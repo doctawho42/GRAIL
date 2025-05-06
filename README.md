@@ -9,6 +9,7 @@ networks.
 ### 1.1 From source with **Poetry**
 Run `poetry install` from the directory with `pyproject.toml` file
 ### 1.2 From **Docker** image
+Now is not available
 ### 1.3 From **PyPi**
 `pip install grail`
 
