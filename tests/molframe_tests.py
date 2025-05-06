@@ -1,8 +1,8 @@
 import sys
 sys.path.append('..')
-from grail.utils.preparation import MolFrame
+from grail_metabolism.utils.preparation import MolFrame
 import signal
-from grail.model.filter import Filter
+from grail_metabolism.model.filter import Filter
 import torch
 
 import logging
@@ -13,8 +13,8 @@ def handler(signum, frame):
     raise TimeoutError
 
 signal.signal(signal.SIGALRM, handler)
-triples = MolFrame.read_triples('../grail/data/val_triples.txt')
-test = MolFrame.from_file('../grail/data/val.sdf', triples)
+triples = MolFrame.read_triples('../grail_metabolism/data/val_triples.txt')
+test = MolFrame.from_file('../grail_metabolism/data/val.sdf', triples)
 
 def test_setup() -> None:
     logging.debug("Starting full setup")

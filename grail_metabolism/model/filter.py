@@ -6,11 +6,11 @@ from torch_geometric.nn import GATv2Conv, global_mean_pool
 from torch_geometric.data import Data, Batch
 from torch_geometric import nn
 import torch_geometric
-from grail.model.wrapper import GFilter
-from grail.utils.preparation import MolFrame
+from grail_metabolism.model.wrapper import GFilter
+from grail_metabolism.utils.preparation import MolFrame
 from torch_geometric.loader import DataLoader
 from tqdm.auto import tqdm
-from grail.model.train_model import PULoss
+from grail_metabolism.model.train_model import PULoss
 
 class Filter(GFilter):
     def __init__(self, in_channels: int):

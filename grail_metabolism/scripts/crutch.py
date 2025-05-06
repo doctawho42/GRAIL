@@ -8,7 +8,7 @@ import warnings
 warnings.filterwarnings('ignore')
 tqdm.pandas()
 
-from grail.utils.reaction_mapper import combine_reaction
+from grail_metabolism.utils.reaction_mapper import combine_reaction
 import argparse
 
 parser = argparse.ArgumentParser()

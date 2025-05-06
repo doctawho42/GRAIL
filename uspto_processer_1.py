@@ -2,7 +2,7 @@
 import pandas as pd
 from rdkit import Chem
 
-from grail.utils.preparation import extract, standardize_mol
+from grail_metabolism.utils.preparation import extract, standardize_mol
 
 from tqdm.auto import tqdm
 import warnings
@@ -11,7 +11,7 @@ import pickle as pkl
 warnings.filterwarnings('ignore')
 tqdm.pandas()
 
-uspto = pd.read_csv('grail/data/USPTO_FULL.csv')
+uspto = pd.read_csv('grail_metabolism/data/USPTO_FULL.csv')
 reactions = uspto['reactions'].str.split('>').apply(lambda x: (x[0], x[2]))
 uspto = pd.DataFrame(reactions.to_list(), columns=['sub', 'prod'])
 

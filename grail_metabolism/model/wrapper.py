@@ -2,7 +2,7 @@ from torch import nn
 from torch_geometric.data import Data
 import typing as tp
 from abc import ABC, abstractmethod
-from grail.utils.preparation import MolFrame
+from grail_metabolism.utils.preparation import MolFrame
 
 class GFilter(nn.Module, ABC):
     def __init__(self):

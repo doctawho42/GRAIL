@@ -2,8 +2,8 @@ import optuna
 from typing import Optional
 import pickle as pkl
 
-from grail.utils.preparation import MolFrame
-from grail.model.filter import create_filter_pairs, create_filter_singles
+from grail_metabolism.utils.preparation import MolFrame
+from grail_metabolism.model.filter import create_filter_pairs, create_filter_singles
 from typing import Literal
 
 class OptunaWrapper:

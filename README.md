@@ -25,5 +25,5 @@ versions of **Python**, use only **Python 3.9 or lower** if you want
 to create your own set of transformation rules. All necessary
 tools are in `grail.utils.reaction_mapper`
 
-[pypi-image]: https://badge.fury.io/py/torch-geometric.svg
-[pypi-url]: https://pypi.python.org/pypi/torch-geometric
+[pypi-image]: https://badge.fury.io/py/grail_metabolism.svg
+[pypi-url]: https://pypi.python.org/pypi/grail_metabolism

@@ -9,12 +9,12 @@ import random
 from tqdm.auto import tqdm
 import pandas as pd
 try:
-    from grail.utils.reaction_mapper import combine_reaction
+    from grail_metabolism.utils.reaction_mapper import combine_reaction
 except ImportError:
     print('ATTENTION: you use incorrect for rxnmapper version of rdkit')
     def combine_reaction(*args, **kwargs) -> None:
         return None
-from grail.utils.transform import from_pair, from_rdmol
+from grail_metabolism.utils.transform import from_pair, from_rdmol
 from sklearn.impute import SimpleImputer
 from sklearn.metrics import matthews_corrcoef as mcc, roc_auc_score as roc_auc, jaccard_score as jac
 from torch import tensor
@@ -26,7 +26,7 @@ from torch_geometric.data import Batch
 from multipledispatch import dispatch
 from aizynthfinder.aizynthfinder import AiZynthExpander
 import faiss
-from grail.model.train_model import PULoss
+from grail_metabolism.model.train_model import PULoss
 
 import rdkit
 from rdkit import Chem
@@ -62,7 +62,7 @@ def get_reactions(expander: AiZynthExpander, smiles: str) -> list[list[str]]:
 warnings.filterwarnings('ignore')
 tqdm.pandas()
 
-with open('/Users/nikitapolomosnov/PycharmProjects/GRAIL_0/grail/data/smirks.txt') as rulefile:
+with open('/Users/nikitapolomosnov/PycharmProjects/GRAIL_0/grail_metabolism/data/smirks.txt') as rulefile:
     rules = tuple(x.rstrip() for x in rulefile)
 
 uncharger = rdMolStandardize.Uncharger() # annoying, but necessary as no convenience method exists
