@@ -1,0 +1,28 @@
+    def __init__(self, card: pd.DataFrame, sub_name: str = 'sub', prod_name: str = 'prod', real_name: str = 'real',
+                 mol_structs: Optional[Dict[str, Chem.Mol]] = None, standartize: bool = True) -> None:
+        if standartize:
+            subs = card[sub_name].progress_apply(standardize_mol)
+            prods = card[prod_name].progress_apply(standardize_mol)
+        else:
+            subs = card[sub_name]
+            prods = card[prod_name]
+        if real_name not in card.columns:
+            card[real_name] = np.ones(len(subs))
+        self.card = dd(set)
+        self.gen_card = dd(set)
+        self.mol_structs = {}
+        self.negs = dd(set)
+        self.graphs = dd(list)
+        self.single = {}
+        self.morgan = {}
+        for sub in tqdm(subs.values):
+            self.card[sub] |= set(prods[(subs == sub) & (card[real_name].astype(int) == 1)].values.tolist())
+            if not prods[(subs == sub) & (card[real_name].astype(int) == 0)].empty:
+                self.gen_card[sub] |= set(prods[(subs == sub) & (card[real_name].astype(int) == 0)].values.tolist())
+            if mol_structs is None:
+                self.mol_structs[sub] = Chem.MolFromSmiles(sub)
+        if mol_structs is None:
+            for prod in prods:
+                self.mol_structs[prod] = Chem.MolFromSmiles(prod)
+        else:
+            self.mol_structs = mol_structs
