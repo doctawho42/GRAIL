@@ -11,7 +11,7 @@ Run `poetry install` from the directory with `pyproject.toml` file
 ### 1.2 From **Docker** image
 Now is not available
 ### 1.3 From **PyPi**
-`pip install grail`
+`pip install grail_metabolism`
 
 **IMPORTANT:** If you are going to run **GRAIL** with **CUDA**,
 then after installation run `install.py` script to add 
