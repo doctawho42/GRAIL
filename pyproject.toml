@@ -19,6 +19,9 @@ torch-geometric = "^2.6.1"
 multipledispatch = "^1.0.0"
 
 
+[tool.poetry.group.extras.dependencies]
+rxnmapper = "^0.4.1"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
