@@ -2,7 +2,7 @@
 [![PyPI Version][pypi-image]][pypi-url]
 
 **GRAIL** is an open-source tool for drug metabolism 
-prediction, based on transformers and graph neural 
+prediction, based on SMARTS reaction rules and graph neural 
 networks. 
 
 ## 1. Installation
