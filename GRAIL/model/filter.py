@@ -3,7 +3,7 @@ import numpy as np
 import typing as tp
 from torch.nn import Module, Sequential, ReLU, Linear, BatchNorm1d, Dropout, Sigmoid
 from torch_geometric.nn import GATv2Conv, global_mean_pool
-from torch_geometric.data import Data
+from torch_geometric.data import Data, Batch
 from torch_geometric import nn
 import torch_geometric
 from grail.model.wrapper import GFilter
@@ -12,7 +12,7 @@ from torch_geometric.loader import DataLoader
 from tqdm.auto import tqdm
 from grail.model.train_model import PULoss
 
-class Filter(Module):
+class Filter(GFilter):
     def __init__(self, in_channels: int):
         super(Filter, self).__init__()
         self.module = nn.Sequential('x, edge_index, edge_attr', [
@@ -123,7 +123,6 @@ def create_filter_singles(arg_vec: tp.List[int]) -> Module:
     class Filter(Module):
         def __init__(self) -> None:
             super(Filter, self).__init__()
-
             self.conv1_sub = GATv2Conv(10, arg_vec[0], dropout=0.25, edge_dim=6)
             self.conv2_sub = GATv2Conv(arg_vec[0], arg_vec[1], dropout=0.25, edge_dim=6)
             self.conv3_sub = GATv2Conv(arg_vec[1], arg_vec[2], dropout=0.25, edge_dim=6)
@@ -183,4 +182,52 @@ def create_filter_singles(arg_vec: tp.List[int]) -> Module:
             x = torch.cat((node_sub, fp_sub, node, fp_met), dim=1)
             x = self.FCNN(x)
             return x
+
+        def fit(self, data: MolFrame, lr: float = 1e-5, eps: int = 100, verbose: bool = False,
+                prior: float = 0.75) -> 'Filter':
+            device = 'cuda' if torch.cuda.is_available() else 'cpu'
+            self.to(device)
+
+            criterion = PULoss(prior)
+            optimizer = torch.optim.Adam(self.parameters(), lr=lr, betas=(0.9, 0.99), weight_decay=1e-8)
+            scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer=optimizer, gamma=0.8)
+
+            def collate(data_list: tp.List) -> tp.Tuple[Batch, Batch]:
+                batchA = Batch.from_data_list([data[0] for data in data_list])
+                batchB = Batch.from_data_list([data[1] for data in data_list])
+                return batchA, batchB
+
+            if verbose:
+                print('Starting DataLoaders generation')
+
+            train_loader = []
+            for mol in self.card.keys():
+                sub = self.single[mol]
+                if sub is not None:
+                    for met in self.card[mol]:
+                        if self.single[met] is not None:
+                            train_loader.append((sub, self.single[met]))
+            for mol in self.negs.keys():
+                sub = self.single[mol]
+                if sub is not None:
+                    for met in self.negs[mol]:
+                        if self.single[met] is not None:
+                            train_loader.append((sub, self.single[met]))
+            train_loader = DataLoader(train_loader, batch_size=128, shuffle=True, collate_fn=collate)
+
+            history = []
+            for _ in tqdm(range(100)):
+                self.train()
+                for batch in train_loader:
+                    met_batch = batch[1].to(device)
+                    sub_batch = batch[0].to(device)
+                    out = self(sub_batch, met_batch)
+                    loss = criterion(out, met_batch.y.unsqueeze(1).float())
+                    history.append(loss.item())
+                    loss.backward()
+                    optimizer.step()
+                    optimizer.zero_grad()
+                scheduler.step()
+            return self
+
     return Filter()

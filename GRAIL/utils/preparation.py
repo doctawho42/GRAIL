@@ -26,6 +26,7 @@ from torch_geometric.data import Batch
 from multipledispatch import dispatch
 from aizynthfinder.aizynthfinder import AiZynthExpander
 import faiss
+from grail.model.train_model import PULoss
 
 import rdkit
 from rdkit import Chem
@@ -718,7 +719,7 @@ class MolFrame:
         device = 'cuda' if torch.cuda.is_available() else 'cpu'
         model.to(device)
 
-        criterion = nn.BCELoss()
+        criterion = PULoss(0.25)
         optimizer = torch.optim.Adam(model.parameters(), lr=lr, betas=(0.9, 0.99), weight_decay=decay)
         scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer=optimizer, gamma=0.8)
 
@@ -788,7 +789,7 @@ class MolFrame:
         """
         device = 'cuda' if torch.cuda.is_available() else 'cpu'
         model.to(device)
-        criterion = nn.BCELoss()
+        criterion = PULoss(0.25)
         optimizer = torch.optim.Adam(model.parameters(), lr=lr, betas=(0.9, 0.99), weight_decay=decay)
         scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer=optimizer, gamma=0.8)
 

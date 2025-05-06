@@ -67,11 +67,14 @@ class ModelWrapper:
         print('Filter learning')
         self.filter.fit(data)
         print('Generator learning')
-        self.generator.fit(data)
+        if self.generator == 'simple':
+            pass
+        else:
+            self.generator.fit(data)
         return self
 
     def generate(self, sub: str) -> tp.List[str]:
-        to_check = self.filter.generate(sub)
+        to_check = self.generator.generate(sub)
         to_return = []
         for mol in to_check:
             is_real = bool(self.filter.predict(sub, mol))
