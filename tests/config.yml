@@ -1,0 +1,11 @@
+expansion:
+  uspto:
+    - /Users/nikitapolomosnov/PycharmProjects/GRAIL_0/tests/uspto_model.onnx
+    - /Users/nikitapolomosnov/PycharmProjects/GRAIL_0/tests/uspto_templates.csv.gz
+  ringbreaker:
+    - /Users/nikitapolomosnov/PycharmProjects/GRAIL_0/tests/uspto_ringbreaker_model.onnx
+    - /Users/nikitapolomosnov/PycharmProjects/GRAIL_0/tests/uspto_ringbreaker_templates.csv.gz
+filter:
+  uspto: /Users/nikitapolomosnov/PycharmProjects/GRAIL_0/tests/uspto_filter_model.onnx
+stock:
+  zinc: /Users/nikitapolomosnov/PycharmProjects/GRAIL_0/tests/zinc_stock.hdf5
