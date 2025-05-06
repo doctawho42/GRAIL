@@ -1,4 +1,4 @@
-# GRAIL: Graph-based drug metabolism Reaction prediction via Attentive Interaction Layers
+# GRAIL: Graph neural networks and Rule-based Approach In drug metaboLism prediction
 [![PyPI Version][pypi-image]][pypi-url]
 
 **GRAIL** is an open-source tool for drug metabolism 
@@ -7,6 +7,7 @@ networks.
 
 ## 1. Installation
 ### 1.1 From source with **Poetry**
+Run `poetry install` from the directory with `pyproject.toml` file
 ### 1.2 From **Docker** image
 ### 1.3 From **PyPi**
 `pip install grail`
