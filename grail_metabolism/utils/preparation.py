@@ -18,7 +18,7 @@ from grail_metabolism.utils.transform import from_pair, from_rdmol
 from sklearn.impute import SimpleImputer
 from sklearn.metrics import matthews_corrcoef as mcc, roc_auc_score as roc_auc, jaccard_score as jac
 from torch import tensor
-from torch.nn import Module
+from torch.nn import Module, BCELoss
 import torch
 from torch import nn
 from torch_geometric.loader import DataLoader
@@ -26,7 +26,6 @@ from torch_geometric.data import Batch
 from multipledispatch import dispatch
 from aizynthfinder.aizynthfinder import AiZynthExpander
 import faiss
-from grail_metabolism.model.train_model import PULoss
 
 import rdkit
 from rdkit import Chem
@@ -62,7 +61,7 @@ def get_reactions(expander: AiZynthExpander, smiles: str) -> list[list[str]]:
 warnings.filterwarnings('ignore')
 tqdm.pandas()
 
-with open('/Users/nikitapolomosnov/PycharmProjects/GRAIL_0/grail_metabolism/data/smirks.txt') as rulefile:
+with open('/Users/nikitapolomosnov/PycharmProjects/GRAIL/grail_metabolism/data/smirks.txt') as rulefile:
     rules = tuple(x.rstrip() for x in rulefile)
 
 uncharger = rdMolStandardize.Uncharger() # annoying, but necessary as no convenience method exists
@@ -138,7 +137,22 @@ def timeout(seconds: float = 30, error_message: str = os.strerror(errno.ETIME)):
 
     return decorator
 
-
+def generate_vectors(reaction_dict, real_products_dict):
+    vectors = {}
+    for substrate in reaction_dict:
+        # Initialize a vector of 474 zeros
+        vector = [0] * 474
+        # Get the real products for this substrate, default to empty set if not present
+        real_products = real_products_dict.get(substrate, set())
+        # Iterate over each product and its indexes in the reaction_dict
+        for product, indexes in reaction_dict[substrate].items():
+            if product in real_products:
+                for idx in indexes:
+                    # Ensure the index is within the valid range
+                    if 0 <= idx < 474:
+                        vector[idx] = 1
+        vectors[substrate] = vector
+    return vectors
 
 @timeout(seconds=30)
 def standardize_mol(mol: Union[rdkit.Chem.rdchem.Mol, str], ph: float = None) -> Union[rdkit.Chem.rdchem.Mol, str]:
@@ -588,9 +602,9 @@ class MolFrame:
         :return: :class:None
         """
         if pca:
-            with open('/Users/nikitapolomosnov/PycharmProjects/GRAIL_0/notebooks/pca_ats.pkl', 'rb') as file:
+            with open('/Users/nikitapolomosnov/PycharmProjects/GRAIL/notebooks/pca_ats.pkl', 'rb') as file:
                 pca_x = pkl.load(file)
-            with open('/Users/nikitapolomosnov/PycharmProjects/GRAIL_0/notebooks/pca_bonds.pkl', 'rb') as file:
+            with open('/Users/nikitapolomosnov/PycharmProjects/GRAIL/notebooks/pca_bonds.pkl', 'rb') as file:
                 pca_b = pkl.load(file)
         mols = self.mol_structs
         for substrate in tqdm(self.card):
@@ -633,9 +647,9 @@ class MolFrame:
         :return: :class:None
         """
         if pca:
-            with open('/Users/nikitapolomosnov/PycharmProjects/GRAIL_0/notebooks/pca_ats_single.pkl', 'rb') as file:
+            with open('/Users/nikitapolomosnov/PycharmProjects/GRAIL/notebooks/pca_ats_single.pkl', 'rb') as file:
                 pca_x = pkl.load(file)
-            with open('/Users/nikitapolomosnov/PycharmProjects/GRAIL_0/notebooks/pca_bonds_single.pkl', 'rb') as file:
+            with open('/Users/nikitapolomosnov/PycharmProjects/GRAIL/notebooks/pca_bonds_single.pkl', 'rb') as file:
                 pca_b = pkl.load(file)
         mols = self.mol_structs
         for mol in tqdm(self.card):
@@ -719,7 +733,7 @@ class MolFrame:
         device = 'cuda' if torch.cuda.is_available() else 'cpu'
         model.to(device)
 
-        criterion = PULoss(0.25)
+        criterion = BCELoss()
         optimizer = torch.optim.Adam(model.parameters(), lr=lr, betas=(0.9, 0.99), weight_decay=decay)
         scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer=optimizer, gamma=0.8)
 
@@ -789,7 +803,7 @@ class MolFrame:
         """
         device = 'cuda' if torch.cuda.is_available() else 'cpu'
         model.to(device)
-        criterion = PULoss(0.25)
+        criterion = BCELoss
         optimizer = torch.optim.Adam(model.parameters(), lr=lr, betas=(0.9, 0.99), weight_decay=decay)
         scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer=optimizer, gamma=0.8)
 

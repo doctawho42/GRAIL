@@ -12,6 +12,7 @@ from tqdm.auto import tqdm
 from rdkit import Chem
 from rdkit.Chem.AllChem import ReactionFromSmarts
 from itertools import chain
+import typing as tp
 
 def generate_vectors(reaction_dict, real_products_dict):
     vectors = {}
@@ -122,7 +123,7 @@ class Generator(GGenerator):
         sub_mol = from_rdmol(mol)
         vector = cpunum(self(sub_mol))
         out = []
-        for i, rule in enumerate(self.rules):
+        for i, rule in enumerate(tqdm(self.rules)):
             if vector[i] == 1:
                 rxn = ReactionFromSmarts(rule)
                 try:
@@ -150,4 +151,43 @@ class Generator(GGenerator):
                         continue
                     for stand in mols_standart:
                         out.append(stand)
+        return out
+
+class SimpleGenerator(GGenerator):
+    def __init__(self, rules: tp.List[str]):
+        self.rules = rules
+
+    def fit(self, data: MolFrame):
+        pass
+
+    def generate(self, sub: str) -> tp.List[str]:
+        mol = Chem.MolFromSmiles(sub)
+        out = []
+        for i, rule in enumerate(tqdm(self.rules)):
+            rxn = ReactionFromSmarts(rule)
+            try:
+                mols_prebuild = chain.from_iterable(rxn.RunReactants((mol,)))
+            except ValueError:
+                continue
+            if not mols_prebuild:
+                continue
+            else:
+                mols_splitted = []
+                for preb in mols_prebuild:
+                    mols_splitted += Chem.MolToSmiles(preb).split('.')
+                mols_splitted = [x for x in mols_splitted if iscorrect(x)]
+                mols_splitted = list(map(Chem.MolFromSmiles, mols_splitted))
+                mols_splitted = [x for x in mols_splitted if x is not None]
+                if not mols_splitted:
+                    continue
+                try:
+                    mols_standart = list(map(standardize_mol, mols_splitted))
+                except Chem.KekulizeException:
+                    continue
+                except RuntimeError:
+                    continue
+                except Chem.AtomValenceException:
+                    continue
+                for stand in mols_standart:
+                    out.append(stand)
         return out
