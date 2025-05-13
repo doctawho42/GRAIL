@@ -8,6 +8,7 @@ import pickle as pkl
 import random
 from tqdm.auto import tqdm
 import pandas as pd
+from pathlib import Path
 try:
     from grail_metabolism.utils.reaction_mapper import combine_reaction
 except ImportError:
@@ -261,43 +262,43 @@ class MolFrame:
 
             **mol_structs** (Dict[str, Chem.Mol]): optional :class:`dict`-like object with all needed :class:Chem.Mol objects
         From :class:`dict`:
-            **card** (Dict): :class:`dict`-like object with substrates as keys and products as values
+            **map** (Dict): :class:`dict`-like object with substrates as keys and products as values
 
-            **gen_card** (Dict): :class:`dict`-like object with substrates as keys and generated products as values
+            **gen_map** (Dict): :class:`dict`-like object with substrates as keys and generated products as values
 
             **mol_structs** (Dict[str, Chem.Mol]): optional :class:`dict`-like object with all needed Chem.Mol objects
     """
 
     @dispatch(pd.DataFrame)
-    def __init__(self, card: pd.DataFrame, sub_name: str = 'sub', prod_name: str = 'prod', real_name: str = 'real',
+    def __init__(self, map: pd.DataFrame, sub_name: str = 'sub', prod_name: str = 'prod', real_name: str = 'real',
                  mol_structs: Optional[Dict[str, Chem.Mol]] = None, standartize: bool = True) -> None:
         # Standardize molecules if required
         if standartize:
 
-            subs_std = card[sub_name].progress_apply(standardize_mol)
-            prods_std = card[prod_name].progress_apply(standardize_mol)
+            subs_std = map[sub_name].progress_apply(standardize_mol)
+            prods_std = map[prod_name].progress_apply(standardize_mol)
         else:
-            subs_std = card[sub_name]
-            prods_std = card[prod_name]
+            subs_std = map[sub_name]
+            prods_std = map[prod_name]
 
         # Ensure real column exists and is integer type
-        if real_name not in card.columns:
-            card[real_name] = 1
-        card[real_name] = card[real_name].astype(int)
+        if real_name not in map.columns:
+            map[real_name] = 1
+        map[real_name] = map[real_name].astype(int)
 
         # Create optimized processing dataframe
         processed_df = pd.DataFrame({
             'sub_std': subs_std,
             'prod_std': prods_std,
-            'real': card[real_name]
+            'real': map[real_name]
         })
 
         # Group by standardized substrates
         grouped = processed_df.groupby('sub_std')
 
         # Initialize data containers
-        self.card = dd(set)
-        self.gen_card = dd(set)
+        self.map = dd(set)
+        self.gen_map = dd(set)
         self.negs = dd(set)
         self.graphs = dd(list)
         self.single = {}
@@ -307,12 +308,12 @@ class MolFrame:
         for sub, group in tqdm(grouped, desc="Processing reactions"):
             # Handle real products
             real_products = group[group['real'] == 1]['prod_std']
-            self.card[sub].update(real_products)
+            self.map[sub].update(real_products)
 
             # Handle generated products
             gen_products = group[group['real'] == 0]['prod_std']
             if not gen_products.empty:
-                self.gen_card[sub].update(gen_products)
+                self.gen_map[sub].update(gen_products)
 
         # Handle molecular structures
 
@@ -334,9 +335,9 @@ class MolFrame:
             self.mol_structs = mol_structs
 
     @dispatch(dict)
-    def __init__(self, card: Dict, gen_card: Optional[DefaultDict] = None, mol_structs: Optional[Dict] = None) -> None:
-        self.card = card
-        self.gen_card = dd(set) if gen_card is None else gen_card
+    def __init__(self, map: Dict, gen_map: Optional[DefaultDict] = None, mol_structs: Optional[Dict] = None) -> None:
+        self.map = map
+        self.gen_map = dd(set) if gen_map is None else gen_map
         self.negs = dd(set)
         self.graphs = dd(list)
         self.single = {}
@@ -344,14 +345,14 @@ class MolFrame:
         if mol_structs is not None:
             self.mol_structs = mol_structs
         else:
-            for sub in card:
+            for sub in map:
                 self.mol_structs[sub] = Chem.MolFromSmiles(sub)
-                for prod in card[sub]:
+                for prod in map[sub]:
                     self.mol_structs[prod] = Chem.MolFromSmiles(prod)
-            if gen_card:
-                for sub in gen_card:
+            if gen_map:
+                for sub in gen_map:
                     self.mol_structs[sub] = Chem.MolFromSmiles(sub)
-                    for prod in gen_card[sub]:
+                    for prod in gen_map[sub]:
                         self.mol_structs[prod] = Chem.MolFromSmiles(prod)
 
     @staticmethod
@@ -401,14 +402,14 @@ class MolFrame:
                 return np.zeros(len(rules))
 
             opt_matrix = dd(_zeros)
-            for substrate in tqdm(self.card, desc='Metabolize substrates'):
+            for substrate in tqdm(self.map, desc='Metabolize substrates'):
                 try:
                     #signal.alarm(10)
                     gen_stat = metaboliser(self.mol_structs[substrate], rules=rules)
                     for product in gen_stat:
                         product_smiles = Chem.MolToSmiles(product)
                         np.put(opt_matrix[product_smiles], list(gen_stat[product]), 1)
-                        self.gen_card[substrate].add(product_smiles)
+                        self.gen_map[substrate].add(product_smiles)
                         self.mol_structs[product_smiles] = product
                 except TimeoutError:
                     continue
@@ -422,12 +423,12 @@ class MolFrame:
                         equivalent.add(frozenset([i, j]))
             return equivalent
         elif mode == 'gen':
-            for substrate in tqdm(self.card):
-                if True:  # todo - correct work with substrate not in gen_card
+            for substrate in tqdm(self.map):
+                if True:  # todo - correct work with substrate not in gen_map
                     gen_stat = metaboliser(self.mol_structs[substrate], rules=rules)
                     for product in gen_stat:
                         product_smiles = Chem.MolToSmiles(product)
-                        self.gen_card[substrate].add(product_smiles)
+                        self.gen_map[substrate].add(product_smiles)
                         self.mol_structs[product_smiles] = product
         else:
             raise ValueError
@@ -438,55 +439,55 @@ class MolFrame:
         :param other: :class:`MolFrame`
         :return: :class:`MolFrame`
         """
-        new_card = self.card.copy()
-        new_card.update(other.card)
-        new_gencard = self.gen_card.copy()
-        new_gencard.update(other.gen_card)
+        new_map = self.map.copy()
+        new_map.update(other.map)
+        new_genmap = self.gen_map.copy()
+        new_genmap.update(other.gen_map)
         new_mols = self.mol_structs.copy()
         new_mols.update(other.mol_structs)
-        new_molframe = MolFrame(new_card, gen_card=new_gencard, mol_structs=new_mols)
+        new_molframe = MolFrame(new_map, gen_map=new_genmap, mol_structs=new_mols)
         return new_molframe
 
     def clean(self) -> None:
-        to_del_card = []
-        for key in self.card:
-            if len(self.card[key]) == 0:
-                to_del_card.append(key)
-        for key in to_del_card:
-            del self.card[key]
-        to_del_gencard = []
-        for key in self.gen_card:
-            if len(self.gen_card[key]) == 0:
-                to_del_gencard.append(key)
-        for key in to_del_gencard:
-            del self.gen_card[key]
-        self.__reconstruct(self.card)
-        self.__reconstruct(self.gen_card)
+        to_del_map = []
+        for key in self.map:
+            if len(self.map[key]) == 0:
+                to_del_map.append(key)
+        for key in to_del_map:
+            del self.map[key]
+        to_del_genmap = []
+        for key in self.gen_map:
+            if len(self.gen_map[key]) == 0:
+                to_del_genmap.append(key)
+        for key in to_del_genmap:
+            del self.gen_map[key]
+        self.__reconstruct(self.map)
+        self.__reconstruct(self.gen_map)
 
-    def __reconstruct(self, card: Dict[str, Set[Chem.Mol]]) -> None:
-        for sub in card:
+    def __reconstruct(self, map: Dict[str, Set[Chem.Mol]]) -> None:
+        for sub in map:
             if sub not in self.mol_structs.keys():
                 self.mol_structs[sub] = Chem.MolFromSmiles(sub)
-            for prod in card[sub]:
+            for prod in map[sub]:
                 if prod not in self.mol_structs.keys():
                     self.mol_structs[prod] = Chem.MolFromSmiles(prod)
 
     def train_val_test_split(self, frac: float) -> List['MolFrame']:
-        x = np.array(list(self.card.keys()))
+        x = np.array(list(self.map.keys()))
         np.random.shuffle(x)
         idx = int(frac * len(x))
         train, val, test = x[idx * 2:], x[:idx], x[idx:idx * 2]
         tables = []
         for sub_set in [train, val, test]:
-            cards = {}
-            gen_cards = {}
+            maps = {}
+            gen_maps = {}
             mol_structs = {}
-            for key in self.card:
+            for key in self.map:
                 if key in sub_set:
-                    cards[key] = self.card[key]
-                    gen_cards[key] = self.gen_card[key]
+                    maps[key] = self.map[key]
+                    gen_maps[key] = self.gen_map[key]
                     mol_structs[key] = self.mol_structs[key]
-            molframe = MolFrame(cards, gen_card=dd(set, gen_cards), mol_structs=mol_structs)
+            molframe = MolFrame(maps, gen_map=dd(set, gen_maps), mol_structs=mol_structs)
             tables.append(molframe)
         return tables
 
@@ -495,9 +496,9 @@ class MolFrame:
         Generate negative subclass.
         :return: :class:None
         """
-        for sub in self.card:
-            for prod in self.gen_card[sub]:
-                if prod not in self.card[sub]:
+        for sub in self.map:
+            for prod in self.gen_map[sub]:
+                if prod not in self.map[sub]:
                     self.negs[sub].add(prod)
 
     def passify(self, name: str) -> List[Tuple[int, int, int]]:
@@ -512,13 +513,13 @@ class MolFrame:
         indexes = []
         status = []
         triples = []
-        for key in self.card:
+        for key in self.map:
             smiles.append(key)
             molecules.append(self.mol_structs[key])
             i = 1 if not indexes else indexes[-1] + 1
             indexes.append(i)
             status.append('Substrate')
-            for val in self.card[key]:
+            for val in self.map[key]:
                 smiles.append(val)
                 molecules.append(self.mol_structs[val])
                 j = indexes[-1] + 1
@@ -555,8 +556,8 @@ class MolFrame:
             return None
 
         rules = set()
-        for substrate in tqdm(self.card, desc='Generating rules'):
-            for product in self.card[substrate]:
+        for substrate in tqdm(self.map, desc='Generating rules'):
+            for product in self.map[substrate]:
                 rules.add(combine_reaction(self.mol_structs[substrate], self.mol_structs[product]))
         return rules
 
@@ -572,18 +573,18 @@ class MolFrame:
 
     def plot_coverage(self) -> None:
         coverages = []
-        for substrate in tqdm(self.card):
-            coverages.append(len(self.card[substrate] & self.gen_card[substrate]) / len(self.card[substrate]))
+        for substrate in tqdm(self.map):
+            coverages.append(len(self.map[substrate] & self.gen_map[substrate]) / len(self.map[substrate]))
         sns.boxplot(coverages)
         plt.show()
 
     def __repr__(self) -> str:
         self.clean()
-        return f'MolFrame: {len(self.card)} substrates'
+        return f'MolFrame: {len(self.map)} substrates'
 
     def __str__(self) -> str:
         self.clean()
-        return f'MolFrame: {len(self.card)} substrates'
+        return f'MolFrame: {len(self.map)} substrates'
 
     def morganize(self, size: int = 256) -> None:
         r"""
@@ -602,13 +603,15 @@ class MolFrame:
         :return: :class:None
         """
         if pca:
-            with open('/Users/nikitapolomosnov/PycharmProjects/GRAIL/notebooks/pca_ats.pkl', 'rb') as file:
+            ats = Path(__file__).parent / '..' / 'data' / 'pca_ats.pkl'
+            bonds = Path(__file__).parent / '..' / 'data' / 'pca_bonds.pkl'
+            with open(ats, 'rb') as file:
                 pca_x = pkl.load(file)
-            with open('/Users/nikitapolomosnov/PycharmProjects/GRAIL/notebooks/pca_bonds.pkl', 'rb') as file:
+            with open(bonds, 'rb') as file:
                 pca_b = pkl.load(file)
         mols = self.mol_structs
-        for substrate in tqdm(self.card):
-            for product in self.card[substrate]:
+        for substrate in tqdm(self.map):
+            for product in self.map[substrate]:
                 self.graphs[substrate].append(from_pair(mols[substrate], mols[product]))
                 if self.graphs[substrate][-1] is not None:
                     self.graphs[substrate][-1].y = tensor([1.], dtype=torch.double)
@@ -627,8 +630,8 @@ class MolFrame:
                         self.graphs[substrate][-1].fp = torch.cat([self.morgan[substrate], self.morgan[product]], dim=1)
                         self.graphs[substrate][-1].smiles = product
 
-        for graph_card in tqdm(self.graphs.values()):
-            for pair in graph_card:
+        for graph_map in tqdm(self.graphs.values()):
+            for pair in graph_map:
                 if pair is not None:
                     for i in range(len(pair.x)):
                         for j in range(len(pair.x[i])):
@@ -647,12 +650,14 @@ class MolFrame:
         :return: :class:None
         """
         if pca:
-            with open('/Users/nikitapolomosnov/PycharmProjects/GRAIL/notebooks/pca_ats_single.pkl', 'rb') as file:
+            ats = Path(__file__).parent / '..' / 'data' / 'pca_ats_single.pkl'
+            bonds = Path(__file__).parent / '..' / 'data' / 'pca_bonds_single.pkl'
+            with open(ats, 'rb') as file:
                 pca_x = pkl.load(file)
-            with open('/Users/nikitapolomosnov/PycharmProjects/GRAIL/notebooks/pca_bonds_single.pkl', 'rb') as file:
+            with open(bonds, 'rb') as file:
                 pca_b = pkl.load(file)
         mols = self.mol_structs
-        for mol in tqdm(self.card):
+        for mol in tqdm(self.map):
             try:
                 self.single[mol] = from_rdmol(mols[mol])
             except ValueError:
@@ -660,7 +665,7 @@ class MolFrame:
                 continue
             self.single[mol].fp = self.morgan[mol]
             self.single[mol].y = tensor([1.], dtype=torch.double)
-            for prod in self.card[mol]:
+            for prod in self.map[mol]:
                 try:
                     self.single[prod] = from_rdmol(mols[prod])
                     self.single[prod].y = tensor([1.], dtype=torch.double)
@@ -816,10 +821,10 @@ class MolFrame:
             print('Starting DataLoaders generation')
 
         train_loader = []
-        for mol in self.card.keys():
+        for mol in self.map.keys():
             sub = self.single[mol]
             if sub is not None:
-                for met in self.card[mol]:
+                for met in self.map[mol]:
                     if self.single[met] is not None:
                         train_loader.append((sub, self.single[met]))
         for mol in self.negs.keys():
@@ -831,10 +836,10 @@ class MolFrame:
         train_loader = DataLoader(train_loader, batch_size=128, shuffle=True, collate_fn=collate)
 
         test_loader = []
-        for mol in test.card.keys():
+        for mol in test.map.keys():
             sub = test.single[mol]
             if sub is not None:
-                for met in test.card[mol]:
+                for met in test.map[mol]:
                     if test.single[met] is not None:
                         test_loader.append((sub, test.single[met]))
         for mol in test.negs.keys():
@@ -903,10 +908,10 @@ class MolFrame:
 
         loader = []
         if mode == 'single':
-            for mol in self.card.keys():
+            for mol in self.map.keys():
                 sub = self.single[mol]
                 if sub is not None:
-                    for met in self.card[mol]:
+                    for met in self.map[mol]:
                         if self.single[met] is not None:
                             loader.append((sub, self.single[met]))
             for mol in self.negs.keys():
@@ -959,7 +964,7 @@ class MolFrame:
         recall = []
         model.eval()
         if mode == 'single':
-            for mol, prods in tqdm(self.card.items(), total=len(self.card)):
+            for mol, prods in tqdm(self.map.items(), total=len(self.map)):
                 if self.single[mol] is not None:
                     tp = 0
                     fp = 0
@@ -969,7 +974,7 @@ class MolFrame:
                         if self.single[prod] is not None:
                             out = model(self.single[mol], self.single[prod]).item()
                             if out >= 0.5:
-                                if prod in self.gen_card[mol]:
+                                if prod in self.gen_map[mol]:
                                     tp += 1
                                 else:
                                     fn +=1
@@ -998,7 +1003,7 @@ class MolFrame:
                     if pair is not None:
                         out = model(pair).item()
                         if out >= 0.5:
-                            if pair.smiles in self.gen_card[sub] and pair.y.item == 1:
+                            if pair.smiles in self.gen_map[sub] and pair.y.item == 1:
                                 tp += 1
                             elif pair.y.item == 0:
                                 fp += 1
@@ -1037,13 +1042,18 @@ class MolFrame:
         return precision, recall, f1, jac
 
     def permute_augmentation(self, cutoff: Optional[float] = 0.85) -> None:
+        r"""
+        Create kNN-based permutational augmentation of the dataset
+        :param cutoff: cutoff for Tanimoto similarity
+        :return: None
+        """
         dim = 256
         bits = 256
         index = faiss.IndexLSH(dim, bits)
         morgans = []
         reversed_morgans = {}
         for key, tens in tqdm(self.morgan.items()):
-            if key not in self.card.keys():
+            if key not in self.map.keys():
                 morgans.append(tens.squeeze(0).numpy())
                 reversed_morgans[tuple(tens.squeeze(0).numpy())] = key
         morgans = np.array(morgans)
@@ -1051,7 +1061,7 @@ class MolFrame:
         D, I = index.search(morgans, 10)
 
         transposed = {}
-        for key, prods in tqdm(self.card.items()):
+        for key, prods in tqdm(self.map.items()):
             for prod in prods:
                 transposed[prod] = key
 
@@ -1090,28 +1100,34 @@ class MolFrame:
                 sub = transposed[prod]
                 if cutoff is not None:
                     if prod in reals:
-                        self.card[sub].add(prod)
+                        self.map[sub].add(prod)
                     else:
-                        self.gen_card[sub].add(prod)
+                        self.gen_map[sub].add(prod)
                 else:
-                    self.gen_card[sub].add(prod)
+                    self.gen_map[sub].add(prod)
 
     @torch.no_grad()
     def metabolize_filter(self, filter_model: nn.Module, rules: List[str]) -> DefaultDict[str, Set[str]]:
-        out_card = dd(set)
+        r"""
+        Metabolize substrates with a filtration by the given Filter model
+        :param filter_model: Filter model
+        :param rules: list of SMARTS rules
+        :return:
+        """
+        out_map = dd(set)
         filter_model.eval()
-        for substrate in tqdm(self.card.keys()):
+        for substrate in tqdm(self.map.keys()):
             for product in metaboliser(self.mol_structs[substrate], rules):
                 if product is not None:
                     input = from_pair(substrate, product)
                     out = cpunum(filter_model(input))
                     if all(out >= 0.5):
-                        out_card[substrate].add(product)
-        return out_card
+                        out_map[substrate].add(product)
+        return out_map
 
     def metabolic_mapping(self, rules: List[str]) -> DefaultDict[str, Dict[str, Set[int]]]:
-        mapped_card = dd(dict)
-        for substrate in tqdm(self.card):
+        mapped_map = dd(dict)
+        for substrate in tqdm(self.map):
             try:
                 gen_stat = metaboliser(self.mol_structs[substrate], rules=rules)
             except TimeoutError:
@@ -1119,16 +1135,28 @@ class MolFrame:
             finally:
                 for product in gen_stat:
                     product_smiles = Chem.MolToSmiles(product)
-                    mapped_card[substrate][product_smiles] = gen_stat[product]
-        return mapped_card
+                    mapped_map[substrate][product_smiles] = gen_stat[product]
+        return mapped_map
 
-    def sample_cards(self, frac: float) -> 'MolFrame':
-        subs = list(self.card.keys())
+    def sample_maps(self, frac: float) -> 'MolFrame':
+        r"""
+        Create a subsample of the dataset
+        :param frac: fraction of the dataset
+        :return: New MolFrame
+        """
+        subs = list(self.map.keys())
         sampled = random.sample(subs, int(len(subs) * frac))
-        new_card = {}
-        gen_card = dd(set)
-        mol_structs = self.mol_structs
+        new_map = {}
+        gen_map = dd(set)
+        mol_structs = {}
         for substrate in sampled:
-            new_card[substrate] = self.card[substrate]
-            gen_card[substrate] = self.gen_card[substrate]
-        return MolFrame(new_card, gen_card=gen_card, mol_structs=mol_structs)
+            new_map[substrate] = self.map[substrate]
+            gen_map[substrate] = self.gen_map[substrate]
+            for met in new_map[substrate]:
+                mol_structs[met] = self.mol_structs[met]
+            for product in gen_map[substrate]:
+                mol_structs[product] = self.mol_structs[product]
+        return MolFrame(new_map, gen_map=gen_map, mol_structs=mol_structs)
+    
+    def __getitem__(self, item: str) -> Tuple[Set[str], Set[str], Chem.Mol]:
+        return self.map[item], self.gen_map[item], self.mol_structs[item]

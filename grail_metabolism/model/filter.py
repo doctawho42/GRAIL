@@ -1,6 +1,9 @@
 import torch
 import numpy as np
 import typing as tp
+from pathlib import Path
+from sklearn.impute import SimpleImputer
+import pickle as pkl
 from torch.nn import Module, Sequential, ReLU, Linear, BatchNorm1d, Dropout, Sigmoid
 from torch_geometric.nn import GATv2Conv, global_mean_pool
 from torch_geometric.data import Data, Batch
@@ -63,8 +66,8 @@ class Filter(GFilter):
             raise TypeError('Unsupported mode')
         self.mode = mode
 
-    @dispatch()
-    def forward(self, data: Data) -> torch.Tensor:
+    @dispatch(Data, str)
+    def forward(self, data: Data, met: str) -> torch.Tensor:
         data.x = data.x.to(torch.float32)
         data.edge_attr = data.edge_attr.to(torch.float32)
         data.edge_index = data.edge_index.to(torch.int64)
@@ -141,7 +144,7 @@ class Filter(GFilter):
             for _ in tqdm(range(100)):
                 self.train()
                 for batch in train_loader:
-                    out = self(batch)
+                    out = self(batch, 'pass')
                     loss = criterion(out, batch.y.unsqueeze(1).float())
                     history.append(loss.item())
                     loss.backward()
@@ -157,10 +160,10 @@ class Filter(GFilter):
                 return batchA, batchB
 
             train_loader = []
-            for mol in self.card.keys():
+            for mol in self.map.keys():
                 sub = self.single[mol]
                 if sub is not None:
-                    for met in self.card[mol]:
+                    for met in self.map[mol]:
                         if self.single[met] is not None:
                             train_loader.append((sub, self.single[met]))
             for mol in self.negs.keys():
@@ -189,14 +192,52 @@ class Filter(GFilter):
         else:
             raise TypeError('Unsupported mode')
 
-    def predict(self, sub: str, prod: str) -> int:
+    def predict(self, sub: str, prod: str, pca: bool = True) -> int:
         sub_mol = Chem.MolFromSmiles(sub)
         prod_mol = Chem.MolFromSmiles(prod)
         if self.mode == 'pair':
             graph = from_pair(sub_mol, prod_mol)
-            return int(cpunum(self(graph)).item())
+            if graph is not None:
+                for i in range(len(graph.x)):
+                    for j in range(len(graph.x[i])):
+                        if graph.x[i][j] == float('inf'):
+                            graph.x[i][j] = 0
+                graph.x = torch.tensor(SimpleImputer(missing_values=np.nan,
+                                              strategy='constant',
+                                              fill_value=0).fit_transform(graph.x))
+                if pca:
+                    ats = Path(__file__).parent / '..' / 'data' / 'pca_ats.pkl'
+                    bonds = Path(__file__).parent / '..' / 'data' / 'pca_bonds.pkl'
+                    with open(ats, 'rb') as file:
+                        pca_x = pkl.load(file)
+                    with open(bonds, 'rb') as file:
+                        pca_b = pkl.load(file)
+                    graph.x = torch.tensor(pca_x.transform(graph.x))
+                    graph.edge_attr = torch.tensor(pca_b.transform(graph.edge_attr))
+                return int(cpunum(self(graph)).item())
         elif self.mode == 'single':
             graph_sub, graph_prod = from_rdmol(sub_mol), from_rdmol(prod_mol)
+            if pca:
+                ats = Path(__file__).parent / '..' / 'data' / 'pca_ats_single.pkl'
+                bonds = Path(__file__).parent / '..' / 'data' / 'pca_bonds_single.pkl'
+                with open(ats, 'rb') as file:
+                    pca_x = pkl.load(file)
+                with open(bonds, 'rb') as file:
+                    pca_b = pkl.load(file)
+                for mol in (graph_sub, graph_prod):
+                    for i in range(len(mol.x)):
+                        for j in range(len(mol.x[i])):
+                            if mol.x[i][j] == float('inf'):
+                                mol.x[i][j] = 0
+                    mol.x = torch.tensor(SimpleImputer(missing_values=np.nan,
+                                                           strategy='constant',
+                                                           fill_value=0).fit_transform(mol.x))
+                    mol.x = torch.tensor(pca_x.transform(mol.x))
+                    try:
+                        mol.edge_attr = torch.tensor(pca_b.transform(mol.edge_attr))
+                    except ValueError:
+                        print('Some issue happened with this molecule:')
+                        print(mol, mol.edge_attr, mol.x)
             return int(cpunum(self(graph_sub, graph_prod)).item())
         else:
             raise TypeError('Unsupported mode')
@@ -357,10 +398,10 @@ def create_filter_singles(arg_vec: tp.List[int]) -> Module:
                 print('Starting DataLoaders generation')
 
             train_loader = []
-            for mol in self.card.keys():
+            for mol in self.map.keys():
                 sub = self.single[mol]
                 if sub is not None:
-                    for met in self.card[mol]:
+                    for met in self.map[mol]:
                         if self.single[met] is not None:
                             train_loader.append((sub, self.single[met]))
             for mol in self.negs.keys():
