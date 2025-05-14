@@ -7,7 +7,9 @@ from grail_metabolism.model.filter import create_filter_pairs, create_filter_sin
 from typing import Literal
 
 class OptunaWrapper:
-
+    r"""
+    Optuna wrapper class
+    """
     def __init__(self, study: Optional[optuna.study.Study], mode: Literal['pair', 'single'] = 'pair') -> None:
         self.study = study
         self.lr = 0
@@ -18,6 +20,11 @@ class OptunaWrapper:
 
     @staticmethod
     def from_pickle(file_path: str) -> 'OptunaWrapper':
+        r"""
+        Create Optuna wrapper from pickled study file
+        :param file_path: path to pickled study file
+        :return:
+        """
         with open(file_path, 'rb') as f:
             return OptunaWrapper(pkl.load(f))
 
@@ -49,6 +56,10 @@ class OptunaWrapper:
         self.study = study
 
     def create_optimal_model(self) -> None:
+        r"""
+        Create model with optimal hyperparameters
+        :return:
+        """
         if self.study is None:
             raise ValueError('Study is None')
         self.lr = self.study.best_params['lr']

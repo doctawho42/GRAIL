@@ -86,6 +86,7 @@ class Filter(GFilter):
 
     @dispatch(Data)
     def forward(self, sub: Data, met: Data) -> torch.Tensor:
+        # 1. Metabolite
         met.x = met.x.to(torch.float32)
         met.edge_attr = met.edge_attr.to(torch.float32)
         node = self.conv1(met.x, met.edge_index, edge_attr=met.edge_attr)
@@ -125,7 +126,7 @@ class Filter(GFilter):
         device = 'cuda' if torch.cuda.is_available() else 'cpu'
         self.to(device)
 
-        criterion = PULoss(prior)
+        criterion = PULoss(prior) # loss function (nnPU) for the positive-unlabelled paradigm
         optimizer = torch.optim.Adam(self.parameters(), lr=lr, betas=(0.9, 0.99), weight_decay=1e-8)
         scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer=optimizer, gamma=0.8)
 
@@ -243,6 +244,7 @@ class Filter(GFilter):
             raise TypeError('Unsupported mode')
 
 def create_filter_pairs(arg_vec: tp.List[int]) -> Module:
+    print('Deprecated warning')
     class Filter(GFilter):
         def __init__(self) -> None:
             super(Filter, self).__init__()
@@ -317,6 +319,7 @@ def create_filter_pairs(arg_vec: tp.List[int]) -> Module:
     return Filter()
 
 def create_filter_singles(arg_vec: tp.List[int]) -> Module:
+    print('Deprecated warning')
     class Filter(Module):
         def __init__(self) -> None:
             super(Filter, self).__init__()

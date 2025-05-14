@@ -55,9 +55,15 @@ class GGenerator(nn.Module, ABC):
 
 
 class ModelWrapper:
-    def __init__(self, filter: GFilter, generator: tp.Union[tp.Literal['simple'], GGenerator], rules: tp.Optional[tp.List[str]] = None) -> None:
-        self.filter = filter
-        self.generator = generator
+    r"""
+    Wrapper for the whole GRAIL
+    """
+    def __init__(self,
+                 filter: GFilter,
+                 generator: tp.Union[tp.Literal['simple'], GGenerator],
+                 rules: tp.Optional[tp.List[str]] = None) -> None:
+        self.filter = filter # filter part
+        self.generator = generator # generator part
         if generator == 'simple':
             self.rules = rules
             self.generator = SimpleGenerator(rules)
@@ -79,6 +85,11 @@ class ModelWrapper:
         return self
 
     def generate(self, sub: str) -> tp.List[str]:
+        r"""
+        Generate metabolites of the given substrate
+        :param sub: substrate SMILES
+        :return: list of product SMILES
+        """
         to_check = self.generator.generate(sub)
         to_return = []
         for mol in to_check:
@@ -88,6 +99,9 @@ class ModelWrapper:
         return to_return
 
 class SimpleGenerator(GGenerator):
+    r"""
+    Non-learnable simple generator
+    """
     def __init__(self, rules: tp.List[str]):
         self.rules = rules
 

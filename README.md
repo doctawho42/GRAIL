@@ -79,9 +79,27 @@ The `model` module contains key components:
 - **Generator**: Handles the generation of reaction rules and transformations.
 
 ### 4.3 Utilities
-- **Preparation**: Prepares molecular data for training and evaluation.
+- **Preparation**: Prepares and standardizes molecular data for training and evaluation.
 - **OptunaWrapper**: Facilitates hyperparameter optimization using the Optuna library.
+- **Transform**: Here you can transform molecular data into graphs
+- **ReactionMapper**: Make your own set of reaction rules via RXNMapper
 
+#### Graphs' base characteristics:
+There are two types of molecular graphs in this library: singlegraphs
+(just common molecular graphs) and pairgraphs, in which two molecular graphs (substrate and product)
+are merged by those maximum common substructure. 
+
+Node-edge dimensions:
+- 16 and 18 in singlegraphs (`from_rdmol`)
+- 10 and 6 in PCAed singlegraphs
+- 17 and 18 in pairgraphs (`from_pair`)
+- 12 and 6 in PCAed pairgraphs
+
+There are also SMARTS reaction graphs (merged by atom mapping) `from_rule`
+
+#### Reaction mapper
+- `combine_reaction` to process reaction into SMARTS pattern
+- `process` to process the MolFrame by `combine_reaction`
 ---
 
 ## 5. Usage Examples
@@ -89,32 +107,86 @@ The `model` module contains key components:
 ### Example 1: Loading Data with `MolFrame`
 ```python
 from grail_metabolism.utils.preparation import MolFrame
-# Process triples
+# Process triples 
+# (substrate_index, metabolite_index, real_or_not)
 triples = MolFrame.read_triples('triples.txt')
 # Initialize from file
 mol_frame = MolFrame.from_file('data.sdf', triples)
 ```
 
-### Example 2: Training a Model
+### Example 2: Training filter part
+```python
+from grail_metabolism.model.filter import Filter
+from grail_metabolism.utils.preparation import MolFrame
+
+# Setting hyperparameters
+in_channels = ...
+edge_dim = ...
+arg_vec = [...] # len = 6
+
+# Set up the data
+train = MolFrame(...)
+test = MolFrame(...)
+
+model = Filter(in_channels, edge_dim, arg_vec, mode=...) # mode: pair or single
+model.fit(train)
+# Or
+train.train_pairs(model, # or train_singles
+                  test,
+                  lr=...,
+                  eps=...,
+                  decay=...,
+                  verbose=...)
+sub = ...
+met = ...
+model.predict(sub, met)
+```
+
+### Example 3: Training the Generator
+```python
+from grail_metabolism.model.generator import Generator
+from grail_metabolism.utils.preparation import MolFrame
+from grail_metabolism.utils.transform import from_rule
+from rdkit import Chem
+
+# Setting rule dict
+rules = [...]
+rule_dict = {rule: from_rule(rule) for rule in rules}
+in_channels = ...
+edge_dim = ...
+
+# Set up the data
+train = MolFrame(...)
+
+model = Generator(rule_dict, in_channels, edge_dim)
+model.fit(train)
+model.generate(...)
+```
+
+### Example 4: Training a Complete Model
 ```python
 from grail_metabolism.utils.preparation import MolFrame
 from grail_metabolism.model.grail import summon_the_grail
 
 # Initialize model and datasets
-model = summon_the_grail(...)
+rules = ...
+model = summon_the_grail(rules, (..., ...), (..., ...))
 train_set = MolFrame(...)
 test_set = MolFrame(...)
 
 # Train the model
 trained_model = model.fit(train_set)
+
+model.generate(...)
 ```
 
-### Example 3: Hyperparameter Optimization
+### Example 4: Hyperparameter Optimization
 ```python
 from grail_metabolism.utils.optuna import OptunaWrapper
 
 # Initialize OptunaWrapper
 wrapper = OptunaWrapper(None, mode='pair')
+# Or use OptunaWrapper.from_pickle for the ready Optuna study
 
 # Run optimization
 wrapper.make_study(train_set, test_set)
