@@ -15,7 +15,10 @@ from rdkit.Chem import rdFMCS, rdRascalMCES
 warnings.filterwarnings('ignore')
 tqdm.pandas()
 
-rxn_mapper = RXNMapper()
+try:
+    rxn_mapper = RXNMapper()
+except NameError:
+    rxn_mapper = None
 
 
 def _mask_gen(mol: Chem.Mol, mol_map: Iterable[int], secondary = True):
