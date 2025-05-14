@@ -1,9 +1,7 @@
 from torch import nn
-from torch_geometric.data import Data
 import typing as tp
 from abc import ABC, abstractmethod
 from grail_metabolism.utils.preparation import MolFrame, iscorrect, standardize_mol
-from ..utils.transform import from_rule, from_rdmol
 from tqdm.auto import tqdm
 from rdkit import Chem
 from rdkit.Chem.AllChem import ReactionFromSmarts

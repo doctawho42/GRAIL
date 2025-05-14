@@ -272,14 +272,30 @@ class MolFrame:
     @dispatch(pd.DataFrame)
     def __init__(self, map: pd.DataFrame, sub_name: str = 'sub', prod_name: str = 'prod', real_name: str = 'real',
                  mol_structs: Optional[Dict[str, Chem.Mol]] = None, standartize: bool = True) -> None:
+        # Validate input DataFrame
+        if map.empty:
+            raise ValueError("Input DataFrame is empty. Please provide valid substrate-product data.")
+
+        required_columns = {sub_name, prod_name, real_name}
+        if not required_columns.issubset(map.columns):
+            missing_columns = required_columns - set(map.columns)
+            raise ValueError(f"Missing required columns in DataFrame: {', '.join(missing_columns)}")
+
         # Standardize molecules if required
         if standartize:
+            subs_std = map[sub_name].progress_apply(lambda x: self._handle_standardization(x))
+            prods_std = map[prod_name].progress_apply(lambda x: self._handle_standardization(x))
+        else:
+            subs_std = map[sub_name]
+            prods_std = map[prod_name]
+        # Standardize molecules if required
+        '''if standartize:
 
             subs_std = map[sub_name].progress_apply(standardize_mol)
             prods_std = map[prod_name].progress_apply(standardize_mol)
         else:
             subs_std = map[sub_name]
-            prods_std = map[prod_name]
+            prods_std = map[prod_name]'''
 
         # Ensure real column exists and is integer type
         if real_name not in map.columns:
@@ -356,6 +372,14 @@ class MolFrame:
                         self.mol_structs[prod] = Chem.MolFromSmiles(prod)
 
     @staticmethod
+    def _handle_standardization(smiles: str) -> str:
+        try:
+            return standardize_mol(smiles)
+        except ValueError as e:
+            warnings.warn(f"Standardization failed for molecule: {smiles}. Error: {e}")
+            return smiles  # Return original SMILES if standardization failed
+
+    @staticmethod
     def from_file(file_path: str, triples: List[Tuple[int, int, int]], standartize: bool = True) -> 'MolFrame':
         r"""
         Read MolFrame from file and list of triples.
@@ -367,7 +391,7 @@ class MolFrame:
         # Load SDF file into a dataframe
         data = LoadSDF(file_path, molColName='Molecules', smilesName='SMILES')
         if 'Index' not in data.columns:
-            raise ValueError('No Index attribute in an SDF file')
+            raise ValueError('No Index attribute in an SDF file. Cannot proceed with loading file: {}'.format(file_path))
         # Change columns types in the dataframe
         data['Index'] = data['Index'].apply(int)
         triple_data = pd.DataFrame(triples, columns=['sub', 'prod', 'real'])
@@ -384,8 +408,14 @@ class MolFrame:
         :param file_path: path to txt file
         :return: list of triples (sub, prod, real)
         """
+        if not os.path.exists(file_path):
+            raise FileNotFoundError(f"File not found: {file_path}")
+
         with open(file_path) as file:
-            return [tuple(int(x) for x in file.readline().split()) for line in file]
+            try:
+                return [tuple(int(x) for x in line.split()) for line in file]
+            except Exception as e:
+                raise ValueError(f"Failed to read triples from file: {file_path}. Error: {e}")
 
     def metabolize(self, rules: List[str], mode: Literal['opt', 'gen'] = 'opt') -> Optional[Set[FrozenSet[int]]]:
         r"""
@@ -481,15 +511,18 @@ class MolFrame:
         for sub_set in [train, val, test]:
             maps = {}
             gen_maps = {}
-            mol_structs = {}
-            for key in self.map:
-                if key in sub_set:
-                    maps[key] = self.map[key]
-                    gen_maps[key] = self.gen_map[key]
-                    mol_structs[key] = self.mol_structs[key]
+            mol_structs = self._extract_molecular_structures(sub_set)
             molframe = MolFrame(maps, gen_map=dd(set, gen_maps), mol_structs=mol_structs)
             tables.append(molframe)
         return tables
+
+    def _extract_molecular_structures(self, sub_set: Set[str]) -> Dict[str, Chem.Mol]:
+        """Extracts molecular structures for the given subset of keys."""
+        mol_structs = {}
+        for key in self.map:
+            if key in sub_set:
+                mol_structs[key] = self.mol_structs[key]
+        return mol_structs
 
     def negatives(self) -> None:
         r"""
