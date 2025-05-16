@@ -138,11 +138,11 @@ def timeout(seconds: float = 30, error_message: str = os.strerror(errno.ETIME)):
 
     return decorator
 
-def generate_vectors(reaction_dict, real_products_dict):
+def generate_vectors(reaction_dict, real_products_dict, num_rules):
     vectors = {}
     for substrate in reaction_dict:
         # Initialize a vector of 474 zeros
-        vector = [0] * 474
+        vector = [0] * num_rules
         # Get the real products for this substrate, default to empty set if not present
         real_products = real_products_dict.get(substrate, set())
         # Iterate over each product and its indexes in the reaction_dict
@@ -150,7 +150,7 @@ def generate_vectors(reaction_dict, real_products_dict):
             if product in real_products:
                 for idx in indexes:
                     # Ensure the index is within the valid range
-                    if 0 <= idx < 474:
+                    if 0 <= idx < num_rules:
                         vector[idx] = 1
         vectors[substrate] = vector
     return vectors
@@ -817,6 +817,7 @@ class MolFrame:
                 out = model(batch)
                 loss = criterion(out, batch.y.unsqueeze(1).float())
                 history.append(loss.item())
+                if verbose: plt.plot(history)
                 loss.backward()
                 optimizer.step()
                 optimizer.zero_grad()
@@ -1170,6 +1171,55 @@ class MolFrame:
                     product_smiles = Chem.MolToSmiles(product)
                     mapped_map[substrate][product_smiles] = gen_stat[product]
         return mapped_map
+
+    def train_generator(self, model: nn.Module, lr: float = 1e-5, eps: int = 100, decay: float = 1e-10, verbose: bool = True) -> Tuple[nn.Module, float]:
+        r"""
+        Train generator model on the inner metabolic mapping
+        :param model: generator model
+        :param lr: learning rate
+        :param verbose: to verbose or not
+        :return: learned model and the final value of Huber loss
+        """
+        train_loader = []
+        mapping_sample = self.metabolic_mapping(list(model.rules.keys()))
+        num_rules = len(model.rules)
+        vecs = generate_vectors(mapping_sample, self.map, num_rules)
+
+        criterion = torch.nn.HuberLoss()
+        optimizer = torch.optim.Adam(model.parameters(), lr=lr, betas=(0.9, 0.99), weight_decay=decay)
+        scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer=optimizer, gamma=0.8)
+
+        for substrate in self.map:
+            datum = self.single[substrate].clone()
+            datum.y = torch.tensor(vecs[substrate], dtype=torch.float32)
+            train_loader.append(datum)
+
+        train_loader = DataLoader(train_loader, batch_size=128, shuffle=True)
+
+        history = []
+        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        for _ in tqdm(range(eps)):
+            model.train()
+            for batch in train_loader:
+                batch = batch.to(device)
+                out = model(batch)
+
+                # Правильное преобразование формы целевых меток
+                target = batch.y.view(out.shape[0], -1)  # [batch_size, num_rules]
+
+                # Проверка размерностей
+                assert out.shape == target.shape, \
+                    f"Shape mismatch: out {out.shape} vs target {target.shape}"
+
+                loss = criterion(out, target)
+                history.append(loss.item())
+                if verbose: plt.plot()
+                optimizer.zero_grad()
+                loss.backward()
+                optimizer.step()
+            scheduler.step()
+
+        return model, loss.item()
 
     def sample_maps(self, frac: float) -> 'MolFrame':
         r"""

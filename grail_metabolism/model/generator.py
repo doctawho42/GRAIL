@@ -68,15 +68,17 @@ class RuleParse(Module):
         return x
 
 class Generator(GGenerator):
-    def __init__(self, rule_dict: dict[str, Batch], in_channels: int, edge_dim: int) -> None:
+    def __init__(self, rule_dict: dict[str, Batch], in_channels: int, edge_dim: int, arg_vec: tp.Optional[tp.List[int]] = None) -> None:
         super(Generator, self).__init__()
         self.parser = RuleParse(rule_dict)
         self.rules = rule_dict
-        self.bilinear = Bilinear(100, 100, 1)
+        if arg_vec is None:
+            arg_vec = [100] * 2
         self.module = nn.Sequential('x, edge_index, edge_attr', [
-            (GATv2Conv(in_channels, 100, edge_dim=edge_dim), 'x, edge_index, edge_attr -> x'),
+            (GATv2Conv(in_channels, arg_vec[0], edge_dim=edge_dim), 'x, edge_index, edge_attr -> x'),
+            (GATv2Conv(arg_vec[0], arg_vec[1], edge_dim=edge_dim), 'x, edge_index, edge_attr -> x'),
+            (GATv2Conv(arg_vec[1], 100, edge_dim=edge_dim), 'x, edge_index, edge_attr -> x'),
         ])
-        self.linear = nn.Linear(100, 100)
 
     '''def forward(self, data: Data) -> torch.Tensor:
         y = self.parser()  # [num_rules, 100]
