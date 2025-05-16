@@ -111,7 +111,7 @@ def timeout(seconds: int = 30):
         return new_f
     return decorate
 '''
-def timeout(seconds: float = 30, error_message: str = os.strerror(errno.ETIME)):
+def timeout(seconds: float = 30):
 
     def decorator(func):
 

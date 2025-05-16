@@ -1,4 +1,8 @@
+import gc
 import re
+from functools import wraps
+from threading import Timer
+
 from rdkit import Chem
 from rdkit.Chem import AllChem
 
@@ -90,6 +94,32 @@ one_hot = {
     '*': np.ones(16)
 }
 
+def timeout(seconds: float = 30):
+
+    def decorator(func):
+
+        @wraps(func)
+        def _handle_timeout(*args, **kwargs):
+
+            def _raise_timeout():
+                raise TimeoutError
+
+            timer = Timer(seconds, _raise_timeout)
+            timer.start()
+            try:
+                result = func(*args, **kwargs)
+            except TimeoutError:
+                print('timeout')
+                gc.collect()
+                return None
+            finally:
+                timer.cancel()
+            return result
+
+        return _handle_timeout
+
+    return decorator
+
 def from_rdmol(mol: Any) -> Optional[Data]:
     r"""Converts a :class:`rdkit.Chem.Mol` instance to a
     :class:`torch_geometric.data.Data` instance.
@@ -142,7 +172,7 @@ def from_rdmol(mol: Any) -> Optional[Data]:
 
     return Data(x=x, edge_index=edge_index, edge_attr=edge_attr)
 
-
+@timeout(seconds=30)
 def from_pair(mol1: Any, mol2: Any) -> Optional[Data]:
     r"""Converts a pair of :class:`rdkit.Chem.Mol` objects to a
     :class:`torch_geometric.data.Data` graph with connected

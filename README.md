@@ -21,7 +21,8 @@
 2. [Data Availability](#2-data-availability)
 3. [Quick Start](#3-quick-start)
 4. [Modules Overview](#4-modules-overview)
-5. [Usage Examples](#5-usage-examples)
+5. [eUSPTO](#5-enchanced-uspto-euspto)
+6. [Usage Examples](#6-usage-examples)
 
 ---
 
@@ -48,6 +49,10 @@ python install.py
 
 ## 2. Data Availability
 The dataset can be downloaded from [Zenodo](https://zenodo.org/records/15392504?preview=1&token=eyJhbGciOiJIUzUxMiJ9.eyJpZCI6ImVmNWEwN2QyLWVlZTMtNDk2Ny1hYjg3LWExNDcwMDA5NTEyNSIsImRhdGEiOnt9LCJyYW5kb20iOi...).
+
+**Data collection pipeline:**
+
+![data.png](img/data.png)
 
 **Note:** This dataset is still in draft form and is subject to updates.
 
@@ -76,8 +81,9 @@ The `MolFrame` class handles data preparation and is essential for working with 
 ### 4.2 Models
 The `model` module contains key components:
 - **Filter**: Implements GNN-based filters for molecular graphs.
+![filter_1.png](img/filter_1.png)
 - **Generator**: Handles the generation of reaction rules and transformations.
-
+![generator.png](img/generator.png)
 ### 4.3 Utilities
 - **Preparation**: Prepares and standardizes molecular data for training and evaluation.
 - **OptunaWrapper**: Facilitates hyperparameter optimization using the Optuna library.
@@ -102,7 +108,16 @@ There are also SMARTS reaction graphs (merged by atom mapping) `from_rule`
 - `process` to process the MolFrame by `combine_reaction`
 ---
 
-## 5. Usage Examples
+## 5. Enchanced USPTO (eUSPTO)
+To create the pre-training dataset - **eUSPTO**, you should firstly apply
+two `uspto_processer_*.py` scripts to get USPTO in pickle file, and then go to the 
+`notebooks/uspto_process.ipynb` to apply here `MolFrame.permute_augmentation`. 
+
+![euspto.png](img/euspto.png)
+
+---
+
+## 6. Usage Examples
 
 ### Example 1: Loading Data with `MolFrame`
 ```python
