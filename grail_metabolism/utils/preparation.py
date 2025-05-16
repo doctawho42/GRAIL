@@ -10,12 +10,12 @@ from tqdm.auto import tqdm
 import pandas as pd
 from pathlib import Path
 try:
-    from grail_metabolism.utils.reaction_mapper import combine_reaction
+    from .reaction_mapper import combine_reaction
 except ImportError:
     print('ATTENTION: you use incorrect for rxnmapper version of rdkit')
     def combine_reaction(*args, **kwargs) -> None:
         return None
-from grail_metabolism.utils.transform import from_pair, from_rdmol
+from .transform import from_pair, from_rdmol
 from sklearn.impute import SimpleImputer
 from sklearn.metrics import matthews_corrcoef as mcc, roc_auc_score as roc_auc, jaccard_score as jac
 from torch import tensor
@@ -25,7 +25,6 @@ from torch import nn
 from torch_geometric.loader import DataLoader
 from torch_geometric.data import Batch
 from multipledispatch import dispatch
-from aizynthfinder.aizynthfinder import AiZynthExpander
 import faiss
 
 import rdkit
@@ -51,7 +50,7 @@ from rdkit.Chem.PandasTools import WriteSDF, LoadSDF
 def handler(signum, frame):
     raise TimeoutError
 
-def get_reactions(expander: AiZynthExpander, smiles: str) -> list[list[str]]:
+def get_reactions(expander: 'AiZynthExpander', smiles: str) -> list[list[str]]:
     reactions = expander.do_expansion(smiles)
     reactants_smiles = []
     for reaction_tuple in reactions:
@@ -1081,6 +1080,7 @@ class MolFrame:
         :param cutoff: cutoff for Tanimoto similarity
         :return: None
         """
+        from aizynthfinder.aizynthfinder import AiZynthExpander
         dim = 256
         bits = 256
         index = faiss.IndexLSH(dim, bits)

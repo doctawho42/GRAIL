@@ -1,7 +1,7 @@
 import torch
 from torch import nn
 from torch.nn import Module
-from grail_metabolism.utils.preparation import MolFrame
+from ..utils.preparation import MolFrame
 from torch_geometric.loader import DataLoader
 from sklearn.metrics import roc_auc_score as roc_auc, matthews_corrcoef as mcc
 import matplotlib.pyplot as plt

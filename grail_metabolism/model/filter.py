@@ -9,13 +9,13 @@ from torch_geometric.nn import GATv2Conv, global_mean_pool
 from torch_geometric.data import Data, Batch
 from torch_geometric import nn
 import torch_geometric
-from grail_metabolism.model.wrapper import GFilter
-from grail_metabolism.utils.preparation import MolFrame, cpunum
-from grail_metabolism.utils.transform import from_rule, from_rdmol, from_pair
+from .wrapper import GFilter
+from ..utils.preparation import MolFrame, cpunum
+from ..utils.transform import from_rule, from_rdmol, from_pair
 from rdkit import Chem
 from torch_geometric.loader import DataLoader
 from tqdm.auto import tqdm
-from grail_metabolism.model.train_model import PULoss
+from .train_model import PULoss
 from multipledispatch import dispatch
 
 class Filter(GFilter):

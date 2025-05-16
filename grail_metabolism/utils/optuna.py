@@ -2,9 +2,9 @@ import optuna
 from typing import Optional
 import pickle as pkl
 
-from grail_metabolism.utils.preparation import MolFrame
-from grail_metabolism.model.filter import Filter
-from grail_metabolism.model.generator import Generator
+from .preparation import MolFrame
+from ..model.filter import Filter
+from ..model.generator import Generator
 from typing import Literal, Dict
 
 class OptunaWrapper:

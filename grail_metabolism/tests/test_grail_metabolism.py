@@ -1,9 +1,11 @@
 import unittest
+
+import pandas as pd
 import torch
-from grail_metabolism.utils.preparation import MolFrame
-from grail_metabolism.model.generator import Generator, generate_vectors
-from grail_metabolism.model.filter import Filter
-from grail_metabolism.model.grail import summon_the_grail
+from ..utils.preparation import MolFrame
+from ..model.generator import Generator, generate_vectors
+from ..model.filter import Filter
+from ..model.grail import summon_the_grail
 from torch_geometric.data import Data
 
 
@@ -11,9 +13,12 @@ class TestGrailMetabolism(unittest.TestCase):
 
     def test_molframe_initialization(self):
         """Test initializing MolFrame with valid and invalid data."""
-        valid_data = {'sub': ['C(C(=O)O)N', 'CC(=O)O'], 'prod': ['CC(=O)N', 'CCO'], 'real': [1, 0]}
-        molframe = MolFrame(map=valid_data)
-        self.assertIsInstance(molframe, MolFrame)
+        valid_data = pd.DataFrame({'sub': ['C(C(=O)O)N', 'CC(=O)O'], 'prod': ['CC(=O)N', 'CCO'], 'real': [1, 0]})
+        valid_map = {'CCO': ['CC=O', 'O=C=O']}
+        molframe_1 = MolFrame(valid_data)
+        molframe_2 = MolFrame(valid_map)
+        self.assertIsInstance(molframe_1, MolFrame)
+        self.assertIsInstance(molframe_2, MolFrame)
 
         invalid_data = {'sub': [], 'prod': [], 'real': []}
         with self.assertRaises(ValueError):
