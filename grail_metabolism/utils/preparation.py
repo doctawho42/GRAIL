@@ -50,7 +50,7 @@ from rdkit.Chem.PandasTools import WriteSDF, LoadSDF
 def handler(signum, frame):
     raise TimeoutError
 
-def get_reactions(expander: 'AiZynthExpander', smiles: str) -> list[list[str]]:
+def get_reactions(expander, smiles: str) -> list[list[str]]:
     reactions = expander.do_expansion(smiles)
     reactants_smiles = []
     for reaction_tuple in reactions:
