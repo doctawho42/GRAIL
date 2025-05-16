@@ -1,0 +1,15 @@
+version: 2
+
+python:
+  install:
+    - requirements: requirements.txt
+    - method: pip
+      path: .
+
+conda:
+  environment: environment.yml
+
+# Build PDF & ePub
+formats:
+  - epub
+  - pdf
