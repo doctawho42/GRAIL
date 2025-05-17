@@ -318,6 +318,7 @@ class MolFrame:
         self.graphs = dd(list)
         self.single = {}
         self.morgan = {}
+        self.reaction_labels = {}
 
         # Process groups efficiently
         for sub, group in tqdm(grouped, desc="Processing reactions"):
@@ -357,6 +358,7 @@ class MolFrame:
         self.graphs = dd(list)
         self.single = {}
         self.morgan = {}
+        self.reaction_labels = {}
         if mol_structs is not None:
             self.mol_structs = mol_structs
         else:
@@ -1181,9 +1183,7 @@ class MolFrame:
         :return: learned model and the final value of Huber loss
         """
         train_loader = []
-        mapping_sample = self.metabolic_mapping(list(model.rules.keys()))
-        num_rules = len(model.rules)
-        vecs = generate_vectors(mapping_sample, self.map, num_rules)
+        vecs = self.reaction_labels
 
         criterion = torch.nn.HuberLoss()
         optimizer = torch.optim.Adam(model.parameters(), lr=lr, betas=(0.9, 0.99), weight_decay=decay)
@@ -1243,3 +1243,8 @@ class MolFrame:
     
     def __getitem__(self, item: str) -> Tuple[Set[str], Set[str], Chem.Mol]:
         return self.map[item], self.gen_map[item], self.mol_structs[item]
+
+    def label_reactions(self, rules: List[str]) -> None:
+        mapping_sample = self.metabolic_mapping(rules)
+        vecs = generate_vectors(mapping_sample, self.map, len(rules))
+        self.reaction_labels = vecs

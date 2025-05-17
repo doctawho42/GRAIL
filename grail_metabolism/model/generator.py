@@ -130,9 +130,7 @@ class Generator(GGenerator):
             print('Starting DataLoaders generation')
 
         train_loader = []
-        mapping_sample = data.metabolic_mapping(list(self.rules.keys()))
-        num_rules = len(self.rules)  # Получаем актуальное количество правил
-        vecs = generate_vectors(mapping_sample, data.map, num_rules)
+        vecs = data.reaction_labels
 
         for substrate in data.map:
             datum = data.single[substrate].clone()
