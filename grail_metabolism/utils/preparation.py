@@ -813,7 +813,7 @@ class MolFrame:
         for epoch in tqdm(range(eps)):
             model.train()
             for batch in train_loader:
-                out = model(batch)
+                out = model(batch, 'pass')
                 loss = criterion(out, batch.y.unsqueeze(1).float())
                 history.append(loss.item())
                 if verbose: plt.plot(history)
