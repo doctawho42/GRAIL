@@ -79,7 +79,7 @@ class OptunaWrapper:
         if self.mode == 'pair':
             self.filter = Filter(12, 6, self.arg_vec, self.mode)
         elif self.mode == 'single':
-            self.filter = Filter(12, 6, self.arg_vec, self.mode)
+            self.filter = Filter(10, 6, self.arg_vec, self.mode)
         else:
             raise ValueError
 

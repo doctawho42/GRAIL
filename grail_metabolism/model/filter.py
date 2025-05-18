@@ -161,18 +161,18 @@ class Filter(GFilter):
                 return batchA, batchB
 
             train_loader = []
-            for mol in self.map.keys():
-                sub = self.single[mol]
+            for mol in data.map.keys():
+                sub = data.single[mol]
                 if sub is not None:
-                    for met in self.map[mol]:
-                        if self.single[met] is not None:
-                            train_loader.append((sub, self.single[met]))
-            for mol in self.negs.keys():
-                sub = self.single[mol]
+                    for met in data.map[mol]:
+                        if data.single[met] is not None:
+                            train_loader.append((sub, data.single[met]))
+            for mol in data.negs.keys():
+                sub = data.single[mol]
                 if sub is not None:
-                    for met in self.negs[mol]:
-                        if self.single[met] is not None:
-                            train_loader.append((sub, self.single[met]))
+                    for met in data.negs[mol]:
+                        if data.single[met] is not None:
+                            train_loader.append((sub, data.single[met]))
             train_loader = DataLoader(train_loader, batch_size=128, shuffle=True, collate_fn=collate)
 
             history = []
