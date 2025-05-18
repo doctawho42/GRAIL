@@ -84,7 +84,7 @@ class Filter(GFilter):
 
         return x
 
-    @dispatch(Data)
+    @dispatch(Data, Data)
     def forward(self, sub: Data, met: Data) -> torch.Tensor:
         # 1. Metabolite
         met.x = met.x.to(torch.float32)
