@@ -924,7 +924,7 @@ class MolFrame:
         return model
 
     @torch.no_grad()
-    def test(self, model: Module, mode: Literal['single', 'pair']) -> Tuple[float, float]:
+    def test(self, model: Module, mode: Literal['single', 'pair'] = 'pair') -> Tuple[float, float]:
         r"""
         Test the given model and return its metrics.
         :param model: :class:`Module` model to train
@@ -971,7 +971,7 @@ class MolFrame:
             if mode == 'single':
                 out = model(*data)
             elif mode == 'pair':
-                out = model(data)
+                out = model(data, 'pass')
             else:
                 raise AttributeError
             pred.extend(list(cpunum(out)))

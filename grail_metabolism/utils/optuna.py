@@ -77,11 +77,21 @@ class OptunaWrapper:
             if key.startswith('x'):
                 self.arg_vec.append(self.study.best_params[key])
         if self.mode == 'pair':
-            self.model = Filter(12, 6, self.arg_vec, self.mode)
+            self.filter = Filter(12, 6, self.arg_vec, self.mode)
         elif self.mode == 'single':
-            self.model = Filter(12, 6, self.arg_vec, self.mode)
+            self.filter = Filter(12, 6, self.arg_vec, self.mode)
         else:
             raise ValueError
+
+    def create_optimal_generator(self, rule_dict) -> None:
+        if self.study is None:
+            raise ValueError('Study is None')
+        self.lr = self.study.best_params['lr']
+        self.decay = self.study.best_params['decay']
+        for key in self.study.best_params.keys():
+            if key.startswith('x'):
+                self.arg_vec.append(self.study.best_params[key])
+        self.generator = Generator(rule_dict, 10, 6, arg_vec=self.arg_vec)
 
     def train_on(self, train_set: MolFrame, test_set: MolFrame) -> None:
         if self.study is None or self.model is None:
