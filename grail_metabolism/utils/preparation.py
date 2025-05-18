@@ -61,7 +61,8 @@ def get_reactions(expander, smiles: str) -> list[list[str]]:
 warnings.filterwarnings('ignore')
 tqdm.pandas()
 
-with open('/Users/nikitapolomosnov/PycharmProjects/GRAIL/grail_metabolism/data/smirks.txt') as rulefile:
+smirks_path = Path(__file__).parent.parent/ 'data' / 'smirks.txt'
+with open(smirks_path) as rulefile:
     rules = tuple(x.rstrip() for x in rulefile)
 
 uncharger = rdMolStandardize.Uncharger() # annoying, but necessary as no convenience method exists
