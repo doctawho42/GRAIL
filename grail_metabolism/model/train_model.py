@@ -112,3 +112,30 @@ class PULoss(nn.Module):
             return -self.gamma * negative_risk
 
         return positive_risk + negative_risk
+
+
+import torch.nn.functional as F
+
+class AsymmetricBCELoss(nn.Module):
+    def __init__(self, gamma=2.0):
+        super().__init__()
+        self.gamma = gamma
+
+    def forward(self, inputs, targets):
+        # inputs: инпуты (без сигмоиды)
+        # targets: бинарные метки (0 или 1)
+
+        # Вычисляем BCE
+        bce_loss = F.binary_cross_entropy(
+            inputs, targets, reduction='none'
+        )
+
+        # Усиливаем штраф для FN (где targets == 1)
+        weights = torch.where(targets == 1, self.gamma, 1.0)
+        weighted_loss = bce_loss * weights
+
+        return weighted_loss.mean()
+'''
+# Пример использования
+gamma = 2.0
+criterion = AsymmetricBCELoss(gamma=gamma)'''
