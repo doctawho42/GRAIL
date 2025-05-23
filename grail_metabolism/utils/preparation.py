@@ -88,30 +88,7 @@ def extract(smiles: str) -> Optional[str]:
         return None
 
 import time
-'''
-def timeout(seconds: int = 30):
-    def decorate(f):
-        def handler(signum, frame):
-            raise TimeoutError
-        def new_f(*args, **kwargs):
-            old = signal.signal(signal.SIGALRM, handler)
-            old_time_left = signal.alarm(seconds)
-            if 0 < old_time_left < seconds: # never lengthen existing timer
-                signal.alarm(old_time_left)
-            start_time = time.time()
-            try:
-                result = f(*args, **kwargs)
-            except TimeoutError:
-                result = None
-            finally:
-                if old_time_left > 0: # deduct f's run time from the saved timer
-                    old_time_left -= time.time() - start_time
-                signal.signal(signal.SIGALRM, old)
-                signal.alarm(old_time_left)
-            return result
-        return new_f
-    return decorate
-'''
+
 def timeout(seconds: float = 30):
 
     def decorator(func):
@@ -120,7 +97,8 @@ def timeout(seconds: float = 30):
         def _handle_timeout(*args, **kwargs):
 
             def _raise_timeout():
-                raise TimeoutError
+                # raise TimeoutError
+                pass # todo make timeout
 
             timer = Timer(seconds, _raise_timeout)
             timer.start()
@@ -221,7 +199,10 @@ def metaboliser(mol: rdkit.Chem.rdchem.Mol, rules: Iterable[str] = rules) -> Opt
         else:
             mols_splitted = []
             for preb in mols_prebuild:
-                mols_splitted += Chem.MolToSmiles(preb).split('.')
+                try:
+                    mols_splitted += Chem.MolToSmiles(preb).split('.')
+                except RuntimeError:
+                    pass
             mols_splitted = [x for x in mols_splitted if iscorrect(x)]
             mols_splitted = list(map(Chem.MolFromSmiles, mols_splitted))
             mols_splitted = [x for x in mols_splitted if x is not None]
