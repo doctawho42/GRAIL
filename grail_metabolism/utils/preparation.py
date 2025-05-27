@@ -1,11 +1,12 @@
 import os
 import re
 import gc
-import errno
 import signal
 import warnings
 import pickle as pkl
 import random
+from argparse import ArgumentError
+
 from tqdm.auto import tqdm
 import pandas as pd
 from pathlib import Path
@@ -87,7 +88,6 @@ def extract(smiles: str) -> Optional[str]:
     else:
         return None
 
-import time
 
 def timeout(seconds: float = 30):
 
@@ -1152,8 +1152,11 @@ class MolFrame:
                 continue
             finally:
                 for product in gen_stat:
-                    product_smiles = Chem.MolToSmiles(product)
-                    mapped_map[substrate][product_smiles] = gen_stat[product]
+                    try:
+                        product_smiles = Chem.MolToSmiles(product)
+                        mapped_map[substrate][product_smiles] = gen_stat[product]
+                    except Exception:
+                        pass
         return mapped_map
 
     def train_generator(self, model: nn.Module, lr: float = 1e-5, eps: int = 100, decay: float = 1e-10, verbose: bool = True) -> Tuple[nn.Module, float]:
