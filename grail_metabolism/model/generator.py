@@ -173,10 +173,10 @@ class Generator(GGenerator):
         train_loader = DataLoader(train_loader, batch_size=128, shuffle=True)
 
         history = []
+        best_loss = float('inf')
         for _ in tqdm(range(100)):
             self.train()
             epoch_loss = 0
-            best_loss = float('inf')
             for batch in train_loader:
                 batch = batch.to(device)
                 out = self(batch)
@@ -231,11 +231,11 @@ class Generator(GGenerator):
                 sub_mol.edge_attr = torch.tensor(pca_b.transform(sub_mol.edge_attr))
             except ValueError:
                 print('Some issue happened with this molecule:')
-                print(sub, sub_mol.edge_attr, sub_mol.x)
+                print(sub)
         vector = cpunum(self(sub_mol).squeeze())
 
         # Adaptive thresholding
-        top_k = max(1, int(len(vector) * 0.25))  # Выбираем топ 10% правил
+        top_k = max(1, int(len(vector) * 0.25))  # Выбираем топ 25% правил
         threshold = np.partition(vector, -top_k)[-top_k]
 
         active_rules = np.where(vector >= threshold)[0]

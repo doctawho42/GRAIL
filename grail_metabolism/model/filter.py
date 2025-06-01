@@ -121,7 +121,10 @@ class Filter(GFilter):
         x = self.FCNN(x)
         return x
 
-    def fit(self, data: MolFrame, lr: float = 1e-5, eps: int = 100, verbose: bool = False,
+    def fit(self, data: MolFrame,
+            lr: float = 1e-5,
+            eps: int = 100,
+            verbose: bool = False,
             prior: float = 0.75) -> 'Filter':
         device = 'cuda' if torch.cuda.is_available() else 'cpu'
         self.to(device)
@@ -135,12 +138,13 @@ class Filter(GFilter):
 
         if self.mode =='pair':
             train_loader = []
-            for pairs in data.graphs.values():
+            for pairs in data.graphs.values(): # dataloaders from pairgraphs
                 for pair in pairs:
                     if pair is not None:
                         train_loader.append(pair)
             train_loader = DataLoader(train_loader, batch_size=128, shuffle=True)
 
+            # Laerning process
             history = []
             for _ in tqdm(range(100)):
                 self.train()
@@ -160,7 +164,7 @@ class Filter(GFilter):
                 batchB = Batch.from_data_list([data[1] for data in data_list])
                 return batchA, batchB
 
-            train_loader = []
+            train_loader = [] # dataloader from singlegraphs
             for mol in data.map.keys():
                 sub = data.single[mol]
                 if sub is not None:
@@ -175,19 +179,26 @@ class Filter(GFilter):
                             train_loader.append((sub, data.single[met]))
             train_loader = DataLoader(train_loader, batch_size=128, shuffle=True, collate_fn=collate)
 
+            # Learning process
             history = []
+            best_loss = float('inf')
             for _ in tqdm(range(100)):
                 self.train()
+                epoch_loss = 0
                 for batch in train_loader:
                     met_batch = batch[1].to(device)
                     sub_batch = batch[0].to(device)
                     out = self(sub_batch, met_batch)
                     loss = criterion(out, met_batch.y.unsqueeze(1).float())
                     history.append(loss.item())
+                    epoch_loss += loss.item()
                     loss.backward()
                     optimizer.step()
                     optimizer.zero_grad()
                 scheduler.step()
+                if epoch_loss < best_loss:
+                    best_loss = epoch_loss
+                    torch.save(self.state_dict(), 'best_filter.pth')
             return self
 
         else:
