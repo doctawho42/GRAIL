@@ -93,10 +93,25 @@ class ModelWrapper:
         to_check = self.generator.generate(sub)
         to_return = []
         for mol in to_check:
-            is_real = bool(self.filter.predict(sub, mol))
+            is_real = bool(self.filter.predict(sub, Chem.MolToSmiles(mol)))
             if is_real:
-                to_return.append(mol)
+                to_return.append(Chem.MolToSmiles(mol))
         return to_return
+
+    def f1_score(self, sub: str, prods: tp.Iterable[str]) -> float:
+        mols = self.generate(sub)
+        tp, fp, fn = 0, 0, 0
+        for mol in mols:
+            if mol in prods:
+                tp += 1
+            else:
+                fp += 1
+        for mol in prods:
+            if mol not in mols:
+                fn += 1
+        precision = tp / (tp + fp)
+        recall = tp / (tp + fn)
+        return 2 * (precision * recall) / (precision + recall)
 
 class SimpleGenerator(GGenerator):
     r"""

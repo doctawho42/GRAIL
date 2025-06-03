@@ -176,7 +176,7 @@ class Generator(GGenerator):
                 torch.nn.utils.clip_grad_norm_(self.parameters(), 1.0)
                 optimizer.step()
                 epoch_loss += loss.item()
-            if verbose: print(f'Loss{epoch_loss}')
+            if verbose: print(f'Loss {epoch_loss}')
             scheduler.step(epoch_loss)
 
             scheduler.step(epoch_loss)
@@ -247,6 +247,16 @@ class Generator(GGenerator):
                 for stand in mols_standart:
                     out.append(stand)
         return out
+
+    @torch.no_grad()
+    def jaccard(self, test_frame: MolFrame) -> tp.List[float]:
+        self.eval()
+        jaccards = []
+        for sub in test_frame.map:
+            mols = set([Chem.MolToSmiles(x) for x in self.generate(sub)])
+            reals = test_frame.map[sub]
+            jaccards.append(len(reals & mols) / len(reals | mols))
+        return jaccards
 
 class SimpleGenerator(GGenerator):
     def __init__(self, rules: tp.List[str]):

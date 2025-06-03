@@ -17,6 +17,7 @@ from torch_geometric.loader import DataLoader
 from tqdm.auto import tqdm
 from .train_model import PULoss
 from multipledispatch import dispatch
+from sklearn.metrics import matthews_corrcoef
 
 class Filter(GFilter):
     def __init__(self, in_channels, edge_dim, arg_vec: tp.List[int], mode: tp.Literal['single', 'pair']):
@@ -253,6 +254,23 @@ class Filter(GFilter):
             return int(cpunum(self(graph_sub, graph_prod)).item())
         else:
             raise TypeError('Unsupported mode')
+
+    @torch.no_grad()
+    def mcc(self, test_frame):
+        self.eval()
+        mccs = []
+        for sub in tqdm(test_frame.map):
+            reals = []
+            bins = []
+            for prod in test_frame.map[sub]:
+                bins.append(self.predict(sub, prod))
+                reals.append(1)
+            for prod in test_frame.negs[sub]:
+                bins.append(self.predict(sub, prod))
+                reals.append(0)
+            mccs.append(matthews_corrcoef(reals, bins))
+        return mccs
+
 
 def create_filter_pairs(arg_vec: tp.List[int]) -> Module:
     print('Deprecated warning')
