@@ -40,7 +40,6 @@ import seaborn as sns
 
 from rdkit.Chem.MolStandardize import rdMolStandardize
 from rdkit.Chem import rdFingerprintGenerator
-from dimorphite_dl import DimorphiteDL
 
 from functools import wraps
 from threading import Timer
@@ -134,7 +133,7 @@ def generate_vectors(reaction_dict, real_products_dict, num_rules):
     return vectors
 
 @timeout(seconds=30)
-def standardize_mol(mol: Union[rdkit.Chem.rdchem.Mol, str], ph: float = None) -> Union[rdkit.Chem.rdchem.Mol, str]:
+def standardize_mol(mol: Union[rdkit.Chem.rdchem.Mol, str], ph: Optional[float] = None) -> Union[rdkit.Chem.rdchem.Mol, str]:
     """Standardize the :class:`rdkit` molecule, select its parent molecule, uncharge it,
        then enumerate all tautomers."""
 
@@ -154,6 +153,7 @@ def standardize_mol(mol: Union[rdkit.Chem.rdchem.Mol, str], ph: float = None) ->
     if ph is None:
         uncharged_parent_clean_mol = uncharger.uncharge(parent_clean_mol)
     else:
+        from dimorphite_dl import DimorphiteDL
         dimorphite_dl = DimorphiteDL(min_ph=ph,
                                      max_ph=ph,
                                      max_variants=128,
@@ -1233,3 +1233,7 @@ class MolFrame:
         mapping_sample = self.metabolic_mapping(rules)
         vecs = generate_vectors(mapping_sample, self.map, len(rules))
         self.reaction_labels = vecs
+
+    def load_labels(self, path: str) -> None:
+        data = pd.read_csv(path).to_dict(orient='list')
+        self.reaction_labels = data

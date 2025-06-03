@@ -1,5 +1,4 @@
 from tqdm.auto import tqdm
-import pandas as pd
 
 try:
     from rxnmapper import RXNMapper
@@ -129,7 +128,7 @@ def combine_reaction(mol1: Chem.Mol, mol2: Chem.Mol, secondary = True, test_mode
     return rxn
 
 
-def process(data: pd.DataFrame, secondary = True, test_mode = False) -> Set[str]:
+def process(data, secondary = True, test_mode = False) -> Set[str]:
     reactions = set()
     flag = False
     if 'sub_mol' in data.columns:

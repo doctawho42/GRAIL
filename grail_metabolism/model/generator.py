@@ -4,7 +4,7 @@ import pickle as pkl
 from sklearn.impute import SimpleImputer
 import numpy as np
 from torch.nn import Module, Sequential, ReLU, Linear, Bilinear, MultiheadAttention, BatchNorm1d, Dropout, init, Sigmoid
-from torch.nn.functional import dropout
+from torch.nn.functional import dropout, threshold
 from torch_geometric.nn import GATv2Conv, global_mean_pool
 from torch_geometric.data import Batch, Data
 from torch_geometric.loader import DataLoader
@@ -102,27 +102,6 @@ class Generator(GGenerator):
         self.final_proj = nn.Linear(self.embed_dim, self.num_rules)
         self.sigmoid = Sigmoid()
         self.dropout = Dropout(0.2)
-
-    '''def forward(self, data: Data) -> torch.Tensor:
-        y = self.parser()  # [num_rules, 100]
-        data.x = data.x.to(torch.float32)
-        data.edge_attr = data.edge_attr.to(torch.float32)
-        data.edge_index = data.edge_index.to(torch.int64)
-
-        # Get embeddings for the input molecules
-        x = self.module(data.x, data.edge_index, edge_attr=data.edge_attr)
-        x = global_mean_pool(x, data.batch)  # [batch_size, 100]
-
-        # Create a matrix of interactions between all rules and all molecules in the batches
-        x = x.unsqueeze(0).repeat(len(self.rules), 1, 1)  # [num_rules, batch_size, 100]
-        y = y.unsqueeze(1).expand(-1, x.size(1), -1)  # [num_rules, batch_size, 100]
-
-        # Apply bilinear to get logits
-        logits = self.bilinear(x, y).squeeze(-1)  # [num_rules, batch_size]
-
-        # Transpose
-        return logits.T  # [batch_size, num_rules]
-    '''
 
     def forward(self, data: Data) -> torch.Tensor:
         # Получаем эмбеддинги правил с явным указанием типа
@@ -235,12 +214,10 @@ class Generator(GGenerator):
         vector = cpunum(self(sub_mol).squeeze())
 
         # Adaptive thresholding
-        top_k = max(1, int(len(vector) * 0.25))  # Выбираем топ 25% правил
+        top_k = max(1, int(len(vector) * 0.1))
         threshold = np.partition(vector, -top_k)[-top_k]
 
         active_rules = np.where(vector >= threshold)[0]
-        '''threshold = 0.3 if len(vector[vector > 0.4]) == 0 else 0.4
-        active_rules = torch.where(torch.tensor(vector >= threshold))[0]'''
         out = []
         for rule in active_rules:
             rxn = ReactionFromSmarts(list(self.rules.keys())[rule])
