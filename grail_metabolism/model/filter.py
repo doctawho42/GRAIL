@@ -20,7 +20,11 @@ from multipledispatch import dispatch
 from sklearn.metrics import matthews_corrcoef
 
 class Filter(GFilter):
-    def __init__(self, in_channels, edge_dim, arg_vec: tp.List[int], mode: tp.Literal['single', 'pair']):
+    def __init__(self,
+                 in_channels: int,
+                 edge_dim: int,
+                 arg_vec: tp.List[int],
+                 mode: tp.Literal['single', 'pair']) -> None:
         super(Filter, self).__init__()
         if mode == 'pair':
             self.module = nn.Sequential('x, edge_index, edge_attr', [
@@ -147,7 +151,7 @@ class Filter(GFilter):
 
             # Laerning process
             history = []
-            for _ in tqdm(range(100)):
+            for _ in tqdm(range(eps)):
                 self.train()
                 for batch in train_loader:
                     out = self(batch, 'pass')
@@ -183,7 +187,7 @@ class Filter(GFilter):
             # Learning process
             history = []
             best_loss = float('inf')
-            for _ in tqdm(range(100)):
+            for _ in tqdm(range(eps)):
                 self.train()
                 epoch_loss = 0
                 for batch in train_loader:
@@ -197,6 +201,7 @@ class Filter(GFilter):
                     optimizer.step()
                     optimizer.zero_grad()
                 scheduler.step()
+                print(epoch_loss)
                 if epoch_loss < best_loss:
                     best_loss = epoch_loss
                     torch.save(self.state_dict(), 'best_filter.pth')
@@ -227,7 +232,7 @@ class Filter(GFilter):
                         pca_b = pkl.load(file)
                     graph.x = torch.tensor(pca_x.transform(graph.x))
                     graph.edge_attr = torch.tensor(pca_b.transform(graph.edge_attr))
-                return int(cpunum(self(graph)).item())
+                return int(cpunum(self(graph, 'pass')).item())
         elif self.mode == 'single':
             graph_sub, graph_prod = from_rdmol(sub_mol), from_rdmol(prod_mol)
             if pca:
