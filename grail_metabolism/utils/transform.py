@@ -19,6 +19,8 @@ from torch_geometric.utils import (
 )
 
 import numpy as np
+from rdkit.Chem import rdFingerprintGenerator
+from torch import tensor
 
 bond_types = np.array([[0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
                        [1., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
@@ -173,7 +175,12 @@ def from_rdmol(mol: Any) -> Optional[Data]:
         perm = (edge_index[0] * x.size(0) + edge_index[1]).argsort()
         edge_index, edge_attr = edge_index[:, perm], edge_attr[perm]
 
-    return Data(x=x, edge_index=edge_index, edge_attr=edge_attr)
+    morgan_fp_gen = rdFingerprintGenerator.GetMorganGenerator(
+        includeChirality=True, fpSize=256, countSimulation=False)
+    fp = tensor([morgan_fp_gen.GetFingerprint(mol)], dtype=torch.double)
+    graph = Data(x=x, edge_index=edge_index, edge_attr=edge_attr)
+    graph.fp = fp
+    return graph
 
 @timeout(seconds=30)
 def from_pair(mol1: Any, mol2: Any) -> Optional[Data]:
@@ -323,7 +330,14 @@ def from_pair(mol1: Any, mol2: Any) -> Optional[Data]:
         perm = (edge_index[0] * x.size(0) + edge_index[1]).argsort()
         edge_index, edge_attr = edge_index[:, perm], edge_attr[perm]
 
-    return Data(x=x, edge_index=edge_index, edge_attr=edge_attr)
+    morgan_fp_gen = rdFingerprintGenerator.GetMorganGenerator(
+        includeChirality=True, fpSize=256, countSimulation=False)
+    fp1 = tensor([morgan_fp_gen.GetFingerprint(mol1)], dtype=torch.double)
+    fp2 = tensor([morgan_fp_gen.GetFingerprint(mol1)], dtype=torch.double)
+    fp = torch.concat((fp1, fp2), dim=1)
+    graph = Data(x=x, edge_index=edge_index, edge_attr=edge_attr)
+    graph.fp = fp
+    return graph
 
 
 def apply_operation(vec1, vec2, operator):
