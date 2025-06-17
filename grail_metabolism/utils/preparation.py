@@ -124,7 +124,7 @@ def generate_vectors(reaction_dict, real_products_dict, num_rules):
         real_products = real_products_dict.get(substrate, set())
         # Iterate over each product and its indexes in the reaction_dict
         for product, indexes in reaction_dict[substrate].items():
-            if product in real_products:
+            if standardize_mol(product) in real_products:
                 for idx in indexes:
                     # Ensure the index is within the valid range
                     if 0 <= idx < num_rules:
@@ -1153,7 +1153,7 @@ class MolFrame:
             finally:
                 for product in gen_stat:
                     try:
-                        product_smiles = Chem.MolToSmiles(product)
+                        product_smiles = standardize_mol(Chem.MolToSmiles(product))
                         mapped_map[substrate][product_smiles] = gen_stat[product]
                     except Exception:
                         pass

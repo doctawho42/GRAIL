@@ -4,7 +4,7 @@ import typing as tp
 from pathlib import Path
 from sklearn.impute import SimpleImputer
 import pickle as pkl
-from torch.nn import Module, Sequential, ReLU, Linear, BatchNorm1d, Dropout, Sigmoid
+from torch.nn import Module, Sequential, ReLU, Linear, BatchNorm1d, Dropout, Sigmoid, BCELoss
 from torch_geometric.nn import GATv2Conv, global_mean_pool
 from torch_geometric.data import Data, Batch
 from torch_geometric import nn
@@ -126,11 +126,15 @@ class Filter(GFilter):
             lr: float = 1e-5,
             eps: int = 100,
             verbose: bool = False,
-            prior: float = 0.75) -> 'Filter':
+            prior: float = 0.75,
+            nnPU: bool = True) -> 'Filter':
         device = 'cuda' if torch.cuda.is_available() else 'cpu'
         self.to(device)
 
-        criterion = PULoss(prior) # loss function (nnPU) for the positive-unlabelled paradigm
+        if nnPU:
+            criterion = PULoss(prior) # loss function (nnPU) for the positive-unlabelled paradigm
+        else:
+            criterion = BCELoss()
         optimizer = torch.optim.Adam(self.parameters(), lr=lr, betas=(0.9, 0.99), weight_decay=1e-8)
         scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer=optimizer, gamma=0.8)
 
@@ -147,15 +151,22 @@ class Filter(GFilter):
 
             # Laerning process
             history = []
+            best_loss = float('inf')
             for _ in tqdm(range(eps)):
                 self.train()
+                epoch_loss = 0
                 for batch in train_loader:
                     out = self(batch, 'pass')
                     loss = criterion(out, batch.y.unsqueeze(1).float())
                     history.append(loss.item())
+                    epoch_loss += loss.item()
                     loss.backward()
                     optimizer.step()
                     optimizer.zero_grad()
+                if epoch_loss < best_loss:
+                    print(epoch_loss)
+                    best_loss = epoch_loss
+                    torch.save(self.state_dict(), 'best_filter_pair.pth')
                 scheduler.step()
             return self
 
@@ -199,7 +210,7 @@ class Filter(GFilter):
                 scheduler.step()
                 if epoch_loss < best_loss:
                     best_loss = epoch_loss
-                    torch.save(self.state_dict(), 'best_filter.pth')
+                    torch.save(self.state_dict(), 'best_filter_single.pth')
             return self
 
         else:

@@ -72,9 +72,11 @@ def train_pairs(model: Module, train_set: MolFrame, test_set: MolFrame, lr: floa
 
 
 class PULoss(nn.Module):
-    """wrapper of loss function for PU learning"""
+    r"""
+    Wrapper of loss function for PU learning
+    """
 
-    def __init__(self, prior, loss=(lambda x: torch.sigmoid(-x)), gamma=1, beta=0, nnPU=True):
+    def __init__(self, prior, loss=(lambda x: torch.sigmoid(-x)), gamma=1, beta=0, nnPU=True) -> None:
         super(PULoss, self).__init__()
 
         if not 0 < prior < 1:
@@ -95,7 +97,7 @@ class PULoss(nn.Module):
         if inp.is_cuda:
             self.prior = self.prior.cuda()
 
-        positive, unlabeled = target == self.positive, target == self.unlabeled
+        positive, unlabeled = (target == self.positive), (target == self.unlabeled)
         positive, unlabeled = positive.type(torch.float), unlabeled.type(torch.float)
 
         n_positive, n_unlabeled = torch.clamp(torch.sum(positive), min=self.min_count), torch.clamp(
@@ -117,25 +119,25 @@ class PULoss(nn.Module):
 import torch.nn.functional as F
 
 class AsymmetricBCELoss(nn.Module):
+    r"""
+    Loss function for asymmetric cross entropy
+    :param gamma: coefficient for the false negatives
+    """
     def __init__(self, gamma=2.0):
         super().__init__()
         self.gamma = gamma
 
     def forward(self, inputs, targets):
-        # inputs: инпуты (без сигмоиды)
-        # targets: бинарные метки (0 или 1)
+        # inputs
+        # targets: binary labels
 
-        # Вычисляем BCE
+        # Compute BCE
         bce_loss = F.binary_cross_entropy(
             inputs, targets, reduction='none'
         )
 
-        # Усиливаем штраф для FN (где targets == 1)
+        # Enhance loss for FN (where targets == 1)
         weights = torch.where(targets == 1, self.gamma, 1.0)
         weighted_loss = bce_loss * weights
 
         return weighted_loss.mean()
-'''
-# Пример использования
-gamma = 2.0
-criterion = AsymmetricBCELoss(gamma=gamma)'''

@@ -37,11 +37,11 @@ class PretrainedGrail(ModelWrapper):
     """
     def __init__(self):
         gen = torch.load(Path(__file__).parent / '..' / 'data' / 'best_generator.pth')
-        filt = torch.load(Path(__file__).parent / '..' / 'data' / 'filter.pth')
-        with open(Path(__file__).parent / '..' / 'data' / 'reactions.txt') as file:
-            rules = file.read().split("', '")
+        filt = torch.load(Path(__file__).parent / '..' / 'data' / 'best_filter_pair.pth')
+        with open(Path(__file__).parent / '..' / 'data' / 'merged_smirks.txt') as file:
+            rules = file.read().splitlines()
         rule_dict = {rule: from_rule(rule) for rule in rules}
-        generator = Generator(rule_dict, 10, 6)
+        generator = Generator(rule_dict, 10, 6, arg_vec=[785, 519])
         generator.load_state_dict(gen)
         filter = Filter(12, 6, [500]*6, 'pair')
         filter.load_state_dict(filt)
