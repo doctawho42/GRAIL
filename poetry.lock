@@ -438,21 +438,6 @@ docs = ["ipython", "matplotlib", "numpydoc", "sphinx"]
 tests = ["pytest", "pytest-cov", "pytest-xdist"]
 
 [[package]]
-name = "dimorphite-dl"
-version = "2.0.1"
-description = "Adds hydrogen atoms to molecular representations as specified by pH"
-optional = false
-python-versions = ">=3.10"
-files = [
-    {file = "dimorphite_dl-2.0.1-py3-none-any.whl", hash = "sha256:d4e8d3194ec82ce9ac2f859c7f1cd56fd2ad718e15cc3e89aa739bc270ceea4d"},
-    {file = "dimorphite_dl-2.0.1.tar.gz", hash = "sha256:dc4d615536281088da2fdb6398be22dacb0a48a4ca68fc532470ab0174571de1"},
-]
-
-[package.dependencies]
-loguru = ">=0.7.2,<0.8"
-rdkit = ">=2020.3.3,<2026"
-
-[[package]]
 name = "filelock"
 version = "3.18.0"
 description = "A platform independent file lock."
@@ -882,24 +867,6 @@ files = [
     {file = "kiwisolver-1.4.8-pp310-pypy310_pp73-win_amd64.whl", hash = "sha256:65ea09a5a3faadd59c2ce96dc7bf0f364986a315949dc6374f04396b0d60e09b"},
     {file = "kiwisolver-1.4.8.tar.gz", hash = "sha256:23d5f023bdc8c7e54eb65f03ca5d5bb25b601eac4d7f1a042888a1f45237987e"},
 ]
-
-[[package]]
-name = "loguru"
-version = "0.7.3"
-description = "Python logging made (stupidly) simple"
-optional = false
-python-versions = "<4.0,>=3.5"
-files = [
-    {file = "loguru-0.7.3-py3-none-any.whl", hash = "sha256:31a33c10c8e1e10422bfd431aeb5d351c7cf7fa671e3c4df004162264b28220c"},
-    {file = "loguru-0.7.3.tar.gz", hash = "sha256:19480589e77d47b8d85b2c827ad95d49bf31b0dcde16593892eb51dd18706eb6"},
-]
-
-[package.dependencies]
-colorama = {version = ">=0.3.4", markers = "sys_platform == \"win32\""}
-win32-setctime = {version = ">=1.0.0", markers = "sys_platform == \"win32\""}
-
-[package.extras]
-dev = ["Sphinx (==8.1.3)", "build (==1.2.2)", "colorama (==0.4.5)", "colorama (==0.4.6)", "exceptiongroup (==1.1.3)", "freezegun (==1.1.0)", "freezegun (==1.5.0)", "mypy (==v0.910)", "mypy (==v0.971)", "mypy (==v1.13.0)", "mypy (==v1.4.1)", "myst-parser (==4.0.0)", "pre-commit (==4.0.1)", "pytest (==6.1.2)", "pytest (==8.3.2)", "pytest-cov (==2.12.1)", "pytest-cov (==5.0.0)", "pytest-cov (==6.0.0)", "pytest-mypy-plugins (==1.9.3)", "pytest-mypy-plugins (==3.1.0)", "sphinx-rtd-theme (==3.0.2)", "tox (==3.27.1)", "tox (==4.23.2)", "twine (==6.0.1)"]
 
 [[package]]
 name = "markupsafe"
@@ -2649,20 +2616,6 @@ files = [
 watchmedo = ["PyYAML (>=3.10)"]
 
 [[package]]
-name = "win32-setctime"
-version = "1.2.0"
-description = "A small Python utility to set file creation time on Windows"
-optional = false
-python-versions = ">=3.5"
-files = [
-    {file = "win32_setctime-1.2.0-py3-none-any.whl", hash = "sha256:95d644c4e708aba81dc3704a116d8cbc974d70b3bdb8be1d150e36be6e9d1390"},
-    {file = "win32_setctime-1.2.0.tar.gz", hash = "sha256:ae1fdf948f5640aae05c511ade119313fb6a30d7eabe25fef9764dca5873c4c0"},
-]
-
-[package.extras]
-dev = ["black (>=19.3b0)", "pytest (>=4.6.2)"]
-
-[[package]]
 name = "yarl"
 version = "1.20.1"
 description = "Yet another URL library"
@@ -2783,4 +2736,4 @@ propcache = ">=0.2.1"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "166b8e00960ab64e375faf8d90dfb0d1ab091d0c83ad8cba32d81a941f49c1f2"
+content-hash = "74232092c76ec786812f9c1f924e71b6747d99ac2f2a84b638946db7911c9ff1"
