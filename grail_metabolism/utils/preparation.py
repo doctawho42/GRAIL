@@ -46,6 +46,7 @@ from threading import Timer
 
 import numpy as np
 from rdkit.Chem.PandasTools import WriteSDF, LoadSDF
+from ..model.train_model import PULoss
 
 def handler(signum, frame):
     raise TimeoutError
@@ -740,7 +741,8 @@ class MolFrame:
                     lr: float = 1e-5,
                     eps: int = 100,
                     decay: float = 1e-8,
-                    verbose: bool = True) -> Module:
+                    verbose: bool = True,
+                    prior: float = 0.05) -> Module:
         r"""
         Train the given model on pairgraphs.
         :param model: Model to train
@@ -749,12 +751,13 @@ class MolFrame:
         :param eps: number of epochs
         :param verbose: toggle verbose mode
         :param decay: weight decay factor
+        :param prior: prior for nnPU loss
         :return: :class:`Module` - trained model
         """
         device = 'cuda' if torch.cuda.is_available() else 'cpu'
         model.to(device)
 
-        criterion = BCELoss()
+        criterion = PULoss(prior).to(device)
         optimizer = torch.optim.Adam(model.parameters(), lr=lr, betas=(0.9, 0.99), weight_decay=decay)
         scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer=optimizer, gamma=0.8)
 
@@ -813,7 +816,14 @@ class MolFrame:
 
         return model
 
-    def train_singles(self, model: Module, test: 'MolFrame', lr: float = 1e-5, eps: int = 100, decay: float = 1e-8, verbose: bool = True) -> Module:
+    def train_singles(self,
+                      model: Module,
+                      test: 'MolFrame',
+                      lr: float = 1e-5,
+                      eps: int = 100,
+                      decay: float = 1e-8,
+                      verbose: bool = True,
+                      prior: float = 0.05) -> Module:
         r"""
         Train the given model on singlegraphs.
         :param model: Model to train
@@ -821,11 +831,13 @@ class MolFrame:
         :param lr: learning rate
         :param eps: number of epochs
         :param verbose: toggle verbose mode
+        :param decay: weight decay factor
+        :param prior: prior for nnPU loss
         :return: :class:`Module` - trained model
         """
         device = 'cuda' if torch.cuda.is_available() else 'cpu'
         model.to(device)
-        criterion = BCELoss
+        criterion = PULoss(prior).to(device)
         optimizer = torch.optim.Adam(model.parameters(), lr=lr, betas=(0.9, 0.99), weight_decay=decay)
         scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer=optimizer, gamma=0.8)
 

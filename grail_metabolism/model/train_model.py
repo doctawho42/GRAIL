@@ -1,7 +1,7 @@
 import torch
 from torch import nn
 from torch.nn import Module
-from ..utils.preparation import MolFrame
+#from ..utils.preparation import MolFrame
 from torch_geometric.loader import DataLoader
 from sklearn.metrics import roc_auc_score as roc_auc, matthews_corrcoef as mcc
 import matplotlib.pyplot as plt
@@ -30,7 +30,7 @@ def test(model: Module, loader: DataLoader) -> Tuple[float, float]:
     return mat, roc
 
 
-def train_pairs(model: Module, train_set: MolFrame, test_set: MolFrame, lr: float, decay: float, eps: int) -> Module:
+def train_pairs(model: Module, train_set, test_set, lr: float, decay: float, eps: int) -> Module:
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     model.to(device)
 
