@@ -757,7 +757,7 @@ class MolFrame:
         device = 'cuda' if torch.cuda.is_available() else 'cpu'
         model.to(device)
 
-        criterion = PULoss(prior).to(device)
+        criterion = BCELoss().to(device)
         optimizer = torch.optim.Adam(model.parameters(), lr=lr, betas=(0.9, 0.99), weight_decay=decay)
         scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer=optimizer, gamma=0.8)
 
@@ -837,7 +837,7 @@ class MolFrame:
         """
         device = 'cuda' if torch.cuda.is_available() else 'cpu'
         model.to(device)
-        criterion = PULoss(prior).to(device)
+        criterion = BCELoss().to(device)
         optimizer = torch.optim.Adam(model.parameters(), lr=lr, betas=(0.9, 0.99), weight_decay=decay)
         scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer=optimizer, gamma=0.8)
 

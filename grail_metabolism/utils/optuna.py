@@ -39,17 +39,16 @@ class OptunaWrapper:
         def objective(trial: optuna.trial.Trial) -> float:
             lr = trial.suggest_float('lr', 1e-7, 1e-2, log=True)
             decay = trial.suggest_float('decay', 1e-10, 1e-2, log=True)
-            prior = trial.suggest_float('prior', 0, 1)
             arg_vec = []
             if direction == 'filter':
                 for i in range(1, 7):
                     arg_vec.append(trial.suggest_int(f"x{i}", 50, 1000))
                 if self.mode == 'pair':
                     model = Filter(12, 6, arg_vec, self.mode)
-                    train_set.train_pairs(model, test_set, lr=lr, eps=3, decay=decay, prior=prior)
+                    train_set.train_pairs(model, test_set, lr=lr, eps=2, decay=decay)
                 elif self.mode == 'single':
                     model = Filter(12, 6, arg_vec, self.mode)
-                    train_set.train_singles(model, test_set, lr=lr, eps=3, decay=decay, prior=prior)
+                    train_set.train_singles(model, test_set, lr=lr, eps=2, decay=decay)
                 else:
                     raise ValueError
                 model.eval()
