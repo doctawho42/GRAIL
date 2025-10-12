@@ -152,7 +152,7 @@ def from_rdmol(mol: Any) -> Optional[Data]:
         if len(row) == 15:
             return None
 
-    x = torch.tensor(xs, dtype=torch.double).view(-1, 16)
+    x = torch.tensor(xs, dtype=torch.float32).view(-1, 16)
 
     edge_indices, edge_attrs = [], []
     for bond in mol.GetBonds():  # type: ignore
@@ -169,7 +169,7 @@ def from_rdmol(mol: Any) -> Optional[Data]:
 
     edge_index = torch.tensor(edge_indices)
     edge_index = edge_index.t().to(torch.long).view(2, -1)
-    edge_attr = torch.tensor(edge_attrs, dtype=torch.double).view(-1, 18)
+    edge_attr = torch.tensor(edge_attrs, dtype=torch.float32).view(-1, 18)
 
     if edge_index.numel() > 0:  # Sort indices.
         perm = (edge_index[0] * x.size(0) + edge_index[1]).argsort()
@@ -177,7 +177,7 @@ def from_rdmol(mol: Any) -> Optional[Data]:
 
     morgan_fp_gen = rdFingerprintGenerator.GetMorganGenerator(
         includeChirality=True, fpSize=256, countSimulation=False)
-    fp = tensor([morgan_fp_gen.GetFingerprint(mol)], dtype=torch.double)
+    fp = tensor([morgan_fp_gen.GetFingerprint(mol)], dtype=torch.float32)
     graph = Data(x=x, edge_index=edge_index, edge_attr=edge_attr)
     graph.fp = fp
     return graph
@@ -229,7 +229,7 @@ def from_pair(mol1: Any, mol2: Any) -> Optional[Data]:
     xs.append(list(np.zeros(17)))
     xs.append(list(np.zeros(17)))
 
-    x = torch.tensor(xs, dtype=torch.double).view(-1, 17)
+    x = torch.tensor(xs, dtype=torch.float32).view(-1, 17)
 
     edge_indices, edge_attrs = [], []
     idxs = set()
@@ -324,7 +324,7 @@ def from_pair(mol1: Any, mol2: Any) -> Optional[Data]:
     edge_index = torch.tensor(edge_indices)
     edge_index = edge_index.t().to(torch.double).view(2, -1)
     torch.tensor(edge_attrs, dtype=torch.double)
-    edge_attr = torch.tensor(edge_attrs, dtype=torch.double).view(-1, 18)
+    edge_attr = torch.tensor(edge_attrs, dtype=torch.float32).view(-1, 18)
 
     if edge_index.numel() > 0:  # Sort indices.
         perm = (edge_index[0] * x.size(0) + edge_index[1]).argsort()
@@ -332,8 +332,8 @@ def from_pair(mol1: Any, mol2: Any) -> Optional[Data]:
 
     morgan_fp_gen = rdFingerprintGenerator.GetMorganGenerator(
         includeChirality=True, fpSize=256, countSimulation=False)
-    fp1 = tensor([morgan_fp_gen.GetFingerprint(mol1)], dtype=torch.double)
-    fp2 = tensor([morgan_fp_gen.GetFingerprint(mol1)], dtype=torch.double)
+    fp1 = tensor([morgan_fp_gen.GetFingerprint(mol1)], dtype=torch.float32)
+    fp2 = tensor([morgan_fp_gen.GetFingerprint(mol1)], dtype=torch.float32)
     fp = torch.concat((fp1, fp2), dim=1)
     graph = Data(x=x, edge_index=edge_index, edge_attr=edge_attr)
     graph.fp = fp
@@ -410,7 +410,7 @@ def from_rule(rule: str) -> Data:
             xs.append(parse_expression(atom.GetSmarts()[1:-1].split(':')[0]))
         else:
             xs.append(one_hot[atom.GetSmarts()])
-    x = torch.tensor(xs, dtype=torch.double).view(-1, 16)
+    x = torch.tensor(xs, dtype=torch.float32).view(-1, 16)
 
     edge_indices, edge_attrs = [], []
     idxs = set()
@@ -468,7 +468,7 @@ def from_rule(rule: str) -> Data:
 
     edge_index = torch.tensor(edge_indices)
     edge_index = edge_index.t().to(torch.double).view(2, -1)
-    edge_attr = torch.tensor(edge_attrs, dtype=torch.double).view(-1, 18)
+    edge_attr = torch.tensor(edge_attrs, dtype=torch.float32).view(-1, 18)
 
     if edge_index.numel() > 0:  # Sort indices.
         perm = (edge_index[0] * x.size(0) + edge_index[1]).argsort()
