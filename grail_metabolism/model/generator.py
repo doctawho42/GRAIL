@@ -21,30 +21,56 @@ from .train_model import AsymmetricBCELoss
 import matplotlib.pyplot as plt
 import random
 from itertools import chain
+from ..nn.molpath import EdgePathNN
 
 class RuleParse(Module):
-    def __init__(self, rule_dict: dict[str, Batch]) -> None:
+    def __init__(self,
+                 rule_dict: dict[str, Batch],
+                 arg_vec: tp.List[int] = [100, 200, 400, 200, 100],
+                 use_molpath: bool = False,
+                 molpath_hidden: tp.Optional[int] = None,
+                 molpath_cutoff: tp.Optional[int] = None,
+                 molpath_y: tp.Optional[float] = None
+                 ) -> None:
         super(RuleParse, self).__init__()
+        self.use_molpath = use_molpath
         self.rule_dict = rule_dict
-        self.rule_encoder = nn.Sequential('x, edge_index, edge_attr', [
-            (GATv2Conv(16, 100, edge_dim=18, dropout=0.25), 'x, edge_index, edge_attr -> x'),
-            ReLU(inplace=True),
-            BatchNorm1d(100),
-            (GATv2Conv(100, 200, edge_dim=18, dropout=0.25), 'x, edge_index, edge_attr -> x'),
-            ReLU(inplace=True),
-            BatchNorm1d(200),
-            Linear(200, 400),
-            BatchNorm1d(400)
-        ])
-        self.ffn = Sequential(
-            Linear(400, 200),
-            ReLU(inplace=True),
-            Linear(200, 100),
-            ReLU(inplace=True),
-            BatchNorm1d(100),
-            Linear(100, 100)
-        )
-        self.batch_norm = BatchNorm1d(400)
+        if not use_molpath:
+            self.rule_encoder = nn.Sequential('x, edge_index, edge_attr', [
+                (GATv2Conv(16, arg_vec[0], edge_dim=18, dropout=0.25), 'x, edge_index, edge_attr -> x'),
+                ReLU(inplace=True),
+                BatchNorm1d(arg_vec[0]),
+                (GATv2Conv(arg_vec[0], arg_vec[1], edge_dim=18, dropout=0.25), 'x, edge_index, edge_attr -> x'),
+                ReLU(inplace=True),
+                BatchNorm1d(arg_vec[1]),
+                Linear(arg_vec[1], arg_vec[2]),
+                BatchNorm1d(arg_vec[2])
+            ])
+            self.ffn = Sequential(
+                Linear(arg_vec[2], arg_vec[3]),
+                ReLU(inplace=True),
+                Linear(arg_vec[3], arg_vec[4]),
+                ReLU(inplace=True),
+                BatchNorm1d(arg_vec[4]),
+                Linear(arg_vec[4], 100)
+            )
+            self.batch_norm = BatchNorm1d(arg_vec[2])
+        else:
+            self.rule_encoder = EdgePathNN(
+                                            hidden_dim=molpath_hidden,
+                                            cutoff=molpath_cutoff,  # Maximum path length
+                                            y=molpath_y,  # Attention parameter
+                                            n_classes=100,
+                                            device=torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu'),
+                                            node_feat_dim=16,  # Your node feature dimension
+                                            edge_feat_dim=18,  # Your edge feature dimension
+                                            use_fingerprint=False,  # Whether to use fingerprints
+                                            readout="sum",
+                                            path_agg="sum",
+                                            dropout=0.1
+                                        )
+            self.ffn = torch.nn.Identity()
+            self.batch_norm = torch.nn.Identity()
 
     def forward(self) -> torch.Tensor:
         # Create the batch of rules
@@ -59,11 +85,14 @@ class RuleParse(Module):
         batch.edge_index = batch.edge_index.to(torch.int64)
 
         # Apply Module to the batch
-        data = self.rule_encoder(batch.x, batch.edge_index, batch.edge_attr)
-        x = global_mean_pool(data, batch.batch)  # batch.batch теперь на device
-        x = self.batch_norm(x)
-        # Apply the feed-forward network
-        x = self.ffn(x)
+        if self.use_molpath:
+            x = self.rule_encoder(batch)
+        else:
+            data = self.rule_encoder(batch.x, batch.edge_index, batch.edge_attr)
+            x = global_mean_pool(data, data.batch)
+            x = self.batch_norm(x)
+            # Apply the feed-forward network
+            x = self.ffn(x)
         return x
 
 class MoleculeAugmentor:
@@ -156,33 +185,58 @@ def get_maccs_smarts():
     return maccs_smarts
 
 class MACCSRuleParse(Module):
-    def __init__(self, maccs_smarts):
+    def __init__(self,
+                 maccs_smarts,
+                 arg_vec: tp.List[int] = [100, 200, 400, 200, 100],
+                 use_molpath: bool = False,
+                 molpath_hidden: tp.Optional[int] = None,
+                 molpath_cutoff: tp.Optional[int] = None,
+                 molpath_y: tp.Optional[float] = None
+                 ):
         super().__init__()
+        self.use_molpath = use_molpath
         self.maccs_smarts = maccs_smarts
         self.maccs_graphs = self._create_maccs_graphs()
 
         # RuleParse для MACCS-паттернов
-        self.rule_encoder = nn.Sequential('x, edge_index, edge_attr', [
-            (GATv2Conv(16, 100, edge_dim=18, dropout=0.25), 'x, edge_index, edge_attr -> x'),
-            ReLU(inplace=True),
-            BatchNorm1d(100),
-            (GATv2Conv(100, 200, edge_dim=18, dropout=0.25), 'x, edge_index, edge_attr -> x'),
-            ReLU(inplace=True),
-            BatchNorm1d(200),
-            Linear(200, 400),
-            BatchNorm1d(400)
-        ])
+        if not use_molpath:
+            self.rule_encoder = nn.Sequential('x, edge_index, edge_attr', [
+                (GATv2Conv(16, arg_vec[0], edge_dim=18, dropout=0.25), 'x, edge_index, edge_attr -> x'),
+                ReLU(inplace=True),
+                BatchNorm1d(arg_vec[0]),
+                (GATv2Conv(arg_vec[0], arg_vec[1], edge_dim=18, dropout=0.25), 'x, edge_index, edge_attr -> x'),
+                ReLU(inplace=True),
+                BatchNorm1d(arg_vec[1]),
+                Linear(arg_vec[1], arg_vec[2]),
+                BatchNorm1d(arg_vec[2])
+            ])
+            self.ffn = Sequential(
+                Linear(arg_vec[2], arg_vec[3]),
+                ReLU(inplace=True),
+                Linear(arg_vec[3], arg_vec[4]),
+                ReLU(inplace=True),
+                BatchNorm1d(arg_vec[4]),
+                Linear(arg_vec[4], 100)
+            )
+            self.batch_norm = BatchNorm1d(arg_vec[2])
+        else:
+            self.rule_encoder = EdgePathNN(
+                hidden_dim=molpath_hidden,
+                cutoff=molpath_cutoff,  # Maximum path length
+                y=molpath_y,  # Attention parameter
+                n_classes=100,
+                device=torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu'),
+                node_feat_dim=16,  # Your node feature dimension
+                edge_feat_dim=18,  # Your edge feature dimension
+                use_fingerprint=False,  # Whether to use fingerprints
+                readout="sum",
+                path_agg="sum",
+                dropout=0.1
+            )
+            self.ffn = torch.nn.Identity()
+            self.batch_norm = torch.nn.Identity()
 
-        self.ffn = Sequential(
-            Linear(400, 200),
-            ReLU(inplace=True),
-            Linear(200, 100),
-            ReLU(inplace=True),
-            BatchNorm1d(100),
-            Linear(100, 100)
-        )
-
-        self.batch_norm = BatchNorm1d(400)
+        self.batch_norm = BatchNorm1d(arg_vec[2])
 
     def _create_maccs_graphs(self):
         """Создание графов для MACCS-паттернов"""
@@ -218,10 +272,13 @@ class MACCSRuleParse(Module):
         batch.edge_index = batch.edge_index.to(torch.int64)
 
         # Применяем RuleParse
-        data = self.rule_encoder(batch.x, batch.edge_index, batch.edge_attr)
-        x = global_mean_pool(data, batch.batch)  # Теперь batch.batch тоже на device
-        x = self.batch_norm(x)
-        x = self.ffn(x)
+        if self.use_molpath:
+            x = self.rule_encoder(batch)
+        else:
+            data = self.rule_encoder(batch.x, batch.edge_index, batch.edge_attr)
+            x = global_mean_pool(data, data.batch)  # Теперь batch.batch тоже на device
+            x = self.batch_norm(x)
+            x = self.ffn(x)
 
         # Создаем полную матрицу на правильном устройстве
         full_embeddings = torch.zeros(166, 100, device=device)
@@ -232,10 +289,29 @@ class MACCSRuleParse(Module):
         return full_embeddings
 
 class MACCSPredictor(Module):
-    def __init__(self, molecular_encoder, maccs_smarts):
+    def __init__(self,
+                 molecular_encoder,
+                 maccs_smarts,
+                 arg_vec: tp.List[int] = [100, 200, 400, 200, 100],
+                 use_molpath: bool = False,
+                 molpath_hidden: tp.Optional[int] = None,
+                 molpath_cutoff: tp.Optional[int] = None,
+                 molpath_y: tp.Optional[float] = None
+                 ):
         super().__init__()
+        self.use_molpath = use_molpath
+        self.maccs_smarts = maccs_smarts
+        self.molpath_hidden = molpath_hidden
+        self.molpath_cutoff = molpath_cutoff
+        self.molpath_y = molpath_y
         self.molecular_encoder = molecular_encoder
-        self.maccs_ruleparse = MACCSRuleParse(maccs_smarts)
+        self.maccs_ruleparse = MACCSRuleParse(maccs_smarts,
+                                              arg_vec=arg_vec,
+                                              use_molpath=use_molpath,
+                                              molpath_hidden=molpath_hidden,
+                                              molpath_cutoff=molpath_cutoff,
+                                              molpath_y=molpath_y
+        )
 
         # Замораживаем молекулярный энкодер
         for param in self.molecular_encoder.parameters():
@@ -247,10 +323,8 @@ class MACCSPredictor(Module):
             ReLU(inplace=True),
             Dropout(0.2),
             Linear(256, 166),
-            # УБЕРИТЕ Sigmoid() отсюда - мы применим его отдельно
         )
 
-        # Добавьте отдельный Sigmoid
         self.sigmoid = Sigmoid()
 
     def forward(self, molecular_graph):
@@ -258,12 +332,15 @@ class MACCSPredictor(Module):
         molecular_graph = molecular_graph.to(device)
 
         with torch.no_grad():
-            node_embeddings = self.molecular_encoder(
-                molecular_graph.x,
-                molecular_graph.edge_index,
-                molecular_graph.edge_attr
-            )
-            mol_embedding = global_mean_pool(node_embeddings, molecular_graph.batch)
+            if self.use_molpath:
+                mol_embedding = self.molecular_encoder(molecular_graph)
+            else:
+                node_embeddings = self.molecular_encoder(
+                    molecular_graph.x,
+                    molecular_graph.edge_index,
+                    molecular_graph.edge_attr
+                )
+                mol_embedding = global_mean_pool(node_embeddings, molecular_graph.batch)
             #print(f"mol_embedding range: [{mol_embedding.min().item():.6f}, {mol_embedding.max().item():.6f}]")
 
         maccs_embeddings = self.maccs_ruleparse()
@@ -283,27 +360,61 @@ class MACCSPredictor(Module):
 class Generator(GGenerator):
     def __init__(self, rule_dict: dict[str, Batch], in_channels: int, edge_dim: int,
                  arg_vec: tp.Optional[tp.List[int]] = None,
+                 rp_arg_vec: tp.Optional[tp.List[int]] = None,
                  projection_dim: int = 256,
-                 use_maccs_pretraining: bool = False):
+                 use_maccs_pretraining: bool = False,
+                 use_molpath: bool = False,
+                 molpath_hidden: tp.Optional[int] = None,
+                 molpath_cutoff: tp.Optional[int] = None,
+                 molpath_y: tp.Optional[float] = None
+                 ):
         super(Generator, self).__init__()
-
-        self.parser = RuleParse(rule_dict)
+        if rp_arg_vec is None:
+            rp_arg_vec = [200] * 5
+        self.rp_arg_vec = rp_arg_vec
+        self.use_molpath = use_molpath
+        self.molpath_hidden = molpath_hidden
+        self.molpath_cutoff = molpath_cutoff
+        self.molpath_y = molpath_y
+        self.parser = RuleParse(rule_dict,
+                                arg_vec=rp_arg_vec,
+                                use_molpath=use_molpath,
+                                molpath_hidden=molpath_hidden,
+                                molpath_cutoff=molpath_cutoff,
+                                molpath_y=molpath_y)
         self.rules = rule_dict
         self.num_rules = len(rule_dict)
+        self.use_molpath = use_molpath
 
         if arg_vec is None:
-            arg_vec = [100] * 2
+            arg_vec = [500] * 2
 
-        # Основной GNN энкодер - ОБЩИЙ для всех задач
-        self.gnn_encoder = nn.Sequential('x, edge_index, edge_attr', [
-            (GATv2Conv(in_channels, arg_vec[0], edge_dim=edge_dim, dropout=0.25), 'x, edge_index, edge_attr -> x'),
-            ReLU(inplace=True),
-            BatchNorm1d(arg_vec[0]),
-            (GATv2Conv(arg_vec[0], arg_vec[1], edge_dim=edge_dim, dropout=0.25), 'x, edge_index, edge_attr -> x'),
-            ReLU(inplace=True),
-            BatchNorm1d(arg_vec[1]),
-            (GATv2Conv(arg_vec[1], 100, edge_dim=edge_dim, dropout=0.25), 'x, edge_index, edge_attr -> x'),
-        ])
+        # Основной GNN энкодер
+        if not use_molpath:
+            self.gnn_encoder = nn.Sequential('x, edge_index, edge_attr', [
+                (GATv2Conv(in_channels, arg_vec[0], edge_dim=edge_dim, dropout=0.25), 'x, edge_index, edge_attr -> x'),
+                ReLU(inplace=True),
+                BatchNorm1d(arg_vec[0]),
+                (GATv2Conv(arg_vec[0], arg_vec[1], edge_dim=edge_dim, dropout=0.25), 'x, edge_index, edge_attr -> x'),
+                ReLU(inplace=True),
+                BatchNorm1d(arg_vec[1]),
+                (GATv2Conv(arg_vec[1], 100, edge_dim=edge_dim, dropout=0.25), 'x, edge_index, edge_attr -> x'),
+            ])
+        else:
+            self.gnn_encoder = EdgePathNN(
+                                            hidden_dim=molpath_hidden,
+                                            cutoff=molpath_cutoff,  # Maximum path length
+                                            y=molpath_y,  # Attention parameter
+                                            n_classes=100,
+                                            device=torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu'),
+                                            node_feat_dim=16,  # Your node feature dimension
+                                            edge_feat_dim=18,  # Your edge feature dimension
+                                            use_fingerprint=True,  # Whether to use fingerprints
+                                            fingerprint_dim=1024,  # Your fingerprint dimension
+                                            readout="sum",
+                                            path_agg="sum",
+                                            dropout=0.1
+                                        )
 
         # Проекционная головка для контрастивного обучения
         self.projection_head = Sequential(
@@ -369,7 +480,10 @@ class Generator(GGenerator):
         data.edge_index = data.edge_index.to(torch.int64)
 
         # Получаем базовые эмбеддинги от GNN энкодера
-        x = self.gnn_encoder(data.x, data.edge_index, data.edge_attr)
+        if self.use_molpath:
+            x = self.gnn_encoder(data)
+        else:
+            x = self.gnn_encoder(data.x, data.edge_index, data.edge_attr)
 
         if mode == 'contrastive':
             # Режим контрастивного обучения
@@ -678,7 +792,10 @@ class Generator(GGenerator):
         self.parser.ffn.load_state_dict(maccs_ruleparse.ffn.state_dict())
 
         # Копируем веса batch_norm
-        self.parser.batch_norm.load_state_dict(maccs_ruleparse.batch_norm.state_dict())
+        try:
+            self.parser.batch_norm.load_state_dict(maccs_ruleparse.batch_norm.state_dict())
+        except Exception as e:
+            print(f'{e}, maybe its torch.nn.Identity()')
 
     def pretrain_maccs(self, smiles_list, epochs=50, batch_size=64, lr=1e-4):
         """Предобучение RuleParse на задаче предсказания MACCS-ключей"""
@@ -692,7 +809,14 @@ class Generator(GGenerator):
         device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
         # Создаем модель предсказания MACCS
-        maccs_predictor = MACCSPredictor(self.gnn_encoder, self.maccs_smarts)
+        maccs_predictor = MACCSPredictor(self.gnn_encoder,
+                                         self.maccs_smarts,
+                                         arg_vec=self.rp_arg_vec,
+                                         use_molpath=self.use_molpath,
+                                         molpath_hidden=self.molpath_hidden,
+                                         molpath_cutoff=self.molpath_cutoff,
+                                         molpath_y=self.molpath_y
+                                         )
         maccs_predictor.to(device)
 
         # Создаем датасет молекул с MACCS-ключами
@@ -725,9 +849,6 @@ class Generator(GGenerator):
 
                     # Получаем предсказания
                     predictions = maccs_predictor(batch)
-
-                    # ТЩАТЕЛЬНАЯ ПРОВЕРКА ПРЕДСКАЗАНИЙ
-                    #print(f"Predictions range: [{predictions.min().item():.6f}, {predictions.max().item():.6f}]")
 
                     # Проверяем, что все предсказания в диапазоне [0, 1]
                     if predictions.min() < 0 or predictions.max() > 1:
