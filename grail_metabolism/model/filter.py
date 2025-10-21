@@ -12,6 +12,7 @@ import torch_geometric
 from .wrapper import GFilter
 from ..utils.preparation import MolFrame, cpunum
 from ..utils.transform import from_rule, from_rdmol, from_pair
+from ..nn.molpath import EdgePathNN
 from rdkit import Chem
 from torch_geometric.loader import DataLoader
 from tqdm.auto import tqdm
@@ -20,7 +21,11 @@ from multipledispatch import dispatch
 from sklearn.metrics import matthews_corrcoef
 
 class Filter(GFilter):
-    def __init__(self, in_channels, edge_dim, arg_vec: tp.List[int], mode: tp.Literal['single', 'pair']):
+    def __init__(self,
+                 in_channels,
+                 edge_dim,
+                 arg_vec: tp.List[int],
+                 mode: tp.Literal['single', 'pair'],):
         super(Filter, self).__init__()
         if mode == 'pair':
             self.module = nn.Sequential('x, edge_index, edge_attr', [
@@ -32,7 +37,7 @@ class Filter(GFilter):
                 ReLU(inplace=True)
             ])
             self.dropout = Dropout(0.1)
-            self.lin1 = Linear((arg_vec[2] + 256 * 2), arg_vec[3])
+            self.lin1 = Linear((arg_vec[2] + 1024 * 2), arg_vec[3])
             self.bn1 = BatchNorm1d(arg_vec[3])
             self.lin2 = Linear(arg_vec[3], arg_vec[4])
             self.bn2 = BatchNorm1d(arg_vec[4])
@@ -51,7 +56,7 @@ class Filter(GFilter):
             self.conv4 = GATv2Conv(arg_vec[2], arg_vec[3], dropout=0.25, edge_dim=edge_dim)
 
             self.FCNN = Sequential(
-                Linear(arg_vec[3] * 2 + 256 * 2, arg_vec[4]),
+                Linear(arg_vec[3] * 2 + 1024 * 2, arg_vec[4]),
                 ReLU(inplace=True),
                 BatchNorm1d(arg_vec[4]),
                 Linear(arg_vec[4], arg_vec[5]),
@@ -269,6 +274,290 @@ class Filter(GFilter):
     @torch.no_grad()
     def mcc(self, test_frame):
         self.eval()
+        mccs = []
+        for sub in tqdm(test_frame.map):
+            reals = []
+            bins = []
+            for prod in test_frame.map[sub]:
+                bins.append(self.predict(sub, prod))
+                reals.append(1)
+            for prod in test_frame.negs[sub]:
+                bins.append(self.predict(sub, prod))
+                reals.append(0)
+            mccs.append(matthews_corrcoef(reals, bins))
+        return mccs
+
+
+class MolPathFilter(GFilter):
+    def __init__(self,
+                 in_channels,
+                 edge_dim,
+                 arg_vec,
+                 mode,
+                 molpath_hidden: tp.Optional[int] = None,
+                 molpath_cutoff: tp.Optional[int] = None,
+                 molpath_y: tp.Optional[float] = None
+                 ):
+        super().__init__()
+        if mode == 'pair':
+            self.module = EdgePathNN(
+                                    hidden_dim=arg_vec[0],
+                                    cutoff=molpath_cutoff,  # Maximum path length
+                                    y=molpath_y,  # Attention parameter
+                                    n_classes=arg_vec[1],
+                                    device=torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu'),
+                                    node_feat_dim=in_channels,  # Your node feature dimension
+                                    edge_feat_dim=edge_dim,  # Your edge feature dimension
+                                    use_fingerprint=True,  # Whether to use fingerprints
+                                    fingerprint_dim=2048,  # Your fingerprint dimension
+                                    readout="sum",
+                                    path_agg="sum",
+                                    dropout=0.1
+                                    )
+            self.FCNN = Sequential(
+                Linear(arg_vec[1], arg_vec[2]),
+                ReLU(inplace=True),
+                BatchNorm1d(arg_vec[2]),
+                Linear(arg_vec[2], arg_vec[3]),
+                ReLU(inplace=True),
+                BatchNorm1d(arg_vec[3]),
+                Linear(arg_vec[3], 50),
+                ReLU(inplace=True),
+                BatchNorm1d(50),
+                Linear(50, 1),
+                Sigmoid()
+            )
+
+        elif mode == 'single':
+            self.conv1_sub = EdgePathNN(
+                                        hidden_dim=arg_vec[0],
+                                        cutoff=molpath_cutoff,  # Maximum path length
+                                        y=molpath_y,  # Attention parameter
+                                        n_classes=arg_vec[1],
+                                        device=torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu'),
+                                        node_feat_dim=in_channels,  # Your node feature dimension
+                                        edge_feat_dim=edge_dim,  # Your edge feature dimension
+                                        use_fingerprint=True,  # Whether to use fingerprints
+                                        fingerprint_dim=1024,  # Your fingerprint dimension
+                                        readout="sum",
+                                        path_agg="sum",
+                                        dropout=0.1
+                                        )
+
+            self.conv1_met = EdgePathNN(
+                                        hidden_dim=arg_vec[0],
+                                        cutoff=molpath_cutoff,  # Maximum path length
+                                        y=molpath_y,  # Attention parameter
+                                        n_classes=arg_vec[1],
+                                        device=torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu'),
+                                        node_feat_dim=in_channels,  # Your node feature dimension
+                                        edge_feat_dim=edge_dim,  # Your edge feature dimension
+                                        use_fingerprint=True,  # Whether to use fingerprints
+                                        fingerprint_dim=1024,  # Your fingerprint dimension
+                                        readout="sum",
+                                        path_agg="sum",
+                                        dropout=0.1
+                                        )
+
+            self.FCNN = Sequential(
+                Linear(arg_vec[1] * 2, arg_vec[2]),
+                ReLU(inplace=True),
+                BatchNorm1d(arg_vec[2]),
+                Linear(arg_vec[2], arg_vec[3]),
+                ReLU(inplace=True),
+                BatchNorm1d(arg_vec[3]),
+                Linear(arg_vec[4], 50),
+                ReLU(inplace=True),
+                BatchNorm1d(50),
+                Linear(50, 1),
+                Sigmoid()
+            )
+        else:
+            raise TypeError('Unsupported mode')
+        self.mode = mode
+
+    @dispatch(Data, str)
+    def forward(self, data: Data, met: str) -> torch.Tensor:
+        data.x = data.x.to(torch.float32)
+        data.edge_attr = data.edge_attr.to(torch.float32)
+        data.edge_index = data.edge_index.to(torch.int64)
+        data.fp = data.fp.to(torch.float32)
+
+        x = self.module(data)
+        x = self.FCNN(x)
+
+        return x
+
+    @dispatch(Data, Data)
+    def forward(self, sub: Data, met: Data) -> torch.Tensor:
+        sub.fp = sub.fp.to(torch.float32)
+        met.fp = met.fp.to(torch.float32)
+        # 1. Metabolite
+        met.x = met.x.to(torch.float32)
+        met.edge_attr = met.edge_attr.to(torch.float32)
+        node = self.conv1_met(met)
+
+        # 2. Substrate
+        sub.x = sub.x.to(torch.float32)
+        sub.edge_attr = sub.edge_attr.to(torch.float32)
+        node_sub = self.conv1_sub(sub)
+
+        # 3. Apply a final classifier
+        x = torch.cat((node_sub, node), dim=1)
+        x = self.FCNN(x)
+        return x
+
+    def fit(self, data: MolFrame,
+            lr: float = 1e-5,
+            eps: int = 100,
+            verbose: bool = False,
+            prior: float = 0.75,
+            nnPU: bool = True) -> 'MolPathFilter':
+        device = 'cuda' if torch.cuda.is_available() else 'cpu'
+        self.to(device)
+
+        if nnPU:
+            criterion = PULoss(prior)  # loss function (nnPU) for the positive-unlabelled paradigm
+        else:
+            criterion = BCELoss()
+        optimizer = torch.optim.Adam(self.parameters(), lr=lr, betas=(0.9, 0.99), weight_decay=1e-8)
+        scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer=optimizer, gamma=0.8)
+
+        if verbose:
+            print('Starting DataLoaders generation')
+
+        if self.mode == 'pair':
+            train_loader = []
+            for pairs in data.graphs.values():  # dataloaders from pairgraphs
+                for pair in pairs:
+                    if pair is not None:
+                        train_loader.append(pair)
+            train_loader = DataLoader(train_loader, batch_size=128, shuffle=True)
+
+            # Learning process
+            history = []
+            best_loss = float('inf')
+            for _ in tqdm(range(eps)):
+                self.train()
+                epoch_loss = 0
+                for batch in train_loader:
+                    batch = batch.to(device)
+                    out = self(batch, 'pass')
+                    loss = criterion(out, batch.y.unsqueeze(1).float())
+                    history.append(loss.item())
+                    epoch_loss += loss.item()
+                    loss.backward()
+                    optimizer.step()
+                    optimizer.zero_grad()
+                if epoch_loss < best_loss:
+                    print(epoch_loss)
+                    best_loss = epoch_loss
+                    torch.save(self.state_dict(), 'best_molpath_filter_pair.pth')
+                scheduler.step()
+            return self
+
+        elif self.mode == 'single':
+            def collate(data_list: tp.List) -> tp.Tuple[Batch, Batch]:
+                batchA = Batch.from_data_list([data[0] for data in data_list])
+                batchB = Batch.from_data_list([data[1] for data in data_list])
+                return batchA, batchB
+
+            train_loader = []  # dataloader from singlegraphs
+            for mol in data.map.keys():
+                sub = data.single[mol]
+                if sub is not None:
+                    for met in data.map[mol]:
+                        if data.single[met] is not None:
+                            train_loader.append((sub, data.single[met]))
+            for mol in data.negs.keys():
+                sub = data.single[mol]
+                if sub is not None:
+                    for met in data.negs[mol]:
+                        if data.single[met] is not None:
+                            train_loader.append((sub, data.single[met]))
+            train_loader = DataLoader(train_loader, batch_size=128, shuffle=True, collate_fn=collate)
+
+            # Learning process
+            history = []
+            best_loss = float('inf')
+            for _ in tqdm(range(eps)):
+                self.train()
+                epoch_loss = 0
+                for batch in train_loader:
+                    met_batch = batch[1].to(device)
+                    sub_batch = batch[0].to(device)
+                    out = self(sub_batch, met_batch)
+                    loss = criterion(out, met_batch.y.unsqueeze(1).float())
+                    history.append(loss.item())
+                    epoch_loss += loss.item()
+                    loss.backward()
+                    optimizer.step()
+                    optimizer.zero_grad()
+                scheduler.step()
+                if epoch_loss < best_loss:
+                    best_loss = epoch_loss
+                    torch.save(self.state_dict(), 'best_molpath_filter_single.pth')
+            return self
+
+        else:
+            raise TypeError('Unsupported mode')
+
+    def predict(self, sub: str, prod: str, pca: bool = True) -> int:
+        sub_mol = Chem.MolFromSmiles(sub)
+        prod_mol = Chem.MolFromSmiles(prod)
+        if self.mode == 'pair':
+            graph = from_pair(sub_mol, prod_mol)
+            if graph is not None:
+                for i in range(len(graph.x)):
+                    for j in range(len(graph.x[i])):
+                        if graph.x[i][j] == float('inf'):
+                            graph.x[i][j] = 0
+                graph.x = torch.tensor(SimpleImputer(missing_values=np.nan,
+                                                     strategy='constant',
+                                                     fill_value=0).fit_transform(graph.x))
+                if pca:
+                    ats = Path(__file__).parent / '..' / 'data' / 'pca_ats.pkl'
+                    bonds = Path(__file__).parent / '..' / 'data' / 'pca_bonds.pkl'
+                    with open(ats, 'rb') as file:
+                        pca_x = pkl.load(file)
+                    with open(bonds, 'rb') as file:
+                        pca_b = pkl.load(file)
+                    graph.x = torch.tensor(pca_x.transform(graph.x))
+                    graph.edge_attr = torch.tensor(pca_b.transform(graph.edge_attr))
+                return int(cpunum(self(graph, 'pass')).item())
+        elif self.mode == 'single':
+            graph_sub, graph_prod = from_rdmol(sub_mol), from_rdmol(prod_mol)
+            if pca:
+                ats = Path(__file__).parent / '..' / 'data' / 'pca_ats_single.pkl'
+                bonds = Path(__file__).parent / '..' / 'data' / 'pca_bonds_single.pkl'
+                with open(ats, 'rb') as file:
+                    pca_x = pkl.load(file)
+                with open(bonds, 'rb') as file:
+                    pca_b = pkl.load(file)
+                for mol in (graph_sub, graph_prod):
+                    for i in range(len(mol.x)):
+                        for j in range(len(mol.x[i])):
+                            if mol.x[i][j] == float('inf'):
+                                mol.x[i][j] = 0
+                    mol.x = torch.tensor(SimpleImputer(missing_values=np.nan,
+                                                       strategy='constant',
+                                                       fill_value=0).fit_transform(mol.x))
+                    mol.x = torch.tensor(pca_x.transform(mol.x))
+                    try:
+                        mol.edge_attr = torch.tensor(pca_b.transform(mol.edge_attr))
+                    except ValueError:
+                        print('Some issue happened with this molecule:')
+                        print(mol, mol.edge_attr, mol.x)
+            return int(cpunum(self(graph_sub, graph_prod)).item())
+        else:
+            raise TypeError('Unsupported mode')
+
+    @torch.no_grad()
+    def mcc(self, test_frame):
+        self.eval()
+        device = 'cuda' if torch.cuda.is_available() else 'cpu'
+        self.to(device)
+
         mccs = []
         for sub in tqdm(test_frame.map):
             reals = []

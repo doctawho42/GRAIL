@@ -1,3 +1,4 @@
+import gc
 import torch
 from pathlib import Path
 import pickle as pkl
@@ -1015,15 +1016,18 @@ class Generator(GGenerator):
             print("\n=== Phase 1: Contrastive Learning ===")
             self._contrastive_pretrain_phase(graphs, contrastive_epochs, batch_size, lr)
 
-        # Этап 2: MACCS предобучение (RuleParse)
+        # Этап 2: Маскированное моделирование (уточнение)
+        if masked_epochs > 0:
+            print("\n=== Phase 3: Masked Modeling ===")
+            self._masked_modeling_pretrain_phase(graphs, masked_epochs, batch_size, lr)
+
+        del graphs
+        gc.collect()
+        # Этап 3: MACCS предобучение (RuleParse)
         if maccs_epochs > 0 and self.use_maccs_pretraining:
             print("\n=== Phase 2: MACCS-based RuleParse Pretraining ===")
             self.pretrain_maccs(smiles_list, maccs_epochs, batch_size, lr)
 
-        # Этап 3: Маскированное моделирование (уточнение)
-        if masked_epochs > 0:
-            print("\n=== Phase 3: Masked Modeling ===")
-            self._masked_modeling_pretrain_phase(graphs, masked_epochs, batch_size, lr)
 
         # Сохраняем веса если указан путь
         if save_path:

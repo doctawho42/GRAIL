@@ -363,6 +363,8 @@ class MolFrame:
             warnings.warn(f"Standardization failed for molecule: {smiles}. Error: {e}")
             return smiles  # Return original SMILES if standardization failed
 
+    # В файле preparation.py - исправленный метод from_file
+
     @staticmethod
     def from_file(file_path: str, triples: List[Tuple[int, int, int]], standartize: bool = True) -> 'MolFrame':
         r"""
@@ -372,18 +374,78 @@ class MolFrame:
         :param standartize: (bool, optional) to standardize or not
         :return: MolFrame
         """
-        # Load SDF file into a dataframe
-        data = LoadSDF(file_path, molColName='Molecules', smilesName='SMILES')
-        if 'Index' not in data.columns:
-            raise ValueError('No Index attribute in an SDF file. Cannot proceed with loading file: {}'.format(file_path))
-        # Change columns types in the dataframe
-        data['Index'] = data['Index'].apply(int)
-        triple_data = pd.DataFrame(triples, columns=['sub', 'prod', 'real'])
-        triple_data['sub'] = triple_data['sub'].apply(lambda x: data[data['Index'] == x]['SMILES'].item())
-        triple_data['prod'] = triple_data['prod'].apply(lambda x: data[data['Index'] == x]['SMILES'].item())
-        mol_structs = dict(zip(data.SMILES, data.Molecules))
+        try:
+            # Load SDF file into a dataframe
+            data = LoadSDF(file_path, molColName='Molecules', smilesName='SMILES')
+            if 'Index' not in data.columns:
+                raise ValueError(
+                    'No Index attribute in an SDF file. Cannot proceed with loading file: {}'.format(file_path))
 
-        return MolFrame(triple_data, mol_structs=mol_structs, standartize=standartize)
+            # Create mapping from Index to SMILES and Molecules
+            index_to_smiles = {}
+            index_to_molecule = {}
+
+            for idx, row in data.iterrows():
+                try:
+                    index_val = int(row['Index'])
+                    smiles_val = row['SMILES']
+                    molecule_val = row['Molecules']
+
+                    # Handle duplicate indices - use first occurrence
+                    if index_val not in index_to_smiles:
+                        index_to_smiles[index_val] = smiles_val
+                        index_to_molecule[index_val] = molecule_val
+                    else:
+                        print(f"Warning: Duplicate index {index_val} found. Using first occurrence.")
+
+                except (ValueError, KeyError) as e:
+                    print(f"Warning: Skipping row {idx} due to error: {e}")
+                    continue
+
+            # Create triple data with proper error handling
+            valid_triples = []
+            missing_indices = set()
+
+            for sub_idx, prod_idx, real_val in triples:
+                if sub_idx in index_to_smiles and prod_idx in index_to_smiles:
+                    valid_triples.append({
+                        'sub': index_to_smiles[sub_idx],
+                        'prod': index_to_smiles[prod_idx],
+                        'real': real_val
+                    })
+                else:
+                    if sub_idx not in index_to_smiles:
+                        missing_indices.add(sub_idx)
+                    if prod_idx not in index_to_smiles:
+                        missing_indices.add(prod_idx)
+
+            if missing_indices:
+                print(f"Warning: {len(missing_indices)} indices from triples not found in SDF file")
+                print(f"Missing indices sample: {list(missing_indices)[:10]}")
+
+            if not valid_triples:
+                raise ValueError("No valid triples found after processing")
+
+            triple_data = pd.DataFrame(valid_triples)
+
+            # Create molecules dictionary
+            all_smiles = set(triple_data['sub']).union(triple_data['prod'])
+            mol_structs = {}
+
+            for smiles in all_smiles:
+                # Find the molecule in our mapping
+                for idx, sm in index_to_smiles.items():
+                    if sm == smiles:
+                        mol_structs[smiles] = index_to_molecule[idx]
+                        break
+
+            print(f"Successfully loaded {len(valid_triples)} triples from {len(all_smiles)} unique molecules")
+
+            return MolFrame(triple_data, mol_structs=mol_structs, standartize=standartize)
+
+        except Exception as e:
+            print(f"Error loading file {file_path}: {e}")
+            raise
 
     @staticmethod
     def read_triples(file_path: str) -> List[Tuple[int, int, int]]:
@@ -463,28 +525,71 @@ class MolFrame:
         return new_molframe
 
     def clean(self) -> None:
-        to_del_map = []
-        for key in self.map:
-            if len(self.map[key]) == 0:
-                to_del_map.append(key)
-        for key in to_del_map:
-            del self.map[key]
-        to_del_genmap = []
-        for key in self.gen_map:
-            if len(self.gen_map[key]) == 0:
-                to_del_genmap.append(key)
-        for key in to_del_genmap:
-            del self.gen_map[key]
-        self.__reconstruct(self.map)
-        self.__reconstruct(self.gen_map)
+        r"""
+        Clean the dataset
+        """
+        try:
+            to_del_map = []
+            for key in list(self.map.keys()):
+                if len(self.map[key]) == 0:
+                    to_del_map.append(key)
 
-    def __reconstruct(self, map: Dict[str, Set[Chem.Mol]]) -> None:
+            for key in to_del_map:
+                del self.map[key]
+                if key in self.gen_map:
+                    del self.gen_map[key]
+                if key in self.negs:
+                    del self.negs[key]
+
+            to_del_genmap = []
+            for key in list(self.gen_map.keys()):
+                if len(self.gen_map[key]) == 0:
+                    to_del_genmap.append(key)
+
+            for key in to_del_genmap:
+                del self.gen_map[key]
+
+            self.__reconstruct(self.map)
+            self.__reconstruct(self.gen_map)
+
+            print(f"Cleaning completed: {len(self.map)} substrates remaining")
+
+        except Exception as e:
+            print(f"Error during cleaning: {e}")
+            raise
+
+    def __reconstruct(self, map: Dict[str, Set[str]]) -> None:
+        r"""
+        Reconstruct molecular structures with error handling
+        """
+        molecules_to_add = {}
+
         for sub in map:
-            if sub not in self.mol_structs.keys():
-                self.mol_structs[sub] = Chem.MolFromSmiles(sub)
+            if sub not in self.mol_structs:
+                try:
+                    mol = Chem.MolFromSmiles(sub)
+                    if mol is not None:
+                        molecules_to_add[sub] = mol
+                    else:
+                        print(f"Warning: Could not create molecule from SMILES: {sub}")
+                except Exception as e:
+                    print(f"Error creating molecule for {sub}: {e}")
+
             for prod in map[sub]:
-                if prod not in self.mol_structs.keys():
-                    self.mol_structs[prod] = Chem.MolFromSmiles(prod)
+                if prod not in self.mol_structs and prod not in molecules_to_add:
+                    try:
+                        mol = Chem.MolFromSmiles(prod)
+                        if mol is not None:
+                            molecules_to_add[prod] = mol
+                        else:
+                            print(f"Warning: Could not create molecule from SMILES: {prod}")
+                    except Exception as e:
+                        print(f"Error creating molecule for {prod}: {e}")
+
+        self.mol_structs.update(molecules_to_add)
+
+        if molecules_to_add:
+            print(f"Added {len(molecules_to_add)} new molecules during reconstruction")
 
     def train_val_test_split(self, frac: float) -> List['MolFrame']:
         x = np.array(list(self.map.keys()))
@@ -514,9 +619,13 @@ class MolFrame:
         :return: :class:None
         """
         for sub in self.map:
-            for prod in self.gen_map[sub]:
-                if prod not in self.map[sub]:
-                    self.negs[sub].add(prod)
+            if sub in self.gen_map:
+                for prod in self.gen_map[sub]:
+                    if prod not in self.map[sub]:
+                        self.negs[sub].add(prod)
+            else:
+                self.gen_map[sub] = set()
+                print(f"Warning: Substrate {sub} not found in gen_map, created empty entry")
 
     def passify(self, name: str) -> List[Tuple[int, int, int]]:
         r"""
@@ -603,7 +712,7 @@ class MolFrame:
         self.clean()
         return f'MolFrame: {len(self.map)} substrates'
 
-    def morganize(self, size: int = 256) -> None:
+    def morganize(self, size: int = 1024) -> None:
         r"""
         Generate Morgan fingerprints for each molecule.
         :param size: size of Morgan fingerprints
@@ -723,15 +832,32 @@ class MolFrame:
                         print(key, pair.edge_attr, pair.x)
                         self.single[key] = None
 
-    def full_setup(self) -> None:
-        self.clean()
-        self.negatives()
-        print('Morgan fingerprints generation')
-        self.morganize()
-        print('Pair graphs generation')
-        self.pairgraphs()
-        print('Single graphs generation')
-        self.singlegraphs()
+    def full_setup(self, pca: bool = True) -> None:
+        r"""
+        Complete data preparation pipeline with error handling
+        """
+        try:
+            self.clean()
+            print("Cleaning completed")
+
+            self.negatives()
+            print("Negatives generation completed")
+
+            print('Morgan fingerprints generation')
+            self.morganize()
+            print('Morgan fingerprints completed')
+
+            print('Pair graphs generation')
+            self.pairgraphs(pca=pca)  # Упрощаем без PCA для тестирования
+            print('Pair graphs completed')
+
+            print('Single graphs generation')
+            self.singlegraphs(pca=pca)  # Упрощаем без PCA для тестирования
+            print('Single graphs completed')
+
+        except Exception as e:
+            print(f"Error in full_setup: {e}")
+            raise
 
     def make_everything_good(self):
         del self
