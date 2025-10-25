@@ -1059,7 +1059,7 @@ class Generator(GGenerator):
         self.pretrained = True
         print(f"Pretrained weights loaded from {path}")
 
-    def fit(self, data: MolFrame, lr: float = 1e-5, verbose: bool = True,
+    def fit(self, data: MolFrame, lr: float = 1e-5, verbose: bool = True, eps: int = 100,
             gamma: int = 2, freeze_pretrained: bool = False) -> 'Generator':
         """
         Обучение с поддержкой заморозки предобученных слоев
@@ -1107,7 +1107,7 @@ class Generator(GGenerator):
 
         history = []
         best_loss = float('inf')
-        for _ in tqdm(range(100)):
+        for _ in tqdm(range(eps)):
             self.train()
             epoch_loss = 0
             for batch in train_loader:

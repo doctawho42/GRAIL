@@ -5,7 +5,7 @@ from pathlib import Path
 from sklearn.impute import SimpleImputer
 import pickle as pkl
 from torch.nn import Module, Sequential, ReLU, Linear, BatchNorm1d, Dropout, Sigmoid, BCELoss
-from torch_geometric.nn import GATv2Conv, global_mean_pool
+from torch_geometric.nn import GATv2Conv, global_mean_pool, GINConv, GCNConv
 from torch_geometric.data import Data, Batch
 from torch_geometric import nn
 import torch_geometric
@@ -15,10 +15,11 @@ from ..utils.transform import from_rule, from_rdmol, from_pair
 from ..nn.molpath import EdgePathNN
 from rdkit import Chem
 from torch_geometric.loader import DataLoader
-from tqdm.auto import tqdm
+from tqdm.auto import tqdm, trange
 from .train_model import PULoss
 from multipledispatch import dispatch
 from sklearn.metrics import matthews_corrcoef
+from torch.nn import functional as F
 
 class Filter(GFilter):
     def __init__(self,
@@ -72,60 +73,68 @@ class Filter(GFilter):
             raise TypeError('Unsupported mode')
         self.mode = mode
 
-    @dispatch(Data, str)
-    def forward(self, data: Data, met: str) -> torch.Tensor:
-        data.x = data.x.to(torch.float32)
-        data.edge_attr = data.edge_attr.to(torch.float32)
-        data.edge_index = data.edge_index.to(torch.int64)
-        data.fp = data.fp.to(torch.float32)
+    def forward(self, data, met=None) -> torch.Tensor:
+        if self.mode == 'pair':
+            # Handle pair mode - data is a DataBatch, met is a string
+            data.x = data.x.to(torch.float32)
+            data.edge_attr = data.edge_attr.to(torch.float32)
+            data.edge_index = data.edge_index.to(torch.int64)
+            data.fp = data.fp.to(torch.float32)
 
-        x = self.module(data.x, data.edge_index, data.edge_attr)
-        x = global_mean_pool(x, data.batch)
-        x = torch.cat([x, data.fp], dim=1)
+            x = self.module(data.x, data.edge_index, data.edge_attr)
+            x = global_mean_pool(x, data.batch)
+            x = torch.cat([x, data.fp], dim=1)
 
-        x = self.lin1(x).relu()
-        x = self.lin2(x).relu()
-        x = self.lin3(x).relu()
-        x = self.lin4(x).sigmoid()
+            x = self.lin1(x).relu()
+            x = self.lin2(x).relu()
+            x = self.lin3(x).relu()
+            x = self.lin4(x).sigmoid()
 
-        return x
+            return x
 
-    @dispatch(Data, Data)
-    def forward(self, sub: Data, met: Data) -> torch.Tensor:
-        # 1. Metabolite
-        met.x = met.x.to(torch.float32)
-        met.edge_attr = met.edge_attr.to(torch.float32)
-        node = self.conv1(met.x, met.edge_index, edge_attr=met.edge_attr)
-        node = node.relu()
-        node = self.conv2(node, met.edge_index, edge_attr=met.edge_attr)
-        node = node.relu()
-        node = self.conv3(node, met.edge_index, edge_attr=met.edge_attr)
-        node = node.relu()
-        node = self.conv4(node, met.edge_index, edge_attr=met.edge_attr)
-        node = node.relu()
+        elif self.mode == 'single':
+            # Handle single mode - data is substrate, met is metabolite
+            if met is None:
+                raise ValueError("In single mode, met parameter is required")
 
-        node = global_mean_pool(node, met.batch)
+            # 1. Metabolite
+            met.x = met.x.to(torch.float32)
+            met.edge_attr = met.edge_attr.to(torch.float32)
+            node = self.conv1(met.x, met.edge_index, edge_attr=met.edge_attr)
+            node = node.relu()
+            node = self.conv2(node, met.edge_index, edge_attr=met.edge_attr)
+            node = node.relu()
+            node = self.conv3(node, met.edge_index, edge_attr=met.edge_attr)
+            node = node.relu()
+            node = self.conv4(node, met.edge_index, edge_attr=met.edge_attr)
+            node = node.relu()
 
-        # 2. Substrate
-        sub.x = sub.x.to(torch.float32)
-        sub.edge_attr = sub.edge_attr.to(torch.float32)
-        node_sub = self.conv1_sub(sub.x, sub.edge_index, edge_attr=sub.edge_attr)
-        node_sub = node_sub.relu()
-        node_sub = self.conv2_sub(node_sub, sub.edge_index, edge_attr=sub.edge_attr)
-        node_sub = node_sub.relu()
-        node_sub = self.conv3_sub(node_sub, sub.edge_index, edge_attr=sub.edge_attr)
-        node_sub = node_sub.relu()
-        node_sub = self.conv4_sub(node_sub, sub.edge_index, edge_attr=sub.edge_attr)
-        node_sub = node_sub.relu()
+            node = global_mean_pool(node, met.batch)
 
-        node_sub = global_mean_pool(node_sub, sub.batch)
+            # 2. Substrate
+            sub = data
+            sub.x = sub.x.to(torch.float32)
+            sub.edge_attr = sub.edge_attr.to(torch.float32)
+            node_sub = self.conv1_sub(sub.x, sub.edge_index, edge_attr=sub.edge_attr)
+            node_sub = node_sub.relu()
+            node_sub = self.conv2_sub(node_sub, sub.edge_index, edge_attr=sub.edge_attr)
+            node_sub = node_sub.relu()
+            node_sub = self.conv3_sub(node_sub, sub.edge_index, edge_attr=sub.edge_attr)
+            node_sub = node_sub.relu()
+            node_sub = self.conv4_sub(node_sub, sub.edge_index, edge_attr=sub.edge_attr)
+            node_sub = node_sub.relu()
 
-        # 3. Apply a final classifier
-        fp_sub = sub.fp.to(torch.float32)
-        fp_met = met.fp.to(torch.float32)
-        x = torch.cat((node_sub, fp_sub, node, fp_met), dim=1)
-        x = self.FCNN(x)
-        return x
+            node_sub = global_mean_pool(node_sub, sub.batch)
+
+            # 3. Apply a final classifier
+            fp_sub = sub.fp.to(torch.float32)
+            fp_met = met.fp.to(torch.float32)
+            x = torch.cat((node_sub, fp_sub, node, fp_met), dim=1)
+            x = self.FCNN(x)
+            return x
+
+        else:
+            raise TypeError('Unsupported mode')
 
     def fit(self, data: MolFrame,
             lr: float = 1e-5,
@@ -294,7 +303,6 @@ class MolPathFilter(GFilter):
                  edge_dim,
                  arg_vec,
                  mode,
-                 molpath_hidden: tp.Optional[int] = None,
                  molpath_cutoff: tp.Optional[int] = None,
                  molpath_y: tp.Optional[float] = None
                  ):
@@ -366,7 +374,7 @@ class MolPathFilter(GFilter):
                 Linear(arg_vec[2], arg_vec[3]),
                 ReLU(inplace=True),
                 BatchNorm1d(arg_vec[3]),
-                Linear(arg_vec[4], 50),
+                Linear(arg_vec[3], 50),
                 ReLU(inplace=True),
                 BatchNorm1d(50),
                 Linear(50, 1),
@@ -376,36 +384,46 @@ class MolPathFilter(GFilter):
             raise TypeError('Unsupported mode')
         self.mode = mode
 
-    @dispatch(Data, str)
-    def forward(self, data: Data, met: str) -> torch.Tensor:
-        data.x = data.x.to(torch.float32)
-        data.edge_attr = data.edge_attr.to(torch.float32)
-        data.edge_index = data.edge_index.to(torch.int64)
-        data.fp = data.fp.to(torch.float32)
+    def forward(self, data, met=None) -> torch.Tensor:
+        if self.mode == 'pair':
+            # Handle pair mode - data is a DataBatch
+            data.x = data.x.to(torch.float32)
+            data.edge_attr = data.edge_attr.to(torch.float32)
+            data.edge_index = data.edge_index.to(torch.int64)
+            data.fp = data.fp.to(torch.float32)
 
-        x = self.module(data)
-        x = self.FCNN(x)
+            x = self.module(data)
+            x = self.FCNN(x)
+            return x
 
-        return x
+        elif self.mode == 'single':
+            # Handle single mode - data is substrate, met is metabolite
+            if met is None:
+                raise ValueError("In single mode, met parameter is required")
 
-    @dispatch(Data, Data)
-    def forward(self, sub: Data, met: Data) -> torch.Tensor:
-        sub.fp = sub.fp.to(torch.float32)
-        met.fp = met.fp.to(torch.float32)
-        # 1. Metabolite
-        met.x = met.x.to(torch.float32)
-        met.edge_attr = met.edge_attr.to(torch.float32)
-        node = self.conv1_met(met)
+            sub = data
+            met = met
 
-        # 2. Substrate
-        sub.x = sub.x.to(torch.float32)
-        sub.edge_attr = sub.edge_attr.to(torch.float32)
-        node_sub = self.conv1_sub(sub)
+            sub.fp = sub.fp.to(torch.float32)
+            met.fp = met.fp.to(torch.float32)
 
-        # 3. Apply a final classifier
-        x = torch.cat((node_sub, node), dim=1)
-        x = self.FCNN(x)
-        return x
+            # 1. Metabolite
+            met.x = met.x.to(torch.float32)
+            met.edge_attr = met.edge_attr.to(torch.float32)
+            node = self.conv1_met(met)
+
+            # 2. Substrate
+            sub.x = sub.x.to(torch.float32)
+            sub.edge_attr = sub.edge_attr.to(torch.float32)
+            node_sub = self.conv1_sub(sub)
+
+            # 3. Apply a final classifier
+            x = torch.cat((node_sub, node), dim=1)
+            x = self.FCNN(x)
+            return x
+
+        else:
+            raise TypeError('Unsupported mode')
 
     def fit(self, data: MolFrame,
             lr: float = 1e-5,
@@ -760,3 +778,799 @@ def create_filter_singles(arg_vec: tp.List[int]) -> Module:
             return self
 
     return Filter()
+
+class MorganOnlyFilter(GFilter):
+    """
+    Baseline filter that uses **only** concatenated Morgan fingerprints
+    (substrate + product, 2048 dim) and a small MLP.
+    Mode is hard-coded to 'pair'.
+    """
+    def __init__(self, input_dim: int = 2048,
+                 hidden_dims: tp.List[int] = None):
+        super().__init__()
+        self.mode = 'pair'
+        hidden_dims = hidden_dims or [512, 256, 128]
+
+        layers = []
+        prev = input_dim
+        for h in hidden_dims:
+            layers += [torch.nn.Linear(prev, h),
+                       torch.nn.ReLU(),
+                       torch.nn.Dropout(0.2),
+                       torch.nn.BatchNorm1d(h)]
+            prev = h
+        layers += [torch.nn.Linear(prev, 1), torch.nn.Sigmoid()]
+        self.mlp = torch.nn.Sequential(*layers)
+
+    def forward(self, data, *args):
+        return self.mlp(data.fp.to(torch.float32))
+
+    # ---------- training ------------------------------------------------
+    def fit(self, data: MolFrame, lr: float = 1e-4, eps: int = 100,
+            verbose: bool = True, **kw) -> "MorganOnlyFilter":
+        device = 'cuda' if torch.cuda.is_available() else 'cpu'
+        self.to(device)
+        opt   = torch.optim.Adam(self.parameters(), lr=lr, weight_decay=1e-8)
+        sched = torch.optim.lr_scheduler.ExponentialLR(opt, gamma=0.8)
+        loader = torch_geometric.loader.DataLoader(
+            [g for graphs in data.graphs.values() for g in graphs if g is not None],
+            batch_size=128, shuffle=True
+        )
+        for epoch in trange(eps):
+            self.train()
+            total = 0.
+            for batch in loader:
+                batch = batch.to(device)
+                opt.zero_grad()
+                loss = torch.nn.BCELoss()(self(batch), batch.y.unsqueeze(1).float())
+                loss.backward()
+                opt.step()
+                total += loss.item()
+            sched.step()
+            if verbose and (epoch+1) % 20 == 0:
+                print(f"MorganOnly epoch {epoch+1}: loss {total/len(loader):.4f}")
+        return self
+
+    # ---------- inference ----------------------------------------------
+    @torch.no_grad()
+    def predict(self, sub: str, prod: str, pca: bool = True) -> int:
+        from ..utils.transform import from_pair
+        from rdkit import Chem
+        mol1, mol2 = Chem.MolFromSmiles(sub), Chem.MolFromSmiles(prod)
+        if mol1 is None or mol2 is None:
+            return 0
+        data = from_pair(mol1, mol2)
+        if data is None:
+            return 0
+        data.batch = torch.zeros(data.x.size(0), dtype=torch.long)
+        self.eval()
+        return int((self(data.to(next(self.parameters()).device)) > 0.5).cpu().item())
+
+    # ---------- evaluation helper --------------------------------------
+    @torch.no_grad()
+    def mcc(self, test_frame: MolFrame) -> tp.List[float]:
+        self.eval()
+        outs, reals = [], []
+        for sub in test_frame.map:
+            for prod in test_frame.map[sub]:
+                outs.append(self.predict(sub, prod))
+                reals.append(1)
+            for prod in test_frame.negs.get(sub, []):
+                outs.append(self.predict(sub, prod))
+                reals.append(0)
+        return [matthews_corrcoef(reals, outs)]
+
+
+class GINFilter(GFilter):
+    def __init__(self, in_channels, edge_dim, arg_vec: tp.List[int], mode: tp.Literal['single', 'pair']):
+        super(GINFilter, self).__init__()
+        self.mode = mode
+
+        if mode == 'pair':
+            # GIN layers for pair mode
+            nn1 = Sequential(Linear(in_channels, arg_vec[0]), ReLU(), Linear(arg_vec[0], arg_vec[0]))
+            nn2 = Sequential(Linear(arg_vec[0], arg_vec[1]), ReLU(), Linear(arg_vec[1], arg_vec[1]))
+            nn3 = Sequential(Linear(arg_vec[1], arg_vec[2]), ReLU(), Linear(arg_vec[2], arg_vec[2]))
+
+            self.conv1 = GINConv(nn1)
+            self.conv2 = GINConv(nn2)
+            self.conv3 = GINConv(nn3)
+
+            self.lin1 = Linear(arg_vec[2] + 1024 * 2, arg_vec[3])
+            self.lin2 = Linear(arg_vec[3], arg_vec[4])
+            self.lin3 = Linear(arg_vec[4], arg_vec[5])
+            self.lin4 = Linear(arg_vec[5], 1)
+
+            self.bn1 = BatchNorm1d(arg_vec[3])
+            self.bn2 = BatchNorm1d(arg_vec[4])
+            self.bn3 = BatchNorm1d(arg_vec[5])
+            self.dropout = Dropout(0.1)
+
+        elif mode == 'single':
+            # GIN layers for substrate
+            nn1_sub = Sequential(Linear(in_channels, arg_vec[0]), ReLU(), Linear(arg_vec[0], arg_vec[0]))
+            nn2_sub = Sequential(Linear(arg_vec[0], arg_vec[1]), ReLU(), Linear(arg_vec[1], arg_vec[1]))
+            nn3_sub = Sequential(Linear(arg_vec[1], arg_vec[2]), ReLU(), Linear(arg_vec[2], arg_vec[2]))
+            nn4_sub = Sequential(Linear(arg_vec[2], arg_vec[3]), ReLU(), Linear(arg_vec[3], arg_vec[3]))
+
+            self.conv1_sub = GINConv(nn1_sub)
+            self.conv2_sub = GINConv(nn2_sub)
+            self.conv3_sub = GINConv(nn3_sub)
+            self.conv4_sub = GINConv(nn4_sub)
+
+            # GIN layers for metabolite
+            nn1_met = Sequential(Linear(in_channels, arg_vec[0]), ReLU(), Linear(arg_vec[0], arg_vec[0]))
+            nn2_met = Sequential(Linear(arg_vec[0], arg_vec[1]), ReLU(), Linear(arg_vec[1], arg_vec[1]))
+            nn3_met = Sequential(Linear(arg_vec[1], arg_vec[2]), ReLU(), Linear(arg_vec[2], arg_vec[2]))
+            nn4_met = Sequential(Linear(arg_vec[2], arg_vec[3]), ReLU(), Linear(arg_vec[3], arg_vec[3]))
+
+            self.conv1_met = GINConv(nn1_met)
+            self.conv2_met = GINConv(nn2_met)
+            self.conv3_met = GINConv(nn3_met)
+            self.conv4_met = GINConv(nn4_met)
+
+            self.FCNN = Sequential(
+                Linear(arg_vec[3] * 2 + 1024 * 2, arg_vec[4]),
+                ReLU(inplace=True),
+                BatchNorm1d(arg_vec[4]),
+                Linear(arg_vec[4], arg_vec[5]),
+                ReLU(inplace=True),
+                BatchNorm1d(arg_vec[5]),
+                Linear(arg_vec[5], 50),
+                ReLU(inplace=True),
+                BatchNorm1d(50),
+                Linear(50, 1),
+                Sigmoid()
+            )
+
+    def forward(self, data: Data, met: tp.Union[Data, str] = 'pass') -> torch.Tensor:
+        if self.mode == 'pair':
+            data.x = data.x.to(torch.float32)
+            data.edge_index = data.edge_index.to(torch.int64)
+            data.fp = data.fp.to(torch.float32)
+
+            x = F.relu(self.conv1(data.x, data.edge_index))
+            x = F.relu(self.conv2(x, data.edge_index))
+            x = F.relu(self.conv3(x, data.edge_index))
+
+            x = global_mean_pool(x, data.batch)
+            x = torch.cat([x, data.fp], dim=1)
+
+            x = self.dropout(x)
+            x = F.relu(self.bn1(self.lin1(x)))
+            x = F.relu(self.bn2(self.lin2(x)))
+            x = F.relu(self.bn3(self.lin3(x)))
+            x = torch.sigmoid(self.lin4(x))
+
+            return x
+
+        elif self.mode == 'single':
+            if isinstance(met, str):
+                raise ValueError("In single mode, met should be Data object")
+
+            # Metabolite processing
+            met.x = met.x.to(torch.float32)
+            node_met = F.relu(self.conv1_met(met.x, met.edge_index))
+            node_met = F.relu(self.conv2_met(node_met, met.edge_index))
+            node_met = F.relu(self.conv3_met(node_met, met.edge_index))
+            node_met = F.relu(self.conv4_met(node_met, met.edge_index))
+            node_met = global_mean_pool(node_met, met.batch)
+
+            # Substrate processing
+            sub = data
+            sub.x = sub.x.to(torch.float32)
+            node_sub = F.relu(self.conv1_sub(sub.x, sub.edge_index))
+            node_sub = F.relu(self.conv2_sub(node_sub, sub.edge_index))
+            node_sub = F.relu(self.conv3_sub(node_sub, sub.edge_index))
+            node_sub = F.relu(self.conv4_sub(node_sub, sub.edge_index))
+            node_sub = global_mean_pool(node_sub, sub.batch)
+
+            # Combine with fingerprints
+            fp_sub = sub.fp.to(torch.float32)
+            fp_met = met.fp.to(torch.float32)
+            x = torch.cat((node_sub, fp_sub, node_met, fp_met), dim=1)
+            x = self.FCNN(x)
+
+            return x
+
+    def predict(self, sub: str, prod: str, pca: bool = True) -> int:
+        """Implement the predict method required by GFilter"""
+        sub_mol = Chem.MolFromSmiles(sub)
+        prod_mol = Chem.MolFromSmiles(prod)
+
+        if self.mode == 'pair':
+            graph = from_pair(sub_mol, prod_mol)
+            if graph is not None:
+                # Preprocess graph
+                for i in range(len(graph.x)):
+                    for j in range(len(graph.x[i])):
+                        if graph.x[i][j] == float('inf'):
+                            graph.x[i][j] = 0
+                graph.x = torch.tensor(SimpleImputer(missing_values=np.nan,
+                                                     strategy='constant',
+                                                     fill_value=0).fit_transform(graph.x))
+                if pca:
+                    ats = Path(__file__).parent / '..' / 'data' / 'pca_ats.pkl'
+                    bonds = Path(__file__).parent / '..' / 'data' / 'pca_bonds.pkl'
+                    with open(ats, 'rb') as file:
+                        pca_x = pkl.load(file)
+                    with open(bonds, 'rb') as file:
+                        pca_b = pkl.load(file)
+                    graph.x = torch.tensor(pca_x.transform(graph.x))
+                    graph.edge_attr = torch.tensor(pca_b.transform(graph.edge_attr))
+
+                # Add batch dimension and predict
+                graph.batch = torch.zeros(graph.x.size(0), dtype=torch.long)
+                with torch.no_grad():
+                    prediction = self(graph, 'pass').item()
+                return 1 if prediction > 0.5 else 0
+            return 0
+
+        elif self.mode == 'single':
+            graph_sub, graph_prod = from_rdmol(sub_mol), from_rdmol(prod_mol)
+            if graph_sub is not None and graph_prod is not None:
+                # Preprocess graphs
+                if pca:
+                    ats = Path(__file__).parent / '..' / 'data' / 'pca_ats_single.pkl'
+                    bonds = Path(__file__).parent / '..' / 'data' / 'pca_bonds_single.pkl'
+                    with open(ats, 'rb') as file:
+                        pca_x = pkl.load(file)
+                    with open(bonds, 'rb') as file:
+                        pca_b = pkl.load(file)
+
+                    for mol in (graph_sub, graph_prod):
+                        for i in range(len(mol.x)):
+                            for j in range(len(mol.x[i])):
+                                if mol.x[i][j] == float('inf'):
+                                    mol.x[i][j] = 0
+                        mol.x = torch.tensor(SimpleImputer(missing_values=np.nan,
+                                                           strategy='constant',
+                                                           fill_value=0).fit_transform(mol.x))
+                        mol.x = torch.tensor(pca_x.transform(mol.x))
+                        try:
+                            mol.edge_attr = torch.tensor(pca_b.transform(mol.edge_attr))
+                        except ValueError:
+                            print('Some issue happened with this molecule:')
+                            print(mol, mol.edge_attr, mol.x)
+
+                # Add batch dimensions and predict
+                graph_sub.batch = torch.zeros(graph_sub.x.size(0), dtype=torch.long)
+                graph_prod.batch = torch.zeros(graph_prod.x.size(0), dtype=torch.long)
+
+                with torch.no_grad():
+                    prediction = self(graph_sub, graph_prod).item()
+                return 1 if prediction > 0.5 else 0
+            return 0
+
+        else:
+            raise TypeError('Unsupported mode')
+
+    def fit(self, data: MolFrame, lr: float = 1e-5, eps: int = 100, verbose: bool = True,
+            prior: float = 0.75, nnPU: bool = True) -> 'GINFilter':
+        from .train_model import PULoss
+
+        device = 'cuda' if torch.cuda.is_available() else 'cpu'
+        self.to(device)
+
+        if nnPU:
+            criterion = PULoss(prior)
+        else:
+            criterion = BCELoss()
+
+        optimizer = torch.optim.Adam(self.parameters(), lr=lr, betas=(0.9, 0.99), weight_decay=1e-8)
+        scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer=optimizer, gamma=0.8)
+
+        if self.mode == 'pair':
+            train_loader = []
+            for pairs in data.graphs.values():
+                for pair in pairs:
+                    if pair is not None:
+                        train_loader.append(pair)
+
+            if len(train_loader) == 0:
+                print("Warning: No training data available for pair mode")
+                return self
+
+            train_loader = DataLoader(train_loader, batch_size=min(128, len(train_loader)), shuffle=True)
+
+            for epoch in tqdm(range(eps)):
+                self.train()
+                epoch_loss = 0
+                for batch in train_loader:
+                    batch = batch.to(device)
+                    out = self(batch, 'pass')
+                    loss = criterion(out, batch.y.unsqueeze(1).float())
+
+                    optimizer.zero_grad()
+                    loss.backward()
+                    optimizer.step()
+                    epoch_loss += loss.item()
+
+                scheduler.step()
+                if verbose and (epoch + 1) % 20 == 0:
+                    print(f'Epoch {epoch + 1}, Loss: {epoch_loss:.4f}')
+
+        return self
+
+
+class GCNFilter(GFilter):
+    def __init__(self, in_channels, edge_dim, arg_vec: tp.List[int], mode: tp.Literal['single', 'pair']):
+        super(GCNFilter, self).__init__()
+        self.mode = mode
+
+        if mode == 'pair':
+            self.conv1 = GCNConv(in_channels, arg_vec[0])
+            self.conv2 = GCNConv(arg_vec[0], arg_vec[1])
+            self.conv3 = GCNConv(arg_vec[1], arg_vec[2])
+
+            self.lin1 = nn.Linear(arg_vec[2] + 1024 * 2, arg_vec[3])
+            self.lin2 = nn.Linear(arg_vec[3], arg_vec[4])
+            self.lin3 = nn.Linear(arg_vec[4], arg_vec[5])
+            self.lin4 = nn.Linear(arg_vec[5], 1)
+
+            self.bn1 = BatchNorm1d(arg_vec[3])
+            self.bn2 = BatchNorm1d(arg_vec[4])
+            self.bn3 = BatchNorm1d(arg_vec[5])
+            self.dropout = Dropout(0.1)
+
+        elif mode == 'single':
+            # GCN layers for substrate and metabolite
+            self.conv1_sub = GCNConv(in_channels, arg_vec[0])
+            self.conv2_sub = GCNConv(arg_vec[0], arg_vec[1])
+            self.conv3_sub = GCNConv(arg_vec[1], arg_vec[2])
+            self.conv4_sub = GCNConv(arg_vec[2], arg_vec[3])
+
+            self.conv1_met = GCNConv(in_channels, arg_vec[0])
+            self.conv2_met = GCNConv(arg_vec[0], arg_vec[1])
+            self.conv3_met = GCNConv(arg_vec[1], arg_vec[2])
+            self.conv4_met = GCNConv(arg_vec[2], arg_vec[3])
+
+            self.FCNN = Sequential(
+                Linear(arg_vec[3] * 2 + 1024 * 2, arg_vec[4]),
+                ReLU(inplace=True),
+                BatchNorm1d(arg_vec[4]),
+                Linear(arg_vec[4], arg_vec[5]),
+                ReLU(inplace=True),
+                BatchNorm1d(arg_vec[5]),
+                Linear(arg_vec[5], 50),
+                ReLU(inplace=True),
+                BatchNorm1d(50),
+                Linear(50, 1),
+                Sigmoid()
+            )
+
+    def forward(self, data: Data, met: tp.Union[Data, str] = 'pass') -> torch.Tensor:
+        if self.mode == 'pair':
+            data.x = data.x.to(torch.float32)
+            data.edge_index = data.edge_index.to(torch.int64)
+            data.fp = data.fp.to(torch.float32)
+
+            x = F.relu(self.conv1(data.x, data.edge_index))
+            x = F.relu(self.conv2(x, data.edge_index))
+            x = F.relu(self.conv3(x, data.edge_index))
+
+            x = global_mean_pool(x, data.batch)
+            x = torch.cat([x, data.fp], dim=1)
+
+            x = self.dropout(x)
+            x = F.relu(self.bn1(self.lin1(x)))
+            x = F.relu(self.bn2(self.lin2(x)))
+            x = F.relu(self.bn3(self.lin3(x)))
+            x = torch.sigmoid(self.lin4(x))
+
+            return x
+
+        elif self.mode == 'single':
+            if isinstance(met, str):
+                raise ValueError("In single mode, met should be Data object")
+
+            # Metabolite processing
+            met.x = met.x.to(torch.float32)
+            node_met = F.relu(self.conv1_met(met.x, met.edge_index))
+            node_met = F.relu(self.conv2_met(node_met, met.edge_index))
+            node_met = F.relu(self.conv3_met(node_met, met.edge_index))
+            node_met = F.relu(self.conv4_met(node_met, met.edge_index))
+            node_met = global_mean_pool(node_met, met.batch)
+
+            # Substrate processing
+            sub = data
+            sub.x = sub.x.to(torch.float32)
+            node_sub = F.relu(self.conv1_sub(sub.x, sub.edge_index))
+            node_sub = F.relu(self.conv2_sub(node_sub, sub.edge_index))
+            node_sub = F.relu(self.conv3_sub(node_sub, sub.edge_index))
+            node_sub = F.relu(self.conv4_sub(node_sub, sub.edge_index))
+            node_sub = global_mean_pool(node_sub, sub.batch)
+
+            # Combine with fingerprints
+            fp_sub = sub.fp.to(torch.float32)
+            fp_met = met.fp.to(torch.float32)
+            x = torch.cat((node_sub, fp_sub, node_met, fp_met), dim=1)
+            x = self.FCNN(x)
+
+            return x
+
+    def predict(self, sub: str, prod: str, pca: bool = True) -> int:
+        """Implement the predict method required by GFilter"""
+        sub_mol = Chem.MolFromSmiles(sub)
+        prod_mol = Chem.MolFromSmiles(prod)
+
+        if self.mode == 'pair':
+            graph = from_pair(sub_mol, prod_mol)
+            if graph is not None:
+                # Preprocess graph
+                for i in range(len(graph.x)):
+                    for j in range(len(graph.x[i])):
+                        if graph.x[i][j] == float('inf'):
+                            graph.x[i][j] = 0
+                graph.x = torch.tensor(SimpleImputer(missing_values=np.nan,
+                                                     strategy='constant',
+                                                     fill_value=0).fit_transform(graph.x))
+                if pca:
+                    ats = Path(__file__).parent / '..' / 'data' / 'pca_ats.pkl'
+                    bonds = Path(__file__).parent / '..' / 'data' / 'pca_bonds.pkl'
+                    with open(ats, 'rb') as file:
+                        pca_x = pkl.load(file)
+                    with open(bonds, 'rb') as file:
+                        pca_b = pkl.load(file)
+                    graph.x = torch.tensor(pca_x.transform(graph.x))
+                    graph.edge_attr = torch.tensor(pca_b.transform(graph.edge_attr))
+
+                # Add batch dimension and predict
+                graph.batch = torch.zeros(graph.x.size(0), dtype=torch.long)
+                with torch.no_grad():
+                    prediction = self(graph, 'pass').item()
+                return 1 if prediction > 0.5 else 0
+            return 0
+
+        elif self.mode == 'single':
+            graph_sub, graph_prod = from_rdmol(sub_mol), from_rdmol(prod_mol)
+            if graph_sub is not None and graph_prod is not None:
+                # Preprocess graphs
+                if pca:
+                    ats = Path(__file__).parent / '..' / 'data' / 'pca_ats_single.pkl'
+                    bonds = Path(__file__).parent / '..' / 'data' / 'pca_bonds_single.pkl'
+                    with open(ats, 'rb') as file:
+                        pca_x = pkl.load(file)
+                    with open(bonds, 'rb') as file:
+                        pca_b = pkl.load(file)
+
+                    for mol in (graph_sub, graph_prod):
+                        for i in range(len(mol.x)):
+                            for j in range(len(mol.x[i])):
+                                if mol.x[i][j] == float('inf'):
+                                    mol.x[i][j] = 0
+                        mol.x = torch.tensor(SimpleImputer(missing_values=np.nan,
+                                                           strategy='constant',
+                                                           fill_value=0).fit_transform(mol.x))
+                        mol.x = torch.tensor(pca_x.transform(mol.x))
+                        try:
+                            mol.edge_attr = torch.tensor(pca_b.transform(mol.edge_attr))
+                        except ValueError:
+                            print('Some issue happened with this molecule:')
+                            print(mol, mol.edge_attr, mol.x)
+
+                # Add batch dimensions and predict
+                graph_sub.batch = torch.zeros(graph_sub.x.size(0), dtype=torch.long)
+                graph_prod.batch = torch.zeros(graph_prod.x.size(0), dtype=torch.long)
+
+                with torch.no_grad():
+                    prediction = self(graph_sub, graph_prod).item()
+                return 1 if prediction > 0.5 else 0
+            return 0
+
+        else:
+            raise TypeError('Unsupported mode')
+
+    def fit(self, data: MolFrame, lr: float = 1e-5, eps: int = 100, verbose: bool = True,
+            prior: float = 0.75, nnPU: bool = True) -> 'GCNFilter':
+        from .train_model import PULoss
+
+        device = 'cuda' if torch.cuda.is_available() else 'cpu'
+        self.to(device)
+
+        if nnPU:
+            criterion = PULoss(prior)
+        else:
+            criterion = nn.BCELoss()
+
+        optimizer = torch.optim.Adam(self.parameters(), lr=lr, betas=(0.9, 0.99), weight_decay=1e-8)
+        scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer=optimizer, gamma=0.8)
+
+        if self.mode == 'pair':
+            train_loader = []
+            for pairs in data.graphs.values():
+                for pair in pairs:
+                    if pair is not None:
+                        train_loader.append(pair)
+
+            if len(train_loader) == 0:
+                print("Warning: No training data available for pair mode")
+                return self
+
+            train_loader = DataLoader(train_loader, batch_size=min(128, len(train_loader)), shuffle=True)
+
+            for epoch in tqdm(range(eps)):
+                self.train()
+                epoch_loss = 0
+                for batch in train_loader:
+                    batch = batch.to(device)
+                    out = self(batch, 'pass')
+                    loss = criterion(out, batch.y.unsqueeze(1).float())
+
+                    optimizer.zero_grad()
+                    loss.backward()
+                    optimizer.step()
+                    epoch_loss += loss.item()
+
+                scheduler.step()
+                if verbose and (epoch + 1) % 20 == 0:
+                    print(f'Epoch {epoch + 1}, Loss: {epoch_loss:.4f}')
+
+        return self
+
+
+class GATv2Filter(GFilter):
+    def __init__(self,
+                 in_channels,
+                 edge_dim,
+                 arg_vec: tp.List[int],
+                 mode: tp.Literal['single', 'pair'],):
+        super(GATv2Filter, self).__init__()
+        if mode == 'pair':
+            self.module = nn.Sequential('x, edge_index, edge_attr', [
+                (GATv2Conv(in_channels, arg_vec[0], edge_dim=edge_dim, dropout=0.25), 'x, edge_index, edge_attr -> x'),
+                ReLU(inplace=True),
+                (GATv2Conv(arg_vec[0], arg_vec[1], edge_dim=edge_dim, dropout=0.25), 'x, edge_index, edge_attr -> x'),
+                ReLU(inplace=True),
+                (GATv2Conv(arg_vec[1], arg_vec[2], edge_dim=edge_dim, dropout=0.25), 'x, edge_index, edge_attr -> x'),
+                ReLU(inplace=True)
+            ])
+            self.dropout = Dropout(0.1)
+            self.lin1 = Linear((arg_vec[2]), arg_vec[3])
+            self.bn1 = BatchNorm1d(arg_vec[3])
+            self.lin2 = Linear(arg_vec[3], arg_vec[4])
+            self.bn2 = BatchNorm1d(arg_vec[4])
+            self.lin3 = Linear(arg_vec[4], arg_vec[5])
+            self.bn3 = BatchNorm1d(arg_vec[5])
+            self.lin4 = Linear(arg_vec[5], 1)
+        elif mode == 'single':
+            self.conv1_sub = GATv2Conv(in_channels, arg_vec[0], dropout=0.25, edge_dim=edge_dim)
+            self.conv2_sub = GATv2Conv(arg_vec[0], arg_vec[1], dropout=0.25, edge_dim=edge_dim)
+            self.conv3_sub = GATv2Conv(arg_vec[1], arg_vec[2], dropout=0.25, edge_dim=edge_dim)
+            self.conv4_sub = GATv2Conv(arg_vec[2], arg_vec[3], dropout=0.25, edge_dim=edge_dim)
+
+            self.conv1 = GATv2Conv(in_channels, arg_vec[0], dropout=0.25, edge_dim=edge_dim)
+            self.conv2 = GATv2Conv(arg_vec[0], arg_vec[1], dropout=0.25, edge_dim=edge_dim)
+            self.conv3 = GATv2Conv(arg_vec[1], arg_vec[2], dropout=0.25, edge_dim=edge_dim)
+            self.conv4 = GATv2Conv(arg_vec[2], arg_vec[3], dropout=0.25, edge_dim=edge_dim)
+
+            self.FCNN = Sequential(
+                Linear(arg_vec[3] * 2, arg_vec[4]),
+                ReLU(inplace=True),
+                BatchNorm1d(arg_vec[4]),
+                Linear(arg_vec[4], arg_vec[5]),
+                ReLU(inplace=True),
+                BatchNorm1d(arg_vec[5]),
+                Linear(arg_vec[5], 50),
+                ReLU(inplace=True),
+                BatchNorm1d(50),
+                Linear(50, 1),
+                Sigmoid()
+            )
+        else:
+            raise TypeError('Unsupported mode')
+        self.mode = mode
+
+    @dispatch(Data, str)
+    def forward(self, data: Data, met: str) -> torch.Tensor:
+        data.x = data.x.to(torch.float32)
+        data.edge_attr = data.edge_attr.to(torch.float32)
+        data.edge_index = data.edge_index.to(torch.int64)
+        data.fp = data.fp.to(torch.float32)
+
+        x = self.module(data.x, data.edge_index, data.edge_attr)
+        x = global_mean_pool(x, data.batch)
+
+        x = self.lin1(x).relu()
+        x = self.lin2(x).relu()
+        x = self.lin3(x).relu()
+        x = self.lin4(x).sigmoid()
+
+        return x
+
+    @dispatch(Data, Data)
+    def forward(self, sub: Data, met: Data) -> torch.Tensor:
+        # 1. Metabolite
+        met.x = met.x.to(torch.float32)
+        met.edge_attr = met.edge_attr.to(torch.float32)
+        node = self.conv1(met.x, met.edge_index, edge_attr=met.edge_attr)
+        node = node.relu()
+        node = self.conv2(node, met.edge_index, edge_attr=met.edge_attr)
+        node = node.relu()
+        node = self.conv3(node, met.edge_index, edge_attr=met.edge_attr)
+        node = node.relu()
+        node = self.conv4(node, met.edge_index, edge_attr=met.edge_attr)
+        node = node.relu()
+
+        node = global_mean_pool(node, met.batch)
+
+        # 2. Substrate
+        sub.x = sub.x.to(torch.float32)
+        sub.edge_attr = sub.edge_attr.to(torch.float32)
+        node_sub = self.conv1_sub(sub.x, sub.edge_index, edge_attr=sub.edge_attr)
+        node_sub = node_sub.relu()
+        node_sub = self.conv2_sub(node_sub, sub.edge_index, edge_attr=sub.edge_attr)
+        node_sub = node_sub.relu()
+        node_sub = self.conv3_sub(node_sub, sub.edge_index, edge_attr=sub.edge_attr)
+        node_sub = node_sub.relu()
+        node_sub = self.conv4_sub(node_sub, sub.edge_index, edge_attr=sub.edge_attr)
+        node_sub = node_sub.relu()
+
+        node_sub = global_mean_pool(node_sub, sub.batch)
+
+        # 3. Apply a final classifier
+        fp_sub = sub.fp.to(torch.float32)
+        fp_met = met.fp.to(torch.float32)
+        x = torch.cat((node_sub, node), dim=1)
+        x = self.FCNN(x)
+        return x
+
+    def fit(self, data: MolFrame,
+            lr: float = 1e-5,
+            eps: int = 100,
+            verbose: bool = False,
+            prior: float = 0.75,
+            nnPU: bool = True) -> 'GATv2Filter':
+        device = 'cuda' if torch.cuda.is_available() else 'cpu'
+        self.to(device)
+
+        if nnPU:
+            criterion = PULoss(prior) # loss function (nnPU) for the positive-unlabelled paradigm
+        else:
+            criterion = BCELoss()
+        optimizer = torch.optim.Adam(self.parameters(), lr=lr, betas=(0.9, 0.99), weight_decay=1e-8)
+        scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer=optimizer, gamma=0.8)
+
+        if verbose:
+            print('Starting DataLoaders generation')
+
+        if self.mode =='pair':
+            train_loader = []
+            for pairs in data.graphs.values(): # dataloaders from pairgraphs
+                for pair in pairs:
+                    if pair is not None:
+                        train_loader.append(pair)
+            train_loader = DataLoader(train_loader, batch_size=128, shuffle=True)
+
+            # Laerning process
+            history = []
+            best_loss = float('inf')
+            for _ in tqdm(range(eps)):
+                self.train()
+                epoch_loss = 0
+                for batch in train_loader:
+                    out = self(batch, 'pass')
+                    loss = criterion(out, batch.y.unsqueeze(1).float())
+                    history.append(loss.item())
+                    epoch_loss += loss.item()
+                    loss.backward()
+                    optimizer.step()
+                    optimizer.zero_grad()
+                if epoch_loss < best_loss:
+                    print(epoch_loss)
+                    best_loss = epoch_loss
+                    torch.save(self.state_dict(), 'best_filter_pair.pth')
+                scheduler.step()
+            return self
+
+        elif self.mode == 'single':
+            def collate(data_list: tp.List) -> tp.Tuple[Batch, Batch]:
+                batchA = Batch.from_data_list([data[0] for data in data_list])
+                batchB = Batch.from_data_list([data[1] for data in data_list])
+                return batchA, batchB
+
+            train_loader = [] # dataloader from singlegraphs
+            for mol in data.map.keys():
+                sub = data.single[mol]
+                if sub is not None:
+                    for met in data.map[mol]:
+                        if data.single[met] is not None:
+                            train_loader.append((sub, data.single[met]))
+            for mol in data.negs.keys():
+                sub = data.single[mol]
+                if sub is not None:
+                    for met in data.negs[mol]:
+                        if data.single[met] is not None:
+                            train_loader.append((sub, data.single[met]))
+            train_loader = DataLoader(train_loader, batch_size=128, shuffle=True, collate_fn=collate)
+
+            # Learning process
+            history = []
+            best_loss = float('inf')
+            for _ in tqdm(range(eps)):
+                self.train()
+                epoch_loss = 0
+                for batch in train_loader:
+                    met_batch = batch[1].to(device)
+                    sub_batch = batch[0].to(device)
+                    out = self(sub_batch, met_batch)
+                    loss = criterion(out, met_batch.y.unsqueeze(1).float())
+                    history.append(loss.item())
+                    epoch_loss += loss.item()
+                    loss.backward()
+                    optimizer.step()
+                    optimizer.zero_grad()
+                scheduler.step()
+                if epoch_loss < best_loss:
+                    best_loss = epoch_loss
+                    torch.save(self.state_dict(), 'best_filter_single.pth')
+            return self
+
+        else:
+            raise TypeError('Unsupported mode')
+
+    def predict(self, sub: str, prod: str, pca: bool = True) -> int:
+        sub_mol = Chem.MolFromSmiles(sub)
+        prod_mol = Chem.MolFromSmiles(prod)
+        if self.mode == 'pair':
+            graph = from_pair(sub_mol, prod_mol)
+            if graph is not None:
+                for i in range(len(graph.x)):
+                    for j in range(len(graph.x[i])):
+                        if graph.x[i][j] == float('inf'):
+                            graph.x[i][j] = 0
+                graph.x = torch.tensor(SimpleImputer(missing_values=np.nan,
+                                              strategy='constant',
+                                              fill_value=0).fit_transform(graph.x))
+                if pca:
+                    ats = Path(__file__).parent / '..' / 'data' / 'pca_ats.pkl'
+                    bonds = Path(__file__).parent / '..' / 'data' / 'pca_bonds.pkl'
+                    with open(ats, 'rb') as file:
+                        pca_x = pkl.load(file)
+                    with open(bonds, 'rb') as file:
+                        pca_b = pkl.load(file)
+                    graph.x = torch.tensor(pca_x.transform(graph.x))
+                    graph.edge_attr = torch.tensor(pca_b.transform(graph.edge_attr))
+                return int(cpunum(self(graph, 'pass')).item())
+        elif self.mode == 'single':
+            graph_sub, graph_prod = from_rdmol(sub_mol), from_rdmol(prod_mol)
+            if pca:
+                ats = Path(__file__).parent / '..' / 'data' / 'pca_ats_single.pkl'
+                bonds = Path(__file__).parent / '..' / 'data' / 'pca_bonds_single.pkl'
+                with open(ats, 'rb') as file:
+                    pca_x = pkl.load(file)
+                with open(bonds, 'rb') as file:
+                    pca_b = pkl.load(file)
+                for mol in (graph_sub, graph_prod):
+                    for i in range(len(mol.x)):
+                        for j in range(len(mol.x[i])):
+                            if mol.x[i][j] == float('inf'):
+                                mol.x[i][j] = 0
+                    mol.x = torch.tensor(SimpleImputer(missing_values=np.nan,
+                                                           strategy='constant',
+                                                           fill_value=0).fit_transform(mol.x))
+                    mol.x = torch.tensor(pca_x.transform(mol.x))
+                    try:
+                        mol.edge_attr = torch.tensor(pca_b.transform(mol.edge_attr))
+                    except ValueError:
+                        print('Some issue happened with this molecule:')
+                        print(mol, mol.edge_attr, mol.x)
+            return int(cpunum(self(graph_sub, graph_prod)).item())
+        else:
+            raise TypeError('Unsupported mode')
+
+    @torch.no_grad()
+    def mcc(self, test_frame):
+        self.eval()
+        mccs = []
+        for sub in tqdm(test_frame.map):
+            reals = []
+            bins = []
+            for prod in test_frame.map[sub]:
+                bins.append(self.predict(sub, prod))
+                reals.append(1)
+            for prod in test_frame.negs[sub]:
+                bins.append(self.predict(sub, prod))
+                reals.append(0)
+            mccs.append(matthews_corrcoef(reals, bins))
+        return mccs

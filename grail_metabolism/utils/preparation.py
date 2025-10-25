@@ -270,14 +270,6 @@ class MolFrame:
         else:
             subs_std = map[sub_name]
             prods_std = map[prod_name]
-        # Standardize molecules if required
-        '''if standartize:
-
-            subs_std = map[sub_name].progress_apply(standardize_mol)
-            prods_std = map[prod_name].progress_apply(standardize_mol)
-        else:
-            subs_std = map[sub_name]
-            prods_std = map[prod_name]'''
 
         # Ensure real column exists and is integer type
         if real_name not in map.columns:
@@ -736,6 +728,7 @@ class MolFrame:
             with open(bonds, 'rb') as file:
                 pca_b = pkl.load(file)
         mols = self.mol_structs
+        self.graphs = dd(list)
         for substrate in tqdm(self.map):
             for product in self.map[substrate]:
                 self.graphs[substrate].append(from_pair(mols[substrate], mols[product]))
@@ -782,6 +775,7 @@ class MolFrame:
                 pca_x = pkl.load(file)
             with open(bonds, 'rb') as file:
                 pca_b = pkl.load(file)
+        self.singles = {}
         mols = self.mol_structs
         for mol in tqdm(self.map):
             try:
@@ -898,7 +892,13 @@ class MolFrame:
             for pair in pairs:
                 if pair is not None:
                     train_loader.append(pair)
-        train_loader = DataLoader(train_loader, batch_size=128, shuffle=True)
+
+        # Check if we have training data
+        if len(train_loader) == 0:
+            print("Warning: No training data available for pair mode")
+            return model
+
+        train_loader = DataLoader(train_loader, batch_size=min(128, len(train_loader)), shuffle=True)
 
         test_loader = []
         for pairs in test.graphs.values():
@@ -1375,3 +1375,296 @@ class MolFrame:
     def load_labels(self, path: str) -> None:
         data = pd.read_csv(path).to_dict(orient='list')
         self.reaction_labels = data
+
+    def train_val_test_split_by_scaffold(self,
+                                         train_frac: float = 0.7,
+                                         val_frac: float = 0.15,
+                                         test_frac: float = 0.15,
+                                         random_state: int = 42) -> List['MolFrame']:
+        """
+        Split the dataset by Bemis-Murcko scaffolds to ensure structurally novel molecules
+        in validation and test sets.
+
+        Args:
+            train_frac: Fraction of scaffolds for training
+            val_frac: Fraction of scaffolds for validation
+            test_frac: Fraction of scaffolds for testing
+            random_state: Random seed for reproducibility
+
+        Returns:
+            List of three MolFrame objects: [train, val, test]
+        """
+        from rdkit.Chem.Scaffolds import MurckoScaffold
+        from collections import defaultdict
+        import random
+
+        # Set random seed for reproducibility
+        random.seed(random_state)
+        np.random.seed(random_state)
+
+        def get_scaffold(smiles: str) -> str:
+            """Get Murcko scaffold for a molecule"""
+            try:
+                mol = self.mol_structs.get(smiles)
+                if mol is None:
+                    mol = Chem.MolFromSmiles(smiles)
+                scaffold = MurckoScaffold.GetScaffoldForMol(mol)
+                return Chem.MolToSmiles(scaffold)
+            except:
+                # If scaffold generation fails, use the molecule itself as "scaffold"
+                return smiles
+
+        # Group substrates by their scaffolds
+        scaffold_to_substrates = defaultdict(list)
+        for substrate in self.map.keys():
+            scaffold = get_scaffold(substrate)
+            scaffold_to_substrates[scaffold].append(substrate)
+
+        # Convert to list and shuffle
+        scaffolds = list(scaffold_to_substrates.keys())
+        random.shuffle(scaffolds)
+
+        # Calculate split indices
+        n_scaffolds = len(scaffolds)
+        train_idx = int(train_frac * n_scaffolds)
+        val_idx = train_idx + int(val_frac * n_scaffolds)
+
+        # Split scaffolds
+        train_scaffolds = scaffolds[:train_idx]
+        val_scaffolds = scaffolds[train_idx:val_idx]
+        test_scaffolds = scaffolds[val_idx:]
+
+        print(
+            f"Scaffold split: {len(train_scaffolds)} train, {len(val_scaffolds)} val, {len(test_scaffolds)} test scaffolds")
+
+        # Create substrate sets for each split
+        train_subs = set()
+        val_subs = set()
+        test_subs = set()
+
+        for scaffold in train_scaffolds:
+            train_subs.update(scaffold_to_substrates[scaffold])
+        for scaffold in val_scaffolds:
+            val_subs.update(scaffold_to_substrates[scaffold])
+        for scaffold in test_scaffolds:
+            test_subs.update(scaffold_to_substrates[scaffold])
+
+        print(f"Substrate split: {len(train_subs)} train, {len(val_subs)} val, {len(test_subs)} test substrates")
+
+        # Create MolFrames for each split
+        splits = []
+        for sub_set, split_name in zip([train_subs, val_subs, test_subs], ['train', 'val', 'test']):
+            split_map = {}
+            split_gen_map = dd(set)
+            split_mol_structs = {}
+
+            # Add substrates and their products
+            for substrate in sub_set:
+                if substrate in self.map:
+                    split_map[substrate] = self.map[substrate].copy()
+                    # Add molecular structures for substrate and its products
+                    split_mol_structs[substrate] = self.mol_structs[substrate]
+                    for product in split_map[substrate]:
+                        if product in self.mol_structs:
+                            split_mol_structs[product] = self.mol_structs[product]
+
+                if substrate in self.gen_map:
+                    split_gen_map[substrate] = self.gen_map[substrate].copy()
+                    # Add molecular structures for generated products
+                    for product in split_gen_map[substrate]:
+                        if product in self.mol_structs:
+                            split_mol_structs[product] = self.mol_structs[product]
+
+            # Create new MolFrame
+            split_molframe = MolFrame(split_map, gen_map=split_gen_map, mol_structs=split_mol_structs)
+
+            # Copy other attributes if they exist
+            if hasattr(self, 'negs') and self.negs:
+                for substrate in sub_set:
+                    if substrate in self.negs:
+                        split_molframe.negs[substrate] = self.negs[substrate].copy()
+
+            if hasattr(self, 'reaction_labels') and self.reaction_labels:
+                for substrate in sub_set:
+                    if substrate in self.reaction_labels:
+                        split_molframe.reaction_labels[substrate] = self.reaction_labels[substrate]
+
+            splits.append(split_molframe)
+            print(
+                f"{split_name} set: {len(split_map)} substrates, {sum(len(prods) for prods in split_map.values())} reactions")
+
+        return splits
+
+    def train_val_test_split_by_scaffold_stratified(self,
+                                                    train_frac: float = 0.7,
+                                                    val_frac: float = 0.15,
+                                                    test_frac: float = 0.15,
+                                                    min_scaffold_freq: int = 1,
+                                                    random_state: int = 42) -> List['MolFrame']:
+        """
+        Stratified scaffold split that ensures similar distribution of reaction types
+        across splits while maintaining scaffold separation.
+
+        Args:
+            train_frac: Fraction of data for training
+            val_frac: Fraction of data for validation
+            test_frac: Fraction of data for testing
+            min_scaffold_freq: Minimum frequency for a scaffold to be considered
+            random_state: Random seed for reproducibility
+        """
+        from rdkit.Chem.Scaffolds import MurckoScaffold
+        from collections import defaultdict
+        import random
+
+        random.seed(random_state)
+        np.random.seed(random_state)
+
+        def get_scaffold(smiles: str) -> str:
+            try:
+                mol = self.mol_structs.get(smiles)
+                if mol is None:
+                    mol = Chem.MolFromSmiles(smiles)
+                scaffold = MurckoScaffold.GetScaffoldForMol(mol)
+                return Chem.MolToSmiles(scaffold)
+            except:
+                return smiles
+
+        # Group by scaffolds and count reactions
+        scaffold_stats = defaultdict(lambda: {'substrates': set(), 'reaction_count': 0})
+
+        for substrate, products in self.map.items():
+            scaffold = get_scaffold(substrate)
+            scaffold_stats[scaffold]['substrates'].add(substrate)
+            scaffold_stats[scaffold]['reaction_count'] += len(products)
+
+        # Filter rare scaffolds
+        frequent_scaffolds = {scaffold: stats for scaffold, stats in scaffold_stats.items()
+                              if len(stats['substrates']) >= min_scaffold_freq}
+
+        # Sort scaffolds by number of reactions (descending)
+        sorted_scaffolds = sorted(frequent_scaffolds.keys(),
+                                  key=lambda x: scaffold_stats[x]['reaction_count'],
+                                  reverse=True)
+
+        # Assign scaffolds to splits to balance reaction counts
+        train_scaffolds = []
+        val_scaffolds = []
+        test_scaffolds = []
+
+        train_reaction_count = 0
+        val_reaction_count = 0
+        test_reaction_count = 0
+        total_reactions = sum(stats['reaction_count'] for stats in scaffold_stats.values())
+
+        target_train = total_reactions * train_frac
+        target_val = total_reactions * val_frac
+
+        for scaffold in sorted_scaffolds:
+            stats = scaffold_stats[scaffold]
+
+            # Assign to the split that needs more reactions
+            if train_reaction_count < target_train:
+                train_scaffolds.append(scaffold)
+                train_reaction_count += stats['reaction_count']
+            elif val_reaction_count < target_val:
+                val_scaffolds.append(scaffold)
+                val_reaction_count += stats['reaction_count']
+            else:
+                test_scaffolds.append(scaffold)
+                test_reaction_count += stats['reaction_count']
+
+        print(f"Stratified scaffold split:")
+        print(
+            f"Train: {len(train_scaffolds)} scaffolds, {train_reaction_count} reactions ({train_reaction_count / total_reactions:.1%})")
+        print(
+            f"Val: {len(val_scaffolds)} scaffolds, {val_reaction_count} reactions ({val_reaction_count / total_reactions:.1%})")
+        print(
+            f"Test: {len(test_scaffolds)} scaffolds, {test_reaction_count} reactions ({test_reaction_count / total_reactions:.1%})")
+
+        # Create substrate sets and MolFrames (same as in previous method)
+        train_subs = set()
+        val_subs = set()
+        test_subs = set()
+
+        for scaffold in train_scaffolds:
+            train_subs.update(scaffold_stats[scaffold]['substrates'])
+        for scaffold in val_scaffolds:
+            val_subs.update(scaffold_stats[scaffold]['substrates'])
+        for scaffold in test_scaffolds:
+            test_subs.update(scaffold_stats[scaffold]['substrates'])
+
+        return self._create_split_molframes(train_subs, val_subs, test_subs)
+
+    def _create_split_molframes(self, train_subs: set, val_subs: set, test_subs: set) -> List['MolFrame']:
+        """Helper method to create MolFrames from substrate sets"""
+        splits = []
+        for sub_set, split_name in zip([train_subs, val_subs, test_subs], ['train', 'val', 'test']):
+            split_map = {}
+            split_gen_map = dd(set)
+            split_mol_structs = {}
+
+            for substrate in sub_set:
+                if substrate in self.map:
+                    split_map[substrate] = self.map[substrate].copy()
+                    split_mol_structs[substrate] = self.mol_structs[substrate]
+                    for product in split_map[substrate]:
+                        if product in self.mol_structs:
+                            split_mol_structs[product] = self.mol_structs[product]
+
+                if substrate in self.gen_map:
+                    split_gen_map[substrate] = self.gen_map[substrate].copy()
+                    for product in split_gen_map[substrate]:
+                        if product in self.mol_structs:
+                            split_mol_structs[product] = self.mol_structs[product]
+
+            split_molframe = MolFrame(split_map, gen_map=split_gen_map, mol_structs=split_mol_structs)
+
+            # Copy other attributes
+            for attr in ['negs', 'reaction_labels']:
+                if hasattr(self, attr) and getattr(self, attr):
+                    for substrate in sub_set:
+                        if substrate in getattr(self, attr):
+                            getattr(split_molframe, attr)[substrate] = getattr(self, attr)[substrate]
+
+            splits.append(split_molframe)
+
+        return splits
+
+    def subset_from_substrates(self, substrate_list: list[str]) -> 'MolFrame':
+        """
+        Return a new MolFrame that keeps only the substrates in *substrate_list*
+        together with their real / generated / negative products and molecular
+        objects.
+        """
+        from collections import defaultdict as dd
+        new_map = {s: self.map[s] for s in substrate_list if s in self.map}
+        new_gen_map = {s: self.gen_map[s] for s in substrate_list if s in self.gen_map}
+        new_negs = {s: self.negs[s] for s in substrate_list if s in self.negs}
+        # molecular structures
+        mols = {}
+        for s in substrate_list:
+            if s in self.mol_structs:
+                mols[s] = self.mol_structs[s]
+                for p in new_map.get(s, []):
+                    if p in self.mol_structs:
+                        mols[p] = self.mol_structs[p]
+                for p in new_gen_map.get(s, []):
+                    if p in self.mol_structs:
+                        mols[p] = self.mol_structs[p]
+                for p in new_negs.get(s, []):
+                    if p in self.mol_structs:
+                        mols[p] = self.mol_structs[p]
+        # copy other attributes that may already exist
+        new = MolFrame(new_map, gen_map=dd(set, new_gen_map), mol_structs=mols)
+        new.negs = dd(set, new_negs)
+        # graphs / singles / morgan / labels – keep untouched (will be rebuilt if needed)
+        if hasattr(self, "graphs"):
+            new.graphs = dd(list, {s: self.graphs[s] for s in substrate_list if s in self.graphs})
+        if hasattr(self, "single"):
+            new.single = {k: v for k, v in self.single.items() if k in mols}
+        if hasattr(self, "morgan"):
+            new.morgan = {k: v for k, v in self.morgan.items() if k in mols}
+        if hasattr(self, "reaction_labels"):
+            new.reaction_labels = {s: self.reaction_labels[s]
+                                   for s in substrate_list if s in self.reaction_labels}
+        return new
