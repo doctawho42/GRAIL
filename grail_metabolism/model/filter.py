@@ -170,6 +170,7 @@ class Filter(GFilter):
                 self.train()
                 epoch_loss = 0
                 for batch in train_loader:
+                    batch = batch.to(device)
                     out = self(batch, 'pass')
                     loss = criterion(out, batch.y.unsqueeze(1).float())
                     history.append(loss.item())
@@ -233,6 +234,7 @@ class Filter(GFilter):
     def predict(self, sub: str, prod: str, pca: bool = True) -> int:
         sub_mol = Chem.MolFromSmiles(sub)
         prod_mol = Chem.MolFromSmiles(prod)
+        device = 'cuda' if torch.cuda.is_available() else 'cpu'
         if self.mode == 'pair':
             graph = from_pair(sub_mol, prod_mol)
             if graph is not None:
@@ -252,6 +254,7 @@ class Filter(GFilter):
                         pca_b = pkl.load(file)
                     graph.x = torch.tensor(pca_x.transform(graph.x))
                     graph.edge_attr = torch.tensor(pca_b.transform(graph.edge_attr))
+                    graph = graph.to(device)
                 return int(cpunum(self(graph, 'pass')).item())
         elif self.mode == 'single':
             graph_sub, graph_prod = from_rdmol(sub_mol), from_rdmol(prod_mol)
@@ -276,6 +279,7 @@ class Filter(GFilter):
                     except ValueError:
                         print('Some issue happened with this molecule:')
                         print(mol, mol.edge_attr, mol.x)
+                    mol.to(device)
             return int(cpunum(self(graph_sub, graph_prod)).item())
         else:
             raise TypeError('Unsupported mode')
@@ -542,6 +546,8 @@ class MolPathFilter(GFilter):
                         pca_b = pkl.load(file)
                     graph.x = torch.tensor(pca_x.transform(graph.x))
                     graph.edge_attr = torch.tensor(pca_b.transform(graph.edge_attr))
+                    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+                    graph = graph.to(device)
                 return int(cpunum(self(graph, 'pass')).item())
         elif self.mode == 'single':
             graph_sub, graph_prod = from_rdmol(sub_mol), from_rdmol(prod_mol)
@@ -566,6 +572,8 @@ class MolPathFilter(GFilter):
                     except ValueError:
                         print('Some issue happened with this molecule:')
                         print(mol, mol.edge_attr, mol.x)
+                    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+                    mol.to(device)
             return int(cpunum(self(graph_sub, graph_prod)).item())
         else:
             raise TypeError('Unsupported mode')
@@ -1002,6 +1010,8 @@ class GINFilter(GFilter):
                 # Add batch dimension and predict
                 graph.batch = torch.zeros(graph.x.size(0), dtype=torch.long)
                 with torch.no_grad():
+                    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+                    graph = graph.to(device)
                     prediction = self(graph, 'pass').item()
                 return 1 if prediction > 0.5 else 0
             return 0
@@ -1032,6 +1042,8 @@ class GINFilter(GFilter):
                         except ValueError:
                             print('Some issue happened with this molecule:')
                             print(mol, mol.edge_attr, mol.x)
+                        device = 'cuda' if torch.cuda.is_available() else 'cpu'
+                        mol.to(device)
 
                 # Add batch dimensions and predict
                 graph_sub.batch = torch.zeros(graph_sub.x.size(0), dtype=torch.long)
@@ -1218,6 +1230,8 @@ class GCNFilter(GFilter):
                 # Add batch dimension and predict
                 graph.batch = torch.zeros(graph.x.size(0), dtype=torch.long)
                 with torch.no_grad():
+                    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+                    graph = graph.to(device)
                     prediction = self(graph, 'pass').item()
                 return 1 if prediction > 0.5 else 0
             return 0
@@ -1248,6 +1262,8 @@ class GCNFilter(GFilter):
                         except ValueError:
                             print('Some issue happened with this molecule:')
                             print(mol, mol.edge_attr, mol.x)
+                        device = 'cuda' if torch.cuda.is_available() else 'cpu'
+                        mol.to(device)
 
                 # Add batch dimensions and predict
                 graph_sub.batch = torch.zeros(graph_sub.x.size(0), dtype=torch.long)
@@ -1449,6 +1465,7 @@ class GATv2Filter(GFilter):
                 self.train()
                 epoch_loss = 0
                 for batch in train_loader:
+                    batch = batch.to(device)
                     out = self(batch, 'pass')
                     loss = criterion(out, batch.y.unsqueeze(1).float())
                     history.append(loss.item())
@@ -1531,6 +1548,8 @@ class GATv2Filter(GFilter):
                         pca_b = pkl.load(file)
                     graph.x = torch.tensor(pca_x.transform(graph.x))
                     graph.edge_attr = torch.tensor(pca_b.transform(graph.edge_attr))
+                    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+                    graph = graph.to(device)
                 return int(cpunum(self(graph, 'pass')).item())
         elif self.mode == 'single':
             graph_sub, graph_prod = from_rdmol(sub_mol), from_rdmol(prod_mol)
@@ -1555,6 +1574,8 @@ class GATv2Filter(GFilter):
                     except ValueError:
                         print('Some issue happened with this molecule:')
                         print(mol, mol.edge_attr, mol.x)
+                    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+                    mol.to(device)
             return int(cpunum(self(graph_sub, graph_prod)).item())
         else:
             raise TypeError('Unsupported mode')

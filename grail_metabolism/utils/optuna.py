@@ -403,14 +403,15 @@ class ComprehensiveOptunaWrapper:
         """Create filter model based on model_type with suggested hyperparameters"""
         lr = trial.suggest_float('lr', 1e-7, 1e-2, log=True)
         decay = trial.suggest_float('decay', 1e-10, 1e-2, log=True)
+        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
         if self.model_type == 'Filter':
             arg_vec = [trial.suggest_int(f"x{i}", 50, 1000) for i in range(1, 7)]
-            return Filter(in_channels, edge_dim, arg_vec, self.mode), lr, decay
+            return Filter(in_channels, edge_dim, arg_vec, self.mode).to(device), lr, decay
 
         elif self.model_type == 'GATv2Filter':
             arg_vec = [trial.suggest_int(f"x{i}", 50, 1000) for i in range(1, 7)]
-            return Filter(in_channels, edge_dim, arg_vec, self.mode), lr, decay
+            return GATv2Filter(in_channels, edge_dim, arg_vec, self.mode).to(device), lr, decay
 
         elif self.model_type == 'MolPathFilter':
             molpath_cutoff = trial.suggest_int('molpath_cutoff', 3, 8)
@@ -425,22 +426,22 @@ class ComprehensiveOptunaWrapper:
                 in_channels, edge_dim, arg_vec, self.mode,
                 molpath_cutoff=molpath_cutoff,
                 molpath_y=molpath_y
-            )
+            ).to(device)
             return model, lr, decay
 
         elif self.model_type == 'GINFilter':
             arg_vec = [trial.suggest_int(f"x{i}", 50, 1000) for i in range(1, 7)]
-            return GINFilter(in_channels, edge_dim, arg_vec, self.mode), lr, decay
+            return GINFilter(in_channels, edge_dim, arg_vec, self.mode).to(device), lr, decay
 
         elif self.model_type == 'GCNFilter':
             arg_vec = [trial.suggest_int(f"x{i}", 50, 1000) for i in range(1, 7)]
-            return GCNFilter(in_channels, edge_dim, arg_vec, self.mode), lr, decay
+            return GCNFilter(in_channels, edge_dim, arg_vec, self.mode).to(device), lr, decay
 
         elif self.model_type == 'MorganOnlyFilter':
             hidden_dims = []
             for i in range(3):
                 hidden_dims.append(trial.suggest_int(f"hidden_dim_{i}", 64, 512))
-            return MorganOnlyFilter(input_dim=2048, hidden_dims=hidden_dims), lr, decay
+            return MorganOnlyFilter(input_dim=2048, hidden_dims=hidden_dims).to(device), lr, decay
 
         else:
             raise ValueError(f"Unsupported model type: {self.model_type}")
@@ -469,6 +470,8 @@ class ComprehensiveOptunaWrapper:
 
                 # Create model with suggested hyperparameters
                 model, lr, decay = self._get_filter_model(trial, in_channels, edge_dim)
+                device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+                model = model.to(device)
 
                 if direction == 'filter':
                     # Train and evaluate filter
@@ -562,7 +565,7 @@ class ComprehensiveOptunaWrapper:
 
         elif self.model_type == 'GATv2Filter':
             self.arg_vec = [best_params[f'x{i}'] for i in range(1, 7)]
-            self.filter = Filter(in_channels, edge_dim, self.arg_vec, self.mode)
+            self.filter = GATv2Filter(in_channels, edge_dim, self.arg_vec, self.mode)
 
         elif self.model_type == 'MolPathFilter':
             self.molpath_params = {

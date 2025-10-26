@@ -914,6 +914,7 @@ class MolFrame:
             bin_pred = []
             real = []
             for data in tqdm(loader):
+                data = data.to(device)
                 out = model(data)
                 pred.extend(list(cpunum(out)))
                 bin_pred.extend(list((cpunum(out) > 0.5).astype(int)))
@@ -926,6 +927,7 @@ class MolFrame:
         for epoch in tqdm(range(eps)):
             model.train()
             for batch in train_loader:
+                batch = batch.to(device)
                 out = model(batch, 'pass')
                 loss = criterion(out, batch.y.unsqueeze(1).float())
                 history.append(loss.item())
@@ -1055,6 +1057,7 @@ class MolFrame:
         pred = []
         bin_pred = []
         real = []
+        device = next(model.parameters()).device
 
         def collate(data_list: List) -> Tuple[Batch, Batch]:
             batchA = Batch.from_data_list([data[0] for data in data_list])
@@ -1089,8 +1092,11 @@ class MolFrame:
 
         for data in tqdm(loader):
             if mode == 'single':
+                data[0].to(device)
+                data[1].to(device)
                 out = model(*data)
             elif mode == 'pair':
+                data = data.to(device)
                 out = model(data, 'pass')
             else:
                 raise AttributeError
