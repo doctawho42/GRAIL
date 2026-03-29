@@ -1,1676 +1,1279 @@
+from __future__ import annotations
+
 import os
 import re
-import gc
 import signal
 import warnings
-import pickle as pkl
-import random
-from argparse import ArgumentError
-
-from tqdm.auto import tqdm
-import pandas as pd
+from collections import defaultdict
+from functools import lru_cache
 from pathlib import Path
-try:
-    from .reaction_mapper import combine_reaction
-except ImportError:
-    print('ATTENTION: you use incorrect for rxnmapper version of rdkit')
-    def combine_reaction(*args, **kwargs) -> None:
-        return None
-from .transform import from_pair, from_rdmol
-from sklearn.impute import SimpleImputer
-from sklearn.metrics import matthews_corrcoef as mcc, roc_auc_score as roc_auc, jaccard_score as jac
-from torch import tensor
-from torch.nn import Module, BCELoss
-import torch
-from torch import nn
-from torch_geometric.loader import DataLoader
-from torch_geometric.data import Batch
-from multipledispatch import dispatch
-import faiss
-
-import rdkit
-from rdkit import Chem
-from rdkit.Chem import AllChem
-
-from typing import Dict, Union, Literal, Optional, Set, List, Tuple, FrozenSet, Any, DefaultDict, Iterable
-from itertools import chain
-from collections import defaultdict as dd
-import matplotlib.pyplot as plt
-import seaborn as sns
-
-from rdkit.Chem.MolStandardize import rdMolStandardize
-from rdkit.Chem import rdFingerprintGenerator
-
-from functools import wraps
-from threading import Timer
+from typing import Any, DefaultDict, Dict, FrozenSet, Iterable, Iterator, List, Literal, Optional, Sequence, Set, Tuple, Union
 
 import numpy as np
-from rdkit.Chem.PandasTools import WriteSDF, LoadSDF
-from ..model.train_model import PULoss
+import pandas as pd
+import torch
+from rdkit import Chem
+from rdkit import RDLogger
+from rdkit.Chem import AllChem
+from rdkit.Chem import rdFingerprintGenerator
+from rdkit.Chem.MolStandardize import rdMolStandardize
+from torch import Tensor
+from torch.nn import Module
+from torch_geometric.data import Batch, Data
+from torch_geometric.loader import DataLoader
+from tqdm.auto import tqdm
 
-def handler(signum, frame):
-    raise TimeoutError
+from .transform import EDGE_DIM, FINGERPRINT_DIM, PAIR_NODE_DIM, SINGLE_NODE_DIM, apply_feature_projection, from_pair, from_rdmol
 
-def get_reactions(expander, smiles: str) -> list[list[str]]:
-    reactions = expander.do_expansion(smiles)
-    reactants_smiles = []
-    for reaction_tuple in reactions:
-        reactants_smiles.append([mol.smiles for mol in reaction_tuple[0].reactants[0]])
-    return reactants_smiles
-
-
-warnings.filterwarnings('ignore')
+warnings.filterwarnings("ignore")
 tqdm.pandas()
+RDLogger.DisableLog("rdApp.warning")
+RDLogger.DisableLog("rdApp.error")
 
-smirks_path = Path(__file__).parent.parent/ 'data' / 'smirks.txt'
-with open(smirks_path) as rulefile:
-    rules = tuple(x.rstrip() for x in rulefile)
-
-uncharger = rdMolStandardize.Uncharger() # annoying, but necessary as no convenience method exists
-te = rdMolStandardize.TautomerEnumerator()  # canonicalize tautomer form
-
-def carbon_counter(x):
-    return x.count('C') + x.count('c') - sum(x.count(e) for e in ['Cl', 'Ca', 'Co', 'Sc', 'Cr', 'Cd', 'Cs'])
-def iscorrect(x):
-    return carbon_counter(x) >= 3
-atom_counter = lambda x: len(re.findall('((?<=\[)[A-Z][a-z])|((?!\[)[A-GI-Za-z])', x))
+_UNCHARGER = rdMolStandardize.Uncharger()
+_TAUTOMER_ENUMERATOR = rdMolStandardize.TautomerEnumerator()
+_MORGAN_GENERATOR = rdFingerprintGenerator.GetMorganGenerator(
+    includeChirality=True,
+    fpSize=1024,
+    countSimulation=False,
+)
+_REACTION_PRODUCT_CAP = 500
+_REACTION_TIMEOUT_SECONDS = 5.0
+_PAIR_GRAPH_TIMEOUT_SECONDS = 3.0
 
 
-def cpunum(tensor) -> np.ndarray:
-    return tensor.cpu().detach().numpy()
+def _package_root() -> Path:
+    return Path(__file__).resolve().parent.parent
+
+
+def _local_data_dir() -> Path:
+    return _package_root() / "data"
+
+
+def _resources_dir() -> Path:
+    return _package_root() / "resources"
+
+
+def _normalize_cache_path(path: Union[str, Path, None]) -> Optional[Path]:
+    if path is None:
+        return None
+    return Path(path)
+
+
+def _atomic_torch_save(payload: Any, path: Union[str, Path]) -> Path:
+    destination = Path(path)
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    temporary = destination.with_suffix(destination.suffix + ".tmp")
+    torch.save(payload, temporary)
+    os.replace(temporary, destination)
+    return destination
+
+
+def _load_cached_mapping(path: Union[str, Path, None]) -> Dict[str, Any]:
+    cache_path = _normalize_cache_path(path)
+    if cache_path is None or not cache_path.exists():
+        return {}
+    try:
+        payload = torch.load(cache_path, map_location="cpu", weights_only=False)
+    except TypeError:
+        payload = torch.load(cache_path, map_location="cpu")
+    if isinstance(payload, dict):
+        return dict(payload)
+    return {}
+
+
+def carbon_counter(smiles: str) -> int:
+    return smiles.count("C") + smiles.count("c") - sum(
+        smiles.count(token) for token in ["Cl", "Ca", "Co", "Sc", "Cr", "Cd", "Cs"]
+    )
+
+
+def iscorrect(smiles: str) -> bool:
+    return carbon_counter(smiles) >= 3
+
+
+def atom_counter(smiles: str) -> int:
+    return len(re.findall(r"((?<=\[)[A-Z][a-z])|((?!\[)[A-GI-Za-z])", smiles))
+
+
+def cpunum(tensor: Tensor) -> np.ndarray:
+    return tensor.detach().cpu().numpy()
 
 
 def extract(smiles: str) -> Optional[str]:
-    """Extract the biggest correct molecule from a given SMILES string"""
-    xtr = max(smiles.split('.'), key=atom_counter)
-    if iscorrect(xtr):
-        return xtr
+    if not smiles:
+        return None
+    fragment = max(smiles.split("."), key=atom_counter)
+    return fragment if iscorrect(fragment) else None
+
+
+def _normalize_return_type(mol: Chem.Mol, return_smiles: bool) -> Union[Chem.Mol, str]:
+    canonical = Chem.MolToSmiles(mol, isomericSmiles=False)
+    if return_smiles:
+        return canonical
+    return Chem.MolFromSmiles(canonical)
+
+
+def standardize_mol(mol: Union[Chem.Mol, str], ph: Optional[float] = None) -> Union[Chem.Mol, str]:
+    return_smiles = isinstance(mol, str)
+    if return_smiles:
+        parsed = Chem.MolFromSmiles(mol)
+        if parsed is None:
+            raise ValueError(f"Failed to parse SMILES: {mol}")
+        mol = parsed
+
+    cleaned = rdMolStandardize.Cleanup(mol)
+    parent = rdMolStandardize.FragmentParent(cleaned)
+
+    if ph is None:
+        neutral = _UNCHARGER.uncharge(parent)
     else:
+        try:
+            from dimorphite_dl import DimorphiteDL
+        except ImportError as exc:
+            raise RuntimeError("dimorphite_dl is required for pH-specific standardization") from exc
+        protonator = DimorphiteDL(
+            min_ph=ph,
+            max_ph=ph,
+            max_variants=128,
+            label_states=False,
+            pka_precision=1.0,
+        )
+        candidates = protonator.protonate(Chem.MolToSmiles(parent))
+        neutral = Chem.MolFromSmiles(candidates[0]) if candidates else parent
+
+    tautomer = _TAUTOMER_ENUMERATOR.Canonicalize(neutral)
+    if tautomer is None:
+        raise ValueError("Failed to canonicalize molecule")
+    return _normalize_return_type(tautomer, return_smiles)
+
+
+@lru_cache(maxsize=262144)
+def _standardize_smiles_cached(smiles: str) -> str:
+    return str(standardize_mol(smiles))
+
+
+@lru_cache(maxsize=262144)
+def _canonicalize_smiles_cached(smiles: str) -> str:
+    mol = Chem.MolFromSmiles(smiles)
+    if mol is None:
+        raise ValueError(f"Failed to parse SMILES: {smiles}")
+    return Chem.MolToSmiles(mol, isomericSmiles=False)
+
+
+def _normalize_smiles_cached(smiles: str, mode: Literal["standardize", "canonical"]) -> str:
+    if mode == "standardize":
+        return _standardize_smiles_cached(smiles)
+    return _canonicalize_smiles_cached(smiles)
+
+
+def _smiles_to_mol(smiles: str) -> Optional[Chem.Mol]:
+    try:
+        return Chem.MolFromSmiles(smiles)
+    except Exception:
         return None
 
 
-def timeout(seconds: float = 30):
+@lru_cache(maxsize=32768)
+def _compile_rule_reaction(rule: str):
+    try:
+        return AllChem.ReactionFromSmarts(rule)
+    except Exception:
+        return None
 
-    def decorator(func):
 
-        @wraps(func)
-        def _handle_timeout(*args, **kwargs):
+@lru_cache(maxsize=32768)
+def _compile_rule_pattern(rule: str) -> Optional[Chem.Mol]:
+    try:
+        reactant = rule.split(">>", 1)[0].strip()
+        if reactant.startswith("(") and reactant.endswith(")"):
+            reactant = reactant[1:-1]
+        return Chem.MolFromSmarts(reactant)
+    except Exception:
+        return None
 
-            def _raise_timeout():
-                # raise TimeoutError
-                pass # todo make timeout
 
-            timer = Timer(seconds, _raise_timeout)
-            timer.start()
+class ReactionTimeoutError(Exception):
+    pass
+
+
+class PairGraphTimeoutError(Exception):
+    pass
+
+
+def _timeout_handler(signum: int, frame: object) -> None:
+    raise ReactionTimeoutError()
+
+
+def _pair_timeout_handler(signum: int, frame: object) -> None:
+    raise PairGraphTimeoutError()
+
+
+def safe_run_reactants(
+    rxn,
+    substrate: Chem.Mol,
+    timeout: float = _REACTION_TIMEOUT_SECONDS,
+    max_products: int = _REACTION_PRODUCT_CAP,
+):
+    if rxn is None or substrate is None:
+        return ()
+    if not hasattr(signal, "setitimer"):
+        try:
+            return rxn.RunReactants((substrate,), maxProducts=max_products)
+        except Exception:
+            return ()
+
+    previous_handler = signal.getsignal(signal.SIGALRM)
+    try:
+        signal.signal(signal.SIGALRM, _timeout_handler)
+        signal.setitimer(signal.ITIMER_REAL, timeout)
+        return rxn.RunReactants((substrate,), maxProducts=max_products)
+    except ReactionTimeoutError:
+        return ()
+    except Exception:
+        return ()
+    finally:
+        signal.setitimer(signal.ITIMER_REAL, 0)
+        signal.signal(signal.SIGALRM, previous_handler)
+
+
+def _pair_graph_without_cross_edges(mol1: Chem.Mol, mol2: Chem.Mol) -> Optional[Data]:
+    graph1 = from_rdmol(mol1)
+    graph2 = from_rdmol(mol2)
+    if graph1 is None or graph2 is None:
+        return None
+
+    x1 = torch.cat(
+        (
+            graph1.x,
+            torch.zeros((graph1.x.size(0), 1), dtype=torch.float32),
+            torch.zeros((graph1.x.size(0), 1), dtype=torch.float32),
+        ),
+        dim=1,
+    )
+    x2 = torch.cat(
+        (
+            graph2.x,
+            torch.ones((graph2.x.size(0), 1), dtype=torch.float32),
+            torch.zeros((graph2.x.size(0), 1), dtype=torch.float32),
+        ),
+        dim=1,
+    )
+    x = torch.cat((x1, x2), dim=0).view(-1, PAIR_NODE_DIM)
+
+    edge_indices: List[Tensor] = []
+    edge_attrs: List[Tensor] = []
+    if graph1.edge_index.numel():
+        edge_indices.append(graph1.edge_index.clone())
+        edge_attrs.append(graph1.edge_attr.clone())
+    if graph2.edge_index.numel():
+        offset = graph1.x.size(0)
+        edge_indices.append(graph2.edge_index.clone() + offset)
+        edge_attrs.append(graph2.edge_attr.clone())
+
+    if edge_indices:
+        edge_index = torch.cat(edge_indices, dim=1)
+        edge_attr = torch.cat(edge_attrs, dim=0)
+    else:
+        edge_index = torch.empty((2, 0), dtype=torch.long)
+        edge_attr = torch.empty((0, EDGE_DIM), dtype=torch.float32)
+
+    graph = Data(x=x, edge_index=edge_index, edge_attr=edge_attr)
+    graph.fp = torch.cat((graph1.fp.float(), graph2.fp.float()), dim=1)
+    graph.fallback_pair = 1
+    return graph
+
+
+def build_pair_graph(
+    mol1: Chem.Mol,
+    mol2: Chem.Mol,
+    timeout: float = _PAIR_GRAPH_TIMEOUT_SECONDS,
+) -> Optional[Data]:
+    if mol1 is None or mol2 is None:
+        return None
+
+    if not hasattr(signal, "setitimer"):
+        try:
+            graph = from_pair(mol1, mol2)
+        except Exception:
+            graph = None
+        if graph is None:
+            graph = _pair_graph_without_cross_edges(mol1, mol2)
+        if graph is not None and not hasattr(graph, "fallback_pair"):
+            graph.fallback_pair = 0
+        return graph
+
+    previous_handler = signal.getsignal(signal.SIGALRM)
+    try:
+        signal.signal(signal.SIGALRM, _pair_timeout_handler)
+        signal.setitimer(signal.ITIMER_REAL, timeout)
+        graph = from_pair(mol1, mol2)
+    except PairGraphTimeoutError:
+        graph = None
+    except Exception:
+        graph = None
+    finally:
+        signal.setitimer(signal.ITIMER_REAL, 0)
+        signal.signal(signal.SIGALRM, previous_handler)
+
+    if graph is None:
+        graph = _pair_graph_without_cross_edges(mol1, mol2)
+    if graph is not None and not hasattr(graph, "fallback_pair"):
+        graph.fallback_pair = 0
+    return graph
+
+
+def _iter_reaction_products(substrate: Chem.Mol, rule: str) -> Iterator[Chem.Mol]:
+    pattern = _compile_rule_pattern(rule)
+    rxn = _compile_rule_reaction(rule)
+    if pattern is None or rxn is None:
+        return iter(())
+    try:
+        if not substrate.HasSubstructMatch(pattern):
+            return iter(())
+    except Exception:
+        return iter(())
+    outcomes = safe_run_reactants(rxn, substrate)
+    flattened = []
+    for product_tuple in outcomes:
+        flattened.extend(product_tuple)
+    return iter(flattened)
+
+
+def _clean_product_smiles(smiles: str) -> List[str]:
+    valid = []
+    for fragment in smiles.split("."):
+        fragment = fragment.strip()
+        if fragment and iscorrect(fragment):
+            valid.append(fragment)
+    return valid
+
+
+def apply_rules_to_molecule(
+    mol: Chem.Mol,
+    rules: Sequence[str],
+    normalization_mode: Literal["standardize", "canonical"] = "standardize",
+) -> DefaultDict[str, Set[int]]:
+    products: DefaultDict[str, Set[int]] = defaultdict(set)
+    if mol is None:
+        return products
+
+    substrate = Chem.AddHs(Chem.Mol(mol))
+    for rule_index, rule in enumerate(rules):
+        for product in _iter_reaction_products(substrate, rule):
             try:
-                result = func(*args, **kwargs)
-            except TimeoutError:
-                print('timeout')
-                gc.collect()
-                return None
-            finally:
-                timer.cancel()
-            return result
+                smiles = Chem.MolToSmiles(product)
+            except Exception:
+                continue
+            for fragment in _clean_product_smiles(smiles):
+                try:
+                    normalized = _normalize_smiles_cached(fragment, normalization_mode)
+                except Exception:
+                    continue
+                if normalized:
+                    products[normalized].add(rule_index)
+    return products
 
-        return _handle_timeout
 
-    return decorator
+def metaboliser(
+    mol: Chem.Mol,
+    rules: Optional[Iterable[str]] = None,
+    normalization_mode: Literal["standardize", "canonical"] = "standardize",
+) -> DefaultDict[str, Set[int]]:
+    selected_rules = list(rules) if rules is not None else load_default_rules()
+    return apply_rules_to_molecule(mol, selected_rules, normalization_mode=normalization_mode)
 
-def generate_vectors(reaction_dict, real_products_dict, num_rules):
-    vectors = {}
-    for substrate in reaction_dict:
-        # Initialize a vector of 474 zeros
+
+def generate_vectors(
+    reaction_dict: Dict[str, Dict[str, Iterable[int]]],
+    real_products_dict: Dict[str, Iterable[str]],
+    num_rules: int,
+    normalization_mode: Literal["standardize", "canonical"] = "standardize",
+) -> Dict[str, List[int]]:
+    def normalize_label(value: str) -> str:
+        try:
+            return _normalize_smiles_cached(str(value), normalization_mode)
+        except Exception:
+            return value
+
+    vectors: Dict[str, List[int]] = {}
+    normalized_real = {
+        substrate: {normalize_label(product) for product in products}
+        for substrate, products in real_products_dict.items()
+    }
+    for substrate, product_map in reaction_dict.items():
         vector = [0] * num_rules
-        # Get the real products for this substrate, default to empty set if not present
-        real_products = real_products_dict.get(substrate, set())
-        # Iterate over each product and its indexes in the reaction_dict
-        for product, indexes in reaction_dict[substrate].items():
-            if standardize_mol(product) in real_products:
-                for idx in indexes:
-                    # Ensure the index is within the valid range
-                    if 0 <= idx < num_rules:
-                        vector[idx] = 1
+        allowed = normalized_real.get(substrate, set())
+        for product, indexes in product_map.items():
+            normalized_product = normalize_label(product)
+            if normalized_product not in allowed:
+                continue
+            for index in indexes:
+                if 0 <= index < num_rules:
+                    vector[index] = 1
         vectors[substrate] = vector
     return vectors
 
-@timeout(seconds=30)
-def standardize_mol(mol: Union[rdkit.Chem.rdchem.Mol, str], ph: Optional[float] = None) -> Union[rdkit.Chem.rdchem.Mol, str]:
-    """Standardize the :class:`rdkit` molecule, select its parent molecule, uncharge it,
-       then enumerate all tautomers."""
 
-    if isinstance(mol, str):
-        mol = Chem.MolFromSmiles(mol)
-        is_mol = False
-    else:
-        is_mol = True
+@lru_cache(maxsize=4)
+def _load_pickle(path: str) -> Any:
+    import pickle
 
-    # removeHs, disconnect metal atoms, normalize the molecule, reionize the molecule
-    clean_mol = rdMolStandardize.Cleanup(mol)
-    # if many fragments, get the "parent" (the actual mol we are interested in)
-    parent_clean_mol = rdMolStandardize.FragmentParent(clean_mol)
-    # try to neutralize molecule and make one resonance structure
+    with open(path, "rb") as handle:
+        return pickle.load(handle)
 
-    # if ph is None - try to uncharge molecule
-    if ph is None:
-        uncharged_parent_clean_mol = uncharger.uncharge(parent_clean_mol)
-    else:
-        from dimorphite_dl import DimorphiteDL
-        dimorphite_dl = DimorphiteDL(min_ph=ph,
-                                     max_ph=ph,
-                                     max_variants=128,
-                                     label_states=False,
-                                     pka_precision=1.0) # protonate with specified pH
-        uncharged_parent_clean_mol = Chem.MolFromSmiles(
-            dimorphite_dl.protonate(Chem.MolToSmiles(parent_clean_mol))[0])
-    taut_uncharged_parent_clean_mol = te.Canonicalize(
-        uncharged_parent_clean_mol)
-    if taut_uncharged_parent_clean_mol is None: raise ValueError('Invalid molecule state')
 
-    if is_mol:
-        return Chem.MolFromSmiles(Chem.MolToSmiles(taut_uncharged_parent_clean_mol, isomericSmiles=False))
-    else:
-        return Chem.MolToSmiles(taut_uncharged_parent_clean_mol, isomericSmiles=False)
+def _maybe_project_graph(graph: Data, node_path: Optional[Path], edge_path: Optional[Path]) -> Data:
+    node_projector = _load_pickle(str(node_path)) if node_path and node_path.exists() else None
+    edge_projector = _load_pickle(str(edge_path)) if edge_path and edge_path.exists() else None
+    if node_projector is None and edge_projector is None:
+        return graph
+    return apply_feature_projection(graph, node_projector=node_projector, edge_projector=edge_projector)
 
-@timeout(seconds=30)
-def metaboliser(mol: rdkit.Chem.rdchem.Mol, rules: Iterable[str] = rules) -> Optional[dd[Any, set]]:
-    r"""
-    Applies all known biotransformation rules to the given substrate and returns
-    products with corresponding SMARTS
 
-    Args:
-        mol (rdkit.Chem.rdchem.Mol): the class :class:`rdkit` molecule
-        rules (Iterable[str]): an iterable of transformation rules in SMARTS format
-    :return: (Optional[dd[Any, Set]]): :class:`collections.defaultdict` with :class:`set` of product :class:`str` SMILES
-    """
+def _first_existing(paths: Sequence[Path]) -> Optional[Path]:
+    for path in paths:
+        if path.exists():
+            return path
+    return None
 
-    dict_rules = dd(set)
-    if mol is not None:
-        mol = Chem.AddHs(mol)
-    else:
-        return None
 
-    for i, rule in enumerate(rules):
-        rxn = AllChem.ReactionFromSmarts(rule)
-        try:
-            mols_prebuild = chain.from_iterable(rxn.RunReactants((mol,)))
-        except ValueError:
-            continue
-        if not mols_prebuild:
-            continue
-        else:
-            mols_splitted = []
-            for preb in mols_prebuild:
-                try:
-                    mols_splitted += Chem.MolToSmiles(preb).split('.')
-                except RuntimeError:
-                    pass
-            mols_splitted = [x for x in mols_splitted if iscorrect(x)]
-            mols_splitted = list(map(Chem.MolFromSmiles, mols_splitted))
-            mols_splitted = [x for x in mols_splitted if x is not None]
-            if not mols_splitted:
-                continue
-            try:
-                mols_standart = list(map(standardize_mol, mols_splitted))
-            except Chem.KekulizeException:
-                continue
-            except RuntimeError:
-                continue
-            except Chem.AtomValenceException:
-                continue
-            for stand in mols_standart:
-                if stand != '':
-                    dict_rules[stand].add(i)
-
-    for key in dict_rules:
-        dict_rules[key] = set(dict_rules[key])
-
-    return dict_rules
+def load_default_rules() -> List[str]:
+    candidate = _first_existing(
+        [
+            _local_data_dir() / "merged_smirks.txt",
+            _local_data_dir() / "smirks.txt",
+            _resources_dir() / "example_rules.txt",
+        ]
+    )
+    if candidate is None:
+        return []
+    with open(candidate) as handle:
+        return [line.strip() for line in handle if line.strip()]
 
 
 class MolFrame:
-    r"""
-    An extension providing more precious pipelines'
-    form to work with GRAIL.
+    def __init__(
+        self,
+        data: Union[pd.DataFrame, Dict[str, Iterable[str]]],
+        sub_name: str = "sub",
+        prod_name: str = "prod",
+        real_name: str = "real",
+        gen_map: Optional[DefaultDict[str, Set[str]]] = None,
+        mol_structs: Optional[Dict[str, Chem.Mol]] = None,
+        standartize: bool = True,
+        normalization_mode: Optional[Literal["standardize", "canonical"]] = None,
+    ) -> None:
+        self.map: DefaultDict[str, Set[str]] = defaultdict(set)
+        self.gen_map: DefaultDict[str, Set[str]] = defaultdict(set)
+        self.negs: DefaultDict[str, Set[str]] = defaultdict(set)
+        self.graphs: DefaultDict[str, List[Data]] = defaultdict(list)
+        self.single: Dict[str, Data] = {}
+        self.morgan: Dict[str, Tensor] = {}
+        self.reaction_labels: Dict[str, List[int]] = {}
+        self.mol_structs: Dict[str, Chem.Mol] = {}
+        self.normalization_mode: Literal["standardize", "canonical"] = (
+            normalization_mode if normalization_mode is not None else ("standardize" if standartize else "canonical")
+        )
 
-    Initialization:
-        From :class:`pd.DataFrame`:
-            **value** (pd.DataFrame): :class:`pd.DataFrame` with substrate-product pairs
-
-            **sub_name** (str): name of column with substrates SMILES
-
-            **prod_name** (str): name of column with products SMILES
-
-            **real_name** (str): name of column indicating if this pair is real
-
-            **mol_structs** (Dict[str, Chem.Mol]): optional :class:`dict`-like object with all needed :class:Chem.Mol objects
-        From :class:`dict`:
-            **map** (Dict): :class:`dict`-like object with substrates as keys and products as values
-
-            **gen_map** (Dict): :class:`dict`-like object with substrates as keys and generated products as values
-
-            **mol_structs** (Dict[str, Chem.Mol]): optional :class:`dict`-like object with all needed Chem.Mol objects
-    """
-
-    @dispatch(pd.DataFrame)
-    def __init__(self, map: pd.DataFrame, sub_name: str = 'sub', prod_name: str = 'prod', real_name: str = 'real',
-                 mol_structs: Optional[Dict[str, Chem.Mol]] = None, standartize: bool = True) -> None:
-        # Validate input DataFrame
-        if map.empty:
-            raise ValueError("Input DataFrame is empty. Please provide valid substrate-product data.")
-
-        required_columns = {sub_name, prod_name, real_name}
-        if not required_columns.issubset(map.columns):
-            missing_columns = required_columns - set(map.columns)
-            raise ValueError(f"Missing required columns in DataFrame: {', '.join(missing_columns)}")
-
-        # Standardize molecules if required
-        if standartize:
-            subs_std = map[sub_name].progress_apply(lambda x: self._handle_standardization(x))
-            prods_std = map[prod_name].progress_apply(lambda x: self._handle_standardization(x))
+        if isinstance(data, pd.DataFrame):
+            self._init_from_dataframe(
+                data=data,
+                sub_name=sub_name,
+                prod_name=prod_name,
+                real_name=real_name,
+                mol_structs=mol_structs,
+                standartize=standartize,
+            )
+        elif isinstance(data, dict):
+            self._init_from_mapping(data=data, gen_map=gen_map, mol_structs=mol_structs, standartize=standartize)
         else:
-            subs_std = map[sub_name]
-            prods_std = map[prod_name]
+            raise TypeError("MolFrame expects a pandas.DataFrame or a mapping of substrate to products")
 
-        # Ensure real column exists and is integer type
-        if real_name not in map.columns:
-            map[real_name] = 1
-        map[real_name] = map[real_name].astype(int)
+        self.clean()
 
-        # Create optimized processing dataframe
-        processed_df = pd.DataFrame({
-            'sub_std': subs_std,
-            'prod_std': prods_std,
-            'real': map[real_name]
-        })
+    def _normalize_smiles(self, smiles: str, standartize: bool) -> str:
+        if not isinstance(smiles, str) or not smiles.strip():
+            raise ValueError("Empty SMILES are not supported")
+        if not standartize:
+            return smiles
+        try:
+            normalized = _standardize_smiles_cached(smiles)
+        except Exception:
+            warnings.warn(f"Failed to standardize {smiles}; using original representation")
+            normalized = smiles
+        return str(normalized)
 
-        # Group by standardized substrates
-        grouped = processed_df.groupby('sub_std')
+    def _init_from_dataframe(
+        self,
+        data: pd.DataFrame,
+        sub_name: str,
+        prod_name: str,
+        real_name: str,
+        mol_structs: Optional[Dict[str, Chem.Mol]],
+        standartize: bool,
+    ) -> None:
+        if data.empty:
+            raise ValueError("Input DataFrame is empty")
+        required_columns = {sub_name, prod_name}
+        if not required_columns.issubset(data.columns):
+            missing = required_columns.difference(data.columns)
+            raise ValueError(f"Missing required columns: {', '.join(sorted(missing))}")
 
-        # Initialize data containers
-        self.map = dd(set)
-        self.gen_map = dd(set)
-        self.negs = dd(set)
-        self.graphs = dd(list)
-        self.single = {}
-        self.morgan = {}
-        self.reaction_labels = {}
+        normalized = data.copy()
+        normalized[real_name] = normalized.get(real_name, 1).astype(int)
 
-        # Process groups efficiently
-        for sub, group in tqdm(grouped, desc="Processing reactions"):
-            # Handle real products
-            real_products = group[group['real'] == 1]['prod_std']
-            self.map[sub].update(real_products)
+        cache: Dict[str, str] = {}
 
-            # Handle generated products
-            gen_products = group[group['real'] == 0]['prod_std']
-            if not gen_products.empty:
-                self.gen_map[sub].update(gen_products)
+        def normalize_cached(value: str) -> str:
+            key = str(value)
+            if key not in cache:
+                cache[key] = self._normalize_smiles(key, standartize)
+            return cache[key]
 
-        # Handle molecular structures
+        normalized[sub_name] = normalized[sub_name].map(normalize_cached)
+        normalized[prod_name] = normalized[prod_name].map(normalize_cached)
 
-        @timeout(seconds=30)
-        def from_smiles(smiles: str) -> Chem.Mol:
-            return Chem.MolFromSmiles(smiles)
+        for row in normalized[[sub_name, prod_name, real_name]].itertuples(index=False):
+            substrate, product, is_real = row
+            if is_real:
+                self.map[substrate].add(product)
+            else:
+                self.gen_map[substrate].add(product)
 
-        if mol_structs is None:
-            unique_smiles = set(processed_df['sub_std']).union(processed_df['prod_std'])
-            self.mol_structs = {}
-            for smile in tqdm(unique_smiles, desc="Creating molecule objects"):
-                try:
-                    self.mol_structs[smile] = from_smiles(smile)
-                except TimeoutError:
-                    pass
-            #self.mol_structs = {smile: Chem.MolFromSmiles(smile) for smile in
-                                #tqdm(unique_smiles, desc="Creating molecules")}
-        else:
-            self.mol_structs = mol_structs
+        self._bootstrap_molecules(mol_structs)
 
-    @dispatch(dict)
-    def __init__(self, map: Dict, gen_map: Optional[DefaultDict] = None, mol_structs: Optional[Dict] = None) -> None:
-        self.map = map
-        self.gen_map = dd(set) if gen_map is None else gen_map
-        self.negs = dd(set)
-        self.graphs = dd(list)
-        self.single = {}
-        self.morgan = {}
-        self.reaction_labels = {}
-        if mol_structs is not None:
-            self.mol_structs = mol_structs
-        else:
-            for sub in map:
-                self.mol_structs[sub] = Chem.MolFromSmiles(sub)
-                for prod in map[sub]:
-                    self.mol_structs[prod] = Chem.MolFromSmiles(prod)
-            if gen_map:
-                for sub in gen_map:
-                    self.mol_structs[sub] = Chem.MolFromSmiles(sub)
-                    for prod in gen_map[sub]:
-                        self.mol_structs[prod] = Chem.MolFromSmiles(prod)
+    def _init_from_mapping(
+        self,
+        data: Dict[str, Iterable[str]],
+        gen_map: Optional[DefaultDict[str, Set[str]]],
+        mol_structs: Optional[Dict[str, Chem.Mol]],
+        standartize: bool,
+    ) -> None:
+        if not data:
+            raise ValueError("Input mapping is empty")
+        for substrate, products in data.items():
+            substrate_smiles = self._normalize_smiles(substrate, standartize)
+            for product in products:
+                self.map[substrate_smiles].add(self._normalize_smiles(str(product), standartize))
+        if gen_map:
+            for substrate, products in gen_map.items():
+                substrate_smiles = self._normalize_smiles(substrate, standartize)
+                for product in products:
+                    self.gen_map[substrate_smiles].add(self._normalize_smiles(str(product), standartize))
+        self._bootstrap_molecules(mol_structs)
+
+    def _bootstrap_molecules(self, mol_structs: Optional[Dict[str, Chem.Mol]]) -> None:
+        if mol_structs:
+            self.mol_structs = {smiles: Chem.Mol(mol) for smiles, mol in mol_structs.items() if mol is not None}
+            return
+
+        smiles_set = set(self.map.keys()) | set(self.gen_map.keys())
+        for products in self.map.values():
+            smiles_set.update(products)
+        for products in self.gen_map.values():
+            smiles_set.update(products)
+        self.mol_structs = {
+            smiles: mol
+            for smiles in smiles_set
+            if (mol := _smiles_to_mol(smiles)) is not None
+        }
 
     @staticmethod
-    def _handle_standardization(smiles: str) -> str:
-        try:
-            return standardize_mol(smiles)
-        except ValueError as e:
-            warnings.warn(f"Standardization failed for molecule: {smiles}. Error: {e}")
-            return smiles  # Return original SMILES if standardization failed
-
-    # В файле preparation.py - исправленный метод from_file
-
-    @staticmethod
-    def from_file(file_path: str, triples: List[Tuple[int, int, int]], standartize: bool = True) -> 'MolFrame':
-        r"""
-        Read MolFrame from file and list of triples.
-        :param file_path: (str) path to SDF file
-        :param triples: (List[Tuple[int, int, int]]) list of triples (sub, prod, real)
-        :param standartize: (bool, optional) to standardize or not
-        :return: MolFrame
-        """
-        try:
-            # Load SDF file into a dataframe
-            data = LoadSDF(file_path, molColName='Molecules', smilesName='SMILES')
-            if 'Index' not in data.columns:
-                raise ValueError(
-                    'No Index attribute in an SDF file. Cannot proceed with loading file: {}'.format(file_path))
-
-            # Create mapping from Index to SMILES and Molecules
-            index_to_smiles = {}
-            index_to_molecule = {}
-
-            for idx, row in data.iterrows():
-                try:
-                    index_val = int(row['Index'])
-                    smiles_val = row['SMILES']
-                    molecule_val = row['Molecules']
-
-                    # Handle duplicate indices - use first occurrence
-                    if index_val not in index_to_smiles:
-                        index_to_smiles[index_val] = smiles_val
-                        index_to_molecule[index_val] = molecule_val
-                    else:
-                        print(f"Warning: Duplicate index {index_val} found. Using first occurrence.")
-
-                except (ValueError, KeyError) as e:
-                    print(f"Warning: Skipping row {idx} due to error: {e}")
+    def read_triples(file_path: Union[str, Path]) -> List[Tuple[int, int, int]]:
+        path = Path(file_path)
+        if not path.exists():
+            raise FileNotFoundError(path)
+        triples = []
+        with open(path) as handle:
+            for line_number, line in enumerate(handle, start=1):
+                stripped = line.strip()
+                if not stripped:
                     continue
-
-            # Create triple data with proper error handling
-            valid_triples = []
-            missing_indices = set()
-
-            for sub_idx, prod_idx, real_val in triples:
-                if sub_idx in index_to_smiles and prod_idx in index_to_smiles:
-                    valid_triples.append({
-                        'sub': index_to_smiles[sub_idx],
-                        'prod': index_to_smiles[prod_idx],
-                        'real': real_val
-                    })
-                else:
-                    if sub_idx not in index_to_smiles:
-                        missing_indices.add(sub_idx)
-                    if prod_idx not in index_to_smiles:
-                        missing_indices.add(prod_idx)
-
-            if missing_indices:
-                print(f"Warning: {len(missing_indices)} indices from triples not found in SDF file")
-                print(f"Missing indices sample: {list(missing_indices)[:10]}")
-
-            if not valid_triples:
-                raise ValueError("No valid triples found after processing")
-
-            triple_data = pd.DataFrame(valid_triples)
-
-            # Create molecules dictionary
-            all_smiles = set(triple_data['sub']).union(triple_data['prod'])
-            mol_structs = {}
-
-            for smiles in all_smiles:
-                # Find the molecule in our mapping
-                for idx, sm in index_to_smiles.items():
-                    if sm == smiles:
-                        mol_structs[smiles] = index_to_molecule[idx]
-                        break
-
-            print(f"Successfully loaded {len(valid_triples)} triples from {len(all_smiles)} unique molecules")
-
-            return MolFrame(triple_data, mol_structs=mol_structs, standartize=standartize)
-
-        except Exception as e:
-            print(f"Error loading file {file_path}: {e}")
-            raise
+                parts = stripped.split()
+                if len(parts) != 3:
+                    raise ValueError(f"Invalid triple at line {line_number}: {stripped}")
+                triples.append(tuple(int(value) for value in parts))
+        return triples
 
     @staticmethod
-    def read_triples(file_path: str) -> List[Tuple[int, int, int]]:
-        r"""
-        Read triples from file.
-        :param file_path: path to txt file
-        :return: list of triples (sub, prod, real)
-        """
-        if not os.path.exists(file_path):
-            raise FileNotFoundError(f"File not found: {file_path}")
+    def from_file(
+        file_path: Union[str, Path],
+        triples: List[Tuple[int, int, int]],
+        standartize: bool = True,
+    ) -> "MolFrame":
+        sdf_path = Path(file_path)
+        if not sdf_path.exists():
+            raise FileNotFoundError(sdf_path)
+        if not triples:
+            raise ValueError("Triples are required for SDF loading")
 
-        with open(file_path) as file:
+        required_ids = {sub_idx for sub_idx, _, _ in triples} | {prod_idx for _, prod_idx, _ in triples}
+        index_to_smiles: Dict[int, str] = {}
+        index_to_mol: Dict[int, Chem.Mol] = {}
+        supplier = Chem.SDMolSupplier(str(sdf_path), removeHs=False)
+        for fallback_index, mol in enumerate(supplier, start=1):
+            if mol is None:
+                continue
             try:
-                return [tuple(int(x) for x in line.split()) for line in file]
-            except Exception as e:
-                raise ValueError(f"Failed to read triples from file: {file_path}. Error: {e}")
+                index = int(mol.GetProp("Index")) if mol.HasProp("Index") else fallback_index
+            except Exception:
+                index = fallback_index
+            if index not in required_ids:
+                continue
+            smiles = mol.GetProp("SMILES") if mol.HasProp("SMILES") else Chem.MolToSmiles(mol, isomericSmiles=False)
+            index_to_smiles[index] = smiles
+            index_to_mol[index] = mol
+            if len(index_to_smiles) == len(required_ids):
+                break
 
-    def metabolize(self, rules: List[str], mode: Literal['opt', 'gen'] = 'opt') -> Optional[Set[FrozenSet[int]]]:
-        r"""
-        Produce pseudo-metabolized molecules. If mode is 'opt', generate set of pairs of equal rules.
-        :param rules: list of SMARTS
-        :param mode: (Literal['opt', 'gen']) 'opt' - generate set of pairs of equal rules, 'gen' - only generate molecules
-        :return: set of pairs of equal rules
-        """
-        signal.signal(signal.SIGALRM, handler)
-        if mode == 'opt':
-            equivalent = set()
+        if not index_to_smiles:
+            raise ValueError(f"Failed to load molecules from {sdf_path}")
 
-            def _zeros():
-                return np.zeros(len(rules))
-
-            opt_matrix = dd(_zeros)
-            for substrate in tqdm(self.map, desc='Metabolize substrates'):
+        normalized_index_to_smiles = dict(index_to_smiles)
+        if standartize:
+            for index, smiles in list(normalized_index_to_smiles.items()):
                 try:
-                    #signal.alarm(10)
-                    gen_stat = metaboliser(self.mol_structs[substrate], rules=rules)
-                    for product in gen_stat:
-                        product_smiles = Chem.MolToSmiles(product)
-                        np.put(opt_matrix[product_smiles], list(gen_stat[product]), 1)
-                        self.gen_map[substrate].add(product_smiles)
-                        self.mol_structs[product_smiles] = product
-                except TimeoutError:
-                    continue
-                except TypeError:
-                    print('TypeError')
-                    continue
-            opt_matrix = np.array(list(opt_matrix.values()), dtype=int).T
-            for i, col1 in enumerate(opt_matrix):
-                for j, col2 in enumerate(opt_matrix):
-                    if np.equal(col1, col2).all() and i != j:
-                        equivalent.add(frozenset([i, j]))
-            return equivalent
-        elif mode == 'gen':
-            for substrate in tqdm(self.map):
-                if True:  # todo - correct work with substrate not in gen_map
-                    gen_stat = metaboliser(self.mol_structs[substrate], rules=rules)
-                    for product in gen_stat:
-                        product_smiles = Chem.MolToSmiles(product)
-                        self.gen_map[substrate].add(product_smiles)
-                        self.mol_structs[product_smiles] = product
-        else:
-            raise ValueError
+                    normalized_index_to_smiles[index] = _standardize_smiles_cached(smiles)
+                except Exception:
+                    warnings.warn(f"Failed to standardize {smiles}; using original representation")
+                    normalized_index_to_smiles[index] = smiles
 
-    def __or__(self, other: 'MolFrame') -> 'MolFrame':
-        r"""
-        Combine two MolFrames.
-        :param other: :class:`MolFrame`
-        :return: :class:`MolFrame`
-        """
-        new_map = self.map.copy()
-        new_map.update(other.map)
-        new_genmap = self.gen_map.copy()
-        new_genmap.update(other.gen_map)
-        new_mols = self.mol_structs.copy()
-        new_mols.update(other.mol_structs)
-        new_molframe = MolFrame(new_map, gen_map=new_genmap, mol_structs=new_mols)
-        return new_molframe
+        records = []
+        for sub_idx, prod_idx, is_real in triples:
+            substrate = normalized_index_to_smiles.get(sub_idx)
+            product = normalized_index_to_smiles.get(prod_idx)
+            if substrate is None or product is None:
+                continue
+            records.append({"sub": substrate, "prod": product, "real": is_real})
+
+        if not records:
+            raise ValueError("No valid triples could be matched to SDF records")
+
+        used_smiles = {record["sub"] for record in records} | {record["prod"] for record in records}
+        if standartize:
+            mol_structs = {
+                smiles: mol
+                for smiles in used_smiles
+                if (mol := _smiles_to_mol(smiles)) is not None
+            }
+        else:
+            mol_structs = {
+                smiles: index_to_mol[index]
+                for index, smiles in index_to_smiles.items()
+                if smiles in used_smiles and index_to_mol.get(index) is not None
+            }
+        return MolFrame(
+            pd.DataFrame.from_records(records),
+            mol_structs=mol_structs,
+            standartize=False if standartize else standartize,
+            normalization_mode="standardize" if standartize else "canonical",
+        )
+
+    def _subset_mapping(self, keys: Iterable[str], mapping: Dict[str, Set[str]]) -> Dict[str, Set[str]]:
+        return {key: set(mapping.get(key, set())) for key in keys if key in mapping}
+
+    def train_val_test_split(self, frac: float, seed: int = 42) -> List["MolFrame"]:
+        if not 0.0 < frac < 0.5:
+            raise ValueError("frac must be in (0, 0.5)")
+        substrates = np.array(sorted(self.map.keys()))
+        rng = np.random.default_rng(seed)
+        rng.shuffle(substrates)
+        size = int(len(substrates) * frac)
+        val_keys = substrates[:size]
+        test_keys = substrates[size : 2 * size]
+        train_keys = substrates[2 * size :]
+
+        out = []
+        for subset in (train_keys, val_keys, test_keys):
+            subset_map = self._subset_mapping(subset, self.map)
+            subset_gen = defaultdict(set, self._subset_mapping(subset, self.gen_map))
+            subset_mols = {smiles: self.mol_structs[smiles] for smiles in self.mol_structs if smiles in subset_map or any(smiles in products for products in subset_map.values()) or any(smiles in products for products in subset_gen.values())}
+            out.append(
+                MolFrame(
+                    subset_map,
+                    gen_map=subset_gen,
+                    mol_structs=subset_mols,
+                    standartize=False,
+                    normalization_mode=self.normalization_mode,
+                )
+            )
+        return out
+
+    def subset(self, substrates: Iterable[str]) -> "MolFrame":
+        selected = {substrate for substrate in substrates if substrate in self.map}
+        subset_map = self._subset_mapping(selected, self.map)
+        subset_gen = defaultdict(set, self._subset_mapping(selected, self.gen_map))
+        included_smiles: Set[str] = set(selected)
+        for mapping in (subset_map, subset_gen):
+            for products in mapping.values():
+                included_smiles.update(products)
+        subset_mols = {
+            smiles: self.mol_structs[smiles]
+            for smiles in included_smiles
+            if smiles in self.mol_structs
+        }
+        return MolFrame(
+            subset_map,
+            gen_map=subset_gen,
+            mol_structs=subset_mols,
+            standartize=False,
+            normalization_mode=self.normalization_mode,
+        )
+
+    def sample_substrates(self, max_substrates: Optional[int], seed: int = 42) -> "MolFrame":
+        if max_substrates is None or max_substrates <= 0 or max_substrates >= len(self.map):
+            return self
+        rng = np.random.default_rng(seed)
+        substrates = np.array(sorted(self.map.keys()))
+        rng.shuffle(substrates)
+        return self.subset(substrates[:max_substrates].tolist())
+
+    def exclude_substrates(self, excluded: Iterable[str]) -> "MolFrame":
+        excluded = {str(substrate) for substrate in excluded}
+        if not excluded:
+            return self
+        kept = [substrate for substrate in self.map.keys() if substrate not in excluded]
+        return self.subset(kept)
+
+    def __or__(self, other: "MolFrame") -> "MolFrame":
+        merged_map: DefaultDict[str, Set[str]] = defaultdict(set)
+        merged_gen: DefaultDict[str, Set[str]] = defaultdict(set)
+
+        for mapping, target in ((self.map, merged_map), (other.map, merged_map), (self.gen_map, merged_gen), (other.gen_map, merged_gen)):
+            for substrate, products in mapping.items():
+                target[substrate].update(products)
+
+        merged_mols = dict(self.mol_structs)
+        merged_mols.update(other.mol_structs)
+        return MolFrame(
+            dict(merged_map),
+            gen_map=merged_gen,
+            mol_structs=merged_mols,
+            standartize=False,
+            normalization_mode=self.normalization_mode,
+        )
 
     def clean(self) -> None:
-        r"""
-        Clean the dataset
-        """
-        try:
-            to_del_map = []
-            for key in list(self.map.keys()):
-                if len(self.map[key]) == 0:
-                    to_del_map.append(key)
+        cleaned_map: DefaultDict[str, Set[str]] = defaultdict(set)
+        cleaned_gen: DefaultDict[str, Set[str]] = defaultdict(set)
+        valid_smiles: Set[str] = set()
 
-            for key in to_del_map:
-                del self.map[key]
-                if key in self.gen_map:
-                    del self.gen_map[key]
-                if key in self.negs:
-                    del self.negs[key]
+        for mapping, target in ((self.map, cleaned_map), (self.gen_map, cleaned_gen)):
+            for substrate, products in mapping.items():
+                substrate_mol = self.mol_structs.get(substrate) or _smiles_to_mol(substrate)
+                if substrate_mol is None or not products:
+                    continue
+                target_products = {product for product in products if (self.mol_structs.get(product) or _smiles_to_mol(product)) is not None}
+                if not target_products:
+                    continue
+                target[substrate].update(target_products)
+                valid_smiles.add(substrate)
+                valid_smiles.update(target_products)
 
-            to_del_genmap = []
-            for key in list(self.gen_map.keys()):
-                if len(self.gen_map[key]) == 0:
-                    to_del_genmap.append(key)
-
-            for key in to_del_genmap:
-                del self.gen_map[key]
-
-            self.__reconstruct(self.map)
-            self.__reconstruct(self.gen_map)
-
-            print(f"Cleaning completed: {len(self.map)} substrates remaining")
-
-        except Exception as e:
-            print(f"Error during cleaning: {e}")
-            raise
-
-    def __reconstruct(self, map: Dict[str, Set[str]]) -> None:
-        r"""
-        Reconstruct molecular structures with error handling
-        """
-        molecules_to_add = {}
-
-        for sub in map:
-            if sub not in self.mol_structs:
-                try:
-                    mol = Chem.MolFromSmiles(sub)
-                    if mol is not None:
-                        molecules_to_add[sub] = mol
-                    else:
-                        print(f"Warning: Could not create molecule from SMILES: {sub}")
-                except Exception as e:
-                    print(f"Error creating molecule for {sub}: {e}")
-
-            for prod in map[sub]:
-                if prod not in self.mol_structs and prod not in molecules_to_add:
-                    try:
-                        mol = Chem.MolFromSmiles(prod)
-                        if mol is not None:
-                            molecules_to_add[prod] = mol
-                        else:
-                            print(f"Warning: Could not create molecule from SMILES: {prod}")
-                    except Exception as e:
-                        print(f"Error creating molecule for {prod}: {e}")
-
-        self.mol_structs.update(molecules_to_add)
-
-        if molecules_to_add:
-            print(f"Added {len(molecules_to_add)} new molecules during reconstruction")
-
-    def train_val_test_split(self, frac: float) -> List['MolFrame']:
-        x = np.array(list(self.map.keys()))
-        np.random.shuffle(x)
-        idx = int(frac * len(x))
-        train, val, test = x[idx * 2:], x[:idx], x[idx:idx * 2]
-        tables = []
-        for sub_set in [train, val, test]:
-            maps = {}
-            gen_maps = {}
-            mol_structs = self._extract_molecular_structures(sub_set)
-            molframe = MolFrame(maps, gen_map=dd(set, gen_maps), mol_structs=mol_structs)
-            tables.append(molframe)
-        return tables
-
-    def _extract_molecular_structures(self, sub_set: Set[str]) -> Dict[str, Chem.Mol]:
-        """Extracts molecular structures for the given subset of keys."""
-        mol_structs = {}
-        for key in self.map:
-            if key in sub_set:
-                mol_structs[key] = self.mol_structs[key]
-        return mol_structs
+        self.map = cleaned_map
+        self.gen_map = cleaned_gen
+        self.mol_structs = {
+            smiles: self.mol_structs.get(smiles) or _smiles_to_mol(smiles)
+            for smiles in valid_smiles
+            if (self.mol_structs.get(smiles) or _smiles_to_mol(smiles)) is not None
+        }
+        self.negatives()
 
     def negatives(self) -> None:
-        r"""
-        Generate negative subclass.
-        :return: :class:None
-        """
-        for sub in self.map:
-            if sub in self.gen_map:
-                for prod in self.gen_map[sub]:
-                    if prod not in self.map[sub]:
-                        self.negs[sub].add(prod)
-            else:
-                self.gen_map[sub] = set()
-                print(f"Warning: Substrate {sub} not found in gen_map, created empty entry")
+        self.negs = defaultdict(set)
+        for substrate, generated in self.gen_map.items():
+            self.negs[substrate].update(product for product in generated if product not in self.map.get(substrate, set()))
 
-    def passify(self, name: str) -> List[Tuple[int, int, int]]:
-        r"""
-        Transform dataset to work with PASS or USSR programs
-        :param name: Name of SDF file to write into
-        :return: list of triples (sub, prod, real)
-        """
+    def metabolize(
+        self,
+        rules: Sequence[str],
+        mode: Literal["opt", "gen"] = "opt",
+    ) -> Optional[Set[FrozenSet[int]]]:
+        equivalence: Set[FrozenSet[int]] = set()
+        product_rule_matrix: Dict[str, np.ndarray] = {}
+
+        for substrate, mol in tqdm(self.mol_structs.items(), desc="Applying rules"):
+            if substrate not in self.map:
+                continue
+            generated = apply_rules_to_molecule(mol, list(rules), normalization_mode=self.normalization_mode)
+            for product, indexes in generated.items():
+                self.gen_map[substrate].add(product)
+                self.mol_structs.setdefault(product, _smiles_to_mol(product))
+                if mode == "opt":
+                    vec = product_rule_matrix.setdefault(product, np.zeros(len(rules), dtype=int))
+                    for index in indexes:
+                        vec[index] = 1
+
         self.negatives()
-        smiles = []
-        molecules = []
-        indexes = []
-        status = []
-        triples = []
-        for key in self.map:
-            smiles.append(key)
-            molecules.append(self.mol_structs[key])
-            i = 1 if not indexes else indexes[-1] + 1
-            indexes.append(i)
-            status.append('Substrate')
-            for val in self.map[key]:
-                smiles.append(val)
-                molecules.append(self.mol_structs[val])
-                j = indexes[-1] + 1
-                indexes.append(j)
-                status.append('Real')
-                triples.append((i, j, 1))
-            for val in self.negs[key]:
-                smiles.append(val)
-                molecules.append(self.mol_structs[val])
-                j = indexes[-1] + 1
-                indexes.append(j)
-                status.append('Generated')
-                triples.append((i, j, 0))
+        if mode != "opt":
+            return None
 
-        data = pd.DataFrame({
-            'Index': indexes,
-            'SMILES': smiles,
-            'Molecules': molecules,
-            'Status': status
-        })
-        WriteSDF(data, f'{name}.sdf', molColName='Molecules', properties=list(data.columns))
+        matrix = np.array(list(product_rule_matrix.values()), dtype=int).T if product_rule_matrix else np.zeros((len(rules), 0), dtype=int)
+        for left in range(matrix.shape[0]):
+            for right in range(left + 1, matrix.shape[0]):
+                if np.array_equal(matrix[left], matrix[right]):
+                    equivalence.add(frozenset({left, right}))
+        return equivalence
 
+    def augment(self, rules: Sequence[str]) -> None:
+        self.metabolize(rules, mode="gen")
+        self.clean()
+
+    def morganize(
+        self,
+        size: int = 1024,
+        cache_path: Union[str, Path, None] = None,
+        save_interval: int = 1000,
+    ) -> None:
+        generator = rdFingerprintGenerator.GetMorganGenerator(
+            includeChirality=True,
+            fpSize=size,
+            countSimulation=False,
+        )
+        self.morgan = {}
+        cache_file = _normalize_cache_path(cache_path)
+        if cache_file is not None:
+            cached = _load_cached_mapping(cache_file)
+            self.morgan = {
+                smiles: tensor
+                for smiles, tensor in cached.items()
+                if smiles in self.mol_structs and isinstance(tensor, Tensor)
+            }
+            if self.morgan:
+                print(
+                    f"Loaded {len(self.morgan)} Morgan fingerprints from cache: {cache_file}",
+                    flush=True,
+                )
+
+        pending = [smiles for smiles in self.mol_structs.keys() if smiles not in self.morgan]
+        for index, smiles in enumerate(tqdm(pending, desc="Building Morgan fingerprints"), start=1):
+            mol = self.mol_structs.get(smiles)
+            if mol is None:
+                continue
+            self.morgan[smiles] = torch.tensor(
+                np.asarray(generator.GetFingerprint(mol), dtype=np.float32),
+                dtype=torch.float32,
+            ).view(1, -1)
+            if cache_file is not None and (index % save_interval == 0 or index == len(pending)):
+                _atomic_torch_save(self.morgan, cache_file)
+
+    def singlegraphs(
+        self,
+        pca: bool = False,
+        smiles: Optional[Iterable[str]] = None,
+        cache_path: Union[str, Path, None] = None,
+        save_interval: int = 250,
+    ) -> None:
+        node_path = _local_data_dir() / "pca_ats_single.pkl" if pca else None
+        edge_path = _local_data_dir() / "pca_bonds_single.pkl" if pca else None
+        self.single = {}
+        cache_file = _normalize_cache_path(cache_path)
+        selected_smiles = list(smiles) if smiles is not None else list(self.mol_structs.keys())
+        if cache_file is not None:
+            cached = _load_cached_mapping(cache_file)
+            self.single = {
+                key: graph
+                for key, graph in cached.items()
+                if key in self.mol_structs and isinstance(graph, Data)
+            }
+            if self.single:
+                print(
+                    f"Loaded {len(self.single)} single graphs from cache: {cache_file}",
+                    flush=True,
+                )
+
+        pending = [key for key in selected_smiles if key not in self.single]
+        for index, smiles_value in enumerate(tqdm(pending, desc="Building single graphs"), start=1):
+            mol = self.mol_structs.get(smiles_value)
+            if mol is None:
+                continue
+            graph = from_rdmol(mol)
+            if graph is None:
+                continue
+            graph = _maybe_project_graph(graph, node_path=node_path, edge_path=edge_path)
+            self.single[smiles_value] = graph
+            if cache_file is not None and (index % save_interval == 0 or index == len(pending)):
+                _atomic_torch_save(self.single, cache_file)
+
+    def pairgraphs(self, pca: bool = False) -> None:
+        if not self.single:
+            self.singlegraphs(pca=False)
+
+        node_path = _local_data_dir() / "pca_ats.pkl" if pca else None
+        edge_path = _local_data_dir() / "pca_bonds.pkl" if pca else None
+        self.graphs = defaultdict(list)
+
+        for label, mapping in ((1.0, self.map), (0.0, self.negs)):
+            total_substrates = len(mapping)
+            pair_count = 0
+            fallback_count = 0
+            split_name = "positive" if label else "negative"
+            for substrate_index, (substrate, products) in enumerate(
+                tqdm(mapping.items(), desc=f"Building {split_name} pair graphs"),
+                start=1,
+            ):
+                if substrate_index == 1 or substrate_index % 100 == 0 or substrate_index == total_substrates:
+                    print(
+                        f"pairgraphs {split_name} progress {substrate_index}/{total_substrates} "
+                        f"substrates, {pair_count} graphs, {fallback_count} fallback",
+                        flush=True,
+                    )
+                sub_mol = self.mol_structs.get(substrate)
+                if sub_mol is None:
+                    continue
+                for product in products:
+                    prod_mol = self.mol_structs.get(product)
+                    if prod_mol is None:
+                        continue
+                    graph = build_pair_graph(sub_mol, prod_mol)
+                    if graph is None:
+                        continue
+                    fallback_count += int(getattr(graph, "fallback_pair", 0))
+                    pair_count += 1
+                    graph = _maybe_project_graph(graph, node_path=node_path, edge_path=edge_path)
+                    graph.y = torch.tensor([label], dtype=torch.float32)
+                    graph.smiles = product
+                    self.graphs[substrate].append(graph)
+
+    def pair_records(self) -> List[Tuple[str, str, float]]:
+        records: List[Tuple[str, str, float]] = []
+        for label, mapping in ((1.0, self.map), (0.0, self.negs)):
+            for substrate, products in mapping.items():
+                if substrate not in self.mol_structs:
+                    continue
+                for product in products:
+                    if product not in self.mol_structs:
+                        continue
+                    records.append((substrate, product, label))
+        return records
+
+    def pair_loader(self, batch_size: int, shuffle: bool = True, pca: bool = False) -> DataLoader:
+        node_path = _local_data_dir() / "pca_ats.pkl" if pca else None
+        edge_path = _local_data_dir() / "pca_bonds.pkl" if pca else None
+        dataset = _LazyPairDataset(self, self.pair_records(), node_path=node_path, edge_path=edge_path)
+        return DataLoader(dataset, batch_size=batch_size, shuffle=shuffle)
+
+    def label_reactions(
+        self,
+        rules: Sequence[str],
+        cache_path: Union[str, Path, None] = None,
+        save_interval: int = 100,
+    ) -> None:
+        selected_rules = list(rules)
+        cache_file = _normalize_cache_path(cache_path)
+        self.reaction_labels = {}
+        if cache_file is not None:
+            cached = _load_cached_mapping(cache_file)
+            self.reaction_labels = {
+                substrate: list(vector)
+                for substrate, vector in cached.items()
+                if substrate in self.map and isinstance(vector, list) and len(vector) == len(selected_rules)
+            }
+            if self.reaction_labels:
+                print(
+                    f"Loaded {len(self.reaction_labels)} reaction label vectors from cache: {cache_file}",
+                    flush=True,
+                )
+
+        pending = [substrate for substrate in self.map.keys() if substrate not in self.reaction_labels]
+        total = len(self.map)
+        for pending_index, substrate in enumerate(tqdm(pending, desc="Labeling reactions"), start=1):
+            completed = total - len(pending) + pending_index
+            if pending_index == 1 or completed % 100 == 0 or completed == total:
+                print(f"label_reactions progress {completed}/{total}", flush=True)
+            mol = self.mol_structs.get(substrate)
+            if mol is None:
+                continue
+            generated = apply_rules_to_molecule(mol, selected_rules, normalization_mode=self.normalization_mode)
+            vector = [0] * len(selected_rules)
+            allowed = self.map.get(substrate, set())
+            for product, indexes in generated.items():
+                if product not in allowed:
+                    continue
+                for rule_index in indexes:
+                    if 0 <= rule_index < len(vector):
+                        vector[rule_index] = 1
+            self.reaction_labels[substrate] = vector
+            if cache_file is not None and (pending_index % save_interval == 0 or pending_index == len(pending)):
+                _atomic_torch_save(self.reaction_labels, cache_file)
+
+    def full_setup(
+        self,
+        pca: bool = False,
+        rules: Optional[Sequence[str]] = None,
+        include_reaction_labels: bool = True,
+        include_pair_graphs: bool = True,
+        include_morgan: bool = False,
+        single_smiles: Optional[Iterable[str]] = None,
+        include_single_graphs: bool = True,
+        morgan_cache_path: Union[str, Path, None] = None,
+        single_cache_path: Union[str, Path, None] = None,
+        reaction_label_cache_path: Union[str, Path, None] = None,
+        cache_save_interval: int = 100,
+    ) -> None:
+        self.clean()
+        if include_morgan:
+            self.morganize(cache_path=morgan_cache_path, save_interval=max(cache_save_interval, 100))
+        else:
+            self.morgan = {}
+        if include_single_graphs:
+            self.singlegraphs(
+                pca=pca,
+                smiles=single_smiles,
+                cache_path=single_cache_path,
+                save_interval=max(cache_save_interval, 50),
+            )
+        else:
+            self.single = {}
+        if include_pair_graphs:
+            self.pairgraphs(pca=pca)
+        else:
+            self.graphs = defaultdict(list)
+        selected_rules = list(rules) if rules is not None else load_default_rules()
+        if selected_rules and include_reaction_labels:
+            self.label_reactions(
+                selected_rules,
+                cache_path=reaction_label_cache_path,
+                save_interval=max(cache_save_interval, 25),
+            )
+        elif not include_reaction_labels:
+            self.reaction_labels = {}
+
+    def to_frame(self) -> pd.DataFrame:
+        rows = []
+        for substrate, products in self.map.items():
+            rows.extend({"sub": substrate, "prod": product, "real": 1} for product in products)
+        for substrate, products in self.negs.items():
+            rows.extend({"sub": substrate, "prod": product, "real": 0} for product in products)
+        return pd.DataFrame(rows)
+
+    def passify(self, name: Union[str, Path]) -> List[Tuple[int, int, int]]:
+        from rdkit.Chem import PandasTools
+
+        output = Path(name)
+        if output.suffix != ".sdf":
+            output = output.with_suffix(".sdf")
+
+        rows = []
+        triples: List[Tuple[int, int, int]] = []
+        index = 1
+        index_map: Dict[str, int] = {}
+
+        for substrate in self.map:
+            index_map[substrate] = index
+            rows.append({"Index": index, "SMILES": substrate, "Molecules": self.mol_structs[substrate], "Status": "Substrate"})
+            index += 1
+
+        for substrate, products in self.map.items():
+            for product in products:
+                index_map[product] = index
+                rows.append({"Index": index, "SMILES": product, "Molecules": self.mol_structs[product], "Status": "Real"})
+                triples.append((index_map[substrate], index, 1))
+                index += 1
+
+        for substrate, products in self.negs.items():
+            for product in products:
+                index_map[product] = index
+                rows.append({"Index": index, "SMILES": product, "Molecules": self.mol_structs[product], "Status": "Generated"})
+                triples.append((index_map[substrate], index, 0))
+                index += 1
+
+        PandasTools.WriteSDF(pd.DataFrame(rows), str(output), molColName="Molecules", properties=["Index", "SMILES", "Status"])
         return triples
 
     def create_rules(self) -> Optional[Set[str]]:
-        r"""
-        Augment rule set with all "real" substrate-metabolite pairs.
-        :return: (Set[str]) set of SMARTS rules
-        """
         try:
-            from rxnmapper import RXNMapper
+            from .reaction_mapper import combine_reaction
         except ImportError:
-            print('ATTENTION: rxnmapper is not installed')
+            warnings.warn("reaction_mapper is not available in this environment")
             return None
 
         rules = set()
-        for substrate in tqdm(self.map, desc='Generating rules'):
-            for product in self.map[substrate]:
-                rules.add(combine_reaction(self.mol_structs[substrate], self.mol_structs[product]))
+        for substrate, products in tqdm(self.map.items(), desc="Generating SMARTS rules"):
+            substrate_mol = self.mol_structs.get(substrate)
+            if substrate_mol is None:
+                continue
+            for product in products:
+                product_mol = self.mol_structs.get(product)
+                if product_mol is None:
+                    continue
+                try:
+                    rule = combine_reaction(substrate_mol, product_mol)
+                except Exception:
+                    continue
+                if rule:
+                    rules.add(rule)
         return rules
 
-    def augment(self, rules: List[str]) -> None:
-        r"""
-        Augment dataset with the given rules.
-        :param rules: (List[str]) list of SMARTS rules
-        :return: :class:None
-        """
-        self.metabolize(rules)
-        self.clean()
-        self.negatives()
-
     def plot_coverage(self) -> None:
+        import matplotlib.pyplot as plt
+        import seaborn as sns
+
+        self.negatives()
         coverages = []
-        for substrate in tqdm(self.map):
-            coverages.append(len(self.map[substrate] & self.gen_map[substrate]) / len(self.map[substrate]))
+        for substrate, products in self.map.items():
+            generated = self.gen_map.get(substrate, set())
+            if products:
+                coverages.append(len(products & generated) / len(products))
         sns.boxplot(coverages)
         plt.show()
 
-    def __repr__(self) -> str:
-        self.clean()
-        return f'MolFrame: {len(self.map)} substrates'
+    def _pair_dataset(self) -> List[Data]:
+        dataset = []
+        for graphs in self.graphs.values():
+            dataset.extend(graph for graph in graphs if graph is not None)
+        return dataset
 
-    def __str__(self) -> str:
-        self.clean()
-        return f'MolFrame: {len(self.map)} substrates'
-
-    def morganize(self, size: int = 1024) -> None:
-        r"""
-        Generate Morgan fingerprints for each molecule.
-        :param size: size of Morgan fingerprints
-        :return: :class:None
-        """
-        morgan_fp_gen = rdFingerprintGenerator.GetMorganGenerator(
-            includeChirality=True, fpSize=size, countSimulation=False)
-        for mol in tqdm(self.mol_structs):
-            self.morgan[mol] = tensor([morgan_fp_gen.GetFingerprint(self.mol_structs[mol])], dtype=torch.double)
-
-    def pairgraphs(self, pca: bool = True) -> None:
-        r"""
-        Generate molecule pair graphs.
-        :return: :class:None
-        """
-        if pca:
-            ats = Path(__file__).parent / '..' / 'data' / 'pca_ats.pkl'
-            bonds = Path(__file__).parent / '..' / 'data' / 'pca_bonds.pkl'
-            with open(ats, 'rb') as file:
-                pca_x = pkl.load(file)
-            with open(bonds, 'rb') as file:
-                pca_b = pkl.load(file)
-        mols = self.mol_structs
-        self.graphs = dd(list)
-        for substrate in tqdm(self.map):
-            for product in self.map[substrate]:
-                self.graphs[substrate].append(from_pair(mols[substrate], mols[product]))
-                if self.graphs[substrate][-1] is not None:
-                    self.graphs[substrate][-1].y = tensor([1.], dtype=torch.double)
-                    self.graphs[substrate][-1].fp = torch.cat([self.morgan[substrate], self.morgan[product]], dim=1)
-                    self.graphs[substrate][-1].smiles = product
-        for substrate in tqdm(self.negs):
-            for product in self.negs[substrate]:
-                try:
-                    self.graphs[substrate].append(from_pair(mols[substrate], mols[product]))
-                except TimeoutError:
-                    self.graphs[substrate].append(None)
+    def _single_dataset(self) -> List[Tuple[Data, Data]]:
+        dataset = []
+        for label, mapping in ((1.0, self.map), (0.0, self.negs)):
+            for substrate, products in mapping.items():
+                sub_graph = self.single.get(substrate)
+                if sub_graph is None:
                     continue
-                finally:
-                    if self.graphs[substrate][-1] is not None:
-                        self.graphs[substrate][-1].y = tensor([0.], dtype=torch.double)
-                        self.graphs[substrate][-1].fp = torch.cat([self.morgan[substrate], self.morgan[product]], dim=1)
-                        self.graphs[substrate][-1].smiles = product
+                for product in products:
+                    prod_graph = self.single.get(product)
+                    if prod_graph is None:
+                        continue
+                    pair = (sub_graph.clone(), prod_graph.clone())
+                    pair[1].y = torch.tensor([label], dtype=torch.float32)
+                    dataset.append(pair)
+        return dataset
 
-        for graph_map in tqdm(self.graphs.values()):
-            for pair in graph_map:
-                if pair is not None:
-                    for i in range(len(pair.x)):
-                        for j in range(len(pair.x[i])):
-                            if pair.x[i][j] == float('inf'):
-                                pair.x[i][j] = 0
-                    pair.x = tensor(SimpleImputer(missing_values=np.nan,
-                                                  strategy='constant',
-                                                  fill_value=0).fit_transform(pair.x))
-                    if pca:
-                        pair.x = tensor(pca_x.transform(pair.x))
-                        pair.edge_attr = tensor(pca_b.transform(pair.edge_attr))
-
-    def singlegraphs(self, pca: bool = True) -> None:
-        r"""
-        Generate molecule graphs.
-        :return: :class:None
-        """
-        if pca:
-            ats = Path(__file__).parent / '..' / 'data' / 'pca_ats_single.pkl'
-            bonds = Path(__file__).parent / '..' / 'data' / 'pca_bonds_single.pkl'
-            with open(ats, 'rb') as file:
-                pca_x = pkl.load(file)
-            with open(bonds, 'rb') as file:
-                pca_b = pkl.load(file)
-        self.singles = {}
-        mols = self.mol_structs
-        for mol in tqdm(self.map):
-            try:
-                self.single[mol] = from_rdmol(mols[mol])
-            except ValueError:
-                self.single[mol] = None
-                continue
-            self.single[mol].fp = self.morgan[mol]
-            self.single[mol].y = tensor([1.], dtype=torch.double)
-            for prod in self.map[mol]:
-                try:
-                    self.single[prod] = from_rdmol(mols[prod])
-                    self.single[prod].y = tensor([1.], dtype=torch.double)
-                    self.single[prod].fp = self.morgan[prod]
-                except ValueError:
-                    self.single[prod] = None
-        for mol in tqdm(self.negs):
-            try:
-                self.single[mol] = from_rdmol(mols[mol])
-            except ValueError:
-                self.single[mol] = None
-                continue
-            self.single[mol].fp = self.morgan[mol]
-            self.single[mol].y = tensor([1.], dtype=torch.double)
-            for prod in self.negs[mol]:
-                try:
-                    self.single[prod] = from_rdmol(mols[prod])
-                    self.single[prod].y = tensor([0.], dtype=torch.double)
-                    self.single[prod].fp = self.morgan[prod]
-                except ValueError:
-                    self.single[prod] = None
-
-        for key, pair in tqdm(self.single.items()):
-            if pair is not None:
-                for i in range(len(pair.x)):
-                    for j in range(len(pair.x[i])):
-                        if pair.x[i][j] == float('inf'):
-                            pair.x[i][j] = 0
-                pair.x = tensor(SimpleImputer(missing_values=np.nan,
-                                              strategy='constant',
-                                              fill_value=0).fit_transform(pair.x))
-                if pca:
-                    pair.x = tensor(pca_x.transform(pair.x))
-                    try:
-                        pair.edge_attr = tensor(pca_b.transform(pair.edge_attr))
-                    except ValueError:
-                        print('Some issue happened with this molecule:')
-                        print(key, pair.edge_attr, pair.x)
-                        self.single[key] = None
-
-    def full_setup(self, pca: bool = True) -> None:
-        r"""
-        Complete data preparation pipeline with error handling
-        """
-        try:
-            self.clean()
-            print("Cleaning completed")
-
-            self.negatives()
-            print("Negatives generation completed")
-
-            print('Morgan fingerprints generation')
-            self.morganize()
-            print('Morgan fingerprints completed')
-
-            print('Pair graphs generation')
-            self.pairgraphs(pca=pca)  # Упрощаем без PCA для тестирования
-            print('Pair graphs completed')
-
-            print('Single graphs generation')
-            self.singlegraphs(pca=pca)  # Упрощаем без PCA для тестирования
-            print('Single graphs completed')
-
-        except Exception as e:
-            print(f"Error in full_setup: {e}")
-            raise
-
-    def make_everything_good(self):
-        del self
-
-    def train_pairs(self, model: Module,
-                    test: 'MolFrame',
-                    lr: float = 1e-5,
-                    eps: int = 100,
-                    decay: float = 1e-8,
-                    verbose: bool = True,
-                    prior: float = 0.05) -> Module:
-        r"""
-        Train the given model on pairgraphs.
-        :param model: Model to train
-        :param test: MolFrame object to train on
-        :param lr: learning rate
-        :param eps: number of epochs
-        :param verbose: toggle verbose mode
-        :param decay: weight decay factor
-        :param prior: prior for nnPU loss
-        :return: :class:`Module` - trained model
-        """
-        device = 'cuda' if torch.cuda.is_available() else 'cpu'
-        model.to(device)
-
-        criterion = BCELoss().to(device)
-        optimizer = torch.optim.Adam(model.parameters(), lr=lr, betas=(0.9, 0.99), weight_decay=decay)
-        scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer=optimizer, gamma=0.8)
-
-        def cpunum(tensor) -> np.ndarray:
-            return tensor.cpu().detach().numpy()
-
-        if verbose:
-            print('Starting DataLoaders generation')
-
-        train_loader = []
-        for pairs in self.graphs.values():
-            for pair in pairs:
-                if pair is not None:
-                    train_loader.append(pair)
-
-        # Check if we have training data
-        if len(train_loader) == 0:
-            print("Warning: No training data available for pair mode")
-            return model
-
-        train_loader = DataLoader(train_loader, batch_size=min(128, len(train_loader)), shuffle=True)
-
-        test_loader = []
-        for pairs in test.graphs.values():
-            for pair in pairs:
-                if pair is not None:
-                    test_loader.append(pair)
-        test_loader = DataLoader(test_loader, batch_size=128)
-
-        @torch.no_grad()
-        def test(loader: DataLoader) -> Tuple[float, float]:
-            model.eval()
-            pred = []
-            bin_pred = []
-            real = []
-            for data in tqdm(loader):
-                data = data.to(device)
-                out = model(data)
-                pred.extend(list(cpunum(out)))
-                bin_pred.extend(list((cpunum(out) > 0.5).astype(int)))
-                real.extend(list(cpunum(data.y)))
-            mat = mcc(real, bin_pred)
-            roc = roc_auc(real, pred)
-            return mat, roc
-
-        history = []
-        for epoch in tqdm(range(eps)):
-            model.train()
-            for batch in train_loader:
-                batch = batch.to(device)
-                out = model(batch, 'pass')
-                loss = criterion(out, batch.y.unsqueeze(1).float())
-                history.append(loss.item())
-                if verbose: plt.plot(history)
-                loss.backward()
-                optimizer.step()
-                optimizer.zero_grad()
-            scheduler.step()
-            if (epoch+1) % 10 == 0:
-                mat, roc = test(test_loader)
-                plt.plot(history)
-                if verbose:
-                    print(f'Epoch {epoch+1}: MCC = {mat:.4f}, ROC = {roc:.4f}')
-
+    def train_pairs(
+        self,
+        model: Module,
+        test_set: Optional["MolFrame"] = None,
+        lr: float = 1e-5,
+        eps: int = 100,
+        decay: float = 1e-8,
+        verbose: bool = True,
+        prior: float = 0.75,
+        nnPU: bool = True,
+    ) -> Module:
+        del test_set, decay
+        model.fit(self, lr=lr, eps=eps, verbose=verbose, prior=prior, nnPU=nnPU)
         return model
 
-    def train_singles(self,
-                      model: Module,
-                      test: 'MolFrame',
-                      lr: float = 1e-5,
-                      eps: int = 100,
-                      decay: float = 1e-8,
-                      verbose: bool = True,
-                      prior: float = 0.05) -> Module:
-        r"""
-        Train the given model on singlegraphs.
-        :param model: Model to train
-        :param test: MolFrame object to train on
-        :param lr: learning rate
-        :param eps: number of epochs
-        :param verbose: toggle verbose mode
-        :param decay: weight decay factor
-        :param prior: prior for nnPU loss
-        :return: :class:`Module` - trained model
-        """
-        device = 'cuda' if torch.cuda.is_available() else 'cpu'
-        model.to(device)
-        criterion = BCELoss().to(device)
-        optimizer = torch.optim.Adam(model.parameters(), lr=lr, betas=(0.9, 0.99), weight_decay=decay)
-        scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer=optimizer, gamma=0.8)
-
-        def collate(data_list: List) -> Tuple[Batch, Batch]:
-            batchA = Batch.from_data_list([data[0] for data in data_list])
-            batchB = Batch.from_data_list([data[1] for data in data_list])
-            return batchA, batchB
-
-        if verbose:
-            print('Starting DataLoaders generation')
-
-        train_loader = []
-        for mol in self.map.keys():
-            sub = self.single[mol]
-            if sub is not None:
-                for met in self.map[mol]:
-                    if self.single[met] is not None:
-                        train_loader.append((sub, self.single[met]))
-        for mol in self.negs.keys():
-            sub = self.single[mol]
-            if sub is not None:
-                for met in self.negs[mol]:
-                    if self.single[met] is not None:
-                        train_loader.append((sub, self.single[met]))
-        train_loader = DataLoader(train_loader, batch_size=128, shuffle=True, collate_fn=collate)
-
-        test_loader = []
-        for mol in test.map.keys():
-            sub = test.single[mol]
-            if sub is not None:
-                for met in test.map[mol]:
-                    if test.single[met] is not None:
-                        test_loader.append((sub, test.single[met]))
-        for mol in test.negs.keys():
-            sub = test.single[mol]
-            if sub is not None:
-                for met in test.negs[mol]:
-                    if test.single[met] is not None:
-                        test_loader.append((sub, test.single[met]))
-        test_loader = DataLoader(test_loader, batch_size=128, collate_fn=collate)
-
-        @torch.no_grad()
-        def test(loader: DataLoader) -> Tuple[float, float]:
-            model.eval()
-            pred = []
-            bin_pred = []
-            real = []
-            for data in tqdm(loader):
-                met_batch = data[1].to(device)
-                sub_batch = data[0].to(device)
-                out = model(sub_batch, met_batch)
-                pred.extend(list(cpunum(out)))
-                bin_pred.extend(list((cpunum(out) > 0.5).astype(int)))
-                real.extend(list(cpunum(met_batch.y)))
-            mat = mcc(real, bin_pred)
-            roc = roc_auc(real, pred)
-            return mat, roc
-
-        history = []
-        for epoch in tqdm(range(eps)):
-            model.train()
-            for batch in train_loader:
-                met_batch = batch[1].to(device)
-                sub_batch = batch[0].to(device)
-                out = model(sub_batch, met_batch)
-                loss = criterion(out, met_batch.y.unsqueeze(1).float())
-                history.append(loss.item())
-                if verbose: plt.plot(history)
-                loss.backward()
-                optimizer.step()
-                optimizer.zero_grad()
-            scheduler.step()
-            if (epoch+1) % 10 == 0:
-                mat, roc = test(test_loader)
-                if verbose:
-                    print(f'Epoch {epoch+1}: MCC = {mat:.4f}, ROC = {roc:.4f}')
-
+    def train_singles(
+        self,
+        model: Module,
+        test_set: Optional["MolFrame"] = None,
+        lr: float = 1e-5,
+        eps: int = 100,
+        decay: float = 1e-8,
+        verbose: bool = True,
+        prior: float = 0.75,
+        nnPU: bool = True,
+    ) -> Module:
+        del test_set, decay
+        model.fit(self, lr=lr, eps=eps, verbose=verbose, prior=prior, nnPU=nnPU)
         return model
 
-    @torch.no_grad()
-    def test(self, model: Module, mode: Literal['single', 'pair'] = 'pair') -> Tuple[float, float]:
-        r"""
-        Test the given model and return its metrics.
-        :param model: :class:`Module` model to train
-        :param mode: if 'single' tests on singlegraphs, if 'pair' tests on pairgraphs
-        :return: MCC and ROC AUC values of the model on this MolFrame
-        """
+    def train_generator(
+        self,
+        model: Module,
+        lr: float = 1e-5,
+        eps: int = 100,
+        decay: float = 1e-10,
+        verbose: bool = True,
+    ) -> Tuple[Module, float]:
+        del decay
+        model.fit(self, lr=lr, eps=eps, verbose=verbose)
+        return model, float("nan")
+
+    def test(self, model: Module, mode: Literal["single", "pair"] = "pair") -> Tuple[float, float]:
+        from sklearn.metrics import matthews_corrcoef, roc_auc_score
+
         model.eval()
-        pred = []
-        bin_pred = []
-        real = []
-        device = next(model.parameters()).device
+        preds: List[float] = []
+        binary: List[int] = []
+        targets: List[int] = []
+        threshold = float(getattr(model, "calibrated_threshold", 0.5) or 0.5)
 
-        def collate(data_list: List) -> Tuple[Batch, Batch]:
-            batchA = Batch.from_data_list([data[0] for data in data_list])
-            batchB = Batch.from_data_list([data[1] for data in data_list])
-            return batchA, batchB
-
-        loader = []
-        if mode == 'single':
-            for mol in self.map.keys():
-                sub = self.single[mol]
-                if sub is not None:
-                    for met in self.map[mol]:
-                        if self.single[met] is not None:
-                            loader.append((sub, self.single[met]))
-            for mol in self.negs.keys():
-                sub = self.single[mol]
-                if sub is not None:
-                    for met in self.negs[mol]:
-                        if self.single[met] is not None:
-                            loader.append((sub, self.single[met]))
-            loader = DataLoader(loader, batch_size=128, shuffle=True, collate_fn=collate)
-
-        elif mode == 'pair':
-            for pairs in self.graphs.values():
-                for pair in pairs:
-                    if pair is not None:
-                        loader.append(pair)
-            loader = DataLoader(loader, batch_size=128, shuffle=True)
-
+        if mode == "pair":
+            if self.graphs:
+                dataset = self._pair_dataset()
+                if not dataset:
+                    raise ValueError("Pair graphs are not prepared")
+                loader = DataLoader(dataset, batch_size=64)
+            else:
+                loader = self.pair_loader(batch_size=64, shuffle=False)
+            for batch in loader:
+                output = model(batch).view(-1)
+                preds.extend(cpunum(output).tolist())
+                binary.extend((cpunum(output) > threshold).astype(int).tolist())
+                targets.extend(cpunum(batch.y.view(-1)).astype(int).tolist())
         else:
-            raise AttributeError
-
-        for data in tqdm(loader):
-            if mode == 'single':
-                data[0].to(device)
-                data[1].to(device)
-                out = model(*data)
-            elif mode == 'pair':
-                data = data.to(device)
-                out = model(data, 'pass')
-            else:
-                raise AttributeError
-            pred.extend(list(cpunum(out)))
-            bin_pred.extend(list((cpunum(out) > 0.5).astype(int)))
-            if mode == 'single':
-                real.extend(list(cpunum(data[1].y)))
-            else:
-                real.extend(list(cpunum(data.y)))
-        mat = mcc(real, bin_pred)
-        roc = roc_auc(real, pred)
-        return mat, roc
-
-    @torch.no_grad()
-    def visualize(self, model: Module, mode: Literal['single', 'pair']) -> Optional[tuple[list[float], list[float],
-    list[float], list[float]]]:
-        r"""
-        Visualize the given model metrics on each metabolic map and return lists of them.
-        :param model: model to visualize
-        :param mode: if 'single' - tests on singlegraphs, if 'pair' - tests on pairgraphs
-        :return: Jaccard, F1, Precision and Recall of the given model on each metabolic map
-        """
-        jac = []
-        f1 = []
-        precision = []
-        recall = []
-        model.eval()
-        if mode == 'single':
-            for mol, prods in tqdm(self.map.items(), total=len(self.map)):
-                if self.single[mol] is not None:
-                    tp = 0
-                    fp = 0
-                    fn = 0
-                    tn = 0
-                    for prod in prods:
-                        if self.single[prod] is not None:
-                            out = model(self.single[mol], self.single[prod]).item()
-                            if out >= 0.5:
-                                if prod in self.gen_map[mol]:
-                                    tp += 1
-                                else:
-                                    fn +=1
-                            else:
-                                fn += 1
-                    for genprod in self.negs[mol]:
-                        if self.single[genprod] is not None:
-                            out = model(self.single[mol], self.single[genprod]).item()
-                            if out >= 0.5:
-                                fp += 1
-                            else:
-                                tn += 1
-                    precision.append(tp / (tp + fp))
-                    recall.append(tp / (tp + fn))
-                    jac.append(tp / (tp + fp + fn))
-                    f1.append(2 * tp / (2 * tp + fn + tn))
-
-        elif mode == 'pair':
-            #print('In process :)')
-            for sub, pairs in tqdm(self.graphs.items()):
-                tp = 0
-                fp = 0
-                fn = 0
-                tn = 0
-                for pair in pairs:
-                    if pair is not None:
-                        out = model(pair).item()
-                        if out >= 0.5:
-                            if pair.smiles in self.gen_map[sub] and pair.y.item == 1:
-                                tp += 1
-                            elif pair.y.item == 0:
-                                fp += 1
-                            else:
-                                fn += 1
-                        else:
-                            if pair.y.item == 0:
-                                tn += 1
-                            elif pair.y.item == 1:
-                                fn += 1
-                precision.append(tp / (tp + fp))
-                recall.append(tp / (tp + fn))
-                jac.append(tp / (tp + fn + tn))
-                f1.append(2 * tp / (2 * tp + fn + tn))
-
-        else:
-            raise AttributeError
-
-        nested_list = [precision, recall, f1, jac]
-        fig, ax = plt.subplots()
-        flierprops = dict(marker='x', markerfacecolor='orange', markersize=1,
-                          markeredgecolor='none')
-        meanpointprops = dict(marker='D', markeredgecolor='black',
-                              markerfacecolor='firebrick')
-        ax.boxplot(nested_list,
-                   showmeans=True,
-                   flierprops=flierprops,
-                   meanprops=meanpointprops,
-                   bootstrap=10_000)
-        ax.set_xticks([y + 1 for y in range(len(nested_list))],
-                      labels=['Precision', 'Recall', 'F1', 'Jaccard index'])
-        ax.set_xlabel('Metrics')
-        ax.set_ylabel('Observed values')
-        plt.show()
-
-        return precision, recall, f1, jac
-
-    def permute_augmentation(self, cutoff: Optional[float] = 0.85) -> None:
-        r"""
-        Create kNN-based permutational augmentation of the dataset
-        :param cutoff: cutoff for Tanimoto similarity
-        :return: None
-        """
-        from aizynthfinder.aizynthfinder import AiZynthExpander
-        dim = 256
-        bits = 256
-        index = faiss.IndexLSH(dim, bits)
-        morgans = []
-        reversed_morgans = {}
-        for key, tens in tqdm(self.morgan.items()):
-            if key not in self.map.keys():
-                morgans.append(tens.squeeze(0).numpy())
-                reversed_morgans[tuple(tens.squeeze(0).numpy())] = key
-        morgans = np.array(morgans)
-        index.add(morgans)
-        D, I = index.search(morgans, 10)
-
-        transposed = {}
-        for key, prods in tqdm(self.map.items()):
-            for prod in prods:
-                transposed[prod] = key
-
-        morgan_fp_gen = rdFingerprintGenerator.GetMorganGenerator(
-            includeChirality=True, fpSize=256, countSimulation=False)
-
-        if not os.path.exists('uspto_model.onnx'):
-            os.system('download_public_data .')
-
-        expander = AiZynthExpander(configfile='config.yml')
-        expander.expansion_policy.select("uspto")
-        expander.filter_policy.select("uspto")
-
-        def real_in_generated(frac: float, I) -> list[str]:
-            reals = []
-            for subset in tqdm(I):
-                for idx in subset[1:]:
-                    sub = reversed_morgans[tuple(morgans[idx])]
-                    real = False
-                    for pair in get_reactions(expander, reversed_morgans[tuple(morgans[idx])]):
-                        for mol in pair:
-                            if jac(self.morgan[transposed[sub]].squeeze(0).numpy(),
-                                   np.array(morgan_fp_gen.GetFingerprint(Chem.MolFromSmiles(mol)))) >= frac:
-                                real = True
-                                reals.append(mol)
-                                break
-                        if real:
-                            break
-            return reals
-
-        if cutoff is not None:
-            reals = real_in_generated(cutoff, I)
-        for subset in tqdm(I):
-            for idx in subset[1:]:
-                prod = reversed_morgans[tuple(morgans[idx])]
-                sub = transposed[prod]
-                if cutoff is not None:
-                    if prod in reals:
-                        self.map[sub].add(prod)
-                    else:
-                        self.gen_map[sub].add(prod)
-                else:
-                    self.gen_map[sub].add(prod)
-
-    @torch.no_grad()
-    def metabolize_filter(self, filter_model: nn.Module, rules: List[str]) -> DefaultDict[str, Set[str]]:
-        r"""
-        Metabolize substrates with a filtration by the given Filter model
-        :param filter_model: Filter model
-        :param rules: list of SMARTS rules
-        :return:
-        """
-        out_map = dd(set)
-        filter_model.eval()
-        for substrate in tqdm(self.map.keys()):
-            for product in metaboliser(self.mol_structs[substrate], rules):
-                if product is not None:
-                    input = from_pair(substrate, product)
-                    out = cpunum(filter_model(input))
-                    if all(out >= 0.5):
-                        out_map[substrate].add(product)
-        return out_map
-
-    def metabolic_mapping(self, rules: List[str]) -> DefaultDict[str, Dict[str, Set[int]]]:
-        mapped_map = dd(dict)
-        for substrate in tqdm(self.map):
-            try:
-                gen_stat = metaboliser(self.mol_structs[substrate], rules=rules)
-            except TimeoutError:
-                continue
-            finally:
-                for product in gen_stat:
-                    try:
-                        product_smiles = standardize_mol(Chem.MolToSmiles(product))
-                        mapped_map[substrate][product_smiles] = gen_stat[product]
-                    except Exception:
-                        pass
-        return mapped_map
-
-    def train_generator(self, model: nn.Module, lr: float = 1e-5, eps: int = 100, decay: float = 1e-10, verbose: bool = True) -> Tuple[nn.Module, float]:
-        r"""
-        Train generator model on the inner metabolic mapping
-        :param model: generator model
-        :param lr: learning rate
-        :param verbose: to verbose or not
-        :return: learned model and the final value of Huber loss
-        """
-        train_loader = []
-        vecs = self.reaction_labels
-
-        criterion = torch.nn.HuberLoss()
-        optimizer = torch.optim.Adam(model.parameters(), lr=lr, betas=(0.9, 0.99), weight_decay=decay)
-        scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer=optimizer, gamma=0.8)
-
-        for substrate in self.map:
-            datum = self.single[substrate].clone()
-            datum.y = torch.tensor(vecs[substrate], dtype=torch.float32)
-            train_loader.append(datum)
-
-        train_loader = DataLoader(train_loader, batch_size=128, shuffle=True)
-
-        history = []
-        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        for _ in tqdm(range(eps)):
-            model.train()
-            for batch in train_loader:
-                batch = batch.to(device)
-                out = model(batch)
-
-                # Правильное преобразование формы целевых меток
-                target = batch.y.view(out.shape[0], -1)  # [batch_size, num_rules]
-
-                # Проверка размерностей
-                assert out.shape == target.shape, \
-                    f"Shape mismatch: out {out.shape} vs target {target.shape}"
-
-                loss = criterion(out, target)
-                history.append(loss.item())
-                if verbose: plt.plot()
-                optimizer.zero_grad()
-                loss.backward()
-                optimizer.step()
-            scheduler.step()
-
-        return model, loss.item()
-
-    def sample_maps(self, frac: float) -> 'MolFrame':
-        r"""
-        Create a subsample of the dataset
-        :param frac: fraction of the dataset
-        :return: New MolFrame
-        """
-        subs = list(self.map.keys())
-        sampled = random.sample(subs, int(len(subs) * frac))
-        new_map = {}
-        gen_map = dd(set)
-        mol_structs = {}
-        for substrate in sampled:
-            new_map[substrate] = self.map[substrate]
-            gen_map[substrate] = self.gen_map[substrate]
-            for met in new_map[substrate]:
-                mol_structs[met] = self.mol_structs[met]
-            for product in gen_map[substrate]:
-                mol_structs[product] = self.mol_structs[product]
-        return MolFrame(new_map, gen_map=gen_map, mol_structs=mol_structs)
-    
-    def __getitem__(self, item: str) -> Tuple[Set[str], Set[str], Chem.Mol]:
-        return self.map[item], self.gen_map[item], self.mol_structs[item]
-
-    def label_reactions(self, rules: List[str]) -> None:
-        mapping_sample = self.metabolic_mapping(rules)
-        vecs = generate_vectors(mapping_sample, self.map, len(rules))
-        self.reaction_labels = vecs
-
-    def load_labels(self, path: str) -> None:
-        data = pd.read_csv(path).to_dict(orient='list')
-        self.reaction_labels = data
-
-    def train_val_test_split_by_scaffold(self,
-                                         train_frac: float = 0.7,
-                                         val_frac: float = 0.15,
-                                         test_frac: float = 0.15,
-                                         random_state: int = 42) -> List['MolFrame']:
-        """
-        Split the dataset by Bemis-Murcko scaffolds to ensure structurally novel molecules
-        in validation and test sets.
-
-        Args:
-            train_frac: Fraction of scaffolds for training
-            val_frac: Fraction of scaffolds for validation
-            test_frac: Fraction of scaffolds for testing
-            random_state: Random seed for reproducibility
-
-        Returns:
-            List of three MolFrame objects: [train, val, test]
-        """
-        from rdkit.Chem.Scaffolds import MurckoScaffold
-        from collections import defaultdict
-        import random
-
-        # Set random seed for reproducibility
-        random.seed(random_state)
-        np.random.seed(random_state)
-
-        def get_scaffold(smiles: str) -> str:
-            """Get Murcko scaffold for a molecule"""
-            try:
-                mol = self.mol_structs.get(smiles)
-                if mol is None:
-                    mol = Chem.MolFromSmiles(smiles)
-                scaffold = MurckoScaffold.GetScaffoldForMol(mol)
-                return Chem.MolToSmiles(scaffold)
-            except:
-                # If scaffold generation fails, use the molecule itself as "scaffold"
-                return smiles
-
-        # Group substrates by their scaffolds
-        scaffold_to_substrates = defaultdict(list)
-        for substrate in self.map.keys():
-            scaffold = get_scaffold(substrate)
-            scaffold_to_substrates[scaffold].append(substrate)
-
-        # Convert to list and shuffle
-        scaffolds = list(scaffold_to_substrates.keys())
-        random.shuffle(scaffolds)
-
-        # Calculate split indices
-        n_scaffolds = len(scaffolds)
-        train_idx = int(train_frac * n_scaffolds)
-        val_idx = train_idx + int(val_frac * n_scaffolds)
-
-        # Split scaffolds
-        train_scaffolds = scaffolds[:train_idx]
-        val_scaffolds = scaffolds[train_idx:val_idx]
-        test_scaffolds = scaffolds[val_idx:]
-
-        print(
-            f"Scaffold split: {len(train_scaffolds)} train, {len(val_scaffolds)} val, {len(test_scaffolds)} test scaffolds")
-
-        # Create substrate sets for each split
-        train_subs = set()
-        val_subs = set()
-        test_subs = set()
-
-        for scaffold in train_scaffolds:
-            train_subs.update(scaffold_to_substrates[scaffold])
-        for scaffold in val_scaffolds:
-            val_subs.update(scaffold_to_substrates[scaffold])
-        for scaffold in test_scaffolds:
-            test_subs.update(scaffold_to_substrates[scaffold])
-
-        print(f"Substrate split: {len(train_subs)} train, {len(val_subs)} val, {len(test_subs)} test substrates")
-
-        # Create MolFrames for each split
-        splits = []
-        for sub_set, split_name in zip([train_subs, val_subs, test_subs], ['train', 'val', 'test']):
-            split_map = {}
-            split_gen_map = dd(set)
-            split_mol_structs = {}
-
-            # Add substrates and their products
-            for substrate in sub_set:
-                if substrate in self.map:
-                    split_map[substrate] = self.map[substrate].copy()
-                    # Add molecular structures for substrate and its products
-                    split_mol_structs[substrate] = self.mol_structs[substrate]
-                    for product in split_map[substrate]:
-                        if product in self.mol_structs:
-                            split_mol_structs[product] = self.mol_structs[product]
-
-                if substrate in self.gen_map:
-                    split_gen_map[substrate] = self.gen_map[substrate].copy()
-                    # Add molecular structures for generated products
-                    for product in split_gen_map[substrate]:
-                        if product in self.mol_structs:
-                            split_mol_structs[product] = self.mol_structs[product]
-
-            # Create new MolFrame
-            split_molframe = MolFrame(split_map, gen_map=split_gen_map, mol_structs=split_mol_structs)
-
-            # Copy other attributes if they exist
-            if hasattr(self, 'negs') and self.negs:
-                for substrate in sub_set:
-                    if substrate in self.negs:
-                        split_molframe.negs[substrate] = self.negs[substrate].copy()
-
-            if hasattr(self, 'reaction_labels') and self.reaction_labels:
-                for substrate in sub_set:
-                    if substrate in self.reaction_labels:
-                        split_molframe.reaction_labels[substrate] = self.reaction_labels[substrate]
-
-            splits.append(split_molframe)
-            print(
-                f"{split_name} set: {len(split_map)} substrates, {sum(len(prods) for prods in split_map.values())} reactions")
-
-        return splits
-
-    def train_val_test_split_by_scaffold_stratified(self,
-                                                    train_frac: float = 0.7,
-                                                    val_frac: float = 0.15,
-                                                    test_frac: float = 0.15,
-                                                    min_scaffold_freq: int = 1,
-                                                    random_state: int = 42) -> List['MolFrame']:
-        """
-        Stratified scaffold split that ensures similar distribution of reaction types
-        across splits while maintaining scaffold separation.
-
-        Args:
-            train_frac: Fraction of data for training
-            val_frac: Fraction of data for validation
-            test_frac: Fraction of data for testing
-            min_scaffold_freq: Minimum frequency for a scaffold to be considered
-            random_state: Random seed for reproducibility
-        """
-        from rdkit.Chem.Scaffolds import MurckoScaffold
-        from collections import defaultdict
-        import random
-
-        random.seed(random_state)
-        np.random.seed(random_state)
-
-        def get_scaffold(smiles: str) -> str:
-            try:
-                mol = self.mol_structs.get(smiles)
-                if mol is None:
-                    mol = Chem.MolFromSmiles(smiles)
-                scaffold = MurckoScaffold.GetScaffoldForMol(mol)
-                return Chem.MolToSmiles(scaffold)
-            except:
-                return smiles
-
-        # Group by scaffolds and count reactions
-        scaffold_stats = defaultdict(lambda: {'substrates': set(), 'reaction_count': 0})
-
-        for substrate, products in self.map.items():
-            scaffold = get_scaffold(substrate)
-            scaffold_stats[scaffold]['substrates'].add(substrate)
-            scaffold_stats[scaffold]['reaction_count'] += len(products)
-
-        # Filter rare scaffolds
-        frequent_scaffolds = {scaffold: stats for scaffold, stats in scaffold_stats.items()
-                              if len(stats['substrates']) >= min_scaffold_freq}
-
-        # Sort scaffolds by number of reactions (descending)
-        sorted_scaffolds = sorted(frequent_scaffolds.keys(),
-                                  key=lambda x: scaffold_stats[x]['reaction_count'],
-                                  reverse=True)
-
-        # Assign scaffolds to splits to balance reaction counts
-        train_scaffolds = []
-        val_scaffolds = []
-        test_scaffolds = []
-
-        train_reaction_count = 0
-        val_reaction_count = 0
-        test_reaction_count = 0
-        total_reactions = sum(stats['reaction_count'] for stats in scaffold_stats.values())
-
-        target_train = total_reactions * train_frac
-        target_val = total_reactions * val_frac
-
-        for scaffold in sorted_scaffolds:
-            stats = scaffold_stats[scaffold]
-
-            # Assign to the split that needs more reactions
-            if train_reaction_count < target_train:
-                train_scaffolds.append(scaffold)
-                train_reaction_count += stats['reaction_count']
-            elif val_reaction_count < target_val:
-                val_scaffolds.append(scaffold)
-                val_reaction_count += stats['reaction_count']
-            else:
-                test_scaffolds.append(scaffold)
-                test_reaction_count += stats['reaction_count']
-
-        print(f"Stratified scaffold split:")
-        print(
-            f"Train: {len(train_scaffolds)} scaffolds, {train_reaction_count} reactions ({train_reaction_count / total_reactions:.1%})")
-        print(
-            f"Val: {len(val_scaffolds)} scaffolds, {val_reaction_count} reactions ({val_reaction_count / total_reactions:.1%})")
-        print(
-            f"Test: {len(test_scaffolds)} scaffolds, {test_reaction_count} reactions ({test_reaction_count / total_reactions:.1%})")
-
-        # Create substrate sets and MolFrames (same as in previous method)
-        train_subs = set()
-        val_subs = set()
-        test_subs = set()
-
-        for scaffold in train_scaffolds:
-            train_subs.update(scaffold_stats[scaffold]['substrates'])
-        for scaffold in val_scaffolds:
-            val_subs.update(scaffold_stats[scaffold]['substrates'])
-        for scaffold in test_scaffolds:
-            test_subs.update(scaffold_stats[scaffold]['substrates'])
-
-        return self._create_split_molframes(train_subs, val_subs, test_subs)
-
-    def _create_split_molframes(self, train_subs: set, val_subs: set, test_subs: set) -> List['MolFrame']:
-        """Helper method to create MolFrames from substrate sets"""
-        splits = []
-        for sub_set, split_name in zip([train_subs, val_subs, test_subs], ['train', 'val', 'test']):
-            split_map = {}
-            split_gen_map = dd(set)
-            split_mol_structs = {}
-
-            for substrate in sub_set:
-                if substrate in self.map:
-                    split_map[substrate] = self.map[substrate].copy()
-                    split_mol_structs[substrate] = self.mol_structs[substrate]
-                    for product in split_map[substrate]:
-                        if product in self.mol_structs:
-                            split_mol_structs[product] = self.mol_structs[product]
-
-                if substrate in self.gen_map:
-                    split_gen_map[substrate] = self.gen_map[substrate].copy()
-                    for product in split_gen_map[substrate]:
-                        if product in self.mol_structs:
-                            split_mol_structs[product] = self.mol_structs[product]
-
-            split_molframe = MolFrame(split_map, gen_map=split_gen_map, mol_structs=split_mol_structs)
-
-            # Copy other attributes
-            for attr in ['negs', 'reaction_labels']:
-                if hasattr(self, attr) and getattr(self, attr):
-                    for substrate in sub_set:
-                        if substrate in getattr(self, attr):
-                            getattr(split_molframe, attr)[substrate] = getattr(self, attr)[substrate]
-
-            splits.append(split_molframe)
-
-        return splits
-
-    def subset_from_substrates(self, substrate_list: list[str]) -> 'MolFrame':
-        """
-        Return a new MolFrame that keeps only the substrates in *substrate_list*
-        together with their real / generated / negative products and molecular
-        objects.
-        """
-        from collections import defaultdict as dd
-        new_map = {s: self.map[s] for s in substrate_list if s in self.map}
-        new_gen_map = {s: self.gen_map[s] for s in substrate_list if s in self.gen_map}
-        new_negs = {s: self.negs[s] for s in substrate_list if s in self.negs}
-        # molecular structures
-        mols = {}
-        for s in substrate_list:
-            if s in self.mol_structs:
-                mols[s] = self.mol_structs[s]
-                for p in new_map.get(s, []):
-                    if p in self.mol_structs:
-                        mols[p] = self.mol_structs[p]
-                for p in new_gen_map.get(s, []):
-                    if p in self.mol_structs:
-                        mols[p] = self.mol_structs[p]
-                for p in new_negs.get(s, []):
-                    if p in self.mol_structs:
-                        mols[p] = self.mol_structs[p]
-        # copy other attributes that may already exist
-        new = MolFrame(new_map, gen_map=dd(set, new_gen_map), mol_structs=mols)
-        new.negs = dd(set, new_negs)
-        # graphs / singles / morgan / labels – keep untouched (will be rebuilt if needed)
-        if hasattr(self, "graphs"):
-            new.graphs = dd(list, {s: self.graphs[s] for s in substrate_list if s in self.graphs})
-        if hasattr(self, "single"):
-            new.single = {k: v for k, v in self.single.items() if k in mols}
-        if hasattr(self, "morgan"):
-            new.morgan = {k: v for k, v in self.morgan.items() if k in mols}
-        if hasattr(self, "reaction_labels"):
-            new.reaction_labels = {s: self.reaction_labels[s]
-                                   for s in substrate_list if s in self.reaction_labels}
-        return new
+            dataset = self._single_dataset()
+            if not dataset:
+                raise ValueError("Single graphs are not prepared")
+
+            def collate(items: List[Tuple[Data, Data]]) -> Tuple[Batch, Batch]:
+                left = Batch.from_data_list([item[0] for item in items])
+                right = Batch.from_data_list([item[1] for item in items])
+                return left, right
+
+            loader = DataLoader(dataset, batch_size=64, collate_fn=collate)
+            for sub_batch, prod_batch in loader:
+                output = model(sub_batch, prod_batch).view(-1)
+                preds.extend(cpunum(output).tolist())
+                binary.extend((cpunum(output) > threshold).astype(int).tolist())
+                targets.extend(cpunum(prod_batch.y.view(-1)).astype(int).tolist())
+
+        if len(set(targets)) < 2:
+            return 0.0, 0.0
+        return matthews_corrcoef(targets, binary), roc_auc_score(targets, preds)
+
+    def __repr__(self) -> str:
+        return f"MolFrame(substrates={len(self.map)}, positives={sum(len(products) for products in self.map.values())}, negatives={sum(len(products) for products in self.negs.values())})"
+
+    __str__ = __repr__
+
+
+def _invalid_pair_graph(label: float, product: str) -> Data:
+    graph = Data(
+        x=torch.zeros((1, PAIR_NODE_DIM), dtype=torch.float32),
+        edge_index=torch.empty((2, 0), dtype=torch.long),
+        edge_attr=torch.empty((0, EDGE_DIM), dtype=torch.float32),
+    )
+    graph.fp = torch.zeros((1, 2 * FINGERPRINT_DIM), dtype=torch.float32)
+    graph.y = torch.tensor([label], dtype=torch.float32)
+    graph.smiles = product
+    graph.fallback_pair = 1
+    graph.invalid_pair = 1
+    return graph
+
+
+class _LazyPairDataset(torch.utils.data.Dataset):
+    def __init__(
+        self,
+        frame: MolFrame,
+        records: Sequence[Tuple[str, str, float]],
+        node_path: Optional[Path] = None,
+        edge_path: Optional[Path] = None,
+    ) -> None:
+        self.frame = frame
+        self.records = list(records)
+        self.node_path = node_path
+        self.edge_path = edge_path
+
+    def __len__(self) -> int:
+        return len(self.records)
+
+    def __getitem__(self, index: int) -> Data:
+        substrate, product, label = self.records[index]
+        sub_mol = self.frame.mol_structs.get(substrate)
+        prod_mol = self.frame.mol_structs.get(product)
+        if sub_mol is None or prod_mol is None:
+            return _invalid_pair_graph(label, product)
+
+        graph = build_pair_graph(sub_mol, prod_mol)
+        if graph is None:
+            return _invalid_pair_graph(label, product)
+
+        graph = _maybe_project_graph(graph, node_path=self.node_path, edge_path=self.edge_path)
+        graph.y = torch.tensor([label], dtype=torch.float32)
+        graph.smiles = product
+        return graph

@@ -1,477 +1,410 @@
-import gc
-import re
-from functools import wraps
-from threading import Timer
+from __future__ import annotations
 
-from rdkit import Chem
-from rdkit.Chem import AllChem
-
-from torch_geometric.data import Data
-from rdkit.Chem import rdEHTTools
-from rdkit.Chem import rdFMCS
-import torch
-from typing import List, Dict, Any, Optional
-from torch_geometric.transforms import AddLaplacianEigenvectorPE
-from numpy.linalg import eig
-from torch_geometric.utils import (
-    get_laplacian,
-    to_scipy_sparse_matrix
-)
+from dataclasses import dataclass
+from typing import Any, Dict, Iterable, List, Optional, Sequence
 
 import numpy as np
+import torch
+from rdkit import Chem
+from rdkit.Chem import rdFMCS
 from rdkit.Chem import rdFingerprintGenerator
-from torch import tensor
+from torch import Tensor
+from torch_geometric.data import Data
 
-bond_types = np.array([[0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                       [1., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                       [1., 1., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                       [1., 1., 1., 0., 0., 0., 0., 0., 0., 0., 0.],
-                       [1., 1., 1., 1., 0., 0., 0., 0., 0., 0., 0.],
-                       [1., 1., 1., 1., 1., 0., 0., 0., 0., 0., 0.],
-                       [1., 1., 1., 1., 1., 1., 0., 0., 0., 0., 0.],
-                       [1., 0.5, 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                       [1., 1., 0.5, 0., 0., 0., 0., 0., 0., 0., 0.],
-                       [1., 1., 1., 0.5, 0., 0., 0., 0., 0., 0., 0.],
-                       [1., 1., 1., 1., 0.5, 0., 0., 0., 0., 0., 0.],
-                       [1., 1., 1., 1., 1., 0.5, 0., 0., 0., 0., 0.],
-                       [1., 1., 0., 0., 0., 0., 1., 0., 0., 0., 0.],
-                       [0., 0., 0., 0., 0., 0., 0., 1., 0., 0., 0.],
-                       [0., 0., 0., 0., 0., 0., 0., 0., 1., 0., 0.],
-                       [1., 0., 0., 0., 0., 0., 0., 0., 0., 1., 0.],
-                       [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 1.],
-                       [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 1.],
-                       [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 1.],
-                       [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 1.],
-                       [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
-                       [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]])
+SINGLE_NODE_DIM = 16
+PAIR_NODE_DIM = 18
+EDGE_DIM = 18
+FINGERPRINT_DIM = 1024
 
-x_map: Dict[str, List[Any]] = {
-    'chirality': [
-        'CHI_UNSPECIFIED',
-        'CHI_TETRAHEDRAL_CW',
-        'CHI_TETRAHEDRAL_CCW',
-        'CHI_OTHER',
-        'CHI_TETRAHEDRAL',
-        'CHI_ALLENE',
-        'CHI_SQUAREPLANAR',
-        'CHI_TRIGONALBIPYRAMIDAL',
-        'CHI_OCTAHEDRAL',
+_BOND_FEATURES = np.array(
+    [
+        [0.0] * 11,
+        [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [1.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [1.0, 1.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [1.0, 1.0, 1.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [1.0, 1.0, 1.0, 1.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [1.0, 1.0, 1.0, 1.0, 1.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0],
+        [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0],
     ],
-    'hybridization': list(np.eye(8)),
+    dtype=np.float32,
+)
+
+_HYBRIDIZATION_INDEX: Dict[int, int] = {
+    int(Chem.rdchem.HybridizationType.UNSPECIFIED): 0,
+    int(Chem.rdchem.HybridizationType.S): 1,
+    int(Chem.rdchem.HybridizationType.SP): 2,
+    int(Chem.rdchem.HybridizationType.SP2): 3,
+    int(Chem.rdchem.HybridizationType.SP3): 4,
+    int(Chem.rdchem.HybridizationType.SP2D): 5,
+    int(Chem.rdchem.HybridizationType.SP3D): 6,
+    int(Chem.rdchem.HybridizationType.SP3D2): 7,
 }
 
-e_map: Dict[str, List[Any]] = {
-    'bond_type': list(bond_types),
-    'stereo': list(np.eye(6)),
+_ATOM_TOKENS = np.eye(16, dtype=np.float32)
+_TOKEN_EMBEDDINGS: Dict[str, np.ndarray] = {
+    "6": _ATOM_TOKENS[0],
+    "7": _ATOM_TOKENS[1],
+    "8": _ATOM_TOKENS[2],
+    "9": _ATOM_TOKENS[3],
+    "15": _ATOM_TOKENS[4],
+    "16": _ATOM_TOKENS[5],
+    "17": _ATOM_TOKENS[6],
+    "35": _ATOM_TOKENS[7],
+    "53": _ATOM_TOKENS[8],
+    "C": _ATOM_TOKENS[0],
+    "N": _ATOM_TOKENS[1],
+    "O": _ATOM_TOKENS[2],
+    "F": _ATOM_TOKENS[3],
+    "P": _ATOM_TOKENS[4],
+    "S": _ATOM_TOKENS[5],
+    "Cl": _ATOM_TOKENS[6],
+    "Br": _ATOM_TOKENS[7],
+    "I": _ATOM_TOKENS[8],
+    "c": _ATOM_TOKENS[9],
+    "n": _ATOM_TOKENS[10],
+    "o": _ATOM_TOKENS[2],
+    "s": _ATOM_TOKENS[5],
+    "H": _ATOM_TOKENS[14],
+    "X": _ATOM_TOKENS[15],
+    "R": _ATOM_TOKENS[15],
+    "*": np.ones(16, dtype=np.float32),
+    "-": _ATOM_TOKENS[13],
+    "=": _ATOM_TOKENS[12] + _ATOM_TOKENS[13],
+    ":": _ATOM_TOKENS[13] + 0.5 * _ATOM_TOKENS[12],
 }
 
-oh_matrix = np.eye(16)
-one_hot = {
-    '6': oh_matrix[0],
-    '7': oh_matrix[1],
-    '8': oh_matrix[2],
-    '9': oh_matrix[3],
-    '15': oh_matrix[4],
-    '16': oh_matrix[5],
-    '17': oh_matrix[6],
-    '35': oh_matrix[7],
-    '53': oh_matrix[8],
-    'P': oh_matrix[4],
-    'S': oh_matrix[5],
-    'C': oh_matrix[0],
-    'B': oh_matrix[0],
-    'c': oh_matrix[9],
-    'n': oh_matrix[10],
-    's': oh_matrix[5],
-    'N': oh_matrix[1],
-    'O': oh_matrix[2],
-    'o': oh_matrix[2],
-    'F': oh_matrix[3],
-    'Cl': oh_matrix[6],
-    'Br': oh_matrix[7],
-    'I': oh_matrix[8],
-    '=': oh_matrix[12] + oh_matrix[13],
-    '-': oh_matrix[13],
-    ':': oh_matrix[13] + 0.5*oh_matrix[12],
-    'H': oh_matrix[14],
-    'X': oh_matrix[15],
-    'R': oh_matrix[15],
-    '*': np.ones(16)
-}
+_MORGAN_GENERATOR = rdFingerprintGenerator.GetMorganGenerator(
+    includeChirality=True,
+    fpSize=FINGERPRINT_DIM,
+    countSimulation=False,
+)
 
-def timeout(seconds: float = 30):
 
-    def decorator(func):
+def _safe_charge(atom: Chem.Atom) -> float:
+    try:
+        value = atom.GetProp("_GasteigerCharge")
+        charge = float(value)
+        if np.isfinite(charge):
+            return charge
+    except Exception:
+        pass
+    return 0.0
 
-        @wraps(func)
-        def _handle_timeout(*args, **kwargs):
 
-            def _raise_timeout():
-                raise TimeoutError
+def _hybridization_vector(atom: Chem.Atom) -> np.ndarray:
+    out = np.zeros(8, dtype=np.float32)
+    index = _HYBRIDIZATION_INDEX.get(int(atom.GetHybridization()), 0)
+    out[index] = 1.0
+    return out
 
-            timer = Timer(seconds, _raise_timeout)
-            timer.start()
-            try:
-                result = func(*args, **kwargs)
-            except TimeoutError:
-                print('timeout')
-                gc.collect()
-                return None
-            finally:
-                timer.cancel()
-            return result
 
-        return _handle_timeout
+def _atom_features(atom: Chem.Atom) -> List[float]:
+    features: List[float] = [
+        atom.GetAtomicNum() / 118.0,
+        atom.GetTotalDegree() / 8.0,
+        float(atom.GetFormalCharge()),
+        atom.GetTotalNumHs() / 4.0,
+        atom.GetNumRadicalElectrons() / 4.0,
+    ]
+    features.extend(_hybridization_vector(atom).tolist())
+    features.append(float(atom.GetIsAromatic()))
+    features.append(float(atom.IsInRing()))
+    features.append(_safe_charge(atom))
+    return features
 
-    return decorator
+
+def _bond_features(bond: Chem.Bond) -> List[float]:
+    bond_type_idx = min(int(bond.GetBondType()), len(_BOND_FEATURES) - 1)
+    stereo = np.zeros(6, dtype=np.float32)
+    stereo_idx = min(int(bond.GetStereo()), 5)
+    stereo[stereo_idx] = 1.0
+    return (
+        _BOND_FEATURES[bond_type_idx].tolist()
+        + stereo.tolist()
+        + [float(bond.GetIsConjugated())]
+    )
+
+
+def _empty_edge_tensors(edge_dim: int = EDGE_DIM) -> tuple[Tensor, Tensor]:
+    edge_index = torch.empty((2, 0), dtype=torch.long)
+    edge_attr = torch.empty((0, edge_dim), dtype=torch.float32)
+    return edge_index, edge_attr
+
+
+def _sort_edges(edge_index: Tensor, edge_attr: Tensor, num_nodes: int) -> tuple[Tensor, Tensor]:
+    if edge_index.numel() == 0:
+        return edge_index, edge_attr
+    perm = (edge_index[0] * max(num_nodes, 1) + edge_index[1]).argsort()
+    return edge_index[:, perm], edge_attr[perm]
+
+
+def _fingerprint(mol: Chem.Mol) -> Tensor:
+    fp = np.asarray(_MORGAN_GENERATOR.GetFingerprint(mol), dtype=np.float32)
+    return torch.tensor(fp, dtype=torch.float32).view(1, -1)
+
+
+def _prepare_molecule(mol: Chem.Mol) -> Chem.Mol:
+    prepared = Chem.Mol(mol)
+    try:
+        Chem.rdPartialCharges.ComputeGasteigerCharges(prepared)
+    except Exception:
+        pass
+    return prepared
+
+
+def _edge_list_from_mol(mol: Chem.Mol, offset: int = 0) -> tuple[List[List[int]], List[List[float]]]:
+    edge_indices: List[List[int]] = []
+    edge_attrs: List[List[float]] = []
+    for bond in mol.GetBonds():
+        begin = bond.GetBeginAtomIdx() + offset
+        end = bond.GetEndAtomIdx() + offset
+        features = _bond_features(bond)
+        edge_indices.extend([[begin, end], [end, begin]])
+        edge_attrs.extend([features, features])
+    return edge_indices, edge_attrs
+
 
 def from_rdmol(mol: Any) -> Optional[Data]:
-    r"""Converts a :class:`rdkit.Chem.Mol` instance to a
-    :class:`torch_geometric.data.Data` instance.
+    if not isinstance(mol, Chem.Mol):
+        return None
 
-    Args:
-        mol (rdkit.Chem.Mol): The :class:`rdkit` molecule.
-    """
+    prepared = _prepare_molecule(mol)
+    x_rows = [_atom_features(atom) for atom in prepared.GetAtoms()]
+    if not x_rows:
+        return None
 
-    assert isinstance(mol, Chem.Mol)
-    mol.ComputeGasteigerCharges()
+    x = torch.tensor(x_rows, dtype=torch.float32).view(-1, SINGLE_NODE_DIM)
+    edge_indices, edge_attrs = _edge_list_from_mol(prepared)
+    if edge_indices:
+        edge_index = torch.tensor(edge_indices, dtype=torch.long).t().contiguous()
+        edge_attr = torch.tensor(edge_attrs, dtype=torch.float32).view(-1, EDGE_DIM)
+        edge_index, edge_attr = _sort_edges(edge_index, edge_attr, x.size(0))
+    else:
+        edge_index, edge_attr = _empty_edge_tensors()
 
-    xs: List[List[float]] = []
-    for atom in mol.GetAtoms():  # type: ignore
-        row: List[float] = []
-        row.append(atom.GetAtomicNum() / 83)
-        row.append(atom.GetTotalDegree() / 11)
-        row.append(atom.GetFormalCharge())
-        row.append(atom.GetTotalNumHs() / 9)
-        row.append(atom.GetNumRadicalElectrons() / 5)
-        row.extend(x_map['hybridization'][int(atom.GetHybridization())])
-        row.append(int(atom.GetIsAromatic()))
-        row.append(int(atom.IsInRing()))
-        row.append(float(atom.GetProp('_GasteigerCharge')))
-        xs.append(row)
-        if len(row) == 15:
-            return None
-
-    x = torch.tensor(xs, dtype=torch.float32).view(-1, 16)
-
-    edge_indices, edge_attrs = [], []
-    for bond in mol.GetBonds():  # type: ignore
-        i = bond.GetBeginAtomIdx()
-        j = bond.GetEndAtomIdx()
-
-        e = []
-        e.extend(e_map['bond_type'][int(bond.GetBondType())])
-        e.extend(e_map['stereo'][int(bond.GetStereo())])
-        e.append(int(bond.GetIsConjugated()))
-
-        edge_indices += [[i, j], [j, i]]
-        edge_attrs += [e, e]
-
-    edge_index = torch.tensor(edge_indices)
-    edge_index = edge_index.t().to(torch.long).view(2, -1)
-    edge_attr = torch.tensor(edge_attrs, dtype=torch.float32).view(-1, 18)
-
-    if edge_index.numel() > 0:  # Sort indices.
-        perm = (edge_index[0] * x.size(0) + edge_index[1]).argsort()
-        edge_index, edge_attr = edge_index[:, perm], edge_attr[perm]
-
-    morgan_fp_gen = rdFingerprintGenerator.GetMorganGenerator(
-        includeChirality=True, fpSize=1024, countSimulation=False)
-    fp = tensor([morgan_fp_gen.GetFingerprint(mol)], dtype=torch.float32)
     graph = Data(x=x, edge_index=edge_index, edge_attr=edge_attr)
-    graph.fp = fp
+    graph.fp = _fingerprint(prepared)
     return graph
 
-@timeout(seconds=30)
+
 def from_pair(mol1: Any, mol2: Any) -> Optional[Data]:
-    r"""Converts a pair of :class:`rdkit.Chem.Mol` objects to a
-    :class:`torch_geometric.data.Data` graph with connected
-    largest common substructures.
+    if not isinstance(mol1, Chem.Mol) or not isinstance(mol2, Chem.Mol):
+        return None
 
-    Args:
-        mol1 (rdkit.Chem.Mol): The :class:`rdkit` molecule.
-        mol2 (rdkit.Chem.Mol): The :class:`rdkit` molecule.
-    """
-
-    assert isinstance(mol1, Chem.Mol) & isinstance(mol2, Chem.Mol)
-    mol1.ComputeGasteigerCharges()
-    mol2.ComputeGasteigerCharges()
-
-    xs: List[List[float]] = []
-    for atom in mol1.GetAtoms():  # type: ignore
-        row: List[float] = []
-        row.append(atom.GetAtomicNum() / 83)
-        row.append(atom.GetTotalDegree() / 11)
-        row.append(atom.GetFormalCharge())
-        row.append(atom.GetTotalNumHs() / 9)
-        row.append(atom.GetNumRadicalElectrons() / 5)
-        row.extend(x_map['hybridization'][int(atom.GetHybridization())])
-        row.append(int(atom.GetIsAromatic()))
-        row.append(int(atom.IsInRing()))
-        row.append(float(atom.GetProp('_GasteigerCharge')))
-        row.append(0)
-        xs.append(row)
-
-    for atom in mol2.GetAtoms():
-        row: List[float] = []
-        row.append(atom.GetAtomicNum() / 83)
-        row.append(atom.GetTotalDegree() / 11)
-        row.append(atom.GetFormalCharge())
-        row.append(atom.GetTotalNumHs() / 9)
-        row.append(atom.GetNumRadicalElectrons() / 5)
-        row.extend(x_map['hybridization'][int(atom.GetHybridization())])
-        row.append(int(atom.GetIsAromatic()))
-        row.append(int(atom.IsInRing()))
-        row.append(float(atom.GetProp('_GasteigerCharge')))
-        row.append(1)
-        xs.append(row)
-
-    xs.append(list(np.zeros(17)))
-    xs.append(list(np.zeros(17)))
-
-    x = torch.tensor(xs, dtype=torch.float32).view(-1, 17)
-
-    edge_indices, edge_attrs = [], []
-    idxs = set()
-    count_1 = 0
-    for bond in mol1.GetBonds():  # type: ignore
-        i = bond.GetBeginAtomIdx()
-        idxs.add(i)
-        j = bond.GetEndAtomIdx()
-        idxs.add(j)
-
-        e = []
-        e.extend(e_map['bond_type'][int(bond.GetBondType())])
-        e.extend(e_map['stereo'][int(bond.GetStereo())])
-        e.append(int(bond.GetIsConjugated()))
-
-        count_1 += 2
-        edge_indices += [[i, j], [j, i]]
-        edge_attrs += [e, e]
-
-    idx_1 = max(list(idxs))
-    count_2 = 0
-    second_indices = []
-    for bond in mol2.GetBonds():  # type: ignore
-        i = bond.GetBeginAtomIdx() + idx_1 + 1
-        j = bond.GetEndAtomIdx() + idx_1 + 1
-
-        e = []
-        e.extend(e_map['bond_type'][int(bond.GetBondType())])
-        e.extend(e_map['stereo'][int(bond.GetStereo())])
-        e.append(int(bond.GetIsConjugated()))
-
-        count_2 += 2
-        edge_indices += [[i, j], [j, i]]
-        second_indices += [[i - idx_1 - 1, j - idx_1 - 1], [j - idx_1 - 1, i - idx_1 - 1]]
-        edge_attrs += [e, e]
+    prepared1 = _prepare_molecule(mol1)
+    prepared2 = _prepare_molecule(mol2)
+    graph1 = from_rdmol(prepared1)
+    graph2 = from_rdmol(prepared2)
+    if graph1 is None or graph2 is None:
+        return None
 
     try:
-        edge_index_1, edge_weight_1 = get_laplacian(
-            torch.tensor(edge_indices[:count_1], dtype=torch.int64).T,
-            normalization='sym',
-            num_nodes=count_1
+        common = rdFMCS.FindMCS(
+            [prepared1, prepared2],
+            atomCompare=rdFMCS.AtomCompare.CompareAnyHeavyAtom,
+            bondCompare=rdFMCS.BondCompare.CompareAny,
+            timeout=5,
         )
-    except IndexError:
-        return None
+        common_mol = Chem.MolFromSmarts(common.smartsString) if common.smartsString else None
+    except Exception:
+        common_mol = None
 
-    try:
-        edge_index_2, edge_weight_2 = get_laplacian(
-            torch.tensor(second_indices, dtype=torch.int64).T,
-            normalization='sym',
-            num_nodes=count_2
-        )
-    except IndexError:
-        return None
+    common_sub = set(prepared1.GetSubstructMatch(common_mol)) if common_mol else set()
+    common_prod = set(prepared2.GetSubstructMatch(common_mol)) if common_mol else set()
 
-    L1 = to_scipy_sparse_matrix(edge_index_1, edge_weight_1, count_1)
-    L2 = to_scipy_sparse_matrix(edge_index_2, edge_weight_2, count_2)
-    eig_vals, eig_vecs = eig(L1.todense())
-    eig_vecs = np.real(eig_vecs[:, eig_vals.argsort()])
-    pe = torch.from_numpy(eig_vecs[:, 1:1 + 1])
-    pe = pe[pe.nonzero()].squeeze(dim=-1)[..., 0].unsqueeze(-1)
-    eig_vals, eig_vecs = eig(L2.todense())
-    eig_vecs = np.real(eig_vecs[:, eig_vals.argsort()])
-    sec_pe = torch.from_numpy(eig_vecs[:, 1:1 + 1])
-    sec_pe = sec_pe[sec_pe.nonzero()].squeeze(-1)[..., 0].unsqueeze(-1)
-    pe = torch.cat((pe, sec_pe, torch.tensor([[0], [0]])), dim=0)
-    sign = -1 + 2 * torch.randint(0, 2, (1,))
-    pe *= sign
+    x1 = torch.cat(
+        (
+            graph1.x,
+            torch.zeros((graph1.x.size(0), 1), dtype=torch.float32),
+            torch.tensor([[1.0 if idx in common_sub else 0.0] for idx in range(graph1.x.size(0))]),
+        ),
+        dim=1,
+    )
+    x2 = torch.cat(
+        (
+            graph2.x,
+            torch.ones((graph2.x.size(0), 1), dtype=torch.float32),
+            torch.tensor([[1.0 if idx in common_prod else 0.0] for idx in range(graph2.x.size(0))]),
+        ),
+        dim=1,
+    )
+    x = torch.cat((x1, x2), dim=0).view(-1, PAIR_NODE_DIM)
 
-    common = rdFMCS.FindMCS([mol1, mol2],
-                            atomCompare=rdFMCS.AtomCompare.CompareAnyHeavyAtom,
-                            bondCompare=rdFMCS.BondCompare.CompareAny, timeout=10)
-    common_struct = Chem.MolFromSmarts(common.smartsString)
-    virtual_1 = len(xs) - 2
-    virtual_2 = len(xs) - 1
+    edge_indices, edge_attrs = _edge_list_from_mol(prepared1)
+    offset = graph1.x.size(0)
+    edge_indices_2, edge_attrs_2 = _edge_list_from_mol(prepared2, offset=offset)
+    edge_indices.extend(edge_indices_2)
+    edge_attrs.extend(edge_attrs_2)
 
-    for i in mol1.GetSubstructMatch(common_struct):
-        edge_indices += [[i, virtual_1], [virtual_1, i]]
-        e = list(np.zeros(18))
-        edge_attrs += [e, e]
-    for i in mol2.GetSubstructMatch(common_struct):
-        edge_indices += [[i + idx_1 + 1, virtual_2], [virtual_2, i + idx_1 + 1]]
-        e = list(np.zeros(18))
-        edge_attrs += [e, e]
+    if common_sub and common_prod:
+        for left, right in zip(sorted(common_sub), sorted(common_prod)):
+            features = [0.0] * EDGE_DIM
+            edge_indices.extend([[left, offset + right], [offset + right, left]])
+            edge_attrs.extend([features, features])
 
-    edge_indices += [[virtual_1, virtual_2], [virtual_2, virtual_1]]
-    e = list(np.zeros(18))
-    edge_attrs += [e, e]
-    try:
-        x = torch.cat((x, pe), dim=-1)
-    except RuntimeError:
-        return None
-    edge_index = torch.tensor(edge_indices)
-    edge_index = edge_index.t().to(torch.double).view(2, -1)
-    torch.tensor(edge_attrs, dtype=torch.double)
-    edge_attr = torch.tensor(edge_attrs, dtype=torch.float32).view(-1, 18)
+    if edge_indices:
+        edge_index = torch.tensor(edge_indices, dtype=torch.long).t().contiguous()
+        edge_attr = torch.tensor(edge_attrs, dtype=torch.float32).view(-1, EDGE_DIM)
+        edge_index, edge_attr = _sort_edges(edge_index, edge_attr, x.size(0))
+    else:
+        edge_index, edge_attr = _empty_edge_tensors()
 
-    if edge_index.numel() > 0:  # Sort indices.
-        perm = (edge_index[0] * x.size(0) + edge_index[1]).argsort()
-        edge_index, edge_attr = edge_index[:, perm], edge_attr[perm]
-
-    morgan_fp_gen = rdFingerprintGenerator.GetMorganGenerator(
-        includeChirality=True, fpSize=1024, countSimulation=False)
-    fp1 = tensor([morgan_fp_gen.GetFingerprint(mol1)], dtype=torch.float32)
-    fp2 = tensor([morgan_fp_gen.GetFingerprint(mol2)], dtype=torch.float32)
-    fp = torch.concat((fp1, fp2), dim=1)
     graph = Data(x=x, edge_index=edge_index, edge_attr=edge_attr)
-    graph.fp = fp
+    graph.fp = torch.cat((_fingerprint(prepared1), _fingerprint(prepared2)), dim=1)
     return graph
 
 
-def apply_operation(vec1, vec2, operator):
-    if operator in [';', '&']:
+def apply_operation(vec1: np.ndarray, vec2: np.ndarray, operator: str) -> np.ndarray:
+    if operator in {";", "&"}:
         return vec1 + vec2
-    elif operator == ',':
-        return (vec1 + vec2) / 2
-    elif operator == '!':
+    if operator == ",":
+        return (vec1 + vec2) / 2.0
+    if operator == "!":
         return -vec1
-    return vec1  # В случае неизвестной операции возвращаем vec1
+    return vec1
 
 
-# Функция для разбора выражения
-def parse_expression(expr):
-    expr = expr.replace('[', '(').replace(']', ')')
-    tokens = re.findall(r'(\d+|[HcCOSPFBrlI=\-&,();:X])', expr)
-    stack = []
-    current_vec = np.zeros(16)
-    operators = []
-
-    for i, token in enumerate(tokens):
-        try:
-            if token == 'C' and tokens[i + 1] == 'l':
-                tokens[i] += 'l'
-            elif token == 'B' and tokens[i + 1] == 'r':
-                tokens[i] += 'r'
-        except IndexError:
-            pass
+def parse_expression(expr: str) -> np.ndarray:
+    expr = expr.replace("#", "")
+    expr = expr.replace("[", "(").replace("]", ")")
+    tokens = list(_tokenize_expression(expr))
+    stack: List[str] = []
+    current_vec = np.zeros(16, dtype=np.float32)
 
     for token in tokens:
-        if token.isdigit():  # Если это число
-            if stack and stack[-1] in ['H', 'X', 'R']:  # Да, это H или X
-                atom = stack.pop()
-                current_vec += one_hot[atom] * int(token)
-                continue
+        if token.isdigit() and stack and stack[-1] in {"H", "X", "R"}:
+            atom = stack.pop()
+            current_vec += _TOKEN_EMBEDDINGS[atom] * int(token)
+            continue
 
-        if token in one_hot:  # Если это атом
+        if token in _TOKEN_EMBEDDINGS:
             stack.append(token)
-            current_vec += one_hot[token]
+            current_vec += _TOKEN_EMBEDDINGS[token]
+            continue
 
-        elif token in [';', ',', '&', '!']:  # Если это операция
-            operators.append(token)
-
-        elif token == '(':  # Начало подвыражения
+        if token == "(":
             stack.append(token)
+            continue
 
-        elif token == ')':  # Конец подвыражения
-            sub_vec = np.zeros(16)
-            while stack and stack[-1] != '(':
-                sub_vec += one_hot[stack.pop()]
-            stack.pop()  # Удаляем '('
-            current_vec += sub_vec  # Добавляем подвыражение к текущему
+        if token == ")":
+            sub_vec = np.zeros(16, dtype=np.float32)
+            while stack and stack[-1] != "(":
+                sub_vec += _TOKEN_EMBEDDINGS.get(stack.pop(), 0.0)
+            if stack and stack[-1] == "(":
+                stack.pop()
+            current_vec += sub_vec
+
     return current_vec
 
 
-def from_rule(rule: str) -> Data:
-    sub, prod = [
-        Chem.MolFromSmarts(mol)
-        if not mol.startswith('(') else Chem.MolFromSmarts(mol[1:-1])
-        for mol in rule.split('>>')
-    ]
-    xs = []
-    for atom in sub.GetAtoms():
-        if atom.GetSmarts().startswith('['):
-            xs.append(parse_expression(atom.GetSmarts()[1:-1].split(':')[0]))
-        else:
-            xs.append(one_hot[atom.GetSmarts()])
-    for atom in prod.GetAtoms():
-        if atom.GetSmarts().startswith('['):
-            xs.append(parse_expression(atom.GetSmarts()[1:-1].split(':')[0]))
-        else:
-            xs.append(one_hot[atom.GetSmarts()])
-    x = torch.tensor(xs, dtype=torch.float32).view(-1, 16)
+def _tokenize_expression(expr: str) -> Iterable[str]:
+    raw = Chem.MolFromSmarts(f"[{expr}]")
+    if raw is None:
+        for token in ("Cl", "Br"):
+            expr = expr.replace(token, f" {token} ")
+        for char in "()!;,&:-=XRHCONSPFIcnosp0123456789":
+            expr = expr.replace(char, f" {char} ")
+        return [token for token in expr.split() if token]
 
-    edge_indices, edge_attrs = [], []
-    idxs = set()
-    count_1 = 0
-    for bond in sub.GetBonds():  # type: ignore
-        i = bond.GetBeginAtomIdx()
-        idxs.add(i)
-        j = bond.GetEndAtomIdx()
-        idxs.add(j)
-
-        e = []
-        e.extend(e_map['bond_type'][int(bond.GetBondType())])
-        e.extend(e_map['stereo'][int(bond.GetStereo())])
-        e.append(int(bond.GetIsConjugated()))
-
-        count_1 += 2
-        edge_indices += [[i, j], [j, i]]
-        edge_attrs += [e, e]
-
-    try:
-        idx_1 = max(list(idxs))
-    except Exception:
-        idx_1 = 0
-    count_2 = 0
-    second_indices = []
-    for bond in prod.GetBonds():  # type: ignore
-        i = bond.GetBeginAtomIdx() + idx_1 + 1
-        j = bond.GetEndAtomIdx() + idx_1 + 1
-
-        e = []
-        e.extend(e_map['bond_type'][int(bond.GetBondType())])
-        e.extend(e_map['stereo'][int(bond.GetStereo())])
-        e.append(int(bond.GetIsConjugated()))
-
-        count_2 += 2
-        edge_indices += [[i, j], [j, i]]
-        second_indices += [[i - idx_1 - 1, j - idx_1 - 1],
-                           [j - idx_1 - 1, i - idx_1 - 1]]
-        edge_attrs += [e, e]
-
-    for atom in sub.GetAtoms():
-        try:
-            num = atom.GetProp('molAtomMapNumber')
-        except KeyError:
+    tokens: List[str] = []
+    current = ""
+    for char in expr:
+        if char.isalnum():
+            current += char
             continue
-        for sec_atom in prod.GetAtoms():
-            try:
-                if sec_atom.GetProp('molAtomMapNumber') == num:
-                    a, b = atom.GetIdx(), sec_atom.GetIdx() + idx_1 + 1
-                    edge_indices += [[a, b], [b, a]]
-                    e = list(np.zeros(18))
-                    edge_attrs += [e, e]
-            except KeyError:
-                continue
+        if current:
+            tokens.append(current)
+            current = ""
+        if not char.isspace():
+            tokens.append(char)
+    if current:
+        tokens.append(current)
 
-    edge_index = torch.tensor(edge_indices)
-    edge_index = edge_index.t().to(torch.double).view(2, -1)
-    edge_attr = torch.tensor(edge_attrs, dtype=torch.float32).view(-1, 18)
+    merged: List[str] = []
+    idx = 0
+    while idx < len(tokens):
+        token = tokens[idx]
+        if idx + 1 < len(tokens) and token == "C" and tokens[idx + 1] == "l":
+            merged.append("Cl")
+            idx += 2
+            continue
+        if idx + 1 < len(tokens) and token == "B" and tokens[idx + 1] == "r":
+            merged.append("Br")
+            idx += 2
+            continue
+        merged.append(token)
+        idx += 1
+    return merged
 
-    if edge_index.numel() > 0:  # Sort indices.
-        perm = (edge_index[0] * x.size(0) + edge_index[1]).argsort()
-        edge_index, edge_attr = edge_index[:, perm], edge_attr[perm]
+
+def _rule_atom_features(atom: Chem.Atom) -> np.ndarray:
+    smarts = atom.GetSmarts()
+    if smarts.startswith("["):
+        return parse_expression(smarts[1:-1].split(":")[0])
+    return _TOKEN_EMBEDDINGS.get(smarts, np.zeros(16, dtype=np.float32))
+
+
+def from_rule(rule: str) -> Data:
+    parts = rule.split(">>")
+    if len(parts) != 2:
+        raise ValueError(f"Invalid SMARTS rule: {rule}")
+
+    sub_smarts, prod_smarts = parts
+    sub = Chem.MolFromSmarts(sub_smarts[1:-1] if sub_smarts.startswith("(") and sub_smarts.endswith(")") else sub_smarts)
+    prod = Chem.MolFromSmarts(prod_smarts[1:-1] if prod_smarts.startswith("(") and prod_smarts.endswith(")") else prod_smarts)
+    if sub is None or prod is None:
+        raise ValueError(f"Failed to parse SMARTS rule: {rule}")
+
+    xs = [_rule_atom_features(atom) for atom in sub.GetAtoms()]
+    xs.extend(_rule_atom_features(atom) for atom in prod.GetAtoms())
+    x = torch.tensor(np.asarray(xs, dtype=np.float32), dtype=torch.float32).view(-1, SINGLE_NODE_DIM)
+
+    edge_indices, edge_attrs = _edge_list_from_mol(sub)
+    sub_offset = sub.GetNumAtoms()
+    prod_indices, prod_attrs = _edge_list_from_mol(prod, offset=sub_offset)
+    edge_indices.extend(prod_indices)
+    edge_attrs.extend(prod_attrs)
+
+    for atom in sub.GetAtoms():
+        if not atom.HasProp("molAtomMapNumber"):
+            continue
+        atom_map = atom.GetProp("molAtomMapNumber")
+        for prod_atom in prod.GetAtoms():
+            if prod_atom.HasProp("molAtomMapNumber") and prod_atom.GetProp("molAtomMapNumber") == atom_map:
+                features = [0.0] * EDGE_DIM
+                left = atom.GetIdx()
+                right = prod_atom.GetIdx() + sub_offset
+                edge_indices.extend([[left, right], [right, left]])
+                edge_attrs.extend([features, features])
+
+    if edge_indices:
+        edge_index = torch.tensor(edge_indices, dtype=torch.long).t().contiguous()
+        edge_attr = torch.tensor(edge_attrs, dtype=torch.float32).view(-1, EDGE_DIM)
+        edge_index, edge_attr = _sort_edges(edge_index, edge_attr, x.size(0))
+    else:
+        edge_index, edge_attr = _empty_edge_tensors()
 
     return Data(x=x, edge_index=edge_index, edge_attr=edge_attr)
+
+
+def apply_feature_projection(
+    graph: Data,
+    node_projector: Optional[Any] = None,
+    edge_projector: Optional[Any] = None,
+) -> Data:
+    projected = graph.clone()
+    if node_projector is not None and projected.x.numel() > 0:
+        projected.x = torch.tensor(node_projector.transform(projected.x.numpy()), dtype=torch.float32)
+    if edge_projector is not None and projected.edge_attr.numel() > 0:
+        projected.edge_attr = torch.tensor(edge_projector.transform(projected.edge_attr.numpy()), dtype=torch.float32)
+    return projected

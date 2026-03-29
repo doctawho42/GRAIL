@@ -1,1252 +1,1068 @@
-import gc
-import torch
-from pathlib import Path
-import pickle as pkl
-from sklearn.impute import SimpleImputer
+from __future__ import annotations
+
+import math
+import time
+from typing import Dict, Iterable, List, Literal, Optional, Sequence, Tuple
+
 import numpy as np
-from torch.nn import Module, Sequential, ReLU, Linear, Bilinear, MultiheadAttention, BatchNorm1d, Dropout, init, Sigmoid
-from torch.nn.functional import dropout, threshold
-from torch_geometric.nn import GATv2Conv, global_mean_pool
+import torch
+import torch.nn.functional as F
+from rdkit import Chem
+from rdkit.Chem import MACCSkeys
+from rdkit.Chem import rdChemReactions
+from torch import nn
 from torch_geometric.data import Batch, Data
 from torch_geometric.loader import DataLoader
-from torch_geometric import nn
-from .wrapper import GGenerator
-from ..utils.preparation import MolFrame, cpunum, iscorrect, standardize_mol
-from ..utils.transform import from_rdmol, from_rule
-from tqdm.auto import tqdm
-from rdkit import Chem
-from rdkit.Chem.AllChem import ReactionFromSmarts
-from rdkit.Chem import MACCSkeys
-import typing as tp
-from .train_model import AsymmetricBCELoss
-import matplotlib.pyplot as plt
-import random
-from itertools import chain
-from ..nn.molpath import EdgePathNN
+from torch_geometric.nn import global_mean_pool
+from torch_geometric.utils import to_dense_batch
 
-class RuleParse(Module):
-    def __init__(self,
-                 rule_dict: dict[str, Batch],
-                 arg_vec: tp.List[int] = [100, 200, 400, 200, 100],
-                 use_molpath: bool = False,
-                 molpath_hidden: tp.Optional[int] = None,
-                 molpath_cutoff: tp.Optional[int] = None,
-                 molpath_y: tp.Optional[float] = None
-                 ) -> None:
-        super(RuleParse, self).__init__()
-        self.use_molpath = use_molpath
-        self.rule_dict = rule_dict
-        if not use_molpath:
-            self.rule_encoder = nn.Sequential('x, edge_index, edge_attr', [
-                (GATv2Conv(16, arg_vec[0], edge_dim=18, dropout=0.25), 'x, edge_index, edge_attr -> x'),
-                ReLU(inplace=True),
-                BatchNorm1d(arg_vec[0]),
-                (GATv2Conv(arg_vec[0], arg_vec[1], edge_dim=18, dropout=0.25), 'x, edge_index, edge_attr -> x'),
-                ReLU(inplace=True),
-                BatchNorm1d(arg_vec[1]),
-                Linear(arg_vec[1], arg_vec[2]),
-                BatchNorm1d(arg_vec[2])
-            ])
-            self.ffn = Sequential(
-                Linear(arg_vec[2], arg_vec[3]),
-                ReLU(inplace=True),
-                Linear(arg_vec[3], arg_vec[4]),
-                ReLU(inplace=True),
-                BatchNorm1d(arg_vec[4]),
-                Linear(arg_vec[4], 100)
-            )
-            self.batch_norm = BatchNorm1d(arg_vec[2])
-        else:
-            self.rule_encoder = EdgePathNN(
-                                            hidden_dim=molpath_hidden,
-                                            cutoff=molpath_cutoff,  # Maximum path length
-                                            y=molpath_y,  # Attention parameter
-                                            n_classes=100,
-                                            device=torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu'),
-                                            node_feat_dim=16,  # Your node feature dimension
-                                            edge_feat_dim=18,  # Your edge feature dimension
-                                            use_fingerprint=False,  # Whether to use fingerprints
-                                            readout="sum",
-                                            path_agg="sum",
-                                            dropout=0.1
-                                        )
-            self.ffn = torch.nn.Identity()
-            self.batch_norm = torch.nn.Identity()
+from ._graph import GraphEncoder
+from .wrapper import GGenerator
+from ..utils.preparation import MolFrame, generate_vectors, safe_run_reactants, standardize_mol
+from ..utils.transform import EDGE_DIM, FINGERPRINT_DIM, SINGLE_NODE_DIM, from_rdmol, from_rule
+
+
+def _pad_dims(values: Sequence[int], size: int, default: int) -> List[int]:
+    padded = list(values[:size])
+    while len(padded) < size:
+        padded.append(default)
+    return padded
+
+
+def _strip_grouping(smarts: str) -> str:
+    text = str(smarts).strip()
+    if text.startswith("(") and text.endswith(")"):
+        return text[1:-1]
+    return text
+
+
+def _split_rule(rule: str) -> Tuple[str, str]:
+    left, right = rule.split(">>", 1)
+    return _strip_grouping(left), _strip_grouping(right)
+
+
+def _safe_logit(probabilities: torch.Tensor) -> torch.Tensor:
+    probs = probabilities.clamp(1e-4, 1.0 - 1e-4)
+    return torch.log(probs / (1.0 - probs))
+
+
+def _rule_metadata(rule: str) -> List[float]:
+    sub_smarts, prod_smarts = _split_rule(rule)
+    sub = Chem.MolFromSmarts(sub_smarts)
+    prod = Chem.MolFromSmarts(prod_smarts)
+    if sub is None or prod is None:
+        return [0.0] * 6
+    sub_atoms = float(sub.GetNumAtoms())
+    prod_atoms = float(prod.GetNumAtoms())
+    mapped_sub = float(sum(atom.HasProp("molAtomMapNumber") for atom in sub.GetAtoms()))
+    mapped_prod = float(sum(atom.HasProp("molAtomMapNumber") for atom in prod.GetAtoms()))
+    aromatic_sub = float(sum(atom.GetIsAromatic() for atom in sub.GetAtoms()))
+    aromatic_prod = float(sum(atom.GetIsAromatic() for atom in prod.GetAtoms()))
+    return [
+        sub_atoms / 32.0,
+        prod_atoms / 32.0,
+        mapped_sub / max(sub_atoms, 1.0),
+        mapped_prod / max(prod_atoms, 1.0),
+        abs(sub_atoms - prod_atoms) / 16.0,
+        (aromatic_sub + aromatic_prod) / max(sub_atoms + prod_atoms, 1.0),
+    ]
+
+
+def _timeout_buffer(last_epoch_seconds: float) -> float:
+    return max(30.0, min(300.0, 0.2 * max(last_epoch_seconds, 0.0)))
+
+
+class RuleParse(nn.Module):
+    def __init__(
+        self,
+        rule_dict: Dict[str, Data],
+        arg_vec: Sequence[int],
+        embedding_dim: int = 128,
+        use_molpath: bool = False,
+        molpath_hidden: Optional[int] = None,
+        molpath_cutoff: Optional[int] = None,
+        molpath_y: Optional[float] = None,
+    ) -> None:
+        super().__init__()
+        del use_molpath, molpath_hidden, molpath_cutoff, molpath_y
+        hidden = _pad_dims(arg_vec, 3, embedding_dim)
+        self.rule_keys = list(rule_dict.keys())
+        self.rule_graphs = [rule_dict[key] for key in self.rule_keys]
+        self.rule_batch = Batch.from_data_list(self.rule_graphs) if self.rule_graphs else None
+        self.encoder = GraphEncoder(
+            in_channels=SINGLE_NODE_DIM,
+            edge_dim=EDGE_DIM,
+            hidden_dims=hidden[:2],
+            out_dim=embedding_dim,
+            conv_kind="gatv2",
+            dropout=0.1,
+        )
+        meta = [_rule_metadata(rule) for rule in self.rule_keys]
+        meta_tensor = torch.tensor(meta, dtype=torch.float32) if meta else torch.empty((0, 6), dtype=torch.float32)
+        self.register_buffer("rule_meta", meta_tensor, persistent=False)
+        self.id_embedding = nn.Embedding(max(len(self.rule_keys), 1), embedding_dim)
+        self.meta_encoder = nn.Sequential(
+            nn.Linear(6, embedding_dim),
+            nn.GELU(),
+            nn.Linear(embedding_dim, embedding_dim),
+        )
+        self.norm = nn.LayerNorm(embedding_dim)
 
     def forward(self) -> torch.Tensor:
-        # Create the batch of rules
         device = next(self.parameters()).device
-        batch = Batch.from_data_list(list(self.rule_dict.values()))
+        if self.rule_batch is None:
+            return torch.empty((0, self.id_embedding.embedding_dim), device=device)
+        rule_batch = self.rule_batch.to(device)
+        encoded = self.encoder(rule_batch)
+        ids = self.id_embedding.weight[: encoded.size(0)]
+        meta = self.meta_encoder(self.rule_meta.to(device))
+        return self.norm(encoded + ids + meta)
 
-        # Перемещаем весь батч на устройство
-        batch = batch.to(device)
-
-        batch.x = batch.x.to(torch.float32)
-        batch.edge_attr = batch.edge_attr.to(torch.float32)
-        batch.edge_index = batch.edge_index.to(torch.int64)
-
-        # Apply Module to the batch
-        if self.use_molpath:
-            x = self.rule_encoder(batch)
-        else:
-            data = self.rule_encoder(batch.x, batch.edge_index, batch.edge_attr)
-            x = global_mean_pool(data, data.batch)
-            x = self.batch_norm(x)
-            # Apply the feed-forward network
-            x = self.ffn(x)
-        return x
 
 class MoleculeAugmentor:
     @staticmethod
-    def atom_masking(graph, mask_ratio=0.15):
-        """Маскирование случайных атомов"""
-        num_nodes = graph.x.size(0)
-        if num_nodes == 0:
-            return graph
-
-        num_mask = max(1, int(mask_ratio * num_nodes))
-        num_mask = min(num_mask, num_nodes - 1)  # Оставляем хотя бы 1 узел
-
-        mask_indices = torch.randperm(num_nodes)[:num_mask]
-        mask_token = torch.zeros_like(graph.x[0:1]).squeeze(0)
-
-        graph.x[mask_indices] = mask_token
-        return graph
-
-    @staticmethod
-    def bond_deletion(graph, delete_ratio=0.15):
-        """Удаление случайных связей"""
-        num_edges = graph.edge_index.size(1)
-        num_delete = int(delete_ratio * num_edges)
-
-        if num_edges > 0 and num_delete > 0:
-            keep_indices = torch.randperm(num_edges)[num_delete:]
-            graph.edge_index = graph.edge_index[:, keep_indices]
-            graph.edge_attr = graph.edge_attr[keep_indices]
-        return graph
-
-    @staticmethod
-    def subgraph_removal(graph, remove_ratio=0.2):
-        """Удаление случайного подграфа"""
-        num_nodes = graph.x.size(0)
+    def atom_masking(graph: Data, mask_ratio: float = 0.15) -> Data:
+        masked = graph.clone()
+        num_nodes = masked.x.size(0)
         if num_nodes <= 1:
-            return graph
+            return masked
+        num_mask = max(1, min(num_nodes - 1, int(num_nodes * mask_ratio)))
+        mask_indices = torch.randperm(num_nodes)[:num_mask]
+        masked.x[mask_indices] = 0.0
+        return masked
 
-        num_remove = max(1, int(remove_ratio * num_nodes))
-
-        # Выбираем случайный стартовый узел
-        start_node = torch.randint(0, num_nodes, (1,))
-
-        # BFS для выбора связного подграфа
-        removed_nodes = set()
-        queue = [start_node.item()]
-
-        while len(removed_nodes) < num_remove and queue:
-            node = queue.pop(0)
-            if node not in removed_nodes:
-                removed_nodes.add(node)
-                # Добавляем соседей
-                neighbors = graph.edge_index[1, graph.edge_index[0] == node].tolist()
-                queue.extend([n for n in neighbors if n not in removed_nodes])
-
-        # Маскируем удаленные узлы
-        removed_nodes = list(removed_nodes)[:num_remove]
-        mask_token = torch.zeros_like(graph.x[0])
-        graph.x[removed_nodes] = mask_token
-
-        return graph
+    @staticmethod
+    def edge_masking(graph: Data, mask_ratio: float = 0.15) -> Data:
+        masked = graph.clone()
+        num_edges = masked.edge_index.size(1)
+        if num_edges == 0:
+            return masked
+        num_keep = max(1, int(num_edges * (1.0 - mask_ratio)))
+        keep = torch.randperm(num_edges)[:num_keep]
+        masked.edge_index = masked.edge_index[:, keep]
+        masked.edge_attr = masked.edge_attr[keep]
+        return masked
 
     @classmethod
-    def augment_batch(cls, graph_batch):
-        """Применяем случайную аугментацию к батчу"""
-        aug_type = random.choice(['atom_masking', 'bond_deletion', 'subgraph_removal'])
+    def augment_batch(cls, batch: Batch) -> Batch:
+        graphs = batch.to_data_list()
+        augmented = []
+        for graph in graphs:
+            transformed = cls.atom_masking(graph) if np.random.rand() < 0.5 else cls.edge_masking(graph)
+            augmented.append(transformed)
+        return Batch.from_data_list(augmented)
 
+
+def get_maccs_smarts() -> List[str]:
+    smarts = []
+    for index in range(1, 167):
         try:
-            if aug_type == 'atom_masking':
-                return cls.atom_masking(graph_batch)
-            elif aug_type == 'bond_deletion':
-                return cls.bond_deletion(graph_batch)
-            else:
-                return cls.subgraph_removal(graph_batch)
-        except Exception as e:
-            return graph_batch
+            pattern = MACCSkeys.smartsPatts[index]
+            smarts.append(pattern[0] if pattern else "")
+        except Exception:
+            smarts.append("")
+    return smarts
 
-def get_maccs_smarts():
-    """Получение SMARTS-паттернов для MACCS-ключей"""
-    maccs_smarts = []
-    for i in range(1, 167):  # MACCS keys 1-166
-        try:
-            # Получаем SMARTS для каждого ключа
-            smarts = MACCSkeys.smartsPatts[i]
-            maccs_smarts.append(smarts)
-        except (KeyError, AttributeError):
-            # Если ключ не существует, используем пустой паттерн
-            maccs_smarts.append('')
 
-    return maccs_smarts
-
-class MACCSRuleParse(Module):
-    def __init__(self,
-                 maccs_smarts,
-                 arg_vec: tp.List[int] = [100, 200, 400, 200, 100],
-                 use_molpath: bool = False,
-                 molpath_hidden: tp.Optional[int] = None,
-                 molpath_cutoff: tp.Optional[int] = None,
-                 molpath_y: tp.Optional[float] = None
-                 ):
+class GeneratorObjective(nn.Module):
+    def __init__(self, rank_weight: float = 0.25, ranking_margin: float = 0.45) -> None:
         super().__init__()
-        self.use_molpath = use_molpath
-        self.maccs_smarts = maccs_smarts
-        self.maccs_graphs = self._create_maccs_graphs()
+        self.rank_weight = float(rank_weight)
+        self.ranking_margin = float(ranking_margin)
 
-        # RuleParse для MACCS-паттернов
-        if not use_molpath:
-            self.rule_encoder = nn.Sequential('x, edge_index, edge_attr', [
-                (GATv2Conv(16, arg_vec[0], edge_dim=18, dropout=0.25), 'x, edge_index, edge_attr -> x'),
-                ReLU(inplace=True),
-                BatchNorm1d(arg_vec[0]),
-                (GATv2Conv(arg_vec[0], arg_vec[1], edge_dim=18, dropout=0.25), 'x, edge_index, edge_attr -> x'),
-                ReLU(inplace=True),
-                BatchNorm1d(arg_vec[1]),
-                Linear(arg_vec[1], arg_vec[2]),
-                BatchNorm1d(arg_vec[2])
-            ])
-            self.ffn = Sequential(
-                Linear(arg_vec[2], arg_vec[3]),
-                ReLU(inplace=True),
-                Linear(arg_vec[3], arg_vec[4]),
-                ReLU(inplace=True),
-                BatchNorm1d(arg_vec[4]),
-                Linear(arg_vec[4], 100)
-            )
-            self.batch_norm = BatchNorm1d(arg_vec[2])
-        else:
-            self.rule_encoder = EdgePathNN(
-                hidden_dim=molpath_hidden,
-                cutoff=molpath_cutoff,  # Maximum path length
-                y=molpath_y,  # Attention parameter
-                n_classes=100,
-                device=torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu'),
-                node_feat_dim=16,  # Your node feature dimension
-                edge_feat_dim=18,  # Your edge feature dimension
-                use_fingerprint=False,  # Whether to use fingerprints
-                readout="sum",
-                path_agg="sum",
-                dropout=0.1
-            )
-            self.ffn = torch.nn.Identity()
-            self.batch_norm = torch.nn.Identity()
+    def forward(
+        self,
+        logits: torch.Tensor,
+        targets: torch.Tensor,
+        mask: torch.Tensor,
+        pos_weight: torch.Tensor,
+    ) -> torch.Tensor:
+        if logits.shape != targets.shape:
+            raise RuntimeError(f"Shape mismatch: {logits.shape} != {targets.shape}")
+        weights = pos_weight.view(1, -1).expand_as(logits)
+        bce = F.binary_cross_entropy_with_logits(logits, targets, reduction="none", pos_weight=weights)
+        probabilities = torch.sigmoid(logits)
+        focal = torch.where(targets > 0.5, (1.0 - probabilities).pow(2.0), probabilities.pow(1.0))
+        masked = (bce * (1.0 + focal) * mask).sum() / mask.sum().clamp_min(1.0)
 
-        self.batch_norm = BatchNorm1d(arg_vec[2])
+        positive_mask = (targets > 0.5) & (mask > 0.0)
+        negative_mask = (targets <= 0.5) & (mask > 0.0)
+        if self.rank_weight <= 0.0 or not positive_mask.any() or not negative_mask.any():
+            return masked
 
-    def _create_maccs_graphs(self):
-        """Создание графов для MACCS-паттернов"""
-        maccs_graphs = {}
-        for i, smarts in enumerate(self.maccs_smarts):
-            if smarts and smarts[0] != '':  # Если SMARTS не пустой
-                try:
-                    graph = from_rule(smarts[0]+'>>'+'')
-                    maccs_graphs[i] = graph
-                except Exception as e:
-                    print(f"Failed to create graph for MACCS key {i}: {e}")
-                    maccs_graphs[i] = None
-            else:
-                maccs_graphs[i] = None
-        return maccs_graphs
+        pos_logits = logits.masked_fill(~positive_mask, float("inf"))
+        neg_logits = logits.masked_fill(~negative_mask, float("-inf"))
+        hardest_positive = pos_logits.min(dim=1).values
+        hardest_negative = neg_logits.max(dim=1).values
+        valid = positive_mask.any(dim=1) & negative_mask.any(dim=1)
+        if valid.any():
+            ranking = torch.relu(self.ranking_margin - hardest_positive[valid] + hardest_negative[valid]).mean()
+            return masked + self.rank_weight * ranking
+        return masked
 
-    def forward(self):
-        """Получение эмбеддингов для всех MACCS-паттернов"""
-        device = next(self.parameters()).device
-
-        valid_graphs = [graph for graph in self.maccs_graphs.values() if graph is not None]
-        if not valid_graphs:
-            return torch.zeros(166, 100, device=device)
-
-        batch = Batch.from_data_list(valid_graphs)
-
-        # Перемещаем ВСЕ компоненты батча на устройство
-        batch = batch.to(device)
-
-        # Явно преобразуем типы данных после перемещения на устройство
-        batch.x = batch.x.to(torch.float32)
-        batch.edge_attr = batch.edge_attr.to(torch.float32)
-        batch.edge_index = batch.edge_index.to(torch.int64)
-
-        # Применяем RuleParse
-        if self.use_molpath:
-            x = self.rule_encoder(batch)
-        else:
-            data = self.rule_encoder(batch.x, batch.edge_index, batch.edge_attr)
-            x = global_mean_pool(data, data.batch)  # Теперь batch.batch тоже на device
-            x = self.batch_norm(x)
-            x = self.ffn(x)
-
-        # Создаем полную матрицу на правильном устройстве
-        full_embeddings = torch.zeros(166, 100, device=device)
-        valid_indices = [i for i, graph in enumerate(self.maccs_graphs.values()) if graph is not None]
-        if valid_indices:
-            full_embeddings[valid_indices] = x
-
-        return full_embeddings
-
-class MACCSPredictor(Module):
-    def __init__(self,
-                 molecular_encoder,
-                 maccs_smarts,
-                 arg_vec: tp.List[int] = [100, 200, 400, 200, 100],
-                 use_molpath: bool = False,
-                 molpath_hidden: tp.Optional[int] = None,
-                 molpath_cutoff: tp.Optional[int] = None,
-                 molpath_y: tp.Optional[float] = None
-                 ):
-        super().__init__()
-        self.use_molpath = use_molpath
-        self.maccs_smarts = maccs_smarts
-        self.molpath_hidden = molpath_hidden
-        self.molpath_cutoff = molpath_cutoff
-        self.molpath_y = molpath_y
-        self.molecular_encoder = molecular_encoder
-        self.maccs_ruleparse = MACCSRuleParse(maccs_smarts,
-                                              arg_vec=arg_vec,
-                                              use_molpath=use_molpath,
-                                              molpath_hidden=molpath_hidden,
-                                              molpath_cutoff=molpath_cutoff,
-                                              molpath_y=molpath_y
-        )
-
-        # Замораживаем молекулярный энкодер
-        for param in self.molecular_encoder.parameters():
-            param.requires_grad = False
-
-        # Предиктор MACCS-ключей
-        self.predictor = Sequential(
-            Linear(166, 256),
-            ReLU(inplace=True),
-            Dropout(0.2),
-            Linear(256, 166),
-        )
-
-        self.sigmoid = Sigmoid()
-
-    def forward(self, molecular_graph):
-        device = next(self.parameters()).device
-        molecular_graph = molecular_graph.to(device)
-
-        with torch.no_grad():
-            if self.use_molpath:
-                mol_embedding = self.molecular_encoder(molecular_graph)
-            else:
-                node_embeddings = self.molecular_encoder(
-                    molecular_graph.x,
-                    molecular_graph.edge_index,
-                    molecular_graph.edge_attr
-                )
-                mol_embedding = global_mean_pool(node_embeddings, molecular_graph.batch)
-            #print(f"mol_embedding range: [{mol_embedding.min().item():.6f}, {mol_embedding.max().item():.6f}]")
-
-        maccs_embeddings = self.maccs_ruleparse()
-        #print(f"maccs_embeddings range: [{maccs_embeddings.min().item():.6f}, {maccs_embeddings.max().item():.6f}]")
-
-        similarities = torch.mm(mol_embedding, maccs_embeddings.T)
-        #print(f"similarities range: [{similarities.min().item():.6f}, {similarities.max().item():.6f}]")
-
-        logits = self.predictor(similarities)
-        #print(f"logits range: [{logits.min().item():.6f}, {logits.max().item():.6f}]")
-
-        predictions = self.sigmoid(logits)
-        #print(f"predictions after sigmoid range: [{predictions.min().item():.6f}, {predictions.max().item():.6f}]")
-
-        return predictions
 
 class Generator(GGenerator):
-    def __init__(self, rule_dict: dict[str, Batch], in_channels: int, edge_dim: int,
-                 arg_vec: tp.Optional[tp.List[int]] = None,
-                 rp_arg_vec: tp.Optional[tp.List[int]] = None,
-                 projection_dim: int = 256,
-                 use_maccs_pretraining: bool = False,
-                 use_molpath: bool = False,
-                 molpath_hidden: tp.Optional[int] = None,
-                 molpath_cutoff: tp.Optional[int] = None,
-                 molpath_y: tp.Optional[float] = None
-                 ):
-        super(Generator, self).__init__()
-        if rp_arg_vec is None:
-            rp_arg_vec = [200] * 5
-        self.rp_arg_vec = rp_arg_vec
-        self.use_molpath = use_molpath
-        self.molpath_hidden = molpath_hidden
-        self.molpath_cutoff = molpath_cutoff
-        self.molpath_y = molpath_y
-        self.parser = RuleParse(rule_dict,
-                                arg_vec=rp_arg_vec,
-                                use_molpath=use_molpath,
-                                molpath_hidden=molpath_hidden,
-                                molpath_cutoff=molpath_cutoff,
-                                molpath_y=molpath_y)
-        self.rules = rule_dict
-        self.num_rules = len(rule_dict)
-        self.use_molpath = use_molpath
+    _rule_graph_cache: Dict[str, Data] = {}
 
-        if arg_vec is None:
-            arg_vec = [500] * 2
+    def __init__(
+        self,
+        rule_dict: Dict[str, Data],
+        in_channels: int,
+        edge_dim: int,
+        arg_vec: Optional[Sequence[int]] = None,
+        rp_arg_vec: Optional[Sequence[int]] = None,
+        projection_dim: int = 128,
+        use_maccs_pretraining: bool = False,
+        scoring: Literal["bilinear", "dot", "mlp", "retrieval"] = "retrieval",
+        conv_kind: Literal["gatv2", "gcn", "gin"] = "gatv2",
+        top_k: int = 15,
+        use_molpath: bool = False,
+        molpath_hidden: Optional[int] = None,
+        molpath_cutoff: Optional[int] = None,
+        molpath_y: Optional[float] = None,
+        use_fingerprint: bool = True,
+        rank_weight: float = 0.25,
+        ranking_margin: float = 0.45,
+        prior_strength: float = 0.4,
+        use_applicability_mask: bool = True,
+        applicability_penalty: float = 7.5,
+        candidate_aggregation: Literal["max", "mean", "noisy_or", "hybrid"] = "noisy_or",
+    ) -> None:
+        super().__init__()
+        self._prime_rule_graph_cache(rule_dict)
+        self.rules = {rule: graph for rule, graph in zip(rule_dict.keys(), self._get_rule_graphs(list(rule_dict.keys())))}
+        self.rule_names = list(self.rules.keys())
+        self.num_rules = len(self.rule_names)
+        hidden = _pad_dims(arg_vec or [128, 256], 2, 128)
+        rule_hidden = _pad_dims(rp_arg_vec or [128, 128, 128], 3, 128)
+        self.scoring = scoring
+        self.embed_dim = projection_dim
+        self.use_fingerprint = use_fingerprint
+        self.prior_strength = float(prior_strength)
+        self.use_applicability_mask = use_applicability_mask
+        self.applicability_penalty = float(applicability_penalty)
+        self.candidate_aggregation = candidate_aggregation
+        self.default_top_k = max(1, int(top_k))
 
-        # Основной GNN энкодер
-        if not use_molpath:
-            self.gnn_encoder = nn.Sequential('x, edge_index, edge_attr', [
-                (GATv2Conv(in_channels, arg_vec[0], edge_dim=edge_dim, dropout=0.25), 'x, edge_index, edge_attr -> x'),
-                ReLU(inplace=True),
-                BatchNorm1d(arg_vec[0]),
-                (GATv2Conv(arg_vec[0], arg_vec[1], edge_dim=edge_dim, dropout=0.25), 'x, edge_index, edge_attr -> x'),
-                ReLU(inplace=True),
-                BatchNorm1d(arg_vec[1]),
-                (GATv2Conv(arg_vec[1], 100, edge_dim=edge_dim, dropout=0.25), 'x, edge_index, edge_attr -> x'),
-            ])
-        else:
-            self.gnn_encoder = EdgePathNN(
-                                            hidden_dim=molpath_hidden,
-                                            cutoff=molpath_cutoff,  # Maximum path length
-                                            y=molpath_y,  # Attention parameter
-                                            n_classes=100,
-                                            device=torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu'),
-                                            node_feat_dim=16,  # Your node feature dimension
-                                            edge_feat_dim=18,  # Your edge feature dimension
-                                            use_fingerprint=True,  # Whether to use fingerprints
-                                            fingerprint_dim=1024,  # Your fingerprint dimension
-                                            readout="sum",
-                                            path_agg="sum",
-                                            dropout=0.1
-                                        )
-
-        # Проекционная головка для контрастивного обучения
-        self.projection_head = Sequential(
-            Linear(100, projection_dim),
-            BatchNorm1d(projection_dim),
-            ReLU(inplace=True),
-            Linear(projection_dim, projection_dim)
+        self.parser = RuleParse(
+            rule_dict=self.rules,
+            arg_vec=rule_hidden,
+            embedding_dim=projection_dim,
+            use_molpath=use_molpath,
+            molpath_hidden=molpath_hidden,
+            molpath_cutoff=molpath_cutoff,
+            molpath_y=molpath_y,
         )
-
-        # Предикторы для маскированного моделирования
-        self.atom_predictor = Linear(100, in_channels)
-        self.bond_predictor = Linear(200, edge_dim)
-
-        # Основные компоненты генератора
-        self.embed_dim = 100
-        self.attention = MultiheadAttention(
-            embed_dim=self.embed_dim,
-            num_heads=4,
-            batch_first=True
+        self.substrate_encoder = GraphEncoder(
+            in_channels=in_channels,
+            edge_dim=edge_dim,
+            hidden_dims=hidden,
+            out_dim=projection_dim,
+            conv_kind=conv_kind,
+            dropout=0.1,
         )
-        self.final_proj = Linear(self.embed_dim, self.num_rules)
-        self.sigmoid = Sigmoid()
-        self.dropout = Dropout(0.2)
-
-        # Флаги предобучения
-        self.pretrained = False
-        self.use_maccs_pretraining = use_maccs_pretraining
-        if use_maccs_pretraining:
-            self.maccs_smarts = get_maccs_smarts()
-
-        # Инициализация весов
-        self._initialize_weights()
-
-    def _initialize_weights(self):
-        """Инициализация весов для стабильности"""
-        for module in [self.projection_head, self.atom_predictor, self.bond_predictor]:
-            if isinstance(module, Sequential):
-                for layer in module:
-                    if isinstance(layer, Linear):
-                        # Используем Xavier инициализацию для лучшей стабильности
-                        init.xavier_uniform_(layer.weight)
-                        if layer.bias is not None:
-                            init.constant_(layer.bias, 0)
-            elif isinstance(module, Linear):
-                init.xavier_uniform_(module.weight)
-                if module.bias is not None:
-                    init.constant_(module.bias, 0)
-
-        # Добавьте инициализацию для предиктора MACCS
-        if hasattr(self, 'maccs_predictor'):
-            for module in self.maccs_predictor.modules():
-                if isinstance(module, Linear):
-                    init.xavier_uniform_(module.weight)
-                    if module.bias is not None:
-                        init.constant_(module.bias, 0)
-
-    def forward(self, data: Data, mode: str = 'generation') -> torch.Tensor:
-        """
-        Унифицированный forward с поддержкой разных режимов
-        """
-        data.x = data.x.to(torch.float32)
-        data.edge_attr = data.edge_attr.to(torch.float32)
-        data.edge_index = data.edge_index.to(torch.int64)
-
-        # Получаем базовые эмбеддинги от GNN энкодера
-        if self.use_molpath:
-            x = self.gnn_encoder(data)
-        else:
-            x = self.gnn_encoder(data.x, data.edge_index, data.edge_attr)
-
-        if mode == 'contrastive':
-            # Режим контрастивного обучения
-            graph_emb = global_mean_pool(x, data.batch)
-            z = self.projection_head(graph_emb)
-            return torch.nn.functional.normalize(z, dim=1)
-
-        elif mode == 'masked_modeling':
-            # Режим маскированного моделирования
-            return x
-
-        elif mode == 'generation':
-            # Основной режим генерации
-            mol_emb = global_mean_pool(x, data.batch).to(torch.float32)
-            mol_emb = self.dropout(mol_emb)
-
-            # Получаем эмбеддинги правил
-            rule_emb = self.parser().to(torch.float32)
-
-            # Вычисляем логиты
-            attn_output, _ = self.attention(
-                query=mol_emb.unsqueeze(1),
-                key=rule_emb.unsqueeze(0).repeat(mol_emb.size(0), 1, 1),
-                value=rule_emb.unsqueeze(0).repeat(mol_emb.size(0), 1, 1)
+        self.graph_norm = nn.LayerNorm(projection_dim)
+        if use_fingerprint:
+            self.fp_encoder = nn.Sequential(
+                nn.Linear(FINGERPRINT_DIM, projection_dim),
+                nn.GELU(),
+                nn.Dropout(0.1),
+                nn.Linear(projection_dim, projection_dim),
             )
-            logits = self.final_proj(attn_output.squeeze(1))
-            return self.sigmoid(logits)
-
+            self.substrate_fusion = nn.Sequential(
+                nn.Linear(2 * projection_dim, projection_dim),
+                nn.GELU(),
+                nn.Dropout(0.1),
+                nn.Linear(projection_dim, projection_dim),
+            )
         else:
-            raise ValueError(f"Unknown mode: {mode}")
-
-    def _contrastive_loss(self, z1, z2, temperature=0.1):
-        """Контрастивная потеря"""
-        batch_size = z1.size(0)
-
-        # Нормализация
-        z1 = torch.nn.functional.normalize(z1, p=2, dim=1)
-        z2 = torch.nn.functional.normalize(z2, p=2, dim=1)
-
-        # Вычисляем сходства
-        similarities = torch.mm(z1, z2.T) / max(temperature, 1e-8)
-
-        # Метки: диагональные элементы - положительные пары
-        labels = torch.arange(batch_size, device=z1.device)
-
-        return torch.nn.functional.cross_entropy(similarities, labels)
-
-    def _mask_batch(self, batch, mask_ratio=0.15):
-        """Маскирование батча"""
-        try:
-            masked_batch = batch.clone()
-            num_atoms = batch.x.size(0)
-
-            if num_atoms <= 1:
-                return batch, None, None, None
-
-            num_mask_atoms = max(1, min(num_atoms - 1, int(mask_ratio * num_atoms)))
-            mask_indices = torch.randperm(num_atoms)[:num_mask_atoms]
-
-            mask_indices = mask_indices[mask_indices < num_atoms]
-            if len(mask_indices) == 0:
-                return batch, None, None, None
-
-            atom_targets = batch.x[mask_indices].clone()
-            mask_token = torch.zeros_like(batch.x[0])
-            masked_batch.x[mask_indices] = mask_token
-
-            bond_targets = None
-            if (hasattr(batch, 'edge_attr') and batch.edge_attr is not None and
-                batch.edge_attr.size(0) > 0):
-
-                num_edges = batch.edge_attr.size(0)
-                num_mask_bonds = max(1, min(num_edges - 1, int(mask_ratio * num_edges)))
-                mask_bond_indices = torch.randperm(num_edges)[:num_mask_bonds]
-
-                mask_bond_indices = mask_bond_indices[mask_bond_indices < num_edges]
-                if len(mask_bond_indices) > 0:
-                    bond_targets = batch.edge_attr[mask_bond_indices].clone()
-                    bond_mask_token = torch.zeros_like(batch.edge_attr[0])
-                    masked_batch.edge_attr[mask_bond_indices] = bond_mask_token
-
-            return masked_batch, atom_targets, bond_targets, mask_indices
-
-        except Exception as e:
-            return batch, None, None, None
-
-    def _compute_masked_loss(self, node_embeddings, atom_targets, bond_targets, atom_mask_indices):
-        """Вычисление потерь маскированного моделирования"""
-        try:
-            total_loss = 0
-            loss_components = 0
-
-            # Loss для атомов
-            if atom_targets is not None and atom_mask_indices is not None:
-                valid_indices = atom_mask_indices[atom_mask_indices < node_embeddings.size(0)]
-                if len(valid_indices) > 0:
-                    masked_embeddings = node_embeddings[valid_indices]
-
-                    if masked_embeddings.size(0) == atom_targets.size(0):
-                        atom_pred = self.atom_predictor(masked_embeddings)
-                        atom_loss = torch.nn.functional.mse_loss(atom_pred, atom_targets)
-                        total_loss += atom_loss
-                        loss_components += 1
-
-            # Loss для связей
-            if bond_targets is not None and len(bond_targets) > 0:
-                # Используем среднее по всем узлам для предсказания связей
-                mean_embedding = node_embeddings.mean(dim=0, keepdim=True)
-                bond_pred = self.bond_predictor(mean_embedding)
-
-                # Среднее по целевым связям
-                mean_bond_targets = bond_targets.mean(dim=0, keepdim=True)
-                bond_loss = torch.nn.functional.mse_loss(bond_pred, mean_bond_targets)
-                total_loss += bond_loss
-                loss_components += 1
-
-            if loss_components == 0:
-                return torch.tensor(0.0, device=node_embeddings.device)
-
-            return total_loss / loss_components
-
-        except Exception as e:
-            return torch.tensor(0.0, device=node_embeddings.device)
-
-    def _create_pretraining_graphs(self, smiles_list):
-        """Создание графов для предобучения"""
-        graphs = []
-        for smiles in tqdm(smiles_list, desc="Creating pretraining graphs"):
-            try:
-                mol = Chem.MolFromSmiles(smiles)
-                if mol is not None:
-                    graph = from_rdmol(mol)
-                    if graph is not None:
-                        graph.x = graph.x.to(torch.float32)
-                        graph.edge_attr = graph.edge_attr.to(torch.float32)
-                        graph.edge_index = graph.edge_index.to(torch.int64)
-                        graphs.append(graph)
-            except Exception as e:
-                continue
-
-        print(f"Created {len(graphs)} graphs for pretraining")
-        return graphs
-
-    def _contrastive_pretrain_phase(self, graphs, epochs, batch_size, lr):
-        """Контрастивное обучение с обновлением весов Generator"""
-        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        self.to(device)
-
-        optimizer = torch.optim.AdamW([
-            {'params': self.gnn_encoder.parameters(), 'lr': lr},
-            {'params': self.projection_head.parameters(), 'lr': lr}
-        ], weight_decay=1e-6)
-
-        scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=epochs)
-        augmentor = MoleculeAugmentor()
-
-        dataloader = DataLoader(graphs, batch_size=batch_size, shuffle=True)
-
-        for epoch in range(epochs):
-            self.train()
-            total_loss = 0
-            num_batches = 0
-
-            for batch in tqdm(dataloader, desc=f"Contrastive Epoch {epoch+1}"):
-                try:
-                    batch = batch.to(device)
-
-                    # Создаем аугментированные версии
-                    aug1 = augmentor.augment_batch(batch)
-                    aug2 = augmentor.augment_batch(batch)
-
-                    # Получаем проекции через ОДИН И ТОТ ЖЕ gnn_encoder
-                    z1 = self(aug1, mode='contrastive')
-                    z2 = self(aug2, mode='contrastive')
-
-                    # Контрастивная потеря
-                    loss = self._contrastive_loss(z1, z2)
-
-                    if torch.isnan(loss):
-                        continue
-
-                    # ОБНОВЛЯЕМ ВЕСА gnn_encoder И projection_head
-                    optimizer.zero_grad()
-                    loss.backward()
-                    torch.nn.utils.clip_grad_norm_(
-                        list(self.gnn_encoder.parameters()) +
-                        list(self.projection_head.parameters()),
-                        max_norm=1.0
-                    )
-                    optimizer.step()
-
-                    total_loss += loss.item()
-                    num_batches += 1
-
-                except Exception as e:
-                    continue
-
-            if num_batches > 0:
-                avg_loss = total_loss / num_batches
-                current_lr = scheduler.get_last_lr()[0]
-                print(f"Contrastive Epoch {epoch+1}, Loss: {avg_loss:.4f}, LR: {current_lr:.6f}")
-
-            scheduler.step()
-
-    def _masked_modeling_pretrain_phase(self, graphs, epochs, batch_size, lr):
-        """Маскированное моделирование с обновлением весов Generator"""
-        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        self.to(device)
-
-        optimizer = torch.optim.AdamW([
-            {'params': self.gnn_encoder.parameters(), 'lr': lr},
-            {'params': self.atom_predictor.parameters(), 'lr': lr},
-            {'params': self.bond_predictor.parameters(), 'lr': lr}
-        ], weight_decay=1e-6)
-
-        scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=epochs)
-
-        dataloader = DataLoader(graphs, batch_size=batch_size, shuffle=True)
-
-        for epoch in range(epochs):
-            self.train()
-            total_loss = 0
-            num_batches = 0
-
-            for batch in tqdm(dataloader, desc=f"Masked Epoch {epoch+1}"):
-                try:
-                    batch = batch.to(device)
-
-                    # Маскируем батч
-                    masked_batch, atom_targets, bond_targets, atom_mask_indices = \
-                        self._mask_batch(batch)
-
-                    if atom_targets is None:
-                        continue
-
-                    # Получаем эмбеддинги через ОДИН И ТОТ ЖЕ gnn_encoder
-                    node_embeddings = self(masked_batch, mode='masked_modeling')
-
-                    # Вычисляем потери для атомов и связей
-                    loss = self._compute_masked_loss(
-                        node_embeddings, atom_targets, bond_targets, atom_mask_indices
-                    )
-
-                    if torch.isnan(loss) or loss.item() == 0:
-                        continue
-
-                    # ОБНОВЛЯЕМ ВЕСА gnn_encoder, atom_predictor, bond_predictor
-                    optimizer.zero_grad()
-                    loss.backward()
-                    torch.nn.utils.clip_grad_norm_(
-                        list(self.gnn_encoder.parameters()) +
-                        list(self.atom_predictor.parameters()) +
-                        list(self.bond_predictor.parameters()),
-                        max_norm=1.0
-                    )
-                    optimizer.step()
-
-                    total_loss += loss.item()
-                    num_batches += 1
-
-                except Exception as e:
-                    continue
-
-            if num_batches > 0:
-                avg_loss = total_loss / num_batches
-                current_lr = scheduler.get_last_lr()[0]
-                print(f"Masked Modeling Epoch {epoch+1}, Loss: {avg_loss:.4f}, LR: {current_lr:.6f}")
-
-            scheduler.step()
-
-    def _create_maccs_dataset(self, smiles_list):
-        """Создание датасета с MACCS-ключами"""
-        graphs = []
-        for smiles in tqdm(smiles_list, desc="Creating MACCS dataset"):
-            try:
-                mol = Chem.MolFromSmiles(smiles)
-                if mol is not None:
-                    # Создаем граф молекулы
-                    graph = from_rdmol(mol)
-                    if graph is not None:
-                        graph.x = graph.x.to(torch.float32)
-                        graph.edge_attr = graph.edge_attr.to(torch.float32)
-                        graph.edge_index = graph.edge_index.to(torch.int64)
-
-                        # Вычисляем MACCS-ключи и создаем тензор с правильной формой
-                        maccs_fp = MACCSkeys.GenMACCSKeys(mol)
-                        maccs_bits = np.array([maccs_fp.GetBit(i) for i in range(166)])
-
-                        # Явно создаем тензор с формой [166] (не [166, 1] и не [1, 166])
-                        graph.maccs = torch.tensor(maccs_bits, dtype=torch.float32)
-
-                        graphs.append(graph)
-            except Exception as e:
-                print(f"Error creating graph for {smiles}: {e}")
-                continue
-
-        print(f"Created MACCS dataset with {len(graphs)} molecules")
-        return graphs
-
-    def _transfer_maccs_weights(self, maccs_ruleparse):
-        """Перенос обученных весов из MACCS RuleParse в основной RuleParse"""
-        # Копируем веса rule_encoder
-        self.parser.rule_encoder.load_state_dict(maccs_ruleparse.rule_encoder.state_dict())
-
-        # Копируем веса FFN
-        self.parser.ffn.load_state_dict(maccs_ruleparse.ffn.state_dict())
-
-        # Копируем веса batch_norm
-        try:
-            self.parser.batch_norm.load_state_dict(maccs_ruleparse.batch_norm.state_dict())
-        except Exception as e:
-            print(f'{e}, maybe its torch.nn.Identity()')
-
-    def pretrain_maccs(self, smiles_list, epochs=50, batch_size=64, lr=1e-4):
-        """Предобучение RuleParse на задаче предсказания MACCS-ключей"""
-        if not self.use_maccs_pretraining:
-            print("MACCS pretraining is disabled. Set use_maccs_pretraining=True in constructor.")
-            return
-
-        print("Starting MACCS-based RuleParse pretraining...")
-
-        # Используем CPU для отладки
-        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
-        # Создаем модель предсказания MACCS
-        maccs_predictor = MACCSPredictor(self.gnn_encoder,
-                                         self.maccs_smarts,
-                                         arg_vec=self.rp_arg_vec,
-                                         use_molpath=self.use_molpath,
-                                         molpath_hidden=self.molpath_hidden,
-                                         molpath_cutoff=self.molpath_cutoff,
-                                         molpath_y=self.molpath_y
-                                         )
-        maccs_predictor.to(device)
-
-        # Создаем датасет молекул с MACCS-ключами
-        dataset = self._create_maccs_dataset(smiles_list)
-
-        if len(dataset) < batch_size:
-            print(f"Not enough molecules: {len(dataset)} < {batch_size}")
-            return
-
-        optimizer = torch.optim.AdamW(
-            list(maccs_predictor.maccs_ruleparse.parameters()) +
-            list(maccs_predictor.predictor.parameters()),
-            lr=lr, weight_decay=1e-6
+            self.fp_encoder = None
+            self.substrate_fusion = None
+        self.substrate_norm = nn.LayerNorm(projection_dim)
+        self.node_key = nn.Linear(projection_dim, projection_dim, bias=False)
+        self.node_value = nn.Linear(projection_dim, projection_dim, bias=False)
+        self.rule_query = nn.Linear(projection_dim, projection_dim, bias=False)
+
+        pair_dim = (6 * projection_dim) + 2
+        self.rule_mlp = nn.Sequential(
+            nn.Linear(pair_dim, 2 * projection_dim),
+            nn.GELU(),
+            nn.Dropout(0.1),
+            nn.Linear(2 * projection_dim, projection_dim),
+            nn.GELU(),
+            nn.Linear(projection_dim, 1),
+        )
+        self.bilinear = nn.Parameter(torch.empty(projection_dim, projection_dim))
+        self.bias = nn.Parameter(torch.zeros(self.num_rules))
+        self.global_scale = nn.Parameter(torch.tensor(1.0))
+        self.local_scale = nn.Parameter(torch.tensor(0.7))
+        self.match_scale = nn.Parameter(torch.tensor(0.25))
+        self.dropout = nn.Dropout(0.1)
+        self.projection_head = nn.Sequential(
+            nn.Linear(projection_dim, projection_dim),
+            nn.ReLU(inplace=True),
+            nn.Linear(projection_dim, projection_dim),
+        )
+        self.atom_predictor = nn.Linear(projection_dim, SINGLE_NODE_DIM)
+        self.maccs_head = nn.Linear(projection_dim, 166)
+        self.use_maccs_pretraining = use_maccs_pretraining
+        self.pretrained = False
+        self.objective = GeneratorObjective(rank_weight=rank_weight, ranking_margin=ranking_margin)
+        self.rule_patterns = [self._compile_reactant_pattern(rule) for rule in self.rule_names]
+        self.rule_reactions = [self._compile_reaction(rule) for rule in self.rule_names]
+        self._applicability_cache: Dict[str, Tuple[np.ndarray, np.ndarray]] = {}
+        self.calibrated_threshold: Optional[float] = None
+        self.register_buffer("rule_prior_logits", torch.zeros(self.num_rules), persistent=False)
+        self.register_buffer("pos_weight", torch.ones(self.num_rules), persistent=False)
+        nn.init.xavier_uniform_(self.bilinear)
+
+    @classmethod
+    def _placeholder_rule_graph(cls) -> Data:
+        return Data(
+            x=torch.zeros((1, SINGLE_NODE_DIM), dtype=torch.float32),
+            edge_index=torch.empty((2, 0), dtype=torch.long),
+            edge_attr=torch.zeros((0, EDGE_DIM), dtype=torch.float32),
         )
 
-        criterion = torch.nn.BCELoss()
-        scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=epochs)
-
-        dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
-
-        for epoch in range(epochs):
-            maccs_predictor.train()
-            total_loss = 0
-            num_batches = 0
-
-            for batch in tqdm(dataloader, desc=f"MACCS Epoch {epoch+1}"):
+    @classmethod
+    def _cached_rule_graph(cls, rule: str, existing: Optional[Data] = None) -> Data:
+        if rule not in cls._rule_graph_cache:
+            graph = existing
+            if graph is None:
                 try:
-                    # Перемещаем ВЕСЬ батч на устройство
-                    batch = batch.to(device)
+                    graph = from_rule(rule)
+                except Exception:
+                    graph = None
+            if graph is None:
+                graph = cls._placeholder_rule_graph()
+            cls._rule_graph_cache[rule] = graph
+        return cls._rule_graph_cache[rule].clone()
 
-                    # Получаем предсказания
-                    predictions = maccs_predictor(batch)
+    def _prime_rule_graph_cache(self, rule_dict: Dict[str, Data]) -> None:
+        for rule, graph in rule_dict.items():
+            self._cached_rule_graph(rule, existing=graph)
 
-                    # Проверяем, что все предсказания в диапазоне [0, 1]
-                    if predictions.min() < 0 or predictions.max() > 1:
-                        print(f"ERROR: Predictions out of bounds! min={predictions.min().item():.6f}, max={predictions.max().item():.6f}")
-                        # Принудительно ограничиваем диапазон
-                        predictions = torch.clamp(predictions, min=0.0, max=1.0)
-                        print(f"After clamping: [{predictions.min().item():.6f}, {predictions.max().item():.6f}]")
+    def _get_rule_graphs(self, rules: List[str]) -> List[Data]:
+        return [self._cached_rule_graph(rule) for rule in rules]
 
-                    # Проверяем на NaN и бесконечности
-                    if torch.isnan(predictions).any():
-                        print("ERROR: NaN in predictions!")
-                        continue
+    @staticmethod
+    def _compile_reactant_pattern(rule: str) -> Optional[Chem.Mol]:
+        try:
+            reactant_smarts, _ = _split_rule(rule)
+            return Chem.MolFromSmarts(reactant_smarts)
+        except Exception:
+            return None
 
-                    if torch.isinf(predictions).any():
-                        print("ERROR: Inf in predictions!")
-                        continue
+    @staticmethod
+    def _compile_reaction(rule: str):
+        try:
+            return rdChemReactions.ReactionFromSmarts(rule)
+        except Exception:
+            return None
 
-                    # Получаем истинные MACCS-ключи
-                    true_maccs = batch.maccs
+    def _rule_embeddings(self, device: torch.device) -> torch.Tensor:
+        self.parser.to(device)
+        return self.parser().to(device)
 
-                    # Проверяем и исправляем форму целевых меток
-                    if true_maccs.dim() == 1:
-                        true_maccs = true_maccs.view(predictions.shape)
+    def _batch_index(self, data: Data, device: torch.device) -> torch.Tensor:
+        batch = getattr(data, "batch", None)
+        if batch is None:
+            return torch.zeros(data.x.size(0), dtype=torch.long, device=device)
+        return batch.to(device)
 
-                    # Проверяем целевые метки
-                    #print(f"True MACCS range: [{true_maccs.min().item():.0f}, {true_maccs.max().item():.0f}]")
+    def _reshape_rule_tensor(self, value: Optional[torch.Tensor], batch_size: int, fill: float, device: torch.device) -> torch.Tensor:
+        if value is None or self.num_rules == 0:
+            return torch.full((batch_size, self.num_rules), fill_value=fill, dtype=torch.float32, device=device)
+        return value.float().view(batch_size, self.num_rules).to(device)
 
-                    # Убедимся, что целевые метки содержат только 0 и 1
-                    unique_vals = torch.unique(true_maccs)
-                    #print(f"Unique values in true_maccs: {unique_vals}")
+    def _compose_substrate_embedding(self, data: Data) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+        device = data.x.device
+        node_states = self.substrate_encoder.forward_nodes(data)
+        batch_index = self._batch_index(data, device)
+        graph_embedding = self.graph_norm(global_mean_pool(node_states, batch_index))
+        if not self.use_fingerprint:
+            return graph_embedding, graph_embedding, node_states, batch_index
 
-                    if not torch.all((true_maccs == 0) | (true_maccs == 1)):
-                        print("WARNING: true_maccs contains values other than 0 and 1!")
-                        # Принудительно преобразуем к 0 и 1
-                        true_maccs = torch.where(true_maccs > 0.5, 1.0, 0.0)
-
-                    # Убедимся, что формы совпадают
-                    assert predictions.shape == true_maccs.shape, \
-                        f"Shape mismatch: predictions {predictions.shape} vs true_maccs {true_maccs.shape}"
-
-                    # Вычисляем потерю
-                    loss = criterion(predictions, true_maccs)
-
-                    #print(f"Loss: {loss.item():.6f}")
-
-                    if torch.isnan(loss):
-                        print("WARNING: NaN loss!")
-                        continue
-
-                    # Оптимизация
-                    optimizer.zero_grad()
-                    loss.backward()
-
-                    # Проверяем градиенты
-                    total_norm = 0.0
-                    for p in maccs_predictor.parameters():
-                        if p.grad is not None:
-                            param_norm = p.grad.data.norm(2)
-                            total_norm += param_norm.item() ** 2
-                    total_norm = total_norm ** 0.5
-                    #print(f"Gradient norm: {total_norm:.6f}")
-
-                    torch.nn.utils.clip_grad_norm_(
-                        list(maccs_predictor.maccs_ruleparse.parameters()) +
-                        list(maccs_predictor.predictor.parameters()),
-                        max_norm=1.0
-                    )
-                    optimizer.step()
-
-                    total_loss += loss.item()
-                    num_batches += 1
-
-                except Exception as e:
-                    print(f"Error in MACCS training: {e}")
-                    import traceback
-                    traceback.print_exc()
-                    continue
-
-            if num_batches > 0:
-                avg_loss = total_loss / num_batches
-                current_lr = scheduler.get_last_lr()[0]
-                print(f"MACCS Epoch {epoch+1}, Loss: {avg_loss:.4f}, LR: {current_lr:.6f}")
-
-            scheduler.step()
-
-        # Переносим обученные веса RuleParse в основной парсер
-        self._transfer_maccs_weights(maccs_predictor.maccs_ruleparse)
-        print("MACCS pretraining completed and weights transferred to RuleParse!")
-
-    def pretrain(self, smiles_list, epochs=50, batch_size=64, lr=1e-4,
-                 contrastive_ratio=0.6, save_path=None):
-        """
-        Интегрированное предобучение с переносом весов
-        """
-        # Создаем графы для предобучения
-        graphs = self._create_pretraining_graphs(smiles_list)
-
-        if len(graphs) < batch_size:
-            print(f"Not enough graphs: {len(graphs)} < {batch_size}")
-            return
-
-        # Вычисляем количество эпох для каждого этапа
-        contrastive_epochs = int(epochs * contrastive_ratio)
-        masked_epochs = epochs - contrastive_epochs
-
-        print(f"Starting integrated pretraining:")
-        print(f"  - Contrastive learning: {contrastive_epochs} epochs")
-        print(f"  - Masked modeling: {masked_epochs} epochs")
-
-        # Этап 1: Контрастивное обучение
-        if contrastive_epochs > 0:
-            print("Phase 1: Contrastive Learning")
-            self._contrastive_pretrain_phase(graphs, contrastive_epochs, batch_size, lr)
-
-        # Этап 2: Маскированное моделирование
-        if masked_epochs > 0:
-            print("Phase 2: Masked Modeling")
-            self._masked_modeling_pretrain_phase(graphs, masked_epochs, batch_size, lr)
-
-        # Сохраняем веса если указан путь
-        if save_path:
-            self.save_pretrained_weights(save_path)
-
-        self.pretrained = True
-        print("Integrated pretraining completed successfully!")
-
-    def comprehensive_pretrain(self, smiles_list, epochs=100, batch_size=64, lr=1e-4,
-                              contrastive_ratio=0.4, maccs_ratio=0.3, masked_ratio=0.3,
-                              save_path=None):
-        """
-        Комплексное предобучение с тремя этапами:
-        1. Контрастивное обучение (молекулярный энкодер)
-        2. MACCS предобучение (RuleParse)
-        3. Маскированное моделирование (уточнение)
-        """
-
-        # Проверка пропорций
-        total_ratio = contrastive_ratio + maccs_ratio + masked_ratio
-        if abs(total_ratio - 1.0) > 1e-6:
-            print(f"Warning: Ratios sum to {total_ratio}, normalizing to 1.0")
-            contrastive_ratio /= total_ratio
-            maccs_ratio /= total_ratio
-            masked_ratio /= total_ratio
-
-        # Создаем графы
-        graphs = self._create_pretraining_graphs(smiles_list)
-
-        if len(graphs) < batch_size:
-            print(f"Not enough graphs: {len(graphs)} < {batch_size}")
-            return
-
-        # Вычисляем количество эпох для каждого этапа
-        contrastive_epochs = int(epochs * contrastive_ratio)
-        maccs_epochs = int(epochs * maccs_ratio)
-        masked_epochs = epochs - contrastive_epochs - maccs_epochs
-
-        print("Starting comprehensive pretraining:")
-        print(f"  - Contrastive learning: {contrastive_epochs} epochs")
-        print(f"  - MACCS pretraining: {maccs_epochs} epochs")
-        print(f"  - Masked modeling: {masked_epochs} epochs")
-
-        # Этап 1: Контрастивное обучение (молекулярный энкодер)
-        if contrastive_epochs > 0:
-            print("\n=== Phase 1: Contrastive Learning ===")
-            self._contrastive_pretrain_phase(graphs, contrastive_epochs, batch_size, lr)
-
-        # Этап 2: Маскированное моделирование (уточнение)
-        if masked_epochs > 0:
-            print("\n=== Phase 3: Masked Modeling ===")
-            self._masked_modeling_pretrain_phase(graphs, masked_epochs, batch_size, lr)
-
-        del graphs
-        gc.collect()
-        # Этап 3: MACCS предобучение (RuleParse)
-        if maccs_epochs > 0 and self.use_maccs_pretraining:
-            print("\n=== Phase 2: MACCS-based RuleParse Pretraining ===")
-            self.pretrain_maccs(smiles_list, maccs_epochs, batch_size, lr)
-
-
-        # Сохраняем веса если указан путь
-        if save_path:
-            self.save_pretrained_weights(save_path)
-
-        self.pretrained = True
-        print("\nComprehensive pretraining completed successfully!")
-
-    def save_pretrained_weights(self, path):
-        """Сохранение предобученных весов"""
-        weights = {
-            'gnn_encoder': self.gnn_encoder.state_dict(),
-            'projection_head': self.projection_head.state_dict(),
-            'atom_predictor': self.atom_predictor.state_dict(),
-            'bond_predictor': self.bond_predictor.state_dict(),
-            'parser': self.parser.state_dict(),
-        }
-        torch.save(weights, path)
-        print(f"Pretrained weights saved to {path}")
-
-    def load_pretrained_weights(self, path):
-        """Загрузка предобученных весов"""
-        weights = torch.load(path)
-        self.gnn_encoder.load_state_dict(weights['gnn_encoder'])
-        self.projection_head.load_state_dict(weights['projection_head'])
-        self.atom_predictor.load_state_dict(weights['atom_predictor'])
-        self.bond_predictor.load_state_dict(weights['bond_predictor'])
-        self.parser.load_state_dict(weights['parser'])
-        self.pretrained = True
-        print(f"Pretrained weights loaded from {path}")
-
-    def fit(self, data: MolFrame, lr: float = 1e-5, verbose: bool = True, eps: int = 100,
-            gamma: int = 2, freeze_pretrained: bool = False) -> 'Generator':
-        """
-        Обучение с поддержкой заморозки предобученных слоев
-        """
-        device = 'cuda' if torch.cuda.is_available() else 'cpu'
-        self.to(device)
-
-        # Настраиваем параметры для оптимизации
-        if self.pretrained and freeze_pretrained:
-            # Замораживаем предобученные компоненты
-            for param in self.gnn_encoder.parameters():
-                param.requires_grad = False
-
-            # Обучаем только специфичные для генерации компоненты
-            optimizer_params = [
-                {'params': self.attention.parameters(), 'lr': lr},
-                {'params': self.final_proj.parameters(), 'lr': lr},
-                {'params': self.parser.parameters(), 'lr': lr * 0.1}  # Меньший LR для парсера
-            ]
-            print("Training with frozen pretrained weights")
+        batch_size = graph_embedding.size(0)
+        fp = getattr(data, "fp", None)
+        if fp is None:
+            fp = torch.zeros((batch_size, FINGERPRINT_DIM), dtype=torch.float32, device=device)
         else:
-            # Обучаем все параметры
-            optimizer_params = self.parameters()
-            print("Training all parameters")
+            fp = fp.float().view(batch_size, -1).to(device)
+        assert self.fp_encoder is not None
+        assert self.substrate_fusion is not None
+        fp_embedding = self.fp_encoder(fp)
+        fused = self.substrate_fusion(torch.cat((graph_embedding, fp_embedding), dim=1))
+        return graph_embedding, self.substrate_norm(fused), node_states, batch_index
 
-        criterion = AsymmetricBCELoss(gamma=gamma)
-        optimizer = torch.optim.AdamW(optimizer_params, lr=lr, betas=(0.9, 0.99), weight_decay=1e-10)
-        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
-            optimizer, mode='min', factor=0.5, patience=3
+    def _pairwise_inputs(
+        self,
+        substrate_embedding: torch.Tensor,
+        node_states: torch.Tensor,
+        batch_index: torch.Tensor,
+        rules: torch.Tensor,
+        rule_mask: torch.Tensor,
+        rule_counts: torch.Tensor,
+    ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+        dense_nodes, node_mask = to_dense_batch(node_states, batch_index)
+        keys = self.node_key(dense_nodes)
+        values = self.node_value(dense_nodes)
+        queries = self.rule_query(rules)
+        attn = torch.einsum("bnd,rd->brn", keys, queries) / math.sqrt(max(self.embed_dim, 1))
+        attn = attn.masked_fill(~node_mask.unsqueeze(1), -1e4)
+        local_weights = torch.softmax(attn, dim=-1)
+        local_context = torch.einsum("brn,bnd->brd", local_weights, values)
+
+        substrate = substrate_embedding.unsqueeze(1).expand(-1, self.num_rules, -1)
+        rule_bank = rules.unsqueeze(0).expand(substrate_embedding.size(0), -1, -1)
+        log_counts = torch.log1p(rule_counts.clamp_min(0.0)) / math.log(5.0)
+        match_features = torch.stack((rule_mask, log_counts), dim=-1)
+
+        pair_features = torch.cat(
+            (
+                substrate,
+                rule_bank,
+                local_context,
+                substrate * rule_bank,
+                torch.abs(substrate - rule_bank),
+                local_context * rule_bank,
+                match_features,
+            ),
+            dim=-1,
         )
+        return pair_features, local_context, match_features
 
-        if verbose:
-            print('Starting DataLoaders generation')
+    def _forward_generation_logits(self, data: Data) -> torch.Tensor:
+        _, substrate_embedding, node_states, batch_index = self._compose_substrate_embedding(data)
+        batch_size = substrate_embedding.size(0)
+        rules = self._rule_embeddings(substrate_embedding.device)
+        if rules.numel() == 0:
+            return torch.empty((batch_size, 0), device=substrate_embedding.device)
 
-        train_loader = []
-        vecs = data.reaction_labels
+        rule_mask = self._reshape_rule_tensor(getattr(data, "rule_mask", None), batch_size, 1.0, substrate_embedding.device)
+        rule_counts = self._reshape_rule_tensor(getattr(data, "rule_counts", None), batch_size, 0.0, substrate_embedding.device)
 
-        for substrate in data.map:
-            datum = data.single[substrate].clone()
-            # Преобразуем целевые метки в форму [num_rules]
-            datum.y = torch.tensor(vecs[substrate], dtype=torch.float32)
-            train_loader.append(datum)
+        if self.scoring == "bilinear":
+            logits = torch.einsum("bi,ij,rj->br", substrate_embedding, self.bilinear, rules)
+        elif self.scoring == "dot":
+            logits = F.normalize(substrate_embedding, dim=1) @ F.normalize(rules, dim=1).T
+        else:
+            pair_features, local_context, match_features = self._pairwise_inputs(
+                substrate_embedding,
+                node_states,
+                batch_index,
+                rules,
+                rule_mask,
+                rule_counts,
+            )
+            interaction_logits = self.rule_mlp(pair_features).squeeze(-1)
+            global_similarity = F.normalize(substrate_embedding, dim=1) @ F.normalize(rules, dim=1).T
+            local_similarity = F.cosine_similarity(local_context, rules.unsqueeze(0), dim=-1)
+            if self.scoring == "mlp":
+                logits = interaction_logits + (self.match_scale * match_features[..., 1])
+            else:
+                logits = (
+                    interaction_logits
+                    + (self.global_scale * global_similarity)
+                    + (self.local_scale * local_similarity)
+                    + (self.match_scale * match_features[..., 1])
+                )
 
-        train_loader = DataLoader(train_loader, batch_size=128, shuffle=True)
+        logits = logits + self.bias.view(1, -1) + (self.prior_strength * self.rule_prior_logits.view(1, -1))
+        if self.use_applicability_mask and self.num_rules:
+            logits = logits - ((1.0 - rule_mask) * self.applicability_penalty)
+        return logits
 
-        history = []
-        best_loss = float('inf')
-        for _ in tqdm(range(eps)):
-            self.train()
-            epoch_loss = 0
-            for batch in train_loader:
+    def forward(self, data: Data, mode: str = "generation", return_logits: bool = False) -> torch.Tensor:
+        _, embeddings, _, _ = self._compose_substrate_embedding(data)
+        if mode == "contrastive":
+            return F.normalize(self.projection_head(embeddings), dim=1)
+        if mode == "masked_modeling":
+            return embeddings
+        if mode == "maccs":
+            return torch.sigmoid(self.maccs_head(embeddings))
+        if mode != "generation":
+            raise ValueError(f"Unsupported mode: {mode}")
+
+        logits = self._forward_generation_logits(data)
+        if return_logits:
+            return logits
+        return torch.sigmoid(logits)
+
+    def _rule_applicability(self, substrate: str, mol: Optional[Chem.Mol] = None) -> Tuple[np.ndarray, np.ndarray]:
+        if substrate in self._applicability_cache:
+            return self._applicability_cache[substrate]
+        if mol is None:
+            mol = Chem.MolFromSmiles(substrate)
+        mask = np.zeros(self.num_rules, dtype=np.float32)
+        counts = np.zeros(self.num_rules, dtype=np.float32)
+        if mol is None:
+            self._applicability_cache[substrate] = (mask, counts)
+            return mask, counts
+        for index, pattern in enumerate(self.rule_patterns):
+            if pattern is None:
+                continue
+            try:
+                matches = mol.GetSubstructMatches(pattern, uniquify=True, maxMatches=4)
+            except Exception:
+                matches = ()
+            if matches:
+                mask[index] = 1.0
+                counts[index] = float(min(len(matches), 4))
+        self._applicability_cache[substrate] = (mask, counts)
+        return mask, counts
+
+    def _get_applicability(self, substrate: str, mol: Optional[Chem.Mol] = None) -> Tuple[np.ndarray, np.ndarray]:
+        return self._rule_applicability(substrate, mol)
+
+    def _single_records(self, data: MolFrame) -> List[Data]:
+        if not data.single:
+            data.singlegraphs()
+        records = []
+        for substrate, graph in data.single.items():
+            if substrate not in data.map or substrate not in data.reaction_labels:
+                continue
+            datum = graph.clone()
+            mask, counts = self._get_applicability(substrate, data.mol_structs.get(substrate))
+            datum.y = torch.tensor(data.reaction_labels[substrate], dtype=torch.float32)
+            datum.rule_mask = torch.tensor(mask, dtype=torch.float32)
+            datum.rule_counts = torch.tensor(counts, dtype=torch.float32)
+            records.append(datum)
+        return records
+
+    def _single_loader(self, records: List[Data], batch_size: int, shuffle: bool = True) -> DataLoader:
+        return DataLoader(records, batch_size=batch_size, shuffle=shuffle)
+
+    def _compute_epoch_loss(self, records: Sequence[Data], batch_size: int, device: torch.device) -> float:
+        if not records:
+            return float("inf")
+        loader = self._single_loader(list(records), batch_size=batch_size, shuffle=False)
+        total_loss = 0.0
+        num_batches = 0
+        self.eval()
+        with torch.no_grad():
+            for batch in loader:
                 batch = batch.to(device)
-                out = self(batch)
+                logits = self(batch, return_logits=True)
+                targets = batch.y.view(logits.size(0), -1).float()
+                rule_mask = self._reshape_rule_tensor(getattr(batch, "rule_mask", None), logits.size(0), 1.0, logits.device)
+                loss = self.objective(logits, targets, rule_mask, self.pos_weight.to(logits.device))
+                total_loss += float(loss.item())
+                num_batches += 1
+        return total_loss / max(num_batches, 1)
 
-                # Правильное преобразование формы целевых меток
-                target = batch.y.view(out.shape[0], -1)  # [batch_size, num_rules]
+    def _update_rule_statistics(self, records: Sequence[Data]) -> None:
+        if not records or self.num_rules == 0:
+            return
+        targets = torch.stack([record.y.float() for record in records], dim=0).view(len(records), self.num_rules)
+        mask = torch.stack([record.rule_mask.float() for record in records], dim=0).view(len(records), self.num_rules)
+        positives = targets.sum(dim=0)
+        exposures = mask.sum(dim=0)
+        negatives = ((1.0 - targets) * mask).sum(dim=0)
+        pos_weight = ((negatives + 1.0) / (positives + 1.0)).clamp(1.0, 25.0)
+        prior_prob = torch.where(
+            exposures > 0.0,
+            (positives + 1.0) / (exposures + 2.0),
+            torch.full_like(exposures, 0.01),
+        )
+        with torch.no_grad():
+            self.pos_weight.copy_(pos_weight.to(self.pos_weight.device))
+            self.rule_prior_logits.copy_(_safe_logit(prior_prob).to(self.rule_prior_logits.device))
 
-                # Проверка размерностей
-                assert out.shape == target.shape, \
-                    f"Shape mismatch: out {out.shape} vs target {target.shape}"
+    def _create_pretraining_graphs(self, smiles_list: Sequence[str]) -> List[Data]:
+        graphs = []
+        for smiles in smiles_list:
+            mol = Chem.MolFromSmiles(smiles)
+            if mol is None:
+                continue
+            graph = from_rdmol(mol)
+            if graph is not None:
+                graphs.append(graph)
+        return graphs
 
-                loss = criterion(out, target)
-                if verbose:
-                    history.append(loss.item())
+    def _contrastive_loss(self, z1: torch.Tensor, z2: torch.Tensor, temperature: float = 0.1) -> torch.Tensor:
+        similarity = torch.mm(z1, z2.T) / max(temperature, 1e-8)
+        labels = torch.arange(z1.size(0), device=z1.device)
+        return F.cross_entropy(similarity, labels)
 
+    def _masked_loss(self, pooled: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
+        prediction = self.atom_predictor(pooled)
+        return F.mse_loss(prediction, targets)
+
+    def pretrain(
+        self,
+        smiles_list: Sequence[str],
+        epochs: int = 25,
+        batch_size: int = 64,
+        lr: float = 1e-4,
+        contrastive_ratio: float = 0.5,
+        save_path: Optional[str] = None,
+    ) -> None:
+        graphs = self._create_pretraining_graphs(smiles_list)
+        if not graphs:
+            return
+
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.to(device)
+        optimizer = torch.optim.Adam(self.parameters(), lr=lr, weight_decay=1e-6)
+        loader = DataLoader(graphs, batch_size=batch_size, shuffle=True)
+        contrastive_epochs = max(1, int(epochs * contrastive_ratio))
+
+        for epoch in range(epochs):
+            self.train()
+            for batch in loader:
+                batch = batch.to(device)
                 optimizer.zero_grad()
+                if epoch < contrastive_epochs:
+                    aug1 = MoleculeAugmentor.augment_batch(batch).to(device)
+                    aug2 = MoleculeAugmentor.augment_batch(batch).to(device)
+                    loss = self._contrastive_loss(self(aug1, mode="contrastive"), self(aug2, mode="contrastive"))
+                else:
+                    pooled = self(batch, mode="masked_modeling")
+                    node_targets = global_mean_pool(batch.x.float(), batch.batch)
+                    loss = self._masked_loss(pooled, node_targets)
                 loss.backward()
-                torch.nn.utils.clip_grad_norm_(self.parameters(), 1.0)
+                optimizer.step()
+        self.pretrained = True
+        if save_path:
+            self.save_pretrained_weights(save_path)
+
+    def pretrain_maccs(
+        self,
+        smiles_list: Sequence[str],
+        epochs: int = 20,
+        batch_size: int = 64,
+        lr: float = 1e-4,
+    ) -> None:
+        if not self.use_maccs_pretraining:
+            return
+        graphs = []
+        for smiles in smiles_list:
+            mol = Chem.MolFromSmiles(smiles)
+            if mol is None:
+                continue
+            graph = from_rdmol(mol)
+            if graph is None:
+                continue
+            fingerprint = MACCSkeys.GenMACCSKeys(mol)
+            graph.maccs = torch.tensor([fingerprint.GetBit(index) for index in range(166)], dtype=torch.float32)
+            graphs.append(graph)
+        if not graphs:
+            return
+
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.to(device)
+        optimizer = torch.optim.Adam(
+            list(self.substrate_encoder.parameters()) + list(self.maccs_head.parameters()),
+            lr=lr,
+            weight_decay=1e-6,
+        )
+        criterion = nn.BCELoss()
+        loader = DataLoader(graphs, batch_size=batch_size, shuffle=True)
+        for _ in range(epochs):
+            self.train()
+            for batch in loader:
+                batch = batch.to(device)
+                optimizer.zero_grad()
+                loss = criterion(self(batch, mode="maccs"), batch.maccs.view(batch.num_graphs, -1))
+                loss.backward()
+                optimizer.step()
+
+    def comprehensive_pretrain(
+        self,
+        smiles_list: Sequence[str],
+        epochs: int = 50,
+        batch_size: int = 64,
+        lr: float = 1e-4,
+        contrastive_ratio: float = 0.4,
+        maccs_ratio: float = 0.3,
+        masked_ratio: float = 0.3,
+        save_path: Optional[str] = None,
+    ) -> None:
+        total = contrastive_ratio + maccs_ratio + masked_ratio
+        if total <= 0:
+            return
+        contrastive_ratio /= total
+        maccs_ratio /= total
+        masked_ratio /= total
+        self.pretrain(
+            smiles_list=smiles_list,
+            epochs=max(1, int(epochs * (contrastive_ratio + masked_ratio))),
+            batch_size=batch_size,
+            lr=lr,
+            contrastive_ratio=contrastive_ratio / max(contrastive_ratio + masked_ratio, 1e-8),
+        )
+        self.pretrain_maccs(
+            smiles_list=smiles_list,
+            epochs=max(1, int(epochs * maccs_ratio)),
+            batch_size=batch_size,
+            lr=lr,
+        )
+        if save_path:
+            self.save_pretrained_weights(save_path)
+
+    def save_pretrained_weights(self, path: str) -> None:
+        torch.save(
+            {
+                "substrate_encoder": self.substrate_encoder.state_dict(),
+                "parser": self.parser.state_dict(),
+                "projection_head": self.projection_head.state_dict(),
+                "atom_predictor": self.atom_predictor.state_dict(),
+                "maccs_head": self.maccs_head.state_dict(),
+                "bilinear": self.bilinear.data,
+                "bias": self.bias.data,
+                "rule_prior_logits": self.rule_prior_logits.data,
+                "pos_weight": self.pos_weight.data,
+            },
+            path,
+        )
+
+    def load_pretrained_weights(self, path: str) -> None:
+        weights = torch.load(path, map_location="cpu")
+        self.substrate_encoder.load_state_dict(weights["substrate_encoder"])
+        self.parser.load_state_dict(weights["parser"])
+        self.projection_head.load_state_dict(weights["projection_head"])
+        self.atom_predictor.load_state_dict(weights["atom_predictor"])
+        self.maccs_head.load_state_dict(weights["maccs_head"])
+        self.bilinear.data.copy_(weights["bilinear"])
+        self.bias.data.copy_(weights["bias"])
+        if "rule_prior_logits" in weights and self.rule_prior_logits.numel():
+            self.rule_prior_logits.data.copy_(weights["rule_prior_logits"])
+        if "pos_weight" in weights and self.pos_weight.numel():
+            self.pos_weight.data.copy_(weights["pos_weight"])
+        self.pretrained = True
+
+    def fit(
+        self,
+        data: MolFrame,
+        lr: float = 1e-4,
+        verbose: bool = True,
+        eps: int = 20,
+        gamma: int = 2,
+        freeze_pretrained: bool = False,
+        batch_size: int = 64,
+        weight_decay: float = 1e-6,
+        val_data: Optional[MolFrame] = None,
+        patience: int = 7,
+        min_delta: float = 1e-4,
+        timeout_seconds: Optional[float] = None,
+    ) -> "Generator":
+        del gamma
+        if not data.single:
+            data.singlegraphs()
+        if not data.reaction_labels:
+            data.label_reactions(self.rule_names)
+
+        records = self._single_records(data)
+        self._update_rule_statistics(records)
+        loader = self._single_loader(records, batch_size=batch_size)
+
+        val_records: List[Data] = []
+        if val_data is not None:
+            if not val_data.single:
+                val_data.singlegraphs()
+            if not val_data.reaction_labels:
+                val_data.label_reactions(self.rule_names)
+            val_records = self._single_records(val_data)
+
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.to(device)
+        if freeze_pretrained and self.pretrained:
+            for parameter in self.substrate_encoder.parameters():
+                parameter.requires_grad = False
+
+        optimizer = torch.optim.Adam(
+            filter(lambda parameter: parameter.requires_grad, self.parameters()),
+            lr=lr,
+            weight_decay=weight_decay,
+        )
+        best_loss = float("inf")
+        best_val_loss = float("inf")
+        best_state = None
+        patience_counter = 0
+        loss_history: List[float] = []
+        val_loss_history: List[float] = []
+        early_stopped_epoch: Optional[int] = None
+        timed_out = False
+        stop_reason = "completed"
+        last_epoch_seconds: Optional[float] = None
+        started = time.perf_counter()
+
+        def _sync_training_state() -> None:
+            self.best_state_ = best_state
+            self.best_loss_ = best_loss if loss_history else None
+            self.best_val_loss_ = best_val_loss if val_records and val_loss_history else None
+            self.loss_history_ = list(loss_history)
+            self.val_loss_history_ = list(val_loss_history)
+            self.epochs_trained_ = len(loss_history)
+            self.early_stopped_epoch_ = early_stopped_epoch
+            self.timed_out_ = timed_out
+            self.timeout_seconds_ = timeout_seconds
+            self.stop_reason_ = stop_reason
+            self.last_epoch_seconds_ = last_epoch_seconds
+
+        _sync_training_state()
+        for epoch in range(eps):
+            if timeout_seconds is not None and last_epoch_seconds is not None:
+                elapsed = time.perf_counter() - started
+                remaining = timeout_seconds - elapsed
+                required_seconds = last_epoch_seconds + _timeout_buffer(last_epoch_seconds)
+                if remaining <= required_seconds:
+                    timed_out = True
+                    stop_reason = "timeout"
+                    if verbose:
+                        print(
+                            f"generator stopping before epoch={epoch + 1} "
+                            f"remaining={remaining:.1f}s estimated_epoch={last_epoch_seconds:.1f}s"
+                        )
+                    break
+            epoch_started = time.perf_counter()
+            self.train()
+            epoch_loss = 0.0
+            num_batches = 0
+            for batch in loader:
+                batch = batch.to(device)
+                optimizer.zero_grad()
+                logits = self(batch, return_logits=True)
+                targets = batch.y.view(logits.size(0), -1).float()
+                rule_mask = self._reshape_rule_tensor(getattr(batch, "rule_mask", None), logits.size(0), 1.0, logits.device)
+                loss = self.objective(logits, targets, rule_mask, self.pos_weight.to(logits.device))
+                loss.backward()
                 optimizer.step()
                 epoch_loss += loss.item()
-            if verbose:
-                print(f'Loss {epoch_loss}')
-            scheduler.step(epoch_loss)
-
-            if epoch_loss < best_loss:
-                best_loss = epoch_loss
-                torch.save(self.state_dict(), 'best_generator.pth')
-
+                num_batches += 1
+            if num_batches == 0:
+                stop_reason = "no_batches"
+                break
+            avg_loss = epoch_loss / num_batches
+            loss_history.append(float(avg_loss))
+            best_loss = min(best_loss, avg_loss)
+            if val_records:
+                val_loss = self._compute_epoch_loss(val_records, batch_size=batch_size, device=device)
+                val_loss_history.append(float(val_loss))
+                if verbose:
+                    print(f"generator epoch={epoch + 1} train_loss={avg_loss:.4f} val_loss={val_loss:.4f}")
+                if val_loss < best_val_loss - min_delta:
+                    best_val_loss = val_loss
+                    best_state = {key: value.detach().cpu().clone() for key, value in self.state_dict().items()}
+                    self.best_state_ = best_state
+                    patience_counter = 0
+                else:
+                    patience_counter += 1
+                if patience_counter >= patience:
+                    early_stopped_epoch = epoch + 1
+                    stop_reason = "early_stopping"
+                    if verbose:
+                        print(f"generator early stopping at epoch={epoch + 1} patience={patience}")
+                    break
+            elif verbose:
+                print(f"generator epoch={epoch + 1} loss={avg_loss:.4f}")
+            last_epoch_seconds = time.perf_counter() - epoch_started
+            _sync_training_state()
+            if timeout_seconds is not None and (time.perf_counter() - started) >= timeout_seconds:
+                timed_out = True
+                stop_reason = "timeout"
+                _sync_training_state()
+                if verbose:
+                    print(f"generator stopping at epoch={epoch + 1} timeout_seconds={timeout_seconds}")
+                break
+        if best_state is not None:
+            self.load_state_dict(best_state)
+        _sync_training_state()
         return self
 
-    @torch.no_grad()
-    def generate(self, sub: str, pca: bool = True) -> list[str]:
-        self.eval()
+    def _graph_for_substrate(self, sub: str) -> Tuple[Optional[Chem.Mol], Optional[Data]]:
         mol = Chem.MolFromSmiles(sub)
-        sub_mol = from_rdmol(mol)
-        if pca:
-            ats = Path(__file__).parent / '..' / 'data' / 'pca_ats_single.pkl'
-            bonds = Path(__file__).parent / '..' / 'data' / 'pca_bonds_single.pkl'
-            with open(ats, 'rb') as file:
-                pca_x = pkl.load(file)
-            with open(bonds, 'rb') as file:
-                pca_b = pkl.load(file)
-            for i in range(len(sub_mol.x)):
-                for j in range(len(sub_mol.x[i])):
-                    if sub_mol.x[i][j] == float('inf'):
-                        sub_mol.x[i][j] = 0
-            sub_mol.x = torch.tensor(SimpleImputer(missing_values=np.nan,
-                                          strategy='constant',
-                                          fill_value=0).fit_transform(sub_mol.x))
-            sub_mol.x = torch.tensor(pca_x.transform(sub_mol.x))
-            try:
-                sub_mol.edge_attr = torch.tensor(pca_b.transform(sub_mol.edge_attr))
-            except ValueError:
-                print('Some issue happened with this molecule:')
-                print(sub)
-        vector = cpunum(self(sub_mol).squeeze())
-
-        # Adaptive thresholding
-        top_k = max(1, int(len(vector) * 0.1))
-        threshold = np.partition(vector, -top_k)[-top_k]
-
-        active_rules = np.where(vector >= threshold)[0]
-        out = []
-        for rule in active_rules:
-            rxn = ReactionFromSmarts(list(self.rules.keys())[rule])
-            try:
-                mols_prebuild = chain.from_iterable(rxn.RunReactants((mol,)))
-            except ValueError:
-                continue
-            if not mols_prebuild:
-                continue
-            else:
-                mols_splitted = []
-                for preb in mols_prebuild:
-                    mols_splitted += Chem.MolToSmiles(preb).split('.')
-                mols_splitted = [x for x in mols_splitted if iscorrect(x)]
-                mols_splitted = list(map(Chem.MolFromSmiles, mols_splitted))
-                mols_splitted = [x for x in mols_splitted if x is not None]
-                if not mols_splitted:
-                    continue
-                try:
-                    mols_standart = list(map(standardize_mol, mols_splitted))
-                except Chem.KekulizeException:
-                    continue
-                except RuntimeError:
-                    continue
-                except Chem.AtomValenceException:
-                    continue
-                for stand in mols_standart:
-                    out.append(stand)
-        return out
+        if mol is None:
+            return None, None
+        graph = from_rdmol(mol)
+        if graph is None:
+            return mol, None
+        mask, counts = self._get_applicability(sub, mol)
+        graph.rule_mask = torch.tensor(mask, dtype=torch.float32)
+        graph.rule_counts = torch.tensor(counts, dtype=torch.float32)
+        return mol, graph
 
     @torch.no_grad()
-    def jaccard(self, test_frame: MolFrame) -> tp.List[float]:
+    def score_rules(self, sub: str, return_mask: bool = False):
+        mol, graph = self._graph_for_substrate(sub)
+        if mol is None or graph is None:
+            empty = np.array([], dtype=np.float32)
+            if return_mask:
+                return empty, empty
+            return empty
+        first_param = next(iter(self.parameters()), None)
+        device = first_param.device if first_param is not None else torch.device("cpu")
+        batch = Batch.from_data_list([graph]).to(device)
+        scores = self(batch).view(-1).detach().cpu().numpy()
+        if return_mask:
+            rule_mask = graph.rule_mask.detach().cpu().numpy()
+            return scores, rule_mask
+        return scores
+
+    @torch.no_grad()
+    def calibrate_threshold(
+        self,
+        val_data: MolFrame,
+        rules: Optional[Sequence[str]] = None,
+        target: Literal["recall_at_precision", "f1"] = "recall_at_precision",
+        min_precision: float = 0.01,
+        verbose: bool = True,
+    ) -> Tuple[float, float]:
+        selected_rules = list(rules) if rules is not None else self.rule_names
+        if not val_data.reaction_labels:
+            val_data.label_reactions(selected_rules)
+
+        all_scores: List[float] = []
+        all_labels: List[float] = []
+
         self.eval()
-        jaccards = []
-        for sub in test_frame.map:
-            mols = set([Chem.MolToSmiles(x) for x in self.generate(sub)])
-            reals = test_frame.map[sub]
-            jaccards.append(len(reals & mols) / len(reals | mols))
-        return jaccards
-
-class SimpleGenerator(GGenerator):
-    def __init__(self, rules: tp.List[str]):
-        self.rules = rules
-
-    def fit(self, data: MolFrame):
-        pass
-
-    def generate(self, sub: str) -> tp.List[str]:
-        mol = Chem.MolFromSmiles(sub)
-        out = []
-        for i, rule in enumerate(tqdm(self.rules)):
-            rxn = ReactionFromSmarts(rule)
+        for substrate in val_data.map:
             try:
-                mols_prebuild = chain.from_iterable(rxn.RunReactants((mol,)))
-            except ValueError:
+                scores, mask = self.score_rules(substrate, return_mask=True)
+            except Exception:
                 continue
-            if not mols_prebuild:
+            if scores.size == 0:
                 continue
-            else:
-                mols_splitted = []
-                for preb in mols_prebuild:
-                    mols_splitted += Chem.MolToSmiles(preb).split('.')
-                mols_splitted = [x for x in mols_splitted if iscorrect(x)]
-                mols_splitted = list(map(Chem.MolFromSmiles, mols_splitted))
-                mols_splitted = [x for x in mols_splitted if x is not None]
-                if not mols_splitted:
-                    continue
-                try:
-                    mols_standart = list(map(standardize_mol, mols_splitted))
-                except Chem.KekulizeException:
-                    continue
-                except RuntimeError:
-                    continue
-                except Chem.AtomValenceException:
-                    continue
-                for stand in mols_standart:
-                    out.append(stand)
-        return out
+            labels = val_data.reaction_labels.get(substrate)
+            if labels is None:
+                continue
+            labels_np = np.asarray(labels, dtype=np.float32)
+            if labels_np.shape[0] != scores.shape[0]:
+                continue
+            valid = mask > 0.0
+            if not valid.any():
+                continue
+            all_scores.extend(scores[valid].tolist())
+            all_labels.extend(labels_np[valid].tolist())
+
+        if not all_scores:
+            self.calibrated_threshold = 0.5
+            return 0.5, 0.0
+
+        scores_t = torch.tensor(all_scores, dtype=torch.float32)
+        labels_t = torch.tensor(all_labels, dtype=torch.float32)
+        best_threshold = 0.5
+        best_metric = -1.0
+
+        for threshold_step in range(1, 100):
+            threshold = threshold_step / 100.0
+            predictions = (scores_t >= threshold).float()
+            tp = float((predictions * labels_t).sum().item())
+            fp = float((predictions * (1.0 - labels_t)).sum().item())
+            fn = float((((1.0 - predictions) * labels_t)).sum().item())
+            precision = tp / (tp + fp + 1e-8)
+            recall = tp / (tp + fn + 1e-8)
+            f1 = 2.0 * precision * recall / (precision + recall + 1e-8)
+            if target == "recall_at_precision":
+                if precision >= min_precision and recall > best_metric:
+                    best_metric = recall
+                    best_threshold = threshold
+            elif f1 > best_metric:
+                best_metric = f1
+                best_threshold = threshold
+
+        self.calibrated_threshold = best_threshold
+        if verbose:
+            print(
+                f"generator threshold calibrated={best_threshold:.3f} "
+                f"target={target} metric={best_metric:.4f}"
+            )
+        return best_threshold, best_metric
+
+    def _aggregate_candidate_scores(self, scores: Sequence[float]) -> float:
+        if not scores:
+            return 0.0
+        if self.candidate_aggregation == "max":
+            return float(max(scores))
+        if self.candidate_aggregation == "mean":
+            return float(sum(scores) / len(scores))
+        clipped = np.clip(np.asarray(scores, dtype=np.float32), 1e-6, 1.0 - 1e-6)
+        noisy_or = float(1.0 - np.prod(1.0 - clipped))
+        if self.candidate_aggregation == "noisy_or":
+            return noisy_or
+        return float((0.65 * float(clipped.max())) + (0.35 * noisy_or))
+
+    @torch.no_grad()
+    def generate_scored(
+        self,
+        sub: str,
+        pca: bool = False,
+        top_k: Optional[int] = None,
+        threshold: Optional[float] = None,
+    ) -> List[tuple[str, float]]:
+        del pca
+        mol, _ = self._graph_for_substrate(sub)
+        if mol is None:
+            return []
+        scores, rule_mask = self.score_rules(sub, return_mask=True)
+        if scores.size == 0:
+            return []
+
+        active_pool = np.where(rule_mask > 0.0)[0] if self.use_applicability_mask else np.arange(scores.shape[0])
+        if active_pool.size == 0:
+            active_pool = np.arange(scores.shape[0])
+
+        if threshold is not None:
+            active = active_pool[scores[active_pool] >= threshold]
+            if active.size == 0 and top_k is not None:
+                ranked_pool = active_pool[np.argsort(scores[active_pool])[::-1]]
+                active = ranked_pool[:top_k]
+        else:
+            if top_k is None:
+                top_k = min(self.default_top_k, max(1, active_pool.size))
+            ranked_pool = active_pool[np.argsort(scores[active_pool])[::-1]]
+            active = ranked_pool[:top_k]
+
+        candidate_scores: Dict[str, List[float]] = {}
+        ranked_indices = sorted((int(index) for index in active), key=lambda index: float(scores[index]), reverse=True)
+        for index in ranked_indices:
+            if index >= len(self.rule_reactions):
+                continue
+            reaction = self.rule_reactions[index]
+            if reaction is None:
+                continue
+            rule_score = float(scores[index])
+            outcomes = safe_run_reactants(reaction, mol)
+            seen_products = set()
+            for product_tuple in outcomes:
+                for product in product_tuple:
+                    try:
+                        smiles = Chem.MolToSmiles(product)
+                    except Exception:
+                        continue
+                    for fragment in smiles.split("."):
+                        fragment = fragment.strip()
+                        if not fragment:
+                            continue
+                        try:
+                            normalized = str(standardize_mol(fragment))
+                        except Exception:
+                            continue
+                        if normalized in seen_products:
+                            continue
+                        seen_products.add(normalized)
+                        candidate_scores.setdefault(normalized, []).append(rule_score)
+
+        ranked = [(candidate, self._aggregate_candidate_scores(values)) for candidate, values in candidate_scores.items()]
+        return sorted(ranked, key=lambda item: (-item[1], item[0]))
+
+    @torch.no_grad()
+    def generate(
+        self,
+        sub: str,
+        pca: bool = False,
+        top_k: Optional[int] = None,
+        threshold: Optional[float] = None,
+    ) -> List[str]:
+        return [candidate for candidate, _ in self.generate_scored(sub, pca=pca, top_k=top_k, threshold=threshold)]
+
+    @torch.no_grad()
+    def jaccard(self, test_frame: MolFrame) -> List[float]:
+        scores = []
+        for substrate, products in test_frame.map.items():
+            predicted = set(self.generate(substrate))
+            real = {str(standardize_mol(product)) for product in products}
+            union = predicted | real
+            scores.append(len(predicted & real) / len(union) if union else 0.0)
+        return scores

@@ -1,17 +1,21 @@
 import streamlit as st
 
-import sys
-sys.path.append('.')
-
 from grail_metabolism.model.grail import PretrainedGrail
 
-model = PretrainedGrail()
 
-st.title('Drug metabolites prediction using Grail')
+@st.cache_resource
+def load_model() -> PretrainedGrail:
+    return PretrainedGrail(strict=False)
 
-input_str = st.text_input('Enter drug compound SMILES', 'CN1C=NC2=C1C(=O)N(C(=O)N2C)C')
 
-if input_str:
-    model.draw(input_str)
-    with open('network.html') as file:
-        st.components.v1.html(file.read())
+st.title("GRAIL metabolite prediction")
+smiles = st.text_input("Enter substrate SMILES", "CN1C=NC2=C1C(=O)N(C(=O)N2C)C")
+
+if smiles:
+    model = load_model()
+    try:
+        html_path = model.draw(smiles, output_html="network.html")
+        with open(html_path) as handle:
+            st.components.v1.html(handle.read(), height=850)
+    except Exception as exc:
+        st.error(str(exc))

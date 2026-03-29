@@ -1,0 +1,52 @@
+.DS_Store
+.coverage
+.coverage.*
+.hypothesis/
+.idea/
+.ipynb_checkpoints/
+.mypy_cache/
+.nox/
+.pytest_cache/
+.ruff_cache/
+.tox/
+.venv/
+__pycache__/
+*.egg-info/
+*.log
+*.pyc
+*.pyd
+*.pyo
+*.tmp
+
+# Local build / packaging output
+build/
+dist/
+
+# Local experiment output
+artifacts/
+results/
+configs/generated/
+
+# Local environments and heavyweight research data
+grail_metabolism/data/
+grail_metabolism/lib/
+grail_metabolism/venv/
+
+# Generated package-adjacent assets
+grail_metabolism/network.html
+grail_metabolism/single_molecule_network.html
+grail_metabolism/*.csv.gz
+grail_metabolism/*.hdf5
+grail_metabolism/*.onnx
+grail_metabolism/*.pth
+grail_metabolism/config.yml
+timeout.log
+
+# Research scratch space and notebook byproducts
+sub.pkl
+prod.pkl
+gens.smi
+xtr.txt
+
+# Local tooling output
+qodana.yaml

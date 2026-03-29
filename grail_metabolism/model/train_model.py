@@ -3,8 +3,6 @@ from torch import nn
 from torch.nn import Module
 #from ..utils.preparation import MolFrame
 from torch_geometric.loader import DataLoader
-from sklearn.metrics import roc_auc_score as roc_auc, matthews_corrcoef as mcc
-import matplotlib.pyplot as plt
 import numpy as np
 from tqdm.auto import tqdm
 from typing import Tuple
@@ -16,6 +14,8 @@ def cpunum(tensor) -> np.ndarray:
 
 @torch.no_grad()
 def test(model: Module, loader: DataLoader) -> Tuple[float, float]:
+    from sklearn.metrics import roc_auc_score as roc_auc, matthews_corrcoef as mcc
+
     model.eval()
     pred = []
     bin_pred = []
@@ -31,6 +31,8 @@ def test(model: Module, loader: DataLoader) -> Tuple[float, float]:
 
 
 def train_pairs(model: Module, train_set, test_set, lr: float, decay: float, eps: int) -> Module:
+    import matplotlib.pyplot as plt
+
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     model.to(device)
 

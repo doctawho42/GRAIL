@@ -1,222 +1,227 @@
-# GRAIL: Graph Neural Networks and Rule-based Approach in Drug Metabolism Prediction
-[![PyPI Version][pypi-image]][pypi-url]
+# GRAIL
 
-**GRAIL** is an open-source tool for drug metabolism prediction, combining **SMARTS reaction rules** with **Graph Neural Networks** (GNNs). It is designed for researchers and developers working in cheminformatics, drug discovery, and computational biology.
+GRAIL is a research-oriented package for xenobiotic metabolism prediction. It combines:
 
----
+1. A multi-label generator that scores biotransformation SMARTS rules for a substrate graph.
+2. Rule application with RDKit to enumerate candidate metabolites.
+3. A binary filter that ranks substrate-metabolite pairs.
 
-## Key Features
-- **Rule-based Predictions**: Leverages SMARTS reaction rules for accurate metabolic predictions.
-- **Graph Neural Networks**: Utilizes cutting-edge GNN architectures for enhanced learning from molecular graphs.
-- **Flexible Data Handling**: Supports data input from multiple formats, including pandas DataFrames, dictionaries, and SDF files.
-- **Customizable Models**: Includes modular components (`Filter`, `Generator`, and others) for flexible model creation and training.
-- **Hyperparameter Optimization**: Built-in support for Optuna for efficient hyperparameter tuning.
+The repository originally mixed models, datasets, notebooks and local virtual environments in one tree. The refactor now turns it into:
 
----
+- a usable Python package
+- a reproducible experiment shell
+- a preset-based ablation framework
+- a CLI for train / eval / infer
+- lightweight notebooks for reviewers and exploratory work
 
-## Table of Contents
-1. [Installation](#1-installation)
-   - [From Source](#11-from-source-with-poetry)
-   - [From PyPI](#12-from-pypi)
-2. [Data Availability](#2-data-availability)
-3. [Quick Start](#3-quick-start)
-4. [Modules Overview](#4-modules-overview)
-5. [eUSPTO](#5-enchanced-uspto-euspto)
-6. [Usage Examples](#6-usage-examples)
+## What is included
 
----
+- `grail_metabolism.utils.preparation.MolFrame` for dataset assembly from DataFrames, mappings or SDF + triples.
+- `grail_metabolism.utils.transform` for molecular graph, pair graph and SMARTS rule graph featurization.
+- `grail_metabolism.model.Generator` and `grail_metabolism.model.Filter` for generator and filter stages.
+- `grail_metabolism.workflows` for pretrain / train / eval / infer orchestration.
+- `grail_metabolism.experiments` for experiment presets and ablations.
+- `grail` CLI for quick prediction, preset export and experiment execution.
+- Packaged rules/resources in `grail_metabolism/resources/`.
+- YAML experiment configs in `configs/`.
+- Project structure notes in [docs/PROJECT_LAYOUT.md](docs/PROJECT_LAYOUT.md).
+- Curated lightweight notebooks in `examples/notebooks/`.
 
-## 1. Installation
+Large training artefacts are intentionally not packaged. The 36 GB local dataset in `grail_metabolism/data` is treated as external research data.
 
-### 1.1 From Source with **Poetry**
-Run the following command in the directory containing the `pyproject.toml` file:
+## Installation
+
+### Poetry
+
 ```bash
 poetry install
 ```
 
-### 1.2 From **PyPI**
-Install the library directly from PyPI:
+### pip
+
 ```bash
-pip install grail_metabolism
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+pip install -e .[tuning]
 ```
 
-**IMPORTANT:** If you plan to run **GRAIL** with **CUDA**, execute the `install.py` script post-installation to set up the appropriate `torch-geometric`, `torch-scatter`, and `torch-sparse` versions:
+Important:
+
+- Use `numpy<2` with the RDKit / PyG stack used here.
+- If you need Optuna support, install the tuning extra: `pip install .[tuning]`.
+- If you need the Streamlit demo, install the app extra: `pip install .[app]`.
+
+## Quick start
+
+```python
+import pandas as pd
+
+from grail_metabolism import MolFrame, summon_the_grail
+
+rules = ["[CH2:1][OH:2]>>[CH:1]=[O:2]"]
+frame = MolFrame(
+    pd.DataFrame(
+        [
+            {"sub": "CCO", "prod": "CC=O", "real": 1},
+            {"sub": "CCO", "prod": "CCO", "real": 0},
+        ]
+    )
+)
+frame.full_setup(rules=rules)
+
+model = summon_the_grail(rules)
+model.filter.fit(frame, eps=10, nnPU=False, verbose=False)
+print(model.generate("CCO", top_k=1))
+```
+
+## CLI
+
+Print the bundled rules:
+
 ```bash
-python install.py
+grail rules
 ```
 
----
+Apply a rules file directly:
 
-## 2. Data Availability
-The dataset can be downloaded from [Zenodo](https://zenodo.org/records/15392504?preview=1&token=eyJhbGciOiJIUzUxMiJ9.eyJpZCI6ImVmNWEwN2QyLWVlZTMtNDk2Ny1hYjg3LWExNDcwMDA5NTEyNSIsImRhdGEiOnt9LCJyYW5kb20iOi...).
-
-**Data collection pipeline:**
-
-![data.png](img/data.png)
-
-**Note:** This dataset is still in draft form and is subject to updates.
-
----
-
-## 3. Quick Start
-
-**IMPORTANT:** Due to **RXNMapper** incompatibility with newer Python versions, use **Python 3.9 or lower** when creating new transformation rules.
-
-For a quick demonstration of the library's capabilities, refer to the `notebooks/Unit_Tests.ipynb` file.
-
----
-
-## 4. Modules Overview
-
-### 4.1 MolFrame
-The `MolFrame` class handles data preparation and is essential for working with metabolic maps and molecular data. It supports:
-- **Initialization**:
-  - From `pandas.DataFrame`
-  - From dictionaries with metabolic maps
-  - From SDF files
-- **File Loading**:
-  - Use the `MolFrame.from_file` method to load data.
-  - Pre-process triples (substrate, metabolite, real_or_not) using `MolFrame.read_triples`.
-
-### 4.2 Models
-The `model` module contains key components:
-- **Filter**: Implements GNN-based filters for molecular graphs.
-![filter_1.png](img/filter_1.png)
-- **Generator**: Handles the generation of reaction rules and transformations.
-![generator.png](img/generator.png)
-### 4.3 Utilities
-- **Preparation**: Prepares and standardizes molecular data for training and evaluation.
-- **OptunaWrapper**: Facilitates hyperparameter optimization using the Optuna library.
-- **Transform**: Here you can transform molecular data into graphs
-- **ReactionMapper**: Make your own set of reaction rules via RXNMapper
-
-#### Graphs' base characteristics:
-There are two types of molecular graphs in this library: singlegraphs
-(just common molecular graphs) and pairgraphs, in which two molecular graphs (substrate and product)
-are merged by those maximum common substructure. 
-
-Node-edge dimensions:
-- 16 and 18 in singlegraphs (`from_rdmol`)
-- 10 and 6 in PCAed singlegraphs
-- 17 and 18 in pairgraphs (`from_pair`)
-- 12 and 6 in PCAed pairgraphs
-
-There are also SMARTS reaction graphs (merged by atom mapping) `from_rule`
-
-#### Reaction mapper
-- `combine_reaction` to process reaction into SMARTS pattern
-- `process` to process the MolFrame by `combine_reaction`
----
-
-## 5. Enchanced USPTO (eUSPTO)
-To create the pre-training dataset - **eUSPTO**, you should firstly apply
-two `uspto_processer_*.py` scripts to get USPTO in pickle file, and then go to the 
-`notebooks/uspto_process.ipynb` to apply here `MolFrame.permute_augmentation`. 
-
-![euspto.png](img/euspto.png)
-
----
-
-## 6. Usage Examples
-
-### Example 1: Loading Data with `MolFrame`
-```python
-from grail_metabolism.utils.preparation import MolFrame
-# Process triples 
-# (substrate_index, metabolite_index, real_or_not)
-triples = MolFrame.read_triples('triples.txt')
-# Initialize from file
-mol_frame = MolFrame.from_file('data.sdf', triples)
+```bash
+grail predict "CCO" --rules my_rules.txt
 ```
 
-### Example 2: Training filter part
-```python
-from grail_metabolism.model.filter import Filter
-from grail_metabolism.utils.preparation import MolFrame
+Run a preset experiment:
 
-# Setting hyperparameters
-in_channels = ...
-edge_dim = ...
-arg_vec = [...] # len = 6
-
-# Set up the data
-train = MolFrame(...)
-test = MolFrame(...)
-
-model = Filter(in_channels, edge_dim, arg_vec, mode=...) # mode: pair or single
-model.fit(train)
-# Or
-train.train_pairs(model, # or train_singles
-                  test,
-                  lr=...,
-                  eps=...,
-                  decay=...,
-                  verbose=...)
-sub = ...
-met = ...
-model.predict(sub, met)
+```bash
+grail run-preset paper_minimal_baseline
 ```
 
-### Example 3: Training the Generator
-```python
-from grail_metabolism.model.generator import Generator
-from grail_metabolism.utils.preparation import MolFrame
-from grail_metabolism.utils.transform import from_rule
-from rdkit import Chem
+Run a YAML config:
 
-# Setting rule dict
-rules = [...]
-rule_dict = {rule: from_rule(rule) for rule in rules}
-in_channels = ...
-edge_dim = ...
-
-# Set up the data
-train = MolFrame(...)
-
-model = Generator(rule_dict, in_channels, edge_dim)
-model.fit(train)
-model.generate(...)
+```bash
+grail run-config configs/paper_full_ensemble.yaml
 ```
 
-### Example 4: Training a Complete Model
-```python
-from grail_metabolism.utils.preparation import MolFrame
-from grail_metabolism.model.grail import summon_the_grail
+Run multiple ablations:
 
-# Initialize model and datasets
-rules = ...
-model = summon_the_grail(rules, (..., ...), (..., ...))
-train_set = MolFrame(...)
-test_set = MolFrame(...)
-
-# Train the model
-trained_model = model.fit(train_set)
-
-model.generate(...)
+```bash
+grail ablate paper_no_pretrain paper_filter_graph_only paper_generator_dot
 ```
 
-### Example 4: Hyperparameter Optimization
-```python
-from grail_metabolism.utils.optuna import OptunaWrapper
+Export preset configs:
 
-# Initialize OptunaWrapper
-wrapper = OptunaWrapper(None, mode='pair')
-# Or use OptunaWrapper.from_pickle for the ready Optuna study
-
-# Run optimization
-wrapper.make_study(train_set, test_set)
-
-# Train optimal model
-wrapper.train_on(train_set, test_set)
+```bash
+grail presets --export-dir configs/generated
 ```
 
----
+The `predict` subcommand uses the simple rule engine by default. The experiment-oriented commands use the full workflow shell.
 
-## 6. Contributing
-Contributions are welcome! To contribute:
-1. Fork the repository.
-2. Create a new branch for your feature or bugfix.
-3. Submit a pull request with a detailed description.
+## Experiment presets
 
-[pypi-image]: https://badge.fury.io/py/grail_metabolism.svg
-[pypi-url]: https://pypi.python.org/pypi/grail_metabolism
+Main shipped presets:
+
+- `paper_full_ensemble`
+- `paper_no_pretrain`
+- `paper_filter_graph_only`
+- `paper_filter_morgan_only`
+- `paper_filter_single`
+- `paper_generator_dot`
+- `paper_generator_mlp`
+- `paper_filter_gcn`
+- `paper_filter_gin`
+- `paper_minimal_baseline`
+
+See [docs/EXPERIMENTS.md](docs/EXPERIMENTS.md) for the intended ablation matrix.
+
+## Data format
+
+`MolFrame` supports:
+
+- `pandas.DataFrame` with columns `sub`, `prod`, `real`
+- `dict[str, set[str]]` for positive substrate-product pairs
+- `SDF + triples.txt` through `MolFrame.from_file(...)`
+
+Triples format:
+
+```text
+id_substrate id_metabolite is_real
+```
+
+## Testing
+
+```bash
+python -m pytest grail_metabolism/tests -q
+```
+
+or, in a clean environment:
+
+```bash
+pytest -q
+```
+
+Research-shell smoke tests cover:
+
+- public API
+- featurization
+- CLI basics
+- config serialization
+- preset export
+
+There is also a compact developer entrypoint:
+
+```bash
+make test
+make smoke
+```
+
+## Packaging
+
+Build source and wheel distributions:
+
+```bash
+python -m build
+```
+
+Build them from a clean staging directory and validate metadata:
+
+```bash
+bash scripts/build_release.sh
+```
+
+or:
+
+```bash
+make release
+```
+
+Useful references:
+
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
+- [docs/DATASETS.md](docs/DATASETS.md)
+- [docs/EXPERIMENTS.md](docs/EXPERIMENTS.md)
+- [docs/NOTEBOOKS.md](docs/NOTEBOOKS.md)
+- [docs/PUBLICATION_GUIDE.md](docs/PUBLICATION_GUIDE.md)
+- [docs/PROJECT_LAYOUT.md](docs/PROJECT_LAYOUT.md)
+- [docs/REPRODUCIBILITY.md](docs/REPRODUCIBILITY.md)
+- [docs/WORKFLOWS.md](docs/WORKFLOWS.md)
+
+## Repository hygiene
+
+Tracked source lives in:
+
+- `grail_metabolism/`
+- `scripts/`
+- `configs/`
+- `docs/`
+
+Generated or local-only content is ignored:
+
+- `artifacts/`
+- `results/`
+- `notebooks/`
+- heavyweight files under `grail_metabolism/data/`
+
+Legacy one-off research helpers live under `scripts/legacy/` and are not part of the tested package surface.
+
+## Notes on pretrained assets
+
+`PretrainedGrail` will try to load local weights if they exist in the repository, but the package does not ship giant checkpoints by default. For publication, weights should be versioned separately, for example via Zenodo or a model registry.
