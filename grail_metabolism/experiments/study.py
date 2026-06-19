@@ -67,7 +67,9 @@ def _make_budgeted_config(preset: str, budget: BudgetSpec, output_dir: str | Pat
             "max_test_substrates": budget.test_substrates,
             "max_uspto_rows": budget.max_uspto_rows,
             "sampling_seed": budget.sampling_seed,
-            "standardize": False,
+            # Standardize identically to the headline pipeline so screening numbers
+            # are comparable (the field standardizes both predictions and references).
+            "standardize": True,
         },
         pretrain={
             "epochs": budget.pretrain_epochs,

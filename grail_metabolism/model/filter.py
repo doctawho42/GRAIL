@@ -137,7 +137,10 @@ class Filter(GFilter):
         else:
             raise ValueError(f"Unsupported mode: {mode}")
 
-    def forward(self, data: Data, met: Optional[Data] = None) -> torch.Tensor:
+    def forward(self, data: Data, met: Optional[Data] = None, return_logits: bool = False) -> torch.Tensor:
+        # return_logits=True returns raw classifier logits (no sigmoid). The nnPU
+        # surrogate (PULoss) is defined in the LOGIT domain; feeding it probabilities
+        # applies a second sigmoid and collapses the loss range, killing the gradient.
         if self.mode == "pair":
             features = []
             device = data.x.device
@@ -153,7 +156,8 @@ class Filter(GFilter):
                 if fp is None:
                     fp = torch.zeros((batch_size, 2 * FINGERPRINT_DIM), device=device)
                 features.append(fp.float())
-            return torch.sigmoid(self.classifier(torch.cat(features, dim=1)))
+            logits = self.classifier(torch.cat(features, dim=1))
+            return logits if return_logits else torch.sigmoid(logits)
 
         if met is None:
             raise ValueError("met is required in single mode")
@@ -177,7 +181,8 @@ class Filter(GFilter):
                 prod_fp = torch.zeros((batch_size, FINGERPRINT_DIM), device=device)
             features.extend([sub_fp.float(), prod_fp.float()])
         features = torch.cat(features, dim=1)
-        return torch.sigmoid(self.classifier(features))
+        logits = self.classifier(features)
+        return logits if return_logits else torch.sigmoid(logits)
 
     def _pair_loader(self, data: MolFrame, batch_size: int, shuffle: bool = True) -> DataLoader:
         if data.graphs:
@@ -195,7 +200,7 @@ class Filter(GFilter):
 
         return DataLoader(_SingleDataset(dataset), batch_size=batch_size, shuffle=shuffle, collate_fn=collate)
 
-    def _compute_loader_loss(self, loader: DataLoader, criterion, device: torch.device) -> float:
+    def _compute_loader_loss(self, loader: DataLoader, criterion, device: torch.device, return_logits: bool = False) -> float:
         total_loss = 0.0
         num_batches = 0
         self.eval()
@@ -203,13 +208,13 @@ class Filter(GFilter):
             for batch in loader:
                 if self.mode == "pair":
                     batch = batch.to(device)
-                    output = self(batch)
+                    output = self(batch, return_logits=return_logits)
                     target = batch.y.view(-1, 1).float()
                 else:
                     sub_batch, prod_batch = batch
                     sub_batch = sub_batch.to(device)
                     prod_batch = prod_batch.to(device)
-                    output = self(sub_batch, prod_batch)
+                    output = self(sub_batch, prod_batch, return_logits=return_logits)
                     target = prod_batch.y.view(-1, 1).float()
                 loss = criterion(output, target)
                 total_loss += float(loss.item())
@@ -234,6 +239,8 @@ class Filter(GFilter):
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.to(device)
         criterion = PULoss(prior) if nnPU else nn.BCELoss()
+        # PULoss consumes logits; BCELoss consumes probabilities.
+        use_logits = bool(nnPU)
         optimizer = torch.optim.Adam(self.parameters(), lr=lr, weight_decay=weight_decay)
 
         if self.mode == "pair":
@@ -296,13 +303,13 @@ class Filter(GFilter):
                 optimizer.zero_grad()
                 if self.mode == "pair":
                     batch = batch.to(device)
-                    output = self(batch)
+                    output = self(batch, return_logits=use_logits)
                     target = batch.y.view(-1, 1).float()
                 else:
                     sub_batch, prod_batch = batch
                     sub_batch = sub_batch.to(device)
                     prod_batch = prod_batch.to(device)
-                    output = self(sub_batch, prod_batch)
+                    output = self(sub_batch, prod_batch, return_logits=use_logits)
                     target = prod_batch.y.view(-1, 1).float()
                 loss = criterion(output, target)
                 loss.backward()
@@ -316,7 +323,7 @@ class Filter(GFilter):
             loss_history.append(float(avg_loss))
             best_loss = min(best_loss, avg_loss)
             if val_loader is not None:
-                val_loss = self._compute_loader_loss(val_loader, criterion, device)
+                val_loss = self._compute_loader_loss(val_loader, criterion, device, return_logits=use_logits)
                 val_loss_history.append(float(val_loss))
                 if verbose:
                     print(f"filter epoch={epoch + 1} train_loss={avg_loss:.4f} val_loss={val_loss:.4f}")
@@ -432,6 +439,68 @@ class Filter(GFilter):
         return float(self(sub_batch, prod_batch).view(-1).item())
 
     @torch.no_grad()
+    def score_batch(self, sub: str, prods: Sequence[str]) -> List[float]:
+        """Score all candidate products of one substrate in a single forward pass.
+
+        Equivalent to calling score(sub, prod) per product, but batches the pair/single
+        graphs into one GNN forward instead of one-at-a-time, which is the dominant
+        inference cost when the generator emits many candidates.
+        """
+        products = list(prods)
+        if not products:
+            return []
+        sub_mol = Chem.MolFromSmiles(sub)
+        if sub_mol is None:
+            return [0.0] * len(products)
+        first_param = next(iter(self.parameters()), None)
+        device = first_param.device if first_param is not None else torch.device("cpu")
+        self.eval()
+        scores = [0.0] * len(products)
+
+        if self.mode == "pair":
+            graphs = []
+            indices = []
+            for index, prod in enumerate(products):
+                prod_mol = Chem.MolFromSmiles(prod)
+                if prod_mol is None:
+                    continue
+                graph = build_pair_graph(sub_mol, prod_mol)
+                if graph is None:
+                    continue
+                graphs.append(graph)
+                indices.append(index)
+            if graphs:
+                batch = Batch.from_data_list(graphs).to(device)
+                out = self(batch).view(-1).detach().cpu().numpy()
+                for position, index in enumerate(indices):
+                    scores[index] = float(out[position])
+            return scores
+
+        sub_graph = from_rdmol(sub_mol)
+        if sub_graph is None:
+            return scores
+        sub_graphs = []
+        prod_graphs = []
+        indices = []
+        for index, prod in enumerate(products):
+            prod_mol = Chem.MolFromSmiles(prod)
+            if prod_mol is None:
+                continue
+            prod_graph = from_rdmol(prod_mol)
+            if prod_graph is None:
+                continue
+            sub_graphs.append(sub_graph.clone())
+            prod_graphs.append(prod_graph)
+            indices.append(index)
+        if sub_graphs:
+            sub_batch = Batch.from_data_list(sub_graphs).to(device)
+            prod_batch = Batch.from_data_list(prod_graphs).to(device)
+            out = self(sub_batch, prod_batch).view(-1).detach().cpu().numpy()
+            for position, index in enumerate(indices):
+                scores[index] = float(out[position])
+        return scores
+
+    @torch.no_grad()
     def predict(self, sub: str, prod: str, pca: bool = False, threshold: Optional[float] = None) -> int:
         cutoff = float(self.calibrated_threshold if threshold is None else threshold)
         return int(self.score(sub, prod, pca=pca) >= cutoff)
@@ -483,14 +552,15 @@ class MorganOnlyFilter(Filter):
             nn.Linear(hidden[1], 1),
         )
 
-    def forward(self, data: Data, met: Optional[Data] = None) -> torch.Tensor:
+    def forward(self, data: Data, met: Optional[Data] = None, return_logits: bool = False) -> torch.Tensor:
         if self.mode == "pair":
             fp = data.fp.float()
         else:
             if met is None:
                 raise ValueError("met is required in single mode")
             fp = torch.cat((data.fp.float(), met.fp.float()), dim=1)
-        return torch.sigmoid(self.classifier(fp))
+        logits = self.classifier(fp)
+        return logits if return_logits else torch.sigmoid(logits)
 
     def fit(
         self,
@@ -510,6 +580,7 @@ class MorganOnlyFilter(Filter):
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.to(device)
         criterion = PULoss(prior) if nnPU else nn.BCELoss()
+        use_logits = bool(nnPU)
         optimizer = torch.optim.Adam(self.parameters(), lr=lr, weight_decay=weight_decay)
 
         if self.mode == "pair":
@@ -579,13 +650,13 @@ class MorganOnlyFilter(Filter):
                 optimizer.zero_grad()
                 if self.mode == "pair":
                     batch = batch.to(device)
-                    output = self(batch)
+                    output = self(batch, return_logits=use_logits)
                     target = batch.y.view(-1, 1).float()
                 else:
                     sub_batch, prod_batch = batch
                     sub_batch = sub_batch.to(device)
                     prod_batch = prod_batch.to(device)
-                    output = self(sub_batch, prod_batch)
+                    output = self(sub_batch, prod_batch, return_logits=use_logits)
                     target = prod_batch.y.view(-1, 1).float()
                 loss = criterion(output, target)
                 loss.backward()
@@ -599,7 +670,7 @@ class MorganOnlyFilter(Filter):
             loss_history.append(float(avg_loss))
             best_loss = min(best_loss, avg_loss)
             if val_loader is not None:
-                val_loss = self._compute_loader_loss(val_loader, criterion, device)
+                val_loss = self._compute_loader_loss(val_loader, criterion, device, return_logits=use_logits)
                 val_loss_history.append(float(val_loss))
                 if verbose:
                     print(f"morgan filter epoch={epoch + 1} train_loss={avg_loss:.4f} val_loss={val_loss:.4f}")

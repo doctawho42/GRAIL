@@ -10,17 +10,31 @@ from ..model.wrapper import ModelWrapper
 from .data import DatasetBundle
 
 
-def evaluate_generator(generator: Generator, bundle: DatasetBundle, config: EvaluationConfig) -> Dict[str, float]:
-    predictions = []
+def _generator_predictions(generator: Generator, frame, config: EvaluationConfig) -> List[Dict[str, object]]:
     threshold = config.threshold if config.threshold is not None else getattr(generator, "calibrated_threshold", None)
-    for substrate, products in bundle.test.map.items():
-        ranked = generator.generate(
+    predictions = []
+    for substrate, products in frame.map.items():
+        ranked = generator.generate(substrate, top_k=config.candidate_top_k, threshold=threshold)
+        predictions.append({"substrate": substrate, "predicted": ranked, "real": sorted(products)})
+    return predictions
+
+
+def _ensemble_predictions(model: ModelWrapper, frame, config: EvaluationConfig) -> List[Dict[str, object]]:
+    threshold = config.threshold if config.threshold is not None else getattr(model.generator, "calibrated_threshold", None)
+    rows = []
+    for substrate, products in frame.map.items():
+        ranked = model.generate(
             substrate,
             top_k=config.candidate_top_k,
             threshold=threshold,
+            max_output=config.max_output,
         )
-        predictions.append({"substrate": substrate, "predicted": ranked, "real": sorted(products)})
-    return aggregate_prediction_metrics(predictions, config.generator_top_k)
+        rows.append({"substrate": substrate, "predicted": ranked, "real": sorted(products)})
+    return rows
+
+
+def evaluate_generator(generator: Generator, bundle: DatasetBundle, config: EvaluationConfig) -> Dict[str, float]:
+    return aggregate_prediction_metrics(_generator_predictions(generator, bundle.test, config), config.generator_top_k, match=config.match)
 
 
 def evaluate_filter(filter_model: Filter, bundle: DatasetBundle) -> Dict[str, float]:
@@ -29,32 +43,18 @@ def evaluate_filter(filter_model: Filter, bundle: DatasetBundle) -> Dict[str, fl
 
 
 def evaluate_ensemble(model: ModelWrapper, bundle: DatasetBundle, config: EvaluationConfig) -> Dict[str, float]:
-    predictions = []
-    threshold = config.threshold if config.threshold is not None else getattr(model.generator, "calibrated_threshold", None)
-    for substrate, products in bundle.test.map.items():
-        ranked = model.generate(
-            substrate,
-            top_k=config.candidate_top_k,
-            threshold=threshold,
-        )
-        predictions.append({"substrate": substrate, "predicted": ranked, "real": sorted(products)})
-    return aggregate_prediction_metrics(predictions, config.generator_top_k)
+    return aggregate_prediction_metrics(_ensemble_predictions(model, bundle.test, config), config.generator_top_k, match=config.match)
+
+
+def evaluate_ensemble_val(model: ModelWrapper, bundle: DatasetBundle, config: EvaluationConfig) -> Dict[str, float]:
+    """Ensemble metrics on the VALIDATION split, for model/preset selection.
+
+    Selecting the best preset/hyperparameters by test metrics is selection-on-test
+    leakage. Use this for ranking; reserve evaluate_ensemble (test) for the single
+    final report of the chosen configuration.
+    """
+    return aggregate_prediction_metrics(_ensemble_predictions(model, bundle.val, config), config.generator_top_k, match=config.match)
 
 
 def collect_ensemble_predictions(model: ModelWrapper, bundle: DatasetBundle, config: EvaluationConfig) -> List[Dict[str, object]]:
-    rows = []
-    threshold = config.threshold if config.threshold is not None else getattr(model.generator, "calibrated_threshold", None)
-    for substrate, products in bundle.test.map.items():
-        ranked = model.generate(
-            substrate,
-            top_k=config.candidate_top_k,
-            threshold=threshold,
-        )
-        rows.append(
-            {
-                "substrate": substrate,
-                "predicted": ranked,
-                "real": sorted(products),
-            }
-        )
-    return rows
+    return _ensemble_predictions(model, bundle.test, config)

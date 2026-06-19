@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import argparse
 import json
 import shutil
 from collections import defaultdict
@@ -148,8 +149,46 @@ def substrate_set(triples: Sequence[CanonicalTriple]) -> Set[str]:
     return {row.sub_smiles for row in triples}
 
 
+def molecule_set(triples: Sequence[CanonicalTriple]) -> Set[str]:
+    """Every molecule in the split -- both substrates and products."""
+    molecules: Set[str] = set()
+    for row in triples:
+        molecules.add(row.sub_smiles)
+        molecules.add(row.prod_smiles)
+    return molecules
+
+
+def metabolite_set(triples: Sequence[CanonicalTriple]) -> Set[str]:
+    return {row.prod_smiles for row in triples if row.label == 1}
+
+
 def positive_pairs(triples: Sequence[CanonicalTriple]) -> Set[Tuple[str, str]]:
     return {(row.sub_smiles, row.prod_smiles) for row in triples if row.label == 1}
+
+
+def filter_by_disallowed_molecules(
+    triples: Sequence[CanonicalTriple],
+    disallowed: Set[str],
+) -> Tuple[List[CanonicalTriple], int, int]:
+    """Drop any triple whose SUBSTRATE OR PRODUCT molecule appears in ``disallowed``.
+
+    Substrate-only filtering still lets the same molecule be a train product and a
+    test substrate/product (structure leakage). This enforces full molecule-set
+    disjointness between splits.
+    """
+    kept: List[CanonicalTriple] = []
+    removed_triples = 0
+    removed_molecules: Set[str] = set()
+    for row in triples:
+        if row.sub_smiles in disallowed or row.prod_smiles in disallowed:
+            removed_triples += 1
+            if row.sub_smiles in disallowed:
+                removed_molecules.add(row.sub_smiles)
+            if row.prod_smiles in disallowed:
+                removed_molecules.add(row.prod_smiles)
+            continue
+        kept.append(row)
+    return kept, removed_triples, len(removed_molecules)
 
 
 def pair_overlap(left: Sequence[CanonicalTriple], right: Sequence[CanonicalTriple]) -> int:
@@ -197,12 +236,23 @@ def overlap_summary(splits: Dict[str, Sequence[CanonicalTriple]]) -> Dict[str, D
             key = f"{left_name}_{right_name}"
             summary[key] = {
                 "substrate_overlap": len(substrate_set(left) & substrate_set(right)),
+                "molecule_overlap": len(molecule_set(left) & molecule_set(right)),
                 "positive_pair_overlap": pair_overlap(left, right),
             }
     return summary
 
 
 def main() -> int:
+    parser = argparse.ArgumentParser(description="Build clean (leakage-free) split triples.")
+    parser.add_argument(
+        "--molecule-disjoint",
+        action="store_true",
+        help="Enforce full molecule-set disjointness (drop any train/val triple whose "
+        "substrate OR product appears as a molecule in a later split), not just "
+        "substrate-level disjointness.",
+    )
+    args = parser.parse_args()
+
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 
     original_triples: Dict[str, List[CanonicalTriple]] = {}
@@ -221,17 +271,28 @@ def main() -> int:
         "val_positive_pairs_in_test": pair_overlap(original_triples["val"], original_triples["test"]),
     }
 
-    test_substrates = substrate_set(original_triples["test"])
-    val_substrates = substrate_set(original_triples["val"])
-
-    clean_train, train_removed_for_test, train_removed_test_substrates = filter_by_disallowed_substrates(
-        original_triples["train"],
-        test_substrates | val_substrates,
-    )
-    clean_val, val_removed_for_test, val_removed_test_substrates = filter_by_disallowed_substrates(
-        original_triples["val"],
-        test_substrates,
-    )
+    if args.molecule_disjoint:
+        test_block = molecule_set(original_triples["test"])
+        val_block = molecule_set(original_triples["val"])
+        clean_train, train_removed_for_test, train_removed_test_substrates = filter_by_disallowed_molecules(
+            original_triples["train"],
+            test_block | val_block,
+        )
+        clean_val, val_removed_for_test, val_removed_test_substrates = filter_by_disallowed_molecules(
+            original_triples["val"],
+            test_block,
+        )
+    else:
+        test_substrates = substrate_set(original_triples["test"])
+        val_substrates = substrate_set(original_triples["val"])
+        clean_train, train_removed_for_test, train_removed_test_substrates = filter_by_disallowed_substrates(
+            original_triples["train"],
+            test_substrates | val_substrates,
+        )
+        clean_val, val_removed_for_test, val_removed_test_substrates = filter_by_disallowed_substrates(
+            original_triples["val"],
+            test_substrates,
+        )
     clean_test = list(original_triples["test"])
 
     write_triples(CLEAN_TRIPLES["train"], clean_train)
@@ -266,9 +327,13 @@ def main() -> int:
             },
         },
         "clean_overlap": clean_overlap,
+        "molecule_disjoint_mode": bool(args.molecule_disjoint),
         "verification": {
             "zero_substrate_overlap_between_clean_splits": all(
                 value["substrate_overlap"] == 0 for value in clean_overlap.values()
+            ),
+            "zero_molecule_overlap_between_clean_splits": all(
+                value["molecule_overlap"] == 0 for value in clean_overlap.values()
             ),
             "zero_positive_pair_overlap_train_test": clean_overlap["train_test"]["positive_pair_overlap"] == 0,
         },

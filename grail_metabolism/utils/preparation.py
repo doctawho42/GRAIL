@@ -88,8 +88,18 @@ def carbon_counter(smiles: str) -> int:
     )
 
 
+# Minimum heavy-atom count a fragment must have to be retained. The previous
+# heuristic required >= 3 carbons, which silently discarded entire classes of
+# real small metabolites (formaldehyde, formate, acetaldehyde, glycine/acetyl
+# conjugate fragments, small N-/O-dealkylation products). A heavy-atom floor of 2
+# keeps every realistic small metabolite while still dropping lone-atom inorganic
+# leaving groups (water, halide, ammonia).
+_MIN_FRAGMENT_HEAVY_ATOMS = 2
+
+
 def iscorrect(smiles: str) -> bool:
-    return carbon_counter(smiles) >= 3
+    mol = Chem.MolFromSmiles(smiles)
+    return mol is not None and mol.GetNumHeavyAtoms() >= _MIN_FRAGMENT_HEAVY_ATOMS
 
 
 def atom_counter(smiles: str) -> int:
@@ -438,18 +448,48 @@ def _first_existing(paths: Sequence[Path]) -> Optional[Path]:
     return None
 
 
+def _default_rule_bank_candidates() -> List[Path]:
+    """Canonical, ordered preference list for the default rule bank.
+
+    Single source of truth so every entry point (presets, load_default_rules,
+    PretrainedGrail) resolves to the SAME bank. Previously these disagreed: training
+    used resources/extended_smirks.txt (7581 rules) while packaged inference loaded
+    data/merged_smirks.txt (656), a train/inference label-space mismatch.
+    """
+    resources = _resources_dir()
+    data = _local_data_dir()
+    return [
+        resources / "extended_smirks.txt",
+        resources / "mined_only.txt",
+        resources / "notebooks_rules.txt",
+        data / "merged_smirks.txt",
+        data / "smirks.txt",
+        resources / "example_rules.txt",
+    ]
+
+
+def resolve_default_rule_bank() -> Optional[Path]:
+    return _first_existing(_default_rule_bank_candidates())
+
+
 def load_default_rules() -> List[str]:
-    candidate = _first_existing(
-        [
-            _local_data_dir() / "merged_smirks.txt",
-            _local_data_dir() / "smirks.txt",
-            _resources_dir() / "example_rules.txt",
-        ]
-    )
+    candidate = resolve_default_rule_bank()
     if candidate is None:
         return []
     with open(candidate) as handle:
         return [line.strip() for line in handle if line.strip()]
+
+
+def load_phase2_rules() -> List[str]:
+    """Curated phase II conjugation SMIRKS (glucuronidation, sulfation, methylation,
+    N-acetylation, glycine/taurine conjugation, GSH conjugation), keyed to the correct
+    acceptor functional groups. Each rule is validated to compile and fire under RDKit.
+    Closes the phase II coverage gap flagged as the main rule-based SOTA limitation."""
+    path = _resources_dir() / "phase2_conjugation.smarts"
+    if not path.exists():
+        return []
+    with open(path) as handle:
+        return [line.strip() for line in handle if line.strip() and not line.startswith("#")]
 
 
 class MolFrame:
@@ -521,7 +561,12 @@ class MolFrame:
             raise ValueError(f"Missing required columns: {', '.join(sorted(missing))}")
 
         normalized = data.copy()
-        normalized[real_name] = normalized.get(real_name, 1).astype(int)
+        # normalized.get(real_name, 1) returns a scalar int when the column is absent,
+        # and ``int`` has no ``.astype`` -> crash. Default the whole column instead.
+        if real_name in normalized.columns:
+            normalized[real_name] = normalized[real_name].fillna(1).astype(int)
+        else:
+            normalized[real_name] = 1
 
         cache: Dict[str, str] = {}
 
@@ -673,16 +718,41 @@ class MolFrame:
     def _subset_mapping(self, keys: Iterable[str], mapping: Dict[str, Set[str]]) -> Dict[str, Set[str]]:
         return {key: set(mapping.get(key, set())) for key in keys if key in mapping}
 
-    def train_val_test_split(self, frac: float, seed: int = 42) -> List["MolFrame"]:
+    def train_val_test_split(self, frac: float, seed: int = 42, enforce_disjoint: bool = False) -> List["MolFrame"]:
         if not 0.0 < frac < 0.5:
             raise ValueError("frac must be in (0, 0.5)")
         substrates = np.array(sorted(self.map.keys()))
         rng = np.random.default_rng(seed)
         rng.shuffle(substrates)
         size = int(len(substrates) * frac)
-        val_keys = substrates[:size]
-        test_keys = substrates[size : 2 * size]
-        train_keys = substrates[2 * size :]
+        val_keys = list(substrates[:size])
+        test_keys = list(substrates[size : 2 * size])
+        train_keys = list(substrates[2 * size :])
+
+        if enforce_disjoint:
+            # Substrate-level disjointness is not enough: the SAME molecule can be a
+            # train product and a test substrate/product, leaking structures across
+            # splits. Drop any val/test substrate whose molecule set (substrate + its
+            # products) intersects the train molecule set, so the three splits share no
+            # molecule at all.
+            def molecule_set(keys: Iterable[str]) -> Set[str]:
+                molecules: Set[str] = set()
+                for key in keys:
+                    molecules.add(key)
+                    molecules.update(self.map.get(key, set()))
+                    molecules.update(self.gen_map.get(key, set()))
+                return molecules
+
+            train_molecules = molecule_set(train_keys)
+            val_keys = [
+                key for key in val_keys
+                if not ({key} | self.map.get(key, set()) | self.gen_map.get(key, set())) & train_molecules
+            ]
+            kept_molecules = train_molecules | molecule_set(val_keys)
+            test_keys = [
+                key for key in test_keys
+                if not ({key} | self.map.get(key, set()) | self.gen_map.get(key, set())) & kept_molecules
+            ]
 
         out = []
         for subset in (train_keys, val_keys, test_keys):

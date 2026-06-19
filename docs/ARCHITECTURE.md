@@ -82,3 +82,27 @@ Artifacts are written to:
 Expensive split preparation is cached separately under:
 
 - `artifacts/preprocessed/<split>/<signature>/`
+
+## Correctness & methodology notes
+
+Key behaviours that affect prediction quality and comparability:
+
+- Pair-graph alignment edges (`from_pair`) connect chemically corresponding atoms via the
+  element-aware MCS atom mapping, not by sorted atom index.
+- The filter trains in the logit domain: `Filter.forward(..., return_logits=True)` feeds
+  `PULoss` (nnPU) or `BCEWithLogitsLoss`; probabilities are only used at inference/scoring.
+- The generator decision threshold is calibrated for F1 (precision-aware), not
+  `recall_at_precision(min_precision=0.01)`; `generate_scored` applies `top_k` after the
+  threshold so a low threshold cannot emit nearly all applicable rules.
+- The generator objective is PU-aware: applicable-but-unobserved rules are down-weighted
+  (`GeneratorConfig.unlabeled_weight`) rather than treated as confident negatives.
+- Small metabolites are retained (heavy-atom floor of 2, not a 3-carbon filter).
+- Metrics support InChIKey matching (`EvaluationConfig.match="inchikey"`, the literature
+  convention) and report `mean_output_size`; precision is a pessimistic lower bound under
+  incomplete annotation, so lead with recall@k / coverage on a shared external benchmark.
+- One shared resolver (`resolve_default_rule_bank`) backs presets, `load_default_rules`
+  and `PretrainedGrail`, and the trained rule list + architecture are stored in the
+  checkpoint so inference reconstructs the exact label space.
+- A curated, RDKit-validated phase II conjugation bank
+  (`resources/phase2_conjugation.smarts`) can be appended via
+  `DatasetConfig.include_phase2_rules`.

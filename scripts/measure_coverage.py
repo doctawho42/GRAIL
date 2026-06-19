@@ -21,16 +21,21 @@ ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = ROOT / "grail_metabolism" / "data"
 RESULTS_DIR = ROOT / "results"
 
-RULE_BANK_SPECS: List[Tuple[str, Path]] = [
-    ("smirks.txt", DATA_DIR / "smirks.txt"),
+RESOURCES_DIR = ROOT / "grail_metabolism" / "resources"
+
+# Include the DEFAULT bank (extended_smirks.txt) and the mined-only bank, since the
+# single most important number for a rule-based SOTA claim is the recall ceiling of the
+# bank actually used at training time. Only existing files are measured.
+_ALL_RULE_BANK_SPECS: List[Tuple[str, Path]] = [
+    ("extended_smirks.txt", RESOURCES_DIR / "extended_smirks.txt"),
+    ("mined_only.txt", RESOURCES_DIR / "mined_only.txt"),
+    ("notebooks_rules.txt", RESOURCES_DIR / "notebooks_rules.txt"),
     ("merged_smirks.txt", DATA_DIR / "merged_smirks.txt"),
+    ("smirks.txt", DATA_DIR / "smirks.txt"),
     ("compressed_rules.smarts", ROOT / "grail_metabolism" / "compressed_rules.smarts"),
-    (
-        "notebooks_rules.txt",
-        (ROOT / "grail_metabolism" / "resources" / "notebooks_rules.txt")
-        if (ROOT / "grail_metabolism" / "resources" / "notebooks_rules.txt").exists()
-        else (ROOT / "notebooks" / "rules.txt"),
-    ),
+]
+RULE_BANK_SPECS: List[Tuple[str, Path]] = [
+    (name, path) for name, path in _ALL_RULE_BANK_SPECS if path.exists()
 ]
 
 SPLIT_SPECS: List[Tuple[str, Path, Path]] = [
@@ -535,7 +540,10 @@ def print_summary_table(rule_banks: Dict[str, Dict[str, object]]) -> None:
         "Mean Candidates",
     ]
     rows = []
-    for bank_name in ["smirks.txt", "merged_smirks.txt", "compressed_rules.smarts", "notebooks_rules.txt", "union_all"]:
+    bank_order = [name for name, _ in RULE_BANK_SPECS] + ["union_all"]
+    for bank_name in bank_order:
+        if bank_name not in rule_banks:
+            continue
         payload = rule_banks[bank_name]
         rows.append(
             [

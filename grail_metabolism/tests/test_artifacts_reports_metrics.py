@@ -77,9 +77,11 @@ def test_top_k_and_aggregate_prediction_metrics():
         "recall",
         "f1",
         "exact_match",
+        "mean_output_size",
         "top_1_recall",
         "top_2_recall",
         "top_3_recall",
     }
     assert metrics["top_1_recall"] == 0.5
     assert metrics["top_3_recall"] >= metrics["top_1_recall"]
+    assert metrics["mean_output_size"] == 2.0  # (3 + 1) / 2

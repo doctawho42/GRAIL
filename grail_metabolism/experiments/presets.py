@@ -7,17 +7,18 @@ from ..config import DatasetConfig, EvaluationConfig, ExperimentConfig, FilterCo
 
 
 def _default_rules_path() -> str:
-    package_root = Path(__file__).resolve().parents[1]
-    extended_rules = package_root / "resources" / "extended_smirks.txt"
-    notebooks_rules = package_root / "resources" / "notebooks_rules.txt"
+    # Resolve through the single shared resolver so presets, load_default_rules() and
+    # PretrainedGrail all agree on the default bank (no train/inference label mismatch).
+    from ..utils.preparation import _package_root, resolve_default_rule_bank
 
-    # Prefer the mined extended bank because it has the highest measured clean-test coverage ceiling.
-    if extended_rules.exists():
-        return "grail_metabolism/resources/extended_smirks.txt"
-    # If mining artifacts are missing, fall back to the packaged notebooks bank, which outperformed merged_smirks.txt.
-    if notebooks_rules.exists():
-        return "grail_metabolism/resources/notebooks_rules.txt"
-    return "grail_metabolism/data/merged_smirks.txt"
+    bank = resolve_default_rule_bank()
+    if bank is None:
+        return "grail_metabolism/data/merged_smirks.txt"
+    repo_root = _package_root().parent
+    try:
+        return str(bank.relative_to(repo_root))
+    except ValueError:
+        return str(bank)
 
 
 def _default_dataset() -> DatasetConfig:

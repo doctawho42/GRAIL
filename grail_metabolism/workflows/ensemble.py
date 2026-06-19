@@ -11,8 +11,9 @@ from ..artifacts import ArtifactStore
 from ..config import ExperimentConfig
 from ..model.wrapper import ModelWrapper
 from ..utils.preparation import MolFrame
+from ..utils.seed import seed_everything
 from .data import DatasetBundle, load_dataset_bundle
-from .evaluation import collect_ensemble_predictions, evaluate_ensemble, evaluate_filter, evaluate_generator
+from .evaluation import collect_ensemble_predictions, evaluate_ensemble, evaluate_ensemble_val, evaluate_filter, evaluate_generator
 from .factory import build_filter, build_generator
 from .pretraining import PretrainingWorkflow
 from .training import FilterTrainingWorkflow, GeneratorTrainingWorkflow
@@ -115,6 +116,9 @@ class EnsembleWorkflow:
     artifacts: ArtifactStore
 
     def run_bundle(self, bundle: DatasetBundle) -> Dict[str, Dict[str, float]]:
+        # Seed every RNG (weight init, shuffling, augmentation) so the run is
+        # reproducible. config.sampling_seed only covers data subsampling.
+        seed_everything(self.config.seed)
         runtime: Dict[str, float] = {}
         if (
             not bundle.train.single
@@ -176,6 +180,8 @@ class EnsembleWorkflow:
         generator_metrics = evaluate_generator(generator, bundle, self.config.evaluation)
         filter_metrics = evaluate_filter(filter_model, bundle)
         ensemble_metrics = evaluate_ensemble(model, bundle, self.config.evaluation)
+        # Validation-split ensemble metrics for model/preset selection (avoid selecting on test).
+        ensemble_val_metrics = evaluate_ensemble_val(model, bundle, self.config.evaluation)
         predictions = collect_ensemble_predictions(model, bundle, self.config.evaluation)
         runtime["evaluation_seconds"] = time.perf_counter() - evaluation_started
 
@@ -183,7 +189,9 @@ class EnsembleWorkflow:
             "generator": generator_metrics,
             "filter": filter_metrics,
             "ensemble": ensemble_metrics,
+            "ensemble_val": ensemble_val_metrics,
             "runtime": runtime,
+            "reproducibility": {"seed": self.config.seed, "sampling_seed": self.config.dataset.sampling_seed},
         }
         if candidate_stats.get("enabled"):
             metrics["filter_candidates"] = candidate_stats

@@ -35,6 +35,7 @@ def build_generator(config: GeneratorConfig, rules: list[str]) -> Generator:
         use_fingerprint=config.use_fingerprint,
         rank_weight=config.rank_weight,
         ranking_margin=config.ranking_margin,
+        unlabeled_weight=config.unlabeled_weight,
         prior_strength=config.prior_strength,
         use_applicability_mask=config.use_applicability_mask,
         applicability_penalty=config.applicability_penalty,

@@ -165,10 +165,16 @@ def get_maccs_smarts() -> List[str]:
 
 
 class GeneratorObjective(nn.Module):
-    def __init__(self, rank_weight: float = 0.25, ranking_margin: float = 0.45) -> None:
+    def __init__(self, rank_weight: float = 0.25, ranking_margin: float = 0.45, unlabeled_weight: float = 1.0) -> None:
         super().__init__()
         self.rank_weight = float(rank_weight)
         self.ranking_margin = float(ranking_margin)
+        # Weight applied to applicable-but-unobserved (target=0) rules. Metabolite
+        # annotations are incomplete, so these are positive-unlabeled, not true
+        # negatives. unlabeled_weight < 1 down-weights them so the generator is not
+        # punished at full strength for proposing plausible-but-unannotated products,
+        # which otherwise suppresses recall.
+        self.unlabeled_weight = float(unlabeled_weight)
 
     def forward(
         self,
@@ -183,7 +189,14 @@ class GeneratorObjective(nn.Module):
         bce = F.binary_cross_entropy_with_logits(logits, targets, reduction="none", pos_weight=weights)
         probabilities = torch.sigmoid(logits)
         focal = torch.where(targets > 0.5, (1.0 - probabilities).pow(2.0), probabilities.pow(1.0))
-        masked = (bce * (1.0 + focal) * mask).sum() / mask.sum().clamp_min(1.0)
+        # Down-weight unobserved-applicable negatives (PU-aware).
+        label_weight = torch.where(
+            targets > 0.5,
+            torch.ones_like(targets),
+            torch.full_like(targets, self.unlabeled_weight),
+        )
+        effective = mask * label_weight
+        masked = (bce * (1.0 + focal) * effective).sum() / effective.sum().clamp_min(1.0)
 
         positive_mask = (targets > 0.5) & (mask > 0.0)
         negative_mask = (targets <= 0.5) & (mask > 0.0)
@@ -223,6 +236,7 @@ class Generator(GGenerator):
         use_fingerprint: bool = True,
         rank_weight: float = 0.25,
         ranking_margin: float = 0.45,
+        unlabeled_weight: float = 1.0,
         prior_strength: float = 0.4,
         use_applicability_mask: bool = True,
         applicability_penalty: float = 7.5,
@@ -307,7 +321,7 @@ class Generator(GGenerator):
         self.maccs_head = nn.Linear(projection_dim, 166)
         self.use_maccs_pretraining = use_maccs_pretraining
         self.pretrained = False
-        self.objective = GeneratorObjective(rank_weight=rank_weight, ranking_margin=ranking_margin)
+        self.objective = GeneratorObjective(rank_weight=rank_weight, ranking_margin=ranking_margin, unlabeled_weight=unlabeled_weight)
         self.rule_patterns = [self._compile_reactant_pattern(rule) for rule in self.rule_names]
         self.rule_reactions = [self._compile_reaction(rule) for rule in self.rule_names]
         self._applicability_cache: Dict[str, Tuple[np.ndarray, np.ndarray]] = {}
@@ -474,6 +488,16 @@ class Generator(GGenerator):
         return logits
 
     def forward(self, data: Data, mode: str = "generation", return_logits: bool = False) -> torch.Tensor:
+        # Generation is the dominant path: compute the substrate embedding ONCE inside
+        # _forward_generation_logits. The previous code also called
+        # _compose_substrate_embedding here and discarded it, doubling encoder compute
+        # on every train/eval/inference forward.
+        if mode == "generation":
+            logits = self._forward_generation_logits(data)
+            if return_logits:
+                return logits
+            return torch.sigmoid(logits)
+
         _, embeddings, _, _ = self._compose_substrate_embedding(data)
         if mode == "contrastive":
             return F.normalize(self.projection_head(embeddings), dim=1)
@@ -481,13 +505,7 @@ class Generator(GGenerator):
             return embeddings
         if mode == "maccs":
             return torch.sigmoid(self.maccs_head(embeddings))
-        if mode != "generation":
-            raise ValueError(f"Unsupported mode: {mode}")
-
-        logits = self._forward_generation_logits(data)
-        if return_logits:
-            return logits
-        return torch.sigmoid(logits)
+        raise ValueError(f"Unsupported mode: {mode}")
 
     def _rule_applicability(self, substrate: str, mol: Optional[Chem.Mol] = None) -> Tuple[np.ndarray, np.ndarray]:
         if substrate in self._applicability_cache:
@@ -589,6 +607,26 @@ class Generator(GGenerator):
         prediction = self.atom_predictor(pooled)
         return F.mse_loss(prediction, targets)
 
+    def _masked_node_modeling(self, batch: Batch, mask_ratio: float = 0.15) -> torch.Tensor:
+        # True masked-atom modeling: zero out a subset of nodes on the INPUT graph,
+        # encode the corrupted graph, and reconstruct the ORIGINAL features of exactly
+        # the masked nodes. This forces the encoder to infer missing structure from
+        # context, unlike the previous task which regressed the mean of its own
+        # unmasked input (a near-trivial identity).
+        x = batch.x.float()
+        num_nodes = x.size(0)
+        if num_nodes == 0:
+            return x.sum() * 0.0
+        num_mask = max(1, int(num_nodes * mask_ratio))
+        mask_indices = torch.randperm(num_nodes, device=x.device)[:num_mask]
+        original = x[mask_indices].clone()
+        masked = batch.clone()
+        masked.x = x.clone()
+        masked.x[mask_indices] = 0.0
+        node_states = self.substrate_encoder.forward_nodes(masked)
+        prediction = self.atom_predictor(node_states[mask_indices])
+        return F.mse_loss(prediction, original)
+
     def pretrain(
         self,
         smiles_list: Sequence[str],
@@ -618,9 +656,7 @@ class Generator(GGenerator):
                     aug2 = MoleculeAugmentor.augment_batch(batch).to(device)
                     loss = self._contrastive_loss(self(aug1, mode="contrastive"), self(aug2, mode="contrastive"))
                 else:
-                    pooled = self(batch, mode="masked_modeling")
-                    node_targets = global_mean_pool(batch.x.float(), batch.batch)
-                    loss = self._masked_loss(pooled, node_targets)
+                    loss = self._masked_node_modeling(batch)
                 loss.backward()
                 optimizer.step()
         self.pretrained = True
@@ -645,7 +681,10 @@ class Generator(GGenerator):
             if graph is None:
                 continue
             fingerprint = MACCSkeys.GenMACCSKeys(mol)
-            graph.maccs = torch.tensor([fingerprint.GetBit(index) for index in range(166)], dtype=torch.float32)
+            # RDKit MACCS keys span 167 bits where bit 0 is an always-zero placeholder
+            # and bits 1..166 are the real keys. Use range(1, 167) so the 166-wide head
+            # learns real keys (previously it wasted a slot on bit 0 and dropped bit 166).
+            graph.maccs = torch.tensor([fingerprint.GetBit(index) for index in range(1, 167)], dtype=torch.float32)
             graphs.append(graph)
         if not graphs:
             return
@@ -905,8 +944,8 @@ class Generator(GGenerator):
         self,
         val_data: MolFrame,
         rules: Optional[Sequence[str]] = None,
-        target: Literal["recall_at_precision", "f1"] = "recall_at_precision",
-        min_precision: float = 0.01,
+        target: Literal["recall_at_precision", "f1"] = "f1",
+        min_precision: float = 0.1,
         verbose: bool = True,
     ) -> Tuple[float, float]:
         selected_rules = list(rules) if rules is not None else self.rule_names
@@ -1008,6 +1047,10 @@ class Generator(GGenerator):
             if active.size == 0 and top_k is not None:
                 ranked_pool = active_pool[np.argsort(scores[active_pool])[::-1]]
                 active = ranked_pool[:top_k]
+            elif top_k is not None and active.size > top_k:
+                # Apply top_k AFTER thresholding so a low calibrated threshold cannot
+                # emit nearly every applicable rule; keep only the top_k best-scoring.
+                active = active[np.argsort(scores[active])[::-1][:top_k]]
         else:
             if top_k is None:
                 top_k = min(self.default_top_k, max(1, active_pool.size))

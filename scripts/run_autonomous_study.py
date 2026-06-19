@@ -56,18 +56,16 @@ def main() -> int:
     screening_df = runs_to_frame(screening_runs)
     screening_df.to_csv(table_dir / "screening_metrics.csv", index=False)
 
+    # Select presets by VALIDATION metrics only (selecting by test metrics is
+    # selection-on-test leakage). Fall back to test columns only if the val columns
+    # are unavailable for backward compatibility.
+    selection_keys = [key for key in ["ensemble_val.f1", "ensemble_val.jaccard"] if key in screening_df.columns]
+    if not selection_keys:
+        selection_keys = ["ensemble.f1", "ensemble.jaccard"]
+    selection_keys = selection_keys + ["runtime_sec"]
+    ascending = [False] * (len(selection_keys) - 1) + [True]
     top_confirmation = (
-        screening_df.sort_values(
-            [
-                "ensemble.f1",
-                "ensemble.jaccard",
-                "generator.top_5_recall",
-                "filter.roc_auc",
-                "filter.mcc",
-                "runtime_sec",
-            ],
-            ascending=[False, False, False, False, False, True],
-        )
+        screening_df.sort_values(selection_keys, ascending=ascending)
         .head(3)["preset"]
         .tolist()
     )

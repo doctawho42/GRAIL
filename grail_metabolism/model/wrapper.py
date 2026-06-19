@@ -87,8 +87,12 @@ class ModelWrapper:
         top_k: Optional[int] = None,
         threshold: Optional[float] = None,
         filter_threshold: Optional[float] = None,
+        max_output: Optional[int] = None,
     ) -> List[str]:
-        from grail_metabolism.utils.preparation import standardize_mol
+        # Candidates from generate_scored are already standardized, so we normalize
+        # through the cached path (idempotent + fast) instead of re-running the
+        # expensive uncached tautomer canonicalization on every product.
+        from grail_metabolism.utils.preparation import _standardize_smiles_cached
         rule_threshold = threshold if threshold is not None else getattr(self.generator, "calibrated_threshold", None)
         effective_filter_threshold = (
             float(filter_threshold)
@@ -100,18 +104,30 @@ class ModelWrapper:
             scored_candidates = self.generator.generate_scored(sub, top_k=top_k, threshold=rule_threshold)
         else:
             scored_candidates = [(candidate, 1.0) for candidate in self.generator.generate(sub, top_k=top_k, threshold=rule_threshold)]
-        accepted = []
-        evaluated = []
+        normalized_candidates = []
+        generator_scores = []
         for candidate, generator_score in scored_candidates:
             try:
-                normalized = str(standardize_mol(candidate))
+                normalized = _standardize_smiles_cached(candidate)
             except Exception:
                 normalized = candidate
-            filter_score = float(self.filter.score(sub, normalized))
-            evaluated.append((normalized, filter_score * float(generator_score), filter_score, float(generator_score)))
+            normalized_candidates.append(normalized)
+            generator_scores.append(float(generator_score))
+
+        # Batch-score all candidates of this substrate in one filter forward pass.
+        if hasattr(self.filter, "score_batch"):
+            filter_scores = self.filter.score_batch(sub, normalized_candidates)
+        else:
+            filter_scores = [float(self.filter.score(sub, prod)) for prod in normalized_candidates]
+
+        accepted = []
+        evaluated = []
+        for normalized, generator_score, filter_score in zip(normalized_candidates, generator_scores, filter_scores):
+            filter_score = float(filter_score)
+            evaluated.append((normalized, filter_score * generator_score, filter_score, generator_score))
             if filter_score < effective_filter_threshold:
                 continue
-            accepted.append((normalized, filter_score * float(generator_score), filter_score, float(generator_score)))
+            accepted.append((normalized, filter_score * generator_score, filter_score, generator_score))
         ranked_candidates = accepted
         if not ranked_candidates and evaluated:
             fallback_limit = max(1, min(top_k or 3, 3, len(evaluated)))
@@ -125,6 +141,10 @@ class ModelWrapper:
                 continue
             seen.add(candidate)
             ranked.append(candidate)
+        # Optional hard cap on the returned set: the headline metric is set-based, so an
+        # uncapped output crushes precision. Callers (evaluation) can bound it to a small k.
+        if max_output is not None and max_output > 0:
+            ranked = ranked[:max_output]
         return ranked
 
     def f1_score(self, sub: str, prods: Iterable[str]) -> float:

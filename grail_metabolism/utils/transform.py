@@ -209,9 +209,13 @@ def from_pair(mol1: Any, mol2: Any) -> Optional[Data]:
         return None
 
     try:
+        # Element-aware atom comparison so the shared core (and thus the cross-edges)
+        # aligns chemically corresponding atoms (C<->C, N<->N, O<->O). Bond comparison
+        # stays permissive so the core survives bond-order changes common in oxidation.
+        # The previous CompareAnyHeavyAtom let a substrate N align to a product O.
         common = rdFMCS.FindMCS(
             [prepared1, prepared2],
-            atomCompare=rdFMCS.AtomCompare.CompareAnyHeavyAtom,
+            atomCompare=rdFMCS.AtomCompare.CompareElements,
             bondCompare=rdFMCS.BondCompare.CompareAny,
             timeout=5,
         )
@@ -219,8 +223,14 @@ def from_pair(mol1: Any, mol2: Any) -> Optional[Data]:
     except Exception:
         common_mol = None
 
-    common_sub = set(prepared1.GetSubstructMatch(common_mol)) if common_mol else set()
-    common_prod = set(prepared2.GetSubstructMatch(common_mol)) if common_mol else set()
+    # Keep the substructure matches as ORDERED tuples: GetSubstructMatch returns atom
+    # indices in the pattern-atom order, so match_sub[i] and match_prod[i] are the SAME
+    # MCS atom in each molecule. The set() copies are only for order-independent
+    # "is in the shared core" node-feature flags below.
+    match_sub = prepared1.GetSubstructMatch(common_mol) if common_mol else ()
+    match_prod = prepared2.GetSubstructMatch(common_mol) if common_mol else ()
+    common_sub = set(match_sub)
+    common_prod = set(match_prod)
 
     x1 = torch.cat(
         (
@@ -246,8 +256,10 @@ def from_pair(mol1: Any, mol2: Any) -> Optional[Data]:
     edge_indices.extend(edge_indices_2)
     edge_attrs.extend(edge_attrs_2)
 
-    if common_sub and common_prod:
-        for left, right in zip(sorted(common_sub), sorted(common_prod)):
+    # Cross-edges link each substrate atom to its TRUE MCS-corresponding product atom
+    # (positional zip over the ordered matches), not by sorted atom index.
+    if match_sub and match_prod:
+        for left, right in zip(match_sub, match_prod):
             features = [0.0] * EDGE_DIM
             edge_indices.extend([[left, offset + right], [offset + right, left]])
             edge_attrs.extend([features, features])
@@ -280,16 +292,25 @@ def parse_expression(expr: str) -> np.ndarray:
     tokens = list(_tokenize_expression(expr))
     stack: List[str] = []
     current_vec = np.zeros(16, dtype=np.float32)
+    negate_next = False
 
     for token in tokens:
+        # SMARTS negation: "!O" must not collapse to the same vector as "O".
+        if token == "!":
+            negate_next = True
+            continue
+
         if token.isdigit() and stack and stack[-1] in {"H", "X", "R"}:
             atom = stack.pop()
-            current_vec += _TOKEN_EMBEDDINGS[atom] * int(token)
+            sign = -1.0 if negate_next else 1.0
+            current_vec += sign * _TOKEN_EMBEDDINGS[atom] * int(token)
+            negate_next = False
             continue
 
         if token in _TOKEN_EMBEDDINGS:
             stack.append(token)
-            current_vec += _TOKEN_EMBEDDINGS[token]
+            current_vec += (-_TOKEN_EMBEDDINGS[token] if negate_next else _TOKEN_EMBEDDINGS[token])
+            negate_next = False
             continue
 
         if token == "(":

@@ -125,8 +125,18 @@ def _resolve_triples_path(triples_path: str | None, use_clean_splits: bool) -> s
 def _load_rules(config: DatasetConfig) -> List[str]:
     if config.rules_path:
         with open(config.rules_path) as handle:
-            return [line.strip() for line in handle if line.strip()]
-    return load_default_rules()
+            rules = [line.strip() for line in handle if line.strip()]
+    else:
+        rules = load_default_rules()
+    if getattr(config, "include_phase2_rules", False):
+        from ..utils.preparation import load_phase2_rules
+
+        seen = set(rules)
+        for rule in load_phase2_rules():
+            if rule not in seen:
+                rules.append(rule)
+                seen.add(rule)
+    return rules
 
 
 def _load_excluded_substrates(config: DatasetConfig) -> list[str]:

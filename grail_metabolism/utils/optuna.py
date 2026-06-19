@@ -59,11 +59,14 @@ class OptunaWrapper:
     def make_study(
         self,
         train_set: MolFrame,
-        test_set: MolFrame,
+        val_set: MolFrame,
         direction: Literal["filter", "generator"],
         rule_dict: Optional[Dict] = None,
         n_trials: int = 20,
     ) -> None:
+        # Hyperparameters are tuned against the VALIDATION set. Tuning on the test set
+        # is selection-on-test leakage; the test set must be touched once, after the
+        # final configuration is fixed.
         optuna = _require_optuna()
         study = optuna.create_study(
             study_name=f"{direction}_{self.mode}",
@@ -79,14 +82,14 @@ class OptunaWrapper:
                 in_channels = 18 if self.mode == "pair" else 16
                 model, _ = self._build_filter(trial, in_channels=in_channels, edge_dim=18)
                 model.fit(train_set, lr=lr, eps=3, verbose=False, weight_decay=decay)
-                mcc, _ = test_set.test(model, mode=self.mode)
+                mcc, _ = val_set.test(model, mode=self.mode)
                 return mcc
 
             arg_vec = [trial.suggest_int(f"x{i}", 64, 256) for i in range(1, 3)]
             rp_arg_vec = [trial.suggest_int(f"rp_x{i}", 64, 256) for i in range(1, 4)]
             model = Generator(rule_dict or {}, 16, 18, arg_vec=arg_vec, rp_arg_vec=rp_arg_vec)
             model.fit(train_set, lr=lr, eps=3, verbose=False, weight_decay=decay)
-            jaccard = model.jaccard(test_set)
+            jaccard = model.jaccard(val_set)
             return -(sum(jaccard) / len(jaccard) if jaccard else 0.0)
 
         study.optimize(objective, n_trials=n_trials)

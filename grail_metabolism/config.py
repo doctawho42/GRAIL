@@ -33,6 +33,9 @@ class DatasetConfig:
     test_sdf: Optional[str] = None
     test_triples: Optional[str] = None
     rules_path: Optional[str] = None
+    # Append the curated phase II conjugation rule bank to the active rules. Phase II
+    # (glucuronidation, sulfation, etc.) is the main rule-based coverage gap.
+    include_phase2_rules: bool = False
     uspto_csv: Optional[str] = None
     use_clean_splits: bool = True
     standardize: bool = True
@@ -66,6 +69,10 @@ class GeneratorConfig:
     use_fingerprint: bool = True
     rank_weight: float = 0.2
     ranking_margin: float = 0.4
+    # PU-aware down-weighting of applicable-but-unobserved rules (incomplete labels).
+    # < 1.0 avoids punishing the generator at full strength for plausible-but-unannotated
+    # products, which otherwise suppresses recall.
+    unlabeled_weight: float = 0.5
     prior_strength: float = 0.35
     use_applicability_mask: bool = True
     applicability_penalty: float = 7.5
@@ -118,6 +125,13 @@ class OptimConfig:
 class EvaluationConfig:
     generator_top_k: List[int] = field(default_factory=lambda: [1, 3, 5, 10])
     candidate_top_k: int = 10
+    # Hard cap on the size of the final ensemble output set. None = uncapped. The
+    # headline set-F1/precision collapses under an uncapped candidate flood, so this
+    # lets the operating point be bounded to a small k at evaluation time.
+    max_output: Optional[int] = None
+    # Structure matching for metrics: "exact" canonical-SMILES set equality, or
+    # "inchikey" (the literature convention; absorbs tautomer/charge differences).
+    match: Literal["exact", "inchikey"] = "exact"
     threshold: Optional[float] = None
     export_predictions: bool = True
 
@@ -127,6 +141,10 @@ class ExperimentConfig:
     name: str
     description: str = ""
     output_dir: str = "artifacts"
+    # Global RNG seed for model init / training / shuffling (distinct from
+    # dataset.sampling_seed, which only controls data subsampling). Recorded in the
+    # metrics report so headline numbers are reproducible.
+    seed: int = 42
     tags: List[str] = field(default_factory=list)
     dataset: DatasetConfig = field(default_factory=DatasetConfig)
     generator: GeneratorConfig = field(default_factory=GeneratorConfig)
@@ -195,6 +213,7 @@ def experiment_from_dict(payload: Dict[str, Any]) -> ExperimentConfig:
         name=payload["name"],
         description=payload.get("description", ""),
         output_dir=payload.get("output_dir", "artifacts"),
+        seed=int(payload.get("seed", 42)),
         tags=list(payload.get("tags", [])),
         dataset=dataset,
         generator=generator,

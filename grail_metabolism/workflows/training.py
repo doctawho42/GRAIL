@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from typing import Any, Dict, Optional
 
 from ..artifacts import ArtifactStore
@@ -56,18 +56,22 @@ class GeneratorTrainingWorkflow:
             timeout_seconds=timeout_seconds,
             verbose=True,
         )
-        threshold, metric = generator.calibrate_threshold(bundle.val, bundle.rules, target="recall_at_precision", verbose=True)
+        # Calibrate for F1 (precision-aware) rather than recall_at_precision(min_precision=0.01),
+        # which drove the threshold to its floor and emitted nearly every applicable rule.
+        threshold, metric = generator.calibrate_threshold(bundle.val, bundle.rules, target="f1", verbose=True)
         self.artifacts.save_checkpoint(
             "checkpoints/generator.pt",
             {
                 "state_dict": generator.state_dict(),
                 "calibrated_threshold": threshold,
                 "calibration_metric": metric,
+                "arch": asdict(self.config.generator),
+                "rules": list(getattr(generator, "rule_names", [])),
             },
         )
         self.artifacts.save_json(
             "reports/generator_calibration.json",
-            {"calibrated_threshold": threshold, "metric": metric, "target": "recall_at_precision"},
+            {"calibrated_threshold": threshold, "metric": metric, "target": "f1"},
         )
         self.artifacts.save_json(
             "reports/generator_training.json",
@@ -77,7 +81,7 @@ class GeneratorTrainingWorkflow:
                     "train_data": _frame_summary(bundle.train),
                     "val_data": _frame_summary(bundle.val),
                     "calibration_metric": metric,
-                    "calibration_target": "recall_at_precision",
+                    "calibration_target": "f1",
                 },
             ),
         )
@@ -112,6 +116,7 @@ class FilterTrainingWorkflow:
                 "state_dict": filter_model.state_dict(),
                 "calibrated_threshold": threshold,
                 "calibration_metric": metric,
+                "arch": asdict(self.config.filter),
             },
         )
         self.artifacts.save_json(
