@@ -77,6 +77,11 @@ class GeneratorConfig:
     use_applicability_mask: bool = True
     applicability_penalty: float = 7.5
     candidate_aggregation: Literal["max", "mean", "noisy_or", "hybrid"] = "noisy_or"
+    # Generator training mode. "supervised" = multi-label rule classification (default).
+    # "gflownet" = after supervised warm-start, train the generator as a forward flow
+    # policy over the metabolic tree (Trajectory Balance), so terminal sampling is
+    # proportional to reward and multi-step paths to annotated metabolites are learned.
+    training_mode: Literal["supervised", "gflownet"] = "supervised"
 
 
 @dataclass
@@ -119,6 +124,28 @@ class OptimConfig:
     nnpu: bool = True
     patience: int = 7
     min_delta: float = 1e-4
+
+
+@dataclass
+class GFlowNetConfig:
+    """GFlowNet (Trajectory Balance) generator training over the metabolic tree.
+
+    Active only when GeneratorConfig.training_mode == "gflownet". The forward policy is
+    the generator (warm-started from supervised training) + a STOP head; the reward is
+    annotation-based at training time (terminal hits an annotated metabolite of the
+    parent), which directly optimizes multi-step recall without needing the filter.
+    """
+    epochs: int = 10
+    lr: float = 1e-4               # generator/stop-head learning rate
+    logz_lr: float = 1e-2          # larger LR for the scalar logZ (standard for TB)
+    batch_substrates: int = 16     # substrates per optimizer step
+    max_depth: int = 2             # trajectory length cap
+    per_node_top_k: int = 12       # generator rules considered per expansion
+    beta: float = 6.0              # reward sharpness: R = exp(beta) for a hit, exp(0)=1 for a miss
+    epsilon: float = 0.1           # epsilon-uniform exploration mixed into P_F
+    anchor_weight: float = 0.0     # optional supervised imitation bonus on annotated terminals
+    node_budget: int = 64          # per-trajectory expansion safety cap
+    reward: Literal["annotation", "filter"] = "annotation"
 
 
 @dataclass
@@ -173,6 +200,7 @@ class ExperimentConfig:
     generator_optim: OptimConfig = field(default_factory=OptimConfig)
     filter_optim: OptimConfig = field(default_factory=OptimConfig)
     evaluation: EvaluationConfig = field(default_factory=EvaluationConfig)
+    gflownet: GFlowNetConfig = field(default_factory=GFlowNetConfig)
 
     def __post_init__(self) -> None:
         if self.generator.use_pretraining != self.pretrain.enabled:
@@ -231,6 +259,7 @@ def experiment_from_dict(payload: Dict[str, Any]) -> ExperimentConfig:
     eval_payload = dict(payload.get("evaluation", {}))
     multistep_payload = eval_payload.pop("multistep", {}) or {}
     evaluation = EvaluationConfig(**eval_payload, multistep=MultiStepConfig(**multistep_payload))
+    gflownet = GFlowNetConfig(**payload.get("gflownet", {}))
     return ExperimentConfig(
         name=payload["name"],
         description=payload.get("description", ""),
@@ -244,6 +273,7 @@ def experiment_from_dict(payload: Dict[str, Any]) -> ExperimentConfig:
         generator_optim=generator_optim,
         filter_optim=filter_optim,
         evaluation=evaluation,
+        gflownet=gflownet,
     )
 
 

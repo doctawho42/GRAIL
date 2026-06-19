@@ -56,19 +56,40 @@ class GeneratorTrainingWorkflow:
             timeout_seconds=timeout_seconds,
             verbose=True,
         )
+        # Optional GFlowNet phase 2: refine the (warm-started) generator into a forward
+        # flow policy over the metabolic tree via Trajectory Balance. Reward is annotation-
+        # based (hit an annotated metabolite of the parent), so it needs no trained filter.
+        gflownet_info: Optional[Dict[str, Any]] = None
+        if self.config.generator.training_mode == "gflownet":
+            from ..metrics import _inchikey
+            from ..model.gflownet import GFlowNetTrainer, annotation_reward_fn
+
+            annotated_ik = {sub: {_inchikey(p) for p in prods} for sub, prods in bundle.train.map.items()}
+            reward_fn = annotation_reward_fn(annotated_ik, self.config.gflownet.beta)
+            trainer = GFlowNetTrainer(generator, self.config.gflownet, reward_fn)
+            trainer.fit(list(bundle.train.map.keys()), verbose=True)
+            gflownet_info = {
+                "logz": float(trainer.log_z),
+                "tb_loss_history": list(trainer.loss_history_),
+                "reward": self.config.gflownet.reward,
+                "beta": self.config.gflownet.beta,
+                "max_depth": self.config.gflownet.max_depth,
+            }
+
         # Calibrate for F1 (precision-aware) rather than recall_at_precision(min_precision=0.01),
         # which drove the threshold to its floor and emitted nearly every applicable rule.
+        # Calibrated on the FINAL policy (after the optional GFlowNet phase).
         threshold, metric = generator.calibrate_threshold(bundle.val, bundle.rules, target="f1", verbose=True)
-        self.artifacts.save_checkpoint(
-            "checkpoints/generator.pt",
-            {
-                "state_dict": generator.state_dict(),
-                "calibrated_threshold": threshold,
-                "calibration_metric": metric,
-                "arch": asdict(self.config.generator),
-                "rules": list(getattr(generator, "rule_names", [])),
-            },
-        )
+        checkpoint = {
+            "state_dict": generator.state_dict(),
+            "calibrated_threshold": threshold,
+            "calibration_metric": metric,
+            "arch": asdict(self.config.generator),
+            "rules": list(getattr(generator, "rule_names", [])),
+        }
+        if gflownet_info is not None:
+            checkpoint["gflownet_logz"] = gflownet_info["logz"]
+        self.artifacts.save_checkpoint("checkpoints/generator.pt", checkpoint)
         self.artifacts.save_json(
             "reports/generator_calibration.json",
             {"calibrated_threshold": threshold, "metric": metric, "target": "f1"},
@@ -82,6 +103,8 @@ class GeneratorTrainingWorkflow:
                     "val_data": _frame_summary(bundle.val),
                     "calibration_metric": metric,
                     "calibration_target": "f1",
+                    "training_mode": self.config.generator.training_mode,
+                    "gflownet": gflownet_info,
                 },
             ),
         )

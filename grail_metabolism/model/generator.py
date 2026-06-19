@@ -319,6 +319,8 @@ class Generator(GGenerator):
         )
         self.atom_predictor = nn.Linear(projection_dim, SINGLE_NODE_DIM)
         self.maccs_head = nn.Linear(projection_dim, 166)
+        # GFlowNet STOP-action head: P(stop | molecule) competes with the rule actions.
+        self.stop_head = nn.Linear(projection_dim, 1)
         self.use_maccs_pretraining = use_maccs_pretraining
         self.pretrained = False
         self.objective = GeneratorObjective(rank_weight=rank_weight, ranking_margin=ranking_margin, unlabeled_weight=unlabeled_weight)
@@ -938,6 +940,64 @@ class Generator(GGenerator):
             rule_mask = graph.rule_mask.detach().cpu().numpy()
             return scores, rule_mask
         return scores
+
+    def action_distribution(self, sub: str):
+        """Differentiable GFlowNet forward-policy logits over {child products} ∪ {STOP}.
+
+        Returns (children: List[str], child_logits: Tensor[len(children)], stop_logit:
+        Tensor[1]). The RDKit enumeration (which children exist) is the fixed environment,
+        but the logit assigned to each child (logsumexp over the rules that produce it) and
+        the STOP logit are differentiable w.r.t. the generator — this is the policy the
+        Trajectory-Balance objective trains. NOT wrapped in no_grad on purpose.
+        """
+        first_param = next(iter(self.parameters()), None)
+        device = first_param.device if first_param is not None else torch.device("cpu")
+        mol, graph = self._graph_for_substrate(sub)
+        if mol is None or graph is None:
+            return [], torch.empty(0, device=device), torch.zeros(1, device=device)
+        batch = Batch.from_data_list([graph]).to(device)
+        _, embedding, _, _ = self._compose_substrate_embedding(batch)
+        rule_logits = self._forward_generation_logits(batch).view(-1)  # [num_rules], differentiable
+        stop_logit = self.stop_head(embedding).view(-1)  # [1]
+        rule_mask = (
+            graph.rule_mask.detach().cpu().numpy()
+            if getattr(graph, "rule_mask", None) is not None
+            else np.ones(self.num_rules, dtype=np.float32)
+        )
+        child_to_rules: Dict[str, List[int]] = {}
+        for index in np.where(rule_mask > 0.0)[0]:
+            index = int(index)
+            if index >= len(self.rule_reactions):
+                continue
+            reaction = self.rule_reactions[index]
+            if reaction is None:
+                continue
+            for product_tuple in safe_run_reactants(reaction, mol):
+                for product in product_tuple:
+                    try:
+                        smiles = Chem.MolToSmiles(product)
+                    except Exception:
+                        continue
+                    for fragment in smiles.split("."):
+                        fragment = fragment.strip()
+                        if not fragment:
+                            continue
+                        try:
+                            normalized = str(standardize_mol(fragment))
+                        except Exception:
+                            continue
+                        if normalized:
+                            child_to_rules.setdefault(normalized, []).append(index)
+        children = list(child_to_rules.keys())
+        if not children:
+            return [], torch.empty(0, device=device), stop_logit
+        child_logits = torch.stack(
+            [
+                torch.logsumexp(rule_logits[torch.tensor(child_to_rules[child], dtype=torch.long, device=device)], dim=0)
+                for child in children
+            ]
+        )
+        return children, child_logits, stop_logit
 
     @torch.no_grad()
     def calibrate_threshold(
