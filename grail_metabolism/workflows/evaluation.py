@@ -21,6 +21,8 @@ def _generator_predictions(generator: Generator, frame, config: EvaluationConfig
 
 def _ensemble_predictions(model: ModelWrapper, frame, config: EvaluationConfig) -> List[Dict[str, object]]:
     threshold = config.threshold if config.threshold is not None else getattr(model.generator, "calibrated_threshold", None)
+    ms = getattr(config, "multistep", None)
+    multistep = ms if (ms is not None and ms.enabled and ms.max_depth > 1) else None
     rows = []
     for substrate, products in frame.map.items():
         ranked = model.generate(
@@ -28,6 +30,7 @@ def _ensemble_predictions(model: ModelWrapper, frame, config: EvaluationConfig) 
             top_k=config.candidate_top_k,
             threshold=threshold,
             max_output=config.max_output,
+            multistep=multistep,
         )
         rows.append({"substrate": substrate, "predicted": ranked, "real": sorted(products)})
     return rows

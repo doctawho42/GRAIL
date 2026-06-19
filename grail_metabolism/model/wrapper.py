@@ -9,6 +9,7 @@ from torch import nn
 
 if TYPE_CHECKING:
     from grail_metabolism.utils.preparation import MolFrame
+    from grail_metabolism.config import MultiStepConfig
 
 
 class GFilter(nn.Module, ABC):
@@ -81,6 +82,19 @@ class ModelWrapper:
         self.filter.fit(data, lr=filter_lr, eps=filter_epochs, verbose=verbose)
         return self
 
+    def generate_multistep(
+        self,
+        sub: str,
+        config: "MultiStepConfig",
+        threshold: Optional[float] = None,
+        max_output: Optional[int] = None,
+    ) -> List[str]:
+        from .multistep import MetabolicTree
+
+        rule_threshold = threshold if threshold is not None else getattr(self.generator, "calibrated_threshold", None)
+        tree = MetabolicTree(self.generator, self.filter, config, rule_threshold=rule_threshold)
+        return [smiles for smiles, _ in tree.beam_search(sub, max_output=max_output)]
+
     def generate(
         self,
         sub: str,
@@ -88,7 +102,12 @@ class ModelWrapper:
         threshold: Optional[float] = None,
         filter_threshold: Optional[float] = None,
         max_output: Optional[int] = None,
+        multistep: "Optional[MultiStepConfig]" = None,
     ) -> List[str]:
+        # Multi-step beam search only when explicitly requested with depth>1; otherwise
+        # the exact single-step path below runs unchanged (byte-identical back-compat).
+        if multistep is not None and getattr(multistep, "max_depth", 1) > 1:
+            return self.generate_multistep(sub, multistep, threshold=threshold, max_output=max_output)
         # Candidates from generate_scored are already standardized, so we normalize
         # through the cached path (idempotent + fast) instead of re-running the
         # expensive uncached tautomer canonicalization on every product.

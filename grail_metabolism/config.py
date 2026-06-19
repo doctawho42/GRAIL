@@ -122,6 +122,24 @@ class OptimConfig:
 
 
 @dataclass
+class MultiStepConfig:
+    """Multi-step (depth>1) metabolite generation over the metabolic tree.
+
+    Defaults reduce to current single-step behavior (enabled=False / max_depth=1), so an
+    unchanged config produces identical metrics. Used both as the runtime config for
+    model.multistep.MetabolicTree and as the serializable EvaluationConfig.multistep.
+    """
+    enabled: bool = False
+    max_depth: int = 1                 # 1 == single-step; >=2 engages the beam search
+    beam_width: int = 25               # frontier nodes carried to the next depth
+    expand_threshold: float = 0.5      # filter(parent, node) >= tau to spawn children
+    node_budget: int = 2000            # global per-substrate expansion cap
+    per_node_top_k: int = 10           # generator top_k per expansion
+    prior_aggregation: Literal["mean", "min", "product", "noisy_or"] = "mean"
+    reward_prior_weight: float = 1.0   # node_score = reward * prior**reward_prior_weight
+
+
+@dataclass
 class EvaluationConfig:
     generator_top_k: List[int] = field(default_factory=lambda: [1, 3, 5, 10])
     candidate_top_k: int = 10
@@ -134,6 +152,8 @@ class EvaluationConfig:
     match: Literal["exact", "inchikey"] = "exact"
     threshold: Optional[float] = None
     export_predictions: bool = True
+    # Multi-step generation at evaluation time (off by default -> single-step).
+    multistep: MultiStepConfig = field(default_factory=MultiStepConfig)
 
 
 @dataclass
@@ -208,7 +228,9 @@ def experiment_from_dict(payload: Dict[str, Any]) -> ExperimentConfig:
     pretrain = PretrainConfig(**payload.get("pretrain", {}))
     generator_optim = OptimConfig(**payload.get("generator_optim", {}))
     filter_optim = OptimConfig(**payload.get("filter_optim", {}))
-    evaluation = EvaluationConfig(**payload.get("evaluation", {}))
+    eval_payload = dict(payload.get("evaluation", {}))
+    multistep_payload = eval_payload.pop("multistep", {}) or {}
+    evaluation = EvaluationConfig(**eval_payload, multistep=MultiStepConfig(**multistep_payload))
     return ExperimentConfig(
         name=payload["name"],
         description=payload.get("description", ""),

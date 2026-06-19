@@ -130,6 +130,74 @@ def grail_ceiling(test_map: Dict[str, Set[str]], rules: List[str]) -> Dict[str, 
     }
 
 
+def grail_ceiling_depth(
+    test_map: Dict[str, Set[str]],
+    rules: List[str],
+    depth: int,
+    beam: int = 25,
+    node_budget: int = 4000,
+) -> Dict[str, object]:
+    """Recall ceiling when rules may be applied up to `depth` times (no policy).
+
+    A TRUE unbounded depth-2 ceiling is computationally infeasible (all 7581 rules applied
+    to every one of ~195 depth-1 products per substrate). `beam` caps the frontier breadth
+    per level (deterministically, by canonical SMILES), so this is a breadth-capped LOWER
+    BOUND on the real multi-step ceiling: if even this lifts recall over the depth-1
+    ceiling, multi-step rule application genuinely helps. `node_budget` is a global per-
+    substrate safety cap on total expansions.
+    """
+    recovered = total = subs_with_hit = 0
+    cand_sizes: List[int] = []
+    start = time.perf_counter()
+    items = list(test_map.items())
+    for i, (sub, true_prods) in enumerate(items, start=1):
+        if i == 1 or i % 25 == 0 or i == len(items):
+            print(f"  [ceiling d={depth} beam={beam}] {i}/{len(items)} ({time.perf_counter()-start:.0f}s)", flush=True)
+        true_ik = ik_set(true_prods)
+        total += len(true_ik)
+        if Chem.MolFromSmiles(sub) is None:
+            continue
+        root_ik = _inchikey(sub)
+        visited_ik = {root_ik}
+        frontier = [sub]
+        expansions = 0
+        for _ in range(depth):
+            next_candidates: Set[str] = set()
+            for m_smi in frontier:
+                if expansions >= node_budget:
+                    break
+                m = Chem.MolFromSmiles(m_smi)
+                if m is None:
+                    continue
+                expansions += 1
+                for p_smi in apply_rules_to_molecule(m, rules, normalization_mode="canonical").keys():
+                    p_ik = _inchikey(p_smi)
+                    if p_ik not in visited_ik:
+                        visited_ik.add(p_ik)
+                        next_candidates.add(p_smi)
+            if not next_candidates or expansions >= node_budget:
+                break
+            # breadth cap: keep a deterministic subset as the next frontier
+            frontier = sorted(next_candidates)[:beam] if beam and len(next_candidates) > beam else sorted(next_candidates)
+        gen_ik = visited_ik - {root_ik}
+        cand_sizes.append(len(gen_ik))
+        hit = len(true_ik & gen_ik)
+        recovered += hit
+        if hit:
+            subs_with_hit += 1
+    return {
+        "depth": depth,
+        "beam": beam,
+        "node_budget": node_budget,
+        "recall_ceiling_lower_bound": recovered / total if total else 0.0,
+        "fraction_substrates_with_any_hit": subs_with_hit / len(items) if items else 0.0,
+        "mean_candidates_per_substrate": sum(cand_sizes) / len(cand_sizes) if cand_sizes else 0.0,
+        "true_recovered": recovered,
+        "true_total": total,
+        "n_rules": len(rules),
+    }
+
+
 def grail_ceiling_delta(test_map: Dict[str, Set[str]], base_rules: List[str], phase2_rules: List[str]) -> Dict[str, float]:
     """Recall ceiling of the base bank vs base+phase2, on the SAME substrates (one pass)."""
     base_rec = comb_rec = total = base_hit = comb_hit = 0
@@ -164,8 +232,85 @@ def grail_ceiling_delta(test_map: Dict[str, Set[str]], base_rules: List[str], ph
     }
 
 
+_GAP_CLASSES = [
+    ("hydroxylation/oxidation (+O, +16)", 15.995),
+    ("dioxidation (+2O, +32)", 31.990),
+    ("methylation (+CH2, +14)", 14.016),
+    ("demethylation (-CH2, -14)", -14.016),
+    ("desaturation (-H2, -2)", -2.016),
+    ("reduction (+H2, +2)", 2.016),
+    ("hydration/hydrolysis (+H2O, +18)", 18.011),
+    ("dehydration (-H2O, -18)", -18.011),
+    ("dihydrodiol (+H2O2-ish, +34)", 34.005),
+    ("decarboxylation (-CO2, -44)", -43.990),
+    ("acetylation (+C2H2O, +42)", 42.011),
+    ("glucuronidation (+C6H8O6, +176)", 176.032),
+    ("sulfation (+SO3, +80)", 79.957),
+    ("glycine conjugation (+57)", 57.021),
+    ("taurine conjugation (+107)", 107.004),
+    ("glutathione conjugation (+305)", 305.068),
+    ("cysteine conjugation (+119)", 119.004),
+    ("mercapturate/NAC (+161)", 161.015),
+    ("oxidative deamination (-NH, +O-1, +1)", 0.984),
+    ("isomerization/rearrangement (~0)", 0.0),
+]
+
+
+def classify_gap(delta_mw: Optional[float]) -> str:
+    if delta_mw is None:
+        return "other (invalid MW)"
+    for label, target in _GAP_CLASSES:
+        if abs(delta_mw - target) < 1.5:
+            return label
+    return f"other (deltaMW~{round(delta_mw)})"
+
+
+def gap_analysis(test_map: Dict[str, Set[str]], rules: List[str]) -> Dict[str, object]:
+    """Bucket the TRUE metabolites the base bank fails to reach, by substrate->metabolite
+    mass shift, to reveal which transformation classes are missing from the bank."""
+    from collections import Counter
+    from rdkit.Chem import Descriptors
+
+    buckets: Counter = Counter()
+    examples: Dict[str, list] = {}
+    n_uncovered = 0
+    n_total = 0
+    start = time.perf_counter()
+    items = list(test_map.items())
+    for i, (sub, true_prods) in enumerate(items, start=1):
+        if i == 1 or i % 50 == 0 or i == len(items):
+            print(f"  [gap] {i}/{len(items)} ({time.perf_counter()-start:.0f}s)", flush=True)
+        mol = Chem.MolFromSmiles(sub)
+        if mol is None:
+            continue
+        sub_mw = Descriptors.MolWt(mol)
+        gen_ik = ik_set(apply_rules_to_molecule(mol, rules, normalization_mode="canonical").keys())
+        for prod in true_prods:
+            n_total += 1
+            if _inchikey(prod) in gen_ik:
+                continue
+            n_uncovered += 1
+            pm = Chem.MolFromSmiles(prod)
+            delta = (Descriptors.MolWt(pm) - sub_mw) if pm is not None else None
+            label = classify_gap(delta)
+            buckets[label] += 1
+            if len(examples.setdefault(label, [])) < 3:
+                examples[label].append({"sub": sub, "met": prod, "deltaMW": round(delta, 1) if delta is not None else None})
+    ranked = buckets.most_common()
+    return {
+        "n_true_total": n_total,
+        "n_uncovered": n_uncovered,
+        "uncovered_fraction": n_uncovered / n_total if n_total else 0.0,
+        "top_missing_transformation_classes": [
+            {"class": label, "count": count, "fraction_of_uncovered": count / n_uncovered if n_uncovered else 0.0,
+             "examples": examples.get(label, [])}
+            for label, count in ranked
+        ],
+    }
+
+
 # ---- 2. SyGMa baseline ----
-def sygma_baseline(test_map: Dict[str, Set[str]], ks: List[int]) -> Optional[Dict[str, float]]:
+def sygma_baseline(test_map: Dict[str, Set[str]], ks: List[int]) -> Optional[Dict[str, object]]:
     try:
         import sygma
     except ImportError:
@@ -224,10 +369,42 @@ def main() -> int:
     ap.add_argument("--ks", type=int, nargs="+", default=[5, 10, 12, 15])
     ap.add_argument("--with-phase2", action="store_true", help="add curated phase II bank to GRAIL ceiling")
     ap.add_argument("--phase2-delta", action="store_true", help="report base vs base+phase2 ceiling on the same substrates (one pass)")
+    ap.add_argument("--gap-analysis", action="store_true", help="bucket the metabolites the bank misses by mass-shift class")
+    ap.add_argument("--depth", type=int, default=1, help="multi-step ceiling: apply rules up to this depth (breadth-capped lower bound)")
+    ap.add_argument("--beam", type=int, default=25, help="frontier breadth cap per level for --depth>1")
+    ap.add_argument("--node-budget", type=int, default=4000, help="per-substrate expansion cap for --depth>1")
     ap.add_argument("--out", type=str, default=str(ROOT / "results" / "benchmark_report.json"))
     args = ap.parse_args()
 
     test_map = load_test_map(args.sample, args.seed)
+
+    if args.depth and args.depth > 1:
+        rules = load_default_rules()
+        print(f"\n== depth-{args.depth} ceiling (breadth-capped lower bound, beam={args.beam}, base={len(rules)} rules) ==", flush=True)
+        d1 = grail_ceiling(test_map, rules)
+        dD = grail_ceiling_depth(test_map, rules, depth=args.depth, beam=args.beam, node_budget=args.node_budget)
+        lift = float(dD["recall_ceiling_lower_bound"]) - float(d1["recall_ceiling"])
+        print(json.dumps({"depth1_ceiling": d1, f"depth{args.depth}_ceiling_lower_bound": dD, "lift_over_depth1": lift}, indent=2), flush=True)
+        out_path = Path(args.out.replace(".json", f"_depth{args.depth}.json"))
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        out_path.write_text(json.dumps({
+            "n_test_substrates": len(test_map), "matching": "inchikey",
+            "depth1_ceiling": d1, f"depth{args.depth}_ceiling_lower_bound": dD,
+            "lift_over_depth1": lift,
+        }, indent=2))
+        print(f"\nWrote {out_path}", flush=True)
+        return 0
+
+    if args.gap_analysis:
+        rules = load_default_rules()
+        print(f"\n== gap analysis (uncovered true metabolites by mass-shift class, base={len(rules)} rules) ==", flush=True)
+        gap = gap_analysis(test_map, rules)
+        print(json.dumps(gap, indent=2), flush=True)
+        out_path = Path(args.out.replace(".json", "_gap.json"))
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        out_path.write_text(json.dumps({"n_test_substrates": len(test_map), "matching": "inchikey", "gap_analysis": gap}, indent=2))
+        print(f"\nWrote {out_path}", flush=True)
+        return 0
 
     if args.phase2_delta:
         base = load_default_rules()
