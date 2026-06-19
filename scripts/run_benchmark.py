@@ -130,6 +130,40 @@ def grail_ceiling(test_map: Dict[str, Set[str]], rules: List[str]) -> Dict[str, 
     }
 
 
+def grail_ceiling_delta(test_map: Dict[str, Set[str]], base_rules: List[str], phase2_rules: List[str]) -> Dict[str, float]:
+    """Recall ceiling of the base bank vs base+phase2, on the SAME substrates (one pass)."""
+    base_rec = comb_rec = total = base_hit = comb_hit = 0
+    start = time.perf_counter()
+    items = list(test_map.items())
+    for i, (sub, true_prods) in enumerate(items, start=1):
+        if i == 1 or i % 50 == 0 or i == len(items):
+            print(f"  [phase2-delta] {i}/{len(items)} ({time.perf_counter()-start:.0f}s)", flush=True)
+        true_ik = ik_set(true_prods)
+        total += len(true_ik)
+        mol = Chem.MolFromSmiles(sub)
+        if mol is None:
+            continue
+        base_ik = ik_set(apply_rules_to_molecule(mol, base_rules, normalization_mode="canonical").keys())
+        p2_ik = ik_set(apply_rules_to_molecule(mol, phase2_rules, normalization_mode="canonical").keys())
+        comb_ik = base_ik | p2_ik
+        bh, ch = len(true_ik & base_ik), len(true_ik & comb_ik)
+        base_rec += bh
+        comb_rec += ch
+        base_hit += 1 if bh else 0
+        comb_hit += 1 if ch else 0
+    n = len(items)
+    return {
+        "base_recall_ceiling": base_rec / total if total else 0.0,
+        "base_plus_phase2_recall_ceiling": comb_rec / total if total else 0.0,
+        "ceiling_lift": (comb_rec - base_rec) / total if total else 0.0,
+        "extra_metabolites_recovered": comb_rec - base_rec,
+        "base_fraction_with_hit": base_hit / n if n else 0.0,
+        "base_plus_phase2_fraction_with_hit": comb_hit / n if n else 0.0,
+        "true_total": total,
+        "n_phase2_rules": len(phase2_rules),
+    }
+
+
 # ---- 2. SyGMa baseline ----
 def sygma_baseline(test_map: Dict[str, Set[str]], ks: List[int]) -> Optional[Dict[str, float]]:
     try:
@@ -189,10 +223,24 @@ def main() -> int:
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--ks", type=int, nargs="+", default=[5, 10, 12, 15])
     ap.add_argument("--with-phase2", action="store_true", help="add curated phase II bank to GRAIL ceiling")
+    ap.add_argument("--phase2-delta", action="store_true", help="report base vs base+phase2 ceiling on the same substrates (one pass)")
     ap.add_argument("--out", type=str, default=str(ROOT / "results" / "benchmark_report.json"))
     args = ap.parse_args()
 
     test_map = load_test_map(args.sample, args.seed)
+
+    if args.phase2_delta:
+        base = load_default_rules()
+        p2 = [r for r in load_phase2_rules() if r not in set(base)]
+        print(f"\n== phase II ceiling delta (base={len(base)} rules, +{len(p2)} phase II) ==", flush=True)
+        delta = grail_ceiling_delta(test_map, base, p2)
+        print(json.dumps(delta, indent=2), flush=True)
+        out_path = Path(args.out.replace(".json", "_phase2_delta.json"))
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        out_path.write_text(json.dumps({"n_test_substrates": len(test_map), "matching": "inchikey", "phase2_delta": delta}, indent=2))
+        print(f"\nWrote {out_path}", flush=True)
+        return 0
+
     rules = load_default_rules()
     if args.with_phase2:
         extra = [r for r in load_phase2_rules() if r not in set(rules)]
