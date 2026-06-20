@@ -111,7 +111,10 @@ class ModelWrapper:
         # Candidates from generate_scored are already standardized, so we normalize
         # through the cached path (idempotent + fast) instead of re-running the
         # expensive uncached tautomer canonicalization on every product.
-        from grail_metabolism.utils.preparation import _standardize_smiles_cached
+        from grail_metabolism.utils.preparation import _normalize_smiles_cached
+        # Normalize with the SAME mode the generator emits (and was trained on), so the
+        # filter scores candidates in the model's distribution and matching stays consistent.
+        gen_mode = getattr(self.generator, "gen_normalization", "standardize")
         rule_threshold = threshold if threshold is not None else getattr(self.generator, "calibrated_threshold", None)
         effective_filter_threshold = (
             float(filter_threshold)
@@ -127,7 +130,7 @@ class ModelWrapper:
         generator_scores = []
         for candidate, generator_score in scored_candidates:
             try:
-                normalized = _standardize_smiles_cached(candidate)
+                normalized = _normalize_smiles_cached(candidate, gen_mode)
             except Exception:
                 normalized = candidate
             normalized_candidates.append(normalized)

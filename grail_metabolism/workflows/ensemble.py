@@ -137,6 +137,9 @@ class EnsembleWorkflow:
             )
             runtime["data_prepare_seconds"] = time.perf_counter() - prepare_started
         generator = build_generator(self.config.generator, bundle.rules)
+        # Products emitted at generation time must be normalized the same way the data was
+        # (canonical when standardize=False), for speed and so generated/real sets match.
+        generator.gen_normalization = "standardize" if self.config.dataset.standardize else "canonical"
         filter_model = build_filter(self.config.filter)
 
         pretrain_started = time.perf_counter()

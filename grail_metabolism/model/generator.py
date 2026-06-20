@@ -18,7 +18,7 @@ from torch_geometric.utils import to_dense_batch
 
 from ._graph import GraphEncoder
 from .wrapper import GGenerator
-from ..utils.preparation import MolFrame, generate_vectors, safe_run_reactants, standardize_mol
+from ..utils.preparation import MolFrame, _normalize_smiles_cached, generate_vectors, safe_run_reactants
 from ..utils.transform import EDGE_DIM, FINGERPRINT_DIM, SINGLE_NODE_DIM, from_rdmol, from_rule
 
 
@@ -319,6 +319,10 @@ class Generator(GGenerator):
         )
         self.atom_predictor = nn.Linear(projection_dim, SINGLE_NODE_DIM)
         self.maccs_head = nn.Linear(projection_dim, 166)
+        # Normalization for products enumerated at generation time. "canonical" is ~5x
+        # faster than tautomer "standardize" and must match the dataset normalization the
+        # model was trained on (set to "canonical" when trained with standardize=False).
+        self.gen_normalization: Literal["standardize", "canonical"] = "standardize"
         # GFlowNet STOP-action head: P(stop | molecule) competes with the rule actions.
         self.stop_head = nn.Linear(projection_dim, 1)
         self.use_maccs_pretraining = use_maccs_pretraining
@@ -983,7 +987,7 @@ class Generator(GGenerator):
                         if not fragment:
                             continue
                         try:
-                            normalized = str(standardize_mol(fragment))
+                            normalized = _normalize_smiles_cached(fragment, self.gen_normalization)
                         except Exception:
                             continue
                         if normalized:
@@ -1139,7 +1143,7 @@ class Generator(GGenerator):
                         if not fragment:
                             continue
                         try:
-                            normalized = str(standardize_mol(fragment))
+                            normalized = _normalize_smiles_cached(fragment, self.gen_normalization)
                         except Exception:
                             continue
                         if normalized in seen_products:
@@ -1165,7 +1169,7 @@ class Generator(GGenerator):
         scores = []
         for substrate, products in test_frame.map.items():
             predicted = set(self.generate(substrate))
-            real = {str(standardize_mol(product)) for product in products}
+            real = {_normalize_smiles_cached(product, self.gen_normalization) for product in products}
             union = predicted | real
             scores.append(len(predicted & real) / len(union) if union else 0.0)
         return scores

@@ -536,6 +536,15 @@ class MolFrame:
         if not isinstance(smiles, str) or not smiles.strip():
             raise ValueError("Empty SMILES are not supported")
         if not standartize:
+            # In canonical mode, map products must be CANONICALIZED so they match the
+            # canonical generated products produced during reaction labeling (otherwise
+            # raw SDF SMILES never match -> labeling marks nothing). Standardize mode
+            # passes through SMILES that were already standardized upstream.
+            if self.normalization_mode == "canonical":
+                try:
+                    return _canonicalize_smiles_cached(smiles)
+                except Exception:
+                    return smiles
             return smiles
         try:
             normalized = _standardize_smiles_cached(smiles)
