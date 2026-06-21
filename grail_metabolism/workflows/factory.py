@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Dict
 
-from ..config import FilterConfig, GeneratorConfig
+from ..config import FilterConfig, GeneratorConfig, SoMConfig
 from ..model.filter import Filter, GATv2Filter, GCNFilter, GINFilter, MolPathFilter, MorganOnlyFilter
 from ..model.generator import Generator
 FILTER_TYPES = {
@@ -66,4 +66,19 @@ def build_filter(config: FilterConfig):
         arg_vec=config.hidden_dims,
         mode=config.mode,
         **kwargs,
+    )
+
+
+def build_som(config: SoMConfig):
+    """Single construction path for the SoM regioselectivity prior (model.som.SoMPredictor)."""
+    from ..model.som import SoMPredictor
+    from ..utils.transform import EDGE_DIM, SINGLE_NODE_DIM
+
+    return SoMPredictor(
+        in_channels=SINGLE_NODE_DIM,
+        edge_dim=EDGE_DIM,
+        hidden_dims=config.hidden_dims,
+        out_dim=config.out_dim,
+        conv_kind=config.conv_kind,
+        dropout=config.dropout,
     )

@@ -51,8 +51,12 @@ class ModelWrapper:
         filter: GFilter,
         generator: Union[GGenerator, Literal["simple"]],
         rules: Optional[Sequence[str]] = None,
+        som: Optional[nn.Module] = None,
     ) -> None:
         self.filter = filter
+        # Optional site-of-metabolism prior (model.som.SoMPredictor). When set and used
+        # with som_beta>0, generate() reweights candidates by site plausibility.
+        self.som = som
         if generator == "simple":
             if not rules:
                 raise ValueError("rules are required for the simple generator")
@@ -103,6 +107,10 @@ class ModelWrapper:
         filter_threshold: Optional[float] = None,
         max_output: Optional[int] = None,
         multistep: "Optional[MultiStepConfig]" = None,
+        gate_by_filter: bool = True,
+        som_beta: Optional[float] = None,
+        som_aggregation: str = "max",
+        filter_candidate_cap: Optional[int] = None,
     ) -> List[str]:
         # Multi-step beam search only when explicitly requested with depth>1; otherwise
         # the exact single-step path below runs unchanged (byte-identical back-compat).
@@ -126,6 +134,12 @@ class ModelWrapper:
             scored_candidates = self.generator.generate_scored(sub, top_k=top_k, threshold=rule_threshold)
         else:
             scored_candidates = [(candidate, 1.0) for candidate in self.generator.generate(sub, top_k=top_k, threshold=rule_threshold)]
+        # The pair-filter (MCS-aware graph per candidate) is the dominant cost and scales
+        # with candidate count. Since the final rank is filter*generator*som, a candidate the
+        # generator already scores low rarely reaches the top max_output -- so cap the filter
+        # to the generator's top-N candidates (generate_scored is sorted by score, desc).
+        if filter_candidate_cap is not None and filter_candidate_cap > 0:
+            scored_candidates = scored_candidates[:filter_candidate_cap]
         normalized_candidates = []
         generator_scores = []
         for candidate, generator_score in scored_candidates:
@@ -142,31 +156,66 @@ class ModelWrapper:
         else:
             filter_scores = [float(self.filter.score(sub, prod)) for prod in normalized_candidates]
 
-        accepted = []
+        # Optional site-of-metabolism reweight: combined = filter * generator * som^beta.
+        # beta=0 or no SoM model -> multiplier 1 -> exact filter*generator ranking (back-compat).
+        # SoM only reshapes the RANK (never the filter gate), honoring the rank-only lesson.
+        beta = float(som_beta) if som_beta is not None else 0.0
+        som = getattr(self, "som", None)
+        use_som = som is not None and beta > 0.0
+        sub_mol = None
+        som_atoms = None
+        if use_som:
+            from .som import product_som_score
+
+            sub_mol = Chem.MolFromSmiles(sub)
+            som_atoms = som.score_atoms(sub)
+            use_som = sub_mol is not None and som_atoms is not None and len(som_atoms) > 0
+
         evaluated = []
+        accepted = []
         for normalized, generator_score, filter_score in zip(normalized_candidates, generator_scores, filter_scores):
             filter_score = float(filter_score)
-            evaluated.append((normalized, filter_score * generator_score, filter_score, generator_score))
-            if filter_score < effective_filter_threshold:
-                continue
-            accepted.append((normalized, filter_score * generator_score, filter_score, generator_score))
-        ranked_candidates = accepted
-        if not ranked_candidates and evaluated:
+            som_mult = product_som_score(som_atoms, sub_mol, normalized, som_aggregation) ** beta if use_som else 1.0
+            combined = filter_score * generator_score * som_mult
+            evaluated.append((normalized, combined, filter_score, generator_score))
+            if filter_score >= effective_filter_threshold:
+                accepted.append((normalized, combined, filter_score, generator_score))
+        sort_key = lambda item: (-item[1], -item[2], -item[3], item[0])
+        if not gate_by_filter:
+            # rank-only: keep every candidate, ordered by filter*generator score, and let
+            # max_output do the truncation. The hard gate discards plausible-but-sub-
+            # threshold hits and measurably hurts recall@k; ranking keeps them in reach.
+            ranked_candidates = sorted(evaluated, key=sort_key)
+        elif accepted:
+            ranked_candidates = sorted(accepted, key=sort_key)
+        elif evaluated:
+            # gated, but nothing cleared the threshold: surface a few best-ranked anyway
+            # so a substrate is never silently empty.
             fallback_limit = max(1, min(top_k or 3, 3, len(evaluated)))
-            ranked_candidates = sorted(evaluated, key=lambda item: (-item[1], -item[2], -item[3], item[0]))[:fallback_limit]
+            ranked_candidates = sorted(evaluated, key=sort_key)[:fallback_limit]
         else:
-            ranked_candidates = sorted(ranked_candidates, key=lambda item: (-item[1], -item[2], -item[3], item[0]))
+            ranked_candidates = []
+        # Dedup the output by the SAME tautomer-invariant key the structure metrics match
+        # on, not the raw canonical string. Otherwise tautomer/charge variants of one
+        # molecule each take a slot of the (small) max_output budget while the metric
+        # collapses them to a single hit -- wasting capacity that could hold other distinct
+        # metabolites. Bounded to max_output so the tautomer canonicalization stays cheap.
+        from grail_metabolism.metrics import _tautomer_inchikey
+
         seen = set()
         ranked = []
+        cap = max_output if (max_output is not None and max_output > 0) else None
         for candidate, _, _, _ in ranked_candidates:
-            if candidate in seen:
+            try:
+                key = _tautomer_inchikey(candidate)
+            except Exception:
+                key = candidate
+            if key in seen:
                 continue
-            seen.add(candidate)
+            seen.add(key)
             ranked.append(candidate)
-        # Optional hard cap on the returned set: the headline metric is set-based, so an
-        # uncapped output crushes precision. Callers (evaluation) can bound it to a small k.
-        if max_output is not None and max_output > 0:
-            ranked = ranked[:max_output]
+            if cap is not None and len(ranked) >= cap:
+                break
         return ranked
 
     def f1_score(self, sub: str, prods: Iterable[str]) -> float:

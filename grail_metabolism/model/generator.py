@@ -267,6 +267,11 @@ class Generator(GGenerator):
             molpath_cutoff=molpath_cutoff,
             molpath_y=molpath_y,
         )
+        # Inference cache for the encoded rule bank (see _rule_embeddings). The rule graphs
+        # and encoder weights are fixed during inference, so the ~7.5k-rule encode is done
+        # once and reused across substrates instead of re-run every forward (the dominant
+        # per-substrate cost). Invalidated on any grad-enabled (training) forward.
+        self._rule_embedding_cache: Optional[torch.Tensor] = None
         self.substrate_encoder = GraphEncoder(
             in_channels=in_channels,
             edge_dim=edge_dim,
@@ -382,7 +387,21 @@ class Generator(GGenerator):
 
     def _rule_embeddings(self, device: torch.device) -> torch.Tensor:
         self.parser.to(device)
-        return self.parser().to(device)
+        if torch.is_grad_enabled():
+            # Training / differentiable (GFlowNet) path: encoder weights change each step and
+            # gradients must flow, so recompute. Also drop any inference cache so a later
+            # no-grad pass cannot reuse embeddings from before a weight update.
+            self._rule_embedding_cache = None
+            return self.parser().to(device)
+        # Inference (no_grad): the rule bank and encoder weights are fixed across substrates,
+        # so encode the rule graphs ONCE and reuse. This is the dominant per-substrate cost.
+        # score_rules runs this in eval mode, so dropout is off and parser() is deterministic
+        # -- the single cached pass equals re-encoding every substrate.
+        cache = self._rule_embedding_cache
+        if cache is None or cache.device != device:
+            cache = self.parser().to(device)
+            self._rule_embedding_cache = cache
+        return cache
 
     def _batch_index(self, data: Data, device: torch.device) -> torch.Tensor:
         batch = getattr(data, "batch", None)
@@ -939,7 +958,17 @@ class Generator(GGenerator):
         first_param = next(iter(self.parameters()), None)
         device = first_param.device if first_param is not None else torch.device("cpu")
         batch = Batch.from_data_list([graph]).to(device)
-        scores = self(batch).view(-1).detach().cpu().numpy()
+        # Score in eval mode so inference is deterministic (encoder dropout off) -- this also
+        # lets _rule_embeddings cache the rule-bank encoding across substrates. Restore the
+        # prior mode afterward so a caller mid-training is unaffected.
+        was_training = self.training
+        if was_training:
+            self.eval()
+        try:
+            scores = self(batch).view(-1).detach().cpu().numpy()
+        finally:
+            if was_training:
+                self.train()
         if return_mask:
             rule_mask = graph.rule_mask.detach().cpu().numpy()
             return scores, rule_mask

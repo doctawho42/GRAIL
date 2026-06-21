@@ -23,6 +23,10 @@ def _ensemble_predictions(model: ModelWrapper, frame, config: EvaluationConfig) 
     threshold = config.threshold if config.threshold is not None else getattr(model.generator, "calibrated_threshold", None)
     ms = getattr(config, "multistep", None)
     multistep = ms if (ms is not None and ms.enabled and ms.max_depth > 1) else None
+    # Headline metric is recall@k, so default to rank-only (no hard filter gate). The
+    # gate is precision-oriented and measurably lowers recall@k.
+    gate_by_filter = getattr(config, "ranking_policy", "rank") == "gate"
+    filter_candidate_cap = getattr(config, "filter_candidate_cap", None)
     rows = []
     for substrate, products in frame.map.items():
         ranked = model.generate(
@@ -31,6 +35,8 @@ def _ensemble_predictions(model: ModelWrapper, frame, config: EvaluationConfig) 
             threshold=threshold,
             max_output=config.max_output,
             multistep=multistep,
+            gate_by_filter=gate_by_filter,
+            filter_candidate_cap=filter_candidate_cap,
         )
         rows.append({"substrate": substrate, "predicted": ranked, "real": sorted(products)})
     return rows

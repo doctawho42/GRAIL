@@ -29,9 +29,42 @@ def _inchikey(smiles: str) -> str:
         return smiles
 
 
+@lru_cache(maxsize=131072)
+def _tautomer_inchikey(smiles: str) -> str:
+    """Tautomer-canonical InChIKey: full standardization (incl. tautomer canonicalization) then InChIKey.
+
+    Standard InChI only normalizes a *subset* of tautomers, so two SMILES that are the
+    same molecule up to a proton shift (e.g. keto/enol, amide/imidic-acid, several N-H
+    heterocycles) can get different InChIKeys. The rule engine routinely emits a
+    different tautomer of the annotated metabolite than the reference SMILES, so plain
+    ``match="inchikey"`` silently misses those true hits (measured ~4.5x recall loss on
+    the (в) subset run). Running ``standardize_mol`` (Cleanup -> FragmentParent ->
+    uncharge -> TautomerEnumerator.Canonicalize) on BOTH sides collapses them onto the
+    same representative before the InChIKey, so the match becomes tautomer-invariant.
+
+    This is heavier than ``_inchikey`` (tautomer enumeration), so it is reserved for the
+    small final output set + reference set at scoring time, never the generation loop.
+    Both this and the underlying standardize are cached, so repeats are free.
+    """
+    try:
+        from rdkit import Chem
+
+        from grail_metabolism.utils.preparation import _standardize_smiles_cached
+
+        standardized = _standardize_smiles_cached(smiles)
+        mol = Chem.MolFromSmiles(standardized)
+        if mol is None:
+            return _inchikey(smiles)
+        return Chem.MolToInchiKey(mol) or standardized
+    except Exception:
+        return _inchikey(smiles)
+
+
 def _match_keys(items: Iterable[str], match: str) -> Set[str]:
     if match == "inchikey":
         return {_inchikey(str(item)) for item in items}
+    if match == "inchikey_tautomer":
+        return {_tautomer_inchikey(str(item)) for item in items}
     return {str(item) for item in items}
 
 
@@ -80,12 +113,14 @@ def exact_match(predicted: Iterable[str], real: Iterable[str]) -> float:
 def aggregate_prediction_metrics(
     predictions: List[Dict[str, object]],
     ks: Sequence[int],
-    match: Literal["exact", "inchikey"] = "exact",
+    match: Literal["exact", "inchikey", "inchikey_tautomer"] = "exact",
 ) -> Dict[str, float]:
     """Macro-averaged set metrics over per-substrate predictions.
 
     match="inchikey" compares structures by InChIKey (literature convention) instead of
-    raw SMILES equality. ``mean_output_size`` reports the average number of predicted
+    raw SMILES equality; match="inchikey_tautomer" first tautomer-canonicalizes both
+    sides (see ``_tautomer_inchikey``) so a rule-emitted tautomer of the reference still
+    matches -- the recall-correct mode for this rule engine. ``mean_output_size`` reports the average number of predicted
     structures per substrate, which the field always reports next to precision because
     precision is a pessimistic lower bound under incomplete annotation (an unannotated
     prediction is counted as a false positive but may be a real, unrecorded metabolite).

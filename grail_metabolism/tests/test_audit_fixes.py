@@ -6,7 +6,7 @@ import torch
 from rdkit import Chem
 from torch_geometric.data import Batch
 
-from grail_metabolism.metrics import aggregate_prediction_metrics
+from grail_metabolism.metrics import _tautomer_inchikey, aggregate_prediction_metrics
 from grail_metabolism.model.filter import Filter
 from grail_metabolism.model.grail import summon_the_grail
 from grail_metabolism.model.train_model import PULoss
@@ -154,3 +154,83 @@ def test_generate_respects_max_output_cap():
     model.generator.generate_scored = fake_scored
     assert len(model.generate("CCO", max_output=2)) == 2
     assert len(model.generate("CCO")) == 3
+
+
+def test_rule_embedding_cache_consistent_and_invalidated():
+    # Inference caches the encoded rule bank (the dominant per-substrate cost): scoring is
+    # deterministic (eval mode, dropout off) and the cached tensor is reused across calls;
+    # a grad-enabled (training) forward invalidates it so weight updates aren't masked.
+    from torch_geometric.data import Batch
+
+    seed_everything(0)
+    gen = summon_the_grail([RULE]).generator
+    s1 = gen.score_rules("CCO")
+    assert gen._rule_embedding_cache is not None
+    cached = gen._rule_embedding_cache
+    s2 = gen.score_rules("CCO")
+    assert gen._rule_embedding_cache is cached          # reused, not re-encoded
+    assert (s1 == s2).all()                              # deterministic inference
+
+    graph = gen._graph_for_substrate("CCO")[1]
+    gen.train()
+    with torch.enable_grad():
+        gen(Batch.from_data_list([graph]))
+    assert gen._rule_embedding_cache is None             # training forward invalidates the cache
+
+
+def test_tautomer_match_recovers_hits_plain_inchikey_misses():
+    # Acetone keto (CC(=O)C) vs its enol (CC(O)=C): standard InChI does NOT normalize
+    # this keto-enol pair, so plain "inchikey" matching misses it; tautomer
+    # canonicalization collapses both onto the same key. The rule engine routinely
+    # emits a different tautomer of the reference, so this is the recall-correct mode.
+    preds = [{"predicted": ["CC(O)=C"], "real": ["CC(=O)C"]}]
+    plain = aggregate_prediction_metrics(preds, ks=[1], match="inchikey")
+    taut = aggregate_prediction_metrics(preds, ks=[1], match="inchikey_tautomer")
+    assert plain["recall"] == 0.0
+    assert taut["recall"] == 1.0
+    assert taut["top_1_recall"] == 1.0
+
+
+def test_rank_only_policy_keeps_subthreshold_hits():
+    # A true hit whose filter score sits BELOW the calibrated threshold is dropped by the
+    # hard gate but kept (and ranked) by the rank-only policy. This guards the conclusion
+    # that gating hurts recall@k while the filter is still useful as a ranker.
+    seed_everything(0)
+    model = summon_the_grail([RULE])
+    model.filter.calibrated_threshold = 0.6
+
+    def fake_scored(sub, top_k=None, threshold=None):
+        return [("CCO", 0.9), ("CC=O", 0.8)]  # CCO is the sub-threshold true hit
+
+    model.generator.generate_scored = fake_scored
+    model.filter.score_batch = lambda sub, prods: [{"CCO": 0.3, "CC=O": 0.7}.get(p, 0.0) for p in prods]
+
+    gated = model.generate("CCO", gate_by_filter=True)
+    rank_only = model.generate("CCO", gate_by_filter=False)
+
+    assert "CC=O" in gated and "CCO" not in gated          # gate discards the sub-threshold hit
+    assert "CCO" in rank_only and "CC=O" in rank_only       # rank-only retains it
+    assert rank_only[0] == "CC=O"                            # still ordered by filter*generator
+
+
+def test_output_dedup_collapses_tautomer_variants_freeing_budget():
+    # Acetone keto (CC(=O)C) and enol (CC(O)=C) are the SAME molecule (one tautomer-
+    # InChIKey). With canonical normalization they keep distinct SMILES strings, so a
+    # string-keyed dedup would let both occupy the 2-slot budget and crowd out ethanol.
+    # The tautomer-keyed output dedup must collapse them and free a slot for the distinct
+    # third molecule -- matching the key the structure metric uses.
+    seed_everything(0)
+    model = summon_the_grail([RULE])
+    model.filter.calibrated_threshold = 0.0
+    model.generator.gen_normalization = "canonical"  # force dedup (not normalization) to collapse tautomers
+    model.filter.score_batch = lambda sub, prods: [1.0] * len(prods)  # rank by generator score
+
+    def fake_scored(sub, top_k=None, threshold=None):
+        return [("CC(=O)C", 0.9), ("CC(O)=C", 0.85), ("CCO", 0.8)]  # keto, enol, ethanol
+
+    model.generator.generate_scored = fake_scored
+    out = model.generate("CCO", max_output=2)
+    keys = {_tautomer_inchikey(s) for s in out}
+    assert len(out) == 2                            # two slots filled
+    assert len(keys) == 2                           # with two DISTINCT molecules, not two acetone tautomers
+    assert _tautomer_inchikey("CCO") in keys        # ethanol got in because the tautomer dup freed a slot

@@ -167,6 +167,24 @@ class MultiStepConfig:
 
 
 @dataclass
+class SoMConfig:
+    """Site-of-metabolism regioselectivity prior (see model/som.py).
+
+    A learned per-atom SoM probability reweights candidates at ranking time:
+    combined = filter * generator * som_score**beta. beta=0 (or enabled=False) reduces to
+    current behavior exactly, so it is a clean, opt-in ablation. Soft reweight, never a gate.
+    """
+    enabled: bool = False
+    beta: float = 1.0                  # reweight strength; 0 == off / byte-identical
+    aggregation: Literal["max", "mean"] = "max"   # over a product's reacting atoms
+    checkpoint: Optional[str] = None   # path to a trained som.pt
+    hidden_dims: List[int] = field(default_factory=lambda: [64, 64])
+    out_dim: int = 64
+    conv_kind: Literal["gatv2", "gcn", "gin"] = "gatv2"
+    dropout: float = 0.1
+
+
+@dataclass
 class EvaluationConfig:
     generator_top_k: List[int] = field(default_factory=lambda: [1, 3, 5, 10])
     candidate_top_k: int = 10
@@ -174,13 +192,28 @@ class EvaluationConfig:
     # headline set-F1/precision collapses under an uncapped candidate flood, so this
     # lets the operating point be bounded to a small k at evaluation time.
     max_output: Optional[int] = None
-    # Structure matching for metrics: "exact" canonical-SMILES set equality, or
-    # "inchikey" (the literature convention; absorbs tautomer/charge differences).
-    match: Literal["exact", "inchikey"] = "exact"
+    # Structure matching for metrics: "exact" canonical-SMILES set equality,
+    # "inchikey" (the literature convention; absorbs charge/some-tautomer differences),
+    # or "inchikey_tautomer" (tautomer-canonicalize both sides first -- the recall-correct
+    # mode here, since rules emit a different tautomer of the reference than standard InChI
+    # normalizes; plain inchikey loses ~4.5x recall on this engine).
+    match: Literal["exact", "inchikey", "inchikey_tautomer"] = "exact"
+    # Ensemble output policy. "rank": rank all candidates by filter*generator score and
+    # take the top max_output (recall-correct -- the headline metric is recall@k). "gate":
+    # drop candidates below the filter's calibrated threshold first (precision-oriented).
+    # The hard gate measurably hurts recall@k (it discards plausible-but-sub-threshold
+    # hits), so "rank" is the default for evaluation; CLI/predict can still gate.
+    ranking_policy: Literal["rank", "gate"] = "rank"
+    # Cap the number of generator candidates the (expensive MCS-aware) filter scores, taking
+    # the generator's top-N. None = score all. The dominant eval cost; bounded N keeps recall
+    # while cutting filter time roughly linearly.
+    filter_candidate_cap: Optional[int] = None
     threshold: Optional[float] = None
     export_predictions: bool = True
     # Multi-step generation at evaluation time (off by default -> single-step).
     multistep: MultiStepConfig = field(default_factory=MultiStepConfig)
+    # Site-of-metabolism regioselectivity prior (off by default -> no reweight).
+    som: SoMConfig = field(default_factory=SoMConfig)
 
 
 @dataclass
@@ -258,7 +291,12 @@ def experiment_from_dict(payload: Dict[str, Any]) -> ExperimentConfig:
     filter_optim = OptimConfig(**payload.get("filter_optim", {}))
     eval_payload = dict(payload.get("evaluation", {}))
     multistep_payload = eval_payload.pop("multistep", {}) or {}
-    evaluation = EvaluationConfig(**eval_payload, multistep=MultiStepConfig(**multistep_payload))
+    som_payload = eval_payload.pop("som", {}) or {}
+    evaluation = EvaluationConfig(
+        **eval_payload,
+        multistep=MultiStepConfig(**multistep_payload),
+        som=SoMConfig(**som_payload),
+    )
     gflownet = GFlowNetConfig(**payload.get("gflownet", {}))
     return ExperimentConfig(
         name=payload["name"],
