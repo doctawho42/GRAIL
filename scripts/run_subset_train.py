@@ -29,23 +29,34 @@ SYGMA_PRECISION = {"5": 0.175, "10": 0.105, "12": 0.090, "15": 0.074}
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--train", type=int, default=300)
-    ap.add_argument("--val", type=int, default=80)
-    ap.add_argument("--test", type=int, default=200)
+    ap.add_argument("--train", type=int, default=300, help="train substrates (0=all)")
+    ap.add_argument("--val", type=int, default=80, help="val substrates (0=all)")
+    ap.add_argument("--test", type=int, default=200, help="test substrates (0=all)")
     ap.add_argument("--gen-epochs", type=int, default=5)
     ap.add_argument("--filter-epochs", type=int, default=5)
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--threads", type=int, default=6)
+    ap.add_argument("--name", type=str, default="subset_train_v")
+    ap.add_argument("--filter-cap", type=int, default=0, help="filter candidate cap at eval (0=none)")
+    ap.add_argument("--match", type=str, default="inchikey", choices=["inchikey", "inchikey_tautomer", "exact"])
+    ap.add_argument("--filter-mode", type=str, default="pair", choices=["pair", "single"],
+                    help="single avoids the per-pair MCS (much faster training/eval)")
     args = ap.parse_args()
 
     torch.set_num_threads(args.threads)
+    # single mode encodes substrate/product single graphs (16-dim SINGLE_NODE_DIM nodes),
+    # so in_channels must be 16 (the preset's 18 is the pair-graph node dim).
+    filter_override = {"mode": args.filter_mode}
+    if args.filter_mode == "single":
+        filter_override["in_channels"] = 16
     config = get_experiment_preset("paper_full_ensemble").with_overrides(
-        name="subset_train_v",
+        name=args.name,
         seed=args.seed,
+        filter=filter_override,
         dataset={
-            "max_train_substrates": args.train,
-            "max_val_substrates": args.val,
-            "max_test_substrates": args.test,
+            "max_train_substrates": (args.train or None),
+            "max_val_substrates": (args.val or None),
+            "max_test_substrates": (args.test or None),
             "cache_preprocessed": True,
             # Canonical normalization (NOT tautomer standardization) for ~5x faster
             # reaction labeling; tautomer/charge robustness is recovered at eval via
@@ -61,7 +72,8 @@ def main() -> int:
             "generator_top_k": [1, 3, 5, 10, 12, 15],
             "candidate_top_k": 30,
             "max_output": 15,
-            "match": "inchikey",
+            "match": args.match,
+            "filter_candidate_cap": (args.filter_cap or None),
             "export_predictions": True,
         },
     )

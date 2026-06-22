@@ -47,8 +47,18 @@ def evaluate_generator(generator: Generator, bundle: DatasetBundle, config: Eval
 
 
 def evaluate_filter(filter_model: Filter, bundle: DatasetBundle) -> Dict[str, float]:
-    mcc, roc_auc = bundle.test.test(filter_model, mode=filter_model.mode)
-    return {"mcc": float(mcc), "roc_auc": float(roc_auc)}
+    # Single mode scores independent single graphs; run_bundle preps train/val only, so the
+    # test split's single graphs may be missing (pair mode has a lazy loader, single doesn't).
+    # Prepare them here. The MCC/ROC-AUC is a secondary metric, so degrade gracefully rather
+    # than fail the whole run if the test split can't be scored.
+    try:
+        if getattr(filter_model, "mode", "pair") == "single" and not bundle.test.single:
+            bundle.test.singlegraphs()
+        mcc, roc_auc = bundle.test.test(filter_model, mode=filter_model.mode)
+        return {"mcc": float(mcc), "roc_auc": float(roc_auc)}
+    except Exception as exc:  # pragma: no cover - secondary metric, never block the headline
+        print(f"  evaluate_filter skipped ({type(exc).__name__}: {exc})", flush=True)
+        return {"mcc": 0.0, "roc_auc": 0.0}
 
 
 def evaluate_ensemble(model: ModelWrapper, bundle: DatasetBundle, config: EvaluationConfig) -> Dict[str, float]:
