@@ -22,9 +22,13 @@ learned rule-rankers. MetaBench gives the field a common, honest yardstick.
 Metabolite structure prediction underlies toxicity assessment, drug–drug interaction
 analysis, and environmental fate modeling. Methods span expert rule systems (SyGMa, Meteor,
 BioTransformer), rule+ML hybrids (GLORYx), and sequence/graph learners (MetaTrans,
-MetaPredictor, LAGOM). Reported recall ranges from ~0.35 (early transformers) to ~0.77
-(GLORYx) — but **on different datasets, splits, and match definitions**, so the numbers are
-not comparable.
+MetaPredictor, LAGOM). The recurring published "leaderboard" (GLORYx 0.77, SyGMa 0.68,
+MetaPredictor 0.47, LAGOM 0.43, MetaTrans 0.35) reads like a ranking, but tracing each number
+to its source shows it is **not one measurement**: it mixes different *test sets*, *match
+definitions*, **and prediction budgets** (GLORYx 0.77 is *uncapped* recall over 1,724
+predictions; LAGOM 0.43 is *top-10* over ~328), and two of the five numbers are not even the
+named method's own — they are downstream re-runs or mis-attributions (§5). The spread is
+dominated by these protocol choices, not method quality.
 
 Two problems compound. First, **matching is inconsistent**: a prediction that is "correct"
 under one paper's protocol is "wrong" under another's (a stereoisomer matches under
@@ -43,13 +47,16 @@ ranking loss, showing ranking is the dominant, data-saturating gap.
 ## 2. Related work
 
 **Methods.** SyGMa [Ridder & Wagener, ChemMedChem 2008] applies expert rules with an
-empirical reaction-likelihood score (recall ~0.68 on the GLORYx set). GLORYx [de Bruyn Kops
-et al., Chem. Res. Toxicol. 2021] adds FAME-based site-of-metabolism ranking (recall ~0.77).
-BioTransformer [Wishart et al., NAR 2022] is a hybrid rule+ML system. MetaTrans [Litsa et
-al., Chem. Sci. 2020], MetaPredictor [Zhu et al., Brief. Bioinform. 2024], and LAGOM
-[Larsson et al., AI in Life Sci. 2025] are learned (recall ~0.35–0.47). **No shared
-leaderboard exists**; the recurring GLORYx external set (37 drugs/136 metabolites) is the
-closest thing to a common hold-out.
+empirical reaction-likelihood score. GLORYx [de Bruyn Kops et al., Chem. Res. Toxicol. 2021]
+adds FAME-based site-of-metabolism ranking. BioTransformer [Wishart et al., NAR 2022] is a
+hybrid rule+ML system. MetaTrans [Litsa et al., Chem. Sci. 2020], MetaPredictor [Zhu et al.,
+Brief. Bioinform. 2024], and LAGOM [Larsson et al., AI in Life Sci. 2025] are learned. Their
+*own*-reported recalls are **not** the low ~0.35–0.47 figures often quoted for them: MetaTrans
+reports 0.576@10 and MetaPredictor 0.739@15 (both under fingerprint Tanimoto=1, on their own
+sets); the 0.35/0.47 are LAGOM's canonical-SMILES re-runs / a mis-attribution (§5). **No
+shared leaderboard exists**; the recurring GLORYx external set (37 drugs/136 metabolites) is
+the closest thing to a common hold-out, but even there reported numbers use different k and
+matching.
 
 **Evaluation.** Application studies [Scholz et al., Sci. Total Environ. 2023; Gao et al.,
 JCIM 2026] run several tools but neither standardizes matching nor audits leakage. Tautomer
@@ -85,14 +92,42 @@ acetone keto}, recall is **0.0 / 0.5 / 0.5 / 1.0** under strict-InChIKey / GLORY
 recall@15 swings across protocols (e.g. canonical/Tanimoto strictest, no-stereo/tautomer most
 lenient); the leaderboard reorders once methods are close. We recommend `inchikey_tautomer`:
 rules emit a tautomer of the reference that standard InChI does not normalize, costing ~4.5×
-recall under plain InChIKey on our engine.
+recall under plain InChIKey on our engine. Matching is only the first of **three** protocol
+axes the literature conflates; the other two — **prediction budget** (uncapped vs top-k) and
+**test set** — are quantified in §5, where holding method/set/match fixed and changing only the
+budget moves a single tool's recall by ~0.18.
 
 ## 5. Baselines under one protocol
 
-[PENDING] Each method contributes a ranked-prediction file, scored uniformly (canonical
-dedup → top-k → match mode). Current entries: GRAIL (rule generator + learned filter) and
-SyGMa. Planned: GLORYx, BioTransformer, MetaTrans, MetaPredictor, LAGOM. GRAIL is one fair
-entry; the contribution is the protocol and the analysis, not a new SOTA.
+Each method contributes a ranked-prediction file, scored uniformly (canonical dedup → top-k →
+match mode). On the GLORYx-37 shared set, recall@15 under the recommended `inchikey_tautomer`
+protocol is **SyGMa 0.498, BioTransformer 0.373, GRAIL 0.243**; MetaPredictor is pending (run
+in progress). GRAIL is one fair entry — the contribution is the protocol and the analysis, not
+a new SOTA.
+
+**The published "leaderboard" is not a leaderboard.** Before our standardized numbers can be
+read against the literature, the literature numbers must be provenanced. The recurring
+collation — GLORYx 0.77, SyGMa 0.68, MetaPredictor 0.47, LAGOM 0.43, MetaTrans 0.35 (LAGOM
+2025, Table 2) — conflates three incomparable axes, and two entries are not the named method's
+own number (`data/published_provenance.json`):
+
+| quoted | what it actually is | k / budget | match | test set |
+|---|---|---|---|---|
+| GLORYx 0.77 | uncapped recall, 105/136 TP from **1,724** predictions (prec 0.061) | uncapped | InChI-no-stereo | GLORYx-37 |
+| SyGMa 0.68 | uncapped recall, ~800 predictions (prec 0.12), GLORYx authors' re-eval | uncapped | InChI-no-stereo | GLORYx-37 |
+| MetaPredictor 0.47 | **mis-attributed** (≈ SyGMa's top-5 in MetaPredictor's table / a re-run); its own recall is **0.739@15** | top-k | Tanimoto=1 | own 135-drug set |
+| LAGOM 0.43 | top-10 recall, ~328 predictions | top-10 | canonical SMILES | GLORYx-136 |
+| MetaTrans 0.35 | **LAGOM's re-run**; its own recall is **0.576@10** | top-10 | canonical SMILES | GLORYx-136 |
+
+Within LAGOM's own Table 2, GLORYx/SyGMa are *quoted* (footnote a: uncapped, 1,724/800
+predictions) while the learned models are *re-run* at top-10 over ~328 — so the headline
+0.77-vs-0.43 spread is mostly the prediction budget, not the method.
+
+**One axis, isolated.** Holding method, set, and matching fixed and changing only the budget:
+SyGMa's published 0.68 is uncapped (~22 predictions/drug); capped at top-15 under our protocol
+the *same tool* scores **0.498**, and SyGMa is protocol-robust across all our match modes
+(~0.49–0.50). Almost the entire **0.68 → 0.50** gap is the prediction budget alone. A fixed
+(k, match, set) is the minimum needed to compare any two of these methods.
 
 ## 6. What limits the task: a decomposition
 

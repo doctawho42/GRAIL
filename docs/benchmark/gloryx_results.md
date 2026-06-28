@@ -37,10 +37,41 @@ for more candidates at higher k. *How you match and at which k both change who w
    `prior_strength=8`): GLORYx is 37 out-of-distribution drugs and its references include many
    multi-generation / multi-step metabolites a single-step generator cannot reach.
 2. **Standardized re-evaluation is stricter than published numbers.** Under our protocol
-   SyGMa is 0.498@15; its published recall is 0.68 (at its own, larger/uncapped k and its own
-   matching). Published leaderboard numbers (GLORYx 0.77, SyGMa 0.68, MetaPredictor 0.47,
-   LAGOM 0.43, MetaTrans 0.35) are **not** apples-to-apples — which is exactly why a single
-   protocol is needed.
+   SyGMa is 0.498@15; its published recall is 0.68 (uncapped, ~22 predictions/drug). The
+   recurring published leaderboard (GLORYx 0.77, SyGMa 0.68, MetaPredictor 0.47, LAGOM 0.43,
+   MetaTrans 0.35) is **not** one measurement — it mixes three incomparable axes and two of
+   its numbers are mis-attributed. See the provenance table below.
+
+## The published "leaderboard" is not one measurement (provenance)
+
+The recurring leaderboard cited for this task — GLORYx 0.77, SyGMa 0.68, MetaPredictor 0.47,
+LAGOM 0.43, MetaTrans 0.35 — comes from **LAGOM (Larsson et al. 2025) Table 2**. Tracing each
+number to its source (`data/published_provenance.json`; agent-extracted, cross-checks
+internally consistent, e.g. GLORYx 105/136 = 0.77 recall and 105/1724 = 0.061 precision) shows
+it is **not a single measurement**: it conflates three incomparable axes — *matching
+protocol*, *k / prediction budget*, and *test set* — and **two of its five numbers are
+mis-attributed**.
+
+| quoted | what the number actually is | k / budget | match | test set | source |
+|---|---|---|---|---|---|
+| **GLORYx 0.77** | uncapped recall, 105/136 TP from **1724** predictions (precision 0.061) | uncapped (~47/drug) | InChI-no-stereo | GLORYx-37 (**= our set**) | de Bruyn Kops 2021, Table 5 |
+| **SyGMa 0.68** | uncapped recall, ~800 predictions (precision 0.12); GLORYx authors' re-eval | uncapped (~22/drug) | InChI-no-stereo | GLORYx-37 (**= our set**) | de Bruyn Kops 2021, Table 5 |
+| **MetaPredictor 0.47** | ⚠ **not its number** — ≈ SyGMa's top-5 (47.4%) in MetaPredictor's own table / LAGOM re-run. Its *own* recall is **0.544@5 → 0.739@15** | top-5…15 | Tanimoto=1 | own 135-drug/283-met | Zhu 2024, BiB Table 1 |
+| **LAGOM 0.43** | top-10 recall, ~328 predictions | top-10 | canonical SMILES | GLORYx-136 pairs | Larsson 2025, Table 2 |
+| **MetaTrans 0.35** | ⚠ **not its number** — LAGOM's canonical-SMILES re-run. Its *own* recall is **0.576@10** | top-10 (re-run) | canonical SMILES | LAGOM's GLORYx-136 | Larsson 2025, Table 2 |
+
+**LAGOM Table 2 is itself a mix:** GLORYx (0.77) and SyGMa (0.68) carry footnote *"a = values
+obtained from de Bruyn Kops et al."* (quoted; uncapped recall over 1724 / 800 predictions),
+while LAGOM/MetaTrans/MetaPredictor/Chemformer were re-run at top-10 over ~328 predictions
+under canonical SMILES. **The 0.77-vs-0.43 spread is dominated by the uncapped-vs-top-10
+prediction budget, not method quality** — comparing them as a leaderboard is a category error.
+
+**Concrete demonstration (same method, same set, same matching — only the budget changes).**
+On GLORYx-37, SyGMa's published 0.68 is *uncapped* (~22 predictions/drug). Under our protocol
+*capped at top-15* the same tool scores **recall@15 = 0.498**, and SyGMa is protocol-robust
+across all our match modes (~0.49–0.50, table above). So almost the entire **0.68 → 0.50** gap
+is the prediction budget — not the matching, not the model. This is exactly the confound a
+standardized protocol (fixed k, fixed match, fixed set) removes.
 
 ## Pending (raw predictions → full rank-flip table)
 

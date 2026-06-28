@@ -1,0 +1,65 @@
+{
+  "_comment": "Provenance of the recurring published metabolite-prediction 'leaderboard' (0.77/0.68/0.47/0.43/0.35). Extracted from the source papers via a 5-agent literature-provenance pass (2026-06-29); cross-checks internally consistent (e.g. GLORYx 105/136=0.77 recall, 105/1724=0.061 precision). Numbers should be re-verified against source PDFs before camera-ready. Conclusion: the popular leaderboard is NOT one measurement -- it mixes three incomparable axes (matching protocol, k/prediction-budget, test set) and two of its five numbers are mis-attributed.",
+  "axes_of_incomparability": ["matching_protocol", "k_or_prediction_budget", "test_set"],
+  "methods": [
+    {
+      "method": "GLORYx",
+      "leaderboard_number": 0.77,
+      "what_it_actually_is": "uncapped recall over the full ranked prediction set: 105/136 true metabolites recovered from 1724 total predictions (precision 0.061; rank-based AUC 0.79)",
+      "k_or_budget": "uncapped (~47 predictions per drug)",
+      "matching_protocol": "InChI-without-stereo",
+      "test_set": "GLORYx 37-drug / 136-metabolite set (SAME set we evaluate on)",
+      "same_set_as_ours": true,
+      "source": "de Bruyn Kops, Sicho, Stork, Kirchmair 2021, Chem. Res. Toxicol. 34(2):286-299, Table 5 (PMID 32786543; DOI 10.1021/acs.chemrestox.0c00224)",
+      "confidence": "high"
+    },
+    {
+      "method": "SyGMa",
+      "leaderboard_number": 0.68,
+      "what_it_actually_is": "uncapped recall, ~800 total predictions (precision 0.12; AUC 0.74); a re-evaluation of SyGMa by the GLORYx authors, NOT the 2008 SyGMa paper",
+      "k_or_budget": "uncapped (~22 predictions per drug)",
+      "matching_protocol": "InChI-without-stereo",
+      "test_set": "GLORYx 37-drug / 136-metabolite set (SAME set we evaluate on)",
+      "same_set_as_ours": true,
+      "source": "de Bruyn Kops et al. 2021, Chem. Res. Toxicol., Table 5 (SyGMa re-eval row)",
+      "confidence": "high"
+    },
+    {
+      "method": "MetaPredictor",
+      "leaderboard_number": 0.47,
+      "what_it_actually_is": "MIS-ATTRIBUTED. 0.47 is NOT MetaPredictor's own recall -- it matches SyGMa's top-5 recall (47.4%) in MetaPredictor's own comparison table, and/or LAGOM's canonical-SMILES re-run of MetaPredictor. MetaPredictor's OWN self-reported recall is 0.544@5, 0.678@10, 0.724@12, 0.739@15.",
+      "self_reported_recall": {"top5": 0.544, "top10": 0.678, "top12": 0.724, "top15": 0.739},
+      "k_or_budget": "top-5 ... top-15",
+      "matching_protocol": "fingerprint Tanimoto=1",
+      "test_set": "own 135-drug / 283-metabolite set (NOT GLORYx-37)",
+      "same_set_as_ours": false,
+      "source": "Zhu, Huang, Wang, Gu, Li, Liu, Tang 2024, Briefings in Bioinformatics 25(5):bbae374, Table 1 (PMID 39082648; DOI 10.1093/bib/bbae374)",
+      "confidence": "high"
+    },
+    {
+      "method": "LAGOM",
+      "leaderboard_number": 0.43,
+      "what_it_actually_is": "top-10 recall, ~328 total predictions, canonical-SMILES exact match; the LAGOM paper's own model (ChemVA-Met)",
+      "k_or_budget": "top-10 (~328 predictions total)",
+      "matching_protocol": "canonical SMILES (exact)",
+      "test_set": "GLORYx 136-pair hold-out (overlaps the 37-drug set; counted by parent-child pairs)",
+      "same_set_as_ours": "partial",
+      "source": "Larsson et al. 2025, Artificial Intelligence in the Life Sciences 8:100142, Table 2 (ChemRxiv 10.26434/chemrxiv-2025-0mqf8; code github.com/tsofiac/LAGOM)",
+      "confidence": "high"
+    },
+    {
+      "method": "MetaTrans",
+      "leaderboard_number": 0.35,
+      "what_it_actually_is": "NOT MetaTrans's own number. 0.35 is LAGOM's canonical-SMILES re-run of MetaTrans (top-10, GLORYx-136). MetaTrans's OWN self-reported recall is 0.429@5, 0.576@10, 0.641@20, 0.677@30 (Tanimoto=1, own set).",
+      "self_reported_recall": {"top5": 0.429, "top10": 0.576, "top20": 0.641, "top30": 0.677},
+      "k_or_budget": "top-10 (LAGOM re-run) vs a beam-size curve in the original",
+      "matching_protocol": "canonical SMILES (LAGOM re-run) vs fingerprint Tanimoto=1 (original)",
+      "test_set": "LAGOM's GLORYx-136 (re-run) vs MetaTrans's own 84-drug/217-metabolite set (original)",
+      "same_set_as_ours": "partial",
+      "source": "Larsson et al. 2025 Table 2 (re-run); original: Litsa, Das, Kavraki 2020, Chem. Sci. 11:12777-12788 (DOI 10.1039/D0SC02639E)",
+      "confidence": "high"
+    }
+  ],
+  "lagom_table2_caveat": "The 'leaderboard' is LAGOM (Larsson 2025) Table 2, which is itself NOT a single uniform re-evaluation: GLORYx (0.77) and SyGMa (0.68) carry footnote 'a = values obtained from de Bruyn Kops et al.' (quoted; uncapped recall over 1724 / 800 predictions, InChI-no-stereo), while LAGOM (0.43), MetaTrans (0.35), MetaPredictor (0.47) and Chemformer (0.37) were re-run by the LAGOM authors at top-10 over ~328 predictions under canonical-SMILES. The 0.77-vs-0.43 spread is dominated by the uncapped-vs-top-10 prediction budget, not method quality.",
+  "concrete_demonstration": "On the SAME GLORYx-37 set, SyGMa's published 0.68 is uncapped (~22 predictions/drug); under our standardized protocol capped at top-15 the same tool scores recall@15 = 0.498 (and SyGMa is protocol-robust across all our match modes, ~0.49-0.50), so almost the entire 0.68->0.50 gap is the prediction budget (uncapped vs top-15), holding method, set and matching effectively fixed."
+}
