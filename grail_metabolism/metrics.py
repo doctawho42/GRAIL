@@ -60,11 +60,46 @@ def _tautomer_inchikey(smiles: str) -> str:
         return _inchikey(smiles)
 
 
+@lru_cache(maxsize=131072)
+def _inchikey_skeleton(smiles: str) -> str:
+    """First InChIKey block (the connectivity skeleton) -- stereo/charge/isotope-blind.
+
+    Approximates GLORYx's matching, which generates InChI *without stereochemistry*. Two
+    stereoisomers (or charge variants) share this key but differ under full `inchikey`.
+    """
+    key = _inchikey(smiles)
+    return key.split("-")[0] if "-" in key else key
+
+
+@lru_cache(maxsize=131072)
+def _morgan_key(smiles: str) -> str:
+    """Morgan/ECFP(r=2, 2048) bit-string. Two molecules share it iff their fingerprints are
+    identical, i.e. Tanimoto = 1 -- the matching MetaTrans uses (deliberately stereo/charge
+    blind, and lenient to fingerprint collisions)."""
+    try:
+        from rdkit import Chem
+        from rdkit.Chem import AllChem
+
+        mol = Chem.MolFromSmiles(smiles)
+        if mol is None:
+            return smiles
+        return AllChem.GetMorganFingerprintAsBitVect(mol, 2, nBits=2048).ToBitString()
+    except Exception:
+        return smiles
+
+
 def _match_keys(items: Iterable[str], match: str) -> Set[str]:
+    # Each metabolite-prediction paper matches structures differently; exposing them all as
+    # set keys lets one prediction set be re-scored under every protocol (the rank-flip /
+    # match-sensitivity experiment). Plain `exact` is canonical-SMILES equality.
     if match == "inchikey":
         return {_inchikey(str(item)) for item in items}
     if match == "inchikey_tautomer":
         return {_tautomer_inchikey(str(item)) for item in items}
+    if match == "inchi_no_stereo":
+        return {_inchikey_skeleton(str(item)) for item in items}
+    if match == "tanimoto1":
+        return {_morgan_key(str(item)) for item in items}
     return {str(item) for item in items}
 
 
@@ -113,7 +148,7 @@ def exact_match(predicted: Iterable[str], real: Iterable[str]) -> float:
 def aggregate_prediction_metrics(
     predictions: List[Dict[str, object]],
     ks: Sequence[int],
-    match: Literal["exact", "inchikey", "inchikey_tautomer"] = "exact",
+    match: Literal["exact", "inchikey", "inchikey_tautomer", "inchi_no_stereo", "tanimoto1"] = "exact",
 ) -> Dict[str, float]:
     """Macro-averaged set metrics over per-substrate predictions.
 

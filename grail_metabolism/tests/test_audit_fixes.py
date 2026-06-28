@@ -156,6 +156,18 @@ def test_generate_respects_max_output_cap():
     assert len(model.generate("CCO")) == 3
 
 
+def test_match_protocols_disagree_rank_flip():
+    # The same prediction is scored "correct" or "wrong" depending purely on the match
+    # protocol each paper uses -- the match-sensitivity phenomenon the benchmark is built on.
+    # predicted = D-alanine + acetone enol; real = L-alanine + acetone keto.
+    preds = [{"predicted": ["C[C@@H](N)C(=O)O", "CC(O)=C"], "real": ["C[C@H](N)C(=O)O", "CC(=O)C"]}]
+    rec = lambda m: aggregate_prediction_metrics(preds, ks=[2], match=m)["recall"]
+    assert rec("inchikey") == 0.0           # strict: stereo + tautomer both miss
+    assert rec("inchi_no_stereo") == 0.5    # GLORYx stereo-blind: alanine matches, tautomer doesn't
+    assert rec("tanimoto1") == 0.5          # MetaTrans Tanimoto=1: same
+    assert rec("inchikey_tautomer") == 1.0  # tautomer+stereo collapse: both match
+
+
 def test_rule_prior_logits_persist_through_state_dict():
     # Empirical per-rule priors (SyGMa-style log-odds, learned in _update_rule_statistics)
     # must survive save/reload. They were persistent=False, so state_dict dropped them and
