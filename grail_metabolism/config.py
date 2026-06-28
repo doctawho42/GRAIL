@@ -197,7 +197,7 @@ class EvaluationConfig:
     # or "inchikey_tautomer" (tautomer-canonicalize both sides first -- the recall-correct
     # mode here, since rules emit a different tautomer of the reference than standard InChI
     # normalizes; plain inchikey loses ~4.5x recall on this engine).
-    match: Literal["exact", "inchikey", "inchikey_tautomer"] = "exact"
+    match: Literal["exact", "inchikey", "inchikey_tautomer", "inchi_no_stereo", "tanimoto1"] = "exact"
     # Ensemble output policy. "rank": rank all candidates by filter*generator score and
     # take the top max_output (recall-correct -- the headline metric is recall@k). "gate":
     # drop candidates below the filter's calibrated threshold first (precision-oriented).
@@ -208,6 +208,10 @@ class EvaluationConfig:
     # the generator's top-N. None = score all. The dominant eval cost; bounded N keeps recall
     # while cutting filter time roughly linearly.
     filter_candidate_cap: Optional[int] = None
+    # Override the generator's empirical-rule-prior weight at eval time (the trained value is
+    # ~0.4). The learned generator under-weights the prior; a val-selected ~8 lifts recall@15
+    # from ~0.36 to ~0.38 for free (no retraining). None = use the trained value unchanged.
+    prior_strength: Optional[float] = None
     threshold: Optional[float] = None
     export_predictions: bool = True
     # Multi-step generation at evaluation time (off by default -> single-step).

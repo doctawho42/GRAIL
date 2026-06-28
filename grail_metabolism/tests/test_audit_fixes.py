@@ -156,6 +156,20 @@ def test_generate_respects_max_output_cap():
     assert len(model.generate("CCO")) == 3
 
 
+def test_eval_prior_strength_override():
+    # The eval-time prior_strength override must set the generator's prior weight when given
+    # and leave it untouched when None (the deploy of the prior-vs-learned finding).
+    from grail_metabolism.config import EvaluationConfig
+    from grail_metabolism.workflows.evaluation import _apply_prior_strength
+
+    gen = summon_the_grail([RULE]).generator
+    gen.prior_strength = 0.4
+    _apply_prior_strength(gen, EvaluationConfig(prior_strength=8.0))
+    assert gen.prior_strength == 8.0
+    _apply_prior_strength(gen, EvaluationConfig(prior_strength=None))  # None = leave as-is
+    assert gen.prior_strength == 8.0
+
+
 def test_match_protocols_disagree_rank_flip():
     # The same prediction is scored "correct" or "wrong" depending purely on the match
     # protocol each paper uses -- the match-sensitivity phenomenon the benchmark is built on.

@@ -10,7 +10,16 @@ from ..model.wrapper import ModelWrapper
 from .data import DatasetBundle
 
 
+def _apply_prior_strength(generator, config: EvaluationConfig) -> None:
+    """Optionally override the generator's empirical-rule-prior weight for evaluation. The
+    learned generator under-weights the prior; a val-selected ~8 lifts recall@15 for free."""
+    ps = getattr(config, "prior_strength", None)
+    if ps is not None and hasattr(generator, "prior_strength"):
+        generator.prior_strength = float(ps)
+
+
 def _generator_predictions(generator: Generator, frame, config: EvaluationConfig) -> List[Dict[str, object]]:
+    _apply_prior_strength(generator, config)
     threshold = config.threshold if config.threshold is not None else getattr(generator, "calibrated_threshold", None)
     predictions = []
     for substrate, products in frame.map.items():
@@ -20,6 +29,7 @@ def _generator_predictions(generator: Generator, frame, config: EvaluationConfig
 
 
 def _ensemble_predictions(model: ModelWrapper, frame, config: EvaluationConfig) -> List[Dict[str, object]]:
+    _apply_prior_strength(model.generator, config)
     threshold = config.threshold if config.threshold is not None else getattr(model.generator, "calibrated_threshold", None)
     ms = getattr(config, "multistep", None)
     multistep = ms if (ms is not None and ms.enabled and ms.max_depth > 1) else None
