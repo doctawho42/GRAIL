@@ -88,10 +88,26 @@ def _morgan_key(smiles: str) -> str:
         return smiles
 
 
+@lru_cache(maxsize=131072)
+def _canonical_key(smiles: str) -> str:
+    """Stereo-free canonical SMILES (RDKit, isomericSmiles=False) -- the matching LAGOM uses
+    (canonical-SMILES top-k). Stricter than InChIKey (sensitive to charge/protonation form)."""
+    try:
+        from rdkit import Chem
+
+        mol = Chem.MolFromSmiles(smiles)
+        return Chem.MolToSmiles(mol, isomericSmiles=False) if mol is not None else smiles
+    except Exception:
+        return smiles
+
+
 def _match_keys(items: Iterable[str], match: str) -> Set[str]:
     # Each metabolite-prediction paper matches structures differently; exposing them all as
     # set keys lets one prediction set be re-scored under every protocol (the rank-flip /
-    # match-sensitivity experiment). Plain `exact` is canonical-SMILES equality.
+    # match-sensitivity experiment). `exact` is raw-SMILES equality; `canonical` is RDKit
+    # stereo-free canonical SMILES (LAGOM).
+    if match == "canonical":
+        return {_canonical_key(str(item)) for item in items}
     if match == "inchikey":
         return {_inchikey(str(item)) for item in items}
     if match == "inchikey_tautomer":
@@ -148,7 +164,7 @@ def exact_match(predicted: Iterable[str], real: Iterable[str]) -> float:
 def aggregate_prediction_metrics(
     predictions: List[Dict[str, object]],
     ks: Sequence[int],
-    match: Literal["exact", "inchikey", "inchikey_tautomer", "inchi_no_stereo", "tanimoto1"] = "exact",
+    match: Literal["exact", "canonical", "inchikey", "inchikey_tautomer", "inchi_no_stereo", "tanimoto1"] = "exact",
 ) -> Dict[str, float]:
     """Macro-averaged set metrics over per-substrate predictions.
 

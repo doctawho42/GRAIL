@@ -35,9 +35,9 @@ try:  # SyGMa rule application emits a flood of sanitization warnings
 except Exception:
     pass
 
-MODES = ["exact", "inchikey", "inchi_no_stereo", "tanimoto1", "inchikey_tautomer"]
+MODES = ["canonical", "inchikey", "inchi_no_stereo", "tanimoto1", "inchikey_tautomer"]
 MODE_LABEL = {
-    "exact": "canon-SMILES (LAGOM)", "inchikey": "InChIKey (strict)",
+    "canonical": "canon-SMILES (LAGOM)", "inchikey": "InChIKey (strict)",
     "inchi_no_stereo": "no-stereo (GLORYx)", "tanimoto1": "Tanimoto=1 (MetaTrans)",
     "inchikey_tautomer": "tautomer-InChIKey (ours)",
 }
