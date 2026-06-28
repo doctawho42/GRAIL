@@ -337,8 +337,15 @@ class Generator(GGenerator):
         self.rule_reactions = [self._compile_reaction(rule) for rule in self.rule_names]
         self._applicability_cache: Dict[str, Tuple[np.ndarray, np.ndarray]] = {}
         self.calibrated_threshold: Optional[float] = None
-        self.register_buffer("rule_prior_logits", torch.zeros(self.num_rules), persistent=False)
-        self.register_buffer("pos_weight", torch.ones(self.num_rules), persistent=False)
+        # Persisted: these hold EMPIRICAL per-rule statistics learned from the training data
+        # (_update_rule_statistics) -- rule_prior_logits is the SyGMa-style log-odds that a
+        # rule yields a true metabolite, added to the score with prior_strength. They were
+        # persistent=False, so save->state_dict->reload silently dropped them (reloaded models
+        # ran with zeroed priors, losing ~0.03 recall@15). Rule count is verified against arch
+        # on load, so a persistent buffer is safe. (rule_meta stays non-persistent: it is
+        # deterministically rebuilt from the rule bank at construction.)
+        self.register_buffer("rule_prior_logits", torch.zeros(self.num_rules), persistent=True)
+        self.register_buffer("pos_weight", torch.ones(self.num_rules), persistent=True)
         nn.init.xavier_uniform_(self.bilinear)
 
     @classmethod

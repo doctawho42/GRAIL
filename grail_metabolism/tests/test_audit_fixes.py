@@ -156,6 +156,20 @@ def test_generate_respects_max_output_cap():
     assert len(model.generate("CCO")) == 3
 
 
+def test_rule_prior_logits_persist_through_state_dict():
+    # Empirical per-rule priors (SyGMa-style log-odds, learned in _update_rule_statistics)
+    # must survive save/reload. They were persistent=False, so state_dict dropped them and
+    # reloaded models ran with zeroed priors (lost ~0.03 recall@15).
+    seed_everything(0)
+    gen = summon_the_grail([RULE]).generator
+    with torch.no_grad():
+        gen.rule_prior_logits.copy_(torch.full_like(gen.rule_prior_logits, 1.234))
+    assert "rule_prior_logits" in gen.state_dict()  # now persisted
+    gen2 = summon_the_grail([RULE]).generator
+    gen2.load_state_dict(gen.state_dict())
+    assert torch.allclose(gen2.rule_prior_logits, torch.full_like(gen2.rule_prior_logits, 1.234))
+
+
 def test_rule_embedding_cache_consistent_and_invalidated():
     # Inference caches the encoded rule bank (the dominant per-substrate cost): scoring is
     # deterministic (eval mode, dropout off) and the cached tensor is reused across calls;
