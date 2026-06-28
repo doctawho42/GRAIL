@@ -46,6 +46,28 @@ model/method ceiling, not a data ceiling** — more data is exhausted as a lever
 not nested — `np.choice` is not prefix-stable — but identical recall at 2× size is an
 unambiguous plateau.)
 
+## 3a. The learned generator under-weights the empirical rule prior (the ranking lever)
+
+GRAIL's generator carries an empirical per-rule prior (log-odds that a rule yields a true
+metabolite, `rule_prior_logits`, learned in `_update_rule_statistics`), blended into the
+score with weight `prior_strength` (trained value 0.4). Sweeping that weight at inference (no
+retraining; `scripts/sweep_prior_strength.py` on a priors-persisted checkpoint) maps the
+**learned ↔ prior spectrum** of recall@15 (tautomer):
+
+| prior_strength | 0 (pure learned) | 0.4 (as trained) | 3 | val-selected (≈8) | 20 (prior-dominated) | SyGMa |
+|---|---|---|---|---|---|---|
+| **test recall@15** | 0.313 | 0.356 | 0.377 | **0.382** | 0.397 | 0.558 |
+| val recall@15 | 0.249 | 0.353 | 0.371 | 0.376 | — | — |
+
+Two findings: **(i)** the learned scorer alone (0.313) is far worse than prior-weighted
+ranking — the generator is trained with too small a prior weight; up-weighting it 0.4→8 is a
+**free +0.03@15** (vs pure-learned, +0.069 / +22%), closing the gap to SyGMa from 60% to
+**68%**. This is exactly SyGMa's strength (it ranks by empirical reaction probability).
+**(ii)** Even the prior-dominated limit (~0.40) stays well below SyGMa (0.558): GRAIL's
+priors — sparse per-rule statistics over 7,581 rules — are **noisier than SyGMa's curated
+probabilities**. The dominant ranking signal is the empirical frequency prior; *estimation
+quality* of that prior is the residual gap. (Selected on val, reported on test.)
+
 ## 3. Component analysis: the learned filter is a good classifier but a neutral ranker
 
 Across all three scales, the learned pair/single filter reaches ROC-AUC ≈ 0.80 / MCC ≈ 0.30,

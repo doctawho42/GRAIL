@@ -109,8 +109,18 @@ And it is not the filter: a learned plausibility filter reaches ROC-AUC ~0.80 ye
 beat the generator's own ranking at any scale. The unreachable tail is dominated by phase-I
 transformations (phase-II ~6%), with ~50% a long mass-shift tail attributable to
 regioselectivity (right reaction, wrong site) and genuinely multi-step metabolites.
-[PENDING: the empirical-rule-prior-vs-learned-scorer study, which tests whether a simple
-frequency prior — SyGMa's strength — out-ranks the learned generator.]
+
+**The learned scorer under-uses the empirical rule prior.** Our reference ranker blends a
+learned rule score with an empirical per-rule prior (log-odds of yielding a true metabolite)
+at weight `prior_strength`. Sweeping that weight at inference (no retraining) maps the
+learned↔prior spectrum: pure-learned ranking gives recall@15 = 0.313, the as-trained blend
+0.356, and up-weighting the prior (selected on val) **0.382 — a free +0.069 (+22%) over
+pure-learned, closing the gap to SyGMa from 60% to 68%.** SyGMa's edge is precisely this
+empirical reaction-frequency prior, which the learned model under-weights. Yet even the
+prior-dominated limit (~0.40) stays below SyGMa (0.558): GRAIL's priors are sparse per-rule
+statistics over 7,581 rules and are noisier than SyGMa's curated probabilities — *the
+dominant ranking signal is the empirical prior; its estimation quality is the residual gap.*
+This is a general lesson for learned rankers over large rule/template libraries.
 
 ## 7. Limitations
 
