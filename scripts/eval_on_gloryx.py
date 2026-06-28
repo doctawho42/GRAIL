@@ -137,6 +137,9 @@ def main() -> int:
     ap.add_argument("--filter-cap", type=int, default=32)
     ap.add_argument("--max-output", type=int, default=15)
     ap.add_argument("--threads", type=int, default=6)
+    ap.add_argument("--extra", nargs="*", default=[], help="Name=path.json files {parent:[preds]} (e.g. BioTransformer)")
+    ap.add_argument("--no-grail", action="store_true")
+    ap.add_argument("--no-sygma", action="store_true")
     args = ap.parse_args()
     torch.set_num_threads(args.threads)
 
@@ -144,10 +147,14 @@ def main() -> int:
     parents = list(reals)
     print(f"GLORYx: {len(parents)} parents, {sum(len(v) for v in reals.values())} reference metabolites", flush=True)
 
-    methods = {
-        "GRAIL": grail_predictions(parents, args.ckpt_dir, args.prior_strength, args.filter_cap, args.max_output),
-        "SyGMa": sygma_predictions(parents),
-    }
+    methods = {}
+    if not args.no_grail:
+        methods["GRAIL"] = grail_predictions(parents, args.ckpt_dir, args.prior_strength, args.filter_cap, args.max_output)
+    if not args.no_sygma:
+        methods["SyGMa"] = sygma_predictions(parents)
+    for spec in args.extra:
+        name, path = spec.split("=", 1)
+        methods[name] = json.loads(Path(path).read_text())
     report = {"set": "GLORYx-37", "n_parents": len(parents), "prior_strength": args.prior_strength,
               "by_method": {m: score(p, reals, KS) for m, p in methods.items()}, "published_at_paper_k": PUBLISHED}
     (ROOT / "results").mkdir(exist_ok=True)
