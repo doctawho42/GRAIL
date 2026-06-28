@@ -92,8 +92,8 @@ acetone keto}, recall is **0.0 / 0.5 / 0.5 / 1.0** under strict-InChIKey / GLORY
 scored under one protocol (recall@15) give **a genuine #1 flip from the match rule alone**: with
 SyGMa and MetaPredictor close, SyGMa is first under `canonical` (0.498 vs 0.477), strict
 `inchikey` (0.492 vs 0.362), and `tanimoto1` (0.500 vs 0.478), while MetaPredictor is first under
-`inchi_no_stereo` and the recommended `inchikey_tautomer` (0.504 vs 0.498). No predictions
-change — only the definition of "match" — yet the winner does. The driver is stereochemistry:
+`inchi_no_stereo` and the recommended `inchikey_tautomer` (0.504 vs 0.498) (Fig. rankflip). No
+predictions change — only the definition of "match" — yet the winner does. The driver is stereochemistry:
 MetaPredictor (like GRAIL) emits stereo-variant structures, so under the only stereo-*aware*
 protocol (full InChIKey) it collapses 0.504 → 0.362 (1.4×) and SyGMa overtakes it by 0.13;
 GRAIL swings 0.243 → 0.116 (2.1×); SyGMa preserves stereo and is protocol-robust (~0.49–0.50).

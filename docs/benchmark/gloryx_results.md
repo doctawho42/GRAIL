@@ -18,6 +18,13 @@ load). GRAIL = full5000_priors checkpoint at val-selected `prior_strength=8`, to
 recall@k (tautomer): MetaPredictor 0.244/0.477/0.501/0.504 · SyGMa 0.347/0.461/0.483/0.498
 · BioTransformer 0.175/0.297/0.336/0.373 · GRAIL 0.182/0.219/0.228/0.243 (@5/10/12/15).
 
+![rank-flip across matching protocols](rankflip.png)
+
+*Figure (`rankflip.png`, via `scripts/make_rankflip_figure.py`): recall@15 across the five
+matching protocols, strict→lenient. SyGMa is flat (~0.49–0.50, stereo-robust); MetaPredictor
+starts below it under strict InChIKey (stereo collapse 1.4×) and overtakes it under the
+stereo-blind protocols — the shaded "MetaPredictor #1" region.*
+
 **A genuine top-of-leaderboard rank-flip — from the match protocol alone.** With two close
 methods (SyGMa and MetaPredictor) the *identity of the #1 method changes with the matching
 rule*: SyGMa is first under `canonical` (0.498 vs 0.477), strict `inchikey` (0.492 vs 0.362),
