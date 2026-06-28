@@ -88,22 +88,31 @@ fixed predictions are re-scored under all five.
 acetone keto}, recall is **0.0 / 0.5 / 0.5 / 1.0** under strict-InChIKey / GLORYx / MetaTrans
 / tautomer — the same predictions, four different verdicts.
 
-**Result.** [PENDING full table — needs cross-method baselines.] On GRAIL and SyGMa, absolute
-recall@15 swings across protocols (e.g. canonical/Tanimoto strictest, no-stereo/tautomer most
-lenient); the leaderboard reorders once methods are close. We recommend `inchikey_tautomer`:
-rules emit a tautomer of the reference that standard InChI does not normalize, costing ~4.5×
-recall under plain InChIKey on our engine. Matching is only the first of **three** protocol
-axes the literature conflates; the other two — **prediction budget** (uncapped vs top-k) and
-**test set** — are quantified in §5, where holding method/set/match fixed and changing only the
-budget moves a single tool's recall by ~0.18.
+**Result — a top-of-leaderboard reorder, observed.** On the GLORYx-37 shared set, four methods
+scored under one protocol (recall@15) give **a genuine #1 flip from the match rule alone**: with
+SyGMa and MetaPredictor close, SyGMa is first under `canonical` (0.498 vs 0.477), strict
+`inchikey` (0.492 vs 0.362), and `tanimoto1` (0.500 vs 0.478), while MetaPredictor is first under
+`inchi_no_stereo` and the recommended `inchikey_tautomer` (0.504 vs 0.498). No predictions
+change — only the definition of "match" — yet the winner does. The driver is stereochemistry:
+MetaPredictor (like GRAIL) emits stereo-variant structures, so under the only stereo-*aware*
+protocol (full InChIKey) it collapses 0.504 → 0.362 (1.4×) and SyGMa overtakes it by 0.13;
+GRAIL swings 0.243 → 0.116 (2.1×); SyGMa preserves stereo and is protocol-robust (~0.49–0.50).
+A second reorder comes from k: SyGMa leads at recall@5 (0.347 vs 0.244) but MetaPredictor
+overtakes by @15. We recommend `inchikey_tautomer`: rules and learned models emit tautomers of
+the reference that plain InChI does not normalize. Matching is only the first of **three**
+protocol axes the literature conflates; the other two — **prediction budget** (uncapped vs
+top-k) and **test set** — are quantified in §5, where holding method/set/match fixed and changing
+only the budget moves a single tool's recall by ~0.18.
 
 ## 5. Baselines under one protocol
 
 Each method contributes a ranked-prediction file, scored uniformly (canonical dedup → top-k →
 match mode). On the GLORYx-37 shared set, recall@15 under the recommended `inchikey_tautomer`
-protocol is **SyGMa 0.498, BioTransformer 0.373, GRAIL 0.243**; MetaPredictor is pending (run
-in progress). GRAIL is one fair entry — the contribution is the protocol and the analysis, not
-a new SOTA.
+protocol is **MetaPredictor 0.504, SyGMa 0.498, BioTransformer 0.373, GRAIL 0.243** (the top
+pair reorders by protocol; §4). GRAIL is one fair entry — the contribution is the protocol and
+the analysis, not a new SOTA. Notably MetaPredictor's standardized 0.504 *exceeds* its
+"published 0.47", consistent with that 0.47 being a downstream re-run/mis-attribution rather
+than its own number (below).
 
 **The published "leaderboard" is not a leaderboard.** Before our standardized numbers can be
 read against the literature, the literature numbers must be provenanced. The recurring
@@ -160,8 +169,10 @@ This is a general lesson for learned rankers over large rule/template libraries.
 ## 7. Limitations
 
 Annotations are incomplete (precision is a lower bound; we lead with recall + output size).
-The rule-vs-learned fairness asymmetry is surfaced but not eliminated. The cross-paper GLORYx
-anchor and several baselines are pending acquisition. The limit decomposition mixes a
+The rule-vs-learned fairness asymmetry is surfaced but not eliminated. Four methods are run
+under the standardized protocol (SyGMa, MetaPredictor, BioTransformer, GRAIL); three more
+(GLORYx-the-tool, MetaTrans, LAGOM) are cited from provenanced published numbers, as releasing
+them is infeasible (missing weights / dependency rot). The limit decomposition mixes a
 full-test ceiling with a test-subset recall; the exact same-set split is a pending run.
 
 ## 8. Conclusion

@@ -6,30 +6,43 @@ hold-out. We score every method's *fixed* predictions under all five matching pr
 (`scripts/eval_on_gloryx.py`; data `docs/benchmark/data/gloryx_test.json`, escapes fixed on
 load). GRAIL = full5000_priors checkpoint at val-selected `prior_strength=8`, top-15.
 
-## Recall@15 by matching protocol (3 methods run under one protocol)
+## Recall@15 by matching protocol (4 methods run under one protocol)
 
 | method | canonical (LAGOM) | InChIKey (strict) | no-stereo (GLORYx) | Tanimoto=1 (MetaTrans) | tautomer-InChIKey (ours) |
 |---|---|---|---|---|---|
-| SyGMa | 0.498 | 0.492 | 0.498 | 0.500 | 0.498 |
+| SyGMa | 0.498 | **0.492** | 0.498 | 0.500 | 0.498 |
+| MetaPredictor | 0.477 | **0.362** | **0.504** | 0.478 | **0.504** |
 | BioTransformer | 0.373 | 0.346 | 0.373 | 0.373 | 0.373 |
 | GRAIL | 0.237 | **0.116** | 0.243 | 0.237 | 0.243 |
 
-recall@k (tautomer): SyGMa 0.347/0.461/0.483/0.498 · BioTransformer 0.175/0.297/0.336/0.373
-· GRAIL 0.182/0.219/0.228/0.243 (@5/10/12/15).
+recall@k (tautomer): MetaPredictor 0.244/0.477/0.501/0.504 · SyGMa 0.347/0.461/0.483/0.498
+· BioTransformer 0.175/0.297/0.336/0.373 · GRAIL 0.182/0.219/0.228/0.243 (@5/10/12/15).
 
-**Match-sensitivity is driven by stereochemistry handling.** GRAIL strips stereo during
-generation (`standardize_mol`, `isomericSmiles=False`), so under the only *stereo-aware*
-protocol (full InChIKey) it drops to 0.116, but under every *stereo-blind* protocol
-(canonical isomeric-free, no-stereo InChIKey, Tanimoto=1, tautomer) it scores ~0.24 — **a
-2.1× swing from a single protocol choice.** BioTransformer also dips under strict InChIKey
-(0.346 vs 0.373). SyGMa preserves stereo and is protocol-robust (~0.49–0.50).
+**A genuine top-of-leaderboard rank-flip — from the match protocol alone.** With two close
+methods (SyGMa and MetaPredictor) the *identity of the #1 method changes with the matching
+rule*: SyGMa is first under `canonical` (0.498 vs 0.477), strict `inchikey` (0.492 vs 0.362),
+and `tanimoto1` (0.500 vs 0.478); MetaPredictor is first under `inchi_no_stereo` and the
+recommended `inchikey_tautomer` (0.504 vs 0.498). No predictions changed — only the definition
+of "match" — yet the winner does. This is the leaderboard reorder the protocol is designed to
+expose, now observed, not hypothesized.
 
-**Two reorderings the protocol/metric reveal.** (i) Among these three (well-separated)
-methods the *order* is stable across match protocols, but the *magnitudes* swing 1.5–3×, so
-for closer methods the protocol would flip the leaderboard (the choice of stereo-awareness
-alone moves GRAIL 2.1×). (ii) **k-sensitivity:** at recall@5 GRAIL ≈ BioTransformer (0.182 vs
-0.175) but by @15 BioTransformer pulls ahead (0.373 vs 0.243) — it trades top-rank precision
-for more candidates at higher k. *How you match and at which k both change who wins.*
+**It is driven by stereochemistry handling.** MetaPredictor, like GRAIL, emits stereo-variant
+or stereo-stripped structures, so under the only *stereo-aware* protocol (full InChIKey) it
+collapses 0.504 → **0.362 (a 1.4× swing)** and SyGMa overtakes it by 0.13; GRAIL swings 0.243 →
+**0.116 (2.1×)**. SyGMa preserves stereo and is protocol-robust (~0.49–0.50), so under strict
+InChIKey it leads decisively while under stereo-blind matching it is merely tied. BioTransformer
+also dips under strict InChIKey (0.346 vs 0.373).
+
+**A second reorder from k.** At recall@5 SyGMa leads MetaPredictor clearly (0.347 vs 0.244),
+but MetaPredictor overtakes it by @15 (0.504 vs 0.498) — it trades top-rank precision for recall
+at higher k. So *both how you match and at which k decide who wins*; only fixing both makes the
+comparison meaningful. (Among the well-separated lower pair, BioTransformer > GRAIL is stable
+across all protocols, though magnitudes still swing 1.5–2×.)
+
+**Note on MetaPredictor vs its "published 0.47".** Under our standardized protocol MetaPredictor
+scores 0.504@15 on GLORYx-37 — *higher* than the 0.47 it carries in the published leaderboard,
+consistent with the provenance finding below that 0.47 is a downstream re-run / mis-attribution,
+not MetaPredictor's own number.
 
 ## Cross-distribution and protocol-vs-published caveats (for the paper)
 
@@ -73,10 +86,14 @@ across all our match modes (~0.49–0.50, table above). So almost the entire **0
 is the prediction budget — not the matching, not the model. This is exactly the confound a
 standardized protocol (fixed k, fixed match, fixed set) removes.
 
-## Pending (raw predictions → full rank-flip table)
+## Baselines run, and what remains
 
-The full cross-method rank-flip needs each tool's raw predictions on this set. Next:
-BioTransformer 3.0 (Java JAR, weights bundled) and MetaPredictor (weights in-repo) — both run
-on CPU and drop into `run_match_sensitivity.py` as prediction files. GLORYx-run (needs FAME3
-weights), MetaTrans (dependency rot), LAGOM (no checkpoint) are harder; cite their published
-numbers as context where running is infeasible.
+**Run under the standardized protocol (raw predictions → rank-flip table above):** SyGMa
+(py-sygma), BioTransformer 3.0 (Java JAR), MetaPredictor (two-stage transformer, GPU via Colab
+`colab/metapredictor_gloryx.ipynb`; predictions in `data/metapredictor_gloryx.json`), and
+GRAIL. Four methods now sit under one (k, match, set), which is what surfaced the SyGMa↔
+MetaPredictor #1 flip.
+
+**Remaining (cite published numbers as context — running infeasible):** GLORYx-the-tool (needs
+FAME3 weights), MetaTrans (dependency rot), LAGOM (no released checkpoint). Their leaderboard
+numbers are provenanced below and are *not* drop-in comparable to the four standardized rows.
