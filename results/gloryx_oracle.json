@@ -1,0 +1,621 @@
+{
+  "small": {
+    "label": "small (top_k=100, max_pool=80)",
+    "top_k": 100,
+    "max_pool": 80,
+    "n_parents": 37,
+    "macro_oracle_recall_at_15": 0.3715,
+    "macro_coverage": 0.3715,
+    "per_parent": [
+      {
+        "parent": "COc1ccc(cc1)n2nc(C(=O)N)c3CCN(C(=O)c23)c4ccc(cc4)N5CCCCC5=O",
+        "n_true": 2,
+        "hits_in_pool": 1,
+        "pool_size": 35,
+        "oracle15": 0.5,
+        "coverage": 0.5
+      },
+      {
+        "parent": "Nc1cccc2C(=O)N(Cc12)C3CCC(=O)NC3=O",
+        "n_true": 2,
+        "hits_in_pool": 0,
+        "pool_size": 30,
+        "oracle15": 0.0,
+        "coverage": 0.0
+      },
+      {
+        "parent": "Clc1ccc(s1)C(=O)NC[C@H]2CN(C(=O)O2)c3ccc(cc3)N4CCOCC4=O",
+        "n_true": 14,
+        "hits_in_pool": 6,
+        "pool_size": 40,
+        "oracle15": 0.4286,
+        "coverage": 0.4286
+      },
+      {
+        "parent": "Nc1ncnc2c1c(nn2[C@@H]3CCCN(C3)C(=O)C=C)c4ccc(Oc5ccccc5)cc4",
+        "n_true": 2,
+        "hits_in_pool": 1,
+        "pool_size": 20,
+        "oracle15": 0.5,
+        "coverage": 0.5
+      },
+      {
+        "parent": "CC(C)c1nc(CN(C)C(=O)N[C@@H](CCN2CCOCC2)C(=O)N[C@H](CC[C@H](Cc3ccccc3)NC(=O)OCc4cncs4)Cc5ccccc5)cs1",
+        "n_true": 5,
+        "hits_in_pool": 3,
+        "pool_size": 80,
+        "oracle15": 0.6,
+        "coverage": 0.6
+      },
+      {
+        "parent": "N[C@@H](CC(=O)N1CCn2c(C1)nnc2C(F)(F)F)Cc3cc(F)c(F)cc3F",
+        "n_true": 3,
+        "hits_in_pool": 1,
+        "pool_size": 18,
+        "oracle15": 0.3333,
+        "coverage": 0.3333
+      },
+      {
+        "parent": "CNC(=O)c1ccc(cc1F)N2C(=S)N(C(=O)C2(C)C)c3ccc(C#N)c(c3)C(F)(F)F",
+        "n_true": 2,
+        "hits_in_pool": 2,
+        "pool_size": 23,
+        "oracle15": 1.0,
+        "coverage": 1.0
+      },
+      {
+        "parent": "Nc1nc(NC2CC2)c3ncn([C@@H]4C[C@H](CO)C=C4)c3n1",
+        "n_true": 2,
+        "hits_in_pool": 0,
+        "pool_size": 44,
+        "oracle15": 0.0,
+        "coverage": 0.0
+      },
+      {
+        "parent": "C[C@@H]1CCO[C@H]2CN3C=C(C(=O)NCc4ccc(F)cc4F)C(=O)C(=C3C(=O)N12)O",
+        "n_true": 3,
+        "hits_in_pool": 1,
+        "pool_size": 32,
+        "oracle15": 0.3333,
+        "coverage": 0.3333
+      },
+      {
+        "parent": "C[C@]12CC[C@H]3[C@@H](CC=C4C[C@@H](O)CC[C@]34C)[C@@H]1CC=C2c5cccnc5",
+        "n_true": 4,
+        "hits_in_pool": 0,
+        "pool_size": 80,
+        "oracle15": 0.0,
+        "coverage": 0.0
+      },
+      {
+        "parent": "CCCCCCCCc1ccc(CCC(N)(CO)CO)cc1",
+        "n_true": 5,
+        "hits_in_pool": 0,
+        "pool_size": 80,
+        "oracle15": 0.0,
+        "coverage": 0.0
+      },
+      {
+        "parent": "CCC(=O)O[C@@]1([C@H](C)C[C@H]2[C@@H]3C[C@H](F)C4=CC(=O)C=C[C@]4(C)[C@@]3(F)[C@@H](O)C[C@]12C)C(=O)SCF",
+        "n_true": 1,
+        "hits_in_pool": 1,
+        "pool_size": 29,
+        "oracle15": 1.0,
+        "coverage": 1.0
+      },
+      {
+        "parent": "CCCC1O[C@@H]2C[C@H]3[C@@H]4CCC5=CC(=O)C=C[C@]5(C)[C@H]4[C@@H](O)C[C@]3(C)[C@@]2(O1)C(=O)CO",
+        "n_true": 12,
+        "hits_in_pool": 2,
+        "pool_size": 80,
+        "oracle15": 0.1667,
+        "coverage": 0.1667
+      },
+      {
+        "parent": "COc1ccc(CC(C)NCC(O)c2ccc(O)c(NC=O)c2)cc1",
+        "n_true": 4,
+        "hits_in_pool": 1,
+        "pool_size": 80,
+        "oracle15": 0.25,
+        "coverage": 0.25
+      },
+      {
+        "parent": "COc1ccc2[nH]c(nc2c1)[S@@](=O)Cc3ncc(C)c(OC)c3C",
+        "n_true": 2,
+        "hits_in_pool": 2,
+        "pool_size": 37,
+        "oracle15": 1.0,
+        "coverage": 1.0
+      },
+      {
+        "parent": "OC[C@H]1O[C@H]([C@H](O)[C@@H](O)[C@@H]1O)c2ccc(Cl)c(Cc3ccc(O[C@H]4CCOC4)cc3)c2",
+        "n_true": 4,
+        "hits_in_pool": 1,
+        "pool_size": 80,
+        "oracle15": 0.25,
+        "coverage": 0.25
+      },
+      {
+        "parent": "Cc1nc(Nc2ncc(s2)C(=O)Nc3c(C)cccc3Cl)cc(n1)N4CCN(CCO)CC4",
+        "n_true": 6,
+        "hits_in_pool": 2,
+        "pool_size": 53,
+        "oracle15": 0.3333,
+        "coverage": 0.3333
+      },
+      {
+        "parent": "CC(C)c1c(C(=O)Nc2ccccc2)c(c3ccccc3)c(c4ccc(F)cc4)n1CC[C@@H](O)C[C@@H](O)CC(=O)O",
+        "n_true": 2,
+        "hits_in_pool": 0,
+        "pool_size": 80,
+        "oracle15": 0.0,
+        "coverage": 0.0
+      },
+      {
+        "parent": "Nc1cccc2C(=O)N(C3CCC(=O)NC3=O)C(=O)c12",
+        "n_true": 7,
+        "hits_in_pool": 2,
+        "pool_size": 29,
+        "oracle15": 0.2857,
+        "coverage": 0.2857
+      },
+      {
+        "parent": "CC(C)OC(=O)[C@H](C)N[P@](=O)(OC[C@H]1O[C@@H](N2C=CC(=O)NC2=O)[C@](C)(F)[C@@H]1O)Oc3ccccc3",
+        "n_true": 5,
+        "hits_in_pool": 1,
+        "pool_size": 33,
+        "oracle15": 0.2,
+        "coverage": 0.2
+      },
+      {
+        "parent": "CC(C)CN(C[C@@H](O)[C@H](Cc1ccccc1)NC(=O)O[C@H]2CO[C@H]3OCC[C@@H]23)S(=O)(=O)c4ccc(N)cc4",
+        "n_true": 7,
+        "hits_in_pool": 1,
+        "pool_size": 80,
+        "oracle15": 0.1429,
+        "coverage": 0.1429
+      },
+      {
+        "parent": "Cc1cn(cn1)c2cc(NC(=O)c3ccc(C)c(Nc4nccc(n4)c5cccnc5)c3)cc(c2)C(F)(F)F",
+        "n_true": 5,
+        "hits_in_pool": 1,
+        "pool_size": 78,
+        "oracle15": 0.2,
+        "coverage": 0.2
+      },
+      {
+        "parent": "COc1cc(N(C)CCN(C)C)c(NC(=O)C=C)cc1Nc2nccc(n2)c3cn(C)c4ccccc34",
+        "n_true": 7,
+        "hits_in_pool": 4,
+        "pool_size": 45,
+        "oracle15": 0.5714,
+        "coverage": 0.5714
+      },
+      {
+        "parent": "CO[C@@H]1C[C@@H](CC[C@H]1O)\\C=C(/C)\\[C@H]2OC(=O)[C@@H]3CCCCN3C(=O)C(=O)[C@]4(O)O[C@H]([C@H](C[C@@H](C)C\\C(=C\\[C@@H](CC=C)C(=O)C[C@H](O)[C@H]2C)\\C)OC)[C@H](C[C@H]4C)OC",
+        "n_true": 2,
+        "hits_in_pool": 0,
+        "pool_size": 80,
+        "oracle15": 0.0,
+        "coverage": 0.0
+      },
+      {
+        "parent": "C[C@@H](NCCCc1cccc(c1)C(F)(F)F)c2cccc3ccccc23",
+        "n_true": 7,
+        "hits_in_pool": 1,
+        "pool_size": 80,
+        "oracle15": 0.1429,
+        "coverage": 0.1429
+      },
+      {
+        "parent": "C[C@@H]1CCN(C[C@@H]1N(C)c2ncnc3[nH]ccc23)C(=O)CC#N",
+        "n_true": 4,
+        "hits_in_pool": 1,
+        "pool_size": 24,
+        "oracle15": 0.25,
+        "coverage": 0.25
+      },
+      {
+        "parent": "Cn1c(CNc2ccc(cc2)C(=N)N)nc3cc(ccc13)C(=O)N(CCC(=O)O)c4ccccn4",
+        "n_true": 12,
+        "hits_in_pool": 4,
+        "pool_size": 21,
+        "oracle15": 0.3333,
+        "coverage": 0.3333
+      },
+      {
+        "parent": "O=C1[C@@H]2[C@H]3CC[C@H](C3)[C@@H]2C(=O)N1C[C@@H]4CCCC[C@H]4CN5CCN(CC5)c6nsc7ccccc67",
+        "n_true": 1,
+        "hits_in_pool": 1,
+        "pool_size": 34,
+        "oracle15": 1.0,
+        "coverage": 1.0
+      },
+      {
+        "parent": "COC(=O)[C@@H](N1CCc2sccc2C1)c3ccccc3Cl",
+        "n_true": 5,
+        "hits_in_pool": 1,
+        "pool_size": 17,
+        "oracle15": 0.2,
+        "coverage": 0.2
+      },
+      {
+        "parent": "CCOc1cc(ccc1OC)[C@@H](CS(=O)(=O)C)N2C(=O)c3cccc(NC(=O)C)c3C2=O",
+        "n_true": 18,
+        "hits_in_pool": 4,
+        "pool_size": 23,
+        "oracle15": 0.2222,
+        "coverage": 0.2222
+      },
+      {
+        "parent": "Cc1cc(\\C=C\\C#N)cc(C)c1Nc2ccnc(Nc3ccc(cc3)C#N)n2",
+        "n_true": 5,
+        "hits_in_pool": 0,
+        "pool_size": 50,
+        "oracle15": 0.0,
+        "coverage": 0.0
+      },
+      {
+        "parent": "CC#CCn1c(nc2N(C)C(=O)N(Cc3nc(C)c4ccccc4n3)C(=O)c12)N5CCC[C@@H](N)C5",
+        "n_true": 9,
+        "hits_in_pool": 3,
+        "pool_size": 39,
+        "oracle15": 0.3333,
+        "coverage": 0.3333
+      },
+      {
+        "parent": "CN1CCN(Cc2ccc(cc2)C(=O)Nc3ccc(C)c(Nc4nccc(n4)c5cccnc5)c3)CC1",
+        "n_true": 9,
+        "hits_in_pool": 3,
+        "pool_size": 47,
+        "oracle15": 0.3333,
+        "coverage": 0.3333
+      },
+      {
+        "parent": "CO[C@@H]1C[C@H](C[C@@H](C)[C@@H]2CC(=O)[C@H](C)\\C=C(/C)\\[C@@H](O)[C@@H](OC)C(=O)[C@H](C)C[C@H](C)\\C=C\\C=C\\C=C(/C)\\[C@H](C[C@@H]3CC[C@@H](C)[C@@](O)(O3)C(=O)C(=O)N4CCCC[C@H]4C(=O)O2)OC)CC[C@H]1OCCO",
+        "n_true": 12,
+        "hits_in_pool": 4,
+        "pool_size": 80,
+        "oracle15": 0.3333,
+        "coverage": 0.3333
+      },
+      {
+        "parent": "CC(C)c1nc(nc(c2ccc(F)cc2)c1\\C=C\\[C@@H](O)C[C@@H](O)CC(=O)O)N(C)S(=O)(=O)C",
+        "n_true": 2,
+        "hits_in_pool": 2,
+        "pool_size": 80,
+        "oracle15": 1.0,
+        "coverage": 1.0
+      },
+      {
+        "parent": "CCOc1ccc(Cc2cc(ccc2Cl)[C@@H]3O[C@H](CO)[C@@H](O)[C@H](O)[C@H]3O)cc1",
+        "n_true": 2,
+        "hits_in_pool": 1,
+        "pool_size": 80,
+        "oracle15": 0.5,
+        "coverage": 0.5
+      },
+      {
+        "parent": "CCCSc1nc(N[C@@H]2C[C@H]2c3ccc(F)c(F)c3)c4nnn([C@@H]5C[C@H](OCCO)[C@@H](O)[C@H]5O)c4n1",
+        "n_true": 2,
+        "hits_in_pool": 2,
+        "pool_size": 65,
+        "oracle15": 1.0,
+        "coverage": 1.0
+      }
+    ]
+  },
+  "large": {
+    "label": "large (top_k=200, max_pool=150)",
+    "top_k": 200,
+    "max_pool": 150,
+    "n_parents": 37,
+    "macro_oracle_recall_at_15": 0.499,
+    "macro_coverage": 0.499,
+    "per_parent": [
+      {
+        "parent": "COc1ccc(cc1)n2nc(C(=O)N)c3CCN(C(=O)c23)c4ccc(cc4)N5CCCCC5=O",
+        "n_true": 2,
+        "hits_in_pool": 1,
+        "pool_size": 135,
+        "oracle15": 0.5,
+        "coverage": 0.5
+      },
+      {
+        "parent": "Nc1cccc2C(=O)N(Cc12)C3CCC(=O)NC3=O",
+        "n_true": 2,
+        "hits_in_pool": 0,
+        "pool_size": 94,
+        "oracle15": 0.0,
+        "coverage": 0.0
+      },
+      {
+        "parent": "Clc1ccc(s1)C(=O)NC[C@H]2CN(C(=O)O2)c3ccc(cc3)N4CCOCC4=O",
+        "n_true": 14,
+        "hits_in_pool": 7,
+        "pool_size": 75,
+        "oracle15": 0.5,
+        "coverage": 0.5
+      },
+      {
+        "parent": "Nc1ncnc2c1c(nn2[C@@H]3CCCN(C3)C(=O)C=C)c4ccc(Oc5ccccc5)cc4",
+        "n_true": 2,
+        "hits_in_pool": 2,
+        "pool_size": 96,
+        "oracle15": 1.0,
+        "coverage": 1.0
+      },
+      {
+        "parent": "CC(C)c1nc(CN(C)C(=O)N[C@@H](CCN2CCOCC2)C(=O)N[C@H](CC[C@H](Cc3ccccc3)NC(=O)OCc4cncs4)Cc5ccccc5)cs1",
+        "n_true": 5,
+        "hits_in_pool": 3,
+        "pool_size": 150,
+        "oracle15": 0.6,
+        "coverage": 0.6
+      },
+      {
+        "parent": "N[C@@H](CC(=O)N1CCn2c(C1)nnc2C(F)(F)F)Cc3cc(F)c(F)cc3F",
+        "n_true": 3,
+        "hits_in_pool": 1,
+        "pool_size": 97,
+        "oracle15": 0.3333,
+        "coverage": 0.3333
+      },
+      {
+        "parent": "CNC(=O)c1ccc(cc1F)N2C(=S)N(C(=O)C2(C)C)c3ccc(C#N)c(c3)C(F)(F)F",
+        "n_true": 2,
+        "hits_in_pool": 2,
+        "pool_size": 101,
+        "oracle15": 1.0,
+        "coverage": 1.0
+      },
+      {
+        "parent": "Nc1nc(NC2CC2)c3ncn([C@@H]4C[C@H](CO)C=C4)c3n1",
+        "n_true": 2,
+        "hits_in_pool": 1,
+        "pool_size": 136,
+        "oracle15": 0.5,
+        "coverage": 0.5
+      },
+      {
+        "parent": "C[C@@H]1CCO[C@H]2CN3C=C(C(=O)NCc4ccc(F)cc4F)C(=O)C(=C3C(=O)N12)O",
+        "n_true": 3,
+        "hits_in_pool": 1,
+        "pool_size": 82,
+        "oracle15": 0.3333,
+        "coverage": 0.3333
+      },
+      {
+        "parent": "C[C@]12CC[C@H]3[C@@H](CC=C4C[C@@H](O)CC[C@]34C)[C@@H]1CC=C2c5cccnc5",
+        "n_true": 4,
+        "hits_in_pool": 0,
+        "pool_size": 150,
+        "oracle15": 0.0,
+        "coverage": 0.0
+      },
+      {
+        "parent": "CCCCCCCCc1ccc(CCC(N)(CO)CO)cc1",
+        "n_true": 5,
+        "hits_in_pool": 0,
+        "pool_size": 150,
+        "oracle15": 0.0,
+        "coverage": 0.0
+      },
+      {
+        "parent": "CCC(=O)O[C@@]1([C@H](C)C[C@H]2[C@@H]3C[C@H](F)C4=CC(=O)C=C[C@]4(C)[C@@]3(F)[C@@H](O)C[C@]12C)C(=O)SCF",
+        "n_true": 1,
+        "hits_in_pool": 1,
+        "pool_size": 150,
+        "oracle15": 1.0,
+        "coverage": 1.0
+      },
+      {
+        "parent": "CCCC1O[C@@H]2C[C@H]3[C@@H]4CCC5=CC(=O)C=C[C@]5(C)[C@H]4[C@@H](O)C[C@]3(C)[C@@]2(O1)C(=O)CO",
+        "n_true": 12,
+        "hits_in_pool": 2,
+        "pool_size": 150,
+        "oracle15": 0.1667,
+        "coverage": 0.1667
+      },
+      {
+        "parent": "COc1ccc(CC(C)NCC(O)c2ccc(O)c(NC=O)c2)cc1",
+        "n_true": 4,
+        "hits_in_pool": 1,
+        "pool_size": 144,
+        "oracle15": 0.25,
+        "coverage": 0.25
+      },
+      {
+        "parent": "COc1ccc2[nH]c(nc2c1)[S@@](=O)Cc3ncc(C)c(OC)c3C",
+        "n_true": 2,
+        "hits_in_pool": 2,
+        "pool_size": 88,
+        "oracle15": 1.0,
+        "coverage": 1.0
+      },
+      {
+        "parent": "OC[C@H]1O[C@H]([C@H](O)[C@@H](O)[C@@H]1O)c2ccc(Cl)c(Cc3ccc(O[C@H]4CCOC4)cc3)c2",
+        "n_true": 4,
+        "hits_in_pool": 1,
+        "pool_size": 150,
+        "oracle15": 0.25,
+        "coverage": 0.25
+      },
+      {
+        "parent": "Cc1nc(Nc2ncc(s2)C(=O)Nc3c(C)cccc3Cl)cc(n1)N4CCN(CCO)CC4",
+        "n_true": 6,
+        "hits_in_pool": 2,
+        "pool_size": 116,
+        "oracle15": 0.3333,
+        "coverage": 0.3333
+      },
+      {
+        "parent": "CC(C)c1c(C(=O)Nc2ccccc2)c(c3ccccc3)c(c4ccc(F)cc4)n1CC[C@@H](O)C[C@@H](O)CC(=O)O",
+        "n_true": 2,
+        "hits_in_pool": 1,
+        "pool_size": 150,
+        "oracle15": 0.5,
+        "coverage": 0.5
+      },
+      {
+        "parent": "Nc1cccc2C(=O)N(C3CCC(=O)NC3=O)C(=O)c12",
+        "n_true": 7,
+        "hits_in_pool": 2,
+        "pool_size": 88,
+        "oracle15": 0.2857,
+        "coverage": 0.2857
+      },
+      {
+        "parent": "CC(C)OC(=O)[C@H](C)N[P@](=O)(OC[C@H]1O[C@@H](N2C=CC(=O)NC2=O)[C@](C)(F)[C@@H]1O)Oc3ccccc3",
+        "n_true": 5,
+        "hits_in_pool": 1,
+        "pool_size": 141,
+        "oracle15": 0.2,
+        "coverage": 0.2
+      },
+      {
+        "parent": "CC(C)CN(C[C@@H](O)[C@H](Cc1ccccc1)NC(=O)O[C@H]2CO[C@H]3OCC[C@@H]23)S(=O)(=O)c4ccc(N)cc4",
+        "n_true": 7,
+        "hits_in_pool": 2,
+        "pool_size": 150,
+        "oracle15": 0.2857,
+        "coverage": 0.2857
+      },
+      {
+        "parent": "Cc1cn(cn1)c2cc(NC(=O)c3ccc(C)c(Nc4nccc(n4)c5cccnc5)c3)cc(c2)C(F)(F)F",
+        "n_true": 5,
+        "hits_in_pool": 4,
+        "pool_size": 139,
+        "oracle15": 0.8,
+        "coverage": 0.8
+      },
+      {
+        "parent": "COc1cc(N(C)CCN(C)C)c(NC(=O)C=C)cc1Nc2nccc(n2)c3cn(C)c4ccccc34",
+        "n_true": 7,
+        "hits_in_pool": 6,
+        "pool_size": 122,
+        "oracle15": 0.8571,
+        "coverage": 0.8571
+      },
+      {
+        "parent": "CO[C@@H]1C[C@@H](CC[C@H]1O)\\C=C(/C)\\[C@H]2OC(=O)[C@@H]3CCCCN3C(=O)C(=O)[C@]4(O)O[C@H]([C@H](C[C@@H](C)C\\C(=C\\[C@@H](CC=C)C(=O)C[C@H](O)[C@H]2C)\\C)OC)[C@H](C[C@H]4C)OC",
+        "n_true": 2,
+        "hits_in_pool": 0,
+        "pool_size": 150,
+        "oracle15": 0.0,
+        "coverage": 0.0
+      },
+      {
+        "parent": "C[C@@H](NCCCc1cccc(c1)C(F)(F)F)c2cccc3ccccc23",
+        "n_true": 7,
+        "hits_in_pool": 2,
+        "pool_size": 142,
+        "oracle15": 0.2857,
+        "coverage": 0.2857
+      },
+      {
+        "parent": "C[C@@H]1CCN(C[C@@H]1N(C)c2ncnc3[nH]ccc23)C(=O)CC#N",
+        "n_true": 4,
+        "hits_in_pool": 2,
+        "pool_size": 129,
+        "oracle15": 0.5,
+        "coverage": 0.5
+      },
+      {
+        "parent": "Cn1c(CNc2ccc(cc2)C(=N)N)nc3cc(ccc13)C(=O)N(CCC(=O)O)c4ccccn4",
+        "n_true": 12,
+        "hits_in_pool": 5,
+        "pool_size": 62,
+        "oracle15": 0.4167,
+        "coverage": 0.4167
+      },
+      {
+        "parent": "O=C1[C@@H]2[C@H]3CC[C@H](C3)[C@@H]2C(=O)N1C[C@@H]4CCCC[C@H]4CN5CCN(CC5)c6nsc7ccccc67",
+        "n_true": 1,
+        "hits_in_pool": 1,
+        "pool_size": 150,
+        "oracle15": 1.0,
+        "coverage": 1.0
+      },
+      {
+        "parent": "COC(=O)[C@@H](N1CCc2sccc2C1)c3ccccc3Cl",
+        "n_true": 5,
+        "hits_in_pool": 1,
+        "pool_size": 67,
+        "oracle15": 0.2,
+        "coverage": 0.2
+      },
+      {
+        "parent": "CCOc1cc(ccc1OC)[C@@H](CS(=O)(=O)C)N2C(=O)c3cccc(NC(=O)C)c3C2=O",
+        "n_true": 18,
+        "hits_in_pool": 5,
+        "pool_size": 66,
+        "oracle15": 0.2778,
+        "coverage": 0.2778
+      },
+      {
+        "parent": "Cc1cc(\\C=C\\C#N)cc(C)c1Nc2ccnc(Nc3ccc(cc3)C#N)n2",
+        "n_true": 5,
+        "hits_in_pool": 1,
+        "pool_size": 112,
+        "oracle15": 0.2,
+        "coverage": 0.2
+      },
+      {
+        "parent": "CC#CCn1c(nc2N(C)C(=O)N(Cc3nc(C)c4ccccc4n3)C(=O)c12)N5CCC[C@@H](N)C5",
+        "n_true": 9,
+        "hits_in_pool": 6,
+        "pool_size": 150,
+        "oracle15": 0.6667,
+        "coverage": 0.6667
+      },
+      {
+        "parent": "CN1CCN(Cc2ccc(cc2)C(=O)Nc3ccc(C)c(Nc4nccc(n4)c5cccnc5)c3)CC1",
+        "n_true": 9,
+        "hits_in_pool": 8,
+        "pool_size": 147,
+        "oracle15": 0.8889,
+        "coverage": 0.8889
+      },
+      {
+        "parent": "CO[C@@H]1C[C@H](C[C@@H](C)[C@@H]2CC(=O)[C@H](C)\\C=C(/C)\\[C@@H](O)[C@@H](OC)C(=O)[C@H](C)C[C@H](C)\\C=C\\C=C\\C=C(/C)\\[C@H](C[C@@H]3CC[C@@H](C)[C@@](O)(O3)C(=O)C(=O)N4CCCC[C@H]4C(=O)O2)OC)CC[C@H]1OCCO",
+        "n_true": 12,
+        "hits_in_pool": 4,
+        "pool_size": 150,
+        "oracle15": 0.3333,
+        "coverage": 0.3333
+      },
+      {
+        "parent": "CC(C)c1nc(nc(c2ccc(F)cc2)c1\\C=C\\[C@@H](O)C[C@@H](O)CC(=O)O)N(C)S(=O)(=O)C",
+        "n_true": 2,
+        "hits_in_pool": 2,
+        "pool_size": 150,
+        "oracle15": 1.0,
+        "coverage": 1.0
+      },
+      {
+        "parent": "CCOc1ccc(Cc2cc(ccc2Cl)[C@@H]3O[C@H](CO)[C@@H](O)[C@H](O)[C@H]3O)cc1",
+        "n_true": 2,
+        "hits_in_pool": 2,
+        "pool_size": 150,
+        "oracle15": 1.0,
+        "coverage": 1.0
+      },
+      {
+        "parent": "CCCSc1nc(N[C@@H]2C[C@H]2c3ccc(F)c(F)c3)c4nnn([C@@H]5C[C@H](OCCO)[C@@H](O)[C@H]5O)c4n1",
+        "n_true": 2,
+        "hits_in_pool": 2,
+        "pool_size": 150,
+        "oracle15": 1.0,
+        "coverage": 1.0
+      }
+    ]
+  },
+  "interpretation": {
+    "reranker_r15_reference": 0.333,
+    "sygma_r15_reference": 0.498,
+    "small_oracle_at_15": 0.3715,
+    "large_oracle_at_15": 0.499,
+    "verdict": "RANKING: oracle near or above SyGMa -- the generator pool is rich enough; scaling the reranker CAN close the gap."
+  }
+}
