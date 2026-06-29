@@ -28,6 +28,8 @@ def test_generate_scored_public_api_unchanged():
     assert isinstance(plain, list) and all(len(t) == 2 for t in plain)
     # same candidate set as the detailed path
     assert {s for s, _ in plain} == {s for s, _, _, _ in gen.generate_scored_with_details(SUB, top_k=50)}
+    # full list equality: (smiles, gen_score) must match exactly, same order
+    assert plain == [(s, sc) for s, sc, _, _ in gen.generate_scored_with_details(SUB, top_k=50)]
 
 
 def test_generate_scored_with_details_budget_cap():

@@ -18,6 +18,10 @@ from torch_geometric.utils import to_dense_batch
 
 from ._graph import GraphEncoder
 from .wrapper import GGenerator
+try:
+    from .som import _reacting_atoms as _som_reacting_atoms
+except Exception:
+    _som_reacting_atoms = None
 from ..utils.preparation import MolFrame, _normalize_smiles_cached, generate_vectors, safe_run_reactants
 from ..utils.transform import EDGE_DIM, FINGERPRINT_DIM, SINGLE_NODE_DIM, from_rdmol, from_rule
 
@@ -1173,8 +1177,7 @@ class Generator(GGenerator):
         tuple of ints; empty tuple on any failure (never raises).
         """
         try:
-            from .som import _reacting_atoms
-            return tuple(sorted(_reacting_atoms(sub_mol, product_mol)))
+            return tuple(sorted(_som_reacting_atoms(sub_mol, product_mol)))
         except Exception:
             return tuple()
 
@@ -1187,34 +1190,11 @@ class Generator(GGenerator):
         threshold: Optional[float] = None,
     ) -> List[tuple[str, float]]:
         del pca
-        mol, _ = self._graph_for_substrate(sub)
+        mol, scores, ranked_indices = self._prepare_generation(sub, top_k, threshold)
         if mol is None:
             return []
-        scores, rule_mask = self.score_rules(sub, return_mask=True)
-        if scores.size == 0:
-            return []
-
-        active_pool = np.where(rule_mask > 0.0)[0] if self.use_applicability_mask else np.arange(scores.shape[0])
-        if active_pool.size == 0:
-            active_pool = np.arange(scores.shape[0])
-
-        if threshold is not None:
-            active = active_pool[scores[active_pool] >= threshold]
-            if active.size == 0 and top_k is not None:
-                ranked_pool = active_pool[np.argsort(scores[active_pool])[::-1]]
-                active = ranked_pool[:top_k]
-            elif top_k is not None and active.size > top_k:
-                # Apply top_k AFTER thresholding so a low calibrated threshold cannot
-                # emit nearly every applicable rule; keep only the top_k best-scoring.
-                active = active[np.argsort(scores[active])[::-1][:top_k]]
-        else:
-            if top_k is None:
-                top_k = min(self.default_top_k, max(1, active_pool.size))
-            ranked_pool = active_pool[np.argsort(scores[active_pool])[::-1]]
-            active = ranked_pool[:top_k]
 
         candidate_scores: Dict[str, List[float]] = {}
-        ranked_indices = sorted((int(index) for index in active), key=lambda index: float(scores[index]), reverse=True)
         for index in ranked_indices:
             if index >= len(self.rule_reactions):
                 continue
