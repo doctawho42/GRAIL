@@ -80,6 +80,14 @@ def main() -> None:
         help="pair = MCS pair-graph + learned rule embedding (legacy); "
              "bi = no-MCS siamese single-graph + rule-prior scalar feature (fair).",
     )
+    parser.add_argument(
+        "--no-rule-prior", action="store_true",
+        help="Ablation: zero out the rule-prior scalar feature in BiEncoderReranker.",
+    )
+    parser.add_argument(
+        "--no-gen-score", action="store_true",
+        help="Ablation: zero out the generator-score scalar feature in BiEncoderReranker.",
+    )
     args = parser.parse_args()
 
     t_start = time.time()
@@ -152,7 +160,11 @@ def main() -> None:
     print(f"[gate] training reranker (listwise InfoNCE, arch={args.arch}) ...", flush=True)
     t0 = time.time()
     if args.arch == "bi":
-        reranker = BiEncoderReranker(in_channels=SINGLE_NODE_DIM)
+        reranker = BiEncoderReranker(
+            in_channels=SINGLE_NODE_DIM,
+            use_rule_prior=not args.no_rule_prior,
+            use_gen_score=not args.no_gen_score,
+        )
         trainer = BiRerankerTrainer(reranker, lr=1e-3, seed=args.seed)
         trainer.fit(train_examples, epochs=args.epochs)
         eval_fn = evaluate_bi
@@ -188,6 +200,8 @@ def main() -> None:
             "top_k": args.top_k,
             "max_pool": args.max_pool,
             "rule_embed_dim": args.rule_embed_dim,
+            "use_rule_prior": not getattr(args, "no_rule_prior", False),
+            "use_gen_score": not getattr(args, "no_gen_score", False),
         },
         "counts": {
             "train_examples": len(train_examples),

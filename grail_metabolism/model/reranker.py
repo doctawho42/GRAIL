@@ -96,9 +96,13 @@ class BiEncoderReranker(nn.Module):
         hidden_dims: Sequence[int] = (64, 128),
         out_dim: int = 128,
         dropout: float = 0.1,
+        use_rule_prior: bool = True,
+        use_gen_score: bool = True,
     ) -> None:
         super().__init__()
         self.out_dim = int(out_dim)
+        self.use_rule_prior = bool(use_rule_prior)
+        self.use_gen_score = bool(use_gen_score)
         # Siamese: ONE encoder shared between substrate and products (single graphs).
         self.encoder = GraphEncoder(
             in_channels=in_channels,
@@ -108,8 +112,10 @@ class BiEncoderReranker(nn.Module):
             conv_kind="gatv2",
             dropout=dropout,
         )
-        # Interaction features [sub, prod, sub*prod, |sub-prod|] = 4*out_dim, plus the two
+        # Interaction features [sub, prod, sub*prod, |sub-prod|] = 4*out_dim, plus up to two
         # scalar features (rule_prior, gen_score). NO rule embedding.
+        # When an ablation flag is False the corresponding scalar is zeroed out but the head
+        # input dimension is unchanged so checkpoints remain compatible.
         head_in = 4 * self.out_dim + 2
         self.head = nn.Sequential(
             nn.Linear(head_in, 128),
@@ -152,5 +158,11 @@ class BiEncoderReranker(nn.Module):
         )  # (N, 4*out_dim)
         rule_prior = rule_prior.to(device).float().view(n, 1)
         gen_score = gen_score.to(device).float().view(n, 1)
+        # Ablation: zero out a scalar feature when its flag is disabled.
+        # The head input dimension is kept the same so checkpoints stay compatible.
+        if not self.use_rule_prior:
+            rule_prior = torch.zeros_like(rule_prior)
+        if not self.use_gen_score:
+            gen_score = torch.zeros_like(gen_score)
         features = torch.cat([interaction, rule_prior, gen_score], dim=-1)
         return self.head(features).squeeze(-1)

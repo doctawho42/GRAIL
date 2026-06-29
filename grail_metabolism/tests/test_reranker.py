@@ -240,3 +240,59 @@ def test_bi_encoder_infonce_flips_ranking():
     assert hit_logit > non_hit_logit, (
         f"hit logit {hit_logit:.3f} did not rise above non-hits {non_hit_logit:.3f}"
     )
+
+
+# --------------------------------------------------------------------------- #
+# Ablation flags: use_rule_prior and use_gen_score.
+# --------------------------------------------------------------------------- #
+
+
+def _bi_forward(model, cands, sub="OCc1ccccc1"):
+    sub_graph = _single_graph(sub)
+    prod_batch = Batch.from_data_list([_single_graph(c) for c in cands])
+    rule_prior = torch.tensor([0.5, -1.2, 0.0], dtype=torch.float32)
+    gen_score = torch.tensor([0.9, 0.4, 0.3], dtype=torch.float32)
+    return model(sub_graph, prod_batch, rule_prior, gen_score)
+
+
+def test_bi_ablation_no_rule_prior():
+    """BiEncoderReranker(use_rule_prior=False) still produces (N,) logits and is
+    differentiable -- the rule_prior scalar is zeroed but the head shape is unchanged."""
+    model = BiEncoderReranker(in_channels=SINGLE_NODE_DIM, use_rule_prior=False)
+    assert not model.use_rule_prior
+    assert model.use_gen_score
+
+    cands = ["O=Cc1ccccc1", "OCc1ccccc1", "Oc1ccccc1"]
+    logits = _bi_forward(model, cands)
+    assert logits.shape == (len(cands),), f"expected ({len(cands)},), got {logits.shape}"
+
+    logits.sum().backward()
+    grads = [p.grad for p in model.parameters() if p.grad is not None]
+    assert grads, "no gradients populated with use_rule_prior=False"
+
+
+def test_bi_ablation_no_gen_score():
+    """BiEncoderReranker(use_gen_score=False) still produces (N,) logits and is
+    differentiable -- the gen_score scalar is zeroed but the head shape is unchanged."""
+    model = BiEncoderReranker(in_channels=SINGLE_NODE_DIM, use_gen_score=False)
+    assert model.use_rule_prior
+    assert not model.use_gen_score
+
+    cands = ["O=Cc1ccccc1", "OCc1ccccc1", "Oc1ccccc1"]
+    logits = _bi_forward(model, cands)
+    assert logits.shape == (len(cands),), f"expected ({len(cands)},), got {logits.shape}"
+
+    logits.sum().backward()
+    grads = [p.grad for p in model.parameters() if p.grad is not None]
+    assert grads, "no gradients populated with use_gen_score=False"
+
+
+def test_bi_ablation_both_disabled():
+    """Both scalars disabled: forward still runs, produces (N,) logits. Guards the
+    'both off' degenerate corner (graph-only baseline)."""
+    model = BiEncoderReranker(
+        in_channels=SINGLE_NODE_DIM, use_rule_prior=False, use_gen_score=False
+    )
+    cands = ["O=Cc1ccccc1", "OCc1ccccc1", "Oc1ccccc1"]
+    logits = _bi_forward(model, cands)
+    assert logits.shape == (len(cands),), f"expected ({len(cands)},), got {logits.shape}"
