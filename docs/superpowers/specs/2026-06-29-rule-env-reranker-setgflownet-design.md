@@ -57,9 +57,13 @@ A site-conditioned cross-encoder scoring `r(substrate, product, site)`:
   input to a discriminative model, not as a post-hoc multiplier.
 - **Contextual rule-match embedding (CRX):** concatenate an embedding of the rule encoded *in
   context* of its match (matched atoms + local environment), not the generic rule graph.
-- **Analogue-retrieval feature (RNS, optional/ablated):** a per-candidate feature from k-NN
-  analogue substrates' observed sites (transferred via MCS) — a site signal independent of the
-  GNN, the panel's hedge against "same neutral encoder."
+- **Analogue-retrieval feature (RNS, v1 core component):** a per-candidate feature derived from
+  k-NN analogue substrates (chemical-space neighbors in the *training* set) whose observed
+  metabolite sites are transferred onto the query via MCS atom-mapping, giving a query-specific
+  site posterior. This is a site signal **independent of the GNN** — the panel's primary hedge
+  against the "same neutral encoder" failure mode — so it is included in the v1 reranker, not
+  deferred to an ablation. (The ablation then *removes* RNS to quantify its contribution.) The
+  k-NN index is built once over the training substrates (Morgan-fingerprint nearest neighbors).
 
 ### 3.3 Training objective (new `workflows/reranker.py`)
 Per substrate, assemble candidate **groups** with provenance, then optimize:
@@ -106,10 +110,12 @@ This is the novel-method/diversity contribution; the reranker (3) secures the re
   PU/`MolFrame.negs`, tautomer-InChIKey metrics, val-selection harness, rule-encoding cache,
   `GFlowNetTrainer`/`action_distribution`/`stop_head` (Stage 2b), `EnsembleWorkflow.run_bundle`.
 - **New:** provenance path in `generate_scored`; `model/reranker.py`; `workflows/reranker.py`
-  (group assembly + contrastive+listwise+PU loss); one pair-node input channel; `scripts/
-  run_reranker.py`; reranker eval; (2b) `(rule×site)` set actions + set-coverage reward +
-  `scripts/run_gflownet.py` + set eval. Guard tests in `tests/` for: provenance correctness,
-  MCS-alignment preserved, sibling-group construction, PU weighting, within/cross decomposition.
+  (group assembly + contrastive+listwise+PU loss); one pair-node input channel; a **k-NN
+  analogue index** (Morgan-fingerprint nearest neighbors over training substrates + their
+  observed sites, with MCS site-transfer) feeding the RNS feature; `scripts/run_reranker.py`;
+  reranker eval; (2b) `(rule×site)` set actions + set-coverage reward + `scripts/run_gflownet.py`
+  + set eval. Guard tests in `tests/` for: provenance correctness, MCS-alignment preserved,
+  sibling-group construction, PU weighting, RNS site-transfer, within/cross decomposition.
 
 ## 6. Compute (validate-small → one scale-up; Colab Pro+)
 M0/M1 are cheap (CPU + short GPU). M2 and Stage 2b run on Colab GPU via a self-contained
