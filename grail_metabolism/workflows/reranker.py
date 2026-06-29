@@ -1,0 +1,354 @@
+"""Stage 2a reranker workflow: pool building, hit labelling, the listwise InfoNCE loss,
+a caching trainer, and the val evaluation that decides GO vs DEAD.
+
+The slow part is pool generation (``generate_scored_with_details`` at top_k=200), so each
+split's assembled pair-graphs + rule_ids + hit labels are cached to a ``.pt`` and reused
+across epochs. Matching is tautomer-InChIKey throughout (``metrics._tautomer_inchikey``).
+Selection is on VAL, never test.
+"""
+from __future__ import annotations
+
+from pathlib import Path
+from typing import Dict, List, Optional, Sequence, Tuple
+
+import torch
+from rdkit import Chem
+from torch_geometric.data import Batch, Data
+
+from ..metrics import _tautomer_inchikey
+from ..model.reranker import MinimalReranker
+from ..utils.seed import seed_everything
+from ..utils.transform import from_pair
+
+PoolEntry = Tuple[str, float, int]  # (smiles, gen_score, rule_id)
+
+
+def build_pool(
+    generator,
+    sub: str,
+    top_k: int = 200,
+    max_pool: int = 100,
+) -> List[PoolEntry]:
+    """Generate the candidate pool for one substrate, dedup by tautomer-InChIKey
+    (keeping generator order), then truncate to ``max_pool``.
+
+    Returns ``[(smiles, gen_score, rule_id), ...]`` in generator-score order.
+    """
+    detailed = generator.generate_scored_with_details(sub, top_k=top_k)
+    pool: List[PoolEntry] = []
+    seen: set = set()
+    for smiles, gen_score, rule_id, _sites in detailed:
+        key = _tautomer_inchikey(smiles)
+        if key in seen:
+            continue
+        seen.add(key)
+        pool.append((smiles, float(gen_score), int(rule_id)))
+        if len(pool) >= max_pool:
+            break
+    return pool
+
+
+def label_hits(pool: Sequence[PoolEntry], true_products: Sequence[str]) -> torch.Tensor:
+    """Boolean hit mask over the pool: a candidate is a hit iff its tautomer-InChIKey is
+    in the tautomer-InChIKey set of the annotated true products."""
+    truth = {_tautomer_inchikey(p) for p in true_products}
+    flags = [_tautomer_inchikey(smiles) in truth for smiles, _, _ in pool]
+    return torch.tensor(flags, dtype=torch.bool)
+
+
+def listwise_infonce(logits: torch.Tensor, hit_mask: torch.Tensor) -> torch.Tensor:
+    """Per-substrate listwise InfoNCE.
+
+    With pool logits ``s`` (length N) and a boolean ``hit_mask``, treat EACH hit as the
+    positive against the WHOLE pool as the softmax denominator::
+
+        L = - (1 / H) * sum_{h in hits} ( s[h] - logsumexp(s) )
+
+    Returns 0 (with grad) when the pool has no hits, so a hit-less substrate is skipped.
+    """
+    if logits.numel() == 0:
+        return logits.sum() * 0.0
+    hit_mask = hit_mask.to(logits.device).bool()
+    num_hits = int(hit_mask.sum().item())
+    if num_hits == 0:
+        return logits.sum() * 0.0
+    denom = torch.logsumexp(logits, dim=0)  # scalar; full pool is the denominator
+    hit_logits = logits[hit_mask]
+    per_hit = hit_logits - denom  # log-softmax of each hit over the pool
+    return -(per_hit.sum() / num_hits)
+
+
+# --------------------------------------------------------------------------- #
+# Cached per-substrate examples.
+# --------------------------------------------------------------------------- #
+
+class _SubstrateExample:
+    """One substrate's cached training/eval material: assembled pair graphs, the firing
+    rule_id per candidate, the hit mask, the gen_scores (for the generator-alone baseline),
+    and the candidate smiles."""
+
+    __slots__ = ("sub", "graphs", "rule_ids", "hit_mask", "gen_scores", "smiles", "true_products")
+
+    def __init__(self, sub, graphs, rule_ids, hit_mask, gen_scores, smiles, true_products):
+        self.sub = sub
+        self.graphs = graphs
+        self.rule_ids = rule_ids
+        self.hit_mask = hit_mask
+        self.gen_scores = gen_scores
+        self.smiles = smiles
+        # ALL annotated true products for this substrate (the recall denominator). Some
+        # are not in the pool at all -- that gap is exactly why the oracle ceiling < 1.0.
+        self.true_products = true_products
+
+
+def _build_examples(
+    generator,
+    molframe,
+    n_substrates: int,
+    top_k: int,
+    max_pool: int,
+    verbose: bool = True,
+) -> List[_SubstrateExample]:
+    """Assemble cached examples for up to ``n_substrates`` substrates that have >=1
+    parseable candidate. Substrates with no parseable pool are dropped."""
+    substrates = list(molframe.map.keys())
+    examples: List[_SubstrateExample] = []
+    for idx, sub in enumerate(substrates):
+        if len(examples) >= n_substrates:
+            break
+        sub_mol = Chem.MolFromSmiles(sub)
+        if sub_mol is None:
+            continue
+        pool = build_pool(generator, sub, top_k=top_k, max_pool=max_pool)
+        if not pool:
+            continue
+        graphs: List[Data] = []
+        rule_ids: List[int] = []
+        gen_scores: List[float] = []
+        smiles: List[str] = []
+        for cand_smiles, gen_score, rule_id in pool:
+            cand_mol = Chem.MolFromSmiles(cand_smiles)
+            if cand_mol is None:
+                continue
+            graph = from_pair(sub_mol, cand_mol)
+            if graph is None:
+                continue
+            graphs.append(graph)
+            rule_ids.append(int(rule_id))
+            gen_scores.append(float(gen_score))
+            smiles.append(cand_smiles)
+        if not graphs:
+            continue
+        # Recompute the hit mask over the SURVIVING (parseable) candidates only.
+        surviving_pool = [(s, sc, r) for s, sc, r in zip(smiles, gen_scores, rule_ids)]
+        true_products = sorted(molframe.map[sub])
+        hit_mask = label_hits(surviving_pool, true_products)
+        examples.append(
+            _SubstrateExample(
+                sub=sub,
+                graphs=graphs,
+                rule_ids=torch.tensor(rule_ids, dtype=torch.long),
+                hit_mask=hit_mask,
+                gen_scores=torch.tensor(gen_scores, dtype=torch.float32),
+                smiles=smiles,
+                true_products=true_products,
+            )
+        )
+        if verbose and (len(examples) % 25 == 0):
+            print(
+                f"  built {len(examples)} examples (scanned {idx + 1} substrates)",
+                flush=True,
+            )
+    return examples
+
+
+def _cache_payload(examples: List[_SubstrateExample]) -> List[dict]:
+    return [
+        {
+            "sub": ex.sub,
+            "graphs": ex.graphs,
+            "rule_ids": ex.rule_ids,
+            "hit_mask": ex.hit_mask,
+            "gen_scores": ex.gen_scores,
+            "smiles": ex.smiles,
+            "true_products": ex.true_products,
+        }
+        for ex in examples
+    ]
+
+
+def _examples_from_payload(payload: List[dict]) -> List[_SubstrateExample]:
+    return [
+        _SubstrateExample(
+            sub=row["sub"],
+            graphs=row["graphs"],
+            rule_ids=row["rule_ids"],
+            hit_mask=row["hit_mask"],
+            gen_scores=row["gen_scores"],
+            smiles=row["smiles"],
+            true_products=row["true_products"],
+        )
+        for row in payload
+    ]
+
+
+def load_or_build_examples(
+    generator,
+    molframe,
+    n_substrates: int,
+    cache_path: Path,
+    top_k: int = 200,
+    max_pool: int = 100,
+    verbose: bool = True,
+) -> List[_SubstrateExample]:
+    """Load assembled examples from ``cache_path`` if present, else build and cache them.
+
+    Pool generation at top_k=200 is the slow part, so this is the one thing worth caching;
+    epochs reuse the cached pair-graphs/rule_ids/hit masks.
+    """
+    cache_path = Path(cache_path)
+    if cache_path.exists():
+        if verbose:
+            print(f"  loading cached examples from {cache_path}", flush=True)
+        payload = torch.load(cache_path, map_location="cpu", weights_only=False)
+        return _examples_from_payload(payload)
+    if verbose:
+        print(f"  building examples (no cache at {cache_path})", flush=True)
+    examples = _build_examples(
+        generator, molframe, n_substrates, top_k=top_k, max_pool=max_pool, verbose=verbose
+    )
+    cache_path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = cache_path.with_suffix(cache_path.suffix + ".tmp")
+    torch.save(_cache_payload(examples), tmp)
+    tmp.replace(cache_path)
+    if verbose:
+        print(f"  cached {len(examples)} examples -> {cache_path}", flush=True)
+    return examples
+
+
+class RerankerTrainer:
+    """Trains a ``MinimalReranker`` with the per-substrate listwise InfoNCE objective.
+
+    Loss = ``listwise_infonce`` per substrate (the ONLY loss -- no sibling, no BCE),
+    averaged over substrates that have >=1 hit in their pool. Adam, lr 1e-3.
+    """
+
+    def __init__(
+        self,
+        reranker: MinimalReranker,
+        lr: float = 1e-3,
+        seed: int = 0,
+        device: Optional[torch.device] = None,
+    ) -> None:
+        self.seed = int(seed)
+        seed_everything(self.seed)
+        self.device = device or torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.reranker = reranker.to(self.device)
+        self.optimizer = torch.optim.Adam(self.reranker.parameters(), lr=lr)
+
+    def _batch_for(self, ex: _SubstrateExample) -> Tuple[Batch, torch.Tensor]:
+        batch = Batch.from_data_list([g.clone() for g in ex.graphs]).to(self.device)
+        rule_ids = ex.rule_ids.to(self.device)
+        return batch, rule_ids
+
+    def fit(
+        self,
+        examples: List[_SubstrateExample],
+        epochs: int = 15,
+        verbose: bool = True,
+    ) -> MinimalReranker:
+        # Only substrates with at least one hit in the pool contribute gradient.
+        trainable = [ex for ex in examples if bool(ex.hit_mask.any())]
+        if verbose:
+            print(
+                f"  training on {len(trainable)}/{len(examples)} substrates with >=1 pool hit",
+                flush=True,
+            )
+        for epoch in range(epochs):
+            seed_everything(self.seed + epoch)  # deterministic per-epoch shuffle
+            order = torch.randperm(len(trainable)).tolist()
+            self.reranker.train()
+            total = 0.0
+            count = 0
+            for i in order:
+                ex = trainable[i]
+                batch, rule_ids = self._batch_for(ex)
+                self.optimizer.zero_grad()
+                logits = self.reranker(batch, rule_ids)
+                loss = listwise_infonce(logits, ex.hit_mask.to(self.device))
+                loss.backward()
+                self.optimizer.step()
+                total += float(loss.item())
+                count += 1
+            if verbose:
+                avg = total / max(count, 1)
+                print(f"  epoch {epoch + 1}/{epochs} listwise_infonce={avg:.4f}", flush=True)
+        return self.reranker
+
+
+def _recall_at_k(ranked_smiles: Sequence[str], true_products: Sequence[str], k: int) -> float:
+    """Tautomer-InChIKey recall@k: fraction of distinct true products whose key appears
+    in the top-k of the ranking."""
+    truth = {_tautomer_inchikey(p) for p in true_products}
+    if not truth:
+        return 0.0
+    topk_keys = {_tautomer_inchikey(s) for s in ranked_smiles[:k]}
+    return len(topk_keys & truth) / len(truth)
+
+
+@torch.no_grad()
+def evaluate(
+    reranker: MinimalReranker,
+    examples: List[_SubstrateExample],
+    ks: Sequence[int] = (5, 10, 12, 15),
+    device: Optional[torch.device] = None,
+) -> Dict[str, float]:
+    """Score each substrate's pool with the reranker, rank desc, and compute recall@k
+    (tautomer). Also compute generator-alone recall (gen_score order) and oracle recall
+    (hits-first) on the SAME pools, for reference.
+
+    Returns a flat dict: ``reranker_recall@{k}``, ``generator_recall@{k}``,
+    ``oracle_recall@{k}``, plus ``n_substrates`` and ``mean_pool_size``.
+    """
+    device = device or next(reranker.parameters()).device
+    reranker.eval()
+    rer_acc = {k: 0.0 for k in ks}
+    gen_acc = {k: 0.0 for k in ks}
+    ora_acc = {k: 0.0 for k in ks}
+    pool_sizes = 0
+    n = 0
+    for ex in examples:
+        truth = ex.hit_mask  # boolean over the pool, already tautomer-IK derived
+        # Recall denominator = ALL annotated true products (incl. those absent from the
+        # pool). The oracle ranking (hits-first) therefore tops out below 1.0 exactly by
+        # the fraction of true products the generator never enumerated into the pool.
+        true_products = ex.true_products
+        batch = Batch.from_data_list([g.clone() for g in ex.graphs]).to(device)
+        rule_ids = ex.rule_ids.to(device)
+        scores = reranker(batch, rule_ids).detach().cpu()
+
+        # reranker ranking: by predicted logit desc
+        rer_order = torch.argsort(scores, descending=True).tolist()
+        rer_ranked = [ex.smiles[i] for i in rer_order]
+        # generator-alone ranking: by gen_score desc (this IS the generator's own order)
+        gen_order = torch.argsort(ex.gen_scores, descending=True).tolist()
+        gen_ranked = [ex.smiles[i] for i in gen_order]
+        # oracle ranking: hits first (best achievable on this pool)
+        ora_order = sorted(
+            range(len(ex.smiles)), key=lambda i: (0 if truth[i] else 1)
+        )
+        ora_ranked = [ex.smiles[i] for i in ora_order]
+
+        for k in ks:
+            rer_acc[k] += _recall_at_k(rer_ranked, true_products, k)
+            gen_acc[k] += _recall_at_k(gen_ranked, true_products, k)
+            ora_acc[k] += _recall_at_k(ora_ranked, true_products, k)
+        pool_sizes += len(ex.smiles)
+        n += 1
+
+    out: Dict[str, float] = {"n_substrates": float(n), "mean_pool_size": pool_sizes / max(n, 1)}
+    for k in ks:
+        out[f"reranker_recall@{k}"] = rer_acc[k] / max(n, 1)
+        out[f"generator_recall@{k}"] = gen_acc[k] / max(n, 1)
+        out[f"oracle_recall@{k}"] = ora_acc[k] / max(n, 1)
+    return out
