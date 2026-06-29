@@ -296,3 +296,70 @@ def test_bi_ablation_both_disabled():
     cands = ["O=Cc1ccccc1", "OCc1ccccc1", "Oc1ccccc1"]
     logits = _bi_forward(model, cands)
     assert logits.shape == (len(cands),), f"expected ({len(cands)},), got {logits.shape}"
+
+
+# --------------------------------------------------------------------------- #
+# Parallel (spawn-Pool) bi-example builder: must produce IDENTICAL examples to the
+# serial path (only speed changes). Built around a tiny in-test generator + checkpoint.
+# --------------------------------------------------------------------------- #
+
+import types  # noqa: E402
+
+from grail_metabolism.config import GeneratorConfig as _GenCfg  # noqa: E402
+from grail_metabolism.workflows.reranker import (  # noqa: E402
+    build_examples_bi,
+    build_examples_bi_parallel,
+)
+
+
+def _tiny_gate_checkpoint(tmp_path, rules):
+    """Build a tiny real generator (a couple of rules), save it in the gate checkpoint
+    format ({state_dict, arch, rules}), and return (generator, ckpt_path)."""
+    gen = build_generator(_GenCfg(), rules)
+    gen.eval()
+    ckpt = tmp_path / "tiny_generator.pt"
+    torch.save(
+        {
+            "state_dict": gen.state_dict(),
+            "arch": _GenCfg().__dict__.copy(),
+            "rules": list(rules),
+        },
+        ckpt,
+    )
+    return gen, ckpt
+
+
+def test_parallel_bi_builder_matches_serial(tmp_path):
+    """build_examples_bi_parallel(workers=2) yields the SAME examples as the serial
+    build_examples_bi (same count, smiles, hit_masks, rule_priors) on a tiny MolFrame."""
+    rules = ["[CH2:1][OH:2]>>[CH:1]=[O:2]", "[c:1][H:2]>>[c:1][OH]"]
+    # 3 small substrates; map values are the "true products" (recall denominator).
+    fake_map = {
+        "OCc1ccccc1": {"O=Cc1ccccc1"},
+        "CCO": {"CC=O"},
+        "OCc1ccc(O)cc1": {"O=Cc1ccc(O)cc1"},
+    }
+    molframe = types.SimpleNamespace(map=fake_map)
+
+    gen, ckpt = _tiny_gate_checkpoint(tmp_path, rules)
+
+    n = len(fake_map)
+    serial = build_examples_bi(gen, molframe, n, top_k=50, max_pool=40, verbose=False)
+    parallel = build_examples_bi_parallel(
+        molframe, n, top_k=50, max_pool=40,
+        gen_ckpt=str(ckpt), workers=2,
+        prior_strength=float(getattr(gen, "prior_strength", 0.4)),
+        verbose=False,
+    )
+
+    assert len(serial) >= 1, "expected the tiny pool to yield at least one example"
+    assert len(parallel) == len(serial), (
+        f"parallel built {len(parallel)} examples, serial built {len(serial)}"
+    )
+    for a, b in zip(serial, parallel):
+        assert a.sub == b.sub, f"substrate order differs: {a.sub!r} vs {b.sub!r}"
+        assert a.smiles == b.smiles, f"smiles differ for {a.sub!r}"
+        assert torch.equal(a.hit_mask, b.hit_mask), f"hit_mask differs for {a.sub!r}"
+        assert torch.equal(a.rule_priors, b.rule_priors), f"rule_priors differ for {a.sub!r}"
+        assert torch.allclose(a.gen_scores, b.gen_scores), f"gen_scores differ for {a.sub!r}"
+        assert a.true_products == b.true_products, f"true_products differ for {a.sub!r}"

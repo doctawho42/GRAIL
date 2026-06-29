@@ -8,6 +8,8 @@ Selection is on VAL, never test.
 """
 from __future__ import annotations
 
+import multiprocessing as mp
+import os
 from pathlib import Path
 from typing import Dict, List, Optional, Sequence, Tuple
 
@@ -390,6 +392,63 @@ class _BiExample:
         self.true_products = true_products
 
 
+def _build_one_bi(
+    generator,
+    sub: str,
+    true_products: Sequence[str],
+    top_k: int,
+    max_pool: int,
+    prior: torch.Tensor,
+    num_rules: int,
+) -> Optional[_BiExample]:
+    """Build ONE bi-encoder example (or ``None`` if the substrate/pool is unusable).
+
+    This is the single per-substrate body shared by the serial loop and the parallel
+    worker, so both paths produce byte-identical examples for the same substrate.
+    """
+    sub_mol = Chem.MolFromSmiles(sub)
+    if sub_mol is None:
+        return None
+    sub_graph = from_rdmol(sub_mol)
+    if sub_graph is None:
+        return None
+    pool = build_pool(generator, sub, top_k=top_k, max_pool=max_pool)
+    if not pool:
+        return None
+    prod_graphs: List[Data] = []
+    rule_priors: List[float] = []
+    gen_scores: List[float] = []
+    smiles: List[str] = []
+    for cand_smiles, gen_score, rule_id in pool:
+        cand_mol = Chem.MolFromSmiles(cand_smiles)
+        if cand_mol is None:
+            continue
+        graph = from_rdmol(cand_mol)
+        if graph is None:
+            continue
+        prod_graphs.append(graph)
+        # Empirical per-rule prior log-odds; clamp the id defensively.
+        rid = int(rule_id) if 0 <= int(rule_id) < num_rules else 0
+        rule_priors.append(float(prior[rid]) if num_rules else 0.0)
+        gen_scores.append(float(gen_score))
+        smiles.append(cand_smiles)
+    if not prod_graphs:
+        return None
+    surviving_pool = [(s, sc, 0) for s, sc in zip(smiles, gen_scores)]
+    true_products = sorted(true_products)
+    hit_mask = label_hits(surviving_pool, true_products)
+    return _BiExample(
+        sub=sub,
+        sub_graph=sub_graph,
+        prod_graphs=prod_graphs,
+        rule_priors=torch.tensor(rule_priors, dtype=torch.float32),
+        gen_scores=torch.tensor(gen_scores, dtype=torch.float32),
+        hit_mask=hit_mask,
+        smiles=smiles,
+        true_products=true_products,
+    )
+
+
 def build_examples_bi(
     generator,
     molframe,
@@ -411,54 +470,124 @@ def build_examples_bi(
     for idx, sub in enumerate(substrates):
         if len(examples) >= n_substrates:
             break
-        sub_mol = Chem.MolFromSmiles(sub)
-        if sub_mol is None:
-            continue
-        sub_graph = from_rdmol(sub_mol)
-        if sub_graph is None:
-            continue
-        pool = build_pool(generator, sub, top_k=top_k, max_pool=max_pool)
-        if not pool:
-            continue
-        prod_graphs: List[Data] = []
-        rule_priors: List[float] = []
-        gen_scores: List[float] = []
-        smiles: List[str] = []
-        for cand_smiles, gen_score, rule_id in pool:
-            cand_mol = Chem.MolFromSmiles(cand_smiles)
-            if cand_mol is None:
-                continue
-            graph = from_rdmol(cand_mol)
-            if graph is None:
-                continue
-            prod_graphs.append(graph)
-            # Empirical per-rule prior log-odds; clamp the id defensively.
-            rid = int(rule_id) if 0 <= int(rule_id) < num_rules else 0
-            rule_priors.append(float(prior[rid]) if num_rules else 0.0)
-            gen_scores.append(float(gen_score))
-            smiles.append(cand_smiles)
-        if not prod_graphs:
-            continue
-        surviving_pool = [(s, sc, 0) for s, sc in zip(smiles, gen_scores)]
-        true_products = sorted(molframe.map[sub])
-        hit_mask = label_hits(surviving_pool, true_products)
-        examples.append(
-            _BiExample(
-                sub=sub,
-                sub_graph=sub_graph,
-                prod_graphs=prod_graphs,
-                rule_priors=torch.tensor(rule_priors, dtype=torch.float32),
-                gen_scores=torch.tensor(gen_scores, dtype=torch.float32),
-                hit_mask=hit_mask,
-                smiles=smiles,
-                true_products=true_products,
-            )
+        ex = _build_one_bi(
+            generator, sub, molframe.map[sub], top_k, max_pool, prior, num_rules
         )
+        if ex is None:
+            continue
+        examples.append(ex)
         if verbose and (len(examples) % 25 == 0):
             print(
                 f"  built {len(examples)} bi-examples (scanned {idx + 1} substrates)",
                 flush=True,
             )
+    return examples
+
+
+# --------------------------------------------------------------------------- #
+# Parallel (process-Pool) bi-example builder.
+#
+# Pool generation (RDKit rule application inside generate_scored_with_details) is the
+# single-threaded wall (~12-21 s/substrate). It parallelizes cleanly across CPU cores:
+# each worker loads its OWN generator from the checkpoint once (in the initializer), pins
+# torch to 1 thread to avoid oversubscription, and builds one _BiExample per call. The
+# example content is identical to the serial path -- only the throughput changes.
+#
+# START METHOD = "spawn" (NOT fork). Once the parent process has loaded a generator, its
+# PyTorch/RDKit native runtime is no longer fork-safe: a forked child CRASHES inside the
+# first GNN forward of generate_scored_with_details (the Pool then silently respawns it,
+# spinning forever). Spawn gives each worker a fresh interpreter that re-imports torch and
+# re-loads the generator cleanly. The trade-off is a per-worker startup of ~80 s (SMARTS
+# compile + generator load); this amortizes fully at the 1000+ substrate build scale.
+# --------------------------------------------------------------------------- #
+
+# Per-worker module global: the generator loaded once in the initializer and reused for
+# every substrate that worker handles (avoids re-paying the ~80 s SMARTS-compile per call).
+_BI_WORKER_GEN = None
+
+
+def _bi_worker_init(gen_ckpt_path: str, prior_strength: float) -> None:
+    """Pool initializer: pin torch to 1 thread, silence rdkit, load the generator once into
+    a module global. Each worker pays the generator-load cost exactly once.
+    """
+    # CRITICAL: without this, N workers each spawn many BLAS/torch threads and oversubscribe
+    # the box, making the parallel path SLOWER than serial.
+    torch.set_num_threads(1)
+    from rdkit import RDLogger
+
+    RDLogger.DisableLog("rdApp.*")
+
+    # Reuse the exact load logic of scripts/run_reranker_gate.py:_load_generator so the
+    # worker generator is identical to the serial one.
+    from ..config import GeneratorConfig
+    from ..model.grail import _read_checkpoint
+    from .factory import build_generator
+
+    state = _read_checkpoint(gen_ckpt_path)
+    if state is None or "arch" not in state or "rules" not in state:
+        raise RuntimeError(f"Generator checkpoint missing arch/rules: {gen_ckpt_path}")
+    generator = build_generator(GeneratorConfig(**state["arch"]), state["rules"])
+    generator.load_state_dict(state["state_dict"], strict=False)
+    generator.eval()
+    generator.prior_strength = float(prior_strength)
+    global _BI_WORKER_GEN
+    _BI_WORKER_GEN = generator
+
+
+def _bi_build_one(args: Tuple[str, Sequence[str], int, int]) -> Optional[_BiExample]:
+    """Pool worker fn: build ONE _BiExample using the worker-global generator.
+
+    ``args = (sub, true_products, top_k, max_pool)``. Returns the example or ``None`` when
+    the pool is empty / substrate unparseable. Identical content to the serial body.
+    """
+    sub, true_products, top_k, max_pool = args
+    gen = _BI_WORKER_GEN
+    if gen is None:  # pragma: no cover - initializer always runs first
+        raise RuntimeError("worker generator not initialized")
+    prior = gen.rule_prior_logits.detach().cpu()
+    num_rules = int(prior.numel())
+    return _build_one_bi(gen, sub, true_products, top_k, max_pool, prior, num_rules)
+
+
+def build_examples_bi_parallel(
+    molframe,
+    n_substrates: int,
+    top_k: int,
+    max_pool: int,
+    gen_ckpt: str,
+    workers: int,
+    prior_strength: float,
+    verbose: bool = True,
+) -> List[_BiExample]:
+    """Parallel analogue of ``build_examples_bi`` using a spawn process Pool.
+
+    Submits ALL loaded substrates (``molframe.map`` keys -- n_substrates + buffer) through
+    ``pool.imap`` (ORDERED, chunksize=4) so the collected examples are reproducible and
+    match the serial order. Stops once ``n_substrates`` non-None examples are collected.
+    """
+    workers = min(int(workers), os.cpu_count() or 1)
+    substrates = list(molframe.map.keys())
+    args = [(sub, list(molframe.map[sub]), top_k, max_pool) for sub in substrates]
+
+    examples: List[_BiExample] = []
+    ctx = mp.get_context("spawn")
+    pool = ctx.Pool(
+        processes=workers,
+        initializer=_bi_worker_init,
+        initargs=(gen_ckpt, prior_strength),
+    )
+    try:
+        for ex in pool.imap(_bi_build_one, args, chunksize=4):
+            if ex is None:
+                continue
+            examples.append(ex)
+            if verbose and (len(examples) % 25 == 0):
+                print(f"  built {len(examples)} bi-examples (parallel)", flush=True)
+            if len(examples) >= n_substrates:
+                break
+    finally:
+        pool.terminate()
+        pool.join()
     return examples
 
 
@@ -502,19 +631,42 @@ def load_or_build_examples_bi(
     top_k: int = 200,
     max_pool: int = 100,
     verbose: bool = True,
+    workers: int = 1,
+    gen_ckpt: Optional[str] = None,
 ) -> List[_BiExample]:
-    """Load assembled bi-encoder examples from ``cache_path`` if present, else build+cache."""
+    """Load assembled bi-encoder examples from ``cache_path`` if present, else build+cache.
+
+    When ``workers > 1`` and ``gen_ckpt`` is given, pool generation runs in a fork Pool
+    (each worker loads its own generator from ``gen_ckpt`` once). The parallel path produces
+    IDENTICAL example content to the serial path -- only the build throughput changes. The
+    passed ``generator``'s ``prior_strength`` is propagated to the workers so the candidate
+    pools match exactly. When ``workers <= 1`` (or no ``gen_ckpt``), the serial path runs.
+    """
     cache_path = Path(cache_path)
     if cache_path.exists():
         if verbose:
             print(f"  loading cached bi-examples from {cache_path}", flush=True)
         payload = torch.load(cache_path, map_location="cpu", weights_only=False)
         return _bi_examples_from_payload(payload)
-    if verbose:
-        print(f"  building bi-examples (no cache at {cache_path})", flush=True)
-    examples = build_examples_bi(
-        generator, molframe, n_substrates, top_k=top_k, max_pool=max_pool, verbose=verbose
-    )
+    if int(workers) > 1 and gen_ckpt:
+        if verbose:
+            print(
+                f"  building bi-examples in PARALLEL ({min(int(workers), os.cpu_count() or 1)} "
+                f"workers; no cache at {cache_path})",
+                flush=True,
+            )
+        examples = build_examples_bi_parallel(
+            molframe, n_substrates, top_k=top_k, max_pool=max_pool,
+            gen_ckpt=str(gen_ckpt), workers=int(workers),
+            prior_strength=float(getattr(generator, "prior_strength", 0.4)),
+            verbose=verbose,
+        )
+    else:
+        if verbose:
+            print(f"  building bi-examples (no cache at {cache_path})", flush=True)
+        examples = build_examples_bi(
+            generator, molframe, n_substrates, top_k=top_k, max_pool=max_pool, verbose=verbose
+        )
     cache_path.parent.mkdir(parents=True, exist_ok=True)
     tmp = cache_path.with_suffix(cache_path.suffix + ".tmp")
     torch.save(_bi_cache_payload(examples), tmp)

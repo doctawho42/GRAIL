@@ -13,6 +13,8 @@ from __future__ import annotations
 
 import argparse
 import json
+import multiprocessing as mp
+import os
 import re
 import sys
 import time
@@ -69,11 +71,14 @@ def _load_generator():
     return generator
 
 
-def _train_reranker(generator, seed: int = SEED, epochs: int = EPOCHS) -> BiEncoderReranker:
+def _train_reranker(
+    generator, seed: int = SEED, epochs: int = EPOCHS, workers: int = 1
+) -> BiEncoderReranker:
     """Load cached train-bi examples and fit the BiEncoderReranker.
 
     Uses the pre-built 800-substrate bi pool cache (train_bi_s800_seed0_k100.pt) so this
-    completes in seconds rather than minutes.
+    completes in seconds rather than minutes. When the cache is absent and ``workers > 1``,
+    the train pools are (re)built in parallel via the spawn Pool.
     """
     if not TRAIN_CACHE.exists():
         raise FileNotFoundError(
@@ -104,6 +109,7 @@ def _train_reranker(generator, seed: int = SEED, epochs: int = EPOCHS) -> BiEnco
     train_examples = load_or_build_examples_bi(
         generator, bundle.train, 800, TRAIN_CACHE,
         top_k=100, max_pool=100,  # match original cache params
+        workers=workers, gen_ckpt=str(GEN_CKPT),
     )
     print(f"[reranker_predict] {len(train_examples)} train examples loaded in {time.time()-t0:.1f}s", flush=True)
 
@@ -117,6 +123,110 @@ def _train_reranker(generator, seed: int = SEED, epochs: int = EPOCHS) -> BiEnco
     return reranker
 
 
+def _build_predict_material(generator, sub, top_k, max_pool, prior, num_rules):
+    """Build the per-substrate material needed to score one substrate: the substrate
+    single-graph, the candidate product single-graphs, the rule-prior + gen-score scalars,
+    and the candidate smiles. Returns ``None`` when the substrate/pool is unusable.
+
+    This is the single per-substrate body shared by the serial loop and the parallel worker,
+    so both produce identical predictions.
+    """
+    sub_mol = Chem.MolFromSmiles(sub)
+    if sub_mol is None:
+        return None
+    sub_graph = from_rdmol(sub_mol)
+    if sub_graph is None:
+        return None
+    pool = build_pool(generator, sub, top_k=top_k, max_pool=max_pool)
+    if not pool:
+        return None
+    prod_graphs = []
+    rule_priors_list = []
+    gen_scores_list = []
+    cand_smiles_list = []
+    for cand_smiles, gen_score, rule_id in pool:
+        cand_mol = Chem.MolFromSmiles(cand_smiles)
+        if cand_mol is None:
+            continue
+        graph = from_rdmol(cand_mol)
+        if graph is None:
+            continue
+        prod_graphs.append(graph)
+        rid = int(rule_id) if 0 <= int(rule_id) < num_rules else 0
+        rule_priors_list.append(float(prior[rid]) if num_rules else 0.0)
+        gen_scores_list.append(float(gen_score))
+        cand_smiles_list.append(cand_smiles)
+    if not prod_graphs:
+        return None
+    return sub_graph, prod_graphs, rule_priors_list, gen_scores_list, cand_smiles_list
+
+
+def _score_and_dedup(reranker, material, top_n) -> List[str]:
+    """Score one substrate's material with the reranker and return the top-N deduped,
+    standardized SMILES. Pure main-process work (no RDKit pool generation)."""
+    sub_graph, prod_graphs, rule_priors_list, gen_scores_list, cand_smiles_list = material
+    prod_batch = Batch.from_data_list(prod_graphs)
+    rule_prior_t = torch.tensor(rule_priors_list, dtype=torch.float32)
+    gen_score_t = torch.tensor(gen_scores_list, dtype=torch.float32)
+    with torch.no_grad():
+        scores = reranker(sub_graph, prod_batch, rule_prior_t, gen_score_t).cpu()
+    # Sort by score descending, tiebreak on pool order.
+    order = sorted(range(len(cand_smiles_list)), key=lambda i: (-float(scores[i]), i))
+    # Dedup by tautomer-InChIKey; standardize each emitted SMILES via the project's
+    # canonical normalization (_standardize_smiles_cached) before adding to output so
+    # that strict-InChIKey matching in downstream eval finds the right keys.
+    seen = set()
+    top_smiles: List[str] = []
+    for i in order:
+        smi = cand_smiles_list[i]
+        try:
+            smi_std = _standardize_smiles_cached(smi)
+        except Exception:
+            smi_std = smi
+        try:
+            key = _tautomer_inchikey(smi_std)
+        except Exception:
+            key = smi_std
+        if key in seen:
+            continue
+        seen.add(key)
+        top_smiles.append(smi_std)
+        if len(top_smiles) >= top_n:
+            break
+    return top_smiles
+
+
+# Per-worker generator global for the parallel predict pool-build path.
+_PREDICT_WORKER_GEN = None
+
+
+def _predict_worker_init(gen_ckpt_path: str, prior_strength: float) -> None:
+    """Pool initializer for prediction: pin torch threads, silence rdkit, load the
+    generator once per worker. Mirrors the gate path's _load_generator exactly."""
+    torch.set_num_threads(1)
+    RDLogger.DisableLog("rdApp.*")
+    state = _read_checkpoint(gen_ckpt_path)
+    if state is None or "arch" not in state or "rules" not in state:
+        raise RuntimeError(f"Generator checkpoint missing arch/rules: {gen_ckpt_path}")
+    generator = build_generator(GeneratorConfig(**state["arch"]), state["rules"])
+    generator.load_state_dict(state["state_dict"], strict=False)
+    generator.eval()
+    generator.prior_strength = float(prior_strength)
+    global _PREDICT_WORKER_GEN
+    _PREDICT_WORKER_GEN = generator
+
+
+def _predict_build_worker(args):
+    """Pool worker: build (and return) the per-substrate material for one substrate.
+    Returns ``(sub, material)`` where material is ``None`` for unusable substrates."""
+    sub, top_k, max_pool = args
+    gen = _PREDICT_WORKER_GEN
+    prior = gen.rule_prior_logits.detach().cpu()
+    num_rules = int(prior.numel())
+    material = _build_predict_material(gen, sub, top_k, max_pool, prior, num_rules)
+    return sub, material
+
+
 def reranker_predict(
     generator,
     reranker: BiEncoderReranker,
@@ -125,6 +235,8 @@ def reranker_predict(
     max_pool: int = MAX_POOL,
     top_n: int = TOP_N_OUT,
     verbose: bool = True,
+    workers: int = 1,
+    gen_ckpt: Optional[str] = None,
 ) -> Dict[str, List[str]]:
     """Score each substrate's candidate pool with the reranker and return top-N reranked SMILES.
 
@@ -134,91 +246,50 @@ def reranker_predict(
       3. BiEncoderReranker scores -> rank descending.
       4. Tautomer-InChIKey dedup -> top_n.
 
-    Returns {substrate_smiles: [top_n_smiles, ...]}.
+    When ``workers > 1`` and ``gen_ckpt`` is given, the slow pool-generation step runs in a
+    spawn Pool; the reranker scoring stays in the main process. Predictions are identical to
+    the serial path -- only throughput changes. Returns {substrate_smiles: [top_n_smiles, ...]}.
     """
-    device = next(reranker.parameters()).device
     reranker.eval()
     prior = generator.rule_prior_logits.detach().cpu()
     num_rules = int(prior.numel())
-
     results: Dict[str, List[str]] = {}
     t_start = time.time()
+
+    if int(workers) > 1 and gen_ckpt:
+        workers = min(int(workers), os.cpu_count() or 1)
+        if verbose:
+            print(f"  [predict] building pools in PARALLEL ({workers} workers)", flush=True)
+        ctx = mp.get_context("spawn")
+        args = [(sub, top_k, max_pool) for sub in substrates]
+        pool = ctx.Pool(
+            processes=workers,
+            initializer=_predict_worker_init,
+            initargs=(str(gen_ckpt), float(getattr(generator, "prior_strength", 0.4))),
+        )
+        try:
+            done = 0
+            for sub, material in pool.imap(_predict_build_worker, args, chunksize=4):
+                done += 1
+                if verbose and (done == 1 or done % 5 == 0 or done == len(substrates)):
+                    print(
+                        f"  [predict] {done}/{len(substrates)} ({time.time()-t_start:.0f}s elapsed)",
+                        flush=True,
+                    )
+                results[sub] = [] if material is None else _score_and_dedup(reranker, material, top_n)
+        finally:
+            pool.terminate()
+            pool.join()
+        return results
+
     for idx, sub in enumerate(substrates, 1):
         if verbose and (idx == 1 or idx % 5 == 0 or idx == len(substrates)):
             print(
                 f"  [predict] {idx}/{len(substrates)} ({time.time()-t_start:.0f}s elapsed)",
                 flush=True,
             )
-        sub_mol = Chem.MolFromSmiles(sub)
-        if sub_mol is None:
-            results[sub] = []
-            continue
-        sub_graph = from_rdmol(sub_mol)
-        if sub_graph is None:
-            results[sub] = []
-            continue
-
-        pool = build_pool(generator, sub, top_k=top_k, max_pool=max_pool)
-        if not pool:
-            results[sub] = []
-            continue
-
-        prod_graphs = []
-        rule_priors_list = []
-        gen_scores_list = []
-        cand_smiles_list = []
-
-        for cand_smiles, gen_score, rule_id in pool:
-            cand_mol = Chem.MolFromSmiles(cand_smiles)
-            if cand_mol is None:
-                continue
-            graph = from_rdmol(cand_mol)
-            if graph is None:
-                continue
-            prod_graphs.append(graph)
-            rid = int(rule_id) if 0 <= int(rule_id) < num_rules else 0
-            rule_priors_list.append(float(prior[rid]) if num_rules else 0.0)
-            gen_scores_list.append(float(gen_score))
-            cand_smiles_list.append(cand_smiles)
-
-        if not prod_graphs:
-            results[sub] = []
-            continue
-
-        prod_batch = Batch.from_data_list(prod_graphs)
-        rule_prior_t = torch.tensor(rule_priors_list, dtype=torch.float32)
-        gen_score_t = torch.tensor(gen_scores_list, dtype=torch.float32)
-
-        with torch.no_grad():
-            scores = reranker(sub_graph, prod_batch, rule_prior_t, gen_score_t).cpu()
-
-        # Sort by score descending, tiebreak on pool order.
-        order = sorted(range(len(cand_smiles_list)), key=lambda i: (-float(scores[i]), i))
-
-        # Dedup by tautomer-InChIKey; standardize each emitted SMILES via the project's
-        # canonical normalization (_standardize_smiles_cached) before adding to output so
-        # that strict-InChIKey matching in downstream eval finds the right keys.
-        # Tautomer-IK dedup is re-keyed on the *standardized* form to remain consistent.
-        seen = set()
-        top_smiles = []
-        for i in order:
-            smi = cand_smiles_list[i]
-            try:
-                smi_std = _standardize_smiles_cached(smi)
-            except Exception:
-                smi_std = smi
-            try:
-                key = _tautomer_inchikey(smi_std)
-            except Exception:
-                key = smi_std
-            if key in seen:
-                continue
-            seen.add(key)
-            top_smiles.append(smi_std)
-            if len(top_smiles) >= top_n:
-                break
-
-        results[sub] = top_smiles
+        material = _build_predict_material(generator, sub, top_k, max_pool, prior, num_rules)
+        results[sub] = [] if material is None else _score_and_dedup(reranker, material, top_n)
     return results
 
 
@@ -269,6 +340,11 @@ def main() -> None:
     ap.add_argument("--max-pool", type=int, default=MAX_POOL)
     ap.add_argument("--top-n", type=int, default=TOP_N_OUT)
     ap.add_argument("--threads", type=int, default=6)
+    ap.add_argument(
+        "--workers", type=int, default=1,
+        help="Parallel pool-generation workers (spawn Pool) for both the train-pool build "
+             "(when the cache is cold) and the prediction loop. 1 = serial.",
+    )
     args = ap.parse_args()
 
     torch.set_num_threads(args.threads)
@@ -278,7 +354,7 @@ def main() -> None:
     generator = _load_generator()
     print(f"[reranker_predict] generator loaded; num_rules={generator.num_rules}", flush=True)
 
-    reranker = _train_reranker(generator, seed=args.seed, epochs=args.epochs)
+    reranker = _train_reranker(generator, seed=args.seed, epochs=args.epochs, workers=args.workers)
 
     if args.substrates == "gloryx":
         print("[reranker_predict] loading GLORYx parents ...", flush=True)
@@ -295,6 +371,7 @@ def main() -> None:
     preds = reranker_predict(
         generator, reranker, substrates,
         top_k=args.top_k, max_pool=args.max_pool, top_n=args.top_n,
+        workers=args.workers, gen_ckpt=str(GEN_CKPT),
     )
 
     out_path = Path(args.out)

@@ -88,6 +88,11 @@ def main() -> None:
         "--no-gen-score", action="store_true",
         help="Ablation: zero out the generator-score scalar feature in BiEncoderReranker.",
     )
+    parser.add_argument(
+        "--workers", type=int, default=1,
+        help="Parallel pool-generation workers (spawn Pool). 1 = serial. >1 reloads the "
+             "generator per worker from the checkpoint; only valid for --arch bi.",
+    )
     args = parser.parse_args()
 
     t_start = time.time()
@@ -135,12 +140,16 @@ def main() -> None:
 
     build_train = load_or_build_examples_bi if args.arch == "bi" else load_or_build_examples
     build_val = build_train
+    # Only the bi builder accepts the parallel kwargs; the legacy pair builder is serial.
+    par_kwargs = {"workers": args.workers, "gen_ckpt": str(GEN_CKPT)} if args.arch == "bi" else {}
+    if args.workers > 1 and args.arch != "bi":
+        print("[gate] --workers>1 is only supported for --arch bi; running serial.", flush=True)
 
     print("[gate] assembling TRAIN pools (cached) ...", flush=True)
     t0 = time.time()
     train_examples = build_train(
         generator, bundle.train, args.train_substrates, train_cache,
-        top_k=args.top_k, max_pool=args.max_pool,
+        top_k=args.top_k, max_pool=args.max_pool, **par_kwargs,
     )
     print(f"[gate] train examples={len(train_examples)} in {time.time()-t0:.1f}s", flush=True)
 
@@ -148,7 +157,7 @@ def main() -> None:
     t0 = time.time()
     val_examples = build_val(
         generator, bundle.val, args.val_substrates, val_cache,
-        top_k=args.top_k, max_pool=args.max_pool,
+        top_k=args.top_k, max_pool=args.max_pool, **par_kwargs,
     )
     print(f"[gate] val examples={len(val_examples)} in {time.time()-t0:.1f}s", flush=True)
 
