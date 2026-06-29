@@ -16,9 +16,9 @@ from rdkit import Chem
 from torch_geometric.data import Batch, Data
 
 from ..metrics import _tautomer_inchikey
-from ..model.reranker import MinimalReranker
+from ..model.reranker import BiEncoderReranker, MinimalReranker
 from ..utils.seed import seed_everything
-from ..utils.transform import from_pair
+from ..utils.transform import from_pair, from_rdmol
 
 PoolEntry = Tuple[str, float, int]  # (smiles, gen_score, rule_id)
 
@@ -339,6 +339,275 @@ def evaluate(
         # parse-survival steps preserve it), so the candidate list as-is IS that ranking.
         gen_ranked = list(ex.smiles)
         # oracle ranking: hits first (best achievable on this pool), generator order within.
+        ora_order = sorted(range(len(ex.smiles)), key=lambda i: (0 if truth[i] else 1, i))
+        ora_ranked = [ex.smiles[i] for i in ora_order]
+
+        for k in ks:
+            rer_acc[k] += _recall_at_k(rer_ranked, true_products, k)
+            gen_acc[k] += _recall_at_k(gen_ranked, true_products, k)
+            ora_acc[k] += _recall_at_k(ora_ranked, true_products, k)
+        pool_sizes += len(ex.smiles)
+        n += 1
+
+    out: Dict[str, float] = {"n_substrates": float(n), "mean_pool_size": pool_sizes / max(n, 1)}
+    for k in ks:
+        out[f"reranker_recall@{k}"] = rer_acc[k] / max(n, 1)
+        out[f"generator_recall@{k}"] = gen_acc[k] / max(n, 1)
+        out[f"oracle_recall@{k}"] = ora_acc[k] / max(n, 1)
+    return out
+
+
+# =========================================================================== #
+# Stage 2a (FAIR): no-MCS bi-encoder example path + trainer + eval.
+#
+# Same listwise InfoNCE loss, same recall@k eval as the pair path above. What
+# changes: examples store SINGLE graphs (from_rdmol, NO from_pair / rdFMCS) for
+# the substrate and each product, plus the empirical rule-prior log-odds scalar
+# per candidate (generator.rule_prior_logits[rule_id]) -- NOT a learned rule
+# embedding. The example build is ~seconds/substrate instead of the MCS path's
+# ~23 s/example.
+# =========================================================================== #
+
+
+class _BiExample:
+    """One substrate's cached bi-encoder material: the substrate single-graph, the per-
+    candidate product single-graphs, the rule-prior scalar + gen_score per candidate, the
+    hit mask, the candidate smiles, and ALL annotated true products (recall denominator)."""
+
+    __slots__ = (
+        "sub", "sub_graph", "prod_graphs", "rule_priors", "gen_scores",
+        "hit_mask", "smiles", "true_products",
+    )
+
+    def __init__(self, sub, sub_graph, prod_graphs, rule_priors, gen_scores, hit_mask, smiles, true_products):
+        self.sub = sub
+        self.sub_graph = sub_graph
+        self.prod_graphs = prod_graphs
+        self.rule_priors = rule_priors
+        self.gen_scores = gen_scores
+        self.hit_mask = hit_mask
+        self.smiles = smiles
+        self.true_products = true_products
+
+
+def build_examples_bi(
+    generator,
+    molframe,
+    n_substrates: int,
+    top_k: int,
+    max_pool: int,
+    verbose: bool = True,
+) -> List[_BiExample]:
+    """Assemble no-MCS bi-encoder examples for up to ``n_substrates`` substrates.
+
+    For each substrate: ``build_pool(compute_sites=False)`` (no MCS), then ``from_rdmol`` the
+    substrate ONCE and ``from_rdmol`` each candidate (single graphs only, no merged pair
+    graph). The rule signal is the scalar ``rule_prior = float(generator.rule_prior_logits[rule_id])``.
+    """
+    prior = generator.rule_prior_logits.detach().cpu()
+    num_rules = int(prior.numel())
+    substrates = list(molframe.map.keys())
+    examples: List[_BiExample] = []
+    for idx, sub in enumerate(substrates):
+        if len(examples) >= n_substrates:
+            break
+        sub_mol = Chem.MolFromSmiles(sub)
+        if sub_mol is None:
+            continue
+        sub_graph = from_rdmol(sub_mol)
+        if sub_graph is None:
+            continue
+        pool = build_pool(generator, sub, top_k=top_k, max_pool=max_pool)
+        if not pool:
+            continue
+        prod_graphs: List[Data] = []
+        rule_priors: List[float] = []
+        gen_scores: List[float] = []
+        smiles: List[str] = []
+        for cand_smiles, gen_score, rule_id in pool:
+            cand_mol = Chem.MolFromSmiles(cand_smiles)
+            if cand_mol is None:
+                continue
+            graph = from_rdmol(cand_mol)
+            if graph is None:
+                continue
+            prod_graphs.append(graph)
+            # Empirical per-rule prior log-odds; clamp the id defensively.
+            rid = int(rule_id) if 0 <= int(rule_id) < num_rules else 0
+            rule_priors.append(float(prior[rid]) if num_rules else 0.0)
+            gen_scores.append(float(gen_score))
+            smiles.append(cand_smiles)
+        if not prod_graphs:
+            continue
+        surviving_pool = [(s, sc, 0) for s, sc in zip(smiles, gen_scores)]
+        true_products = sorted(molframe.map[sub])
+        hit_mask = label_hits(surviving_pool, true_products)
+        examples.append(
+            _BiExample(
+                sub=sub,
+                sub_graph=sub_graph,
+                prod_graphs=prod_graphs,
+                rule_priors=torch.tensor(rule_priors, dtype=torch.float32),
+                gen_scores=torch.tensor(gen_scores, dtype=torch.float32),
+                hit_mask=hit_mask,
+                smiles=smiles,
+                true_products=true_products,
+            )
+        )
+        if verbose and (len(examples) % 25 == 0):
+            print(
+                f"  built {len(examples)} bi-examples (scanned {idx + 1} substrates)",
+                flush=True,
+            )
+    return examples
+
+
+def _bi_cache_payload(examples: List[_BiExample]) -> List[dict]:
+    return [
+        {
+            "sub": ex.sub,
+            "sub_graph": ex.sub_graph,
+            "prod_graphs": ex.prod_graphs,
+            "rule_priors": ex.rule_priors,
+            "gen_scores": ex.gen_scores,
+            "hit_mask": ex.hit_mask,
+            "smiles": ex.smiles,
+            "true_products": ex.true_products,
+        }
+        for ex in examples
+    ]
+
+
+def _bi_examples_from_payload(payload: List[dict]) -> List[_BiExample]:
+    return [
+        _BiExample(
+            sub=row["sub"],
+            sub_graph=row["sub_graph"],
+            prod_graphs=row["prod_graphs"],
+            rule_priors=row["rule_priors"],
+            gen_scores=row["gen_scores"],
+            hit_mask=row["hit_mask"],
+            smiles=row["smiles"],
+            true_products=row["true_products"],
+        )
+        for row in payload
+    ]
+
+
+def load_or_build_examples_bi(
+    generator,
+    molframe,
+    n_substrates: int,
+    cache_path: Path,
+    top_k: int = 200,
+    max_pool: int = 100,
+    verbose: bool = True,
+) -> List[_BiExample]:
+    """Load assembled bi-encoder examples from ``cache_path`` if present, else build+cache."""
+    cache_path = Path(cache_path)
+    if cache_path.exists():
+        if verbose:
+            print(f"  loading cached bi-examples from {cache_path}", flush=True)
+        payload = torch.load(cache_path, map_location="cpu", weights_only=False)
+        return _bi_examples_from_payload(payload)
+    if verbose:
+        print(f"  building bi-examples (no cache at {cache_path})", flush=True)
+    examples = build_examples_bi(
+        generator, molframe, n_substrates, top_k=top_k, max_pool=max_pool, verbose=verbose
+    )
+    cache_path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = cache_path.with_suffix(cache_path.suffix + ".tmp")
+    torch.save(_bi_cache_payload(examples), tmp)
+    tmp.replace(cache_path)
+    if verbose:
+        print(f"  cached {len(examples)} bi-examples -> {cache_path}", flush=True)
+    return examples
+
+
+class BiRerankerTrainer:
+    """Trains a ``BiEncoderReranker`` with the same per-substrate listwise InfoNCE objective
+    as ``RerankerTrainer`` (the ONLY loss), averaged over substrates with >=1 pool hit."""
+
+    def __init__(
+        self,
+        reranker: BiEncoderReranker,
+        lr: float = 1e-3,
+        seed: int = 0,
+        device: Optional[torch.device] = None,
+    ) -> None:
+        self.seed = int(seed)
+        seed_everything(self.seed)
+        self.device = device or torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.reranker = reranker.to(self.device)
+        self.optimizer = torch.optim.Adam(self.reranker.parameters(), lr=lr)
+
+    def fit(
+        self,
+        examples: List[_BiExample],
+        epochs: int = 15,
+        verbose: bool = True,
+    ) -> BiEncoderReranker:
+        trainable = [ex for ex in examples if bool(ex.hit_mask.any())]
+        if verbose:
+            print(
+                f"  training (bi) on {len(trainable)}/{len(examples)} substrates with >=1 pool hit",
+                flush=True,
+            )
+        for epoch in range(epochs):
+            seed_everything(self.seed + epoch)
+            order = torch.randperm(len(trainable)).tolist()
+            self.reranker.train()
+            total = 0.0
+            count = 0
+            for i in order:
+                ex = trainable[i]
+                sub_graph = ex.sub_graph.clone()
+                prod_batch = Batch.from_data_list([g.clone() for g in ex.prod_graphs])
+                self.optimizer.zero_grad()
+                logits = self.reranker(
+                    sub_graph, prod_batch,
+                    ex.rule_priors.to(self.device), ex.gen_scores.to(self.device),
+                )
+                loss = listwise_infonce(logits, ex.hit_mask.to(self.device))
+                loss.backward()
+                self.optimizer.step()
+                total += float(loss.item())
+                count += 1
+            if verbose:
+                avg = total / max(count, 1)
+                print(f"  epoch {epoch + 1}/{epochs} listwise_infonce={avg:.4f}", flush=True)
+        return self.reranker
+
+
+@torch.no_grad()
+def evaluate_bi(
+    reranker: BiEncoderReranker,
+    examples: List[_BiExample],
+    ks: Sequence[int] = (5, 10, 12, 15),
+    device: Optional[torch.device] = None,
+) -> Dict[str, float]:
+    """Bi-encoder analogue of ``evaluate``: reranker vs generator-alone vs oracle recall@k
+    (tautomer-InChIKey) on the SAME pools."""
+    device = device or next(reranker.parameters()).device
+    reranker.eval()
+    rer_acc = {k: 0.0 for k in ks}
+    gen_acc = {k: 0.0 for k in ks}
+    ora_acc = {k: 0.0 for k in ks}
+    pool_sizes = 0
+    n = 0
+    for ex in examples:
+        truth = ex.hit_mask
+        true_products = ex.true_products
+        sub_graph = ex.sub_graph.clone()
+        prod_batch = Batch.from_data_list([g.clone() for g in ex.prod_graphs])
+        scores = reranker(
+            sub_graph, prod_batch,
+            ex.rule_priors.to(device), ex.gen_scores.to(device),
+        ).detach().cpu()
+
+        rer_order = sorted(range(len(ex.smiles)), key=lambda i: (-float(scores[i]), i))
+        rer_ranked = [ex.smiles[i] for i in rer_order]
+        gen_ranked = list(ex.smiles)
         ora_order = sorted(range(len(ex.smiles)), key=lambda i: (0 if truth[i] else 1, i))
         ora_ranked = [ex.smiles[i] for i in ora_order]
 

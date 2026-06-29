@@ -148,3 +148,95 @@ def test_listwise_infonce_zero_hits_is_zero():
     hit_mask = torch.tensor([False, False, False])
     loss = listwise_infonce(logits, hit_mask)
     assert float(loss.item()) == 0.0
+
+
+# --------------------------------------------------------------------------- #
+# Stage 2a (fair): no-MCS BiEncoderReranker (siamese single-graph + rule-prior
+# scalar feature). No nn.Embedding over rules, no from_pair/rdFMCS in the path.
+# --------------------------------------------------------------------------- #
+
+from grail_metabolism.model.reranker import BiEncoderReranker  # noqa: E402
+from grail_metabolism.utils.transform import SINGLE_NODE_DIM, from_rdmol  # noqa: E402
+
+
+def _single_graph(smiles):
+    mol = Chem.MolFromSmiles(smiles)
+    graph = from_rdmol(mol)
+    assert graph is not None
+    return graph
+
+
+def test_bi_encoder_forward_shape_and_differentiable():
+    """forward(sub_graph, prod_batch, rule_prior, gen_score) -> (N,) logits; grads flow.
+
+    The substrate is encoded ONCE and broadcast across the N candidates; the rule signal
+    is the scalar ``rule_prior`` feature (no nn.Embedding).
+    """
+    model = BiEncoderReranker(in_channels=SINGLE_NODE_DIM)
+    # No rule embedding anywhere in this architecture.
+    assert not any(
+        isinstance(m, torch.nn.Embedding) for m in model.modules()
+    ), "bi-encoder must not contain an nn.Embedding over rules"
+
+    cands = ["O=Cc1ccccc1", "OCc1ccccc1", "Oc1ccccc1"]
+    sub_graph = _single_graph("OCc1ccccc1")
+    prod_batch = Batch.from_data_list([_single_graph(c) for c in cands])
+    rule_prior = torch.tensor([0.5, -1.2, 0.0], dtype=torch.float32)
+    gen_score = torch.tensor([0.9, 0.4, 0.3], dtype=torch.float32)
+
+    logits = model(sub_graph, prod_batch, rule_prior, gen_score)
+    assert logits.shape == (len(cands),), f"expected ({len(cands)},), got {logits.shape}"
+
+    loss = logits.sum()
+    loss.backward()
+    grads = [p.grad for p in model.parameters() if p.grad is not None]
+    assert grads, "no gradients populated -- model is not differentiable end to end"
+    assert any(torch.any(g != 0) for g in grads), "all gradients are zero"
+
+
+def test_bi_encoder_path_has_no_mcs():
+    """The bi-encoder example path must NOT import/use from_pair or rdFMCS. Guards that we
+    removed the MCS confound: build_examples_bi uses from_rdmol only."""
+    import inspect
+
+    import grail_metabolism.workflows.reranker as rr
+
+    src = inspect.getsource(rr.build_examples_bi)
+    assert "from_pair" not in src, "bi path must not call from_pair (MCS bottleneck)"
+    assert "rdFMCS" not in src and "FindMCS" not in src, "bi path must not use rdFMCS"
+    assert "from_rdmol" in src, "bi path should featurize single graphs via from_rdmol"
+
+
+def test_bi_encoder_infonce_flips_ranking():
+    """On a 3-candidate pool with 1 hit, Adam steps on JUST that example raise the hit's
+    logit above the non-hits (same loss as pair path, bi-encoder model)."""
+    torch.manual_seed(0)
+    model = BiEncoderReranker(in_channels=SINGLE_NODE_DIM)
+    cands = ["O=Cc1ccccc1", "Oc1ccccc1", "OCc1ccccc1"]
+    sub_graph = _single_graph("OCc1ccccc1")
+    prod_batch = Batch.from_data_list([_single_graph(c) for c in cands])
+    rule_prior = torch.tensor([0.1, 0.1, 0.1], dtype=torch.float32)
+    gen_score = torch.tensor([0.5, 0.5, 0.5], dtype=torch.float32)
+    hit_mask = torch.tensor([False, False, True])
+
+    model.train()
+    opt = torch.optim.Adam(model.parameters(), lr=1e-2)
+
+    with torch.no_grad():
+        first = listwise_infonce(model(sub_graph, prod_batch, rule_prior, gen_score), hit_mask).item()
+    for _ in range(80):
+        opt.zero_grad()
+        logits = model(sub_graph, prod_batch, rule_prior, gen_score)
+        loss = listwise_infonce(logits, hit_mask)
+        loss.backward()
+        opt.step()
+    with torch.no_grad():
+        last = listwise_infonce(model(sub_graph, prod_batch, rule_prior, gen_score), hit_mask).item()
+        final_logits = model(sub_graph, prod_batch, rule_prior, gen_score)
+
+    assert last < first, f"loss did not decrease ({first:.4f} -> {last:.4f})"
+    hit_logit = final_logits[hit_mask].max().item()
+    non_hit_logit = final_logits[~hit_mask].max().item()
+    assert hit_logit > non_hit_logit, (
+        f"hit logit {hit_logit:.3f} did not rise above non-hits {non_hit_logit:.3f}"
+    )

@@ -35,19 +35,24 @@ RDLogger.DisableLog("rdApp.*")
 
 from grail_metabolism.config import DatasetConfig, GeneratorConfig
 from grail_metabolism.model.grail import _read_checkpoint
-from grail_metabolism.model.reranker import MinimalReranker
+from grail_metabolism.model.reranker import BiEncoderReranker, MinimalReranker
 from grail_metabolism.utils.seed import seed_everything
+from grail_metabolism.utils.transform import SINGLE_NODE_DIM
 from grail_metabolism.workflows.data import load_dataset_bundle
 from grail_metabolism.workflows.factory import build_generator
 from grail_metabolism.workflows.reranker import (
+    BiRerankerTrainer,
     RerankerTrainer,
     evaluate,
+    evaluate_bi,
     load_or_build_examples,
+    load_or_build_examples_bi,
 )
 
 GEN_CKPT = ROOT / "artifacts" / "full5000_priors" / "checkpoints" / "generator.pt"
 CACHE_DIR = ROOT / "artifacts" / "reranker_gate_cache"
 RESULTS_PATH = ROOT / "results" / "reranker_gate.json"
+RESULTS_PATH_BI = ROOT / "results" / "reranker_gate_bi.json"
 KS = (5, 10, 12, 15)
 
 
@@ -70,11 +75,16 @@ def main() -> None:
     parser.add_argument("--top-k", type=int, default=200)
     parser.add_argument("--max-pool", type=int, default=100)
     parser.add_argument("--rule-embed-dim", type=int, default=32)
+    parser.add_argument(
+        "--arch", choices=["pair", "bi"], default="bi",
+        help="pair = MCS pair-graph + learned rule embedding (legacy); "
+             "bi = no-MCS siamese single-graph + rule-prior scalar feature (fair).",
+    )
     args = parser.parse_args()
 
     t_start = time.time()
     seed_everything(args.seed)
-    print(f"[gate] seed={args.seed} top_k={args.top_k} max_pool={args.max_pool}", flush=True)
+    print(f"[gate] arch={args.arch} seed={args.seed} top_k={args.top_k} max_pool={args.max_pool}", flush=True)
 
     print("[gate] loading trained generator ...", flush=True)
     t0 = time.time()
@@ -109,12 +119,18 @@ def main() -> None:
     )
 
     CACHE_DIR.mkdir(parents=True, exist_ok=True)
-    train_cache = CACHE_DIR / f"train_s{args.train_substrates}_seed{args.seed}_k{args.top_k}.pt"
-    val_cache = CACHE_DIR / f"val_s{args.val_substrates}_seed{args.seed}_k{args.top_k}.pt"
+    # Bi-encoder caches are NOT pair-graph compatible -- tag the arch into the filename so
+    # the two paths never read each other's .pt.
+    tag = f"_{args.arch}"
+    train_cache = CACHE_DIR / f"train{tag}_s{args.train_substrates}_seed{args.seed}_k{args.top_k}.pt"
+    val_cache = CACHE_DIR / f"val{tag}_s{args.val_substrates}_seed{args.seed}_k{args.top_k}.pt"
+
+    build_train = load_or_build_examples_bi if args.arch == "bi" else load_or_build_examples
+    build_val = build_train
 
     print("[gate] assembling TRAIN pools (cached) ...", flush=True)
     t0 = time.time()
-    train_examples = load_or_build_examples(
+    train_examples = build_train(
         generator, bundle.train, args.train_substrates, train_cache,
         top_k=args.top_k, max_pool=args.max_pool,
     )
@@ -122,7 +138,7 @@ def main() -> None:
 
     print("[gate] assembling VAL pools (cached) ...", flush=True)
     t0 = time.time()
-    val_examples = load_or_build_examples(
+    val_examples = build_val(
         generator, bundle.val, args.val_substrates, val_cache,
         top_k=args.top_k, max_pool=args.max_pool,
     )
@@ -133,15 +149,22 @@ def main() -> None:
     print(f"[gate] train substrates with >=1 pool hit: {train_hits}/{len(train_examples)}", flush=True)
     print(f"[gate] val substrates with >=1 pool hit:   {val_hits}/{len(val_examples)}", flush=True)
 
-    print("[gate] training reranker (listwise InfoNCE) ...", flush=True)
+    print(f"[gate] training reranker (listwise InfoNCE, arch={args.arch}) ...", flush=True)
     t0 = time.time()
-    reranker = MinimalReranker(n_rules=generator.num_rules, rule_embed_dim=args.rule_embed_dim)
-    trainer = RerankerTrainer(reranker, lr=1e-3, seed=args.seed)
-    trainer.fit(train_examples, epochs=args.epochs)
+    if args.arch == "bi":
+        reranker = BiEncoderReranker(in_channels=SINGLE_NODE_DIM)
+        trainer = BiRerankerTrainer(reranker, lr=1e-3, seed=args.seed)
+        trainer.fit(train_examples, epochs=args.epochs)
+        eval_fn = evaluate_bi
+    else:
+        reranker = MinimalReranker(n_rules=generator.num_rules, rule_embed_dim=args.rule_embed_dim)
+        trainer = RerankerTrainer(reranker, lr=1e-3, seed=args.seed)
+        trainer.fit(train_examples, epochs=args.epochs)
+        eval_fn = evaluate
     print(f"[gate] training done in {time.time()-t0:.1f}s", flush=True)
 
     print("[gate] evaluating on VAL ...", flush=True)
-    metrics = evaluate(reranker, val_examples, ks=KS, device=trainer.device)
+    metrics = eval_fn(reranker, val_examples, ks=KS, device=trainer.device)
 
     reranker_r15 = metrics["reranker_recall@15"]
     generator_r15 = metrics["generator_recall@15"]
@@ -157,6 +180,7 @@ def main() -> None:
 
     result = {
         "seed": args.seed,
+        "arch": args.arch,
         "config": {
             "train_substrates_requested": args.train_substrates,
             "val_substrates_requested": args.val_substrates,
@@ -182,8 +206,10 @@ def main() -> None:
         "wall_seconds": time.time() - t_start,
     }
 
-    RESULTS_PATH.parent.mkdir(parents=True, exist_ok=True)
-    with open(RESULTS_PATH, "w") as handle:
+    # Write the bi run to its own file so the legacy pair-run verdict is preserved.
+    results_path = RESULTS_PATH_BI if args.arch == "bi" else RESULTS_PATH
+    results_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(results_path, "w") as handle:
         json.dump(result, handle, indent=2)
 
     print("\n========== STAGE 2a RERANKER GATE ==========", flush=True)
@@ -202,7 +228,7 @@ def main() -> None:
         f"oracle@15={oracle_r15:.4f}",
         flush=True,
     )
-    print(f"  results -> {RESULTS_PATH}", flush=True)
+    print(f"  results -> {results_path}", flush=True)
     print(f"  total wall: {result['wall_seconds']:.1f}s", flush=True)
 
 

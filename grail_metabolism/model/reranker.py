@@ -14,10 +14,10 @@ from typing import Sequence
 
 import torch
 from torch import nn
-from torch_geometric.data import Batch
+from torch_geometric.data import Batch, Data
 
 from ._graph import GraphEncoder
-from ..utils.transform import EDGE_DIM, PAIR_NODE_DIM
+from ..utils.transform import EDGE_DIM, PAIR_NODE_DIM, SINGLE_NODE_DIM
 
 
 class MinimalReranker(nn.Module):
@@ -64,4 +64,93 @@ class MinimalReranker(nn.Module):
         rule_id = rule_id.to(graph_embed.device).long()
         rule_embed = self.rule_embedding(rule_id)  # (N, rule_embed_dim)
         features = torch.cat([graph_embed, rule_embed], dim=-1)
+        return self.head(features).squeeze(-1)
+
+
+class BiEncoderReranker(nn.Module):
+    """Stage 2a (fair): a NO-MCS siamese bi-encoder reranker.
+
+    The MCS pair-graph reranker had two confounds: (1) it ran ``rdFMCS`` per candidate
+    (slow -> couldn't train at scale) and (2) it carried a learned per-rule
+    ``nn.Embedding`` over 7581 rules that can't train on 120 substrates. This model
+    removes both:
+
+    * A SHARED ``GraphEncoder`` over the 16-dim SINGLE graph (``utils.transform.from_rdmol``)
+      encodes the substrate and each product independently -- no merged MCS pair graph,
+      no ``from_pair``, no ``rdFMCS`` (so the example build is ~seconds, not 23 s/example).
+    * The rule signal is the empirical per-rule **prior log-odds scalar** feature
+      (``generator.rule_prior_logits[rule_id]``), passed in as ``rule_prior``. There is NO
+      ``nn.Embedding`` over rules anywhere in this module.
+
+    ``forward`` encodes the substrate ONCE and broadcasts it across the N candidates, then
+    builds the interaction features ``[sub, prod, sub*prod, |sub-prod|]``, concatenates the
+    two scalar features ``rule_prior`` and ``gen_score``, and an MLP maps to one logit per
+    candidate. Trained with the same per-substrate listwise InfoNCE objective as the pair
+    reranker (``workflows.reranker.listwise_infonce``).
+    """
+
+    def __init__(
+        self,
+        in_channels: int = SINGLE_NODE_DIM,
+        edge_dim: int = EDGE_DIM,
+        hidden_dims: Sequence[int] = (64, 128),
+        out_dim: int = 128,
+        dropout: float = 0.1,
+    ) -> None:
+        super().__init__()
+        self.out_dim = int(out_dim)
+        # Siamese: ONE encoder shared between substrate and products (single graphs).
+        self.encoder = GraphEncoder(
+            in_channels=in_channels,
+            edge_dim=edge_dim,
+            hidden_dims=list(hidden_dims),
+            out_dim=out_dim,
+            conv_kind="gatv2",
+            dropout=dropout,
+        )
+        # Interaction features [sub, prod, sub*prod, |sub-prod|] = 4*out_dim, plus the two
+        # scalar features (rule_prior, gen_score). NO rule embedding.
+        head_in = 4 * self.out_dim + 2
+        self.head = nn.Sequential(
+            nn.Linear(head_in, 128),
+            nn.ReLU(inplace=True),
+            nn.Dropout(dropout),
+            nn.Linear(128, 64),
+            nn.ReLU(inplace=True),
+            nn.Linear(64, 1),
+        )
+
+    def forward(
+        self,
+        sub_graph: Data,
+        prod_batch: Batch,
+        rule_prior: torch.Tensor,
+        gen_score: torch.Tensor,
+    ) -> torch.Tensor:
+        """One scalar logit per candidate.
+
+        ``sub_graph`` is a single ``from_rdmol`` graph for the (shared) substrate;
+        ``prod_batch`` is a ``Batch`` of N ``from_rdmol`` product graphs; ``rule_prior`` and
+        ``gen_score`` are length-N scalar feature tensors. The substrate is encoded once and
+        broadcast over the N products.
+
+        To keep ``BatchNorm1d`` valid (it errors on a 1-row batch in train mode), the
+        substrate is encoded inside the SAME batch as the products and split back out.
+        """
+        device = next(self.parameters()).device
+        # Encode substrate + products together so BatchNorm sees >1 graph even when the
+        # caller scores a single product. The substrate is graph 0 of the joint batch.
+        joint = Batch.from_data_list([sub_graph] + prod_batch.to_data_list()).to(device)
+        embed = self.encoder(joint)  # (N+1, out_dim)
+        sub_emb = embed[0:1]  # (1, out_dim)
+        prod_emb = embed[1:]  # (N, out_dim)
+        n = prod_emb.size(0)
+        sub_b = sub_emb.expand(n, -1)  # broadcast the shared substrate over candidates
+
+        interaction = torch.cat(
+            [sub_b, prod_emb, sub_b * prod_emb, (sub_b - prod_emb).abs()], dim=-1
+        )  # (N, 4*out_dim)
+        rule_prior = rule_prior.to(device).float().view(n, 1)
+        gen_score = gen_score.to(device).float().view(n, 1)
+        features = torch.cat([interaction, rule_prior, gen_score], dim=-1)
         return self.head(features).squeeze(-1)
