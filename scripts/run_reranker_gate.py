@@ -92,10 +92,10 @@ def main() -> None:
         test_triples="grail_metabolism/data/test_triples.txt",
         rules_path="grail_metabolism/resources/extended_smirks.txt",
         use_clean_splits=True,
-        standardize=True,
+        standardize=False,
         cache_preprocessed=False,
-        max_train_substrates=args.train_substrates * 2,
-        max_val_substrates=args.val_substrates * 2,
+        max_train_substrates=args.train_substrates + 60,
+        max_val_substrates=args.val_substrates + 30,
         max_test_substrates=1,
         sampling_seed=args.seed,
     )

@@ -1232,9 +1232,15 @@ class Generator(GGenerator):
         sub: str,
         top_k: Optional[int] = None,
         threshold: Optional[float] = None,
+        compute_sites: bool = True,
     ) -> List[Tuple[str, float, int, Tuple[int, ...]]]:
         """Like ``generate_scored`` but returns ``(smiles, gen_score, rule_id, firing_atoms)``
         per candidate, exposing the provenance needed by the Stage-2a reranker.
+
+        ``compute_sites=False`` skips the per-product MCS firing-atom localization (the
+        dominant cost at large ``top_k``) and returns an empty ``firing_atoms`` tuple; use it
+        when only ``rule_id`` is needed (e.g. the cross-rule reranker, where M0 showed the
+        within-rule/regioselectivity signal is ~4% of the headroom).
 
         The candidate set and scores are identical to ``generate_scored`` (same
         ``_prepare_generation`` setup, same ``_aggregate_candidate_scores``).  When a
@@ -1278,7 +1284,8 @@ class Generator(GGenerator):
                         )
                         entry["scores"].append(rule_score)
                         if rule_score > entry["best"][0]:
-                            entry["best"] = (rule_score, index, self._firing_atoms(mol, product))
+                            sites = self._firing_atoms(mol, product) if compute_sites else tuple()
+                            entry["best"] = (rule_score, index, sites)
 
         out: List[Tuple[str, float, int, Tuple[int, ...]]] = []
         for normalized, entry in data.items():

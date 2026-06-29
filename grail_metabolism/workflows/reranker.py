@@ -34,7 +34,10 @@ def build_pool(
 
     Returns ``[(smiles, gen_score, rule_id), ...]`` in generator-score order.
     """
-    detailed = generator.generate_scored_with_details(sub, top_k=top_k)
+    # compute_sites=False: skip the per-product MCS firing-atom localization (the dominant
+    # cost at top_k=200). The cross-rule reranker uses rule_id, not firing sites (M0: regio
+    # is ~4% of headroom).
+    detailed = generator.generate_scored_with_details(sub, top_k=top_k, compute_sites=False)
     pool: List[PoolEntry] = []
     seen: set = set()
     for smiles, gen_score, rule_id, _sites in detailed:
@@ -327,16 +330,16 @@ def evaluate(
         rule_ids = ex.rule_ids.to(device)
         scores = reranker(batch, rule_ids).detach().cpu()
 
-        # reranker ranking: by predicted logit desc
-        rer_order = torch.argsort(scores, descending=True).tolist()
+        # reranker ranking: by predicted logit desc. Stable tiebreak on original (pool)
+        # order so equal logits keep generator order rather than an arbitrary permutation.
+        rer_order = sorted(range(len(ex.smiles)), key=lambda i: (-float(scores[i]), i))
         rer_ranked = [ex.smiles[i] for i in rer_order]
-        # generator-alone ranking: by gen_score desc (this IS the generator's own order)
-        gen_order = torch.argsort(ex.gen_scores, descending=True).tolist()
-        gen_ranked = [ex.smiles[i] for i in gen_order]
-        # oracle ranking: hits first (best achievable on this pool)
-        ora_order = sorted(
-            range(len(ex.smiles)), key=lambda i: (0 if truth[i] else 1)
-        )
+        # generator-alone ranking: the pool is ALREADY in the generator's own score order
+        # (generate_scored_with_details sorts by (-gen_score, smiles) and the IK-dedup /
+        # parse-survival steps preserve it), so the candidate list as-is IS that ranking.
+        gen_ranked = list(ex.smiles)
+        # oracle ranking: hits first (best achievable on this pool), generator order within.
+        ora_order = sorted(range(len(ex.smiles)), key=lambda i: (0 if truth[i] else 1, i))
         ora_ranked = [ex.smiles[i] for i in ora_order]
 
         for k in ks:
