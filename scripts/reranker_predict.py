@@ -33,6 +33,7 @@ from grail_metabolism.config import DatasetConfig, GeneratorConfig
 from grail_metabolism.metrics import _tautomer_inchikey
 from grail_metabolism.model.grail import _read_checkpoint
 from grail_metabolism.model.reranker import BiEncoderReranker
+from grail_metabolism.utils.preparation import _standardize_smiles_cached
 from grail_metabolism.utils.seed import seed_everything
 from grail_metabolism.utils.transform import SINGLE_NODE_DIM, from_rdmol
 from grail_metabolism.workflows.data import load_dataset_bundle
@@ -194,19 +195,26 @@ def reranker_predict(
         # Sort by score descending, tiebreak on pool order.
         order = sorted(range(len(cand_smiles_list)), key=lambda i: (-float(scores[i]), i))
 
-        # Dedup by tautomer-InChIKey; truncate to top_n.
+        # Dedup by tautomer-InChIKey; standardize each emitted SMILES via the project's
+        # canonical normalization (_standardize_smiles_cached) before adding to output so
+        # that strict-InChIKey matching in downstream eval finds the right keys.
+        # Tautomer-IK dedup is re-keyed on the *standardized* form to remain consistent.
         seen = set()
         top_smiles = []
         for i in order:
             smi = cand_smiles_list[i]
             try:
-                key = _tautomer_inchikey(smi)
+                smi_std = _standardize_smiles_cached(smi)
             except Exception:
-                key = smi
+                smi_std = smi
+            try:
+                key = _tautomer_inchikey(smi_std)
+            except Exception:
+                key = smi_std
             if key in seen:
                 continue
             seen.add(key)
-            top_smiles.append(smi)
+            top_smiles.append(smi_std)
             if len(top_smiles) >= top_n:
                 break
 
