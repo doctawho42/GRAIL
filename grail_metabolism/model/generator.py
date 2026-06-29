@@ -1122,6 +1122,62 @@ class Generator(GGenerator):
             return noisy_or
         return float((0.65 * float(clipped.max())) + (0.35 * noisy_or))
 
+    def _prepare_generation(
+        self,
+        sub: str,
+        top_k: Optional[int],
+        threshold: Optional[float],
+    ):
+        """Shared setup for generate_scored and generate_scored_with_details.
+
+        Returns ``(mol, scores, ranked_indices)`` where *ranked_indices* is the
+        sorted list of rule indices to try.  Returns ``(None, None, None)`` when
+        the substrate cannot be parsed or the rule scorer returns nothing.
+        """
+        mol, _ = self._graph_for_substrate(sub)
+        if mol is None:
+            return None, None, None
+        scores, rule_mask = self.score_rules(sub, return_mask=True)
+        if scores.size == 0:
+            return None, None, None
+
+        active_pool = np.where(rule_mask > 0.0)[0] if self.use_applicability_mask else np.arange(scores.shape[0])
+        if active_pool.size == 0:
+            active_pool = np.arange(scores.shape[0])
+
+        if threshold is not None:
+            active = active_pool[scores[active_pool] >= threshold]
+            if active.size == 0 and top_k is not None:
+                ranked_pool = active_pool[np.argsort(scores[active_pool])[::-1]]
+                active = ranked_pool[:top_k]
+            elif top_k is not None and active.size > top_k:
+                # Apply top_k AFTER thresholding so a low calibrated threshold cannot
+                # emit nearly every applicable rule; keep only the top_k best-scoring.
+                active = active[np.argsort(scores[active])[::-1][:top_k]]
+        else:
+            effective_k = top_k if top_k is not None else min(self.default_top_k, max(1, active_pool.size))
+            ranked_pool = active_pool[np.argsort(scores[active_pool])[::-1]]
+            active = ranked_pool[:effective_k]
+
+        ranked_indices = sorted(
+            (int(index) for index in active),
+            key=lambda index: float(scores[index]),
+            reverse=True,
+        )
+        return mol, scores, ranked_indices
+
+    def _firing_atoms(self, sub_mol, product_mol) -> tuple:
+        """Return substrate atom indices that fired when producing *product_mol*.
+
+        Uses the element-aware MCS from ``som._reacting_atoms``.  Returns a sorted
+        tuple of ints; empty tuple on any failure (never raises).
+        """
+        try:
+            from .som import _reacting_atoms
+            return tuple(sorted(_reacting_atoms(sub_mol, product_mol)))
+        except Exception:
+            return tuple()
+
     @torch.no_grad()
     def generate_scored(
         self,
@@ -1189,6 +1245,67 @@ class Generator(GGenerator):
 
         ranked = [(candidate, self._aggregate_candidate_scores(values)) for candidate, values in candidate_scores.items()]
         return sorted(ranked, key=lambda item: (-item[1], item[0]))
+
+    @torch.no_grad()
+    def generate_scored_with_details(
+        self,
+        sub: str,
+        top_k: Optional[int] = None,
+        threshold: Optional[float] = None,
+    ) -> List[Tuple[str, float, int, Tuple[int, ...]]]:
+        """Like ``generate_scored`` but returns ``(smiles, gen_score, rule_id, firing_atoms)``
+        per candidate, exposing the provenance needed by the Stage-2a reranker.
+
+        The candidate set and scores are identical to ``generate_scored`` (same
+        ``_prepare_generation`` setup, same ``_aggregate_candidate_scores``).  When a
+        SMILES is reachable by multiple rules the *best* (max rule_score) rule's
+        ``rule_id`` and ``firing_atoms`` are kept.
+        """
+        mol, scores, ranked_indices = self._prepare_generation(sub, top_k, threshold)
+        if mol is None:
+            return []
+
+        # normalized_smiles -> {"scores": [...], "best": (rule_score, rule_id, firing_atoms)}
+        data: Dict[str, Dict] = {}
+        for index in ranked_indices:
+            if index >= len(self.rule_reactions):
+                continue
+            reaction = self.rule_reactions[index]
+            if reaction is None:
+                continue
+            rule_score = float(scores[index])
+            seen: set = set()
+            for product_tuple in safe_run_reactants(reaction, mol):
+                for product in product_tuple:
+                    try:
+                        smiles = Chem.MolToSmiles(product)
+                    except Exception:
+                        continue
+                    for fragment in smiles.split("."):
+                        fragment = fragment.strip()
+                        if not fragment:
+                            continue
+                        try:
+                            normalized = _normalize_smiles_cached(fragment, self.gen_normalization)
+                        except Exception:
+                            continue
+                        if normalized in seen:
+                            continue
+                        seen.add(normalized)
+                        entry = data.setdefault(
+                            normalized,
+                            {"scores": [], "best": (-1e9, index, tuple())},
+                        )
+                        entry["scores"].append(rule_score)
+                        if rule_score > entry["best"][0]:
+                            entry["best"] = (rule_score, index, self._firing_atoms(mol, product))
+
+        out: List[Tuple[str, float, int, Tuple[int, ...]]] = []
+        for normalized, entry in data.items():
+            agg = self._aggregate_candidate_scores(entry["scores"])
+            _, rule_id, sites = entry["best"]
+            out.append((normalized, float(agg), int(rule_id), sites))
+        return sorted(out, key=lambda item: (-item[1], item[0]))
 
     @torch.no_grad()
     def generate(

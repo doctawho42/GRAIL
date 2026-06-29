@@ -208,6 +208,10 @@ class EvaluationConfig:
     # the generator's top-N. None = score all. The dominant eval cost; bounded N keeps recall
     # while cutting filter time roughly linearly.
     filter_candidate_cap: Optional[int] = None
+    # Budget for the Stage-2a reranker candidate pool: how many generator top-k candidates
+    # are passed to generate_scored_with_details for reranking.  Default 100 (up from the
+    # generator's own default_top_k=10) so the reranker sees a richer candidate set.
+    candidate_pool: int = 100
     # Override the generator's empirical-rule-prior weight at eval time (the trained value is
     # ~0.4). The learned generator under-weights the prior; a val-selected ~8 lifts recall@15
     # from ~0.36 to ~0.38 for free (no retraining). None = use the trained value unchanged.
