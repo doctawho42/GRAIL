@@ -97,6 +97,23 @@ in the projected CRX-Rank band (0.45–0.52) with the *simpler* bi-encoder, and 
 MetaPredictor recall band (≈0.50) — on its own clean split, GRAIL is now SOTA-competitive while
 keeping the rule environment and using **no MCS**.
 
+**Touch-once TEST (clean test split, n=400, every hyperparameter frozen from val selection):**
+
+| | recall@5 | recall@10 | recall@15 |
+|---|---|---|---|
+| generator alone | 0.284 | 0.371 | 0.424 |
+| **reranker** | **0.381** | **0.463** | **0.498** |
+| oracle (perfect rerank of pool) | 0.655 | 0.663 | 0.663 |
+
+**val 0.507 ≈ test 0.498 — no overfit; the headline number is credible.** Reranker test
+**0.498@15 = +17.5% over generator-alone (0.424)**, 75% of the oracle ceiling (0.663), and **89% of
+SyGMa's clean-test recall (0.558) — up from the generator's 76%** — rule-based, no MCS. Two budget
+effects stack: the wider generation budget (top_k=200/pool=150) lifts the generator itself from its
+deployed ~0.385 to 0.424@15, and the reranker adds +0.074 on top. The residual to oracle (0.498→
+0.663) is in-distribution ranking headroom; the residual to SyGMa (0.498→0.558) is curated-rule
+quality, not a ranking failure. (`results/reranker_gate_bi_test.json`, seed 0; full-test + seed
+1/2 mean±std pending via `--test-substrates 1200`.)
+
 **External (GLORYx-37, out-of-distribution) — the honest generalization row:**
 
 reranker lifts GRAIL **0.243 → 0.351 @15 (+44% rel.)**, into BioTransformer's region (0.373); at
