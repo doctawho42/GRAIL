@@ -114,6 +114,24 @@ deployed ~0.385 to 0.424@15, and the reranker adds +0.074 on top. The residual t
 quality, not a ranking failure. (`results/reranker_gate_bi_test.json`, seed 0; full-test + seed
 1/2 mean±std pending via `--test-substrates 1200`.)
 
+**Feature ablation (val, seed 0, pools reused — what carries the signal?):**
+
+| reranker features | val recall@15 | InfoNCE loss (ep20) | Δ vs full |
+|---|---|---|---|
+| rule-prior + gen-score (full) | 0.507 | — | — |
+| − gen-score (rule-prior only) | **0.508** | 2.67 | +0.001 (neutral) |
+| − rule-prior (gen-score only) | **0.490** | 3.14 | **−0.017** |
+
+**The rule-prior scalar feature is load-bearing; the generator score is redundant.** Dropping the
+empirical per-rule prior costs −0.017@15 and raises the training loss (2.67→3.14); dropping the
+generator score is neutral (+0.001). This vindicates the central Stage-2a design choice — the
+rule-prior as a **scalar feature** (not the `nn.Embedding(7581)` that confounded the dead 120-
+substrate gate) — and is exactly the cross-rule signal the M0 decomposition predicted (96% of the
+headroom is *which rule fires*) plus the prior-vs-learned finding (empirical prior ≥ learned score).
+The learned reranker still does the heavy lifting *on top of* the prior: rule-prior-only reranking is
+0.508 here vs ~0.40 for ranking by the raw per-rule prior (Spike 1) — the GNN bi-encoder + listwise
+objective lift 0.40→0.51; the prior is the key feature, the gen-score scalar adds nothing.
+
 **External (GLORYx-37, out-of-distribution) — the honest generalization row:**
 
 reranker lifts GRAIL **0.243 → 0.351 @15 (+44% rel.)**, into BioTransformer's region (0.373); at
