@@ -72,23 +72,24 @@ def _load_generator():
 
 
 def _train_reranker(
-    generator, seed: int = SEED, epochs: int = EPOCHS, workers: int = 1
+    generator, seed: int = SEED, epochs: int = EPOCHS, workers: int = 1,
+    train_substrates: int = 800, top_k: int = TOP_K, max_pool: int = MAX_POOL,
 ) -> BiEncoderReranker:
-    """Load cached train-bi examples and fit the BiEncoderReranker.
+    """Load (or build) the bi-encoder training pools for ``train_substrates`` substrates at the
+    given ``top_k``/``max_pool`` and fit the BiEncoderReranker.
 
-    Uses the pre-built 800-substrate bi pool cache (train_bi_s800_seed0_k100.pt) so this
-    completes in seconds rather than minutes. When the cache is absent and ``workers > 1``,
-    the train pools are (re)built in parallel via the spawn Pool.
+    The cache filename matches the one ``run_reranker_gate.py`` wrote
+    (``train_bi_s{N}_seed{seed}_k{top_k}.pt``), so a prior scaled gate run with the SAME
+    ``--train-substrates``/``--top-k`` loads instantly. If the cache is absent the pools are
+    (re)built in parallel via the spawn Pool (``workers>1``) -- so match these to the gate run.
     """
-    if not TRAIN_CACHE.exists():
-        raise FileNotFoundError(
-            f"Training cache not found: {TRAIN_CACHE}\n"
-            "Run scripts/run_reranker_gate.py --arch bi first to build and cache the pools."
-        )
-    print(f"[reranker_predict] loading cached train examples from {TRAIN_CACHE} ...", flush=True)
+    cache_path = CACHE_DIR / f"train_bi_s{train_substrates}_seed{seed}_k{top_k}.pt"
+    if cache_path.exists():
+        print(f"[reranker_predict] loading cached train examples from {cache_path} ...", flush=True)
+    else:
+        print(f"[reranker_predict] train cache {cache_path} absent; building {train_substrates} "
+              f"pools at top_k={top_k} (match the gate run to reuse its cache) ...", flush=True)
     t0 = time.time()
-    # We need a molframe object to satisfy the API, but load_or_build_examples_bi will use
-    # the cache if it exists. Build a minimal dataset bundle for the cache path only.
     cfg = DatasetConfig(
         train_sdf="grail_metabolism/data/train.sdf",
         train_triples="grail_metabolism/data/train_triples.txt",
@@ -100,18 +101,18 @@ def _train_reranker(
         use_clean_splits=True,
         standardize=False,
         cache_preprocessed=False,
-        max_train_substrates=860,
+        max_train_substrates=train_substrates + 60,
         max_val_substrates=1,
         max_test_substrates=1,
-        sampling_seed=SEED,
+        sampling_seed=seed,
     )
     bundle = load_dataset_bundle(cfg)
     train_examples = load_or_build_examples_bi(
-        generator, bundle.train, 800, TRAIN_CACHE,
-        top_k=100, max_pool=100,  # match original cache params
+        generator, bundle.train, train_substrates, cache_path,
+        top_k=top_k, max_pool=max_pool,
         workers=workers, gen_ckpt=str(GEN_CKPT),
     )
-    print(f"[reranker_predict] {len(train_examples)} train examples loaded in {time.time()-t0:.1f}s", flush=True)
+    print(f"[reranker_predict] {len(train_examples)} train examples in {time.time()-t0:.1f}s", flush=True)
 
     seed_everything(seed)
     reranker = BiEncoderReranker(in_channels=SINGLE_NODE_DIM)
@@ -355,6 +356,9 @@ def main() -> None:
     ap.add_argument("--seed", type=int, default=SEED)
     ap.add_argument("--top-k", type=int, default=TOP_K)
     ap.add_argument("--max-pool", type=int, default=MAX_POOL)
+    ap.add_argument("--train-substrates", type=int, default=800,
+                    help="Substrate count of the cached training pools to load/build -- MATCH "
+                         "the gate run (e.g. 1200) so the cache filename matches and loads instantly.")
     ap.add_argument("--top-n", type=int, default=TOP_N_OUT)
     ap.add_argument("--threads", type=int, default=6)
     ap.add_argument(
@@ -371,7 +375,10 @@ def main() -> None:
     generator = _load_generator()
     print(f"[reranker_predict] generator loaded; num_rules={generator.num_rules}", flush=True)
 
-    reranker = _train_reranker(generator, seed=args.seed, epochs=args.epochs, workers=args.workers)
+    reranker = _train_reranker(
+        generator, seed=args.seed, epochs=args.epochs, workers=args.workers,
+        train_substrates=args.train_substrates, top_k=args.top_k, max_pool=args.max_pool,
+    )
 
     if args.substrates == "gloryx":
         print("[reranker_predict] loading GLORYx parents ...", flush=True)
