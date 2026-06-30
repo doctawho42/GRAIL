@@ -509,9 +509,11 @@ _MAX_SPAWN_WORKERS = 8
 _BI_WORKER_GEN = None
 
 
-def _bi_worker_init(gen_ckpt_path: str, prior_strength: float) -> None:
+def _bi_worker_init(gen_ckpt_path: str, prior_strength: float, rule_emb=None) -> None:
     """Pool initializer: pin torch to 1 thread, silence rdkit, load the generator once into
-    a module global. Each worker pays the generator-load cost exactly once.
+    a module global. ``rule_emb`` (warmed ONCE in the parent) is injected as the rule-bank
+    embedding cache so this worker SKIPS the slow single-threaded 7581-rule GNN encoding --
+    the per-worker stall that made the parallel build appear hung.
     """
     # CRITICAL: without this, N workers each spawn many BLAS/torch threads and oversubscribe
     # the box, making the parallel path SLOWER than serial.
@@ -533,6 +535,8 @@ def _bi_worker_init(gen_ckpt_path: str, prior_strength: float) -> None:
     generator.load_state_dict(state["state_dict"], strict=False)
     generator.eval()
     generator.prior_strength = float(prior_strength)
+    if rule_emb is not None:
+        generator._rule_embedding_cache = rule_emb  # skip the 7581-rule encoding
     global _BI_WORKER_GEN
     _BI_WORKER_GEN = generator
 
@@ -583,11 +587,15 @@ def build_examples_bi_parallel(
     generator.prior_strength = float(prior_strength)
     substrates = list(molframe.map.keys())
     args = [(sub, list(molframe.map[sub]), top_k, max_pool) for sub in substrates]
-    torch.set_num_threads(1)
+    # Warm the rule-bank embeddings ONCE here (parent, full threads) so each spawn worker can
+    # SKIP the slow single-threaded 7581-rule GNN encoding -- without this the workers stall at
+    # 100% CPU for minutes re-encoding the bank before the first example.
+    with torch.no_grad():
+        rule_emb = generator._rule_embeddings(torch.device("cpu")).detach().cpu().contiguous()
     examples: List[_BiExample] = []
     pool = mp.get_context("spawn").Pool(
         processes=workers, initializer=_bi_worker_init,
-        initargs=(str(gen_ckpt), float(prior_strength)),
+        initargs=(str(gen_ckpt), float(prior_strength), rule_emb),
     )
     try:
         for ex in pool.imap(_bi_build_one, args, chunksize=4):

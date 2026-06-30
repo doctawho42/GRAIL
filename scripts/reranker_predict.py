@@ -200,9 +200,10 @@ def _score_and_dedup(reranker, material, top_n) -> List[str]:
 _PREDICT_WORKER_GEN = None
 
 
-def _predict_worker_init(gen_ckpt_path: str, prior_strength: float) -> None:
-    """Pool initializer for prediction: pin torch threads, silence rdkit, load the
-    generator once per worker. Mirrors the gate path's _load_generator exactly."""
+def _predict_worker_init(gen_ckpt_path: str, prior_strength: float, rule_emb=None) -> None:
+    """Pool initializer for prediction: pin torch threads, silence rdkit, load the generator
+    once per worker. ``rule_emb`` (warmed once in the parent) is injected as the rule-bank
+    embedding cache so the worker skips the slow 7581-rule GNN encoding."""
     torch.set_num_threads(1)
     RDLogger.DisableLog("rdApp.*")
     state = _read_checkpoint(gen_ckpt_path)
@@ -212,6 +213,8 @@ def _predict_worker_init(gen_ckpt_path: str, prior_strength: float) -> None:
     generator.load_state_dict(state["state_dict"], strict=False)
     generator.eval()
     generator.prior_strength = float(prior_strength)
+    if rule_emb is not None:
+        generator._rule_embedding_cache = rule_emb
     global _PREDICT_WORKER_GEN
     _PREDICT_WORKER_GEN = generator
 
@@ -261,14 +264,16 @@ def reranker_predict(
         # reloads the generator from gen_ckpt once, so the worker count is hard-capped at 8 to
         # keep N generator copies within RAM (a high count, e.g. 48, OOMs).
         workers = max(1, min(int(workers), os.cpu_count() or 1, 8))
-        torch.set_num_threads(1)
         args = [(sub, top_k, max_pool) for sub in substrates]
         if gen_ckpt:
             if verbose:
                 print(f"  [predict] building pools in PARALLEL ({workers} spawn workers)", flush=True)
+            # Warm the rule-bank embeddings once (parent) so workers skip the 7581-rule encoding.
+            with torch.no_grad():
+                rule_emb = generator._rule_embeddings(torch.device("cpu")).detach().cpu().contiguous()
             pool = mp.get_context("spawn").Pool(
                 processes=workers, initializer=_predict_worker_init,
-                initargs=(str(gen_ckpt), float(getattr(generator, "prior_strength", 0.4))),
+                initargs=(str(gen_ckpt), float(getattr(generator, "prior_strength", 0.4)), rule_emb),
             )
         else:
             pool = None
