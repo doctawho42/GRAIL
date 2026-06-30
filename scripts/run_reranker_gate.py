@@ -70,7 +70,14 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Stage 2a reranker GO/DEAD gate")
     parser.add_argument("--train-substrates", type=int, default=300)
     parser.add_argument("--val-substrates", type=int, default=150)
-    parser.add_argument("--test-substrates", type=int, default=400)
+    parser.add_argument(
+        "--test-substrates", type=int, default=2000,
+        help="Test substrates for --eval-split test. Default 2000 exceeds the full "
+             "clean test split (1246), so the touch-once eval uses the ENTIRE test "
+             "set (no subsampling -> identical set across seeds, so mean+-std over "
+             "seeds reflects training variance only). Set below the split size only "
+             "for a quick subsampled peek.",
+    )
     parser.add_argument(
         "--eval-split", choices=["val", "test"], default="val",
         help="Which split to evaluate the trained reranker on. 'val' for selection; "

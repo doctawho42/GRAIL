@@ -111,8 +111,8 @@ SyGMa's clean-test recall (0.558) — up from the generator's 76%** — rule-bas
 effects stack: the wider generation budget (top_k=200/pool=150) lifts the generator itself from its
 deployed ~0.385 to 0.424@15, and the reranker adds +0.074 on top. The residual to oracle (0.498→
 0.663) is in-distribution ranking headroom; the residual to SyGMa (0.498→0.558) is curated-rule
-quality, not a ranking failure. (`results/reranker_gate_bi_test.json`, seed 0; full-test + seed
-1/2 mean±std pending via `--test-substrates 1200`.)
+quality, not a ranking failure. (`results/reranker_gate_bi_test.json`, seed 0, n=400 subsample;
+full clean-test (1246 substrates) + seed 1/2 mean±std pending via `--test-substrates 2000`.)
 
 **Feature ablation (val, seed 0, pools reused — what carries the signal?):**
 
