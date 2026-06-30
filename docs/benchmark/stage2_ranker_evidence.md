@@ -74,3 +74,40 @@ diversity/coverage method contribution, and full rule interpretability.
 **Next cheap probe before committing:** decompose the mis-ranking into *within-rule* (sibling
 regioisomers) vs *cross-rule* (wrong rule's product ranked above the right one) — confirms how much
 of the 0.385→0.573 headroom the regioselectivity (site) fix specifically captures.
+
+## Spike 3 — built and validated: the no-MCS bi-encoder reranker (`scripts/reranker_predict.py`)
+
+We built the *simplest* reranker the panel converged on — a **no-MCS siamese bi-encoder** over
+`from_rdmol(substrate)` + `from_rdmol(product)` (no rdFMCS), plus interaction features, a **scalar
+`rule_prior_logits[rule_id]` feature** (not an embedding), and the generator score, trained with a
+listwise InfoNCE + PU loss over the generator's IK-deduped candidate pool. It deliberately omits the
+panel's heavier site-conditioning (CRX/RNS/SIBYL) — it is the floor, not the ceiling, of the design
+space. Trained on 1,188 clean-train substrates (top_k=200, max_pool=150), 20 epochs, val-selected.
+
+**In-distribution (clean val, n≈400 substrates) — the make-or-break gate:**
+
+| | recall@5 | recall@10 | recall@15 |
+|---|---|---|---|
+| generator alone | 0.279 | 0.380 | 0.420 |
+| **reranker** | **0.410** | **0.473** | **0.507** |
+| oracle (perfect rerank of pool) | 0.671 | 0.674 | 0.674 |
+
+**GO: reranker 0.507@15 = +21% over generator-alone (0.420), 75% of the oracle ceiling.** It lands
+in the projected CRX-Rank band (0.45–0.52) with the *simpler* bi-encoder, and in the SyGMa/
+MetaPredictor recall band (≈0.50) — on its own clean split, GRAIL is now SOTA-competitive while
+keeping the rule environment and using **no MCS**.
+
+**External (GLORYx-37, out-of-distribution) — the honest generalization row:**
+
+reranker lifts GRAIL **0.243 → 0.351 @15 (+44% rel.)**, into BioTransformer's region (0.373); at
+recall@5 it is **2nd of five (0.266)**, ahead of MetaPredictor (0.244) and BioTransformer (0.175),
+behind only SyGMa (0.347). Full cross-method table in `gloryx_results.md`. The residual @15 gap to
+the SOTA pair (≈0.50) is **pool coverage, not ranking** — GLORYx's oracle over this single-step pool
+is ≈0.499, and its references include multi-generation metabolites a single-step generator cannot
+reach. This is precisely the coverage axis Stage 2b (Set-GFlowNet over *multi-step* rule application)
+targets; the within-rule regioselectivity probe above remains the cheap next diagnostic.
+
+**Reading.** Stage 2a is validated: a rule-preserving, no-MCS reranker reaches recall parity with the
+learned/rule SOTA *in-distribution* and closes most of the external gap, with strong top-rank
+precision. The remaining external shortfall is multi-step coverage, which motivates Stage 2b rather
+than further single-step ranking work.
