@@ -244,11 +244,22 @@ def main() -> None:
     }
 
     # Write the bi run to its own file so the legacy pair-run verdict is preserved.
-    # Tag the test eval distinctly so the touch-once TEST number never clobbers the val gate.
+    # Tag eval-split / ablations / non-zero seed into the filename so the canonical val
+    # headline (seed 0, all features, --eval-split val -> reranker_gate_bi.json) is NEVER
+    # clobbered by a test eval, an ablation, or another seed.
     if args.arch == "bi":
+        suffix = ""
+        if eval_is_test:
+            suffix += "_test"
+        if args.no_rule_prior:
+            suffix += "_noprior"
+        if args.no_gen_score:
+            suffix += "_nogen"
+        if args.seed != 0:
+            suffix += f"_seed{args.seed}"
         results_path = (
-            RESULTS_PATH_BI.with_name("reranker_gate_bi_test.json")
-            if eval_is_test else RESULTS_PATH_BI
+            RESULTS_PATH_BI if suffix == ""
+            else RESULTS_PATH_BI.with_name(f"reranker_gate_bi{suffix}.json")
         )
     else:
         results_path = RESULTS_PATH
