@@ -591,8 +591,9 @@ def build_examples_bi_parallel(
     for high worker counts, where the old spawn path reloaded the 7581-rule generator per
     worker and thrashed RAM at e.g. 48 workers). On macOS/Windows (fork+torch is unsafe there)
     falls back to a SPAWN Pool whose workers reload from ``gen_ckpt`` so local tests still run.
-    ORDERED imap (chunksize=4) keeps the collected examples reproducible; stops at
-    ``n_substrates`` non-None.
+    UNORDERED imap yields each pool as its worker finishes (no head-of-line blocking on a slow
+    substrate); stops once ``n_substrates`` are collected. Example order is not deterministic
+    across runs, but the trainer is order-invariant.
     """
     # SPAWN is fork-safe everywhere (fork + torch/OpenMP deadlocks on Linux); each worker
     # reloads the generator from gen_ckpt ONCE. The caller MUST cap ``workers`` low (~8) so
@@ -618,8 +619,10 @@ def build_examples_bi_parallel(
     num_rules = int(prior.numel())
     try:
         # Workers return PLAIN pools (no tensors); the graphs are built here in the main
-        # process so nothing torch crosses the mp boundary.
-        for res in pool.imap(_bi_pool_worker, args, chunksize=4):
+        # process so nothing torch crosses the mp boundary. imap_UNORDERED yields each pool as
+        # its worker finishes -- a single pathological substrate (a big drug + 200 rules) no
+        # longer head-of-line-blocks the whole stream (the "stuck at 100" symptom).
+        for res in pool.imap_unordered(_bi_pool_worker, args, chunksize=2):
             if res is None:
                 continue
             sub_r, pool_r, true_r = res

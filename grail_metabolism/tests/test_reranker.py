@@ -356,8 +356,11 @@ def test_parallel_bi_builder_matches_serial(tmp_path):
     assert len(parallel) == len(serial), (
         f"parallel built {len(parallel)} examples, serial built {len(serial)}"
     )
-    for a, b in zip(serial, parallel):
-        assert a.sub == b.sub, f"substrate order differs: {a.sub!r} vs {b.sub!r}"
+    # parallel is UNORDERED (imap_unordered), so match examples by substrate, not by position.
+    by_sub = {b.sub: b for b in parallel}
+    for a in serial:
+        assert a.sub in by_sub, f"parallel is missing substrate {a.sub!r}"
+        b = by_sub[a.sub]
         assert a.smiles == b.smiles, f"smiles differ for {a.sub!r}"
         assert torch.equal(a.hit_mask, b.hit_mask), f"hit_mask differs for {a.sub!r}"
         assert torch.equal(a.rule_priors, b.rule_priors), f"rule_priors differ for {a.sub!r}"

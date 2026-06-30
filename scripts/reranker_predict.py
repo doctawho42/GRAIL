@@ -282,8 +282,9 @@ def reranker_predict(
             try:
                 done = 0
                 # Workers return PLAIN pools; the graphs + scoring happen here in the main
-                # process so nothing torch crosses the mp boundary.
-                for sub, plain_pool in pool.imap(_predict_build_worker, args, chunksize=4):
+                # process so nothing torch crosses the mp boundary. UNORDERED so a slow
+                # substrate does not head-of-line-block the stream.
+                for sub, plain_pool in pool.imap_unordered(_predict_build_worker, args, chunksize=2):
                     done += 1
                     if verbose and (done == 1 or done % 5 == 0 or done == len(substrates)):
                         print(
