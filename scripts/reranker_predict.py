@@ -216,6 +216,14 @@ def _predict_worker_init(gen_ckpt_path: str, prior_strength: float) -> None:
     _PREDICT_WORKER_GEN = generator
 
 
+def _predict_worker_init_fork() -> None:
+    """FORK Pool init: only pin torch threads + silence rdkit. The generator is inherited
+    from the parent via copy-on-write (``_PREDICT_WORKER_GEN`` set before the fork) -- no
+    per-worker reload (the fix for high worker counts)."""
+    torch.set_num_threads(1)
+    RDLogger.DisableLog("rdApp.*")
+
+
 def _predict_build_worker(args):
     """Pool worker: build (and return) the per-substrate material for one substrate.
     Returns ``(sub, material)`` where material is ``None`` for unusable substrates."""
@@ -256,31 +264,44 @@ def reranker_predict(
     results: Dict[str, List[str]] = {}
     t_start = time.time()
 
-    if int(workers) > 1 and gen_ckpt:
-        workers = min(int(workers), os.cpu_count() or 1)
-        if verbose:
-            print(f"  [predict] building pools in PARALLEL ({workers} workers)", flush=True)
-        ctx = mp.get_context("spawn")
+    if int(workers) > 1:
+        workers = max(1, min(int(workers), os.cpu_count() or 1))
+        torch.set_num_threads(1)
         args = [(sub, top_k, max_pool) for sub in substrates]
-        pool = ctx.Pool(
-            processes=workers,
-            initializer=_predict_worker_init,
-            initargs=(str(gen_ckpt), float(getattr(generator, "prior_strength", 0.4))),
-        )
-        try:
-            done = 0
-            for sub, material in pool.imap(_predict_build_worker, args, chunksize=4):
-                done += 1
-                if verbose and (done == 1 or done % 5 == 0 or done == len(substrates)):
-                    print(
-                        f"  [predict] {done}/{len(substrates)} ({time.time()-t_start:.0f}s elapsed)",
-                        flush=True,
-                    )
-                results[sub] = [] if material is None else _score_and_dedup(reranker, material, top_n)
-        finally:
-            pool.terminate()
-            pool.join()
-        return results
+        # Linux (Colab): FORK -- load the generator once here, workers inherit it via
+        # copy-on-write (no per-worker reload, no N x memory; fixes high worker counts).
+        # macOS/Windows: SPAWN fallback (workers reload from gen_ckpt) so it runs locally.
+        global _PREDICT_WORKER_GEN
+        if sys.platform.startswith("linux"):
+            if verbose:
+                print(f"  [predict] building pools in PARALLEL ({workers} fork workers)", flush=True)
+            _PREDICT_WORKER_GEN = generator
+            pool = mp.get_context("fork").Pool(processes=workers, initializer=_predict_worker_init_fork)
+        elif gen_ckpt:
+            if verbose:
+                print(f"  [predict] building pools in PARALLEL ({workers} spawn workers)", flush=True)
+            pool = mp.get_context("spawn").Pool(
+                processes=workers, initializer=_predict_worker_init,
+                initargs=(str(gen_ckpt), float(getattr(generator, "prior_strength", 0.4))),
+            )
+        else:
+            pool = None
+        if pool is not None:
+            try:
+                done = 0
+                for sub, material in pool.imap(_predict_build_worker, args, chunksize=4):
+                    done += 1
+                    if verbose and (done == 1 or done % 5 == 0 or done == len(substrates)):
+                        print(
+                            f"  [predict] {done}/{len(substrates)} ({time.time()-t_start:.0f}s elapsed)",
+                            flush=True,
+                        )
+                    results[sub] = [] if material is None else _score_and_dedup(reranker, material, top_n)
+            finally:
+                pool.terminate()
+                pool.join()
+            return results
+        # pool is None (non-linux without gen_ckpt) -> fall through to the serial loop below.
 
     for idx, sub in enumerate(substrates, 1):
         if verbose and (idx == 1 or idx % 5 == 0 or idx == len(substrates)):

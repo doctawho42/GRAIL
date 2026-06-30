@@ -346,7 +346,7 @@ def test_parallel_bi_builder_matches_serial(tmp_path):
     n = len(fake_map)
     serial = build_examples_bi(gen, molframe, n, top_k=50, max_pool=40, verbose=False)
     parallel = build_examples_bi_parallel(
-        molframe, n, top_k=50, max_pool=40,
+        gen, molframe, n, top_k=50, max_pool=40,
         gen_ckpt=str(ckpt), workers=2,
         prior_strength=float(getattr(gen, "prior_strength", 0.4)),
         verbose=False,
