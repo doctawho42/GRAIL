@@ -70,6 +70,12 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Stage 2a reranker GO/DEAD gate")
     parser.add_argument("--train-substrates", type=int, default=300)
     parser.add_argument("--val-substrates", type=int, default=150)
+    parser.add_argument("--test-substrates", type=int, default=400)
+    parser.add_argument(
+        "--eval-split", choices=["val", "test"], default="val",
+        help="Which split to evaluate the trained reranker on. 'val' for selection; "
+             "'test' ONCE for the final report (touch-test-once).",
+    )
     parser.add_argument("--epochs", type=int, default=15)
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--top-k", type=int, default=200)
@@ -106,6 +112,7 @@ def main() -> None:
 
     # Subsample substrates at load time so the SDF standardization stays tractable. Pull a
     # generous multiple of the requested counts because some substrates yield empty pools.
+    eval_is_test = args.eval_split == "test"
     cfg = DatasetConfig(
         train_sdf="grail_metabolism/data/train.sdf",
         train_triples="grail_metabolism/data/train_triples.txt",
@@ -118,16 +125,21 @@ def main() -> None:
         standardize=False,
         cache_preprocessed=False,
         max_train_substrates=args.train_substrates + 60,
-        max_val_substrates=args.val_substrates + 30,
-        max_test_substrates=1,
+        # Only load the split we evaluate on; the other stays at 1 so the slow SDF
+        # standardization stays tractable. Touch-test-once: --eval-split test loads test.
+        max_val_substrates=(1 if eval_is_test else args.val_substrates + 30),
+        max_test_substrates=(args.test_substrates + 60 if eval_is_test else 1),
         sampling_seed=args.seed,
     )
     print("[gate] loading dataset bundle (SDF standardization is the slow load) ...", flush=True)
     t0 = time.time()
     bundle = load_dataset_bundle(cfg)
+    eval_bundle = bundle.test if eval_is_test else bundle.val
+    eval_count = args.test_substrates if eval_is_test else args.val_substrates
+    eval_prefix = "test" if eval_is_test else "val"
     print(
         f"[gate] bundle loaded in {time.time()-t0:.1f}s; "
-        f"train={len(bundle.train.map)} val={len(bundle.val.map)}",
+        f"train={len(bundle.train.map)} {eval_prefix}={len(eval_bundle.map)}",
         flush=True,
     )
 
@@ -136,7 +148,7 @@ def main() -> None:
     # the two paths never read each other's .pt.
     tag = f"_{args.arch}"
     train_cache = CACHE_DIR / f"train{tag}_s{args.train_substrates}_seed{args.seed}_k{args.top_k}.pt"
-    val_cache = CACHE_DIR / f"val{tag}_s{args.val_substrates}_seed{args.seed}_k{args.top_k}.pt"
+    eval_cache = CACHE_DIR / f"{eval_prefix}{tag}_s{eval_count}_seed{args.seed}_k{args.top_k}.pt"
 
     build_train = load_or_build_examples_bi if args.arch == "bi" else load_or_build_examples
     build_val = build_train
@@ -153,18 +165,18 @@ def main() -> None:
     )
     print(f"[gate] train examples={len(train_examples)} in {time.time()-t0:.1f}s", flush=True)
 
-    print("[gate] assembling VAL pools (cached) ...", flush=True)
+    print(f"[gate] assembling {eval_prefix.upper()} pools (cached) ...", flush=True)
     t0 = time.time()
-    val_examples = build_val(
-        generator, bundle.val, args.val_substrates, val_cache,
+    eval_examples = build_val(
+        generator, eval_bundle, eval_count, eval_cache,
         top_k=args.top_k, max_pool=args.max_pool, **par_kwargs,
     )
-    print(f"[gate] val examples={len(val_examples)} in {time.time()-t0:.1f}s", flush=True)
+    print(f"[gate] {eval_prefix} examples={len(eval_examples)} in {time.time()-t0:.1f}s", flush=True)
 
     train_hits = sum(1 for ex in train_examples if bool(ex.hit_mask.any()))
-    val_hits = sum(1 for ex in val_examples if bool(ex.hit_mask.any()))
+    eval_hits = sum(1 for ex in eval_examples if bool(ex.hit_mask.any()))
     print(f"[gate] train substrates with >=1 pool hit: {train_hits}/{len(train_examples)}", flush=True)
-    print(f"[gate] val substrates with >=1 pool hit:   {val_hits}/{len(val_examples)}", flush=True)
+    print(f"[gate] {eval_prefix} substrates with >=1 pool hit:   {eval_hits}/{len(eval_examples)}", flush=True)
 
     print(f"[gate] training reranker (listwise InfoNCE, arch={args.arch}) ...", flush=True)
     t0 = time.time()
@@ -184,8 +196,8 @@ def main() -> None:
         eval_fn = evaluate
     print(f"[gate] training done in {time.time()-t0:.1f}s", flush=True)
 
-    print("[gate] evaluating on VAL ...", flush=True)
-    metrics = eval_fn(reranker, val_examples, ks=KS, device=trainer.device)
+    print(f"[gate] evaluating on {eval_prefix.upper()} (touch-once for test) ...", flush=True)
+    metrics = eval_fn(reranker, eval_examples, ks=KS, device=trainer.device)
 
     reranker_r15 = metrics["reranker_recall@15"]
     generator_r15 = metrics["generator_recall@15"]
@@ -204,6 +216,8 @@ def main() -> None:
         "arch": args.arch,
         "config": {
             "train_substrates_requested": args.train_substrates,
+            "eval_split": args.eval_split,
+            "eval_substrates_requested": eval_count,
             "val_substrates_requested": args.val_substrates,
             "epochs": args.epochs,
             "top_k": args.top_k,
@@ -214,9 +228,9 @@ def main() -> None:
         },
         "counts": {
             "train_examples": len(train_examples),
-            "val_examples": len(val_examples),
+            "eval_examples": len(eval_examples),
             "train_substrates_with_hits": train_hits,
-            "val_substrates_with_hits": val_hits,
+            "eval_substrates_with_hits": eval_hits,
         },
         "metrics": metrics,
         "headline": {
@@ -230,13 +244,21 @@ def main() -> None:
     }
 
     # Write the bi run to its own file so the legacy pair-run verdict is preserved.
-    results_path = RESULTS_PATH_BI if args.arch == "bi" else RESULTS_PATH
+    # Tag the test eval distinctly so the touch-once TEST number never clobbers the val gate.
+    if args.arch == "bi":
+        results_path = (
+            RESULTS_PATH_BI.with_name("reranker_gate_bi_test.json")
+            if eval_is_test else RESULTS_PATH_BI
+        )
+    else:
+        results_path = RESULTS_PATH
     results_path.parent.mkdir(parents=True, exist_ok=True)
     with open(results_path, "w") as handle:
         json.dump(result, handle, indent=2)
 
     print("\n========== STAGE 2a RERANKER GATE ==========", flush=True)
-    print(f"  val substrates evaluated: {int(metrics['n_substrates'])}", flush=True)
+    print(f"  eval split: {args.eval_split.upper()}", flush=True)
+    print(f"  {eval_prefix} substrates evaluated: {int(metrics['n_substrates'])}", flush=True)
     print(f"  mean pool size:           {metrics['mean_pool_size']:.1f}", flush=True)
     for k in KS:
         print(
