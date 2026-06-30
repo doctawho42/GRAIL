@@ -123,22 +123,16 @@ def _train_reranker(
     return reranker
 
 
-def _build_predict_material(generator, sub, top_k, max_pool, prior, num_rules):
-    """Build the per-substrate material needed to score one substrate: the substrate
-    single-graph, the candidate product single-graphs, the rule-prior + gen-score scalars,
-    and the candidate smiles. Returns ``None`` when the substrate/pool is unusable.
-
-    This is the single per-substrate body shared by the serial loop and the parallel worker,
-    so both produce identical predictions.
-    """
+def _material_from_pool(sub, pool, prior, num_rules):
+    """Build per-substrate scoring material from an ALREADY-generated pool (from_rdmol the
+    substrate + each candidate). The parallel path runs this in the MAIN process so NO torch
+    tensors cross the mp boundary -- workers return only the plain pool, which avoids the
+    shared-memory FD exhaustion that returning graph tensors caused."""
     sub_mol = Chem.MolFromSmiles(sub)
     if sub_mol is None:
         return None
     sub_graph = from_rdmol(sub_mol)
-    if sub_graph is None:
-        return None
-    pool = build_pool(generator, sub, top_k=top_k, max_pool=max_pool)
-    if not pool:
+    if sub_graph is None or not pool:
         return None
     prod_graphs = []
     rule_priors_list = []
@@ -159,6 +153,14 @@ def _build_predict_material(generator, sub, top_k, max_pool, prior, num_rules):
     if not prod_graphs:
         return None
     return sub_graph, prod_graphs, rule_priors_list, gen_scores_list, cand_smiles_list
+
+
+def _build_predict_material(generator, sub, top_k, max_pool, prior, num_rules):
+    """Serial per-substrate body: build the pool then the material (one process)."""
+    pool = build_pool(generator, sub, top_k=top_k, max_pool=max_pool)
+    if not pool:
+        return None
+    return _material_from_pool(sub, pool, prior, num_rules)
 
 
 def _score_and_dedup(reranker, material, top_n) -> List[str]:
@@ -220,14 +222,13 @@ def _predict_worker_init(gen_ckpt_path: str, prior_strength: float, rule_emb=Non
 
 
 def _predict_build_worker(args):
-    """Pool worker: build (and return) the per-substrate material for one substrate.
-    Returns ``(sub, material)`` where material is ``None`` for unusable substrates."""
+    """Pool worker: do ONLY build_pool (rule application) and return the PLAIN pool
+    ``(sub, pool)`` -- the main process builds the graphs so no tensors cross the mp boundary
+    (returning graph tensors from workers exhausts shared-memory FDs)."""
     sub, top_k, max_pool = args
     gen = _PREDICT_WORKER_GEN
-    prior = gen.rule_prior_logits.detach().cpu()
-    num_rules = int(prior.numel())
-    material = _build_predict_material(gen, sub, top_k, max_pool, prior, num_rules)
-    return sub, material
+    pool = build_pool(gen, sub, top_k=top_k, max_pool=max_pool)
+    return sub, pool
 
 
 def reranker_predict(
@@ -280,13 +281,16 @@ def reranker_predict(
         if pool is not None:
             try:
                 done = 0
-                for sub, material in pool.imap(_predict_build_worker, args, chunksize=4):
+                # Workers return PLAIN pools; the graphs + scoring happen here in the main
+                # process so nothing torch crosses the mp boundary.
+                for sub, plain_pool in pool.imap(_predict_build_worker, args, chunksize=4):
                     done += 1
                     if verbose and (done == 1 or done % 5 == 0 or done == len(substrates)):
                         print(
                             f"  [predict] {done}/{len(substrates)} ({time.time()-t_start:.0f}s elapsed)",
                             flush=True,
                         )
+                    material = _material_from_pool(sub, plain_pool, prior, num_rules) if plain_pool else None
                     results[sub] = [] if material is None else _score_and_dedup(reranker, material, top_n)
             finally:
                 pool.terminate()

@@ -392,19 +392,17 @@ class _BiExample:
         self.true_products = true_products
 
 
-def _build_one_bi(
-    generator,
+def _bi_example_from_pool(
     sub: str,
+    pool: Sequence[Tuple[str, float, int]],
     true_products: Sequence[str],
-    top_k: int,
-    max_pool: int,
     prior: torch.Tensor,
     num_rules: int,
 ) -> Optional[_BiExample]:
-    """Build ONE bi-encoder example (or ``None`` if the substrate/pool is unusable).
-
-    This is the single per-substrate body shared by the serial loop and the parallel
-    worker, so both paths produce byte-identical examples for the same substrate.
+    """Build a bi-encoder example from an ALREADY-generated candidate pool: ``from_rdmol`` the
+    substrate + each candidate (single graphs) and label hits. The parallel path runs this in
+    the MAIN process so NO torch tensors cross the multiprocessing boundary -- passing graph
+    tensors back from workers exhausts shared-memory file descriptors (the mmap ENOMEM stall).
     """
     sub_mol = Chem.MolFromSmiles(sub)
     if sub_mol is None:
@@ -412,7 +410,6 @@ def _build_one_bi(
     sub_graph = from_rdmol(sub_mol)
     if sub_graph is None:
         return None
-    pool = build_pool(generator, sub, top_k=top_k, max_pool=max_pool)
     if not pool:
         return None
     prod_graphs: List[Data] = []
@@ -447,6 +444,24 @@ def _build_one_bi(
         smiles=smiles,
         true_products=true_products,
     )
+
+
+def _build_one_bi(
+    generator,
+    sub: str,
+    true_products: Sequence[str],
+    top_k: int,
+    max_pool: int,
+    prior: torch.Tensor,
+    num_rules: int,
+) -> Optional[_BiExample]:
+    """Serial per-substrate body: generate the pool (rule application) then build the example
+    in one process. The parallel path splits these -- workers generate pools, the main process
+    builds the graphs -- but both produce identical examples for the same substrate."""
+    pool = build_pool(generator, sub, top_k=top_k, max_pool=max_pool)
+    if not pool:
+        return None
+    return _bi_example_from_pool(sub, pool, true_products, prior, num_rules)
 
 
 def build_examples_bi(
@@ -541,19 +556,21 @@ def _bi_worker_init(gen_ckpt_path: str, prior_strength: float, rule_emb=None) ->
     _BI_WORKER_GEN = generator
 
 
-def _bi_build_one(args: Tuple[str, Sequence[str], int, int]) -> Optional[_BiExample]:
-    """Pool worker fn: build ONE _BiExample using the worker-global generator.
-
-    ``args = (sub, true_products, top_k, max_pool)``. Returns the example or ``None`` when
-    the pool is empty / substrate unparseable. Identical content to the serial body.
+def _bi_pool_worker(args: Tuple[str, Sequence[str], int, int]):
+    """Pool worker fn: do ONLY the expensive ``build_pool`` (rule application) for one
+    substrate and return the PLAIN pool ``(sub, [(smiles, gen_score, rule_id), ...],
+    true_products)``. NO torch tensors cross the multiprocessing boundary -- the main process
+    builds the graphs (``_bi_example_from_pool``), which avoids the shared-memory FD
+    exhaustion (mmap ENOMEM) that returning graph tensors from workers caused.
     """
     sub, true_products, top_k, max_pool = args
     gen = _BI_WORKER_GEN
     if gen is None:  # pragma: no cover - initializer always runs first
         raise RuntimeError("worker generator not initialized")
-    prior = gen.rule_prior_logits.detach().cpu()
-    num_rules = int(prior.numel())
-    return _build_one_bi(gen, sub, true_products, top_k, max_pool, prior, num_rules)
+    pool = build_pool(gen, sub, top_k=top_k, max_pool=max_pool)
+    if not pool:
+        return None
+    return (sub, pool, list(true_products))
 
 
 def build_examples_bi_parallel(
@@ -597,8 +614,16 @@ def build_examples_bi_parallel(
         processes=workers, initializer=_bi_worker_init,
         initargs=(str(gen_ckpt), float(prior_strength), rule_emb),
     )
+    prior = generator.rule_prior_logits.detach().cpu()
+    num_rules = int(prior.numel())
     try:
-        for ex in pool.imap(_bi_build_one, args, chunksize=4):
+        # Workers return PLAIN pools (no tensors); the graphs are built here in the main
+        # process so nothing torch crosses the mp boundary.
+        for res in pool.imap(_bi_pool_worker, args, chunksize=4):
+            if res is None:
+                continue
+            sub_r, pool_r, true_r = res
+            ex = _bi_example_from_pool(sub_r, pool_r, true_r, prior, num_rules)
             if ex is None:
                 continue
             examples.append(ex)
