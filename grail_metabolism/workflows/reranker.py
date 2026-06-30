@@ -10,7 +10,6 @@ from __future__ import annotations
 
 import multiprocessing as mp
 import os
-import sys
 from pathlib import Path
 from typing import Dict, List, Optional, Sequence, Tuple
 
@@ -504,6 +503,9 @@ def build_examples_bi(
 
 # Per-worker module global: the generator loaded once in the initializer and reused for
 # every substrate that worker handles (avoids re-paying the ~80 s SMARTS-compile per call).
+# Spawn workers each reload the full generator (~80s + a generator-sized RAM copy), so the
+# parallel build hard-caps the worker count: more than this OOMs (the 48-worker failure mode).
+_MAX_SPAWN_WORKERS = 8
 _BI_WORKER_GEN = None
 
 
@@ -550,18 +552,6 @@ def _bi_build_one(args: Tuple[str, Sequence[str], int, int]) -> Optional[_BiExam
     return _build_one_bi(gen, sub, true_products, top_k, max_pool, prior, num_rules)
 
 
-def _bi_worker_init_fork() -> None:
-    """FORK Pool initializer: only pin torch to 1 thread + silence rdkit. The generator is
-    INHERITED from the parent via copy-on-write (set in ``_BI_WORKER_GEN`` before the fork),
-    so there is NO per-worker reload and NO N x generator memory -- the fix for high worker
-    counts (e.g. 48), where the old spawn path reloaded the 7581-rule generator per worker.
-    """
-    torch.set_num_threads(1)
-    from rdkit import RDLogger
-
-    RDLogger.DisableLog("rdApp.*")
-
-
 def build_examples_bi_parallel(
     generator,
     molframe,
@@ -583,24 +573,22 @@ def build_examples_bi_parallel(
     ORDERED imap (chunksize=4) keeps the collected examples reproducible; stops at
     ``n_substrates`` non-None.
     """
-    workers = max(1, min(int(workers), os.cpu_count() or 1))
+    # SPAWN is fork-safe everywhere (fork + torch/OpenMP deadlocks on Linux); each worker
+    # reloads the generator from gen_ckpt ONCE. The caller MUST cap ``workers`` low (~8) so
+    # N generator copies fit in RAM -- a high count (e.g. 48) OOMs from N reloads. This is the
+    # reliable path; fork-COW (no reload) is not used because it is unsafe with torch.
+    workers = max(1, min(int(workers), os.cpu_count() or 1, _MAX_SPAWN_WORKERS))
+    if not gen_ckpt:
+        raise ValueError("parallel build requires gen_ckpt for the spawn workers")
     generator.prior_strength = float(prior_strength)
     substrates = list(molframe.map.keys())
     args = [(sub, list(molframe.map[sub]), top_k, max_pool) for sub in substrates]
-    torch.set_num_threads(1)  # parent: 1 thread before fork (fork-safety)
-
-    global _BI_WORKER_GEN
+    torch.set_num_threads(1)
     examples: List[_BiExample] = []
-    if sys.platform.startswith("linux"):
-        _BI_WORKER_GEN = generator  # forked workers inherit this (COW); no reload
-        pool = mp.get_context("fork").Pool(processes=workers, initializer=_bi_worker_init_fork)
-    else:
-        if not gen_ckpt:
-            raise ValueError("non-fork platform requires gen_ckpt for the spawn worker reload")
-        pool = mp.get_context("spawn").Pool(
-            processes=workers, initializer=_bi_worker_init,
-            initargs=(str(gen_ckpt), float(prior_strength)),
-        )
+    pool = mp.get_context("spawn").Pool(
+        processes=workers, initializer=_bi_worker_init,
+        initargs=(str(gen_ckpt), float(prior_strength)),
+    )
     try:
         for ex in pool.imap(_bi_build_one, args, chunksize=4):
             if ex is None:

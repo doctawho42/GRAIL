@@ -216,14 +216,6 @@ def _predict_worker_init(gen_ckpt_path: str, prior_strength: float) -> None:
     _PREDICT_WORKER_GEN = generator
 
 
-def _predict_worker_init_fork() -> None:
-    """FORK Pool init: only pin torch threads + silence rdkit. The generator is inherited
-    from the parent via copy-on-write (``_PREDICT_WORKER_GEN`` set before the fork) -- no
-    per-worker reload (the fix for high worker counts)."""
-    torch.set_num_threads(1)
-    RDLogger.DisableLog("rdApp.*")
-
-
 def _predict_build_worker(args):
     """Pool worker: build (and return) the per-substrate material for one substrate.
     Returns ``(sub, material)`` where material is ``None`` for unusable substrates."""
@@ -265,19 +257,13 @@ def reranker_predict(
     t_start = time.time()
 
     if int(workers) > 1:
-        workers = max(1, min(int(workers), os.cpu_count() or 1))
+        # SPAWN (fork-safe everywhere; fork + torch/OpenMP deadlocks on Linux). Each worker
+        # reloads the generator from gen_ckpt once, so the worker count is hard-capped at 8 to
+        # keep N generator copies within RAM (a high count, e.g. 48, OOMs).
+        workers = max(1, min(int(workers), os.cpu_count() or 1, 8))
         torch.set_num_threads(1)
         args = [(sub, top_k, max_pool) for sub in substrates]
-        # Linux (Colab): FORK -- load the generator once here, workers inherit it via
-        # copy-on-write (no per-worker reload, no N x memory; fixes high worker counts).
-        # macOS/Windows: SPAWN fallback (workers reload from gen_ckpt) so it runs locally.
-        global _PREDICT_WORKER_GEN
-        if sys.platform.startswith("linux"):
-            if verbose:
-                print(f"  [predict] building pools in PARALLEL ({workers} fork workers)", flush=True)
-            _PREDICT_WORKER_GEN = generator
-            pool = mp.get_context("fork").Pool(processes=workers, initializer=_predict_worker_init_fork)
-        elif gen_ckpt:
+        if gen_ckpt:
             if verbose:
                 print(f"  [predict] building pools in PARALLEL ({workers} spawn workers)", flush=True)
             pool = mp.get_context("spawn").Pool(
