@@ -61,6 +61,8 @@ def main() -> None:
     args = ap.parse_args()
 
     state = _read_checkpoint(args.gen_ckpt)
+    if state is None or "arch" not in state or "rules" not in state:
+        raise SystemExit(f"Generator checkpoint missing/invalid (need arch+rules): {args.gen_ckpt}")
     generator = build_generator(GeneratorConfig(**state["arch"]), state["rules"])
     generator.load_state_dict(state["state_dict"], strict=False); generator.eval()
 
