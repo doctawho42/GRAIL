@@ -101,7 +101,16 @@ class SetGFlowNetTrainer:
         self.loss_history_ = []
 
     def candidate_children(self, state_smiles):
-        """Cached ``(child_smiles, gen_score, rule_id)`` list for a state via the generator."""
+        """Cached ``(child_smiles, gen_score, rule_id)`` list for a state via the generator.
+
+        Candidates with unparseable SMILES are dropped here -- the one cached enumeration
+        point -- so every downstream consumer (``_reranker_child_logits``, ``sample_forest``,
+        ``policy_logits``) iterates the SAME filtered list and stays aligned between logits
+        and actions. Real generators over large SMIRKS banks occasionally emit RDKit-
+        unsanitizable products; without this guard ``Chem.MolFromSmiles`` returns ``None``,
+        ``from_rdmol(None)`` returns ``None``, and ``Batch.from_data_list([None, ...])`` raises
+        ``TypeError`` deep in the rollout.
+        """
         if state_smiles not in self._child_cache:
             seen, out = set(), []
             for smiles, gscore, rid, *_ in self.generator.generate_scored_with_details(
@@ -110,6 +119,8 @@ class SetGFlowNetTrainer:
                 if smiles in seen:
                     continue
                 seen.add(smiles)
+                if Chem.MolFromSmiles(smiles) is None:
+                    continue
                 out.append((smiles, float(gscore), int(rid)))
             self._child_cache[state_smiles] = out
         return self._child_cache[state_smiles]

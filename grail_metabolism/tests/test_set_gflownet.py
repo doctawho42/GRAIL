@@ -74,3 +74,39 @@ def test_tb_loss_is_finite_and_backprops():
     assert any(
         p.grad is not None and torch.isfinite(p.grad).all() for p in rr.parameters()
     )
+    # Backbone-grad assertion: the reranker's GNN backbone (rr.encoder) must actually
+    # train -- guards against a future regression that detaches the encoder so only the
+    # head params get gradient.
+    backbone_params = list(rr.encoder.parameters())
+    assert backbone_params, "rr.encoder has no parameters to check"
+    assert any(
+        p.grad is not None and torch.isfinite(p.grad).all() and p.grad.abs().sum() > 0
+        for p in backbone_params
+    )
+
+
+class _BadSmilesGen:
+    """Emits one valid child and one RDKit-unparseable child for the same state."""
+
+    rule_prior_logits = torch.zeros(8)
+
+    def generate_scored_with_details(self, sub, top_k=200, max_pool=None, compute_sites=False):
+        return {
+            "CCO": [("CC", 0.9, 1), ("@@@bad", 0.5, 2)],
+        }.get(sub, [])
+
+
+def test_candidate_children_drops_unparseable_smiles():
+    gen = _BadSmilesGen()
+    rr = BiEncoderReranker(in_channels=SINGLE_NODE_DIM)
+    cfg = GFlowNetConfig(
+        max_depth=1, beta=2.0, epsilon=0.0, batch_substrates=1,
+        lam=0.1, max_size=5, top_k=200,
+    )
+    trainer = SetGFlowNetTrainer(gen, rr, cfg, annotated_ik_fn=lambda root: set())
+    kids = trainer.candidate_children("CCO")
+    assert [c[0] for c in kids] == ["CC"]   # bad SMILES silently dropped, valid one kept
+
+    torch.manual_seed(0)
+    loss = trainer.tb_loss("CCO")           # must not raise (TypeError from Batch.from_data_list)
+    assert torch.isfinite(loss)
