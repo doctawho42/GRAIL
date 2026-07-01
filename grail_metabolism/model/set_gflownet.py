@@ -36,3 +36,10 @@ class ForestState:
         nodes = [self.root] + list(self.parent.keys())
         return [n for n in nodes
                 if self.depth_of(n) < self.max_depth and len(self.parent) < self.max_size]
+
+
+def set_coverage_logreward(terminal_set, annotated_ik, beta: float, lam: float) -> float:
+    """log R(S) = beta * (TP - lam*|S|). PU-aware: non-annotated members cost only lam
+    (size), never a false-negative penalty."""
+    tp = len(terminal_set & annotated_ik)
+    return float(beta) * (tp - float(lam) * len(terminal_set))
