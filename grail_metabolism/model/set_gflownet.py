@@ -4,7 +4,7 @@ reward = PU set-coverage; forward policy = the Stage-2a reranker; backward = ana
 from __future__ import annotations
 import math
 from dataclasses import dataclass, field, replace
-from typing import Dict, FrozenSet, List, Optional
+from typing import Dict, FrozenSet, List
 
 
 @dataclass(frozen=True)
@@ -64,6 +64,7 @@ import torch.nn.functional as F  # noqa: E402
 from torch import nn  # noqa: E402
 from rdkit import Chem  # noqa: E402
 from torch_geometric.data import Batch  # noqa: E402
+from ..metrics import _tautomer_inchikey  # noqa: E402
 from ..utils.transform import from_rdmol  # noqa: E402
 
 
@@ -98,6 +99,7 @@ class SetGFlowNetTrainer:
         self.log_z = nn.Parameter(torch.zeros(1, device=self.device))
         self.stop_head = StopHead(reranker.embed_dim).to(self.device)
         self._child_cache = {}
+        self._ik_cache: dict = {}
         self.loss_history_ = []
 
     def candidate_children(self, state_smiles):
@@ -168,9 +170,27 @@ class SetGFlowNetTrainer:
 
     def sample_forest(self, root):
         cfg = self.config
-        state = ForestState(root=root, max_depth=cfg.max_depth, max_size=getattr(cfg, "max_size", 15))
-        ik = lambda s: Chem.MolToInchiKey(Chem.MolFromSmiles(s)) if Chem.MolFromSmiles(s) else s
-        smiles_of = {root: root}
+
+        def ik(s):
+            # Tautomer-canonical InChIKey: keeps state identity, TB reward
+            # (terminal_set() ∩ annotated_ik), and eval reconstruction (run_gflownet.py's
+            # ``smiles_of`` / ``evaluate_matrix``) in the SAME key space as
+            # ``annotated_ik_fn`` (built with ``metrics._tautomer_inchikey``). Plain
+            # ``Chem.MolToInchiKey`` would under-count TPs whenever the rule engine emits
+            # a different tautomer of a true metabolite. Memoized here because
+            # ``_tautomer_inchikey`` does full tautomer canonicalization (slow) and the
+            # same SMILES recurs heavily across children/steps/samples; it is itself
+            # ``lru_cache``d in ``metrics.py`` but a local memo avoids repeated dict/hash
+            # overhead through that layer too.
+            cached = self._ik_cache.get(s)
+            if cached is None:
+                cached = _tautomer_inchikey(s)
+                self._ik_cache[s] = cached
+            return cached
+
+        root_ik = ik(root)
+        state = ForestState(root=root_ik, max_depth=cfg.max_depth, max_size=getattr(cfg, "max_size", 15))
+        smiles_of = {root_ik: root}
         sum_log_pf, post_add = [], []
         for _ in range(getattr(cfg, "max_size", 15)):
             # Gather candidate ADD actions across the frontier (parent, child, gscore, rid).
@@ -180,7 +200,7 @@ class SetGFlowNetTrainer:
                 kids = self.candidate_children(p_smiles)
                 for c_smiles, g, rid in kids:
                     c_ik = ik(c_smiles)
-                    if c_ik in state.terminal_set() or c_ik == root:
+                    if c_ik in state.terminal_set() or c_ik == root_ik:
                         continue
                     actions.append((parent_ik, p_smiles, c_smiles, c_ik, g, rid))
             # Build the logit vector: [reranker child logits...] + [stop logit].

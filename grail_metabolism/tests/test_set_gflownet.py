@@ -110,3 +110,94 @@ def test_candidate_children_drops_unparseable_smiles():
     torch.manual_seed(0)
     loss = trainer.tb_loss("CCO")           # must not raise (TypeError from Batch.from_data_list)
     assert torch.isfinite(loss)
+
+
+# --------------------------------------------------------------------------- #
+# Final-review fix: ``sample_forest``'s state identity must use
+# ``metrics._tautomer_inchikey`` (same key space as ``annotated_ik_fn`` / eval), not
+# plain ``Chem.MolToInchiKey`` -- otherwise two tautomers of the same true metabolite
+# are counted as two distinct terminal-set members / two separate TPs instead of one.
+# --------------------------------------------------------------------------- #
+
+from grail_metabolism.metrics import _tautomer_inchikey  # noqa: E402
+
+# Acetylacetone keto/enol tautomers: RDKit's plain InChIKey treats them as DIFFERENT
+# molecules, but metrics._tautomer_inchikey (full tautomer canonicalization) collapses
+# them onto the same key. This is exactly the pair that would expose a regression back
+# to plain Chem.MolToInchiKey in sample_forest.
+_KETO = "CC(=O)CC(=O)C"
+_ENOL = "CC(=O)C=C(O)C"
+
+
+def test_tautomer_pair_collapses_under_tautomer_inchikey_not_plain():
+    from rdkit import Chem
+
+    plain_keto = Chem.MolToInchiKey(Chem.MolFromSmiles(_KETO))
+    plain_enol = Chem.MolToInchiKey(Chem.MolFromSmiles(_ENOL))
+    assert plain_keto != plain_enol, "test fixture assumption broken: pick another tautomer pair"
+    assert _tautomer_inchikey(_KETO) == _tautomer_inchikey(_ENOL)
+
+
+class _TautomerGen:
+    """Root emits BOTH tautomers of the same metabolite as separate children."""
+
+    rule_prior_logits = torch.zeros(8)
+
+    def generate_scored_with_details(self, sub, top_k=200, max_pool=None, compute_sites=False):
+        return {
+            "CCO": [(_KETO, 0.9, 1), (_ENOL, 0.5, 2)],
+        }.get(sub, [])
+
+
+def test_sample_forest_collapses_tautomer_children_to_one_terminal_member():
+    """Guard: FAILS under the old plain-Chem.MolToInchiKey ``ik`` (terminal_set would be
+    able to hold both _KETO and _ENOL as two distinct members); PASSES after routing
+    ``ik`` through metrics._tautomer_inchikey (they can only ever be one member)."""
+    gen = _TautomerGen()
+    rr = BiEncoderReranker(in_channels=SINGLE_NODE_DIM)
+    cfg = GFlowNetConfig(
+        max_depth=1, beta=2.0, epsilon=1.0, batch_substrates=1,
+        lam=0.1, max_size=3, top_k=200,
+    )
+    trainer = SetGFlowNetTrainer(gen, rr, cfg, annotated_ik_fn=lambda root: set())
+
+    # epsilon=1.0 forces uniform-random action selection (add keto / add enol / STOP),
+    # so across a handful of seeds both tautomers get added to the SAME forest at least
+    # once. Regardless of seed, the terminal set can never legitimately exceed size 1,
+    # since the two candidate children are tautomers of one metabolite.
+    saw_both_added = False
+    for seed in range(20):
+        torch.manual_seed(seed)
+        state, _sum_log_pf, _post_add = trainer.sample_forest("CCO")
+        terminal = state.terminal_set()
+        assert len(terminal) <= 1, (
+            f"seed={seed}: terminal_set={terminal} has >1 member for tautomeric children "
+            "-- state identity is not tautomer-invariant"
+        )
+        if len(terminal) == 1:
+            saw_both_added = True
+    assert saw_both_added, "no seed ever added a child -- test rollout never exercised the ADD path"
+
+
+def test_set_coverage_logreward_counts_tautomer_hit_from_other_tautomer_annotation():
+    """A forest terminal produced in the KETO form must still count as a TP when the
+    annotation set is given in the ENOL form (and vice versa) -- reward-side proof that
+    terminal_set() and annotated_ik share the tautomer-invariant key space."""
+    gen = _TautomerGen()
+    rr = BiEncoderReranker(in_channels=SINGLE_NODE_DIM)
+    cfg = GFlowNetConfig(
+        max_depth=1, beta=2.0, epsilon=1.0, batch_substrates=1,
+        lam=0.1, max_size=3, top_k=200,
+    )
+    trainer = SetGFlowNetTrainer(gen, rr, cfg, annotated_ik_fn=lambda root: set())
+
+    annotated_ik = {_tautomer_inchikey(_ENOL)}  # reference given in the OTHER tautomer form
+    hit = False
+    for seed in range(20):
+        torch.manual_seed(seed)
+        state, _sum_log_pf, _post_add = trainer.sample_forest("CCO")
+        terminal = state.terminal_set()
+        if terminal and (terminal & annotated_ik):
+            hit = True
+            break
+    assert hit, "KETO-form terminal never matched an ENOL-form annotation"
