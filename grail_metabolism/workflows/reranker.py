@@ -835,12 +835,17 @@ def evaluate_bi(
 # candidates rooted at an INTERMEDIATE metabolite m1 that was itself just generated (not
 # annotated). Some annotated metabolites m2 are only reachable as root -> m1 -> m2 (depth-2)
 # and never appear as a direct depth-1 child of root -- scripts/census_multistep.py's
-# census_depth2 measures how common this is. This section replicates that traversal (rather
-# than importing scripts.census_multistep, which lives outside the installed
-# `grail_metabolism` package and would break for anyone without the repo's scripts/ dir on
-# sys.path) to COLLECT the (m1, m2) chains instead of just counting them, then builds one
-# _BiExample per chain rooted at m1 via the existing _bi_example_from_pool helper -- so the
-# reranker also sees calibration examples where the "substrate" is itself a metabolite.
+# census_depth2 measures how common this is. This section reuses that same depth-1/depth-2
+# reachability idea (rather than importing scripts.census_multistep, which lives outside the
+# installed `grail_metabolism` package and would break for anyone without the repo's scripts/
+# dir on sys.path) to COLLECT the (m1, m2) chains instead of just counting them, then builds
+# one _BiExample per chain rooted at m1 via the existing _bi_example_from_pool helper -- so
+# the reranker also sees calibration examples where the "substrate" is itself a metabolite.
+# NOTE: unlike census_depth2 (which pools depth-2 children across all depth-1 intermediates
+# before intersecting with the annotated set, so a depth-2-only metabolite counts once no
+# matter how many intermediates reach it), build_intermediate_pairs groups per unlocking
+# intermediate m1 -- so the number of _BiExample objects produced here is NOT the same
+# number as census_depth2's depth2_only count.
 # =========================================================================== #
 
 
@@ -848,9 +853,11 @@ def _children_ik(sub: str, generator, top_k: int, max_pool: int) -> Dict[str, st
     """One generator hop from ``sub``: InChIKey (tautomer) -> smiles of each distinct
     rule-child, generator-order-first-wins on duplicate keys. Mirrors
     ``scripts/census_multistep.py:_children_ik`` exactly (same generate_scored_with_details
-    call, same dedup rule) so the depth-2 chains collected here match what census_depth2
-    would count; ``max_pool`` is accepted for interface parity with that script but -- like
-    there -- is NOT forwarded to the real generator call (top_k alone bounds it there)."""
+    call, same dedup rule) -- this per-hop helper is identical to the script's, though the
+    caller below groups its results differently than ``census_depth2`` does (see
+    ``build_intermediate_pairs``); ``max_pool`` is accepted for interface parity with that
+    script but -- like there -- is NOT forwarded to the real generator call (top_k alone
+    bounds it there)."""
     out: Dict[str, str] = {}
     for smiles, _gen_score, _rule_id, *_ in generator.generate_scored_with_details(
         sub, top_k=top_k, compute_sites=False
