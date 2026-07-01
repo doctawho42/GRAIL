@@ -54,3 +54,223 @@ def log_pb_trajectory(post_add_states) -> float:
         n_leaves = max(len(st.leaves()), 1)
         total += math.log(1.0 / n_leaves)
     return total
+
+
+# --------------------------------------------------------------------------- #
+# Task 5: SetGFlowNetTrainer -- reranker forward policy P_F, forest rollout, TB loss.
+# --------------------------------------------------------------------------- #
+import torch  # noqa: E402
+import torch.nn.functional as F  # noqa: E402
+from torch import nn  # noqa: E402
+from rdkit import Chem  # noqa: E402
+from torch_geometric.data import Batch  # noqa: E402
+from ..utils.transform import from_rdmol  # noqa: E402
+
+
+class StopHead(nn.Module):
+    """Scalar STOP logit from a pooled representation of the current frontier."""
+
+    def __init__(self, dim: int) -> None:
+        super().__init__()
+        self.mlp = nn.Sequential(nn.Linear(dim, dim), nn.ReLU(), nn.Linear(dim, 1))
+
+    def forward(self, frontier_embed: torch.Tensor) -> torch.Tensor:
+        return self.mlp(frontier_embed).view(())
+
+
+class SetGFlowNetTrainer:
+    """Set-GFlowNet trainer: the Stage-2a reranker is the forward policy P_F over a forest
+    rollout (each ADD action attaches one metabolite to a frontier node), trained with the
+    Trajectory-Balance loss against the PU set-coverage log-reward.
+
+    ``P_F`` at each step is a softmax over ``[reranker child logits ...] + [STOP logit]``:
+    the reranker scores every candidate ADD across the frontier, and a small ``StopHead``
+    scores termination from a pooled frontier embedding. ``P_B`` is the analytic
+    ``1/#leaves`` backward for forest construction (``log_pb_trajectory``).
+    """
+
+    def __init__(self, generator, reranker, config, annotated_ik_fn, device=None):
+        self.generator = generator
+        self.reranker = reranker
+        self.config = config
+        self.annotated_ik_fn = annotated_ik_fn
+        self.device = device or torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.log_z = nn.Parameter(torch.zeros(1, device=self.device))
+        self.stop_head = StopHead(reranker.embed_dim).to(self.device)
+        self._child_cache = {}
+        self.loss_history_ = []
+
+    def candidate_children(self, state_smiles):
+        """Cached ``(child_smiles, gen_score, rule_id)`` list for a state via the generator."""
+        if state_smiles not in self._child_cache:
+            seen, out = set(), []
+            for smiles, gscore, rid, *_ in self.generator.generate_scored_with_details(
+                state_smiles, top_k=self.config.top_k, compute_sites=False
+            ):
+                if smiles in seen:
+                    continue
+                seen.add(smiles)
+                out.append((smiles, float(gscore), int(rid)))
+            self._child_cache[state_smiles] = out
+        return self._child_cache[state_smiles]
+
+    def _reranker_child_logits(self, parent_smiles, children):
+        """Reranker logits for ADD candidates of ONE parent (gradients flow to the reranker)."""
+        mol = Chem.MolFromSmiles(parent_smiles)
+        sub_graph = from_rdmol(mol)
+        prod_batch = Batch.from_data_list(
+            [from_rdmol(Chem.MolFromSmiles(c)) for c, _, _ in children]
+        ).to(self.device)
+        rule_prior = self.generator.rule_prior_logits.to(self.device)[
+            torch.tensor([rid for _, _, rid in children], device=self.device)
+        ]
+        gen_score = torch.tensor([g for _, g, _ in children], device=self.device)
+        return self.reranker(sub_graph.to(self.device), prod_batch, rule_prior, gen_score)  # [N]
+
+    def policy_logits(self, state, cand):
+        """[reranker child logits ...] + [STOP logit] for the given frontier candidates.
+
+        ``cand`` is a list of ``(parent_ik, parent_smiles, child_smiles, child_ik, gen, rid)``
+        ADD actions (the ``actions`` gathered in ``sample_forest``); ``smiles_of`` mapping is
+        carried implicitly via the tuple contents. Returns ``Tensor[N+1]`` (N children + STOP)
+        and the flattened action list in the same order as the child logits."""
+        smiles_of = {}  # only needed for the frontier pooling; reconstruct from cand tuples
+        for parent_ik, p_smiles, c_smiles, c_ik, _g, _rid in cand:
+            smiles_of.setdefault(parent_ik, p_smiles)
+            smiles_of.setdefault(c_ik, c_smiles)
+        stop_logit = self.stop_head(self._frontier_embed(state, smiles_of)).view(1)
+        by_parent = {}
+        for a in cand:
+            by_parent.setdefault(a[1], []).append(a)
+        child_logits = []
+        for p_smiles, group in by_parent.items():
+            child_logits.append(
+                self._reranker_child_logits(
+                    p_smiles, [(c, g, rid) for _, _, c, _, g, rid in group]
+                )
+            )
+        child_logits = (
+            torch.cat(child_logits) if child_logits else torch.zeros(0, device=self.device)
+        )
+        flat = [a for group in by_parent.values() for a in group]
+        return torch.cat([child_logits, stop_logit]), flat
+
+    def sample_forest(self, root):
+        cfg = self.config
+        state = ForestState(root=root, max_depth=cfg.max_depth, max_size=getattr(cfg, "max_size", 15))
+        ik = lambda s: Chem.MolToInchiKey(Chem.MolFromSmiles(s)) if Chem.MolFromSmiles(s) else s
+        smiles_of = {root: root}
+        sum_log_pf, post_add = [], []
+        for _ in range(getattr(cfg, "max_size", 15)):
+            # Gather candidate ADD actions across the frontier (parent, child, gscore, rid).
+            actions = []
+            for parent_ik in state.frontier():
+                p_smiles = smiles_of.get(parent_ik, parent_ik)
+                kids = self.candidate_children(p_smiles)
+                for c_smiles, g, rid in kids:
+                    c_ik = ik(c_smiles)
+                    if c_ik in state.terminal_set() or c_ik == root:
+                        continue
+                    actions.append((parent_ik, p_smiles, c_smiles, c_ik, g, rid))
+            # Build the logit vector: [reranker child logits...] + [stop logit].
+            stop_logit = self.stop_head(self._frontier_embed(state, smiles_of)).view(1)
+            if not actions:
+                break
+            by_parent = {}
+            for a in actions:
+                by_parent.setdefault(a[1], []).append(a)
+            child_logits = []
+            for p_smiles, group in by_parent.items():
+                child_logits.append(
+                    self._reranker_child_logits(
+                        p_smiles, [(c, g, rid) for _, _, c, _, g, rid in group]
+                    )
+                )
+            child_logits = (
+                torch.cat(child_logits) if child_logits else torch.zeros(0, device=self.device)
+            )
+            logits = torch.cat([child_logits, stop_logit])
+            log_probs = F.log_softmax(logits, dim=0)
+            idx = self._sample_index(log_probs.detach())
+            sum_log_pf.append(log_probs[idx])
+            if idx == len(actions):  # STOP
+                break
+            flat = [a for group in by_parent.values() for a in group]  # order of child_logits
+            parent_ik, _, c_smiles, c_ik, _, _ = flat[idx]
+            state = state.add(parent_ik, c_ik)
+            smiles_of[c_ik] = c_smiles
+            post_add.append(state)
+        total = torch.stack(sum_log_pf).sum() if sum_log_pf else torch.zeros((), device=self.device)
+        return state, total, post_add
+
+    def _frontier_embed(self, state, smiles_of):
+        """Mean of the reranker's substrate encoding over frontier nodes (coarse pooled rep).
+
+        All frontier graphs are batched into ONE ``Batch`` so ``GraphEncoder``'s BatchNorm
+        sees them together; ``encode_substrate`` handles the 1-graph edge (first rollout step,
+        frontier == [root]) by running its norm layers in eval for that call."""
+        graphs = []
+        for ik_ in state.frontier():
+            mol = Chem.MolFromSmiles(smiles_of.get(ik_, ik_))
+            if mol is not None:
+                g = from_rdmol(mol)
+                if g is not None:
+                    graphs.append(g)
+        if not graphs:
+            return torch.zeros(self.reranker.embed_dim, device=self.device)
+        batch = Batch.from_data_list(graphs).to(self.device)
+        embs = self.reranker.encode_substrate(batch)  # (k, embed_dim)
+        return embs.mean(0)
+
+    def _sample_index(self, log_probs):
+        n = int(log_probs.shape[0])
+        if self.config.epsilon > 0.0 and float(torch.rand(())) < self.config.epsilon:
+            return int(torch.randint(0, n, (1,)))
+        return int(torch.multinomial(log_probs.exp(), 1))
+
+    def tb_loss(self, root):
+        state, sum_log_pf, post_add = self.sample_forest(root)
+        log_r = set_coverage_logreward(
+            state.terminal_set(),
+            set(self.annotated_ik_fn(root)),
+            self.config.beta,
+            getattr(self.config, "lam", 0.1),
+        )
+        log_pb = log_pb_trajectory(post_add)
+        return (self.log_z.squeeze() + sum_log_pf - log_pb - log_r) ** 2
+
+    def fit(self, substrates, epochs=None, verbose=False):
+        cfg = self.config
+        epochs = epochs if epochs is not None else cfg.epochs
+        subs = [s for s in substrates if s]
+        params = [p for p in self.reranker.parameters() if p.requires_grad] + list(
+            self.stop_head.parameters()
+        )
+        opt = torch.optim.Adam(
+            [
+                {"params": params, "lr": cfg.lr},
+                {"params": [self.log_z], "lr": cfg.logz_lr},
+            ]
+        )
+        self.loss_history_ = []
+        for epoch in range(epochs):
+            self.reranker.train()
+            order = torch.randperm(len(subs)).tolist()
+            ep, nb = 0.0, 0
+            for start in range(0, len(subs), cfg.batch_substrates):
+                batch = [subs[i] for i in order[start:start + cfg.batch_substrates]]
+                losses = [self.tb_loss(s) for s in batch]
+                loss = torch.stack(losses).mean()
+                opt.zero_grad()
+                loss.backward()
+                opt.step()
+                ep += float(loss.item())
+                nb += 1
+            self.loss_history_.append(ep / max(nb, 1))
+            if verbose:
+                print(
+                    f"setgfn epoch={epoch + 1} tb_loss={self.loss_history_[-1]:.4f} "
+                    f"logZ={float(self.log_z):.3f}",
+                    flush=True,
+                )
+        return self

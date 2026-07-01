@@ -101,6 +101,9 @@ class BiEncoderReranker(nn.Module):
     ) -> None:
         super().__init__()
         self.out_dim = int(out_dim)
+        # Public alias for the pooled-embedding dim (the Set-GFlowNet StopHead / frontier
+        # pooling in ``model.set_gflownet`` reads ``reranker.embed_dim``).
+        self.embed_dim = int(out_dim)
         self.use_rule_prior = bool(use_rule_prior)
         self.use_gen_score = bool(use_gen_score)
         # Siamese: ONE encoder shared between substrate and products (single graphs).
@@ -125,6 +128,42 @@ class BiEncoderReranker(nn.Module):
             nn.ReLU(inplace=True),
             nn.Linear(64, 1),
         )
+
+    def encode_substrate(self, graphs) -> torch.Tensor:
+        """Pooled single-graph embedding(s).
+
+        ``graphs`` is a ``from_rdmol`` ``Data`` (one graph) or a ``Batch`` of them; returns
+        ``(M, out_dim)`` pooled embeddings (M == number of graphs). This is the substrate
+        encoding path factored out of ``forward`` so the Set-GFlowNet frontier pooling can
+        reuse the trained encoder.
+
+        BatchNorm1d in ``GraphEncoder`` raises on a 1-row (single-graph) batch in train mode.
+        ``forward`` sidesteps this by encoding the substrate inside the joint product batch;
+        callers that legitimately encode a lone graph (the STOP-head frontier pooling starts
+        from ``[root]``) hit that edge. When there is a single graph we run the encoder's norm
+        layers in eval for this call only (a coarse pooled rep -- not updating its running
+        BatchNorm stats here is fine) and restore the prior mode. Gradients still flow.
+        """
+        device = next(self.parameters()).device
+        batch = graphs
+        if not isinstance(batch, Batch):
+            batch = Batch.from_data_list([batch])
+        batch = batch.to(device)
+        n_graphs = int(batch.num_graphs) if hasattr(batch, "num_graphs") else 1
+        if n_graphs <= 1:
+            # Toggle only the encoder's BatchNorm layers to eval for this single-row encode;
+            # keep them differentiable (no torch.no_grad) so gradients propagate.
+            norm_layers = [m for m in self.encoder.modules() if isinstance(m, nn.BatchNorm1d)]
+            prev = [m.training for m in norm_layers]
+            for m in norm_layers:
+                m.eval()
+            try:
+                out = self.encoder(batch)
+            finally:
+                for m, was_training in zip(norm_layers, prev):
+                    m.train(was_training)
+            return out
+        return self.encoder(batch)
 
     def forward(
         self,

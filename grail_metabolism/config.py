@@ -146,6 +146,11 @@ class GFlowNetConfig:
     anchor_weight: float = 0.0     # optional supervised imitation bonus on annotated terminals
     node_budget: int = 64          # per-trajectory expansion safety cap
     reward: Literal["annotation", "filter"] = "annotation"
+    # Set-GFlowNet (Stage 2b) fields, distinct from the single-terminal GFlowNetTrainer above.
+    # The forest rollout builds a SET of metabolites; these govern its reward and rollout size.
+    lam: float = 0.1               # size penalty in the PU set-coverage log-reward
+    max_size: int = 15             # max number of metabolites in the terminal set (forest size)
+    top_k: int = 200               # generator candidates enumerated per frontier node (Set-GFN)
 
 
 @dataclass
