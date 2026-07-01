@@ -43,3 +43,14 @@ def set_coverage_logreward(terminal_set, annotated_ik, beta: float, lam: float) 
     (size), never a false-negative penalty."""
     tp = len(terminal_set & annotated_ik)
     return float(beta) * (tp - float(lam) * len(terminal_set))
+
+
+def log_pb_trajectory(post_add_states) -> float:
+    """Sum of log(1/#leaves) over the states reached AFTER each ADD action. The last-added
+    node of a forest must be a current leaf, so P_B(remove leaf)=1/#leaves is the exact
+    analytic backward for forest construction."""
+    total = 0.0
+    for st in post_add_states:
+        n_leaves = max(len(st.leaves()), 1)
+        total += math.log(1.0 / n_leaves)
+    return total
