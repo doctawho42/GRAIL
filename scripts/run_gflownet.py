@@ -92,6 +92,8 @@ def _load_generator():
         raise SystemExit(f"Generator checkpoint missing arch/rules: {GEN_CKPT}")
     generator = build_generator(GeneratorConfig(**state["arch"]), state["rules"])
     generator.load_state_dict(state["state_dict"], strict=False)
+    if state.get("calibrated_threshold") is not None:
+        generator.calibrated_threshold = state["calibrated_threshold"]
     generator.eval()
     return generator, state["rules"]
 
@@ -134,6 +136,8 @@ def _reranker_topk_smiles(reranker, generator, root: str, k: int, top_k: int, ma
     if sub_mol is None:
         return []
     sub_graph = from_rdmol(sub_mol)
+    if sub_graph is None:
+        return []
     prior = generator.rule_prior_logits.detach().cpu()
     num_rules = int(prior.numel())
     prod_graphs, rule_priors, gen_scores, smiles = [], [], [], []
