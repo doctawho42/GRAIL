@@ -825,3 +825,93 @@ def evaluate_bi(
         out[f"generator_recall@{k}"] = gen_acc[k] / max(n, 1)
         out[f"oracle_recall@{k}"] = ora_acc[k] / max(n, 1)
     return out
+
+
+# =========================================================================== #
+# Task 6: intermediate-node (depth-2) bootstrap pairs.
+#
+# The reranker above is trained ONLY on (root, product) pairs -- one hop from an
+# annotated substrate. But at inference the forest policy (Stage 2b) also has to rank
+# candidates rooted at an INTERMEDIATE metabolite m1 that was itself just generated (not
+# annotated). Some annotated metabolites m2 are only reachable as root -> m1 -> m2 (depth-2)
+# and never appear as a direct depth-1 child of root -- scripts/census_multistep.py's
+# census_depth2 measures how common this is. This section replicates that traversal (rather
+# than importing scripts.census_multistep, which lives outside the installed
+# `grail_metabolism` package and would break for anyone without the repo's scripts/ dir on
+# sys.path) to COLLECT the (m1, m2) chains instead of just counting them, then builds one
+# _BiExample per chain rooted at m1 via the existing _bi_example_from_pool helper -- so the
+# reranker also sees calibration examples where the "substrate" is itself a metabolite.
+# =========================================================================== #
+
+
+def _children_ik(sub: str, generator, top_k: int, max_pool: int) -> Dict[str, str]:
+    """One generator hop from ``sub``: InChIKey (tautomer) -> smiles of each distinct
+    rule-child, generator-order-first-wins on duplicate keys. Mirrors
+    ``scripts/census_multistep.py:_children_ik`` exactly (same generate_scored_with_details
+    call, same dedup rule) so the depth-2 chains collected here match what census_depth2
+    would count; ``max_pool`` is accepted for interface parity with that script but -- like
+    there -- is NOT forwarded to the real generator call (top_k alone bounds it there)."""
+    out: Dict[str, str] = {}
+    for smiles, _gen_score, _rule_id, *_ in generator.generate_scored_with_details(
+        sub, top_k=top_k, compute_sites=False
+    ):
+        ik = _tautomer_inchikey(smiles)
+        if ik is not None and ik not in out:
+            out[ik] = smiles
+    return out
+
+
+def build_intermediate_pairs(
+    generator,
+    molframe,
+    n_substrates: int,
+    top_k: int,
+    max_pool: int = 100,
+    verbose: bool = True,
+) -> List[_BiExample]:
+    """Depth-2 bootstrap examples: for each root substrate with an annotated metabolite m2
+    that is depth-2-reachable but NOT depth-1 (root -> m1 -> m2), emit one ``_BiExample``
+    rooted at the intermediate m1 with m2 (and any other such depth-2-only metabolites
+    sharing that m1) as the positive hit(s) among m1's own rule-children.
+
+    Scans up to ``n_substrates`` roots from ``molframe.map`` (same iteration order as the
+    other builders); a root contributes zero or more examples (one per distinct m1 that
+    unlocks a depth-2-only annotated metabolite). These are meant to be concatenated with
+    the normal depth-1 ``_BiExample`` list for the reranker fine-tune (concatenation itself
+    is Task 8, not here).
+    """
+    prior = generator.rule_prior_logits.detach().cpu()
+    num_rules = int(prior.numel())
+    substrates = list(molframe.map.keys())
+    examples: List[_BiExample] = []
+    scanned = 0
+    for sub in substrates[:n_substrates]:
+        scanned += 1
+        annotated_ik = {_tautomer_inchikey(p) for p in molframe.map[sub]} - {None}
+        if not annotated_ik:
+            continue
+        d1 = _children_ik(sub, generator, top_k, max_pool)
+        depth1_hits = set(d1) & annotated_ik
+        # Group depth-2-only annotated metabolites by the m1 that unlocks them.
+        by_m1: Dict[str, List[str]] = {}
+        for m1_smiles in d1.values():
+            d2 = _children_ik(m1_smiles, generator, top_k, max_pool)
+            depth2_only_iks = (set(d2) & annotated_ik) - depth1_hits
+            if not depth2_only_iks:
+                continue
+            by_m1[m1_smiles] = [d2[ik] for ik in depth2_only_iks]
+        for m1_smiles, m2_list in by_m1.items():
+            pool = build_pool(generator, m1_smiles, top_k=top_k, max_pool=max_pool)
+            if not pool:
+                continue
+            ex = _bi_example_from_pool(m1_smiles, pool, m2_list, prior, num_rules)
+            if ex is None:
+                continue
+            examples.append(ex)
+            if verbose and (len(examples) % 25 == 0):
+                print(
+                    f"  built {len(examples)} intermediate bi-examples "
+                    f"(scanned {scanned} roots)",
+                    flush=True,
+                )
+    return examples

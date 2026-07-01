@@ -366,3 +366,42 @@ def test_parallel_bi_builder_matches_serial(tmp_path):
         assert torch.equal(a.rule_priors, b.rule_priors), f"rule_priors differ for {a.sub!r}"
         assert torch.allclose(a.gen_scores, b.gen_scores), f"gen_scores differ for {a.sub!r}"
         assert a.true_products == b.true_products, f"true_products differ for {a.sub!r}"
+
+
+# --------------------------------------------------------------------------- #
+# Task 6: intermediate-node (depth-2) bootstrap pairs for the forest policy.
+#
+# root -> m1 -> m2 chain built from REAL SMIRKS rules (mirrors the rest of this file's
+# fixture style, rather than a hand-rolled stub generator): benzyl alcohol --r0--> benz-
+# aldehyde --r1--> benzoic acid. m2 is annotated for `root` but is NOT a depth-1 child of
+# `root` (only m1 is) -- i.e. exactly the depth-2-only case build_intermediate_pairs must
+# catch.
+# --------------------------------------------------------------------------- #
+
+from grail_metabolism.workflows.reranker import build_intermediate_pairs  # noqa: E402
+
+_ROOT = "OCc1ccccc1"       # benzyl alcohol
+_M1 = "O=Cc1ccccc1"        # benzaldehyde (depth-1 child of root via rule 0)
+_M2 = "O=C(O)c1ccccc1"     # benzoic acid (depth-1 child of m1 via rule 1; depth-2-only from root)
+
+
+def _tiny_generator_depth2():
+    rules = ["[CH2:1][OH:2]>>[CH:1]=[O:2]", "[CH:1]=[O:2]>>[C:1](=[O:2])[OH]"]
+    gen = build_generator(GeneratorConfig(), rules)
+    gen.eval()
+    return gen
+
+
+def _tiny_molframe_depth2():
+    # root's annotated set contains m2 (depth-2-only) but NOT m1.
+    fake_map = {_ROOT: {_M2}}
+    return types.SimpleNamespace(map=fake_map)
+
+
+def test_intermediate_pairs_rooted_at_intermediate():
+    gen = _tiny_generator_depth2()
+    molframe = _tiny_molframe_depth2()
+    ex = build_intermediate_pairs(gen, molframe, n_substrates=5, top_k=50)
+    assert any(e.sub == _M1 and bool(e.hit_mask.any()) for e in ex), (
+        f"expected a _BiExample rooted at {_M1!r} with a hit; got subs={[e.sub for e in ex]}"
+    )
