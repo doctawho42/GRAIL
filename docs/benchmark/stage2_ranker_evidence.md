@@ -97,22 +97,24 @@ in the projected CRX-Rank band (0.45–0.52) with the *simpler* bi-encoder, and 
 MetaPredictor recall band (≈0.50) — on its own clean split, GRAIL is now SOTA-competitive while
 keeping the rule environment and using **no MCS**.
 
-**Touch-once TEST (clean test split, n=400, every hyperparameter frozen from val selection):**
+**TEST headline — full clean test (n=1170), mean±std over 3 seeds, hyperparameters frozen from val:**
 
 | | recall@5 | recall@10 | recall@15 |
 |---|---|---|---|
-| generator alone | 0.284 | 0.371 | 0.424 |
-| **reranker** | **0.381** | **0.463** | **0.498** |
-| oracle (perfect rerank of pool) | 0.655 | 0.663 | 0.663 |
+| generator alone | 0.294 | 0.382 | 0.433 |
+| **reranker** | **0.376 ± 0.016** | **0.454 ± 0.018** | **0.500 ± 0.015** |
+| oracle (perfect rerank of pool) | 0.670 | 0.677 | 0.677 |
 
-**val 0.507 ≈ test 0.498 — no overfit; the headline number is credible.** Reranker test
-**0.498@15 = +17.5% over generator-alone (0.424)**, 75% of the oracle ceiling (0.663), and **89% of
-SyGMa's clean-test recall (0.558) — up from the generator's 76%** — rule-based, no MCS. Two budget
-effects stack: the wider generation budget (top_k=200/pool=150) lifts the generator itself from its
-deployed ~0.385 to 0.424@15, and the reranker adds +0.074 on top. The residual to oracle (0.498→
-0.663) is in-distribution ranking headroom; the residual to SyGMa (0.498→0.558) is curated-rule
-quality, not a ranking failure. (`results/reranker_gate_bi_test.json`, seed 0, n=400 subsample;
-full clean-test (1246 substrates) + seed 1/2 mean±std pending via `--test-substrates 2000`.)
+**val 0.507 ≈ test 0.500 ± 0.015 — no overfit, tight seed variance.** Reranker test
+**0.500 ± 0.015 @15 = +15.7% over generator-alone (0.433)**, 74% of the oracle ceiling (0.677), and
+**90% of SyGMa's clean-test recall (0.558) — up from the generator's 78%** — rule-based, no MCS.
+Per-seed @15: 0.521 / 0.487 / 0.493. The generator baseline is deterministic (±0.000: fixed
+checkpoint scored on an identical full-test set across seeds), so the ±0.015 is pure reranker
+training variance (train-subsample draw + init), not test-set noise. Two budget effects stack: the
+wider generation budget (top_k=200/pool=150) lifts the generator itself from its deployed ~0.385 to
+0.433@15, and the reranker adds +0.067 on top. The residual to oracle (0.500→0.677) is
+in-distribution ranking headroom; the residual to SyGMa (0.500→0.558) is curated-rule quality, not a
+ranking failure. (`results/reranker_gate_bi_test{,_seed1,_seed2}.json`; `scripts/aggregate_seeds.py`.)
 
 **Feature ablation (val, seed 0, pools reused — what carries the signal?):**
 
