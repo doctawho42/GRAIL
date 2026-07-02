@@ -339,4 +339,8 @@ class SetGFlowNetTrainer:
                     f"logZ={float(self.log_z):.3f}",
                     flush=True,
                 )
+            # Persist the env caches EVERY epoch so a killed run never loses the (expensive,
+            # deterministic) pool-gen it already did -- the next run resumes from a warm cache.
+            if self._child_cache_path or self._ik_cache_path:
+                self.save_caches()
         return self
