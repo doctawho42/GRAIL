@@ -30,18 +30,33 @@ def _children_ik(sub, generator, top_k, max_pool):
 
 
 def census_depth2(sub, annotated_ik, generator, top_k=200, max_pool=150):
+    """Count how many of ``annotated_ik`` are reachable at depth 1, at depth 2 ONLY, or not
+    within 2 rule steps.
+
+    Perf: depth-2 is the combinatorial explosion (expanding every depth-1 child re-runs the
+    generator + RDKit rule application + tautomer canonicalization). We only expand depth-2
+    when annotated metabolites remain unreached after depth 1, and stop as soon as all are
+    found -- so a substrate whose whole annotated set is single-step-reachable costs ONE
+    generator call, not one-per-child. This is exact (identical counts to the naive version):
+    early-exit only fires once nothing is left to find.
+    """
     d1 = _children_ik(sub, generator, top_k, max_pool)          # ik -> smiles at depth 1
     depth1_hits = set(d1) & annotated_ik
-    d2 = set()
-    for child_smiles in d1.values():                            # expand each depth-1 child once
-        d2 |= set(_children_ik(child_smiles, generator, top_k, max_pool))
-    depth2_only = (d2 & annotated_ik) - depth1_hits
-    reached = depth1_hits | (d2 & annotated_ik)
+    unreached = annotated_ik - depth1_hits
+    depth2_found = set()
+    if unreached:                                               # skip depth-2 entirely if covered
+        for child_smiles in d1.values():
+            newly = set(_children_ik(child_smiles, generator, top_k, max_pool)) & unreached
+            if newly:
+                depth2_found |= newly
+                unreached -= newly
+                if not unreached:                               # all annotated found -> stop
+                    break
     return {
         "n_annot": len(annotated_ik),
         "depth1": len(depth1_hits),
-        "depth2_only": len(depth2_only),
-        "unreach": len(annotated_ik - reached),
+        "depth2_only": len(depth2_found),
+        "unreach": len(unreached),
     }
 
 
@@ -91,7 +106,10 @@ def main() -> None:
     frame = getattr(bundle, args.split)
 
     agg = {"n_annot": 0, "depth1": 0, "depth2_only": 0, "unreach": 0, "n_subs": 0}
-    for sub, prods in list(frame.map.items())[: args.substrates]:
+    subs = list(frame.map.items())[: args.substrates]
+    print(f"[census] {len(subs)} {args.split} substrates, top_k={args.top_k} "
+          f"(depth-2 expanded only when depth-1 misses annotations) ...", flush=True)
+    for i, (sub, prods) in enumerate(subs, 1):
         annotated_ik = {_tautomer_inchikey(p) for p in prods} - {None}
         if not annotated_ik:
             continue
@@ -101,6 +119,11 @@ def main() -> None:
         for k in ("n_annot", "depth1", "depth2_only", "unreach"):
             agg[k] += c[k]
         agg["n_subs"] += 1
+        if i % 5 == 0 or i == len(subs):
+            frac = agg["depth2_only"] / max(agg["n_annot"], 1)
+            print(f"[census] {i}/{len(subs)} subs={agg['n_subs']} n_annot={agg['n_annot']} "
+                  f"depth1={agg['depth1']} depth2_only={agg['depth2_only']} "
+                  f"unreach={agg['unreach']} | depth2_only_frac={frac:.4f}", flush=True)
     agg["depth2_only_frac"] = agg["depth2_only"] / max(agg["n_annot"], 1)
     Path(args.out).parent.mkdir(parents=True, exist_ok=True)
     Path(args.out).write_text(json.dumps(agg, indent=2))
