@@ -3,6 +3,8 @@ reward = PU set-coverage; forward policy = the Stage-2a reranker; backward = ana
 1/#leaves. See docs/superpowers/specs/2026-07-01-set-gflownet-stage2b-design.md."""
 from __future__ import annotations
 import math
+import os
+import pickle
 from dataclasses import dataclass, field, replace
 from typing import Dict, FrozenSet, List
 
@@ -90,7 +92,8 @@ class SetGFlowNetTrainer:
     ``1/#leaves`` backward for forest construction (``log_pb_trajectory``).
     """
 
-    def __init__(self, generator, reranker, config, annotated_ik_fn, device=None):
+    def __init__(self, generator, reranker, config, annotated_ik_fn, device=None,
+                 child_cache_path=None, ik_cache_path=None):
         self.generator = generator
         self.config = config
         self.annotated_ik_fn = annotated_ik_fn
@@ -102,9 +105,37 @@ class SetGFlowNetTrainer:
         self.reranker = reranker.to(self.device)
         self.log_z = nn.Parameter(torch.zeros(1, device=self.device))
         self.stop_head = StopHead(self.reranker.embed_dim).to(self.device)
-        self._child_cache = {}
+        # Environment caches. Both map deterministic pure functions -- (state, top_k) ->
+        # children via RDKit rule application, and SMILES -> tautomer-InChIKey -- so persisting
+        # them across runs is EXACT: the expensive RDKit / tautomer-canonicalization work is
+        # done once and reused by every later M1/M2/seed run. child_cache is (generator, top_k)
+        # -specific (the caller must key its file by top_k); ik_cache is universal.
+        self._child_cache: dict = {}
         self._ik_cache: dict = {}
+        self._child_cache_path = child_cache_path
+        self._ik_cache_path = ik_cache_path
+        self._load_caches()
         self.loss_history_ = []
+
+    def _load_caches(self):
+        for path, attr in ((self._child_cache_path, "_child_cache"),
+                           (self._ik_cache_path, "_ik_cache")):
+            if path and os.path.exists(path):
+                try:
+                    with open(path, "rb") as fh:
+                        setattr(self, attr, pickle.load(fh))
+                except Exception as exc:  # a corrupt/incompatible cache must never crash training
+                    print(f"[set_gflownet] WARNING: ignoring unreadable cache {path}: {exc}", flush=True)
+
+    def save_caches(self):
+        """Persist both environment caches to disk (call after training / eval). No-op if the
+        paths are unset. Safe to call repeatedly; only the main process writes."""
+        for path, obj in ((self._child_cache_path, self._child_cache),
+                          (self._ik_cache_path, self._ik_cache)):
+            if path:
+                os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
+                with open(path, "wb") as fh:
+                    pickle.dump(obj, fh)
 
     def candidate_children(self, state_smiles):
         """Cached ``(child_smiles, gen_score, rule_id)`` list for a state via the generator.

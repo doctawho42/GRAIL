@@ -422,10 +422,18 @@ def main() -> None:
         epochs=args.epochs,
     )
     train_substrates_list = list(bundle.train.map.keys())[: args.train_substrates]
+    # Persistent, cross-run environment caches (exact -- RDKit rule application and tautomer
+    # canonicalization are deterministic). Built once, reused by every later M1/M2/seed run,
+    # so the slow "epoch 1 pool-gen" is paid only the FIRST time. child cache is (generator,
+    # top_k)-specific (keyed by top_k in the filename); ik cache is universal.
+    child_cache_path = CACHE_DIR / f"gfn_child_cache_k{args.top_k}.pkl"
+    ik_cache_path = CACHE_DIR / "gfn_ik_cache.pkl"
     trainer = SetGFlowNetTrainer(
         generator, reranker, gfn_config, _make_annotated_ik_fn(bundle.train), device=rr_trainer.device,
+        child_cache_path=str(child_cache_path), ik_cache_path=str(ik_cache_path),
     )
     trainer.fit(train_substrates_list, epochs=args.epochs, verbose=True)
+    trainer.save_caches()  # persist env caches populated during training
     print(f"[gflownet] Set-GFlowNet training done in {time.time()-t0:.1f}s", flush=True)
 
     print(f"[gflownet] evaluating dual matrix on {eval_prefix.upper()} (touch-once for test) ...", flush=True)
@@ -437,6 +445,7 @@ def main() -> None:
         n_eval=eval_count, n_samples=args.n_samples, max_size=args.max_size,
         top_k=args.top_k, max_pool=args.max_pool, device=rr_trainer.device,
     )
+    trainer.save_caches()  # persist env caches populated by eval (test states are reused across seeds)
     print(f"[gflownet] eval done in {time.time()-t0:.1f}s", flush=True)
 
     result = {

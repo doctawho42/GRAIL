@@ -239,3 +239,30 @@ def test_trainer_unifies_reranker_stophead_logz_device():
     sh_dev = next(trainer.stop_head.parameters()).device
     lz_dev = trainer.log_z.device
     assert rr_dev == sh_dev == lz_dev, f"device split: reranker={rr_dev} stop_head={sh_dev} log_z={lz_dev}"
+
+
+def test_persistent_child_cache_roundtrip(tmp_path):
+    """The (state,top_k)->children cache persists across trainers: a second trainer with the
+    same cache path must serve candidate_children FROM DISK without ever calling the generator
+    (RDKit rule application is deterministic, so cross-run caching is exact)."""
+    child_path = tmp_path / "child.pkl"
+    ik_path = tmp_path / "ik.pkl"
+    rr = BiEncoderReranker(in_channels=SINGLE_NODE_DIM)
+    cfg = GFlowNetConfig(max_depth=1, beta=2.0, epsilon=0.0, batch_substrates=1,
+                         lam=0.1, max_size=3, top_k=200)
+    t1 = SetGFlowNetTrainer(_TwoChildrenGen(), rr, cfg, annotated_ik_fn=lambda root: set(),
+                            child_cache_path=str(child_path), ik_cache_path=str(ik_path))
+    kids = t1.candidate_children(_ROOT)          # populates the in-memory cache
+    assert kids and all(len(x) == 3 for x in kids)
+    t1.save_caches()
+    assert child_path.exists()
+
+    class _BoomGen:
+        rule_prior_logits = torch.zeros(8)
+
+        def generate_scored_with_details(self, *a, **k):
+            raise AssertionError("generator called -- the persistent cache was not loaded")
+
+    t2 = SetGFlowNetTrainer(_BoomGen(), rr, cfg, annotated_ik_fn=lambda root: set(),
+                            child_cache_path=str(child_path), ik_cache_path=str(ik_path))
+    assert t2.candidate_children(_ROOT) == kids  # served from the on-disk cache, no generator call
