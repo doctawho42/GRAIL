@@ -66,8 +66,27 @@ def main() -> None:
     generator = build_generator(GeneratorConfig(**state["arch"]), state["rules"])
     generator.load_state_dict(state["state_dict"], strict=False); generator.eval()
 
-    cfg = DatasetConfig(use_clean_splits=True, standardize=False, cache_preprocessed=False,
-                        max_test_substrates=args.substrates + 60, sampling_seed=0)
+    # Specify every path explicitly (mirroring run_reranker_gate.py, the config proven on
+    # Colab) -- DatasetConfig's path defaults are all None, which makes _load_split return an
+    # empty frame ("Input DataFrame is empty"). load_dataset_bundle always loads all three
+    # splits, so cap the two we are NOT censusing at 1 to keep their SDF load cheap.
+    n_sub = args.substrates + 60
+    cfg = DatasetConfig(
+        train_sdf="grail_metabolism/data/train.sdf",
+        train_triples="grail_metabolism/data/train_triples.txt",
+        val_sdf="grail_metabolism/data/val.sdf",
+        val_triples="grail_metabolism/data/val_triples.txt",
+        test_sdf="grail_metabolism/data/test.sdf",
+        test_triples="grail_metabolism/data/test_triples.txt",
+        rules_path="grail_metabolism/resources/extended_smirks.txt",
+        use_clean_splits=True,
+        standardize=False,
+        cache_preprocessed=False,
+        max_train_substrates=(n_sub if args.split == "train" else 1),
+        max_val_substrates=(n_sub if args.split == "val" else 1),
+        max_test_substrates=(n_sub if args.split == "test" else 1),
+        sampling_seed=0,
+    )
     bundle = load_dataset_bundle(cfg)
     frame = getattr(bundle, args.split)
 
