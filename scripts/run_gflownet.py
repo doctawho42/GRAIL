@@ -106,7 +106,10 @@ def _load_filter():
     """
     state = _read_checkpoint(FILTER_CKPT)
     if state is None or "arch" not in state:
-        raise SystemExit(f"Filter checkpoint missing arch: {FILTER_CKPT}")
+        print(f"[gflownet] WARNING: filter checkpoint missing/invalid ({FILTER_CKPT}) -- "
+              "the beam baseline needs it, so it is SKIPPED. The gflownet and reranker "
+              "baselines (the core comparison) still run.", flush=True)
+        return None
     filt = build_filter(FilterConfig(**state["arch"]))
     filt.load_state_dict(state["state_dict"], strict=False)
     filt.calibrated_threshold = state.get("calibrated_threshold")
@@ -250,9 +253,10 @@ def evaluate_matrix(
         )
         reranker_recall.append(_recall_at_k(reranker_smiles, annotated_ik))
 
-        beam_out = beam_tree.beam_search(root, max_output=max_size)
-        beam_smiles = [s for s, _score in beam_out]
-        beam_recall.append(_recall_at_k(beam_smiles, annotated_ik))
+        if beam_tree is not None:  # beam baseline only when a filter checkpoint was available
+            beam_out = beam_tree.beam_search(root, max_output=max_size)
+            beam_smiles = [s for s, _score in beam_out]
+            beam_recall.append(_recall_at_k(beam_smiles, annotated_ik))
 
         diversity_rows.append(_diversity_block(sampled_sets, smiles_of, annotated_ik))
         n_evaluated += 1
@@ -264,8 +268,9 @@ def evaluate_matrix(
         "n_substrates": float(n_evaluated),
         f"gflownet_recall@{max_size}": _mean(gflownet_recall),
         f"reranker_recall@{max_size}": _mean(reranker_recall),
-        f"beam_recall@{max_size}": _mean(beam_recall),
     }
+    if beam_recall:  # only present when the beam baseline ran (filter checkpoint available)
+        metrics[f"beam_recall@{max_size}"] = _mean(beam_recall)
     for key in ("modes_discovered", "mean_pairwise_tanimoto", "n_unique_scaffolds", "set_size_calibration"):
         metrics[key] = _mean([row[key] for row in diversity_rows])
     return metrics
@@ -420,7 +425,7 @@ def main() -> None:
     print(f"[gflownet] evaluating dual matrix on {eval_prefix.upper()} (touch-once for test) ...", flush=True)
     t0 = time.time()
     multistep_cfg = MultiStepConfig(enabled=True, max_depth=args.max_depth, per_node_top_k=10)
-    beam_tree = MetabolicTree(generator, filt, multistep_cfg)
+    beam_tree = MetabolicTree(generator, filt, multistep_cfg) if filt is not None else None
     metrics = evaluate_matrix(
         trainer, generator, reranker, beam_tree, eval_bundle,
         n_eval=eval_count, n_samples=args.n_samples, max_size=args.max_size,
@@ -469,10 +474,12 @@ def main() -> None:
     print("\n========== STAGE 2b SET-GFLOWNET ==========", flush=True)
     print(f"  eval split: {args.eval_split.upper()}", flush=True)
     print(f"  {eval_prefix} substrates evaluated: {int(metrics['n_substrates'])}", flush=True)
+    _beam_key = f"beam_recall@{args.max_size}"
+    _beam_str = f"{metrics[_beam_key]:.4f}" if _beam_key in metrics else "n/a (no filter)"
     print(
         f"  recall@{args.max_size}  gflownet={metrics[f'gflownet_recall@{args.max_size}']:.4f}  "
         f"reranker={metrics[f'reranker_recall@{args.max_size}']:.4f}  "
-        f"beam={metrics[f'beam_recall@{args.max_size}']:.4f}",
+        f"beam={_beam_str}",
         flush=True,
     )
     print(
