@@ -231,6 +231,11 @@ def test_trainer_unifies_reranker_stophead_logz_device():
     cfg = GFlowNetConfig(max_depth=1, beta=2.0, epsilon=0.0, batch_substrates=1,
                          lam=0.1, max_size=3, top_k=200)
     trainer = SetGFlowNetTrainer(_TwoChildrenGen(), rr, cfg, annotated_ik_fn=lambda root: set())
-    assert next(trainer.reranker.parameters()).device == trainer.device
-    assert next(trainer.stop_head.parameters()).device == trainer.device
-    assert trainer.log_z.device == trainer.device
+    # Compare the actual parameter devices to EACH OTHER, not to trainer.device: moving a
+    # module to torch.device("cuda") (index None) lands its params on "cuda:0" (index 0),
+    # and torch's strict device __eq__ treats cuda != cuda:0. What matters is that all three
+    # sit on the SAME device -- they diverged cpu-vs-cuda under the bug this guards.
+    rr_dev = next(trainer.reranker.parameters()).device
+    sh_dev = next(trainer.stop_head.parameters()).device
+    lz_dev = trainer.log_z.device
+    assert rr_dev == sh_dev == lz_dev, f"device split: reranker={rr_dev} stop_head={sh_dev} log_z={lz_dev}"
