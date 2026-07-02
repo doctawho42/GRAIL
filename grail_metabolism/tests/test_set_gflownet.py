@@ -218,3 +218,19 @@ def test_tautomer_inchikey_collapses_real_pair_where_rdkit_supports_it():
     if _tautomer_inchikey(keto) != _tautomer_inchikey(enol):
         pytest.skip("this RDKit build does not canonicalize acetylacetone keto/enol to one form")
     assert Chem.MolToInchiKey(Chem.MolFromSmiles(keto)) != Chem.MolToInchiKey(Chem.MolFromSmiles(enol))
+
+
+def test_trainer_unifies_reranker_stophead_logz_device():
+    """Device-unification guard: the reranker (forward policy P_F), stop_head, and log_z
+    must all live on ``trainer.device``. Otherwise ``_frontier_embed`` produces an embedding
+    from the (un-moved) reranker encoder that the on-device StopHead rejects -- a hard
+    ``Expected all tensors to be on the same device`` crash on GPU. Trivially true on a
+    CPU-only box, but it locks the invariant against a regression that moves stop_head/log_z
+    to self.device while leaving the reranker where the caller passed it."""
+    rr = BiEncoderReranker(in_channels=SINGLE_NODE_DIM)
+    cfg = GFlowNetConfig(max_depth=1, beta=2.0, epsilon=0.0, batch_substrates=1,
+                         lam=0.1, max_size=3, top_k=200)
+    trainer = SetGFlowNetTrainer(_TwoChildrenGen(), rr, cfg, annotated_ik_fn=lambda root: set())
+    assert next(trainer.reranker.parameters()).device == trainer.device
+    assert next(trainer.stop_head.parameters()).device == trainer.device
+    assert trainer.log_z.device == trainer.device

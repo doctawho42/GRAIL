@@ -92,12 +92,16 @@ class SetGFlowNetTrainer:
 
     def __init__(self, generator, reranker, config, annotated_ik_fn, device=None):
         self.generator = generator
-        self.reranker = reranker
         self.config = config
         self.annotated_ik_fn = annotated_ik_fn
         self.device = device or torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        # Unify device: the reranker (forward policy P_F) MUST live on the same device as
+        # stop_head / log_z. Otherwise _frontier_embed produces a CPU embedding (from the
+        # un-moved reranker encoder) that the on-device StopHead rejects -- invisible on a
+        # CPU-only box, a hard `Expected all tensors to be on the same device` crash on GPU.
+        self.reranker = reranker.to(self.device)
         self.log_z = nn.Parameter(torch.zeros(1, device=self.device))
-        self.stop_head = StopHead(reranker.embed_dim).to(self.device)
+        self.stop_head = StopHead(self.reranker.embed_dim).to(self.device)
         self._child_cache = {}
         self._ik_cache: dict = {}
         self.loss_history_ = []
