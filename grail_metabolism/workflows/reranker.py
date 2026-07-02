@@ -899,6 +899,11 @@ def build_intermediate_pairs(
             continue
         d1 = _children_ik(sub, generator, top_k, max_pool)
         depth1_hits = set(d1) & annotated_ik
+        if not (annotated_ik - depth1_hits):
+            # depth-1 already covers every annotated metabolite -> this root yields no
+            # depth-2-only examples. Skip the (expensive) per-child depth-2 expansion; this
+            # is exact (a fully-covered root produces zero examples either way).
+            continue
         # Group depth-2-only annotated metabolites by the m1 that unlocks them.
         by_m1: Dict[str, List[str]] = {}
         for m1_smiles in d1.values():

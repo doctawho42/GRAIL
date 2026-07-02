@@ -310,6 +310,11 @@ def main() -> None:
     # Reranker warm-start knobs, mirroring run_reranker_gate.py's --arch bi defaults.
     parser.add_argument("--rerank-epochs", type=int, default=15, help="Depth-1 reranker InfoNCE epochs.")
     parser.add_argument("--bootstrap-epochs", type=int, default=5, help="Depth-2 bootstrap fine-tune epochs.")
+    parser.add_argument(
+        "--bootstrap-substrates", type=int, default=150,
+        help="How many train roots build_intermediate_pairs SCANS for depth-2 pairs (the depth-2 "
+             "expansion is expensive; a sample is enough to fine-tune). Not the reranker's train size.",
+    )
     parser.add_argument("--max-pool", type=int, default=100)
     args = parser.parse_args()
 
@@ -382,14 +387,15 @@ def main() -> None:
     if args.bootstrap:
         print("[gflownet] building depth-2 bootstrap examples (build_intermediate_pairs) ...", flush=True)
         t0 = time.time()
-        # NOTE: n_substrates here bounds ROOTS SCANNED, not examples produced (unlike the
-        # depth-1 builders above) -- see build_intermediate_pairs's docstring.
+        # NOTE: --bootstrap-substrates bounds ROOTS SCANNED, not examples produced (unlike the
+        # depth-1 builders) -- the per-root depth-2 expansion is expensive, so a small sample of
+        # roots is enough to fine-tune. See build_intermediate_pairs's docstring.
         bootstrap_examples = build_intermediate_pairs(
-            generator, bundle.train, args.train_substrates, top_k=args.top_k, max_pool=args.max_pool,
+            generator, bundle.train, args.bootstrap_substrates, top_k=args.top_k, max_pool=args.max_pool,
         )
         print(
             f"[gflownet] bootstrap examples={len(bootstrap_examples)} "
-            f"(scanned up to {args.train_substrates} roots) in {time.time()-t0:.1f}s",
+            f"(scanned up to {args.bootstrap_substrates} roots) in {time.time()-t0:.1f}s",
             flush=True,
         )
         if bootstrap_examples:
