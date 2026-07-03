@@ -415,7 +415,8 @@ class SetGFlowNetTrainer:
                     iks[c] = _tautomer_inchikey(c)
                 results[s] = (children, iks)
         else:
-            rule_emb = self.generator._rule_embeddings(torch.device("cpu")).detach().cpu().contiguous()
+            with torch.no_grad():
+                rule_emb = self.generator._rule_embeddings(torch.device("cpu")).detach().cpu().contiguous()
             pool = _mp.get_context("spawn").Pool(
                 processes=workers, initializer=_gfn_worker_init,
                 initargs=(gen_ckpt, self.config.top_k, rule_emb),
