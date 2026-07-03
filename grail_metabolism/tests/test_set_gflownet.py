@@ -282,3 +282,80 @@ def test_persistent_child_cache_roundtrip(tmp_path):
     t2 = SetGFlowNetTrainer(_BoomGen(), rr, cfg, annotated_ik_fn=lambda root: set(),
                             child_cache_path=str(child_path), ik_cache_path=str(ik_path))
     assert t2.candidate_children(_ROOT) == kids  # served from the on-disk cache, no generator call
+
+
+# --------------------------------------------------------------------------- #
+# Task 2: prewarm_caches -- two-wave parallel cache build. The pytest here only
+# exercises the workers=1 in-method serial map (identical to lazy candidate_children);
+# the real spawn>1 path needs a real generator checkpoint and is validated on Modal.
+# --------------------------------------------------------------------------- #
+
+def test_prewarm_matches_serial(monkeypatch):
+    """prewarm_caches(workers=1) must populate _child_cache identically to lazily calling
+    candidate_children on the roots + their depth-1 children (max_depth=2 here), and
+    _ik_cache must cover every touched smiles."""
+    from grail_metabolism.model import set_gflownet as sg
+
+    # deterministic 1-level expansion: root -> two children, each child -> one grandchild
+    KIDS = {
+        "ROOT":  [("CCO", 0.9, 1), ("CCCO", 0.5, 2)],
+        "CCO":   [("CCOC", 0.7, 3)],
+        "CCCO":  [("CCCOC", 0.4, 4)],
+    }
+
+    class _StubGen:
+        rule_prior_logits = torch.zeros(8)
+
+        def generate_scored_with_details(self, s, top_k, compute_sites=False, max_pool=None):
+            return [(c, g, r) for (c, g, r) in KIDS.get(s, [])]
+
+    # plain-identity tautomer-IK so no RDKit dependency in the test
+    monkeypatch.setattr(sg, "_tautomer_inchikey", lambda s: f"IK::{s}")
+
+    cfg = GFlowNetConfig(max_depth=2, beta=2.0, epsilon=0.0, batch_substrates=1,
+                         lam=0.1, max_size=5, top_k=5)
+
+    def _mk():
+        rr = BiEncoderReranker(in_channels=SINGLE_NODE_DIM)
+        return sg.SetGFlowNetTrainer(_StubGen(), rr, cfg, annotated_ik_fn=lambda s: set())
+
+    # serial reference: lazily expand roots + their depth-1 children
+    ser = _mk()
+    for root in ("ROOT",):
+        for c, _, _ in ser.candidate_children(root):
+            ser.candidate_children(c)          # depth-1 children expanded (depth-2 are terminal)
+
+    # prewarm path (workers=1 => in-method serial map over the same _expand_state)
+    par = _mk()
+    par.prewarm_caches(["ROOT"], workers=1, gen_ckpt=None)
+
+    assert par._child_cache == ser._child_cache      # identical (dict eq ignores insertion order)
+    # ik cache covers every touched smiles (root + all children)
+    for s in ("ROOT", "CCO", "CCCO", "CCOC", "CCCOC"):
+        assert par._ik_cache[s] == f"IK::{s}"
+
+
+def test_prewarm_skips_already_cached_states(monkeypatch):
+    """prewarm_caches is safe to call repeatedly: states already in _child_cache are not
+    re-expanded (a generator that raises on repeat calls for a cached state must not blow up)."""
+    from grail_metabolism.model import set_gflownet as sg
+
+    calls = {"n": 0}
+
+    class _CountingGen:
+        rule_prior_logits = torch.zeros(8)
+
+        def generate_scored_with_details(self, s, top_k, compute_sites=False, max_pool=None):
+            calls["n"] += 1
+            return {"ROOT": [("CCO", 0.9, 1)]}.get(s, [])
+
+    monkeypatch.setattr(sg, "_tautomer_inchikey", lambda s: f"IK::{s}")
+    cfg = GFlowNetConfig(max_depth=1, beta=2.0, epsilon=0.0, batch_substrates=1,
+                         lam=0.1, max_size=5, top_k=5)
+    rr = BiEncoderReranker(in_channels=SINGLE_NODE_DIM)
+    trainer = sg.SetGFlowNetTrainer(_CountingGen(), rr, cfg, annotated_ik_fn=lambda s: set())
+
+    trainer.prewarm_caches(["ROOT"], workers=1, gen_ckpt=None)
+    assert calls["n"] == 1
+    trainer.prewarm_caches(["ROOT"], workers=1, gen_ckpt=None)  # second call: ROOT already cached
+    assert calls["n"] == 1

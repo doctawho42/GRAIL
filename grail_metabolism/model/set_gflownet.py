@@ -3,6 +3,7 @@ reward = PU set-coverage; forward policy = the Stage-2a reranker; backward = ana
 1/#leaves. See docs/superpowers/specs/2026-07-01-set-gflownet-stage2b-design.md."""
 from __future__ import annotations
 import math
+import multiprocessing as _mp
 import os
 import pickle
 from dataclasses import dataclass, field, replace
@@ -73,6 +74,46 @@ def _expand_state(generator, state_smiles, top_k):
             continue
         out.append((smiles, float(gscore), int(rid)))
     return out
+
+
+# --------------------------------------------------------------------------- #
+# Task 2: parallel two-wave cache pre-warm (spawn Pool, mirrors
+# workflows/reranker.py's _bi_worker_init / _bi_pool_worker). Workers return PLAIN
+# python data (str/float/int/dict) only -- never torch tensors -- across the mp boundary.
+# --------------------------------------------------------------------------- #
+_MAX_GFN_WORKERS = 8
+_GFN_WORKER = {"gen": None, "top_k": None}
+
+
+def _gfn_worker_init(gen_ckpt, top_k, rule_emb=None):
+    """Pool initializer: pin torch to 1 thread, silence rdkit, load the generator once into
+    a module global (mirrors reranker.py:_bi_worker_init). ``rule_emb`` (warmed ONCE in the
+    parent) is injected as the rule-bank embedding cache so this worker skips the slow
+    single-threaded rule-bank GNN encoding."""
+    import torch as _t
+    _t.set_num_threads(1)
+    from rdkit import RDLogger
+    RDLogger.DisableLog("rdApp.*")
+    from ..config import GeneratorConfig
+    from ..model.grail import _read_checkpoint
+    from ..workflows.factory import build_generator
+    state = _read_checkpoint(gen_ckpt)
+    gen = build_generator(GeneratorConfig(**state["arch"]), state["rules"])
+    gen.load_state_dict(state["state_dict"], strict=False)
+    if rule_emb is not None:
+        gen._rule_embedding_cache = rule_emb   # skip the ~80s 7581-rule GNN encoding
+    _GFN_WORKER["gen"], _GFN_WORKER["top_k"] = gen, top_k
+
+
+def _gfn_pool_worker(state_smiles):
+    """Pool worker fn: expand one state via the worker's own generator and return PLAIN data
+    only -- (state, children, {smiles: tautomer_ik}) -- never torch tensors."""
+    gen, top_k = _GFN_WORKER["gen"], _GFN_WORKER["top_k"]
+    children = _expand_state(gen, state_smiles, top_k)               # [(smiles, float, int)]
+    iks = {state_smiles: _tautomer_inchikey(state_smiles)}
+    for c, _g, _rid in children:
+        iks[c] = _tautomer_inchikey(c)
+    return state_smiles, children, iks                              # PLAIN data only
 
 
 # --------------------------------------------------------------------------- #
@@ -353,3 +394,58 @@ class SetGFlowNetTrainer:
             if self._child_cache_path or self._ik_cache_path:
                 self.save_caches()
         return self
+
+    def _expand_many(self, states, workers, gen_ckpt):
+        """Expand every not-yet-cached state in ``states`` (dedup, order-preserving), merge
+        the results into ``_child_cache``/``_ik_cache``, and return ``{state: children}`` for
+        the newly expanded states only. Serial when ``workers<=1`` or no ``gen_ckpt`` (the
+        in-method map calls the SAME ``_expand_state`` as ``candidate_children``, so results
+        are identical to lazy serial expansion); a spawn ``Pool`` otherwise, with workers
+        returning PLAIN python data only (never torch tensors)."""
+        todo = [s for s in dict.fromkeys(states) if s and s not in self._child_cache]
+        if not todo:
+            return {}
+        workers = max(1, min(int(workers), os.cpu_count() or 1, _MAX_GFN_WORKERS))
+        results = {}
+        if workers <= 1 or not gen_ckpt:
+            for s in todo:
+                children = _expand_state(self.generator, s, self.config.top_k)
+                iks = {s: _tautomer_inchikey(s)}
+                for c, _g, _rid in children:
+                    iks[c] = _tautomer_inchikey(c)
+                results[s] = (children, iks)
+        else:
+            rule_emb = self.generator._rule_embeddings(torch.device("cpu")).detach().cpu().contiguous()
+            pool = _mp.get_context("spawn").Pool(
+                processes=workers, initializer=_gfn_worker_init,
+                initargs=(gen_ckpt, self.config.top_k, rule_emb),
+            )
+            try:
+                for s, children, iks in pool.imap_unordered(_gfn_pool_worker, todo, chunksize=2):
+                    results[s] = (children, iks)
+            finally:
+                pool.close(); pool.join()
+        for s, (children, iks) in results.items():
+            self._child_cache[s] = children
+            for k, v in iks.items():
+                self._ik_cache.setdefault(k, v)
+        return {s: children for s, (children, iks) in results.items()}
+
+    def prewarm_caches(self, root_smiles, workers, gen_ckpt=None, verbose=False):
+        """Populate _child_cache/_ik_cache for every state the depth-<=max_depth fit/eval will
+        expand (roots + their depth-1 children), in parallel. Deterministic; identical to lazy
+        serial candidate_children. Safe to call repeatedly (only expands uncached states).
+        Pure cache population -- does NOT consume the sampling RNG."""
+        roots = list(dict.fromkeys(s for s in root_smiles if s))
+        wave1 = self._expand_many(roots, workers, gen_ckpt)
+        if verbose:
+            print(f"[gflownet] prewarm wave1: {len(wave1)} roots expanded", flush=True)
+        if int(getattr(self.config, "max_depth", 2)) >= 2:
+            depth1 = list(dict.fromkeys(
+                c for children in wave1.values() for c, _g, _rid in children
+            ))
+            wave2 = self._expand_many(depth1, workers, gen_ckpt)
+            if verbose:
+                print(f"[gflownet] prewarm wave2: {len(wave2)} depth-1 states expanded", flush=True)
+        if self._child_cache_path or self._ik_cache_path:
+            self.save_caches()
