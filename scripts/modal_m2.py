@@ -59,16 +59,19 @@ art_vol = modal.Volume.from_name("grail-artifacts", create_if_missing=True)
 # ~(steps/epoch)*logz_lr = (1200/16)*0.04 ~ 3/epoch, converging to the beta=6 target
 # (~O(12)) in a few epochs -- the same convergence speed that gave M1 its PASS at 100
 # substrates with logz_lr=0.3 (100/16*0.3 ~ 2/epoch).
+# Budget-fit scale ($15 credits left): CPU-only serial env is the wall, so keep the scale
+# modest and guaranteed-cheap. logz_lr=0.16 rescaled for 300 subs (300/16 ~ 19 steps/epoch
+# x 0.16 ~ 3/epoch -> same logZ-convergence speed as the validated M1 recipe).
 M2_ARGS = [
-    "--train-substrates", "1200",
+    "--train-substrates", "300",
     "--max-depth", "2",
     "--max-size", "10",
-    "--epochs", "15",
+    "--epochs", "8",
     "--top-k", "50",
-    "--logz-lr", "0.04",
-    "--n-samples", "8",            # eval samples/substrate (16 was infeasible: serial cold eval)
+    "--logz-lr", "0.16",
+    "--n-samples", "4",
     "--eval-split", "test",
-    "--test-substrates", "400",    # representative clean-test subsample (full 1246 eval doesn't fit 24h serial)
+    "--test-substrates", "200",    # representative clean-test subsample
     "--workers", "8",
     "--no-bootstrap",
 ]
@@ -99,10 +102,10 @@ def _link_data():
 
 @app.function(
     image=image,
-    # 24GB GPU (was T4/16GB which OOM'd: fit() holds all batch_substrates=16 forests'
-    # autograd graphs until backward, and a large-molecule batch spiked past 14.5GB).
-    # List = availability fallback; A100-40GB gives extra headroom if a batch spikes higher.
-    gpu=["L4", "A10", "A100-40GB"],
+    # CPU-ONLY: the env is CPU-bound (RDKit rule application + featurization + tautomer),
+    # GPU util was ~0%, and CPU is ~3-5x cheaper/hr AND immune to the CUDA OOM that killed
+    # the GPU runs. 32GB RAM comfortably holds the batch-16 forest-graph peak (~14.5GB).
+    gpu=None,
     cpu=8.0,               # 8 physical cores for the 8-worker spawn pool (RDKit pool-gen)
     memory=32768,
     volumes={
