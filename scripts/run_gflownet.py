@@ -445,6 +445,11 @@ def main() -> None:
         generator, reranker, gfn_config, _make_annotated_ik_fn(bundle.train), device=rr_trainer.device,
         child_cache_path=str(child_cache_path), ik_cache_path=str(ik_cache_path),
     )
+    if args.workers > 1:
+        print(f"[gflownet] parallel pre-warming train caches ({args.workers} workers) ...", flush=True)
+        t0 = time.time()
+        trainer.prewarm_caches(train_substrates_list, args.workers, gen_ckpt=str(GEN_CKPT), verbose=True)
+        print(f"[gflownet] train prewarm done in {time.time()-t0:.1f}s", flush=True)
     trainer.fit(train_substrates_list, epochs=args.epochs, verbose=True)
     trainer.save_caches()  # persist env caches populated during training
     print(f"[gflownet] Set-GFlowNet training done in {time.time()-t0:.1f}s", flush=True)
@@ -453,6 +458,12 @@ def main() -> None:
     t0 = time.time()
     multistep_cfg = MultiStepConfig(enabled=True, max_depth=args.max_depth, per_node_top_k=10)
     beam_tree = MetabolicTree(generator, filt, multistep_cfg) if filt is not None else None
+    if args.workers > 1:
+        eval_roots = list(eval_bundle.map.keys())[:eval_count]
+        print(f"[gflownet] parallel pre-warming eval caches ({len(eval_roots)} roots) ...", flush=True)
+        t0_prewarm = time.time()
+        trainer.prewarm_caches(eval_roots, args.workers, gen_ckpt=str(GEN_CKPT), verbose=True)
+        print(f"[gflownet] eval prewarm done in {time.time()-t0_prewarm:.1f}s", flush=True)
     metrics = evaluate_matrix(
         trainer, generator, reranker, beam_tree, eval_bundle,
         n_eval=eval_count, n_samples=args.n_samples, max_size=args.max_size,
