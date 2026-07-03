@@ -84,7 +84,7 @@ def _expand_state(generator, state_smiles, top_k):
 _MAX_GFN_WORKERS = 8
 # Persist the caches every N newly-expanded states DURING a long prewarm so a preempted /
 # killed run resumes warm instead of restarting the whole (hours-long) prewarm from scratch.
-_PREWARM_CKPT_EVERY = 2000
+_PREWARM_CKPT_EVERY = 200
 _GFN_WORKER = {"gen": None, "top_k": None}
 
 

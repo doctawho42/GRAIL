@@ -41,7 +41,7 @@ BRANCH = "metabench-reranker"
 image = (
     modal.Image.debian_slim(python_version="3.10")
     .apt_install("git", "libxrender1", "libxext6", "libsm6")
-    .run_commands(f"git clone --branch {BRANCH} --depth 1 {REPO} /root/GRAIL  # rev preempt-robust-600")
+    .run_commands(f"git clone --branch {BRANCH} --depth 1 {REPO} /root/GRAIL  # rev ckpt200-300")
     .workdir("/root/GRAIL")
     .run_commands(
         "pip install --no-cache-dir 'numpy<2'",
@@ -59,19 +59,20 @@ art_vol = modal.Volume.from_name("grail-artifacts", create_if_missing=True)
 # ~(steps/epoch)*logz_lr = (1200/16)*0.04 ~ 3/epoch, converging to the beta=6 target
 # (~O(12)) in a few epochs -- the same convergence speed that gave M1 its PASS at 100
 # substrates with logz_lr=0.3 (100/16*0.3 ~ 2/epoch).
-# Mid-scale headline (600 train): the full depth<=2 prewarm at 1200 was hours + preemption-
-# fragile; 600 keeps the prewarm ~1h (now CHECKPOINTED every 2000 states -> preemption-robust)
-# and the run affordable. logz_lr=0.08 rescaled (600/16 ~ 37 steps/epoch x 0.08 ~ 3/epoch).
+# 300-scale headline: the 600 full-prewarm livelocked on preemptible workers (coarse
+# checkpoint couldn't save between reclaims). 300's states are already in the 83MB cache the
+# 600 run built (deterministic subset) -> its prewarm is near-instant, and _PREWARM_CKPT_EVERY
+# is now 200 (fine-grained saves survive frequent preemption). logz_lr=0.16 (300/16~19 steps x 0.16~3/epoch).
 M2_ARGS = [
-    "--train-substrates", "600",
+    "--train-substrates", "300",
     "--max-depth", "2",
     "--max-size", "10",
     "--epochs", "15",
     "--top-k", "50",
-    "--logz-lr", "0.08",
+    "--logz-lr", "0.16",
     "--n-samples", "8",
     "--eval-split", "test",
-    "--test-substrates", "300",    # representative clean-test subsample
+    "--test-substrates", "200",    # representative clean-test subsample
     "--workers", "8",
     "--no-bootstrap",
 ]
