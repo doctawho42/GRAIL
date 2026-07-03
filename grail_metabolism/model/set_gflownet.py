@@ -82,6 +82,9 @@ def _expand_state(generator, state_smiles, top_k):
 # python data (str/float/int/dict) only -- never torch tensors -- across the mp boundary.
 # --------------------------------------------------------------------------- #
 _MAX_GFN_WORKERS = 8
+# Persist the caches every N newly-expanded states DURING a long prewarm so a preempted /
+# killed run resumes warm instead of restarting the whole (hours-long) prewarm from scratch.
+_PREWARM_CKPT_EVERY = 2000
 _GFN_WORKER = {"gen": None, "top_k": None}
 
 
@@ -406,14 +409,25 @@ class SetGFlowNetTrainer:
         if not todo:
             return {}
         workers = max(1, min(int(workers), os.cpu_count() or 1, _MAX_GFN_WORKERS))
-        results = {}
+        expanded: dict = {}
+
+        def _merge(s, children, iks):
+            # Merge one result into the caches AS IT ARRIVES, and checkpoint every
+            # _PREWARM_CKPT_EVERY states so a preemption mid-prewarm resumes warm.
+            self._child_cache[s] = children
+            for k, v in iks.items():
+                self._ik_cache.setdefault(k, v)
+            expanded[s] = children
+            if self._child_cache_path and len(expanded) % _PREWARM_CKPT_EVERY == 0:
+                self.save_caches()
+
         if workers <= 1 or not gen_ckpt:
             for s in todo:
                 children = _expand_state(self.generator, s, self.config.top_k)
                 iks = {s: _tautomer_inchikey(s)}
                 for c, _g, _rid in children:
                     iks[c] = _tautomer_inchikey(c)
-                results[s] = (children, iks)
+                _merge(s, children, iks)
         else:
             with torch.no_grad():
                 rule_emb = self.generator._rule_embeddings(torch.device("cpu")).detach().cpu().contiguous()
@@ -423,14 +437,10 @@ class SetGFlowNetTrainer:
             )
             try:
                 for s, children, iks in pool.imap_unordered(_gfn_pool_worker, todo, chunksize=2):
-                    results[s] = (children, iks)
+                    _merge(s, children, iks)
             finally:
                 pool.close(); pool.join()
-        for s, (children, iks) in results.items():
-            self._child_cache[s] = children
-            for k, v in iks.items():
-                self._ik_cache.setdefault(k, v)
-        return {s: children for s, (children, iks) in results.items()}
+        return expanded
 
     def prewarm_caches(self, root_smiles, workers, gen_ckpt=None, verbose=False):
         """Populate _child_cache/_ik_cache for every state the depth-<=max_depth fit/eval will

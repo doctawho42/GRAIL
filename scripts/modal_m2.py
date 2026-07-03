@@ -41,7 +41,7 @@ BRANCH = "metabench-reranker"
 image = (
     modal.Image.debian_slim(python_version="3.10")
     .apt_install("git", "libxrender1", "libxext6", "libsm6")
-    .run_commands(f"git clone --branch {BRANCH} --depth 1 {REPO} /root/GRAIL  # rev a9312b8 t2a-fix")
+    .run_commands(f"git clone --branch {BRANCH} --depth 1 {REPO} /root/GRAIL  # rev preempt-robust-600")
     .workdir("/root/GRAIL")
     .run_commands(
         "pip install --no-cache-dir 'numpy<2'",
@@ -59,19 +59,19 @@ art_vol = modal.Volume.from_name("grail-artifacts", create_if_missing=True)
 # ~(steps/epoch)*logz_lr = (1200/16)*0.04 ~ 3/epoch, converging to the beta=6 target
 # (~O(12)) in a few epochs -- the same convergence speed that gave M1 its PASS at 100
 # substrates with logz_lr=0.3 (100/16*0.3 ~ 2/epoch).
-# Full 1200-scale headline, now affordable via parallel prewarm (--workers 8 fully warms
-# the depth<=2 cache upfront -> warm-fast epochs). logz_lr=0.04 rescaled for 1200 subs
-# (1200/16 ~ 75 steps/epoch x 0.04 ~ 3/epoch -> same logZ-convergence speed as M1).
+# Mid-scale headline (600 train): the full depth<=2 prewarm at 1200 was hours + preemption-
+# fragile; 600 keeps the prewarm ~1h (now CHECKPOINTED every 2000 states -> preemption-robust)
+# and the run affordable. logz_lr=0.08 rescaled (600/16 ~ 37 steps/epoch x 0.08 ~ 3/epoch).
 M2_ARGS = [
-    "--train-substrates", "1200",
+    "--train-substrates", "600",
     "--max-depth", "2",
     "--max-size", "10",
     "--epochs", "15",
     "--top-k", "50",
-    "--logz-lr", "0.04",
+    "--logz-lr", "0.08",
     "--n-samples", "8",
     "--eval-split", "test",
-    "--test-substrates", "400",    # representative clean-test subsample
+    "--test-substrates", "300",    # representative clean-test subsample
     "--workers", "8",
     "--no-bootstrap",
 ]
@@ -125,6 +125,11 @@ def run_m2(seeds=(0, 1, 2)):
     _link_data()
     for seed in seeds:
         out = f"artifacts/reranker_gate_cache/gflownet_m2_test_seed{seed}.json"
+        # Preemption resilience: Modal restarts run_m2 from the top after a worker preemption,
+        # so skip seeds whose result JSON already persisted to the Volume.
+        if os.path.exists(out):
+            print(f"===== seed {seed} already complete ({out}) -- skipping =====", flush=True)
+            continue
         cmd = [sys.executable, "-u", "scripts/run_gflownet.py", *M2_ARGS,
                "--seed", str(seed), "--out", out]
         print(f"\n===== GRAIL M2 seed {seed} =====\n{' '.join(cmd)}\n", flush=True)
