@@ -295,6 +295,12 @@ def main() -> None:
     parser.add_argument("--max-size", type=int, default=15, help="Forest size cap == matched output budget K.")
     parser.add_argument("--top-k", type=int, default=200, help="Generator candidates enumerated per frontier node.")
     parser.add_argument("--epochs", type=int, default=10, help="Set-GFlowNet TB training epochs.")
+    parser.add_argument(
+        "--logz-lr", type=float, default=1e-2,
+        help="Learning rate for the scalar logZ. logZ's target scales with beta (~O(beta*max_TP)), "
+             "so with the default it moves only ~(steps/epoch)*logz_lr per epoch and needs many "
+             "epochs to converge. Raise it (e.g. 0.3) for a decisive few-epoch sanity run.",
+    )
     parser.add_argument("--n-samples", type=int, default=32, help="Forests sampled per eval substrate (M).")
     parser.add_argument(
         "--eval-substrates", type=int, default=100,
@@ -426,6 +432,7 @@ def main() -> None:
         max_size=args.max_size,
         top_k=args.top_k,
         epochs=args.epochs,
+        logz_lr=args.logz_lr,
     )
     train_substrates_list = list(bundle.train.map.keys())[: args.train_substrates]
     # Persistent, cross-run environment caches (exact -- RDKit rule application and tautomer
