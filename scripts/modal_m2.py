@@ -73,6 +73,29 @@ M2_ARGS = [
     "--no-bootstrap",
 ]
 
+# The git clone ships tracked files in grail_metabolism/data/ (PCA pickles, smirks) so we
+# CANNOT mount the data Volume over it. Mount the Volume at a separate empty path and
+# symlink just our staged SDFs + triples into the repo's data dir, leaving the tracked
+# featurization files intact.
+DATA_MOUNT = "/vol_data"
+DATA_FILES = [
+    "train.sdf", "val.sdf", "test.sdf",
+    "train_triples.txt", "val_triples.txt", "test_triples.txt",
+    "train_triples_clean.txt", "val_triples_clean.txt", "test_triples_clean.txt",
+]
+
+
+def _link_data():
+    """Symlink the Volume's SDFs + triples into grail_metabolism/data/ (idempotent)."""
+    import os
+
+    dst_dir = "/root/GRAIL/grail_metabolism/data"
+    for name in DATA_FILES:
+        src, dst = f"{DATA_MOUNT}/{name}", f"{dst_dir}/{name}"
+        if os.path.islink(dst) or os.path.exists(dst):
+            os.remove(dst)
+        os.symlink(src, dst)
+
 
 @app.function(
     image=image,
@@ -80,7 +103,7 @@ M2_ARGS = [
     cpu=8.0,               # 8 physical cores for the 8-worker spawn pool (RDKit pool-gen)
     memory=32768,
     volumes={
-        "/root/GRAIL/grail_metabolism/data": data_vol,   # SDFs + triples (Volume root == data dir)
+        DATA_MOUNT: data_vol,                            # SDFs + triples (symlinked into repo data dir)
         "/root/GRAIL/artifacts": art_vol,                # checkpoints + reranker_gate_cache (caches+results)
     },
     timeout=86400,         # 24h; per-epoch cache saves mean a timeout/kill loses no pool-gen (re-run resumes warm)
@@ -91,6 +114,7 @@ def run_m2(seeds=(0, 1, 2)):
     import sys
 
     os.chdir("/root/GRAIL")
+    _link_data()
     for seed in seeds:
         out = f"artifacts/reranker_gate_cache/gflownet_m2_test_seed{seed}.json"
         cmd = [sys.executable, "-u", "scripts/run_gflownet.py", *M2_ARGS,
@@ -132,13 +156,13 @@ def warmup():
 
 @app.function(
     image=image,
-    volumes={"/root/GRAIL/grail_metabolism/data": data_vol},
+    volumes={DATA_MOUNT: data_vol},
     timeout=1800,
 )
 def decompress():
     """Gunzip any ``*.sdf.gz`` staged on the data Volume into ``*.sdf`` and drop the .gz.
 
-    The SDFs are text and compress ~5x, so we upload the tiny .gz over a slow home
+    The SDFs are text and compress ~17x, so we upload the tiny .gz over a slow home
     uplink and expand them here on Modal's fast disk.
     """
     import glob
@@ -146,7 +170,7 @@ def decompress():
     import os
     import shutil
 
-    d = "/root/GRAIL/grail_metabolism/data"
+    d = DATA_MOUNT
     for gz in sorted(glob.glob(f"{d}/*.sdf.gz")):
         out = gz[:-3]
         with gzip.open(gz, "rb") as fi, open(out, "wb") as fo:
@@ -155,6 +179,33 @@ def decompress():
         print(f"decompressed {os.path.basename(out)} ({os.path.getsize(out) // 1_000_000}M)", flush=True)
     data_vol.commit()
     print("decompress: committed", flush=True)
+
+
+@app.function(
+    image=image,
+    gpu="T4",
+    cpu=8.0,
+    memory=32768,
+    volumes={DATA_MOUNT: data_vol, "/root/GRAIL/artifacts": art_vol},
+    timeout=3600,
+)
+def smoke():
+    """Tiny end-to-end run on REAL data to validate the full pipeline before the 12h M2."""
+    import os
+    import subprocess
+    import sys
+
+    os.chdir("/root/GRAIL")
+    _link_data()
+    cmd = [sys.executable, "-u", "scripts/run_gflownet.py",
+           "--train-substrates", "5", "--max-depth", "2", "--max-size", "6",
+           "--epochs", "1", "--top-k", "20", "--logz-lr", "0.1", "--n-samples", "2",
+           "--eval-split", "val", "--eval-substrates", "3", "--workers", "4", "--no-bootstrap",
+           "--out", "artifacts/reranker_gate_cache/gflownet_smoke.json"]
+    print(" ".join(cmd), flush=True)
+    subprocess.run(cmd, check=True)
+    art_vol.commit()
+    print("SMOKE OK", flush=True)
 
 
 @app.local_entrypoint()
