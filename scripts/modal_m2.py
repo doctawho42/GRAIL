@@ -102,6 +102,61 @@ def run_m2(seeds=(0, 1, 2)):
     print("\n===== M2 ALL SEEDS DONE =====", flush=True)
 
 
+@app.function(
+    image=image,
+    volumes={"/root/GRAIL/artifacts": art_vol},   # checkpoint only; no data needed for pre-flight
+    timeout=1800,
+)
+def warmup():
+    """Force the image build + validate the env and staged checkpoint before the long run."""
+    import os
+
+    os.chdir("/root/GRAIL")
+    import rdkit
+    import torch
+
+    print(f"torch={torch.__version__} rdkit={rdkit.__version__} cuda={torch.cuda.is_available()}", flush=True)
+    import grail_metabolism  # noqa: F401  -- proves `pip install -e .` worked
+    from pathlib import Path
+
+    from grail_metabolism.model.grail import _read_checkpoint
+
+    state = _read_checkpoint(Path("artifacts/full5000_priors/checkpoints/generator.pt"))
+    assert state is not None, "generator.pt failed to load from the grail-artifacts Volume"
+    print(
+        f"generator.pt OK: has_arch={'arch' in state} n_rules={len(state.get('rules', []))}",
+        flush=True,
+    )
+    return "warmup ok"
+
+
+@app.function(
+    image=image,
+    volumes={"/root/GRAIL/grail_metabolism/data": data_vol},
+    timeout=1800,
+)
+def decompress():
+    """Gunzip any ``*.sdf.gz`` staged on the data Volume into ``*.sdf`` and drop the .gz.
+
+    The SDFs are text and compress ~5x, so we upload the tiny .gz over a slow home
+    uplink and expand them here on Modal's fast disk.
+    """
+    import glob
+    import gzip
+    import os
+    import shutil
+
+    d = "/root/GRAIL/grail_metabolism/data"
+    for gz in sorted(glob.glob(f"{d}/*.sdf.gz")):
+        out = gz[:-3]
+        with gzip.open(gz, "rb") as fi, open(out, "wb") as fo:
+            shutil.copyfileobj(fi, fo, length=16 * 1024 * 1024)
+        os.remove(gz)
+        print(f"decompressed {os.path.basename(out)} ({os.path.getsize(out) // 1_000_000}M)", flush=True)
+    data_vol.commit()
+    print("decompress: committed", flush=True)
+
+
 @app.local_entrypoint()
 def main():
     run_m2.remote()
