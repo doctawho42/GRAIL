@@ -41,7 +41,7 @@ BRANCH = "metabench-reranker"
 image = (
     modal.Image.debian_slim(python_version="3.10")
     .apt_install("git", "libxrender1", "libxext6", "libsm6")
-    .run_commands(f"git clone --branch {BRANCH} --depth 1 {REPO} /root/GRAIL  # rev 5ad60c5 parallel-prewarm")
+    .run_commands(f"git clone --branch {BRANCH} --depth 1 {REPO} /root/GRAIL  # rev a9312b8 t2a-fix")
     .workdir("/root/GRAIL")
     .run_commands(
         "pip install --no-cache-dir 'numpy<2'",
@@ -59,19 +59,19 @@ art_vol = modal.Volume.from_name("grail-artifacts", create_if_missing=True)
 # ~(steps/epoch)*logz_lr = (1200/16)*0.04 ~ 3/epoch, converging to the beta=6 target
 # (~O(12)) in a few epochs -- the same convergence speed that gave M1 its PASS at 100
 # substrates with logz_lr=0.3 (100/16*0.3 ~ 2/epoch).
-# Budget-fit scale ($15 credits left): CPU-only serial env is the wall, so keep the scale
-# modest and guaranteed-cheap. logz_lr=0.16 rescaled for 300 subs (300/16 ~ 19 steps/epoch
-# x 0.16 ~ 3/epoch -> same logZ-convergence speed as the validated M1 recipe).
+# Full 1200-scale headline, now affordable via parallel prewarm (--workers 8 fully warms
+# the depth<=2 cache upfront -> warm-fast epochs). logz_lr=0.04 rescaled for 1200 subs
+# (1200/16 ~ 75 steps/epoch x 0.04 ~ 3/epoch -> same logZ-convergence speed as M1).
 M2_ARGS = [
-    "--train-substrates", "300",
+    "--train-substrates", "1200",
     "--max-depth", "2",
     "--max-size", "10",
-    "--epochs", "8",
+    "--epochs", "15",
     "--top-k", "50",
-    "--logz-lr", "0.16",
-    "--n-samples", "4",
+    "--logz-lr", "0.04",
+    "--n-samples", "8",
     "--eval-split", "test",
-    "--test-substrates", "200",    # representative clean-test subsample
+    "--test-substrates", "400",    # representative clean-test subsample
     "--workers", "8",
     "--no-bootstrap",
 ]
