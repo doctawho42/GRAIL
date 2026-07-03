@@ -210,4 +210,9 @@ def smoke():
 
 @app.local_entrypoint()
 def main():
-    run_m2.remote()
+    # .spawn() (NOT .remote()): fire-and-forget server-side so the 3-seed job survives the
+    # local client disconnecting. Modal warns .remote()/.map() in detached apps may be
+    # canceled when the caller disconnects. Run with `modal run --detach`.
+    fc = run_m2.spawn()
+    print(f"SPAWNED run_m2 -> function call id: {fc.object_id}", flush=True)
+    print("Poll results:  modal volume ls grail-artifacts /reranker_gate_cache", flush=True)
