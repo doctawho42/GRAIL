@@ -66,9 +66,9 @@ M2_ARGS = [
     "--epochs", "15",
     "--top-k", "50",
     "--logz-lr", "0.04",
-    "--n-samples", "16",
+    "--n-samples", "8",            # eval samples/substrate (16 was infeasible: serial cold eval)
     "--eval-split", "test",
-    "--test-substrates", "2000",   # >1246 clean-test subs => full test, touch-once
+    "--test-substrates", "400",    # representative clean-test subsample (full 1246 eval doesn't fit 24h serial)
     "--workers", "8",
     "--no-bootstrap",
 ]
@@ -99,7 +99,10 @@ def _link_data():
 
 @app.function(
     image=image,
-    gpu="T4",              # matches Colab (14GB used there); env is CPU-bound so this is cheap insurance
+    # 24GB GPU (was T4/16GB which OOM'd: fit() holds all batch_substrates=16 forests'
+    # autograd graphs until backward, and a large-molecule batch spiked past 14.5GB).
+    # List = availability fallback; A100-40GB gives extra headroom if a batch spikes higher.
+    gpu=["L4", "A10", "A100-40GB"],
     cpu=8.0,               # 8 physical cores for the 8-worker spawn pool (RDKit pool-gen)
     memory=32768,
     volumes={
@@ -114,6 +117,8 @@ def run_m2(seeds=(0, 1, 2)):
     import sys
 
     os.chdir("/root/GRAIL")
+    # Reduce CUDA fragmentation (the OOM error explicitly suggested this).
+    os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
     _link_data()
     for seed in seeds:
         out = f"artifacts/reranker_gate_cache/gflownet_m2_test_seed{seed}.json"
