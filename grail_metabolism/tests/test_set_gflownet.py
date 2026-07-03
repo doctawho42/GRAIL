@@ -359,3 +359,36 @@ def test_prewarm_skips_already_cached_states(monkeypatch):
     assert calls["n"] == 1
     trainer.prewarm_caches(["ROOT"], workers=1, gen_ckpt=None)  # second call: ROOT already cached
     assert calls["n"] == 1
+
+
+def test_prewarm_expands_depth1_of_precached_root(monkeypatch):
+    """T2a regression: when a root is ALREADY in _child_cache (resume / partial cache) but its
+    depth-1 children are not yet expanded, prewarm_caches must STILL expand those depth-1
+    children -- wave2 reads all roots' cached children, not just wave1's freshly-expanded ones.
+    (Old code harvested depth1 from wave1.values(), which is empty for a pre-cached root, so the
+    depth-1 child was left cold -- exactly the no-op observed when reusing a banked cache.)"""
+    from grail_metabolism.model import set_gflownet as sg
+
+    KIDS = {"ROOT": [("CCO", 0.9, 1)], "CCO": [("CCOC", 0.7, 3)]}
+
+    class _StubGen:
+        rule_prior_logits = torch.zeros(8)
+
+        def generate_scored_with_details(self, s, top_k, compute_sites=False, max_pool=None):
+            return [(c, g, r) for (c, g, r) in KIDS.get(s, [])]
+
+    monkeypatch.setattr(sg, "_tautomer_inchikey", lambda s: f"IK::{s}")
+    cfg = GFlowNetConfig(max_depth=2, beta=2.0, epsilon=0.0, batch_substrates=1,
+                         lam=0.1, max_size=5, top_k=5)
+    rr = BiEncoderReranker(in_channels=SINGLE_NODE_DIM)
+    trainer = sg.SetGFlowNetTrainer(_StubGen(), rr, cfg, annotated_ik_fn=lambda s: set())
+
+    # Simulate a partial/resumed cache: ROOT cached (children list present) but "CCO" NOT expanded.
+    trainer._child_cache["ROOT"] = [("CCO", 0.9, 1)]
+    assert "CCO" not in trainer._child_cache
+
+    trainer.prewarm_caches(["ROOT"], workers=1, gen_ckpt=None)
+
+    # wave2 must have expanded the pre-cached root's depth-1 child:
+    assert "CCO" in trainer._child_cache, "wave2 skipped the pre-cached root's depth-1 child"
+    assert trainer._child_cache["CCO"] == [("CCOC", 0.7, 3)]

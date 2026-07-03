@@ -442,8 +442,15 @@ class SetGFlowNetTrainer:
         if verbose:
             print(f"[gflownet] prewarm wave1: {len(wave1)} roots expanded", flush=True)
         if int(getattr(self.config, "max_depth", 2)) >= 2:
+            # Harvest depth-1 states from ALL roots' cached children -- not just wave1's
+            # freshly-expanded ones. After wave1 every root is in _child_cache (freshly
+            # expanded OR already-cached from a prior/partial run); reading wave1.values()
+            # alone would skip wave2 for pre-cached roots (resume / partial cache), leaving
+            # their depth-1 children cold.
             depth1 = list(dict.fromkeys(
-                c for children in wave1.values() for c, _g, _rid in children
+                c
+                for r in roots if r in self._child_cache
+                for c, _g, _rid in self._child_cache[r]
             ))
             wave2 = self._expand_many(depth1, workers, gen_ckpt)
             if verbose:
