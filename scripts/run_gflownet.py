@@ -297,6 +297,12 @@ def main() -> None:
     parser.add_argument("--epochs", type=int, default=10, help="Set-GFlowNet TB training epochs.")
     parser.add_argument("--n-samples", type=int, default=32, help="Forests sampled per eval substrate (M).")
     parser.add_argument(
+        "--eval-substrates", type=int, default=100,
+        help="Cap on VAL substrates evaluated (eval is expensive: n_samples rollouts each, on a "
+             "COLD cache -- val states weren't warmed by training). Ignored for --eval-split test "
+             "(that uses --test-substrates).",
+    )
+    parser.add_argument(
         "--bootstrap", action="store_true", default=True,
         help="Fine-tune the reranker on the depth-2 bootstrap (build_intermediate_pairs) "
              "after the depth-1 InfoNCE fit.",
@@ -349,7 +355,7 @@ def main() -> None:
         standardize=False,
         cache_preprocessed=False,
         max_train_substrates=args.train_substrates + 60,
-        max_val_substrates=(1 if eval_is_test else 300),
+        max_val_substrates=(1 if eval_is_test else args.eval_substrates + 30),
         max_test_substrates=(args.test_substrates + 60 if eval_is_test else 1),
         sampling_seed=args.seed,
     )
@@ -357,7 +363,7 @@ def main() -> None:
     t0 = time.time()
     bundle = load_dataset_bundle(cfg)
     eval_bundle = bundle.test if eval_is_test else bundle.val
-    eval_count = args.test_substrates if eval_is_test else len(eval_bundle.map)
+    eval_count = args.test_substrates if eval_is_test else min(args.eval_substrates, len(eval_bundle.map))
     eval_prefix = "test" if eval_is_test else "val"
     print(
         f"[gflownet] bundle loaded in {time.time()-t0:.1f}s; "
