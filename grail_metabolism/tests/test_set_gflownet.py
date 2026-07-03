@@ -241,6 +241,22 @@ def test_trainer_unifies_reranker_stophead_logz_device():
     assert rr_dev == sh_dev == lz_dev, f"device split: reranker={rr_dev} stop_head={sh_dev} log_z={lz_dev}"
 
 
+def test_expand_state_matches_candidate_children(monkeypatch):
+    """_expand_state is the pure extraction of the per-state child-expansion logic,
+    shared by candidate_children and parallel pre-warm workers. It deduplicates by SMILES,
+    drops unparseable molecules, and preserves order."""
+    from grail_metabolism.model import set_gflownet as sg
+
+    class _StubGen:
+        # returns fixed (smiles, gscore, rid, ...) rows; dupes + a bad smiles to exercise filtering
+        def generate_scored_with_details(self, s, top_k, compute_sites=False):
+            return [("CCO", 0.9, 3), ("CCO", 0.4, 3), ("bad_smiles", 0.5, 7), ("CCCO", 0.2, 9)]
+
+    out = sg._expand_state(_StubGen(), "c1ccccc1", top_k=5)
+    assert out == [("CCO", 0.9, 3), ("CCCO", 0.2, 9)]   # dedup + drop unparseable, order preserved
+    assert all(isinstance(g, float) and isinstance(r, int) for _, g, r in out)
+
+
 def test_persistent_child_cache_roundtrip(tmp_path):
     """The (state,top_k)->children cache persists across trainers: a second trainer with the
     same cache path must serve candidate_children FROM DISK without ever calling the generator

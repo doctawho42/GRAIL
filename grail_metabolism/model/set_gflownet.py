@@ -58,6 +58,23 @@ def log_pb_trajectory(post_add_states) -> float:
     return total
 
 
+def _expand_state(generator, state_smiles, top_k):
+    """Deterministic top_k child expansion of one state: dedup by SMILES, drop unparseable,
+    keep detached (smiles, float gscore, int rid). Shared by candidate_children AND the
+    parallel pre-warm workers so the two paths are identical by construction."""
+    seen, out = set(), []
+    for smiles, gscore, rid, *_ in generator.generate_scored_with_details(
+        state_smiles, top_k=top_k, compute_sites=False
+    ):
+        if smiles in seen:
+            continue
+        seen.add(smiles)
+        if Chem.MolFromSmiles(smiles) is None:
+            continue
+        out.append((smiles, float(gscore), int(rid)))
+    return out
+
+
 # --------------------------------------------------------------------------- #
 # Task 5: SetGFlowNetTrainer -- reranker forward policy P_F, forest rollout, TB loss.
 # --------------------------------------------------------------------------- #
@@ -149,17 +166,9 @@ class SetGFlowNetTrainer:
         ``TypeError`` deep in the rollout.
         """
         if state_smiles not in self._child_cache:
-            seen, out = set(), []
-            for smiles, gscore, rid, *_ in self.generator.generate_scored_with_details(
-                state_smiles, top_k=self.config.top_k, compute_sites=False
-            ):
-                if smiles in seen:
-                    continue
-                seen.add(smiles)
-                if Chem.MolFromSmiles(smiles) is None:
-                    continue
-                out.append((smiles, float(gscore), int(rid)))
-            self._child_cache[state_smiles] = out
+            self._child_cache[state_smiles] = _expand_state(
+                self.generator, state_smiles, self.config.top_k
+            )
         return self._child_cache[state_smiles]
 
     def _reranker_child_logits(self, parent_smiles, children):
