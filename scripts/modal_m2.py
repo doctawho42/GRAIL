@@ -41,7 +41,7 @@ BRANCH = "metabench-reranker"
 image = (
     modal.Image.debian_slim(python_version="3.10")
     .apt_install("git", "libxrender1", "libxext6", "libsm6")
-    .run_commands(f"git clone --branch {BRANCH} --depth 1 {REPO} /root/GRAIL  # rev waves1-300")
+    .run_commands(f"git clone --branch {BRANCH} --depth 1 {REPO} /root/GRAIL  # rev ckpt-cpu-300")
     .workdir("/root/GRAIL")
     .run_commands(
         "pip install --no-cache-dir 'numpy<2'",
@@ -107,18 +107,19 @@ def _link_data():
 
 @app.function(
     image=image,
-    # GPU now, because the calculus flipped once the (state,top_k)->children expansion cache
-    # was fully populated on the Volume. In the FIRST CPU run the env was expansion-bound
-    # (RDKit rule application dominated, GPU sat ~idle) -- so CPU was right. But with expansion
-    # cached, Set-GFlowNet training is BACKPROP-bound (the reranker GNN over batch-16 forest
-    # rollouts), which ran ~25min/epoch on CPU -> 6.3h/seed. That 6.3h window does NOT survive
-    # preemptible workers (a preemption at the eval finish line lost the whole uncheckpointed
-    # training and restarted seed 0). A 24GB GPU cuts epochs ~10x (~45min/seed), so a seed
-    # comfortably finishes inside a preemption window. expandable_segments (set in run_m2) +
-    # 24GB tames the batch-16 forest-graph autograd peak (~14.5GB) that OOM'd the old 16GB T4.
-    gpu=["A10", "L4", "A100-40GB"],   # 24GB (A10/L4) w/ 40GB fallback; fits the forest-graph peak
-    cpu=8.0,               # host cores for the spawn pool + lazy RDKit expansion of the visited subset
-    memory=32768,
+    # CPU (reverted from a GPU attempt). The GPU experiment FAILED on both axes: (1) no speedup
+    # -- Set-GFlowNet rollouts are latency-bound (300 sequential per-substrate rollouts of tiny
+    # GNN forwards; the card never saturates), so epochs stayed ~25min like CPU; (2) it OOM-
+    # CRASHED at epoch 6 -- the batch-16 forest autograd graphs genuinely allocated 21.6GiB
+    # (not fragmentation, so expandable_segments couldn't help), overflowing 24GB VRAM. The CPU
+    # run, by contrast, reached all 15 epochs + eval: 32GB host RAM absorbs the same forest-graph
+    # peak. So CPU is the correct, cheaper, more robust base. The only real weakness -- a 6.3h
+    # training being lost to a preemption -- is now fixed by per-epoch model checkpointing
+    # (--resume-ckpt): a preempted seed resumes from its last completed epoch, so the run
+    # completes regardless of how often workers are reclaimed.
+    gpu=None,
+    cpu=8.0,               # cores for the spawn pool + lazy RDKit expansion of the visited subset
+    memory=32768,          # holds the batch-16 forest-graph peak (~14.5GB) that OOM'd 24GB VRAM
     volumes={
         DATA_MOUNT: data_vol,                            # SDFs + triples (symlinked into repo data dir)
         "/root/GRAIL/artifacts": art_vol,                # checkpoints + reranker_gate_cache (caches+results)
@@ -141,8 +142,12 @@ def run_m2(seeds=(0, 1, 2)):
         if os.path.exists(out):
             print(f"===== seed {seed} already complete ({out}) -- skipping =====", flush=True)
             continue
+        # Per-seed training checkpoint: --resume-ckpt lets a preempted/killed seed resume from
+        # its last completed epoch instead of restarting training at 0. This closes the gap the
+        # env cache didn't: a preemption used to lose the whole multi-hour GNN training.
+        ckpt = f"artifacts/reranker_gate_cache/gflownet_m2_test_seed{seed}.ckpt.pt"
         cmd = [sys.executable, "-u", "scripts/run_gflownet.py", *M2_ARGS,
-               "--seed", str(seed), "--out", out]
+               "--seed", str(seed), "--out", out, "--resume-ckpt", ckpt]
         print(f"\n===== GRAIL M2 seed {seed} =====\n{' '.join(cmd)}\n", flush=True)
         subprocess.run(cmd, check=True)
         art_vol.commit()   # persist caches + this seed's results before the next seed

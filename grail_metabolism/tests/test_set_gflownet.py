@@ -426,3 +426,59 @@ def test_prewarm_waves1_expands_roots_only(monkeypatch):
     # recover the depth-1 state when the policy actually visits it.
     assert trainer.candidate_children("CCO") == [("CCOC", 0.7, 3)]
     assert "CCO" in trainer._child_cache
+
+
+def test_train_checkpoint_resumes_from_last_epoch(tmp_path):
+    """Model-checkpointing (preemption/crash recovery): fit(resume_path=p) persists the trainable
+    state every epoch, and a fresh trainer given the same path RESUMES from the last completed
+    epoch -- it does NOT restart at 0 -- while restoring logZ + weights. This is the fix for a
+    multi-hour training being lost when a preemptible worker is reclaimed."""
+    ckpt = str(tmp_path / "seed0.ckpt.pt")
+
+    def _mk():
+        rr = BiEncoderReranker(in_channels=SINGLE_NODE_DIM)
+        cfg = GFlowNetConfig(max_depth=2, beta=2.0, epsilon=0.0, batch_substrates=1,
+                             lam=0.1, max_size=5, top_k=200)
+        return SetGFlowNetTrainer(_MiniGen(), rr, cfg, annotated_ik_fn=lambda root: set())
+
+    torch.manual_seed(0)
+    t1 = _mk()
+    t1.fit(["CCO"], epochs=2, resume_path=ckpt)
+    assert (tmp_path / "seed0.ckpt.pt").exists(), "fit must persist the resume checkpoint"
+    assert len(t1.loss_history_) == 2
+    logz_at_2 = float(t1.log_z)
+
+    # Direct load restores epoch + logZ exactly. Done BEFORE the resume-fit below, which would
+    # advance (overwrite) the checkpoint to epoch 4. The optimizer must be built over the SAME
+    # params in the SAME order as fit() (optimizer state_dict maps by index).
+    torch.manual_seed(2)
+    t3 = _mk()
+    params = [p for p in t3.reranker.parameters() if p.requires_grad] + list(t3.stop_head.parameters())
+    opt = torch.optim.Adam([{"params": params}, {"params": [t3.log_z]}])
+    assert float(t3.log_z) == 0.0                       # fresh trainer starts at logZ=0
+    start = t3._load_train_ckpt(ckpt, opt)
+    assert start == 2, "checkpoint must report the epoch to resume FROM"
+    assert abs(float(t3.log_z) - logz_at_2) < 1e-5, "logZ must be restored from the checkpoint"
+
+    # Fresh trainer, SAME checkpoint, asked for 4 epochs total: it must load epoch=2 and run
+    # only epochs 2,3 -> loss_history length 4. A broken resume (restart at 0) would run 4 fresh
+    # epochs on top of the 2 loaded entries -> length 6.
+    torch.manual_seed(1)
+    t2 = _mk()
+    t2.fit(["CCO"], epochs=4, resume_path=ckpt)
+    assert len(t2.loss_history_) == 4, "resume must continue (2 loaded + 2 new), not restart at 0"
+
+
+def test_train_checkpoint_ignores_corrupt_file(tmp_path):
+    """A corrupt/unreadable training checkpoint must be IGNORED (train from scratch, start_epoch
+    0), never crash the run -- a half-written file from a kill mid-save must not brick recovery."""
+    bad = tmp_path / "seed0.ckpt.pt"
+    bad.write_bytes(b"not a torch checkpoint")
+
+    rr = BiEncoderReranker(in_channels=SINGLE_NODE_DIM)
+    cfg = GFlowNetConfig(max_depth=2, beta=2.0, epsilon=0.0, batch_substrates=1,
+                         lam=0.1, max_size=5, top_k=200)
+    trainer = SetGFlowNetTrainer(_MiniGen(), rr, cfg, annotated_ik_fn=lambda root: set())
+    opt = torch.optim.Adam([{"params": list(trainer.reranker.parameters())},
+                            {"params": [trainer.log_z]}])
+    assert trainer._load_train_ckpt(str(bad), opt) == 0   # ignored, not raised

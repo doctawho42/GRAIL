@@ -325,6 +325,12 @@ def main() -> None:
              "front (fully parallel but over-expands unvisited children).",
     )
     parser.add_argument("--out", type=str, default=None, help="Override the results JSON path.")
+    parser.add_argument(
+        "--resume-ckpt", type=str, default=None,
+        help="Path to a Set-GFlowNet training checkpoint (saved every epoch). If it exists, "
+             "training RESUMES from the last completed epoch instead of restarting at 0 -- "
+             "makes a multi-hour run survive preemption/crash on preemptible workers.",
+    )
     # Reranker warm-start knobs, mirroring run_reranker_gate.py's --arch bi defaults.
     parser.add_argument("--rerank-epochs", type=int, default=15, help="Depth-1 reranker InfoNCE epochs.")
     parser.add_argument("--bootstrap-epochs", type=int, default=5, help="Depth-2 bootstrap fine-tune epochs.")
@@ -457,7 +463,8 @@ def main() -> None:
         trainer.prewarm_caches(train_substrates_list, args.workers, gen_ckpt=str(GEN_CKPT),
                                verbose=True, waves=args.prewarm_waves)
         print(f"[gflownet] train prewarm done in {time.time()-t0:.1f}s", flush=True)
-    trainer.fit(train_substrates_list, epochs=args.epochs, verbose=True)
+    trainer.fit(train_substrates_list, epochs=args.epochs, verbose=True,
+                resume_path=args.resume_ckpt)
     trainer.save_caches()  # persist env caches populated during training
     print(f"[gflownet] Set-GFlowNet training done in {time.time()-t0:.1f}s", flush=True)
 

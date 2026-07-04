@@ -198,6 +198,45 @@ class SetGFlowNetTrainer:
                 with open(path, "wb") as fh:
                     pickle.dump(obj, fh)
 
+    def _save_train_ckpt(self, path, next_epoch, optimizer):
+        """Atomically persist the trainable state (P_F reranker + stop_head + logZ + Adam
+        moments + loss history) so a preempted/crashed run RESUMES from the last completed
+        epoch instead of restarting at epoch 0. The env caches (save_caches) only spare
+        re-EXPANSION; training -- the multi-hour GNN backprop -- is the dominant cost this
+        guards. Written to a .tmp sibling then os.replace'd, so a kill mid-write never leaves
+        a half-written checkpoint that would fail to load."""
+        os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
+        tmp = path + ".tmp"
+        torch.save({
+            "epoch": int(next_epoch),                       # epoch index to resume FROM
+            "reranker": self.reranker.state_dict(),
+            "stop_head": self.stop_head.state_dict(),
+            "log_z": self.log_z.detach().cpu(),
+            "optimizer": optimizer.state_dict(),
+            "loss_history": list(self.loss_history_),
+        }, tmp)
+        os.replace(tmp, path)
+
+    def _load_train_ckpt(self, path, optimizer):
+        """Restore trainable state; return the epoch to resume FROM (0 if no usable checkpoint).
+        A corrupt/incompatible checkpoint is ignored (train from scratch) rather than crashing.
+        ``optimizer`` must already be built over the SAME params (state_dict maps by index)."""
+        if not os.path.exists(path):
+            return 0
+        try:
+            ckpt = torch.load(path, map_location=self.device)
+            self.reranker.load_state_dict(ckpt["reranker"])
+            self.stop_head.load_state_dict(ckpt["stop_head"])
+            with torch.no_grad():
+                self.log_z.copy_(ckpt["log_z"].to(self.device))
+            optimizer.load_state_dict(ckpt["optimizer"])
+            self.loss_history_ = list(ckpt.get("loss_history", []))
+            return int(ckpt.get("epoch", 0))
+        except Exception as exc:  # never let a bad checkpoint abort the run
+            print(f"[set_gflownet] WARNING: ignoring unreadable train checkpoint {path}: {exc}",
+                  flush=True)
+            return 0
+
     def candidate_children(self, state_smiles):
         """Cached ``(child_smiles, gen_score, rule_id)`` list for a state via the generator.
 
@@ -358,7 +397,7 @@ class SetGFlowNetTrainer:
         log_pb = log_pb_trajectory(post_add)
         return (self.log_z.squeeze() + sum_log_pf - log_pb - log_r) ** 2
 
-    def fit(self, substrates, epochs=None, verbose=False):
+    def fit(self, substrates, epochs=None, verbose=False, resume_path=None):
         cfg = self.config
         epochs = epochs if epochs is not None else cfg.epochs
         subs = [s for s in substrates if s]
@@ -372,7 +411,18 @@ class SetGFlowNetTrainer:
             ]
         )
         self.loss_history_ = []
-        for epoch in range(epochs):
+        # Resume from a per-run training checkpoint if one persisted (preemption / crash
+        # recovery). MUST come AFTER the optimizer is built -- _load_train_ckpt restores the
+        # Adam moment buffers into it. start_epoch>0 means the earlier run already completed
+        # `start_epoch` epochs; if it equals `epochs` the loop is empty and we fall straight
+        # through to eval (recovers a run killed after training, mid-eval).
+        start_epoch = 0
+        if resume_path:
+            start_epoch = self._load_train_ckpt(resume_path, opt)
+            if verbose and start_epoch:
+                print(f"[gflownet] resumed training from epoch {start_epoch} "
+                      f"(logZ={float(self.log_z):.3f})", flush=True)
+        for epoch in range(start_epoch, epochs):
             self.reranker.train()
             order = torch.randperm(len(subs)).tolist()
             ep, nb = 0.0, 0
@@ -396,6 +446,9 @@ class SetGFlowNetTrainer:
             # deterministic) pool-gen it already did -- the next run resumes from a warm cache.
             if self._child_cache_path or self._ik_cache_path:
                 self.save_caches()
+            # Persist trainable state every epoch so a preemption/crash resumes from here.
+            if resume_path:
+                self._save_train_ckpt(resume_path, epoch + 1, opt)
         return self
 
     def _expand_many(self, states, workers, gen_ckpt):
