@@ -41,7 +41,7 @@ BRANCH = "metabench-reranker"
 image = (
     modal.Image.debian_slim(python_version="3.10")
     .apt_install("git", "libxrender1", "libxext6", "libsm6")
-    .run_commands(f"git clone --branch {BRANCH} --depth 1 {REPO} /root/GRAIL  # rev ckpt200-300")
+    .run_commands(f"git clone --branch {BRANCH} --depth 1 {REPO} /root/GRAIL  # rev waves1-300")
     .workdir("/root/GRAIL")
     .run_commands(
         "pip install --no-cache-dir 'numpy<2'",
@@ -59,10 +59,13 @@ art_vol = modal.Volume.from_name("grail-artifacts", create_if_missing=True)
 # ~(steps/epoch)*logz_lr = (1200/16)*0.04 ~ 3/epoch, converging to the beta=6 target
 # (~O(12)) in a few epochs -- the same convergence speed that gave M1 its PASS at 100
 # substrates with logz_lr=0.3 (100/16*0.3 ~ 2/epoch).
-# 300-scale headline: the 600 full-prewarm livelocked on preemptible workers (coarse
-# checkpoint couldn't save between reclaims). 300's states are already in the 83MB cache the
-# 600 run built (deterministic subset) -> its prewarm is near-instant, and _PREWARM_CKPT_EVERY
-# is now 200 (fine-grained saves survive frequent preemption). logz_lr=0.16 (300/16~19 steps x 0.16~3/epoch).
+# 300-scale headline. --prewarm-waves 1 is load-bearing: the full 2-wave prewarm OVER-EXPANDS
+# -- it expands ALL depth-1 children of every root (~10k+ RDKit+reranker calls), most of which
+# the policy never samples. Measured on the 600 AND the 300 run this is a multi-hour grind that
+# dwarfs training. waves=1 expands only the 300 roots up front (fast, parallel); fit/eval then
+# lazily expand ONLY the depth-1 states a rollout actually ADDS to its forest (<=max_size each,
+# the visited subset ~2-4k, cached once) -- the correct 'bound to policy-visited' scaling.
+# logz_lr=0.16 (300/16~19 steps x 0.16~3/epoch converges logZ to the beta=6 target ~O(12)).
 M2_ARGS = [
     "--train-substrates", "300",
     "--max-depth", "2",
@@ -74,6 +77,7 @@ M2_ARGS = [
     "--eval-split", "test",
     "--test-substrates", "200",    # representative clean-test subsample
     "--workers", "8",
+    "--prewarm-waves", "1",        # roots-only prewarm; lazy depth-1 (see note above)
     "--no-bootstrap",
 ]
 

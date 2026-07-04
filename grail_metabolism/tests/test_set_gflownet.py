@@ -392,3 +392,37 @@ def test_prewarm_expands_depth1_of_precached_root(monkeypatch):
     # wave2 must have expanded the pre-cached root's depth-1 child:
     assert "CCO" in trainer._child_cache, "wave2 skipped the pre-cached root's depth-1 child"
     assert trainer._child_cache["CCO"] == [("CCOC", 0.7, 3)]
+
+
+def test_prewarm_waves1_expands_roots_only(monkeypatch):
+    """waves=1 must expand ONLY the roots and leave depth-1 children COLD -- fit/eval expand the
+    visited depth-1 subset lazily via candidate_children. This is the over-expansion fix: at scale
+    the full depth-1 frontier (all top_k children of every root) dwarfs the subset a policy visits,
+    so prewarming it all is a multi-hour waste. Guards that waves=1 skips wave2 entirely."""
+    from grail_metabolism.model import set_gflownet as sg
+
+    KIDS = {"ROOT": [("CCO", 0.9, 1)], "CCO": [("CCOC", 0.7, 3)]}
+
+    class _StubGen:
+        rule_prior_logits = torch.zeros(8)
+
+        def generate_scored_with_details(self, s, top_k, compute_sites=False, max_pool=None):
+            return [(c, g, r) for (c, g, r) in KIDS.get(s, [])]
+
+    monkeypatch.setattr(sg, "_tautomer_inchikey", lambda s: f"IK::{s}")
+    cfg = GFlowNetConfig(max_depth=2, beta=2.0, epsilon=0.0, batch_substrates=1,
+                         lam=0.1, max_size=5, top_k=5)
+    rr = BiEncoderReranker(in_channels=SINGLE_NODE_DIM)
+    trainer = sg.SetGFlowNetTrainer(_StubGen(), rr, cfg, annotated_ik_fn=lambda s: set())
+
+    trainer.prewarm_caches(["ROOT"], workers=1, gen_ckpt=None, waves=1)
+
+    # Root expanded; its depth-1 child left COLD (waves=1 skips wave2 even at max_depth=2):
+    assert "ROOT" in trainer._child_cache, "waves=1 must still expand the roots"
+    assert trainer._child_cache["ROOT"] == [("CCO", 0.9, 1)]
+    assert "CCO" not in trainer._child_cache, "waves=1 must NOT expand depth-1 children"
+
+    # And lazy candidate_children still expands it on demand (identical result), proving fit/eval
+    # recover the depth-1 state when the policy actually visits it.
+    assert trainer.candidate_children("CCO") == [("CCOC", 0.7, 3)]
+    assert "CCO" in trainer._child_cache

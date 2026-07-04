@@ -442,16 +442,26 @@ class SetGFlowNetTrainer:
                 pool.close(); pool.join()
         return expanded
 
-    def prewarm_caches(self, root_smiles, workers, gen_ckpt=None, verbose=False):
-        """Populate _child_cache/_ik_cache for every state the depth-<=max_depth fit/eval will
-        expand (roots + their depth-1 children), in parallel. Deterministic; identical to lazy
-        serial candidate_children. Safe to call repeatedly (only expands uncached states).
-        Pure cache population -- does NOT consume the sampling RNG."""
+    def prewarm_caches(self, root_smiles, workers, gen_ckpt=None, verbose=False, waves=2):
+        """Populate _child_cache/_ik_cache for the states fit/eval will expand, in parallel.
+        Deterministic; identical to lazy serial candidate_children. Safe to call repeatedly
+        (only expands uncached states). Pure cache population -- does NOT consume the sampling RNG.
+
+        ``waves`` bounds how deep the prewarm expands:
+          - ``waves=1`` -- expand ONLY the roots (depth-0). ``fit``/eval then expand the depth-1
+            states LAZILY via ``candidate_children`` as the policy actually visits them. Because a
+            rollout only expands nodes it ADDS to the forest (<= max_size per sample), the visited
+            depth-1 subset is far smaller than the full depth-1 frontier -- so wave1-only avoids
+            the depth-1 OVER-EXPANSION (expanding all ~top_k children of every root, most never
+            sampled). Preferred at scale.
+          - ``waves>=2`` -- also expand ALL depth-1 children of every root up front (the original
+            behavior). Fully parallel, but over-expands the unvisited depth-1 states.
+        """
         roots = list(dict.fromkeys(s for s in root_smiles if s))
         wave1 = self._expand_many(roots, workers, gen_ckpt)
         if verbose:
             print(f"[gflownet] prewarm wave1: {len(wave1)} roots expanded", flush=True)
-        if int(getattr(self.config, "max_depth", 2)) >= 2:
+        if int(waves) >= 2 and int(getattr(self.config, "max_depth", 2)) >= 2:
             # Harvest depth-1 states from ALL roots' cached children -- not just wave1's
             # freshly-expanded ones. After wave1 every root is in _child_cache (freshly
             # expanded OR already-cached from a prior/partial run); reading wave1.values()

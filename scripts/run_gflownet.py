@@ -318,6 +318,12 @@ def main() -> None:
         "--workers", type=int, default=1,
         help="Parallel pool-generation workers for the reranker pool cache (spawn Pool). 1 = serial.",
     )
+    parser.add_argument(
+        "--prewarm-waves", type=int, default=2, choices=(1, 2),
+        help="Prewarm depth: 1 = expand roots only (fit/eval lazily expand the visited depth-1 "
+             "subset -- avoids depth-1 over-expansion at scale); 2 = also expand ALL depth-1 up "
+             "front (fully parallel but over-expands unvisited children).",
+    )
     parser.add_argument("--out", type=str, default=None, help="Override the results JSON path.")
     # Reranker warm-start knobs, mirroring run_reranker_gate.py's --arch bi defaults.
     parser.add_argument("--rerank-epochs", type=int, default=15, help="Depth-1 reranker InfoNCE epochs.")
@@ -448,7 +454,8 @@ def main() -> None:
     if args.workers > 1:
         print(f"[gflownet] parallel pre-warming train caches ({args.workers} workers) ...", flush=True)
         t0 = time.time()
-        trainer.prewarm_caches(train_substrates_list, args.workers, gen_ckpt=str(GEN_CKPT), verbose=True)
+        trainer.prewarm_caches(train_substrates_list, args.workers, gen_ckpt=str(GEN_CKPT),
+                               verbose=True, waves=args.prewarm_waves)
         print(f"[gflownet] train prewarm done in {time.time()-t0:.1f}s", flush=True)
     trainer.fit(train_substrates_list, epochs=args.epochs, verbose=True)
     trainer.save_caches()  # persist env caches populated during training
@@ -462,7 +469,8 @@ def main() -> None:
         eval_roots = list(eval_bundle.map.keys())[:eval_count]
         print(f"[gflownet] parallel pre-warming eval caches ({len(eval_roots)} roots) ...", flush=True)
         t0_prewarm = time.time()
-        trainer.prewarm_caches(eval_roots, args.workers, gen_ckpt=str(GEN_CKPT), verbose=True)
+        trainer.prewarm_caches(eval_roots, args.workers, gen_ckpt=str(GEN_CKPT),
+                               verbose=True, waves=args.prewarm_waves)
         print(f"[gflownet] eval prewarm done in {time.time()-t0_prewarm:.1f}s", flush=True)
     metrics = evaluate_matrix(
         trainer, generator, reranker, beam_tree, eval_bundle,
