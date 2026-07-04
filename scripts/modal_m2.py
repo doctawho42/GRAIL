@@ -107,11 +107,17 @@ def _link_data():
 
 @app.function(
     image=image,
-    # CPU-ONLY: the env is CPU-bound (RDKit rule application + featurization + tautomer),
-    # GPU util was ~0%, and CPU is ~3-5x cheaper/hr AND immune to the CUDA OOM that killed
-    # the GPU runs. 32GB RAM comfortably holds the batch-16 forest-graph peak (~14.5GB).
-    gpu=None,
-    cpu=8.0,               # 8 physical cores for the 8-worker spawn pool (RDKit pool-gen)
+    # GPU now, because the calculus flipped once the (state,top_k)->children expansion cache
+    # was fully populated on the Volume. In the FIRST CPU run the env was expansion-bound
+    # (RDKit rule application dominated, GPU sat ~idle) -- so CPU was right. But with expansion
+    # cached, Set-GFlowNet training is BACKPROP-bound (the reranker GNN over batch-16 forest
+    # rollouts), which ran ~25min/epoch on CPU -> 6.3h/seed. That 6.3h window does NOT survive
+    # preemptible workers (a preemption at the eval finish line lost the whole uncheckpointed
+    # training and restarted seed 0). A 24GB GPU cuts epochs ~10x (~45min/seed), so a seed
+    # comfortably finishes inside a preemption window. expandable_segments (set in run_m2) +
+    # 24GB tames the batch-16 forest-graph autograd peak (~14.5GB) that OOM'd the old 16GB T4.
+    gpu=["A10", "L4", "A100-40GB"],   # 24GB (A10/L4) w/ 40GB fallback; fits the forest-graph peak
+    cpu=8.0,               # host cores for the spawn pool + lazy RDKit expansion of the visited subset
     memory=32768,
     volumes={
         DATA_MOUNT: data_vol,                            # SDFs + triples (symlinked into repo data dir)
