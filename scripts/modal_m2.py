@@ -41,7 +41,7 @@ BRANCH = "metabench-reranker"
 image = (
     modal.Image.debian_slim(python_version="3.10")
     .apt_install("git", "libxrender1", "libxext6", "libsm6")
-    .run_commands(f"git clone --branch {BRANCH} --depth 1 {REPO} /root/GRAIL  # rev evalfix-300")
+    .run_commands(f"git clone --branch {BRANCH} --depth 1 {REPO} /root/GRAIL  # rev nobeam-100")
     .workdir("/root/GRAIL")
     .run_commands(
         "pip install --no-cache-dir 'numpy<2'",
@@ -73,11 +73,15 @@ M2_ARGS = [
     "--epochs", "15",
     "--top-k", "50",
     "--logz-lr", "0.16",
-    "--n-samples", "8",
+    "--n-samples", "4",
     "--eval-split", "test",
-    "--test-substrates", "200",    # representative clean-test subsample
+    "--test-substrates", "100",    # clean-test subsample, trimmed so the (uncheckpointed) eval
+                                   # finishes INSIDE a preemptible-worker window. The prior 200/8
+                                   # eval ran ~2h and got preempted before finishing -> restarted
+                                   # from scratch (eval isn't checkpointed like training is).
     "--workers", "8",
     "--prewarm-waves", "1",        # roots-only prewarm; lazy depth-1 (see note above)
+    "--no-eval-beam",              # skip the optional filter beam baseline (not core; halves eval)
     "--no-bootstrap",
 ]
 

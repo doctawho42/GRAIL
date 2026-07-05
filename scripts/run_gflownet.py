@@ -316,6 +316,14 @@ def main() -> None:
         "--eval-split", choices=["val", "test"], default="val",
         help="Which split to evaluate on. 'val' for selection; 'test' ONCE for the final report.",
     )
+    parser.add_argument(
+        "--no-eval-beam", dest="eval_beam", action="store_false",
+        help="Skip the optional filter multistep-beam baseline in eval (a per-substrate depth-D "
+             "beam_search). It is NOT part of the core gflownet-vs-reranker comparison; dropping "
+             "it keeps the (uncheckpointed) eval short enough to finish inside a preemptible "
+             "worker's window.",
+    )
+    parser.set_defaults(eval_beam=True)
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--beta", type=float, default=6.0, help="Reward sharpness in set_coverage_logreward.")
     parser.add_argument("--lam", type=float, default=0.1, help="Size penalty in set_coverage_logreward.")
@@ -383,10 +391,18 @@ def main() -> None:
     generator, rules = _load_generator()
     print(f"[gflownet] generator loaded in {time.time()-t0:.1f}s; num_rules={generator.num_rules}", flush=True)
 
-    print("[gflownet] loading trained filter (beam baseline) ...", flush=True)
-    t0 = time.time()
-    filt = _load_filter()
-    print(f"[gflownet] filter loaded in {time.time()-t0:.1f}s", flush=True)
+    if args.eval_beam:
+        print("[gflownet] loading trained filter (beam baseline) ...", flush=True)
+        t0 = time.time()
+        filt = _load_filter()
+        print(f"[gflownet] filter loaded in {time.time()-t0:.1f}s", flush=True)
+    else:
+        # --no-eval-beam: skip the OPTIONAL filter multistep-beam baseline. It's a per-substrate
+        # depth-D beam_search (expensive) and is NOT part of the core gflownet-vs-reranker
+        # comparison; dropping it keeps the eval short enough to finish inside a preemptible
+        # worker's window (the eval is not checkpointed, so a >window eval never completes).
+        print("[gflownet] --no-eval-beam: skipping the filter beam baseline (faster eval)", flush=True)
+        filt = None
 
     eval_is_test = args.eval_split == "test"
     cfg = DatasetConfig(
