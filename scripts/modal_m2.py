@@ -41,7 +41,7 @@ BRANCH = "metabench-reranker"
 image = (
     modal.Image.debian_slim(python_version="3.10")
     .apt_install("git", "libxrender1", "libxext6", "libsm6")
-    .run_commands(f"git clone --branch {BRANCH} --depth 1 {REPO} /root/GRAIL  # rev ckpt-cpu-300")
+    .run_commands(f"git clone --branch {BRANCH} --depth 1 {REPO} /root/GRAIL  # rev evalfix-300")
     .workdir("/root/GRAIL")
     .run_commands(
         "pip install --no-cache-dir 'numpy<2'",

@@ -209,6 +209,36 @@ def evaluate_matrix(
     diversity_rows: List[Dict[str, float]] = []
     n_evaluated = 0
 
+    # ik->SMILES map, built ONCE and grown INCREMENTALLY across substrates (each child-cache
+    # parent folded in exactly once) using the WARM trainer._ik_cache. The prior code rebuilt
+    # this per-substrate by scanning the ENTIRE ~1M-entry child cache and calling the COLD
+    # module-level _tautomer_inchikey on every child -- re-tautomer-canonicalizing the whole
+    # cache once PER substrate. That O(cache x n_subs) cold-canon flood was the eval's
+    # multi-hour bottleneck; this makes it O(cache) total with warm lookups. Deterministic:
+    # same ik->smiles content, just not recomputed.
+    global_smiles_of: Dict[str, str] = {}
+    _folded_parents: set = set()
+
+    def _ik_warm(s: str):
+        ik = trainer._ik_cache.get(s)
+        if ik is None:
+            ik = _tautomer_inchikey(s)
+            if ik is not None:
+                trainer._ik_cache[s] = ik
+        return ik
+
+    def _fold_new_cache_entries():
+        # Fold any child-cache parents not seen yet (incl. states this substrate's forests just
+        # lazily expanded) into the global ik->smiles map, exactly once each.
+        for p_smiles in list(trainer._child_cache.keys()):
+            if p_smiles in _folded_parents:
+                continue
+            _folded_parents.add(p_smiles)
+            for c_smiles, _g, _rid in trainer._child_cache[p_smiles]:
+                ik = _ik_warm(c_smiles)
+                if ik is not None:
+                    global_smiles_of.setdefault(ik, c_smiles)
+
     for root in substrates:
         annotated_ik = set(annotated_ik_fn(root))
         if not annotated_ik:
@@ -220,7 +250,6 @@ def evaluate_matrix(
         # Sample M forests; keep the SMILES for every produced InChIKey (needed for
         # diversity/tanimoto/scaffold metrics and for materializing the gflownet@K set).
         sampled_sets: List[frozenset] = []
-        smiles_of: Dict[str, str] = {}
         best_log_r, best_state = None, None
         with torch.no_grad():
             trainer.reranker.eval()
@@ -237,12 +266,11 @@ def evaluate_matrix(
         # Reconstruct smiles for every InChIKey touched by any sampled forest via the
         # trainer's candidate cache (populated during sample_forest for root + all
         # frontier nodes visited); fall back to the root's own candidate pool.
-        smiles_of[_tautomer_inchikey(root)] = root
-        for p_smiles, kids in trainer._child_cache.items():
-            for c_smiles, _g, _rid in kids:
-                ik = _tautomer_inchikey(c_smiles)
-                if ik is not None:
-                    smiles_of.setdefault(ik, c_smiles)
+        _fold_new_cache_entries()          # fold in states this substrate's forests just expanded
+        smiles_of = global_smiles_of       # shared, incrementally-grown map (warm-cache lookups)
+        rik = _ik_warm(root)
+        if rik is not None:
+            smiles_of.setdefault(rik, root)
 
         best_terminal = best_state.terminal_set() if best_state is not None else frozenset()
         best_smiles = [smiles_of[ik] for ik in best_terminal if ik in smiles_of][:max_size]
