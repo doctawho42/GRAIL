@@ -121,3 +121,10 @@ MetaPredictor #1 flip.
 **Remaining (cite published numbers as context — running infeasible):** GLORYx-the-tool (needs
 FAME3 weights), MetaTrans (dependency rot), LAGOM (no released checkpoint). Their leaderboard
 numbers are provenanced below and are *not* drop-in comparable to the four standardized rows.
+
+**Stage 2b (Set-GFlowNet) — internal clean-test, not GLORYx.** The multi-step diverse-set method is
+measured on the internal clean-test split (n=300 train / 100 test, 3 seeds), not this external GLORYx
+set, so it is not a row here. Headline: gflownet recall@10 **0.303 ± 0.012** vs the same reranker
+**0.376 ± 0.004** on that subsample — the GFlowNet does *not* beat pointwise recall; its contribution
+is diverse-set generation (mean pairwise Tanimoto 0.259, ~17 scaffolds/substrate, modes_discovered
+0.587). Full result + honest caveats in `stage2_ranker_evidence.md` (Spike 4).

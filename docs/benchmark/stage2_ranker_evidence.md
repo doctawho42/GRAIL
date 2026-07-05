@@ -148,3 +148,40 @@ targets; the within-rule regioselectivity probe above remains the cheap next dia
 learned/rule SOTA *in-distribution* and closes most of the external gap, with strong top-rank
 precision. The remaining external shortfall is multi-step coverage, which motivates Stage 2b rather
 than further single-step ranking work.
+
+## Spike 4 — Stage 2b Set-GFlowNet (M2): the diverse-set method, measured
+
+The Set-GFlowNet is trained end-to-end (Trajectory Balance, β=6 PU set-coverage reward, the Stage-2a
+bi-encoder reranker as the forward policy P_F) and evaluated on the clean **test** split, 3 seeds,
+mean±std. This is a **proof-of-concept scale**: n=300 train / n=100 test substrates, 4 forests per
+substrate, beam-free eval, tautomer-InChIKey. It is **not** directly comparable to the Stage-2a
+full-test headline above (different k, n, metric emphasis) — both columns here are re-measured on the
+same 100-substrate subsample, so the reranker@10 here (0.376) sits below its full-test 0.454@10.
+
+| series (test, n=100, 3 seeds) | recall@10 | modes_discovered | mean_pairwise_tanimoto ↓ | scaffolds/sub |
+|---|---|---|---|---|
+| **gflownet** (best-of-4-forests set) | **0.303 ± 0.012** | 0.587 ± 0.042 | 0.259 ± 0.010 | 16.7 ± 1.2 |
+| reranker (same subsample) | 0.376 ± 0.004 | — | — | — |
+
+**Honest reading — the contribution is diversity, not pointwise recall.** On single-best-forest
+recall@10 the GFlowNet is **0.303, ~81% of the reranker's 0.376** — it does *not* beat the pointwise
+ranker (consistent with the M1 sanity: 92% at tiny scale). What it adds is a **structurally diverse
+metabolite SET**: mean pairwise Tanimoto 0.259 (low = diverse), ~17 distinct Bemis–Murcko scaffolds
+per substrate, and modes_discovered 0.587 — the count of distinct annotated metabolites surfaced
+across the 4 diverse samples, i.e. the union-coverage a single-trajectory reranker cannot produce by
+construction. Tight seed variance (±0.012) confirms stable training (logZ converged to ~25 each seed,
+matching the β=6 partition target).
+
+**Positioning.** This validates the Stage-2b machinery end-to-end (it trains, converges, and produces
+diverse sets) and supports the *method* claim — diverse set generation over the rule DAG — rather than
+a recall-beating claim. A publishable headline still needs (a) full train/test scale and a matched
+output budget for a fair gflownet-vs-reranker recall comparison, and (b) a budget-matched coverage
+metric (union@K vs reranker@K) to quantify the diversity payoff.
+`results/gflownet_m2_test_seed{0,1,2}.json`; `scripts/aggregate_seeds.py`.
+
+**Compute note.** M2 was a multi-hour exercise on preemptible workers; the load-bearing infra: per-epoch
+model checkpointing (`--resume-ckpt`) so training survives preemption (resume-from-epoch, validated live
+when a reclaim hit mid-eval), `--prewarm-waves 1` to avoid depth-1 over-expansion, an O(cache) eval
+ik→smiles fix (a per-substrate full-cache cold-tautomer rescan was a multi-hour bottleneck), and
+`--no-eval-beam` + the 100-substrate eval to keep the uncheckpointed evaluation inside a preemption
+window. GPU was tried and abandoned (latency-bound rollouts + a 24 GB OOM the 32 GB-RAM CPU path avoids).
