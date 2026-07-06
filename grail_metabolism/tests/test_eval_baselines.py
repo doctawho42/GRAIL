@@ -324,3 +324,113 @@ def test_dpp_theta_zero_ignores_relevance_ordering():
     ranked_a = baselines.dpp_greedy_select(pool_a, k=3, theta=0.0)
     ranked_b = baselines.dpp_greedy_select(pool_b, k=3, theta=0.0)
     assert ranked_a == ranked_b
+
+
+# ---------------------------------------------------------------------------
+# Task 3: mmr_select (BASE-03) -- reconciled relevance/similarity scale with
+# lambda=1/lambda=0 degenerate limits.
+# ---------------------------------------------------------------------------
+
+
+def test_mmr_lambda_one_recovers_top_k_ranking():
+    pool = [
+        (_HEXANE, 3.0),
+        (_HEPTANE, 2.0),
+        (_BENZENE, 1.0),
+        ("CCN", 0.5),
+        ("CCCl", 0.0),
+    ]
+    ranked = baselines.mmr_select(pool, k=len(pool), lam=1.0)
+    expected_order = [
+        s for s, _ in sorted(pool, key=lambda x: (-x[1], metrics._tautomer_inchikey(x[0])))
+    ]
+    assert ranked == expected_order
+
+
+def _farthest_point_reference(pool, k):
+    """Hand-rolled max-min (farthest-point) picker independent of relevance,
+    used as an oracle for the lambda=0 degenerate case."""
+    from rdkit import Chem
+    from rdkit.Chem import AllChem, DataStructs
+
+    smiles = [s for s, _ in pool]
+    mols = [Chem.MolFromSmiles(s) for s in smiles]
+    fps = [AllChem.GetMorganFingerprintAsBitVect(m, radius=2, nBits=2048) for m in mols]
+    n = len(smiles)
+    max_sim = [0.0] * n
+    selected_mask = [False] * n
+    ranked = []
+    for _ in range(min(k, n)):
+        best_j = None
+        best_score = None
+        for j in range(n):
+            if selected_mask[j]:
+                continue
+            score = -max_sim[j]
+            key = (-score, smiles[j])
+            if best_score is None or key < best_score:
+                best_score = key
+                best_j = j
+        selected_mask[best_j] = True
+        ranked.append(smiles[best_j])
+        for j in range(n):
+            if not selected_mask[j]:
+                sim = DataStructs.TanimotoSimilarity(fps[best_j], fps[j])
+                max_sim[j] = max(max_sim[j], sim)
+    return ranked
+
+
+def test_mmr_lambda_zero_recovers_maxmin_diversity():
+    pool = [
+        (_HEXANE, 3.0),
+        (_HEPTANE, 2.0),
+        (_BENZENE, 1.0),
+        ("CCN", 0.5),
+    ]
+    # First-pick invariance to a permutation of relevance scores (lam=0 must
+    # ignore Rel entirely) -- both permutations select the same first pick.
+    permuted_pool = [(s, -sc) for s, sc in pool]
+    ranked_original = baselines.mmr_select(pool, k=1, lam=0.0)
+    ranked_permuted = baselines.mmr_select(permuted_pool, k=1, lam=0.0)
+    assert ranked_original == ranked_permuted
+
+    # Cross-check against a hand-rolled farthest-point reference.
+    ranked_full = baselines.mmr_select(pool, k=len(pool), lam=0.0)
+    reference = _farthest_point_reference(pool, k=len(pool))
+    assert ranked_full == reference
+
+
+def test_mmr_lambda_sweep_monotonic_diversity():
+    pool = [
+        (_HEXANE, 3.0),
+        (_HEPTANE, 2.0),
+        (_BENZENE, 1.0),
+        ("CCN", 0.5),
+        ("CCCl", 0.0),
+    ]
+    results = {}
+    for lam in (1.0, 0.5, 0.0):
+        ranked = baselines.mmr_select(pool, k=3, lam=lam)
+        results[lam] = diversity.mean_pairwise_tanimoto(ranked)
+
+    # lam=1 -> most similar to top-K (higher mean similarity); lam=0 -> most
+    # spread out (lower mean similarity). Non-increasing as lam decreases.
+    assert results[0.0] <= results[0.5] + 1e-9
+    assert results[0.5] <= results[1.0] + 1e-9
+
+
+def test_mmr_select_dedups_and_hits_budget_k(monkeypatch):
+    _patch_tautomer_ik(monkeypatch)
+
+    pool_with_dup = [
+        (_TAUT_A, 5.0),
+        (_TAUT_B, 4.9),
+        (_HEXANE, 4.0),
+        (_HEPTANE, 3.0),
+        (_BENZENE, 2.0),
+        ("CCN", 1.0),
+    ]
+    ranked = baselines.mmr_select(pool_with_dup, k=5, lam=0.5)
+    out = diversity.dedup_to_budget(ranked, k=4)
+    assert len(out) == 4
+    assert sum(1 for s in out if s in (_TAUT_A, _TAUT_B)) == 1
