@@ -28,6 +28,11 @@ from rdkit import Chem, RDLogger
 
 RDLogger.DisableLog("rdApp.*")
 
+from grail_metabolism.eval.diversity import (
+    circles_count,
+    mean_pairwise_tanimoto,
+    n_unique_scaffolds,
+)
 from grail_metabolism.metrics import _inchikey
 from grail_metabolism.utils.preparation import (
     apply_rules_to_molecule,
@@ -311,16 +316,40 @@ def gap_analysis(test_map: Dict[str, Set[str]], rules: List[str]) -> Dict[str, o
 
 # ---- 2. SyGMa baseline ----
 def sygma_baseline(test_map: Dict[str, Set[str]], ks: List[int]) -> Optional[Dict[str, object]]:
+    """SyGMa phase1+phase2 baseline: recall@k/precision@k (plain-InChIKey matching,
+    unchanged) plus the diversity triplet (BASE-04, canonicalization-consistent via
+    eval/diversity.py).
+
+    NOTE (Pitfall 4, canonicalization divergence -- documented, not a bug): this
+    function's recall_at/precision_at path matches predictions via the PLAIN
+    _inchikey (line below, unchanged from before BASE-04), while the
+    mean_pairwise_tanimoto/circles@t0.4/circles@t0.7/n_unique_scaffolds diversity
+    triplet is computed by feeding the RAW ranked SMILES (pre plain-InChIKey dedup,
+    parent dropped by SMILES equality) into eval/diversity.py's functions, each of
+    which runs its OWN internal tautomer-InChIKey dedup
+    (_dedup_smiles_by_tautomer_ik) before fingerprinting. A tautomer pair in SyGMa's
+    raw output can therefore count as TWO distinct predictions in recall_at/
+    precision_at but collapse to ONE molecule in the diversity triplet -- this is
+    expected and correct (it keeps the triplet consistent with every other baseline
+    and with the gflownet path), not a mismatch to "fix".
+    """
     try:
         import sygma
     except ImportError:
-        print("sygma not installed; skipping baseline (pip install sygma)", flush=True)
+        print("sygma not installed; skipping baseline (pip install -e .[baselines])", flush=True)
         return None
     scenario = sygma.Scenario([[sygma.ruleset["phase1"], 1], [sygma.ruleset["phase2"], 1]])
     recall_at = {k: 0.0 for k in ks}
     prec_at = {k: 0.0 for k in ks}
     out_sizes = []
     n = 0
+    # Diversity-triplet accumulators (BASE-04): running sum over substrates,
+    # divided by n at the end -- mean over substrates, NOT the last substrate's
+    # numbers (mirrors how recall_at/prec_at are aggregated above).
+    div_mean_pairwise_tanimoto = 0.0
+    div_circles_t04 = 0.0
+    div_circles_t07 = 0.0
+    div_n_unique_scaffolds = 0.0
     start = time.perf_counter()
     items = list(test_map.items())
     for i, (sub, true_prods) in enumerate(items, start=1):
@@ -352,6 +381,15 @@ def sygma_baseline(test_map: Dict[str, Set[str]], ks: List[int]) -> Optional[Dic
             hit = len(topk & true_ik)
             recall_at[k] += hit / len(true_ik) if true_ik else 0.0
             prec_at[k] += hit / k
+
+        # --- BASE-04 diversity triplet: RAW ranked SMILES (NOT the plain-IK
+        # -deduped `preds` above), parent dropped by SMILES equality; each
+        # eval/diversity.py function dedups by tautomer-InChIKey internally.
+        raw_ranked_smiles = [entry[0] for entry in ranked if entry[0] != sub]
+        div_mean_pairwise_tanimoto += mean_pairwise_tanimoto(raw_ranked_smiles)
+        div_circles_t04 += circles_count(raw_ranked_smiles, threshold=0.4)
+        div_circles_t07 += circles_count(raw_ranked_smiles, threshold=0.7)
+        div_n_unique_scaffolds += n_unique_scaffolds(raw_ranked_smiles)
     if n == 0:
         return None
     return {
@@ -359,6 +397,12 @@ def sygma_baseline(test_map: Dict[str, Set[str]], ks: List[int]) -> Optional[Dic
         "precision_at": {str(k): prec_at[k] / n for k in ks},
         "mean_output_size": sum(out_sizes) / len(out_sizes) if out_sizes else 0.0,
         "n_substrates": n,
+        # BASE-04: aggregate_seeds.py-compatible key names, verbatim matching
+        # run_gflownet.py:_diversity_block's diversity-triplet keys.
+        "mean_pairwise_tanimoto": div_mean_pairwise_tanimoto / n,
+        "circles@t0.4": div_circles_t04 / n,
+        "circles@t0.7": div_circles_t07 / n,
+        "n_unique_scaffolds": div_n_unique_scaffolds / n,
     }
 
 
