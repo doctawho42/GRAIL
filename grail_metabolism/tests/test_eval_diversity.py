@@ -144,6 +144,31 @@ def test_modes_discovered_canonical_gates_on_reward_and_tanimoto():
     assert count_none == 0
 
 
+def test_modes_discovered_canonical_collapses_tautomer_duplicates(monkeypatch):
+    """FIX C (EVAL-04) guard: modes_discovered_canonical must run the SAME
+    _dedup_smiles_by_tautomer_ik pre-pass as circles_count/mean_pairwise_tanimoto/
+    n_unique_scaffolds on its reward-gate survivors BEFORE the len(mols) < 2 / sphere-
+    exclusion step -- otherwise two tautomers of the same molecule (both passing the
+    reward gate) would count as two distinct 'modes' instead of collapsing to one.
+    Uses the same monkeypatched _tautomer_inchikey as the existing diversity/recall
+    identity-agreement test."""
+    monkeypatch.setattr(diversity, "_tautomer_inchikey", _fake_taut_ik)
+    monkeypatch.setattr(metrics, "_tautomer_inchikey", _fake_taut_ik)
+
+    # _TAUT_A and _TAUT_B are an exact tautomer-duplicate pair under the fake IK; both
+    # pass a reward gate that accepts everything (tau=0).
+    candidates = [_TAUT_A, _TAUT_B]
+
+    def reward_fn(x: str) -> float:
+        return 1.0
+
+    count = diversity.modes_discovered_canonical(candidates, reward_fn, tau=1.0, delta=0.7)
+    assert count == 1, (
+        "an exact tautomer-duplicate pair must collapse to ONE mode before the "
+        "sphere-exclusion gate, not be counted as two distinct modes"
+    )
+
+
 def test_auc_of_curve_known_answer():
     # Exact D-EVAL02-KGRID non-uniform grid with hand-picked distinct values.
     curve = {5: 0.10, 10: 0.20, 15: 0.30, 20: 0.40, 30: 0.50, 50: 0.60}

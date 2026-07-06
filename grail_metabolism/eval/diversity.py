@@ -158,8 +158,16 @@ def modes_discovered_canonical(
     not implemented here. Like ``annotated_coverage_count``, this is gated on
     an incomplete PU annotation set when a ground-truth-based ``reward_fn`` is
     used -- the same precision-as-lower-bound caveat applies.
+
+    FIX C (EVAL-04, adversarial review): runs the SAME ``_dedup_smiles_by_tautomer_ik``
+    pre-pass on the reward-gate survivors that ``circles_count``/``mean_pairwise_tanimoto``/
+    ``n_unique_scaffolds`` all run before fingerprinting -- without it, two tautomers of the
+    same molecule would each independently pass the reward gate and count as two distinct
+    "modes" instead of collapsing to one, forking this function's canonicalization away from
+    the rest of the module.
     """
     survivors = [x for x in sampled_smiles if reward_fn(x) >= tau]
+    survivors = _dedup_smiles_by_tautomer_ik(survivors)
     mols = [Chem.MolFromSmiles(s) for s in survivors]
     mols = [m for m in mols if m is not None]
 
