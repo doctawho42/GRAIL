@@ -349,11 +349,13 @@ def test_mmr_lambda_one_recovers_top_k_ranking():
 
 def _farthest_point_reference(pool, k):
     """Hand-rolled max-min (farthest-point) picker independent of relevance,
-    used as an oracle for the lambda=0 degenerate case."""
+    used as an oracle for the lambda=0 degenerate case. Tie-break lexicographic
+    on tautomer-InChIKey, matching mmr_select's own deterministic tie-break."""
     from rdkit import Chem
     from rdkit.Chem import AllChem, DataStructs
 
     smiles = [s for s, _ in pool]
+    tie_keys = [metrics._tautomer_inchikey(s) for s in smiles]
     mols = [Chem.MolFromSmiles(s) for s in smiles]
     fps = [AllChem.GetMorganFingerprintAsBitVect(m, radius=2, nBits=2048) for m in mols]
     n = len(smiles)
@@ -367,7 +369,7 @@ def _farthest_point_reference(pool, k):
             if selected_mask[j]:
                 continue
             score = -max_sim[j]
-            key = (-score, smiles[j])
+            key = (-score, tie_keys[j])
             if best_score is None or key < best_score:
                 best_score = key
                 best_j = j

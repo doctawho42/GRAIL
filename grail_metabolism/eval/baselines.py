@@ -282,3 +282,79 @@ def dpp_greedy_select(
         ranked.append(smiles[j])
 
     return ranked
+
+
+def mmr_select(
+    pool: Pool,
+    k: int,
+    lam: float = 0.5,
+    fps: Optional[Sequence] = None,
+) -> List[str]:
+    """Maximal Marginal Relevance selection with a reconciled Rel/Sim scale (BASE-03).
+
+    Per D-BASE03-MMRSCALE: ``score(i) = lam * Rel(i) - (1 - lam) *
+    max_{j in selected} Sim(i, j)``. ``Rel`` is the raw reranker logit
+    min-max normalized to ``[0, 1]`` across the pool (``rel = (score -
+    score.min()) / max(score.max() - score.min(), 1e-8)``); ``Sim`` is
+    Tanimoto over the shared fingerprint (``_pool_fingerprints``/
+    ``_tanimoto_kernel_matrix``), already in ``[0, 1]`` -- NOT re-normalized.
+    Reconciling both terms to ``[0, 1]`` before combining is what makes
+    ``lam`` a meaningful relevance-vs-diversity dial.
+
+    ``lam=1.0`` recovers the reranker's own top-K ordering exactly (Rel-only
+    degenerate case); ``lam=0.0`` recovers a pure max-min diversity picker,
+    independent of relevance. Ties are broken deterministically (lexicographic
+    on ``_tautomer_inchikey``) for cross-seed reproducibility.
+
+    Maintains ``max_sim_to_selected`` as an incremental running-max
+    (``O(K * N_pool)``, not ``O(K^2 * N_pool)``), updated once per pick.
+    """
+    if not pool or k <= 0:
+        return []
+
+    smiles = [s for s, _ in pool]
+    raw_scores = np.asarray([sc for _, sc in pool], dtype=np.float64)
+    n = len(smiles)
+
+    span = max(float(raw_scores.max() - raw_scores.min()), 1e-8)
+    rel = (raw_scores - raw_scores.min()) / span
+
+    if fps is None:
+        fps = _pool_fingerprints(smiles)
+    if len(fps) != n:
+        parseable_smiles = []
+        parseable_idx = []
+        for i, s in enumerate(smiles):
+            if Chem.MolFromSmiles(s) is not None:
+                parseable_smiles.append(s)
+                parseable_idx.append(i)
+        smiles = parseable_smiles
+        rel = rel[parseable_idx]
+        n = len(smiles)
+        if n == 0:
+            return []
+
+    S = _tanimoto_kernel_matrix(fps)
+    tie_keys = [_tautomer_inchikey(s) for s in smiles]
+
+    max_sim_to_selected = np.zeros(n, dtype=np.float64)
+    selected_mask = np.zeros(n, dtype=bool)
+    ranked: List[str] = []
+
+    for _ in range(min(k, n)):
+        mmr_score = lam * rel - (1.0 - lam) * max_sim_to_selected
+        best_j = None
+        best_key = None
+        for idx in range(n):
+            if selected_mask[idx]:
+                continue
+            key = (-float(mmr_score[idx]), tie_keys[idx])
+            if best_key is None or key < best_key:
+                best_key = key
+                best_j = idx
+        j = best_j
+        selected_mask[j] = True
+        ranked.append(smiles[j])
+        max_sim_to_selected = np.maximum(max_sim_to_selected, S[j, :])
+
+    return ranked
