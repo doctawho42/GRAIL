@@ -11,8 +11,13 @@ RDKit-version-independent.
 
 from __future__ import annotations
 
+import re
+from pathlib import Path
+
 import grail_metabolism.eval.diversity as diversity
 import grail_metabolism.metrics as metrics
+
+RUN_GFLOWNET_PATH = Path(__file__).resolve().parents[2] / "scripts" / "run_gflownet.py"
 
 # Hexane/heptane: genuinely distinct SMILES but high Tanimoto similarity
 # (~0.875, verified against the installed RDKit build); benzene is
@@ -158,3 +163,170 @@ def test_auc_of_curve_known_answer():
     # 2-point edge case pins the (k_max - k_min) normalization divisor.
     two_point = {5: 0.2, 50: 0.8}
     assert diversity.auc_of_curve(two_point, k_min=5, k_max=50) == 0.5 * (0.2 + 0.8)
+
+
+# ---------------------------------------------------------------------------
+# Phase 1 Plan 02 guard tests: budget-matching / JSON-key-stability /
+# reranker-pretruncation / aggregate_seeds.py key-detection.
+# ---------------------------------------------------------------------------
+
+
+def test_dedup_to_budget_prevents_silent_budget_shrinkage(monkeypatch):
+    """EVAL-01 silent-budget-shrinkage landmine: a ranked list containing
+    tautomer-duplicate SMILES must NOT silently under-fill its stated budget --
+    requesting k=N distinct post-canon molecules must return N distinct
+    molecules whenever >= N distinct molecules are available in the stream,
+    even if the raw (pre-dedup) stream is dominated by duplicate pairs."""
+    monkeypatch.setattr(diversity, "_tautomer_inchikey", _fake_taut_ik)
+    monkeypatch.setattr(metrics, "_tautomer_inchikey", _fake_taut_ik)
+
+    # Interleave the tautomer-duplicate pair with 4 genuinely distinct molecules.
+    # A naive (non-deduped) truncation to k=4 would return only 3 distinct
+    # molecules (since _TAUT_A/_TAUT_B collapse to one key) -- silently
+    # shrinking the effective budget below the requested 4.
+    distinct_fillers = ["c1ccccc1", "CCN", "CCCl", "CCBr"]
+    ranked = [_TAUT_A, _TAUT_B] + distinct_fillers
+    out = diversity.dedup_to_budget(ranked, k=4)
+
+    assert len(out) == 4
+    keys = {_fake_taut_ik(s) for s in out}
+    assert len(keys) == 4, "must be 4 DISTINCT post-canon molecules, not shrunk by the dup pair"
+    # Only one of the tautomer-collapsed pair occupies a slot; the freed slot
+    # goes to the next-ranked distinct filler (CCCl), not the 4th ranked
+    # filler (CCBr, which would only be needed if the dup pair had NOT freed
+    # a slot -- i.e. a naive non-deduped truncation would have stopped one
+    # slot earlier and never reached CCCl).
+    assert sum(1 for s in out if s in (_TAUT_A, _TAUT_B)) == 1
+    assert "CCCl" in out  # the freed slot lets budget reach the 3rd distinct filler
+    assert "CCBr" not in out  # k=4 exhausted before the 4th filler is needed
+
+
+def test_diversity_block_json_key_is_modes_discovered():
+    """D-EVAL05-JSONKEY guard: the results-dict key literal 'modes_discovered'
+    must stay present in run_gflownet.py's _diversity_block (even though the
+    VALUE now comes from the renamed annotated_coverage_count), and the new
+    '#Circles' keys are additive alongside it. Asserted against the module
+    source text (not by importing/exercising the model-heavy _diversity_block
+    itself), so this guard stays dataset-free and torch-light."""
+    src = Path(RUN_GFLOWNET_PATH).read_text()
+    assert '"modes_discovered"' in src, (
+        "the results-dict key literal 'modes_discovered' must remain -- a rename here "
+        "silently breaks aggregate_seeds.py's DIVERSITY_KEYS contract"
+    )
+    assert "annotated_coverage_count" in src, (
+        "the diversity call site must use the renamed annotated_coverage_count function"
+    )
+    assert '"circles@t0.4"' in src and '"circles@t0.7"' in src, (
+        "circles@t0.4/circles@t0.7 must be present as additive diversity-block keys"
+    )
+    # The old function name must no longer be CALLED (a bare leftover reference would
+    # indicate the call site was never actually migrated).
+    assert "modes_discovered(sampled_sets" not in src
+
+
+def test_reranker_stream_not_pretruncated_below_kgrid(monkeypatch):
+    """FIX 2 budget-fairness guard: the reranker stream handed to dedup_to_budget
+    must have length >= max(ks) whenever the underlying (reranked) pool
+    supports it -- i.e. _reranker_topk_smiles must be called with k=max(ks),
+    NOT the legacy (smaller) max_size, so reranker_union@30/@50 are computed
+    over the FULL available pool rather than silently capped below the
+    K-grid. Exercises the real _reranker_topk_smiles boundary (real, pure
+    from_rdmol/Batch -- no torch dependency stubbed) with a tiny stub
+    reranker/generator/pool (no real model checkpoint needed)."""
+    import torch
+
+    import scripts.run_gflownet as rg
+
+    ks = (5, 10, 15, 20, 30, 50)
+    k_max = max(ks)
+    n_candidates = 80  # comfortably >= k_max so the pool is never the bottleneck
+
+    # Stub pool: (smiles, gen_score, rule_id) tuples, one per candidate, all
+    # parseable and structurally distinct (varying alkyl chain length).
+    fake_pool = [(f"{'C' * (i + 1)}O", float(n_candidates - i), 0) for i in range(n_candidates)]
+    monkeypatch.setattr(rg, "build_pool", lambda generator, root, top_k, max_pool: fake_pool)
+
+    class _FakeGenerator:
+        rule_prior_logits = torch.zeros(1)
+
+    class _FakeReranker:
+        def __call__(self, sub_graph, prod_batch, rule_priors, gen_scores):
+            # Score purely by gen_score so ranking is deterministic and known.
+            return gen_scores
+
+    stream = rg._reranker_topk_smiles(
+        _FakeReranker(), _FakeGenerator(), root="CCO", k=k_max, top_k=200, max_pool=100, device="cpu",
+    )
+    assert len(stream) >= k_max, (
+        f"reranker stream must be requested at k=max(ks)={k_max}, not pre-truncated to a "
+        f"smaller max_size -- got only {len(stream)} candidates from a pool of {n_candidates}"
+    )
+
+    # Source-level corroboration: evaluate_matrix's reranker call site passes k=max(ks),
+    # not k=max_size, when building the stream that reaches dedup_to_budget.
+    src = Path(RUN_GFLOWNET_PATH).read_text()
+    assert re.search(r"_reranker_topk_smiles\([^)]*k\s*=\s*max\(ks\)", src), (
+        "evaluate_matrix must request the reranker stream at k=max(ks), not k=max_size"
+    )
+
+
+def test_aggregate_seeds_picks_up_new_keys(tmp_path):
+    """FIX 3 aggregation guard: gflownet_union@{k}/reranker_union@{k}, circles@t0.4/
+    circles@t0.7, and union_at_k_auc must aggregate mean+/-std across >=2 fake seeds,
+    while the pre-existing modes_discovered key still aggregates (regression guard
+    that the additive edit did not drop it)."""
+    import scripts.aggregate_seeds as agg
+
+    def _fake_run(seed: int, gflownet_union_30: float) -> dict:
+        return {
+            "seed": seed,
+            "config": {"eval_split": "val"},
+            "metrics": {
+                "n_substrates": 10.0,
+                "gflownet_recall@15": 0.30 + 0.01 * seed,
+                "reranker_recall@15": 0.28 + 0.01 * seed,
+                "gflownet_union@30": gflownet_union_30,
+                "reranker_union@50": 0.50 + 0.02 * seed,
+                "circles@t0.4": 3.0 + seed,
+                "circles@t0.7": 1.0 + seed,
+                "union_at_k_auc": 0.40 + 0.01 * seed,
+                "modes_discovered": 2.0 + seed,
+                "mean_pairwise_tanimoto": 0.4,
+                "n_unique_scaffolds": 4.0,
+                "set_size_calibration": 0.1,
+            },
+        }
+
+    runs = [_fake_run(0, 0.55), _fake_run(1, 0.57)]
+
+    series_order, series_ks, _ = agg._detect_series_k(runs)
+    # Both the plain-recall series and the (union) series must be detected.
+    assert "gflownet" in series_order and 15 in series_ks["gflownet"]
+    assert "reranker" in series_order and 15 in series_ks["reranker"]
+    assert "gflownet(union)" in series_order and 30 in series_ks["gflownet(union)"]
+    assert "reranker(union)" in series_order and 50 in series_ks["reranker(union)"]
+
+    # Key reconstruction must round-trip back to the exact metrics-dict keys.
+    assert agg._metric_key("gflownet", 15) == "gflownet_recall@15"
+    assert agg._metric_key("gflownet(union)", 30) == "gflownet_union@30"
+
+    # Mean+/-std aggregation for the union series across the 2 fake seeds.
+    union_vals = [r["metrics"]["gflownet_union@30"] for r in runs]
+    expected_mean = sum(union_vals) / len(union_vals)
+    computed_mean = sum(
+        r["metrics"][agg._metric_key("gflownet(union)", 30)] for r in runs
+    ) / len(runs)
+    assert abs(computed_mean - expected_mean) < 1e-9
+
+    # New diversity keys (circles@/union_at_k_auc) must be detected AND aggregate.
+    diversity_keys = agg._detect_diversity_keys(runs)
+    for key in ("circles@t0.4", "circles@t0.7", "union_at_k_auc"):
+        assert key in diversity_keys, f"{key} must be picked up by _detect_diversity_keys"
+        vals = [r["metrics"][key] for r in runs]
+        assert len(vals) == 2  # both fake seeds contribute
+
+    # Regression guard: modes_discovered must STILL aggregate (additive edit must not
+    # drop the pre-existing key).
+    assert "modes_discovered" in diversity_keys
+    md_vals = [r["metrics"]["modes_discovered"] for r in runs]
+    assert md_vals == [2.0, 3.0]
