@@ -121,6 +121,18 @@ def test_reranker_output_is_unbounded_logit_not_probability():
         torch.manual_seed(seed)
         reranker = BiEncoderReranker(hidden_dims=(8, 8), out_dim=8, dropout=0.0)
         reranker.eval()
+        # Scale up the head's weights (still random, just larger magnitude) so
+        # the pre-activation logit is forced comfortably outside [0,1] absent
+        # any bounding nonlinearity -- a bare nn.Linear output is linear in its
+        # weights, so this is a legitimate way to exercise "is the output ever
+        # allowed to leave [0,1]" without requiring a fully-trained checkpoint.
+        # If a sigmoid (or any other bounded squashing) were silently added to
+        # the head, output would stay in [0,1] regardless of weight scale.
+        with torch.no_grad():
+            for module in reranker.head.modules():
+                if isinstance(module, torch.nn.Linear):
+                    module.weight.mul_(20.0)
+                    module.bias.mul_(20.0)
 
         sub = from_rdmol(Chem.MolFromSmiles("CCO"))
         prods = [
