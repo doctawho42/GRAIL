@@ -530,13 +530,61 @@ def test_eval_checkpoint_discards_stale_config_fingerprint(tmp_path):
     assert saved["config_fingerprint"] == new_fingerprint
 
 
+def test_eval_checkpoint_discards_stale_config_on_split_change(tmp_path):
+    """FIX B guard: a checkpoint written while evaluating VAL must be DISCARDED (not
+    silently adopted) when the SAME other config params are reused to evaluate TEST.
+    Before FIX B, ``_eval_config_fingerprint`` did not cover ``eval_split`` (or the
+    evaluated-substrate identity), so a VAL checkpoint could be accepted on TEST and
+    ``next_idx >= len(test_substrates)`` would skip the whole TEST loop, silently
+    reporting VAL rows as TEST -- violating "select on val, touch test once"."""
+    import scripts.run_gflownet as rg
+
+    ckpt = str(tmp_path / "eval_seed0.ckpt.json")
+    val_substrates = ["CCO", "CCCO", "CCCCO", "CCCCCO"]
+    # Same COUNT of substrates on "test" but a DIFFERENT substrate set -- covers both the
+    # eval_split flip and the substrate-identity guard in one fixture.
+    test_substrates = ["CCN", "CCCN", "CCCCN", "CCCCCN"]
+
+    val_fingerprint = rg._eval_config_fingerprint(
+        max_size=10, ks=(5, 10, 15, 20, 30, 50), n_samples=32, top_k=200, max_pool=100,
+        eval_split="val", substrates=val_substrates, eval_beam=True,
+    )
+    test_fingerprint = rg._eval_config_fingerprint(
+        max_size=10, ks=(5, 10, 15, 20, 30, 50), n_samples=32, top_k=200, max_pool=100,
+        eval_split="test", substrates=test_substrates, eval_beam=True,
+    )
+    assert val_fingerprint != test_fingerprint
+
+    # Write a checkpoint under the VAL config, fully complete.
+    _run_eval_loop(val_substrates, resume_path=ckpt, eval_ckpt_every=10,
+                    config_fingerprint=val_fingerprint)
+    rows_val, next_idx_val = rg._load_eval_ckpt(ckpt, val_fingerprint)
+    assert next_idx_val == len(val_substrates)
+
+    # Loading the SAME checkpoint file under the TEST run's fingerprint must discard it
+    # entirely (start fresh at substrate 0), never adopt the VAL rows as TEST rows.
+    rows_test, next_idx_test = rg._load_eval_ckpt(ckpt, test_fingerprint)
+    assert rows_test == {}
+    assert next_idx_test == 0
+
+    # And the TEST loop recomputes every TEST substrate from scratch, never short-circuiting
+    # via a stale next_idx that would silently skip real TEST rows.
+    recomputed = _run_eval_loop(test_substrates, resume_path=ckpt, eval_ckpt_every=10,
+                                  config_fingerprint=test_fingerprint)
+    assert set(recomputed.keys()) == set(test_substrates)
+
+
 def test_eval_config_fingerprint_stable_and_sensitive():
     """The fingerprint must be a pure, deterministic function of its inputs (same inputs ->
     same hash across calls) AND sensitive to each of the fields the plan requires it to
-    cover (max_size, ks, n_samples, top_k, max_pool, circles thresholds)."""
+    cover (max_size, ks, n_samples, top_k, max_pool, circles thresholds, and -- FIX B --
+    eval_split, the evaluated-substrate set, and eval_beam)."""
     import scripts.run_gflownet as rg
 
-    base = dict(max_size=10, ks=(5, 10, 15, 20, 30, 50), n_samples=32, top_k=200, max_pool=100)
+    base = dict(
+        max_size=10, ks=(5, 10, 15, 20, 30, 50), n_samples=32, top_k=200, max_pool=100,
+        eval_split="val", substrates=("CCO", "CCCO", "CCCCO"), eval_beam=True,
+    )
     fp_base = rg._eval_config_fingerprint(**base)
     assert rg._eval_config_fingerprint(**base) == fp_base  # deterministic
 
@@ -546,6 +594,9 @@ def test_eval_config_fingerprint_stable_and_sensitive():
         {**base, "n_samples": 33},
         {**base, "top_k": 201},
         {**base, "max_pool": 101},
+        {**base, "eval_split": "test"},
+        {**base, "substrates": ("CCO", "CCCO", "CCCCCO")},  # same count, different set
+        {**base, "eval_beam": False},
     ]
     for variant in variants:
         assert rg._eval_config_fingerprint(**variant) != fp_base

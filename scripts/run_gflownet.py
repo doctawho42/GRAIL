@@ -204,15 +204,36 @@ def _diversity_block(sampled_sets: List[frozenset], smiles_of: Dict[str, str], a
     }
 
 
+def _substrate_set_fingerprint(substrates: Sequence[str]) -> str:
+    """Stable sha256 over the sorted root SMILES of ``substrates`` -- a compact, order-
+    independent identifier of WHICH substrates are being evaluated (not just how many),
+    so a checkpoint written against one substrate set (e.g. a different split, or the
+    same split subsampled differently) is never silently accepted against another."""
+    return hashlib.sha256("\n".join(sorted(substrates)).encode("utf-8")).hexdigest()
+
+
 def _eval_config_fingerprint(
     max_size: int, ks: Sequence[int], n_samples: int, top_k: int, max_pool: int,
     circles_thresholds: Sequence[float] = (0.4, 0.7),
+    eval_split: str = "val", substrates: Sequence[str] = (), eval_beam: bool = True,
 ) -> str:
     """Stable hash of the eval-config fields that would make blended checkpoint rows WRONG
     if changed between the checkpoint's write and the current run (FIX 6 / D-EVAL06-SCHEMA):
     ``max_size``, the K-grid ``ks``, the #Circles thresholds, ``n_samples``, ``top_k``,
-    ``max_pool``. A mismatch on resume means the checkpoint is stale and must be discarded
-    (see ``_load_eval_ckpt``), never silently blended with rows computed under a different
+    ``max_pool``.
+
+    Also covers (FIX B, adversarial review): ``eval_split`` (val vs test -- without this a
+    ``--resume-eval-ckpt`` written on VAL could be silently adopted on TEST when the other
+    params happen to match, since ``next_idx >= len(test_substrates)`` would skip the whole
+    TEST loop and report VAL rows as TEST), a stable identifier of the evaluated-substrate
+    SET (``_substrate_set_fingerprint(substrates)`` -- a sha256 of the sorted root SMILES,
+    not just ``len(substrates)``, so two same-sized-but-different substrate samples are
+    distinguished too), and ``eval_beam`` (whether the beam baseline is on -- a checkpoint's
+    rows do or don't carry ``beam_recall``, so flipping ``--eval-beam``/``--no-eval-beam``
+    must not silently blend rows computed under a different beam-baseline setting).
+
+    A mismatch on resume means the checkpoint is stale and must be discarded (see
+    ``_load_eval_ckpt``), never silently blended with rows computed under a different
     config."""
     payload = {
         "max_size": int(max_size),
@@ -221,6 +242,10 @@ def _eval_config_fingerprint(
         "n_samples": int(n_samples),
         "top_k": int(top_k),
         "max_pool": int(max_pool),
+        "eval_split": str(eval_split),
+        "substrate_set_fingerprint": _substrate_set_fingerprint(substrates),
+        "n_substrates": len(substrates),
+        "eval_beam": bool(eval_beam),
     }
     return hashlib.sha256(json.dumps(payload, sort_keys=True).encode("utf-8")).hexdigest()
 
@@ -283,6 +308,7 @@ def evaluate_matrix(
     ks: Sequence[int] = (5, 10, 15, 20, 30, 50),
     resume_path: Optional[str] = None,
     eval_ckpt_every: int = 10,
+    eval_split: str = "val",
 ) -> Dict[str, float]:
     """Dual eval matrix at matched output budget K = max_size, PLUS a budget-matched
     union@K curve over ``ks`` (D-EVAL01-SEMANTICS / D-EVAL02-KGRID). See module docstring.
@@ -307,7 +333,8 @@ def evaluate_matrix(
     (``.tmp`` + ``os.replace``, mirroring ``set_gflownet.py:_save_train_ckpt``) every
     ``eval_ckpt_every`` substrates and once more after the loop. The checkpoint embeds a
     ``config_fingerprint`` over the fields that would make blended rows wrong if changed
-    (``max_size``, ``ks``, the #Circles thresholds, ``n_samples``, ``top_k``, ``max_pool``);
+    (``max_size``, ``ks``, the #Circles thresholds, ``n_samples``, ``top_k``, ``max_pool``,
+    plus ``eval_split``, the evaluated-substrate-set fingerprint, and ``eval_beam`` per FIX B);
     a fingerprint mismatch on load discards the checkpoint (WARNING, start fresh) rather than
     blending old-config and new-config rows (FIX 6). Final aggregation runs over
     ``completed_rows.values()`` so a resumed run's metrics are identical to an uninterrupted
@@ -319,7 +346,10 @@ def evaluate_matrix(
     annotated_ik_fn = _make_annotated_ik_fn(eval_bundle)
     k_max = max(ks)
 
-    config_fingerprint = _eval_config_fingerprint(max_size, ks, n_samples, top_k, max_pool)
+    config_fingerprint = _eval_config_fingerprint(
+        max_size, ks, n_samples, top_k, max_pool,
+        eval_split=eval_split, substrates=substrates, eval_beam=(beam_tree is not None),
+    )
     completed_rows, next_idx = _load_eval_ckpt(resume_path, config_fingerprint)
 
     # ik->SMILES map, built ONCE and grown INCREMENTALLY across substrates (each child-cache
@@ -752,6 +782,7 @@ def main() -> None:
         top_k=args.top_k, max_pool=args.max_pool, device=rr_trainer.device,
         ks=(5, 10, 15, 20, 30, 50),
         resume_path=args.resume_eval_ckpt, eval_ckpt_every=args.eval_ckpt_every,
+        eval_split=args.eval_split,
     )
     trainer.save_caches()  # persist env caches populated by eval (test states are reused across seeds)
     print(f"[gflownet] eval done in {time.time()-t0:.1f}s", flush=True)
