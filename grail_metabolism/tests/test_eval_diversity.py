@@ -193,6 +193,34 @@ def test_auc_of_curve_known_answer():
     assert diversity.auc_of_curve(two_point, k_min=5, k_max=50) == 0.5 * (0.2 + 0.8)
 
 
+def test_compute_ablation_verdict_all_three_outcomes():
+    # Full confirmation: gflownet beats BOTH ablations by > margin.
+    assert diversity.compute_ablation_verdict(
+        gflownet_auc=0.30, abl01_auc=0.20, abl02_auc=0.22, margin=0.02
+    ) == "confirmed"
+
+    # Null: independent sampling matches within margin (neither beat holds).
+    assert diversity.compute_ablation_verdict(
+        gflownet_auc=0.30, abl01_auc=0.29, abl02_auc=0.29, margin=0.02
+    ) == "null"
+
+    # Partial: beats abl01 by > margin but loses to (does not beat) abl02 by > margin.
+    assert diversity.compute_ablation_verdict(
+        gflownet_auc=0.30, abl01_auc=0.20, abl02_auc=0.31, margin=0.02
+    ) == "partial"
+
+    # Does NOT beat abl01 by margin => not confirmed, not the partial pattern => null,
+    # even though it clears abl02.
+    assert diversity.compute_ablation_verdict(
+        gflownet_auc=0.30, abl01_auc=0.31, abl02_auc=0.20, margin=0.02
+    ) == "null"
+
+    # Boundary: a difference exactly equal to margin is NOT a beat (strict >).
+    assert diversity.compute_ablation_verdict(
+        gflownet_auc=0.30, abl01_auc=0.28, abl02_auc=0.28, margin=0.02
+    ) == "null"
+
+
 # ---------------------------------------------------------------------------
 # Phase 1 Plan 02 guard tests: budget-matching / JSON-key-stability /
 # reranker-pretruncation / aggregate_seeds.py key-detection.

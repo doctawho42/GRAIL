@@ -12,7 +12,7 @@ from evaluation scripts and notebooks without pulling in the model stack.
 from __future__ import annotations
 
 from itertools import combinations
-from typing import Callable, Dict, Iterable, List, Sequence, Set
+from typing import Callable, Dict, Iterable, List, Literal, Sequence, Set
 
 from rdkit import Chem
 from rdkit.Chem import AllChem, DataStructs
@@ -132,6 +132,42 @@ def auc_of_curve(curve: Dict[int, float], k_min: int, k_max: int) -> float:
         area += 0.5 * (v_a + v_b) * (k_b - k_a)
     span = k_max - k_min
     return area / span if span else 0.0
+
+
+def compute_ablation_verdict(
+    gflownet_auc: float, abl01_auc: float, abl02_auc: float, margin: float
+) -> Literal["confirmed", "null", "partial"]:
+    """Pre-registered ABL-03 verdict rule over three validation-selected union@K AUCs.
+
+    ``gflownet_auc`` is the Set-GFlowNet's own union@K AUC; ``abl01_auc`` is the
+    independent single-terminal baseline's; ``abl02_auc`` is the ensemble
+    single-terminal baseline's. All three must be computed by the SAME harness
+    (``auc_of_curve`` over ``union_at_k_curve``), on VAL, at the same K-grid and total
+    output budget -- this function is pure post-hoc arithmetic over those numbers, no
+    I/O, no globals.
+
+    ``margin`` (the pre-specified threshold Delta) is supplied by the caller; its
+    numeric value/convention is a Wave 3 decision, not baked in here. A difference
+    exactly equal to ``margin`` does NOT count as a beat (strict ``>`` comparison).
+
+    Three outcomes, all reportable:
+    - "confirmed": the set reward beats BOTH ablations by more than margin -- the
+      set-level reward is confirmed to drive the coverage/diversity gain.
+    - "partial": the set reward beats the independent single-terminal baseline by
+      more than margin but does NOT beat the ensemble baseline by more than margin --
+      the honest framing is a compute-cost tradeoff (set-reward training vs paying
+      for M independently-trained policies).
+    - "null": neither of the above -- independent sampling matches or nearly matches
+      the set reward, i.e. the set reward does not clear even the weaker (single)
+      baseline by the pre-specified margin.
+    """
+    beats_single = gflownet_auc - abl01_auc > margin
+    beats_ensemble = gflownet_auc - abl02_auc > margin
+    if beats_single and beats_ensemble:
+        return "confirmed"
+    if beats_single and not beats_ensemble:
+        return "partial"
+    return "null"
 
 
 def modes_discovered_canonical(
