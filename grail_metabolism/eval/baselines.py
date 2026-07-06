@@ -83,6 +83,38 @@ def _tanimoto_kernel_matrix(fps: Sequence) -> np.ndarray:
     return S
 
 
+def _dedup_pool_score_aware(pool_smiles: Sequence[str], pool_scores: np.ndarray) -> Tuple[List[str], np.ndarray]:
+    """Score-aware tautomer-InChIKey dedup: keep the HIGHEST-scored member per group.
+
+    Groups ``pool_smiles`` by ``_tautomer_inchikey`` (the SAME canonicalization
+    ``eval/diversity.py`` folds into every metric before fingerprinting -- see
+    module docstring), and for each group keeps only the ``(smiles, score)``
+    pair with the maximal score, preserving relevance while collapsing
+    tautomer duplicates BEFORE any fingerprint/kernel is built. Without this,
+    two tautomers of the same molecule (near-0 Tanimoto under Morgan
+    fingerprints despite being the same molecule) are scored as maximally
+    dissimilar and both get selected as "diverse" (FIX A, adversarial review).
+
+    Order of the returned lists follows first-seen order of each group's
+    surviving representative (stable, not re-sorted by score) so downstream
+    callers' index bookkeeping stays simple.
+    """
+    best_idx_by_key: dict = {}
+    order: List[str] = []
+    for i, s in enumerate(pool_smiles):
+        key = _tautomer_inchikey(s)
+        if key not in best_idx_by_key:
+            best_idx_by_key[key] = i
+            order.append(key)
+        elif pool_scores[i] > pool_scores[best_idx_by_key[key]]:
+            best_idx_by_key[key] = i
+
+    kept_idx = [best_idx_by_key[key] for key in order]
+    smiles_out = [pool_smiles[i] for i in kept_idx]
+    scores_out = pool_scores[kept_idx]
+    return smiles_out, scores_out
+
+
 def _softmax(logits: np.ndarray) -> np.ndarray:
     shifted = logits - np.max(logits)
     exp = np.exp(shifted)
@@ -156,12 +188,25 @@ def temperature_topp_select(
 
     ``rng`` defaults to ``np.random.default_rng()`` when not supplied; pass a
     seeded ``Generator`` for deterministic/reproducible tests.
+
+    Parses-and-skips unparseable SMILES up front (``Chem.MolFromSmiles(s) is
+    None``), mirroring DPP/MMR's ``_pool_fingerprints`` convention (FIX C,
+    adversarial review) -- without this guard, an unparseable SMILES survives
+    into the output because ``_tautomer_inchikey`` falls back to the raw
+    string on parse failure, letting this baseline pad its budget with junk
+    that DPP/MMR correctly drop.
     """
     if not pool or k <= 0:
         return []
 
     smiles = [s for s, _ in pool]
     scores = np.asarray([sc for _, sc in pool], dtype=np.float64)
+
+    parseable_idx = [i for i, s in enumerate(smiles) if Chem.MolFromSmiles(s) is not None]
+    smiles = [smiles[i] for i in parseable_idx]
+    scores = scores[parseable_idx]
+    if not smiles:
+        return []
 
     logits = scores / max(T, 1e-8)
     probs = _softmax(logits)
@@ -223,33 +268,51 @@ def dpp_greedy_select(
        near-duplicate regioisomers (returns FEWER than k on a redundant pool)
        instead of merely avoiding NaN.
 
-    ``fps`` may be a precomputed fingerprint list (reused by an orchestrator
-    across multiple selectors on the same pool); when omitted, fingerprints
-    are computed internally via ``_pool_fingerprints``.
+    ``fps`` may be a precomputed fingerprint list, ONLY honored when its
+    length matches the final tautomer-deduped, parseable pool size exactly;
+    a caller-supplied ``fps`` of any other length is discarded and
+    fingerprints are recomputed via ``_pool_fingerprints`` on the final
+    filtered pool (FIX B, adversarial review) -- a stale ``fps`` from before
+    dedup/parse-filtering must never reach ``_tanimoto_kernel_matrix``, which
+    would otherwise broadcast-crash or silently corrupt the kernel.
     """
     if not pool or k <= 0:
         return []
 
     smiles = [s for s, _ in pool]
     scores = np.asarray([sc for _, sc in pool], dtype=np.float64)
-    n = len(smiles)
 
-    if fps is None:
+    # Drop unparseable SMILES up front (parse-and-skip, mirroring
+    # _pool_fingerprints' own convention) BEFORE the tautomer dedup below, so
+    # _tautomer_inchikey never has to fall back to a raw/unparseable string.
+    parseable_smiles = []
+    parseable_idx = []
+    for i, s in enumerate(smiles):
+        if Chem.MolFromSmiles(s) is not None:
+            parseable_smiles.append(s)
+            parseable_idx.append(i)
+    smiles = parseable_smiles
+    scores = scores[parseable_idx]
+    if not smiles:
+        return []
+
+    # FIX A: score-aware tautomer-InChIKey dedup BEFORE building the
+    # similarity kernel -- two tautomers of the same molecule must be
+    # collapsed to one distinct-molecule slot (keeping the higher-scored
+    # representative), not scored as near-maximally different by S.
+    smiles, scores = _dedup_pool_score_aware(smiles, scores)
+    n = len(smiles)
+    if n == 0:
+        return []
+
+    # FIX B: always recompute fps on the FINAL filtered/deduped smiles list;
+    # only reuse a caller-supplied `fps` when its length already matches.
+    if fps is None or len(fps) != n:
         fps = _pool_fingerprints(smiles)
-    # _pool_fingerprints may have skipped unparseable SMILES; guard the shape
-    # mismatch defensively (degenerate/malformed pool) rather than crash.
-    if len(fps) != n:
-        # Fall back to only the parseable subset, keeping smiles/scores aligned.
-        parseable_smiles = []
-        parseable_idx = []
-        for i, s in enumerate(smiles):
-            if Chem.MolFromSmiles(s) is not None:
-                parseable_smiles.append(s)
-                parseable_idx.append(i)
-        smiles = parseable_smiles
-        scores = scores[parseable_idx]
-        n = len(smiles)
-        if n == 0:
+        if len(fps) != n:
+            # _pool_fingerprints itself can drop entries it can't parse; this
+            # should not happen since `smiles` is already parse-filtered, but
+            # re-validate defensively rather than feed a mismatched kernel.
             return []
 
     q = np.exp(theta * scores)
@@ -308,30 +371,50 @@ def mmr_select(
 
     Maintains ``max_sim_to_selected`` as an incremental running-max
     (``O(K * N_pool)``, not ``O(K^2 * N_pool)``), updated once per pick.
+
+    ``fps`` may be a precomputed fingerprint list, ONLY honored when its
+    length matches the final tautomer-deduped, parseable pool size exactly;
+    a caller-supplied ``fps`` of any other length is discarded and
+    fingerprints are recomputed via ``_pool_fingerprints`` on the final
+    filtered pool (FIX B, adversarial review).
     """
     if not pool or k <= 0:
         return []
 
     smiles = [s for s, _ in pool]
     raw_scores = np.asarray([sc for _, sc in pool], dtype=np.float64)
+
+    # Drop unparseable SMILES up front (parse-and-skip), BEFORE the tautomer
+    # dedup below, mirroring dpp_greedy_select's ordering.
+    parseable_smiles = []
+    parseable_idx = []
+    for i, s in enumerate(smiles):
+        if Chem.MolFromSmiles(s) is not None:
+            parseable_smiles.append(s)
+            parseable_idx.append(i)
+    smiles = parseable_smiles
+    raw_scores = raw_scores[parseable_idx]
+    if not smiles:
+        return []
+
+    # FIX A: score-aware tautomer-InChIKey dedup BEFORE building the
+    # similarity kernel and BEFORE the relevance min-max normalization, so
+    # two tautomers of the same molecule collapse to one distinct-molecule
+    # slot (keeping the higher raw-scored representative) instead of being
+    # scored as near-maximally different by S.
+    smiles, raw_scores = _dedup_pool_score_aware(smiles, raw_scores)
     n = len(smiles)
+    if n == 0:
+        return []
 
     span = max(float(raw_scores.max() - raw_scores.min()), 1e-8)
     rel = (raw_scores - raw_scores.min()) / span
 
-    if fps is None:
+    # FIX B: always recompute fps on the FINAL filtered/deduped smiles list;
+    # only reuse a caller-supplied `fps` when its length already matches.
+    if fps is None or len(fps) != n:
         fps = _pool_fingerprints(smiles)
-    if len(fps) != n:
-        parseable_smiles = []
-        parseable_idx = []
-        for i, s in enumerate(smiles):
-            if Chem.MolFromSmiles(s) is not None:
-                parseable_smiles.append(s)
-                parseable_idx.append(i)
-        smiles = parseable_smiles
-        rel = rel[parseable_idx]
-        n = len(smiles)
-        if n == 0:
+        if len(fps) != n:
             return []
 
     S = _tanimoto_kernel_matrix(fps)
