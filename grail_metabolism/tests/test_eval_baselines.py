@@ -202,14 +202,21 @@ def _verify_neardup_fixture_premise():
 def test_dpp_greedy_select_dedups_and_hits_budget_k(monkeypatch):
     _patch_tautomer_ik(monkeypatch)
 
+    # Pool has a tautomer-duplicate pair (_TAUT_A/_TAUT_B, fake-collapsed) plus
+    # enough genuinely distinct fillers so the ranked stream can supply a
+    # 4th distinct candidate once dedup_to_budget frees the slot the
+    # duplicate pair would otherwise occupy (mirrors
+    # test_dedup_to_budget_prevents_silent_budget_shrinkage's pool shape --
+    # DPP is asked for MORE than k so the post-dedup budget can still be met).
     pool_with_dup = [
-        (_TAUT_A, 3.0),
-        (_TAUT_B, 2.9),
-        (_HEXANE, 2.0),
-        (_HEPTANE, 1.0),
-        (_BENZENE, 0.5),
+        (_TAUT_A, 5.0),
+        (_TAUT_B, 4.9),
+        (_HEXANE, 4.0),
+        (_HEPTANE, 3.0),
+        (_BENZENE, 2.0),
+        ("CCN", 1.0),
     ]
-    ranked = baselines.dpp_greedy_select(pool_with_dup, k=4, theta=1.0)
+    ranked = baselines.dpp_greedy_select(pool_with_dup, k=5, theta=1.0)
     out = diversity.dedup_to_budget(ranked, k=4)
     assert len(out) == 4
     assert sum(1 for s in out if s in (_TAUT_A, _TAUT_B)) == 1

@@ -185,3 +185,100 @@ def temperature_topp_select(
         seen_keys.add(key)
         ranked.append(smi)
     return ranked
+
+
+def dpp_greedy_select(
+    pool: Pool,
+    k: int,
+    theta: float = 1.0,
+    fps: Optional[Sequence] = None,
+    eps: float = 1e-8,
+    tol: float = 1e-6,
+) -> List[str]:
+    """DPP greedy MAP selection via incremental Cholesky (BASE-02).
+
+    Per D-BASE02-DPPKERNEL: ``L = diag(q).S.diag(q)`` with ``q_i = exp(theta *
+    relevance_logit_i)`` (the quality term) and ``S`` the Tanimoto similarity
+    kernel over the shared Morgan r=2/2048 fingerprint (``_pool_fingerprints``/
+    ``_tanimoto_kernel_matrix``). Greedy MAP inference follows Chen, Zhang and
+    Zhou (NeurIPS 2018, arXiv:1709.05135)'s incremental-Cholesky algorithm --
+    ``O(K^2 * N_pool)``, not the naive ``O(M^4)`` recompute-determinant
+    version.
+
+    Near-duplicate-exclusion + numerical-stability scheme (the load-bearing
+    correctness spec -- see D-BASE02-DPPKERNEL's rationale for why this is
+    NOT the naive fixed-epsilon-floor-plus-absolute-break sketch):
+
+    1. The SIMILARITY-kernel diagonal is regularized AT CONSTRUCTION to
+       ``S_ii = 1 + eps`` (NOT a uniform epsilon added to the whole marginal-
+       gain vector), keeping ``L`` positive-definite.
+    2. Each per-step marginal gain is CLIPPED to ``>= 0`` before the sqrt
+       (``d2j = max(d2[j], 0.0)``) -- this only touches items already at
+       ~0, preserving the TRUE relative ordering of genuine diversity.
+    3. The loop stops on a RELATIVE tolerance: ``d2_init_max`` is the max of
+       the initial marginal-gain vector, and the loop breaks when the argmax
+       remaining gain ``d2[j] <= tol * d2_init_max``. Redundant near-duplicate
+       items (gain at the jitter-noise floor) trip this stop; genuinely
+       diverse items (gain O(1)) do not -- so the selector actually EXCLUDES
+       near-duplicate regioisomers (returns FEWER than k on a redundant pool)
+       instead of merely avoiding NaN.
+
+    ``fps`` may be a precomputed fingerprint list (reused by an orchestrator
+    across multiple selectors on the same pool); when omitted, fingerprints
+    are computed internally via ``_pool_fingerprints``.
+    """
+    if not pool or k <= 0:
+        return []
+
+    smiles = [s for s, _ in pool]
+    scores = np.asarray([sc for _, sc in pool], dtype=np.float64)
+    n = len(smiles)
+
+    if fps is None:
+        fps = _pool_fingerprints(smiles)
+    # _pool_fingerprints may have skipped unparseable SMILES; guard the shape
+    # mismatch defensively (degenerate/malformed pool) rather than crash.
+    if len(fps) != n:
+        # Fall back to only the parseable subset, keeping smiles/scores aligned.
+        parseable_smiles = []
+        parseable_idx = []
+        for i, s in enumerate(smiles):
+            if Chem.MolFromSmiles(s) is not None:
+                parseable_smiles.append(s)
+                parseable_idx.append(i)
+        smiles = parseable_smiles
+        scores = scores[parseable_idx]
+        n = len(smiles)
+        if n == 0:
+            return []
+
+    q = np.exp(theta * scores)
+    S = _tanimoto_kernel_matrix(fps)
+    # Regularize the SIMILARITY-kernel diagonal AT CONSTRUCTION (S_ii = 1+eps),
+    # NOT a uniform epsilon added to the whole d2 vector later.
+    np.fill_diagonal(S, 1.0 + eps)
+
+    selected: List[int] = []
+    ranked: List[str] = []
+    c = np.zeros((0, n), dtype=np.float64)  # accumulated Cholesky columns
+
+    # diag(L) under the regularized S: d2_i = q_i^2 * S_ii = q_i^2 * (1+eps)
+    d2 = (q * q) * (1.0 + eps)
+    d2_init_max = float(np.max(d2)) if n else 0.0
+
+    for _ in range(min(k, n)):
+        j = int(np.argmax(d2))
+        if d2_init_max <= 0.0 or d2[j] <= tol * d2_init_max:
+            break  # relative-tolerance stop: remaining gain is at the noise floor
+        d2j = max(float(d2[j]), 0.0)  # per-step gain clip (touches only ~0 items)
+        if c.shape[0]:
+            e = (q[j] * q * S[j, :] - c[:, j] @ c) / np.sqrt(d2j)
+        else:
+            e = (q[j] * q * S[j, :]) / np.sqrt(d2j)
+        c = np.vstack([c, e])
+        d2 = d2 - e ** 2
+        d2[j] = -np.inf  # never re-pick
+        selected.append(j)
+        ranked.append(smiles[j])
+
+    return ranked
