@@ -619,3 +619,75 @@ def test_round_robin_draw_counts_degenerate_single_member():
     # M_ensemble=1 -> the single member draws the entire k_max budget.
     counts = _rg._round_robin_draw_counts(k_max=12, m_ensemble=1)
     assert counts == [12]
+
+
+# --------------------------------------------------------------------------- #
+# Adversarial-review fix (BLOCKER): every GFlowNet-family trainer must get its OWN
+# fresh reranker loaded from one warm-start snapshot -- never share the live `reranker`
+# object -- so ablation arms train independent parameter tensors and don't retroactively
+# corrupt each other's / the set-GFlowNet reference's eval policy. Dataset-free guard,
+# reproducing main()'s construction pattern (warm_state snapshot + fresh
+# BiEncoderReranker(in_channels=SINGLE_NODE_DIM).load_state_dict(...) per trainer).
+# --------------------------------------------------------------------------- #
+
+import copy  # noqa: E402
+
+
+def _fresh_warm_reranker(warm_state):
+    r = BiEncoderReranker(in_channels=SINGLE_NODE_DIM)
+    r.load_state_dict(copy.deepcopy(warm_state))
+    return r
+
+
+def test_gflownet_family_trainers_get_independent_reranker_objects():
+    gen = _MiniGen()
+    warm_reranker = BiEncoderReranker(in_channels=SINGLE_NODE_DIM)
+    warm_state = copy.deepcopy(warm_reranker.state_dict())
+
+    cfg = GFlowNetConfig(max_depth=2, beta=2.0, epsilon=0.0, batch_substrates=1,
+                         lam=0.1, max_size=5, top_k=200)
+    single_cfg = GFlowNetConfig(max_depth=2, beta=1.5, epsilon=0.0, batch_substrates=1,
+                                lam=0.1, max_size=1, top_k=200)
+
+    set_trainer = SetGFlowNetTrainer(
+        gen, _fresh_warm_reranker(warm_state), cfg, annotated_ik_fn=lambda root: set()
+    )
+
+    torch.manual_seed(0)
+    abl01 = SingleTerminalGFlowNetTrainer(
+        gen, _fresh_warm_reranker(warm_state), single_cfg, annotated_ik_fn=lambda root: {"CCOO"}
+    )
+    torch.manual_seed(1)
+    abl02_member = SingleTerminalGFlowNetTrainer(
+        gen, _fresh_warm_reranker(warm_state), single_cfg, annotated_ik_fn=lambda root: {"CCOO"}
+    )
+
+    # (a) distinct objects, no shared parameter tensors, across ALL three trainers.
+    assert abl01.reranker is not abl02_member.reranker
+    assert set_trainer.reranker is not abl01.reranker
+    assert set_trainer.reranker is not abl02_member.reranker
+    for p1, p2 in zip(abl01.reranker.parameters(), abl02_member.reranker.parameters()):
+        assert p1 is not p2
+        assert p1.data_ptr() != p2.data_ptr()
+    for p1, p2 in zip(set_trainer.reranker.parameters(), abl01.reranker.parameters()):
+        assert p1 is not p2
+        assert p1.data_ptr() != p2.data_ptr()
+
+    # All three start from the IDENTICAL warm-start (purity).
+    for pa, pb in zip(abl01.reranker.parameters(), abl02_member.reranker.parameters()):
+        assert torch.allclose(pa, pb)
+    for pa, pb in zip(set_trainer.reranker.parameters(), abl01.reranker.parameters()):
+        assert torch.allclose(pa, pb)
+
+    # (b) after a brief fit() under two different seeds, the ensemble members' reranker
+    # parameters DIVERGE -- proving they are training independently, not sharing tensors.
+    torch.manual_seed(0)
+    abl01.fit(["CCO"], epochs=1, verbose=False)
+    torch.manual_seed(1)
+    abl02_member.fit(["CCO"], epochs=1, verbose=False)
+
+    diverged = any(
+        not torch.allclose(pa, pb)
+        for pa, pb in zip(abl01.reranker.parameters(), abl02_member.reranker.parameters())
+    )
+    assert diverged, "ensemble members' reranker params must diverge after independent fit()"

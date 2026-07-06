@@ -40,6 +40,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import copy
 import hashlib
 import json
 import os
@@ -1039,6 +1040,17 @@ def main() -> None:
     reranker = BiEncoderReranker(in_channels=SINGLE_NODE_DIM)
     rr_trainer = BiRerankerTrainer(reranker, lr=1e-3, seed=args.seed)
     rr_trainer.fit(train_examples, epochs=args.rerank_epochs)
+    # Snapshot the WARM-STARTED weights ONCE, before any GFlowNet TB training touches
+    # `reranker`. Every GFlowNet-family trainer below (the set-GFlowNet reference AND each
+    # single-terminal ablation trainer) gets its OWN fresh BiEncoderReranker loaded from this
+    # snapshot -- never the same live `reranker` object -- so their TB `fit()` calls train
+    # disjoint parameter tensors. Without this, `SetGFlowNetTrainer.__init__`'s
+    # `self.reranker = reranker.to(self.device)` is a no-copy alias: sharing one `reranker`
+    # object across trainers means later `fit()` calls silently overwrite the weights an
+    # earlier trainer's eval policy depends on (breaking single-variable purity for the
+    # reference arm) and would make ABL-02's "ensemble" members just sequential snapshots of
+    # one continuous trajectory instead of independently trained policies.
+    warm_state = copy.deepcopy(reranker.state_dict())
     print(f"[gflownet] reranker warm-start done in {time.time()-t0:.1f}s", flush=True)
 
     if args.bootstrap:
@@ -1086,8 +1098,19 @@ def main() -> None:
     # top_k)-specific (keyed by top_k in the filename); ik cache is universal.
     child_cache_path = CACHE_DIR / f"gfn_child_cache_k{args.top_k}.pkl"
     ik_cache_path = CACHE_DIR / "gfn_ik_cache.pkl"
+
+    def _fresh_warm_reranker() -> BiEncoderReranker:
+        """A fresh ``BiEncoderReranker`` loaded from the warm-start snapshot, sharing no
+        parameter tensors with `reranker` or any other trainer's reranker (see the
+        `warm_state` snapshot comment above -- this is what makes each GFlowNet-family
+        trainer's TB training independent)."""
+        r = BiEncoderReranker(in_channels=SINGLE_NODE_DIM)
+        r.load_state_dict(copy.deepcopy(warm_state))
+        return r
+
     trainer = SetGFlowNetTrainer(
-        generator, reranker, gfn_config, _make_annotated_ik_fn(bundle.train), device=rr_trainer.device,
+        generator, _fresh_warm_reranker(), gfn_config, _make_annotated_ik_fn(bundle.train),
+        device=rr_trainer.device,
         child_cache_path=str(child_cache_path), ik_cache_path=str(ik_cache_path),
     )
     if args.workers > 1:
@@ -1104,13 +1127,16 @@ def main() -> None:
     # Phase 3 ablation (ABL-01/ABL-02): single-terminal trainer(s), single-variable-ablation
     # contract (per D-02/D-03/D-07) -- ONLY max_size (1, not args.max_size) and the reward
     # (single_hit_logreward via SingleTerminalGFlowNetTrainer, beta=args.beta_prime NOT
-    # args.beta) differ from the set-GFlowNet trained above. Same generator, SAME warm-started
-    # reranker object (no fresh reranker retrained), same annotated_ik_fn, same device, and the
-    # SAME child/ik env-cache files (the environment is deterministic and seed-independent, so
-    # sharing the cache across the set-GFlowNet and the ablation trainer(s) is exact, not an
-    # approximation). The ensemble members' per-seed training/checkpoint orchestration across
-    # multiple processes is Wave 3's concern (modal_m2.py); here we construct/train in-process
-    # for eval given this run's own train split.
+    # args.beta) differ from the set-GFlowNet trained above. Same generator, same
+    # annotated_ik_fn, same device, and the SAME child/ik env-cache files (the environment is
+    # deterministic and seed-independent, so sharing the cache across the set-GFlowNet and the
+    # ablation trainer(s) is exact, not an approximation). Each trainer (the set-GFlowNet
+    # reference AND every ablation trainer) gets its OWN fresh reranker loaded from the SAME
+    # `warm_state` snapshot (see snapshot comment above) -- identical warm-start (purity),
+    # independent parameter tensors (no cross-arm corruption, genuine ensemble). The ensemble
+    # members' per-seed training/checkpoint orchestration across multiple processes is Wave 3's
+    # concern (modal_m2.py); here we construct/train in-process for eval given this run's own
+    # train split.
     single_trainer = None
     ensemble_trainers = None
     if args.ablation_mode != "off":
@@ -1126,7 +1152,8 @@ def main() -> None:
         def _build_single_trainer(seed: int) -> SingleTerminalGFlowNetTrainer:
             seed_everything(seed)
             t = SingleTerminalGFlowNetTrainer(
-                generator, reranker, single_gfn_config, _make_annotated_ik_fn(bundle.train),
+                generator, _fresh_warm_reranker(), single_gfn_config,
+                _make_annotated_ik_fn(bundle.train),
                 device=rr_trainer.device,
                 child_cache_path=str(child_cache_path), ik_cache_path=str(ik_cache_path),
             )
