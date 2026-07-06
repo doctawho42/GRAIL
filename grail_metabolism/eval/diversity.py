@@ -12,17 +12,17 @@ from evaluation scripts and notebooks without pulling in the model stack.
 from __future__ import annotations
 
 from itertools import combinations
-from typing import Iterable, List, Sequence, Set
+from typing import Callable, Dict, Iterable, List, Sequence, Set
 
 from rdkit import Chem
 from rdkit.Chem import AllChem, DataStructs
 from rdkit.Chem.Scaffolds import MurckoScaffold
 from rdkit.SimDivFilters import rdSimDivPickers
 
-from grail_metabolism.metrics import _tautomer_inchikey
+from grail_metabolism.metrics import _match_keys, _tautomer_inchikey
 
 
-def modes_discovered(sampled_sets: Iterable[frozenset], annotated_ik: Set[str]) -> int:
+def annotated_coverage_count(sampled_sets: Iterable[frozenset], annotated_ik: Set[str]) -> int:
     """Count distinct annotated InChIKeys found across ALL sampled sets.
 
     Takes the union of every set in ``sampled_sets`` (each a ``frozenset[str]``
@@ -30,11 +30,144 @@ def modes_discovered(sampled_sets: Iterable[frozenset], annotated_ik: Set[str]) 
     annotated InChIKeys for the substrate. This is a coverage/"mode discovery"
     metric: how many of the true metabolites did the generator find in *any*
     of its sampled sets, not just its best/first one.
+
+    NOTE: this function is a pure rename of GRAIL's original ``modes_discovered``
+    (byte-identical behavior). It is gated on the same incomplete PU annotation
+    set as ``modes_discovered_canonical`` below -- it can only "find" a
+    metabolite that happens to be annotated, so it is a lower bound on true
+    coverage, not an exact count (the PU precision-as-lower-bound caveat).
     """
     union: Set[str] = set()
     for s in sampled_sets:
         union.update(s)
     return len(union & set(annotated_ik))
+
+
+def dedup_to_budget(
+    smiles_ranked: Sequence[str], k: int, match: str = "inchikey_tautomer"
+) -> List[str]:
+    """Truncate a ranked candidate list to ``k`` DISTINCT post-canonicalization molecules.
+
+    Iterates ``smiles_ranked`` in rank order, computes each candidate's match
+    key via ``grail_metabolism.metrics._match_keys`` (the SAME canonicalization
+    used for recall matching), and keeps the first-seen SMILES per distinct key
+    until ``k`` distinct keys are collected. This is THE single dedup+truncate
+    utility every method's output (GFlowNet, reranker, DPP, MMR, SyGMa, ...)
+    should pass through before any metric (recall OR diversity) is computed on
+    it, so a method that happens to emit more tautomer-duplicate pairs cannot
+    silently look parsimonious by exhausting its budget on duplicates.
+
+    ``match`` is an explicit parameter (default ``"inchikey_tautomer"``), not a
+    hardcoded convention, so callers can re-score under a different matching
+    protocol via the same ``_match_keys`` dispatch recall matching uses.
+    """
+    seen: Set[str] = set()
+    out: List[str] = []
+    for s in smiles_ranked:
+        key = next(iter(_match_keys([s], match)))
+        if key in seen:
+            continue
+        seen.add(key)
+        out.append(s)
+        if len(out) >= k:
+            break
+    return out
+
+
+def union_at_k_curve(
+    smiles_ranked: Sequence[str],
+    annotated_ik: Set[str],
+    ks: Sequence[int] = (5, 10, 15, 20, 30, 50),
+) -> Dict[int, float]:
+    """union@K for every K in ``ks``, computed over ONE ranked SMILES stream.
+
+    ``smiles_ranked`` is a single ranked list of SMILES in caller-supplied
+    order -- the SAME shape ``dedup_to_budget`` consumes, so the GFlowNet path
+    (reconstructing SMILES via its ``smiles_of`` map) and Phase-2 baselines
+    (which natively produce ranked SMILES) can both call this one function
+    without a frozenset<->SMILES bridge (FIX 5: one shared curve primitive).
+
+    For each ``k``, asserts ``len(smiles_ranked) >= k`` (flagging when a
+    method under-produces at a requested K -- e.g. SyGMa's internal pruning
+    capping output below K -- rather than silently truncating to whatever was
+    sampled) and computes the coverage numerator as
+    ``|{_tautomer_inchikey(s) for s in smiles_ranked[:k]} & annotated_ik| / |annotated_ik|``
+    over the first-``k`` slice of the SAME underlying stream -- routing
+    SMILES->identity through the SAME ``_tautomer_inchikey`` as recall/dedup
+    (EVAL-04 consistency), which guarantees the curve is monotone in K by
+    construction (a K=20 slice is a strict superset of a K=10 slice of the
+    same stream).
+
+    Returns an empty-``annotated_ik`` slot as 0.0 (rather than raising) to
+    keep the curve total-function over any ``ks`` grid.
+    """
+    curve: Dict[int, float] = {}
+    annotated = set(annotated_ik)
+    denom = len(annotated)
+    for k in ks:
+        assert len(smiles_ranked) >= k, (
+            f"union_at_k_curve: candidate stream under-produces at k={k} "
+            f"(got {len(smiles_ranked)} candidates, requested k={k}) -- the "
+            "method emitted fewer than K distinct-ranked candidates for this K"
+        )
+        stream_ik = {_tautomer_inchikey(s) for s in smiles_ranked[:k]}
+        curve[k] = len(stream_ik & annotated) / denom if denom else 0.0
+    return curve
+
+
+def auc_of_curve(curve: Dict[int, float], k_min: int, k_max: int) -> float:
+    """Trapezoidal AUC of a metric-vs-K curve, normalized by ``(k_max - k_min)``.
+
+    ``curve`` maps K -> metric value (as produced by ``union_at_k_curve``,
+    possibly over a non-uniform K-grid, e.g. ``(5, 10, 15, 20, 30, 50)``).
+    Integrates trapezoidally over the SORTED ``(k, value)`` points between
+    ``k_min`` and ``k_max`` inclusive, then divides by ``(k_max - k_min)`` so
+    the result stays in the metric's own units (recall-like), not raw area.
+    Uses plain-Python arithmetic (no numpy/scipy), keeping the module
+    dependency-light per its RDKit-only header.
+    """
+    points = sorted((k, v) for k, v in curve.items() if k_min <= k <= k_max)
+    area = 0.0
+    for (k_a, v_a), (k_b, v_b) in zip(points, points[1:]):
+        area += 0.5 * (v_a + v_b) * (k_b - k_a)
+    span = k_max - k_min
+    return area / span if span else 0.0
+
+
+def modes_discovered_canonical(
+    sampled_smiles: Sequence[str],
+    reward_fn: Callable[[str], float],
+    tau: float,
+    delta: float = 0.7,
+) -> int:
+    """GFlowNet-literature-canonical "modes discovered": reward-gated + Tanimoto-excluded.
+
+    A candidate counts as a new mode iff (a) ``reward_fn(x) >= tau`` (the
+    reward-threshold gate) AND (b) it is NOT within Tanimoto similarity
+    ``delta`` of any other surviving candidate already counted (the sphere-
+    exclusion gate) -- both gates are applied, matching the RGFN/QGFN-lineage
+    convention. Reuses the SAME ``_greedy_sphere_exclusion`` machinery
+    ``circles_count`` uses (no duplicated LeaderPicker plumbing), called at
+    distance ``1.0 - delta`` over the surviving candidates' fingerprints.
+
+    Default ``reward_fn``/``tau`` per D-EVAL05-REWARDFN is the binary
+    "is annotated true metabolite" gate (``reward_fn(x) = 1 if annotated else 0``,
+    ``tau = 1``) -- this makes ``modes_discovered_canonical`` differ from
+    ``annotated_coverage_count`` ONLY by the added Tanimoto-exclusion gate. A
+    continuous generator-score-based reward proxy is a Phase 4/5 enhancement,
+    not implemented here. Like ``annotated_coverage_count``, this is gated on
+    an incomplete PU annotation set when a ground-truth-based ``reward_fn`` is
+    used -- the same precision-as-lower-bound caveat applies.
+    """
+    survivors = [x for x in sampled_smiles if reward_fn(x) >= tau]
+    mols = [Chem.MolFromSmiles(s) for s in survivors]
+    mols = [m for m in mols if m is not None]
+
+    if len(mols) < 2:
+        return len(mols)
+
+    fps = [AllChem.GetMorganFingerprintAsBitVect(m, radius=2, nBits=2048) for m in mols]
+    return _greedy_sphere_exclusion(fps, 1.0 - delta)
 
 
 def _dedup_smiles_by_tautomer_ik(smiles_list: Sequence[str]) -> List[str]:

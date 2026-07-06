@@ -1,6 +1,6 @@
 from grail_metabolism.eval.diversity import (
+    annotated_coverage_count,
     mean_pairwise_tanimoto,
-    modes_discovered,
     n_unique_scaffolds,
     set_size_calibration,
 )
@@ -8,7 +8,7 @@ from grail_metabolism.eval.diversity import (
 
 def test_modes_discovered_counts_distinct_hits_across_sets():
     sets = [frozenset({"A", "X"}), frozenset({"B", "Y"}), frozenset({"A"})]
-    assert modes_discovered(sets, annotated_ik={"A", "B", "C"}) == 2  # A, B found; C never
+    assert annotated_coverage_count(sets, annotated_ik={"A", "B", "C"}) == 2  # A, B found; C never
 
 
 def test_mean_pairwise_tanimoto_identical_is_one():
@@ -16,13 +16,13 @@ def test_mean_pairwise_tanimoto_identical_is_one():
 
 
 def test_modes_discovered_empty_sets_finds_nothing():
-    assert modes_discovered([], annotated_ik={"A", "B"}) == 0
-    assert modes_discovered([frozenset()], annotated_ik={"A", "B"}) == 0
+    assert annotated_coverage_count([], annotated_ik={"A", "B"}) == 0
+    assert annotated_coverage_count([frozenset()], annotated_ik={"A", "B"}) == 0
 
 
 def test_modes_discovered_ignores_unannotated_hits():
     sets = [frozenset({"Z"})]
-    assert modes_discovered(sets, annotated_ik={"A", "B"}) == 0
+    assert annotated_coverage_count(sets, annotated_ik={"A", "B"}) == 0
 
 
 def test_mean_pairwise_tanimoto_distinct_molecules_below_one():
