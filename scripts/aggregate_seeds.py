@@ -62,7 +62,10 @@ RECALL_KEY_RE = re.compile(r"^(?P<series>.+)_(?:recall|union)@(?P<k>\d+)$")
 # more scalars later -- anything here that's missing from a run is simply skipped).
 # circles@t0.4 / circles@t0.7 / union_at_k_auc are Phase 1 Plan 02's additive co-primary
 # keys (D-EVAL03-CIRCLESKEYS / D-EVAL02-AUCNORM); modes_discovered and the original three
-# stay untouched.
+# stay untouched. gflownet_union_at_k_auc / reranker_union_at_k_auc (FIX E, adversarial
+# review) are the PER-SERIES AUC breakdown evaluate_matrix emits alongside the combined
+# union_at_k_auc -- without these two, the per-series breakdown never appeared in the
+# aggregate mean±std report even though evaluate_matrix already computes and emits them.
 DIVERSITY_KEYS = (
     "modes_discovered",
     "mean_pairwise_tanimoto",
@@ -71,6 +74,8 @@ DIVERSITY_KEYS = (
     "circles@t0.4",
     "circles@t0.7",
     "union_at_k_auc",
+    "gflownet_union_at_k_auc",
+    "reranker_union_at_k_auc",
 )
 
 

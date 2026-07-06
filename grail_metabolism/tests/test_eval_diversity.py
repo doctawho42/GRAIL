@@ -302,7 +302,10 @@ def test_aggregate_seeds_picks_up_new_keys(tmp_path):
     """FIX 3 aggregation guard: gflownet_union@{k}/reranker_union@{k}, circles@t0.4/
     circles@t0.7, and union_at_k_auc must aggregate mean+/-std across >=2 fake seeds,
     while the pre-existing modes_discovered key still aggregates (regression guard
-    that the additive edit did not drop it)."""
+    that the additive edit did not drop it). FIX E (adversarial review) additionally
+    guards that the PER-SERIES gflownet_union_at_k_auc/reranker_union_at_k_auc AUC
+    breakdown -- emitted by evaluate_matrix alongside the combined union_at_k_auc --
+    also aggregates via DIVERSITY_KEYS, not just the combined scalar."""
     import scripts.aggregate_seeds as agg
 
     def _fake_run(seed: int, gflownet_union_30: float) -> dict:
@@ -318,6 +321,8 @@ def test_aggregate_seeds_picks_up_new_keys(tmp_path):
                 "circles@t0.4": 3.0 + seed,
                 "circles@t0.7": 1.0 + seed,
                 "union_at_k_auc": 0.40 + 0.01 * seed,
+                "gflownet_union_at_k_auc": 0.42 + 0.01 * seed,
+                "reranker_union_at_k_auc": 0.38 + 0.01 * seed,
                 "modes_discovered": 2.0 + seed,
                 "mean_pairwise_tanimoto": 0.4,
                 "n_unique_scaffolds": 4.0,
@@ -352,6 +357,14 @@ def test_aggregate_seeds_picks_up_new_keys(tmp_path):
         assert key in diversity_keys, f"{key} must be picked up by _detect_diversity_keys"
         vals = [r["metrics"][key] for r in runs]
         assert len(vals) == 2  # both fake seeds contribute
+
+    # FIX E guard: the PER-SERIES union AUC breakdown (gflownet_union_at_k_auc/
+    # reranker_union_at_k_auc) must ALSO be detected and aggregate, not just the
+    # combined union_at_k_auc scalar.
+    for key in ("gflownet_union_at_k_auc", "reranker_union_at_k_auc"):
+        assert key in diversity_keys, f"{key} must be picked up by _detect_diversity_keys"
+        vals = [r["metrics"][key] for r in runs]
+        assert len(vals) == 2
 
     # Regression guard: modes_discovered must STILL aggregate (additive edit must not
     # drop the pre-existing key).
