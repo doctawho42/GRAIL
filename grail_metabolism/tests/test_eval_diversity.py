@@ -14,6 +14,7 @@ from __future__ import annotations
 import json
 import os
 import re
+import sys
 from pathlib import Path
 
 import grail_metabolism.eval.diversity as diversity
@@ -357,6 +358,59 @@ def test_aggregate_seeds_picks_up_new_keys(tmp_path):
     assert "modes_discovered" in diversity_keys
     md_vals = [r["metrics"]["modes_discovered"] for r in runs]
     assert md_vals == [2.0, 3.0]
+
+
+def test_aggregate_seeds_headline_includes_plain_recall_not_only_union(tmp_path, monkeypatch, capsys):
+    """FIX A guard: HEADLINE must NOT silently drop the plain matched-budget
+    `_recall@{k}` series when the loaded runs ALSO carry `_union@{k}` keys with a
+    LARGER k-grid. Before the fix, `headline_k = max(all_ks)` pooled BOTH families
+    (plain recall k's tied to --max-size, e.g. 10, and union k's up to 50) and always
+    resolved to the union grid's max -- so `gflownet_recall@10`/`reranker_recall@10`
+    never appeared in the printed HEADLINE block, only the `(union)` series did.
+
+    Builds fixture JSONs with BOTH `gflownet_recall@10`+`reranker_recall@10` AND
+    `gflownet_union@{5..50}`+`reranker_union@{5..50}`, runs the real `main()` entry
+    point end-to-end (subprocess-free, via monkeypatched argv), and asserts the
+    printed output contains a `HEADLINE recall@10` line (not only a union headline)."""
+    import scripts.aggregate_seeds as agg
+
+    def _fake_run(seed: int) -> dict:
+        return {
+            "seed": seed,
+            "config": {"eval_split": "test"},
+            "metrics": {
+                "n_substrates": 10.0,
+                "gflownet_recall@10": 0.30 + 0.01 * seed,
+                "reranker_recall@10": 0.28 + 0.01 * seed,
+                **{f"gflownet_union@{k}": 0.20 + 0.01 * k for k in (5, 10, 15, 20, 30, 50)},
+                **{f"reranker_union@{k}": 0.18 + 0.01 * k for k in (5, 10, 15, 20, 30, 50)},
+            },
+        }
+
+    paths = []
+    for seed in (0, 1):
+        p = tmp_path / f"gflownet_test_seed{seed}.json"
+        p.write_text(json.dumps(_fake_run(seed)))
+        paths.append(str(p))
+
+    monkeypatch.setattr(sys, "argv", ["aggregate_seeds.py", *paths])
+    agg.main()
+    out = capsys.readouterr().out
+
+    assert "HEADLINE recall@10" in out, (
+        "the matched-budget recall@10 HEADLINE must be printed, not silently dropped "
+        "in favor of the union series' larger k-grid"
+    )
+    assert "HEADLINE union@50" in out, (
+        "a separate, clearly-labeled union headline must ALSO be printed so both "
+        "families are visible and never conflated"
+    )
+    # The recall@10 headline line must actually carry the gflownet/reranker series
+    # values, not just the label.
+    recall_line_idx = out.index("HEADLINE recall@10")
+    union_line_idx = out.index("HEADLINE union@50")
+    recall_block = out[recall_line_idx:union_line_idx]
+    assert "gflownet" in recall_block or "reranker" in recall_block
 
 
 # ---------------------------------------------------------------------------

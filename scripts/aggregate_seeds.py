@@ -239,34 +239,57 @@ def main() -> None:
     # Headline line: largest k present across all series, mean±std for every series at
     # that k. If both "reranker" and "generator" series exist there, keep the legacy
     # "vs generator-alone (+X%)" lift line; otherwise print each series' mean±std.
-    headline_k = max(all_ks)
-    headline_series = [s for s in series_order if headline_k in series_ks[s]]
-    headline_vals = {}
-    for s in headline_series:
-        key = _metric_key(s, headline_k)
-        vals = [r["metrics"][key] for r in runs if key in r.get("metrics", {})]
-        if not vals:
-            continue
-        mean = statistics.fmean(vals)
-        std = statistics.pstdev(vals) if len(vals) > 1 else 0.0
-        headline_vals[s] = (mean, std)
+    #
+    # FIX A: headline_k must be selected over the PLAIN (non-"(union)") recall series
+    # only. all_ks pools BOTH the plain "_recall@{k}" family (k tied to --max-size, e.g.
+    # 10-15) and the "_union@{k}" family (k up to the K-grid max, e.g. 50) -- taking
+    # max(all_ks) over that mixed pool resolves to the union grid's max and silently
+    # drops the primary matched-budget "gflownet_recall@{max_size}"/"reranker_recall@
+    # {max_size}"/"beam_recall@{max_size}" rows from the printed HEADLINE. Restricting
+    # headline_k to the plain-recall series' own k's keeps that primary row visible, and
+    # a SEPARATE, clearly-labeled union headline is printed alongside it so neither
+    # family is silently dropped or conflated with the other.
+    recall_series_ks = {s: ks for s, ks in series_ks.items() if not s.endswith("(union)")}
+    union_series_ks = {s: ks for s, ks in series_ks.items() if s.endswith("(union)")}
 
-    if "reranker" in headline_vals and "generator" in headline_vals:
-        rr_m, rr_s = headline_vals["reranker"]
-        gg_m, _gg_s = headline_vals["generator"]
-        lift = (rr_m - gg_m) / gg_m * 100 if gg_m else float("nan")
-        print(f"\nHEADLINE recall@{headline_k} ({split}): reranker {rr_m:.4f}±{rr_s:.4f} vs "
-              f"generator-alone {gg_m:.4f}  (+{lift:.1f}%)", flush=True)
-        # Print any other series (e.g. oracle) at the headline k too.
-        others = [s for s in headline_series if s not in ("reranker", "generator")]
-        if others:
-            extra = "  ".join(f"{s} {headline_vals[s][0]:.4f}±{headline_vals[s][1]:.4f}" for s in others)
-            print(f"  (also: {extra})", flush=True)
-    else:
-        print(f"\nHEADLINE recall@{headline_k} ({split}):", flush=True)
+    def _headline_block(label: str, series_ks_map: dict, k: int) -> None:
+        headline_series = [s for s in series_order if s in series_ks_map and k in series_ks_map[s]]
+        headline_vals = {}
         for s in headline_series:
-            m, s_std = headline_vals[s]
-            print(f"  {s:<10} {m:.4f}±{s_std:.4f}", flush=True)
+            key = _metric_key(s, k)
+            vals = [r["metrics"][key] for r in runs if key in r.get("metrics", {})]
+            if not vals:
+                continue
+            mean = statistics.fmean(vals)
+            std = statistics.pstdev(vals) if len(vals) > 1 else 0.0
+            headline_vals[s] = (mean, std)
+
+        if "reranker" in headline_vals and "generator" in headline_vals:
+            rr_m, rr_s = headline_vals["reranker"]
+            gg_m, _gg_s = headline_vals["generator"]
+            lift = (rr_m - gg_m) / gg_m * 100 if gg_m else float("nan")
+            print(f"\n{label}{k} ({split}): reranker {rr_m:.4f}±{rr_s:.4f} vs "
+                  f"generator-alone {gg_m:.4f}  (+{lift:.1f}%)", flush=True)
+            # Print any other series (e.g. oracle) at the headline k too.
+            others = [s for s in headline_series if s not in ("reranker", "generator")]
+            if others:
+                extra = "  ".join(f"{s} {headline_vals[s][0]:.4f}±{headline_vals[s][1]:.4f}" for s in others)
+                print(f"  (also: {extra})", flush=True)
+        else:
+            print(f"\n{label}{k} ({split}):", flush=True)
+            for s in headline_series:
+                m, s_std = headline_vals[s]
+                print(f"  {s:<10} {m:.4f}±{s_std:.4f}", flush=True)
+
+    if recall_series_ks:
+        headline_k = max(k for ks in recall_series_ks.values() for k in ks)
+        _headline_block("HEADLINE recall@", recall_series_ks, headline_k)
+    else:
+        print("\n(no plain recall@k series found -- skipping HEADLINE recall@k block)", flush=True)
+
+    if union_series_ks:
+        union_k_max = max(k for ks in union_series_ks.values() for k in ks)
+        _headline_block("HEADLINE union@", union_series_ks, union_k_max)
 
 
 if __name__ == "__main__":
