@@ -671,3 +671,155 @@ def test_base05_no_top_level_sygma_import_required():
     assert "sygma" not in getattr(
         sys.modules.get("grail_metabolism.tests.test_eval_baselines"), "__dict__", {}
     ), "test_eval_baselines.py must not import sygma at module scope"
+
+
+# ---------------------------------------------------------------------------
+# FIX A (adversarial review): DPP/MMR must fold tautomer-InChIKey dedup INTO
+# the similarity kernel itself, not just use it for tie-breaking -- a REAL
+# RDKit tautomer pair (keto/enol, not the monkeypatched fake-IK fixture)
+# plus a genuinely-diverse third candidate.
+# ---------------------------------------------------------------------------
+
+_KETO = "CC=O"  # acetaldehyde (keto form)
+_ENOL = "C=CO"  # vinyl alcohol (enol form) -- same molecule, real RDKit collapse
+_REAL_DIVERSE = "c1ccccc1"  # benzene -- structurally unrelated to keto/enol
+
+
+def _verify_real_tautomer_fixture_premise():
+    """Sanity-check the fixture's premise against the installed RDKit build:
+    keto/enol collapse to the SAME real _tautomer_inchikey, and their raw
+    Morgan Tanimoto similarity is near-0 (so an un-deduped kernel would treat
+    them as maximally diverse)."""
+    from rdkit import Chem
+    from rdkit.Chem import AllChem, DataStructs
+
+    assert metrics._tautomer_inchikey(_KETO) == metrics._tautomer_inchikey(_ENOL)
+
+    mols = [Chem.MolFromSmiles(s) for s in (_KETO, _ENOL)]
+    fps = [AllChem.GetMorganFingerprintAsBitVect(m, radius=2, nBits=2048) for m in mols]
+    raw_sim = DataStructs.TanimotoSimilarity(fps[0], fps[1])
+    assert raw_sim < 0.2, "keto/enol must be near-maximally dissimilar under raw Morgan fps"
+
+
+def test_dpp_folds_real_tautomer_dedup_into_kernel_not_just_tiebreak():
+    _verify_real_tautomer_fixture_premise()
+
+    pool = [(_KETO, 2.0), (_ENOL, 1.9), (_REAL_DIVERSE, 1.0)]
+    ranked = baselines.dpp_greedy_select(pool, k=2, theta=1.0)
+
+    assert _REAL_DIVERSE in ranked, (
+        "dpp_greedy_select must select the genuinely diverse candidate once "
+        "the kernel treats keto/enol as one molecule"
+    )
+    n_taut = sum(1 for s in ranked if s in (_KETO, _ENOL))
+    assert n_taut <= 1, (
+        "dpp_greedy_select's own kernel must treat the keto/enol tautomer "
+        "pair as the SAME molecule -- at most one may be selected"
+    )
+
+
+def test_mmr_folds_real_tautomer_dedup_into_kernel_not_just_tiebreak():
+    _verify_real_tautomer_fixture_premise()
+
+    pool = [(_KETO, 2.0), (_ENOL, 1.9), (_REAL_DIVERSE, 1.0)]
+    ranked = baselines.mmr_select(pool, k=2, lam=0.3)
+
+    assert _REAL_DIVERSE in ranked, (
+        "mmr_select must select the genuinely diverse candidate once the "
+        "kernel treats keto/enol as one molecule"
+    )
+    n_taut = sum(1 for s in ranked if s in (_KETO, _ENOL))
+    assert n_taut <= 1, (
+        "mmr_select's own kernel must treat the keto/enol tautomer pair as "
+        "the SAME molecule -- at most one may be selected"
+    )
+
+
+# ---------------------------------------------------------------------------
+# FIX B (adversarial review): a stale/mismatched caller-supplied `fps` must
+# never reach `_tanimoto_kernel_matrix` -- either it is discarded and
+# recomputed on the final filtered/deduped pool, or a length mismatch is
+# rejected clearly. Never a silent shape-mismatch crash or broadcast
+# corruption.
+# ---------------------------------------------------------------------------
+
+
+def test_dpp_fps_kwarg_happy_path_matching_length():
+    pool = [(_HEXANE, 3.0), (_HEPTANE, 2.0), (_BENZENE, 1.0)]
+    fps = baselines._pool_fingerprints([s for s, _ in pool])
+    ranked = baselines.dpp_greedy_select(pool, k=3, theta=1.0, fps=fps)
+    assert all(isinstance(s, str) for s in ranked)
+    assert len(ranked) > 0
+
+
+def test_dpp_stale_short_fps_does_not_crash_or_corrupt():
+    # 4-candidate pool, but a stale 3-length fps (as if computed before a
+    # dedup/parse-filter step dropped one entry) -- must not broadcast-crash
+    # and must not silently corrupt the kernel; recompute internally instead.
+    pool = [(_HEXANE, 3.0), (_HEPTANE, 2.0), (_BENZENE, 1.0), ("CCN", 0.5)]
+    stale_fps = baselines._pool_fingerprints([_HEXANE, _HEPTANE, _BENZENE])
+    ranked = baselines.dpp_greedy_select(pool, k=4, theta=1.0, fps=stale_fps)
+    assert len(ranked) == len(set(ranked)) == 4, (
+        "a stale-length fps must be discarded and recomputed on the full "
+        "4-candidate pool, not silently truncate/corrupt the result"
+    )
+
+
+def test_mmr_fps_kwarg_happy_path_matching_length():
+    pool = [(_HEXANE, 3.0), (_HEPTANE, 2.0), (_BENZENE, 1.0)]
+    fps = baselines._pool_fingerprints([s for s, _ in pool])
+    ranked = baselines.mmr_select(pool, k=3, lam=0.5, fps=fps)
+    assert all(isinstance(s, str) for s in ranked)
+    assert len(ranked) > 0
+
+
+def test_mmr_stale_short_fps_does_not_crash_or_corrupt():
+    pool = [(_HEXANE, 3.0), (_HEPTANE, 2.0), (_BENZENE, 1.0), ("CCN", 0.5)]
+    stale_fps = baselines._pool_fingerprints([_HEXANE, _HEPTANE, _BENZENE])
+    ranked = baselines.mmr_select(pool, k=4, lam=0.5, fps=stale_fps)
+    assert len(ranked) == len(set(ranked)) == 4, (
+        "a stale-length fps must be discarded and recomputed on the full "
+        "4-candidate pool, not silently truncate/corrupt the result"
+    )
+
+
+# ---------------------------------------------------------------------------
+# FIX C (adversarial review): all three selectors (and the `select()`
+# dispatcher) must parse-and-skip unparseable SMILES -- none may return the
+# invalid string, mirroring DPP/MMR's existing `_pool_fingerprints` guard.
+# ---------------------------------------------------------------------------
+
+_UNPARSEABLE = "C1CC"  # unmatched ring closure -- Chem.MolFromSmiles returns None
+
+
+@pytest.mark.parametrize(
+    "method,kwargs",
+    [
+        ("temperature_topp", {"T": 1.0, "p": 1.0, "rng": np.random.default_rng(0)}),
+        ("dpp", {"theta": 1.0}),
+        ("mmr", {"lam": 0.5}),
+    ],
+)
+def test_selectors_skip_unparseable_smiles(method, kwargs):
+    pool = [
+        (_HEXANE, 3.0),
+        (_HEPTANE, 2.0),
+        (_BENZENE, 1.0),
+        (_UNPARSEABLE, 5.0),  # highest score -- would dominate if not filtered
+    ]
+    ranked = baselines.select(pool, k=4, method=method, **kwargs)
+    assert _UNPARSEABLE not in ranked, (
+        f"{method}: unparseable SMILES must never survive into the selected output"
+    )
+
+
+def test_temperature_topp_select_skips_unparseable_smiles_directly():
+    pool = [
+        (_HEXANE, 3.0),
+        (_HEPTANE, 2.0),
+        (_BENZENE, 1.0),
+        (_UNPARSEABLE, 5.0),
+    ]
+    rng = np.random.default_rng(0)
+    ranked = baselines.temperature_topp_select(pool, k=4, T=1.0, p=1.0, rng=rng)
+    assert _UNPARSEABLE not in ranked
