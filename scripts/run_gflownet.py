@@ -228,6 +228,7 @@ def _eval_config_fingerprint(
     max_size: int, ks: Sequence[int], n_samples: int, top_k: int, max_pool: int,
     circles_thresholds: Sequence[float] = (0.4, 0.7),
     eval_split: str = "val", substrates: Sequence[str] = (), eval_beam: bool = True,
+    ablation_mode: str = "off", m_ensemble: int = 0,
 ) -> str:
     """Stable hash of the eval-config fields that would make blended checkpoint rows WRONG
     if changed between the checkpoint's write and the current run (FIX 6 / D-EVAL06-SCHEMA):
@@ -244,6 +245,10 @@ def _eval_config_fingerprint(
     rows do or don't carry ``beam_recall``, so flipping ``--eval-beam``/``--no-eval-beam``
     must not silently blend rows computed under a different beam-baseline setting).
 
+    Also covers (T-03-04, Plan 03-02): ``ablation_mode`` and ``m_ensemble`` -- a checkpoint
+    written under one ablation mode (or a different ensemble size) must be discarded, not
+    silently reused, under another (mirrors the FIX-B split guard one level up).
+
     A mismatch on resume means the checkpoint is stale and must be discarded (see
     ``_load_eval_ckpt``), never silently blended with rows computed under a different
     config."""
@@ -258,6 +263,8 @@ def _eval_config_fingerprint(
         "substrate_set_fingerprint": _substrate_set_fingerprint(substrates),
         "n_substrates": len(substrates),
         "eval_beam": bool(eval_beam),
+        "ablation_mode": str(ablation_mode),
+        "m_ensemble": int(m_ensemble),
     }
     return hashlib.sha256(json.dumps(payload, sort_keys=True).encode("utf-8")).hexdigest()
 
@@ -305,6 +312,72 @@ def _save_eval_ckpt(path: str, config_fingerprint: str, rows: Dict[str, dict], n
     os.replace(tmp, path)
 
 
+def _round_robin_draw_counts(k_max: int, m_ensemble: int) -> List[int]:
+    """Per-member draw-count allocation for ABL-02's round-robin ensemble (D-04).
+
+    Returns a list of length ``m_ensemble`` where each entry is the number of
+    single-terminal draws that member should contribute, summing to >= ``k_max``
+    total raw draws, with every member within 1 of every other (the standard
+    "as-even-as-possible" ``ceil(k_max/m_ensemble)`` split: the first
+    ``k_max % m_ensemble`` members get one extra draw when the division isn't
+    exact). Pure arithmetic, no side effects -- unit-testable in isolation
+    (Task 3 guard test), and the single source of truth the ABL-02 stream
+    builder below calls into (no separate/duplicated allocation logic).
+
+    Handles ``m_ensemble > k_max`` (some members get 0 draws) and
+    ``m_ensemble`` evenly dividing ``k_max`` (every member gets exactly the
+    same count) without special-casing either.
+    """
+    if m_ensemble <= 0:
+        return []
+    base, extra = divmod(int(k_max), int(m_ensemble))
+    return [base + 1 if i < extra else base for i in range(m_ensemble)]
+
+
+def _draw_until_budget(draw_fn, k_max: int, cap: int) -> "tuple[List[str], int]":
+    """Shared adaptive raw-draw discipline for ALL GFlowNet-family arms in ablation
+    mode (D-03): repeatedly call ``draw_fn()`` (each call performs ONE raw draw --
+    one sampled forest, or one single-terminal rollout -- and returns a list of
+    produced SMILES, possibly empty) and accumulate the raw stream, until EITHER
+    ``dedup_to_budget(raw_stream, k=k_max)`` yields ``k_max`` distinct entries, OR
+    ``cap`` raw draws have been made (whichever first). Returns ``(raw_stream,
+    n_raw_draws)`` -- the caller re-runs its own ``dedup_to_budget``/
+    ``union_at_k_curve`` on ``raw_stream`` exactly like the existing fixed-loop
+    streams did (no parallel truncation/coverage logic here, per D-05).
+
+    This is the ONE cap definition every GFlowNet-family arm (gflownet /
+    ablation01 / ablation02) shares in ablation mode -- a mode-collapsed policy
+    that never reaches ``k_max`` distinct candidates hits ``cap`` and stops
+    (bounded loop; the caller's under-production guard then skips the row),
+    rather than looping unboundedly (T-03-03).
+    """
+    raw_stream: List[str] = []
+    n_draws = 0
+    while n_draws < cap:
+        raw_stream.extend(draw_fn())
+        n_draws += 1
+        if len(dedup_to_budget(raw_stream, k=k_max)) >= k_max:
+            break
+    return raw_stream, n_draws
+
+
+def _shared_substrate_survivors(
+    arm_curve_maps: Dict[str, Dict[str, Dict[int, float]]],
+) -> "set[str]":
+    """Intersection of substrate keys for which EVERY GFlowNet-family arm in
+    ``arm_curve_maps`` produced a curve (D-04b differential-missingness fix).
+
+    ``arm_curve_maps`` maps arm name -> {substrate_root: curve_dict}. Returns the
+    substrate-key intersection across all arms passed in (arms that did not run
+    are simply absent from ``arm_curve_maps`` and do not constrain the
+    intersection). An empty ``arm_curve_maps`` returns an empty set.
+    """
+    if not arm_curve_maps:
+        return set()
+    substrate_sets = [set(curves.keys()) for curves in arm_curve_maps.values()]
+    return set.intersection(*substrate_sets)
+
+
 def evaluate_matrix(
     trainer: SetGFlowNetTrainer,
     generator,
@@ -321,6 +394,10 @@ def evaluate_matrix(
     resume_path: Optional[str] = None,
     eval_ckpt_every: int = 10,
     eval_split: str = "val",
+    ablation_mode: str = "off",
+    single_trainer: Optional["SingleTerminalGFlowNetTrainer"] = None,
+    ensemble_trainers: Optional[List["SingleTerminalGFlowNetTrainer"]] = None,
+    raw_draw_cap_mult: int = 10,
 ) -> Dict[str, float]:
     """Dual eval matrix at matched output budget K = max_size, PLUS a budget-matched
     union@K curve over ``ks`` (D-EVAL01-SEMANTICS / D-EVAL02-KGRID). See module docstring.
@@ -353,16 +430,35 @@ def evaluate_matrix(
     run's, independent of the order rows were (re)computed in. This is a SEPARATE file with a
     separate lifecycle from the environment-cache checkpoint (``trainer.save_caches()``) --
     the two are never conflated.
+
+    Phase 3 ablation (ABL-01/ABL-02, D-03/D-04/D-04b/D-05): when ``ablation_mode`` is
+    ``"single"`` or ``"ensemble"``, this ALSO builds budget-matched ``ablation01_union@{k}``
+    / ``ablation02_union@{k}`` streams (independent single-terminal / round-robin ensemble
+    of single-terminal policies), reusing the SAME ``dedup_to_budget`` / ``union_at_k_curve``
+    / ``auc_of_curve`` primitives as the gflownet/reranker streams -- no parallel truncation
+    or coverage implementation. Critically, in this mode the gflownet arm's OWN raw-draw
+    loop is ALSO switched from the fixed ``for _ in range(n_samples)`` to the SAME adaptive
+    "draw until dedup hits k_max OR the shared ``raw_draw_cap_mult*k_max`` cap" discipline
+    the ablation arms use (D-03), so the reference arm is never budget-starved relative to
+    the baselines. When ``ablation_mode == "off"`` (the default), the gflownet loop is the
+    ORIGINAL fixed ``for _ in range(n_samples)`` loop, byte-unchanged, so no Phase 1/2
+    headline number moves. The GFlowNet-family arms' (gflownet/ablation01/ablation02)
+    ``*_union_at_k_auc`` are means over the INTERSECTED shared-surviving-substrate set
+    (D-04b) -- not each arm's own private survivor population -- with per-arm skip counts
+    (``{arm}_n_skipped``) surfaced in the returned metrics dict.
     """
     substrates = list(eval_bundle.map.keys())[:n_eval]
     annotated_ik_fn = _make_annotated_ik_fn(eval_bundle)
     k_max = max(ks)
 
+    m_ensemble = len(ensemble_trainers) if ensemble_trainers else 0
     config_fingerprint = _eval_config_fingerprint(
         max_size, ks, n_samples, top_k, max_pool,
         eval_split=eval_split, substrates=substrates, eval_beam=(beam_tree is not None),
+        ablation_mode=ablation_mode, m_ensemble=m_ensemble,
     )
     completed_rows, next_idx = _load_eval_ckpt(resume_path, config_fingerprint)
+    raw_draw_cap = int(raw_draw_cap_mult) * k_max
 
     # ik->SMILES map, built ONCE and grown INCREMENTALLY across substrates (each child-cache
     # parent folded in exactly once) using the WARM trainer._ik_cache. The prior code rebuilt
@@ -374,6 +470,18 @@ def evaluate_matrix(
     global_smiles_of: Dict[str, str] = {}
     _folded_parents: set = set()
 
+    # Every GFlowNet-family trainer whose child-cache may need folding into
+    # global_smiles_of this eval run -- the reference gflownet trainer ALWAYS, plus
+    # any ablation trainer(s) (they each hold their OWN in-memory _child_cache/_ik_cache,
+    # loaded from the SAME shared cache files at construction but mutated independently
+    # during their own rollouts -- so a child a single-terminal/ensemble trainer
+    # discovers must be folded in too, or its SMILES would be missing from smiles_of).
+    _cache_trainers = [trainer]
+    if single_trainer is not None:
+        _cache_trainers.append(single_trainer)
+    if ensemble_trainers:
+        _cache_trainers.extend(ensemble_trainers)
+
     def _ik_warm(s: str):
         ik = trainer._ik_cache.get(s)
         if ik is None:
@@ -384,15 +492,18 @@ def evaluate_matrix(
 
     def _fold_new_cache_entries():
         # Fold any child-cache parents not seen yet (incl. states this substrate's forests just
-        # lazily expanded) into the global ik->smiles map, exactly once each.
-        for p_smiles in list(trainer._child_cache.keys()):
-            if p_smiles in _folded_parents:
-                continue
-            _folded_parents.add(p_smiles)
-            for c_smiles, _g, _rid in trainer._child_cache[p_smiles]:
-                ik = _ik_warm(c_smiles)
-                if ik is not None:
-                    global_smiles_of.setdefault(ik, c_smiles)
+        # lazily expanded, across ALL GFlowNet-family trainers) into the global ik->smiles map,
+        # exactly once each (per (trainer identity, parent smiles) pair).
+        for cache_trainer in _cache_trainers:
+            for p_smiles in list(cache_trainer._child_cache.keys()):
+                key = (id(cache_trainer), p_smiles)
+                if key in _folded_parents:
+                    continue
+                _folded_parents.add(key)
+                for c_smiles, _g, _rid in cache_trainer._child_cache[p_smiles]:
+                    ik = _ik_warm(c_smiles)
+                    if ik is not None:
+                        global_smiles_of.setdefault(ik, c_smiles)
 
     for i, root in enumerate(substrates):
         if i < next_idx:
@@ -405,21 +516,57 @@ def evaluate_matrix(
         if root_mol is None:
             continue
 
-        # Sample M forests; keep the SMILES for every produced InChIKey (needed for
+        # Sample forests; keep the SMILES for every produced InChIKey (needed for
         # diversity/tanimoto/scaffold metrics and for materializing the gflownet@K set).
+        #
+        # FIX A / D-03: in ablation mode ALL GFlowNet-family arms share ONE adaptive
+        # raw-draw discipline (draw until dedup_to_budget hits k_max distinct OR the
+        # SHARED raw_draw_cap_mult*k_max cap is hit) -- the gflownet arm's fixed
+        # `for _ in range(n_samples)` loop (<= n_samples raw draws, no retry/cap) is
+        # REPLACED for ablation mode ONLY, so the reference arm is not budget-starved
+        # vs the ablation baselines. `ablation_mode == "off"` keeps the ORIGINAL fixed
+        # loop byte-unchanged so the Phase 1/2 headline path never moves.
         sampled_sets: List[frozenset] = []
         best_log_r, best_state = None, None
+        gflownet_n_raw_draws = n_samples
         with torch.no_grad():
             trainer.reranker.eval()
-            for _ in range(n_samples):
-                state, _sum_log_pf, _post_add = trainer.sample_forest(root)
-                terminal = state.terminal_set()
-                sampled_sets.append(terminal)
-                log_r = set_coverage_logreward(
-                    terminal, annotated_ik, trainer.config.beta, getattr(trainer.config, "lam", 0.1)
-                )
-                if best_log_r is None or log_r > best_log_r:
-                    best_log_r, best_state = log_r, state
+            if ablation_mode == "off":
+                for _ in range(n_samples):
+                    state, _sum_log_pf, _post_add = trainer.sample_forest(root)
+                    terminal = state.terminal_set()
+                    sampled_sets.append(terminal)
+                    log_r = set_coverage_logreward(
+                        terminal, annotated_ik, trainer.config.beta, getattr(trainer.config, "lam", 0.1)
+                    )
+                    if best_log_r is None or log_r > best_log_r:
+                        best_log_r, best_state = log_r, state
+            else:
+                # Adaptive draw-to-k_max-or-shared-cap loop (D-03). The stopping check
+                # uses the COUNT of distinct terminal-set InChIKeys seen so far as a
+                # cheap, exact proxy for "distinct dedup_to_budget-eligible candidates":
+                # ``dedup_to_budget``'s match key for the default "inchikey_tautomer"
+                # protocol IS the tautomer InChIKey (the same identity space
+                # ``ForestState.terminal_set()`` already uses), so the eventual deduped-
+                # SMILES stream can have AT MOST this many distinct entries -- reaching
+                # k_max distinct InChIKeys here is both necessary and sufficient for the
+                # downstream dedup_to_budget(..., k=k_max) call to also reach k_max.
+                n_draws = 0
+                union_iks: set = set()
+                while n_draws < raw_draw_cap:
+                    state, _sum_log_pf, _post_add = trainer.sample_forest(root)
+                    terminal = state.terminal_set()
+                    sampled_sets.append(terminal)
+                    union_iks.update(terminal)
+                    log_r = set_coverage_logreward(
+                        terminal, annotated_ik, trainer.config.beta, getattr(trainer.config, "lam", 0.1)
+                    )
+                    if best_log_r is None or log_r > best_log_r:
+                        best_log_r, best_state = log_r, state
+                    n_draws += 1
+                    if len(union_iks) >= k_max:
+                        break
+                gflownet_n_raw_draws = n_draws
 
         # Reconstruct smiles for every InChIKey touched by any sampled forest via the
         # trainer's candidate cache (populated during sample_forest for root + all
@@ -486,6 +633,84 @@ def evaluate_matrix(
                 flush=True,
             )
 
+        # ablation01_union@{k} / ablation02_union@{k}: budget-matched union@K streams for
+        # the independent single-terminal (ABL-01) and ensemble single-terminal (ABL-02)
+        # baselines (D-03, D-04). Both call the SAME dedup_to_budget/union_at_k_curve as
+        # every other arm (D-05) -- no parallel truncation/coverage implementation -- and
+        # share the SAME raw_draw_cap as the gflownet arm above (FIX A / D-03).
+        ablation01_union_curve = None
+        ablation01_n_raw_draws = None
+        if ablation_mode == "single" and single_trainer is not None:
+            def _single_draw_fn():
+                with torch.no_grad():
+                    single_trainer.reranker.eval()
+                    state, _sum_log_pf, _post_add = single_trainer.sample_forest(root)
+                terminal = state.terminal_set()
+                _fold_new_cache_entries()  # fold this draw's newly-expanded states first
+                return [smiles_of[ik] for ik in terminal if ik in smiles_of]
+
+            ablation01_raw, ablation01_n_raw_draws = _draw_until_budget(
+                _single_draw_fn, k_max=k_max, cap=raw_draw_cap
+            )
+            ablation01_union_stream = dedup_to_budget(ablation01_raw, k=k_max)
+            if len(ablation01_union_stream) >= k_max:
+                ablation01_union_curve = union_at_k_curve(ablation01_union_stream, annotated_ik, ks=ks)
+            else:
+                print(
+                    f"[gflownet] WARNING: root={root!r} ablation01 union stream under-produces at "
+                    f"k_max={k_max} (got {len(ablation01_union_stream)} distinct candidates) -- "
+                    "skipping this substrate's ablation01_union@K row (shared raw-draw cap hit)",
+                    flush=True,
+                )
+
+        ablation02_union_curve = None
+        ablation02_n_raw_draws = None
+        if ablation_mode == "ensemble" and ensemble_trainers:
+            # D-04's ceil(k_max/M_ensemble)-per-member allocation (_round_robin_draw_counts)
+            # schedules the FIRST pass -- member 0 draws draw_counts[0] times, member 1
+            # draws draw_counts[1] times, etc, summing to >= k_max total raw draws, each
+            # member within 1 draw of every other. If the shared raw-draw cap allows further
+            # draws after that first pass (e.g. some members under-produce and dedup hasn't
+            # hit k_max distinct yet), the schedule CYCLES back through the SAME per-member
+            # allocation again rather than stopping -- so a mode-collapsed member does not
+            # stall the whole draw loop; it just contributes fewer distinct candidates per
+            # pass while still getting drawn from at the SAME even cadence.
+            draw_counts = _round_robin_draw_counts(k_max, len(ensemble_trainers))
+            first_pass_schedule = [
+                m for m, cnt in enumerate(draw_counts) for _ in range(cnt)
+            ] or list(range(len(ensemble_trainers)))
+
+            def _member_cycle():
+                while True:
+                    for m in first_pass_schedule:
+                        yield m
+
+            _member_iter = _member_cycle()
+
+            def _ensemble_draw_fn():
+                member_idx = next(_member_iter)
+                trainer_i = ensemble_trainers[member_idx]
+                with torch.no_grad():
+                    trainer_i.reranker.eval()  # FIX F: restated for EVERY member
+                    state, _sum_log_pf, _post_add = trainer_i.sample_forest(root)
+                terminal = state.terminal_set()
+                _fold_new_cache_entries()  # fold this draw's newly-expanded states first
+                return [smiles_of[ik] for ik in terminal if ik in smiles_of]
+
+            ablation02_raw, ablation02_n_raw_draws = _draw_until_budget(
+                _ensemble_draw_fn, k_max=k_max, cap=raw_draw_cap
+            )
+            ablation02_union_stream = dedup_to_budget(ablation02_raw, k=k_max)
+            if len(ablation02_union_stream) >= k_max:
+                ablation02_union_curve = union_at_k_curve(ablation02_union_stream, annotated_ik, ks=ks)
+            else:
+                print(
+                    f"[gflownet] WARNING: root={root!r} ablation02 union stream under-produces at "
+                    f"k_max={k_max} (got {len(ablation02_union_stream)} distinct candidates) -- "
+                    "skipping this substrate's ablation02_union@K row (shared raw-draw cap hit)",
+                    flush=True,
+                )
+
         row: Dict[str, object] = {
             "gflownet_recall": gflownet_recall_val,
             "reranker_recall": reranker_recall_val,
@@ -497,6 +722,14 @@ def evaluate_matrix(
             row["gflownet_union_curve"] = gflownet_union_curve
         if reranker_union_curve is not None:
             row["reranker_union_curve"] = reranker_union_curve
+        if ablation_mode != "off":
+            row["gflownet_n_raw_draws"] = gflownet_n_raw_draws
+        if ablation01_union_curve is not None:
+            row["ablation01_union_curve"] = ablation01_union_curve
+            row["ablation01_n_raw_draws"] = ablation01_n_raw_draws
+        if ablation02_union_curve is not None:
+            row["ablation02_union_curve"] = ablation02_union_curve
+            row["ablation02_n_raw_draws"] = ablation02_n_raw_draws
         completed_rows[root] = row
 
         if resume_path and (i + 1) % eval_ckpt_every == 0:
@@ -514,12 +747,26 @@ def evaluate_matrix(
     reranker_recall = [r["reranker_recall"] for r in rows]
     beam_recall = [r["beam_recall"] for r in rows if "beam_recall" in r]
     diversity_rows = [r["diversity"] for r in rows]
-    gflownet_union_curves = [
-        {int(k): v for k, v in r["gflownet_union_curve"].items()} for r in rows if "gflownet_union_curve" in r
-    ]
-    reranker_union_curves = [
-        {int(k): v for k, v in r["reranker_union_curve"].items()} for r in rows if "reranker_union_curve" in r
-    ]
+
+    # Per-substrate curve maps (root -> {k: value}), keyed by substrate so the shared-
+    # substrate-set restriction below (D-04b) can intersect them by key, not just zip by
+    # position (rows may have skipped DIFFERENT substrates for different arms).
+    gflownet_curves_by_root: Dict[str, Dict[int, float]] = {
+        root: {int(k): v for k, v in row["gflownet_union_curve"].items()}
+        for root, row in completed_rows.items() if "gflownet_union_curve" in row
+    }
+    reranker_curves_by_root: Dict[str, Dict[int, float]] = {
+        root: {int(k): v for k, v in row["reranker_union_curve"].items()}
+        for root, row in completed_rows.items() if "reranker_union_curve" in row
+    }
+    ablation01_curves_by_root: Dict[str, Dict[int, float]] = {
+        root: {int(k): v for k, v in row["ablation01_union_curve"].items()}
+        for root, row in completed_rows.items() if "ablation01_union_curve" in row
+    }
+    ablation02_curves_by_root: Dict[str, Dict[int, float]] = {
+        root: {int(k): v for k, v in row["ablation02_union_curve"].items()}
+        for root, row in completed_rows.items() if "ablation02_union_curve" in row
+    }
 
     metrics: Dict[str, float] = {
         "n_substrates": float(n_evaluated),
@@ -534,18 +781,55 @@ def evaluate_matrix(
     ):
         metrics[key] = _mean([row[key] for row in diversity_rows])
 
-    # gflownet_union@{k} / reranker_union@{k} (D-EVAL01-SEMANTICS): mean-over-substrates of
-    # each method's per-substrate union@K curve, plus a union_at_k_auc summary per series via
-    # the shared auc_of_curve (D-EVAL02-AUCNORM). Curves that were skipped for a given
-    # substrate (under-production guard above) are simply absent from that substrate's
-    # contribution to the mean, matching _mean's existing "skip empty" convention.
-    for series_name, curves in (("gflownet", gflownet_union_curves), ("reranker", reranker_union_curves)):
+    # FIX A (D-04b/D-05): the GFlowNet-family arms (gflownet/ablation01/ablation02, whichever
+    # ran) must have their *_union@{k}/*_union_at_k_auc computed over the IDENTICAL
+    # (intersected) surviving-substrate set -- NOT each arm's own private survivor population
+    # -- so a differential-missingness confound (arms mode-collapsing on DIFFERENT
+    # substrates) cannot silently invalidate the head-to-head verdict. The reranker series is
+    # NOT part of the GFlowNet-family comparison (not part of the ABL-03 verdict) and keeps
+    # its existing full-survivor mean, unrestricted.
+    gflownet_family_curves: Dict[str, Dict[str, Dict[int, float]]] = {"gflownet": gflownet_curves_by_root}
+    if ablation01_curves_by_root:
+        gflownet_family_curves["ablation01"] = ablation01_curves_by_root
+    if ablation02_curves_by_root:
+        gflownet_family_curves["ablation02"] = ablation02_curves_by_root
+
+    if len(gflownet_family_curves) > 1:
+        # Multiple GFlowNet-family arms ran (ablation mode) -- restrict ALL of them to the
+        # shared surviving-substrate intersection before averaging.
+        shared_substrates = _shared_substrate_survivors(gflownet_family_curves)
+    else:
+        # Only the plain gflownet arm ran (ablation_mode == "off") -- no restriction needed;
+        # this is the byte-unchanged Phase 1/2 headline path's own full-survivor set.
+        shared_substrates = set(gflownet_curves_by_root.keys())
+
+    for series_name, curves_by_root in gflownet_family_curves.items():
+        restricted = {
+            root: curve for root, curve in curves_by_root.items() if root in shared_substrates
+        }
+        curves = list(restricted.values())
         for k in ks:
             metrics[f"{series_name}_union@{k}"] = _mean([c[k] for c in curves if k in c])
         auc_values = [auc_of_curve(c, k_min=min(ks), k_max=k_max) for c in curves]
         metrics[f"{series_name}_union_at_k_auc"] = _mean(auc_values)
-    # Single unqualified `union_at_k_auc` summary (mean over both series) for a simple
+        # Per-arm skip count: substrates where this arm produced a curve but was excluded
+        # from the shared intersection (under-produced for a DIFFERENT arm), surfaced
+        # rather than hidden, per D-04b.
+        metrics[f"{series_name}_n_skipped"] = float(len(curves_by_root) - len(restricted))
+
+    # reranker_union@{k} (D-EVAL01-SEMANTICS): mean-over-substrates of the reranker's own
+    # per-substrate union@K curve over its OWN full survivor set (not restricted to the
+    # GFlowNet-family intersection -- it is not part of the ablation verdict).
+    reranker_curves = list(reranker_curves_by_root.values())
+    for k in ks:
+        metrics[f"reranker_union@{k}"] = _mean([c[k] for c in reranker_curves if k in c])
+    reranker_auc_values = [auc_of_curve(c, k_min=min(ks), k_max=k_max) for c in reranker_curves]
+    metrics["reranker_union_at_k_auc"] = _mean(reranker_auc_values)
+
+    # Single unqualified `union_at_k_auc` summary (mean over gflownet + reranker) for a simple
     # top-line aggregate_seeds.py DIVERSITY_KEYS entry, alongside the per-series variants.
+    # Deliberately excludes ablation01/ablation02 (an ablation-only concept) so this combined
+    # scalar's meaning is unchanged from the Phase 1/2 headline path.
     metrics["union_at_k_auc"] = _mean(
         [metrics[f"{s}_union_at_k_auc"] for s in ("gflownet", "reranker") if f"{s}_union_at_k_auc" in metrics]
     )
