@@ -38,6 +38,14 @@ mechanisms unchanged -- ``--resume-ckpt`` (per-epoch training resume) and
 ``modal_m2.py::run_m2``'s ``if os.path.exists(out): skip``), so an interrupted local run
 resumes without re-doing completed work.
 
+The planning/selection/verdict logic (beta-prime scoring, margin/sensitivity-grid
+computation, per-substrate paired-array extraction, final report assembly) now lives in
+``grail_metabolism/ablation_plan.py`` -- a shared, dataset-free, Modal-import-free
+module also used by ``scripts/modal_ablation.py`` (the PARALLEL Modal orchestrator that
+un-defers the Modal task this script's docstring used to say was unavailable). This
+script keeps its own path/subprocess/CLI plumbing (the LOCAL sequential execution
+strategy); only the pure arithmetic was factored out. Behavior is unchanged.
+
 Usage (FULL scale -- see 03-03-SUMMARY.md for the exact copy-pasteable command):
   python scripts/run_ablation_local.py --train-substrates 300 --test-substrates 100 \\
       --epochs 15 --m-ensemble 3 --beta-prime-grid 2 4 6 8 10 --seeds 0 1 2
@@ -62,16 +70,21 @@ RUN_GFLOWNET = ROOT / "scripts" / "run_gflownet.py"
 
 sys.path.insert(0, str(ROOT))
 
+from grail_metabolism.ablation_plan import (  # noqa: E402
+    K_MAX,
+    KS,
+    compute_delta_sensitivity_grid,
+    degeneracy_guarded_margin,
+    mean_std,
+    per_substrate_aucs as _per_substrate_aucs_from_dict,
+    pick_beta_prime,
+)
 from grail_metabolism.eval.diversity import (  # noqa: E402
     assert_config_match,
-    auc_of_curve,
-    compute_ablation_verdict,
     paired_bootstrap_delta_ci,
 )
 
 DEFAULT_ARTIFACTS_DIR = ROOT / "artifacts" / "ablation_local"
-KS = (5, 10, 15, 20, 30, 50)
-K_MAX = max(KS)
 
 
 def _fixed_args(
@@ -183,43 +196,10 @@ def sweep_beta_prime(
     return scores
 
 
-def pick_beta_prime(scores: Dict[float, Optional[float]]) -> float:
-    """Pick the VAL-better beta-prime (max ablation01 union@K AUC); apply the D-10
-    endpoint-widen check as a printed WARNING (the actual widen is a human follow-up
-    action, not auto-executed -- widening requires re-running the sweep with new grid
-    points, which is out of scope for a pure selection function)."""
-    valid = {bp: v for bp, v in scores.items() if v is not None}
-    if not valid:
-        raise RuntimeError("pick_beta_prime: no valid beta-prime scores (all runs failed/dry-run)")
-    best = max(valid, key=lambda bp: valid[bp])
-    grid_sorted = sorted(valid)
-    if len(grid_sorted) >= 2 and best in (grid_sorted[0], grid_sorted[-1]):
-        print(
-            f"[run_ablation_local] WARNING (D-10 endpoint-widen criterion): best beta_prime="
-            f"{best} is at a GRID ENDPOINT ({grid_sorted[0]}..{grid_sorted[-1]}) -- the true "
-            "optimum may lie outside the sampled range. Widen the grid before trusting the "
-            "verdict if this is the full sweep.",
-            flush=True,
-        )
-    return best
-
-
-def _per_substrate_aucs(eval_ckpt_path: Path, series: str) -> Dict[str, float]:
-    """Read a --resume-eval-ckpt JSON and compute {root: union_at_k_auc} for one series
-    (e.g. "gflownet", "ablation01", "ablation02") from its per-substrate union curves.
-    This is the ONLY place per-substrate (not mean-aggregated) numbers are available --
-    result['metrics'] only carries the already-averaged scalar."""
-    with open(eval_ckpt_path) as fh:
-        ckpt = json.load(fh)
-    rows = ckpt.get("rows", {})
-    out: Dict[str, float] = {}
-    curve_key = f"{series}_union_curve"
-    for root, row in rows.items():
-        if curve_key not in row:
-            continue
-        curve = {int(k): v for k, v in row[curve_key].items()}
-        out[root] = auc_of_curve(curve, k_min=min(KS), k_max=K_MAX)
-    return out
+# pick_beta_prime, compute_delta_sensitivity_grid, degeneracy_guarded_margin are now
+# imported from grail_metabolism.ablation_plan (shared with scripts/modal_ablation.py).
+# _mean_std is replaced by the imported mean_std below.
+_mean_std = mean_std
 
 
 def paired_arrays(
@@ -230,44 +210,20 @@ def paired_arrays(
     seed's test-touch run in this runner's design, so the shared-substrate-set
     restriction from D-04b already applies within one run; when the two arms come from
     DIFFERENT seed invocations, this additionally intersects by root SMILES so pairing
-    stays valid)."""
-    gflownet_aucs = _per_substrate_aucs(gflownet_eval_ckpt, "gflownet")
-    abl_aucs = _per_substrate_aucs(abl_eval_ckpt, abl_series)
+    stays valid).
+
+    Reads the two JSON files from disk then delegates the pure per-substrate-AUC
+    extraction to ``grail_metabolism.ablation_plan.per_substrate_aucs`` (the shared,
+    I/O-free function also used by ``scripts/modal_ablation.py``, which reads its
+    eval checkpoints off a downloaded Modal Volume snapshot instead of local disk)."""
+    with open(gflownet_eval_ckpt) as fh:
+        gflownet_ckpt = json.load(fh)
+    with open(abl_eval_ckpt) as fh:
+        abl_ckpt = json.load(fh) if abl_eval_ckpt != gflownet_eval_ckpt else gflownet_ckpt
+    gflownet_aucs = _per_substrate_aucs_from_dict(gflownet_ckpt, "gflownet")
+    abl_aucs = _per_substrate_aucs_from_dict(abl_ckpt, abl_series)
     shared_roots = sorted(set(gflownet_aucs) & set(abl_aucs))
     return [gflownet_aucs[r] for r in shared_roots], [abl_aucs[r] for r in shared_roots]
-
-
-def compute_delta_sensitivity_grid(
-    gflownet_auc: float, abl01_auc: float, abl02_auc: float, std: float,
-) -> Dict[str, str]:
-    """SENSITIVITY grid (D-11): the seed-level compute_ablation_verdict's outcome across
-    {0.5x, 1.0x, 1.5x}xstd plus the fixed degeneracy-fallback margin=0.02, applied when
-    std < 0.005 or std/mean(gflownet_auc) implies CV > 1.0 (D-11 degeneracy guard)."""
-    grid: Dict[str, str] = {}
-    for mult in (0.5, 1.0, 1.5):
-        margin = mult * std
-        grid[f"{mult}x_std"] = compute_ablation_verdict(gflownet_auc, abl01_auc, abl02_auc, margin=margin)
-    grid["fixed_0.02"] = compute_ablation_verdict(gflownet_auc, abl01_auc, abl02_auc, margin=0.02)
-    return grid
-
-
-def degeneracy_guarded_margin(std: float, mean_auc: float, floor: float = 0.005, cv_bound: float = 1.0) -> float:
-    """D-11 pre-registered degeneracy fallback: use the fixed Delta=0.02 when the 3-seed
-    std is below an absolute floor OR its coefficient of variation exceeds cv_bound."""
-    cv = (std / mean_auc) if mean_auc else float("inf")
-    if std < floor or cv > cv_bound:
-        return 0.02
-    return 1.0 * std
-
-
-def _mean_std(xs: Sequence[float]) -> "tuple[float, float]":
-    import statistics
-
-    if not xs:
-        return 0.0, 0.0
-    mean = statistics.fmean(xs)
-    std = statistics.pstdev(xs) if len(xs) > 1 else 0.0
-    return mean, std
 
 
 def main() -> None:
