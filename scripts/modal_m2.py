@@ -150,8 +150,14 @@ def run_m2(seeds=(0, 1, 2)):
         # its last completed epoch instead of restarting training at 0. This closes the gap the
         # env cache didn't: a preemption used to lose the whole multi-hour GNN training.
         ckpt = f"artifacts/reranker_gate_cache/gflownet_m2_test_seed{seed}.ckpt.pt"
+        # Per-seed EVAL checkpoint: --resume-eval-ckpt resumes the per-SUBSTRATE eval loop
+        # (evaluate_matrix), distinct from the per-epoch training resume above -- a preemption
+        # during the ~100-substrate eval resumes mid-eval instead of restarting at substrate 0.
+        # Seed-keyed (like the training ckpt) so a seed-0 partial eval is never loaded by seed 1.
+        eval_ckpt = f"artifacts/reranker_gate_cache/gflownet_m2_eval_seed{seed}.ckpt.json"
         cmd = [sys.executable, "-u", "scripts/run_gflownet.py", *M2_ARGS,
-               "--seed", str(seed), "--out", out, "--resume-ckpt", ckpt]
+               "--seed", str(seed), "--out", out, "--resume-ckpt", ckpt,
+               "--resume-eval-ckpt", eval_ckpt]
         print(f"\n===== GRAIL M2 seed {seed} =====\n{' '.join(cmd)}\n", flush=True)
         subprocess.run(cmd, check=True)
         art_vol.commit()   # persist caches + this seed's results before the next seed
