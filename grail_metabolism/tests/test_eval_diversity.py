@@ -11,6 +11,8 @@ RDKit-version-independent.
 
 from __future__ import annotations
 
+import json
+import os
 import re
 from pathlib import Path
 
@@ -330,3 +332,197 @@ def test_aggregate_seeds_picks_up_new_keys(tmp_path):
     assert "modes_discovered" in diversity_keys
     md_vals = [r["metrics"]["modes_discovered"] for r in runs]
     assert md_vals == [2.0, 3.0]
+
+
+# ---------------------------------------------------------------------------
+# Phase 1 Plan 03 guard tests: EVAL-06 per-substrate eval-checkpoint resume
+# equivalence, corrupt-checkpoint-ignored, and stale-config-fingerprint-discarded.
+# ---------------------------------------------------------------------------
+
+
+def _fake_process_substrate(root: str) -> dict:
+    """A tiny, deterministic stand-in for one substrate's evaluate_matrix body: a pure
+    function of ``root`` (no randomness, no model calls) so uninterrupted vs.
+    checkpoint-then-resume runs are trivially comparable without pulling in the model
+    stack."""
+    n = len(root)
+    return {
+        "gflownet_recall": (n % 5) / 5.0,
+        "reranker_recall": (n % 3) / 3.0,
+        "diversity": {
+            "modes_discovered": float(n % 4),
+            "mean_pairwise_tanimoto": 0.5,
+            "n_unique_scaffolds": float(n % 2 + 1),
+            "set_size_calibration": 0.0,
+            "circles@t0.4": float(n % 3),
+            "circles@t0.7": float(n % 2),
+        },
+    }
+
+
+class _BoomOnCall:
+    """Callable stub that raises AssertionError if invoked -- used to prove a resumed run
+    does NOT recompute already-checkpointed substrates (mirrors test_set_gflownet.py's
+    _BoomGen pattern, generalized to a plain callable rather than a generator stub)."""
+
+    def __call__(self, root: str) -> dict:
+        raise AssertionError(f"must not recompute already-completed substrate {root!r}")
+
+
+def _run_eval_loop(substrates, resume_path, eval_ckpt_every, config_fingerprint, process_fn=None):
+    """Minimal stand-in for evaluate_matrix's per-substrate loop body, built directly on
+    top of the real _load_eval_ckpt/_save_eval_ckpt helpers under test -- exercises the
+    exact resume/skip/checkpoint-interval logic evaluate_matrix uses, without needing the
+    torch/model stack."""
+    import scripts.run_gflownet as rg
+
+    completed_rows, next_idx = rg._load_eval_ckpt(resume_path, config_fingerprint)
+    for i, root in enumerate(substrates):
+        if i < next_idx:
+            continue
+        fn = process_fn if process_fn is not None else _fake_process_substrate
+        completed_rows[root] = fn(root)
+        if resume_path and (i + 1) % eval_ckpt_every == 0:
+            rg._save_eval_ckpt(resume_path, config_fingerprint, completed_rows, i + 1)
+    if resume_path:
+        rg._save_eval_ckpt(resume_path, config_fingerprint, completed_rows, len(substrates))
+    return completed_rows
+
+
+def _aggregate(rows: dict) -> dict:
+    """Order-independent aggregation mirroring evaluate_matrix's final _mean(...) step
+    (D-EVAL06-SCHEMA: aggregation runs over completed_rows.values(), not append order)."""
+    values = list(rows.values())
+    n = len(values)
+    return {
+        "n_substrates": float(n),
+        "gflownet_recall": sum(v["gflownet_recall"] for v in values) / n,
+        "reranker_recall": sum(v["reranker_recall"] for v in values) / n,
+        "modes_discovered": sum(v["diversity"]["modes_discovered"] for v in values) / n,
+    }
+
+
+def test_evaluate_matrix_resume_produces_identical_final_metrics(tmp_path):
+    """EVAL-06 guard (1)+(2): a run over N tiny substrates uninterrupted produces the SAME
+    final aggregated metrics as a run checkpointed after N/2 and resumed, AND the resumed
+    run does not recompute already-completed substrates (a _BoomOnCall stub would fail the
+    test if it were called for one of them)."""
+    substrates = [f"C{'C' * i}O" for i in range(10)]  # 10 distinct, deterministic "SMILES"
+    fingerprint = "fp-v1"
+
+    # Uninterrupted: no resume_path, single pass.
+    uninterrupted_rows = _run_eval_loop(substrates, resume_path=None, eval_ckpt_every=10,
+                                          config_fingerprint=fingerprint)
+    uninterrupted_metrics = _aggregate(uninterrupted_rows)
+
+    # Split: checkpoint written after substrate 5 (N/2), then resumed to completion.
+    ckpt = str(tmp_path / "eval_seed0.ckpt.json")
+    half = substrates[:5]
+    _run_eval_loop(half, resume_path=ckpt, eval_ckpt_every=5, config_fingerprint=fingerprint)
+    assert os.path.exists(ckpt), "a checkpoint must be written after 5 substrates (eval_ckpt_every=5)"
+
+    # Resume: process the FULL substrate list, but the first 5 substrates must be served
+    # from the checkpoint (never recomputed) -- prove it with a boom-on-call stub gated to
+    # only the first-5 roots.
+    boom = _BoomOnCall()
+
+    def _guarded_process(root: str) -> dict:
+        if root in half:
+            boom(root)  # would raise if a checkpointed substrate is recomputed
+        return _fake_process_substrate(root)
+
+    resumed_rows = _run_eval_loop(substrates, resume_path=ckpt, eval_ckpt_every=10,
+                                    config_fingerprint=fingerprint, process_fn=_guarded_process)
+    resumed_metrics = _aggregate(resumed_rows)
+
+    assert resumed_metrics == uninterrupted_metrics, (
+        "resumed final aggregated metrics must be IDENTICAL to an uninterrupted run "
+        "(order-independent aggregation over completed_rows.values())"
+    )
+    assert set(resumed_rows.keys()) == set(substrates)
+
+
+def test_eval_checkpoint_ignores_corrupt_file(tmp_path):
+    """EVAL-06 guard (3): a corrupt/unreadable eval checkpoint must be IGNORED (start
+    fresh from substrate 0), never crash the run -- mirrors
+    test_train_checkpoint_ignores_corrupt_file's guard for the training checkpoint."""
+    import scripts.run_gflownet as rg
+
+    bad = tmp_path / "eval_seed0.ckpt.json"
+    bad.write_bytes(b"not valid json{{{")
+
+    rows, next_idx = rg._load_eval_ckpt(str(bad), "any-fingerprint")
+    assert rows == {}
+    assert next_idx == 0
+
+    # And the loop-level helper proceeds without crashing, recomputing everything.
+    substrates = ["CCO", "CCCO", "CCCCO"]
+    result = _run_eval_loop(substrates, resume_path=str(bad), eval_ckpt_every=10,
+                              config_fingerprint="any-fingerprint")
+    assert set(result.keys()) == set(substrates)
+
+
+def test_eval_checkpoint_discards_stale_config_fingerprint(tmp_path):
+    """EVAL-06 guard (4) / FIX 6: a checkpoint written under one config_fingerprint must be
+    DISCARDED (not blended) when loaded under a DIFFERENT fingerprint -- the run restarts
+    from substrate 0 and every row is recomputed under the new config, rather than the old
+    checkpoint's stale rows silently leaking through."""
+    import scripts.run_gflownet as rg
+
+    ckpt = str(tmp_path / "eval_seed0.ckpt.json")
+    substrates = ["CCO", "CCCO", "CCCCO", "CCCCCO"]
+
+    old_fingerprint = rg._eval_config_fingerprint(
+        max_size=10, ks=(5, 10, 15, 20, 30, 50), n_samples=32, top_k=200, max_pool=100,
+    )
+    # A materially different config (max_size changed) must hash to a DIFFERENT fingerprint.
+    new_fingerprint = rg._eval_config_fingerprint(
+        max_size=15, ks=(5, 10, 15, 20, 30, 50), n_samples=32, top_k=200, max_pool=100,
+    )
+    assert old_fingerprint != new_fingerprint
+
+    # Write a checkpoint under the OLD config, fully complete.
+    _run_eval_loop(substrates, resume_path=ckpt, eval_ckpt_every=10,
+                    config_fingerprint=old_fingerprint)
+    rows_old, next_idx_old = rg._load_eval_ckpt(ckpt, old_fingerprint)
+    assert next_idx_old == len(substrates)
+    assert set(rows_old.keys()) == set(substrates)
+
+    # Loading the SAME file under the NEW (current-run) fingerprint must discard it entirely.
+    rows_new, next_idx_new = rg._load_eval_ckpt(ckpt, new_fingerprint)
+    assert rows_new == {}
+    assert next_idx_new == 0
+
+    # And re-running under the new fingerprint recomputes every substrate from scratch
+    # (proving the stale rows are never blended into the new-config aggregation).
+    recomputed = _run_eval_loop(substrates, resume_path=ckpt, eval_ckpt_every=10,
+                                  config_fingerprint=new_fingerprint)
+    assert set(recomputed.keys()) == set(substrates)
+
+    # The file on disk now carries the NEW fingerprint (overwritten, not merged).
+    with open(ckpt) as fh:
+        saved = json.load(fh)
+    assert saved["config_fingerprint"] == new_fingerprint
+
+
+def test_eval_config_fingerprint_stable_and_sensitive():
+    """The fingerprint must be a pure, deterministic function of its inputs (same inputs ->
+    same hash across calls) AND sensitive to each of the fields the plan requires it to
+    cover (max_size, ks, n_samples, top_k, max_pool, circles thresholds)."""
+    import scripts.run_gflownet as rg
+
+    base = dict(max_size=10, ks=(5, 10, 15, 20, 30, 50), n_samples=32, top_k=200, max_pool=100)
+    fp_base = rg._eval_config_fingerprint(**base)
+    assert rg._eval_config_fingerprint(**base) == fp_base  # deterministic
+
+    variants = [
+        {**base, "max_size": 11},
+        {**base, "ks": (5, 10, 15, 20, 30)},
+        {**base, "n_samples": 33},
+        {**base, "top_k": 201},
+        {**base, "max_pool": 101},
+    ]
+    for variant in variants:
+        assert rg._eval_config_fingerprint(**variant) != fp_base
+
+    assert rg._eval_config_fingerprint(**base, circles_thresholds=(0.3, 0.7)) != fp_base
