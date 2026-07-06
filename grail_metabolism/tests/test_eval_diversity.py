@@ -267,6 +267,81 @@ def test_paired_bootstrap_delta_ci_rejects_length_mismatch_and_empty():
         diversity.paired_bootstrap_delta_ci([], [], n_boot=100)
 
 
+def _base_config(**overrides):
+    cfg = {
+        "train_substrates_requested": 300,
+        "eval_split": "test",
+        "eval_substrates_requested": 100,
+        "beta": 6.0,
+        "lam": 0.1,
+        "max_depth": 2,
+        "max_size": 10,
+        "top_k": 50,
+        "epochs": 15,
+        "n_samples": 4,
+        "bootstrap": False,
+        "rerank_epochs": 15,
+        "bootstrap_epochs": 5,
+        "ablation_mode": "off",
+        "beta_prime": 6.0,
+        "m_ensemble": 3,
+        "raw_draw_cap_mult": 10,
+        "verdict_margin": 0.02,
+    }
+    cfg.update(overrides)
+    return cfg
+
+
+def test_assert_config_match_passes_when_only_allowed_fields_differ():
+    configs = {
+        "gflownet": _base_config(ablation_mode="off"),
+        "ablation01": _base_config(ablation_mode="single", beta_prime=8.0, max_size=1, seed=0),
+        "ablation02": _base_config(ablation_mode="ensemble", beta_prime=8.0, max_size=1, seed=1, m_ensemble=3),
+    }
+    diversity.assert_config_match(configs)  # must not raise
+
+
+def test_assert_config_match_fails_on_train_substrates_drift():
+    configs = {
+        "gflownet": _base_config(train_substrates_requested=300),
+        "ablation01": _base_config(train_substrates_requested=150),
+    }
+    import pytest
+
+    with pytest.raises(ValueError, match="train_substrates_requested"):
+        diversity.assert_config_match(configs)
+
+
+def test_assert_config_match_fails_on_silent_eval_split_drift():
+    # The FIX-C motivating case: an --eval-split val left on one arm while the other
+    # two touched test.
+    configs = {
+        "gflownet": _base_config(eval_split="test"),
+        "ablation01": _base_config(eval_split="test"),
+        "ablation02": _base_config(eval_split="val"),
+    }
+    import pytest
+
+    with pytest.raises(ValueError, match="eval_split"):
+        diversity.assert_config_match(configs)
+
+
+def test_assert_config_match_fails_on_missing_key():
+    configs = {
+        "gflownet": _base_config(),
+        "ablation01": {k: v for k, v in _base_config().items() if k != "epochs"},
+    }
+    import pytest
+
+    with pytest.raises(ValueError, match="epochs"):
+        diversity.assert_config_match(configs)
+
+
+def test_assert_config_match_noop_on_single_or_empty_config():
+    diversity.assert_config_match({})
+    diversity.assert_config_match({"gflownet": _base_config()})
+
+
 # ---------------------------------------------------------------------------
 # Phase 1 Plan 02 guard tests: budget-matching / JSON-key-stability /
 # reranker-pretruncation / aggregate_seeds.py key-detection.

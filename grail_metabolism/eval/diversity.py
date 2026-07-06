@@ -248,6 +248,56 @@ def paired_bootstrap_delta_ci(
     }
 
 
+# The only fields the three test-touch arms (gflownet / ablation01 / ablation02) are
+# PERMITTED to differ on (FIX C, D-11). Everything else in ``result["config"]`` must be
+# byte-identical across the three test-touch runs -- a silent flag drift (e.g. an
+# ``--eval-split val`` left on one arm, or a different ``--train-substrates``) would make
+# the final three-way table non-comparable without this gate catching it mechanically.
+ALLOWED_CONFIG_DRIFT_FIELDS = frozenset({"ablation_mode", "beta", "beta_prime", "max_size", "seed"})
+
+
+def assert_config_match(
+    configs: Dict[str, Dict[str, object]],
+    allowed_drift_fields: Iterable[str] = ALLOWED_CONFIG_DRIFT_FIELDS,
+) -> None:
+    """FIX C (D-11) automated test-touch config-match gate.
+
+    ``configs`` maps an arm label (e.g. ``"gflownet"``, ``"ablation01"``, ``"ablation02"``)
+    to that arm's ``result["config"]`` dict (as written by ``scripts/run_gflownet.py``).
+    Diffs every pair of arms' config dicts and raises ``ValueError`` if any key OUTSIDE
+    ``allowed_drift_fields`` differs in value (or is present in one config but not
+    another) between any two arms -- replacing a bare human prose check with a mechanical
+    assertion that train-substrates, top_k, epochs, rerank-epochs, bootstrap flags, and the
+    test-substrate count/split are byte-identical across every test-touch run.
+
+    Pure function: no I/O, no globals. Raises on the FIRST mismatch found (deterministic
+    iteration order over ``sorted(configs)``) with a message naming the offending arms,
+    key, and both values, so a CI failure is immediately actionable.
+    """
+    labels = sorted(configs)
+    if len(labels) < 2:
+        return  # nothing to compare
+    allowed = set(allowed_drift_fields)
+    base_label = labels[0]
+    base_config = configs[base_label]
+    for other_label in labels[1:]:
+        other_config = configs[other_label]
+        all_keys = set(base_config) | set(other_config)
+        for key in sorted(all_keys):
+            if key in allowed:
+                continue
+            base_val = base_config.get(key, "<MISSING>")
+            other_val = other_config.get(key, "<MISSING>")
+            if base_val != other_val:
+                raise ValueError(
+                    f"assert_config_match: FAIL -- '{key}' differs between "
+                    f"'{base_label}' ({base_val!r}) and '{other_label}' ({other_val!r}), "
+                    f"but '{key}' is not in the allowed-drift set {sorted(allowed)}. "
+                    "The three test-touch arms must be byte-identical outside "
+                    "ablation_mode/beta/beta_prime/max_size/seed."
+                )
+
+
 def modes_discovered_canonical(
     sampled_smiles: Sequence[str],
     reward_fn: Callable[[str], float],
