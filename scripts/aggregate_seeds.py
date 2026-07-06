@@ -11,10 +11,17 @@ This is the headline format the methodology asks for (mean±std over >=3 seeds).
 
 The two JSON shapes differ (different series names, and the gflownet shape uses a single
 k tied to ``--max-size`` rather than the fixed {5,10,12,15} of the gate). Rather than
-hardcode either shape, this script auto-detects every ``{series}_recall@{k}`` key present
-across the loaded runs (regex ``^(?P<series>.+)_recall@(?P<k>\\d+)$``) and aggregates
-whatever it finds, so both shapes -- and any future one following the same naming
-convention -- work unchanged.
+hardcode either shape, this script auto-detects every ``{series}_recall@{k}``/``{series}_
+union@{k}`` key present across the loaded runs (regex ``^(?P<series>.+)_(?:recall|union)@
+(?P<k>\\d+)$``) and aggregates whatever it finds, so both shapes -- and any future one
+following the same naming convention -- work unchanged.
+
+Additionally (Phase 1 Plan 02, additive-only per D-EVAL05-JSONKEY): ``gflownet_union@{k}``/
+``reranker_union@{k}`` co-primary keys (budget-matched union@K curve rows) are aggregated
+through the SAME series/k path as ``_recall@{k}``, and ``circles@t0.4``/``circles@t0.7``/
+``union_at_k_auc`` are added to ``DIVERSITY_KEYS``. The existing ``modes_discovered`` key
+and ``_recall@{k}`` handling are left byte-stable -- this is purely additive so no
+historical M2 aggregate output changes.
 
 Usage:
   # default: every test-split gate json under results/
@@ -41,20 +48,29 @@ except ImportError:  # pragma: no cover
 
 ROOT = Path(__file__).resolve().parents[1]
 
-# Matches any "<series>_recall@<k>" metric key, e.g. "reranker_recall@15",
-# "gflownet_recall@15", "generator_recall@5". Series names are free-form (may contain
-# underscores themselves, e.g. a future "beam_search_recall@15" would parse as
-# series="beam_search", k=15).
-RECALL_KEY_RE = re.compile(r"^(?P<series>.+)_recall@(?P<k>\d+)$")
+# Matches any "<series>_recall@<k>" OR "<series>_union@<k>" metric key, e.g.
+# "reranker_recall@15", "gflownet_recall@15", "generator_recall@5",
+# "gflownet_union@30", "reranker_union@50" (Phase 1 Plan 02's budget-matched union@K curve
+# rows -- additive, aggregated through the SAME series/k path as the pre-existing
+# "_recall@{k}" keys so the recall behavior stays byte-identical). Series names are
+# free-form (may contain underscores themselves, e.g. a future "beam_search_recall@15"
+# would parse as series="beam_search", k=15).
+RECALL_KEY_RE = re.compile(r"^(?P<series>.+)_(?:recall|union)@(?P<k>\d+)$")
 
 # Non-recall scalar metrics worth aggregating mean±std when present (currently only
 # emitted by run_gflownet.py's diversity block, but any run's ``metrics`` dict may add
 # more scalars later -- anything here that's missing from a run is simply skipped).
+# circles@t0.4 / circles@t0.7 / union_at_k_auc are Phase 1 Plan 02's additive co-primary
+# keys (D-EVAL03-CIRCLESKEYS / D-EVAL02-AUCNORM); modes_discovered and the original three
+# stay untouched.
 DIVERSITY_KEYS = (
     "modes_discovered",
     "mean_pairwise_tanimoto",
     "n_unique_scaffolds",
     "set_size_calibration",
+    "circles@t0.4",
+    "circles@t0.7",
+    "union_at_k_auc",
 )
 
 
@@ -69,12 +85,24 @@ def _load(paths: list[str]) -> list[dict]:
 
 
 def _detect_series_k(runs: list[dict]) -> tuple[list[str], dict[str, list[int]], dict[str, set]]:
-    """Scan every run's ``metrics`` dict for ``{series}_recall@{k}`` keys.
+    """Scan every run's ``metrics`` dict for ``{series}_recall@{k}`` (and, additively,
+    ``{series}_union@{k}``) keys.
+
+    A series carrying ``_union@`` keys is tracked under a distinct series label
+    (``"{series}(union)"``) rather than folded into the plain ``_recall@`` series bucket
+    of the same base name -- e.g. ``gflownet_recall@15`` and ``gflownet_union@30`` are two
+    DIFFERENT series here, since they are different metric keys with different k-grids.
+    This keeps every downstream key reconstruction (``f"{series}_recall@{k}"``) correct: a
+    plain ``_recall@`` series is only ever reconstructed with ``_recall@``, and a ``_union@``
+    series only ever with ``_union@``. Byte-stable for the pre-existing recall-only runs
+    (which never produce a ``_union@`` key, so ``series_order``/``series_ks`` for them is
+    identical to before this change).
 
     Returns (series_in_first_seen_order, {series: sorted k's}, {series: set of k's per-run
     to detect disagreement}). Warns (via stdout) if runs disagree on which keys they carry.
     """
     series_ks: dict[str, set] = {}
+    series_suffix: dict[str, str] = {}
     per_run_keysets: list[set] = []
     series_order: list[str] = []
     for r in runs:
@@ -84,12 +112,15 @@ def _detect_series_k(runs: list[dict]) -> tuple[list[str], dict[str, list[int]],
             m = RECALL_KEY_RE.match(key)
             if not m:
                 continue
-            series = m.group("series")
+            base_series = m.group("series")
             k = int(m.group("k"))
+            suffix = "union" if key.endswith(f"_union@{k}") else "recall"
+            series = base_series if suffix == "recall" else f"{base_series}(union)"
             keyset.add((series, k))
             if series not in series_ks:
                 series_ks[series] = set()
                 series_order.append(series)
+                series_suffix[series] = suffix
             series_ks[series].add(k)
         per_run_keysets.append(keyset)
 
@@ -100,7 +131,9 @@ def _detect_series_k(runs: list[dict]) -> tuple[list[str], dict[str, list[int]],
     for r, keyset in zip(runs, per_run_keysets):
         missing = all_keysets - keyset
         if missing:
-            missing_str = ", ".join(f"{s}_recall@{k}" for s, k in sorted(missing))
+            missing_str = ", ".join(
+                f"{s}_{series_suffix.get(s, 'recall')}@{k}" for s, k in sorted(missing)
+            )
             print(
                 f"WARNING: {r.get('_path')} (seed={r.get('seed')}) is missing keys present "
                 f"in other runs: {missing_str}",
@@ -109,6 +142,15 @@ def _detect_series_k(runs: list[dict]) -> tuple[list[str], dict[str, list[int]],
 
     series_k_sorted = {s: sorted(ks) for s, ks in series_ks.items()}
     return series_order, series_k_sorted, series_ks
+
+
+def _metric_key(series: str, k: int) -> str:
+    """Reconstruct the actual metrics-dict key for a (possibly ``(union)``-suffixed)
+    series label produced by ``_detect_series_k``. ``"gflownet"`` -> ``gflownet_recall@{k}``
+    (byte-stable, pre-existing behavior); ``"gflownet(union)"`` -> ``gflownet_union@{k}``."""
+    if series.endswith("(union)"):
+        return f"{series[: -len('(union)')]}_union@{k}"
+    return f"{series}_recall@{k}"
 
 
 def _detect_diversity_keys(runs: list[dict]) -> list[str]:
@@ -159,7 +201,7 @@ def main() -> None:
         metrics = r.get("metrics", {})
         cells = []
         for s, k in all_pairs:
-            key = f"{s}_recall@{k}"
+            key = _metric_key(s, k)
             val = metrics.get(key)
             cells.append(f"{val:.4f}" if val is not None else "   -  ")
         print(f"{str(r.get('seed')):>4} | " + " | ".join(cells), flush=True)
@@ -174,7 +216,7 @@ def main() -> None:
     for series in series_order:
         cells = []
         for k in all_ks:
-            key = f"{series}_recall@{k}"
+            key = _metric_key(series, k)
             vals = [r["metrics"][key] for r in runs if key in r.get("metrics", {})]
             if not vals:
                 cells.append("-")
@@ -201,7 +243,7 @@ def main() -> None:
     headline_series = [s for s in series_order if headline_k in series_ks[s]]
     headline_vals = {}
     for s in headline_series:
-        key = f"{s}_recall@{headline_k}"
+        key = _metric_key(s, headline_k)
         vals = [r["metrics"][key] for r in runs if key in r.get("metrics", {})]
         if not vals:
             continue

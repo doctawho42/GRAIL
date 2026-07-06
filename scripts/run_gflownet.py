@@ -59,10 +59,15 @@ from grail_metabolism.config import (
     MultiStepConfig,
 )
 from grail_metabolism.eval.diversity import (
+    annotated_coverage_count,
+    auc_of_curve,
+    circles_count,
+    dedup_to_budget,
     mean_pairwise_tanimoto,
-    modes_discovered,
+    modes_discovered_canonical,
     n_unique_scaffolds,
     set_size_calibration,
+    union_at_k_curve,
 )
 from grail_metabolism.metrics import _tautomer_inchikey
 from grail_metabolism.model.grail import _read_checkpoint
@@ -181,10 +186,19 @@ def _diversity_block(sampled_sets: List[frozenset], smiles_of: Dict[str, str], a
     reports these regardless of the M0 multi-gen recall gate)."""
     all_smiles = [smiles_of[ik] for s in sampled_sets for ik in s if ik in smiles_of]
     return {
-        "modes_discovered": float(modes_discovered(sampled_sets, annotated_ik)),
+        # NOTE (D-EVAL05-JSONKEY): the value now comes from the renamed
+        # `annotated_coverage_count` (was `modes_discovered`); the results-dict KEY is kept
+        # literally "modes_discovered" so `aggregate_seeds.py`'s DIVERSITY_KEYS contract stays
+        # unbroken. The JSON-key rename is deferred to whichever later phase next regenerates
+        # M2-style results.
+        "modes_discovered": float(annotated_coverage_count(sampled_sets, annotated_ik)),
         "mean_pairwise_tanimoto": float(mean_pairwise_tanimoto(all_smiles)),
         "n_unique_scaffolds": float(n_unique_scaffolds(all_smiles)),
         "set_size_calibration": float(set_size_calibration(sampled_sets, annotated_ik)),
+        # #Circles (D-EVAL03-CIRCLESKEYS): additive co-primary diversity keys, explicit
+        # thresholds (t=0.4 headline/tight, t=0.7 broad), no magic default.
+        "circles@t0.4": float(circles_count(all_smiles, threshold=0.4)),
+        "circles@t0.7": float(circles_count(all_smiles, threshold=0.7)),
     }
 
 
@@ -299,7 +313,10 @@ def evaluate_matrix(
     }
     if beam_recall:  # only present when the beam baseline ran (filter checkpoint available)
         metrics[f"beam_recall@{max_size}"] = _mean(beam_recall)
-    for key in ("modes_discovered", "mean_pairwise_tanimoto", "n_unique_scaffolds", "set_size_calibration"):
+    for key in (
+        "modes_discovered", "mean_pairwise_tanimoto", "n_unique_scaffolds", "set_size_calibration",
+        "circles@t0.4", "circles@t0.7",
+    ):
         metrics[key] = _mean([row[key] for row in diversity_rows])
     return metrics
 
@@ -584,7 +601,9 @@ def main() -> None:
         f"  diversity: modes_discovered={metrics['modes_discovered']:.2f}  "
         f"mean_pairwise_tanimoto={metrics['mean_pairwise_tanimoto']:.4f}  "
         f"n_unique_scaffolds={metrics['n_unique_scaffolds']:.2f}  "
-        f"set_size_calibration={metrics['set_size_calibration']:.2f}",
+        f"set_size_calibration={metrics['set_size_calibration']:.2f}  "
+        f"circles@t0.4={metrics['circles@t0.4']:.2f}  "
+        f"circles@t0.7={metrics['circles@t0.7']:.2f}",
         flush=True,
     )
     print(f"  results -> {results_path}", flush=True)
