@@ -469,6 +469,103 @@ def test_train_checkpoint_resumes_from_last_epoch(tmp_path):
     assert len(t2.loss_history_) == 4, "resume must continue (2 loaded + 2 new), not restart at 0"
 
 
+# --------------------------------------------------------------------------- #
+# Task 1: single_hit_logreward + SingleTerminalGFlowNetTrainer (max_size=1
+# single-terminal ablation baseline, ABL-01/02). See 03-01-PLAN.md.
+# --------------------------------------------------------------------------- #
+
+from grail_metabolism.model.set_gflownet import (  # noqa: E402
+    single_hit_logreward,
+    SingleTerminalGFlowNetTrainer,
+)
+
+
+def test_single_hit_logreward_hit_miss_empty():
+    annotated = {"A", "B"}
+    # hit: single-member terminal set intersects the annotated set -> beta
+    assert single_hit_logreward(frozenset({"A"}), annotated, beta=2.0) == 2.0
+    # miss: single-member terminal set does NOT intersect -> 0.0, no size penalty
+    assert single_hit_logreward(frozenset({"X"}), annotated, beta=2.0) == 0.0
+    # empty set -> 0.0, no size penalty
+    assert single_hit_logreward(frozenset(), annotated, beta=2.0) == 0.0
+
+
+def test_single_terminal_max_size_one_yields_at_most_one_member():
+    gen = _MiniGen()
+    rr = BiEncoderReranker(in_channels=SINGLE_NODE_DIM)
+    cfg = GFlowNetConfig(
+        max_depth=2, beta=2.0, epsilon=0.0, batch_substrates=1,
+        lam=0.1, max_size=1, top_k=200,
+    )
+    trainer = SingleTerminalGFlowNetTrainer(gen, rr, cfg, annotated_ik_fn=lambda root: set())
+    for seed in range(20):
+        torch.manual_seed(seed)
+        state, _sum_log_pf, post_add = trainer.sample_forest("CCO")
+        assert len(state.terminal_set()) <= 1, (
+            f"seed={seed}: terminal_set={state.terminal_set()} exceeds max_size=1"
+        )
+        if len(post_add) <= 1:
+            assert log_pb_trajectory(post_add) == 0.0
+
+
+def test_single_terminal_tb_loss_finite_and_backprops():
+    gen = _MiniGen()
+    rr = BiEncoderReranker(in_channels=SINGLE_NODE_DIM)
+    cfg = GFlowNetConfig(
+        max_depth=2, beta=2.0, epsilon=0.0, batch_substrates=1,
+        lam=0.1, max_size=1, top_k=200,
+    )
+    trainer = SingleTerminalGFlowNetTrainer(gen, rr, cfg, annotated_ik_fn=lambda root: set())
+    torch.manual_seed(0)
+    loss = trainer.tb_loss("CCO")
+    assert torch.isfinite(loss)
+    loss.backward()
+    assert any(
+        p.grad is not None and torch.isfinite(p.grad).all() for p in rr.parameters()
+    )
+    backbone_params = list(rr.encoder.parameters())
+    assert backbone_params, "rr.encoder has no parameters to check"
+    assert any(
+        p.grad is not None and torch.isfinite(p.grad).all() and p.grad.abs().sum() > 0
+        for p in backbone_params
+    )
+
+
+def test_single_terminal_trainer_checkpoint_roundtrips_at_max_size_one(tmp_path):
+    """Mirrors test_train_checkpoint_resumes_from_last_epoch for the
+    SingleTerminalGFlowNetTrainer subclass: the inherited _save_train_ckpt/
+    _load_train_ckpt/fit machinery must round-trip correctly (resume from the last
+    completed epoch, restore logZ) unaffected by max_size=1."""
+    ckpt = str(tmp_path / "single_seed0.ckpt.pt")
+
+    def _mk():
+        rr = BiEncoderReranker(in_channels=SINGLE_NODE_DIM)
+        cfg = GFlowNetConfig(max_depth=2, beta=2.0, epsilon=0.0, batch_substrates=1,
+                             lam=0.1, max_size=1, top_k=200)
+        return SingleTerminalGFlowNetTrainer(_MiniGen(), rr, cfg, annotated_ik_fn=lambda root: set())
+
+    torch.manual_seed(0)
+    t1 = _mk()
+    t1.fit(["CCO"], epochs=2, resume_path=ckpt)
+    assert (tmp_path / "single_seed0.ckpt.pt").exists(), "fit must persist the resume checkpoint"
+    assert len(t1.loss_history_) == 2
+    logz_at_2 = float(t1.log_z)
+
+    torch.manual_seed(2)
+    t3 = _mk()
+    params = [p for p in t3.reranker.parameters() if p.requires_grad] + list(t3.stop_head.parameters())
+    opt = torch.optim.Adam([{"params": params}, {"params": [t3.log_z]}])
+    assert float(t3.log_z) == 0.0
+    start = t3._load_train_ckpt(ckpt, opt)
+    assert start == 2, "checkpoint must report the epoch to resume FROM"
+    assert abs(float(t3.log_z) - logz_at_2) < 1e-5, "logZ must be restored from the checkpoint"
+
+    torch.manual_seed(1)
+    t2 = _mk()
+    t2.fit(["CCO"], epochs=4, resume_path=ckpt)
+    assert len(t2.loss_history_) == 4, "resume must continue (2 loaded + 2 new), not restart at 0"
+
+
 def test_train_checkpoint_ignores_corrupt_file(tmp_path):
     """A corrupt/unreadable training checkpoint must be IGNORED (train from scratch, start_epoch
     0), never crash the run -- a half-written file from a kill mid-save must not brick recovery."""

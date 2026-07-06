@@ -48,6 +48,20 @@ def set_coverage_logreward(terminal_set, annotated_ik, beta: float, lam: float) 
     return float(beta) * (tp - float(lam) * len(terminal_set))
 
 
+def single_hit_logreward(terminal_set, annotated_ik, beta: float) -> float:
+    """log R(x) = beta if the single terminal member is an annotated true metabolite,
+    else 0. This is the natural |S|<=1 analog of set_coverage_logreward, but carries
+    NO size-penalty term -- unlike the set reward's ``lam*|S|`` component, no size
+    penalty is meaningful when the terminal is capped at a single member (there is
+    nothing to penalize: |S| is 0 or 1 by construction, not a free-varying quantity).
+    Stays in the log domain (no exp/log wrapping) exactly like set_coverage_logreward,
+    so tb_loss consumes it identically. beta here is the single-terminal reward's own
+    sharpness and should be selected independently on validation, not inherited from
+    the set-reward's beta (the two rewards have different natural scales)."""
+    tp = len(terminal_set & annotated_ik)  # 0 or 1 by construction (|S|<=1)
+    return float(beta) * float(tp)
+
+
 def log_pb_trajectory(post_add_states) -> float:
     """Sum of log(1/#leaves) over the states reached AFTER each ADD action. The last-added
     node of a forest must be a current leaf, so P_B(remove leaf)=1/#leaves is the exact
@@ -530,3 +544,34 @@ class SetGFlowNetTrainer:
                 print(f"[gflownet] prewarm wave2: {len(wave2)} depth-1 states expanded", flush=True)
         if self._child_cache_path or self._ik_cache_path:
             self.save_caches()
+
+
+class SingleTerminalGFlowNetTrainer(SetGFlowNetTrainer):
+    """Single-terminal-ablation trainer (ABL-01/02): ``SetGFlowNetTrainer`` with
+    ``config.max_size=1`` and ``single_hit_logreward`` in place of
+    ``set_coverage_logreward``.
+
+    This is the single-variable-ablation contract: ONLY ``max_size`` (via the
+    ``GFlowNetConfig`` passed to the constructor) and the reward function passed to
+    ``tb_loss`` differ from ``SetGFlowNetTrainer``. Every other piece of machinery --
+    the reranker forward policy (``_reranker_child_logits``/``policy_logits``),
+    ``candidate_children``/rule-DAG expansion, ``sample_forest``'s rollout loop,
+    ``StopHead``, the analytic backward policy (``log_pb_trajectory``), the
+    Trajectory-Balance loss SHAPE, warm-start/optimizer construction in ``fit``,
+    ``top_k``, and the checkpoint helpers (``_save_train_ckpt``/``_load_train_ckpt``/
+    ``save_caches``) are ALL inherited UNCHANGED, not reimplemented or forked. With
+    ``config.max_size=1``, ``ForestState.frontier()``'s existing
+    ``len(self.parent) < self.max_size`` gate self-terminates the rollout after at
+    most one ADD action, so no new rollout code is needed to produce single-terminal
+    trajectories -- ``state.terminal_set()`` has ``|S| <= 1`` by construction.
+    """
+
+    def tb_loss(self, root):
+        state, sum_log_pf, post_add = self.sample_forest(root)
+        log_r = single_hit_logreward(
+            state.terminal_set(),
+            set(self.annotated_ik_fn(root)),
+            self.config.beta,
+        )
+        log_pb = log_pb_trajectory(post_add)
+        return (self.log_z.squeeze() + sum_log_pf - log_pb - log_r) ** 2
