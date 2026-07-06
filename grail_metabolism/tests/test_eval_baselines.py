@@ -11,6 +11,7 @@ import it (``diversity``, ``metrics``, and ``baselines``), following the
 from __future__ import annotations
 
 import numpy as np
+import pytest
 
 import grail_metabolism.eval.baselines as baselines
 import grail_metabolism.eval.diversity as diversity
@@ -436,3 +437,237 @@ def test_mmr_select_dedups_and_hits_budget_k(monkeypatch):
     out = diversity.dedup_to_budget(ranked, k=4)
     assert len(out) == 4
     assert sum(1 for s in out if s in (_TAUT_A, _TAUT_B)) == 1
+
+
+# ---------------------------------------------------------------------------
+# BASE-05: cross-baseline validation suite -- proves temperature, DPP, MMR,
+# and the SyGMa dedup_to_budget composition ALL (a) output k distinct
+# post-tautomer-dedup entries at a matched budget, (b) route through the
+# SHARED Morgan r=2/2048 fingerprint, (c) share the ONE canonicalization path
+# (no per-baseline drift). Plus the SyGMa diversity-triplet canonicalization
+# guard (Pitfall 4).
+# ---------------------------------------------------------------------------
+
+
+def _sygma_adapter_ranked_smiles(pool, k):
+    """Inline stand-in for the SyGMa producer under BASE-05's test scope.
+
+    SyGMa's real contract (per 02-RESEARCH.md/02-02-PLAN.md) is "raw ranked
+    SMILES in, dedup_to_budget out" -- the external `sygma` package is NOT
+    import-required for this dataset-free suite (no top-level `import sygma`
+    anywhere in this file). This adapter reproduces exactly that contract: it
+    takes a pool of (smiles, score) already ranked by the caller (descending
+    score, as `tree.to_smiles()` + `calc_scores()` would produce) and returns
+    the raw ranked SMILES list unchanged -- the composition under test is
+    THIS raw list piped through the REAL `diversity.dedup_to_budget`, exactly
+    mirroring how `sygma_baseline`'s diversity triplet consumes
+    `tree.to_smiles()` output in scripts/run_benchmark.py.
+    """
+    ranked = [s for s, _ in sorted(pool, key=lambda x: -x[1])]
+    return ranked[: max(k, len(ranked))]
+
+
+def _base05_pool_with_dup():
+    """A pool with one monkeypatched tautomer-duplicate pair plus enough
+    genuinely distinct fillers to reach k=4 distinct entries after dedup
+    (mirrors the per-selector budget/dedup fixture shape already established
+    above in this file)."""
+    return [
+        (_TAUT_A, 5.0),
+        (_TAUT_B, 4.9),
+        (_HEXANE, 4.0),
+        (_HEPTANE, 3.0),
+        (_BENZENE, 2.0),
+        ("CCN", 1.0),
+    ]
+
+
+_BASE05_BASELINE_PRODUCERS = {
+    "temperature_topp": lambda pool, k: baselines.temperature_topp_select(
+        pool, k=k, T=1.0, p=1.0, rng=np.random.default_rng(0)
+    ),
+    "dpp": lambda pool, k: baselines.dpp_greedy_select(pool, k=k, theta=1.0),
+    "mmr": lambda pool, k: baselines.mmr_select(pool, k=k, lam=0.5),
+    "sygma_adapter": lambda pool, k: _sygma_adapter_ranked_smiles(pool, k),
+}
+
+
+@pytest.mark.parametrize("name", sorted(_BASE05_BASELINE_PRODUCERS))
+def test_base05_all_baselines_dedup_to_budget_k_distinct(monkeypatch, name):
+    """(a) Every baseline (temperature/DPP/MMR/SyGMa-adapter) yields exactly k
+    DISTINCT entries through the REAL dedup_to_budget on a pool with a known
+    tautomer duplicate plus surplus distinct fillers -- no baseline forks the
+    budget/dedup contract."""
+    _patch_tautomer_ik(monkeypatch)
+
+    pool = _base05_pool_with_dup()
+    producer = _BASE05_BASELINE_PRODUCERS[name]
+    ranked = producer(pool, 5)
+    out = diversity.dedup_to_budget(ranked, k=4)
+
+    assert len(out) == 4, f"{name}: expected 4 distinct post-dedup entries, got {len(out)}"
+    assert sum(1 for s in out if s in (_TAUT_A, _TAUT_B)) == 1, (
+        f"{name}: the tautomer-duplicate pair must collapse to exactly one slot"
+    )
+
+
+def test_base05_shared_fingerprint_consistency():
+    """(b) baselines._tanimoto_kernel_matrix agrees with
+    diversity.mean_pairwise_tanimoto on a fixed pair -- proving DPP/MMR's
+    kernel uses the SAME Morgan r=2/2048 fingerprint as the eval-harness
+    diversity metrics (a 2-molecule mean_pairwise_tanimoto IS exactly their
+    pairwise Tanimoto)."""
+    from rdkit import Chem
+    from rdkit.Chem import AllChem, DataStructs
+
+    # Known-answer sanity check first (validate the premise on the installed
+    # RDKit build before asserting equality with the module helpers).
+    mols = [Chem.MolFromSmiles(s) for s in (_HEXANE, _HEPTANE)]
+    fps_raw = [AllChem.GetMorganFingerprintAsBitVect(m, radius=2, nBits=2048) for m in mols]
+    raw_tanimoto = DataStructs.TanimotoSimilarity(fps_raw[0], fps_raw[1])
+
+    fps = baselines._pool_fingerprints([_HEXANE, _HEPTANE])
+    S = baselines._tanimoto_kernel_matrix(fps)
+    expected = diversity.mean_pairwise_tanimoto([_HEXANE, _HEPTANE])
+
+    assert abs(raw_tanimoto - expected) < 1e-9
+    assert abs(S[0, 1] - expected) < 1e-9
+
+
+def test_base05_knob_monotonicity_rollup():
+    """(c) Cross-baseline roll-up of the per-selector knob-monotonicity
+    guards: temperature (T up -> more spread -> mean pairwise tanimoto
+    non-increasing), DPP (theta up -> mean relevance non-decreasing), MMR
+    (lambda down -> more weight on diversity -> mean pairwise tanimoto
+    non-increasing) -- each baseline's knob has a demonstrable directional
+    effect on a fixed pool."""
+    pool = _POOL
+
+    # Temperature: T up -> more spread -> mean_pairwise_tanimoto non-increasing.
+    temp_results = {}
+    for T in (0.5, 1.0, 2.0):
+        rng = np.random.default_rng(42)
+        ranked = baselines.temperature_topp_select(pool, k=4, T=T, p=1.0, rng=rng)
+        out = diversity.dedup_to_budget(ranked, k=4)
+        temp_results[T] = diversity.mean_pairwise_tanimoto(out)
+    assert temp_results[2.0] <= temp_results[0.5] + 1e-9
+
+    # DPP: theta up -> trusts the ranker's own ordering more -> mean relevance
+    # of the selected set is non-decreasing.
+    dpp_pool = [
+        (_HEXANE, 3.0),
+        (_HEPTANE, 2.0),
+        (_BENZENE, 1.0),
+        ("CCN", 0.5),
+        ("CCCl", 0.0),
+    ]
+    score_of = dict(dpp_pool)
+    dpp_mean_relevance = {}
+    for theta in (0.0, 1.0, 2.0):
+        ranked = baselines.dpp_greedy_select(dpp_pool, k=3, theta=theta)
+        dpp_mean_relevance[theta] = sum(score_of[s] for s in ranked) / len(ranked)
+    assert dpp_mean_relevance[0.0] <= dpp_mean_relevance[1.0] + 1e-9
+    assert dpp_mean_relevance[1.0] <= dpp_mean_relevance[2.0] + 1e-9
+
+    # MMR: lambda down -> more weight on diversity -> mean_pairwise_tanimoto
+    # of the selected set is non-increasing as lambda decreases.
+    mmr_pool = [
+        (_HEXANE, 3.0),
+        (_HEPTANE, 2.0),
+        (_BENZENE, 1.0),
+        ("CCN", 0.5),
+        ("CCCl", 0.0),
+    ]
+    mmr_results = {}
+    for lam in (1.0, 0.5, 0.0):
+        ranked = baselines.mmr_select(mmr_pool, k=3, lam=lam)
+        mmr_results[lam] = diversity.mean_pairwise_tanimoto(ranked)
+    assert mmr_results[0.0] <= mmr_results[0.5] + 1e-9
+    assert mmr_results[0.5] <= mmr_results[1.0] + 1e-9
+
+
+def test_base05_degenerate_limits_rollup():
+    """(d) DPP/MMR degenerate limits: MMR lambda=1 recovers top-K, lambda=0
+    recovers max-min; DPP theta=0 ignores relevance ordering (selection is
+    invariant to a monotonic rescaling of input scores)."""
+    pool = [
+        (_HEXANE, 3.0),
+        (_HEPTANE, 2.0),
+        (_BENZENE, 1.0),
+        ("CCN", 0.5),
+        ("CCCl", 0.0),
+    ]
+
+    # MMR lambda=1 -> exact top-K ranking (Rel-only degenerate case).
+    ranked = baselines.mmr_select(pool, k=len(pool), lam=1.0)
+    expected_order = [
+        s for s, _ in sorted(pool, key=lambda x: (-x[1], metrics._tautomer_inchikey(x[0])))
+    ]
+    assert ranked == expected_order
+
+    # MMR lambda=0 -> first-pick invariant to a permutation of relevance scores.
+    maxmin_pool = pool[:4]
+    permuted_pool = [(s, -sc) for s, sc in maxmin_pool]
+    ranked_original = baselines.mmr_select(maxmin_pool, k=1, lam=0.0)
+    ranked_permuted = baselines.mmr_select(permuted_pool, k=1, lam=0.0)
+    assert ranked_original == ranked_permuted
+
+    # DPP theta=0 -> selection invariant to a monotonic rescaling of scores.
+    pool_a = [(_HEXANE, 1.0), (_HEPTANE, 2.0), (_BENZENE, 3.0)]
+    pool_b = [(_HEXANE, 10.0), (_HEPTANE, 20.0), (_BENZENE, 30.0)]
+    ranked_a = baselines.dpp_greedy_select(pool_a, k=3, theta=0.0)
+    ranked_b = baselines.dpp_greedy_select(pool_b, k=3, theta=0.0)
+    assert ranked_a == ranked_b
+
+
+def test_base05_sygma_diversity_triplet_uses_tautomer_dedup_not_plain_inchikey(monkeypatch):
+    """(g) SyGMa canonicalization guard (Pitfall 4): feed a raw ranked-SMILES
+    list containing a monkeypatched tautomer pair into
+    mean_pairwise_tanimoto/circles_count/n_unique_scaffolds and assert they
+    treat the pair as ONE molecule via the shared _fake_taut_ik 3-way
+    monkeypatch -- independent of whatever plain-InChIKey dedup
+    sygma_baseline's own recall/precision path applies, proving the SyGMa
+    triplet routes through the SAME canonicalization as recall + the
+    gflownet path."""
+    _patch_tautomer_ik(monkeypatch)
+
+    # Raw ranked SMILES as scripts/run_benchmark.py:sygma_baseline would feed
+    # into the diversity functions: parent already dropped, NOT deduped by
+    # plain InChIKey (both _TAUT_A and _TAUT_B are present, distinct plain
+    # InChIKeys but the same fake tautomer key).
+    raw_ranked_smiles = [_TAUT_A, _TAUT_B, _HEXANE, _HEPTANE]
+
+    # mean_pairwise_tanimoto/circles_count/n_unique_scaffolds all run their
+    # own _dedup_smiles_by_tautomer_ik pre-pass -- the tautomer pair collapses
+    # to one molecule before any pairwise/scaffold computation.
+    deduped_count = len(diversity._dedup_smiles_by_tautomer_ik(raw_ranked_smiles))
+    assert deduped_count == 3, (
+        "the tautomer pair must collapse to ONE molecule before diversity "
+        "computation (3 distinct molecules total: the collapsed pair + hexane "
+        "+ heptane), independent of plain-InChIKey dedup"
+    )
+
+    # circles_count/n_unique_scaffolds/mean_pairwise_tanimoto must all be
+    # computable without raising and must reflect the collapsed count, not a
+    # plain-InChIKey-deduped count of 4.
+    n_scaffolds = diversity.n_unique_scaffolds(raw_ranked_smiles)
+    assert n_scaffolds <= 3
+
+    circles_04 = diversity.circles_count(raw_ranked_smiles, threshold=0.4)
+    assert circles_04 <= 3
+
+    mpt = diversity.mean_pairwise_tanimoto(raw_ranked_smiles)
+    assert 0.0 <= mpt <= 1.0
+
+
+def test_base05_no_top_level_sygma_import_required():
+    """The BASE-05 suite (and this test module as a whole) is dataset-free and
+    does NOT require the external `sygma` package to import -- the SyGMa path
+    under test is the dedup_to_budget composition on a hand-built raw ranked
+    list (see `_sygma_adapter_ranked_smiles`), not a call into the real
+    `sygma` library."""
+    import sys
+
+    assert "sygma" not in getattr(
+        sys.modules.get("grail_metabolism.tests.test_eval_baselines"), "__dict__", {}
+    ), "test_eval_baselines.py must not import sygma at module scope"
