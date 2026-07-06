@@ -1,0 +1,136 @@
+"""Dataset-free guard tests for scripts/modal_ablation.py -- the PARALLEL Modal
+orchestrator that un-defers 03-03's Modal task.
+
+Unlike test_run_ablation_local.py (which guards that Modal is NEVER imported),
+modal_ablation.py legitimately imports modal (it IS the Modal orchestrator) -- so
+these tests are SKIPPED if the ``modal`` package is not installed in the current
+environment (matching the plan's "Modal imports guarded so make test doesn't
+require Modal" requirement: the test suite must stay green in an environment
+without Modal, it just skips this file's module-import-dependent checks in that
+case). Source-inspection checks that only read the .py file as TEXT (no import)
+always run, regardless of whether ``modal`` is installed.
+"""
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+import pytest
+
+ROOT = Path(__file__).resolve().parents[2]
+MODAL_ABLATION_PATH = ROOT / "scripts" / "modal_ablation.py"
+
+sys.path.insert(0, str(ROOT))
+
+modal_available = True
+try:
+    import modal  # noqa: F401
+except ImportError:
+    modal_available = False
+
+
+def _code_only(src: str) -> str:
+    """Strip the module docstring so source-inspection guards only see ACTUAL CODE,
+    not prose that legitimately discusses .map()/fan-out in the module docstring's
+    design explanation. Generalizes test_run_ablation_local.py's helper of the same
+    name to modules without a `#!` shebang line (modal_ablation.py has none)."""
+    first = src.find('"""')
+    if first == -1:
+        return src
+    second = src.find('"""', first + 3)
+    if second == -1:
+        return src
+    return src[second + 3:]
+
+
+def test_source_never_maps_across_substrates_only_across_configs():
+    """D-08: .map()/.starmap() may fan out across INDEPENDENT CONFIGS (the whole
+    point of this file) but must never appear inside a per-substrate eval loop --
+    that loop lives unchanged inside run_gflownet.py/evaluate_matrix, never here.
+    Confirms this file's only ACTUAL fan-out call sites are `run_one_config.map(...)`
+    (a real Python call, not prose mentioning ``.map()`` inside docstrings)."""
+    import re
+
+    src = _code_only(MODAL_ABLATION_PATH.read_text())
+    # Match an actual call expression: `<identifier>.map(` or `<identifier>.starmap(`,
+    # not backtick-quoted/double-backtick prose like `` `.map()` `` or ``.map()``.
+    call_pattern = re.compile(r"(\w+)\.(map|starmap)\(")
+    map_calls = [
+        (line, m.group(1)) for line in src.splitlines()
+        for m in [call_pattern.search(line)] if m
+    ]
+    assert map_calls, "expected at least one .map()/.starmap() call (the config fan-out)"
+    for line, receiver in map_calls:
+        assert receiver == "run_one_config", (
+            f"unexpected .map()/.starmap() call site (must only fan out over "
+            f"run_one_config, got receiver={receiver!r}): {line}"
+        )
+
+
+def test_source_reuses_shared_ablation_plan_module_not_reimplemented():
+    """The orchestrator must import its planning/selection/verdict logic from
+    grail_metabolism.ablation_plan, never reimplement plan_configs/select_beta_prime/
+    aggregate_and_verdict inline."""
+    src = MODAL_ABLATION_PATH.read_text()
+    assert "from grail_metabolism.ablation_plan import" in src
+    assert "plan_configs" in src
+    assert "select_beta_prime" in src
+    assert "aggregate_and_verdict" in src
+    # Must NOT redefine these as local functions (would silently fork the science).
+    assert "def plan_configs(" not in src
+    assert "def select_beta_prime(" not in src
+    assert "def aggregate_and_verdict(" not in src
+
+
+def test_source_reuses_modal_m2_image_and_volumes_not_reinvented():
+    """Reuse contract: the image/Volumes/data-symlink constants come from
+    scripts/modal_m2.py, not a re-declared image build."""
+    src = MODAL_ABLATION_PATH.read_text()
+    assert "from scripts.modal_m2 import" in src
+    assert "modal.Image.debian_slim" not in src, "must not re-declare the base image"
+
+
+def test_source_uses_config_keyed_idempotent_out_paths():
+    """Mirrors modal_m2.py::run_m2's `if os.path.exists(out): skip` contract, keyed
+    by config tag rather than seed."""
+    src = MODAL_ABLATION_PATH.read_text()
+    assert "os.path.exists(out)" in src
+    assert "already complete" in src
+    assert "art_vol.commit()" in src
+
+
+def test_source_uses_run_gflownet_ablation_mode_cli_unchanged():
+    """The per-config unit must invoke run_gflownet.py's existing --ablation-mode
+    CLI (never reimplement the training/eval science inline)."""
+    src = MODAL_ABLATION_PATH.read_text()
+    assert '"scripts/run_gflownet.py"' in src
+    assert '"--ablation-mode"' in src
+    assert '"--beta-prime"' in src
+    assert '"--resume-ckpt"' in src
+    assert '"--resume-eval-ckpt"' in src
+
+
+def test_source_has_a_prewarm_barrier_before_any_parallel_wave():
+    """The env cache must be built once (prewarm) BEFORE the first .map() fan-out,
+    not concurrently with it -- guards against the cache-build race the module
+    docstring's safety argument depends on."""
+    src = MODAL_ABLATION_PATH.read_text()
+    prewarm_pos = src.find("prewarm.remote()")
+    first_map_pos = src.find("_run_wave(plan[\"sweep\"]")
+    assert prewarm_pos != -1, "expected an explicit prewarm barrier call"
+    assert first_map_pos != -1
+    assert prewarm_pos < first_map_pos, "prewarm must run BEFORE the first parallel wave"
+
+
+@pytest.mark.skipif(not modal_available, reason="modal package not installed in this environment")
+def test_module_imports_without_live_modal_auth():
+    """App/Volume construction (modal.App(...), modal.Volume.from_name(...)) must not
+    require a live authenticated session at import time -- this is what lets
+    `make test` stay green in CI without Modal credentials configured, matching the
+    already-shipped modal_m2.py's same property."""
+    import importlib
+
+    mod = importlib.import_module("scripts.modal_ablation")
+    assert hasattr(mod, "app")
+    assert hasattr(mod, "run_one_config")
+    assert hasattr(mod, "run_ablation")
