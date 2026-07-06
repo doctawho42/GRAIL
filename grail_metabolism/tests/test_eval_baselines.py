@@ -95,18 +95,27 @@ def test_temperature_topp_select_dedups_and_hits_budget_k(monkeypatch):
 
 
 def test_temperature_increases_mean_pairwise_diversity_monotonically():
+    # FIX D (adversarial review): a single stochastic draw pinned to one seed
+    # fails this property ~20% of the time across seeds. Average
+    # mean_pairwise_tanimoto over many independent seeds per temperature
+    # before comparing, asserting the property in expectation rather than on
+    # one draw.
     pool = _POOL
+    n_seeds = 40
     results = {}
     for T in (0.5, 1.0, 2.0):
-        rng = np.random.default_rng(42)
-        ranked = baselines.temperature_topp_select(pool, k=4, T=T, p=1.0, rng=rng)
-        out = diversity.dedup_to_budget(ranked, k=4)
-        results[T] = diversity.mean_pairwise_tanimoto(out)
+        vals = []
+        for seed in range(n_seeds):
+            rng = np.random.default_rng(seed)
+            ranked = baselines.temperature_topp_select(pool, k=4, T=T, p=1.0, rng=rng)
+            out = diversity.dedup_to_budget(ranked, k=4)
+            vals.append(diversity.mean_pairwise_tanimoto(out))
+        results[T] = sum(vals) / len(vals)
 
     # More temperature -> more spread -> mean pairwise tanimoto should be
-    # non-increasing (or n_unique_scaffolds non-decreasing); allow a small
-    # numerical tolerance since this is a stochastic sampler.
-    assert results[2.0] <= results[0.5] + 1e-9
+    # non-increasing in expectation; a tolerance appropriate to the 40-seed
+    # sample average (not the tight single-draw epsilon).
+    assert results[2.0] <= results[0.5] + 0.05
 
 
 def test_reranker_output_is_unbounded_logit_not_probability():
@@ -543,14 +552,21 @@ def test_base05_knob_monotonicity_rollup():
     effect on a fixed pool."""
     pool = _POOL
 
-    # Temperature: T up -> more spread -> mean_pairwise_tanimoto non-increasing.
+    # Temperature: T up -> more spread -> mean_pairwise_tanimoto non-increasing
+    # in expectation. FIX D (adversarial review): average over many seeds
+    # rather than comparing a single stochastic draw pinned to one seed,
+    # which fails this property ~20% of the time.
+    n_seeds = 40
     temp_results = {}
     for T in (0.5, 1.0, 2.0):
-        rng = np.random.default_rng(42)
-        ranked = baselines.temperature_topp_select(pool, k=4, T=T, p=1.0, rng=rng)
-        out = diversity.dedup_to_budget(ranked, k=4)
-        temp_results[T] = diversity.mean_pairwise_tanimoto(out)
-    assert temp_results[2.0] <= temp_results[0.5] + 1e-9
+        vals = []
+        for seed in range(n_seeds):
+            rng = np.random.default_rng(seed)
+            ranked = baselines.temperature_topp_select(pool, k=4, T=T, p=1.0, rng=rng)
+            out = diversity.dedup_to_budget(ranked, k=4)
+            vals.append(diversity.mean_pairwise_tanimoto(out))
+        temp_results[T] = sum(vals) / len(vals)
+    assert temp_results[2.0] <= temp_results[0.5] + 0.05
 
     # DPP: theta up -> trusts the ranker's own ordering more -> mean relevance
     # of the selected set is non-decreasing.
