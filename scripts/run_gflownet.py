@@ -28,6 +28,11 @@ Mirrors ``scripts/run_reranker_gate.py``'s structure (checkpoint loading, Datase
 pool caching, results JSON tagged by seed/split) so ``scripts/aggregate_seeds.py`` can read
 the output unchanged.
 
+NOTE: ``eval/diversity.py:modes_discovered_canonical`` (reward-gated + Tanimoto-exclusion-
+gated GFlowNet-canonical mode count) is available but intentionally NOT emitted by
+``evaluate_matrix`` here -- wiring it in requires a reward-gate methodology decision
+(``reward_fn``/``tau``/``delta``) deferred to a future user decision; tracked as a follow-up.
+
 Usage:
   python scripts/run_gflownet.py --train-substrates 300 --eval-split val \
       --max-depth 2 --max-size 15 --epochs 10 --n-samples 32
@@ -60,13 +65,16 @@ from grail_metabolism.config import (
     GFlowNetConfig,
     MultiStepConfig,
 )
+# NOTE: `modes_discovered_canonical` is available in eval/diversity.py (reward-gated
+# GFlowNet-canonical mode count) but is intentionally NOT imported/emitted here -- wiring it
+# into evaluate_matrix's output requires a reward-gate methodology decision (reward_fn/tau/
+# delta) deferred to a future user decision; tracked as a follow-up (FIX D, adversarial review).
 from grail_metabolism.eval.diversity import (
     annotated_coverage_count,
     auc_of_curve,
     circles_count,
     dedup_to_budget,
     mean_pairwise_tanimoto,
-    modes_discovered_canonical,
     n_unique_scaffolds,
     set_size_calibration,
     union_at_k_curve,
