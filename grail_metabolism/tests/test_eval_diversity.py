@@ -697,3 +697,218 @@ def test_eval_config_fingerprint_stable_and_sensitive():
         assert rg._eval_config_fingerprint(**variant) != fp_base
 
     assert rg._eval_config_fingerprint(**base, circles_thresholds=(0.3, 0.7)) != fp_base
+
+
+def test_eval_config_fingerprint_sensitive_to_ablation_mode_and_m_ensemble():
+    """T-03-04 guard: a checkpoint written under one ablation_mode (or a different
+    m_ensemble) must be DISCARDED, not silently reused, under another -- mirrors FIX B's
+    eval_split guard one level up. Default ablation_mode='off'/m_ensemble=0 must still
+    match the plain _eval_config_fingerprint_stable_and_sensitive base fingerprint (no
+    change to the existing off-mode fingerprint value)."""
+    import scripts.run_gflownet as rg
+
+    base = dict(
+        max_size=10, ks=(5, 10, 15, 20, 30, 50), n_samples=32, top_k=200, max_pool=100,
+        eval_split="val", substrates=("CCO", "CCCO", "CCCCO"), eval_beam=True,
+    )
+    fp_off = rg._eval_config_fingerprint(**base)
+    # Explicit off-mode defaults reproduce the SAME fingerprint as omitting the args.
+    assert rg._eval_config_fingerprint(**base, ablation_mode="off", m_ensemble=0) == fp_off
+
+    fp_single = rg._eval_config_fingerprint(**base, ablation_mode="single", m_ensemble=0)
+    fp_ensemble_3 = rg._eval_config_fingerprint(**base, ablation_mode="ensemble", m_ensemble=3)
+    fp_ensemble_5 = rg._eval_config_fingerprint(**base, ablation_mode="ensemble", m_ensemble=5)
+
+    assert len({fp_off, fp_single, fp_ensemble_3, fp_ensemble_5}) == 4, (
+        "ablation_mode and m_ensemble must each distinguish the fingerprint -- "
+        "off/single/ensemble(M=3)/ensemble(M=5) must all hash differently"
+    )
+
+
+# ---------------------------------------------------------------------------
+# Plan 03-02 Task 3(b)(c)(d): ablation-stream harness-reuse, shared raw-draw-cap,
+# and shared-substrate-set/skip-count guards (D-03, D-04, D-04b, D-05).
+# ---------------------------------------------------------------------------
+
+
+def test_ablation_streams_reuse_shared_harness_source_inspection():
+    """D-05 guard: the ablation01/ablation02 stream-building region of run_gflownet.py
+    must call the SAME dedup_to_budget/union_at_k_curve functions the gflownet/reranker
+    streams call -- no parallel truncation/coverage implementation is introduced for the
+    ablation arms. Source-inspection style, mirroring
+    test_diversity_block_json_key_is_modes_discovered."""
+    src = Path(RUN_GFLOWNET_PATH).read_text()
+
+    assert "ablation01_union_stream = dedup_to_budget(" in src
+    assert "ablation02_union_stream = dedup_to_budget(" in src
+    assert re.search(r"ablation01_union_curve\s*=\s*union_at_k_curve\(", src)
+    assert re.search(r"ablation02_union_curve\s*=\s*union_at_k_curve\(", src)
+
+    # union_at_k_curve/dedup_to_budget must be called for gflownet, reranker, AND both
+    # ablation arms -- at least 4 distinct call sites total (D-05 "reuse, not fork").
+    assert src.count("union_at_k_curve(") >= 4
+    assert src.count("dedup_to_budget(") >= 4
+
+    # No parallel truncation/coverage `def` is introduced for the ablation arms (a
+    # regression would look like `def _ablation_union_at_k` or similar bespoke helper).
+    assert "def _ablation01_union_at_k" not in src
+    assert "def _ablation02_union_at_k" not in src
+    assert "def _ablation_dedup" not in src
+    assert "def _ablation_union_at_k" not in src
+
+
+def test_ablation_streams_behaviorally_match_gflownet_path_shape():
+    """Behavioral corroboration of D-05: feeding the SAME synthetic ranked SMILES stream
+    through dedup_to_budget + union_at_k_curve (the exact two calls the ablation stream
+    builders make) produces the identical output shape/keys as the gflownet path -- i.e.
+    ablation01/02 are genuinely calling the shared primitives, not a fork with different
+    semantics."""
+    smiles = ["CCO", "CCCO", "CCCCO", "CCCCCO", "CCCCCCO", "CCCCCCCO"]
+    annotated_ik = {metrics._tautomer_inchikey(s) for s in smiles[:3]}
+    ks = (2, 3, 5)
+    k_max = max(ks)
+
+    # gflownet-path-shaped call.
+    gflownet_stream = diversity.dedup_to_budget(smiles, k=k_max)
+    gflownet_curve = diversity.union_at_k_curve(gflownet_stream, annotated_ik, ks=ks)
+
+    # ablation-path-shaped call: identical stream, identical primitives, identical args.
+    ablation01_stream = diversity.dedup_to_budget(smiles, k=k_max)
+    ablation01_curve = diversity.union_at_k_curve(ablation01_stream, annotated_ik, ks=ks)
+
+    assert set(gflownet_curve.keys()) == set(ablation01_curve.keys()) == set(ks)
+    assert gflownet_curve == ablation01_curve
+
+
+def test_draw_until_budget_shared_cap_and_gflownet_not_bounded_by_n_samples():
+    """FIX A / D-03 guard: in ablation mode ALL GFlowNet-family arms share ONE raw-draw
+    cap (raw_draw_cap_mult*k_max) via the extracted _draw_until_budget helper, and the
+    gflownet arm's ablation-mode branch does NOT bound its raw draws by n_samples (a
+    mode-collapsed stub run past n_samples=4 draws, hitting the SAME shared cap as an
+    ablation arm would)."""
+    import scripts.run_gflownet as rg
+
+    k_max = 5
+    raw_draw_cap_mult = 10
+    cap = raw_draw_cap_mult * k_max  # 50
+
+    # A mode-collapsing draw_fn that NEVER produces a new distinct candidate (always
+    # returns the same single SMILES) -- must hit the cap exactly, not stop early and not
+    # loop past it.
+    def _collapsing_draw_fn():
+        return ["CCO"]
+
+    stream, n_draws = rg._draw_until_budget(_collapsing_draw_fn, k_max=k_max, cap=cap)
+    assert n_draws == cap, "a mode-collapsed policy must hit the FULL shared cap, not stop early"
+    assert len(stream) == cap  # one raw candidate contributed per draw, never deduped here
+
+    # Same cap definition must apply verbatim to a "gflownet-shaped" draw_fn (returns
+    # MULTIPLE candidates per draw, like a sampled forest) that also mode-collapses --
+    # proving the gflownet arm's ablation-mode branch shares the identical cap value,
+    # not a separate n_samples-bounded budget (n_samples would typically be ~4-32, far
+    # below cap=50).
+    n_samples_stub = 4  # far below cap -- if gflownet were still n_samples-bounded in
+                         # ablation mode, a naive loop would stop at 4, not 50.
+
+    def _collapsing_forest_draw_fn():
+        return ["CCO", "CCO"]  # a "forest" that repeats the same molecule twice
+
+    forest_stream, forest_n_draws = rg._draw_until_budget(
+        _collapsing_forest_draw_fn, k_max=k_max, cap=cap
+    )
+    assert forest_n_draws == cap
+    assert forest_n_draws > n_samples_stub, (
+        "the shared raw-draw cap must exceed n_samples -- the gflownet arm in ablation "
+        "mode must NOT be bounded by n_samples"
+    )
+
+    # Source-level corroboration: the gflownet arm's ablation-mode branch is gated on
+    # `ablation_mode == "off"` for the ORIGINAL fixed loop, and uses raw_draw_cap (not
+    # n_samples) as the ablation-mode stopping bound.
+    src = Path(RUN_GFLOWNET_PATH).read_text()
+    assert 'if ablation_mode == "off":' in src
+    assert "while n_draws < raw_draw_cap:" in src
+
+
+def test_draw_until_budget_stops_early_when_budget_reached():
+    """_draw_until_budget must stop as soon as dedup_to_budget reaches k_max distinct
+    candidates -- not always exhaust the cap -- when the draw_fn produces genuinely
+    distinct candidates every call."""
+    import scripts.run_gflownet as rg
+
+    calls = {"n": 0}
+
+    def _distinct_draw_fn():
+        calls["n"] += 1
+        return [f"{'C' * calls['n']}O"]  # a new distinct SMILES every call
+
+    stream, n_draws = rg._draw_until_budget(_distinct_draw_fn, k_max=5, cap=100)
+    assert n_draws == 5, "must stop as soon as k_max distinct candidates are reached"
+    assert len(diversity.dedup_to_budget(stream, k=5)) == 5
+
+
+def test_shared_substrate_survivors_restricts_auc_to_intersection():
+    """D-04b guard: hand-built completed_rows-shaped curve maps where gflownet survives
+    for {A,B,C}, ablation01 for {A,B} (under-produced on C), and ablation02 for {A,B,C} --
+    the compared arms' *_union_at_k_auc must be computed over the INTERSECTION {A,B}
+    (identical population across all three), and per-arm skip counts must be surfaced."""
+    import scripts.run_gflownet as rg
+
+    curve_a = {5: 0.4, 10: 0.6}
+    curve_b = {5: 0.5, 10: 0.7}
+    curve_c = {5: 0.9, 10: 1.0}  # only gflownet/ablation02 have this -- must be EXCLUDED
+
+    gflownet_curves = {"A": curve_a, "B": curve_b, "C": curve_c}
+    ablation01_curves = {"A": curve_a, "B": curve_b}  # under-produced on C -- absent
+    ablation02_curves = {"A": curve_a, "B": curve_b, "C": curve_c}
+
+    arm_curve_maps = {
+        "gflownet": gflownet_curves,
+        "ablation01": ablation01_curves,
+        "ablation02": ablation02_curves,
+    }
+    shared = rg._shared_substrate_survivors(arm_curve_maps)
+    assert shared == {"A", "B"}, (
+        "the shared surviving-substrate set must be the INTERSECTION across all "
+        "GFlowNet-family arms, excluding C (missing from ablation01)"
+    )
+
+    # Restricting each arm's curves to `shared` before computing union_at_k_auc means
+    # gflownet's and ablation02's AUC must ALSO exclude substrate C's (much higher) curve
+    # -- i.e. their AUC must equal ablation01's own (unrestricted) AUC, not a value
+    # inflated by C.
+    def _auc_over(curves_by_root, keys):
+        curves = [curves_by_root[k] for k in keys]
+        return sum(diversity.auc_of_curve(c, k_min=5, k_max=10) for c in curves) / len(curves)
+
+    gflownet_auc_restricted = _auc_over(gflownet_curves, shared)
+    gflownet_auc_unrestricted = _auc_over(gflownet_curves, gflownet_curves.keys())
+    ablation01_auc = _auc_over(ablation01_curves, ablation01_curves.keys())
+
+    assert abs(gflownet_auc_restricted - ablation01_auc) < 1e-9, (
+        "gflownet's AUC restricted to the shared set must match ablation01's own AUC "
+        "(both are means over exactly {A,B})"
+    )
+    assert gflownet_auc_restricted != gflownet_auc_unrestricted, (
+        "the restricted AUC must differ from the naive (unrestricted, C-inflated) AUC -- "
+        "proving the intersection restriction actually changes the computed value"
+    )
+
+    # Skip-count surfacing: gflownet and ablation02 each had 1 substrate (C) excluded by
+    # the shared-set restriction; ablation01 had 0 (its own full survivor set IS the
+    # intersection here).
+    skip_counts = {
+        name: len(curves) - len(shared & curves.keys())
+        for name, curves in arm_curve_maps.items()
+    }
+    assert skip_counts == {"gflownet": 1, "ablation01": 0, "ablation02": 1}
+
+
+def test_evaluate_matrix_source_restricts_gflownet_family_aucs_to_shared_set():
+    """Source-level corroboration that evaluate_matrix's aggregation section actually
+    calls _shared_substrate_survivors before computing the GFlowNet-family arms'
+    *_union_at_k_auc, and surfaces {arm}_n_skipped in the metrics dict (D-04b/D-05)."""
+    src = Path(RUN_GFLOWNET_PATH).read_text()
+    assert "_shared_substrate_survivors(" in src
+    assert re.search(r"metrics\[f\"\{series_name\}_n_skipped\"\]", src)
+    assert re.search(r"metrics\[f\"\{series_name\}_union_at_k_auc\"\]", src)

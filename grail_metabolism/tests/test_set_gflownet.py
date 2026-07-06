@@ -579,3 +579,43 @@ def test_train_checkpoint_ignores_corrupt_file(tmp_path):
     opt = torch.optim.Adam([{"params": list(trainer.reranker.parameters())},
                             {"params": [trainer.log_z]}])
     assert trainer._load_train_ckpt(str(bad), opt) == 0   # ignored, not raised
+
+
+# --------------------------------------------------------------------------- #
+# Plan 03-02 Task 3(a): ABL-02 round-robin ensemble draw-count allocator guard.
+# Pure arithmetic over scripts.run_gflownet._round_robin_draw_counts (D-04).
+# --------------------------------------------------------------------------- #
+
+import scripts.run_gflownet as _rg  # noqa: E402
+
+
+def test_round_robin_draw_counts_even_divide():
+    # k_max=9, M=3 divides evenly -> every member gets exactly 3.
+    counts = _rg._round_robin_draw_counts(k_max=9, m_ensemble=3)
+    assert counts == [3, 3, 3]
+    assert sum(counts) == 9
+
+
+def test_round_robin_draw_counts_uneven_ceil_split():
+    # k_max=50, M=3 -> ceil(50/3)=17 for the first (50 % 3 = 2) members, 16 for the rest;
+    # summing to >= 50, no member off by more than 1 from another.
+    counts = _rg._round_robin_draw_counts(k_max=50, m_ensemble=3)
+    assert sum(counts) >= 50
+    assert max(counts) - min(counts) <= 1
+    assert counts == [17, 17, 16]
+
+
+def test_round_robin_draw_counts_m_ensemble_exceeds_k_max():
+    # M_ensemble=10 > k_max=5 -> 5 members get 1 draw, 5 members get 0; still sums to >= 5
+    # and no member is off by more than 1 from any other.
+    counts = _rg._round_robin_draw_counts(k_max=5, m_ensemble=10)
+    assert len(counts) == 10
+    assert sum(counts) >= 5
+    assert max(counts) - min(counts) <= 1
+    assert sorted(counts, reverse=True) == [1, 1, 1, 1, 1, 0, 0, 0, 0, 0]
+
+
+def test_round_robin_draw_counts_degenerate_single_member():
+    # M_ensemble=1 -> the single member draws the entire k_max budget.
+    counts = _rg._round_robin_draw_counts(k_max=12, m_ensemble=1)
+    assert counts == [12]
