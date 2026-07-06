@@ -156,3 +156,164 @@ def test_reranker_output_is_unbounded_logit_not_probability():
         "silently added to the head, which would break temperature_topp_select's "
         "direct-division-by-T assumption"
     )
+
+
+# ---------------------------------------------------------------------------
+# Task 2: dpp_greedy_select (BASE-02) -- greedy MAP via incremental Cholesky
+# with diagonal jitter + per-step gain clip + relative-tolerance stop.
+# ---------------------------------------------------------------------------
+
+# A cluster of near-identical long-alkyl-chain regioisomers: verified (below,
+# inline) to have pairwise Tanimoto == 1.0 under the shared Morgan r=2/2048
+# fingerprint (long straight chains saturate the radius-2 environment so
+# chain-length differences stop registering). This models GRAIL's
+# regioisomer-heavy candidate pools (same rule applied at different sites).
+_NEARDUP_CLUSTER = [
+    "CCCCCCCCCCCCCCCC",
+    "CCCCCCCCCCCCCCCCC",
+    "CCCCCCCCCCCCCCC",
+    "CCCCCCCCCCCCCCCCCC",
+]
+
+# A polycyclic aromatic, structurally unrelated to the alkyl-chain cluster
+# (Tanimoto ~0.0 to every cluster member, verified inline below).
+_DIVERSE_ONE = "c1ccc2c(c1)ccc1ccccc12"
+
+
+def _verify_neardup_fixture_premise():
+    """Inline known-answer sanity check of the hand-picked fixture's premise
+    (mirrors test_eval_diversity.py's discipline of re-validating fixture
+    assumptions against the installed RDKit build before asserting on them)."""
+    from rdkit import Chem
+    from rdkit.Chem import AllChem, DataStructs
+
+    mols = [Chem.MolFromSmiles(s) for s in _NEARDUP_CLUSTER]
+    fps = [AllChem.GetMorganFingerprintAsBitVect(m, radius=2, nBits=2048) for m in mols]
+    for i in range(len(fps)):
+        for j in range(i + 1, len(fps)):
+            assert DataStructs.TanimotoSimilarity(fps[i], fps[j]) > 0.9999
+
+    diverse_mol = Chem.MolFromSmiles(_DIVERSE_ONE)
+    diverse_fp = AllChem.GetMorganFingerprintAsBitVect(diverse_mol, radius=2, nBits=2048)
+    for fp in fps:
+        assert DataStructs.TanimotoSimilarity(fp, diverse_fp) < 0.1
+
+
+def test_dpp_greedy_select_dedups_and_hits_budget_k(monkeypatch):
+    _patch_tautomer_ik(monkeypatch)
+
+    pool_with_dup = [
+        (_TAUT_A, 3.0),
+        (_TAUT_B, 2.9),
+        (_HEXANE, 2.0),
+        (_HEPTANE, 1.0),
+        (_BENZENE, 0.5),
+    ]
+    ranked = baselines.dpp_greedy_select(pool_with_dup, k=4, theta=1.0)
+    out = diversity.dedup_to_budget(ranked, k=4)
+    assert len(out) == 4
+    assert sum(1 for s in out if s in (_TAUT_A, _TAUT_B)) == 1
+
+
+def test_dpp_and_mmr_kernel_matches_diversity_module_tanimoto():
+    # Known-answer sanity check first (mirrors test_circles_count_known_answer's
+    # discipline): validate the fixture premise against the installed RDKit
+    # build before asserting equality with the module helper.
+    from rdkit import Chem
+    from rdkit.Chem import AllChem, DataStructs
+
+    mols = [Chem.MolFromSmiles(s) for s in (_HEXANE, _HEPTANE)]
+    fps_raw = [AllChem.GetMorganFingerprintAsBitVect(m, radius=2, nBits=2048) for m in mols]
+    raw_tanimoto = DataStructs.TanimotoSimilarity(fps_raw[0], fps_raw[1])
+
+    fps = baselines._pool_fingerprints([_HEXANE, _HEPTANE])
+    S = baselines._tanimoto_kernel_matrix(fps)
+
+    # A 2-molecule mean_pairwise_tanimoto IS exactly their pairwise Tanimoto.
+    expected = diversity.mean_pairwise_tanimoto([_HEXANE, _HEPTANE])
+    assert abs(raw_tanimoto - expected) < 1e-9
+    # Assert on the OFF-diagonal only -- the diagonal is deliberately
+    # regularized (S_ii = 1 + eps) inside dpp_greedy_select's own kernel
+    # construction, so a bare _tanimoto_kernel_matrix diagonal of 1.0 (not
+    # 1+eps) must not be conflated with that.
+    assert abs(S[0, 1] - expected) < 1e-9
+    assert S[0, 0] == 1.0 and S[1, 1] == 1.0
+
+
+def test_dpp_theta_sweep_monotonic_relevance_weighting():
+    pool = [
+        (_HEXANE, 3.0),
+        (_HEPTANE, 2.0),
+        (_BENZENE, 1.0),
+        ("CCN", 0.5),
+        ("CCCl", 0.0),
+    ]
+    mean_relevance = {}
+    for theta in (0.0, 1.0, 2.0):
+        ranked = baselines.dpp_greedy_select(pool, k=3, theta=theta)
+        score_of = dict(pool)
+        mean_relevance[theta] = sum(score_of[s] for s in ranked) / len(ranked)
+
+    assert mean_relevance[0.0] <= mean_relevance[1.0] + 1e-9
+    assert mean_relevance[1.0] <= mean_relevance[2.0] + 1e-9
+
+
+def test_dpp_greedy_select_exclusion_stop_on_near_duplicate_pool():
+    """Load-bearing near-duplicate EXCLUSION/STOP guard (Pitfall 5): a pool of
+    N near-identical items (all pairwise Tanimoto > 0.9999) requested with
+    k=N must return FEWER than N picks -- proving the relative-tolerance stop
+    actually fires (the selector STOPS on redundancy), not merely avoids NaN."""
+    _verify_neardup_fixture_premise()
+
+    n = len(_NEARDUP_CLUSTER)
+    pool = [(s, 1.0) for s in _NEARDUP_CLUSTER]
+    ranked = baselines.dpp_greedy_select(pool, k=n, theta=1.0)
+    assert len(ranked) < n, (
+        "dpp_greedy_select must EXCLUDE redundant near-duplicates via the "
+        "relative-tolerance stop, returning fewer than k picks on a pool of "
+        "near-identical items -- a defective fixed-epsilon-floor scheme would "
+        "never stop and would return all N"
+    )
+
+
+def test_dpp_greedy_select_signal_survives_in_mixed_pool():
+    """Load-bearing diversity-SIGNAL-SURVIVES guard (Pitfall 5): a mixed pool
+    of 1 genuinely-diverse candidate + M near-duplicates, k=2, must select the
+    genuinely-diverse candidate -- proving the diversity signal is not
+    noise-dominated by a naive epsilon floor."""
+    _verify_neardup_fixture_premise()
+
+    pool = [(s, 1.0) for s in _NEARDUP_CLUSTER] + [(_DIVERSE_ONE, 1.0)]
+    ranked = baselines.dpp_greedy_select(pool, k=2, theta=1.0)
+    assert _DIVERSE_ONE in ranked, (
+        "the genuinely-diverse candidate must be selected in a mixed pool of "
+        "1 diverse + M near-duplicates -- an epsilon-floor-poisoned argmax "
+        "would instead pick near-duplicates over the real diversity signal"
+    )
+
+
+def test_dpp_greedy_select_numerically_stable_on_regioisomer_pool():
+    """No NaN / no invalid-value sqrt warning on a near-singular kernel."""
+    import warnings
+
+    _verify_neardup_fixture_premise()
+
+    pool = [(s, 1.0) for s in _NEARDUP_CLUSTER]
+    with warnings.catch_warnings():
+        warnings.simplefilter("error", RuntimeWarning)
+        ranked = baselines.dpp_greedy_select(pool, k=len(_NEARDUP_CLUSTER), theta=1.0)
+
+    assert all(isinstance(s, str) for s in ranked)
+    assert len(ranked) > 0
+
+
+def test_dpp_theta_zero_ignores_relevance_ordering():
+    """theta=0: q_i is constant (exp(0)=1 for all i), so selection is driven
+    purely by the similarity kernel S -- selection order must be invariant to
+    a monotonic rescaling of the input scores."""
+    pool_a = [(_HEXANE, 1.0), (_HEPTANE, 2.0), (_BENZENE, 3.0)]
+    pool_b = [(_HEXANE, 10.0), (_HEPTANE, 20.0), (_BENZENE, 30.0)]  # monotonic rescale
+
+    ranked_a = baselines.dpp_greedy_select(pool_a, k=3, theta=0.0)
+    ranked_b = baselines.dpp_greedy_select(pool_b, k=3, theta=0.0)
+    assert ranked_a == ranked_b
