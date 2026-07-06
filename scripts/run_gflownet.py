@@ -83,7 +83,11 @@ from grail_metabolism.metrics import _tautomer_inchikey
 from grail_metabolism.model.grail import _read_checkpoint
 from grail_metabolism.model.multistep import MetabolicTree
 from grail_metabolism.model.reranker import BiEncoderReranker
-from grail_metabolism.model.set_gflownet import SetGFlowNetTrainer, set_coverage_logreward
+from grail_metabolism.model.set_gflownet import (
+    SetGFlowNetTrainer,
+    SingleTerminalGFlowNetTrainer,
+    set_coverage_logreward,
+)
 from grail_metabolism.utils.seed import seed_everything
 from grail_metabolism.utils.transform import SINGLE_NODE_DIM
 from grail_metabolism.workflows.data import load_dataset_bundle
@@ -637,7 +641,47 @@ def main() -> None:
              "expansion is expensive; a sample is enough to fine-tune). Not the reranker's train size.",
     )
     parser.add_argument("--max-pool", type=int, default=100)
+    # Phase 3 (Set-Reward Novelty Ablation) knobs -- ABL-01/ABL-02/ABL-03. Default
+    # ablation_mode="off" keeps every existing run byte-unchanged (D-03).
+    parser.add_argument(
+        "--ablation-mode", choices=["off", "single", "ensemble"], default="off",
+        help="off (default, byte-unchanged headline path) | single (ABL-01 independent "
+             "single-terminal baseline) | ensemble (ABL-02 round-robin ensemble of "
+             "--m-ensemble single-terminal policies). See 03-02-PLAN.md D-03/D-04.",
+    )
+    parser.add_argument(
+        "--beta-prime", type=float, default=None,
+        help="Reward sharpness for single_hit_logreward (the single-terminal ablation "
+             "reward), selected on VAL INDEPENDENTLY of --beta (D-07) -- the single-"
+             "terminal reward's natural scale differs from the set reward's, so silently "
+             "inheriting --beta risks an unfairly weak/strong baseline. Defaults to --beta "
+             "so a run can opt into inheritance explicitly.",
+    )
+    parser.add_argument(
+        "--m-ensemble", type=int, default=3,
+        help="Ensemble size M for --ablation-mode ensemble (ABL-02): the number of "
+             "independently-seeded SingleTerminalGFlowNetTrainer policies round-robin-"
+             "drawn from. Distinct from k_max (the total output budget).",
+    )
+    parser.add_argument(
+        "--raw-draw-cap-mult", type=int, default=10,
+        help="Shared raw-draw cap multiplier for ALL GFlowNet-family arms in ablation "
+             "mode (gflownet + ablation01 + ablation02): each arm draws more raw forests/"
+             "single-terminal samples until dedup_to_budget reaches k_max distinct "
+             "candidates OR raw_draw_cap_mult*k_max raw draws are made, whichever first "
+             "(D-03). A mode-collapsed policy hits the cap and that substrate's row is "
+             "skipped for that arm (WARNING), rather than looping unboundedly.",
+    )
+    parser.add_argument(
+        "--verdict-margin", type=float, default=0.02,
+        help="Strict-> margin Delta for compute_ablation_verdict's confirmed/partial/null "
+             "call over the gflownet/ablation01/ablation02 union_at_k_auc values. Only "
+             "used (printed, non-gating) when --ablation-mode != off and both ablation "
+             "AUCs are present.",
+    )
     args = parser.parse_args()
+    if args.beta_prime is None:
+        args.beta_prime = args.beta
 
     t_start = time.time()
     seed_everything(args.seed)
@@ -773,6 +817,56 @@ def main() -> None:
     trainer.save_caches()  # persist env caches populated during training
     print(f"[gflownet] Set-GFlowNet training done in {time.time()-t0:.1f}s", flush=True)
 
+    # Phase 3 ablation (ABL-01/ABL-02): single-terminal trainer(s), single-variable-ablation
+    # contract (per D-02/D-03/D-07) -- ONLY max_size (1, not args.max_size) and the reward
+    # (single_hit_logreward via SingleTerminalGFlowNetTrainer, beta=args.beta_prime NOT
+    # args.beta) differ from the set-GFlowNet trained above. Same generator, SAME warm-started
+    # reranker object (no fresh reranker retrained), same annotated_ik_fn, same device, and the
+    # SAME child/ik env-cache files (the environment is deterministic and seed-independent, so
+    # sharing the cache across the set-GFlowNet and the ablation trainer(s) is exact, not an
+    # approximation). The ensemble members' per-seed training/checkpoint orchestration across
+    # multiple processes is Wave 3's concern (modal_m2.py); here we construct/train in-process
+    # for eval given this run's own train split.
+    single_trainer = None
+    ensemble_trainers = None
+    if args.ablation_mode != "off":
+        single_gfn_config = GFlowNetConfig(
+            max_depth=args.max_depth,
+            beta=args.beta_prime,
+            max_size=1,
+            top_k=args.top_k,
+            epochs=args.epochs,
+            logz_lr=args.logz_lr,
+        )
+
+        def _build_single_trainer(seed: int) -> SingleTerminalGFlowNetTrainer:
+            seed_everything(seed)
+            t = SingleTerminalGFlowNetTrainer(
+                generator, reranker, single_gfn_config, _make_annotated_ik_fn(bundle.train),
+                device=rr_trainer.device,
+                child_cache_path=str(child_cache_path), ik_cache_path=str(ik_cache_path),
+            )
+            t.fit(train_substrates_list, epochs=args.epochs, verbose=False)
+            t.save_caches()
+            return t
+
+        if args.ablation_mode == "single":
+            print("[gflownet] training ABL-01 independent single-terminal trainer ...", flush=True)
+            t0 = time.time()
+            single_trainer = _build_single_trainer(args.seed)
+            print(f"[gflownet] ABL-01 trainer done in {time.time()-t0:.1f}s", flush=True)
+        elif args.ablation_mode == "ensemble":
+            print(
+                f"[gflownet] training ABL-02 ensemble of {args.m_ensemble} single-terminal "
+                "trainers ...", flush=True,
+            )
+            t0 = time.time()
+            ensemble_trainers = [
+                _build_single_trainer(args.seed * 1000 + m) for m in range(args.m_ensemble)
+            ]
+            print(f"[gflownet] ABL-02 ensemble done in {time.time()-t0:.1f}s", flush=True)
+        seed_everything(args.seed)  # restore this run's own seed after ensemble-member seeding
+
     print(f"[gflownet] evaluating dual matrix on {eval_prefix.upper()} (touch-once for test) ...", flush=True)
     t0 = time.time()
     multistep_cfg = MultiStepConfig(enabled=True, max_depth=args.max_depth, per_node_top_k=10)
@@ -791,9 +885,35 @@ def main() -> None:
         ks=(5, 10, 15, 20, 30, 50),
         resume_path=args.resume_eval_ckpt, eval_ckpt_every=args.eval_ckpt_every,
         eval_split=args.eval_split,
+        ablation_mode=args.ablation_mode, single_trainer=single_trainer,
+        ensemble_trainers=ensemble_trainers, raw_draw_cap_mult=args.raw_draw_cap_mult,
     )
     trainer.save_caches()  # persist env caches populated by eval (test states are reused across seeds)
+    if single_trainer is not None:
+        single_trainer.save_caches()
+    if ensemble_trainers:
+        for t in ensemble_trainers:
+            t.save_caches()
     print(f"[gflownet] eval done in {time.time()-t0:.1f}s", flush=True)
+
+    if args.ablation_mode != "off" and "ablation01_union_at_k_auc" in metrics and \
+            "ablation02_union_at_k_auc" in metrics:
+        from grail_metabolism.eval.diversity import compute_ablation_verdict
+
+        verdict = compute_ablation_verdict(
+            gflownet_auc=metrics["gflownet_union_at_k_auc"],
+            abl01_auc=metrics["ablation01_union_at_k_auc"],
+            abl02_auc=metrics["ablation02_union_at_k_auc"],
+            margin=args.verdict_margin,
+        )
+        metrics["ablation_verdict"] = verdict
+        print(
+            f"[gflownet] ABL-03 verdict (margin={args.verdict_margin}): {verdict}  "
+            f"(gflownet_auc={metrics['gflownet_union_at_k_auc']:.4f}  "
+            f"ablation01_auc={metrics['ablation01_union_at_k_auc']:.4f}  "
+            f"ablation02_auc={metrics['ablation02_union_at_k_auc']:.4f})",
+            flush=True,
+        )
 
     result = {
         "seed": args.seed,
@@ -811,6 +931,11 @@ def main() -> None:
             "bootstrap": args.bootstrap,
             "rerank_epochs": args.rerank_epochs,
             "bootstrap_epochs": args.bootstrap_epochs,
+            "ablation_mode": args.ablation_mode,
+            "beta_prime": args.beta_prime,
+            "m_ensemble": args.m_ensemble,
+            "raw_draw_cap_mult": args.raw_draw_cap_mult,
+            "verdict_margin": args.verdict_margin,
         },
         "counts": {
             "train_examples": len(train_examples),
