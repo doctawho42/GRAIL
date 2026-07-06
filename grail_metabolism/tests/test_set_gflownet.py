@@ -691,3 +691,40 @@ def test_gflownet_family_trainers_get_independent_reranker_objects():
         for pa, pb in zip(abl01.reranker.parameters(), abl02_member.reranker.parameters())
     )
     assert diverged, "ensemble members' reranker params must diverge after independent fit()"
+
+
+# --------------------------------------------------------------------------- #
+# Adversarial-review fix (structural purity guard): SingleTerminalGFlowNetTrainer's
+# single-variable-ablation contract must hold STRUCTURALLY, not just behaviorally --
+# it may override ONLY tb_loss. A future edit silently overriding another inherited
+# method (sample_forest, candidate_children, fit, checkpoint helpers, ...) would break
+# the ablation's single-variable-change guarantee without any behavioral test catching it.
+# --------------------------------------------------------------------------- #
+
+def test_single_terminal_trainer_overrides_only_tb_loss():
+    inherited_methods = [
+        "sample_forest",
+        "candidate_children",
+        "policy_logits",
+        "_reranker_child_logits",
+        "fit",
+        "prewarm_caches",
+        "_expand_many",
+        "_load_caches",
+        "save_caches",
+        "_save_train_ckpt",
+        "_load_train_ckpt",
+    ]
+    for name in inherited_methods:
+        assert hasattr(SetGFlowNetTrainer, name), f"parent has no method {name!r} (name drift?)"
+        assert getattr(SingleTerminalGFlowNetTrainer, name) is getattr(SetGFlowNetTrainer, name), (
+            f"{name!r} must be inherited UNCHANGED from SetGFlowNetTrainer, not overridden"
+        )
+
+    own_members = [
+        n for n in SingleTerminalGFlowNetTrainer.__dict__
+        if not (n.startswith("__") and n.endswith("__"))
+    ]
+    assert own_members == ["tb_loss"], (
+        f"SingleTerminalGFlowNetTrainer must define ONLY tb_loss; found {own_members}"
+    )
