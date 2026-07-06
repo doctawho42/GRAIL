@@ -214,12 +214,33 @@ def evaluate_matrix(
     top_k: int,
     max_pool: int,
     device,
+    ks: Sequence[int] = (5, 10, 15, 20, 30, 50),
 ) -> Dict[str, float]:
-    """Dual eval matrix at matched output budget K = max_size. See module docstring."""
+    """Dual eval matrix at matched output budget K = max_size, PLUS a budget-matched
+    union@K curve over ``ks`` (D-EVAL01-SEMANTICS / D-EVAL02-KGRID). See module docstring.
+
+    Two DISTINCT aggregation semantics are reported, never conflated (D-EVAL01-SEMANTICS):
+      - ``gflownet_recall@{max_size}`` / ``reranker_recall@{max_size}`` / ``beam_recall@
+        {max_size}`` (unchanged, best-of-N-forest / single-ranked-list rows, preserved for
+        historical M1/M2 comparability).
+      - ``gflownet_union@{k}`` / ``reranker_union@{k}`` for every ``k`` in ``ks`` (the
+        union-of-all-N-forests / full-reranked-pool operating point, matched to how
+        Phase 2's baselines will emit their own full K-budget set), plus a
+        ``*_union_at_k_auc`` scalar summary per series via ``auc_of_curve``.
+
+    Both the gflownet-union stream and the reranker stream reaching ``dedup_to_budget`` are
+    built/requested at ``k=max(ks)`` -- NEITHER is pre-truncated to ``max_size`` before that
+    dedup pass (EVAL-01 budget-fairness fix) -- so ``union@30``/``union@50`` are computed
+    over the FULL available pool whenever it supports that many candidates, not silently
+    capped by the legacy (smaller) ``max_size`` budget.
+    """
     substrates = list(eval_bundle.map.keys())[:n_eval]
     annotated_ik_fn = _make_annotated_ik_fn(eval_bundle)
+    k_max = max(ks)
 
     gflownet_recall, reranker_recall, beam_recall = [], [], []
+    gflownet_union_curves: List[Dict[int, float]] = []
+    reranker_union_curves: List[Dict[int, float]] = []
     diversity_rows: List[Dict[str, float]] = []
     n_evaluated = 0
 
@@ -286,19 +307,58 @@ def evaluate_matrix(
         if rik is not None:
             smiles_of.setdefault(rik, root)
 
+        # gflownet_recall@{max_size}: unchanged best-of-N-forest row (D-EVAL01-SEMANTICS
+        # "if you can only ship one forest" operating point) -- preserved for historical
+        # M1/M2 comparability, dedup-truncated to max_size only (not the K-grid).
         best_terminal = best_state.terminal_set() if best_state is not None else frozenset()
-        best_smiles = [smiles_of[ik] for ik in best_terminal if ik in smiles_of][:max_size]
+        best_smiles_raw = [smiles_of[ik] for ik in best_terminal if ik in smiles_of]
+        best_smiles = dedup_to_budget(best_smiles_raw, k=max_size)
         gflownet_recall.append(_recall_at_k(best_smiles, annotated_ik))
 
-        reranker_smiles = _reranker_topk_smiles(
-            reranker, generator, root, k=max_size, top_k=top_k, max_pool=max_pool, device=device
+        # reranker_recall@{max_size}: legacy single-ranked-list row. FIX (budget-fairness,
+        # EVAL-01): request the reranker stream at k=max(ks), NOT max_size -- top_k/max_pool
+        # are the pool-construction knobs (distinct from this output-budget k), and must be
+        # large enough for the reranked pool to actually supply k_max candidates. Slice
+        # locally to max_size for this legacy row so its semantics are unchanged; the FULL
+        # (up to k_max) stream is what reaches dedup_to_budget/union_at_k_curve below.
+        reranker_stream_raw = _reranker_topk_smiles(
+            reranker, generator, root, k=max(ks), top_k=top_k, max_pool=max_pool, device=device
         )
+        reranker_smiles = dedup_to_budget(reranker_stream_raw, k=max_size)
         reranker_recall.append(_recall_at_k(reranker_smiles, annotated_ik))
 
         if beam_tree is not None:  # beam baseline only when a filter checkpoint was available
             beam_out = beam_tree.beam_search(root, max_output=max_size)
             beam_smiles = [s for s, _score in beam_out]
             beam_recall.append(_recall_at_k(beam_smiles, annotated_ik))
+
+        # gflownet_union@{k} / reranker_union@{k}: budget-matched union@K curve
+        # (D-EVAL01-SEMANTICS union-of-N-forests / full-reranked-pool operating point).
+        # Each stream is deduped ONCE at k=k_max (NOT re-truncated per k), then
+        # union_at_k_curve slices that single deduped stream at every k in ks -- monotone
+        # by construction, no re-inlined slice+recall loop (FIX 5).
+        gflownet_union_stream_raw = [smiles_of[ik] for s in sampled_sets for ik in s if ik in smiles_of]
+        gflownet_union_stream = dedup_to_budget(gflownet_union_stream_raw, k=k_max)
+        if len(gflownet_union_stream) >= k_max:
+            gflownet_union_curves.append(union_at_k_curve(gflownet_union_stream, annotated_ik, ks=ks))
+        else:
+            print(
+                f"[gflownet] WARNING: root={root!r} gflownet union stream under-produces at "
+                f"k_max={k_max} (got {len(gflownet_union_stream)} distinct candidates) -- "
+                "skipping this substrate's gflownet_union@K row (EVAL-02 under-production guard)",
+                flush=True,
+            )
+
+        reranker_union_stream = dedup_to_budget(reranker_stream_raw, k=k_max)
+        if len(reranker_union_stream) >= k_max:
+            reranker_union_curves.append(union_at_k_curve(reranker_union_stream, annotated_ik, ks=ks))
+        else:
+            print(
+                f"[gflownet] WARNING: root={root!r} reranker union stream under-produces at "
+                f"k_max={k_max} (got {len(reranker_union_stream)} distinct candidates) -- "
+                "skipping this substrate's reranker_union@K row (EVAL-02 under-production guard)",
+                flush=True,
+            )
 
         diversity_rows.append(_diversity_block(sampled_sets, smiles_of, annotated_ik))
         n_evaluated += 1
@@ -318,6 +378,22 @@ def evaluate_matrix(
         "circles@t0.4", "circles@t0.7",
     ):
         metrics[key] = _mean([row[key] for row in diversity_rows])
+
+    # gflownet_union@{k} / reranker_union@{k} (D-EVAL01-SEMANTICS): mean-over-substrates of
+    # each method's per-substrate union@K curve, plus a union_at_k_auc summary per series via
+    # the shared auc_of_curve (D-EVAL02-AUCNORM). Curves that were skipped for a given
+    # substrate (under-production guard above) are simply absent from that substrate's
+    # contribution to the mean, matching _mean's existing "skip empty" convention.
+    for series_name, curves in (("gflownet", gflownet_union_curves), ("reranker", reranker_union_curves)):
+        for k in ks:
+            metrics[f"{series_name}_union@{k}"] = _mean([c[k] for c in curves if k in c])
+        auc_values = [auc_of_curve(c, k_min=min(ks), k_max=k_max) for c in curves]
+        metrics[f"{series_name}_union_at_k_auc"] = _mean(auc_values)
+    # Single unqualified `union_at_k_auc` summary (mean over both series) for a simple
+    # top-line aggregate_seeds.py DIVERSITY_KEYS entry, alongside the per-series variants.
+    metrics["union_at_k_auc"] = _mean(
+        [metrics[f"{s}_union_at_k_auc"] for s in ("gflownet", "reranker") if f"{s}_union_at_k_auc" in metrics]
+    )
     return metrics
 
 
@@ -544,6 +620,7 @@ def main() -> None:
         trainer, generator, reranker, beam_tree, eval_bundle,
         n_eval=eval_count, n_samples=args.n_samples, max_size=args.max_size,
         top_k=args.top_k, max_pool=args.max_pool, device=rr_trainer.device,
+        ks=(5, 10, 15, 20, 30, 50),
     )
     trainer.save_caches()  # persist env caches populated by eval (test states are reused across seeds)
     print(f"[gflownet] eval done in {time.time()-t0:.1f}s", flush=True)
