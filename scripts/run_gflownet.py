@@ -35,11 +35,13 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
+import os
 import sys
 import time
 from pathlib import Path
-from typing import Dict, List, Sequence
+from typing import Dict, List, Optional, Sequence
 
 import torch
 
@@ -202,6 +204,70 @@ def _diversity_block(sampled_sets: List[frozenset], smiles_of: Dict[str, str], a
     }
 
 
+def _eval_config_fingerprint(
+    max_size: int, ks: Sequence[int], n_samples: int, top_k: int, max_pool: int,
+    circles_thresholds: Sequence[float] = (0.4, 0.7),
+) -> str:
+    """Stable hash of the eval-config fields that would make blended checkpoint rows WRONG
+    if changed between the checkpoint's write and the current run (FIX 6 / D-EVAL06-SCHEMA):
+    ``max_size``, the K-grid ``ks``, the #Circles thresholds, ``n_samples``, ``top_k``,
+    ``max_pool``. A mismatch on resume means the checkpoint is stale and must be discarded
+    (see ``_load_eval_ckpt``), never silently blended with rows computed under a different
+    config."""
+    payload = {
+        "max_size": int(max_size),
+        "ks": [int(k) for k in ks],
+        "circles_thresholds": [float(t) for t in circles_thresholds],
+        "n_samples": int(n_samples),
+        "top_k": int(top_k),
+        "max_pool": int(max_pool),
+    }
+    return hashlib.sha256(json.dumps(payload, sort_keys=True).encode("utf-8")).hexdigest()
+
+
+def _load_eval_ckpt(path: Optional[str], config_fingerprint: str):
+    """Load a per-substrate eval checkpoint, mirroring ``set_gflownet.py``'s
+    ``_load_train_ckpt`` ignore-and-restart behavior one level down (JSON instead of
+    ``torch.load``, per-substrate rows instead of per-epoch model state).
+
+    Returns ``(completed_rows, next_idx)``. Starts fresh (``{}``, ``0``) when:
+      - ``path`` is falsy or the file does not exist;
+      - the file is corrupt/unreadable (caught, WARNING printed, never fatal);
+      - the checkpoint's own ``config_fingerprint`` is absent or differs from
+        ``config_fingerprint`` (FIX 6 stale-config-resume guard -- discarded exactly like a
+        corrupt file, never blended).
+    """
+    if not path or not os.path.exists(path):
+        return {}, 0
+    try:
+        with open(path) as fh:
+            saved = json.load(fh)
+        saved_fp = saved.get("config_fingerprint")
+        if saved_fp != config_fingerprint:
+            print(
+                f"[gflownet] WARNING: eval checkpoint config fingerprint mismatch at {path} -- "
+                "discarding stale rows, starting fresh",
+                flush=True,
+            )
+            return {}, 0
+        return dict(saved.get("rows", {})), int(saved.get("next_idx", 0))
+    except Exception as exc:  # never let a bad checkpoint abort the run
+        print(f"[gflownet] WARNING: ignoring unreadable eval checkpoint {path}: {exc}", flush=True)
+        return {}, 0
+
+
+def _save_eval_ckpt(path: str, config_fingerprint: str, rows: Dict[str, dict], next_idx: int) -> None:
+    """Atomically persist the per-substrate eval checkpoint: write to a ``.tmp`` sibling then
+    ``os.replace`` (the exact atomic pattern ``set_gflownet.py:_save_train_ckpt`` uses for
+    training checkpoints, one level down -- JSON rows, not ``torch.save`` model state), so a
+    kill mid-write never leaves a half-written file that would fail to load."""
+    os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
+    tmp = path + ".tmp"
+    with open(tmp, "w") as fh:
+        json.dump({"config_fingerprint": config_fingerprint, "rows": rows, "next_idx": next_idx}, fh)
+    os.replace(tmp, path)
+
+
 def evaluate_matrix(
     trainer: SetGFlowNetTrainer,
     generator,
@@ -215,6 +281,8 @@ def evaluate_matrix(
     max_pool: int,
     device,
     ks: Sequence[int] = (5, 10, 15, 20, 30, 50),
+    resume_path: Optional[str] = None,
+    eval_ckpt_every: int = 10,
 ) -> Dict[str, float]:
     """Dual eval matrix at matched output budget K = max_size, PLUS a budget-matched
     union@K curve over ``ks`` (D-EVAL01-SEMANTICS / D-EVAL02-KGRID). See module docstring.
@@ -233,16 +301,26 @@ def evaluate_matrix(
     dedup pass (EVAL-01 budget-fairness fix) -- so ``union@30``/``union@50`` are computed
     over the FULL available pool whenever it supports that many candidates, not silently
     capped by the legacy (smaller) ``max_size`` budget.
+
+    EVAL-06 resumability: when ``resume_path`` is set, per-substrate result rows are
+    accumulated in ``completed_rows`` (keyed by root SMILES) and persisted atomically
+    (``.tmp`` + ``os.replace``, mirroring ``set_gflownet.py:_save_train_ckpt``) every
+    ``eval_ckpt_every`` substrates and once more after the loop. The checkpoint embeds a
+    ``config_fingerprint`` over the fields that would make blended rows wrong if changed
+    (``max_size``, ``ks``, the #Circles thresholds, ``n_samples``, ``top_k``, ``max_pool``);
+    a fingerprint mismatch on load discards the checkpoint (WARNING, start fresh) rather than
+    blending old-config and new-config rows (FIX 6). Final aggregation runs over
+    ``completed_rows.values()`` so a resumed run's metrics are identical to an uninterrupted
+    run's, independent of the order rows were (re)computed in. This is a SEPARATE file with a
+    separate lifecycle from the environment-cache checkpoint (``trainer.save_caches()``) --
+    the two are never conflated.
     """
     substrates = list(eval_bundle.map.keys())[:n_eval]
     annotated_ik_fn = _make_annotated_ik_fn(eval_bundle)
     k_max = max(ks)
 
-    gflownet_recall, reranker_recall, beam_recall = [], [], []
-    gflownet_union_curves: List[Dict[int, float]] = []
-    reranker_union_curves: List[Dict[int, float]] = []
-    diversity_rows: List[Dict[str, float]] = []
-    n_evaluated = 0
+    config_fingerprint = _eval_config_fingerprint(max_size, ks, n_samples, top_k, max_pool)
+    completed_rows, next_idx = _load_eval_ckpt(resume_path, config_fingerprint)
 
     # ik->SMILES map, built ONCE and grown INCREMENTALLY across substrates (each child-cache
     # parent folded in exactly once) using the WARM trainer._ik_cache. The prior code rebuilt
@@ -274,7 +352,10 @@ def evaluate_matrix(
                 if ik is not None:
                     global_smiles_of.setdefault(ik, c_smiles)
 
-    for root in substrates:
+    for i, root in enumerate(substrates):
+        if i < next_idx:
+            continue  # already completed in a prior (checkpointed) run -- resume index
+
         annotated_ik = set(annotated_ik_fn(root))
         if not annotated_ik:
             continue
@@ -313,7 +394,7 @@ def evaluate_matrix(
         best_terminal = best_state.terminal_set() if best_state is not None else frozenset()
         best_smiles_raw = [smiles_of[ik] for ik in best_terminal if ik in smiles_of]
         best_smiles = dedup_to_budget(best_smiles_raw, k=max_size)
-        gflownet_recall.append(_recall_at_k(best_smiles, annotated_ik))
+        gflownet_recall_val = _recall_at_k(best_smiles, annotated_ik)
 
         # reranker_recall@{max_size}: legacy single-ranked-list row. FIX (budget-fairness,
         # EVAL-01): request the reranker stream at k=max(ks), NOT max_size -- top_k/max_pool
@@ -325,12 +406,13 @@ def evaluate_matrix(
             reranker, generator, root, k=max(ks), top_k=top_k, max_pool=max_pool, device=device
         )
         reranker_smiles = dedup_to_budget(reranker_stream_raw, k=max_size)
-        reranker_recall.append(_recall_at_k(reranker_smiles, annotated_ik))
+        reranker_recall_val = _recall_at_k(reranker_smiles, annotated_ik)
 
+        beam_recall_val = None
         if beam_tree is not None:  # beam baseline only when a filter checkpoint was available
             beam_out = beam_tree.beam_search(root, max_output=max_size)
             beam_smiles = [s for s, _score in beam_out]
-            beam_recall.append(_recall_at_k(beam_smiles, annotated_ik))
+            beam_recall_val = _recall_at_k(beam_smiles, annotated_ik)
 
         # gflownet_union@{k} / reranker_union@{k}: budget-matched union@K curve
         # (D-EVAL01-SEMANTICS union-of-N-forests / full-reranked-pool operating point).
@@ -339,8 +421,9 @@ def evaluate_matrix(
         # by construction, no re-inlined slice+recall loop (FIX 5).
         gflownet_union_stream_raw = [smiles_of[ik] for s in sampled_sets for ik in s if ik in smiles_of]
         gflownet_union_stream = dedup_to_budget(gflownet_union_stream_raw, k=k_max)
+        gflownet_union_curve = None
         if len(gflownet_union_stream) >= k_max:
-            gflownet_union_curves.append(union_at_k_curve(gflownet_union_stream, annotated_ik, ks=ks))
+            gflownet_union_curve = union_at_k_curve(gflownet_union_stream, annotated_ik, ks=ks)
         else:
             print(
                 f"[gflownet] WARNING: root={root!r} gflownet union stream under-produces at "
@@ -350,8 +433,9 @@ def evaluate_matrix(
             )
 
         reranker_union_stream = dedup_to_budget(reranker_stream_raw, k=k_max)
+        reranker_union_curve = None
         if len(reranker_union_stream) >= k_max:
-            reranker_union_curves.append(union_at_k_curve(reranker_union_stream, annotated_ik, ks=ks))
+            reranker_union_curve = union_at_k_curve(reranker_union_stream, annotated_ik, ks=ks)
         else:
             print(
                 f"[gflownet] WARNING: root={root!r} reranker union stream under-produces at "
@@ -360,11 +444,40 @@ def evaluate_matrix(
                 flush=True,
             )
 
-        diversity_rows.append(_diversity_block(sampled_sets, smiles_of, annotated_ik))
-        n_evaluated += 1
+        row: Dict[str, object] = {
+            "gflownet_recall": gflownet_recall_val,
+            "reranker_recall": reranker_recall_val,
+            "diversity": _diversity_block(sampled_sets, smiles_of, annotated_ik),
+        }
+        if beam_recall_val is not None:
+            row["beam_recall"] = beam_recall_val
+        if gflownet_union_curve is not None:
+            row["gflownet_union_curve"] = gflownet_union_curve
+        if reranker_union_curve is not None:
+            row["reranker_union_curve"] = reranker_union_curve
+        completed_rows[root] = row
+
+        if resume_path and (i + 1) % eval_ckpt_every == 0:
+            _save_eval_ckpt(resume_path, config_fingerprint, completed_rows, i + 1)
+
+    if resume_path:
+        _save_eval_ckpt(resume_path, config_fingerprint, completed_rows, len(substrates))
 
     def _mean(xs: List[float]) -> float:
         return sum(xs) / len(xs) if xs else 0.0
+
+    rows = list(completed_rows.values())
+    n_evaluated = len(rows)
+    gflownet_recall = [r["gflownet_recall"] for r in rows]
+    reranker_recall = [r["reranker_recall"] for r in rows]
+    beam_recall = [r["beam_recall"] for r in rows if "beam_recall" in r]
+    diversity_rows = [r["diversity"] for r in rows]
+    gflownet_union_curves = [
+        {int(k): v for k, v in r["gflownet_union_curve"].items()} for r in rows if "gflownet_union_curve" in r
+    ]
+    reranker_union_curves = [
+        {int(k): v for k, v in r["reranker_union_curve"].items()} for r in rows if "reranker_union_curve" in r
+    ]
 
     metrics: Dict[str, float] = {
         "n_substrates": float(n_evaluated),
@@ -459,6 +572,23 @@ def main() -> None:
         help="Path to a Set-GFlowNet training checkpoint (saved every epoch). If it exists, "
              "training RESUMES from the last completed epoch instead of restarting at 0 -- "
              "makes a multi-hour run survive preemption/crash on preemptible workers.",
+    )
+    parser.add_argument(
+        "--resume-eval-ckpt", type=str, default=None,
+        help="Path to a per-substrate EVAL checkpoint (saved every --eval-ckpt-every "
+             "substrates inside evaluate_matrix). If it exists (and its embedded config "
+             "fingerprint matches this run's config), eval RESUMES mid-loop from the last "
+             "completed substrate instead of restarting at 0 -- mirrors --resume-ckpt's UX "
+             "but for the eval loop, not training. A corrupt or config-mismatched checkpoint "
+             "is ignored (WARNING, start fresh), never fatal. Distinct from the environment-"
+             "cache checkpoint (save_caches) -- a separate file, separate lifecycle.",
+    )
+    parser.add_argument(
+        "--eval-ckpt-every", type=int, default=10,
+        help="Persist the eval checkpoint every N substrates (D-EVAL06-INTERVAL). Each "
+             "substrate does n_samples full forest rollouts + a reranker pool build, so this "
+             "interval is tighter than the env-cache prewarm interval; tune against measured "
+             "per-substrate wall-clock at scale.",
     )
     # Reranker warm-start knobs, mirroring run_reranker_gate.py's --arch bi defaults.
     parser.add_argument("--rerank-epochs", type=int, default=15, help="Depth-1 reranker InfoNCE epochs.")
@@ -621,6 +751,7 @@ def main() -> None:
         n_eval=eval_count, n_samples=args.n_samples, max_size=args.max_size,
         top_k=args.top_k, max_pool=args.max_pool, device=rr_trainer.device,
         ks=(5, 10, 15, 20, 30, 50),
+        resume_path=args.resume_eval_ckpt, eval_ckpt_every=args.eval_ckpt_every,
     )
     trainer.save_caches()  # persist env caches populated by eval (test states are reused across seeds)
     print(f"[gflownet] eval done in {time.time()-t0:.1f}s", flush=True)
