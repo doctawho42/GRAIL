@@ -397,8 +397,13 @@ def sygma_baseline(test_map: Dict[str, Set[str]], ks: List[int]) -> Optional[Dic
         "precision_at": {str(k): prec_at[k] / n for k in ks},
         "mean_output_size": sum(out_sizes) / len(out_sizes) if out_sizes else 0.0,
         "n_substrates": n,
-        # BASE-04: aggregate_seeds.py-compatible key names, verbatim matching
-        # run_gflownet.py:_diversity_block's diversity-triplet keys.
+        # BASE-04: the four scalar key NAMES here (mean_pairwise_tanimoto,
+        # circles@t0.4, circles@t0.7, n_unique_scaffolds) match
+        # run_gflownet.py:_diversity_block's diversity-triplet keys verbatim,
+        # for side-by-side reading. NOTE: this dict is flat, unlike
+        # _diversity_block's shape, and aggregate_seeds.py does not read
+        # sygma's JSON -- so "compatible" here is limited to key-name parity,
+        # not a shared schema/consumer.
         "mean_pairwise_tanimoto": div_mean_pairwise_tanimoto / n,
         "circles@t0.4": div_circles_t04 / n,
         "circles@t0.7": div_circles_t07 / n,
