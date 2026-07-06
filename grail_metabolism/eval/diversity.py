@@ -11,6 +11,8 @@ from evaluation scripts and notebooks without pulling in the model stack.
 
 from __future__ import annotations
 
+import random
+import statistics
 from itertools import combinations
 from typing import Callable, Dict, Iterable, List, Literal, Sequence, Set
 
@@ -168,6 +170,82 @@ def compute_ablation_verdict(
     if beats_single and not beats_ensemble:
         return "partial"
     return "null"
+
+
+def paired_bootstrap_delta_ci(
+    gflownet_per_sub: Sequence[float],
+    abl_per_sub: Sequence[float],
+    n_boot: int = 10000,
+    ci: float = 0.95,
+    seed: int = 0,
+) -> Dict[str, object]:
+    """PRIMARY ABL-03 verdict statistic (D-11 / FIX B): a bootstrap CI on the mean
+    PAIRED per-substrate delta ``gflownet_i - abl_i`` between the Set-GFlowNet arm and
+    ONE ablation arm.
+
+    ``gflownet_per_sub``/``abl_per_sub`` are matched (same-length, same-order) per-
+    substrate scalars -- e.g. each substrate's ``union_at_k_auc`` or a single ``union@K``
+    value -- for the SAME shared-substrate population (guaranteed by Plan 02's D-04b
+    shared-substrate-set restriction, so the pairing is meaningful). Resamples the
+    ``n_boot`` bootstrap replicates by drawing (with replacement) substrate INDICES once
+    per replicate and applying the SAME drawn indices to both arrays (preserving the
+    pairing -- this is what makes it a matched-pairs bootstrap, not two independent
+    single-arm bootstraps), then takes the empirical ``ci``-coverage percentile interval
+    of the resulting distribution of resampled means.
+
+    Uses Python's stdlib ``random`` module (a local ``random.Random(seed)`` instance, not
+    the global RNG) and ``statistics.fmean``, matching this module's RDKit-only, numpy-
+    free dependency posture. Deterministic given ``seed`` (default 0) for reproducibility.
+
+    Returns a dict with:
+      - ``mean_delta``: the observed (non-resampled) mean of ``gflownet_i - abl_i``.
+      - ``ci_low``/``ci_high``: the ``ci``-coverage percentile bootstrap interval bounds.
+      - ``ci``: the requested coverage (echoed back for downstream reporting).
+      - ``n_boot``: the requested resample count (echoed back).
+      - ``n_pairs``: the number of paired substrates used.
+      - ``confirmed``: ``True`` iff the CI excludes 0 in gflownet's favor (``ci_low > 0``).
+
+    Raises ``ValueError`` if the two arrays differ in length or are empty -- a
+    length mismatch means the caller passed non-shared-substrate-restricted arrays,
+    which would silently break the pairing invariant this function depends on.
+    """
+    if len(gflownet_per_sub) != len(abl_per_sub):
+        raise ValueError(
+            "paired_bootstrap_delta_ci: gflownet_per_sub and abl_per_sub must be the "
+            f"same length (matched per-substrate pairs), got {len(gflownet_per_sub)} "
+            f"vs {len(abl_per_sub)}"
+        )
+    n = len(gflownet_per_sub)
+    if n == 0:
+        raise ValueError("paired_bootstrap_delta_ci: no paired substrates (empty input)")
+
+    deltas = [float(g) - float(a) for g, a in zip(gflownet_per_sub, abl_per_sub)]
+    mean_delta = statistics.fmean(deltas)
+
+    rng = random.Random(seed)
+    boot_means: List[float] = []
+    for _ in range(int(n_boot)):
+        resample = [deltas[rng.randrange(n)] for _ in range(n)]
+        boot_means.append(statistics.fmean(resample))
+    boot_means.sort()
+
+    alpha = 1.0 - ci
+    lo_idx = int((alpha / 2.0) * len(boot_means))
+    hi_idx = int((1.0 - alpha / 2.0) * len(boot_means)) - 1
+    lo_idx = max(0, min(lo_idx, len(boot_means) - 1))
+    hi_idx = max(0, min(hi_idx, len(boot_means) - 1))
+    ci_low = boot_means[lo_idx]
+    ci_high = boot_means[hi_idx]
+
+    return {
+        "mean_delta": mean_delta,
+        "ci_low": ci_low,
+        "ci_high": ci_high,
+        "ci": ci,
+        "n_boot": int(n_boot),
+        "n_pairs": n,
+        "confirmed": ci_low > 0.0,
+    }
 
 
 def modes_discovered_canonical(

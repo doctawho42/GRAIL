@@ -221,6 +221,52 @@ def test_compute_ablation_verdict_all_three_outcomes():
     ) == "null"
 
 
+def test_paired_bootstrap_delta_ci_known_positive_delta_excludes_zero():
+    # gflownet_i is CONSISTENTLY higher than abl_i by ~0.10 across every substrate
+    # (small jitter, same sign throughout) -- the CI should exclude 0 in gflownet's favor.
+    gflownet_per_sub = [0.50, 0.55, 0.48, 0.52, 0.60, 0.45, 0.51, 0.53, 0.49, 0.58]
+    abl_per_sub = [0.40, 0.44, 0.39, 0.41, 0.49, 0.36, 0.40, 0.43, 0.38, 0.47]
+
+    result = diversity.paired_bootstrap_delta_ci(
+        gflownet_per_sub, abl_per_sub, n_boot=2000, ci=0.95, seed=0
+    )
+    assert result["n_pairs"] == 10
+    assert result["mean_delta"] > 0.05
+    assert result["ci_low"] > 0.0
+    assert result["ci"] == 0.95
+    assert result["n_boot"] == 2000
+    assert result["confirmed"] is True
+
+
+def test_paired_bootstrap_delta_ci_null_delta_includes_zero():
+    # Deltas oscillate around 0 with no consistent sign -- the CI must include 0.
+    gflownet_per_sub = [0.50, 0.40, 0.55, 0.38, 0.51, 0.42, 0.49, 0.41, 0.52, 0.39]
+    abl_per_sub = [0.48, 0.42, 0.53, 0.40, 0.53, 0.40, 0.51, 0.39, 0.50, 0.41]
+
+    result = diversity.paired_bootstrap_delta_ci(
+        gflownet_per_sub, abl_per_sub, n_boot=2000, ci=0.95, seed=0
+    )
+    assert result["ci_low"] <= 0.0 <= result["ci_high"]
+    assert result["confirmed"] is False
+
+
+def test_paired_bootstrap_delta_ci_deterministic_given_seed():
+    gflownet_per_sub = [0.5, 0.6, 0.4, 0.55, 0.45]
+    abl_per_sub = [0.4, 0.5, 0.3, 0.45, 0.35]
+    r1 = diversity.paired_bootstrap_delta_ci(gflownet_per_sub, abl_per_sub, n_boot=500, seed=7)
+    r2 = diversity.paired_bootstrap_delta_ci(gflownet_per_sub, abl_per_sub, n_boot=500, seed=7)
+    assert r1 == r2
+
+
+def test_paired_bootstrap_delta_ci_rejects_length_mismatch_and_empty():
+    import pytest
+
+    with pytest.raises(ValueError):
+        diversity.paired_bootstrap_delta_ci([0.5, 0.6], [0.4], n_boot=100)
+    with pytest.raises(ValueError):
+        diversity.paired_bootstrap_delta_ci([], [], n_boot=100)
+
+
 # ---------------------------------------------------------------------------
 # Phase 1 Plan 02 guard tests: budget-matching / JSON-key-stability /
 # reranker-pretruncation / aggregate_seeds.py key-detection.
