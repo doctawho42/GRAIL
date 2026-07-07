@@ -220,11 +220,7 @@ def measure_selection(
     knob-sweep as ~ms per knob-point NOR rebuild the O(N^2) kernel per knob-point)."""
     import numpy as np
 
-    from grail_metabolism.eval.baselines import (
-        _pool_fingerprints,
-        _tanimoto_kernel_matrix,
-        select,
-    )
+    from grail_metabolism.eval.baselines import dedup_and_fingerprint, select
 
     # Build real reranker-scored pools from the built candidate pools so scores are the real
     # logits DPP/MMR/temperature consume. Reuse _reranker_topk-style scoring inline.
@@ -286,34 +282,24 @@ def measure_selection(
             select(scored, k=k, method="temperature_topp", T=T, p=p, rng=rng)
             temp_times.append(time.perf_counter() - t0)
 
-        # DPP/MMR: ONE fingerprint+kernel build per pool (lambda-independent), reused.
-        # Mirror baselines' internal filtering (parse + tautomer-dedup) so the fps the
-        # cached kernel is built over matches what select() will use, letting the FIX-B
-        # length guard reuse it rather than silently rebuild it.
-        from grail_metabolism.eval.baselines import _dedup_pool_score_aware
-
-        smi = [s for s, _ in scored]
-        sc = np.asarray([v for _, v in scored], dtype=np.float64)
-        pidx = [i for i, s in enumerate(smi) if Chem.MolFromSmiles(s) is not None]
-        smi = [smi[i] for i in pidx]
-        sc = sc[pidx]
-        if not smi:
-            continue
-        smi_d, _sc_d = _dedup_pool_score_aware(smi, sc)
+        # DPP/MMR: ONE fingerprint+kernel build per pool (theta/lam-INDEPENDENT) via
+        # dedup_and_fingerprint, then reuse BOTH fps AND kernel across every knob-point
+        # (Task 3). Passing kernel= (not just fps=) is what makes the per-knob cost a cheap
+        # greedy re-select instead of a hidden O(N^2) rebuild -- the exact reuse property this
+        # term is meant to measure. (Bug fix: the earlier fps-only calls silently rebuilt S.)
         t0 = time.perf_counter()
-        fps = _pool_fingerprints(smi_d)
-        _ = _tanimoto_kernel_matrix(fps)  # the O(N^2) build billed ONCE per pool
+        smi_d, _sc_d, fps, S = dedup_and_fingerprint(scored)
         kernel_build_times.append(time.perf_counter() - t0)
+        if not smi_d:
+            continue
 
-        # per-knob selects reusing the cached fps (the length matches the deduped pool, so
-        # select()'s FIX-B guard reuses it rather than rebuilding the kernel).
         for theta in dpp_knobs:
             t0 = time.perf_counter()
-            select(scored, k=k, method="dpp", theta=theta, fps=fps)
+            select(scored, k=k, method="dpp", theta=theta, fps=fps, kernel=S)
             dpp_perknob_times.append(time.perf_counter() - t0)
         for lam in mmr_knobs:
             t0 = time.perf_counter()
-            select(scored, k=k, method="mmr", lam=lam, fps=fps)
+            select(scored, k=k, method="mmr", lam=lam, fps=fps, kernel=S)
             mmr_perknob_times.append(time.perf_counter() - t0)
 
     return {
@@ -550,7 +536,8 @@ def extrapolate(
     }
 
 
-def recommend(extrap: Dict, ceiling_hours: float, ceiling_usd: float, ceiling_gb: float) -> Dict:
+def recommend(extrap: Dict, ceiling_hours: float, ceiling_usd: float, ceiling_gb: float,
+              ceiling_modal_wall_hours: float = 72.0) -> Dict:
     """Map the extrapolation to {local_feasible, modal_needed, scope_trim_needed} vs the
     user ceilings. Uses the CONSERVATIVE side of each band (planning-number, D-40-06).
 
@@ -568,20 +555,23 @@ def recommend(extrap: Dict, ceiling_hours: float, ceiling_usd: float, ceiling_gb
         rec = "local_feasible"
         reason = (f"local-serial high-band {local_high:.1f}h <= ceiling {ceiling_hours}h "
                   f"and disk {gb:.2f}GB <= {ceiling_gb}GB")
-    elif modal_max_usd <= ceiling_usd and gb <= ceiling_gb:
+    elif (modal_max_usd <= ceiling_usd and modal_max_h <= ceiling_modal_wall_hours
+          and gb <= ceiling_gb):
         rec = "modal_needed"
         reason = (f"local-serial high-band {local_high:.1f}h EXCEEDS ceiling {ceiling_hours}h; "
-                  f"Modal max ${modal_max_usd:.0f} <= ${ceiling_usd} and disk {gb:.2f}GB <= "
-                  f"{ceiling_gb}GB -> parallelize on Modal")
+                  f"Modal max ${modal_max_usd:.0f} <= ${ceiling_usd}, wall {modal_max_h:.1f}h <= "
+                  f"{ceiling_modal_wall_hours}h and disk {gb:.2f}GB <= {ceiling_gb}GB -> "
+                  f"parallelize on Modal")
     else:
         rec = "scope_trim_needed"
         reason = (f"neither local (high {local_high:.1f}h vs {ceiling_hours}h) nor Modal "
-                  f"(max ${modal_max_usd:.0f} vs ${ceiling_usd}, disk {gb:.2f}GB vs "
-                  f"{ceiling_gb}GB) fits the ceilings")
+                  f"(max ${modal_max_usd:.0f} vs ${ceiling_usd}, wall {modal_max_h:.1f}h vs "
+                  f"{ceiling_modal_wall_hours}h, disk {gb:.2f}GB vs {ceiling_gb}GB) fits the ceilings")
     return {
         "recommendation": rec,
         "reason": reason,
-        "ceilings": {"hours": ceiling_hours, "usd": ceiling_usd, "gb": ceiling_gb},
+        "ceilings": {"hours": ceiling_hours, "usd": ceiling_usd, "gb": ceiling_gb,
+                     "modal_wall_hours": ceiling_modal_wall_hours},
         "measured_against": {
             "local_serial_high_band_hours": local_high,
             "modal_max_band_hours": modal_max_h,
@@ -620,6 +610,9 @@ def main() -> None:
     ap.add_argument("--ceiling-hours", type=float, default=48.0)
     ap.add_argument("--ceiling-usd", type=float, default=200.0)
     ap.add_argument("--ceiling-gb", type=float, default=100.0)
+    ap.add_argument("--ceiling-modal-wall-hours", type=float, default=72.0,
+                    help="Max acceptable Modal preemption-max WALL hours for a modal_needed "
+                         "verdict (the 'no multi-day run' guard); above it -> scope_trim_needed.")
     ap.add_argument("--out", type=str, default=str(RESULTS_PATH))
     args = ap.parse_args()
 
@@ -699,6 +692,12 @@ def main() -> None:
           f"({frac_cold*100:.0f}%)", flush=True)
 
     cold_sample = _stratify_by_size(cold_valid, sizes, args.n_cold, n_buckets=3)
+    if not cold_sample:
+        raise SystemExit(
+            "[budget] no COLD substrates found (every test substrate is already in the "
+            "env-cache bank, or the split is empty/unparseable) -- cannot measure cold "
+            "pool-build. Run on a split with substrates absent from artifacts/reranker_gate_cache."
+        )
     print(f"[budget] cold stratified sample: n={len(cold_sample)} "
           f"hac range [{min(sizes[s] for s in cold_sample)}, "
           f"{max(sizes[s] for s in cold_sample)}]", flush=True)
@@ -748,7 +747,8 @@ def main() -> None:
         preempt_rate_band=(args.preempt_rate_min, args.preempt_rate_expected, args.preempt_rate_max),
         preempt_reload_min=args.preempt_reload_min,
     )
-    rec = recommend(extrap, args.ceiling_hours, args.ceiling_usd, args.ceiling_gb)
+    rec = recommend(extrap, args.ceiling_hours, args.ceiling_usd, args.ceiling_gb,
+                    ceiling_modal_wall_hours=args.ceiling_modal_wall_hours)
 
     report = {
         "meta": {

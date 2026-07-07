@@ -943,24 +943,41 @@ def test_pool_cache_hit_miss_and_config_key(tmp_path):
         calls["n"] += 1
         return [("CCO", 2.0, 3), ("CCCO", 1.0, 5), ("c1ccccc1", 0.5, 7)]
 
-    cp1 = pool_cache.build_or_load_pool(
-        "SUB", 0, None, top_k=200, max_pool=100, cache_dir=tmp_path, build_pool_fn=_fake_build
-    )
+    def _build(top_k=200, gen_ckpt="genA", seed=0):
+        return pool_cache.build_or_load_pool(
+            "SUB", seed, None, top_k=top_k, max_pool=100, cache_dir=tmp_path,
+            gen_ckpt=gen_ckpt, build_pool_fn=_fake_build,
+        )
+
+    cp1 = _build()
     assert calls["n"] == 1
     assert [s for s, _, _ in cp1.pool] == ["CCO", "CCCO", "c1ccccc1"]
 
     # same config -> HIT, generator NOT re-invoked
-    cp2 = pool_cache.build_or_load_pool(
-        "SUB", 0, None, top_k=200, max_pool=100, cache_dir=tmp_path, build_pool_fn=_fake_build
-    )
+    cp2 = _build()
     assert calls["n"] == 1
     assert cp2.pool == cp1.pool
 
-    # changed top_k -> different config key -> MISS (rebuild)
-    pool_cache.build_or_load_pool(
-        "SUB", 0, None, top_k=50, max_pool=100, cache_dir=tmp_path, build_pool_fn=_fake_build
-    )
+    # seed does NOT affect the key (pool is seed-invariant) -> still a HIT
+    _build(seed=7)
+    assert calls["n"] == 1
+
+    # changed top_k -> different key -> MISS
+    _build(top_k=50)
     assert calls["n"] == 2
+
+    # changed generator identity -> different key -> MISS (no stale-pool collision)
+    _build(gen_ckpt="genB")
+    assert calls["n"] == 3
+
+
+def test_pool_cache_requires_gen_ckpt(tmp_path):
+    from grail_metabolism.eval import pool_cache
+
+    with pytest.raises(ValueError):
+        pool_cache.build_or_load_pool(
+            "SUB", 0, None, cache_dir=tmp_path, build_pool_fn=lambda *a, **k: [("CCO", 1.0, 0)]
+        )
 
 
 def test_pool_cache_fingerprint_determinism(tmp_path):
@@ -969,7 +986,9 @@ def test_pool_cache_fingerprint_determinism(tmp_path):
     def _fake_build(gen, sub, top_k, max_pool):
         return [("CCO", 2.0, 3), ("CCCO", 1.0, 5), ("c1ccccc1", 0.5, 7)]
 
-    cp = pool_cache.build_or_load_pool("SUB", 0, None, cache_dir=tmp_path, build_pool_fn=_fake_build)
+    cp = pool_cache.build_or_load_pool(
+        "SUB", 0, None, cache_dir=tmp_path, gen_ckpt="genA", build_pool_fn=_fake_build
+    )
     scored = [(s, sc) for s, sc, _ in cp.pool]
     _, _, _, S1 = baselines.dedup_and_fingerprint(scored)
     _, _, _, S2 = baselines.dedup_and_fingerprint(scored)
@@ -987,14 +1006,14 @@ def test_run_baseline_selects_knob_on_val_not_test(monkeypatch):
     import scripts.run_baselines as rb
 
     def _fake_select(method, knob, sp, k):
-        return [f"{sp.substrate}:{knob}"]
+        return [f"{sp.substrate}:{knob['theta']}"]
 
     monkeypatch.setattr(rb, "_select_with_knob", _fake_select)
 
     val = [rb.ScoredPool(substrate="V", pool=[])]
     test = [rb.ScoredPool(substrate="T", pool=[])]
 
-    # val objective is maximized at knob 1.0 (NOT 4.0)
+    # val objective is maximized at knob theta=1.0 (NOT 4.0)
     def _obj(selected, sp):
         return 1.0 if selected[0].endswith(":1.0") else 0.0
 
@@ -1006,10 +1025,12 @@ def test_run_baseline_selects_knob_on_val_not_test(monkeypatch):
         "dpp", val, test, k=3, objective_fn=_obj,
         metric_fns={"used_knob": _used_knob}, grid=[1.0, 4.0],
     )
-    assert res["knob_name"] == "theta"
-    assert res["val_selected_knob"] == 1.0
-    assert res["val_curve"] == {1.0: 1.0, 4.0: 0.0}
-    # the load-bearing assertion: TEST used the VAL-selected knob (1.0), not the test set
+    assert res["knob_names"] == ["theta"]
+    assert res["val_selected_knob"] == {"theta": 1.0}
+    scores = {tuple(c["knob"].items()): c["score"] for c in res["val_curve"]}
+    assert scores[(("theta", 1.0),)] == 1.0
+    assert scores[(("theta", 4.0),)] == 0.0
+    # the load-bearing assertion: TEST used the VAL-selected knob (theta=1.0), not the test set
     assert res["test_metrics"]["used_knob"] == 1.0
 
 
@@ -1025,5 +1046,16 @@ def test_run_baseline_end_to_end_mmr_real_molecules():
     assert sp.kernel.shape == (4, 4)  # 4 distinct molecules, kernel built once
 
     res = rb.run_baseline("mmr", [sp], [sp], k=2, grid=[0.0, 1.0])
-    assert res["val_selected_knob"] in (0.0, 1.0)
+    assert res["val_selected_knob"] in ({"lam": 0.0}, {"lam": 1.0})
     assert 0.0 <= res["test_metrics"]["recall"] <= 1.0
+
+
+def test_dpp_kernel_without_fps_is_honored(monkeypatch):
+    """Plan 04-01 review fix #6: a valid precomputed kernel must be honored even when fps is
+    NOT also passed (fps only ever BUILDS a kernel) -- no silent rebuild."""
+    _smiles, _scores, _fps, S = baselines.dedup_and_fingerprint(_POOL_KR)
+    calls = _count_kernel_builds(monkeypatch)
+    r = baselines.select(_POOL_KR, k=3, method="dpp", theta=1.0, kernel=S)  # kernel, NO fps=
+    assert calls["n"] == 0, "a valid kernel must be honored even without fps"
+    r_ref = baselines.select(_POOL_KR, k=3, method="dpp", theta=1.0)
+    assert r == r_ref

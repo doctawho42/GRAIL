@@ -24,6 +24,7 @@ here (this module covers the post-hoc baselines only).
 """
 from __future__ import annotations
 
+import itertools
 from dataclasses import dataclass, field
 from typing import Callable, Dict, List, Optional, Sequence, Set, Tuple
 
@@ -32,12 +33,46 @@ import numpy as np
 from grail_metabolism.eval.baselines import dedup_and_fingerprint, select
 from grail_metabolism.metrics import _tautomer_inchikey
 
-# method -> (knob kwarg name, default val grid). The knob is the method's OWN diversity dial.
-KNOB_REGISTRY: Dict[str, Tuple[str, List[float]]] = {
-    "temperature_topp": ("T", [0.5, 1.0, 2.0]),
-    "dpp": ("theta", [0.5, 1.0, 2.0, 4.0]),
-    "mmr": ("lam", [0.0, 0.25, 0.5, 0.75, 1.0]),
+# method -> list of (knob kwarg name, default val grid) AXES. A method's knob-space is the
+# cartesian product of its axes, so a knob-point is a dict {name: value}. temperature_topp is
+# genuinely TWO-dimensional (T AND top-p p); sweeping T alone with p pinned at 1.0 leaves the
+# nucleus axis dead and under-explores the (T,p) frontier -- so both axes are swept (the
+# research spec's T x p grid), not just T.
+KNOB_REGISTRY: Dict[str, List[Tuple[str, List[float]]]] = {
+    "temperature_topp": [("T", [0.5, 1.0, 2.0]), ("p", [0.9, 0.95, 1.0])],
+    "dpp": [("theta", [0.5, 1.0, 2.0, 4.0])],
+    "mmr": [("lam", [0.0, 0.25, 0.5, 0.75, 1.0])],
 }
+
+# Documented per-method NEUTRAL knob (no strong diversity/relevance bias). Used ONLY as the
+# tie-break target so a val objective that saturates/ties across knobs resolves to the neutral
+# point deterministically, never to whichever knob happens to appear first in the grid.
+KNOB_NEUTRAL: Dict[str, Dict[str, float]] = {
+    "temperature_topp": {"T": 1.0, "p": 1.0},
+    "dpp": {"theta": 1.0},
+    "mmr": {"lam": 0.5},
+}
+
+
+def knob_points(method: str, grid_override: Optional[Sequence[float]] = None) -> List[Dict[str, float]]:
+    """Enumerate every knob-point (a dict of the method's axis kwargs) as the cartesian product
+    of its axis grids. ``grid_override`` (if given) replaces the FIRST axis's grid -- convenient
+    for single-axis methods (dpp/mmr)."""
+    axes = KNOB_REGISTRY[method]
+    if grid_override is not None:
+        axes = [(axes[0][0], list(grid_override))] + list(axes[1:])
+    names = [a[0] for a in axes]
+    grids = [a[1] for a in axes]
+    return [dict(zip(names, combo)) for combo in itertools.product(*grids)]
+
+
+def _dist_to_neutral(method: str, knob: Dict[str, float]) -> float:
+    neutral = KNOB_NEUTRAL[method]
+    return sum((knob[k] - neutral.get(k, 0.0)) ** 2 for k in knob)
+
+
+def _neg_values(knob: Dict[str, float]) -> Tuple[float, ...]:
+    return tuple(-v for _, v in sorted(knob.items()))
 
 
 @dataclass
@@ -73,11 +108,10 @@ def _default_objective(selected: Sequence[str], sp: ScoredPool) -> float:
     return recall_objective(selected, sp.annotated_ik)
 
 
-def _select_with_knob(method: str, knob_value: float, sp: ScoredPool, k: int) -> List[str]:
-    """One selection at a single knob-point, reusing the pool's cached fps+kernel for
-    DPP/MMR (so the kernel is built once per pool, not once per knob-point)."""
-    knob_name, _ = KNOB_REGISTRY[method]
-    kwargs: Dict[str, object] = {knob_name: knob_value}
+def _select_with_knob(method: str, knob: Dict[str, float], sp: ScoredPool, k: int) -> List[str]:
+    """One selection at a single knob-point (a dict of the method's axis kwargs), reusing the
+    pool's cached fps+kernel for DPP/MMR (kernel built once per pool, not once per knob-point)."""
+    kwargs: Dict[str, object] = dict(knob)
     if method in ("dpp", "mmr"):
         kwargs["fps"] = sp.fps
         kwargs["kernel"] = sp.kernel
@@ -92,32 +126,37 @@ def sweep_knob_on_val(
     k: int,
     objective_fn: Callable[[Sequence[str], ScoredPool], float] = _default_objective,
     grid: Optional[Sequence[float]] = None,
-) -> Tuple[float, Dict[float, float]]:
-    """Sweep ``method``'s knob over ``grid`` on the VAL pools; return the argmax knob and
-    the full ``{knob: mean_val_objective}`` curve. The knob is selected HERE (val), never
-    on test."""
-    _knob_name, default_grid = KNOB_REGISTRY[method]
-    grid = list(grid) if grid is not None else list(default_grid)
-    curve: Dict[float, float] = {}
-    for kv in grid:
-        vals = [objective_fn(_select_with_knob(method, kv, sp, k), sp) for sp in val_pools]
-        curve[kv] = float(np.mean(vals)) if vals else 0.0
-    best = max(grid, key=lambda kv: curve[kv])
-    return best, curve
+) -> Tuple[Dict[str, float], List[Dict[str, object]]]:
+    """Sweep ``method``'s knob-space (cartesian product of its axes) on the VAL pools; return
+    the argmax knob (a dict) and the full ``[{knob, score}, ...]`` curve. The knob is selected
+    HERE (val), never on test. Ties are broken DETERMINISTICALLY -- highest val score, then
+    nearest the method's documented neutral knob, then a stable value order -- so the selected
+    knob never depends on grid ordering."""
+    points = knob_points(method, grid)
+    scored: List[Tuple[Dict[str, float], float]] = []
+    for knob in points:
+        vals = [objective_fn(_select_with_knob(method, knob, sp, k), sp) for sp in val_pools]
+        scored.append((knob, float(np.mean(vals)) if vals else 0.0))
+    best_knob, _best_score = max(
+        scored,
+        key=lambda ks: (ks[1], -_dist_to_neutral(method, ks[0]), _neg_values(ks[0])),
+    )
+    curve: List[Dict[str, object]] = [{"knob": kn, "score": sc} for kn, sc in scored]
+    return best_knob, curve
 
 
 def evaluate_on_test(
     method: str,
-    knob_value: float,
+    knob: Dict[str, float],
     test_pools: Sequence[ScoredPool],
     k: int,
     metric_fns: Dict[str, Callable[[Sequence[str], ScoredPool], float]],
 ) -> Dict[str, float]:
-    """Evaluate the SINGLE (val-selected) ``knob_value`` on the TEST pools -- one pass, the
-    only time test is touched (SCALE-03)."""
+    """Evaluate the SINGLE (val-selected) ``knob`` on the TEST pools -- one pass, the only time
+    test is touched (SCALE-03)."""
     acc: Dict[str, List[float]] = {name: [] for name in metric_fns}
     for sp in test_pools:
-        sel = _select_with_knob(method, knob_value, sp, k)
+        sel = _select_with_knob(method, knob, sp, k)
         for name, fn in metric_fns.items():
             acc[name].append(fn(sel, sp))
     return {name: (float(np.mean(vals)) if vals else 0.0) for name, vals in acc.items()}
@@ -132,16 +171,15 @@ def run_baseline(
     metric_fns: Optional[Dict[str, Callable[[Sequence[str], ScoredPool], float]]] = None,
     grid: Optional[Sequence[float]] = None,
 ) -> Dict[str, object]:
-    """Full val-select -> test-once cycle for one baseline. Returns the val-selected knob,
-    the val curve, and the test metrics computed with THAT knob (never a test-optimal one)."""
+    """Full val-select -> test-once cycle for one baseline. Returns the val-selected knob (a
+    dict), the val curve, and the test metrics computed with THAT knob (never a test-optimal one)."""
     best, curve = sweep_knob_on_val(method, val_pools, k, objective_fn, grid)
     if metric_fns is None:
         metric_fns = {"recall": lambda sel, sp: recall_objective(sel, sp.annotated_ik)}
     test_metrics = evaluate_on_test(method, best, test_pools, k, metric_fns)
-    knob_name, _ = KNOB_REGISTRY[method]
     return {
         "method": method,
-        "knob_name": knob_name,
+        "knob_names": [axis[0] for axis in KNOB_REGISTRY[method]],
         "val_selected_knob": best,
         "val_curve": curve,
         "test_metrics": test_metrics,

@@ -337,19 +337,17 @@ def dpp_greedy_select(
     if n == 0:
         return []
 
-    # FIX B + Task 3 kernel-reuse: reuse a caller-supplied fps/kernel ONLY when it
-    # matches the final deduped pool size exactly; else (re)build. The kernel is
-    # theta-INDEPENDENT, so ONE build serves an entire theta knob-sweep (D-40-02/H4).
-    if fps is None or len(fps) != n:
-        fps = _pool_fingerprints(smiles)
-        if len(fps) != n:
-            # _pool_fingerprints can still drop an entry; a mismatch means a reused
-            # kernel would be stale, so drop it and recompute both defensively.
-            return []
-        kernel = None  # fps was rebuilt -> any caller kernel no longer corresponds
+    # FIX B + Task 3 kernel-reuse: a valid caller kernel (matching the deduped pool) is used
+    # DIRECTLY and is sufficient on its own -- the kernel is theta-INDEPENDENT, so ONE build
+    # serves an entire theta knob-sweep (D-40-02/H4), and fps is only ever needed to BUILD a
+    # kernel. Otherwise (re)build from fps, rebuilding a stale/absent caller fps too.
     if kernel is not None and getattr(kernel, "shape", None) == (n, n):
         S = np.array(kernel, dtype=np.float64, copy=True)  # COPY: never mutate the shared cache
     else:
+        if fps is None or len(fps) != n:
+            fps = _pool_fingerprints(smiles)
+            if len(fps) != n:
+                return []  # defensive: never feed a mismatched kernel
         S = _tanimoto_kernel_matrix(fps)
 
     q = np.exp(theta * scores)
@@ -428,17 +426,16 @@ def mmr_select(
     span = max(float(raw_scores.max() - raw_scores.min()), 1e-8)
     rel = (raw_scores - raw_scores.min()) / span
 
-    # FIX B + Task 3 kernel-reuse: reuse caller fps/kernel only when it matches the
-    # deduped pool exactly; the kernel is lam-INDEPENDENT so ONE build serves the whole
-    # lam knob-sweep (D-40-02/H4). MMR only READS S (no mutation), so no copy is needed.
-    if fps is None or len(fps) != n:
-        fps = _pool_fingerprints(smiles)
-        if len(fps) != n:
-            return []
-        kernel = None
+    # FIX B + Task 3 kernel-reuse: a valid caller kernel is used DIRECTLY and is sufficient on
+    # its own (fps only ever BUILDS a kernel); the kernel is lam-INDEPENDENT so ONE build
+    # serves the whole lam knob-sweep (D-40-02/H4). MMR only READS S (no mutation), no copy.
     if kernel is not None and getattr(kernel, "shape", None) == (n, n):
         S = kernel
     else:
+        if fps is None or len(fps) != n:
+            fps = _pool_fingerprints(smiles)
+            if len(fps) != n:
+                return []
         S = _tanimoto_kernel_matrix(fps)
     tie_keys = [_tautomer_inchikey(s) for s in smiles]
 

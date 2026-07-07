@@ -280,6 +280,12 @@ def _eval_config_fingerprint(
         "eval_beam": bool(eval_beam),
         "ablation_mode": str(ablation_mode),
         "m_ensemble": int(m_ensemble),
+        # Diversity-row SCHEMA version: bump whenever _diversity_block's emitted key set
+        # changes, so a checkpoint written under an older schema is DISCARDED on resume (not
+        # blended). v2 adds modes_discovered_canonical (Plan 04-01 Task 5); without this token
+        # a pre-Task-5 checkpoint hashed identically and its rows -- lacking the new key --
+        # crashed the unguarded diversity aggregation on resume.
+        "diversity_schema": "v2-canonical",
     }
     return hashlib.sha256(json.dumps(payload, sort_keys=True).encode("utf-8")).hexdigest()
 
@@ -795,7 +801,12 @@ def evaluate_matrix(
         "mean_pairwise_tanimoto", "n_unique_scaffolds", "set_size_calibration",
         "circles@t0.4", "circles@t0.7",
     ):
-        metrics[key] = _mean([row[key] for row in diversity_rows])
+        # Defensive (belt-and-suspenders with the diversity_schema fingerprint token): skip a
+        # key absent from the rows rather than KeyError-crashing the whole eval. Within one run
+        # every row shares a schema, so this never silently subset-averages.
+        vals = [row[key] for row in diversity_rows if key in row]
+        if vals:
+            metrics[key] = _mean(vals)
 
     # FIX A (D-04b/D-05): the GFlowNet-family arms (gflownet/ablation01/ablation02, whichever
     # ran) must have their *_union@{k}/*_union_at_k_auc computed over the IDENTICAL

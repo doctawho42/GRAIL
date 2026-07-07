@@ -236,11 +236,19 @@ def main() -> None:
     diversity_keys = _detect_diversity_keys(runs)
     if diversity_keys:
         print("\nmean±std across seeds (diversity):", flush=True)
+        n_runs = len(runs)
         for key in diversity_keys:
             vals = [r["metrics"][key] for r in runs if key in r.get("metrics", {})]
+            if not vals:
+                continue
             mean = statistics.fmean(vals)
             std = statistics.pstdev(vals) if len(vals) > 1 else 0.0
-            print(f"{key:<25} | {mean:.4f}±{std:.4f}", flush=True)
+            # Surface the per-key contributing-seed count. A key present in only SOME seeds
+            # (e.g. mixed old/new metrics.json when a new diversity key was added mid-project)
+            # is averaged over a SUBSET and is NOT comparable to all-seed keys -- flag it
+            # explicitly rather than silently blend an apples-to-oranges mean±std.
+            flag = "" if len(vals) == n_runs else f"  [!] only {len(vals)}/{n_runs} seeds"
+            print(f"{key:<25} | {mean:.4f}±{std:.4f}  (n={len(vals)}){flag}", flush=True)
 
     # Headline line: largest k present across all series, mean±std for every series at
     # that k. If both "reranker" and "generator" series exist there, keep the legacy
