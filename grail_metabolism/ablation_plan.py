@@ -324,13 +324,26 @@ def aggregate_and_verdict(
         "ablation02": test_ensemble_result["config"],
     })
 
+    # `.get(..., 0.0)`, not `[...]`: run_gflownet.py only POPULATES
+    # ablation01_union_at_k_auc/ablation02_union_at_k_auc when at least one eval
+    # substrate's (weaker) single-terminal/ensemble arm reaches k_max=50 DISTINCT
+    # candidates (see its own defensive `"ablation01_union_at_k_auc" in metrics`
+    # guard before computing its CLI-only verdict print) -- an under-provisioned
+    # eval window (few/small substrates) can legitimately leave the key absent for
+    # EVERY substrate. Absent means that arm produced no valid union@k curve at all
+    # on this split, i.e. its floor performance is 0.0 -- the same "no data -> 0.0"
+    # convention `_mean([])` already uses elsewhere in this module. Falling back to
+    # 0.0 here (rather than a bare `[...]` KeyError) keeps aggregate_and_verdict
+    # robust to this legitimate, substrate-structure-dependent degeneracy without
+    # changing the verdict arithmetic for the (expected, common) case where the key
+    # IS present.
     val_gflownet_aucs = [r["metrics"]["gflownet_union_at_k_auc"] for r in val_single_results]
-    val_abl01_aucs = [r["metrics"]["ablation01_union_at_k_auc"] for r in val_single_results]
-    val_abl02_aucs = [r["metrics"]["ablation02_union_at_k_auc"] for r in val_ensemble_results]
+    val_abl01_aucs = [r["metrics"].get("ablation01_union_at_k_auc", 0.0) for r in val_single_results]
+    val_abl02_aucs = [r["metrics"].get("ablation02_union_at_k_auc", 0.0) for r in val_ensemble_results]
 
     test_gflownet_auc = test_single_result["metrics"]["gflownet_union_at_k_auc"]
-    test_abl01_auc = test_single_result["metrics"]["ablation01_union_at_k_auc"]
-    test_abl02_auc = test_ensemble_result["metrics"]["ablation02_union_at_k_auc"]
+    test_abl01_auc = test_single_result["metrics"].get("ablation01_union_at_k_auc", 0.0)
+    test_abl02_auc = test_ensemble_result["metrics"].get("ablation02_union_at_k_auc", 0.0)
 
     gflownet_paired, abl01_paired = paired_arrays_from_ckpts(
         test_single_eval_ckpt, test_single_eval_ckpt, "ablation01"
@@ -339,8 +352,23 @@ def aggregate_and_verdict(
         test_ensemble_eval_ckpt, test_ensemble_eval_ckpt, "ablation02"
     )
 
-    primary_ci_abl01 = paired_bootstrap_delta_ci(gflownet_paired, abl01_paired, n_boot=10000, ci=0.95)
-    primary_ci_abl02 = paired_bootstrap_delta_ci(gflownet_paired_e, abl02_paired, n_boot=10000, ci=0.95)
+    # An EMPTY shared-substrate intersection means the weaker ablation arm never
+    # produced a *_union_curve row on ANY test substrate (the same k_max=50
+    # under-production degeneracy the metrics-level `.get(..., 0.0)` fallback above
+    # guards against, but surfacing one layer deeper -- at the per-substrate
+    # eval-checkpoint level rather than the already-averaged scalar). Unlike the
+    # scalar fallback, fabricating a bootstrap CI from zero pairs would misrepresent
+    # statistical confidence that does not exist, so report "no data" explicitly
+    # instead of calling paired_bootstrap_delta_ci (which correctly raises
+    # ValueError on empty input -- that guard stays intact for its other callers).
+    if abl01_paired:
+        primary_ci_abl01 = paired_bootstrap_delta_ci(gflownet_paired, abl01_paired, n_boot=10000, ci=0.95)
+    else:
+        primary_ci_abl01 = {"confirmed": False, "n_pairs": 0, "note": "no shared substrates with ablation01 curves"}
+    if abl02_paired:
+        primary_ci_abl02 = paired_bootstrap_delta_ci(gflownet_paired_e, abl02_paired, n_boot=10000, ci=0.95)
+    else:
+        primary_ci_abl02 = {"confirmed": False, "n_pairs": 0, "note": "no shared substrates with ablation02 curves"}
 
     mean_gflownet, std_gflownet = mean_std(val_gflownet_aucs)
     margin = degeneracy_guarded_margin(std_gflownet, mean_gflownet)

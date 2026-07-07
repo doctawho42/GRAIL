@@ -413,3 +413,76 @@ def test_aggregate_and_verdict_raises_on_config_mismatch():
         assert False, "expected ValueError from assert_config_match"
     except ValueError as exc:
         assert "train_substrates_requested" in str(exc)
+
+
+def test_aggregate_and_verdict_tolerates_missing_ablation_auc_key():
+    """Regression guard: run_gflownet.py only populates
+    metrics['ablation01_union_at_k_auc']/['ablation02_union_at_k_auc'] when at least
+    one eval substrate's (weaker) single-terminal/ensemble arm reaches k_max=50
+    DISTINCT candidates -- on a small/under-provisioned eval window (few substrates,
+    small max_size/n_samples) EVERY substrate can legitimately under-produce for
+    these weaker arms, leaving the key absent from metrics entirely (not present with
+    value 0.0 -- ABSENT). A detached Modal smoke run hit exactly this: both TEST-touch
+    configs came back with `gflownet_union_at_k_auc` present but
+    `ablation01_union_at_k_auc`/`ablation02_union_at_k_auc` missing, and a bare
+    `metrics["ablation01_union_at_k_auc"]` index crashed aggregate_and_verdict with
+    KeyError. aggregate_and_verdict must fall back to 0.0 (the same "no data -> 0.0"
+    convention `_mean([])` already uses elsewhere in this module) instead of
+    KeyError-ing, so the ablation orchestration can complete and report an honest
+    (if degenerate) verdict rather than crash."""
+    config = {"train_substrates_requested": 5, "eval_split": "test", "top_k": 50}
+
+    # Missing ablation01_union_at_k_auc / ablation02_union_at_k_auc entirely -- the
+    # weaker arm never reached k_max=50 distinct candidates on ANY eval substrate.
+    test_single_result = {
+        "config": config,
+        "metrics": {"gflownet_union_at_k_auc": 0.25},
+    }
+    test_ensemble_result = {
+        "config": config,
+        "metrics": {"gflownet_union_at_k_auc": 0.25},
+    }
+
+    # A non-empty eval checkpoint (paired_arrays_from_ckpts needs >=1 shared root) --
+    # only the gflownet series has curves; the ablation01/02 series is absent from
+    # every row, mirroring the same "arm never reached k_max" degeneracy.
+    ablation_free_ckpt = {
+        "rows": {
+            "root0": {"gflownet_union_curve": {"5": 0.1, "10": 0.1, "15": 0.1, "20": 0.1, "30": 0.1, "50": 0.1}},
+        }
+    }
+
+    report = ablation_plan.aggregate_and_verdict(
+        val_single_results=[{"metrics": {"gflownet_union_at_k_auc": 0.2}}],
+        val_ensemble_results=[{"metrics": {"gflownet_union_at_k_auc": 0.2}}],
+        test_single_result=test_single_result,
+        test_ensemble_result=test_ensemble_result,
+        test_single_eval_ckpt=ablation_free_ckpt,
+        test_ensemble_eval_ckpt=ablation_free_ckpt,
+        chosen_beta_prime=6.0,
+        sweep_scores={},
+        m_ensemble=3,
+    )
+
+    assert report["test_table"]["ablation01_union_at_k_auc"] == 0.0
+    assert report["test_table"]["ablation02_union_at_k_auc"] == 0.0
+    assert report["val_seed_aucs"]["ablation01"] == [0.0]
+    assert report["val_seed_aucs"]["ablation02"] == [0.0]
+    # gflownet's OWN AUC must never be defaulted -- it's always populated by
+    # run_gflownet.py regardless of ablation_mode, so a missing key there would be a
+    # genuine upstream bug, not a legitimate degeneracy; the KeyError must still fire.
+    try:
+        ablation_plan.aggregate_and_verdict(
+            val_single_results=[{"metrics": {}}],
+            val_ensemble_results=[{"metrics": {"gflownet_union_at_k_auc": 0.2}}],
+            test_single_result=test_single_result,
+            test_ensemble_result=test_ensemble_result,
+            test_single_eval_ckpt=ablation_free_ckpt,
+            test_ensemble_eval_ckpt=ablation_free_ckpt,
+            chosen_beta_prime=6.0,
+            sweep_scores={},
+            m_ensemble=3,
+        )
+        assert False, "expected KeyError for a missing gflownet_union_at_k_auc"
+    except KeyError:
+        pass
