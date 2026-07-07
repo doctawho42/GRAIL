@@ -68,6 +68,7 @@ RECALL_KEY_RE = re.compile(r"^(?P<series>.+)_(?:recall|union)@(?P<k>\d+)$")
 # aggregate mean±std report even though evaluate_matrix already computes and emits them.
 DIVERSITY_KEYS = (
     "modes_discovered",
+    "modes_discovered_canonical",
     "mean_pairwise_tanimoto",
     "n_unique_scaffolds",
     "set_size_calibration",

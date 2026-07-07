@@ -1033,3 +1033,48 @@ def test_evaluate_matrix_source_restricts_gflownet_family_aucs_to_shared_set():
     assert "_shared_substrate_survivors(" in src
     assert re.search(r"metrics\[f\"\{series_name\}_n_skipped\"\]", src)
     assert re.search(r"metrics\[f\"\{series_name\}_union_at_k_auc\"\]", src)
+
+
+# ---------------------------------------------------------------------------
+# Plan 04-01 Task 5: modes_discovered_canonical wired into _diversity_block's output.
+# ---------------------------------------------------------------------------
+
+def test_diversity_block_emits_modes_discovered_canonical():
+    """_diversity_block must now emit the reward-gated + Tanimoto-excluded
+    modes_discovered_canonical key alongside the plain annotated_coverage_count
+    (Plan 04-01 Task 5). Exercised on a hand-built fixture (no model / dataset)."""
+    import scripts.run_gflownet as rg
+    from grail_metabolism.metrics import _tautomer_inchikey
+
+    ik_cco = _tautomer_inchikey("CCO")           # annotated
+    ik_bz = _tautomer_inchikey("c1ccccc1")       # NOT annotated
+    smiles_of = {ik_cco: "CCO", ik_bz: "c1ccccc1"}
+    sampled_sets = [frozenset({ik_cco, ik_bz})]
+    annotated_ik = {ik_cco}
+
+    block = rg._diversity_block(sampled_sets, smiles_of, annotated_ik)
+
+    assert "modes_discovered_canonical" in block
+    # only CCO passes the binary annotated reward gate; after sphere-exclusion -> 1 mode
+    assert block["modes_discovered_canonical"] == 1.0
+    # the plain annotated-coverage key is still present and unchanged
+    assert block["modes_discovered"] == 1.0
+
+
+def test_diversity_block_canonical_does_not_inflate_on_tautomers(monkeypatch):
+    """The canonical mode count must NOT double-count tautomers of the same annotated
+    molecule (relies on modes_discovered_canonical's FIX-C tautomer pre-pass)."""
+    import scripts.run_gflownet as rg
+
+    monkeypatch.setattr(diversity, "_tautomer_inchikey", _fake_taut_ik)
+    monkeypatch.setattr(metrics, "_tautomer_inchikey", _fake_taut_ik)
+    monkeypatch.setattr(rg, "_tautomer_inchikey", _fake_taut_ik)
+
+    shared = _fake_taut_ik(_TAUT_A)  # == _fake_taut_ik(_TAUT_B) == "SHARED_TAUT_KEY"
+    smiles_of = {shared: _TAUT_A}
+    sampled_sets = [frozenset({shared})]
+    annotated_ik = {shared}
+
+    block = rg._diversity_block(sampled_sets, smiles_of, annotated_ik)
+    # one distinct annotated molecule -> exactly one canonical mode, never two
+    assert block["modes_discovered_canonical"] == 1.0

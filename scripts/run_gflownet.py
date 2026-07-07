@@ -76,6 +76,7 @@ from grail_metabolism.eval.diversity import (
     circles_count,
     dedup_to_budget,
     mean_pairwise_tanimoto,
+    modes_discovered_canonical,
     n_unique_scaffolds,
     set_size_calibration,
     union_at_k_curve,
@@ -207,6 +208,19 @@ def _diversity_block(sampled_sets: List[frozenset], smiles_of: Dict[str, str], a
         # unbroken. The JSON-key rename is deferred to whichever later phase next regenerates
         # M2-style results.
         "modes_discovered": float(annotated_coverage_count(sampled_sets, annotated_ik)),
+        # Plan 04-01 Task 5 / D-40-04: GFlowNet-literature-canonical "modes discovered" --
+        # the binary annotated reward gate (reward_fn = 1 iff the candidate's tautomer-InChIKey
+        # is in the annotated set, tau=1.0) PLUS a Tanimoto sphere-exclusion at delta=0.4 (the
+        # #Circles HEADLINE threshold). NOTE: the plan text conflated the two thresholds --
+        # #Circles-0.4 is a SIMILARITY threshold, so it maps to `delta` (the exclusion), NOT to
+        # `tau` (the reward gate). Tautomer duplicates are collapsed by the function's own FIX-C
+        # pre-pass, so they cannot inflate the count. delta=0.7 (broad) can be added later.
+        "modes_discovered_canonical": float(modes_discovered_canonical(
+            all_smiles,
+            reward_fn=lambda s: 1.0 if _tautomer_inchikey(s) in annotated_ik else 0.0,
+            tau=1.0,
+            delta=0.4,
+        )),
         "mean_pairwise_tanimoto": float(mean_pairwise_tanimoto(all_smiles)),
         "n_unique_scaffolds": float(n_unique_scaffolds(all_smiles)),
         "set_size_calibration": float(set_size_calibration(sampled_sets, annotated_ik)),
@@ -777,7 +791,8 @@ def evaluate_matrix(
     if beam_recall:  # only present when the beam baseline ran (filter checkpoint available)
         metrics[f"beam_recall@{max_size}"] = _mean(beam_recall)
     for key in (
-        "modes_discovered", "mean_pairwise_tanimoto", "n_unique_scaffolds", "set_size_calibration",
+        "modes_discovered", "modes_discovered_canonical",
+        "mean_pairwise_tanimoto", "n_unique_scaffolds", "set_size_calibration",
         "circles@t0.4", "circles@t0.7",
     ):
         metrics[key] = _mean([row[key] for row in diversity_rows])
