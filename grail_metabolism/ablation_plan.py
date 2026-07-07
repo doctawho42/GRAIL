@@ -186,8 +186,15 @@ def sweep_scores_from_results(
     ``run_ablation_local.py``'s ``sweep_beta_prime``'s dry-run-skip behavior."""
     scores: Dict[float, Optional[float]] = {}
     for cfg in sweep_configs:
-        bp = float(cfg["beta_prime"])
-        result = results_by_tag.get(cfg["tag"])
+        raw_bp = cfg.get("beta_prime")
+        if raw_bp is None:
+            raise ValueError(
+                f"sweep_scores_from_results: config {cfg.get('tag')!r} has no "
+                "beta_prime set (sweep configs must be fully materialized by "
+                "plan_configs before being passed here)"
+            )
+        bp = float(raw_bp)  # type: ignore[arg-type]
+        result = results_by_tag.get(str(cfg["tag"]))
         if result is None:
             scores[bp] = None
             continue
