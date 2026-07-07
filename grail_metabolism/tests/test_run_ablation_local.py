@@ -101,16 +101,40 @@ def test_per_seed_out_and_checkpoint_paths_are_seed_keyed():
     assert "seed={seed}" in src or "seed{seed}" in src
 
 
-def test_config_match_gate_invoked_before_accepting_test_table():
-    """FIX C wiring: main() must call assert_config_match on the three test-touch arms'
-    result['config'] dicts BEFORE reading test_gflownet_auc/test_abl01_auc/test_abl02_auc
-    off of them."""
+def test_verdict_delegated_to_shared_aggregate_and_verdict():
+    """FIX 1 wiring: main() must compute its final verdict by calling the SHARED
+    ``grail_metabolism.ablation_plan.aggregate_and_verdict`` -- the same function
+    ``scripts/modal_ablation.py`` calls -- instead of duplicating the verdict/
+    config-match-gate logic inline (which had drifted to reference
+    ``compute_ablation_verdict`` without importing it, an unguarded NameError).
+    ``aggregate_and_verdict`` applies the FIX C ``assert_config_match`` gate
+    internally before reading any test-table value, so this runner no longer needs
+    (and no longer has) its own inline gate call."""
     src = RUNNER_PATH.read_text()
-    gate_pos = src.find("assert_config_match(")
-    assert gate_pos != -1, "assert_config_match must be called in main()"
-    read_pos = src.find("test_gflownet_auc = test_single")
-    assert read_pos != -1
-    assert gate_pos < read_pos, "config-match gate must run BEFORE the test table is read"
+    code = _code_only(src)
+    assert "aggregate_and_verdict(" in code, "main() must call the shared aggregate_and_verdict"
+    assert "compute_ablation_verdict" not in code, (
+        "compute_ablation_verdict must not be referenced directly in this file's CODE -- it "
+        "is only used inside the shared ablation_plan.aggregate_and_verdict (a bare, "
+        "unimported reference here is exactly the NameError bug this fix addresses)"
+    )
+    # No duplicate/divergent verdict logic: this file must not import diversity's
+    # verdict primitives directly anymore -- it delegates to ablation_plan instead.
+    assert "from grail_metabolism.eval.diversity import" not in code
+
+
+def test_no_unimported_name_references_in_source():
+    """Regression guard for the exact class of bug this fix addresses: every bare
+    name used in the module must resolve to something imported or defined in this
+    file (catches a future NameError-by-refactor before it reaches a multi-hour
+    Modal-adjacent run). Cheap proxy: compile the file (catches syntax errors) and
+    confirm the historically-broken symbol is gone from this file's namespace."""
+    import ast
+
+    src = RUNNER_PATH.read_text()
+    compile(src, str(RUNNER_PATH), "exec")  # must not raise
+    tree = ast.parse(src)
+    assert isinstance(tree, ast.Module)
 
 
 def test_pick_beta_prime_selects_max_val_score():

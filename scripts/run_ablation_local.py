@@ -23,13 +23,16 @@ What it does, in order:
      invocation (run_gflownet.py internally trains M members seeded ``seed*1000+m`` and
      round-robins draws across them -- no separate per-member subprocess is needed here).
   4. Selects on VAL, then touches TEST exactly once (one more triple of invocations at
-     ``--eval-split test``), gated by ``assert_config_match`` (FIX C) before accepting the
-     three-way test table.
-  5. Computes BOTH verdict views: the PRIMARY paired-per-substrate bootstrap CI
-     (``paired_bootstrap_delta_ci``, reading the per-substrate curves out of the
-     ``--resume-eval-ckpt`` JSON's ``rows`` -- the mean-only ``result["metrics"]`` scalars
-     do not carry per-substrate arrays) and the SECONDARY seed-level
-     ``compute_ablation_verdict`` + a Delta sensitivity grid.
+     ``--eval-split test``).
+  5. Computes the final verdict report by calling the SHARED
+     ``grail_metabolism.ablation_plan.aggregate_and_verdict`` -- the EXACT function
+     ``scripts/modal_ablation.py`` also calls, so local and Modal runs produce
+     byte-identical verdicts from identical per-config results. It applies the
+     ``assert_config_match`` (FIX C) gate before reading the three-way test table, then
+     computes BOTH the PRIMARY paired-per-substrate bootstrap CI (reading per-substrate
+     curves out of the ``--resume-eval-ckpt`` JSON's ``rows`` -- the mean-only
+     ``result["metrics"]`` scalars do not carry per-substrate arrays) and the SECONDARY
+     seed-level ``compute_ablation_verdict`` + a Delta sensitivity grid.
 
 Resume-safety: every invocation reuses ``run_gflownet.py``'s own two checkpoint
 mechanisms unchanged -- ``--resume-ckpt`` (per-epoch training resume) and
@@ -73,15 +76,12 @@ sys.path.insert(0, str(ROOT))
 from grail_metabolism.ablation_plan import (  # noqa: E402
     K_MAX,
     KS,
+    aggregate_and_verdict,
     compute_delta_sensitivity_grid,
     degeneracy_guarded_margin,
     mean_std,
     per_substrate_aucs as _per_substrate_aucs_from_dict,
     pick_beta_prime,
-)
-from grail_metabolism.eval.diversity import (  # noqa: E402
-    assert_config_match,
-    paired_bootstrap_delta_ci,
 )
 
 DEFAULT_ARTIFACTS_DIR = ROOT / "artifacts" / "ablation_local"
@@ -136,6 +136,24 @@ def _invoke(
         return None
     with open(out_path) as fh:
         return json.load(fh)
+
+
+def _require_result(result: Optional[dict], label: str) -> dict:
+    """Guard against a ``None`` per-config result before subscripting it.
+
+    ``_run_ablation_mode``/``_invoke`` return ``Optional[dict]`` -- ``None`` only when
+    ``--dry-run`` is set AND the out-path doesn't exist yet (see ``_invoke``). Every
+    call site past the dry-run early-return in ``main()`` expects a materialized dict;
+    raise a clear, actionable error here instead of letting a ``None`` reach a bare
+    ``result["config"]``/``result["metrics"]`` subscript (``TypeError: 'NoneType' object
+    is not subscriptable``)."""
+    if result is None:
+        raise RuntimeError(
+            f"run_ablation_local: '{label}' produced no result (subprocess likely "
+            "under-produced, was skipped in --dry-run, or its --out JSON is missing/"
+            "unreadable). Cannot continue aggregation without this config's result."
+        )
+    return result
 
 
 def _out_path(artifacts_dir: Path, tag: str) -> Path:
@@ -294,13 +312,13 @@ def main() -> None:
             eval_split="val", artifacts_dir=artifacts_dir, fixed=fixed,
             eval_substrates=args.eval_substrates,
         )
-        val_single_results.append(r1)
+        val_single_results.append(_require_result(r1, f"ablation01 (single) VAL seed={seed}"))
         r2 = _run_ablation_mode(
             "ensemble", seed=seed, beta_prime=chosen_beta_prime, m_ensemble=args.m_ensemble,
             eval_split="val", artifacts_dir=artifacts_dir, fixed=fixed,
             eval_substrates=args.eval_substrates,
         )
-        val_ensemble_results.append(r2)
+        val_ensemble_results.append(_require_result(r2, f"ablation02 (ensemble) VAL seed={seed}"))
 
     val_gflownet_aucs = [r["metrics"]["gflownet_union_at_k_auc"] for r in val_single_results]
     val_abl01_aucs = [r["metrics"]["ablation01_union_at_k_auc"] for r in val_single_results]
@@ -318,71 +336,47 @@ def main() -> None:
     # 3. Test touched ONCE.
     print("[run_ablation_local] === Step 3: TEST touch (once) ===", flush=True)
     test_seed = args.seeds[0]
-    test_single = _run_ablation_mode(
-        "single", seed=test_seed, beta_prime=chosen_beta_prime, m_ensemble=args.m_ensemble,
-        eval_split="test", artifacts_dir=artifacts_dir, fixed=fixed,
+    test_single = _require_result(
+        _run_ablation_mode(
+            "single", seed=test_seed, beta_prime=chosen_beta_prime, m_ensemble=args.m_ensemble,
+            eval_split="test", artifacts_dir=artifacts_dir, fixed=fixed,
+        ),
+        "ablation01 (single) TEST touch",
     )
-    test_ensemble = _run_ablation_mode(
-        "ensemble", seed=test_seed, beta_prime=chosen_beta_prime, m_ensemble=args.m_ensemble,
-        eval_split="test", artifacts_dir=artifacts_dir, fixed=fixed,
+    test_ensemble = _require_result(
+        _run_ablation_mode(
+            "ensemble", seed=test_seed, beta_prime=chosen_beta_prime, m_ensemble=args.m_ensemble,
+            eval_split="test", artifacts_dir=artifacts_dir, fixed=fixed,
+        ),
+        "ablation02 (ensemble) TEST touch",
     )
 
-    # FIX C: automated config-match gate BEFORE accepting the test-split table.
-    assert_config_match({
-        "gflownet": test_single["config"],
-        "ablation01": test_single["config"],
-        "ablation02": test_ensemble["config"],
-    })
+    # 4. Verdict computation delegated to the SHARED grail_metabolism.ablation_plan
+    # .aggregate_and_verdict -- the EXACT function scripts/modal_ablation.py calls, so
+    # local and Modal runs produce byte-identical verdicts from identical per-config
+    # results (unifies what used to be duplicate, divergence-prone inline verdict logic
+    # in this file). It internally re-applies the FIX C config-match gate before
+    # reading any test-table value.
+    single_eval_ckpt_path = _ckpt_paths(artifacts_dir, f"ablation_single_test_seed{test_seed}")[1]
+    ensemble_eval_ckpt_path = _ckpt_paths(artifacts_dir, f"ablation_ensemble_test_seed{test_seed}")[1]
+    with open(single_eval_ckpt_path) as fh:
+        test_single_eval_ckpt = json.load(fh)
+    with open(ensemble_eval_ckpt_path) as fh:
+        test_ensemble_eval_ckpt = json.load(fh)
+
+    report = aggregate_and_verdict(
+        val_single_results=val_single_results,
+        val_ensemble_results=val_ensemble_results,
+        test_single_result=test_single,
+        test_ensemble_result=test_ensemble,
+        test_single_eval_ckpt=test_single_eval_ckpt,
+        test_ensemble_eval_ckpt=test_ensemble_eval_ckpt,
+        chosen_beta_prime=chosen_beta_prime,
+        sweep_scores=scores,
+        m_ensemble=args.m_ensemble,
+    )
     print("[run_ablation_local] config-match gate PASSED (FIX C).", flush=True)
 
-    test_gflownet_auc = test_single["metrics"]["gflownet_union_at_k_auc"]
-    test_abl01_auc = test_single["metrics"]["ablation01_union_at_k_auc"]
-    test_abl02_auc = test_ensemble["metrics"]["ablation02_union_at_k_auc"]
-
-    # 4a. PRIMARY: paired per-substrate bootstrap CI, reading per-substrate curves out of
-    # the test-touch eval checkpoints.
-    single_ckpt = _ckpt_paths(artifacts_dir, f"ablation_single_test_seed{test_seed}")[1]
-    ensemble_ckpt = _ckpt_paths(artifacts_dir, f"ablation_ensemble_test_seed{test_seed}")[1]
-    gflownet_paired, abl01_paired = paired_arrays(single_ckpt, single_ckpt, "ablation01")
-    gflownet_paired_e, abl02_paired = paired_arrays(ensemble_ckpt, ensemble_ckpt, "ablation02")
-
-    primary_ci_abl01 = paired_bootstrap_delta_ci(gflownet_paired, abl01_paired, n_boot=10000, ci=0.95)
-    primary_ci_abl02 = paired_bootstrap_delta_ci(gflownet_paired_e, abl02_paired, n_boot=10000, ci=0.95)
-
-    # 4b. SECONDARY: seed-level verdict + degeneracy-guarded margin + sensitivity grid.
-    mean_gflownet, std_gflownet = _mean_std(val_gflownet_aucs)
-    margin = degeneracy_guarded_margin(std_gflownet, mean_gflownet)
-    secondary_verdict = compute_ablation_verdict(
-        test_gflownet_auc, test_abl01_auc, test_abl02_auc, margin=margin,
-    )
-    sensitivity_grid = compute_delta_sensitivity_grid(
-        test_gflownet_auc, test_abl01_auc, test_abl02_auc, std=std_gflownet,
-    )
-
-    report = {
-        "beta_prime_sweep": scores,
-        "chosen_beta_prime": chosen_beta_prime,
-        "val_seed_aucs": {
-            "gflownet": val_gflownet_aucs, "ablation01": val_abl01_aucs, "ablation02": val_abl02_aucs,
-        },
-        "test_table": {
-            "gflownet_union_at_k_auc": test_gflownet_auc,
-            "ablation01_union_at_k_auc": test_abl01_auc,
-            "ablation02_union_at_k_auc": test_abl02_auc,
-        },
-        "primary_paired_bootstrap": {
-            "vs_ablation01": primary_ci_abl01,
-            "vs_ablation02": primary_ci_abl02,
-        },
-        "secondary_seed_level_verdict": secondary_verdict,
-        "secondary_margin_used": margin,
-        "sensitivity_grid": sensitivity_grid,
-        "m_ensemble": args.m_ensemble,
-        "note_fix_e": (
-            "Phase 3 reports the generous-ensemble variant only; the compute-matched "
-            "ensemble is deferred to Phase 4."
-        ),
-    }
     report_path = artifacts_dir / "verdict_report.json"
     with open(report_path, "w") as fh:
         json.dump(report, fh, indent=2)
