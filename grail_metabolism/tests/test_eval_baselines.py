@@ -839,3 +839,191 @@ def test_temperature_topp_select_skips_unparseable_smiles_directly():
     rng = np.random.default_rng(0)
     ranked = baselines.temperature_topp_select(pool, k=4, T=1.0, p=1.0, rng=rng)
     assert _UNPARSEABLE not in ranked
+
+
+# ---------------------------------------------------------------------------
+# Plan 04-01 Task 3: per-pool kernel reuse across a knob-sweep (D-40-02 / H4).
+# The lambda/theta-independent Tanimoto kernel must be built ONCE per pool and
+# reused across every DPP/MMR knob-point, giving IDENTICAL results to the
+# rebuild-every-time path.
+# ---------------------------------------------------------------------------
+
+# Five distinct, parseable molecules with distinct tautomer-InChIKeys (no dedup
+# collapse under the real _tautomer_inchikey), so the deduped pool size is 5.
+_POOL_KR = [
+    (_HEXANE, 2.0),
+    (_HEPTANE, 1.5),
+    (_BENZENE, 1.0),
+    ("CCO", 0.5),
+    ("CCCO", 0.2),
+]
+
+
+def _count_kernel_builds(monkeypatch):
+    """Wrap baselines._tanimoto_kernel_matrix with a call counter; returns the dict."""
+    calls = {"n": 0}
+    orig = baselines._tanimoto_kernel_matrix
+
+    def _counting(fps_arg):
+        calls["n"] += 1
+        return orig(fps_arg)
+
+    monkeypatch.setattr(baselines, "_tanimoto_kernel_matrix", _counting)
+    return calls
+
+
+def test_dedup_and_fingerprint_shapes_and_kernel():
+    smiles, scores, fps, S = baselines.dedup_and_fingerprint(_POOL_KR)
+    assert len(smiles) == len(_POOL_KR)  # all distinct, nothing dropped
+    assert len(fps) == len(_POOL_KR)
+    assert S.shape == (len(_POOL_KR), len(_POOL_KR))
+    # RAW kernel: diagonal is 1.0 (NOT the DPP-regularized 1+eps)
+    assert np.allclose(np.diag(S), 1.0)
+
+
+def test_dpp_reuses_cached_kernel_across_knobpoints(monkeypatch):
+    smiles, scores, fps, S = baselines.dedup_and_fingerprint(_POOL_KR)
+    calls = _count_kernel_builds(monkeypatch)
+
+    # two theta knob-points reusing the cached fps+kernel -> ZERO rebuilds
+    r1 = baselines.select(_POOL_KR, k=3, method="dpp", theta=1.0, fps=fps, kernel=S)
+    r2 = baselines.select(_POOL_KR, k=3, method="dpp", theta=4.0, fps=fps, kernel=S)
+    assert calls["n"] == 0, "cached kernel must be reused, not rebuilt per knob-point"
+
+    # identical to the rebuild-every-time path (correctness, not just speed)
+    r1b = baselines.select(_POOL_KR, k=3, method="dpp", theta=1.0)
+    r2b = baselines.select(_POOL_KR, k=3, method="dpp", theta=4.0)
+    assert r1 == r1b
+    assert r2 == r2b
+
+
+def test_mmr_reuses_cached_kernel_across_knobpoints(monkeypatch):
+    smiles, scores, fps, S = baselines.dedup_and_fingerprint(_POOL_KR)
+    calls = _count_kernel_builds(monkeypatch)
+
+    r1 = baselines.select(_POOL_KR, k=3, method="mmr", lam=0.5, fps=fps, kernel=S)
+    r2 = baselines.select(_POOL_KR, k=3, method="mmr", lam=0.9, fps=fps, kernel=S)
+    assert calls["n"] == 0, "cached kernel must be reused, not rebuilt per knob-point"
+
+    r1b = baselines.select(_POOL_KR, k=3, method="mmr", lam=0.5)
+    r2b = baselines.select(_POOL_KR, k=3, method="mmr", lam=0.9)
+    assert r1 == r1b
+    assert r2 == r2b
+
+
+def test_dpp_rejects_mismatched_cached_kernel(monkeypatch):
+    # a wrong-shape kernel must be IGNORED and rebuilt (no crash, correct result)
+    calls = _count_kernel_builds(monkeypatch)
+    bad_kernel = np.eye(2, dtype=np.float64)
+    r = baselines.select(_POOL_KR, k=3, method="dpp", theta=1.0, kernel=bad_kernel)
+    assert calls["n"] == 1, "a mismatched kernel must trigger a defensive rebuild"
+    r_ref = baselines.select(_POOL_KR, k=3, method="dpp", theta=1.0)
+    assert r == r_ref
+
+
+def test_dedup_and_fingerprint_collapses_tautomers(monkeypatch):
+    _patch_tautomer_ik(monkeypatch)
+    pool = [(_TAUT_A, 1.0), (_TAUT_B, 0.5), (_DISTINCT, 0.2)]
+    smiles, scores, fps, S = baselines.dedup_and_fingerprint(pool)
+    assert len(smiles) == 2  # TAUT_A/B collapse to one; DISTINCT stays
+    assert S.shape == (2, 2)
+    assert _TAUT_A in smiles  # the higher-scored representative is kept
+
+
+# ---------------------------------------------------------------------------
+# Plan 04-01 Task 2: disk cache for the expensive candidate pool.
+# ---------------------------------------------------------------------------
+
+def test_pool_cache_hit_miss_and_config_key(tmp_path):
+    from grail_metabolism.eval import pool_cache
+
+    calls = {"n": 0}
+
+    def _fake_build(gen, sub, top_k, max_pool):
+        calls["n"] += 1
+        return [("CCO", 2.0, 3), ("CCCO", 1.0, 5), ("c1ccccc1", 0.5, 7)]
+
+    cp1 = pool_cache.build_or_load_pool(
+        "SUB", 0, None, top_k=200, max_pool=100, cache_dir=tmp_path, build_pool_fn=_fake_build
+    )
+    assert calls["n"] == 1
+    assert [s for s, _, _ in cp1.pool] == ["CCO", "CCCO", "c1ccccc1"]
+
+    # same config -> HIT, generator NOT re-invoked
+    cp2 = pool_cache.build_or_load_pool(
+        "SUB", 0, None, top_k=200, max_pool=100, cache_dir=tmp_path, build_pool_fn=_fake_build
+    )
+    assert calls["n"] == 1
+    assert cp2.pool == cp1.pool
+
+    # changed top_k -> different config key -> MISS (rebuild)
+    pool_cache.build_or_load_pool(
+        "SUB", 0, None, top_k=50, max_pool=100, cache_dir=tmp_path, build_pool_fn=_fake_build
+    )
+    assert calls["n"] == 2
+
+
+def test_pool_cache_fingerprint_determinism(tmp_path):
+    from grail_metabolism.eval import pool_cache
+
+    def _fake_build(gen, sub, top_k, max_pool):
+        return [("CCO", 2.0, 3), ("CCCO", 1.0, 5), ("c1ccccc1", 0.5, 7)]
+
+    cp = pool_cache.build_or_load_pool("SUB", 0, None, cache_dir=tmp_path, build_pool_fn=_fake_build)
+    scored = [(s, sc) for s, sc, _ in cp.pool]
+    _, _, _, S1 = baselines.dedup_and_fingerprint(scored)
+    _, _, _, S2 = baselines.dedup_and_fingerprint(scored)
+    assert np.allclose(S1, S2)  # the kernel over the cached pool is deterministic
+
+
+# ---------------------------------------------------------------------------
+# Plan 04-01 Task 4: run_baselines val-select -> test-once discipline (SCALE-03).
+# ---------------------------------------------------------------------------
+
+def test_run_baseline_selects_knob_on_val_not_test(monkeypatch):
+    """The knob is chosen to maximize the VAL objective, and the TEST evaluation uses THAT
+    knob -- never a test-optimal one (SCALE-03). RDKit-free via a fake selector that encodes
+    (substrate, knob) so the test metric can observe which knob TEST actually used."""
+    import scripts.run_baselines as rb
+
+    def _fake_select(method, knob, sp, k):
+        return [f"{sp.substrate}:{knob}"]
+
+    monkeypatch.setattr(rb, "_select_with_knob", _fake_select)
+
+    val = [rb.ScoredPool(substrate="V", pool=[])]
+    test = [rb.ScoredPool(substrate="T", pool=[])]
+
+    # val objective is maximized at knob 1.0 (NOT 4.0)
+    def _obj(selected, sp):
+        return 1.0 if selected[0].endswith(":1.0") else 0.0
+
+    # test metric reports the knob actually used on TEST
+    def _used_knob(selected, sp):
+        return float(selected[0].split(":")[1])
+
+    res = rb.run_baseline(
+        "dpp", val, test, k=3, objective_fn=_obj,
+        metric_fns={"used_knob": _used_knob}, grid=[1.0, 4.0],
+    )
+    assert res["knob_name"] == "theta"
+    assert res["val_selected_knob"] == 1.0
+    assert res["val_curve"] == {1.0: 1.0, 4.0: 0.0}
+    # the load-bearing assertion: TEST used the VAL-selected knob (1.0), not the test set
+    assert res["test_metrics"]["used_knob"] == 1.0
+
+
+def test_run_baseline_end_to_end_mmr_real_molecules():
+    """End-to-end smoke over the real select()/kernel path: a pool whose two annotated
+    molecules are the top-2 reranker-scored -> the swept knob recovers them on test,
+    recall stays a valid fraction."""
+    import scripts.run_baselines as rb
+
+    pool = [("CCO", 3.0), ("CCCO", 2.5), (_BENZENE, 1.0), ("CCN", 0.5)]
+    ann = {metrics._tautomer_inchikey("CCO"), metrics._tautomer_inchikey("CCCO")}
+    sp = rb.prepare_scored_pool("S", pool, ann)
+    assert sp.kernel.shape == (4, 4)  # 4 distinct molecules, kernel built once
+
+    res = rb.run_baseline("mmr", [sp], [sp], k=2, grid=[0.0, 1.0])
+    assert res["val_selected_knob"] in (0.0, 1.0)
+    assert 0.0 <= res["test_metrics"]["recall"] <= 1.0

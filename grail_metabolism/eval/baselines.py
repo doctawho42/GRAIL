@@ -115,6 +115,56 @@ def _dedup_pool_score_aware(pool_smiles: Sequence[str], pool_scores: np.ndarray)
     return smiles_out, scores_out
 
 
+def _parse_and_dedup(pool: Pool) -> Tuple[List[str], np.ndarray]:
+    """The shared parse-filter + score-aware tautomer-dedup prefix used IDENTICALLY
+    by ``dpp_greedy_select`` and ``mmr_select`` (and by ``dedup_and_fingerprint``).
+
+    Drops unparseable SMILES (``Chem.MolFromSmiles(s) is None``) preserving order,
+    then collapses tautomer-InChIKey duplicates keeping the highest-scored member
+    (``_dedup_pool_score_aware``). Returns ``(smiles, scores)`` on the FINAL
+    distinct-molecule pool. Extracted so the fingerprint/kernel a caller precomputes
+    (via ``dedup_and_fingerprint``) is built over EXACTLY the same deduped order the
+    selectors derive internally -- which is what makes the cross-knob kernel reuse in
+    ``dpp_greedy_select``/``mmr_select`` safe (Plan 04-01 Task 3 / D-40-02).
+    """
+    smiles = [s for s, _ in pool]
+    scores = np.asarray([sc for _, sc in pool], dtype=np.float64)
+    parseable_idx = [i for i, s in enumerate(smiles) if Chem.MolFromSmiles(s) is not None]
+    smiles = [smiles[i] for i in parseable_idx]
+    scores = scores[parseable_idx]
+    if not smiles:
+        return [], np.asarray([], dtype=np.float64)
+    return _dedup_pool_score_aware(smiles, scores)
+
+
+def dedup_and_fingerprint(pool: Pool) -> Tuple[List[str], np.ndarray, List, np.ndarray]:
+    """Build the canonical prepared pool ONCE: ``(smiles, scores, fps, S)``.
+
+    Runs the shared ``_parse_and_dedup`` prefix, then the ONE shared
+    ``_pool_fingerprints`` + ``_tanimoto_kernel_matrix`` pair. ``S`` is the RAW
+    Tanimoto kernel with diagonal ``1.0`` (NOT regularized -- ``dpp_greedy_select``
+    regularizes a private COPY of its diagonal). The lambda-INDEPENDENT ``fps``/``S``
+    can be reused across an ENTIRE knob-sweep of DPP/MMR over this pool by passing
+    them into ``select(..., fps=fps, kernel=S)`` -- turning the O(N^2) kernel build
+    from once-per-knob-point into once-per-pool (Plan 04-01 Task 3 / D-40-02, H4).
+
+    Returns empty structures for a degenerate (empty / all-unparseable) pool.
+    """
+    smiles, scores = _parse_and_dedup(pool)
+    if not smiles:
+        return [], np.asarray([], dtype=np.float64), [], np.zeros((0, 0), dtype=np.float64)
+    fps = _pool_fingerprints(smiles)
+    if len(fps) != len(smiles):
+        # _pool_fingerprints re-parses and can drop entries; keep fps/S self-consistent
+        # by rebuilding smiles to the fingerprintable subset is out of scope here -- a
+        # mismatch means a caller-supplied reuse would be rejected by the length guard
+        # and the selector recomputes safely, so just return the mismatched fps and let
+        # the selector's own guard handle it.
+        return smiles, scores, fps, np.zeros((0, 0), dtype=np.float64)
+    S = _tanimoto_kernel_matrix(fps)
+    return smiles, scores, fps, S
+
+
 def _softmax(logits: np.ndarray) -> np.ndarray:
     shifted = logits - np.max(logits)
     exp = np.exp(shifted)
@@ -237,6 +287,7 @@ def dpp_greedy_select(
     k: int,
     theta: float = 1.0,
     fps: Optional[Sequence] = None,
+    kernel: Optional[np.ndarray] = None,
     eps: float = 1e-8,
     tol: float = 1e-6,
 ) -> List[str]:
@@ -279,44 +330,29 @@ def dpp_greedy_select(
     if not pool or k <= 0:
         return []
 
-    smiles = [s for s, _ in pool]
-    scores = np.asarray([sc for _, sc in pool], dtype=np.float64)
-
-    # Drop unparseable SMILES up front (parse-and-skip, mirroring
-    # _pool_fingerprints' own convention) BEFORE the tautomer dedup below, so
-    # _tautomer_inchikey never has to fall back to a raw/unparseable string.
-    parseable_smiles = []
-    parseable_idx = []
-    for i, s in enumerate(smiles):
-        if Chem.MolFromSmiles(s) is not None:
-            parseable_smiles.append(s)
-            parseable_idx.append(i)
-    smiles = parseable_smiles
-    scores = scores[parseable_idx]
-    if not smiles:
-        return []
-
-    # FIX A: score-aware tautomer-InChIKey dedup BEFORE building the
-    # similarity kernel -- two tautomers of the same molecule must be
-    # collapsed to one distinct-molecule slot (keeping the higher-scored
-    # representative), not scored as near-maximally different by S.
-    smiles, scores = _dedup_pool_score_aware(smiles, scores)
+    # Shared parse-filter + score-aware tautomer-dedup (FIX A + FIX C), IDENTICAL
+    # order to dedup_and_fingerprint so a caller-precomputed fps/kernel aligns.
+    smiles, scores = _parse_and_dedup(pool)
     n = len(smiles)
     if n == 0:
         return []
 
-    # FIX B: always recompute fps on the FINAL filtered/deduped smiles list;
-    # only reuse a caller-supplied `fps` when its length already matches.
+    # FIX B + Task 3 kernel-reuse: reuse a caller-supplied fps/kernel ONLY when it
+    # matches the final deduped pool size exactly; else (re)build. The kernel is
+    # theta-INDEPENDENT, so ONE build serves an entire theta knob-sweep (D-40-02/H4).
     if fps is None or len(fps) != n:
         fps = _pool_fingerprints(smiles)
         if len(fps) != n:
-            # _pool_fingerprints itself can drop entries it can't parse; this
-            # should not happen since `smiles` is already parse-filtered, but
-            # re-validate defensively rather than feed a mismatched kernel.
+            # _pool_fingerprints can still drop an entry; a mismatch means a reused
+            # kernel would be stale, so drop it and recompute both defensively.
             return []
+        kernel = None  # fps was rebuilt -> any caller kernel no longer corresponds
+    if kernel is not None and getattr(kernel, "shape", None) == (n, n):
+        S = np.array(kernel, dtype=np.float64, copy=True)  # COPY: never mutate the shared cache
+    else:
+        S = _tanimoto_kernel_matrix(fps)
 
     q = np.exp(theta * scores)
-    S = _tanimoto_kernel_matrix(fps)
     # Regularize the SIMILARITY-kernel diagonal AT CONSTRUCTION (S_ii = 1+eps),
     # NOT a uniform epsilon added to the whole d2 vector later.
     np.fill_diagonal(S, 1.0 + eps)
@@ -352,6 +388,7 @@ def mmr_select(
     k: int,
     lam: float = 0.5,
     fps: Optional[Sequence] = None,
+    kernel: Optional[np.ndarray] = None,
 ) -> List[str]:
     """Maximal Marginal Relevance selection with a reconciled Rel/Sim scale (BASE-03).
 
@@ -381,28 +418,9 @@ def mmr_select(
     if not pool or k <= 0:
         return []
 
-    smiles = [s for s, _ in pool]
-    raw_scores = np.asarray([sc for _, sc in pool], dtype=np.float64)
-
-    # Drop unparseable SMILES up front (parse-and-skip), BEFORE the tautomer
-    # dedup below, mirroring dpp_greedy_select's ordering.
-    parseable_smiles = []
-    parseable_idx = []
-    for i, s in enumerate(smiles):
-        if Chem.MolFromSmiles(s) is not None:
-            parseable_smiles.append(s)
-            parseable_idx.append(i)
-    smiles = parseable_smiles
-    raw_scores = raw_scores[parseable_idx]
-    if not smiles:
-        return []
-
-    # FIX A: score-aware tautomer-InChIKey dedup BEFORE building the
-    # similarity kernel and BEFORE the relevance min-max normalization, so
-    # two tautomers of the same molecule collapse to one distinct-molecule
-    # slot (keeping the higher raw-scored representative) instead of being
-    # scored as near-maximally different by S.
-    smiles, raw_scores = _dedup_pool_score_aware(smiles, raw_scores)
+    # Shared parse-filter + score-aware tautomer-dedup (FIX A), IDENTICAL order to
+    # DPP / dedup_and_fingerprint so a caller-precomputed fps/kernel aligns.
+    smiles, raw_scores = _parse_and_dedup(pool)
     n = len(smiles)
     if n == 0:
         return []
@@ -410,14 +428,18 @@ def mmr_select(
     span = max(float(raw_scores.max() - raw_scores.min()), 1e-8)
     rel = (raw_scores - raw_scores.min()) / span
 
-    # FIX B: always recompute fps on the FINAL filtered/deduped smiles list;
-    # only reuse a caller-supplied `fps` when its length already matches.
+    # FIX B + Task 3 kernel-reuse: reuse caller fps/kernel only when it matches the
+    # deduped pool exactly; the kernel is lam-INDEPENDENT so ONE build serves the whole
+    # lam knob-sweep (D-40-02/H4). MMR only READS S (no mutation), so no copy is needed.
     if fps is None or len(fps) != n:
         fps = _pool_fingerprints(smiles)
         if len(fps) != n:
             return []
-
-    S = _tanimoto_kernel_matrix(fps)
+        kernel = None
+    if kernel is not None and getattr(kernel, "shape", None) == (n, n):
+        S = kernel
+    else:
+        S = _tanimoto_kernel_matrix(fps)
     tie_keys = [_tautomer_inchikey(s) for s in smiles]
 
     max_sim_to_selected = np.zeros(n, dtype=np.float64)
