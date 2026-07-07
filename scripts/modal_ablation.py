@@ -90,10 +90,45 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-# Reused, unchanged, from the existing M2 Modal app -- same image, same Volumes, same
-# data-symlink helper. Imported (not copy-pasted) so a change to the base image/pins
-# only has to happen in one place.
-from scripts.modal_m2 import DATA_FILES, DATA_MOUNT, image  # noqa: E402
+# Reused, unchanged, from the existing M2 Modal app -- same base image (git clone of
+# the pushed `metabench-reranker` branch + pins), same Volumes, same data-symlink
+# helper. Imported (not copy-pasted) so a change to the base image/pins only has to
+# happen in one place.
+from scripts.modal_m2 import DATA_FILES, DATA_MOUNT
+from scripts.modal_m2 import image as _base_image  # noqa: E402
+
+# LAYERED OVERLAY (build-time copy, not a runtime mount): the base image's git clone
+# only has whatever was last PUSHED to `metabench-reranker` on GitHub -- it does not
+# see this worktree's uncommitted-to-that-branch code (ablation_plan.py,
+# scripts/modal_ablation.py itself, or any other commit still local to this branch).
+# `add_local_dir(..., copy=True)` bakes the CURRENT local repo tree on top of the
+# cloned checkout at build time, so the container always runs the code actually being
+# edited/tested here -- no push to a shared branch required for iteration or smoke
+# runs. copy=True (not the default mount-at-startup) because subsequent `run_commands`
+# would not be reachable from a startup-time mount overlay in the same way, and this
+# way `pip install -e .` (already baked into `_base_image`) plus the overlaid source
+# stay consistent inside one built image layer.
+#
+# Overlay ONLY the two source directories the ablation path actually needs
+# (grail_metabolism/, scripts/) -- NOT the whole worktree root. The worktree root
+# also holds large/irrelevant/volatile local-only directories (artifacts/, results/,
+# .git, .idea, .pytest_cache, editor/tool state dirs) that are unnecessary to ship
+# and, worse, can be mutated by other local processes DURING the Modal build
+# (Modal snapshots the tree and errors if a file changes mid-build) -- scoping the
+# overlay to just the source dirs sidesteps both problems.
+image = (
+    _base_image
+    .add_local_dir(
+        str(ROOT / "grail_metabolism"), "/root/GRAIL/grail_metabolism",
+        copy=True,
+        ignore=["**/__pycache__/**", "*.pyc", "data/**"],
+    )
+    .add_local_dir(
+        str(ROOT / "scripts"), "/root/GRAIL/scripts",
+        copy=True,
+        ignore=["**/__pycache__/**", "*.pyc"],
+    )
+)
 
 from grail_metabolism.ablation_plan import (  # noqa: E402
     DEFAULT_BETA_PRIME_GRID,
