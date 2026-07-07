@@ -310,47 +310,35 @@ def prewarm() -> str:
     return "prewarm: done"
 
 
-def _download_json(remote_path: str) -> Optional[dict]:
-    """Read a JSON file already materialized on the LOCAL filesystem via
-    ``art_vol`` reload + a local-entrypoint-side ``modal volume get``-equivalent.
-
-    The local entrypoint runs OUTSIDE any container, so it cannot open Volume paths
-    directly -- it must call a tiny Modal function that reads the file INSIDE a
-    container (where the Volume is mounted) and returns the parsed JSON over the
-    wire. Returns ``None`` if the file does not exist (e.g. a config's result JSON
-    when running a small/partial smoke)."""
-    return _read_artifact_json.remote(remote_path)
-
-
-@app.function(
-    image=image,
-    volumes={"/root/GRAIL/artifacts": art_vol},
-    timeout=300,
-)
-def _read_artifact_json(path: str) -> Optional[dict]:
-    import os
-
-    full = f"/root/GRAIL/{path}"
-    if not os.path.exists(full):
-        return None
-    with open(full) as fh:
-        return json.load(fh)
-
-
 def _run_wave(configs: Sequence[Dict[str, object]], fixed_args: List[str]) -> Dict[str, dict]:
     """Fan a wave of INDEPENDENT configs out across Modal containers in PARALLEL via
     ``.map()``, collecting each config's parsed result JSON keyed by its ``tag``.
     This is the ONE place ``.map()`` is used across configs (never across substrates
     within one eval -- that stays inside ``run_gflownet.py``'s own eval loop,
-    unchanged, per D-08)."""
+    unchanged, per D-08).
+
+    Called from INSIDE ``orchestrate_ablation`` (a cloud-side ``@app.function``), so
+    this ``.map()`` is a function-to-function call happening server-side -- not a
+    local-caller ``.map()`` that a CLI disconnect could cancel."""
     results: Dict[str, dict] = {}
     for out in run_one_config.map(configs, kwargs={"fixed_args": fixed_args}):
         results[out["tag"]] = out["result"]
     return results
 
 
-@app.local_entrypoint()
-def run_ablation(
+@app.function(
+    image=image,
+    cpu=1.0,
+    memory=4096,
+    volumes={DATA_MOUNT: data_vol, "/root/GRAIL/artifacts": art_vol},
+    # Generous: the orchestrator's own execution IS the whole ablation (prewarm +
+    # every wave's .map() fan-out + aggregate_and_verdict), so its timeout must cover
+    # the full run, not just one config. 24h matches run_one_config's own per-config
+    # timeout; wall-clock for the whole ablation is bounded by wave count x per-config
+    # time / fan-out width, comfortably inside this envelope for the paper-scale run.
+    timeout=86400,
+)
+def orchestrate_ablation(
     train_substrates: int = 300,
     test_substrates: int = 100,
     epochs: int = 15,
@@ -366,16 +354,34 @@ def run_ablation(
     prewarm_waves: int = 1,
     eval_beam: bool = False,
     eval_substrates: Optional[int] = None,
-):
-    """PARALLEL ablation orchestration: prewarm (barrier) -> beta-prime VAL sweep
-    (parallel) -> select beta_prime (local) -> VAL seed runs (parallel) -> test touch
-    (parallel) -> download + aggregate_and_verdict (local). See module docstring for
-    the full wave breakdown and the safety argument for why cross-config fan-out
-    (unlike cross-substrate fan-out) is safe here.
+    verdict_tag: str = "verdict_report",
+) -> dict:
+    """CLOUD-SIDE orchestrator: runs entirely inside a Modal container, so it survives
+    the local CLI disconnecting AND the caller's machine sleeping -- this is the fix
+    for the ``.remote()``/``.map()``-in-a-detached-app warning ("may be canceled when
+    the local caller disconnects"): previously this whole body ran in the
+    ``@app.local_entrypoint``, i.e. in the LOCAL CLI process, so a killed/disconnected
+    CLI during ``modal run --detach`` canceled the in-flight fan-out even though
+    ``--detach`` was passed. Moving the orchestration itself into an ``@app.function``
+    means the entrypoint only has to survive long enough to ``.spawn()`` this function
+    (a single fast RPC) -- everything after that (prewarm barrier, every wave's
+    ``.map()`` fan-out, ``aggregate_and_verdict``, writing the verdict report) executes
+    inside Modal's infrastructure, independent of the CLI process's lifetime.
 
-    ``beta_prime_grid``/``seeds`` are comma-separated strings (Modal local-entrypoint
-    args are simple scalars; parsed here into the ``Sequence[float]``/``Sequence[int]``
-    ``ablation_plan.plan_configs`` expects).
+    Idempotent/resumable exactly like the local_entrypoint version it replaces: the
+    prewarm barrier's scratch-marker skip, ``run_one_config``'s per-config
+    ``os.path.exists(out): skip``, and ``art_vol.commit()`` after every unit -- so a
+    re-launch (e.g. after this orchestrator itself was preempted) resumes rather than
+    restarts. ``verdict_tag`` namespaces the output report filename so a smoke run can
+    write ``<tag>.json`` without colliding with the full run's ``verdict_report.json``.
+
+    ``beta_prime_grid``/``seeds`` are comma-separated strings (Modal function args
+    passed from the local entrypoint are simple scalars; parsed here into the
+    ``Sequence[float]``/``Sequence[int]`` ``ablation_plan.plan_configs`` expects).
+
+    Returns the verdict report dict (also written to the Volume) so ``.spawn(...)
+    .get()`` callers (e.g. a detached-smoke poller) can fetch it directly without a
+    separate Volume round-trip, in addition to the persisted JSON.
     """
     grid = [float(x) for x in beta_prime_grid.split(",")]
     seed_list = [int(x) for x in seeds.split(",")]
@@ -416,11 +422,14 @@ def run_ablation(
     test_single_result = test_results[test_single_tag]
     test_ensemble_result = test_results[test_ensemble_tag]
 
-    print("[modal_ablation] === downloading eval checkpoints for paired-bootstrap arrays ===", flush=True)
+    print("[modal_ablation] === reading eval checkpoints for paired-bootstrap arrays ===", flush=True)
     _, test_single_eval_ckpt_path = _ckpt_paths(test_single_tag)
     _, test_ensemble_eval_ckpt_path = _ckpt_paths(test_ensemble_tag)
-    test_single_eval_ckpt = _download_json(test_single_eval_ckpt_path)
-    test_ensemble_eval_ckpt = _download_json(test_ensemble_eval_ckpt_path)
+    # Running cloud-side now, so the eval-checkpoint JSONs live on the SAME mounted
+    # Volume this function already has -- read them directly (no cross-container RPC
+    # needed, unlike the old local-entrypoint version's `_download_json`).
+    test_single_eval_ckpt = _read_local_artifact_json(test_single_eval_ckpt_path)
+    test_ensemble_eval_ckpt = _read_local_artifact_json(test_ensemble_eval_ckpt_path)
     if test_single_eval_ckpt is None or test_ensemble_eval_ckpt is None:
         raise RuntimeError(
             "modal_ablation: test-touch eval checkpoints missing on the Volume -- "
@@ -440,47 +449,104 @@ def run_ablation(
         m_ensemble=m_ensemble,
     )
 
-    print("\n========== ABL-03 VERDICT (Modal parallel) ==========", flush=True)
+    print("\n========== ABL-03 VERDICT (Modal cloud-side orchestrator) ==========", flush=True)
     print(json.dumps(report, indent=2), flush=True)
 
-    report_path = f"artifacts/{ARTIFACTS_SUBDIR}/verdict_report.json"
-    _write_verdict.remote(report_path, report)
-    print(f"\n[modal_ablation] verdict report -> Volume:/{report_path}", flush=True)
-
-
-@app.function(
-    image=image,
-    volumes={"/root/GRAIL/artifacts": art_vol},
-    timeout=300,
-)
-def _write_verdict(path: str, report: dict) -> None:
+    report_path = f"artifacts/{ARTIFACTS_SUBDIR}/{verdict_tag}.json"
     import os
 
-    full = f"/root/GRAIL/{path}"
+    full = f"/root/GRAIL/{report_path}"
     os.makedirs(os.path.dirname(full), exist_ok=True)
     with open(full, "w") as fh:
         json.dump(report, fh, indent=2)
     art_vol.commit()
+    print(f"\n[modal_ablation] verdict report -> Volume:/{report_path}", flush=True)
+
+    return report
+
+
+def _read_local_artifact_json(path: str) -> Optional[dict]:
+    """Read a JSON artifact from the LOCALLY MOUNTED Volume path -- valid only when
+    called from inside a container that already has ``art_vol`` mounted at
+    ``/root/GRAIL/artifacts`` (i.e. from within ``orchestrate_ablation`` itself, not
+    from the local entrypoint, which runs outside any container)."""
+    import os
+
+    full = f"/root/GRAIL/{path}"
+    if not os.path.exists(full):
+        return None
+    with open(full) as fh:
+        return json.load(fh)
 
 
 @app.local_entrypoint()
-def smoke():
-    """TINY end-to-end smoke on REAL data: 2 configs (1 beta-prime sweep point on VAL
-    at trivial scale) run in PARALLEL via ``.map()``, proving the parallel-fan-out path
-    works before committing to the full ~8-config run. Cost-conscious: n_train~5,
-    n_eval~3, 1 epoch, 1 beta-prime, seed 0 only, no prewarm barrier needed at this
-    trivial scale (each config builds its own tiny cache; the point of this smoke is
-    the PARALLEL PATH, not cache-sharing, which the full run's prewarm barrier covers).
+def run_ablation(
+    train_substrates: int = 300,
+    test_substrates: int = 100,
+    epochs: int = 15,
+    m_ensemble: int = DEFAULT_M_ENSEMBLE,
+    beta_prime_grid: str = "2,4,6,8,10",
+    seeds: str = "0,1,2",
+    top_k: int = 50,
+    max_size: int = 10,
+    max_depth: int = 2,
+    workers: int = 8,
+    logz_lr: float = 0.16,
+    n_samples: int = 4,
+    prewarm_waves: int = 1,
+    eval_beam: bool = False,
+    eval_substrates: Optional[int] = None,
+    verdict_tag: str = "verdict_report",
+):
+    """Entrypoint ONLY: parse scalar args, ``.spawn()`` the cloud-side
+    ``orchestrate_ablation`` (fire-and-forget), print the function-call id + the
+    monitoring/verdict-fetch commands, and RETURN IMMEDIATELY -- does NOT block on
+    ``.get()``. This is the load-bearing fix: ``.spawn()`` (not ``.remote()``) hands
+    the whole ablation off to run server-side, so ``modal run --detach
+    scripts/modal_ablation.py::run_ablation ...`` truly detaches -- the cloud
+    orchestrator keeps running after this CLI process exits (or the laptop sleeps),
+    exactly like ``modal_m2.py``'s ``main()`` already does for the M2 headline run.
     """
-    fixed_args = _fixed_args(
-        train_substrates=5, test_substrates=3, epochs=1, prewarm_waves=1,
-        eval_beam=False, top_k=20, max_size=6, max_depth=2, workers=4,
-        logz_lr=0.1, n_samples=2,
+    fc = orchestrate_ablation.spawn(
+        train_substrates=train_substrates, test_substrates=test_substrates, epochs=epochs,
+        m_ensemble=m_ensemble, beta_prime_grid=beta_prime_grid, seeds=seeds, top_k=top_k,
+        max_size=max_size, max_depth=max_depth, workers=workers, logz_lr=logz_lr,
+        n_samples=n_samples, prewarm_waves=prewarm_waves, eval_beam=eval_beam,
+        eval_substrates=eval_substrates, verdict_tag=verdict_tag,
     )
-    plan = plan_configs(beta_prime_grid=[6.0], seeds=[0], m_ensemble=2, eval_substrates=3)
-    configs = fill_beta_prime(plan["val"], 6.0)   # both single + ensemble VAL configs at seed 0
-    print(f"[modal_ablation] SMOKE: running {len(configs)} configs in parallel ...", flush=True)
-    results = _run_wave(configs, fixed_args)
-    for tag, result in results.items():
-        print(f"[modal_ablation] SMOKE {tag}: metrics keys={sorted(result['metrics'].keys())}", flush=True)
-    print("SMOKE OK -- parallel fan-out produced a result JSON per config on the Volume.", flush=True)
+    print(f"SPAWNED orchestrate_ablation -> function call id: {fc.object_id}", flush=True)
+    print("This CLI process may now exit/disconnect; the ablation keeps running in the cloud.", flush=True)
+    print(f"Poll progress:  modal volume ls grail-artifacts /{ARTIFACTS_SUBDIR}", flush=True)
+    print(
+        f"Fetch verdict when done:  modal volume get grail-artifacts "
+        f"/{ARTIFACTS_SUBDIR}/{verdict_tag}.json results/",
+        flush=True,
+    )
+
+
+@app.local_entrypoint()
+def smoke(verdict_tag: str = "smoke_verdict_report"):
+    """TINY end-to-end DETACHED smoke on REAL data: spawns ``orchestrate_ablation`` at
+    trivial scale (n_train~5, n_eval~3, 1 epoch, 1 beta-prime, seed 0 only) to prove
+    the cloud-side orchestrator (prewarm + parallel fan-out + aggregate_and_verdict +
+    verdict write) completes ON ITS OWN once spawned -- the same detach-survival
+    property ``run_ablation`` relies on for the full run. ``verdict_tag`` defaults to
+    a smoke-only filename so this never collides with the full run's
+    ``verdict_report.json``.
+
+    Run detached to prove CLI-independence:
+        modal run --detach scripts/modal_ablation.py::smoke
+    """
+    fc = orchestrate_ablation.spawn(
+        train_substrates=5, test_substrates=3, epochs=1, m_ensemble=2,
+        beta_prime_grid="6", seeds="0", top_k=20, max_size=6, max_depth=2,
+        workers=4, logz_lr=0.1, n_samples=2, prewarm_waves=1, eval_beam=False,
+        eval_substrates=3, verdict_tag=verdict_tag,
+    )
+    print(f"SPAWNED smoke orchestrate_ablation -> function call id: {fc.object_id}", flush=True)
+    print("This CLI process may now exit/disconnect; the smoke keeps running in the cloud.", flush=True)
+    print(f"Poll:  modal volume ls grail-artifacts /{ARTIFACTS_SUBDIR}", flush=True)
+    print(
+        f"Fetch:  modal volume get grail-artifacts /{ARTIFACTS_SUBDIR}/{verdict_tag}.json results/",
+        flush=True,
+    )

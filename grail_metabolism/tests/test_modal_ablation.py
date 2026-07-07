@@ -134,3 +134,76 @@ def test_module_imports_without_live_modal_auth():
     assert hasattr(mod, "app")
     assert hasattr(mod, "run_one_config")
     assert hasattr(mod, "run_ablation")
+    assert hasattr(mod, "orchestrate_ablation")
+
+
+def test_orchestration_moved_cloud_side_entrypoint_only_spawns():
+    """Regression guard for the detach bug: a `modal run --detach` of a
+    `@app.local_entrypoint` dies when the CLI disconnects, because .remote()/.map()
+    calls issued FROM the local entrypoint run in the local caller's process. The fix
+    moves the whole orchestration (prewarm -> sweep -> select beta_prime -> val runs ->
+    test touch -> aggregate_and_verdict -> write verdict) into a cloud-side
+    `@app.function` (`orchestrate_ablation`), and shrinks `run_ablation` down to a
+    `.spawn()` + immediate return -- so the entrypoint survives only long enough to
+    hand off, and the actual multi-hour work runs server-side, immune to CLI exit."""
+    src = _code_only(MODAL_ABLATION_PATH.read_text())
+
+    # `orchestrate_ablation` must be a real Modal function (cloud-side), not a plain
+    # helper -- the whole point is that it executes remotely, not in the local CLI.
+    orchestrate_pos = src.find("def orchestrate_ablation(")
+    assert orchestrate_pos != -1, "expected a cloud-side orchestrate_ablation function"
+    preceding = src[:orchestrate_pos]
+    last_decorator_start = preceding.rfind("@app.function(")
+    assert last_decorator_start != -1
+    # No blank-line-free code between the last @app.function( and orchestrate_ablation's
+    # def would be overly strict given kwargs span multiple lines; instead confirm the
+    # decorator block immediately precedes the def with no other `def ` in between.
+    between = preceding[last_decorator_start:]
+    assert "def " not in between, "orchestrate_ablation must be directly decorated by @app.function"
+
+    # The heavy orchestration body (prewarm barrier + wave fan-outs + verdict) must
+    # live INSIDE orchestrate_ablation, not inside run_ablation.
+    entrypoint_pos = src.find("def run_ablation(")
+    assert entrypoint_pos != -1
+    smoke_pos = src.find("def smoke(")
+    assert smoke_pos != -1 and smoke_pos > entrypoint_pos
+    entrypoint_body = src[entrypoint_pos:smoke_pos]
+
+    assert "prewarm.remote()" not in entrypoint_body, "prewarm must run inside orchestrate_ablation, not the entrypoint"
+    assert "_run_wave(" not in entrypoint_body, "wave fan-out must run inside orchestrate_ablation, not the entrypoint"
+    assert "aggregate_and_verdict(" not in entrypoint_body, "verdict aggregation must run inside orchestrate_ablation"
+
+    # The entrypoint's ONLY interaction with the heavy work must be a .spawn() call
+    # (fire-and-forget) -- never .remote()/.get() (which would block the CLI process
+    # on the full multi-hour run, reintroducing the exact detach bug being fixed).
+    # Strip the function's own docstring first: it legitimately discusses ``.get()``
+    # in prose (contrasting .spawn() with the blocking alternative it replaces).
+    doc_start = entrypoint_body.find('"""')
+    doc_end = entrypoint_body.find('"""', doc_start + 3) + 3 if doc_start != -1 else -1
+    entrypoint_code_only = entrypoint_body[doc_end:] if doc_end != -1 else entrypoint_body
+
+    assert "orchestrate_ablation.spawn(" in entrypoint_body
+    assert "orchestrate_ablation.remote(" not in entrypoint_body
+    assert ".get()" not in entrypoint_code_only
+
+
+def test_smoke_also_spawns_cloud_side_not_blocking():
+    """The smoke entrypoint must exercise the SAME cloud-side detach path as the real
+    run (spawn + return), so a detached smoke run actually proves CLI-independence
+    rather than blocking on a local .remote()/.map() call."""
+    src = _code_only(MODAL_ABLATION_PATH.read_text())
+    smoke_pos = src.find("def smoke(")
+    assert smoke_pos != -1
+    smoke_body = src[smoke_pos:]
+    assert "orchestrate_ablation.spawn(" in smoke_body
+    assert "orchestrate_ablation.remote(" not in smoke_body
+
+
+def test_smoke_and_full_run_verdict_tags_are_isolated_by_parameter():
+    """The verdict report filename must be parameterized (verdict_tag) so a smoke run
+    can write its own tiny verdict without colliding with (or false-skipping) the full
+    run's verdict_report.json."""
+    src = MODAL_ABLATION_PATH.read_text()
+    assert "verdict_tag" in src
+    assert 'verdict_tag: str = "verdict_report"' in src
+    assert 'verdict_tag: str = "smoke_verdict_report"' in src
