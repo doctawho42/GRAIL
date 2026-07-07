@@ -469,9 +469,19 @@ def _read_local_artifact_json(path: str) -> Optional[dict]:
     """Read a JSON artifact from the LOCALLY MOUNTED Volume path -- valid only when
     called from inside a container that already has ``art_vol`` mounted at
     ``/root/GRAIL/artifacts`` (i.e. from within ``orchestrate_ablation`` itself, not
-    from the local entrypoint, which runs outside any container)."""
+    from the local entrypoint, which runs outside any container).
+
+    ``art_vol.reload()`` is REQUIRED here: the orchestrator's own container mounted
+    the Volume once at startup, so its view is a snapshot from that point. The file
+    being read was written and ``.commit()``-ed by a DIFFERENT container (one of the
+    ``run_one_config`` workers fanned out via ``.map()``) -- without an explicit
+    ``reload()``, the orchestrator's mount can still miss that sibling container's
+    commit, so the read would spuriously return ``None`` (surfaced as
+    "eval checkpoints missing on the Volume" even though `modal volume ls` shows the
+    file already committed)."""
     import os
 
+    art_vol.reload()
     full = f"/root/GRAIL/{path}"
     if not os.path.exists(full):
         return None
