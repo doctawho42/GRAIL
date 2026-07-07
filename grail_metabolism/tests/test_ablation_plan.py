@@ -250,6 +250,138 @@ def test_aggregate_and_verdict_produces_full_report_shape():
     assert report["m_ensemble"] == 3
 
 
+def _synthetic_report_inputs(
+    val_gflownet_aucs, val_abl01_aucs, val_abl02_aucs,
+    test_gflownet_auc, test_abl01_auc, test_abl02_auc,
+    per_sub_gflownet, per_sub_abl01, per_sub_abl02,
+):
+    """Build a full set of synthetic, dataset-free inputs to ``aggregate_and_verdict``:
+    per-seed VAL/TEST result dicts (mirroring ``run_gflownet.py --out`` JSON shape) plus
+    per-substrate union@K curves in the eval-checkpoint ``rows`` shape (mirroring
+    ``--resume-eval-ckpt`` JSON), so the PRIMARY paired-bootstrap statistic is driven by
+    an explicit per-substrate array (not just the mean-only scalar test table the
+    SECONDARY seed-level verdict reads)."""
+    config = {
+        "train_substrates_requested": 5, "eval_split": "test", "beta": 6.0,
+        "max_size": 6, "top_k": 20, "epochs": 1,
+    }
+
+    def _result(gflownet_auc, abl01_auc=None, abl02_auc=None):
+        metrics = {"gflownet_union_at_k_auc": gflownet_auc}
+        if abl01_auc is not None:
+            metrics["ablation01_union_at_k_auc"] = abl01_auc
+        if abl02_auc is not None:
+            metrics["ablation02_union_at_k_auc"] = abl02_auc
+        return {"config": dict(config), "metrics": metrics}
+
+    val_single_results = [
+        _result(g, abl01_auc=a) for g, a in zip(val_gflownet_aucs, val_abl01_aucs)
+    ]
+    val_ensemble_results = [
+        _result(g, abl02_auc=a) for g, a in zip(val_gflownet_aucs, val_abl02_aucs)
+    ]
+    test_single_result = _result(test_gflownet_auc, abl01_auc=test_abl01_auc)
+    test_ensemble_result = _result(test_gflownet_auc, abl02_auc=test_abl02_auc)
+
+    def _eval_ckpt(abl_key, gflownet_values, abl_values):
+        rows = {}
+        for i, (gv, av) in enumerate(zip(gflownet_values, abl_values)):
+            root = f"root{i}"
+            rows[root] = {
+                "gflownet_union_curve": {"5": gv, "10": gv, "15": gv, "20": gv, "30": gv, "50": gv},
+                f"{abl_key}_union_curve": {"5": av, "10": av, "15": av, "20": av, "30": av, "50": av},
+            }
+        return {"rows": rows}
+
+    test_single_eval_ckpt = _eval_ckpt("ablation01", per_sub_gflownet, per_sub_abl01)
+    test_ensemble_eval_ckpt = _eval_ckpt("ablation02", per_sub_gflownet, per_sub_abl02)
+
+    return dict(
+        val_single_results=val_single_results,
+        val_ensemble_results=val_ensemble_results,
+        test_single_result=test_single_result,
+        test_ensemble_result=test_ensemble_result,
+        test_single_eval_ckpt=test_single_eval_ckpt,
+        test_ensemble_eval_ckpt=test_ensemble_eval_ckpt,
+    )
+
+
+def test_aggregate_and_verdict_end_to_end_confirmed_scenario():
+    """FIX 4 (test hardening): a CLEAR gflownet-wins scenario -- the set-GFlowNet's
+    union@K AUC is far above BOTH ablation baselines, at every substrate, with tight
+    (low-variance) VAL seed AUCs -- must produce a "confirmed" SECONDARY verdict and a
+    primary paired-bootstrap CI on BOTH arms that excludes 0 in gflownet's favor.
+    Feeds SYNTHETIC per-config result dicts (VAL seed scalars + per-substrate TEST
+    union@K curves) end-to-end through ``aggregate_and_verdict`` exactly as
+    ``run_ablation_local.py``/``modal_ablation.py`` do -- exercising the exact
+    aggregation path a NameError/None-subscript/object-as-float bug would crash."""
+    inputs = _synthetic_report_inputs(
+        val_gflownet_aucs=[0.60, 0.61, 0.59],
+        val_abl01_aucs=[0.20, 0.19, 0.21],
+        val_abl02_aucs=[0.25, 0.24, 0.26],
+        test_gflownet_auc=0.62,
+        test_abl01_auc=0.22,
+        test_abl02_auc=0.28,
+        per_sub_gflownet=[0.55, 0.60, 0.65, 0.70],
+        per_sub_abl01=[0.15, 0.20, 0.25, 0.30],
+        per_sub_abl02=[0.20, 0.25, 0.30, 0.35],
+    )
+    report = ablation_plan.aggregate_and_verdict(
+        **inputs, chosen_beta_prime=6.0, sweep_scores={2.0: 0.10, 6.0: 0.20}, m_ensemble=3,
+    )
+
+    expected_keys = {
+        "beta_prime_sweep", "chosen_beta_prime", "val_seed_aucs", "test_table",
+        "primary_paired_bootstrap", "secondary_seed_level_verdict",
+        "secondary_margin_used", "sensitivity_grid", "m_ensemble", "note_fix_e",
+    }
+    assert set(report.keys()) == expected_keys
+
+    # SECONDARY seed-level verdict: gflownet clears both ablations by a wide margin.
+    assert report["secondary_seed_level_verdict"] == "confirmed"
+    # Sensitivity grid: robust to the margin choice -- "confirmed" at every threshold.
+    assert set(report["sensitivity_grid"].values()) == {"confirmed"}
+
+    # PRIMARY paired-bootstrap CI: both arms' CI must exclude 0 in gflownet's favor.
+    primary = report["primary_paired_bootstrap"]
+    assert primary["vs_ablation01"]["confirmed"] is True
+    assert primary["vs_ablation01"]["ci_low"] > 0.0
+    assert primary["vs_ablation02"]["confirmed"] is True
+    assert primary["vs_ablation02"]["ci_low"] > 0.0
+
+
+def test_aggregate_and_verdict_end_to_end_null_scenario():
+    """FIX 4 (test hardening): a NULL scenario -- the set-GFlowNet's union@K AUC is
+    statistically indistinguishable from (in fact slightly below) the ensemble
+    ablation baseline, well within a healthy, non-degenerate margin -- must produce a
+    "null" SECONDARY verdict and a primary paired-bootstrap CI vs ablation02 that does
+    NOT exclude 0 in gflownet's favor."""
+    inputs = _synthetic_report_inputs(
+        val_gflownet_aucs=[0.40, 0.42, 0.38],
+        val_abl01_aucs=[0.39, 0.41, 0.37],
+        val_abl02_aucs=[0.41, 0.43, 0.39],
+        test_gflownet_auc=0.40,
+        test_abl01_auc=0.395,
+        test_abl02_auc=0.405,
+        per_sub_gflownet=[0.38, 0.40, 0.40, 0.42],
+        per_sub_abl01=[0.37, 0.39, 0.40, 0.42],
+        per_sub_abl02=[0.39, 0.41, 0.40, 0.42],
+    )
+    report = ablation_plan.aggregate_and_verdict(
+        **inputs, chosen_beta_prime=4.0, sweep_scores={2.0: 0.30, 4.0: 0.31}, m_ensemble=3,
+    )
+
+    # SECONDARY seed-level verdict: gflownet does not clear the weaker (single)
+    # baseline by the pre-specified margin -- "null", not "confirmed"/"partial".
+    assert report["secondary_seed_level_verdict"] == "null"
+
+    # PRIMARY paired-bootstrap CI vs the ensemble ablation must NOT be confidently in
+    # gflownet's favor (mean delta is at/near zero or negative).
+    primary = report["primary_paired_bootstrap"]
+    assert primary["vs_ablation02"]["confirmed"] is False
+    assert primary["vs_ablation02"]["mean_delta"] <= 0.0
+
+
 def test_aggregate_and_verdict_raises_on_config_mismatch():
     """FIX C gate must fire when the three test-touch arms' configs disagree outside
     the allowed-drift fields (e.g. a silently different train_substrates)."""
