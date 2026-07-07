@@ -544,13 +544,27 @@ def smoke(verdict_tag: str = "smoke_verdict_report"):
     a smoke-only filename so this never collides with the full run's
     ``verdict_report.json``.
 
+    ``top_k=50``/``max_size=10``/``n_samples=4`` (matching the production defaults,
+    NOT the originally-tinier top_k=20/max_size=6/n_samples=2) are load-bearing here:
+    ``ablation_plan.aggregate_and_verdict`` unconditionally reads
+    ``metrics["ablation01_union_at_k_auc"]``/``["ablation02_union_at_k_auc"]``, which
+    ``run_gflownet.py`` only populates when at least one eval substrate's weaker
+    ablation01/02 arm reaches ``k_max=50`` DISTINCT candidates (see its own defensive
+    ``"ablation01_union_at_k_auc" in metrics`` guard before computing its CLI-only
+    verdict print). At top_k=20/max_size=6 the reranker pool is capped below k_max, so
+    the weaker single-terminal/ensemble arms structurally can never reach 50 distinct
+    products -- this ran a first detached smoke into exactly that KeyError. Matching
+    the real run's top_k/max_size/n_samples keeps the search space large enough that
+    reaching 50 distinct candidates is realistic even at trivial substrate counts,
+    without touching ``ablation_plan.py``'s aggregation math (out of this fix's scope).
+
     Run detached to prove CLI-independence:
         modal run --detach scripts/modal_ablation.py::smoke
     """
     fc = orchestrate_ablation.spawn(
         train_substrates=5, test_substrates=3, epochs=1, m_ensemble=2,
-        beta_prime_grid="6", seeds="0", top_k=20, max_size=6, max_depth=2,
-        workers=4, logz_lr=0.1, n_samples=2, prewarm_waves=1, eval_beam=False,
+        beta_prime_grid="6", seeds="0", top_k=50, max_size=10, max_depth=2,
+        workers=4, logz_lr=0.1, n_samples=4, prewarm_waves=1, eval_beam=False,
         eval_substrates=3, verdict_tag=verdict_tag,
     )
     print(f"SPAWNED smoke orchestrate_ablation -> function call id: {fc.object_id}", flush=True)

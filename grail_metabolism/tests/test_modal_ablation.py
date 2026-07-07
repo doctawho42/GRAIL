@@ -199,6 +199,31 @@ def test_smoke_also_spawns_cloud_side_not_blocking():
     assert "orchestrate_ablation.remote(" not in smoke_body
 
 
+def test_smoke_top_k_reaches_k_max_so_ablation_aucs_are_populated():
+    """Regression guard: a first detached smoke run crashed inside
+    aggregate_and_verdict with `KeyError: 'ablation01_union_at_k_auc'`.
+    run_gflownet.py only populates that metrics key when at least one eval
+    substrate's (weaker) ablation01/02 arm reaches k_max=50 DISTINCT candidates; at
+    top_k=20 the reranker pool is capped below k_max, so the weaker single-terminal/
+    ensemble arms can structurally never get there. The smoke's top_k must be >= the
+    hardcoded k_max=50 in run_gflownet.py's eval ks=(5,10,15,20,30,50) so the
+    aggregate_and_verdict call (which reads this key unconditionally, unlike
+    run_gflownet.py's own defensive `in metrics` guard) doesn't KeyError."""
+    src = _code_only(MODAL_ABLATION_PATH.read_text())
+    smoke_pos = src.find("def smoke(")
+    assert smoke_pos != -1
+    smoke_body = src[smoke_pos:]
+    spawn_pos = smoke_body.find("orchestrate_ablation.spawn(")
+    assert spawn_pos != -1
+    call_end = smoke_body.find(")", spawn_pos)
+    spawn_call = smoke_body[spawn_pos:call_end]
+    assert "top_k=50" in spawn_call, (
+        "smoke's top_k must be >= run_gflownet.py's hardcoded k_max=50 so the "
+        "weaker ablation01/02 arms can reach 50 distinct candidates -- otherwise "
+        "aggregate_and_verdict KeyErrors on a missing *_union_at_k_auc key"
+    )
+
+
 def test_smoke_and_full_run_verdict_tags_are_isolated_by_parameter():
     """The verdict report filename must be parameterized (verdict_tag) so a smoke run
     can write its own tiny verdict without colliding with (or false-skipping) the full
