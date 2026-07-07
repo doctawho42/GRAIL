@@ -61,16 +61,27 @@ configs are never lost on retry.
 ONE-TIME SETUP: already done (Modal authed; ``grail-data``/``grail-artifacts`` exist
 and hold the staged SDFs/triples + generator/filter checkpoints + the env cache).
 
-TINY SMOKE (proves the parallel path end-to-end on real data, minutes not hours):
+The orchestration itself (prewarm barrier -> every wave's parallel fan-out ->
+aggregate_and_verdict -> verdict write) runs CLOUD-SIDE inside ``orchestrate_ablation``,
+a regular ``@app.function``. Both ``run_ablation`` and ``smoke`` below are thin
+``@app.local_entrypoint``s that ONLY ``.spawn()`` it and return immediately -- this is
+what makes ``--detach`` actually detach: the CLI process only has to survive long
+enough to issue that one fast RPC, not the whole multi-hour run. Modal's own guidance
+("``.remote()``/``.map()`` calls in detached apps may be canceled when the local caller
+disconnects") is exactly why the orchestration cannot live in the local entrypoint
+itself, unlike a naive first attempt might assume.
 
-    modal run scripts/modal_ablation.py::smoke
+TINY DETACHED SMOKE (proves the cloud orchestrator completes CLI-independently, on
+real data, in minutes not hours):
 
-FULL RUN (fully unattended, detached; survives local disconnect) -- launched by the
-orchestrator, NOT by this executor:
+    modal run --detach scripts/modal_ablation.py::smoke
+
+FULL RUN (fully unattended, detached; survives local disconnect AND the caller's
+machine sleeping) -- launched by the orchestrator, NOT by this executor:
 
     modal run --detach scripts/modal_ablation.py::run_ablation \\
         --train-substrates 300 --test-substrates 100 --epochs 15 --m-ensemble 3 \\
-        --beta-prime-grid 2 4 6 8 10 --seeds 0 1 2
+        --beta-prime-grid 2,4,6,8,10 --seeds 0,1,2
 
 FETCH the verdict report when done:
 
@@ -537,12 +548,12 @@ def run_ablation(
 @app.local_entrypoint()
 def smoke(verdict_tag: str = "smoke_verdict_report"):
     """TINY end-to-end DETACHED smoke on REAL data: spawns ``orchestrate_ablation`` at
-    trivial scale (n_train~5, n_eval~3, 1 epoch, 1 beta-prime, seed 0 only) to prove
-    the cloud-side orchestrator (prewarm + parallel fan-out + aggregate_and_verdict +
-    verdict write) completes ON ITS OWN once spawned -- the same detach-survival
-    property ``run_ablation`` relies on for the full run. ``verdict_tag`` defaults to
-    a smoke-only filename so this never collides with the full run's
-    ``verdict_report.json``.
+    a small-but-not-trivial scale (n_train~5, n_eval~8, 1 epoch, 1 beta-prime, seed 0
+    only) to prove the cloud-side orchestrator (prewarm + parallel fan-out +
+    aggregate_and_verdict + verdict write) completes ON ITS OWN once spawned -- the
+    same detach-survival property ``run_ablation`` relies on for the full run.
+    ``verdict_tag`` defaults to a smoke-only filename so this never collides with the
+    full run's ``verdict_report.json``.
 
     ``top_k=50``/``max_size=10``/``n_samples=4`` (matching the production defaults,
     NOT the originally-tinier top_k=20/max_size=6/n_samples=2) are load-bearing here:
@@ -553,19 +564,27 @@ def smoke(verdict_tag: str = "smoke_verdict_report"):
     ``"ablation01_union_at_k_auc" in metrics`` guard before computing its CLI-only
     verdict print). At top_k=20/max_size=6 the reranker pool is capped below k_max, so
     the weaker single-terminal/ensemble arms structurally can never reach 50 distinct
-    products -- this ran a first detached smoke into exactly that KeyError. Matching
-    the real run's top_k/max_size/n_samples keeps the search space large enough that
-    reaching 50 distinct candidates is realistic even at trivial substrate counts,
-    without touching ``ablation_plan.py``'s aggregation math (out of this fix's scope).
+    products -- this ran a first detached smoke into exactly that KeyError.
+
+    ``eval_substrates=8``/``test_substrates=8`` (bumped from 3) is ALSO load-bearing:
+    whether any one substrate's ablation01/02 arm reaches 50 distinct candidates is
+    substrate-structure-dependent, not purely a scale knob -- a second detached smoke
+    at n_eval=3 with the production top_k/max_size/n_samples STILL came back missing
+    the key on the TEST split's particular 3 substrates (while VAL's 3 happened to
+    clear it), because ``--test-substrates`` takes the first N substrates of the split
+    deterministically, and small N means no averaging headroom. Widening the eval
+    window to 8 substrates gives the mean-over-substrates a much better chance that at
+    least one clears k_max=50, without touching ``ablation_plan.py``'s aggregation math
+    (out of this fix's scope) or cherry-picking specific "friendly" substrates.
 
     Run detached to prove CLI-independence:
         modal run --detach scripts/modal_ablation.py::smoke
     """
     fc = orchestrate_ablation.spawn(
-        train_substrates=5, test_substrates=3, epochs=1, m_ensemble=2,
+        train_substrates=5, test_substrates=8, epochs=1, m_ensemble=2,
         beta_prime_grid="6", seeds="0", top_k=50, max_size=10, max_depth=2,
         workers=4, logz_lr=0.1, n_samples=4, prewarm_waves=1, eval_beam=False,
-        eval_substrates=3, verdict_tag=verdict_tag,
+        eval_substrates=8, verdict_tag=verdict_tag,
     )
     print(f"SPAWNED smoke orchestrate_ablation -> function call id: {fc.object_id}", flush=True)
     print("This CLI process may now exit/disconnect; the smoke keeps running in the cloud.", flush=True)
