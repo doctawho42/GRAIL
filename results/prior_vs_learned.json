@@ -1,0 +1,64 @@
+{
+  "split": "test",
+  "n": 245,
+  "candidate_top_k": 30,
+  "filter_cap": 32,
+  "max_output": 15,
+  "match": "inchikey_tautomer",
+  "sygma_recall@": {
+    "5": 0.47,
+    "10": 0.531,
+    "12": 0.543,
+    "15": 0.558
+  },
+  "modes": {
+    "learned_only": {
+      "gen_only": {
+        "recall@5": 0.094,
+        "recall@10": 0.21,
+        "recall@12": 0.229,
+        "recall@15": 0.266,
+        "mean_output": 14.84
+      },
+      "gen_x_filter": {
+        "recall@5": 0.226,
+        "recall@10": 0.277,
+        "recall@12": 0.282,
+        "recall@15": 0.3,
+        "mean_output": 14.84
+      }
+    },
+    "blend_ps0.4": {
+      "gen_only": {
+        "recall@5": 0.094,
+        "recall@10": 0.21,
+        "recall@12": 0.229,
+        "recall@15": 0.266,
+        "mean_output": 14.84
+      },
+      "gen_x_filter": {
+        "recall@5": 0.226,
+        "recall@10": 0.277,
+        "recall@12": 0.282,
+        "recall@15": 0.3,
+        "mean_output": 14.84
+      }
+    },
+    "prior_only": {
+      "gen_only": {
+        "recall@5": 0.066,
+        "recall@10": 0.121,
+        "recall@12": 0.14,
+        "recall@15": 0.173,
+        "mean_output": 14.93
+      },
+      "gen_x_filter": {
+        "recall@5": 0.16,
+        "recall@10": 0.22,
+        "recall@12": 0.224,
+        "recall@15": 0.247,
+        "mean_output": 14.93
+      }
+    }
+  }
+}
