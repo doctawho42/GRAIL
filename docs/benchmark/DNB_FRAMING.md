@@ -90,6 +90,61 @@ provenance harmonization; the budget-matched view.)
 
 ---
 
+### UPDATE 4 (2026-07-10) — MetaPredictor added; paired-bootstrap CI reframes the claim honestly
+
+Added MetaPredictor (transformer ensemble, run locally in a Python-3.8/PyTorch-1.13/OpenNMT
+conda env). Four-method recall@15 on our 150-substrate set, `results/match_sensitivity_4method.json`:
+
+| method | canon (LAGOM) | InChIKey | no-stereo (GLORYx) | Tanimoto=1 | tautomer (ours) |
+|--------|------|------|------|------|------|
+| GRAIL  | 0.356 | 0.357 | 0.358 | 0.356 | 0.365 |
+| SyGMa  | 0.514 | 0.547 | 0.548 | 0.514 | 0.554 |
+| BioTransformer | 0.315 | 0.435 | 0.439 | 0.315 | 0.444 |
+| **MetaPredictor** | **0.531** | **0.570** | **0.578** | **0.532** | **0.585** |
+
+**Paired-bootstrap CI (`scripts/rank_flip_ci.py`, n=150 substrates, 10k resamples, seed 0,
+`results/rank_flip_ci.json`) — the honest statistical picture, and it changes what we claim:**
+
+*Flip pair GRAIL↔BioTransformer, Δ = recall(GRAIL) − recall(BioTransformer):*
+- canonical (strict): Δ = **+0.041**, 95% CI **[−0.044, +0.122]** — GRAIL leads on point estimate, **n.s.**
+- tautomer (normalized): Δ = **−0.079**, 95% CI **[−0.166, +0.007]** — BioTransformer leads, **n.s.** (borderline)
+- **interaction** (how much MORE BioTransformer gains from normalization than GRAIL): **+0.120**,
+  95% CI **[+0.073, +0.171]** — **SIGNIFICANT**.
+
+*Per-method protocol-sensitivity (recall_normalized − recall_strict), all four methods:*
+
+| method | sensitivity | 95% CI | |
+|--------|------|------|------|
+| GRAIL | +0.010 | [+0.001, +0.025] | ~flat |
+| SyGMa | +0.040 | [+0.014, +0.072] | |
+| MetaPredictor | +0.053 | [+0.022, +0.090] | |
+| **BioTransformer** | **+0.130** | **[+0.081, +0.181]** | steep |
+
+**What is and isn't certified — state it this way to referees:**
+- ❌ The naive claim "the leaderboard *significantly* reorders" is **NOT supported at n=150**: each
+  individual pairwise lead (GRAIL>BT strict; BT>GRAIL normalized) has a CI that spans zero (the
+  tautomer one only just — upper bound +0.007). The point-estimate reordering is real but the
+  per-pair margins are within noise. **The referee's "underpowered" concern was correct about
+  *this* framing.**
+- ✅ The **certified claim is the differential protocol-sensitivity**: every method's measured
+  recall depends significantly on the match protocol, and *by method-specific amounts that span
+  13× and are mutually distinguishable* (BioTransformer's CI [0.081, 0.181] does not overlap
+  GRAIL's [0.001, 0.025]). BioTransformer — a rule enumerator emitting many stereo/tautomer/charge
+  variants — gains **+0.13 recall** from normalized matching; GRAIL, which already canonicalizes
+  its output, gains **+0.01**. That differential is what *causes* the point-estimate leaderboard to
+  reorder, and it is **powered at n=150** (interaction CI [+0.073, +0.171]).
+
+So the honest, defensible thesis is not "match choice flips the ranking (p<0.05)" but "**match
+choice changes measured recall by method-dependent, statistically significant amounts — up to
++0.13, enough to reorder the leaderboard — so any cross-paper comparison that does not fix the
+protocol is confounded.**" This is *stronger* rigor than a bare flip claim and directly answers
+Referee FATAL-1 + the underpowered concern: the load-bearing statistic (the interaction / per-method
+sensitivity) is significant; the fragile one (per-pair reversal) we explicitly decline to over-claim.
+(Still open: provenance harmonization of the 0.718 ceiling + SyGMa 0.558 under `inchikey_tautomer`;
+the budget-matched view; optionally LAGOM/MetaTrans to widen the sensitivity spread.)
+
+---
+
 ## Thesis
 
 Metabolite structure prediction has **no agreed way to decide when a predicted structure is
@@ -118,11 +173,15 @@ recall@k co-reported with mean output size and coverage, select-on-val / touch-t
 mean±std over ≥3 seeds. Alongside it we re-implement the literature's conventions
 (`inchi_no_stereo`, `tanimoto1`, `canonical`, `inchikey`) and re-score the *same* predictions
 of *every* method under all of them.
-> ⚠️ **HEDGE (referee FATAL-1):** the claim "the leaderboard reorders" is **not yet
-> demonstrated** — only the six modes are implemented. Until `run_match_sensitivity.py` is run
-> and shows ≥2 methods inverting (or the learned↔rule gap materially compressing), state this
-> as *"we measure how much a published ranking depends on its matching choice"*, not as a
-> proven reordering. **This is the make-or-break experiment (see Open Experiments #1).**
+> ✅ **RESOLVED (referee FATAL-1) — see UPDATE 4.** `run_match_sensitivity.py` has been run on
+> four methods × five protocols; `rank_flip_ci.py` gives paired-bootstrap CIs (n=150). The
+> **certified** claim is the *differential protocol-sensitivity* — every method's measured recall
+> depends significantly on the match protocol, by method-specific amounts spanning 13×
+> (GRAIL +0.01 vs BioTransformer +0.13, non-overlapping CIs; interaction CI [+0.073, +0.171]).
+> The point-estimate leaderboard reorders (GRAIL↔BioTransformer) as a consequence. **State it as
+> "match choice changes measured recall by method-dependent, significant amounts, enough to
+> reorder the leaderboard," NOT as "the flip is individually significant"** — the per-pair
+> reversal margins span zero at n=150 and we explicitly decline to over-claim them.
 
 **(2) Leakage-audited public split + the GLORYx-37 shared external set.** Molecule-disjoint
 clean splits (`scripts/fix_splits.py --molecule-disjoint` + a machine-checkable

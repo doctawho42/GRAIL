@@ -1,0 +1,75 @@
+{
+  "a": "GRAIL",
+  "b": "BioTransformer",
+  "k": 15,
+  "n_substrates": 150,
+  "n_boot": 10000,
+  "seed": 0,
+  "protocols": {
+    "canonical": {
+      "recall_GRAIL": 0.3556,
+      "recall_BioTransformer": 0.3149,
+      "delta_A_minus_B": 0.0407,
+      "ci95": [
+        -0.0437,
+        0.1215
+      ],
+      "leader": "GRAIL",
+      "verdict": "n.s. (CI spans 0)"
+    },
+    "inchikey_tautomer": {
+      "recall_GRAIL": 0.3654,
+      "recall_BioTransformer": 0.4445,
+      "delta_A_minus_B": -0.0791,
+      "ci95": [
+        -0.166,
+        0.007
+      ],
+      "leader": "BioTransformer",
+      "verdict": "n.s. (CI spans 0)"
+    }
+  },
+  "interaction_B_extra_gain_from_normalization": {
+    "mean": 0.1198,
+    "ci95": [
+      0.0731,
+      0.1711
+    ],
+    "verdict": "SIGNIFICANT"
+  },
+  "protocol_sensitivity_per_method": {
+    "GRAIL": {
+      "sensitivity": 0.0098,
+      "ci95": [
+        0.0006,
+        0.0254
+      ],
+      "verdict": "SIGNIFICANT"
+    },
+    "BioTransformer": {
+      "sensitivity": 0.1296,
+      "ci95": [
+        0.0812,
+        0.1813
+      ],
+      "verdict": "SIGNIFICANT"
+    },
+    "SyGMa": {
+      "sensitivity": 0.0404,
+      "ci95": [
+        0.0144,
+        0.072
+      ],
+      "verdict": "SIGNIFICANT"
+    },
+    "MetaPredictor": {
+      "sensitivity": 0.0533,
+      "ci95": [
+        0.0217,
+        0.09
+      ],
+      "verdict": "SIGNIFICANT"
+    }
+  },
+  "flip_significant": false
+}
