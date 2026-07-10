@@ -1,0 +1,28 @@
+{
+  "n_test_substrates": 150,
+  "matching": "inchikey",
+  "depth1_ceiling": {
+    "recall_ceiling": 0.7107692307692308,
+    "recall_ceiling_tautomer": 0.7292307692307692,
+    "fraction_substrates_with_any_hit": 0.8466666666666667,
+    "fraction_substrates_with_any_hit_tautomer": 0.8733333333333333,
+    "mean_candidates_per_substrate": 194.14666666666668,
+    "true_recovered": 231,
+    "true_total": 325,
+    "true_recovered_tautomer": 237,
+    "true_total_tautomer": 325,
+    "n_rules": 7581
+  },
+  "depth2_ceiling_lower_bound": {
+    "depth": 2,
+    "beam": 10,
+    "node_budget": 2500,
+    "recall_ceiling_lower_bound": 0.7230769230769231,
+    "fraction_substrates_with_any_hit": 0.8533333333333334,
+    "mean_candidates_per_substrate": 1652.7333333333333,
+    "true_recovered": 235,
+    "true_total": 325,
+    "n_rules": 7581
+  },
+  "lift_over_depth1": 0.012307692307692242
+}

@@ -1,0 +1,1964 @@
+{
+  "n_test_substrates": 500,
+  "matching": "inchikey",
+  "gap_analysis": {
+    "n_true_total": 1110,
+    "n_uncovered": 299,
+    "uncovered_fraction": 0.2693693693693694,
+    "top_missing_transformation_classes": [
+      {
+        "class": "hydroxylation/oxidation (+O, +16)",
+        "count": 18,
+        "fraction_of_uncovered": 0.06020066889632107,
+        "examples": [
+          {
+            "sub": "O=C(O)c1cccnc1",
+            "met": "N=C(O)c1ccc[n+]([O-])c1",
+            "deltaMW": 15.0
+          },
+          {
+            "sub": "CC(=O)C1(O)CCC2C3=CC(Cl)=C4CC(=O)OCC4(C)C3CCC21C",
+            "met": "CC12COC(=O)C=C1C(Cl)=CC1C2CCC2(C)C1CCC2(O)C(=O)CO",
+            "deltaMW": 16.0
+          },
+          {
+            "sub": "N=c1nc(S)c2nc[nH]c2[nH]1",
+            "met": "Oc1nc(S)c2nc(O)[nH]c2n1",
+            "deltaMW": 17.0
+          }
+        ]
+      },
+      {
+        "class": "reduction (+H2, +2)",
+        "count": 17,
+        "fraction_of_uncovered": 0.056856187290969896,
+        "examples": [
+          {
+            "sub": "O=C(O)CCCCC1CCSS1",
+            "met": "O=C(O)CCCCC(S)CCS",
+            "deltaMW": 2.0
+          },
+          {
+            "sub": "O=C1C=CC(=NC(=O)c2sccc2NCc2ccnc3ccccc23)C=C1",
+            "met": "O=C(Nc1ccc(O)cc1)c1sccc1NCc1ccnc2ccccc12",
+            "deltaMW": 2.0
+          },
+          {
+            "sub": "CC1C=C2CC(=O)CCC2C2CCC3(C)C(O)CCC3C12",
+            "met": "CC1CC2=CC(O)CCC2C2CCC3(C)C(O)CCC3C12",
+            "deltaMW": 2.0
+          }
+        ]
+      },
+      {
+        "class": "dioxidation (+2O, +32)",
+        "count": 13,
+        "fraction_of_uncovered": 0.043478260869565216,
+        "examples": [
+          {
+            "sub": "CN=C(O)N1CCC(Oc2cccc(Cl)c2)C1",
+            "met": "CN=C(O)NCC(CC(=O)O)Oc1cccc(Cl)c1",
+            "deltaMW": 32.0
+          },
+          {
+            "sub": "CC(=O)OC1=C2C(C)C(OC(=O)C(O)C(N=C(O)c3ccccc3)c3ccccc3)CC(O)(C(OC(=O)c3ccccc3)C3C4(OC(C)=O)COC4CC(O)C3(C)C1=O)C2(C)C",
+            "met": "CC(=O)OC1=C2C(C)C(OC(=O)C(O)C(NC(=O)c3ccc(O)cc3)c3ccccc3)C(O)C(O)(C(OC(=O)c3ccccc3)C3C4(OC(C)=O)COC4CC(O)C3(C)C1=O)C2(C)C",
+            "deltaMW": 32.0
+          },
+          {
+            "sub": "CCC=CCC=CCC=CCC=CCC=CCCCC(=O)O",
+            "met": "CCC=CCC=CCC(O)C=CC=CC=CC(O)CCCC(=O)O",
+            "deltaMW": 32.0
+          }
+        ]
+      },
+      {
+        "class": "oxidative deamination (-NH, +O-1, +1)",
+        "count": 12,
+        "fraction_of_uncovered": 0.04013377926421405,
+        "examples": [
+          {
+            "sub": "ClC1=CC(C2=C(Cl)C3OC3(Cl)C(Cl)=C2Cl)=C(Cl)C2OC12Cl",
+            "met": "Oc1c(Cl)cc(-c2c(Cl)c(Cl)c(O)c(Cl)c2Cl)c(Cl)c1Cl",
+            "deltaMW": 0.0
+          },
+          {
+            "sub": "CC=Cc1cc(OC)c(OC)cc1O",
+            "met": "C=CCc1cc(OC)c(OC)cc1O",
+            "deltaMW": -0.0
+          },
+          {
+            "sub": "CC12CCC3C(C(=O)C=C4CC(O)CCC43C)C1CCC2=O",
+            "met": "CC12CCC3C(C(O)C=C4CC(=O)CCC43C)C1CCC2=O",
+            "deltaMW": 0.0
+          }
+        ]
+      },
+      {
+        "class": "methylation (+CH2, +14)",
+        "count": 12,
+        "fraction_of_uncovered": 0.04013377926421405,
+        "examples": [
+          {
+            "sub": "O=C(O)CCCCC1CCSS1",
+            "met": "O=C(O)CC(=O)CCC1CCSS1",
+            "deltaMW": 14.0
+          },
+          {
+            "sub": "O=C(O)c1cccnc1",
+            "met": "C[n+]1cccc(C(=O)[O-])c1",
+            "deltaMW": 14.0
+          },
+          {
+            "sub": "CCc1nn(CCO)c(CC)c1Oc1cc(C#N)cc(C#N)c1",
+            "met": "CCc1nn(CCO)c(C(C)=O)c1Oc1cc(C#N)cc(C#N)c1",
+            "deltaMW": 14.0
+          }
+        ]
+      },
+      {
+        "class": "hydration/hydrolysis (+H2O, +18)",
+        "count": 8,
+        "fraction_of_uncovered": 0.026755852842809364,
+        "examples": [
+          {
+            "sub": "O=S1(=O)CCNCN1",
+            "met": "NS(=O)(=O)CCNCO",
+            "deltaMW": 18.0
+          },
+          {
+            "sub": "N=c1nc(O)c2c([nH]1)NCC1C[N+](c3ccc(C(O)=NC(CCC(=O)O)C(=O)[O-])cc3)=CN21",
+            "met": "N=c1nc(O)c2c([nH]1)NCC(CN(C=O)c1ccc(C(=O)NC(CCC(=O)O)C(=O)O)cc1)N2",
+            "deltaMW": 18.0
+          },
+          {
+            "sub": "COc1cc2c(c3oc(=O)c4c(c13)CCC4=O)C1C(O2)OC(n2c[n+](C3CC(O)C(CO)O3)c3[nH]c(=N)nc([O-])c32)C1O",
+            "met": "COc1cc2c(c3oc(=O)c4c(c13)CCC4=O)C1C(O2)OC(N(C=O)c2c(O)nc(=N)[nH]c2NC2CC(O)C(CO)O2)C1O",
+            "deltaMW": 18.0
+          }
+        ]
+      },
+      {
+        "class": "desaturation (-H2, -2)",
+        "count": 8,
+        "fraction_of_uncovered": 0.026755852842809364,
+        "examples": [
+          {
+            "sub": "C=CCc1ccc(O)c(OC)c1",
+            "met": "C=CC=C1C=CC(=O)C(OC)=C1",
+            "deltaMW": -2.0
+          },
+          {
+            "sub": "COc1cc(N2CCC(N3CCOCC3)CC2)ccc1Nc1ncc2ccc(-c3ccccc3OC)n2n1",
+            "met": "COc1cc(N2CCC(N3CCOCC3)CC2)ccc1N=C1N=CC2=CC=C(c3ccccc3OC)[N+]2=N1",
+            "deltaMW": -1.0
+          },
+          {
+            "sub": "CC1C=C2CC(=O)CCC2C2CCC3(C)C(O)CCC3C12",
+            "met": "CC1Cc2cc(O)ccc2C2CCC3(C)C(O)CCC3C12",
+            "deltaMW": -2.0
+          }
+        ]
+      },
+      {
+        "class": "dihydrodiol (+H2O2-ish, +34)",
+        "count": 7,
+        "fraction_of_uncovered": 0.023411371237458192,
+        "examples": [
+          {
+            "sub": "CCc1nn(CCO)c(CC)c1Oc1cc(C#N)cc(C#N)c1",
+            "met": "CCc1nn(CCO)c(C(C)O)c1Oc1cc(C#N)cc(C(=N)O)c1",
+            "deltaMW": 34.0
+          },
+          {
+            "sub": "C=CCc1ccc(O)c(OC)c1",
+            "met": "CCCc1cc(OC)c(O)cc1S",
+            "deltaMW": 34.1
+          },
+          {
+            "sub": "O=c1c(-c2ccc(O)cc2)coc2cc(O)ccc12",
+            "met": "O=c1c(-c2ccc(O)c(Cl)c2)coc2cc(O)ccc12",
+            "deltaMW": 34.4
+          }
+        ]
+      },
+      {
+        "class": "dehydration (-H2O, -18)",
+        "count": 7,
+        "fraction_of_uncovered": 0.023411371237458192,
+        "examples": [
+          {
+            "sub": "Cn1c(CO)cc2c(N3CCCC3)nc(N3CCCC3)nc21",
+            "met": "C=c1cc2c(n1C)=NC(=[N+]1CCCC1)N=C2N1CCCC1",
+            "deltaMW": -17.0
+          },
+          {
+            "sub": "COc1cc(O)c(CC2OC2(C)C)c(O)c1C(=O)C=Cc1ccc(O)cc1",
+            "met": "COc1cc(O)c2c(c1C(=O)C=Cc1ccc(O)cc1)OC(C)(C)C=C2",
+            "deltaMW": -18.0
+          },
+          {
+            "sub": "CS(=O)(=O)CCN=CC(=O)CCC(=O)c1ccc2ncnc(Nc3ccc(OCc4cccc(F)c4)c(Cl)c3)c2c1",
+            "met": "CS(=O)(=O)CCN1C=C(O)C=CC1=c1ccc2c(c1)C(=Nc1ccc(OCc3cccc(F)c3)c(Cl)c1)N=CN=2",
+            "deltaMW": -18.0
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~62)",
+        "count": 6,
+        "fraction_of_uncovered": 0.020066889632107024,
+        "examples": [
+          {
+            "sub": "ClC1=CC(c2ccc(Cl)cc2Cl)=C(Cl)C2OC12",
+            "met": "CS(=O)(=O)c1cc(Cl)c(-c2ccc(Cl)cc2Cl)cc1Cl",
+            "deltaMW": 62.1
+          },
+          {
+            "sub": "ClC1=CC(c2ccc(Cl)cc2Cl)=C(Cl)C2OC12",
+            "met": "CS(=O)(=O)c1cc(Cl)cc(-c2ccc(Cl)cc2Cl)c1Cl",
+            "deltaMW": 62.1
+          },
+          {
+            "sub": "ClC1=CC2OC2(Cl)C=C1c1ccc(Cl)c(Cl)c1",
+            "met": "CS(=O)(=O)c1cc(Cl)c(-c2ccc(Cl)c(Cl)c2)cc1Cl",
+            "deltaMW": 62.1
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~307)",
+        "count": 5,
+        "fraction_of_uncovered": 0.016722408026755852,
+        "examples": [
+          {
+            "sub": "Cc1oc(-c2ccccc2)nc1CCOc1ccc(CN(CC(=O)O)C(=O)Oc2ccc(O)cc2)c(O)c1",
+            "met": "CC1(SCC(N=C(O)CCC(N)C(=O)O)C(O)=NCC(=O)O)OC(c2ccccc2)=NC1CCOc1ccc(CN(CC(=O)O)C(=O)Oc2ccc(O)cc2)c(O)c1",
+            "deltaMW": 307.3
+          },
+          {
+            "sub": "C=C1C=CC=C(C)C1=NC(=O)c1cnc(Nc2cc(N3CCN(CCO)CC3)nc(C)n2)s1",
+            "met": "Cc1nc(Nc2ncc(C(O)=Nc3c(C)cccc3CSCC(N=C(O)CCC(N)C(=O)O)C(O)=NCC(=O)O)s2)cc(N2CCN(CCO)CC2)n1",
+            "deltaMW": 307.3
+          },
+          {
+            "sub": "C=CCNc1c(O)cc2c(O)c1C=C(C)CC(OC)C(O)C(C)C=C(C)C(OC(=N)O)C(OC)C=CC=C(C)C(=O)N2",
+            "met": "C=CCNc1c(O)c(SCC(N=C(O)CCC(N)C(=O)O)C(O)=NCC(=O)O)c2c(O)c1CC(C)CC(OC)C(O)C(C)C=C(C)C(OC(=N)O)C(OC)C=CC=C(C)C(=O)N2",
+            "deltaMW": 307.3
+          }
+        ]
+      },
+      {
+        "class": "demethylation (-CH2, -14)",
+        "count": 5,
+        "fraction_of_uncovered": 0.016722408026755852,
+        "examples": [
+          {
+            "sub": "O=c1c(-c2ccc(O)cc2)coc2cc(O)ccc12",
+            "met": "Oc1ccc(C2=COc3cc(O)ccc3C2)cc1",
+            "deltaMW": -14.0
+          },
+          {
+            "sub": "O=c1c(-c2ccc(O)cc2)coc2cc(O)ccc12",
+            "met": "Oc1ccc(C2=Cc3ccc(O)cc3OC2)cc1",
+            "deltaMW": -14.0
+          },
+          {
+            "sub": "Cc1cc(OCC2(CONC(=N)N)CC2)cc(OS(=O)(=O)c2ccccc2S(C)(=O)=O)c1",
+            "met": "Cc1cc(OCC2(CONC=N)CC2)cc(OS(=O)(=O)c2ccccc2S(C)(=O)=O)c1",
+            "deltaMW": -15.0
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~20)",
+        "count": 4,
+        "fraction_of_uncovered": 0.013377926421404682,
+        "examples": [
+          {
+            "sub": "CC12CCC3C(C(=O)C=C4CC(O)CCC43C)C1CCC2=O",
+            "met": "CC12CCC(O)CC1=CC(O)C1C2CCC2(C)C(O)C(O)CC12",
+            "deltaMW": 20.0
+          },
+          {
+            "sub": "CC12CC(C=O)C(=O)CC1CCC1C2CCC2(C)C1CCC2(C)O",
+            "met": "CC1(CC(=O)O)C(CC(=O)O)CCC2C1CCC1(C)C2CCC1(C)O",
+            "deltaMW": 20.0
+          },
+          {
+            "sub": "Oc1ncc(F)c(O)n1",
+            "met": "N=C(O)NCC(F)C(=O)O",
+            "deltaMW": 20.0
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~30)",
+        "count": 4,
+        "fraction_of_uncovered": 0.013377926421404682,
+        "examples": [
+          {
+            "sub": "O=C(O)CCCCC1CCSS1",
+            "met": "CSCCC(CCCCC(=O)O)SC",
+            "deltaMW": 30.1
+          },
+          {
+            "sub": "CC(C)NCC(O)COc1cccc2ccccc12",
+            "met": "COc1ccc(OCC(O)CNC(C)C)c2ccccc12",
+            "deltaMW": 30.0
+          },
+          {
+            "sub": "Oc1ccccc1",
+            "met": "COc1ccccc1O",
+            "deltaMW": 30.0
+          }
+        ]
+      },
+      {
+        "class": "mercapturate/NAC (+161)",
+        "count": 4,
+        "fraction_of_uncovered": 0.013377926421404682,
+        "examples": [
+          {
+            "sub": "N=c1nc(S)c2ncn(C3OC(COP(=O)(O)O)C(O)C3O)c2[nH]1",
+            "met": "N=c1nc(S)c2ncn(C3OC(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)C(O)C3O)c2[nH]1",
+            "deltaMW": 160.0
+          },
+          {
+            "sub": "O=P(O)(O)OCC1OC(n2cnc3c(S)ncnc32)C(O)C1O",
+            "met": "O=P(O)(O)OP(=O)(O)OP(=O)(O)OCC1OC(n2cnc3c(S)ncnc32)C(O)C1O",
+            "deltaMW": 160.0
+          },
+          {
+            "sub": "CC1(O)C(O)C(COP(=O)(O)O)OC1n1ccc(=N)nc1O",
+            "met": "CC1(O)C(O)C(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)OC1n1ccc(=N)nc1O",
+            "deltaMW": 160.0
+          }
+        ]
+      },
+      {
+        "class": "sulfation (+SO3, +80)",
+        "count": 4,
+        "fraction_of_uncovered": 0.013377926421404682,
+        "examples": [
+          {
+            "sub": "N=c1nc(O)c2ncn(COCCO)c2[nH]1",
+            "met": "N=c1nc(O)c2ncn(COCCOP(=O)(O)O)c2[nH]1",
+            "deltaMW": 80.0
+          },
+          {
+            "sub": "Cc1cc2nc3c(O)nc(=O)nc-3n(CC(O)C(O)C(O)CO)c2cc1N",
+            "met": "Cc1cc2nc3c(O)nc(=O)nc-3n(CC(O)C(O)C(O)COP(=O)(O)O)c2cc1N",
+            "deltaMW": 80.0
+          },
+          {
+            "sub": "COc1c(N2CC3CCCNC3C2)c(F)cc2c(=O)c(C(=O)O)cn(C3CC3)c12",
+            "met": "COc1c(N2CC3CCCN(S(=O)(=O)O)C3C2)c(F)cc2c(=O)c(C(=O)O)cn(C3CC3)c12",
+            "deltaMW": 80.1
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~78)",
+        "count": 4,
+        "fraction_of_uncovered": 0.013377926421404682,
+        "examples": [
+          {
+            "sub": "ClC(Cl)=C(c1ccc(Cl)cc1)c1ccc(Cl)cc1",
+            "met": "CS(=O)(=O)c1cc(Cl)ccc1C(=C(Cl)Cl)c1ccc(Cl)cc1",
+            "deltaMW": 78.1
+          },
+          {
+            "sub": "ClC(Cl)=C(c1ccc(Cl)cc1)c1ccc(Cl)cc1",
+            "met": "CS(=O)(=O)c1cc(C(=C(Cl)Cl)c2ccc(Cl)cc2)ccc1Cl",
+            "deltaMW": 78.1
+          },
+          {
+            "sub": "Clc1ccc(Cl)c(-c2ccc(Cl)c(Cl)c2)c1",
+            "met": "CS(=O)(=O)c1cc(Cl)c(-c2ccc(Cl)c(Cl)c2)cc1Cl",
+            "deltaMW": 78.1
+          }
+        ]
+      },
+      {
+        "class": "glucuronidation (+C6H8O6, +176)",
+        "count": 4,
+        "fraction_of_uncovered": 0.013377926421404682,
+        "examples": [
+          {
+            "sub": "CC(NC(=O)O)C12CC3CC(CC(C3)C1)C2",
+            "met": "CC(N=C(O)OC1OC(C(=O)O)C(O)C(O)C1O)C12CC3CC(CC(C3)C1)C2",
+            "deltaMW": 176.1
+          },
+          {
+            "sub": "O=C1N=C(c2ccccc2Cl)c2cc(Cl)ccc2NC1O",
+            "met": "O=C(O)C1OC(OC2N=C(c3ccccc3Cl)c3cc(Cl)ccc3N=C2O)C(O)C(O)C1O",
+            "deltaMW": 176.1
+          },
+          {
+            "sub": "COc1cc(-c2oc3cc(=O)cc(O)c-3cc2OC2OC(CO)C(O)C2O)cc(OC)c1O",
+            "met": "COc1cc(-c2oc3cc(OC4OC(C(=O)O)C(O)C(O)C4O)cc(=O)c-3cc2OC2OC(CO)C(O)C2O)cc(OC)c1O",
+            "deltaMW": 176.1
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-16)",
+        "count": 4,
+        "fraction_of_uncovered": 0.013377926421404682,
+        "examples": [
+          {
+            "sub": "COc1cc(-c2nc(-c3c(C)c(Cl)c(C)[n+]([O-])c3Cl)no2)cc([N+](=O)[O-])c1O",
+            "met": "COc1cc(-c2nc(-c3c(Cl)nc(C)c(Cl)c3C)no2)cc([N+](=O)[O-])c1O",
+            "deltaMW": -16.0
+          },
+          {
+            "sub": "Cc1c(Cl)c(C)[n+]([O-])c(Cl)c1-c1noc(-c2cc(O)c(O)c([N+](=O)[O-])c2)n1",
+            "met": "Cc1nc(Cl)c(-c2noc(-c3cc(O)c(O)c([N+](=O)[O-])c3)n2)c(C)c1Cl",
+            "deltaMW": -16.0
+          },
+          {
+            "sub": "CC12CCC3C(CC=C4CC(=O)C(Cl)CC43C)C1CCC2=O",
+            "met": "CC12CCC3c4cc(Cl)c(O)cc4CCC3C1CCC2=O",
+            "deltaMW": -16.0
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-81)",
+        "count": 3,
+        "fraction_of_uncovered": 0.010033444816053512,
+        "examples": [
+          {
+            "sub": "O=C(O)C1CCCC2SCCC(N=C(O)C(S)Cc3ccccc3)C(=O)N21",
+            "met": "O=C(NCCO)C(=O)NC(CO)C(O)c1ccc([N+](=O)[O-])cc1",
+            "deltaMW": -81.3
+          },
+          {
+            "sub": "NC(Cc1c[nH]c2ccccc12)C(=O)O",
+            "met": "O=C(O)c1ccccn1",
+            "deltaMW": -81.1
+          },
+          {
+            "sub": "Cn1cncc1C(N)(c1ccc(Cl)cc1)c1ccc2nc(O)cc(-c3cccc(Cl)c3)c2c1",
+            "met": "O=C(c1ccc(Cl)cc1)c1ccc2nc(O)cc(-c3cccc(Cl)c3)c2c1",
+            "deltaMW": -81.1
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-42)",
+        "count": 3,
+        "fraction_of_uncovered": 0.010033444816053512,
+        "examples": [
+          {
+            "sub": "CC(=O)OC1N=C(c2ccccc2Cl)c2cc(Cl)ccc2N=C1O",
+            "met": "O=C1N=C(c2ccccc2Cl)c2cc(Cl)ccc2NC1O",
+            "deltaMW": -42.0
+          },
+          {
+            "sub": "CC(=O)C1=CCC2C3CC=C4CC(O)CCC4(C)C3CCC12C",
+            "met": "CC12C=CCC1C1CCC3CC(=O)CCC3(C)C1CC2",
+            "deltaMW": -42.0
+          },
+          {
+            "sub": "Cc1onc(-c2ccccc2Cl)c1C(O)=NC1C(=O)N2C1SC(C)(C)C2C(=O)O",
+            "met": "CC1ON=C(c2ccccc2Cl)C1C1=NCC2SC(C)(C)C(C(=O)O)N12",
+            "deltaMW": -42.0
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~132)",
+        "count": 3,
+        "fraction_of_uncovered": 0.010033444816053512,
+        "examples": [
+          {
+            "sub": "N=c1nc(S)c2nc[nH]c2[nH]1",
+            "met": "N=c1nc(S)c2ncn(C3OC(CO)C(O)C3O)c2[nH]1",
+            "deltaMW": 132.1
+          },
+          {
+            "sub": "CSc1ncnc2[nH]cnc12",
+            "met": "CSc1ncnc2c1ncn2C1OC(CO)C(O)C1O",
+            "deltaMW": 132.1
+          },
+          {
+            "sub": "Oc1ncc(F)c(O)n1",
+            "met": "O=c1nc(O)c(F)cn1C1OC(CO)C(O)C1O",
+            "deltaMW": 132.1
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~196)",
+        "count": 3,
+        "fraction_of_uncovered": 0.010033444816053512,
+        "examples": [
+          {
+            "sub": "N=c1nc(S)c2nc[nH]c2[nH]1",
+            "met": "N=c1nc(S)c2ncn(C3CC(O)C(COP(=O)(O)O)O3)c2[nH]1",
+            "deltaMW": 196.1
+          },
+          {
+            "sub": "CSc1ncnc2[nH]cnc12",
+            "met": "CSc1ncnc2c1ncn2C1CC(O)C(COP(=O)(O)O)O1",
+            "deltaMW": 196.1
+          },
+          {
+            "sub": "Oc1ncc(F)c(O)n1",
+            "met": "O=c1nc(O)c(F)cn1C1CC(O)C(COP(=O)(O)O)O1",
+            "deltaMW": 196.1
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~292)",
+        "count": 3,
+        "fraction_of_uncovered": 0.010033444816053512,
+        "examples": [
+          {
+            "sub": "N=c1nc(S)c2nc[nH]c2[nH]1",
+            "met": "N=c1nc(S)c2ncn(C3OC(COP(=O)(O)O)C(OP(=O)(O)O)C3O)c2[nH]1",
+            "deltaMW": 292.1
+          },
+          {
+            "sub": "CSc1ncnc2[nH]cnc12",
+            "met": "CSc1ncnc2c1ncn2C1OC(COP(=O)(O)O)C(OP(=O)(O)O)C1O",
+            "deltaMW": 292.1
+          },
+          {
+            "sub": "Oc1ncc(F)c(O)n1",
+            "met": "O=c1nc(O)c(F)cn1C1OC(COP(=O)(O)OP(=O)(O)O)C(O)C1O",
+            "deltaMW": 292.1
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~212)",
+        "count": 3,
+        "fraction_of_uncovered": 0.010033444816053512,
+        "examples": [
+          {
+            "sub": "N=c1nc(S)c2nc[nH]c2[nH]1",
+            "met": "N=c1nc(S)c2ncn(C3OC(COP(=O)(O)O)C(O)C3O)c2[nH]1",
+            "deltaMW": 212.1
+          },
+          {
+            "sub": "CSc1ncnc2[nH]cnc12",
+            "met": "CSc1ncnc2c1ncn2C1OC(COP(=O)(O)O)C(O)C1O",
+            "deltaMW": 212.1
+          },
+          {
+            "sub": "Oc1ncc(F)c(O)n1",
+            "met": "O=c1nc(O)c(F)cn1C1OC(COP(=O)(O)O)C(O)C1O",
+            "deltaMW": 212.1
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~28)",
+        "count": 3,
+        "fraction_of_uncovered": 0.010033444816053512,
+        "examples": [
+          {
+            "sub": "CCC=CCC=CCC=CCC=CCC=CCCCC(=O)O",
+            "met": "CCC=CCC=CCC=CCC=CCC=CCCCCCC(=O)O",
+            "deltaMW": 28.1
+          },
+          {
+            "sub": "CCCCCCCCC=CCCCCCCCC(=O)O",
+            "met": "CCCCCCCCC=CCCCCCCCC(=O)OCC",
+            "deltaMW": 28.1
+          },
+          {
+            "sub": "CNCCCC12CCC(c3ccccc31)c1ccccc12",
+            "met": "CC(O)=NCCCC12CCC(c3ccccc31)c1ccccc12",
+            "deltaMW": 28.0
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~48)",
+        "count": 3,
+        "fraction_of_uncovered": 0.010033444816053512,
+        "examples": [
+          {
+            "sub": "CCC=CCC=CCC=CCC=CCC=CCCCC(=O)O",
+            "met": "CCC=CCC(O)C=CC1OC2CC(O2)C1CC=CCCCC(=O)O",
+            "deltaMW": 48.0
+          },
+          {
+            "sub": "CCC=CCC=CCC=CCC=CCC=CCCCC(=O)O",
+            "met": "CCC=CCC(O)C=CC1C(O)CC(=O)C1CC=CCCCC(=O)O",
+            "deltaMW": 48.0
+          },
+          {
+            "sub": "C=CCc1ccc(O)c(OC)c1",
+            "met": "COc1cc(CC(O)C(=O)O)ccc1O",
+            "deltaMW": 48.0
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-4)",
+        "count": 3,
+        "fraction_of_uncovered": 0.010033444816053512,
+        "examples": [
+          {
+            "sub": "CC1C=C2CC(=O)CCC2C2CCC3(C)C(O)CCC3C12",
+            "met": "CC1Cc2cc(O)ccc2C2CCC3(C)C(=O)CCC3C12",
+            "deltaMW": -4.0
+          },
+          {
+            "sub": "OCC(Cc1cccc(O)c1)C(CO)Cc1cccc(O)c1",
+            "met": "O=C1OCC(Cc2cccc(O)c2)C1Cc1cccc(O)c1",
+            "deltaMW": -4.0
+          },
+          {
+            "sub": "CCC(O)CCC(C)O",
+            "met": "CCC(=O)CCC(C)=O",
+            "deltaMW": -4.0
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-37)",
+        "count": 3,
+        "fraction_of_uncovered": 0.010033444816053512,
+        "examples": [
+          {
+            "sub": "NC(Cc1c[nH]c2ccccc12)C(=O)O",
+            "met": "O=C(O)c1cccnc1C(=O)O",
+            "deltaMW": -37.1
+          },
+          {
+            "sub": "Cn1c(CCCC(=O)O)nc2cc(N(CCCl)CCCl)ccc21",
+            "met": "Cn1c(CCCC(=O)O)nc2cc(N(CCO)CCO)ccc21",
+            "deltaMW": -36.9
+          },
+          {
+            "sub": "O=C(O)CCCc1nc2ccc(N(CCCl)CCCl)cc2[nH]1",
+            "met": "O=C(O)CCCc1nc2ccc(N(CCO)CCO)cc2[nH]1",
+            "deltaMW": -36.9
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~4)",
+        "count": 3,
+        "fraction_of_uncovered": 0.010033444816053512,
+        "examples": [
+          {
+            "sub": "NC(Cc1c[nH]c2ccccc12)C(=O)O",
+            "met": "Nc1ccccc1C(=O)CC(N)C(=O)O",
+            "deltaMW": 4.0
+          },
+          {
+            "sub": "O=c1c(-c2ccc(O)cc2)coc2cc(O)ccc12",
+            "met": "CC(C(=O)c1ccc(O)cc1O)c1ccc(O)cc1",
+            "deltaMW": 4.0
+          },
+          {
+            "sub": "CC12CC(C=O)C(=O)CC1CCC1C2CCC2(C)C1CCC2(C)O",
+            "met": "CC12CC(CO)C(O)CC1CCC1C2CCC2(C)C1CCC2(C)O",
+            "deltaMW": 4.0
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-12)",
+        "count": 3,
+        "fraction_of_uncovered": 0.010033444816053512,
+        "examples": [
+          {
+            "sub": "O=c1c(-c2ccc(O)cc2)coc2cc(O)ccc12",
+            "met": "Oc1ccc(C2COc3cc(O)ccc3C2)cc1",
+            "deltaMW": -12.0
+          },
+          {
+            "sub": "CC1=CC(=O)CC2CCC3C4CCC(O)C4(C)CCC3C12C",
+            "met": "CC12CCC3C(CCC4CC(O)CCC43C)C1CCC2=O",
+            "deltaMW": -12.0
+          },
+          {
+            "sub": "CSC1=CCC2C3CC=C4CC(=O)C=CC4(C)C3(F)C(O)CC12C",
+            "met": "CC12CC(O)C3(F)C(CC=C4CC(=O)C=CC43C)C1CCC2S",
+            "deltaMW": -12.0
+          }
+        ]
+      },
+      {
+        "class": "glutathione conjugation (+305)",
+        "count": 3,
+        "fraction_of_uncovered": 0.010033444816053512,
+        "examples": [
+          {
+            "sub": "CC(C)NCC(O)COc1cccc2ccccc12",
+            "met": "CC(C)NCC(O)COc1c(SCC(N=C(O)CCC(N)C(=O)O)C(O)=NCC(=O)O)ccc2ccccc12",
+            "deltaMW": 305.3
+          },
+          {
+            "sub": "CC1CCN(C(=O)CC#N)CC1N(C)c1ncnc2[nH]ccc12",
+            "met": "CC1CC(SCC(N=C(O)CCC(N)C(=O)O)C(O)=NCC(=O)O)N(C(=O)CC#N)CC1N(C)c1ncnc2[nH]ccc12",
+            "deltaMW": 305.3
+          },
+          {
+            "sub": "CC1=CC(=O)c2ccccc2C1=O",
+            "met": "CC1=C(SCC(N=C(O)CCC(N)C(=O)O)C(O)=NCC(=O)O)C(=O)c2ccccc2C1=O",
+            "deltaMW": 305.3
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-26)",
+        "count": 3,
+        "fraction_of_uncovered": 0.010033444816053512,
+        "examples": [
+          {
+            "sub": "CC(C)NCC(O)COc1cccc2ccccc12",
+            "met": "NCC(O)COc1ccc(O)c2ccccc12",
+            "deltaMW": -26.1
+          },
+          {
+            "sub": "CC12CC(C=O)C(=O)CC1CCC1C2CCC2(C)C1CCC2(C)O",
+            "met": "CC12CCC(O)CC1CCC1C2CCC2(C)C1CCC2(C)O",
+            "deltaMW": -26.0
+          },
+          {
+            "sub": "O=C(O)C=Cc1ccc(O)cc1",
+            "met": "O=C(O)c1ccc(O)cc1",
+            "deltaMW": -26.0
+          }
+        ]
+      },
+      {
+        "class": "acetylation (+C2H2O, +42)",
+        "count": 3,
+        "fraction_of_uncovered": 0.010033444816053512,
+        "examples": [
+          {
+            "sub": "O=C(O)c1ccccc1O",
+            "met": "O=C(O)N=C(O)c1ccccc1O",
+            "deltaMW": 43.0
+          },
+          {
+            "sub": "CC1=CC(=O)CC2CCC3C4CCC(O)C4(C)CCC3C12C",
+            "met": "CC(=O)OC1CCC2C3CCC4CC(=O)C=C(C)C4(C)C3CCC12C",
+            "deltaMW": 42.0
+          },
+          {
+            "sub": "CNCCCC12CCC(c3ccccc31)c1ccccc12",
+            "met": "CC(=O)N(C)CCCC12CCC(c3ccccc31)c1ccccc12",
+            "deltaMW": 42.0
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~29)",
+        "count": 2,
+        "fraction_of_uncovered": 0.006688963210702341,
+        "examples": [
+          {
+            "sub": "O=C(O)c1cccnc1",
+            "met": "Cn1ccc(=O)c(C(=N)O)c1",
+            "deltaMW": 29.0
+          },
+          {
+            "sub": "O=C(O)c1cccnc1",
+            "met": "Cn1cc(C(=N)O)ccc1=O",
+            "deltaMW": 29.0
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~356)",
+        "count": 2,
+        "fraction_of_uncovered": 0.006688963210702341,
+        "examples": [
+          {
+            "sub": "N=c1nc(S)c2nc[nH]c2[nH]1",
+            "met": "N=c1nc(S)c2ncn(C3CC(O)C(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)O3)c2[nH]1",
+            "deltaMW": 356.1
+          },
+          {
+            "sub": "Oc1ncc(F)c(O)n1",
+            "met": "O=c1nc(O)c(F)cn1C1CC(O)C(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)O1",
+            "deltaMW": 356.1
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~50)",
+        "count": 2,
+        "fraction_of_uncovered": 0.006688963210702341,
+        "examples": [
+          {
+            "sub": "CCC=CCC=CCC=CCC=CCC=CCCCC(=O)O",
+            "met": "CCCCCC(O)C=CC1OC2CC(O2)C1CC=CCCCC(=O)O",
+            "deltaMW": 50.0
+          },
+          {
+            "sub": "Cn1cnc([N+](=O)[O-])c1Sc1ncnc2[nH]cnc12",
+            "met": "O=C(NCCO)C(=O)NC(CO)C(O)c1ccc([N+](=O)[O-])cc1",
+            "deltaMW": 50.0
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-76)",
+        "count": 2,
+        "fraction_of_uncovered": 0.006688963210702341,
+        "examples": [
+          {
+            "sub": "OC(CCCl)=NCc1ccc(O)cc1",
+            "met": "O=C(O)c1ccc(O)cc1",
+            "deltaMW": -75.5
+          },
+          {
+            "sub": "CC(Cc1ccccc1)NCCn1cnc2c1c(=O)n(C)c(=O)n2C",
+            "met": "CC(O)=NCCn1cnc2c1c(=O)n(C)c(=O)n2C",
+            "deltaMW": -76.1
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~60)",
+        "count": 2,
+        "fraction_of_uncovered": 0.006688963210702341,
+        "examples": [
+          {
+            "sub": "C=c1c(N)c(O)c2c(COC(=N)O)c3n(c2c1O)CC(NC)C=3",
+            "met": "C=c1c(N)c(O)c2c(CSCC(N)C(=O)O)c3n(c2c1O)CC(NC)C=3",
+            "deltaMW": 60.1
+          },
+          {
+            "sub": "C=c1c(N)c(O)c2c(COC(=N)O)c3n(c2c1O)CC(NC)C=3",
+            "met": "CNC1Cn2c3c(c(C)c2C1SCC(N)C(=O)O)C(=O)C(=N)C(C)C3=O",
+            "deltaMW": 60.1
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-116)",
+        "count": 2,
+        "fraction_of_uncovered": 0.006688963210702341,
+        "examples": [
+          {
+            "sub": "COc1cc(C2OCC3C(c4cc(OC)c(O)c(OC)c4)OCC23)cc(OC)c1O",
+            "met": "OCC(Cc1cccc(O)c1)C(CO)Cc1cccc(O)c1",
+            "deltaMW": -116.1
+          },
+          {
+            "sub": "CS(=O)(=O)NN(CCCl)S(C)(=O)=O",
+            "met": "C=C[N]NS(C)(=O)=O",
+            "deltaMW": -115.6
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-11)",
+        "count": 2,
+        "fraction_of_uncovered": 0.006688963210702341,
+        "examples": [
+          {
+            "sub": "N#CC(O)c1cccc(Oc2ccccc2)c1",
+            "met": "O=C(O)c1cccc(Oc2ccccc2)c1",
+            "deltaMW": -11.0
+          },
+          {
+            "sub": "CC(C)NCC(O)COc1cccc2ccccc12",
+            "met": "O=C(O)C(O)COc1ccc(O)c2ccccc12",
+            "deltaMW": -11.1
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~240)",
+        "count": 2,
+        "fraction_of_uncovered": 0.006688963210702341,
+        "examples": [
+          {
+            "sub": "N=c1[nH]cnc2c(C3OC(CO)C(O)C3O)c[nH]c12",
+            "met": "N=c1[nH]cnc2c(C3OC(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)C(O)C3O)c[nH]c12",
+            "deltaMW": 239.9
+          },
+          {
+            "sub": "Cc1cn(C2CC(N=[N+]=[N-])C(CO)O2)c(=O)nc1O",
+            "met": "Cc1cn(C2CC(N=[N+]=[N-])C(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)O2)c(=O)nc1O",
+            "deltaMW": 239.9
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~95)",
+        "count": 2,
+        "fraction_of_uncovered": 0.006688963210702341,
+        "examples": [
+          {
+            "sub": "O=P(O)(O)OCC1OC(n2cnc3c(S)ncnc32)C(O)C1O",
+            "met": "N=c1nc(S)c2ncn(C3OC(COP(=O)(O)O)C(OP(=O)(O)O)C3O)c2[nH]1",
+            "deltaMW": 95.0
+          },
+          {
+            "sub": "O=P(O)(O)OCC1OC(n2cnc3c(S)ncnc32)C(O)C1O",
+            "met": "N=c1nc(S)c2ncn(C3OC(COP(=O)(O)OP(=O)(O)O)C(O)C3O)c2[nH]1",
+            "deltaMW": 95.0
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-190)",
+        "count": 2,
+        "fraction_of_uncovered": 0.006688963210702341,
+        "examples": [
+          {
+            "sub": "CC(Cc1ccccc1)NCCn1cnc2c1c(=O)n(C)c(=O)n2C",
+            "met": "CC(N)C(O)c1ccccc1",
+            "deltaMW": -190.2
+          },
+          {
+            "sub": "CC(Cc1ccccc1)NCCn1cnc2c1c(=O)n(C)c(=O)n2C",
+            "met": "CC(N)Cc1ccc(O)cc1",
+            "deltaMW": -190.2
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-110)",
+        "count": 2,
+        "fraction_of_uncovered": 0.006688963210702341,
+        "examples": [
+          {
+            "sub": "CC(CN=C(S)S)N=C(S)S",
+            "met": "CC1CN=C(S)N1",
+            "deltaMW": -110.2
+          },
+          {
+            "sub": "Cn1cnc([N+](=O)[O-])c1Sc1ncnc2[nH]cnc12",
+            "met": "N=c1nc(S)c2nc[nH]c2[nH]1",
+            "deltaMW": -110.1
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-23)",
+        "count": 2,
+        "fraction_of_uncovered": 0.006688963210702341,
+        "examples": [
+          {
+            "sub": "CCOP(=S)(OCC)Oc1nc(Cl)c(Cl)cc1Cl",
+            "met": "O=C(NCCO)C(=O)NC(CO)C(O)c1ccc([N+](=O)[O-])cc1",
+            "deltaMW": -23.3
+          },
+          {
+            "sub": "Oc1ncc(F)c(O)n1",
+            "met": "NCC(F)C(=O)O",
+            "deltaMW": -23.0
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-94)",
+        "count": 2,
+        "fraction_of_uncovered": 0.006688963210702341,
+        "examples": [
+          {
+            "sub": "Cc1cn(C2CC(N=[N+]=[N-])C(COP(=O)(NC(CC(C)C)C(=O)O)Oc3ccccc3)O2)c(=O)nc1O",
+            "met": "Cc1cn(C2CC(N=[N+]=[N-])C(COP3(=O)NC(CC(C)C)C(=O)O3)O2)c(=O)nc1O",
+            "deltaMW": -94.1
+          },
+          {
+            "sub": "Cc1cn(C2CC(N=[N+]=[N-])C(COP(=O)(NC(Cc3ccccc3)C(=O)O)Oc3ccccc3)O2)c(=O)nc1O",
+            "met": "Cc1cn(C2CC(N=[N+]=[N-])C(COP3(=O)NC(Cc4ccccc4)C(=O)O3)O2)c(=O)nc1O",
+            "deltaMW": -94.1
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-86)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "CC(C)CCC(O)C(C)C1CCC2C3CC=C4CC(O)CCC4(C)C3CCC12C",
+            "met": "CC(=O)C1CCC2C3CC=C4CC(O)CCC4(C)C3CCC12C",
+            "deltaMW": -86.2
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~243)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "CS(=O)c1nn(CCc2ccncc2)c(=S)s1",
+            "met": "NC(CCC(O)=NC(CSc1nn(CCc2ccncc2)c(=S)s1)C(O)=NCC(=O)O)C(=O)O",
+            "deltaMW": 243.2
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-163)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "NC(CCC(O)=NC(CSC(=S)S)C(O)=NCC(=O)O)C(=O)O",
+            "met": "O=C(O)CN=C(O)C1CSC(S)=N1",
+            "deltaMW": -163.2
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-220)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "NC(CCC(O)=NC(CSC(=S)S)C(O)=NCC(=O)O)C(=O)O",
+            "met": "O=C(O)C1CSC(S)=N1",
+            "deltaMW": -220.3
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~71)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "OCc1ccccc1",
+            "met": "O=C(O)CN=C(O)c1ccccc1",
+            "deltaMW": 71.0
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~407)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "O=C(O)C1CCCC2SCCC(N=C(O)C(S)Cc3ccccc3)C(=O)N21",
+            "met": "O=C(O)C1CCCC2SCCC(N=C(O)C(Cc3ccccc3)SSC(Cc3ccccc3)C(O)=NC3CCSC4CCCC(C(=O)O)N4C3=O)C(=O)N21",
+            "deltaMW": 406.5
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-195)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "N=c1nc(S)c2ncn(C3OC(COP(=O)(O)O)C(O)C3O)c2[nH]1",
+            "met": "Oc1nc(S)c2nc(O)[nH]c2n1",
+            "deltaMW": -195.1
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-29)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "N=C(O)OCC(COC(=N)O)c1ccccc1",
+            "met": "N=C(O)OCC(C(=O)O)c1ccccc1",
+            "deltaMW": -29.0
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-47)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "N=C(O)OCC(COC(=N)O)c1ccccc1",
+            "met": "O=C1N=C(O)C(c2ccccc2)CO1",
+            "deltaMW": -47.1
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-106)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "N=C(O)OCC(COC(=N)O)c1ccccc1",
+            "met": "C=C(C=O)c1ccccc1",
+            "deltaMW": -106.1
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-241)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "O=C(O)CCC(=O)OCC(N=C(O)C(Cl)Cl)C(O)c1ccc([N+](=O)[O-])cc1",
+            "met": "Nc1ccc(C(O)C(N)CO)cc1",
+            "deltaMW": -241.0
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-153)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "O=C(O)CCC(=O)OCC(N=C(O)C(Cl)Cl)C(O)c1ccc([N+](=O)[O-])cc1",
+            "met": "O=[N+]([O-])c1ccc(C(O)C(CO)N=C(O)CO)cc1",
+            "deltaMW": -153.0
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-58)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "O=C(O)CCC(=O)OCC(N=C(O)C(Cl)Cl)C(O)c1ccc([N+](=O)[O-])cc1",
+            "met": "CC(=O)OC(c1ccc([N+](=O)[O-])cc1)C(CO)N=C(O)C(Cl)Cl",
+            "deltaMW": -58.0
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-211)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "O=C(O)CCC(=O)OCC(N=C(O)C(Cl)Cl)C(O)c1ccc([N+](=O)[O-])cc1",
+            "met": "NC(CO)C(O)c1ccc([N+](=O)[O-])cc1",
+            "deltaMW": -211.0
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-139)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "O=C(O)CCC(=O)OCC(N=C(O)C(Cl)Cl)C(O)c1ccc([N+](=O)[O-])cc1",
+            "met": "O=C(O)C(=O)NC(CO)C(O)c1ccc([N+](=O)[O-])cc1",
+            "deltaMW": -139.0
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~154)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "OCCNCCO",
+            "met": "O=P(O)(OCCNCCO)OCC(O)CO",
+            "deltaMW": 154.1
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~222)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "OCCNCCO",
+            "met": "O=C(NCCO)C(=O)NC(CO)C(O)c1ccc([N+](=O)[O-])cc1",
+            "deltaMW": 222.2
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-28)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "COc1cc(C=CC(=O)O)cc(-c2cc(CCC(=O)O)cc(OC)c2O)c1O",
+            "met": "O=C(O)C=Cc1cc(O)c(O)c(-c2cc(CCC(=O)O)cc(O)c2O)c1",
+            "deltaMW": -28.1
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~211)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "N=c1nc(S)c2nc[nH]c2[nH]1",
+            "met": "CSc1ncnc2c1ncn2C1OC(COP(=O)(O)O)C(O)C1O",
+            "deltaMW": 211.1
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~276)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "N=c1nc(S)c2nc[nH]c2[nH]1",
+            "met": "N=c1nc(S)c2ncn(C3CC(OP(=O)(O)O)C(COP(=O)(O)O)O3)c2[nH]1",
+            "deltaMW": 276.1
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-71)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "CCCC(=O)SCC[N+](C)(C)C",
+            "met": "C[N+](C)(C)CC[S-]",
+            "deltaMW": -71.1
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~190)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "CC12CCC3C(CCC4CC(=O)CCC43C)C1CCC2O",
+            "met": "CC12CC(=O)C3C(CCC4CC(OC5OC(C(=O)O)C(O)C(O)C5O)CCC43C)C1CCC2=O",
+            "deltaMW": 190.1
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~192)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "CC12CCC3C(CCC4CC(=O)CCC43C)C1CCC2O",
+            "met": "CC12CC(O)C3C(CCC4CC(OC5OC(C(=O)O)C(O)C(O)C5O)CCC43C)C1CCC2=O",
+            "deltaMW": 192.1
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~178)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "CC12CCC3C(CCC4CC(=O)CCC43C)C1CCC2O",
+            "met": "CC12CCC3C(CCC4CC(OC5OC(C(=O)O)C(O)C(O)C5O)CCC43C)C1CCC2O",
+            "deltaMW": 178.1
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-355)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "CCC(C)C(N=C(O)CCN=C(O)CCC(=O)O)C(O)=NC(C)C(O)=NC(CC(C)C)C(O)=NC1CC(OC2CC(O)(C(=O)CO)Cc3c(O)c4c(c(O)c32)C(=O)c2c(OC)cccc2C4=O)OC(C)C1O",
+            "met": "COc1cccc2c(O)c3c(c(O)c12)C(=O)C1=C(CC(O)(C(=O)CO)CC1OC1CC(N=C(O)C(N)CC(C)C)C(O)C(C)O1)C3=O",
+            "deltaMW": -355.4
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-395)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "O=C1Oc2ccccc2C=CC(O)=NCCCCCCOc2ccc(cc2)CC1N=C(O)CCc1ccccc1",
+            "met": "O=c1ccc2ccccc2o1",
+            "deltaMW": -394.5
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-128)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "O=C1Oc2ccccc2C=CC(O)=NCCCCCCOc2ccc(cc2)CC1N=C(O)CCc1ccccc1",
+            "met": "NCCCCCCOc1ccc(CC(N=C(O)CCc2ccccc2)C(=O)O)cc1",
+            "deltaMW": -128.1
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~369)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "CCCCCCCCC=CCCCCCCCC(=O)O",
+            "met": "CCCCCCCCC=CCCCCCCCC(=O)OC1CCC2(C)C(=CCC3C2CCC2(C)C(C(C)CCCC(C)C)CCC32)C1",
+            "deltaMW": 368.6
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~475)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "CCCCCCCCC=CCCCCCCCC(=O)O",
+            "met": "CCCCCCCCC=CCCCCCCCC(=O)OCC(COP(=O)(O)OCCCC)OC(=O)CCCCCCCC=CCCCCCCCC",
+            "deltaMW": 474.6
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~66)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "COc1nc(=N)[nH]c2c1ncn2C1OC(CO)C(O)C1O",
+            "met": "N=c1nc(O)c2ncn(C3OC(COP(=O)(O)O)C(O)C3O)c2[nH]1",
+            "deltaMW": 66.0
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-102)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "CC(C)CCC(O)C(C)(O)C1CCC2C3CC=C4CC(O)CCC4(C)C3CCC21C",
+            "met": "CC(=O)C1CCC2C3CC=C4CC(O)CCC4(C)C3CCC12C",
+            "deltaMW": -102.2
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~44)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "COC(=O)C(CC(C)C)N=C(O)C(CCC(=O)O)N=C(O)C(CCC(=O)O)N=C(O)OC(C)(C)C",
+            "met": "COC(=O)C(CC(C)C)N=C(O)C(CCC(=O)O)N=C(O)C(CC(C(=O)O)C(=O)O)N=C(O)OC(C)(C)C",
+            "deltaMW": 44.0
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~36)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "CCOP(=S)(OCC)Oc1ccc([N+](=O)[O-])cc1",
+            "met": "O=C(NCCO)C(=O)NC(CO)C(O)c1ccc([N+](=O)[O-])cc1",
+            "deltaMW": 36.0
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-64)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "O=P(O)(O)OCC1OC(n2cnc3c(S)ncnc32)C(O)C1O",
+            "met": "OCC1OC(n2cnc3c(S)nc(O)nc32)C(O)C1O",
+            "deltaMW": -64.0
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-65)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "O=P(O)(O)OCC1OC(n2cnc3c(S)ncnc32)C(O)C1O",
+            "met": "N=c1nc(S)c2ncn(C3OC(CO)C(O)C3O)c2[nH]1",
+            "deltaMW": -65.0
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~94)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "O=P(O)(O)OCC1OC(n2cnc3c(S)ncnc32)C(O)C1O",
+            "met": "CSc1ncnc2c1ncn2C1OC(COP(=O)(O)O)C(OP(=O)(O)O)C1O",
+            "deltaMW": 94.0
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-41)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "CC(C)NCC(O)COc1cccc2ccccc12",
+            "met": "O=C(O)COc1ccc(O)c2ccccc12",
+            "deltaMW": -41.1
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-27)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "CC(C)NCC(O)COc1cccc2ccccc12",
+            "met": "O=C(O)C(O)COc1cccc2ccccc12",
+            "deltaMW": -27.1
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-57)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "CC(C)NCC(O)COc1cccc2ccccc12",
+            "met": "O=C(O)COc1cccc2ccccc12",
+            "deltaMW": -57.1
+          }
+        ]
+      },
+      {
+        "class": "decarboxylation (-CO2, -44)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "CC(C)NCC(O)COc1cccc2ccccc12",
+            "met": "O=C(CO)COc1cccc2ccccc12",
+            "deltaMW": -43.1
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-24)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "CC(=O)N1CCN(c2ccc(OCC3COC(Cn4ccnc4)(c4ccc(Cl)cc4Cl)O3)cc2)CC1",
+            "met": "CC(=O)N1CCN(c2ccc(OCC3COC(CNC=N)(c4ccc(Cl)cc4Cl)O3)cc2)CC1",
+            "deltaMW": -24.0
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-46)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "CCOC(=O)C(CCc1ccccc1)NC(C)C(=O)N1Cc2ccccc2CC1C(=O)O",
+            "met": "CC1C(=O)N2Cc3ccccc3CC2C(=O)N1C(CCc1ccccc1)C(=O)O",
+            "deltaMW": -46.1
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-60)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "O=C(O)C(O)CC(O)c1ccc(-c2ccccc2)cc1",
+            "met": "O=C(O)Cc1ccc(-c2ccccc2)cc1",
+            "deltaMW": -60.1
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-63)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "Cc1ccc(F)cc1C(O)=Nc1ccc(C(=O)N2Cc3cccn3C(O)c3ccccc32)c(Cl)c1",
+            "met": "Cc1ccc(F)cc1C(O)=Nc1ccc(C(O)=Nc2ccccc2C(=O)O)c(Cl)c1",
+            "deltaMW": -63.1
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-103)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "CC(Cc1ccccc1)NCCn1cnc2c1c(=O)n(C)c(=O)n2C",
+            "met": "Cn1c(=O)c2c(ncn2CC(=O)O)n(C)c1=O",
+            "deltaMW": -103.2
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~323)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "CC1=CC(=O)C=C(C)C1=NC(=O)c1cnc(Nc2cc(N3CCN(CCO)CC3)nc(C)n2)s1",
+            "met": "Cc1nc(Nc2ncc(C(O)=Nc3c(C)c(O)c(O)c(SCC(N=C(O)CCC(N)C(=O)O)C(O)=NCC(=O)O)c3C)s2)cc(N2CCN(CCO)CC2)n1",
+            "deltaMW": 323.3
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-237)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "CCCCCCCCCCCCCCCC(=O)N=c1ccn(C2OC(CO)C(O)C2O)c(O)n1",
+            "met": "O=c1nc(O)ccn1C1OC(CO)C(O)C1O",
+            "deltaMW": -237.4
+          }
+        ]
+      },
+      {
+        "class": "glycine conjugation (+57)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "N#Cc1cc(C(C=O)=CC=O)c2ccc(OCc3cccc(C4(O)CC5COC(C4)O5)n3)cc2c1",
+            "met": "CON=CC=C(C=NOC)c1cc(C#N)cc2cc(OCc3cccc(C4(O)CC5COC(C4)O5)n3)ccc12",
+            "deltaMW": 58.1
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~563)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "O=[Se](O)O",
+            "met": "NC(CCC(O)=NC(CS[Se]SCC(N=C(O)CCC(N)C(=O)O)C(O)=NCC(=O)O)C(O)=NCC(=O)O)C(=O)O",
+            "deltaMW": 562.6
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-48)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "O=[Se](O)O",
+            "met": "[SeH2]",
+            "deltaMW": -48.0
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-90)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "COC(=O)C(Cc1ccccc1)NP(=O)(OCC1C=CC(n2cc(C)c(O)nc2=O)O1)Oc1ccccc1",
+            "met": "Cc1cn(C2C=CC(COP(=O)(O)NC(Cc3ccccc3)C(=O)O)O2)c(=O)nc1O",
+            "deltaMW": -90.1
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~320)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "O=P(O)(O)OC1OC(O)C(O)C(O)C1O",
+            "met": "O=c1nc(O)ccn1C1OC(COP(=O)(O)OP(=O)(O)OC2OC(CO)C(O)C(O)C2O)C(O)C1O",
+            "deltaMW": 320.2
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~131)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "Oc1ccccc1",
+            "met": "CC(O)=NC(Sc1ccccc1)C(=O)O",
+            "deltaMW": 131.2
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~6)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "CC12CC(C=O)C(=O)CC1CCC1C2CCC2(C)C1CCC2(C)O",
+            "met": "CC1(C(=O)O)C(CC(=O)O)CCC2C1CCC1(C)C2CCC1(C)O",
+            "deltaMW": 6.0
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~101)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "Cn1cnc([N+](=O)[O-])c1Sc1ncnc2[nH]cnc12",
+            "met": "CSc1ncnc2c1ncn2C1OC(COP(=O)(O)O)C(O)C1O",
+            "deltaMW": 101.0
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-111)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "Cn1cnc([N+](=O)[O-])c1Sc1ncnc2[nH]cnc12",
+            "met": "CSc1ncnc2[nH]cnc12",
+            "deltaMW": -111.1
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~155)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "Cn1cnc([N+](=O)[O-])c1Sc1ncnc2[nH]cnc12",
+            "met": "Cn1cnc([N+](=O)[O-])c1SCC(N=C(O)CCC(N)C(=O)O)C(O)=NCC(=O)O",
+            "deltaMW": 155.1
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~87)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "Cn1cnc([N+](=O)[O-])c1Sc1ncnc2[nH]cnc12",
+            "met": "O=P(O)(O)OCC1OC(n2cnc3c(S)ncnc32)C(O)C1O",
+            "deltaMW": 87.0
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~102)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "Cn1cnc([N+](=O)[O-])c1Sc1ncnc2[nH]cnc12",
+            "met": "N=c1nc(S)c2ncn(C3OC(COP(=O)(O)O)C(O)C3O)c2[nH]1",
+            "deltaMW": 102.0
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-305)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "NC(CCC(O)=NC(CSSC1CCN(C(C(=O)C2CC2)c2ccccc2F)CC1=CC(=O)O)C(O)=NCC(=O)O)C(=O)O",
+            "met": "O=C(O)C=C1CN(C(C(=O)C2CC2)c2ccccc2F)CCC1S",
+            "deltaMW": -305.3
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-132)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "CC(=O)SCC(Cc1ccccc1)C(O)=NCC(=O)OCc1ccccc1",
+            "met": "O=C(O)CN=C(O)C(CS)Cc1ccccc1",
+            "deltaMW": -132.2
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-205)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "NC(C[Se]Cc1ccc(Cl)cc1)C(=O)O",
+            "met": "CC(=O)C(=O)O",
+            "deltaMW": -204.6
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-101)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "Cn1c(CCCC(=O)O)nc2cc(N(CCCl)CCSCC(N=C(O)CCC(N)C(=O)O)C(O)=NCC(=O)O)ccc21",
+            "met": "Cn1c(CCCC(=O)O)nc2cc(N(CCSCC(N)C(=O)O)CCSCC(N)C(=O)O)ccc21",
+            "deltaMW": -101.5
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-129)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "Cc1cc(C)cc(C(CC(C)C)N=C(O)c2cc(C(O)Oc3cccc(Cl)c3)ccc2CCC(=O)O)c1",
+            "met": "Cc1cc(C)cc(C(CC(C)C)N=C(O)c2cc(C=O)ccc2CCC(=O)O)c1",
+            "deltaMW": -128.6
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~303)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "COC(=O)c1c(F)cccc1-c1ccc(C(C)Nc2nccc(Cl)c2N=C(O)CC#N)cc1",
+            "met": "COC(=O)c1c(-c2ccc(C(C)Nc3nccc(Cl)c3N=C(O)CC#N)cc2)ccc(SCC(N=C(O)CCC(N)C(=O)O)C(O)=NCC(=O)O)c1O",
+            "deltaMW": 303.3
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-82)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "Cn1cncc1C(O)(c1ccc(Cl)cc1)c1ccc2c(c1)c(-c1cccc(Cl)c1)cc(=O)n2C",
+            "met": "Cn1c(=O)cc(-c2cccc(Cl)c2)c2cc(C(=O)c3ccc(Cl)cc3)ccc21",
+            "deltaMW": -82.1
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~137)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "CCOP(=S)(OCC)Oc1nc(Cl)c(Cl)cc1Cl",
+            "met": "NC(CCC(O)=NC(CSc1nc(Cl)c(Cl)cc1Cl)C(O)=NCC(=O)O)C(=O)O",
+            "deltaMW": 137.2
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-161)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "O=[N+]([O-])OC1COC2C(O)COC12",
+            "met": "[N]=O",
+            "deltaMW": -161.1
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~197)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "Cc1cn(C2CC(N=[N+]=[N-])C(CO)O2)c(=O)nc1O",
+            "met": "Cc1cn(C2C=CC(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)O2)c(=O)nc1O",
+            "deltaMW": 196.9
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-154)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "CCCCCCCCCC(=O)OC1CCC2C3CC=C4CC(=O)CCC4C3CCC12C",
+            "met": "CC12CCC3C4=C(CCC3C1CCC2O)CC(=O)CC4",
+            "deltaMW": -154.3
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-150)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "CCCCCCCCCC(=O)OC1CCC2C3CC=C4CC(=O)CCC4C3CCC12C",
+            "met": "CC12CCC3C4CCC(O)CC4CCC3C1CCC2O",
+            "deltaMW": -150.2
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-152)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "CCCCCCCCCC(=O)OC1CCC2C3CC=C4CC(=O)CCC4C3CCC12C",
+            "met": "CC12CCC3C4CCC(O)CC4CCC3C1CCC2=O",
+            "deltaMW": -152.2
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~116)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "Oc1ncc(F)c(O)n1",
+            "met": "O=c1nc(O)c(F)cn1C1CC(O)C(CO)O1",
+            "deltaMW": 116.1
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-68)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "OC(=NCC1CCCCN1)c1cc(OCC(F)(F)F)ccc1OCC(F)(F)F",
+            "met": "OC1=NC(CN=C(O)c2cc(O)ccc2OCC(F)(F)F)CCC1",
+            "deltaMW": -68.0
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-36)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "COc1cc2cc(C(=O)N3CC(CCl)c4c3cc(O)c3ncccc43)[nH]c2c(OC)c1OC",
+            "met": "COc1cc2cc(C(=O)N3CC4CC45C3=CC(=O)c3ncccc35)[nH]c2c(OC)c1OC",
+            "deltaMW": -36.5
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-144)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "CS(=O)(=O)NN(CCCl)S(C)(=O)=O",
+            "met": "[CH2]CS(C)(=O)=O",
+            "deltaMW": -143.6
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~722)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "CC(=O)C(=O)O",
+            "met": "CC(=O)SCCN=C(O)CCN=C(O)C(O)C(C)(C)COP(=O)(O)OP(=O)(O)OCC1OC(n2cnc3c(N)ncnc32)C(O)C1OP(=O)(O)O",
+            "deltaMW": 721.5
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~-56)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "CC(=O)OC1(C(C)=O)CC(O)C2C3=CC(Cl)=C4CC(=O)OCC4(C)C3CCC21C",
+            "met": "CC(O)C1(O)CC(O)C2C3CC(O)C4=CC(=O)OCC4(C)C3CCC21C",
+            "deltaMW": -56.5
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~55)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "O=S(=O)(F)C(F)(F)C(F)(F)C(F)(F)C(F)(F)C(F)(F)C(F)(F)C(F)(F)C(F)(F)F",
+            "met": "CN(CCO)S(=O)(=O)C(F)(F)C(F)(F)C(F)(F)C(F)(F)C(F)(F)C(F)(F)C(F)(F)C(F)(F)F",
+            "deltaMW": 55.1
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~69)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "O=S(=O)(F)C(F)(F)C(F)(F)C(F)(F)C(F)(F)C(F)(F)C(F)(F)C(F)(F)C(F)(F)F",
+            "met": "CCN(CCO)S(=O)(=O)C(F)(F)C(F)(F)C(F)(F)C(F)(F)C(F)(F)C(F)(F)C(F)(F)C(F)(F)F",
+            "deltaMW": 69.1
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~7)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "Cc1c(F)c(N)c2c(=O)cc(-c3ccc(N)c(F)c3)oc2c1F",
+            "met": "O=C(NCCO)C(=O)NC(CO)C(O)c1ccc([N+](=O)[O-])cc1",
+            "deltaMW": 7.0
+          }
+        ]
+      },
+      {
+        "class": "other (deltaMW~272)",
+        "count": 1,
+        "fraction_of_uncovered": 0.0033444816053511705,
+        "examples": [
+          {
+            "sub": "CC1=CC(=O)c2ccccc2C1=O",
+            "met": "CC(C)=CCCC(C)=CCCC(C)=CCC=C(C)C=Cc1c(C)c(O)c2ccccc2c1O",
+            "deltaMW": 272.5
+          }
+        ]
+      }
+    ]
+  }
+}
