@@ -344,10 +344,11 @@ def _run_wave(configs: Sequence[Dict[str, object]], fixed_args: List[str]) -> Di
     volumes={DATA_MOUNT: data_vol, "/root/GRAIL/artifacts": art_vol},
     # Generous: the orchestrator's own execution IS the whole ablation (prewarm +
     # every wave's .map() fan-out + aggregate_and_verdict), so its timeout must cover
-    # the full run, not just one config. 24h matches run_one_config's own per-config
-    # timeout; wall-clock for the whole ablation is bounded by wave count x per-config
-    # time / fan-out width, comfortably inside this envelope for the paper-scale run.
-    timeout=86400,
+    # the full run, not just one config. 48h -- the first 24h run hit this wall because
+    # the preemption-throttled Modal spot capacity + the per-substrate eval cost pushed
+    # the whole ablation past 24h; per-config checkpoints make a re-launch RESUME cheaply,
+    # but the orchestrator envelope must outlast the worst-case preemption drag.
+    timeout=172800,
 )
 def orchestrate_ablation(
     train_substrates: int = 300,

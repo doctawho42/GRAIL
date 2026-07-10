@@ -1,0 +1,62 @@
+{
+  "beta_prime_sweep": {
+    "2.0": 0.17469135802469135,
+    "4.0": 0.23888888888888887,
+    "6.0": 0.24542483660130715,
+    "8.0": 0.2517361111111111,
+    "10.0": 0.3178571428571429
+  },
+  "chosen_beta_prime": 10.0,
+  "val_seed_aucs": {
+    "gflownet": [
+      0.14102564102564102,
+      0.16968810916179336,
+      0.07777777777777778
+    ],
+    "ablation01": [
+      0.2482905982905983,
+      0.3792397660818714,
+      0.45416666666666666
+    ],
+    "ablation02": [
+      0.3173611111111111,
+      0.3637426900584795,
+      0.4699074074074074
+    ]
+  },
+  "test_table": {
+    "gflownet_union_at_k_auc": 0.058641975308641965,
+    "ablation01_union_at_k_auc": 0.18672839506172836,
+    "ablation02_union_at_k_auc": 0.21450617283950615
+  },
+  "primary_paired_bootstrap": {
+    "vs_ablation01": {
+      "mean_delta": -0.1280864197530864,
+      "ci_low": -0.3040123456790123,
+      "ci_high": -0.01697530864197531,
+      "ci": 0.95,
+      "n_boot": 10000,
+      "n_pairs": 12,
+      "confirmed": false
+    },
+    "vs_ablation02": {
+      "mean_delta": -0.1419753086419753,
+      "ci_low": -0.30092592592592593,
+      "ci_high": -0.018518518518518517,
+      "ci": 0.95,
+      "n_boot": 10000,
+      "n_pairs": 12,
+      "confirmed": false
+    }
+  },
+  "secondary_seed_level_verdict": "null",
+  "secondary_margin_used": 0.03839753797112506,
+  "sensitivity_grid": {
+    "0.5x_std": "null",
+    "1.0x_std": "null",
+    "1.5x_std": "null",
+    "fixed_0.02": "null"
+  },
+  "m_ensemble": 3,
+  "note_fix_e": "Phase 3 reports the generous-ensemble variant only; the compute-matched ensemble is deferred to Phase 4."
+}
