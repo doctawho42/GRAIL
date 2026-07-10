@@ -33,7 +33,7 @@ from grail_metabolism.eval.diversity import (
     mean_pairwise_tanimoto,
     n_unique_scaffolds,
 )
-from grail_metabolism.metrics import _inchikey
+from grail_metabolism.metrics import _inchikey, _tautomer_inchikey
 from grail_metabolism.utils.preparation import (
     apply_rules_to_molecule,
     load_default_rules,
@@ -101,11 +101,75 @@ def ik_set(smiles_iter) -> Set[str]:
     return {_inchikey(s) for s in smiles_iter}
 
 
+# Elements whose presence keeps the heavy-atom-formula prefilter sound (below): standardization
+# (Cleanup->FragmentParent->uncharge->tautomer-canon) preserves heavy-atom composition for a
+# single organic fragment. Metals / multi-fragment salts can lose atoms to disconnection, so
+# those products bypass the prefilter and are always tautomer-keyed.
+_ORGANIC_ELEMENTS = {"C", "N", "O", "S", "P", "F", "Cl", "Br", "I", "H", "B", "Si", "Se", "As"}
+
+
+def _heavy_formula(mol) -> tuple:
+    """Heavy-atom composition multiset (RDKit mols carry H implicitly, so GetAtoms() is heavy
+    atoms only). Invariant under tautomerization / (de)protonation / stereo, hence a NECESSARY
+    condition for tautomer-InChIKey equality -- a sound prefilter for skipping products that
+    cannot possibly match a true metabolite under `inchikey_tautomer`."""
+    from collections import Counter
+
+    return tuple(sorted(Counter(a.GetSymbol() for a in mol.GetAtoms()).items()))
+
+
+def _prefilter_unsafe(smi: str, mol) -> bool:
+    """The heavy-formula prefilter is unsound only when standardization changes heavy-atom
+    composition: salt/fragment stripping (multi-fragment SMILES) or metal disconnection."""
+    if "." in smi:
+        return True
+    return any(a.GetSymbol() not in _ORGANIC_ELEMENTS for a in mol.GetAtoms())
+
+
+def _tautomer_recovered(true_prods, product_smiles, audit: bool = False):
+    """(denominator, recovered[, recovered_naive]) for the tautomer-InChIKey ceiling on ONE
+    substrate. denominator = # tautomer-distinct true metabolites; recovered = # matched by any
+    product. Sound speedup: tautomer-canonicalize a product only when its heavy formula matches
+    a true metabolite's (or when the prefilter is unsafe). `audit=True` also computes the naive
+    "tautomer-key every product" figure so a caller can assert the prefilter loses nothing."""
+    true_taut: Dict[str, tuple] = {}
+    true_formulas: Set[tuple] = set()
+    for t in true_prods:
+        m = Chem.MolFromSmiles(t)
+        if m is None:
+            continue
+        true_taut[_tautomer_inchikey(t)] = _heavy_formula(m)
+    true_formulas = set(true_taut.values())
+    total = len(true_taut)
+    matched: Set[str] = set()
+    naive_keys: Set[str] = set()
+    for p in product_smiles:
+        m = Chem.MolFromSmiles(p)
+        if m is None:
+            continue
+        unsafe = _prefilter_unsafe(p, m)
+        if unsafe or _heavy_formula(m) in true_formulas:
+            pk = _tautomer_inchikey(p)
+            if pk in true_taut:
+                matched.add(pk)
+            if audit:
+                naive_keys.add(pk)
+        elif audit:
+            naive_keys.add(_tautomer_inchikey(p))
+    if audit:
+        return total, len(matched), len(set(true_taut) & naive_keys)
+    return total, len(matched), None
+
+
 # ---- 1. GRAIL rule-bank recall ceiling ----
-def grail_ceiling(test_map: Dict[str, Set[str]], rules: List[str]) -> Dict[str, float]:
-    recovered = 0
-    total = 0
-    subs_with_hit = 0
+def grail_ceiling(test_map: Dict[str, Set[str]], rules: List[str], audit_tautomer: int = 0) -> Dict[str, float]:
+    """Depth-1 rule-bank recall ceiling under BOTH plain InChIKey and tautomer-InChIKey (so the
+    headline ceiling is reported in the same match mode as GRAIL/SyGMa -- referee provenance).
+    `audit_tautomer=N` cross-checks the prefiltered tautomer count against the naive all-products
+    count on the first N substrates (mismatch must be 0 for the prefilter to be trustworthy)."""
+    recovered = total = subs_with_hit = 0
+    recovered_t = total_t = subs_with_hit_t = 0
+    audit_prefilter_sum = audit_naive_sum = audit_mismatch = 0
     cand_sizes = []
     start = time.perf_counter()
     items = list(test_map.items())
@@ -114,25 +178,52 @@ def grail_ceiling(test_map: Dict[str, Set[str]], rules: List[str]) -> Dict[str, 
             print(f"  [ceiling] {i}/{len(items)} ({time.perf_counter()-start:.0f}s)", flush=True)
         mol = Chem.MolFromSmiles(sub)
         true_ik = ik_set(true_prods)
+        do_audit = bool(audit_tautomer) and i <= audit_tautomer
         if mol is None:
             total += len(true_ik)
+            tt, _tr, _ = _tautomer_recovered(true_prods, [], audit=False)
+            total_t += tt
             continue
         products = apply_rules_to_molecule(mol, rules, normalization_mode="canonical")
-        gen_ik = ik_set(products.keys())
+        prod_keys = list(products.keys())
+        gen_ik = ik_set(prod_keys)
         cand_sizes.append(len(gen_ik))
         hit = len(true_ik & gen_ik)
         recovered += hit
         total += len(true_ik)
         if hit:
             subs_with_hit += 1
-    return {
+        tt, tr, tr_naive = _tautomer_recovered(true_prods, prod_keys, audit=do_audit)
+        total_t += tt
+        recovered_t += tr
+        if tr:
+            subs_with_hit_t += 1
+        if do_audit:
+            audit_prefilter_sum += tr
+            audit_naive_sum += tr_naive
+            if tr != tr_naive:
+                audit_mismatch += 1
+    out = {
         "recall_ceiling": recovered / total if total else 0.0,
+        "recall_ceiling_tautomer": recovered_t / total_t if total_t else 0.0,
         "fraction_substrates_with_any_hit": subs_with_hit / len(items) if items else 0.0,
+        "fraction_substrates_with_any_hit_tautomer": subs_with_hit_t / len(items) if items else 0.0,
         "mean_candidates_per_substrate": sum(cand_sizes) / len(cand_sizes) if cand_sizes else 0.0,
         "true_recovered": recovered,
         "true_total": total,
+        "true_recovered_tautomer": recovered_t,
+        "true_total_tautomer": total_t,
         "n_rules": len(rules),
     }
+    if audit_tautomer:
+        out["audit_tautomer"] = {
+            "n_substrates": min(audit_tautomer, len(items)),
+            "recovered_prefilter_sum": audit_prefilter_sum,
+            "recovered_naive_sum": audit_naive_sum,
+            "mismatch_substrates": audit_mismatch,
+            "prefilter_sound": audit_mismatch == 0 and audit_prefilter_sum == audit_naive_sum,
+        }
+    return out
 
 
 def grail_ceiling_depth(
@@ -341,6 +432,11 @@ def sygma_baseline(test_map: Dict[str, Set[str]], ks: List[int]) -> Optional[Dic
     scenario = sygma.Scenario([[sygma.ruleset["phase1"], 1], [sygma.ruleset["phase2"], 1]])
     recall_at = {k: 0.0 for k in ks}
     prec_at = {k: 0.0 for k in ks}
+    # tautomer-InChIKey mode, so SyGMa is scored in the SAME match protocol as the ceiling and
+    # GRAIL headline (referee provenance). Deduped by tautomer key, parent dropped by tautomer key.
+    recall_at_t = {k: 0.0 for k in ks}
+    prec_at_t = {k: 0.0 for k in ks}
+    kmax = max(ks)
     out_sizes = []
     n = 0
     # Diversity-triplet accumulators (BASE-04): running sum over substrates,
@@ -382,6 +478,25 @@ def sygma_baseline(test_map: Dict[str, Set[str]], ks: List[int]) -> Optional[Dic
             recall_at[k] += hit / len(true_ik) if true_ik else 0.0
             prec_at[k] += hit / k
 
+        # --- tautomer-InChIKey recall/precision: dedup the ranked SMILES by tautomer key,
+        # drop the parent by tautomer key, keep only the first kmax tautomer-distinct preds
+        # (enough for every recall@k, k<=kmax) so we tautomer-canonicalize <=kmax entries.
+        parent_tk = _tautomer_inchikey(sub)
+        preds_t: List[str] = []
+        for entry in ranked:
+            tk = _tautomer_inchikey(entry[0])
+            if tk == parent_tk or tk in preds_t:
+                continue
+            preds_t.append(tk)
+            if len(preds_t) >= kmax:
+                break
+        true_tk = {_tautomer_inchikey(t) for t in true_prods}
+        for k in ks:
+            topk_t = set(preds_t[:k])
+            hit_t = len(topk_t & true_tk)
+            recall_at_t[k] += hit_t / len(true_tk) if true_tk else 0.0
+            prec_at_t[k] += hit_t / k
+
         # --- BASE-04 diversity triplet: RAW ranked SMILES (NOT the plain-IK
         # -deduped `preds` above), parent dropped by SMILES equality; each
         # eval/diversity.py function dedups by tautomer-InChIKey internally.
@@ -395,6 +510,8 @@ def sygma_baseline(test_map: Dict[str, Set[str]], ks: List[int]) -> Optional[Dic
     return {
         "recall_at": {str(k): recall_at[k] / n for k in ks},
         "precision_at": {str(k): prec_at[k] / n for k in ks},
+        "recall_at_tautomer": {str(k): recall_at_t[k] / n for k in ks},
+        "precision_at_tautomer": {str(k): prec_at_t[k] / n for k in ks},
         "mean_output_size": sum(out_sizes) / len(out_sizes) if out_sizes else 0.0,
         "n_substrates": n,
         # BASE-04: the four scalar key NAMES here (mean_pairwise_tanimoto,
@@ -422,6 +539,9 @@ def main() -> int:
     ap.add_argument("--depth", type=int, default=1, help="multi-step ceiling: apply rules up to this depth (breadth-capped lower bound)")
     ap.add_argument("--beam", type=int, default=25, help="frontier breadth cap per level for --depth>1")
     ap.add_argument("--node-budget", type=int, default=4000, help="per-substrate expansion cap for --depth>1")
+    ap.add_argument("--audit-tautomer", type=int, default=0,
+                    help="cross-check the tautomer-ceiling heavy-formula prefilter against naive "
+                         "all-products keying on the first N substrates (mismatch must be 0)")
     ap.add_argument("--out", type=str, default=str(ROOT / "results" / "benchmark_report.json"))
     args = ap.parse_args()
 
@@ -473,18 +593,18 @@ def main() -> int:
         rules = rules + extra
         print(f"Added {len(extra)} phase II rules -> {len(rules)} total", flush=True)
 
-    print("\n== GRAIL rule-bank recall ceiling ==", flush=True)
-    ceiling = grail_ceiling(test_map, rules)
+    print("\n== GRAIL rule-bank recall ceiling (plain InChIKey + tautomer-InChIKey) ==", flush=True)
+    ceiling = grail_ceiling(test_map, rules, audit_tautomer=args.audit_tautomer)
     print(json.dumps(ceiling, indent=2), flush=True)
 
-    print("\n== SyGMa baseline ==", flush=True)
+    print("\n== SyGMa baseline (plain InChIKey + tautomer-InChIKey) ==", flush=True)
     sygma_metrics = sygma_baseline(test_map, args.ks)
     if sygma_metrics:
         print(json.dumps(sygma_metrics, indent=2), flush=True)
 
     report = {
         "n_test_substrates": len(test_map),
-        "matching": "inchikey",
+        "matching": "inchikey+inchikey_tautomer",
         "with_phase2_rules": bool(args.with_phase2),
         "grail_rule_bank_ceiling": ceiling,
         "sygma_baseline": sygma_metrics,
