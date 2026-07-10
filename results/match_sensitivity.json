@@ -1,0 +1,91 @@
+{
+  "n_substrates": 150,
+  "ks": [
+    5,
+    10,
+    15
+  ],
+  "modes": [
+    "canonical",
+    "inchikey",
+    "inchi_no_stereo",
+    "tanimoto1",
+    "inchikey_tautomer"
+  ],
+  "by_method": {
+    "GRAIL": {
+      "canonical": {
+        "recall@5": 0.311,
+        "recall@10": 0.346,
+        "recall@15": 0.356,
+        "precision": 0.107,
+        "mean_output": 8.65
+      },
+      "inchikey": {
+        "recall@5": 0.312,
+        "recall@10": 0.347,
+        "recall@15": 0.357,
+        "precision": 0.108,
+        "mean_output": 8.65
+      },
+      "inchi_no_stereo": {
+        "recall@5": 0.314,
+        "recall@10": 0.349,
+        "recall@15": 0.358,
+        "precision": 0.108,
+        "mean_output": 8.65
+      },
+      "tanimoto1": {
+        "recall@5": 0.311,
+        "recall@10": 0.346,
+        "recall@15": 0.356,
+        "precision": 0.107,
+        "mean_output": 8.65
+      },
+      "inchikey_tautomer": {
+        "recall@5": 0.321,
+        "recall@10": 0.356,
+        "recall@15": 0.365,
+        "precision": 0.109,
+        "mean_output": 8.65
+      }
+    },
+    "SyGMa": {
+      "canonical": {
+        "recall@5": 0.433,
+        "recall@10": 0.492,
+        "recall@15": 0.514,
+        "precision": 0.028,
+        "mean_output": 74.15
+      },
+      "inchikey": {
+        "recall@5": 0.457,
+        "recall@10": 0.525,
+        "recall@15": 0.547,
+        "precision": 0.029,
+        "mean_output": 74.15
+      },
+      "inchi_no_stereo": {
+        "recall@5": 0.457,
+        "recall@10": 0.525,
+        "recall@15": 0.548,
+        "precision": 0.029,
+        "mean_output": 74.15
+      },
+      "tanimoto1": {
+        "recall@5": 0.433,
+        "recall@10": 0.492,
+        "recall@15": 0.514,
+        "precision": 0.028,
+        "mean_output": 74.15
+      },
+      "inchikey_tautomer": {
+        "recall@5": 0.465,
+        "recall@10": 0.533,
+        "recall@15": 0.554,
+        "precision": 0.029,
+        "mean_output": 74.15
+      }
+    }
+  }
+}

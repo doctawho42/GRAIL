@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 import json
 import sys
 import time
@@ -112,6 +113,30 @@ def score(method_preds: Dict[str, List[str]], reals: Dict[str, List[str]], ks: L
     return by_mode
 
 
+def _score_cached(name: str, method_preds: Dict[str, List[str]], reals: Dict[str, List[str]],
+                  ks: List[int], cache_dir: Path) -> Dict[str, Dict]:
+    """Disk-cache score() per method (keyed by the method's predictions + reals + ks + modes).
+    Re-scoring the leaderboard is dominated by tautomer-canonicalizing each method's output
+    (SyGMa's ~12k molecules ~= 14 min); caching means ADDING a method re-scores ONLY that
+    method, not every existing one."""
+    payload = json.dumps({
+        "preds": {s: method_preds.get(s, []) for s in sorted(reals)},
+        "reals": {s: sorted(reals[s]) for s in sorted(reals)},
+        "ks": list(ks), "modes": MODES,
+    }, sort_keys=True)
+    key = hashlib.sha256(payload.encode()).hexdigest()[:16]
+    cf = cache_dir / f"score_{name}_{key}.json"
+    if cf.exists():
+        print(f"  [score-cache] {name}: HIT", flush=True)
+        return json.loads(cf.read_text())
+    t = time.perf_counter()
+    bm = score(method_preds, reals, ks)
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    cf.write_text(json.dumps(bm))
+    print(f"  [score-cache] {name}: scored in {time.perf_counter()-t:.0f}s -> cached", flush=True)
+    return bm
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--grail-csv", type=str, default=str(ROOT / "artifacts" / "full5000_single" / "predictions" / "test_predictions.csv"))
@@ -119,9 +144,11 @@ def main() -> int:
     ap.add_argument("--max-substrates", type=int, default=150)
     ap.add_argument("--ks", type=int, nargs="*", default=[5, 10, 15])
     ap.add_argument("--no-sygma", action="store_true")
+    ap.add_argument("--cache-dir", type=str, default=str(ROOT / "results" / "match_sens_cache"))
     ap.add_argument("--out", type=str, default=str(ROOT / "results" / "match_sensitivity.json"))
     args = ap.parse_args()
 
+    cache_dir = Path(args.cache_dir)
     grail_preds, reals = load_grail_csv(Path(args.grail_csv))
     subs = [s for s in reals if reals[s]][: args.max_substrates]
     reals = {s: reals[s] for s in subs}
@@ -129,14 +156,23 @@ def main() -> int:
 
     methods: Dict[str, Dict[str, List[str]]] = {"GRAIL": {s: grail_preds.get(s, []) for s in subs}}
     if not args.no_sygma:
-        print("generating SyGMa predictions...", flush=True)
-        methods["SyGMa"] = sygma_predictions(subs)
+        subs_key = hashlib.sha256("|".join(sorted(subs)).encode()).hexdigest()[:16]
+        sygma_cf = cache_dir / f"sygma_preds_{subs_key}.json"
+        if sygma_cf.exists():
+            print(f"loading cached SyGMa predictions ({sygma_cf.name})", flush=True)
+            methods["SyGMa"] = json.loads(sygma_cf.read_text())
+        else:
+            print("generating SyGMa predictions...", flush=True)
+            methods["SyGMa"] = sygma_predictions(subs)
+            cache_dir.mkdir(parents=True, exist_ok=True)
+            sygma_cf.write_text(json.dumps(methods["SyGMa"]))
     for spec in args.extra:
         name, path = spec.split("=", 1)
         methods[name] = json.loads(Path(path).read_text())
 
     report = {"n_substrates": len(subs), "ks": args.ks, "modes": MODES,
-              "by_method": {name: score(p, reals, args.ks) for name, p in methods.items()}}
+              "by_method": {name: _score_cached(name, p, reals, args.ks, cache_dir)
+                            for name, p in methods.items()}}
     Path(args.out).write_text(json.dumps(report, indent=2))
 
     k = args.ks[-1]
