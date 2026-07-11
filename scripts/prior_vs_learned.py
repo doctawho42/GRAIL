@@ -40,12 +40,38 @@ import numpy as np
 import torch
 
 from grail_metabolism.config import DatasetConfig, FilterConfig, GeneratorConfig
-from grail_metabolism.metrics import _tautomer_inchikey, aggregate_prediction_metrics
+from grail_metabolism.metrics import (
+    _match_keys,
+    _tautomer_inchikey,
+    aggregate_prediction_metrics,
+    top_k_recall,
+)
 from grail_metabolism.workflows.data import load_dataset_bundle
 from grail_metabolism.workflows.factory import build_filter, build_generator
 
 SYGMA = {"5": 0.470, "10": 0.531, "12": 0.543, "15": 0.558}  # same split, from run_benchmark
 KS = [5, 10, 12, 15]
+CI_K = 15  # the headline recall@k the paired-bootstrap CI is computed on
+
+
+def _row_recall(row, k: int = CI_K) -> float:
+    """Per-substrate recall@k under tautomer-InChIKey, consistent with aggregate_prediction_metrics
+    (map each predicted SMILES to its tautomer key preserving rank, intersect the top-k with the
+    tautomer-keyed reference set)."""
+    ranked = [next(iter(_match_keys([s], "inchikey_tautomer"))) for s in row["predicted"]]
+    real = _match_keys(row["real"], "inchikey_tautomer")
+    return top_k_recall(ranked, real, k)
+
+
+def _boot_ci(delta, n_boot: int = 10000, seed: int = 0, alpha: float = 0.05):
+    """Paired bootstrap over substrates (the correct unit): resample the per-substrate delta vector."""
+    rng = np.random.default_rng(seed)
+    n = len(delta)
+    means = np.empty(n_boot, dtype=float)
+    for b in range(n_boot):
+        means[b] = delta[rng.integers(0, n, n)].mean()
+    lo, hi = np.quantile(means, [alpha / 2, 1 - alpha / 2])
+    return float(delta.mean()), float(lo), float(hi)
 
 
 def _load(path, build_fn):
@@ -77,6 +103,8 @@ def _install_prior_only(generator):
     keeping the real applicability mask. Returns a restore() callable."""
     original = generator.score_rules
     prior_prob = torch.sigmoid(generator.rule_prior_logits.detach()).cpu().numpy().astype(np.float32)
+    assert prior_prob.std() > 0, ("prior-only would be a uniform (degenerate) baseline: "
+                                  "rule_prior_logits is constant -- populate the trained prior first")
 
     def prior_score_rules(sub, return_mask=False):
         out = original(sub, return_mask=True)  # (scores, mask); we keep only the mask
@@ -119,12 +147,20 @@ def _eval_mode(generator, filter_model, items, top_k, cap, mo, label):
     fm = aggregate_prediction_metrics(gf_rows, KS, match="inchikey_tautomer")
     pack = lambda m: {f"recall@{k}": round(m.get(f"top_{k}_recall", 0.0), 3) for k in KS} | {
         "mean_output": round(m.get("mean_output_size", 0.0), 2)}
-    return {"gen_only": pack(gm), "gen_x_filter": pack(fm)}
+    gen_vec = np.array([_row_recall(r) for r in gen_rows], dtype=float)
+    filt_vec = np.array([_row_recall(r) for r in gf_rows], dtype=float)
+    return {"gen_only": pack(gm), "gen_x_filter": pack(fm)}, {"gen": gen_vec, "filter": filt_vec}
 
 
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--ckpt-dir", type=str, default=str(ROOT / "artifacts" / "full5000_single" / "checkpoints"))
+    ap.add_argument("--priors-generator", type=str,
+                    default=str(ROOT / "artifacts" / "full5000_priors" / "checkpoints" / "generator.pt"),
+                    help="checkpoint carrying the TRAINED rule_prior_logits (the full5000_single "
+                         "generator.pt predates the persistent-buffer fix and lacks it). The empirical "
+                         "prior is copied from here into the (byte-identical-weights) headline generator "
+                         "so prior-only is the real frequency prior and blend actually differs from learned.")
     ap.add_argument("--split", choices=["test", "val"], default="test")
     ap.add_argument("--max-substrates", type=int, default=250)
     ap.add_argument("--sampling-seed", type=int, default=42)
@@ -140,6 +176,22 @@ def main() -> int:
     generator = _load(ck / "generator.pt", lambda a, r: build_generator(GeneratorConfig(**a), r))
     generator.gen_normalization = "canonical"
     filter_model = _load(ck / "filter.pt", lambda a, r: build_filter(FilterConfig(**a)))
+
+    # The headline full5000_single generator.pt predates the persistent rule_prior_logits fix, so
+    # loading it strict=False leaves that buffer at its zero init -> prior-only would be a degenerate
+    # uniform baseline and blend would trivially equal learned. Copy the TRAINED prior from the
+    # byte-identical-weights full5000_priors checkpoint, then hard-guard against a degenerate prior.
+    priors_state = torch.load(args.priors_generator, map_location="cpu", weights_only=False)["state_dict"]
+    assert "rule_prior_logits" in priors_state, f"no rule_prior_logits in {args.priors_generator}"
+    trained_prior = priors_state["rule_prior_logits"].to(generator.rule_prior_logits.dtype)
+    assert trained_prior.shape == generator.rule_prior_logits.shape, "rule count / bank mismatch"
+    with torch.no_grad():
+        generator.rule_prior_logits.copy_(trained_prior)
+    rp = generator.rule_prior_logits
+    assert float(rp.abs().max()) > 0 and float(rp.std()) > 0, \
+        "rule_prior_logits is degenerate (zero/constant) -- prior comparison would be invalid"
+    print(f"loaded trained prior: nonzero={int((rp != 0).sum())}/{rp.numel()} std={float(rp.std()):.3f} "
+          f"range[{float(rp.min()):.2f},{float(rp.max()):.2f}]", flush=True)
 
     dataset = DatasetConfig(
         train_sdf="grail_metabolism/data/train.sdf", train_triples="grail_metabolism/data/train_triples.txt",
@@ -161,17 +213,41 @@ def main() -> int:
     report = {"split": args.split, "n": len(items), "candidate_top_k": top_k, "filter_cap": cap,
               "max_output": mo, "match": "inchikey_tautomer", "sygma_recall@": SYGMA, "modes": {}}
 
+    vecs = {}  # mode -> {"gen": per-substrate recall@CI_K vector, "filter": ...}
     # learned-only (prior_strength = 0) and blend (0.4)
     generator.prior_strength = 0.0
-    report["modes"]["learned_only"] = _eval_mode(generator, filter_model, items, top_k, cap, mo, "learned_only")
+    report["modes"]["learned_only"], vecs["learned_only"] = _eval_mode(generator, filter_model, items, top_k, cap, mo, "learned_only")
     generator.prior_strength = 0.4
-    report["modes"]["blend_ps0.4"] = _eval_mode(generator, filter_model, items, top_k, cap, mo, "blend_ps0.4")
+    report["modes"]["blend_ps0.4"], vecs["blend_ps0.4"] = _eval_mode(generator, filter_model, items, top_k, cap, mo, "blend_ps0.4")
     # prior-only (frequency prior, GNN discarded)
     restore = _install_prior_only(generator)
     try:
-        report["modes"]["prior_only"] = _eval_mode(generator, filter_model, items, top_k, cap, mo, "prior_only")
+        report["modes"]["prior_only"], vecs["prior_only"] = _eval_mode(generator, filter_model, items, top_k, cap, mo, "prior_only")
     finally:
         restore()
+
+    # Paired-bootstrap CIs (over substrates) on the decision-relevant recall@CI_K gaps: is the
+    # learned rule-selection significantly better than the frequency prior, and is the prior
+    # non-redundant on top of the learned scorer (blend - learned should be ~0)?
+    gap_specs = [("learned_only", "prior_only", "gen"), ("learned_only", "prior_only", "filter"),
+                 ("blend_ps0.4", "learned_only", "gen"), ("blend_ps0.4", "learned_only", "filter")]
+    report["bootstrap_ci"] = {"k": CI_K, "n_boot": 10000, "seed": 0, "gaps": {}}
+    print(f"\n==== paired-bootstrap CI on recall@{CI_K} gaps (n={len(items)}, tautomer) ====", flush=True)
+    for a, b, axis in gap_specs:
+        mean, lo, hi = _boot_ci(vecs[a][axis] - vecs[b][axis])
+        sig = "SIGNIFICANT" if (lo > 0 or hi < 0) else "n.s. (spans 0)"
+        report["bootstrap_ci"]["gaps"][f"{a}__minus__{b}__{axis}"] = {
+            "delta": round(mean, 4), "ci95": [round(lo, 4), round(hi, 4)], "verdict": sig}
+        print(f"  {a} - {b} [{axis:>6}]: {mean:+.4f} 95%CI[{lo:+.4f},{hi:+.4f}]  {sig}", flush=True)
+    # within-mode filter lift (gen_x_filter - gen_only): does the pair-filter add ranking value on
+    # top of a given generator ordering? (These back the "filter does real ranking work" claim, which
+    # was previously an un-bootstrapped point estimate.)
+    for mode in ("learned_only", "prior_only"):
+        mean, lo, hi = _boot_ci(vecs[mode]["filter"] - vecs[mode]["gen"])
+        sig = "SIGNIFICANT" if (lo > 0 or hi < 0) else "n.s. (spans 0)"
+        report["bootstrap_ci"]["gaps"][f"{mode}__filter_lift"] = {
+            "delta": round(mean, 4), "ci95": [round(lo, 4), round(hi, 4)], "verdict": sig}
+        print(f"  {mode} filter_lift : {mean:+.4f} 95%CI[{lo:+.4f},{hi:+.4f}]  {sig}", flush=True)
 
     Path(args.out).write_text(json.dumps(report, indent=2))
     print(f"\n==== recall@15 ({args.split}, tautomer) -- does learned rule-selection beat the prior? ====", flush=True)

@@ -30,34 +30,89 @@
     },
     "blend_ps0.4": {
       "gen_only": {
-        "recall@5": 0.094,
-        "recall@10": 0.21,
-        "recall@12": 0.229,
-        "recall@15": 0.266,
-        "mean_output": 14.84
+        "recall@5": 0.311,
+        "recall@10": 0.38,
+        "recall@12": 0.385,
+        "recall@15": 0.396,
+        "mean_output": 11.63
       },
       "gen_x_filter": {
-        "recall@5": 0.226,
-        "recall@10": 0.277,
-        "recall@12": 0.282,
-        "recall@15": 0.3,
-        "mean_output": 14.84
+        "recall@5": 0.34,
+        "recall@10": 0.387,
+        "recall@12": 0.394,
+        "recall@15": 0.399,
+        "mean_output": 11.63
       }
     },
     "prior_only": {
       "gen_only": {
-        "recall@5": 0.066,
-        "recall@10": 0.121,
-        "recall@12": 0.14,
-        "recall@15": 0.173,
-        "mean_output": 14.93
+        "recall@5": 0.342,
+        "recall@10": 0.389,
+        "recall@12": 0.402,
+        "recall@15": 0.41,
+        "mean_output": 10.75
       },
       "gen_x_filter": {
-        "recall@5": 0.16,
-        "recall@10": 0.22,
-        "recall@12": 0.224,
-        "recall@15": 0.247,
-        "mean_output": 14.93
+        "recall@5": 0.358,
+        "recall@10": 0.395,
+        "recall@12": 0.403,
+        "recall@15": 0.405,
+        "mean_output": 10.75
+      }
+    }
+  },
+  "bootstrap_ci": {
+    "k": 15,
+    "n_boot": 10000,
+    "seed": 0,
+    "gaps": {
+      "learned_only__minus__prior_only__gen": {
+        "delta": -0.1443,
+        "ci95": [
+          -0.1955,
+          -0.0947
+        ],
+        "verdict": "SIGNIFICANT"
+      },
+      "learned_only__minus__prior_only__filter": {
+        "delta": -0.105,
+        "ci95": [
+          -0.1522,
+          -0.0582
+        ],
+        "verdict": "SIGNIFICANT"
+      },
+      "blend_ps0.4__minus__learned_only__gen": {
+        "delta": 0.1301,
+        "ci95": [
+          0.083,
+          0.1778
+        ],
+        "verdict": "SIGNIFICANT"
+      },
+      "blend_ps0.4__minus__learned_only__filter": {
+        "delta": 0.0988,
+        "ci95": [
+          0.0566,
+          0.1427
+        ],
+        "verdict": "SIGNIFICANT"
+      },
+      "learned_only__filter_lift": {
+        "delta": 0.0344,
+        "ci95": [
+          0.0105,
+          0.0612
+        ],
+        "verdict": "SIGNIFICANT"
+      },
+      "prior_only__filter_lift": {
+        "delta": -0.0049,
+        "ci95": [
+          -0.0188,
+          0.0064
+        ],
+        "verdict": "n.s. (spans 0)"
       }
     }
   }
