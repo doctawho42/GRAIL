@@ -19,7 +19,8 @@ the diagnosis fair and comparable.
 
 **GRAIL does not win on recall.** On our clean molecule-disjoint split it reaches
 **~0.40 recall@15** (tautomer-InChIKey, with its empirical prior — see the §3 checkpoint caveat;
-earlier prior-less evals reported ~0.30–0.36), still below SyGMa (0.55) and MetaPredictor (0.585).
+earlier prior-less evals reported ~0.30–0.36), still below SyGMa (0.57 tautomer, full clean test)
+and MetaPredictor (0.585).
 The paper's A*/Q1 value is therefore the **ceiling + the diagnosis + the protocol**, *not* a SOTA
 claim. GRAIL enters its own comparison as one honest row. We never imply GRAIL is the best
 predictor; we show it is an interpretable, rule-grounded instrument that exposes *why* the
@@ -45,7 +46,10 @@ coverage-conversion*, not rule expressiveness. The 0.735 is reported under the *
 protocol as GRAIL and SyGMa** (referee MAJOR-3 resolved — no more mixed match modes); the plain
 0.718 reproduces the previously reported number exactly, validating the run. The tautomer path is
 computed via a heavy-atom-formula prefilter **verified sound** against naive keying (audit
-mismatch = 0 on 50 substrates). *Source: `results/benchmark_report.json` / `run_benchmark.py`.*
+mismatch = 0 on 50 substrates). The same run co-measures the **SyGMa** baseline under both
+protocols on the identical split: recall@15 **0.558 plain / 0.572 tautomer** (n=1168) — so the
+ceiling, SyGMa, and GRAIL are now all reported under tautomer-InChIKey. *Source:
+`results/benchmark_report.json` / `run_benchmark.py`.*
 
 ### §3 — The conversion gap (ceiling ≫ realized)
 GRAIL converts only **~0.40 of the ~0.72 ceiling** into top-15 recall — a ~55% conversion. The
