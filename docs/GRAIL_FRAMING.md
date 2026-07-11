@@ -91,6 +91,12 @@ The match-sensitivity ("rank-flip") analysis and the multi-method comparison mov
 is to justify that the numbers above are apples-to-apples and that prior rule-vs-learned
 comparisons were confounded (methods gain method-dependent, significant amounts from the match
 protocol — differential sensitivity CI [+0.073, +0.171]; see `docs/benchmark/DNB_FRAMING.md`).
+Now spans **5 methods** (GRAIL, SyGMa, BioTransformer, MetaPredictor, MetaTrans;
+`results/match_sensitivity_5method.json`), with two independent rank-flips (GRAIL↔BioTransformer;
+MetaTrans↔SyGMa) and a **non-monotonic** protocol response for MetaTrans (canon 0.523 > InChIKey
+0.494 < no-stereo 0.561) — the protocol effect is method-idiosyncratic, not a uniform lift.
+(LAGOM was scoped but is unusable: code available, trained weights never released — retraining a
+Chemformer on DrugBank-licensed data is out of scope.)
 
 ## Referee-risk register (GRAIL-primary)
 - **"GRAIL loses — why publish it?"** → we do not claim a recall win; the contribution is the

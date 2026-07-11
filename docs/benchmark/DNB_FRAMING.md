@@ -145,6 +145,43 @@ the budget-matched view; optionally LAGOM/MetaTrans to widen the sensitivity spr
 
 ---
 
+### UPDATE 5 (2026-07-11) — MetaTrans added (5th method); LAGOM unusable; provenance harmonized
+
+**Provenance harmonized** (`results/benchmark_report.json`, full 1170-substrate clean test): the
+rule-bank ceiling is **0.718 plain / 0.735 tautomer** and SyGMa is **0.558 plain / 0.572 tautomer**
+— so ceiling, SyGMa, and GRAIL are all now reported under `inchikey_tautomer` (referee MAJOR-3
+closed; the prefilter for the tautomer ceiling was audited sound, mismatch 0 on 50 substrates).
+
+**MetaTrans added as the 5th method** (KavrakiLab, Litsa 2020; 6-model transformer ensemble, run in
+a linux/amd64 py3.5/torch-1.1.0 Docker container; native output is an unranked set, so
+`tier2_metatrans_to_json.py` derives an ensemble-vote proxy ranking). **LAGOM was scoped but is
+unusable** — code is public but the trained weights were never released, and reproducing it means
+retraining a Chemformer on DrugBank-licensed data (out of scope); record it as
+"code available, weights not released."
+
+recall@15 by method × protocol (`results/match_sensitivity_5method.json`):
+
+| method | canon (LAGOM) | InChIKey | no-stereo (GLORYx) | Tanimoto=1 | tautomer (ours) |
+|--------|------|------|------|------|------|
+| GRAIL  | 0.356 | 0.357 | 0.358 | 0.356 | 0.365 |
+| SyGMa  | 0.514 | 0.547 | 0.548 | 0.514 | 0.554 |
+| BioTransformer | 0.315 | 0.435 | 0.439 | 0.315 | 0.444 |
+| MetaPredictor | 0.531 | 0.570 | 0.578 | 0.532 | 0.585 |
+| **MetaTrans** | 0.523 | **0.494** | 0.561 | 0.524 | 0.561 |
+
+The 5th method makes the differential-sensitivity thesis **richer**, in two ways:
+- **A second rank-flip** — MetaTrans > SyGMa under canon / no-stereo / Tanimoto=1 / tautomer, but
+  **SyGMa > MetaTrans under strict InChIKey** (MetaTrans drops to 0.494 < 0.547). So the leaderboard
+  reorders in *two independent* method pairs (GRAIL↔BioTransformer and MetaTrans↔SyGMa) as the match
+  protocol changes.
+- **Non-monotone protocol response** — MetaTrans is the only method where more normalization does
+  NOT monotonically raise recall: canon 0.523 **>** InChIKey 0.494 **<** no-stereo 0.561. It emits
+  isomeric SMILES, so strict InChIKey penalises stereo mismatches while stereo-blind protocols
+  (canon, no-stereo) don't. The protocol effect is therefore **method-idiosyncratic**, not a uniform
+  "normalization lifts recall" — a sharper statement than UPDATE 4's monotone differential.
+
+---
+
 ## Thesis
 
 Metabolite structure prediction has **no agreed way to decide when a predicted structure is
