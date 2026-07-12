@@ -30,6 +30,13 @@ def test_factor_bootstrap_closure_and_bounds():
     for name in specs:
         assert 0.0 <= res[name]["lo"] <= res[name]["point"] <= res[name]["hi"] <= 1.0
 
+def test_ratio_of_sums_ci_ordering_and_determinism():
+    pairs = [(1, 1), (0, 3), (2, 4)]
+    p, lo, hi = ratio_of_sums_ci(pairs, n_boot=500, seed=0)
+    assert lo <= p <= hi
+    assert p == ratio_of_sums(pairs)
+    assert (p, lo, hi) == ratio_of_sums_ci(pairs, n_boot=500, seed=0)  # seeded, reproducible
+
 def test_paired_diff_ci_sign_and_determinism():
     diffs = [-0.2, -0.3, -0.1, -0.25]
     p, lo, hi = paired_diff_bootstrap_ci(diffs, n_boot=500, seed=0)
