@@ -1,0 +1,293 @@
+{
+  "match": "inchikey_tautomer",
+  "internal_ceiling": {
+    "point": 0.7354639969195226,
+    "lo": 0.7087006515906478,
+    "hi": 0.7616146230007617,
+    "n": 1170,
+    "macro": 0.7916018894080344
+  },
+  "external_ceiling_uncapped": {
+    "point": 0.6326530612244898,
+    "lo": 0.5314009661835749,
+    "hi": 0.7333333333333333,
+    "n": 37,
+    "macro": 0.6973830973830975
+  },
+  "external_ceiling_capped_committed": 0.3715,
+  "external_per_parent": [
+    {
+      "parent": "COc1ccc(cc1)n2nc(C(=O)N)c3CCN(C(=O)c23)c4ccc(cc4)N5CCCCC5=O",
+      "recovered": 2,
+      "denom": 2,
+      "coverage": 1.0
+    },
+    {
+      "parent": "Nc1cccc2C(=O)N(Cc12)C3CCC(=O)NC3=O",
+      "recovered": 2,
+      "denom": 2,
+      "coverage": 1.0
+    },
+    {
+      "parent": "Clc1ccc(s1)C(=O)NC[C@H]2CN(C(=O)O2)c3ccc(cc3)N4CCOCC4=O",
+      "recovered": 11,
+      "denom": 14,
+      "coverage": 0.7857142857142857
+    },
+    {
+      "parent": "Nc1ncnc2c1c(nn2[C@@H]3CCCN(C3)C(=O)C=C)c4ccc(Oc5ccccc5)cc4",
+      "recovered": 2,
+      "denom": 2,
+      "coverage": 1.0
+    },
+    {
+      "parent": "CC(C)c1nc(CN(C)C(=O)N[C@@H](CCN2CCOCC2)C(=O)N[C@H](CC[C@H](Cc3ccccc3)NC(=O)OCc4cncs4)Cc5ccccc5)cs1",
+      "recovered": 3,
+      "denom": 5,
+      "coverage": 0.6
+    },
+    {
+      "parent": "N[C@@H](CC(=O)N1CCn2c(C1)nnc2C(F)(F)F)Cc3cc(F)c(F)cc3F",
+      "recovered": 1,
+      "denom": 3,
+      "coverage": 0.3333333333333333
+    },
+    {
+      "parent": "CNC(=O)c1ccc(cc1F)N2C(=S)N(C(=O)C2(C)C)c3ccc(C#N)c(c3)C(F)(F)F",
+      "recovered": 2,
+      "denom": 2,
+      "coverage": 1.0
+    },
+    {
+      "parent": "Nc1nc(NC2CC2)c3ncn([C@@H]4C[C@H](CO)C=C4)c3n1",
+      "recovered": 2,
+      "denom": 2,
+      "coverage": 1.0
+    },
+    {
+      "parent": "C[C@@H]1CCO[C@H]2CN3C=C(C(=O)NCc4ccc(F)cc4F)C(=O)C(=C3C(=O)N12)O",
+      "recovered": 3,
+      "denom": 3,
+      "coverage": 1.0
+    },
+    {
+      "parent": "C[C@]12CC[C@H]3[C@@H](CC=C4C[C@@H](O)CC[C@]34C)[C@@H]1CC=C2c5cccnc5",
+      "recovered": 2,
+      "denom": 4,
+      "coverage": 0.5
+    },
+    {
+      "parent": "CCCCCCCCc1ccc(CCC(N)(CO)CO)cc1",
+      "recovered": 1,
+      "denom": 5,
+      "coverage": 0.2
+    },
+    {
+      "parent": "CCC(=O)O[C@@]1([C@H](C)C[C@H]2[C@@H]3C[C@H](F)C4=CC(=O)C=C[C@]4(C)[C@@]3(F)[C@@H](O)C[C@]12C)C(=O)SCF",
+      "recovered": 1,
+      "denom": 1,
+      "coverage": 1.0
+    },
+    {
+      "parent": "CCCC1O[C@@H]2C[C@H]3[C@@H]4CCC5=CC(=O)C=C[C@]5(C)[C@H]4[C@@H](O)C[C@]3(C)[C@@]2(O1)C(=O)CO",
+      "recovered": 6,
+      "denom": 12,
+      "coverage": 0.5
+    },
+    {
+      "parent": "COc1ccc(CC(C)NCC(O)c2ccc(O)c(NC=O)c2)cc1",
+      "recovered": 4,
+      "denom": 4,
+      "coverage": 1.0
+    },
+    {
+      "parent": "COc1ccc2[nH]c(nc2c1)[S@@](=O)Cc3ncc(C)c(OC)c3C",
+      "recovered": 2,
+      "denom": 2,
+      "coverage": 1.0
+    },
+    {
+      "parent": "OC[C@H]1O[C@H]([C@H](O)[C@@H](O)[C@@H]1O)c2ccc(Cl)c(Cc3ccc(O[C@H]4CCOC4)cc3)c2",
+      "recovered": 4,
+      "denom": 4,
+      "coverage": 1.0
+    },
+    {
+      "parent": "Cc1nc(Nc2ncc(s2)C(=O)Nc3c(C)cccc3Cl)cc(n1)N4CCN(CCO)CC4",
+      "recovered": 5,
+      "denom": 6,
+      "coverage": 0.8333333333333334
+    },
+    {
+      "parent": "CC(C)c1c(C(=O)Nc2ccccc2)c(c3ccccc3)c(c4ccc(F)cc4)n1CC[C@@H](O)C[C@@H](O)CC(=O)O",
+      "recovered": 2,
+      "denom": 2,
+      "coverage": 1.0
+    },
+    {
+      "parent": "Nc1cccc2C(=O)N(C3CCC(=O)NC3=O)C(=O)c12",
+      "recovered": 5,
+      "denom": 7,
+      "coverage": 0.7142857142857143
+    },
+    {
+      "parent": "CC(C)OC(=O)[C@H](C)N[P@](=O)(OC[C@H]1O[C@@H](N2C=CC(=O)NC2=O)[C@](C)(F)[C@@H]1O)Oc3ccccc3",
+      "recovered": 1,
+      "denom": 5,
+      "coverage": 0.2
+    },
+    {
+      "parent": "CC(C)CN(C[C@@H](O)[C@H](Cc1ccccc1)NC(=O)O[C@H]2CO[C@H]3OCC[C@@H]23)S(=O)(=O)c4ccc(N)cc4",
+      "recovered": 6,
+      "denom": 7,
+      "coverage": 0.8571428571428571
+    },
+    {
+      "parent": "Cc1cn(cn1)c2cc(NC(=O)c3ccc(C)c(Nc4nccc(n4)c5cccnc5)c3)cc(c2)C(F)(F)F",
+      "recovered": 4,
+      "denom": 5,
+      "coverage": 0.8
+    },
+    {
+      "parent": "COc1cc(N(C)CCN(C)C)c(NC(=O)C=C)cc1Nc2nccc(n2)c3cn(C)c4ccccc34",
+      "recovered": 6,
+      "denom": 7,
+      "coverage": 0.8571428571428571
+    },
+    {
+      "parent": "CO[C@@H]1C[C@@H](CC[C@H]1O)\\C=C(/C)\\[C@H]2OC(=O)[C@@H]3CCCCN3C(=O)C(=O)[C@]4(O)O[C@H]([C@H](C[C@@H](C)C\\C(=C\\[C@@H](CC=C)C(=O)C[C@H](O)[C@H]2C)\\C)OC)[C@H](C[C@H]4C)OC",
+      "recovered": 0,
+      "denom": 2,
+      "coverage": 0.0
+    },
+    {
+      "parent": "C[C@@H](NCCCc1cccc(c1)C(F)(F)F)c2cccc3ccccc23",
+      "recovered": 0,
+      "denom": 7,
+      "coverage": 0.0
+    },
+    {
+      "parent": "C[C@@H]1CCN(C[C@@H]1N(C)c2ncnc3[nH]ccc23)C(=O)CC#N",
+      "recovered": 2,
+      "denom": 4,
+      "coverage": 0.5
+    },
+    {
+      "parent": "Cn1c(CNc2ccc(cc2)C(=N)N)nc3cc(ccc13)C(=O)N(CCC(=O)O)c4ccccn4",
+      "recovered": 5,
+      "denom": 12,
+      "coverage": 0.4166666666666667
+    },
+    {
+      "parent": "O=C1[C@@H]2[C@H]3CC[C@H](C3)[C@@H]2C(=O)N1C[C@@H]4CCCC[C@H]4CN5CCN(CC5)c6nsc7ccccc67",
+      "recovered": 1,
+      "denom": 1,
+      "coverage": 1.0
+    },
+    {
+      "parent": "COC(=O)[C@@H](N1CCc2sccc2C1)c3ccccc3Cl",
+      "recovered": 1,
+      "denom": 5,
+      "coverage": 0.2
+    },
+    {
+      "parent": "CCOc1cc(ccc1OC)[C@@H](CS(=O)(=O)C)N2C(=O)c3cccc(NC(=O)C)c3C2=O",
+      "recovered": 8,
+      "denom": 18,
+      "coverage": 0.4444444444444444
+    },
+    {
+      "parent": "Cc1cc(\\C=C\\C#N)cc(C)c1Nc2ccnc(Nc3ccc(cc3)C#N)n2",
+      "recovered": 1,
+      "denom": 5,
+      "coverage": 0.2
+    },
+    {
+      "parent": "CC#CCn1c(nc2N(C)C(=O)N(Cc3nc(C)c4ccccc4n3)C(=O)c12)N5CCC[C@@H](N)C5",
+      "recovered": 7,
+      "denom": 9,
+      "coverage": 0.7777777777777778
+    },
+    {
+      "parent": "CN1CCN(Cc2ccc(cc2)C(=O)Nc3ccc(C)c(Nc4nccc(n4)c5cccnc5)c3)CC1",
+      "recovered": 6,
+      "denom": 9,
+      "coverage": 0.6666666666666666
+    },
+    {
+      "parent": "CO[C@@H]1C[C@H](C[C@@H](C)[C@@H]2CC(=O)[C@H](C)\\C=C(/C)\\[C@@H](O)[C@@H](OC)C(=O)[C@H](C)C[C@H](C)\\C=C\\C=C\\C=C(/C)\\[C@H](C[C@@H]3CC[C@@H](C)[C@@](O)(O3)C(=O)C(=O)N4CCCC[C@H]4C(=O)O2)OC)CC[C@H]1OCCO",
+      "recovered": 11,
+      "denom": 12,
+      "coverage": 0.9166666666666666
+    },
+    {
+      "parent": "CC(C)c1nc(nc(c2ccc(F)cc2)c1\\C=C\\[C@@H](O)C[C@@H](O)CC(=O)O)N(C)S(=O)(=O)C",
+      "recovered": 1,
+      "denom": 2,
+      "coverage": 0.5
+    },
+    {
+      "parent": "CCOc1ccc(Cc2cc(ccc2Cl)[C@@H]3O[C@H](CO)[C@@H](O)[C@H](O)[C@H]3O)cc1",
+      "recovered": 2,
+      "denom": 2,
+      "coverage": 1.0
+    },
+    {
+      "parent": "CCCSc1nc(N[C@@H]2C[C@H]2c3ccc(F)c(F)c3)c4nnn([C@@H]5C[C@H](OCCO)[C@@H](O)[C@H]5O)c4n1",
+      "recovered": 2,
+      "denom": 2,
+      "coverage": 1.0
+    }
+  ],
+  "regression": {
+    "descriptor_names": [
+      "mw",
+      "n_rings",
+      "n_aromatic",
+      "n_hetero",
+      "n_conj",
+      "n_true_ph"
+    ],
+    "coefficients": [
+      0.7799059629031179,
+      0.0005800511269728533,
+      -0.021440338863272755,
+      0.00906526732510143,
+      -0.014057347143655816,
+      -0.005637959425542084,
+      -0.021649216168559575
+    ],
+    "intercept_first": true,
+    "n_points": 1207,
+    "target": "per-substrate coverage_i (unweighted OLS) -> predicted_*_mean tracks the MACRO mean",
+    "internal_macro_coverage": 0.7916018894080344,
+    "external_macro_coverage": 0.6973830973830975,
+    "predicted_internal_mean": 0.7904067681361424,
+    "predicted_external_mean": 0.7351747700348213
+  },
+  "provenance": {
+    "internal": {
+      "source": "results/recall_factorization.json (per_substrate; Task 2)",
+      "quantity": "coverage_i = Cfull_i / U_i, tautomer-InChIKey full-bank depth-1 ceiling",
+      "resampling_unit": "substrate",
+      "n_boot": 10000,
+      "seed": 0,
+      "note": "point reproduces micro coverage_bank 0.7355; CI matches recall_factorization.json factors.coverage_bank (same clusters, seed=0)"
+    },
+    "external": {
+      "source": "docs/benchmark/data/gloryx_test.json (37 GLORYx parents)",
+      "quantity": "UNCAPPED full-bank depth-1 tautomer coverage per parent (apply_rules_to_molecule, normalization_mode=canonical, no pool cap)",
+      "match_helper": "run_benchmark._tautomer_recovered",
+      "resampling_unit": "parent",
+      "n_boot": 10000,
+      "seed": 0,
+      "n_rules": 7581,
+      "capped_committed_source": "results/gloryx_oracle.json small.macro_coverage = 0.3715 (generator pool top_k=100/max_pool=80, macro over 37 parents)",
+      "guardrail": "n=37 -> wide CI; suggestive-but-transferable, not a fitted law. The committed 0.3715 is POOL-CAPPED and UNDERSTATES the external ceiling -- it is NOT 'the external ceiling'. This uncapped figure is micro (ratio-of-sums); the capped 0.3715 is macro -- both agree uncapped >> capped."
+    },
+    "regression": {
+      "fit": "numpy.linalg.lstsq (OLS, intercept first), pooled internal + external points",
+      "interpretation": "one model tracks BOTH means; the internal-vs-external gap is composition (GLORYx drugs are larger / more conjugated), not a bug"
+    }
+  }
+}
