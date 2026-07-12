@@ -8,6 +8,17 @@ from math import comb
 from typing import Dict, List, Sequence, Tuple
 
 
+def _percentile_ci(sorted_boots: Sequence[float], alpha: float) -> Tuple[float, float]:
+    """(lo, hi) percentile bounds of an already-sorted bootstrap sample. The hi index
+    is clamped to the last element so alpha==0 (or any rounding to the length) cannot
+    IndexError. For the normal path (m==n_boot, alpha==0.05) the indices are identical
+    to the original inline arithmetic, so tested outputs are unchanged."""
+    m = len(sorted_boots)
+    lo_idx = int((alpha / 2) * m)
+    hi_idx = min(m - 1, int((1 - alpha / 2) * m))
+    return sorted_boots[lo_idx], sorted_boots[hi_idx]
+
+
 def ratio_of_sums(pairs: Sequence[Tuple[float, float]]) -> float:
     """Sum(numerator)/Sum(denominator) over per-cluster (num, den) pairs; 0.0 if
     total denominator is 0. This is the correct estimator when pairs within a
@@ -22,15 +33,18 @@ def ratio_of_sums_ci(
 ) -> Tuple[float, float, float]:
     """Percentile CI for a ratio-of-sums estimator via cluster (substrate)
     resampling with replacement. Returns (point, lo, hi)."""
-    rng = random.Random(seed)
     n = len(pairs)
+    if n == 0:
+        return 0.0, 0.0, 0.0
+    rng = random.Random(seed)
     point = ratio_of_sums(pairs)
     boots: List[float] = []
     for _ in range(n_boot):
         sample = [pairs[rng.randrange(n)] for _ in range(n)]
         boots.append(ratio_of_sums(sample))
     boots.sort()
-    return point, boots[int((alpha / 2) * n_boot)], boots[int((1 - alpha / 2) * n_boot)]
+    lo, hi = _percentile_ci(boots, alpha)
+    return point, lo, hi
 
 
 def factor_bootstrap_ci(
@@ -45,8 +59,10 @@ def factor_bootstrap_ci(
     Each bootstrap resamples substrates ONCE and recomputes every factor on that
     same resample, so the factor CIs are mutually consistent. Returns
     {name: {"point": .., "lo": .., "hi": ..}}."""
-    rng = random.Random(seed)
     n = len(records)
+    if n == 0:
+        return {name: {"point": 0.0, "lo": 0.0, "hi": 0.0} for name in factor_specs}
+    rng = random.Random(seed)
 
     def factors(sample: Sequence[Dict[str, float]]) -> Dict[str, float]:
         out: Dict[str, float] = {}
@@ -65,12 +81,8 @@ def factor_bootstrap_ci(
             acc[name].append(f[name])
     res: Dict[str, Dict[str, float]] = {}
     for name in factor_specs:
-        b = sorted(acc[name])
-        res[name] = {
-            "point": point[name],
-            "lo": b[int((alpha / 2) * n_boot)],
-            "hi": b[int((1 - alpha / 2) * n_boot)],
-        }
+        lo, hi = _percentile_ci(sorted(acc[name]), alpha)
+        res[name] = {"point": point[name], "lo": lo, "hi": hi}
     return res
 
 
@@ -79,15 +91,18 @@ def paired_diff_bootstrap_ci(
 ) -> Tuple[float, float, float]:
     """Percentile CI for the mean of paired per-substrate differences d_i. Returns
     (point, lo, hi). A wholly-below-0 CI certifies a loss."""
-    rng = random.Random(seed)
     n = len(diffs)
-    point = sum(diffs) / n if n else 0.0
+    if n == 0:
+        return 0.0, 0.0, 0.0
+    rng = random.Random(seed)
+    point = sum(diffs) / n
     boots: List[float] = []
     for _ in range(n_boot):
         s = sum(diffs[rng.randrange(n)] for _ in range(n)) / n
         boots.append(s)
     boots.sort()
-    return point, boots[int((alpha / 2) * n_boot)], boots[int((1 - alpha / 2) * n_boot)]
+    lo, hi = _percentile_ci(boots, alpha)
+    return point, lo, hi
 
 
 def mcnemar_exact_p(b: int, c: int) -> float:

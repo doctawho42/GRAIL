@@ -105,6 +105,8 @@ def _ceiling_init():
         os.environ.setdefault(_var, "1")
     global _WORKER_RULES
     _WORKER_RULES = load_default_rules()
+    if _WORKER_RULES is None:
+        raise RuntimeError("rule bank not found (load_default_rules() returned None)")
 
 
 def _ceiling_worker(item):

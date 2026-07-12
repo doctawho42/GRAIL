@@ -25,7 +25,6 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "scripts"))
 
-from grail_metabolism.metrics import _tautomer_inchikey
 from grail_metabolism.stats import mcnemar_exact_p, paired_diff_bootstrap_ci
 from run_benchmark import load_test_map, sygma_topk
 from factorize_recall import tautomer_hits
@@ -35,17 +34,11 @@ FACTORIZATION_JSON = ROOT / "results" / "recall_factorization.json"
 OUT = ROOT / "results" / "anchor_certification.json"
 
 
-def per_substrate_recall(preds, trues) -> float:
+def per_substrate_recall(preds, trues, u) -> float:
     """Tautomer-InChIKey recall for ONE substrate: (# tautomer-distinct trues recovered by any
-    pred) / (# tautomer-distinct trues). The denominator is keyed by tautomer-InChIKey so it
-    equals Task 2's U_i, keeping GRAIL and SyGMa on the same denominator."""
-    tk = set()
-    for t in trues:
-        try:
-            tk.add(_tautomer_inchikey(t))
-        except Exception:
-            tk.add(t)
-    return tautomer_hits(preds, trues) / len(tk) if tk else 0.0
+    pred) / u, where u = Task 2's U_i (the tautomer-distinct true count). Taking u as a parameter
+    keeps GRAIL and SyGMa on the SAME shared denominator instead of recomputing it here."""
+    return tautomer_hits(preds, trues) / u if u else 0.0
 
 
 def any_hit(preds, trues) -> bool:
@@ -78,10 +71,9 @@ def main() -> int:
         rg = g["H"] / u_i if u_i else 0.0
         g_hit = g["H"] > 0
 
-        # SyGMa: score its top-15 with the SAME tautomer keying and the SAME U_i denominator.
-        s_hits = tautomer_hits(sygma[sub], trues)
-        rs = s_hits / u_i if u_i else 0.0
-        s_hit = s_hits > 0
+        # SyGMa: score its top-15 through the tested helpers on the SAME shared U_i denominator.
+        rs = per_substrate_recall(sygma[sub], trues, u_i)
+        s_hit = any_hit(sygma[sub], trues)
 
         diffs.append(rg - rs)
         sum_rg += rg

@@ -48,3 +48,17 @@ def test_mcnemar_exact_two_sided():
     # 10 vs 0 discordant -> 2 * 0.5^10 = 0.001953...
     assert math.isclose(mcnemar_exact_p(10, 0), 2 * (0.5 ** 10))
     assert mcnemar_exact_p(5, 5) == 1.0
+
+def test_factor_bootstrap_ci_determinism():
+    records = [{"U": 2, "Cfull": 2, "Cbud": 2, "H": 1}, {"U": 3, "Cfull": 2, "Cbud": 1, "H": 1}]
+    specs = {"coverage_bank": ("Cfull", "U"), "ranking_conversion": ("H", "Cbud")}
+    a = factor_bootstrap_ci(records, specs, n_boot=200, seed=0)
+    b = factor_bootstrap_ci(records, specs, n_boot=200, seed=0)
+    assert a == b  # seeded -> identical dict
+
+def test_empty_input_returns_zero_without_raising():
+    # all three CI estimators must guard empty input (n==0) rather than RNG-crash
+    assert ratio_of_sums_ci([], n_boot=100, seed=0) == (0.0, 0.0, 0.0)
+    assert paired_diff_bootstrap_ci([], n_boot=100, seed=0) == (0.0, 0.0, 0.0)
+    res = factor_bootstrap_ci([], {"coverage_bank": ("Cfull", "U")}, n_boot=100, seed=0)
+    assert res == {"coverage_bank": {"point": 0.0, "lo": 0.0, "hi": 0.0}}
