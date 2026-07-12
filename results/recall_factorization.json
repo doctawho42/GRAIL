@@ -24,7 +24,7 @@
   "macro_recall": 0.32964969908272296,
   "macro_coverage_bank": 0.7916018894080344,
   "macro_oracle_recall": 0.42529953239281265,
-  "aggregation_note": "Factors + micro_recall are pooled ratio-of-sums (the telescoping-identity frame; micro coverage_bank == the published rule-bank ceiling 0.735). macro_* are per-substrate means (metrics.py convention); macro_recall reproduces the deployed headline recall@15 ~0.334.",
+  "aggregation_note": "Factors + micro_recall are pooled ratio-of-sums (the telescoping-identity frame; micro coverage_bank == the published rule-bank ceiling 0.735). macro_* are per-substrate means (metrics.py convention); macro_recall reproduces the deployed headline recall@15 0.330 (the earlier ~0.334 was a 291-substrate eval, now corrected).",
   "provenance": {
     "split": "clean test (test_triples_clean.txt + test.sdf)",
     "ceiling_pool": "full extended_smirks bank, depth-1 (n_rules=7581)",

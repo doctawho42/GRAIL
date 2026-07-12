@@ -302,7 +302,7 @@ def main() -> int:
             "Factors + micro_recall are pooled ratio-of-sums (the telescoping-identity frame; "
             "micro coverage_bank == the published rule-bank ceiling 0.735). macro_* are "
             "per-substrate means (metrics.py convention); macro_recall reproduces the deployed "
-            "headline recall@15 ~0.334."
+            "headline recall@15 0.330 (the earlier ~0.334 was a 291-substrate eval, now corrected)."
         ),
         "provenance": {
             "split": "clean test (test_triples_clean.txt + test.sdf)",
