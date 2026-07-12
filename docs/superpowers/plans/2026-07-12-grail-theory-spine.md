@@ -239,7 +239,35 @@ git commit -m "feat(stats): cluster-bootstrap + ratio-of-sums + McNemar estimato
 - Consumes: `grail_metabolism.stats.factor_bootstrap_ci`; `run_benchmark.load_test_map`, `._tautomer_recovered`; `apply_rules_to_molecule`, `resolve_default_rule_bank`; the generator pool pattern; `artifacts/full5000_single/predictions/test_predictions.csv`.
 - Produces: `results/recall_factorization.json` with keys `factors` (coverage_bank / selection_retention / ranking_conversion each `{point, lo, hi}`), `micro_recall`, `oracle_recall` (`= C_bud/U`), `n_substrates`, `match`, `provenance`, and `per_substrate` (list of `{sub, U, Cfull, Cbud, H}`). The `per_substrate` dump is consumed by Task 4.
 
-**Definitions** (per substrate `s`, tautomer-InChIKey): `U_i=|T_s|` (tautomer-distinct trues); `Cfull_i` = trues recovered by the **full-bank** depth-1 products; `Cbud_i` = trues recovered by the **deployed generator pool** (`generate_scored`, top_k=max_pool); `H_i` = trues recovered by the **deployed top-15 output** (from the committed CSV). Then `coverage_bank=ΣCfull/ΣU`, `selection_retention=ΣCbud/ΣCfull`, `ranking_conversion=ΣH/ΣCbud`; `oracle_recall=ΣCbud/ΣU`.
+**Definitions** (per substrate `s`, tautomer-InChIKey): `U_i=|T_s|` (tautomer-distinct trues); `Cfull_i` = trues recovered by the **full-bank** depth-1 products; `Cbud_i` = trues recovered by the **deployed generator pool** (`generate_scored`, top_k=max_pool); `H_i` = trues recovered by the **deployed top-15 output**. Then `coverage_bank=ΣCfull/ΣU`, `selection_retention=ΣCbud/ΣCfull`, `ranking_conversion=ΣH/ΣCbud`; `oracle_recall=ΣCbud/ΣU`.
+
+> **CONTROLLER CORRECTION (2026-07-12, pre-dispatch — supersedes the Step-3 CSV path for `H`).**
+> `artifacts/full5000_single/predictions/test_predictions.csv` covers only **291 substrates** (an
+> `ensemble.py` export cap), NOT the full test set; using it would silently compute the whole
+> factorization on a non-representative 291-substrate subset and invite the exact "cherry-picked
+> subset" referee attack the paper avoids. `artifacts/full5000_single/reports/metrics.json` confirms
+> the deployed **ensemble** `top_15_recall = 0.334` is the full-set number, and both checkpoints
+> (`generator.pt` + `filter.pt`) are in `artifacts/full5000_single/checkpoints/`. Therefore:
+> - Compute `H` by running the **actual deployed pipeline** on ALL test-map substrates (≈1170).
+>   Load the deployed wrapper (generator + filter) — read `grail_metabolism/model/grail.py:85-170`
+>   for the exact load path (`summon_the_grail` and/or `ModelWrapper(filter_weights=..., generator_weights=...)`),
+>   pointing at `artifacts/full5000_single/checkpoints/{generator.pt,filter.pt}`.
+> - Per substrate: `H_i` = `tautomer_hits(wrapper.generate(sub, max_output=15), trues)` (the deployed
+>   gen×filter top-15); `Cbud_i` = `tautomer_hits([s for s,_ in gen.generate_scored(sub, top_k=200)], trues)`
+>   (the generator pool the filter reranks); `Cfull_i` via `_tautomer_recovered` as in Step 3.
+> - **Do NOT read `test_predictions.csv`.** Delete the `load_deployed_topk` helper; KEEP `tautomer_hits`
+>   (still needed to count hits from the pipeline's SMILES output, and its unit test in Step 1 still applies).
+> - **Persist per-substrate the deployed top-15 SMILES** in each `per_substrate` record
+>   (add `"deployed_top15": [smiles,...]` alongside `U/Cfull/Cbud/H`) so Task 4 reuses them without
+>   re-running the pipeline.
+> - Report the actual `n` (≈1170). Sanity: `micro_recall` ≈ 0.334 (matches metrics.json ensemble
+>   top_15_recall); `coverage_bank` ≈ 0.735.
+> - **Runtime (staged, mandatory):** FIRST run a ~20-substrate timing probe under `caffeinate -dimsu`
+>   and extrapolate to the full test set. If extrapolated full wall-time > ~2h, STOP and report the
+>   timing (status DONE_WITH_CONCERNS / BLOCKED) so the controller decides (subset-with-representativeness
+>   vs generator-alone-`H` vs Modal) — do NOT silently subsample. If ≤ ~2h, proceed to the full run.
+>   (The prior deployed eval took ~206s once graph caches were built; a cold featurization pass can be
+>   much longer — build caches first, then time.)
 
 - [ ] **Step 1: Write a failing unit test for the CSV-hit helper**
 
@@ -654,8 +682,16 @@ git commit -m "feat(diagnostic): external-validity ceiling CI + uncapped GLORYx 
 - Create (run output): `results/anchor_certification.json`
 
 **Interfaces:**
-- Consumes: `grail_metabolism.stats.paired_diff_bootstrap_ci`, `.mcnemar_exact_p`; the deployed GRAIL top-15 (`test_predictions.csv`) and SyGMa on the same substrates (`run_benchmark.sygma_baseline` restricted to the common set, or `run_benchmark.load_test_map` + a SyGMa run); `run_benchmark._tautomer_recovered` for per-substrate recall; the `tautomer_hits` helper from Task 2 (`from factorize_recall import tautomer_hits`).
+- Consumes: `grail_metabolism.stats.paired_diff_bootstrap_ci`, `.mcnemar_exact_p`; GRAIL's deployed per-substrate top-15 and SyGMa on the same substrates; `run_benchmark._tautomer_recovered` for per-substrate recall; the `tautomer_hits` helper from Task 2 (`from factorize_recall import tautomer_hits`).
 - Produces: `results/anchor_certification.json` with `delta_mean_recall` (`{point, lo, hi}`), `mcnemar` (`{b, c, p}`), `common_n`, `common_subset_ceiling`, `full_ceiling`.
+
+> **CONTROLLER CORRECTION (2026-07-12 — supersedes the Step-3 `load_deployed(DEPLOYED_CSV)` path).**
+> Same 291-vs-1170 issue as Task 2: do NOT use `test_predictions.csv`. Take GRAIL's per-substrate
+> deployed top-15 SMILES from **Task 2's `results/recall_factorization.json` `per_substrate[].deployed_top15`**
+> (persisted there by Task 2's correction), keyed by substrate. SyGMa's per-substrate top-15 comes from
+> `run_benchmark.sygma_topk` (the DRY helper added in Step 4) on the same substrate set. Compute the
+> paired diff and McNemar over the full common set (≈1170), and report `common_n`. Drop the
+> `load_deployed` helper. Everything else in the task stands.
 
 - [ ] **Step 1: Write a failing unit test for per-substrate recall + any-hit**
 
