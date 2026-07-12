@@ -10,7 +10,8 @@ Rule-based metabolite-structure prediction is limited **not by rule coverage but
 conversion of that coverage into a ranked prediction set.** We present **GRAIL**, a rule-based
 predictor that learns to *select* SMIRKS transformations over a large curated bank (7,581 rules)
 and score the resulting (substrate, product) pairs, and we use it to **decompose where the
-rule-based paradigm's headroom is lost** — coverage vs ranking vs regioselectivity vs multi-step.
+rule-based paradigm's headroom is lost** — coverage vs **selection** vs ranking (with regioselectivity
+and multi-step entering as sub-levers) — a gap **dominated by rule selection, then ranking.**
 The contribution is the architecture **plus** a rigorous, honest diagnosis; a standardized,
 tautomer-aware, leakage-audited evaluation protocol (the benchmark) is the apparatus that makes
 the diagnosis fair and comparable.
@@ -19,7 +20,8 @@ the diagnosis fair and comparable.
 
 **GRAIL does not win on recall.** On our clean molecule-disjoint split it reaches
 **0.330 recall@15** (per-substrate macro; **0.261** pooled micro) — tautomer-InChIKey, deployed
-pipeline, full 1170-substrate clean test; prior-independent — verified on both checkpoints — below
+pipeline, full 1170-substrate clean test; prior-independent (verified on the 291-substrate evaluation;
+the full-1170 headline scores the single deployed checkpoint) — below
 SyGMa (0.572 tautomer) and MetaPredictor (0.585). (The earlier "~0.334" anchor was a 291-substrate
 evaluation, `max_test_substrates:300`; the honest full-1170 figure is **0.330 macro / 0.261 micro**,
 and every headline number here reports its match mode, split, n, and source artifact.)
@@ -115,8 +117,8 @@ The bank's **recall ceiling** — the best achievable recall if the selector/fil
 on the full clean molecule-disjoint test split (1170 substrates, 2597 true pairs) is
 **0.718 (plain InChIKey) / 0.735 (tautomer-InChIKey)** — 1865 / 1910 of 2597 recovered. Far above
 the best learned systems (~0.47–0.585) and comparable to rule systems on their own sets.
-**Coverage is high; the bank is powerful.** So the task is limited by *ranking and
-coverage-conversion*, not rule expressiveness. The 0.735 is reported under the **same tautomer
+**Coverage is high; the bank is powerful.** So the task is limited by *coverage-conversion* — a
+dominant selection loss then ranking — not rule expressiveness. The 0.735 is reported under the **same tautomer
 protocol as GRAIL and SyGMa** (referee MAJOR-3 resolved — no more mixed match modes); the plain
 0.718 reproduces the previously reported number exactly, validating the run. The tautomer path is
 computed via a heavy-atom-formula prefilter **verified sound** against naive keying (audit
@@ -133,13 +135,18 @@ pairs are dependent; 10 000 resamples; `results/ceiling_external_validity.json`)
 over the 37 GLORYx parents, no pool cap, same tautomer match — the external ceiling is **0.633** (95%
 CI **[0.531, 0.733]**, n=37, wide by design). This is far above the previously committed **0.3715**,
 which is **pool-capped** (a generator-budget artifact from `gloryx_oracle.json`) and must **never** be
-read as "the external ceiling." One OLS composition regression, fit pooled over per-substrate coverage
-against molecular descriptors (MW, ring count, aromatic/heteroatom counts, a conjugation-site count,
-and `n_true`), predicts **both** population means: **~0.79** internal and **~0.74** external in-sample
-(0.738 out-of-sample, recovering ~56% of the internal→external gap). Coverage is therefore governed by
-a **transferable composition covariate** — GLORYx parents are larger, more-conjugated drugs — which is
-the §4 ΔMW long tail made quantitative, a suggestive-but-transferable regularity rather than a fitted
-law, and *not* a defect in the bank or the protocol. *Source: `results/ceiling_external_validity.json`.*
+read as "the external ceiling." One OLS composition regression against molecular descriptors (MW, ring
+count, aromatic/heteroatom counts, a conjugation-site count, and `n_true`) fits per-substrate coverage
+across both populations. Its predicted **macro (per-substrate-mean)** coverages are **~0.79** internal
+and **~0.74** external in-sample — the macro frame, distinct from the **micro** rule-bank ceilings
+(0.735 internal / 0.633 external) quoted above; note the ~0.74 in-sample external prediction sits
+*above* the measured external macro coverage (0.697). Holding the external points out of the fit
+(fit-internal → predict-external) still lands at **0.738** out-of-sample, recovering **~56%** of the
+internal→external macro gap (`regression.predicted_external_mean_oos` = 0.738,
+`regression.gap_recovery_frac` = 0.565). This is a **suggestive partial composition effect at n=37** —
+GLORYx parents are larger, more-conjugated drugs, the §4 ΔMW long tail made quantitative — **not a
+fitted or transferable law**, and *not* a defect in the bank or the protocol.
+*Source: `results/ceiling_external_validity.json`.*
 
 ### §3 — The conversion gap (ceiling ≫ realized)
 In the pooled (micro) frame of §1.5, the deployed pipeline converts the **0.735** rule-bank ceiling
@@ -170,8 +177,9 @@ the paired per-substrate difference `recall_GRAIL − recall_SyGMa` is **−0.24
 matches the full-1170 ceiling (0.735), so the common set is representative. The paired bootstrap
 covers continuous recall and McNemar is used **only** for the binary any-hit outcome; together they
 certify *evaluation* variance (a single deployed checkpoint scored over resampled substrates).
-Training-seed variance is separately bounded by val ≈ test (0.327 vs 0.330). SyGMa > GRAIL is
-significant — the anchor holds.
+The split is not overfit (val ≈ test); the variance certified here is **evaluation** variance only —
+the deployed headline is a single checkpoint, not a seed average. SyGMa > GRAIL is significant — the
+anchor holds.
 
 > **Note (checkpoint / prior — resolved).** Prior-independence of the *deployed* pipeline was
 > established on the earlier 291-substrate evaluation: the prior-populated checkpoint `full5000_priors`
@@ -294,7 +302,9 @@ Chemformer on DrugBank-licensed data is out of scope.)
   (no rule grounding): learned selection over a large SMIRKS bank + MCS-aware PU pair filter.
 
 ## Open items before submission
-1. **Provenance** (in flight): full-set ceiling + SyGMa under tautomer → fill §2 hero number.
-2. **prior-vs-learned CIs** (paired bootstrap on the learned−prior gap) for §4 rigor.
+1. ~~**Provenance**: full-set ceiling + SyGMa under tautomer → fill §2 hero number.~~ **DONE** — §2
+   reports the full-set tautomer ceiling (0.735) and SyGMa (0.572) on the identical split.
+2. ~~**prior-vs-learned CIs** (paired bootstrap on the learned−prior gap) for §4 rigor.~~ **DONE** —
+   §4 row 1 carries the paired-bootstrap CIs.
 3. **Tier-2 for the supplement** (LAGOM/MetaTrans) to widen the match-sensitivity spread.
 4. Fold `DNB_FRAMING.md` explicitly into the §Supplement narrative.

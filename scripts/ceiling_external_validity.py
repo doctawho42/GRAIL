@@ -205,6 +205,25 @@ def main() -> int:
           f"(internal_macro={int_macro:.4f}) predicted_external_mean={pred_ext:.4f} "
           f"(external_macro={ext_macro:.4f})", flush=True)
 
+    # 3b. leave-external-out (out-of-sample): fit the OLS on the INTERNAL points only, then
+    # predict the mean over the held-out EXTERNAL (GLORYx-37) points. This is the honest
+    # transferability test -- the external points never touch the fit -- and gap_recovery_frac
+    # reports how much of the internal->external macro gap that fit-internal->predict-external
+    # prediction recovers.
+    Xb_int, y_int, _ = _design_matrix(int_rows)
+    coef_oos, *_ = np.linalg.lstsq(Xb_int, y_int, rcond=None)
+    pred_ext_oos = _predicted_mean(ext_rows, coef_oos)
+    gap = ext_macro - int_macro
+    gap_recovery_frac = (pred_ext_oos - int_macro) / gap if gap != 0 else 0.0
+    gap_recovery_definition = (
+        "(predicted_external_mean_oos - internal_macro) / (external_macro - internal_macro): "
+        "fraction of the internal->external macro-coverage gap recovered by the "
+        "fit-internal->predict-external out-of-sample prediction")
+    print(f"[regression-oos] fit-internal->predict-external "
+          f"predicted_external_mean_oos={pred_ext_oos:.4f} "
+          f"(external_macro={ext_macro:.4f}, internal_macro={int_macro:.4f}) "
+          f"gap_recovery_frac={gap_recovery_frac:.4f}", flush=True)
+
     report = {
         "match": "inchikey_tautomer",
         "internal_ceiling": {"point": ip, "lo": ilo, "hi": ihi, "n": len(int_pairs), "macro": int_macro},
@@ -222,6 +241,9 @@ def main() -> int:
             "external_macro_coverage": ext_macro,
             "predicted_internal_mean": pred_int,
             "predicted_external_mean": pred_ext,
+            "predicted_external_mean_oos": pred_ext_oos,
+            "gap_recovery_frac": gap_recovery_frac,
+            "gap_recovery_definition": gap_recovery_definition,
         },
         "provenance": {
             "internal": {

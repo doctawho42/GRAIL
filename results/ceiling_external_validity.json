@@ -263,7 +263,10 @@
     "internal_macro_coverage": 0.7916018894080344,
     "external_macro_coverage": 0.6973830973830975,
     "predicted_internal_mean": 0.7904067681361424,
-    "predicted_external_mean": 0.7351747700348213
+    "predicted_external_mean": 0.7351747700348213,
+    "predicted_external_mean_oos": 0.7383498319050348,
+    "gap_recovery_frac": 0.5651957147668097,
+    "gap_recovery_definition": "(predicted_external_mean_oos - internal_macro) / (external_macro - internal_macro): fraction of the internal->external macro-coverage gap recovered by the fit-internal->predict-external out-of-sample prediction"
   },
   "provenance": {
     "internal": {
