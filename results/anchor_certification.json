@@ -1,0 +1,33 @@
+{
+  "match": "inchikey_tautomer",
+  "k": 15,
+  "common_n": 1168,
+  "variance_certified": "evaluation variance (substrate resampling of the fixed 1170-substrate test set); NOT training-seed variance -- a single deployed checkpoint is scored",
+  "mean_recall_GRAIL": 0.3302141677455357,
+  "mean_recall_SyGMa": 0.5717888592752047,
+  "delta_mean_recall": {
+    "point": -0.24157469152966907,
+    "lo": -0.271406337243164,
+    "hi": -0.21173934955376858,
+    "definition": "mean_i (recall_GRAIL_i - recall_SyGMa_i); point < 0 with the 95% CI wholly below 0 certifies GRAIL loses to SyGMa on the common set"
+  },
+  "mcnemar": {
+    "b_grail_only": 87,
+    "c_sygma_only": 379,
+    "p": 1.715643266885125e-44,
+    "definition": "exact two-sided McNemar on any-hit@15 discordance; b = GRAIL hit & SyGMa miss, c = SyGMa hit & GRAIL miss"
+  },
+  "common_subset_ceiling": 0.735929067077872,
+  "full_ceiling_reference": 0.7354639969195226,
+  "provenance": {
+    "resampling_unit": "substrate",
+    "n_boot": 10000,
+    "seed": 0,
+    "match": "inchikey_tautomer",
+    "join_key": "substrate SMILES string",
+    "grail_source": "results/recall_factorization.json per_substrate H_i/U_i (deployed generator.pt x filter.pt on all 1170 substrates; Task 2)",
+    "sygma_source": "run_benchmark.sygma_topk (phase1+phase2 scenario): first-15 tautomer-distinct, parent-dropped predictions in SyGMa score order",
+    "common_subset_ceiling_def": "ratio-of-sums SigmaCfull/SigmaU over the common set (Task 2 Cfull, U)",
+    "full_ceiling_reference_def": "Task 2 micro coverage_bank (SigmaCfull/SigmaU over all 1170)"
+  }
+}

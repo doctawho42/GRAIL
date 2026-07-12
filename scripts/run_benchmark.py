@@ -406,6 +406,64 @@ def gap_analysis(test_map: Dict[str, Set[str]], rules: List[str]) -> Dict[str, o
 
 
 # ---- 2. SyGMa baseline ----
+def _sygma_scenario():
+    """Construct the SyGMa phase1+phase2 scenario -- the single place SyGMa is configured.
+    Raises ImportError if the optional `sygma` dependency is not installed (callers decide
+    whether to skip gracefully or surface BLOCKED)."""
+    import sygma
+
+    return sygma.Scenario([[sygma.ruleset["phase1"], 1], [sygma.ruleset["phase2"], 1]])
+
+
+def _sygma_ranked(mol, scenario) -> Optional[List[list]]:
+    """Raw SyGMa generation for ONE molecule: the ranked ``[smiles, score]`` list (parent
+    first, score-sorted via ``calc_scores`` before ``to_smiles``), or ``None`` if SyGMa's run
+    raised. This is the ONE shared code path for the (expensive) per-substrate SyGMa
+    enumeration; both ``sygma_baseline`` and ``sygma_topk`` build their views on top of it, so
+    the two entry points can never diverge in how SyGMa is invoked."""
+    try:
+        tree = scenario.run(mol)
+        tree.calc_scores()  # required before to_smiles(), which sorts by score
+        return tree.to_smiles()  # list of [smiles, score], parent first
+    except Exception:
+        return None
+
+
+def sygma_topk(test_map: Dict[str, Set[str]], k: int) -> Dict[str, List[str]]:
+    """Per-substrate ranked SyGMa predicted SMILES (top-k), the SAME generation
+    ``sygma_baseline`` scores. Returns ``{substrate_smiles: [smiles, ...]}`` holding the first
+    ``k`` tautomer-InChIKey-distinct, parent-dropped predictions in SyGMa score order -- i.e.
+    exactly the molecules behind ``sygma_baseline``'s ``recall_at_tautomer`` (same dedup/parent
+    rule), surfaced as SMILES so a caller can score them with ``tautomer_hits``. Raises
+    ImportError if ``sygma`` is missing (caller reports BLOCKED)."""
+    scenario = _sygma_scenario()
+    out: Dict[str, List[str]] = {}
+    items = list(test_map.items())
+    start = time.perf_counter()
+    for i, (sub, _true) in enumerate(items, start=1):
+        if i == 1 or i % 50 == 0 or i == len(items):
+            print(f"  [sygma_topk] {i}/{len(items)} ({time.perf_counter()-start:.0f}s)", flush=True)
+        mol = Chem.MolFromSmiles(sub)
+        if mol is None:
+            continue
+        ranked = _sygma_ranked(mol, scenario)
+        if ranked is None:
+            continue
+        parent_tk = _tautomer_inchikey(sub)
+        preds: List[str] = []
+        seen: Set[str] = set()
+        for entry in ranked:
+            tk = _tautomer_inchikey(entry[0])
+            if tk == parent_tk or tk in seen:
+                continue
+            seen.add(tk)
+            preds.append(entry[0])
+            if len(preds) >= k:
+                break
+        out[sub] = preds
+    return out
+
+
 def sygma_baseline(test_map: Dict[str, Set[str]], ks: List[int]) -> Optional[Dict[str, object]]:
     """SyGMa phase1+phase2 baseline: recall@k/precision@k (plain-InChIKey matching,
     unchanged) plus the diversity triplet (BASE-04, canonicalization-consistent via
@@ -425,11 +483,10 @@ def sygma_baseline(test_map: Dict[str, Set[str]], ks: List[int]) -> Optional[Dic
     and with the gflownet path), not a mismatch to "fix".
     """
     try:
-        import sygma
+        scenario = _sygma_scenario()
     except ImportError:
         print("sygma not installed; skipping baseline (pip install -e .[baselines])", flush=True)
         return None
-    scenario = sygma.Scenario([[sygma.ruleset["phase1"], 1], [sygma.ruleset["phase2"], 1]])
     recall_at = {k: 0.0 for k in ks}
     prec_at = {k: 0.0 for k in ks}
     # tautomer-InChIKey mode, so SyGMa is scored in the SAME match protocol as the ceiling and
@@ -454,11 +511,8 @@ def sygma_baseline(test_map: Dict[str, Set[str]], ks: List[int]) -> Optional[Dic
         mol = Chem.MolFromSmiles(sub)
         if mol is None:
             continue
-        try:
-            tree = scenario.run(mol)
-            tree.calc_scores()  # required before to_smiles(), which sorts by score
-            ranked = tree.to_smiles()  # list of [smiles, score], parent first
-        except Exception:
+        ranked = _sygma_ranked(mol, scenario)
+        if ranked is None:
             continue
         preds = []
         for entry in ranked:
