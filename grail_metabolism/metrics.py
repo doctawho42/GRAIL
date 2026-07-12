@@ -29,6 +29,51 @@ def _inchikey(smiles: str) -> str:
         return smiles
 
 
+def _taut_key_raw(smiles: str) -> str:
+    """Tautomer-canonical InChIKey with NO fallback: standardize (Cleanup -> FragmentParent ->
+    uncharge -> TautomerEnumerator.Canonicalize) then InChIKey. Raises on any failure — the caller
+    decides whether that failure is per-molecule (fall back) or systemic (fail loud)."""
+    from rdkit import Chem
+
+    from grail_metabolism.utils.preparation import _standardize_smiles_cached
+
+    standardized = _standardize_smiles_cached(smiles)
+    mol = Chem.MolFromSmiles(standardized)
+    if mol is None:
+        raise ValueError(f"could not parse standardized SMILES for {smiles!r}")
+    return Chem.MolToInchiKey(mol) or standardized
+
+
+_TAUTOMER_PATH_OK: "bool | None" = None
+
+
+def _ensure_tautomer_path() -> None:
+    """One-time self-check that the tautomer path is actually functional. ``_tautomer_inchikey``
+    falls back to plain ``_inchikey`` on failure — correct for a single un-standardizable molecule,
+    but catastrophic if the WHOLE standardize stack is broken (e.g. a missing dependency): every key
+    would silently collapse to the plain InChIKey, degrading every tautomer number (the 0.735 ceiling
+    -> the plain 0.718, etc.) with no error. So on first use we verify a known keto/enol pair really
+    merges; if it does not, we fail LOUDLY rather than let the headline numbers silently degrade."""
+    global _TAUTOMER_PATH_OK
+    if _TAUTOMER_PATH_OK:
+        return
+    try:
+        merged = _taut_key_raw("CC(=O)CC(C)=O") == _taut_key_raw("CC(=O)C=C(O)C")
+    except Exception as exc:  # standardization itself is broken -> systemic, not a bad input
+        raise RuntimeError(
+            "tautomer-InChIKey standardization is broken (cannot standardize a known keto/enol "
+            "pair); refusing to silently fall back to plain InChIKey and corrupt every tautomer "
+            f"number. Original error: {exc!r}"
+        ) from exc
+    if not merged:
+        raise RuntimeError(
+            "tautomer-InChIKey path is non-functional: a known keto/enol pair did NOT merge, so "
+            "tautomer canonicalization is inactive (likely a broken standardize dependency). "
+            "Refusing to silently degrade every tautomer number to plain InChIKey."
+        )
+    _TAUTOMER_PATH_OK = True
+
+
 @lru_cache(maxsize=131072)
 def _tautomer_inchikey(smiles: str) -> str:
     """Tautomer-canonical InChIKey: full standardization (incl. tautomer canonicalization) then InChIKey.
@@ -45,19 +90,16 @@ def _tautomer_inchikey(smiles: str) -> str:
     This is heavier than ``_inchikey`` (tautomer enumeration), so it is reserved for the
     small final output set + reference set at scoring time, never the generation loop.
     Both this and the underlying standardize are cached, so repeats are free.
+
+    A one-time canary (``_ensure_tautomer_path``) fails loudly if the whole standardize path is
+    broken, so a degraded environment cannot silently turn this into plain ``_inchikey``. A single
+    un-standardizable molecule still falls back gracefully (per-input, not systemic).
     """
+    _ensure_tautomer_path()
     try:
-        from rdkit import Chem
-
-        from grail_metabolism.utils.preparation import _standardize_smiles_cached
-
-        standardized = _standardize_smiles_cached(smiles)
-        mol = Chem.MolFromSmiles(standardized)
-        if mol is None:
-            return _inchikey(smiles)
-        return Chem.MolToInchiKey(mol) or standardized
+        return _taut_key_raw(smiles)
     except Exception:
-        return _inchikey(smiles)
+        return _inchikey(smiles)  # this ONE molecule couldn't be standardized -> per-input fallback
 
 
 @lru_cache(maxsize=131072)

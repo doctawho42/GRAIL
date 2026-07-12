@@ -274,3 +274,46 @@ def test_output_dedup_collapses_tautomer_variants_freeing_budget():
     assert len(out) == 2                            # two slots filled
     assert len(keys) == 2                           # with two DISTINCT molecules, not two acetone tautomers
     assert _tautomer_inchikey("CCO") in keys        # ethanol got in because the tautomer dup freed a slot
+
+
+def test_tautomer_path_fails_loud_when_pair_stops_merging():
+    # A broken standardize env silently makes _tautomer_inchikey == plain _inchikey, degrading
+    # every tautomer number (0.735 ceiling -> plain 0.718) with NO error. The one-time canary must
+    # raise instead. Simulate degradation: the no-fallback key returns the PLAIN inchikey.
+    import pytest
+    import grail_metabolism.metrics as m
+    orig_flag, orig_raw = m._TAUTOMER_PATH_OK, m._taut_key_raw
+    try:
+        m._TAUTOMER_PATH_OK = None
+        m._taut_key_raw = m._inchikey            # keto/enol no longer merge under a plain key
+        with pytest.raises(RuntimeError, match="tautomer"):
+            m._ensure_tautomer_path()
+    finally:
+        m._TAUTOMER_PATH_OK, m._taut_key_raw = orig_flag, orig_raw
+
+
+def test_tautomer_path_fails_loud_when_standardize_throws():
+    import pytest
+    import grail_metabolism.metrics as m
+    orig_flag, orig_raw = m._TAUTOMER_PATH_OK, m._taut_key_raw
+
+    def _boom(_s):
+        raise ImportError("numpy missing")
+
+    try:
+        m._TAUTOMER_PATH_OK = None
+        m._taut_key_raw = _boom
+        with pytest.raises(RuntimeError):
+            m._ensure_tautomer_path()
+    finally:
+        m._TAUTOMER_PATH_OK, m._taut_key_raw = orig_flag, orig_raw
+
+
+def test_tautomer_path_healthy_in_this_env():
+    # Positive control: in a real env the canary passes and a per-molecule bad SMILES still falls
+    # back gracefully (does NOT raise) — fail-fast is systemic-only.
+    import grail_metabolism.metrics as m
+    m._TAUTOMER_PATH_OK = None
+    m._ensure_tautomer_path()  # must not raise
+    assert m._tautomer_inchikey("CC(=O)CC(C)=O") == m._tautomer_inchikey("CC(=O)C=C(O)C")
+    assert m._tautomer_inchikey("not_a_smiles") == m._tautomer_inchikey("not_a_smiles")  # per-mol fallback, no raise
