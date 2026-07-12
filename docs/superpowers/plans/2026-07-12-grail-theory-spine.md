@@ -477,6 +477,18 @@ git commit -m "feat(diagnostic): per-substrate coverage x selection x ranking re
 - Consumes: `grail_metabolism.stats.ratio_of_sums_ci`; `run_benchmark.load_test_map`, `._tautomer_recovered`; `apply_rules_to_molecule`, `resolve_default_rule_bank`; `results/gloryx_oracle.json` (`small.per_parent` records: `parent`, `n_true`, `hits_in_pool`, `pool_size`); `numpy`.
 - Produces: `results/ceiling_external_validity.json` with `internal_ceiling` (`{point, lo, hi}`), `external_ceiling_uncapped` (`{point, lo, hi}`), `regression` (`coefficients`, `predicted_internal_mean`, `predicted_external_mean`, `descriptor_names`).
 
+> **CONTROLLER CORRECTION (2026-07-13 — reuse Task 2's per-substrate coverage; do NOT re-run the 90-min ceiling).**
+> Task 2 already computed per-substrate `(U, Cfull)` under tautomer-InChIKey for all 1170 test substrates in
+> `results/recall_factorization.json` `per_substrate` (each record: `{sub, U, Cfull, Cbud, H, deployed_top15}`).
+> Replace `_coverage_pairs_internal` (which re-runs `load_dataset_bundle` + full-bank `apply_rules` at ~90 min) with a
+> read of that JSON:
+> - internal cluster-bootstrap ceiling CI = `ratio_of_sums_ci([(r["Cfull"], r["U"]) for r in per_substrate], n_boot=10000, seed=0)` — this reproduces micro `coverage_bank` 0.7355 with a CI (it will match `recall_factorization.json` `factors.coverage_bank`).
+> - internal regression points: per substrate `coverage_i = r["Cfull"]/r["U"]`, descriptors from `r["sub"]`, `n_true_i = r["U"]`.
+> Only the EXTERNAL GLORYx-37 uncapped ceiling still needs a fresh `apply_rules` pass — but that is 37 parents (~3 min),
+> so `_coverage_pairs_external_uncapped` stays as written (tautomer via `_tautomer_recovered`, no pool cap). Everything else
+> (the composition regression predicting BOTH means, the guardrails: uncapped external, n=37 wide CI, gap=composition-not-bug) stands.
+> Net: this task is now ~5 min, not ~90 min.
+
 - [ ] **Step 1: Write a failing unit test for the descriptor vector**
 
 ```python
