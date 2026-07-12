@@ -308,3 +308,76 @@ Chemformer on DrugBank-licensed data is out of scope.)
    §4 row 1 carries the paired-bootstrap CIs.
 3. **Tier-2 for the supplement** (LAGOM/MetaTrans) to widen the match-sensitivity spread.
 4. Fold `DNB_FRAMING.md` explicitly into the §Supplement narrative.
+
+## §Reproducibility & provenance — the TAME protocol
+
+We package the evaluation as **TAME** — the **T**automer-**A**ware **M**etabolite-structure
+**E**valuation protocol: a tautomer-InChIKey match quotient, a leakage-audited molecule-disjoint
+train/val/test split, and a frozen multi-method re-scoring harness. TAME is a *protocol + audited
+split + re-scoring harness*, **not** a leaderboard service — its purpose is to make the numbers in
+§2–§4 apples-to-apples and one-command reproducible, not to rank submissions. Every headline stat
+below ships with its full provenance and regenerates from committed checkpoints + the symlinked
+dataset via `scripts/regen_headline.sh`.
+
+### Provenance table
+
+Every row is under **tautomer-InChIKey** match unless noted. "micro" = pooled ratio-of-sums
+(`Σhit/Σtrue`; the §1.5 decomposition frame, in which `coverage_bank` = the 0.735 ceiling);
+"macro" = per-substrate mean (the `metrics.py` cross-method frame). CIs are 95% (10 000 resamples,
+seed 0) over the stated resampling unit.
+
+| stat | value | match mode | split | n | resampling unit | seed | source file |
+|---|---|---|---|---|---|---|---|
+| Rule-bank coverage ceiling (**micro**) | 0.7355, CI [0.709, 0.762] | tautomer-InChIKey | clean test | 1170 | substrate (cluster) | 0 | `results/recall_factorization.json` (`factors.coverage_bank`); also `results/benchmark_report.json` (`grail_rule_bank_ceiling.recall_ceiling_tautomer`) |
+| GRAIL deployed recall@15 | 0.330 (**macro**) / 0.261 (**micro**) | tautomer-InChIKey | clean test | 1170 | substrate | 0 | `results/recall_factorization.json` (`macro_recall` / `micro_recall`) |
+| selection_retention (**micro** factor) | 0.489, CI [0.458, 0.520] | tautomer-InChIKey | clean test | 1170 | substrate | 0 | `results/recall_factorization.json` (`factors.selection_retention`) |
+| ranking_conversion (**micro** factor) | 0.726, CI [0.687, 0.765] | tautomer-InChIKey | clean test | 1170 | substrate | 0 | `results/recall_factorization.json` (`factors.ranking_conversion`) |
+| SyGMa recall@15 | 0.572 (**macro**) | tautomer-InChIKey | clean test | 1168 | substrate | 0 | `results/benchmark_report.json` (`sygma_baseline.recall_at_tautomer["15"]`); `results/anchor_certification.json` (`mean_recall_SyGMa`) |
+| MetaPredictor recall@15 | 0.585 (**macro**) | tautomer-InChIKey | clean-test tier-2 subset | 150 | substrate | 0 | `results/match_sensitivity_5method.json` (`by_method.MetaPredictor.inchikey_tautomer`) |
+| External uncapped GLORYx-37 ceiling (**micro**) | 0.633, CI [0.531, 0.733] | tautomer-InChIKey | GLORYx external set | 37 | parent (cluster) | 0 | `results/ceiling_external_validity.json` (`external_ceiling_uncapped`) |
+| Anchor Δ(GRAIL − SyGMa) (**macro**) | −0.242, CI [−0.271, −0.212]; McNemar p ≈ 1.7e-44 (any-hit@15) | tautomer-InChIKey | clean-test common set | 1168 | substrate (paired) | 0 | `results/anchor_certification.json` (`delta_mean_recall`, `mcnemar`) |
+| **Differential match-protocol sensitivity (interaction)** | +0.120, CI [+0.073, +0.171] | canonical vs tautomer-InChIKey (Δ of Δ) | clean-test tier-2 subset | 150 | substrate (paired) | 0 | `results/rank_flip_ci.json` (`interaction_B_extra_gain_from_normalization`) |
+
+Guardrail restated in tabular form: GRAIL's deployed recall (0.330 macro / 0.261 micro) sits
+**below** SyGMa (0.572) and MetaPredictor (0.585); the anchor row certifies that loss (Δ = −0.242,
+CI wholly < 0). We claim **no recall win** — the contribution is the ceiling, the decomposition, and
+the protocol.
+
+### Declared primary endpoint
+
+The **pre-declared primary endpoint of TAME is the differential match-protocol-sensitivity
+interaction**, `Δ_B − Δ_GRAIL = +0.120, 95% CI [+0.073, +0.171]` (`results/rank_flip_ci.json`,
+`interaction_B_extra_gain_from_normalization`): the extra recall a method gains purely from moving
+canonical → tautomer-InChIKey matching, above what GRAIL gains — establishing that the match
+protocol is a **method-dependent confounder**, which is the paper's methodological claim.
+Multiplicity is controlled by **Holm** correction *within each declared family of tests*: (i) the
+**per-method protocol-sensitivity family** (`protocol_sensitivity_per_method` — GRAIL, SyGMa,
+BioTransformer, MetaPredictor), and (ii) the **rank-flip pairwise family** (the per-protocol
+GRAIL↔BioTransformer and MetaTrans↔SyGMa Δ contrasts); Holm is applied *within*, not across,
+families. Everything else — the recall factorization (§1.5/§3), the external-validity ceiling (§2),
+and the anchor certification (§2) — is **secondary / descriptive** and reported with CIs but not
+counted against the primary-endpoint error budget.
+
+### Released artifact + one-command regen
+
+TAME releases the **frozen per-substrate, 5-method × 5-protocol prediction set** so the
+match-sensitivity numbers re-score without re-running any predictor:
+
+- **Frozen predictions** — `artifacts/tier2/biotransformer_preds.json`,
+  `artifacts/tier2/metapredictor_preds.json`, `artifacts/tier2/metatrans_preds.json` (the three
+  external tools); GRAIL's deployed per-substrate ranking at
+  `artifacts/full5000_single/predictions/test_predictions.csv`; SyGMa is re-derivable (not a frozen
+  JSON) via `scripts/run_benchmark.py`.
+- **Re-scoring harness** — `scripts/run_match_sensitivity.py` re-scores those frozen predictions
+  under all five match quotients (canonical, inchikey, inchi_no_stereo, tanimoto1,
+  inchikey_tautomer) → `results/match_sensitivity_5method.json`; `scripts/rank_flip_ci.py` bootstraps
+  the primary-endpoint CI → `results/rank_flip_ci.json`.
+- **Leakage audit** — the molecule-disjoint clean split (`*_triples_clean.txt`) is produced by
+  `scripts/fix_splits.py --molecule-disjoint`, which enforces full molecule-set disjointness across
+  train/val/test and emits its audit summary to `results/leakage_fix_report.json` when run (that
+  report is regenerated by the script, not committed to this tree).
+- **One-command regen** — `scripts/regen_headline.sh` regenerates every headline number above
+  (`benchmark_report`, `recall_factorization`, `ceiling_external_validity`, `anchor_certification`)
+  and the `docs/benchmark/factorization_waterfall.{png,svg}` figure, in order, from committed
+  checkpoints + the symlinked dataset. The dominant cost is `factorize_recall.py` (~90 min: deployed
+  pipeline + parallel full-bank ceiling over all 1170).
