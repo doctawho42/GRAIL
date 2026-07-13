@@ -121,7 +121,7 @@ Run:
 cd /Users/nikitapolomosnov/PycharmProjects/GRAIL/.claude/worktrees/hungry-pasteur-25d746
 grep -c '^## ' docs/benchmark/manuscript.md
 ```
-Expected: `18` (16 numbered/named sections + Fig 1 + Draft TODO; the Abstract and Introduction are `## Abstract` and `## 1. Introduction`). If not 18, add the missing headers.
+Expected: `17` (Abstract + §1–§14 = 15 sections, + Fig 1 + Draft TODO; the title is a single-`#` H1 and is NOT counted by `^## `). If not 17, add the missing headers.
 
 - [ ] **Step 3: Prepend SUPERSEDED banner to the two stale drafts**
 
