@@ -657,7 +657,17 @@ reverse method rankings. We offer TAME, not a single leaderboard entry, as the r
 this work.
 
 ## Figure 1 — pipeline schematic
-> _[FIGURE 1: GRAIL 3-stage pipeline schematic — TO BUILD]_ A left-to-right schematic: (i) substrate + 7,581-rule SMIRKS bank → learned retrieval-scored **generator** selecting rules; (ii) **RDKit rule application** enumerating candidate products; (iii) **PU-trained MCS-aware pair filter** scoring (substrate, product) pairs; deployment ranks by `filter_score × generator_score`. Real schematic is a post-draft task.
+
+![The GRAIL three-stage metabolite-structure pipeline](pipeline_schematic.svg)
+
+**Figure 1.** The GRAIL pipeline. A substrate *s* passes through three stages: (i) a
+retrieval-scored **generator** that selects applicable rules from the 7,581-SMIRKS bank
+(trained to identify which rules yield a true metabolite for *s*); (ii) **RDKit rule
+application**, which deterministically enumerates candidate products (its rule-bank coverage of
+*s* upper-bounds achievable recall, §6); and (iii) a PU-trained (nnPU, logit-domain),
+MCS-aware **pair filter** scoring each (substrate, product) graph. Deployment ranks candidates
+by `filter_score f × generator_score g`; recall decomposes as
+coverage_bank · selection_retention · ranking_conversion (§4, §8).
 
 ## Draft TODO / open items
 
@@ -684,8 +694,8 @@ mostly compute-gated or cheap post-draft edits — not open scientific limitatio
   ceiling comparison beyond GRAIL and SyGMa.
 - Regenerate `rankflip.svg` and `scaling_curve.svg` on the current committed numbers.
 - ~~Verify all comparator DOIs and resolve "Gao 2026"~~ — **done** (Crossref-verified 2026-07-13, `results/citations_verified.json`; MetaTrans/MetaPredictor/BioTransformer/Dhaked/DataSAIL DOIs supplied or corrected, "Gao 2026" confirmed nonexistent and dropped).
-- Build Figure 1 (pipeline schematic) and the internal-vs-external, paired-Δ/McNemar, and
-  ΔMW-long-tail figures flagged as optional/post-draft in §7, §9, and §11.
+- ~~Build Figure 1 (pipeline schematic)~~ — **done** (`pipeline_schematic.svg`). Still optional/post-draft: the
+  internal-vs-external, paired-Δ/McNemar, and ΔMW-long-tail figures flagged in §7, §9, and §11.
 - A paired confidence interval for Proposition 1's listwise-reranker confirmation (currently a
   3-seed standard deviation, ±0.015, not a paired bootstrap, §10) and commit its supporting
   artifacts.

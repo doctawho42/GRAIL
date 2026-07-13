@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 360" font-family="Helvetica, Arial, sans-serif">
+  <rect x="0" y="0" width="1000" height="360" fill="#ffffff"/>
+  <text x="500" y="34" text-anchor="middle" font-size="19" font-weight="700" fill="#1b2a3a">The GRAIL three-stage metabolite-structure pipeline</text>
+
+  <!-- ===== defs: arrowhead ===== -->
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#55606b"/>
+    </marker>
+  </defs>
+
+  <!-- ===== input pill ===== -->
+  <rect x="16" y="150" width="116" height="70" rx="10" fill="#e8eef4" stroke="#33475b" stroke-width="1.5"/>
+  <text x="74" y="180" text-anchor="middle" font-size="13" font-weight="700" fill="#1b2a3a">Substrate</text>
+  <text x="74" y="200" text-anchor="middle" font-size="13" font-style="italic" fill="#1b2a3a">s</text>
+
+  <!-- ===== Stage 1: Generator ===== -->
+  <g>
+    <rect x="176" y="96" width="182" height="160" rx="8" fill="#f4f6f8" stroke="#33475b" stroke-width="1.5"/>
+    <rect x="176" y="96" width="182" height="7" rx="3" fill="#2f6f9f"/>
+    <text x="267" y="128" text-anchor="middle" font-size="15" font-weight="700" fill="#1b2a3a">① Generator</text>
+    <text x="267" y="152" text-anchor="middle" font-size="11" fill="#42505f">retrieval scorer over the</text>
+    <text x="267" y="168" text-anchor="middle" font-size="11" fill="#42505f">7,581-SMIRKS rule bank</text>
+    <text x="267" y="192" text-anchor="middle" font-size="11" font-weight="600" fill="#2f6f9f">→ selects applicable rules</text>
+    <text x="267" y="222" text-anchor="middle" font-size="9.5" fill="#8a97a4">trained: which rules yield a</text>
+    <text x="267" y="235" text-anchor="middle" font-size="9.5" fill="#8a97a4">true metabolite for s</text>
+  </g>
+
+  <!-- ===== Stage 2: Rule application ===== -->
+  <g>
+    <rect x="408" y="96" width="182" height="160" rx="8" fill="#f4f6f8" stroke="#33475b" stroke-width="1.5"/>
+    <rect x="408" y="96" width="182" height="7" rx="3" fill="#3f8a5f"/>
+    <text x="499" y="128" text-anchor="middle" font-size="15" font-weight="700" fill="#1b2a3a">② Rule application</text>
+    <text x="499" y="152" text-anchor="middle" font-size="11" fill="#42505f">RDKit applies the selected</text>
+    <text x="499" y="168" text-anchor="middle" font-size="11" fill="#42505f">SMIRKS to the substrate</text>
+    <text x="499" y="192" text-anchor="middle" font-size="11" font-weight="600" fill="#3f8a5f">→ candidate products</text>
+    <text x="499" y="222" text-anchor="middle" font-size="9.5" fill="#8a97a4">deterministic enumeration;</text>
+    <text x="499" y="235" text-anchor="middle" font-size="9.5" fill="#8a97a4">coverage bounds recall (§6)</text>
+  </g>
+
+  <!-- ===== Stage 3: Pair filter ===== -->
+  <g>
+    <rect x="640" y="96" width="182" height="160" rx="8" fill="#f4f6f8" stroke="#33475b" stroke-width="1.5"/>
+    <rect x="640" y="96" width="182" height="7" rx="3" fill="#9f5f2f"/>
+    <text x="731" y="128" text-anchor="middle" font-size="15" font-weight="700" fill="#1b2a3a">③ Pair filter</text>
+    <text x="731" y="152" text-anchor="middle" font-size="11" fill="#42505f">MCS-aware (substrate,</text>
+    <text x="731" y="168" text-anchor="middle" font-size="11" fill="#42505f">product) graph classifier</text>
+    <text x="731" y="192" text-anchor="middle" font-size="11" font-weight="600" fill="#9f5f2f">→ filter score f</text>
+    <text x="731" y="222" text-anchor="middle" font-size="9.5" fill="#8a97a4">PU-trained (nnPU),</text>
+    <text x="731" y="235" text-anchor="middle" font-size="9.5" fill="#8a97a4">logit domain</text>
+  </g>
+
+  <!-- ===== output pill ===== -->
+  <rect x="868" y="150" width="118" height="70" rx="10" fill="#e8eef4" stroke="#33475b" stroke-width="1.5"/>
+  <text x="927" y="176" text-anchor="middle" font-size="12" font-weight="700" fill="#1b2a3a">Ranked</text>
+  <text x="927" y="192" text-anchor="middle" font-size="12" font-weight="700" fill="#1b2a3a">metabolites</text>
+  <text x="927" y="208" text-anchor="middle" font-size="9.5" fill="#8a97a4">top-k</text>
+
+  <!-- ===== arrows ===== -->
+  <line x1="134" y1="185" x2="172" y2="176" stroke="#55606b" stroke-width="1.8" marker-end="url(#ah)"/>
+  <line x1="360" y1="176" x2="404" y2="176" stroke="#55606b" stroke-width="1.8" marker-end="url(#ah)"/>
+  <text x="382" y="166" text-anchor="middle" font-size="9" fill="#8a97a4">rules</text>
+  <line x1="592" y1="176" x2="636" y2="176" stroke="#55606b" stroke-width="1.8" marker-end="url(#ah)"/>
+  <text x="614" y="166" text-anchor="middle" font-size="9" fill="#8a97a4">candidates</text>
+  <line x1="824" y1="176" x2="864" y2="185" stroke="#55606b" stroke-width="1.8" marker-end="url(#ah)"/>
+
+  <!-- ===== deployment ranking rule ===== -->
+  <text x="500" y="312" text-anchor="middle" font-size="12.5" fill="#1b2a3a">Deployment ranks each candidate <tspan font-style="italic">(s, m)</tspan> pair by <tspan font-weight="700">filter_score f × generator_score g</tspan>.</text>
+  <text x="500" y="332" text-anchor="middle" font-size="11" fill="#5b6b7b">Recall decomposes as coverage_bank · selection_retention · ranking_conversion (§4, §8).</text>
+</svg>
