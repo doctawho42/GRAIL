@@ -104,7 +104,7 @@ probabilities, covers roughly 70% of human biotransformations, and reproduces 68
 metabolites (30% within its own top-3). **GLORYx** (de Bruyn Kops et al. 2020, *Chem Res Toxicol*,
 doi:10.1021/acs.chemrestox.0c00224) pairs a site-of-metabolism classifier with reaction rules,
 reports 77% recall (AUC 0.79), and explicitly finds phase-2 (conjugation) ranking harder than
-phase-1 — a finding our own ΔMW long-tail analysis (§8) independently reproduces. **BioTransformer
+phase-1 — a finding our own ΔMW long-tail analysis (§10) independently reproduces. **BioTransformer
 3.0** (Djoumbou-Feunang et al. 2019, *J Cheminform*) combines knowledge-based and machine-learned
 rules for broad-scope in-silico metabolism. On the learned side, **MetaTrans**
 `[cite: Litsa, Das, Kavraki 2020, Chem Sci; verify vol/DOI]` is an end-to-end transformer ensemble
@@ -272,8 +272,8 @@ the InChIKey) — **our recommended default**. Plain InChI only normalizes a *su
 so a rule-emitted tautomer of a reference routinely fails to match under plain `inchikey` even
 though it is the same chemical entity; tautomer-canonicalizing both sides first closes that gap
 and is the most defensible structure-identity criterion for a rule-driven generator. Unless
-stated otherwise, §3–§4 use `inchikey_tautomer`; §11 quantifies how much the method ranking
-depends on which of the five quotients is used.
+stated otherwise, all results outside §11 use `inchikey_tautomer`; §11 quantifies how much the
+method ranking depends on which of the five quotients is used.
 
 **Split and leakage audit.** All splits are molecule-disjoint: no substrate in test or val
 appears in train, and no test substrate appears in val. The clean triples are built and verified
@@ -349,7 +349,7 @@ must **never** be read as "the external ceiling."
 
 Internal (0.735) and external (0.633) both sit in the **micro** frame. A separate question is
 whether the internal-external gap is compositional: GLORYx parents tend to be larger,
-more-conjugated drugs than the internal test set, and the ΔMW long tail noted in §4 suggests
+more-conjugated drugs than the internal test set, and the ΔMW long tail noted in §4/§10 suggests
 coverage should degrade with molecular complexity. One OLS regression of **per-substrate**
 coverage on molecular descriptors (molecular weight, ring count, aromatic-atom count, heteroatom
 count, a conjugation-site count, and `n_true`) fit across both populations predicts **macro**
@@ -474,7 +474,7 @@ much (misses are a diverse long tail), and data scaling is flat — so the domin
 loss remains `selection_retention` (§8: 0.489), the learned rule-selector performing worse than a
 trivial frequency prior in the probe. The three Propositions below explain *why*.
 
-**Proposition 1 — Surrogate mismatch (→ `ranking_conversion`).** A filter trained by a strictly proper scoring rule (BCE/PU) learns a globally calibrated posterior, Bayes-optimal for AUC and calibration; ranking each substrate's candidate pool by that posterior and taking top-k is recall@k-optimal only when pools are homogeneous. GRAIL's pools vary in size (17–150) and positive rate (`n_true` 1–18), so a pointwise-calibrated scorer can be recall@k-suboptimal even while a listwise, ranking-consistent surrogate dominates — supported by a minimal 2-substrate counterexample (`grail_metabolism/tests/test_prop1_counterexample.py`) in which the recall-superior reorder is verified *not* globally calibrated, so a proper-scoring objective rejects it. *Confirmation:* a listwise-InfoNCE reranker of similar capacity beats the pointwise filter as a ranker, **0.433 → 0.500 @15 (+0.067)**, 74% of the oracle **0.677** — confirmed on a held-out Stage-2 run (`docs/benchmark/stage2_ranker_evidence.md`, Spike-3) `[PENDING: paired CI — currently 3-seed std (±0.015), not a paired bootstrap]`. *Guardrail:* this is a theorem about **objectives**, not a recall win — the reranker's **0.500 still loses to SyGMa (0.558)** and is reported only as a separate Stage-2 artifact, never as a headline number.
+**Proposition 1 — Surrogate mismatch (→ `ranking_conversion`).** A filter trained by a strictly proper scoring rule (BCE/PU) learns a globally calibrated posterior, Bayes-optimal for AUC and calibration; ranking each substrate's candidate pool by that posterior and taking top-k is recall@k-optimal only when pools are homogeneous. GRAIL's pools vary in size (17–150) and positive rate (`n_true` 1–18), so a pointwise-calibrated scorer can be recall@k-suboptimal even while a listwise, ranking-consistent surrogate dominates — supported by a minimal 2-substrate counterexample (`grail_metabolism/tests/test_prop1_counterexample.py`) in which the recall-superior reorder is verified *not* globally calibrated, so a proper-scoring objective rejects it. *Confirmation:* a listwise-InfoNCE reranker of similar capacity beats the pointwise filter as a ranker, **0.433 → 0.500 @15 (+0.067)**, 74% of the **Stage-2 oracle 0.677** — confirmed on a held-out Stage-2 run (`docs/benchmark/stage2_ranker_evidence.md`, Spike-3) `[PENDING: paired CI — currently 3-seed std (±0.015), not a paired bootstrap]`. *Guardrail:* this is a theorem about **objectives**, not a recall win — the reranker's **0.500 still loses to SyGMa (0.558)** and is reported only as a separate Stage-2 artifact, never as a headline number.
 
 **Proposition 2 — Propensity-PU identifiability (→ `selection_retention`).** Under PU annotation with an approximately constant labeling propensity (SCAR), a learner with constant unlabeled weighting recovers a propensity-distorted score whose dominant component is the marginal rule-firing rate `π(r)` — the frequency prior — so the prior is Bayes-competitive **by construction**, and the learned selector improves on it only if substrate-conditional prevalence variation exceeds estimation noise; the observed data-scaling saturation (table, row 4) indicates it does not at current scale. *Anchor:* learned-only **0.266** vs prior-only **0.410** (gen-only @15, Δ **−0.144**, 95% CI **[−0.196, −0.095]**, paired bootstrap, n=245; `results/prior_vs_learned.json`). *Falsifiable prediction:* reweighting the labeled loss by `1/ê(r)` (a SAR correction) should shrink the prior's edge — an **open test, not a promised fix**. *Guardrail:* the propensity model `e(r) ∝ π(r)` is an **unmeasured modeling assumption**, flagged as such — this is an explanatory model plus a refutable prediction, not proof that learning cannot win, and it is consistent with the deployed pipeline's prior-independence noted above.
 
@@ -517,8 +517,8 @@ single-n rerun is future work.** Within this table, GRAIL and SyGMa are re-score
 n=150 subset as the tier-2 methods so all 5 columns are paired on identical substrates for the
 statistics below; that is why the table's GRAIL/SyGMa cells differ from their full-test headline
 figures, restated as the honest-anchor ordering that runs through this paper: **GRAIL 0.330 macro
-< SyGMa 0.572 < MetaPredictor 0.585** (§6, §8–§9, `results/anchor_certification.json`; all macro
-tautomer-InChIKey). GRAIL is not competitive on recall in either scoring — the contribution here
+< SyGMa 0.572** (§6, §8–§9, `results/anchor_certification.json`) **< MetaPredictor 0.585 (n=150)**
+(`results/match_sensitivity_5method.json`; all macro tautomer-InChIKey). GRAIL is not competitive on recall in either scoring — the contribution here
 is the protocol, not a win.
 
 **Primary endpoint.** The pre-declared primary endpoint of this analysis is the **differential
