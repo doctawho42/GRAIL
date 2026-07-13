@@ -159,7 +159,7 @@ object; §4 attaches a mechanism to each factor.
 The waterfall figure **`docs/benchmark/factorization_waterfall.svg`** draws this on one common
 n=1170 population (tautomer-InChIKey, micro ratio-of-sums): `U (1.0) → coverage_bank (0.735) →
 coverage·selection = oracle recall (0.359) → deployed recall (0.261)`, with the **oracle line**
-marking the ceiling on the ranking bar and each factor annotated with its 95% CI. Bar-1→Bar-2 is the
+marking the ceiling on the ranking bar; the coverage bar carries a 95% CI whisker and all three factor CIs are listed in the accompanying table. Bar-1→Bar-2 is the
 selection loss; Bar-2→Bar-3 the ranking loss. The figure is labeled a decomposition, and never
 asserts equality with any macro number.
 

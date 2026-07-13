@@ -571,7 +571,9 @@ bound** throughout: because negatives are rule-applicable, non-annotated product
 confirmed non-metabolites (§3), an unannotated true metabolite is scored as a false positive, so
 every precision number in this paper understates the pipeline's true precision by an unknown,
 non-annotation-corrected amount — we lead with recall and `mean_output_size` for this reason and
-do not report precision as a headline metric. Third, the deployed headline (recall@15 = 0.261
+do not report precision as a headline metric.
+
+Third, the deployed headline (recall@15 = 0.261
 micro / 0.330 macro, §8–§9) is a **single checkpoint**, not a seed-averaged estimate; the
 honest-anchor certification (§9)
 bounds *evaluation* variance — resampling and discordance over a fixed model — not *training*
@@ -583,6 +585,7 @@ subset for which frozen third-party predictions exist, while GRAIL and SyGMa's h
 elsewhere in the paper are reported on the full **n≈1170** clean test split; within Table 3 itself
 GRAIL and SyGMa are re-scored on the matching n=150 subset so the five columns are paired on
 identical substrates, but a single-n, five-method rerun on the full test split remains future work.
+
 Fifth, the external-validity ceiling (§7) is measured on only **37** GLORYx parent substrates, so
 its 95% CI is wide by design ([0.531, 0.733]) and the composition-effect regression that partially
 explains the internal–external gap is fit on the same small external population — we frame it as
