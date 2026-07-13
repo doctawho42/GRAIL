@@ -289,7 +289,41 @@ not a seed average `[PENDING: multi-seed mean±std]`. Within that scope, the res
 > _[FIGURE: paired-Δ / McNemar — optional, post-draft]_
 
 ## 10. Results — Diagnosis: levers and three propositions
-> _[STUB — Task 8]_
+
+Each lever below attaches to exactly one factor of the §4 decomposition (annotated in the Factor
+column); the table is followed by three refutable Propositions that localise *why*, not merely
+*where*, recall is lost.
+
+| Lever | Factor | Finding | Evidence |
+|---|---|---|---|
+| **Learned vs. prior** *(top_k-limited rule-selection probe — not deployed recall)* | `selection_retention` | A SyGMa-style frequency prior significantly out-ranks the learned generator: gen-only recall@15 prior-only **0.410** vs learned-only **0.266** (Δ **−0.144**, 95% CI **[−0.196, −0.095]**, paired bootstrap, n=245); with the filter, 0.405 vs 0.300 (Δ −0.105, CI [−0.152, −0.058]). Adding the prior to the learned scorer lifts **+0.130** gen / **+0.099** filter (both significant); the filter significantly helps only the *weak learned* ordering (+0.034, CI [+0.011, +0.061]), not the strong prior (n.s.). | `results/prior_vs_learned.json` (245 test subs) |
+| **Multi-step (depth-2)** | `coverage_bank` | Breadth-capped depth-2 rule application lifts the ceiling by only **+0.012** (0.711→0.723) at **8.5×** candidate cost (194→1653 candidates/substrate) — not the dominant coverage lever. | `results/benchmark_report_depth2.json` (150 subs, beam 10) |
+| **Coverage (ΔMW gap)** | `coverage_bank` | **26.9%** of true metabolites are uncovered by the depth-1 bank (plain InChIKey; ~25% under tautomer). Misses are a diverse long tail — the top missing class (hydroxylation/oxidation) is only **6%** of uncovered. | `results/benchmark_report_gap.json` (500 subs) |
+| **Data scaling** | `selection_retention` | Recall saturates (2418→4787 substrates ≈ flat) — the plateau is not a data-quantity problem. | `results/full{2500,5000}_single.log` |
+| **Regioselectivity (SoM)** | `ranking_conversion` | A site-of-metabolism prior gives only a small lift — regioselective ranking is hard within the bank. | `results/train_som.log` |
+
+**Probe vs. deployed.** The learned-vs-prior row is a controlled, top_k-limited rule-selection
+**probe** (each mode picks its own top-30 rules, same downstream product loop and filter) — it is
+*not* the deployed recall. The deployed pipeline applies rules broadly rather than through a
+top_k selector and is measurably **prior-independent**: on an earlier 291-substrate evaluation,
+two checkpoints differing only in whether a trained prior buffer was present gave essentially
+identical recall (0.335 vs 0.334), so deployed recall (**0.330** macro / **0.261** micro, §8–§9)
+is coverage-limited, not prior-limited — the probe *reveals* the learned selector's weakness;
+deployment *masks* it by not depending on that selector's ranking. *Honesty note:* an earlier
+draft reported the opposite — "learned beats prior" — an artifact of a checkpoint whose prior
+buffer was un-persisted; that reversal is withdrawn and corrected here, caught by adversarial
+verification. Neither multi-step application nor any single rule-family addition moves coverage
+much (misses are a diverse long tail), and data scaling is flat — so the dominant, addressable
+loss remains `selection_retention` (§8: 0.489), the learned rule-selector performing worse than a
+trivial frequency prior in the probe. The three Propositions below explain *why*.
+
+**Proposition 1 — Surrogate mismatch (→ `ranking_conversion`).** A filter trained by a strictly proper scoring rule (BCE/PU) learns a globally calibrated posterior, Bayes-optimal for AUC and calibration; ranking each substrate's candidate pool by that posterior and taking top-k is recall@k-optimal only when pools are homogeneous. GRAIL's pools vary in size (17–150) and positive rate (`n_true` 1–18), so a pointwise-calibrated scorer can be recall@k-suboptimal even while a listwise, ranking-consistent surrogate dominates — supported by a minimal 2-substrate counterexample (`grail_metabolism/tests/test_prop1_counterexample.py`) in which the recall-superior reorder is verified *not* globally calibrated, so a proper-scoring objective rejects it. *Confirmation:* a listwise-InfoNCE reranker of similar capacity beats the pointwise filter as a ranker, **0.433 → 0.500 @15 (+0.067)**, 74% of the oracle **0.677** — confirmed on a held-out Stage-2 run (`docs/benchmark/stage2_ranker_evidence.md`, Spike-3) `[PENDING: paired CI — currently 3-seed std (±0.015), not a paired bootstrap]`. *Guardrail:* this is a theorem about **objectives**, not a recall win — the reranker's **0.500 still loses to SyGMa (0.558)** and is reported only as a separate Stage-2 artifact, never as a headline number.
+
+**Proposition 2 — Propensity-PU identifiability (→ `selection_retention`).** Under PU annotation with an approximately constant labeling propensity (SCAR), a learner with constant unlabeled weighting recovers a propensity-distorted score whose dominant component is the marginal rule-firing rate `π(r)` — the frequency prior — so the prior is Bayes-competitive **by construction**, and the learned selector improves on it only if substrate-conditional prevalence variation exceeds estimation noise; the observed data-scaling saturation (table, row 4) indicates it does not at current scale. *Anchor:* learned-only **0.266** vs prior-only **0.410** (gen-only @15, Δ **−0.144**, 95% CI **[−0.196, −0.095]**, paired bootstrap, n=245; `results/prior_vs_learned.json`). *Falsifiable prediction:* reweighting the labeled loss by `1/ê(r)` (a SAR correction) should shrink the prior's edge — an **open test, not a promised fix**. *Guardrail:* the propensity model `e(r) ∝ π(r)` is an **unmeasured modeling assumption**, flagged as such — this is an explanatory model plus a refutable prediction, not proof that learning cannot win, and it is consistent with the deployed pipeline's prior-independence noted above.
+
+**Proposition 3 — Paradigm limit (→ `coverage_bank`).** Single-step rule-based recall ≤ single-step `coverage_bank` < 1, because a non-vanishing fraction of references are multi-generation (e.g. oxidation → conjugation) and unreachable by any single rule application — an irreducible residual that no ranking improvement can recover. *Witnesses:* depth-2 rule application lifts the ceiling by only **+0.012** at **8.5×** candidate cost (table, row 2; `results/benchmark_report_depth2.json`); on the external GLORYx set the uncapped single-step ceiling is **0.633** (§7), whose references include single-step-unreachable multi-generation metabolites. *Guardrail:* the bound is **single-step-conditional** — it bounds the single-step paradigm, not the problem; multi-step and out-of-bank chemistry remain open coverage levers.
+
+*Source: `results/prior_vs_learned.json`, `results/benchmark_report_depth2.json`, `results/benchmark_report_gap.json`, `docs/benchmark/stage2_ranker_evidence.md`.*
 
 ## 11. Results — Match-sensitivity and cross-method comparison
 > _[STUB — Task 9]_
