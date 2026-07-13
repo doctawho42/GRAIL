@@ -15,7 +15,7 @@ leakage-audited, molecule-disjoint clean test split (1170 substrates), the rule 
 ceiling is **0.735** (tautomer-InChIKey, micro), but the deployed pipeline converts only 35.5% of
 that ceiling into realised recall@15 = **0.261** (micro) `[PENDING: multi-seed mean±std]`, a gap
 **dominated by a selection loss** (selection_retention = **0.489**) larger than the ranking loss.
-Stated up front: **GRAIL does not win on recall** — 0.330 macro recall@15, below SyGMa (0.572) and
+Stated up front: **GRAIL does not win on recall** — 0.330 macro recall@15 `[PENDING: multi-seed mean±std]`, below SyGMa (0.572) and
 MetaPredictor (0.585, on the n=150 tier-2 subset). We also introduce **TAME**, a tautomer-aware,
 leakage-audited matching and re-scoring protocol, and show with a pre-declared primary endpoint
 that match-protocol choice is a method-dependent confounder that can reverse method rankings
