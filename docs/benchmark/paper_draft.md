@@ -1,3 +1,5 @@
+> **⚠ SUPERSEDED (2026-07-13).** This is the pre-reframe "MetaBench / How You Match Decides Who Wins" draft. Its thesis, headline numbers (ceiling 0.718, GRAIL ~0.334/~0.40, two-factor split), and name are wrong-thesis and MUST NOT be built on. The current manuscript is `docs/benchmark/manuscript.md` (GRAIL-primary, ceiling 0.735, three-factor decomposition, TAME). Preserved for history only.
+
 # How You Match Decides Who Wins: A Standardized, Leakage-Audited Benchmark for Metabolite Structure Prediction
 
 *Working draft (NeurIPS Datasets & Benchmarks track). Sections marked [PENDING] await

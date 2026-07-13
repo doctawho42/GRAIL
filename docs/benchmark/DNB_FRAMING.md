@@ -1,3 +1,5 @@
+> **⚠ SUPERSEDED (2026-07-13).** Match-sensitivity-as-headline framing with a dated UPDATE-1..5 discovery narrative. The match-sensitivity analysis now lives as a supporting section in `docs/benchmark/manuscript.md` (§11). Preserved for history only.
+
 # GRAIL → NeurIPS D&B: Paper Framing (draft)
 
 **Status:** framing draft (2026-07-08), after the Stage-2 GFlowNet ablation returned a NULL.
