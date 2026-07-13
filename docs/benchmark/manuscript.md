@@ -96,7 +96,51 @@ factor:
 | `ranking_conversion` | the filter / listwise reranker, the oracle bound, Proposition 1 |
 
 ## 5. Methods — TAME evaluation protocol
-> _[STUB — Task 4]_
+
+We package the evaluation apparatus as **TAME** — the **T**automer-**A**ware
+**M**etabolite-structure **E**valuation protocol: a tautomer-InChIKey match quotient, a
+leakage-audited molecule-disjoint train/val/test split, and a frozen multi-method re-scoring
+harness. TAME is a *protocol + audited split + re-scoring harness*, not a leaderboard service —
+it exists so the numbers in §3–§4 and §6–§9 are apples-to-apples and regenerable from committed
+artifacts, not to rank community submissions.
+
+**Matching protocol.** The field has never agreed on what counts as a "match": GLORYx uses a
+stereo-blind InChIKey skeleton, MetaTrans uses Morgan-fingerprint Tanimoto=1, and LAGOM uses
+canonical SMILES equality. TAME exposes each as an explicit, named quotient rather than picking
+one silently: `canonical` (stereo-free canonical SMILES equality), `inchikey` (the
+literature-standard full InChIKey), `inchi_no_stereo` (the InChIKey skeleton block, stereo-blind,
+as GLORYx uses), `tanimoto1` (identical Morgan fingerprint, as MetaTrans uses), and
+`inchikey_tautomer` (tautomer-canonicalize both predicted and reference structures before taking
+the InChIKey) — **our recommended default**. Plain InChI only normalizes a *subset* of tautomers,
+so a rule-emitted tautomer of a reference routinely fails to match under plain `inchikey` even
+though it is the same chemical entity; tautomer-canonicalizing both sides first closes that gap
+and is the most defensible structure-identity criterion for a rule-driven generator. Unless
+stated otherwise, §3–§4 use `inchikey_tautomer`; §11 quantifies how much the method ranking
+depends on which of the five quotients is used.
+
+**Split and leakage audit.** All splits are molecule-disjoint: no substrate in test or val
+appears in train, and no test substrate appears in val. The clean triples are built and verified
+by `scripts/fix_splits.py --molecule-disjoint`, which canonicalizes SMILES, removes cross-split
+substrates, and checks zero substrate and zero positive-pair overlap, emitting its audit summary
+to `results/leakage_fix_report.json` when run. Trustworthiness is corroborated empirically, not
+merely asserted: recall@15 tracks closely between val and test (0.327 vs 0.330), inconsistent
+with test-set overfitting.
+
+**Metrics.** We lead with recall@k, co-reported with `mean_output_size` rather than precision
+alone, since precision is a pessimistic lower bound under incomplete annotation — an unannotated
+candidate is scored a false positive even though it may be a real, simply unrecorded, metabolite.
+Selection of models, presets, and hyperparameters happens exclusively on the validation split;
+the test split is touched once, for the final reported numbers.
+
+**Worked example.** The quotient dependence is not hypothetical. Consider a predicted set
+`{D-alanine, acetone (enol tautomer)}` scored against annotated references `{L-alanine, acetone
+(keto tautomer)}`. Under strict `inchikey`, both predictions miss: the alanine pair differs at a
+stereocenter, and the acetone pair differs only by a keto/enol tautomerization outside the subset
+plain InChI normalizes, so it also misses under `inchi_no_stereo`. Once both sides are
+tautomer-canonicalized under `inchikey_tautomer`, the acetone pair becomes a hit. The same fixed
+predictions can therefore score as a near-total miss or a hit purely by changing the match
+quotient, with no change to the underlying chemistry — the phenomenon §11 quantifies across
+methods and the shared external set.
 
 ## 6. Results — Rule-bank coverage ceiling
 > _[STUB — Task 5]_
