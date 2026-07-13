@@ -1,6 +1,6 @@
 # GRAIL: rule-based metabolite-structure prediction, a coverage×selection×ranking diagnosis, and the TAME evaluation protocol
 
-> **Draft status (2026-07-13):** first assembled full draft. Numbers sourced from `docs/GRAIL_FRAMING.md` / `results/*.json`. Compute-gated values are marked `[PENDING: ...]`; unverified citations are marked `[cite: ...]`. Venue target: JCIM / J. Cheminformatics.
+> **Draft status (2026-07-13):** first assembled full draft. Numbers sourced from `docs/GRAIL_FRAMING.md` / `results/*.json`. Compute-gated values are marked `[PENDING: ...]`. Comparator citations are Crossref-verified (2026-07-13; see `results/citations_verified.json`). Venue target: JCIM / J. Cheminformatics.
 
 ## Abstract
 
@@ -105,11 +105,12 @@ metabolites (30% within its own top-3). **GLORYx** (de Bruyn Kops et al. 2020, *
 doi:10.1021/acs.chemrestox.0c00224) pairs a site-of-metabolism classifier with reaction rules,
 reports 77% recall (AUC 0.79), and explicitly finds phase-2 (conjugation) ranking harder than
 phase-1 — a finding our own ΔMW long-tail analysis (§10) independently reproduces. **BioTransformer
-3.0** (Djoumbou-Feunang et al. 2019, *J Cheminform*) combines knowledge-based and machine-learned
-rules for broad-scope in-silico metabolism. On the learned side, **MetaTrans**
-`[cite: Litsa, Das, Kavraki 2020, Chem Sci; verify vol/DOI]` is an end-to-end transformer ensemble
-emitting an unranked SMILES-to-SMILES candidate set, and **MetaPredictor**
-`[cite: MetaPredictor — verify]` is a comparable transformer-ensemble baseline. GRAIL sits between
+3.0** (Djoumbou-Feunang et al. 2019, *J Cheminform*, doi:10.1186/s13321-018-0324-5) combines
+knowledge-based and machine-learned rules for broad-scope in-silico metabolism. On the learned
+side, **MetaTrans** (Litsa et al. 2020, *Chem Sci*, doi:10.1039/D0SC02639E) is an end-to-end
+transformer ensemble emitting an unranked SMILES-to-SMILES candidate set, and **MetaPredictor**
+(Zhu et al. 2024, *Brief Bioinform*, doi:10.1093/bib/bbae374) is a comparable deep-language-model
+baseline. GRAIL sits between
 these lineages — rule-grounded like SyGMa/GLORYx/BioTransformer, but with a learned rule-selection
 stage in place of a fixed probability table.
 
@@ -128,27 +129,30 @@ definition, audited train/test leakage, or asked whether the ranking is stable u
 choice; that triad is where we differ in protocol, not in the fact of comparison.
 
 The structure-matching protocol used throughout (§5, `inchikey_tautomer`) is grounded in prior
-standardization work, not invented from scratch. Dhaked et al. 2019
-`[cite: Dhaked 2019 — verify DOI]` catalog dozens of tautomer transforms and show standard InChI
-normalizes only a subset of them, so plain-InChI matching systematically misses keto–enol and
+standardization work, not invented from scratch. Dhaked et al. 2020
+(*J Chem Inf Model*, doi:10.1021/acs.jcim.9b01080) catalog dozens of tautomer transforms and show
+standard InChI normalizes only a subset of them, so plain-InChI matching systematically misses keto–enol and
 carbon-shift tautomer pairs — the same failure mode our merge check and rule-bank ceiling gap (§6)
-surface directly. Hähnke et al. 2018 (*J Cheminform*, PubChem standardization) report that 60% of
-PubChem structures differ from their canonical InChI form, mainly due to tautomer choice. Mansouri
-et al. 2024 (*J Cheminform*, QSAR-ready standardization) describe a comparable
+surface directly. Hähnke et al. 2018 (*J Cheminform*, PubChem standardization, doi:10.1186/s13321-018-0293-8) report
+that 60% of PubChem structures differ from their canonical InChI form, mainly due to tautomer
+choice. Mansouri et al. 2024 (*J Cheminform*, QSAR-ready standardization,
+doi:10.1186/s13321-024-00814-3) describe a comparable
 desalt/destereo/tautomer-canonicalization pipeline, precedent for the `standardize_mol` path used
 here. Tautomer standardization is thus established *preprocessing*; what is new is adopting it as
 the *matching* protocol and quantifying how far it moves the leaderboard (§11's interaction
 confidence interval).
 
-Leakage-aware splitting is likewise not new in general — **DataSAIL**
-`[cite: DataSAIL — verify DOI]` splits datasets to minimize cross-split similarity, benchmarked
+Leakage-aware splitting is likewise not new in general — **DataSAIL** (Joeres et al. 2025,
+*Nat Commun*, doi:10.1038/s41467-025-58606-8) splits datasets to minimize cross-split similarity,
+benchmarked
 against DeepChem, LoHi, and GraphPart on MoleculeNet-style tasks. We contribute not a new
 splitting algorithm but a metabolite-specific molecule-disjoint audit — substrate–metabolite
 identity overlap is the leak that matters here — backed by a machine-checkable leakage report and
 validation-versus-test agreement (§5). And that evaluation choices reorder leaderboards is
-established outside chemistry: Mishra et al. 2021 show difficulty-weighting reorders NLP/ML
-leaderboards so "top models may not be best," and Rodriguez et al. 2021 show individual evaluation
-examples carry unequal ranking information. The domain-specific instantiation is ours: in
+established outside chemistry: Mishra et al. 2021 (*AAAI*, doi:10.1609/aaai.v35i15.17599) show
+difficulty-weighting reorders NLP/ML leaderboards so "top models may not be best," and Rodriguez
+et al. 2021 (*ACL*, doi:10.18653/v1/2021.acl-long.346) show individual evaluation examples carry
+unequal ranking information. The domain-specific instantiation is ours: in
 metabolite *structure* prediction, the previously-unexamined, load-bearing choice is how a
 predicted structure is matched to its reference (canonical SMILES, InChIKey, no-stereo InChI,
 Tanimoto = 1, or tautomer-aware InChIKey), and §11 shows this single choice reorders the
@@ -163,10 +167,7 @@ leakage-audited molecule-disjoint split, a match-sensitivity ("rank-flip") analy
 leaderboard is not match-invariant, and — via GRAIL run through the identical harness as one
 honest, interpretable row — a coverage × selection × ranking decomposition of where a rule-based
 paradigm's headroom is lost. GRAIL is offered throughout as a diagnosed instrument, not a
-recall-superiority claim. One benchmark reference flagged in earlier planning notes,
-`[resolve: "Gao 2026"]`, could not be located in this literature pass (the nearest 2026 candidate,
-Giné et al., addresses MS/MS spectral annotation, a different task) and is left unresolved pending
-confirmation of which source was intended.
+recall-superiority claim.
 
 ## 3. Methods — GRAIL architecture
 
@@ -682,7 +683,7 @@ mostly compute-gated or cheap post-draft edits — not open scientific limitatio
 - Run MetaTrans on the 37-substrate GLORYx external set (§7), to extend the external-validity
   ceiling comparison beyond GRAIL and SyGMa.
 - Regenerate `rankflip.svg` and `scaling_curve.svg` on the current committed numbers.
-- Verify all comparator DOIs (§2) and resolve the unlocated "Gao 2026" reference.
+- ~~Verify all comparator DOIs and resolve "Gao 2026"~~ — **done** (Crossref-verified 2026-07-13, `results/citations_verified.json`; MetaTrans/MetaPredictor/BioTransformer/Dhaked/DataSAIL DOIs supplied or corrected, "Gao 2026" confirmed nonexistent and dropped).
 - Build Figure 1 (pipeline schematic) and the internal-vs-external, paired-Δ/McNemar, and
   ΔMW-long-tail figures flagged as optional/post-draft in §7, §9, and §11.
 - A paired confidence interval for Proposition 1's listwise-reranker confirmation (currently a
