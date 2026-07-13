@@ -145,10 +145,74 @@ near-total miss or a full hit purely by changing the match quotient, with no cha
 underlying chemistry — the phenomenon §11 quantifies across methods and the shared external set.
 
 ## 6. Results — Rule-bank coverage ceiling
-> _[STUB — Task 5]_
+
+The rule bank's **recall ceiling** — the best achievable recall if rule selection and ranking
+were both perfect, i.e. the full-bank depth-1 `apply_rules` pool matched against the annotated
+references — on the full clean molecule-disjoint test split (1170 substrates, 2597 true pairs) is
+**0.718 (plain InChIKey) / 0.735 (tautomer-InChIKey)**, recovering **1865 / 1910 of 2597** true
+pairs. This is far above the best learned end-to-end systems on this benchmark (recall@15 roughly
+0.47–0.585) and comparable to other rule-based systems evaluated on their own sets. **Coverage is
+high; the bank is powerful.** The practical consequence is that the GRAIL task is limited by
+*coverage-conversion* — a dominant selection loss followed by a ranking loss, quantified in §8 —
+not by rule expressiveness.
+
+Both ceiling figures are reported under the **same tautomer-InChIKey protocol used for GRAIL and
+SyGMa** throughout this paper (no mixed match modes across methods). The plain-InChIKey figure,
+0.718, exactly reproduces the previously reported ceiling, which validates that this run of
+`scripts/run_benchmark.py` is consistent with earlier measurements. The same run co-measures the
+**SyGMa** baseline on the identical split under both protocols: recall@15 **0.558 plain / 0.572
+tautomer** (n=1168 substrates with SyGMa-scoreable output) — so the rule-bank ceiling, SyGMa, and
+GRAIL are now all reported under one shared tautomer-InChIKey standard.[^tautomer-audit]
+
+| system | protocol | recall | n |
+|---|---|---|---|
+| **rule-bank ceiling** (full bank, depth-1) | tautomer-InChIKey | **0.735** (1910/2597) | 1170 |
+| rule-bank ceiling (full bank, depth-1) | plain InChIKey | 0.718 (1865/2597) | 1170 |
+| SyGMa (recall@15) | tautomer-InChIKey | 0.572 | 1168 |
+| SyGMa (recall@15) | plain InChIKey | 0.558 | 1168 |
+| learned end-to-end systems (recall@15, literature) | mixed / method-specific | ~0.47–0.585 | — |
+
+*Source: `results/benchmark_report.json` / `scripts/run_benchmark.py`.*
+
+[^tautomer-audit]: The tautomer match is computed via a heavy-atom-formula prefilter for
+tractability; an audit against naive (unfiltered) tautomer keying on 50 substrates found the
+prefilter sound — mismatch = 0.
 
 ## 7. Results — External validity of the ceiling
-> _[STUB — Task 5]_
+
+The internal ceiling `coverage_bank = 0.735` (the **micro**, pooled ratio-of-sums estimate `Σhit /
+Σtrue` — not a per-substrate mean; within-substrate pairs are dependent so a mean-of-ratios would
+misrepresent the uncertainty) carries a cluster-bootstrap 95% CI of **[0.709, 0.762]** (resampling
+substrates, 10,000 resamples). Recomputed apples-to-apples on an **external** set — the 37 GLORYx
+parent substrates, one uncapped full-bank depth-1 `apply_rules` pass, no pool cap, the same
+tautomer match — the external ceiling is **0.633** (95% CI **[0.531, 0.733]**, n=37, wide by
+design at this sample size). This is far above the previously committed figure of **0.3715**,
+which is **pool-capped** — a generator-budget artifact inherited from `gloryx_oracle.json` — and
+must **never** be read as "the external ceiling."
+
+Internal (0.735) and external (0.633) both sit in the **micro** frame. A separate question is
+whether the internal-external gap is compositional: GLORYx parents tend to be larger,
+more-conjugated drugs than the internal test set, and the ΔMW long tail noted in §4 suggests
+coverage should degrade with molecular complexity. One OLS regression of **per-substrate**
+coverage on molecular descriptors (molecular weight, ring count, aromatic-atom count, heteroatom
+count, a conjugation-site count, and `n_true`) fit across both populations predicts **macro**
+(per-substrate-mean) coverages of **~0.79** internal and **~0.74** external, in-sample — the macro
+frame, distinct from the micro ceilings quoted above. Note honestly that this ~0.74 in-sample
+external prediction sits *above* the measured external macro coverage of 0.697, so the in-sample
+fit alone overstates transferability. Holding the external points fully out of the fit
+(fit-internal-only → predict-external) instead lands at **0.738 out-of-sample**, recovering
+**~56%** of the internal→external macro-coverage gap
+(`regression.predicted_external_mean_oos = 0.738`, `regression.gap_recovery_frac = 0.565`). This
+out-of-sample number, not the in-sample one, is the transferable claim.
+
+We frame this as a **suggestive partial composition effect at n=37** — consistent with, but not
+proof of, molecular composition driving part of the internal-external coverage gap — and
+explicitly *not* a fitted or transferable law, and *not* a defect in the rule bank or the matching
+protocol.
+
+> _[FIGURE: internal-vs-external coverage scatter — optional, post-draft]_
+
+*Source: `results/ceiling_external_validity.json`.*
 
 ## 8. Results — Recall decomposition
 > _[STUB — Task 6]_
