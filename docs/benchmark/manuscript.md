@@ -526,6 +526,28 @@ figures, restated as the honest-anchor ordering that runs through this paper: **
 (`results/match_sensitivity_5method.json`; all macro tautomer-InChIKey). GRAIL is not competitive on recall in either scoring — the contribution here
 is the protocol, not a win.
 
+**Budget-matched view.** recall@15 is not a budget-fair comparison: SyGMa reaches 0.554 by emitting
+~74 predictions per substrate, whereas GRAIL reaches 0.365 at ~8.7. Normalising by output —
+precision, recall per prediction — reorders the board: SyGMa's precision is **0.029**, roughly 4×
+below the low-output methods (GRAIL **0.109**, BioTransformer 0.127, MetaTrans 0.122, MetaPredictor
+0.116). Precision is a pessimistic lower bound under incomplete annotation (§Methods), but the ~7×
+output-volume gap it reflects is real. At a matched small budget (recall@5) the recall spread also
+compresses (SyGMa 0.465 ≈ MetaPredictor 0.470; GRAIL 0.321). This corroborates the independent
+SyGMa-overproduction finding of Boyce et al. 2022 (§2): SyGMa's coverage is bought with a large
+prediction volume, which the budget-matched view controls for.
+
+**Table 4.** Budget-matched leaderboard, tautomer-InChIKey (`results/budget_matched_leaderboard.json`):
+recall at matched cut-offs, precision (recall per prediction), and mean output size. Same populations
+as Table 3 — GRAIL and SyGMa on n≈1170, the tier-2 methods on the n=150 shared subset.
+
+| method | recall@5 | recall@10 | recall@15 | precision | mean_output |
+|---|---|---|---|---|---|
+| **GRAIL** | 0.321 | 0.356 | 0.365 | 0.109 | 8.7 |
+| SyGMa | 0.465 | 0.533 | 0.554 | 0.029 | 74.2 |
+| BioTransformer | 0.315 | 0.396 | 0.444 | 0.127 | 10.8 |
+| MetaPredictor | 0.470 | 0.575 | 0.585 | 0.116 | 11.2 |
+| MetaTrans | 0.424 | 0.533 | 0.561 | 0.122 | 12.7 |
+
 **Primary endpoint.** The pre-declared primary endpoint of this analysis is the **differential
 match-protocol sensitivity (interaction)** between GRAIL and BioTransformer: how much *more*
 BioTransformer gains, moving from canonical to tautomer-InChIKey matching, than GRAIL gains over
@@ -709,8 +731,9 @@ mostly compute-gated or cheap post-draft edits — not open scientific limitatio
   (§13's `[PENDING]` items)~~ — **done** (`artifacts/tier2/*_preds.json`,
   `artifacts/full5000_single/predictions/test_predictions.csv`, and
   `results/leakage_fix_report.json` all committed).
-- A budget-matched leaderboard view, controlling for `mean_output_size` (SyGMa's 74.15
-  predictions/substrate vs 8.65–12.71 for the other four methods, §11).
+- ~~A budget-matched leaderboard view, controlling for `mean_output_size`~~ — **done** (Table 4,
+  §11: recall@{5,10,15} + precision + output size; SyGMa's 0.029 precision vs GRAIL's 0.109 at ~7×
+  the output volume; `results/budget_matched_leaderboard.json`).
 - A paired confidence interval for the MetaTrans↔SyGMa rank-flip (§11), currently reported as a
   point estimate only.
 - Run MetaTrans on the 37-substrate GLORYx external set (§7), to extend the external-validity

@@ -1,0 +1,42 @@
+{
+  "protocol": "inchikey_tautomer",
+  "n_substrates_note": "GRAIL & SyGMa on n\u22481170; tier-2 (BioTransformer, MetaPredictor, MetaTrans) on the n=150 shared subset.",
+  "by_method": {
+    "GRAIL": {
+      "recall@5": 0.321,
+      "recall@10": 0.356,
+      "recall@15": 0.365,
+      "precision": 0.109,
+      "mean_output": 8.65
+    },
+    "SyGMa": {
+      "recall@5": 0.465,
+      "recall@10": 0.533,
+      "recall@15": 0.554,
+      "precision": 0.029,
+      "mean_output": 74.15
+    },
+    "BioTransformer": {
+      "recall@5": 0.315,
+      "recall@10": 0.396,
+      "recall@15": 0.444,
+      "precision": 0.127,
+      "mean_output": 10.77
+    },
+    "MetaPredictor": {
+      "recall@5": 0.47,
+      "recall@10": 0.575,
+      "recall@15": 0.585,
+      "precision": 0.116,
+      "mean_output": 11.15
+    },
+    "MetaTrans": {
+      "recall@5": 0.424,
+      "recall@10": 0.533,
+      "recall@15": 0.561,
+      "precision": 0.122,
+      "mean_output": 12.71
+    }
+  },
+  "reading": "recall@15 is not budget-fair: SyGMa's 0.554 is emitted over ~74 predictions (precision 0.029), ~7x GRAIL's ~8.7 (precision 0.109). At recall@5 (matched small budget) the recall spread narrows. Precision (recall per prediction) reorders the board toward the low-output methods."
+}
