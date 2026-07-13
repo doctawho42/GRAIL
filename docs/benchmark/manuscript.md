@@ -215,7 +215,56 @@ protocol.
 *Source: `results/ceiling_external_validity.json`.*
 
 ## 8. Results — Recall decomposition
-> _[STUB — Task 6]_
+
+We now populate the §4 identity `recall@k = coverage_bank · selection_retention ·
+ranking_conversion` with measured values, on the common clean molecule-disjoint test split (n=1170
+substrates, tautomer-InChIKey, k=15; pooled/micro ratio-of-sums; 10,000-resample substrate
+block-bootstrap; `results/recall_factorization.json`). The deployed pipeline realises **recall@15
+= 0.261** `[PENDING: multi-seed mean±std over ≥3 seeds]` — a single deployed checkpoint, not yet a
+multi-seed estimate.
+
+| factor | value | 95% CI | reading |
+|---|---|---|---|
+| `coverage_bank` (C_full/U) | **0.735** | [0.709, 0.762] | equals the §6 rule-bank ceiling |
+| `selection_retention` (C_bud/C_full) | **0.489** | [0.458, 0.520] | **the dominant loss** |
+| `ranking_conversion` (H/C_bud) | **0.726** | [0.687, 0.765] | top-k ordering of the retained pool |
+| product = micro recall@15 | **0.261** | — | 0.735 · 0.489 · 0.726 |
+
+The **oracle** recall — the deployed candidate pool ranked perfectly (`ranking_conversion = 1`) — is
+`C_bud/U =` **0.359** (micro). The single largest leak in the pipeline is
+**`selection_retention = 0.489`**: fewer than half of the metabolites the full rule bank could in
+principle recover survive into the deployed, budget-limited candidate pool. That is a **selection**
+failure — the generator's rule choice plus the generation budget — and it is upstream of, and
+larger than, the ranking loss. The decomposition's main use is exactly this localisation: it points
+at *which* stage to fix, not at ranking alone.
+
+Restated as a conversion rate, the deployed pipeline turns the **0.735** rule-bank ceiling into
+**0.261** realised recall@15, a **35.5% conversion** (0.261 / 0.735). Because conversion is the
+product of the last two factors, `selection_retention × ranking_conversion = 0.489 × 0.726`, this
+35.5% is not one ranking failure but **two losses in series**, with selection (0.489) the larger of
+the two and ranking (0.726) a smaller second cut on top of it.
+
+**Figure 2** draws this as a waterfall on the same n=1170 population:
+
+![Recall decomposition waterfall](factorization_waterfall.svg)
+
+**Figure 2.** Recall decomposition waterfall, one common n=1170 population (tautomer-InChIKey,
+micro ratio-of-sums): `U (1.0) → coverage_bank (0.735) → coverage·selection = oracle recall (0.359)
+→ deployed recall (0.261)`, with the oracle line marking the ceiling on the ranking bar and each
+factor annotated with its 95% CI. Bar-1→Bar-2 is the selection loss; Bar-2→Bar-3 the ranking loss.
+
+Throughout, cross-method recall@15 is the per-substrate mean (macro): GRAIL **0.330**, SyGMa
+**0.572**; the decomposition uses the pooled (micro) frame — the only frame in which the three
+factors multiply exactly to the realised recall and `coverage_bank` equals the 0.735 ceiling — in
+which deployed recall is **0.261**.
+
+As established in §4, this is a **decomposition**, not a theorem: the identity telescopes and
+closes on any numbers, so its exact cancellation is never offered as evidence for anything beyond
+bookkeeping. Its only role here is to localise the loss to `selection_retention`, which motivates
+the §10 diagnostics (the learned-vs-prior rule-selection probe and data-scaling saturation) and
+Proposition 2.
+
+*Source: `results/recall_factorization.json`.*
 
 ## 9. Results — Honest-anchor certification
 > _[STUB — Task 7]_
