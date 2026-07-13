@@ -267,7 +267,26 @@ Proposition 2.
 *Source: `results/recall_factorization.json`.*
 
 ## 9. Results — Honest-anchor certification
-> _[STUB — Task 7]_
+
+GRAIL's loss to SyGMa (§8: deployed **0.330** macro vs SyGMa **0.572**) is not a sampling artifact
+of which substrates happened to be scored. On the common substrate set shared by both methods
+(n=1168, tautomer-InChIKey; `results/anchor_certification.json`), the paired per-substrate
+difference `recall_GRAIL − recall_SyGMa` is **−0.242**, 95% CI **[−0.271, −0.212]** — wholly below
+zero — computed by a 10,000-resample substrate block-bootstrap. An independent, distribution-free
+check on the binary any-hit@15 outcome, the exact McNemar test, agrees: **b = 87** substrates hit
+by GRAIL but missed by SyGMa vs **c = 379** hit by SyGMa but missed by GRAIL, **p ≈ 1.7×10⁻⁴⁴**.
+The common-subset ceiling (**0.736**) matches the full-1170 ceiling (**0.735**), so restricting to
+the common set does not bias the comparison — it is representative of the full population.
+
+Scope matters here. The paired bootstrap covers continuous recall; McNemar covers only the binary
+any-hit outcome. Together they certify **evaluation** variance — the uncertainty from scoring one
+fixed, already-trained checkpoint over resampled/discordant substrates — not **training** variance
+across independently seeded runs. The split itself is not overfit (val ≈ test), but the variance
+certified here is evaluation variance only: the deployed **0.330** headline is a single checkpoint,
+not a seed average `[PENDING: multi-seed mean±std]`. Within that scope, the result is unambiguous:
+**SyGMa > GRAIL is significant — the anchor holds.**
+
+> _[FIGURE: paired-Δ / McNemar — optional, post-draft]_
 
 ## 10. Results — Diagnosis: levers and three propositions
 > _[STUB — Task 8]_
