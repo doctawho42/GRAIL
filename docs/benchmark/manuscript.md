@@ -11,11 +11,11 @@ right rule, and whether it *ranks* the resulting candidate into a bounded output
 under whichever structural-match convention a paper adopts. We present **GRAIL**, a three-stage
 rule-based-plus-learned predictor (a curated 7,581-SMIRKS bank, a learned rule selector, and a
 PU-trained pair filter), and use it to decompose recall into coverage × selection × ranking. On a
-leakage-audited, molecule-disjoint clean test split (1170 substrates), the rule bank's coverage
+leakage-audited, substrate-disjoint clean test split (1170 substrates), the rule bank's coverage
 ceiling is **0.735** (tautomer-InChIKey, micro), but the deployed pipeline converts only 35.5% of
-that ceiling into realised recall@15 = **0.261** (micro) `[PENDING: multi-seed mean±std]`, a gap
+that ceiling into realised recall@15 = **0.261** (micro) (3-seed 0.269 ± 0.006), a gap
 **dominated by a selection loss** (selection_retention = **0.489**) larger than the ranking loss.
-Stated up front: **GRAIL does not win on recall** — 0.330 macro recall@15 `[PENDING: multi-seed mean±std]`, below SyGMa (0.572) and
+Stated up front: **GRAIL does not win on recall** — 0.330 macro recall@15 (3-seed 0.344 ± 0.010; §9), below SyGMa (0.572) and
 MetaPredictor (0.585, on the n=150 tier-2 subset). We also introduce **TAME**, a tautomer-aware,
 leakage-audited matching and re-scoring protocol, and show with a pre-declared primary endpoint
 that match-protocol choice is a method-dependent confounder that can reverse method rankings
@@ -46,8 +46,8 @@ tautomer-aware canonicalization — so leaderboards built under different match 
 directly comparable, even when scoring identical chemistry.
 
 We state our headline result up front, because it runs against the grain of most papers in this
-space: **GRAIL does not win on recall.** On a leakage-audited, molecule-disjoint clean test split,
-GRAIL reaches 0.330 macro recall@15 (0.261 pooled/micro) `[PENDING: multi-seed mean±std]` — below
+space: **GRAIL does not win on recall.** On a leakage-audited, substrate-disjoint clean test split,
+GRAIL reaches 0.330 macro recall@15 (0.261 pooled/micro) (3-seed retraining: macro 0.344 ± 0.010, micro 0.269 ± 0.006; §9) — below
 both SyGMa (0.572) and MetaPredictor (0.585, on the n=150 tier-2 subset on which all five compared
 methods are jointly scored). §9 certifies this independently with a paired bootstrap and an exact
 McNemar test, both wholly significant against GRAIL. GRAIL enters its own comparison as one honest
@@ -146,7 +146,7 @@ Leakage-aware splitting is likewise not new in general — **DataSAIL** (Joeres 
 *Nat Commun*, doi:10.1038/s41467-025-58606-8) splits datasets to minimize cross-split similarity,
 benchmarked
 against DeepChem, LoHi, and GraphPart on MoleculeNet-style tasks. We contribute not a new
-splitting algorithm but a metabolite-specific molecule-disjoint audit — substrate–metabolite
+splitting algorithm but a metabolite-specific leakage audit — substrate–metabolite
 identity overlap is the leak that matters here — backed by a machine-checkable leakage report and
 validation-versus-test agreement (§5). And that evaluation choices reorder leaderboards is
 established outside chemistry: Mishra et al. 2021 (*AAAI*, doi:10.1609/aaai.v35i15.17599) show
@@ -163,7 +163,7 @@ metabolite-structure predictors (Scholz 2023; Boyce 2022), not the first to stan
 structures for comparison (PubChem; QSAR-ready pipelines), not the first to build a leakage-aware
 split (DataSAIL). TAME's contribution is their first **joint instantiation** for metabolite
 structure prediction specifically: a standardized, tautomer-aware matching protocol, a
-leakage-audited molecule-disjoint split, a match-sensitivity ("rank-flip") analysis showing the
+leakage-audited substrate-disjoint split, a match-sensitivity ("rank-flip") analysis showing the
 leaderboard is not match-invariant, and — via GRAIL run through the identical harness as one
 honest, interpretable row — a coverage × selection × ranking decomposition of where a rule-based
 paradigm's headroom is lost. GRAIL is offered throughout as a diagnosed instrument, not a
@@ -257,7 +257,7 @@ factor:
 
 We package the evaluation apparatus as **TAME** — the **T**automer-**A**ware
 **M**etabolite-structure **E**valuation protocol: a tautomer-InChIKey match quotient, a
-leakage-audited molecule-disjoint train/val/test split, and a frozen multi-method re-scoring
+leakage-audited substrate-disjoint train/val/test split, and a frozen multi-method re-scoring
 harness. TAME is a *protocol + audited split + re-scoring harness*, not a leaderboard service —
 it exists so the numbers in §6–§9 are apples-to-apples and regenerable from committed
 artifacts, not to rank community submissions.
@@ -276,13 +276,13 @@ and is the most defensible structure-identity criterion for a rule-driven genera
 stated otherwise, all results outside §11 use `inchikey_tautomer`; §11 quantifies how much the
 method ranking depends on which of the five quotients is used.
 
-**Split and leakage audit.** All splits are molecule-disjoint: no substrate in test or val
-appears in train, and no test substrate appears in val. The clean triples are built and verified
-by `scripts/fix_splits.py --molecule-disjoint`, which canonicalizes SMILES, removes cross-split
-substrates, and checks zero substrate and zero positive-pair overlap, emitting its audit summary
-to `results/leakage_fix_report.json` when run. Trustworthiness is corroborated empirically, not
-merely asserted: recall@15 tracks closely between val and test (0.327 vs 0.330), inconsistent
-with test-set overfitting.
+**Split and leakage audit.** All splits are substrate-disjoint: no substrate in test or val
+appears in train, and no test substrate appears in val. The clean triples are built by
+`scripts/fix_splits.py` and audited (read-only) by `scripts/audit_leakage.py`, which canonicalizes
+SMILES and verifies zero substrate and zero positive-pair overlap across every split pair, emitting
+its audit summary to `results/leakage_fix_report.json` when run. Trustworthiness is corroborated
+empirically, not merely asserted: recall@15 tracks closely between val and test (0.327 vs 0.330),
+inconsistent with test-set overfitting.
 
 **Metrics.** We lead with recall@k, co-reported with `mean_output_size` rather than precision
 alone, since precision is a pessimistic lower bound under incomplete annotation — an unannotated
@@ -306,7 +306,7 @@ underlying chemistry — the phenomenon §11 quantifies across methods and the s
 
 The rule bank's **recall ceiling** — the best achievable recall if rule selection and ranking
 were both perfect, i.e. the full-bank depth-1 `apply_rules` pool matched against the annotated
-references — on the full clean molecule-disjoint test split (1170 substrates, 2597 true pairs) is
+references — on the full clean substrate-disjoint test split (1170 substrates, 2597 true pairs) is
 **0.718 (plain InChIKey) / 0.735 (tautomer-InChIKey)**, recovering **1865 / 1910 of 2597** true
 pairs. This is far above the best learned end-to-end systems on this benchmark (recall@15 roughly
 0.47–0.585) and comparable to other rule-based systems evaluated on their own sets. **Coverage is
@@ -375,10 +375,10 @@ protocol.
 ## 8. Results — Recall decomposition
 
 We now populate the §4 identity `recall@k = coverage_bank · selection_retention ·
-ranking_conversion` with measured values, on the common clean molecule-disjoint test split (n=1170
+ranking_conversion` with measured values, on the common clean substrate-disjoint test split (n=1170
 substrates, tautomer-InChIKey, k=15; pooled/micro ratio-of-sums; 10,000-resample substrate
 block-bootstrap; `results/recall_factorization.json`). The deployed pipeline realises **recall@15
-= 0.261** `[PENDING: multi-seed mean±std over ≥3 seeds]` — a single deployed checkpoint, not yet a
+= 0.261** (3-seed micro 0.269 ± 0.006; §9) — a single deployed checkpoint, not itself the
 multi-seed estimate.
 
 | factor | value | 95% CI | reading |
@@ -440,8 +440,12 @@ Scope matters here. The paired bootstrap covers continuous recall; McNemar cover
 any-hit outcome. Together they certify **evaluation** variance — the uncertainty from scoring one
 fixed, already-trained checkpoint over resampled/discordant substrates — not **training** variance
 across independently seeded runs. The split itself is not overfit (val ≈ test), but the variance
-certified here is evaluation variance only: the deployed **0.330** headline is a single checkpoint,
-not a seed average `[PENDING: multi-seed mean±std]`. Within that scope, the result is unambiguous:
+certified here is evaluation variance only: the deployed checkpoint's 0.330 macro / 0.261 micro is
+a single training run; retraining the full generator+filter pipeline under three seeds gives macro
+recall@15 = 0.344 ± 0.010 and micro = 0.269 ± 0.006 (mean ± s.d.;
+`results/multiseed_headline.json`), so the reported recall is not an artifact of one training
+seed — the analyzed checkpoint sits at the conservative low end of the seed distribution. Within
+that scope, the result is unambiguous:
 **SyGMa > GRAIL is significant — the anchor holds.**
 
 > _[FIGURE: paired-Δ / McNemar — optional, post-draft]_
@@ -578,8 +582,8 @@ Third, the deployed headline (recall@15 = 0.261
 micro / 0.330 macro, §8–§9) is a **single checkpoint**, not a seed-averaged estimate; the
 honest-anchor certification (§9)
 bounds *evaluation* variance — resampling and discordance over a fixed model — not *training*
-variance across independently seeded runs, and a multi-seed mean±std over the deployed pipeline
-has not yet been run `[PENDING: run_multiseed.py, ≥3 seeds]`. Fourth, the five-method,
+variance across independently seeded runs, and a three-seed retraining confirms the headline is
+seed-stable (macro 0.344 ± 0.010, micro 0.269 ± 0.006; §9). Fourth, the five-method,
 five-protocol match-sensitivity comparison (§11, Table 3) mixes sample sizes: the three tier-2
 comparators (BioTransformer, MetaPredictor, MetaTrans) are scored only on the **n=150** shared
 subset for which frozen third-party predictions exist, while GRAIL and SyGMa's headline numbers
@@ -602,19 +606,26 @@ problem in general.
 
 ## 13. Data & Code Availability
 
-All splits used in this paper are **molecule-disjoint**: no substrate in val or test appears in
-train, and no test substrate appears in val. The clean triples are built and audited by
-`scripts/fix_splits.py --molecule-disjoint`, which canonicalizes SMILES, removes cross-split
-substrates, verifies zero substrate and zero positive-pair overlap, and emits its audit summary to
-`results/leakage_fix_report.json` when run `[PENDING: commit leakage_fix_report.json]`.
+All splits used in this paper are **substrate-disjoint**: no substrate in val or test appears in
+train, and no test substrate appears in val. The clean triples are built by `scripts/fix_splits.py`
+and audited (read-only) by `scripts/audit_leakage.py`, which canonicalizes SMILES and verifies zero
+substrate and zero positive-pair overlap across every split pair, emitting its audit summary to
+`results/leakage_fix_report.json`.
+
+The splits are substrate-disjoint, but molecules are not unique to one split: **115 of 1198** test
+substrates (~10%) recur as a *training metabolite* (238 of the 1170 evaluated test substrates
+appear as some training molecule), because metabolites are shared across substrates. This does
+**not** inflate recall — on the **932** test substrates with zero training-structure exposure,
+macro recall@15 = **0.338** / micro **0.289**, at or above the full-set **0.330 / 0.261**; the
+leaked substrates are in fact harder (macro **0.296**). Audit: `results/leakage_fix_report.json`,
+`scripts/audit_leakage.py`, `scripts/leak_impact.py`.
 
 The **frozen per-substrate, 5-method × 5-protocol prediction set** underlying §11's
 match-sensitivity analysis is released so those numbers re-score without re-running any predictor:
 the three external tier-2 tools' frozen predictions live at `artifacts/tier2/biotransformer_preds.json`,
 `artifacts/tier2/metapredictor_preds.json`, and `artifacts/tier2/metatrans_preds.json`; GRAIL's
 deployed per-substrate ranking is at `artifacts/full5000_single/predictions/test_predictions.csv`;
-SyGMa is re-derivable on demand (not shipped as a frozen JSON) via `scripts/run_benchmark.py`
-`[PENDING: commit frozen tier-2 preds]`.
+SyGMa is re-derivable on demand (not shipped as a frozen JSON) via `scripts/run_benchmark.py`.
 
 The **re-scoring harness** is `scripts/run_match_sensitivity.py`, which re-scores the frozen
 predictions under all five match quotients (canonical, InChIKey, InChI-without-stereo, Tanimoto=1,
@@ -635,8 +646,7 @@ DrugBank's license does not permit unrestricted redistribution of the raw datase
 release code, splits, checkpoints, and derived prediction/evaluation artifacts, not the raw
 DrugBank source records. Third-party frozen predictions (BioTransformer, MetaPredictor, MetaTrans)
 were generated by us running each tool's own code/weights on DrugBank-licensed substrates and are
-released under the same constraint. `[PENDING: commit frozen tier-2 predictions and
-leakage_fix_report.json to this tree]`.
+released under the same constraint.
 
 ## 14. Conclusion
 
@@ -675,17 +685,20 @@ Tracked here rather than folded into §12 because these are concrete, actionable
 mostly compute-gated or cheap post-draft edits — not open scientific limitations.
 
 **COMPUTE** (gated on runtime, not analysis):
-- Multi-seed headline mean±std over the deployed pipeline (`scripts/run_multiseed.py`, ≥3 seeds) —
+- ~~Multi-seed headline mean±std over the deployed pipeline (`scripts/run_multiseed.py`, ≥3 seeds) —
   the one true compute gate underneath every downstream number (anchor Δ, decomposition, all three
-  Propositions currently rest on a single checkpoint).
+  Propositions currently rest on a single checkpoint)~~ — **done** (macro 0.344 ± 0.010, micro
+  0.269 ± 0.006 over 3 seeds; `results/multiseed_headline.json`; §9).
 - Run the tier-2 tools (BioTransformer, MetaPredictor, MetaTrans) on the full **1170**-substrate
   clean test split, closing the n=150-vs-1170 comparability gap noted in §12.
 - Optional: a compute-matched GFlowNet null, for context on what a comparably-budgeted learned
   generator would score.
 
 **CHEAP** (post-draft, no new compute):
-- Commit the frozen tier-2 predictions and `results/leakage_fix_report.json` to this tree
-  (§13's `[PENDING]` items).
+- ~~Commit the frozen tier-2 predictions and `results/leakage_fix_report.json` to this tree
+  (§13's `[PENDING]` items)~~ — **done** (`artifacts/tier2/*_preds.json`,
+  `artifacts/full5000_single/predictions/test_predictions.csv`, and
+  `results/leakage_fix_report.json` all committed).
 - A budget-matched leaderboard view, controlling for `mean_output_size` (SyGMa's 74.15
   predictions/substrate vs 8.65–12.71 for the other four methods, §11).
 - A paired confidence interval for the MetaTrans↔SyGMa rank-flip (§11), currently reported as a
