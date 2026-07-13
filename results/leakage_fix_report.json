@@ -1,0 +1,55 @@
+{
+  "audit": "read-only verification of the committed clean splits",
+  "source_clean_triples": {
+    "train": "/Users/nikitapolomosnov/PycharmProjects/GRAIL/.claude/worktrees/hungry-pasteur-25d746/grail_metabolism/data/train_triples_clean.txt",
+    "val": "/Users/nikitapolomosnov/PycharmProjects/GRAIL/.claude/worktrees/hungry-pasteur-25d746/grail_metabolism/data/val_triples_clean.txt",
+    "test": "/Users/nikitapolomosnov/PycharmProjects/GRAIL/.claude/worktrees/hungry-pasteur-25d746/grail_metabolism/data/test_triples_clean.txt"
+  },
+  "clean_split_stats": {
+    "train": {
+      "remaining_triples": 345031,
+      "remaining_positive_triples": 22061,
+      "remaining_substrates": 9011,
+      "remaining_positive_pairs": 17454
+    },
+    "val": {
+      "remaining_triples": 37959,
+      "remaining_positive_triples": 2451,
+      "remaining_substrates": 1020,
+      "remaining_positive_pairs": 2085
+    },
+    "test": {
+      "remaining_triples": 43886,
+      "remaining_positive_triples": 3700,
+      "remaining_substrates": 1198,
+      "remaining_positive_pairs": 2597
+    }
+  },
+  "clean_overlap": {
+    "train_val": {
+      "substrate_overlap": 0,
+      "molecule_overlap": 2251,
+      "positive_pair_overlap": 0
+    },
+    "train_test": {
+      "substrate_overlap": 0,
+      "molecule_overlap": 2408,
+      "positive_pair_overlap": 0
+    },
+    "val_test": {
+      "substrate_overlap": 0,
+      "molecule_overlap": 700,
+      "positive_pair_overlap": 0
+    }
+  },
+  "substrate_disjoint": true,
+  "positive_pair_disjoint": true,
+  "molecule_disjoint": false,
+  "structure_leak": {
+    "val_substrate_in_train_molecules": 192,
+    "test_substrate_in_train_molecules": 243,
+    "val_substrate_in_train_metabolites": 75,
+    "test_substrate_in_train_metabolites": 115
+  },
+  "note": "substrate_disjoint = no substrate appears in two splits (the primary leakage guard for substrate->metabolite prediction). positive_pair_disjoint = no identical (substrate, metabolite) pair recurs. molecule_disjoint would additionally require no molecule (incl. metabolites) to recur across splits; metabolites are shared across substrates so this is False and structure_leak quantifies whether any EVAL SUBSTRATE structure was seen in training."
+}
