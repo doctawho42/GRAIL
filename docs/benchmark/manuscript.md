@@ -12,7 +12,35 @@
 > _[STUB — Task 10]_
 
 ## 3. Methods — GRAIL architecture
-> _[STUB — Task 2]_
+
+GRAIL predicts xenobiotic metabolite structures with a three-stage, rule-based-plus-learned
+pipeline. The first stage, the **generator**, is a learned multi-label rule selector that
+approximates `P(r|s)` — the probability that rule `r` applies to substrate `s` — over a curated
+bank of **7,581 SMIRKS** rules; the default scorer is retrieval-based, combining cross-attention
+between substrate and rule graph embeddings, an embedding-similarity term, and an MLP head. The
+second stage, **RDKit rule application**, mechanically applies every rule the generator selects
+and enumerates the resulting candidate products, retaining provenance of which rule produced which
+candidate. The third stage is a **PU-trained, MCS-aware pair filter**: a binary classifier scoring
+each (substrate, product) pair. Its training data are positive-unlabeled — annotated true
+metabolites are the only positives, while rule-applicable products lacking a positive annotation
+are treated as *unlabeled*, not as confirmed negatives, since absence of an annotation does not
+certify a transformation does not occur. The filter is accordingly trained in the logit domain
+(`return_logits=True`) so a PULoss/nnPU surrogate operates on raw classifier outputs rather than
+post-sigmoid probabilities, and the generator itself down-weights unobserved-but-applicable rules
+rather than penalizing them as hard negatives. Featurization uses fixed-width graphs: single-molecule
+graphs feed the generator encoder with 16-dim node features, while the pair filter operates on
+merged substrate–product graphs with 18-dim nodes and 18-dim edges plus a 1024-dim Morgan
+fingerprint branch; cross-edges linking substrate and product atoms come from an element-aware
+maximum common substructure (MCS) atom correspondence rather than sorted or arbitrary indices,
+preserving chemically meaningful atom mappings across the reaction. At deployment,
+`ModelWrapper.generate` runs all three stages and ranks the candidate set by
+`filter_score × generator_score`, combining the filter's pair-plausibility judgment with the
+generator's rule-selection confidence into a single ranking signal. Throughout this paper, unless
+stated otherwise, structure matching between predicted and reference metabolites uses
+`inchikey_tautomer` as the default match mode. The three stages together form an interpretable
+instrument — the selected rule, the enumerated product, and the filter's pair judgment are each
+inspectable — and the contribution we claim is interpretable learned rule selection paired with a
+PU-aware pair filter, not recall supremacy over other metabolite predictors.
 
 ## 4. Methods — Formal framework
 > _[STUB — Task 3]_
