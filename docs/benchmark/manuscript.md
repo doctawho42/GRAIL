@@ -101,7 +101,7 @@ We package the evaluation apparatus as **TAME** — the **T**automer-**A**ware
 **M**etabolite-structure **E**valuation protocol: a tautomer-InChIKey match quotient, a
 leakage-audited molecule-disjoint train/val/test split, and a frozen multi-method re-scoring
 harness. TAME is a *protocol + audited split + re-scoring harness*, not a leaderboard service —
-it exists so the numbers in §3–§4 and §6–§9 are apples-to-apples and regenerable from committed
+it exists so the numbers in §6–§9 are apples-to-apples and regenerable from committed
 artifacts, not to rank community submissions.
 
 **Matching protocol.** The field has never agreed on what counts as a "match": GLORYx uses a
@@ -136,11 +136,13 @@ the test split is touched once, for the final reported numbers.
 `{D-alanine, acetone (enol tautomer)}` scored against annotated references `{L-alanine, acetone
 (keto tautomer)}`. Under strict `inchikey`, both predictions miss: the alanine pair differs at a
 stereocenter, and the acetone pair differs only by a keto/enol tautomerization outside the subset
-plain InChI normalizes, so it also misses under `inchi_no_stereo`. Once both sides are
-tautomer-canonicalized under `inchikey_tautomer`, the acetone pair becomes a hit. The same fixed
-predictions can therefore score as a near-total miss or a hit purely by changing the match
-quotient, with no change to the underlying chemistry — the phenomenon §11 quantifies across
-methods and the shared external set.
+plain InChI normalizes, so it also misses under `inchi_no_stereo`. `inchikey_tautomer`
+standardization additionally strips stereochemistry (canonical SMILES generated with
+`isomericSmiles=False`), so tautomer-canonicalizing both sides collapses both gaps at once: the
+acetone keto/enol pair becomes a hit *and* the D-/L-alanine stereocenter pair becomes a hit,
+scoring full recall on this example. The same fixed predictions can therefore score as a
+near-total miss or a full hit purely by changing the match quotient, with no change to the
+underlying chemistry — the phenomenon §11 quantifies across methods and the shared external set.
 
 ## 6. Results — Rule-bank coverage ceiling
 > _[STUB — Task 5]_
