@@ -559,16 +559,129 @@ certification (§9) are secondary/descriptive and are not counted against this e
 *Source: `results/match_sensitivity_5method.json`, `results/rank_flip_ci.json`.*
 
 ## 12. Limitations
-> _[STUB — Task 12]_
+
+We state these plainly rather than let them surface in review. First, **no recall win**: GRAIL
+does not win on recall anywhere in this paper. It loses to SyGMa by a certified, significant
+margin (§9: paired Δ = **−0.242**, 95% CI [−0.271, −0.212]; McNemar p ≈ 1.7×10⁻⁴⁴) and to the
+learned transformer baselines on the shared n=150 subset (MetaPredictor 0.585, MetaTrans 0.561,
+both above GRAIL's 0.365 under the same tautomer protocol, §11). Nothing in this paper should be
+read as a state-of-the-art claim; the contribution is the ceiling, the decomposition, and the
+protocol, with GRAIL as one honestly diagnosed row. Second, **precision is a pessimistic lower
+bound** throughout: because negatives are rule-applicable, non-annotated products rather than
+confirmed non-metabolites (§3), an unannotated true metabolite is scored as a false positive, so
+every precision number in this paper understates the pipeline's true precision by an unknown,
+non-annotation-corrected amount — we lead with recall and `mean_output_size` for this reason and
+do not report precision as a headline metric. Third, the deployed headline (recall@15 = 0.261
+micro / 0.330 macro, §8–§9) is a **single checkpoint**, not a seed-averaged estimate; the
+honest-anchor certification (§9)
+bounds *evaluation* variance — resampling and discordance over a fixed model — not *training*
+variance across independently seeded runs, and a multi-seed mean±std over the deployed pipeline
+has not yet been run `[PENDING: run_multiseed.py, ≥3 seeds]`. Fourth, the five-method,
+five-protocol match-sensitivity comparison (§11, Table 3) mixes sample sizes: the three tier-2
+comparators (BioTransformer, MetaPredictor, MetaTrans) are scored only on the **n=150** shared
+subset for which frozen third-party predictions exist, while GRAIL and SyGMa's headline numbers
+elsewhere in the paper are reported on the full **n≈1170** clean test split; within Table 3 itself
+GRAIL and SyGMa are re-scored on the matching n=150 subset so the five columns are paired on
+identical substrates, but a single-n, five-method rerun on the full test split remains future work.
+Fifth, the external-validity ceiling (§7) is measured on only **37** GLORYx parent substrates, so
+its 95% CI is wide by design ([0.531, 0.733]) and the composition-effect regression that partially
+explains the internal–external gap is fit on the same small external population — we frame it as
+suggestive, not as a transferable law. Sixth, Proposition 2's explanatory model rests on an
+**unmeasured assumption**: the propensity model `e(r) ∝ π(r)` (labeling probability proportional
+to the marginal rule-firing rate) is asserted, not estimated from data, so the identifiability
+argument for why the learned selector underperforms a frequency prior is consistent with, but not
+proof of, the stated mechanism (§10). Finally, Proposition 3's paradigm bound is **single-step
+conditional**: depth-2 rule application recovers only +0.012 ceiling at 8.5× candidate cost (§10),
+so multi-step and out-of-bank chemistry remain an open, unresolved coverage lever rather than a
+closed question — the bound constrains the single-step paradigm, not the metabolite-prediction
+problem in general.
 
 ## 13. Data & Code Availability
-> _[STUB — Task 12]_
+
+All splits used in this paper are **molecule-disjoint**: no substrate in val or test appears in
+train, and no test substrate appears in val. The clean triples are built and audited by
+`scripts/fix_splits.py --molecule-disjoint`, which canonicalizes SMILES, removes cross-split
+substrates, verifies zero substrate and zero positive-pair overlap, and emits its audit summary to
+`results/leakage_fix_report.json` when run `[PENDING: commit leakage_fix_report.json]`.
+
+The **frozen per-substrate, 5-method × 5-protocol prediction set** underlying §11's
+match-sensitivity analysis is released so those numbers re-score without re-running any predictor:
+the three external tier-2 tools' frozen predictions live at `artifacts/tier2/biotransformer_preds.json`,
+`artifacts/tier2/metapredictor_preds.json`, and `artifacts/tier2/metatrans_preds.json`; GRAIL's
+deployed per-substrate ranking is at `artifacts/full5000_single/predictions/test_predictions.csv`;
+SyGMa is re-derivable on demand (not shipped as a frozen JSON) via `scripts/run_benchmark.py`
+`[PENDING: commit frozen tier-2 preds]`.
+
+The **re-scoring harness** is `scripts/run_match_sensitivity.py`, which re-scores the frozen
+predictions under all five match quotients (canonical, InChIKey, InChI-without-stereo, Tanimoto=1,
+tautomer-InChIKey) to produce `results/match_sensitivity_5method.json`, and
+`scripts/rank_flip_ci.py`, which bootstraps the primary-endpoint confidence interval to produce
+`results/rank_flip_ci.json`.
+
+The §6–§9 diagnostic reports (`benchmark_report`, `recall_factorization`,
+`ceiling_external_validity`, `anchor_certification`) and the Figure 2 waterfall regenerate
+end-to-end from committed checkpoints and the symlinked dataset with a **single command**,
+`scripts/regen_headline.sh`; the dominant cost is `factorize_recall.py` (~90 minutes: the deployed
+pipeline plus a parallel full-bank ceiling pass over all 1170 test substrates). The §11
+match-protocol numbers, including the primary endpoint, regenerate separately via
+`run_match_sensitivity.py` followed by `rank_flip_ci.py`.
+
+**License constraint.** The underlying substrate–metabolite data is **DrugBank-derived**, and
+DrugBank's license does not permit unrestricted redistribution of the raw dataset; we therefore
+release code, splits, checkpoints, and derived prediction/evaluation artifacts, not the raw
+DrugBank source records. Third-party frozen predictions (BioTransformer, MetaPredictor, MetaTrans)
+were generated by us running each tool's own code/weights on DrugBank-licensed substrates and are
+released under the same constraint. `[PENDING: commit frozen tier-2 predictions and
+leakage_fix_report.json to this tree]`.
 
 ## 14. Conclusion
-> _[STUB — Task 12]_
+
+Rule-based metabolite-structure prediction is not recall-limited by rule expressiveness — the
+curated bank's coverage ceiling is high (0.735 tautomer-InChIKey) — it is limited by
+**coverage-conversion**: a dominant selection loss (`selection_retention` = 0.489) followed by a
+smaller ranking loss (`ranking_conversion` = 0.726), together converting only 35.5% of the ceiling
+into realised recall@15. We do not claim GRAIL wins on recall — it loses to SyGMa and to learned
+transformer baselines, certified by paired bootstrap and exact McNemar test — and we do not offer
+the coverage×selection×ranking identity as anything beyond an exact accounting device for
+localising that loss. What the paper does contribute is a diagnosed, interpretable instrument:
+GRAIL's three inspectable stages let us attribute the loss to a specific pipeline stage rather than
+an opaque end-to-end score, and three refutable propositions explain *why* each stage loses
+headroom, each with an open falsification test rather than a promised fix. We also contribute
+**TAME**, a tautomer-aware, leakage-audited matching and re-scoring protocol, and show with a
+pre-declared primary endpoint that match-protocol choice is a method-dependent confounder that can
+reverse method rankings. We offer TAME, not a single leaderboard entry, as the reusable output of
+this work.
 
 ## Figure 1 — pipeline schematic
 > _[FIGURE 1: GRAIL 3-stage pipeline schematic — TO BUILD]_ A left-to-right schematic: (i) substrate + 7,581-rule SMIRKS bank → learned retrieval-scored **generator** selecting rules; (ii) **RDKit rule application** enumerating candidate products; (iii) **PU-trained MCS-aware pair filter** scoring (substrate, product) pairs; deployment ranks by `filter_score × generator_score`. Real schematic is a post-draft task.
 
 ## Draft TODO / open items
-> _[STUB — Task 12 seeds this; final content is the out-of-scope track-list]_
+
+Tracked here rather than folded into §12 because these are concrete, actionable follow-ups —
+mostly compute-gated or cheap post-draft edits — not open scientific limitations.
+
+**COMPUTE** (gated on runtime, not analysis):
+- Multi-seed headline mean±std over the deployed pipeline (`scripts/run_multiseed.py`, ≥3 seeds) —
+  the one true compute gate underneath every downstream number (anchor Δ, decomposition, all three
+  Propositions currently rest on a single checkpoint).
+- Run the tier-2 tools (BioTransformer, MetaPredictor, MetaTrans) on the full **1170**-substrate
+  clean test split, closing the n=150-vs-1170 comparability gap noted in §12.
+- Optional: a compute-matched GFlowNet null, for context on what a comparably-budgeted learned
+  generator would score.
+
+**CHEAP** (post-draft, no new compute):
+- Commit the frozen tier-2 predictions and `results/leakage_fix_report.json` to this tree
+  (§13's `[PENDING]` items).
+- A budget-matched leaderboard view, controlling for `mean_output_size` (SyGMa's 74.15
+  predictions/substrate vs 8.65–12.71 for the other four methods, §11).
+- A paired confidence interval for the MetaTrans↔SyGMa rank-flip (§11), currently reported as a
+  point estimate only.
+- Run MetaTrans on the 37-substrate GLORYx external set (§7), to extend the external-validity
+  ceiling comparison beyond GRAIL and SyGMa.
+- Regenerate `rankflip.svg` and `scaling_curve.svg` on the current committed numbers.
+- Verify all comparator DOIs (§2) and resolve the unlocated "Gao 2026" reference.
+- Build Figure 1 (pipeline schematic) and the internal-vs-external, paired-Δ/McNemar, and
+  ΔMW-long-tail figures flagged as optional/post-draft in §7, §9, and §11.
+- A paired confidence interval for Proposition 1's listwise-reranker confirmation (currently a
+  3-seed standard deviation, ±0.015, not a paired bootstrap, §10) and commit its supporting
+  artifacts.
