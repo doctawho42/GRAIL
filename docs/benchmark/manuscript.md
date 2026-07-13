@@ -9,7 +9,77 @@
 > _[STUB — Task 11]_
 
 ## 2. Related Work
-> _[STUB — Task 10]_
+
+Metabolite-structure prediction spans two lineages: expert-curated reaction-rule systems and
+learned sequence-to-sequence or ensemble models. **SyGMa** (Ridder & Wagener 2008, *ChemMedChem*,
+doi:10.1002/cmdc.200700312) applies a curated SMIRKS library scored by empirical biotransformation
+probabilities, covers roughly 70% of human biotransformations, and reproduces 68% of test
+metabolites (30% within its own top-3). **GLORYx** (de Bruyn Kops et al. 2020, *Chem Res Toxicol*,
+doi:10.1021/acs.chemrestox.0c00224) pairs a site-of-metabolism classifier with reaction rules,
+reports 77% recall (AUC 0.79), and explicitly finds phase-2 (conjugation) ranking harder than
+phase-1 — a finding our own ΔMW long-tail analysis (§8) independently reproduces. **BioTransformer
+3.0** (Djoumbou-Feunang et al. 2019, *J Cheminform*) combines knowledge-based and machine-learned
+rules for broad-scope in-silico metabolism. On the learned side, **MetaTrans**
+`[cite: Litsa, Das, Kavraki 2020, Chem Sci; verify vol/DOI]` is an end-to-end transformer ensemble
+emitting an unranked SMILES-to-SMILES candidate set, and **MetaPredictor**
+`[cite: MetaPredictor — verify]` is a comparable transformer-ensemble baseline. GRAIL sits between
+these lineages — rule-grounded like SyGMa/GLORYx/BioTransformer, but with a learned rule-selection
+stage in place of a fixed probability table.
+
+We are not the first to place several of these tools side by side, and we cite the two prior
+multi-method comparisons as **corroboration**, not a threat to novelty. Scholz et al. 2023
+(*Sci Total Environ*) benchmarked SyGMa, GLORY, GLORYx, BioTransformer 3.0, and MetaTrans on 85
+agrochemical parents and found low first-generation precision (~18%, falling to ~2% over three
+generations) and strong divergence between rule-based and ML tools — both reproduced by our own
+precision-lower-bound framing and rank-flip analysis (§11). Boyce et al. 2022 (*Comput Toxicol*,
+doi:10.1016/j.comtox.2021.100208) compared SyGMa, Meteor Nexus, BioTransformer, TIMES, OECD
+Toolbox, and CTS on 37 chemicals and found SyGMa had the highest raw coverage but was "prone to
+significant overprediction" (5,125 metabolites, 54.7% of all predictions; precision 1.1–29%) —
+direct external support for the output-budget confound our budget-matched view (§11,
+`mean_output_size`) controls for. Neither prior comparison standardized the structure-match
+definition, audited train/test leakage, or asked whether the ranking is stable under the match
+choice; that triad is where we differ in protocol, not in the fact of comparison.
+
+The structure-matching protocol used throughout (§5, `inchikey_tautomer`) is grounded in prior
+standardization work, not invented from scratch. Dhaked et al. 2019
+`[cite: Dhaked 2019 — verify DOI]` catalog dozens of tautomer transforms and show standard InChI
+normalizes only a subset of them, so plain-InChI matching systematically misses keto–enol and
+carbon-shift tautomer pairs — the same failure mode our merge check and rule-bank ceiling gap (§6)
+surface directly. Hähnke et al. 2018 (*J Cheminform*, PubChem standardization) report that 60% of
+PubChem structures differ from their canonical InChI form, mainly due to tautomer choice. Mansouri
+et al. 2024 (*J Cheminform*, QSAR-ready standardization) describe a comparable
+desalt/destereo/tautomer-canonicalization pipeline, precedent for the `standardize_mol` path used
+here. Tautomer standardization is thus established *preprocessing*; what is new is adopting it as
+the *matching* protocol and quantifying how far it moves the leaderboard (§11's interaction
+confidence interval).
+
+Leakage-aware splitting is likewise not new in general — **DataSAIL**
+`[cite: DataSAIL — verify DOI]` splits datasets to minimize cross-split similarity, benchmarked
+against DeepChem, LoHi, and GraphPart on MoleculeNet-style tasks. We contribute not a new
+splitting algorithm but a metabolite-specific molecule-disjoint audit — substrate–metabolite
+identity overlap is the leak that matters here — backed by a machine-checkable leakage report and
+validation-versus-test agreement (§5). And that evaluation choices reorder leaderboards is
+established outside chemistry: Mishra et al. 2021 show difficulty-weighting reorders NLP/ML
+leaderboards so "top models may not be best," and Rodriguez et al. 2021 show individual evaluation
+examples carry unequal ranking information. The domain-specific instantiation is ours: in
+metabolite *structure* prediction, the previously-unexamined, load-bearing choice is how a
+predicted structure is matched to its reference (canonical SMILES, InChIKey, no-stereo InChI,
+Tanimoto = 1, or tautomer-aware InChIKey), and §11 shows this single choice reorders the
+leaderboard across two independent method pairs, including one non-monotone response (MetaTrans).
+
+We make no claim to being first on any individual axis: not the first to compare
+metabolite-structure predictors (Scholz 2023; Boyce 2022), not the first to standardize chemical
+structures for comparison (PubChem; QSAR-ready pipelines), not the first to build a leakage-aware
+split (DataSAIL). TAME's contribution is their first **joint instantiation** for metabolite
+structure prediction specifically: a standardized, tautomer-aware matching protocol, a
+leakage-audited molecule-disjoint split, a match-sensitivity ("rank-flip") analysis showing the
+leaderboard is not match-invariant, and — via GRAIL run through the identical harness as one
+honest, interpretable row — a coverage × selection × ranking decomposition of where a rule-based
+paradigm's headroom is lost. GRAIL is offered throughout as a diagnosed instrument, not a
+recall-superiority claim. One benchmark reference flagged in earlier planning notes,
+`[resolve: "Gao 2026"]`, could not be located in this literature pass (the nearest 2026 candidate,
+Giné et al., addresses MS/MS spectral annotation, a different task) and is left unresolved pending
+confirmation of which source was intended.
 
 ## 3. Methods — GRAIL architecture
 
