@@ -326,7 +326,80 @@ trivial frequency prior in the probe. The three Propositions below explain *why*
 *Source: `results/prior_vs_learned.json`, `results/benchmark_report_depth2.json`, `results/benchmark_report_gap.json`, `docs/benchmark/stage2_ranker_evidence.md`.*
 
 ## 11. Results — Match-sensitivity and cross-method comparison
-> _[STUB — Task 9]_
+
+§7's acetone/alanine example showed that a fixed pair of predictions can score as a near-total
+miss or a full hit purely by changing the match quotient. We now quantify that effect across
+methods, not one worked example, to establish that **prior rule-vs-learned comparisons in the
+literature are confounded**: each paper matches predictions to references under its own convention
+— GLORYx by InChI-without-stereo, MetaTrans by fingerprint Tanimoto = 1, LAGOM by canonical SMILES,
+rule engines by plain InChIKey — and because that choice interacts with method-specific output
+habits (stereo emission, tautomer form), leaderboards under different conventions are not
+comparable even on the same chemistry.
+
+The analysis spans **5 methods** — GRAIL, SyGMa, BioTransformer, MetaPredictor, MetaTrans — scored
+under **5 match protocols**: canonical SMILES (LAGOM), plain InChIKey, InChI-without-stereo
+(GLORYx), Tanimoto = 1, and tautomer-InChIKey (this paper's protocol). All 5 methods' predictions
+are frozen and re-scored by one harness (`results/match_sensitivity_5method.json`), so only the
+match rule changes across columns, not the chemistry. (LAGOM itself was scoped but is unusable —
+weights were never released — and is excluded from the table.)
+
+| method | canon (LAGOM) | InChIKey | no-stereo (GLORYx) | Tanimoto=1 | tautomer (ours) | mean_output_size |
+|---|---|---|---|---|---|---|
+| **GRAIL** | 0.356 | 0.357 | 0.358 | 0.356 | 0.365 | 8.65 |
+| BioTransformer | 0.315 | 0.435 | 0.439 | 0.315 | 0.444 | 10.77 |
+| SyGMa | 0.514 | 0.547 | 0.548 | 0.514 | 0.554 | 74.15 |
+| MetaTrans | 0.523 | 0.494 | 0.561 | 0.524 | 0.561 | 12.71 |
+| MetaPredictor | 0.531 | 0.570 | 0.578 | 0.532 | 0.585 | 11.15 |
+
+**Table 3.** recall@15 by method × match protocol, n=150 shared substrates (`results/match_sensitivity_5method.json`).
+GRAIL is listed first as the honest anchor, never the headline. `mean_output_size` exposes SyGMa's
+large candidate budget (74.15 predictions/substrate vs 8.65–12.71 for the other four) — recall
+alone is not apples-to-apples either. **Tier-2 comparators (BioTransformer, MetaPredictor,
+MetaTrans) are scored on the n=150 shared subset; GRAIL and SyGMa on the full n≈1170 clean test. A
+single-n rerun is future work.** Within this table, GRAIL and SyGMa are re-scored on the same
+n=150 subset as the tier-2 methods so all 5 columns are paired on identical substrates for the
+statistics below; that is why the table's GRAIL/SyGMa cells differ from their full-test headline
+figures, restated as the honest-anchor ordering that runs through this paper: **GRAIL 0.330 macro
+< SyGMa 0.572 < MetaPredictor 0.585** (§6, §8–§9, `results/anchor_certification.json`; all macro
+tautomer-InChIKey). GRAIL is not competitive on recall in either scoring — the contribution here
+is the protocol, not a win.
+
+**Primary endpoint.** The pre-declared primary endpoint of this analysis is the **differential
+match-protocol sensitivity (interaction)** between GRAIL and BioTransformer: how much *more*
+BioTransformer gains, moving from canonical to tautomer-InChIKey matching, than GRAIL gains over
+the same move. That interaction is **+0.120, 95% CI [+0.073, +0.171]** (`results/rank_flip_ci.json`,
+`interaction_B_extra_gain_from_normalization`; 150 substrates, 10,000 paired bootstrap resamples,
+seed 0) — wholly above zero. This is the certified result: the match protocol is a
+**method-dependent confounder**, not a neutral scoring choice.
+
+**Two independent rank-flips** follow from that confounder. (1) **GRAIL ↔ BioTransformer**: under
+canonical matching GRAIL leads (Δ = +0.041), under tautomer-InChIKey BioTransformer leads
+(Δ = −0.079) — the point-estimate ranking reverses. (2) **MetaTrans ↔ SyGMa**: MetaTrans leads
+SyGMa under canonical, no-stereo, and Tanimoto = 1 matching, but SyGMa leads under strict InChIKey
+(MetaTrans drops to 0.494 against SyGMa's 0.547) — a second, independent reordering. **Honest note:**
+neither per-pair flip is individually significant at n=150 — each pairwise Δ's CI spans zero
+(GRAIL↔BioTransformer canonical: [−0.044, +0.122]; tautomer: [−0.166, +0.007], borderline). The
+certified claim is the differential sensitivity that drives the flips, not the flips themselves.
+
+**MetaTrans is also non-monotonic** in the match protocol, uniquely among the 5 methods: canon
+**0.523** > InChIKey **0.494** < no-stereo **0.561**. MetaTrans emits isomeric SMILES, so strict
+InChIKey penalizes stereo mismatches that stereo-blind protocols (canonical, no-stereo) ignore —
+more normalization does not monotonically raise its recall. The protocol effect is therefore
+**method-idiosyncratic**, not a uniform "normalization helps" story.
+
+**Multiplicity.** Holm correction is applied *within* two declared families, not across them. (i)
+The **per-method protocol-sensitivity family** — GRAIL, SyGMa, BioTransformer, MetaPredictor —
+where every sensitivity (recall_tautomer − recall_canonical) is significant and the four are
+mutually distinguishable: GRAIL +0.010 [+0.001, +0.025], SyGMa +0.040 [+0.014, +0.072],
+MetaPredictor +0.053 [+0.022, +0.090], BioTransformer +0.130 [+0.081, +0.181] — a 13× spread with
+non-overlapping CIs at the extremes. (ii) The **rank-flip pairwise family** — the per-protocol
+GRAIL↔BioTransformer and MetaTrans↔SyGMa Δ contrasts, none individually significant at n=150 (the
+honest note above). The recall factorization (§8), external-validity ceiling (§7), and anchor
+certification (§9) are secondary/descriptive and are not counted against this error budget.
+
+> _[FIGURE: rank-flip — regenerate rankflip.svg on current numbers, post-draft]_
+
+*Source: `results/match_sensitivity_5method.json`, `results/rank_flip_ci.json`.*
 
 ## 12. Limitations
 > _[STUB — Task 12]_
