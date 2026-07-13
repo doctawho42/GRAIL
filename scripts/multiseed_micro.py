@@ -69,6 +69,17 @@ def main() -> int:
         print(f"  macro recall@15: {st.mean(macros):.4f} ± {st.pstdev(macros):.4f}   values={[round(v,4) for v in macros]}")
         print(f"  micro recall@15: {st.mean(micros):.4f} ± {st.pstdev(micros):.4f}   values={[round(v,4) for v in micros]}")
         print("  (published single deployed checkpoint: macro 0.330 / micro 0.261, factorize_recall)")
+        import json
+        out = ROOT / "results" / "multiseed_micro.json"
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(json.dumps({
+            "note": "per-seed macro + micro recall@15 (tautomer-InChIKey) over the deployed pipeline, "
+                    "full clean test; the micro source the manuscript cites for 3-seed micro.",
+            "macro_recall_at_15": {"mean": st.mean(macros), "std": st.pstdev(macros), "values": macros},
+            "micro_recall_at_15": {"mean": st.mean(micros), "std": st.pstdev(micros), "values": micros},
+            "published_single_checkpoint": {"macro": 0.330, "micro": 0.261, "source": "factorize_recall"},
+        }, indent=2))
+        print(f"  wrote {out}")
     return 0
 
 

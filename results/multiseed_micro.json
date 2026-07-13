@@ -1,0 +1,26 @@
+{
+  "note": "per-seed macro + micro recall@15 (tautomer-InChIKey) over the deployed pipeline, full clean test; the micro source the manuscript cites for 3-seed micro.",
+  "macro_recall_at_15": {
+    "mean": 0.34365933160769596,
+    "std": 0.009896488142007597,
+    "values": [
+      0.34374216627136894,
+      0.33149745347062537,
+      0.35573837508109357
+    ]
+  },
+  "micro_recall_at_15": {
+    "mean": 0.26861838726245507,
+    "std": 0.005819347300269472,
+    "values": [
+      0.2684899845916795,
+      0.2615562403697997,
+      0.275808936825886
+    ]
+  },
+  "published_single_checkpoint": {
+    "macro": 0.33,
+    "micro": 0.261,
+    "source": "factorize_recall"
+  }
+}

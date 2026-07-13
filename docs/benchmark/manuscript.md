@@ -443,7 +443,7 @@ across independently seeded runs. The split itself is not overfit (val ≈ test)
 certified here is evaluation variance only: the deployed checkpoint's 0.330 macro / 0.261 micro is
 a single training run; retraining the full generator+filter pipeline under three seeds gives macro
 recall@15 = 0.344 ± 0.010 and micro = 0.269 ± 0.006 (mean ± s.d.;
-`results/multiseed_headline.json`), so the reported recall is not an artifact of one training
+`results/multiseed_headline.json` macro, `results/multiseed_micro.json` micro), so the reported recall is not an artifact of one training
 seed — the analyzed checkpoint sits at the conservative low end of the seed distribution. Within
 that scope, the result is unambiguous:
 **SyGMa > GRAIL is significant — the anchor holds.**
@@ -688,7 +688,7 @@ mostly compute-gated or cheap post-draft edits — not open scientific limitatio
 - ~~Multi-seed headline mean±std over the deployed pipeline (`scripts/run_multiseed.py`, ≥3 seeds) —
   the one true compute gate underneath every downstream number (anchor Δ, decomposition, all three
   Propositions currently rest on a single checkpoint)~~ — **done** (macro 0.344 ± 0.010, micro
-  0.269 ± 0.006 over 3 seeds; `results/multiseed_headline.json`; §9).
+  0.269 ± 0.006 over 3 seeds; `results/multiseed_headline.json`, `results/multiseed_micro.json`; §9).
 - Run the tier-2 tools (BioTransformer, MetaPredictor, MetaTrans) on the full **1170**-substrate
   clean test split, closing the n=150-vs-1170 comparability gap noted in §12.
 - Optional: a compute-matched GFlowNet null, for context on what a comparably-budgeted learned
