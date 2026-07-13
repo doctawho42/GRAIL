@@ -559,7 +559,17 @@ GRAIL↔BioTransformer and MetaTrans↔SyGMa Δ contrasts, none individually sig
 honest note above). The recall factorization (§8), external-validity ceiling (§7), and anchor
 certification (§9) are secondary/descriptive and are not counted against this error budget.
 
-> _[FIGURE: rank-flip — regenerate rankflip.svg on current numbers, post-draft]_
+![Leaderboard reordering under the match protocol](rankflip_5method.svg)
+
+**Figure 3.** Recall@15 for all five methods across the five structure-match protocols
+(`scripts/make_rankflip_5method.py` from `results/match_sensitivity_5method.json`). Where two
+methods' lines cross, their leaderboard rank flips: GRAIL overtakes BioTransformer under the
+canonical and Tanimoto=1 protocols but trails it under InChIKey/no-stereo/tautomer, and MetaTrans
+dips below SyGMa at InChIKey (its non-monotone response: canonical 0.523 > InChIKey 0.494 <
+no-stereo 0.561). GRAIL and SyGMa are scored on n≈1170; the tier-2 methods (BioTransformer,
+MetaPredictor, MetaTrans) on the n=150 shared subset — the per-pair flips are not individually
+significant at n=150, but the differential match-protocol sensitivity across methods is
+(interaction +0.120 [+0.073, +0.171], the pre-declared primary endpoint).
 
 *Source: `results/match_sensitivity_5method.json`, `results/rank_flip_ci.json`.*
 
@@ -705,7 +715,9 @@ mostly compute-gated or cheap post-draft edits — not open scientific limitatio
   point estimate only.
 - Run MetaTrans on the 37-substrate GLORYx external set (§7), to extend the external-validity
   ceiling comparison beyond GRAIL and SyGMa.
-- Regenerate `rankflip.svg` and `scaling_curve.svg` on the current committed numbers.
+- ~~Regenerate the rank-flip figure on the current committed numbers~~ — **done** (Figure 3,
+  `docs/benchmark/rankflip_5method.svg` via `scripts/make_rankflip_5method.py`, from the current
+  5-method match-sensitivity data; the legacy `scaling_curve.svg` is unused and dropped).
 - ~~Verify all comparator DOIs and resolve "Gao 2026"~~ — **done** (Crossref-verified 2026-07-13, `results/citations_verified.json`; MetaTrans/MetaPredictor/BioTransformer/Dhaked/DataSAIL DOIs supplied or corrected, "Gao 2026" confirmed nonexistent and dropped).
 - ~~Build Figure 1 (pipeline schematic)~~ — **done** (`pipeline_schematic.svg`). Still optional/post-draft: the
   internal-vs-external, paired-Δ/McNemar, and ΔMW-long-tail figures flagged in §7, §9, and §11.
