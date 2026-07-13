@@ -3,10 +3,97 @@
 > **Draft status (2026-07-13):** first assembled full draft. Numbers sourced from `docs/GRAIL_FRAMING.md` / `results/*.json`. Compute-gated values are marked `[PENDING: ...]`; unverified citations are marked `[cite: ...]`. Venue target: JCIM / J. Cheminformatics.
 
 ## Abstract
-> _[STUB — Task 11]_
+
+Rule-based metabolite-structure prediction is usually reported as a single top-k recall number,
+as if that transparently reflected a method's chemistry-generation capability. It does not:
+recall conflates whether a rule bank *covers* a transformation, whether a model *selects* the
+right rule, and whether it *ranks* the resulting candidate into a bounded output — and shifts
+under whichever structural-match convention a paper adopts. We present **GRAIL**, a three-stage
+rule-based-plus-learned predictor (a curated 7,581-SMIRKS bank, a learned rule selector, and a
+PU-trained pair filter), and use it to decompose recall into coverage × selection × ranking. On a
+leakage-audited, molecule-disjoint clean test split (1170 substrates), the rule bank's coverage
+ceiling is **0.735** (tautomer-InChIKey, micro), but the deployed pipeline converts only 35.5% of
+that ceiling into realised recall@15 = **0.261** (micro) `[PENDING: multi-seed mean±std]`, a gap
+**dominated by a selection loss** (selection_retention = **0.489**) larger than the ranking loss.
+Stated up front: **GRAIL does not win on recall** — 0.330 macro recall@15, below SyGMa (0.572) and
+MetaPredictor (0.585, on the n=150 tier-2 subset). We also introduce **TAME**, a tautomer-aware,
+leakage-audited matching and re-scoring protocol, and show with a pre-declared primary endpoint
+that match-protocol choice is a method-dependent confounder that can reverse method rankings
+(interaction **+0.120**, 95% CI **[+0.073, +0.171]**). GRAIL's contribution is the coverage
+ceiling as a diagnostic primitive, the decomposition, the protocol, and an honestly-diagnosed
+interpretable instrument — not a state-of-the-art claim.
 
 ## 1. Introduction
-> _[STUB — Task 11]_
+
+Metabolite-structure prediction — given a xenobiotic or drug substrate, predicting the structures
+its Phase-1/Phase-2 biotransformations produce — sits at the intersection of drug metabolism,
+toxicology, and structure-generation modeling. Two lineages dominate the field: expert-curated
+reaction-rule engines (SyGMa, GLORYx, BioTransformer) applying hand-tuned SMIRKS transformations,
+and learned sequence-to-sequence or ensemble models (MetaTrans, MetaPredictor) emitting candidate
+structures directly. Comparisons across these lineages — even within the rule-based lineage — are
+usually reported as a single top-k recall number, as though that number transparently reflects a
+method's underlying chemistry-generation capability.
+
+It does not. A rule-based predictor's realised recall is the product of at least three largely
+independent capacities: whether the rule bank *covers* the transformation at all, whether the
+model *selects* the right rule out of the ones the bank offers, and whether it *ranks* the
+resulting candidate correctly into a bounded top-k output. A single aggregate recall number
+conflates all three — a predictor with a rich bank but a poor selector looks identical, on that
+number, to a predictor with a narrow bank and a perfect selector. Nor is the number comparable
+across papers: the field has never agreed on what counts as a structural "match" — plain
+InChIKey, InChI-without-stereo, canonical-SMILES equality, fingerprint Tanimoto = 1, or a
+tautomer-aware canonicalization — so leaderboards built under different match conventions are not
+directly comparable, even when scoring identical chemistry.
+
+We state our headline result up front, because it runs against the grain of most papers in this
+space: **GRAIL does not win on recall.** On a leakage-audited, molecule-disjoint clean test split,
+GRAIL reaches 0.330 macro recall@15 (0.261 pooled/micro) `[PENDING: multi-seed mean±std]` — below
+both SyGMa (0.572) and MetaPredictor (0.585, on the n=150 tier-2 subset on which all five compared
+methods are jointly scored). §9 certifies this independently with a paired bootstrap and an exact
+McNemar test, both wholly significant against GRAIL. GRAIL enters its own comparison as one honest
+row, not the winner.
+
+What GRAIL *is* useful for is turning that loss into a measurement. Its three stages — a learned
+rule selector, deterministic RDKit rule application, and a PU-trained pair filter — are each
+inspectable, letting us ask, for the rule-based paradigm generally and not only for GRAIL, how
+much headroom the rule bank has (coverage), how much of it the selection stage retains, and how
+much of what survives it the ranking stage correctly surfaces. That decomposition, not a
+leaderboard placement, is this paper's central instrument.
+
+We make four contributions:
+
+1. **The rule-bank coverage ceiling as a diagnostic primitive.** We measure the best achievable
+   recall under perfect selection and ranking — **0.735** tautomer-InChIKey recall@15 on the full
+   clean test split — and show it generalizes, with attenuation, to an external substrate set: a
+   reusable measurement independent of any particular selection or ranking model.
+
+2. **An exact coverage × selection × ranking recall decomposition, with three refutable
+   propositions.** We derive an identity factoring realised recall into `coverage_bank ·
+   selection_retention · ranking_conversion`, populate it on the deployed pipeline (dominant loss
+   at `selection_retention` = **0.489**, larger than the ranking loss), and propose three
+   falsifiable explanations for the loss — a surrogate-objective mismatch in ranking, a
+   propensity-PU identifiability limit on selection, and a single-step paradigm bound on coverage
+   — each with evidence and an open falsification test.
+
+3. **TAME, a standardized, tautomer-aware, leakage-audited matching protocol, with a
+   match-sensitivity analysis.** We show, with a pre-declared primary endpoint, that match-
+   convention choice is a method-dependent confounder, not a neutral scoring detail: the
+   differential sensitivity between GRAIL and BioTransformer moving from canonical to
+   tautomer-InChIKey matching is **+0.120** (95% CI **[+0.073, +0.171]**) — enough to reverse
+   method rankings a fixed convention would report as stable.
+
+4. **GRAIL as an interpretable, honestly-diagnosed instrument.** We report GRAIL as one row in its
+   own comparison table, not a state-of-the-art claim: rule selection, product enumeration, and
+   pair-plausibility scoring are each individually inspectable, letting contribution 2's
+   decomposition attribute loss to a specific pipeline stage rather than an opaque end-to-end
+   score.
+
+The remainder of the paper: §2 situates GRAIL against rule-based and learned prior art; §3–§5
+describe the architecture, the formal decomposition, and the TAME protocol; §6–§9 report the
+coverage ceiling, its external validity, the recall decomposition, and the honest-anchor
+certification; §10 develops the three propositions; §11 quantifies match-sensitivity across five
+methods and five matching protocols; §12–§14 close with limitations, data/code availability, and
+conclusions.
 
 ## 2. Related Work
 
