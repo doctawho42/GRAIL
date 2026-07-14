@@ -8,8 +8,10 @@ Selection is on VAL, never test.
 """
 from __future__ import annotations
 
+import contextlib
 import multiprocessing as mp
 import os
+import signal
 from pathlib import Path
 from typing import Dict, List, Optional, Sequence, Tuple
 
@@ -23,6 +25,40 @@ from ..utils.seed import seed_everything
 from ..utils.transform import from_pair, from_rdmol
 
 PoolEntry = Tuple[str, float, int]  # (smiles, gen_score, rule_id)
+
+# Opt-in per-substrate wall-clock cap for the SERIAL bi-example build. A few substrates trigger
+# a candidate-enumeration blow-up (thousands of rule products -> a long Python-level tautomer
+# dedup loop) that stalls the build for minutes; SIGALRM fires between candidates and lets the
+# builder skip them. Off by default (0); set RERANKER_SUB_TIMEOUT=<seconds> to enable. Only the
+# main thread can take SIGALRM, so parallel Pool workers ignore it (they rely on Pool timeouts).
+_PER_SUB_TIMEOUT = int(os.environ.get("RERANKER_SUB_TIMEOUT", "0"))
+
+
+class _SubstrateTimeout(Exception):
+    """Raised when one substrate's pool build exceeds ``_PER_SUB_TIMEOUT`` seconds."""
+
+
+def _raise_substrate_timeout(signum, frame):  # noqa: ARG001 (signal handler signature)
+    raise _SubstrateTimeout()
+
+
+@contextlib.contextmanager
+def _substrate_time_budget(idx: int):
+    """Arm a SIGALRM budget for one substrate build; no-op when disabled or off-main-thread."""
+    if _PER_SUB_TIMEOUT <= 0:
+        yield
+        return
+    try:
+        prev = signal.signal(signal.SIGALRM, _raise_substrate_timeout)
+    except ValueError:
+        yield  # not the main thread (e.g. a Pool worker) -> cannot arm; run uncapped
+        return
+    signal.alarm(_PER_SUB_TIMEOUT)
+    try:
+        yield
+    finally:
+        signal.alarm(0)
+        signal.signal(signal.SIGALRM, prev)
 
 
 def build_pool(
@@ -482,12 +518,28 @@ def build_examples_bi(
     num_rules = int(prior.numel())
     substrates = list(molframe.map.keys())
     examples: List[_BiExample] = []
+    skipped = 0
+    idx = -1
     for idx, sub in enumerate(substrates):
         if len(examples) >= n_substrates:
             break
-        ex = _build_one_bi(
-            generator, sub, molframe.map[sub], top_k, max_pool, prior, num_rules
-        )
+        # A handful of substrates trigger a candidate-enumeration blow-up (thousands of
+        # rule products -> a long Python-level tautomer-dedup loop) that stalls the serial
+        # build for minutes; SIGALRM fires between candidates and skips them. Opt-in via
+        # RERANKER_SUB_TIMEOUT (seconds; 0 = off) so tests/normal callers are unaffected.
+        with _substrate_time_budget(idx):
+            try:
+                ex = _build_one_bi(
+                    generator, sub, molframe.map[sub], top_k, max_pool, prior, num_rules
+                )
+            except _SubstrateTimeout:
+                skipped += 1
+                print(
+                    f"  [timeout] substrate idx={idx} exceeded {_PER_SUB_TIMEOUT}s "
+                    f"(pool blow-up) -> skipped ({skipped} total)",
+                    flush=True,
+                )
+                continue
         if ex is None:
             continue
         examples.append(ex)
@@ -496,6 +548,8 @@ def build_examples_bi(
                 f"  built {len(examples)} bi-examples (scanned {idx + 1} substrates)",
                 flush=True,
             )
+    if skipped:
+        print(f"  [timeout] skipped {skipped} pool-blow-up substrate(s) of {idx + 1} scanned", flush=True)
     return examples
 
 
