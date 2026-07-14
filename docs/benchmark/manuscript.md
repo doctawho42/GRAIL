@@ -61,7 +61,7 @@ much headroom the rule bank has (coverage), how much of it the selection stage r
 much of what survives it the ranking stage correctly surfaces. That decomposition, not a
 leaderboard placement, is this paper's central instrument.
 
-We make four contributions:
+We make five contributions:
 
 1. **The rule-bank coverage ceiling as a diagnostic primitive.** We measure the best achievable
    recall under perfect selection and ranking — **0.735** tautomer-InChIKey recall@15 on the full
@@ -76,14 +76,21 @@ We make four contributions:
    propensity-PU identifiability limit on selection, and a single-step paradigm bound on coverage
    — each with evidence and an open falsification test.
 
-3. **TAME, a standardized, tautomer-aware, leakage-audited matching protocol, with a
+3. **An automated, self-validated, leakage-safe reaction-template mining procedure.** Rather than
+   hand-curating reaction SMIRKS as SyGMa and Meteor do, GRAIL's 7,581-rule bank is built by mining
+   annotated substrate→metabolite pairs drawn only from the clean, molecule-disjoint training
+   split: MCS-anchored reaction-center detection, atom-mapping via either a neural attention mapper
+   (RXNMapper) or a rule-based MCS-positional correspondence, per-rule self-testing against its
+   source reaction, and a selectivity filter rejecting over-general templates (§3).
+
+4. **TAME, a standardized, tautomer-aware, leakage-audited matching protocol, with a
    match-sensitivity analysis.** We show, with a pre-declared primary endpoint, that match-
    convention choice is a method-dependent confounder, not a neutral scoring detail: the
    differential sensitivity between GRAIL and BioTransformer moving from canonical to
    tautomer-InChIKey matching is **+0.120** (95% CI **[+0.073, +0.171]**) — enough to reverse
    method rankings a fixed convention would report as stable.
 
-4. **GRAIL as an interpretable, honestly-diagnosed instrument.** We report GRAIL as one row in its
+5. **GRAIL as an interpretable, honestly-diagnosed instrument.** We report GRAIL as one row in its
    own comparison table, not a state-of-the-art claim: rule selection, product enumeration, and
    pair-plausibility scoring are each individually inspectable, letting contribution 2's
    decomposition attribute loss to a specific pipeline stage rather than an opaque end-to-end
@@ -200,6 +207,43 @@ stated otherwise, structure matching between predicted and reference metabolites
 instrument — the selected rule, the enumerated product, and the filter's pair judgment are each
 inspectable — and the contribution we claim is interpretable learned rule selection paired with a
 PU-aware pair filter, not recall supremacy over other metabolite predictors.
+
+**Rule-bank construction.** Unlike the hand-curated expert systems GRAIL is benchmarked against
+(SyGMa, Meteor), its SMIRKS rule bank is built by an automated, self-validated mining procedure
+over annotated substrate→metabolite pairs rather than by manual reaction-rule authoring. The
+bank-construction pipeline (`scripts/mine_rules.py`, `process_pair`) reads only the clean,
+molecule-disjoint **TRAIN** split — never validation or test — and, per annotated pair: (i) locates
+a ring-aware maximum-common-substructure anchor (RDKit FMCS with `ringMatchesRingOnly`,
+`completeRingsOnly`, `bondCompare=CompareAny`, `atomCompare=CompareElements`), requiring the MCS to
+cover at least 40% of the smaller molecule's atoms; (ii) derives a reaction center from that anchor
+(`find_reaction_center`) by flagging matched atoms whose element, formal charge, H-count,
+aromaticity, or degree changed, atom pairs whose connecting bond order changed, and any
+leaving/entering atoms together with their matched neighbours — trying multiple substrate/product
+match combinations and keeping the one that minimises the resulting center size; (iii) expands the
+center by a 1-bond radius (`expand_center`) to capture the immediate reactive environment; (iv)
+atom-maps the expanded substrate/product fragments by their MCS positional correspondence into a
+candidate SMIRKS template (`build_smirks`); (v) **self-tests** the template — a rule survives only
+if applying it to its own source substrate regenerates, after canonicalization, the annotated
+source product (`self_test`), otherwise it is discarded; and (vi) passes the surviving, deduplicated
+templates through a **selectivity filter** (`filter_rule_candidates`) that rejects templates that
+are unselective (mean more than 200 distinct products across a 50-substrate sample) or
+simultaneously too general and too prolific (applicable to more than 90% of sampled substrates
+while still producing more than 50 products on average). The codebase implements a second
+atom-mapping backend alongside the MCS-positional correspondence above: `combine_reaction` in
+`grail_metabolism/utils/reaction_mapper.py` detects a reaction center via RASCAL MCES
+(`rdRascalMCES.FindMCES`, falling back to RDKit FMCS) plus a 1-bond environment, then emits a mapped
+SMIRKS using **RXNMapper**, a neural attention-based atom-mapper
+(`get_attention_guided_atom_maps`) — so both a neural and a rule-based atom-mapping route to SMIRKS
+construction are available in the codebase. Because mining reads exclusively from the clean TRAIN
+split, no test-split metabolite can leak into a mined rule, so the rule-bank coverage ceiling
+reported as a held-out quantity (§6, 0.735) stays honest. The deployed bank,
+`grail_metabolism/resources/extended_smirks.txt` (**7,581** SMIRKS), is the deduplicated union of
+four prior curated banks — `smirks.txt` (473), `merged_smirks.txt` (656), `compressed_rules.smarts`
+(500), and `notebooks_rules.txt` (1,051) — with the newly mined, self-tested, selectivity-filtered
+templates. The selectivity filter is a design-time counterpart to the selection↔precision trade-off
+quantified empirically in §10's selection-breadth ablation: rejecting over-general templates at
+construction time is the same lever as narrowing `top_k` at inference time, applied before
+deployment rather than at the deployed operating point.
 
 ## 4. Methods — Formal framework
 
