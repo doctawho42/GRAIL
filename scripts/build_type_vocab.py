@@ -13,6 +13,7 @@ Prints `K types cover P% of train pairs` for the kept (dense, type_id >= 0) voca
 """
 from __future__ import annotations
 
+import argparse
 import json
 import sys
 from pathlib import Path
@@ -25,12 +26,16 @@ from grail_metabolism.model.reaction_types import build_type_vocab
 
 CATALOG = ROOT / "results" / "mined_rule_catalog_v2.json"
 OUT = ROOT / "grail_metabolism" / "resources" / "coarse_type_vocab.json"
-MIN_PAIRS = 5
 
 
 def main() -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--min-pairs", type=int, default=5,
+                    help="minimum pooled train-pair support for a signature to get its own type id "
+                         "(lower = more types + higher coverage but sparser per-type signal)")
+    args = ap.parse_args()
     catalog = json.loads(CATALOG.read_text())
-    type_id_to_sig, rule_to_type = build_type_vocab(catalog, min_pairs=MIN_PAIRS)
+    type_id_to_sig, rule_to_type = build_type_vocab(catalog, min_pairs=args.min_pairs)
 
     total_pairs = sum(int(entry.get("count", 0)) for entry in catalog.values())
     covered_pairs = sum(t["n_pairs"] for t in type_id_to_sig.values())
