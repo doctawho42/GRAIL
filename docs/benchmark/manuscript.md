@@ -77,11 +77,13 @@ We make five contributions:
    — each with evidence and an open falsification test.
 
 3. **An automated, self-validated, leakage-safe reaction-template mining procedure.** Rather than
-   hand-curating reaction SMIRKS as SyGMa and Meteor do, GRAIL's 7,581-rule bank is built by mining
-   annotated substrate→metabolite pairs drawn only from the clean, molecule-disjoint training
-   split: MCS-anchored reaction-center detection, atom-mapping via either a neural attention mapper
-   (RXNMapper) or a rule-based MCS-positional correspondence, per-rule self-testing against its
-   source reaction, and a selectivity filter rejecting over-general templates (§3).
+   hand-curating reaction SMIRKS as SyGMa and Meteor do, GRAIL assembles its rule bank
+   automatically — 5,856 self-validated templates mined from annotated substrate→metabolite pairs
+   drawn only from the clean, molecule-disjoint training split, deduplicated with prior curated
+   rule sets into the 7,581-rule bank: MCS-anchored reaction-center detection, atom-mapping via
+   either a neural attention mapper (RXNMapper) or a rule-based MCS-positional correspondence,
+   per-rule self-testing against its source reaction, and a selectivity filter rejecting
+   over-general templates (§3).
 
 4. **TAME, a standardized, tautomer-aware, leakage-audited matching protocol, with a
    match-sensitivity analysis.** We show, with a pre-declared primary endpoint, that match-
@@ -254,8 +256,8 @@ coverage beyond what the bank already contains, so the rule-bank coverage ceilin
 is bounded by the diversity of the training-reaction *source*, not by mining incompleteness.
 Expanding coverage would therefore require new reaction corpora or more general templates — which
 the selectivity filter above deliberately resists — rather than further re-mining of the same data,
-consistent with §10's selection-breadth finding that GRAIL's residual gap to SyGMa is a rule-set
-coverage limit, not a ranking deficiency. The selectivity filter is a design-time counterpart to the
+consistent with §10's finding that GRAIL's residual gap to SyGMa is a compound of over-aggressive
+rule-selection breadth and a residual rule-set coverage limit — not a ranking deficiency. The selectivity filter is a design-time counterpart to the
 selection↔precision trade-off
 quantified empirically in §10's selection-breadth ablation: rejecting over-general templates at
 construction time is the same lever as narrowing `top_k` at inference time, applied before
