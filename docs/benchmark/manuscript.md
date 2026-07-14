@@ -479,7 +479,7 @@ rule-selection breadth as its own lever:
 
 Widening top_k 30→300 monotonically lifts recall@15 **0.352→0.413 (+0.061)** and pool coverage
 **0.482→0.608**, at the cost of an **8.6×** pool inflation (12.5→107.6 mean candidates) — recall
-bought with precision, the same trade SyGMa makes by overproducing (~81 outputs/substrate). It
+bought with precision, the same trade SyGMa makes by overproducing (~74 outputs/substrate). It
 also saturates BELOW the ceiling: pool coverage plateaus at **0.608 < 0.735** even at ~all
 applicable rules, and recall@15 0.413 still << SyGMa's 0.572 — so breadth is a real but PARTIAL
 lever. Ranking still loses roughly a third of in-pool hits even at top_k=300 (recall / pool
