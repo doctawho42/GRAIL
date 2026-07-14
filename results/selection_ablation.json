@@ -1,0 +1,32 @@
+{
+  "split": "test",
+  "n": 245,
+  "prior_strength": 0.4,
+  "match": "inchikey_tautomer",
+  "note": "selection-breadth ablation on deployed full5000 pipeline (gen from full5000_priors, deployed filter); top_k=600 skipped (>=300 approx exhausts applicable rules). pool_coverage = oracle (true metabolite anywhere in pool) = coverage_bank x selection_retention(top_k); recall@15 = deployed filter-ranked top-15.",
+  "reference": {
+    "deployed_recall@15": 0.33,
+    "sygma_recall@15": 0.572,
+    "ceiling": 0.735
+  },
+  "by_top_k": {
+    "30": {
+      "pool_coverage": 0.482,
+      "recall@15": 0.352,
+      "mean_pool_size": 12.5,
+      "mean_output": 7.99
+    },
+    "100": {
+      "pool_coverage": 0.547,
+      "recall@15": 0.388,
+      "mean_pool_size": 35.3,
+      "mean_output": 9.47
+    },
+    "300": {
+      "pool_coverage": 0.608,
+      "recall@15": 0.413,
+      "mean_pool_size": 107.6,
+      "mean_output": 9.53
+    }
+  }
+}
