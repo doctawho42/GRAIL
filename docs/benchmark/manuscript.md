@@ -240,7 +240,23 @@ reported as a held-out quantity (§6, 0.735) stays honest. The deployed bank,
 `grail_metabolism/resources/extended_smirks.txt` (**7,581** SMIRKS), is the deduplicated union of
 four prior curated banks — `smirks.txt` (473), `merged_smirks.txt` (656), `compressed_rules.smarts`
 (500), and `notebooks_rules.txt` (1,051) — with the newly mined, self-tested, selectivity-filtered
-templates. The selectivity filter is a design-time counterpart to the selection↔precision trade-off
+templates. Mining scale and support are heavy-tailed: the MCS-positional miner alone extracts
+**5,856** unique, self-tested SMIRKS templates from the clean TRAIN positives
+(`results/mined_rule_catalog_v2.json`), of which **4,274 of 5,856 (73%)** are supported by a single
+training pair and only **457** by five or more (the single most-supported template covers **1,531**
+pairs) — deduplicated together with the four prior curated banks above, this reaches the deployed
+**7,581**-rule bank, so the bank is dominated by highly specific, near-single-example templates
+rather than broad general reactions. Re-running the miner independently over the same clean TRAIN
+split re-derives templates that are already all present in the deployed bank (**5,856/5,856; 0
+new**; `grail_metabolism/resources/mined_only_v2.txt` against `extended_smirks.txt`) — the mining
+procedure is deterministic and, on this TRAIN corpus, source-saturated: it surfaces no additional
+coverage beyond what the bank already contains, so the rule-bank coverage ceiling (**0.735**, §6)
+is bounded by the diversity of the training-reaction *source*, not by mining incompleteness.
+Expanding coverage would therefore require new reaction corpora or more general templates — which
+the selectivity filter above deliberately resists — rather than further re-mining of the same data,
+consistent with §10's selection-breadth finding that GRAIL's residual gap to SyGMa is a rule-set
+coverage limit, not a ranking deficiency. The selectivity filter is a design-time counterpart to the
+selection↔precision trade-off
 quantified empirically in §10's selection-breadth ablation: rejecting over-general templates at
 construction time is the same lever as narrowing `top_k` at inference time, applied before
 deployment rather than at the deployed operating point.
