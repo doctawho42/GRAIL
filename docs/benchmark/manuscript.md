@@ -16,7 +16,7 @@ ceiling is **0.735** (tautomer-InChIKey, micro), but the deployed pipeline conve
 that ceiling into realised recall@15 = **0.261** (micro) (3-seed 0.269 ± 0.006), a gap
 **dominated by a selection loss** (selection_retention = **0.489**) larger than the ranking loss.
 Stated up front: **GRAIL does not win on recall** — 0.330 macro recall@15 (3-seed 0.344 ± 0.010; §9), below SyGMa (0.572) and
-MetaPredictor (0.585, on the n=150 tier-2 subset). We also introduce **TAME**, a tautomer-aware,
+MetaPredictor (0.585 on the n=150 subset; a full-test re-run scores 0.568, ≈ SyGMa). We also introduce **TAME**, a tautomer-aware,
 leakage-audited matching and re-scoring protocol, and show with a pre-declared primary endpoint
 that match-protocol choice is a method-dependent confounder that can reverse method rankings
 (interaction **+0.120**, 95% CI **[+0.073, +0.171]**). GRAIL's contribution is the coverage
@@ -48,8 +48,9 @@ directly comparable, even when scoring identical chemistry.
 We state our headline result up front, because it runs against the grain of most papers in this
 space: **GRAIL does not win on recall.** On a leakage-audited, substrate-disjoint clean test split,
 GRAIL reaches 0.330 macro recall@15 (0.261 pooled/micro) (3-seed retraining: macro 0.344 ± 0.010, micro 0.269 ± 0.006; §9) — below
-both SyGMa (0.572) and MetaPredictor (0.585, on the n=150 tier-2 subset on which all five compared
-methods are jointly scored). §9 certifies this independently with a paired bootstrap and an exact
+both SyGMa (0.572) and MetaPredictor (0.585 on the n=150 tier-2 subset on which all five compared
+methods are jointly scored; and 0.568 on the full n≈1170 test — ≈ SyGMa, confirming the subset is
+representative). §9 certifies this independently with a paired bootstrap and an exact
 McNemar test, both wholly significant against GRAIL. GRAIL enters its own comparison as one honest
 row, not the winner.
 
@@ -523,7 +524,10 @@ n=150 subset as the tier-2 methods so all 5 columns are paired on identical subs
 statistics below; that is why the table's GRAIL/SyGMa cells differ from their full-test headline
 figures, restated as the honest-anchor ordering that runs through this paper: **GRAIL 0.330 macro
 < SyGMa 0.572** (§6, §8–§9, `results/anchor_certification.json`) **< MetaPredictor 0.585 (n=150)**
-(`results/match_sensitivity_5method.json`; all macro tautomer-InChIKey). GRAIL is not competitive on recall in either scoring — the contribution here
+(`results/match_sensitivity_5method.json`; all macro tautomer-InChIKey). Re-scored on the full test,
+MetaPredictor reaches **0.568** (`results/metapredictor_1170.json`, n=1169) — essentially tied with
+SyGMa (0.572) on matched n and still far above GRAIL, and the n=150 value overstates it by only
++0.017, so the shared subset is representative. GRAIL is not competitive on recall in either scoring — the contribution here
 is the protocol, not a win.
 
 **Budget-matched view.** recall@15 is not a budget-fair comparison: SyGMa reaches 0.554 by emitting
@@ -621,7 +625,11 @@ comparators (BioTransformer, MetaPredictor, MetaTrans) are scored only on the **
 subset for which frozen third-party predictions exist, while GRAIL and SyGMa's headline numbers
 elsewhere in the paper are reported on the full **n≈1170** clean test split; within Table 3 itself
 GRAIL and SyGMa are re-scored on the matching n=150 subset so the five columns are paired on
-identical substrates, but a single-n, five-method rerun on the full test split remains future work.
+identical substrates. MetaPredictor has since been re-scored on the full test (recall@15 0.568,
+≈ SyGMa, `results/metapredictor_1170.json`), confirming its n=150 value is representative and
+leaving only BioTransformer and MetaTrans on n=150; a full single-n, five-method rerun remains
+future work (BioTransformer's exact n=150 configuration is unscripted and MetaTrans's inference
+pipeline is no longer reproducible in-tree).
 
 Fifth, the external-validity ceiling (§7) is measured on only **37** GLORYx parent substrates, so
 its 95% CI is wide by design ([0.531, 0.733]) and the composition-effect regression that partially
@@ -721,8 +729,10 @@ mostly compute-gated or cheap post-draft edits — not open scientific limitatio
   the one true compute gate underneath every downstream number (anchor Δ, decomposition, all three
   Propositions currently rest on a single checkpoint)~~ — **done** (macro 0.344 ± 0.010, micro
   0.269 ± 0.006 over 3 seeds; `results/multiseed_headline.json`, `results/multiseed_micro.json`; §9).
-- Run the tier-2 tools (BioTransformer, MetaPredictor, MetaTrans) on the full **1170**-substrate
-  clean test split, closing the n=150-vs-1170 comparability gap noted in §12.
+- ~~Run the tier-2 tools (BioTransformer, MetaPredictor, MetaTrans) on the full **1170**-substrate
+  clean test split~~ — **MetaPredictor done** (recall@15 0.568, `results/metapredictor_1170.json`).
+  BioTransformer's n=150 config is unscripted and MetaTrans's inference pipeline is no longer
+  reproducible in-tree, so those two remain on n=150 (the §12 caveat covers them).
 - Optional: a compute-matched GFlowNet null, for context on what a comparably-budgeted learned
   generator would score.
 
