@@ -827,6 +827,39 @@ def evaluate_bi(
     return out
 
 
+def evaluate_bi_per_substrate(
+    reranker: BiEncoderReranker,
+    examples: List[_BiExample],
+    k: int = 15,
+    device: Optional[torch.device] = None,
+) -> Tuple[List[float], List[float]]:
+    """Per-substrate reranker vs generator-alone recall@k (tautomer-InChIKey) on the SAME pools.
+
+    Same ranking as ``evaluate_bi`` (which returns only the aggregate means); here the per-substrate
+    values are kept so a PAIRED bootstrap CI on the reranker-minus-generator improvement can be
+    computed (Proposition 1). The means of the returned lists equal ``evaluate_bi``'s
+    ``reranker_recall@k`` / ``generator_recall@k`` exactly.
+    """
+    device = device or next(reranker.parameters()).device
+    reranker.eval()
+    rer_list: List[float] = []
+    gen_list: List[float] = []
+    for ex in examples:
+        true_products = ex.true_products
+        sub_graph = ex.sub_graph.clone()
+        prod_batch = Batch.from_data_list([g.clone() for g in ex.prod_graphs])
+        scores = reranker(
+            sub_graph, prod_batch,
+            ex.rule_priors.to(device), ex.gen_scores.to(device),
+        ).detach().cpu()
+        rer_order = sorted(range(len(ex.smiles)), key=lambda i: (-float(scores[i]), i))
+        rer_ranked = [ex.smiles[i] for i in rer_order]
+        gen_ranked = list(ex.smiles)
+        rer_list.append(_recall_at_k(rer_ranked, true_products, k))
+        gen_list.append(_recall_at_k(gen_ranked, true_products, k))
+    return rer_list, gen_list
+
+
 # =========================================================================== #
 # Task 6: intermediate-node (depth-2) bootstrap pairs.
 #

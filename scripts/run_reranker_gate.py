@@ -40,11 +40,13 @@ from grail_metabolism.utils.seed import seed_everything
 from grail_metabolism.utils.transform import SINGLE_NODE_DIM
 from grail_metabolism.workflows.data import load_dataset_bundle
 from grail_metabolism.workflows.factory import build_generator
+from grail_metabolism.stats import paired_diff_bootstrap_ci
 from grail_metabolism.workflows.reranker import (
     BiRerankerTrainer,
     RerankerTrainer,
     evaluate,
     evaluate_bi,
+    evaluate_bi_per_substrate,
     load_or_build_examples,
     load_or_build_examples_bi,
 )
@@ -105,6 +107,11 @@ def main() -> None:
         "--workers", type=int, default=1,
         help="Parallel pool-generation workers (spawn Pool). 1 = serial. >1 reloads the "
              "generator per worker from the checkpoint; only valid for --arch bi.",
+    )
+    parser.add_argument(
+        "--paired-ci-out", default=None,
+        help="If set (bi arch only), also compute a PAIRED per-substrate bootstrap CI of the "
+             "reranker-minus-generator recall@15 improvement (Proposition 1) and write it here.",
     )
     args = parser.parse_args()
 
@@ -209,6 +216,29 @@ def main() -> None:
     reranker_r15 = metrics["reranker_recall@15"]
     generator_r15 = metrics["generator_recall@15"]
     oracle_r15 = metrics["oracle_recall@15"]
+
+    # Proposition 1: paired per-substrate bootstrap CI of the reranker's recall@15 improvement.
+    paired_ci = None
+    if args.paired_ci_out and args.arch == "bi":
+        rer_ps, gen_ps = evaluate_bi_per_substrate(reranker, eval_examples, k=15, device=trainer.device)
+        diffs = [r - g for r, g in zip(rer_ps, gen_ps)]
+        point, lo, hi = paired_diff_bootstrap_ci(diffs, n_boot=10000, seed=0)
+        paired_ci = {
+            "metric": "reranker_minus_generator_recall@15",
+            "eval_split": args.eval_split,
+            "n_substrates": len(diffs),
+            "mean_improvement": point,
+            "ci95_lo": lo,
+            "ci95_hi": hi,
+            "reranker_recall@15": sum(rer_ps) / max(len(rer_ps), 1),
+            "generator_recall@15": sum(gen_ps) / max(len(gen_ps), 1),
+            "significant": lo > 0.0,
+        }
+        Path(args.paired_ci_out).parent.mkdir(parents=True, exist_ok=True)
+        with open(args.paired_ci_out, "w") as handle:
+            json.dump(paired_ci, handle, indent=2)
+        print(f"[gate] paired CI: +{point:.4f} [{lo:+.4f}, {hi:+.4f}] "
+              f"(n={len(diffs)}, significant={lo > 0.0}) -> {args.paired_ci_out}", flush=True)
 
     # GO vs DEAD reading.
     if reranker_r15 > generator_r15 + 0.01:

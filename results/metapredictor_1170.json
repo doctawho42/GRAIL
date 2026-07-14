@@ -1,0 +1,20 @@
+{
+  "method": "MetaPredictor",
+  "n_substrates": 1169,
+  "match": "inchikey_tautomer",
+  "recall_at": {
+    "5": 0.474,
+    "10": 0.557,
+    "15": 0.568
+  },
+  "mean_output": 11.07,
+  "all_modes_recall_at_15": {
+    "canonical": 0.529,
+    "inchikey": 0.542,
+    "inchi_no_stereo": 0.559,
+    "tanimoto1": 0.532,
+    "inchikey_tautomer": 0.568
+  },
+  "n150_value_recall_at_15_tautomer": 0.585,
+  "note": "MetaPredictor re-run on the FULL clean test (1169 scored); recall@15 tautomer 0.568 vs 0.585 on the n=150 subset -> subset representative, slightly optimistic. On matched n=1170: SyGMa 0.572 ~ MetaPredictor 0.568 (SyGMa marginally ahead), both >> GRAIL 0.344."
+}
