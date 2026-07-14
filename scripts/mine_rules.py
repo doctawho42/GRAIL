@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import os
 import random
 import re
 import sys
@@ -49,10 +50,15 @@ RULE_BANK_PATHS = {
     ),
 }
 
-MINED_ONLY_PATH = RESOURCES_DIR / "mined_only.txt"
-EXTENDED_RULES_PATH = RESOURCES_DIR / "extended_smirks.txt"
-RULE_CATALOG_PATH = RESULTS_DIR / "mined_rule_catalog.json"
-RULE_MINING_REPORT = RESULTS_DIR / "rule_mining_report.json"
+# Output-path suffix (MINE_OUT_SUFFIX) lets a measurement run write to *_v2 files without
+# clobbering the DEPLOYED grail_metabolism/resources/extended_smirks.txt (every trained
+# checkpoint + every published number depends on that exact bank). Empty by default -> the
+# original in-place behaviour is preserved for a real bank rebuild.
+_OUT_SUFFIX = os.environ.get("MINE_OUT_SUFFIX", "")
+MINED_ONLY_PATH = RESOURCES_DIR / f"mined_only{_OUT_SUFFIX}.txt"
+EXTENDED_RULES_PATH = RESOURCES_DIR / f"extended_smirks{_OUT_SUFFIX}.txt"
+RULE_CATALOG_PATH = RESULTS_DIR / f"mined_rule_catalog{_OUT_SUFFIX}.json"
+RULE_MINING_REPORT = RESULTS_DIR / f"rule_mining_report{_OUT_SUFFIX}.json"
 PREVIOUS_COVERAGE_REPORT = RESULTS_DIR / "coverage_report.json"
 LEAKAGE_FIX_REPORT = RESULTS_DIR / "leakage_fix_report.json"
 
