@@ -1,0 +1,22 @@
+{
+  "split": "test",
+  "n": 245,
+  "prior_strength": 0.4,
+  "match": "inchikey_tautomer",
+  "note": "ranking-signal comparison on identical broad pools (deployed pipeline candidate pool ranked by filter*gen=learned vs the rule frequency prior=SyGMa-style). At narrow breadth prior~=filter; as breadth grows the LEARNED filter pulls ahead (top_k=300: 0.413 vs 0.374), so GRAIL's ranking model is not the deficit. pool_coverage is rank-independent (see selection_ablation.json). n=245 subset.",
+  "reference": {
+    "deployed_recall@15": 0.33,
+    "sygma_recall@15": 0.572,
+    "ceiling": 0.735
+  },
+  "filter_gen": {
+    "30": 0.352,
+    "100": 0.388,
+    "300": 0.413
+  },
+  "prior": {
+    "30": 0.359,
+    "100": 0.374,
+    "300": 0.374
+  }
+}

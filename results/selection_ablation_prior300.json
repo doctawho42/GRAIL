@@ -1,0 +1,22 @@
+{
+  "split": "test",
+  "n": 245,
+  "prior_strength": 0.4,
+  "rank_by": "prior",
+  "reference": {
+    "deployed_recall@15": 0.33,
+    "sygma_recall@15": 0.572,
+    "ceiling": 0.735
+  },
+  "by_top_k": {
+    "300": {
+      "pool_coverage": null,
+      "recall@5": 0.324,
+      "recall@10": 0.36,
+      "recall@15": 0.374,
+      "precision": 0.093,
+      "mean_pool_size": 107.6,
+      "mean_output": 9.53
+    }
+  }
+}

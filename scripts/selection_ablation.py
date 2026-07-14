@@ -90,7 +90,11 @@ def main() -> int:
     ap.add_argument("--top-ks", type=str, default="30,100,300")
     ap.add_argument("--prior-strength", type=float, default=0.4, help="deployed=0.4; raise to rank rules by the frequency prior")
     ap.add_argument("--max-output", type=int, default=15)
-    ap.add_argument("--filter-cap", type=int, default=300, help="candidates fed to the filter; large so a broad pool actually reaches it")
+    ap.add_argument("--filter-cap", type=int, default=300, help="candidates fed to the ranker; large so a broad pool actually reaches it")
+    ap.add_argument("--rank-by", choices=["filter_gen", "gen", "prior"], default="filter_gen",
+                    help="rank the pool by filter*gen (deployed), gen alone, or the rule frequency prior (SyGMa-style)")
+    ap.add_argument("--skip-coverage", action="store_true",
+                    help="skip the oracle pool-coverage set (rank-independent; reuse it from another rank_by run) to halve peak memory at large top_k")
     ap.add_argument("--threads", type=int, default=6)
     ap.add_argument("--out", default=str(ROOT / "results" / "selection_ablation.json"))
     args = ap.parse_args()
@@ -104,7 +108,8 @@ def main() -> int:
     filter_model = _load(Path(args.filter_ckpt), lambda a, r: build_filter(FilterConfig(**a)))
     gen_threshold = getattr(generator, "calibrated_threshold", None)
     top_ks = [int(t) for t in str(args.top_ks).split(",") if t.strip()]
-    print(f"prior std={prior_std:.3f}  prior_strength={args.prior_strength}  top_ks={top_ks}", flush=True)
+    prior_vec = generator.rule_prior_logits.detach().cpu()  # SyGMa-style empirical per-rule log-odds
+    print(f"prior std={prior_std:.3f}  prior_strength={args.prior_strength}  rank_by={args.rank_by}  top_ks={top_ks}", flush=True)
 
     dataset = DatasetConfig(
         train_sdf="grail_metabolism/data/train.sdf", train_triples="grail_metabolism/data/train_triples.txt",
@@ -123,7 +128,7 @@ def main() -> int:
     print(f"{args.split} substrates: {len(items)}", flush=True)
 
     report = {
-        "split": args.split, "n": len(items), "prior_strength": args.prior_strength,
+        "split": args.split, "n": len(items), "prior_strength": args.prior_strength, "rank_by": args.rank_by,
         "reference": {"deployed_recall@15": DEPLOYED_15, "sygma_recall@15": SYGMA_15, "ceiling": CEILING},
         "by_top_k": {},
     }
@@ -133,23 +138,32 @@ def main() -> int:
         for i, (sub, prods) in enumerate(items, 1):
             if i == 1 or i % 50 == 0 or i == len(items):
                 print(f"  top_k={T}: {i}/{len(items)} ({time.perf_counter()-t:.0f}s)", flush=True)
-            scored = generator.generate_scored(sub, top_k=T, threshold=gen_threshold)
-            pool_smiles = [s for s, _ in scored]
-            pool_sizes.append(len(pool_smiles))
+            # (smiles, agg_gen_score, rule_id, _); identical candidate set to generate_scored.
+            detailed = generator.generate_scored_with_details(sub, top_k=T, threshold=gen_threshold, compute_sites=False)
+            detailed.sort(key=lambda d: (-d[1], d[0]))  # generator-score order (matches generate_scored)
+            pool_sizes.append(len(detailed))
             # (a) oracle pool coverage: is any true metabolite reachable in the broad pool?
-            true_keys = _taut_set(prods)
-            if true_keys & _taut_set(pool_smiles):
-                pool_hits += 1
-            # (b) deployed recall@15: filter-rank the (capped) pool, top-15
-            capped = scored[: args.filter_cap]
-            cands = [s for s, _ in capped]
-            fscores = filter_model.score_batch(sub, cands) if cands else []
-            combined = [(s, float(fs) * float(gs)) for (s, gs), fs in zip(capped, fscores)]
-            ranked = [s for s, _ in sorted(combined, key=lambda x: -x[1])]
+            # (rank-independent -- skippable to halve peak memory at large top_k, then reused
+            # from another rank_by run at the same top_k.)
+            if not args.skip_coverage:
+                true_keys = _taut_set(prods)
+                if true_keys & _taut_set(d[0] for d in detailed):
+                    pool_hits += 1
+            # (b) recall@15: rank the (capped) pool by the chosen signal, top-15
+            capped = detailed[: args.filter_cap]
+            if args.rank_by == "prior":  # SyGMa-style: rank by the rule's empirical frequency prior
+                keyed = [(d[0], float(prior_vec[d[2]])) for d in capped]
+            elif args.rank_by == "gen":  # learned generator score alone (no filter)
+                keyed = [(d[0], float(d[1])) for d in capped]
+            else:  # filter_gen (deployed): filter_score * gen_score
+                cands = [d[0] for d in capped]
+                fscores = filter_model.score_batch(sub, cands) if cands else []
+                keyed = [(d[0], float(fs) * float(d[1])) for d, fs in zip(capped, fscores)]
+            ranked = [s for s, _ in sorted(keyed, key=lambda x: -x[1])]
             rows.append({"predicted": _dedup_cap(ranked, args.max_output), "real": sorted(prods)})
         m = aggregate_prediction_metrics(rows, KS, match="inchikey_tautomer")
         report["by_top_k"][str(T)] = {
-            "pool_coverage": round(pool_hits / len(items), 3),
+            "pool_coverage": (None if args.skip_coverage else round(pool_hits / len(items), 3)),
             **{f"recall@{k}": round(m.get(f"top_{k}_recall", 0.0), 3) for k in KS},
             "precision": round(m.get("precision", 0.0), 3),
             "mean_pool_size": round(sum(pool_sizes) / len(pool_sizes), 1),
@@ -165,7 +179,8 @@ def main() -> int:
     print(f"{'top_k':>6} | {'pool_cov':>8} | {'recall@15':>9} | {'mean_pool':>9} | {'mean_out':>8}", flush=True)
     for T in top_ks:
         r = report["by_top_k"][str(T)]
-        print(f"{T:>6} | {r['pool_coverage']:>8.3f} | {r['recall@15']:>9.3f} | {r['mean_pool_size']:>9.1f} | {r['mean_output']:>8.2f}", flush=True)
+        pc = "    n/a" if r["pool_coverage"] is None else f"{r['pool_coverage']:>8.3f}"
+        print(f"{T:>6} | {pc} | {r['recall@15']:>9.3f} | {r['mean_pool_size']:>9.1f} | {r['mean_output']:>8.2f}", flush=True)
     print(f"  refs: deployed@15={DEPLOYED_15}  SyGMa@15={SYGMA_15}  ceiling={CEILING}", flush=True)
     print(f"Wrote {args.out}", flush=True)
     return 0
