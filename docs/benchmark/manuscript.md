@@ -10,7 +10,7 @@ recall conflates whether a rule bank *covers* a transformation, whether a model 
 right rule, and whether it *ranks* the resulting candidate into a bounded output — and shifts
 under whichever structural-match convention a paper adopts. We present **GRAIL**, a three-stage
 rule-based-plus-learned predictor (a curated 7,581-SMIRKS bank, a learned rule selector, and a
-PU-trained pair filter), and use it to decompose recall into coverage × selection × ranking. On a
+PU-trained structural filter), and use it to decompose recall into coverage × selection × ranking. On a
 leakage-audited, substrate-disjoint clean test split (1170 substrates), the rule bank's coverage
 ceiling is **0.735** (tautomer-InChIKey, micro), but the deployed pipeline converts only 35.5% of
 that ceiling into realised recall@15 = **0.261** (micro) (3-seed 0.269 ± 0.006), a gap
@@ -55,7 +55,7 @@ McNemar test, both wholly significant against GRAIL. GRAIL enters its own compar
 row, not the winner.
 
 What GRAIL *is* useful for is turning that loss into a measurement. Its three stages — a learned
-rule selector, deterministic RDKit rule application, and a PU-trained pair filter — are each
+rule selector, deterministic RDKit rule application, and a PU-trained structural filter — are each
 inspectable, letting us ask, for the rule-based paradigm generally and not only for GRAIL, how
 much headroom the rule bank has (coverage), how much of it the selection stage retains, and how
 much of what survives it the ranking stage correctly surfaces. That decomposition, not a
@@ -188,19 +188,16 @@ bank of **7,581 SMIRKS** rules; the default scorer is retrieval-based, combining
 between substrate and rule graph embeddings, an embedding-similarity term, and an MLP head. The
 second stage, **RDKit rule application**, mechanically applies every rule the generator selects
 and enumerates the resulting candidate products, retaining provenance of which rule produced which
-candidate. The third stage is a **PU-trained, MCS-aware pair filter**: a binary classifier scoring
-each (substrate, product) pair. Its training data are positive-unlabeled — annotated true
+candidate. The third stage is a **PU-trained structural filter**: a binary classifier scoring
+each (substrate, product) pair (neural architecture detailed below). Its training data are positive-unlabeled — annotated true
 metabolites are the only positives, while rule-applicable products lacking a positive annotation
 are treated as *unlabeled*, not as confirmed negatives, since absence of an annotation does not
 certify a transformation does not occur. The filter is accordingly trained in the logit domain
 (`return_logits=True`) so a PULoss/nnPU surrogate operates on raw classifier outputs rather than
 post-sigmoid probabilities, and the generator itself down-weights unobserved-but-applicable rules
-rather than penalizing them as hard negatives. Featurization uses fixed-width graphs: single-molecule
-graphs feed the generator encoder with 16-dim node features, while the pair filter operates on
-merged substrate–product graphs with 18-dim nodes and 18-dim edges plus a 1024-dim Morgan
-fingerprint branch; cross-edges linking substrate and product atoms come from an element-aware
-maximum common substructure (MCS) atom correspondence rather than sorted or arbitrary indices,
-preserving chemically meaningful atom mappings across the reaction. At deployment,
+rather than penalizing them as hard negatives. Featurization uses fixed-width graphs — 16-dim single-molecule nodes, 18-dim edges — and a
+1024-bit Morgan fingerprint per molecule; the two learned stages, whose architectures are detailed
+in the two subsections below, build on this shared featurization. At deployment,
 `ModelWrapper.generate` runs all three stages and ranks the candidate set by
 `filter_score × generator_score`, combining the filter's pair-plausibility judgment with the
 generator's rule-selection confidence into a single ranking signal. Throughout this paper, unless
@@ -208,7 +205,50 @@ stated otherwise, structure matching between predicted and reference metabolites
 `inchikey_tautomer` as the default match mode. The three stages together form an interpretable
 instrument — the selected rule, the enumerated product, and the filter's pair judgment are each
 inspectable — and the contribution we claim is interpretable learned rule selection paired with a
-PU-aware pair filter, not recall supremacy over other metabolite predictors.
+PU-aware structural filter, not recall supremacy over other metabolite predictors.
+
+**Generator architecture (learned rule selector).** The generator scores the entire rule bank
+against a substrate in one forward pass. A shared GATv2 graph encoder — three message-passing
+layers with node dimensions 16→192→256→128, each layer BatchNorm→ReLU→dropout(0.1) and a
+mean-pooled readout — embeds the substrate's single-molecule graph into a 128-dim vector; a
+parallel MLP embeds its 1024-bit Morgan fingerprint and a gated fusion (GELU MLPs, LayerNorm)
+combines the two into the substrate representation. Each SMIRKS rule is embedded independently by a
+rule-graph encoder of the same GATv2 family (hidden dimensions 128→192→128) together with a
+six-dimensional global rule-feature branch, so the full 7,581-rule bank is re-encoded on every
+forward pass — the dominant compute cost, and the reason inference scales with bank size. The
+per-rule logit is a sum of four learned terms: (i) a *cross-attention interaction* in which the rule
+embedding queries the substrate's atom states (single-head attention over node keys/values) to form
+a rule-specific local context, which is concatenated with the pooled embeddings and passed through a
+three-layer MLP; (ii) a *global* cosine similarity between the substrate and rule embeddings; (iii) a
+*local* cosine similarity between the attention context and the rule; and (iv) an SMARTS-*match*
+term — each scaled by a learned scalar. To this logit the model adds a per-rule bias and a
+frequency-prior term (`prior_strength = 0.4` times the rule's log-frequency in the TRAIN split), then
+subtracts a large penalty (7.5) for rules whose SMARTS does not match the substrate — an
+applicability mask that zeroes out inapplicable rules — before a sigmoid yields `P(r|s)`. When a rule
+fires at several sites, its per-firing probabilities are combined by noisy-OR. Training is
+multi-label rule classification with a margin-ranking auxiliary (rank weight 0.25, margin 0.45);
+critically, rules that are SMARTS-applicable but not annotated as productive are *down-weighted*
+(weight 0.5), not treated as hard negatives, reflecting the positive-unlabeled nature of the labels.
+Optimization is Adam (lr 1e-4, ≤20 epochs, early stopping).
+
+**Filter architecture (structural plausibility).** The deployed filter — the checkpoint behind every
+GRAIL number in this paper — is the *single-encoder* variant: it embeds the substrate and the
+candidate product **independently**, each with its own three-layer GATv2 encoder over the molecule's
+16-dim single-graph (16→192→256→128, mean-pooled), then concatenates the two 128-dim graph
+embeddings with both molecules' 1024-bit Morgan fingerprints and maps the resulting 2304-dim vector
+through a three-layer MLP (→128→64→1, ReLU, dropout 0.1) to a single logit. The codebase also
+implements a *pair* variant — the configuration default — that instead encodes one **merged**
+substrate–product graph whose 18-dim nodes are joined by cross-edges placed from an element-aware
+maximum-common-substructure (MCS) atom correspondence, rather than sorted or arbitrary indices,
+preserving chemically meaningful atom mappings across the reaction; we report the single-encoder
+filter because it is the checkpoint that produced our tuned pipeline, and note the MCS pair variant
+as an implemented alternative. Both variants train on **positive-unlabeled** data — annotated
+metabolites are the only positives, while rule-applicable-but-unannotated products are treated as
+*unlabeled*, not confirmed negatives, since a missing annotation does not certify a transformation
+does not occur — using a non-negative PU (nnPU) risk estimator with class-prior 0.75, evaluated in
+the **logit domain** (`return_logits=True`) so the surrogate operates on raw classifier outputs
+rather than a doubly-applied sigmoid. Optimization is Adam (lr 1e-4, ≤20 epochs, early stopping,
+patience 7).
 
 **Rule-bank construction.** Unlike the hand-curated expert systems GRAIL is benchmarked against
 (SyGMa, Meteor), its SMIRKS rule bank is built by an automated, self-validated mining procedure
@@ -833,8 +873,8 @@ this work.
 retrieval-scored **generator** that selects applicable rules from the 7,581-SMIRKS bank
 (trained to identify which rules yield a true metabolite for *s*); (ii) **RDKit rule
 application**, which deterministically enumerates candidate products (its rule-bank coverage of
-*s* upper-bounds achievable recall, §6); and (iii) a PU-trained (nnPU, logit-domain),
-MCS-aware **pair filter** scoring each (substrate, product) graph. Deployment ranks candidates
+*s* upper-bounds achievable recall, §6); and (iii) a PU-trained (nnPU, logit-domain)
+**structural filter** scoring each (substrate, product) pair. Deployment ranks candidates
 by `filter_score f × generator_score g`; recall decomposes as
 coverage_bank · selection_retention · ranking_conversion (§4, §8).
 

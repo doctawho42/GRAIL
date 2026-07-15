@@ -38,13 +38,13 @@
     <text x="499" y="235" text-anchor="middle" font-size="9.5" fill="#8a97a4">coverage bounds recall (§6)</text>
   </g>
 
-  <!-- ===== Stage 3: Pair filter ===== -->
+  <!-- ===== Stage 3: Structural filter ===== -->
   <g>
     <rect x="640" y="96" width="182" height="160" rx="8" fill="#f4f6f8" stroke="#33475b" stroke-width="1.5"/>
     <rect x="640" y="96" width="182" height="7" rx="3" fill="#9f5f2f"/>
-    <text x="731" y="128" text-anchor="middle" font-size="15" font-weight="700" fill="#1b2a3a">③ Pair filter</text>
-    <text x="731" y="152" text-anchor="middle" font-size="11" fill="#42505f">MCS-aware (substrate,</text>
-    <text x="731" y="168" text-anchor="middle" font-size="11" fill="#42505f">product) graph classifier</text>
+    <text x="731" y="128" text-anchor="middle" font-size="15" font-weight="700" fill="#1b2a3a">③ Structural filter</text>
+    <text x="731" y="152" text-anchor="middle" font-size="11" fill="#42505f">(substrate, product)</text>
+    <text x="731" y="168" text-anchor="middle" font-size="11" fill="#42505f">pair classifier</text>
     <text x="731" y="192" text-anchor="middle" font-size="11" font-weight="600" fill="#9f5f2f">→ filter score f</text>
     <text x="731" y="222" text-anchor="middle" font-size="9.5" fill="#8a97a4">PU-trained (nnPU),</text>
     <text x="731" y="235" text-anchor="middle" font-size="9.5" fill="#8a97a4">logit domain</text>
