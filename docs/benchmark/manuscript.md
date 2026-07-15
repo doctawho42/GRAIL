@@ -241,15 +241,28 @@ through a three-layer MLP (→128→64→1, ReLU, dropout 0.1) to a single logit
 implements a *pair* variant — the configuration default — that instead encodes one **merged**
 substrate–product graph whose 18-dim nodes are joined by cross-edges placed from an element-aware
 maximum-common-substructure (MCS) atom correspondence, rather than sorted or arbitrary indices,
-preserving chemically meaningful atom mappings across the reaction; we report the single-encoder
-filter because it is the checkpoint that produced our tuned pipeline, and note the MCS pair variant
-as an implemented alternative. Both variants train on **positive-unlabeled** data — annotated
+preserving chemically meaningful atom mappings across the reaction; we deploy the single-encoder
+filter because — as we show below — it is both more accurate and far cheaper than the MCS pair
+variant, which is implemented but dominated. Both variants train on **positive-unlabeled** data — annotated
 metabolites are the only positives, while rule-applicable-but-unannotated products are treated as
 *unlabeled*, not confirmed negatives, since a missing annotation does not certify a transformation
 does not occur — using a non-negative PU (nnPU) risk estimator with class-prior 0.75, evaluated in
 the **logit domain** (`return_logits=True`) so the surrogate operates on raw classifier outputs
 rather than a doubly-applied sigmoid. Optimization is Adam (lr 1e-4, ≤20 epochs, early stopping,
 patience 7).
+
+**Single vs. pair filter — the deployment choice, measured.** Rather than assume the single-encoder
+filter is the right default, we trained both variants on an identical 800-substrate subset (same
+negatives, seed, and optimizer; only the filter `mode` differs) and evaluated them on the full clean
+test split with the same generator and candidate pool. The single-encoder filter is the better
+model: it beats the MCS pair filter on paired recall@15 (single 0.366 vs pair 0.357; pair−single
+**−0.0090, 95% CI [−0.017, −0.001]**, paired bootstrap, n=1170) and by a wider margin at recall@5
+(0.282 vs 0.259). It is also roughly 20× cheaper: the pair filter's per-pair MCS featurization makes
+full-data training ≈14 h (against ~40 min for single) and imposes an MCS at every inference
+candidate. Both accuracy and cost therefore favour independent encoders — the MCS pair filter is a
+*dominated*, not merely unused, alternative (`results/filter_compare_matched_sub800.json`; this is a
+matched-subset comparison, so both absolute recalls sit below the full-data deployed filter and only
+the paired delta is the claim).
 
 **Rule-bank construction.** Unlike the hand-curated expert systems GRAIL is benchmarked against
 (SyGMa, Meteor), its SMIRKS rule bank is built by an automated, self-validated mining procedure

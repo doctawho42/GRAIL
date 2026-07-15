@@ -30,6 +30,10 @@ source-limited. That framing drives the directions in §3.
   PU-trained structural filter; deploy ranks by `filter_score × generator_score`, top-15.
 - Deployed checkpoints: `artifacts/full5000_priors` (generator, priors intact),
   `artifacts/full5000_single` (single-encoder filter). Concrete architectures now written into §3.
+- Filter architecture chosen **empirically**: on matched-subset training the single-encoder filter
+  beats the MCS-aware pair filter (paired recall@15 −0.009 [−0.017, −0.001], n=1170) at ~20× lower
+  training cost — the MCS pair variant is implemented but *dominated*
+  (`results/filter_compare_matched_sub800.json`; §3).
 
 **B. Rule bank & automated mining** (`scripts/mine_rules.py`, §3)
 - 7,581-SMIRKS bank; **automated self-validated mining** (MCS-anchored reaction center →
