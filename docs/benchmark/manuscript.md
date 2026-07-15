@@ -222,7 +222,8 @@ a rule-specific local context, which is concatenated with the pooled embeddings 
 three-layer MLP; (ii) a *global* cosine similarity between the substrate and rule embeddings; (iii) a
 *local* cosine similarity between the attention context and the rule; and (iv) an SMARTS-*match*
 term — each scaled by a learned scalar. To this logit the model adds a per-rule bias and a
-frequency-prior term (`prior_strength = 0.4` times the rule's log-frequency in the TRAIN split), then
+frequency-prior term (weight `prior_strength = 0.4`) — the log-odds that a rule yields a true
+metabolite, estimated from its TRAIN statistics — then
 subtracts a large penalty (7.5) for rules whose SMARTS does not match the substrate — an
 applicability mask that zeroes out inapplicable rules — before a sigmoid yields `P(r|s)`. When a rule
 fires at several sites, its per-firing probabilities are combined by noisy-OR. Training is
