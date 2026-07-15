@@ -80,7 +80,12 @@ source-limited. That framing drives the directions in §3.
 Recall = coverage × selection × ranking, and **coverage is the binding constraint**. Directions are
 ordered by expected leverage against that identity, not by novelty.
 
-### D1 — Broaden coverage (the binding constraint) · highest leverage, out of current scope
+### D1 — Broaden coverage (the binding constraint) · highest leverage, partly out of scope
+**Measured** (`results/coverage_gap_types.json`, §10 Prop 3): the single-step coverage gap (687
+uncovered test transformations) is **41% known-type** (280 — a reaction type the bank already has,
+reachable by a more general template → in-bank ceiling ≤ **0.843**) and **53% novel-type** (366 —
+absent from the bank, needs new corpora); together they cap the ceiling at 0.984. So the two levers
+below are complementary, and template generalization alone is bounded to ≈+0.11 ceiling headroom.
 Re-mining the same TRAIN split is source-saturated (0 new), so coverage can only grow from **new
 reaction sources** or **more general templates**:
 - Ingest external metabolism corpora (DrugBank/HMDB metabolism, MetaXBioDB, GLORYx training
