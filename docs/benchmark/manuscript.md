@@ -596,6 +596,8 @@ frequency prior in the probe. The three Propositions below explain *why*.
 
 **Proposition 3 — Paradigm limit (→ `coverage_bank`).** Single-step rule-based recall ≤ single-step `coverage_bank` < 1, because a non-vanishing fraction of references are multi-generation (e.g. oxidation → conjugation) and unreachable by any single rule application — an irreducible residual that no ranking improvement can recover. *Witnesses:* depth-2 rule application lifts the ceiling by only **+0.012** at **8.5×** candidate cost (table, row 2; `results/benchmark_report_depth2.json`); on the external GLORYx set the uncapped single-step ceiling is **0.633** (§7), whose references include single-step-unreachable multi-generation metabolites. *Guardrail:* the bound is **single-step-conditional** — it bounds the single-step paradigm, not the problem; multi-step and out-of-bank chemistry remain open coverage levers.
 
+***Intervention — a factorized generator tests Propositions 2–3.*** This is a controlled intervention turning the observational decomposition above into a causal test: we rebuilt Stage-1 as a dense factorized generator, `P(type|s)·P(site|type,s)`, over a coarse ~radius-0 type vocabulary. **Selection is fixable:** the learned type head beats the frequency prior ~3× at k=5 (recall@5 0.086 vs 0.030), robust across two vocabulary granularities (371 and 701 types), converging to the prior by k=10 (0.298 vs 0.309); site localisation holds (site hit@3 0.78, cf. Gate C 0.81) — val set, `results/factorized_val.json` — so Prop 2's PU degeneracy is a target-support artifact, not fundamental, confirming its falsifiable `1/ê`-style prediction. **But coverage binds:** as a replacement generator the pipeline reaches only recall@15 0.256 on the full clean test — a net regression against deployed GRAIL (budget-matched recall@15 0.365, precision 0.109) — because type-selection caps oracle reachability at ~47%, unchanged when the vocabulary widened 371→701 (`results/factorized_eval.json`), confirming Prop 3 causally. **Ranking margin:** kept at broad coverage and used only to re-rank, `filter×gen×type×site` beats `filter×gen` by +0.027 (95% CI [+0.008, +0.047], paired bootstrap, n=400 test subset); the factorized signal alone is n.s. (+0.013, CI [−0.009, +0.035]) (`results/hybrid_rerank.json`). *Synthesis:* selection is addressable, ranking yields a small significant margin, but coverage — the source-limited rule bank — remains binding; no Stage-1 redesign matches SyGMa without a broader bank.
+
 *Source: `results/prior_vs_learned.json`, `results/benchmark_report_depth2.json`, `results/benchmark_report_gap.json`, `docs/benchmark/stage2_ranker_evidence.md`, `results/selection_ablation.json`, `results/selection_ablation_ranksignal.json`.*
 
 ## 11. Results — Match-sensitivity and cross-method comparison
@@ -753,6 +755,13 @@ conditional**: depth-2 rule application recovers only +0.012 ceiling at 8.5× ca
 so multi-step and out-of-bank chemistry remain an open, unresolved coverage lever rather than a
 closed question — the bound constrains the single-step paradigm, not the metabolite-prediction
 problem in general.
+
+We also built and evaluated a factorized-generator redesign of Stage-1 as a direct intervention
+(§10); it does **not** beat the deployed pipeline as a generator (coverage-bound at recall@15
+0.256 < deployed 0.365) — its only deployable value is a modest, paired-significant re-ranking
+gain (+0.027, 95% CI [0.008, 0.047], n=400 test subset) — and closing the larger gap to SyGMa
+still requires a broader rule bank, out of scope here, consistent with the coverage-binding
+finding.
 
 ## 13. Data & Code Availability
 
