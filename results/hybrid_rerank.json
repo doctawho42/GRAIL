@@ -1,0 +1,25 @@
+{
+  "n": 250,
+  "top_k": 300,
+  "baseline_broad_filter": 0.413,
+  "rankings": {
+    "a_filter_gen": {
+      "recall@15": 0.3369,
+      "recall@5": 0.2744,
+      "precision": 0.0822,
+      "mean_output": 10.24
+    },
+    "b_filter_type_site": {
+      "recall@15": 0.3572,
+      "recall@5": 0.2449,
+      "precision": 0.0844,
+      "mean_output": 10.24
+    },
+    "c_all": {
+      "recall@15": 0.3768,
+      "recall@5": 0.2767,
+      "precision": 0.0865,
+      "mean_output": 10.24
+    }
+  }
+}
