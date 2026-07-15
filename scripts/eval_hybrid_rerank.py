@@ -143,10 +143,29 @@ def main() -> int:
             "precision": round(m.get("precision", 0.0), 4),
             "mean_output": round(m.get("mean_output_size", 0.0), 2),
         }
+
+    # Paired per-substrate CI of the re-rank gain (c - a) at recall@15 on the IDENTICAL broad pool.
+    def _r15(pred, real):
+        tr = {_tautomer_inchikey(s) for s in real}
+        if not tr:
+            return 0.0
+        tp = {_tautomer_inchikey(s) for s in pred[:args.max_output]}
+        return len(tp & tr) / len(tr)
+    from grail_metabolism.stats import paired_diff_bootstrap_ci
+    a_rows, c_rows, b_rows = rows["a_filter_gen"], rows["c_all"], rows["b_filter_type_site"]
+    deltas_ca = [_r15(c["predicted"], c["real"]) - _r15(a["predicted"], a["real"]) for a, c in zip(a_rows, c_rows)]
+    deltas_ba = [_r15(b["predicted"], b["real"]) - _r15(a["predicted"], a["real"]) for a, b in zip(a_rows, b_rows)]
+    for name, diffs in (("c_minus_a", deltas_ca), ("b_minus_a", deltas_ba)):
+        pt, lo, hi = paired_diff_bootstrap_ci(diffs)
+        report.setdefault("paired_delta_recall15", {})[name] = {"point": round(pt, 4), "lo": round(lo, 4), "hi": round(hi, 4)}
+
     Path(args.out).write_text(json.dumps(report, indent=2))
     print("\n=== hybrid re-ranking on the broad pool (same substrates) ===", flush=True)
     for key, v in report["rankings"].items():
         print(f"  {key:20s}: recall@15 {v['recall@15']}  recall@5 {v['recall@5']}  prec {v['precision']}  out {v['mean_output']}", flush=True)
+    for name, v in report["paired_delta_recall15"].items():
+        sig = "SIGNIFICANT (>0)" if v["lo"] > 0 else "n.s. (CI includes 0)"
+        print(f"  paired {name} recall@15: {v['point']:+.4f}  95% CI [{v['lo']:+.4f}, {v['hi']:+.4f}]  -> {sig}", flush=True)
     print(f"  (broad+filter baseline ~0.413; deployed 0.330; SyGMa 0.572)", flush=True)
     print(f"Wrote {args.out}", flush=True)
     return 0
