@@ -1,25 +1,37 @@
 {
-  "n": 250,
+  "n": 400,
   "top_k": 300,
   "baseline_broad_filter": 0.413,
   "rankings": {
     "a_filter_gen": {
-      "recall@15": 0.3369,
-      "recall@5": 0.2744,
-      "precision": 0.0822,
-      "mean_output": 10.24
+      "recall@15": 0.348,
+      "recall@5": 0.2794,
+      "precision": 0.0913,
+      "mean_output": 9.88
     },
     "b_filter_type_site": {
-      "recall@15": 0.3572,
-      "recall@5": 0.2449,
-      "precision": 0.0844,
-      "mean_output": 10.24
+      "recall@15": 0.361,
+      "recall@5": 0.2703,
+      "precision": 0.093,
+      "mean_output": 9.88
     },
     "c_all": {
-      "recall@15": 0.3768,
-      "recall@5": 0.2767,
-      "precision": 0.0865,
-      "mean_output": 10.24
+      "recall@15": 0.3747,
+      "recall@5": 0.2851,
+      "precision": 0.0945,
+      "mean_output": 9.88
+    }
+  },
+  "paired_delta_recall15": {
+    "c_minus_a": {
+      "point": 0.0267,
+      "lo": 0.0077,
+      "hi": 0.0468
+    },
+    "b_minus_a": {
+      "point": 0.013,
+      "lo": -0.0088,
+      "hi": 0.0353
     }
   }
 }
