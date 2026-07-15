@@ -360,8 +360,9 @@ class Filter(GFilter):
     def calibrate_threshold(
         self,
         val_data: MolFrame,
-        target: Literal["f1", "mcc"] = "f1",
+        target: Literal["f1", "mcc", "precision"] = "f1",
         verbose: bool = True,
+        min_precision: float = 0.5,
     ) -> Tuple[float, float]:
         all_scores: List[float] = []
         all_labels: List[float] = []
@@ -385,6 +386,14 @@ class Filter(GFilter):
         labels_t = torch.tensor(all_labels, dtype=torch.float32)
         best_threshold = 0.5
         best_metric = -1.0
+        # target == "precision": among thresholds clearing `min_precision`, track the one
+        # with the highest recall (the most permissive threshold that still clears the
+        # floor); separately track the max-precision threshold as a fallback for when no
+        # threshold reaches the floor at all.
+        precision_threshold: Optional[float] = None
+        precision_best_recall = -1.0
+        fallback_threshold = 0.5
+        fallback_best_precision = -1.0
 
         for threshold_step in range(1, 100):
             threshold = threshold_step / 100.0
@@ -399,10 +408,28 @@ class Filter(GFilter):
             mcc_num = tp * tn - fp * fn
             mcc_den = ((tp + fp) * (tp + fn) * (tn + fp) * (tn + fn)) ** 0.5 + 1e-8
             mcc = mcc_num / mcc_den
+
+            if target == "precision":
+                if precision > fallback_best_precision:
+                    fallback_best_precision = precision
+                    fallback_threshold = threshold
+                if precision >= min_precision and recall > precision_best_recall:
+                    precision_best_recall = recall
+                    precision_threshold = threshold
+                continue
+
             metric = f1 if target == "f1" else mcc
             if metric > best_metric:
                 best_metric = metric
                 best_threshold = threshold
+
+        if target == "precision":
+            if precision_threshold is not None:
+                best_threshold = precision_threshold
+                best_metric = precision_best_recall
+            else:
+                best_threshold = fallback_threshold
+                best_metric = fallback_best_precision
 
         self.calibrated_threshold = best_threshold
         if verbose:

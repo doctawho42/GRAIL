@@ -156,6 +156,44 @@ def test_generate_respects_max_output_cap():
     assert len(model.generate("CCO")) == 3
 
 
+def test_filter_precision_calibration():
+    # Synthetic (substrate, product) pool where true positives score higher than the
+    # unlabeled negatives, but the two bands overlap slightly -- so only a
+    # sufficiently high threshold clears a precision floor, and it must cost recall.
+    positives = ["CC=O", "CC(=O)O", "CCN", "CCCl", "CCBr", "CCF", "CCI", "CCS"]
+    negatives = ["CCC", "CCCC", "CCCCC", "CCCCCC", "CCCCCCC"]
+    rows = [{"sub": "CCO", "prod": p, "real": 1} for p in positives]
+    rows += [{"sub": "CCO", "prod": p, "real": 0} for p in negatives]
+    frame = MolFrame(pd.DataFrame(rows))
+
+    sub_key = next(iter(frame.map.keys()))
+    pos_keys = sorted(frame.map[sub_key])
+    neg_keys = sorted(frame.gen_map[sub_key])
+    assert len(pos_keys) == len(positives)
+    assert len(neg_keys) == len(negatives)
+
+    # High, distinct scores for true positives; lower, distinct scores for negatives.
+    score_table = {}
+    for i, key in enumerate(pos_keys):
+        score_table[(sub_key, key)] = 0.90 - i * 0.01  # 0.90 .. 0.83
+    for i, key in enumerate(neg_keys):
+        score_table[(sub_key, key)] = 0.20 + i * 0.01  # 0.20 .. 0.24
+
+    model = Filter(18, 18, [32, 64, 32, 64, 32, 16], mode="pair")
+    model.score = lambda sub, prod, pca=False: score_table[(sub, prod)]
+
+    threshold, _ = model.calibrate_threshold(frame, target="precision", min_precision=0.8, verbose=False)
+
+    tp = sum(1 for key in pos_keys if score_table[(sub_key, key)] >= threshold)
+    fp = sum(1 for key in neg_keys if score_table[(sub_key, key)] >= threshold)
+    fn = len(pos_keys) - tp
+    precision = tp / (tp + fp) if (tp + fp) else 0.0
+    recall = tp / (tp + fn) if (tp + fn) else 0.0
+    assert precision >= 0.8
+    assert recall > 0.0
+    assert model.calibrated_threshold == threshold
+
+
 def test_eval_prior_strength_override():
     # The eval-time prior_strength override must set the generator's prior weight when given
     # and leave it untouched when None (the deploy of the prior-vs-learned finding).
