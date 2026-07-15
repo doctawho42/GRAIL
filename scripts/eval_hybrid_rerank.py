@@ -74,11 +74,14 @@ def _dedup_top(cands_scored, mo):
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--max-substrates", type=int, default=250)
+    ap.add_argument("--start", type=int, default=0, help="shard slice start index into the test map (for parallel shards)")
+    ap.add_argument("--end", type=int, default=0, help="shard slice end index (0 = to the end); overrides --max-substrates when start/end set")
     ap.add_argument("--top-k", type=int, default=300, help="rules applied for the broad pool (matches the 0.413 ablation)")
     ap.add_argument("--max-output", type=int, default=15)
     ap.add_argument("--filter-cap", type=int, default=300)
     ap.add_argument("--threads", type=int, default=6)
     ap.add_argument("--out", default=str(ROOT / "results" / "hybrid_rerank.json"))
+    ap.add_argument("--rows-out", default="", help="if set, dump raw per-substrate rows (predicted/real) here and skip aggregation; the merge script combines shards")
     args = ap.parse_args()
     torch.set_num_threads(args.threads)
 
@@ -93,7 +96,12 @@ def main() -> int:
     gen_threshold = getattr(generator, "calibrated_threshold", None)
 
     test_map = load_test_map(None, 42)
-    items = list(test_map.items())[: args.max_substrates] if args.max_substrates else list(test_map.items())
+    all_items = list(test_map.items())
+    if args.start or args.end:
+        items = all_items[args.start : (args.end or None)]
+        print(f"shard slice [{args.start}:{args.end or len(all_items)}] of {len(all_items)}", flush=True)
+    else:
+        items = all_items[: args.max_substrates] if args.max_substrates else all_items
     print(f"substrates: {len(items)}  top_k={args.top_k}", flush=True)
 
     rows = {"a_filter_gen": [], "b_filter_type_site": [], "c_all": []}
@@ -133,6 +141,11 @@ def main() -> int:
         rows["a_filter_gen"].append({"predicted": _dedup_top(a, args.max_output), "real": real})
         rows["b_filter_type_site"].append({"predicted": _dedup_top(b, args.max_output), "real": real})
         rows["c_all"].append({"predicted": _dedup_top(c, args.max_output), "real": real})
+
+    if args.rows_out:
+        Path(args.rows_out).write_text(json.dumps({"n": len(items), "top_k": args.top_k, "rows": rows}))
+        print(f"\nShard done: {len(items)} substrates -> {args.rows_out} (merge with scripts/merge_hybrid_shards.py)", flush=True)
+        return 0
 
     report = {"n": len(items), "top_k": args.top_k, "baseline_broad_filter": 0.413, "rankings": {}}
     for key, rws in rows.items():
