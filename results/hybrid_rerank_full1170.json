@@ -1,0 +1,38 @@
+{
+  "n": 1170,
+  "top_k": 300,
+  "baseline_broad_filter": 0.413,
+  "n_shards": 6,
+  "rankings": {
+    "a_filter_gen": {
+      "recall@15": 0.3875,
+      "recall@5": 0.3092,
+      "precision": 0.0978,
+      "mean_output": 9.96
+    },
+    "b_filter_type_site": {
+      "recall@15": 0.3886,
+      "recall@5": 0.2956,
+      "precision": 0.0982,
+      "mean_output": 9.96
+    },
+    "c_all": {
+      "recall@15": 0.4041,
+      "recall@5": 0.3095,
+      "precision": 0.1001,
+      "mean_output": 9.96
+    }
+  },
+  "paired_delta_recall15": {
+    "c_minus_a": {
+      "point": 0.0165,
+      "lo": 0.0062,
+      "hi": 0.0272
+    },
+    "b_minus_a": {
+      "point": 0.001,
+      "lo": -0.0103,
+      "hi": 0.0128
+    }
+  }
+}
