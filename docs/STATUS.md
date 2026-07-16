@@ -121,14 +121,26 @@ End-to-end through the deployed `generate`: c−a **+0.040** on n=250 (full-test
   default. Optional next: retrain the joint heads on the top_k=300 pool to match the shipped
   operating point exactly (current joint was trained/eval'd on top_k=100).
 
-### D4 — Set-level generation (GFlowNet) · high novelty, GPU-gated
+### D4 — Set-level generation (GFlowNet) · machinery built + validated e2e; result compute-gated
 A GFlowNet whose terminal object is a **diverse SET/forest of metabolites** per substrate, trained
-to a **set-level** (coverage/recall, PU-aware) reward over the rule-defined transformation DAG —
-beyond single-terminal GFlowNets. Skeleton exists (`model/gflownet.py`, `model/multistep.py`,
-`GFlowNetConfig`) but is **not trained end-to-end**; needs GPU, `stop_head` checkpoint persistence,
-a filter-based reward, `scripts/run_gflownet.py`, and a recall@k/diversity eval harness. Positions
-vs RGFN / SynFlowNet / RxnFlow for a main-track method paper. See
-`docs/superpowers/specs/` and the staged plan.
+to a **PU set-coverage** reward over the rule DAG — beyond single-terminal GFlowNets. **Fully built
++ unit-tested** (`model/set_gflownet.py`: `ForestState`, `set_coverage_logreward` β/λ, analytic
+`P_B=1/#leaves`, `StopHead`, TB loss; `scripts/run_gflownet.py` = train + dual-eval matrix
+{gflownet, reranker, beam} at recall@K + diversity {modes, pairwise-Tanimoto, unique-scaffolds,
+circles}). Positions vs RGFN / SynFlowNet / RxnFlow.
+- **First end-to-end run (this session):** validated at `top_k=40` — produces the full dual-eval
+  matrix. Three blockers surfaced (none showed in unit tests):
+  1. `--bootstrap` (depth-2 chain enumeration) **hangs** (combinatorial) → use `--no-bootstrap`
+     (optional fine-tune, M0-gated behind an unmet depth-2 census anyway).
+  2. Unbounded forest-rollout caches **OOM at scale** → **FIXED**: bounded-LRU
+     `child_cache_max`/`ik_cache_max` (commit `4239d3a`, test 287).
+  3. `top_k=200` forest rollout **crashes natively/silently** (~1.8 GB RSS, RAM 77% free → RDKit
+     segfault, not OOM; cache fix didn't help) → **use `top_k<=40`** (stable regime).
+- **Undertrained model under-produces** (near-empty forests → recall@15 0.0 at 2 epochs; reranker/
+  beam 0.43). Needs ~25+ epochs; forest-eval is ~40 s/sample (union-stream retries when
+  under-producing). A converged single-seed run is **~overnight on CPU**; multi-seed is
+  compute-gated (Modal burned, GCP occupied — but this is CPU-bound, so GCP CPU-spot ≈ $1–2 total).
+- **Tested runnable recipe:** `run_gflownet.py --no-bootstrap --top-k 40 --epochs ~25 --train-substrates 150 --eval-substrates 50 --n-samples 16`.
 
 ### D5 — Multi-step metabolism (depth ≥ 2) · low expected gain, targeted only
 Chemically real (phase-I → phase-II), but depth-2 lifts the coverage ceiling only ~+0.012 (a long
