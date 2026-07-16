@@ -99,6 +99,21 @@ def _preset_map() -> Dict[str, ExperimentConfig]:
             tags=["paper", "ensemble", "two-stage-filter"],
             filter={"train_on_candidates": True, "candidate_generation_top_k": 200},
         ),
+        "paper_full_ensemble_hybrid": base.with_overrides(
+            name="paper_full_ensemble_hybrid",
+            description=(
+                "Default ensemble + factorized hybrid re-ranker (rank by filter*gen*type*site; "
+                "§10 paired +0.0165 [0.006,0.027] over filter*gen). Rank-only, never gates. "
+                "Requires a trained FactorizedGenerator checkpoint (default artifacts/factorized_v1)."
+            ),
+            tags=["paper", "ensemble", "hybrid-rerank"],
+            evaluation={
+                "factorized_rerank": True,
+                "factorized_rerank_checkpoint": "artifacts/factorized_v1/checkpoints/factorized.pt",
+                "factorized_rerank_vocab": "grail_metabolism/resources/coarse_type_vocab.json",
+                "factorized_rerank_aggregation": "max",
+            },
+        ),
         "paper_no_pretrain": base.with_overrides(
             name="paper_no_pretrain",
             description="Ablation: generator without any USPTO-style pretraining",

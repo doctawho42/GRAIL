@@ -99,7 +99,8 @@ reaction sources** or **more general templates**:
 ### D2 — Ship the hybrid re-rank (the fixable, already-validated margin) · **DONE**
 `model/factorized_infer.FactorizedReranker` + gated `ModelWrapper.generate` multiply
 `P(type|s)·P(site|type,s)` into the rank (rank-only, byte-identical when off); opt-in via
-`EvaluationConfig.factorized_rerank` (+ checkpoint/vocab paths), wired in `EnsembleWorkflow`.
+`EvaluationConfig.factorized_rerank` (+ checkpoint/vocab paths), wired in `EnsembleWorkflow`,
+exposed as preset `paper_full_ensemble_hybrid`.
 End-to-end through the deployed `generate`: c−a **+0.040** on n=250 (full-test authoritative
 +0.0165 [0.006, 0.027]); regression test + `make test` 286. No new training.
 
