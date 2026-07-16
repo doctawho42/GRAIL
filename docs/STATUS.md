@@ -116,8 +116,10 @@ End-to-end through the deployed `generate`: c−a **+0.040** on n=250 (full-test
   `artifacts/factorized_joint`). On a matched top_k=100 pool the joint-trained re-ranker **beats the
   bolt-on** by paired **+0.0089 [0.003, 0.015], n=1170** and the `filter×gen` baseline by +0.0091 —
   where the independently-trained bolt-on adds nothing on that pool (+0.0002, n.s.). Rank-aware
-  training > MLE for the heads (`results/joint_rerank.json`, §10). Optional next: repoint the
-  hybrid preset at `factorized_joint`, and/or retrain on the top_k=300 pool for the shipped operating point.
+  training > MLE for the heads (`results/joint_rerank.json`, §10). **Shipped:** preset
+  `paper_full_ensemble_hybrid` now points at `artifacts/factorized_joint` (the joint reranker) by
+  default. Optional next: retrain the joint heads on the top_k=300 pool to match the shipped
+  operating point exactly (current joint was trained/eval'd on top_k=100).
 
 ### D4 — Set-level generation (GFlowNet) · high novelty, GPU-gated
 A GFlowNet whose terminal object is a **diverse SET/forest of metabolites** per substrate, trained

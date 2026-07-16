@@ -102,14 +102,16 @@ def _preset_map() -> Dict[str, ExperimentConfig]:
         "paper_full_ensemble_hybrid": base.with_overrides(
             name="paper_full_ensemble_hybrid",
             description=(
-                "Default ensemble + factorized hybrid re-ranker (rank by filter*gen*type*site; "
-                "§10 paired +0.0165 [0.006,0.027] over filter*gen). Rank-only, never gates. "
-                "Requires a trained FactorizedGenerator checkpoint (default artifacts/factorized_v1)."
+                "Default ensemble + factorized hybrid re-ranker (rank by filter*gen*type*site; §10). "
+                "Rank-only, never gates. Uses the JOINT-trained heads (rank loss vs frozen gen+filter), "
+                "which beat the independently-trained bolt-on by paired +0.0089 [0.003,0.015] and the "
+                "filter*gen baseline by +0.0091. Requires a trained FactorizedGenerator checkpoint "
+                "(default artifacts/factorized_joint; fall back to artifacts/factorized_v1 for the bolt-on)."
             ),
             tags=["paper", "ensemble", "hybrid-rerank"],
             evaluation={
                 "factorized_rerank": True,
-                "factorized_rerank_checkpoint": "artifacts/factorized_v1/checkpoints/factorized.pt",
+                "factorized_rerank_checkpoint": "artifacts/factorized_joint/checkpoints/factorized.pt",
                 "factorized_rerank_vocab": "grail_metabolism/resources/coarse_type_vocab.json",
                 "factorized_rerank_aggregation": "max",
             },
