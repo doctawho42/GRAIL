@@ -6,6 +6,7 @@ import math
 import multiprocessing as _mp
 import os
 import pickle
+from collections import OrderedDict
 from dataclasses import dataclass, field, replace
 from typing import Dict, FrozenSet, List
 
@@ -185,12 +186,28 @@ class SetGFlowNetTrainer:
         # them across runs is EXACT: the expensive RDKit / tautomer-canonicalization work is
         # done once and reused by every later M1/M2/seed run. child_cache is (generator, top_k)
         # -specific (the caller must key its file by top_k); ik_cache is universal.
-        self._child_cache: dict = {}
-        self._ik_cache: dict = {}
+        # Bounded-LRU environment caches: at top_k~200 each _child_cache entry holds ~top_k
+        # candidate tuples, so an unbounded dict OOMs (jetsam-kills the run) once thousands of
+        # rollout states accumulate. OrderedDict + an LRU cap bounds memory while keeping the
+        # states of the substrate currently being rolled out warm (they recur across ADD steps
+        # and samples). cap<=0 restores the legacy unbounded behavior.
+        self._child_cache: "OrderedDict[str, list]" = OrderedDict()
+        self._ik_cache: "OrderedDict[str, str]" = OrderedDict()
+        self._child_cache_max = int(getattr(config, "child_cache_max", 0) or 0)
+        self._ik_cache_max = int(getattr(config, "ik_cache_max", 0) or 0)
         self._child_cache_path = child_cache_path
         self._ik_cache_path = ik_cache_path
         self._load_caches()
+        self._trim_cache(self._child_cache, self._child_cache_max)
+        self._trim_cache(self._ik_cache, self._ik_cache_max)
         self.loss_history_ = []
+
+    @staticmethod
+    def _trim_cache(cache: "OrderedDict", cap: int) -> None:
+        """LRU-evict the oldest entries until len(cache) <= cap (cap<=0 disables the bound)."""
+        if cap and cap > 0:
+            while len(cache) > cap:
+                cache.popitem(last=False)
 
     def _load_caches(self):
         for path, attr in ((self._child_cache_path, "_child_cache"),
@@ -198,7 +215,9 @@ class SetGFlowNetTrainer:
             if path and os.path.exists(path):
                 try:
                     with open(path, "rb") as fh:
-                        setattr(self, attr, pickle.load(fh))
+                        # Wrap in an OrderedDict so LRU move_to_end / popitem(last=False) work
+                        # even when the on-disk cache was pickled as a plain dict by an older run.
+                        setattr(self, attr, OrderedDict(pickle.load(fh)))
                 except Exception as exc:  # a corrupt/incompatible cache must never crash training
                     print(f"[set_gflownet] WARNING: ignoring unreadable cache {path}: {exc}", flush=True)
 
@@ -262,11 +281,14 @@ class SetGFlowNetTrainer:
         ``from_rdmol(None)`` returns ``None``, and ``Batch.from_data_list([None, ...])`` raises
         ``TypeError`` deep in the rollout.
         """
-        if state_smiles not in self._child_cache:
-            self._child_cache[state_smiles] = _expand_state(
-                self.generator, state_smiles, self.config.top_k
-            )
-        return self._child_cache[state_smiles]
+        cache = self._child_cache
+        if state_smiles in cache:
+            cache.move_to_end(state_smiles)  # LRU touch
+            return cache[state_smiles]
+        val = _expand_state(self.generator, state_smiles, self.config.top_k)
+        cache[state_smiles] = val
+        self._trim_cache(cache, self._child_cache_max)
+        return val
 
     def _reranker_child_logits(self, parent_smiles, children):
         """Reranker logits for ADD candidates of ONE parent (gradients flow to the reranker)."""
@@ -323,10 +345,14 @@ class SetGFlowNetTrainer:
             # same SMILES recurs heavily across children/steps/samples; it is itself
             # ``lru_cache``d in ``metrics.py`` but a local memo avoids repeated dict/hash
             # overhead through that layer too.
-            cached = self._ik_cache.get(s)
+            cache = self._ik_cache
+            cached = cache.get(s)
             if cached is None:
                 cached = _tautomer_inchikey(s)
-                self._ik_cache[s] = cached
+                cache[s] = cached
+                self._trim_cache(cache, self._ik_cache_max)
+            else:
+                cache.move_to_end(s)  # LRU touch
             return cached
 
         root_ik = ik(root)

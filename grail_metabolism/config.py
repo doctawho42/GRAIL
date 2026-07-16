@@ -151,6 +151,11 @@ class GFlowNetConfig:
     lam: float = 0.1               # size penalty in the PU set-coverage log-reward
     max_size: int = 15             # max number of metabolites in the terminal set (forest size)
     top_k: int = 200               # generator candidates enumerated per frontier node (Set-GFN)
+    # Bounded-LRU caps on the forest-rollout environment caches (0 = unbounded, legacy). The
+    # per-state candidate cache holds up to top_k tuples per entry, so it OOMs at scale if
+    # unbounded; a large LRU cap bounds memory while keeping per-substrate warmth.
+    child_cache_max: int = 12000   # max cached state->children entries (LRU-evicted)
+    ik_cache_max: int = 400000     # max cached SMILES->tautomer-InChIKey entries (LRU-evicted)
 
 
 @dataclass

@@ -728,3 +728,28 @@ def test_single_terminal_trainer_overrides_only_tb_loss():
     assert own_members == ["tb_loss"], (
         f"SingleTerminalGFlowNetTrainer must define ONLY tb_loss; found {own_members}"
     )
+
+
+def test_child_cache_lru_bounded_prevents_unbounded_growth():
+    """The forest-rollout environment caches must be LRU-bounded so top_k~200 rollouts don't
+    OOM at scale (the first end-to-end run was jetsam-killed by an unbounded _child_cache)."""
+    from collections import OrderedDict
+    from grail_metabolism.model.set_gflownet import SetGFlowNetTrainer
+
+    # Eviction primitive: cap keeps the most-recent entries; cap<=0 disables the bound.
+    c = OrderedDict((str(i), i) for i in range(5))
+    SetGFlowNetTrainer._trim_cache(c, 3)
+    assert list(c) == ["2", "3", "4"]
+    SetGFlowNetTrainer._trim_cache(c, 0)
+    assert len(c) == 3
+
+    # candidate_children honors the cap and LRU-evicts the oldest state.
+    trainer = SetGFlowNetTrainer(
+        _MiniGen(), BiEncoderReranker(in_channels=SINGLE_NODE_DIM),
+        GFlowNetConfig(max_depth=2, top_k=200, child_cache_max=1),
+        annotated_ik_fn=lambda root: set(),
+    )
+    trainer.candidate_children("CCO")
+    trainer.candidate_children("CCO O")
+    assert len(trainer._child_cache) == 1
+    assert "CCO O" in trainer._child_cache and "CCO" not in trainer._child_cache
