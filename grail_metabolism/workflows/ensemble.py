@@ -178,7 +178,19 @@ class EnsembleWorkflow:
         filter_model = FilterTrainingWorkflow(self.config, self.artifacts).run(filter_model, bundle, train_data=filter_train_data)
         runtime["filter_train_seconds"] = time.perf_counter() - filter_train_started
 
-        model = ModelWrapper(filter_model, generator)
+        factorized = None
+        ev = self.config.evaluation
+        if getattr(ev, "factorized_rerank", False) and ev.factorized_rerank_checkpoint and ev.factorized_rerank_vocab:
+            from ..model.factorized_infer import FactorizedReranker
+
+            factorized = FactorizedReranker.load(
+                ev.factorized_rerank_checkpoint,
+                ev.factorized_rerank_vocab,
+                getattr(generator, "rule_names", []),
+                aggregation=ev.factorized_rerank_aggregation,
+            )
+            print("Factorized re-ranker enabled (filter*gen*type*site).", flush=True)
+        model = ModelWrapper(filter_model, generator, factorized=factorized)
         evaluation_started = time.perf_counter()
         generator_metrics = evaluate_generator(generator, bundle, self.config.evaluation)
         filter_metrics = evaluate_filter(filter_model, bundle)

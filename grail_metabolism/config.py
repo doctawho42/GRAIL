@@ -227,6 +227,14 @@ class EvaluationConfig:
     multistep: MultiStepConfig = field(default_factory=MultiStepConfig)
     # Site-of-metabolism regioselectivity prior (off by default -> no reweight).
     som: SoMConfig = field(default_factory=SoMConfig)
+    # Factorized re-ranker (§10 hybrid re-rank: filter*gen*type*site, paired +0.0165 on the full
+    # clean test). Off by default -> no reweight. When enabled with a trained FactorizedGenerator
+    # checkpoint + type vocab, generate() multiplies P(type|s)*P(site|type,s) into the rank
+    # (rank-only, never gates; byte-identical when off).
+    factorized_rerank: bool = False
+    factorized_rerank_checkpoint: Optional[str] = None
+    factorized_rerank_vocab: Optional[str] = None
+    factorized_rerank_aggregation: str = "max"
 
 
 @dataclass
