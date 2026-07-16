@@ -581,6 +581,7 @@ column); the table is followed by three refutable Propositions that localise *wh
 | **Data scaling** | `selection_retention` | Recall saturates (2418→4787 substrates ≈ flat) — the plateau is not a data-quantity problem. | `results/full{2500,5000}_single.log` |
 | **Regioselectivity (SoM)** | `ranking_conversion` | A site-of-metabolism prior gives only a small lift — regioselective ranking is hard within the bank. | `results/train_som.log` |
 | **Selection breadth (top_k sweep)** | `selection_retention` | Widening the deployed rule selector's `top_k` 30→300 lifts recall@15 **0.352→0.413 (+0.061)** and pool coverage **0.482→0.608**, saturating below the 0.735 ceiling (n=245 test subset; trend, not deployed-scale absolute). | `results/selection_ablation.json` (245 test subs) |
+| **Abstention (filter gate)** | `ranking_conversion` | Gating output by a filter-score threshold τ traces a recall↔precision frontier, but precision stays **nearly flat (~0.10–0.12)** and no val-selected τ reaches 0.2: raising τ shrinks the output (9.96→0.3) and collapses recall (**0.388→0.041**) for essentially no precision gain — precision is annotation-bounded, not threshold-bounded, justifying the rank-only default. | `results/abstention_frontier.json` (val-selected → 1170 test) |
 
 **Selection-breadth counterfactual (n=245 test subset).** Sweeping the number of rules applied
 (`top_k`) on the deployed pipeline (generator from `full5000_priors` with the trained prior
@@ -600,6 +601,22 @@ also saturates BELOW the ceiling: pool coverage plateaus at **0.608 < 0.735** ev
 applicable rules, and recall@15 0.413 still << SyGMa's 0.572 — so breadth is a real but PARTIAL
 lever. Ranking still loses roughly a third of in-pool hits even at top_k=300 (recall / pool
 coverage = 0.413 / 0.608 = **0.68**, consistent with `ranking_conversion` = 0.726, §8).
+
+**Abstention is not a precision lever (val-selected τ → full 1170-substrate test).** Where breadth
+trades precision for recall, the reverse move — deliberately abstaining — barely moves precision.
+Gating the deployed pipeline's output by a filter-score threshold τ (candidates with
+`filter_score < τ` are dropped; survivors ranked by `filter × gen`, top-15) and sweeping τ traces a
+recall↔precision frontier whose precision axis is **nearly flat**: from rank-only τ=0 (recall@15
+**0.388**, precision **0.098**, 9.96 outputs/substrate) through τ=0.5 (recall 0.146, precision 0.114,
+1.55 outputs) to τ=0.9 (recall 0.041, precision 0.040, 0.30 outputs), precision never exceeds
+**~0.123**, and no τ selected on validation reaches even precision 0.2. Raising τ removes true and
+apparently-false candidates in near-equal proportion — because most "false" predictions are
+*unannotated true* metabolites — so gating shrinks the output and collapses recall for almost no
+precision gain; the best validation-selected F1 operating point (τ≈0.10) lifts F1 only marginally
+(0.129→0.131) by trimming the output tail. Precision here is therefore **annotation-bounded, not
+threshold-bounded**, which both substantiates the "precision is a pessimistic lower bound under
+incomplete annotation" caveat (§5, §8) and justifies the rank-only deployment default
+(`results/abstention_frontier.json`).
 
 On the SAME broad pools, a second arm compares the deployed learned ranker (`filter × gen`)
 against the rule frequency prior alone (SyGMa-style):

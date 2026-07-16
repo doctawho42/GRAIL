@@ -104,11 +104,15 @@ exposed as preset `paper_full_ensemble_hybrid`.
 End-to-end through the deployed `generate`: c−a **+0.040** on n=250 (full-test authoritative
 +0.0165 [0.006, 0.027]); regression test + `make test` 286. No new training.
 
-### D3 — Better selection at fixed coverage · medium
-The dense factorized generator escapes the PU degeneracy but is coverage-capped as a replacement.
-Options: **jointly train** the factorized generator with the filter (rather than as a bolt-on
-re-ranker); or **precision-calibrated abstention** (`filter.calibrate_threshold` is built) to pick a
-recall/precision operating point deliberately rather than at the default breadth.
+### D3 — Better selection at fixed coverage · **abstention arm DONE**
+- **Calibrated abstention (done):** `scripts/abstention_frontier.py` sweeps the filter-gate τ,
+  selecting operating points on val and reporting on test (§10 lever table + frontier note). Result:
+  **abstention is not a precision lever** — precision stays flat ~0.10–0.12 and never clears 0.2 at
+  any τ (raising τ collapses recall 0.388→0.041 for ~no precision gain), because precision is
+  annotation-bounded, not threshold-bounded. Confirms the rank-only default and the
+  precision-lower-bound framing (`results/abstention_frontier.json`).
+- **Joint train gen+filter (open):** co-train the factorized generator with the filter instead of a
+  bolt-on re-ranker — higher effort, uncertain marginal gain over the shipped +0.0165. Not started.
 
 ### D4 — Set-level generation (GFlowNet) · high novelty, GPU-gated
 A GFlowNet whose terminal object is a **diverse SET/forest of metabolites** per substrate, trained
