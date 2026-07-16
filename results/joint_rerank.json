@@ -1,0 +1,42 @@
+{
+  "n": 1170,
+  "top_k": 100,
+  "n_shards": 6,
+  "rankings": {
+    "filter_gen": {
+      "recall@15": 0.3728,
+      "recall@5": 0.3033,
+      "precision": 0.096,
+      "mean_output": 9.92
+    },
+    "boltclon_v1": {
+      "recall@15": 0.373,
+      "recall@5": 0.3045,
+      "precision": 0.0964,
+      "mean_output": 9.92
+    },
+    "joint": {
+      "recall@15": 0.3819,
+      "recall@5": 0.3038,
+      "precision": 0.0975,
+      "mean_output": 9.92
+    }
+  },
+  "paired_delta_recall15": {
+    "c_minus_b_joint_vs_bolton": {
+      "point": 0.0089,
+      "lo": 0.0032,
+      "hi": 0.0153
+    },
+    "b_minus_a": {
+      "point": 0.0002,
+      "lo": -0.0073,
+      "hi": 0.0077
+    },
+    "c_minus_a": {
+      "point": 0.0091,
+      "lo": 0.0027,
+      "hi": 0.016
+    }
+  }
+}

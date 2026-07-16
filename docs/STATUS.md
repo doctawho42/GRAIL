@@ -111,8 +111,13 @@ End-to-end through the deployed `generate`: c−a **+0.040** on n=250 (full-test
   any τ (raising τ collapses recall 0.388→0.041 for ~no precision gain), because precision is
   annotation-bounded, not threshold-bounded. Confirms the rank-only default and the
   precision-lower-bound framing (`results/abstention_frontier.json`).
-- **Joint train gen+filter (open):** co-train the factorized generator with the filter instead of a
-  bolt-on re-ranker — higher effort, uncertain marginal gain over the shipped +0.0165. Not started.
+- **Joint train (done):** fine-tune the factorized type/site heads with a listwise **ranking loss**
+  against the *frozen* generator+filter (`scripts/{build_joint_pools,train_joint_factorized,eval_joint_rerank}.py`;
+  `artifacts/factorized_joint`). On a matched top_k=100 pool the joint-trained re-ranker **beats the
+  bolt-on** by paired **+0.0089 [0.003, 0.015], n=1170** and the `filter×gen` baseline by +0.0091 —
+  where the independently-trained bolt-on adds nothing on that pool (+0.0002, n.s.). Rank-aware
+  training > MLE for the heads (`results/joint_rerank.json`, §10). Optional next: repoint the
+  hybrid preset at `factorized_joint`, and/or retrain on the top_k=300 pool for the shipped operating point.
 
 ### D4 — Set-level generation (GFlowNet) · high novelty, GPU-gated
 A GFlowNet whose terminal object is a **diverse SET/forest of metabolites** per substrate, trained
