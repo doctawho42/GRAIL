@@ -1,0 +1,286 @@
+{
+  "n_val": 994,
+  "n_test": 1170,
+  "tau_grid": [
+    0.0,
+    0.05,
+    0.1,
+    0.15,
+    0.2,
+    0.25,
+    0.3,
+    0.35,
+    0.4,
+    0.5,
+    0.6,
+    0.7,
+    0.8,
+    0.9
+  ],
+  "val_curve": [
+    {
+      "tau": 0.0,
+      "recall@15": 0.4067,
+      "recall@5": 0.322,
+      "precision": 0.0908,
+      "f1": 0.1268,
+      "mean_output": 10.31
+    },
+    {
+      "tau": 0.05,
+      "recall@15": 0.3429,
+      "recall@5": 0.2833,
+      "precision": 0.1351,
+      "f1": 0.1585,
+      "mean_output": 6.77
+    },
+    {
+      "tau": 0.1,
+      "recall@15": 0.3006,
+      "recall@5": 0.2592,
+      "precision": 0.1441,
+      "f1": 0.1602,
+      "mean_output": 5.25
+    },
+    {
+      "tau": 0.15,
+      "recall@15": 0.2703,
+      "recall@5": 0.2382,
+      "precision": 0.146,
+      "f1": 0.1557,
+      "mean_output": 4.36
+    },
+    {
+      "tau": 0.2,
+      "recall@15": 0.2389,
+      "recall@5": 0.2147,
+      "precision": 0.1335,
+      "f1": 0.1417,
+      "mean_output": 3.66
+    },
+    {
+      "tau": 0.25,
+      "recall@15": 0.2205,
+      "recall@5": 0.2042,
+      "precision": 0.1287,
+      "f1": 0.1368,
+      "mean_output": 3.13
+    },
+    {
+      "tau": 0.3,
+      "recall@15": 0.2101,
+      "recall@5": 0.195,
+      "precision": 0.1261,
+      "f1": 0.1338,
+      "mean_output": 2.75
+    },
+    {
+      "tau": 0.35,
+      "recall@15": 0.1957,
+      "recall@5": 0.1807,
+      "precision": 0.1213,
+      "f1": 0.1278,
+      "mean_output": 2.4
+    },
+    {
+      "tau": 0.4,
+      "recall@15": 0.1824,
+      "recall@5": 0.1709,
+      "precision": 0.1178,
+      "f1": 0.1222,
+      "mean_output": 2.07
+    },
+    {
+      "tau": 0.5,
+      "recall@15": 0.1527,
+      "recall@5": 0.1469,
+      "precision": 0.1073,
+      "f1": 0.1112,
+      "mean_output": 1.56
+    },
+    {
+      "tau": 0.6,
+      "recall@15": 0.1289,
+      "recall@5": 0.1241,
+      "precision": 0.0994,
+      "f1": 0.1004,
+      "mean_output": 1.19
+    },
+    {
+      "tau": 0.7,
+      "recall@15": 0.1088,
+      "recall@5": 0.1054,
+      "precision": 0.0954,
+      "f1": 0.0921,
+      "mean_output": 0.85
+    },
+    {
+      "tau": 0.8,
+      "recall@15": 0.0854,
+      "recall@5": 0.0852,
+      "precision": 0.0829,
+      "f1": 0.0784,
+      "mean_output": 0.57
+    },
+    {
+      "tau": 0.9,
+      "recall@15": 0.0528,
+      "recall@5": 0.0528,
+      "precision": 0.0531,
+      "f1": 0.0503,
+      "mean_output": 0.27
+    }
+  ],
+  "test_curve": [
+    {
+      "tau": 0.0,
+      "recall@15": 0.3875,
+      "recall@5": 0.3092,
+      "precision": 0.0978,
+      "f1": 0.1286,
+      "mean_output": 9.96
+    },
+    {
+      "tau": 0.05,
+      "recall@15": 0.3031,
+      "recall@5": 0.2589,
+      "precision": 0.1231,
+      "f1": 0.1379,
+      "mean_output": 6.34
+    },
+    {
+      "tau": 0.1,
+      "recall@15": 0.2617,
+      "recall@5": 0.2278,
+      "precision": 0.1193,
+      "f1": 0.1306,
+      "mean_output": 4.81
+    },
+    {
+      "tau": 0.15,
+      "recall@15": 0.2345,
+      "recall@5": 0.2105,
+      "precision": 0.1224,
+      "f1": 0.1285,
+      "mean_output": 3.93
+    },
+    {
+      "tau": 0.2,
+      "recall@15": 0.2112,
+      "recall@5": 0.1902,
+      "precision": 0.1171,
+      "f1": 0.1225,
+      "mean_output": 3.33
+    },
+    {
+      "tau": 0.25,
+      "recall@15": 0.1982,
+      "recall@5": 0.1809,
+      "precision": 0.1166,
+      "f1": 0.1211,
+      "mean_output": 2.88
+    },
+    {
+      "tau": 0.3,
+      "recall@15": 0.1878,
+      "recall@5": 0.1726,
+      "precision": 0.1167,
+      "f1": 0.1195,
+      "mean_output": 2.51
+    },
+    {
+      "tau": 0.35,
+      "recall@15": 0.1733,
+      "recall@5": 0.1605,
+      "precision": 0.1137,
+      "f1": 0.1147,
+      "mean_output": 2.21
+    },
+    {
+      "tau": 0.4,
+      "recall@15": 0.1642,
+      "recall@5": 0.1527,
+      "precision": 0.1139,
+      "f1": 0.1128,
+      "mean_output": 1.98
+    },
+    {
+      "tau": 0.5,
+      "recall@15": 0.1461,
+      "recall@5": 0.1367,
+      "precision": 0.114,
+      "f1": 0.1068,
+      "mean_output": 1.55
+    },
+    {
+      "tau": 0.6,
+      "recall@15": 0.1251,
+      "recall@5": 0.119,
+      "precision": 0.1005,
+      "f1": 0.0949,
+      "mean_output": 1.21
+    },
+    {
+      "tau": 0.7,
+      "recall@15": 0.1026,
+      "recall@5": 0.0983,
+      "precision": 0.0872,
+      "f1": 0.082,
+      "mean_output": 0.9
+    },
+    {
+      "tau": 0.8,
+      "recall@15": 0.0732,
+      "recall@5": 0.072,
+      "precision": 0.0689,
+      "f1": 0.0637,
+      "mean_output": 0.6
+    },
+    {
+      "tau": 0.9,
+      "recall@15": 0.0408,
+      "recall@5": 0.0406,
+      "precision": 0.04,
+      "f1": 0.0363,
+      "mean_output": 0.3
+    }
+  ],
+  "operating_points": {
+    "max_recall": {
+      "val_selected_tau": 0.0,
+      "test": {
+        "tau": 0.0,
+        "recall@15": 0.3875,
+        "recall@5": 0.3092,
+        "precision": 0.0978,
+        "f1": 0.1286,
+        "mean_output": 9.96
+      },
+      "rule": "no gate (rank-only)"
+    },
+    "f1_max": {
+      "val_selected_tau": 0.1,
+      "val_f1": 0.1602,
+      "test": {
+        "tau": 0.1,
+        "recall@15": 0.2617,
+        "recall@5": 0.2278,
+        "precision": 0.1193,
+        "f1": 0.1306,
+        "mean_output": 4.81
+      }
+    },
+    "precision_ge_0.2": {
+      "val_selected_tau": null,
+      "note": "no tau on val reaches this precision"
+    },
+    "precision_ge_0.3": {
+      "val_selected_tau": null,
+      "note": "no tau on val reaches this precision"
+    },
+    "precision_ge_0.5": {
+      "val_selected_tau": null,
+      "note": "no tau on val reaches this precision"
+    }
+  }
+}
