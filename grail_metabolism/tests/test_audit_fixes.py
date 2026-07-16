@@ -355,3 +355,42 @@ def test_tautomer_path_healthy_in_this_env():
     m._ensure_tautomer_path()  # must not raise
     assert m._tautomer_inchikey("CC(=O)CC(C)=O") == m._tautomer_inchikey("CC(=O)C=C(O)C")
     assert m._tautomer_inchikey("not_a_smiles") == m._tautomer_inchikey("not_a_smiles")  # per-mol fallback, no raise
+
+
+def test_factorized_reranker_reshapes_rank_but_never_gates():
+    """The factorized re-ranker multiplies a per-candidate type*site factor into the rank (the
+    §10 hybrid re-rank, deployable form) without ever gating a candidate out; a uniform multiplier
+    leaves the filter*generator order unchanged, and factorized=None is byte-identical."""
+    from grail_metabolism.model.wrapper import ModelWrapper
+
+    class _Gen:
+        gen_normalization = "canonical"
+        calibrated_threshold = None
+
+        def generate_scored_with_details(self, sub, top_k=None, threshold=None, compute_sites=True):
+            return [("CCO", 0.9, 0, ()), ("CCN", 0.5, 1, ())]
+
+    class _Filter:
+        mode = "single"
+        calibrated_threshold = 0.0
+
+        def score_batch(self, sub, prods):
+            return [0.5 for _ in prods]  # equal filter -> rank set by generator * factorized
+
+    class _Reranker:
+        def __init__(self, mults):
+            self._m = mults
+
+        def multipliers(self, sub_mol, detailed):
+            return self._m
+
+    sub = "CCCCO"
+    # Uniform type*site factor -> order follows the generator score (CCO 0.9 > CCN 0.5).
+    base = ModelWrapper(_Filter(), _Gen(), rules=[], factorized=_Reranker([1.0, 1.0]))
+    assert base.generate(sub, gate_by_filter=False) == ["CCO", "CCN"]
+    # A large type*site factor on the low-generator candidate reranks it to the top,
+    # and BOTH candidates still survive (rank-only, never gates).
+    rr = ModelWrapper(_Filter(), _Gen(), rules=[], factorized=_Reranker([1.0, 10.0]))
+    out_rr = rr.generate(sub, gate_by_filter=False)
+    assert out_rr[0] == "CCN"
+    assert set(out_rr) == {"CCO", "CCN"}

@@ -158,3 +158,57 @@ def generate(
         reverse=True,
     )
     return [row[0] for row in ranked[:max_output]]
+
+
+class FactorizedReranker:
+    """Re-rank a candidate pool by the factorized ``P(type|s)·P(site|type,s)`` signal.
+
+    This is the deployable form of §10's hybrid re-rank: on the identical broad pool,
+    ``filter×gen×type×site`` beats ``filter×gen`` by a paired **+0.0165 (95% CI [0.006, 0.027],
+    n=1170)** (``results/hybrid_rerank_full1170.json``). It multiplies a per-candidate
+    ``type × site`` factor into the ranking and NEVER gates a candidate out (rank-only, honoring
+    the same lesson as the SoM prior), so with no reranker the deployment ranking is unchanged.
+    """
+
+    def __init__(self, model, rule_to_type: Dict[str, int], rule_names: Sequence[str], aggregation: str = "max") -> None:
+        self.model = model
+        self.model.eval()
+        self.rule_to_type = dict(rule_to_type)
+        self.rule_names = list(rule_names)
+        self.aggregation = aggregation
+
+    @classmethod
+    def load(cls, checkpoint, vocab_path, rule_names: Sequence[str], aggregation: str = "max") -> "FactorizedReranker":
+        import json
+        from pathlib import Path
+
+        from .factorized import FactorizedGenerator
+
+        model = FactorizedGenerator.load(checkpoint)
+        rule_to_type = json.loads(Path(vocab_path).read_text())["rule_to_type"]
+        return cls(model, rule_to_type, rule_names, aggregation=aggregation)
+
+    def multipliers(self, sub_mol, detailed) -> List[float]:
+        """Per-candidate ``type × site`` multiplier, index-aligned to ``detailed``.
+
+        ``detailed`` is the ``generate_scored_with_details`` output
+        ``(smiles, gen_score, rule_id, firing_atoms)``. A candidate whose rule maps to no known
+        type falls back to the mean type score (a neutral prior), and an un-localizable site
+        yields the neutral 1.0 from ``product_som_score`` -- so the reranker only reshapes rank.
+        """
+        from .som import product_som_score
+
+        data = from_rdmol(sub_mol)
+        with torch.no_grad():
+            type_scores = torch.sigmoid(self.model.type_logits(data))[0].cpu().numpy()
+            site_scores = torch.sigmoid(self.model.site_logits(data)).cpu().numpy()
+        type_floor = float(type_scores.mean())
+        out: List[float] = []
+        for row in detailed:
+            smi, _gscore, rid = row[0], row[1], row[2]
+            smirks = self.rule_names[rid] if 0 <= rid < len(self.rule_names) else None
+            tid = self.rule_to_type.get(smirks, -1) if smirks is not None else -1
+            tfac = float(type_scores[tid]) if 0 <= tid < len(type_scores) else type_floor
+            sfac = product_som_score(site_scores, sub_mol, smi, self.aggregation)
+            out.append(tfac * sfac)
+        return out

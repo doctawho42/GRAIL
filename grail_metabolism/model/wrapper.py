@@ -52,11 +52,17 @@ class ModelWrapper:
         generator: Union[GGenerator, Literal["simple"]],
         rules: Optional[Sequence[str]] = None,
         som: Optional[nn.Module] = None,
+        factorized: "Optional[object]" = None,
     ) -> None:
         self.filter = filter
         # Optional site-of-metabolism prior (model.som.SoMPredictor). When set and used
         # with som_beta>0, generate() reweights candidates by site plausibility.
         self.som = som
+        # Optional factorized re-ranker (model.factorized_infer.FactorizedReranker). When set,
+        # generate() multiplies its per-candidate P(type|s)*P(site|type,s) factor into the rank
+        # (the §10 hybrid re-rank, paired +0.0165). Rank-only: it never gates a candidate out,
+        # and with factorized=None the ranking is byte-identical to filter*generator(*som).
+        self.factorized = factorized
         if generator == "simple":
             if not rules:
                 raise ValueError("rules are required for the simple generator")
@@ -130,7 +136,15 @@ class ModelWrapper:
             else float(getattr(self.filter, "calibrated_threshold", 0.5) or 0.5)
         )
 
-        if hasattr(self.generator, "generate_scored"):
+        # When a factorized re-ranker is attached, fetch rule provenance (rule_id per candidate)
+        # so we can look up each candidate's P(type|s); compute_sites=False skips the costly MCS
+        # firing-atom localization (the reranker localizes the site itself from the product SMILES).
+        use_factorized = self.factorized is not None and hasattr(self.generator, "generate_scored_with_details")
+        detailed = None
+        if use_factorized:
+            detailed = self.generator.generate_scored_with_details(sub, top_k=top_k, threshold=rule_threshold, compute_sites=False)
+            scored_candidates = [(row[0], row[1]) for row in detailed]
+        elif hasattr(self.generator, "generate_scored"):
             scored_candidates = self.generator.generate_scored(sub, top_k=top_k, threshold=rule_threshold)
         else:
             scored_candidates = [(candidate, 1.0) for candidate in self.generator.generate(sub, top_k=top_k, threshold=rule_threshold)]
@@ -140,6 +154,8 @@ class ModelWrapper:
         # to the generator's top-N candidates (generate_scored is sorted by score, desc).
         if filter_candidate_cap is not None and filter_candidate_cap > 0:
             scored_candidates = scored_candidates[:filter_candidate_cap]
+            if detailed is not None:
+                detailed = detailed[:filter_candidate_cap]
         normalized_candidates = []
         generator_scores = []
         for candidate, generator_score in scored_candidates:
@@ -171,12 +187,24 @@ class ModelWrapper:
             som_atoms = som.score_atoms(sub)
             use_som = sub_mol is not None and som_atoms is not None and len(som_atoms) > 0
 
+        # Factorized re-rank multipliers (P(type|s)*P(site|type,s) per candidate), index-aligned to
+        # normalized_candidates. None -> multiplier 1.0 (byte-identical to filter*generator(*som)).
+        fac_mults = None
+        if use_factorized and detailed:
+            fac_sub_mol = sub_mol if sub_mol is not None else Chem.MolFromSmiles(sub)
+            if fac_sub_mol is not None:
+                try:
+                    fac_mults = self.factorized.multipliers(fac_sub_mol, detailed)
+                except Exception:
+                    fac_mults = None
+
         evaluated = []
         accepted = []
-        for normalized, generator_score, filter_score in zip(normalized_candidates, generator_scores, filter_scores):
+        for idx, (normalized, generator_score, filter_score) in enumerate(zip(normalized_candidates, generator_scores, filter_scores)):
             filter_score = float(filter_score)
             som_mult = product_som_score(som_atoms, sub_mol, normalized, som_aggregation) ** beta if use_som else 1.0
-            combined = filter_score * generator_score * som_mult
+            fac_mult = float(fac_mults[idx]) if fac_mults is not None and idx < len(fac_mults) else 1.0
+            combined = filter_score * generator_score * som_mult * fac_mult
             evaluated.append((normalized, combined, filter_score, generator_score))
             if filter_score >= effective_filter_threshold:
                 accepted.append((normalized, combined, filter_score, generator_score))
