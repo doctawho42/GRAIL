@@ -96,10 +96,12 @@ reaction sources** or **more general templates**:
   already generalizes radius-1 rules) to lift oracle reachability past ~47%.
 - This is the only lever §10/§12 identify as capable of closing the gap toward SyGMa.
 
-### D2 — Ship the hybrid re-rank (the fixable, already-validated margin) · low effort
-Wire `filter×gen×type×site` into `ModelWrapper.generate` (today: `filter×gen`) by loading the
-factorized checkpoint + type vocab at deploy. A small but **verified, free** gain (+0.0165
-[0.006, 0.027], n=1170). Needs: a scoring hook + a deployment guard test. No new training.
+### D2 — Ship the hybrid re-rank (the fixable, already-validated margin) · **DONE**
+`model/factorized_infer.FactorizedReranker` + gated `ModelWrapper.generate` multiply
+`P(type|s)·P(site|type,s)` into the rank (rank-only, byte-identical when off); opt-in via
+`EvaluationConfig.factorized_rerank` (+ checkpoint/vocab paths), wired in `EnsembleWorkflow`.
+End-to-end through the deployed `generate`: c−a **+0.040** on n=250 (full-test authoritative
++0.0165 [0.006, 0.027]); regression test + `make test` 286. No new training.
 
 ### D3 — Better selection at fixed coverage · medium
 The dense factorized generator escapes the PU degeneracy but is coverage-capped as a replacement.
