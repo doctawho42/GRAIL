@@ -3,7 +3,41 @@
 A single place to see **what is built** and **where the leverage is next**. Paper-level,
 post-draft punch-list items (figures, remaining baselines, CI touch-ups) live in the manuscript's
 own *Draft TODO / open items* section — this document is the project- and research-level roll-up
-that sits above it. Last updated 2026-07-15.
+that sits above it. Last updated 2026-07-17.
+
+## 0. Post-external-review reframe (2026-07-17) — venue = D&B track
+
+An external conceptual review pushed a grand reframe: *"recall ranks banks/enumeration, not models;
+the leaderboard is an artifact of two conventions (match protocol + no output-size normalization)."*
+We ran its **decisive falsification test before writing the abstract** — the budget-matched frontier
+(`results/budget_matched_frontier.json`): **SyGMa dominates GRAIL at EVERY output budget k (crossover
+k=1; GRAIL@64 0.41 < SyGMa@64 0.52)**. So the reframe is **FALSIFIED** — SyGMa is genuinely a better
+metabolite predictor at matched budget; GRAIL's bank covers more (0.701 > SyGMa's pool 0.520) but its
+selection+ranking cannot convert it. That is our own **P1 (weak selector)**, not an unfair metric.
+
+**Retraction (same over-reach, caught):** "P2 in cross-method form" (SyGMa's prior-ranking beats
+GRAIL's learned ranking across the frontier) is **not clean** — different banks/pools, and at k=64
+SyGMa isn't ranking at all (dumps its whole pool). The clean P2 is the **internal** same-pool result
+(learned 0.266 vs prior 0.410 on GRAIL's own pool). Do **not** claim a cross-method P2 without a
+same-pool ranker test (GRAIL pool × {learned, prior, random}).
+
+**Chosen framing — A, a Datasets & Benchmarks paper (A* venue; Syntheseus→NeurIPS'23, GuacaMol/MOSES
+precedent).** What survives and carries it: **TAME rank-flip** (+0.120 [0.073, 0.171], Syntheseus-grade),
+audited split, 5-method comparison under one protocol, the **coverage×selection×ranking decomposition**
+(mechanism), **coverage provably corpus-limited** (re-mining TRAIN → 0/5856 new), **P2 as an XMC-framed
+section** (rule selection = extreme multi-label with ~0 positives/substrate; dense reformulation → 3×
+prior), and a **self-measured below-SOTA ablator** — the benchmark's authors ran their own method first
+and reported it loses at every budget (falsification as a design principle, not a scar).
+
+**Upside = TAME's generality.** Reframe dead ⇒ TAME is the only measurement leg ⇒ all remaining ceiling
+is whether **rank-flip reproduces in other domains** (retrosynthesis, molgen) — re-score existing
+external predictions under the 5 match modes, no training. If it does, TAME becomes a measurement
+phenomenon of molecular ML (main-track on different grounds). **This is the main next move.**
+
+**Order:** (1) cross-domain rank-flip pilot on ONE external prediction set; (2) 1170 run overnight as a
+*supporting* table (gates nothing); (3) optional same-pool ranker test (only if a cross-method P2 is
+wanted); (4) abstract under D&B — TAME center, P2 as XMC section, GRAIL as self-measured ablator.
+**Discipline adopted:** name the falsifying run *with* the thesis, not after.
 
 ## 1. Where things stand
 
