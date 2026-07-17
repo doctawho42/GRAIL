@@ -141,16 +141,21 @@ circles}). Positions vs RGFN / SynFlowNet / RxnFlow.
   under-producing). A converged single-seed run is **~overnight on CPU**; multi-seed is
   compute-gated (Modal burned, GCP occupied — but this is CPU-bound, so GCP CPU-spot ≈ $1–2 total).
 - **Tested runnable recipe:** `run_gflownet.py --no-bootstrap --top-k 40 --epochs ~25 --train-substrates 150 --eval-substrates 50 --n-samples 16`.
-- **First converged result** (`results/gflownet_seed0_overnight.json`; seed 0, **VAL**, 120 train /
-  40 eval / 12 samples / 25 epochs; 3.6 h CPU): the trained Set-GFlowNet **no longer under-produces**
-  (recall@15 **0.0→0.296**). Single-set recall@15: **gflownet 0.296 > beam 0.263**, < reranker 0.405
-  — competitive point-recall, not best. But the **diversity→coverage advantage shows**: over the
-  diverse sampled forests, `union_at_k_auc` **0.251 > reranker 0.222** and `union@50` 0.341 > 0.333,
-  with high intrinsic diversity (pairwise-Tanimoto 0.215, ~39 unique scaffolds, circles@0.4≈31).
-  **Caveats:** ONE seed, VAL only, n=40 — a first signal, not a headline; `reranker_union` rows are
-  partly on under-production-skipped substrates (union edge is directional/noisy). Clean multi-seed +
-  the single test-touch remain compute-gated. This is Stage-2 (method paper), separate from the
-  diagnosis manuscript.
+- **Converged + multi-seed result** (`results/gflownet_seed{0,1,2}_overnight.json`; 3 seeds, **VAL**,
+  120 train / 40 eval / 12 samples / 25 epochs; ~3.6 h CPU/seed): the trained Set-GFlowNet **no longer
+  under-produces** (recall@15 0.0→~0.29). But multi-seed **corrects the seed-0 over-read**:
+  - **recall@15 mean±std:** gflownet **0.292±0.032** ≈ beam **0.311±0.039**, both < reranker
+    **0.411±0.044** — the Set-GFlowNet does **not** beat the baselines on point recall (seed-0's
+    "beats beam" was noise).
+  - **diversity is real + stable:** pairwise-Tanimoto **0.214±0.003**, unique-scaffolds **38.7±1.9**,
+    circles@0.4 **31.4±0.5**, modes 0.77±0.10.
+  - **but no clean coverage *win*:** gflownet-union AUC 0.284±0.031 (tight) vs reranker-union AUC
+    **0.266±0.237** (0.0–0.576 across seeds — corrupted by inconsistent under-production skips), so the
+    seed-0 union edge does **not** survive as a defensible claim.
+  - **Honest verdict:** the novel set-generation machinery works and yields diverse outputs, but on
+    this data/scale shows **no robust recall or coverage advantage** over the simpler reranker. A clean
+    comparative-diversity claim needs the EVAL-02 under-production guard fixed on the baseline arms +
+    larger n / more seeds (GPU/compute). Stage-2 (method paper), separate from the diagnosis manuscript.
 
 ### D5 — Multi-step metabolism (depth ≥ 2) · low expected gain, targeted only
 Chemically real (phase-I → phase-II), but depth-2 lifts the coverage ceiling only ~+0.012 (a long
