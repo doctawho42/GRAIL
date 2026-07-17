@@ -1,0 +1,32 @@
+{
+  "n_shared": 150,
+  "match": "inchikey_tautomer",
+  "methods": [
+    {
+      "method": "GRAIL",
+      "n": 150,
+      "pool_coverage_recall_inf": 0.3183,
+      "recall@15": 0.3183,
+      "selection_retention": 1.0,
+      "precision@15": 0.0996,
+      "mean_output": 8.13,
+      "recall_per_output": 0.03913
+    },
+    {
+      "method": "SyGMa",
+      "n": 150,
+      "pool_coverage_recall_inf": 0.5201,
+      "recall@15": 0.4925,
+      "selection_retention": 0.9469,
+      "precision@15": 0.0757,
+      "mean_output": 63.97,
+      "recall_per_output": 0.0077
+    }
+  ],
+  "grail_bank_ceiling_on_shared": 0.7014,
+  "grail_selection_retention_vs_bank_ceiling": 0.4538,
+  "interpretation": {
+    "sygma_selection_retention": 0.9469,
+    "claim": "SyGMa retention~=1.0 (dumps its applicable pool, no selection) vs GRAIL <1 (pays a selection tax); GRAIL's BANK covers more than SyGMa realises, yet GRAIL's realised recall is lower -> recall ranks the absence of a selection stage / enumeration breadth, not model quality."
+  }
+}
