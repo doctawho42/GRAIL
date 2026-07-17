@@ -141,6 +141,16 @@ circles}). Positions vs RGFN / SynFlowNet / RxnFlow.
   under-producing). A converged single-seed run is **~overnight on CPU**; multi-seed is
   compute-gated (Modal burned, GCP occupied — but this is CPU-bound, so GCP CPU-spot ≈ $1–2 total).
 - **Tested runnable recipe:** `run_gflownet.py --no-bootstrap --top-k 40 --epochs ~25 --train-substrates 150 --eval-substrates 50 --n-samples 16`.
+- **First converged result** (`results/gflownet_seed0_overnight.json`; seed 0, **VAL**, 120 train /
+  40 eval / 12 samples / 25 epochs; 3.6 h CPU): the trained Set-GFlowNet **no longer under-produces**
+  (recall@15 **0.0→0.296**). Single-set recall@15: **gflownet 0.296 > beam 0.263**, < reranker 0.405
+  — competitive point-recall, not best. But the **diversity→coverage advantage shows**: over the
+  diverse sampled forests, `union_at_k_auc` **0.251 > reranker 0.222** and `union@50` 0.341 > 0.333,
+  with high intrinsic diversity (pairwise-Tanimoto 0.215, ~39 unique scaffolds, circles@0.4≈31).
+  **Caveats:** ONE seed, VAL only, n=40 — a first signal, not a headline; `reranker_union` rows are
+  partly on under-production-skipped substrates (union edge is directional/noisy). Clean multi-seed +
+  the single test-touch remain compute-gated. This is Stage-2 (method paper), separate from the
+  diagnosis manuscript.
 
 ### D5 — Multi-step metabolism (depth ≥ 2) · low expected gain, targeted only
 Chemically real (phase-I → phase-II), but depth-2 lifts the coverage ceiling only ~+0.012 (a long
