@@ -1,0 +1,32 @@
+{
+  "model": "sagawa/ReactionT5v2-retrosynthesis-USPTO_50k",
+  "n": 200,
+  "beams": 5,
+  "accuracy_by_mode": {
+    "canonical": {
+      "top1": 0.695,
+      "top3": 0.81,
+      "top5": 0.855
+    },
+    "nostereo": {
+      "top1": 0.71,
+      "top3": 0.82,
+      "top5": 0.87
+    },
+    "inchikey": {
+      "top1": 0.695,
+      "top3": 0.81,
+      "top5": 0.855
+    },
+    "tautomer": {
+      "top1": 0.715,
+      "top3": 0.825,
+      "top5": 0.87
+    }
+  },
+  "spread_across_modes": {
+    "top1": 0.02,
+    "top3": 0.015,
+    "top5": 0.015
+  }
+}

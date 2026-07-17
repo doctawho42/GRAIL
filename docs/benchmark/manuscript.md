@@ -875,13 +875,17 @@ conventions; if the method ordering does not move (interaction CI covering zero)
 claim fails. A clean instance requires ≥2 models of **comparable strength but differing
 match-sensitivity** whose raw ranked predictions are public; we found they are not (only same-family
 or strength-mismatched checkpoints are readily runnable), so the multi-model cross-domain rank-flip
-is deferred rather than forced. As a first, single-model probe we do confirm the phenomenon's
-premise in retrosynthesis — the *same* ReactionT5v2 predictions on the USPTO-50k test score
-materially differently under {canonical, stereo-stripped, InChIKey, tautomer} matching
-(`results/xdomain_retro_protocol.json`), a protocol-dependence but not yet a reordering.
-Establishing the cross-domain reordering would move this contribution from a domain protocol to a
-measurement phenomenon of molecular ML — the single most valuable next step, and one that needs no
-new training, only public predictions that do not yet exist in a re-scorable form.
+is deferred rather than forced. A first single-model probe (ReactionT5v2 on the USPTO-50k test,
+n=200; `results/xdomain_retro_protocol.json`) in fact suggests the effect is **domain-dependent, not
+universal**: the *same* predictions move only ~**0.02** in top-1 accuracy across {canonical,
+stereo-stripped, InChIKey, tautomer} matching (0.695–0.715) — roughly an order of magnitude below the
+metabolism interaction (§11) — plausibly because retrosynthesis references are canonical-clean small
+molecules, whereas the metabolism rule engine emits tautomer/stereo variants of its references. So
+the honest cross-domain reading is **not** that protocol choice universally reorders leaderboards,
+but that its magnitude is a function of how much a generator's outputs diverge tautomerically/
+stereochemically from the references. Establishing whether protocol choice *reorders* (not merely
+shifts) leaderboards in a domain with comparable tautomer ambiguity remains the named open test, and
+needs only public multi-model predictions in a re-scorable form — which do not yet exist.
 
 ## 13. Data & Code Availability
 
