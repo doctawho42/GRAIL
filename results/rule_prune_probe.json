@@ -1,0 +1,16 @@
+{
+  "n_rules_total": 7581,
+  "annotated_test_substrates": 291,
+  "match": "canonical_smiles (upper bound on DEAD; tautomer would shrink DEAD)",
+  "classes": {
+    "ACTIVE_useful_or_broad": 668,
+    "SALVAGEABLE_narrow_but_useful": 46,
+    "FIRES_never_useful": 1767,
+    "DEAD_weight_prunable": 5100
+  },
+  "useful_rules_total": 714,
+  "unfired_on_random_pool": 4834,
+  "of_unfired__salvageable_useful_on_test": 28,
+  "of_unfired__dead_never_useful": 4789,
+  "note": "DEAD = never a true metabolite on the annotated test set AND fires on <=1 of ~1000 random probes + <=1 test substrate. Upper bound (train-inclusive usefulness would reduce it). Pruning DEAD is reachability-preserving for the annotated data by construction."
+}
