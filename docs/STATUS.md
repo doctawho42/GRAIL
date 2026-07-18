@@ -3,7 +3,7 @@
 A single place to see **what is built** and **where the leverage is next**. Paper-level,
 post-draft punch-list items (figures, remaining baselines, CI touch-ups) live in the manuscript's
 own *Draft TODO / open items* section — this document is the project- and research-level roll-up
-that sits above it. Last updated 2026-07-17.
+that sits above it. Last updated 2026-07-19.
 
 ## 0. Post-external-review reframe (2026-07-17) — venue = D&B track
 
@@ -38,6 +38,49 @@ phenomenon of molecular ML (main-track on different grounds). **This is the main
 *supporting* table (gates nothing); (3) optional same-pool ranker test (only if a cross-method P2 is
 wanted); (4) abstract under D&B — TAME center, P2 as XMC section, GRAIL as self-measured ablator.
 **Discipline adopted:** name the falsifying run *with* the thesis, not after.
+
+## 0a. Rule-granularity probe (2026-07-19) — measured, mostly negative
+
+Tested whether **rule granularity** (bank breadth/redundancy) is a lever on the recall factors
+`coverage(0.735) × selection(0.489) × ranking(0.726)`. Four measurements, each pre-registered with its
+falsifier; three of my own hypotheses were tempered or killed by the numbers. Verdict per claim, at
+measured confidence:
+
+1. **Merging functional duplicates → SELECTION.** Redundancy is real: of the 2,747 rules that fire on a
+   1,000-substrate probe, 25% are exact functional duplicates (`rule_collapse.json`, held-out merge
+   stability 0.975); a distribution-free canonical-SMIRKS dedup over all 7,581 removes ~7.5%
+   (`rule_dedup_provable.json`; permutation variants are only ~43% of the redundancy, the rest is
+   non-structural). **But the net selection benefit is unconfirmed:** `label_reactions` marks every
+   producing rule positive and each rule has its own `id_embedding`, so duplicates split the training
+   signal — yet `noisy_or` at inference pools the duplicate scores back (multiplicity ≈ frequency prior),
+   partially healing the split. And the zero-id ablation (below) shows the split `id` is itself inert.
+   **Verdict: weak lever; treat as deploy hygiene**, which folds into the resource+cache measurement
+   (rule embeddings are substrate-independent and already cached once at startup — bank size hits
+   startup cost/memory, not per-query latency).
+
+2. **Pruning dead rules → SPARSITY (P2).** *Confirmed as real and reducible.* Training-wide (4,787
+   substrates, `rule_train_positives.json`): **56.3% of the bank is NEVER a positive label** (dead-weight,
+   reachability-preserving to prune) and **20.1% is positive on exactly one substrate** (overfit
+   singletons) → **~76% dead-or-singleton**. So the 7,581-way sparsity that degenerates the learned
+   selector is *not* irreducible — pruning is a distinct, untested-magnitude lever (separate from merging;
+   the salvageable-narrow ~0.6% overlap the D1 generalization/coverage population). Recall impact of
+   pruning is unmeasured but reachability-preserving by construction on the annotated data.
+
+3. **`id_embedding` dominance → mechanism of P2. FALSIFIED.** The rule embedding is
+   `norm(graph_encoding + id_embedding + meta)`; the `id_embedding` carries **82% of cross-rule variance**
+   vs 17% for the GATv2 structure (`rule_embed_decomp.json`) — seductively "the model is a lookup table,
+   rare-rule `id` is untrained noise, *that* is P2." The **zero-id inference ablation kills it**
+   (`ablate_id_embedding.json`): zeroing `id` moves recall@15 by **−0.007** and *improves* recall@1/@5
+   (+0.037/+0.027). The 82% variance is **not load-bearing** — a geometric illusion; downstream scoring
+   looks past `id`. P2 is not explained here.
+
+**Free byproduct:** since zeroing `id` *raises* top-k precision (+0.037@1, +0.027@5, n=291), dropping the
+`id` component at inference is a small, confirmatory-check-worthy tweak — inference-only, no retrain.
+
+**Net:** rule-granularity yielded one real lever (pruning, magnitude untested), one weak/hygiene lever
+(merging), and one cleanly-falsified mechanism (`id`→P2). None is a headline recall lever. Deadline
+levers remain **resource+cache** and **GRAIL-vs-MetaTox**. Scripts: `rule_collapse.py`,
+`rule_dedup_provable.py`, `rule_prune_probe.py`, `probe_rule_embeddings.py`, `ablate_id_embedding.py`.
 
 ## 1. Where things stand
 
