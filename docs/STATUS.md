@@ -43,8 +43,16 @@ wanted); (4) abstract under D&B — TAME center, P2 as XMC section, GRAIL as sel
 
 Tested whether **rule granularity** (bank breadth/redundancy) is a lever on the recall factors
 `coverage(0.735) × selection(0.489) × ranking(0.726)`. Four measurements, each pre-registered with its
-falsifier; three of my own hypotheses were tempered or killed by the numbers. Verdict per claim, at
-measured confidence:
+falsifier; three of my own hypotheses were tempered or killed by the numbers.
+
+**Methodology caveat — test peeked.** These exploratory probes (`rule_prune_probe`,
+`ablate_id_embedding`, and the earlier budget-matched / cross-method runs) scored on the **test** split
+(`test_predictions.csv`) — a soft breach of *touch-test-once*. Consequence: the final GRAIL-vs-MetaTox
+row is now slightly adaptively biased. Mitigation going forward: **test is frozen for that single final
+row**; any follow-up exploratory run (the prune-and-re-rank check) goes on **val** (val GRAIL
+predictions must be generated first — none cached yet).
+
+Verdict per claim, at measured confidence:
 
 1. **Merging functional duplicates → SELECTION.** Redundancy is real: of the 2,747 rules that fire on a
    1,000-substrate probe, 25% are exact functional duplicates (`rule_collapse.json`, held-out merge
@@ -58,13 +66,23 @@ measured confidence:
    (rule embeddings are substrate-independent and already cached once at startup — bank size hits
    startup cost/memory, not per-query latency).
 
-2. **Pruning dead rules → SPARSITY (P2).** *Confirmed as real and reducible.* Training-wide (4,787
-   substrates, `rule_train_positives.json`): **56.3% of the bank is NEVER a positive label** (dead-weight,
-   reachability-preserving to prune) and **20.1% is positive on exactly one substrate** (overfit
-   singletons) → **~76% dead-or-singleton**. So the 7,581-way sparsity that degenerates the learned
-   selector is *not* irreducible — pruning is a distinct, untested-magnitude lever (separate from merging;
-   the salvageable-narrow ~0.6% overlap the D1 generalization/coverage population). Recall impact of
-   pruning is unmeasured but reachability-preserving by construction on the annotated data.
+2. **Pruning dead rules.** *The reducible-sparsity fact is solid; the selection mechanism moved, and the
+   pruning scope shrank.* Training-wide (4,787 substrates, `rule_train_positives.json`): **56.3% of the
+   bank is NEVER a positive label** and **20.1% is positive on exactly one substrate** → **~76% of the
+   TARGET is train-dead-or-singleton**, i.e. *training* sparsity is reducible (P2-relevant, solid). Two
+   cautions the self-audit forces, both previously over-stated:
+   - **Reachability (train/test confounder, third occurrence).** "Prunable without coverage loss" holds
+     only for the *training target* — all-negative columns are pure train ballast. It is **not proven for
+     the deployed bank**: a rule useless on train can be a true label on test/novel chemistry (e.g. a
+     curated SyGMa general rule that never matched train). So "76% of the *bank* prunes" is unmeasured and
+     carries **test-coverage risk**; only "76% of the *target* is train-dead-or-singleton" is solid.
+   - **Mechanism (undercut by the same shot as merging).** The zero-id ablation shows `id` is inert, so
+     "dead rules inject noise via untrained `id`" is *also* inert — the target-sparsity→selection story is
+     undermined. What survives is a **different, id-independent, inference-side** lever: the
+     *fires-but-never-useful* class (**1,767** rules) emits **distractor products** that dilute ranking
+     through `noisy_or`; cutting those could clean ranking. This is the live pruning hypothesis now —
+     **untested**, routed to a prune-and-re-rank check on **val**. (The 4,271 never-fire rules produce no
+     candidates at all, so with `id` inert they may simply be harmless ballast.)
 
 3. **`id_embedding` dominance → mechanism of P2. FALSIFIED.** The rule embedding is
    `norm(graph_encoding + id_embedding + meta)`; the `id_embedding` carries **82% of cross-rule variance**
@@ -74,12 +92,16 @@ measured confidence:
    (+0.037/+0.027). The 82% variance is **not load-bearing** — a geometric illusion; downstream scoring
    looks past `id`. P2 is not explained here.
 
-**Free byproduct:** since zeroing `id` *raises* top-k precision (+0.037@1, +0.027@5, n=291), dropping the
-`id` component at inference is a small, confirmatory-check-worthy tweak — inference-only, no retrain.
+**Byproduct — single run on test, an anomaly not a gift:** zeroing `id` *raised* top-k precision
+(+0.037@1, +0.027@5, n=291, one run). A component holding 82% of embedding variance whose removal is
+net-helpful is strange — possibly `id` *trainedly* memorizes noise. Verify on **val**, multiseed, before
+believing it; do not sell it as a free tweak.
 
-**Net:** rule-granularity yielded one real lever (pruning, magnitude untested), one weak/hygiene lever
-(merging), and one cleanly-falsified mechanism (`id`→P2). None is a headline recall lever. Deadline
-levers remain **resource+cache** and **GRAIL-vs-MetaTox**. Scripts: `rule_collapse.py`,
+**Net:** rule-granularity yielded one solid *fact* (training sparsity is reducible — 76% of the target is
+train-dead-or-singleton), one *untested id-independent hypothesis* (cut the 1,767 distractor-emitting
+rules to clean ranking, on val), one weak/hygiene lever (merging), and one cleanly-falsified mechanism
+(`id`→P2). No confirmed headline recall lever. Deadline levers remain **resource+cache** and
+**GRAIL-vs-MetaTox**. Scripts: `rule_collapse.py`,
 `rule_dedup_provable.py`, `rule_prune_probe.py`, `probe_rule_embeddings.py`, `ablate_id_embedding.py`.
 
 ## 1. Where things stand
