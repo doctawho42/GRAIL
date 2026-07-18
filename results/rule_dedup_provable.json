@@ -1,0 +1,58 @@
+{
+  "n_rules_total": 7581,
+  "n_unparseable": 1,
+  "equivalence": "provable canonical SMIRKS (atom-order + atom-map-relabel invariant, correspondence-preserving)",
+  "n_distinct_canonical": 7010,
+  "rules_eliminated": 571,
+  "collapse_fraction_of_bank": 0.0753,
+  "clusters_ge2": 319,
+  "max_cluster_size": 17,
+  "rules_in_ge2_clusters": 890,
+  "size_histogram_top": {
+    "17": 1,
+    "16": 1,
+    "15": 1,
+    "14": 1,
+    "12": 1,
+    "11": 1,
+    "9": 3,
+    "8": 5,
+    "7": 2,
+    "6": 3,
+    "5": 9,
+    "4": 16,
+    "3": 47,
+    "2": 228,
+    "1": 6691
+  },
+  "safety_structural_implies_behavioral": {
+    "checked_clusters": 319,
+    "clusters_with_pool_evidence": 178,
+    "over_merges": 2,
+    "examples": [
+      {
+        "key": "O=C(O)[*:1]~[*:2]~[C:3][OH]>>O=C1O[C:3][*:2]~[*:1]1||C|O|O|O|[*]|[*]|[*]|[*]|[C&",
+        "members": [
+          403,
+          1214
+        ],
+        "distinct_pool_signatures": 2
+      },
+      {
+        "key": "O=C(O)[*:1]~[*:2]~[*:3]~[C:4][OH]>>O=C1O[C:4][*:3]~[*:2]~[*:1]1||C|O|O|O|[*]|[*]",
+        "members": [
+          431,
+          1218,
+          1219
+        ],
+        "distinct_pool_signatures": 3
+      }
+    ]
+  },
+  "structural_vs_behavioral_on_fired": {
+    "fired_rules": 2747,
+    "structural_distinct_among_fired": 2454,
+    "behavioral_distinct_among_fired": 2056,
+    "note": "structural (provable, permutation/relabel) vs behavioral (empirical, any same-product equivalence on the pool). behavioral <= structural means extra non-structural functional equivalences exist beyond permutation variants."
+  }
+}
