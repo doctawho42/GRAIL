@@ -1,5 +1,10 @@
 # GRAIL — consolidated findings
 
+> **Superseded (2026-06-28 snapshot).** For the current state read `docs/STATUS.md` (§0 D&B
+> reframe + falsification, §0a rule-granularity ledger) and `docs/CONCEPTUAL_REVIEW_RU.md` §0.5.
+> This file predates the budget-matched falsification, the two-products frame, and MetaTox as the
+> #1 number; kept for the methodology section below, which is still accurate.
+
 Status as of 2026-06-28. Honest summary of where GRAIL (rule-based + learned metabolite
 structure predictor) stands against the SOTA goal, the methodology used, and what was
 learned. Numbers are reproducible from the committed code; artifacts are gitignored.
