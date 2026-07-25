@@ -169,11 +169,23 @@ benchmarked
 against DeepChem, LoHi, and GraphPart on MoleculeNet-style tasks. We contribute not a new
 splitting algorithm but a metabolite-specific leakage audit — substrate–metabolite
 identity overlap is the leak that matters here — backed by a machine-checkable leakage report and
-validation-versus-test agreement (§5). And that evaluation choices reorder leaderboards is
+validation-versus-test agreement (§5). Concurrent audits of molecular-ML benchmarks reach a
+compatible conclusion from the *implementation* side — Liu, Bushuiev et al. 2026 (*arXiv*:2606.19624,
+"MassSpecGym in the Wild") find 17 of 26 papers affected by leakage, shortcut learning, and
+metric-implementation divergence across independent codebases; we differ by holding implementation
+fixed in one codebase and varying the match convention as a single *deliberate* controlled factor,
+so the reordering we report is an intrinsic property of the convention choice, not cross-codebase
+inconsistency. And that evaluation choices reorder leaderboards is
 established outside chemistry: Mishra et al. 2021 (*AAAI*, doi:10.1609/aaai.v35i15.17599) show
 difficulty-weighting reorders NLP/ML leaderboards so "top models may not be best," and Rodriguez
 et al. 2021 (*ACL*, doi:10.18653/v1/2021.acl-long.346) show individual evaluation examples carry
-unequal ranking information. The domain-specific instantiation is ours: in
+unequal ranking information. Closest in claim-shape, and concurrent in molecular ML, Agarwal &
+Bisht 2026 (*arXiv*:2606.12639, "The Metric Picks the Winner") show with paired significance
+testing that the evaluation choice *inverts* which model wins on drug-response prediction in unseen
+chemistry — the same "the metric reorders the leaderboard" result on a different axis (a scoring
+metric, not a structure-matching convention) and task (transcriptomic response, not metabolite
+structure), and without a coverage×selection×ranking decomposition or a pre-registered
+structure-convention endpoint. The domain-specific instantiation is ours: in
 metabolite *structure* prediction, the previously-unexamined, load-bearing choice is how a
 predicted structure is matched to its reference (canonical SMILES, InChIKey, no-stereo InChI,
 Tanimoto = 1, or tautomer-aware InChIKey), and §11 shows this single choice reorders the
