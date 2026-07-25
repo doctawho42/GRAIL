@@ -816,6 +816,32 @@ however, the underlying **interaction is significant** — BioTransformer gains 
 certified claim is therefore the differential sensitivity that drives the flips, not the flips
 themselves — now established on two independent method pairs and two different protocol axes.
 
+**External replication on the GLORYx-37 shared set.** The results above live on a 150-substrate
+subset of our own split, so we repeated the analysis on the field's de-facto external hold-out —
+the 37 GLORYx drugs (205 reference metabolites) — with four methods whose predictions were frozen
+before scoring (SyGMa recomputed with py-sygma; BioTransformer, MetaPredictor and GRAIL from
+committed prediction files), switching only `inchikey` → `inchikey_tautomer`
+(`results/gloryx_rank_flip_ci.json`, paired bootstrap over substrates, 10,000 resamples).
+Protocol sensitivity differs across methods by more than an order of magnitude, and three of the
+four intervals exclude zero:
+
+| method | InChIKey | tautomer-InChIKey | gain (95% CI) |
+|---|---|---|---|
+| SyGMa | 0.492 | 0.498 | **+0.007** [+0.000, +0.020] |
+| BioTransformer | 0.346 | 0.374 | **+0.028** [+0.002, +0.064] |
+| MetaPredictor | 0.362 | 0.504 | **+0.142** [+0.079, +0.215] |
+| GRAIL | 0.155 | 0.333 | **+0.178** [+0.097, +0.269] |
+
+The protocol × method interaction is significant for **four of six** method pairs, the largest
+being GRAIL↔SyGMa (**−0.171** [−0.264, −0.086]) and MetaPredictor↔SyGMa (**−0.135** [−0.209,
+−0.072]). The ordering consequence is sharpest for MetaPredictor↔SyGMa: under strict InChIKey
+SyGMa leads by a **significant** −0.130 ([−0.196, −0.065]); under tautomer matching that advantage
+**disappears entirely** and the point estimate reverses (+0.005, n.s.). As internally, we certify
+the differential sensitivity rather than the individual reversal — but the phenomenon is now shown
+on an **external, literature-standard set**, with a different method quartet, at a sample size
+(n=37) where the intervals still exclude zero. A convention chosen for convenience can therefore
+erase a statistically significant advantage between two published tools.
+
 **MetaTrans is also non-monotonic** in the match protocol, uniquely among the 5 methods: canon
 **0.523** > InChIKey **0.494** < no-stereo **0.561**. MetaTrans emits isomeric SMILES, so strict
 InChIKey penalizes stereo mismatches that stereo-blind protocols (canonical, no-stereo) ignore —
@@ -1002,20 +1028,15 @@ coverage_bank · selection_retention · ranking_conversion (§4, §8).
   have no comparable cap. Deferred deliberately until the venue is fixed — trimming now would be
   polish against an unknown constraint.
 
-- **UNUSED ASSET — the external 4-method GLORYx table is computed but not cited by the body.**
-  `docs/benchmark/gloryx_results.md` already scores **four** methods on the 37-substrate GLORYx set
-  under all five matching protocols (SyGMa, MetaPredictor, BioTransformer, GRAIL; MetaTrans absent
-  for the reproducibility reason above). §7 currently uses GLORYx only as an *external substrate set
-  for GRAIL's own coverage ceiling*, not as a method comparison, so this table is orphaned. Two
-  reasons to pull it in: (i) it is a genuine **external-set** multi-method comparison, which
-  strengthens external validity beyond the internal n=150 shared subset of §11; (ii) it appears to
-  reproduce the protocol-sensitivity phenomenon *outside* the internal split — e.g. MetaPredictor
-  swings 0.362 (strict InChIKey) → 0.504 (no-stereo / tautomer) while SyGMa is flat at ~0.49, which
-  would reorder that pair. **Before using it as a rank-flip replication, compute paired CIs at
-  n=37** — the sample is small and the current numbers are point estimates only; at that n the
-  interval may well span zero, in which case it belongs as a descriptive external table, not as
-  evidence. Decide alongside the MetaTox question below.
-
+- ~~UNUSED ASSET — the external 4-method GLORYx table is computed but not cited by the body.~~ —
+  **DONE, and it promoted to evidence.** Paired CIs were computed at n=37 as the pre-registered
+  precondition (`results/gloryx_rank_flip_ci.json`, `scripts/gloryx_rank_flip_ci.py`) and the
+  intervals exclude zero: per-method protocol sensitivity spans SyGMa +0.007 [+0.000, +0.020] to
+  GRAIL +0.178 [+0.097, +0.269], the interaction is significant for four of six pairs, and SyGMa's
+  **significant** advantage over MetaPredictor under strict InChIKey (−0.130 [−0.196, −0.065])
+  vanishes under tautomer matching. Written into §11 as an external replication of the primary
+  phenomenon, framed like the internal result (differential sensitivity certified; individual
+  reversal not). *Caveat retained in the text:* n=37.
 - **DECISION PENDING — whether MetaTox enters this paper.** GRAIL has now been scored head-to-head
   against **MetaTox** (the way2drug incumbent) under this paper's own protocol: a statistical tie at
   every k (recall@15 0.340 vs 0.363, Δ −0.023 [−0.101, +0.054], n=270; `results/grail_vs_metatox.json`)
