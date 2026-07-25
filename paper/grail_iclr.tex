@@ -63,7 +63,7 @@ the correct product is generated but ranked below the reporting threshold.
 We address both problems. We introduce TAME, an evaluation protocol for metabolite-structure
 prediction that comprises tautomer-aware structure matching, a leakage-audited data split, and a
 harness that re-scores fixed predictions from several methods under a common criterion. Applying
-this protocol to five published methods, we find that the matching convention systematically
+this protocol to four published methods and to our own, we find that the matching criterion systematically
 reorders the leaderboard, and we reproduce the same reordering on an independent external dataset.
 We then introduce a decomposition of recall into coverage, selection and ranking, which attributes
 a method's performance to a specific stage of its pipeline and thereby identifies the intervention
@@ -114,10 +114,7 @@ the aggregate score does not indicate which is warranted.
 This work addresses both assumptions. We define an evaluation protocol that states the structure
 matching criterion explicitly and permits it to be varied, and we use it to re-score fixed
 predictions from five published methods. We define a decomposition that separates recall into the
-contributions of rule coverage, template selection and product ranking, and we apply it to a
-predictor we release for that purpose. Our findings are that the matching criterion changes which
-method appears best, both on our data and on an independent external benchmark, and that for the
-predictor we analyse the dominant loss occurs at template selection rather than at ranking.
+contributions of rule coverage, template selection and product ranking, and we apply it to GRAIL, the predictor we release for that purpose.
 
 The remainder of this article is organised as follows. Section~\ref{sec:related} reviews prior
 work on metabolite prediction and on evaluation methodology in related domains.
@@ -219,11 +216,14 @@ constructed and then audited read-only by a separate script that canonicalises S
 zero substrate and zero positive-pair overlap across every split pair, emitting a machine-checkable
 report. Leakage-aware splitting is itself not novel, since DataSAIL \citep{Joeres_2025} minimises cross-split similarity on
 MoleculeNet-style tasks. The leak that matters here is
-substrate--metabolite \emph{identity} overlap, which is domain-specific. Trustworthiness is
-corroborated empirically rather than asserted: on the deployed run's own evaluation, the same
-configuration scored on both splits gives recall@15 $=0.344$ on validation and $0.334$ on test, a
-gap of $+0.010$ in the expected direction (validation marginally easier, since selection touched
-it) and far too small to indicate test-set overfitting.
+substrate--metabolite \emph{identity} overlap, which is domain-specific. As a secondary check, the deployed
+configuration scored on both splits gives macro recall@15 $=0.344$ on validation and $0.334$ on
+test. That evaluation covers 293 and 291 substrates respectively and is superseded on the full
+split by the figures in Section~\ref{sec:diagnosis}. The gap of $+0.010$ lies in the expected
+direction, validation being marginally easier because model selection touched it, but it is the
+same magnitude as the seed-to-seed standard deviation reported in Section~\ref{sec:diagnosis}, so
+it corroborates the zero-overlap audit rather than constituting independent evidence against
+test-set overfitting.
 
 \paragraph{Metrics.} We lead with recall@$k$ co-reported with \texttt{mean\_output\_size}, not with
 precision alone. Under incomplete annotation precision is a \emph{pessimistic lower bound}: an
@@ -259,8 +259,14 @@ the three factors partition the loss with no residual: it is an accounting devic
 Its value is diagnostic: a
 single recall number cannot say \emph{which} gate closed, and the
 three interventions those gates imply (mine more chemistry, fix selection, fix ranking) are
-entirely different pieces of work. Estimator details, including why we report the micro
-(ratio-of-sums) form, are in Appendix~\ref{app:formal}.
+entirely different pieces of work. Two aggregations are in use, and every figure below is labelled with which one it is. The
+\emph{micro} (ratio-of-sums) form pools reference metabolites across substrates, $|H|/|U|$ as
+written above, so each substrate contributes in proportion to its number of references. The
+\emph{macro} form averages per-substrate recall, weighting every substrate equally.
+Table~\ref{tab:decomp} reports micro throughout, because only the micro form makes the three
+factors multiply out exactly; the head-to-head comparisons in Section~\ref{sec:diagnosis} report
+macro, which is the convention used by the comparator tools. On this split the two differ
+($0.261$ micro against $0.330$ macro). Estimator details are in Appendix~\ref{app:formal}.
 
 \paragraph{The ceiling as a primitive.} The first factor is measurable without any model: apply
 all \nbank\ rules to every test substrate and ask what fraction of references appears anywhere in
@@ -292,8 +298,9 @@ product   & recall@15 (micro)                & \textbf{\realised} &  \\
 
 \paragraph{What the decomposition says.} Table~\ref{tab:decomp} localises the loss. The deployed
 pipeline converts only $35.5\%$ of its own ceiling into realised recall, and the largest single
-leak is \textbf{selection}: less than half of what the bank can reach survives into the budgeted
-candidate pool. Ranking is the mildest of the three. The decomposition therefore indicates selection, rather than ranking, as the stage at which
+shortfall is \textbf{selection}: less than half of what the bank can reach survives into the
+budgeted candidate pool. Coverage and ranking are statistically indistinguishable from one another
+($0.735$ $[0.709,0.762]$ against $0.726$ $[0.687,0.765]$); only selection is clearly dominant. The decomposition therefore indicates selection, rather than ranking, as the stage at which
 intervention is warranted. It also bounds what this architecture can achieve: even a perfect selector and a perfect
 ranker would stop at \ceiling, and Appendix~\ref{app:props} shows that ceiling is
 corpus-limited rather than a tuning artifact.
@@ -301,12 +308,12 @@ corpus-limited rather than a tuning artifact.
 \section{Results}
 \label{sec:results}
 
-\subsection{The match convention reorders the leaderboard}
+\subsection{The matching criterion reorders the leaderboard}
 \label{sec:rankflip}
 
 Five methods (GRAIL, SyGMa \citep{Ridder_2008}, BioTransformer
 \citep{Djoumbou_Feunang_2019}, MetaPredictor \citep{Zhu_2024} and MetaTrans \citep{Litsa_2020})
-have their \emph{frozen} predictions re-scored by one harness under five matching conventions, so
+have their \emph{frozen} predictions re-scored by one harness under five matching criterions, so
 only the match rule changes across columns, never the chemistry (Table~\ref{tab:matchsens}). Two
 observations follow immediately. Methods are not equally sensitive to the convention: GRAIL moves
 by $0.009$ from canonical to tautomer matching while BioTransformer moves by $0.129$. And
@@ -333,7 +340,7 @@ each method's change and its 95\% confidence interval.}
 \begin{tabular}{lccccc c}
 \toprule
 \textbf{method} & canon. & InChIKey & no-stereo & Tanimoto$=$1 & tautomer & mean \\
- & (LAGOM) & (strict) & (GLORYx) & (MetaTrans) & (ours) & outputs \\
+ & & (strict) & (GLORYx) & (fingerprint) & (ours) & outputs \\
 \midrule
 \textbf{GRAIL}   & 0.356 & 0.357 & 0.358 & 0.356 & 0.365 & \phantom{0}8.7 \\
 BioTransformer   & 0.315 & 0.435 & 0.439 & 0.315 & 0.444 & 10.8 \\
@@ -370,7 +377,7 @@ GLORYx drugs \citep{de_Bruyn_Kops_2020} with four methods, switching only
 InChIKey~$\rightarrow$~tautomer-InChIKey (Table~\ref{tab:gloryx}). Protocol sensitivity spans more
 than an order of magnitude across methods
 (SyGMa $+0.007$, GRAIL $+0.178$), and three of the
-four intervals exclude zero. The interaction is significant for \textbf{four of six} method pairs,
+four intervals exclude zero. Of the six method pairs, four show a significant interaction (reported without correction for multiple comparisons),
 the largest being GRAIL$\leftrightarrow$SyGMa ($-0.171$ $[-0.264,-0.086]$) and
 MetaPredictor$\leftrightarrow$SyGMa ($-0.135$ $[-0.209,-0.072]$). The ordering consequence is
 sharpest for the latter: under strict InChIKey SyGMa leads by a \emph{significant} $-0.130$
@@ -401,22 +408,24 @@ MetaPredictor  & 0.362 & 0.504 & $+0.142$ $[+0.079,+0.215]$ \\
 \paragraph{Mechanism.} The spread is not arbitrary: a method's protocol sensitivity tracks how far
 its outputs diverge tautomerically from the references it is scored against. A rule engine that
 emits whichever tautomer its SMIRKS produce (GRAIL, MetaPredictor) gains most from tautomer-aware
-matching; a method that canonicalises its own output (SyGMa) gains almost nothing. This predicts
-where the effect should be \emph{small}, and we test that prediction out of domain in
-Appendix~\ref{app:xdomain}.
+matching; a method that canonicalises its own output (SyGMa) gains almost nothing. This predicts that the effect should be small where a generator
+canonicalises its own output. A single-model test in retrosynthesis, a domain whose reference
+structures are canonical, finds a spread of about $0.02$ across the same criteria, an order of
+magnitude below the metabolism effect (Appendix~\ref{app:xdomain}).
 
 \subsection{Comparison against published methods}
 \label{sec:diagnosis}
 
-We report the comparison against published methods before applying the decomposition. On the full clean test split GRAIL reaches
-\textbf{\grailmacro} macro recall@15 (3 seeds: $0.344 \pm 0.010$) against SyGMa's \textbf{0.572},
+We report the comparison against published methods before applying the decomposition. On the full clean test split ($n=\ntest$) the deployed GRAIL checkpoint reaches
+\textbf{\grailmacro} macro recall@15; retraining the same configuration under three seeds gives
+$0.344 \pm 0.010$ on that split. SyGMa reaches \textbf{0.572},
 a paired difference of $-0.242$ (95\% CI $[-0.271,\,-0.212]$, cluster bootstrap over $n=1{,}168$ common substrates), and against MetaPredictor's $0.585$ on the shared subset ($0.568$ re-scored on the
 full test). GRAIL does not achieve the highest recall at any output budget. A budget-matched frontier
 sweeping $k \in [1,64]$ finds SyGMa ahead at \emph{every} $k$ with no crossover
 (Appendix~\ref{app:budget}): the gap is not an artifact of output-size accounting, it is a genuine
 selection weakness, and \S\ref{sec:decomp} localises it.
 
-GRAIL is competitive on a different axis: it returns $8.7$ candidates at
+GRAIL differs from SyGMa on a second axis, output size: it returns $8.7$ candidates at
 precision $0.109$ where SyGMa returns $74$ at $0.029$, an operating point that recall@$k$ alone does not express.
 
 \subsection{Learning loses to counting: selection is extreme multi-label}
@@ -481,18 +490,21 @@ lapses rather than only its protocol. Subsequent exploratory work was moved to v
 \section{Conclusion}
 \label{sec:conclusion}
 
-The criterion by which a predicted molecular structure is judged identical to a reference is a
-free parameter of metabolite-prediction benchmarks, and it is not neutral. Methods differ in how
-their outputs deviate from reference structures, so varying the criterion changes the measured
-ordering of published tools. We observed this on five methods under a common protocol and
-reproduced it on an independent external dataset. Evaluations of structure-generating methods
-should therefore state the matching criterion and report sensitivity to it.
+Benchmarks for structure-generating methods in chemistry inherit a free parameter that is seldom
+acknowledged: the criterion deciding when a generated structure counts as the reference structure.
+We have shown that this parameter is not neutral for metabolite prediction, because methods differ
+systematically in how their outputs depart from reference structures, and that varying it changes
+which published tool appears best. The practical consequence is that a reported recall figure is
+interpretable only alongside the criterion that produced it, and that benchmark papers in this
+area should report sensitivity to that choice rather than fixing it silently.
 
-Recall additionally aggregates three separable failure modes. Decomposing it into rule coverage,
-template selection and product ranking attributes a method's score to a specific stage and
-indicates where improvement is possible. Applied to the predictor released with this work, the
-decomposition locates the principal loss at template selection, a problem whose structure matches
-extreme multi-label classification with very few positive labels per instance.
+Attributing a recall figure to a stage of the pipeline is likewise possible and, we would argue,
+necessary. The decomposition introduced here requires no additional experiments, applies to any
+method built on an enumerable rule base, and converts an aggregate score into a statement about
+where the method fails. For the predictor examined here it identifies rule selection as the
+binding constraint, and characterises that stage as extreme multi-label classification with very
+few positive labels per instance, a regime in which simple frequency baselines are known to be
+strong.
 
 \subsubsection*{Reproducibility statement}
 
