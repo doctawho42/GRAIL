@@ -96,8 +96,98 @@ predictor, not a state-of-the-art claim.
 
 \subsection{The match convention reorders the leaderboard}
 \label{sec:rankflip}
-% SOURCE: manuscript.md section 11 (5-method table + two internal interactions + GLORYx external)
-% THE core evidence. Both internal pairs + the external GLORYx-37 replication with CIs.
+
+Five methods --- GRAIL, SyGMa \citep{Ridder_2008}, BioTransformer
+\citep{Djoumbou_Feunang_2019}, MetaPredictor \citep{Zhu_2024} and MetaTrans \citep{Litsa_2020} ---
+have their \emph{frozen} predictions re-scored by one harness under five matching conventions, so
+only the match rule changes across columns, never the chemistry (Table~\ref{tab:matchsens}). Two
+observations follow immediately. Methods are not equally sensitive to the convention: GRAIL moves
+by $0.009$ from canonical to tautomer matching while BioTransformer moves by $0.129$. And
+\texttt{mean\_output\_size} exposes a second, orthogonal confound --- SyGMa emits $74$ candidates
+per substrate against $8.7$--$12.7$ for the others --- so recall alone is not budget-fair either
+(Appendix~\ref{app:budget}).
+
+\begin{table}[t]
+\caption{recall@15 by method $\times$ match protocol, $n=\nshared$ shared substrates. Only the
+match rule differs across columns; predictions are frozen. GRAIL is listed first as the honest
+anchor, never as the headline.}
+\label{tab:matchsens}
+\begin{center}
+\begin{tabular}{lccccc c}
+\toprule
+\textbf{method} & canon. & InChIKey & no-stereo & Tanimoto$=$1 & tautomer & mean \\
+ & (LAGOM) & (strict) & (GLORYx) & (MetaTrans) & (ours) & outputs \\
+\midrule
+\textbf{GRAIL}   & 0.356 & 0.357 & 0.358 & 0.356 & 0.365 & \phantom{0}8.7 \\
+BioTransformer   & 0.315 & 0.435 & 0.439 & 0.315 & 0.444 & 10.8 \\
+SyGMa            & 0.514 & 0.547 & 0.548 & 0.514 & 0.554 & 74.2 \\
+MetaTrans        & 0.523 & 0.494 & 0.561 & 0.524 & 0.561 & 12.7 \\
+MetaPredictor    & 0.531 & 0.570 & 0.578 & 0.532 & 0.585 & 11.2 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table}
+
+\paragraph{Primary endpoint.} We pre-declared the \emph{differential} sensitivity as the endpoint,
+not any individual reversal: the protocol $\times$ method interaction, i.e.\ how much more one
+method gains from normalized matching than another, with a paired bootstrap over substrates
+($10{,}000$ resamples; substrates are the independent unit). It is significant on two independent
+pairs along two different protocol axes: BioTransformer gains \interA\ \interAci\ more than GRAIL
+from canonical$\rightarrow$tautomer, and SyGMa gains \interB\ \interBci\ more than MetaTrans from
+canonical$\rightarrow$InChIKey. The convention is therefore a \textbf{method-dependent
+confounder}, not a neutral scoring choice.
+
+\paragraph{Two reversals follow, neither individually significant.} Under canonical matching GRAIL
+leads BioTransformer ($\Delta=+0.041$); under tautomer matching BioTransformer leads
+($\Delta=-0.079$). MetaTrans leads SyGMa under canonical, no-stereo and Tanimoto$=$1 matching
+($\Delta=+0.010$) but trails under strict InChIKey ($\Delta=-0.053$), driven by a
+\emph{non-monotone} response --- MetaTrans is the only method whose recall \emph{falls} under
+normalization, because it emits isomeric SMILES that strict InChIKey penalises. \textbf{Honest
+note:} every pairwise $\Delta$ here has a CI spanning zero at $n=\nshared$ (GRAIL$\leftrightarrow$
+BioTransformer canonical $[-0.044,+0.122]$, tautomer $[-0.166,+0.007]$;
+MetaTrans$\leftrightarrow$SyGMa canonical $[-0.064,+0.081]$, InChIKey $[-0.130,+0.023]$). We
+certify the interaction that drives the reversals, not the reversals themselves.
+
+\paragraph{External replication.} The results above live on a $\nshared$-substrate subset of our
+own split, so we repeated the analysis on the field's de-facto external hold-out: the \nglory\
+GLORYx drugs \citep{de_Bruyn_Kops_2020} with four methods, switching only
+InChIKey~$\rightarrow$~tautomer-InChIKey (Table~\ref{tab:gloryx}). Protocol sensitivity spans more
+than an order of magnitude across methods --- SyGMa $+0.007$, GRAIL $+0.178$ --- and three of the
+four intervals exclude zero. The interaction is significant for \textbf{four of six} method pairs,
+the largest being GRAIL$\leftrightarrow$SyGMa ($-0.171$ $[-0.264,-0.086]$) and
+MetaPredictor$\leftrightarrow$SyGMa ($-0.135$ $[-0.209,-0.072]$). The ordering consequence is
+sharpest for the latter: under strict InChIKey SyGMa leads by a \emph{significant} $-0.130$
+$[-0.196,-0.065]$; under tautomer matching that advantage \textbf{disappears entirely} and the
+point estimate reverses ($+0.005$, n.s.). A convention chosen for convenience can therefore erase
+a statistically significant advantage between two published tools --- now shown on an external,
+literature-standard set, with a different method quartet, at a sample size where the intervals
+still exclude zero.
+
+\begin{table}[t]
+\caption{External replication on the GLORYx set ($n=\nglory$ drugs, 205 reference metabolites).
+recall@15 under strict InChIKey versus tautomer-InChIKey, with the paired-bootstrap CI on the
+per-method gain. Predictions are frozen before scoring.}
+\label{tab:gloryx}
+\begin{center}
+\begin{tabular}{lccl}
+\toprule
+\textbf{method} & InChIKey & tautomer & gain (95\% CI) \\
+\midrule
+SyGMa          & 0.492 & 0.498 & $+0.007$ $[+0.000,+0.020]$ \\
+BioTransformer & 0.346 & 0.374 & $+0.028$ $[+0.002,+0.064]$ \\
+MetaPredictor  & 0.362 & 0.504 & $+0.142$ $[+0.079,+0.215]$ \\
+\textbf{GRAIL} & 0.155 & 0.333 & $+0.178$ $[+0.097,+0.269]$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table}
+
+\paragraph{Mechanism.} The spread is not arbitrary: a method's protocol sensitivity tracks how far
+its outputs diverge tautomerically from the references it is scored against. A rule engine that
+emits whichever tautomer its SMIRKS produce (GRAIL, MetaPredictor) gains most from tautomer-aware
+matching; a method that canonicalises its own output (SyGMa) gains almost nothing. This predicts
+where the effect should be \emph{small}, and we test that prediction out of domain in
+Appendix~\ref{app:xdomain}.
 
 \subsection{Where GRAIL's recall goes}
 \label{sec:diagnosis}
@@ -141,6 +231,10 @@ predictor, not a state-of-the-art claim.
 \label{app:negative}
 % SOURCE: STATUS section 0a (rule-granularity trio) + manuscript section 10 (Set-GFlowNet)
 % Merging = hygiene; pruning = harmful (falsified on val); id-embedding -> P2 = falsified.
+
+\section{Budget-matched comparison}
+\label{app:budget}
+% SOURCE: manuscript.md section 11 (Table 4 + budget-matched frontier + cross-method decomposition)
 
 \section{Cross-domain protocol probe}
 \label{app:xdomain}
