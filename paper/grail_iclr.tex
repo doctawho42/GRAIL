@@ -133,9 +133,70 @@ once, for the final reported numbers.
 
 \section{The decomposition and the coverage ceiling}
 \label{sec:decomp}
-% SOURCE: manuscript.md sections 4 (framework, compressed) + 6 (ceiling) + 8 (decomposition)
-% Keep: definition of coverage x selection x ranking, the ceiling as a diagnostic primitive,
-% the numbers. Formal framework + estimator details -> appendix.
+
+A rule-grounded predictor reaches a reference metabolite only by passing three gates in sequence:
+the transformation must be \emph{expressible} by some rule in the bank, that rule must be
+\emph{selected} into the substrate's candidate pool under a finite budget, and the resulting
+product must be \emph{ranked} into the top $k$. Write, for a substrate set $S$ with reference sets
+$Y_s$:
+\[
+\underbrace{\frac{|H|}{|U|}}_{\text{recall@}k}
+\;=\;
+\underbrace{\frac{|C_{\text{full}}|}{|U|}}_{\text{coverage}}
+\;\cdot\;
+\underbrace{\frac{|C_{\text{bud}}|}{|C_{\text{full}}|}}_{\text{selection}}
+\;\cdot\;
+\underbrace{\frac{|H|}{|C_{\text{bud}}|}}_{\text{ranking}},
+\qquad
+U=\textstyle\bigcup_s Y_s ,
+\]
+where $C_{\text{full}}$ are references recovered by applying the \emph{entire} bank without a
+budget, $C_{\text{bud}}$ those surviving the selector's budgeted pool, and $H$ those actually
+returned in the top $k$. The identity is exact by construction (each set contains the next), so
+the three factors partition the loss with no residual: it is an accounting device, not a model.
+Its value is diagnostic --- a single recall number cannot say \emph{which} gate closed, and the
+three interventions those gates imply (mine more chemistry, fix selection, fix ranking) are
+entirely different pieces of work. Estimator details, including why we report the micro
+(ratio-of-sums) form, are in Appendix~\ref{app:formal}.
+
+\paragraph{The ceiling as a primitive.} The first factor is measurable without any model: apply
+all \nbank\ rules to every test substrate and ask what fraction of references appears anywhere in
+the union. That is the bank's \textbf{coverage ceiling} --- the best recall achievable if selection
+and ranking were both perfect --- and on the clean test split it is \textbf{\ceiling}
+(cluster-bootstrap 95\% CI $[0.709,0.762]$, resampling substrates). We argue this should be
+reported alongside recall for any rule-grounded method, because it separates \emph{what the
+knowledge base can express} from \emph{what the model does with it}, and because it bounds every
+downstream claim: no ranking improvement can exceed it.
+
+\begin{table}[t]
+\caption{The decomposition on the clean test split ($n=\ntest$, tautomer-InChIKey, micro).
+The three factors multiply exactly to realised recall. Selection, not ranking, is the dominant
+loss.}
+\label{tab:decomp}
+\begin{center}
+\begin{tabular}{llcl}
+\toprule
+\textbf{factor} & \textbf{definition} & \textbf{value} & \textbf{95\% CI} \\
+\midrule
+coverage  & $|C_{\text{full}}|/|U|$          & \textbf{\ceiling} & $[0.709,\,0.762]$ \\
+selection & $|C_{\text{bud}}|/|C_{\text{full}}|$ & \textbf{\selret}  & $[0.458,\,0.520]$ \\
+ranking   & $|H|/|C_{\text{bud}}|$           & \textbf{0.726}    & $[0.687,\,0.765]$ \\
+\midrule
+product   & recall@15 (micro)                & \textbf{\realised} & --- \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table}
+
+\paragraph{What the decomposition says.} Table~\ref{tab:decomp} localises the loss. The deployed
+pipeline converts only $35.5\%$ of its own ceiling into realised recall, and the largest single
+leak is \textbf{selection}: less than half of what the bank can reach survives into the budgeted
+candidate pool. Ranking is the mildest of the three. This is a claim about \emph{our} instrument,
+and it is the reason the paper spends \S\ref{sec:xmc} on selection rather than on a better
+re-ranker --- an intervention chosen by the decomposition rather than by intuition. It also sets
+the honest ceiling on what this architecture can become: even a perfect selector and a perfect
+ranker would stop at \ceiling, and Appendix~\ref{app:props} shows that ceiling is
+corpus-limited rather than a tuning artifact.
 
 \section{Results}
 \label{sec:results}
