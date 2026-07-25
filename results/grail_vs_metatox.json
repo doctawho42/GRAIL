@@ -1,0 +1,159 @@
+{
+  "sdf": "/private/tmp/claude-501/-Users-nikitapolomosnov-PycharmProjects-GRAIL--claude-worktrees-hungry-pasteur-25d746/b5c82afa-18d6-4d5e-a7c8-a26002ffeba1/scratchpad/metatox/all_metabol (MetaboliteLikeness).SDF",
+  "match": "inchikey_tautomer",
+  "metatox_config": "layer 1 only, WITHOUT SMIRKS-rule variant (per supplier note)",
+  "n_parents_returned": 270,
+  "n_submitted": 291,
+  "scopes": {
+    "shared_metatox_returned": {
+      "n": 270,
+      "grail": {
+        "recall@1": 0.1489,
+        "recall@5": 0.2989,
+        "recall@10": 0.3325,
+        "recall@15": 0.3399
+      },
+      "metatox": {
+        "recall@1": 0.141,
+        "recall@5": 0.2934,
+        "recall@10": 0.3471,
+        "recall@15": 0.363
+      },
+      "grail_pool_coverage": 0.3399,
+      "metatox_pool_coverage": 0.363,
+      "grail_precision": {
+        "precision@1": 0.2222,
+        "precision@5": 0.1267,
+        "precision@10": 0.1054,
+        "precision@15": 0.101
+      },
+      "metatox_precision": {
+        "precision@1": 0.2556,
+        "precision@5": 0.143,
+        "precision@10": 0.1066,
+        "precision@15": 0.0915
+      },
+      "mean_output_size": {
+        "grail": 8.49,
+        "metatox": 10.3
+      },
+      "delta_recall_by_k": {
+        "@1": {
+          "point": 0.0079,
+          "ci95": [
+            -0.0503,
+            0.0651
+          ],
+          "verdict": "tie"
+        },
+        "@5": {
+          "point": 0.0055,
+          "ci95": [
+            -0.067,
+            0.0787
+          ],
+          "verdict": "tie"
+        },
+        "@10": {
+          "point": -0.0146,
+          "ci95": [
+            -0.0923,
+            0.0619
+          ],
+          "verdict": "tie"
+        },
+        "@15": {
+          "point": -0.0231,
+          "ci95": [
+            -0.1008,
+            0.0538
+          ],
+          "verdict": "tie"
+        }
+      },
+      "delta_recall15_grail_minus_metatox": {
+        "point": -0.0231,
+        "ci95": [
+          -0.1008,
+          0.0538
+        ],
+        "verdict": "tie (CI spans 0)"
+      }
+    },
+    "all_submitted_with_truth": {
+      "n": 291,
+      "grail": {
+        "recall@1": 0.1481,
+        "recall@5": 0.295,
+        "recall@10": 0.3273,
+        "recall@15": 0.3342
+      },
+      "metatox": {
+        "recall@1": 0.1308,
+        "recall@5": 0.2722,
+        "recall@10": 0.322,
+        "recall@15": 0.3368
+      },
+      "grail_pool_coverage": 0.3342,
+      "metatox_pool_coverage": 0.3368,
+      "grail_precision": {
+        "precision@1": 0.2234,
+        "precision@5": 0.1251,
+        "precision@10": 0.1043,
+        "precision@15": 0.1001
+      },
+      "metatox_precision": {
+        "precision@1": 0.2371,
+        "precision@5": 0.1326,
+        "precision@10": 0.0989,
+        "precision@15": 0.0849
+      },
+      "mean_output_size": {
+        "grail": 8.42,
+        "metatox": 9.56
+      },
+      "delta_recall_by_k": {
+        "@1": {
+          "point": 0.0173,
+          "ci95": [
+            -0.0362,
+            0.0715
+          ],
+          "verdict": "tie"
+        },
+        "@5": {
+          "point": 0.0228,
+          "ci95": [
+            -0.0458,
+            0.0916
+          ],
+          "verdict": "tie"
+        },
+        "@10": {
+          "point": 0.0052,
+          "ci95": [
+            -0.068,
+            0.0777
+          ],
+          "verdict": "tie"
+        },
+        "@15": {
+          "point": -0.0026,
+          "ci95": [
+            -0.0756,
+            0.0697
+          ],
+          "verdict": "tie"
+        }
+      },
+      "delta_recall15_grail_minus_metatox": {
+        "point": -0.0026,
+        "ci95": [
+          -0.0756,
+          0.0697
+        ],
+        "verdict": "tie (CI spans 0)"
+      }
+    }
+  }
+}
