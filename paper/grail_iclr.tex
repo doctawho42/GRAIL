@@ -68,9 +68,59 @@ predictor, not a state-of-the-art claim.
 
 \section{Introduction}
 \label{sec:intro}
-% SOURCE: manuscript.md section 1 (compress ~2400 -> ~900 words)
-% Must land for an ML reader in one page: (i) the task, (ii) the two failure modes, (iii) what we
-% contribute, (iv) the honest-anchor stance. Chemistry motivated fast, not taught.
+
+Predicting which molecules a drug is broken down into --- its \emph{metabolites} --- decides
+whether a candidate is toxic, whether it clears too fast, and what a clinical assay should look
+for. The task is structure generation under a hard correctness criterion: given a substrate
+molecule, return the set of product structures the body actually produces. The dominant approach
+is rule-grounded: a curated bank of SMIRKS reaction templates is applied to the substrate to
+enumerate chemically plausible products, and a model decides which templates to apply and how to
+order the results \citep{Ridder_2008, de_Bruyn_Kops_2020, Djoumbou_Feunang_2019}.
+
+Progress in this area is reported as a single number: top-$k$ recall against a set of reference
+metabolites. We argue that this number is doing two jobs it cannot do, and we quantify both
+failures.
+
+\paragraph{Failure 1: the number depends on a convention nobody states.} Recall requires deciding
+when a predicted structure ``is'' a reference structure --- and that is a choice of equivalence
+relation on molecules, not a fact. Published work makes the choice differently and silently:
+stereo-blind InChIKey, fingerprint identity, canonical-SMILES equality. Because methods differ in
+\emph{how} their outputs deviate from references (a rule engine emits whichever tautomer its
+template produces; a sequence model emits canonical strings), the choice does not shift all
+methods equally. It is a \textbf{method-dependent confounder}. We show it reorders the
+leaderboard, with a pre-declared endpoint and paired intervals, on two internal method pairs
+(interaction \interA\ \interAci; \interB\ \interBci) and again on an external, literature-standard
+set where a \emph{significant} advantage between two published tools is erased by switching
+convention alone.
+
+\paragraph{Failure 2: one number conflates three different failures.} A rule-grounded prediction
+must pass three gates: the transformation must be expressible by the bank, the rule must be
+selected under a finite budget, and the product must be ranked into the top $k$. Recall multiplies
+these together, so a low score cannot say which gate closed --- yet the three imply completely
+different work (mine more chemistry, fix selection, fix ranking). We make the decomposition
+operational and argue the bank's \textbf{coverage ceiling} should be reported alongside recall for
+any rule-grounded method, since it separates what the knowledge base can express from what the
+model does with it.
+
+\paragraph{Contributions.}
+(i) \textbf{TAME}, a tautomer-aware matching protocol with a leakage-audited substrate-disjoint
+split and a frozen re-scoring harness (\S\ref{sec:tame});
+(ii) the \textbf{coverage $\times$ selection $\times$ ranking} decomposition with the ceiling as a
+reportable primitive (\S\ref{sec:decomp});
+(iii) a five-method re-evaluation under one protocol establishing that the match convention
+reorders the leaderboard, replicated externally (\S\ref{sec:rankflip});
+(iv) a diagnosis locating the dominant loss in \emph{selection} and identifying it as extreme
+multi-label classification, where a frequency prior beats the learned selector by
+$0.144$ (\S\ref{sec:xmc});
+(v) \textbf{GRAIL}, the rule-based-plus-learned predictor used as the instrument, released with
+every artifact needed to reproduce the numbers.
+
+\paragraph{On not winning.} GRAIL loses to SyGMa on recall at every output budget
+(\S\ref{sec:diagnosis}). We report that first, not in a footnote, because a paper about
+measurement earns nothing by exempting its own method from the measurement. The contribution here
+is the instrument and the diagnosis; the released negative results --- including three of our own
+hypotheses that their pre-registered falsifiers destroyed (Appendix~\ref{app:negative}) --- are
+part of that contribution, not an apology for it.
 
 \section{Related Work}
 \label{sec:related}
