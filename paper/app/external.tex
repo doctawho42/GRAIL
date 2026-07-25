@@ -1,0 +1,15 @@
+\subsection{Internal and external coverage ceilings}
+
+The internal ceiling \texttt{coverage\_bank = 0.735} (the \textbf{micro}, pooled ratio-of-sums estimate $\Sigma_{\mathrm{hit}} / \Sigma_{\mathrm{true}}$ --- not a per-substrate mean; within-substrate pairs are dependent so a mean-of-ratios would misrepresent the uncertainty) carries a cluster-bootstrap 95\% CI of \textbf{[0.709, 0.762]} (resampling substrates, 10,000 resamples). Recomputed apples-to-apples on an \textbf{external} set --- the 37 GLORYx parent substrates, one uncapped full-bank depth-1 \texttt{apply\_rules} pass, no pool cap, the same tautomer match --- the external ceiling is \textbf{0.633} (95\% CI \textbf{[0.531, 0.733]}, $n=37$, wide by design at this sample size). This is far above the previously committed figure of \textbf{0.3715}, which is \textbf{pool-capped} --- a generator-budget artifact inherited from \texttt{gloryx\_oracle.json} --- and must \textbf{never} be read as ``the external ceiling.''
+
+\subsection{Compositional analysis of the internal--external gap}
+
+Internal (0.735) and external (0.633) both sit in the \textbf{micro} frame. A separate question is whether the internal-external gap is compositional: GLORYx parents tend to be larger, more-conjugated drugs than the internal test set, and the $\Delta$MW long tail noted earlier in the main text suggests coverage should degrade with molecular complexity. One OLS regression of \textbf{per-substrate} coverage on molecular descriptors (molecular weight, ring count, aromatic-atom count, heteroatom count, a conjugation-site count, and \texttt{n\_true}) fit across both populations predicts \textbf{macro} (per-substrate-mean) coverages of \textbf{$\sim$0.79} internal and \textbf{$\sim$0.74} external, in-sample --- the macro frame, distinct from the micro ceilings quoted above. Note honestly that this $\sim$0.74 in-sample external prediction sits \emph{above} the measured external macro coverage of 0.697, so the in-sample fit alone overstates transferability. Holding the external points fully out of the fit (fit-internal-only $\rightarrow$ predict-external) instead lands at \textbf{0.738 out-of-sample}, recovering \textbf{$\sim$56\%} of the internal$\rightarrow$external macro-coverage gap (\texttt{regression.predicted\_external\_mean\_oos = 0.738}, \texttt{regression.gap\_recovery\_frac = 0.565}). This out-of-sample number, not the in-sample one, is the transferable claim.
+
+\subsection{Interpretation}
+
+We frame this as a \textbf{suggestive partial composition effect at $n=37$} --- consistent with, but not proof of, molecular composition driving part of the internal-external coverage gap --- and explicitly \emph{not} a fitted or transferable law, and \emph{not} a defect in the rule bank or the matching protocol.
+
+\emph{[Figure: internal-vs-external coverage scatter --- optional, post-draft]}
+
+\emph{Source: \texttt{results/ceiling\_external\_validity.json}.}

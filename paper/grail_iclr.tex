@@ -10,6 +10,15 @@
 \usepackage{multirow}
 \usepackage{hyperref}
 
+% Artifact paths appear throughout the appendices inside \texttt{}; without breakpoints they
+% overflow the column. Allow breaks after / and _ in typewriter text.
+\usepackage{xspace}
+\makeatletter
+\newcommand{\artifact}[1]{\texttt{\seqsplitpath{#1}}}
+\newcommand{\seqsplitpath}[1]{#1}
+\makeatother
+\sloppy
+
 % ---- shared macros (keep every number in ONE place so text and tables cannot drift) ----
 \newcommand{\nbank}{7{,}581}          % rules in the bank
 \newcommand{\ntest}{1{,}170}          % clean test substrates
@@ -506,33 +515,37 @@ the de-anonymized repository will be linked in the camera-ready version.
 \bibliography{refs}
 
 \appendix
+
 \section{Architecture of GRAIL}
 \label{app:arch}
-% SOURCE: manuscript.md section 3 (full)
+\input{app/arch}
 
 \section{Formal framework}
 \label{app:formal}
-% SOURCE: manuscript.md section 4 (full)
+\input{app/formal}
 
 \section{Propositions and their witnesses}
 \label{app:props}
-% SOURCE: manuscript.md section 10 (Propositions 1-3 in full, incl. the controlled objective swap)
+\input{app/props}
 
-\section{External validity of the ceiling}
+\section{External validity of the coverage ceiling}
 \label{app:external}
-% SOURCE: manuscript.md section 7
+\input{app/external}
 
-\section{Negative results}
+\section{Released negative results}
 \label{app:negative}
-% SOURCE: STATUS section 0a (rule-granularity trio) + manuscript section 10 (Set-GFlowNet)
-% Merging = hygiene; pruning = harmful (falsified on val); id-embedding -> P2 = falsified.
+\input{app/negative}
+
+\section{Cross-domain protocol probe and further limitations}
+\label{app:xdomain}
+\input{app/xdomain}
+
+\section{Worked example: one prediction set, five verdicts}
+\label{app:worked}
+\input{app/worked}
 
 \section{Budget-matched comparison}
 \label{app:budget}
-% SOURCE: manuscript.md section 11 (Table 4 + budget-matched frontier + cross-method decomposition)
-
-\section{Cross-domain protocol probe}
-\label{app:xdomain}
-% SOURCE: manuscript.md section 12 (retrosynthesis, domain-attenuated)
+\input{app/budget}
 
 \end{document}

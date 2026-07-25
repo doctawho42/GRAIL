@@ -1,0 +1,35 @@
+\paragraph{Overview.} The architecture described in the main text's architecture section, together with the coverage ceiling and recall decomposition reported later (in the coverage-ceiling and recall-decomposition sections), are unified by one compact generative model, which also gives the three propositions of the propositions section a principled home. The framework is deliberately thin: one likelihood, one decomposition, one lever$\to$factor map --- it is not a rewrite of the empirical results that follow.
+
+\paragraph{A generative latent-reaction mixture.} For a substrate $s$, a metabolite $m$ arises by choosing a transformation rule $r$, choosing a firing site, and applying the rule:
+
+\[
+P(m \mid s) \;=\; \sum_{r} \sum_{\text{site} \,\in\, \text{sites}(r,s)} P(r \mid s) \cdot P(\text{site} \mid r, s) \cdot \mathbb{1}\big[\text{apply}(r, s, \text{site}) = m\big]
+\]
+
+The application term is deterministic given RDKit, so the inner indicator collapses to the enumerable product support; the latent variables are \emph{which rule fired} and \emph{at which site}, and the observation --- the annotated metabolite set --- is positive-unlabeled: a rule-applicable, non-annotated product is unlabeled, not a certified negative. The three deployed stages of the architecture section are one marginal-likelihood approximation of this model --- the model the pipeline approximates, not a claim that the trained weights are its MLE. The \textbf{generator} approximates $P(r \mid s)$ (rule selection); its persisted \texttt{rule\_prior\_logits} is the marginal $\pi(r) = P(r \text{ fires})$. \textbf{RDKit rule application} realises the deterministic support $\mathbb{1}[\text{apply}(r,s,\text{site})=m]$, enumerating candidate products. The \textbf{filter} approximates a discriminative correction $P(\text{true} \mid s, m)$ over the enumerated candidates. Deployment ranks by \texttt{filter\_score} $\times$ \texttt{generator\_score}. PU training approximates EM over the unobserved rule-firing indicator.
+
+\paragraph{A recall decomposition.} Fix top-$k$. For substrate $s$, let $T_s$ be the true references and let the candidate sets nest $R_s(k) \subseteq P_{\text{bud},s} \subseteq P_{\text{full},s}$, where $P_{\text{full},s}$ is the full-bank depth-1 rule-applicable pool (the coverage ceiling reported in the coverage-ceiling section), $P_{\text{bud},s}$ the deployed budget-limited pool after generator selection, and $R_s(k)$ the top-$k$ ranked output. With $\text{hit}(A_s)$ the number of references matched by set $A_s$ under the tautomer-InChIKey quotient (monotone under inclusion) and pooled (micro) sums $U = \sum_s |T_s|$, $C_{\text{full}} = \sum_s \text{hit}(P_{\text{full},s})$, $C_{\text{bud}} = \sum_s \text{hit}(P_{\text{bud},s})$, $H = \sum_s \text{hit}(R_s(k))$:
+
+\begin{align*}
+\text{recall@}k &= \frac{H}{U} = \left(\frac{C_{\text{full}}}{U}\right) \cdot \left(\frac{C_{\text{bud}}}{C_{\text{full}}}\right) \cdot \left(\frac{H}{C_{\text{bud}}}\right) \\
+&= \texttt{coverage\_bank} \cdot \texttt{selection\_retention} \cdot \texttt{ranking\_conversion}
+\end{align*}
+
+Because the sets nest, each factor lies in $[0,1]$ and the three multiply out exactly to the realised recall on any numbers --- it is an accounting identity, not a theorem; its only use is to localise where recall is lost across the pipeline, and its exact cancellation is never offered as evidence for anything beyond that bookkeeping. Qualitatively, \texttt{coverage\_bank} coincides with the rule-bank ceiling reported in the coverage-ceiling section.
+
+\paragraph{Lever $\to$ factor map.} Every diagnostic in the propositions section and each proposition attaches to exactly one factor:
+
+\begin{table}[h]
+\centering
+\caption{Lever $\to$ factor map: every diagnostic and proposition in the propositions section attaches to exactly one recall-decomposition factor.}
+\label{tab:lever-factor-map}
+\begin{tabular}{l p{9.5cm}}
+\toprule
+Factor & Levers \& propositions \\
+\midrule
+\texttt{coverage\_bank} & multi-step rule application (depth-2), the $\Delta$MW coverage gap, the external-validity composition covariate (see the external-validity section), Proposition 3 \\
+\texttt{selection\_retention} & the learned-vs-prior rule-selection probe, data-scaling saturation, Proposition 2 \\
+\texttt{ranking\_conversion} & the filter / listwise reranker, the oracle bound, Proposition 1 \\
+\bottomrule
+\end{tabular}
+\end{table}
