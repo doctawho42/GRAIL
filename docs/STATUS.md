@@ -160,6 +160,39 @@ Both deadline levers are now **done**: resource+cache (`resource_cache_profile.j
 GRAIL-vs-MetaTox (§0b). Scripts: `prune_and_rerank_val.py`, `rule_collapse.py`,
 `rule_dedup_provable.py`, `rule_prune_probe.py`, `probe_rule_embeddings.py`, `ablate_id_embedding.py`.
 
+## 0c. Venue decision (2026-07-26) — ICLR 2027 first, NeurIPS ED 2027 fallback
+
+**Chosen:** submit to **ICLR 2027** (abstract 19 Sep 2026, full paper **24 Sep 2026** — ~8 weeks),
+with **NeurIPS Evaluations & Datasets 2027** (~May 2027) as the fallback. Sequencing works: an ICLR
+decision lands ~Jan 2027, leaving time to fold the reviews into an ED submission.
+
+*Why not the ideal venue first:* NeurIPS 2026's ED track (the renamed D&B track) closed **6 May
+2026**, ~2.5 months before the manuscript was ready. Waiting for ED 2027 costs ~10 months in a
+neighbourhood the lit-check found to be actively standardizing (MassSpecGym-in-the-Wild 2026,
+retrosynthesis-benchmark rethinking 2026, Agarwal & Bisht 2026) — real scoop risk.
+
+*Risk that made this a close call, and what defuses it:* an ML main track judges by method norms,
+where "our own instrument loses on recall" reads as a defect rather than a design principle. **ICLR
+carries a `Datasets and benchmarks` primary area**, so the submission routes to reviewers who expect
+a benchmark contribution — this largely restores the category protection the external review said
+D&B venues provide. Journals (JCIM / J. Cheminformatics, Q1, rolling) were the low-risk alternative
+and were declined in favour of the A* attempt; no institutional constraint forced a journal.
+
+**Conversion work (the real cost).** ICLR is **9 pages main text + unlimited appendix, LaTeX**; the
+current draft is ~13.5k words of markdown, so roughly two thirds moves to the appendix. Proposed
+split — *main:* the two failure modes, TAME, the rank-flip (2 internal pairs **+ the external
+GLORYx-37 replication**, now the strongest single piece of evidence), the coverage × selection ×
+ranking decomposition, P2-as-XMC in brief, the honest anchor, limitations. *Appendix:* full
+architecture (§3), formal framework (§4), proposition witnesses, the rule-granularity negative
+results, the GFlowNet negative result, external-validity regression, cross-domain probe.
+
+**Practical constraints to handle:** (i) ICLR is **double-blind** and the repository is public
+(`github.com/doctawho42/GRAIL`) — an anonymized artifact link is required at submission; (ii) the
+275-word abstract needs no trimming (ICLR has no JCIM-style 250-word cap); (iii) the MetaTox
+decision (§0b) resolves by deadline — include as a 6th method only if the SMIRKS variant arrives and
+is re-scored in time, otherwise keep the leaderboard at five and cite the comparison as external
+validation.
+
 ## 0b. GRAIL vs MetaTox (2026-07-25) — the grant number: a TIE, and strong COMPLEMENTARITY
 
 The #1 deliverable. MetaTox is the way2drug incumbent; this is the first head-to-head under one
