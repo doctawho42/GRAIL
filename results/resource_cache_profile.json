@@ -1,0 +1,47 @@
+{
+  "threads": 6,
+  "device": "cpu",
+  "startup": {
+    "checkpoint_io_s": 0.013,
+    "build_models_s": 67.205,
+    "of_which_rule_graph_featurization_s": 50.312,
+    "of_which_rdkit_reaction_compilation_s": 0.401,
+    "rule_embedding_cache_fill_s": 2.443,
+    "total_cold_start_s": 69.648,
+    "n_rules": 7581,
+    "rule_embedding_tensor_mb": 3.88,
+    "rss_start_mb": 396.9,
+    "rss_after_build_mb": 794.0,
+    "rss_after_cache_mb": 1099.3,
+    "note": "Cold start is dominated by RULE-GRAPH FEATURIZATION (`from_rule`: SMIRKS -> torch-geometric graph features, once per rule), NOT by RDKit reaction compilation (~0.3s), the GNN encode, or checkpoint I/O (~0.01s). All of it is one-time and substrate-independent, so none of it is on the per-query path -- and because the rule graphs depend only on the bank, they are serializable to disk, which would remove the dominant term outright (untested, actionable)."
+  },
+  "per_query": {
+    "n": 60,
+    "e2e_p50_s": 0.2751,
+    "e2e_p95_s": 1.6081,
+    "e2e_mean_s": 0.4571,
+    "mean_outputs": 10.67,
+    "stage_mean_s": {
+      "generator_scoring": 0.0333,
+      "rdkit_rule_application": 0.0681,
+      "filter_scoring": 0.111
+    },
+    "rss_steady_mb": 636.5
+  },
+  "dedup_delta": {
+    "full_bank_rules": 7581,
+    "dedup_bank_rules": 7010,
+    "compile_full_s": 0.401,
+    "compile_dedup_s": 0.356,
+    "encode_full_s": 1.584,
+    "encode_dedup_s": 1.278,
+    "startup_saving_s": 4.096,
+    "startup_saving_pct": 5.9,
+    "of_which_gnn_encode_s": 0.306,
+    "graph_featurization_saving_est_s": 3.79,
+    "saving_pct_denominator": "total cold start (build + cache fill)",
+    "embedding_memory_saving_mb": 0.29,
+    "per_query_saving_s": 0.0,
+    "note": "Both compiled reactions and rule embeddings are substrate-independent and built once, so dedup shrinks ONE-TIME startup and resident memory, not per-query latency. The saving is dominated by RDKit compilation, not by the GNN encode."
+  }
+}
