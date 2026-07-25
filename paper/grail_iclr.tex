@@ -1,0 +1,149 @@
+\documentclass{article}
+\usepackage{iclr2026_conference,times}
+
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{microtype}
+\usepackage{url}
+\usepackage[table]{xcolor}
+\usepackage{multirow}
+\usepackage{hyperref}
+
+% ---- shared macros (keep every number in ONE place so text and tables cannot drift) ----
+\newcommand{\nbank}{7{,}581}          % rules in the bank
+\newcommand{\ntest}{1{,}170}          % clean test substrates
+\newcommand{\nshared}{150}            % internal shared multi-method subset
+\newcommand{\nglory}{37}              % external GLORYx substrates
+\newcommand{\ceiling}{0.735}          % coverage_bank (micro)
+\newcommand{\realised}{0.261}         % realised recall@15 (micro)
+\newcommand{\selret}{0.489}           % selection retention
+\newcommand{\grailmacro}{0.330}       % GRAIL macro recall@15
+\newcommand{\interA}{+0.120}          % GRAIL<->BioTransformer interaction
+\newcommand{\interAci}{[+0.073,\,+0.171]}
+\newcommand{\interB}{+0.063}          % MetaTrans<->SyGMa interaction
+\newcommand{\interBci}{[+0.022,\,+0.106]}
+
+\title{Recall Is Not One Number: A Tautomer-Aware Protocol and a\\
+Coverage $\times$ Selection $\times$ Ranking Decomposition for\\
+Metabolite-Structure Prediction}
+
+% double-blind: authors stay anonymous until camera-ready
+\author{Anonymous authors \\ Paper under double-blind review}
+
+\newcommand{\fix}{\marginpar{FIX}}
+\newcommand{\new}{\marginpar{NEW}}
+
+% \iclrfinalcopy  % ENABLE ONLY for camera-ready -- it reveals authors and prints
+%                 % "Published as a conference paper"; submission must stay anonymous.
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Metabolite-structure prediction is reported as a single top-$k$ recall number, as if that
+transparently measured a method's chemistry-generation capability. It does not, and this paper
+quantifies both ways it fails. First, \textbf{the number depends on an unstated convention}:
+nothing fixes when a predicted structure ``matches'' a reference, and papers variously use
+canonical SMILES, InChIKey, stereo-blind InChI, or fingerprint identity. We introduce
+\textbf{TAME}, a tautomer-aware matching and re-scoring protocol on a leakage-audited,
+substrate-disjoint split; re-score five methods' frozen predictions under five conventions; and
+show with a pre-declared primary endpoint that the convention is a \textbf{method-dependent
+confounder that reorders the leaderboard}. The protocol $\times$ method interaction is
+\textbf{\interA} (95\% CI \textbf{\interAci}) for one method pair, replicates on a second,
+independent pair along a different protocol axis (\textbf{\interB}, \textbf{\interBci}), and
+replicates again on the external GLORYx set with four methods. Second, \textbf{one number
+conflates three distinct failures}: whether the rule bank \emph{covers} a transformation, whether
+the model \emph{selects} the right rule, and whether it \emph{ranks} the product into a bounded
+output. We make that decomposition operational --- with the bank's coverage ceiling as a
+diagnostic primitive --- using \textbf{GRAIL}, a three-stage rule-based-plus-learned predictor
+(\nbank-SMIRKS bank, learned rule selector, PU-trained structural filter). On \ntest\ audited test
+substrates the ceiling is \textbf{\ceiling}, but the deployed pipeline realises recall@15 =
+\textbf{\realised} (micro) --- 35.5\% of it --- a gap \textbf{dominated by selection loss}
+(retention \textbf{\selret}), not by ranking. Stated up front: \textbf{GRAIL does not win on
+recall} (\grailmacro\ macro) --- it is the instrument we measure first and hardest. The
+contribution is the protocol, the decomposition, and an honestly-diagnosed interpretable
+predictor, not a state-of-the-art claim.
+\end{abstract}
+
+\section{Introduction}
+\label{sec:intro}
+% SOURCE: manuscript.md section 1 (compress ~2400 -> ~900 words)
+% Must land for an ML reader in one page: (i) the task, (ii) the two failure modes, (iii) what we
+% contribute, (iv) the honest-anchor stance. Chemistry motivated fast, not taught.
+
+\section{Related Work}
+\label{sec:related}
+% SOURCE: manuscript.md section 2 (compress ~1800 -> ~500 words)
+% Must keep the cite-and-differentiate against: Maziarz_2025 (closest on axis),
+% agarwal2026metric (closest on claim-shape), liu2026massspecgymwild (implementation-side),
+% Scholz_2023 + Gao_2026 (same in-domain leaderboard). Standardization lineage -> appendix.
+
+\section{TAME: a tautomer-aware evaluation protocol}
+\label{sec:tame}
+% SOURCE: manuscript.md section 5 (matching protocol + split/leakage audit + metrics)
+% Keep: the five quotients, why tautomer-InChIKey is the defensible default, the audit, and the
+% val/test agreement (0.344 vs 0.334). Worked example -> appendix.
+
+\section{The decomposition and the coverage ceiling}
+\label{sec:decomp}
+% SOURCE: manuscript.md sections 4 (framework, compressed) + 6 (ceiling) + 8 (decomposition)
+% Keep: definition of coverage x selection x ranking, the ceiling as a diagnostic primitive,
+% the numbers. Formal framework + estimator details -> appendix.
+
+\section{Results}
+\label{sec:results}
+
+\subsection{The match convention reorders the leaderboard}
+\label{sec:rankflip}
+% SOURCE: manuscript.md section 11 (5-method table + two internal interactions + GLORYx external)
+% THE core evidence. Both internal pairs + the external GLORYx-37 replication with CIs.
+
+\subsection{Where GRAIL's recall goes}
+\label{sec:diagnosis}
+% SOURCE: manuscript.md sections 8-9 (decomposition applied + honest anchor certification)
+
+\subsection{Learning loses to counting: selection as extreme multi-label}
+\label{sec:xmc}
+% SOURCE: manuscript.md section 10, Proposition 2 (compressed; witnesses -> appendix)
+
+\section{Limitations}
+\label{sec:limitations}
+% SOURCE: manuscript.md section 12 (keep scope honesty; long-form caveats -> appendix)
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+\subsubsection*{Reproducibility statement}
+% Anonymized artifact link goes here (NOT the public GitHub URL -- deanonymizes).
+
+\bibliographystyle{iclr2026_conference}
+\bibliography{refs}
+
+\appendix
+\section{Architecture of GRAIL}
+\label{app:arch}
+% SOURCE: manuscript.md section 3 (full)
+
+\section{Formal framework}
+\label{app:formal}
+% SOURCE: manuscript.md section 4 (full)
+
+\section{Propositions and their witnesses}
+\label{app:props}
+% SOURCE: manuscript.md section 10 (Propositions 1-3 in full, incl. the controlled objective swap)
+
+\section{External validity of the ceiling}
+\label{app:external}
+% SOURCE: manuscript.md section 7
+
+\section{Negative results}
+\label{app:negative}
+% SOURCE: STATUS section 0a (rule-granularity trio) + manuscript section 10 (Set-GFlowNet)
+% Merging = hygiene; pruning = harmful (falsified on val); id-embedding -> P2 = falsified.
+
+\section{Cross-domain protocol probe}
+\label{app:xdomain}
+% SOURCE: manuscript.md section 12 (retrosynthesis, domain-attenuated)
+
+\end{document}
