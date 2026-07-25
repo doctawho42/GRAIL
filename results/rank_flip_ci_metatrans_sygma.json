@@ -1,0 +1,59 @@
+{
+  "a": "MetaTrans",
+  "b": "SyGMa",
+  "k": 15,
+  "n_substrates": 150,
+  "n_boot": 10000,
+  "seed": 0,
+  "protocols": {
+    "canonical": {
+      "recall_MetaTrans": 0.5233,
+      "recall_SyGMa": 0.5137,
+      "delta_A_minus_B": 0.0096,
+      "ci95": [
+        -0.0641,
+        0.0812
+      ],
+      "leader": "MetaTrans",
+      "verdict": "n.s. (CI spans 0)"
+    },
+    "inchikey": {
+      "recall_MetaTrans": 0.494,
+      "recall_SyGMa": 0.547,
+      "delta_A_minus_B": -0.0529,
+      "ci95": [
+        -0.1296,
+        0.0229
+      ],
+      "leader": "SyGMa",
+      "verdict": "n.s. (CI spans 0)"
+    }
+  },
+  "interaction_B_extra_gain_from_normalization": {
+    "mean": 0.0625,
+    "ci95": [
+      0.0223,
+      0.1058
+    ],
+    "verdict": "SIGNIFICANT"
+  },
+  "protocol_sensitivity_per_method": {
+    "MetaTrans": {
+      "sensitivity": -0.0293,
+      "ci95": [
+        -0.0649,
+        0.0041
+      ],
+      "verdict": "n.s."
+    },
+    "SyGMa": {
+      "sensitivity": 0.0332,
+      "ci95": [
+        0.0104,
+        0.0623
+      ],
+      "verdict": "SIGNIFICANT"
+    }
+  },
+  "flip_significant": false
+}

@@ -65,13 +65,32 @@ def boot_ci(delta: np.ndarray, n_boot: int, seed: int, alpha: float = 0.05):
     return float(delta.mean()), float(lo), float(hi)
 
 
-def load_method(spec: str, grail_preds, subs) -> Dict[str, List[str]]:
-    """`GRAIL` -> the CSV preds; otherwise `name=path.json`."""
+def load_method(spec: str, grail_preds, subs, min_coverage: float = 0.98) -> Dict[str, List[str]]:
+    """`GRAIL` -> the CSV preds; otherwise `name=path.json`.
+
+    GUARD: cached per-method predictions are keyed to the substrate list they were generated for,
+    and different runs produced different 150-substrate sets. Joining the wrong cache silently
+    scores the missing substrates as recall 0 (observed: SyGMa 0.514 -> 0.286, which would have
+    published a bogus CI). Refuse to proceed when a method does not cover the evaluated substrates.
+    """
     if spec == "GRAIL":
-        return {s: grail_preds.get(s, []) for s in subs}
-    _, path = spec.split("=", 1)
-    d = json.loads(Path(path).read_text())
-    return {s: d.get(s, []) for s in subs}
+        preds = {s: grail_preds.get(s, []) for s in subs}
+        covered = sum(1 for s in subs if grail_preds.get(s))
+    else:
+        _, path = spec.split("=", 1)
+        d = json.loads(Path(path).read_text())
+        preds = {s: d.get(s, []) for s in subs}
+        covered = sum(1 for s in subs if s in d)
+    frac = covered / max(len(subs), 1)
+    if frac < min_coverage:
+        raise SystemExit(
+            f"ERROR: '{spec.split('=', 1)[0]}' covers only {covered}/{len(subs)} ({frac:.1%}) of the "
+            f"evaluated substrates. This cache was built for a different substrate set; the missing "
+            f"ones would score recall 0 and corrupt the CI. Use the cache whose keyset matches "
+            f"(compare with the other methods' prediction files) or restrict --max-substrates to the "
+            f"shared intersection."
+        )
+    return preds
 
 
 def main() -> int:

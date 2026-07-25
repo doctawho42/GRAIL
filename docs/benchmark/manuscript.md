@@ -790,11 +790,19 @@ seed 0) — wholly above zero. This is the certified result: the match protocol 
 **Two independent rank-flips** follow from that confounder. (1) **GRAIL ↔ BioTransformer**: under
 canonical matching GRAIL leads (Δ = +0.041), under tautomer-InChIKey BioTransformer leads
 (Δ = −0.079) — the point-estimate ranking reverses. (2) **MetaTrans ↔ SyGMa**: MetaTrans leads
-SyGMa under canonical, no-stereo, and Tanimoto = 1 matching, but SyGMa leads under strict InChIKey
-(MetaTrans drops to 0.494 against SyGMa's 0.547) — a second, independent reordering. **Honest note:**
+SyGMa under canonical, no-stereo, and Tanimoto = 1 matching (Δ = +0.010), but SyGMa leads under
+strict InChIKey (Δ = −0.053; MetaTrans drops to 0.494 against SyGMa's 0.547) — a second,
+independent reordering, and one driven by a *non-monotone* response: MetaTrans is the only method
+whose recall **falls** under normalization. **Honest note:**
 neither per-pair flip is individually significant at n=150 — each pairwise Δ's CI spans zero
-(GRAIL↔BioTransformer canonical: [−0.044, +0.122]; tautomer: [−0.166, +0.007], borderline). The
-certified claim is the differential sensitivity that drives the flips, not the flips themselves.
+(GRAIL↔BioTransformer canonical: [−0.044, +0.122]; tautomer: [−0.166, +0.007], borderline;
+MetaTrans↔SyGMa canonical: [−0.064, +0.081]; InChIKey: [−0.130, +0.023]). In **both** pairs,
+however, the underlying **interaction is significant** — BioTransformer gains +0.120
+[+0.073, +0.171] more than GRAIL from canonical→tautomer, and SyGMa gains +0.063
+[+0.022, +0.106] more than MetaTrans from canonical→InChIKey (paired bootstrap over substrates,
+10,000 resamples; `results/rank_flip_ci.json`, `results/rank_flip_ci_metatrans_sygma.json`). The
+certified claim is therefore the differential sensitivity that drives the flips, not the flips
+themselves — now established on two independent method pairs and two different protocol axes.
 
 **MetaTrans is also non-monotonic** in the match protocol, uniquely among the 5 methods: canon
 **0.523** > InChIKey **0.494** < no-stereo **0.561**. MetaTrans emits isomeric SMILES, so strict
@@ -999,8 +1007,14 @@ mostly compute-gated or cheap post-draft edits — not open scientific limitatio
 - ~~A budget-matched leaderboard view, controlling for `mean_output_size`~~ — **done** (Table 4,
   §11: recall@{5,10,15} + precision + output size; SyGMa's 0.029 precision vs GRAIL's 0.109 at ~7×
   the output volume; `results/budget_matched_leaderboard.json`).
-- A paired confidence interval for the MetaTrans↔SyGMa rank-flip (§11), currently reported as a
-  point estimate only.
+- ~~A paired confidence interval for the MetaTrans↔SyGMa rank-flip (§11), currently reported as a
+  point estimate only.~~ — **done** (`results/rank_flip_ci_metatrans_sygma.json`: per-protocol Δ
+  CIs both span zero, but the interaction SyGMa-gains-more-than-MetaTrans is +0.063 [+0.022,
+  +0.106], significant — so the differential-sensitivity claim now rests on two independent
+  method pairs). `scripts/rank_flip_ci.py` additionally gained a substrate-coverage guard: the
+  cached per-method predictions come from runs with *different* 150-substrate sets, and joining a
+  mismatched cache silently scores missing substrates as recall 0 (it produced SyGMa 0.286 instead
+  of 0.514 before the guard existed).
 - Run MetaTrans on the 37-substrate GLORYx external set (§7), to extend the external-validity
   ceiling comparison beyond GRAIL and SyGMa.
 - ~~Regenerate the rank-flip figure on the current committed numbers~~ — **done** (Figure 3,
