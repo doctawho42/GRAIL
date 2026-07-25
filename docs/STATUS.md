@@ -133,10 +133,20 @@ Verdict per claim, at measured confidence:
    (+0.037/+0.027). The 82% variance is **not load-bearing** — a geometric illusion; downstream scoring
    looks past `id`. P2 is not explained here.
 
-**Byproduct — single run on test, an anomaly not a gift:** zeroing `id` *raised* top-k precision
-(+0.037@1, +0.027@5, n=291, one run). A component holding 82% of embedding variance whose removal is
-net-helpful is strange — possibly `id` *trainedly* memorizes noise. Verify on **val**, multiseed, before
-believing it; do not sell it as a free tweak.
+**Byproduct — VERIFIED ON VAL, and it does NOT replicate.** The single test run had zeroing `id`
+*raise* top-k precision (+0.037@1, +0.027@5, n=291), which I downgraded to "anomaly, verify before
+believing". Re-run on **val** with paired bootstrap CIs (n=994, 10k resamples,
+`results/ablate_id_embedding_val.json`): **every k is n.s.** — @1 +0.0011 [−0.0086, +0.0107],
+@5 +0.0055 [−0.0074, +0.0181], @15 −0.0116 [−0.0266, +0.0036], @30 −0.0119 [−0.0282, +0.0044].
+The +0.037@1 was **single-run noise**; the "free tweak" is dead, exactly as the downgrade anticipated.
+What the val run *does* confirm, now with CIs the original test run never had, is the main result:
+zeroing 82% of the embedding variance moves recall by nothing distinguishable from zero at any k —
+`id` is **not load-bearing**, and the `id`→P2 mechanism stays falsified on an independent split.
+*(Method note: the first val attempt crashed at the CI step on a paired-vector alignment bug — the
+per-substrate append was skipped for substrates with no candidates while `n` still counted them, so
+the two arms dropped different substrates (991 vs 990). It only crashed because the counts differed;
+equal counts would have produced a silently wrong CI. Fixed by recording recall 0 for empty
+candidates, plus an explicit alignment guard.)*
 
 **Net — the track is CLOSED, and negatively.** All three candidate levers were measured and none
 survived: **merging** = weak/deploy-hygiene (net effect unconfirmed; `noisy_or` heals the training
