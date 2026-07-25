@@ -421,8 +421,14 @@ appears in train, and no test substrate appears in val. The clean triples are bu
 `scripts/fix_splits.py` and audited (read-only) by `scripts/audit_leakage.py`, which canonicalizes
 SMILES and verifies zero substrate and zero positive-pair overlap across every split pair, emitting
 its audit summary to `results/leakage_fix_report.json` when run. Trustworthiness is corroborated
-empirically, not merely asserted: recall@15 tracks closely between val and test (0.327 vs 0.330),
-inconsistent with test-set overfitting.
+empirically, not merely asserted: on the deployed run's own evaluation — the same configuration
+scored on both splits — recall@15 is **0.344 on validation and 0.334 on test**
+(`artifacts/full5000_single/reports/metrics.json`, `ensemble_val` vs `ensemble`). The gap is
+**+0.010** in the expected direction (validation marginally easier, since selection touched it),
+far too small to indicate test-set overfitting. The headline test figure quoted elsewhere in this
+paper (0.330) comes from the anchor certification on the full 1,170-substrate test split
+(`results/anchor_certification.json`, n=1168) and is a separate, larger-sample evaluation; we keep
+the two provenances distinct rather than pairing numbers from different runs.
 
 **Metrics.** We lead with recall@k, co-reported with `mean_output_size` rather than precision
 alone, since precision is a pessimistic lower bound under incomplete annotation — an unannotated
@@ -1026,10 +1032,10 @@ mostly compute-gated or cheap post-draft edits — not open scientific limitatio
 - A paired confidence interval for Proposition 1's listwise-reranker confirmation (currently a
   3-seed standard deviation, ±0.015, not a paired bootstrap, §10) and commit its supporting
   artifacts.
-- **Provenance check on §5's val/test agreement figures.** The text cites "0.327 vs 0.330"; the
-  deployed run's own `artifacts/full5000_single/reports/metrics.json` reports **val 0.3439 / test
-  0.3342** (`ensemble_val` / `ensemble`, same configuration on both splits). The *claim* is
-  unaffected — the two splits still track closely (Δ = +0.010, inconsistent with test-set
-  overfitting, and the direction is val-slightly-easier as expected) — but the exact pair of
-  numbers quoted should be re-sourced to the run that produced them before submission, since this
-  paper is judged on evaluation hygiene.
+- ~~**Provenance check on §5's val/test agreement figures.**~~ — **done.** The previously quoted
+  "0.327 vs 0.330" pair was **untraceable**: no committed artifact contains a val figure of 0.327,
+  and the 0.330 test figure comes from a *different* evaluation (`anchor_certification.json`, full
+  1,170-substrate test), so the two were never a matched pair. §5 now cites the deployed run's own
+  same-configuration evaluation of both splits — **val 0.344 / test 0.334**
+  (`artifacts/full5000_single/reports/metrics.json`, Δ = +0.010) — and states the 0.330 anchor
+  provenance separately. The claim (no test-set overfitting) is unchanged and now sourced.
