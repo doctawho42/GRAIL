@@ -1,0 +1,34 @@
+{
+  "n_substrates": 248,
+  "k": 15,
+  "match": "inchikey_tautomer",
+  "metatox_config": "layer 1 only, WITHOUT SMIRKS-rule variant",
+  "recall": {
+    "grail": 0.317,
+    "metatox": 0.3952,
+    "union": 0.6112
+  },
+  "gain_from_adding_grail_to_metatox": {
+    "point": 0.2161,
+    "ci95": [
+      0.1706,
+      0.2633
+    ]
+  },
+  "gain_from_adding_metatox_to_grail": {
+    "point": 0.2943,
+    "ci95": [
+      0.2468,
+      0.3435
+    ]
+  },
+  "correct_metabolite_census": {
+    "only_grail": 95,
+    "only_metatox": 170,
+    "both": 55,
+    "share_only_grail": 0.2969,
+    "share_only_metatox": 0.5312,
+    "share_both": 0.1719
+  },
+  "reading": "Strongly complementary: the union recovers far more than either method alone and most correctly-found metabolites are found by exactly one method, so the deployment question is not which tool replaces which but whether to run both."
+}
