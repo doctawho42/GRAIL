@@ -303,6 +303,21 @@ by $0.009$ from canonical to tautomer matching while BioTransformer moves by $0.
 per substrate against $8.7$--$12.7$ for the others --- so recall alone is not budget-fair either
 (Appendix~\ref{app:budget}).
 
+\begin{figure}[t]
+\begin{center}
+\includegraphics[width=\textwidth]{fig_rankflip}
+\end{center}
+\caption{\textbf{The same predictions, reordered by the matching convention alone.} Each line is
+one method's recall@15; only the equivalence relation used to decide ``predicted $=$ reference''
+changes along the $x$-axis. \textbf{(a)} Internal shared subset: lines cross, and the crossings are
+not parallel --- BioTransformer swings $0.129$ between conventions while GRAIL moves $0.009$, so
+the convention is not a constant offset. MetaTrans is non-monotone (it emits isomeric SMILES that
+strict InChIKey penalises). \textbf{(b)} External GLORYx hold-out, with each method's gain and its
+paired bootstrap CI: SyGMa leads MetaPredictor under strict InChIKey and the advantage is gone
+under tautomer matching. Both panels are drawn directly from the committed result artifacts.}
+\label{fig:rankflip}
+\end{figure}
+
 \begin{table}[t]
 \caption{recall@15 by method $\times$ match protocol, $n=\nshared$ shared substrates. Only the
 match rule differs across columns; predictions are frozen. GRAIL is listed first as the honest
