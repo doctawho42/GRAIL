@@ -70,6 +70,14 @@ def recall_row(gen, filt, subs, real_ik, gen_thr, per_sub=None):
         detailed = gen.generate_scored_with_details(sub, top_k=300, threshold=gen_thr, compute_sites=False) if mol is not None else []
         smis = [_normalize_smiles_cached(d[0], "canonical") for d in detailed]
         if not smis:
+            # A substrate with no candidates scores recall 0 -- record it so the per-substrate
+            # vectors stay ALIGNED BY SUBSTRATE across arms. Skipping the append here (the original
+            # bug) drops different substrates in each arm, so a paired bootstrap would subtract
+            # mismatched vectors; it only crashed because the two arms happened to drop different
+            # counts (991 vs 990). Equal counts would have produced a silently wrong CI.
+            if per_sub is not None:
+                for k in KS:
+                    per_sub.setdefault(k, []).append(0.0)
             continue
         fs = filt.score_batch(sub, smis)
         scored = sorted(zip(smis, (float(f) * float(d[1]) for f, d in zip(fs, detailed))), key=lambda x: -x[1])
@@ -131,6 +139,12 @@ def main() -> int:
     rng = np.random.default_rng(args.seed)
     cis = {}
     for k in KS:
+        # guard: a paired bootstrap is only valid on vectors aligned substrate-by-substrate
+        if len(abl_per[k]) != len(base_per[k]) or len(base_per[k]) != n:
+            raise SystemExit(
+                f"ERROR: per-substrate vectors are not paired at k={k} "
+                f"(baseline {len(base_per[k])}, ablation {len(abl_per[k])}, scored substrates {n}). "
+                "Every scored substrate must contribute exactly one entry per arm.")
         d = np.asarray(abl_per[k]) - np.asarray(base_per[k])
         means = np.array([d[rng.integers(0, len(d), len(d))].mean() for _ in range(args.n_boot)])
         lo, hi = np.quantile(means, [0.025, 0.975])
