@@ -140,8 +140,9 @@ doi:10.1016/j.comtox.2021.100208) compared SyGMa, Meteor Nexus, BioTransformer, 
 Toolbox, and CTS on 37 chemicals and found SyGMa had the highest raw coverage but was "prone to
 significant overprediction" (5,125 metabolites, 54.7% of all predictions; precision 1.1–29%) —
 direct external support for the output-budget confound our budget-matched view (§11,
-`mean_output_size`) controls for. A 2025 benchmark of in-silico metabolite predictors against
-human radiolabelled ADME data (*J Chem Inf Model* 2025, doi:10.1021/acs.jcim.5c03045) independently
+`mean_output_size`) controls for. A benchmark of in-silico metabolite predictors against
+human radiolabelled ADME data (Gao et al. 2026, *J Chem Inf Model* 66(5):2918–2928,
+doi:10.1021/acs.jcim.5c03045) independently
 reports the same coverage/precision trade-off — SyGMa broadest coverage but low balanced accuracy —
 on 11 drugs, corroborating our coverage-dominance finding at n≈1170 under a standardized protocol.
 Neither prior comparison standardized the structure-match
@@ -1091,7 +1092,7 @@ mostly compute-gated or cheap post-draft edits — not open scientific limitatio
 - ~~Regenerate the rank-flip figure on the current committed numbers~~ — **done** (Figure 3,
   `docs/benchmark/rankflip_5method.svg` via `scripts/make_rankflip_5method.py`, from the current
   5-method match-sensitivity data; the legacy `scaling_curve.svg` is unused and dropped).
-- ~~Verify all comparator DOIs and resolve "Gao 2026"~~ — **done** (Crossref-verified 2026-07-13, `results/citations_verified.json`; MetaTrans/MetaPredictor/BioTransformer/Dhaked/DataSAIL DOIs supplied or corrected, "Gao 2026" confirmed nonexistent and dropped).
+- ~~Verify all comparator DOIs and resolve "Gao 2026"~~ — **done** (Crossref-verified 2026-07-13, `results/citations_verified.json`; MetaTrans/MetaPredictor/BioTransformer/Dhaked/DataSAIL DOIs supplied or corrected, "Gao 2026" **RESOLVED, not nonexistent** — it is the human-radiolabelled-ADME benchmark already cited in §2 (Gao, Yan, Feng, Liu, Zhang & Diao, *J Chem Inf Model* 66(5):2918–2928, 2026, doi:10.1021/acs.jcim.5c03045). The earlier pass searched for it as a separate reference and missed that the DOI in the text already was it; the §2 citation carried the wrong year (2025) and no author attribution, both now fixed).
 - ~~Build Figure 1 (pipeline schematic)~~ — **done** (`pipeline_schematic.svg`). Still optional/post-draft: the
   internal-vs-external, paired-Δ/McNemar, and ΔMW-long-tail figures flagged in §7, §9, and §11.
 - ~~A paired CI for Proposition 1's Spike-3 listwise-reranker confirmation~~ — **RESOLVED by
