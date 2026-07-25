@@ -29,15 +29,45 @@ section** (rule selection = extreme multi-label with ~0 positives/substrate; den
 prior), and a **self-measured below-SOTA ablator** — the benchmark's authors ran their own method first
 and reported it loses at every budget (falsification as a design principle, not a scar).
 
-**Upside = TAME's generality.** Reframe dead ⇒ TAME is the only measurement leg ⇒ all remaining ceiling
-is whether **rank-flip reproduces in other domains** (retrosynthesis, molgen) — re-score existing
-external predictions under the 5 match modes, no training. If it does, TAME becomes a measurement
-phenomenon of molecular ML (main-track on different grounds). **This is the main next move.**
+**Upside = TAME's generality — measured, and it is domain-attenuated.** The plan was: re-score external
+predictions under the 5 match modes; if rank-flip reproduces elsewhere, TAME becomes a measurement
+phenomenon of molecular ML. The single-model precursor **ran** (`results/xdomain_retro_protocol.json`,
+ReactionT5v2 on USPTO-50k, n=200): top-1 moves only **~0.02** across {canonical, no-stereo, InChIKey,
+tautomer} — an order of magnitude below metabolism's +0.120. So a *robust multi-method rank-flip in
+retrosynthesis is unlikely* (movements too small to reorder well-separated methods). The honest,
+defensible cross-domain claim is therefore **not** "protocol choice universally reorders leaderboards"
+but "its magnitude scales with how far a generator's outputs diverge tautomerically/stereochemically
+from the references" — large in metabolism (rule engine emits tautomers), small in canonical-clean
+retrosynthesis. Written up in manuscript §12; **do not over-invest expecting a large cross-domain flip.**
 
-**Order:** (1) cross-domain rank-flip pilot on ONE external prediction set; (2) 1170 run overnight as a
+**Order:** (1) ~~cross-domain rank-flip pilot~~ — done, weak, reframed above; (2) 1170 run overnight as a
 *supporting* table (gates nothing); (3) optional same-pool ranker test (only if a cross-method P2 is
 wanted); (4) abstract under D&B — TAME center, P2 as XMC section, GRAIL as self-measured ablator.
 **Discipline adopted:** name the falsifying run *with* the thesis, not after.
+
+**Lit-check verdict (2026-07-19, external review + verified sweep).** An external conceptual review
+endorsed the plan — *write the D&B paper, TAME center, GRAIL as self-measured ablator, Set-GFlowNet to
+future work* — and its own literature check returned "solid, publishable D&B contribution; not a
+landmark (the neighbourhood is crowded and standardizing), but better positioned than the alternatives:
+D&B venues **reward** 'your eval is broken + here is the fix', so non-SOTA is a feature there, and
+metabolite-structure prediction is less saturated than retrosynthesis/property prediction."
+We then ran our own verification sweep (8 agents, web-verified) rather than trusting either side:
+- **All 4 reviewer citations are real** (Zagribelnyy *arXiv*:2602.03554 ICML'26; *Molecules* 31(5):769
+  2026; MADGEN ICLR'25 *arXiv*:2501.01950; GuacaMol JCIM'19) — zero hallucinations, but none sits on
+  TAME's axis; they are background/adjacent, not competing claims.
+- **Sharpest neighbors were already cited + differentiated**: Syntheseus (Maziarz, the closest on the
+  *axis*), Scholz 2023 and JCIM-ADME 2026 (the same in-domain 5-tool leaderboard).
+- **Two genuinely-new concurrent neighbors added** to §2 after independently verifying both arXiv IDs:
+  Agarwal & Bisht 2026 (*arXiv*:2606.12639, closest on *claim-shape* — metric choice inverts the winner;
+  differs by axis/task/no decomposition) and Liu, Bushuiev et al. 2026 (*arXiv*:2606.19624, MassSpecGym
+  in the Wild — implementation-side audit; differs by fixed-implementation vs controlled-convention).
+- **Verdict:** the "overlaps uncited prior work" exposure was real and is now **neutralized**. *No prior
+  work makes TAME's exact claim* — convention × method interaction, quantified with CI, pre-registered,
+  on a leakage-audited split, in metabolite structure. The field is crowded on the *general* worry and
+  empty on the *specific quantified instance*.
+- **Standing risk (reviewer, accepted):** a paper whose thesis is evaluation rigor gets judged hardest on
+  its own eval hygiene. See §0a's test-peeked caveat — exploratory runs go to val, test stays frozen for
+  the single final MetaTox row.
 
 ## 0a. Rule-granularity probe (2026-07-19) — measured, mostly negative
 
