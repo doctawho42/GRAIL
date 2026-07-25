@@ -55,7 +55,7 @@ def _taut(s):
         return None
 
 
-def recall_row(gen, filt, subs, real_ik, gen_thr):
+def recall_row(gen, filt, subs, real_ik, gen_thr, per_sub=None):
     curve = {k: 0.0 for k in KS}
     n = 0
     t0 = time.time()
@@ -81,14 +81,27 @@ def recall_row(gen, filt, subs, real_ik, gen_thr):
                 ranked.append(k)
         for k in KS:
             hit = len(set(ranked[:k]) & rk)
-            curve[k] += hit / len(rk)
+            val = hit / len(rk)
+            curve[k] += val
+            if per_sub is not None:
+                per_sub.setdefault(k, []).append(val)
     return {k: round(v / n, 4) for k, v in curve.items()}, n
 
 
 def main() -> int:
-    torch.set_num_threads(6)
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--preds-csv", default=str(GRAIL_CSV),
+                    help="prediction CSV supplying substrates + ground truth (use the VAL dump for "
+                         "exploratory verification; test is frozen for the final MetaTox row)")
+    ap.add_argument("--out", default=str(OUT))
+    ap.add_argument("--n-boot", type=int, default=10000)
+    ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--threads", type=int, default=6)
+    args = ap.parse_args()
+    torch.set_num_threads(args.threads)
     real_ik = {}
-    with open(GRAIL_CSV) as fh:
+    with open(args.preds_csv) as fh:
         for row in csv.DictReader(fh):
             rk = {k for k in (_taut(r) for r in row.get("real", "").split("|") if r) if k}
             if rk:
@@ -102,7 +115,8 @@ def main() -> int:
     filt = _load(DEPLOYED_FILTER, lambda a, r: build_filter(FilterConfig(**a)))
 
     print("  [baseline] id ON", flush=True)
-    base, n = recall_row(gen, filt, subs, real_ik, gen_thr)
+    base_per = {}
+    base, n = recall_row(gen, filt, subs, real_ik, gen_thr, base_per)
 
     # zero the id component, clear the rule-embedding cache, re-run
     with torch.no_grad():
@@ -110,20 +124,35 @@ def main() -> int:
     gen._rule_embedding_cache = None
     gen.parser._rule_embedding_cache = None if hasattr(gen.parser, "_rule_embedding_cache") else None
     print("  [ablation] id ZEROED", flush=True)
-    abl, _ = recall_row(gen, filt, subs, real_ik, gen_thr)
+    abl_per = {}
+    abl, _ = recall_row(gen, filt, subs, real_ik, gen_thr, abl_per)
 
-    report = {"n": n, "ks": KS, "recall_id_on": base, "recall_id_zeroed": abl,
-              "delta": {f"@{k}": round(abl[k] - base[k], 4) for k in KS}}
-    OUT.write_text(__import__("json").dumps(report, indent=2))
+    import numpy as np
+    rng = np.random.default_rng(args.seed)
+    cis = {}
+    for k in KS:
+        d = np.asarray(abl_per[k]) - np.asarray(base_per[k])
+        means = np.array([d[rng.integers(0, len(d), len(d))].mean() for _ in range(args.n_boot)])
+        lo, hi = np.quantile(means, [0.025, 0.975])
+        cis[f"@{k}"] = {"delta": round(float(d.mean()), 4),
+                        "ci95": [round(float(lo), 4), round(float(hi), 4)],
+                        "verdict": "SIGNIFICANT" if (lo > 0 or hi < 0) else "n.s. (CI spans 0)"}
+    report = {"split_csv": args.preds_csv, "n": n, "ks": KS,
+              "recall_id_on": base, "recall_id_zeroed": abl,
+              "delta": {f"@{k}": round(abl[k] - base[k], 4) for k in KS},
+              "paired_bootstrap": cis, "n_boot": args.n_boot, "seed": args.seed}
+    Path(args.out).write_text(__import__("json").dumps(report, indent=2))
     print("\n=== TEST 2: zero-id ablation (ensemble recall@k) ===", flush=True)
     print(f"{'k':>4} | {'id ON':>8} | {'id ZERO':>8} | {'delta':>8}", flush=True)
     for k in KS:
-        print(f"{k:>4} | {base[k]:>8} | {abl[k]:>8} | {abl[k]-base[k]:>+8.4f}", flush=True)
+        c = cis[f"@{k}"]
+        print(f"{k:>4} | {base[k]:>8} | {abl[k]:>8} | {abl[k]-base[k]:>+8.4f} | "
+              f"95%CI[{c['ci95'][0]:+.4f},{c['ci95'][1]:+.4f}] {c['verdict']}", flush=True)
     verdict = ("id NOT load-bearing (dominance is geometric illusion; P2-lookup story FALSIFIED)"
                if abs(abl[15] - base[15]) < 0.02 else
                "id IS load-bearing (rule scoring ~ per-slot lookup; P2 mechanism architecturally supported)")
     print(f"VERDICT @15: {verdict}", flush=True)
-    print(f"Wrote {OUT}", flush=True)
+    print(f"Wrote {args.out}", flush=True)
     return 0
 
 

@@ -1021,17 +1021,32 @@ mostly compute-gated or cheap post-draft edits — not open scientific limitatio
   cached per-method predictions come from runs with *different* 150-substrate sets, and joining a
   mismatched cache silently scores missing substrates as recall 0 (it produced SyGMa 0.286 instead
   of 0.514 before the guard existed).
-- Run MetaTrans on the 37-substrate GLORYx external set (§7), to extend the external-validity
-  ceiling comparison beyond GRAIL and SyGMa.
+- **Run MetaTrans on the 37-substrate GLORYx external set (§7) — BLOCKED, same cause as the n=150
+  caveat.** MetaTrans's inference pipeline is no longer reproducible in-tree (stated in §11 and
+  §12), so new MetaTrans predictions cannot be generated without rebuilding that environment; its
+  existing frozen n=150 predictions (`artifacts/tier2/metatrans_preds.json`) do not cover the
+  GLORYx-37 substrates. Either rebuild the environment or leave the external-validity comparison
+  scoped to GRAIL and SyGMa, stating that scope explicitly (current behaviour).
 - ~~Regenerate the rank-flip figure on the current committed numbers~~ — **done** (Figure 3,
   `docs/benchmark/rankflip_5method.svg` via `scripts/make_rankflip_5method.py`, from the current
   5-method match-sensitivity data; the legacy `scaling_curve.svg` is unused and dropped).
 - ~~Verify all comparator DOIs and resolve "Gao 2026"~~ — **done** (Crossref-verified 2026-07-13, `results/citations_verified.json`; MetaTrans/MetaPredictor/BioTransformer/Dhaked/DataSAIL DOIs supplied or corrected, "Gao 2026" confirmed nonexistent and dropped).
 - ~~Build Figure 1 (pipeline schematic)~~ — **done** (`pipeline_schematic.svg`). Still optional/post-draft: the
   internal-vs-external, paired-Δ/McNemar, and ΔMW-long-tail figures flagged in §7, §9, and §11.
-- A paired confidence interval for Proposition 1's listwise-reranker confirmation (currently a
-  3-seed standard deviation, ±0.015, not a paired bootstrap, §10) and commit its supporting
-  artifacts.
+- **A paired CI for Proposition 1's Spike-3 listwise-reranker confirmation — BLOCKED on missing
+  artifacts, not on effort.** The per-substrate scores needed for a paired bootstrap live in
+  `results/reranker_gate_bi_test{,_seed1,_seed2}.json`, cited in
+  `docs/benchmark/stage2_ranker_evidence.md`, and **those files are not present in this tree** (only
+  an early seed-0 gate run, `results/reranker_gate_bi.json`, survives). Recomputing the CI therefore
+  requires re-running the 3-seed Stage-2 training, i.e. compute, not analysis. Two mitigations, both
+  already true: (i) the reported ±0.015 is *pure reranker seed variance* (the generator baseline is
+  deterministic on a fixed checkpoint), so it is a meaningful spread rather than a placeholder; and
+  (ii) the same directional claim — a rank-aware objective beats the pointwise filter on identical
+  pools — is independently certified by **paired bootstrap CIs on the full n=1170 test** in the
+  intervention paragraph (hybrid re-rank **+0.0165 [+0.006, +0.027]**; joint-trained re-ranker
+  **+0.0091 [+0.003, +0.016]**, `results/hybrid_rerank_full1170.json`, `results/joint_rerank.json`).
+  Before submission either re-run the seeds and commit the three JSONs, or re-scope §10's
+  confirmation sentence to lead with the two n=1170 CIs that do exist.
 - ~~**Provenance check on §5's val/test agreement figures.**~~ — **done.** The previously quoted
   "0.327 vs 0.330" pair was **untraceable**: no committed artifact contains a val figure of 0.327,
   and the 0.330 test figure comes from a *different* evaluation (`anchor_certification.json`, full
