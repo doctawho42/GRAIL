@@ -296,13 +296,52 @@ matching; a method that canonicalises its own output (SyGMa) gains almost nothin
 where the effect should be \emph{small}, and we test that prediction out of domain in
 Appendix~\ref{app:xdomain}.
 
-\subsection{Where GRAIL's recall goes}
+\subsection{The honest anchor: our own instrument, measured first}
 \label{sec:diagnosis}
-% SOURCE: manuscript.md sections 8-9 (decomposition applied + honest anchor certification)
 
-\subsection{Learning loses to counting: selection as extreme multi-label}
+A benchmark whose authors also ship a method invites the obvious suspicion, so we state the
+comparison before any of our own results. On the full clean test split GRAIL reaches
+\textbf{\grailmacro} macro recall@15 (3 seeds: $0.344 \pm 0.010$) against SyGMa's \textbf{0.572} ---
+a paired difference of $-0.242$ (95\% CI $[-0.271,\,-0.212]$, cluster bootstrap over $n=1{,}168$
+common substrates) --- and MetaPredictor's $0.585$ on the shared subset ($0.568$ re-scored on the
+full test). \textbf{GRAIL does not win on recall, at any budget.} A budget-matched frontier
+sweeping $k \in [1,64]$ finds SyGMa ahead at \emph{every} $k$ with no crossover
+(Appendix~\ref{app:budget}): the gap is not an artifact of output-size accounting, it is a genuine
+selection weakness, and \S\ref{sec:decomp} localises it.
+
+We report this deliberately and early. The instrument used to build a measurement protocol should
+be the first thing the protocol is turned on, and it should be reported even when --- especially
+when --- it loses. Where GRAIL is competitive is a different axis: it returns $8.7$ candidates at
+precision $0.109$ where SyGMa returns $74$ at $0.029$, an operating point that matters for
+interactive use but that recall@$k$ alone does not express.
+
+\subsection{Learning loses to counting: selection is extreme multi-label}
 \label{sec:xmc}
-% SOURCE: manuscript.md section 10, Proposition 2 (compressed; witnesses -> appendix)
+
+Since selection is the dominant leak, we ask what makes it hard, and the answer is structural
+rather than metabolism-specific. Choosing which of \nbank\ rules apply to a substrate is an
+\textbf{extreme multi-label classification} (XMC) problem with a near-empty positive set:
+approximately one to three rules fire per substrate, i.e.\ ${\sim}0.03\%$ of labels. In exactly
+this regime XMC has long established that frequency/propensity baselines are hard to beat, which
+is why propensity-scored losses were introduced \citep{Jain_2016}. Metabolite rule selection
+\emph{inherits} this pathology, which the domain literature does not name.
+
+The prediction is testable, and it holds against us: on the same candidate pools a learned-only
+selector reaches $0.266$ while ranking by the empirical rule-firing frequency alone reaches
+$0.410$ --- a paired difference of $\mathbf{-0.144}$ (95\% CI $[-0.196,\,-0.095]$, $n=245$). The
+learned selector loses to counting. Under PU annotation with an approximately constant labelling
+propensity, a learner with constant unlabelled weighting recovers a propensity-distorted score
+whose dominant component is the marginal firing rate, so the prior is Bayes-competitive
+\emph{by construction} at the selection stage; the learner can only win if substrate-conditional
+prevalence variation exceeds estimation noise, and the observed data-scaling saturation indicates
+it does not at this scale.
+
+Two qualifications keep this from being read as ``learning does not work here''. First, the effect
+is \emph{selection-specific}: at the separate \emph{ranking} stage, on identical broad pools, the
+learned filter beats the same frequency prior ($0.413$ versus $0.374$). Second, the pathology is
+addressable rather than fundamental --- a dense reformulation over a coarse reaction-type
+vocabulary beats the prior roughly threefold at $k{=}5$, though at a cost in reachability that
+makes it a diagnosis rather than a drop-in fix (Appendix~\ref{app:props}).
 
 \section{Limitations}
 \label{sec:limitations}
