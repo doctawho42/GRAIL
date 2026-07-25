@@ -12,6 +12,18 @@ bundle's val frame, then the `substrate,predicted,real` pipe-joined CSV written 
 (`rank_flip_ci`, `ablate_id_embedding`, prune-and-re-rank, ...) can point at it unchanged.
 
 Output: artifacts/full5000_single/predictions/val_predictions.csv
+
+IMPORTANT -- CHECKPOINT PAIRING (do not compare this file naively to test_predictions.csv):
+this dump uses the `full5000_priors` GENERATOR + `full5000_single` filter, the pairing the probe
+scripts use (budget_matched_frontier, ablate_id_embedding) because the priors generator has a
+non-degenerate rule prior. `test_predictions.csv` was written by the `full5000_single` run with its
+OWN generator. So the two files are different model configurations, and a val-vs-test difference
+computed across them mixes split effects with configuration effects. Measured, config-matched:
+  priors-config  val 0.3882 (n=994, this file)  vs  test 0.3665 (n=291, ablate_id_embedding baseline)
+      -> val is only ~+0.022 easier
+  single-config  val 0.3439            vs  test 0.3342  (the run's own reports/metrics.json)
+      -> +0.010, the val/test agreement the manuscript cites
+A naive read of this file against test_predictions.csv gives a spurious +0.054 gap.
 """
 from __future__ import annotations
 

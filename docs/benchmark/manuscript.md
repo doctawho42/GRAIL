@@ -1026,3 +1026,10 @@ mostly compute-gated or cheap post-draft edits — not open scientific limitatio
 - A paired confidence interval for Proposition 1's listwise-reranker confirmation (currently a
   3-seed standard deviation, ±0.015, not a paired bootstrap, §10) and commit its supporting
   artifacts.
+- **Provenance check on §5's val/test agreement figures.** The text cites "0.327 vs 0.330"; the
+  deployed run's own `artifacts/full5000_single/reports/metrics.json` reports **val 0.3439 / test
+  0.3342** (`ensemble_val` / `ensemble`, same configuration on both splits). The *claim* is
+  unaffected — the two splits still track closely (Δ = +0.010, inconsistent with test-set
+  overfitting, and the direction is val-slightly-easier as expected) — but the exact pair of
+  numbers quoted should be re-sourced to the run that produced them before submission, since this
+  paper is judged on evaluation hygiene.
