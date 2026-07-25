@@ -1,6 +1,6 @@
 # GRAIL: rule-based metabolite-structure prediction, a coverage×selection×ranking diagnosis, and the TAME evaluation protocol
 
-> **Draft status (2026-07-26):** complete draft — **no `[PENDING]` values remain in the body**; every reported number is sourced from a committed artifact under `results/`. Two follow-ups are blocked on inputs rather than analysis and are scoped explicitly in the text (Spike-3's per-substrate scores are absent from the tree, so Proposition 1 rests on the n=1170 paired intervals instead; MetaTrans's inference pipeline is not reproducible in-tree, so the external GLORYx comparison is scoped to GRAIL and SyGMa). One decision is deferred by choice: whether MetaTox enters as a 6th method (see *Draft TODO*). Comparator citations are Crossref-verified (2026-07-13; `results/citations_verified.json`). Venue target: JCIM / J. Cheminformatics, or a Datasets & Benchmarks track.
+> **Draft status (2026-07-26):** complete draft — **no `[PENDING]` values remain in the body**; every reported number is sourced from a committed artifact under `results/`. Two follow-ups are blocked on inputs rather than analysis and are scoped explicitly in the text (Spike-3's per-substrate scores are absent from the tree, so Proposition 1 rests on the n=1170 paired intervals instead; MetaTrans's inference pipeline is not reproducible in-tree, so it is absent from the supporting external GLORYx table, which covers four methods). One decision is deferred by choice: whether MetaTox enters as a 6th method (see *Draft TODO*). Comparator citations are Crossref-verified (2026-07-13; `results/citations_verified.json`). Venue target: JCIM / J. Cheminformatics, or a Datasets & Benchmarks track.
 
 ## Abstract
 
@@ -989,6 +989,20 @@ by `filter_score f × generator_score g`; recall decomposes as
 coverage_bank · selection_retention · ranking_conversion (§4, §8).
 
 ## Draft TODO / open items
+
+- **UNUSED ASSET — the external 4-method GLORYx table is computed but not cited by the body.**
+  `docs/benchmark/gloryx_results.md` already scores **four** methods on the 37-substrate GLORYx set
+  under all five matching protocols (SyGMa, MetaPredictor, BioTransformer, GRAIL; MetaTrans absent
+  for the reproducibility reason above). §7 currently uses GLORYx only as an *external substrate set
+  for GRAIL's own coverage ceiling*, not as a method comparison, so this table is orphaned. Two
+  reasons to pull it in: (i) it is a genuine **external-set** multi-method comparison, which
+  strengthens external validity beyond the internal n=150 shared subset of §11; (ii) it appears to
+  reproduce the protocol-sensitivity phenomenon *outside* the internal split — e.g. MetaPredictor
+  swings 0.362 (strict InChIKey) → 0.504 (no-stereo / tautomer) while SyGMa is flat at ~0.49, which
+  would reorder that pair. **Before using it as a rank-flip replication, compute paired CIs at
+  n=37** — the sample is small and the current numbers are point estimates only; at that n the
+  interval may well span zero, in which case it belongs as a descriptive external table, not as
+  evidence. Decide alongside the MetaTox question below.
 
 - **DECISION PENDING — whether MetaTox enters this paper.** GRAIL has now been scored head-to-head
   against **MetaTox** (the way2drug incumbent) under this paper's own protocol: a statistical tie at
