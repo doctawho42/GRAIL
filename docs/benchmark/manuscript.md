@@ -990,6 +990,20 @@ coverage_bank · selection_retention · ranking_conversion (§4, §8).
 
 ## Draft TODO / open items
 
+- **DECISION PENDING — whether MetaTox enters this paper.** GRAIL has now been scored head-to-head
+  against **MetaTox** (the way2drug incumbent) under this paper's own protocol: a statistical tie at
+  every k (recall@15 0.340 vs 0.363, Δ −0.023 [−0.101, +0.054], n=270; `results/grail_vs_metatox.json`)
+  and, more interestingly for a *benchmark* paper, **strong complementarity** — union recall 0.611 vs
+  0.395 for the better single method, with only **17.2%** of correctly-found metabolites found by both
+  (`results/metatox_complementarity.json`). That last number is a benchmark-level claim in its own
+  right: single-method recall systematically understates achievable coverage, which is squarely this
+  paper's thesis about evaluation practice. **Not yet incorporated** because the available MetaTox run
+  is layer-1 **without** its SMIRKS-rule variant (a partial configuration whose caveat would have to be
+  carried through the leaderboard); the SMIRKS version is expected, and re-running is two unchanged
+  commands (`compare_metatox.py`, `metatox_complementarity.py`). Decide after it lands: either add
+  MetaTox as a 6th method + a complementarity subsection, or cite the comparison as external validation
+  and keep the leaderboard at 5 methods.
+
 Tracked here rather than folded into §12 because these are concrete, actionable follow-ups —
 mostly compute-gated or cheap post-draft edits — not open scientific limitations.
 
