@@ -108,11 +108,21 @@ Verdict per claim, at measured confidence:
      carries **test-coverage risk**; only "76% of the *target* is train-dead-or-singleton" is solid.
    - **Mechanism (undercut by the same shot as merging).** The zero-id ablation shows `id` is inert, so
      "dead rules inject noise via untrained `id`" is *also* inert — the target-sparsity→selection story is
-     undermined. What survives is a **different, id-independent, inference-side** lever: the
-     *fires-but-never-useful* class (**1,767** rules) emits **distractor products** that dilute ranking
-     through `noisy_or`; cutting those could clean ranking. This is the live pruning hypothesis now —
-     **untested**, routed to a prune-and-re-rank check on **val**. (The 4,271 never-fire rules produce no
-     candidates at all, so with `id` inert they may simply be harmless ballast.)
+     undermined. What survived was a **different, id-independent, inference-side** hypothesis: dead rules
+     emit **distractor products** that dilute ranking, so cutting them could raise recall.
+   - **RESOLVED — and the lever is FALSIFIED (2026-07-19, `results/prune_and_rerank_val.json`).** Pruning
+     the 4,271 training-dead rules (bank 7,581 → 3,310) and re-ranking on **val** (n=994, tautomer,
+     deployed operating point, prune set derived from TRAINING positives only) **hurts on both axes**:
+     recall@15 **0.388 → 0.352** (Δ −0.036, 95% CI [−0.050, −0.024]) and pool coverage
+     **0.439 → 0.378** (Δ −0.061, CI [−0.078, −0.046]); mean pool 46.9 → 40.0. Both CIs exclude zero.
+     So the pre-registered **reachability-loss** branch won, not distractor-cut: rules that never earn a
+     positive label across 4,787 training substrates **still produce true metabolites on unseen val
+     chemistry**. The §0a caveat is now measured rather than hypothesised — *"76% of the TARGET is
+     train-dead-or-singleton" stands; "76% of the BANK is prunable" is FALSE.* The bank's apparent dead
+     weight is generalization capacity living in its tail, which also argues against bank-shrinking as a
+     deployment tactic (provable dedup remains safe; pruning does not). Note the ranking partially
+     absorbs the damage — 6.1 points of lost coverage cost only 3.6 points of realised recall — but the
+     net is unambiguously negative.
 
 3. **`id_embedding` dominance → mechanism of P2. FALSIFIED.** The rule embedding is
    `norm(graph_encoding + id_embedding + meta)`; the `id_embedding` carries **82% of cross-rule variance**
@@ -127,11 +137,16 @@ Verdict per claim, at measured confidence:
 net-helpful is strange — possibly `id` *trainedly* memorizes noise. Verify on **val**, multiseed, before
 believing it; do not sell it as a free tweak.
 
-**Net:** rule-granularity yielded one solid *fact* (training sparsity is reducible — 76% of the target is
-train-dead-or-singleton), one *untested id-independent hypothesis* (cut the 1,767 distractor-emitting
-rules to clean ranking, on val), one weak/hygiene lever (merging), and one cleanly-falsified mechanism
-(`id`→P2). No confirmed headline recall lever. Deadline levers remain **resource+cache** and
-**GRAIL-vs-MetaTox**. Scripts: `rule_collapse.py`,
+**Net — the track is CLOSED, and negatively.** All three candidate levers were measured and none
+survived: **merging** = weak/deploy-hygiene (net effect unconfirmed; `noisy_or` heals the training
+split), **pruning** = actively harmful (falsified on val: −0.036 recall, −0.061 coverage, both CIs
+excluding zero), **`id`→P2** = falsified (zero-id ablation). What remains is one solid *fact* (training
+sparsity is reducible — 76% of the **target** is train-dead-or-singleton, which is *not* the same as the
+bank being prunable) and one structural insight (the bank's tail carries generalization capacity, so
+coverage really is the physical limit — consistent with §0's P1 diagnosis). Three of these outcomes
+falsified hypotheses I had argued for; that is the intended function of pre-registering the falsifier.
+Deadline levers remain **resource+cache** (done, `resource_cache_profile.json`) and
+**GRAIL-vs-MetaTox** (blocked on predictions). Scripts: `prune_and_rerank_val.py`, `rule_collapse.py`,
 `rule_dedup_provable.py`, `rule_prune_probe.py`, `probe_rule_embeddings.py`, `ablate_id_embedding.py`.
 
 ## 1. Where things stand
