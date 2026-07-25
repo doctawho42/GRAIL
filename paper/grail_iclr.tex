@@ -81,9 +81,55 @@ predictor, not a state-of-the-art claim.
 
 \section{TAME: a tautomer-aware evaluation protocol}
 \label{sec:tame}
-% SOURCE: manuscript.md section 5 (matching protocol + split/leakage audit + metrics)
-% Keep: the five quotients, why tautomer-InChIKey is the defensible default, the audit, and the
-% val/test agreement (0.344 vs 0.334). Worked example -> appendix.
+
+TAME is a \emph{protocol, an audited split and a re-scoring harness}, not a leaderboard service:
+it exists so that the numbers in \S\ref{sec:results} are apples-to-apples and regenerable from
+committed artifacts.
+
+\paragraph{The match quotient.} The field has never agreed what counts as a match. GLORYx uses a
+stereo-blind InChIKey skeleton, MetaTrans uses Morgan-fingerprint Tanimoto${=}1$, LAGOM uses
+canonical-SMILES equality --- each a different equivalence relation on molecules, each applied
+silently. TAME makes the choice explicit by exposing all of them as named quotients: predicted and
+reference structures are mapped through one of
+\[
+q \in \{\textsc{canonical},\ \textsc{inchikey},\ \textsc{inchi-no-stereo},\ \textsc{tanimoto1},\
+\textsc{inchikey-tautomer}\}
+\]
+and a prediction counts as a hit iff $q(\hat{y}) = q(y)$ for some reference $y$. Our recommended
+default is \textsc{inchikey-tautomer}: standard InChI normalizes only a \emph{subset} of tautomers
+\citep{Dhaked_2020}, so a rule engine that emits a keto form of an enol reference fails to match
+under plain \textsc{inchikey} even though it produced the same chemical entity. Tautomer-canonicalising
+both sides before hashing closes that gap and is the most defensible identity criterion for a
+rule-driven generator. Unless stated otherwise all results use \textsc{inchikey-tautomer};
+\S\ref{sec:rankflip} quantifies how much the ranking depends on that choice. A worked example in
+which the same fixed predictions score a near-total miss or a full hit purely by changing $q$ is
+given in Appendix~\ref{app:worked}.
+
+This is not an invented normalization. Tautomer standardization is established \emph{preprocessing}
+--- \citet{Hahnke_2018} report that 60\% of PubChem structures differ from their canonical InChI
+form, mainly by tautomer choice, and \citet{Mansouri_2024} describe a comparable
+desalt/destereo/tautomer-canonicalisation pipeline. What is new here is adopting it as the
+\emph{matching} rule and measuring how far it moves the leaderboard.
+
+\paragraph{Split and leakage audit.} All splits are substrate-disjoint: no substrate in test or
+validation appears in train, and no test substrate appears in validation. Clean triples are
+constructed and then audited read-only by a separate script that canonicalises SMILES and verifies
+zero substrate and zero positive-pair overlap across every split pair, emitting a machine-checkable
+report. Leakage-aware splitting is itself not novel --- DataSAIL \citep{Joeres_2025} minimises
+cross-split similarity on MoleculeNet-style tasks --- but the leak that matters here is
+substrate--metabolite \emph{identity} overlap, which is domain-specific. Trustworthiness is
+corroborated empirically rather than asserted: on the deployed run's own evaluation, the same
+configuration scored on both splits gives recall@15 $=0.344$ on validation and $0.334$ on test, a
+gap of $+0.010$ in the expected direction (validation marginally easier, since selection touched
+it) and far too small to indicate test-set overfitting.
+
+\paragraph{Metrics.} We lead with recall@$k$ co-reported with \texttt{mean\_output\_size}, not with
+precision alone. Under incomplete annotation precision is a \emph{pessimistic lower bound}: an
+unannotated candidate is scored a false positive even when it is a real but unrecorded metabolite.
+Reporting recall without output size is equally misleading in the other direction, since a method
+can buy recall by enumerating (Table~\ref{tab:matchsens}, and Appendix~\ref{app:budget}). Model,
+preset and hyper-parameter selection happens exclusively on validation; the test split is touched
+once, for the final reported numbers.
 
 \section{The decomposition and the coverage ceiling}
 \label{sec:decomp}
