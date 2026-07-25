@@ -4,24 +4,30 @@
 
 ## Abstract
 
-Rule-based metabolite-structure prediction is usually reported as a single top-k recall number,
-as if that transparently reflected a method's chemistry-generation capability. It does not:
-recall conflates whether a rule bank *covers* a transformation, whether a model *selects* the
-right rule, and whether it *ranks* the resulting candidate into a bounded output — and shifts
-under whichever structural-match convention a paper adopts. We present **GRAIL**, a three-stage
-rule-based-plus-learned predictor (a curated 7,581-SMIRKS bank, a learned rule selector, and a
-PU-trained structural filter), and use it to decompose recall into coverage × selection × ranking. On a
-leakage-audited, substrate-disjoint clean test split (1170 substrates), the rule bank's coverage
-ceiling is **0.735** (tautomer-InChIKey, micro), but the deployed pipeline converts only 35.5% of
-that ceiling into realised recall@15 = **0.261** (micro) (3-seed 0.269 ± 0.006), a gap
-**dominated by a selection loss** (selection_retention = **0.489**) larger than the ranking loss.
-Stated up front: **GRAIL does not win on recall** — 0.330 macro recall@15 (3-seed 0.344 ± 0.010; §9), below SyGMa (0.572) and
-MetaPredictor (0.585 on the n=150 subset; a full-test re-run scores 0.568, ≈ SyGMa). We also introduce **TAME**, a tautomer-aware,
-leakage-audited matching and re-scoring protocol, and show with a pre-declared primary endpoint
-that match-protocol choice is a method-dependent confounder that can reverse method rankings
-(interaction **+0.120**, 95% CI **[+0.073, +0.171]**). GRAIL's contribution is the coverage
-ceiling as a diagnostic primitive, the decomposition, the protocol, and an honestly-diagnosed
-interpretable instrument — not a state-of-the-art claim.
+Metabolite-structure prediction is reported as a single top-k recall number, as if that
+transparently measured a method's chemistry-generation capability. It does not, and this paper
+quantifies both ways it fails.
+
+First, **the number depends on an unstated convention**: nothing fixes when a predicted structure
+"matches" a reference, and papers variously use canonical SMILES, InChIKey, stereo-blind InChI, or
+fingerprint identity. We introduce **TAME**, a tautomer-aware matching and re-scoring protocol on a
+leakage-audited, substrate-disjoint split; re-score five methods' frozen predictions under five
+conventions; and show with a pre-declared primary endpoint that the convention is a
+**method-dependent confounder that reorders the leaderboard**. The protocol × method interaction is
+**+0.120** (95% CI **[+0.073, +0.171]**) for one method pair, and replicates on a second,
+independent pair along a different protocol axis (**+0.063**, **[+0.022, +0.106]**).
+
+Second, **one number conflates three distinct failures**: whether the rule bank *covers* a
+transformation, whether the model *selects* the right rule, and whether it *ranks* the product into
+a bounded output. We make that decomposition operational — with the bank's coverage ceiling as a
+diagnostic primitive — using **GRAIL**, a three-stage rule-based-plus-learned predictor
+(7,581-SMIRKS bank, learned rule selector, PU-trained structural filter). On 1,170 audited test
+substrates the ceiling is **0.735**, but the deployed pipeline realises recall@15 = **0.261**
+(micro; 3-seed 0.269 ± 0.006) — 35.5% of it — a gap **dominated by selection loss**
+(retention **0.489**), not by ranking. Stated up front: **GRAIL does not win on recall** — 0.330
+macro (3-seed 0.344 ± 0.010) against SyGMa 0.572 and MetaPredictor 0.585; it is the instrument we
+measure first and hardest. The contribution is the protocol, the decomposition, and an
+honestly-diagnosed interpretable predictor, not a state-of-the-art claim.
 
 ## 1. Introduction
 
@@ -989,6 +995,12 @@ by `filter_score f × generator_score g`; recall decomposes as
 coverage_bank · selection_retention · ranking_conversion (§4, §8).
 
 ## Draft TODO / open items
+
+- **Abstract length is venue-dependent (275 words).** Restructured to lead with TAME (the chosen
+  framing) and to carry both rank-flip interactions; every figure in it is verified against its
+  artifact. JCIM caps abstracts at 250 words, so trim ~25 there; J. Cheminformatics and D&B tracks
+  have no comparable cap. Deferred deliberately until the venue is fixed — trimming now would be
+  polish against an unknown constraint.
 
 - **UNUSED ASSET — the external 4-method GLORYx table is computed but not cited by the body.**
   `docs/benchmark/gloryx_results.md` already scores **four** methods on the 37-substrate GLORYx set
