@@ -124,10 +124,49 @@ part of that contribution, not an apology for it.
 
 \section{Related Work}
 \label{sec:related}
-% SOURCE: manuscript.md section 2 (compress ~1800 -> ~500 words)
-% Must keep the cite-and-differentiate against: Maziarz_2025 (closest on axis),
-% agarwal2026metric (closest on claim-shape), liu2026massspecgymwild (implementation-side),
-% Scholz_2023 + Gao_2026 (same in-domain leaderboard). Standardization lineage -> appendix.
+
+\paragraph{Careful re-evaluation reorders chemistry leaderboards.} The closest precedent on our
+axis is \textbf{Syntheseus} \citep{Maziarz_2025}, which showed that the ranking of state-of-the-art
+retrosynthesis models changes under careful, standardized re-evaluation --- including a case where
+one model's relaxed stereochemistry criterion, not applied to its baselines, inflated its reported
+accuracy. We differ in kind rather than degree: that result is a qualitative single-case debunking,
+whereas we sweep the whole matching-convention family as a controlled factor and report a
+\emph{pre-declared interaction with a confidence interval}, plus the decomposition that explains
+which stage the reordering acts on.
+
+\paragraph{Concurrent work on evaluation choice.} \citet{agarwal2026metric} is closest in
+claim-shape --- evaluation choice inverts which model wins, with significance testing --- but on a
+different axis (a scoring metric, not a structure-identity convention) and task (transcriptomic
+drug response), and without a coverage/selection/ranking decomposition.
+\citet{liu2026massspecgymwild} reach a compatible conclusion from the \emph{implementation} side,
+finding leakage, shortcut learning and metric-implementation divergence across independent
+codebases; we instead hold implementation fixed in one harness and vary the convention as a
+deliberate controlled factor, so the reordering we report is a property of the convention itself
+rather than of cross-codebase inconsistency.
+
+\paragraph{Multi-method comparisons in this domain.} We are not the first to place these tools side
+by side. \citet{Scholz_2023} benchmarked SyGMa, GLORY, GLORYx, BioTransformer and MetaTrans on 85
+agrochemical parents and found low first-generation precision and strong rule-versus-learned
+divergence; \citet{Boyce_2022} compared six tools on 37 chemicals and found SyGMa had the highest
+raw coverage but was ``prone to significant overprediction''; \citet{Gao_2026} report the same
+coverage/precision trade-off against human radiolabelled ADME data. All three corroborate our
+findings and none standardizes the structure-match definition, audits split leakage, or asks
+whether the ranking is stable under the match choice --- that triad is where we differ, in protocol
+rather than in the fact of comparison.
+
+\paragraph{Evaluation confounds outside chemistry.} That evaluation choices reorder leaderboards is
+established elsewhere: \citet{Mishra_2021} show difficulty-weighting reorders NLP/ML leaderboards
+so ``top models may not be best'', and \citet{Rodriguez_2021} show individual evaluation examples
+carry unequal ranking information. Our contribution is the domain-specific instantiation --- in
+metabolite-structure prediction the load-bearing, previously unexamined choice is how a predicted
+structure is matched to its reference --- together with the measurement showing it is
+method-dependent.
+
+\paragraph{What we do not claim.} Not the first to compare metabolite-structure predictors, not the
+first to standardize chemical structures for comparison (tautomer standardization is established
+preprocessing, \S\ref{sec:tame}), and not the first to build a leakage-aware split
+\citep{Joeres_2025}. The claim is the conjunction: a named protocol, an audited split, a frozen
+multi-method re-scoring, and the quantified demonstration that the convention is a confounder.
 
 \section{TAME: a tautomer-aware evaluation protocol}
 \label{sec:tame}
@@ -395,13 +434,58 @@ makes it a diagnosis rather than a drop-in fix (Appendix~\ref{app:props}).
 
 \section{Limitations}
 \label{sec:limitations}
-% SOURCE: manuscript.md section 12 (keep scope honesty; long-form caveats -> appendix)
+
+\paragraph{Sample sizes differ across comparisons.} The five-method table rests on $\nshared$
+shared substrates, because two comparators could only be run on that subset; GRAIL and SyGMa are
+scored on the full $\ntest$. The external replication is $n=\nglory$. At those sizes the
+\emph{interactions} are significant but no individual pairwise reversal is, and we report them that
+way throughout rather than promoting point estimates.
+
+\paragraph{Two comparators are not re-runnable in-tree.} MetaTrans's inference pipeline no longer
+reproduces in our environment and BioTransformer's exact configuration is unscripted, so both are
+represented by frozen prediction files rather than by re-executable code. Their numbers are
+therefore reproducible from our artifacts but not independently regenerable from scratch --- a
+weaker guarantee, and one we prefer to state than to obscure.
+
+\paragraph{Precision is a lower bound, not an estimate.} Reference metabolite sets are
+\emph{incomplete}: an unannotated but chemically real product is scored a false positive. Every
+precision figure here should be read as pessimistic, which is why we lead with recall and output
+size and never rank methods by precision.
+
+\paragraph{The single-step bound.} Our ceiling is single-step-conditional. A non-vanishing fraction
+of references are multi-generation products unreachable by any one rule application; depth-2
+application lifts the ceiling by only ${\sim}0.012$ at ${\sim}8.5\times$ candidate cost. The
+$\ceiling$ ceiling bounds this paradigm, not the problem.
+
+\paragraph{Evaluation hygiene of this paper itself.} Our headline numbers come from a single
+evaluation of the deployed configuration, with model and hyper-parameter selection done on
+validation. Some \emph{exploratory} analyses reported in Appendix~\ref{app:negative}, however, were
+scored on the test split before we tightened this discipline; they inform no headline claim and
+their conclusions are negative, but a paper arguing for evaluation rigor should disclose its own
+lapses rather than only its protocol. Subsequent exploratory work was moved to validation.
 
 \section{Conclusion}
 \label{sec:conclusion}
 
+A single top-$k$ recall number in metabolite-structure prediction hides two distinct things: an
+unstated choice of when two molecules count as the same, and the composition of three separate
+failure modes. We gave the first a protocol and a measurement --- the convention is a
+method-dependent confounder that reorders the leaderboard, on internal pairs and on an external
+literature-standard set --- and the second a decomposition with the bank's coverage ceiling as a
+reportable primitive, which localises our own instrument's dominant loss in selection and
+identifies that loss as extreme multi-label classification, where counting still beats learning.
+GRAIL does not win on recall, and we report that first. What we offer is a way to say precisely
+\emph{why} any rule-grounded method scores what it scores, and a protocol under which that score
+means the same thing across papers.
+
 \subsubsection*{Reproducibility statement}
-% Anonymized artifact link goes here (NOT the public GitHub URL -- deanonymizes).
+
+All numbers in this paper are regenerable from committed artifacts: the frozen predictions of every
+method, the leakage-audit report, and one JSON per experiment holding the values quoted in the
+text and tables. The evaluation harness, the matching quotients, the split construction and audit,
+and every analysis script named in the text are released together with the model checkpoints
+required to reproduce the GRAIL rows. An anonymized artifact archive accompanies this submission;
+the de-anonymized repository will be linked in the camera-ready version.
 
 \bibliographystyle{iclr2026_conference}
 \bibliography{refs}
