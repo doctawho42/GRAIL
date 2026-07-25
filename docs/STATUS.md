@@ -3,7 +3,7 @@
 A single place to see **what is built** and **where the leverage is next**. Paper-level,
 post-draft punch-list items (figures, remaining baselines, CI touch-ups) live in the manuscript's
 own *Draft TODO / open items* section — this document is the project- and research-level roll-up
-that sits above it. Last updated 2026-07-19.
+that sits above it. Last updated 2026-07-25. **Headline result: §0b (GRAIL vs MetaTox — tie, and strong complementarity).**
 
 ## 0. Post-external-review reframe (2026-07-17) — venue = D&B track
 
@@ -79,8 +79,9 @@ falsifier; three of my own hypotheses were tempered or killed by the numbers.
 `ablate_id_embedding`, and the earlier budget-matched / cross-method runs) scored on the **test** split
 (`test_predictions.csv`) — a soft breach of *touch-test-once*. Consequence: the final GRAIL-vs-MetaTox
 row is now slightly adaptively biased. Mitigation going forward: **test is frozen for that single final
-row**; any follow-up exploratory run (the prune-and-re-rank check) goes on **val** (val GRAIL
-predictions must be generated first — none cached yet).
+row** (spent on §0b); any follow-up exploratory run goes on **val**, and the val GRAIL predictions
+now exist (`artifacts/full5000_single/predictions/val_predictions.csv`, 994 substrates, produced by
+`dump_val_predictions.py` through the same code path as the test dump).
 
 Verdict per claim, at measured confidence:
 
@@ -145,9 +146,60 @@ sparsity is reducible — 76% of the **target** is train-dead-or-singleton, whic
 bank being prunable) and one structural insight (the bank's tail carries generalization capacity, so
 coverage really is the physical limit — consistent with §0's P1 diagnosis). Three of these outcomes
 falsified hypotheses I had argued for; that is the intended function of pre-registering the falsifier.
-Deadline levers remain **resource+cache** (done, `resource_cache_profile.json`) and
-**GRAIL-vs-MetaTox** (blocked on predictions). Scripts: `prune_and_rerank_val.py`, `rule_collapse.py`,
+Both deadline levers are now **done**: resource+cache (`resource_cache_profile.json`) and
+GRAIL-vs-MetaTox (§0b). Scripts: `prune_and_rerank_val.py`, `rule_collapse.py`,
 `rule_dedup_provable.py`, `rule_prune_probe.py`, `probe_rule_embeddings.py`, `ablate_id_embedding.py`.
+
+## 0b. GRAIL vs MetaTox (2026-07-25) — the grant number: a TIE, and strong COMPLEMENTARITY
+
+The #1 deliverable. MetaTox is the way2drug incumbent; this is the first head-to-head under one
+protocol (tautomer-InChIKey, TAME). Predictions supplied as an SDF; join verified before scoring —
+`ID_all = <structure_ordinal>_<metabolite_number>`, ordinal → our `SUB####` submission id, and
+**268 of 270 returned parents match our submitted structure exactly** by canonical SMILES (the 2
+exceptions differ only by MetaTox's internal aromaticity/charge perception), so the ordinal join is
+unshifted. Metabolites are ranked by `Values` (combined biotransformation × site probability, max
+over producing reactions). Artifacts: `results/grail_vs_metatox.json`,
+`results/metatox_complementarity.json`, `results/metatox_preds.json`; scripts `compare_metatox.py`,
+`metatox_complementarity.py`.
+
+**Result 1 — statistical tie at every k.** On the substrates MetaTox returned (n=270):
+
+| k | GRAIL | MetaTox | Δ (GRAIL−MetaTox) | 95% CI |
+|---|---|---|---|---|
+| 1 | **0.149** | 0.141 | +0.008 | [−0.050, +0.065] tie |
+| 5 | **0.299** | 0.293 | +0.006 | [−0.067, +0.079] tie |
+| 10 | 0.333 | **0.347** | −0.015 | [−0.092, +0.062] tie |
+| 15 | 0.340 | **0.363** | −0.023 | [−0.101, +0.054] tie |
+
+Counting the 21 substrates MetaTox returned nothing for as failures (n=291): GRAIL 0.334 vs MetaTox
+0.337, Δ −0.003 [−0.076, +0.070] — also a tie, with GRAIL ahead at k≤5 (+0.017@1, +0.023@5). GRAIL
+is more precise per output (precision@15 **0.101 vs 0.092**) with a smaller set (**8.5 vs 10.3**),
+and the crossover sits at k≈10 — GRAIL leads where a UI actually shows results.
+
+**Result 2 — the deployment-decisive finding: the two methods are strongly COMPLEMENTARY.** A tie
+invites the wrong question ("which replaces which?"); the overlap answers the right one. On the 248
+substrates where MetaTox produced metabolites:
+
+| | recall@15 |
+|---|---|
+| GRAIL alone | 0.317 |
+| MetaTox alone | 0.395 |
+| **union** | **0.611** |
+
+Adding GRAIL to MetaTox gains **+0.216 [+0.171, +0.263]**; adding MetaTox to GRAIL gains +0.294
+[+0.247, +0.343] — both far outside zero. Census of correctly-found metabolites: **95 only-GRAIL,
+170 only-MetaTox, 55 both — just 17.2% shared**, i.e. **83% of true hits are found by exactly one
+method**. So the positioning is *GRAIL alongside MetaTox*, not instead of it: an integration that
+raises the incumbent's recall by ~55% relative, rather than a replacement that must win.
+
+**Scope caveat, load-bearing.** This is MetaTox **layer 1 only, WITHOUT its SMIRKS-rule variant**
+(supplier's note; the SMIRKS version follows). That is not MetaTox's ceiling, and it bears directly
+on the headline: **if the SMIRKS rules overlap GRAIL's bank, complementarity should shrink.** That
+is the pre-named falsifier — re-run `compare_metatox.py` + `metatox_complementarity.py` unchanged on
+the new SDF when it arrives. Until then, +0.216 is an upper estimate of the integration gain.
+Secondary caveats: MetaTox returned nothing for 21/291 substrates and empty metabolite lists for a
+further 22; and the test split was peeked during exploration (§0a) — this is the single final row it
+was frozen for.
 
 ## 1. Where things stand
 
