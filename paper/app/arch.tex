@@ -1,155 +1,141 @@
-GRAIL predicts xenobiotic metabolite structures with a three-stage, rule-based-plus-learned
-pipeline. The first stage, the \textbf{generator}, is a learned multi-label rule selector that
-approximates $P(r \mid s)$ --- the probability that rule $r$ applies to substrate $s$ --- over a
-curated bank of \textbf{7,581 SMIRKS} rules; the default scorer is retrieval-based, combining
-cross-attention between substrate and rule graph embeddings, an embedding-similarity term, and an
-MLP head. The second stage, \textbf{RDKit rule application}, mechanically applies every rule the
-generator selects and enumerates the resulting candidate products, retaining provenance of which
-rule produced which candidate. The third stage is a \textbf{PU-trained structural filter}: a binary
-classifier scoring each (substrate, product) pair (neural architecture detailed below). Its
-training data are positive-unlabeled --- annotated true metabolites are the only positives, while
-rule-applicable products lacking a positive annotation are treated as \emph{unlabeled}, not as
-confirmed negatives, since absence of an annotation does not certify a transformation does not
-occur. The filter is accordingly trained in the logit domain (\texttt{return\_logits=True}) so a
-PULoss/nnPU surrogate operates on raw classifier outputs rather than post-sigmoid probabilities,
-and the generator itself down-weights unobserved-but-applicable rules rather than penalizing them
-as hard negatives. Featurization uses fixed-width graphs --- 16-dim single-molecule nodes, 18-dim
-edges --- and a 1024-bit Morgan fingerprint per molecule; the two learned stages, whose
-architectures are detailed in the two subsections below, build on this shared featurization. At
-deployment, \texttt{ModelWrapper.generate} runs all three stages and ranks the candidate set by
-\texttt{filter\_score} $\times$ \texttt{generator\_score}, combining the filter's
-pair-plausibility judgment with the generator's rule-selection confidence into a single ranking
-signal. Throughout this paper, unless stated otherwise, structure matching between predicted and
-reference metabolites uses \texttt{inchikey\_tautomer} as the default match mode. The three stages
-together form an interpretable instrument --- the selected rule, the enumerated product, and the
-filter's pair judgment are each inspectable --- and the contribution we claim is interpretable
-learned rule selection paired with a PU-aware structural filter, not recall supremacy over other
+GRAIL predicts xenobiotic metabolite structures in three stages. A learned generator scores every
+rule in a bank of $\nbank$ SMIRKS templates against the substrate, estimating the probability
+$P(r\mid s)$ that rule $r$ applies to substrate $s$. RDKit then applies each selected rule and
+enumerates the products, recording which rule produced which candidate. A structural filter scores
+each substrate--product pair, and the deployed system ranks candidates by the product of the
+filter and generator scores, combining a judgement about the plausibility of the pair with the
+generator's confidence in the rule that made it.
+
+Both learned stages train on positive-unlabelled data. Annotated metabolites are the only
+positives; rule-applicable products that carry no annotation are unlabelled rather than negative,
+because a missing annotation does not establish that a transformation does not occur. The filter
+is therefore trained on raw classifier outputs, so that a non-negative positive-unlabelled
+surrogate is not applied on top of a sigmoid, and the generator down-weights applicable but
+unobserved rules instead of penalising them as hard negatives.
+
+Both stages share a featurisation: molecular graphs with 16-dimensional nodes and 18-dimensional
+edges, and a 1024-bit Morgan fingerprint per molecule. Unless stated otherwise, matching between
+predicted and reference structures uses the tautomer-aware InChIKey convention throughout this
+paper.
+
+The three stages are separately inspectable --- the selected rule, the enumerated product, and
+the filter's judgement of the pair --- and interpretable rule selection paired with a
+positive-unlabelled filter is what the architecture contributes, not recall above other
 metabolite predictors.
 
-\subsection{Generator Architecture (Learned Rule Selector)}
+\subsection{The generator}
 
-The generator scores the entire rule bank against a substrate in one forward pass. A shared GATv2
-graph encoder --- three message-passing layers with node dimensions
-$16 \rightarrow 192 \rightarrow 256 \rightarrow 128$, each layer
-BatchNorm$\rightarrow$ReLU$\rightarrow$dropout(0.1) and a mean-pooled readout --- embeds the
-substrate's single-molecule graph into a 128-dim vector; a parallel MLP embeds its 1024-bit Morgan
-fingerprint and a gated fusion (GELU MLPs, LayerNorm) combines the two into the substrate
-representation. Each SMIRKS rule is embedded independently by a rule-graph encoder of the same
-GATv2 family (hidden dimensions $128 \rightarrow 192 \rightarrow 128$) together with a
-six-dimensional global rule-feature branch, so the full 7,581-rule bank is re-encoded on every
-forward pass --- the dominant compute cost, and the reason inference scales with bank size. The
-per-rule logit is a sum of four learned terms: (i) a \emph{cross-attention interaction} in which
-the rule embedding queries the substrate's atom states (single-head attention over node
-keys/values) to form a rule-specific local context, which is concatenated with the pooled
-embeddings and passed through a three-layer MLP; (ii) a \emph{global} cosine similarity between the
-substrate and rule embeddings; (iii) a \emph{local} cosine similarity between the attention context
-and the rule; and (iv) an SMARTS-\emph{match} term --- each scaled by a learned scalar. To this
-logit the model adds a per-rule bias and a frequency-prior term (weight
-\texttt{prior\_strength = 0.4}) --- the log-odds that a rule yields a true metabolite, estimated
-from its TRAIN statistics --- then subtracts a large penalty (7.5) for rules whose SMARTS does not
-match the substrate --- an applicability mask that zeroes out inapplicable rules --- before a
-sigmoid yields $P(r \mid s)$. When a rule fires at several sites, its per-firing probabilities are
-combined by noisy-OR. Training is multi-label rule classification with a margin-ranking auxiliary
-(rank weight 0.25, margin 0.45); critically, rules that are SMARTS-applicable but not annotated as
-productive are \emph{down-weighted} (weight 0.5), not treated as hard negatives, reflecting the
-positive-unlabeled nature of the labels. Optimization is Adam (lr 1e-4, $\leq$20 epochs, early
-stopping).
+The generator scores the entire bank in one forward pass. A GATv2 encoder with three
+message-passing layers, node dimensions $16\to192\to256\to128$, batch normalisation, ReLU and
+dropout of 0.1 at each layer, and a mean-pooled readout, embeds the substrate graph into 128
+dimensions. A parallel multilayer perceptron embeds its Morgan fingerprint, and a gated fusion
+combines the two into the substrate representation. Each rule is embedded independently by a
+rule-graph encoder of the same family, with hidden dimensions $128\to192\to128$, alongside a
+six-dimensional branch of global rule features. The full bank is re-encoded on every forward pass,
+which dominates the compute cost and is why inference time scales with bank size.
 
-\subsection{Filter Architecture (Structural Plausibility)}
+The logit for a rule sums four learned terms, each scaled by its own learned scalar. A
+cross-attention term lets the rule embedding query the substrate's atom states through
+single-head attention over node keys and values, producing a rule-specific local context that is
+concatenated with the pooled embeddings and passed through a three-layer perceptron. A global term
+is the cosine similarity between the substrate and rule embeddings, and a local term the cosine
+similarity between the attention context and the rule. A fourth term reflects whether the rule's
+SMARTS pattern matches. To this sum the model adds a per-rule bias and a frequency-prior term at
+weight 0.4, the log-odds that the rule yields a true metabolite as estimated from training
+statistics, then subtracts a penalty of 7.5 for rules whose SMARTS does not match, which
+effectively masks inapplicable rules before the sigmoid. Where a rule fires at several sites, the
+per-firing probabilities are combined by noisy-OR.
 
-The deployed filter --- the checkpoint behind every GRAIL number in this paper --- is the
-\emph{single-encoder} variant: it embeds the substrate and the candidate product
-\textbf{independently}, each with its own three-layer GATv2 encoder over the molecule's 16-dim
-single-graph ($16 \rightarrow 192 \rightarrow 256 \rightarrow 128$, mean-pooled), then concatenates
-the two 128-dim graph embeddings with both molecules' 1024-bit Morgan fingerprints and maps the
-resulting 2304-dim vector through a three-layer MLP ($\rightarrow 128 \rightarrow 64 \rightarrow 1$,
-ReLU, dropout 0.1) to a single logit. The codebase also implements a \emph{pair} variant --- the
-configuration default --- that instead encodes one \textbf{merged} substrate--product graph whose
-18-dim nodes are joined by cross-edges placed from an element-aware maximum-common-substructure
-(MCS) atom correspondence, rather than sorted or arbitrary indices, preserving chemically meaningful
-atom mappings across the reaction; we deploy the single-encoder filter because --- as we show below
---- it is both more accurate and far cheaper than the MCS pair variant, which is implemented but
-dominated. Both variants train on \textbf{positive-unlabeled} data --- annotated metabolites are
-the only positives, while rule-applicable-but-unannotated products are treated as \emph{unlabeled},
-not confirmed negatives, since a missing annotation does not certify a transformation does not
-occur --- using a non-negative PU (nnPU) risk estimator with class-prior 0.75, evaluated in the
-\textbf{logit domain} (\texttt{return\_logits=True}) so the surrogate operates on raw classifier
-outputs rather than a doubly-applied sigmoid. Optimization is Adam (lr 1e-4, $\leq$20 epochs, early
-stopping, patience 7).
+Training is multi-label rule classification with a margin-ranking auxiliary at weight 0.25 and
+margin 0.45. Rules that match the substrate but carry no annotation are down-weighted by half
+rather than treated as negatives, which is what makes the objective positive-unlabelled.
+Optimisation uses Adam at a learning rate of $10^{-4}$ for at most 20 epochs with early stopping.
 
-\subsection{Single vs.\ Pair Filter: The Deployment Choice, Measured}
+\subsection{The filter}
 
-Rather than assume the single-encoder filter is the right default, we trained both variants on an
-identical 800-substrate subset (same negatives, seed, and optimizer; only the filter \texttt{mode}
-differs) and evaluated them on the full clean test split with the same generator and candidate
-pool. The single-encoder filter is the better model: it beats the MCS pair filter on paired
-recall@15 (single 0.366 vs pair 0.357; pair $-$ single \textbf{$-0.0090$, 95\% CI
-$[-0.017, -0.001]$}, paired bootstrap, $n=1170$) and by a wider margin at recall@5 (0.282 vs
-0.259). It is also roughly $20\times$ cheaper: the pair filter's per-pair MCS featurization makes
-full-data training $\approx 14$h (against $\sim 40$ min for single) and imposes an MCS at every
-inference candidate. Both accuracy and cost therefore favour independent encoders --- the MCS pair
-filter is a \emph{dominated}, not merely unused, alternative
-(\texttt{results/filter\_compare\_matched\_sub800.json}; this is a matched-subset comparison, so
-both absolute recalls sit below the full-data deployed filter and only the paired delta is the
-claim).
+The deployed filter, which is the checkpoint behind every GRAIL number reported here, embeds the
+substrate and the candidate product independently. Each passes through its own three-layer GATv2
+encoder over the molecule's graph, with dimensions $16\to192\to256\to128$ and a mean-pooled
+readout. The two 128-dimensional embeddings are concatenated with both Morgan fingerprints, and
+the resulting 2304-dimensional vector is mapped through a three-layer perceptron
+($\to128\to64\to1$, ReLU, dropout 0.1) to a single logit.
 
-\subsection{Rule-Bank Construction}
+An alternative variant encodes one merged substrate--product graph, whose 18-dimensional nodes
+are joined by cross-edges placed according to an element-aware maximum-common-substructure
+correspondence between atoms rather than by index order, so that chemically meaningful atom
+mappings are preserved across the reaction. We measured the two rather than assuming which should
+be the default, and report the comparison below.
 
-Unlike the hand-curated expert systems GRAIL is benchmarked against (SyGMa, Meteor), its SMIRKS
-rule bank is built by an automated, self-validated mining procedure over annotated
-substrate$\rightarrow$metabolite pairs rather than by manual reaction-rule authoring. The
-bank-construction pipeline (\texttt{scripts/mine\_rules.py}, \texttt{process\_pair}) reads only the
-clean, molecule-disjoint \textbf{TRAIN} split --- never validation or test --- and, per annotated
-pair: (i) locates a ring-aware maximum-common-substructure anchor (RDKit FMCS with
-\texttt{ringMatchesRingOnly}, \texttt{completeRingsOnly}, \texttt{bondCompare=CompareAny},
-\texttt{atomCompare=CompareElements}), requiring the MCS to cover at least 40\% of the smaller
-molecule's atoms; (ii) derives a reaction center from that anchor (\texttt{find\_reaction\_center})
-by flagging matched atoms whose element, formal charge, H-count, aromaticity, or degree changed,
-atom pairs whose connecting bond order changed, and any leaving/entering atoms together with their
-matched neighbours --- trying multiple substrate/product match combinations and keeping the one
-that minimises the resulting center size; (iii) expands the center by a 1-bond radius
-(\texttt{expand\_center}) to capture the immediate reactive environment; (iv) atom-maps the
-expanded substrate/product fragments by their MCS positional correspondence into a candidate
-SMIRKS template (\texttt{build\_smirks}); (v) \textbf{self-tests} the template --- a rule survives
-only if applying it to its own source substrate regenerates, after canonicalization, the annotated
-source product (\texttt{self\_test}), otherwise it is discarded; and (vi) passes the surviving,
-deduplicated templates through a \textbf{selectivity filter} (\texttt{filter\_rule\_candidates})
-that rejects templates that are unselective (mean more than 200 distinct products across a
-50-substrate sample) or simultaneously too general and too prolific (applicable to more than 90\%
-of sampled substrates while still producing more than 50 products on average). The codebase
-implements a second atom-mapping backend alongside the MCS-positional correspondence above:
-\texttt{combine\_reaction} in \texttt{grail\_metabolism/utils/reaction\_mapper.py} detects a
-reaction center via RASCAL MCES (\texttt{rdRascalMCES.FindMCES}, falling back to RDKit FMCS) plus a
-1-bond environment, then emits a mapped SMIRKS using \textbf{RXNMapper}, a neural
-attention-based atom-mapper (\texttt{get\_attention\_guided\_atom\_maps}) --- so both a neural and
-a rule-based atom-mapping route to SMIRKS construction are available in the codebase. Because
-mining reads exclusively from the clean TRAIN split, no test-split metabolite can leak into a mined
-rule, so the rule-bank coverage ceiling reported as a held-out quantity (the coverage-ceiling
-section, 0.735) stays honest. The deployed bank,
-\texttt{grail\_metabolism/resources/extended\_smirks.txt} (\textbf{7,581} SMIRKS), is the
-deduplicated union of four prior curated banks --- \texttt{smirks.txt} (473),
-\texttt{merged\_smirks.txt} (656), \texttt{compressed\_rules.smarts} (500), and
-\texttt{notebooks\_rules.txt} (1,051) --- with the newly mined, self-tested, selectivity-filtered
-templates. Mining scale and support are heavy-tailed: the MCS-positional miner alone extracts
-\textbf{5,856} unique, self-tested SMIRKS templates from the clean TRAIN positives
-(\texttt{results/mined\_rule\_catalog\_v2.json}), of which \textbf{4,274 of 5,856 (73\%)} are
-supported by a single training pair and only \textbf{457} by five or more (the single
-most-supported template covers \textbf{1,531} pairs) --- deduplicated together with the four prior
-curated banks above, this reaches the deployed \textbf{7,581}-rule bank, so the bank is dominated
-by highly specific, near-single-example templates rather than broad general reactions. Re-running
-the miner independently over the same clean TRAIN split re-derives templates that are already all
-present in the deployed bank (\textbf{5,856/5,856; 0 new};
-\texttt{grail\_metabolism/resources/mined\_only\_v2.txt} against \texttt{extended\_smirks.txt}) ---
-the mining procedure is deterministic and, on this TRAIN corpus, source-saturated: it surfaces no
-additional coverage beyond what the bank already contains, so the rule-bank coverage ceiling
-(\textbf{0.735}, the coverage-ceiling section) is bounded by the diversity of the training-reaction
-\emph{source}, not by mining incompleteness. Expanding coverage would therefore require new
-reaction corpora or more general templates --- which the selectivity filter above deliberately
-resists --- rather than further re-mining of the same data, consistent with the finding, reported
-in the selection-breadth ablation section, that GRAIL's residual gap to SyGMa is a compound of
-over-aggressive rule-selection breadth and a residual rule-set coverage limit --- not a ranking
-deficiency. The selectivity filter is a design-time counterpart to the
-selection$\leftrightarrow$precision trade-off quantified empirically in the selection-breadth
-ablation section: rejecting over-general templates at construction time is the same lever as
-narrowing \texttt{top\_k} at inference time, applied before deployment rather than at the deployed
-operating point.
+Both variants use a non-negative positive-unlabelled risk estimator with a class prior of 0.75,
+evaluated on logits. Optimisation uses Adam at a learning rate of $10^{-4}$ for at most 20 epochs
+with early stopping at a patience of 7.
+
+\subsection{Choosing between the two filters}
+
+Both variants were trained on an identical 800-substrate subset, with the same negatives, seed and
+optimiser, differing only in which encoder they used, and evaluated on the full clean test split
+with the same generator and candidate pool.
+
+Independent encoders win on accuracy. Recall@15 is 0.366 for the independent variant against 0.357
+for the merged-graph variant, a paired difference of $-0.0090$ with a 95\% confidence interval of
+$[-0.017,-0.001]$ over $n=\ntest$; at recall@5 the margin widens, 0.282 against 0.259.
+
+They also win on cost by roughly twenty-fold. Computing a maximum common substructure for every
+pair makes full-data training take about 14 hours against roughly 40 minutes, and imposes the same
+computation at every candidate at inference. Accuracy and cost point the same way, so the
+merged-graph variant is not merely unused but dominated.
+
+\subsection{How the rule bank was built}
+
+The expert systems GRAIL is compared against, such as SyGMa and Meteor, use hand-authored reaction
+rules. GRAIL's bank is mined automatically from annotated substrate--metabolite pairs, with each
+candidate template validated against the pair that produced it.
+
+Mining reads only the clean, molecule-disjoint training split. For each annotated pair it first
+locates a ring-aware maximum common substructure as an anchor, using RDKit's FMCS with ring atoms
+matched only to ring atoms, rings completed, any bond order allowed to match, and atoms compared
+by element; the anchor must cover at least 40 per cent of the smaller molecule's atoms. From that
+anchor it derives a reaction centre. Three kinds of atom are flagged: matched atoms whose element,
+formal charge, hydrogen count, aromaticity or degree changed; atom pairs whose connecting bond
+order changed; and leaving or entering atoms together with their matched neighbours. Several
+substrate--product match combinations are tried, and the one giving the smallest centre is kept. The centre is then
+expanded by one bond to capture its immediate reactive environment, and the expanded fragments are
+atom-mapped by their positional correspondence in the maximum common substructure into a candidate
+SMIRKS template.
+
+Two gates follow. A template survives only if applying it to its own source substrate regenerates
+the annotated product after canonicalisation. The surviving, deduplicated templates then pass a
+selectivity filter that rejects templates producing more than 200 distinct products on average
+across a 50-substrate sample, and templates that are both very general and very prolific,
+applicable to more than 90 per cent of sampled substrates while still averaging more than 50
+products.
+
+A second atom-mapping route is also implemented: it detects the reaction centre with RASCAL MCES,
+falling back to FMCS, expands by one bond as above, and emits a mapped SMIRKS using RXNMapper, a
+neural attention-based atom mapper. Both a rule-based and a neural mapping route are therefore
+available.
+
+Because mining reads the training split alone, no test metabolite can enter a mined rule, so the
+coverage ceiling reported in the main text remains a held-out quantity.
+
+\subsection{What the bank contains}
+
+The deployed bank of $\nbank$ templates is the deduplicated union of four earlier curated banks,
+of 473, 656, 500 and 1{,}051 rules, together with the newly mined templates.
+
+Support across mined templates is heavily skewed. The positional miner alone extracts 5{,}856
+unique self-tested templates from the training positives. Of these, 4{,}274 --- 73 per cent ---
+rest on a single training pair, and only 457 on five or more; the single best-supported template
+covers 1{,}531 pairs. The bank is therefore dominated by highly specific, near-single-example
+templates rather than by broad general reactions.
+
+Re-running the miner independently over the same training split re-derives templates that are all
+already in the bank: 5{,}856 of 5{,}856, none new. Mining is deterministic and, on this corpus,
+saturated at its source. The coverage ceiling of $\ceiling$ is bounded by the diversity of the
+training reactions, not by incomplete mining, so extending coverage requires new reaction corpora
+or more general templates rather than further mining of the same data.
+
+The selectivity filter is the construction-time counterpart of the breadth--precision trade
+measured in Appendix~\ref{app:props}. Rejecting over-general templates when the bank is built and
+narrowing the number of rules applied at inference act on the same quantity, one before
+deployment and one at the operating point.

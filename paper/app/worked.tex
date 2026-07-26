@@ -1,1 +1,16 @@
-\textbf{Worked example.} The quotient dependence is not hypothetical. Consider a predicted set \texttt{\{D-alanine, acetone (enol tautomer)\}} scored against annotated references \texttt{\{L-alanine, acetone (keto tautomer)\}}. Under strict \texttt{inchikey}, both predictions miss: the alanine pair differs at a stereocenter, and the acetone pair differs only by a keto/enol tautomerization outside the subset plain InChI normalizes, so it also misses under \texttt{inchi\_no\_stereo}. \texttt{inchikey\_tautomer} standardization additionally strips stereochemistry (canonical SMILES generated with \texttt{isomericSmiles=False}), so tautomer-canonicalizing both sides collapses both gaps at once: the acetone keto/enol pair becomes a hit \emph{and} the D-/L-alanine stereocenter pair becomes a hit, scoring full recall on this example. The same fixed predictions can therefore score as a near-total miss or a full hit purely by changing the match quotient, with no change to the underlying chemistry --- the phenomenon quantified across methods and the shared external set in the matching-quotient sensitivity analysis.
+A single pair of predictions makes the dependence on the matching convention concrete.
+
+Suppose a method predicts D-alanine and the enol tautomer of acetone, and the references are
+L-alanine and the keto tautomer of acetone. Under strict \textsc{inchikey} matching both
+predictions miss: the alanine pair differs at a stereocentre, and the acetone pair differs by a
+keto--enol tautomerisation, which lies outside what plain InChI normalises, so it misses under
+stereo-blind matching as well.
+
+Tautomer-aware matching canonicalises tautomers on both sides and generates its canonical SMILES
+without stereochemistry, so it closes both gaps at once. The acetone pair becomes a hit because
+the tautomers collapse, and the alanine pair becomes a hit because the stereocentre is no longer
+distinguished. The same predictions score full recall.
+
+Nothing about the chemistry changed between the two readings. The same fixed predictions score as
+a near-total miss or as a perfect result depending only on which convention is applied --- the
+effect the main text quantifies across five methods and an external set.

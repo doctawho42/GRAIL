@@ -1,33 +1,93 @@
-\subsection{No recall win, and precision as a pessimistic lower bound}
+\subsection{GRAIL does not win on recall}
 
-We state these plainly rather than let them surface in review. First, \textbf{no recall win}: GRAIL does not win on recall anywhere in this paper. It loses to SyGMa by a certified, significant margin (the certification section: paired $\Delta = -0.242$, 95\% CI $[-0.271, -0.212]$; McNemar $p \approx 1.7\times10^{-44}$) and to the learned transformer baselines on the shared $n=150$ subset (MetaPredictor 0.585, MetaTrans 0.561, both above GRAIL's 0.365 under the same tautomer protocol, the match-sensitivity section). Nothing in this paper should be read as a state-of-the-art claim; the contribution is the ceiling, the decomposition, and the protocol, with GRAIL as one honestly diagnosed row.
+GRAIL loses on recall everywhere in this paper. Against SyGMa the margin is significant and
+certified: a paired difference of $-0.242$, 95\% confidence interval $[-0.271,-0.212]$, with
+McNemar's test at $p\approx1.7\times10^{-44}$. It also loses to the learned transformer baselines
+on the shared subset of $\nshared$ substrates, where MetaPredictor reaches 0.585 and MetaTrans
+0.561 against GRAIL's 0.365 under the same tautomer-aware protocol. Nothing here should be read
+as a claim to the state of the art. What the paper contributes is the coverage ceiling, the
+decomposition, and the matching protocol; GRAIL is one diagnosed row within them.
 
-Second, \textbf{precision is a pessimistic lower bound} throughout: because negatives are rule-applicable, non-annotated products rather than confirmed non-metabolites (the data-labeling section), an unannotated true metabolite is scored as a false positive, so every precision number in this paper understates the pipeline's true precision by an unknown, non-annotation-corrected amount --- we lead with recall and \texttt{mean\_output\_size} for this reason and do not report precision as a headline metric.
+\subsection{Precision understates performance}
 
-\subsection{Single-checkpoint headline and a mixed-sample-size comparison}
+Every precision number in this paper is a lower bound. Negatives are rule-applicable products
+that carry no annotation rather than confirmed non-metabolites, so an unannotated true metabolite
+counts as a false positive. The size of that understatement is unknown and uncorrected. This is
+why we lead with recall and with the mean size of the output set, and do not report precision as
+a headline quantity.
 
-Third, the deployed headline (recall@15 $= 0.261$ micro / $0.330$ macro, the headline-results and certification sections) is a \textbf{single checkpoint}, not a seed-averaged estimate; the honest-anchor certification (the certification section) bounds \emph{evaluation} variance --- resampling and discordance over a fixed model --- not \emph{training} variance across independently seeded runs, and a three-seed retraining confirms the headline is seed-stable (macro $0.344 \pm 0.010$, micro $0.269 \pm 0.006$; the certification section).
+\subsection{The headline is one checkpoint}
 
-Fourth, the five-method, five-protocol match-sensitivity comparison (the match-sensitivity section, Table 3) mixes sample sizes: the three tier-2 comparators (BioTransformer, MetaPredictor, MetaTrans) are scored only on the \textbf{$n=150$} shared subset for which frozen third-party predictions exist, while GRAIL and SyGMa's headline numbers elsewhere in the paper are reported on the full \textbf{$n\approx1170$} clean test split; within Table 3 itself GRAIL and SyGMa are re-scored on the matching $n=150$ subset so the five columns are paired on identical substrates. MetaPredictor has since been re-scored on the full test (recall@15 $0.568$, $\approx$ SyGMa, \texttt{results/metapredictor\_1170.json}), confirming its $n=150$ value is representative and leaving only BioTransformer and MetaTrans on $n=150$; a full single-$n$, five-method rerun remains future work (BioTransformer's exact $n=150$ configuration is unscripted and MetaTrans's inference pipeline is no longer reproducible in-tree).
+The deployed headline, recall@15 of $\realised$ micro and $\grailmacro$ macro, comes from a single
+checkpoint rather than an average over seeds. The certification bounds variance in the evaluation
+--- resampling and discordance over a fixed model --- not variance in training across independently
+seeded runs. Retraining on three seeds confirms the headline is stable, at $0.344\pm0.010$ macro
+and $0.269\pm0.006$ micro, but the headline itself remains a single-checkpoint number.
 
-\subsection{External validity, an unmeasured identifiability assumption, and single-step scope}
+\subsection{The five-method comparison mixes sample sizes}
 
-Fifth, the external-validity ceiling (the external-validity section) is measured on only \textbf{37} GLORYx parent substrates, so its 95\% CI is wide by design ($[0.531, 0.733]$) and the composition-effect regression that partially explains the internal--external gap is fit on the same small external population --- we frame it as suggestive, not as a transferable law.
+The three additional comparators --- BioTransformer, MetaPredictor and MetaTrans --- are scored
+only on the shared subset of $\nshared$ substrates for which frozen third-party predictions exist,
+whereas GRAIL's and SyGMa's headline numbers elsewhere are reported on the full clean test split of
+$\ntest$. Within the comparison table itself all five methods are re-scored on the same $\nshared$
+substrates, so the columns are paired on identical inputs.
 
-Sixth, Proposition 2's explanatory model rests on an \textbf{unmeasured assumption}: the propensity model $e(r) \propto \pi(r)$ (labeling probability proportional to the marginal rule-firing rate) is asserted, not estimated from data, so the identifiability argument for why the learned selector underperforms a frequency prior is consistent with, but not proof of, the stated mechanism (the propositions-and-mechanism section).
+MetaPredictor has since been re-scored on the full test split, at recall@15 of 0.568, close to
+SyGMa, which indicates its subset value is representative. BioTransformer and MetaTrans remain on
+the subset. A full five-method rerun at a single sample size is future work: BioTransformer's
+subset configuration was not scripted, and MetaTrans's inference pipeline no longer reproduces
+in-tree.
 
-Finally, Proposition 3's paradigm bound is \textbf{single-step conditional}: depth-2 rule application recovers only $+0.012$ ceiling at $8.5\times$ candidate cost (the propositions-and-mechanism section), so multi-step and out-of-bank chemistry remain an open, unresolved coverage lever rather than a closed question --- the bound constrains the single-step paradigm, not the metabolite-prediction problem in general.
+\subsection{External validity rests on 37 substrates}
 
-\subsection{Factorized-generator intervention}
+The external ceiling is measured on 37 GLORYx parent substrates, so its 95\% interval is wide by
+construction, at $[0.531,0.733]$. The regression that partially explains the gap between internal
+and external coverage is fit on the same small external population. We report it as suggestive
+rather than as a law that transfers.
 
-We also built and evaluated a factorized-generator redesign of Stage-1 as a direct intervention (the propositions-and-mechanism section); it does \textbf{not} beat the deployed pipeline as a generator (coverage-bound at recall@15 $0.256 <$ deployed $0.365$) --- its only deployable value is a modest, paired-significant re-ranking gain ($+0.0165$, 95\% CI $[0.006, 0.027]$, full clean test, $n=1170$) --- and closing the larger gap to SyGMa still requires a broader rule bank, out of scope here, consistent with the coverage-binding finding.
+\subsection{One assumption behind Proposition 2 is not measured}
 
-\subsection{Scope and generality: a cross-domain protocol probe}
+Proposition 2's explanation assumes that the probability of a rule being labelled is proportional
+to its marginal firing rate. That propensity model is asserted rather than estimated from data.
+The identifiability argument for why a learned selector underperforms a frequency prior is
+therefore consistent with the stated mechanism, not proof of it.
 
-Finally, a \textbf{scope-and-generality} limitation that doubles as this paper's clearest future direction: our rank-flip result (the match-sensitivity section) is established \textbf{within metabolite prediction only}. Whether match-protocol choice reorders leaderboards \emph{across} molecular-ML tasks --- retrosynthesis, molecular generation --- is an open, testable hypothesis, and we name its falsifying run explicitly: re-score $\geq 2$ comparable published models' \emph{frozen} predictions in another domain under the same five match conventions; if the method ordering does not move (interaction CI covering zero), the generality claim fails.
+\subsection{Proposition 3 bounds single-step application only}
 
-A clean instance requires $\geq 2$ models of \textbf{comparable strength but differing match-sensitivity} whose raw ranked predictions are public; we found they are not (only same-family or strength-mismatched checkpoints are readily runnable), so the multi-model cross-domain rank-flip is deferred rather than forced.
+Depth-2 application recovers 0.012 of ceiling at 8.5 times the candidate cost, so the bound
+constrains single-step rule application rather than metabolite prediction in general. Multi-step
+chemistry and chemistry outside the bank remain open sources of coverage.
 
-A first single-model probe (ReactionT5v2 on the USPTO-50k test, $n=200$; \texttt{results/xdomain\_retro\_protocol.json}) in fact suggests the effect is \textbf{domain-dependent, not universal}: the \emph{same} predictions move only \textbf{$\sim 0.02$} in top-1 accuracy across \{canonical, stereo-stripped, InChIKey, tautomer\} matching ($0.695$--$0.715$) --- roughly an order of magnitude below the metabolism interaction (the match-sensitivity section) --- plausibly because retrosynthesis references are canonical-clean small molecules, whereas the metabolism rule engine emits tautomer/stereo variants of its references.
+\subsection{The factorised generator does not replace the deployed one}
 
-So the honest cross-domain reading is \textbf{not} that protocol choice universally reorders leaderboards, but that its magnitude is a function of how much a generator's outputs diverge tautomerically/stereochemically from the references. Establishing whether protocol choice \emph{reorders} (not merely shifts) leaderboards in a domain with comparable tautomer ambiguity remains the named open test, and needs only public multi-model predictions in a re-scorable form --- which do not yet exist.
+The factorised redesign of the generator is coverage-bound, reaching recall@15 of 0.256 against
+the deployed 0.365. Its only deployable value is a modest re-ranking gain of $+0.0165$, 95\%
+confidence interval $[0.006,0.027]$, on the full clean test. Closing the larger gap to SyGMa still
+requires a broader rule bank, which is outside the scope of this paper.
+
+\subsection{The rank-flip result is established within one domain}
+
+The reordering under different matching conventions is demonstrated for metabolite prediction. Whether
+matching conventions reorder leaderboards in other molecular-machine-learning tasks, such as
+retrosynthesis or molecular generation, is an open question, and the run that would settle it is
+specific: re-score the frozen predictions of at least two comparable published models in another
+domain under the same five conventions. If the ordering does not move, with an interaction interval
+covering zero, the broader claim fails.
+
+That run needs at least two models of comparable strength whose match sensitivity differs and
+whose raw ranked predictions are public. Such pairs do not currently exist in a re-scorable form:
+the checkpoints that are readily runnable are either from the same family or badly mismatched in
+strength. We therefore defer the comparison rather than force it.
+
+A single-model measurement suggests the effect is domain-dependent. Scoring ReactionT5v2 on 200
+substrates from the USPTO-50k test set, the same predictions move only about 0.02 in top-1
+accuracy across canonical, stereo-stripped, InChIKey and tautomer matching, between 0.695 and
+0.715 --- roughly an order of magnitude less than the interaction we measure in metabolism. A
+plausible reason is that retrosynthesis references are canonical, clean small molecules, whereas a
+metabolism rule engine emits tautomer and stereochemical variants of its references.
+
+The reading we take from this is not that matching conventions reorder leaderboards everywhere,
+but that the size of the effect depends on how far a generator's outputs diverge tautomerically
+and stereochemically from the references it is scored against. Whether the convention reorders,
+rather than merely shifts, results in another domain with comparable tautomer ambiguity remains
+the open test, and it needs only public multi-model predictions in a re-scorable form.

@@ -1,14 +1,24 @@
-\paragraph{Budget-matched view.} recall@15 is not a budget-fair comparison: SyGMa reaches 0.554 by emitting $\sim$74 predictions per substrate, whereas GRAIL reaches 0.365 at $\sim$8.7. Normalising by output --- precision, recall per prediction --- reorders the board: SyGMa's precision is \textbf{0.029}, roughly 4$\times$ below the low-output methods (GRAIL \textbf{0.109}, BioTransformer 0.127, MetaTrans 0.122, MetaPredictor 0.116). Precision is a pessimistic lower bound under incomplete annotation (as noted in the Methods section), but the $\sim$7$\times$ output-volume gap it reflects is real. At a matched small budget (recall@5) the recall spread also compresses (SyGMa 0.465 $\approx$ MetaPredictor 0.470; GRAIL 0.321). This corroborates the independent SyGMa-overproduction finding of \citet{Boyce_2022} (as discussed in the related-work section): SyGMa's coverage is bought with a large prediction volume, which the budget-matched view controls for.
+Recall at a fixed cut-off is not a comparison at matched cost. SyGMa reaches 0.554 by emitting
+about 74 predictions per substrate; GRAIL reaches 0.365 at about 8.7. Normalising by output size
+reorders the table: SyGMa's precision is 0.029, roughly four times below the low-output methods
+--- GRAIL at 0.109, BioTransformer at 0.127, MetaTrans at 0.122 and MetaPredictor at 0.116.
+Precision understates all of these under incomplete annotation, but the sevenfold difference in
+output volume it reflects is real. At a smaller matched budget the recall spread compresses as
+well: at $k=5$, SyGMa's 0.465 is close to MetaPredictor's 0.470, with GRAIL at 0.321. This
+matches the independent finding of \citet{Boyce_2022} that SyGMa buys coverage with prediction
+volume.
 
 \begin{table}[h]
 \centering
-\caption{Budget-matched leaderboard, tautomer-InChIKey (\texttt{results/budget\_matched\_leaderboard.json}): recall at matched cut-offs, precision (recall per prediction), and mean output size. Same populations as Table 3 --- GRAIL and SyGMa on $n \approx 1170$, the tier-2 methods on the $n=150$ shared subset.}
+\caption{Recall at matched cut-offs, precision, and mean output size under tautomer-aware
+matching. Populations follow Table~\ref{tab:matchsens}: GRAIL and SyGMa on $n=\ntest$, the
+remaining methods on the shared subset of $\nshared$.}
 \label{tab:budget-matched-leaderboard}
 \begin{tabular}{lccccc}
 \toprule
 Method & Recall@5 & Recall@10 & Recall@15 & Precision & Mean output \\
 \midrule
-\textbf{GRAIL} & 0.321 & 0.356 & 0.365 & 0.109 & 8.7 \\
+GRAIL & 0.321 & 0.356 & 0.365 & 0.109 & 8.7 \\
 SyGMa & 0.465 & 0.533 & 0.554 & 0.029 & 74.2 \\
 BioTransformer & 0.315 & 0.396 & 0.444 & 0.127 & 10.8 \\
 MetaPredictor & 0.470 & 0.575 & 0.585 & 0.116 & 11.2 \\
@@ -17,4 +27,27 @@ MetaTrans & 0.424 & 0.533 & 0.561 & 0.122 & 12.7 \\
 \end{tabular}
 \end{table}
 
-\paragraph{Budget-matched frontier and cross-method decomposition (we measure our own instrument first).} Table~\ref{tab:budget-matched-leaderboard}'s cut-offs already place GRAIL below SyGMa at every $k$; a fine-grained frontier confirms this is not an artifact of the $k=15$ operating point. Ranking each method's own candidate pool and reading recall@$k$ for $k = 1, \ldots, 64$ on the shared substrates (\texttt{results/budget\_matched\_frontier.json}, tautomer), \textbf{SyGMa dominates GRAIL at every budget with no crossover} --- from $k=1$ (\textbf{0.233 vs 0.127}) through $k=64$ (\textbf{0.520 vs 0.410}). GRAIL does \emph{not} win at a matched output budget; its learned selector/ranker is the binding weakness (Proposition 1), which the budget-matched view isolates from the output-volume confound. The mechanism is visible when recall is decomposed \textbf{per method}, not only for GRAIL (\texttt{results/cross\_method\_decomposition.json}, shared $n=150$): SyGMa applies its whole applicable rule set and emits it, so its \textbf{selection retention is 1.0 by construction} --- it has no selection stage (precision 0.076 at $\sim$64 outputs) and its recall is simply its bank's realised coverage, \textbf{0.520}. GRAIL's rule bank in fact covers \textbf{more} of these transformations --- bank ceiling \textbf{0.701} on this subset (cf. the 0.735 full-test ceiling, the coverage-ceiling section) $>$ SyGMa's realised 0.520 --- yet GRAIL realises only recall@15 0.318 here because its selection + ranking retains just \textbf{0.454} of that reachable coverage. The gap to SyGMa is therefore not a worse rule bank; it is a selection tax that recall charges only to a method that \emph{has} a selection stage --- a tax GRAIL pays and loses. We report this because a benchmark whose authors run their own pipeline through their own instrument, and find it loses at every budget, is more trustworthy than one whose method wins.
+\subsection{The frontier across budgets}
+
+The cut-offs in Table~\ref{tab:budget-matched-leaderboard} already place GRAIL below SyGMa at
+every $k$ reported. A finer sweep confirms that this is not an artefact of the operating point.
+Ranking each method's own candidate pool and reading recall at every budget from $k=1$ to $k=64$
+on the shared substrates, SyGMa dominates GRAIL throughout with no crossover, from 0.233 against
+0.127 at $k=1$ to 0.520 against 0.410 at $k=64$. GRAIL does not win at a matched output budget,
+and its selector and ranker are the binding weakness.
+
+\subsection{Decomposing both methods}
+
+Applying the decomposition to each method, rather than to GRAIL alone, shows the mechanism. SyGMa
+has no selection stage: it applies its whole applicable rule set and emits the result, so its
+selection factor is 1 by construction, at precision 0.076 and about 64 outputs per substrate. Its
+recall is therefore just the coverage its bank realises, 0.520.
+
+GRAIL's bank in fact reaches more of these transformations than SyGMa emits: its ceiling on this
+subset is 0.701, against a full-test ceiling of $\ceiling$ and SyGMa's realised 0.520. GRAIL
+nevertheless reaches only 0.318 at $k=15$ here, because selection and ranking together retain
+0.454 of what the bank could reach.
+
+The gap to SyGMa is thus not a worse rule bank. It is the cost of having a selection stage at all,
+which recall charges only to methods that select, and which GRAIL currently pays without
+recovering.

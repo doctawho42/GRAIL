@@ -1,141 +1,269 @@
-\subsection{Diagnostic levers}
+The decomposition in the main text says where recall is lost. This appendix says why. It
+reports the measurements behind each factor, states three propositions that explain the losses
+mechanistically, and describes two interventions that test them.
 
-Each lever below attaches to exactly one factor of the decomposition introduced earlier (annotated in the Factor column); the table is followed by three refutable propositions that localise \emph{why}, not merely \emph{where}, recall is lost.
+\subsection{Measurements behind each factor}
+
+Table~\ref{tab:levers} lists the diagnostic measurements, each attached to the one factor of the
+decomposition it constrains.
 
 \begin{table}[h]
 \centering
 \footnotesize
-\begin{tabular}{p{2.6cm}p{2.3cm}p{6.3cm}p{2.6cm}}
+\begin{tabular}{p{2.5cm}p{2.4cm}p{7.6cm}}
 \toprule
-Lever & Factor & Finding & Evidence \\
+Measurement & Factor & Finding \\
 \midrule
-\textbf{Learned vs.\ prior} \emph{(\texttt{top\_k}-limited rule-selection probe --- not deployed recall)} &
-\texttt{selection\_\allowbreak retention} &
-A SyGMa-style frequency prior significantly out-ranks the learned generator: gen-only recall@15 prior-only \textbf{0.410} vs learned-only \textbf{0.266} ($\Delta$ \textbf{$-$0.144}, 95\% CI \textbf{[$-$0.196, $-$0.095]}, paired bootstrap, n=245); with the filter, 0.405 vs 0.300 ($\Delta$ $-$0.105, CI [$-$0.152, $-$0.058]). Adding the prior to the learned scorer lifts \textbf{+0.130} gen / \textbf{+0.099} filter (both significant); the filter significantly helps only the \emph{weak learned} ordering (+0.034, CI [+0.011, +0.061]), not the strong prior (n.s.). &
-\texttt{results/\allowbreak prior\_\allowbreak vs\_\allowbreak learned.json} (245 test subs) \\
+Learned versus prior selection &
+selection &
+A frequency prior of the kind SyGMa uses outranks the learned generator. Generator-only
+recall@15 is 0.410 for the prior and 0.266 for the learned scorer ($\Delta=-0.144$,
+95\% CI $[-0.196,-0.095]$, paired bootstrap, $n=245$); with the filter, 0.405 against 0.300
+($\Delta=-0.105$, $[-0.152,-0.058]$). Adding the prior to the learned scorer gains $+0.130$
+without the filter and $+0.099$ with it. The filter significantly improves only the weaker
+learned ordering ($+0.034$, $[+0.011,+0.061]$), not the prior. \\
 \addlinespace
-\textbf{Multi-step (depth-2)} &
-\texttt{coverage\allowbreak\_bank} &
-Breadth-capped depth-2 rule application lifts the ceiling by only \textbf{+0.012} (0.711$\to$0.723) at \textbf{8.5$\times$} candidate cost (194$\to$1653 candidates/substrate) --- not the dominant coverage lever. &
-\texttt{results/\allowbreak benchmark\_\allowbreak report\_\allowbreak depth2.json} (150 subs, beam 10) \\
+Multi-step application &
+coverage &
+Breadth-capped depth-2 application raises the ceiling from 0.711 to 0.723, at 8.5 times the
+candidate cost (194 to 1{,}653 candidates per substrate). \\
 \addlinespace
-\textbf{Coverage ($\Delta$MW gap)} &
-\texttt{coverage\allowbreak\_bank} &
-\textbf{26.9\%} of true metabolites are uncovered by the depth-1 bank (plain InChIKey; $\sim$25\% under tautomer). Misses are a diverse long tail --- the top missing class (hydroxylation/oxidation) is only \textbf{6\%} of uncovered. &
-\texttt{results/\allowbreak benchmark\_\allowbreak report\_\allowbreak gap.json} (500 subs) \\
+Composition of the coverage gap &
+coverage &
+26.9 per cent of reference metabolites are outside the depth-1 bank under InChIKey matching,
+about 25 per cent under tautomer matching. The misses are a diverse tail: the largest single
+missing class, hydroxylation and oxidation, is 6 per cent of the uncovered set ($n=500$). \\
 \addlinespace
-\textbf{Data scaling} &
-\texttt{selection\_\allowbreak retention} &
-Recall saturates (2418$\to$4787 substrates $\approx$ flat) --- the plateau is not a data-quantity problem. &
-\texttt{results/\allowbreak full\{2500,\allowbreak 5000\}\allowbreak \_single.log} \\
+Training-set size &
+selection &
+Recall is flat between 2{,}418 and 4{,}787 training substrates. \\
 \addlinespace
-\textbf{Regioselectivity (SoM)} &
-\texttt{ranking\allowbreak\_conversion} &
-A site-of-metabolism prior gives only a small lift --- regioselective ranking is hard within the bank. &
-\texttt{results/\allowbreak train\_\allowbreak som.log} \\
+Site-of-metabolism prior &
+ranking &
+A site-of-metabolism prior gives only a small gain; regioselective ordering within the bank is
+hard. \\
 \addlinespace
-\textbf{Selection breadth (\texttt{top\_k} sweep)} &
-\texttt{selection\_\allowbreak retention} &
-Widening the deployed rule selector's \texttt{top\_k} 30$\to$300 lifts recall@15 \textbf{0.352$\to$0.413 (+0.061)} and pool coverage \textbf{0.482$\to$0.608}, saturating below the 0.735 ceiling (n=245 test subset; trend, not deployed-scale absolute). &
-\texttt{results/\allowbreak selection\_\allowbreak ablation.json} (245 test subs) \\
+Selection breadth &
+selection &
+Widening the rule selector from 30 to 300 rules lifts recall@15 from 0.352 to 0.413 and pool
+coverage from 0.482 to 0.608, saturating below the $\ceiling$ ceiling ($n=245$ test subset; the
+trend, not the absolute level, is the finding). \\
 \addlinespace
-\textbf{Abstention (filter gate)} &
-\texttt{ranking\allowbreak\_conversion} &
-Gating output by a filter-score threshold $\tau$ traces a recall$\leftrightarrow$precision frontier, but precision stays \textbf{nearly flat ($\sim$0.10--0.12)} and no val-selected $\tau$ reaches 0.2: raising $\tau$ shrinks the output (9.96$\to$0.3) and collapses recall (\textbf{0.388$\to$0.041}) for essentially no precision gain --- precision is annotation-bounded, not threshold-bounded, justifying the rank-only default. &
-\texttt{results/\allowbreak abstention\_\allowbreak frontier.json} (val-selected $\to$ 1170 test) \\
+Abstention &
+ranking &
+Gating output on a filter-score threshold traces a recall--precision frontier whose precision
+axis is nearly flat, between 0.10 and 0.12; no threshold selected on validation reaches 0.2.
+Raising the threshold shrinks the output from 9.96 candidates to 0.3 and collapses recall from
+0.388 to 0.041 for almost no precision gain. \\
 \bottomrule
 \end{tabular}
-\caption{Diagnostic levers and the recall-decomposition factor each one attaches to.}
+\caption{Diagnostic measurements and the recall-decomposition factor each one constrains.}
 \label{tab:levers}
 \end{table}
 
-\subsection{Selection breadth and abstention ablations}
+\subsection{Selection breadth and abstention}
 
-\paragraph{Selection-breadth counterfactual (n=245 test subset).}
-Sweeping the number of rules applied (\texttt{top\_k}) on the deployed pipeline (generator from \texttt{full5000\_priors} with the trained prior restored, deployed filter, ranked by the deployed \texttt{filter} $\times$ \texttt{generator} score) isolates rule-selection breadth as its own lever:
+The number of rules the generator selects is the pipeline's most direct control over the
+recall--precision trade. Sweeping it on the deployed pipeline, with everything else held fixed,
+separates selection breadth from the two neighbouring factors.
 
 \begin{table}[h]
 \centering
 \begin{tabular}{lcccc}
 \toprule
-\texttt{top\_k} (rules applied) & pool coverage (oracle) & deployed recall@15 & mean pool & mean output \\
+Rules applied & pool coverage & recall@15 & mean pool & mean output \\
 \midrule
 30 (deployed) & 0.482 & 0.352 & 12.5 & 7.99 \\
 100 & 0.547 & 0.388 & 35.3 & 9.47 \\
-300 ($\approx$ applicable-rule limit) & 0.608 & 0.413 & 107.6 & 9.53 \\
+300 (all applicable) & 0.608 & 0.413 & 107.6 & 9.53 \\
 \bottomrule
 \end{tabular}
-\caption{Selection-breadth counterfactual on the deployed pipeline (n=245 test subset).}
+\caption{Selection breadth on the deployed pipeline, $n=245$ test subset.}
 \label{tab:selection-breadth}
 \end{table}
 
-Widening \texttt{top\_k} 30$\to$300 monotonically lifts recall@15 \textbf{0.352$\to$0.413 (+0.061)} and pool coverage \textbf{0.482$\to$0.608}, at the cost of an \textbf{8.6$\times$} pool inflation (12.5$\to$107.6 mean candidates) --- recall bought with precision, the same trade SyGMa makes by overproducing ($\sim$74 outputs/substrate). It also saturates below the ceiling: pool coverage plateaus at \textbf{0.608 $<$ 0.735} even at $\sim$all applicable rules, and recall@15 0.413 still $\ll$ SyGMa's 0.572 --- so breadth is a real but partial lever. Ranking still loses roughly a third of in-pool hits even at \texttt{top\_k}=300 (recall / pool coverage = 0.413 / 0.608 = \textbf{0.68}, consistent with \texttt{ranking\allowbreak\_conversion} = 0.726, reported in the decomposition-results section).
+Widening the selector from 30 to 300 rules lifts recall@15 by 0.061 and pool coverage by 0.126,
+at 8.6 times the pool size. This is recall bought with precision, the same trade SyGMa makes by
+overproducing. The gain saturates below the ceiling: pool coverage plateaus at 0.608 against a
+$\ceiling$ ceiling even when essentially every applicable rule is fired, and recall@15 at 0.413
+remains far below SyGMa's 0.572 on this subset. Roughly a third of the metabolites present in
+the pool are still lost in ranking at the widest setting ($0.413/0.608=0.68$), consistent with
+the ranking factor of 0.726 in the main text.
 
-\paragraph{Abstention is not a precision lever (val-selected $\tau$, full 1170-substrate test).}
-Where breadth trades precision for recall, the reverse move --- deliberately abstaining --- barely moves precision. Gating the deployed pipeline's output by a filter-score threshold $\tau$ (candidates with \texttt{filter\_score} $<$ $\tau$ are dropped; survivors ranked by \texttt{filter} $\times$ \texttt{gen}, top-15) and sweeping $\tau$ traces a recall$\leftrightarrow$precision frontier whose precision axis is \textbf{nearly flat}: from rank-only $\tau=0$ (recall@15 \textbf{0.388}, precision \textbf{0.098}, 9.96 outputs/substrate) through $\tau=0.5$ (recall 0.146, precision 0.114, 1.55 outputs) to $\tau=0.9$ (recall 0.041, precision 0.040, 0.30 outputs), precision never exceeds \textbf{$\sim$0.123}, and no $\tau$ selected on validation reaches even precision 0.2. Raising $\tau$ removes true and apparently-false candidates in near-equal proportion --- because most ``false'' predictions are \emph{unannotated true} metabolites --- so gating shrinks the output and collapses recall for almost no precision gain; the best validation-selected F1 operating point ($\tau \approx 0.10$) lifts F1 only marginally (0.129$\to$0.131) by trimming the output tail. Precision here is therefore \textbf{annotation-bounded, not threshold-bounded}, which both substantiates the ``precision is a pessimistic lower bound under incomplete annotation'' caveat (noted in the evaluation-hygiene and decomposition-results sections) and justifies the rank-only deployment default (\texttt{results/\allowbreak abstention\_\allowbreak frontier.json}).
+Abstention moves in the opposite direction and gains little. Dropping candidates whose filter
+score falls below a threshold, then ranking the survivors as usual, traces a frontier along which
+precision barely moves. With no threshold, recall@15 is 0.388 at precision 0.098 and 9.96 outputs
+per substrate; at a threshold of 0.5, recall is 0.146 at precision 0.114 and 1.55 outputs; at 0.9,
+recall is 0.041 at precision 0.040 and 0.30 outputs. Precision never exceeds about 0.123. Raising the
+threshold removes true and apparently false candidates in near-equal proportion, because most
+apparent false positives are unannotated true metabolites. The best threshold selected on
+validation lifts F1 from 0.129 to 0.131 by trimming the output tail. Precision here is bounded
+by the annotation, not by the threshold, which is why the deployed system ranks rather than
+abstains.
 
-On the same broad pools, a second arm compares the deployed learned ranker (\texttt{filter} $\times$ \texttt{gen}) against the rule frequency prior alone (SyGMa-style):
+On the same broad pools, the learned ranker can be compared directly against the frequency prior
+(Table~\ref{tab:ranker-vs-prior}). At narrow breadth the two are indistinguishable; as the pool
+broadens the learned filter pulls ahead while the prior plateaus. Substituting the prior for the
+learned score at the ranking stage would cost recall rather than gain it.
 
 \begin{table}[h]
 \centering
 \begin{tabular}{lcc}
 \toprule
-\texttt{top\_k} & filter $\times$ gen (learned) & frequency prior (SyGMa-style) \\
+Rules applied & learned (filter $\times$ generator) & frequency prior \\
 \midrule
 30 & 0.352 & 0.359 \\
 100 & 0.388 & 0.374 \\
 300 & 0.413 & 0.374 \\
 \bottomrule
 \end{tabular}
-\caption{Learned ranker vs.\ frequency prior on identical broad pools, by selection breadth.}
+\caption{Learned ranker against the frequency prior on identical pools, by selection breadth.}
 \label{tab:ranker-vs-prior}
 \end{table}
 
-At narrow breadth the two are $\approx$ equal (0.352 vs 0.359); as the pool broadens the \textbf{learned filter pulls ahead} (0.413 vs 0.374 at \texttt{top\_k}=300), while the frequency prior plateaus at 0.374 --- swapping to the prior signal at breadth would hurt, not help.
+Taken together, the deficit against SyGMa on this axis is a compound of over-narrow rule
+selection at the deployed setting, worth about 0.06 in recovered recall, and a residual coverage
+gap that no breadth setting closes. It is not a deficiency of the ranking model: the learned
+filter outranks the frequency prior once the pool is broad. These are $n=245$ measurements, and
+the deployed baseline of 0.352 is inflated on this subset relative to the full-test macro recall
+of $\grailmacro$.
 
-\emph{Synthesis:} GRAIL's deficit vs.\ SyGMa on this axis is a compound of (i) over-aggressive rule selection at the deployed \texttt{top\_k}=30 (recoverable $\sim$+0.06 by widening breadth) and (ii) a residual rule-set coverage gap (pool coverage saturates at 0.608 $<$ 0.735) --- it is \textbf{not} a ranking-model deficiency: the learned filter out-ranks the frequency prior once the candidate pool is broad. This is an \textbf{n=245 test-subset} ablation; the trend (breadth helps, ranking doesn't hurt) is the finding --- the absolute \texttt{top\_k}=30 baseline (0.352) is subset-inflated relative to the full-1170 deployed macro recall (0.330). (\texttt{results/\allowbreak selection\_\allowbreak ablation.json}, \texttt{results/\allowbreak selection\_\allowbreak ablation\_\allowbreak ranksignal.json})
+\subsection{Selection as measured against selection as deployed}
 
-\paragraph{Probe vs.\ deployed.}
-The learned-vs-prior row is a controlled, \texttt{top\_k}-limited rule-selection \textbf{probe} (each mode picks its own top-30 rules, same downstream product loop and filter) --- it is \emph{not} the deployed recall. The deployed pipeline in fact applies its \textbf{top-30 selected rules} --- the selection-breadth ablation above confirms this: its \texttt{top\_k}=30 baseline (0.352 subset) reproduces deployed recall (0.330 macro / 0.344 3-seed, reported in the decomposition- and deployment-results sections), so the deployed pipeline \emph{is} a \texttt{top\_k}=30 rule selector, and widening that selector's breadth is itself a soft lever (previous paragraph), not evidence that rules are applied unselectively. Separately --- and narrower in scope --- the deployed pipeline is measurably \textbf{prior-independent} at that fixed \texttt{top\_k}=30 operating point: on an earlier 291-substrate evaluation, two checkpoints differing only in whether a trained prior buffer was present gave essentially identical recall (0.335 vs 0.334), so deployed recall (\textbf{0.330} macro / \textbf{0.261} micro, reported in the decomposition- and deployment-results sections) is coverage-limited, not prior-limited at the deployed operating point --- the prior \emph{term} barely moves recall there, distinct from the \texttt{top\_k} breadth axis above; the probe \emph{reveals} the learned selector's weakness; deployment \emph{masks} it by not depending on that selector's ranking. \emph{Honesty note:} an earlier draft reported the opposite --- ``learned beats prior'' --- an artifact of a checkpoint whose prior buffer was un-persisted; that reversal is withdrawn and corrected here, caught by adversarial verification. Neither multi-step application nor any single rule-family addition moves coverage much (misses are a diverse long tail), and data scaling is flat --- so the dominant, addressable loss remains \texttt{selection\_\allowbreak retention} (decomposition-results section: 0.489), the learned rule-selector performing worse than a trivial frequency prior in the probe. The three propositions below explain \emph{why}.
+The learned-versus-prior comparison in Table~\ref{tab:levers} is a controlled comparison of rule
+selection, in which each mode picks its own thirty rules and shares the downstream product loop
+and filter. It is not the deployed recall. The deployed pipeline applies its own top thirty
+rules, and the breadth sweep confirms the correspondence: the 30-rule baseline of 0.352 on this
+subset reproduces the deployed macro recall of $\grailmacro$ on the full test.
+
+At that operating point the deployed system is close to prior-independent. Two checkpoints
+differing only in whether a trained prior buffer was present gave 0.335 and 0.334 on an earlier
+291-substrate evaluation. Deployed recall is therefore limited by coverage rather than by the
+prior term, even though the selection experiment shows the learned selector losing to the prior
+when selection is what is measured. The experiment exposes a weakness that deployment conceals
+by not depending on the selector's ordering.
+
+Neither multi-step application nor any single rule family moves coverage much, and training-set
+size is saturated. The dominant addressable loss remains selection, at $\selret$: a learned rule
+selector that performs worse than counting. The three propositions below explain why.
 
 \subsection{Three propositions}
 
-\paragraph{Proposition 1 --- Surrogate mismatch ($\to$ \texttt{ranking\allowbreak\_conversion}).}
-A filter trained by a strictly proper scoring rule (BCE/PU) learns a globally calibrated posterior, Bayes-optimal for AUC and calibration; ranking each substrate's candidate pool by that posterior and taking top-$k$ is recall@$k$-optimal only when pools are homogeneous. GRAIL's pools vary in size (17--150) and positive rate (\texttt{n\_true} 1--18), so a pointwise-calibrated scorer can be recall@$k$-suboptimal even while a listwise, ranking-consistent surrogate dominates --- supported by a minimal 2-substrate counterexample (\texttt{grail\_\allowbreak metabolism/\allowbreak tests/\allowbreak test\_\allowbreak prop1\_\allowbreak counterexample.py}) in which the recall-superior reorder is verified \emph{not} globally calibrated, so a proper-scoring objective rejects it.
+\paragraph{Proposition 1: the training objective is mismatched to the metric.}
+A filter trained under a strictly proper scoring rule learns a globally calibrated posterior,
+which is Bayes-optimal for AUC and for calibration. Ranking each substrate's pool by that
+posterior and taking the top $k$ is optimal for recall@$k$ only when pools are homogeneous.
+GRAIL's pools are not: they range from 17 to 150 candidates and from 1 to 18 positives. A
+pointwise-calibrated scorer can therefore be suboptimal for recall@$k$ while a listwise
+surrogate dominates it. A two-substrate counterexample makes this concrete: the reordering that
+improves recall is verifiably not globally calibrated, so a proper scoring rule rejects it.
 
-\emph{Confirmation --- a controlled objective swap on the full test set.} The cleanest evidence isolates the objective while holding everything else fixed: the same two auxiliary heads, the same frozen generator and filter, and the \textbf{same candidate pool} are used twice, differing only in how the heads were trained. Trained \textbf{pointwise} (independent MLE) and multiplied into the rank, they add \textbf{nothing} --- +0.0002 (95\% CI [$-$0.0073, +0.0077], n.s.). Fine-tuned instead with a \textbf{listwise ranking loss} against the frozen $\log(\text{filter})+\log(\text{gen})$ context, the identical heads gain \textbf{+0.0089 (95\% CI [+0.0032, +0.0153])} over their pointwise counterpart and \textbf{+0.0091 (95\% CI [+0.0027, +0.0160])} over the \texttt{filter} $\times$ \texttt{gen} baseline --- paired bootstrap over the full clean test, n=1170 (\texttt{results/\allowbreak joint\_\allowbreak rerank.json}). Since capacity, features, and pool are held constant, the margin is attributable to the \textbf{training objective}, which is exactly the surrogate mismatch this proposition predicts. A second, independent re-ranking arm reproduces the direction at the same n: \texttt{filter} $\times$ \texttt{gen} $\times$ \texttt{type} $\times$ \texttt{site} lifts recall@15 from 0.388 to 0.404, a paired \textbf{+0.0165 (95\% CI [+0.006, +0.027])}, while the factorized signal on its own is n.s. (+0.001, [$-$0.010, +0.013]) (\texttt{results/\allowbreak hybrid\_\allowbreak rerank\_\allowbreak full1170.json}).
+A controlled swap of the objective, holding everything else fixed, confirms the prediction. The
+same two auxiliary heads, the same frozen generator and filter, and the same candidate pool are
+used twice, differing only in how the heads were trained. Trained pointwise and multiplied into
+the rank, they add nothing: $+0.0002$, 95\% CI $[-0.0073,+0.0077]$. Fine-tuned with a listwise
+ranking loss against the frozen generator and filter context, the identical heads gain $+0.0089$
+$[+0.0032,+0.0153]$ over their pointwise counterpart and $+0.0091$ $[+0.0027,+0.0160]$ over the
+baseline, on a paired bootstrap over the full test set of $\ntest$ substrates. Capacity, features
+and pool are constant, so the margin is attributable to the objective. A second re-ranking arm
+reproduces the direction at the same sample size: adding type and site terms lifts recall@15
+from 0.388 to 0.404, a paired $+0.0165$ $[+0.006,+0.027]$, while the factorised signal on its own
+is not significant ($+0.001$, $[-0.010,+0.013]$).
 
-\emph{Secondary, weaker evidence:} a higher-capacity listwise-InfoNCE reranker scored \textbf{0.433 $\to$ 0.500 @15 (+0.067)}, 74\% of the Stage-2 oracle 0.677, on a held-out Stage-2 run (\texttt{docs/\allowbreak benchmark/\allowbreak stage2\_\allowbreak ranker\_\allowbreak evidence.md}, Spike-3) --- reported as $\pm$0.015 across 3 seeds (pure reranker variance; the generator baseline is deterministic). We do \textbf{not} give this figure a paired interval: its per-substrate scores were not retained, so a paired bootstrap cannot be recomputed without retraining, and the proposition rests on the n=1170 intervals above rather than on this number. \emph{Guardrail:} this is a theorem about \textbf{objectives}, not a recall win --- the reranker's \textbf{0.500 still loses to SyGMa (0.558)} and is reported only as a separate Stage-2 artifact, never as a headline number.
+Weaker supporting evidence comes from a higher-capacity listwise reranker, which scored 0.500
+against a 0.433 baseline in a separate held-out run, a gain of $+0.067$, or 74 per cent of that run's oracle ceiling
+of 0.677, with a spread of $\pm0.015$ across three seeds. That figure has no paired interval:
+its per-substrate scores were not retained, so the bootstrap cannot be recomputed without
+retraining. The proposition rests on the $n=\ntest$ intervals rather than on it. The claim
+concerns objectives, not absolute performance: 0.500 still loses to SyGMa's 0.558.
 
-\paragraph{Proposition 2 --- Learning loses to counting: rule selection is extreme multi-label classification ($\to$ \texttt{selection\_\allowbreak retention}).}
-This is the paper's central selection finding, and it is not metabolism-specific folklore rediscovered: selecting which of the \textbf{7,581} rules apply to a substrate is an \emph{extreme multi-label classification} (XMC) problem with a near-empty positive set ($\approx$1--3 firing rules per substrate, $\sim$0.03\% of labels). In exactly this regime, XMC has long established that frequency/propensity baselines are hard to beat and that na\"{\i}ve losses are dominated by label sparsity --- propensity-scored losses were introduced precisely for this failure mode \citep{Jain_2016}. Metabolism rule selection \textbf{inherits this XMC pathology}, which the domain literature does not name; our contribution is to identify it here and to test it causally (below). Concretely: under PU annotation with an approximately constant labeling propensity (SCAR), a learner with constant unlabeled weighting recovers a propensity-distorted score whose dominant component is the marginal rule-firing rate $\pi(r)$ --- the frequency prior --- so the prior is Bayes-competitive \textbf{by construction} at the rule-selection stage (which rules clear \texttt{top\_k}), and the learned selector improves on it only if substrate-conditional prevalence variation exceeds estimation noise; the observed data-scaling saturation (Table~\ref{tab:levers}, row 4) indicates it does not at current scale.
+\paragraph{Proposition 2: rule selection is extreme multi-label classification, where counting is
+a strong baseline.}
+Selecting which of $\nbank$ rules apply to a substrate is an extreme multi-label classification
+problem with a nearly empty positive set: one to three rules fire per substrate, about 0.03 per
+cent of the label space. In this regime the classification literature has long established that
+frequency and propensity baselines are hard to beat and that naive losses are dominated by label
+sparsity; propensity-scored losses were introduced for precisely this failure mode
+\citep{Jain_2016}. Metabolism rule selection inherits the pathology, which the domain literature
+does not name. Identifying it here, and testing it, is the contribution.
 
-\emph{Anchor:} learned-only \textbf{0.266} vs prior-only \textbf{0.410} (gen-only @15, $\Delta$ \textbf{$-$0.144}, 95\% CI \textbf{[$-$0.196, $-$0.095]}, paired bootstrap, n=245; \texttt{results/\allowbreak prior\_\allowbreak vs\_\allowbreak learned.json}). \emph{Ranking-stage nuance:} this prior advantage is selection-specific, not a general ``learned $<$ prior'' --- at the separate \textbf{ranking} stage (ordering the candidate pool once rules are already applied broadly), the learned filter is the better scorer: on the same broad pools, \texttt{filter} $\times$ \texttt{gen} beats the frequency prior \textbf{0.413 vs 0.374} at \texttt{top\_k}=300 (ranking-signal arm of the selection-breadth ablation above, n=245 subset; \texttt{results/\allowbreak selection\_\allowbreak ablation\_\allowbreak ranksignal.json}), consistent with Proposition 1's listwise-reranker gain. \emph{Falsifiable prediction:} reweighting the labeled loss by $1/\hat{e}(r)$ (a SAR correction) should shrink the prior's edge --- an \textbf{open test, not a promised fix}. \emph{Guardrail:} the propensity model $e(r) \propto \pi(r)$ is an \textbf{unmeasured modeling assumption}, flagged as such --- this is an explanatory model plus a refutable prediction, not proof that learning cannot win, and it is consistent with the deployed pipeline's prior-independence noted above.
+The mechanism is specific. Under positive-unlabelled annotation with an approximately constant
+labelling propensity, a learner with constant unlabelled weighting recovers a propensity-distorted
+score whose dominant component is the marginal rule-firing rate. That rate is the frequency
+prior, so the prior is competitive by construction at the selection stage, and the learned
+selector improves on it only when substrate-conditional variation in prevalence exceeds
+estimation noise. The saturation with training-set size indicates that it does not at present
+scale.
 
-\paragraph{Proposition 3 --- Paradigm limit ($\to$ \texttt{coverage\allowbreak\_bank}).}
-Single-step rule-based recall $\leq$ single-step \texttt{coverage\allowbreak\_bank} $<1$, because a non-vanishing fraction of references are multi-generation (e.g.\ oxidation $\to$ conjugation) and unreachable by any single rule application --- an irreducible residual that no ranking improvement can recover.
+The supporting measurement is the learned-only recall of 0.266 against the prior's 0.410
+($\Delta=-0.144$, $[-0.196,-0.095]$, $n=245$). The advantage is specific to selection and does
+not generalise to ranking: once rules have been applied broadly, the learned filter is the
+better scorer, at 0.413 against the prior's 0.374. The proposition makes a refutable prediction,
+that reweighting the labelled loss by the inverse estimated propensity should shrink the prior's
+edge; this is an open test. The propensity model itself is an unmeasured modelling assumption.
 
-\emph{Witnesses:} depth-2 rule application lifts the ceiling by only \textbf{+0.012} at \textbf{8.5$\times$} candidate cost (Table~\ref{tab:levers}, row 2; \texttt{results/\allowbreak benchmark\_\allowbreak report\_\allowbreak depth2.json}); on the external GLORYx set the uncapped single-step ceiling is \textbf{0.633} (reported in the external-validation section), whose references include single-step-unreachable multi-generation metabolites.
+\paragraph{Proposition 3: single-step rule application has a ceiling below one.}
+Single-step recall cannot exceed single-step coverage, and coverage is bounded away from one
+because a non-vanishing fraction of references are multi-generation products, for instance
+oxidation followed by conjugation, unreachable by any single rule application. No improvement in
+ranking recovers that residual.
 
-\emph{Composition of the gap:} typing each uncovered transformation by its radius-0 reaction type (element-aware changed-bond multiset) against the \textbf{4,417} types the bank already contains (\texttt{results/\allowbreak coverage\_\allowbreak gap\_\allowbreak types.json}; the pipeline reproduces the ceiling exactly, coverage 0.7355) shows the single-step gap is a mix skewed to novel chemistry --- of \textbf{687} uncovered test transformations, \textbf{41\% (280)} are of a reaction type the bank \emph{already} has (reachable in principle by a more general template, an in-bank ceiling of at most $(1910+280)/2597 = \textbf{0.843}$), while \textbf{53\% (366)} are \textbf{novel types absent from the bank}, addressable only by new reaction corpora (both together would bound the ceiling at 0.984). So template generalization is a real but \textbf{bounded} lever ($\approx$+0.11 ceiling headroom at best); the majority of the residual gap is genuinely out-of-bank chemistry, not a template-specificity artifact. \emph{Guardrail:} the bound is \textbf{single-step-conditional} --- it bounds the single-step paradigm, not the problem; multi-step and out-of-bank chemistry remain open coverage levers.
+Two measurements witness the bound. Depth-2 application raises the ceiling by 0.012 at 8.5 times
+the candidate cost. On the external GLORYx set the uncapped single-step ceiling is 0.633, and
+its references include multi-generation metabolites that no single step can reach.
 
-\subsection{Causal interventions}
+The composition of the gap determines how much of it template generalisation could close. Typing
+each uncovered transformation by its element-aware changed-bond multiset, and comparing against
+the 4{,}417 types the bank already contains, splits the 687 uncovered test transformations into
+280 (41 per cent) whose reaction type the bank already has, and 366 (53 per cent) whose type is
+absent from it. The first group is reachable in principle by a more general template, which
+bounds an in-bank ceiling at $(1910+280)/2597 = 0.843$; closing both groups would bound it at
+0.984. Template generalisation is therefore a real but bounded gain of about 0.11 in ceiling
+headroom, and the majority of the residual is genuinely out-of-bank chemistry rather than an
+artefact of template specificity. The bound is conditional on single-step application: it
+constrains the paradigm, not the problem.
 
-\paragraph{Intervention: a factorized generator tests Propositions 2--3.}
-This is a controlled intervention turning the observational decomposition above into a causal test: we rebuilt Stage-1 as a dense factorized generator, $P(\text{type}\mid s)\cdot P(\text{site}\mid \text{type},s)$, over a coarse $\sim$radius-0 type vocabulary.
+\subsection{Two interventions}
 
-\textbf{Selection is fixable:} the learned type head beats the frequency prior $\sim$3$\times$ at $k=5$ (recall@5 0.086 vs 0.030), robust across two vocabulary granularities (371 and 701 types), converging to the prior by $k=10$ (0.298 vs 0.309); site localisation holds (site hit@3 0.78, cf.\ Gate C 0.81) --- val set, \texttt{results/\allowbreak factorized\_\allowbreak val.json} --- so Proposition 2's PU degeneracy is a target-support artifact, not fundamental, confirming its falsifiable $1/\hat{e}$-style prediction.
+\paragraph{A factorised generator tests Propositions 2 and 3.}
+Rebuilding the generator as a dense factorised model, $P(\text{type}\mid s)\cdot
+P(\text{site}\mid \text{type},s)$ over a coarse reaction-type vocabulary, turns the observational
+decomposition into a causal test.
 
-\textbf{But coverage binds:} as a replacement generator the pipeline reaches only recall@15 0.256 on the full clean test --- a net regression against deployed GRAIL (budget-matched recall@15 0.365, precision 0.109) --- because type-selection caps oracle reachability at $\sim$47\%, unchanged when the vocabulary widened 371$\to$701 (\texttt{results/\allowbreak factorized\_\allowbreak eval.json}), confirming Proposition 3 causally.
+Selection proves fixable. The learned type head beats the frequency prior by roughly threefold at
+$k=5$ (recall@5 0.086 against 0.030), holds across two vocabulary granularities of 371 and 701
+types, and converges to the prior by $k=10$ (0.298 against 0.309). Site localisation holds, at
+0.78 hit@3 against a 0.81 reference. The positive-unlabelled degeneracy of Proposition 2 is
+therefore an artefact of the target's support, not a fundamental limit, which confirms that
+proposition's prediction.
 
-\textbf{Ranking margin:} kept at broad coverage and used only to re-rank, \texttt{filter}$\times$\texttt{gen}$\times$\texttt{type}$\times$\texttt{site} lifts recall@15 from 0.388 to 0.404 over \texttt{filter}$\times$\texttt{gen} on the identical broad pool --- a paired +0.0165 (95\% CI [+0.006, +0.027], paired bootstrap over the full clean test, n=1170); the factorized signal alone is n.s.\ (+0.001, CI [$-$0.010, +0.013]) (\texttt{results/\allowbreak hybrid\_\allowbreak rerank\_\allowbreak full1170.json}).
+Coverage nevertheless binds. As a replacement generator the pipeline reaches only recall@15
+0.256 on the full test, a regression against the budget-matched deployed 0.365 at precision
+0.109, because type selection caps oracle reachability at about 47 per cent. Widening the
+vocabulary from 371 to 701 types leaves that cap unchanged, which confirms Proposition 3
+causally.
 
-\textbf{Joint vs.\ bolt-on ranking:} the bolt-on re-ranker multiplies \emph{independently} MLE-trained type/site probabilities into the rank; fine-tuning those two heads instead with a listwise ranking loss against the \textbf{fixed} generator and filter (frozen $\log(\text{filter})+\log(\text{gen})$ context, gradients only through the heads) sharpens the signal --- on a matched \texttt{top\_k}=100 pool the joint-trained re-ranker beats the bolt-on by a paired \textbf{+0.0089 (95\% CI [+0.003, +0.015], n=1170)} and the \texttt{filter}$\times$\texttt{gen} baseline by \textbf{+0.0091 [+0.003, +0.016]}, where on that pool the independently-trained bolt-on adds nothing (+0.0002, n.s.). So \emph{rank-aware} training, not the type/site heads per se, recovers this margin (\texttt{results/\allowbreak joint\_\allowbreak rerank.json}).
+Kept at broad coverage and used only to re-rank, the same signal is worth a small significant
+margin: recall@15 rises from 0.388 to 0.404, a paired $+0.0165$ $[+0.006,+0.027]$ over the full
+test set. How the heads are trained decides whether that margin appears. Multiplying
+independently trained type and site probabilities into the rank adds nothing on a matched pool
+($+0.0002$, not significant). Fine-tuning the same two heads with a listwise ranking loss against
+a frozen generator and filter beats that bolt-on by $+0.0089$ $[+0.003,+0.015]$ and the baseline
+by $+0.0091$ $[+0.003,+0.016]$. Rank-aware training, not the type and site heads themselves,
+recovers the margin.
 
-\emph{Synthesis:} selection is addressable, ranking yields a small significant margin, but coverage --- the source-limited rule bank --- remains binding; no Stage-1 redesign matches SyGMa without a broader bank.
+Selection is addressable and ranking yields a small margin, but coverage, which is set by the
+rule bank, remains binding. No redesign of the generator matches SyGMa without a broader bank.
 
-\paragraph{Set-generation (GFlowNet): a released negative result.}
-Beyond re-ranking, we also formulated Stage-1 as a \textbf{set-terminal GFlowNet} (\texttt{model/\allowbreak set\_\allowbreak gflownet.py}): the terminal object is a forest/set of metabolites per substrate, trained by Trajectory Balance against a PU set-coverage reward with an analytic \texttt{1/\#leaves} backward --- a genuinely novel formulation for this domain, released for reuse. On our benchmark it does \textbf{not} beat the simpler baselines: across 3 seeds (val, n=40) its single-set recall@15 is \textbf{0.292$\pm$0.032}, statistically indistinguishable from beam (0.311$\pm$0.039) and below the Stage-2a reranker (0.411$\pm$0.044). It does produce diverse sets (pairwise-Tanimoto 0.214$\pm$0.003, $\sim$39 unique scaffolds), but a clean \emph{diversity-advantage} claim is \textbf{not} supported here --- the union-coverage comparison against the baselines is dominated by an under-production artefact in the baseline arms (its variance spans 0.0--0.58 across seeds), so we do not report that metric. We include this as a negative result because a benchmark is well-served by an honest report that a fashionable architecture does not win on it (\texttt{results/gflownet\_seed\{0,1,2\}\_overnight.json}; a fair multi-seed diversity comparison at scale is future work, discussed in the future-work section).
-
-\bigskip
-\emph{Source: \texttt{results/\allowbreak prior\_\allowbreak vs\_\allowbreak learned.json}, \texttt{results/\allowbreak benchmark\_\allowbreak report\_\allowbreak depth2.json}, \texttt{results/\allowbreak benchmark\_\allowbreak report\_\allowbreak gap.json}, \texttt{docs/\allowbreak benchmark/\allowbreak stage2\_\allowbreak ranker\_\allowbreak evidence.md}, \texttt{results/\allowbreak selection\_\allowbreak ablation.json}, \texttt{results/\allowbreak selection\_\allowbreak ablation\_\allowbreak ranksignal.json}.}
+\paragraph{Set generation with a GFlowNet does not win here.}
+Beyond re-ranking, we formulated the generator as a set-terminal GFlowNet whose terminal object
+is a set of metabolites per substrate, trained by Trajectory Balance against a
+positive-unlabelled set-coverage reward with an analytic backward policy. The formulation is new
+for this domain and is released for reuse. It does not beat the simpler baselines on this
+benchmark: across three seeds on 40 validation substrates its single-set recall@15 is
+$0.292\pm0.032$, indistinguishable from beam search at $0.311\pm0.039$ and below a reranker at
+$0.411\pm0.044$. It does produce diverse sets, with pairwise Tanimoto similarity $0.214\pm0.003$
+over roughly 39 unique scaffolds, but the natural diversity comparison is not interpretable here:
+union coverage against the baselines is dominated by under-production in the baseline arms, whose
+variance spans 0.0 to 0.58 across seeds, so we omit that metric. The result is included because a
+benchmark is better served by reporting that a fashionable architecture does not win on it.
