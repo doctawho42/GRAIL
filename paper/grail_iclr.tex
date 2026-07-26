@@ -79,8 +79,8 @@ When a drug enters the body it is chemically transformed. Enzymes, principally i
 oxidise, cleave and conjugate the administered compound into a set of new molecules called
 metabolites. Which metabolites form is a central question in drug development, because a
 metabolite may be inactive, may carry the therapeutic effect, or may be toxic in ways the parent
-compound is not. Regulatory submissions require that major human metabolites be identified, and
-identifying them experimentally is slow and expensive. Computational prediction of metabolite
+compound is not. Regulatory review attends closely to major human metabolites, and identifying them
+experimentally is slow and expensive. Computational prediction of metabolite
 structures therefore has direct practical value: given the structure of an administered compound,
 predict the structures of the molecules the body will produce from it.
 
@@ -113,8 +113,9 @@ the aggregate score does not indicate which is warranted.
 
 This work addresses both assumptions. We define an evaluation protocol that states the structure
 matching criterion explicitly and permits it to be varied, and we use it to re-score fixed
-predictions from five published methods. We define a decomposition that separates recall into the
-contributions of rule coverage, template selection and product ranking, and we apply it to GRAIL, the predictor we release for that purpose.
+predictions from four published methods alongside our own. We define a decomposition that
+separates recall into the contributions of coverage, selection and ranking, and we apply it to
+GRAIL, the predictor we release for that purpose.
 
 The remainder of this article is organised as follows. Section~\ref{sec:related} reviews prior
 work on metabolite prediction and on evaluation methodology in related domains.
@@ -129,10 +130,10 @@ and Section~\ref{sec:conclusion} concludes.
 \label{sec:related}
 
 \paragraph{Metabolite-structure prediction.} Rule-based prediction of metabolite structures was
-established by SyGMa \citep{Ridder_2008}, which encodes phase I and phase II biotransformations as
-reaction templates and scores the resulting products by the empirical frequency with which each
+established by SyGMa \citep{Ridder_2008}, which encodes phase I (oxidation, reduction, hydrolysis) and phase II
+(conjugation) biotransformations as reaction templates and scores the resulting products by the empirical frequency with which each
 template yields an observed metabolite. GLORYx \citep{de_Bruyn_Kops_2020} couples a comparable
-template library to a machine-learned model of sites of metabolism, and BioTransformer
+template library to a machine-learned model of sites of metabolism, the atoms at which an enzyme acts, and BioTransformer
 \citep{Djoumbou_Feunang_2019} extends the template approach to microbial and environmental
 transformations. Learned alternatives dispense with templates: MetaTrans \citep{Litsa_2020} treats
 metabolite prediction as sequence-to-sequence translation between molecular strings, and
@@ -183,10 +184,10 @@ attribute a predictor's score to a specific stage of its pipeline. The present w
 \label{sec:tame}
 
 TAME is a \emph{protocol, an audited split and a re-scoring harness}, not a leaderboard service:
-it exists so that the numbers in \S\ref{sec:results} are apples-to-apples and regenerable from
+it exists so that the numbers in \S\ref{sec:results} are directly comparable and regenerable from
 committed artifacts.
 
-\paragraph{The match quotient.} The field has never agreed what counts as a match. GLORYx uses a
+\paragraph{The matching criterion.} The field has never agreed what counts as a match. GLORYx uses a
 stereo-blind InChIKey skeleton, MetaTrans uses Morgan-fingerprint Tanimoto${=}1$, LAGOM uses
 canonical-SMILES equality. Each is a different equivalence relation on molecules, and each is applied silently. TAME makes the choice explicit by exposing all of them as named quotients: predicted and
 reference structures are mapped through one of
@@ -196,15 +197,15 @@ q \in \{\textsc{canonical},\ \textsc{inchikey},\ \textsc{inchi-no-stereo},\ \tex
 \]
 and a prediction counts as a hit iff $q(\hat{y}) = q(y)$ for some reference $y$. Our recommended
 default is \textsc{inchikey-tautomer}: standard InChI normalizes only a \emph{subset} of tautomers
-\citep{Dhaked_2020}, so a rule engine that emits a keto form of an enol reference fails to match
-under plain \textsc{inchikey} even though it produced the same chemical entity. Tautomer-canonicalising
+\citep{Dhaked_2020}, so a rule engine that emits a keto form (C=O) of an enol reference (C=C-OH), two tautomers of
+the same compound, fails to match under plain \textsc{inchikey} even though it produced the same chemical entity. Tautomer-canonicalising
 both sides before hashing closes that gap and is the most defensible identity criterion for a
 rule-driven generator. Unless stated otherwise all results use \textsc{inchikey-tautomer};
 \S\ref{sec:rankflip} quantifies how much the ranking depends on that choice. A worked example in
 which the same fixed predictions score a near-total miss or a full hit purely by changing $q$ is
 given in Appendix~\ref{app:worked}.
 
-This is not an invented normalization. Tautomer standardization is established \emph{preprocessing}.
+Tautomer standardization is established \emph{preprocessing}.
 \citet{Hahnke_2018} report that 60\% of PubChem structures differ from their canonical InChI
 form, mainly by tautomer choice, and \citet{Mansouri_2024} describe a comparable
 desalt/destereo/tautomer-canonicalisation pipeline. What is new here is adopting it as the
@@ -237,7 +238,8 @@ once, for the final reported numbers.
 \label{sec:decomp}
 
 A rule-grounded predictor reaches a reference metabolite only by passing three gates in sequence:
-the transformation must be \emph{expressible} by some rule in the bank, that rule must be
+the transformation must be
+\emph{expressible} by some rule in GRAIL's bank of \nbank\ curated rules, that rule must be
 \emph{selected} into the substrate's candidate pool under a finite budget, and the resulting
 product must be \emph{ranked} into the top $k$. Write, for a substrate set $S$ with reference sets
 $Y_s$:
@@ -256,10 +258,9 @@ where $C_{\text{full}}$ are references recovered by applying the \emph{entire} b
 budget, $C_{\text{bud}}$ those surviving the selector's budgeted pool, and $H$ those actually
 returned in the top $k$. The identity is exact by construction (each set contains the next), so
 the three factors partition the loss with no residual: it is an accounting device, not a model.
-Its value is diagnostic: a
-single recall number cannot say \emph{which} gate closed, and the
-three interventions those gates imply (mine more chemistry, fix selection, fix ranking) are
-entirely different pieces of work. Two aggregations are in use, and every figure below is labelled with which one it is. The
+Its value is diagnostic: a single recall number cannot indicate
+\emph{which} gate closed, while the three corresponding interventions, expanding the rule bank,
+improving selection and improving ranking, address unrelated components of the pipeline. Two aggregations are in use, and every figure below is labelled with which one it is. The
 \emph{micro} (ratio-of-sums) form pools reference metabolites across substrates, $|H|/|U|$ as
 written above, so each substrate contributes in proportion to its number of references. The
 \emph{macro} form averages per-substrate recall, weighting every substrate equally.
@@ -302,8 +303,9 @@ shortfall is \textbf{selection}: less than half of what the bank can reach survi
 budgeted candidate pool. Coverage and ranking are statistically indistinguishable from one another
 ($0.735$ $[0.709,0.762]$ against $0.726$ $[0.687,0.765]$); only selection is clearly dominant. The decomposition therefore indicates selection, rather than ranking, as the stage at which
 intervention is warranted. It also bounds what this architecture can achieve: even a perfect selector and a perfect
-ranker would stop at \ceiling, and Appendix~\ref{app:props} shows that ceiling is
-corpus-limited rather than a tuning artifact.
+ranker would stop at \ceiling, and that ceiling is corpus-limited rather than a
+consequence of tuning: 53 per cent of uncovered transformations are of reaction types absent from
+the bank altogether (Appendix~\ref{app:props}).
 
 \section{Results}
 \label{sec:results}
@@ -314,8 +316,7 @@ corpus-limited rather than a tuning artifact.
 Five methods (GRAIL, SyGMa \citep{Ridder_2008}, BioTransformer
 \citep{Djoumbou_Feunang_2019}, MetaPredictor \citep{Zhu_2024} and MetaTrans \citep{Litsa_2020})
 have their \emph{frozen} predictions re-scored by one harness under five matching criterions, so
-only the match rule changes across columns, never the chemistry (Table~\ref{tab:matchsens}). Two
-observations follow immediately. Methods are not equally sensitive to the convention: GRAIL moves
+only the match rule changes across columns, never the chemistry (Table~\ref{tab:matchsens}). Methods are not equally sensitive to the convention: GRAIL moves
 by $0.009$ from canonical to tautomer matching while BioTransformer moves by $0.129$. And
 \texttt{mean\_output\_size} exposes a second, orthogonal confound: SyGMa emits $74$ candidates
 per substrate against $8.7$ to $12.7$ for the others, so recall alone is not budget-fair either
@@ -355,7 +356,9 @@ MetaPredictor    & 0.531 & 0.570 & 0.578 & 0.532 & 0.585 & 11.2 \\
 \paragraph{Primary endpoint.} We pre-declared the \emph{differential} sensitivity as the endpoint,
 not any individual reversal: the protocol $\times$ method interaction, i.e.\ how much more one
 method gains from normalized matching than another, with a paired bootstrap over substrates
-($10{,}000$ resamples; substrates are the independent unit). It is significant on two independent
+($10{,}000$ resamples; substrates are the independent unit). Interactions and per-method changes
+are computed from unrounded values and may therefore differ by $0.001$ from the difference of the
+rounded figures displayed in the tables. It is significant on two independent
 pairs along two different protocol axes: BioTransformer gains \interA\ \interAci\ more than GRAIL
 from canonical$\rightarrow$tautomer, and SyGMa gains \interB\ \interBci\ more than MetaTrans from
 canonical$\rightarrow$InChIKey. The convention is therefore a \textbf{method-dependent
@@ -364,7 +367,7 @@ confounder}, not a neutral scoring choice.
 \paragraph{Two reversals follow, neither individually significant.} Under canonical matching GRAIL
 leads BioTransformer ($\Delta=+0.041$); under tautomer matching BioTransformer leads
 ($\Delta=-0.079$). MetaTrans leads SyGMa under canonical, no-stereo and Tanimoto$=$1 matching
-($\Delta=+0.010$) but trails under strict InChIKey ($\Delta=-0.053$), driven by a
+($\Delta$ between $+0.009$ and $+0.013$) but trails under strict InChIKey ($\Delta=-0.053$), driven by a
 \emph{non-monotone} response, since
 MetaTrans is the only method whose recall \emph{falls} under
 normalization, because it emits isomeric SMILES that strict InChIKey penalises. We note that every pairwise $\Delta$ here has a CI spanning zero at $n=\nshared$ (GRAIL$\leftrightarrow$
@@ -407,7 +410,7 @@ MetaPredictor  & 0.362 & 0.504 & $+0.142$ $[+0.079,+0.215]$ \\
 
 \paragraph{Mechanism.} The spread is not arbitrary: a method's protocol sensitivity tracks how far
 its outputs diverge tautomerically from the references it is scored against. A rule engine that
-emits whichever tautomer its SMIRKS produce (GRAIL, MetaPredictor) gains most from tautomer-aware
+emits whichever tautomer its reaction templates produce (GRAIL, MetaPredictor) gains most from tautomer-aware
 matching; a method that canonicalises its own output (SyGMa) gains almost nothing. This predicts that the effect should be small where a generator
 canonicalises its own output. A single-model test in retrosynthesis, a domain whose reference
 structures are canonical, finds a spread of about $0.02$ across the same criteria, an order of
@@ -428,7 +431,7 @@ selection weakness, and \S\ref{sec:decomp} localises it.
 GRAIL differs from SyGMa on a second axis, output size: it returns $8.7$ candidates at
 precision $0.109$ where SyGMa returns $74$ at $0.029$, an operating point that recall@$k$ alone does not express.
 
-\subsection{Learning loses to counting: selection is extreme multi-label}
+\subsection{Selection as extreme multi-label classification}
 \label{sec:xmc}
 
 Since selection is the dominant leak, we ask what makes it hard, and the answer is structural
@@ -440,8 +443,7 @@ is why propensity-scored losses were introduced \citep{Jain_2016}. Metabolite ru
 \emph{inherits} this pathology, which the domain literature does not name.
 
 This prediction is borne out. On the same candidate pools a learned-only
-selector reaches $0.266$ while ranking by the empirical rule-firing frequency alone reaches $0.410$, a paired difference of $\mathbf{-0.144}$ (95\% CI $[-0.196,\,-0.095]$, $n=245$). The
-learned selector loses to counting. Under PU annotation with an approximately constant labelling
+selector reaches $0.266$ while ranking by the empirical rule-firing frequency alone reaches $0.410$, a paired difference of $\mathbf{-0.144}$ (95\% CI $[-0.196,\,-0.095]$, $n=245$). The learned selector underperforms the frequency baseline. Under PU annotation with an approximately constant labelling
 propensity, a learner with constant unlabelled weighting recovers a propensity-distorted score
 whose dominant component is the marginal firing rate, so the prior is Bayes-competitive
 \emph{by construction} at the selection stage; the learner can only win if substrate-conditional
@@ -452,9 +454,11 @@ Two observations delimit the scope of this result. First, the effect
 is \emph{selection-specific}: at the separate \emph{ranking} stage, on identical broad pools, the
 learned filter beats the same frequency prior ($0.413$ versus $0.374$). Second, the pathology is
 addressable rather than fundamental, since
-a dense reformulation over a coarse reaction-type
-vocabulary beats the prior roughly threefold at $k{=}5$, though at a cost in reachability that
-makes it a diagnosis rather than a drop-in fix (Appendix~\ref{app:props}).
+a dense reformulation that predicts a coarse reaction type, an element-aware description of
+which bonds change, rather than a specific rule exceeds the prior at $k{=}5$ ($0.086$ against
+$0.030$). That reformulation caps the fraction of references any selector could reach at about
+47 per cent, so it diagnoses the problem rather than replacing the pipeline
+(Appendix~\ref{app:props}).
 
 \section{Limitations}
 \label{sec:limitations}
@@ -465,7 +469,7 @@ scored on the full $\ntest$. The external replication is $n=\nglory$. At those s
 \emph{interactions} are significant but no individual pairwise reversal is, and we report them that
 way throughout rather than promoting point estimates.
 
-\paragraph{Two comparators are not re-runnable in-tree.} MetaTrans's inference pipeline no longer
+\paragraph{Two comparators cannot be re-run in this codebase.} MetaTrans's inference pipeline no longer
 reproduces in our environment and BioTransformer's exact configuration is unscripted, so both are
 represented by frozen prediction files rather than by re-executable code. Their numbers are
 therefore reproducible from our artifacts but not independently regenerable from scratch, which is a weaker guarantee.
@@ -477,15 +481,14 @@ size and never rank methods by precision.
 
 \paragraph{The single-step bound.} Our ceiling is single-step-conditional. A non-vanishing fraction
 of references are multi-generation products unreachable by any one rule application; depth-2
-application lifts the ceiling by only ${\sim}0.012$ at ${\sim}8.5\times$ candidate cost. The
-$\ceiling$ ceiling bounds this paradigm, not the problem.
+application lifts the ceiling by only ${\sim}0.012$ at approximately $8.5$ times the candidate
+cost, so the $\ceiling$ ceiling bounds this single-step formulation rather than the task itself.
 
 \paragraph{Evaluation hygiene of this paper itself.} Our headline numbers come from a single
 evaluation of the deployed configuration, with model and hyper-parameter selection done on
 validation. Some \emph{exploratory} analyses reported in Appendix~\ref{app:negative}, however, were
-scored on the test split before we tightened this discipline; they inform no headline claim and
-their conclusions are negative, but a paper arguing for evaluation rigor should disclose its own
-lapses rather than only its protocol. Subsequent exploratory work was moved to validation.
+scored on the test split before we tightened this discipline; They inform no headline claim and their conclusions are
+negative. Subsequent exploratory work was moved to the validation split.
 
 \section{Conclusion}
 \label{sec:conclusion}
@@ -510,7 +513,7 @@ strong.
 
 All numbers in this paper are regenerable from committed artifacts: the frozen predictions of every
 method, the leakage-audit report, and one JSON per experiment holding the values quoted in the
-text and tables. The evaluation harness, the matching quotients, the split construction and audit,
+text and tables. The evaluation harness, the matching criterions, the split construction and audit,
 and every analysis script named in the text are released together with the model checkpoints
 required to reproduce the GRAIL rows. An anonymized artifact archive accompanies this submission;
 the de-anonymized repository will be linked in the camera-ready version.
