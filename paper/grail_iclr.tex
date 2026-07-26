@@ -96,8 +96,7 @@ that appear among a method's $k$ highest-ranked predictions.
 
 That comparison rests on an assumption that has not been examined. Computing recall requires a
 decision about when a predicted molecular structure counts as the same molecule as an
-experimentally reported one, and chemistry offers several defensible answers. Two structures may
-be compared as canonical text strings, as hashed chemical identifiers, as identifiers with
+experimentally reported one, and chemistry offers several defensible answers. Two structures may be compared as canonical text strings (SMILES, the standard line notation for molecular structure), as hashed chemical identifiers, as identifiers with
 stereochemistry removed, or as molecular fingerprints. These criteria disagree, most importantly
 about tautomers, which are alternative structures of one compound that differ in the position of a
 mobile hydrogen atom. Published evaluations adopt one criterion each, usually without stating why,
@@ -187,9 +186,9 @@ TAME is a \emph{protocol, an audited split and a re-scoring harness}, not a lead
 it exists so that the numbers in \S\ref{sec:results} are directly comparable and regenerable from
 committed artifacts.
 
-\paragraph{The matching criterion.} The field has never agreed what counts as a match. GLORYx uses a
-stereo-blind InChIKey skeleton, MetaTrans uses Morgan-fingerprint Tanimoto${=}1$, LAGOM uses
-canonical-SMILES equality. Each is a different equivalence relation on molecules, and each is applied silently. TAME makes the choice explicit by exposing all of them as named quotients: predicted and
+\paragraph{The matching criterion.} The field has never agreed what counts as a match. GLORYx uses a stereo-blind InChIKey skeleton, MetaTrans compares
+Morgan fingerprints for identity, and rule-based systems that canonicalise their own output, such
+as SyGMa, effectively compare canonical SMILES strings. Each is a different equivalence relation on molecules, and each is applied silently. TAME makes the choice explicit by exposing all of them as named quotients: predicted and
 reference structures are mapped through one of
 \[
 q \in \{\textsc{canonical},\ \textsc{inchikey},\ \textsc{inchi-no-stereo},\ \textsc{tanimoto1},\
@@ -298,8 +297,7 @@ product   & recall@15 (micro)                & \textbf{\realised} &  \\
 \end{table}
 
 \paragraph{What the decomposition says.} Table~\ref{tab:decomp} localises the loss. The deployed
-pipeline converts only $35.5\%$ of its own ceiling into realised recall, and the largest single
-shortfall is \textbf{selection}: less than half of what the bank can reach survives into the
+pipeline converts only $35.5\%$ of its own ceiling into realised recall, and the largest single shortfall is \textbf{selection}: less than half of what the bank can reach survives into the
 budgeted candidate pool. Coverage and ranking are statistically indistinguishable from one another
 ($0.735$ $[0.709,0.762]$ against $0.726$ $[0.687,0.765]$); only selection is clearly dominant. The decomposition therefore indicates selection, rather than ranking, as the stage at which
 intervention is warranted. It also bounds what this architecture can achieve: even a perfect selector and a perfect
@@ -370,13 +368,15 @@ leads BioTransformer ($\Delta=+0.041$); under tautomer matching BioTransformer l
 ($\Delta$ between $+0.009$ and $+0.013$) but trails under strict InChIKey ($\Delta=-0.053$), driven by a
 \emph{non-monotone} response, since
 MetaTrans is the only method whose recall \emph{falls} under
-normalization, because it emits isomeric SMILES that strict InChIKey penalises. We note that every pairwise $\Delta$ here has a CI spanning zero at $n=\nshared$ (GRAIL$\leftrightarrow$
+normalization, because it emits isomeric SMILES, which record the stereochemistry that a stereo-blind criterion discards and a strict one penalises. We note that every pairwise $\Delta$ here has a CI spanning zero at $n=\nshared$ (GRAIL$\leftrightarrow$
 BioTransformer canonical $[-0.044,+0.122]$, tautomer $[-0.166,+0.007]$;
 MetaTrans$\leftrightarrow$SyGMa canonical $[-0.064,+0.081]$, InChIKey $[-0.130,+0.023]$). The interaction underlying the reversals is therefore established, while the individual reversals are not.
 
 \paragraph{External replication.} The results above live on a $\nshared$-substrate subset of our
-own split, so we repeated the analysis on the field's de-facto external hold-out: the \nglory\
-GLORYx drugs \citep{de_Bruyn_Kops_2020} with four methods, switching only
+own split, so we repeated the analysis on the field's de-facto external hold-out, the \nglory\
+GLORYx drugs \citep{de_Bruyn_Kops_2020}. The GLORYx tool supplies this evaluation set but is not
+itself scored on it, because the trained weights of its site-of-metabolism component are not
+available for re-execution. Four methods are compared, switching only
 InChIKey~$\rightarrow$~tautomer-InChIKey (Table~\ref{tab:gloryx}). Protocol sensitivity spans more
 than an order of magnitude across methods
 (SyGMa $+0.007$, GRAIL $+0.178$), and three of the
@@ -385,8 +385,10 @@ the largest being GRAIL$\leftrightarrow$SyGMa ($-0.171$ $[-0.264,-0.086]$) and
 MetaPredictor$\leftrightarrow$SyGMa ($-0.135$ $[-0.209,-0.072]$). The ordering consequence is
 sharpest for the latter: under strict InChIKey SyGMa leads by a \emph{significant} $-0.130$
 $[-0.196,-0.065]$; under tautomer matching that advantage \textbf{disappears entirely} and the
-point estimate reverses ($+0.005$, n.s.). A convention chosen for convenience can therefore erase
-a statistically significant advantage between two published tools. This is shown on an external,
+point estimate reverses ($+0.005$, n.s.). A criterion chosen for convenience can therefore erase a
+statistically significant advantage between two published tools. This pair is the sharpest of the
+six tested, and the six were tested without correction for multiple comparisons, so it is offered
+as an illustration of the mechanism rather than as an independently significant reversal. This is shown on an external,
 literature-standard set, with a different method quartet, at a sample size where the intervals
 still exclude zero.
 
@@ -421,20 +423,23 @@ magnitude below the metabolism effect (Appendix~\ref{app:xdomain}).
 
 We report the comparison against published methods before applying the decomposition. On the full clean test split ($n=\ntest$) the deployed GRAIL checkpoint reaches
 \textbf{\grailmacro} macro recall@15; retraining the same configuration under three seeds gives
-$0.344 \pm 0.010$ on that split. SyGMa reaches \textbf{0.572},
-a paired difference of $-0.242$ (95\% CI $[-0.271,\,-0.212]$, cluster bootstrap over $n=1{,}168$ common substrates), and against MetaPredictor's $0.585$ on the shared subset ($0.568$ re-scored on the
-full test). GRAIL does not achieve the highest recall at any output budget. A budget-matched frontier
+$0.344 \pm 0.010$ on that split. SyGMa reaches \textbf{0.572}, a paired difference of $-0.242$ from GRAIL
+(95\% CI $[-0.271,\,-0.212]$, cluster bootstrap over $n=1{,}168$ common substrates).
+MetaPredictor reaches $0.585$ on the shared subset ($n=\nshared$) and $0.568$ when re-scored on
+the full test ($n=1{,}169$). GRAIL trails both. GRAIL does not achieve the highest recall at any output budget. A budget-matched frontier
 sweeping $k \in [1,64]$ finds SyGMa ahead at \emph{every} $k$ with no crossover
 (Appendix~\ref{app:budget}): the gap is not an artifact of output-size accounting, it is a genuine
 selection weakness, and \S\ref{sec:decomp} localises it.
 
-GRAIL differs from SyGMa on a second axis, output size: it returns $8.7$ candidates at
-precision $0.109$ where SyGMa returns $74$ at $0.029$, an operating point that recall@$k$ alone does not express.
+GRAIL differs from SyGMa on a second axis, the size of the returned set. On the same full test
+split GRAIL returns $8.4$ candidates per substrate at precision $0.109$ (three-seed mean), where
+SyGMa returns $81.0$ at $0.076$. This is an operating point that recall@$k$ alone does not
+express.
 
 \subsection{Selection as extreme multi-label classification}
 \label{sec:xmc}
 
-Since selection is the dominant leak, we ask what makes it hard, and the answer is structural
+Since selection is the dominant shortfall, we ask what makes it hard, and the answer is structural
 rather than metabolism-specific. Choosing which of \nbank\ rules apply to a substrate is an
 \textbf{extreme multi-label classification} (XMC) problem with a near-empty positive set:
 approximately one to three rules fire per substrate, i.e.\ ${\sim}0.03\%$ of labels. In exactly
