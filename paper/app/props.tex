@@ -1,65 +1,29 @@
-The decomposition in the main text says where recall is lost. This appendix says why. It
-reports the measurements behind each factor, states three propositions that explain the losses
-mechanistically, and describes two interventions that test them.
+Table~\ref{tab:levers} in the main text lists seven diagnostic measurements and the factor each
+one constrains. This appendix reports those measurements in full, states three propositions that
+account for them, and describes two interventions that test the propositions.
 
-\subsection{Measurements behind each factor}
+\subsection{Coverage composition, data scale, and regioselectivity}
 
-Table~\ref{tab:levers} lists the diagnostic measurements, each attached to the one factor of the
-decomposition it constrains.
+Three of the seven measurements are reported here; the remaining four are expanded in the
+subsections that follow and in Proposition 3.
 
-\begin{table}[h]
-\centering
-\footnotesize
-\begin{tabular}{p{2.5cm}p{2.4cm}p{7.6cm}}
-\toprule
-Measurement & Factor & Finding \\
-\midrule
-Learned versus prior selection &
-selection &
-A frequency prior of the kind SyGMa uses outranks the learned generator. Generator-only
-recall@15 is 0.410 for the prior and 0.266 for the learned scorer ($\Delta=-0.144$,
-95\% CI $[-0.196,-0.095]$, paired bootstrap, $n=245$); with the filter, 0.405 against 0.300
-($\Delta=-0.105$, $[-0.152,-0.058]$). Adding the prior to the learned scorer gains $+0.130$
-without the filter and $+0.099$ with it. The filter significantly improves only the weaker
-learned ordering ($+0.034$, $[+0.011,+0.061]$), not the prior. \\
-\addlinespace
-Multi-step application &
-coverage &
-Breadth-capped depth-2 application raises the ceiling from 0.711 to 0.723, at 8.5 times the
-candidate cost (194 to 1{,}653 candidates per substrate). \\
-\addlinespace
-Composition of the coverage gap &
-coverage &
-26.9 per cent of reference metabolites are outside the depth-1 bank under InChIKey matching,
-about 25 per cent under tautomer matching. The misses are a diverse tail: the largest single
-missing class, hydroxylation and oxidation, is 6 per cent of the uncovered set ($n=500$). \\
-\addlinespace
-Training-set size &
-selection &
-Recall is flat between 2{,}418 and 4{,}787 training substrates. \\
-\addlinespace
-Site-of-metabolism prior &
-ranking &
-A site-of-metabolism prior gives only a small gain; regioselective ordering within the bank is
-hard. \\
-\addlinespace
-Selection breadth &
-selection &
-Widening the rule selector from 30 to 300 rules lifts recall@15 from 0.352 to 0.413 and pool
-coverage from 0.482 to 0.608, saturating below the $\ceiling$ ceiling ($n=245$ test subset; the
-trend, not the absolute level, is the finding). \\
-\addlinespace
-Abstention &
-ranking &
-Gating output on a filter-score threshold traces a recall--precision frontier whose precision
-axis is nearly flat, between 0.10 and 0.12; no threshold selected on validation reaches 0.2.
-Raising the threshold shrinks the output from 9.96 candidates to 0.3 and collapses recall from
-0.388 to 0.041 for almost no precision gain. \\
-\bottomrule
-\end{tabular}
-\caption{Diagnostic measurements and the recall-decomposition factor each one constrains.}
-\label{tab:levers}
-\end{table}
+\paragraph{Composition of the uncovered set.}
+Measured on 500 substrates, 26.9 per cent of reference metabolites lie outside what the bank
+reaches in one step under InChIKey matching, and about 25 per cent under tautomer-aware matching.
+The misses are a diverse tail rather than one absent rule family: the largest single class,
+hydroxylation and oxidation, accounts for 6 per cent of the uncovered set. Proposition 3 types
+the gap by reaction type and bounds how much of it a more general template could close.
+
+\paragraph{Training-set size.}
+Recall is flat between 2{,}418 and 4{,}787 training substrates. Doubling the number of substrates
+does not move selection, which is what rules out under-training as the explanation for the
+shortfall and which Proposition 2 accounts for: with one to three rules firing per substrate over
+a label space of $\nbank$, more substrates add little to the per-rule positive counts that a
+learned selector would need.
+
+\paragraph{Site-of-metabolism prior.}
+Adding a prior over which site of the substrate is metabolised gives only a small gain. Ordering
+candidates regioselectively within the bank remains hard, and we did not isolate why.
 
 \subsection{Selection breadth and abstention}
 

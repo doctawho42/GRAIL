@@ -10,13 +10,7 @@
 \usepackage{multirow}
 \usepackage{hyperref}
 
-% Artifact paths appear throughout the appendices inside \texttt{}; without breakpoints they
-% overflow the column. Allow breaks after / and _ in typewriter text.
 \usepackage{xspace}
-\makeatletter
-\newcommand{\artifact}[1]{\texttt{\seqsplitpath{#1}}}
-\newcommand{\seqsplitpath}[1]{#1}
-\makeatother
 \sloppy
 
 % ---- shared macros (keep every number in ONE place so text and tables cannot drift) ----
@@ -465,6 +459,60 @@ $0.030$). That reformulation caps the fraction of references any selector could 
 47 per cent, so it diagnoses the problem rather than replacing the pipeline
 (Appendix~\ref{app:props}).
 
+\subsection{What constrains each factor}
+\label{sec:evidence}
+
+The diagnosis rests on seven measurements, not on the decomposition alone. Each one is designed to
+move exactly one factor, so that a result which fails to move recall is as informative as one that
+does. Table~\ref{tab:levers} collects them.
+
+\begin{table}[t]
+\caption{Seven diagnostic measurements, each attached to the factor of the decomposition it
+constrains. Sample sizes differ between rows.}
+\label{tab:levers}
+\begin{center}
+\small
+\begin{tabular}{p{4.2cm}p{1.4cm}p{6.6cm}}
+\toprule
+\textbf{measurement} & \textbf{factor} & \textbf{result} \\
+\midrule
+learned selection against a frequency prior & selection &
+$0.266$ against $0.410$; $\Delta = -0.144$ $[-0.196,-0.095]$ ($n{=}245$) \\
+selection breadth, 30 to 300 rules & selection &
+recall $0.352 \to 0.413$; pool coverage $0.482 \to 0.608$ ($n{=}245$) \\
+training set, 2{,}418 to 4{,}787 substrates & selection &
+flat \\
+\addlinespace
+depth-2 rule application & coverage &
+ceiling $+0.012$, at $8.5\times$ the candidate cost ($n{=}150$) \\
+composition of the uncovered set & coverage &
+$26.9\%$ of references outside the bank under \textsc{inchikey}, ${\sim}25\%$ under tautomer
+matching; largest missing class $6\%$ ($n{=}500$) \\
+\addlinespace
+site-of-metabolism prior & ranking &
+small gain \\
+abstention on filter score & ranking &
+precision never above $0.12$; recall $0.388 \to 0.041$ ($n{=}\ntest$) \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table}
+
+Four of the seven are interventions that failed, and they are the more useful half. Applying rules
+twice, training on twice the data, adding a site-of-metabolism prior and abstaining on low filter
+scores are the obvious remedies for a system in this position; none of them works here. Depth-2 application buys $0.012$ of ceiling for an $8.5$-fold increase in candidates, and
+doubling the training set changes nothing, which is why we attribute the shortfall to the
+structure of the selection problem rather than to under-training. Abstention is the sharpest of
+the four: raising the threshold removes true and apparently false candidates in nearly equal
+proportion, because an unannotated candidate is scored a false positive whether or not it is a real
+metabolite, so precision stays flat while recall collapses. Precision here is bounded by the
+annotation rather than by the threshold, which is why we report recall against output size rather
+than precision. Of the remaining three, two
+locate recoverable recall at the selection stage --- the gap to the frequency prior and the gain
+from widening selection --- and the third characterises what the bank cannot reach in one step.
+Appendix~\ref{app:props} gives the measurements in full, with three propositions that account for
+them.
+
 \section{Limitations}
 \label{sec:limitations}
 
@@ -492,8 +540,8 @@ cost, so the $\ceiling$ ceiling bounds this single-step formulation rather than 
 \paragraph{Evaluation hygiene of this paper itself.} Our headline numbers come from a single
 evaluation of the deployed configuration, with model and hyper-parameter selection done on
 validation. Some \emph{exploratory} analyses reported in Appendix~\ref{app:negative}, however, were
-scored on the test split before we tightened this discipline; They inform no headline claim and their conclusions are
-negative. Subsequent exploratory work was moved to the validation split.
+scored on the test split before we tightened this discipline. They inform no headline claim, and
+their conclusions are negative. Subsequent exploratory work was moved to the validation split.
 
 \section{Conclusion}
 \label{sec:conclusion}
@@ -518,9 +566,9 @@ strong.
 
 All numbers in this paper are regenerable from committed artifacts: the frozen predictions of every
 method, the leakage-audit report, and one JSON per experiment holding the values quoted in the
-text and tables. The evaluation harness, the matching criterions, the split construction and audit,
-and every analysis script named in the text are released together with the model checkpoints
-required to reproduce the GRAIL rows. An anonymized artifact archive accompanies this submission;
+text and tables. The evaluation harness, the five matching criteria, the split construction and its audit, and
+the analysis code behind every table are released together with the model checkpoints required to
+reproduce the GRAIL rows. An anonymized artifact archive accompanies this submission;
 the de-anonymized repository will be linked in the camera-ready version.
 
 \bibliographystyle{iclr2026_conference}
