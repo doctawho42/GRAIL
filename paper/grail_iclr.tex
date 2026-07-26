@@ -27,9 +27,9 @@
 \newcommand{\interB}{+0.063}          % MetaTrans<->SyGMa interaction
 \newcommand{\interBci}{[+0.022,\,+0.106]}
 
-\title{Recall Is Not One Number: A Tautomer-Aware Protocol and a\\
-Coverage $\times$ Selection $\times$ Ranking Decomposition for\\
-Metabolite-Structure Prediction}
+\title{The Less It Knows, The Better It Scores:\\
+Match Sensitivity and Recall Decomposition\\
+in Metabolite-Structure Prediction}
 
 % double-blind: authors stay anonymous until camera-ready
 \author{Anonymous authors \\ Paper under double-blind review}
@@ -54,8 +54,9 @@ aggregates three distinct failure modes, because a metabolite may be missed when
 reaction is absent from a method's rule base, when the applicable rule is not selected, or when
 the correct product is generated but ranked below the reporting threshold.
 
-We address both problems. We introduce TAME, an evaluation protocol for metabolite-structure
-prediction that comprises tautomer-aware structure matching, a leakage-audited data split, and a
+We address both problems. We introduce TAME (tautomer-aware metabolite
+evaluation), a protocol for metabolite-structure prediction that comprises tautomer-aware
+structure matching, a leakage-audited data split, and a
 harness that re-scores fixed predictions from several methods under a common criterion. Applying
 this protocol to four published methods and to our own, we find that the matching criterion systematically
 reorders the leaderboard, and we reproduce the same reordering on an independent external dataset.
