@@ -18,10 +18,9 @@ edges, and a 1024-bit Morgan fingerprint per molecule. Unless stated otherwise, 
 predicted and reference structures uses the tautomer-aware InChIKey convention throughout this
 paper.
 
-The three stages are separately inspectable --- the selected rule, the enumerated product, and
-the filter's judgement of the pair --- and interpretable rule selection paired with a
-positive-unlabelled filter is what the architecture contributes, not recall above other
-metabolite predictors.
+The three stages are separately inspectable: the selected rule, the enumerated product, and the
+filter's judgement of the pair. What the architecture contributes is interpretable rule selection
+paired with a positive-unlabelled filter, not recall above other metabolite predictors.
 
 \subsection{The generator}
 
@@ -82,8 +81,8 @@ $[-0.017,-0.001]$ over $n=\ntest$; at recall@5 the margin widens, 0.282 against 
 
 They also win on cost by roughly twenty-fold. Computing a maximum common substructure for every
 pair makes full-data training take about 14 hours against roughly 40 minutes, and imposes the same
-computation at every candidate at inference. Accuracy and cost point the same way, so the
-merged-graph variant is not merely unused but dominated.
+computation at every candidate at inference. Accuracy and cost point the same way. The merged-graph
+variant is implemented and available; we do not deploy it because it loses on both counts.
 
 \subsection{How the rule bank was built}
 
@@ -94,7 +93,7 @@ candidate template validated against the pair that produced it.
 Mining reads only the clean, molecule-disjoint training split. For each annotated pair it first
 locates a ring-aware maximum common substructure as an anchor, using RDKit's FMCS with ring atoms
 matched only to ring atoms, rings completed, any bond order allowed to match, and atoms compared
-by element; the anchor must cover at least 40 per cent of the smaller molecule's atoms. From that
+by element; the anchor must cover at least 40\% of the smaller molecule's atoms. From that
 anchor it derives a reaction centre. Three kinds of atom are flagged: matched atoms whose element,
 formal charge, hydrogen count, aromaticity or degree changed; atom pairs whose connecting bond
 order changed; and leaving or entering atoms together with their matched neighbours. Several
@@ -107,7 +106,7 @@ Two gates follow. A template survives only if applying it to its own source subs
 the annotated product after canonicalisation. The surviving, deduplicated templates then pass a
 selectivity filter that rejects templates producing more than 200 distinct products on average
 across a 50-substrate sample, and templates that are both very general and very prolific,
-applicable to more than 90 per cent of sampled substrates while still averaging more than 50
+applicable to more than 90\% of sampled substrates while still averaging more than 50
 products.
 
 A second atom-mapping route is also implemented: it detects the reaction centre with RASCAL MCES,
@@ -124,7 +123,7 @@ The deployed bank of $\nbank$ templates is the deduplicated union of four earlie
 of 473, 656, 500 and 1{,}051 rules, together with the newly mined templates.
 
 Support across mined templates is heavily skewed. The positional miner alone extracts 5{,}856
-unique self-tested templates from the training positives. Of these, 4{,}274 --- 73 per cent ---
+unique self-tested templates from the training positives. Of these, 4{,}274 (73\%)
 rest on a single training pair, and only 457 on five or more; the single best-supported template
 covers 1{,}531 pairs. The bank is therefore dominated by highly specific, near-single-example
 templates rather than by broad general reactions.

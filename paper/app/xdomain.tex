@@ -20,13 +20,13 @@ a headline quantity.
 
 The deployed headline, recall@15 of $\realised$ micro and $\grailmacro$ macro, comes from a single
 checkpoint rather than an average over seeds. The certification bounds variance in the evaluation
---- resampling and discordance over a fixed model --- not variance in training across independently
+(resampling and discordance over a fixed model), not variance in training across independently
 seeded runs. Retraining on three seeds confirms the headline is stable, at $0.344\pm0.010$ macro
 and $0.269\pm0.006$ micro, but the headline itself remains a single-checkpoint number.
 
 \subsection{The five-method comparison mixes sample sizes}
 
-The three additional comparators --- BioTransformer, MetaPredictor and MetaTrans --- are scored
+The three additional comparators (BioTransformer, MetaPredictor and MetaTrans) are scored
 only on the shared subset of $\nshared$ substrates for which frozen third-party predictions exist,
 whereas GRAIL's and SyGMa's headline numbers elsewhere are reported on the full clean test split of
 $\ntest$. Within the comparison table itself all five methods are re-scored on the same $\nshared$
@@ -82,12 +82,12 @@ strength. We therefore defer the comparison rather than force it.
 A single-model measurement suggests the effect is domain-dependent. Scoring ReactionT5v2 on 200
 substrates from the USPTO-50k test set, the same predictions move only about 0.02 in top-1
 accuracy across canonical, stereo-stripped, InChIKey and tautomer matching, between 0.695 and
-0.715 --- roughly an order of magnitude less than the interaction we measure in metabolism. A
+0.715, roughly an order of magnitude less than the interaction we measure in metabolism. A
 plausible reason is that retrosynthesis references are canonical, clean small molecules, whereas a
 metabolism rule engine emits tautomer and stereochemical variants of its references.
 
 The reading we take from this is not that matching conventions reorder leaderboards everywhere,
 but that the size of the effect depends on how far a generator's outputs diverge tautomerically
-and stereochemically from the references it is scored against. Whether the convention reorders,
-rather than merely shifts, results in another domain with comparable tautomer ambiguity remains
-the open test, and it needs only public multi-model predictions in a re-scorable form.
+and stereochemically from the references it is scored against. Whether the convention reorders
+results in another domain of comparable tautomer ambiguity, rather than only shifting them,
+remains the open test, and it needs only public multi-model predictions in a re-scorable form.

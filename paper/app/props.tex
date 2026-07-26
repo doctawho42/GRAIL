@@ -8,10 +8,10 @@ Three of the seven measurements are reported here; the remaining four are expand
 subsections that follow and in Proposition 3.
 
 \paragraph{Composition of the uncovered set.}
-Measured on 500 substrates, 26.9 per cent of reference metabolites lie outside what the bank
-reaches in one step under InChIKey matching, and about 25 per cent under tautomer-aware matching.
+Measured on 500 substrates, 26.9\% of reference metabolites lie outside what the bank
+reaches in one step under InChIKey matching, and about 25\% under tautomer-aware matching.
 The misses are a diverse tail rather than one absent rule family: the largest single class,
-hydroxylation and oxidation, accounts for 6 per cent of the uncovered set. Proposition 3 types
+hydroxylation and oxidation, accounts for 6\% of the uncovered set. Proposition 3 types
 the gap by reaction type and bounds how much of it a more general template could close.
 
 \paragraph{Training-set size.}
@@ -59,8 +59,9 @@ score falls below a threshold, then ranking the survivors as usual, traces a fro
 precision barely moves. With no threshold, recall@15 is 0.388 at precision 0.098 and 9.96 outputs
 per substrate; at a threshold of 0.5, recall is 0.146 at precision 0.114 and 1.55 outputs; at 0.9,
 recall is 0.041 at precision 0.040 and 0.30 outputs. Precision never exceeds about 0.123. Raising the
-threshold removes true and apparently false candidates in near-equal proportion, because most
-apparent false positives are unannotated true metabolites. The best threshold selected on
+threshold removes true and apparently false candidates in near-equal proportion, because an
+unannotated candidate is scored a false positive whether or not it is a real metabolite. The best
+threshold selected on
 validation lifts F1 from 0.129 to 0.131 by trimming the output tail. Precision here is bounded
 by the annotation, not by the threshold, which is why the deployed system ranks rather than
 abstains.
@@ -135,7 +136,7 @@ from 0.388 to 0.404, a paired $+0.0165$ $[+0.006,+0.027]$, while the factorised 
 is not significant ($+0.001$, $[-0.010,+0.013]$).
 
 Weaker supporting evidence comes from a higher-capacity listwise reranker, which scored 0.500
-against a 0.433 baseline in a separate held-out run, a gain of $+0.067$, or 74 per cent of that run's oracle ceiling
+against a 0.433 baseline in a separate held-out run, a gain of $+0.067$, or 74\% of that run's oracle ceiling
 of 0.677, with a spread of $\pm0.015$ across three seeds. That figure has no paired interval:
 its per-substrate scores were not retained, so the bootstrap cannot be recomputed without
 retraining. The proposition rests on the $n=\ntest$ intervals rather than on it. The claim
@@ -179,7 +180,7 @@ its references include multi-generation metabolites that no single step can reac
 The composition of the gap determines how much of it template generalisation could close. Typing
 each uncovered transformation by its element-aware changed-bond multiset, and comparing against
 the 4{,}417 types the bank already contains, splits the 687 uncovered test transformations into
-280 (41 per cent) whose reaction type the bank already has, and 366 (53 per cent) whose type is
+280 (41\%) whose reaction type the bank already has, and 366 (53\%) whose type is
 absent from it. The first group is reachable in principle by a more general template, which
 bounds an in-bank ceiling at $(1910+280)/2597 = 0.843$; closing both groups would bound it at
 0.984. Template generalisation is therefore a real but bounded gain of about 0.11 in ceiling
@@ -203,7 +204,7 @@ proposition's prediction.
 
 Coverage nevertheless binds. As a replacement generator the pipeline reaches only recall@15
 0.256 on the full test, a regression against the budget-matched deployed 0.365 at precision
-0.109, because type selection caps oracle reachability at about 47 per cent. Widening the
+0.109, because type selection caps oracle reachability at about 47\%. Widening the
 vocabulary from 371 to 701 types leaves that cap unchanged, which confirms Proposition 3
 causally.
 

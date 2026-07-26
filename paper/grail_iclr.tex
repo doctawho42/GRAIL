@@ -147,7 +147,7 @@ sensitive its conclusions are to that criterion.
 \paragraph{Structure standardisation.} The difficulty of deciding when two molecular structures
 denote the same compound is documented independently of metabolite prediction.
 \citet{Dhaked_2020} catalogue tautomeric transformations and show that the standard InChI
-identifier normalises only a subset of them. \citet{Hahnke_2018} report that roughly 60 per cent of
+identifier normalises only a subset of them. \citet{Hahnke_2018} report that roughly 60\% of
 PubChem records differ from their canonical InChI representation, predominantly through tautomer
 choice, and \citet{Mansouri_2024} describe a standardisation pipeline developed for
 quantitative structure-activity modelling. This literature treats standardisation as a
@@ -265,7 +265,7 @@ macro, which is the convention used by the comparator tools. On this split the t
 \paragraph{The ceiling as a primitive.} The first factor is measurable without any model: apply
 all \nbank\ rules to every test substrate and ask what fraction of references appears anywhere in
 the union. That is the bank's \textbf{coverage ceiling}, the best recall achievable if selection
-and ranking were both perfect. On the clean test split it is \textbf{\ceiling}
+and ranking were both perfect. On the clean test split it is \ceiling
 (cluster-bootstrap 95\% CI $[0.709,0.762]$, resampling substrates). We argue this should be
 reported alongside recall for any rule-grounded method, because it separates \emph{what the
 knowledge base can express} from \emph{what the model does with it}, and because it bounds every
@@ -291,12 +291,12 @@ product   & recall@15 (micro)                & \textbf{\realised} &  \\
 \end{table}
 
 \paragraph{What the decomposition says.} Table~\ref{tab:decomp} localises the loss. The deployed
-pipeline converts only $35.5\%$ of its own ceiling into realised recall, and the largest single shortfall is \textbf{selection}: less than half of what the bank can reach survives into the
+pipeline converts only $35.5\%$ of its own ceiling into realised recall, and the largest single shortfall is selection: less than half of what the bank can reach survives into the
 budgeted candidate pool. Coverage and ranking are statistically indistinguishable from one another
 ($0.735$ $[0.709,0.762]$ against $0.726$ $[0.687,0.765]$); only selection is clearly dominant. The decomposition therefore indicates selection, rather than ranking, as the stage at which
 intervention is warranted. It also bounds what this architecture can achieve: even a perfect selector and a perfect
 ranker would stop at \ceiling, and that ceiling is corpus-limited rather than a
-consequence of tuning: 53 per cent of uncovered transformations are of reaction types absent from
+consequence of tuning: 53\% of uncovered transformations are of reaction types absent from
 the bank altogether (Appendix~\ref{app:props}).
 
 \section{Results}
@@ -378,7 +378,7 @@ four intervals exclude zero. Of the six method pairs, four show a significant in
 the largest being GRAIL$\leftrightarrow$SyGMa ($-0.171$ $[-0.264,-0.086]$) and
 MetaPredictor$\leftrightarrow$SyGMa ($-0.135$ $[-0.209,-0.072]$). The ordering consequence is
 sharpest for the latter: under strict InChIKey SyGMa leads by a \emph{significant} $-0.130$
-$[-0.196,-0.065]$; under tautomer matching that advantage \textbf{disappears entirely} and the
+$[-0.196,-0.065]$; under tautomer matching that advantage disappears entirely and the
 point estimate reverses ($+0.005$, n.s.). A criterion chosen for convenience can therefore erase a
 statistically significant advantage between two published tools. This pair is the sharpest of the
 six tested, and the six were tested without correction for multiple comparisons, so it is offered
@@ -416,8 +416,8 @@ magnitude below the metabolism effect (Appendix~\ref{app:xdomain}).
 \label{sec:diagnosis}
 
 We report the comparison against published methods before applying the decomposition. On the full clean test split ($n=\ntest$) the deployed GRAIL checkpoint reaches
-\textbf{\grailmacro} macro recall@15; retraining the same configuration under three seeds gives
-$0.344 \pm 0.010$ on that split. SyGMa reaches \textbf{0.572}, a paired difference of $-0.242$ from GRAIL
+\grailmacro\ macro recall@15; retraining the same configuration under three seeds gives
+$0.344 \pm 0.010$ on that split. SyGMa reaches $0.572$, a paired difference of $-0.242$ from GRAIL
 (95\% CI $[-0.271,\,-0.212]$, cluster bootstrap over $n=1{,}168$ common substrates).
 MetaPredictor reaches $0.585$ on the shared subset ($n=\nshared$) and $0.568$ when re-scored on
 the full test ($n=1{,}169$). GRAIL trails both. GRAIL does not achieve the highest recall at any output budget. A budget-matched frontier
@@ -442,7 +442,7 @@ is why propensity-scored losses were introduced \citep{Jain_2016}. Metabolite ru
 \emph{inherits} this pathology, which the domain literature does not name.
 
 This prediction is borne out. On the same candidate pools a learned-only
-selector reaches $0.266$ while ranking by the empirical rule-firing frequency alone reaches $0.410$, a paired difference of $\mathbf{-0.144}$ (95\% CI $[-0.196,\,-0.095]$, $n=245$). The learned selector underperforms the frequency baseline. Under PU annotation with an approximately constant labelling
+selector reaches $0.266$ while ranking by the empirical rule-firing frequency alone reaches $0.410$, a paired difference of $\mathbf{-0.144}$ (95\% CI $[-0.196,\,-0.095]$, $n=245$). The learned selector underperforms the frequency baseline. Under positive-unlabelled annotation with an approximately constant labelling
 propensity, a learner with constant unlabelled weighting recovers a propensity-distorted score
 whose dominant component is the marginal firing rate, so the prior is Bayes-competitive
 \emph{by construction} at the selection stage; the learner can only win if substrate-conditional
@@ -456,7 +456,7 @@ addressable rather than fundamental, since
 a dense reformulation that predicts a coarse reaction type, an element-aware description of
 which bonds change, rather than a specific rule exceeds the prior at $k{=}5$ ($0.086$ against
 $0.030$). That reformulation caps the fraction of references any selector could reach at about
-47 per cent, so it diagnoses the problem rather than replacing the pipeline
+47\%, so it diagnoses the problem rather than replacing the pipeline
 (Appendix~\ref{app:props}).
 
 \subsection{What constrains each factor}
@@ -508,8 +508,8 @@ proportion, because an unannotated candidate is scored a false positive whether 
 metabolite, so precision stays flat while recall collapses. Precision here is bounded by the
 annotation rather than by the threshold, which is why we report recall against output size rather
 than precision. Of the remaining three, two
-locate recoverable recall at the selection stage --- the gap to the frequency prior and the gain
-from widening selection --- and the third characterises what the bank cannot reach in one step.
+locate recoverable recall at the selection stage: the gap to the frequency prior and the gain from
+widening selection. The third characterises what the bank cannot reach in one step.
 Appendix~\ref{app:props} gives the measurements in full, with three propositions that account for
 them.
 

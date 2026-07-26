@@ -13,11 +13,10 @@ Redundancy is present and measurable. Applying the full bank to a sample of 1{,}
 2{,}747 rules fire at least once, and these fall into 2{,}056 distinct classes when rules are
 grouped by the exact set of substrate-product pairs they generate. A quarter of the firing rules
 are therefore functional duplicates of another rule on this chemistry. Splitting that sample in
-half and re-deriving the grouping on each half preserves 97.5 per cent of the equivalences, so the
+half and re-deriving the grouping on each half preserves 97.5\% of the equivalences, so the
 grouping is not an artefact of the particular substrates sampled. A second, distribution-free
-procedure that canonicalises each reaction template and removes exact duplicates eliminates 7.5
-per cent of the whole bank, with permutation variants of a single template accounting for roughly
-43 per cent of that redundancy and non-structural equivalences for the remainder.
+procedure that canonicalises each reaction template and removes exact duplicates eliminates 7.5\% of the whole bank, with permutation variants of a single template accounting for roughly
+43\% of that redundancy and non-structural equivalences for the remainder.
 
 Whether removing this redundancy would improve selection is not established. Training marks every
 rule that produces an annotated metabolite as positive, and each rule carries its own embedding,
@@ -30,8 +29,8 @@ cost and memory rather than as a route to better accuracy.
 
 \subsection{Rules that never contribute}
 
-Across the 4{,}787 training substrates, 56.3 per cent of the bank is never a positive label, and a
-further 20.1 per cent is positive for exactly one substrate. Roughly three quarters of the
+Across the 4{,}787 training substrates, 56.3\% of the bank is never a positive label, and a
+further 20.1\% is positive for exactly one substrate. Roughly three quarters of the
 7{,}581-dimensional target is therefore either inert or supported by a single example, which is
 consistent with the extreme multi-label characterisation in the main text and suggests that the
 effective sparsity of the learning problem is reducible.
@@ -39,7 +38,7 @@ effective sparsity of the learning problem is reducible.
 It does not follow that the corresponding rules can be removed. We tested removal directly, by
 discarding the 4{,}271 rules that are never a positive label in training, which reduces the bank
 from 7{,}581 to 3{,}310, and re-ranking on the validation split. Performance falls on both axes.
-Recall@15 declines from 0.388 to 0.352 (paired difference $-0.036$, 95 per cent confidence
+Recall@15 declines from 0.388 to 0.352 (paired difference $-0.036$, 95\% confidence
 interval $[-0.050,-0.024]$), and the fraction of references present anywhere in the generated pool
 declines from 0.439 to 0.378 ($-0.061$, $[-0.078,-0.046]$); both intervals exclude zero. The mean
 pool size falls from 46.9 to 40.0 candidates.
@@ -55,14 +54,14 @@ on which the deployed system depends.
 
 Each rule's representation is the sum of a graph encoding of its reaction template, a learned
 per-rule embedding indexed by position in the bank, and a small vector of structural features.
-Decomposing the variance across rules attributes 82 per cent to the per-rule embedding and 17 per
+Decomposing the variance across rules attributes 82\% to the per-rule embedding and 17 per
 cent to the graph encoding, which suggests that the model treats the bank largely as a lookup
 table. On that reading the rare rules, whose embeddings receive almost no gradient, would
 contribute noise to the selection score, and the extreme multi-label pathology would have an
 architectural explanation.
 
 That reading does not hold. Setting the per-rule embedding to zero at inference, which removes the
-component carrying 82 per cent of the variance, changes recall@15 by $-0.007$ on the test split.
+component carrying 82\% of the variance, changes recall@15 by $-0.007$ on the test split.
 Repeating the ablation on the validation split with paired bootstrap intervals over 994 substrates
 gives no significant change at any cut-off: $+0.0011$ $[-0.0086,+0.0107]$ at $k=1$, $+0.0055$
 $[-0.0074,+0.0181]$ at $k=5$, $-0.0116$ $[-0.0266,+0.0036]$ at $k=15$, and $-0.0119$
