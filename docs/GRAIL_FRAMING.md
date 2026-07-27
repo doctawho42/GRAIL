@@ -92,12 +92,12 @@ molecule-disjoint test split (n=1170 substrates, tautomer-InChIKey, k=15;
 | factor | value | 95% CI | reading |
 |---|---|---|---|
 | `coverage_bank` (C_full/U) | **0.735** | [0.709, 0.762] | equals the §2 rule-bank ceiling |
-| `selection_retention` (C_bud/C_full) | **0.489** | [0.458, 0.520] | **the dominant loss** |
-| `ranking_conversion` (H/C_bud) | **0.726** | [0.687, 0.765] | top-k ordering of the retained pool |
-| product = micro recall@15 | **0.261** | — | 0.735 · 0.489 · 0.726 |
+| `selection_retention` (C_bud/C_full) | **0.368** | [0.343, 0.393] | **the dominant loss** |
+| `ranking_conversion` (H/C_bud) | **0.963** | [0.946, 0.978] | top-k ordering of the retained pool |
+| product = micro recall@15 | **0.261** | — | 0.735 · 0.368 · 0.963 |
 
 The oracle (perfect ranking of the deployed pool, `ranking_conversion = 1`) is `C_bud/U =` **0.359**
-(micro). The single largest leak is **`selection_retention = 0.489`**: fewer than half the metabolites
+(micro). The single largest leak is **`selection_retention = 0.368`**: fewer than half the metabolites
 the full bank *could* recover survive into the deployed budget pool — a **selection** failure (the
 generator's rule choice + the generation budget), upstream of ranking. (These are the pooled *micro*
 factors, the only frame in which the three multiply exactly to the realised recall and in which
@@ -152,8 +152,8 @@ fitted or transferable law**, and *not* a defect in the bank or the protocol.
 In the pooled (micro) frame of §1.5, the deployed pipeline converts the **0.735** rule-bank ceiling
 into **0.261** realised recall@15 — a **35.5% conversion** (0.261 / 0.735). By the §1.5 decomposition
 this conversion gap is the product of the last two factors,
-`selection_retention × ranking_conversion = 0.489 × 0.726`, so it is **not one ranking failure but
-two losses in series**, with selection (0.489) the larger. The gap is the paper's central diagnostic
+`selection_retention × ranking_conversion = 0.368 × 0.963`, so it is **not one ranking failure but
+two losses in series**, with selection (0.368) the larger. The gap is the paper's central diagnostic
 object; §4 attaches a mechanism to each factor.
 
 The waterfall figure **`docs/benchmark/factorization_waterfall.svg`** draws this on one common
@@ -204,9 +204,9 @@ column), and the three refutable **Propositions** that follow the table localise
 
 **Net diagnosis:** the rule bank covers 0.735 (micro); the deployed GRAIL surfaces only **0.261**
 (micro; 0.330 macro) of it in top-15 (a 35.5% conversion). The gap is a **coverage-conversion**
-problem that §1.5 splits into a *dominant selection loss* (`selection_retention` 0.489 — the deployed
+problem that §1.5 splits into a *dominant selection loss* (`selection_retention` 0.368 — the deployed
 budget pool loses more than half the bank's recoverable hits before ranking) followed by a *ranking
-loss* (`ranking_conversion` 0.726): from a candidate pool whose full-bank coverage approaches the
+loss* (`ranking_conversion` 0.963): from a candidate pool whose full-bank coverage approaches the
 ceiling, GRAIL's selection + filter ranking promotes only 0.261 of the references into the top 15. A
 controlled rule-selection probe sharpens *why the learned part does not help*: in a top_k-limited
 setting the learned generator ranks rules **worse than a trivial frequency prior** (−0.14 gen-only,
@@ -254,7 +254,7 @@ the marginal rule-firing rate `π(r)` — the frequency prior. The prior is ther
 variation exceeds estimation noise; the observed data saturation (2418 → 4787 substrates ≈ flat)
 indicates it does not at current scale. In §1.5 terms `π(r)` is the generative marginal `P(r fires)`,
 so this is an identifiability statement about `P(r|s)` beyond its marginal under SCAR — and it names
-*why* `selection_retention` (0.489) is the dominant loss: the selector cannot separate the recoverable
+*why* `selection_retention` (0.368) is the dominant loss: the selector cannot separate the recoverable
 pool better than the frequency prior.
 *Anchor (committed, significant).* learned-only 0.266 vs prior-only 0.410 (gen-only @15,
 Δ = **−0.144**, 95% CI **[−0.196, −0.095]**, paired bootstrap; `results/prior_vs_learned.json`, n=245).
@@ -332,8 +332,8 @@ seed 0) over the stated resampling unit.
 |---|---|---|---|---|---|---|---|
 | Rule-bank coverage ceiling (**micro**) | 0.7355, CI [0.709, 0.762] | tautomer-InChIKey | clean test | 1170 | substrate (cluster) | 0 | `results/recall_factorization.json` (`factors.coverage_bank`); also `results/benchmark_report.json` (`grail_rule_bank_ceiling.recall_ceiling_tautomer`) |
 | GRAIL deployed recall@15 | 0.330 (**macro**) / 0.261 (**micro**) | tautomer-InChIKey | clean test | 1170 | substrate | 0 | `results/recall_factorization.json` (`macro_recall` / `micro_recall`) |
-| selection_retention (**micro** factor) | 0.489, CI [0.458, 0.520] | tautomer-InChIKey | clean test | 1170 | substrate | 0 | `results/recall_factorization.json` (`factors.selection_retention`) |
-| ranking_conversion (**micro** factor) | 0.726, CI [0.687, 0.765] | tautomer-InChIKey | clean test | 1170 | substrate | 0 | `results/recall_factorization.json` (`factors.ranking_conversion`) |
+| selection_retention (**micro** factor) | 0.368, CI [0.343, 0.393] | tautomer-InChIKey | clean test | 1170 | substrate | 0 | `results/recall_factorization.json` (`factors.selection_retention`) |
+| ranking_conversion (**micro** factor) | 0.963, CI [0.946, 0.978] | tautomer-InChIKey | clean test | 1170 | substrate | 0 | `results/recall_factorization.json` (`factors.ranking_conversion`) |
 | SyGMa recall@15 | 0.572 (**macro**) | tautomer-InChIKey | clean test | 1168 | substrate | 0 | `results/benchmark_report.json` (`sygma_baseline.recall_at_tautomer["15"]`); `results/anchor_certification.json` (`mean_recall_SyGMa`) |
 | MetaPredictor recall@15 | 0.585 (**macro**) | tautomer-InChIKey | clean-test tier-2 subset | 150 | substrate | 0 | `results/match_sensitivity_5method.json` (`by_method.MetaPredictor.inchikey_tautomer`) |
 | External uncapped GLORYx-37 ceiling (**micro**) | 0.633, CI [0.531, 0.733] | tautomer-InChIKey | GLORYx external set | 37 | parent (cluster) | 0 | `results/ceiling_external_validity.json` (`external_ceiling_uncapped`) |

@@ -4,10 +4,15 @@ This document specifies the endpoint, the estimator and the analysis population 
 match-sensitivity results, so that the specification can be read independently of the prose that
 reports them.
 
-**Status.** This is a specification, not a pre-registration. It was written after the first
-re-scoring runs, and the repository history shows the differential framing entering at the same
-commit that first demonstrated the effect. Nothing here was registered before the data were seen.
-The paper states the endpoint and the multiplicity situation on those terms.
+**Status.** Partly pre-specified, and the split matters. The *design* was fixed in advance:
+a draft dated 2026-06-28 names all five matching criteria and specifies that each method's frozen
+predictions be re-scored under all of them, twelve days before the first match-sensitivity
+artifact (2026-07-10). The *estimator* was not: the differential framing and the paired bootstrap
+enter the history on 2026-07-10, seven hours after the first result, in a commit whose own message
+describes it as reframing that result. No correction for multiplicity was planned or applied.
+
+This document was written later still. Read it as a specification of what was done, with the
+design half pre-dated and the analysis half not.
 
 ## Endpoint
 

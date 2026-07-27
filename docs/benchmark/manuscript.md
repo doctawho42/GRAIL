@@ -1,3 +1,8 @@
+> **Superseded.** This is the pre-LaTeX manuscript. The submitted paper is `paper/grail_iclr.tex`.
+> Numbers here are stale in at least one respect that matters: the recall decomposition below uses
+> the old budget boundary (0.735 × 0.489 × 0.726), which charged the 200-to-30 rule narrowing to
+> ranking. The current factors are 0.735 × 0.368 × 0.963. Read this file as history.
+
 # GRAIL: rule-based metabolite-structure prediction, a coverage×selection×ranking diagnosis, and the TAME evaluation protocol
 
 > **Draft status (2026-07-26):** complete draft — **no `[PENDING]` values remain in the body**; every reported number is sourced from a committed artifact under `results/`. Two follow-ups are blocked on inputs rather than analysis and are scoped explicitly in the text (Spike-3's per-substrate scores are absent from the tree, so Proposition 1 rests on the n=1170 paired intervals instead; MetaTrans's inference pipeline is not reproducible in-tree, so it is absent from the supporting external GLORYx table, which covers four methods). One decision is deferred by choice: whether MetaTox enters as a 6th method (see *Draft TODO*). Comparator citations are Crossref-verified (2026-07-13; `results/citations_verified.json`). Venue target: JCIM / J. Cheminformatics, or a Datasets & Benchmarks track.

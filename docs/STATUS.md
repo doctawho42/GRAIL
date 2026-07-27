@@ -62,7 +62,7 @@ We then ran our own verification sweep (8 agents, web-verified) rather than trus
   differs by axis/task/no decomposition) and Liu, Bushuiev et al. 2026 (*arXiv*:2606.19624, MassSpecGym
   in the Wild — implementation-side audit; differs by fixed-implementation vs controlled-convention).
 - **Verdict:** the "overlaps uncited prior work" exposure was real and is now **neutralized**. *No prior
-  work makes TAME's exact claim* — convention × method interaction, quantified with CI, pre-registered,
+  work makes TAME's exact claim* — convention × method interaction, quantified with CI (design pre-specified, estimator not — see docs/ANALYSIS_PLAN.md),
   on a leakage-audited split, in metabolite structure. The field is crowded on the *general* worry and
   empty on the *specific quantified instance*.
 - **Standing risk (reviewer, accepted):** a paper whose thesis is evaluation rigor gets judged hardest on
@@ -72,7 +72,7 @@ We then ran our own verification sweep (8 agents, web-verified) rather than trus
 ## 0a. Rule-granularity probe (2026-07-19) — measured, mostly negative
 
 Tested whether **rule granularity** (bank breadth/redundancy) is a lever on the recall factors
-`coverage(0.735) × selection(0.489) × ranking(0.726)`. Four measurements, each pre-registered with its
+`coverage(0.735) × selection(0.368) × ranking(0.963)`. Four measurements, each pre-registered with its
 falsifier; three of my own hypotheses were tempered or killed by the numbers.
 
 **Methodology caveat — test peeked.** These exploratory probes (`rule_prune_probe`,
@@ -255,11 +255,11 @@ GRAIL beating SOTA recall.
 |---|---|---|
 | Rule-bank coverage ceiling (held-out) | **0.735** (tautomer-InChIKey, micro) | §6 |
 | Deployed GRAIL recall@15 | **0.261** micro · 0.269 ± 0.006 (3-seed) · **0.344 ± 0.010** macro | §8, §9 |
-| Recall decomposition | 0.735 (coverage) × 0.489 (selection) × 0.726 (ranking) = 0.261 | §8 |
+| Recall decomposition | 0.735 (coverage) × 0.368 (selection) × 0.963 (ranking) = 0.261 | §8 |
 | Honest anchor — SyGMa on our split | 0.558 (reproduced exactly) | §9 |
 | MetaPredictor on full 1170 | 0.568 | `results/metapredictor_1170.json` |
 
-**Dominant loss is SELECTION** (0.489 retention), against a coverage ceiling that itself is
+**Dominant loss is SELECTION** (0.368 retention), against a coverage ceiling that itself is
 source-limited. That framing drives the directions in §3.
 
 ## 2. What is built

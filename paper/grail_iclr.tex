@@ -58,9 +58,9 @@ We address both problems. We introduce TAME (tolerance-aware metabolite
 evaluation), a protocol for metabolite-structure prediction that comprises an explicit and
 variable structure-matching criterion, a leakage-audited data split, and a harness that re-scores
 fixed predictions from several methods under a common criterion. Applying
-this protocol to published methods and to our own, we find that the matching criterion
-reorders the leaderboard, and that a reordering appears again, between a different pair of
-methods, on an independent external dataset.
+this protocol to published methods and to our own, we find that the matching criterion reorders
+the leaderboard. On an independent external dataset, one step of added tolerance erases a
+statistically significant advantage between two published tools.
 We then introduce a decomposition of recall into coverage, selection and ranking, which attributes
 a method's performance to a specific stage of its pipeline and thereby identifies the intervention
 that would improve it. Applying the decomposition to GRAIL, a rule-based and learned predictor
@@ -372,9 +372,12 @@ MetaPredictor    & 0.531 & 0.570 & 0.578 & 0.532 & 0.585 & 11.2 \\
 individual reversal: the protocol $\times$ method interaction, how much more one method gains from
 a more tolerant criterion than another, with a paired bootstrap over substrates ($10{,}000$
 resamples; substrates are the independent unit). Every method gains under a more tolerant
-criterion, so only the differential can reorder anything. We did not register this endpoint before
-seeing the data, and we do not correct for testing six pairs; the reversals below are illustrations
-rather than independently significant findings. It is significant on two independent
+criterion, so only the differential can reorder anything. The design was fixed before the data:
+the five criteria were named, and the re-scoring of frozen predictions specified, twelve days
+before the first result was computed. The estimator was not: we chose the differential and the
+paired bootstrap when we analysed the results, and we apply no correction for testing six method
+pairs. The reversals are therefore reported as illustrations of the mechanism rather than as
+independently significant findings. It is significant on two independent
 pairs along two different protocol axes: BioTransformer gains \interA\ \interAci\ more than GRAIL
 from canonical$\rightarrow$tautomer, and SyGMa gains \interB\ \interBci\ more than MetaTrans from
 canonical$\rightarrow$InChIKey. The convention is therefore a \textbf{method-dependent
@@ -392,13 +395,10 @@ MetaTrans$\leftrightarrow$SyGMa canonical $[-0.064,+0.081]$, InChIKey $[-0.130,+
 
 \paragraph{External replication.} The results above live on a $\nshared$-substrate subset of our
 own split, so we repeated the analysis on the field's de-facto external hold-out, the \nglory\
-GLORYx drugs \citep{de_Bruyn_Kops_2020}. The GLORYx tool supplies this evaluation set but is not
-itself scored on it, because the trained weights of its site-of-metabolism component are not
-available for re-execution. Four methods are compared, switching only
-InChIKey~$\rightarrow$~tautomer-InChIKey (Table~\ref{tab:gloryx}). Protocol sensitivity spans more
-than an order of magnitude across methods
-(SyGMa $+0.007$, GRAIL $+0.178$), and three of the
-four intervals exclude zero. Of the six method pairs, four show a significant interaction (reported without correction for multiple comparisons),
+GLORYx drugs \citep{de_Bruyn_Kops_2020}, whose own tool is not scored here because the weights of
+its site-of-metabolism component are not available for re-execution. Four methods are compared
+across the criterion ladder (Table~\ref{tab:gloryx}). Sensitivity spans more than an order of
+magnitude across them, and three of the four intervals exclude zero. Of the six method pairs, four show a significant interaction (reported without correction for multiple comparisons),
 the largest being GRAIL$\leftrightarrow$SyGMa ($-0.171$ $[-0.264,-0.086]$) and
 MetaPredictor$\leftrightarrow$SyGMa ($-0.135$ $[-0.209,-0.072]$). The ordering consequence is
 sharpest for the latter: under strict InChIKey SyGMa leads by a \emph{significant} $-0.130$
@@ -446,6 +446,12 @@ $0.02$ across the same criteria, an order of magnitude below either effect
 
 \subsection{Comparison against published methods}
 \label{sec:diagnosis}
+
+\paragraph{Reading GRAIL's numbers.} Three figures appear and are not interchangeable: $0.365$ is
+the paired 150-substrate subset, $\grailmacro$ the mean of per-substrate recalls on the full split,
+and $\realised$ the pooled ratio of hits to references, lower because substrates with many
+references weigh more. The decomposition uses the pooled form, the only one that multiplies out
+exactly.
 
 Before diagnosing GRAIL further we place it against the published methods. On the full clean test split ($n=\ntest$) the deployed GRAIL checkpoint reaches
 \grailmacro\ macro recall@15; retraining the same configuration under three seeds gives
@@ -602,13 +608,10 @@ strong.
 \subsubsection*{Reproducibility statement}
 
 All numbers here are regenerable from committed artifacts, but for one reranker figure whose
-per-substrate scores were not retained, flagged where it appears: the frozen predictions of
-every
-method, the leakage-audit report, and one JSON per experiment holding the values quoted in the
-text and tables. The evaluation harness, the five matching criteria, the split construction and its audit, and
-the analysis code behind every table are released together with the model checkpoints required to
-reproduce the GRAIL rows. An anonymized artifact archive accompanies this submission;
-the de-anonymized repository will be linked in the camera-ready version.
+per-substrate scores were not retained and which is flagged where it appears. The release contains
+every method's frozen predictions, the leakage-audit report, the evaluation harness with its five
+criteria, the split construction and audit, the analysis code, and the GRAIL checkpoints, in an
+anonymized archive accompanying this submission.
 
 \bibliographystyle{iclr2026_conference}
 \bibliography{refs}
