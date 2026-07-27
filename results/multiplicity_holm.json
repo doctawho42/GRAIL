@@ -1,0 +1,86 @@
+{
+ "alpha": 0.05,
+ "p_value_note": "normal approximation from the paired-bootstrap CI",
+ "external": {
+  "n_pairs_tested": 6,
+  "family_size": 6,
+  "result": [
+   {
+    "pair": "MetaPredictor_vs_SyGMa",
+    "p": 0.0001134605883583717,
+    "threshold": 0.008333333333333333,
+    "rejected": true
+   },
+   {
+    "pair": "GRAIL_vs_SyGMa",
+    "p": 0.0001645766954427863,
+    "threshold": 0.01,
+    "rejected": true
+   },
+   {
+    "pair": "BioTransformer_vs_GRAIL",
+    "p": 0.0007073162596058502,
+    "threshold": 0.0125,
+    "rejected": true
+   },
+   {
+    "pair": "BioTransformer_vs_MetaPredictor",
+    "p": 0.003802123350875597,
+    "threshold": 0.016666666666666666,
+    "rejected": true
+   },
+   {
+    "pair": "BioTransformer_vs_SyGMa",
+    "p": 0.12451628768584366,
+    "threshold": 0.025,
+    "rejected": false
+   },
+   {
+    "pair": "MetaPredictor_vs_GRAIL",
+    "p": 0.5365506666053399,
+    "threshold": 0.05,
+    "rejected": false
+   }
+  ],
+  "n_surviving": 4
+ },
+ "internal_as_tested": {
+  "n_pairs_tested": 2,
+  "family_size": 2,
+  "result": [
+   {
+    "pair": "GRAIL_vs_BioTransformer",
+    "p": 1.6519937773296078e-06,
+    "threshold": 0.025,
+    "rejected": true
+   },
+   {
+    "pair": "MetaTrans_vs_SyGMa",
+    "p": 0.003345402939834319,
+    "threshold": 0.05,
+    "rejected": true
+   }
+  ],
+  "n_surviving": 2
+ },
+ "internal_conservative": {
+  "n_pairs_tested": 2,
+  "family_size": 10,
+  "note": "corrected as if all 10 pairs of the five-method table were the family",
+  "result": [
+   {
+    "pair": "GRAIL_vs_BioTransformer",
+    "p": 1.6519937773296078e-06,
+    "threshold": 0.005,
+    "rejected": true
+   },
+   {
+    "pair": "MetaTrans_vs_SyGMa",
+    "p": 0.003345402939834319,
+    "threshold": 0.005555555555555556,
+    "rejected": true
+   }
+  ],
+  "n_surviving": 2
+ }
+}

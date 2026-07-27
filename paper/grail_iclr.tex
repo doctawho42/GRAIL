@@ -114,6 +114,11 @@ matched references, so all three move with the criterion: the decomposition meas
 only relative to a declared one. We apply it to GRAIL, the predictor we release for that purpose,
 whose rule base is enumerable and whose coverage factor is therefore exact rather than estimated.
 
+We release the bundle the protocol needs, not a model: the leakage-audited split, the re-scoring
+harness with all five criteria, the frozen predictions of all five methods under each, the
+leakage-audit report, and GRAIL's checkpoints. Adding a sixth method needs its ranked output on
+the split and nothing else.
+
 The remainder of this article is organised as follows. Section~\ref{sec:related} reviews prior
 work on metabolite prediction and on evaluation methodology in related domains.
 Section~\ref{sec:tame} defines the evaluation protocol, the matching criteria and the data split.
@@ -157,16 +162,14 @@ quantitative structure-activity modelling. This literature treats standardisatio
 preprocessing step applied before analysis, rather than as a parameter of the evaluation itself.
 
 \paragraph{Evaluation methodology in adjacent fields.} That methodological choices can alter the
-apparent ordering of methods is recognised more broadly. \citet{Maziarz_2025} re-evaluated
-retrosynthesis models under a standardised procedure and found that the reported ranking changed,
-in part because one model had been scored under a relaxed stereochemistry criterion not applied to
-its baselines. \citet{agarwal2026metric} demonstrate for drug-response prediction that the choice
+apparent ordering of methods is recognised more broadly. \citet{Maziarz_2025} re-evaluated retrosynthesis models under a
+standardised procedure and found the ranking changed, partly because one model had been scored
+under a relaxed stereochemistry criterion its baselines did not get. \citet{agarwal2026metric} demonstrate for drug-response prediction that the choice
 of scoring metric inverts which model performs best. \citet{liu2026massspecgymwild} audit published
 work built on a mass-spectrometry benchmark and attribute discrepancies to data leakage, shortcut
-learning and divergent metric implementations across codebases. Outside chemistry,
-\citet{Mishra_2021} show that weighting evaluation examples by difficulty reorders natural-language
-leaderboards, and \citet{Rodriguez_2021} show that individual examples carry unequal information
-about model ranking. Data splitting has received similar attention, and \citet{Joeres_2025}
+learning and divergent metric implementations across codebases. Outside chemistry, weighting evaluation
+examples by difficulty reorders natural-language leaderboards \citep{Mishra_2021}, and individual
+examples carry unequal information about model ranking \citep{Rodriguez_2021}. Data splitting has received similar attention, and \citet{Joeres_2025}
 propose a general procedure for constructing splits that minimise similarity between partitions.
 
 \paragraph{Remaining gap.} Taken together, this literature establishes that structure
@@ -238,10 +241,13 @@ precision alone. Under incomplete annotation precision is a \emph{pessimistic lo
 unannotated candidate is scored a false positive even when it is a real but unrecorded metabolite.
 Reporting recall without output size is equally misleading in the other direction, since a method
 can buy recall by enumerating (Table~\ref{tab:matchsens}, and Appendix~\ref{app:budget}). Model, preset and hyper-parameter
-selection happens on validation. Two choices were not made that way and we name them rather than
-imply otherwise: the deployed filter's encoder variant was chosen on a test-split comparison
-(Appendix~\ref{app:arch}), and the exploratory analyses of Appendix~\ref{app:negative} were
-scored on test before this discipline was tightened. Neither enters a headline number.
+selection happens on validation, with two exceptions we name rather than imply. The deployed
+filter's encoder variant was chosen by comparing both variants on test
+(Appendix~\ref{app:arch}); that choice fixes which encoder is deployed and so reaches every GRAIL
+number here, the headline included. The exploratory analyses of Appendix~\ref{app:negative} were
+also scored on test, before this discipline was tightened, and support no claim anywhere. Results
+we report on test --- the decomposition, the learned-versus-prior comparison, the breadth sweep
+--- are measurements, not selections: no setting was chosen from them.
 
 \section{The decomposition and the coverage ceiling}
 \label{sec:decomp}
@@ -373,9 +379,10 @@ resamples; substrates are the independent unit). Every method gains under a more
 criterion, so only the differential can reorder anything. The design was fixed before the data:
 the five criteria were named, and the re-scoring of frozen predictions specified, twelve days
 before the first result was computed. The estimator was not: we chose the differential and the
-paired bootstrap when we analysed the results, and we apply no correction for testing six method
-pairs. The reversals are therefore reported as illustrations of the mechanism rather than as
-independently significant findings. It is significant on two independent
+paired bootstrap when we analysed the results. We do correct for multiplicity. Under
+Holm--Bonferroni at $\alpha=0.05$ every interaction this paper calls significant remains so, on
+both sets; internally the two survive even when the family is taken conservatively as all ten
+pairs the five-method table admits, rather than the two we computed. It is significant on two independent
 pairs along two different protocol axes: BioTransformer gains \interA\ \interAci\ more than GRAIL
 from canonical$\rightarrow$tautomer, and SyGMa gains \interB\ \interBci\ more than MetaTrans from
 canonical$\rightarrow$InChIKey. The convention is therefore a \textbf{method-dependent
@@ -396,15 +403,14 @@ own split, so we repeated the analysis on the field's de-facto external hold-out
 GLORYx drugs \citep{de_Bruyn_Kops_2020}, whose own tool is not scored here because the weights of
 its site-of-metabolism component are not available for re-execution. Four methods are compared
 across the criterion ladder (Table~\ref{tab:gloryx}). Sensitivity spans more than an order of
-magnitude across them, and three of the four intervals exclude zero. Of the six method pairs, four show a significant interaction (reported without correction for multiple comparisons),
-the largest being GRAIL$\leftrightarrow$SyGMa ($-0.171$ $[-0.264,-0.086]$) and
+magnitude across them, and three of the four intervals exclude zero. Of the six method pairs, four show a significant interaction, all four surviving
+Holm--Bonferroni over the six; the largest are GRAIL$\leftrightarrow$SyGMa ($-0.171$ $[-0.264,-0.086]$) and
 MetaPredictor$\leftrightarrow$SyGMa ($-0.135$ $[-0.209,-0.072]$). The ordering consequence is
 sharpest for the latter: under strict InChIKey SyGMa leads by a \emph{significant} $-0.130$
 $[-0.196,-0.065]$; one rung of tolerance later, once stereochemistry is disregarded, that
 advantage is gone and the point estimate reverses ($+0.005$, n.s.). A criterion chosen for convenience can therefore erase a
-statistically significant advantage between two published tools. This pair is the sharpest of the
-six tested, and the six were tested without correction for multiple comparisons, so it is offered
-as an illustration of the mechanism rather than as an independently significant reversal. This is shown on an external,
+statistically significant advantage between two published tools. This pair is the sharpest of the six tested and survives
+correction over all of them. This is shown on an external,
 literature-standard set, with a different method quartet, at a sample size where the intervals
 still exclude zero.
 
@@ -593,7 +599,8 @@ We have shown that this parameter is not neutral for metabolite prediction, beca
 systematically in how their outputs depart from reference structures, and that varying it changes
 which published tool appears best. The practical consequence is that a reported recall figure is
 interpretable only alongside the criterion that produced it, and that benchmark papers in this
-area should report sensitivity to that choice rather than fixing it silently.
+area should report recall under all five criteria rather than fixing one silently, and, where the
+method is rule-grounded, the coverage ceiling of its own rule base.
 
 Attributing a recall figure to a stage of the pipeline is likewise possible and, we would argue,
 necessary, and it rests on the first contribution: the factors are counts of matched references,
