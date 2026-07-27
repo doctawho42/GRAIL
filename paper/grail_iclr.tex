@@ -58,8 +58,9 @@ We address both problems. We introduce TAME (tautomer-aware metabolite
 evaluation), a protocol for metabolite-structure prediction that comprises tautomer-aware
 structure matching, a leakage-audited data split, and a
 harness that re-scores fixed predictions from several methods under a common criterion. Applying
-this protocol to four published methods and to our own, we find that the matching criterion systematically
-reorders the leaderboard, and we reproduce the same reordering on an independent external dataset.
+this protocol to four published methods and to our own, we find that the matching criterion
+reorders the leaderboard, and that a reordering appears again, between a different pair of
+methods, on an independent external dataset.
 We then introduce a decomposition of recall into coverage, selection and ranking, which attributes
 a method's performance to a specific stage of its pipeline and thereby identifies the intervention
 that would improve it. Applying the decomposition to GRAIL, a rule-based and learned predictor
@@ -189,12 +190,26 @@ reference structures are mapped through one of
 q \in \{\textsc{canonical},\ \textsc{inchikey},\ \textsc{inchi-no-stereo},\ \textsc{tanimoto1},\
 \textsc{inchikey-tautomer}\}
 \]
-and a prediction counts as a hit iff $q(\hat{y}) = q(y)$ for some reference $y$. Our recommended
-default is \textsc{inchikey-tautomer}: standard InChI normalizes only a \emph{subset} of tautomers
-\citep{Dhaked_2020}, so a rule engine that emits a keto form (C=O) of an enol reference (C=C-OH), two tautomers of
-the same compound, fails to match under plain \textsc{inchikey} even though it produced the same chemical entity. Tautomer-canonicalising
-both sides before hashing closes that gap and is the most defensible identity criterion for a
-rule-driven generator. Unless stated otherwise all results use \textsc{inchikey-tautomer};
+and a prediction counts as a hit iff $q(\hat{y}) = q(y)$ for some reference $y$. Each map is
+computed with RDKit 2023.09: \textsc{canonical} is canonical SMILES equality;
+\textsc{inchikey} is the full InChIKey; \textsc{inchi-no-stereo} is its first block, the
+connectivity skeleton, which is blind to stereochemistry, charge and isotopes; \textsc{tanimoto1}
+is equality of Morgan fingerprints at radius 2 over 2048 bits, which is Tanimoto similarity of one;
+and \textsc{inchikey-tautomer} standardises both sides before hashing, taking the fragment parent,
+neutralising charges, canonicalising tautomers, and writing SMILES without stereochemistry.
+
+Our recommended default is \textsc{inchikey-tautomer}. Standard InChI normalises only a
+\emph{subset} of tautomers \citep{Dhaked_2020}, so a rule engine that emits a keto form (C=O) of
+an enol reference (C=C-OH), two tautomers of the same compound, fails to match under plain
+\textsc{inchikey} even though it produced the same chemical entity. Two properties of this default
+must be stated because they bear on every number below. It is the most permissive of the five, and
+it is stereo-blind as well as tautomer-blind, so a predicted D-alanine matches an L-alanine
+reference. The stereo relaxation is not incidental: several methods here, GRAIL among them,
+standardise their own output without stereochemistry and cannot emit a stereocentre at all, so a
+stereo-sensitive criterion would score them on a representation they never produce. We therefore
+report every result under all five criteria rather than defending one.
+
+Unless stated otherwise all results use \textsc{inchikey-tautomer};
 \S\ref{sec:rankflip} quantifies how much the ranking depends on that choice. A worked example in
 which the same fixed predictions score a near-total miss or a full hit purely by changing $q$ is
 given in Appendix~\ref{app:worked}.
@@ -220,13 +235,15 @@ same magnitude as the seed-to-seed standard deviation reported in Section~\ref{s
 it corroborates the zero-overlap audit rather than constituting independent evidence against
 test-set overfitting.
 
-\paragraph{Metrics.} We lead with recall@$k$ co-reported with \texttt{mean\_output\_size}, not with
+\paragraph{Metrics.} We lead with recall@$k$ co-reported with the mean size of the output set, not with
 precision alone. Under incomplete annotation precision is a \emph{pessimistic lower bound}: an
 unannotated candidate is scored a false positive even when it is a real but unrecorded metabolite.
 Reporting recall without output size is equally misleading in the other direction, since a method
-can buy recall by enumerating (Table~\ref{tab:matchsens}, and Appendix~\ref{app:budget}). Model,
-preset and hyper-parameter selection happens exclusively on validation; the test split is touched
-once, for the final reported numbers.
+can buy recall by enumerating (Table~\ref{tab:matchsens}, and Appendix~\ref{app:budget}). Model, preset and hyper-parameter
+selection happens on validation. Two choices were not made that way and we name them rather than
+imply otherwise: the deployed filter's encoder variant was chosen on a test-split comparison
+(Appendix~\ref{app:arch}), and the exploratory analyses of Appendix~\ref{app:negative} were
+scored on test before this discipline was tightened. Neither enters a headline number.
 
 \section{The decomposition and the coverage ceiling}
 \label{sec:decomp}
@@ -308,10 +325,12 @@ the bank altogether (Appendix~\ref{app:props}).
 
 Five methods (GRAIL, SyGMa \citep{Ridder_2008}, BioTransformer
 \citep{Djoumbou_Feunang_2019}, MetaPredictor \citep{Zhu_2024} and MetaTrans \citep{Litsa_2020})
-have their \emph{frozen} predictions re-scored by one harness under five matching criterions, so
-only the match rule changes across columns, never the chemistry (Table~\ref{tab:matchsens}). Methods are not equally sensitive to the convention: GRAIL moves
-by $0.009$ from canonical to tautomer matching while BioTransformer moves by $0.129$. And
-\texttt{mean\_output\_size} exposes a second, orthogonal confound: SyGMa emits $74$ candidates
+have their \emph{frozen} predictions re-scored by one harness under all five matching criteria, so
+only the match rule changes across columns, never the chemistry
+(Table~\ref{tab:matchsens}; Figure~\ref{fig:rankflip}a plots the same values).
+Methods are not equally sensitive to the convention: GRAIL moves by $0.009$ from canonical to
+tautomer matching while BioTransformer moves by $0.129$. The mean size of the output set exposes a
+second, orthogonal confound: SyGMa emits $74$ candidates
 per substrate against $8.7$ to $12.7$ for the others, so recall alone is not budget-fair either
 (Appendix~\ref{app:budget}).
 
@@ -442,8 +461,10 @@ this regime XMC has long established that frequency/propensity baselines are har
 is why propensity-scored losses were introduced \citep{Jain_2016}. Metabolite rule selection
 \emph{inherits} this pathology, which the domain literature does not name.
 
-This prediction is borne out. On the same candidate pools a learned-only
-selector reaches $0.266$ while ranking by the empirical rule-firing frequency alone reaches $0.410$, a paired difference of $\mathbf{-0.144}$ (95\% CI $[-0.196,\,-0.095]$, $n=245$). The learned selector underperforms the frequency baseline. Under positive-unlabelled annotation with an approximately constant labelling
+This prediction is borne out. Each arm selects its own thirty rules and passes them through the
+same downstream product enumeration and filter: a learned-only selector reaches $0.266$ while
+selecting by empirical rule-firing frequency alone reaches $0.410$, a paired difference of
+$-0.144$ (95\% CI $[-0.196,\,-0.095]$, $n=245$). The learned selector underperforms the frequency baseline. Under positive-unlabelled annotation with an approximately constant labelling
 propensity, a learner with constant unlabelled weighting recovers a propensity-distorted score
 whose dominant component is the marginal firing rate, so the prior is Bayes-competitive
 \emph{by construction} at the selection stage; the learner can only win if substrate-conditional
