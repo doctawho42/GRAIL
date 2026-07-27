@@ -186,6 +186,7 @@ class GeneratorObjective(nn.Module):
         targets: torch.Tensor,
         mask: torch.Tensor,
         pos_weight: torch.Tensor,
+        propensity_weight: Optional[torch.Tensor] = None,
     ) -> torch.Tensor:
         if logits.shape != targets.shape:
             raise RuntimeError(f"Shape mismatch: {logits.shape} != {targets.shape}")
@@ -193,10 +194,17 @@ class GeneratorObjective(nn.Module):
         bce = F.binary_cross_entropy_with_logits(logits, targets, reduction="none", pos_weight=weights)
         probabilities = torch.sigmoid(logits)
         focal = torch.where(targets > 0.5, (1.0 - probabilities).pow(2.0), probabilities.pow(1.0))
-        # Down-weight unobserved-applicable negatives (PU-aware).
+        # Down-weight unobserved-applicable negatives (PU-aware). Positives carry weight 1 unless a
+        # propensity vector is supplied, in which case each carries the inverse propensity of its
+        # own rule, so rare rules are not drowned out by the marginal firing rate.
+        positive_weight = (
+            torch.ones_like(targets)
+            if propensity_weight is None
+            else propensity_weight.view(1, -1).expand_as(targets)
+        )
         label_weight = torch.where(
             targets > 0.5,
-            torch.ones_like(targets),
+            positive_weight,
             torch.full_like(targets, self.unlabeled_weight),
         )
         effective = mask * label_weight
@@ -241,6 +249,9 @@ class Generator(GGenerator):
         rank_weight: float = 0.25,
         ranking_margin: float = 0.45,
         unlabeled_weight: float = 1.0,
+        propensity_weighting: bool = False,
+        propensity_a: float = 0.55,
+        propensity_b: float = 1.5,
         prior_strength: float = 0.4,
         use_applicability_mask: bool = True,
         applicability_penalty: float = 7.5,
@@ -337,6 +348,9 @@ class Generator(GGenerator):
         self.use_maccs_pretraining = use_maccs_pretraining
         self.pretrained = False
         self.objective = GeneratorObjective(rank_weight=rank_weight, ranking_margin=ranking_margin, unlabeled_weight=unlabeled_weight)
+        self.propensity_weighting = bool(propensity_weighting)
+        self.propensity_a = float(propensity_a)
+        self.propensity_b = float(propensity_b)
         self.rule_patterns = [self._compile_reactant_pattern(rule) for rule in self.rule_names]
         self.rule_reactions = [self._compile_reaction(rule) for rule in self.rule_names]
         self._applicability_cache: Dict[str, Tuple[np.ndarray, np.ndarray]] = {}
@@ -350,6 +364,7 @@ class Generator(GGenerator):
         # deterministically rebuilt from the rule bank at construction.)
         self.register_buffer("rule_prior_logits", torch.zeros(self.num_rules), persistent=True)
         self.register_buffer("pos_weight", torch.ones(self.num_rules), persistent=True)
+        self.register_buffer("propensity_weight", torch.ones(self.num_rules), persistent=True)
         nn.init.xavier_uniform_(self.bilinear)
 
     @classmethod
@@ -600,7 +615,13 @@ class Generator(GGenerator):
                 logits = self(batch, return_logits=True)
                 targets = batch.y.view(logits.size(0), -1).float()
                 rule_mask = self._reshape_rule_tensor(getattr(batch, "rule_mask", None), logits.size(0), 1.0, logits.device)
-                loss = self.objective(logits, targets, rule_mask, self.pos_weight.to(logits.device))
+                loss = self.objective(
+                    logits,
+                    targets,
+                    rule_mask,
+                    self.pos_weight.to(logits.device),
+                    self.propensity_weight.to(logits.device) if self.propensity_weighting else None,
+                )
                 total_loss += float(loss.item())
                 num_batches += 1
         return total_loss / max(num_batches, 1)
@@ -619,8 +640,25 @@ class Generator(GGenerator):
             (positives + 1.0) / (exposures + 2.0),
             torch.full_like(exposures, 0.01),
         )
+        # Propensity model of Jain et al. (2016): a label's probability of being annotated given that
+        # it is true, fit from its positive count. Inverting it up-weights rare rules, which is the
+        # standard XMC correction for a learner that would otherwise reproduce the frequency prior.
+        if self.propensity_weighting:
+            n = float(len(records))
+            a, b = self.propensity_a, self.propensity_b
+            c = (math.log(max(n, 2.0)) - 1.0) * (b + 1.0) ** a
+            propensity = 1.0 / (1.0 + c * torch.exp(-a * torch.log(positives + b)))
+            inverse = 1.0 / propensity.clamp_min(1e-6)
+            observed = positives > 0.0
+            # Normalise over rules that actually carry a positive, so the loss keeps its scale and
+            # the comparison against constant weighting is not confounded by a change in step size.
+            scale = inverse[observed].mean() if observed.any() else inverse.mean()
+            propensity_weight = (inverse / scale.clamp_min(1e-6)).clamp(0.1, 25.0)
+        else:
+            propensity_weight = torch.ones_like(pos_weight)
         with torch.no_grad():
             self.pos_weight.copy_(pos_weight.to(self.pos_weight.device))
+            self.propensity_weight.copy_(propensity_weight.to(self.propensity_weight.device))
             self.rule_prior_logits.copy_(_safe_logit(prior_prob).to(self.rule_prior_logits.device))
 
     def _create_pretraining_graphs(self, smiles_list: Sequence[str]) -> List[Data]:
@@ -901,7 +939,13 @@ class Generator(GGenerator):
                 logits = self(batch, return_logits=True)
                 targets = batch.y.view(logits.size(0), -1).float()
                 rule_mask = self._reshape_rule_tensor(getattr(batch, "rule_mask", None), logits.size(0), 1.0, logits.device)
-                loss = self.objective(logits, targets, rule_mask, self.pos_weight.to(logits.device))
+                loss = self.objective(
+                    logits,
+                    targets,
+                    rule_mask,
+                    self.pos_weight.to(logits.device),
+                    self.propensity_weight.to(logits.device) if self.propensity_weighting else None,
+                )
                 loss.backward()
                 optimizer.step()
                 epoch_loss += loss.item()

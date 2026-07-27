@@ -73,6 +73,15 @@ class GeneratorConfig:
     # < 1.0 avoids punishing the generator at full strength for plausible-but-unannotated
     # products, which otherwise suppresses recall.
     unlabeled_weight: float = 0.5
+    # Propensity-scored positive weighting (Jain et al., 2016). The selection stage is extreme
+    # multi-label classification with a near-empty positive set, a regime in which a learner under
+    # constant weighting recovers a score dominated by each rule's marginal firing rate -- which is
+    # exactly the frequency prior it fails to beat. Weighting each positive by the inverse of its
+    # label's estimated propensity is the XMC literature's remedy for that failure mode. Off by
+    # default: the deployed checkpoint does not use it.
+    propensity_weighting: bool = False
+    propensity_a: float = 0.55
+    propensity_b: float = 1.5
     prior_strength: float = 0.35
     use_applicability_mask: bool = True
     applicability_penalty: float = 7.5

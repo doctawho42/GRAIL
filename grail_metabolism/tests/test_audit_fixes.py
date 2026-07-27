@@ -394,3 +394,45 @@ def test_factorized_reranker_reshapes_rank_but_never_gates():
     out_rr = rr.generate(sub, gate_by_filter=False)
     assert out_rr[0] == "CCN"
     assert set(out_rr) == {"CCO", "CCN"}
+
+
+def test_propensity_weighting_upweights_rare_rules_and_is_off_by_default():
+    """Propensity-scored positives (Jain et al. 2016) must invert the firing rate, not follow it.
+
+    The selection diagnosis says a learner under constant weighting recovers a score dominated by
+    each rule's marginal firing rate. The correction is only meaningful if the weight it applies is
+    monotonically DECREASING in that rate; a weight that rises with frequency would amplify the
+    pathology instead of countering it. This pins the direction, the normalisation, and the fact
+    that the deployed default is unchanged.
+    """
+    import math
+    import torch
+
+    from grail_metabolism.config import GeneratorConfig
+    from grail_metabolism.model.generator import GeneratorObjective
+
+    assert GeneratorConfig().propensity_weighting is False, "deployed default must not change"
+
+    # Reproduce the estimator on a synthetic label-frequency profile.
+    positives = torch.tensor([1.0, 4.0, 16.0, 64.0, 256.0])
+    n, a, b = 500.0, 0.55, 1.5
+    c = (math.log(n) - 1.0) * (b + 1.0) ** a
+    propensity = 1.0 / (1.0 + c * torch.exp(-a * torch.log(positives + b)))
+    inverse = 1.0 / propensity.clamp_min(1e-6)
+    weight = inverse / inverse.mean()
+
+    diffs = weight[1:] - weight[:-1]
+    assert torch.all(diffs < 0), f"weight must fall as a rule fires more often, got {weight.tolist()}"
+    assert weight[0] > weight[-1] * 1.5, "rarest rule must be materially up-weighted against the commonest"
+
+    # The objective must use it for positives and leave the PU down-weighting of negatives alone.
+    obj = GeneratorObjective(rank_weight=0.0, unlabeled_weight=0.5)
+    logits = torch.zeros(2, 5)
+    targets = torch.tensor([[1.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 1.0]])
+    mask = torch.ones(2, 5)
+    pos_w = torch.ones(5)
+    flat = obj(logits, targets, mask, pos_w)
+    scored = obj(logits, targets, mask, pos_w, weight)
+    assert not torch.isclose(flat, scored), "supplying propensities must change the loss"
+    assert torch.isclose(obj(logits, targets, mask, pos_w, torch.ones(5)), flat), \
+        "unit propensities must reproduce constant weighting exactly"
