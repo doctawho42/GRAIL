@@ -1,0 +1,419 @@
+{
+ "models": [
+  "aae",
+  "char_rnn",
+  "combinatorial",
+  "hmm",
+  "jtn",
+  "latent_gan",
+  "ngram",
+  "vae"
+ ],
+ "modes": [
+  "canonical",
+  "inchikey",
+  "inchi_no_stereo",
+  "tanimoto1",
+  "inchikey_tautomer"
+ ],
+ "ks": [
+  1000,
+  10000
+ ],
+ "n_generated": {
+  "aae": 30000,
+  "char_rnn": 30000,
+  "combinatorial": 30000,
+  "hmm": 30000,
+  "jtn": 30000,
+  "latent_gan": 30208,
+  "ngram": 30000,
+  "vae": 30000
+ },
+ "uniqueness": {
+  "canonical": {
+   "aae": {
+    "unique@1000": 1.0,
+    "unique@10000": 0.999,
+    "ci95_at_10000": [
+     0.8437,
+     0.8561
+    ]
+   },
+   "char_rnn": {
+    "unique@1000": 1.0,
+    "unique@10000": 0.9993,
+    "ci95_at_10000": [
+     0.8439,
+     0.8561
+    ]
+   },
+   "combinatorial": {
+    "unique@1000": 1.0,
+    "unique@10000": 0.9899,
+    "ci95_at_10000": [
+     0.8371,
+     0.8494
+    ]
+   },
+   "hmm": {
+    "unique@1000": 0.972,
+    "unique@10000": 0.9226,
+    "ci95_at_10000": [
+     0.7805,
+     0.7943
+    ]
+   },
+   "jtn": {
+    "unique@1000": 1.0,
+    "unique@10000": 0.9992,
+    "ci95_at_10000": [
+     0.844,
+     0.8562
+    ]
+   },
+   "latent_gan": {
+    "unique@1000": 1.0,
+    "unique@10000": 0.9975,
+    "ci95_at_10000": [
+     0.8438,
+     0.8561
+    ]
+   },
+   "ngram": {
+    "unique@1000": 1.0,
+    "unique@10000": 0.9856,
+    "ci95_at_10000": [
+     0.8324,
+     0.8451
+    ]
+   },
+   "vae": {
+    "unique@1000": 1.0,
+    "unique@10000": 0.9982,
+    "ci95_at_10000": [
+     0.8435,
+     0.8556
+    ]
+   }
+  },
+  "inchikey": {
+   "aae": {
+    "unique@1000": 1.0,
+    "unique@10000": 0.999,
+    "ci95_at_10000": [
+     0.8437,
+     0.8561
+    ]
+   },
+   "char_rnn": {
+    "unique@1000": 1.0,
+    "unique@10000": 0.9993,
+    "ci95_at_10000": [
+     0.8439,
+     0.8561
+    ]
+   },
+   "combinatorial": {
+    "unique@1000": 1.0,
+    "unique@10000": 0.9899,
+    "ci95_at_10000": [
+     0.8371,
+     0.8494
+    ]
+   },
+   "hmm": {
+    "unique@1000": 0.972,
+    "unique@10000": 0.9226,
+    "ci95_at_10000": [
+     0.7805,
+     0.7943
+    ]
+   },
+   "jtn": {
+    "unique@1000": 1.0,
+    "unique@10000": 0.9991,
+    "ci95_at_10000": [
+     0.844,
+     0.8561
+    ]
+   },
+   "latent_gan": {
+    "unique@1000": 1.0,
+    "unique@10000": 0.9975,
+    "ci95_at_10000": [
+     0.8438,
+     0.8561
+    ]
+   },
+   "ngram": {
+    "unique@1000": 1.0,
+    "unique@10000": 0.9856,
+    "ci95_at_10000": [
+     0.8324,
+     0.8451
+    ]
+   },
+   "vae": {
+    "unique@1000": 1.0,
+    "unique@10000": 0.9982,
+    "ci95_at_10000": [
+     0.8435,
+     0.8556
+    ]
+   }
+  },
+  "inchi_no_stereo": {
+   "aae": {
+    "unique@1000": 1.0,
+    "unique@10000": 0.9979,
+    "ci95_at_10000": [
+     0.8432,
+     0.8553
+    ]
+   },
+   "char_rnn": {
+    "unique@1000": 1.0,
+    "unique@10000": 0.9991,
+    "ci95_at_10000": [
+     0.8437,
+     0.8559
+    ]
+   },
+   "combinatorial": {
+    "unique@1000": 1.0,
+    "unique@10000": 0.9899,
+    "ci95_at_10000": [
+     0.8371,
+     0.8494
+    ]
+   },
+   "hmm": {
+    "unique@1000": 0.961,
+    "unique@10000": 0.8884,
+    "ci95_at_10000": [
+     0.7536,
+     0.7677
+    ]
+   },
+   "jtn": {
+    "unique@1000": 1.0,
+    "unique@10000": 0.9991,
+    "ci95_at_10000": [
+     0.844,
+     0.8561
+    ]
+   },
+   "latent_gan": {
+    "unique@1000": 0.994,
+    "unique@10000": 0.988,
+    "ci95_at_10000": [
+     0.836,
+     0.8484
+    ]
+   },
+   "ngram": {
+    "unique@1000": 0.987,
+    "unique@10000": 0.9565,
+    "ci95_at_10000": [
+     0.8078,
+     0.8209
+    ]
+   },
+   "vae": {
+    "unique@1000": 1.0,
+    "unique@10000": 0.9973,
+    "ci95_at_10000": [
+     0.843,
+     0.855
+    ]
+   }
+  },
+  "tanimoto1": {
+   "aae": {
+    "unique@1000": 1.0,
+    "unique@10000": 0.999,
+    "ci95_at_10000": [
+     0.8437,
+     0.8561
+    ]
+   },
+   "char_rnn": {
+    "unique@1000": 1.0,
+    "unique@10000": 0.9993,
+    "ci95_at_10000": [
+     0.8439,
+     0.8561
+    ]
+   },
+   "combinatorial": {
+    "unique@1000": 1.0,
+    "unique@10000": 0.9898,
+    "ci95_at_10000": [
+     0.837,
+     0.8494
+    ]
+   },
+   "hmm": {
+    "unique@1000": 0.972,
+    "unique@10000": 0.9224,
+    "ci95_at_10000": [
+     0.7805,
+     0.7942
+    ]
+   },
+   "jtn": {
+    "unique@1000": 1.0,
+    "unique@10000": 0.9992,
+    "ci95_at_10000": [
+     0.844,
+     0.8562
+    ]
+   },
+   "latent_gan": {
+    "unique@1000": 1.0,
+    "unique@10000": 0.9975,
+    "ci95_at_10000": [
+     0.8437,
+     0.856
+    ]
+   },
+   "ngram": {
+    "unique@1000": 0.999,
+    "unique@10000": 0.9855,
+    "ci95_at_10000": [
+     0.8323,
+     0.845
+    ]
+   },
+   "vae": {
+    "unique@1000": 1.0,
+    "unique@10000": 0.9982,
+    "ci95_at_10000": [
+     0.8435,
+     0.8556
+    ]
+   }
+  },
+  "inchikey_tautomer": {
+   "aae": {
+    "unique@1000": 1.0,
+    "unique@10000": 0.999,
+    "ci95_at_10000": [
+     0.8437,
+     0.8561
+    ]
+   },
+   "char_rnn": {
+    "unique@1000": 1.0,
+    "unique@10000": 0.9993,
+    "ci95_at_10000": [
+     0.8439,
+     0.8561
+    ]
+   },
+   "combinatorial": {
+    "unique@1000": 1.0,
+    "unique@10000": 0.9899,
+    "ci95_at_10000": [
+     0.8371,
+     0.8494
+    ]
+   },
+   "hmm": {
+    "unique@1000": 0.972,
+    "unique@10000": 0.9226,
+    "ci95_at_10000": [
+     0.7805,
+     0.7943
+    ]
+   },
+   "jtn": {
+    "unique@1000": 1.0,
+    "unique@10000": 0.9991,
+    "ci95_at_10000": [
+     0.844,
+     0.8561
+    ]
+   },
+   "latent_gan": {
+    "unique@1000": 1.0,
+    "unique@10000": 0.9975,
+    "ci95_at_10000": [
+     0.8438,
+     0.8561
+    ]
+   },
+   "ngram": {
+    "unique@1000": 1.0,
+    "unique@10000": 0.9856,
+    "ci95_at_10000": [
+     0.8324,
+     0.8451
+    ]
+   },
+   "vae": {
+    "unique@1000": 1.0,
+    "unique@10000": 0.9982,
+    "ci95_at_10000": [
+     0.8435,
+     0.8556
+    ]
+   }
+  }
+ },
+ "ranking": {
+  "canonical": [
+   "char_rnn",
+   "jtn",
+   "aae",
+   "vae",
+   "latent_gan",
+   "combinatorial",
+   "ngram",
+   "hmm"
+  ],
+  "inchikey": [
+   "char_rnn",
+   "jtn",
+   "aae",
+   "vae",
+   "latent_gan",
+   "combinatorial",
+   "ngram",
+   "hmm"
+  ],
+  "inchi_no_stereo": [
+   "char_rnn",
+   "jtn",
+   "aae",
+   "vae",
+   "combinatorial",
+   "latent_gan",
+   "ngram",
+   "hmm"
+  ],
+  "tanimoto1": [
+   "char_rnn",
+   "jtn",
+   "aae",
+   "vae",
+   "latent_gan",
+   "combinatorial",
+   "ngram",
+   "hmm"
+  ],
+  "inchikey_tautomer": [
+   "char_rnn",
+   "jtn",
+   "aae",
+   "vae",
+   "latent_gan",
+   "combinatorial",
+   "ngram",
+   "hmm"
+  ]
+ },
+ "ordering_changed": false,
+ "models_that_moved": []
+}

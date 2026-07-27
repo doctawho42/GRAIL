@@ -1,0 +1,34 @@
+{
+ "method": "SyGMa",
+ "match": "inchikey_tautomer",
+ "k": 15,
+ "n_substrates": 1170,
+ "n_boot": 10000,
+ "seed": 0,
+ "factors": {
+  "coverage_bank": {
+   "point": 0.5422,
+   "ci95": [
+    0.5172,
+    0.5679
+   ]
+  },
+  "selection_retention": {
+   "point": 1.0,
+   "ci95": [
+    1.0,
+    1.0
+   ],
+   "note": "1 by construction: SyGMa has no selection stage"
+  },
+  "ranking_conversion": {
+   "point": 0.9418,
+   "ci95": [
+    0.9269,
+    0.9557
+   ]
+  }
+ },
+ "micro_recall": 0.5106,
+ "mean_output": 81.73
+}

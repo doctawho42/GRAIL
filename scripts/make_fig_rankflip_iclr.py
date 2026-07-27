@@ -26,8 +26,8 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-INTERNAL = ROOT / "results" / "match_sensitivity_5method.json"
-EXTERNAL = ROOT / "results" / "gloryx_rank_flip_ci.json"
+INTERNAL = ROOT / "results" / "match_sensitivity_fulln_paired.json"
+EXTERNAL = ROOT / "results" / "gloryx_criterion_ladder.json"
 OUT = ROOT / "paper" / "fig_rankflip.pdf"
 
 PROTOS = ["canonical", "inchikey", "inchi_no_stereo", "tanimoto1", "inchikey_tautomer"]
@@ -39,7 +39,7 @@ COLOR = {"GRAIL": "#000000", "SyGMa": "#0072B2", "BioTransformer": "#D55E00",
 
 
 def main() -> int:
-    internal = json.loads(INTERNAL.read_text())["by_method"]
+    internal = json.loads(INTERNAL.read_text())["recall_at_15"]
     ext = json.loads(EXTERNAL.read_text())
 
     fig, (ax1, ax2) = plt.subplots(
@@ -48,7 +48,7 @@ def main() -> int:
     # ---- (a) internal, 5 protocols ----
     xs = range(len(PROTOS))
     for m, d in internal.items():
-        ys = [d[p]["recall@15"] for p in PROTOS]
+        ys = [d[p] for p in PROTOS]
         ax1.plot(xs, ys, marker="o", ms=3.4, lw=1.5, color=COLOR.get(m, "#555"), zorder=3,
                  label=m)
         ax1.annotate(m, (len(PROTOS) - 1, ys[-1]), xytext=(4, -2), textcoords="offset points",
@@ -59,15 +59,15 @@ def main() -> int:
     ax1.set_xlim(-0.25, len(PROTOS) - 1 + 1.5)
     ax1.tick_params(axis="y", labelsize=7)
     ax1.grid(axis="y", ls=":", alpha=0.45, lw=0.6)
-    ax1.set_title(r"(a) internal ($n{=}150$, 5 methods)", fontsize=8)
+    ax1.set_title(r"(a) full test split ($n{=}1{,}170$)", fontsize=8)
     for s in ("top", "right"):
         ax1.spines[s].set_visible(False)
 
     # ---- (b) external GLORYx, 2 protocols, with gain CIs ----
-    rec, sens = ext["recall"], ext["protocol_sensitivity"]
+    rec, sens = ext["recall"], ext["steps"]
     for m, v in rec.items():
-        ys = [v["inchikey"], v["inchikey_tautomer"]]
-        ax2.plot([0, 1], ys, marker="o", ms=3.4, lw=1.5, color=COLOR.get(m, "#555"), zorder=3)
+        ys = [v["inchikey"], v["inchi_no_stereo"], v["inchikey_tautomer"]]
+        ax2.plot([0, 1, 2], ys, marker="o", ms=3.4, lw=1.5, color=COLOR.get(m, "#555"), zorder=3)
 
     # Declutter the right-hand labels: MetaPredictor and SyGMa converge to ~0.50 under tautomer
     # matching (that convergence IS the panel's point), so naive annotation overlaps them and
@@ -82,19 +82,19 @@ def main() -> int:
             if abs(yy - py) < gap:
                 yy = py - gap
         placed.append(yy)
-        g = sens[m]
-        ax2.annotate(f"{m} {g['gain']:+.3f} [{g['ci95'][0]:+.2f},{g['ci95'][1]:+.2f}]",
-                     (1, y), xytext=(1.06, yy), textcoords=("data", "data"),
+        g = sens[m]["stereo"]
+        ax2.annotate(f"{m} stereo {g['gain']:+.3f}",
+                     (2, y), xytext=(2.08, yy), textcoords=("data", "data"),
                      fontsize=5.2, color=COLOR.get(m, "#555"), va="center",
                      arrowprops=dict(arrowstyle="-", lw=0.4,
                                      color=COLOR.get(m, "#555"), alpha=0.55,
                                      shrinkA=0, shrinkB=2))
-    ax2.set_xticks([0, 1])
-    ax2.set_xticklabels(["InChIKey", "tautomer"], fontsize=6.4)
-    ax2.set_xlim(-0.12, 3.05)
+    ax2.set_xticks([0, 1, 2])
+    ax2.set_xticklabels(["InChIKey", "no-stereo", "tautomer"], fontsize=6.4)
+    ax2.set_xlim(-0.12, 5.2)
     ax2.tick_params(axis="y", labelsize=7)
     ax2.grid(axis="y", ls=":", alpha=0.45, lw=0.6)
-    ax2.set_title(r"(b) external GLORYx ($n{=}37$)", fontsize=8)
+    ax2.set_title(r"(b) external GLORYx ($n{=}37$), by rung", fontsize=8)
     for s in ("top", "right"):
         ax2.spines[s].set_visible(False)
 
@@ -103,10 +103,9 @@ def main() -> int:
     print(f"wrote {OUT}", flush=True)
 
     # provenance echo so the caption's numbers can be eyeballed against the artifacts
-    print("  internal tautomer-vs-canonical spread:",
-          {m: round(d["inchikey_tautomer"]["recall@15"] - d["canonical"]["recall@15"], 3)
-           for m, d in internal.items()}, flush=True)
-    print("  external gains:", {m: v["gain"] for m, v in sens.items()}, flush=True)
+    print("  full-split tautomer-vs-canonical spread:",
+          {m: round(d["inchikey_tautomer"] - d["canonical"], 3) for m, d in internal.items()}, flush=True)
+    print("  external stereo steps:", {m: v["stereo"]["gain"] for m, v in sens.items()}, flush=True)
     return 0
 
 

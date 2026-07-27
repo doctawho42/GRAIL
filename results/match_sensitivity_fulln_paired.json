@@ -1,0 +1,99 @@
+{
+ "n_substrates": 1170,
+ "k": 15,
+ "n_boot": 10000,
+ "seed": 0,
+ "modes": [
+  "canonical",
+  "inchikey",
+  "inchi_no_stereo",
+  "tanimoto1",
+  "inchikey_tautomer"
+ ],
+ "strict": "canonical",
+ "tolerant": "inchikey_tautomer",
+ "recall_at_15": {
+  "GRAIL": {
+   "canonical": 0.3234,
+   "inchikey": 0.3308,
+   "inchi_no_stereo": 0.3332,
+   "tanimoto1": 0.3236,
+   "inchikey_tautomer": 0.3395
+  },
+  "MetaPredictor": {
+   "canonical": 0.5295,
+   "inchikey": 0.5531,
+   "inchi_no_stereo": 0.5594,
+   "tanimoto1": 0.5323,
+   "inchikey_tautomer": 0.5693
+  },
+  "SyGMa": {
+   "canonical": 0.5292,
+   "inchikey": 0.5545,
+   "inchi_no_stereo": 0.5588,
+   "tanimoto1": 0.5309,
+   "inchikey_tautomer": 0.5674
+  }
+ },
+ "sensitivity": {
+  "GRAIL": {
+   "gain": 0.0161,
+   "ci95": [
+    0.01,
+    0.0229
+   ]
+  },
+  "MetaPredictor": {
+   "gain": 0.0397,
+   "ci95": [
+    0.0302,
+    0.0498
+   ]
+  },
+  "SyGMa": {
+   "gain": 0.0382,
+   "ci95": [
+    0.0292,
+    0.0475
+   ]
+  }
+ },
+ "pairwise": [
+  {
+   "pair": "GRAIL_vs_MetaPredictor",
+   "p": 0.0001,
+   "threshold": 0.01667,
+   "rejected": true,
+   "interaction_b_minus_a": 0.0236,
+   "ci95": [
+    0.014,
+    0.0338
+   ],
+   "reorders": false
+  },
+  {
+   "pair": "GRAIL_vs_SyGMa",
+   "p": 0.0001,
+   "threshold": 0.025,
+   "rejected": true,
+   "interaction_b_minus_a": 0.0221,
+   "ci95": [
+    0.0126,
+    0.0317
+   ],
+   "reorders": false
+  },
+  {
+   "pair": "MetaPredictor_vs_SyGMa",
+   "p": 0.6728,
+   "threshold": 0.05,
+   "rejected": false,
+   "interaction_b_minus_a": -0.0015,
+   "ci95": [
+    -0.0089,
+    0.0057
+   ],
+   "reorders": false
+  }
+ ]
+}
