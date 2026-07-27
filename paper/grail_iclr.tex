@@ -496,8 +496,8 @@ precision by $c$ and capping it at certainty, the F1 ordering holds down to $c\a
 SyGMa passes GRAIL, MetaPredictor never being passed --- a rate at which a substrate with three
 recorded metabolites would have about fifty-five (Appendix~\ref{app:props}).
 
-\begin{table}[tb]
-\caption{Seven diagnostic measurements, each attached to the factor of the decomposition it
+\begin{table}[!htbp]
+\caption{Eight diagnostic measurements, each attached to the factor of the decomposition it
 constrains. Sample sizes differ between rows.}
 \label{tab:levers}
 \begin{center}
@@ -521,6 +521,8 @@ site-of-metabolism prior & ranking &
 $+0.011$ at the best of five weightings, itself chosen on this split ($n{=}245$) \\
 abstention on filter score & ranking &
 precision never above $0.123$; recall $0.388 \to 0.041$ ($n{=}\ntest$) \\
+propensity-scored selection loss & selection &
+$0.249$ against $0.266$; deficit to the prior widens to $-0.161$ $[-0.215,-0.107]$ ($n{=}245$) \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -547,37 +549,38 @@ prices.
 \label{sec:xmc}
 
 Since selection is the dominant shortfall, we ask what makes it hard, and the answer is structural
-rather than metabolism-specific. Choosing which of \nbank\ rules apply to a substrate is
-\textbf{extreme multi-label classification} with a near-empty positive set: one to three rules per
-substrate carry a positive label, some ${\sim}0.03\%$ of the label space, while far more are
-applicable. What is scarce is the annotation, not the applicability. In exactly this regime XMC has
-long established that frequency and propensity baselines are hard to beat, which is why
-propensity-scored losses were introduced \citep{Jain_2016}; metabolite rule selection
-\emph{inherits} that pathology, which the domain literature does not name.
+rather than metabolism-specific. Choosing which of \nbank\ rules apply is \textbf{extreme
+multi-label classification} with a near-empty positive set: one to three rules per substrate carry a
+positive label, some ${\sim}0.03\%$ of the label space, while far more are applicable, so what is
+scarce is the annotation rather than the applicability. In that regime XMC has long established that
+frequency and propensity baselines are hard to beat, which is why propensity-scored losses were
+introduced \citep{Jain_2016}; rule selection \emph{inherits} that pathology, unnamed in this
+domain.
 
 The prediction holds. Each arm selects thirty rules and passes them through the same enumeration
-and filter: a learned-only selector reaches $0.266$ where empirical rule-firing frequency alone
-reaches $0.410$, a paired difference of $-0.144$ $[-0.196,\,-0.095]$, $n=245$. Under the propensity
-model that governs precision above, a learner with constant unlabelled weighting recovers a
-distorted score whose dominant component is the marginal firing rate, so the prior is
-Bayes-competitive here \emph{by construction}. The effect is selection-specific, since at the
-ranking stage on identical pools the learned filter beats the same prior ($0.413$ against $0.374$),
-and it is addressable rather than fundamental: a dense reformulation predicting a coarse reaction
-type instead of a specific rule exceeds the prior at retrieving the right type within five guesses.
-Appendix~\ref{app:props} gives both, and the propensity-scored losses the framing points to are
-the obvious next intervention.
+and filter: a learned-only selector reaches $0.266$ where rule-firing frequency alone reaches
+$0.410$, a paired difference of $-0.144$ $[-0.196,\,-0.095]$, $n=245$. Under the propensity model
+that governs precision above, a learner with constant unlabelled weighting recovers a distorted
+score dominated by the marginal firing rate, so the prior is Bayes-competitive here \emph{by
+construction}. The effect is selection-specific: at the ranking
+stage on identical pools the learned filter beats the same prior ($0.413$ against $0.374$).
+The framing also prescribes a remedy, and it fails: weighting each positive by the inverse of its
+rule's estimated propensity \citep{Jain_2016} moves the selector to $0.249$ from $0.266$. That
+correction treats a label's rarity as an artifact of incomplete annotation, and here rarity is
+substantially chemistry, so it works against the signal (Appendix~\ref{app:props}).
 
 \subsection{What constrains each factor}
 \label{sec:evidence}
 
-The diagnosis rests on seven measurements, not on the decomposition alone, each designed to move
+The diagnosis rests on eight measurements, not on the decomposition alone, each designed to move
 exactly one factor so that a result failing to move recall is as informative as one that does
 (Table~\ref{tab:levers}).
 
 
-Four of the seven are interventions that failed, and they are the more useful half: applying rules
+Five of the eight are interventions that failed, and they are the more useful half: applying rules
 twice, doubling the training data, adding a site-of-metabolism prior and abstaining on low filter
-scores are the obvious remedies, and none works. Depth-2 buys $0.012$ of ceiling for $8.5$ times the
+scores are the obvious remedies, as is the propensity-scored loss the XMC framing prescribes, and
+none works. Depth-2 buys $0.012$ of ceiling for $8.5$ times the
 candidates and doubling the data changes nothing, which is why we attribute the shortfall to the
 structure of the selection problem rather than to under-training. Abstention is sharpest: raising
 the threshold removes true and apparently false candidates alike, an unannotated candidate being a
@@ -604,8 +607,7 @@ frozen prediction files: reproducible from our artifacts but not regenerable fro
 unannotated but chemically real product scores as a false positive, so every precision and F1 figure
 is pessimistic. We rank on them in \S\ref{sec:metric} only because a uniform-propensity model
 identifies the precision ordering and holds the F1 ordering down to an implausible annotation rate.
-That model is assumed, not estimated, and a propensity varying with how many candidates a method
-emits would weaken it.
+That model is assumed rather than estimated.
 
 \paragraph{The single-step bound.} The ceiling is single-step-conditional. Some references are
 multi-generation products no single rule application reaches, and depth-2 lifts the ceiling by only
@@ -632,8 +634,8 @@ having a selection stage.
 Two free parameters sit between predictions and a leaderboard position, and this field declares
 neither: the rule for when two structures are the same molecule, not neutral because methods differ
 in how their outputs depart from the references, and the aggregate, under which the recall leader
-finishes last because a pipeline that selects nothing is what recall rewards and precision
-punishes. The paper's halves meet there. Both belong in any report, with the coverage ceiling
+finishes last because a pipeline that selects nothing is what recall rewards and precision punishes.
+The paper's halves meet there, and both parameters belong in any report, with the coverage ceiling
 wherever there is a rule base.
 
 \subsubsection*{Reproducibility statement}

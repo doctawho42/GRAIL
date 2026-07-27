@@ -309,3 +309,38 @@ because its extra candidates are disproportionately the implausible ones. That i
 which the argument is weakest, and we state it rather than test it: estimating a
 structure-dependent propensity would need exactly the exhaustively annotated references whose
 absence creates the problem.
+
+
+\subsection{The prescribed remedy for the selection pathology does not work}
+
+Section~\ref{sec:xmc} identifies rule selection as extreme multi-label classification and cites the
+literature in which propensity-scored losses were introduced for exactly that regime
+\citep{Jain_2016}. Naming a pathology without trying its standard treatment would leave the
+diagnosis untested, so we ran the treatment.
+
+Each positive rule label is weighted by the inverse of its estimated propensity, fit from the rule's
+positive count by the model of \citet{Jain_2016} with $A=0.55$, $B=1.5$, and normalised over rules
+that carry a positive so the loss keeps its scale. Across the $\nbank$ rules the weights run from
+$0.196$ to $1.669$ with a mean of $1.377$, and $81.5\%$ of rules are up-weighted. The training
+configuration is otherwise identical to the deployed one, differing in three fields, and the
+generator trained to completion over eight epochs with validation loss falling monotonically from
+$0.530$ to $0.472$.
+
+It does not help. On the same 245 substrates, under the same protocol and with the same deployed
+filter, the learned-only selector reaches recall@15 of $0.249$ against $0.266$ under constant
+weighting. Its deficit to the frequency prior widens from $-0.144$ $[-0.196,-0.095]$ to $-0.161$
+$[-0.215,-0.107]$; both are significant and the intervals overlap heavily, so the change itself is
+not distinguishable while the absence of improvement is clear. The prior-only arm returns $0.410$
+in both runs, identical to four decimal places, which confirms the comparison isolates the training
+objective. Per-substrate scores from the two runs were not retained jointly, so we do not quote a
+paired interval on the $-0.017$ difference itself.
+
+The reading we take is about the domain rather than the method. Inverse-propensity weighting exists
+to correct a label's rarity when that rarity is an artifact of incomplete annotation. In metabolism
+a rule's firing frequency is substantially not an artifact: common rules are common because the
+transformations they encode are common in the chemistry. Down-weighting them by a factor of five,
+which is what the fitted propensities do at the head of the distribution, therefore discards signal
+rather than correcting bias. This is a candidate explanation for the original finding rather than a
+demonstration of it: separating the annotation and chemistry components of rule frequency would
+need an exhaustively annotated reference set, which is the same object whose absence creates the
+positive-unlabelled problem throughout this paper.
