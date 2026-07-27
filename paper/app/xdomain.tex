@@ -92,6 +92,46 @@ the subset. A full five-method rerun at a single sample size is future work: Bio
 subset configuration was not scripted, and MetaTrans's inference pipeline no longer reproduces
 in-tree.
 
+\subsection{The five-method comparison under four aggregates}
+
+Table~\ref{tab:setmetrics} re-scores every method's deployed output set on the shared subset, with
+no top-$k$ truncation, since precision and Jaccard are set quantities. The orderings by recall and
+by F1 are different orderings.
+
+\begin{table}[h]
+\caption{Macro precision, recall, F1 and Jaccard over each method's deployed output on the shared
+subset ($n=\nshared$), under \textsc{inchikey-tautomer}. Rank by recall and rank by F1 in the last
+two columns.}
+\label{tab:setmetrics}
+\begin{center}
+\begin{tabular}{lccccc cc}
+\toprule
+\textbf{method} & prec. & recall & F1 & Jaccard & outputs & rk-R & rk-F1 \\
+\midrule
+MetaTrans        & 0.122 & 0.565 & \textbf{0.177} & 0.105 & 11.5 & 2 & 1 \\
+MetaPredictor    & 0.116 & \textbf{0.585} & 0.174 & 0.101 & 10.9 & 1 & 2 \\
+BioTransformer   & 0.127 & 0.453 & 0.162 & 0.104 & 10.7 & 4 & 3 \\
+\textbf{GRAIL}   & 0.110 & 0.365 & 0.143 & 0.092 & \phantom{0}8.7 & 5 & 4 \\
+SyGMa            & 0.028 & 0.562 & 0.049 & 0.027 & 75.1 & 3 & 5 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table}
+
+Only one of these movements is certified, and it is the one the decomposition names. On F1 the four
+selecting methods are mutually indistinguishable, every pairwise interval covering zero, the widest
+separation being GRAIL against MetaTrans at $-0.033$ $[-0.071,+0.004]$. SyGMa is below all four,
+$+0.094$ $[+0.065,+0.124]$ against GRAIL rising to $+0.127$ $[+0.106,+0.149]$ against MetaTrans.
+On recall it is above two of them, $-0.109$ $[-0.168,-0.052]$ against BioTransformer and $-0.197$
+$[-0.274,-0.121]$ against GRAIL. Those two pairs are the certified reversals: each is significant
+in one direction on recall and in the other on F1.
+
+The remaining exchanges of place, MetaTrans past MetaPredictor at the top and BioTransformer past
+GRAIL below it, are within noise and we do not claim them. The reading is not that the aggregate
+shuffles a leaderboard arbitrarily. It is that the aggregate is decisive for exactly the
+architecture the factorisation identifies, the one with no selection stage, and inert among the
+architectures that select.
+
 \subsection{External validity rests on 37 substrates}
 
 The external ceiling is measured on 37 GLORYx parent substrates, so its 95\% interval is wide by
