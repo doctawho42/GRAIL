@@ -359,6 +359,15 @@ in both runs, identical to four decimal places, which confirms the comparison is
 objective. Per-substrate scores from the two runs were not retained jointly, so we do not quote a
 paired interval on the $-0.017$ difference itself.
 
+The intervention was also run end to end, not only in the isolated probe, and there the discipline
+this paper argues for is what decides it. Retraining the deployed configuration with the propensity
+objective and evaluating it as deployed gives $0.348$ against $0.334$ on test, which read alone
+looks like a gain of $+0.014$. On validation, the split model selection is permitted to touch, the
+same comparison gives $0.343$ against $0.344$, a difference of $-0.001$. The test-split movement is
+a single seed against a seed-to-seed spread of $\pm0.010$ and is not corroborated by the split we
+are allowed to select on, so we do not claim it. Both figures are on the $300$-substrate evaluation
+that configuration runs and are not comparable with the full-split numbers elsewhere in this paper.
+
 The reading we take is about the domain rather than the method. Inverse-propensity weighting exists
 to correct a label's rarity when that rarity is an artifact of incomplete annotation. In metabolism
 a rule's firing frequency is substantially not an artifact: common rules are common because the
