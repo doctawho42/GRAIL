@@ -6,13 +6,14 @@ pandas>=2.2,<3.0
 # scripts/gloryx_criterion_ladder.py and scripts/factorize_recall.py and updating the paper.
 rdkit==2022.9.5
 scikit-learn>=1.5,<2.0
-scipy>=1.14,<2.0
+scipy>=1.11,<2.0
 torch>=2.4,<3.0
-torch-geometric>=2.6,<3.0
+torch-geometric>=2.4,<3.0
 matplotlib>=3.9,<4.0
-seaborn>=0.13,<1.0
-tqdm>=4.67,<5.0
-multipledispatch>=1.0,<2.0
+tqdm>=4.65,<5.0
 pyvis>=0.3,<1.0
-Pillow>=11.0,<12.0
+Pillow>=11.0,<13.0
 PyYAML>=6.0,<7.0
+
+# Optional: only for plotting helpers, which import it lazily or under try.
+# seaborn>=0.13,<1.0
