@@ -405,9 +405,10 @@ GLORYx drugs \citep{de_Bruyn_Kops_2020}, whose own tool is not scored here becau
 its site-of-metabolism component are not available for re-execution. Four methods are compared
 across the criterion ladder (Table~\ref{tab:gloryx}). Sensitivity spans more than an order of
 magnitude across them, and three of the four intervals exclude zero. Of the six method pairs, four show a significant interaction, all four surviving
-Holm--Bonferroni over the six; the largest are GRAIL$\leftrightarrow$SyGMa ($-0.171$ $[-0.264,-0.086]$) and
-MetaPredictor$\leftrightarrow$SyGMa ($-0.135$ $[-0.209,-0.072]$). The ordering consequence is
-sharpest for the latter: under strict InChIKey SyGMa leads by a \emph{significant} $-0.130$
+Holm--Bonferroni over the six; the largest in magnitude are GRAIL$\leftrightarrow$SyGMa ($-0.171$
+$[-0.264,-0.086]$) and BioTransformer$\leftrightarrow$GRAIL ($+0.150$ $[+0.069,+0.242]$). The
+ordering consequence is sharpest for a third, MetaPredictor$\leftrightarrow$SyGMa ($-0.135$
+$[-0.209,-0.072]$): under strict InChIKey SyGMa leads by a \emph{significant} $-0.130$
 $[-0.196,-0.065]$; one rung of tolerance later, once stereochemistry is disregarded, that
 advantage is gone and the point estimate reverses ($+0.005$, n.s.). A criterion chosen for convenience can therefore erase a statistically significant advantage
 between two published tools, on an external literature-standard set with a different method
@@ -594,21 +595,23 @@ represented by frozen prediction files. Their numbers are reproducible from our 
 regenerable from scratch, a weaker guarantee.
 
 \paragraph{Precision is a lower bound, not an estimate.} Reference sets are \emph{incomplete}: an
-unannotated but chemically real product is scored a false positive, so every precision and F1
-figure here is pessimistic. We rank on them in \S\ref{sec:metric} only because a uniform-propensity
-model makes the precision ordering identified and the F1 ordering robust down to an implausible
-annotation rate. That model is assumed, not estimated; a propensity that varied systematically with
-how many candidates a method emits would weaken the argument.
+unannotated but chemically real product scores as a false positive, so every precision and F1 figure
+is pessimistic. We rank on them in \S\ref{sec:metric} only because a uniform-propensity model
+identifies the precision ordering and holds the F1 ordering down to an implausible annotation rate.
+That model is assumed, not estimated, and a propensity varying with how many candidates a method
+emits would weaken it.
 
-\paragraph{The single-step bound.} Our ceiling is single-step-conditional. A non-vanishing fraction
-of references are multi-generation products unreachable by any one rule application; depth-2
-application lifts the ceiling by only ${\sim}0.012$ at approximately $8.5$ times the candidate
-cost, so the $\ceiling$ ceiling bounds this single-step formulation rather than the task itself.
+\paragraph{The single-step bound.} The ceiling is single-step-conditional. Some references are
+multi-generation products no single rule application reaches, and depth-2 lifts the ceiling by only
+${\sim}0.012$ at $8.5$ times the candidate cost, so $\ceiling$ bounds this formulation rather than
+the task.
 
 \paragraph{Evaluation hygiene of this paper itself.} Headline numbers come from a single evaluation
-of the deployed configuration, with selection done on validation. Some \emph{exploratory} analyses
-in Appendix~\ref{app:negative} were scored on test before we tightened this discipline; they inform
-no headline claim and their conclusions are negative.
+of the deployed configuration, with selection on validation but for two exceptions
+(\S\ref{sec:tame}). The deployed filter's encoder variant was chosen by comparing variants on test,
+and that choice reaches every GRAIL number here, the headline included; and the \emph{exploratory}
+analyses in Appendix~\ref{app:negative} were scored on test before we tightened this discipline,
+though they inform no headline claim and their conclusions are negative.
 
 \section{Conclusion}
 \label{sec:conclusion}

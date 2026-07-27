@@ -151,8 +151,9 @@ against a 0.433 baseline in a separate held-out run, a gain of $+0.067$, or 74\%
 of 0.677, with a spread of $\pm0.015$ across three seeds. That figure has no paired interval:
 its per-substrate scores were not retained, so the bootstrap cannot be recomputed without
 retraining. The proposition rests on the $n=\ntest$ intervals rather than on it. The claim
-concerns objectives, not absolute performance: 0.500 still loses to SyGMa's 0.558 on the same
-245-substrate subset.
+concerns objectives, not absolute performance: that run is on the full clean test, and its 0.500
+still loses to SyGMa, which reaches 0.558 there under plain \textsc{inchikey} and 0.572 under the
+tautomer-aware default, so the gap holds under either criterion.
 
 \paragraph{Proposition 2: rule selection is extreme multi-label classification, where counting is
 a strong baseline.}

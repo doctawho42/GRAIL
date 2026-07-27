@@ -42,7 +42,11 @@ are the binding weakness.
 \subsection{Decomposing both methods}
 
 Applying the decomposition to each method, rather than to GRAIL alone, shows the mechanism. The
-values below come from the same re-scoring run as the frontier.
+values below are not the frontier's. They describe each method's \emph{deployed} output on the same
+$\nshared$ substrates under the same criterion, whereas the frontier truncates each method's full
+candidate pool at a common $k$. The two differ for GRAIL, which reports $0.318$ as deployed against
+$0.350$ at $k=15$ on the frontier, because the frontier draws fifteen candidates from a pool the
+deployed selector never emits.
 
 SyGMa has no selection stage: it applies its whole applicable rule set and emits the result, at
 about 64 outputs per substrate on this subset. Almost nothing is lost between what its pool

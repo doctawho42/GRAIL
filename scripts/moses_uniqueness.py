@@ -48,13 +48,21 @@ def main() -> int:
         print(f"{mode:20} " + "  ".join(f"{m}:{rep['uniqueness'][mode][m][f'unique@{KS[-1]}']:.3f}"
                                         for m in order), flush=True)
 
-    base, tol = rep["ranking"][MODES[0]], rep["ranking"][MODES[-1]]
-    moved = [m for m in base if base.index(m) != tol.index(m)]
+    # Compare EVERY criterion against the base, not just the two endpoints: the criteria are not
+    # ordered by tolerance in a way that makes canonical-vs-tautomer an upper bound on movement,
+    # and the intermediate stereo-blind rung is exactly where this set moves.
+    base = rep["ranking"][MODES[0]]
+    rep["models_that_moved_by_mode"] = {
+        mode: [m for m in base if base.index(m) != rep["ranking"][mode].index(m)]
+        for mode in MODES[1:]
+    }
+    moved = sorted({m for v in rep["models_that_moved_by_mode"].values() for m in v})
     rep["ordering_changed"] = bool(moved)
     rep["models_that_moved"] = moved
-    print(f"\ncanonical order : {base}", flush=True)
-    print(f"tautomer order  : {tol}", flush=True)
-    print(f"ordering changed: {rep['ordering_changed']}  ({len(moved)} models move)", flush=True)
+    for mode in MODES:
+        print(f"{mode:20} {rep['ranking'][mode]}", flush=True)
+    print(f"ordering changed: {rep['ordering_changed']}  (moves under: "
+          f"{[k for k, v in rep['models_that_moved_by_mode'].items() if v]})", flush=True)
     OUT.write_text(json.dumps(rep, indent=1))
     print(f"wrote {OUT}", flush=True)
     return 0
