@@ -237,18 +237,30 @@ recovers the margin.
 Selection is addressable and ranking yields a small margin, but coverage, which is set by the
 rule bank, remains binding. No redesign of the generator matches SyGMa without a broader bank.
 
-\paragraph{Set generation with a GFlowNet does not win here.}
-Beyond re-ranking, we formulated the generator as a set-terminal GFlowNet whose terminal object
-is a set of metabolites per substrate, trained by Trajectory Balance against a
-positive-unlabelled set-coverage reward with an analytic backward policy. The formulation is new
-for this domain and is released for reuse. It does not beat the simpler baselines on this
-benchmark: across three seeds on 40 validation substrates its single-set recall@15 is
-$0.292\pm0.032$, indistinguishable from beam search at $0.311\pm0.039$ and below a reranker at
-$0.411\pm0.044$. It does produce diverse sets, with pairwise Tanimoto similarity $0.214\pm0.003$
-over roughly 39 unique scaffolds, but the natural diversity comparison is not interpretable here:
-union coverage against the baselines is dominated by under-production in the baseline arms, whose
-variance spans 0.0 to 0.58 across seeds, so we omit that metric. The result is included because a
-benchmark is better served by reporting that a fashionable architecture does not win on it.
+\paragraph{Set generation with a GFlowNet does not win here, and the reason is cardinality.}
+Beyond re-ranking, we formulated the generator as a set-terminal GFlowNet whose terminal object is
+a set of metabolites per substrate, trained by Trajectory Balance against a positive-unlabelled
+set-coverage reward $\log R(S) = \beta(\mathrm{TP} - \lambda|S|)$ with an analytic backward policy.
+The formulation is new for this domain and is released for reuse. Across three seeds on 40
+validation substrates its single-set recall@15 is $0.292\pm0.032$, indistinguishable from beam
+search at $0.311\pm0.039$ and below a reranker at $0.411\pm0.044$.
+
+That comparison is on an endpoint its objective is at odds with, which is worth stating plainly:
+the reward pays a size penalty and recall@$k$ does not charge one, so the architecture was scored by
+a measure indifferent to the term it optimises. Judging it on a set endpoint instead does not
+rescue it. The runs retain aggregates rather than per-substrate predictions, so we estimate rather
+than re-score: mean emitted set size is $14.2$ against reference sets averaging $2.2$, which puts
+pooled F1 near $0.079$ and Jaccard near $0.041$, below every method in \S\ref{sec:metric}. Even at
+perfect recall a set of that size caps F1 at $0.271$.
+
+The diagnosis is not that the reward was mis-specified for set agreement. Since $\beta$ cancels in
+the argmax, the reward instructs the policy to emit any candidate whose hit probability exceeds
+$\lambda = 0.1$, while F1 at this operating point wants everything above $0.040$; the reward is the
+\emph{more} conservative of the two. What happened is that the policy emitted $14.2$ against a
+configured maximum of $15$, saturating its cap on essentially every substrate, so the size term
+never bound in practice and the model never learned how many metabolites a substrate has. Set-level
+training without an explicit cardinality estimate is therefore untested rather than refuted here,
+and predicting set size is the component this architecture was missing.
 
 \subsection{Partial identification of the metric ordering under incomplete annotation}
 \label{app:propensity}
@@ -302,6 +314,14 @@ $0.05$ & 0.368 & 0.611 & 0.401 \\
 The reported ordering survives to $c = 0.055$, where SyGMa overtakes GRAIL; MetaPredictor is never
 overtaken on a grid running down to $c=0.05$. At $c=0.055$ a substrate carrying three recorded
 metabolites would have about fifty-five in truth, which the references do not support.
+
+The same model bounds what any set metric can measure. A predictor that emitted exactly the true
+metabolite set would still be scored against the annotated subset, so with completeness $c$ it
+measures Jaccard $c$ and F1 $2c/(1+c)$ however good it is. At $c=0.5$ that is a Jaccard ceiling of
+$0.5$ and an F1 ceiling of $0.667$; at $c=0.3$, $0.30$ and $0.462$. Set-agreement endpoints are
+therefore bounded by annotation completeness in a way recall is not, which is a reason to report
+them beside recall rather than in place of it, and a caution for any method trained directly on set
+agreement: optimising it on incomplete references trains partly on which metabolites were recorded.
 
 The assumption doing the work is uniformity. A propensity that fell systematically with how
 implausible a product is would favour the wide-output method more than this correction allows,
