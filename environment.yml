@@ -152,7 +152,9 @@ dependencies:
       - notebook-shim==0.2.4
       - numba==0.60.0
       - numexpr==2.10.0
-      - numpy==2.2.6
+      # numpy stays below 2: the RDKit / torch-geometric stack this project runs on is a
+      # numpy-1 stack, and it is the version the reported numbers were produced with.
+      - numpy==1.26.4
       - numpydoc==1.8.0
       - onnxruntime==1.16.3
       - optuna==2.10.1
