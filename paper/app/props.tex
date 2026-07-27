@@ -213,9 +213,12 @@ types, and converges to the prior by $k=10$ (0.298 against 0.309). Site localisa
 therefore an artefact of the target's support, not a fundamental limit, which confirms that
 proposition's prediction.
 
-Coverage nevertheless binds. As a replacement generator the pipeline reaches only recall@15
-0.256 on the full test, a regression against the budget-matched deployed 0.365 at precision
-0.109, because type selection caps oracle reachability at about 47\%. Widening the
+Coverage nevertheless binds. As a replacement generator the pipeline reaches recall@15 0.256 on
+the full test, against $\grailmacro$ for the deployed pipeline on the same split and at a
+comparable output size, 8.0 candidates per substrate against 8.4. The two runs were scored
+separately rather than paired, so we quote no interval on the difference; the interval on the
+factorised run's own recall is $[0.233,0.279]$, which excludes the deployed value. Type selection
+caps oracle reachability at about 47\%, which is why. Widening the
 vocabulary from 371 to 701 types leaves that cap unchanged, which rules out vocabulary
 coarseness as the reason for it. That is consistent with Proposition 3 but does not test it: the
 proposition concerns what one application step can reach, and vocabulary size is not application
