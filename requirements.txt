@@ -1,6 +1,10 @@
 numpy>=1.24,<2.0
 pandas>=2.2,<3.0
-rdkit>=2024.3
+# Pinned exactly, not floated. The evaluation protocol's matching criterion runs through
+# RDKit's tautomer canonicalisation, whose canonical form is not stable across releases, so
+# the reported numbers are reproducible only at this version. Do not relax without re-running
+# scripts/gloryx_criterion_ladder.py and scripts/factorize_recall.py and updating the paper.
+rdkit==2022.9.5
 scikit-learn>=1.5,<2.0
 scipy>=1.14,<2.0
 torch>=2.4,<3.0

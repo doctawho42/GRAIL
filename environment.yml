@@ -202,8 +202,10 @@ dependencies:
       - pyyaml==6.0.2
       - pyzmq==26.2.0
       - rdchiral==1.1.0
-      - rdkit==2024.9.6
-      - rdkit-pypi==2022.9.5
+      # One rdkit declaration only. Declaring both rdkit and rdkit-pypi installs two
+      # distributions over the same package: whichever lands last decides the version that
+      # actually runs, and the matching criterion depends on it.
+      - rdkit==2022.9.5
       - recommonmark==0.7.1
       - referencing==0.36.2
       - requests==2.32.4
