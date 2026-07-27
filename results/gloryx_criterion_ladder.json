@@ -1,0 +1,99 @@
+{
+ "n_substrates": 37,
+ "k": 15,
+ "n_boot": 10000,
+ "seed": 0,
+ "ladder": [
+  "inchikey",
+  "inchi_no_stereo",
+  "inchikey_tautomer"
+ ],
+ "recall": {
+  "BioTransformer": {
+   "inchikey": 0.3456,
+   "inchi_no_stereo": 0.3735,
+   "inchikey_tautomer": 0.3735
+  },
+  "MetaPredictor": {
+   "inchikey": 0.3621,
+   "inchi_no_stereo": 0.5038,
+   "inchikey_tautomer": 0.5038
+  },
+  "GRAIL": {
+   "inchikey": 0.155,
+   "inchi_no_stereo": 0.3103,
+   "inchikey_tautomer": 0.3328
+  },
+  "SyGMa": {
+   "inchikey": 0.4916,
+   "inchi_no_stereo": 0.4984,
+   "inchikey_tautomer": 0.4984
+  }
+ },
+ "steps": {
+  "BioTransformer": {
+   "stereo": {
+    "gain": 0.0279,
+    "ci95": [
+     0.0023,
+     0.064
+    ]
+   },
+   "tautomer": {
+    "gain": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   }
+  },
+  "MetaPredictor": {
+   "stereo": {
+    "gain": 0.1416,
+    "ci95": [
+     0.0785,
+     0.215
+    ]
+   },
+   "tautomer": {
+    "gain": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   }
+  },
+  "GRAIL": {
+   "stereo": {
+    "gain": 0.1553,
+    "ci95": [
+     0.0751,
+     0.2438
+    ]
+   },
+   "tautomer": {
+    "gain": 0.0225,
+    "ci95": [
+     0.0,
+     0.0586
+    ]
+   }
+  },
+  "SyGMa": {
+   "stereo": {
+    "gain": 0.0068,
+    "ci95": [
+     0.0,
+     0.0203
+    ]
+   },
+   "tautomer": {
+    "gain": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   }
+  }
+ }
+}
