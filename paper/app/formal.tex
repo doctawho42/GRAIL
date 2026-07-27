@@ -26,12 +26,12 @@ rule-firing indicator. This describes the model the pipeline approximates; it do
 the trained weights are its maximum-likelihood solution.
 
 \paragraph{An exact decomposition of recall.}
-Fix a cut-off $k$. For substrate $s$ let $T_s$ be its references, and let the candidate sets nest,
+Fix a cut-off $k$. For substrate $s$ let $Y_s$ be its references, and let the candidate sets nest,
 $R_s(k) \subseteq P_{\text{bud},s} \subseteq P_{\text{full},s}$, where $P_{\text{full},s}$ is the
 pool reachable by applying the whole bank once, $P_{\text{bud},s}$ the pool the generator's budget
 admits, and $R_s(k)$ the ranked output. Write $\text{hit}(A_s)$ for the number of references
 matched by a set under the tautomer-aware quotient, which is monotone under inclusion, and pool
-across substrates: $U=\sum_s|T_s|$, $C_{\text{full}}=\sum_s\text{hit}(P_{\text{full},s})$,
+across substrates: $|U|=\sum_{s}|Y_s|$, $C_{\text{full}}=\sum_s\text{hit}(P_{\text{full},s})$,
 $C_{\text{bud}}=\sum_s\text{hit}(P_{\text{bud},s})$ and $H=\sum_s\text{hit}(R_s(k))$. Then
 \begin{align*}
 \text{recall@}k &= \frac{H}{U}

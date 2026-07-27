@@ -10,20 +10,28 @@ subsections that follow and in Proposition 3.
 \paragraph{Composition of the uncovered set.}
 Measured on 500 substrates, 26.9\% of reference metabolites lie outside what the bank
 reaches in one step under InChIKey matching, and about 25\% under tautomer-aware matching.
-The misses are a diverse tail rather than one absent rule family: the largest single class,
-hydroxylation and oxidation, accounts for 6\% of the uncovered set. Proposition 3 types
+The misses are a diverse tail rather than one absent rule family. Binning them by the
+substrate-to-metabolite mass difference, no bin holds more than 6\% of the uncovered set. We
+report the distribution rather than named reaction classes, because a mass difference does not
+identify a transformation: the same $+14$ is produced by an N-methylation and by an oxidation of a
+methylene to a carbonyl. Proposition 3 types
 the gap by reaction type and bounds how much of it a more general template could close.
 
 \paragraph{Training-set size.}
-Recall is flat between 2{,}418 and 4{,}787 training substrates. Doubling the number of substrates
-does not move selection, which is what rules out under-training as the explanation for the
+Recall moves from 0.330 to 0.334 between 2{,}418 and 4{,}787 training substrates. These are two
+single runs rather than a paired comparison, so we give no interval; the change is smaller than the
+$\pm0.010$ spread the same configuration shows across three seeds, which is the sense in which it
+is flat. Doubling the number of substrates does not move selection, which is what rules out under-training as the explanation for the
 shortfall and which Proposition 2 accounts for: with one to three rules firing per substrate over
 a label space of $\nbank$, more substrates add little to the per-rule positive counts that a
 learned selector would need.
 
 \paragraph{Site-of-metabolism prior.}
-Adding a prior over which site of the substrate is metabolised gives only a small gain. Ordering
-candidates regioselectively within the bank remains hard, and we did not isolate why.
+Weighting candidates by a learned prior over which site of the substrate is metabolised lifts
+recall@15 from 0.147 to 0.158 on 245 test substrates. The weight was the best of five values tried
+on that same split, and the response to it is not monotone, so $+0.011$ is an upper bound on what
+this signal is worth rather than an estimate of it. Ordering candidates regioselectively within the
+bank remains hard, and we did not isolate why.
 
 \subsection{Selection breadth and abstention}
 
@@ -48,8 +56,8 @@ Rules applied & pool coverage & recall@15 & mean pool & mean output \\
 
 Widening the selector from 30 to 300 rules lifts recall@15 by 0.061 and pool coverage by 0.126,
 at 8.6 times the pool size. This is recall bought with precision, the same trade SyGMa makes by
-overproducing. The gain saturates below the ceiling: pool coverage plateaus at 0.608 against a
-$\ceiling$ ceiling even when essentially every applicable rule is fired, and recall@15 at 0.413
+overproducing. The gain saturates below the ceiling: pool coverage plateaus at 0.608 against the full-test
+ceiling of $\ceiling$ even when essentially every applicable rule is fired, and recall@15 at 0.413
 remains far below SyGMa's 0.572 on this subset. Roughly a third of the metabolites present in
 the pool are still lost in ranking at the widest setting ($0.413/0.608=0.68$), consistent with
 the ranking factor of 0.726 in the main text.

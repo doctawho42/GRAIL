@@ -38,7 +38,9 @@ def main() -> int:
         if float(v.max()) == 0.0:
             raise SystemExit(f"ERROR: '{n}' scores 0 everywhere under '{c}' -- broken adapter.")
 
+    import rdkit
     rep = {"n_substrates": len(subs), "k": K, "n_boot": N_BOOT, "seed": SEED,
+           "rdkit_version": rdkit.__version__,
            "ladder": LADDER, "recall": {}, "steps": {}}
     print(f"n={len(subs)}, recall@{K}\n")
     print(f"{'method':>15} | " + " | ".join(f"{c:>18}" for c in LADDER)

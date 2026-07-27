@@ -191,7 +191,7 @@ q \in \{\textsc{canonical},\ \textsc{inchikey},\ \textsc{inchi-no-stereo},\ \tex
 \textsc{inchikey-tautomer}\}
 \]
 and a prediction counts as a hit iff $q(\hat{y}) = q(y)$ for some reference $y$. Each map is
-computed with RDKit 2023.09: \textsc{canonical} is canonical SMILES equality;
+computed with RDKit 2022.09.5, the version that reproduces the columns reported here: \textsc{canonical} is canonical SMILES equality;
 \textsc{inchikey} is the full InChIKey; \textsc{inchi-no-stereo} is its first block, the
 connectivity skeleton, which is blind to stereochemistry, charge and isotopes; \textsc{tanimoto1}
 is equality of Morgan fingerprints at radius 2 over 2048 bits, which is Tanimoto similarity of one;
@@ -263,7 +263,7 @@ $Y_s$:
 \;\cdot\;
 \underbrace{\frac{|H|}{|C_{\text{bud}}|}}_{\text{ranking}},
 \qquad
-U=\textstyle\bigcup_s Y_s ,
+|U|=\textstyle\sum_{s\in S}|Y_s| ,
 \]
 where $C_{\text{full}}$ are references recovered by applying the \emph{entire} bank without a
 budget, $C_{\text{bud}}$ those surviving the selector's budgeted pool, and $H$ those actually
@@ -512,16 +512,16 @@ $0.266$ against $0.410$; $\Delta = -0.144$ $[-0.196,-0.095]$ ($n{=}245$) \\
 selection breadth, 30 to 300 rules & selection &
 recall $0.352 \to 0.413$; pool coverage $0.482 \to 0.608$ ($n{=}245$) \\
 training set, 2{,}418 to 4{,}787 substrates & selection &
-flat \\
+recall $0.330 \to 0.334$, inside the $\pm0.010$ spread across seeds \\
 \addlinespace
 depth-2 rule application & coverage &
 ceiling $+0.012$, at $8.5\times$ the candidate cost ($n{=}150$) \\
 composition of the uncovered set & coverage &
 $26.9\%$ of references outside the bank under \textsc{inchikey}, ${\sim}25\%$ under tautomer
-matching; largest missing class $6\%$ ($n{=}500$) \\
+matching; no mass-difference bin exceeds $6\%$ of the uncovered set ($n{=}500$) \\
 \addlinespace
 site-of-metabolism prior & ranking &
-small gain \\
+$+0.011$ at the best of five weightings, itself chosen on this split ($n{=}245$) \\
 abstention on filter score & ranking &
 precision never above $0.12$; recall $0.388 \to 0.041$ ($n{=}\ntest$) \\
 \bottomrule
