@@ -107,7 +107,8 @@ The learned-versus-prior comparison in Table~\ref{tab:levers} is a controlled co
 selection, in which each mode picks its own thirty rules and shares the downstream product loop
 and filter. It is not the deployed recall. The deployed pipeline applies its own top thirty
 rules, and the breadth sweep confirms the correspondence: the 30-rule baseline of 0.352 on this
-subset reproduces the deployed macro recall of $\grailmacro$ on the full test.
+subset sits close to the deployed macro recall of $\grailmacro$ on the full test, above it by the
+subset inflation noted above rather than reproducing it exactly.
 
 At that operating point the deployed system is close to prior-independent. Two checkpoints
 differing only in whether a trained prior buffer was present gave 0.335 and 0.334 on an earlier
@@ -205,8 +206,7 @@ decomposition into a causal test.
 
 Selection proves fixable. The learned type head beats the frequency prior by roughly threefold at
 $k=5$ (recall@5 0.086 against 0.030), holds across two vocabulary granularities of 371 and 701
-types, and converges to the prior by $k=10$ (0.298 against 0.309). Site localisation holds, at
-0.78 hit@3 against a 0.81 reference. The positive-unlabelled degeneracy of Proposition 2 is
+types, and converges to the prior by $k=10$ (0.298 against 0.309). Site localisation is close to, but below, its reference: 0.78 hit@3 against 0.81. The positive-unlabelled degeneracy of Proposition 2 is
 therefore an artefact of the target's support, not a fundamental limit, which confirms that
 proposition's prediction.
 

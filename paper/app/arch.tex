@@ -76,8 +76,8 @@ optimiser, differing only in which encoder they used, and evaluated on the full 
 with the same generator and candidate pool.
 
 Independent encoders win on accuracy. Recall@15 is 0.366 for the independent variant against 0.357
-for the merged-graph variant, a paired difference of $-0.0090$ with a 95\% confidence interval of
-$[-0.017,-0.001]$ over $n=\ntest$; at recall@5 the margin widens, 0.282 against 0.259.
+for the merged-graph variant, a paired difference of $-0.0090$ with a 95\% paired-bootstrap interval of
+$[-0.017,-0.001]$ over $n=\ntest$ substrates; at recall@5 the margin widens, 0.282 against 0.259.
 
 They also win on cost by roughly twenty-fold. Computing a maximum common substructure for every
 pair makes full-data training take about 14 hours against roughly 40 minutes, and imposes the same
@@ -86,18 +86,19 @@ variant is implemented and available; we do not deploy it because it loses on bo
 
 \subsection{How the rule bank was built}
 
-The expert systems GRAIL is compared against, such as SyGMa and Meteor, use hand-authored reaction
+The rule-based system GRAIL is compared against, SyGMa, uses hand-authored reaction
 rules. GRAIL's bank is mined automatically from annotated substrate--metabolite pairs, with each
 candidate template validated against the pair that produced it.
 
 Mining reads only the clean, molecule-disjoint training split. For each annotated pair it first
-locates a ring-aware maximum common substructure as an anchor, using RDKit's FMCS with ring atoms
+locates a ring-aware maximum common substructure, using RDKit's FMCS with ring atoms
 matched only to ring atoms, rings completed, any bond order allowed to match, and atoms compared
-by element; the anchor must cover at least 40\% of the smaller molecule's atoms. From that
-anchor it derives a reaction centre. Three kinds of atom are flagged: matched atoms whose element,
+by element; the match must cover at least 40\% of the smaller molecule's atoms. From that common
+substructure it derives a reaction centre. Three kinds of atom are flagged: matched atoms whose element,
 formal charge, hydrogen count, aromaticity or degree changed; atom pairs whose connecting bond
 order changed; and leaving or entering atoms together with their matched neighbours. Several
-substrate--product match combinations are tried, and the one giving the smallest centre is kept. The centre is then
+substrate--product match combinations are tried, and the one giving the smallest centre is kept.
+The centre is then
 expanded by one bond to capture its immediate reactive environment, and the expanded fragments are
 atom-mapped by their positional correspondence in the maximum common substructure into a candidate
 SMIRKS template.

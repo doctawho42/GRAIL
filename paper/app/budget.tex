@@ -34,9 +34,10 @@ by its own score and truncate at a common $k$. This is a separate re-scoring run
 $\nshared$ substrates and the same matching criterion, and its numbers are not the deployed ones,
 because truncating a pool at $k$ is not what either system does in normal use.
 
-Under that common budget SyGMa leads GRAIL at every $k$ with no crossover: 0.233 against 0.127 at
-$k=1$, 0.493 against 0.350 at $k=15$, and 0.520 against 0.410 at $k=64$. GRAIL does not win at a
-matched output budget, and its selector and ranker are the binding weakness.
+Under that common budget, measured at seven cut-offs between 1 and 64, SyGMa leads GRAIL at every
+one with no crossover: 0.233 against 0.127 at $k=1$, 0.493 against 0.350 at $k=15$, and 0.520
+against 0.410 at $k=64$. GRAIL does not win at a matched output budget, and its selector and ranker
+are the binding weakness.
 
 \subsection{Decomposing both methods}
 

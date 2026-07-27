@@ -1,8 +1,10 @@
 \subsection{GRAIL does not win on recall}
 
 GRAIL loses on recall everywhere in this paper. Against SyGMa the margin is significant and
-certified: a paired difference of $-0.242$, 95\% confidence interval $[-0.271,-0.212]$, with
-McNemar's test at $p\approx1.7\times10^{-44}$. It also loses to the learned transformer baselines
+certified: a paired difference of $-0.242$ in mean per-substrate recall, 95\%
+confidence interval $[-0.271,-0.212]$. A McNemar test on a different endpoint, whether each
+substrate yields any hit at all within the top 15, rejects at $p\approx1.7\times10^{-44}$; it
+corroborates the direction rather than testing the margin. It also loses to the learned transformer baselines
 on the shared subset of $\nshared$ substrates, where MetaPredictor reaches 0.585 and MetaTrans
 0.561 against GRAIL's 0.365 under the same tautomer-aware protocol. Nothing here should be read
 as a claim to the state of the art. What the paper contributes is the coverage ceiling, the
