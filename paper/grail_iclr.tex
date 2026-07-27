@@ -27,9 +27,9 @@
 \newcommand{\interB}{+0.063}          % MetaTrans<->SyGMa interaction
 \newcommand{\interBci}{[+0.022,\,+0.106]}
 
-\title{The Less It Knows, The Better It Scores:\\
-Match Sensitivity and Recall Decomposition\\
-in Metabolite-Structure Prediction}
+\title{The Bank Is Not the Bottleneck:\\
+Decomposing Recall in\\
+Metabolite-Structure Prediction}
 
 % double-blind: authors stay anonymous until camera-ready
 \author{Anonymous authors \\ Paper under double-blind review}
@@ -44,28 +44,25 @@ in Metabolite-Structure Prediction}
 \maketitle
 
 \begin{abstract}
-Computational prediction of drug metabolites is assessed almost universally by a single quantity:
-the fraction of known metabolites that a method recovers among its top $k$ outputs. This quantity
-is less informative than its ubiquity suggests. It depends on an unstated convention, namely the
-rule by which a predicted structure is judged identical to a reference structure, and different
-methods are affected differently by that rule. The published ranking of tools therefore depends on
-a methodological decision that this field reports rarely and has never varied. The same quantity also
-aggregates three distinct failure modes, because a metabolite may be missed when the underlying
-reaction is absent from a method's rule base, when the applicable rule is not selected, or when
-the correct product is generated but ranked below the reporting threshold.
+Computational prediction of drug metabolites is assessed almost universally by top-$k$ recall, the
+fraction of known metabolites a method recovers. A single number cannot say why a method scores
+what it does, because a metabolite is missed for three unrelated reasons: no rule in the method's
+knowledge base expresses the transformation, the applicable rule is not selected, or the correct
+product is generated but ranked too low to report. Improving the rule base, the selector and the
+ranker are different research programmes, and recall does not indicate which is warranted.
 
-We address both problems. We introduce TAME (tolerance-aware metabolite
-evaluation), a protocol for metabolite-structure prediction that comprises an explicit and
-variable structure-matching criterion, a leakage-audited data split, and a harness that re-scores
-fixed predictions from several methods under a common criterion. Applying
-this protocol to published methods and to our own, we find that the matching criterion reorders
-the leaderboard. On an independent external dataset, one step of added tolerance erases a
-statistically significant advantage between two published tools.
-We then introduce a decomposition of recall into coverage, selection and ranking, which attributes
-a method's performance to a specific stage of its pipeline and thereby identifies the intervention
-that would improve it. Applying the decomposition to GRAIL, a rule-based and learned predictor
-released with this work, locates its principal loss in rule selection, which we characterise as an
-instance of extreme multi-label classification.
+We decompose recall exactly into coverage, selection and ranking for methods built on an
+enumerable rule base, and apply it to two of them. The comparison explains the leaderboard rather
+than restating it. The method with the wider rule base loses: it reaches more chemistry and
+converts a third of that reach, while its competitor reaches less and converts nearly all of it,
+having no selection stage to lose anything at. The gap between them is the price of selecting at
+all, which recall charges only to methods that select, and which no aggregate score reveals.
+
+Every factor counts references matched against predictions, so the decomposition is defined only
+relative to a stated rule for when two structures are the same molecule. That rule is never stated
+in this field and has never been varied. We vary it over five conventions with predictions held
+fixed, find the ordering of published methods is not invariant to the choice, and release the
+protocol, the audited split and the frozen predictions that make the measurement repeatable.
 \end{abstract}
 
 \section{Introduction}
@@ -90,43 +87,46 @@ decide which of many templates to apply. Whatever the underlying approach, publi
 compared on the same quantity: top-$k$ recall, the fraction of experimentally observed metabolites
 that appear among a method's $k$ highest-ranked predictions.
 
-That comparison rests on an assumption this field has not examined. Computing recall requires a
-decision about when a predicted molecular structure counts as the same molecule as an
-experimentally reported one, and chemistry offers several defensible answers. Two structures may be compared as canonical text strings (SMILES, the standard line notation for molecular structure), as hashed chemical identifiers, as identifiers with
-stereochemistry removed, or as molecular fingerprints. These criteria disagree, most importantly about tautomers,
-alternative structures of one compound differing in the position of a mobile hydrogen atom.
-Evaluations in this field adopt one each, usually without stating why, and none has asked what a
-different one would do to the ordering. That question has been answered elsewhere in the
-affirmative, which is why it is worth asking here.
+That comparison hides what it is measuring. A rule-based or hybrid method can fail to recover a
+metabolite for three unrelated reasons: the required transformation may have no corresponding
+template in its rule base, the template may exist but not be selected, or the correct product may
+be generated but ranked too low to be reported. Recall confounds these, so a low score identifies
+no deficiency and suggests no remedy. Improving the rule base, improving template selection and
+improving ranking are different research programmes, and the aggregate score does not indicate
+which is warranted.
 
-A second assumption concerns what recall measures. A rule-based or hybrid method can fail to
-recover a metabolite for three unrelated reasons: the required transformation may have no
-corresponding template in its rule base, the template may exist but not be applied, or the correct
-product may be generated but ranked too low to be reported. Recall confounds these, so a
-low score identifies no specific deficiency and suggests no specific remedy. Improving the rule
-base, improving template selection and improving ranking are different research programmes, and
-the aggregate score does not indicate which is warranted.
+This work separates them. For a method whose rule base can be enumerated, recall factorises
+exactly into coverage, selection and ranking, and the factorisation is a measurement rather than an
+estimate: the coverage term is obtained by applying the entire rule base and asking what it
+reaches. Applied to two such methods it explains a leaderboard instead of restating one. The method
+with the wider rule base reaches more chemistry and converts a third of that reach; the one with
+the narrower base converts nearly all of its own, because it applies every applicable rule and so
+has no selection stage in which to lose anything. It wins by half a leaderboard position for that
+reason alone.
 
-This work addresses both assumptions, in that order, because the second depends on the first. We
-define an evaluation protocol that states the matching criterion explicitly and permits it to be
-varied, and use it to re-score fixed predictions from four published methods alongside our own. We
-then define a decomposition of recall into coverage, selection and ranking. Every factor counts
-matched references, so all three move with the criterion: the decomposition measures something
-only relative to a declared one. We apply it to GRAIL, the predictor we release for that purpose,
-whose rule base is enumerable and whose coverage factor is therefore exact rather than estimated.
+Making the factorisation well-posed exposes a second problem, which is why the paper addresses it
+first. Every factor counts references matched against predictions, so all three move with the rule
+deciding when a predicted structure counts as the same molecule as a reported one, and chemistry offers
+several defensible such rules: canonical SMILES strings, hashed chemical identifiers, identifiers
+with stereochemistry removed, or molecular fingerprints. They disagree most about tautomers,
+alternative structures of one compound differing in the position of a mobile hydrogen atom. Evaluations in this field adopt one each, usually
+without stating why, and none has varied it. We vary it over five conventions with predictions held
+fixed, and the ordering of published methods is not invariant to the choice. That a matching rule
+can reorder a leaderboard has been shown before in other fields; that this field's rankings depend
+on an unstated one has not.
 
 We release the bundle the protocol needs, not a model: the leakage-audited split, the re-scoring
 harness with all five criteria, the frozen predictions of all five methods under each, the
-leakage-audit report, and GRAIL's checkpoints. Adding a sixth method needs its ranked output on
-the split and nothing else.
+leakage-audit report, and GRAIL's checkpoints, GRAIL being the predictor we release so that the
+decomposition has a second rule-grounded system to run on. Adding a sixth method needs its ranked
+output on the split and nothing else.
 
-The remainder of this article is organised as follows. Section~\ref{sec:related} reviews prior
-work on metabolite prediction and on evaluation methodology in related domains.
-Section~\ref{sec:tame} defines the evaluation protocol, the matching criteria and the data split.
-Section~\ref{sec:decomp} introduces the recall decomposition and the coverage ceiling.
-Section~\ref{sec:results} reports the effect of the matching criterion on method ranking and the
-decomposition applied to our predictor. Section~\ref{sec:limitations} discusses limitations and
-Section~\ref{sec:conclusion} concludes.
+The remainder of this article is organised as follows. Section~\ref{sec:related} reviews prior work
+on metabolite prediction and on evaluation methodology in related fields. Section~\ref{sec:tame}
+defines the matching criteria, the protocol and the audited split. Section~\ref{sec:decomp} states
+the decomposition and the coverage ceiling. Section~\ref{sec:results} reports both, and
+characterises the stage they identify as extreme multi-label classification.
+Section~\ref{sec:limitations} discusses limitations and Section~\ref{sec:conclusion} concludes.
 
 \section{Related Work}
 \label{sec:related}
@@ -341,11 +341,13 @@ the bank altogether (Appendix~\ref{app:props}).
 \section{Results}
 \label{sec:results}
 
-\subsection{The matching criterion reorders the leaderboard}
+\subsection{The criterion the decomposition rests on}
 \label{sec:rankflip}
 
-Published methods have their \emph{frozen} predictions re-scored by the TAME harness under all five
-of its criteria, so only the match rule changes across columns, never the chemistry. Three of them
+Because every factor of the decomposition counts matched references, the criterion has to be
+settled before the decomposition means anything. Published methods have their \emph{frozen}
+predictions re-scored by the TAME harness under all five criteria, so only the match rule changes
+across columns, never the chemistry. Three of them
 --- GRAIL, SyGMa \citep{Ridder_2008} and MetaPredictor \citep{Zhu_2024} --- have predictions for
 the whole clean test split and are compared there, paired on identical substrates
 (Table~\ref{tab:matchsens}). Two more, BioTransformer \citep{Djoumbou_Feunang_2019} and MetaTrans
@@ -597,25 +599,23 @@ their conclusions are negative. Subsequent exploratory work was moved to the val
 \section{Conclusion}
 \label{sec:conclusion}
 
-Benchmarks for structure-generating methods in chemistry inherit a free parameter that is seldom
-acknowledged: the criterion deciding when a generated structure counts as the reference structure.
-We have shown that this parameter is not neutral for metabolite prediction, because methods differ
-systematically in how their outputs depart from reference structures, and that varying it changes
-which published tool appears best. The practical consequence is that a reported recall figure is
-interpretable only alongside the criterion that produced it, and that benchmark papers in this
+A recall figure for a rule-grounded predictor factorises, exactly and without further experiments,
+into what its rule base can express, what its selector admits, and what its ranker returns. Applied
+to two published systems the factorisation explains their ordering rather than repeating it: the
+one with the wider rule base converts a third of what it reaches, the one with the narrower base
+converts nearly all of its own because it selects nothing, and the gap between them is the price of
+having a selection stage. Read as an aggregate, the same two numbers say only that one system
+scores higher. We identify selection as the binding constraint for the predictor examined here, and
+characterise that stage as extreme multi-label classification with very few positive labels per
+instance, a regime in which frequency baselines are known to be hard to beat.
+
+The factorisation is defined only relative to a rule for when two structures are the same molecule,
+and that rule is a free parameter this field leaves unstated. It is not a neutral one: methods
+differ systematically in how their outputs depart from reference structures, so varying it moves
+the ordering, as it has been shown to move orderings in other fields. A reported recall figure is
+therefore interpretable only alongside the criterion that produced it. Benchmark papers in this
 area should report recall under all five criteria rather than fixing one silently, and, where the
 method is rule-grounded, the coverage ceiling of its own rule base.
-
-Attributing a recall figure to a stage of the pipeline is likewise possible. Splitting coverage
-from ranking is not new in this field, and our contribution is to make the split exact, to separate
-selection from ranking within it, and to note that it rests on the first contribution: the factors
-count matched references, so a decomposition computed under an unstated criterion inherits that
-arbitrariness at every stage. The decomposition introduced here requires no additional experiments, applies to any
-method built on an enumerable rule base, and converts an aggregate score into a statement about
-where the method fails. For the predictor examined here it identifies rule selection as the
-binding constraint, and characterises that stage as extreme multi-label classification with very
-few positive labels per instance, a regime in which simple frequency baselines are known to be
-strong.
 
 \subsubsection*{Reproducibility statement}
 
