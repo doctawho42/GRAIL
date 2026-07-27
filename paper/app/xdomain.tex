@@ -16,6 +16,18 @@ counts as a false positive. The size of that understatement is unknown and uncor
 why we lead with recall and with the mean size of the output set, and do not report precision as
 a headline quantity.
 
+\subsection{The recommended criterion cannot penalise a limitation of our own system}
+
+The default criterion disregards stereochemistry, and GRAIL's own standardisation writes SMILES
+without stereochemistry, so it never emits a stereocentre. Under a stereo-sensitive criterion GRAIL
+would be scored on a representation it cannot produce; under the default it is not. On the external
+set this is the whole of the difference, and it is large: GRAIL rises from 0.155 to 0.310 when
+stereochemistry is disregarded, against a further 0.023 from tautomer canonicalisation. A reader
+should therefore treat GRAIL's external figure as conditional on a tolerance that happens to suit
+its output convention. The comparisons in this paper remain valid, because every method is scored
+under the same criterion and all three rungs are reported, but a system that does emit
+stereochemistry is not rewarded for doing so anywhere in this evaluation.
+
 \subsection{The headline is one checkpoint}
 
 The deployed headline, recall@15 of $\realised$ micro and $\grailmacro$ macro, comes from a single

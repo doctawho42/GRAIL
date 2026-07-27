@@ -54,10 +54,10 @@ aggregates three distinct failure modes, because a metabolite may be missed when
 reaction is absent from a method's rule base, when the applicable rule is not selected, or when
 the correct product is generated but ranked below the reporting threshold.
 
-We address both problems. We introduce TAME (tautomer-aware metabolite
-evaluation), a protocol for metabolite-structure prediction that comprises tautomer-aware
-structure matching, a leakage-audited data split, and a
-harness that re-scores fixed predictions from several methods under a common criterion. Applying
+We address both problems. We introduce TAME (tolerance-aware metabolite
+evaluation), a protocol for metabolite-structure prediction that comprises an explicit and
+variable structure-matching criterion, a leakage-audited data split, and a harness that re-scores
+fixed predictions from several methods under a common criterion. Applying
 this protocol to four published methods and to our own, we find that the matching criterion
 reorders the leaderboard, and that a reordering appears again, between a different pair of
 methods, on an independent external dataset.
@@ -175,7 +175,7 @@ a prediction is judged correct. What has not been established is whether that cr
 the ranking of metabolite predictors, and if so by how much; nor is there an accepted way to
 attribute a predictor's score to a specific stage of its pipeline. The present work supplies both.
 
-\section{TAME: a tautomer-aware evaluation protocol}
+\section{TAME: an evaluation protocol with a declared matching criterion}
 \label{sec:tame}
 
 TAME is a \emph{protocol, an audited split and a re-scoring harness}, not a leaderboard service:
@@ -214,7 +214,7 @@ Unless stated otherwise all results use \textsc{inchikey-tautomer};
 which the same fixed predictions score a near-total miss or a full hit purely by changing $q$ is
 given in Appendix~\ref{app:worked}.
 
-Tautomer standardization is established \emph{preprocessing}.
+Structure standardisation is established \emph{preprocessing}.
 \citet{Hahnke_2018} report that 60\% of PubChem structures differ from their canonical InChI
 form, mainly by tautomer choice, and \citet{Mansouri_2024} describe a comparable
 desalt/destereo/tautomer-canonicalisation pipeline. What is new here is adopting it as the
@@ -340,8 +340,9 @@ per substrate against $8.7$ to $12.7$ for the others, so recall alone is not bud
 \end{center}
 \caption{recall@15 of each method under different structure-matching criteria.
 (a) Five methods on the shared internal subset under five criteria. (b) Four methods on the
-external GLORYx set under strict InChIKey and tautomer-aware InChIKey matching, annotated with
-each method's change and its 95\% confidence interval.}
+external GLORYx set under the strictest and the most tolerant of the criteria, annotated with each
+method's change and its 95\% confidence interval; Table~\ref{tab:gloryx} separates that change
+into its stereo and tautomer components.}
 \label{fig:rankflip}
 \end{figure}
 
@@ -398,8 +399,8 @@ four intervals exclude zero. Of the six method pairs, four show a significant in
 the largest being GRAIL$\leftrightarrow$SyGMa ($-0.171$ $[-0.264,-0.086]$) and
 MetaPredictor$\leftrightarrow$SyGMa ($-0.135$ $[-0.209,-0.072]$). The ordering consequence is
 sharpest for the latter: under strict InChIKey SyGMa leads by a \emph{significant} $-0.130$
-$[-0.196,-0.065]$; under tautomer matching that advantage disappears entirely and the
-point estimate reverses ($+0.005$, n.s.). A criterion chosen for convenience can therefore erase a
+$[-0.196,-0.065]$; one rung of tolerance later, once stereochemistry is disregarded, that
+advantage is gone and the point estimate reverses ($+0.005$, n.s.). A criterion chosen for convenience can therefore erase a
 statistically significant advantage between two published tools. This pair is the sharpest of the
 six tested, and the six were tested without correction for multiple comparisons, so it is offered
 as an illustration of the mechanism rather than as an independently significant reversal. This is shown on an external,
@@ -407,30 +408,38 @@ literature-standard set, with a different method quartet, at a sample size where
 still exclude zero.
 
 \begin{table}[t]
-\caption{recall@15 on the external GLORYx set ($n=\nglory$) under strict InChIKey and
-tautomer-aware InChIKey matching, with the paired-bootstrap confidence interval on the change.}
+\caption{recall@15 on the external GLORYx set ($n=\nglory$) under three criteria of increasing
+tolerance. The middle column separates the two relaxations that \textsc{inchikey-tautomer} applies
+together; the interval is on the stereo step. The remaining tautomer step is $0.000$ for every
+method except GRAIL, where it is $+0.023$ $[+0.000,+0.059]$.}
 \label{tab:gloryx}
 \begin{center}
-\begin{tabular}{lccl}
+\begin{tabular}{lcccl}
 \toprule
-\textbf{method} & InChIKey & tautomer & gain (95\% CI) \\
+\textbf{method} & InChIKey & no-stereo & tautomer & stereo step (95\% CI) \\
 \midrule
-SyGMa          & 0.492 & 0.498 & $+0.007$ $[+0.000,+0.020]$ \\
-BioTransformer & 0.346 & 0.374 & $+0.028$ $[+0.002,+0.064]$ \\
-MetaPredictor  & 0.362 & 0.504 & $+0.142$ $[+0.079,+0.215]$ \\
-\textbf{GRAIL} & 0.155 & 0.333 & $+0.178$ $[+0.097,+0.269]$ \\
+SyGMa          & 0.492 & 0.498 & 0.498 & $+0.007$ $[+0.000,+0.020]$ \\
+BioTransformer & 0.346 & 0.374 & 0.374 & $+0.028$ $[+0.002,+0.064]$ \\
+MetaPredictor  & 0.362 & 0.504 & 0.504 & $+0.142$ $[+0.079,+0.215]$ \\
+\textbf{GRAIL} & 0.155 & 0.310 & 0.333 & $+0.155$ $[+0.075,+0.244]$ \\
 \bottomrule
 \end{tabular}
 \end{center}
 \end{table}
 
-\paragraph{Mechanism.} The spread is not arbitrary: a method's protocol sensitivity tracks how far
-its outputs diverge tautomerically from the references it is scored against. A rule engine that
-emits whichever tautomer its reaction templates produce (GRAIL, MetaPredictor) gains most from tautomer-aware
-matching; a method that canonicalises its own output (SyGMa) gains almost nothing. This predicts that the effect should be small where a generator
-canonicalises its own output. A single-model test in retrosynthesis, a domain whose reference
-structures are canonical, finds a spread of about $0.02$ across the same criteria, an order of
-magnitude below the metabolism effect (Appendix~\ref{app:xdomain}).
+\paragraph{Mechanism.} The spread is not arbitrary: a method's sensitivity tracks how far its
+outputs diverge \emph{representationally} from the references it is scored against, and the
+intermediate column identifies which divergence is responsible. On this set it is stereochemistry
+alone: every gain that separates the methods is realised by the stereo step, and the tautomer step
+that follows is zero for all but one method. GLORYx references carry stereocentres, and several of
+these systems standardise their own output without stereochemistry and cannot emit one, so a
+stereo-sensitive criterion scores them on a representation they never produce. Tautomerism is what
+fails to match internally, where references are already stereo-stripped; stereochemistry is what
+fails to match here. Which relaxation dominates is thus a property of the reference set, not of the
+criterion. A single-model test in retrosynthesis,
+a domain whose references are canonical and stereochemically explicit, finds a spread of about
+$0.02$ across the same criteria, an order of magnitude below either effect
+(Appendix~\ref{app:xdomain}).
 
 \subsection{Comparison against published methods}
 \label{sec:diagnosis}
