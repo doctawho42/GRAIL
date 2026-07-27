@@ -257,8 +257,12 @@ The diagnosis is not that the reward was mis-specified for set agreement. Since 
 the argmax, the reward instructs the policy to emit any candidate whose hit probability exceeds
 $\lambda = 0.1$, while F1 at this operating point wants everything above $0.040$; the reward is the
 \emph{more} conservative of the two. What happened is that the policy emitted $14.2$ against a
-configured maximum of $15$, saturating its cap on essentially every substrate, so the size term
-never bound in practice and the model never learned how many metabolites a substrate has. Set-level
+configured maximum of $15$. We have the mean rather than the per-substrate distribution, so we do
+not claim every set saturated; the mean alone bounds it, since a deficit of $0.8$ from the cap
+leaves under a tenth of substrates able to emit materially fewer. The size term therefore had
+almost no room to act, and the emitted sets track the cap rather than the substrate: on the same
+runs the mean emitted set exceeds the true one by $12.0\pm0.2$ across three seeds, a spread far
+tighter than the reference sets themselves, which run from $1$ to $29$. Set-level
 training without an explicit cardinality estimate is therefore untested rather than refuted here,
 and predicting set size is the component this architecture was missing.
 
