@@ -106,20 +106,21 @@ low score identifies no specific deficiency and suggests no specific remedy. Imp
 base, improving template selection and improving ranking are different research programmes, and
 the aggregate score does not indicate which is warranted.
 
-This work addresses both assumptions. We define an evaluation protocol that states the structure
-matching criterion explicitly and permits it to be varied, and we use it to re-score fixed
-predictions from four published methods alongside our own. We define a decomposition that
-separates recall into the contributions of coverage, selection and ranking, and we apply it to
-GRAIL, the predictor we release for that purpose.
+This work addresses both assumptions, in that order, because the second depends on the first. We
+define an evaluation protocol that states the matching criterion explicitly and permits it to be
+varied, and use it to re-score fixed predictions from four published methods alongside our own. We
+then define a decomposition of recall into coverage, selection and ranking. Every factor counts
+matched references, so all three move with the criterion: the decomposition measures something
+only relative to a declared one. We apply it to GRAIL, the predictor we release for that purpose,
+whose rule base is enumerable and whose coverage factor is therefore exact rather than estimated.
 
 The remainder of this article is organised as follows. Section~\ref{sec:related} reviews prior
 work on metabolite prediction and on evaluation methodology in related domains.
 Section~\ref{sec:tame} defines the evaluation protocol, the matching criteria and the data split.
 Section~\ref{sec:decomp} introduces the recall decomposition and the coverage ceiling.
-Section~\ref{sec:results} reports the effect of the matching criterion on method ranking, the
-decomposition applied to our predictor, and the characterisation of template selection as an
-extreme multi-label problem. Section~\ref{sec:limitations} discusses the limitations of the study
-and Section~\ref{sec:conclusion} concludes.
+Section~\ref{sec:results} reports the effect of the matching criterion on method ranking and the
+decomposition applied to our predictor. Section~\ref{sec:limitations} discusses limitations and
+Section~\ref{sec:conclusion} concludes.
 
 \section{Related Work}
 \label{sec:related}
@@ -214,11 +215,8 @@ Unless stated otherwise all results use \textsc{inchikey-tautomer};
 which the same fixed predictions score a near-total miss or a full hit purely by changing $q$ is
 given in Appendix~\ref{app:worked}.
 
-Structure standardisation is established \emph{preprocessing}.
-\citet{Hahnke_2018} report that 60\% of PubChem structures differ from their canonical InChI
-form, mainly by tautomer choice, and \citet{Mansouri_2024} describe a comparable
-desalt/destereo/tautomer-canonicalisation pipeline. What is new here is adopting it as the
-\emph{matching} rule and measuring how far it moves the leaderboard.
+Standardisation of this kind is established preprocessing (\S\ref{sec:related}); what is new
+here is adopting it as the \emph{matching} rule and measuring how far it moves the leaderboard.
 
 \paragraph{Split and leakage audit.} All splits are substrate-disjoint: no substrate in test or
 validation appears in train, and no test substrate appears in validation. Clean triples are
@@ -559,7 +557,7 @@ them.
 \section{Limitations}
 \label{sec:limitations}
 
-\paragraph{Sample sizes differ across comparisons.} The five-method table rests on $\nshared$
+\paragraph{Sample sizes differ.} The five-method table rests on $\nshared$
 shared substrates, because two comparators could only be run on that subset; GRAIL and SyGMa are
 scored on the full $\ntest$. The external replication is $n=\nglory$. At those sizes the
 \emph{interactions} are significant but no individual pairwise reversal is, and we report them that
@@ -598,7 +596,9 @@ interpretable only alongside the criterion that produced it, and that benchmark 
 area should report sensitivity to that choice rather than fixing it silently.
 
 Attributing a recall figure to a stage of the pipeline is likewise possible and, we would argue,
-necessary. The decomposition introduced here requires no additional experiments, applies to any
+necessary, and it rests on the first contribution: the factors are counts of matched references,
+so a decomposition computed under an unstated criterion inherits that arbitrariness at every
+stage. The decomposition introduced here requires no additional experiments, applies to any
 method built on an enumerable rule base, and converts an aggregate score into a statement about
 where the method fails. For the predictor examined here it identifies rule selection as the
 binding constraint, and characterises that stage as extreme multi-label classification with very
@@ -608,10 +608,10 @@ strong.
 \subsubsection*{Reproducibility statement}
 
 All numbers here are regenerable from committed artifacts, but for one reranker figure whose
-per-substrate scores were not retained and which is flagged where it appears. The release contains
-every method's frozen predictions, the leakage-audit report, the evaluation harness with its five
-criteria, the split construction and audit, the analysis code, and the GRAIL checkpoints, in an
-anonymized archive accompanying this submission.
+per-substrate scores were not retained and which is flagged where it appears. The anonymized archive
+accompanying this submission holds every method's frozen predictions, the leakage-audit report,
+the harness with its five criteria, the split construction and audit, the analysis code, and the
+GRAIL checkpoints.
 
 \bibliographystyle{iclr2026_conference}
 \bibliography{refs}
