@@ -118,7 +118,7 @@ SyGMa            & 0.028 & 0.562 & 0.049 & 0.027 & 75.1 & 3 & 5 \\
 \end{center}
 \end{table}
 
-Only one of these movements is certified, and it is the one the decomposition names. On F1 the four
+Only one method moves with certification, and it is the one the decomposition names. On F1 the four
 selecting methods are mutually indistinguishable, every pairwise interval covering zero, the widest
 separation being GRAIL against MetaTrans at $-0.033$ $[-0.071,+0.004]$. SyGMa is below all four,
 $+0.094$ $[+0.065,+0.124]$ against GRAIL rising to $+0.127$ $[+0.106,+0.149]$ against MetaTrans.
@@ -129,8 +129,11 @@ in one direction on recall and in the other on F1.
 The remaining exchanges of place, MetaTrans past MetaPredictor at the top and BioTransformer past
 GRAIL below it, are within noise and we do not claim them. The reading is not that the aggregate
 shuffles a leaderboard arbitrarily. It is that the aggregate is decisive for exactly the
-architecture the factorisation identifies, the one with no selection stage, and inert among the
-architectures that select.
+architecture the factorisation identifies, the one with no selection stage, and not detectably
+different among the architectures that select. That last is a failure to detect rather than a
+demonstration of absence: the widest of those intervals still admits a difference of $0.07$ at
+$n=\nshared$, and separating the two readings needs a larger shared subset than the comparators
+currently supply.
 
 \subsection{External validity rests on 37 substrates}
 
