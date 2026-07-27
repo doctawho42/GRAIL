@@ -60,9 +60,13 @@ all, which recall charges only to methods that select, and which no aggregate sc
 
 Every factor counts references matched against predictions, so the decomposition is defined only
 relative to a stated rule for when two structures are the same molecule. That rule is never stated
-in this field and has never been varied. We vary it over five conventions with predictions held
-fixed, find the ordering of published methods is not invariant to the choice, and release the
-protocol, the audited split and the frozen predictions that make the measurement repeatable.
+in this field and has never been varied. Varying it over five conventions with predictions held
+fixed erases a statistically significant advantage between two published tools on the external set;
+on our full split it leaves the recall ordering stable to within noise and moves the F1 ordering
+instead. The aggregate is a second undeclared parameter and the more consequential one, since the
+method that leads on recall finishes last on F1, and the decomposition predicts that reordering
+from a structural property rather than observing it. We release the protocol, the audited split and
+the frozen predictions that make both measurements repeatable.
 \end{abstract}
 
 \section{Introduction}
@@ -106,27 +110,21 @@ reason alone.
 
 Making the factorisation well-posed exposes a second problem, which is why the paper addresses it
 first. Every factor counts references matched against predictions, so all three move with the rule
-deciding when a predicted structure counts as the same molecule as a reported one, and chemistry offers
-several defensible such rules: canonical SMILES strings, hashed chemical identifiers, identifiers
-with stereochemistry removed, or molecular fingerprints. They disagree most about tautomers,
-alternative structures of one compound differing in the position of a mobile hydrogen atom. Evaluations in this field adopt one each, usually
-without stating why, and none has varied it. We vary it over five conventions with predictions held
-fixed, and the ordering of published methods is not invariant to the choice. That a matching rule
-can reorder a leaderboard has been shown before in other fields; that this field's rankings depend
-on an unstated one has not.
+deciding when a predicted structure is the same molecule as a reported one, and chemistry offers
+several defensible rules: canonical SMILES, hashed identifiers, identifiers with stereochemistry
+removed, or fingerprints. They disagree most about tautomers, alternative structures of one
+compound differing in the position of a mobile hydrogen. Evaluations here adopt one each, usually
+without saying why, and none has varied it. Varying it over five conventions with predictions held
+fixed erases a significant advantage between two published tools externally, and internally moves
+the F1 ordering while leaving recall's stable to within noise. A third parameter is the aggregate
+itself: report F1 rather than recall and the leader becomes the straggler. That matching rules and
+metric choices can reorder leaderboards is established in other fields; that this field's rankings
+turn on two undeclared ones is not.
 
-We release the bundle the protocol needs, not a model: the leakage-audited split, the re-scoring
-harness with all five criteria, the frozen predictions of all five methods under each, the
-leakage-audit report, and GRAIL's checkpoints, GRAIL being the predictor we release so that the
-decomposition has a second rule-grounded system to run on. Adding a sixth method needs its ranked
-output on the split and nothing else.
-
-The remainder of this article is organised as follows. Section~\ref{sec:related} reviews prior work
-on metabolite prediction and on evaluation methodology in related fields. Section~\ref{sec:tame}
-defines the matching criteria, the protocol and the audited split. Section~\ref{sec:decomp} states
-the decomposition and the coverage ceiling. Section~\ref{sec:results} reports both, and
-characterises the stage they identify as extreme multi-label classification.
-Section~\ref{sec:limitations} discusses limitations and Section~\ref{sec:conclusion} concludes.
+We release the bundle the protocol needs rather than a model: the leakage-audited split and its
+audit report, the re-scoring harness with all five criteria, every method's frozen predictions
+under each, and GRAIL's checkpoints, GRAIL being the second rule-grounded system the decomposition
+runs on. Adding a sixth method needs its ranked output and nothing else.
 
 \section{Related Work}
 \label{sec:related}
@@ -273,7 +271,11 @@ $Y_s$:
 \]
 where $C_{\text{full}}$ are references recovered by applying the \emph{entire} bank without a
 budget, $C_{\text{bud}}$ those surviving the selector's budgeted pool, and $H$ those actually
-returned in the top $k$. The identity is exact by construction (each set contains the next), so
+returned in the top $k$. The first factor requires an enumerable rule base, so the factorisation
+runs on the rule-grounded methods compared here and not on the sequence-to-sequence ones, which
+have no bank to apply. That is a property of the method class rather than a limit of the
+measurement: any method with a rule base decomposes, and the two here span the design space from a
+selector that chooses to one that does not. The identity is exact by construction (each set contains the next), so
 the three factors partition the loss with no residual: it is an accounting device, not a model.
 Its value is diagnostic: a single recall number cannot indicate \emph{which} gate closed, while
 the three corresponding interventions address unrelated components of the pipeline. Two
@@ -460,9 +462,11 @@ rewards and precision punishes, so a pipeline with no selection stage must lead 
 the other. The factorisation predicts the reordering from a structural property rather than
 observing it after the fact.
 
-The matching criterion acts on these metrics too, and acts where it left recall alone. The recall
-ordering over the full split is identical under all five criteria. The F1 gap between GRAIL and
-MetaPredictor is not: it is certified under four criteria, at $-0.026$ $[-0.038,-0.013]$ under the
+The matching criterion acts on these metrics too, and acts where it barely touched recall. Over the
+full split the recall@15 ordering is stable to within noise: the leading pair exchanges places
+between criteria, but by at most $0.0014$, and their differential sensitivity is $-0.002$
+$[-0.009,+0.006]$, so nothing there is claimable. The F1 gap between GRAIL and MetaPredictor is
+another matter: it is certified under four criteria, at $-0.026$ $[-0.038,-0.013]$ under the
 tautomer-aware default, and indistinguishable from zero under plain \textsc{inchikey}, at
 $+0.003$ $[-0.009,+0.015]$. That is an erased gap rather than a certified reversal, and we claim it
 as no more than that. Two undeclared free parameters therefore sit between a set of predictions and
@@ -480,20 +484,19 @@ metabolites would need about fifty-five in truth for that to bite (Appendix~\ref
 \subsection{Comparison against published methods}
 \label{sec:diagnosis}
 
-GRAIL's several recall figures are not interchangeable; Appendix~\ref{app:xdomain} says which is which.
-Before diagnosing GRAIL further we place it against the published methods. On the full clean test split ($n=\ntest$) the deployed GRAIL checkpoint reaches
-\grailmacro\ macro recall@15; retraining the same configuration under three seeds gives
-$0.344 \pm 0.010$ on that split. SyGMa reaches $0.572$, a paired difference of $-0.242$ from GRAIL
-(95\% CI $[-0.271,\,-0.212]$, cluster bootstrap over $n=1{,}168$ common substrates).
-MetaPredictor reaches $0.585$ on the shared subset ($n=\nshared$) and $0.568$ when re-scored on
-the full test ($n=1{,}169$). GRAIL trails both. GRAIL does not achieve the highest recall at any output budget. A budget-matched frontier
-sweeping $k \in [1,64]$ finds SyGMa ahead at \emph{every} $k$ with no crossover
-(Appendix~\ref{app:budget}): the gap is not an artifact of output-size accounting, it is a genuine
-selection weakness, and \S\ref{sec:decomp} localises it.
-
-GRAIL differs from SyGMa on a second axis, the size of the returned set: $8.4$ candidates per
-substrate against $81.7$ on the same split. That is an operating point recall@$k$ does not
-express, and \S\ref{sec:metric} prices it.
+Four GRAIL recall figures appear and none is interchangeable: $\realised$ is micro, the pooled ratio
+of hits to references; $\grailmacro$ is macro over the output as emitted; $0.340$ is macro after the
+harness collapses duplicates, which is what it does for every method and so is the figure used in
+any cross-method table; and $0.344\pm0.010$ is the three-seed mean of that last one
+(Appendix~\ref{app:xdomain}).
+Against the published methods on the full clean test split, GRAIL trails both: SyGMa reaches
+$0.572$, a paired difference of $-0.242$ $[-0.271,\,-0.212]$ over the $1{,}168$ common substrates,
+and MetaPredictor $0.568$ on the same split ($0.585$ on the shared subset). Nor does GRAIL lead at
+any output budget: a frontier sweeping $k \in [1,64]$ finds SyGMa ahead at \emph{every} $k$ with no
+crossover (Appendix~\ref{app:budget}), so the gap is not output-size accounting but the selection
+weakness \S\ref{sec:decomp} localises. The two differ on a second axis besides, returning $8.4$
+candidates per substrate against $81.7$ --- an operating point recall@$k$ does not express, and
+\S\ref{sec:metric} prices.
 
 \subsection{Selection as extreme multi-label classification}
 \label{sec:xmc}
@@ -602,31 +605,29 @@ of references are multi-generation products unreachable by any one rule applicat
 application lifts the ceiling by only ${\sim}0.012$ at approximately $8.5$ times the candidate
 cost, so the $\ceiling$ ceiling bounds this single-step formulation rather than the task itself.
 
-\paragraph{Evaluation hygiene of this paper itself.} Our headline numbers come from a single
-evaluation of the deployed configuration, with model and hyper-parameter selection done on
-validation. Some \emph{exploratory} analyses reported in Appendix~\ref{app:negative}, however, were
-scored on the test split before we tightened this discipline. They inform no headline claim, and
-their conclusions are negative. Subsequent exploratory work was moved to the validation split.
+\paragraph{Evaluation hygiene of this paper itself.} Headline numbers come from a single evaluation
+of the deployed configuration, with selection done on validation. Some \emph{exploratory} analyses
+in Appendix~\ref{app:negative} were scored on test before we tightened this discipline; they inform
+no headline claim and their conclusions are negative.
 
 \section{Conclusion}
 \label{sec:conclusion}
 
-A recall figure for a rule-grounded predictor factorises, exactly and without further experiments,
-into what its rule base can express, what its selector admits, and what its ranker returns. Applied
-to two published systems it explains their ordering rather than repeating it: the one with the
-wider rule base converts a third of what it reaches, the one with the narrower base converts nearly
-all of its own because it selects nothing, and the gap is the price of having a selection stage.
-Read as an aggregate, the same two numbers say only that one system scores higher.
+A recall figure for a rule-grounded predictor factorises exactly into what its rule base can
+express, what its selector admits, and what its ranker returns. Applied to two published systems it
+explains their ordering rather than repeating it: the wider bank converts a third of what it
+reaches, the narrower nearly all of its own because it selects nothing, and the gap is the price of
+having a selection stage. As an aggregate those numbers say only that one scores higher.
 
+\looseness=-1
 Two free parameters sit between a set of predictions and a leaderboard position, and this field
-declares neither. The first is the rule for when two structures are the same molecule, which is not
-neutral because methods differ systematically in how their outputs depart from reference
-structures. The second is the aggregate: the method that leads on recall finishes last on F1, and
-the decomposition predicts that from a structural property, since a pipeline with no selection
-stage is exactly what recall rewards and precision punishes. The two halves of this paper meet
-there. A reported score is interpretable only alongside the criterion and the aggregate that
-produced it, and benchmark papers here should report both, together with the coverage ceiling of
-the rule base where the method has one.
+declares neither. The first is the rule for when two structures are the same molecule, not neutral
+because methods differ in how their outputs depart from the references. The second is the
+aggregate: the method leading on recall finishes last on F1, which the decomposition predicts
+structurally, a pipeline with no selection stage being what recall rewards and precision punishes.
+The two halves of the paper meet there. A score is interpretable only alongside the criterion and
+the aggregate that produced it, and both belong in any report, with the coverage ceiling wherever
+there is a rule base.
 
 \subsubsection*{Reproducibility statement}
 
