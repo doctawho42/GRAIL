@@ -220,8 +220,11 @@ def compute_records(model, items, ceiling, log_every=25):
         if u_i == 0:
             continue
         true_prods = list(prods)
-        # C_bud: deployed generator pool (the candidate set the filter reranks)
-        scored = gen.generate_scored(sub, top_k=MAX_POOL, threshold=gen_threshold)
+        # C_bud: products of the rules the DEPLOYED SELECTOR actually chooses. Pool membership is
+        # fixed by rule selection; the filter's candidate cap and the top-k cut only order and
+        # truncate what is already in the pool, so both belong to the ranking factor. The earlier
+        # revision used top_k=MAX_POOL here, which charged the rule narrowing to ranking instead.
+        scored = gen.generate_scored(sub, top_k=CANDIDATE_TOP_K, threshold=gen_threshold)
         cbud_i = tautomer_hits([s for s, _ in scored], true_prods)
         # H: deployed gen x filter top-15, EXACT deployed operating point (rank policy, no gate)
         deployed_top15 = model.generate(
@@ -290,10 +293,11 @@ def main() -> int:
     U = sum(r["U"] for r in records)
     micro_recall = sum(r["H"] for r in records) / U
     oracle_recall = sum(r["Cbud"] for r in records) / U
+    import rdkit
     report = {
         "match": "inchikey_tautomer",
         "k": K,
-        "n_substrates": len(records),
+        "n_substrates": len(records), "rdkit_version": rdkit.__version__,
         "factors": factors,
         "micro_recall": micro_recall,
         "oracle_recall": oracle_recall,
@@ -309,7 +313,11 @@ def main() -> int:
         "provenance": {
             "split": "clean test (test_triples_clean.txt + test.sdf)",
             "ceiling_pool": f"full extended_smirks bank, depth-1 (n_rules={len(rules)})",
-            "deployed_pool": f"generator.pt generate_scored top_k={MAX_POOL}, threshold=calibrated",
+            "deployed_pool": (
+            f"generator.pt generate_scored(top_k={CANDIDATE_TOP_K}) -- products of the rules "
+            f"the deployed selector chooses; the filter cap ({FILTER_CANDIDATE_CAP}) and the "
+            f"top-{K} cut are counted in the ranking factor"),
+        "deployed_pool_previous_definition": f"generate_scored top_k={MAX_POOL} (charged rule narrowing to ranking)",
             "deployed_output": (
                 f"generator.pt x filter.pt: generate(top_k={CANDIDATE_TOP_K}, max_output={K}, "
                 f"ranking_policy=rank, filter_candidate_cap={FILTER_CANDIDATE_CAP})"

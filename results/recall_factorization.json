@@ -9,26 +9,27 @@
       "hi": 0.7616146230007617
     },
     "selection_retention": {
-      "point": 0.4884816753926702,
-      "lo": 0.4579484686436558,
-      "hi": 0.5196687370600414
+      "point": 0.3680628272251309,
+      "lo": 0.3432271991365353,
+      "hi": 0.392838335966298
     },
     "ranking_conversion": {
-      "point": 0.7256162915326902,
-      "lo": 0.6870389884088515,
-      "hi": 0.7648902821316614
+      "point": 0.9630156472261735,
+      "lo": 0.9458333333333333,
+      "hi": 0.9780521262002744
     }
   },
   "micro_recall": 0.2606854062379669,
-  "oracle_recall": 0.35926068540623796,
-  "macro_recall": 0.32964969908272296,
-  "macro_coverage_bank": 0.7916018894080344,
-  "macro_oracle_recall": 0.42529953239281265,
+  "oracle_recall": 0.2706969580284944,
+  "macro_recall": 0.32964969908272285,
+  "macro_coverage_bank": 0.7916018894080341,
+  "macro_oracle_recall": 0.33969073829042873,
   "aggregation_note": "Factors + micro_recall are pooled ratio-of-sums (the telescoping-identity frame; micro coverage_bank == the published rule-bank ceiling 0.735). macro_* are per-substrate means (metrics.py convention); macro_recall reproduces the deployed headline recall@15 0.330 (the earlier ~0.334 was a 291-substrate eval, now corrected).",
   "provenance": {
     "split": "clean test (test_triples_clean.txt + test.sdf)",
     "ceiling_pool": "full extended_smirks bank, depth-1 (n_rules=7581)",
-    "deployed_pool": "generator.pt generate_scored top_k=200, threshold=calibrated",
+    "deployed_pool": "generator.pt generate_scored(top_k=30) -- products of the rules the deployed selector chooses; the filter cap (32) and the top-15 cut are counted in the ranking factor",
+    "deployed_pool_previous_definition": "generate_scored top_k=200 (charged rule narrowing to ranking)",
     "deployed_output": "generator.pt x filter.pt: generate(top_k=30, max_output=15, ranking_policy=rank, filter_candidate_cap=32)",
     "match": "inchikey_tautomer",
     "resampling_unit": "substrate",
@@ -96,7 +97,7 @@
       "sub": "COc1cc2c(=O)c(-c3ccc(O)cc3)coc2cc1O",
       "U": 13,
       "Cfull": 10,
-      "Cbud": 10,
+      "Cbud": 3,
       "H": 3,
       "deployed_top15": [
         "O=c1c(-c2ccc(O)cc2)coc2cc(O)c(O)cc12",
@@ -204,7 +205,7 @@
       "sub": "C=CCNc1c(O)cc2c(O)c1C=C(C)CC(OC)C(O)C(C)C=C(C)C(OC(=N)O)C(OC)C=CC=C(C)C(=O)N2",
       "U": 7,
       "Cfull": 6,
-      "Cbud": 4,
+      "Cbud": 2,
       "H": 2,
       "deployed_top15": [
         "COC1C=CC=C(C)C(=O)Nc2cc(O)c(N)c(c2O)C=C(C)CC(OC)C(O)C(C)C=C(C)C1OC(=N)O",
@@ -228,7 +229,7 @@
       "sub": "COC1C=CC=C(C)C(=O)Nc2cc(O)c(N)c(c2O)C=C(C)CC(OC)C(O)C(C)C=C(C)C1OC(=N)O",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "COC1C=CC=C(C)C(=O)Nc2cc(O)c(N)c(c2O)C=C(C)CC(O)C(O)C(C)C=C(C)C1OC(=N)O",
@@ -273,7 +274,7 @@
       "sub": "C=CCNc1c(O)cc2c(O)c1C=C(C)CC(OC)C(O)C(C)C=C(C)C(OC(=N)O)C(OC)C=CC=C(CO)C(=O)N2",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "COC1C=CC=C(CO)C(=O)Nc2cc(O)c(N)c(c2O)C=C(C)CC(OC)C(O)C(C)C=C(C)C1OC(=N)O",
@@ -317,7 +318,7 @@
       "sub": "C=CCNc1c(O)cc2c(O)c1C=C(C)CC(O)C(O)C(C)C=C(C)C(OC(=N)O)C(OC)C=CC=C(C)C(=O)N2",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "COC1C=CC=C(C)C(=O)Nc2cc(O)c(N)c(c2O)C=C(C)CC(O)C(O)C(C)C=C(C)C1OC(=N)O",
@@ -438,7 +439,7 @@
       "sub": "CC1CCN(C(=O)CC#N)CC1N(C)c1ncnc2[nH]ccc12",
       "U": 4,
       "Cfull": 3,
-      "Cbud": 2,
+      "Cbud": 1,
       "H": 1,
       "deployed_top15": [
         "CC1CCN(C(=O)CC#N)CC1Nc1ncnc2[nH]ccc12",
@@ -543,7 +544,7 @@
       "sub": "Cc1c(O)c(=O)n(-c2ccc(O)cc2)n1C",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "Cc1[nH]n(-c2ccc(O)cc2)c(=O)c1O",
@@ -661,7 +662,7 @@
       "sub": "c1ccc2cc3c(ccc4ccccc43)cc2c1",
       "U": 8,
       "Cfull": 8,
-      "Cbud": 5,
+      "Cbud": 4,
       "H": 4,
       "deployed_top15": [
         "OC1C=Cc2cc3ccc4ccccc4c3cc2C1O",
@@ -740,7 +741,7 @@
       "sub": "COc1ccccc1-c1cc(=O)c2ccc(O)cc2o1",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "C[O-]",
@@ -956,7 +957,7 @@
       "sub": "N=c1ccn(C2OC(CO)C(O)C2(F)F)c(O)n1",
       "U": 4,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "N=c1cc[nH]c(O)n1",
@@ -1040,7 +1041,7 @@
       "sub": "CC12CCC(=O)C=C1CCC1C2CCC2(C)C(O)CCC12",
       "U": 5,
       "Cfull": 2,
-      "Cbud": 2,
+      "Cbud": 1,
       "H": 1,
       "deployed_top15": [
         "CC12CCC(O)C=C1CCC1C2CCC2(C)C(O)CCC12",
@@ -1225,7 +1226,7 @@
       "sub": "Cc1cc(-c2ccccc2)n[nH]c1=NCCN1CCOCC1",
       "U": 8,
       "Cfull": 6,
-      "Cbud": 3,
+      "Cbud": 2,
       "H": 2,
       "deployed_top15": [
         "Cc1cc(-c2ccccc2)n[nH]c1=NCC[N+]1(O)CCOCC1",
@@ -1420,7 +1421,7 @@
       "sub": "Cc1cc(C)cc(C(CC(C)C)N=C(O)c2cc(COc3cccc(F)c3)ccc2CCC(=O)O)c1",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "Cc1cc(C)cc(C(N)CC(C)C)c1",
@@ -1570,7 +1571,7 @@
       "sub": "O=C(OC1CN2CCC1CC2)N1CC(O)c2ccccc2C1c1ccccc1",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "OC1CNC(c2ccccc2)c2ccccc21",
@@ -1659,7 +1660,7 @@
       "sub": "N#Cc1cc(-c2ccoc2)c2ccc(OCc3cccc(C4(O)CC5COC(C4)O5)n3)cc2c1",
       "U": 3,
       "Cfull": 3,
-      "Cbud": 2,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "CC(O)(CCCO)c1cccc(COc2ccc3c(-c4ccoc4)cc(C#N)cc3c2)n1",
@@ -2040,7 +2041,7 @@
       "sub": "CC1(F)C(O)C(COP(=O)(O)O)OC1n1ccc(O)nc1=O",
       "U": 2,
       "Cfull": 2,
-      "Cbud": 2,
+      "Cbud": 1,
       "H": 1,
       "deployed_top15": [
         "CC1(F)C(O)C(CO)OC1n1ccc(O)nc1=O",
@@ -2322,7 +2323,7 @@
       "sub": "Nc1ncnc2c1c(-c1ccccc1)cn2C1OC(COP(=O)(O)O)C(O)C1O",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "Nc1ncnc2c1c(-c1ccccc1)cn2C1OC(COP(=O)(O)O)C(O)C1O",
@@ -2527,7 +2528,7 @@
       "sub": "CCc1nn(CCO)c(CC)c1Oc1cc(C#N)cc(C#N)c1",
       "U": 9,
       "Cfull": 7,
-      "Cbud": 7,
+      "Cbud": 4,
       "H": 3,
       "deployed_top15": [
         "CCc1n[nH]c(CC)c1Oc1cc(C#N)cc(C#N)c1",
@@ -2610,7 +2611,7 @@
       "sub": "CCc1nn(CCO)c(C(C)=O)c1Oc1cc(C#N)cc(C#N)c1",
       "U": 3,
       "Cfull": 2,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "CCc1nn(CCO)c(C(C)=O)c1O",
@@ -3018,7 +3019,7 @@
       "sub": "CCOC(=O)C(c1c(O)c2ccccc2oc1=O)c1c(O)c2ccccc2oc1=O",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "O=C(O)C(c1c(O)c2ccccc2oc1=O)c1c(O)c2ccccc2oc1=O",
@@ -3038,7 +3039,7 @@
       "sub": "CCOC(=O)C(c1c(O)c2ccc(O)cc2oc1=O)c1c(O)oc2ccccc2c1=O",
       "U": 2,
       "Cfull": 2,
-      "Cbud": 2,
+      "Cbud": 1,
       "H": 1,
       "deployed_top15": [
         "O=C(O)C(c1c(O)c2ccc(O)cc2oc1=O)c1c(O)oc2ccccc2c1=O",
@@ -3144,7 +3145,7 @@
       "sub": "CC1CC2C3CC(F)C4=CC(=O)C=CC4(C)C3(F)C(O)CC2(C)C1(OC(=O)c1ccco1)C(=O)O",
       "U": 2,
       "Cfull": 2,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "CC1CC2C3CC(F)C4=CC(=O)C=CC4(C)C3(F)C(O)CC2(C)C1(O)C(=O)O",
@@ -3227,7 +3228,7 @@
       "sub": "CCC1OC(=O)C(C)C(=O)C(C)C(OC2OC(C)CC(N(C)C)C2O)C(C)(OCC=Cc2cnc3ccccc3c2)CC(C)C(=O)C(C)C2N=C(O)OC12C",
       "U": 3,
       "Cfull": 3,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "OCC=Cc1cnc2ccccc2c1",
@@ -3275,7 +3276,7 @@
       "sub": "CCC1OC(=O)C(C)C(=O)C(C)C(OC2OC(C)CC(N(C)C)C2O)C(C)(OCC=Cc2cnc3ccccc3c2)CC(C)C(=O)C(C)(O)C2N=C(O)OC12C",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "OCC=Cc1cnc2ccccc2c1",
@@ -3329,7 +3330,7 @@
       "sub": "CCC(C)(C)C(=O)OC1CC(C=O)=CC2=CCC(C)C(CCC3CC(O)CC(=O)O3)C21",
       "U": 2,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "CCC(C)(C)C(=O)O",
@@ -3556,7 +3557,7 @@
       "sub": "CCN(CC)CCN=C(O)c1cc(Cl)c(N)cc1OC(C)C(C)=O",
       "U": 2,
       "Cfull": 2,
-      "Cbud": 2,
+      "Cbud": 1,
       "H": 1,
       "deployed_top15": [
         "CCNCCN=C(O)c1cc(Cl)c(N)cc1OC(C)C(C)=O",
@@ -3662,7 +3663,7 @@
       "sub": "OC(COc1cccc2ncccc12)CN1CCN(C2c3ccccc3C3C(c4ccccc42)C3(F)F)CC1",
       "U": 2,
       "Cfull": 2,
-      "Cbud": 2,
+      "Cbud": 1,
       "H": 1,
       "deployed_top15": [
         "FC1(F)C2c3ccccc3C(N3CCNCC3)c3ccccc3C21",
@@ -3874,7 +3875,7 @@
       "sub": "CCC(C(=N)O)N1CC(CCCO)CC1=O",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "CCC(NCC(C)CCCO)C(=N)O",
@@ -3891,7 +3892,7 @@
       "sub": "CCC(C(=N)O)N1CC(CC(C)O)CC1=O",
       "U": 2,
       "Cfull": 2,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "CCC(NCCCC(C)O)C(=N)O",
@@ -4005,7 +4006,7 @@
       "sub": "CC(OC(=O)N(C)c1ccc(F)cc1CO)[n+]1cnn(CC(O)(c2cc(F)ccc2F)C(C)c2nc(-c3ccc(C#N)cc3)cs2)c1",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "CNc1ccc(F)cc1CO",
@@ -4134,7 +4135,7 @@
       "sub": "O=S(=O)(N=C(O)Nc1ccc(Cl)cc1)c1ccc2c(c1)CCC2O",
       "U": 2,
       "Cfull": 2,
-      "Cbud": 2,
+      "Cbud": 1,
       "H": 1,
       "deployed_top15": [
         "Nc1ccc(Cl)cc1",
@@ -4193,7 +4194,7 @@
       "sub": "O=S(=O)(N=C(O)Nc1ccc(Cl)cc1)c1ccc2c(c1)C(O)CC2",
       "U": 2,
       "Cfull": 2,
-      "Cbud": 2,
+      "Cbud": 1,
       "H": 1,
       "deployed_top15": [
         "Nc1ccc(Cl)cc1",
@@ -4238,7 +4239,7 @@
       "sub": "Nc1ccc(Cl)cc1O",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "Cl",
@@ -4304,7 +4305,7 @@
       "sub": "C=C(C=CCC(C)C)C(C)=O",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "C=C(CCCC(C)C)C(C)=O",
@@ -4318,7 +4319,7 @@
       "sub": "Oc1ccc(O)n1CC1CCC2CN(c3ncccn3)CCN2C1",
       "U": 4,
       "Cfull": 3,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "Oc1ccc(O)n1CC1CCC2CN(c3ncccn3)CC[N+]2(O)C1",
@@ -4342,7 +4343,7 @@
       "sub": "Oc1cnc(N2CCN3CC(Cn4c(O)ccc4O)CCC3C2)nc1",
       "U": 5,
       "Cfull": 3,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "Oc1cnc(N2CCNCC2)nc1",
@@ -4389,7 +4390,7 @@
       "sub": "CCN(CC)CCN=C(O)c1cc(Cl)c(N)cc1OC",
       "U": 8,
       "Cfull": 6,
-      "Cbud": 2,
+      "Cbud": 1,
       "H": 1,
       "deployed_top15": [
         "CCNCCN=C(O)c1cc(Cl)c(N)cc1OC",
@@ -4443,7 +4444,7 @@
       "sub": "CN(C)CCC=C1c2ccccc2COc2ccccc21",
       "U": 8,
       "Cfull": 6,
-      "Cbud": 2,
+      "Cbud": 1,
       "H": 1,
       "deployed_top15": [
         "CNCCC=C1c2ccccc2COc2ccccc21",
@@ -4584,7 +4585,7 @@
       "sub": "O=C1CCC2(O)C3Cc4ccc(O)c5c4C2(CCN3CC2CC2)C1O5",
       "U": 3,
       "Cfull": 3,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "O=C1CCC2(O)C3Cc4ccc(O)c5c4C2(CCN3)C1O5",
@@ -4671,7 +4672,7 @@
       "sub": "CN1CCCCC1CCN1c2ccccc2Sc2ccc(S(C)(=O)=O)cc21",
       "U": 6,
       "Cfull": 5,
-      "Cbud": 2,
+      "Cbud": 1,
       "H": 1,
       "deployed_top15": [
         "CN1CCCCC1CCN1c2ccccc2S(=O)c2ccc(S(C)(=O)=O)cc21",
@@ -4804,7 +4805,7 @@
       "sub": "CCN(CC)CCN=C(O)c1cc(S(C)(=O)=O)ccc1OC",
       "U": 2,
       "Cfull": 2,
-      "Cbud": 2,
+      "Cbud": 1,
       "H": 1,
       "deployed_top15": [
         "CCNCCN=C(O)c1cc(S(C)(=O)=O)ccc1OC",
@@ -4961,7 +4962,7 @@
       "sub": "COc1cc(-c2cc(=O)c3c(O)cc(O)cc3o2)cc(OC)c1O",
       "U": 6,
       "Cfull": 6,
-      "Cbud": 6,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "C[O-]",
@@ -5181,7 +5182,7 @@
       "sub": "COc1ccc(Cl)cc1N=C(O)Cc1ccc(S(=O)(=O)Nc2ncc(CC(C)C)cn2)cc1",
       "U": 3,
       "Cfull": 3,
-      "Cbud": 3,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "CC(C)Cc1cnc(NS(=O)(=O)c2ccc(CC3=Nc4cc(Cl)ccc4OCO3)cc2)nc1",
@@ -5205,7 +5206,7 @@
       "sub": "COc1ccc(Cl)cc1N=C(O)Cc1ccc(S(=O)(=O)Nc2ncc(CC(C)CO)cn2)cc1",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "CC(CO)Cc1cnc(NS(=O)(=O)c2ccc(CC3=Nc4cc(Cl)ccc4OCO3)cc2)nc1",
@@ -5848,7 +5849,7 @@
       "sub": "CC(Cc1ccccc1)NCCn1cnc2c1c(=O)n(C)c(=O)n2C",
       "U": 11,
       "Cfull": 7,
-      "Cbud": 7,
+      "Cbud": 4,
       "H": 4,
       "deployed_top15": [
         "CC(Cc1ccccc1)NCCn1cnc2nc(O)n(C)c(=O)c21",
@@ -5941,7 +5942,7 @@
       "sub": "CC(N)C(O)c1ccccc1",
       "U": 2,
       "Cfull": 2,
-      "Cbud": 2,
+      "Cbud": 1,
       "H": 1,
       "deployed_top15": [
         "CC(O)C(O)c1ccccc1",
@@ -6002,7 +6003,7 @@
       "sub": "Nc1ccc(-c2ccc(C=Nn3cc(O)nc3O)o2)cc1",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "Nc1ccc(-c2ccc(-c3nn4cc(O)nc4o3)o2)cc1",
@@ -6195,7 +6196,7 @@
       "sub": "OC1=Nc2ccc(Cl)cc2C(C#CC2CC2)(C(F)(F)F)O1",
       "U": 3,
       "Cfull": 2,
-      "Cbud": 2,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "Nc1ccc(Cl)cc1",
@@ -6214,7 +6215,7 @@
       "sub": "OC1=Nc2c(O)cc(Cl)cc2C(C#CC2CC2)(C(F)(F)F)O1",
       "U": 5,
       "Cfull": 5,
-      "Cbud": 2,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "OC1=Nc2c3cc(Cl)cc2C(C(F)(F)F)(C#CC2CC2O3)O1",
@@ -6246,7 +6247,7 @@
       "sub": "Cc1c(Cl)c(C)[n+]([O-])c(Cl)c1-c1noc(-c2cc(O)c(O)c([N+](=O)[O-])c2)n1",
       "U": 6,
       "Cfull": 4,
-      "Cbud": 2,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "Cl",
@@ -6426,7 +6427,7 @@
       "sub": "Cc1cc(=O)oc2cc(N)ccc12",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "Nc1ccc2c(CO)cc(=O)oc2c1",
@@ -6624,7 +6625,7 @@
       "sub": "Cc1cc2c(F)c(Oc3ncnn4cc(OCC(C)O)c(C)c34)ccc2[nH]1",
       "U": 6,
       "Cfull": 5,
-      "Cbud": 4,
+      "Cbud": 1,
       "H": 1,
       "deployed_top15": [
         "Cc1cc2c(F)c(Oc3ncnn4cc(OC5OC5C)c(C)c34)ccc2[nH]1",
@@ -6758,7 +6759,7 @@
       "sub": "Nc1ccc(S(=O)(=O)Nc2ccc(O)cn2)cc1",
       "U": 2,
       "Cfull": 2,
-      "Cbud": 2,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "Nc1ccc(S(N)(=O)=O)cc1",
@@ -6801,7 +6802,7 @@
       "sub": "O=C(O)c1nn(Cc2ccc(Cl)cc2Cl)c2ccccc12",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "O=C1OC(c2ccc(Cl)cc2Cl)n2nc1c1ccccc12",
@@ -7093,7 +7094,7 @@
       "sub": "COc1cc2c(c3oc(=O)c4c(c13)CCC4=O)C1C=COC1O2",
       "U": 9,
       "Cfull": 6,
-      "Cbud": 6,
+      "Cbud": 2,
       "H": 2,
       "deployed_top15": [
         "COc1cc(O)cc2oc(=O)c3c(c12)CCC3=O",
@@ -7112,7 +7113,7 @@
       "sub": "COc1cc2c(c3oc(=O)c4c(c13)CCC4=O)C1C(O2)OC2OC21",
       "U": 3,
       "Cfull": 3,
-      "Cbud": 2,
+      "Cbud": 1,
       "H": 1,
       "deployed_top15": [
         "COc1cc(O)cc2oc(=O)c3c(c12)CCC3=O",
@@ -7326,7 +7327,7 @@
       "sub": "CN=C(O)NCC(CC(=O)O)Oc1cccc(Cl)c1",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "Oc1cccc(Cl)c1",
@@ -7511,7 +7512,7 @@
       "sub": "Cc1cc(O)c(C)c(C)c1C=CC1(C)CCC(=O)O1",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "CC(=O)O",
@@ -7547,7 +7548,7 @@
       "sub": "CC1C=C2CC(=O)CCC2C2CCC3(C)C(O)CCC3C12",
       "U": 5,
       "Cfull": 3,
-      "Cbud": 2,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "CC1C=C2CC(=O)CCC2C2CCC3(C)C(O)CCC3C12",
@@ -7777,7 +7778,7 @@
       "sub": "O=c1c2ccccc2nc2n1CCc1c-2[nH]c2ccccc12",
       "U": 6,
       "Cfull": 6,
-      "Cbud": 6,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "O=c1[nH]c(-c2cc3ccccc3[nH]2)nc2ccccc12",
@@ -7827,7 +7828,7 @@
       "sub": "N=c1nc(O)c2ncn(COCCO)c2[nH]1",
       "U": 4,
       "Cfull": 3,
-      "Cbud": 3,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "N=c1nc(O)c2ncn(CO)c2[nH]1",
@@ -7956,7 +7957,7 @@
       "sub": "CCCCCCC(C)(C)c1ccc(C2CC(O)CCC2CCCO)c(O)c1",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "CCCCC1CC(C)(C)c2ccc(C3CC(O)CCC3CCCO)c(c2)O1",
@@ -8126,7 +8127,7 @@
       "sub": "CC(C)C(N=C(O)C(C(C)C)N(C)C)C(=O)N(C)C(C(=O)N1CCCC1C(=O)N1CCCC1C(O)=NC(C)(C)C)C(C)C",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "CC(C)(C)N=C(O)C1CCCN1C(=O)C1CCCN1",
@@ -8228,7 +8229,7 @@
       "sub": "CC(C(=O)O)c1ccc(-c2ccccc2)c(F)c1",
       "U": 4,
       "Cfull": 3,
-      "Cbud": 3,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "O=C=O",
@@ -8433,7 +8434,7 @@
       "sub": "COC(=O)C1=C(C)N=C(C)C(C(=O)OC)C1c1cccc(C#N)c1",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "COC(=O)C1=C(C)N=C(C)C(C(=O)O)C1c1cccc(C#N)c1",
@@ -8620,7 +8621,7 @@
       "sub": "Sc1ncnc2[nH]cnc12",
       "U": 16,
       "Cfull": 3,
-      "Cbud": 3,
+      "Cbud": 2,
       "H": 2,
       "deployed_top15": [
         "O=C([O-])C1OC([n+]2cnc3[nH]cnc3c2S)C(O)C(O)C1O",
@@ -8644,7 +8645,7 @@
       "sub": "O=P(O)(O)OCC1OC(n2cnc3c(S)ncnc32)C(O)C1O",
       "U": 11,
       "Cfull": 4,
-      "Cbud": 4,
+      "Cbud": 1,
       "H": 1,
       "deployed_top15": [
         "O=[SH]c1ncnc2c1ncn2C1OC(COP(=O)(O)O)C(O)C1O",
@@ -8663,7 +8664,7 @@
       "sub": "N=c1nc(S)c2ncn(C3OC(COP(=O)(O)O)C(O)C3O)c2[nH]1",
       "U": 4,
       "Cfull": 2,
-      "Cbud": 2,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "N=c1nc([SH]=O)c2ncn(C3OC(COP(=O)(O)O)C(O)C3O)c2[nH]1",
@@ -8682,7 +8683,7 @@
       "sub": "CSc1ncnc2c1ncn2C1OC(COP(=O)(O)O)C(O)C1O",
       "U": 3,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "CS(=O)c1ncnc2c1ncn2C1OC(COP(=O)(O)O)C(O)C1O",
@@ -8962,7 +8963,7 @@
       "sub": "ONCCCCCN1c2ccccc2Sc2ccc(C(F)(F)F)cc21",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "O=S1c2ccccc2N(CCCCCNO)c2cc(C(F)(F)F)ccc21",
@@ -8974,7 +8975,7 @@
       "sub": "CC(=O)c1cc2c(CO)cc(O)cc2oc1=O",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "CC(=O)O",
@@ -9100,7 +9101,7 @@
       "sub": "Cc1nc(N=C(O)N2CCCC2C(=N)O)sc1-c1ccnc(C(C)(C)C(F)(F)F)c1",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "Cc1nc(N)sc1-c1ccnc(C(C)(C)C(F)(F)F)c1",
@@ -9384,7 +9385,7 @@
       "sub": "COc1ccc(-c2oc3cc(O)ccc3c(=O)c2O)cc1OC",
       "U": 2,
       "Cfull": 2,
-      "Cbud": 2,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "C[O-]",
@@ -9523,7 +9524,7 @@
       "sub": "CCc1c(CO)cc(C(=O)NC2(C(=O)O)CCCCC2)c(=O)n1Cc1ccc(F)cc1",
       "U": 2,
       "Cfull": 2,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "CCc1c2cc(c(=O)n1Cc1ccc(F)cc1)C(=O)NC1(C(=O)O)CCCC(C1)OC2",
@@ -9547,7 +9548,7 @@
       "sub": "Cc1cc(O)cc2oc(-c3ccccc3)cc(=O)c12",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "O=c1cc(-c2ccccc2)oc2cc3cc(c12)CO3",
@@ -9571,7 +9572,7 @@
       "sub": "CS(=O)(=O)c1ccccc1-c1ccc(N=C(O)c2cc(C(F)(F)F)nn2-c2cccc(CN)c2)c(F)c1",
       "U": 6,
       "Cfull": 2,
-      "Cbud": 2,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "CS(=O)(=O)c1ccccc1-c1ccc(N)c(F)c1",
@@ -9636,7 +9637,7 @@
       "sub": "CS(=O)(=O)C1=C(c2ccc(N=C(O)c3cc(C(F)(F)F)nn3-c3cccc(CN)c3)c(F)c2)C2OC2C=C1",
       "U": 2,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "CS(=O)(=O)C1=C(c2ccc(N=C(O)c3cc(C(F)(F)F)nn3-c3cccc(CN)c3)c(F)c2)C(O)C(O)C=C1",
@@ -9653,7 +9654,7 @@
       "sub": "CC(C)C(=O)OC(OC(O)=NCC(CC(=O)O)c1ccc(Cl)cc1)C(C)C",
       "U": 3,
       "Cfull": 3,
-      "Cbud": 3,
+      "Cbud": 2,
       "H": 2,
       "deployed_top15": [
         "NCC(CC(=O)O)c1ccc(Cl)cc1",
@@ -9872,7 +9873,7 @@
       "sub": "CNCCCC12CCC(c3ccccc31)c1cc(O)ccc12",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "CNCCCC12CC3Oc4ccc1c(c4)C3c1ccccc12",
@@ -9954,7 +9955,7 @@
       "sub": "Cc1c(F)c(N)c2c(=O)cc(-c3ccc(N)c(F)c3)oc2c1F",
       "U": 7,
       "Cfull": 6,
-      "Cbud": 6,
+      "Cbud": 3,
       "H": 2,
       "deployed_top15": [
         "Cc1c(O)c(N)c2c(=O)cc(-c3ccc(N)c(F)c3)oc2c1F",
@@ -9988,7 +9989,7 @@
       "sub": "Cc1c(F)c(N)c2c(=O)cc(-c3ccc(NO)c(F)c3)oc2c1F",
       "U": 2,
       "Cfull": 2,
-      "Cbud": 2,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "Cc1c(F)c(N)c2c(=O)cc(-c3ccc(N)c(F)c3)oc2c1F",
@@ -10099,7 +10100,7 @@
       "sub": "O=P(O)(O)OCC1CCC(n2cnc3c(O)ncnc32)O1",
       "U": 2,
       "Cfull": 2,
-      "Cbud": 2,
+      "Cbud": 1,
       "H": 1,
       "deployed_top15": [
         "O=P(O)(O)OCC1CC2Oc3ncnc4c3ncn4C2O1",
@@ -10171,7 +10172,7 @@
       "sub": "O=c1c(O)c(-c2ccc(O)c(O)c2)oc2cc(O)ccc12",
       "U": 3,
       "Cfull": 3,
-      "Cbud": 3,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "O=c1cc(-c2ccc(O)c(O)c2)oc2cc(O)ccc12",
@@ -10246,7 +10247,7 @@
       "sub": "O=Cc1cccc2ccccc12",
       "U": 2,
       "Cfull": 2,
-      "Cbud": 2,
+      "Cbud": 1,
       "H": 1,
       "deployed_top15": [
         "O=CC1=CC(O)C(O)c2ccccc21",
@@ -10386,7 +10387,7 @@
       "sub": "N=C(O)CN=C(O)C1CCCN1C(=O)CN",
       "U": 2,
       "Cfull": 2,
-      "Cbud": 2,
+      "Cbud": 1,
       "H": 1,
       "deployed_top15": [
         "NCC(=O)O",
@@ -10404,7 +10405,7 @@
       "sub": "COc1ccc(-c2oc3cc(O)cc(O)c3c(=O)c2OC)cc1OCc1ccccc1",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "COc1ccc(CC(=O)O)cc1OCc1ccccc1",
@@ -10607,7 +10608,7 @@
       "sub": "COc1cc2c(c3oc(=O)c4c(c13)CCC4=O)C1C(O2)OC(n2c[n+](C3CC(O)C(CO)O3)c3[nH]c(=N)nc([O-])c32)C1O",
       "U": 2,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "COc1cc(O)cc2oc(=O)c3c(c12)CCC3=O",
@@ -10739,7 +10740,7 @@
       "sub": "COc1ccc2c(c1)c(CC(O)=NCCc1ccccc1)c(C)n2C(=O)c1ccc(Cl)cc1",
       "U": 3,
       "Cfull": 3,
-      "Cbud": 3,
+      "Cbud": 1,
       "H": 1,
       "deployed_top15": [
         "COc1ccc2c(c1)c(CC(=O)O)c(C)n2C(=O)c1ccc(Cl)cc1",
@@ -10878,7 +10879,7 @@
       "sub": "CNS(=O)(=O)Cc1ccc2[nH]cc(CCN(C)C)c2c1",
       "U": 3,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "CNCCc1c[nH]c2ccc(CS(=O)(=O)NC)cc12",
@@ -11110,7 +11111,7 @@
       "sub": "CC(C)CC(N=C(O)C(Cc1c[nH]c2ccccc12)N=C(O)C(N=C(O)C(C)N=C(O)CCCCCNC(=O)c1ccc(-c2c3nc(c(-c4ccccc4)c4ccc([nH]4)c(-c4ccccc4)c4ccc([nH]4)c(-c4ccccc4)c4nc2CC4)C=C3)cc1)C(C)O)C(=O)N1CCCC1C(=O)N1CCCC1C(O)=NC(CCCNC(=N)N)C(=O)O",
       "U": 3,
       "Cfull": 3,
-      "Cbud": 3,
+      "Cbud": 2,
       "H": 2,
       "deployed_top15": [
         "CC(C)CC(N)C(=O)N1CCCC1C(=O)N1CCCC1C(O)=NC(CCCNC(=N)N)C(=O)O",
@@ -11158,7 +11159,7 @@
       "sub": "OC(=NCC1CCCCN1)c1cc(O)ccc1OCC(F)(F)F",
       "U": 2,
       "Cfull": 2,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "OC(=NCC1CCCCN1)c1cc(O)ccc1O",
@@ -11238,7 +11239,7 @@
       "sub": "Cc1cc(=O)oc2cc(O)ccc12",
       "U": 2,
       "Cfull": 2,
-      "Cbud": 2,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "O=c1ccc2ccc(O)cc2o1",
@@ -11326,7 +11327,7 @@
       "sub": "O=c1nc(NO)ccn1C1OC(COP(=O)(O)O)C(O)C1O",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "O=c1nc(NO)ccn1C1OC(CO)C(O)C1O",
@@ -11528,7 +11529,7 @@
       "sub": "O=c1c(O)c(-c2ccc(O)cc2)oc2ccc(O)cc12",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "O=c1cc(-c2ccc(O)cc2)oc2ccc(O)cc12",
@@ -11570,7 +11571,7 @@
       "sub": "O=C1CC(c2ccccc2O)Oc2ccccc21",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "CC(=O)c1ccccc1O",
@@ -11670,7 +11671,7 @@
       "sub": "CC1NC(=O)C(=O)N1CCC(C(=N)O)(c1ccccc1)c1ccccc1",
       "U": 2,
       "Cfull": 2,
-      "Cbud": 2,
+      "Cbud": 1,
       "H": 1,
       "deployed_top15": [
         "CC(N)NCCC(C(=N)O)(c1ccccc1)c1ccccc1",
@@ -11713,7 +11714,7 @@
       "sub": "O=C(O)C=Cc1ccc(O)c(O)c1",
       "U": 16,
       "Cfull": 9,
-      "Cbud": 8,
+      "Cbud": 3,
       "H": 2,
       "deployed_top15": [
         "O=C(O)CCC(N=C(O)C=Cc1ccc(O)c(O)c1)C(=O)O",
@@ -11832,7 +11833,7 @@
       "sub": "O=c1c(O)c(-c2ccccc2O)oc2ccccc12",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "O=C1c2ccccc2OC(c2ccccc2O)C1O",
@@ -12007,7 +12008,7 @@
       "sub": "CCCn1c(Cn2ccnc2-c2cccc(F)n2)nc2cc(C#N)ccc21",
       "U": 4,
       "Cfull": 4,
-      "Cbud": 4,
+      "Cbud": 1,
       "H": 1,
       "deployed_top15": [
         "CCCn1c(CO)nc2cc(C#N)ccc21",
@@ -12031,7 +12032,7 @@
       "sub": "CCCn1c(Cn2cc(O)nc2-c2cccc(F)n2)nc2cc(C#N)ccc21",
       "U": 2,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "CCCn1c(CO)nc2cc(C#N)ccc21",
@@ -12124,7 +12125,7 @@
       "sub": "COCCOc1cnc2c(NCc3nnc4ccc(-c5cc(C)ns5)nn34)ccnc2c1",
       "U": 3,
       "Cfull": 3,
-      "Cbud": 3,
+      "Cbud": 2,
       "H": 2,
       "deployed_top15": [
         "Cc1cc(-c2ccc3nnc(CNc4ccnc5cc(O)cnc45)n3n2)sn1",
@@ -12147,7 +12148,7 @@
       "sub": "Cc1cc(-c2ccc3nnc(CNc4ccnc5cc(OCCO)cnc45)n3n2)sn1",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "Cc1cc(-c2ccc3nnc(C4Nc5ccnc6cc(cnc56)OCCO4)n3n2)sn1",
@@ -12229,7 +12230,7 @@
       "sub": "O=c1cc(-c2cccc(O)c2)oc2cc(O)c(O)cc12",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "O=c1cc(-c2ccccc2)oc2cc(O)c(O)cc12",
@@ -12700,7 +12701,7 @@
       "sub": "Cn1c(CCCC(=O)O)nc2cc(N(CCCl)CCCl)ccc21",
       "U": 10,
       "Cfull": 9,
-      "Cbud": 2,
+      "Cbud": 1,
       "H": 1,
       "deployed_top15": [
         "Cn1c(CCCC(=O)O)nc2cc(NCCCl)ccc21",
@@ -12764,7 +12765,7 @@
       "sub": "Cn1c(CCCC(=O)O)nc2cc(N(CCCl)CCCl)c(O)cc21",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "Cn1c(CCCC(=O)O)nc2cc(NCCCl)c(O)cc21",
@@ -12821,7 +12822,7 @@
       "sub": "Cn1c(C(O)CCC(=O)O)nc2cc(N(CCCl)CCCl)ccc21",
       "U": 2,
       "Cfull": 2,
-      "Cbud": 2,
+      "Cbud": 1,
       "H": 1,
       "deployed_top15": [
         "Cn1c(C(O)CCC(=O)O)nc2cc(NCCCl)ccc21",
@@ -13063,7 +13064,7 @@
       "sub": "C=C1C=CC=C(C)C1=NC(=O)c1cnc(Nc2cc(N3CCN(CCO)CC3)nc(C)n2)s1",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "C=C1C=CC=C(C)C1=NC(=O)c1cnc(Nc2cc(N3CCNCC3)nc(C)n2)s1",
@@ -13300,7 +13301,7 @@
       "sub": "COC12CCC3(CC1C(C)(O)C(C)(C)C)C1Cc4ccc(O)c5c4C3(CCN1CC1CC1)C2O5",
       "U": 7,
       "Cfull": 7,
-      "Cbud": 2,
+      "Cbud": 1,
       "H": 1,
       "deployed_top15": [
         "CC(C)(C)C(C)(O)C1CC23CCC1(O)C1Oc4c(O)ccc5c4C12CCN(CC1CC1)C3C5",
@@ -13381,7 +13382,7 @@
       "sub": "OC1=NC(CCCl)Oc2ccccc21",
       "U": 2,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "O=C(O)c1ccccc1O",
@@ -13446,7 +13447,7 @@
       "sub": "O=c1ccoc2cc(O)ccc12",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "O=c1cc(O)oc2cc(O)ccc12",
@@ -13470,7 +13471,7 @@
       "sub": "CC(=O)N1CCN(c2ccc(OCC3COC(Cn4cc[n+](Cc5ccc(OC(=O)C(C)(C)C)cc5)c4)(c4ccc(Cl)cc4Cl)O3)cc2)CC1",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "CC(=O)N1CCN(c2ccc(OCCOC(O)(Cn3cc[n+](Cc4ccc(OC(=O)C(C)(C)C)cc4)c3)c3ccc(Cl)cc3Cl)cc2)CC1",
@@ -13494,7 +13495,7 @@
       "sub": "CC(=O)N1CCN(c2ccc(OCC3COC(Cn4ccnc4)(c4ccc(Cl)cc4Cl)O3)cc2)CC1",
       "U": 8,
       "Cfull": 4,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "CC(=O)N1CCN(c2ccc(OCCOC(O)(Cn3ccnc3)c3ccc(Cl)cc3Cl)cc2)CC1",
@@ -14088,7 +14089,7 @@
       "sub": "Cc1cc(C)cc(C(CC(C)C)N=C(O)c2cc(C(O)Oc3cccc(Cl)c3)ccc2CCC(=O)O)c1",
       "U": 2,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "Cc1cc(C)cc(C(N)CC(C)C)c1",
@@ -14274,7 +14275,7 @@
       "sub": "Nc1cc(-c2ccncc2)cnc1O",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "Nc1cc(-c2cc[n+](C3OC(C(=O)[O-])C(O)C(O)C3O)cc2)cnc1O",
@@ -14534,7 +14535,7 @@
       "sub": "O=c1ccc2ccc(O)c(O)c2o1",
       "U": 3,
       "Cfull": 3,
-      "Cbud": 3,
+      "Cbud": 1,
       "H": 1,
       "deployed_top15": [
         "O=c1ccc2ccc(O)cc2o1",
@@ -14675,7 +14676,7 @@
       "sub": "N=c1[nH]c2c3cccc(O)c3cc(-c3ccco3)c2c2ccccc12",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "N=c1[nH]c2c3c(cc(-c4ccco4)c2c2ccccc12)C1(O)OC1C=C3",
@@ -14770,7 +14771,7 @@
       "sub": "Cc1c(-c2ccccc2)oc2cc(O)ccc2c1=O",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "c1ccccc1",
@@ -14903,7 +14904,7 @@
       "sub": "CC(C)(C(=O)OC1OC(C(=O)O)C(O)C(O)C1O)c1ccccc1",
       "U": 2,
       "Cfull": 2,
-      "Cbud": 2,
+      "Cbud": 1,
       "H": 1,
       "deployed_top15": [
         "CC(C)(C(=O)O)c1ccccc1",
@@ -14981,7 +14982,7 @@
       "sub": "CNCC(=O)Oc1c(C)cc(C[n+]2cnn(CC(O)(c3ccc(F)cc3F)C(C)c3nc(-c4ccc(C#N)cc4)cs3)c2)cc1C",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "CNCC(=O)Oc1c(C)cc(C[n+]2cnn(CC(O)(c3ccc(F)cc3F)C(C)C3=NC(c4ccc(C#N)cc4)=CS3=O)c2)cc1C",
@@ -15258,7 +15259,7 @@
       "sub": "C=C(C)C1CCC(C(O)=NC(Cc2ccccc2)C(=O)O)CC1",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "NC(Cc1ccccc1)C(=O)O",
@@ -15352,7 +15353,7 @@
       "sub": "C=CC1(C)OC(=O)N(c2cc(Cl)cc(Cl)c2)C1=O",
       "U": 2,
       "Cfull": 2,
-      "Cbud": 2,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "O=C(O)Nc1cc(Cl)cc(Cl)c1",
@@ -15623,7 +15624,7 @@
       "sub": "C[N+]1(CC2CC2)CCC23c4c5ccc([O-])c4OC2C(=O)CCC3(O)C1C5",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "O=C1CCC2(O)C3Cc4ccc([O-])c5c4C2(CC[NH+]3CC2CC2)C1O5",
@@ -15647,7 +15648,7 @@
       "sub": "CCC1(C(C)CCO)C(O)=NC(=O)N=C1O",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "NC(N)=O",
@@ -15705,7 +15706,7 @@
       "sub": "O=C(O)C=Cc1ccc(O)cc1",
       "U": 4,
       "Cfull": 2,
-      "Cbud": 2,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "O=C(O)CCC(N=C(O)C=Cc1ccc(O)cc1)C(=O)O",
@@ -15809,7 +15810,7 @@
       "sub": "O=c1c(-c2ccc(O)cc2)coc2cc(O)cc(O)c12",
       "U": 15,
       "Cfull": 11,
-      "Cbud": 11,
+      "Cbud": 3,
       "H": 3,
       "deployed_top15": [
         "O=C1c2c(O)cc(O)cc2OCC1c1ccc(O)cc1",
@@ -15887,7 +15888,7 @@
       "sub": "COc1ccccc1Oc1c(NS(=O)(=O)c2ccc(C(C)(C)C)cc2)nc(-c2ncccn2)nc1OCCO",
       "U": 2,
       "Cfull": 2,
-      "Cbud": 2,
+      "Cbud": 1,
       "H": 1,
       "deployed_top15": [
         "COc1ccccc1Oc1c(NS(=O)(=O)c2ccc(C(C)(C)C)cc2)nc(-c2ncccn2)nc1OC1CO1",
@@ -15911,7 +15912,7 @@
       "sub": "CC(C)(C)c1ccc(S(=O)(=O)Nc2nc(-c3ncccn3)nc(OCCO)c2Oc2ccccc2O)cc1",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "CC(C)(C)c1ccc(S(=O)(=O)Nc2nc(-c3ncccn3)nc3c2Oc2ccccc2OC(CO)O3)cc1",
@@ -15981,7 +15982,7 @@
       "sub": "COc1cc(C2Oc3cc(O)cc(OS(=O)(=O)O)c3CC2O)ccc1O",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "COc1cc(C(O)C(C)O)ccc1O",
@@ -16018,7 +16019,7 @@
       "sub": "CC(C)CC(N=C(O)C(Cc1c[nH]c2ccccc12)N=C(O)C(N=C(O)C(C)N=C(O)CCCCCNC(=O)c1ccc(-c2c3ccc([nH]3)c(-c3ccccc3)c3nc(c(-c4ccccc4)c4nc(c(-c5ccccc5)c5ccc2[nH]5)CC4)C=C3)cc1)C(C)O)C(=O)N1CCCC1C(=O)N1CCCC1C(O)=NC(CCCNC(=N)N)C(=O)O",
       "U": 3,
       "Cfull": 3,
-      "Cbud": 3,
+      "Cbud": 2,
       "H": 2,
       "deployed_top15": [
         "CC(C)CC(N)C(=O)N1CCCC1C(=O)N1CCCC1C(O)=NC(CCCNC(=N)N)C(=O)O",
@@ -16042,7 +16043,7 @@
       "sub": "CN=C(O)Cc1ccc2ccn(C3CCN(CCc4ccccc4F)CC3)c2c1",
       "U": 6,
       "Cfull": 6,
-      "Cbud": 2,
+      "Cbud": 1,
       "H": 1,
       "deployed_top15": [
         "CN=C(O)Cc1ccc2ccn(C3CCNCC3)c2c1",
@@ -16104,7 +16105,7 @@
       "sub": "CC1CN1C1=CC(=O)c2c(c(CO)cn2C)C1=O",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "CC1CN1",
@@ -16189,7 +16190,7 @@
       "sub": "Cc1ccc(F)cc1C(O)=Nc1ccc(C(=O)N2Cc3cccn3Cc3ccccc32)c(Cl)c1",
       "U": 5,
       "Cfull": 3,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "Nc1ccc(C(=O)N2Cc3cccn3Cc3ccccc32)c(Cl)c1",
@@ -16277,7 +16278,7 @@
       "sub": "COc1ccc(C(O)=NCc2ccc(OCCN(C)C)cc2)cc1OC",
       "U": 2,
       "Cfull": 2,
-      "Cbud": 2,
+      "Cbud": 1,
       "H": 1,
       "deployed_top15": [
         "CNCCOc1ccc(CN=C(O)c2ccc(OC)c(OC)c2)cc1",
@@ -16357,7 +16358,7 @@
       "sub": "COc1ccc(-c2oc3cc(O)cc(O)c3c(=O)c2OC)cc1O",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "COc1ccc(CC(=O)O)cc1O",
@@ -16594,7 +16595,7 @@
       "sub": "Cn1nc(-c2cccnc2)nc1-c1ccccc1CO",
       "U": 4,
       "Cfull": 4,
-      "Cbud": 3,
+      "Cbud": 1,
       "H": 1,
       "deployed_top15": [
         "Cn1nc(-c2ccc[n+](C3OC(C(=O)[O-])C(O)C(O)C3O)c2)nc1-c1ccccc1CO",
@@ -16618,7 +16619,7 @@
       "sub": "Cn1nc(-c2ccc[n+]([O-])c2)nc1-c1ccccc1CO",
       "U": 2,
       "Cfull": 2,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "[O-][n+]1cccc(-c2nc(-c3ccccc3CO)n[nH]2)c1",
@@ -16733,7 +16734,7 @@
       "sub": "N=C(O)c1cnn(-c2cccc3ncccc23)c1C1CC1",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "O=C(O)c1cnn(-c2cccc3ncccc23)c1C1CC1",
@@ -16753,7 +16754,7 @@
       "sub": "Nc1cc(O)c2ccc3cccc4ccc1c2c43",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "Nc1cc(O)c2c3c1ccc1cccc(c13)C(O)C2O",
@@ -16878,7 +16879,7 @@
       "sub": "O=c1c(-c2ccc(O)cc2)coc2cc(O)ccc12",
       "U": 16,
       "Cfull": 9,
-      "Cbud": 9,
+      "Cbud": 4,
       "H": 3,
       "deployed_top15": [
         "O=c1c(-c2ccc(O)cc2)coc2cc(O)c(O)c(O)c12",
@@ -17662,7 +17663,7 @@
       "sub": "OC(=NC1CN2CCC1CC2)c1ccc2c(c1)OCCO2",
       "U": 4,
       "Cfull": 3,
-      "Cbud": 3,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "NC1CN2CCC1CC2",
@@ -17891,7 +17892,7 @@
       "sub": "COc1ccc2c(c1)CN(C)CCS2",
       "U": 6,
       "Cfull": 5,
-      "Cbud": 4,
+      "Cbud": 2,
       "H": 2,
       "deployed_top15": [
         "CNCCSc1ccc(OC)cc1",
@@ -17947,7 +17948,7 @@
       "sub": "CC(C)c1c(C(O)=NC(=N)N)cnn1-c1cccc2ncccc12",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "CC(C)c1c(C(=O)O)cnn1-c1cccc2ncccc12",
@@ -18047,7 +18048,7 @@
       "sub": "NCC(F)C[PH](=O)O",
       "U": 5,
       "Cfull": 2,
-      "Cbud": 2,
+      "Cbud": 1,
       "H": 0,
       "deployed_top15": [
         "NC1O[PH](=O)CC1F",
@@ -18379,7 +18380,7 @@
       "sub": "CCCC(C)CO",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "CC",
@@ -18981,7 +18982,7 @@
       "sub": "CN1CCN(c2ncc(-c3cc(Cl)cc(Cl)c3Cl)c(=N)[nH]2)CC1",
       "U": 2,
       "Cfull": 2,
-      "Cbud": 2,
+      "Cbud": 1,
       "H": 1,
       "deployed_top15": [
         "N=c1[nH]c(N2CCNCC2)ncc1-c1cc(Cl)cc(Cl)c1Cl",
@@ -18997,7 +18998,7 @@
       "sub": "C=CCc1ccc(OC)c(OC)c1",
       "U": 6,
       "Cfull": 6,
-      "Cbud": 4,
+      "Cbud": 3,
       "H": 3,
       "deployed_top15": [
         "COc1ccc(CC(O)CO)cc1OC",
@@ -19021,7 +19022,7 @@
       "sub": "C=CCc1ccc(O)c(OC)c1",
       "U": 10,
       "Cfull": 5,
-      "Cbud": 4,
+      "Cbud": 3,
       "H": 3,
       "deployed_top15": [
         "COc1cc(CC(O)CO)ccc1O",
@@ -19108,7 +19109,7 @@
       "sub": "O=c1cc(-c2ccc(O)c(O)c2)oc2cc(O)ccc12",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "O=c1cc(-c2ccc(O)cc2)oc2cc(O)ccc12",
@@ -19390,7 +19391,7 @@
       "sub": "CN1CCC23C4=CCC(=O)C2Oc2c(O)ccc(c23)CC41",
       "U": 1,
       "Cfull": 1,
-      "Cbud": 1,
+      "Cbud": 0,
       "H": 0,
       "deployed_top15": [
         "O=C1CC=C2C3Cc4ccc(O)c5c4C2(CCN3)C1O5",
@@ -19827,7 +19828,7 @@
       "sub": "CCN(CC)CCCC(C)N=c1c2ccc(Cl)cc2[nH]c2ccc(OC)cc12",
       "U": 3,
       "Cfull": 3,
-      "Cbud": 3,
+      "Cbud": 2,
       "H": 2,
       "deployed_top15": [
         "CCNCCCC(C)N=c1c2ccc(Cl)cc2[nH]c2ccc(OC)cc12",
@@ -20030,7 +20031,7 @@
       "sub": "OCC(Cc1cccc(O)c1)C(CO)Cc1cccc(O)c1",
       "U": 7,
       "Cfull": 6,
-      "Cbud": 6,
+      "Cbud": 1,
       "H": 0,
       "deployed_top15": [
         "C=O",
@@ -20361,7 +20362,7 @@
       "sub": "Cn1c(=O)cc(-c2cccc(Cl)c2)c2cc(C(=O)c3ccc(Cl)cc3)ccc21",
       "U": 2,
       "Cfull": 2,
-      "Cbud": 2,
+      "Cbud": 1,
       "H": 1,
       "deployed_top15": [
         "Cn1c(=O)cc(-c2cccc(Cl)c2)c2cc(C(O)c3ccc(Cl)cc3)ccc21",
@@ -20393,5 +20394,6 @@
         "Cn1cncc1C(N)(C1=CC23OC2(C=C1)N=C(O)C=C3c1cccc(Cl)c1)c1ccc(Cl)cc1"
       ]
     }
-  ]
+  ],
+  "rdkit_version": "2022.09.5"
 }

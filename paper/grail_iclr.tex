@@ -20,7 +20,7 @@
 \newcommand{\nglory}{37}              % external GLORYx substrates
 \newcommand{\ceiling}{0.735}          % coverage_bank (micro)
 \newcommand{\realised}{0.261}         % realised recall@15 (micro)
-\newcommand{\selret}{0.489}           % selection retention
+\newcommand{\selret}{0.368}           % selection retention
 \newcommand{\grailmacro}{0.330}       % GRAIL macro recall@15
 \newcommand{\interA}{+0.120}          % GRAIL<->BioTransformer interaction
 \newcommand{\interAci}{[+0.073,\,+0.171]}
@@ -299,8 +299,8 @@ with cluster-bootstrap confidence intervals. Their product equals realised recal
 \textbf{factor} & \textbf{definition} & \textbf{value} & \textbf{95\% CI} \\
 \midrule
 coverage  & $|C_{\text{full}}|/|U|$          & \textbf{\ceiling} & $[0.709,\,0.762]$ \\
-selection & $|C_{\text{bud}}|/|C_{\text{full}}|$ & \textbf{\selret}  & $[0.458,\,0.520]$ \\
-ranking   & $|H|/|C_{\text{bud}}|$           & \textbf{0.726}    & $[0.687,\,0.765]$ \\
+selection & $|C_{\text{bud}}|/|C_{\text{full}}|$ & \textbf{\selret}  & $[0.343,\,0.393]$ \\
+ranking   & $|H|/|C_{\text{bud}}|$           & \textbf{0.963}    & $[0.946,\,0.978]$ \\
 \midrule
 product   & recall@15 (micro)                & \textbf{\realised} &  \\
 \bottomrule
@@ -309,10 +309,12 @@ product   & recall@15 (micro)                & \textbf{\realised} &  \\
 \end{table}
 
 \paragraph{What the decomposition says.} Table~\ref{tab:decomp} localises the loss. The deployed
-pipeline converts only $35.5\%$ of its own ceiling into realised recall, and the largest single shortfall is selection: less than half of what the bank can reach survives into the
-budgeted candidate pool. Coverage and ranking are statistically indistinguishable from one another
-($0.735$ $[0.709,0.762]$ against $0.726$ $[0.687,0.765]$); only selection is clearly dominant. The decomposition therefore indicates selection, rather than ranking, as the stage at which
-intervention is warranted. It also bounds what this architecture can achieve: even a perfect selector and a perfect
+pipeline converts only $35.5\%$ of its own ceiling into realised recall, and the three factors
+separate cleanly, with no pair of intervals overlapping. Selection is the binding constraint:
+barely a third of what the bank can reach survives the selector's rule budget. Ranking is close to
+lossless at $0.963$ $[0.946,0.978]$, so once a candidate is in the budgeted pool it almost always
+reaches the output. Coverage sits between them. The decomposition therefore points at selection,
+and specifically at how few rules are applied, as the stage where intervention is warranted. It also bounds what this architecture can achieve: even a perfect selector and a perfect
 ranker would stop at \ceiling, and that ceiling is corpus-limited rather than a
 consequence of tuning: 53\% of uncovered transformations are of reaction types absent from
 the bank altogether (Appendix~\ref{app:props}).
