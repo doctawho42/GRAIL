@@ -14,9 +14,11 @@ decomposition, and the matching protocol; GRAIL is one diagnosed row within them
 
 Every precision number in this paper is a lower bound. Negatives are rule-applicable products
 that carry no annotation rather than confirmed non-metabolites, so an unannotated true metabolite
-counts as a false positive. The size of that understatement is unknown and uncorrected. This is
-why we lead with recall and with the mean size of the output set, and do not report precision as
-a headline quantity.
+counts as a false positive, and the size of that understatement is unknown. We lead with recall and
+with the mean size of the output set for that reason. Precision and F1 nonetheless appear in
+\S\ref{sec:metric}, because under a uniform annotation propensity the understatement is a common
+factor that leaves the precision ordering identified, and the F1 ordering survives correction down
+to an annotation rate the references make implausible.
 
 \subsection{The recommended criterion cannot penalise a limitation of our own system}
 
@@ -70,6 +72,13 @@ MetaPredictor    & 0.531 & 0.570 & 0.578 & 0.532 & 0.585 & 11.2 \\
 \end{center}
 \end{table}
 
+
+The two reversals the main text reports on this subset rest on differences that are individually
+indistinguishable from zero at $n=\nshared$. GRAIL against BioTransformer is $[-0.044,+0.122]$
+under canonical matching and $[-0.166,+0.007]$ under tautomer; MetaTrans against SyGMa is
+$[-0.064,+0.081]$ under canonical and $[-0.130,+0.023]$ under strict InChIKey. What the paper
+claims is the interaction that produces them, which is significant and survives correction; the
+reversals themselves illustrate it and are not evidence on their own.
 
 The three additional comparators (BioTransformer, MetaPredictor and MetaTrans) are scored
 only on the shared subset of $\nshared$ substrates for which frozen third-party predictions exist,
