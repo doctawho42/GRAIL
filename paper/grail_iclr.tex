@@ -49,7 +49,7 @@ the fraction of known metabolites that a method recovers among its top $k$ outpu
 is less informative than its ubiquity suggests. It depends on an unstated convention, namely the
 rule by which a predicted structure is judged identical to a reference structure, and different
 methods are affected differently by that rule. The published ranking of tools therefore depends on
-a methodological decision that is rarely reported and never varied. The same quantity also
+a methodological decision that this field reports rarely and has never varied. The same quantity also
 aggregates three distinct failure modes, because a metabolite may be missed when the underlying
 reaction is absent from a method's rule base, when the applicable rule is not selected, or when
 the correct product is generated but ranked below the reporting threshold.
@@ -90,13 +90,14 @@ decide which of many templates to apply. Whatever the underlying approach, publi
 compared on the same quantity: top-$k$ recall, the fraction of experimentally observed metabolites
 that appear among a method's $k$ highest-ranked predictions.
 
-That comparison rests on an assumption that has not been examined. Computing recall requires a
+That comparison rests on an assumption this field has not examined. Computing recall requires a
 decision about when a predicted molecular structure counts as the same molecule as an
 experimentally reported one, and chemistry offers several defensible answers. Two structures may be compared as canonical text strings (SMILES, the standard line notation for molecular structure), as hashed chemical identifiers, as identifiers with
-stereochemistry removed, or as molecular fingerprints. These criteria disagree, most importantly
-about tautomers, which are alternative structures of one compound that differ in the position of a
-mobile hydrogen atom. Published evaluations adopt one criterion each, usually without stating why,
-and no study has asked whether the choice affects the resulting ranking of methods.
+stereochemistry removed, or as molecular fingerprints. These criteria disagree, most importantly about tautomers,
+alternative structures of one compound differing in the position of a mobile hydrogen atom.
+Evaluations in this field adopt one each, usually without stating why, and none has asked what a
+different one would do to the ordering. That question has been answered elsewhere in the
+affirmative, which is why it is worth asking here.
 
 A second assumption concerns what recall measures. A rule-based or hybrid method can fail to
 recover a metabolite for three unrelated reasons: the required transformation may have no
@@ -163,21 +164,26 @@ preprocessing step applied before analysis, rather than as a parameter of the ev
 
 \paragraph{Evaluation methodology in adjacent fields.} That methodological choices can alter the
 apparent ordering of methods is recognised more broadly. \citet{Maziarz_2025} re-evaluated retrosynthesis models under a
-standardised procedure and found the ranking changed, partly because one model had been scored
-under a relaxed stereochemistry criterion its baselines did not get. \citet{agarwal2026metric} demonstrate for drug-response prediction that the choice
-of scoring metric inverts which model performs best. \citet{liu2026massspecgymwild} audit published
-work built on a mass-spectrometry benchmark and attribute discrepancies to data leakage, shortcut
-learning and divergent metric implementations across codebases. Outside chemistry, weighting evaluation
-examples by difficulty reorders natural-language leaderboards \citep{Mishra_2021}, and individual
-examples carry unequal information about model ranking \citep{Rodriguez_2021}. Data splitting has received similar attention, and \citet{Joeres_2025}
+standardised procedure and reversed a published ordering, partly because one model had been scored
+under a relaxed stereochemistry criterion its baselines did not get: the closest precedent to this
+work, and the only one that varies a structure-matching rule. \citet{agarwal2026metric} demonstrate for drug-response prediction that the choice
+of scoring metric inverts which model performs best. \citet{liu2026massspecgymwild} audit published work built on a mass-spectrometry benchmark and
+state the mechanism directly: divergent metric implementations, stereochemistry handling in
+InChIKey matching among them, suffice to reorder rankings on identical predictions. Outside
+chemistry the experiment has been run several times. re-scoring frozen text-to-SQL submissions under denotation
+equivalence rather than exact match shows exact match misrepresenting the state of the art
+\citep{Zhong_2020}, and re-scoring frozen question-answering outputs under four answer-equivalence
+rules makes one system best under a rule it had lost under \citep{Kamalloo_2023}. Weighting evaluation examples by difficulty likewise reorders
+natural-language leaderboards \citep{Mishra_2021, Rodriguez_2021}. Data splitting has received similar attention, and \citet{Joeres_2025}
 propose a general procedure for constructing splits that minimise similarity between partitions.
 
 \paragraph{Remaining gap.} Taken together, this literature establishes that structure
 standardisation is unsettled, that evaluation choices can reorder method rankings in adjacent
 domains, and that metabolite predictors have been compared without varying the criterion by which
-a prediction is judged correct. What has not been established is whether that criterion affects
-the ranking of metabolite predictors, and if so by how much; nor is there an accepted way to
-attribute a predictor's score to a specific stage of its pipeline.
+a prediction is judged correct. That a matching rule can reorder a leaderboard is therefore not in doubt. What is unestablished is
+whether it does so for metabolite predictors, and by how much, when the rule is the only thing
+varying across a set of conventions rather than one relaxation of stereochemistry; and there is no
+accepted way to attribute a predictor's score to a stage of its pipeline.
 
 \section{TAME: an evaluation protocol with a declared matching criterion}
 \label{sec:tame}
@@ -454,14 +460,7 @@ $0.02$ across the same criteria, an order of magnitude below either effect
 \subsection{Comparison against published methods}
 \label{sec:diagnosis}
 
-\paragraph{Reading GRAIL's numbers.} Several figures appear and are not interchangeable. On the
-full split, $0.340$ is the mean of per-substrate recalls after duplicate predictions are collapsed
-by the matching criterion, which is what the re-scoring harness does for every method;
-$\grailmacro$ is the same mean over the output as emitted, without that collapse; and $\realised$
-is the pooled ratio of hits to references, lower because substrates with many references weigh
-more. The decomposition uses the pooled uncollapsed form, the only one that multiplies out
-exactly.
-
+GRAIL's several recall figures are not interchangeable; Appendix~\ref{app:xdomain} says which is which.
 Before diagnosing GRAIL further we place it against the published methods. On the full clean test split ($n=\ntest$) the deployed GRAIL checkpoint reaches
 \grailmacro\ macro recall@15; retraining the same configuration under three seeds gives
 $0.344 \pm 0.010$ on that split. SyGMa reaches $0.572$, a paired difference of $-0.242$ from GRAIL
@@ -607,10 +606,11 @@ interpretable only alongside the criterion that produced it, and that benchmark 
 area should report recall under all five criteria rather than fixing one silently, and, where the
 method is rule-grounded, the coverage ceiling of its own rule base.
 
-Attributing a recall figure to a stage of the pipeline is likewise possible and, we would argue,
-necessary, and it rests on the first contribution: the factors are counts of matched references,
-so a decomposition computed under an unstated criterion inherits that arbitrariness at every
-stage. The decomposition introduced here requires no additional experiments, applies to any
+Attributing a recall figure to a stage of the pipeline is likewise possible. Splitting coverage
+from ranking is not new in this field, and our contribution is to make the split exact, to separate
+selection from ranking within it, and to note that it rests on the first contribution: the factors
+count matched references, so a decomposition computed under an unstated criterion inherits that
+arbitrariness at every stage. The decomposition introduced here requires no additional experiments, applies to any
 method built on an enumerable rule base, and converts an aggregate score into a statement about
 where the method fails. For the predictor examined here it identifies rule selection as the
 binding constraint, and characterises that stage as extreme multi-label classification with very

@@ -30,6 +30,16 @@ its output convention. The comparisons in this paper remain valid, because every
 under the same criterion and all three rungs are reported, but a system that does emit
 stereochemistry is not rewarded for doing so anywhere in this evaluation.
 
+\subsection{Which GRAIL number is which}
+
+Several figures appear and are not interchangeable. On the
+full split, $0.340$ is the mean of per-substrate recalls after duplicate predictions are collapsed
+by the matching criterion, which is what the re-scoring harness does for every method;
+$\grailmacro$ is the same mean over the output as emitted, without that collapse; and $\realised$
+is the pooled ratio of hits to references, lower because substrates with many references weigh
+more. The decomposition uses the pooled uncollapsed form, the only one that multiplies out
+exactly.
+
 \subsection{The headline is one checkpoint}
 
 The deployed headline, recall@15 of $\realised$ micro and $\grailmacro$ macro, comes from a single
