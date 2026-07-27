@@ -149,7 +149,8 @@ against a 0.433 baseline in a separate held-out run, a gain of $+0.067$, or 74\%
 of 0.677, with a spread of $\pm0.015$ across three seeds. That figure has no paired interval:
 its per-substrate scores were not retained, so the bootstrap cannot be recomputed without
 retraining. The proposition rests on the $n=\ntest$ intervals rather than on it. The claim
-concerns objectives, not absolute performance: 0.500 still loses to SyGMa's 0.558.
+concerns objectives, not absolute performance: 0.500 still loses to SyGMa's 0.558 on the same
+245-substrate subset.
 
 \paragraph{Proposition 2: rule selection is extreme multi-label classification, where counting is
 a strong baseline.}
@@ -213,8 +214,10 @@ proposition's prediction.
 Coverage nevertheless binds. As a replacement generator the pipeline reaches only recall@15
 0.256 on the full test, a regression against the budget-matched deployed 0.365 at precision
 0.109, because type selection caps oracle reachability at about 47\%. Widening the
-vocabulary from 371 to 701 types leaves that cap unchanged, which confirms Proposition 3
-causally.
+vocabulary from 371 to 701 types leaves that cap unchanged, which rules out vocabulary
+coarseness as the reason for it. That is consistent with Proposition 3 but does not test it: the
+proposition concerns what one application step can reach, and vocabulary size is not application
+depth.
 
 Kept at broad coverage and used only to re-rank, the same signal is worth a small significant
 margin: recall@15 rises from 0.388 to 0.404, a paired $+0.0165$ $[+0.006,+0.027]$ over the full

@@ -466,7 +466,9 @@ express.
 Since selection is the dominant shortfall, we ask what makes it hard, and the answer is structural
 rather than metabolism-specific. Choosing which of \nbank\ rules apply to a substrate is an
 \textbf{extreme multi-label classification} (XMC) problem with a near-empty positive set:
-approximately one to three rules fire per substrate, i.e.\ ${\sim}0.03\%$ of labels. In exactly
+approximately one to three rules per
+substrate carry a positive label, some ${\sim}0.03\%$ of the label space. Far more rules than that
+are applicable to a given substrate; what is scarce is the annotation, not the applicability. In exactly
 this regime XMC has long established that frequency/propensity baselines are hard to beat, which
 is why propensity-scored losses were introduced \citep{Jain_2016}. Metabolite rule selection
 \emph{inherits} this pathology, which the domain literature does not name.
