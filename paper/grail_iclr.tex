@@ -429,7 +429,7 @@ with SyGMa; the one between BioTransformer and GRAIL does not, and we withdraw i
 
 
 
-\paragraph{The criterion moves human agreement, and that agreement bounds the benchmark.} The
+\paragraph{The criterion moves human agreement, and that agreement bounds what recall means.} The
 strongest evidence for declaring the criterion involves no model. Twenty-five external drugs are
 independently curated by our corpus too, so the two metabolite lists compare as a prediction does to
 a reference: the two expert curations of one drug agree at a Jaccard of $0.075$ under canonical
@@ -437,11 +437,12 @@ matching and $0.406$ under the tautomer-aware default, on the same drugs either 
 looks like disagreement about observed chemistry is disagreement about notation.
 
 \looseness=-1
-They also bound what the benchmark registers: an independent curation recovers only $0.539$ of the
-corpus annotation, so unretrieved references are not all model error. Whether models reach it
-depends on the budget. MetaPredictor's uncapped $0.562$ is a tie inside noise bought with $10.6$
-metabolites per drug against the curation's $6.0$; at the curation's own budget it recovers $0.301$,
-behind by $0.238$ $[0.123,0.354]$ (Appendix~\ref{app:xdomain}).
+They also bound what a recall figure means rather than what it can reach: a competent independent
+curation records only $0.539$ of the corpus annotation, so past that level recall increasingly
+measures one source's inclusion choices. Where models sit against it depends on the budget.
+MetaPredictor's uncapped $0.562$ is a tie inside noise bought with $10.6$ metabolites per drug
+against the curation's $6.0$; at the curation's own budget it recovers $0.301$, behind by $0.238$
+$[0.123,0.354]$ (Appendix~\ref{app:xdomain}).
 
 \paragraph{Mechanism.} The spread tracks how far a method's outputs diverge
 \emph{representationally} from the references it is scored against, and the intermediate column

@@ -294,6 +294,23 @@ cut in is not one it claims.
 Models therefore reach curator-level recall only by spending more output than a curator does. At the
 curator's own budget they are behind by a quarter to a third of the reference set.
 
+That per-substrate cap is not an arbitrary handicap, which is the objection it invites. The size
+supplied is the curator's own, so it is the per-substrate cardinality an oracle would choose, and
+Appendix~\ref{app:props} measures what that oracle is worth and how little of it is obtainable: for
+MetaPredictor on the full split it lifts macro-F1 from $0.259$ at its best constant $k$ to $0.435$,
+and a cross-fitted head trained to predict the same quantity recovers $4.3\%$ of that gain out of
+sample ($3.2\%$ for GRAIL, negative for SyGMa). No method here can set this budget for itself. What
+the cap does \emph{not} do is deny the model outputs it could have justified --- under recall a cap
+can only cost --- so the comparison reduces to the plain statement: spending what the curator spent,
+the curator retrieves $0.539$ of the other source's list and the best model $0.301$.
+
+One reading is not available, and it is the one the framing invites. The curators had the literature
+on each of these drugs in front of them; they were recording what had been observed, not predicting
+it from structure. So this measures the references, not the contestants: an independent competent
+reading of the same chemistry omits $46\%$ of what the corpus records, which is why recall past that
+level is increasingly a measurement of one source's inclusion criteria. It is not evidence about
+whether models have caught up with expert judgement, and should not be read as any.
+
 Two limits are worth stating rather than leaving to be found. Twenty-five drugs give intervals
 around $\pm0.1$, and these are drugs two sources both chose to curate, so they carry $5.7$ to $6.5$
 references each against $2.2$ across the corpus. Better-studied compounds are exactly where two
