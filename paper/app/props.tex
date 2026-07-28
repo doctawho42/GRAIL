@@ -338,6 +338,41 @@ on calibrated candidate scores, which is a different object from the abstention 
 Table~\ref{tab:levers}, that having been a global threshold judged on recall@$k$, where truncation
 can only lose.
 
+\subsection{A similarity-to-training split does not measure transfer here}
+
+Rule-encoded chemistry is general where learned patterns are not, so a rule-grounded method might be
+expected to lose less on substrates far from its training data. That would be a claim about the
+paradigm rather than a leaderboard position, and it is testable on frozen predictions by stratifying
+the test split on maximum Morgan--Tanimoto similarity to any training substrate. It does not
+survive, and the way it fails is the part worth reporting.
+
+The design carries a control that decides whether the axis means anything at all. SyGMa is a rule
+engine that never saw the training split, so if the axis measures transfer its curve must be flat.
+It is not: SyGMa degrades at $+0.166$ on F1 and $+0.293$ on recall against GRAIL's $+0.158$ and
+$+0.307$, statistically the same slope from a method with nothing to transfer from.
+
+The confound is then confirmed on a quantity no learning touches. The fraction of a substrate's
+references the rule bank reaches at all rises from $0.712$ below similarity $0.3$ to $0.819$ above
+$0.6$. The bank has no knowledge of which substrates were used for training, so this is chemistry:
+substrates unlike the training set are harder for every method. The common cause is visible in the
+same stratification, since reference sets shrink the same way, $2.40$ annotated metabolites above
+$0.6$ against $1.90$ below $0.3$. Training corpus, rule bank and annotation all derive from the
+literature of well-studied metabolism, so the axis measures how well studied a substrate is and
+moves all three together.
+
+Read at face value the slopes would say the transformer transfers best, at $+0.106$ and $+0.118$,
+roughly half the other two. Read correctly they say the measurement cannot support a transfer claim
+in either direction, and we make none.
+
+The caution generalises past this paper, which is why the negative is released rather than dropped.
+Stratifying a test set by similarity to training is the standard way to argue generalisation in
+molecular machine learning, and wherever a knowledge base and a training corpus share provenance the
+axis is confounded with difficulty. The detector is cheap and is the contribution here: a
+knowledge-based method that never trained. Had we run the learned methods alone we would have
+concluded from $+0.158$ against $+0.106$ that the transformer is the more robust of the two --- a
+conclusion against our own system, and therefore the kind that gets less scrutiny, resting on a
+measurement that cannot support it.
+
 \subsection{Partial identification of the metric ordering under incomplete annotation}
 \label{app:propensity}
 

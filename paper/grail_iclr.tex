@@ -443,37 +443,6 @@ not of the criterion. In retrosynthesis, whose references are canonical and ster
 explicit, the same criteria span about $0.02$ (Appendix~\ref{app:xdomain}).
 
 
-\begin{table}[!htbp]
-\caption{Eight diagnostic measurements, each attached to the factor it constrains. Sample sizes
-differ between rows.}
-\label{tab:levers}
-\begin{center}
-\footnotesize
-\begin{tabular}{p{4.2cm}p{1.4cm}p{6.6cm}}
-\toprule
-\textbf{measurement} & \textbf{factor} & \textbf{result} \\
-\midrule
-learned selection against a frequency prior & selection &
-$0.266$ against $0.410$; $\Delta = -0.144$ $[-0.196,-0.095]$ ($n{=}245$) \\
-selection breadth, 30 to 300 rules & selection &
-recall $0.352 \to 0.413$; pool coverage $0.482 \to 0.608$ ($n{=}245$) \\
-training set, 2{,}418 to 4{,}787 substrates & selection &
-recall $0.330 \to 0.334$, inside the $\pm0.010$ seed spread \\
-depth-2 rule application & coverage &
-ceiling $+0.012$, at $8.5\times$ the candidate cost ($n{=}150$) \\
-composition of the uncovered set & coverage &
-$26.9\%$ of references outside the bank under \textsc{inchikey}, ${\sim}25\%$ under tautomer; no
-mass bin exceeds $6\%$ of it ($n{=}500$) \\
-site-of-metabolism prior & ranking &
-$+0.011$ at the best of five weightings, itself chosen on this split ($n{=}245$) \\
-abstention on filter score & ranking &
-precision never above $0.123$; recall $0.388 \to 0.041$ ($n{=}\ntest$) \\
-propensity-scored selection loss & selection &
-$0.249$ against $0.266$; deficit to the prior widens to $-0.161$ $[-0.215,-0.107]$ ($n{=}245$) \\
-\bottomrule
-\end{tabular}
-\end{center}
-\end{table}
 
 \subsection{The metric is a second free parameter, and the decomposition predicts it}
 \label{sec:metric}
@@ -529,6 +498,40 @@ the references do not support (Appendix~\ref{app:props}).
 
 
 
+\begin{table}[!htbp]
+\caption{Nine diagnostic measurements, each attached to the factor it constrains. Sample sizes
+differ between rows.}
+\label{tab:levers}
+\begin{center}
+\footnotesize
+\begin{tabular}{p{4.2cm}p{1.4cm}p{6.6cm}}
+\toprule
+\textbf{measurement} & \textbf{factor} & \textbf{result} \\
+\midrule
+learned selection against a frequency prior & selection &
+$0.266$ against $0.410$; $\Delta = -0.144$ $[-0.196,-0.095]$ ($n{=}245$) \\
+selection breadth, 30 to 300 rules & selection &
+recall $0.352 \to 0.413$; pool coverage $0.482 \to 0.608$ ($n{=}245$) \\
+training set, 2{,}418 to 4{,}787 substrates & selection &
+recall $0.330 \to 0.334$, inside the $\pm0.010$ seed spread \\
+depth-2 rule application & coverage &
+ceiling $+0.012$, at $8.5\times$ the candidate cost ($n{=}150$) \\
+composition of the uncovered set & coverage &
+$26.9\%$ of references outside the bank; no mass bin exceeds $6\%$ of it ($n{=}500$) \\
+site-of-metabolism prior & ranking &
+$+0.011$ at the best of five weightings, itself chosen here ($n{=}245$) \\
+abstention on filter score & ranking &
+precision never above $0.123$; recall $0.388 \to 0.041$ ($n{=}\ntest$) \\
+propensity-scored selection loss & selection &
+$0.249$ against $0.266$; deficit to the prior widens to $-0.161$ $[-0.215,-0.107]$ ($n{=}245$) \\
+similarity-to-training stratification & coverage &
+bank coverage itself rises $0.712 \to 0.819$ with similarity; an untrained rule engine degrades as
+fast as the learned ones ($n{=}\ntest$) \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table}
+
 \subsection{Comparison against published methods}
 \label{sec:diagnosis}
 
@@ -571,23 +574,21 @@ rarity that is here substantially chemistry (Appendix~\ref{app:props}).
 \subsection{What constrains each factor}
 \label{sec:evidence}
 
-The diagnosis rests on eight measurements, not on the decomposition alone, each designed to move
+The diagnosis rests on nine measurements, not on the decomposition alone, each designed to move
 exactly one factor so that a result failing to move recall is as informative as one that does
 (Table~\ref{tab:levers}).
 
 
-Five of the eight are interventions that failed, and they are the more useful half: applying rules
-twice, doubling the training data, adding a site-of-metabolism prior and abstaining on low filter
-scores are the obvious remedies, as is the propensity-scored loss the XMC framing prescribes, and
-none works. Depth-2 buys $0.012$ of ceiling for $8.5$ times the
+Six of the nine failed, and are the more useful half: rules applied twice, twice the data, a
+site-of-metabolism prior, abstention on filter score, the propensity-scored loss XMC prescribes, and
+a stratification meant to show a rule bank transfers better off distribution, where an untrained rule
+engine degrades just as fast. None works. Depth-2 buys $0.012$ of ceiling for $8.5$ times the
 candidates and doubling the data changes nothing, which is why we attribute the shortfall to the
-structure of the selection problem rather than to under-training. Abstention is sharpest: raising
-the threshold removes true and apparently false candidates alike, an unannotated candidate being a
-false positive whether or not it is real, so precision stays flat while recall collapses. Its
-\emph{level} is bounded by the annotation rather than the threshold, even though
-\S\ref{sec:metric} shows its ordering is not. Of the remaining three, two locate recoverable recall
-at selection and the third characterises what the bank cannot reach in one step
-(Appendix~\ref{app:props}).
+structure of the selection problem rather than to under-training. Abstention is sharpest: raising the
+threshold removes true and apparently false candidates alike, an unannotated candidate being a false
+positive whether or not it is real, so precision stays flat while recall collapses --- its
+\emph{level} bounded by the annotation, though \S\ref{sec:metric} shows its ordering is not. Of the rest, two locate recoverable recall at selection
+and the third characterises what the bank cannot reach in one step (Appendix~\ref{app:props}).
 
 \section{Limitations}
 \label{sec:limitations}
