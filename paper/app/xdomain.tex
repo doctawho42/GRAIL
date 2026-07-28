@@ -296,10 +296,11 @@ curator's own budget they are behind by a quarter to a third of the reference se
 
 That per-substrate cap is not an arbitrary handicap, which is the objection it invites. The size
 supplied is the curator's own, so it is the per-substrate cardinality an oracle would choose, and
-Appendix~\ref{app:props} measures what that oracle is worth and how little of it is obtainable: for
-MetaPredictor on the full split it lifts macro-F1 from $0.259$ at its best constant $k$ to $0.435$,
-and a cross-fitted head trained to predict the same quantity recovers $4.3\%$ of that gain out of
-sample ($3.2\%$ for GRAIL, negative for SyGMa). No method here can set this budget for itself. What
+Appendix~\ref{app:props} measures what that oracle is worth and how little of it is obtainable. Both
+figures are taken out of sample, from the same cross-fit, so they share a baseline: for
+MetaPredictor on the full split the oracle cutoff lifts macro-F1 from $0.254$ at the best constant
+$k$ to $0.435$, and a head trained to predict that cutoff recovers $0.008$ of the $0.181$ available,
+$4.3\%$ ($3.2\%$ for GRAIL, negative for SyGMa). No method here can set this budget for itself. What
 the cap does \emph{not} do is deny the model outputs it could have justified --- under recall a cap
 can only cost --- so the comparison reduces to the plain statement: spending what the curator spent,
 the curator retrieves $0.539$ of the other source's list and the best model $0.301$.
