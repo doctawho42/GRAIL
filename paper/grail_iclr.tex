@@ -412,11 +412,9 @@ canonical$\rightarrow$InChIKey. The convention is a \textbf{method-dependent con
 neutral scoring choice.
 
 \paragraph{Two reversals follow, neither individually significant.} Two pairs exchange places
-between criteria on the shared subset, one non-monotonically, MetaTrans alone emitting isomeric
-SMILES that a stereo-blind criterion discards and a strict one penalises. Every pairwise $\Delta$
-there spans zero at $n=\nshared$ (Appendix~\ref{app:xdomain}): the interaction is established, the
-reversals illustrate it, and this paper's certified reversals come from the aggregate
-(\S\ref{sec:metric}).
+between criteria on the shared subset, one non-monotonically because MetaTrans alone emits isomeric
+SMILES. Every pairwise $\Delta$ there spans zero at $n=\nshared$ (Appendix~\ref{app:xdomain}), so
+the interaction is established and the reversals only illustrate it.
 
 \paragraph{External replication.} The results above live on a $\nshared$-substrate subset of our
 own split, so we repeated the analysis on the field's de-facto external hold-out, the \nglory\
@@ -445,60 +443,9 @@ stereochemistry is what fails here. Which relaxation dominates is a property of 
 not of the criterion. In retrosynthesis, whose references are canonical and stereochemically
 explicit, the same criteria span about $0.02$ (Appendix~\ref{app:xdomain}).
 
-\subsection{The metric is a second free parameter, and the decomposition predicts it}
-\label{sec:metric}
-
-Recall is not the only aggregate this field reports; F1 and Jaccard are standard, and a method
-emitting eighty candidates to catch a few more references is rewarded by the first and punished by
-the others. Computed on each method's deployed output set over the full split --- untruncated, since precision
-and Jaccard are set quantities --- the orderings disagree, and the disagreement is certified in both
-directions. SyGMa leads on recall, by $0.026$ over MetaPredictor with a paired 95\% interval of
-$[0.003,0.049]$, and finishes last on F1, $0.115$ below it, $[0.108,0.121]$. GRAIL, last on recall,
-is $0.089$ above SyGMa on F1, $[0.078,0.100]$, and $0.079$ above it on precision,
-$[0.069,0.089]$.
-
-The aggregate has a second dial besides which function is reported, where the output is truncated,
-and it moves this same pair: under the top-15 cap of Table~\ref{tab:matchsens} SyGMa's lead is gone
-and MetaPredictor is ahead by $0.002$, within noise. A cap set by convention rewards the method that
-never reaches it, deciding a comparison the uncapped measurement certifies the other way.
-
-This is not confined to the two methods the decomposition runs on. Across all five on the shared
-subset, four cluster on F1 with every pairwise difference covering zero while SyGMa sits below all
-four by $0.094$ to $0.127$; on recall the same subset puts SyGMa \emph{above} two of them, by
-$0.109$ over BioTransformer and $0.197$ over GRAIL, both certified. Two pairs therefore reverse with certification on both sides, and both set the one method with no
-selection stage against methods emitting a seventh as many candidates. We order comparators here by
-emitted output size, not by the selection factor, which is measured only for the two methods the
-decomposition runs on. SyGMa alone emits at that scale, so this exhibits a mechanism rather than
-estimating a dependence (Appendix~\ref{app:xdomain}).
-
-The decomposition says why, and this is where the paper's two halves meet. SyGMa's selection factor
-is $1$ because it emits every product its applicable rules generate. That is what recall rewards and
-precision punishes, so a pipeline with no selection stage is scored relatively higher by the first
-than by the second. It need not lead on recall outright, coverage being a free axis: SyGMa's bank
-reaches $0.542$ against GRAIL's $\ceiling$. The factorisation supplies the direction of the
-movement, from a structural property rather than after the fact.
-
-The matching criterion acts on these metrics too, and acts where it barely touched recall. Over the
-full split the recall@15 ordering is stable to within noise, the leading pair exchanging places
-between criteria by at most $0.0014$ with a differential sensitivity of $-0.002$ $[-0.009,+0.006]$.
-The F1 gap between GRAIL and MetaPredictor is another matter: it is certified under four criteria, at $-0.026$ $[-0.038,-0.013]$ under the
-tautomer-aware default, and indistinguishable from zero under plain \textsc{inchikey}, at
-$+0.003$ $[-0.009,+0.015]$. That is an erased gap rather than a certified reversal, and we claim it
-as no more than that. Two undeclared free parameters therefore sit between a set of predictions and
-a leaderboard position, and they do not act on the same comparisons.
-
-Precision here is a lower bound, which threatens this result more than anything else in the paper:
-the method the metric demotes is the one emitting the most candidates, so it has the most room for
-genuine metabolites nobody recorded. Model the annotation as a uniform propensity $c$. Recall is
-then unbiased, a defence of the field's choice we did not expect to be able to make; precision is
-the truth scaled by $c$, so its ordering is identified for every $c$; F1 is neither. Correcting
-precision by $c$ and capping it at certainty, the F1 ordering holds down to $c\approx0.055$, where
-SyGMa passes GRAIL, MetaPredictor never being passed --- a rate at which a substrate with three
-recorded metabolites would have about fifty-five (Appendix~\ref{app:props}).
-
 \begin{table}[!htbp]
-\caption{Eight diagnostic measurements, each attached to the factor of the decomposition it
-constrains. Sample sizes differ between rows.}
+\caption{Eight diagnostic measurements, each attached to the factor it constrains. Sample sizes
+differ between rows.}
 \label{tab:levers}
 \begin{center}
 \footnotesize
@@ -528,6 +475,60 @@ $0.249$ against $0.266$; deficit to the prior widens to $-0.161$ $[-0.215,-0.107
 \end{center}
 \end{table}
 
+\subsection{The metric is a second free parameter, and the decomposition predicts it}
+\label{sec:metric}
+
+Recall is not the only aggregate this field reports; F1 and Jaccard are standard, and a method
+emitting eighty candidates to catch a few more references is rewarded by the first and punished by
+the others. Computed on each method's deployed output set over the full split --- untruncated, since precision
+and Jaccard are set quantities --- the orderings disagree, and the disagreement is certified in both
+directions. SyGMa leads on recall, by $0.026$ over MetaPredictor with a paired 95\% interval of
+$[0.003,0.049]$, and finishes last on F1, $0.115$ below it, $[0.108,0.121]$. GRAIL, last on recall,
+is $0.089$ above SyGMa on F1, $[0.078,0.100]$, and $0.079$ above it on precision,
+$[0.069,0.089]$.
+
+The aggregate has a second dial, where the output is truncated, and it moves this same pair: under
+the top-15 cap of Table~\ref{tab:matchsens} SyGMa's lead is gone and MetaPredictor leads by $0.002$,
+within noise. A cap set by convention rewards the method that never reaches it, deciding a
+comparison the uncapped measurement certifies the other way, and it is mis-set for this endpoint in
+every method here. With the constant chosen out of sample, macro F1 rises from what each emits to
+$0.195$ for GRAIL at $k=1$, $0.254$ for MetaPredictor at $k=2$ and $0.217$ for SyGMa at $k=4$,
+against the $k=15$ the field reports at --- largest for the method emitting most, and needing no
+model (Appendix~\ref{app:props}).
+
+This is not confined to the two methods the decomposition runs on. Across all five on the shared
+subset, four cluster on F1 with every pairwise difference covering zero while SyGMa sits below all
+four by $0.094$ to $0.127$; on recall that subset puts SyGMa \emph{above} two, by $0.109$ over
+BioTransformer and $0.197$ over GRAIL, both certified. Two pairs therefore reverse with certification on both sides, and both set the one method with no
+selection stage against methods emitting a seventh as many candidates. We order comparators here by
+emitted output size, not by the selection factor, which is measured only for the two methods the
+decomposition runs on. SyGMa alone emits at that scale, so this exhibits a mechanism rather than
+estimating a dependence (Appendix~\ref{app:xdomain}).
+
+The decomposition says why, and this is where the paper's two halves meet. SyGMa's selection factor
+is $1$ because it emits every product its applicable rules generate. That is what recall rewards and
+precision punishes, so a pipeline with no selection stage is scored relatively higher by the first
+than by the second. It need not lead on recall outright, coverage being a free axis: SyGMa's bank
+reaches $0.542$ against GRAIL's $\ceiling$. The factorisation supplies the direction of the
+movement, from a structural property rather than after the fact.
+
+The matching criterion acts on these metrics too, and where it barely touched recall. Over the full
+split the recall@15 ordering is stable to within noise, the leading pair exchanging places by at
+most $0.0014$ with a differential sensitivity of $-0.002$ $[-0.009,+0.006]$. The F1 gap between
+GRAIL and MetaPredictor is another matter: it is certified under four criteria, at $-0.026$ $[-0.038,-0.013]$ under the
+tautomer-aware default, and indistinguishable from zero under plain \textsc{inchikey}, at
+$+0.003$ $[-0.009,+0.015]$. That is an erased gap rather than a certified reversal, and we claim it
+as no more than that. Two undeclared free parameters therefore sit between a set of predictions and
+a leaderboard position, and they do not act on the same comparisons.
+
+Precision here is a lower bound, which threatens this result more than anything else in the paper,
+since the method the metric demotes emits the most candidates. Modelling the annotation as a uniform
+propensity $c$ identifies what survives: recall is unbiased, precision is the truth scaled by $c$ so
+its ordering holds for every $c$, and F1 is neither, but its ordering survives to $c\approx0.055$ ---
+a rate at which a substrate with three recorded metabolites would have fifty-five
+(Appendix~\ref{app:props}).
+
+
 \subsection{Comparison against published methods}
 \label{sec:diagnosis}
 
@@ -538,21 +539,20 @@ any cross-method table; and $0.344\pm0.010$ is the three-seed mean of that last 
 (Appendix~\ref{app:xdomain}).
 On the full clean test split GRAIL trails both published comparators: SyGMa reaches $0.572$, a
 paired difference of $-0.242$ $[-0.271,\,-0.212]$ over the $1{,}168$ common substrates, and
-MetaPredictor $0.568$. Nor does GRAIL lead at any output budget, a frontier over $k \in [1,64]$
-finding SyGMa ahead at \emph{every} $k$ (Appendix~\ref{app:budget}), so the gap is the selection
-weakness \S\ref{sec:decomp} localises rather than output-size accounting. The two differ on that
-second axis besides, $8.4$ candidates per substrate against $81.7$, which \S\ref{sec:metric}
-prices.
+MetaPredictor $0.568$. Nor does it lead at any output budget, a frontier over $k \in [1,64]$ finding
+SyGMa ahead at \emph{every} $k$ (Appendix~\ref{app:budget}), so the gap is the selection weakness
+\S\ref{sec:decomp} localises, not output-size accounting. They differ on that second axis besides,
+$8.4$ candidates against $81.7$, which \S\ref{sec:metric} prices.
 
 
 \subsection{Selection as extreme multi-label classification}
 \label{sec:xmc}
 
-Since selection is the dominant shortfall, we ask what makes it hard, and the answer is structural
+Since selection is the dominant shortfall we ask what makes it hard, and the answer is structural
 rather than metabolism-specific. Choosing which of \nbank\ rules apply is \textbf{extreme
 multi-label classification} with a near-empty positive set: one to three rules per substrate carry a
 positive label, some ${\sim}0.03\%$ of the label space, while far more are applicable, so what is
-scarce is the annotation rather than the applicability. In that regime XMC has long established that
+scarce is annotation rather than applicability. In that regime XMC has long established that
 frequency and propensity baselines are hard to beat, which is why propensity-scored losses were
 introduced \citep{Jain_2016}; rule selection \emph{inherits} that pathology, unnamed in this
 domain.
@@ -564,10 +564,10 @@ that governs precision above, a learner with constant unlabelled weighting recov
 score dominated by the marginal firing rate, so the prior is Bayes-competitive here \emph{by
 construction}. The effect is selection-specific: at the ranking
 stage on identical pools the learned filter beats the same prior ($0.413$ against $0.374$).
-The framing also prescribes a remedy, and it fails: weighting each positive by the inverse of its
-rule's estimated propensity \citep{Jain_2016} moves the selector to $0.249$ from $0.266$. That
-correction treats a label's rarity as an artifact of incomplete annotation, and here rarity is
-substantially chemistry, so it works against the signal (Appendix~\ref{app:props}).
+The framing also prescribes a remedy, and it fails: weighting positives by inverse estimated
+propensity \citep{Jain_2016} moves the selector to $0.249$ from $0.266$. That correction treats
+rarity as an annotation artifact, and here rarity is substantially chemistry, so it works against
+the signal (Appendix~\ref{app:props}).
 
 \subsection{What constrains each factor}
 \label{sec:evidence}
@@ -624,18 +624,18 @@ though they inform no headline claim and their conclusions are negative.
 \section{Conclusion}
 \label{sec:conclusion}
 
+\looseness=-1
 A recall figure for a rule-grounded predictor factorises exactly into what its rule base can
 express, what its selector admits, and what its ranker returns. Applied to two published systems it
 explains their ordering rather than repeating it: the wider bank converts a third of what it
-reaches, the narrower nearly all of its own because it selects nothing, and the gap is the price of
-having a selection stage.
+reaches, the narrower nearly all of its own, and the gap is the price of selecting.
 
 \looseness=-1
-Two free parameters sit between predictions and a leaderboard position, and this field declares
+Two free parameters sit between predictions and a leaderboard position and this field declares
 neither: the rule for when two structures are the same molecule, not neutral because methods differ
 in how their outputs depart from the references, and the aggregate, under which the recall leader
 finishes last because a pipeline that selects nothing is what recall rewards and precision punishes.
-The paper's halves meet there, and both parameters belong in any report, with the coverage ceiling
+The paper's halves meet there, and both belong in any report, with the coverage ceiling
 wherever there is a rule base.
 
 \subsubsection*{Reproducibility statement}

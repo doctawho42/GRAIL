@@ -266,6 +266,39 @@ tighter than the reference sets themselves, which run from $1$ to $29$. Set-leve
 training without an explicit cardinality estimate is therefore untested rather than refuted here,
 and predicting set size is the component this architecture was missing.
 
+\subsection{The output budget is mis-set, and adapting it per substrate does not help}
+
+Section~\ref{sec:metric} reports that the truncation is the aggregate's second dial. This gives the
+measurement behind that, and the negative result that follows from it.
+
+Every method here emits a number of candidates fixed by convention rather than by the substrate.
+Sweeping the cut and choosing the constant on held-out folds, macro F1 rises from what each method
+emits to $0.195$ for GRAIL at $k=1$, $0.254$ for MetaPredictor at $k=2$ and $0.217$ for SyGMa at
+$k=4$. The improvement is largest where the emitted set is largest, $0.047 \to 0.217$ for SyGMa,
+which is the same asymmetry the decomposition predicts: a method with no selection stage is the one
+a fixed budget mis-serves most.
+
+The obvious next step is to make the cut depend on the substrate, and it does not work. Per
+substrate the F1-optimal cut $k^\star$ is computable exactly from the ranked list and the annotated
+set, so the ceiling is known: knowing $k^\star$ is worth $48$ to $76\%$ relative over the best
+constant across the five methods. Almost none of that is reachable. Splitting the headroom into the
+part explained by the true set size, a property of the substrate, and the part explained by where
+the hits fell in the ranking, a property of the ranker, leaves cardinality $20\%$ for GRAIL and
+$18\%$ for MetaPredictor. For SyGMa it is negative: emitting exactly the true count scores $0.112$
+against $0.217$ for a constant four, because its hits sit at ranks three and four and truncating to
+the count discards them.
+
+Cross-fitting confirms this out of sample. A gradient-boosted regressor on twelve substrate
+descriptors, predicting $k^\star$ and evaluated on held-out folds, recovers $3.2\%$ of the oracle
+headroom for GRAIL, $4.3\%$ for MetaPredictor and $-6.0\%$ for SyGMa; predicting the set size
+directly falls below the constant baseline for two methods of three. Descriptors are not a graph
+encoder, so this bounds the direction rather than refuting it, but the mechanism it agrees with is
+structural: a head reading only the substrate cannot see which of its own predictions are correct,
+and that is where the headroom lives. The lever the measurement points to instead is a stopping rule
+on calibrated candidate scores, which is a different object from the abstention that failed in
+Table~\ref{tab:levers}, that having been a global threshold judged on recall@$k$, where truncation
+can only lose.
+
 \subsection{Partial identification of the metric ordering under incomplete annotation}
 \label{app:propensity}
 
