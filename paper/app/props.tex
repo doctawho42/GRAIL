@@ -176,7 +176,11 @@ scale.
 The supporting measurement is the learned-only recall of 0.266 against the prior's 0.410
 ($\Delta=-0.144$, $[-0.196,-0.095]$, $n=245$). The advantage is specific to selection and does
 not generalise to ranking: once rules have been applied broadly, the learned filter is the
-better scorer, at 0.413 against the prior's 0.374. The proposition makes a refutable prediction,
+better scorer, at 0.413 against the prior's 0.374 on the same 245 substrates, a paired $+0.039$
+$[+0.007,+0.072]$. That interval clears zero and not by much, and it is worth saying where it comes
+from: the two arms order one identical pool, so they can differ only where the pool exceeds the
+fifteen-candidate budget by enough for order to matter, which is $32$ substrates --- the filter
+ahead on $22$, behind on $10$, and tied with the prior on the remaining $213$. The proposition makes a refutable prediction,
 that reweighting the labelled loss by the inverse estimated propensity should shrink the prior's
 edge; this is an open test. The propensity model itself is an unmeasured modelling assumption.
 

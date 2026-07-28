@@ -50,6 +50,45 @@ PY
 regeneration caches stay untracked by intent (`key_tables` 272M, `moses_keys` 431M,
 `rule_collapse_cache` 11M, `match_sens_cache`, `metatox_input`): they hold no numbers.
 
+**Committing the file is necessary and not sufficient — the artifact must record the configuration
+that produced it.** This bites only for results measured on a *subsample*: a full-split artifact is
+recoverable because the substrate set is the whole split, while a subsampled one is recoverable only
+from the cap and seed, and `_sample_triples` draws with `rng.choice(replace=False)`, so caps are not
+nested and a wrong cap silently yields a different set.
+
+```bash
+python - <<'PY'
+import json, pathlib
+for p in sorted(pathlib.Path("results").glob("*.json")):
+    try: d = json.loads(p.read_text())
+    except Exception: continue
+    if not isinstance(d, dict): continue
+    n = d.get("n") or d.get("n_substrates")
+    if isinstance(n, int) and n < 1000 and not any(
+            k in d for k in ("config", "max_substrates", "sampling_seed")):
+        print("NO CONFIG", p.name, "n =", n)
+PY
+```
+
+**Status: OPEN, 21 artifacts.** Every subsampled artifact fails this, the `n=245` family among them
+— `prior_vs_learned.json` (the certified −0.144 the main text cites), `selection_ablation.json`,
+`selection_ablation_ranksignal.json`, `selection_ablation_prior300.json` — along with the `n=150`
+match-sensitivity and rank-flip family and the `n=37` GLORYx ladder.
+
+Recovering the substrate set for row 4 took a search over caps and then inference from a *sibling*
+script's default (`prior_vs_learned.py` defaults to `--max-substrates 250`, which yields 245;
+`selection_ablation.py` defaults to 200 and produced 245, so it was overridden on a command line
+recorded nowhere). The reconstruction was confirmed only because the recomputed marginals landed on
+the published values to three decimals, and the pool-breadth gate rejected the first attempt. That
+is gates plus luck, not provenance.
+
+**This one cannot be closed retroactively** — the invocations were not recorded, so for most of
+these the cap is not recoverable at all, and back-filling a guessed `config` would be worse than the
+gap. Two honest options before submitting: re-run the load-bearing subsampled artifacts through
+scripts that write a `config` block, or state in the reproducibility statement that subsampled
+results are regenerable only via the scripts' defaults. Do not leave it implied. New analysis
+scripts write the block; `factorized_eval.json` shows the practice already existed here.
+
 ## 3. Every comparison is matched on population, criterion and budget
 
 **Check:** for each comparative claim, state the three settings both sides were computed under. Not
@@ -82,15 +121,23 @@ for s in re.split(r"(?<=[.;])\s+", body):
 PY
 ```
 
-**Status: TWO OPEN ITEMS.** Seven sentences flag; five are fine (they state `n.s.` or `certified`,
-or are table fragments split by the scanner). Two are genuine and no interval exists anywhere in the
-manuscript for either:
+**Status: PASS as of 2026-07-29 — both open items computed and both survive.** Seven sentences
+flag; five are fine (they state `n.s.` or `certified`, or are table fragments split by the scanner).
+The two genuine ones carried no interval anywhere in the manuscript and now do:
 
-- coverage ceiling **0.542 against 0.735** (`grail_iclr.tex:336`, `:529`) — stated as a bare pair;
-- learned filter **0.413 against the prior's 0.374** (`grail_iclr.tex:577`, `app/props.tex:179`).
+- coverage ceiling **0.542 against 0.735** → paired **−0.193 [−0.213, −0.175]**
+  (`scripts/ceiling_gap_ci.py`). Read off artifacts that already existed; nothing was re-derived.
+  The paired interval is 0.038 wide against marginals of 0.053 and 0.051 — the substrate difficulty
+  both banks face is shared, and pairing removes it.
+- learned filter **0.413 against the prior's 0.374** → paired **+0.039 [+0.007, +0.072]**
+  (`scripts/filter_vs_prior_ci.py`). Clears zero, and not by much. The two arms order one identical
+  pool, so they can differ only where the pool exceeds the fifteen-candidate budget: the filter is
+  ahead on 22 substrates, behind on 10, and tied on 213. Both facts belong next to the claim.
 
-Both are computable from existing artifacts and neither is computed. Decide before submitting:
-report the paired interval, or downgrade the wording to a description.
+Each script gates before it reports: every arm must reproduce its published marginal, and the
+per-substrate vector being bootstrapped must average to what the shipped aggregator returns for the
+same rows — otherwise the interval describes a lookalike. The second script's breadth gate
+(mean pool must reproduce 107.6) is what caught the wrong substrate set that sent row 2 above.
 
 ## 5. Splits are leakage-free and selection never touched test
 
@@ -131,6 +178,12 @@ pdftotext -layout paper/grail_iclr.pdf - | awk 'BEGIN{RS="\f"} NR==9' | tail -3
 
 ---
 
-**The two open items in row 4 are the only unmet claims.** Everything else on this list is passing
-as of 2026-07-29 and was passing only after being checked — three of these rows were failing
-silently while the manuscript asserted them.
+**One open item remains: the configuration half of row 2**, and it is a disclosure decision rather
+than a computation. Every other row is passing as of 2026-07-29, and passing only because it was
+checked — three of them were failing silently while the manuscript asserted them.
+
+The document is subject to its own rule. The paragraph above the row-2 command once read "every
+`n=245` artifact fails this" while the command printed 21 files, and the closing line once read "no
+open items remain" while row 2 was open. Both were caught by running the check rather than by
+rereading the prose, which is the entire argument for keeping the commands in here next to the
+claims they support.
