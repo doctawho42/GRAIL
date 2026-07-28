@@ -217,3 +217,40 @@ produce. ZINC molecules and retrosynthesis targets are canonical by construction
 nothing for a generator to diverge from and the criterion has nothing to change. Whether the convention reorders
 results in another domain of comparable tautomer ambiguity, rather than only shifting them,
 remains the open test, and it needs only public multi-model predictions in a re-scorable form.
+
+\subsection{The external set is not external to GRAIL}
+
+The criterion ladder of \S\ref{sec:rankflip} is reported on the $\nglory$ GLORYx drugs as an
+external replication. Checking two independent curations against each other turned up something
+that check was not looking for: $19$ of those $37$ parents are substrates in GRAIL's training split
+and $5$ more are in validation. Thirteen are unseen. The overlap costs a minute to compute and had
+never been computed.
+
+The contamination is one-sided, which decides how much has to be repaired. SyGMa and BioTransformer
+do not train on this corpus, and MetaPredictor was trained by its authors on their own data, so
+their figures are unaffected and stay at $n=\nglory$. Only GRAIL's are inflated, and inflated in our
+own favour. Restricting the other three to the thirteen would have been an error in the opposite
+direction, discarding two thirds of the sample to correct a bias they do not have.
+
+Recomputing on the thirteen with the same loaders, matcher and frozen predictions, so that only the
+substrate list changes, GRAIL's external recall falls by up to a factor of $2.6$: $0.155 \to 0.059$
+under strict \textsc{inchikey}, $0.310 \to 0.185$ once stereochemistry is disregarded, $0.333 \to
+0.223$ under the tautomer-aware default. The other three methods move by less than $0.06$, which is
+the sample change rather than a correction.
+
+Two claims survive and one does not. GRAIL's stereo step remains significant at $+0.126$
+$[+0.028,+0.239]$ against $+0.155$ on the full set, so the mechanism is real rather than memorised:
+GRAIL cannot emit a stereocentre, and a stereo-blind criterion rewards that whether or not it has
+seen the drug. Its interaction with SyGMa also survives, at $+0.126$ $[+0.028,+0.239]$. The
+interaction between BioTransformer and GRAIL does not: published at $+0.150$ $[+0.069,+0.242]$, it
+is $-0.104$ $[-0.223,+0.000]$ on the unseen drugs, reversing sign and losing significance. It was
+named one of the two largest and is withdrawn. Of six pairs, four were significant on the full set
+and two are on the clean one, both against SyGMa.
+
+The headline external result is unaffected because it involves neither contaminated arm. Under
+strict \textsc{inchikey} SyGMa leads MetaPredictor by $-0.130$ $[-0.196,-0.065]$ and one rung later
+the advantage is gone; both methods are external to this corpus in the ordinary sense.
+
+We report this rather than quietly recomputing because the failure is instructive about the protocol
+the paper argues for. An audit of train-test overlap is cheap, is not implied by any of the other
+checks we run, and surfaced here only as a by-product of measuring something else.

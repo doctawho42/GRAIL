@@ -371,8 +371,9 @@ candidates per substrate against GRAIL's $8.4$ (Appendix~\ref{app:budget}).
 \caption{recall@15 by matching criterion. \textbf{Top:} full clean test split ($n=\ntest$), the
 three methods with predictions on all of it; last column is the gain from strictest to most
 tolerant. \textbf{Bottom:} external GLORYx set ($n=\nglory$), where the middle column separates the
-two relaxations \textsc{inchikey-tautomer} applies together and the interval is on the stereo step;
-the remaining tautomer step is $0.000$ for every method but GRAIL, at $+0.023$ $[+0.000,+0.059]$.}
+two relaxations \textsc{inchikey-tautomer} applies together and the interval is on the stereo step.
+$^\dagger$Not external to GRAIL, which trained on $19$ of the $37$ and validated on $5$ more, so its
+row uses the $13$ unseen; the others use all $37$.}
 \label{tab:matchsens}
 \begin{center}
 \begin{tabular}{lccccc l}
@@ -390,7 +391,7 @@ SyGMa          & 0.529 & 0.554 & 0.559 & 0.531 & 0.567 & $+0.038$ $[0.029,0.048]
 SyGMa          & & 0.492 & 0.498 & 0.498 & & $+0.007$ $[+0.000,+0.020]$ \\
 BioTransformer & & 0.346 & 0.374 & 0.374 & & $+0.028$ $[+0.002,+0.064]$ \\
 MetaPredictor  & & 0.362 & 0.504 & 0.504 & & $+0.142$ $[+0.079,+0.215]$ \\
-\textbf{GRAIL} & & 0.155 & 0.310 & 0.333 & & $+0.155$ $[+0.075,+0.244]$ \\
+\textbf{GRAIL}$^\dagger$ & & 0.059 & 0.185 & 0.223 & & $+0.126$ $[+0.028,+0.239]$ \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -415,20 +416,20 @@ between criteria on the shared subset, one non-monotonically because MetaTrans a
 SMILES. Every pairwise $\Delta$ there spans zero at $n=\nshared$ (Appendix~\ref{app:xdomain}), so
 the interaction is established and the reversals only illustrate it.
 
-\paragraph{External replication.} The results above live on a $\nshared$-substrate subset of our
-own split, so we repeated the analysis on the field's de-facto external hold-out, the \nglory\
-GLORYx drugs \citep{de_Bruyn_Kops_2020}, whose own tool is not scored here because the weights of
-its site-of-metabolism component are not available for re-execution. Four methods are compared
-across the criterion ladder (Table~\ref{tab:matchsens}). Sensitivity spans more than an order of
-magnitude across them, and three of the four intervals exclude zero. Of the six method pairs, four show a significant interaction, all four surviving
-Holm--Bonferroni over the six; the largest in magnitude are GRAIL$\leftrightarrow$SyGMa ($-0.171$
-$[-0.264,-0.086]$) and BioTransformer$\leftrightarrow$GRAIL ($+0.150$ $[+0.069,+0.242]$). The
-ordering consequence is sharpest for a third, MetaPredictor$\leftrightarrow$SyGMa ($-0.135$
-$[-0.209,-0.072]$): under strict InChIKey SyGMa leads by a \emph{significant} $-0.130$
-$[-0.196,-0.065]$; one rung of tolerance later, once stereochemistry is disregarded, that
-advantage is gone and the point estimate reverses ($+0.005$, n.s.). A criterion chosen for convenience can therefore erase a statistically significant advantage
-between two published tools, on an external literature-standard set with a different method
-quartet.
+\paragraph{External replication.} The results above live on a $\nshared$-substrate subset of our own
+split, so we repeated the analysis on the field's de-facto external hold-out, the \nglory\ GLORYx
+drugs \citep{de_Bruyn_Kops_2020}, whose own tool is not scored here for want of runnable weights. The set is external for three of the four methods
+and not for ours, which we checked late: $19$ of the $37$ drugs are substrates in GRAIL's training
+split and $5$ more in validation, so GRAIL is reported on the $13$ unseen ones. The other three do
+not train on this corpus, so restricting them would cost power for nothing.
+
+The result this section rests on involves neither contaminated arm. Under strict InChIKey
+SyGMa leads MetaPredictor by a \emph{significant} $-0.130$ $[-0.196,-0.065]$; one rung of tolerance
+later the advantage is gone and the estimate reverses ($+0.005$, n.s.): a criterion chosen for
+convenience can erase a significant advantage between two published tools. On the uncontaminated
+drugs GRAIL's stereo sensitivity survives at $+0.126$ $[+0.028,+0.239]$, as does its interaction
+with SyGMa; the one between BioTransformer and GRAIL does not, and we withdraw it
+(Appendix~\ref{app:xdomain}).
 
 
 
