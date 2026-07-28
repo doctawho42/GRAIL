@@ -129,9 +129,8 @@ metric choices can reorder leaderboards is established in other fields; that thi
 turn on two undeclared ones is not.
 
 We release the bundle the protocol needs rather than a model: the leakage-audited split and its
-audit report, the re-scoring harness with all five criteria, every method's frozen predictions
-under each, and GRAIL's checkpoints, GRAIL being the second rule-grounded system the decomposition
-runs on. Adding a sixth method needs its ranked output and nothing else.
+audit report, the re-scoring harness with all five criteria, every method's frozen predictions under
+each, and GRAIL's checkpoints. Adding a sixth method needs its ranked output and nothing else.
 
 \section{Related Work}
 \label{sec:related}
@@ -488,18 +487,18 @@ is $0.089$ above SyGMa on F1, $[0.078,0.100]$, and $0.079$ above it on precision
 $[0.069,0.089]$.
 
 The aggregate has a second dial, where the output is truncated, and it moves this same pair: under
-the top-15 cap of Table~\ref{tab:matchsens} SyGMa's lead is gone and MetaPredictor leads by $0.002$,
-within noise. A cap set by convention rewards the method that never reaches it, deciding a
-comparison the uncapped measurement certifies the other way, and it is mis-set for this endpoint in
-every method here. With the constant chosen out of sample, macro F1 rises from what each emits to
+the top-15 cap of Table~\ref{tab:matchsens} SyGMa's lead is gone and MetaPredictor leads by $0.002$.
+A cap set by convention rewards the method that never reaches it, deciding a comparison the uncapped
+measurement certifies the other way, and it is mis-set for this endpoint in every method here. With the constant chosen out of sample, macro F1 rises from what each emits to
 $0.195$ for GRAIL at $k=1$, $0.254$ for MetaPredictor at $k=2$ and $0.217$ for SyGMa at $k=4$,
-against the $k=15$ the field reports at --- largest for the method emitting most, and needing no
-model (Appendix~\ref{app:props}).
+against the $k=15$ the field reports at. For GRAIL, whose per-candidate scores make the comparison
+paired, emitting as deployed is certified \emph{worse} than the constant, by $-0.058$
+$[-0.075,-0.042]$ (Appendix~\ref{app:props}).
 
 This is not confined to the two methods the decomposition runs on. Across all five on the shared
 subset, four cluster on F1 with every pairwise difference covering zero while SyGMa sits below all
-four by $0.094$ to $0.127$; on recall that subset puts SyGMa \emph{above} two, by $0.109$ over
-BioTransformer and $0.197$ over GRAIL, both certified. Two pairs therefore reverse with certification on both sides, and both set the one method with no
+four by $0.094$ to $0.127$; on recall that subset puts SyGMa \emph{above} two, by $0.109$ and
+$0.197$ over BioTransformer and GRAIL, both certified. Two pairs therefore reverse with certification on both sides, and both set the one method with no
 selection stage against methods emitting a seventh as many candidates. We order comparators here by
 emitted output size, not by the selection factor, which is measured only for the two methods the
 decomposition runs on. SyGMa alone emits at that scale, so this exhibits a mechanism rather than
@@ -552,10 +551,9 @@ Since selection is the dominant shortfall we ask what makes it hard, and the ans
 rather than metabolism-specific. Choosing which of \nbank\ rules apply is \textbf{extreme
 multi-label classification} with a near-empty positive set: one to three rules per substrate carry a
 positive label, some ${\sim}0.03\%$ of the label space, while far more are applicable, so what is
-scarce is annotation rather than applicability. In that regime XMC has long established that
-frequency and propensity baselines are hard to beat, which is why propensity-scored losses were
-introduced \citep{Jain_2016}; rule selection \emph{inherits} that pathology, unnamed in this
-domain.
+scarce is annotation rather than applicability. In that regime XMC has established that frequency
+and propensity baselines are hard to beat, which is why propensity-scored losses were introduced
+\citep{Jain_2016}; rule selection \emph{inherits} that pathology, unnamed here.
 
 The prediction holds. Each arm selects thirty rules and passes them through the same enumeration
 and filter: a learned-only selector reaches $0.266$ where rule-firing frequency alone reaches
@@ -565,9 +563,8 @@ score dominated by the marginal firing rate, so the prior is Bayes-competitive h
 construction}. The effect is selection-specific: at the ranking
 stage on identical pools the learned filter beats the same prior ($0.413$ against $0.374$).
 The framing also prescribes a remedy, and it fails: weighting positives by inverse estimated
-propensity \citep{Jain_2016} moves the selector to $0.249$ from $0.266$. That correction treats
-rarity as an annotation artifact, and here rarity is substantially chemistry, so it works against
-the signal (Appendix~\ref{app:props}).
+propensity \citep{Jain_2016} moves the selector to $0.249$ from $0.266$. It treats rarity as an
+annotation artifact, and here rarity is substantially chemistry (Appendix~\ref{app:props}).
 
 \subsection{What constrains each factor}
 \label{sec:evidence}
@@ -635,8 +632,8 @@ Two free parameters sit between predictions and a leaderboard position and this 
 neither: the rule for when two structures are the same molecule, not neutral because methods differ
 in how their outputs depart from the references, and the aggregate, under which the recall leader
 finishes last because a pipeline that selects nothing is what recall rewards and precision punishes.
-The paper's halves meet there, and both belong in any report, with the coverage ceiling
-wherever there is a rule base.
+The paper's halves meet there. Both belong in any report, with the coverage ceiling wherever a rule
+base exists.
 
 \subsubsection*{Reproducibility statement}
 

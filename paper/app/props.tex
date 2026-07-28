@@ -278,6 +278,15 @@ $k=4$. The improvement is largest where the emitted set is largest, $0.047 \to 0
 which is the same asymmetry the decomposition predicts: a method with no selection stage is the one
 a fixed budget mis-serves most.
 
+For GRAIL the comparison can be certified rather than tabulated, because its per-candidate ranking
+scores are released with the frozen predictions. Over the $1{,}166$ scored substrates, with the
+constant fit on training folds and every substrate evaluated held out, emitting as deployed scores
+$0.137$ against the constant's $0.196$: a paired difference of $-0.058$, 95\% interval
+$[-0.075,-0.042]$ over $10{,}000$ resamples. The deployed operating point is not merely
+sub-optimal for this endpoint, it is worse than truncating to one candidate. That is a statement
+about the budget rather than about the ranking: the same ranking, cut in the right place, is what
+produces the higher figure.
+
 The obvious next step is to make the cut depend on the substrate, and it does not work. Per
 substrate the F1-optimal cut $k^\star$ is computable exactly from the ranked list and the annotated
 set, so the ceiling is known: knowing $k^\star$ is worth $48$ to $76\%$ relative over the best
