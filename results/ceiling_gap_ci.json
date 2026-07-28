@@ -1,0 +1,17 @@
+{
+ "match": "inchikey_tautomer",
+ "n_substrates": 1170,
+ "n_boot": 10000,
+ "seed": 0,
+ "estimand": "micro coverage_bank(GRAIL) - micro coverage_bank(SyGMa), paired on substrate",
+ "coverage": {
+  "GRAIL": 0.7355,
+  "SyGMa": 0.5422
+ },
+ "gap": 0.1933,
+ "ci95": [
+  0.1747,
+  0.2129
+ ],
+ "excludes_zero": true
+}
