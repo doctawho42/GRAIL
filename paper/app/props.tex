@@ -271,21 +271,29 @@ and predicting set size is the component this architecture was missing.
 Section~\ref{sec:metric} reports that the truncation is the aggregate's second dial. This gives the
 measurement behind that, and the negative result that follows from it.
 
-Every method here emits a number of candidates fixed by convention rather than by the substrate.
-Sweeping the cut and choosing the constant on held-out folds, macro F1 rises from what each method
-emits to $0.195$ for GRAIL at $k=1$, $0.254$ for MetaPredictor at $k=2$ and $0.217$ for SyGMa at
-$k=4$. The improvement is largest where the emitted set is largest, $0.047 \to 0.217$ for SyGMa,
-which is the same asymmetry the decomposition predicts: a method with no selection stage is the one
-a fixed budget mis-serves most.
+Every method here emits a number of candidates fixed by convention rather than by the substrate, and
+no budget is selected in what follows: the F1-versus-$k$ curve is swept for each method, the
+orderings are read off the curves, and the one certified comparison is made at a $k$ fixed in
+advance. A budget chosen against the numbers it is reported on would be optimistically biased, and
+a reordering could be an artifact of the choice, so the choice is removed rather than corrected.
 
-For GRAIL the comparison can be certified rather than tabulated, because its per-candidate ranking
-scores are released with the frozen predictions. Over the $1{,}166$ scored substrates, with the
-constant fit on training folds and every substrate evaluated held out, emitting as deployed scores
-$0.137$ against the constant's $0.196$: a paired difference of $-0.058$, 95\% interval
-$[-0.075,-0.042]$ over $10{,}000$ resamples. The deployed operating point is not merely
-sub-optimal for this endpoint, it is worse than truncating to one candidate. That is a statement
-about the budget rather than about the ranking: the same ranking, cut in the right place, is what
-produces the higher figure.
+Two orderings occur across $k \in [1,32]$. For $k \le 2$ and for $k \ge 13$ it is MetaPredictor,
+GRAIL, SyGMa; for every $k$ from $3$ to $12$ it is MetaPredictor, SyGMa, GRAIL. The field's budget
+of $15$ falls in the first region. At $k=5$, fixed before these curves were computed, all three
+pairs separate: SyGMa above GRAIL by $0.054$ $[0.039,0.068]$, MetaPredictor above GRAIL by $0.067$
+$[0.051,0.083]$, MetaPredictor above SyGMa by $0.013$ $[0.003,0.024]$.
+
+The mechanism is in the same sweep. A method's curve goes flat once $k$ passes what it emits, so
+GRAIL sits at $0.1358$ for every $k$ from $15$ to $32$ having run out at $8.4$ candidates, while
+SyGMa falls from $0.125$ to $0.073$ over the same range because it is still emitting from $81.7$. At
+the field's budget GRAIL is above SyGMa because it has stopped and SyGMa has not, which is what a
+cap does when it binds one method and not the other. The magnitude is not a rounding effect: SyGMa
+moves by a factor of $4.6$ between its best and worst budget in this range.
+
+For GRAIL the deployed operating point can additionally be certified against a fixed cut, because
+its per-candidate ranking scores are released with the frozen predictions. Over the $1{,}166$ scored
+substrates, emitting as deployed scores $0.137$ against $0.196$ at $k=1$: a paired difference of
+$-0.058$, 95\% interval $[-0.075,-0.042]$.
 
 The obvious next step is to make the cut depend on the substrate, and it does not work. Per
 substrate the F1-optimal cut $k^\star$ is computable exactly from the ranked list and the annotated

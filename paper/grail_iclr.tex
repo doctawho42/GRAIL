@@ -488,12 +488,13 @@ $[0.069,0.089]$.
 
 The aggregate has a second dial, where the output is truncated, and it moves this same pair: under
 the top-15 cap of Table~\ref{tab:matchsens} SyGMa's lead is gone and MetaPredictor leads by $0.002$.
-A cap set by convention rewards the method that never reaches it, deciding a comparison the uncapped
-measurement certifies the other way, and it is mis-set for this endpoint in every method here. With the constant chosen out of sample, macro F1 rises from what each emits to
-$0.195$ for GRAIL at $k=1$, $0.254$ for MetaPredictor at $k=2$ and $0.217$ for SyGMa at $k=4$,
-against the $k=15$ the field reports at. For GRAIL, whose per-candidate scores make the comparison
-paired, emitting as deployed is certified \emph{worse} than the constant, by $-0.058$
-$[-0.075,-0.042]$ (Appendix~\ref{app:props}).
+A cap set by convention rewards the method that never reaches it, and the budget is a third
+undeclared parameter that reorders these methods without any budget having to be chosen: swept over
+$k$, SyGMa is above GRAIL for every $k$ from $3$ to $12$ and below it from $13$ on, which is where
+the field's $15$ sits. At $k=5$, fixed in advance, SyGMa leads by $0.054$ $[0.039,0.068]$. The
+mechanism is in the same sweep: GRAIL's curve is flat past $k=15$, having run out at $8.4$
+candidates, while SyGMa is still emitting from $81.7$ --- at the field's budget GRAIL leads because
+it has stopped (Appendix~\ref{app:props}).
 
 This is not confined to the two methods the decomposition runs on. Across all five on the shared
 subset, four cluster on F1 with every pairwise difference covering zero while SyGMa sits below all
@@ -638,9 +639,12 @@ base exists.
 \subsubsection*{Reproducibility statement}
 
 All numbers are regenerable from committed artifacts, but for one reranker figure whose
-per-substrate scores were not retained and which is flagged where it appears. The anonymized
-archive holds every method's frozen predictions, the audits, the harness, the split construction,
-the analysis code and the GRAIL checkpoints.
+per-substrate scores were not retained and which is flagged where it appears. The anonymized archive
+holds every method's frozen predictions, the audits, the harness, the split construction, the
+analysis code and the GRAIL checkpoints. Where an analysis path re-derives a deployed output, the
+two are reconciled before use rather than assumed equal: the released per-candidate score dump
+reproduces the deployed ranking on all $\ntest$ substrates, a check that caught three silent
+divergences in the path that produces it.
 
 \bibliographystyle{iclr2026_conference}
 \bibliography{refs}
