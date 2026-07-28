@@ -65,10 +65,10 @@ relative to a stated rule for when two structures are the same molecule. That ru
 in this field and has never been varied. Varying it over five conventions with predictions held
 fixed erases a statistically significant advantage between two published tools on the external set;
 on our full split it leaves the recall ordering stable to within noise and moves the F1 ordering
-instead. The aggregate is the second undeclared parameter and the more consequential one. Reporting F1
-rather than recall drops the recall leader to last across three methods on the full split and
-reverses two pairs of five with certification on both sides of each reversal --- and the
-decomposition says in advance which pairs, from a structural property rather than after the fact. We release the protocol, the audited split and
+instead. Two further parameters go undeclared and matter more: reporting F1 rather than recall drops
+the recall leader to last, which the decomposition predicts from a structural property rather than
+observing after the fact, and the output budget, imported from a convention that never charged for
+size, reorders them again --- against the system we release. We release the protocol, the audited split and
 the frozen predictions that make both measurements repeatable.
 \end{abstract}
 
@@ -123,8 +123,8 @@ removed, or fingerprints. They disagree most about tautomers, alternative struct
 compound differing in the position of a mobile hydrogen. Evaluations here adopt one each, usually
 without saying why, and none has varied it. Varying it over five conventions with predictions held
 fixed erases a significant advantage between two published tools externally, and internally moves
-the F1 ordering while leaving recall's stable to within noise. The second free parameter is the aggregate
-itself: report F1 rather than recall and the leader becomes the straggler. That matching rules and
+the F1 ordering while leaving recall's stable to within noise. Two more follow: the aggregate, where reporting
+F1 rather than recall makes the leader the straggler, and the output budget. That matching rules and
 metric choices can reorder leaderboards is established in other fields; that this field's rankings
 turn on two undeclared ones is not.
 
@@ -442,6 +442,7 @@ stereochemistry is what fails here. Which relaxation dominates is a property of 
 not of the criterion. In retrosynthesis, whose references are canonical and stereochemically
 explicit, the same criteria span about $0.02$ (Appendix~\ref{app:xdomain}).
 
+
 \begin{table}[!htbp]
 \caption{Eight diagnostic measurements, each attached to the factor it constrains. Sample sizes
 differ between rows.}
@@ -486,20 +487,20 @@ $[0.003,0.049]$, and finishes last on F1, $0.115$ below it, $[0.108,0.121]$. GRA
 is $0.089$ above SyGMa on F1, $[0.078,0.100]$, and $0.079$ above it on precision,
 $[0.069,0.089]$.
 
-The aggregate has a second dial, where the output is truncated, and it moves this same pair: under
-the top-15 cap of Table~\ref{tab:matchsens} SyGMa's lead is gone and MetaPredictor leads by $0.002$.
-A cap set by convention rewards the method that never reaches it, and the budget is a third
-undeclared parameter that reorders these methods without any budget having to be chosen: swept over
-$k$, SyGMa is above GRAIL for every $k$ from $3$ to $12$ and below it from $13$ on, which is where
-the field's $15$ sits. At $k=5$, fixed in advance, SyGMa leads by $0.054$ $[0.039,0.068]$. The
-mechanism is in the same sweep: GRAIL's curve is flat past $k=15$, having run out at $8.4$
-candidates, while SyGMa is still emitting from $81.7$ --- at the field's budget GRAIL leads because
-it has stopped (Appendix~\ref{app:props}).
+The output budget is the third parameter, and it reorders without any budget having to be chosen:
+swept over $k$, SyGMa is above GRAIL for every $k$ from $3$ to $12$ and below from $13$ on, where the
+field's $15$ sits, leading by $0.054$ $[0.039,0.068]$ at $k=5$ and by $0.019$ to $0.035$ elsewhere in
+the region. The
+mechanism generalises: a budget binds a method only when it emits more, so at $k=15$ SyGMa is cut on
+$93.1\%$ of substrates and GRAIL on none, and the convention advantages whoever emits least. GRAIL's
+compact output is priced the same way, truncation being free: SyGMa's top-$k$ beats it from $3$ to
+$12$, and only at $k\le2$, where ranking rather than size differs, does GRAIL lead
+(Appendix~\ref{app:props}).
 
-This is not confined to the two methods the decomposition runs on. Across all five on the shared
-subset, four cluster on F1 with every pairwise difference covering zero while SyGMa sits below all
-four by $0.094$ to $0.127$; on recall that subset puts SyGMa \emph{above} two, by $0.109$ and
-$0.197$ over BioTransformer and GRAIL, both certified. Two pairs therefore reverse with certification on both sides, and both set the one method with no
+This is not confined to the two methods the decomposition runs on. Across all five, four cluster on
+F1 with every pairwise difference covering zero while SyGMa sits below all four by $0.094$ to
+$0.127$; on recall the same subset puts it \emph{above} two, by $0.109$ and $0.197$ over
+BioTransformer and GRAIL, both certified. Two pairs therefore reverse with certification on both sides, and both set the one method with no
 selection stage against methods emitting a seventh as many candidates. We order comparators here by
 emitted output size, not by the selection factor, which is measured only for the two methods the
 decomposition runs on. SyGMa alone emits at that scale, so this exhibits a mechanism rather than
@@ -518,15 +519,14 @@ most $0.0014$ with a differential sensitivity of $-0.002$ $[-0.009,+0.006]$. The
 GRAIL and MetaPredictor is another matter: it is certified under four criteria, at $-0.026$ $[-0.038,-0.013]$ under the
 tautomer-aware default, and indistinguishable from zero under plain \textsc{inchikey}, at
 $+0.003$ $[-0.009,+0.015]$. That is an erased gap rather than a certified reversal, and we claim it
-as no more than that. Two undeclared free parameters therefore sit between a set of predictions and
-a leaderboard position, and they do not act on the same comparisons.
+as no more than that. Three undeclared parameters therefore sit between a set of predictions and a
+leaderboard position, and they do not act on the same comparisons.
 
-Precision here is a lower bound, which threatens this result more than anything else in the paper,
-since the method the metric demotes emits the most candidates. Modelling the annotation as a uniform
-propensity $c$ identifies what survives: recall is unbiased, precision is the truth scaled by $c$ so
-its ordering holds for every $c$, and F1 is neither, but its ordering survives to $c\approx0.055$ ---
-a rate at which a substrate with three recorded metabolites would have fifty-five
-(Appendix~\ref{app:props}).
+Precision here is a lower bound, which threatens this result most, since the method the metric
+demotes emits the most candidates. Under a uniform-propensity model recall is unbiased, precision's
+ordering is identified for every $c$, and F1's survives to $c\approx0.055$ --- an annotation rate
+the references do not support (Appendix~\ref{app:props}).
+
 
 
 \subsection{Comparison against published methods}
@@ -541,8 +541,8 @@ On the full clean test split GRAIL trails both published comparators: SyGMa reac
 paired difference of $-0.242$ $[-0.271,\,-0.212]$ over the $1{,}168$ common substrates, and
 MetaPredictor $0.568$. Nor does it lead at any output budget, a frontier over $k \in [1,64]$ finding
 SyGMa ahead at \emph{every} $k$ (Appendix~\ref{app:budget}), so the gap is the selection weakness
-\S\ref{sec:decomp} localises, not output-size accounting. They differ on that second axis besides,
-$8.4$ candidates against $81.7$, which \S\ref{sec:metric} prices.
+\S\ref{sec:decomp} localises. They differ on output size besides, $8.4$ candidates against $81.7$,
+which \S\ref{sec:metric} prices --- against us.
 
 
 \subsection{Selection as extreme multi-label classification}
@@ -561,11 +561,12 @@ and filter: a learned-only selector reaches $0.266$ where rule-firing frequency 
 $0.410$, a paired difference of $-0.144$ $[-0.196,\,-0.095]$, $n=245$. Under the propensity model
 that governs precision above, a learner with constant unlabelled weighting recovers a distorted
 score dominated by the marginal firing rate, so the prior is Bayes-competitive here \emph{by
-construction}. The effect is selection-specific: at the ranking
-stage on identical pools the learned filter beats the same prior ($0.413$ against $0.374$).
-The framing also prescribes a remedy, and it fails: weighting positives by inverse estimated
-propensity \citep{Jain_2016} moves the selector to $0.249$ from $0.266$. It treats rarity as an
-annotation artifact, and here rarity is substantially chemistry (Appendix~\ref{app:props}).
+construction}. The effect is selection-specific: at the
+ranking stage the learned filter beats the same prior ($0.413$ against $0.374$).
+The framing also prescribes a remedy, and it fails: inverse-propensity weighting of positives
+\citep{Jain_2016} moves the selector to $0.249$ from $0.266$, treating as an annotation artifact a
+rarity that is here substantially chemistry (Appendix~\ref{app:props}).
+
 
 \subsection{What constrains each factor}
 \label{sec:evidence}
@@ -629,12 +630,12 @@ explains their ordering rather than repeating it: the wider bank converts a thir
 reaches, the narrower nearly all of its own, and the gap is the price of selecting.
 
 \looseness=-1
-Two free parameters sit between predictions and a leaderboard position and this field declares
-neither: the rule for when two structures are the same molecule, not neutral because methods differ
-in how their outputs depart from the references, and the aggregate, under which the recall leader
-finishes last because a pipeline that selects nothing is what recall rewards and precision punishes.
-The paper's halves meet there. Both belong in any report, with the coverage ceiling wherever a rule
-base exists.
+Three undeclared parameters sit between predictions and a leaderboard position: the rule for when
+two structures are the same molecule, not neutral because methods differ in how their outputs depart
+from the references; the aggregate, under which the recall leader finishes last because a pipeline
+that selects nothing is what recall rewards and precision punishes; and the budget, which binds only
+methods emitting past it. All three belong in any report, with the coverage ceiling wherever there
+is a rule base.
 
 \subsubsection*{Reproducibility statement}
 

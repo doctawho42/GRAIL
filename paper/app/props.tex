@@ -283,12 +283,34 @@ of $15$ falls in the first region. At $k=5$, fixed before these curves were comp
 pairs separate: SyGMa above GRAIL by $0.054$ $[0.039,0.068]$, MetaPredictor above GRAIL by $0.067$
 $[0.051,0.083]$, MetaPredictor above SyGMa by $0.013$ $[0.003,0.024]$.
 
-The mechanism is in the same sweep. A method's curve goes flat once $k$ passes what it emits, so
-GRAIL sits at $0.1358$ for every $k$ from $15$ to $32$ having run out at $8.4$ candidates, while
-SyGMa falls from $0.125$ to $0.073$ over the same range because it is still emitting from $81.7$. At
-the field's budget GRAIL is above SyGMa because it has stopped and SyGMa has not, which is what a
-cap does when it binds one method and not the other. The magnitude is not a rounding effect: SyGMa
-moves by a factor of $4.6$ between its best and worst budget in this range.
+The mechanism is in the same sweep, and it is stronger than a statement about GRAIL. A budget only
+binds a method when the method emits more than the budget, so at $k=15$ the comparison is not
+budget-matched at all: SyGMa is cut from $81.7$ candidates to $15$ on $93.1\%$ of substrates, while
+GRAIL is cut on \emph{none} of them, having stopped at $8.4$. The convention silently advantages
+whichever methods emit less than the budget, and it is the budget rather than the ranking that
+decides. The magnitude is not a rounding effect: SyGMa moves by a factor of $4.6$ between its best
+and worst budget over $k \in [1,32]$.
+
+The binding is partial well below $15$ too, which is why the certified comparison is reported at
+several budgets rather than one. GRAIL is cut on $63.5\%$ of substrates at $k=5$ and $45.6\%$ at
+$k=8$, against SyGMa's $98.9\%$ and $97.3\%$. Against GRAIL, SyGMa is behind by $0.030$
+$[0.013,0.047]$ at $k=3$, $0.054$ $[0.039,0.068]$ at $k=5$, $0.035$ $[0.023,0.048]$ at $k=8$ and
+$0.019$ $[0.006,0.031]$ at $k=10$, every interval excluding zero, so the reversal is not an artifact
+of one budget inside the region.
+
+\paragraph{What a compact output is and is not worth.} GRAIL returns $8.4$ candidates against
+SyGMa's $81.7$, which we have described as an operating point recall@$k$ does not express. The sweep
+prices it, and mostly against us. Truncation is free: any user preferring a shorter list can take
+SyGMa's top-$k$, and from $k=3$ to $k=12$ that shorter list beats GRAIL's. Emitting few candidates
+therefore confers no advantage that cutting a longer list would not also confer, over most of the
+range, and GRAIL's apparent lead at the field's budget is the cap declining to bind it.
+
+The exception is real and worth stating precisely, because it is the part that survives. At $k=1$
+both methods are genuinely cut, on $92.8\%$ and $99.6\%$ of substrates, and GRAIL is ahead by
+$0.191$ $[0.170,0.212]$; SyGMa reaches $0.004$ there, almost never placing a hit first. At $k=2$ the
+two are indistinguishable, $+0.017$ $[-0.003,+0.037]$. What differs at the head of the list is
+ranking quality rather than output size, so the defensible version of the claim is narrow: GRAIL is
+the better choice when one or two predictions are wanted, and not otherwise.
 
 For GRAIL the deployed operating point can additionally be certified against a fixed cut, because
 its per-candidate ranking scores are released with the frozen predictions. Over the $1{,}166$ scored
