@@ -42,7 +42,10 @@ from rdkit.Chem import rdFingerprintGenerator
 RDLogger.DisableLog("rdApp.*")
 
 MODEL = "sagawa/ReactionT5v2-retrosynthesis-USPTO_50k"
-HF = "hf://datasets/bisectgroup/USPTO_50K/data/"
+# The authoritative split, linked from the model card and used for its published 71.2% top-1.
+# A community copy of "USPTO-50k" gave 0.834 here, thirteen points above, because its test split is
+# not this one -- the guard that caught that is why the split source is pinned rather than assumed.
+SPLIT = ROOT / "grail_metabolism" / "data" / "USPTO_50k"
 CORPUS = ROOT / "grail_metabolism" / "data" / "USPTO_FULL.csv"
 BINS = [0.0, 0.3, 0.4, 0.5, 0.6, 1.01]
 SEED = 0
@@ -110,10 +113,10 @@ def graded(true_r: str, preds: list) -> float:
 
 
 def load_splits():
-    tr = pd.concat([pd.read_parquet(f"{HF}train-0000{i}-of-00006.parquet") for i in range(6)])
-    te = pd.concat([pd.read_parquet(f"{HF}test-0000{i}-of-00006.parquet") for i in range(6)])
-    va = pd.concat([pd.read_parquet(f"{HF}val-0000{i}-of-00006.parquet") for i in range(6)])
-    return tr, te, va
+    """The split the model was fine-tuned on, columns REACTANT/PRODUCT, unmapped SMILES."""
+    f = lambda n: pd.read_csv(SPLIT / f"{n}.csv").rename(
+        columns={"REACTANT": "reactants", "PRODUCT": "product"})
+    return f("train"), f("test"), f("val")
 
 
 def main() -> int:
@@ -128,8 +131,16 @@ def main() -> int:
 
     tr, te, va = load_splits()
     print(f"USPTO-50k: train {len(tr)}, val {len(va)}, test {len(te)}", flush=True)
-    seen_patents = set(tr["id"]) | set(te["id"]) | set(va["id"])
-    print(f"{len(seen_patents)} distinct patents across the three splits", flush=True)
+    # This split carries no patent id, so the control corpus is made disjoint by PRODUCT across all
+    # three splits instead: the retriever can then never return a reaction whose product it has
+    # already seen, which is the contamination that matters for a retrieval baseline.
+    seen_products = set()
+    for frame in (tr, te, va):
+        for s in frame["product"]:
+            u = unmapped(s)
+            if u:
+                seen_products.add(u)
+    print(f"{len(seen_products)} distinct products across the three splits", flush=True)
 
     train_prod = [p for p in (unmapped(s) for s in tr["product"]) if p]
     train_fps = [gen.GetFingerprint(Chem.MolFromSmiles(p)) for p in train_prod]
@@ -141,9 +152,6 @@ def main() -> int:
     import csv as _csv
     with open(CORPUS) as fh:
         for rec in _csv.DictReader(fh):
-            if rec.get("PatentNumber") in seen_patents:
-                skipped += 1
-                continue
             if rng.random() > 0.15:
                 continue
             try:
@@ -153,11 +161,14 @@ def main() -> int:
             p = unmapped(right)
             if p is None or Chem.MolFromSmiles(p).GetNumHeavyAtoms() < 3:
                 continue
+            if p in seen_products:
+                skipped += 1
+                continue
             ctrl_prod.append(p)
             ctrl_react.append(left)
             if len(ctrl_prod) >= args.n_corpus:
                 break
-    print(f"control corpus {len(ctrl_prod)} reactions; {skipped} skipped as USPTO-50k patents",
+    print(f"control corpus {len(ctrl_prod)} reactions; {skipped} skipped as USPTO-50k products",
           flush=True)
     ctrl_fps = [gen.GetFingerprint(Chem.MolFromSmiles(p)) for p in ctrl_prod]
 
@@ -210,7 +221,7 @@ def main() -> int:
            "strata": []}
     print(f"\noverall: model top1 {acc['model']['top1'].mean():.4f} top5 {acc['model']['top5'].mean():.4f}"
           f" | control top1 {acc['control']['top1'].mean():.4f} top5 {acc['control']['top5'].mean():.4f}")
-    print("  (published ReactionT5v2 top-1 on this split is ~0.71; a much higher figure would mean"
+    print("  (published ReactionT5v2 top-1 on this split is 0.712; a much higher figure would mean"
           " the assumed split is not the one it trained on)\n")
     print(f"{'stratum':>16}{'n':>6}{'model top1':>12}{'model graded':>14}{'control graded':>16}")
     for i in range(len(BINS) - 1):
