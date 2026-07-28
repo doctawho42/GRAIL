@@ -1,0 +1,46 @@
+{
+  "seed": 0,
+  "arch": "bi",
+  "config": {
+    "train_substrates_requested": 5,
+    "eval_split": "val",
+    "eval_substrates_requested": 5,
+    "val_substrates_requested": 5,
+    "epochs": 1,
+    "top_k": 50,
+    "max_pool": 50,
+    "rule_embed_dim": 32,
+    "use_rule_prior": true,
+    "use_gen_score": true
+  },
+  "counts": {
+    "train_examples": 5,
+    "eval_examples": 5,
+    "train_substrates_with_hits": 0,
+    "eval_substrates_with_hits": 3
+  },
+  "metrics": {
+    "n_substrates": 5.0,
+    "mean_pool_size": 26.8,
+    "reranker_recall@5": 0.0,
+    "generator_recall@5": 0.23333333333333334,
+    "oracle_recall@5": 0.4333333333333334,
+    "reranker_recall@10": 0.2,
+    "generator_recall@10": 0.4333333333333334,
+    "oracle_recall@10": 0.4333333333333334,
+    "reranker_recall@12": 0.2,
+    "generator_recall@12": 0.4333333333333334,
+    "oracle_recall@12": 0.4333333333333334,
+    "reranker_recall@15": 0.23333333333333334,
+    "generator_recall@15": 0.4333333333333334,
+    "oracle_recall@15": 0.4333333333333334
+  },
+  "headline": {
+    "reranker_recall@15": 0.23333333333333334,
+    "generator_alone_recall@15": 0.4333333333333334,
+    "oracle_recall@15": 0.4333333333333334,
+    "generator_baseline_reference": 0.394,
+    "reading": "DEAD-worse"
+  },
+  "wall_seconds": 225.78249073028564
+}

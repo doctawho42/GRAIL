@@ -1,0 +1,317 @@
+{
+ "mode": "inchikey_tautomer",
+ "n_substrates": 1170,
+ "k_max": 32,
+ "k_fixed_in_advance": 5,
+ "n_boot": 10000,
+ "seed": 0,
+ "mean_emitted": {
+  "GRAIL": 8.4,
+  "SyGMa": 81.73,
+  "MetaPredictor": 10.8
+ },
+ "macro_f1_by_k": {
+  "GRAIL": [
+   0.1948,
+   0.1867,
+   0.1766,
+   0.1676,
+   0.1604,
+   0.1555,
+   0.1497,
+   0.1456,
+   0.1427,
+   0.1408,
+   0.1391,
+   0.138,
+   0.1375,
+   0.1366,
+   0.1358,
+   0.1358,
+   0.1358,
+   0.1358,
+   0.1358,
+   0.1358,
+   0.1358,
+   0.1358,
+   0.1358,
+   0.1358,
+   0.1358,
+   0.1358,
+   0.1358,
+   0.1358,
+   0.1358,
+   0.1358,
+   0.1358,
+   0.1358
+  ],
+  "SyGMa": [
+   0.0038,
+   0.1699,
+   0.207,
+   0.2173,
+   0.214,
+   0.2049,
+   0.1915,
+   0.181,
+   0.1698,
+   0.1592,
+   0.1517,
+   0.1435,
+   0.1367,
+   0.1303,
+   0.1246,
+   0.1198,
+   0.115,
+   0.1101,
+   0.1059,
+   0.1021,
+   0.0987,
+   0.0955,
+   0.0923,
+   0.0894,
+   0.0869,
+   0.0845,
+   0.0823,
+   0.0803,
+   0.0783,
+   0.0765,
+   0.0749,
+   0.0733
+  ],
+  "MetaPredictor": [
+   0.2496,
+   0.2592,
+   0.2583,
+   0.2404,
+   0.227,
+   0.2141,
+   0.2004,
+   0.1891,
+   0.1797,
+   0.1721,
+   0.167,
+   0.1642,
+   0.1629,
+   0.1622,
+   0.1618,
+   0.1617,
+   0.1617,
+   0.1617,
+   0.1617,
+   0.1617,
+   0.1617,
+   0.1617,
+   0.1617,
+   0.1617,
+   0.1617,
+   0.1617,
+   0.1617,
+   0.1617,
+   0.1617,
+   0.1617,
+   0.1617,
+   0.1617
+  ]
+ },
+ "ordering_by_k": {
+  "1": [
+   "MetaPredictor",
+   "GRAIL",
+   "SyGMa"
+  ],
+  "2": [
+   "MetaPredictor",
+   "GRAIL",
+   "SyGMa"
+  ],
+  "3": [
+   "MetaPredictor",
+   "SyGMa",
+   "GRAIL"
+  ],
+  "4": [
+   "MetaPredictor",
+   "SyGMa",
+   "GRAIL"
+  ],
+  "5": [
+   "MetaPredictor",
+   "SyGMa",
+   "GRAIL"
+  ],
+  "6": [
+   "MetaPredictor",
+   "SyGMa",
+   "GRAIL"
+  ],
+  "7": [
+   "MetaPredictor",
+   "SyGMa",
+   "GRAIL"
+  ],
+  "8": [
+   "MetaPredictor",
+   "SyGMa",
+   "GRAIL"
+  ],
+  "9": [
+   "MetaPredictor",
+   "SyGMa",
+   "GRAIL"
+  ],
+  "10": [
+   "MetaPredictor",
+   "SyGMa",
+   "GRAIL"
+  ],
+  "11": [
+   "MetaPredictor",
+   "SyGMa",
+   "GRAIL"
+  ],
+  "12": [
+   "MetaPredictor",
+   "SyGMa",
+   "GRAIL"
+  ],
+  "13": [
+   "MetaPredictor",
+   "GRAIL",
+   "SyGMa"
+  ],
+  "14": [
+   "MetaPredictor",
+   "GRAIL",
+   "SyGMa"
+  ],
+  "15": [
+   "MetaPredictor",
+   "GRAIL",
+   "SyGMa"
+  ],
+  "16": [
+   "MetaPredictor",
+   "GRAIL",
+   "SyGMa"
+  ],
+  "17": [
+   "MetaPredictor",
+   "GRAIL",
+   "SyGMa"
+  ],
+  "18": [
+   "MetaPredictor",
+   "GRAIL",
+   "SyGMa"
+  ],
+  "19": [
+   "MetaPredictor",
+   "GRAIL",
+   "SyGMa"
+  ],
+  "20": [
+   "MetaPredictor",
+   "GRAIL",
+   "SyGMa"
+  ],
+  "21": [
+   "MetaPredictor",
+   "GRAIL",
+   "SyGMa"
+  ],
+  "22": [
+   "MetaPredictor",
+   "GRAIL",
+   "SyGMa"
+  ],
+  "23": [
+   "MetaPredictor",
+   "GRAIL",
+   "SyGMa"
+  ],
+  "24": [
+   "MetaPredictor",
+   "GRAIL",
+   "SyGMa"
+  ],
+  "25": [
+   "MetaPredictor",
+   "GRAIL",
+   "SyGMa"
+  ],
+  "26": [
+   "MetaPredictor",
+   "GRAIL",
+   "SyGMa"
+  ],
+  "27": [
+   "MetaPredictor",
+   "GRAIL",
+   "SyGMa"
+  ],
+  "28": [
+   "MetaPredictor",
+   "GRAIL",
+   "SyGMa"
+  ],
+  "29": [
+   "MetaPredictor",
+   "GRAIL",
+   "SyGMa"
+  ],
+  "30": [
+   "MetaPredictor",
+   "GRAIL",
+   "SyGMa"
+  ],
+  "31": [
+   "MetaPredictor",
+   "GRAIL",
+   "SyGMa"
+  ],
+  "32": [
+   "MetaPredictor",
+   "GRAIL",
+   "SyGMa"
+  ]
+ },
+ "distinct_orderings": [
+  [
+   "MetaPredictor",
+   "GRAIL",
+   "SyGMa"
+  ],
+  [
+   "MetaPredictor",
+   "SyGMa",
+   "GRAIL"
+  ]
+ ],
+ "paired_at_k_fixed": {
+  "GRAIL-SyGMa": {
+   "delta": -0.0536,
+   "ci95": [
+    -0.0676,
+    -0.0391
+   ],
+   "excludes_zero": true
+  },
+  "GRAIL-MetaPredictor": {
+   "delta": -0.0666,
+   "ci95": [
+    -0.0825,
+    -0.0511
+   ],
+   "excludes_zero": true
+  },
+  "SyGMa-MetaPredictor": {
+   "delta": -0.013,
+   "ci95": [
+    -0.0237,
+    -0.0028
+   ],
+   "excludes_zero": true
+  }
+ }
+}

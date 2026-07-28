@@ -1,0 +1,101 @@
+{
+ "mode": "inchikey_tautomer",
+ "k_max": 30,
+ "methods": {
+  "GRAIL": {
+   "n_substrates": 1170,
+   "k_global_best": 1,
+   "macro_f1_global": 0.1948,
+   "macro_f1_oracle": 0.2884,
+   "headroom": 0.0936,
+   "headroom_relative": 0.48,
+   "kstar": {
+    "mean": 1.8,
+    "sd": 1.95,
+    "median": 1,
+    "min": 1,
+    "max": 14,
+    "frac_at_1": 0.758,
+    "frac_le_3": 0.882
+   },
+   "kstar_corr_with_n_ref": 0.254,
+   "kstar_corr_with_n_pred": 0.231
+  },
+  "SyGMa": {
+   "n_substrates": 1170,
+   "k_global_best": 4,
+   "macro_f1_global": 0.2173,
+   "macro_f1_oracle": 0.338,
+   "headroom": 0.1207,
+   "headroom_relative": 0.556,
+   "kstar": {
+    "mean": 3.78,
+    "sd": 3.65,
+    "median": 3,
+    "min": 1,
+    "max": 25,
+    "frac_at_1": 0.29,
+    "frac_le_3": 0.629
+   },
+   "kstar_corr_with_n_ref": 0.34,
+   "kstar_corr_with_n_pred": 0.043
+  },
+  "MetaPredictor": {
+   "n_substrates": 1170,
+   "k_global_best": 2,
+   "macro_f1_global": 0.2592,
+   "macro_f1_oracle": 0.4348,
+   "headroom": 0.1755,
+   "headroom_relative": 0.677,
+   "kstar": {
+    "mean": 2.76,
+    "sd": 2.6,
+    "median": 1,
+    "min": 1,
+    "max": 16,
+    "frac_at_1": 0.513,
+    "frac_le_3": 0.739
+   },
+   "kstar_corr_with_n_ref": 0.475,
+   "kstar_corr_with_n_pred": 0.112
+  },
+  "BioTransformer": {
+   "n_substrates": 150,
+   "k_global_best": 3,
+   "macro_f1_global": 0.183,
+   "macro_f1_oracle": 0.3214,
+   "headroom": 0.1384,
+   "headroom_relative": 0.756,
+   "kstar": {
+    "mean": 3.61,
+    "sd": 4.08,
+    "median": 1,
+    "min": 1,
+    "max": 20,
+    "frac_at_1": 0.513,
+    "frac_le_3": 0.7
+   },
+   "kstar_corr_with_n_ref": 0.352,
+   "kstar_corr_with_n_pred": 0.4
+  },
+  "MetaTrans": {
+   "n_substrates": 150,
+   "k_global_best": 2,
+   "macro_f1_global": 0.2846,
+   "macro_f1_oracle": 0.4317,
+   "headroom": 0.147,
+   "headroom_relative": 0.517,
+   "kstar": {
+    "mean": 2.94,
+    "sd": 2.81,
+    "median": 2,
+    "min": 1,
+    "max": 15,
+    "frac_at_1": 0.493,
+    "frac_le_3": 0.707
+   },
+   "kstar_corr_with_n_ref": 0.381,
+   "kstar_corr_with_n_pred": 0.197
+  }
+ }
+}

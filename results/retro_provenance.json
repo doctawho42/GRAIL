@@ -1,0 +1,68 @@
+{
+ "n_a": 30000,
+ "n_b": 4000,
+ "n_signatures_a": 25505,
+ "bins": [
+  0.0,
+  0.3,
+  0.4,
+  0.5,
+  0.6,
+  1.01
+ ],
+ "seed": 0,
+ "strata": [
+  {
+   "lo": 0.0,
+   "hi": 0.3,
+   "n": 144,
+   "coverage": 0.0556,
+   "formula_coverage": 0.5694
+  },
+  {
+   "lo": 0.3,
+   "hi": 0.4,
+   "n": 884,
+   "coverage": 0.0577,
+   "formula_coverage": 0.6833
+  },
+  {
+   "lo": 0.4,
+   "hi": 0.5,
+   "n": 1052,
+   "coverage": 0.0941,
+   "formula_coverage": 0.6911
+  },
+  {
+   "lo": 0.5,
+   "hi": 0.6,
+   "n": 848,
+   "coverage": 0.1439,
+   "formula_coverage": 0.7075
+  },
+  {
+   "lo": 0.6,
+   "hi": 1.01,
+   "n": 1072,
+   "coverage": 0.4478,
+   "formula_coverage": 0.7379
+  }
+ ],
+ "slope": {
+  "value": 1.0713,
+  "ci95": [
+   1.0109,
+   1.1289
+  ],
+  "excludes_zero": true
+ },
+ "corr": 0.5201,
+ "formula_slope": {
+  "value": 0.2486,
+  "ci95": [
+   0.1805,
+   0.3159
+  ],
+  "excludes_zero": true
+ }
+}

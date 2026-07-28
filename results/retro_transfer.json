@@ -1,0 +1,90 @@
+{
+ "model": "sagawa/ReactionT5v2-retrosynthesis-USPTO_50k",
+ "n": 500,
+ "beams": 5,
+ "bins": [
+  0.0,
+  0.3,
+  0.4,
+  0.5,
+  0.6,
+  1.01
+ ],
+ "n_train": 40029,
+ "n_control_corpus": 120000,
+ "overall": {
+  "model": {
+   "top1": 0.722,
+   "top5": 0.906,
+   "graded": 0.968
+  },
+  "control": {
+   "top1": 0.0,
+   "top5": 0.002,
+   "graded": 0.4437
+  }
+ },
+ "strata": [
+  {
+   "lo": 0.3,
+   "hi": 0.4,
+   "n": 53,
+   "model_top1": 0.6038,
+   "model_graded": 0.9509,
+   "control_graded": 0.4021
+  },
+  {
+   "lo": 0.4,
+   "hi": 0.5,
+   "n": 109,
+   "model_top1": 0.7339,
+   "model_graded": 0.9745,
+   "control_graded": 0.4249
+  },
+  {
+   "lo": 0.5,
+   "hi": 0.6,
+   "n": 132,
+   "model_top1": 0.697,
+   "model_graded": 0.9756,
+   "control_graded": 0.4556
+  },
+  {
+   "lo": 0.6,
+   "hi": 1.01,
+   "n": 196,
+   "model_top1": 0.7806,
+   "model_graded": 0.9636,
+   "control_graded": 0.4625
+  }
+ ],
+ "slopes": {
+  "model_top1": {
+   "slope": 0.3257,
+   "ci95": [
+    0.0525,
+    0.6077
+   ],
+   "excludes_zero": true,
+   "mean": 0.722
+  },
+  "model_graded": {
+   "slope": -0.0461,
+   "ci95": [
+    -0.155,
+    0.0544
+   ],
+   "excludes_zero": false,
+   "mean": 0.968
+  },
+  "control_graded": {
+   "slope": 0.1337,
+   "ci95": [
+    0.022,
+    0.2471
+   ],
+   "excludes_zero": true,
+   "mean": 0.4437
+  }
+ }
+}

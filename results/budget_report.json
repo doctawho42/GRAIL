@@ -1,0 +1,271 @@
+{
+  "meta": {
+    "plan": "04-01 Task 1",
+    "generated_wall_seconds": 233.76732993125916,
+    "top_k": 200,
+    "max_pool": 100,
+    "k_for_selection": 50,
+    "cold_fraction_observed": 0.9991452991452991,
+    "n_cold_sampled": 12,
+    "n_test": 1246,
+    "n_val": 1028
+  },
+  "term_a_cold_poolbuild_seconds_dist": {
+    "n": 12,
+    "median": 4.589948166452814,
+    "p90": 13.360299499938264,
+    "p99": 19.76124683301896,
+    "max": 19.76124683301896,
+    "mean": 6.406181673402898,
+    "per_substrate": [
+      {
+        "smiles": "CC(C)O",
+        "heavy_atoms": 4,
+        "pool_size": 90,
+        "seconds": 5.025969791924581
+      },
+      {
+        "smiles": "C=C(C)C1CC=C(C)C(O)C1",
+        "heavy_atoms": 11,
+        "pool_size": 100,
+        "seconds": 1.8962501250207424
+      },
+      {
+        "smiles": "OC1(Cc2ccccc2)CCCCCC1",
+        "heavy_atoms": 15,
+        "pool_size": 100,
+        "seconds": 3.2685910830041394
+      },
+      {
+        "smiles": "Brc1ccc(Oc2ccc(Br)cc2Br)c(Br)c1",
+        "heavy_atoms": 17,
+        "pool_size": 99,
+        "seconds": 13.360299499938264
+      },
+      {
+        "smiles": "ClC1=C(Cl)C2(Cl)OC2C(Cl)=C1c1cc(Cl)c(Cl)cc1Cl",
+        "heavy_atoms": 20,
+        "pool_size": 100,
+        "seconds": 5.129442415898666
+      },
+      {
+        "smiles": "CC(O)=Nc1ccc(OC(=O)c2ccc(CN)cc2)cc1",
+        "heavy_atoms": 21,
+        "pool_size": 100,
+        "seconds": 3.1407418330200016
+      },
+      {
+        "smiles": "COc1ccc2nc(SCc3ncc(C)c(OC)c3C)[nH]c2c1",
+        "heavy_atoms": 23,
+        "pool_size": 100,
+        "seconds": 4.153926540981047
+      },
+      {
+        "smiles": "N#CC(O)C(C1CCC(O)C1)n1cc(-c2nc[nH]c3nccc2-3)cn1",
+        "heavy_atoms": 25,
+        "pool_size": 100,
+        "seconds": 7.915801958064549
+      },
+      {
+        "smiles": "CC(=O)OCC1=C(C(=O)O)N2C(=O)C(N=C(O)C(N)c3ccccc3)C2SC1",
+        "heavy_atoms": 28,
+        "pool_size": 64,
+        "seconds": 3.050747291999869
+      },
+      {
+        "smiles": "CC(C)OC(=O)Oc1ccc2c3c1OC1C(=O)CCC4(O)C(C2)N(CC2CC2)CCC314",
+        "heavy_atoms": 31,
+        "pool_size": 100,
+        "seconds": 1.3466697499388829
+      },
+      {
+        "smiles": "Cc1ccc(C(=O)OCc2ccc(C(CN)C(=O)Nc3ccc4cnccc4c3)cc2)c(C)c1",
+        "heavy_atoms": 34,
+        "pool_size": 100,
+        "seconds": 8.824492958025075
+      },
+      {
+        "smiles": "CS(=O)(=O)CCNC(O)c1ccc(-c2ccc3ncnc(Nc4ccc(OCc5cccc(F)c5)c(Cl)c4)c3c2)o1",
+        "heavy_atoms": 41,
+        "pool_size": 99,
+        "seconds": 19.76124683301896
+      }
+    ]
+  },
+  "term_b_selection": {
+    "n_pools_timed": 12,
+    "pool_size_dist": {
+      "n": 12,
+      "median": 100.0,
+      "p90": 100,
+      "p99": 100,
+      "max": 100,
+      "mean": 96.0
+    },
+    "temperature_topp_per_knobpoint_s": {
+      "n": 36,
+      "median": 0.012533438042737544,
+      "p90": 0.017439750023186207,
+      "p99": 0.020004292018711567,
+      "max": 0.020004292018711567,
+      "mean": 0.012088448071153834
+    },
+    "dpp_mmr_kernel_build_per_pool_s": {
+      "n": 12,
+      "median": 0.029272290994413197,
+      "p90": 0.038483875105157495,
+      "p99": 0.05037420801818371,
+      "max": 0.05037420801818371,
+      "mean": 0.0296754303368895
+    },
+    "dpp_per_knobpoint_over_cached_kernel_s": {
+      "n": 48,
+      "median": 0.025906374969054013,
+      "p90": 0.03132916707545519,
+      "p99": 0.04653262498322874,
+      "max": 0.04653262498322874,
+      "mean": 0.025076470543960266
+    },
+    "mmr_per_knobpoint_over_cached_kernel_s": {
+      "n": 60,
+      "median": 0.025830958038568497,
+      "p90": 0.03045258403290063,
+      "p99": 0.03366195794660598,
+      "max": 0.035838167066685855,
+      "mean": 0.024460598554772634
+    },
+    "knob_grid": {
+      "temperature_topp": [
+        [
+          1.0,
+          0.9
+        ],
+        [
+          0.5,
+          0.95
+        ],
+        [
+          2.0,
+          1.0
+        ]
+      ],
+      "dpp_theta": [
+        0.5,
+        1.0,
+        2.0,
+        4.0
+      ],
+      "mmr_lam": [
+        0.0,
+        0.25,
+        0.5,
+        0.75,
+        1.0
+      ]
+    }
+  },
+  "term_c_gflownet_train": {
+    "basis": "observed running-ablation pace at n300: 25.0-30.0 min/epoch x 15 epochs (GIVEN)",
+    "per_seed_hours_expected": 6.875,
+    "per_seed_hours_band": [
+      3.4375,
+      10.3125
+    ],
+    "n_seeds": 3,
+    "total_hours_expected": 20.625,
+    "single_point": true,
+    "caveat": "SINGLE-POINT estimate: only the n300 epoch pace is logged; no clean n800 epoch-pace second point is available for a slope, so the full-train-scale cost is a linear-in-epochs extrapolation at n300 pace with a +/-50% band. If the headline trains at a LARGER substrate count, per-epoch cost grows with the frontier-expansion work per epoch and this UNDER-estimates -- the band's high side is the planning number.",
+    "total_hours_band": [
+      10.3125,
+      30.9375
+    ]
+  },
+  "term_d_startup": {
+    "bundle_sdf_standardization_s": 111.0,
+    "reranker_warmstart_s": 125.0,
+    "generator_load_s": 67.1510752090253,
+    "generator_load_measured": true,
+    "total_s": 303.1510752090253
+  },
+  "extrapolation": {
+    "n_test": 1246,
+    "n_val": 1028,
+    "n_seeds": 3,
+    "total_pool_substrates": 6822,
+    "gloryx_n": 37,
+    "term_a_poolbuild": {
+      "stratified_mean_s_per_substrate": 6.406181673402898,
+      "main_hours": 12.13971427109849,
+      "gloryx_hours": 0.19752393492992268,
+      "total_hours": 12.337238206028413
+    },
+    "term_b_selection": {
+      "temperature_topp_hours": 0.06872282728450956,
+      "dpp_mmr_kernel_build_hours": 0.056234940488405605,
+      "dpp_perknob_hours": 0.1900796467232188,
+      "mmr_perknob_hours": 0.2317641713064707,
+      "total_hours": 0.5468015858026047,
+      "knob_grid_sizes": {
+        "temp": 3,
+        "dpp": 4,
+        "mmr": 5
+      }
+    },
+    "term_c_gflownet": {
+      "total_hours_expected": 20.625,
+      "total_hours_band": [
+        10.3125,
+        30.9375
+      ]
+    },
+    "term_d_startup": {
+      "local_hours_once": 0.08420863200250703,
+      "per_container_hours": 0.08420863200250703
+    },
+    "local_serial_hours": {
+      "expected": 33.59324842383352,
+      "band": [
+        23.280748423833526,
+        43.90574842383352
+      ]
+    },
+    "modal_parallel_hours_band": {
+      "min": 8.569713605981384,
+      "expected": 9.248554003899695,
+      "max": 10.832514932375751,
+      "assumed_container_count": 8,
+      "assumed_preempt_rate_per_hour_band": [
+        0.0,
+        0.15,
+        0.5
+      ],
+      "assumed_reload_min_per_preemption": 4.0,
+      "note": "the observed dominant Modal uncertainty this session IS preemption frequency; the max band is the planning number."
+    },
+    "modal_usd_band": {
+      "min": 75.41347973263619,
+      "expected": 81.38727523431733,
+      "max": 95.32613140490662,
+      "assumed_rate_usd_per_container_hour": 1.1
+    },
+    "pool_cache_gb_estimate": {
+      "one_pool_bytes": 3976,
+      "total_gb": 0.025261446833610535
+    }
+  },
+  "recommendation": {
+    "recommendation": "local_feasible",
+    "reason": "local-serial high-band 43.9h <= ceiling 48.0h and disk 0.03GB <= 100.0GB",
+    "ceilings": {
+      "hours": 48.0,
+      "usd": 200.0,
+      "gb": 100.0
+    },
+    "measured_against": {
+      "local_serial_high_band_hours": 43.90574842383352,
+      "modal_max_band_hours": 10.832514932375751,
+      "modal_max_usd": 95.32613140490662,
+      "pool_cache_gb": 0.025261446833610535
+    }
+  }
+}
