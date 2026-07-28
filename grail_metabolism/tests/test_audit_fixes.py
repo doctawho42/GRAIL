@@ -436,3 +436,25 @@ def test_propensity_weighting_upweights_rare_rules_and_is_off_by_default():
     assert not torch.isclose(flat, scored), "supplying propensities must change the loss"
     assert torch.isclose(obj(logits, targets, mask, pos_w, torch.ones(5)), flat), \
         "unit propensities must reproduce constant weighting exactly"
+
+
+def test_return_scores_does_not_change_the_deployed_output():
+    """The scored dump must be the deployed ranking, not a reimplementation of it.
+
+    A per-candidate score dump is only usable for calibration work if it is the same list the
+    pipeline returns, in the same order. Reimplementing the ranking in a script is exactly how this
+    codebase has produced numbers that disagree with each other. This pins that return_scores is a
+    projection of the default path: same candidates, same order, scores attached.
+    """
+    import inspect
+
+    from grail_metabolism.model.wrapper import ModelWrapper
+
+    src = inspect.getsource(ModelWrapper.generate)
+    # one ranked list, one dedup loop, one truncation -- the scored branch must sit inside it
+    assert src.count("for candidate, combined, filter_score, generator_score in ranked_candidates") == 1, \
+        "scored output must read the same ranked list as the default path"
+    assert src.count("if cap is not None and len(ranked) >= cap") == 1, \
+        "a second truncation would let the scored dump diverge from the deployed output"
+    assert inspect.signature(ModelWrapper.generate).parameters["return_scores"].default is False, \
+        "return_scores must be opt-in so the deployed path is untouched"

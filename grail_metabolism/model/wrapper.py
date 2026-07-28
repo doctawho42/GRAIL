@@ -117,6 +117,7 @@ class ModelWrapper:
         som_beta: Optional[float] = None,
         som_aggregation: str = "max",
         filter_candidate_cap: Optional[int] = None,
+        return_scores: bool = False,
     ) -> List[str]:
         # Multi-step beam search only when explicitly requested with depth>1; otherwise
         # the exact single-step path below runs unchanged (byte-identical back-compat).
@@ -233,7 +234,7 @@ class ModelWrapper:
         seen = set()
         ranked = []
         cap = max_output if (max_output is not None and max_output > 0) else None
-        for candidate, _, _, _ in ranked_candidates:
+        for candidate, combined, filter_score, generator_score in ranked_candidates:
             try:
                 key = _tautomer_inchikey(candidate)
             except Exception:
@@ -241,7 +242,11 @@ class ModelWrapper:
             if key in seen:
                 continue
             seen.add(key)
-            ranked.append(candidate)
+            # return_scores carries the ranking scores out with the candidates they belong to.
+            # It reads off the same list in the same order, so a scored dump cannot drift from
+            # the deployed output; the default path is unchanged.
+            ranked.append((candidate, float(combined), float(filter_score), float(generator_score))
+                          if return_scores else candidate)
             if cap is not None and len(ranked) >= cap:
                 break
         return ranked
