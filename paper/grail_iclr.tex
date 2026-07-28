@@ -128,9 +128,9 @@ F1 rather than recall makes the leader the straggler, and the output budget. Tha
 metric choices can reorder leaderboards is established in other fields; that this field's rankings
 turn on two undeclared ones is not.
 
-We release the bundle the protocol needs rather than a model: the leakage-audited split and its
-audit report, the re-scoring harness with all five criteria, every method's frozen predictions under
-each, and GRAIL's checkpoints. Adding a sixth method needs its ranked output and nothing else.
+We release the bundle the protocol needs rather than a model: the audited split, the re-scoring
+harness with all five criteria, every method's frozen predictions, and GRAIL's checkpoints. Adding a
+sixth method needs its ranked output and nothing else.
 
 \section{Related Work}
 \label{sec:related}
@@ -397,10 +397,10 @@ MetaPredictor  & & 0.362 & 0.504 & 0.504 & & $+0.142$ $[+0.079,+0.215]$ \\
 \end{center}
 \end{table}
 
-\paragraph{Primary endpoint.} The endpoint is the \emph{differential} sensitivity, not any individual reversal: the protocol
-$\times$ method interaction, how much more one method gains from a more tolerant criterion than
-another, with a paired bootstrap over substrates ($10{,}000$ resamples). Every method gains under a
-more tolerant criterion, so only the differential can reorder anything. The design was fixed before
+\paragraph{Primary endpoint.} The endpoint is the \emph{differential} sensitivity, not any individual
+reversal: the protocol $\times$ method interaction, with a paired bootstrap over substrates
+($10{,}000$ resamples). Every method gains under a more tolerant criterion, so only the differential
+can reorder anything. The design was fixed before
 the data, the five criteria named and the re-scoring of frozen predictions specified twelve days
 before the first result; the estimator was not, the differential and the paired bootstrap being
 chosen at analysis time. We correct for multiplicity: under Holm--Bonferroni at
@@ -409,19 +409,15 @@ the family is taken conservatively as all ten pairs the five-method table admits
 pairs are significant along two protocol axes, BioTransformer gaining \interA\ \interAci\ more than
 GRAIL from canonical$\rightarrow$tautomer and SyGMa \interB\ \interBci\ more than MetaTrans from
 canonical$\rightarrow$InChIKey. The convention is a \textbf{method-dependent confounder}, not a
-neutral scoring choice.
-
-\paragraph{Two reversals follow, neither individually significant.} Two pairs exchange places
-between criteria on the shared subset, one non-monotonically because MetaTrans alone emits isomeric
-SMILES. Every pairwise $\Delta$ there spans zero at $n=\nshared$ (Appendix~\ref{app:xdomain}), so
-the interaction is established and the reversals only illustrate it.
+neutral scoring choice. Two pairs do exchange places between criteria on this subset, though every
+pairwise $\Delta$ spans zero at $n=\nshared$ (Appendix~\ref{app:xdomain}): the interaction is
+established, the reversals illustrate it.
 
 \paragraph{External replication.} The results above live on a $\nshared$-substrate subset of our own
 split, so we repeated the analysis on the field's de-facto external hold-out, the \nglory\ GLORYx
-drugs \citep{de_Bruyn_Kops_2020}, whose own tool is not scored here for want of runnable weights. The set is external for three of the four methods
-and not for ours, which we checked late: $19$ of the $37$ drugs are substrates in GRAIL's training
-split and $5$ more in validation, so GRAIL is reported on the $13$ unseen ones. The other three do
-not train on this corpus, so restricting them would cost power for nothing.
+drugs \citep{de_Bruyn_Kops_2020}, whose own tool is not scored here for want of runnable weights. The set is external for three of the four methods and
+not for ours, which we checked late: $19$ of the $37$ drugs are in GRAIL's training split and $5$ in
+validation, so GRAIL is reported on the $13$ unseen; the others do not train on this corpus.
 
 The result this section rests on involves neither contaminated arm. Under strict InChIKey
 SyGMa leads MetaPredictor by a \emph{significant} $-0.130$ $[-0.196,-0.065]$; one rung of tolerance
@@ -432,6 +428,19 @@ with SyGMa; the one between BioTransformer and GRAIL does not, and we withdraw i
 (Appendix~\ref{app:xdomain}).
 
 
+
+\paragraph{The criterion moves human agreement, and the benchmark is near its ceiling.} The
+strongest evidence for declaring the criterion involves no model. Twenty-five external drugs are
+independently curated by our corpus too, so the two metabolite lists compare as a prediction does to
+a reference: the two expert curations of one drug agree at a Jaccard of $0.075$ under canonical
+matching and $0.406$ under the tautomer-aware default, on the same drugs either way. Most of what
+looks like disagreement about observed chemistry is disagreement about notation.
+
+They also bound what the benchmark registers. Scored against the corpus annotation with the same
+matcher, an independent curation recovers $0.539$ $[0.439,0.643]$ of it and MetaPredictor $0.562$
+$[0.443,0.676]$, so unretrieved references are not all model error. What has not converged is output
+size: the curation spends $6.0$ metabolites, the model $10.6$, SyGMa $95.9$
+(Appendix~\ref{app:xdomain}).
 
 \paragraph{Mechanism.} The spread tracks how far a method's outputs diverge
 \emph{representationally} from the references it is scored against, and the intermediate column
@@ -444,6 +453,41 @@ not of the criterion. In retrosynthesis, whose references are canonical and ster
 explicit, the same criteria span about $0.02$ (Appendix~\ref{app:xdomain}).
 
 
+
+
+\begin{table}[!htbp]
+\caption{Nine diagnostic measurements, each attached to the factor it constrains; sample sizes
+differ between rows.}
+\label{tab:levers}
+\begin{center}
+\footnotesize
+\begin{tabular}{p{4.2cm}p{1.4cm}p{6.6cm}}
+\toprule
+\textbf{measurement} & \textbf{factor} & \textbf{result} \\
+\midrule
+learned selection against a frequency prior & selection &
+$0.266$ against $0.410$, $\Delta = -0.144$ $[-0.196,-0.095]$ ($n{=}245$) \\
+selection breadth, 30 to 300 rules & selection &
+recall $0.352 \to 0.413$; pool coverage $0.482 \to 0.608$ ($n{=}245$) \\
+training set, 2{,}418 to 4{,}787 substrates & selection &
+recall $0.330 \to 0.334$, inside the $\pm0.010$ seed spread \\
+depth-2 rule application & coverage &
+ceiling $+0.012$, at $8.5\times$ the candidate cost ($n{=}150$) \\
+composition of the uncovered set & coverage &
+$26.9\%$ of references outside the bank; no mass bin exceeds $6\%$ of it ($n{=}500$) \\
+site-of-metabolism prior & ranking &
+$+0.011$ at the best of five weightings, itself chosen here ($n{=}245$) \\
+abstention on filter score & ranking &
+precision never above $0.123$; recall $0.388 \to 0.041$ ($n{=}\ntest$) \\
+propensity-scored selection loss & selection &
+$0.249$ against $0.266$; deficit to the prior widens to $-0.161$ $[-0.215,-0.107]$ ($n{=}245$) \\
+similarity-to-training stratification & coverage &
+bank coverage rises $0.712 \to 0.819$ with similarity; an untrained rule engine degrades as fast as
+the learned ones ($n{=}\ntest$) \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table}
 
 \subsection{The metric is a second free parameter, and the decomposition predicts it}
 \label{sec:metric}
@@ -499,54 +543,20 @@ the references do not support (Appendix~\ref{app:props}).
 
 
 
-\begin{table}[!htbp]
-\caption{Nine diagnostic measurements, each attached to the factor it constrains. Sample sizes
-differ between rows.}
-\label{tab:levers}
-\begin{center}
-\footnotesize
-\begin{tabular}{p{4.2cm}p{1.4cm}p{6.6cm}}
-\toprule
-\textbf{measurement} & \textbf{factor} & \textbf{result} \\
-\midrule
-learned selection against a frequency prior & selection &
-$0.266$ against $0.410$; $\Delta = -0.144$ $[-0.196,-0.095]$ ($n{=}245$) \\
-selection breadth, 30 to 300 rules & selection &
-recall $0.352 \to 0.413$; pool coverage $0.482 \to 0.608$ ($n{=}245$) \\
-training set, 2{,}418 to 4{,}787 substrates & selection &
-recall $0.330 \to 0.334$, inside the $\pm0.010$ seed spread \\
-depth-2 rule application & coverage &
-ceiling $+0.012$, at $8.5\times$ the candidate cost ($n{=}150$) \\
-composition of the uncovered set & coverage &
-$26.9\%$ of references outside the bank; no mass bin exceeds $6\%$ of it ($n{=}500$) \\
-site-of-metabolism prior & ranking &
-$+0.011$ at the best of five weightings, itself chosen here ($n{=}245$) \\
-abstention on filter score & ranking &
-precision never above $0.123$; recall $0.388 \to 0.041$ ($n{=}\ntest$) \\
-propensity-scored selection loss & selection &
-$0.249$ against $0.266$; deficit to the prior widens to $-0.161$ $[-0.215,-0.107]$ ($n{=}245$) \\
-similarity-to-training stratification & coverage &
-bank coverage itself rises $0.712 \to 0.819$ with similarity; an untrained rule engine degrades as
-fast as the learned ones ($n{=}\ntest$) \\
-\bottomrule
-\end{tabular}
-\end{center}
-\end{table}
+
 
 \subsection{Comparison against published methods}
 \label{sec:diagnosis}
 
-Four GRAIL recall figures appear and none is interchangeable: $\realised$ is micro, the pooled ratio
-of hits to references; $\grailmacro$ is macro over the output as emitted; $0.340$ is macro after the
-harness collapses duplicates, which is what it does for every method and so is the figure used in
-any cross-method table; and $0.344\pm0.010$ is the three-seed mean of that last one
-(Appendix~\ref{app:xdomain}).
+Four GRAIL recall figures appear and none is interchangeable: $\realised$ micro, $\grailmacro$ macro
+over the output as emitted, $0.340$ macro after the harness collapses duplicates as it does for
+every method, and $0.344\pm0.010$ the three-seed mean of that last (Appendix~\ref{app:xdomain}).
 On the full clean test split GRAIL trails both published comparators: SyGMa reaches $0.572$, a
-paired difference of $-0.242$ $[-0.271,\,-0.212]$ over the $1{,}168$ common substrates, and
-MetaPredictor $0.568$. Nor does it lead at any output budget, a frontier over $k \in [1,64]$ finding
-SyGMa ahead at \emph{every} $k$ (Appendix~\ref{app:budget}), so the gap is the selection weakness
-\S\ref{sec:decomp} localises. They differ on output size besides, $8.4$ candidates against $81.7$,
-which \S\ref{sec:metric} prices --- against us.
+paired $-0.242$ $[-0.271,\,-0.212]$ over the $1{,}168$ common substrates, and MetaPredictor $0.568$.
+Nor does it lead at any output budget (Appendix~\ref{app:budget}), so the gap is the selection
+weakness \S\ref{sec:decomp} localises. They differ on output size besides, $8.4$ candidates against
+$81.7$, which \S\ref{sec:metric} prices --- against us.
+
 
 
 \subsection{Selection as extreme multi-label classification}
@@ -556,21 +566,15 @@ Since selection is the dominant shortfall we ask what makes it hard, and the ans
 rather than metabolism-specific. Choosing which of \nbank\ rules apply is \textbf{extreme
 multi-label classification} with a near-empty positive set: one to three rules per substrate carry a
 positive label, some ${\sim}0.03\%$ of the label space, while far more are applicable, so what is
-scarce is annotation rather than applicability. In that regime XMC has established that frequency
-and propensity baselines are hard to beat, which is why propensity-scored losses were introduced
-\citep{Jain_2016}; rule selection \emph{inherits} that pathology, unnamed here.
+scarce is annotation rather than applicability. In that regime frequency and propensity baselines
+are known to be hard to beat \citep{Jain_2016}, and rule selection inherits that pathology unnamed.
 
-The prediction holds. Each arm selects thirty rules and passes them through the same enumeration
-and filter: a learned-only selector reaches $0.266$ where rule-firing frequency alone reaches
-$0.410$, a paired difference of $-0.144$ $[-0.196,\,-0.095]$, $n=245$. Under the propensity model
-that governs precision above, a learner with constant unlabelled weighting recovers a distorted
-score dominated by the marginal firing rate, so the prior is Bayes-competitive here \emph{by
-construction}. The effect is selection-specific: at the
-ranking stage the learned filter beats the same prior ($0.413$ against $0.374$).
-The framing also prescribes a remedy, and it fails: inverse-propensity weighting of positives
-\citep{Jain_2016} moves the selector to $0.249$ from $0.266$, treating as an annotation artifact a
-rarity that is here substantially chemistry (Appendix~\ref{app:props}).
-
+It holds here. Each arm selects thirty rules through the same enumeration and filter: a learned
+selector reaches $0.266$ where rule-firing frequency alone reaches $0.410$, a paired $-0.144$
+$[-0.196,\,-0.095]$ at $n=245$. The effect is selection-specific, since at the ranking stage the
+learned filter beats the same prior ($0.413$ against $0.374$). The remedy the framing prescribes
+fails too: inverse-propensity weighting of positives moves the selector to $0.249$, treating as an
+annotation artifact a rarity that is here substantially chemistry (Appendix~\ref{app:props}).
 
 \subsection{What constrains each factor}
 \label{sec:evidence}
@@ -582,14 +586,13 @@ exactly one factor so that a result failing to move recall is as informative as 
 
 Six of the nine failed, and are the more useful half: rules applied twice, twice the data, a
 site-of-metabolism prior, abstention on filter score, the propensity-scored loss XMC prescribes, and
-a stratification meant to show a rule bank transfers better off distribution, where an untrained rule
-engine degrades just as fast. None works. Depth-2 buys $0.012$ of ceiling for $8.5$ times the
-candidates and doubling the data changes nothing, which is why we attribute the shortfall to the
-structure of the selection problem rather than to under-training. Abstention is sharpest: raising the
-threshold removes true and apparently false candidates alike, an unannotated candidate being a false
-positive whether or not it is real, so precision stays flat while recall collapses --- its
-\emph{level} bounded by the annotation, though \S\ref{sec:metric} shows its ordering is not. Of the rest, two locate recoverable recall at selection
-and the third characterises what the bank cannot reach in one step (Appendix~\ref{app:props}).
+a stratification meant to show a rule bank transfers better off distribution, where an untrained
+rule engine degrades just as fast. Depth-2 buys $0.012$ of ceiling for $8.5$ times the candidates
+and doubling the data changes nothing, so we attribute the shortfall to the structure of the
+selection problem rather than to under-training. Abstention is sharpest: the threshold removes true
+and apparently false candidates alike, so precision stays flat while recall collapses, its level
+bounded by the annotation. Of the rest, two locate recoverable recall at selection and the third
+characterises what the bank cannot reach in one step (Appendix~\ref{app:props}).
 
 \section{Limitations}
 \label{sec:limitations}
@@ -626,18 +629,18 @@ though they inform no headline claim and their conclusions are negative.
 \label{sec:conclusion}
 
 \looseness=-1
+\looseness=-1
 A recall figure for a rule-grounded predictor factorises exactly into what its rule base can
 express, what its selector admits, and what its ranker returns. Applied to two published systems it
 explains their ordering rather than repeating it: the wider bank converts a third of what it
 reaches, the narrower nearly all of its own, and the gap is the price of selecting.
 
 \looseness=-1
-Three undeclared parameters sit between predictions and a leaderboard position: the rule for when
-two structures are the same molecule, not neutral because methods differ in how their outputs depart
-from the references; the aggregate, under which the recall leader finishes last because a pipeline
-that selects nothing is what recall rewards and precision punishes; and the budget, which binds only
-methods emitting past it. All three belong in any report, with the coverage ceiling wherever there
-is a rule base.
+Three undeclared parameters sit between predictions and a leaderboard position: the matching rule,
+which moves how far two \emph{curators} of one drug appear to agree before it moves any model; the
+aggregate, under which the recall leader finishes last because a pipeline that selects nothing is
+what recall rewards and precision punishes; and the budget, which binds only methods emitting past
+it. All three belong in any report, with the coverage ceiling wherever a rule base exists.
 
 \subsubsection*{Reproducibility statement}
 
@@ -648,6 +651,13 @@ analysis code and the GRAIL checkpoints. Where an analysis path re-derives a dep
 two are reconciled before use rather than assumed equal: the released per-candidate score dump
 reproduces the deployed ranking on all $\ntest$ substrates, a check that caught three silent
 divergences in the path that produces it.
+
+Every set this paper treats as external or third-party has been audited for overlap with GRAIL's
+training and validation substrates, not only the one where a problem was found. The GLORYx set
+overlaps on $24$ of its $37$ drugs, $64.9\%$, and \S\ref{sec:rankflip} reports GRAIL on the $13$
+that do not; the $\nshared$-substrate shared subset overlaps on $0$ of $150$. The audit is a
+released script rather than a claim, and it is the check whose absence produced the GLORYx error:
+it is implied by none of the others reported here and had never been run.
 
 \bibliographystyle{iclr2026_conference}
 \bibliography{refs}

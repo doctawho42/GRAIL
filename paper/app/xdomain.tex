@@ -254,3 +254,39 @@ the advantage is gone; both methods are external to this corpus in the ordinary 
 We report this rather than quietly recomputing because the failure is instructive about the protocol
 the paper argues for. An audit of train-test overlap is cheap, is not implied by any of the other
 checks we run, and surfaced here only as a by-product of measuring something else.
+
+\subsection{What two independent curations of the same drug agree on}
+
+Twenty-five of the external drugs are also curated by this paper's corpus, independently, which
+makes their two metabolite lists comparable to each other in exactly the way a prediction is
+compared to a reference. Nothing in this subsection involves a model.
+
+The criterion moves that agreement by a factor of five. Under canonical SMILES matching the two
+curations of the same drug reach a Jaccard of $0.075$; under strict \textsc{inchikey} $0.145$; under
+Tanimoto$=$1, $0.239$; stereo-blind, $0.384$; and under the tautomer-aware default $0.406$. One-sided,
+the corpus recovers $0.647$ $[0.535,0.756]$ of the GLORYx list and GLORYx $0.539$ $[0.439,0.643]$ of
+the corpus list, both under the default. All figures are on the same twenty-five drugs, so none of
+this is a population effect. Two experts looking at the same chemistry appear to agree about
+one-fourteenth of it under a naive criterion and about two-fifths under a tolerant one; the
+difference is notation, not chemistry, and it is the cleanest argument in this paper for declaring
+the criterion.
+
+The same twenty-five drugs bound what the benchmark can register. Treating each curation as a
+predictor and scoring every arm against the corpus annotation with the same matcher, an independent
+expert curation recovers $0.539$ $[0.439,0.643]$ of it. MetaPredictor recovers $0.562$
+$[0.443,0.676]$, SyGMa $0.524$, BioTransformer $0.480$, GRAIL $0.338$. Against the GLORYx annotation
+instead, the corpus curation leads at $0.647$ with the best model at $0.560$, on intervals that
+again overlap. A model already recovers about as much of one source's annotation as a second expert
+source does, so the references no method retrieves cannot all be counted as model error.
+
+What has not converged is how economically that recall is bought. The curation reaches $0.539$
+emitting $6.0$ metabolites per drug; MetaPredictor needs $10.6$ for $0.562$ and SyGMa $95.9$ for
+$0.524$. On the axis \S\ref{sec:metric} identifies, models remain far from the curators they now
+match on recall.
+
+Two limits are worth stating rather than leaving to be found. Twenty-five drugs give intervals
+around $\pm0.1$, and these are drugs two sources both chose to curate, so they carry $5.7$ to $6.5$
+references each against $2.2$ across the corpus. Better-studied compounds are exactly where two
+curations have the most opportunity to agree, so $0.539$ is more likely an upper bound on
+inter-source agreement than a typical value, and the saturation it indicates is if anything
+understated.
