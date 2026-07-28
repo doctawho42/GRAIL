@@ -414,6 +414,19 @@
    "hmm"
   ]
  },
- "ordering_changed": false,
- "models_that_moved": []
+ "ordering_changed": true,
+ "models_that_moved": [
+  "combinatorial",
+  "latent_gan"
+ ],
+ "models_that_moved_by_mode": {
+  "inchikey": [],
+  "inchi_no_stereo": [
+   "latent_gan",
+   "combinatorial"
+  ],
+  "tanimoto1": [],
+  "inchikey_tautomer": []
+ },
+ "_summary_note": "ordering_changed compares every criterion against canonical; an earlier version compared only canonical against inchikey_tautomer and reported False"
 }
