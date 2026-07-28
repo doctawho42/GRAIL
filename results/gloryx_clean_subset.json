@@ -1,0 +1,119 @@
+{
+ "n_all": 37,
+ "n_clean": 13,
+ "k": 15,
+ "n_boot": 10000,
+ "seed": 0,
+ "rdkit_version": "2022.09.5",
+ "ladder": [
+  "inchikey",
+  "inchi_no_stereo",
+  "inchikey_tautomer"
+ ],
+ "recall": {
+  "BioTransformer": {
+   "inchikey": 0.287,
+   "inchi_no_stereo": 0.3088,
+   "inchikey_tautomer": 0.3088
+  },
+  "MetaPredictor": {
+   "inchikey": 0.3575,
+   "inchi_no_stereo": 0.446,
+   "inchikey_tautomer": 0.446
+  },
+  "GRAIL": {
+   "inchikey": 0.0593,
+   "inchi_no_stereo": 0.185,
+   "inchikey_tautomer": 0.2234
+  },
+  "SyGMa": {
+   "inchikey": 0.5143,
+   "inchi_no_stereo": 0.5143,
+   "inchikey_tautomer": 0.5143
+  }
+ },
+ "steps": {
+  "BioTransformer": {
+   "stereo": 0.0218,
+   "ci95": [
+    0.0,
+    0.059
+   ],
+   "excludes_zero": false
+  },
+  "MetaPredictor": {
+   "stereo": 0.0885,
+   "ci95": [
+    0.0154,
+    0.1808
+   ],
+   "excludes_zero": true
+  },
+  "GRAIL": {
+   "stereo": 0.1256,
+   "ci95": [
+    0.0282,
+    0.2385
+   ],
+   "excludes_zero": true
+  },
+  "SyGMa": {
+   "stereo": 0.0,
+   "ci95": [
+    0.0,
+    0.0
+   ],
+   "excludes_zero": false
+  }
+ },
+ "pairwise": {
+  "BioTransformer_vs_MetaPredictor": {
+   "interaction": -0.0667,
+   "ci95": [
+    -0.1564,
+    0.0
+   ],
+   "excludes_zero": false
+  },
+  "BioTransformer_vs_GRAIL": {
+   "interaction": -0.1038,
+   "ci95": [
+    -0.2231,
+    0.0
+   ],
+   "excludes_zero": false
+  },
+  "BioTransformer_vs_SyGMa": {
+   "interaction": 0.0218,
+   "ci95": [
+    0.0,
+    0.059
+   ],
+   "excludes_zero": false
+  },
+  "MetaPredictor_vs_GRAIL": {
+   "interaction": -0.0372,
+   "ci95": [
+    -0.1654,
+    0.0962
+   ],
+   "excludes_zero": false
+  },
+  "MetaPredictor_vs_SyGMa": {
+   "interaction": 0.0885,
+   "ci95": [
+    0.0154,
+    0.1808
+   ],
+   "excludes_zero": true
+  },
+  "GRAIL_vs_SyGMa": {
+   "interaction": 0.1256,
+   "ci95": [
+    0.0282,
+    0.2385
+   ],
+   "excludes_zero": true
+  }
+ }
+}

@@ -1,0 +1,320 @@
+{
+ "n_shared": 25,
+ "k": 15,
+ "arms": {
+  "corpus": {
+   "BioTransformer": {
+    "uncapped": 0.4795,
+    "ci95": [
+     0.3686,
+     0.5981
+    ],
+    "top_k": 0.4236,
+    "mean_output": 16.9,
+    "at_k6": 0.2174,
+    "at_k6_ci95": [
+     0.1455,
+     0.2941
+    ],
+    "budget_matched": 0.1934,
+    "budget_matched_ci95": [
+     0.1113,
+     0.2854
+    ],
+    "gap_uncapped": 0.0596,
+    "gap_uncapped_ci95": [
+     -0.0836,
+     0.2078
+    ],
+    "gap_at_k6": 0.2547,
+    "gap_at_k6_ci95": [
+     0.1508,
+     0.362
+    ],
+    "gap_budget_matched": 0.3456,
+    "gap_budget_matched_ci95": [
+     0.2436,
+     0.4553
+    ]
+   },
+   "MetaPredictor": {
+    "uncapped": 0.562,
+    "ci95": [
+     0.4433,
+     0.6764
+    ],
+    "top_k": 0.562,
+    "mean_output": 10.6,
+    "at_k6": 0.3945,
+    "at_k6_ci95": [
+     0.282,
+     0.5111
+    ],
+    "budget_matched": 0.3014,
+    "budget_matched_ci95": [
+     0.1946,
+     0.417
+    ],
+    "gap_uncapped": -0.023,
+    "gap_uncapped_ci95": [
+     -0.153,
+     0.1233
+    ],
+    "gap_at_k6": 0.0777,
+    "gap_at_k6_ci95": [
+     -0.0495,
+     0.2099
+    ],
+    "gap_budget_matched": 0.2376,
+    "gap_budget_matched_ci95": [
+     0.1226,
+     0.3541
+    ]
+   },
+   "GRAIL": {
+    "uncapped": 0.3379,
+    "ci95": [
+     0.2406,
+     0.4396
+    ],
+    "top_k": 0.3379,
+    "mean_output": 15,
+    "at_k6": 0.2876,
+    "at_k6_ci95": [
+     0.1976,
+     0.3849
+    ],
+    "budget_matched": 0.2841,
+    "budget_matched_ci95": [
+     0.1892,
+     0.3873
+    ],
+    "gap_uncapped": 0.2012,
+    "gap_uncapped_ci95": [
+     0.0967,
+     0.3064
+    ],
+    "gap_at_k6": 0.1845,
+    "gap_at_k6_ci95": [
+     0.0892,
+     0.2816
+    ],
+    "gap_budget_matched": 0.255,
+    "gap_budget_matched_ci95": [
+     0.1569,
+     0.3557
+    ]
+   },
+   "SyGMa": {
+    "uncapped": 0.5238,
+    "ci95": [
+     0.4092,
+     0.6382
+    ],
+    "top_k": 0.4675,
+    "mean_output": 95.9,
+    "at_k6": 0.3235,
+    "at_k6_ci95": [
+     0.2197,
+     0.4338
+    ],
+    "budget_matched": 0.2705,
+    "budget_matched_ci95": [
+     0.1784,
+     0.3752
+    ],
+    "gap_uncapped": 0.0153,
+    "gap_uncapped_ci95": [
+     -0.1175,
+     0.1534
+    ],
+    "gap_at_k6": 0.1487,
+    "gap_at_k6_ci95": [
+     0.0158,
+     0.2812
+    ],
+    "gap_budget_matched": 0.2685,
+    "gap_budget_matched_ci95": [
+     0.17,
+     0.372
+    ]
+   },
+   "GLORYx curation": {
+    "uncapped": 0.5391,
+    "ci95": [
+     0.4387,
+     0.6432
+    ],
+    "top_k": 0.5391,
+    "mean_output": 6.0,
+    "at_k6": 0.4721,
+    "at_k6_ci95": [
+     0.3872,
+     0.5605
+    ],
+    "budget_matched": 0.5391,
+    "budget_matched_ci95": [
+     0.4387,
+     0.6432
+    ]
+   }
+  },
+  "gloryx": {
+   "BioTransformer": {
+    "uncapped": 0.44,
+    "ci95": [
+     0.3094,
+     0.5773
+    ],
+    "top_k": 0.4022,
+    "mean_output": 16.9,
+    "at_k6": 0.2062,
+    "at_k6_ci95": [
+     0.1278,
+     0.2919
+    ],
+    "budget_matched": 0.1817,
+    "budget_matched_ci95": [
+     0.1085,
+     0.2603
+    ],
+    "gap_uncapped": 0.2071,
+    "gap_uncapped_ci95": [
+     0.1049,
+     0.3165
+    ],
+    "gap_at_k6": 0.3335,
+    "gap_at_k6_ci95": [
+     0.1781,
+     0.4919
+    ],
+    "gap_budget_matched": 0.4653,
+    "gap_budget_matched_ci95": [
+     0.3311,
+     0.5983
+    ]
+   },
+   "MetaPredictor": {
+    "uncapped": 0.5237,
+    "ci95": [
+     0.4088,
+     0.6416
+    ],
+    "top_k": 0.5237,
+    "mean_output": 10.6,
+    "at_k6": 0.3845,
+    "at_k6_ci95": [
+     0.2723,
+     0.5038
+    ],
+    "budget_matched": 0.3287,
+    "budget_matched_ci95": [
+     0.2297,
+     0.4357
+    ],
+    "gap_uncapped": 0.1234,
+    "gap_uncapped_ci95": [
+     0.0138,
+     0.2451
+    ],
+    "gap_at_k6": 0.1551,
+    "gap_at_k6_ci95": [
+     0.0499,
+     0.2677
+    ],
+    "gap_budget_matched": 0.3184,
+    "gap_budget_matched_ci95": [
+     0.2026,
+     0.4394
+    ]
+   },
+   "GRAIL": {
+    "uncapped": 0.3864,
+    "ci95": [
+     0.2624,
+     0.5179
+    ],
+    "top_k": 0.3864,
+    "mean_output": 15,
+    "at_k6": 0.349,
+    "at_k6_ci95": [
+     0.2181,
+     0.4911
+    ],
+    "budget_matched": 0.3207,
+    "budget_matched_ci95": [
+     0.2012,
+     0.4537
+    ],
+    "gap_uncapped": 0.2606,
+    "gap_uncapped_ci95": [
+     0.1408,
+     0.3749
+    ],
+    "gap_at_k6": 0.1907,
+    "gap_at_k6_ci95": [
+     0.0643,
+     0.314
+    ],
+    "gap_budget_matched": 0.3263,
+    "gap_budget_matched_ci95": [
+     0.1951,
+     0.4573
+    ]
+   },
+   "SyGMa": {
+    "uncapped": 0.5601,
+    "ci95": [
+     0.4319,
+     0.6892
+    ],
+    "top_k": 0.4802,
+    "mean_output": 95.9,
+    "at_k6": 0.3543,
+    "at_k6_ci95": [
+     0.2248,
+     0.4933
+    ],
+    "budget_matched": 0.3275,
+    "budget_matched_ci95": [
+     0.2228,
+     0.4459
+    ],
+    "gap_uncapped": 0.087,
+    "gap_uncapped_ci95": [
+     -0.0391,
+     0.2163
+    ],
+    "gap_at_k6": 0.1854,
+    "gap_at_k6_ci95": [
+     0.038,
+     0.3399
+    ],
+    "gap_budget_matched": 0.3196,
+    "gap_budget_matched_ci95": [
+     0.2036,
+     0.4432
+    ]
+   },
+   "corpus curation": {
+    "uncapped": 0.647,
+    "ci95": [
+     0.5351,
+     0.7556
+    ],
+    "top_k": 0.6304,
+    "mean_output": 6.5,
+    "at_k6": 0.5396,
+    "at_k6_ci95": [
+     0.4107,
+     0.6686
+    ],
+    "budget_matched": 0.647,
+    "budget_matched_ci95": [
+     0.5351,
+     0.7556
+    ]
+   }
+  }
+ }
+}

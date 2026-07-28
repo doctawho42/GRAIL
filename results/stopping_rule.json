@@ -1,0 +1,60 @@
+{
+ "n": 1166,
+ "folds": 5,
+ "seed": 0,
+ "mode": "inchikey_tautomer",
+ "macro_f1": {
+  "emitted": 0.1371,
+  "constant": 0.1955,
+  "threshold": 0.199,
+  "calibrated": 0.1994,
+  "expected_f1": 0.2081
+ },
+ "oracle": 0.291,
+ "gain_over_constant": {
+  "emitted": -0.0584,
+  "threshold": 0.0035,
+  "calibrated": 0.0039,
+  "expected_f1": 0.0126
+ },
+ "paired_vs_constant": {
+  "emitted": {
+   "delta": -0.0584,
+   "ci95": [
+    -0.0753,
+    -0.0416
+   ],
+   "excludes_zero": true
+  },
+  "threshold": {
+   "delta": 0.0035,
+   "ci95": [
+    -0.0047,
+    0.012
+   ],
+   "excludes_zero": false
+  },
+  "calibrated": {
+   "delta": 0.0039,
+   "ci95": [
+    -0.0042,
+    0.0122
+   ],
+   "excludes_zero": false
+  },
+  "expected_f1": {
+   "delta": 0.0126,
+   "ci95": [
+    0.0041,
+    0.0214
+   ],
+   "excludes_zero": true
+  }
+ },
+ "oracle_share": {
+  "emitted": -0.612,
+  "threshold": 0.037,
+  "calibrated": 0.041,
+  "expected_f1": 0.132
+ }
+}

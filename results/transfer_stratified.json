@@ -1,0 +1,160 @@
+{
+ "mode": "inchikey_tautomer",
+ "k_fixed": 5,
+ "k_recall": 15,
+ "bins": [
+  0.0,
+  0.3,
+  0.4,
+  0.5,
+  0.6,
+  1.01
+ ],
+ "n_train": 10079,
+ "n_test": 1170,
+ "strata": [
+  {
+   "lo": 0.0,
+   "hi": 0.3,
+   "n": 91,
+   "methods": {
+    "GRAIL": {
+     "f1_at_k": 0.0863,
+     "recall_at_15": 0.2004
+    },
+    "SyGMa": {
+     "f1_at_k": 0.1651,
+     "recall_at_15": 0.4325
+    },
+    "MetaPredictor": {
+     "f1_at_k": 0.1917,
+     "recall_at_15": 0.5119
+    }
+   }
+  },
+  {
+   "lo": 0.3,
+   "hi": 0.4,
+   "n": 167,
+   "methods": {
+    "GRAIL": {
+     "f1_at_k": 0.1492,
+     "recall_at_15": 0.3033
+    },
+    "SyGMa": {
+     "f1_at_k": 0.1775,
+     "recall_at_15": 0.4937
+    },
+    "MetaPredictor": {
+     "f1_at_k": 0.1905,
+     "recall_at_15": 0.5052
+    }
+   }
+  },
+  {
+   "lo": 0.4,
+   "hi": 0.5,
+   "n": 157,
+   "methods": {
+    "GRAIL": {
+     "f1_at_k": 0.1004,
+     "recall_at_15": 0.2303
+    },
+    "SyGMa": {
+     "f1_at_k": 0.179,
+     "recall_at_15": 0.4889
+    },
+    "MetaPredictor": {
+     "f1_at_k": 0.1994,
+     "recall_at_15": 0.536
+    }
+   }
+  },
+  {
+   "lo": 0.5,
+   "hi": 0.6,
+   "n": 154,
+   "methods": {
+    "GRAIL": {
+     "f1_at_k": 0.1409,
+     "recall_at_15": 0.3044
+    },
+    "SyGMa": {
+     "f1_at_k": 0.2074,
+     "recall_at_15": 0.5831
+    },
+    "MetaPredictor": {
+     "f1_at_k": 0.2445,
+     "recall_at_15": 0.5946
+    }
+   }
+  },
+  {
+   "lo": 0.6,
+   "hi": 1.01,
+   "n": 601,
+   "methods": {
+    "GRAIL": {
+     "f1_at_k": 0.1954,
+     "recall_at_15": 0.4081
+    },
+    "SyGMa": {
+     "f1_at_k": 0.2423,
+     "recall_at_15": 0.6248
+    },
+    "MetaPredictor": {
+     "f1_at_k": 0.2452,
+     "recall_at_15": 0.598
+    }
+   }
+  }
+ ],
+ "slopes": {
+  "f1": {
+   "GRAIL": {
+    "slope": 0.1582,
+    "ci95": [
+     0.1073,
+     0.21
+    ]
+   },
+   "SyGMa": {
+    "slope": 0.1658,
+    "ci95": [
+     0.1151,
+     0.213
+    ]
+   },
+   "MetaPredictor": {
+    "slope": 0.1062,
+    "ci95": [
+     0.0554,
+     0.1595
+    ]
+   }
+  },
+  "recall": {
+   "GRAIL": {
+    "slope": 0.3072,
+    "ci95": [
+     0.2051,
+     0.4101
+    ]
+   },
+   "SyGMa": {
+    "slope": 0.2933,
+    "ci95": [
+     0.1923,
+     0.3999
+    ]
+   },
+   "MetaPredictor": {
+    "slope": 0.1176,
+    "ci95": [
+     0.0142,
+     0.2179
+    ]
+   }
+  }
+ }
+}
