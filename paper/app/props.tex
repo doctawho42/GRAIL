@@ -364,14 +364,25 @@ Read at face value the slopes would say the transformer transfers best, at $+0.1
 roughly half the other two. Read correctly they say the measurement cannot support a transfer claim
 in either direction, and we make none.
 
-The caution generalises past this paper, which is why the negative is released rather than dropped.
-Stratifying a test set by similarity to training is the standard way to argue generalisation in
-molecular machine learning, and wherever a knowledge base and a training corpus share provenance the
-axis is confounded with difficulty. The detector is cheap and is the contribution here: a
-knowledge-based method that never trained. Had we run the learned methods alone we would have
-concluded from $+0.158$ against $+0.106$ that the transformer is the more robust of the two --- a
-conclusion against our own system, and therefore the kind that gets less scrutiny, resting on a
-measurement that cannot support it.
+The detector is not ours. \citet{Buttenschoen_2024} stratify a docking benchmark by maximum
+sequence identity to its training set and run never-trained classical docking alongside the learned
+methods, which is the same design. Their control comes out \emph{flat}: the classical methods score
+alike across strata while the learned ones fall on low-identity targets, so there the axis does
+measure transfer and the degradation is real. That is what makes the instrument worth using rather
+than a formality --- it returns opposite verdicts in the two domains, and a control that always
+agreed would discriminate nothing.
+
+What is ours is the negative result in this domain and the mechanism behind it. Stratifying by
+similarity to training is the standard way to argue generalisation in molecular machine learning,
+and wherever a knowledge base and a training corpus share provenance the axis is confounded with
+difficulty; \citet{Buttenschoen_2024} did not need that explanation because their control was flat.
+Adjacent evidence points the same way without closing it: retrosynthesis accuracy tracks training
+template frequency even for template-free models \citep{Tanovic_2026}, and molecular datasets cover
+structure space by study intensity rather than uniformly \citep{Kretschmer_2025}.
+
+Had we run the learned methods alone we would have concluded from $+0.158$ against $+0.106$ that the
+transformer is the more robust of the two --- a conclusion against our own system, and therefore the
+kind that attracts least scrutiny, resting on a measurement that cannot carry it.
 
 \subsection{Partial identification of the metric ordering under incomplete annotation}
 \label{app:propensity}
