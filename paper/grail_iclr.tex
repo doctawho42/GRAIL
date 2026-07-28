@@ -429,18 +429,19 @@ with SyGMa; the one between BioTransformer and GRAIL does not, and we withdraw i
 
 
 
-\paragraph{The criterion moves human agreement, and the benchmark is near its ceiling.} The
+\paragraph{The criterion moves human agreement, and that agreement bounds the benchmark.} The
 strongest evidence for declaring the criterion involves no model. Twenty-five external drugs are
 independently curated by our corpus too, so the two metabolite lists compare as a prediction does to
 a reference: the two expert curations of one drug agree at a Jaccard of $0.075$ under canonical
 matching and $0.406$ under the tautomer-aware default, on the same drugs either way. Most of what
 looks like disagreement about observed chemistry is disagreement about notation.
 
-They also bound what the benchmark registers. Scored against the corpus annotation with the same
-matcher, an independent curation recovers $0.539$ $[0.439,0.643]$ of it and MetaPredictor $0.562$
-$[0.443,0.676]$, so unretrieved references are not all model error. What has not converged is output
-size: the curation spends $6.0$ metabolites, the model $10.6$, SyGMa $95.9$
-(Appendix~\ref{app:xdomain}).
+\looseness=-1
+They also bound what the benchmark registers: an independent curation recovers only $0.539$ of the
+corpus annotation, so unretrieved references are not all model error. Whether models reach it
+depends on the budget. MetaPredictor's uncapped $0.562$ is a tie inside noise bought with $10.6$
+metabolites per drug against the curation's $6.0$; at the curation's own budget it recovers $0.301$,
+behind by $0.238$ $[0.123,0.354]$ (Appendix~\ref{app:xdomain}).
 
 \paragraph{Mechanism.} The spread tracks how far a method's outputs diverge
 \emph{representationally} from the references it is scored against, and the intermediate column

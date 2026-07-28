@@ -271,22 +271,33 @@ one-fourteenth of it under a naive criterion and about two-fifths under a tolera
 difference is notation, not chemistry, and it is the cleanest argument in this paper for declaring
 the criterion.
 
-The same twenty-five drugs bound what the benchmark can register. Treating each curation as a
-predictor and scoring every arm against the corpus annotation with the same matcher, an independent
-expert curation recovers $0.539$ $[0.439,0.643]$ of it. MetaPredictor recovers $0.562$
-$[0.443,0.676]$, SyGMa $0.524$, BioTransformer $0.480$, GRAIL $0.338$. Against the GLORYx annotation
-instead, the corpus curation leads at $0.647$ with the best model at $0.560$, on intervals that
-again overlap. A model already recovers about as much of one source's annotation as a second expert
-source does, so the references no method retrieves cannot all be counted as model error.
+Those two numbers also bound what the benchmark can register, and the bound needs no model. Neither
+curation is a predictor --- a source's list is what its inclusion criteria admitted, not an attempt
+to reconstruct the other's --- so what the pair fixes is the level at which two independent readings
+of the same chemistry coincide: $0.539$ one way, $0.647$ the other. References that no method
+retrieves cannot all be counted as model error.
 
-What has not converged is how economically that recall is bought. The curation reaches $0.539$
-emitting $6.0$ metabolites per drug; MetaPredictor needs $10.6$ for $0.562$ and SyGMa $95.9$ for
-$0.524$. On the axis \S\ref{sec:metric} identifies, models remain far from the curators they now
-match on recall.
+Where models sit against that level is a statement about budget, and the budget is the parameter
+\S\ref{sec:metric} declares. Uncapped, scored against the corpus annotation with the same matcher,
+MetaPredictor recovers $0.562$ $[0.443,0.676]$, SyGMa $0.524$, BioTransformer $0.480$, GRAIL
+$0.338$; MetaPredictor's paired gap to the curation is $-0.023$ $[-0.153,+0.123]$, a tie inside
+noise rather than a lead, and it is bought with $10.6$ metabolites per drug against the curation's
+$6.0$, SyGMa's near-tie with $95.9$. Capped instead at each drug's own curated set size --- the
+budget the curation actually spent, with the curation itself not truncated --- its $0.539$ stands
+against MetaPredictor's $0.301$, SyGMa's $0.271$, GRAIL's $0.284$ and BioTransformer's $0.193$, and
+every paired gap excludes zero (MetaPredictor $+0.238$ $[+0.123,+0.354]$, the smallest of the four).
+A fixed $k{=}6$, the curation's mean output, truncates the curation as well and points the same way
+without reaching significance: $0.472$ against $0.394$, gap $+0.078$ $[-0.050,+0.210]$. It is the
+more conservative of the two matches, since a curation asserts no ranking and the order its list is
+cut in is not one it claims.
+
+Models therefore reach curator-level recall only by spending more output than a curator does. At the
+curator's own budget they are behind by a quarter to a third of the reference set.
 
 Two limits are worth stating rather than leaving to be found. Twenty-five drugs give intervals
 around $\pm0.1$, and these are drugs two sources both chose to curate, so they carry $5.7$ to $6.5$
 references each against $2.2$ across the corpus. Better-studied compounds are exactly where two
 curations have the most opportunity to agree, so $0.539$ is more likely an upper bound on
-inter-source agreement than a typical value, and the saturation it indicates is if anything
-understated.
+inter-source agreement than a typical value. Which way that biases the ceiling we cannot say: on
+less-studied chemistry both the curations and the models have less to go on, and we have not
+measured which of the two degrades faster.
