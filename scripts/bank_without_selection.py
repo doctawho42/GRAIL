@@ -33,6 +33,7 @@ import time
 from pathlib import Path
 
 import numpy as np
+from multiprocessing import Pool
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
@@ -76,20 +77,65 @@ def _load(path, build_fn):
     return model
 
 
+# Tautomer canonicalisation is a search, not a lookup, and it dominates this script: keying SyGMa's
+# 19,487 structures for these substrates took 47 minutes on the first attempt, before a single
+# substrate had been scored. results/key_tables/inchikey_tautomer.json already holds 108,967 of them,
+# built and verified by build_key_tables.py, and covers 100% of what SyGMa needs here. Look up first,
+# compute only on a miss, and memoise -- GRAIL's wide-bank pools repeat structures across substrates.
+_TABLE = json.loads((ROOT / "results" / "key_tables" / "inchikey_tautomer.json").read_text())
+_MISS: dict = {}
+
+
 def _key(s):
+    k = _TABLE.get(s)
+    if k is not None:
+        return k
+    k = _MISS.get(s)
+    if k is not None:
+        return k
     try:
-        return _tautomer_inchikey(s)
+        k = _tautomer_inchikey(s)
     except Exception:
-        return s
+        k = s
+    _MISS[s] = k
+    return k
 
 
-def _dedup(smiles):
+def _keys_parallel(smiles, pool):
+    """Tautomer keys for a candidate list, table first and the misses farmed out.
+
+    Canonicalisation runs at roughly seven structures a second and GRAIL's wide-bank pools are
+    novel, so this is the whole cost of the script: serial keying of one 300-rule pool took longer
+    than the rest of the arm put together."""
+    out = [_TABLE.get(x) or _MISS.get(x) for x in smiles]
+    todo = [(i, x) for i, (k, x) in enumerate(zip(out, smiles)) if k is None]
+    if todo:
+        for (i, x), k in zip(todo, pool.map(_tautomer_inchikey_safe, [x for _, x in todo], 64)):
+            _MISS[x] = k
+            out[i] = k
+    return out
+
+
+def _tautomer_inchikey_safe(x):
+    try:
+        return _tautomer_inchikey(x)
+    except Exception:
+        return x
+
+
+def _dedup(smiles, cap=None, pool=None):
+    """Unique keys in rank order, stopping at cap -- beyond the largest budget they are never read."""
+    if pool is not None:
+        keys = _keys_parallel(smiles, pool)
+    else:
+        keys = [_key(s) for s in smiles]
     out, seen = [], set()
-    for s in smiles:
-        k = _key(s)
+    for k in keys:
         if k not in seen:
             seen.add(k)
             out.append(k)
+            if cap and len(out) >= cap:
+                break
     return out
 
 
@@ -145,8 +191,11 @@ def main() -> int:
         raise SystemExit(f"SyGMa predictions missing for {len(missing)} of the evaluated substrates")
 
     refs = {s: {k for k in (_key(p) for p in prods) if k} for s, prods in items}
-    sy = {s: _dedup(sygma_preds.get(s, [])) for s, _ in items}
-    print(f"SyGMa mean emitted (deduplicated): {np.mean([len(v) for v in sy.values()]):.1f}", flush=True)
+    cap = max(budgets)
+    with Pool(args.threads) as pool:
+        sy = {s: _dedup(sygma_preds.get(s, []), cap, pool) for s, _ in items}
+    print(f"SyGMa mean emitted (deduplicated): {np.mean([len(v) for v in sy.values()]):.1f} "
+          f"(key table hits {len(_TABLE)}, computed {len(_MISS)})", flush=True)
 
     rep = {"config": {**_code_version(), "max_substrates": args.max_substrates,
                       "sampling_seed": args.sampling_seed, "top_ks": top_ks, "budgets": budgets,
@@ -159,6 +208,7 @@ def main() -> int:
     idx = rng.integers(0, len(items), (N_BOOT, len(items)))
     sy_vec = {b: np.array([recall_at(sy[s], refs[s], b) for s, _ in items]) for b in budgets}
 
+    keypool = Pool(args.threads)
     for T in top_ks:
         ranked, pool_sizes, t = {}, [], time.perf_counter()
         for i, (sub, _) in enumerate(items, 1):
@@ -176,7 +226,7 @@ def main() -> int:
             fs = filt.score_batch(sub, cands) if cands else []
             order = sorted(zip(cands, [float(a) * float(d[1]) for a, d in zip(fs, det)]),
                            key=lambda x: -x[1])
-            ranked[sub] = _dedup([c for c, _ in order])
+            ranked[sub] = _dedup([c for c, _ in order], cap, keypool)
         arm = {"threshold": None if T >= 7581 else gen_threshold,
                "mean_pool": round(float(np.mean(pool_sizes)), 1),
                "mean_unique": round(float(np.mean([len(v) for v in ranked.values()])), 1),
@@ -201,6 +251,7 @@ def main() -> int:
                   f"{'SIG' if r['excludes_zero'] else 'n.s.'}", flush=True)
         rep["arms"][str(T)] = arm
 
+    keypool.close()
     Path(args.out).write_text(json.dumps(rep, indent=1))
     print(f"\nwrote {args.out}")
     return 0
