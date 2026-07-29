@@ -197,6 +197,16 @@ Two measurements witness the bound. Depth-2 application raises the ceiling by 0.
 the candidate cost. On the external GLORYx set the uncapped single-step ceiling is 0.633, and
 its references include multi-generation metabolites that no single step can reach.
 
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=0.52\textwidth]{fig_gap}
+\end{center}
+\caption{What the bank fails to reach in one step, typed by element-aware changed-bond multiset.
+Only the first group is reachable by generalising an existing template, which is what bounds the
+in-bank ceiling at $0.843$.}
+\label{fig:gap}
+\end{figure}
+
 The composition of the gap determines how much of it template generalisation could close. Typing
 each uncovered transformation by its element-aware changed-bond multiset, and comparing against
 the 4{,}417 types the bank already contains, splits the 687 uncovered test transformations into
@@ -362,6 +372,16 @@ paradigm rather than a leaderboard position, and it is testable on frozen predic
 the test split on maximum Morgan--Tanimoto similarity to any training substrate. It does not
 survive, and the way it fails is the part worth reporting.
 
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=0.52\textwidth]{fig_transfer}
+\end{center}
+\caption{The control that decides the axis. If similarity to training measured transfer, SyGMa's
+curve would be flat: it is a rule engine that never saw the training split. It falls on the same
+slope as the learned methods, so the axis is measuring how well studied a substrate is.}
+\label{fig:transfer}
+\end{figure}
+
 The design carries a control that decides whether the axis means anything at all. SyGMa is a rule
 engine that never saw the training split, so if the axis measures transfer its curve must be flat.
 It is not: SyGMa degrades at $+0.166$ on F1 and $+0.293$ on recall against GRAIL's $+0.158$ and
@@ -432,6 +452,16 @@ We check it by correcting each per-substrate precision to $\min(P_{\text{obs}}/c
 recall untouched, and recomputing macro F1 over the full split. The cap makes the correction
 conservative in the direction that matters: a method cannot be credited past certainty, and the
 method with the lowest observed precision is the one that benefits from the correction longest.
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=0.52\textwidth]{fig_propensity}
+\end{center}
+\caption{Macro F1 with each per-substrate precision corrected to $\min(P_{\text{obs}}/c,1)$, swept
+over the annotation propensity. The reported ordering holds until $c=0.055$, where SyGMa passes
+GRAIL; at that rate a substrate with three recorded metabolites would have fifty-five in truth.}
+\label{fig:propensity}
+\end{figure}
 
 \begin{center}
 \begin{tabular}{lccc}

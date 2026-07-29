@@ -318,6 +318,16 @@ Twenty-five of the external drugs are also curated by this paper's corpus, indep
 makes their two metabolite lists comparable to each other in exactly the way a prediction is
 compared to a reference. Nothing in this subsection involves a model.
 
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=0.52\textwidth]{fig_curators}
+\end{center}
+\caption{Two independent expert curations of the same twenty-five drugs, scored against each other
+under each criterion. No model is involved. The same two lists agree about one-fourteenth of their
+content under a naive rule and two-fifths under a tolerant one.}
+\label{fig:curators}
+\end{figure}
+
 The criterion moves that agreement by a factor of five. Under canonical SMILES matching the two
 curations of the same drug reach a Jaccard of $0.075$; under strict \textsc{inchikey} $0.145$; under
 Tanimoto$=$1, $0.239$; stereo-blind, $0.384$; and under the tautomer-aware default $0.406$. One-sided,

@@ -135,7 +135,8 @@ def fig_budget():
 
 
 def main() -> int:
-    for fn in (fig_decomp, fig_ladder, fig_budget):
+    for fn in (fig_decomp, fig_ladder, fig_budget, fig_transfer, fig_propensity,
+               fig_gap, fig_curators):
         info = fn()
         print(f"{fn.__name__:12} -> paper/{fn.__name__.replace('fig_', 'fig_')}.pdf   {info}")
     # the waterfall must multiply out to the recall the paper prints, or the figure is not the table
@@ -144,6 +145,97 @@ def main() -> int:
     assert abs(prod - 0.261) < 5e-4, f"waterfall product {prod:.4f} != published 0.261"
     print(f"\ncheck: GRAIL factors multiply to {prod:.4f}, published 0.261")
     return 0
+
+
+
+
+def fig_transfer():
+    """The negative control: a rule engine that never trained degrades on the same slope."""
+    d = _load("transfer_stratified")
+    strata = d["strata"]
+    x = [(s["lo"] + min(s["hi"], 1.0)) / 2 for s in strata]
+    fig, ax = plt.subplots(figsize=(3.3, 2.5))
+    colours = {"GRAIL": ACC, "SyGMa": ALT, "MetaPredictor": GREY}
+    for m in strata[0]["methods"]:
+        y = [s["methods"][m]["recall_at_15"] for s in strata]
+        ax.plot(x, y, marker="o", ms=3, lw=1.5, color=colours.get(m, GREY),
+                label=f"{m}{' (never trained)' if m == 'SyGMa' else ''}")
+    ax.set_xlabel("max Tanimoto similarity to any training substrate", fontsize=7.5)
+    ax.set_ylabel("recall@15", fontsize=8)
+    ax.tick_params(labelsize=7.5)
+    ax.legend(fontsize=6.3, frameon=False, loc="upper left")
+    for side in ("top", "right"):
+        ax.spines[side].set_visible(False)
+    fig.tight_layout(); fig.savefig(OUT / "fig_transfer.pdf"); plt.close(fig)
+    return {"strata n": [s["n"] for s in strata]}
+
+
+def fig_propensity():
+    """Where the F1 ordering would flip if the references were this incomplete."""
+    d = _load("pu_propensity_bounds")
+    grid, series = d["grid"], d["macro_f1_by_c"]
+    crit = d["crossings"]["GRAIL-SyGMa"]["critical_c"]
+    fig, ax = plt.subplots(figsize=(3.3, 2.5))
+    for m, y in series.items():
+        ax.plot(grid, y, lw=1.5, color={"GRAIL": ACC, "SyGMa": ALT}.get(m, GREY), label=m)
+    if crit:
+        ax.axvline(crit, color=GREY, lw=0.8, ls=":")
+        ax.text(crit, ax.get_ylim()[1] * 0.97, f"  flip at $c={crit}$", fontsize=6.5,
+                color=GREY, va="top")
+    ax.set_xlabel("annotation propensity $c$ (1 = references complete)", fontsize=7.5)
+    ax.set_ylabel("macro F1, corrected", fontsize=8)
+    ax.invert_xaxis(); ax.tick_params(labelsize=7.5)
+    ax.legend(fontsize=6.5, frameon=False, loc="upper left")
+    for side in ("top", "right"):
+        ax.spines[side].set_visible(False)
+    fig.tight_layout(); fig.savefig(OUT / "fig_propensity.pdf"); plt.close(fig)
+    return {"critical c": crit}
+
+
+def fig_gap():
+    """What the uncovered references are: a type the bank has, a type it lacks, or untypeable."""
+    d = _load("coverage_gap_types")
+    g, tot = d["gap"], d["uncovered_pairs"]
+    parts = [("type in bank\n(reachable by a\nmore general rule)", g["known_type"], ACC),
+             ("type absent\nfrom bank", g["novel_type"], ALT),
+             ("untypeable", g["untypeable"], GREY)]
+    fig, ax = plt.subplots(figsize=(3.3, 1.5))
+    left = 0
+    for label, v, c in parts:
+        ax.barh(0, v, left=left, color=c, alpha=0.85, edgecolor="none")
+        ax.text(left + v / 2, 0, f"{v}\n{100*v/tot:.0f}%", ha="center", va="center",
+                fontsize=7, color="white" if v > 60 else GREY)
+        left += v
+    ax.set_yticks([]); ax.set_xlim(0, tot)
+    ax.set_xlabel(f"{tot} uncovered references (of {d['covered_pairs']+tot})", fontsize=7.5)
+    ax.tick_params(labelsize=7)
+    for i, (label, v, c) in enumerate(parts):
+        ax.plot([], [], color=c, lw=5, label=label)
+    ax.legend(fontsize=6, frameon=False, loc="upper center", bbox_to_anchor=(0.5, -0.55), ncol=3)
+    for side in ("top", "right", "left"):
+        ax.spines[side].set_visible(False)
+    fig.tight_layout(); fig.savefig(OUT / "fig_gap.pdf"); plt.close(fig)
+    return {"total": tot, "in-bank ceiling": round((d["covered_pairs"]+g["known_type"])/(d["covered_pairs"]+tot), 3)}
+
+
+def fig_curators():
+    """Two expert curations of the same drugs, agreeing five times better under a tolerant rule."""
+    d = _load("annotation_agreement")["by_mode"]
+    modes = ["canonical", "inchikey", "tanimoto1", "inchi_no_stereo", "inchikey_tautomer"]
+    short = ["canon.", "InChIKey", "Tanimoto=1", "no-stereo", "tautomer"]
+    fig, ax = plt.subplots(figsize=(3.3, 2.3))
+    y = [d[m]["jaccard"] for m in modes]
+    ax.bar(range(len(modes)), y, width=0.6, color=ACC, alpha=0.85, edgecolor="none")
+    for i, v in enumerate(y):
+        ax.text(i, v + 0.012, f"{v:.3f}", ha="center", fontsize=7)
+    ax.set_xticks(range(len(modes)))
+    ax.set_xticklabels(short, fontsize=7, rotation=20, ha="right")
+    ax.set_ylabel("Jaccard between two curations", fontsize=8)
+    ax.set_ylim(0, max(y) * 1.22); ax.tick_params(labelsize=7.5)
+    for side in ("top", "right"):
+        ax.spines[side].set_visible(False)
+    fig.tight_layout(); fig.savefig(OUT / "fig_curators.pdf"); plt.close(fig)
+    return {m: d[m]["jaccard"] for m in modes}
 
 
 if __name__ == "__main__":
