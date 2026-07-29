@@ -6,7 +6,7 @@ set -euo pipefail
 
 CONDA=/opt/homebrew/bin/conda
 ENV=metapredictor
-ROOT=/Users/nikitapolomosnov/PycharmProjects/GRAIL/.claude/worktrees/hungry-pasteur-25d746
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 TIER2_IN=$ROOT/artifacts/tier2_1170
 REPO=$ROOT/artifacts/tier2/metapredictor_src
 SCRIPTS=$ROOT/scripts

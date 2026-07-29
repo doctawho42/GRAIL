@@ -1,4 +1,17 @@
 {
+  "config": {
+    "max_substrates": 250,
+    "sampling_seed": 42,
+    "split": "test",
+    "use_clean_splits": true,
+    "standardize": false,
+    "rules_path": "grail_metabolism/resources/extended_smirks.txt",
+    "candidate_top_k": 30,
+    "filter_cap": 32,
+    "max_output": 15,
+    "ckpt_dir": "artifacts/full5000_single/checkpoints",
+    "priors_generator": "artifacts/full5000_priors/checkpoints/generator.pt"
+  },
   "split": "test",
   "n": 245,
   "candidate_top_k": 30,

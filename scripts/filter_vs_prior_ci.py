@@ -28,6 +28,7 @@ import argparse
 import json
 import sys
 import time
+import pathlib
 from pathlib import Path
 
 import numpy as np
@@ -35,6 +36,15 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
+
+
+def _rel(p) -> str:
+    """Repo-relative path. Absolute paths in a committed artifact name the author's home
+    directory, which is an anonymity leak in a double-blind submission and portable to nobody."""
+    try:
+        return str(pathlib.Path(p).resolve().relative_to(ROOT))
+    except Exception:
+        return str(p)
 
 import torch
 
@@ -152,7 +162,7 @@ def main() -> int:
     rep = {"config": {"max_substrates": args.max_substrates, "sampling_seed": args.sampling_seed,
                       "top_k": args.top_k, "prior_strength": args.prior_strength,
                       "filter_cap": args.filter_cap, "max_output": args.max_output,
-                      "gen_ckpt": args.gen_ckpt, "filter_ckpt": args.filter_ckpt,
+                      "gen_ckpt": _rel(args.gen_ckpt), "filter_ckpt": _rel(args.filter_ckpt),
                       "use_clean_splits": True, "standardize": False},
            "n": len(items), "top_k": args.top_k, "match": "inchikey_tautomer",
            "max_output": args.max_output, "mean_pool_size": round(mean_pool, 1),

@@ -16,11 +16,13 @@ import subprocess
 import sys
 import tempfile
 import time
+import os
 from pathlib import Path
 from typing import Dict, List
 
 ROOT = Path(__file__).resolve().parents[1]
-BT_DIR = Path("/Users/nikitapolomosnov/PycharmProjects/GRAIL_baselines/biotransformer")
+BT_DIR = Path(os.environ.get("BIOTRANSFORMER_DIR",
+                             ROOT.parent / "GRAIL_baselines" / "biotransformer"))
 JAR = BT_DIR / "BioTransformer3.0_20230525.jar"
 
 

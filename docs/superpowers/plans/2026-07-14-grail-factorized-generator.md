@@ -16,7 +16,7 @@
 - Select on val, touch test once. Headline = tautomer-InChIKey macro recall@15 + the recall-at-precision PR frontier.
 - `make test` (`pytest grail_metabolism/tests -q`) stays green; new behavior gets a guard test in `grail_metabolism/tests/`.
 - Preserve interpretability: every prediction stays an RDKit-applied SMIRKS product with atom-level provenance.
-- Python interpreter for running: `/Users/nikitapolomosnov/anaconda3/bin/python`.
+- Python interpreter for running: `~/anaconda3/bin/python`.
 - NO Claude/AI/Co-Authored-By attribution in any commit or doc byline.
 - Decision gate (Task 6): the factorized pipeline must beat the **0.413** broad+filter baseline on the clean test with paired-bootstrap CI separation; else the contribution reframes to precision-only (abstention frontier) and Stage-4 fallback (coarse-type bank consolidation) ships instead.
 
@@ -62,7 +62,7 @@ def test_build_type_vocab_buckets_rare_rules():
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `/Users/nikitapolomosnov/anaconda3/bin/python -m pytest grail_metabolism/tests/test_reaction_types.py -q`
+Run: `~/anaconda3/bin/python -m pytest grail_metabolism/tests/test_reaction_types.py -q`
 Expected: FAIL (module not found).
 
 - [ ] **Step 3: Implement `reaction_types.py`**
@@ -71,7 +71,7 @@ Port `radius0_signature` from `scripts/redesign_gate_a.py` into `canonical_type`
 
 - [ ] **Step 4: Run tests to verify they pass**
 
-Run: `/Users/nikitapolomosnov/anaconda3/bin/python -m pytest grail_metabolism/tests/test_reaction_types.py -q`
+Run: `~/anaconda3/bin/python -m pytest grail_metabolism/tests/test_reaction_types.py -q`
 Expected: PASS (2 passed).
 
 - [ ] **Step 5: Build + commit the vocab artifact**
@@ -79,7 +79,7 @@ Expected: PASS (2 passed).
 `scripts/build_type_vocab.py` loads `results/mined_rule_catalog_v2.json`, calls `build_type_vocab`, writes `grail_metabolism/resources/coarse_type_vocab.json`, and prints `K types cover P% of train pairs`. Run it, confirm `K` is ~100–300 and coverage ≥ 80% of pairs (consistent with Gate A's 86.7%).
 
 ```bash
-/Users/nikitapolomosnov/anaconda3/bin/python scripts/build_type_vocab.py
+~/anaconda3/bin/python scripts/build_type_vocab.py
 git add grail_metabolism/model/reaction_types.py scripts/build_type_vocab.py grail_metabolism/tests/test_reaction_types.py
 git add -f grail_metabolism/resources/coarse_type_vocab.json
 git commit -m "feat(redesign): radius-0 reaction-type vocabulary + rule->type map"
@@ -119,7 +119,7 @@ def test_dense_type_and_site_labels():
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `/Users/nikitapolomosnov/anaconda3/bin/python -m pytest grail_metabolism/tests/test_factorized_data.py -q`
+Run: `~/anaconda3/bin/python -m pytest grail_metabolism/tests/test_factorized_data.py -q`
 Expected: FAIL (module not found).
 
 - [ ] **Step 3: Implement `factorized_data.py`**
@@ -128,7 +128,7 @@ Expected: FAIL (module not found).
 
 - [ ] **Step 4: Run test to verify it passes**
 
-Run: `/Users/nikitapolomosnov/anaconda3/bin/python -m pytest grail_metabolism/tests/test_factorized_data.py -q`
+Run: `~/anaconda3/bin/python -m pytest grail_metabolism/tests/test_factorized_data.py -q`
 Expected: PASS.
 
 - [ ] **Step 5: Commit**
@@ -174,7 +174,7 @@ def test_head_shapes():
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `/Users/nikitapolomosnov/anaconda3/bin/python -m pytest grail_metabolism/tests/test_factorized_model.py -q`
+Run: `~/anaconda3/bin/python -m pytest grail_metabolism/tests/test_factorized_model.py -q`
 Expected: FAIL (module not found).
 
 - [ ] **Step 3: Implement `factorized.py`**
@@ -183,7 +183,7 @@ Expected: FAIL (module not found).
 
 - [ ] **Step 4: Run test to verify it passes**
 
-Run: `/Users/nikitapolomosnov/anaconda3/bin/python -m pytest grail_metabolism/tests/test_factorized_model.py -q`
+Run: `~/anaconda3/bin/python -m pytest grail_metabolism/tests/test_factorized_model.py -q`
 Expected: PASS.
 
 - [ ] **Step 5: Commit**
@@ -214,7 +214,7 @@ git commit -m "feat(redesign): FactorizedGenerator type+site heads on shared Gra
 - [ ] **Step 6: Full training run + VAL GATE.** `scripts/train_factorized.py` loads the bundle via `workflows/data.load_dataset_bundle` (the deployed dataset config), builds the Task-2 dataset on TRAIN, trains, and on VAL computes: (a) `P(type|s)` top-N type recall vs the marginal type-frequency prior's top-N; (b) site top-3 vs Gate C's 0.807. Write `results/factorized_val.json`.
 
 ```bash
-/Users/nikitapolomosnov/anaconda3/bin/python scripts/train_factorized.py --epochs 15 2>&1 | tail -20
+~/anaconda3/bin/python scripts/train_factorized.py --epochs 15 2>&1 | tail -20
 ```
 
 **GATE:** proceed to Task 5/6 only if the learned type head **beats the type-frequency prior on val** (the direct Prop-2-escape signal). If it does not beat the prior, STOP and report — the PU degeneracy persists at the type level and Stage-4 fallback (coarse-type bank consolidation) is the outcome. Commit the checkpoint + val report (`git add -f`).
@@ -257,7 +257,7 @@ git commit -m "feat(redesign): FactorizedGenerator type+site heads on shared Gra
 - [ ] **Step 5: DECISION-GATE eval.** Run `scripts/eval_factorized.py` on the full clean test.
 
 ```bash
-/Users/nikitapolomosnov/anaconda3/bin/python scripts/eval_factorized.py 2>&1 | tail -15
+~/anaconda3/bin/python scripts/eval_factorized.py 2>&1 | tail -15
 ```
 
 Compare `recall@15` to the committed baselines: deployed **0.330**, broad+filter **0.413**, SyGMa **0.572**. **GO** (build the full Stage-3 wiring through `EnsembleWorkflow.run_bundle` behind a config flag + report the lift) **iff** it beats 0.413 with paired-bootstrap CI separation (reuse `grail_metabolism/stats.py:paired_diff_bootstrap_ci`). Otherwise reframe to the precision-only contribution (the PR frontier from Task 5) + Stage-4 fallback. Write `results/factorized_eval.json`; commit (`git add -f`).

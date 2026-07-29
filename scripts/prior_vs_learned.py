@@ -30,11 +30,21 @@ import argparse
 import json
 import sys
 import time
+import pathlib
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
+
+
+def _rel(p) -> str:
+    """Repo-relative path. Absolute paths in a committed artifact name the author's home
+    directory, which is an anonymity leak in a double-blind submission and portable to nobody."""
+    try:
+        return str(pathlib.Path(p).resolve().relative_to(ROOT))
+    except Exception:
+        return str(p)
 
 import numpy as np
 import torch
@@ -218,8 +228,8 @@ def main() -> int:
                "split": args.split, "use_clean_splits": True, "standardize": False,
                "rules_path": "grail_metabolism/resources/extended_smirks.txt",
                "candidate_top_k": args.candidate_top_k, "filter_cap": args.filter_cap,
-               "max_output": args.max_output, "ckpt_dir": args.ckpt_dir,
-               "priors_generator": args.priors_generator},
+               "max_output": args.max_output, "ckpt_dir": _rel(args.ckpt_dir),
+               "priors_generator": _rel(args.priors_generator)},
               "split": args.split, "n": len(items), "candidate_top_k": top_k, "filter_cap": cap,
               "max_output": mo, "match": "inchikey_tautomer", "sygma_recall@": SYGMA, "modes": {}}
 

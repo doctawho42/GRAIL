@@ -10,9 +10,10 @@
 set -euo pipefail
 
 # Real data files (the worktree has symlinks -> the main checkout).
-DATA="/Users/nikitapolomosnov/PycharmProjects/GRAIL/grail_metabolism/data"
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+DATA="$ROOT/grail_metabolism/data"
 # Trained generator/filter checkpoints (in this worktree's artifacts).
-CKPT="/Users/nikitapolomosnov/PycharmProjects/GRAIL/.claude/worktrees/hungry-pasteur-25d746/artifacts/full5000_priors/checkpoints"
+CKPT="$ROOT/artifacts/full5000_priors/checkpoints"
 
 echo "==> creating volumes (idempotent)"
 modal volume create grail-data      2>/dev/null || echo "   grail-data exists"

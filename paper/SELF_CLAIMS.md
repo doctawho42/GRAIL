@@ -175,11 +175,25 @@ generator threshold, calibrated thresholds from the payload) that no other check
 
 ## 7. Anonymised for double-blind
 
+Scan **everything tracked**, not the manuscript. Anonymity leaks through paths, not prose: the
+`config` blocks row 2 asks for record checkpoint locations, and an absolute one names the author's
+home directory in a committed artifact.
+
 ```bash
-grep -rniE "<author-surname>|<handle>|@gmail|github\.com/" paper/*.tex paper/app/*.tex
+git ls-files -z | xargs -0 grep -lI -E "<author-surname>|<handle>|@gmail|/Users/|/home/[a-z]" 2>/dev/null
 ```
 
-**Status: PASS.** Only hits are in the unused ICLR template file `iclr2026_conference.tex`.
+**Status: PASS as of 2026-07-29, after fixing 12 files.** The manuscript was always clean; ten
+tracked files were not. Five were result artifacts recording absolute checkpoint paths — including
+`factorized_eval.json`, cited in row 2 as the good example of config recording, and
+`filter_vs_prior_ci.json`, written the same day *for* this audit. Three were scripts with a
+hard-coded home directory, now derived from `BASH_SOURCE`/`__file__` or an environment variable; two
+were planning documents. Config blocks now store repo-relative paths.
+
+**The rows interact, and this pair inverts.** Row 2 asks artifacts to record where their inputs
+live; done naively that is exactly what breaks this row. Neither check catches it alone — row 2 sees
+a config block and passes, this row saw only `paper/*.tex` and passed. A check narrower than its
+claim, again.
 
 ## 8. Main body within the page limit
 

@@ -118,7 +118,7 @@ Create `docs/benchmark/manuscript.md` with the header block, all `##` section st
 
 Run:
 ```bash
-cd /Users/nikitapolomosnov/PycharmProjects/GRAIL/.claude/worktrees/hungry-pasteur-25d746
+cd .claude/worktrees/hungry-pasteur-25d746
 grep -c '^## ' docs/benchmark/manuscript.md
 ```
 Expected: `17` (Abstract + §1–§14 = 15 sections, + Fig 1 + Draft TODO; the title is a single-`#` H1 and is NOT counted by `^## `). If not 17, add the missing headers.
@@ -699,7 +699,7 @@ git commit -m "docs(manuscript): Limitations, Data & Code Availability, Conclusi
 
 Run:
 ```bash
-cd /Users/nikitapolomosnov/PycharmProjects/GRAIL/.claude/worktrees/hungry-pasteur-25d746
+cd .claude/worktrees/hungry-pasteur-25d746
 echo "=== stale GRAIL headline 0.334 (should be absent as GRAIL's recall) ==="
 grep -n '0\.334' docs/benchmark/manuscript.md
 echo "=== 0.718 must NOT be labeled GRAIL's ceiling headline (only the plain-InChIKey ceiling) ==="
