@@ -38,6 +38,21 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 
+
+def _code_version() -> dict:
+    """Which code wrote this artifact. The published selection_ablation.json carried fields the
+    current script no longer emits, so it was written by an earlier version -- and nothing in it
+    said so. Cap and seed pin the data; this pins the analysis."""
+    import subprocess
+    def _git(*a):
+        try:
+            return subprocess.run(["git", *a], cwd=ROOT, capture_output=True, text=True,
+                                  timeout=10).stdout.strip() or None
+        except Exception:
+            return None
+    return {"script": pathlib.Path(__file__).name, "git_commit": _git("rev-parse", "HEAD"),
+            "git_dirty": bool(_git("status", "--porcelain"))}
+
 def _rel(p) -> str:
     """Repo-relative path. Absolute paths in a committed artifact name the author's home
     directory, which is an anonymity leak in a double-blind submission and portable to nobody."""
@@ -159,7 +174,7 @@ def main() -> int:
     # produced those 245, so its substrate set cannot be recovered and its numbers cannot be
     # reproduced from it. Committing a result file is necessary for regenerability and not
     # sufficient.
-    rep = {"config": {"max_substrates": args.max_substrates, "sampling_seed": args.sampling_seed,
+    rep = {"config": {**_code_version(), "max_substrates": args.max_substrates, "sampling_seed": args.sampling_seed,
                       "top_k": args.top_k, "prior_strength": args.prior_strength,
                       "filter_cap": args.filter_cap, "max_output": args.max_output,
                       "gen_ckpt": _rel(args.gen_ckpt), "filter_ckpt": _rel(args.filter_ckpt),

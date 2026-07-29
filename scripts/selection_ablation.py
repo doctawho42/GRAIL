@@ -35,6 +35,21 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 
+
+def _code_version() -> dict:
+    """Which code wrote this artifact. The published selection_ablation.json carried fields the
+    current script no longer emits, so it was written by an earlier version -- and nothing in it
+    said so. Cap and seed pin the data; this pins the analysis."""
+    import subprocess
+    def _git(*a):
+        try:
+            return subprocess.run(["git", *a], cwd=ROOT, capture_output=True, text=True,
+                                  timeout=10).stdout.strip() or None
+        except Exception:
+            return None
+    return {"script": pathlib.Path(__file__).name, "git_commit": _git("rev-parse", "HEAD"),
+            "git_dirty": bool(_git("status", "--porcelain"))}
+
 def _rel(p) -> str:
     """Repo-relative path. Absolute paths in a committed artifact name the author's home
     directory, which is an anonymity leak in a double-blind submission and portable to nobody."""
@@ -141,14 +156,15 @@ def main() -> int:
     # The substrate set is a seeded draw over the split, so the numbers below are reproducible only
     # with the cap and seed that drew it. Recorded here because they were not: recovering the n=245
     # set behind the published figures took a search over caps (see paper/SELF_CLAIMS.md row 2).
-    "config": {"max_substrates": args.max_substrates, "sampling_seed": args.sampling_seed,
+    "config": {**_code_version(), "max_substrates": args.max_substrates, "sampling_seed": args.sampling_seed,
                "split": args.split, "use_clean_splits": True, "standardize": False,
                "rules_path": "grail_metabolism/resources/extended_smirks.txt",
                "top_ks": top_ks, "prior_strength": args.prior_strength,
                "filter_cap": args.filter_cap, "max_output": args.max_output,
                "rank_by": args.rank_by, "gen_ckpt": _rel(args.gen_ckpt),
                "filter_ckpt": _rel(args.filter_ckpt)},
-        "split": args.split, "n": len(items), "prior_strength": args.prior_strength, "rank_by": args.rank_by,
+        "split": args.split, "n": len(items), "match": "inchikey_tautomer",
+        "prior_strength": args.prior_strength, "rank_by": args.rank_by,
         "reference": {"deployed_recall@15": DEPLOYED_15, "sygma_recall@15": SYGMA_15, "ceiling": CEILING},
         "by_top_k": {},
     }

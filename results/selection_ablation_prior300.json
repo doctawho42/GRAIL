@@ -1,6 +1,27 @@
 {
+  "config": {
+    "script": "selection_ablation.py",
+    "git_commit": "1d56fb8c327278b974da482eb72b30e098a31abe",
+    "git_dirty": true,
+    "max_substrates": 250,
+    "sampling_seed": 42,
+    "split": "test",
+    "use_clean_splits": true,
+    "standardize": false,
+    "rules_path": "grail_metabolism/resources/extended_smirks.txt",
+    "top_ks": [
+      300
+    ],
+    "prior_strength": 0.4,
+    "filter_cap": 300,
+    "max_output": 15,
+    "rank_by": "prior",
+    "gen_ckpt": "artifacts/full5000_priors/checkpoints/generator.pt",
+    "filter_ckpt": "artifacts/full5000_single/checkpoints/filter.pt"
+  },
   "split": "test",
   "n": 245,
+  "match": "inchikey_tautomer",
   "prior_strength": 0.4,
   "rank_by": "prior",
   "reference": {

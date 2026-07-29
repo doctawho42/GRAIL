@@ -12,7 +12,7 @@
     "candidate_top_k": 30,
     "filter_cap": 32,
     "max_output": 15,
-    "ckpt_dir": "artifacts/full5000_single/checkpoints",
+    "ckpt_dir": "artifacts/propensity_eval/checkpoints",
     "priors_generator": "artifacts/full5000_priors/checkpoints/generator.pt"
   },
   "split": "test",
@@ -30,34 +30,34 @@
   "modes": {
     "learned_only": {
       "gen_only": {
-        "recall@5": 0.094,
-        "recall@10": 0.21,
-        "recall@12": 0.229,
-        "recall@15": 0.266,
-        "mean_output": 14.84
+        "recall@5": 0.081,
+        "recall@10": 0.209,
+        "recall@12": 0.232,
+        "recall@15": 0.249,
+        "mean_output": 14.94
       },
       "gen_x_filter": {
-        "recall@5": 0.226,
-        "recall@10": 0.277,
-        "recall@12": 0.282,
-        "recall@15": 0.3,
-        "mean_output": 14.84
+        "recall@5": 0.215,
+        "recall@10": 0.27,
+        "recall@12": 0.29,
+        "recall@15": 0.301,
+        "mean_output": 14.94
       }
     },
     "blend_ps0.4": {
       "gen_only": {
-        "recall@5": 0.311,
-        "recall@10": 0.38,
-        "recall@12": 0.385,
-        "recall@15": 0.396,
-        "mean_output": 11.63
+        "recall@5": 0.308,
+        "recall@10": 0.376,
+        "recall@12": 0.386,
+        "recall@15": 0.402,
+        "mean_output": 11.62
       },
       "gen_x_filter": {
-        "recall@5": 0.34,
-        "recall@10": 0.387,
-        "recall@12": 0.394,
-        "recall@15": 0.399,
-        "mean_output": 11.63
+        "recall@5": 0.352,
+        "recall@10": 0.393,
+        "recall@12": 0.396,
+        "recall@15": 0.4,
+        "mean_output": 11.62
       }
     },
     "prior_only": {
@@ -83,42 +83,42 @@
     "seed": 0,
     "gaps": {
       "learned_only__minus__prior_only__gen": {
-        "delta": -0.1443,
+        "delta": -0.1608,
         "ci95": [
-          -0.1955,
-          -0.0947
+          -0.2145,
+          -0.1065
         ],
         "verdict": "SIGNIFICANT"
       },
       "learned_only__minus__prior_only__filter": {
-        "delta": -0.105,
+        "delta": -0.1042,
         "ci95": [
-          -0.1522,
-          -0.0582
+          -0.1524,
+          -0.0556
         ],
         "verdict": "SIGNIFICANT"
       },
       "blend_ps0.4__minus__learned_only__gen": {
-        "delta": 0.1301,
+        "delta": 0.1532,
         "ci95": [
-          0.083,
-          0.1778
+          0.1007,
+          0.2052
         ],
         "verdict": "SIGNIFICANT"
       },
       "blend_ps0.4__minus__learned_only__filter": {
-        "delta": 0.0988,
+        "delta": 0.0993,
         "ci95": [
-          0.0566,
-          0.1427
+          0.0527,
+          0.1461
         ],
         "verdict": "SIGNIFICANT"
       },
       "learned_only__filter_lift": {
-        "delta": 0.0344,
+        "delta": 0.0517,
         "ci95": [
-          0.0105,
-          0.0612
+          0.0211,
+          0.0847
         ],
         "verdict": "SIGNIFICANT"
       },

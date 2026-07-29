@@ -1,9 +1,31 @@
 {
+  "config": {
+    "script": "selection_ablation.py",
+    "git_commit": "1d56fb8c327278b974da482eb72b30e098a31abe",
+    "git_dirty": true,
+    "max_substrates": 250,
+    "sampling_seed": 42,
+    "split": "test",
+    "use_clean_splits": true,
+    "standardize": false,
+    "rules_path": "grail_metabolism/resources/extended_smirks.txt",
+    "top_ks": [
+      30,
+      100,
+      300
+    ],
+    "prior_strength": 0.4,
+    "filter_cap": 300,
+    "max_output": 15,
+    "rank_by": "filter_gen",
+    "gen_ckpt": "artifacts/full5000_priors/checkpoints/generator.pt",
+    "filter_ckpt": "artifacts/full5000_single/checkpoints/filter.pt"
+  },
   "split": "test",
   "n": 245,
-  "prior_strength": 0.4,
   "match": "inchikey_tautomer",
-  "note": "selection-breadth ablation on deployed full5000 pipeline (gen from full5000_priors, deployed filter); top_k=600 skipped (>=300 approx exhausts applicable rules). pool_coverage = oracle (true metabolite anywhere in pool) = coverage_bank x selection_retention(top_k); recall@15 = deployed filter-ranked top-15.",
+  "prior_strength": 0.4,
+  "rank_by": "filter_gen",
   "reference": {
     "deployed_recall@15": 0.33,
     "sygma_recall@15": 0.572,
@@ -12,19 +34,28 @@
   "by_top_k": {
     "30": {
       "pool_coverage": 0.482,
+      "recall@5": 0.308,
+      "recall@10": 0.344,
       "recall@15": 0.352,
+      "precision": 0.105,
       "mean_pool_size": 12.5,
       "mean_output": 7.99
     },
     "100": {
       "pool_coverage": 0.547,
+      "recall@5": 0.326,
+      "recall@10": 0.369,
       "recall@15": 0.388,
+      "precision": 0.096,
       "mean_pool_size": 35.3,
       "mean_output": 9.47
     },
     "300": {
       "pool_coverage": 0.608,
+      "recall@5": 0.339,
+      "recall@10": 0.382,
       "recall@15": 0.413,
+      "precision": 0.1,
       "mean_pool_size": 107.6,
       "mean_output": 9.53
     }
