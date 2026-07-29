@@ -1,0 +1,50 @@
+{
+ "config": {
+  "script": "ceiling_by_provenance.py",
+  "git_commit": "4685e0a2deab79690020c7d0d80949019e260c41",
+  "git_dirty": false,
+  "bank": "grail_metabolism/resources/extended_smirks.txt",
+  "mined_list": "grail_metabolism/resources/mined_only.txt",
+  "n_rules": 7581,
+  "n_mined": 5866,
+  "n_curated": 1715,
+  "substrate_source": "results/filter_vs_prior_ci.json"
+ },
+ "n": 245,
+ "match": "inchikey_tautomer",
+ "subsets": {
+  "curated": {
+   "n_rules": 1715,
+   "coverage": 0.6596,
+   "ci95": [
+    0.6116,
+    0.7086
+   ]
+  },
+  "mined": {
+   "n_rules": 5866,
+   "coverage": 0.328,
+   "ci95": [
+    0.2812,
+    0.3786
+   ]
+  },
+  "full": {
+   "n_rules": 7581,
+   "coverage": 0.7284,
+   "ci95": [
+    0.6808,
+    0.7767
+   ]
+  }
+ },
+ "ceiling_gate": {
+  "stored": 0.7284,
+  "reproduced": 0.7284
+ },
+ "exclusive": {
+  "curated_only": 0.4004,
+  "mined_only": 0.0688,
+  "shared": 0.2592
+ }
+}
