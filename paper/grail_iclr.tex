@@ -53,9 +53,10 @@ ranker are different research programmes, and recall does not indicate which is 
 
 We decompose recall exactly into coverage, selection and ranking for methods built on an
 enumerable rule base, and apply it to two of them. The comparison explains the leaderboard rather
-than restating it. The method with the wider rule base loses: it reaches more chemistry and
-converts a third of that reach, while its competitor reaches less and converts nearly all of it,
-having no selection stage to lose anything at. The gap is the price of selecting at all, which
+than restating it. The method with the wider rule base loses: its bank reaches $0.735$ of the
+annotated chemistry against its competitor's $0.542$, and it converts a third of that reach into
+recall where the competitor converts nearly all of its own, having no selection stage to lose
+anything at. The gap is the price of selecting at all, which
 recall charges only to methods that select. That is a claim about benchmark design rather than
 about chemistry, and it predicts something checkable: an aggregate crediting hits without charging
 for volume must favour architectures that do not filter.
@@ -120,7 +121,9 @@ first. Every factor counts references matched against predictions, so all three 
 deciding when a predicted structure is the same molecule as a reported one, and chemistry offers
 several defensible rules: canonical SMILES, hashed identifiers, identifiers with stereochemistry
 removed, or fingerprints. They disagree most about tautomers, alternative structures of one
-compound differing in the position of a mobile hydrogen. Evaluations here adopt one each, usually
+compound differing in the position of a mobile hydrogen; Appendix~\ref{app:worked} works one pair
+of predictions through all of them, scoring a near-total miss or a full hit with the chemistry
+fixed. Evaluations here adopt one each, usually
 without saying why, and none has varied it. Varying it over five conventions with predictions held
 fixed erases a significant advantage between two published tools externally, and internally moves
 the F1 ordering while leaving recall's stable to within noise. Two more follow: the aggregate, where reporting
@@ -252,7 +255,10 @@ rather than standing as independent evidence.
 precision alone: under incomplete annotation precision is a \emph{pessimistic lower bound}, since an
 unannotated candidate scores as a false positive even when it is a real but unrecorded metabolite.
 Recall without output size misleads in the other direction, a method being able to buy recall by
-enumerating (Appendix~\ref{app:budget}). Selection happens on validation, with two exceptions we
+enumerating (Appendix~\ref{app:budget}). Two comparisons are confirmatory and carry the multiplicity correction: the differential
+sensitivity of \S\ref{sec:rankflip} and the learned-versus-prior selection gap of
+\S\ref{sec:xmc}. Every other interval in this paper is exploratory and should be read as
+descriptive. Selection happens on validation, with two exceptions we
 name rather than imply. The deployed
 filter's encoder variant was chosen by comparing both variants on test
 (Appendix~\ref{app:arch}); that choice fixes which encoder is deployed and so reaches every GRAIL
@@ -445,32 +451,34 @@ explicit, the same criteria span about $0.02$ (Appendix~\ref{app:xdomain}).
 
 
 \begin{table}[!htbp]
-\caption{Nine diagnostic measurements, each attached to the factor it constrains; sample sizes
-differ between rows.}
+\caption{Nine diagnostic measurements, each attached to the factor it constrains. Sample sizes differ
+between rows, and so does the evidence: \emph{paired} carries an interval on the difference,
+\emph{single} is one run against another with none, and \emph{bound} is a best-of-several figure
+that limits rather than estimates.}
 \label{tab:levers}
 \begin{center}
 \footnotesize
-\begin{tabular}{p{4.2cm}p{1.4cm}p{6.6cm}}
+\begin{tabular}{p{3.9cm}p{1.2cm}p{0.9cm}p{6.0cm}}
 \toprule
-\textbf{measurement} & \textbf{factor} & \textbf{result} \\
+\textbf{measurement} & \textbf{factor} & \textbf{evidence} & \textbf{result} \\
 \midrule
-learned selection against a frequency prior & selection &
+learned selection against a frequency prior & selection & paired &
 $0.266$ against $0.410$, $\Delta = -0.144$ $[-0.196,-0.095]$ ($n{=}245$) \\
-selection breadth, 30 to 300 rules & selection &
+selection breadth, 30 to 300 rules & selection & single &
 recall $0.352 \to 0.413$; pool coverage $0.482 \to 0.608$ ($n{=}245$) \\
-training set, 2{,}418 to 4{,}787 substrates & selection &
+training set, 2{,}418 to 4{,}787 substrates & selection & single &
 recall $0.330 \to 0.334$, inside the $\pm0.010$ seed spread \\
-depth-2 rule application & coverage &
+depth-2 rule application & coverage & single &
 ceiling $+0.012$, at $8.5\times$ the candidate cost ($n{=}150$) \\
-composition of the uncovered set & coverage &
+composition of the uncovered set & coverage & single &
 $26.9\%$ of references outside the bank; no mass bin exceeds $6\%$ of it ($n{=}500$) \\
-site-of-metabolism prior & ranking &
+site-of-metabolism prior & ranking & bound &
 $+0.011$ at the best of five weightings, itself chosen here ($n{=}245$) \\
-abstention on filter score & ranking &
+abstention on filter score & ranking & single &
 precision never above $0.123$; recall $0.388 \to 0.041$ ($n{=}\ntest$) \\
-propensity-scored selection loss & selection &
+propensity-scored selection loss & selection & paired &
 $0.249$ against $0.266$; deficit to the prior widens to $-0.161$ $[-0.215,-0.107]$ ($n{=}245$) \\
-similarity-to-training stratification & coverage &
+similarity-to-training stratification & coverage & paired &
 bank coverage rises $0.712 \to 0.819$ with similarity; an untrained rule engine degrades as fast as
 the learned ones ($n{=}\ntest$) \\
 \bottomrule
