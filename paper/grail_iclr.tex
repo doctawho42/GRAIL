@@ -217,15 +217,17 @@ is equality of Morgan fingerprints at radius 2 over 2048 bits, which is Tanimoto
 and \textsc{inchikey-tautomer} standardises both sides before hashing, taking the fragment parent,
 neutralising charges, canonicalising tautomers, and writing SMILES without stereochemistry.
 
-Our recommended default is \textsc{inchikey-tautomer}. Standard InChI normalises only a
+Our recommendation is conditional on the reference set rather than universal: report all five, and
+choose the default by whether the references carry stereochemistry and tautomeric variety. For this
+corpus that is \textsc{inchikey-tautomer}. Standard InChI normalises only a
 \emph{subset} of tautomers \citep{Dhaked_2020}, so a rule engine emitting a keto form of an enol
 reference fails to match under plain \textsc{inchikey} despite producing the same entity. Two
 properties of this default bear on every number below: it is the most permissive of the five, and
 it is stereo-blind as well as tautomer-blind, so a predicted D-alanine matches an L-alanine
 reference. The stereo relaxation is not incidental, since several methods here, GRAIL among them,
 standardise their output without stereochemistry and cannot emit a stereocentre, so a
-stereo-sensitive criterion would score them on a representation they never produce. We report every
-result under all five criteria rather than defending one.
+stereo-sensitive criterion would score them on a representation they never produce --- which is also
+why the choice suits our own system, and why it is stated as conditional rather than defended.
 
 Unless stated otherwise all results use \textsc{inchikey-tautomer};
 \S\ref{sec:rankflip} quantifies how much the ranking depends on that choice. A worked example in
@@ -242,11 +244,9 @@ zero substrate and zero positive-pair overlap across every split pair, emitting 
 report. Leakage-aware splitting is itself not novel, since DataSAIL \citep{Joeres_2025} minimises cross-split similarity on
 MoleculeNet-style tasks. The leak that matters here is
 substrate--metabolite \emph{identity} overlap, which is domain-specific. As a secondary check, the deployed configuration
-gives macro recall@15 $=0.344$ on validation against $0.334$ on test (293 and 291 substrates,
-superseded on the full split by \S\ref{sec:diagnosis}); it coincides in value with the three-seed
-mean there without being that quantity. The $+0.010$ gap runs in the expected
-direction but matches the seed-to-seed standard deviation, so it corroborates the zero-overlap
-audit rather than standing as independent evidence.
+gives macro recall@15 $=0.344$ on validation against $0.334$ on test (293 and 291 substrates). The
+$+0.010$ gap matches the seed-to-seed standard deviation, so it corroborates the zero-overlap audit
+rather than standing as independent evidence.
 
 \paragraph{Metrics.} We lead with recall@$k$ co-reported with the mean output size, not with
 precision alone: under incomplete annotation precision is a \emph{pessimistic lower bound}, since an
@@ -360,7 +360,8 @@ the whole clean test split and are compared there, paired on identical substrate
 (Appendix~\ref{app:xdomain}); BioTransformer also appears on the external set below.
 
 \looseness=-1
-Methods are not equally sensitive to the convention. Over the full split GRAIL gains $0.016$
+Methods are not equally sensitive to the convention; differentials below are signed comparator
+minus GRAIL. Over the full split GRAIL gains $0.016$
 $[0.010,0.023]$ from canonical to tautomer matching against MetaPredictor's $0.040$
 $[0.030,0.050]$, a differential of $+0.024$ $[0.014,0.034]$ surviving Holm--Bonferroni over the
 three pairs. The same differential against BioTransformer on the 150-substrate subset is $+0.120$,
@@ -376,7 +377,8 @@ three methods with predictions on all of it; last column is the gain from strict
 tolerant. \textbf{Bottom:} external GLORYx set ($n=\nglory$), where the middle column separates the
 two relaxations \textsc{inchikey-tautomer} applies together and the interval is on the stereo step.
 $^\dagger$Not external to GRAIL, which trained on $19$ of the $37$ and validated on $5$ more, so its
-row uses the $13$ unseen; the others use all $37$.}
+row uses the $13$ unseen; the others use all $37$. The gain column is the paired mean difference, not
+the difference of the rounded columns, which is why GRAIL's reads $0.016$ against $0.340-0.323$.}
 \label{tab:matchsens}
 \begin{center}
 \begin{tabular}{lccccc l}
@@ -554,9 +556,8 @@ the references do not support (Appendix~\ref{app:props}).
 \subsection{Comparison against published methods}
 \label{sec:diagnosis}
 
-Four GRAIL recall figures appear and none is interchangeable: $\realised$ micro, $\grailmacro$ macro
-over the output as emitted, $0.340$ macro after the harness collapses duplicates as it does for
-every method, and $0.344\pm0.010$ the three-seed mean of that last (Appendix~\ref{app:xdomain}).
+Recall figures here differ by population, aggregation and truncation, and several coincide in value
+without being the same quantity; Appendix~\ref{app:xdomain} states each.
 On the full clean test split GRAIL trails both published comparators: SyGMa reaches $0.572$, a
 paired $-0.242$ $[-0.271,\,-0.212]$ over the $1{,}168$ common substrates, and MetaPredictor $0.568$.
 Nor does it lead at any output budget (Appendix~\ref{app:budget}), so the gap is the selection

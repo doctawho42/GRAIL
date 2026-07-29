@@ -34,6 +34,45 @@ its output convention. The comparisons in this paper remain valid, because every
 under the same criterion and all three rungs are reported, but a system that does emit
 stereochemistry is not rewarded for doing so anywhere in this evaluation.
 
+\subsection{Which number is which}
+
+Recall figures in this paper differ by population, aggregation, truncation and whether duplicate
+predictions are collapsed, and several coincide in value without being the same quantity.
+Table~\ref{tab:provenance} states each one. Two readings follow from it directly. GRAIL's untruncated
+and $k{=}15$ figures are identical because it never emits more than fifteen, so the budget does not
+bind it; and the SyGMa--MetaPredictor pair \emph{reverses} between the two rows, SyGMa ahead by
+$0.026$ untruncated and behind by $0.002$ at $k{=}15$, which is the budget parameter of
+\S\ref{sec:metric} acting on the leading pair rather than on ours.
+
+\begin{table}[h]
+\caption{Every recall figure this paper reports for the three full-split methods, with what
+distinguishes it. \textsc{i-taut} is \textsc{inchikey-tautomer} throughout.}
+\label{tab:provenance}
+\begin{center}
+\footnotesize
+\begin{tabular}{llcccc}
+\toprule
+figure & where & $n$ & aggregation & truncation & collapsed \\
+\midrule
+GRAIL $\realised$          & Table~\ref{tab:decomp} & $\ntest$ & micro & $k{=}15$ & no \\
+GRAIL $\grailmacro$        & \S\ref{sec:diagnosis}  & $\ntest$ & macro & $k{=}15$ & no \\
+GRAIL $0.340$              & Table~\ref{tab:matchsens} & $\ntest$ & macro & $k{=}15$ & yes \\
+GRAIL $0.344\pm0.010$      & \S\ref{sec:diagnosis}  & $\ntest$ & macro, 3 seeds & $k{=}15$ & yes \\
+GRAIL $0.365$              & Table~\ref{tab:matchsens-subset} & $\nshared$ & macro & $k{=}15$ & yes \\
+GRAIL $0.318$              & Appendix~\ref{app:budget} & $\nshared$ & micro & $k{=}15$ & yes \\
+\midrule
+SyGMa $0.595$              & \S\ref{sec:metric} & $\ntest$ & macro & none & yes \\
+SyGMa $0.567$              & Table~\ref{tab:matchsens} & $\ntest$ & macro & $k{=}15$ & yes \\
+SyGMa $0.572$              & \S\ref{sec:diagnosis} & $1{,}168$ common & macro & $k{=}15$ & yes \\
+SyGMa $0.554$              & Table~\ref{tab:matchsens-subset} & $\nshared$ & macro & $k{=}15$ & yes \\
+\midrule
+MetaPredictor $0.569$      & \S\ref{sec:metric}, Table~\ref{tab:matchsens} & $\ntest$ & macro & either & yes \\
+MetaPredictor $0.585$      & Table~\ref{tab:matchsens-subset} & $\nshared$ & macro & $k{=}15$ & yes \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table}
+
 \subsection{Which GRAIL number is which}
 
 Several figures appear and are not interchangeable. On the
