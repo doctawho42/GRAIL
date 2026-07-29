@@ -11,7 +11,10 @@ prediction volume.
 \begin{table}[h]
 \centering
 \caption{Recall at matched cut-offs, precision, and mean output size under tautomer-aware
-matching, for each method in its deployed configuration on the shared subset ($n=\nshared$).}
+matching, for each method in its deployed configuration on the shared subset ($n=\nshared$). Recall
+here is \emph{macro}, the mean of per-substrate recalls; the decomposition below reports the same
+methods on the same substrates in \emph{micro}, the pooled ratio, which is why GRAIL reads $0.365$
+in this table and $0.318$ there.}
 \label{tab:budget-matched-leaderboard}
 \begin{tabular}{lccccc}
 \toprule
@@ -42,7 +45,9 @@ are the binding weakness.
 \subsection{Decomposing both methods}
 
 Applying the decomposition to each method, rather than to GRAIL alone, shows the mechanism. The
-values below are not the frontier's. They describe each method's \emph{deployed} output on the same
+values below are not the frontier's, and they are \emph{micro} where the table above is macro, so
+GRAIL reads $0.318$ here against $0.365$ there on the same substrates. They describe each method's
+\emph{deployed} output on the same
 $\nshared$ substrates under the same criterion, whereas the frontier truncates each method's full
 candidate pool at a common $k$. The two differ for GRAIL, which reports $0.318$ as deployed against
 $0.350$ at $k=15$ on the frontier, because the frontier draws fifteen candidates from a pool the

@@ -25,8 +25,10 @@ to an annotation rate the references make implausible.
 The default criterion disregards stereochemistry, and GRAIL's own standardisation writes SMILES
 without stereochemistry, so it never emits a stereocentre. Under a stereo-sensitive criterion GRAIL
 would be scored on a representation it cannot produce; under the default it is not. On the external
-set this is the whole of the difference, and it is large: GRAIL rises from 0.155 to 0.310 when
-stereochemistry is disregarded, against a further 0.023 from tautomer canonicalisation. A reader
+set this is the whole of the difference, and it is large: on the thirteen drugs GRAIL has not
+trained on, it rises from $0.059$ to $0.185$ when stereochemistry is disregarded, against a further
+$0.038$ from tautomer canonicalisation. (The corresponding figures on all $37$, $0.155$ to $0.310$,
+are inflated by training overlap and are superseded below.) A reader
 should therefore treat GRAIL's external figure as conditional on a tolerance that happens to suit
 its output convention. The comparisons in this paper remain valid, because every method is scored
 under the same criterion and all three rungs are reported, but a system that does emit
@@ -95,7 +97,10 @@ in-tree.
 \subsection{The five-method comparison under four aggregates}
 
 Table~\ref{tab:setmetrics} re-scores every method's deployed output set on the shared subset, with
-no top-$k$ truncation, since precision and Jaccard are set quantities. The orderings by recall and
+no top-$k$ truncation, since precision and Jaccard are set quantities. Its output sizes count
+structures as emitted, whereas Table~\ref{tab:matchsens-subset} counts them after the harness
+collapses duplicates under the matching criterion, which is why the two differ slightly for every
+method that emits a duplicate. The orderings by recall and
 by F1 are different orderings.
 
 \begin{table}[h]
@@ -241,7 +246,10 @@ the sample change rather than a correction.
 Two claims survive and one does not. GRAIL's stereo step remains significant at $+0.126$
 $[+0.028,+0.239]$ against $+0.155$ on the full set, so the mechanism is real rather than memorised:
 GRAIL cannot emit a stereocentre, and a stereo-blind criterion rewards that whether or not it has
-seen the drug. Its interaction with SyGMa also survives, at $+0.126$ $[+0.028,+0.239]$. The
+seen the drug. Its interaction with SyGMa survives too, but carries no information beyond that step
+and should not be counted as a second result: SyGMa's own stereo step on these thirteen is exactly
+zero, with an interval of $[0,0]$, so the interaction is numerically the same measurement,
+$+0.126$ $[+0.028,+0.239]$. The
 interaction between BioTransformer and GRAIL does not: published at $+0.150$ $[+0.069,+0.242]$, it
 is $-0.104$ $[-0.223,+0.000]$ on the unseen drugs, reversing sign and losing significance. It was
 named one of the two largest and is withdrawn. Of six pairs, four were significant on the full set

@@ -1,11 +1,11 @@
-Table~\ref{tab:levers} in the main text lists seven diagnostic measurements and the factor each
+Table~\ref{tab:levers} in the main text lists nine diagnostic measurements and the factor each
 one constrains. This appendix reports those measurements in full, states three propositions that
 account for them, and describes two interventions that test the propositions.
 
 \subsection{Coverage composition, data scale, and regioselectivity}
 
-Three of the seven measurements are reported here; the remaining four are expanded in the
-subsections that follow and in Proposition 3.
+Three of the nine measurements are reported here; the remaining six are expanded in the
+subsections that follow and in Propositions 2 and 3.
 
 \paragraph{Composition of the uncovered set.}
 Measured on 500 substrates, 26.9\% of reference metabolites lie outside what the bank
@@ -58,7 +58,7 @@ Widening the selector from 30 to 300 rules lifts recall@15 by 0.061 and pool cov
 at 8.6 times the pool size. This is recall bought with precision, the same trade SyGMa makes by
 overproducing. The gain saturates below the ceiling: pool coverage plateaus at 0.608 against the full-test
 ceiling of $\ceiling$ even when essentially every applicable rule is fired, and recall@15 at 0.413
-remains far below SyGMa's 0.572 on this subset. Roughly a third of the metabolites present in
+remains far below SyGMa, which reaches 0.572 on the full split. Roughly a third of the metabolites present in
 the pool are still lost at the cut-off when the selector is widened this far ($0.413/0.608=0.68$).
 That is not the deployed ranking factor, which is measured on the narrower pool the deployed
 selector produces and is close to one: widening the selector fills the pool faster than the
@@ -66,7 +66,10 @@ fifteen output slots can carry, so what selection recovers, the cut-off gives ba
 
 Abstention moves in the opposite direction and gains little. Dropping candidates whose filter
 score falls below a threshold, then ranking the survivors as usual, traces a frontier along which
-precision barely moves. With no threshold, recall@15 is 0.388 at precision 0.098 and 9.96 outputs
+precision barely moves. It is measured on the broad pool rather than the deployed one --- all $300$
+applicable rules, as in the last row of Table~\ref{tab:selection-breadth} --- which is why its
+no-threshold baseline sits above the deployed macro recall of $\grailmacro$ at a larger output size.
+With no threshold, recall@15 is 0.388 at precision 0.098 and 9.96 outputs
 per substrate; at a threshold of 0.5, recall is 0.146 at precision 0.114 and 1.55 outputs; at 0.9,
 recall is 0.041 at precision 0.040 and 0.30 outputs. Precision never exceeds about 0.123. Raising the
 threshold removes true and apparently false candidates in near-equal proportion, because an
@@ -143,8 +146,8 @@ $[+0.0032,+0.0153]$ over their pointwise counterpart and $+0.0091$ $[+0.0027,+0.
 baseline, on a paired bootstrap over the full test set of $\ntest$ substrates. Capacity, features
 and pool are constant, so the margin is attributable to the objective. A second re-ranking arm
 reproduces the direction at the same sample size: adding type and site terms lifts recall@15
-from 0.388 to 0.404, a paired $+0.0165$ $[+0.006,+0.027]$, while the factorised signal on its own
-is not significant ($+0.001$, $[-0.010,+0.013]$).
+from 0.413 to 0.430 on the same broad pool, a paired $+0.0165$ $[+0.006,+0.027]$, while the
+factorised signal on its own is not significant ($+0.001$, $[-0.010,+0.013]$).
 
 Weaker supporting evidence comes from a higher-capacity listwise reranker, which scored 0.500
 against a 0.433 baseline in a separate held-out run, a gain of $+0.067$, or 74\% of that run's oracle ceiling
@@ -230,8 +233,8 @@ proposition concerns what one application step can reach, and vocabulary size is
 depth.
 
 Kept at broad coverage and used only to re-rank, the same signal is worth a small significant
-margin: recall@15 rises from 0.388 to 0.404, a paired $+0.0165$ $[+0.006,+0.027]$ over the full
-test set. How the heads are trained decides whether that margin appears. Multiplying
+margin: recall@15 rises from 0.413 to 0.430, a paired $+0.0165$ $[+0.006,+0.027]$ over the full
+test set. Both are broad-pool figures, not deployed ones. How the heads are trained decides whether that margin appears. Multiplying
 independently trained type and site probabilities into the rank adds nothing on a matched pool
 ($+0.0002$, not significant). Fine-tuning the same two heads with a listwise ranking loss against
 a frozen generator and filter beats that bolt-on by $+0.0089$ $[+0.003,+0.015]$ and the baseline
@@ -297,7 +300,7 @@ and worst budget over $k \in [1,32]$.
 
 The binding is partial well below $15$ too, which is why the certified comparison is reported at
 several budgets rather than one. GRAIL is cut on $63.5\%$ of substrates at $k=5$ and $45.6\%$ at
-$k=8$, against SyGMa's $98.9\%$ and $97.3\%$. Against GRAIL, SyGMa is behind by $0.030$
+$k=8$, against SyGMa's $98.9\%$ and $97.3\%$. Against GRAIL, SyGMa is ahead by $0.030$
 $[0.013,0.047]$ at $k=3$, $0.054$ $[0.039,0.068]$ at $k=5$, $0.035$ $[0.023,0.048]$ at $k=8$ and
 $0.019$ $[0.006,0.031]$ at $k=10$, every interval excluding zero, so the reversal is not an artifact
 of one budget inside the region.

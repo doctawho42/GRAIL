@@ -3,16 +3,16 @@
 
 The paper reports the criterion ladder on 37 GLORYx drugs as an external replication. Checking the
 two curations against each other turned up something that check was not looking for: 19 of those 37
-parents are substrates in GRAIL's training split and 5 more are in validation. Only 12 are unseen.
+parents are substrates in GRAIL's training split and 5 more are in validation. Only 13 are unseen.
 
 The contamination is one-sided, which is the part that matters. SyGMa and BioTransformer do not
 train on this corpus and MetaPredictor trained on its own data, so their GLORYx numbers are
 unaffected; GRAIL's are inflated by drugs it was fitted on, in its own favour. Any interaction
 involving GRAIL on this set inherits that.
 
-This recomputes the ladder on the 12 genuinely unseen parents, reusing the same loaders, matcher and
+This recomputes the ladder on the 13 genuinely unseen parents, reusing the same loaders, matcher and
 frozen predictions as the published run so the only thing that changes is which substrates are
-scored. Twelve is small and the intervals will say so; the point is not a tighter estimate but
+scored. Thirteen is small and the intervals will say so; the point is not a tighter estimate but
 whether the effect survives at all once the contaminated substrates are gone.
 """
 from __future__ import annotations
