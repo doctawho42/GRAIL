@@ -54,7 +54,7 @@ distinguishes it. \textsc{i-taut} is \textsc{inchikey-tautomer} throughout.}
 \toprule
 figure & where & $n$ & aggregation & truncation & collapsed \\
 \midrule
-GRAIL $\realised$          & Table~\ref{tab:decomp} & $\ntest$ & micro & $k{=}15$ & no \\
+GRAIL $\realised$          & Figure~\ref{fig:decomp} & $\ntest$ & micro & $k{=}15$ & no \\
 GRAIL $\grailmacro$        & \S\ref{sec:diagnosis}  & $\ntest$ & macro & $k{=}15$ & no \\
 GRAIL $0.340$              & Table~\ref{tab:matchsens} & $\ntest$ & macro & $k{=}15$ & yes \\
 GRAIL $0.344\pm0.010$      & \S\ref{sec:diagnosis}  & $\ntest$ & macro, 3 seeds & $k{=}15$ & yes \\
@@ -113,6 +113,16 @@ MetaPredictor    & 0.531 & 0.570 & 0.578 & 0.532 & 0.585 & 11.2 \\
 \end{center}
 \end{table}
 
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=0.52\textwidth]{fig_ladder}
+\end{center}
+\caption{The five criteria as a slope plot on the shared subset. What matters is which lines cross:
+BioTransformer passes GRAIL between canonical and InChIKey matching, and MetaTrans passes SyGMa in
+the other direction, on predictions that never change.}
+\label{fig:ladder}
+\end{figure}
 
 The two reversals the main text reports on this subset rest on differences that are individually
 indistinguishable from zero at $n=\nshared$. GRAIL against BioTransformer is $[-0.044,+0.122]$

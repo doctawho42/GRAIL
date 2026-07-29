@@ -284,6 +284,15 @@ orderings are read off the curves, and the one certified comparison is made at a
 advance. A budget chosen against the numbers it is reported on would be optimistically biased, and
 a reordering could be an artifact of the choice, so the choice is removed rather than corrected.
 
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=0.52\textwidth]{fig_budget}
+\end{center}
+\caption{Macro F1 against the output budget. The shaded region is where the ordering differs from
+the one at the field's $k=15$, marked by the dotted line.}
+\label{fig:budget}
+\end{figure}
+
 Two orderings occur across $k \in [1,32]$. For $k \le 2$ and for $k \ge 13$ it is MetaPredictor,
 GRAIL, SyGMa; for every $k$ from $3$ to $12$ it is MetaPredictor, SyGMa, GRAIL. The field's budget
 of $15$ falls in the first region. At $k=5$, fixed before these curves were computed, all three

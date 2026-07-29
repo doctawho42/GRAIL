@@ -291,7 +291,7 @@ selector that chooses to one that does not. The identity is exact by constructio
 the three factors partition the loss with no residual: it is an accounting device, not a model.
 Its value is diagnostic: a single recall number cannot indicate \emph{which} gate closed, while
 the three corresponding interventions address unrelated components of the pipeline. Two
-aggregations are in use and every figure is labelled with which. Table~\ref{tab:decomp} reports
+aggregations are in use and every figure is labelled with which. Figure~\ref{fig:decomp} reports
 \emph{micro}, the pooled ratio of sums written above, because only that form makes the factors
 multiply out exactly; the head-to-head comparisons report \emph{macro}, the mean of per-substrate
 recalls, which is the comparator tools' convention. The two differ here, $0.261$ against $0.330$
@@ -304,27 +304,7 @@ and ranking were both perfect. On the clean test split it is \ceiling\ (cluster-
 reported alongside recall for any rule-grounded method: it separates what the knowledge base can
 express from what the model does with it, and no ranking improvement can exceed it.
 
-\begin{table}[tb]
-\caption{Coverage, selection and ranking factors for two rule-grounded methods on the clean test
-split ($n=\ntest$), with cluster-bootstrap confidence intervals. Each row's factors multiply to
-that method's realised recall@15.}
-\label{tab:decomp}
-\begin{center}
-\begin{tabular}{lccccc}
-\toprule
-& coverage & selection & ranking & recall@15 & outputs \\
-& $|C_{\text{full}}|/|U|$ & $|C_{\text{bud}}|/|C_{\text{full}}|$ & $|H|/|C_{\text{bud}}|$ & (micro) & per substrate \\
-\midrule
-GRAIL & \textbf{\ceiling} & \textbf{\selret} & 0.963 & \realised & 8.4 \\
-      & \footnotesize$[0.709,0.762]$ & \footnotesize$[0.343,0.393]$ & \footnotesize$[0.946,0.978]$ & & \\
-SyGMa & 0.542 & \textbf{1.000} & 0.942 & 0.511 & 81.7 \\
-      & \footnotesize$[0.517,0.568]$ & \footnotesize\emph{by construction} & \footnotesize$[0.927,0.956]$ & & \\
-\bottomrule
-\end{tabular}
-\end{center}
-\end{table}
-
-\paragraph{What the decomposition says.} Table~\ref{tab:decomp} localises the loss. The deployed
+\paragraph{What the decomposition says.} Figure~\ref{fig:decomp} localises the loss. The deployed
 pipeline converts only $35.5\%$ of its own ceiling into realised recall, and the three factors
 separate cleanly, with no pair of intervals overlapping. Selection is the binding constraint:
 barely a third of what the bank can reach survives the selector's rule budget. Ranking is close to

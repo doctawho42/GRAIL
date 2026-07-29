@@ -45,6 +45,19 @@ on any numbers. This is an accounting identity rather than a theorem, and its us
 where recall is lost. The coverage factor coincides with the rule-bank ceiling reported in the
 main text.
 
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=0.72\textwidth]{fig_decomp}
+\end{center}
+\caption{Coverage, selection and ranking on the clean test split ($n=\ntest$) as a waterfall; grey
+is what each gate discards, each bar ends at the realised recall (micro). GRAIL's bank reaches
+further and its selector gives most of it back; SyGMa's reaches less and keeps nearly all of it,
+having no selection stage. Cluster-bootstrap 95\% intervals, GRAIL then SyGMa: coverage
+$[0.709,0.762]$/$[0.517,0.568]$, selection $[0.343,0.393]$/$1$ by construction, ranking
+$[0.946,0.978]$/$[0.927,0.956]$; outputs $8.4$ against $81.7$.}
+\label{fig:decomp}
+\end{figure}
+
 \paragraph{Which measurement constrains which factor.}
 Every diagnostic in Appendix~\ref{app:props}, and each of the three propositions, constrains
 exactly one factor.
