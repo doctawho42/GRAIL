@@ -128,6 +128,16 @@ def main() -> int:
     print(f"{args.split} substrates: {len(items)}", flush=True)
 
     report = {
+    # The substrate set is a seeded draw over the split, so the numbers below are reproducible only
+    # with the cap and seed that drew it. Recorded here because they were not: recovering the n=245
+    # set behind the published figures took a search over caps (see paper/SELF_CLAIMS.md row 2).
+    "config": {"max_substrates": args.max_substrates, "sampling_seed": args.sampling_seed,
+               "split": args.split, "use_clean_splits": True, "standardize": False,
+               "rules_path": "grail_metabolism/resources/extended_smirks.txt",
+               "top_ks": top_ks, "prior_strength": args.prior_strength,
+               "filter_cap": args.filter_cap, "max_output": args.max_output,
+               "rank_by": args.rank_by, "gen_ckpt": args.gen_ckpt,
+               "filter_ckpt": args.filter_ckpt},
         "split": args.split, "n": len(items), "prior_strength": args.prior_strength, "rank_by": args.rank_by,
         "reference": {"deployed_recall@15": DEPLOYED_15, "sygma_recall@15": SYGMA_15, "ceiling": CEILING},
         "by_top_k": {},

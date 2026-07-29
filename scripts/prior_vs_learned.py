@@ -210,7 +210,17 @@ def main() -> int:
     print(f"{args.split} substrates: {len(items)}", flush=True)
     top_k, cap, mo = args.candidate_top_k, args.filter_cap, args.max_output
 
-    report = {"split": args.split, "n": len(items), "candidate_top_k": top_k, "filter_cap": cap,
+    report = {
+    # The substrate set is a seeded draw over the split, so the numbers below are reproducible only
+    # with the cap and seed that drew it. Recorded here because they were not: recovering the n=245
+    # set behind the published figures took a search over caps (see paper/SELF_CLAIMS.md row 2).
+    "config": {"max_substrates": args.max_substrates, "sampling_seed": args.sampling_seed,
+               "split": args.split, "use_clean_splits": True, "standardize": False,
+               "rules_path": "grail_metabolism/resources/extended_smirks.txt",
+               "candidate_top_k": args.candidate_top_k, "filter_cap": args.filter_cap,
+               "max_output": args.max_output, "ckpt_dir": args.ckpt_dir,
+               "priors_generator": args.priors_generator},
+              "split": args.split, "n": len(items), "candidate_top_k": top_k, "filter_cap": cap,
               "max_output": mo, "match": "inchikey_tautomer", "sygma_recall@": SYGMA, "modes": {}}
 
     vecs = {}  # mode -> {"gen": per-substrate recall@CI_K vector, "filter": ...}

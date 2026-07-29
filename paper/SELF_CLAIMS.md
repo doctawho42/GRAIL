@@ -32,16 +32,25 @@ implied by none of the other checks here.
 gitignored and the tracked files are there only by historical `git add -f`, so **new artifacts are
 untracked silently** — nothing fails, nothing warns.
 
+Scan every path a script reads or writes, not just `results/`. The first version of this command
+looked only at `results/` and therefore missed `artifacts/tier2_1170/metapredictor_preds.json` — the
+frozen full-split MetaPredictor predictions behind `set_metrics_by_criterion.py` (the paper's two
+certified reversals), both cardinality tables, the budget curves and the propensity bounds. **A
+check whose scope is narrower than the claim's scope reports a pass it has not earned.**
+
 ```bash
 python - <<'PY'
 import re, pathlib, subprocess
-tracked = set(subprocess.run(["git","ls-files","results/"],capture_output=True,text=True).stdout.split())
-outs = {"results/" + (m.group(1) or m.group(2))
-        for p in pathlib.Path("scripts").glob("*.py")
-        for m in re.finditer(r'"results"\s*/\s*"([^"]+)"|results/([A-Za-z0-9_]+\.json)', p.read_text())}
-for o in sorted(outs):
-    if o not in tracked and pathlib.Path(o).exists():
-        print("UNTRACKED", o)
+tracked = set(subprocess.run(["git","ls-files"],capture_output=True,text=True).stdout.split())
+refs = set()
+for p in pathlib.Path("scripts").glob("*.py"):
+    t = p.read_text()
+    refs |= set(re.findall(r'["\']((?:results|artifacts|configs)/[A-Za-z0-9_./-]+\.(?:json|csv|txt|pt|sdf))["\']', t))
+    for m in re.finditer(r'ROOT\s*/\s*"(artifacts|results)"\s*((?:/\s*"[^"]+"\s*)+)', t):
+        refs.add("/".join([m.group(1)] + re.findall(r'"([^"]+)"', m.group(2))))
+for r in sorted(refs):
+    if r not in tracked and pathlib.Path(r).is_file():
+        print(f"UNTRACKED {pathlib.Path(r).stat().st_size/1e6:8.2f} MB  {r}")
 PY
 ```
 
@@ -70,10 +79,21 @@ for p in sorted(pathlib.Path("results").glob("*.json")):
 PY
 ```
 
-**Status: OPEN, 21 artifacts.** Every subsampled artifact fails this, the `n=245` family among them
-— `prior_vs_learned.json` (the certified −0.144 the main text cites), `selection_ablation.json`,
-`selection_ablation_ranksignal.json`, `selection_ablation_prior300.json` — along with the `n=150`
-match-sensitivity and rank-flip family and the `n=37` GLORYx ladder.
+**Status: 21 artifacts flagged; most are fine and the flag was too blunt.** A subsampled artifact is
+unrecoverable only if *nothing else* pins its substrate set. Three cases, and only the first is a
+real defect:
+
+- **Pinned by data.** The `n=37` GLORYx ladder is the whole external set; the `n=994` val artifacts
+  are the whole clean val split. Nothing to record.
+- **Pinned by a committed file.** The whole `n=150` family — match-sensitivity ×4, rank-flip ×2,
+  budget-matched frontier — is defined by `artifacts/tier2/substrates.json`, a tracked list of
+  exactly those 150, and all three tier2 prediction files share that keyset exactly. `rank_flip_ci.py`
+  even carries a guard for this, added after joining a mismatched cache silently moved SyGMa from
+  0.514 to 0.286. Recoverable; say so rather than re-run.
+- **Pinned by nothing — the real defect.** The `n=245` family: `prior_vs_learned.json` (the
+  certified −0.144 the main text cites), `prior_vs_learned_propensity.json`,
+  `selection_ablation.json`, `selection_ablation_prior300.json`,
+  `selection_ablation_ranksignal.json`.
 
 Recovering the substrate set for row 4 took a search over caps and then inference from a *sibling*
 script's default (`prior_vs_learned.py` defaults to `--max-substrates 250`, which yields 245;
