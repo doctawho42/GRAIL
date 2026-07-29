@@ -648,13 +648,19 @@ it. All three belong in any report, with the coverage ceiling wherever a rule ba
 
 \subsubsection*{Reproducibility statement}
 
-All numbers are regenerable from committed artifacts, but for one reranker figure whose
-per-substrate scores were not retained and which is flagged where it appears. The anonymized archive
-holds every method's frozen predictions, the audits, the harness, the split construction, the
-analysis code and the GRAIL checkpoints. Where an analysis path re-derives a deployed output, the
-two are reconciled before use rather than assumed equal: the released per-candidate score dump
-reproduces the deployed ranking on all $\ntest$ substrates, a check that caught three silent
-divergences in the path that produces it.
+All numbers are regenerable, with one exception flagged where it appears: a reranker figure whose
+per-substrate scores were not retained. What regeneration costs differs by analysis, and the
+distinction is worth stating rather than leaving a reader to discover. Every split-level result
+regenerates from the committed artifacts alone --- frozen predictions, key tables, per-substrate
+records --- while the ablations that rank or re-select candidates require running a trained model,
+so they additionally need the GRAIL checkpoints. The anonymized archive holds those, together with
+every method's frozen predictions, the audits, the harness, the split construction and the analysis
+code. Results measured on a subsample of a split carry the cap and seed that drew it, without which
+the substrate set is not recoverable: sampling draws without replacement, so a different cap yields
+a different set of the same size rather than a subset. Where an analysis path re-derives a deployed
+output, the two are reconciled before use rather than assumed equal: the released per-candidate
+score dump reproduces the deployed ranking on all $\ntest$ substrates, a check that caught three
+silent divergences in the path that produces it.
 
 Every set this paper treats as external or third-party has been audited for overlap with GRAIL's
 training and validation substrates, not only the one where a problem was found. The GLORYx set
