@@ -106,6 +106,89 @@ filter outranks the frequency prior once the pool is broad. These are $n=245$ me
 the deployed baseline of 0.352 is inflated on this subset relative to the full-test macro recall
 of $\grailmacro$.
 
+\subsection{The bank without a selector, at a matched budget}
+\label{app:noselect}
+
+Everything above localises the loss at selection by observation. The counterfactual states it
+directly: apply the bank with no selector at all, rank the whole pool with the deployed scorer, and
+truncate at the number of candidates SyGMa emits. The breadth sweep does not answer this. It ranks
+the pool the deployed 30-rule selector produces, eight to twelve candidates, which has nothing to
+give at $k=64$; and the widest row of Table~\ref{tab:selection-breadth} is not the whole bank
+either, since the generator's calibrated threshold is itself a selector and prunes rules however
+large $\mathit{top\text{-}k}$ is.
+
+Dropping both, the bank produces $661.7$ raw products per substrate, $81.6$ distinct under the
+matching criterion. Scored against SyGMa on the same $245$ substrates, macro recall, paired
+bootstrap over substrates:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lcccl}
+\toprule
+budget $k$ & bank, no selector & SyGMa & difference & \\
+\midrule
+$8$  & 0.415 & 0.513 & $-0.098$ $[-0.169,-0.028]$ & SyGMa ahead \\
+$15$ & 0.528 & 0.569 & $-0.041$ $[-0.109,+0.027]$ & indistinguishable \\
+$32$ & 0.652 & 0.591 & $+0.061$ $[-0.001,+0.123]$ & indistinguishable \\
+$64$ & 0.735 & 0.595 & $+0.140$ $[+0.084,+0.197]$ & the bank ahead \\
+$82$ & 0.760 & 0.595 & $+0.166$ $[+0.110,+0.222]$ & the bank ahead \\
+\bottomrule
+\end{tabular}
+\caption{The bank applied without a selector against SyGMa at matched output budgets, $n=245$.}
+\label{tab:noselect}
+\end{table}
+
+The claim survives its own test, and the condition survives with it. The bank does convert into
+recall above SyGMa once the selector is gone --- but only above the budget the field uses. At $k=15$
+the two are indistinguishable and below it SyGMa wins, so the advantage is bought with output, which
+is the parameter of \S\ref{sec:metric} acting in our favour where \S\ref{sec:metric} has it acting
+against us. Reporting only the $k=82$ row would apply a standard to ourselves that this paper
+refuses to apply to SyGMa.
+
+Two controls place it. At $300$ rules the same comparison is negative at every budget, $-0.120$
+$[-0.190,-0.049]$ at $k=82$, so it is removing the selector rather than widening it that does the
+work; and that arm reproduces the deployed configuration exactly, pool $107.6$ and recall@15
+$0.4134$ against the $107.6$ and $0.413$ of Table~\ref{tab:selection-breadth}. This is a
+counterfactual and not an operating point: $82$ candidates per substrate drawn from $661.7$ is not a
+system anyone would deploy, and its precision would be worse than SyGMa's.
+
+Read against the ceiling rather than against SyGMa, the arm reaches $0.760$ of a macro ceiling of
+$0.803$ on these substrates, so what remains after selection is removed is ranking and the cut-off,
+not coverage. The micro ceiling quoted elsewhere for the same substrates, $0.728$, is a different
+aggregation and not comparable with either.
+
+\subsection{Which half of the bank earns the ceiling}
+\label{app:provenance}
+
+The bank is a deduplicated union of four published rule sets and a much larger body of templates
+mined from the training split, and nothing so far says which part reaches the chemistry.
+\texttt{mined\_only.txt} lists the mined templates verbatim, so the split is exact rather than
+estimated: $5{,}866$ mined and $1{,}715$ curated, partitioning the $7{,}581$ with nothing left over.
+Applying each subset alone, through the same primitives and on the same substrates as the ceiling
+itself:
+
+\begin{center}
+\begin{tabular}{lcccc}
+\toprule
+subset & rules & share of bank & coverage & share of ceiling \\
+\midrule
+curated & $1{,}715$ & $22.6\%$ & $0.660$ $[0.612,0.709]$ & $90.6\%$ \\
+mined   & $5{,}866$ & $77.4\%$ & $0.328$ $[0.281,0.379]$ & $45.0\%$ \\
+union   & $7{,}581$ & $100\%$  & $0.728$ $[0.681,0.777]$ & $100\%$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The union reproduces the $0.7284$ already stored per substrate for exactly these substrates, which
+is the gate the measurement refuses to report without. Exclusively, curated rules reach $0.400$ of
+the references that mined ones do not; mined rules reach $0.069$ that curated ones do not. Seventy-seven
+per cent of the bank contributes nine per cent of the ceiling that nothing else reaches, and $0.259$
+is reachable by both: the mined tail is largely re-deriving curated chemistry.
+
+This does not contradict Appendix~\ref{app:negative}, where discarding the $4{,}271$ rules that
+never carry a positive label costs recall. Contributing to a deployed pool and contributing to the
+ceiling are different things, and the tail does the first while barely moving the second.
+
 \subsection{Selection as measured against selection as deployed}
 
 The learned-versus-prior comparison in Table~\ref{tab:levers} is a controlled comparison of rule

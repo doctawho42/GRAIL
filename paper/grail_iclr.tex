@@ -27,9 +27,8 @@
 \newcommand{\interB}{+0.063}          % MetaTrans<->SyGMa interaction
 \newcommand{\interBci}{[+0.022,\,+0.106]}
 
-\title{The Bank Is Not the Bottleneck:\\
-Decomposing Recall in\\
-Metabolite-Structure Prediction}
+\title{Three Undeclared Parameters Reorder the\\
+Metabolite-Prediction Leaderboard}
 
 % double-blind: authors stay anonymous until camera-ready
 \author{Anonymous authors \\ Paper under double-blind review}
@@ -51,26 +50,29 @@ knowledge base expresses the transformation, the applicable rule is not selected
 product is generated but ranked too low to report. Improving the rule base, the selector and the
 ranker are different research programmes, and recall does not indicate which is warranted.
 
-We decompose recall exactly into coverage, selection and ranking for methods built on an
-enumerable rule base, and apply it to two of them. The comparison explains the leaderboard rather
-than restating it. The method with the wider rule base loses: its bank reaches $0.735$ of the
-annotated chemistry against its competitor's $0.542$, and it converts a third of that reach into
-recall where the competitor converts nearly all of its own, having no selection stage to lose
-anything at. The gap is the price of selecting at all, which
+Three parameters sit between a set of predictions and a leaderboard position, and none is declared:
+the rule for when two structures are the same molecule, the aggregate reported, and the output
+budget. Varying each with predictions held fixed moves the ordering. The matching rule erases a
+statistically significant advantage between two published tools on the external set; reporting F1
+rather than recall drops the recall leader to last; and the budget, imported from a convention that
+never charged for output size, reorders them again.
+
+The third is not arbitrary, and an exact decomposition of recall says why. For methods with an
+enumerable rule base, recall factorises into coverage, selection and ranking, each measurable rather
+than estimated. Applied to two such methods it explains the leaderboard: the wider bank reaches
+$0.735$ of the annotated chemistry against $0.542$ and converts a third of that reach, while the
+narrower converts nearly all of its own, having no selection stage to lose anything at. The gap is the price of selecting at all, which
 recall charges only to methods that select. That is a claim about benchmark design rather than
 about chemistry, and it predicts something checkable: an aggregate crediting hits without charging
 for volume must favour architectures that do not filter.
 
-Every factor counts references matched against predictions, so the decomposition is defined only
-relative to a stated rule for when two structures are the same molecule. That rule is never stated
-in this field and has never been varied. Varying it over five conventions with predictions held
-fixed erases a statistically significant advantage between two published tools on the external set;
-on our full split it leaves the recall ordering stable to within noise and moves the F1 ordering
-instead. Two further parameters go undeclared and matter more: reporting F1 rather than recall drops
-the recall leader to last, which the decomposition predicts from a structural property rather than
-observing after the fact, and the output budget, imported from a convention that never charged for
-size, reorders them again --- against the system we release. We release the protocol, the audited split and
-the frozen predictions that make both measurements repeatable.
+So an aggregate crediting hits without charging for volume cannot be neutral between architectures,
+which the decomposition predicts from a structural property rather than observing after the fact.
+The reading survives its own counterfactual: removing the selection stage entirely and matching the
+output budget, the wider bank passes its competitor by $0.166$ $[0.110,0.222]$ --- but only above
+the budget the field uses, which is the third parameter acting again, this time in our favour. We
+release the protocol, the audited split and the frozen predictions that make every measurement here
+repeatable.
 \end{abstract}
 
 \section{Introduction}
@@ -255,10 +257,9 @@ rather than standing as independent evidence.
 precision alone: under incomplete annotation precision is a \emph{pessimistic lower bound}, since an
 unannotated candidate scores as a false positive even when it is a real but unrecorded metabolite.
 Recall without output size misleads in the other direction, a method being able to buy recall by
-enumerating (Appendix~\ref{app:budget}). Two comparisons are confirmatory and carry the multiplicity correction: the differential
-sensitivity of \S\ref{sec:rankflip} and the learned-versus-prior selection gap of
-\S\ref{sec:xmc}. Every other interval in this paper is exploratory and should be read as
-descriptive. Selection happens on validation, with two exceptions we
+enumerating (Appendix~\ref{app:budget}). Two comparisons are confirmatory and carry the multiplicity correction, the differential
+sensitivity of \S\ref{sec:rankflip} and the learned-versus-prior gap of \S\ref{sec:xmc}; every
+other interval here is exploratory. Selection happens on validation, with two exceptions we
 name rather than imply. The deployed
 filter's encoder variant was chosen by comparing both variants on test
 (Appendix~\ref{app:arch}); that choice fixes which encoder is deployed and so reaches every GRAIL
@@ -311,12 +312,20 @@ reported alongside recall for any rule-grounded method: it separates what the kn
 express from what the model does with it, and no ranking improvement can exceed it.
 
 \paragraph{What the decomposition says.} Figure~\ref{fig:decomp} localises the loss. The deployed
-pipeline converts only $35.5\%$ of its own ceiling into realised recall, and the three factors
-separate cleanly, with no pair of intervals overlapping. Selection is the binding constraint:
-barely a third of what the bank can reach survives the selector's rule budget. Ranking is close to
-lossless at $0.963$ $[0.946,0.978]$, so once a candidate is in the budgeted pool it almost always
-reaches the output. The decomposition therefore points at selection, and specifically at how few
-rules are applied, as the stage where intervention is warranted.
+pipeline converts only $35.5\%$ of its own ceiling into realised recall, the three factors separate
+with no pair of intervals overlapping, and selection is where the loss sits at this operating point:
+barely a third of what the bank can reach survives the selector's rule budget, while ranking is
+close to lossless at $0.963$ $[0.946,0.978]$. It binds jointly with the cut-off rather than alone.
+Widening the selector moves the loss downstream --- what selection recovers, the cut-off gives back
+--- so the honest statement is that the deployed \emph{pair} caps the pipeline near $0.41$ against a
+bank ceiling of \ceiling\ (Appendix~\ref{app:props}).
+
+Removing selection entirely tests that reading rather than restating it. Applying the bank with no
+selector and no threshold, ranking the whole pool and truncating at SyGMa's output, the bank passes
+SyGMa by $0.166$ $[0.110,0.222]$ at $k=82$ --- and is behind at $k=8$, indistinguishable at the
+field's $k=15$. The bank converts, and it converts only above the budget the convention sets, which
+is \S\ref{sec:metric}'s third parameter acting for us where it acts against us later
+(Appendix~\ref{app:noselect}).
 
 Applied to a second method it stops being self-diagnosis. SyGMa is rule-grounded with an
 enumerable bank, so it decomposes on the same split in the same frame, and its profile is the
@@ -327,7 +336,10 @@ wider one. The gap between us is therefore not a worse rule base but the cost of
 stage at all, which recall charges only to methods that select. Two methods lose recall for opposite reasons, and a single score says only that one scores lower.
 The frame also bounds this architecture: a perfect selector and ranker would stop at \ceiling, and
 that ceiling is corpus-limited rather than a consequence of tuning, since 53\% of uncovered
-transformations are of reaction types absent from the bank (Appendix~\ref{app:props}).
+transformations are of reaction types absent from the bank. It is also carried by the curated
+fifth of the bank: the $1{,}715$ curated rules reach $0.660$ where the $5{,}866$ mined ones reach
+$0.328$, and the mined tail adds only $0.069$ that curation does not already reach
+(Appendix~\ref{app:props}).
 
 \section{Results}
 \label{sec:results}
@@ -438,13 +450,12 @@ against the curation's $6.0$; at the curation's own budget it recovers $0.301$, 
 $[0.123,0.354]$ (Appendix~\ref{app:xdomain}).
 
 \paragraph{Mechanism.} The spread tracks how far a method's outputs diverge
-\emph{representationally} from the references it is scored against, and the intermediate column
-says which divergence is responsible. Here it is stereochemistry alone: every separating gain is
-realised by the stereo step, and the tautomer step that follows is zero for all but one method. GLORYx references carry stereocentres, and several of
-these systems standardise their own output without stereochemistry and cannot emit one, so a
-stereo-sensitive criterion scores them on a representation they never produce. Internally, where
-references are already stereo-stripped, tautomerism is what fails instead: which relaxation
-dominates is a property of the reference set, not of the criterion. In retrosynthesis, whose references are canonical and stereochemically
+\emph{representationally} from the references, and the intermediate column says which divergence is
+responsible: here stereochemistry alone, every separating gain realised by the stereo step and the
+tautomer step zero for all but one method. GLORYx references carry stereocentres and several of
+these systems cannot emit one, so a stereo-sensitive criterion scores them on a representation they
+never produce. Internally, where references are already stereo-stripped, tautomerism fails instead:
+which relaxation dominates is a property of the reference set, not of the criterion. In retrosynthesis, whose references are canonical and stereochemically
 explicit, the same criteria span about $0.02$ (Appendix~\ref{app:xdomain}).
 
 
@@ -532,10 +543,9 @@ $+0.003$ $[-0.009,+0.015]$. That is an erased gap rather than a certified revers
 as no more than that. Three undeclared parameters therefore sit between a set of predictions and a
 leaderboard position, and they do not act on the same comparisons.
 
-Precision here is a lower bound, which threatens this result most, since the method the metric
+Precision here is a lower bound, which threatens this result most since the method the metric
 demotes emits the most candidates. Under a uniform-propensity model recall is unbiased, precision's
-ordering is identified for every $c$, and F1's survives to $c\approx0.055$ --- an annotation rate
-the references do not support (Appendix~\ref{app:props}).
+ordering is identified, and F1's survives to $c\approx0.055$ (Appendix~\ref{app:props}).
 
 
 
@@ -544,13 +554,12 @@ the references do not support (Appendix~\ref{app:props}).
 \subsection{Comparison against published methods}
 \label{sec:diagnosis}
 
-Recall figures here differ by population, aggregation and truncation, and several coincide in value
-without being the same quantity; Appendix~\ref{app:xdomain} states each.
-On the full clean test split GRAIL trails both published comparators: SyGMa reaches $0.572$, a
-paired $-0.242$ $[-0.271,\,-0.212]$ over the $1{,}168$ common substrates, and MetaPredictor $0.568$.
-Nor does it lead at any output budget (Appendix~\ref{app:budget}), so the gap is the selection
-weakness \S\ref{sec:decomp} localises. They differ on output size besides, $8.4$ candidates against
-$81.7$, which \S\ref{sec:metric} prices --- against us.
+On the full clean test split GRAIL trails both published comparators, SyGMa at $0.572$ (paired
+$-0.242$ $[-0.271,\,-0.212]$ over the $1{,}168$ common substrates) and MetaPredictor at $0.568$, and
+leads at no output budget (Appendix~\ref{app:budget}). It emits $8.4$ candidates against SyGMa's
+$81.7$, which \S\ref{sec:metric} prices against us. Recall figures here differ by population,
+aggregation and truncation and several coincide in value without being the same quantity;
+Appendix~\ref{app:xdomain} states each.
 
 
 
@@ -579,12 +588,10 @@ The diagnosis rests on nine measurements (Table~\ref{tab:levers}), each designed
 one factor, so a result failing to move recall is as informative as one that does.
 
 
-Six of the nine failed, and are the more useful half: rules applied twice, twice the data, a
-site-of-metabolism prior, abstention on filter score, the propensity-scored loss XMC prescribes, and
-a stratification meant to show a rule bank transfers better off distribution, where an untrained
-rule engine degrades just as fast. Depth-2 buys $0.012$ of ceiling for $8.5$ times the candidates
-and doubling the data changes nothing, so we attribute the shortfall to the structure of the
-selection problem rather than to under-training. Abstention is sharpest: the threshold removes true
+Six of the nine failed, and are the more useful half. Depth-2 buys $0.012$ of ceiling for $8.5$
+times the candidates, doubling the data changes nothing, and the stratification meant to show a rule
+bank transfers better off distribution finds an untrained rule engine degrading just as fast, so we
+attribute the shortfall to the structure of the selection problem rather than to under-training. Abstention is sharpest: the threshold removes true
 and apparently false candidates alike, so precision stays flat while recall collapses, its level
 bounded by the annotation. Of the rest, two locate recoverable recall at selection and the third
 characterises what the bank cannot reach in one step (Appendix~\ref{app:props}).
@@ -618,17 +625,17 @@ which inform no claim.
 \label{sec:conclusion}
 
 \looseness=-1
-A recall figure for a rule-grounded predictor factorises exactly into what its rule base can
-express, what its selector admits, and what its ranker returns. Applied to two published systems it
-explains their ordering rather than repeating it: the wider bank converts a third of what it
-reaches, the narrower nearly all of its own, and the gap is the price of selecting.
+Three parameters decide a leaderboard position before any model does: the matching rule, which moves
+how far two \emph{curators} of one drug agree before it moves any model; the aggregate, under which
+the recall leader finishes last, a pipeline that selects nothing being what recall rewards and
+precision punishes; and the budget, which binds only methods emitting past it. All three belong in
+any report.
 
-\looseness=-2
-Three undeclared parameters sit between predictions and a leaderboard position: the matching rule,
-which moves how far two \emph{curators} of one drug agree before it moves any model; the aggregate,
-under which the recall leader finishes last, a pipeline that selects nothing being what recall
-rewards and precision punishes; and the budget, which binds only methods emitting past it. All three
-belong in any report, with the coverage ceiling wherever a rule base exists.
+\looseness=-1
+For a rule-grounded predictor recall also factorises exactly into bank, selector and ranker, which
+explains an ordering rather than repeating it and predicts the aggregate's effect from a structural
+property. Removing the selector and matching the budget confirms that reading above the field's $k$
+and not below. Report the ceiling wherever a rule base exists.
 
 \subsubsection*{Reproducibility statement}
 
