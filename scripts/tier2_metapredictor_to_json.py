@@ -34,7 +34,8 @@ from rdkit import RDLogger
 
 RDLogger.DisableLog("rdApp.*")
 
-PER_PARENT = 16  # n_best 8 (SoM) x n_best 2 (metabolite)
+PER_PARENT = 16  # n_best 8 (SoM) x n_best 2 (metabolite); --per-parent overrides for a
+                 # wider beam, where the coverage analogue needs n_best1 x n_best2 lines
 
 
 def check_smile(smi: str) -> bool:
@@ -52,12 +53,16 @@ def canon(smi: str) -> str | None:
 
 
 def main() -> int:
+    global PER_PARENT
     ap = argparse.ArgumentParser()
     ap.add_argument("--input-csv", required=True, help="mol_id,smiles rows (header-less), input order")
     ap.add_argument("--metabolite-txt", required=True, help="stage-2 output, 16 tokenised lines per valid parent")
     ap.add_argument("--sub-index-map", required=True, help="sub_N -> substrate SMILES (the run_match_sensitivity keys)")
     ap.add_argument("--out", required=True)
+    ap.add_argument("--per-parent", type=int, default=PER_PARENT,
+                    help="stage-1 n_best times stage-2 n_best for this run")
     args = ap.parse_args()
+    PER_PARENT = args.per_parent
 
     id2smiles = json.loads(Path(args.sub_index_map).read_text())  # sub_N -> substrate SMILES
     drug_lines = [ln for ln in Path(args.input_csv).read_text().split("\n") if ln.strip()]

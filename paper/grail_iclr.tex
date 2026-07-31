@@ -98,17 +98,13 @@ compared on the same quantity: top-$k$ recall, the fraction of experimentally ob
 that appear among a method's $k$ highest-ranked predictions.
 
 That comparison hides what it is measuring. A rule-based or hybrid method can fail to recover a
-metabolite for three unrelated reasons: the required transformation may have no corresponding
-template in its rule base, the template may exist but not be selected, or the correct product may
-be generated but ranked too low to be reported. Recall confounds these, so a low score identifies
-no deficiency and suggests no remedy. Improving the rule base, improving template selection and
-improving ranking are different research programmes, and the aggregate score does not indicate
-which is warranted.
+metabolite for three unrelated reasons: no template expresses the transformation, the template
+exists but is not selected, or the product is generated and ranked too low to report. Recall
+confounds these, so a low score identifies no deficiency and suggests no remedy.
 
 This work separates them. For a method whose rule base can be enumerated, recall factorises
-exactly into coverage, selection and ranking, and the factorisation is a measurement rather than an
-estimate: the coverage term is obtained by applying the entire rule base and asking what it
-reaches. Applied to two such methods it explains a leaderboard instead of restating one. The method
+exactly into coverage, selection and ranking, and the coverage term is obtained by applying the
+entire bank and asking what it reaches. Applied to two such methods it explains a leaderboard instead of restating one. The method
 with the wider rule base reaches more chemistry and converts a third of that reach; the one with
 the narrower base converts nearly all of its own, because it applies every applicable rule and so
 has no selection stage in which to lose anything. It wins by half a leaderboard position for that
@@ -133,9 +129,13 @@ F1 rather than recall makes the leader the straggler, and the output budget. Tha
 metric choices can reorder leaderboards is established in other fields; that this field's rankings
 turn on two undeclared ones is not.
 
-We release the bundle the protocol needs rather than a model: the audited split, the re-scoring
-harness with all five criteria, every method's frozen predictions, and GRAIL's checkpoints. Adding a
-sixth method needs its ranked output and nothing else.
+What generalises past this benchmark is the instrument. Recall factorises exactly wherever the
+candidate set can be enumerated, and the coverage term is then measured rather than estimated, so it
+is reportable for any such method; what it supports is a claim about benchmark design, that an
+aggregate crediting hits without charging for volume cannot be neutral between architectures that
+filter and architectures that do not. We release the bundle that makes it checkable rather than a
+model: the audited split, the harness with all five criteria, every method's frozen predictions and
+GRAIL's checkpoints. Adding a sixth method needs its ranked output and nothing else.
 
 \section{Related Work}
 \label{sec:related}
