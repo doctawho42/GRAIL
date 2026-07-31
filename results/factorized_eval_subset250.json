@@ -1,0 +1,61 @@
+{
+  "config": {
+    "n_substrates": 250,
+    "seed": 42,
+    "top_types": 10,
+    "max_output": 15,
+    "rule_timeout": 1.0,
+    "rule_max_products": 20,
+    "checkpoint": "/Users/nikitapolomosnov/PycharmProjects/GRAIL/.claude/worktrees/hungry-pasteur-25d746/artifacts/factorized_v1/checkpoints/factorized.pt",
+    "filter_checkpoint": "/Users/nikitapolomosnov/PycharmProjects/GRAIL/.claude/worktrees/hungry-pasteur-25d746/artifacts/full5000_single/checkpoints/filter.pt",
+    "vocab": "/Users/nikitapolomosnov/PycharmProjects/GRAIL/.claude/worktrees/hungry-pasteur-25d746/grail_metabolism/resources/coarse_type_vocab.json"
+  },
+  "n_empty_predictions": 9,
+  "mean_output": 7.972,
+  "recall@15": 0.2575,
+  "recall@15_bootstrap_ci": {
+    "point": 0.2575,
+    "lo": 0.2051,
+    "hi": 0.3104,
+    "n_boot": 10000,
+    "note": "Unpaired percentile bootstrap (substrate resampling) on THIS run's own per-substrate recall -- NOT a paired comparison against the 0.413 broad+filter baseline. That baseline (results/selection_ablation.json) was measured on a different 245-substrate subset with no per-substrate breakdown persisted, so a true paired-diff bootstrap (stats.paired_diff_bootstrap_ci over per-substrate deltas) would require rerunning that baseline on this exact substrate set -- out of scope for this eval. Read the CI here as this run's own sampling uncertainty."
+  },
+  "precision_frontier": {
+    "1": {
+      "recall": 0.1416,
+      "precision": 0.192,
+      "f1": 0.1535,
+      "mean_output_size": 0.964
+    },
+    "3": {
+      "recall": 0.2182,
+      "precision": 0.1073,
+      "f1": 0.1344,
+      "mean_output_size": 2.764
+    },
+    "5": {
+      "recall": 0.2398,
+      "precision": 0.0769,
+      "f1": 0.1084,
+      "mean_output_size": 4.208
+    },
+    "10": {
+      "recall": 0.2501,
+      "precision": 0.0564,
+      "f1": 0.0844,
+      "mean_output_size": 6.772
+    },
+    "15": {
+      "recall": 0.2575,
+      "precision": 0.0531,
+      "f1": 0.0801,
+      "mean_output_size": 7.972
+    }
+  },
+  "baselines": {
+    "deployed_generator_x_filter": 0.33,
+    "broad_top_k300_plus_filter": 0.413,
+    "sygma_phase1_phase2": 0.572
+  },
+  "elapsed_seconds": 315.0
+}

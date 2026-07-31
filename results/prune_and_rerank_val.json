@@ -1,39 +1,43 @@
 {
-  "split": "val",
-  "n_substrates": 994,
-  "match": "inchikey_tautomer",
-  "operating_point": {
-    "candidate_top_k": 128,
-    "max_output": 15,
-    "policy": "rank-only"
-  },
-  "bank": {
-    "full": 7581,
-    "pruned": 3310,
-    "removed": 4271,
-    "prune_rule": "zero positive labels across 4,787 TRAINING substrates (no val/test info)"
-  },
-  "recall_at_15": {
-    "full": 0.3882,
-    "pruned": 0.3517,
-    "delta": -0.0364,
-    "ci95": [
-      -0.0495,
-      -0.0239
-    ]
-  },
-  "pool_coverage_recall_inf": {
-    "full": 0.4394,
-    "pruned": 0.3782,
-    "delta": -0.0612,
-    "ci95": [
-      -0.0777,
-      -0.0459
-    ]
-  },
-  "mean_pool_size": {
-    "full": 46.88,
-    "pruned": 40.02
-  },
-  "verdict": "REACHABILITY LOSS: pruned rules were load-bearing on unseen chemistry"
+ "split": "val",
+ "n_substrates": 994,
+ "match": "inchikey_tautomer",
+ "operating_point": {
+  "candidate_top_k": 128,
+  "max_output": 15,
+  "policy": "rank-only"
+ },
+ "bank": {
+  "full": 7581,
+  "pruned": 3310,
+  "removed": 4271,
+  "prune_rule": "zero positive labels across 4,787 TRAINING substrates (no val/test info)"
+ },
+ "recall_at_15": {
+  "full": 0.3882,
+  "pruned": 0.3517,
+  "delta": -0.0364,
+  "ci95": [
+   -0.0495,
+   -0.0239
+  ]
+ },
+ "pool_coverage_recall_inf": {
+  "full": 0.4394,
+  "pruned": 0.3782,
+  "delta": -0.0612,
+  "ci95": [
+   -0.0777,
+   -0.0459
+  ]
+ },
+ "mean_pool_size": {
+  "full": 46.88,
+  "pruned": 40.02
+ },
+ "verdict": "REACHABILITY LOSS: pruned rules were load-bearing on unseen chemistry",
+ "population": {
+  "set": "the whole clean val split",
+  "note": "not drawn with a cap and seed; the substrate set is fixed by the source named here"
+ }
 }

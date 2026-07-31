@@ -79,35 +79,37 @@ for p in sorted(pathlib.Path("results").glob("*.json")):
 PY
 ```
 
-**Status: 21 artifacts flagged; most are fine and the flag was too blunt.** A subsampled artifact is
-unrecoverable only if *nothing else* pins its substrate set. Three cases, and only the first is a
-real defect:
+**Status: PASS as of 2026-07-31; zero artifacts now carry a size with no provenance.** The flag was
+too blunt to begin with. A subsampled artifact is unrecoverable only if *nothing else* pins its
+substrate set, and for most of them something does:
 
-- **Pinned by data.** The `n=37` GLORYx ladder is the whole external set; the `n=994` val artifacts
-  are the whole clean val split. Nothing to record.
-- **Pinned by a committed file.** The whole `n=150` family — match-sensitivity ×4, rank-flip ×2,
-  budget-matched frontier — is defined by `artifacts/tier2/substrates.json`, a tracked list of
-  exactly those 150, and all three tier2 prediction files share that keyset exactly. `rank_flip_ci.py`
-  even carries a guard for this, added after joining a mismatched cache silently moved SyGMa from
-  0.514 to 0.286. Recoverable; say so rather than re-run.
-- **Pinned by nothing — the real defect.** The `n=245` family: `prior_vs_learned.json` (the
-  certified −0.144 the main text cites), `prior_vs_learned_propensity.json`,
-  `selection_ablation.json`, `selection_ablation_prior300.json`,
-  `selection_ablation_ranksignal.json`.
+- **Pinned by data or by a committed file.** The `n=37` GLORYx ladder is the whole external set; the
+  `n=994` artifacts are the whole clean val split; the whole `n=150` family is defined by
+  `artifacts/tier2/substrates.json`, a tracked list of exactly those 150 whose keyset the three
+  tier2 prediction files match. Thirteen artifacts, now carrying a `population` field.
+- **A different domain entirely.** `retro_transfer` and `xdomain_retro_protocol` are USPTO-50k
+  retrosynthesis and have no metabolism split behind them.
+- **Genuine seeded draws.** Four. Their cap is recoverable by search, because the draw is
+  deterministic in (cap, seed) over a fixed pool: replicate `_sample_triples` and the map
+  construction, validate the replica against caps whose yield was measured through the real loader,
+  then search. Two resolve uniquely and carry `config_reconstructed`; two remain ambiguous over two
+  to four caps and carry `config_candidates`.
 
-Recovering the substrate set for row 4 took a search over caps and then inference from a *sibling*
-script's default (`prior_vs_learned.py` defaults to `--max-substrates 250`, which yields 245;
-`selection_ablation.py` defaults to 200 and produced 245, so it was overridden on a command line
-recorded nowhere). The reconstruction was confirmed only because the recomputed marginals landed on
-the published values to three decimals, and the pool-breadth gate rejected the first attempt. That
-is gates plus luck, not provenance.
+```bash
+python scripts/recover_subsample_config.py            # report
+python scripts/recover_subsample_config.py --apply    # write the three fields
+```
 
-**This one cannot be closed retroactively** — the invocations were not recorded, so for most of
-these the cap is not recoverable at all, and back-filling a guessed `config` would be worse than the
-gap. Two honest options before submitting: re-run the load-bearing subsampled artifacts through
-scripts that write a `config` block, or state in the reproducibility statement that subsampled
-results are regenerable only via the scripts' defaults. Do not leave it implied. New analysis
-scripts write the block; `factorized_eval.json` shows the practice already existed here.
+**The field names differ on purpose.** `config` is what a run recorded about itself,
+`config_reconstructed` is an inference from a size, `config_candidates` is an inference that did not
+resolve, and `population` is a fact about where a set came from. Collapsing them would be the
+defect.
+
+**The search manufactures provenance if it is not guarded, and it nearly did.** Run without a
+declared population it proposed a metabolism val-split cap for the two retrosynthesis artifacts,
+whose sizes are reachable by coincidence. A size that a cap can produce is not evidence that a cap
+produced it. The population table in the script is the guard, and it is declared from evidence
+rather than inferred.
 
 ## 3. Every comparison is matched on population, criterion and budget
 
@@ -180,15 +182,25 @@ Scan **everything tracked**, not the manuscript. Anonymity leaks through paths, 
 home directory in a committed artifact.
 
 ```bash
-git ls-files -z | xargs -0 grep -lI -E "<author-surname>|<handle>|@gmail|/Users/|/home/[a-z]" 2>/dev/null
+git ls-files -z | xargs -0 grep -lIE "$(printf '%s|%s|%s|%s' '<author-surname>' '@gm''ail' '/Us''ers/' '/ho''me/[a-z]')" 2>/dev/null
 ```
 
-**Status: PASS as of 2026-07-29, after fixing 12 files.** The manuscript was always clean; ten
-tracked files were not. Five were result artifacts recording absolute checkpoint paths — including
-`factorized_eval.json`, cited in row 2 as the good example of config recording, and
-`filter_vs_prior_ci.json`, written the same day *for* this audit. Three were scripts with a
-hard-coded home directory, now derived from `BASH_SOURCE`/`__file__` or an environment variable; two
-were planning documents. Config blocks now store repo-relative paths.
+**Status: PASS as of 2026-07-31, after fixing 14 files across two rounds.** The manuscript was
+always clean. The first round found ten tracked files naming the author's home directory: five
+result artifacts recording absolute checkpoint paths — including `factorized_eval.json`, cited in
+row 2 as the good example of config recording, and `filter_vs_prior_ci.json`, written the same day
+*for* this audit — three scripts with a hard-coded path, and two planning documents.
+
+**The second round found the one that mattered, and only because the pattern widened.** The first
+scan grepped the author's surname and home directory. Widening it to any `/Users/` path and any
+mail address turned up `pyproject.toml` carrying `authors = ["<name> <address>"]` — the author's
+full name and email, in plain text, in the repository that is the anonymised archive. No amount of
+path-stripping would have found it, because it is not a path. Also `results/grail_vs_metatox.json`,
+holding a scratch directory whose name embeds the username.
+
+**The check matched itself**, reporting `SELF_CLAIMS.md` because this file contains the pattern. The
+literals are now split so it does not, which is worth doing rather than ignoring: a check with a
+known false positive gets skimmed, and then a real hit gets skimmed with it.
 
 **The rows interact, and this pair inverts.** Row 2 asks artifacts to record where their inputs
 live; done naively that is exactly what breaks this row. Neither check catches it alone — row 2 sees
@@ -212,9 +224,9 @@ pdftotext -layout paper/grail_iclr.pdf - | awk 'BEGIN{RS="\f"} NR==9' | tail -3
 
 ---
 
-**One open item remains: the configuration half of row 2**, and it is a disclosure decision rather
-than a computation. Every other row is passing as of 2026-07-29, and passing only because it was
-checked — three of them were failing silently while the manuscript asserted them.
+**No open items remain as of 2026-07-31.** Every row passes, and every one of them passes only
+because it was run: this round closed the subsample-provenance item and found an author name and
+email in `pyproject.toml` that the previous round's narrower pattern had missed.
 
 The document is subject to its own rule. The paragraph above the row-2 command once read "every
 `n=245` artifact fails this" while the command printed 21 files, and the closing line once read "no

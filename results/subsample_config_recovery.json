@@ -1,0 +1,172 @@
+{
+ "config": {
+  "script": "recover_subsample_config.py",
+  "git_commit": "164acc9359c71d5b1d5d547011875302e9fa91d2",
+  "git_dirty": true
+ },
+ "validated_against": {
+  "test:245": 238,
+  "test:248": 237,
+  "test:250": 245,
+  "test:252": 246,
+  "test:255": 246
+ },
+ "artifacts": {
+  "ablate_id_embedding.json": {
+   "n": 291,
+   "status": "ambiguous",
+   "candidates": [
+    {
+     "split": "test",
+     "sampling_seed": 42,
+     "max_substrates": 300
+    },
+    {
+     "split": "test",
+     "sampling_seed": 42,
+     "max_substrates": 306
+    },
+    {
+     "split": "val",
+     "sampling_seed": 42,
+     "max_substrates": 299
+    }
+   ],
+   "n_candidates": 3
+  },
+  "ablate_id_embedding_val.json": {
+   "n": 994,
+   "status": "not a seeded subsample",
+   "population": "the whole clean val split",
+   "candidates": []
+  },
+  "budget_matched_frontier.json": {
+   "n": 150,
+   "status": "not a seeded subsample",
+   "population": "artifacts/tier2/substrates.json",
+   "candidates": []
+  },
+  "gloryx_criterion_ladder.json": {
+   "n": 37,
+   "status": "not a seeded subsample",
+   "population": "the whole GLORYx set",
+   "candidates": []
+  },
+  "gloryx_rank_flip_ci.json": {
+   "n": 37,
+   "status": "not a seeded subsample",
+   "population": "the whole GLORYx set",
+   "candidates": []
+  },
+  "hybrid_rerank.json": {
+   "n": 400,
+   "status": "ambiguous",
+   "candidates": [
+    {
+     "split": "test",
+     "sampling_seed": 42,
+     "max_substrates": 420
+    },
+    {
+     "split": "val",
+     "sampling_seed": 42,
+     "max_substrates": 408
+    },
+    {
+     "split": "val",
+     "sampling_seed": 42,
+     "max_substrates": 414
+    },
+    {
+     "split": "val",
+     "sampling_seed": 42,
+     "max_substrates": 415
+    }
+   ],
+   "n_candidates": 4
+  },
+  "match_sensitivity.json": {
+   "n": 150,
+   "status": "not a seeded subsample",
+   "population": "artifacts/tier2/substrates.json",
+   "candidates": []
+  },
+  "match_sensitivity_3method.json": {
+   "n": 150,
+   "status": "not a seeded subsample",
+   "population": "artifacts/tier2/substrates.json",
+   "candidates": []
+  },
+  "match_sensitivity_4method.json": {
+   "n": 150,
+   "status": "not a seeded subsample",
+   "population": "artifacts/tier2/substrates.json",
+   "candidates": []
+  },
+  "match_sensitivity_5method.json": {
+   "n": 150,
+   "status": "not a seeded subsample",
+   "population": "artifacts/tier2/substrates.json",
+   "candidates": []
+  },
+  "metatox_complementarity.json": {
+   "n": 248,
+   "status": "unique",
+   "candidates": [
+    {
+     "split": "val",
+     "sampling_seed": 42,
+     "max_substrates": 259
+    }
+   ],
+   "n_candidates": 1
+  },
+  "prune_and_rerank_val.json": {
+   "n": 994,
+   "status": "not a seeded subsample",
+   "population": "the whole clean val split",
+   "candidates": []
+  },
+  "rank_flip_ci.json": {
+   "n": 150,
+   "status": "not a seeded subsample",
+   "population": "artifacts/tier2/substrates.json",
+   "candidates": []
+  },
+  "rank_flip_ci_metatrans_sygma.json": {
+   "n": 150,
+   "status": "not a seeded subsample",
+   "population": "artifacts/tier2/substrates.json",
+   "candidates": []
+  },
+  "retro_transfer.json": {
+   "n": 500,
+   "status": "not a seeded subsample",
+   "population": "USPTO-50k retrosynthesis, not a metabolism split",
+   "candidates": []
+  },
+  "selection_ablation_ranksignal.json": {
+   "n": 245,
+   "status": "ambiguous",
+   "candidates": [
+    {
+     "split": "test",
+     "sampling_seed": 42,
+     "max_substrates": 250
+    },
+    {
+     "split": "val",
+     "sampling_seed": 42,
+     "max_substrates": 253
+    }
+   ],
+   "n_candidates": 2
+  },
+  "xdomain_retro_protocol.json": {
+   "n": 200,
+   "status": "not a seeded subsample",
+   "population": "USPTO-50k retrosynthesis, not a metabolism split",
+   "candidates": []
+  }
+ }
+}

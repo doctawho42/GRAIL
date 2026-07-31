@@ -1,27 +1,47 @@
 {
-  "n": 291,
-  "ks": [
-    1,
-    5,
-    15,
-    30
+ "n": 291,
+ "ks": [
+  1,
+  5,
+  15,
+  30
+ ],
+ "recall_id_on": {
+  "1": 0.133,
+  "5": 0.279,
+  "15": 0.3665,
+  "30": 0.4072
+ },
+ "recall_id_zeroed": {
+  "1": 0.1696,
+  "5": 0.3064,
+  "15": 0.3592,
+  "30": 0.386
+ },
+ "delta": {
+  "@1": 0.0366,
+  "@5": 0.0274,
+  "@15": -0.0073,
+  "@30": -0.0212
+ },
+ "config_candidates": {
+  "candidates": [
+   {
+    "split": "test",
+    "sampling_seed": 42,
+    "max_substrates": 300
+   },
+   {
+    "split": "test",
+    "sampling_seed": 42,
+    "max_substrates": 306
+   },
+   {
+    "split": "val",
+    "sampling_seed": 42,
+    "max_substrates": 299
+   }
   ],
-  "recall_id_on": {
-    "1": 0.133,
-    "5": 0.279,
-    "15": 0.3665,
-    "30": 0.4072
-  },
-  "recall_id_zeroed": {
-    "1": 0.1696,
-    "5": 0.3064,
-    "15": 0.3592,
-    "30": 0.386
-  },
-  "delta": {
-    "@1": 0.0366,
-    "@5": 0.0274,
-    "@15": -0.0073,
-    "@30": -0.0212
-  }
+  "note": "several caps yield this substrate count; the run recorded none of them and this does not resolve it"
+ }
 }
