@@ -336,10 +336,10 @@ wider one. The gap between us is therefore not a worse rule base but the cost of
 stage at all, which recall charges only to methods that select. Two methods lose recall for opposite reasons, and a single score says only that one scores lower.
 The frame also bounds this architecture: a perfect selector and ranker would stop at \ceiling, and
 that ceiling is corpus-limited rather than a consequence of tuning, since 53\% of uncovered
-transformations are of reaction types absent from the bank. It is also carried by the curated
-fifth of the bank: the $1{,}715$ curated rules reach $0.660$ where the $5{,}866$ mined ones reach
-$0.328$, and the mined tail adds only $0.069$ that curation does not already reach
-(Appendix~\ref{app:props}).
+transformations are of reaction types absent from the bank. It is carried by the curated fifth --- $1{,}715$ curated rules reach $0.660$ where $5{,}866$ mined
+ones reach $0.328$ --- and the tail is still not disposable: discarding the $4{,}271$ rules that
+never carry a positive label costs recall@15 $-0.036$ $[-0.050,-0.024]$
+(Appendices~\ref{app:props} and~\ref{app:negative}).
 
 \section{Results}
 \label{sec:results}
@@ -403,10 +403,8 @@ MetaPredictor  & & 0.362 & 0.504 & 0.504 & & $+0.142$ $[+0.079,+0.215]$ \\
 \paragraph{Primary endpoint.} The endpoint is the \emph{differential} sensitivity, not any individual
 reversal: the protocol $\times$ method interaction, with a paired bootstrap over substrates
 ($10{,}000$ resamples). Every method gains under a more tolerant criterion, so only the differential
-can reorder anything. The design was fixed before
-the data, the five criteria named and the re-scoring of frozen predictions specified twelve days
-before the first result; the estimator was not, the differential and the paired bootstrap being
-chosen at analysis time. We correct for multiplicity: under Holm--Bonferroni at
+can reorder anything. The design was fixed before the data, the five criteria and the re-scoring of frozen predictions
+specified twelve days before the first result; the estimator was not. We correct for multiplicity: under Holm--Bonferroni at
 $\alpha=0.05$ every interaction called significant here survives on both sets, internally even when
 the family is taken conservatively as all ten pairs the five-method table admits. On the $\nshared$-substrate subset two independent
 pairs are significant along two protocol axes, BioTransformer gaining \interA\ \interAci\ more than
@@ -454,9 +452,10 @@ $[0.123,0.354]$ (Appendix~\ref{app:xdomain}).
 responsible: here stereochemistry alone, every separating gain realised by the stereo step and the
 tautomer step zero for all but one method. GLORYx references carry stereocentres and several of
 these systems cannot emit one, so a stereo-sensitive criterion scores them on a representation they
-never produce. Internally, where references are already stereo-stripped, tautomerism fails instead:
-which relaxation dominates is a property of the reference set, not of the criterion. In retrosynthesis, whose references are canonical and stereochemically
-explicit, the same criteria span about $0.02$ (Appendix~\ref{app:xdomain}).
+never produce. Internally, where references are already stereo-stripped, tautomerism fails instead,
+so which relaxation dominates is a property of the reference set. In retrosynthesis, whose
+references are canonical and stereochemically explicit, the five span about $0.02$
+(Appendix~\ref{app:xdomain}).
 
 
 
@@ -591,10 +590,9 @@ one factor, so a result failing to move recall is as informative as one that doe
 Six of the nine failed, and are the more useful half. Depth-2 buys $0.012$ of ceiling for $8.5$
 times the candidates, doubling the data changes nothing, and the stratification meant to show a rule
 bank transfers better off distribution finds an untrained rule engine degrading just as fast, so we
-attribute the shortfall to the structure of the selection problem rather than to under-training. Abstention is sharpest: the threshold removes true
-and apparently false candidates alike, so precision stays flat while recall collapses, its level
-bounded by the annotation. Of the rest, two locate recoverable recall at selection and the third
-characterises what the bank cannot reach in one step (Appendix~\ref{app:props}).
+attribute the shortfall to the structure of the selection problem rather than to under-training. Abstention is sharpest: the threshold removes true and
+apparently false candidates alike, so precision stays flat while recall collapses. Of the rest, two locate recoverable recall at selection and the third types
+what the bank cannot reach in one step (Appendix~\ref{app:props}).
 
 \section{Limitations}
 \label{sec:limitations}

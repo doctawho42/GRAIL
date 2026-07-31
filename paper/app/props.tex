@@ -106,6 +106,44 @@ filter outranks the frequency prior once the pool is broad. These are $n=245$ me
 the deployed baseline of 0.352 is inflated on this subset relative to the full-test macro recall
 of $\grailmacro$.
 
+\subsection{A third rule-grounded method}
+\label{app:third}
+
+The decomposition runs on two methods and one of them is degenerate in the factor the paper is
+about, SyGMa's selection being $1$ by construction. BioTransformer supplies a third point and a
+non-degenerate one: it selects, conditioning reactions on biosystem and enzyme rather than firing
+everything applicable, and its templates ship enumerably --- $994$ distinct SMIRKS across its
+human, environmental-microbial and standardisation reaction files.
+
+\begin{center}
+\begin{tabular}{lcccc}
+\toprule
+method & rules & bank reach & realised@15 & converts \\
+\midrule
+GRAIL          & $7{,}581$ & 0.701 & 0.318 & 0.45 \\
+SyGMa          & ---       & 0.520 & 0.493 & 0.95 \\
+BioTransformer & $994$     & 0.479 & 0.444 & 0.93 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The third row falls where the two-method reading predicts: a bank between the others in reach,
+converted almost completely by a pipeline that does not throw much away. Across three methods the
+relation is monotone --- the wider the bank, the less of it survives to the output --- which is the
+claim \S\ref{sec:decomp} makes from two.
+
+Two limits on this row, and the second is the one that matters. Applying BioTransformer's templates
+uniformly with RDKit is not its own Java implementation, which layers enzyme predicates, cofactor
+logic and depth control on the same SMIRKS, so this is what the template set expresses rather than
+what its pipeline enumerates; and its budgeted pool is not observable from frozen predictions, so
+selection and ranking stay merged in the conversion column rather than separating as they do for
+GRAIL. The check that makes the row credible at all is the inequality: realised recall cannot
+exceed what the bank reaches. Parsing only the first of the three reaction files gave a reach of
+$0.399$ against a realised $0.444$, which is impossible and is how the missing files were found.
+The margin at $994$ templates is $0.035$, so if further templates ship elsewhere in that
+distribution the reach is higher and the conversion lower still --- in the direction the table
+already reports.
+
 \subsection{The bank without a selector, at a matched budget}
 \label{app:noselect}
 
@@ -338,33 +376,18 @@ Selection is addressable and ranking yields a small margin, but coverage, which 
 rule bank, remains binding. No redesign of the generator matches SyGMa without a broader bank.
 
 \paragraph{Set generation with a GFlowNet does not win here, and the reason is cardinality.}
-Beyond re-ranking, we formulated the generator as a set-terminal GFlowNet whose terminal object is
-a set of metabolites per substrate, trained by Trajectory Balance against a positive-unlabelled
-set-coverage reward $\log R(S) = \beta(\mathrm{TP} - \lambda|S|)$ with an analytic backward policy.
-The formulation is new for this domain and is released for reuse. Across three seeds on 40
-validation substrates its single-set recall@15 is $0.292\pm0.032$, indistinguishable from beam
-search at $0.311\pm0.039$ and below a reranker at $0.411\pm0.044$.
-
-That comparison is on an endpoint its objective is at odds with, which is worth stating plainly:
-the reward pays a size penalty and recall@$k$ does not charge one, so the architecture was scored by
-a measure indifferent to the term it optimises. Judging it on a set endpoint instead does not
-rescue it. The runs retain aggregates rather than per-substrate predictions, so we estimate rather
-than re-score: mean emitted set size is $14.2$ against reference sets averaging $2.2$, which puts
-pooled F1 near $0.079$ and Jaccard near $0.041$, below every method in \S\ref{sec:metric}. Even at
-perfect recall a set of that size caps F1 at $0.271$.
-
-The diagnosis is not that the reward was mis-specified for set agreement. Since $\beta$ cancels in
-the argmax, the reward instructs the policy to emit any candidate whose hit probability exceeds
-$\lambda = 0.1$, while F1 at this operating point wants everything above $0.040$; the reward is the
-\emph{more} conservative of the two. What happened is that the policy emitted $14.2$ against a
-configured maximum of $15$. We have the mean rather than the per-substrate distribution, so we do
-not claim every set saturated; the mean alone bounds it, since a deficit of $0.8$ from the cap
-leaves under a tenth of substrates able to emit materially fewer. The size term therefore had
-almost no room to act, and the emitted sets track the cap rather than the substrate: on the same
-runs the mean emitted set exceeds the true one by $12.0\pm0.2$ across three seeds, a spread far
-tighter than the reference sets themselves, which run from $1$ to $29$. Set-level
-training without an explicit cardinality estimate is therefore untested rather than refuted here,
-and predicting set size is the component this architecture was missing.
+We formulated the generator as a set-terminal GFlowNet trained by Trajectory Balance against a
+positive-unlabelled set-coverage reward $\log R(S) = \beta(\mathrm{TP} - \lambda|S|)$ with an
+analytic backward policy; the formulation is new for this domain and is released for reuse. Across
+three seeds on 40 validation substrates its single-set recall@15 is $0.292\pm0.032$, indistinguishable
+from beam search at $0.311\pm0.039$ and below a reranker at $0.411\pm0.044$. We report it as a
+negative result and claim little from it, because the endpoint is one its objective works against:
+the reward pays a size penalty and recall@$k$ does not charge one. The diagnosis is cardinality
+rather than mis-specification --- $\beta$ cancels in the argmax, so the reward is the \emph{more}
+conservative of the two, and what happened is that the policy emitted $14.2$ against a configured
+maximum of $15$, leaving the size term almost no room to act. Set-level training without an explicit
+cardinality estimate is therefore untested here rather than refuted, and predicting set size is the
+component this architecture was missing.
 
 \subsection{The output budget is mis-set, and adapting it per substrate does not help}
 
