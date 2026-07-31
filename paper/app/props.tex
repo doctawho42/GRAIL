@@ -106,6 +106,52 @@ filter outranks the frequency prior once the pool is broad. These are $n=245$ me
 the deployed baseline of 0.352 is inflated on this subset relative to the full-test macro recall
 of $\grailmacro$.
 
+\subsection{The decomposition's analogue for a sequence-to-sequence method}
+\label{app:seq2seq}
+
+The factorisation runs only where the candidate set can be enumerated, which excludes the strongest
+systems in the comparison. The structural analogue is available anyway, and the three gates are the
+same three with the bank replaced by what a wide decode can reach: coverage becomes the references
+appearing anywhere in a wide beam, selection becomes what survives narrowing to the deployed beam,
+and ranking is the same truncation to $k$. The sets nest for the same reason, so the identity is
+exact rather than approximate.
+
+MetaPredictor decodes in two stages, $8\times8$ then $2\times8$, giving $16$ ranked candidates.
+Re-running it at $16\times16$ then $4\times16$ on the same checkpoints, pipeline and seed changes
+nothing but the beam and yields $64$, of which $34.3$ are distinct under the matching criterion
+against the deployed $10.9$.
+
+\begin{center}
+\begin{tabular}{lccccc}
+\toprule
+& reach & selection & ranking & recall@15 & what the first factor is \\
+\midrule
+MetaPredictor  & 0.612 & 0.804 & 1.000 & 0.492 & a beam budget \\
+GRAIL          & 0.701 & \multicolumn{2}{c}{0.454}   & 0.318 & a rule bank \\
+SyGMa          & 0.520 & \multicolumn{2}{c}{0.947}   & 0.493 & a rule bank \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Read across the row the arithmetic holds exactly, $0.612\times0.804\times1.000 = 0.492$, which is
+the realised micro recall to four places. Read down the first column it does not mean the same
+thing twice, and that is the caveat the analogy needs rather than a detail. A rule bank is a fixed
+object: its reach is a property of the knowledge base and does not change with how the base is
+queried. A beam is a budget, so $0.612$ bounds \emph{this decode} and rises with a wider one. The
+two columns are structurally parallel and semantically different, and putting them in one column of
+one table without saying so would be the confusion this paper is about.
+
+Two readings survive that caveat. MetaPredictor's narrowing costs $0.20$ where GRAIL's rule
+selection costs $0.55$, so a beam is a far less lossy budget than a top-$k$ over $7{,}581$ rules ---
+which is what one would expect of a budget the model itself was trained against. And its ranking
+factor is $1.000$ exactly, for the reason GRAIL's is near one on this subset: the deployed decode
+leaves $10.9$ distinct candidates against a budget of $15$, so the field's $k$ binds neither of
+them. At $k=15$ only SyGMa is truncated, on $93.1\%$ of substrates. The budget parameter of
+\S\ref{sec:metric} is therefore acting on one method out of three even here.
+
+All three rows are the $\nshared$ shared substrates; the full-split figures for GRAIL and SyGMa in
+\S\ref{sec:decomp} are a different population and are not comparable with these.
+
 \subsection{A third rule-grounded method}
 \label{app:third}
 

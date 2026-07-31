@@ -1,0 +1,38 @@
+{
+ "config": {
+  "script": "seq2seq_decomposition.py",
+  "git_commit": "eaa9f2c658827925b57bcf1df0039d6dee8c5e2c",
+  "git_dirty": false,
+  "wide": "artifacts/tier2/metapredictor_preds_wide64.json",
+  "deployed": "artifacts/tier2/metapredictor_preds.json",
+  "k": 15
+ },
+ "n": 150,
+ "match": "inchikey_tautomer",
+ "mean_wide": 34.3,
+ "mean_deployed": 10.9,
+ "factors": {
+  "beam_coverage": {
+   "point": 0.6123,
+   "ci95": [
+    0.5431,
+    0.6877
+   ]
+  },
+  "selection_retention": {
+   "point": 0.8035,
+   "ci95": [
+    0.751,
+    0.8559
+   ]
+  },
+  "ranking_conversion": {
+   "point": 1.0,
+   "ci95": [
+    1.0,
+    1.0
+   ]
+  }
+ },
+ "micro_recall": 0.492
+}

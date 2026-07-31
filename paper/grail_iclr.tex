@@ -290,11 +290,10 @@ $Y_s$:
 \]
 where $C_{\text{full}}$ are references recovered by applying the \emph{entire} bank without a
 budget, $C_{\text{bud}}$ those surviving the selector's budgeted pool, and $H$ those actually
-returned in the top $k$. The first factor requires an enumerable rule base, so the factorisation
-runs on the rule-grounded methods compared here and not on the sequence-to-sequence ones, which
-have no bank to apply. That is a property of the method class rather than a limit of the
-measurement: any method with a rule base decomposes, and the two here span the design space from a
-selector that chooses to one that does not. The identity is exact by construction (each set contains the next), so
+returned in the top $k$. The first factor requires an enumerable candidate set: the bank for rule-grounded methods, a wide
+decode for a sequence-to-sequence one, where the same three gates apply --- MetaPredictor factorises
+$0.612\times0.804\times1.000$, exactly its realised recall, though a beam is a budget rather than a
+knowledge base and bounds that decode rather than the model (Appendix~\ref{app:seq2seq}). The identity is exact by construction (each set contains the next), so
 the three factors partition the loss with no residual: it is an accounting device, not a model.
 Its value is diagnostic: a single recall number cannot indicate \emph{which} gate closed, while
 the three corresponding interventions address unrelated components of the pipeline. Two
