@@ -15,6 +15,25 @@ capped candidate pool and reflects the generator budget of that evaluation rathe
 reach of the rule bank, so it is not comparable to the internal ceiling and should not be read
 as an external ceiling.
 
+\subsection{The external ceiling is not inflated by the drugs GRAIL trained on}
+
+Twenty-four of the $37$ GLORYx parents are substrates in GRAIL's training or validation split, and
+most of the bank is mined automatically from annotated pairs in the training split. Applying the
+bank to a drug it was partly mined from is therefore not independent of training, whatever is true
+of the absence of a neural network at inference. An adversarial reading of \S\ref{sec:rankflip}
+raised exactly this, and it is right about the mechanism.
+
+It is not right about the magnitude, and that is a measurement. Splitting the per-parent coverage
+counts already stored for the external ceiling gives $0.633$ $[0.504,0.767]$ on the twenty-four seen
+parents against $0.632$ $[0.500,0.776]$ on the thirteen unseen, a difference of $+0.002$
+$[-0.192,+0.184]$. The ceiling is therefore reported on all $\nglory$.
+
+At these sample sizes that interval admits an inflation of nearly $0.2$ in either direction, so this
+is a failure to detect rather than a demonstration of absence. What it rules out is the strong form
+of the objection --- that the external ceiling is largely an artifact of mining from these drugs'
+own annotated pairs --- and it does so on the only split available. It does not license the claim
+that no contamination exists.
+
 \subsection{The criterion is implementation-dependent}
 
 Tautomer canonicalisation is not a mathematical operation on a molecule but a search with a

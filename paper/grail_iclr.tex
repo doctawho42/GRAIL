@@ -422,8 +422,10 @@ convenience can erase a significant advantage between two published tools. On th
 drugs GRAIL's stereo sensitivity survives at $+0.126$ $[+0.028,+0.239]$, as does its interaction
 with SyGMa --- the same measurement, SyGMa's stereo step here being zero. The \emph{external}
 interaction with BioTransformer does not, and we withdraw it, leaving the subset estimate untouched.
-This set's coverage ceiling stays on all $\nglory$, applying the bank being model-free
-(Appendix~\ref{app:xdomain}).
+This set's coverage ceiling stays on all $\nglory$, and the reason is a measurement rather than an
+argument: most of the bank is mined from training pairs, so applying it is \emph{not} independent of
+training, but the ceiling is $0.633$ on the twenty-four seen drugs against $0.632$ on the thirteen
+unseen (Appendix~\ref{app:external}).
 
 
 

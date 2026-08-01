@@ -1,0 +1,36 @@
+{
+ "config": {
+  "script": "ceiling_seen_vs_unseen.py",
+  "git_commit": "6e9e3908a43a8b52ad261f7798bd7dc2e8b3a640",
+  "git_dirty": true
+ },
+ "n_total": 37,
+ "published_ceiling_all_37": 0.6327,
+ "groups": {
+  "seen": {
+   "n": 24,
+   "ceiling": 0.6331,
+   "ci95": [
+    0.5039,
+    0.7674
+   ]
+  },
+  "unseen": {
+   "n": 13,
+   "ceiling": 0.6316,
+   "ci95": [
+    0.5,
+    0.7755
+   ]
+  }
+ },
+ "seen_minus_unseen": {
+  "point": 0.0015,
+  "ci95": [
+   -0.1924,
+   0.1842
+  ],
+  "excludes_zero": false,
+  "note": "unpaired: the groups are different drugs"
+ }
+}
