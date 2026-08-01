@@ -61,14 +61,12 @@ The third is not arbitrary, and an exact decomposition of recall says why. For m
 enumerable rule base, recall factorises into coverage, selection and ranking, each measurable rather
 than estimated. Applied to two such methods it explains the leaderboard: the wider bank reaches
 $0.735$ of the annotated chemistry against $0.542$ and converts a third of that reach, while the
-narrower converts nearly all of its own, having no selection stage to lose anything at. The gap is the price of selecting at all, which
-recall charges only to methods that select. That is a claim about benchmark design rather than
-about chemistry, and it predicts something checkable: an aggregate crediting hits without charging
-for volume must favour architectures that do not filter.
+narrower converts nearly all of its own, having no selection stage to lose anything at. The gap is
+the price of selecting, which recall charges only to methods that select: a claim about benchmark
+design rather than about chemistry, predicted from a structural property rather than observed after
+the fact.
 
-So an aggregate crediting hits without charging for volume cannot be neutral between architectures,
-which the decomposition predicts from a structural property rather than observing after the fact.
-The reading survives its own counterfactual: removing the selection stage entirely and matching the
+The reading survives its own counterfactual. Removing the selection stage and matching the
 output budget, the wider bank passes its competitor by $0.166$ $[0.110,0.222]$ --- but only above
 the budget the field uses, which is the third parameter acting again, this time in our favour. We
 release the protocol, the audited split and the frozen predictions that make every measurement here
@@ -595,27 +593,24 @@ what the bank cannot reach in one step (Appendix~\ref{app:props}).
 \section{Limitations}
 \label{sec:limitations}
 
-\paragraph{Sample sizes differ.} The five-method table rests on $\nshared$ shared substrates,
-because two comparators could only be run there; GRAIL, SyGMa and MetaPredictor are scored on the
-full $\ntest$, and the external replication is $n=\nglory$.
-
-\paragraph{Two comparators cannot be re-run in this codebase.} MetaTrans's inference pipeline no
-longer reproduces here and BioTransformer's configuration is unscripted, so both are represented by
-frozen predictions: reproducible from our artifacts, not regenerable from scratch.
+\paragraph{Sample sizes differ, and two comparators cannot be re-run here.} The five-method table
+rests on $\nshared$ shared substrates because MetaTrans's inference pipeline no longer reproduces
+and BioTransformer's configuration is unscripted; both are frozen predictions, reproducible from our
+artifacts but not regenerable. GRAIL, SyGMa and MetaPredictor are scored on the full $\ntest$, and
+the external replication is $n=\nglory$.
 
 \paragraph{Precision is a lower bound, not an estimate.} An unannotated but chemically real product
-scores as a false positive, so every precision and F1 figure is pessimistic. We rank on them in
-\S\ref{sec:metric} only under a uniform-propensity model, which is assumed rather than estimated.
+scores as a false positive, so every precision and F1 figure is pessimistic. \S\ref{sec:metric}
+ranks on them only under a uniform-propensity model, assumed rather than estimated.
 
 \paragraph{The single-step bound.} Some references are multi-generation products no single rule
 application reaches, and depth-2 lifts the ceiling by ${\sim}0.012$ at $8.5$ times the candidate
 cost, so $\ceiling$ bounds this formulation rather than the task.
 
-\paragraph{Evaluation hygiene of this paper itself.} Headline numbers come from a single evaluation
-of the deployed configuration, and selection is on validation but for the two exceptions
+\paragraph{Evaluation hygiene of this paper itself.} Headline numbers come from one evaluation of
+the deployed configuration. Selection is on validation but for the two exceptions
 \S\ref{sec:tame} names: the filter's encoder variant, chosen on test, which reaches every GRAIL
-number here including the headline, and the exploratory analyses of Appendix~\ref{app:negative},
-which inform no claim.
+number including the headline, and the exploratory analyses of Appendix~\ref{app:negative}.
 
 \section{Conclusion}
 \label{sec:conclusion}
@@ -629,9 +624,9 @@ any report.
 
 \looseness=-1
 For a rule-grounded predictor recall also factorises exactly into bank, selector and ranker, which
-explains an ordering rather than repeating it and predicts the aggregate's effect from a structural
-property. Removing the selector and matching the budget confirms that reading above the field's $k$
-and not below. Report the ceiling wherever a rule base exists.
+explains an ordering rather than repeating it and predicts the aggregate's effect. Removing the
+selector and matching the budget confirms that reading above the field's $k$, not below. Report the
+ceiling wherever a rule base exists.
 
 \subsubsection*{Reproducibility statement}
 
