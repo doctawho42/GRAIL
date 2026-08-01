@@ -192,15 +192,18 @@ row 2 as the good example of config recording, and `filter_vs_prior_ci.json`, wr
 *for* this audit — three scripts with a hard-coded path, and two planning documents.
 
 **The second round found the one that mattered, and only because the pattern widened.** The first
-scan grepped the author's surname and home directory. Widening it to any `/Users/` path and any
+scan grepped the author's surname and home directory. Widening it to any absolute home path and any
 mail address turned up `pyproject.toml` carrying `authors = ["<name> <address>"]` — the author's
 full name and email, in plain text, in the repository that is the anonymised archive. No amount of
 path-stripping would have found it, because it is not a path. Also `results/grail_vs_metatox.json`,
 holding a scratch directory whose name embeds the username.
 
-**The check matched itself**, reporting `SELF_CLAIMS.md` because this file contains the pattern. The
-literals are now split so it does not, which is worth doing rather than ignoring: a check with a
-known false positive gets skimmed, and then a real hit gets skimmed with it.
+**The check matched itself twice**, once through the pattern in its own command and once through the
+prose describing what the pattern found. Both are now written so it does not, which is worth doing
+rather than ignoring: a check with a known false positive gets skimmed, and a real hit gets skimmed
+with it. That is not hypothetical here --- the third round found
+`results/factorized_eval_subset250.json` carrying absolute paths, tracked by a bulk `git add -f`
+after the previous round had passed. **Run this row after adding files, not before.**
 
 **The rows interact, and this pair inverts.** Row 2 asks artifacts to record where their inputs
 live; done naively that is exactly what breaks this row. Neither check catches it alone — row 2 sees

@@ -38,11 +38,10 @@ stereochemistry is not rewarded for doing so anywhere in this evaluation.
 
 Recall figures in this paper differ by population, aggregation, truncation and whether duplicate
 predictions are collapsed, and several coincide in value without being the same quantity.
-Table~\ref{tab:provenance} states each one. Two readings follow from it directly. GRAIL's untruncated
-and $k{=}15$ figures are identical because it never emits more than fifteen, so the budget does not
-bind it; and the SyGMa--MetaPredictor pair \emph{reverses} between the two rows, SyGMa ahead by
-$0.026$ untruncated and behind by $0.002$ at $k{=}15$, which is the budget parameter of
-\S\ref{sec:metric} acting on the leading pair rather than on ours.
+Table~\ref{tab:provenance} states each one. Two readings follow from it directly. GRAIL's untruncated and $k{=}15$ figures are identical because it never emits more than fifteen, so
+the budget does not bind it. The SyGMa--MetaPredictor pair \emph{reverses} between the two rows,
+SyGMa ahead by $0.026$ untruncated and behind by $0.002$ at $k{=}15$. That is the budget parameter
+of \S\ref{sec:metric} acting on the leading pair rather than on ours.
 
 \begin{table}[h]
 \caption{Every recall figure this paper reports for the three full-split methods, with what
@@ -75,12 +74,10 @@ MetaPredictor $0.585$      & Table~\ref{tab:matchsens-subset} & $\nshared$ & mac
 
 \subsection{Which GRAIL number is which}
 
-Several figures appear and are not interchangeable. On the
-full split, $0.340$ is the mean of per-substrate recalls after duplicate predictions are collapsed
-by the matching criterion, which is what the re-scoring harness does for every method;
-$\grailmacro$ is the same mean over the output as emitted, without that collapse; and $\realised$
-is the pooled ratio of hits to references, lower because substrates with many references weigh
-more. The decomposition uses the pooled uncollapsed form, the only one that multiplies out
+Several figures appear and are not interchangeable. On the full split, $0.340$ is the mean of per-substrate recalls after duplicate predictions are
+collapsed by the matching criterion, which is what the harness does for every method. $\grailmacro$
+is the same mean over the output as emitted, without that collapse. $\realised$ is the pooled ratio
+of hits to references, lower because substrates with many references weigh more. The decomposition uses the pooled uncollapsed form, the only one that multiplies out
 exactly.
 
 \subsection{The headline is one checkpoint}

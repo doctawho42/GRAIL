@@ -21,10 +21,10 @@ the gap by reaction type and bounds how much of it a more general template could
 Recall moves from 0.330 to 0.334 between 2{,}418 and 4{,}787 training substrates. These are two
 single runs rather than a paired comparison, so we give no interval; the change is smaller than the
 $\pm0.010$ spread the same configuration shows across three seeds, which is the sense in which it
-is flat. Doubling the number of substrates does not move selection, which is what rules out under-training as the explanation for the
-shortfall and which Proposition 2 accounts for: with one to three rules firing per substrate over
-a label space of $\nbank$, more substrates add little to the per-rule positive counts that a
-learned selector would need.
+is flat. Doubling the number of substrates does not move selection, which rules out under-training as the
+explanation for the shortfall. Proposition 2 accounts for that: with one to three rules firing per
+substrate over a label space of $\nbank$, more substrates add little to the per-rule positive counts
+a learned selector would need.
 
 \paragraph{Site-of-metabolism prior.}
 Weighting candidates by a learned prior over which site of the substrate is metabolised lifts
@@ -180,8 +180,8 @@ claim \S\ref{sec:decomp} makes from two.
 
 Two limits on this row, and the second is the one that matters. Applying BioTransformer's templates
 uniformly with RDKit is not its own Java implementation, which layers enzyme predicates, cofactor
-logic and depth control on the same SMIRKS, so this is what the template set expresses rather than
-what its pipeline enumerates; and its budgeted pool is not observable from frozen predictions, so
+logic and depth control on the same SMIRKS. This is therefore what the template set expresses, not
+what its pipeline enumerates. Its budgeted pool is not observable from frozen predictions either, so
 selection and ranking stay merged in the conversion column rather than separating as they do for
 GRAIL. The check that makes the row credible at all is the inequality: realised recall cannot
 exceed what the bank reaches. Parsing only the first of the three reaction files gave a reach of
@@ -347,10 +347,10 @@ The supporting measurement is the learned-only recall of 0.266 against the prior
 ($\Delta=-0.144$, $[-0.196,-0.095]$, $n=245$). The advantage is specific to selection and does
 not generalise to ranking: once rules have been applied broadly, the learned filter is the
 better scorer, at 0.413 against the prior's 0.374 on the same 245 substrates, a paired $+0.039$
-$[+0.007,+0.072]$. That interval clears zero and not by much, and it is worth saying where it comes
-from: the two arms order one identical pool, so they can differ only where the pool exceeds the
-fifteen-candidate budget by enough for order to matter, which is $32$ substrates --- the filter
-ahead on $22$, behind on $10$, and tied with the prior on the remaining $213$. The proposition makes a refutable prediction,
+$[+0.007,+0.072]$. That interval clears zero and not by much, and where it comes from is worth
+saying. The two arms order one identical pool, so they can differ only where the pool exceeds the
+fifteen-candidate budget by enough for order to matter. That is $32$ substrates: the filter ahead on
+$22$, behind on $10$, tied with the prior on the remaining $213$. The proposition makes a refutable prediction,
 that reweighting the labelled loss by the inverse estimated propensity should shrink the prior's
 edge; this is an open test. The propensity model itself is an unmeasured modelling assumption.
 
@@ -490,7 +490,7 @@ two are indistinguishable, $+0.017$ $[-0.003,+0.037]$. What differs at the head 
 ranking quality rather than output size, so the defensible version of the claim is narrow: GRAIL is
 the better choice when one or two predictions are wanted, and not otherwise.
 
-For GRAIL the deployed operating point can additionally be certified against a fixed cut, because
+For GRAIL the deployed operating point can also be certified against a fixed cut, because
 its per-candidate ranking scores are released with the frozen predictions. Over the $1{,}166$ scored
 substrates, emitting as deployed scores $0.137$ against $0.196$ at $k=1$: a paired difference of
 $-0.058$, 95\% interval $[-0.075,-0.042]$.

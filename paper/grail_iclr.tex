@@ -131,9 +131,9 @@ turn on two undeclared ones is not.
 
 What generalises past this benchmark is the instrument. Recall factorises exactly wherever the
 candidate set can be enumerated, and the coverage term is then measured rather than estimated, so it
-is reportable for any such method; what it supports is a claim about benchmark design, that an
-aggregate crediting hits without charging for volume cannot be neutral between architectures that
-filter and architectures that do not. We release the bundle that makes it checkable rather than a
+is reportable for any such method. What it supports is a claim about benchmark design: an aggregate
+crediting hits without charging for volume cannot be neutral between architectures that filter and
+architectures that do not. We release the bundle that makes it checkable rather than a
 model: the audited split, the harness with all five criteria, every method's frozen predictions and
 GRAIL's checkpoints. Adding a sixth method needs its ranked output and nothing else.
 
@@ -183,10 +183,10 @@ misrepresenting the state of the art \citep{Zhong_2020}, and re-scoring frozen q
 outputs under four answer-equivalence rules makes one system best under a rule it had lost under
 \citep{Kamalloo_2023}. On the aggregate, \citet{agarwal2026metric} show for drug-response
 prediction that the choice of scoring metric inverts which model wins. The closest precedent to
-what we find is \citet{Gao_2025_reframing}, who show that structure-based drug design's standard
-score rises with a structural property of the output, its atom count, rather than with quality, so
-that re-evaluating under practically aligned metrics changes which models look good; the same
-field's benchmark was rebuilt around four complementary axes for the same reason
+what we find is \citet{Gao_2025_reframing}. There, structure-based drug design's standard score
+rises with a structural property of the output, its atom count, rather than with quality, so
+re-evaluating under practically aligned metrics changes which models look good. The same field's
+benchmark was rebuilt around four complementary axes for the same reason
 \citep{Lin_2025_cbgbench}. Weighting examples by difficulty reorders natural-language leaderboards
 \citep{Mishra_2021, Rodriguez_2021}. Data
 splitting has received similar attention \citep{Joeres_2025}.
@@ -215,11 +215,12 @@ q \in \{\textsc{canonical},\ \textsc{inchikey},\ \textsc{inchi-no-stereo},\ \tex
 \textsc{inchikey-tautomer}\}
 \]
 and a prediction counts as a hit iff $q(\hat{y}) = q(y)$ for some reference $y$. Each map is
-computed with RDKit 2022.09.5, the version that reproduces the columns reported here: \textsc{canonical} is canonical SMILES equality;
-\textsc{inchikey} is the full InChIKey; \textsc{inchi-no-stereo} is its first block, the
-connectivity skeleton, which is blind to stereochemistry, charge and isotopes; \textsc{tanimoto1}
-is equality of Morgan fingerprints at radius 2 over 2048 bits, which is Tanimoto similarity of one;
-and \textsc{inchikey-tautomer} standardises both sides before hashing, taking the fragment parent,
+computed with RDKit 2022.09.5, the version that reproduces the columns reported here.
+\textsc{canonical} is canonical SMILES equality and \textsc{inchikey} the full InChIKey.
+\textsc{inchi-no-stereo} is its first block, the connectivity skeleton, blind to stereochemistry,
+charge and isotopes. \textsc{tanimoto1} is equality of Morgan fingerprints at radius 2 over 2048
+bits, that is Tanimoto similarity of one. \textsc{inchikey-tautomer} standardises both sides before
+hashing, taking the fragment parent,
 neutralising charges, canonicalising tautomers, and writing SMILES without stereochemistry.
 
 Our recommendation is conditional on the reference set rather than universal: report all five, and
@@ -229,10 +230,10 @@ corpus that is \textsc{inchikey-tautomer}. Standard InChI normalises only a
 reference fails to match under plain \textsc{inchikey} despite producing the same entity. Two
 properties of this default bear on every number below: it is the most permissive of the five, and
 it is stereo-blind as well as tautomer-blind, so a predicted D-alanine matches an L-alanine
-reference. The stereo relaxation is not incidental, since several methods here, GRAIL among them,
-standardise their output without stereochemistry and cannot emit a stereocentre, so a
-stereo-sensitive criterion would score them on a representation they never produce --- which is also
-why the choice suits our own system, and why it is stated as conditional rather than defended.
+reference. The stereo relaxation is not incidental. Several methods here, GRAIL among them, standardise their
+output without stereochemistry and cannot emit a stereocentre, so a stereo-sensitive criterion would
+score them on a representation they never produce. That is also why the choice suits our own system,
+and why it is stated as conditional rather than defended.
 
 Unless stated otherwise all results use \textsc{inchikey-tautomer};
 \S\ref{sec:rankflip} quantifies how much the ranking depends on that choice. A worked example in
@@ -327,11 +328,10 @@ is \S\ref{sec:metric}'s third parameter acting for us where it acts against us l
 (Appendix~\ref{app:noselect}).
 
 Applied to a second method it stops being self-diagnosis. SyGMa is rule-grounded with an
-enumerable bank, so it decomposes on the same split in the same frame, and its profile is the
-inverse of ours: its bank reaches less, $0.542$ against $\ceiling$ ($-0.193$ $[-0.213,-0.175]$
-paired on the substrate), but it applies every applicable
-rule and emits the result, so it converts almost all of that reach where we convert a third of a
-wider one. The gap between us is therefore not a worse rule base but the cost of having a selection
+enumerable bank, so it decomposes on the same split in the same frame. Its profile is the inverse of
+ours. Its bank reaches less, $0.542$ against $\ceiling$ ($-0.193$ $[-0.213,-0.175]$ paired on the
+substrate), but it applies every applicable rule and emits the result, converting almost all of that
+reach where we convert a third of a wider one. The gap between us is therefore not a worse rule base but the cost of having a selection
 stage at all, which recall charges only to methods that select. Two methods lose recall for opposite reasons, and a single score says only that one scores lower.
 The frame also bounds this architecture: a perfect selector and ranker would stop at \ceiling, and
 that ceiling is corpus-limited rather than a consequence of tuning, since 53\% of uncovered
@@ -641,7 +641,7 @@ per-substrate scores were not retained. What regeneration costs differs by analy
 distinction is worth stating rather than leaving a reader to discover. Every split-level result
 regenerates from the committed artifacts alone --- frozen predictions, key tables, per-substrate
 records --- while the ablations that rank or re-select candidates require running a trained model,
-so they additionally need the GRAIL checkpoints. The anonymized archive holds those, together with
+so they also need the GRAIL checkpoints. The anonymized archive holds those, together with
 every method's frozen predictions, the audits, the harness, the split construction and the analysis
 code. One result depends on a third-party file we do not redistribute: the reach of
 BioTransformer's template set is computed from the $994$ SMIRKS in the reaction databases its own
