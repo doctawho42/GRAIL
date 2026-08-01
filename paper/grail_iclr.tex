@@ -643,7 +643,12 @@ regenerates from the committed artifacts alone --- frozen predictions, key table
 records --- while the ablations that rank or re-select candidates require running a trained model,
 so they additionally need the GRAIL checkpoints. The anonymized archive holds those, together with
 every method's frozen predictions, the audits, the harness, the split construction and the analysis
-code. Results measured on a subsample of a split carry the cap and seed that drew it, without which
+code. One result depends on a third-party file we do not redistribute: the reach of
+BioTransformer's template set is computed from the $994$ SMIRKS in the reaction databases its own
+distribution ships, \texttt{metabolicReactions.json}, its \textsc{envmicro} counterpart and
+\texttt{standardizationReactions.json}, which a reader reproduces by pointing the script at an
+installed copy. Its own weights and MetaPredictor's are third-party too and are cited rather than
+shipped. Results measured on a subsample of a split carry the cap and seed that drew it, without which
 the substrate set is not recoverable: sampling draws without replacement, so a different cap yields
 a different set of the same size rather than a subset. Where an analysis path re-derives a deployed
 output, the two are reconciled before use rather than assumed equal: the released per-candidate
