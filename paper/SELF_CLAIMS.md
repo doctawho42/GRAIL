@@ -274,9 +274,64 @@ and 4 both pass on an artifact whose interval is not reproducible: one asks whet
 committed, the other whether the difference carries an interval at all. A check narrower than its
 claim, for the fourth time in this document.
 
+## 11. Every numeric passage traces back to the artifact that produced it
+
+**Check:** walk each passage of the manuscript that prints four or more numerals back to the
+artifact behind it, by opening candidate files rather than inferring from names. Rows 2 and 10 ask
+about the *script's* outputs; this asks about the *paper's* numbers, and the two are not the same
+question.
+
+**This cannot be automated, and the failed attempts are worth recording so nobody rebuilds them.**
+The obvious check — collect the manuscript's numerals, look each one up across all artifacts —
+is vacuous. There are about 288,000 distinct values across 229 committed artifacts, so essentially
+every three-decimal number in [0,1] matches something. Run against the manuscript as it stood
+before the budget family was computed, it reported **zero** unmatched: all fourteen genuinely
+missing figures matched some unrelated artifact by coincidence. The second attempt asked whether
+one artifact holds a passage's numbers *together*, on the theory that coincidences do not
+co-occur. Also vacuous: a single 2,717-value artifact covers all thirteen numerals of the budget
+passage both before and after the family is stripped. Both versions were deleted rather than
+shipped green.
+
+What works is a passage-by-passage walk with the artifact opened and confirmed, run as a fan-out
+over the 34 qualifying passages with an adversarial second pass over everything reported missing.
+
+**Status: 27 gaps reported, 11 closed, and it corrected three figures.** Two of the 27 are not
+gaps on inspection — the tautomer step of $0.038$ and the $0.002$ reversal margin are subtractions
+of two levels the artifacts do hold, checkable from the record though not from the page. The
+corrections are the argument for the row:
+
+- **Main text**, the pipeline converts $35.4\%$ of its ceiling, not $35.5\%$: the published figure
+  was `0.261/0.735` off the *rounded* values, where the artifact fields give `0.354450`.
+- **Main text**, a median of five rules per substrate carries a positive label and not "one to
+  three", and $0.07\%$ of the label space and not $0.03\%$. Measured on the label cache the
+  generator trains against (`scripts/label_density.py`, gated on reproducing the four already
+  published per-rule counts): mean $11.3$, median $5$, only $27.7\%$ of substrates in the
+  one-to-three band. The error ran in the direction that flattered the paper's own framing.
+- **Appendix**, a reranking arm rises from $0.388$ to $0.404$, not from $0.413$ to $0.430$: the
+  start point was `baseline_broad_filter`, a free-standing field equal to the $n{=}245$ figure,
+  while the $+0.0165$ delta it was added to runs between two $n{=}1170$ arms. A number spliced
+  across two populations, and the same $0.413$-versus-$0.388$ confusion that had already been
+  fixed once in the opposite direction.
+
+Three more passages claimed more than they measured: a factor of $4.6$ described as best-versus-
+worst budget when it is best-budget-versus-full-output, a "range" of eight to twelve that spliced
+a mean emitted count with a mean pool size, and a trend in reference-set size that is a contrast
+between endpoints of a non-monotone series.
+
+**Eleven gaps closed by making the producer record what the paper quotes** — `budget_curves.py` and
+`ceiling_by_provenance.py` (row 2's entry), `transfer_confound.py`, which printed its table to
+stdout and wrote nothing, and three `artifacts/*/reports/metrics.json` that were simply untracked.
+
+**The rest are open and now stated in the paper rather than left to be found.** A listwise
+reranker's held-out scores and oracle ceiling, a coarse-vocabulary variant, the cardinality-versus-
+ranking split of oracle headroom, and the propensity-weight distribution all come from exploratory
+runs whose outputs were never persisted. No main-text claim rests on any of them, and the
+reproducibility statement now says so instead of claiming a single exception.
+
 ---
 
-**No open items remain as of 2026-08-01.** Every row passes, and every one of them passes only
+**Rows 10 and 11 were both added on 2026-08-02, and neither existed while the defects they name
+were live.** Every row passes, and every one of them passes only
 because it was run: the previous round closed the subsample-provenance item and found an author name
 and email in `pyproject.toml`, and this one --- run because new results were added, not because
 anything looked wrong --- found two tracked scripts hard-coding the author's home directory, behind

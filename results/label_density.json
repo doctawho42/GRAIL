@@ -1,0 +1,36 @@
+{
+ "config": {
+  "script": "label_density.py",
+  "git_commit": "f4ca46c34ef8fc0d27a4e776e2a54f4ad94245ab",
+  "git_dirty": true,
+  "labels": "artifacts/preprocessed/train/ea9ee257861324be/reaction_labels.pt"
+ },
+ "n_substrates": 4787,
+ "n_rules": 7581,
+ "per_rule": {
+  "train_substrates": 4787,
+  "rules": 7581,
+  "never_positive": 4271,
+  "pos_eq_1": 1520,
+  "pos_ge2": 1790,
+  "useful_ge1": 3310,
+  "gate": "reproduces results/rule_train_positives.json exactly"
+ },
+ "per_substrate": {
+  "mean": 11.3,
+  "median": 5,
+  "min": 0,
+  "max": 96,
+  "percentiles": {
+   "p5": 0,
+   "p25": 2,
+   "p50": 5,
+   "p75": 17,
+   "p95": 42
+  },
+  "share_zero": 0.132,
+  "share_1_to_3": 0.277,
+  "label_space_share_mean": 0.00149,
+  "label_space_share_median": 0.00066
+ }
+}

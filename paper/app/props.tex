@@ -146,7 +146,8 @@ selection costs $0.55$, so a beam is a far less lossy budget than a top-$k$ over
 which is what one would expect of a budget the model itself was trained against. And its ranking
 factor is $1.000$ exactly, for the reason GRAIL's is near one on this subset: the deployed decode
 leaves $10.9$ distinct candidates against a budget of $15$, so the field's $k$ binds neither of
-them. At $k=15$ only SyGMa is truncated, on $93.1\%$ of substrates. The budget parameter of
+them. At $k=15$ only SyGMa is truncated, on $93.1\%$ of substrates on the full split, which is the
+population that fraction is measured on. The budget parameter of
 \S\ref{sec:metric} is therefore acting on one method out of three even here.
 
 All three rows are the $\nshared$ shared substrates; the full-split figures for GRAIL and SyGMa in
@@ -244,8 +245,8 @@ constraint is strengthened rather than weakened by the correction.
 Everything above localises the loss at selection by observation. The counterfactual states it
 directly: apply the bank with no selector at all, rank the whole pool with the deployed scorer, and
 truncate at the number of candidates SyGMa emits. The breadth sweep does not answer this. It ranks
-the pool the deployed 30-rule selector produces, eight to twelve candidates, which has nothing to
-give at $k=64$; and the widest row of Table~\ref{tab:selection-breadth} is not the whole bank
+the pool the deployed 30-rule selector produces, $12.5$ candidates on average of which $8.0$ are
+emitted, which has nothing to give at $k=64$; and the widest row of Table~\ref{tab:selection-breadth} is not the whole bank
 either, since the generator's calibrated threshold is itself a selector and prunes rules however
 large $\mathit{top\text{-}k}$ is.
 
@@ -374,7 +375,7 @@ $[+0.0032,+0.0153]$ over their pointwise counterpart and $+0.0091$ $[+0.0027,+0.
 baseline, on a paired bootstrap over the full test set of $\ntest$ substrates. Capacity, features
 and pool are constant, so the margin is attributable to the objective. A second re-ranking arm
 reproduces the direction at the same sample size: adding type and site terms lifts recall@15
-from 0.413 to 0.430 on the same broad pool, a paired $+0.0165$ $[+0.006,+0.027]$, while the
+from $0.388$ to $0.404$ on the same broad pool, a paired $+0.0165$ $[+0.006,+0.027]$, while the
 factorised signal on its own is not significant ($+0.001$, $[-0.010,+0.013]$).
 
 Weaker supporting evidence comes from a higher-capacity listwise reranker, which scored 0.500
@@ -389,8 +390,8 @@ tautomer-aware default, so the gap holds under either criterion.
 \paragraph{Proposition 2: rule selection is extreme multi-label classification, where counting is
 a strong baseline.}
 Selecting which of $\nbank$ rules apply to a substrate is an extreme multi-label classification
-problem with a nearly empty positive set: one to three rules fire per substrate, about 0.03 per
-cent of the label space. In this regime the classification literature has long established that
+problem with a nearly empty positive set: a median of five rules carries a positive label per
+substrate, $0.07$ per cent of the label space, and a mean of $11.3$, $0.15$ per cent. In this regime the classification literature has long established that
 frequency and propensity baselines are hard to beat and that naive losses are dominated by label
 sparsity; propensity-scored losses were introduced for precisely this failure mode
 \citep{Jain_2016}. Metabolism rule selection inherits the pathology, which the domain literature
@@ -471,7 +472,7 @@ proposition concerns what one application step can reach, and vocabulary size is
 depth.
 
 Kept at broad coverage and used only to re-rank, the same signal is worth a small significant
-margin: recall@15 rises from 0.413 to 0.430, a paired $+0.0165$ $[+0.006,+0.027]$ over the full
+margin: recall@15 rises from $0.388$ to $0.404$, a paired $+0.0165$ $[+0.006,+0.027]$ over the full
 test set. Both are broad-pool figures, not deployed ones. How the heads are trained decides whether that margin appears. Multiplying
 independently trained type and site probabilities into the rank adds nothing on a matched pool
 ($+0.0002$, not significant). Fine-tuning the same two heads with a listwise ranking loss against
@@ -527,8 +528,8 @@ binds a method when the method emits more than the budget, so at $k=15$ the comp
 budget-matched at all: SyGMa is cut from $81.7$ candidates to $15$ on $93.1\%$ of substrates, while
 GRAIL is cut on \emph{none} of them, having stopped at $8.4$. The convention silently advantages
 whichever methods emit less than the budget, and it is the budget rather than the ranking that
-decides. The magnitude is not a rounding effect: SyGMa moves by a factor of $4.6$ between its best
-and worst budget over $k \in [1,32]$.
+decides. The magnitude is not a rounding effect: SyGMa's F1 at its best budget over
+$k \in [1,32]$ is $4.6$ times its F1 scored at the full output it emits.
 
 The binding is partial well below $15$ too, which is why the certified comparison is reported at
 several budgets rather than one. GRAIL is cut on $63.5\%$ of substrates at $k=5$ and $45.6\%$ at
@@ -604,8 +605,9 @@ The confound is then confirmed on a quantity no learning touches. The fraction o
 references the rule bank reaches at all rises from $0.712$ below similarity $0.3$ to $0.819$ above
 $0.6$. The bank has no knowledge of which substrates were used for training, so this is chemistry:
 substrates unlike the training set are harder for every method. The common cause is visible in the
-same stratification, since reference sets shrink the same way, $2.40$ annotated metabolites above
-$0.6$ against $1.90$ below $0.3$. Training corpus, rule bank and annotation all derive from the
+same stratification: reference sets are smaller at the far end too, $2.40$ annotated metabolites
+above $0.6$ against $1.90$ below $0.3$, though across all five strata the series is not monotone
+and the contrast is between its endpoints rather than a trend. Training corpus, rule bank and annotation all derive from the
 literature of well-studied metabolism, so the axis measures how well studied a substrate is and
 moves all three together.
 

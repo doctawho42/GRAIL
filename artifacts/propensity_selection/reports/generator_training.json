@@ -1,0 +1,45 @@
+{
+  "best_loss": 0.4994873863458633,
+  "best_val_loss": 0.4724008418619633,
+  "epochs_trained": 8,
+  "early_stopped_epoch": null,
+  "loss_history": [
+    0.6237405828634898,
+    0.5981920021772384,
+    0.5819724492232005,
+    0.5608975179990132,
+    0.5401366090774536,
+    0.5259284885724386,
+    0.512027944723765,
+    0.4994873863458633
+  ],
+  "val_loss_history": [
+    0.5296267956495285,
+    0.5202298171818256,
+    0.5154039271175861,
+    0.4974503070116043,
+    0.49512613862752913,
+    0.4808602899312973,
+    0.47863670587539675,
+    0.4724008418619633
+  ],
+  "calibrated_threshold": 0.31,
+  "timed_out": false,
+  "timeout_seconds": null,
+  "stop_reason": "completed",
+  "last_epoch_seconds": 829.1040472919994,
+  "train_data": {
+    "substrates": 4787,
+    "positive_pairs": 9688,
+    "negative_pairs": 165529
+  },
+  "val_data": {
+    "substrates": 293,
+    "positive_pairs": 546,
+    "negative_pairs": 9668
+  },
+  "calibration_metric": 0.24384963273285026,
+  "calibration_target": "f1",
+  "training_mode": "supervised",
+  "gflownet": null
+}

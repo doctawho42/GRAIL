@@ -1,0 +1,58 @@
+{
+ "config": {
+  "script": "transfer_confound.py",
+  "git_commit": "f4ca46c34ef8fc0d27a4e776e2a54f4ad94245ab",
+  "git_dirty": true,
+  "substrate_source": "results/recall_factorization.json per_substrate",
+  "fingerprint": "Morgan r=2, 2048 bits, max Tanimoto to any train substrate",
+  "bins": [
+   0,
+   0.3,
+   0.4,
+   0.5,
+   0.6,
+   1.01
+  ]
+ },
+ "n": 1170,
+ "strata": [
+  {
+   "lo": 0,
+   "hi": 0.3,
+   "n": 91,
+   "bank_coverage": 0.7122,
+   "mean_n_refs": 1.9
+  },
+  {
+   "lo": 0.3,
+   "hi": 0.4,
+   "n": 167,
+   "bank_coverage": 0.7842,
+   "mean_n_refs": 2.05
+  },
+  {
+   "lo": 0.4,
+   "hi": 0.5,
+   "n": 157,
+   "bank_coverage": 0.7376,
+   "mean_n_refs": 1.86
+  },
+  {
+   "lo": 0.5,
+   "hi": 0.6,
+   "n": 154,
+   "bank_coverage": 0.7946,
+   "mean_n_refs": 2.23
+  },
+  {
+   "lo": 0.6,
+   "hi": 1.01,
+   "n": 601,
+   "bank_coverage": 0.819,
+   "mean_n_refs": 2.4
+  }
+ ],
+ "slope_bank_coverage_on_similarity": 0.0943,
+ "corr_similarity_n_refs": 0.158,
+ "note": "mean |refs| is not monotone across the strata; the appendix contrasts the endpoints"
+}
