@@ -59,7 +59,7 @@ never charged for output size, reorders them again.
 
 The third is not arbitrary, and an exact decomposition of recall says why. For methods with an
 enumerable rule base, recall factorises into coverage, selection and ranking, each measurable rather
-than estimated. Applied to two such methods it explains the leaderboard: the wider bank reaches
+than estimated. Applied to two such methods it explains the leaderboard: the wider system reaches
 $0.735$ of the annotated chemistry against $0.542$ and converts a third of that reach, while the
 narrower converts nearly all of its own, having no selection stage to lose anything at. The gap is
 the price of selecting, which recall charges only to methods that select: a claim about benchmark
@@ -326,13 +326,20 @@ is \S\ref{sec:metric}'s third parameter acting for us where it acts against us l
 
 Applied to a second method it stops being self-diagnosis. SyGMa is rule-grounded with an
 enumerable bank, so it decomposes on the same split in the same frame. Its profile is the inverse of
-ours. Its bank reaches less, $0.542$ against $\ceiling$ ($-0.193$ $[-0.213,-0.175]$ paired, signed
+ours. Its reach is lower, $0.542$ against $\ceiling$ ($-0.193$ $[-0.213,-0.175]$ paired, signed
 comparator minus GRAIL throughout), but it applies every applicable rule and emits the result,
 converting almost all of that reach where we convert a third of a wider one. The gap between us is therefore not a worse rule base but the cost of having a selection
-stage at all, which recall charges only to methods that select. Two methods lose recall for opposite reasons, and a single score says only that one scores lower.
-The frame also bounds this architecture: a perfect selector and ranker would stop at \ceiling, and
-that ceiling is corpus-limited rather than a consequence of tuning, since 53\% of uncovered
-transformations are of reaction types absent from the bank. It is carried by the curated fifth --- $1{,}715$ curated rules reach $0.660$ where $5{,}866$ mined
+stage at all, which recall charges only to methods that select.
+
+That first factor is \emph{system} reach, not bank breadth. $152$ of SyGMa's $175$ rules sit
+verbatim in our bank, so this compares a superset with a subset, and those $152$ reach $0.189$ under
+our application against $0.385$ under SyGMa's --- an engine effect of $+0.196$ $[+0.156,+0.239]$,
+the size of the reach gap itself. Depth is not the confound: matched at one step SyGMa reaches
+$0.536$ and the gap widens to $0.200$. A rule base has no reach on its own, so \ceiling\ understates
+what ours holds (Appendix~\ref{app:props}).
+The frame also bounds this architecture: a perfect selector and ranker would stop at \ceiling, which
+is limited by the corpus rather than by tuning, $53\%$ of uncovered transformations being of
+reaction types absent from the bank. It is carried by the curated fifth --- $1{,}715$ curated rules reach $0.660$ where $5{,}866$ mined
 ones reach $0.328$ --- and the tail is still not disposable: discarding the $4{,}271$ rules that
 never carry a positive label costs recall@15 $-0.036$ $[-0.050,-0.024]$
 (Appendices~\ref{app:props} and~\ref{app:negative}).
@@ -526,8 +533,8 @@ estimating a dependence (Appendix~\ref{app:xdomain}).
 The decomposition says why, and this is where the paper's two halves meet. SyGMa's selection factor
 is $1$ because it emits every product its applicable rules generate. That is what recall rewards and
 precision punishes, so a pipeline with no selection stage is scored relatively higher by the first
-than by the second. It need not lead on recall outright, coverage being a free axis: SyGMa's bank
-reaches $0.542$ against GRAIL's $\ceiling$, the paired gap of \S\ref{sec:decomp}. The factorisation supplies the direction of the
+than by the second. It need not lead on recall outright, reach being a free axis: SyGMa reaches
+$0.542$ against GRAIL's $\ceiling$, the paired gap of \S\ref{sec:decomp}. The factorisation supplies the direction of the
 movement, from a structural property rather than after the fact.
 
 The matching criterion acts on these metrics too, and where it barely touched recall. Over the full

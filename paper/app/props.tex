@@ -135,9 +135,9 @@ SyGMa          & 0.520 & \multicolumn{2}{c}{0.947}   & 0.493 & a rule bank \\
 
 Read across the row the arithmetic holds exactly, $0.612\times0.804\times1.000 = 0.492$, which is
 the realised micro recall to four places. Read down the first column it does not mean the same
-thing twice, and that is the caveat the analogy needs rather than a detail. A rule bank is a fixed
-object: its reach is a property of the knowledge base and does not change with how the base is
-queried. A beam is a budget, so $0.612$ bounds \emph{this decode} and rises with a wider one. The
+thing twice, and that is the caveat the analogy needs rather than a detail. A beam is a budget, so $0.612$ bounds \emph{this
+decode} and rises with a wider one; a rule bank is a fixed object, but its reach is not, and
+\S\ref{app:enginereach} measures how much of it belongs to the engine rather than the rules. The
 two columns are structurally parallel and semantically different, and putting them in one column of
 one table without saying so would be the confusion this paper is about.
 
@@ -189,6 +189,54 @@ $0.399$ against a realised $0.444$, which is impossible and is how the missing f
 The margin at $994$ templates is $0.035$, so if further templates ship elsewhere in that
 distribution the reach is higher and the conversion lower still --- in the direction the table
 already reports.
+
+\subsection{How much of a bank's reach belongs to the engine}
+\label{app:enginereach}
+
+\S\ref{sec:decomp} compares $0.735$ against $0.542$ and the natural reading is bank breadth. Three
+measurements say that reading is wrong, and the third is the one that matters.
+
+\paragraph{The two banks are not separate objects.} SyGMa's published rule set is one of the curated
+banks our own is a deduplicated union of, so containment is testable by verbatim string membership
+rather than inference: $152$ of its $175$ rules are in \texttt{extended\_smirks.txt}, all in the
+curated portion and none among the mined templates. The comparison is a superset against a subset.
+
+\paragraph{Depth is not the confound.} Our ceiling is one uncapped depth-1 pass. SyGMa's deployed
+pool is built by a scenario in which phase II fires on phase I products, which is composed rather
+than single-step, so the two were not measured the same way. Matching them costs little and moves
+the number the wrong way for us: SyGMa reaches $0.5356$ $[0.510,0.562]$ at one step against $0.5422$
+$[0.517,0.568]$ deployed, composition worth $+0.0065$ $[+0.0038,+0.0096]$, and the gap widens from
+$0.1933$ to $0.1998$ $[0.182,0.219]$. The re-run reproduces the committed $0.5422$ on every
+substrate, which is the gate this was run behind.
+
+\paragraph{Reach is a property of the system, not of the rule base.} Hold the rules fixed at the
+$152$ both systems have and swap only the engine:
+
+\begin{center}
+\begin{tabular}{llc}
+\toprule
+& rules, engine & reach \\
+\midrule
+A & $152$ shared, ours          & 0.189 $[0.152,0.231]$ \\
+B & $152$ shared, SyGMa's       & 0.385 $[0.337,0.437]$ \\
+C & all $175$, SyGMa's          & 0.527 $[0.473,0.584]$ \\
+D & all $175$, SyGMa's composed & 0.531 $[0.477,0.588]$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The engine at fixed rules is worth $+0.196$ $[+0.156,+0.239]$, the $23$ rules we do not hold
+$+0.143$ $[+0.107,+0.181]$, and composition $+0.004$. The engine term alone is the size of the
+entire reach gap the main text reports.
+
+\paragraph{What this costs the paper and what it does not.} The decomposition is untouched: each
+method's three factors are measured through its own application and still multiply to its own
+realised recall. What cannot survive is reading the first factor \emph{across} methods as a property
+of their rule sets. It is a property of rule set and engine together, and \S\ref{sec:decomp} now says
+so. The direction is worth stating plainly, because it is not in our favour rhetorically and is in
+our favour substantively: our engine under-realises shared rules by a factor of two against SyGMa's,
+so $\ceiling$ understates what our bank holds, and the headline that the bank is not the binding
+constraint is strengthened rather than weakened by the correction.
 
 \subsection{The bank without a selector, at a matched budget}
 \label{app:noselect}
