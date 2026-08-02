@@ -125,6 +125,10 @@ def main() -> int:
             rows.append(r)
             if n % 25 == 0 or n == len(items):
                 print(f"  {n}/{len(items)} ({time.perf_counter()-t:.0f}s)", flush=True)
+    # imap_unordered returns in completion order, so the row order varies between runs.
+    # A sum over rows does not care; a bootstrap that resamples row indices does, and the
+    # published interval moved in the fourth decimal on re-run because of it.
+    rows.sort(key=lambda r: r[0])
     U = [r[1] for r in rows]
     hits = {"curated": [r[2] for r in rows], "mined": [r[3] for r in rows],
             "full": [r[4] for r in rows]}

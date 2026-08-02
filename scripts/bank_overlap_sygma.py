@@ -23,6 +23,7 @@ import time
 from pathlib import Path
 
 import numpy as np
+import sygma
 from rdkit import Chem, RDLogger
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -35,7 +36,9 @@ from run_benchmark import _tautomer_recovered
 
 RDLogger.DisableLog("rdApp.*")
 N_BOOT, SEED = 10000, 0
-SYGMA_RULES = Path("/Users/nikitapolomosnov/anaconda3/lib/python3.10/site-packages/sygma/rules")
+# Resolved from the installed package rather than hard-coded: a path under a home directory both
+# breaks on any other machine and names the author in an anonymised archive.
+SYGMA_RULES = Path(os.environ.get("SYGMA_RULES") or (Path(sygma.__file__).parent / "rules"))
 OUT = ROOT / "results" / "bank_overlap_sygma.json"
 _SUB: list = []
 
@@ -93,6 +96,10 @@ def main() -> int:
             if n % 50 == 0 or n == len(items):
                 print(f"  {n}/{len(items)} ({time.perf_counter()-t:.0f}s)", flush=True)
 
+    # imap_unordered returns in completion order, so the row order varies between runs.
+    # A sum over rows does not care; a bootstrap that resamples row indices does, and the
+    # published interval moved in the fourth decimal on re-run because of it.
+    rows.sort(key=lambda r: r[0])
     U = np.array([r[1] for r in rows])
     H = np.array([r[2] for r in rows])
     cov = H.sum() / U.sum()

@@ -133,6 +133,10 @@ def main() -> int:
             if n % 25 == 0 or n == len(items):
                 print(f"  {n}/{len(items)} ({time.perf_counter()-t:.0f}s)", flush=True)
 
+    # imap_unordered returns in completion order, so the row order varies between runs.
+    # A sum over rows does not care; a bootstrap that resamples row indices does, and the
+    # published interval moved in the fourth decimal on re-run because of it.
+    rows.sort(key=lambda r: r[0])
     U = np.array([r[1] for r in rows])
     C = np.array([r[2] for r in rows])
     rng = np.random.default_rng(SEED)

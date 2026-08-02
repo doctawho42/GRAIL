@@ -54,10 +54,21 @@ for r in sorted(refs):
 PY
 ```
 
-**Status: PASS as of 2026-07-29, after fixing 18 violations** — including
-`set_metrics_by_criterion.json`, the source of the paper's two certified reversals. Five
-regeneration caches stay untracked by intent (`key_tables` 272M, `moses_keys` 431M,
-`rule_collapse_cache` 11M, `match_sens_cache`, `metatox_input`): they hold no numbers.
+**Status: PASS as of 2026-08-01, after fixing 18 violations in the first round and 2 in the
+latest** — including `set_metrics_by_criterion.json`, the source of the paper's two certified
+reversals, and, this round, `gloryx_criterion_grid.json` and `ceiling_gap_by_similarity.json`.
+
+Three classes stay untracked, and each is untracked for a different reason, so the command's raw
+output is not the verdict:
+
+- **Regeneration caches**, which hold no numbers: `key_tables` 272M, `moses_keys` 431M,
+  `rule_collapse_cache` 11M, `match_sens_cache`, `metatox_input`, `artifacts/preprocessed`.
+- **Trained checkpoints** (`artifacts/*/checkpoints/*.pt`). The reproducibility statement says the
+  *anonymised archive* holds these, not the git tree, and names which analyses need them — the ones
+  that re-rank or re-select. Every split-level number regenerates without them.
+- **`artifacts/tier2/biotransformer/database/*.json`**, a third-party file we deliberately do not
+  redistribute. The reproducibility statement discloses this by name and says a reader points the
+  script at an installed copy.
 
 **Committing the file is necessary and not sufficient — the artifact must record the configuration
 that produced it.** This bites only for results measured on a *subsample*: a full-split artifact is
@@ -205,6 +216,15 @@ with it. That is not hypothetical here --- the third round found
 `results/factorized_eval_subset250.json` carrying absolute paths, tracked by a bulk `git add -f`
 after the previous round had passed. **Run this row after adding files, not before.**
 
+**The fourth round caught two more, and only because the row was re-run after an add.**
+`bank_overlap_sygma.py` and `reach_engine_vs_bank.py` --- the two scripts behind the system-reach
+result in \S4, the largest finding in the paper --- each hard-coded
+`/<home>/<user>/anaconda3/.../sygma/rules`. Both now resolve the path from the installed package
+(`Path(sygma.__file__).parent / "rules"`, overridable by `$SYGMA_RULES`), which fixes two defects at
+once: the scripts ran on one machine only, and they named the author. Verified equivalent rather
+than assumed: the resolved directory is the same one, yielding the same $148+27=175$ rule lines the
+paper cites.
+
 **The rows interact, and this pair inverts.** Row 2 asks artifacts to record where their inputs
 live; done naively that is exactly what breaks this row. Neither check catches it alone — row 2 sees
 a config block and passes, this row saw only `paper/*.tex` and passed. A check narrower than its
@@ -225,11 +245,42 @@ pdftotext -layout paper/grail_iclr.pdf - | awk 'BEGIN{RS="\f"} NR==9' | tail -3
 
 **Status: PASS**, `results/citations_verified.json`. Re-run after any citation is added.
 
+## 10. A re-run reproduces the artifact, not just the point estimate
+
+**Check:** run a script twice and diff. Row 2 asks whether the artifact is *committed*; this asks
+whether the committed file is what the code *produces*, which is the paper's actual claim.
+
+```bash
+python scripts/bank_overlap_sygma.py && cp results/bank_overlap_sygma.json /tmp/r1.json \
+  && python scripts/bank_overlap_sygma.py && diff /tmp/r1.json results/bank_overlap_sygma.json
+```
+
+**Status: PASS as of 2026-08-01, after fixing four scripts.** Found by accident, which is the point:
+a stray invocation rewrote `bank_overlap_sygma.json` and git showed the interval moving from
+`[0.1512,0.2302]` to `[0.1510,0.2312]` while the point estimate reproduced to four decimals.
+
+The cause is not randomness — the seed is fixed. `imap_unordered` returns rows in completion order,
+so each run bootstrapped a differently ordered array. A sum over rows is order-invariant, which is
+why every point estimate was exact; resampling row *indices* is not. `bank_overlap_sygma.py`,
+`ceiling_by_provenance.py`, `decompose_biotransformer.py` and `reach_engine_vs_bank.py` now sort
+before resampling. `sygma_depth_matched_reach.py` looked identical and is not affected: it keys into
+a dict and iterates a fixed list.
+
+Two published intervals moved and were corrected to the deterministic values: the engine effect
+$+0.196$ went from $[+0.156,+0.239]$ to $[+0.155,+0.240]$, and the provenance table's three.
+
+**No point estimate in the paper changed**, which is exactly why nothing else caught this. Rows 2
+and 4 both pass on an artifact whose interval is not reproducible: one asks whether the file is
+committed, the other whether the difference carries an interval at all. A check narrower than its
+claim, for the fourth time in this document.
+
 ---
 
-**No open items remain as of 2026-07-31.** Every row passes, and every one of them passes only
-because it was run: this round closed the subsample-provenance item and found an author name and
-email in `pyproject.toml` that the previous round's narrower pattern had missed.
+**No open items remain as of 2026-08-01.** Every row passes, and every one of them passes only
+because it was run: the previous round closed the subsample-provenance item and found an author name
+and email in `pyproject.toml`, and this one --- run because new results were added, not because
+anything looked wrong --- found two tracked scripts hard-coding the author's home directory, behind
+the paper's largest finding.
 
 The document is subject to its own rule. The paragraph above the row-2 command once read "every
 `n=245` artifact fails this" while the command printed 21 files, and the closing line once read "no

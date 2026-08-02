@@ -333,7 +333,7 @@ stage at all, which recall charges only to methods that select.
 
 That first factor is \emph{system} reach, not bank breadth. $152$ of SyGMa's $175$ rules sit
 verbatim in our bank, so this compares a superset with a subset, and those $152$ reach $0.189$ under
-our application against $0.385$ under SyGMa's --- an engine effect of $+0.196$ $[+0.156,+0.239]$,
+our application against $0.385$ under SyGMa's --- an engine effect of $+0.196$ $[+0.155,+0.240]$,
 the size of the reach gap itself. Depth is not the confound: matched at one step SyGMa reaches
 $0.536$ and the gap widens to $0.200$. A rule base has no reach on its own, so \ceiling\ understates
 what ours holds (Appendix~\ref{app:props}).
@@ -419,16 +419,19 @@ established, the reversals illustrate it.
 \paragraph{External replication.} The results above live on a $\nshared$-substrate subset of our own
 split, so we repeated the analysis on the field's de-facto external hold-out, the \nglory\ GLORYx
 drugs \citep{de_Bruyn_Kops_2020}, whose own tool is not scored here for want of runnable weights. The set is external for three of the four methods and
-not for ours, which we checked late: $19$ of the $37$ drugs are in GRAIL's training split and $5$ in
-validation, so GRAIL is reported on the $13$ unseen; the others do not train on this corpus.
+not for ours, which we checked late: $24$ of the $37$ are in GRAIL's train or validation split, so
+its row uses the $13$ unseen (Table~\ref{tab:matchsens}).
 
-The result this section rests on involves neither contaminated arm. Under strict InChIKey
-SyGMa leads MetaPredictor by a \emph{significant} $-0.130$ $[-0.196,-0.065]$; one rung of tolerance
-later the advantage is gone and the estimate reverses ($+0.005$, n.s.): a criterion chosen for
-convenience can erase a significant advantage between two published tools. On the uncontaminated
-drugs GRAIL's stereo sensitivity survives at $+0.126$ $[+0.028,+0.239]$, as does its interaction
-with SyGMa --- the same measurement, SyGMa's stereo step here being zero. The \emph{external}
-interaction with BioTransformer does not, and we withdraw it, leaving the subset estimate untouched.
+The result this section rests on involves neither contaminated arm. Under strict InChIKey SyGMa
+leads MetaPredictor by $-0.130$ $[-0.196,-0.065]$; one rung later the advantage is gone ($+0.005$
+$[-0.071,+0.086]$). The endpoint is not that transition, which contrasts a
+significant result with a null one, but the interaction: MetaPredictor gains $+0.135$
+$[+0.072,+0.209]$ more than SyGMa across the stereo step, Holm rank $1$ of six. That interval is
+what is certified; the relaxed gap covers zero and still admits SyGMa ahead by $0.071$, so a
+criterion is shown erasing a significant advantage, not reversing it. On the uncontaminated drugs
+GRAIL's stereo sensitivity survives at $+0.126$ $[+0.028,+0.239]$, as does its interaction with
+SyGMa --- the same measurement, SyGMa's stereo step here being zero. The \emph{external} interaction
+with BioTransformer does not survive and is withdrawn; the subset estimate stands.
 This set's coverage ceiling stays on all $\nglory$, and the reason is a measurement rather than an
 argument: most of the bank is mined from training pairs, so applying it is \emph{not} independent of
 training, but the ceiling is $0.633$ on the twenty-four seen drugs against $0.632$ on the thirteen
@@ -458,7 +461,7 @@ tautomer step zero for all but one method. GLORYx references carry stereocentres
 these systems cannot emit one, so a stereo-sensitive criterion scores them on a representation they
 never produce. Internally, where references are already stereo-stripped, tautomerism fails instead,
 so which relaxation dominates is a property of the reference set. In retrosynthesis, whose
-references are canonical and stereochemically explicit, the five span about $0.02$
+references are canonical and stereochemically explicit, four such criteria span about $0.02$
 (Appendix~\ref{app:xdomain}).
 
 
@@ -546,9 +549,9 @@ $+0.003$ $[-0.009,+0.015]$. That is an erased gap rather than a certified revers
 as no more than that. Three undeclared parameters therefore sit between a set of predictions and a
 leaderboard position, and they do not act on the same comparisons.
 
-Precision here is a lower bound, which threatens this result most since the method the metric
-demotes emits the most candidates. Under a uniform-propensity model recall is unbiased, precision's
-ordering is identified, and F1's survives to $c\approx0.055$ (Appendix~\ref{app:props}).
+Precision here is a lower bound and threatens this result most, since the method the metric demotes
+emits the most candidates; under a uniform-propensity model its ordering is identified and F1's
+survives to $c\approx0.055$ (Appendix~\ref{app:props}).
 
 
 
@@ -604,8 +607,8 @@ what the bank cannot reach in one step (Appendix~\ref{app:props}).
 \paragraph{Sample sizes differ, and two comparators cannot be re-run here.} The five-method table
 rests on $\nshared$ shared substrates because MetaTrans's inference pipeline no longer reproduces
 and BioTransformer's configuration is unscripted; both are frozen predictions, reproducible from our
-artifacts but not regenerable. GRAIL, SyGMa and MetaPredictor are scored on the full $\ntest$, and
-the external replication is $n=\nglory$.
+artifacts but not regenerable. The other three are scored on the full $\ntest$, and the external
+replication is $n=\nglory$.
 
 \paragraph{Precision is a lower bound, not an estimate.} An unannotated but chemically real product
 scores as a false positive, so every precision and F1 figure is pessimistic. \S\ref{sec:metric}
@@ -626,15 +629,10 @@ number including the headline, and the exploratory analyses of Appendix~\ref{app
 \looseness=-1
 Three parameters decide a leaderboard position before any model does: the matching rule, which moves
 how far two \emph{curators} of one drug agree before it moves any model; the aggregate, under which
-the recall leader finishes last, a pipeline that selects nothing being what recall rewards and
-precision punishes; and the budget, which binds only methods emitting past it. All three belong in
-any report.
-
-\looseness=-1
-For a rule-grounded predictor recall also factorises exactly into bank, selector and ranker, which
-explains an ordering rather than repeating it and predicts the aggregate's effect. Removing the
-selector and matching the budget confirms that reading above the field's $k$, not below. Report the
-ceiling wherever a rule base exists.
+the recall leader finishes last, selecting nothing being what recall rewards and precision punishes;
+and the budget, which binds only methods emitting past it. For a rule-grounded predictor recall also
+factorises exactly into bank, selector and ranker, which explains an ordering rather than repeating
+it. Report all three parameters, and the ceiling wherever a rule base exists.
 
 \subsubsection*{Reproducibility statement}
 
@@ -652,7 +650,11 @@ distribution ships, \texttt{metabolicReactions.json}, its \textsc{envmicro} coun
 installed copy. Its own weights and MetaPredictor's are third-party too and are cited rather than
 shipped. Results measured on a subsample of a split carry the cap and seed that drew it, without which
 the substrate set is not recoverable: sampling draws without replacement, so a different cap yields
-a different set of the same size rather than a subset. Where an analysis path re-derives a deployed
+a different set of the same size rather than a subset. Regenerable is meant to include the intervals.
+Four analyses collected per-substrate rows from a process pool in completion order, so each run
+bootstrapped a differently ordered array: the point estimates, being sums, were exact, while the
+intervals moved in the third decimal. The rows are sorted before resampling now, and a repeated run
+reproduces the artifact byte for byte. Where an analysis path re-derives a deployed
 output, the two are reconciled before use rather than assumed equal: the released per-candidate
 score dump reproduces the deployed ranking on all $\ntest$ substrates, a check that caught three
 silent divergences in the path that produces it.
