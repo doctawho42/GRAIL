@@ -52,7 +52,8 @@ ranker are different research programmes, and recall does not indicate which is 
 
 Three parameters sit between a set of predictions and a leaderboard position, and none is declared:
 the rule for when two structures are the same molecule, the aggregate reported, and the output
-budget. Varying each with predictions held fixed moves the ordering. The matching rule erases a
+budget. Varying each with predictions held fixed moves the ordering, and for two of the three the
+movement is a reversal certified in both directions on the full split. The matching rule erases a
 statistically significant advantage between two published tools on the external set; reporting F1
 rather than recall drops the recall leader to last; and the budget, imported from a convention that
 never charged for output size, reorders them again.
@@ -81,24 +82,22 @@ oxidise, cleave and conjugate the administered compound into a set of new molecu
 metabolites. Which metabolites form is a central question in drug development, because a
 metabolite may be inactive, may carry the therapeutic effect, or may be toxic in ways the parent
 compound is not. Regulatory review attends closely to major human metabolites, and identifying them
-experimentally is slow and expensive. Computational prediction of metabolite
-structures therefore has direct practical value: given the structure of an administered compound,
-predict the structures of the molecules the body will produce from it.
+experimentally is slow and expensive, so computational prediction of metabolite structures has
+direct practical value: given an administered compound, predict what the body will produce from it.
 
 Two families of methods address this problem. Rule-based systems encode known biotransformations
 as reaction templates, apply every applicable template to the input compound, and rank the
 resulting products by an empirical score \citep{Ridder_2008, de_Bruyn_Kops_2020,
-Djoumbou_Feunang_2019}. Machine-learning systems instead learn the transformation directly, either
-as a sequence-to-sequence translation between molecular strings or as a classifier over reaction
-types \citep{Litsa_2020, Zhu_2024}. Hybrid systems combine the two, using a learned model to
+Djoumbou_Feunang_2019}. Machine-learning systems instead learn the transformation directly
+\citep{Litsa_2020, Zhu_2024}. Hybrid systems combine the two, using a learned model to
 decide which of many templates to apply. Whatever the underlying approach, published methods are
 compared on the same quantity: top-$k$ recall, the fraction of experimentally observed metabolites
 that appear among a method's $k$ highest-ranked predictions.
 
 That comparison hides what it is measuring. A rule-based or hybrid method can fail to recover a
 metabolite for three unrelated reasons: no template expresses the transformation, the template
-exists but is not selected, or the product is generated and ranked too low to report. Recall
-confounds these, so a low score identifies no deficiency and suggests no remedy.
+exists but is not selected, or the product is ranked too low to report. Recall confounds these, so a
+low score identifies no deficiency and suggests no remedy.
 
 This work separates them. For a method whose rule base can be enumerated, recall factorises
 exactly into coverage, selection and ranking, and the coverage term is obtained by applying the
@@ -115,24 +114,20 @@ move as the factorisation predicts.
 Making the factorisation well-posed exposes a second problem, which is why the paper addresses it
 first. Every factor counts references matched against predictions, so all three move with the rule
 deciding when a predicted structure is the same molecule as a reported one, and chemistry offers
-several defensible rules: canonical SMILES, hashed identifiers, identifiers with stereochemistry
-removed, or fingerprints. They disagree most about tautomers, alternative structures of one
+several defensible rules. They disagree most about tautomers, alternative structures of one
 compound differing in the position of a mobile hydrogen; Appendix~\ref{app:worked} works one pair
 of predictions through all of them, scoring a near-total miss or a full hit with the chemistry
 fixed. Evaluations here adopt one each, usually
 without saying why, and none has varied it. Varying it over five conventions with predictions held
 fixed erases a significant advantage between two published tools externally, and internally moves
 the F1 ordering while leaving recall's stable to within noise. Two more follow: the aggregate, where reporting
-F1 rather than recall makes the leader the straggler, and the output budget. That matching rules and
-metric choices can reorder leaderboards is established in other fields; that this field's rankings
-turn on three undeclared ones is not.
+F1 rather than recall makes the leader the straggler, and the output budget.
 
-What generalises past this benchmark is the instrument rather than the numbers. Recall factorises
+What generalises past this benchmark is the decomposition rather than the numbers. Recall factorises
 exactly wherever the candidate set can be enumerated, and the coverage term is then measured rather
-than estimated, so it is reportable for any such method, a rule bank or a wide decode alike. We
-release the bundle that makes the three parameters checkable rather than a
-model: the audited split, the harness with all five criteria, every method's frozen predictions and
-GRAIL's checkpoints. Adding a sixth method needs its ranked output and nothing else.
+than estimated, so it is reportable for any such method, a rule bank or a wide decode alike. What we
+release is the bundle that makes the three parameters checkable rather than a model, and adding a
+sixth method to it needs that method's ranked output and nothing else.
 
 \section{Related Work}
 \label{sec:related}
@@ -167,8 +162,8 @@ choice, and \citet{Mansouri_2024} describe a standardisation pipeline developed 
 quantitative structure-activity modelling. This literature treats standardisation as a
 preprocessing step applied before analysis, rather than as a parameter of the evaluation itself.
 
-\paragraph{Evaluation methodology in adjacent fields.} That methodological choices alter the
-apparent ordering of methods is recognised more broadly, along two axes this paper also varies.
+\paragraph{Evaluation methodology in adjacent fields.} \looseness=-1 That methodological choices alter the
+apparent ordering of methods is recognised more broadly, along all three axes this paper varies.
 On the matching rule, \citet{Maziarz_2025} re-evaluated retrosynthesis models under a standardised
 procedure and reversed a published ordering, partly because one model had been scored under a
 relaxed stereochemistry criterion its baselines did not get; it is the closest precedent here, and
@@ -185,22 +180,32 @@ rises with a structural property of the output, its atom count, rather than with
 re-evaluating under practically aligned metrics changes which models look good. The same field's
 benchmark was rebuilt around four complementary axes for the same reason
 \citep{Lin_2025_cbgbench}. Weighting examples by difficulty reorders natural-language leaderboards
-\citep{Mishra_2021, Rodriguez_2021}. Data
-splitting has received similar attention \citep{Joeres_2025}.
+\citep{Mishra_2021, Rodriguez_2021}. On the budget the prior work is older and not ours: retrieval
+and recommendation have long evaluated ranked output at a declared cut-off \citep{Jarvelin_2002},
+scored it under incomplete relevance judgements \citep{Buckley_2004}, corrected it for the
+propensity with which a relevant item is recorded \citep{Joachims_2017}, and shown a cut-off
+metric's winner changing with how the candidates entering it are counted \citep{Krichene_2020}.
+That an unpenalised recall@$k$ rewards enumeration is a property of the measure that literature
+settled decades ago; we re-instantiate it here rather than discover it.
 
-\paragraph{Remaining gap.} Neither axis is in doubt in general, and neither has been varied for
-metabolite predictors. What is unestablished is how far each moves this field's rankings when it
-is the only thing changing; and no stage-wise attribution of a predictor's score has been
-reported for metabolite predictors, though the device is established elsewhere, \citet{Maziarz_2025}
-separating single-step accuracy from search in retrosynthesis. That is what would let the two be
-explained rather than only reported.
+\paragraph{Remaining gap.} \looseness=-1 None of the three axes is in doubt in general, and none has been varied
+for metabolite predictors. What is unestablished is how far each moves this field's rankings when it
+is the only thing changing. For the budget the new content is therefore measurement, not the
+trade-off: an ordering that differs across $k\in[3,12]$ from the one at $k\ge13$ where the field's
+$15$ sits, every pair separating inside that region at a $k$ fixed before the curves; a budget
+truncating SyGMa on $93.1\%$ of substrates and GRAIL on none, so the comparison made at it is not
+budget-matched; and a per-substrate budget from descriptors recovering almost none of the oracle
+headroom out of sample, which bounds that direction rather than refuting it
+(Appendix~\ref{app:props}). No stage-wise attribution of
+a predictor's score has been reported for metabolite predictors either, though the device is established
+elsewhere, \citet{Maziarz_2025} separating single-step accuracy from search in retrosynthesis. That
+is what would let the two be explained rather than only reported.
 
 \section{TAME: an evaluation protocol with a declared matching criterion}
 \label{sec:tame}
 
-TAME is a \emph{protocol, an audited split and a re-scoring harness}, not a leaderboard service:
-it exists so that the numbers in \S\ref{sec:results} are directly comparable and regenerable from
-committed artifacts.
+TAME is a \emph{protocol, an audited split and a re-scoring harness}, not a leaderboard service: the
+numbers in \S\ref{sec:results} are comparable and regenerable from committed artifacts.
 
 \paragraph{The matching criterion.} The field has never agreed what counts as a match. GLORYx uses a stereo-blind InChIKey skeleton,
 MetaTrans compares Morgan fingerprints, and rule-based systems that canonicalise their own output,
@@ -233,9 +238,7 @@ score them on a representation they never produce. That is also why the choice s
 and why it is stated as conditional rather than defended.
 
 Unless stated otherwise all results use \textsc{inchikey-tautomer};
-\S\ref{sec:rankflip} quantifies how much the ranking depends on that choice. A worked example in
-which the same fixed predictions score a near-total miss or a full hit purely by changing $q$ is
-given in Appendix~\ref{app:worked}.
+\S\ref{sec:rankflip} quantifies how much the ranking depends on that choice.
 
 Standardisation of this kind is established preprocessing (\S\ref{sec:related}); what is new
 here is adopting it as the \emph{matching} rule and measuring how far it moves the leaderboard.
@@ -257,12 +260,11 @@ unannotated candidate scores as a false positive even when it is a real but unre
 Recall without output size misleads in the other direction, a method being able to buy recall by
 enumerating (Appendix~\ref{app:budget}). Two comparisons are confirmatory and carry the multiplicity correction, the differential
 sensitivity of \S\ref{sec:rankflip} and the learned-versus-prior gap of \S\ref{sec:xmc}; every
-other interval here is exploratory. Selection happens on validation, with two exceptions we
-name rather than imply. The deployed
-filter's encoder variant was chosen by comparing both variants on test
-(Appendix~\ref{app:arch}); that choice fixes which encoder is deployed and so reaches every GRAIL
-number here, the headline included. The exploratory analyses of Appendix~\ref{app:negative} were also scored on test, before this
-discipline was tightened, and support no claim. Everything else we report on test --- the
+other interval here is exploratory. Selection happens on validation, with two exceptions we name
+rather than imply: the deployed filter's encoder variant, chosen by comparing both variants on test
+(Appendix~\ref{app:arch}), which fixes which encoder is deployed and so reaches every GRAIL number
+here, the headline included; and the exploratory analyses of Appendix~\ref{app:negative}, scored on
+test before this discipline was tightened, which support no claim. Everything else we report on test --- the
 decomposition, the learned-versus-prior comparison, the breadth sweep --- is measurement, not
 selection.
 
@@ -292,14 +294,14 @@ returned in the top $k$. The first factor requires an enumerable candidate set: 
 decode for a sequence-to-sequence one, where the same three gates apply --- MetaPredictor factorises
 $0.612\times0.804\times1.000$, exactly its realised recall, though a beam is a budget rather than a
 knowledge base and bounds that decode rather than the model (Appendix~\ref{app:seq2seq}). The identity is exact by construction (each set contains the next), so
-the three factors partition the loss with no residual: it is an accounting device, not a model.
-Its value is diagnostic: a single recall number cannot indicate \emph{which} gate closed, while
-the three corresponding interventions address unrelated components of the pipeline. Two
+the three factors partition the loss with no residual: it is an accounting device, not a model. Two
 aggregations are in use and every figure is labelled with which. Figure~\ref{fig:decomp} reports
 \emph{micro}, the pooled ratio of sums written above, because only that form makes the factors
 multiply out exactly; the head-to-head comparisons report \emph{macro}, the mean of per-substrate
 recalls, which is the comparator tools' convention. The two differ here, $0.261$ against $0.330$
-(Appendix~\ref{app:formal}).
+(Appendix~\ref{app:formal}). Coverage moves the same way and not the opposite one: the macro
+ceiling is the higher of the two, $0.792$ against $0.735$ on this split, so writing the identity in
+micro understates the coverage factor rather than flattering it.
 
 \paragraph{The ceiling as a primitive.} The first factor is measurable without any model: apply
 all \nbank\ rules to every test substrate and ask what fraction of references appears anywhere in
@@ -350,10 +352,9 @@ never carry a positive label costs recall@15 $-0.036$ $[-0.050,-0.024]$
 \subsection{The criterion the decomposition rests on}
 \label{sec:rankflip}
 
-Because every factor of the decomposition counts matched references, the criterion has to be
-settled before the decomposition means anything. Published methods have their \emph{frozen}
-predictions re-scored by the TAME harness under all five criteria, so only the match rule changes
-across columns, never the chemistry. Three of them
+Every factor counts matched references, so the criterion has to be settled first. Published methods
+have their \emph{frozen} predictions re-scored by the TAME harness under all five criteria, so only
+the match rule changes across columns, never the chemistry. Three of them
 --- GRAIL, SyGMa \citep{Ridder_2008} and MetaPredictor \citep{Zhu_2024} --- have predictions for
 the whole clean test split and are compared there, paired on identical substrates
 (Table~\ref{tab:matchsens}). Two more, BioTransformer \citep{Djoumbou_Feunang_2019} and MetaTrans
@@ -364,7 +365,8 @@ the whole clean test split and are compared there, paired on identical substrate
 Methods are not equally sensitive to the convention. Over the full split GRAIL gains $0.016$
 $[0.010,0.023]$ from canonical to tautomer matching against MetaPredictor's $0.040$
 $[0.030,0.050]$, a differential of $+0.024$ $[0.014,0.034]$ surviving Holm--Bonferroni over the
-three pairs. The same differential against BioTransformer on the 150-substrate subset is $+0.120$,
+three pairs. Unequal headroom runs the wrong way here: GRAIL enters from the
+lower baseline, so has more left to recover, and gains the less (Table~\ref{tab:matchsens}). The same differential against BioTransformer on the 150-substrate subset is $+0.120$,
 five times larger; we treat the full-split figure as the estimate, since a subset chosen for data
 availability overstated the effect. Output size is a second, orthogonal confound: SyGMa emits $82$
 candidates per substrate against GRAIL's $8.4$ (Appendix~\ref{app:budget}).
@@ -406,9 +408,11 @@ MetaPredictor  & & 0.362 & 0.504 & 0.504 & & $+0.142$ $[+0.079,+0.215]$ \\
 reversal: the protocol $\times$ method interaction, with a paired bootstrap over substrates
 ($10{,}000$ resamples). Every method gains under a more tolerant criterion, so only the differential
 can reorder anything. The design was fixed before the data, the five criteria and the re-scoring of frozen predictions
-specified twelve days before the first result; the estimator was not. We correct for multiplicity: under Holm--Bonferroni at
-$\alpha=0.05$ every interaction called significant here survives on both sets, internally even when
-the family is taken conservatively as all ten pairs the five-method table admits. On the $\nshared$-substrate subset two independent
+specified twelve days before the first result; the estimator was not. Multiplicity is corrected \emph{post hoc},
+no correction having been planned: the external family is the six pairs its table admits, the
+internal one the two pairs actually tested. Under Holm--Bonferroni at $\alpha=0.05$ every
+interaction called significant here survives on both sets, internally even when the family is taken
+conservatively as all ten pairs the five-method table admits. On the $\nshared$-substrate subset two independent
 pairs are significant along two protocol axes, BioTransformer gaining \interA\ \interAci\ more than
 GRAIL from canonical$\rightarrow$tautomer and SyGMa \interB\ \interBci\ more than MetaTrans from
 canonical$\rightarrow$InChIKey. The convention is a \textbf{method-dependent confounder}, not a
@@ -439,7 +443,8 @@ unseen (Appendix~\ref{app:external}).
 
 
 
-\paragraph{The criterion moves human agreement, and that agreement bounds what recall means.} The
+\paragraph{The criterion moves human agreement, and that agreement bounds what a recall figure
+means.} The
 strongest evidence for declaring the criterion involves no model. Twenty-five external drugs are
 independently curated by our corpus too, so the two metabolite lists compare as a prediction does to
 a reference: the two expert curations of one drug agree at a Jaccard of $0.075$ under canonical
@@ -546,8 +551,7 @@ most $0.0014$ with a differential sensitivity of $-0.002$ $[-0.009,+0.006]$. The
 GRAIL and MetaPredictor is another matter: it is certified under four criteria, at $-0.026$ $[-0.038,-0.013]$ under the
 tautomer-aware default, and indistinguishable from zero under plain \textsc{inchikey}, at
 $+0.003$ $[-0.009,+0.015]$. That is an erased gap rather than a certified reversal, and we claim it
-as no more than that. Three undeclared parameters therefore sit between a set of predictions and a
-leaderboard position, and they do not act on the same comparisons.
+as no more than that: the three parameters do not act on the same comparisons.
 
 Precision here is a lower bound and threatens this result most, since the method the metric demotes
 emits the most candidates; under a uniform-propensity model its ordering is identified and F1's
@@ -591,10 +595,7 @@ annotation artifact a rarity that is here substantially chemistry (Appendix~\ref
 \label{sec:evidence}
 
 The diagnosis rests on nine measurements (Table~\ref{tab:levers}), each designed to move exactly
-one factor, so a result failing to move recall is as informative as one that does.
-
-
-Six of the nine failed, and are the more useful half. Depth-2 buys $0.012$ of ceiling for $8.5$
+one factor. Six of the nine failed, and are the more useful half. Depth-2 buys $0.012$ of ceiling for $8.5$
 times the candidates, doubling the data changes nothing, and the stratification meant to show a rule
 bank transfers better off distribution finds an untrained rule engine degrading just as fast, so we
 attribute the shortfall to the structure of the selection problem rather than to under-training. Abstention is sharpest: the threshold removes true and

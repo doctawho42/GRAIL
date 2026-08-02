@@ -250,8 +250,14 @@ either, since the generator's calibrated threshold is itself a selector and prun
 large $\mathit{top\text{-}k}$ is.
 
 Dropping both, the bank produces $661.7$ raw products per substrate, $81.6$ distinct under the
-matching criterion. Scored against SyGMa on the same $245$ substrates, macro recall, paired
-bootstrap over substrates:
+matching criterion; the $661.7$ is what enters the ranker, not what is emitted. The budget is set to
+SyGMa's emitted count rather than to its pool: at $k=82$ this arm emits $81.6$ distinct structures
+against the $81.7$ SyGMa emits, both counted after the harness's deduplication, which is applied
+identically to all five methods (Appendix~\ref{app:xdomain}). The two counts are on different
+populations, this arm's $245$ substrates against SyGMa's full split, so $82$ is a budget chosen to
+match a published figure and not a matching measured on one population. At that budget the cut is not even binding,
+the arm's recall there being equal to its whole distinct pool's coverage. Scored against SyGMa on
+the same $245$ substrates, macro recall, paired bootstrap over substrates:
 
 \begin{table}[h]
 \centering
@@ -270,7 +276,14 @@ $82$ & 0.760 & 0.595 & $+0.166$ $[+0.110,+0.222]$ & the bank ahead \\
 \label{tab:noselect}
 \end{table}
 
-The claim survives its own test, and the condition survives with it. The bank does convert into
+The comparison that isolates selection needs no second system, and it sits at the field's budget.
+At $k=15$, macro on these same $245$ substrates, one bank and one engine give $0.352$ at the deployed selector breadth,
+$0.413$ with every applicable rule fired (Table~\ref{tab:selection-breadth}) and $0.528$ with the
+selector and its threshold removed. That is the cost of the selection stage measured inside one
+system, against the macro ceiling reported for these substrates below, and it is not a cross-method
+quantity: no second engine and no second bank enter it.
+
+The cross-method claim survives its own test, and the condition survives with it. The bank does convert into
 recall above SyGMa once the selector is gone --- but only above the budget the field uses. At $k=15$
 the two are indistinguishable and below it SyGMa wins, so the advantage is bought with output, which
 is the parameter of \S\ref{sec:metric} acting in our favour where \S\ref{sec:metric} has it acting

@@ -142,15 +142,24 @@ def main() -> int:
                       "n_mined": len(mined), "n_curated": len(curated),
                       "substrate_source": args.substrates},
            "n": len(items), "match": "inchikey_tautomer", "subsets": {}}
+    per = {}
     for name in subsets:
         h = np.array(hits[name])
         cov = h.sum() / U.sum()
         bt = np.array([h[j].sum() / U[j].sum() for j in idx])
+        # Macro is the mean of per-substrate coverages: a different estimand, not a different
+        # rounding of the same one, and the appendix compares an arm against it.
+        per[name] = np.divide(h, U, out=np.zeros(len(h), dtype=float), where=U > 0)
+        bt_macro = per[name][idx].mean(axis=1)
         rep["subsets"][name] = {
             "n_rules": len(subsets[name]), "coverage": round(float(cov), 4),
-            "ci95": [round(float(np.quantile(bt, .025)), 4), round(float(np.quantile(bt, .975)), 4)]}
-        print(f"  {name:8} {len(subsets[name]):>5} rules -> coverage {cov:.4f} "
-              f"{rep['subsets'][name]['ci95']}", flush=True)
+            "ci95": [round(float(np.quantile(bt, .025)), 4), round(float(np.quantile(bt, .975)), 4)],
+            "coverage_macro": round(float(per[name].mean()), 4),
+            "ci95_macro": [round(float(np.quantile(bt_macro, .025)), 4),
+                           round(float(np.quantile(bt_macro, .975)), 4)]}
+        print(f"  {name:8} {len(subsets[name]):>5} rules -> micro {cov:.4f} "
+              f"{rep['subsets'][name]['ci95']}  macro {per[name].mean():.4f} "
+              f"{rep['subsets'][name]['ci95_macro']}", flush=True)
 
     c, m, f = (rep["subsets"][k]["coverage"] for k in ("curated", "mined", "full"))
     if abs(f - CEILING_SUBSET) > TOL:
@@ -159,6 +168,8 @@ def main() -> int:
     rep["ceiling_gate"] = {"stored": CEILING_SUBSET, "reproduced": f}
     rep["exclusive"] = {"curated_only": round(f - m, 4), "mined_only": round(f - c, 4),
                         "shared": round(c + m - f, 4)}
+    rep["per_substrate"] = [{"sub": r[0], "u": int(r[1]), "curated": int(r[2]),
+                             "mined": int(r[3]), "full": int(r[4])} for r in rows]
     print(f"\n  reachable only by curated rules: {f-m:+.4f}")
     print(f"  reachable only by mined rules  : {f-c:+.4f}")
     print(f"  reachable by both              : {c+m-f:+.4f}")

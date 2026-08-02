@@ -15,6 +15,16 @@ property of the curves, and no selection enters.
 The mechanism is worth reading off the same table: a method's curve goes flat once k passes the
 number of candidates it emits, so a large budget compares a method that has stopped against one that
 has not.
+
+Two families are recorded at every k rather than only at the fixed one, because the appendix reads
+numbers off both and an earlier version of this script produced neither. `paired_by_k` is the same
+paired bootstrap as `paired_at_k_fixed`, over the same resample indices, evaluated at each k;
+`truncated_fraction_by_k` is the fraction of substrates on which the cut actually binds, which is
+what "budget-matched" and "cut on almost every substrate" refer to. Reporting an interval at one k
+while the prose quotes intervals at several was a provenance hole, not a difference of opinion: no
+committed artifact held them, and a reader could not have checked them. `paired_at_k_fixed` is kept
+and still reproduces bit for bit, since selection remains confined to the one k fixed in advance --
+the per-k intervals are descriptive, and the prose says which is which.
 """
 from __future__ import annotations
 import json
@@ -52,7 +62,7 @@ def main() -> int:
     }
     subs = [s for s in sorted(set.intersection(*(set(m) for m in methods.values())) & set(truth)) if truth[s]]
 
-    curves, emitted = {}, {}
+    curves, emitted, sizes_by = {}, {}, {}
     for name, preds in methods.items():
         rows, sizes = [], []
         for s in subs:
@@ -63,6 +73,7 @@ def main() -> int:
                          if (min(k, len(pk)) + len(real)) else 0.0 for k in range(1, KMAX + 1)])
         curves[name] = np.array(rows)
         emitted[name] = float(np.mean(sizes))
+        sizes_by[name] = sizes
 
     names = list(methods)
     means = {n: curves[n].mean(axis=0) for n in names}
@@ -70,14 +81,22 @@ def main() -> int:
 
     rng = np.random.default_rng(SEED)
     idx = rng.integers(0, len(subs), (N_BOOT, len(subs)))
-    paired = {}
-    for i, a in enumerate(names):
-        for b in names[i + 1:]:
-            d = curves[a][:, K_FIXED - 1] - curves[b][:, K_FIXED - 1]
-            bt = d[idx].mean(axis=1)
-            lo, hi = float(np.quantile(bt, .025)), float(np.quantile(bt, .975))
-            paired[f"{a}-{b}"] = {"delta": round(float(d.mean()), 4), "ci95": [round(lo, 4), round(hi, 4)],
-                                  "excludes_zero": bool(lo > 0 or hi < 0)}
+
+    def paired_at(a: str, b: str, k: int) -> dict:
+        """Paired bootstrap of the mean F1 difference at budget k, over the shared resample."""
+        d = curves[a][:, k - 1] - curves[b][:, k - 1]
+        bt = d[idx].mean(axis=1)
+        lo, hi = float(np.quantile(bt, .025)), float(np.quantile(bt, .975))
+        return {"delta": round(float(d.mean()), 4), "ci95": [round(lo, 4), round(hi, 4)],
+                "excludes_zero": bool(lo > 0 or hi < 0)}
+
+    pairs = [(a, b) for i, a in enumerate(names) for b in names[i + 1:]]
+    paired = {f"{a}-{b}": paired_at(a, b, K_FIXED) for a, b in pairs}
+    paired_by_k = {str(k): {f"{a}-{b}": paired_at(a, b, k) for a, b in pairs}
+                   for k in range(1, KMAX + 1)}
+    # The cut binds on a substrate when the method offered more candidates than the budget admits.
+    truncated = {n: [round(float(np.mean(np.array(sizes_by[n]) > k)), 4) for k in range(1, KMAX + 1)]
+                 for n in names}
 
     distinct = sorted({tuple(v) for v in order_at.values()})
     rep = {
@@ -88,6 +107,8 @@ def main() -> int:
         "ordering_by_k": {str(k): order_at[k] for k in range(1, KMAX + 1)},
         "distinct_orderings": [list(o) for o in distinct],
         "paired_at_k_fixed": paired,
+        "paired_by_k": paired_by_k,
+        "truncated_fraction_by_k": truncated,
     }
     OUT.write_text(json.dumps(rep, indent=1))
 
@@ -101,6 +122,14 @@ def main() -> int:
     print(f"\npaired at k={K_FIXED}, fixed in advance:")
     for k, v in paired.items():
         print(f"  {k:24} {v['delta']:+.4f} [{v['ci95'][0]:+.4f},{v['ci95'][1]:+.4f}]"
+              f"  {'SIG' if v['excludes_zero'] else 'n.s.'}")
+    print(f"\ntruncated fraction (the cut binds), selected k:")
+    for k in (1, 2, 5, 8, 15):
+        print(f"  k={k:<3} " + ", ".join(f"{n} {100*truncated[n][k-1]:.1f}%" for n in names))
+    print(f"\npaired GRAIL-SyGMa across k (descriptive; selection stays at k={K_FIXED}):")
+    for k in (1, 2, 3, 5, 8, 12, 15):
+        v = paired_by_k[str(k)]["GRAIL-SyGMa"]
+        print(f"  k={k:<3} {v['delta']:+.4f} [{v['ci95'][0]:+.4f},{v['ci95'][1]:+.4f}]"
               f"  {'SIG' if v['excludes_zero'] else 'n.s.'}")
     print(f"\nwrote {OUT}")
     return 0
