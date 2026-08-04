@@ -57,8 +57,8 @@ the methods that two further reporting choices merely expose: reporting F1 rathe
 the recall leader to last, and the output budget reorders the field again. Neither is an axis in its
 own right. Every reversal they certify runs through the one system emitting $82$ candidates against
 everyone else's $8$ to $11$; among the seven pairs that emit alike, none survives certification. The
-matching rule is independent of output size, moving alike at $82$ emitted and at $10.8$ but
-differently at $8.4$. One uncontrolled variable is doing the work two parameters were credited with,
+matching rule is independent of it: at a matched emitted count the sensitivities still separate, the
+extremes by $-0.025$ $[-0.035,-0.015]$. One uncontrolled variable is doing the work two parameters were credited with,
 and an exact decomposition of recall says why. For methods with an
 enumerable rule base, recall factorises into coverage, selection and ranking, each measurable rather
 than estimated. Applied to two such methods it explains the leaderboard: the wider system reaches
@@ -506,12 +506,11 @@ generators tautomer matching is inert (Appendix~\ref{app:xdomain}).
 \label{sec:metric}
 
 \looseness=-1
-Recall is not the only aggregate this field reports; F1 and Jaccard are standard, and a method
-emitting eighty candidates to catch a few more references is rewarded by the first and punished by
-the others. Computed on each method's deployed output set over the full split --- untruncated, since precision
-and Jaccard are set quantities --- the orderings disagree, and the disagreement is certified in both
-directions. The budget has to be named for the leading pair, because it decides which of the two
-leads. At unlimited output SyGMa leads on recall, by $0.026$ over MetaPredictor with a paired 95\%
+Recall is not the only aggregate this field reports, and a method emitting eighty candidates to
+catch a few more references is rewarded by it and punished by F1 and Jaccard. Computed on each
+method's deployed output set over the full split, untruncated since precision and Jaccard are set
+quantities, the orderings disagree and the disagreement is certified in both directions. The budget
+has to be named for the leading pair, because it decides which of the two leads. At unlimited output SyGMa leads on recall, by $0.026$ over MetaPredictor with a paired 95\%
 interval of $[0.003,0.049]$, and finishes last on F1, $0.115$ below it, $[0.108,0.121]$; at the
 field's $k=15$ that recall lead is already absent, MetaPredictor reading $0.569$ against SyGMa's
 $0.567$ on the same split (Table~\ref{tab:matchsens}, Appendix~\ref{app:xdomain}). The two reversals
@@ -520,22 +519,24 @@ measured on, SyGMa leads both of those methods on recall at $k=15$ too. GRAIL, l
 $0.089$ above SyGMa on F1, $[0.078,0.100]$.
 
 \looseness=-1
-The budget does the same work through the same variable, and reorders without any budget having to
-be chosen: swept over $k$, SyGMa is above GRAIL for every $k$ from $3$ to $12$ and below from $13$
-on, where the field's $15$ sits, leading by $0.054$ $[0.039,0.068]$ at $k=5$. A budget binds a
-method only when it emits more, so at $k=15$ SyGMa is cut on $93.1\%$ of substrates while
-re-truncating GRAIL's emitted list cuts none, its emission having been capped there already
-(Appendix~\ref{app:props}).
+The budget does the same work, and it is what identifies the variable: truncating a ranked list
+moves the emitted count with the method and its ranking held fixed, so a reordering along the sweep
+cannot be a property of any one system. It
+reorders without any budget having to be chosen: swept over $k$, SyGMa is above GRAIL from $k=3$ to
+$12$ and below from $13$ on, where the field's $15$ sits, leading by $0.054$ $[0.039,0.068]$ at
+$k=5$. A budget binds a method only when it emits more, so at $k=15$ SyGMa is cut on $93.1\%$ of
+substrates and GRAIL on none (Appendix~\ref{app:props}).
 
 \looseness=-1
 Neither is therefore a free parameter in its own right. Partition the pairs by how close their
 emitted counts are and count reversals certified in \emph{both} directions: across two populations
 twelve occur among the six pairs differing by more than half again, every one involving the method
 emitting $82$; among the seven pairs that emit alike, \emph{none}. Point estimates do exchange there,
-one pair under four aggregate choices, but no interval clears zero. The matching rule is not like
-this. Sensitivities of $0.038$ $[0.029,0.048]$ at $81.7$ emitted and $0.040$ $[0.030,0.050]$ at
-$10.8$ are indistinguishable across a sevenfold gap, while $8.4$ emitted gives $0.016$
-$[0.010,0.023]$, separated from the second though it emits nearly as much
+one pair under four aggregate choices, but no interval clears zero. The matching rule is not like this, though
+showing it needs the emitted counts matched, since within one method the gain grows with the budget.
+Matched at about eight emitted, GRAIL's sensitivity sits below both others by $-0.018$
+$[-0.027,-0.009]$ and $-0.025$ $[-0.035,-0.015]$ paired, and those two are indistinguishable. The
+criterion separates methods at fixed output size, which output size cannot explain
 (Appendix~\ref{app:xdomain}).
 
 \looseness=-1
@@ -562,39 +563,34 @@ survives to $c\approx0.055$ (Appendix~\ref{app:props}).
 
 
 
-\subsection{Comparison against published methods}
-\label{sec:diagnosis}
-
-On the full clean test split GRAIL trails both published comparators, SyGMa at $0.572$ (paired
-$-0.242$ $[-0.271,\,-0.212]$ over the $1{,}168$ common substrates) and MetaPredictor at $0.568$, and
-leads at no output budget (Appendix~\ref{app:budget}). It emits $8.4$ candidates against SyGMa's
-$81.7$, which \S\ref{sec:metric} prices against us. Recall figures here differ by population,
-aggregation and truncation, several coinciding in value without being the same quantity;
-Appendix~\ref{app:xdomain} states each.
-
-
-
 \subsection{Selection as extreme multi-label classification}
 \label{sec:xmc}
+\label{sec:diagnosis}
 
-Selection being the dominant shortfall, what makes it hard is structural rather than
-metabolism-specific: choosing which of \nbank\ rules apply is \textbf{extreme multi-label
-classification} with a near-empty positive set: a median of five rules per substrate carries a
-positive label, $0.07\%$ of the label space, while far more are applicable, so what is scarce is
-annotation rather than applicability --- a regime in which frequency and propensity baselines are
-known to be hard to beat \citep{Jain_2016}, and whose pathology rule selection inherits unnamed.
+\looseness=-1
+On the full clean test split GRAIL trails both published comparators, SyGMa at $0.572$ (paired
+$-0.242$ $[-0.271,\,-0.212]$ over the $1{,}168$ common substrates) and MetaPredictor at $0.568$, and
+leads at no output budget; it emits $8.4$ candidates against SyGMa's $81.7$, which
+\S\ref{sec:metric} prices against us. Recall figures here differ by population, aggregation and
+truncation, several coinciding in value without being the same quantity
+(Appendix~\ref{app:xdomain}).
+
+Selection being the dominant shortfall, what makes it hard is structural: choosing which of
+\nbank\ rules apply is \textbf{extreme multi-label classification} with a near-empty positive set, a
+median of five rules per substrate carrying a positive label, $0.07\%$ of the label space while far
+more are applicable --- a regime in which frequency and propensity baselines are known to be hard to
+beat \citep{Jain_2016}, and whose pathology rule selection inherits unnamed.
 Each arm selects thirty rules through the same enumeration and filter: a learned
 selector reaches $0.266$ where rule-firing frequency alone reaches $0.410$, a paired $-0.144$
 $[-0.196,\,-0.095]$ at $n=245$. The effect is selection-specific: at the ranking stage the same
-filter beats the same prior, $+0.039$ $[+0.007,+0.072]$ paired. The remedy the framing prescribes
-fails too, inverse-propensity weighting moving the selector to $0.249$, since it treats as an
-annotation artifact a rarity that is here substantially chemistry (Appendix~\ref{app:props}).
+filter beats the same prior, $+0.039$ $[+0.007,+0.072]$ paired. The remedy the framing prescribes fails too:
+inverse-propensity weighting moves the selector to $0.249$, treating as an annotation artifact a
+rarity that is here substantially chemistry (Appendix~\ref{app:props}).
 
 \paragraph{What constrains each factor.}
 \label{sec:evidence}
 The diagnosis rests on nine measurements (Table~\ref{tab:levers}), each designed to move exactly one
-factor; six failed, and are the more useful half. Depth-2 buys $0.012$ of ceiling at $8.5$ times the
-candidates, doubling the data changes nothing, and the stratification meant to show a rule bank
+factor; six failed, and are the more useful half. The stratification meant to show a rule bank
 transfers better off distribution finds an untrained engine on a slope the data cannot separate from
 the learned ones' --- a failure to detect rather than evidence of none, so we attribute the
 shortfall to the structure of the selection problem rather than to under-training
@@ -626,14 +622,10 @@ number including the headline, and the exploratory analyses of Appendix~\ref{app
 \section{Conclusion}
 \label{sec:conclusion}
 
-\looseness=-1
+\looseness=-2
 Two things decide a leaderboard position before any model does, and only one is a reporting choice:
-the matching rule, which moves how far two \emph{curators} of one drug agree before it moves a
-model. Output size is a property of the methods that the aggregate and the budget merely expose, and
-no reversal either produces survives certification between methods emitting alike. Recall also
-factorises exactly into bank, selector and ranker, whose first term belongs to the system and not
-the rule base. Declare the matching rule and the output size; report the ceiling with the engine
-that realised it.
+the matching rule. The other is output size, which the aggregate and the budget merely expose.
+Declare both, and report the ceiling with the engine that realised it.
 
 \subsubsection*{Reproducibility statement}
 

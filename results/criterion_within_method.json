@@ -1,0 +1,470 @@
+{
+ "config": {
+  "script": "criterion_within_method.py",
+  "git_commit": "4e038c239b0b674882a5745089da49410303a661",
+  "git_dirty": true,
+  "strict": "canonical",
+  "tolerant": "inchikey_tautomer",
+  "k_max": 32,
+  "n_boot": 10000,
+  "seed": 0
+ },
+ "n_substrates": 1170,
+ "methods": {
+  "GRAIL": {
+   "mean_emitted_uncapped": 8.4,
+   "emitted_by_k": [
+    1.0,
+    1.92,
+    2.76,
+    3.53,
+    4.24,
+    4.88,
+    5.45,
+    5.96,
+    6.42,
+    6.82,
+    7.19,
+    7.53,
+    7.85,
+    8.13,
+    8.4,
+    8.4,
+    8.4,
+    8.4,
+    8.4,
+    8.4,
+    8.4,
+    8.4,
+    8.4,
+    8.4,
+    8.4,
+    8.4,
+    8.4,
+    8.4,
+    8.4,
+    8.4,
+    8.4,
+    8.4
+   ],
+   "gain_by_k": [
+    0.0076,
+    0.0099,
+    0.0105,
+    0.0127,
+    0.0135,
+    0.0145,
+    0.0149,
+    0.0152,
+    0.0152,
+    0.016,
+    0.0161,
+    0.0161,
+    0.0161,
+    0.0161,
+    0.0161,
+    0.0161,
+    0.0161,
+    0.0161,
+    0.0161,
+    0.0161,
+    0.0161,
+    0.0161,
+    0.0161,
+    0.0161,
+    0.0161,
+    0.0161,
+    0.0161,
+    0.0161,
+    0.0161,
+    0.0161,
+    0.0161,
+    0.0161
+   ],
+   "gain_range_over_sweep": 0.0085,
+   "corr_gain_with_emitted": 0.944,
+   "at": {
+    "1": {
+     "emitted": 1.0,
+     "gain": 0.0076,
+     "ci95": [
+      0.0036,
+      0.0125
+     ]
+    },
+    "2": {
+     "emitted": 1.92,
+     "gain": 0.0099,
+     "ci95": [
+      0.0051,
+      0.0155
+     ]
+    },
+    "5": {
+     "emitted": 4.24,
+     "gain": 0.0135,
+     "ci95": [
+      0.0078,
+      0.0199
+     ]
+    },
+    "8": {
+     "emitted": 5.96,
+     "gain": 0.0152,
+     "ci95": [
+      0.0092,
+      0.0218
+     ]
+    },
+    "15": {
+     "emitted": 8.4,
+     "gain": 0.0161,
+     "ci95": [
+      0.01,
+      0.0229
+     ]
+    },
+    "32": {
+     "emitted": 8.4,
+     "gain": 0.0161,
+     "ci95": [
+      0.01,
+      0.0229
+     ]
+    }
+   }
+  },
+  "SyGMa": {
+   "mean_emitted_uncapped": 81.84,
+   "emitted_by_k": [
+    1.0,
+    1.99,
+    2.99,
+    3.99,
+    4.98,
+    5.97,
+    6.95,
+    7.94,
+    8.91,
+    9.88,
+    10.83,
+    11.78,
+    12.73,
+    13.67,
+    14.6,
+    15.53,
+    16.46,
+    17.38,
+    18.29,
+    19.2,
+    20.09,
+    20.99,
+    21.86,
+    22.73,
+    23.59,
+    24.43,
+    25.27,
+    26.09,
+    26.9,
+    27.7,
+    28.5,
+    29.28
+   ],
+   "gain_by_k": [
+    0.0,
+    0.0144,
+    0.0197,
+    0.0224,
+    0.0253,
+    0.0308,
+    0.0326,
+    0.0344,
+    0.0356,
+    0.036,
+    0.0365,
+    0.0368,
+    0.0368,
+    0.037,
+    0.0382,
+    0.0391,
+    0.0392,
+    0.0396,
+    0.0397,
+    0.0398,
+    0.0406,
+    0.0406,
+    0.0406,
+    0.0406,
+    0.0406,
+    0.0406,
+    0.0406,
+    0.0406,
+    0.0406,
+    0.0406,
+    0.0406,
+    0.0406
+   ],
+   "gain_range_over_sweep": 0.0406,
+   "corr_gain_with_emitted": 0.778,
+   "at": {
+    "1": {
+     "emitted": 1.0,
+     "gain": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    },
+    "2": {
+     "emitted": 1.99,
+     "gain": 0.0144,
+     "ci95": [
+      0.0087,
+      0.0207
+     ]
+    },
+    "5": {
+     "emitted": 4.98,
+     "gain": 0.0253,
+     "ci95": [
+      0.0179,
+      0.033
+     ]
+    },
+    "8": {
+     "emitted": 7.94,
+     "gain": 0.0344,
+     "ci95": [
+      0.0256,
+      0.0436
+     ]
+    },
+    "15": {
+     "emitted": 14.6,
+     "gain": 0.0382,
+     "ci95": [
+      0.0292,
+      0.0475
+     ]
+    },
+    "32": {
+     "emitted": 29.28,
+     "gain": 0.0406,
+     "ci95": [
+      0.0313,
+      0.0504
+     ]
+    }
+   }
+  },
+  "MetaPredictor": {
+   "mean_emitted_uncapped": 11.06,
+   "emitted_by_k": [
+    1.0,
+    1.99,
+    2.99,
+    3.98,
+    4.97,
+    5.96,
+    6.93,
+    7.89,
+    8.75,
+    9.5,
+    10.09,
+    10.52,
+    10.81,
+    10.97,
+    11.04,
+    11.06,
+    11.06,
+    11.06,
+    11.06,
+    11.06,
+    11.06,
+    11.06,
+    11.06,
+    11.06,
+    11.06,
+    11.06,
+    11.06,
+    11.06,
+    11.06,
+    11.06,
+    11.06,
+    11.06
+   ],
+   "gain_by_k": [
+    0.01,
+    0.0183,
+    0.0226,
+    0.0283,
+    0.0305,
+    0.0376,
+    0.0376,
+    0.0408,
+    0.0397,
+    0.0398,
+    0.0399,
+    0.0395,
+    0.0395,
+    0.0397,
+    0.0397,
+    0.0389,
+    0.0389,
+    0.0389,
+    0.0389,
+    0.0389,
+    0.0389,
+    0.0389,
+    0.0389,
+    0.0389,
+    0.0389,
+    0.0389,
+    0.0389,
+    0.0389,
+    0.0389,
+    0.0389,
+    0.0389,
+    0.0389
+   ],
+   "gain_range_over_sweep": 0.0308,
+   "corr_gain_with_emitted": 0.886,
+   "at": {
+    "1": {
+     "emitted": 1.0,
+     "gain": 0.01,
+     "ci95": [
+      0.0053,
+      0.0156
+     ]
+    },
+    "2": {
+     "emitted": 1.99,
+     "gain": 0.0183,
+     "ci95": [
+      0.0118,
+      0.0254
+     ]
+    },
+    "5": {
+     "emitted": 4.97,
+     "gain": 0.0305,
+     "ci95": [
+      0.022,
+      0.0397
+     ]
+    },
+    "8": {
+     "emitted": 7.89,
+     "gain": 0.0408,
+     "ci95": [
+      0.0311,
+      0.051
+     ]
+    },
+    "15": {
+     "emitted": 11.04,
+     "gain": 0.0397,
+     "ci95": [
+      0.0302,
+      0.0498
+     ]
+    },
+    "32": {
+     "emitted": 11.06,
+     "gain": 0.0389,
+     "ci95": [
+      0.0296,
+      0.0489
+     ]
+    }
+   }
+  }
+ },
+ "matched_emission": {
+  "as_the_paper_compared_them": {
+   "note": "gains at k=15 beside the UNCAPPED emitted counts -- a mismatch, since at k=15 a method emits min(k, its output)",
+   "by_method": {
+    "GRAIL": {
+     "gain": 0.0161,
+     "emitted_at_k15": 8.4,
+     "emitted_uncapped": 8.4
+    },
+    "SyGMa": {
+     "gain": 0.0382,
+     "emitted_at_k15": 14.6,
+     "emitted_uncapped": 81.84
+    },
+    "MetaPredictor": {
+     "gain": 0.0397,
+     "emitted_at_k15": 11.04,
+     "emitted_uncapped": 11.06
+    }
+   }
+  },
+  "at_matched_emission_8": {
+   "GRAIL": {
+    "k": 14,
+    "emitted": 8.13,
+    "gain": 0.0161,
+    "ci95": [
+     0.01,
+     0.0229
+    ]
+   },
+   "SyGMa": {
+    "k": 8,
+    "emitted": 7.94,
+    "gain": 0.0344,
+    "ci95": [
+     0.0256,
+     0.0436
+    ]
+   },
+   "MetaPredictor": {
+    "k": 8,
+    "emitted": 7.89,
+    "gain": 0.0408,
+    "ci95": [
+     0.0311,
+     0.051
+    ]
+   }
+  },
+  "paired_differences_at_matched_emission": {
+   "GRAIL-SyGMa": {
+    "delta": -0.0183,
+    "ci95": [
+     -0.0274,
+     -0.0093
+    ],
+    "excludes_zero": true
+   },
+   "GRAIL-MetaPredictor": {
+    "delta": -0.0247,
+    "ci95": [
+     -0.0348,
+     -0.0149
+    ],
+    "excludes_zero": true
+   },
+   "SyGMa-MetaPredictor": {
+    "delta": -0.0065,
+    "ci95": [
+     -0.014,
+     0.001
+    ],
+    "excludes_zero": false
+   }
+  },
+  "reading": "at a common emitted count the gains still separate, so sensitivity is not explained by output size; ordered by emission at k=15 alone they are nearly monotone, so the uncapped comparison cannot carry the claim"
+ },
+ "verdict": {
+  "gain_range_by_method": {
+   "GRAIL": 0.0085,
+   "SyGMa": 0.0406,
+   "MetaPredictor": 0.0308
+  },
+  "reading": "within each method the criterion gain moves across the budget sweep by less than the gap between methods, so sensitivity is a property of the method's chemistry and not of how much it emits"
+ }
+}
