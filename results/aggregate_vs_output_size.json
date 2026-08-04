@@ -1,0 +1,771 @@
+{
+ "config": {
+  "script": "aggregate_vs_output_size.py",
+  "git_commit": "54fe06eae5fb8993fb158c8268c7c5cd2cd0b785",
+  "git_dirty": true,
+  "source": "results/set_metrics_by_criterion.json",
+  "criterion": "inchikey_tautomer",
+  "metrics": [
+   "recall",
+   "f1",
+   "jaccard",
+   "precision"
+  ],
+  "comparable_ratio": 1.5
+ },
+ "populations": {
+  "shared150": {
+   "methods": [
+    "GRAIL",
+    "SyGMa",
+    "BioTransformer",
+    "MetaTrans",
+    "MetaPredictor"
+   ],
+   "mean_output": {
+    "GRAIL": 8.65,
+    "SyGMa": 75.14,
+    "BioTransformer": 10.74,
+    "MetaTrans": 11.47,
+    "MetaPredictor": 10.86
+   },
+   "pairs": [
+    {
+     "pair": [
+      "BioTransformer",
+      "GRAIL"
+     ],
+     "mean_output": [
+      10.74,
+      8.65
+     ],
+     "output_ratio": 1.24,
+     "comparable": true,
+     "sign_flips": [],
+     "certified_reversals": 0
+    },
+    {
+     "pair": [
+      "BioTransformer",
+      "MetaPredictor"
+     ],
+     "mean_output": [
+      10.74,
+      10.86
+     ],
+     "output_ratio": 1.01,
+     "comparable": true,
+     "sign_flips": [
+      {
+       "metrics": [
+        "recall",
+        "jaccard"
+       ],
+       "delta_1": -0.132,
+       "ci_1": [
+        -0.2098,
+        -0.0566
+       ],
+       "certified_1": true,
+       "delta_2": 0.0023,
+       "ci_2": [
+        -0.0176,
+        0.0243
+       ],
+       "certified_2": false,
+       "certified_both_directions": false
+      },
+      {
+       "metrics": [
+        "recall",
+        "precision"
+       ],
+       "delta_1": -0.132,
+       "ci_1": [
+        -0.2098,
+        -0.0566
+       ],
+       "certified_1": true,
+       "delta_2": 0.0113,
+       "ci_2": [
+        -0.0127,
+        0.0379
+       ],
+       "certified_2": false,
+       "certified_both_directions": false
+      },
+      {
+       "metrics": [
+        "f1",
+        "jaccard"
+       ],
+       "delta_1": -0.0122,
+       "ci_1": [
+        -0.0382,
+        0.0152
+       ],
+       "certified_1": false,
+       "delta_2": 0.0023,
+       "ci_2": [
+        -0.0176,
+        0.0243
+       ],
+       "certified_2": false,
+       "certified_both_directions": false
+      },
+      {
+       "metrics": [
+        "f1",
+        "precision"
+       ],
+       "delta_1": -0.0122,
+       "ci_1": [
+        -0.0382,
+        0.0152
+       ],
+       "certified_1": false,
+       "delta_2": 0.0113,
+       "ci_2": [
+        -0.0127,
+        0.0379
+       ],
+       "certified_2": false,
+       "certified_both_directions": false
+      }
+     ],
+     "certified_reversals": 0
+    },
+    {
+     "pair": [
+      "BioTransformer",
+      "MetaTrans"
+     ],
+     "mean_output": [
+      10.74,
+      11.47
+     ],
+     "output_ratio": 1.07,
+     "comparable": true,
+     "sign_flips": [
+      {
+       "metrics": [
+        "recall",
+        "precision"
+       ],
+       "delta_1": -0.112,
+       "ci_1": [
+        -0.1911,
+        -0.0327
+       ],
+       "certified_1": true,
+       "delta_2": 0.0056,
+       "ci_2": [
+        -0.0202,
+        0.0331
+       ],
+       "certified_2": false,
+       "certified_both_directions": false
+      },
+      {
+       "metrics": [
+        "f1",
+        "precision"
+       ],
+       "delta_1": -0.015,
+       "ci_1": [
+        -0.0439,
+        0.0149
+       ],
+       "certified_1": false,
+       "delta_2": 0.0056,
+       "ci_2": [
+        -0.0202,
+        0.0331
+       ],
+       "certified_2": false,
+       "certified_both_directions": false
+      },
+      {
+       "metrics": [
+        "jaccard",
+        "precision"
+       ],
+       "delta_1": -0.0015,
+       "ci_1": [
+        -0.0233,
+        0.0223
+       ],
+       "certified_1": false,
+       "delta_2": 0.0056,
+       "ci_2": [
+        -0.0202,
+        0.0331
+       ],
+       "certified_2": false,
+       "certified_both_directions": false
+      }
+     ],
+     "certified_reversals": 0
+    },
+    {
+     "pair": [
+      "BioTransformer",
+      "SyGMa"
+     ],
+     "mean_output": [
+      10.74,
+      75.14
+     ],
+     "output_ratio": 7.0,
+     "comparable": false,
+     "sign_flips": [
+      {
+       "metrics": [
+        "recall",
+        "f1"
+       ],
+       "delta_1": -0.1091,
+       "ci_1": [
+        -0.1684,
+        -0.0516
+       ],
+       "certified_1": true,
+       "delta_2": 0.1123,
+       "ci_2": [
+        0.0878,
+        0.1381
+       ],
+       "certified_2": true,
+       "certified_both_directions": true
+      },
+      {
+       "metrics": [
+        "recall",
+        "jaccard"
+       ],
+       "delta_1": -0.1091,
+       "ci_1": [
+        -0.1684,
+        -0.0516
+       ],
+       "certified_1": true,
+       "delta_2": 0.0771,
+       "ci_2": [
+        0.0579,
+        0.0982
+       ],
+       "certified_2": true,
+       "certified_both_directions": true
+      },
+      {
+       "metrics": [
+        "recall",
+        "precision"
+       ],
+       "delta_1": -0.1091,
+       "ci_1": [
+        -0.1684,
+        -0.0516
+       ],
+       "certified_1": true,
+       "delta_2": 0.0993,
+       "ci_2": [
+        0.0737,
+        0.1278
+       ],
+       "certified_2": true,
+       "certified_both_directions": true
+      }
+     ],
+     "certified_reversals": 3
+    },
+    {
+     "pair": [
+      "GRAIL",
+      "MetaPredictor"
+     ],
+     "mean_output": [
+      8.65,
+      10.86
+     ],
+     "output_ratio": 1.26,
+     "comparable": true,
+     "sign_flips": [],
+     "certified_reversals": 0
+    },
+    {
+     "pair": [
+      "GRAIL",
+      "MetaTrans"
+     ],
+     "mean_output": [
+      8.65,
+      11.47
+     ],
+     "output_ratio": 1.33,
+     "comparable": true,
+     "sign_flips": [],
+     "certified_reversals": 0
+    },
+    {
+     "pair": [
+      "GRAIL",
+      "SyGMa"
+     ],
+     "mean_output": [
+      8.65,
+      75.14
+     ],
+     "output_ratio": 8.69,
+     "comparable": false,
+     "sign_flips": [
+      {
+       "metrics": [
+        "recall",
+        "f1"
+       ],
+       "delta_1": -0.1965,
+       "ci_1": [
+        -0.2737,
+        -0.1205
+       ],
+       "certified_1": true,
+       "delta_2": 0.0939,
+       "ci_2": [
+        0.0648,
+        0.1243
+       ],
+       "certified_2": true,
+       "certified_both_directions": true
+      },
+      {
+       "metrics": [
+        "recall",
+        "jaccard"
+       ],
+       "delta_1": -0.1965,
+       "ci_1": [
+        -0.2737,
+        -0.1205
+       ],
+       "certified_1": true,
+       "delta_2": 0.0656,
+       "ci_2": [
+        0.0443,
+        0.0892
+       ],
+       "certified_2": true,
+       "certified_both_directions": true
+      },
+      {
+       "metrics": [
+        "recall",
+        "precision"
+       ],
+       "delta_1": -0.1965,
+       "ci_1": [
+        -0.2737,
+        -0.1205
+       ],
+       "certified_1": true,
+       "delta_2": 0.0816,
+       "ci_2": [
+        0.0571,
+        0.1092
+       ],
+       "certified_2": true,
+       "certified_both_directions": true
+      }
+     ],
+     "certified_reversals": 3
+    },
+    {
+     "pair": [
+      "MetaPredictor",
+      "MetaTrans"
+     ],
+     "mean_output": [
+      10.86,
+      11.47
+     ],
+     "output_ratio": 1.06,
+     "comparable": true,
+     "sign_flips": [
+      {
+       "metrics": [
+        "recall",
+        "f1"
+       ],
+       "delta_1": 0.0199,
+       "ci_1": [
+        -0.0487,
+        0.0874
+       ],
+       "certified_1": false,
+       "delta_2": -0.0028,
+       "ci_2": [
+        -0.021,
+        0.0152
+       ],
+       "certified_2": false,
+       "certified_both_directions": false
+      },
+      {
+       "metrics": [
+        "recall",
+        "jaccard"
+       ],
+       "delta_1": 0.0199,
+       "ci_1": [
+        -0.0487,
+        0.0874
+       ],
+       "certified_1": false,
+       "delta_2": -0.0039,
+       "ci_2": [
+        -0.0157,
+        0.0077
+       ],
+       "certified_2": false,
+       "certified_both_directions": false
+      },
+      {
+       "metrics": [
+        "recall",
+        "precision"
+       ],
+       "delta_1": 0.0199,
+       "ci_1": [
+        -0.0487,
+        0.0874
+       ],
+       "certified_1": false,
+       "delta_2": -0.0057,
+       "ci_2": [
+        -0.0197,
+        0.0077
+       ],
+       "certified_2": false,
+       "certified_both_directions": false
+      }
+     ],
+     "certified_reversals": 0
+    },
+    {
+     "pair": [
+      "MetaPredictor",
+      "SyGMa"
+     ],
+     "mean_output": [
+      10.86,
+      75.14
+     ],
+     "output_ratio": 6.92,
+     "comparable": false,
+     "sign_flips": [],
+     "certified_reversals": 0
+    },
+    {
+     "pair": [
+      "MetaTrans",
+      "SyGMa"
+     ],
+     "mean_output": [
+      11.47,
+      75.14
+     ],
+     "output_ratio": 6.55,
+     "comparable": false,
+     "sign_flips": [],
+     "certified_reversals": 0
+    }
+   ],
+   "summary": {
+    "n_comparable_pairs": 6,
+    "certified_reversals_among_comparable": 0,
+    "n_disparate_pairs": 4,
+    "certified_reversals_among_disparate": 6
+   }
+  },
+  "full1170": {
+   "methods": [
+    "GRAIL",
+    "SyGMa",
+    "MetaPredictor"
+   ],
+   "mean_output": {
+    "GRAIL": 8.4,
+    "SyGMa": 81.73,
+    "MetaPredictor": 10.8
+   },
+   "pairs": [
+    {
+     "pair": [
+      "GRAIL",
+      "MetaPredictor"
+     ],
+     "mean_output": [
+      8.4,
+      10.8
+     ],
+     "output_ratio": 1.29,
+     "comparable": true,
+     "sign_flips": [
+      {
+       "metrics": [
+        "recall",
+        "precision"
+       ],
+       "delta_1": -0.23,
+       "ci_1": [
+        -0.2617,
+        -0.1988
+       ],
+       "certified_1": true,
+       "delta_2": 0.0006,
+       "ci_2": [
+        -0.0099,
+        0.0113
+       ],
+       "certified_2": false,
+       "certified_both_directions": false
+      },
+      {
+       "metrics": [
+        "f1",
+        "precision"
+       ],
+       "delta_1": -0.0259,
+       "ci_1": [
+        -0.0384,
+        -0.0132
+       ],
+       "certified_1": true,
+       "delta_2": 0.0006,
+       "ci_2": [
+        -0.0099,
+        0.0113
+       ],
+       "certified_2": false,
+       "certified_both_directions": false
+      },
+      {
+       "metrics": [
+        "jaccard",
+        "precision"
+       ],
+       "delta_1": -0.0056,
+       "ci_1": [
+        -0.0151,
+        0.0041
+       ],
+       "certified_1": false,
+       "delta_2": 0.0006,
+       "ci_2": [
+        -0.0099,
+        0.0113
+       ],
+       "certified_2": false,
+       "certified_both_directions": false
+      }
+     ],
+     "certified_reversals": 0
+    },
+    {
+     "pair": [
+      "GRAIL",
+      "SyGMa"
+     ],
+     "mean_output": [
+      8.4,
+      81.73
+     ],
+     "output_ratio": 9.73,
+     "comparable": false,
+     "sign_flips": [
+      {
+       "metrics": [
+        "recall",
+        "f1"
+       ],
+       "delta_1": -0.2559,
+       "ci_1": [
+        -0.2861,
+        -0.2255
+       ],
+       "certified_1": true,
+       "delta_2": 0.0887,
+       "ci_2": [
+        0.0775,
+        0.0997
+       ],
+       "certified_2": true,
+       "certified_both_directions": true
+      },
+      {
+       "metrics": [
+        "recall",
+        "jaccard"
+       ],
+       "delta_1": -0.2559,
+       "ci_1": [
+        -0.2861,
+        -0.2255
+       ],
+       "certified_1": true,
+       "delta_2": 0.0637,
+       "ci_2": [
+        0.0552,
+        0.0725
+       ],
+       "certified_2": true,
+       "certified_both_directions": true
+      },
+      {
+       "metrics": [
+        "recall",
+        "precision"
+       ],
+       "delta_1": -0.2559,
+       "ci_1": [
+        -0.2861,
+        -0.2255
+       ],
+       "certified_1": true,
+       "delta_2": 0.0792,
+       "ci_2": [
+        0.0692,
+        0.0893
+       ],
+       "certified_2": true,
+       "certified_both_directions": true
+      }
+     ],
+     "certified_reversals": 3
+    },
+    {
+     "pair": [
+      "MetaPredictor",
+      "SyGMa"
+     ],
+     "mean_output": [
+      10.8,
+      81.73
+     ],
+     "output_ratio": 7.57,
+     "comparable": false,
+     "sign_flips": [
+      {
+       "metrics": [
+        "recall",
+        "f1"
+       ],
+       "delta_1": -0.026,
+       "ci_1": [
+        -0.0491,
+        -0.003
+       ],
+       "certified_1": true,
+       "delta_2": 0.1146,
+       "ci_2": [
+        0.1078,
+        0.1211
+       ],
+       "certified_2": true,
+       "certified_both_directions": true
+      },
+      {
+       "metrics": [
+        "recall",
+        "jaccard"
+       ],
+       "delta_1": -0.026,
+       "ci_1": [
+        -0.0491,
+        -0.003
+       ],
+       "certified_1": true,
+       "delta_2": 0.0693,
+       "ci_2": [
+        0.0649,
+        0.0736
+       ],
+       "certified_2": true,
+       "certified_both_directions": true
+      },
+      {
+       "metrics": [
+        "recall",
+        "precision"
+       ],
+       "delta_1": -0.026,
+       "ci_1": [
+        -0.0491,
+        -0.003
+       ],
+       "certified_1": true,
+       "delta_2": 0.0786,
+       "ci_2": [
+        0.0735,
+        0.0839
+       ],
+       "certified_2": true,
+       "certified_both_directions": true
+      }
+     ],
+     "certified_reversals": 3
+    }
+   ],
+   "summary": {
+    "n_comparable_pairs": 1,
+    "certified_reversals_among_comparable": 0,
+    "n_disparate_pairs": 2,
+    "certified_reversals_among_disparate": 6
+   }
+  }
+ },
+ "criterion_axis": {
+  "strict": "canonical",
+  "tolerant": "inchikey_tautomer",
+  "n": 1170,
+  "k": 15,
+  "by_method": {
+   "GRAIL": {
+    "emitted": 8.4,
+    "gain": 0.0161,
+    "ci95": [
+     0.01,
+     0.0229
+    ]
+   },
+   "MetaPredictor": {
+    "emitted": 10.8,
+    "gain": 0.0397,
+    "ci95": [
+     0.0302,
+     0.0498
+    ]
+   },
+   "SyGMa": {
+    "emitted": 81.73,
+    "gain": 0.0382,
+    "ci95": [
+     0.0292,
+     0.0475
+    ]
+   }
+  },
+  "ordered_by_output": [
+   "GRAIL",
+   "MetaPredictor",
+   "SyGMa"
+  ],
+  "monotone_in_output_size": false,
+  "note": "criterion sensitivity is a within-method gain; if it were a proxy for output size it would order with emission"
+ },
+ "verdict": {
+  "certified_reversals_among_comparable_emitters": 0,
+  "certified_reversals_among_disparate_emitters": 12,
+  "reading": "no certified reversal survives between methods of comparable output size, so the aggregate axis is a window onto output size rather than a separate parameter"
+ }
+}
