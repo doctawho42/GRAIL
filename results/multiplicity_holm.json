@@ -8,37 +8,93 @@
    {
     "pair": "MetaPredictor_vs_SyGMa",
     "p": 0.0001134605883583717,
+    "p_holm": 0.0006807635301502302,
     "threshold": 0.008333333333333333,
     "rejected": true
    },
    {
     "pair": "GRAIL_vs_SyGMa",
     "p": 0.0001645766954427863,
+    "p_holm": 0.0008228834772139315,
     "threshold": 0.01,
     "rejected": true
    },
    {
     "pair": "BioTransformer_vs_GRAIL",
     "p": 0.0007073162596058502,
+    "p_holm": 0.002829265038423401,
     "threshold": 0.0125,
     "rejected": true
    },
    {
     "pair": "BioTransformer_vs_MetaPredictor",
     "p": 0.003802123350875597,
+    "p_holm": 0.01140637005262679,
     "threshold": 0.016666666666666666,
     "rejected": true
    },
    {
     "pair": "BioTransformer_vs_SyGMa",
     "p": 0.12451628768584366,
+    "p_holm": 0.24903257537168733,
     "threshold": 0.025,
     "rejected": false
    },
    {
     "pair": "MetaPredictor_vs_GRAIL",
     "p": 0.5365506666053399,
+    "p_holm": 0.5365506666053399,
     "threshold": 0.05,
+    "rejected": false
+   }
+  ],
+  "n_surviving": 4
+ },
+ "external_grid": {
+  "n_pairs_tested": 6,
+  "family_size": 12,
+  "note": "the grid actually searched: six method pairs crossed with the two criterion steps the external table reports (InChIKey->no-stereo and no-stereo->tautomer)",
+  "result": [
+   {
+    "pair": "MetaPredictor_vs_SyGMa",
+    "p": 0.0001134605883583717,
+    "p_holm": 0.0013615270603004603,
+    "threshold": 0.004166666666666667,
+    "rejected": true
+   },
+   {
+    "pair": "GRAIL_vs_SyGMa",
+    "p": 0.0001645766954427863,
+    "p_holm": 0.0018103436498706493,
+    "threshold": 0.004545454545454546,
+    "rejected": true
+   },
+   {
+    "pair": "BioTransformer_vs_GRAIL",
+    "p": 0.0007073162596058502,
+    "p_holm": 0.007073162596058502,
+    "threshold": 0.005,
+    "rejected": true
+   },
+   {
+    "pair": "BioTransformer_vs_MetaPredictor",
+    "p": 0.003802123350875597,
+    "p_holm": 0.03421911015788037,
+    "threshold": 0.005555555555555556,
+    "rejected": true
+   },
+   {
+    "pair": "BioTransformer_vs_SyGMa",
+    "p": 0.12451628768584366,
+    "p_holm": 0.9961303014867493,
+    "threshold": 0.00625,
+    "rejected": false
+   },
+   {
+    "pair": "MetaPredictor_vs_GRAIL",
+    "p": 0.5365506666053399,
+    "p_holm": 1.0,
+    "threshold": 0.0071428571428571435,
     "rejected": false
    }
   ],
@@ -51,12 +107,14 @@
    {
     "pair": "GRAIL_vs_BioTransformer",
     "p": 1.6519937773296078e-06,
+    "p_holm": 3.3039875546592157e-06,
     "threshold": 0.025,
     "rejected": true
    },
    {
     "pair": "MetaTrans_vs_SyGMa",
     "p": 0.003345402939834319,
+    "p_holm": 0.003345402939834319,
     "threshold": 0.05,
     "rejected": true
    }
@@ -71,16 +129,40 @@
    {
     "pair": "GRAIL_vs_BioTransformer",
     "p": 1.6519937773296078e-06,
+    "p_holm": 1.651993777329608e-05,
     "threshold": 0.005,
     "rejected": true
    },
    {
     "pair": "MetaTrans_vs_SyGMa",
     "p": 0.003345402939834319,
+    "p_holm": 0.03010862645850887,
     "threshold": 0.005555555555555556,
     "rejected": true
    }
   ],
   "n_surviving": 2
+ },
+ "internal_grid": {
+  "n_pairs_tested": 2,
+  "family_size": 20,
+  "note": "the grid actually searched: all 10 pairs of the five-method table crossed with the two criterion steps reported (canonical->tautomer and canonical->InChIKey)",
+  "result": [
+   {
+    "pair": "GRAIL_vs_BioTransformer",
+    "p": 1.6519937773296078e-06,
+    "p_holm": 3.303987554659216e-05,
+    "threshold": 0.0025,
+    "rejected": true
+   },
+   {
+    "pair": "MetaTrans_vs_SyGMa",
+    "p": 0.003345402939834319,
+    "p_holm": 0.06356265585685206,
+    "threshold": 0.002631578947368421,
+    "rejected": false
+   }
+  ],
+  "n_surviving": 1
  }
 }

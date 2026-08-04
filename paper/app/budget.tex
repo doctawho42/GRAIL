@@ -61,8 +61,11 @@ the coverage its bank realises.
 GRAIL's bank reaches more of these transformations than SyGMa emits: its ceiling on this subset is
 0.701, against a full-test ceiling of $\ceiling$ and SyGMa's realised 0.520. GRAIL nevertheless
 reports 0.318, because selection and ranking together retain 0.454 of what the bank could reach.
-Nothing is lost at the cut-off itself: emitting about eight candidates, GRAIL never reaches the
-budget of fifteen, so its recall@15 equals its pool coverage exactly.
+Nothing is lost at the cut-off itself \emph{on these $\nshared$ substrates}: emitting about eight
+candidates on average, GRAIL's budgeted pool is not truncated here, so its recall@15 equals that
+pool's coverage exactly. That is a property of this subset and not of the method: on the full split
+GRAIL's output policy, which is itself a cap at fifteen, is reached on $308$ of $\ntest$ substrates, and
+that is where the third factor of \S\ref{sec:decomp} loses its references.
 
 The gap to SyGMa is thus not a worse rule bank. It is the cost of having a selection stage at all,
 which recall charges only to methods that select, and which GRAIL currently pays without

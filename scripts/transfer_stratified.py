@@ -149,17 +149,41 @@ def main() -> int:
     # on the difference of slopes against SyGMa, the method that never saw the training split.
     print(f"\nslope of score on max-Tanimoto (positive = worse when far from training):")
     boot = rng.integers(0, len(keep), (N_BOOT, len(keep)))
-    slopes = {}
+    slopes, draws = {}, {}
     for metric in ("f1", "recall"):
-        slopes[metric] = {}
+        slopes[metric], draws[metric] = {}, {}
         for name in methods:
             y = scores[name][metric]
             s_hat = float(np.polyfit(sim, y, 1)[0])
             bt = np.array([np.polyfit(sim[i], y[i], 1)[0] for i in boot[:1000]])
+            draws[metric][name] = bt
             lo, hi = float(np.quantile(bt, .025)), float(np.quantile(bt, .975))
             slopes[metric][name] = {"slope": round(s_hat, 4), "ci95": [round(lo, 4), round(hi, 4)]}
             print(f"  {metric:7} {name:16} {s_hat:+.4f}  [{lo:+.4f},{hi:+.4f}]")
     rep["slopes"] = slopes
+
+    # The control's whole force is that SyGMa's slope is not distinguishable from the learned
+    # methods', and a null asserted from two overlapping per-method intervals is not a null. The
+    # difference is resampled on the same draws, so it is paired, and the interval states the width
+    # of the equivalence the data actually support.
+    print("\npaired slope difference against GRAIL (positive = the comparator degrades faster):")
+    diffs = {}
+    for metric in ("f1", "recall"):
+        diffs[metric] = {}
+        for name in methods:
+            if name == "GRAIL":
+                continue
+            d = draws[metric][name] - draws[metric]["GRAIL"]
+            pt = slopes[metric][name]["slope"] - slopes[metric]["GRAIL"]["slope"]
+            lo, hi = float(np.quantile(d, .025)), float(np.quantile(d, .975))
+            diffs[metric][f"{name}_minus_GRAIL"] = {
+                "diff": round(float(pt), 4), "ci95": [round(lo, 4), round(hi, 4)],
+                "half_width": round(float(max(abs(lo), abs(hi))), 4)}
+            print(f"  {metric:7} {name:16} {pt:+.4f}  [{lo:+.4f},{hi:+.4f}]")
+    rep["slope_differences"] = {
+        "note": "paired on the same bootstrap resamples as the per-method slopes; "
+                "half_width is the largest slope difference the interval still admits",
+        "by_metric": diffs}
     OUT.write_text(json.dumps(rep, indent=1))
     print(f"\nwrote {OUT}")
     return 0

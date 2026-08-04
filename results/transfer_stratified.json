@@ -156,5 +156,46 @@
     ]
    }
   }
+ },
+ "slope_differences": {
+  "note": "paired on the same bootstrap resamples as the per-method slopes; half_width is the largest slope difference the interval still admits",
+  "by_metric": {
+   "f1": {
+    "SyGMa_minus_GRAIL": {
+     "diff": 0.0076,
+     "ci95": [
+      -0.0552,
+      0.0684
+     ],
+     "half_width": 0.0684
+    },
+    "MetaPredictor_minus_GRAIL": {
+     "diff": -0.052,
+     "ci95": [
+      -0.1241,
+      0.0195
+     ],
+     "half_width": 0.1241
+    }
+   },
+   "recall": {
+    "SyGMa_minus_GRAIL": {
+     "diff": -0.0139,
+     "ci95": [
+      -0.145,
+      0.1141
+     ],
+     "half_width": 0.145
+    },
+    "MetaPredictor_minus_GRAIL": {
+     "diff": -0.1896,
+     "ci95": [
+      -0.33,
+      -0.0441
+     ],
+     "half_width": 0.33
+    }
+   }
+  }
  }
 }

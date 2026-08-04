@@ -1,6 +1,43 @@
-Table~\ref{tab:levers} in the main text lists nine diagnostic measurements and the factor each
-one constrains. This appendix reports those measurements in full, states three propositions that
-account for them, and describes two interventions that test the propositions.
+Table~\ref{tab:levers} lists nine diagnostic measurements and the factor each one constrains, as a
+summary of what this appendix then reports in full; it also states three propositions that account
+for the measurements, and describes two interventions that test the propositions.
+
+\begin{table}[!htbp]
+\caption{Nine diagnostic measurements, each attached to the factor it constrains. Sample sizes differ
+between rows, and so does the evidence: \emph{paired} carries an interval on the difference,
+\emph{single} is one run against another with none, and \emph{bound} is a best-of-several figure
+that limits rather than estimates.}
+\label{tab:levers}
+\begin{center}
+\footnotesize
+\begin{tabular}{p{3.9cm}p{1.2cm}p{0.9cm}p{6.0cm}}
+\toprule
+\textbf{measurement} & \textbf{factor} & \textbf{evidence} & \textbf{result} \\
+\midrule
+learned selection against a frequency prior & selection & paired &
+$0.266$ against $0.410$, $\Delta = -0.144$ $[-0.196,-0.095]$ ($n{=}245$) \\
+selection breadth, 30 to 300 rules & selection & single &
+recall $0.352 \to 0.413$; pool coverage $0.482 \to 0.608$ ($n{=}245$) \\
+training set, 2{,}418 to 4{,}787 substrates & selection & single &
+recall $0.330 \to 0.334$, inside the $\pm0.010$ seed spread \\
+depth-2 rule application & coverage & single &
+ceiling $+0.012$, at $8.5\times$ the candidate cost ($n{=}150$) \\
+composition of the uncovered set & coverage & single &
+$26.9\%$ of references outside the bank; no mass bin exceeds $6\%$ of it ($n{=}500$) \\
+site-of-metabolism prior & ranking & bound &
+$+0.011$ at the best of five weightings, itself chosen here ($n{=}245$) \\
+abstention on filter score & ranking & single &
+precision never above $0.123$; recall $0.388 \to 0.041$ ($n{=}\ntest$) \\
+propensity-scored selection loss & selection & paired &
+$0.249$ against $0.266$; deficit to the prior widens to $-0.161$ $[-0.215,-0.107]$ ($n{=}245$) \\
+similarity-to-training stratification & coverage & paired &
+bank coverage rises $0.712 \to 0.819$ with similarity, and an untrained rule engine falls on a slope
+the data cannot separate from the learned ones', $+0.008$ $[-0.055,+0.068]$ on F1 ($n{=}\ntest$) \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table}
+
 
 \subsection{Coverage composition, data scale, and regioselectivity}
 
@@ -157,8 +194,8 @@ All three rows are the $\nshared$ shared substrates; the full-split figures for 
 \label{app:third}
 
 The decomposition runs on two methods and one of them is degenerate in the factor the paper is
-about, SyGMa's selection being $1$ by construction. BioTransformer supplies a third point and a
-non-degenerate one: it selects, conditioning reactions on biosystem and enzyme rather than firing
+about, SyGMa's selection being $1$ by construction. BioTransformer supplies a third rule-grounded
+row, and a non-degenerate one: it selects, conditioning reactions on biosystem and enzyme rather than firing
 everything applicable, and its templates ship enumerably --- $994$ distinct SMIRKS across its
 human, environmental-microbial and standardisation reaction files.
 
@@ -174,22 +211,31 @@ BioTransformer & $994$     & 0.479 & 0.444 & 0.93 \\
 \end{tabular}
 \end{center}
 
-The third row falls where the two-method reading predicts: a bank between the others in reach,
-converted almost completely by a pipeline that does not throw much away. Across three methods the
-relation is monotone --- the wider the bank, the less of it survives to the output --- which is the
-claim \S\ref{sec:decomp} makes from two.
+The row is a bound on what this template set expresses through \emph{our} engine, and it is not a
+third point on a trend. Its reach carries an interval, $0.479$ $[0.414,0.550]$, and
+\S\ref{app:enginereach} measures the engine term at fixed rules at $+0.196$ $[+0.155,+0.240]$ --- a
+term the size of the $0.479$-to-$0.701$ spread among the three reach figures above, though measured
+on a different population, and larger than this row's own interval. The direction of that bias is known: our engine under-realises shared rules
+by about a factor of two against a rule set's own, so $0.479$ is a \emph{lower} bound on what
+BioTransformer's templates reach under BioTransformer's engine, and where this row sits in the reach
+ordering is not fixed by it. We therefore withdraw any monotone reading across the three rows, and
+state the mechanism as the two-system contrast \S\ref{sec:decomp} draws until a third measurement of
+comparable provenance exists. The three reach figures here are of mixed provenance in any case: two
+are through their own engines and one through ours.
 
-Two limits on this row, and the second is the one that matters. Applying BioTransformer's templates
-uniformly with RDKit is not its own Java implementation, which layers enzyme predicates, cofactor
-logic and depth control on the same SMIRKS. This is therefore what the template set expresses, not
-what its pipeline enumerates. Its budgeted pool is not observable from frozen predictions either, so
-selection and ranking stay merged in the conversion column rather than separating as they do for
-GRAIL. The check that makes the row credible at all is the inequality: realised recall cannot
-exceed what the bank reaches. Parsing only the first of the three reaction files gave a reach of
-$0.399$ against a realised $0.444$, which is impossible and is how the missing files were found.
-The margin at $994$ templates is $0.035$, so if further templates ship elsewhere in that
-distribution the reach is higher and the conversion lower still --- in the direction the table
-already reports.
+The two properties that follow are the row's actual claim rather than caveats on it. Applying
+BioTransformer's templates uniformly with RDKit is not its own Java implementation, which layers
+enzyme predicates, cofactor logic and depth control on the same SMIRKS; this is therefore what the
+template set expresses under a stated application procedure, not what its pipeline enumerates. And
+its budgeted pool is not observable from frozen predictions, so selection and ranking stay merged in
+the conversion column rather than separating as they do for GRAIL --- which is why the row cannot
+speak to the selection factor at all. The check that makes it credible is the inequality: realised
+recall cannot exceed what the bank reaches. Parsing only the first of the three reaction files gave
+a reach of $0.399$ against a realised $0.444$, which is impossible and is how the missing files were
+found. The margin at $994$ templates is $0.035$, and it holds at the point estimate only: the lower
+end of the reach interval, $0.414$, falls below the realised $0.444$. If further templates ship
+elsewhere in that distribution the reach is higher and the conversion lower still --- in the
+direction the table already reports.
 
 \subsection{How much of a bank's reach belongs to the engine}
 \label{app:enginereach}
@@ -480,8 +526,13 @@ a frozen generator and filter beats that bolt-on by $+0.0089$ $[+0.003,+0.015]$ 
 by $+0.0091$ $[+0.003,+0.016]$. Rank-aware training, not the type and site heads themselves,
 recovers the margin.
 
-Selection is addressable and ranking yields a small margin, but coverage, which is set by the
-rule bank, remains binding. No redesign of the generator matches SyGMa without a broader bank.
+Selection is addressable and ranking yields a small margin, but no \emph{generator redesign} tested
+here matches SyGMa without a broader bank: for this redesign, coverage is what binds. That is not
+in tension with the summary above or with \S\ref{sec:decomp}, which put the dominant addressable
+loss at the deployed operating point in selection. The two statements are about different
+quantities --- where the deployed pipeline is losing recoverable recall, and what caps a generator
+rebuilt to fix selection --- and \S\ref{sec:decomp} gives the reconciled verdict, that selection
+binds jointly with the cut-off rather than alone.
 
 \paragraph{Set generation with a GFlowNet does not win here, and the reason is cardinality.}
 We formulated the generator as a set-terminal GFlowNet trained by Trajectory Balance against a
@@ -526,7 +577,11 @@ $[0.051,0.083]$, MetaPredictor above SyGMa by $0.013$ $[0.003,0.024]$.
 The mechanism is in the same sweep, and it is stronger than a statement about GRAIL. A budget only
 binds a method when the method emits more than the budget, so at $k=15$ the comparison is not
 budget-matched at all: SyGMa is cut from $81.7$ candidates to $15$ on $93.1\%$ of substrates, while
-GRAIL is cut on \emph{none} of them, having stopped at $8.4$. The convention silently advantages
+re-truncating GRAIL's \emph{emitted} list at $k=15$ removes nothing from any of them, because its
+emission is already capped there. That last is a statement about re-truncation and not about the
+pool: the output reaches the cap upstream, on $308$ of $\ntest$ substrates ($26.3\%$), and every reference the
+decomposition loses between the budgeted pool and the output falls on one of those substrates
+(\S\ref{sec:decomp}). The convention silently advantages
 whichever methods emit less than the budget, and it is the budget rather than the ranking that
 decides. The magnitude is not a rounding effect: SyGMa's F1 at its best budget over
 $k \in [1,32]$ is $4.6$ times its F1 scored at the full output it emits.
@@ -591,20 +646,31 @@ survive, and the way it fails is the part worth reporting.
 \includegraphics[width=0.52\textwidth]{fig_transfer}
 \end{center}
 \caption{The control that decides the axis. If similarity to training measured transfer, SyGMa's
-curve would be flat: it is a rule engine that never saw the training split. It falls on the same
-slope as the learned methods, so the axis is measuring how well studied a substrate is.}
+curve would be flat: it is a rule engine that never saw the training split. It falls on a slope this
+measurement cannot separate from the learned methods', so the axis is measuring how well studied a
+substrate is.}
 \label{fig:transfer}
 \end{figure}
 
 The design carries a control that decides whether the axis means anything at all. SyGMa is a rule
 engine that never saw the training split, so if the axis measures transfer its curve must be flat.
 It is not: SyGMa degrades at $+0.166$ on F1 and $+0.293$ on recall against GRAIL's $+0.158$ and
-$+0.307$, statistically the same slope from a method with nothing to transfer from.
+$+0.307$. Resampled on the same draws, so that the comparison is paired, the difference is $+0.008$
+$[-0.055,+0.068]$ on F1 and $-0.014$ $[-0.145,+0.114]$ on recall. Those are failures to detect a
+difference, not demonstrations that none exists, and the width is the part worth stating: the F1
+interval still admits a gap of $0.068$ and the recall interval one of $0.145$, against slopes of
+$0.158$ and $0.307$ themselves. What the data support is that a rule engine with nothing to
+transfer from falls on a slope this measurement cannot separate from a learned method's --- not that
+the two slopes are equal.
 
-The confound is then confirmed on a quantity no learning touches. The fraction of a substrate's
-references the rule bank reaches at all rises from $0.712$ below similarity $0.3$ to $0.819$ above
-$0.6$. The bank has no knowledge of which substrates were used for training, so this is chemistry:
-substrates unlike the training set are harder for every method. The common cause is visible in the
+A second stratification points the same way and carries its own confound rather than removing it.
+The fraction of a substrate's references the rule bank reaches at all rises from $0.712$ below
+similarity $0.3$ to $0.819$ above $0.6$. That is not a quantity untouched by training: $5{,}866$ of
+the $\nbank$ rules are mined from the training split (\S\ref{app:provenance}), and
+Appendix~\ref{app:external} says in terms that applying the bank to a substrate it was partly mined
+from is not independent of training, so a coverage gradient in similarity to training is exactly
+what a training-derived rule set would produce. It cannot serve as the leg of the argument that no
+learning touches, and we do not use it as one; the control above is what carries the section. The common cause is visible in the
 same stratification: reference sets are smaller at the far end too, $2.40$ annotated metabolites
 above $0.6$ against $1.90$ below $0.3$, though across all five strata the series is not monotone
 and the contrast is between its endpoints rather than a trend. Training corpus, rule bank and annotation all derive from the
@@ -633,7 +699,11 @@ structure space by study intensity rather than uniformly \citep{Kretschmer_2025}
 
 Had we run the learned methods alone we would have concluded from $+0.158$ against $+0.106$ that the
 transformer is the more robust of the two --- a conclusion against our own system, and therefore the
-kind that attracts least scrutiny, resting on a measurement that cannot carry it.
+kind that attracts least scrutiny, resting on a measurement that cannot carry it. That conclusion
+would not even have been a marginal one: paired, the transformer's recall slope is shallower than
+GRAIL's by $-0.190$ $[-0.330,-0.044]$, an interval excluding zero. The axis would have delivered a
+certified transfer claim from a quantity that does not measure transfer, which is why the control
+and not the interval width is what decides here.
 
 \subsection{Partial identification of the metric ordering under incomplete annotation}
 \label{app:propensity}

@@ -124,8 +124,10 @@ The two reversals the main text reports on this subset rest on differences that 
 indistinguishable from zero at $n=\nshared$. GRAIL against BioTransformer is $[-0.044,+0.122]$
 under canonical matching and $[-0.166,+0.007]$ under tautomer; MetaTrans against SyGMa is
 $[-0.064,+0.081]$ under canonical and $[-0.130,+0.023]$ under strict InChIKey. What the paper
-claims is the interaction that produces them, which is significant and survives correction; the
-reversals themselves illustrate it and are not evidence on their own.
+claims is the interaction that produces them; the reversals themselves illustrate it and are not
+evidence on their own. Of the two interactions, only GRAIL against BioTransformer survives the
+correction at the family the search spanned (Appendix~\ref{app:holm}); MetaTrans against SyGMa is
+reported as an uncorrected interval.
 
 The three additional comparators (BioTransformer, MetaPredictor and MetaTrans) are scored
 only on the shared subset of $\nshared$ substrates for which frozen third-party predictions exist,
@@ -184,6 +186,58 @@ different among the architectures that select. That last is a failure to detect 
 demonstration of absence: the widest of those intervals still admits a difference of $0.07$ at
 $n=\nshared$, and separating the two readings needs a larger shared subset than the comparators
 currently supply.
+
+\subsection{The multiplicity correction, and the family it is taken over}
+\label{app:holm}
+
+\S\ref{sec:rankflip} corrects for multiplicity post hoc, and both inputs to that correction belong
+here rather than in a sentence. The p-values are normal approximations to the stored paired-bootstrap
+intervals, $\mathrm{se}=(\mathrm{hi}-\mathrm{lo})/2z$; the intervals themselves remain the primary
+evidence and the approximation is adequate only because most decisions sit far from their threshold
+--- the one that does not is stated as such below.
+
+We declare the family conservatively as the grid the two axes admit rather than the comparisons we
+report; no family was pre-specified. The two axes are method pairs and criterion steps, and two steps are reported on each set:
+canonical$\rightarrow$tautomer and canonical$\rightarrow$InChIKey internally,
+InChIKey$\rightarrow$no-stereo and no-stereo$\rightarrow$tautomer externally. Six pairs times two
+steps is a family of twelve externally; ten pairs times two steps is twenty internally. Taking the
+family as the pairs actually tested, or as the pairs one table admits, counts only one of the two
+axes.
+
+\begin{table}[h]
+\caption{Every interaction entering either family, with its raw p-value, its Holm-adjusted
+p-value at the searched family size, and the step-down threshold its rank carries at
+$\alpha=0.05$. Internal pairs are the $\nshared$-substrate subset, external pairs the $\nglory$
+GLORYx drugs.}
+\label{tab:holm}
+\begin{center}
+\footnotesize
+\begin{tabular}{llcccl}
+\toprule
+family & interaction & raw $p$ & Holm $p$ & threshold & decision \\
+\midrule
+external ($m{=}12$) & MetaPredictor vs SyGMa          & $1.13\times10^{-4}$ & $1.4\times10^{-3}$ & $0.0042$ & rejected \\
+                    & GRAIL vs SyGMa                  & $1.65\times10^{-4}$ & $1.8\times10^{-3}$ & $0.0045$ & rejected \\
+                    & BioTransformer vs GRAIL         & $7.07\times10^{-4}$ & $7.1\times10^{-3}$ & $0.0050$ & rejected \\
+                    & BioTransformer vs MetaPredictor & $3.80\times10^{-3}$ & $3.4\times10^{-2}$ & $0.0056$ & rejected \\
+                    & BioTransformer vs SyGMa         & $0.125$             & $0.996$            & $0.0063$ & not rejected \\
+                    & MetaPredictor vs GRAIL          & $0.537$             & $1.000$            & $0.0071$ & not rejected \\
+\midrule
+internal ($m{=}20$) & GRAIL vs BioTransformer         & $1.65\times10^{-6}$ & $3.3\times10^{-5}$ & $0.0025$ & rejected \\
+                    & MetaTrans vs SyGMa              & $3.35\times10^{-3}$ & $6.4\times10^{-2}$ & $0.0026$ & not rejected \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table}
+
+The external family is unaffected by the widening: the same four interactions are rejected at
+$m=6$ and at $m=12$, and the two that fail are nowhere near their thresholds at either size. The
+internal one is not. At $m=2$ or $m=10$ both internal interactions survive; at the family the
+search actually spanned, the GRAIL--BioTransformer interaction survives with room to spare while
+MetaTrans--SyGMa misses its threshold of $0.0026$ at $p=0.00335$. We report that second interaction
+as an uncorrected interval from here on and do not count it as certified. This is the one decision
+close enough to its threshold that the normal approximation matters, and it is decided against us,
+which is the direction in which an approximation is safe to use.
 
 \subsection{External validity rests on 37 substrates}
 

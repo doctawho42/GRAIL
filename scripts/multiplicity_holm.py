@@ -7,9 +7,15 @@ paired-bootstrap intervals under a normal approximation (se = (hi-lo)/2z), which
 because every decision is far from its threshold; the intervals themselves remain the primary
 evidence.
 
-The internal family is reported twice: over the two pairs actually computed, and conservatively
-over all ten pairs the five-method table admits, since only two were computed and a reviewer is
-entitled to treat the wider family as the reference.
+The internal family is reported three times: over the two pairs actually computed, over all ten
+pairs the five-method table admits, and over the full grid that was actually searched. The search
+was two-dimensional -- method pairs crossed with criterion steps, and two steps are reported
+(canonical->tautomer and canonical->InChIKey) -- so a family fixed by the method-pair axis alone
+undercounts it by a factor of two. The same applies externally, where six pairs were tested across
+two steps (InChIKey->no-stereo and no-stereo->tautomer).
+
+Holm-adjusted p-values are reported alongside the raw ones, so a reader can check a decision at any
+alpha without redoing the step-down.
 """
 from __future__ import annotations
 import json, math
@@ -30,16 +36,23 @@ def p_from_ci(mean: float, lo: float, hi: float) -> float:
 
 
 def holm(tests, m=None, alpha=0.05):
-    """tests: list of (name, p). m defaults to len(tests); a larger m is the conservative family."""
+    """tests: list of (name, p). m defaults to len(tests); a larger m is the conservative family.
+
+    Also reports the Holm-adjusted p-value, the running maximum of (m-i)*p capped at 1, which is
+    the quantity a reader can compare against any alpha directly.
+    """
     m = m or len(tests)
-    out, rejected = [], True
+    out, rejected, running = [], True, 0.0
     for i, (name, p) in enumerate(sorted(tests, key=lambda t: t[1])):
         thr = alpha / (m - i)
+        running = max(running, min(1.0, (m - i) * p))
+        row = {"pair": name, "p": p, "p_holm": running, "threshold": thr}
         if rejected and p < thr:
-            out.append({"pair": name, "p": p, "threshold": thr, "rejected": True})
+            row["rejected"] = True
         else:
             rejected = False
-            out.append({"pair": name, "p": p, "threshold": thr, "rejected": False})
+            row["rejected"] = False
+        out.append(row)
     return out
 
 
@@ -53,6 +66,11 @@ def main() -> int:
         tests.append((pair, p_from_ci(it["mean"], *it["ci95"])))
     rep["external"] = {"n_pairs_tested": len(tests), "family_size": len(tests),
                        "result": holm(tests)}
+    rep["external_grid"] = {
+        "n_pairs_tested": len(tests), "family_size": 2 * len(tests),
+        "note": "the grid actually searched: six method pairs crossed with the two criterion steps "
+                "the external table reports (InChIKey->no-stereo and no-stereo->tautomer)",
+        "result": holm(tests, m=2 * len(tests))}
 
     internal = []
     for f, pair in [("rank_flip_ci.json", "GRAIL_vs_BioTransformer"),
@@ -66,14 +84,22 @@ def main() -> int:
     rep["internal_conservative"] = {"n_pairs_tested": 2, "family_size": n_possible,
                                     "note": f"corrected as if all {n_possible} pairs of the five-method table were the family",
                                     "result": holm(internal, m=n_possible)}
+    rep["internal_grid"] = {
+        "n_pairs_tested": 2, "family_size": 2 * n_possible,
+        "note": f"the grid actually searched: all {n_possible} pairs of the five-method table "
+                "crossed with the two criterion steps reported (canonical->tautomer and "
+                "canonical->InChIKey)",
+        "result": holm(internal, m=2 * n_possible)}
 
-    for k in ("external", "internal_as_tested", "internal_conservative"):
+    for k in ("external", "external_grid", "internal_as_tested", "internal_conservative",
+              "internal_grid"):
         r = rep[k]
         surv = sum(1 for x in r["result"] if x["rejected"])
         r["n_surviving"] = surv
         print(f"{k:24} family m={r['family_size']:2}  survive {surv}/{len(r['result'])}")
         for x in r["result"]:
-            print(f"   {x['pair']:34} p={x['p']:.2e}  thr={x['threshold']:.4f}  "
+            print(f"   {x['pair']:34} p={x['p']:.2e}  p_holm={x['p_holm']:.2e}  "
+                  f"thr={x['threshold']:.5f}  "
                   f"{'rejected' if x['rejected'] else 'not rejected'}")
     OUT.write_text(json.dumps(rep, indent=1))
     print(f"\nwrote {OUT}")

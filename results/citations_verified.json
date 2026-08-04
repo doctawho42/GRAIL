@@ -1,5 +1,5 @@
 {
- "source": "Crossref REST API cross-check, 2026-07-13 (workflow wf_f10af580). Each DOI retrieved and its title/first-author/year/venue cross-checked against the claim; no DOI guessed. status: verified=claim correct; corrected=DOI/metadata fixed; unresolved=not groundable. Extended 2026-08-02: four evaluation-methodology citations added to the related-work section were cross-checked the same way; each entry also records what the manuscript attributes to it and whether the work supports that, which the original pass did not.",
+ "source": "Crossref REST API cross-check, 2026-07-13 (workflow wf_f10af580). Each DOI retrieved and its title/first-author/year/venue cross-checked against the claim; no DOI guessed. status: verified=claim correct; corrected=DOI/metadata fixed; unresolved=not groundable. Extended 2026-08-02: four evaluation-methodology citations added to the related-work section were cross-checked the same way; each entry also records what the manuscript attributes to it and whether the work supports that, which the original pass did not. Extended 2026-08-04: three two-stage-evaluation citations added to the related-work section in response to a priority objection were cross-checked against Crossref the same way (DOI, title, first author, year, venue), each with what the manuscript attributes to it and whether the work supports that.",
  "citations": [
   {
    "key": "SyGMa",
@@ -116,6 +116,30 @@
    "citation": "Krichene W, Rendle S (2020). On Sampled Metrics for Item Recommendation. KDD '20, 1748-1757.",
    "attributed": "shown a cut-off metric's winner changing with how the candidates entering it are counted",
    "supports": "yes -- sampled metrics are shown inconsistent with their exact versions and do not preserve the relative statement 'algorithm A is better than B', not even in expectation"
+  },
+  {
+   "key": "Wang_2011_cascade",
+   "status": "verified",
+   "doi": "10.1145/2009916.2009934",
+   "citation": "Wang L, Lin J, Metzler D (2011). A Cascade Ranking Model for Efficient Ranked Retrieval. SIGIR '11, 105-114.",
+   "attributed": "that retrieval stages a ranked pipeline, an early stage fixing the candidate set a later stage can only reorder",
+   "supports": "yes -- the paper defines a cascade of ranking stages in which each stage prunes the candidate set passed to the next, so recall of an earlier stage bounds the final ranking"
+  },
+  {
+   "key": "Covington_2016",
+   "status": "verified",
+   "doi": "10.1145/2959100.2959190",
+   "citation": "Covington P, Adams J, Sargin E (2016). Deep Neural Networks for YouTube Recommendations. RecSys '16, 191-198.",
+   "attributed": "the two-stage candidate-generation-then-ranking evaluation standard in recommender systems",
+   "supports": "yes -- the system is explicitly split into candidate generation and ranking, and the two stages are evaluated separately"
+  },
+  {
+   "key": "Karpukhin_2020",
+   "status": "verified",
+   "doi": "10.18653/v1/2020.emnlp-main.550",
+   "citation": "Karpukhin V, Oguz B, Min S, Lewis P, Wu L, Edunov S, Chen D, Yih W (2020). Dense Passage Retrieval for Open-Domain Question Answering. EMNLP 2020, 6769-6781.",
+   "attributed": "that open-domain question answering routinely reports retriever recall@k separately from end-task accuracy",
+   "supports": "yes -- top-k retrieval accuracy is reported as its own endpoint alongside end-to-end answer accuracy"
   }
  ]
 }

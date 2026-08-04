@@ -1,0 +1,16 @@
+{
+ "source": "results/recall_factorization.json",
+ "k": 15,
+ "n_substrates": 1170,
+ "n_emitting_at_cap": 308,
+ "share_emitting_at_cap": 0.26324786324786326,
+ "n_substrates_losing_between_Cbud_and_H": 22,
+ "n_losing_substrates_that_are_at_cap": 22,
+ "references_lost_between_Cbud_and_H": 26,
+ "sum_Cbud": 703,
+ "sum_H": 677,
+ "ranking_factor": 0.9630156472261735,
+ "gate": "ranking_factor must reproduce factors.ranking_conversion.point",
+ "gate_committed": 0.9630156472261735,
+ "note": "every substrate that loses a reference between the budgeted pool and the emitted output is one whose emission is at the cap, so the third factor's loss is truncation at the deployed budget rather than a score threshold discarding candidates below the cap"
+}
