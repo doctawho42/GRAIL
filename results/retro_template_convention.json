@@ -1,0 +1,31 @@
+{
+ "config": {
+  "script": "retro_template_convention.py",
+  "git_commit": "b0587d9f629bc4acaecc71e5c4912a52444a4147",
+  "git_dirty": true,
+  "n_products": 500,
+  "n_templates": 42554,
+  "library": "grail_metabolism/uspto_templates.csv.gz",
+  "products": "grail_metabolism/data/USPTO_50k/test.csv",
+  "comparison": "as parsed against Chem.AddHs, nothing else changed"
+ },
+ "convention_census": {
+  "templates": 42554,
+  "with_a_degree_primitive": 42554,
+  "with_a_hydrogen_atom": 0
+ },
+ "applicability": {
+  "matches_hydrogens_implicit": 146346,
+  "matches_hydrogens_explicit": 26788,
+  "ratio": 0.183,
+  "products_with_any_applicable_template": {
+   "implicit": 500,
+   "explicit": 489
+  }
+ },
+ "cause": {
+  "matches_lost_to_the_expansion": 119558,
+  "restored_by_deleting_the_degree_constraint": 119558,
+  "share_restored": 1.0
+ }
+}

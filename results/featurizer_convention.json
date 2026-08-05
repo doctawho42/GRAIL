@@ -1,0 +1,41 @@
+{
+ "config": {
+  "script": "featurizer_convention.py",
+  "git_commit": "b0587d9f629bc4acaecc71e5c4912a52444a4147",
+  "git_dirty": true,
+  "n_molecules": 1170,
+  "rdkit": "2022.09.5",
+  "population": "results/test_references.json, the clean test substrates",
+  "comparison": "as parsed against Chem.AddHs, nothing else changed"
+ },
+ "share_of_molecules_whose_value_changes": {
+  "maccs": 0.9256,
+  "morgan": 0.9983,
+  "crippen_logp": 0.0,
+  "crippen_mr": 0.0,
+  "estate": 0.9983,
+  "tpsa": 0.0
+ },
+ "mean_bits_moved": {
+  "maccs_bits_moved": 2.71,
+  "morgan_bits_moved": 53.7
+ },
+ "filter_verdict_flips": {
+  "PAINS": {
+   "molecules": 0,
+   "share": 0.0
+  },
+  "BRENK": {
+   "molecules": 53,
+   "share": 0.0453
+  },
+  "NIH": {
+   "molecules": 29,
+   "share": 0.0248
+  },
+  "ZINC": {
+   "molecules": 525,
+   "share": 0.4487
+  }
+ }
+}
