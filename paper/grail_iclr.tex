@@ -646,13 +646,12 @@ Declare both, and report the ceiling with the engine that realised it.
 
 \subsubsection*{Reproducibility statement}
 
-Every number in this paper was walked back to the artifact that produced it, and the exceptions are
-listed here rather than left for a reader to find. One family in the appendix comes from
-exploratory runs whose outputs were never persisted: a listwise reranker's held-out scores, its
-oracle ceiling and seed spread; a coarse-vocabulary generator variant and its reachability figure;
-the split of oracle headroom between cardinality and ranking; and the propensity-weight
-distribution. Those are not regenerable from what we release, and no claim in the main text rests
-on any of them. The audit that established this also corrected what it found wrong, which is the
+Every number in this paper was walked back to the artifact that produced it, and every one of them
+regenerates from what we release. Four figures did not when the walk began. Two were recovered
+without the run that had been lost, because the quantity has a closed form or a cross-fitted
+counterpart was already committed; two rested on training runs whose outputs were not kept, and
+those passages are gone rather than carried with a caveat. The audit that established this also
+corrected what it found wrong, which is the
 better argument for running it: two main-text figures, a conversion ratio recomputed off rounded
 inputs and a positive-label density that was low by a factor of two to four, and in the appendix a
 pair of recall endpoints spliced across two substrate populations. What regeneration costs differs by analysis, and the

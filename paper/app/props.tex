@@ -431,15 +431,6 @@ reproduces the direction at the same sample size: adding type and site terms lif
 from $0.388$ to $0.404$ on the same broad pool, a paired $+0.0165$ $[+0.006,+0.027]$, while the
 factorised signal on its own is not significant ($+0.001$, $[-0.010,+0.013]$).
 
-Weaker supporting evidence comes from a higher-capacity listwise reranker, which scored 0.500
-against a 0.433 baseline in a separate held-out run, a gain of $+0.067$, or 74\% of that run's oracle ceiling
-of 0.677, with a spread of $\pm0.015$ across three seeds. That figure has no paired interval:
-its per-substrate scores were not retained, so the bootstrap cannot be recomputed without
-retraining. The proposition rests on the $n=\ntest$ intervals rather than on it. The claim
-concerns objectives, not absolute performance: that run is on the full clean test, and its 0.500
-still loses to SyGMa, which reaches 0.558 there under plain \textsc{inchikey} and 0.572 under the
-tautomer-aware default, so the gap holds under either criterion.
-
 \paragraph{Proposition 2: rule selection is extreme multi-label classification, where counting is
 a strong baseline.}
 Selecting which of $\nbank$ rules apply to a substrate is an extreme multi-label classification
@@ -508,8 +499,7 @@ P(\text{site}\mid \text{type},s)$ over a coarse reaction-type vocabulary, turns 
 decomposition into a causal test.
 
 Selection proves fixable. The learned type head beats the frequency prior by roughly threefold at
-$k=5$ (recall@5 0.086 against 0.030), holds across two vocabulary granularities of 371 and 701
-types, and converges to the prior by $k=10$ (0.298 against 0.309). Site localisation is close to, but below, its reference: 0.78 hit@3 against 0.81. The positive-unlabelled degeneracy of Proposition 2 is
+$k=5$ (recall@5 0.086 against 0.030), and converges to the prior by $k=10$ (0.298 against 0.309). Site localisation is close to, but below, its reference: 0.78 hit@3 against 0.81. The positive-unlabelled degeneracy of Proposition 2 is
 therefore an artefact of the target's support, not a fundamental limit, which confirms that
 proposition's prediction.
 
@@ -517,11 +507,9 @@ Coverage nevertheless binds. As a replacement generator the pipeline reaches rec
 the full test, against $\grailmacro$ for the deployed pipeline on the same split and at a
 comparable output size, 8.0 candidates per substrate against 8.4. The two runs were scored
 separately rather than paired, so we quote no interval on the difference; the interval on the
-factorised run's own recall is $[0.233,0.279]$, which excludes the deployed value. Type selection
-caps oracle reachability at about 47\%, which is why. Widening the
-vocabulary from 371 to 701 types leaves that cap unchanged, which rules out vocabulary
-coarseness as the reason for it. That is consistent with Proposition 3 but does not test it: the
-proposition concerns what one application step can reach, and vocabulary size is not application
+factorised run's own recall is $[0.233,0.279]$, which excludes the deployed value. What caps it is not measured
+here. That the coverage term binds is consistent with Proposition 3 but does not test it: the
+proposition concerns what one application step can reach, and a type vocabulary is not application
 depth.
 
 Kept at broad coverage and used only to re-rank, the same signal is worth a small significant

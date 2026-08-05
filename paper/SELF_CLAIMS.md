@@ -334,9 +334,17 @@ per-rule counts reproduce `rule_train_positives.json`. It also shows what the pa
 the up-weighting lands mostly on the 4,271 rules that never carry a positive, which take the
 maximum weight.
 
-**Two remain open**: a listwise reranker's held-out scores and oracle ceiling, and a
-coarse-vocabulary generator variant. Both need a training run whose output was not kept. No
-main-text claim rests on either, and the reproducibility statement says so.
+**The other two are cut rather than carried.** A listwise reranker's held-out scores and oracle
+ceiling, and a coarse-vocabulary generator variant with its reachability cap, both needed a training
+run whose output was not kept. Both were labelled supporting evidence by the passages that used
+them — the reranker paragraph said outright that "the proposition rests on the $n=1{,}170$ intervals
+rather than on it" — so the paper loses two robustness asides and gains an unconditional
+reproducibility claim. For a paper whose subject is evaluation discipline that is the better trade,
+and it is the one a reviewer can check in a minute.
+
+**Row 11 is therefore closed.** Every number in the manuscript regenerates from the committed
+record. The right way to keep it closed is to run the passage walk again before submission, since
+nothing enforces it: a number added tomorrow will not fail any check in this document.
 
 ## 12. Every entry point that generates a comparator's predictions applies the same rules
 
