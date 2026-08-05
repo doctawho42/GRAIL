@@ -802,7 +802,9 @@ diagnosis untested, so we ran the treatment.
 Each positive rule label is weighted by the inverse of its estimated propensity, fit from the rule's
 positive count by the model of \citet{Jain_2016} with $A=0.55$, $B=1.5$, and normalised over rules
 that carry a positive so the loss keeps its scale. Across the $\nbank$ rules the weights run from
-$0.196$ to $1.669$ with a mean of $1.377$, and $81.5\%$ of rules are up-weighted. The training
+$0.196$ to $1.669$ with a mean of $1.377$, and $81.5\%$ are up-weighted --- most of them
+the $4{,}271$ that never carry a positive at all, which take the maximum weight, against $0.83$
+for a rule with five positives. The training
 configuration is otherwise identical to the deployed one, differing in three fields, and the
 generator trained to completion over eight epochs with validation loss falling monotonically from
 $0.530$ to $0.472$.

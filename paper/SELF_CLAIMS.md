@@ -322,11 +322,21 @@ between endpoints of a non-monotone series.
 `ceiling_by_provenance.py` (row 2's entry), `transfer_confound.py`, which printed its table to
 stdout and wrote nothing, and three `artifacts/*/reports/metrics.json` that were simply untracked.
 
-**The rest are open and now stated in the paper rather than left to be found.** A listwise
-reranker's held-out scores and oracle ceiling, a coarse-vocabulary variant, the cardinality-versus-
-ranking split of oracle headroom, and the propensity-weight distribution all come from exploratory
-runs whose outputs were never persisted. No main-text claim rests on any of them, and the
-reproducibility statement now says so instead of claiming a single exception.
+**Two of the four open items closed on 2026-08-05, and neither needed the lost run.** The
+cardinality-versus-ranking split is recomputed from `cardinality_crossfit.json`, which holds the
+out-of-fold version and says something sharper than the unsourced figures did: predicting the
+per-substrate count recovers $-10\%$ of the oracle headroom for GRAIL and $+5\%$ for MetaPredictor,
+so for two of three methods it is worse than the best constant. The propensity-weight distribution
+is a closed-form function of the per-rule positive counts, the training-set size and two config
+constants, so `scripts/propensity_weights.py` recomputes it exactly — range $0.196$ to $1.669$, mean
+$1.377$, $81.5\%$ up-weighted, every figure matching what was published — behind a gate that the
+per-rule counts reproduce `rule_train_positives.json`. It also shows what the passage had not said:
+the up-weighting lands mostly on the 4,271 rules that never carry a positive, which take the
+maximum weight.
+
+**Two remain open**: a listwise reranker's held-out scores and oracle ceiling, and a
+coarse-vocabulary generator variant. Both need a training run whose output was not kept. No
+main-text claim rests on either, and the reproducibility statement says so.
 
 ## 12. Every entry point that generates a comparator's predictions applies the same rules
 
