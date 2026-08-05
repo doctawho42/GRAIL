@@ -1,0 +1,86 @@
+{
+ "config": {
+  "script": "bank_engine_replication.py",
+  "git_commit": "c49fcde23b14f14577dd68a04b2f7dd3f58e9c1b",
+  "git_dirty": true,
+  "n_substrates": 245,
+  "match": "inchikey_tautomer",
+  "n_boot": 10000,
+  "seed": 0,
+  "knobs_held": {
+   "norm": "standardize",
+   "drop_invalid": true
+  },
+  "apply_loop": "scripts/engine_knobs.apply_with (gated there against arm A)"
+ },
+ "banks": {
+  "sygma_175": {
+   "n_rules": 175,
+   "deployed": {
+    "reach": 0.2205,
+    "ci95": [
+     0.1811,
+     0.2646
+    ]
+   },
+   "without_explicit_h": {
+    "reach": 0.5273,
+    "ci95": [
+     0.4733,
+     0.5835
+    ]
+   },
+   "gain_from_dropping_explicit_h": {
+    "delta": 0.3069,
+    "ci95": [
+     0.2603,
+     0.3553
+    ],
+    "excludes_zero": true,
+    "estimator": "micro",
+    "macro": {
+     "delta": 0.3023,
+     "ci95": [
+      0.2522,
+      0.3534
+     ],
+     "excludes_zero": true
+    }
+   }
+  },
+  "biotransformer": {
+   "n_rules": 994,
+   "deployed": {
+    "reach": 0.4727,
+    "ci95": [
+     0.4263,
+     0.5235
+    ]
+   },
+   "without_explicit_h": {
+    "reach": 0.1305,
+    "ci95": [
+     0.1011,
+     0.1642
+    ]
+   },
+   "gain_from_dropping_explicit_h": {
+    "delta": -0.3422,
+    "ci95": [
+     -0.3879,
+     -0.2979
+    ],
+    "excludes_zero": true,
+    "estimator": "micro",
+    "macro": {
+     "delta": -0.3565,
+     "ci95": [
+      -0.4082,
+      -0.3048
+     ],
+     "excludes_zero": true
+    }
+   }
+  }
+ }
+}

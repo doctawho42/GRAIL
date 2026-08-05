@@ -72,11 +72,10 @@ fact.
 The reading survives its own counterfactual: removing the selection stage and matching the output
 budget, the wider bank passes its competitor by $0.167$ $[0.112,0.223]$, though only above the
 budget the field uses, output size acting again and this time in our favour.
-That first factor turns out to belong to the system rather than the rule base, which bears on how
-any two knowledge bases are compared. Holding fixed the $152$ rules the two banks share and swapping
-only the engine that applies them moves what they reach by $+0.192$ $[+0.152,+0.236]$ --- as large
-as the entire gap between the two banks --- so a coverage figure quoted across papers measures a
-rule set and an application procedure together, and the second is never reported. We release the
+That first factor belongs to the system rather than the rule base: holding fixed the $152$ rules two
+banks share and swapping only the engine that applies them moves what they reach by $+0.192$
+$[+0.152,+0.236]$, as large as the entire gap between the banks --- and the whole of that term is one
+line of preprocessing neither paper reports. We release the
 protocol, the audited split and the frozen predictions that make every measurement repeatable.
 \end{abstract}
 
@@ -229,12 +228,11 @@ computed with RDKit 2022.09.5, the version that reproduces the columns reported 
 reported under this protocol declares the \emph{application} procedure too --- engine and version,
 sanitisation, enumeration and filtering policy, depth --- since at fixed rules that procedure moves
 reach by as much as the reach gap reported here (Appendix~\ref{app:enginereach}).
-\textsc{canonical} is canonical SMILES equality and \textsc{inchikey} the full InChIKey.
-\textsc{inchi-no-stereo} is its first block, the connectivity skeleton, blind to stereochemistry,
-charge and isotopes. \textsc{tanimoto1} is equality of Morgan fingerprints at radius 2 over 2048
-bits, that is Tanimoto similarity of one. \textsc{inchikey-tautomer} standardises both sides before
-hashing, taking the fragment parent,
-neutralising charges, canonicalising tautomers, and writing SMILES without stereochemistry.
+\textsc{canonical} is canonical SMILES equality, \textsc{inchikey} the full InChIKey and
+\textsc{inchi-no-stereo} its first block, the connectivity skeleton blind to stereochemistry, charge
+and isotopes; \textsc{tanimoto1} is Tanimoto similarity of one over Morgan fingerprints at radius 2
+over 2048 bits; \textsc{inchikey-tautomer} standardises both sides before hashing, taking the
+fragment parent, neutralising charges, canonicalising tautomers and dropping stereochemistry.
 
 Our recommendation is conditional on the reference set rather than universal: report all five, and
 choose the default by whether the references carry stereochemistry and tautomeric variety. For this
@@ -245,8 +243,8 @@ properties of this default bear on every number below: it is the most permissive
 it is stereo-blind as well as tautomer-blind, so a predicted D-alanine matches an L-alanine
 reference. The stereo relaxation is not incidental: several methods here, GRAIL among them,
 standardise their output without stereochemistry and cannot emit a stereocentre, so a
-stereo-sensitive criterion would score them on a representation they never produce. That is also why the choice suits our own system,
-and why it is stated as conditional rather than defended.
+stereo-sensitive criterion would score them on a representation they never produce --- which is
+also why the choice suits our own system, and why it is conditional rather than defended.
 
 Unless stated otherwise all results use \textsc{inchikey-tautomer};
 \S\ref{sec:rankflip} quantifies how much the ranking depends on that choice. Standardisation of this
@@ -371,17 +369,22 @@ $5{,}866$ mined ones' $0.328$ --- and the inert-looking tail is still not prunab
 
 \paragraph{The coverage factor belongs to the system, not the rule base.}
 \label{sec:enginereach}
+\looseness=-3
 Reporting a ceiling presumes it is a property of the bank, and it is not. $152$ of SyGMa's $175$
 rules sit verbatim in ours, so those can be held fixed while only the procedure applying them
 changes: our depth-1 enumeration against SyGMa's own, same substrates, same matcher, one step each.
-They reach $0.189$ $[0.151,0.230]$ under our application and $0.381$ $[0.333,0.433]$ under theirs,
+They reach $0.189$ $[0.151,0.230]$ under our application and $0.381$ $[0.333,0.434]$ under theirs,
 an engine term of $+0.192$ $[+0.152,+0.236]$ paired --- against an entire bank-to-bank gap of
 $0.201$ on those substrates, with the $23$ rules we do not hold worth $+0.143$ $[+0.107,+0.180]$ at
 fixed engine and depth no confound. Almost all of what reads as a difference between knowledge
-bases is a difference between the programs that query them, and the direction is against us: our
-engine under-realises shared rules by a factor of two, so \ceiling\ understates what our bank holds.
-Two groups reporting what their banks cover are not comparing banks unless both report the engine
-that realised the figure (Appendix~\ref{app:props}).
+bases is a difference between the programs that query them --- and that difference is one line. Our
+loop expands the substrate with explicit hydrogens before the templates fire and theirs does not;
+toggling that one call, bank and substrates untouched, carries our reach from $0.189$ to $0.384$ ---
+the whole of the engine term, leaving the two engines no longer distinguishable --- where the same
+loop's other two discretionary choices move reach by nothing (Appendix~\ref{app:enginereach}). The term is thus not a fact about two particular programs
+but about one decision neither reports: what a bank covers is uninterpretable without the engine
+that realised the figure, and the direction here is against us, \ceiling\ understating what our own
+bank holds (Appendix~\ref{app:props}).
 
 \section{Results}
 \label{sec:results}
@@ -512,9 +515,8 @@ $0.472$, a gap of $+0.078$ $[-0.050,+0.210]$ that does not reach significance
 \paragraph{Mechanism.} The spread tracks how far a method's outputs diverge
 \emph{representationally} from the references, and the intermediate column says which divergence is
 responsible: here stereochemistry alone, every separating gain realised by the stereo step. GLORYx
-references carry stereocentres and several of these systems cannot emit one, so a stereo-sensitive
-criterion scores them on a representation they never produce; internally, where references are
-already stereo-stripped, tautomerism fails instead. Which relaxation dominates is therefore a
+references carry stereocentres that several of these systems cannot emit; internally, where
+references are already stereo-stripped, tautomerism fails instead. Which relaxation dominates is therefore a
 property of the reference set, and we state that as the effect's condition rather than as a caveat:
 it needs references carrying representational variety to diverge from. Whether the convention reorders another domain remains the open
 test: both replications outside metabolism are failures to detect one, plausibly for that reason,
@@ -607,7 +609,6 @@ transfers better off distribution (Appendix~\ref{app:props}).
 \section{Limitations}
 \label{sec:limitations}
 
-\looseness=-1
 \looseness=-1
 \paragraph{Sample sizes differ, and two comparators cannot be re-run here.} The five-method table
 rests on $\nshared$ shared substrates: MetaTrans's inference pipeline no longer reproduces and

@@ -458,3 +458,51 @@ def test_return_scores_does_not_change_the_deployed_output():
         "a second truncation would let the scored dump diverge from the deployed output"
     assert inspect.signature(ModelWrapper.generate).parameters["return_scores"].default is False, \
         "return_scores must be opt-in so the deployed path is untouched"
+
+
+def test_explicit_hydrogen_detector_is_a_token_test_not_a_substring_search():
+    """A template needs explicit hydrogens iff a hydrogen ATOM appears on its reactant side.
+
+    The first version of this detector was a substring search for "#1" and for "H" after a bracket.
+    It counted sulfur ([#16:2]) and phosphorus ([#15:2]) as hydrogen because their atomic numbers
+    begin with the same two characters, and it counted the negation [!#1] -- which asserts the
+    atom is *not* hydrogen -- as hydrogen. Three published shares were wrong because of it. The
+    distinction it must keep is chemical, not textual: RDKit matches [H] and [#1] only against a
+    hydrogen atom, while the hydrogen-COUNT primitive inside [CH3] is unaffected by AddHs, which is
+    the whole reason the convention matters.
+    """
+    import pathlib
+    import sys
+
+    sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[2] / "scripts"))
+    from explicit_h_mechanism import needs_explicit_hydrogen as needs
+
+    for token in ("[H]", "[#1]", "[H:1]", "[#1:3]", "[H+]", "[C,H]"):
+        assert needs(token), f"{token} is a hydrogen atom and requires the substrate be expanded"
+    for token in ("[#10]", "[#15:2]", "[#16:2]"):
+        assert not needs(token), f"{token} is not hydrogen; its atomic number merely starts with 1"
+    for token in ("[!#1]", "[!#6;!#1]", "[*;!#1]"):
+        assert not needs(token), f"{token} asserts the atom is not hydrogen"
+    for token in ("[CH3]", "[C;H2]", "[#7;H1]", "[C;X4;!H3]"):
+        assert not needs(token), f"{token} counts attached hydrogens and is blind to the expansion"
+
+
+def test_the_hydrogen_atom_primitive_only_matches_an_expanded_substrate():
+    """The premise the convention result rests on, checked against RDKit rather than assumed.
+
+    If [H] matched an implicit hydrogen the whole effect would be a different phenomenon, so this
+    pins the semantics: the atom primitives find nothing until the substrate is expanded, and the
+    count primitive is unmoved by expanding it.
+    """
+    from rdkit import Chem
+
+    mol = Chem.MolFromSmiles("CCO")
+    expanded = Chem.AddHs(Chem.Mol(mol))
+    for pattern in ("[H]", "[#1]"):
+        query = Chem.MolFromSmarts(pattern)
+        assert not mol.GetSubstructMatches(query), f"{pattern} must not match implicit hydrogens"
+        assert len(expanded.GetSubstructMatches(query)) == 6, f"{pattern} must match the six atoms"
+    count_primitive = Chem.MolFromSmarts("[CH3]")
+    assert len(mol.GetSubstructMatches(count_primitive)) == 1
+    assert len(expanded.GetSubstructMatches(count_primitive)) == 1, \
+        "the hydrogen-count primitive must be blind to the expansion"

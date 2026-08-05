@@ -1,0 +1,180 @@
+{
+ "config": {
+  "script": "engine_knobs.py",
+  "git_commit": "c49fcde23b14f14577dd68a04b2f7dd3f58e9c1b",
+  "git_dirty": true,
+  "n_rules": 152,
+  "n_substrates": 245,
+  "match": "inchikey_tautomer",
+  "n_boot": 10000,
+  "seed": 0,
+  "default": {
+   "add_hs": true,
+   "norm": "standardize",
+   "drop_invalid": true
+  },
+  "gate": "default reproduces arm A (0.1887)"
+ },
+ "default_reach": 0.1887,
+ "one_knob_at_a_time": {
+  "explicit_hydrogens": {
+   "from": "True",
+   "to": "False",
+   "reach": 0.3845,
+   "paired_vs_default": {
+    "delta": 0.1958,
+    "ci95": [
+     0.1554,
+     0.2388
+    ],
+    "excludes_zero": true,
+    "estimator": "micro",
+    "macro": {
+     "delta": 0.1687,
+     "ci95": [
+      0.1305,
+      0.2103
+     ],
+     "excludes_zero": true
+    }
+   }
+  },
+  "product_normalisation": {
+   "from": "standardize",
+   "to": "canonical",
+   "reach": 0.1887,
+   "paired_vs_default": {
+    "delta": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ],
+    "excludes_zero": false,
+    "estimator": "micro",
+    "macro": {
+     "delta": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ],
+     "excludes_zero": false
+    }
+   }
+  },
+  "validity_filter": {
+   "from": "True",
+   "to": "False",
+   "reach": 0.1887,
+   "paired_vs_default": {
+    "delta": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ],
+    "excludes_zero": false,
+    "estimator": "micro",
+    "macro": {
+     "delta": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ],
+     "excludes_zero": false
+    }
+   }
+  }
+ },
+ "all_configurations": {
+  "add_hs=True,norm=standardize,drop_invalid=True": {
+   "reach": 0.1887,
+   "ci95": [
+    0.1519,
+    0.2306
+   ]
+  },
+  "add_hs=True,norm=standardize,drop_invalid=False": {
+   "reach": 0.1887,
+   "ci95": [
+    0.1519,
+    0.2306
+   ]
+  },
+  "add_hs=True,norm=canonical,drop_invalid=True": {
+   "reach": 0.1887,
+   "ci95": [
+    0.1519,
+    0.2306
+   ]
+  },
+  "add_hs=True,norm=canonical,drop_invalid=False": {
+   "reach": 0.1887,
+   "ci95": [
+    0.1519,
+    0.2306
+   ]
+  },
+  "add_hs=False,norm=standardize,drop_invalid=True": {
+   "reach": 0.3845,
+   "ci95": [
+    0.3351,
+    0.4386
+   ]
+  },
+  "add_hs=False,norm=standardize,drop_invalid=False": {
+   "reach": 0.3845,
+   "ci95": [
+    0.3351,
+    0.4386
+   ]
+  },
+  "add_hs=False,norm=canonical,drop_invalid=True": {
+   "reach": 0.3845,
+   "ci95": [
+    0.3351,
+    0.4386
+   ]
+  },
+  "add_hs=False,norm=canonical,drop_invalid=False": {
+   "reach": 0.3845,
+   "ci95": [
+    0.3351,
+    0.4386
+   ]
+  }
+ },
+ "spread": {
+  "min": 0.1887,
+  "max": 0.3845,
+  "range": 0.1958
+ },
+ "against_the_comparator_engine": {
+  "our_engine_without_explicit_h": 0.3845,
+  "comparator_engine_same_rules": 0.381,
+  "paired_difference": {
+   "delta": 0.0035,
+   "ci95": [
+    -0.0032,
+    0.0112
+   ],
+   "excludes_zero": false,
+   "estimator": "micro",
+   "macro": {
+    "delta": 0.0099,
+    "ci95": [
+     -0.0003,
+     0.024
+    ],
+    "excludes_zero": false
+   }
+  },
+  "engine_term_micro_recomputed": 0.1922,
+  "committed_engine_term_micro": 0.1922,
+  "share_of_engine_term_carried_by_the_switch": 1.018,
+  "hit_counts": {
+   "references": 567,
+   "deployed": 107,
+   "without_explicit_h": 218,
+   "comparator_engine": 216
+  }
+ }
+}

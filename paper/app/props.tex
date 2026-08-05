@@ -198,7 +198,10 @@ The decomposition runs on two methods and one of them is degenerate in the facto
 about, SyGMa's selection being $1$ by construction. BioTransformer supplies a third rule-grounded
 row, and a non-degenerate one: it selects, conditioning reactions on biosystem and enzyme rather than firing
 everything applicable, and its templates ship enumerably --- $994$ distinct SMIRKS across its
-human, environmental-microbial and standardisation reaction files.
+human, environmental-microbial and standardisation reaction files, of which $16$ occur only inside
+records the shipped database comments out. Every reach figure here is computed over all $994$ and is
+therefore an upper bound on what the $978$ active ones express, since a template can only add
+products.
 
 \begin{center}
 \begin{tabular}{lcccc}
@@ -216,10 +219,14 @@ The row is a bound on what this template set expresses through \emph{our} engine
 third point on a trend. Its reach carries an interval, $0.479$ $[0.414,0.550]$, and
 \S\ref{app:enginereach} measures the engine term at fixed rules at $+0.192$ $[+0.152,+0.236]$ --- a
 term the size of the $0.479$-to-$0.701$ spread among the three reach figures above, though measured
-on a different population, and larger than this row's own interval. The direction of that bias is known: our engine under-realises shared rules
-by about a factor of two against a rule set's own, so $0.479$ is a \emph{lower} bound on what
-BioTransformer's templates reach under BioTransformer's engine, and where this row sits in the reach
-ordering is not fixed by it. We therefore withdraw any monotone reading across the three rows, and
+on a different population, and larger than this row's own interval. The direction of that bias is
+not known for this row, and the reason is instructive. Our engine under-realises SyGMa's rules by
+about a factor of two, but that is a mismatch of hydrogen convention rather than a property of the
+engine: $69.4\%$ of BioTransformer's templates carry a hydrogen \emph{atom} on the reactant side
+against not one of SyGMa's $175$, and our loop supplies exactly the hydrogens theirs are written to
+consume (\S\ref{app:enginereach}). The under-realisation therefore does not transfer here, $0.479$
+is not established as a lower bound, and where this row sits in the reach ordering is fixed in
+neither direction. We therefore withdraw any monotone reading across the three rows, and
 state the mechanism as the two-system contrast \S\ref{sec:decomp} draws until a third measurement of
 comparable provenance exists. The three reach figures here are of mixed provenance in any case: two
 are through their own engines and one through ours.
@@ -266,9 +273,9 @@ $152$ both systems have and swap only the engine:
 & rules, engine & reach \\
 \midrule
 A & $152$ shared, ours          & 0.189 $[0.151,0.230]$ \\
-B & $152$ shared, SyGMa's       & 0.381 $[0.332,0.433]$ \\
-C & all $175$, SyGMa's          & 0.524 $[0.469,0.580]$ \\
-D & all $175$, SyGMa's composed & 0.527 $[0.473,0.583]$ \\
+B & $152$ shared, SyGMa's       & 0.381 $[0.333,0.434]$ \\
+C & all $175$, SyGMa's          & 0.524 $[0.469,0.579]$ \\
+D & all $175$, SyGMa's composed & 0.527 $[0.473,0.582]$ \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -276,6 +283,52 @@ D & all $175$, SyGMa's composed & 0.527 $[0.473,0.583]$ \\
 The engine at fixed rules is worth $+0.192$ $[+0.152,+0.236]$, the $23$ rules we do not hold
 $+0.143$ $[+0.107,+0.180]$, and composition $+0.004$. The engine term alone is the size of the
 entire reach gap the main text reports.
+
+\paragraph{The term is a single decision.} Our application loop makes three discretionary choices
+before it reports a product: whether the substrate is expanded with explicit hydrogens before the
+templates fire, whether products are normalised by tautomer canonicalisation or as plain canonical
+SMILES, and what counts as a valid fragment. Toggling them one at a time over the same $152$ rules,
+with the default configuration gated to reproduce arm A to four decimals and the comparator arm
+gated against arm B, puts the whole term on the first. The gate binds the rule set, the substrates,
+the matcher and the hydrogen decision, because moving any of those moves the number it checks; it
+cannot bind the other two, since every configuration with hydrogens explicit returns that number
+exactly. That is the second and third rows of the table rather than a gap in the check.
+
+\begin{center}
+\begin{tabular}{llcc}
+\toprule
+choice & from $\to$ to & reach & against the default \\
+\midrule
+explicit hydrogens    & yes $\to$ no             & 0.384 & $+0.196$ $[+0.155,+0.239]$ \\
+product normalisation & tautomer $\to$ canonical & 0.189 & $0.000$ \\
+validity floor        & on $\to$ off             & 0.189 & $0.000$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The engine term is $+0.192$, so that one call carries all of it, and what remains against SyGMa's own
+engine is $+0.004$ $[-0.003,+0.011]$: at that setting the two programs are no longer separable on
+these rules. SyGMa's source calls neither \texttt{AddHs} nor \texttt{RemoveHs} anywhere, so the
+contrast is between what the two programs do and not an inference from what they emit. Every figure
+in this paragraph is micro, a difference of ratio-of-sums, which is the estimator the engine term
+itself uses. The macro counterparts sit beside them in the artifact because they are a different
+quantity and not a rounding of the same one: the switch is worth $+0.169$ under it rather than
+$+0.196$, and the residual $+0.010$ $[-0.000,+0.024]$ rather than $+0.004$, an interval that spans
+zero less comfortably. The separability claim is the micro one, and the two estimators should not
+be quoted against each other.
+
+\paragraph{What the switch does.} Not matching, which is the natural guess and is wrong. Over the
+corpus the $152$ templates fire $4{,}259$ times with hydrogens explicit against $4{,}124$ without,
+and every firing writes a SMILES either way. The loss is one step later and it is a valence
+violation: of the $4{,}588$ fragments those products separate into, $2{,}891$ are structures RDKit
+will not read back, against $23$ of $4{,}453$ --- $63\%$ against $0.5\%$, and $99.9\%$ of the excess
+is that rather than the heavy-atom floor. A
+substitution template written against implicit hydrogens does not mention the hydrogen it replaces;
+it attaches the new group and lets RDKit decrement a count held as a property rather than an atom.
+Expand the substrate first and that hydrogen is an atom, nothing removes it, and the product carries
+an aromatic carbon holding both its hydrogen and the new substituent --- benzoic acid under aromatic
+hydroxylation gives \texttt{[H]OC(=O)c1c([H])c([H])c([H])(O)c([H])c1[H]}, which does not parse. The
+template is not wrong and the engine is not wrong. They disagree about how a hydrogen is spelled.
 
 \paragraph{What this costs the paper and what it does not.} The decomposition is untouched: each
 method's three factors are measured through its own application and still multiply to its own
