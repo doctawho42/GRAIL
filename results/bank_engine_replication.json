@@ -1,7 +1,7 @@
 {
  "config": {
   "script": "bank_engine_replication.py",
-  "git_commit": "c49fcde23b14f14577dd68a04b2f7dd3f58e9c1b",
+  "git_commit": "c4b17e178e68a58eebbf70d7fbd9355973f6a1da",
   "git_dirty": true,
   "n_substrates": 245,
   "match": "inchikey_tautomer",
@@ -77,6 +77,40 @@
      "ci95": [
       -0.4082,
       -0.3048
+     ],
+     "excludes_zero": true
+    }
+   }
+  },
+  "grail_full": {
+   "n_rules": 7581,
+   "deployed": {
+    "reach": 0.7302,
+    "ci95": [
+     0.6855,
+     0.7774
+    ]
+   },
+   "without_explicit_h": {
+    "reach": 0.7989,
+    "ci95": [
+     0.7559,
+     0.8436
+    ]
+   },
+   "gain_from_dropping_explicit_h": {
+    "delta": 0.0688,
+    "ci95": [
+     0.0405,
+     0.0979
+    ],
+    "excludes_zero": true,
+    "estimator": "micro",
+    "macro": {
+     "delta": 0.0499,
+     "ci95": [
+      0.0177,
+      0.0833
      ],
      "excludes_zero": true
     }

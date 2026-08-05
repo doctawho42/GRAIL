@@ -1,0 +1,26 @@
+{
+ "config": {
+  "script": "ceiling_norm_check.py",
+  "git_commit": "c4b17e178e68a58eebbf70d7fbd9355973f6a1da",
+  "git_dirty": true,
+  "n_rules": 7581,
+  "n_substrates": 245,
+  "match": "inchikey_tautomer",
+  "add_hs": true,
+  "drop_invalid": true,
+  "normalisation": "canonical",
+  "gate": "must reproduce the committed ceiling 0.7284"
+ },
+ "canonical": {
+  "references": 567,
+  "recovered": 413,
+  "reach": 0.7284
+ },
+ "standardize": {
+  "reach": 0.7302,
+  "source": "results/bank_engine_replication.json banks.grail_full.deployed",
+  "normalisation_is_the_pipeline_default": true
+ },
+ "difference_across_the_whole_bank": 0.0018,
+ "difference_across_the_152_shared_rules": 0.0
+}

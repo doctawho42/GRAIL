@@ -273,7 +273,7 @@ $152$ both systems have and swap only the engine:
 & rules, engine & reach \\
 \midrule
 A & $152$ shared, ours          & 0.189 $[0.151,0.230]$ \\
-B & $152$ shared, SyGMa's       & 0.381 $[0.333,0.434]$ \\
+B & $152$ shared, SyGMa's       & 0.381 $[0.333,0.433]$ \\
 C & all $175$, SyGMa's          & 0.524 $[0.469,0.579]$ \\
 D & all $175$, SyGMa's composed & 0.527 $[0.473,0.582]$ \\
 \bottomrule
@@ -317,6 +317,14 @@ $+0.196$, and the residual $+0.010$ $[-0.000,+0.024]$ rather than $+0.004$, an i
 zero less comfortably. The separability claim is the micro one, and the two estimators should not
 be quoted against each other.
 
+That the other two choices move nothing is a statement about these $152$ rules, and it does not
+survive being generalised. Across the whole $\nbank$ the same loop reaches $0.7284$ under
+\textsc{canonical} normalisation and $0.7302$ under \textsc{standardize}, one recovered reference
+in $567$ --- the first being the mode the published ceiling was measured in and the second the
+pipeline's own default, which is how the discrepancy came to light. Reproducing the committed
+ceiling to four decimals is also what certifies this loop at the scale of the bank rather than of
+the shared subset. A knob inert on part of a bank need not be inert on the bank.
+
 \paragraph{What the switch does.} Not matching, which is the natural guess and is wrong. Over the
 corpus the $152$ templates fire $4{,}259$ times with hydrogens explicit against $4{,}124$ without,
 and every firing writes a SMILES either way. The loss is one step later and it is a valence
@@ -329,6 +337,37 @@ Expand the substrate first and that hydrogen is an atom, nothing removes it, and
 an aromatic carbon holding both its hydrogen and the new substituent --- benzoic acid under aromatic
 hydroxylation gives \texttt{[H]OC(=O)c1c([H])c([H])c([H])(O)c([H])c1[H]}, which does not parse. The
 template is not wrong and the engine is not wrong. They disagree about how a hydrogen is spelled.
+
+\paragraph{The decision belongs to the bank as much as to the engine.} It does not follow that the
+expansion is a mistake. Which setting a bank wants is a property of how its templates were written,
+and no rule file records it. Running the same switch with our engine throughout, over three banks
+assembled by three groups, against the same substrates and their $567$ references:
+
+\begin{center}
+\small
+\begin{tabular}{lcccc}
+\toprule
+bank & rules & hydrogen atom & recovered, explicit & change \\
+     &       & on reactants  & $\to$ implicit      & \\
+\midrule
+SyGMa          & $175$    & none  & $125 \to 299$ & $+0.307$ $[+0.260,+0.355]$ \\
+ours           & $\nbank$ & $675$ & $414 \to 453$ & $+0.069$ $[+0.041,+0.098]$ \\
+BioTransformer & $994$    & $690$ & $268 \to 74$  & $-0.342$ $[-0.388,-0.298]$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Not one of SyGMa's $175$ templates carries a hydrogen \emph{atom} on its reactant side, and its
+reach more than doubles once the hydrogens are gone. $690$ of BioTransformer's $994$ do, and its
+reach falls to a quarter of itself. Ours lies between them on both counts, and that row was written
+down before it was measured: at $675$ templates in $\nbank$ our bank is in SyGMa's convention and
+should move the same way by much less, which is what it does. Three banks cannot establish the share
+as a predictor and it is not offered as one. What they establish is that the direction is not a
+property of our engine, so a reported coverage figure identifies a bank together with a convention,
+and the second half of that pair is recorded nowhere --- including, until this measurement, by us.
+Our own ceiling is where it costs us: on these substrates the same bank recovers $414$ references
+with hydrogens expanded and $453$ without, and every ceiling this paper reports is measured with
+them expanded.
 
 \paragraph{What this costs the paper and what it does not.} The decomposition is untouched: each
 method's three factors are measured through its own application and still multiply to its own
