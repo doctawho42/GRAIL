@@ -54,9 +54,10 @@ rule for when two structures are the same molecule, and how many candidates a me
 first is a reporting choice, and varying it with predictions held fixed erases a statistically
 significant advantage between two published tools on the external set. Output size is a property of
 the methods that two further reporting choices merely expose: reporting F1 rather than recall drops
-the recall leader to last, and the output budget reorders the field again. Neither is an axis in its
+the method that ranks first on recall to last, and the output budget reorders the field again. Neither is an axis in its
 own right. Every reversal they certify runs through the one system emitting $81$ candidates against
-everyone else's $8$ to $11$; among the seven pairs that emit alike, none survives certification. The
+everyone else's $8$ to $11$, and truncating a fixed pair reorders it three times as that count alone
+changes. The
 matching rule is independent of it: at a matched emitted count the sensitivities still separate, the
 extremes by $-0.025$ $[-0.035,-0.015]$. One uncontrolled variable is doing the work two parameters were credited with,
 and an exact decomposition of recall says why. For methods with an
@@ -508,10 +509,9 @@ generators tautomer matching is inert (Appendix~\ref{app:xdomain}).
 \label{sec:metric}
 
 \looseness=-1
-Recall is not the only aggregate this field reports, and a method emitting eighty candidates to
-catch a few more references is rewarded by it and punished by F1 and Jaccard. Computed on each
-method's deployed output set over the full split, untruncated since precision and Jaccard are set
-quantities, the orderings disagree. Against GRAIL the disagreement is
+A method emitting eighty candidates to catch a few more references is rewarded by recall and
+punished by F1 and Jaccard. Computed on each method's deployed output set over the full split,
+untruncated since precision and Jaccard are set quantities, the orderings disagree. Against GRAIL the disagreement is
 certified in both directions: SyGMa leads on recall by $0.253$ $[0.222,0.283]$ and is $0.088$
 $[0.076,0.099]$ below it on F1. Against MetaPredictor only one direction is: SyGMa sits
 $0.113$ $[0.107,0.120]$ below it on F1, certified, while its recall lead of $0.023$ has an interval
@@ -530,11 +530,12 @@ by $0.071$ $[0.057,0.086]$ at $k=5$ --- and below only from $14$ on, where the f
 substrates and GRAIL on none (Appendix~\ref{app:props}).
 
 \looseness=-1
-Neither is therefore a free parameter in its own right. Partition the pairs by how close their
-emitted counts are and count reversals certified in \emph{both} directions: across two populations
-twelve occur among the six pairs differing by more than half again, every one involving the method
-emitting $81$; among the seven pairs that emit alike, \emph{none}. Point estimates do exchange there,
-one pair under four aggregate choices, but no interval clears zero. The matching rule is not like this, though
+The sweep identifies the variable; a tally of which comparisons cleared significance does not.
+Every reversal we can certify involves the one method that overproduces, and none certifies among
+methods emitting alike --- but that second half is a failure to detect, those pairs leaving
+intervals up to $0.158$ open against a median certified reversal of $0.197$. One method alone at
+eighty candidates cannot be told apart from its own peculiarities by a partition; it can by a
+sweep. The matching rule is not like this, though
 showing it needs the emitted counts matched, since within one method the gain grows with the budget.
 Matched at about eight emitted, GRAIL's sensitivity sits below both others by $-0.018$
 $[-0.027,-0.009]$ and $-0.025$ $[-0.035,-0.015]$ paired, and those two are indistinguishable. The
