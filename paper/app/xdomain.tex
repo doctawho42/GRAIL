@@ -373,18 +373,22 @@ compared to a reference. Nothing in this subsection involves a model.
 \includegraphics[width=0.52\textwidth]{fig_curators}
 \end{center}
 \caption{Two independent expert curations of the same twenty-five drugs, scored against each other
-under each criterion. No model is involved. The same two lists agree about one-fourteenth of their
-content under a naive rule and two-fifths under a tolerant one.}
+under each criterion. No model is involved. The same two lists agree about a seventh of their
+content under the strictest rule and two-fifths under the most tolerant.}
 \label{fig:curators}
 \end{figure}
 
-The criterion moves that agreement by a factor of five. Under canonical SMILES matching the two
-curations of the same drug reach a Jaccard of $0.075$; under strict \textsc{inchikey} $0.145$; under
-Tanimoto$=$1, $0.239$; stereo-blind, $0.384$; and under the tautomer-aware default $0.406$. One-sided,
+The criterion moves that agreement by a factor of nearly three. Under strict \textsc{inchikey} the
+two curations of the same drug reach a Jaccard of $0.145$; under canonical SMILES,
+which this harness keys stereo-blind, $0.241$; under Tanimoto$=$1, $0.239$; stereo-blind
+\textsc{inchikey}, $0.384$; and under the tautomer-aware default $0.406$. The five are not
+nested for this measurement --- canonical sits above strict \textsc{inchikey}, because dropping
+stereochemistry from a SMILES string merges more than dropping it from a hash --- so what the figure
+shows is the span, not a ladder. One-sided,
 the corpus recovers $0.647$ $[0.535,0.756]$ of the GLORYx list and GLORYx $0.539$ $[0.439,0.643]$ of
 the corpus list, both under the default. All figures are on the same twenty-five drugs, so none of
 this is a population effect. Two experts looking at the same chemistry appear to agree about
-one-fourteenth of it under a naive criterion and about two-fifths under a tolerant one; the
+a seventh of it under the strictest criterion and about two-fifths under the most tolerant; the
 difference is notation, not chemistry, and it is the cleanest argument in this paper for declaring
 the criterion.
 

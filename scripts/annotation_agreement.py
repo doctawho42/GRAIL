@@ -51,7 +51,11 @@ def key_of(smiles: str, mode: str):
         return None
     try:
         if mode == "canonical":
-            return Chem.MolToSmiles(mol)
+            # isomericSmiles=False, matching grail_metabolism.metrics._canonical_key. RDKit's
+            # default is stereo-AWARE, and keying this rung that way while every method table in
+            # the paper goes through the harness made the curator ladder's strictest endpoint a
+            # different match rule from Table 1's canonical column: 0.075 against 0.241.
+            return Chem.MolToSmiles(mol, isomericSmiles=False)
         if mode == "inchikey":
             return Chem.MolToInchiKey(mol)
         if mode == "inchi_no_stereo":

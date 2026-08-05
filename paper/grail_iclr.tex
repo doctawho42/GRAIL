@@ -337,8 +337,8 @@ policy, itself a cap at $k=15$: it emits at the cap on $308$ of \ntest\ substrat
 references lost between the budgeted pool and the emitted output fall on those. Selection binds
 jointly with the cut-off rather than alone.
 Widening the selector moves the loss downstream --- what selection recovers, the cut-off gives back
---- so the honest statement is that the deployed \emph{pair} caps the pipeline near $0.41$ against a
-bank ceiling of \ceiling\ (Appendix~\ref{app:props}).
+--- so the honest statement is that the deployed \emph{pair} caps the pipeline near $0.41$, macro on
+$245$ substrates, against \ceiling\ micro on the full split (Appendix~\ref{app:props}).
 
 Removing selection entirely tests that reading rather than restating it. Applying the bank with no
 selector and no threshold, ranking the whole pool and truncating at SyGMa's output, the bank passes
@@ -363,10 +363,10 @@ matched at one step SyGMa reaches $0.532$ and the gap widens to $0.203$. The dir
 us, so \ceiling\ understates what our bank holds (Appendix~\ref{app:props}).
 The frame also bounds this architecture: a perfect selector and ranker would stop at \ceiling,
 limited by the corpus rather than by tuning, $53\%$ of uncovered transformations being reaction
-types absent from the bank. That ceiling is carried by the curated fifth, $1{,}715$ curated rules
-reaching $0.660$ where $5{,}866$ mined ones reach $0.328$, and the tail is still not disposable:
-discarding the $4{,}271$ rules that never carry a positive label costs recall@15 $-0.036$
-$[-0.050,-0.024]$ (Appendices~\ref{app:props} and~\ref{app:negative}).
+types absent from the bank. It is carried by the curated fifth: on $245$ substrates where
+the whole bank reaches $0.728$, the $1{,}715$ curated rules reach $0.660$ and the $5{,}866$ mined
+ones $0.328$; and on validation, dropping the $4{,}271$ rules that never carry a positive label
+still costs recall@15 $-0.036$ $[-0.050,-0.024]$ (Appendices~\ref{app:props},~\ref{app:negative}).
 
 \section{Results}
 \label{sec:results}
@@ -476,8 +476,9 @@ unseen (Appendix~\ref{app:external}).
 means.} The
 strongest evidence for declaring the criterion involves no model. Twenty-five external drugs are
 independently curated by our corpus too, so the two metabolite lists compare as a prediction does to
-a reference: the two expert curations of one drug agree at a Jaccard of $0.075$ under canonical
-matching and $0.406$ under the tautomer-aware default, on the same drugs either way. Most of what
+a reference: the two expert curations of one drug agree at a Jaccard of $0.145$ under strict
+\textsc{inchikey} matching and $0.406$ under the tautomer-aware default, on the same drugs
+either way. Most of what
 looks like disagreement about observed chemistry is disagreement about notation.
 
 \looseness=-1
@@ -517,8 +518,8 @@ $[0.076,0.099]$ below it on F1. Against MetaPredictor only one direction is: SyG
 $0.113$ $[0.107,0.120]$ below it on F1, certified, while its recall lead of $0.023$ has an interval
 whose bound rests on zero --- a lead bought by emitting $80.7$ candidates against $10.8$, and one
 a single candidate decides, since dropping the substrate itself from every ranked list costs
-$0.003$ of it. Under recall the top two are indistinguishable; under F1 one is first and the other
-last.
+$0.003$ of it. So the F1 direction is what the data certify here, and the recall
+direction is what a single candidate decides.
 
 \looseness=-1
 The budget does the same work, and it is what identifies the variable: truncating a ranked list
@@ -571,8 +572,8 @@ survives to $c\approx0.055$ (Appendix~\ref{app:props}).
 \label{sec:diagnosis}
 
 \looseness=-1
-On the full clean test split GRAIL trails both published comparators, SyGMa at $0.572$ (paired
-$-0.242$ $[-0.271,\,-0.212]$ over the $1{,}168$ common substrates) and MetaPredictor at $0.568$, and
+GRAIL trails both published comparators, SyGMa at $0.572$ over the $1{,}168$ substrates the two
+share (paired $-0.242$ $[-0.271,\,-0.212]$) and MetaPredictor at $0.568$ over its own $1{,}169$, and
 leads at no output budget; it emits $8.4$ candidates against SyGMa's $80.7$, which
 \S\ref{sec:metric} prices against us. Recall figures here differ by population, aggregation and
 truncation, several coinciding in value without being the same quantity
