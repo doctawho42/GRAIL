@@ -23,7 +23,7 @@
      "recall_at_15": 0.2004
     },
     "SyGMa": {
-     "f1_at_k": 0.1651,
+     "f1_at_k": 0.1748,
      "recall_at_15": 0.4325
     },
     "MetaPredictor": {
@@ -42,8 +42,8 @@
      "recall_at_15": 0.3033
     },
     "SyGMa": {
-     "f1_at_k": 0.1775,
-     "recall_at_15": 0.4937
+     "f1_at_k": 0.1939,
+     "recall_at_15": 0.4942
     },
     "MetaPredictor": {
      "f1_at_k": 0.1905,
@@ -61,7 +61,7 @@
      "recall_at_15": 0.2303
     },
     "SyGMa": {
-     "f1_at_k": 0.179,
+     "f1_at_k": 0.1926,
      "recall_at_15": 0.4889
     },
     "MetaPredictor": {
@@ -80,8 +80,8 @@
      "recall_at_15": 0.3044
     },
     "SyGMa": {
-     "f1_at_k": 0.2074,
-     "recall_at_15": 0.5831
+     "f1_at_k": 0.2271,
+     "recall_at_15": 0.597
     },
     "MetaPredictor": {
      "f1_at_k": 0.2445,
@@ -99,8 +99,8 @@
      "recall_at_15": 0.4081
     },
     "SyGMa": {
-     "f1_at_k": 0.2423,
-     "recall_at_15": 0.6248
+     "f1_at_k": 0.2623,
+     "recall_at_15": 0.6277
     },
     "MetaPredictor": {
      "f1_at_k": 0.2452,
@@ -119,10 +119,10 @@
     ]
    },
    "SyGMa": {
-    "slope": 0.1658,
+    "slope": 0.1798,
     "ci95": [
-     0.1151,
-     0.213
+     0.1284,
+     0.2308
     ]
    },
    "MetaPredictor": {
@@ -142,9 +142,9 @@
     ]
    },
    "SyGMa": {
-    "slope": 0.2933,
+    "slope": 0.2911,
     "ci95": [
-     0.1923,
+     0.1931,
      0.3999
     ]
    },
@@ -162,12 +162,12 @@
   "by_metric": {
    "f1": {
     "SyGMa_minus_GRAIL": {
-     "diff": 0.0076,
+     "diff": 0.0216,
      "ci95": [
-      -0.0552,
-      0.0684
+      -0.0412,
+      0.0857
      ],
-     "half_width": 0.0684
+     "half_width": 0.0857
     },
     "MetaPredictor_minus_GRAIL": {
      "diff": -0.052,
@@ -180,12 +180,12 @@
    },
    "recall": {
     "SyGMa_minus_GRAIL": {
-     "diff": -0.0139,
+     "diff": -0.0161,
      "ci95": [
-      -0.145,
-      0.1141
+      -0.1439,
+      0.1154
      ],
-     "half_width": 0.145
+     "half_width": 0.1439
     },
     "MetaPredictor_minus_GRAIL": {
      "diff": -0.1896,

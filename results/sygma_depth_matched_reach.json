@@ -5,25 +5,25 @@
  "seed": 0,
  "aggregation": "micro (pooled ratio of sums), as in factorize_recall.py and decompose_sygma.py",
  "gate": {
-  "frozen_two_step_reach": 0.5422,
-  "rerun_two_step_reach": 0.5422,
+  "frozen_two_step_reach": 0.5391,
+  "rerun_two_step_reach": 0.5391,
   "decompose_sygma_committed": 0.5422,
   "substrates_with_differing_pool": 0
  },
  "reach": {
   "sygma_depth1_matched": {
-   "point": 0.5356,
+   "point": 0.5325,
    "ci95": [
-    0.5103,
-    0.5616
+    0.5071,
+    0.5583
    ],
    "definition": "phase1-once union phase2-once on the parent; nothing composed -- GRAIL's own Cfull primitive"
   },
   "sygma_deployed_two_step": {
-   "point": 0.5422,
+   "point": 0.5391,
    "ci95": [
-    0.5172,
-    0.5679
+    0.5141,
+    0.5647
    ],
    "definition": "Scenario([[phase1,1],[phase2,1]]): phase II fires on phase I products"
   },
@@ -46,18 +46,18 @@
  },
  "gap": {
   "as_reported": {
-   "point": 0.1933,
+   "point": 0.1964,
    "ci95": [
-    0.1747,
-    0.2129
+    0.1777,
+    0.2158
    ],
    "definition": "GRAIL depth-1 minus SyGMa two-step (the paper's 0.193)"
   },
   "depth_matched": {
-   "point": 0.1998,
+   "point": 0.2029,
    "ci95": [
-    0.1816,
-    0.2187
+    0.1847,
+    0.2217
    ],
    "definition": "GRAIL depth-1 minus SyGMa depth-1"
   }

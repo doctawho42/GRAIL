@@ -7,7 +7,7 @@
  "seed": 0,
  "mean_emitted": {
   "GRAIL": 8.4,
-  "SyGMa": 81.73,
+  "SyGMa": 80.73,
   "MetaPredictor": 10.8
  },
  "macro_f1_by_k": {
@@ -46,38 +46,38 @@
    0.1358
   ],
   "SyGMa": [
-   0.0038,
-   0.1699,
-   0.207,
-   0.2173,
-   0.214,
-   0.2049,
-   0.1915,
-   0.181,
-   0.1698,
-   0.1592,
-   0.1517,
-   0.1435,
-   0.1367,
-   0.1303,
-   0.1246,
-   0.1198,
-   0.115,
-   0.1101,
-   0.1059,
-   0.1021,
-   0.0987,
-   0.0955,
-   0.0923,
-   0.0894,
-   0.0869,
-   0.0845,
-   0.0823,
-   0.0803,
-   0.0783,
-   0.0765,
-   0.0749,
-   0.0733
+   0.2329,
+   0.2596,
+   0.2593,
+   0.2473,
+   0.2317,
+   0.2131,
+   0.199,
+   0.1848,
+   0.172,
+   0.1628,
+   0.1531,
+   0.1452,
+   0.1379,
+   0.1314,
+   0.126,
+   0.1206,
+   0.1152,
+   0.1106,
+   0.1064,
+   0.1027,
+   0.0992,
+   0.0957,
+   0.0926,
+   0.09,
+   0.0874,
+   0.085,
+   0.0829,
+   0.0808,
+   0.0789,
+   0.0771,
+   0.0754,
+   0.0739
   ],
   "MetaPredictor": [
    0.2496,
@@ -117,27 +117,27 @@
  "ordering_by_k": {
   "1": [
    "MetaPredictor",
-   "GRAIL",
-   "SyGMa"
+   "SyGMa",
+   "GRAIL"
   ],
   "2": [
+   "SyGMa",
    "MetaPredictor",
-   "GRAIL",
-   "SyGMa"
+   "GRAIL"
   ],
   "3": [
-   "MetaPredictor",
    "SyGMa",
+   "MetaPredictor",
    "GRAIL"
   ],
   "4": [
-   "MetaPredictor",
    "SyGMa",
+   "MetaPredictor",
    "GRAIL"
   ],
   "5": [
-   "MetaPredictor",
    "SyGMa",
+   "MetaPredictor",
    "GRAIL"
   ],
   "6": [
@@ -177,8 +177,8 @@
   ],
   "13": [
    "MetaPredictor",
-   "GRAIL",
-   "SyGMa"
+   "SyGMa",
+   "GRAIL"
   ],
   "14": [
    "MetaPredictor",
@@ -286,14 +286,19 @@
    "MetaPredictor",
    "SyGMa",
    "GRAIL"
+  ],
+  [
+   "SyGMa",
+   "MetaPredictor",
+   "GRAIL"
   ]
  ],
  "paired_at_k_fixed": {
   "GRAIL-SyGMa": {
-   "delta": -0.0536,
+   "delta": -0.0713,
    "ci95": [
-    -0.0676,
-    -0.0391
+    -0.0857,
+    -0.0567
    ],
    "excludes_zero": true
   },
@@ -306,21 +311,21 @@
    "excludes_zero": true
   },
   "SyGMa-MetaPredictor": {
-   "delta": -0.013,
+   "delta": 0.0047,
    "ci95": [
-    -0.0237,
-    -0.0028
+    -0.0061,
+    0.0154
    ],
-   "excludes_zero": true
+   "excludes_zero": false
   }
  },
  "paired_by_k": {
   "1": {
    "GRAIL-SyGMa": {
-    "delta": 0.1911,
+    "delta": -0.0381,
     "ci95": [
-     0.1703,
-     0.212
+     -0.0641,
+     -0.0111
     ],
     "excludes_zero": true
    },
@@ -333,22 +338,22 @@
     "excludes_zero": true
    },
    "SyGMa-MetaPredictor": {
-    "delta": -0.2458,
+    "delta": -0.0167,
     "ci95": [
-     -0.2684,
-     -0.2238
+     -0.0415,
+     0.0081
     ],
-    "excludes_zero": true
+    "excludes_zero": false
    }
   },
   "2": {
    "GRAIL-SyGMa": {
-    "delta": 0.0168,
+    "delta": -0.073,
     "ci95": [
-     -0.0026,
-     0.0368
+     -0.094,
+     -0.0516
     ],
-    "excludes_zero": false
+    "excludes_zero": true
    },
    "GRAIL-MetaPredictor": {
     "delta": -0.0725,
@@ -359,20 +364,20 @@
     "excludes_zero": true
    },
    "SyGMa-MetaPredictor": {
-    "delta": -0.0893,
+    "delta": 0.0004,
     "ci95": [
-     -0.108,
-     -0.0708
+     -0.0188,
+     0.019
     ],
-    "excludes_zero": true
+    "excludes_zero": false
    }
   },
   "3": {
    "GRAIL-SyGMa": {
-    "delta": -0.0303,
+    "delta": -0.0827,
     "ci95": [
-     -0.047,
-     -0.0134
+     -0.1001,
+     -0.0652
     ],
     "excludes_zero": true
    },
@@ -385,20 +390,20 @@
     "excludes_zero": true
    },
    "SyGMa-MetaPredictor": {
-    "delta": -0.0513,
+    "delta": 0.0011,
     "ci95": [
-     -0.0663,
-     -0.0366
+     -0.0143,
+     0.0161
     ],
-    "excludes_zero": true
+    "excludes_zero": false
    }
   },
   "4": {
    "GRAIL-SyGMa": {
-    "delta": -0.0497,
+    "delta": -0.0797,
     "ci95": [
-     -0.0645,
-     -0.0343
+     -0.0952,
+     -0.0638
     ],
     "excludes_zero": true
    },
@@ -411,20 +416,20 @@
     "excludes_zero": true
    },
    "SyGMa-MetaPredictor": {
-    "delta": -0.0231,
+    "delta": 0.0069,
     "ci95": [
-     -0.0358,
-     -0.0108
+     -0.0058,
+     0.0192
     ],
-    "excludes_zero": true
+    "excludes_zero": false
    }
   },
   "5": {
    "GRAIL-SyGMa": {
-    "delta": -0.0536,
+    "delta": -0.0713,
     "ci95": [
-     -0.0676,
-     -0.0391
+     -0.0857,
+     -0.0567
     ],
     "excludes_zero": true
    },
@@ -437,20 +442,20 @@
     "excludes_zero": true
    },
    "SyGMa-MetaPredictor": {
-    "delta": -0.013,
+    "delta": 0.0047,
     "ci95": [
-     -0.0237,
-     -0.0028
+     -0.0061,
+     0.0154
     ],
-    "excludes_zero": true
+    "excludes_zero": false
    }
   },
   "6": {
    "GRAIL-SyGMa": {
-    "delta": -0.0494,
+    "delta": -0.0576,
     "ci95": [
-     -0.0628,
-     -0.0356
+     -0.0713,
+     -0.0437
     ],
     "excludes_zero": true
    },
@@ -463,20 +468,20 @@
     "excludes_zero": true
    },
    "SyGMa-MetaPredictor": {
-    "delta": -0.0092,
+    "delta": -0.0009,
     "ci95": [
-     -0.0187,
-     0.0001
+     -0.0105,
+     0.0083
     ],
     "excludes_zero": false
    }
   },
   "7": {
    "GRAIL-SyGMa": {
-    "delta": -0.0418,
+    "delta": -0.0493,
     "ci95": [
-     -0.0547,
-     -0.0287
+     -0.0625,
+     -0.0358
     ],
     "excludes_zero": true
    },
@@ -489,20 +494,20 @@
     "excludes_zero": true
    },
    "SyGMa-MetaPredictor": {
-    "delta": -0.0089,
+    "delta": -0.0014,
     "ci95": [
-     -0.0173,
-     -0.0007
+     -0.0099,
+     0.0066
     ],
-    "excludes_zero": true
+    "excludes_zero": false
    }
   },
   "8": {
    "GRAIL-SyGMa": {
-    "delta": -0.0354,
+    "delta": -0.0392,
     "ci95": [
-     -0.0482,
-     -0.0225
+     -0.0521,
+     -0.0263
     ],
     "excludes_zero": true
    },
@@ -515,20 +520,20 @@
     "excludes_zero": true
    },
    "SyGMa-MetaPredictor": {
-    "delta": -0.0081,
+    "delta": -0.0043,
     "ci95": [
-     -0.0157,
-     -0.0008
+     -0.0118,
+     0.0032
     ],
-    "excludes_zero": true
+    "excludes_zero": false
    }
   },
   "9": {
    "GRAIL-SyGMa": {
-    "delta": -0.0271,
+    "delta": -0.0293,
     "ci95": [
-     -0.0396,
-     -0.0146
+     -0.0419,
+     -0.0167
     ],
     "excludes_zero": true
    },
@@ -541,20 +546,20 @@
     "excludes_zero": true
    },
    "SyGMa-MetaPredictor": {
-    "delta": -0.0099,
+    "delta": -0.0078,
     "ci95": [
-     -0.0168,
-     -0.0032
+     -0.0147,
+     -0.0011
     ],
     "excludes_zero": true
    }
   },
   "10": {
    "GRAIL-SyGMa": {
-    "delta": -0.0185,
+    "delta": -0.022,
     "ci95": [
-     -0.0307,
-     -0.0062
+     -0.0344,
+     -0.0096
     ],
     "excludes_zero": true
    },
@@ -567,20 +572,20 @@
     "excludes_zero": true
    },
    "SyGMa-MetaPredictor": {
-    "delta": -0.0128,
+    "delta": -0.0093,
     "ci95": [
-     -0.0194,
-     -0.0065
+     -0.0157,
+     -0.003
     ],
     "excludes_zero": true
    }
   },
   "11": {
    "GRAIL-SyGMa": {
-    "delta": -0.0126,
+    "delta": -0.014,
     "ci95": [
-     -0.0247,
-     -0.0005
+     -0.0261,
+     -0.0017
     ],
     "excludes_zero": true
    },
@@ -593,20 +598,20 @@
     "excludes_zero": true
    },
    "SyGMa-MetaPredictor": {
-    "delta": -0.0152,
+    "delta": -0.0139,
     "ci95": [
-     -0.0214,
-     -0.0092
+     -0.02,
+     -0.0078
     ],
     "excludes_zero": true
    }
   },
   "12": {
    "GRAIL-SyGMa": {
-    "delta": -0.0055,
+    "delta": -0.0072,
     "ci95": [
-     -0.0175,
-     0.0065
+     -0.0191,
+     0.0048
     ],
     "excludes_zero": false
    },
@@ -619,20 +624,20 @@
     "excludes_zero": true
    },
    "SyGMa-MetaPredictor": {
-    "delta": -0.0207,
+    "delta": -0.019,
     "ci95": [
-     -0.0268,
-     -0.0148
+     -0.0251,
+     -0.013
     ],
     "excludes_zero": true
    }
   },
   "13": {
    "GRAIL-SyGMa": {
-    "delta": 0.0008,
+    "delta": -0.0004,
     "ci95": [
-     -0.011,
-     0.0127
+     -0.0124,
+     0.0116
     ],
     "excludes_zero": false
    },
@@ -645,20 +650,20 @@
     "excludes_zero": true
    },
    "SyGMa-MetaPredictor": {
-    "delta": -0.0262,
+    "delta": -0.025,
     "ci95": [
-     -0.0322,
-     -0.0204
+     -0.0311,
+     -0.0193
     ],
     "excludes_zero": true
    }
   },
   "14": {
    "GRAIL-SyGMa": {
-    "delta": 0.0063,
+    "delta": 0.0052,
     "ci95": [
-     -0.0054,
-     0.0182
+     -0.0067,
+     0.0172
     ],
     "excludes_zero": false
    },
@@ -671,20 +676,20 @@
     "excludes_zero": true
    },
    "SyGMa-MetaPredictor": {
-    "delta": -0.0319,
+    "delta": -0.0307,
     "ci95": [
-     -0.0378,
-     -0.0261
+     -0.0367,
+     -0.0249
     ],
     "excludes_zero": true
    }
   },
   "15": {
    "GRAIL-SyGMa": {
-    "delta": 0.0112,
+    "delta": 0.0099,
     "ci95": [
-     -0.0005,
-     0.023
+     -0.0019,
+     0.0218
     ],
     "excludes_zero": false
    },
@@ -697,20 +702,20 @@
     "excludes_zero": true
    },
    "SyGMa-MetaPredictor": {
-    "delta": -0.0371,
+    "delta": -0.0358,
     "ci95": [
-     -0.0431,
-     -0.0313
+     -0.0418,
+     -0.0301
     ],
     "excludes_zero": true
    }
   },
   "16": {
    "GRAIL-SyGMa": {
-    "delta": 0.016,
+    "delta": 0.0153,
     "ci95": [
-     0.0044,
-     0.0279
+     0.0036,
+     0.0272
     ],
     "excludes_zero": true
    },
@@ -723,20 +728,20 @@
     "excludes_zero": true
    },
    "SyGMa-MetaPredictor": {
-    "delta": -0.0419,
+    "delta": -0.0412,
     "ci95": [
-     -0.0478,
-     -0.0362
+     -0.047,
+     -0.0354
     ],
     "excludes_zero": true
    }
   },
   "17": {
    "GRAIL-SyGMa": {
-    "delta": 0.0209,
+    "delta": 0.0207,
     "ci95": [
-     0.0092,
-     0.0326
+     0.009,
+     0.0325
     ],
     "excludes_zero": true
    },
@@ -749,20 +754,20 @@
     "excludes_zero": true
    },
    "SyGMa-MetaPredictor": {
-    "delta": -0.0468,
+    "delta": -0.0466,
     "ci95": [
-     -0.0526,
-     -0.041
+     -0.0524,
+     -0.0408
     ],
     "excludes_zero": true
    }
   },
   "18": {
    "GRAIL-SyGMa": {
-    "delta": 0.0257,
+    "delta": 0.0253,
     "ci95": [
-     0.0142,
-     0.0374
+     0.0137,
+     0.037
     ],
     "excludes_zero": true
    },
@@ -775,20 +780,20 @@
     "excludes_zero": true
    },
    "SyGMa-MetaPredictor": {
-    "delta": -0.0517,
+    "delta": -0.0512,
     "ci95": [
-     -0.0575,
-     -0.0459
+     -0.057,
+     -0.0454
     ],
     "excludes_zero": true
    }
   },
   "19": {
    "GRAIL-SyGMa": {
-    "delta": 0.0299,
+    "delta": 0.0294,
     "ci95": [
-     0.0185,
-     0.0416
+     0.0179,
+     0.0411
     ],
     "excludes_zero": true
    },
@@ -801,20 +806,20 @@
     "excludes_zero": true
    },
    "SyGMa-MetaPredictor": {
-    "delta": -0.0558,
+    "delta": -0.0553,
     "ci95": [
-     -0.0616,
-     -0.05
+     -0.0612,
+     -0.0494
     ],
     "excludes_zero": true
    }
   },
   "20": {
    "GRAIL-SyGMa": {
-    "delta": 0.0337,
+    "delta": 0.0331,
     "ci95": [
-     0.0223,
-     0.0453
+     0.0217,
+     0.0448
     ],
     "excludes_zero": true
    },
@@ -827,20 +832,20 @@
     "excludes_zero": true
    },
    "SyGMa-MetaPredictor": {
-    "delta": -0.0596,
+    "delta": -0.0591,
     "ci95": [
-     -0.0655,
-     -0.0537
+     -0.065,
+     -0.0531
     ],
     "excludes_zero": true
    }
   },
   "21": {
    "GRAIL-SyGMa": {
-    "delta": 0.0371,
+    "delta": 0.0366,
     "ci95": [
-     0.0258,
-     0.0487
+     0.0252,
+     0.0483
     ],
     "excludes_zero": true
    },
@@ -853,20 +858,20 @@
     "excludes_zero": true
    },
    "SyGMa-MetaPredictor": {
-    "delta": -0.063,
+    "delta": -0.0625,
     "ci95": [
-     -0.0689,
-     -0.0571
+     -0.0685,
+     -0.0565
     ],
     "excludes_zero": true
    }
   },
   "22": {
    "GRAIL-SyGMa": {
-    "delta": 0.0403,
+    "delta": 0.0401,
     "ci95": [
-     0.029,
-     0.0518
+     0.0287,
+     0.0517
     ],
     "excludes_zero": true
    },
@@ -879,20 +884,20 @@
     "excludes_zero": true
    },
    "SyGMa-MetaPredictor": {
-    "delta": -0.0662,
+    "delta": -0.066,
     "ci95": [
-     -0.0721,
-     -0.0602
+     -0.072,
+     -0.06
     ],
     "excludes_zero": true
    }
   },
   "23": {
    "GRAIL-SyGMa": {
-    "delta": 0.0435,
+    "delta": 0.0432,
     "ci95": [
-     0.0322,
-     0.055
+     0.0318,
+     0.0548
     ],
     "excludes_zero": true
    },
@@ -905,20 +910,20 @@
     "excludes_zero": true
    },
    "SyGMa-MetaPredictor": {
-    "delta": -0.0694,
+    "delta": -0.0691,
     "ci95": [
-     -0.0754,
-     -0.0634
+     -0.0751,
+     -0.0631
     ],
     "excludes_zero": true
    }
   },
   "24": {
    "GRAIL-SyGMa": {
-    "delta": 0.0464,
+    "delta": 0.0459,
     "ci95": [
-     0.0351,
-     0.0579
+     0.0345,
+     0.0575
     ],
     "excludes_zero": true
    },
@@ -931,20 +936,20 @@
     "excludes_zero": true
    },
    "SyGMa-MetaPredictor": {
-    "delta": -0.0723,
+    "delta": -0.0718,
     "ci95": [
-     -0.0783,
-     -0.0663
+     -0.0778,
+     -0.0657
     ],
     "excludes_zero": true
    }
   },
   "25": {
    "GRAIL-SyGMa": {
-    "delta": 0.0489,
+    "delta": 0.0484,
     "ci95": [
-     0.0376,
-     0.0604
+     0.0371,
+     0.0599
     ],
     "excludes_zero": true
    },
@@ -957,20 +962,20 @@
     "excludes_zero": true
    },
    "SyGMa-MetaPredictor": {
-    "delta": -0.0748,
+    "delta": -0.0743,
     "ci95": [
-     -0.0808,
-     -0.0687
+     -0.0803,
+     -0.0682
     ],
     "excludes_zero": true
    }
   },
   "26": {
    "GRAIL-SyGMa": {
-    "delta": 0.0513,
+    "delta": 0.0508,
     "ci95": [
-     0.04,
-     0.0628
+     0.0395,
+     0.0623
     ],
     "excludes_zero": true
    },
@@ -983,20 +988,20 @@
     "excludes_zero": true
    },
    "SyGMa-MetaPredictor": {
-    "delta": -0.0772,
+    "delta": -0.0767,
     "ci95": [
-     -0.0832,
-     -0.0711
+     -0.0827,
+     -0.0706
     ],
     "excludes_zero": true
    }
   },
   "27": {
    "GRAIL-SyGMa": {
-    "delta": 0.0535,
+    "delta": 0.0529,
     "ci95": [
-     0.0423,
-     0.0649
+     0.0417,
+     0.0644
     ],
     "excludes_zero": true
    },
@@ -1009,20 +1014,20 @@
     "excludes_zero": true
    },
    "SyGMa-MetaPredictor": {
-    "delta": -0.0794,
+    "delta": -0.0789,
     "ci95": [
-     -0.0854,
-     -0.0733
+     -0.0849,
+     -0.0727
     ],
     "excludes_zero": true
    }
   },
   "28": {
    "GRAIL-SyGMa": {
-    "delta": 0.0555,
+    "delta": 0.055,
     "ci95": [
-     0.0443,
-     0.067
+     0.0438,
+     0.0665
     ],
     "excludes_zero": true
    },
@@ -1035,20 +1040,20 @@
     "excludes_zero": true
    },
    "SyGMa-MetaPredictor": {
-    "delta": -0.0815,
+    "delta": -0.081,
     "ci95": [
-     -0.0875,
-     -0.0753
+     -0.087,
+     -0.0748
     ],
     "excludes_zero": true
    }
   },
   "29": {
    "GRAIL-SyGMa": {
-    "delta": 0.0575,
+    "delta": 0.0569,
     "ci95": [
-     0.0463,
-     0.0689
+     0.0457,
+     0.0684
     ],
     "excludes_zero": true
    },
@@ -1061,20 +1066,20 @@
     "excludes_zero": true
    },
    "SyGMa-MetaPredictor": {
-    "delta": -0.0834,
+    "delta": -0.0828,
     "ci95": [
-     -0.0895,
-     -0.0772
+     -0.0889,
+     -0.0766
     ],
     "excludes_zero": true
    }
   },
   "30": {
    "GRAIL-SyGMa": {
-    "delta": 0.0593,
+    "delta": 0.0587,
     "ci95": [
-     0.0481,
-     0.0707
+     0.0475,
+     0.0701
     ],
     "excludes_zero": true
    },
@@ -1087,20 +1092,20 @@
     "excludes_zero": true
    },
    "SyGMa-MetaPredictor": {
-    "delta": -0.0852,
+    "delta": -0.0846,
     "ci95": [
-     -0.0913,
-     -0.079
+     -0.0907,
+     -0.0784
     ],
     "excludes_zero": true
    }
   },
   "31": {
    "GRAIL-SyGMa": {
-    "delta": 0.061,
+    "delta": 0.0604,
     "ci95": [
-     0.0498,
-     0.0723
+     0.0492,
+     0.0718
     ],
     "excludes_zero": true
    },
@@ -1113,20 +1118,20 @@
     "excludes_zero": true
    },
    "SyGMa-MetaPredictor": {
-    "delta": -0.0869,
+    "delta": -0.0863,
     "ci95": [
-     -0.0929,
-     -0.0806
+     -0.0924,
+     -0.0801
     ],
     "excludes_zero": true
    }
   },
   "32": {
    "GRAIL-SyGMa": {
-    "delta": 0.0626,
+    "delta": 0.062,
     "ci95": [
-     0.0514,
-     0.0739
+     0.0508,
+     0.0734
     ],
     "excludes_zero": true
    },
@@ -1139,10 +1144,10 @@
     "excludes_zero": true
    },
    "SyGMa-MetaPredictor": {
-    "delta": -0.0885,
+    "delta": -0.0879,
     "ci95": [
-     -0.0946,
-     -0.0822
+     -0.094,
+     -0.0816
     ],
     "excludes_zero": true
    }
@@ -1186,7 +1191,6 @@
   "SyGMa": [
    0.9957,
    0.9957,
-   0.9957,
    0.9923,
    0.9889,
    0.988,
@@ -1215,7 +1219,8 @@
    0.8,
    0.794,
    0.7855,
-   0.7778
+   0.7778,
+   0.7641
   ],
   "MetaPredictor": [
    0.9957,

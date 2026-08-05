@@ -97,7 +97,7 @@ def _sygma_pool(mol, paths, composed: bool):
 
 
 def _worker(item):
-    sub, trues = item
+    sub, trues, n_parent_keyed = item
     mol = Chem.MolFromSmiles(sub)
     if mol is None or not trues:
         return (0, 0, 0, 0, 0)
@@ -112,7 +112,9 @@ def _worker(item):
     for k, p in pools.items():
         uu, c, _ = _tautomer_recovered(trues, p, audit=False)
         u = int(uu)
-        hits[k] = int(c)
+        # SyGMa's arms carry the parent; GRAIL's primitive does not. Dropping it can only cost a
+        # reference that shares the parent's tautomer key, so remove exactly those.
+        hits[k] = int(c) - (n_parent_keyed if k != "A" else 0)
     return (u, hits["A"], hits["B"], hits["C"], hits["D"])
 
 
@@ -130,7 +132,11 @@ def main() -> int:
 
     src = json.loads((ROOT / "results/filter_vs_prior_ci.json").read_text())["per_substrate"]
     refs = json.loads((ROOT / "results/test_references.json").read_text())
-    items = [(r["sub"], refs[r["sub"]]) for r in src if refs.get(r["sub"])]
+    table = json.loads((ROOT / "results" / "key_tables" / "inchikey_tautomer.json").read_text())
+    def parent_keyed(sub):
+        pk = table.get(sub)
+        return 0 if pk is None else sum(1 for x in refs[sub] if table.get(x) == pk)
+    items = [(r["sub"], refs[r["sub"]], parent_keyed(r["sub"])) for r in src if refs.get(r["sub"])]
     print(f"substrates: {len(items)}", flush=True)
 
     cfg = {"contained": contained, "paths_all": paths_all, "paths_152": paths_152}

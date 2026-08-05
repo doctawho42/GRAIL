@@ -183,7 +183,7 @@ selection costs $0.55$, so a beam is a far less lossy budget than a top-$k$ over
 which is what one would expect of a budget the model itself was trained against. And its ranking
 factor is $1.000$ exactly, for the reason GRAIL's is near one on this subset: the deployed decode
 leaves $10.9$ distinct candidates against a budget of $15$, so the field's $k$ binds neither of
-them. At $k=15$ only SyGMa is truncated, on $93.1\%$ of substrates on the full split, which is the
+them. At $k=15$ only SyGMa is truncated, on $92.7\%$ of substrates on the full split, which is the
 population that fraction is measured on. The budget parameter of
 \S\ref{sec:metric} is therefore acting on one method out of three even here.
 
@@ -213,7 +213,7 @@ BioTransformer & $994$     & 0.479 & 0.444 & 0.93 \\
 
 The row is a bound on what this template set expresses through \emph{our} engine, and it is not a
 third point on a trend. Its reach carries an interval, $0.479$ $[0.414,0.550]$, and
-\S\ref{app:enginereach} measures the engine term at fixed rules at $+0.196$ $[+0.155,+0.240]$ --- a
+\S\ref{app:enginereach} measures the engine term at fixed rules at $+0.192$ $[+0.152,+0.236]$ --- a
 term the size of the $0.479$-to-$0.701$ spread among the three reach figures above, though measured
 on a different population, and larger than this row's own interval. The direction of that bias is known: our engine under-realises shared rules
 by about a factor of two against a rule set's own, so $0.479$ is a \emph{lower} bound on what
@@ -240,7 +240,7 @@ direction the table already reports.
 \subsection{How much of a bank's reach belongs to the engine}
 \label{app:enginereach}
 
-\S\ref{sec:decomp} compares $0.735$ against $0.542$ and the natural reading is bank breadth. Three
+\S\ref{sec:decomp} compares $0.735$ against $0.539$ and the natural reading is bank breadth. Three
 measurements say that reading is wrong, and the third is the one that matters.
 
 \paragraph{The two banks are not separate objects.} SyGMa's published rule set is one of the curated
@@ -251,9 +251,9 @@ curated portion and none among the mined templates. The comparison is a superset
 \paragraph{Depth is not the confound.} Our ceiling is one uncapped depth-1 pass. SyGMa's deployed
 pool is built by a scenario in which phase II fires on phase I products, which is composed rather
 than single-step, so the two were not measured the same way. Matching them costs little and moves
-the number the wrong way for us: SyGMa reaches $0.5356$ $[0.510,0.562]$ at one step against $0.5422$
-$[0.517,0.568]$ deployed, composition worth $+0.0065$ $[+0.0038,+0.0096]$, and the gap widens from
-$0.1933$ to $0.1998$ $[0.182,0.219]$. The re-run reproduces the committed $0.5422$ on every
+the number the wrong way for us: SyGMa reaches $0.5325$ $[0.507,0.558]$ at one step against $0.5391$
+$[0.514,0.565]$ deployed, composition worth $+0.0065$ $[+0.0038,+0.0096]$, and the gap widens from
+$0.1964$ to $0.2029$ $[0.185,0.222]$. The re-run reproduces the frozen pool on every
 substrate, which is the gate this was run behind.
 
 \paragraph{Reach is a property of the system, not of the rule base.} Hold the rules fixed at the
@@ -265,15 +265,15 @@ $152$ both systems have and swap only the engine:
 & rules, engine & reach \\
 \midrule
 A & $152$ shared, ours          & 0.189 $[0.151,0.230]$ \\
-B & $152$ shared, SyGMa's       & 0.385 $[0.336,0.437]$ \\
-C & all $175$, SyGMa's          & 0.527 $[0.473,0.583]$ \\
-D & all $175$, SyGMa's composed & 0.531 $[0.476,0.586]$ \\
+B & $152$ shared, SyGMa's       & 0.381 $[0.332,0.433]$ \\
+C & all $175$, SyGMa's          & 0.524 $[0.469,0.580]$ \\
+D & all $175$, SyGMa's composed & 0.527 $[0.473,0.583]$ \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-The engine at fixed rules is worth $+0.196$ $[+0.155,+0.240]$, the $23$ rules we do not hold
-$+0.143$ $[+0.108,+0.180]$, and composition $+0.004$. The engine term alone is the size of the
+The engine at fixed rules is worth $+0.192$ $[+0.152,+0.236]$, the $23$ rules we do not hold
+$+0.143$ $[+0.107,+0.180]$, and composition $+0.004$. The engine term alone is the size of the
 entire reach gap the main text reports.
 
 \paragraph{What this costs the paper and what it does not.} The decomposition is untouched: each
@@ -299,10 +299,10 @@ large $\mathit{top\text{-}k}$ is.
 Dropping both, the bank produces $661.7$ raw products per substrate, $81.6$ distinct under the
 matching criterion; the $661.7$ is what enters the ranker, not what is emitted. The budget is set to
 SyGMa's emitted count rather than to its pool: at $k=82$ this arm emits $81.6$ distinct structures
-against the $81.7$ SyGMa emits, both counted after the harness's deduplication, which is applied
+against the $80.7$ SyGMa emits, both counted after the harness's deduplication, which is applied
 identically to all five methods (Appendix~\ref{app:xdomain}). The two counts are on different
-populations, this arm's $245$ substrates against SyGMa's full split, so $82$ is a budget chosen to
-match a published figure and not a matching measured on one population. At that budget the cut is not even binding,
+populations, this arm's $245$ substrates against SyGMa's full split, so the arm's budget of $82$ was chosen
+to match a published figure and is not a matching measured on one population. At that budget the cut is not even binding,
 the arm's recall there being equal to its whole distinct pool's coverage. Scored against SyGMa on
 the same $245$ substrates, macro recall, paired bootstrap over substrates:
 
@@ -576,7 +576,7 @@ $[0.051,0.083]$, MetaPredictor above SyGMa by $0.013$ $[0.003,0.024]$.
 
 The mechanism is in the same sweep, and it is stronger than a statement about GRAIL. A budget only
 binds a method when the method emits more than the budget, so at $k=15$ the comparison is not
-budget-matched at all: SyGMa is cut from $81.7$ candidates to $15$ on $93.1\%$ of substrates, while
+budget-matched at all: SyGMa is cut from $80.7$ candidates to $15$ on $92.7\%$ of substrates, while
 re-truncating GRAIL's \emph{emitted} list at $k=15$ removes nothing from any of them, because its
 emission is already capped there. That last is a statement about re-truncation and not about the
 pool: the output reaches the cap upstream, on $308$ of $\ntest$ substrates ($26.3\%$), and every reference the
@@ -584,28 +584,27 @@ decomposition loses between the budgeted pool and the output falls on one of tho
 (\S\ref{sec:decomp}). The convention silently advantages
 whichever methods emit less than the budget, and it is the budget rather than the ranking that
 decides. The magnitude is not a rounding effect: SyGMa's F1 at its best budget over
-$k \in [1,32]$ is $4.6$ times its F1 scored at the full output it emits.
+$k \in [1,32]$ is $5.4$ times its F1 scored at the full output it emits.
 
 The binding is partial well below $15$ too, which is why the certified comparison is reported at
 several budgets rather than one. GRAIL is cut on $63.5\%$ of substrates at $k=5$ and $45.6\%$ at
-$k=8$, against SyGMa's $98.9\%$ and $97.3\%$. Against GRAIL, SyGMa is ahead by $0.030$
-$[0.013,0.047]$ at $k=3$, $0.054$ $[0.039,0.068]$ at $k=5$, $0.035$ $[0.023,0.048]$ at $k=8$ and
-$0.019$ $[0.006,0.031]$ at $k=10$, every interval excluding zero, so the reversal is not an artifact
+$k=8$, against SyGMa's $98.8\%$ and $96.5\%$. Against GRAIL, SyGMa is ahead by $0.083$
+$[0.065,0.100]$ at $k=3$, $0.071$ $[0.057,0.086]$ at $k=5$, $0.039$ $[0.026,0.052]$ at $k=8$ and
+$0.022$ $[0.010,0.034]$ at $k=10$, every interval excluding zero, so the reversal is not an artifact
 of one budget inside the region.
 
 \paragraph{What a compact output is and is not worth.} GRAIL returns $8.4$ candidates against
-SyGMa's $81.7$, which we have described as an operating point recall@$k$ does not express. The sweep
-prices it, and mostly against us. Truncation is free: any user preferring a shorter list can take
-SyGMa's top-$k$, and from $k=3$ to $k=12$ that shorter list beats GRAIL's. Emitting few candidates
-therefore confers no advantage that cutting a longer list would not also confer, over most of the
-range, and GRAIL's apparent lead at the field's budget is the cap declining to bind it.
+SyGMa's $80.7$, which we have described as an operating point recall@$k$ does not express. The sweep
+prices it, and against us throughout. Truncation is free: any user preferring a shorter list can
+take SyGMa's top-$k$, and at every budget up to $13$ that shorter list beats GRAIL's, certified
+from $k=1$ to $k=10$. Emitting few candidates therefore confers no advantage that cutting a longer
+list would not also confer, at any budget below the field's, and GRAIL's lead at $k=15$ is the cap
+declining to bind it.
 
-The exception is real and worth stating precisely, because it is the part that survives. At $k=1$
-both methods are genuinely cut, on $92.8\%$ and $99.6\%$ of substrates, and GRAIL is ahead by
-$0.191$ $[0.170,0.212]$; SyGMa reaches $0.004$ there, almost never placing a hit first. At $k=2$ the
-two are indistinguishable, $+0.017$ $[-0.003,+0.037]$. What differs at the head of the list is
-ranking quality rather than output size, so the defensible version of the claim is narrow: GRAIL is
-the better choice when one or two predictions are wanted, and not otherwise.
+The head of the list is no exception. At $k=1$ both methods are cut, on $92.8\%$ and $99.6\%$ of
+substrates, and SyGMa leads there too, by $0.038$ $[0.011,0.064]$. Every ranked list is scored with
+the parent removed, on tautomer-InChIKey equality with the substrate, so a method is never credited
+or charged for returning the compound it was given.
 
 For GRAIL the deployed operating point can also be certified against a fixed cut, because
 its per-candidate ranking scores are released with the frozen predictions. Over the $1{,}166$ scored

@@ -1,7 +1,7 @@
 {
  "config": {
   "script": "criterion_within_method.py",
-  "git_commit": "4e038c239b0b674882a5745089da49410303a661",
+  "git_commit": "cb1fa8a88a327d75a0efc165d18ddce82abeb70f",
   "git_dirty": true,
   "strict": "canonical",
   "tolerant": "inchikey_tautomer",
@@ -135,59 +135,58 @@
    }
   },
   "SyGMa": {
-   "mean_emitted_uncapped": 81.84,
+   "mean_emitted_uncapped": 80.83,
    "emitted_by_k": [
     1.0,
     1.99,
     2.99,
-    3.99,
-    4.98,
-    5.97,
-    6.95,
-    7.94,
-    8.91,
-    9.88,
-    10.83,
-    11.78,
-    12.73,
-    13.67,
-    14.6,
-    15.53,
-    16.46,
-    17.38,
-    18.29,
-    19.2,
-    20.09,
-    20.99,
-    21.86,
-    22.73,
-    23.59,
-    24.43,
-    25.27,
-    26.09,
-    26.9,
-    27.7,
-    28.5,
-    29.28
+    3.98,
+    4.97,
+    5.96,
+    6.94,
+    7.91,
+    8.88,
+    9.83,
+    10.78,
+    11.73,
+    12.67,
+    13.6,
+    14.53,
+    15.46,
+    16.38,
+    17.3,
+    18.2,
+    19.1,
+    19.99,
+    20.86,
+    21.73,
+    22.59,
+    23.43,
+    24.27,
+    25.09,
+    25.9,
+    26.7,
+    27.49,
+    28.28,
+    29.06
    ],
    "gain_by_k": [
-    0.0,
     0.0144,
-    0.0197,
+    0.0195,
     0.0224,
-    0.0253,
-    0.0308,
+    0.0248,
+    0.0306,
     0.0326,
-    0.0344,
+    0.0341,
     0.0356,
     0.036,
-    0.0365,
+    0.0364,
     0.0368,
     0.0368,
     0.037,
     0.0382,
-    0.0391,
-    0.0392,
+    0.0384,
+    0.0388,
     0.0396,
     0.0397,
     0.0398,
@@ -202,53 +201,54 @@
     0.0406,
     0.0406,
     0.0406,
+    0.0406,
     0.0406
    ],
-   "gain_range_over_sweep": 0.0406,
-   "corr_gain_with_emitted": 0.778,
+   "gain_range_over_sweep": 0.0263,
+   "corr_gain_with_emitted": 0.816,
    "at": {
     "1": {
      "emitted": 1.0,
-     "gain": 0.0,
-     "ci95": [
-      0.0,
-      0.0
-     ]
-    },
-    "2": {
-     "emitted": 1.99,
      "gain": 0.0144,
      "ci95": [
       0.0087,
       0.0207
      ]
     },
-    "5": {
-     "emitted": 4.98,
-     "gain": 0.0253,
+    "2": {
+     "emitted": 1.99,
+     "gain": 0.0195,
      "ci95": [
-      0.0179,
-      0.033
+      0.013,
+      0.0265
+     ]
+    },
+    "5": {
+     "emitted": 4.97,
+     "gain": 0.0306,
+     "ci95": [
+      0.0222,
+      0.0391
      ]
     },
     "8": {
-     "emitted": 7.94,
-     "gain": 0.0344,
+     "emitted": 7.91,
+     "gain": 0.0356,
      "ci95": [
-      0.0256,
-      0.0436
+      0.0268,
+      0.045
      ]
     },
     "15": {
-     "emitted": 14.6,
-     "gain": 0.0382,
+     "emitted": 14.53,
+     "gain": 0.0384,
      "ci95": [
       0.0292,
-      0.0475
+      0.0478
      ]
     },
     "32": {
-     "emitted": 29.28,
+     "emitted": 29.06,
      "gain": 0.0406,
      "ci95": [
       0.0313,
@@ -391,9 +391,9 @@
      "emitted_uncapped": 8.4
     },
     "SyGMa": {
-     "gain": 0.0382,
-     "emitted_at_k15": 14.6,
-     "emitted_uncapped": 81.84
+     "gain": 0.0384,
+     "emitted_at_k15": 14.53,
+     "emitted_uncapped": 80.83
     },
     "MetaPredictor": {
      "gain": 0.0397,
@@ -414,11 +414,11 @@
    },
    "SyGMa": {
     "k": 8,
-    "emitted": 7.94,
-    "gain": 0.0344,
+    "emitted": 7.91,
+    "gain": 0.0356,
     "ci95": [
-     0.0256,
-     0.0436
+     0.0268,
+     0.045
     ]
    },
    "MetaPredictor": {
@@ -433,10 +433,10 @@
   },
   "paired_differences_at_matched_emission": {
    "GRAIL-SyGMa": {
-    "delta": -0.0183,
+    "delta": -0.0195,
     "ci95": [
-     -0.0274,
-     -0.0093
+     -0.0288,
+     -0.0104
     ],
     "excludes_zero": true
    },
@@ -449,10 +449,10 @@
     "excludes_zero": true
    },
    "SyGMa-MetaPredictor": {
-    "delta": -0.0065,
+    "delta": -0.0052,
     "ci95": [
-     -0.014,
-     0.001
+     -0.0124,
+     0.0019
     ],
     "excludes_zero": false
    }
@@ -462,7 +462,7 @@
  "verdict": {
   "gain_range_by_method": {
    "GRAIL": 0.0085,
-   "SyGMa": 0.0406,
+   "SyGMa": 0.0263,
    "MetaPredictor": 0.0308
   },
   "reading": "within each method the criterion gain moves across the budget sweep by less than the gap between methods, so sensitivity is a property of the method's chemistry and not of how much it emits"

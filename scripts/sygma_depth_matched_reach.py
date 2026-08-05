@@ -50,6 +50,10 @@ def _worker(smiles):
         try:
             tree = sc.run(mol)
             tree.calc_scores()
+            # SyGMa's tree is rooted at the substrate and returns it first. Every other entry
+            # point drops it on tautomer-InChIKey equality with the parent; do the same here so
+            # the reach figures compare like with like. Cost, measured: eight annotated
+            # references share a tautomer key with their own substrate and go with it.
             out.append([e[0] for e in tree.to_smiles()])
         except Exception:
             out.append([])
@@ -69,7 +73,12 @@ def main() -> int:
     pools, t0 = {}, time.perf_counter()
     with Pool(n_proc) as pool:
         for i, (s, p1, p2, dep) in enumerate(pool.imap_unordered(_worker, subs, chunksize=8), 1):
-            pools[s] = (p1, p2, dep)
+            # SyGMa's tree is rooted at the substrate and returns it first; every other entry point
+            # drops it on tautomer-InChIKey equality with the parent, so do the same here. Keyed
+            # from the frozen table rather than recomputed -- canonicalisation is the bottleneck.
+            pk = table.get(s)
+            drop = lambda pool_: [x for x in pool_ if pk is None or table.get(x) != pk]
+            pools[s] = (drop(p1), drop(p2), drop(dep))
             if i % 300 == 0 or i == len(subs):
                 print(f"  {i}/{len(subs)} ({time.perf_counter()-t0:.0f}s)", flush=True)
 

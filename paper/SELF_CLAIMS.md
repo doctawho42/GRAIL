@@ -328,10 +328,48 @@ ranking split of oracle headroom, and the propensity-weight distribution all com
 runs whose outputs were never persisted. No main-text claim rests on any of them, and the
 reproducibility statement now says so instead of claiming a single exception.
 
+## 12. Every entry point that generates a comparator's predictions applies the same rules
+
+**Check:** for each external tool, list every script that invokes it and diff what each does to the
+raw output before scoring. Not "does the tool run" — both paths ran fine for months — but "do the
+paths agree on what counts as a prediction".
+
+```bash
+grep -ln "to_smiles()" scripts/*.py | while read f; do
+  printf "%-44s " "$f"
+  grep -q "parent\|_tautomer_inchikey(sub\|!= pk" "$f" && echo "drops the parent" || echo "DOES NOT"
+done
+```
+
+**Status: PASS as of 2026-08-05, after fixing three of five call sites.** SyGMa's tree is rooted at
+the substrate and `to_smiles()` returns it first, scored 1.0. `run_benchmark.sygma_topk` and
+`eval_on_gloryx` dropped it; `sygma_fulltest_predictions`, `sygma_depth_matched_reach` and
+`reach_engine_vs_bank` did not. So every full-split analysis gave the comparator a guaranteed miss
+in its first slot — on 399 of 400 substrates checked — while the subset and external analyses did
+not. Two entry points to one tool disagreed for months and nothing failed, because each was
+internally consistent.
+
+**What it cost, and what it bought.** One published finding was entirely an artifact of it: the
+appendix reported that GRAIL led at $k{=}1$ by $0.191$ and was the better choice when one or two
+predictions were wanted. Corrected, the comparator leads there by $0.038$. A second result moved
+from certified to not: the recall lead behind the aggregate reversal was $0.026$ $[0.003,0.049]$
+and is now $0.023$ with a bound resting on zero, because the parent occupied a slot that a real
+candidate now fills. Against that, the budget sweep gained a third distinct ordering, and the fix
+made the two paths agree.
+
+**The cost is measured rather than assumed:** exactly 8 of 2,597 references share a tautomer key
+with their own substrate and are discarded with it. That is a property of the tautomer-aware
+criterion worth knowing on its own — eight annotated metabolites our default criterion cannot
+distinguish from no reaction at all.
+
+**Blast radius, checked rather than hoped:** the 150-substrate cache and the external path were
+already parent-dropped, so the five-method table, the rank-flip result and every external figure
+are untouched. Only full-split analyses moved.
+
 ---
 
-**Rows 10 and 11 were both added on 2026-08-02, and neither existed while the defects they name
-were live.** Every row passes, and every one of them passes only
+**Rows 10, 11 and 12 were each added after the defect they name had already shipped, which is
+the pattern worth reading: every row here exists because something got through.** Every row passes, and every one of them passes only
 because it was run: the previous round closed the subsample-provenance item and found an author name
 and email in `pyproject.toml`, and this one --- run because new results were added, not because
 anything looked wrong --- found two tracked scripts hard-coding the author's home directory, behind

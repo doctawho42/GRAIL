@@ -1,7 +1,7 @@
 {
  "config": {
   "script": "aggregate_vs_output_size.py",
-  "git_commit": "54fe06eae5fb8993fb158c8268c7c5cd2cd0b785",
+  "git_commit": "cb1fa8a88a327d75a0efc165d18ddce82abeb70f",
   "git_dirty": true,
   "source": "results/set_metrics_by_criterion.json",
   "criterion": "inchikey_tautomer",
@@ -24,7 +24,7 @@
    ],
    "mean_output": {
     "GRAIL": 8.65,
-    "SyGMa": 75.14,
+    "SyGMa": 74.15,
     "BioTransformer": 10.74,
     "MetaTrans": 11.47,
     "MetaPredictor": 10.86
@@ -214,9 +214,9 @@
      ],
      "mean_output": [
       10.74,
-      75.14
+      74.15
      ],
-     "output_ratio": 7.0,
+     "output_ratio": 6.9,
      "comparable": false,
      "sign_flips": [
       {
@@ -230,10 +230,10 @@
         -0.0516
        ],
        "certified_1": true,
-       "delta_2": 0.1123,
+       "delta_2": 0.1103,
        "ci_2": [
-        0.0878,
-        0.1381
+        0.0862,
+        0.1359
        ],
        "certified_2": true,
        "certified_both_directions": true
@@ -249,10 +249,10 @@
         -0.0516
        ],
        "certified_1": true,
-       "delta_2": 0.0771,
+       "delta_2": 0.0758,
        "ci_2": [
-        0.0579,
-        0.0982
+        0.0569,
+        0.0963
        ],
        "certified_2": true,
        "certified_both_directions": true
@@ -268,10 +268,10 @@
         -0.0516
        ],
        "certified_1": true,
-       "delta_2": 0.0993,
+       "delta_2": 0.0979,
        "ci_2": [
-        0.0737,
-        0.1278
+        0.0726,
+        0.1261
        ],
        "certified_2": true,
        "certified_both_directions": true
@@ -314,9 +314,9 @@
      ],
      "mean_output": [
       8.65,
-      75.14
+      74.15
      ],
-     "output_ratio": 8.69,
+     "output_ratio": 8.57,
      "comparable": false,
      "sign_flips": [
       {
@@ -330,10 +330,10 @@
         -0.1205
        ],
        "certified_1": true,
-       "delta_2": 0.0939,
+       "delta_2": 0.0919,
        "ci_2": [
-        0.0648,
-        0.1243
+        0.0626,
+        0.1225
        ],
        "certified_2": true,
        "certified_both_directions": true
@@ -349,10 +349,10 @@
         -0.1205
        ],
        "certified_1": true,
-       "delta_2": 0.0656,
+       "delta_2": 0.0642,
        "ci_2": [
-        0.0443,
-        0.0892
+        0.0429,
+        0.0879
        ],
        "certified_2": true,
        "certified_both_directions": true
@@ -368,10 +368,10 @@
         -0.1205
        ],
        "certified_1": true,
-       "delta_2": 0.0816,
+       "delta_2": 0.0802,
        "ci_2": [
-        0.0571,
-        0.1092
+        0.0558,
+        0.1078
        ],
        "certified_2": true,
        "certified_both_directions": true
@@ -458,9 +458,9 @@
      ],
      "mean_output": [
       10.86,
-      75.14
+      74.15
      ],
-     "output_ratio": 6.92,
+     "output_ratio": 6.83,
      "comparable": false,
      "sign_flips": [],
      "certified_reversals": 0
@@ -472,9 +472,9 @@
      ],
      "mean_output": [
       11.47,
-      75.14
+      74.15
      ],
-     "output_ratio": 6.55,
+     "output_ratio": 6.46,
      "comparable": false,
      "sign_flips": [],
      "certified_reversals": 0
@@ -495,7 +495,7 @@
    ],
    "mean_output": {
     "GRAIL": 8.4,
-    "SyGMa": 81.73,
+    "SyGMa": 80.73,
     "MetaPredictor": 10.8
    },
    "pairs": [
@@ -578,9 +578,9 @@
      ],
      "mean_output": [
       8.4,
-      81.73
+      80.73
      ],
-     "output_ratio": 9.73,
+     "output_ratio": 9.61,
      "comparable": false,
      "sign_flips": [
       {
@@ -588,16 +588,16 @@
         "recall",
         "f1"
        ],
-       "delta_1": -0.2559,
+       "delta_1": -0.2528,
        "ci_1": [
-        -0.2861,
-        -0.2255
+        -0.2832,
+        -0.2224
        ],
        "certified_1": true,
-       "delta_2": 0.0887,
+       "delta_2": 0.0875,
        "ci_2": [
-        0.0775,
-        0.0997
+        0.0763,
+        0.0986
        ],
        "certified_2": true,
        "certified_both_directions": true
@@ -607,16 +607,16 @@
         "recall",
         "jaccard"
        ],
-       "delta_1": -0.2559,
+       "delta_1": -0.2528,
        "ci_1": [
-        -0.2861,
-        -0.2255
+        -0.2832,
+        -0.2224
        ],
        "certified_1": true,
-       "delta_2": 0.0637,
+       "delta_2": 0.063,
        "ci_2": [
-        0.0552,
-        0.0725
+        0.0544,
+        0.0717
        ],
        "certified_2": true,
        "certified_both_directions": true
@@ -626,16 +626,16 @@
         "recall",
         "precision"
        ],
-       "delta_1": -0.2559,
+       "delta_1": -0.2528,
        "ci_1": [
-        -0.2861,
-        -0.2255
+        -0.2832,
+        -0.2224
        ],
        "certified_1": true,
-       "delta_2": 0.0792,
+       "delta_2": 0.0783,
        "ci_2": [
-        0.0692,
-        0.0893
+        0.0683,
+        0.0885
        ],
        "certified_2": true,
        "certified_both_directions": true
@@ -650,9 +650,9 @@
      ],
      "mean_output": [
       10.8,
-      81.73
+      80.73
      ],
-     "output_ratio": 7.57,
+     "output_ratio": 7.47,
      "comparable": false,
      "sign_flips": [
       {
@@ -660,16 +660,16 @@
         "recall",
         "f1"
        ],
-       "delta_1": -0.026,
+       "delta_1": -0.0229,
        "ci_1": [
-        -0.0491,
-        -0.003
+        -0.0458,
+        -0.0
        ],
        "certified_1": true,
-       "delta_2": 0.1146,
+       "delta_2": 0.1134,
        "ci_2": [
-        0.1078,
-        0.1211
+        0.1066,
+        0.1199
        ],
        "certified_2": true,
        "certified_both_directions": true
@@ -679,16 +679,16 @@
         "recall",
         "jaccard"
        ],
-       "delta_1": -0.026,
+       "delta_1": -0.0229,
        "ci_1": [
-        -0.0491,
-        -0.003
+        -0.0458,
+        -0.0
        ],
        "certified_1": true,
-       "delta_2": 0.0693,
+       "delta_2": 0.0686,
        "ci_2": [
-        0.0649,
-        0.0736
+        0.0641,
+        0.0729
        ],
        "certified_2": true,
        "certified_both_directions": true
@@ -698,16 +698,16 @@
         "recall",
         "precision"
        ],
-       "delta_1": -0.026,
+       "delta_1": -0.0229,
        "ci_1": [
-        -0.0491,
-        -0.003
+        -0.0458,
+        -0.0
        ],
        "certified_1": true,
-       "delta_2": 0.0786,
+       "delta_2": 0.0777,
        "ci_2": [
-        0.0735,
-        0.0839
+        0.0725,
+        0.083
        ],
        "certified_2": true,
        "certified_both_directions": true
@@ -747,11 +747,11 @@
     ]
    },
    "SyGMa": {
-    "emitted": 81.73,
-    "gain": 0.0382,
+    "emitted": 80.73,
+    "gain": 0.0384,
     "ci95": [
      0.0292,
-     0.0475
+     0.0478
     ]
    }
   },
@@ -762,6 +762,18 @@
   ],
   "monotone_in_output_size": false,
   "note": "criterion sensitivity is a within-method gain; if it were a proxy for output size it would order with emission"
+ },
+ "power": {
+  "widest_interval_among_comparable_pairs": 0.1584,
+  "where": {
+   "population": "shared150",
+   "pair": [
+    "BioTransformer",
+    "MetaTrans"
+   ]
+  },
+  "median_certified_reversal_size": 0.1965,
+  "reading": "the like-emitting null is a failure to detect, not a demonstration of absence: the widest interval it leaves open is of the same order as the reversals that do certify"
  },
  "verdict": {
   "certified_reversals_among_comparable_emitters": 0,

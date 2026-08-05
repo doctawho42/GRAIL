@@ -160,6 +160,39 @@ def main() -> int:
         print(f"  {m:16} emits {str(c['emitted']):>6}  gain {c['gain']} {c['ci95']}")
     print(f"  monotone in output size: {monotone}")
 
+    # How much does the like-emitting null actually rule out? Counting verdicts says nothing on its
+    # own -- the difference between a certified result and an uncertified one is not itself a
+    # result, which is the reasoning this paper rejects elsewhere. So report the widest interval the
+    # comparable pairs leave open: if it is wide relative to the reversals that do certify, the
+    # partition is a description and not an identification, and the text must say so.
+    widths = []
+    for pop, p_ in rep["populations"].items():
+        for r in p_["pairs"]:
+            if not r["comparable"]:
+                continue
+            for f in r["sign_flips"]:
+                for t in ("1", "2"):
+                    ci = f[f"ci_{t}"]
+                    if ci:
+                        widths.append((round(ci[1] - ci[0], 4), pop, tuple(r["pair"])))
+    certified = [abs(f["delta_1"]) for p_ in rep["populations"].values() for r in p_["pairs"]
+                 for f in r["sign_flips"] if f["certified_both_directions"]]
+    rep["power"] = {
+        "widest_interval_among_comparable_pairs": max(widths)[0] if widths else None,
+        "where": {"population": max(widths)[1], "pair": list(max(widths)[2])} if widths else None,
+        "median_certified_reversal_size": round(float(sorted(certified)[len(certified)//2]), 4)
+                                          if certified else None,
+        "reading": "the like-emitting null is a failure to detect, not a demonstration of absence: "
+                   "the widest interval it leaves open is of the same order as the reversals that "
+                   "do certify",
+    }
+    if widths:
+        w, pop, pair = max(widths)
+        print(f"\npower of the like-emitting null: widest interval {w} "
+              f"({pop}, {pair[0]} vs {pair[1]})")
+        print(f"  against a median certified reversal of {rep['power']['median_certified_reversal_size']}")
+        print("  -> the null cannot separate absence from lack of power")
+
     tot_c = sum(v["certified_reversals_among_comparable"] for _, v in verdicts)
     tot_d = sum(v["certified_reversals_among_disparate"] for _, v in verdicts)
     rep["verdict"] = {

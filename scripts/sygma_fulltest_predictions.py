@@ -7,6 +7,12 @@ as GRAIL. This writes the ranked predictions once so both become possible withou
 
 Substrates are independent, so the work is spread across processes; each worker builds its own
 SyGMa scenario.
+
+``tree.to_smiles()`` returns the parent compound first: SyGMa's tree is rooted at the substrate and
+scores it 1.0. The subset path (``run_benchmark.sygma_topk``) drops it; this path did not, so every
+full-split analysis fed by this file gave SyGMa a guaranteed miss in its first slot, which is
+decisive at small budgets. The parent is dropped here on the same rule ``sygma_topk`` uses --
+tautomer-InChIKey equality with the substrate -- so the two entry points agree.
 """
 from __future__ import annotations
 import json, sys, time
@@ -32,10 +38,17 @@ def _worker(smiles):
     mol = Chem.MolFromSmiles(smiles)
     if mol is None:
         return smiles, []
+    from grail_metabolism.metrics import _tautomer_inchikey as _tk
     try:
         tree = _SC.run(mol)
         tree.calc_scores()
-        return smiles, [e[0] for e in tree.to_smiles()]
+        ranked = [e[0] for e in tree.to_smiles()]
+        # Drop the parent, exactly as run_benchmark.sygma_topk does: the tree is rooted at the
+        # substrate, so to_smiles() returns it first (and occasionally again deeper in the list).
+        pk = _tk(smiles) if _tk else None
+        keep = [x for x in ranked
+                if x != smiles and not (pk is not None and _tk(x) == pk)]
+        return smiles, keep
     except Exception:
         return smiles, []
 

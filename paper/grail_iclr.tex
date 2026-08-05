@@ -55,14 +55,14 @@ first is a reporting choice, and varying it with predictions held fixed erases a
 significant advantage between two published tools on the external set. Output size is a property of
 the methods that two further reporting choices merely expose: reporting F1 rather than recall drops
 the recall leader to last, and the output budget reorders the field again. Neither is an axis in its
-own right. Every reversal they certify runs through the one system emitting $82$ candidates against
+own right. Every reversal they certify runs through the one system emitting $81$ candidates against
 everyone else's $8$ to $11$; among the seven pairs that emit alike, none survives certification. The
 matching rule is independent of it: at a matched emitted count the sensitivities still separate, the
 extremes by $-0.025$ $[-0.035,-0.015]$. One uncontrolled variable is doing the work two parameters were credited with,
 and an exact decomposition of recall says why. For methods with an
 enumerable rule base, recall factorises into coverage, selection and ranking, each measurable rather
 than estimated. Applied to two such methods it explains the leaderboard: the wider system reaches
-$0.735$ of the annotated chemistry against $0.542$ and converts a third of that reach, while the
+$0.735$ of the annotated chemistry against $0.539$ and converts a third of that reach, while the
 narrower converts nearly all of its own, having no selection stage to lose anything at. The gap is
 the price of selecting, which recall charges only to methods that select: a claim about benchmark
 design rather than chemistry, predicted from a structural property rather than observed after the
@@ -74,7 +74,7 @@ budget the field uses, output size acting again and this time in our favour.
 
 That first factor turns out to belong to the system rather than the rule base, which bears on how
 any two knowledge bases are compared. Holding fixed the $152$ rules the two banks share and swapping
-only the engine that applies them moves what they reach by $+0.196$ $[+0.155,+0.240]$ --- as large
+only the engine that applies them moves what they reach by $+0.192$ $[+0.152,+0.236]$ --- as large
 as the entire gap between the two banks --- so a coverage figure quoted across papers measures a
 rule set and an application procedure together, and the second is never reported. We release the
 protocol, the audited split and the frozen predictions that make every measurement repeatable.
@@ -191,9 +191,10 @@ settled decades ago; we re-instantiate it here rather than discover it.
 \paragraph{Remaining gap.} \looseness=-1 None of the three axes is in doubt in general, and none has been varied
 for metabolite predictors. What is unestablished is how far each moves this field's rankings when it
 is the only thing changing. For the budget the new content is therefore measurement, not the
-trade-off: an ordering that differs across $k\in[3,12]$ from the one at $k\ge13$ where the field's
-$15$ sits, every pair separating inside that region at a $k$ fixed before the curves; a budget
-truncating SyGMa on $93.1\%$ of substrates and GRAIL's emitted list on none, so the comparison made at it is not
+trade-off: three distinct orderings across the sweep, the one at $k\ge14$ where the field's
+$15$ sits reached only there, every pair separating inside the region below it at a $k$ fixed
+before the curves; a budget
+truncating SyGMa on $92.7\%$ of substrates and GRAIL's emitted list on none, so the comparison made at it is not
 budget-matched; and a per-substrate budget from descriptors recovering almost none of the oracle
 headroom out of sample, which bounds that direction rather than refuting it
 (Appendix~\ref{app:props}). The decomposition is likewise not ours in general, and the priority is
@@ -348,16 +349,16 @@ field's $k=15$. The bank converts, and only above the budget the convention sets
 \looseness=-1
 Applied to a second method it stops being self-diagnosis. SyGMa is rule-grounded with an enumerable
 bank and decomposes on the same split in the same frame, with the inverse profile: reach lower at
-$0.542$ against $\ceiling$ ($-0.193$ $[-0.213,-0.175]$ paired, signed comparator minus GRAIL
+$0.539$ against $\ceiling$ ($-0.196$ $[-0.216,-0.178]$ paired, signed comparator minus GRAIL
 throughout), but it applies every applicable rule and emits the result, converting almost all of
 that reach where we convert a third of a wider one. Its selection factor is $1$ by construction, because it
-emits every product its applicable rules generate; the same computation returns $0.542$ for its
-coverage and $0.942$ for its ranking, and those two are measured. The gap between us is therefore not a worse rule base but the cost of
+emits every product its applicable rules generate; the same computation returns $0.539$ for its
+coverage and $0.953$ for its ranking, and those two are measured. The gap between us is therefore not a worse rule base but the cost of
 having a selection stage at all, which recall charges only to methods that select.
 
 That first factor is \emph{system} reach, not bank breadth: the $152$ rules the two banks share
-reach $0.189$ under our application against $0.385$ under SyGMa's. Depth is not the confound, since
-matched at one step SyGMa reaches $0.536$ and the gap widens to $0.200$. The direction is against
+reach $0.189$ under our application against $0.381$ under SyGMa's. Depth is not the confound, since
+matched at one step SyGMa reaches $0.532$ and the gap widens to $0.203$. The direction is against
 us, so \ceiling\ understates what our bank holds (Appendix~\ref{app:props}).
 The frame also bounds this architecture: a perfect selector and ranker would stop at \ceiling,
 limited by the corpus rather than by tuning, $53\%$ of uncovered transformations being reaction
@@ -389,7 +390,7 @@ $[0.030,0.050]$, a differential of $+0.024$ $[0.014,0.034]$ surviving Holm--Bonf
 three pairs. Unequal headroom runs the wrong way here: GRAIL enters from the
 lower baseline, so has more left to recover, and gains the less (Table~\ref{tab:matchsens}). The same differential against BioTransformer on the 150-substrate subset is $+0.120$,
 five times larger; we treat the full-split figure as the estimate, since a subset chosen for data
-availability overstated the effect. Output size is a second, orthogonal confound: SyGMa emits $82$
+availability overstated the effect. Output size is a second, orthogonal confound: SyGMa emits $81$
 candidates per substrate against GRAIL's $8.4$ (Appendix~\ref{app:budget}).
 
 
@@ -411,7 +412,7 @@ the $37$ and validated on $5$ more, so its row uses the $13$ unseen; the others 
 \midrule
 \textbf{GRAIL} & 0.323 & 0.331 & 0.333 & 0.324 & 0.340 & $+0.016$ $[0.010,0.023]$ \\
 MetaPredictor  & 0.529 & 0.553 & 0.559 & 0.532 & 0.569 & $+0.040$ $[0.030,0.050]$ \\
-SyGMa          & 0.529 & 0.554 & 0.559 & 0.531 & 0.567 & $+0.038$ $[0.029,0.048]$ \\
+SyGMa          & 0.532 & 0.558 & 0.563 & 0.533 & 0.571 & $+0.038$ $[0.029,0.048]$ \\
 \midrule
 \multicolumn{7}{l}{\emph{external, $n=\nglory$}} \\
 \midrule
@@ -461,7 +462,8 @@ what is certified; the relaxed gap covers zero and still admits SyGMa ahead by $
 criterion is shown erasing a significant advantage, not reversing it. On the uncontaminated drugs
 GRAIL's stereo sensitivity survives at $+0.126$ $[+0.028,+0.239]$, as does its interaction with
 SyGMa --- the same measurement, SyGMa's stereo step here being zero. The \emph{external} interaction
-with BioTransformer does not survive and is withdrawn; the subset estimate stands.
+with BioTransformer does not hold on the uncontaminated drugs and is not claimed; the subset
+estimate is unaffected.
 This set's coverage ceiling stays on all $\nglory$, and the reason is a measurement rather than an
 argument: most of the bank is mined from training pairs, so applying it is \emph{not} independent of
 training, but the ceiling is $0.633$ on the twenty-four seen drugs against $0.632$ on the thirteen
@@ -509,29 +511,29 @@ generators tautomer matching is inert (Appendix~\ref{app:xdomain}).
 Recall is not the only aggregate this field reports, and a method emitting eighty candidates to
 catch a few more references is rewarded by it and punished by F1 and Jaccard. Computed on each
 method's deployed output set over the full split, untruncated since precision and Jaccard are set
-quantities, the orderings disagree and the disagreement is certified in both directions. The budget
-has to be named for the leading pair, because it decides which of the two leads. At unlimited output SyGMa leads on recall, by $0.026$ over MetaPredictor with a paired 95\%
-interval of $[0.003,0.049]$, and finishes last on F1, $0.115$ below it, $[0.108,0.121]$; at the
-field's $k=15$ that recall lead is already absent, MetaPredictor reading $0.569$ against SyGMa's
-$0.567$ on the same split (Table~\ref{tab:matchsens}, Appendix~\ref{app:xdomain}). The two reversals
-certified below are not conditional in that way: on the $\nshared$-substrate subset they are
-measured on, SyGMa leads both of those methods on recall at $k=15$ too. GRAIL, last on recall, is
-$0.089$ above SyGMa on F1, $[0.078,0.100]$.
+quantities, the orderings disagree. Against GRAIL the disagreement is
+certified in both directions: SyGMa leads on recall by $0.253$ $[0.222,0.283]$ and is $0.088$
+$[0.076,0.099]$ below it on F1. Against MetaPredictor only one direction is: SyGMa sits
+$0.113$ $[0.107,0.120]$ below it on F1, certified, while its recall lead of $0.023$ has an interval
+whose bound rests on zero --- a lead bought by emitting $80.7$ candidates against $10.8$, and one
+a single candidate decides, since dropping the substrate itself from every ranked list costs
+$0.003$ of it. Under recall the top two are indistinguishable; under F1 one is first and the other
+last.
 
 \looseness=-1
 The budget does the same work, and it is what identifies the variable: truncating a ranked list
 moves the emitted count with the method and its ranking held fixed, so a reordering along the sweep
 cannot be a property of any one system. It
-reorders without any budget having to be chosen: swept over $k$, SyGMa is above GRAIL from $k=3$ to
-$12$ and below from $13$ on, where the field's $15$ sits, leading by $0.054$ $[0.039,0.068]$ at
-$k=5$. A budget binds a method only when it emits more, so at $k=15$ SyGMa is cut on $93.1\%$ of
+reorders without any budget having to be chosen: swept over $k$ the three methods take three
+distinct orderings, SyGMa above GRAIL at every budget up to $13$ --- certified from $k=1$ to $k=10$,
+by $0.071$ $[0.057,0.086]$ at $k=5$ --- and below only from $14$ on, where the field's $15$ sits. A budget binds a method only when it emits more, so at $k=15$ SyGMa is cut on $92.7\%$ of
 substrates and GRAIL on none (Appendix~\ref{app:props}).
 
 \looseness=-1
 Neither is therefore a free parameter in its own right. Partition the pairs by how close their
 emitted counts are and count reversals certified in \emph{both} directions: across two populations
 twelve occur among the six pairs differing by more than half again, every one involving the method
-emitting $82$; among the seven pairs that emit alike, \emph{none}. Point estimates do exchange there,
+emitting $81$; among the seven pairs that emit alike, \emph{none}. Point estimates do exchange there,
 one pair under four aggregate choices, but no interval clears zero. The matching rule is not like this, though
 showing it needs the emitted counts matched, since within one method the gain grows with the budget.
 Matched at about eight emitted, GRAIL's sensitivity sits below both others by $-0.018$
@@ -570,7 +572,7 @@ survives to $c\approx0.055$ (Appendix~\ref{app:props}).
 \looseness=-1
 On the full clean test split GRAIL trails both published comparators, SyGMa at $0.572$ (paired
 $-0.242$ $[-0.271,\,-0.212]$ over the $1{,}168$ common substrates) and MetaPredictor at $0.568$, and
-leads at no output budget; it emits $8.4$ candidates against SyGMa's $81.7$, which
+leads at no output budget; it emits $8.4$ candidates against SyGMa's $80.7$, which
 \S\ref{sec:metric} prices against us. Recall figures here differ by population, aggregation and
 truncation, several coinciding in value without being the same quantity
 (Appendix~\ref{app:xdomain}).

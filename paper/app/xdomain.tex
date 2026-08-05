@@ -59,8 +59,8 @@ GRAIL $0.344\pm0.010$      & \S\ref{sec:diagnosis}  & $\ntest$ & macro, 3 seeds 
 GRAIL $0.365$              & Table~\ref{tab:matchsens-subset} & $\nshared$ & macro & $k{=}15$ & yes \\
 GRAIL $0.318$              & Appendix~\ref{app:budget} & $\nshared$ & micro & $k{=}15$ & yes \\
 \midrule
-SyGMa $0.595$              & \S\ref{sec:metric} & $\ntest$ & macro & none & yes \\
-SyGMa $0.567$              & Table~\ref{tab:matchsens} & $\ntest$ & macro & $k{=}15$ & yes \\
+SyGMa $0.592$              & \S\ref{sec:metric} & $\ntest$ & macro & none & yes \\
+SyGMa $0.571$              & Table~\ref{tab:matchsens} & $\ntest$ & macro & $k{=}15$ & yes \\
 SyGMa $0.572$              & \S\ref{sec:diagnosis} & $1{,}168$ common & macro & $k{=}15$ & yes \\
 SyGMa $0.554$              & Table~\ref{tab:matchsens-subset} & $\nshared$ & macro & $k{=}15$ & yes \\
 \midrule
@@ -349,9 +349,9 @@ seen the drug. Its interaction with SyGMa survives too, but carries no informati
 and should not be counted as a second result: SyGMa's own stereo step on these thirteen is exactly
 zero, with an interval of $[0,0]$, so the interaction is numerically the same measurement,
 $+0.126$ $[+0.028,+0.239]$. The
-interaction between BioTransformer and GRAIL does not: published at $+0.150$ $[+0.069,+0.242]$, it
-is $-0.104$ $[-0.223,+0.000]$ on the unseen drugs, reversing sign and losing significance. It was
-named one of the two largest and is withdrawn. Of six pairs, four were significant on the full set
+interaction between BioTransformer and GRAIL does not: $+0.150$ $[+0.069,+0.242]$ on all $\nglory$,
+it is $-0.104$ $[-0.223,+0.000]$ on the unseen drugs, reversing sign and losing significance. It is
+among the two largest on the full set and is not claimed on either. Of six pairs, four were significant on the full set
 and two are on the clean one, both against SyGMa.
 
 The headline external result is unaffected because it involves neither contaminated arm. Under

@@ -23,22 +23,22 @@
   },
   "SyGMa": {
    "n_substrates": 1170,
-   "k_global_best": 4,
-   "macro_f1_global": 0.2173,
-   "macro_f1_oracle": 0.338,
-   "headroom": 0.1207,
-   "headroom_relative": 0.556,
+   "k_global_best": 2,
+   "macro_f1_global": 0.2596,
+   "macro_f1_oracle": 0.4293,
+   "headroom": 0.1696,
+   "headroom_relative": 0.653,
    "kstar": {
-    "mean": 3.78,
-    "sd": 3.65,
-    "median": 3,
+    "mean": 3.03,
+    "sd": 3.48,
+    "median": 2,
     "min": 1,
-    "max": 25,
-    "frac_at_1": 0.29,
-    "frac_le_3": 0.629
+    "max": 30,
+    "frac_at_1": 0.497,
+    "frac_le_3": 0.736
    },
-   "kstar_corr_with_n_ref": 0.34,
-   "kstar_corr_with_n_pred": 0.043
+   "kstar_corr_with_n_ref": 0.307,
+   "kstar_corr_with_n_pred": 0.057
   },
   "MetaPredictor": {
    "n_substrates": 1170,

@@ -35,7 +35,11 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 MATCH, N_BOOT, SEED = "inchikey_tautomer", 10000, 0
-PUBLISHED = {"GRAIL": 0.7355, "SyGMa": 0.5422}
+# SyGMa's marginal moved from 0.5422 to 0.5391 when the parent compound was dropped from its
+# frozen predictions (scripts/sygma_fulltest_predictions.py): a handful of substrates annotate a
+# reference that is tautomer-identical to the substrate itself, and re-emitting the parent was
+# scoring as a hit on those.
+PUBLISHED = {"GRAIL": 0.7355, "SyGMa": 0.5391}
 TOL = 0.001
 OUT = ROOT / "results" / "ceiling_gap_ci.json"
 
