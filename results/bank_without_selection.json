@@ -1,12 +1,13 @@
 {
  "config": {
   "script": "bank_without_selection.py",
-  "git_commit": "bff28c460d589f1ca6626c0f802d0ed6c39fd5d5",
+  "git_commit": "cb1fa8a88a327d75a0efc165d18ddce82abeb70f",
   "git_dirty": true,
   "max_substrates": 250,
   "sampling_seed": 42,
   "top_ks": [
    300,
+   1000,
    7581
   ],
   "budgets": [
@@ -32,51 +33,109 @@
    "by_budget": {
     "8": {
      "grail": 0.3671,
-     "sygma": 0.5132,
-     "gap": -0.1461,
+     "sygma": 0.5208,
+     "gap": -0.1537,
      "ci95": [
-      -0.2163,
-      -0.0758
+      -0.224,
+      -0.0827
      ],
      "excludes_zero": true
     },
     "15": {
      "grail": 0.4134,
-     "sygma": 0.5689,
-     "gap": -0.1556,
+     "sygma": 0.5755,
+     "gap": -0.1621,
      "ci95": [
-      -0.225,
-      -0.0858
+      -0.2299,
+      -0.0927
      ],
      "excludes_zero": true
     },
     "32": {
      "grail": 0.4482,
-     "sygma": 0.5905,
-     "gap": -0.1424,
+     "sygma": 0.5889,
+     "gap": -0.1408,
      "ci95": [
-      -0.2119,
-      -0.0711
+      -0.2103,
+      -0.0695
      ],
      "excludes_zero": true
     },
     "64": {
      "grail": 0.4727,
-     "sygma": 0.5946,
-     "gap": -0.122,
+     "sygma": 0.593,
+     "gap": -0.1204,
      "ci95": [
-      -0.1915,
-      -0.0513
+      -0.19,
+      -0.0498
      ],
      "excludes_zero": true
     },
     "82": {
      "grail": 0.4748,
-     "sygma": 0.5946,
-     "gap": -0.1198,
+     "sygma": 0.593,
+     "gap": -0.1182,
      "ci95": [
-      -0.1896,
-      -0.0494
+      -0.188,
+      -0.0481
+     ],
+     "excludes_zero": true
+    }
+   }
+  },
+  "1000": {
+   "threshold": 0.46,
+   "mean_pool": 219.7,
+   "mean_unique": 32.0,
+   "pool_coverage": 0.4912,
+   "by_budget": {
+    "8": {
+     "grail": 0.3781,
+     "sygma": 0.5208,
+     "gap": -0.1427,
+     "ci95": [
+      -0.2124,
+      -0.0721
+     ],
+     "excludes_zero": true
+    },
+    "15": {
+     "grail": 0.4279,
+     "sygma": 0.5755,
+     "gap": -0.1476,
+     "ci95": [
+      -0.2164,
+      -0.0769
+     ],
+     "excludes_zero": true
+    },
+    "32": {
+     "grail": 0.4589,
+     "sygma": 0.5889,
+     "gap": -0.13,
+     "ci95": [
+      -0.1994,
+      -0.0598
+     ],
+     "excludes_zero": true
+    },
+    "64": {
+     "grail": 0.4879,
+     "sygma": 0.593,
+     "gap": -0.1052,
+     "ci95": [
+      -0.1738,
+      -0.0351
+     ],
+     "excludes_zero": true
+    },
+    "82": {
+     "grail": 0.4912,
+     "sygma": 0.593,
+     "gap": -0.1018,
+     "ci95": [
+      -0.1703,
+      -0.0316
      ],
      "excludes_zero": true
     }
@@ -90,51 +149,51 @@
    "by_budget": {
     "8": {
      "grail": 0.4151,
-     "sygma": 0.5132,
-     "gap": -0.0981,
+     "sygma": 0.5208,
+     "gap": -0.1057,
      "ci95": [
-      -0.1688,
-      -0.0284
+      -0.1773,
+      -0.0343
      ],
      "excludes_zero": true
     },
     "15": {
      "grail": 0.5277,
-     "sygma": 0.5689,
-     "gap": -0.0413,
+     "sygma": 0.5755,
+     "gap": -0.0478,
      "ci95": [
-      -0.109,
-      0.0269
+      -0.1146,
+      0.0196
      ],
      "excludes_zero": false
     },
     "32": {
      "grail": 0.6519,
-     "sygma": 0.5905,
-     "gap": 0.0613,
+     "sygma": 0.5889,
+     "gap": 0.0629,
      "ci95": [
-      -0.0006,
-      0.1233
+      0.001,
+      0.1249
      ],
-     "excludes_zero": false
+     "excludes_zero": true
     },
     "64": {
      "grail": 0.7345,
-     "sygma": 0.5946,
-     "gap": 0.1398,
+     "sygma": 0.593,
+     "gap": 0.1414,
      "ci95": [
-      0.0837,
-      0.1966
+      0.0853,
+      0.1983
      ],
      "excludes_zero": true
     },
     "82": {
      "grail": 0.7602,
-     "sygma": 0.5946,
-     "gap": 0.1656,
+     "sygma": 0.593,
+     "gap": 0.1672,
      "ci95": [
-      0.1096,
-      0.2217
+      0.1115,
+      0.223
      ],
      "excludes_zero": true
     }
