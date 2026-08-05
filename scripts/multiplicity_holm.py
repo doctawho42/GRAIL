@@ -91,8 +91,24 @@ def main() -> int:
                 "canonical->InChIKey)",
         "result": holm(internal, m=2 * n_possible)}
 
+    # The second comparison declared confirmatory in the paper is the learned-versus-prior rule
+    # selection gap. It is not a protocol x method interaction and so belongs to neither family
+    # above; it was declared on its own and searched over nothing, so its family is of size one and
+    # the Holm-adjusted p equals the raw p. Reporting it that way is the honest answer -- a
+    # comparison declared corrected has to appear in the multiplicity table with its threshold.
+    sel = json.loads((ROOT / "results" / "prior_vs_learned.json").read_text())
+    g = sel["bootstrap_ci"]["gaps"]["learned_only__minus__prior_only__gen"]
+    rep["selection_confirmatory"] = {
+        "n_pairs_tested": 1, "family_size": 1,
+        "note": "the learned-versus-prior rule-selection gap declared confirmatory alongside the "
+                "differential sensitivity; a family of one, so Holm p = raw p",
+        "estimand": "recall@15(learned selector) - recall@15(frequency prior), paired, n=245",
+        "delta": g["delta"], "ci95": g["ci95"],
+        "result": holm([("learned_selector_vs_frequency_prior",
+                         p_from_ci(g["delta"], *g["ci95"]))])}
+
     for k in ("external", "external_grid", "internal_as_tested", "internal_conservative",
-              "internal_grid"):
+              "internal_grid", "selection_confirmatory"):
         r = rep[k]
         surv = sum(1 for x in r["result"] if x["rejected"])
         r["n_surviving"] = surv

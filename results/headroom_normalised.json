@@ -1,0 +1,148 @@
+{
+ "n_boot": 10000,
+ "seed": 0,
+ "estimand": "mean(relaxed - strict) / (1 - mean(strict)), paired bootstrap over substrates",
+ "note": "robustness column for the raw differential-sensitivity endpoint; not a replacement estimand",
+ "external": {
+  "n_substrates": 37,
+  "k": 15,
+  "strict": "inchikey",
+  "relaxed": "inchikey_tautomer",
+  "per_method": {
+   "BioTransformer": {
+    "recall_strict": 0.3456,
+    "recall_relaxed": 0.3735,
+    "raw_gain": 0.0279,
+    "headroom": 0.6544,
+    "normalised_gain": 0.0427,
+    "normalised_gain_ci95": [
+     0.0036,
+     0.0991
+    ]
+   },
+   "MetaPredictor": {
+    "recall_strict": 0.3621,
+    "recall_relaxed": 0.5038,
+    "raw_gain": 0.1416,
+    "headroom": 0.6379,
+    "normalised_gain": 0.222,
+    "normalised_gain_ci95": [
+     0.125,
+     0.333
+    ]
+   },
+   "GRAIL": {
+    "recall_strict": 0.155,
+    "recall_relaxed": 0.3328,
+    "raw_gain": 0.1778,
+    "headroom": 0.845,
+    "normalised_gain": 0.2104,
+    "normalised_gain_ci95": [
+     0.1165,
+     0.313
+    ]
+   },
+   "SyGMa": {
+    "recall_strict": 0.4916,
+    "recall_relaxed": 0.4984,
+    "raw_gain": 0.0068,
+    "headroom": 0.5084,
+    "normalised_gain": 0.0133,
+    "normalised_gain_ci95": [
+     0.0,
+     0.042
+    ]
+   }
+  },
+  "pairwise_normalised_differential": {
+   "BioTransformer_vs_MetaPredictor": {
+    "b_minus_a": 0.1794,
+    "ci95": [
+     0.0753,
+     0.2969
+    ],
+    "verdict": "SIGNIFICANT"
+   },
+   "BioTransformer_vs_GRAIL": {
+    "b_minus_a": 0.1678,
+    "ci95": [
+     0.0691,
+     0.2725
+    ],
+    "verdict": "SIGNIFICANT"
+   },
+   "BioTransformer_vs_SyGMa": {
+    "b_minus_a": -0.0294,
+    "ci95": [
+     -0.0832,
+     0.0027
+    ],
+    "verdict": "n.s."
+   },
+   "MetaPredictor_vs_GRAIL": {
+    "b_minus_a": -0.0116,
+    "ci95": [
+     -0.1628,
+     0.1407
+    ],
+    "verdict": "n.s."
+   },
+   "MetaPredictor_vs_SyGMa": {
+    "b_minus_a": -0.2087,
+    "ci95": [
+     -0.3216,
+     -0.1105
+    ],
+    "verdict": "SIGNIFICANT"
+   },
+   "GRAIL_vs_SyGMa": {
+    "b_minus_a": -0.1972,
+    "ci95": [
+     -0.3053,
+     -0.0946
+    ],
+    "verdict": "SIGNIFICANT"
+   }
+  }
+ },
+ "internal": {
+  "n_substrates": 150,
+  "k": 15,
+  "strict": "canonical",
+  "relaxed": "inchikey_tautomer",
+  "per_method": {
+   "GRAIL": {
+    "recall_strict": 0.3556,
+    "recall_relaxed": 0.3654,
+    "raw_gain": 0.0098,
+    "headroom": 0.6444,
+    "normalised_gain": 0.0152,
+    "normalised_gain_ci95": [
+     0.001,
+     0.0401
+    ]
+   },
+   "BioTransformer": {
+    "recall_strict": 0.3149,
+    "recall_relaxed": 0.4445,
+    "raw_gain": 0.1296,
+    "headroom": 0.6851,
+    "normalised_gain": 0.1892,
+    "normalised_gain_ci95": [
+     0.1211,
+     0.2617
+    ]
+   }
+  },
+  "pairwise_normalised_differential": {
+   "GRAIL_vs_BioTransformer": {
+    "b_minus_a": 0.1739,
+    "ci95": [
+     0.1081,
+     0.2449
+    ],
+    "verdict": "SIGNIFICANT"
+   }
+  }
+ }
+}

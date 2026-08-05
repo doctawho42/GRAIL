@@ -164,5 +164,26 @@
    }
   ],
   "n_surviving": 1
+ },
+ "selection_confirmatory": {
+  "n_pairs_tested": 1,
+  "family_size": 1,
+  "note": "the learned-versus-prior rule-selection gap declared confirmatory alongside the differential sensitivity; a family of one, so Holm p = raw p",
+  "estimand": "recall@15(learned selector) - recall@15(frequency prior), paired, n=245",
+  "delta": -0.1443,
+  "ci95": [
+   -0.1955,
+   -0.0947
+  ],
+  "result": [
+   {
+    "pair": "learned_selector_vs_frequency_prior",
+    "p": 2.0050657356662782e-08,
+    "p_holm": 2.0050657356662782e-08,
+    "threshold": 0.05,
+    "rejected": true
+   }
+  ],
+  "n_surviving": 1
  }
 }

@@ -205,10 +205,10 @@ family as the pairs actually tested, or as the pairs one table admits, counts on
 axes.
 
 \begin{table}[h]
-\caption{Every interaction entering either family, with its raw p-value, its Holm-adjusted
+\caption{Every comparison entering a family, with its raw p-value, its Holm-adjusted
 p-value at the searched family size, and the step-down threshold its rank carries at
 $\alpha=0.05$. Internal pairs are the $\nshared$-substrate subset, external pairs the $\nglory$
-GLORYx drugs.}
+GLORYx drugs, and the last row is the second confirmatory comparison, on $245$ test substrates.}
 \label{tab:holm}
 \begin{center}
 \footnotesize
@@ -225,6 +225,8 @@ external ($m{=}12$) & MetaPredictor vs SyGMa          & $1.13\times10^{-4}$ & $1
 \midrule
 internal ($m{=}20$) & GRAIL vs BioTransformer         & $1.65\times10^{-6}$ & $3.3\times10^{-5}$ & $0.0025$ & rejected \\
                     & MetaTrans vs SyGMa              & $3.35\times10^{-3}$ & $6.4\times10^{-2}$ & $0.0026$ & not rejected \\
+\midrule
+selection ($m{=}1$) & learned selector vs frequency prior & $2.0\times10^{-8}$ & $2.0\times10^{-8}$ & $0.0500$ & rejected \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -238,6 +240,54 @@ MetaTrans--SyGMa misses its threshold of $0.0026$ at $p=0.00335$. We report that
 as an uncorrected interval from here on and do not count it as certified. This is the one decision
 close enough to its threshold that the normal approximation matters, and it is decided against us,
 which is the direction in which an approximation is safe to use.
+
+\paragraph{The same endpoint on a scale-free footing.} The endpoint is a paired difference of raw
+gains on a $[0,1]$-bounded metric, and the arms enter the relaxation step from different baselines.
+Internally that confound runs against the effect and \S\ref{sec:rankflip} says so; externally it
+runs \emph{with} it, MetaPredictor entering at $0.362$ against SyGMa's $0.492$ and gaining the more.
+Deploying the argument only where it exculpates would not do, so the obvious scale-free version is
+reported here: the gain as a fraction of the headroom left, $\Delta/(1-\text{recall}_{\text{strict}})$,
+resampled paired over substrates so numerator and denominator move together.
+
+\begin{center}
+\begin{tabular}{lccc}
+\toprule
+method & recall (strict) & raw gain & normalised gain (95\% CI) \\
+\midrule
+\multicolumn{4}{l}{\emph{external, $n=\nglory$, \textsc{inchikey}$\rightarrow$\textsc{inchikey-tautomer}}} \\
+SyGMa          & 0.492 & $+0.007$ & $+0.013$ $[+0.000,+0.042]$ \\
+BioTransformer & 0.346 & $+0.028$ & $+0.043$ $[+0.004,+0.099]$ \\
+MetaPredictor  & 0.362 & $+0.142$ & $+0.222$ $[+0.125,+0.333]$ \\
+GRAIL          & 0.155 & $+0.178$ & $+0.210$ $[+0.117,+0.313]$ \\
+\midrule
+\multicolumn{4}{l}{\emph{internal, $n=\nshared$, \textsc{canonical}$\rightarrow$\textsc{inchikey-tautomer}}} \\
+GRAIL          & 0.356 & $+0.010$ & $+0.015$ $[+0.001,+0.040]$ \\
+BioTransformer & 0.315 & $+0.130$ & $+0.189$ $[+0.121,+0.262]$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Every decision in Table~\ref{tab:holm} survives the change of scale, in both directions. Signing each
+interaction as the second method's normalised gain minus the first's, exactly as that table's pairs
+are ordered, the four externally rejected ones keep their sign and exclude zero:
+MetaPredictor--SyGMa $-0.209$ $[-0.322,-0.111]$, GRAIL--SyGMa $-0.197$ $[-0.305,-0.095]$,
+BioTransformer--GRAIL $+0.168$ $[+0.069,+0.273]$, BioTransformer--MetaPredictor $+0.179$
+$[+0.075,+0.297]$, and internally GRAIL--BioTransformer $+0.174$ $[+0.108,+0.245]$. The two
+externally not rejected stay indistinguishable from zero, BioTransformer--SyGMa $-0.029$
+$[-0.083,+0.003]$ and MetaPredictor--GRAIL $-0.012$ $[-0.163,+0.141]$. GRAIL's external row
+is on all $\nglory$ here, where the contaminated arm inflates it, and is not the $13$-drug figure
+\S\ref{sec:rankflip} reports; it is shown because the normalisation is what is at issue, not the
+level. The raw paired difference remains the endpoint --- it is a differential re-scoring of frozen
+predictions and is well defined --- and this is a robustness column beside it.
+
+The last row of Table~\ref{tab:holm} is the second comparison \S\ref{sec:tame} declares confirmatory, and it is not a
+protocol $\times$ method interaction, so it belongs to neither family above: the learned-versus-prior
+rule-selection gap of \S\ref{sec:xmc}, $-0.144$ $[-0.196,-0.095]$ macro at $k=15$ on $245$ test
+substrates. No family was pre-specified for it either, and
+results/prior\_vs\_learned.json spans three selector modes and two stages, so a conservative family
+here is not of size one. Saying so is the answer rather than an evasion: a
+comparison the paper declares corrected has to appear here with its threshold, and at
+$p=2.0\times10^{-8}$ against $0.05$ the correction changes nothing whatever family it is put in.
 
 \subsection{External validity rests on 37 substrates}
 
@@ -332,9 +382,19 @@ never been computed.
 
 The contamination is one-sided, which decides how much has to be repaired. SyGMa and BioTransformer
 do not train on this corpus, and MetaPredictor was trained by its authors on their own data, so
-their figures are unaffected and stay at $n=\nglory$. Only GRAIL's are inflated, and inflated in our
+their figures are unaffected \emph{by this overlap} and stay at $n=\nglory$. Only GRAIL's are
+inflated, and inflated in our
 own favour. Restricting the other three to the thirteen would have been an error in the opposite
 direction, discarding two thirds of the sample to correct a bias they do not have.
+
+The audit is scoped to GRAIL's splits because that is the only overlap that can inflate a number in
+this paper, and one might still ask whether a learned comparator had seen these well-known drugs.
+The reported effect is the wrong shape for that: a method that had memorised stereo-bearing
+reference structures would match them under strict \textsc{inchikey} and have \emph{less} left for a
+stereo-blind criterion to recover, so memorisation attenuates a stereo-step gain rather than
+producing one. MetaPredictor enters that step at $0.362$, below the rule engine's $0.492$, which is
+the opposite signature. Nor is the comparator arm a system that trained on nothing: SyGMa's rule
+probabilities are themselves fitted to an observed-metabolite database \citep{Ridder_2008}.
 
 Recomputing on the thirteen with the same loaders, matcher and frozen predictions, so that only the
 substrate list changes, GRAIL's external recall falls by up to a factor of $2.6$: $0.155 \to 0.059$
@@ -413,7 +473,9 @@ more conservative of the two matches, since a curation asserts no ranking and th
 cut in is not one it claims.
 
 Models therefore reach curator-level recall only by spending more output than a curator does. At the
-curator's own budget they are behind by a quarter to a third of the reference set.
+curator's own budget, matched at each drug's own curated set size, they are behind by a quarter to a
+third of the reference set; the symmetric $k{=}6$ match in the sentence before this one points the
+same way and does not reach significance, and this verdict does not cover it.
 
 That per-substrate cap is not an arbitrary handicap, which is the objection it invites. The size
 supplied is the curator's own, so it is the per-substrate cardinality an oracle would choose, and

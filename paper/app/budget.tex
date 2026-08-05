@@ -67,6 +67,11 @@ pool's coverage exactly. That is a property of this subset and not of the method
 GRAIL's output policy, which is itself a cap at fifteen, is reached on $308$ of $\ntest$ substrates, and
 that is where the third factor of \S\ref{sec:decomp} loses its references.
 
-The gap to SyGMa is thus not a worse rule bank. It is the cost of having a selection stage at all,
+The gap to SyGMa is thus not a worse rule bank. It is the cost of \emph{this} selection stage,
 which recall charges only to methods that select, and which GRAIL currently pays without
-recovering.
+recovering. The stronger reading, that any selection stage costs this, is not available and the
+counterfactual is what rules it out: removing the selector and ranking the raw pool at the same
+budget gives $0.528$ against the deployed selector's $0.352$ at $k=15$ on $245$ substrates
+(\S\ref{app:noselect}), so what is measured here is a selector that retains less than no selector,
+not a tax the benchmark levies on selecting architectures. A selector that lost nothing would carry
+a selection factor of one and would not be charged at all.
