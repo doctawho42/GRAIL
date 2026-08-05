@@ -384,6 +384,49 @@ itself kept only if applying it through
 this engine regenerated its own annotated product (Appendix~\ref{app:arch}), so it was validated
 against this engine rather than a foreign one and supplies no offsetting overstatement.
 
+\subsection{The same choice outside metabolism, failing the other way}
+\label{app:retroconvention}
+
+Everything above is measured on metabolite rule banks, which a reader may fairly take as a fact
+about one small literature. The USPTO retrosynthesis templates are a library from another field,
+extracted by other people from other reactions for another task, and the instrument applies to them
+unchanged. What it finds is not a repetition, because the mechanism is the other one.
+
+\begin{center}
+\small
+\begin{tabular}{lcc}
+\toprule
+& metabolite banks & retrosynthesis templates \\
+\midrule
+patterns                                  & $175$ / $\nbank$ / $994$ & $42{,}554$ \\
+carrying a hydrogen atom                  & none / $675$ / $690$     & none \\
+constraining an atom by degree            & rare                     & all $42{,}554$ \\
+what the expansion breaks                 & the product              & the match \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Applied to $500$ products of the USPTO-50k test split, the library makes $146{,}346$
+template--product matches with hydrogens implicit and $26{,}788$ with them explicit, and the number
+of products with any applicable template falls from $500$ to $489$. The cause is one construct and
+the attribution is exact rather than approximate: of the $119{,}558$ matches the expansion costs,
+$119{,}558$ come back when the degree constraint alone is deleted from the very patterns that lost
+them. The check is a gate --- the measurement is refused below $90\%$ --- and it returns $100\%$.
+
+So a degree primitive counts explicit connections, expanding a molecule changes every degree in it,
+and a library built on them stops matching before it can build anything. That is a different failure
+from the metabolite one, where the patterns fire just as often and the product is what will not
+parse, and the two together give the claim its general form. What is convention-dependent is a class
+of \textsc{smarts} construct rather than a domain: a primitive that counts explicit structure breaks
+matching, a template that rewrites without naming the hydrogen it consumes breaks the product. Both
+are readable from the rule file without running anything, and neither is declared by any library we
+have looked at.
+
+Two things this does not claim. It is applicability rather than coverage against references, which
+is the first step of reach and not the whole of it. And no retrosynthesis system expands its target
+by convention, so this is a latent hazard in that field rather than an error in it --- the point is
+that the dependence is a property of the patterns, and the patterns are not ours.
+
 \subsection{The bank without a selector, at a matched budget}
 \label{app:noselect}
 
