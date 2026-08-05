@@ -27,8 +27,8 @@
 \newcommand{\interB}{+0.063}          % MetaTrans<->SyGMa interaction
 \newcommand{\interBci}{[+0.022,\,+0.106]}
 
-\title{Output Size and the Matching Rule Reorder the\\
-Metabolite-Prediction Leaderboard}
+\title{Measured, Not Estimated: Decomposing Recall\\
+on a Metabolite-Prediction Leaderboard}
 
 % double-blind: authors stay anonymous until camera-ready
 \author{Anonymous authors \\ Paper under double-blind review}
@@ -43,40 +43,42 @@ Metabolite-Prediction Leaderboard}
 \maketitle
 
 \begin{abstract}
-Computational prediction of drug metabolites is assessed almost universally by top-$k$ recall. A
-single number cannot say why a method scores what it does: a metabolite is missed for three
-unrelated reasons --- no rule in the method's knowledge base expresses the transformation, the applicable rule is not selected, or the correct
-product is generated but ranked too low to report. Improving the rule base, the selector and the
-ranker are different research programmes, and recall does not indicate which is warranted.
+Computational prediction of drug metabolites is assessed almost universally by top-$k$ recall, and a
+single number cannot say why a method scores what it does: a metabolite is missed because no rule in
+the knowledge base expresses the transformation, because the applicable rule is not selected, or
+because the correct product is generated and then ranked too low to report. Those are three
+different research programmes, and recall does not indicate which is warranted.
 
-Two things sit between a set of predictions and a leaderboard position and neither is declared: the
-rule for when two structures are the same molecule, and how many candidates a method emits. Only the
-first is a reporting choice, and varying it with predictions held fixed erases a statistically
-significant advantage between two published tools on the external set. The two do different work:
-output size reorders the field, the matching rule erases a gap inside it. Output size is a property of
-the methods that two further reporting choices merely expose: reporting F1 rather than recall drops
-the method that ranks first on recall to last, and the output budget reorders the field again. Every reversal they certify runs through the one system emitting $81$ candidates against
-everyone else's $8$ to $11$, and truncating a fixed pair reorders it three times as that count alone
-changes. The
-matching rule is independent of it: at a matched emitted count the sensitivities still separate, the
-extremes by $-0.025$ $[-0.035,-0.015]$. One uncontrolled variable is doing the work two parameters were credited with,
-and an exact decomposition of recall says why. For methods with an
-enumerable rule base, recall factorises into coverage, selection and ranking, each measurable rather
-than estimated. Applied to two such methods it explains the leaderboard: the wider system reaches
-$0.735$ of the annotated chemistry against $0.539$ and converts a third of that reach, while the
-narrower converts nearly all of its own, having no selection stage to lose anything at. The gap is
-the price of \emph{this} selection stage, which loses more than no selection stage does at the same
-budget, and which recall charges only to methods that select: a claim about benchmark
-design rather than chemistry, predicted from a structural property rather than observed after the
-fact.
-The reading survives its own counterfactual: removing the selection stage and matching the output
-budget, the wider bank passes its competitor by $0.167$ $[0.112,0.223]$, though only above the
-budget the field uses, output size acting again and this time in our favour.
-That first factor belongs to the system rather than the rule base: holding fixed the $152$ rules two
-banks share and swapping only the engine that applies them moves what they reach by $+0.192$
-$[+0.152,+0.236]$, as large as the entire gap between the banks --- and the whole of that term is one
-line of preprocessing neither paper reports. We release the
-protocol, the audited split and the frozen predictions that make every measurement repeatable.
+For a method whose rule base can be enumerated, recall factorises exactly into coverage, selection
+and ranking. The identity is arithmetic, and staging a pipeline this way is not new; what an
+enumerable candidate set changes is that the first factor stops being estimated from a sample or
+bounded by a beam and becomes an exhaustive measurement, so all three are measured rather than
+inferred. Applied to two such methods it explains a leaderboard
+instead of restating one: the wider system reaches $0.735$ of the annotated chemistry against
+$0.539$ and converts a third of that reach, while the narrower converts nearly all of its own,
+having no selection stage to lose anything at. The gap is the price of \emph{this} selection stage,
+which loses more than no selection stage does at the same budget, and which recall charges only to
+methods that select --- a claim about benchmark design rather than chemistry, predicted from a
+structural property rather than observed after the fact. It survives its own counterfactual:
+with the selection stage removed and the output budget matched, the wider bank passes its competitor
+by $0.167$ $[0.112,0.223]$, though only above the budget the field uses.
+
+The first factor is not a property of the rule base at all. Holding fixed the $152$ rules two banks
+share and swapping only the engine that applies them moves what they reach by $+0.192$
+$[+0.152,+0.236]$, as large as the entire gap between the banks, and the whole of that term is one
+line of preprocessing neither paper reports. Which way it points belongs to the bank rather than to
+the engine: the same switch is worth $+0.307$ to one published bank and $-0.342$ to another.
+
+Turned on the leaderboard itself, the same instrument finds two variables sitting between a set of
+predictions and a position on it, neither of them declared: the rule for when two structures are the
+same molecule, and how many candidates a method emits. Varying the first with predictions held fixed
+erases a statistically significant advantage between two published tools on the external set. The
+second reorders the field, and every reversal that reporting F1 or an output budget certifies runs
+through the one system emitting $81$ candidates against everyone else's $8$ to $11$; truncating a
+fixed pair reorders it three times as that count alone changes. The two are independent, since at a
+matched emitted count the criterion sensitivities still separate, the extremes by $-0.025$
+$[-0.035,-0.015]$. We release the protocol, the audited split and the frozen predictions that make
+every measurement repeatable.
 \end{abstract}
 
 \section{Introduction}
@@ -188,23 +190,22 @@ settled decades ago; we re-instantiate it here rather than discover it.
 \paragraph{Remaining gap.} \looseness=-1 None of the three axes is in doubt in general, and none has been varied
 for metabolite predictors. What is unestablished is how far each moves this field's rankings when it
 is the only thing changing. For the budget the new content is therefore measurement, not the
-trade-off: three distinct orderings across the sweep, and at $k=5$ both pairs involving our own
-system separating while the other two do not; a budget
-truncating SyGMa on $92.7\%$ of substrates and GRAIL's emitted list on none, so the comparison made at it is not
-budget-matched; and a per-substrate budget from descriptors recovering almost none of the oracle
-headroom out of sample, which bounds that direction rather than refuting it
-(Appendix~\ref{app:props}). The decomposition is likewise not ours in general, and the priority is
+trade-off. Three distinct orderings appear across the sweep, and at $k=5$ both pairs involving our
+own system separate while the other two do not. The budget truncates SyGMa on $92.7\%$ of substrates
+and GRAIL's emitted list on none, so the comparison made at it is not budget-matched. And a
+per-substrate budget from descriptors recovers almost none of the oracle headroom out of sample,
+which bounds that direction rather than refuting it (Appendix~\ref{app:props}). The decomposition is likewise not ours in general, and the priority is
 worth conceding as plainly as on the budget axis. Splitting a staged system's recall into what
-candidate generation reaches and what a later stage retains is standard practice: cascade ranking in
-retrieval prunes the candidate set stage by stage \citep{Wang_2011_cascade}, recommendation is built
-and evaluated as candidate generation followed by ranking \citep{Covington_2016}, open-domain
-question answering reports retriever recall@$k$ beside end-task accuracy \citep{Karpukhin_2020}, at a
-retrieval budget rather than over everything the retriever could return, and
-\citet{Maziarz_2025} separate single-step accuracy from search in retrosynthesis. What differs here
-is not the identity but what its first factor can be: a corpus is sampled and its first-stage recall
-quoted at that budget, and a beam is a budget
-that widens with compute, so there the term is estimated or bounded, while a finite enumerable rule
-bank makes it an exhaustive measurement, which is what makes it reportable as a ceiling. No
+candidate generation reaches and what a later stage retains is standard practice. Cascade ranking in
+retrieval prunes the candidate set stage by stage \citep{Wang_2011_cascade}; recommendation is built
+and evaluated as candidate generation followed by ranking \citep{Covington_2016};
+\citet{Maziarz_2025} separate single-step accuracy from search in retrosynthesis. Open-domain
+question answering reports retriever recall@$k$ beside end-task accuracy \citep{Karpukhin_2020}, at
+a retrieval budget rather than over everything the retriever could return. What differs here is not
+the identity but what its first factor can be. A sampled corpus quotes first-stage recall at a
+budget, and a beam is a budget that widens with compute, so in both the term is estimated or
+bounded. A finite enumerable rule bank makes it an exhaustive measurement, which is what makes it
+reportable as a ceiling. No
 stage-wise attribution of a predictor's score has been reported for metabolite predictors either,
 and that is what would let the two be explained rather than only reported.
 
@@ -341,17 +342,17 @@ $245$ substrates, against \ceiling\ micro on the full split (Appendix~\ref{app:p
 \looseness=-1
 Removing selection entirely tests that reading rather than restating it. Applying the bank with no
 selector and no threshold, ranking the whole pool and truncating at SyGMa's output, the bank passes
-SyGMa by $0.167$ $[0.112,0.223]$ at $k=82$ and already by $0.063$ $[0.001,0.125]$ at $k=32$ --- and
-is behind at $k=8$, indistinguishable at the field's $k=15$: it converts only above the budget the
-convention sets, \S\ref{sec:metric}'s variable acting for us where it acts against us later
-(Appendix~\ref{app:noselect}).
+SyGMa by $0.167$ $[0.112,0.223]$ at $k=82$ and already by $0.063$ $[0.001,0.125]$ at $k=32$. It is
+behind at $k=8$ and indistinguishable at the field's $k=15$, so it converts only above the budget
+the convention sets --- \S\ref{sec:metric}'s variable acting for us here where it acts against us
+later (Appendix~\ref{app:noselect}).
 
 \looseness=-1
 Applied to a second method it stops being self-diagnosis. SyGMa is rule-grounded with an enumerable
-bank and decomposes on the same split in the same frame, with the inverse profile: reach lower at
-$0.539$ against $\ceiling$ ($-0.196$ $[-0.216,-0.178]$ paired, signed comparator minus GRAIL
-throughout), but it applies every applicable rule and emits the result, converting almost all of
-that reach where we convert a third of a wider one. Its selection factor is $1$ by construction, because it
+bank and decomposes on the same split in the same frame, with the inverse profile. Its reach is the
+lower, $0.539$ against $\ceiling$, a paired $-0.196$ $[-0.216,-0.178]$ --- comparator minus GRAIL
+throughout. But it applies every applicable rule and emits the result, converting almost all of that
+reach where we convert a third of a wider one. Its selection factor is $1$ by construction, because it
 emits every product its applicable rules generate; the same computation returns $0.539$ for its
 coverage and $0.953$ for its ranking, and those two are measured. The gap between us is therefore
 not a worse rule base but the cost of \emph{this} selection stage, which loses more than no
@@ -378,11 +379,11 @@ an engine term of $+0.192$ $[+0.152,+0.236]$ paired --- against an entire bank-t
 $0.201$ on those substrates, with the $23$ rules we do not hold worth $+0.143$ $[+0.107,+0.180]$ at
 fixed engine and depth no confound. Almost all of what reads as a difference between knowledge
 bases is a difference between the programs that query them --- and that difference is one line. Our
-loop expands the substrate with explicit hydrogens before the templates fire and theirs does not;
-toggling that one call, bank and substrates untouched, carries our reach from $0.189$ to $0.384$ ---
-the whole of the engine term, leaving the two engines no longer distinguishable --- where the same
-loop's other two discretionary choices move reach by nothing here (Appendix~\ref{app:enginereach}). The term is thus not a fact about two particular programs
-but about one decision neither reports: what a bank covers is uninterpretable without the engine
+loop expands the substrate with explicit hydrogens before the templates fire and theirs does not.
+Toggling that one call, bank and substrates untouched, carries our reach from $0.189$ to $0.384$:
+the whole of the engine term, leaving the two engines no longer separable, where the same loop's
+other two discretionary choices move reach by nothing here (Appendix~\ref{app:enginereach}).
+The term is thus not a fact about two particular programs but about one decision neither reports: what a bank covers is uninterpretable without the engine
 that realised the figure, and the direction here is against us, \ceiling\ understating what our own
 bank holds (Appendix~\ref{app:props}).
 
@@ -540,10 +541,10 @@ a single candidate decides, since dropping the substrate itself from every ranke
 $0.003$ of it.
 
 \looseness=-1
-The budget does the same work, and it is what identifies the variable: truncating a ranked list
+The budget does the same work, and it is what identifies the variable. Truncating a ranked list
 moves the emitted count with the method and its ranking held fixed, so a reordering along the sweep
-cannot be a property of any one system; MetaPredictor's emitted count has also been moved with the
-model fixed, $10.9$ distinct candidates to $34.3$ at a wider beam (Appendix~\ref{app:seq2seq}). It
+cannot be a property of any one system. MetaPredictor's count has been moved the other way with the
+model fixed too, $10.9$ distinct candidates to $34.3$ at a wider beam (Appendix~\ref{app:seq2seq}). It
 reorders without any budget having to be chosen: swept over $k$ the three methods take three
 distinct orderings, SyGMa above GRAIL at every budget up to $13$ --- certified from $k=1$ to $k=10$,
 by $0.071$ $[0.057,0.086]$ at $k=5$ --- and below only from $14$ on, where the field's $15$ sits. A budget binds a method only when it emits more, so at $k=15$ SyGMa is cut on $92.7\%$ of
@@ -639,35 +640,30 @@ hydrogen.
 
 \subsubsection*{Reproducibility statement}
 
-Every number in this paper was walked back to the artifact that produced it, and every one of them
-regenerates from what we release. Four figures did not when the walk began. Two were recovered
-without the run that had been lost, because the quantity has a closed form or a cross-fitted
-counterpart was already committed; two rested on training runs whose outputs were not kept, and
-those passages are gone rather than carried with a caveat. The audit that established this also
-corrected what it found wrong, which is the
-better argument for running it: two main-text figures, a conversion ratio recomputed off rounded
-inputs and a positive-label density that was low by a factor of two to four, and in the appendix a
-pair of recall endpoints spliced across two substrate populations. What regeneration costs differs by analysis, and the
-distinction is worth stating rather than leaving a reader to discover. Every split-level result
-regenerates from the committed artifacts alone --- frozen predictions, key tables, per-substrate
-records --- while the ablations that rank or re-select candidates require running a trained model,
-so they also need the GRAIL checkpoints. The anonymized archive holds those, together with
-every method's frozen predictions, the audits, the harness, the split construction and the analysis
-code. One result depends on a third-party file we do not redistribute: the reach of
-BioTransformer's template set is computed from the $994$ SMIRKS in the reaction databases its own
-distribution ships, \texttt{metabolicReactions.json}, its \textsc{envmicro} counterpart and
-\texttt{standardizationReactions.json}, which a reader reproduces by pointing the script at an
-installed copy. Its own weights and MetaPredictor's are third-party too and are cited rather than
-shipped. Results measured on a subsample of a split carry the cap and seed that drew it, without which
-the substrate set is not recoverable: sampling draws without replacement, so a different cap yields
-a different set of the same size rather than a subset. Regenerable is meant to include the intervals.
-Four analyses collected per-substrate rows from a process pool in completion order, so each run
-bootstrapped a differently ordered array: the point estimates, being sums, were exact, while the
-intervals moved in the third decimal. The rows are sorted before resampling now, and a repeated run
-reproduces the artifact byte for byte. Where an analysis path re-derives a deployed
-output, the two are reconciled before use rather than assumed equal: the released per-candidate
-score dump reproduces the deployed ranking on all $\ntest$ substrates, a check that caught three
-silent divergences in the path that produces it.
+Every number in this paper traces to a committed artifact and regenerates from what we release, and
+the checks that establish it are released as scripts rather than asserted. What regeneration costs
+differs by analysis: every split-level result regenerates from the committed artifacts alone ---
+frozen predictions, key tables, per-substrate records --- while the ablations that rank or re-select
+candidates require running a trained model and so also need the GRAIL checkpoints. The anonymised
+archive holds those, together with every method's frozen predictions, the audits, the harness, the
+split construction and the analysis code.
+
+Three things a reader needs in order to reproduce rather than approximate. One result depends on a
+third-party file we do not redistribute: the reach of BioTransformer's template set is computed from
+the $994$ SMIRKS its own distribution ships in \texttt{metabolicReactions.json}, its
+\textsc{envmicro} counterpart and \texttt{standardizationReactions.json}, which a reader reproduces
+by pointing the script at an installed copy; its weights and MetaPredictor's are third-party too and
+are cited rather than shipped. Results measured on a subsample of a split carry the cap and seed that
+drew it, without which the substrate set is not recoverable, since sampling draws without replacement
+and a different cap yields a different set of the same size rather than a subset. And
+\emph{regenerable} is meant to include the intervals: per-substrate rows are sorted before
+resampling, so a repeated run reproduces an artifact byte for byte.
+
+Two standing reconciliations guard the analyses against the code they analyse. Where an analysis path
+re-derives a deployed output the two are checked equal before use --- the released per-candidate
+score dump reproduces the deployed ranking on all $\ntest$ substrates --- and where a reimplemented
+loop stands in for the deployed one, it is gated against a figure the deployed one produced, at the
+scale the claim is made on.
 
 Every set this paper treats as external or third-party has been audited for overlap with GRAIL's
 training and validation substrates, not only the one where a problem was found. The GLORYx set
