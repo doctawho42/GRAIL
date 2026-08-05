@@ -272,9 +272,10 @@ rather than standing as independent evidence.
 precision alone: under incomplete annotation precision is a \emph{pessimistic lower bound}, since an
 unannotated candidate scores as a false positive even when it is a real but unrecorded metabolite,
 while recall without output size misleads in the other direction, a method being able to buy recall
-by enumerating (Appendix~\ref{app:budget}). Two comparisons are confirmatory and carry the
-multiplicity correction, the differential sensitivity of \S\ref{sec:rankflip} and the
-learned-versus-prior gap of \S\ref{sec:xmc}; every other interval here is exploratory. Selection
+by enumerating (Appendix~\ref{app:budget}). We designate two comparisons confirmatory and correct
+those for multiplicity, the differential sensitivity of \S\ref{sec:rankflip} and the
+learned-versus-prior gap of \S\ref{sec:xmc}, and treat every other interval as exploratory. The
+designation is made here; the pre-registered design specified no correction. Selection
 happens on validation, with two exceptions we name rather than imply: the deployed filter's encoder
 variant, chosen by comparing both on test (Appendix~\ref{app:arch}), which reaches every GRAIL
 number here including the headline; and the exploratory analyses of Appendix~\ref{app:negative},

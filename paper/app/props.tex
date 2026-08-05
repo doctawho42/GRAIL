@@ -17,7 +17,7 @@ that limits rather than estimates.}
 learned selection against a frequency prior & selection & paired &
 $0.266$ against $0.410$, $\Delta = -0.144$ $[-0.196,-0.095]$ ($n{=}245$) \\
 selection breadth, 30 to 300 rules & selection & single &
-recall $0.352 \to 0.413$; pool coverage $0.482 \to 0.608$ ($n{=}245$) \\
+recall $0.352 \to 0.413$; substrates with a hit in the pool $0.482 \to 0.608$ ($n{=}245$) \\
 training set, 2{,}418 to 4{,}787 substrates & selection & single &
 recall $0.330 \to 0.334$, inside the $\pm0.010$ seed spread \\
 depth-2 rule application & coverage & single &
@@ -93,10 +93,11 @@ Rules applied & pool coverage & recall@15 & mean pool & mean output \\
 
 Widening the selector from 30 to 300 rules lifts recall@15 by 0.061 and pool coverage by 0.126,
 at 8.6 times the pool size. This is recall bought with precision, the same trade SyGMa makes by
-overproducing. The gain saturates below the ceiling: pool coverage plateaus at 0.608 against the full-test
-ceiling of $\ceiling$ even when essentially every applicable rule is fired, and recall@15 at 0.413
-remains far below SyGMa, which reaches 0.572 on the full split. Roughly a third of the metabolites present in
-the pool are still lost at the cut-off when the selector is widened this far ($0.413/0.608=0.68$).
+overproducing. The gain saturates: even when essentially every applicable rule is
+fired, the fraction of substrates with at least one reference somewhere in the pool plateaus at
+$0.608$, and recall@15 at $0.413$ remains far below SyGMa's $0.572$. Those two are not a ratio ---
+the first counts substrates, the second references --- so what the pair shows is that widening the
+selector stops helping well before either is exhausted.
 That is not the deployed ranking factor, which is measured on the narrower pool the deployed
 selector produces and is close to one: widening the selector fills the pool faster than the
 fifteen output slots can carry, so what selection recovers, the cut-off gives back.
@@ -183,7 +184,7 @@ selection costs $0.55$, so a beam is a far less lossy budget than a top-$k$ over
 which is what one would expect of a budget the model itself was trained against. And its ranking
 factor is $1.000$ exactly, for the reason GRAIL's is near one on this subset: the deployed decode
 leaves $10.9$ distinct candidates against a budget of $15$, so the field's $k$ binds neither of
-them. At $k=15$ only SyGMa is truncated, on $92.7\%$ of substrates on the full split, which is the
+them. At $k=15$ SyGMa is truncated on $92.7\%$ of substrates on the full split against MetaPredictor's $1.4\%$ and GRAIL's none, which is the
 population that fraction is measured on. The budget parameter of
 \S\ref{sec:metric} is therefore acting on one method out of three even here.
 
@@ -616,12 +617,12 @@ $-0.058$, 95\% interval $[-0.075,-0.042]$.
 The obvious next step is to make the cut depend on the substrate, and it does not work. Per
 substrate the F1-optimal cut $k^\star$ is computable exactly from the ranked list and the annotated
 set, so the ceiling is known: knowing $k^\star$ is worth $48$ to $76\%$ relative over the best
-constant across the five methods. Almost none of that is reachable. Splitting the headroom into the
-part explained by the true set size, a property of the substrate, and the part explained by where
-the hits fell in the ranking, a property of the ranker, leaves cardinality $20\%$ for GRAIL and
-$18\%$ for MetaPredictor. For SyGMa it is negative: emitting exactly the true count scores $0.112$
-against $0.217$ for a constant four, because its hits sit at ranks three and four and truncating to
-the count discards them.
+constant across the five methods. Almost none of that is reachable. Cut each list instead at a
+per-substrate count predicted out of fold from substrate descriptors, and the part of the headroom
+that recovers is $-10\%$ for GRAIL, $-2\%$ for SyGMa and $+5\%$ for MetaPredictor: for
+two of the three, predicting the set size does worse than the best constant. The true count is a
+property of the substrate and the ranking is a property of the method, and out of fold the first
+carries almost none of the gap.
 
 Cross-fitting confirms this out of sample. A gradient-boosted regressor on twelve substrate
 descriptors, predicting $k^\star$ and evaluated on held-out folds, recovers $3.2\%$ of the oracle
