@@ -164,7 +164,7 @@ MetaTrans        & 0.122 & 0.565 & \textbf{0.177} & 0.105 & 11.5 & 2 & 1 \\
 MetaPredictor    & 0.116 & \textbf{0.585} & 0.174 & 0.101 & 10.9 & 1 & 2 \\
 BioTransformer   & 0.127 & 0.453 & 0.162 & 0.104 & 10.7 & 4 & 3 \\
 \textbf{GRAIL}   & 0.110 & 0.365 & 0.143 & 0.092 & \phantom{0}8.7 & 5 & 4 \\
-SyGMa            & 0.028 & 0.562 & 0.049 & 0.027 & 75.1 & 3 & 5 \\
+SyGMa            & 0.029 & 0.562 & 0.051 & 0.028 & 74.2 & 3 & 5 \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -173,7 +173,7 @@ SyGMa            & 0.028 & 0.562 & 0.049 & 0.027 & 75.1 & 3 & 5 \\
 Only one method moves with certification, and it is the one the decomposition names. On F1 the four
 selecting methods are mutually indistinguishable, every pairwise interval covering zero, the widest
 separation being GRAIL against MetaTrans at $-0.033$ $[-0.071,+0.004]$. SyGMa is below all four,
-$+0.094$ $[+0.065,+0.124]$ against GRAIL rising to $+0.127$ $[+0.106,+0.149]$ against MetaTrans.
+$+0.092$ $[+0.063,+0.123]$ against GRAIL rising to $+0.125$ $[+0.103,+0.147]$ against MetaTrans.
 On recall it is above two of them, $-0.109$ $[-0.168,-0.052]$ against BioTransformer and $-0.197$
 $[-0.274,-0.120]$ against GRAIL. Those two pairs are the certified reversals: each is significant
 in one direction on recall and in the other on F1.
@@ -292,8 +292,8 @@ models MOSES ships samples for, 240{,}208 molecules, under the same five criteri
 Tautomer matching is inert on this set. Every one of the eight returns its canonical Unique@10{,}000
 to within $0.0001$, the single non-zero difference being JT-VAE's $0.9992$ against $0.9991$. The
 relaxation that does something is stereochemistry, and what it does is small: the hidden Markov
-baseline falls $0.923 \to 0.888$ and the $n$-gram baseline $0.986 \to 0.957$, while five of the
-remaining six move by $0.001$ or less. That is enough for one rank exchange, LatentGAN dropping
+baseline falls $0.923 \to 0.888$ and the $n$-gram baseline $0.986 \to 0.957$, while four of the
+remaining six move by $0.001$ or less and a fifth by $0.0011$. That is enough for one rank exchange, LatentGAN dropping
 $0.998 \to 0.988$ past a combinatorial baseline that does not move from $0.990$, so two adjacent
 mid-table models swap positions 5 and 6 under stereo-blind matching and under no other criterion.
 
@@ -339,7 +339,7 @@ direction, discarding two thirds of the sample to correct a bias they do not hav
 Recomputing on the thirteen with the same loaders, matcher and frozen predictions, so that only the
 substrate list changes, GRAIL's external recall falls by up to a factor of $2.6$: $0.155 \to 0.059$
 under strict \textsc{inchikey}, $0.310 \to 0.185$ once stereochemistry is disregarded, $0.333 \to
-0.223$ under the tautomer-aware default. The other three methods move by less than $0.06$, which is
+0.223$ under the tautomer-aware default. The other three methods move by less than $0.07$, which is
 the sample change rather than a correction.
 
 Two claims survive and one does not. GRAIL's stereo step remains significant at $+0.126$
@@ -417,7 +417,7 @@ Appendix~\ref{app:props} measures what that oracle is worth and how little of it
 figures are taken out of sample, from the same cross-fit, so they share a baseline: for
 MetaPredictor on the full split the oracle cutoff lifts macro-F1 from $0.254$ at the best constant
 $k$ to $0.435$, and a head trained to predict that cutoff recovers $0.008$ of the $0.181$ available,
-$4.3\%$ ($3.2\%$ for GRAIL, negative for SyGMa). No method here can set this budget for itself. What
+$4.3\%$ ($3.2\%$ for GRAIL, $1.1\%$ for SyGMa). No method here can set this budget for itself. What
 the cap does \emph{not} do is deny the model outputs it could have justified --- under recall a cap
 can only cost --- so the comparison reduces to the plain statement: spending what the curator spent,
 the curator retrieves $0.539$ of the other source's list and the best model $0.301$.

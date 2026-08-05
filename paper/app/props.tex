@@ -23,7 +23,7 @@ recall $0.330 \to 0.334$, inside the $\pm0.010$ seed spread \\
 depth-2 rule application & coverage & single &
 ceiling $+0.012$, at $8.5\times$ the candidate cost ($n{=}150$) \\
 composition of the uncovered set & coverage & single &
-$26.9\%$ of references outside the bank; no mass bin exceeds $6\%$ of it ($n{=}500$) \\
+$26.9\%$ of references outside the bank; the largest mass bin holds $6.0\%$ of it \\
 site-of-metabolism prior & ranking & bound &
 $+0.011$ at the best of five weightings, itself chosen here ($n{=}245$) \\
 abstention on filter score & ranking & single &
@@ -32,7 +32,7 @@ propensity-scored selection loss & selection & paired &
 $0.249$ against $0.266$; deficit to the prior widens to $-0.161$ $[-0.215,-0.107]$ ($n{=}245$) \\
 similarity-to-training stratification & coverage & paired &
 bank coverage rises $0.712 \to 0.819$ with similarity, and an untrained rule engine falls on a slope
-the data cannot separate from the learned ones', $+0.008$ $[-0.055,+0.068]$ on F1 ($n{=}\ntest$) \\
+the data cannot separate from the learned ones', $+0.022$ $[-0.041,+0.086]$ on F1 ($n{=}\ntest$) \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -48,7 +48,7 @@ subsections that follow and in Propositions 2 and 3.
 Measured on 500 substrates, 26.9\% of reference metabolites lie outside what the bank
 reaches in one step under InChIKey matching, and about 25\% under tautomer-aware matching.
 The misses are a diverse tail rather than one absent rule family. Binning them by the
-substrate-to-metabolite mass difference, no bin holds more than 6\% of the uncovered set. We
+substrate-to-metabolite mass difference, the largest bin holds $6.0\%$ of the uncovered set. We
 report the distribution rather than named reaction classes, because a mass difference does not
 identify a transformation: the same $+14$ is produced by an N-methylation and by an oxidation of a
 methylene to a carbonyl. Proposition 3 types
@@ -625,7 +625,7 @@ the count discards them.
 
 Cross-fitting confirms this out of sample. A gradient-boosted regressor on twelve substrate
 descriptors, predicting $k^\star$ and evaluated on held-out folds, recovers $3.2\%$ of the oracle
-headroom for GRAIL, $4.3\%$ for MetaPredictor and $-6.0\%$ for SyGMa; predicting the set size
+headroom for GRAIL, $4.3\%$ for MetaPredictor and $1.1\%$ for SyGMa; predicting the set size
 directly falls below the constant baseline for two methods of three. Descriptors are not a graph
 encoder, so this bounds the direction rather than refuting it, but the mechanism it agrees with is
 structural: a head reading only the substrate cannot see which of its own predictions are correct,
@@ -655,11 +655,11 @@ substrate is.}
 
 The design carries a control that decides whether the axis means anything at all. SyGMa is a rule
 engine that never saw the training split, so if the axis measures transfer its curve must be flat.
-It is not: SyGMa degrades at $+0.166$ on F1 and $+0.293$ on recall against GRAIL's $+0.158$ and
-$+0.307$. Resampled on the same draws, so that the comparison is paired, the difference is $+0.008$
-$[-0.055,+0.068]$ on F1 and $-0.014$ $[-0.145,+0.114]$ on recall. Those are failures to detect a
+It is not: SyGMa degrades at $+0.180$ on F1 and $+0.291$ on recall against GRAIL's $+0.158$ and
+$+0.307$. Resampled on the same draws, so that the comparison is paired, the difference is $+0.022$
+$[-0.041,+0.086]$ on F1 and $-0.016$ $[-0.144,+0.115]$ on recall. Those are failures to detect a
 difference, not demonstrations that none exists, and the width is the part worth stating: the F1
-interval still admits a gap of $0.068$ and the recall interval one of $0.145$, against slopes of
+interval still admits a gap of $0.086$ and the recall interval one of $0.144$, against slopes of
 $0.158$ and $0.307$ themselves. What the data support is that a rule engine with nothing to
 transfer from falls on a slope this measurement cannot separate from a learned method's --- not that
 the two slopes are equal.
@@ -744,8 +744,8 @@ method with the lowest observed precision is the one that benefits from the corr
 \includegraphics[width=0.52\textwidth]{fig_propensity}
 \end{center}
 \caption{Macro F1 with each per-substrate precision corrected to $\min(P_{\text{obs}}/c,1)$, swept
-over the annotation propensity. The reported ordering holds until $c=0.055$, where SyGMa passes
-GRAIL; at that rate a substrate with three recorded metabolites would have fifty-five in truth.}
+over the annotation propensity. The reported ordering holds until $c=0.06$, where SyGMa passes
+GRAIL; at that rate a substrate with three recorded metabolites would have fifty in truth.}
 \label{fig:propensity}
 \end{figure}
 
@@ -754,18 +754,18 @@ GRAIL; at that rate a substrate with three recorded metabolites would have fifty
 \toprule
 annotation propensity $c$ & GRAIL & MetaPredictor & SyGMa \\
 \midrule
-$1.00$ (as reported) & 0.136 & 0.162 & 0.047 \\
-$0.75$ & 0.163 & 0.202 & 0.061 \\
-$0.50$ & 0.208 & 0.271 & 0.086 \\
-$0.30$ & 0.263 & 0.374 & 0.130 \\
-$0.20$ & 0.306 & 0.461 & 0.177 \\
-$0.10$ & 0.354 & 0.589 & 0.280 \\
-$0.05$ & 0.368 & 0.611 & 0.401 \\
+$1.00$ (as reported) & 0.136 & 0.162 & 0.048 \\
+$0.75$ & 0.163 & 0.202 & 0.062 \\
+$0.50$ & 0.208 & 0.271 & 0.088 \\
+$0.30$ & 0.263 & 0.374 & 0.132 \\
+$0.20$ & 0.306 & 0.461 & 0.179 \\
+$0.10$ & 0.354 & 0.589 & 0.282 \\
+$0.05$ & 0.368 & 0.611 & 0.402 \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-The reported ordering survives to $c = 0.055$, where SyGMa overtakes GRAIL; MetaPredictor is never
+The reported ordering survives to $c = 0.06$, where SyGMa overtakes GRAIL; MetaPredictor is never
 overtaken on a grid running down to $c=0.05$. At $c=0.055$ a substrate carrying three recorded
 metabolites would have about fifty-five in truth, which the references do not support.
 
