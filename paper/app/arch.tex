@@ -9,9 +9,9 @@ generator's confidence in the rule that made it.
 Both learned stages train on positive-unlabelled data. Annotated metabolites are the only
 positives; rule-applicable products that carry no annotation are unlabelled rather than negative,
 because a missing annotation does not establish that a transformation does not occur. The filter
-is therefore trained on raw classifier outputs, so that a non-negative positive-unlabelled
-surrogate is not applied on top of a sigmoid, and the generator down-weights applicable but
-unobserved rules instead of penalising them as hard negatives.
+exposes its raw classifier outputs so that a non-negative positive-unlabelled surrogate is never
+applied on top of a sigmoid when that estimator is selected, and the generator down-weights
+applicable but unobserved rules instead of penalising them as hard negatives.
 
 Both stages share a featurisation: molecular graphs with 16-dimensional nodes and 18-dimensional
 edges, and a 1024-bit Morgan fingerprint per molecule. Unless stated otherwise, matching between
@@ -48,7 +48,7 @@ per-firing probabilities are combined by noisy-OR.
 Training is multi-label rule classification with a margin-ranking auxiliary at weight 0.25 and
 margin 0.45. Rules that match the substrate but carry no annotation are down-weighted by half
 rather than treated as negatives, which is what makes the objective positive-unlabelled.
-Optimisation uses Adam at a learning rate of $10^{-4}$ for at most 20 epochs with early stopping.
+Optimisation uses Adam at a learning rate of $10^{-4}$ for at most 8 epochs with early stopping.
 
 \subsection{The filter}
 
@@ -65,8 +65,9 @@ correspondence between atoms rather than by index order, so that chemically mean
 mappings are preserved across the reaction. We measured the two rather than assuming which should
 be the default, and report the comparison below.
 
-Both variants use a non-negative positive-unlabelled risk estimator with a class prior of 0.75,
-evaluated on logits. Optimisation uses Adam at a learning rate of $10^{-4}$ for at most 20 epochs
+The estimator is selectable: with the non-negative positive-unlabelled risk it consumes logits
+and with binary cross-entropy it consumes probabilities, and the released configuration trains the
+filter under the second. Optimisation uses Adam at a learning rate of $10^{-4}$ for at most 8 epochs
 with early stopping at a patience of 7.
 
 \subsection{Choosing between the two filters}
