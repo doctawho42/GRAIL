@@ -349,8 +349,7 @@ convention sets, \S\ref{sec:metric}'s variable acting for us where it acts again
 (Appendix~\ref{app:noselect}).
 
 \looseness=-1
-Applied to a second method it stops being self-diagnosis, and MetaPredictor's $0.804$ above is a
-selection factor measured on a system that is not ours (Appendix~\ref{app:seq2seq}). SyGMa is rule-grounded with an enumerable
+Applied to a second method it stops being self-diagnosis. SyGMa is rule-grounded with an enumerable
 bank and decomposes on the same split in the same frame, with the inverse profile: reach lower at
 $0.539$ against $\ceiling$ ($-0.196$ $[-0.216,-0.178]$ paired, signed comparator minus GRAIL
 throughout), but it applies every applicable rule and emits the result, converting almost all of
@@ -363,16 +362,26 @@ $245$ substrates (Appendix~\ref{app:noselect}) --- and which recall charges only
 select.
 
 \looseness=-1
-That first factor is \emph{system} reach, not bank breadth: the $152$ rules the two banks share
-reach $0.189$ under our application against $0.381$ under SyGMa's. Depth is not the confound, since
-matched at one step SyGMa reaches $0.532$ and the gap widens to $0.203$. The direction is against
-us, so \ceiling\ understates what our bank holds (Appendix~\ref{app:props}).
-The frame also bounds this architecture: a perfect selector and ranker would stop at \ceiling,
-limited by the corpus rather than by tuning, $53\%$ of uncovered transformations being reaction
-types absent from the bank. It is carried by the curated fifth: on $245$ substrates where
-the whole bank reaches $0.728$, the $1{,}715$ curated rules reach $0.660$ and the $5{,}866$ mined
-ones $0.328$. The inert-looking tail is still not prunable (Appendices~\ref{app:props},
-\ref{app:negative}).
+The frame also bounds this architecture: a perfect selector and ranker would stop at \ceiling\ as
+our own engine realises it (\S\ref{sec:enginereach}), limited by the corpus rather than by tuning,
+$53\%$ of uncovered transformations being reaction types absent from the bank. It is carried by the
+curated fifth --- on $245$ substrates the $1{,}715$ curated rules reach $0.660$ against the
+$5{,}866$ mined ones' $0.328$ --- and the inert-looking tail is still not prunable
+(Appendices~\ref{app:props},~\ref{app:negative}).
+
+\paragraph{The coverage factor belongs to the system, not the rule base.}
+\label{sec:enginereach}
+Reporting a ceiling presumes it is a property of the bank, and it is not. $152$ of SyGMa's $175$
+rules sit verbatim in ours, so those can be held fixed while only the procedure applying them
+changes: our depth-1 enumeration against SyGMa's own, same substrates, same matcher, one step each.
+They reach $0.189$ $[0.151,0.230]$ under our application and $0.381$ $[0.333,0.433]$ under theirs,
+an engine term of $+0.192$ $[+0.152,+0.236]$ paired --- against an entire bank-to-bank gap of
+$0.201$ on those substrates, with the $23$ rules we do not hold worth $+0.143$ $[+0.107,+0.180]$ at
+fixed engine and depth no confound. Almost all of what reads as a difference between knowledge
+bases is a difference between the programs that query them, and the direction is against us: our
+engine under-realises shared rules by a factor of two, so \ceiling\ understates what our bank holds.
+Two groups reporting what their banks cover are not comparing banks unless both report the engine
+that realised the figure (Appendix~\ref{app:props}).
 
 \section{Results}
 \label{sec:results}
@@ -380,15 +389,14 @@ ones $0.328$. The inert-looking tail is still not prunable (Appendices~\ref{app:
 \subsection{The criterion the decomposition rests on}
 \label{sec:rankflip}
 
-\looseness=-1
+\looseness=-2
 Every factor counts matched references, so the criterion is settled first: published methods have
 their \emph{frozen} predictions re-scored by the TAME harness under all five criteria, so only the
-match rule changes across columns, never the chemistry. Three --- GRAIL, SyGMa
-\citep{Ridder_2008} and MetaPredictor \citep{Zhu_2024} --- have predictions for the whole clean test
-split and are compared there, paired on identical substrates (Table~\ref{tab:matchsens});
-BioTransformer \citep{Djoumbou_Feunang_2019} and MetaTrans \citep{Litsa_2020} have internal
-predictions only on a $\nshared$-substrate shared subset (Appendix~\ref{app:xdomain}), BioTransformer
-appearing on the external set too.
+match rule changes across columns, never the chemistry. GRAIL, SyGMa \citep{Ridder_2008} and
+MetaPredictor \citep{Zhu_2024} have predictions for the whole clean test split and are compared
+there, paired on identical substrates (Table~\ref{tab:matchsens}); BioTransformer
+\citep{Djoumbou_Feunang_2019} and MetaTrans \citep{Litsa_2020} appear on the $\nshared$-substrate
+shared subset, and BioTransformer on the external set (Appendix~\ref{app:xdomain}).
 
 \looseness=-1
 Methods are not equally sensitive to the convention. Over the full split GRAIL gains $0.016$
@@ -437,13 +445,13 @@ MetaPredictor  & & 0.362 & 0.504 & 0.504 & & $+0.142$ $[+0.079,+0.215]$ \\
 reversal: the protocol $\times$ method interaction, with a paired bootstrap over substrates
 ($10{,}000$ resamples). Every method gains under a more tolerant criterion, so only the differential
 can reorder anything. The design was fixed before the data, the five criteria and the re-scoring of frozen predictions
-specified twelve days before the first result; the estimator was not. Multiplicity is corrected
-\emph{post hoc}, no correction having been planned, and we declare the family conservatively as the
-grid the two axes admit rather than the comparisons we report: method pairs crossed with criterion
-steps, twelve externally and twenty internally. No family was pre-specified. Every raw and Holm-adjusted p-value entering either family is
-tabulated in Appendix~\ref{app:holm}, with its estimator, a normal approximation to the
-paired-bootstrap interval. Externally all four interactions called significant survive at that
-family size. On the $\nshared$-substrate subset two pairs separate
+specified twelve days before the first result; the estimator was not, and no family was
+pre-specified either. Multiplicity is corrected \emph{post hoc}, with the family declared
+conservatively as the grid the two axes admit rather than the comparisons we report --- method
+pairs crossed with criterion steps, twelve externally and twenty internally. Every raw and
+Holm-adjusted p-value entering either family is tabulated in Appendix~\ref{app:holm} with its
+estimator, a normal approximation to the paired-bootstrap interval; externally all four
+interactions called significant survive. On the $\nshared$-substrate subset two pairs separate
 along two protocol axes, BioTransformer gaining \interA\ \interAci\ more than GRAIL from
 canonical$\rightarrow$tautomer and SyGMa \interB\ \interBci\ more than MetaTrans from
 canonical$\rightarrow$InChIKey; the first survives the correction at that family size, the second
@@ -462,25 +470,19 @@ in GRAIL's train or validation split, so its row uses the $13$ unseen (Table~\re
 
 The result this section rests on involves neither contaminated arm. Under strict InChIKey SyGMa
 leads MetaPredictor by $-0.130$ $[-0.196,-0.065]$; one rung later the advantage is gone ($+0.005$
-$[-0.071,+0.086]$). The endpoint is not that transition, which contrasts a
-significant result with a null one, but the interaction: MetaPredictor gains $+0.135$
-$[+0.072,+0.209]$ more than SyGMa across the stereo step, the smallest of the external p-values and
-rejected at either family size (Appendix~\ref{app:holm}). That interval is
-what is certified; the relaxed gap covers zero and still admits SyGMa ahead by $0.071$, so a
-criterion is shown erasing a significant advantage, not reversing it.
-Unequal headroom runs \emph{with} the effect here, not against it as internally: MetaPredictor
-enters from $0.362$ against SyGMa's $0.492$ and gains the more. Normalised by the headroom left, the
-differential does not vanish --- $+0.209$ $[+0.111,+0.322]$ on that scale --- and every interaction
-rejected here or internally keeps its sign and excludes zero on that scale
-(Appendix~\ref{app:holm}). On the uncontaminated drugs
-GRAIL's stereo sensitivity survives at $+0.126$ $[+0.028,+0.239]$, as does its interaction with
-SyGMa --- the same measurement, SyGMa's stereo step here being zero. The \emph{external} interaction
-with BioTransformer does not hold on the uncontaminated drugs and is not claimed; the subset
-estimate is unaffected.
-This set's coverage ceiling stays on all $\nglory$, and the reason is a measurement rather than an
-argument: most of the bank is mined from training pairs, so applying it is \emph{not} independent of
-training, but the ceiling is $0.633$ on the twenty-four seen drugs against $0.632$ on the thirteen
-unseen (Appendix~\ref{app:external}).
+$[-0.071,+0.086]$). The endpoint is not that transition, which contrasts a significant
+result with a null one, but the interaction: MetaPredictor gains $+0.135$ $[+0.072,+0.209]$ more
+than SyGMa across the stereo step, rejected at either family size (Appendix~\ref{app:holm}). That interval is what is certified: the relaxed gap covers zero
+and still admits SyGMa ahead by $0.071$, so a criterion erases a significant advantage here rather
+than reversing it.
+Unequal headroom runs \emph{with} the effect here rather than against it, and normalised by the
+headroom left it does not vanish, at $+0.209$ $[+0.111,+0.322]$ (Appendix~\ref{app:holm}). On the uncontaminated drugs GRAIL's stereo sensitivity survives at $+0.126$
+$[+0.028,+0.239]$, as does its interaction with SyGMa, whose stereo step here is zero; the
+\emph{external} interaction with BioTransformer does not survive there and is not claimed.
+This set's coverage ceiling stays on all $\nglory$ for a measured reason: most of the bank is mined
+from training pairs, so applying it is \emph{not} independent of training, yet the ceiling is
+$0.633$ on the twenty-four seen drugs against $0.632$ on the thirteen unseen
+(Appendix~\ref{app:external}).
 
 
 
@@ -495,8 +497,8 @@ looks like disagreement about observed chemistry is disagreement about notation.
 
 \looseness=-1
 They also bound what a recall figure means rather than what it can reach: a competent independent
-curation records only $0.539$ of the corpus annotation, so past that level recall increasingly
-measures one source's inclusion choices. That $0.539$ is measured on the $25$ drugs both sources chose to
+curation records only $0.539$ of the corpus annotation, so past that level recall measures one
+source's inclusion choices. That $0.539$ is measured on the $25$ drugs both sources chose to
 curate, which carry $5.7$ to $6.5$ references each against $2.2$ across the clean test split, and we cannot sign the
 direction of that bias; the caveat travels with the number. Where models sit against it depends on
 the budget, and both matched-budget analyses belong here, not only the significant one. MetaPredictor's uncapped $0.562$ is a tie inside noise bought
@@ -509,17 +511,15 @@ $0.472$, a gap of $+0.078$ $[-0.050,+0.210]$ that does not reach significance
 \looseness=-1
 \paragraph{Mechanism.} The spread tracks how far a method's outputs diverge
 \emph{representationally} from the references, and the intermediate column says which divergence is
-responsible: here stereochemistry alone, every separating gain realised by the stereo step and the
-tautomer step zero for all but one method. GLORYx references carry stereocentres and several of
-these systems cannot emit one, so a stereo-sensitive criterion scores them on a representation they
-never produce. Internally, where references are already stereo-stripped, tautomerism fails instead,
-so which relaxation dominates is a property of the reference set. We state that as the effect's
-condition rather than as a caveat on it, because it accounts for where the effect appears: it needs
-references carrying representational variety to diverge from. Both replications outside metabolism
-are failures to detect a reordering, and plausibly for that reason --- in retrosynthesis, whose
-references are canonical and stereochemically explicit, four such criteria span about $0.02$, and
-across eight molecular generators tautomer matching is inert. Whether the convention reorders
-results in another domain remains the open test (Appendix~\ref{app:xdomain}).
+responsible: here stereochemistry alone, every separating gain realised by the stereo step. GLORYx
+references carry stereocentres and several of these systems cannot emit one, so a stereo-sensitive
+criterion scores them on a representation they never produce; internally, where references are
+already stereo-stripped, tautomerism fails instead. Which relaxation dominates is therefore a
+property of the reference set, and we state that as the effect's condition rather than as a caveat:
+it needs references carrying representational variety to diverge from. Whether the convention reorders another domain remains the open
+test: both replications outside metabolism are failures to detect one, plausibly for that reason,
+retrosynthesis references being canonical and stereochemically explicit
+(Appendix~\ref{app:xdomain}).
 
 
 \subsection{The aggregate and the budget are one variable, and the decomposition predicts it}
@@ -528,8 +528,8 @@ results in another domain remains the open test (Appendix~\ref{app:xdomain}).
 \looseness=-1
 Every interval here is exploratory by the \S\ref{sec:tame} designation and corrected for nothing.
 A method emitting eighty candidates to catch a few more references is rewarded by recall and
-punished by F1 and Jaccard. Computed on each method's deployed output set over the full split,
-untruncated since precision and Jaccard are set quantities, the orderings disagree. Against GRAIL the disagreement is
+punished by F1 and Jaccard. On each method's deployed output set over the full split, untruncated
+since precision and Jaccard are set quantities, the orderings disagree. Against GRAIL that is
 certified in both directions: SyGMa leads on recall by $0.253$ $[0.222,0.283]$ and is $0.088$
 $[0.076,0.099]$ below it on F1. Against MetaPredictor only one direction is: SyGMa sits
 $0.113$ $[0.107,0.120]$ below it on F1, certified, while its recall lead of $0.023$ has an interval
@@ -559,10 +559,9 @@ criterion separates methods at fixed output size, which output size cannot expla
 (Appendix~\ref{app:xdomain}).
 
 \looseness=-1
-The decomposition says why, and this is where the paper's two halves meet. SyGMa's selection factor
-is $1$ (\S\ref{sec:decomp}), which is what recall rewards and precision punishes, so a pipeline with
-no selection stage is scored relatively higher by the first than by the second, though reach remains
-a free axis and it need not lead on recall outright.
+The decomposition says why. SyGMa's selection factor is $1$ (\S\ref{sec:decomp}), which is what
+recall rewards and precision punishes, so a pipeline with no selection stage is scored relatively
+higher by the first than the second --- though reach remains free and it need not lead on recall.
 
 \looseness=-1
 The matching criterion acts on these metrics too, and where it barely touched recall. Over the full
@@ -585,32 +584,25 @@ survives to $c\approx0.055$ (Appendix~\ref{app:props}).
 \label{sec:diagnosis}
 
 \looseness=-1
-GRAIL trails both published comparators, SyGMa at $0.572$ over the $1{,}168$ substrates the two
-share (paired $-0.242$ $[-0.271,\,-0.212]$) and MetaPredictor at $0.568$ over its own $1{,}169$, and
-leads at no output budget; it emits $8.4$ candidates against SyGMa's $80.7$, which
-\S\ref{sec:metric} prices against us. Recall figures here differ by population, aggregation and
-truncation, several coinciding in value without being the same quantity
-(Appendix~\ref{app:xdomain}).
+GRAIL trails both published comparators --- SyGMa at $0.572$ on the $1{,}168$ substrates they
+share (paired $-0.242$ $[-0.271,\,-0.212]$) and MetaPredictor at $0.568$ on its own $1{,}169$ ---
+and leads at no output budget. Recall figures here differ by population, aggregation and truncation,
+several coinciding in value without being the same quantity (Appendix~\ref{app:xdomain}).
 Selection being the dominant shortfall, what makes it hard is structural: choosing which of
-\nbank\ rules apply is \textbf{extreme multi-label classification} with a near-empty positive set, a
-median of five rules per substrate carrying a positive label, $0.07\%$ of the label space while far
-more are applicable --- a regime in which frequency and propensity baselines are known to be hard to
-beat \citep{Jain_2016}.
-Each arm selects thirty rules through the same enumeration and filter: a learned
-selector reaches $0.266$ where rule-firing frequency alone reaches $0.410$, a paired $-0.144$
-$[-0.196,\,-0.095]$ at $n=245$. The effect is selection-specific: at the ranking stage the same
-filter beats the same prior, $+0.039$ $[+0.007,+0.072]$ paired. The prescribed remedy fails too:
-inverse-propensity weighting moves the selector to $0.249$, treating as an annotation artifact a
-rarity that is here substantially chemistry (Appendix~\ref{app:props}).
-
-\paragraph{What constrains each factor.}
-\label{sec:evidence}
-The diagnosis rests on nine measurements (Table~\ref{tab:levers}), each designed to move exactly one
-factor; six failed, and are the more useful half. The stratification meant to show a rule bank
-transfers better off distribution finds an untrained engine on a slope the data cannot separate from
-the learned ones' --- a failure to detect rather than evidence of none, so we attribute the
-shortfall to the structure of the selection problem rather than to under-training
+\nbank\ rules apply is \textbf{extreme multi-label classification} with a near-empty positive set, a median
+of five per substrate against far more applicable --- a regime where frequency and propensity
+baselines are hard to beat \citep{Jain_2016}.
+Each arm selects thirty rules through the same enumeration and filter: a learned selector reaches
+$0.266$ where rule-firing frequency alone reaches $0.410$, a paired $-0.144$ $[-0.196,\,-0.095]$ at
+$n=245$, while at the ranking stage the same filter beats the same prior, $+0.039$
+$[+0.007,+0.072]$. The prescribed remedy fails too: inverse-propensity weighting moves the selector
+to $0.249$, treating as an annotation artifact a rarity that is here substantially chemistry
 (Appendix~\ref{app:props}).
+
+\label{sec:evidence}
+The diagnosis rests on nine measurements (Table~\ref{tab:levers}), each designed to move one factor;
+six failed and are the more useful half, among them the stratification meant to show a rule bank
+transfers better off distribution (Appendix~\ref{app:props}).
 
 \section{Limitations}
 \label{sec:limitations}
@@ -619,22 +611,21 @@ shortfall to the structure of the selection problem rather than to under-trainin
 \looseness=-1
 \paragraph{Sample sizes differ, and two comparators cannot be re-run here.} The five-method table
 rests on $\nshared$ shared substrates: MetaTrans's inference pipeline no longer reproduces and
-BioTransformer's configuration is unscripted, so both are frozen predictions, reproducible from our
-artifacts but not regenerable. The other three are scored on the full $\ntest$, the external
-replication on $n=\nglory$.
+BioTransformer's configuration is unscripted, so both are frozen predictions. The other three are
+scored on the full $\ntest$, the external replication on $n=\nglory$.
 
 \paragraph{Precision is a lower bound, not an estimate.} An unannotated but chemically real product
 scores as a false positive, so every precision and F1 figure is pessimistic; \S\ref{sec:metric} ranks
 on them only under a uniform-propensity model, assumed rather than estimated.
 
 \paragraph{The single-step bound.} Some references are multi-generation products no single rule
-application reaches, and depth-2 lifts the ceiling by ${\sim}0.012$ at $8.5$ times the candidate
-cost, so $\ceiling$ bounds this formulation rather than the task.
+application reaches; depth-2 lifts the ceiling by ${\sim}0.012$ at $8.5$ times the cost, so
+$\ceiling$ bounds this formulation rather than the task.
 
 \paragraph{Evaluation hygiene of this paper itself.} Headline numbers come from one evaluation of
-the deployed configuration. Selection is on validation but for the two exceptions
+the deployed configuration, and selection is on validation but for the two exceptions
 \S\ref{sec:tame} names: the filter's encoder variant, chosen on test, which reaches every GRAIL
-number including the headline, and the exploratory analyses of Appendix~\ref{app:negative}.
+number including the headline, and Appendix~\ref{app:negative}'s exploratory analyses.
 
 \section{Conclusion}
 \label{sec:conclusion}
