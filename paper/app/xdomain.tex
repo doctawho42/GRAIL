@@ -187,6 +187,44 @@ demonstration of absence: the widest of those intervals still admits a differenc
 $n=\nshared$, and separating the two readings needs a larger shared subset than the comparators
 currently supply.
 
+\subsection{How much of the ordering is real}
+\label{app:orderingstability}
+
+The reversals above are reported one at a time, which answers whether the phenomenon exists and not
+how much of the leaderboard it consumes. The aggregate is available from the same frozen predictions
+on the same $\nshared$ substrates: every pairing of a matching criterion with an aggregate is a
+leaderboard someone could have published, all five criteria are in use in this literature and all
+four aggregates are reported in it, and not one of the twenty cells is declared by the paper that
+stands on it.
+
+\begin{center}
+\small
+\begin{tabular}{lcccc}
+\toprule
+what is allowed to vary & cells & orderings & pairs changing sign & certified both ways \\
+\midrule
+criterion and aggregate            & $20$ & $11$ & $9/10$ & $2/10$ \\
+criterion alone, at recall         & $5$  & $3$  & $2/10$ & $0/10$ \\
+criterion alone, at F1             & $5$  & $3$  & $5/10$ & $0/10$ \\
+aggregate alone, at one criterion  & $4$  & $4$  & $5/10$ & $1/10$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The two counts differ by more than a factor of four and only the smaller one is a finding. Five
+methods take eleven distinct orderings across the twenty cells and nine of the ten pairwise
+comparisons change sign somewhere in them, which is a description; two pairs reverse with disjoint
+intervals in both directions, and they are the two named above. Quoting the first without the second
+is the fallacy \S\ref{sec:rankflip} rejects, and it is available here to anyone who wants it,
+ourselves included.
+
+Which axis does the work is visible in the slices, and it is the one \S\ref{sec:metric} says it is.
+Holding the aggregate at recall, the criterion alone moves two pairs and certifies none: it erases
+gaps rather than reordering. Holding the criterion fixed, the aggregate alone yields four distinct
+orderings from four cells --- a different leaderboard for every aggregate --- and certifies one. The
+count of orderings is not a property of how finely a sweep was gridded, since both axes here are
+enumerable and small; what a finer budget sweep would add is more cells, not more information.
+
 \subsection{The multiplicity correction, and the family it is taken over}
 \label{app:holm}
 

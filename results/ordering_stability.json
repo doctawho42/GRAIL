@@ -1,0 +1,108 @@
+{
+ "config": {
+  "script": "ordering_stability.py",
+  "git_commit": "adc74870fc01cccdf3611cd313021db63ce9c154",
+  "git_dirty": true,
+  "population": "shared150",
+  "n_substrates": 150,
+  "methods": [
+   "BioTransformer",
+   "GRAIL",
+   "MetaPredictor",
+   "MetaTrans",
+   "SyGMa"
+  ],
+  "source": "results/set_metrics_by_criterion.json",
+  "gate": "certified pairs must reproduce the two the paper names"
+ },
+ "slices": {
+  "criterion_and_aggregate": {
+   "cells": 20,
+   "distinct_orderings": 11,
+   "pairs": 10,
+   "pairs_changing_sign": 9,
+   "pairs_reversing_certified": 2,
+   "certified": [
+    {
+     "pair": [
+      "BioTransformer",
+      "SyGMa"
+     ],
+     "a_above_b_at": [
+      "canonical",
+      "f1"
+     ],
+     "b_above_a_at": [
+      "canonical",
+      "recall"
+     ],
+     "cells_each_way": [
+      15,
+      2
+     ]
+    },
+    {
+     "pair": [
+      "GRAIL",
+      "SyGMa"
+     ],
+     "a_above_b_at": [
+      "canonical",
+      "f1"
+     ],
+     "b_above_a_at": [
+      "canonical",
+      "recall"
+     ],
+     "cells_each_way": [
+      15,
+      5
+     ]
+    }
+   ]
+  },
+  "criterion_alone_at_recall": {
+   "cells": 5,
+   "distinct_orderings": 3,
+   "pairs": 10,
+   "pairs_changing_sign": 2,
+   "pairs_reversing_certified": 0,
+   "certified": []
+  },
+  "criterion_alone_at_f1": {
+   "cells": 5,
+   "distinct_orderings": 3,
+   "pairs": 10,
+   "pairs_changing_sign": 5,
+   "pairs_reversing_certified": 0,
+   "certified": []
+  },
+  "aggregate_alone_at_inchikey_tautomer": {
+   "cells": 4,
+   "distinct_orderings": 4,
+   "pairs": 10,
+   "pairs_changing_sign": 5,
+   "pairs_reversing_certified": 1,
+   "certified": [
+    {
+     "pair": [
+      "GRAIL",
+      "SyGMa"
+     ],
+     "a_above_b_at": [
+      "inchikey_tautomer",
+      "f1"
+     ],
+     "b_above_a_at": [
+      "inchikey_tautomer",
+      "recall"
+     ],
+     "cells_each_way": [
+      3,
+      1
+     ]
+    }
+   ]
+  }
+ }
+}
