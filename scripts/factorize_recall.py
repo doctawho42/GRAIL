@@ -37,10 +37,13 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "scripts"))
 
-# set from the CLI in main(); the published figures were produced with the first True and the second
-# True, which is why both default that way
-CEILING_EXPANDS = True
-CLAMP = True
+# The ceiling must be measured in the convention the deployed generator fires rules in, which is the
+# implicit one (generator._graph_for_substrate is MolFromSmiles with no AddHs). Measuring it expanded
+# and the pool implicitly charges the difference between the two conventions to rule selection, the
+# stage that sits between them. With the convention matched the nesting holds on its own, so the
+# clamp is off by default too: a violation now means a real mismatch and should be seen, not hidden.
+CEILING_EXPANDS = False
+CLAMP = False
 
 from engine_knobs import apply_with
 from grail_metabolism.config import DatasetConfig, FilterConfig, GeneratorConfig
@@ -301,11 +304,12 @@ def main() -> int:
                     help="restore the trained empirical rule prior (reproduces the deployed operating point)")
     ap.add_argument("--no-copy-prior", dest="copy_prior", action="store_false")
     ap.add_argument("--out", type=str, default=str(ROOT / "results" / "recall_factorization.json"))
-    ap.add_argument("--ceiling-convention", choices=("expanded", "implicit"), default="expanded",
+    ap.add_argument("--ceiling-convention", choices=("expanded", "implicit"), default="implicit",
                     help="hydrogen convention for the full-bank pass; 'implicit' matches the one "
                          "the deployed generator actually fires rules in")
-    ap.add_argument("--no-clamp", dest="clamp", action="store_false", default=True,
-                    help="do not force the nesting with min(); report violations instead")
+    ap.add_argument("--clamp", dest="clamp", action="store_true", default=False,
+                    help="force the nesting with min(); only meaningful when the ceiling is measured "
+                         "in a convention the pipeline does not use")
     args = ap.parse_args()
     global CEILING_EXPANDS, CLAMP
     CEILING_EXPANDS = args.ceiling_convention == "expanded"
@@ -327,6 +331,10 @@ def main() -> int:
     ceiling, _ceil_mean_s = run_ceiling_pass(items, args.workers)
     records = compute_records(model, items, ceiling)
 
+    violations = sum(1 for r in records if not r.get("nests", True))
+    if violations:
+        print(f"  WARNING: the nesting fails on {violations} of {len(records)} substrates; the "
+              f"factors below are not a decomposition of anything until that is explained", flush=True)
     specs = {
         "coverage_bank": ("Cfull", "U"),
         "selection_retention": ("Cbud", "Cfull"),

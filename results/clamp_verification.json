@@ -1,0 +1,26 @@
+{
+ "config": {
+  "script": "verify_clamp.py",
+  "git_commit": "a227873afa32a6f4017e161ffb2841f008616a88",
+  "git_dirty": true,
+  "n_substrates": 1170,
+  "threads": 4,
+  "operating_point": {
+   "top_k": 30,
+   "max_output": 15,
+   "filter_candidate_cap": 32,
+   "gate_by_filter": false
+  },
+  "denominator": "U from results/recall_factorization.json per_substrate"
+ },
+ "sum_U": 2597,
+ "H_unclamped": 689,
+ "H_clamped": 689,
+ "committed_H": 677,
+ "micro_recall_unclamped": 0.2653,
+ "micro_recall_clamped": 0.2653,
+ "committed_micro_recall": 0.2607,
+ "nesting_violations": 0,
+ "violations_where_output_is_a_subset_of_the_pool": 0,
+ "violation_detail": []
+}

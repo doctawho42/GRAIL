@@ -18,11 +18,11 @@
 \newcommand{\ntest}{1{,}170}          % clean test substrates
 \newcommand{\nshared}{150}            % internal shared multi-method subset
 \newcommand{\nglory}{37}              % external GLORYx substrates
-\newcommand{\ceiling}{0.735}          % coverage_bank (micro)
-\newcommand{\ceilingmacro}{0.792}     % coverage_bank (macro)
-\newcommand{\realised}{0.261}         % realised recall@15 (micro)
-\newcommand{\selret}{0.368}           % selection retention
-\newcommand{\grailmacro}{0.330}       % GRAIL macro recall@15
+\newcommand{\ceiling}{0.816}          % coverage_bank (micro), hydrogens as the pipeline fires them
+\newcommand{\ceilingmacro}{0.859}     % coverage_bank (macro)
+\newcommand{\realised}{0.265}         % realised recall@15 (micro)
+\newcommand{\selret}{0.339}           % selection retention
+\newcommand{\grailmacro}{0.340}       % GRAIL macro recall@15
 \newcommand{\interA}{+0.120}          % GRAIL<->BioTransformer interaction
 \newcommand{\interAci}{[+0.073,\,+0.171]}
 \newcommand{\interB}{+0.063}          % MetaTrans<->SyGMa interaction
@@ -323,7 +323,7 @@ the coverage factor rather than flattering it.
 \nbank\ rules to every test substrate and ask what fraction of references appears anywhere in the
 union. That \textbf{coverage ceiling} is the best recall achievable if selection and ranking were
 both perfect, and on the clean test split it is \ceiling\ (cluster-bootstrap 95\% CI
-$[0.709,0.762]$). It should be
+$[0.794,0.838]$). It should be
 reported alongside recall for any rule-grounded method, and as \emph{system} reach --- a
 rule set together with a declared application procedure --- rather than as what a knowledge base can
 express, since swapping only the engine moves it by as much as the reach gap below: a ceiling quoted
@@ -335,7 +335,7 @@ pipeline converts only $35.4\%$ of its own ceiling into realised recall, the thr
 with no pair of intervals overlapping (split across selector breadths in
 Table~\ref{tab:selection-breadth}), and selection is where the loss sits at this operating point:
 barely a third of what the bank can reach survives the selector's rule budget, while ranking is
-close to lossless at $0.963$ $[0.946,0.978]$. That third factor is truncation at GRAIL's own output
+close to lossless at $0.960$ $[0.941,0.976]$. That third factor is truncation at GRAIL's own output
 policy, itself a cap at $k=15$: it emits at the cap on $308$ of \ntest\ substrates ($26.3\%$), and all $26$
 references lost between the budgeted pool and the emitted output fall on those. Selection binds
 jointly with the cut-off rather than alone.

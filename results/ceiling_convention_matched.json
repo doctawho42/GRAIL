@@ -1,0 +1,45 @@
+{
+ "config": {
+  "script": "ceiling_convention_matched.py",
+  "git_commit": "a227873afa32a6f4017e161ffb2841f008616a88",
+  "git_dirty": true,
+  "n_substrates": 1170,
+  "n_rules": 7581,
+  "match": "inchikey_tautomer",
+  "n_boot": 10000,
+  "seed": 0,
+  "deployed_convention": "implicit; generator._graph_for_substrate is MolFromSmiles with no AddHs",
+  "published_convention": "expanded; apply_rules_to_molecule calls AddHs",
+  "clamps": "none applied"
+ },
+ "sums": {
+  "U": 2597,
+  "Cfull_expanded": 1910,
+  "Cfull_implicit": 2120,
+  "Cbud": 703,
+  "H": 689
+ },
+ "micro_recall": 0.2653,
+ "as_published_expanded_ceiling": {
+  "coverage": 0.7355,
+  "coverage_ci95": [
+   0.7087,
+   0.7608
+  ],
+  "selection": 0.3681,
+  "ranking": 0.9801,
+  "product": 0.2653,
+  "nesting_violations": 12
+ },
+ "convention_matched_implicit_ceiling": {
+  "coverage": 0.8163,
+  "coverage_ci95": [
+   0.794,
+   0.8383
+  ],
+  "selection": 0.3316,
+  "ranking": 0.9801,
+  "product": 0.2653,
+  "nesting_violations": 12
+ }
+}

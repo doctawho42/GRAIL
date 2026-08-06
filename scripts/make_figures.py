@@ -19,6 +19,7 @@ output does not depend on anything outside matplotlib's defaults.
 from __future__ import annotations
 
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -139,11 +140,20 @@ def main() -> int:
                fig_gap, fig_curators):
         info = fn()
         print(f"{fn.__name__:12} -> paper/{fn.__name__.replace('fig_', 'fig_')}.pdf   {info}")
-    # the waterfall must multiply out to the recall the paper prints, or the figure is not the table
-    g = _load("recall_factorization")["factors"]
+    # The waterfall must multiply out to the recall the artifact records, and the artifact's recall
+    # must be the one the manuscript prints. Reading the target from the artifact rather than from a
+    # literal is deliberate: a hardcoded target goes stale the moment the measurement is corrected,
+    # and then the gate certifies the old number instead of the drawing.
+    art = _load("recall_factorization")
+    g = art["factors"]
     prod = g["coverage_bank"]["point"] * g["selection_retention"]["point"] * g["ranking_conversion"]["point"]
-    assert abs(prod - 0.261) < 5e-4, f"waterfall product {prod:.4f} != published 0.261"
-    print(f"\ncheck: GRAIL factors multiply to {prod:.4f}, published 0.261")
+    assert abs(prod - art["micro_recall"]) < 5e-4, \
+        f"waterfall product {prod:.4f} != this artifact's micro recall {art['micro_recall']:.4f}"
+    macro = re.search(r"\\newcommand\{\\realised\}\{([\d.]+)\}",
+                      (ROOT / "paper" / "grail_iclr.tex").read_text())
+    assert macro and abs(float(macro.group(1)) - art["micro_recall"]) < 5e-4, \
+        f"the manuscript prints {macro and macro.group(1)} where the artifact has {art['micro_recall']:.4f}"
+    print(f"\ncheck: GRAIL factors multiply to {prod:.4f}, and the manuscript prints {macro.group(1)}")
     return 0
 
 
