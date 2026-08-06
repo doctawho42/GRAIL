@@ -19,6 +19,7 @@
 \newcommand{\nshared}{150}            % internal shared multi-method subset
 \newcommand{\nglory}{37}              % external GLORYx substrates
 \newcommand{\ceiling}{0.735}          % coverage_bank (micro)
+\newcommand{\ceilingmacro}{0.792}     % coverage_bank (macro)
 \newcommand{\realised}{0.261}         % realised recall@15 (micro)
 \newcommand{\selret}{0.368}           % selection retention
 \newcommand{\grailmacro}{0.330}       % GRAIL macro recall@15
@@ -54,7 +55,7 @@ and ranking. The identity is arithmetic, and staging a pipeline this way is not 
 enumerable candidate set changes is that the first factor stops being estimated from a sample or
 bounded by a beam and becomes an exhaustive measurement, so all three are measured rather than
 inferred. Applied to two such methods it explains a leaderboard
-instead of restating one: the wider system reaches $0.735$ of the annotated chemistry against
+instead of restating one: the wider system reaches $\ceiling$ of the annotated chemistry against
 $0.539$ and converts a third of that reach, while the narrower converts nearly all of its own,
 having no selection stage to lose anything at. The gap is the price of \emph{this} selection stage,
 which loses more than no selection stage does at the same budget, and which recall charges only to
@@ -313,9 +314,9 @@ the three factors partition the loss with no residual: it is an accounting devic
 aggregations are in use and every figure is labelled with which: Figure~\ref{fig:decomp} reports
 \emph{micro}, the pooled ratio of sums written above, because only that form makes the factors
 multiply out exactly; head-to-head comparisons report \emph{macro}, the mean of per-substrate
-recalls and the comparator tools' convention. The two differ, $0.261$ against $0.330$
+recalls and the comparator tools' convention. The two differ, $\realised$ against $\grailmacro$
 (Appendix~\ref{app:formal}), and coverage moves the same way: the
-macro ceiling is the higher, $0.792$ against $0.735$, so writing the identity in micro understates
+macro ceiling is the higher, $\ceilingmacro$ against $\ceiling$, so writing the identity in micro understates
 the coverage factor rather than flattering it.
 
 \paragraph{The ceiling as a primitive.} The first factor is measurable without any model: apply all

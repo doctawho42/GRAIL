@@ -71,6 +71,52 @@ indicated that removing the embedding improved recall at small $k$ ($+0.037$ at 
 $+0.027$ at $k=5$); that effect did not
 replicate on validation, and we do not report it as a result.
 
+\subsection{Dispatching the hydrogen convention per template}
+\label{app:dispatch}
+
+\S\ref{app:enginereach} shows that what a bank reaches depends on a convention its engine applies
+globally, and that banks disagree about which convention they want. The obvious repair is to stop
+having a global one and apply each template under the convention it was written in. The policy was
+fixed before anything was measured --- a template gets the expanded substrate if and only if its
+reactant side carries a bracket-hydrogen atom, blind to the product side, to the hydrogen-count
+primitive and to negations, with the $238$ templates whose recursive \textsc{smarts} that test
+cannot see inside taking their own bank's majority convention --- because a policy chosen after
+seeing which setting wins would beat any global setting by construction and would measure nothing.
+
+The quantity that decides the claim is the residual rather than the win: reach under dispatch minus
+the better of the two global settings. A residual at zero says the bank is single-convention and
+choosing correctly is the whole story. Above zero says no global setting expresses the bank.
+
+\begin{center}
+\small
+\begin{tabular}{lccccc}
+\toprule
+bank & rules & dispatched & dispatch & best global & residual \\
+\midrule
+SyGMa          & $175$    & $0$   & 0.527 $[0.473,0.584]$ & 0.527 & $+0.000$ \\
+ours           & $\nbank$ & $675$ & 0.815 $[0.774,0.857]$ & 0.799 & $+0.016$ \\
+BioTransformer & $994$    & $726$ & 0.473 $[0.426,0.524]$ & 0.473 & $+0.000$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+One prediction was structural, one held and one failed. SyGMa is the null: none of its templates is
+dispatched, so dispatch is the identity map and has to reproduce its implicit-hydrogen arm to four
+decimals, which it does --- that is the check that the classifier is not sending templates somewhere
+it should not. BioTransformer was predicted to clear its better global setting, because $268$ of its
+templates want the convention the deployed arm denies them; it does not clear it. Those templates do
+add products, and the products are real, but none of them recovers a reference these substrates
+carry. Our own bank clears it by $+0.016$ --- a point estimate on which we make no claim of
+significance, since the two intervals overlap and the run did not retain the per-substrate counts a
+paired interval needs.
+
+The reading we take from this is the weaker one, and it is the recommendation \S\ref{sec:decomp}
+already makes: declare the convention. Dispatching it is worth having for one bank in three, and
+only for a bank that is genuinely mixed --- ours, at $675$ templates in $\nbank$ against none of
+SyGMa's. For a bank written in one convention there is nothing for a cleverer engine to recover, and
+the failure of the BioTransformer prediction is the useful half of this: a bank can be mixed in its
+syntax and single-convention in what it reaches.
+
 \subsection{Evaluation caveat}
 
 The exploratory measurements in this appendix were scored on the test split before the discipline

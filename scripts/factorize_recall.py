@@ -37,6 +37,12 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "scripts"))
 
+# set from the CLI in main(); the published figures were produced with the first True and the second
+# True, which is why both default that way
+CEILING_EXPANDS = True
+CLAMP = True
+
+from engine_knobs import apply_with
 from grail_metabolism.config import DatasetConfig, FilterConfig, GeneratorConfig
 from grail_metabolism.metrics import _tautomer_inchikey
 from grail_metabolism.model.wrapper import ModelWrapper
@@ -95,8 +101,15 @@ def tautomer_hits(preds, trues) -> int:
 _WORKER_RULES = None
 
 
-def _ceiling_init():
-    """Pool initializer: silence RDKit, load the rule bank once into a module global."""
+def _ceiling_init(expands: bool = True):
+    """Pool initializer: silence RDKit, load the rule bank, and carry the convention across.
+
+    The pool is spawned, so a worker re-imports this module and would otherwise take the module
+    default for CEILING_EXPANDS rather than what the CLI asked for -- which is how a convention
+    comes to be applied without anyone declaring it, the defect this option exists to expose.
+    """
+    global CEILING_EXPANDS
+    CEILING_EXPANDS = expands
     from rdkit import RDLogger as _RDLogger
 
     _RDLogger.DisableLog("rdApp.*")
@@ -107,6 +120,25 @@ def _ceiling_init():
     _WORKER_RULES = load_default_rules()
     if _WORKER_RULES is None:
         raise RuntimeError("rule bank not found (load_default_rules() returned None)")
+
+
+def _apply_ceiling(mol, rules):
+    """The bank applied to one substrate for the ceiling.
+
+    The deployed generator fires its selected rules on `Chem.MolFromSmiles(sub)` and nothing else
+    (generator._graph_for_substrate), while `apply_rules_to_molecule` expands the substrate with
+    AddHs first. Measuring the ceiling one way and the pool the other charges the difference between
+    the two conventions -- worth 0.081 of coverage on this split -- to whatever stage sits between
+    them, which here is rule selection. CEILING_EXPANDS selects which convention this pass uses; the
+    published figures were produced with it True.
+    """
+    if CEILING_EXPANDS:
+        return apply_rules_to_molecule(mol, rules, normalization_mode="canonical")
+    from collections import defaultdict
+    out = defaultdict(set)
+    for i, s in enumerate(apply_with(mol, rules, False, "canonical", True)):
+        out[s].add(i)
+    return out
 
 
 def _ceiling_worker(item):
@@ -121,7 +153,7 @@ def _ceiling_worker(item):
     if mol is None or not trues:
         return (sub, 0, 0)
     full_products = list(
-        apply_rules_to_molecule(mol, _WORKER_RULES, normalization_mode="canonical").keys()
+        _apply_ceiling(mol, _WORKER_RULES).keys()
     )
     u_i, cfull_i, _ = _tautomer_recovered(trues, full_products, audit=False)
     return (sub, int(u_i), int(cfull_i))
@@ -139,14 +171,15 @@ def run_ceiling_pass(items, workers):
     ceiling = {}
     t0 = time.perf_counter()
     if workers <= 1:
-        _ceiling_init()
+        _ceiling_init(CEILING_EXPANDS)
         for i, item in enumerate(ceil_items, 1):
             sub, u_i, cfull_i = _ceiling_worker(item)
             ceiling[sub] = (u_i, cfull_i)
             if i == 1 or i % 25 == 0 or i == n:
                 print(f"  [ceiling serial] {i}/{n} ({time.perf_counter()-t0:.0f}s)", flush=True)
     else:
-        pool = multiprocessing.get_context("spawn").Pool(workers, initializer=_ceiling_init)
+        pool = multiprocessing.get_context("spawn").Pool(
+            workers, initializer=_ceiling_init, initargs=(CEILING_EXPANDS,))
         try:
             for i, (sub, u_i, cfull_i) in enumerate(
                 pool.imap_unordered(_ceiling_worker, ceil_items, chunksize=4), 1
@@ -238,10 +271,12 @@ def compute_records(model, items, ceiling, log_every=25):
         h_i = tautomer_hits(deployed_top15, true_prods)
         # Monotonicity clamp: nested pools guarantee H <= Cbud <= Cfull; the clamp only defends
         # against cross-path SMILES canonicalization drift (does not change the telescoping identity).
-        cbud_i = min(cbud_i, cfull_i)
-        h_i = min(h_i, cbud_i)
+        if CLAMP:
+            cbud_i = min(cbud_i, cfull_i)
+            h_i = min(h_i, cbud_i)
         records.append({
             "sub": sub, "U": u_i, "Cfull": cfull_i, "Cbud": cbud_i, "H": h_i,
+            "nests": bool(h_i <= cbud_i <= cfull_i),
             "deployed_top15": list(deployed_top15),
         })
     return records
@@ -266,7 +301,15 @@ def main() -> int:
                     help="restore the trained empirical rule prior (reproduces the deployed operating point)")
     ap.add_argument("--no-copy-prior", dest="copy_prior", action="store_false")
     ap.add_argument("--out", type=str, default=str(ROOT / "results" / "recall_factorization.json"))
+    ap.add_argument("--ceiling-convention", choices=("expanded", "implicit"), default="expanded",
+                    help="hydrogen convention for the full-bank pass; 'implicit' matches the one "
+                         "the deployed generator actually fires rules in")
+    ap.add_argument("--no-clamp", dest="clamp", action="store_false", default=True,
+                    help="do not force the nesting with min(); report violations instead")
     args = ap.parse_args()
+    global CEILING_EXPANDS, CLAMP
+    CEILING_EXPANDS = args.ceiling_convention == "expanded"
+    CLAMP = args.clamp
     torch.set_num_threads(args.threads)
 
     rules = load_default_rules()  # the ~7581 SMIRKS strings (resolve_default_rule_bank returns the Path)
