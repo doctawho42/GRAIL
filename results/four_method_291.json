@@ -1,7 +1,7 @@
 {
  "config": {
   "script": "four_method_291.py",
-  "git_commit": "90f7b9726b07bb6e8ab04c76254f905aec3a6591",
+  "git_commit": "e5da75350e64a7551c33b4bef34e301ac230a4c2",
   "git_dirty": true,
   "n_substrates": 291,
   "match": "inchikey_tautomer",
@@ -89,15 +89,15 @@
    "after_dedup_and_parent_drop": 9777,
    "mean_emitted_uncapped": 33.6,
    "recall": {
-    "1": 0.0165,
-    "3": 0.0556,
-    "5": 0.1113,
-    "8": 0.1865,
-    "10": 0.2316,
-    "15": 0.3383,
-    "20": 0.4436,
-    "30": 0.5564,
-    "50": 0.615
+    "1": 0.0406,
+    "3": 0.1323,
+    "5": 0.218,
+    "8": 0.3113,
+    "10": 0.388,
+    "15": 0.5143,
+    "20": 0.5519,
+    "30": 0.6015,
+    "50": 0.6271
    },
    "mean_emitted": {
     "1": 1.0,
@@ -146,15 +146,13 @@
    3,
    5
   ],
-  "MetaPredictor > SyGMa > GRAIL > MetaTox": [
+  "MetaPredictor > SyGMa > MetaTox > GRAIL": [
    8,
    10
   ],
-  "SyGMa > MetaPredictor > MetaTox > GRAIL": [
-   15,
-   20
-  ],
   "MetaTox > SyGMa > MetaPredictor > GRAIL": [
+   15,
+   20,
    30,
    50
   ]

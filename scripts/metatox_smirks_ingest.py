@@ -47,14 +47,37 @@ def _code_version() -> dict:
             "git_dirty": bool(_git("status", "--porcelain"))}
 
 
+def _spectrum(props) -> tuple[float, float] | None:
+    """(Pa, Pi) for the Metabolite class, which is the score the delivery is named after.
+
+    PASS writes the pair with a comma as the decimal separator: "0,370  0,167  Metabolite". Pa is
+    the method's own confidence and therefore its ranking signal; ignoring it and taking the file's
+    record order would score the method in an ordering it never produced, which is the one thing a
+    frozen-prediction comparison must not do.
+    """
+    raw = props.get("PASS_ACTIVITY_SPECTRUM")
+    if raw is None:
+        return None
+    for line in str(raw).splitlines():
+        parts = line.replace(",", ".").split()
+        if len(parts) >= 3 and parts[2].lower().startswith("metabolite"):
+            try:
+                return float(parts[0]), float(parts[1])
+            except ValueError:
+                return None
+    return None
+
+
 def parse_sdf(path: Path) -> dict:
-    """{substrate index -> [metabolite SMILES]} from an SDF whose only key is `sub_met`."""
-    out: dict[int, list[str]] = {}
+    """{substrate index -> [(smiles, Pa, Pi)]}, ranked by the method's own confidence."""
+    out: dict[int, list[tuple]] = {}
     supplier = Chem.SDMolSupplier(str(path), sanitize=True)
+    n_scored = n_total = n_declared = n_disagree = 0
     for mol in supplier:
         if mol is None:
             continue
-        raw = mol.GetPropsAsDict().get("ID")
+        props = mol.GetPropsAsDict()
+        raw = props.get("ID")
         if raw is None or "_" not in str(raw):
             continue
         try:
@@ -65,8 +88,30 @@ def parse_sdf(path: Path) -> dict:
             smiles = Chem.MolToSmiles(mol)
         except Exception:
             continue
-        if smiles:
-            out.setdefault(idx, []).append(smiles)
+        if not smiles:
+            continue
+        n_total += 1
+        pa_pi = _spectrum(props)
+        if pa_pi is not None:
+            n_scored += 1
+        # PASS writes the spectrum only where it clears its own threshold, and says so in a second
+        # tag. Cross-checking the two is the gate: if they disagree, the field is being read wrong.
+        declared = "1 of 1" in str(props.get("PASS_RESULT_COUNT", ""))
+        n_declared += declared
+        if declared != (pa_pi is not None):
+            n_disagree += 1
+        pa, pi = pa_pi if pa_pi else (float("nan"), float("nan"))
+        out.setdefault(idx, []).append((smiles, pa, pi))
+    print(f"  metabolites carrying a Metabolite spectrum: {n_scored} of {n_total}", flush=True)
+    print(f"  records PASS declares above its own threshold: {n_declared}, "
+          f"disagreeing with the spectrum on {n_disagree}", flush=True)
+    if n_disagree:
+        raise SystemExit("the two tags disagree about which predictions PASS scored; the spectrum "
+                         "field is not being read as PASS wrote it")
+    # scored first, by the method's own confidence; the rest keep the order the file gives them,
+    # since PASS expresses no preference among predictions it declines to score
+    for idx in out:
+        out[idx].sort(key=lambda t: (0, -t[1]) if t[1] == t[1] else (1, 0.0))
     return out
 
 
@@ -81,7 +126,7 @@ def median_similarity(pairs, gen) -> float:
         fp = gen.GetFingerprint(m)
         sims = []
         for p in preds[:40]:
-            q = Chem.MolFromSmiles(p)
+            q = Chem.MolFromSmiles(p[0] if isinstance(p, tuple) else p)
             if q is not None:
                 sims.append(DataStructs.TanimotoSimilarity(fp, gen.GetFingerprint(q)))
         if sims:
@@ -116,8 +161,23 @@ def main() -> int:
         raise SystemExit("the positional join does not separate from a rotated one; the substrate "
                          "order is not what this file assumes")
 
-    preds = {sub: sorted(set(p)) for sub, p in ordered}
+    # Keep the method's own order -- Pa descending -- and dedup by FIRST appearance. Sorting the
+    # SMILES alphabetically, as an earlier revision did, scores a method in an ordering it never
+    # produced, which makes every recall@k for it a statement about the alphabet.
+    preds, scored = {}, {}
+    for sub, items in ordered:
+        seq, seen = [], set()
+        for smiles, pa, pi in items:
+            if smiles in seen:
+                continue
+            seen.add(smiles)
+            seq.append(smiles)
+        preds[sub] = seq
+        scored[sub] = [[smiles, round(pa, 4), round(pi, 4)] for smiles, pa, pi in items
+                       if smiles in seen and (seen.discard(smiles) or True)]
+    above = {sub: [t[0] for t in v if t[1] > t[2]] for sub, v in scored.items()}
     sizes = [len(v) for v in preds.values()]
+    n_above = [len(v) for v in above.values()]
     rep = {"config": {**_code_version(), "sdf": Path(args.sdf).name,
                       "variant": "SMIRKS rules, all 291 parents returned",
                       "join": "positional against results/metatox_input/substrate_map.csv",
@@ -127,7 +187,11 @@ def main() -> int:
            "n_predictions": int(sum(sizes)),
            "mean_output": round(sum(sizes) / len(sizes), 2),
            "median_output": sorted(sizes)[len(sizes) // 2],
-           "predictions": preds}
+           "ranking": "the method's own Pa for the Metabolite class, descending",
+           "mean_output_above_threshold": round(sum(n_above) / len(n_above), 2),
+           "predictions": preds,
+           "predictions_with_scores": scored,
+           "predictions_above_own_threshold": above}
     print(f"\nsubstrates {rep['n_substrates']}, predictions {rep['n_predictions']}, "
           f"mean output {rep['mean_output']}, median {rep['median_output']}")
     Path(args.out).write_text(json.dumps(rep, indent=1))

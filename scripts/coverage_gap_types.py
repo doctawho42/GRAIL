@@ -163,7 +163,7 @@ def main() -> int:
             continue
         # the convention the deployed generator fires rules in; measuring the gap with the
         # substrate expanded counts references as unreachable that the bank does reach
-        products = {k: {0} for k in apply_with(sub_mol, rules, False, "canonical", True)}
+        products = {k: {0} for k in apply_with(sub_mol, rules, False, "canonical", False)}
         covered_keys = set()
         for p in products:
             try:

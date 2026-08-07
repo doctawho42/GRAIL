@@ -56,12 +56,13 @@ The regression takes five molecular descriptors, namely molecular weight, ring c
 aromatic-atom count, heteroatom count, and a count of sites available for phase-II conjugation,
 together with the number of reference metabolites, which is a property of the annotation rather
 than of the molecule. Fit to per-substrate coverage across both populations, it predicts macro
-coverages of about 0.79 internally and 0.74 externally in sample. These are macro quantities, per-substrate means, and are not directly
-comparable to the micro ceilings above. The in-sample external prediction of 0.74 sits above the
-measured external macro coverage of 0.697, so the in-sample fit overstates transferability.
+coverages of about 0.858 internally and 0.808 externally in sample. These are macro quantities,
+per-substrate means, and are not directly comparable to the micro ceilings above. The in-sample
+external prediction of 0.808 sits above the measured external macro coverage of 0.779, so the
+in-sample fit overstates transferability.
 
 Holding the external substrates out of the fit entirely, and predicting them from an
-internal-only model, gives 0.738 out of sample and recovers 57\% of the gap in macro
+internal-only model, gives 0.813 out of sample and recovers 58\% of the gap in macro
 coverage between the two populations. That out-of-sample figure, not the in-sample one, is the
 quantity we report. It is a point estimate from a six-predictor model fit on the internal substrates
 and averaged over the $37$ external ones, and it carries no interval; it indicates a direction, not
