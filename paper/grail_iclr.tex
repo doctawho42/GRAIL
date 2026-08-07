@@ -18,11 +18,11 @@
 \newcommand{\ntest}{1{,}170}          % clean test substrates
 \newcommand{\nshared}{150}            % internal shared multi-method subset
 \newcommand{\nglory}{37}              % external GLORYx substrates
-\newcommand{\ceiling}{0.816}          % coverage_bank (micro), hydrogens as the pipeline fires them
-\newcommand{\ceilingmacro}{0.859}     % coverage_bank (macro)
+\newcommand{\ceiling}{0.817}          % coverage_bank (micro), hydrogens as the pipeline fires them
+\newcommand{\ceilingmacro}{0.860}     % coverage_bank (macro)
 \newcommand{\realised}{0.265}         % realised recall@15 (micro)
-\newcommand{\selret}{0.339}           % selection retention
-\newcommand{\grailmacro}{0.340}       % GRAIL macro recall@15
+\newcommand{\selret}{0.338}           % selection retention
+\newcommand{\grailmacro}{0.339}       % GRAIL macro recall@15
 \newcommand{\interA}{+0.120}          % GRAIL<->BioTransformer interaction
 \newcommand{\interAci}{[+0.073,\,+0.171]}
 \newcommand{\interB}{+0.063}          % MetaTrans<->SyGMa interaction
@@ -323,7 +323,7 @@ the coverage factor rather than flattering it.
 \nbank\ rules to every test substrate and ask what fraction of references appears anywhere in the
 union. That \textbf{coverage ceiling} is the best recall achievable if selection and ranking were
 both perfect, and on the clean test split it is \ceiling\ (cluster-bootstrap 95\% CI
-$[0.794,0.838]$). It should be
+$[0.794,0.839]$). It should be
 reported alongside recall for any rule-grounded method, and as \emph{system} reach --- a
 rule set together with a declared application procedure --- rather than as what a knowledge base can
 express, since swapping only the engine moves it by as much as the reach gap below: a ceiling quoted
@@ -331,12 +331,12 @@ without its engine is not comparable across papers. Inside one system it
 is exactly what it claims, and no ranking improvement can exceed it.
 
 \paragraph{What the decomposition says.}\looseness=-1 Figure~\ref{fig:decomp} localises the loss: the deployed
-pipeline converts only $35.4\%$ of its own ceiling into realised recall, the three factors separate
+pipeline converts only $32.5\%$ of its own ceiling into realised recall, the three factors separate
 with no pair of intervals overlapping (split across selector breadths in
 Table~\ref{tab:selection-breadth}), and selection is where the loss sits at this operating point:
 barely a third of what the bank can reach survives the selector's rule budget, while ranking is
 close to lossless at $0.960$ $[0.941,0.976]$. That third factor is truncation at GRAIL's own output
-policy, itself a cap at $k=15$: it emits at the cap on $308$ of \ntest\ substrates ($26.3\%$), and all $26$
+policy, itself a cap at $k=15$: it emits at the cap on $308$ of \ntest\ substrates ($26.3\%$), and all $29$
 references lost between the budgeted pool and the emitted output fall on those. Selection binds
 jointly with the cut-off rather than alone.
 Widening the selector moves the loss downstream --- what selection recovers, the cut-off gives back
@@ -354,8 +354,9 @@ later (Appendix~\ref{app:noselect}).
 \looseness=-1
 Applied to a second method it stops being self-diagnosis. SyGMa is rule-grounded with an enumerable
 bank and decomposes on the same split in the same frame, with the inverse profile. Its reach is the
-lower, $0.539$ against $\ceiling$, a paired $-0.196$ $[-0.216,-0.178]$ --- comparator minus GRAIL
-throughout. But it applies every applicable rule and emits the result, converting almost all of that
+lower, $0.539$ against $\ceiling$, comparator minus GRAIL throughout. The two are measured through
+their own engines and the paired interval on that difference is reported with the engine term it
+contains (Appendix~\ref{app:enginereach}) rather than here. But it applies every applicable rule and emits the result, converting almost all of that
 reach where we convert a third of a wider one. Its selection factor is $1$ by construction, because it
 emits every product its applicable rules generate; the same computation returns $0.539$ for its
 coverage and $0.953$ for its ranking, and those two are measured. The gap between us is therefore
@@ -377,19 +378,20 @@ $5{,}866$ mined ones' $0.328$ --- and the inert-looking tail is still not prunab
 \looseness=-3
 Reporting a ceiling presumes it is a property of the bank, and it is not. $152$ of SyGMa's $175$
 rules sit verbatim in ours, so those can be held fixed while only the procedure applying them
-changes: our depth-1 enumeration against SyGMa's own, same substrates, same matcher, one step each.
-They reach $0.189$ $[0.151,0.230]$ under our application and $0.381$ $[0.333,0.433]$ under theirs,
+changes: a depth-1 enumeration that expands the substrate with explicit hydrogens against SyGMa's
+own, which does not, same substrates, same matcher, one step each. They reach $0.189$
+$[0.151,0.230]$ under the first and $0.381$ $[0.333,0.433]$ under the second,
 an engine term of $+0.192$ $[+0.152,+0.236]$ paired --- against an entire bank-to-bank gap of
 $0.201$ on those substrates, with the $23$ rules we do not hold worth $+0.143$ $[+0.107,+0.180]$ at
 fixed engine and depth no confound. Almost all of what reads as a difference between knowledge
-bases is a difference between the programs that query them --- and that difference is one line. Our
-loop expands the substrate with explicit hydrogens before the templates fire and theirs does not.
-Toggling that one call, bank and substrates untouched, carries our reach from $0.189$ to $0.384$:
-the whole of the engine term, leaving the two engines no longer separable, where the same loop's
+bases is a difference between the programs that query them --- and that difference is one line, the
+expansion itself. Our own deployed generator does not expand, which is why \ceiling\ is quoted
+without it; the same bank measured with it reaches $0.735$ rather than \ceiling\ on the clean test
+split. Toggling that one call, bank and substrates untouched, carries reach from $0.189$ to $0.384$:
+the whole of the engine term, leaving the two programs no longer separable, where the same loop's
 other two discretionary choices move reach by nothing here (Appendix~\ref{app:enginereach}).
 The term is thus not a fact about two particular programs but about one decision neither reports: what a bank covers is uninterpretable without the engine
-that realised the figure, and the direction here is against us, \ceiling\ understating what our own
-bank holds (Appendix~\ref{app:props}). Nor is the dependence metabolism's: every one of the
+that realised the figure (Appendix~\ref{app:props}). Nor is the dependence metabolism's: every one of the
 $42{,}554$ patterns in the standard retrosynthesis template library constrains atoms by degree and
 none names a hydrogen, so the same call costs that library $82\%$ of its applicability --- by the
 other of two mechanisms, a match lost before a product is built
@@ -493,8 +495,8 @@ $[+0.028,+0.239]$, as does its interaction with SyGMa, whose stereo step here is
 \emph{external} interaction with BioTransformer does not survive there and is not claimed.
 This set's coverage ceiling stays on all $\nglory$ for a measured reason: most of the bank is mined
 from training pairs, so applying it is \emph{not} independent of training, yet the ceiling is
-$0.633$ on the twenty-four seen drugs against $0.632$ on the thirteen unseen
-(Appendix~\ref{app:external}).
+$0.719$ on the twenty-four seen drugs against $0.684$ on the thirteen unseen, a difference
+whose interval spans zero (Appendix~\ref{app:external}).
 
 
 
@@ -555,7 +557,10 @@ cannot be a property of any one system. MetaPredictor's count has been moved the
 model fixed too, $10.9$ distinct candidates to $34.3$ at a wider beam (Appendix~\ref{app:seq2seq}). It
 reorders without any budget having to be chosen: swept over $k$ the three methods take three
 distinct orderings, SyGMa above GRAIL at every budget up to $13$ --- certified from $k=1$ to $k=10$,
-by $0.071$ $[0.057,0.086]$ at $k=5$ --- and below only from $14$ on, where the field's $15$ sits. A budget binds a method only when it emits more, so at $k=15$ SyGMa is cut on $92.7\%$ of
+by $0.071$ $[0.057,0.086]$ at $k=5$ --- and below only from $14$ on, where the field's $15$ sits. A
+fourth method exhausts the field rather than reordering a pair: on $291$ substrates carrying all
+four, MetaTox at $33.6$ candidates is last of them at $k\le10$ and first at $k\ge30$, four orderings
+in all (Appendix~\ref{app:fourmethod}). A budget binds a method only when it emits more, so at $k=15$ SyGMa is cut on $92.7\%$ of
 substrates and GRAIL on none (Appendix~\ref{app:props}).
 
 \looseness=-1

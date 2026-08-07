@@ -506,3 +506,25 @@ def test_the_hydrogen_atom_primitive_only_matches_an_expanded_substrate():
     assert len(mol.GetSubstructMatches(count_primitive)) == 1
     assert len(expanded.GetSubstructMatches(count_primitive)) == 1, \
         "the hydrogen-count primitive must be blind to the expansion"
+
+
+def test_the_manuscript_agrees_with_the_artifact_it_cites():
+    """Every quantity the paper derives from the decomposition must follow from the record.
+
+    SELF_CLAIMS row 11 asserted this and nothing enforced it, which cost seventeen stale values the
+    day the ceiling was corrected: the macro moved and the numbers derived from it did not. A
+    conversion ratio, a truncation count, a paired difference that became arithmetically impossible
+    and a figure caption all survived a reading and were caught only by a reader. This runs the same
+    comparison mechanically, by name rather than by scanning for coincidences, so the next
+    correction cannot leave a derived value behind.
+    """
+    import pathlib
+    import subprocess
+    import sys
+
+    root = pathlib.Path(__file__).resolve().parents[2]
+    result = subprocess.run([sys.executable, str(root / "scripts" / "verify_paper_numbers.py")],
+                            capture_output=True, text=True, cwd=root, timeout=300)
+    assert result.returncode == 0, (
+        "a manuscript number does not follow from results/recall_factorization.json:\n"
+        + result.stdout[-2000:])

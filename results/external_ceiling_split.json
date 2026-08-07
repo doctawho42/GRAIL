@@ -1,0 +1,45 @@
+{
+ "config": {
+  "script": "external_ceiling_split.py",
+  "git_commit": "90f7b9726b07bb6e8ab04c76254f905aec3a6591",
+  "git_dirty": true,
+  "match": "inchikey_tautomer",
+  "convention": "hydrogens implicit, as deployed",
+  "source": "results/ceiling_external_validity.json external_per_parent",
+  "gate": "the split reproduces results/external_overlap_audit.json"
+ },
+ "all": {
+  "recovered": 139,
+  "references": 196,
+  "coverage": 0.7092,
+  "ci95": [
+   0.618,
+   0.8023
+  ]
+ },
+ "seen_in_training": {
+  "recovered": 100,
+  "references": 139,
+  "coverage": 0.7194,
+  "ci95": [
+   0.6071,
+   0.8417
+  ]
+ },
+ "unseen": {
+  "recovered": 39,
+  "references": 57,
+  "coverage": 0.6842,
+  "ci95": [
+   0.5439,
+   0.8409
+  ]
+ },
+ "seen_minus_unseen": {
+  "delta": 0.0352,
+  "ci95": [
+   -0.1566,
+   0.2218
+  ]
+ }
+}

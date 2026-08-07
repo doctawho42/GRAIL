@@ -225,6 +225,40 @@ orderings from four cells --- a different leaderboard for every aggregate --- an
 count of orderings is not a property of how finely a sweep was gridded, since both axes here are
 enumerable and small; what a finer budget sweep would add is more cells, not more information.
 
+\subsection{Four methods, one population, and the budget that reorders all of them}
+\label{app:fourmethod}
+
+The reorderings in \S\ref{sec:metric} run through one method that emits far more than the others,
+which invites the reading that the finding is about SyGMa rather than about budgets. A second
+high-output method settles it. The SMIRKS variant of MetaTox supplies predictions for $291$ test
+substrates, every one of which carries references and predictions from all four methods, so the
+comparison needs no new population beyond naming it. Scored through the same matcher, micro, with
+each method's own parent and its duplicates dropped before the budget is applied:
+
+\begin{center}
+\small
+\begin{tabular}{lcccccc}
+\toprule
+method & emitted & r@$5$ & r@$10$ & r@$15$ & r@$30$ & r@$50$ \\
+\midrule
+SyGMa          & $72.98$ & $0.3744$ & $0.4556$ & $0.4842$ & $0.5068$ & $0.5113$ \\
+MetaTox        & $33.6$ & $0.1113$ & $0.2316$ & $0.3383$ & $0.5564$ & $0.615$ \\
+MetaPredictor  & $10.75$ & $0.3549$ & $0.4707$ & $0.4797$ & $0.4797$ & $0.4797$ \\
+GRAIL          & $10.04$ & $0.2286$ & $0.2526$ & $0.2647$ & $0.2677$ & $0.2677$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Four methods take four distinct orderings across the sweep, and the method that moves furthest is
+the new one: MetaTox is last of the four at every budget up to $10$ and first of them at $30$ and
+above. Nothing about the chemistry changes between those two columns. At $k=10$ it has been
+truncated to under a third of what it emits, and at $k=30$ it has not.
+
+Dropping each method's own parent from its ranked list is not cosmetic here. GRAIL returns the
+substrate itself on $80$ of the $291$, MetaPredictor on $52$ and MetaTox on $14$, while SyGMa never
+does; a slot spent on the parent cannot score, so leaving it in would flatter the methods that spend
+one and would do so most at the smallest budgets, which is where this table is read.
+
 \subsection{The multiplicity correction, and the family it is taken over}
 \label{app:holm}
 
@@ -347,12 +381,15 @@ Depth-2 application recovers 0.012 of ceiling at 8.5 times the candidate cost, s
 constrains single-step rule application rather than metabolite prediction in general. Multi-step
 chemistry and chemistry outside the bank remain open sources of coverage.
 
-\subsection{The factorised generator does not replace the deployed one}
+\subsection{The factorised generator, measured in the convention it runs in}
 
-The factorised redesign of the generator is coverage-bound, reaching recall@15 of 0.256 against
-the deployed $\grailmacro$ on the same full test split. Its only deployable value is a modest re-ranking gain of $+0.0165$, 95\%
-confidence interval $[0.006,0.027]$, on the full clean test. Closing the larger gap to SyGMa still
-requires a broader rule bank, which is outside the scope of this paper.
+The factorised redesign of the generator reaches recall@15 of $0.489$ $[0.464,0.514]$ on the full
+test split against the deployed $\grailmacro$, at $14.0$ candidates per substrate against $8.4$.
+That pair is not budget-matched, so what we claim is the conservative reading: truncated to five
+candidates it matches $\grailmacro$ while emitting fewer than half as many. It also contributes a
+re-ranking gain of $+0.0165$, 95\% confidence interval $[0.006,0.027]$, on the full clean test.
+Closing the larger gap to SyGMa still requires a broader rule bank, which is outside the scope of
+this paper.
 
 \subsection{The rank-flip result is established within one domain}
 

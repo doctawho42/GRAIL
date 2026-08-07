@@ -1,14 +1,15 @@
 \subsection{Internal and external coverage ceilings}
 
 The internal coverage ceiling is $\ceiling$, with a cluster-bootstrap 95\% confidence interval of
-$[0.794,0.838]$ over 10{,}000 resamples of substrates. It is a micro estimate, the pooled ratio
+$[0.794,0.839]$ over 10{,}000 resamples of substrates. It is a micro estimate, the pooled ratio
 of summed hits to summed references rather than a mean over per-substrate ratios: pairs within a
 substrate are dependent, so a mean of ratios would misrepresent the uncertainty.
 
 Recomputing the same quantity on an external set requires the same procedure throughout: the 37
-GLORYx parent substrates, one uncapped depth-1 pass over the full bank, no cap on the candidate
-pool, and the same tautomer-aware match. Under those conditions the external ceiling is 0.633,
-with a 95\% interval of $[0.531,0.733]$, wide by design at this sample size.
+GLORYx parent substrates, one uncapped depth-1 pass over the full bank in the same hydrogen
+convention, no cap on the candidate pool, and the same tautomer-aware match. Under those conditions
+the external ceiling is 0.709, with a 95\% interval of $[0.616,0.804]$, wide by design at this
+sample size.
 
 An earlier figure of 0.3715 has circulated for the external ceiling. It was measured with a
 capped candidate pool and reflects the generator budget of that evaluation rather than the
@@ -24,9 +25,9 @@ of the absence of a neural network at inference. An adversarial reading of \S\re
 raised exactly this, and it is right about the mechanism.
 
 It is not right about the magnitude, and that is a measurement. Splitting the per-parent coverage
-counts already stored for the external ceiling gives $0.633$ $[0.504,0.767]$ on the twenty-four seen
-parents against $0.632$ $[0.500,0.776]$ on the thirteen unseen, a difference of $+0.002$
-$[-0.192,+0.184]$. The ceiling is therefore reported on all $\nglory$.
+counts stored for the external ceiling gives $0.719$ $[0.607,0.842]$ on the twenty-four seen
+parents against $0.684$ $[0.544,0.841]$ on the thirteen unseen, a difference of $+0.035$
+$[-0.157,+0.222]$. The ceiling is therefore reported on all $\nglory$.
 
 At these sample sizes that interval admits an inflation of nearly $0.2$ in either direction, so this
 is a failure to detect rather than a demonstration of absence. What it rules out is the strong form

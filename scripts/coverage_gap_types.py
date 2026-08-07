@@ -37,6 +37,7 @@ from rdkit.Chem import rdFMCS
 
 from grail_metabolism.metrics import _tautomer_inchikey
 from grail_metabolism.model.reaction_types import canonical_type
+from engine_knobs import apply_with
 from grail_metabolism.utils.preparation import apply_rules_to_molecule, load_default_rules
 from scripts.mine_rules import MCS_TIMEOUT_SECONDS, build_smirks, expand_center, find_reaction_center
 from scripts.run_benchmark import load_test_map
@@ -160,7 +161,9 @@ def main() -> int:
         sub_mol = Chem.MolFromSmiles(sub)
         if sub_mol is None:
             continue
-        products = apply_rules_to_molecule(sub_mol, rules, normalization_mode="canonical")
+        # the convention the deployed generator fires rules in; measuring the gap with the
+        # substrate expanded counts references as unreachable that the bank does reach
+        products = {k: {0} for k in apply_with(sub_mol, rules, False, "canonical", True)}
         covered_keys = set()
         for p in products:
             try:

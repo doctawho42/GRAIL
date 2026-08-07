@@ -89,11 +89,20 @@ def _taut_key_set(smiles_iter):
     return out
 
 
+def recovered_keys(preds, trues) -> set:
+    """WHICH true keys a prediction set recovers, not how many.
+
+    The identity needs the recovered SETS to nest, and comparing counts cannot see a failure: a
+    pool recovering one reference and a ceiling recovering two different ones satisfies 1 <= 2
+    while containing nothing of each other. Certifying the nesting on counts is therefore weaker
+    than the property the decomposition claims.
+    """
+    return _taut_key_set(trues) & _taut_key_set(preds)
+
+
 def tautomer_hits(preds, trues) -> int:
     """# of tautomer-distinct true SMILES matched by any predicted SMILES."""
-    pk = _taut_key_set(preds)
-    tk = _taut_key_set(trues)
-    return len(tk & pk)
+    return len(recovered_keys(preds, trues))
 
 
 # --- parallel full-bank ceiling pass (torch-free; RDKit only) --------------------------
@@ -139,7 +148,11 @@ def _apply_ceiling(mol, rules):
         return apply_rules_to_molecule(mol, rules, normalization_mode="canonical")
     from collections import defaultdict
     out = defaultdict(set)
-    for i, s in enumerate(apply_with(mol, rules, False, "canonical", True)):
+    # drop_invalid=False matches the deployed pool: generator.generate_scored splits products on
+    # "." and keeps every fragment, applying no heavy-atom floor. Applying one to the ceiling and
+    # not to the pool is the same undeclared asymmetry as the hydrogen convention, one knob further
+    # down, and it costs the ceiling the sub-two-heavy-atom references this split contains.
+    for i, s in enumerate(apply_with(mol, rules, False, "canonical", False)):
         out[s].add(i)
     return out
 
@@ -154,12 +167,13 @@ def _ceiling_worker(item):
     sub, trues = item
     mol = Chem.MolFromSmiles(sub)
     if mol is None or not trues:
-        return (sub, 0, 0)
+        return (sub, 0, 0, [])
     full_products = list(
         _apply_ceiling(mol, _WORKER_RULES).keys()
     )
     u_i, cfull_i, _ = _tautomer_recovered(trues, full_products, audit=False)
-    return (sub, int(u_i), int(cfull_i))
+    # the recovered KEYS travel with the counts so the nesting can be certified by containment
+    return (sub, int(u_i), int(cfull_i), sorted(recovered_keys(full_products, trues)))
 
 
 def run_ceiling_pass(items, workers):
@@ -176,18 +190,18 @@ def run_ceiling_pass(items, workers):
     if workers <= 1:
         _ceiling_init(CEILING_EXPANDS)
         for i, item in enumerate(ceil_items, 1):
-            sub, u_i, cfull_i = _ceiling_worker(item)
-            ceiling[sub] = (u_i, cfull_i)
+            sub, u_i, cfull_i, keys = _ceiling_worker(item)
+            ceiling[sub] = (u_i, cfull_i, frozenset(keys))
             if i == 1 or i % 25 == 0 or i == n:
                 print(f"  [ceiling serial] {i}/{n} ({time.perf_counter()-t0:.0f}s)", flush=True)
     else:
         pool = multiprocessing.get_context("spawn").Pool(
             workers, initializer=_ceiling_init, initargs=(CEILING_EXPANDS,))
         try:
-            for i, (sub, u_i, cfull_i) in enumerate(
+            for i, (sub, u_i, cfull_i, keys) in enumerate(
                 pool.imap_unordered(_ceiling_worker, ceil_items, chunksize=4), 1
             ):
-                ceiling[sub] = (u_i, cfull_i)
+                ceiling[sub] = (u_i, cfull_i, frozenset(keys))
                 if i == 1 or i % 25 == 0 or i == n:
                     print(f"  [ceiling x{workers}] {i}/{n} ({time.perf_counter()-t0:.0f}s)", flush=True)
         finally:
@@ -252,7 +266,7 @@ def compute_records(model, items, ceiling, log_every=25):
         if i == 1 or i % log_every == 0 or i == len(items):
             print(f"  [torch] {i}/{len(items)} ({time.perf_counter()-t0:.0f}s)", flush=True)
         # C_full / U: reuse the parallel full-bank ceiling (denominator U, recovered Cfull)
-        u_i, cfull_i = ceiling.get(sub, (0, 0))
+        u_i, cfull_i, cfull_keys = ceiling.get(sub, (0, 0, frozenset()))
         if u_i == 0:
             continue
         true_prods = list(prods)
@@ -261,7 +275,8 @@ def compute_records(model, items, ceiling, log_every=25):
         # truncate what is already in the pool, so both belong to the ranking factor. The earlier
         # revision used top_k=MAX_POOL here, which charged the rule narrowing to ranking instead.
         scored = gen.generate_scored(sub, top_k=CANDIDATE_TOP_K, threshold=gen_threshold)
-        cbud_i = tautomer_hits([s for s, _ in scored], true_prods)
+        cbud_keys = recovered_keys([s for s, _ in scored], true_prods)
+        cbud_i = len(cbud_keys)
         # H: deployed gen x filter top-15, EXACT deployed operating point (rank policy, no gate)
         deployed_top15 = model.generate(
             sub,
@@ -271,7 +286,8 @@ def compute_records(model, items, ceiling, log_every=25):
             gate_by_filter=False,
             filter_candidate_cap=FILTER_CANDIDATE_CAP,
         )
-        h_i = tautomer_hits(deployed_top15, true_prods)
+        h_keys = recovered_keys(deployed_top15, true_prods)
+        h_i = len(h_keys)
         # Monotonicity clamp: nested pools guarantee H <= Cbud <= Cfull; the clamp only defends
         # against cross-path SMILES canonicalization drift (does not change the telescoping identity).
         if CLAMP:
@@ -279,7 +295,8 @@ def compute_records(model, items, ceiling, log_every=25):
             h_i = min(h_i, cbud_i)
         records.append({
             "sub": sub, "U": u_i, "Cfull": cfull_i, "Cbud": cbud_i, "H": h_i,
-            "nests": bool(h_i <= cbud_i <= cfull_i),
+            # containment, not a count comparison: the identity claims each set contains the next
+            "nests": bool(h_keys <= cbud_keys <= set(cfull_keys)),
             "deployed_top15": list(deployed_top15),
         })
     return records

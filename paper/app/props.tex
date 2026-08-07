@@ -250,19 +250,23 @@ direction the table already reports.
 \label{app:enginereach}
 
 \S\ref{sec:decomp} compares $\ceiling$ against $0.539$ and the natural reading is bank breadth. Three
-measurements say that reading is wrong, and the third is the one that matters.
+measurements say that reading is wrong, and the third is the one that matters. Every reach in this
+subsection is measured with the substrate expanded, which is not the convention $\ceiling$ is quoted
+under; the comparison here is between two \emph{applications} at fixed rules, and holding the
+expansion fixed across both arms is what makes it one.
 
 \paragraph{The two banks are not separate objects.} SyGMa's published rule set is one of the curated
 banks our own is a deduplicated union of, so containment is testable by verbatim string membership
 rather than inference: $152$ of its $175$ rules are in \texttt{extended\_smirks.txt}, all in the
 curated portion and none among the mined templates. The comparison is a superset against a subset.
 
-\paragraph{Depth is not the confound.} Our ceiling is one uncapped depth-1 pass. SyGMa's deployed
+\paragraph{Depth is not the confound.} The expanded-convention ceiling used here is one uncapped
+depth-1 pass. SyGMa's deployed
 pool is built by a scenario in which phase II fires on phase I products, which is composed rather
 than single-step, so the two were not measured the same way. Matching them costs little and moves
 the number the wrong way for us: SyGMa reaches $0.5325$ $[0.507,0.558]$ at one step against $0.5391$
-$[0.514,0.565]$ deployed, composition worth $+0.0065$ $[+0.0038,+0.0096]$, and the gap widens from
-$0.1964$ to $0.2029$ $[0.185,0.222]$. The re-run reproduces the frozen pool on every
+$[0.514,0.565]$ deployed, composition worth $+0.0065$ $[+0.0038,+0.0096]$, and the gap against that
+same expanded ceiling widens from $0.1964$ to $0.2029$ $[0.185,0.222]$. The re-run reproduces the frozen pool on every
 substrate, which is the gate this was run behind.
 
 \paragraph{Reach is a property of the system, not of the rule base.} Hold the rules fixed at the
@@ -273,7 +277,7 @@ $152$ both systems have and swap only the engine:
 \toprule
 & rules, engine & reach \\
 \midrule
-A & $152$ shared, ours          & 0.189 $[0.151,0.230]$ \\
+A & $152$ shared, expanded      & 0.189 $[0.151,0.230]$ \\
 B & $152$ shared, SyGMa's       & 0.381 $[0.333,0.433]$ \\
 C & all $175$, SyGMa's          & 0.524 $[0.469,0.579]$ \\
 D & all $175$, SyGMa's composed & 0.527 $[0.473,0.582]$ \\
@@ -285,7 +289,7 @@ The engine at fixed rules is worth $+0.192$ $[+0.152,+0.236]$, the $23$ rules we
 $+0.143$ $[+0.107,+0.180]$, and composition $+0.004$. The engine term alone is the size of the
 entire reach gap the main text reports.
 
-\paragraph{The term is a single decision.} Our application loop makes three discretionary choices
+\paragraph{The term is a single decision.} The application loop makes three discretionary choices
 before it reports a product: whether the substrate is expanded with explicit hydrogens before the
 templates fire, whether products are normalised by tautomer canonicalisation or as plain canonical
 SMILES, and what counts as a valid fragment. Toggling them one at a time over the same $152$ rules,
@@ -366,20 +370,21 @@ should move the same way by much less, which is what it does. Three banks cannot
 as a predictor and it is not offered as one. What they establish is that the direction is not a
 property of our engine, so a reported coverage figure identifies a bank together with a convention,
 and the second half of that pair is recorded nowhere --- including, until this measurement, by us.
-Our own ceiling is where it costs us: on these substrates the same bank recovers $414$ references
-with hydrogens expanded and $453$ without, and every ceiling this paper reports is measured with
-them expanded.
+Our own bank is where it costs us: on these substrates it recovers $414$ references with hydrogens
+expanded and $453$ without. \ceiling\ is therefore quoted without the expansion, matching the
+convention the deployed generator fires rules in; the figures this appendix reports for the shared
+$152$ are the expanded ones, and each is labelled where it appears.
 
 \paragraph{What the decomposition survives, and what it does not license.} Each method's three
 factors are measured through its own application and multiply to its own realised recall, so the
 decomposition itself is unaffected. What it does not license is reading the first factor
 \emph{across} methods as a property of their rule sets: it is a property of rule set and engine
 together, which is what \S\ref{sec:decomp} says. The direction is worth stating plainly, because it
-is not in our favour rhetorically and is in our favour substantively: our engine under-realises shared rules by a factor of two against SyGMa's,
-so $\ceiling$ understates what our bank holds, and the headline that the bank is not the binding
-constraint is strengthened rather than weakened by it. That extrapolation does not run
-from the $152$ to the whole bank, which would not be available: it runs to the part of the bank the
-ceiling lives in. The $152$ are curated, and on the $245$ substrates of \S\ref{app:provenance} the
+is not in our favour rhetorically and is in our favour substantively: our engine under-realises
+SyGMa's rules by a factor of two under the expansion, and the same expansion applied to our own bank
+costs it $0.081$ of reach on the clean test split --- which is why $\ceiling$ is quoted under the
+convention the pipeline fires rules in rather than under that one, and why the headline that the
+bank is not the binding constraint is strengthened rather than weakened. The $152$ are curated, and on the $245$ substrates of \S\ref{app:provenance} the
 $1{,}715$ curated rules reach $0.660$ against the whole bank's $0.728$; the mined majority was
 itself kept only if applying it through
 this engine regenerated its own annotated product (Appendix~\ref{app:arch}), so it was validated
@@ -639,12 +644,16 @@ $k=5$ (recall@5 0.086 against 0.030), and converges to the prior by $k=10$ (0.29
 therefore an artefact of the target's support, not a fundamental limit, which confirms that
 proposition's prediction.
 
-Coverage nevertheless binds. As a replacement generator the pipeline reaches recall@15 0.256 on
-the full test, against $\grailmacro$ for the deployed pipeline on the same split and at a
-comparable output size, 8.0 candidates per substrate against 8.4. The two runs were scored
-separately rather than paired, so we quote no interval on the difference; the interval on the
-factorised run's own recall is $[0.233,0.279]$, which excludes the deployed value. What caps it is not measured
-here. That the coverage term binds is consistent with Proposition 3 but does not test it: the
+Coverage does not bind it. As a replacement generator the pipeline reaches recall@15 $0.489$
+$[0.464,0.514]$ on the full test against $\grailmacro$ for the deployed pipeline, but it emits
+$14.0$ candidates per substrate against $8.4$, so that pair is not budget-matched and we do not
+claim it. The conservative comparison is: truncated to five candidates it reaches $0.337$, matching
+the deployed pipeline's $\grailmacro$ while emitting fewer than half as many, and at ten it reaches
+$0.432$. Both runs were scored separately rather than paired, so no interval is quoted on a
+difference. The convention this is measured in is the one the deployed generator fires rules in;
+under the expanding one the same model reaches $0.256$ and emits $8.0$, with $46$ substrates
+receiving no prediction at all against $2$ here, which is the size of the artefact rather than a
+property of the architecture. That the coverage term binds is consistent with Proposition 3 but does not test it: the
 proposition concerns what one application step can reach, and a type vocabulary is not application
 depth.
 

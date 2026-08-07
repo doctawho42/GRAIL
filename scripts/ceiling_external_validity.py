@@ -40,6 +40,7 @@ sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "scripts"))
 
 from grail_metabolism.stats import ratio_of_sums_ci
+from engine_knobs import apply_with
 from grail_metabolism.utils.preparation import apply_rules_to_molecule, load_default_rules
 from rdkit import Chem, RDLogger
 from rdkit.Chem import Descriptors, rdMolDescriptors
@@ -137,7 +138,9 @@ def _coverage_pairs_external_uncapped(rules):
         if mol is None:
             print(f"  [external] {i}/{len(parents)} UNPARSEABLE parent, skipped", flush=True)
             continue
-        products = list(apply_rules_to_molecule(mol, rules, normalization_mode="canonical").keys())
+        # the convention the deployed generator fires rules in, so the external ceiling is the same
+        # quantity as the internal one it is compared against
+        products = apply_with(mol, rules, False, "canonical", True)
         denom, rec, _ = _tautomer_recovered(list(truth[parent]), products, audit=False)
         if denom == 0:
             continue
@@ -258,7 +261,8 @@ def main() -> int:
             "external": {
                 "source": "docs/benchmark/data/gloryx_test.json (37 GLORYx parents)",
                 "quantity": ("UNCAPPED full-bank depth-1 tautomer coverage per parent "
-                             "(apply_rules_to_molecule, normalization_mode=canonical, no pool cap)"),
+                             "(engine_knobs.apply_with, hydrogens implicit as the deployed "
+                             "generator fires them, canonical normalisation, no pool cap)"),
                 "match_helper": "run_benchmark._tautomer_recovered",
                 "resampling_unit": "parent",
                 "n_boot": 10000,

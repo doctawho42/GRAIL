@@ -5,14 +5,14 @@
   "rdkit_version": "2022.09.5",
   "factors": {
     "coverage_bank": {
-      "point": 0.8163265306122449,
-      "lo": 0.7936162495466086,
-      "hi": 0.8382352941176471
+      "point": 0.817096649980747,
+      "lo": 0.794425087108014,
+      "hi": 0.8389589263928426
     },
     "selection_retention": {
-      "point": 0.33867924528301885,
-      "lo": 0.3153326904532305,
-      "hi": 0.3630634997576345
+      "point": 0.3383600377002828,
+      "lo": 0.3149717514124294,
+      "hi": 0.362721609966459
     },
     "ranking_conversion": {
       "point": 0.9596100278551533,
@@ -23,7 +23,7 @@
   "micro_recall": 0.2653061224489796,
   "oracle_recall": 0.2764728532922603,
   "macro_recall": 0.33947875891178264,
-  "macro_coverage_bank": 0.8592242349702561,
+  "macro_coverage_bank": 0.8596800754260967,
   "macro_oracle_recall": 0.35140013999983044,
   "aggregation_note": "Factors + micro_recall are pooled ratio-of-sums (the telescoping-identity frame; micro coverage_bank == the published rule-bank ceiling 0.735). macro_* are per-substrate means (metrics.py convention); macro_recall reproduces the deployed headline recall@15 0.330 (the earlier ~0.334 was a 291-substrate eval, now corrected).",
   "provenance": {
@@ -4736,7 +4736,7 @@
     {
       "sub": "COC(F)(F)C(Cl)Cl",
       "U": 5,
-      "Cfull": 0,
+      "Cfull": 1,
       "Cbud": 0,
       "H": 0,
       "nests": true,
@@ -18314,7 +18314,7 @@
     {
       "sub": "O=[N+]([O-])c1c(F)cc(F)c(F)c1F",
       "U": 3,
-      "Cfull": 2,
+      "Cfull": 3,
       "Cbud": 1,
       "H": 1,
       "nests": true,

@@ -33,6 +33,10 @@ from .som import product_som_score
 __all__ = ["build_rule_by_type", "generate"]
 
 
+# set True to restore the historical expanding behaviour of this inference path
+FACTORIZED_EXPANDS = False
+
+
 def build_rule_by_type(rule_to_type: Dict[str, int]) -> Dict[int, List[str]]:
     """Invert Task 1's `{smirks: type_id}` map into `{type_id: [smirks, ...]}`.
 
@@ -120,7 +124,11 @@ def generate(
         return []
     top_type_ids = [int(i) for i in (-type_probs).argsort()[:k]]
 
-    sub_h = Chem.AddHs(Chem.Mol(sub_mol))
+    # The deployed generator fires rules on the substrate as parsed (generator._graph_for_substrate
+    # is MolFromSmiles and nothing else). Expanding here and not there would measure this model in a
+    # convention the model it is compared against does not use, and the expansion is worth 0.081 of
+    # coverage on this bank, which is the very quantity this ablation is judged on.
+    sub_h = Chem.Mol(sub_mol) if not FACTORIZED_EXPANDS else Chem.AddHs(Chem.Mol(sub_mol))
 
     # tautomer-InChIKey -> (prior_score, smiles); keeps only the best-scoring occurrence of
     # a metabolite reached via more than one rule/type, and preserves first-seen order as a
