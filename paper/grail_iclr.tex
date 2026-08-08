@@ -47,9 +47,14 @@ Decide Molecular Machine-Learning Leaderboards}
 A position on a molecular machine-learning leaderboard is decided partly by choices no paper
 declares: the rule for when two structures are the same molecule, how many candidates a method may
 emit, and --- wherever reaction templates are involved --- how the engine applying them spells a
-hydrogen. We measure all three on frozen predictions: nothing is retrained and only the convention varies. Re-scoring seven published retrosynthesis systems on the $4{,}999$ reactions they share, the
-top-1 order changes: a system fourth under canonical matching is first under stereo-blind matching,
-five of twenty-one pairs exchange, and $109$ of $448$ paired interaction tests survive Holm.
+hydrogen. We measure all three on frozen predictions: nothing is retrained and only the convention
+varies. Re-scoring eleven published retrosynthesis systems on the test sets they actually share, the
+criterion moves systems by certifiably different amounts in both groups and reorders the tighter
+one: among seven separated by a median $0.013$, a system fourth under canonical matching is first
+under stereo-blind matching, five of twenty-one pairs exchange and $109$ of $448$ paired
+interactions survive Holm; among three separated by $0.047$, none exchange. Reordering needs a
+leaderboard packed tighter than the criterion's differential effect --- which is what a benchmark
+looks like as it matures.
 
 A single recall number cannot say which of three failure modes is responsible. Where the rule base
 can be enumerated it factorises \emph{exactly} into coverage, selection and ranking, and
@@ -58,21 +63,20 @@ beam bound. On metabolite prediction this explains a leaderboard instead of rest
 system reaches \ceiling\ against $0.539$ and converts a third of it, while the narrower converts
 nearly all of its own, having no selection stage to lose anything at.
 
-The first factor is not a property of the rule base. Holding fixed the $152$ rules two banks share
+The first factor is not a property of the rule base. Holding the $152$ rules two banks share fixed
 and swapping only the engine moves what they reach by $+0.192$ $[+0.152,+0.236]$, as large as the
 whole gap between the banks, and it is one line of preprocessing neither paper reports. What depends
 on the convention is a class of construct rather than a domain, with three mechanisms and one
-measured instance each: a primitive counting explicit structure breaks the match before any
-product exists (all $42{,}554$ patterns of a standard retrosynthesis library); a rewrite not naming the
-hydrogen it consumes breaks the product (metabolite banks); and a bank assembled from two
-conventions has no right answer at all. Only the third is repairable, and
-dispatching the convention per template recovers $+0.016$ $[+0.006,+0.028]$.
+instance each: a primitive counting explicit structure breaks the match before any product exists
+(all $42{,}554$ patterns of a standard retrosynthesis library); a rewrite not naming the hydrogen it
+consumes breaks the product instead; and a bank assembled from two conventions has no right answer
+at all. Only the third is repairable: dispatching per template recovers $+0.016$ $[+0.006,+0.028]$.
 
-A fourth undeclared choice is which population a familiar name means: the eleven published
-prediction files re-scored here sit on three disjoint test sets, and this paper's own copy of the
-name is one of the deviations. Output size is the plainest --- every certified reversal runs through
-the one system emitting $81$ candidates against everyone else's $8$ to $11$ --- and independent of
-the matching rule. We release the protocol, the split, the frozen predictions and the checks.
+A fourth undeclared choice is which population a familiar name means: those eleven files sit on
+three disjoint test sets, and this paper's own copy of the name is one of the deviations. Output
+size is the plainest --- every certified reversal runs through the one system emitting $81$
+candidates against everyone else's $8$ to $11$. We release the protocol, the split, the frozen
+predictions and the checks.
 \end{abstract}
 
 \section{Introduction}
@@ -518,10 +522,11 @@ responsible: here stereochemistry alone, every separating gain realised by the s
 references carry stereocentres that several of these systems cannot emit; internally, where
 references are already stereo-stripped, tautomerism fails instead. Which relaxation dominates is therefore a
 property of the reference set, and we state that as the effect's condition rather than as a caveat:
-it needs references carrying representational variety to diverge from. It reorders another domain on
-that condition: across $4{,}999$ USPTO-50k reactions, seven published retrosynthesis systems take
-two different top-1 orderings under these criteria and five pairs exchange, with $109$ of $448$
-paired interactions surviving Holm (Appendix~\ref{app:xdomain}).
+it needs references carrying representational variety to diverge from, and a leaderboard packed
+tighter than the differential it produces. Seven published retrosynthesis systems within a median
+$0.013$ of each other exchange five of twenty-one pairs, $109$ of $448$ paired interactions
+surviving Holm; three sitting $0.047$ apart are moved by the same criterion and not reordered
+(Appendix~\ref{app:xdomain}).
 
 
 \subsection{The aggregate and the budget are one variable, and the decomposition predicts it}

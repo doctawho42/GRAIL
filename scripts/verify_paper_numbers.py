@@ -241,7 +241,7 @@ def main() -> int:
                 ("intervals excluding zero", r"\$(\d+)\$ have intervals excluding zero",
                  len(L["certified_interactions"])),
                 ("Holm survivors", r"\\textbf\{\$(\d+)\$ survive Holm", len(L["holm_survivors"])),
-                ("Holm survivors, main body", r"with \$(\d+)\$ of \$\d+\$\s*paired interactions surviving Holm",
+                ("Holm survivors, main body", r"\$(\d+)\$ of \$\d+\$ paired interactions surviving Holm",
                  len(L["holm_survivors"])),
                 ("interaction tests, main body", r"paired interactions surviving Holm", None),
                 ("pairs exchanging at top-1", r"Five of the twenty-one pairs exchange",
@@ -265,6 +265,49 @@ def main() -> int:
             check(f"top-1 canonical, {shown}", m and m.group(1), acc[key]["canonical"]["top1"])
         if set(NAMES.values()) != set(sysl):
             checks.append((False, "leaderboard systems named", sorted(NAMES.values()), sorted(sysl), ""))
+
+    # the replication group, whose value is that it does NOT reorder: the condition the paper states
+    # is a comparison between two measured quantities, and both have to be checked
+    import itertools as _it
+    lb1 = ROOT / "results/retro_leaderboard_cluster1.json"
+    if lb.exists() and lb1.exists():
+        flat = re.sub(r"\s+", " ", whole)
+        rows = {}
+        for tag, path in (("seven-system", lb), ("three-system", lb1)):
+            L2 = json.loads(path.read_text())
+            a2, S2 = L2["accuracy"], L2["config"]["systems"]
+            # one row per PAIR, so a pair's gap is compared with that same pair's differential.
+            # Sorting the two lists separately silently pairs the smallest gap with the smallest
+            # movement, which is a different quantity and gave zero where the answer is seven.
+            per_pair = [(abs(a2[x]["canonical"]["top1"] - a2[y]["canonical"]["top1"]),
+                         abs((a2[x]["tautomer"]["top1"] - a2[x]["canonical"]["top1"])
+                             - (a2[y]["tautomer"]["top1"] - a2[y]["canonical"]["top1"])))
+                        for x, y in _it.combinations(S2, 2)]
+            gaps = sorted(g for g, _ in per_pair)
+            rows[tag] = {"median_gap": gaps[len(gaps) // 2],
+                         "max_diff": max(d2 for _, d2 in per_pair),
+                         "closer": sum(1 for g, d2 in per_pair if g < d2),
+                         "pairs": len(per_pair),
+                         "exchanged": len(L2["pairs_that_exchange"]["top1"])}
+        # the main body states the same condition in words; both of its numbers are checked too
+        mb = re.search(r"within a median \$([\d.]+)\$ of each other", flat)
+        checks.append((close(mb and mb.group(1), rows["seven-system"]["median_gap"], 5e-4),
+                       "median gap, main body", mb and mb.group(1),
+                       round(rows["seven-system"]["median_gap"], 4), ""))
+        mb2 = re.search(r"three sitting \$([\d.]+)\$ apart", flat)
+        checks.append((close(mb2 and mb2.group(1), rows["three-system"]["median_gap"], 5e-4),
+                       "three-system gap, main body", mb2 and mb2.group(1),
+                       round(rows["three-system"]["median_gap"], 4), ""))
+        for tag, v in rows.items():
+            m = re.search(tag + r" & \$([\d.]+)\$ & \$([\d.]+)\$ & \$(\d+)\$ of \$(\d+)\$ & \$(\d+)\$", flat)
+            for i, (label, val) in enumerate((("median gap", v["median_gap"]),
+                                              ("differential move", v["max_diff"]),
+                                              ("pairs closer than the move", v["closer"]),
+                                              ("pairs in the group", v["pairs"]),
+                                              ("pairs exchanged", v["exchanged"]))):
+                checks.append((close(m and m.group(i + 1), val, 5e-4 if i < 2 else 0),
+                               f"{tag}, {label}", m and m.group(i + 1), round(val, 4),
+                               "from the two leaderboard artifacts"))
 
     # 12. intervals printed beside the factors
     for label, key in (("ceiling interval", "coverage_bank"), ("ranking interval", "ranking_conversion")):

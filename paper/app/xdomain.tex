@@ -485,8 +485,37 @@ seven take a single ordering under all four conventions and no pair exchanges. A
 ordering here is stereochemistry, with tautomer canonicalisation adding little on top --- the same
 asymmetry the external metabolite set shows, and the opposite of the internal one. Top-1 is the
 number this field leads with, so a criterion that reorders only there reorders the reported
-leaderboard; but the honest statement is that the reordering is a top-1 phenomenon on this
-benchmark, not a property of the whole accuracy curve.
+leaderboard; but the reordering is a top-1 phenomenon on this benchmark, not a property of the whole
+accuracy curve.
+
+\paragraph{The second group does not reorder, and says why the first one does.} The same run on the
+three-system group is a replication we did not pre-register, and it comes back negative for
+reordering: one ordering under all four criteria, no pair exchanged. It is not negative about the
+criterion. Fifteen of its $66$ paired interactions survive Holm, so the criterion moves those systems
+by certifiably different amounts too --- and by almost exactly the same amounts as in the seven, a
+largest differential of $0.013$ against $0.015$.
+
+What differs is how tightly the leaderboard is packed:
+
+\begin{center}
+\footnotesize
+\begin{tabular}{lcccc}
+\toprule
+group & median pairwise gap & largest differential move & pairs with gap $<$ move & exchanged \\
+\midrule
+seven-system & $0.013$ & $0.015$ & $7$ of $21$ & $5$ \\
+three-system & $0.047$ & $0.013$ & $0$ of $3$  & $0$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+That is the condition, and it is the useful form of the result. A convention reorders a leaderboard
+when it moves two methods by more than the gap between them, so the quantity that decides the
+outcome is not how far a criterion moves scores --- which is the same in both groups --- but how far
+it moves them \emph{relative to how close the methods already are}. Seven systems within a median
+$0.013$ of each other are reordered by a differential of $0.015$; three systems $0.047$ apart are
+not. The reading is uncomfortable rather than reassuring: a leaderboard becomes vulnerable to an
+undeclared convention exactly as it matures and its entries converge.
 
 Two earlier measurements outside metabolism come back negative, and they are negative about
 different things. The first carries a leaderboard: it scores eight generative models and can
