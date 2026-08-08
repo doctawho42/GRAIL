@@ -41,7 +41,8 @@ from run_benchmark import _tautomer_recovered
 RDLogger.DisableLog("rdApp.*")
 N_BOOT, SEED = 10000, 0
 BANK = "grail_full"
-# results/hydrogen_dispatch.json and results/bank_engine_replication.json
+# results/hydrogen_dispatch.json and results/bank_engine_replication.json, both on the
+# 245-substrate subsample; this pair gates that population and no other.
 COMMITTED = {"dispatch": 0.8148, "implicit": 0.7989}
 _CTX: dict = {}
 
@@ -106,12 +107,19 @@ def main() -> int:
     I = np.array([r[3] for r in rows])
     reach_d = round(float(D.sum() / max(U.sum(), 1)), 4)
     reach_i = round(float(I.sum() / max(U.sum(), 1)), 4)
-    print(f"\ngate: dispatch {reach_d} against committed {COMMITTED['dispatch']}, "
-          f"implicit {reach_i} against {COMMITTED['implicit']}")
-    for got, want, name in ((reach_d, COMMITTED["dispatch"], "dispatch"),
-                            (reach_i, COMMITTED["implicit"], "implicit")):
-        if abs(got - want) > 1e-4:
-            raise SystemExit(f"the {name} arm does not reproduce its committed reach")
+    # The committed values were measured on the 245-substrate subsample, so they gate that
+    # population and no other. Asserting them against a run on the full split would be a comparison
+    # across populations -- the defect this paper names -- dressed as a reproducibility check.
+    if args.population == "subsample245":
+        print(f"\ngate: dispatch {reach_d} against committed {COMMITTED['dispatch']}, "
+              f"implicit {reach_i} against {COMMITTED['implicit']}")
+        for got, want, name in ((reach_d, COMMITTED["dispatch"], "dispatch"),
+                                (reach_i, COMMITTED["implicit"], "implicit")):
+            if abs(got - want) > 1e-4:
+                raise SystemExit(f"the {name} arm does not reproduce its committed reach")
+    else:
+        print(f"\narms measured here: dispatch {reach_d}, implicit {reach_i} "
+              f"(the committed pair gates the 245-substrate subsample only)")
 
     rng = np.random.default_rng(SEED)
     idx = rng.integers(0, len(rows), (N_BOOT, len(rows)))

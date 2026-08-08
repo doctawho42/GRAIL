@@ -77,6 +77,27 @@ def assert_nested() -> dict:
     return {"subsample245": len(small), "clean_test": len(big), "nested": True}
 
 
+def ceiling_target(subs, macro: bool = False) -> float:
+    """The committed coverage ceiling restricted to exactly these substrates.
+
+    One implementation, because three scripts gate on this quantity and three copies drift. It is
+    read from the canonical factorization artifact rather than from a literal or from a second
+    artifact that happens to record a ceiling: a gate whose reference value does not track the thing
+    it certifies is the same defect whether the stale value is typed into the source or looked up
+    somewhere else. One gate here read 0.7284 out of a neighbouring artifact -- superseded by a
+    convention correction AND measured on another population -- and kept passing.
+    """
+    rows = {r["sub"]: r for r in
+            json.loads((ROOT / "results/recall_factorization.json").read_text())["per_substrate"]}
+    hit = [rows[s] for s in subs if s in rows]
+    if not hit:
+        raise SystemExit("none of these substrates appear in the factorization artifact; the gate "
+                         "would compare the measurement against nothing")
+    if macro:
+        return sum(r["Cfull"] / r["U"] for r in hit if r["U"]) / len(hit)
+    return sum(r["Cfull"] for r in hit) / max(sum(r["U"] for r in hit), 1)
+
+
 def tagged_out(default_path, name: str) -> str:
     """Where a run writes, so widening never silently overwrites the artifact a gate cites."""
     p = Path(default_path)

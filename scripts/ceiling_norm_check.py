@@ -44,20 +44,6 @@ RDLogger.DisableLog("rdApp.*")
 _CTX: dict = {}
 
 
-def ceiling_target(subs) -> float:
-    """The committed ceiling restricted to exactly these substrates.
-
-    Read from the artifact rather than frozen in this file. A literal is a snapshot of the answer at
-    the moment the gate was written, and it goes on passing after its subject has moved -- which is
-    the failure this gate was itself built to catch one instance of.
-    """
-    rows = {r["sub"]: r for r in
-            json.loads((ROOT / "results/recall_factorization.json").read_text())["per_substrate"]}
-    hit = sum(rows[s]["Cfull"] for s in subs if s in rows)
-    ref = sum(rows[s]["U"] for s in subs if s in rows)
-    return hit / max(ref, 1)
-
-
 def _code_version() -> dict:
     import subprocess
     def _git(*a):

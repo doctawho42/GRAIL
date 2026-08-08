@@ -38,7 +38,7 @@ import os
 from rdkit import Chem, RDLogger
 
 sys.path.insert(0, str(ROOT / "scripts"))
-from _population import POPULATIONS, population_items, tagged_out
+from _population import POPULATIONS, ceiling_target, population_items, tagged_out
 from engine_knobs import apply_with
 from grail_metabolism.utils.preparation import apply_rules_to_molecule
 from run_benchmark import _tautomer_recovered   # the paper's own per-substrate recovery count
@@ -54,17 +54,6 @@ N_BOOT, SEED = 10000, 0
 # worse than failing: it certifies the old value silently. This gate held 0.7284 through a ceiling
 # correction that took the same quantity to 0.8171.
 TOL = 0.002
-
-
-def ceiling_target(subs) -> float:
-    """The committed ceiling restricted to exactly these substrates, micro."""
-    rows = {r["sub"]: r for r in
-            json.loads((ROOT / "results/recall_factorization.json").read_text())["per_substrate"]}
-    hit = sum(rows[s]["Cfull"] for s in subs if s in rows)
-    ref = sum(rows[s]["U"] for s in subs if s in rows)
-    return hit / max(ref, 1)
-_CUR: list = []
-_MIN: list = []
 
 
 def _rel(p) -> str:

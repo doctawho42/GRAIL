@@ -13,9 +13,10 @@ three groups with no common authorship:
     biotransformer    the SMIRKS shipped in BioTransformer's reaction databases
 
 Same substrates, same matcher, same engine, one line different. The grail_full arm doubles as a
-gate: with the switch in its deployed position it must reproduce the committed
-results/reach_engine_vs_bank.json ceiling on these substrates, or this is not the engine the paper
-reports. It also answers a question the paper currently leaves open -- whether the ceiling we
+gate: with the switch in its deployed position it must reproduce the committed coverage ceiling
+restricted to these substrates -- read from results/recall_factorization.json, the artifact the
+published ceiling IS, rather than from a neighbouring file that happens to record one -- or this is
+not the engine the paper reports. It also answers a question the paper currently leaves open -- whether the ceiling we
 publish understates what our own bank holds, and by how much.
 """
 from __future__ import annotations
@@ -39,7 +40,8 @@ sys.path.insert(0, str(ROOT / "scripts"))
 import sygma
 from rdkit import Chem, RDLogger
 
-from _population import POPULATIONS, population_items, load_population, tagged_out
+from _population import (POPULATIONS, ceiling_target, load_population,
+                         population_items, tagged_out)
 from engine_knobs import DEFAULT, apply_with
 from run_benchmark import _tautomer_recovered
 
@@ -197,10 +199,14 @@ def main() -> int:
              "banks": banks}, indent=1))
 
     if "grail_full" in banks:
-        committed = json.loads((ROOT / "results/reach_engine_vs_bank.json").read_text())
-        ceiling = committed["gates"]["grail_full_bank_same_substrates"]
+        # Read from the canonical factorization, restricted to this run's population. The value
+        # this gate used to read out of results/reach_engine_vs_bank.json was 0.7284 -- superseded
+        # by the convention correction and measured on the other population -- and it kept passing,
+        # which is the same failure as a stale literal wearing a lookup.
+        ceiling = ceiling_target([sub for sub, _ in items])
         got = banks["grail_full"]["deployed"]["reach"]
-        print(f"\ngate: grail_full deployed {got} against the committed ceiling {ceiling}")
+        print(f"\ngate: grail_full deployed {got} against the committed ceiling {ceiling:.4f} "
+              f"on these {len(items)} substrates")
         if abs(got - ceiling) > 1e-4:
             raise SystemExit("this is not the engine the published ceiling was measured with")
 
