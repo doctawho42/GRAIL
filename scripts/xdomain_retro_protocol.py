@@ -64,6 +64,34 @@ def reactant_set_key(dotjoined: str, mode: str):
     return frozenset(keys)
 
 
+def load_predictions(path, rows) -> list[list[str]]:
+    """Ranked reactant-set predictions from a released file, aligned to the test rows.
+
+    A second system almost never ships a runnable checkpoint; it ships its predictions. Scoring
+    those needs no model and no GPU, which is the difference between a comparison being feasible
+    and being deferred. Two shapes are accepted:
+
+      [{"product": ..., "preds": [...]}, ...]   -- carries its own alignment, and is checked
+      [[...], [...], ...]                       -- positional, and is trusted only on length
+
+    The alignment check is the point. A released prediction file scored against the wrong rows
+    produces a number that looks like an accuracy, and this literature has already lost thirteen
+    points to a split that differed silently from the one on the model card.
+    """
+    data = json.loads(Path(path).read_text())
+    if len(data) != len(rows):
+        raise SystemExit(f"{path}: {len(data)} predictions against {len(rows)} test reactions -- "
+                         f"these are not the same population")
+    if data and isinstance(data[0], dict):
+        mismatched = sum(1 for d, r in zip(data, rows)
+                         if d.get("product") and d["product"] != r["PRODUCT"])
+        if mismatched:
+            raise SystemExit(f"{path}: {mismatched} of {len(rows)} predictions carry a product that "
+                             f"is not the test row's -- the file is not aligned to this split")
+        return [list(d["preds"]) for d in data]
+    return [list(d) for d in data]
+
+
 def main() -> int:
     import argparse
     ap = argparse.ArgumentParser()
@@ -71,17 +99,28 @@ def main() -> int:
     ap.add_argument("--n", type=int, default=300)
     ap.add_argument("--beams", type=int, default=5)
     ap.add_argument("--threads", type=int, default=6)
+    ap.add_argument("--model", default=MODEL, help="HuggingFace seq2seq id to generate with")
+    ap.add_argument("--predictions", default=None,
+                    help="score a released prediction file instead of generating; no model is loaded")
+    ap.add_argument("--label", default=None, help="name for this system in the report")
     ap.add_argument("--out", default=str(ROOT / "results" / "xdomain_retro_protocol.json"))
     args = ap.parse_args()
-    torch.set_num_threads(args.threads)
-
-    from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
-    print("loading ReactionT5v2 (downloads on first run) ...", flush=True)
-    tok = AutoTokenizer.from_pretrained(MODEL, return_tensors="pt")
-    model = AutoModelForSeq2SeqLM.from_pretrained(MODEL).eval()
 
     rows = list(csv.DictReader(open(args.test_csv)))[: args.n]
-    print(f"test reactions: {len(rows)}  beams={args.beams}", flush=True)
+    label = args.label or (Path(args.predictions).stem if args.predictions else args.model)
+
+    if args.predictions:
+        supplied = load_predictions(args.predictions, rows)
+        print(f"scoring {label}: {len(rows)} released predictions, no model loaded", flush=True)
+        tok = model = None
+    else:
+        supplied = None
+        torch.set_num_threads(args.threads)
+        from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
+        print(f"loading {args.model} (downloads on first run) ...", flush=True)
+        tok = AutoTokenizer.from_pretrained(args.model, return_tensors="pt")
+        model = AutoModelForSeq2SeqLM.from_pretrained(args.model).eval()
+        print(f"test reactions: {len(rows)}  beams={args.beams}", flush=True)
 
     # correct[mode][k] = # test reactions with a top-k hit under that convention
     correct = {m: {k: 0 for k in KS} for m in MODES}
@@ -91,10 +130,14 @@ def main() -> int:
         if i % 25 == 0 or i == len(rows):
             print(f"  {i}/{len(rows)} ({time.time()-t0:.0f}s)", flush=True)
         product, true_r = row["PRODUCT"], row["REACTANT"]
-        inp = tok(product, return_tensors="pt", truncation=True, max_length=200)
-        with torch.no_grad():
-            out = model.generate(**inp, num_beams=args.beams, num_return_sequences=args.beams, max_length=200)
-        preds = [tok.decode(o, skip_special_tokens=True).replace(" ", "").rstrip(".") for o in out]
+        if supplied is not None:
+            preds = supplied[i - 1]
+        else:
+            inp = tok(product, return_tensors="pt", truncation=True, max_length=200)
+            with torch.no_grad():
+                out = model.generate(**inp, num_beams=args.beams,
+                                     num_return_sequences=args.beams, max_length=200)
+            preds = [tok.decode(o, skip_special_tokens=True).replace(" ", "").rstrip(".") for o in out]
         n += 1
         for mode in MODES:
             true_key = reactant_set_key(true_r, mode)
@@ -108,9 +151,12 @@ def main() -> int:
     acc = {m: {f"top{k}": round(correct[m][k] / n, 4) for k in KS} for m in MODES}
     # spread across conventions at each k (the "protocol changes the number" gap)
     spread = {f"top{k}": round(max(acc[m][f"top{k}"] for m in MODES) - min(acc[m][f"top{k}"] for m in MODES), 4) for k in KS}
-    report = {"model": MODEL, "n": n, "beams": args.beams, "accuracy_by_mode": acc, "spread_across_modes": spread}
+    report = {"model": label, "source": "released predictions" if supplied else "generated here",
+              "test_csv": args.test_csv, "n": n,
+              "beams": None if supplied else args.beams,
+              "accuracy_by_mode": acc, "spread_across_modes": spread}
     Path(args.out).write_text(json.dumps(report, indent=2))
-    print(f"\n=== retrosynthesis top-k accuracy under match conventions (ReactionT5v2, n={n}) ===", flush=True)
+    print(f"\n=== retrosynthesis top-k accuracy under match conventions ({label}, n={n}) ===", flush=True)
     print(f"{'mode':10s} | " + " | ".join(f"top{k}".rjust(7) for k in KS), flush=True)
     for m in MODES:
         print(f"{m:10s} | " + " | ".join(str(acc[m][f'top{k}']).rjust(7) for k in KS), flush=True)
