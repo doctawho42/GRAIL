@@ -21,7 +21,7 @@ uses, on the substrates results/ceiling_by_provenance.json is measured on.
 """
 from __future__ import annotations
 
-import json, multiprocessing, os, sys, tempfile, time
+import json, multiprocessing, os, pathlib, sys, tempfile, time
 from pathlib import Path
 
 import numpy as np
@@ -34,6 +34,7 @@ if str(ROOT) not in sys.path:
 sys.path.insert(0, str(ROOT / "scripts"))
 
 from grail_metabolism.utils.preparation import apply_rules_to_molecule
+from _population import POPULATIONS, population_items, tagged_out
 from run_benchmark import _tautomer_recovered
 
 RDLogger.DisableLog("rdApp.*")
@@ -119,6 +120,11 @@ def _worker(item):
 
 
 def main() -> int:
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--population", default="clean_test", choices=POPULATIONS,
+                    help="subsample245 reproduces the committed artifact; clean_test is the split")
+    args = ap.parse_args()
     bank = {l.strip() for l in open(ROOT / "grail_metabolism/resources/extended_smirks.txt") if l.strip()}
     lines = rule_lines()
     sy = sorted({l.split("\t")[0].strip() for ls in lines.values() for l in ls})
@@ -130,13 +136,12 @@ def main() -> int:
     paths_all = _write_subset(lines, None, tmp / "all")
     paths_152 = _write_subset(lines, set(contained), tmp / "c152")
 
-    src = json.loads((ROOT / "results/filter_vs_prior_ci.json").read_text())["per_substrate"]
     refs = json.loads((ROOT / "results/test_references.json").read_text())
     table = json.loads((ROOT / "results" / "key_tables" / "inchikey_tautomer.json").read_text())
     def parent_keyed(sub):
         pk = table.get(sub)
         return 0 if pk is None else sum(1 for x in refs[sub] if table.get(x) == pk)
-    items = [(r["sub"], refs[r["sub"]], parent_keyed(r["sub"])) for r in src if refs.get(r["sub"])]
+    items = [(s, trues, parent_keyed(s)) for s, trues in population_items(args.population)]
     print(f"substrates: {len(items)}", flush=True)
 
     cfg = {"contained": contained, "paths_all": paths_all, "paths_152": paths_152}
@@ -168,7 +173,7 @@ def main() -> int:
     rep = {
         "match": "inchikey_tautomer (run_benchmark._tautomer_recovered, as in bank_overlap_sygma.py)",
         "n": len(items), "n_boot": N_BOOT, "seed": SEED,
-        "substrate_source": "results/filter_vs_prior_ci.json (the ceiling_by_provenance substrates)",
+        "population": args.population,
         "arms": {
             "A_grail_engine_152_rules": est(cols["A"]),
             "B_sygma_engine_152_rules_one_step": est(cols["B"]),
@@ -186,8 +191,9 @@ def main() -> int:
     }
     print(json.dumps(rep["arms"], indent=1), flush=True)
     print(json.dumps(rep["contrasts"], indent=1), flush=True)
-    OUT.write_text(json.dumps(rep, indent=1))
-    print(f"wrote {OUT}", flush=True)
+    out = pathlib.Path(tagged_out(OUT, args.population))
+    out.write_text(json.dumps(rep, indent=1))
+    print(f"wrote {out}", flush=True)
     return 0
 
 

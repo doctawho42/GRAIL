@@ -51,6 +51,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 from rdkit import Chem, RDLogger
 
+from _population import POPULATIONS, population_items, load_population, tagged_out
 from engine_knobs import DEFAULT, apply_with, shared_rules
 from grail_metabolism.utils.preparation import _iter_reaction_products
 
@@ -163,13 +164,13 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--out", default=str(ROOT / "results" / "explicit_h_mechanism.json"))
+    ap.add_argument("--population", default="clean_test", choices=POPULATIONS,
+                    help="subsample245 reproduces the committed artifact; clean_test is the split")
     args = ap.parse_args()
+    args.out = tagged_out(args.out, args.population)
 
     rules = shared_rules()
-    subs = [r["sub"] for r in
-            json.loads((ROOT / "results/filter_vs_prior_ci.json").read_text())["per_substrate"]]
-    truth = json.loads((ROOT / "results/test_references.json").read_text())
-    subs = [s for s in subs if truth.get(s)]
+    subs = load_population(args.population)
     if args.limit:
         subs = subs[: args.limit]
     print(f"{len(rules)} rules over {len(subs)} substrates", flush=True)
@@ -194,7 +195,7 @@ def main() -> int:
 
     unparseable_extra = d["unparseable"] - w["unparseable"]
     floor_extra = d["below_heavy_atom_floor"] - w["below_heavy_atom_floor"]
-    rep = {"config": {**_code_version(), "n_rules": len(rules), "n_substrates": len(rows),
+    rep = {"config": {**_code_version(), "population": args.population, "n_rules": len(rules), "n_substrates": len(rows),
                       "knobs_held": {k: v for k, v in DEFAULT.items() if k != "add_hs"}},
            "pipeline": pipeline,
            "products_in_both": tot(lambda r: r["shared"]),

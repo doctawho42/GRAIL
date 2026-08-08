@@ -55,6 +55,7 @@ from rdkit import Chem, RDLogger
 
 from grail_metabolism.utils.preparation import (
     _clean_product_smiles, _iter_reaction_products, _normalize_smiles_cached, iscorrect)
+from _population import POPULATIONS, population_items, load_population, tagged_out
 from run_benchmark import _tautomer_recovered
 
 RDLogger.DisableLog("rdApp.*")
@@ -174,17 +175,17 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--out", default=str(ROOT / "results" / "engine_knobs.json"))
+    ap.add_argument("--population", default="clean_test", choices=POPULATIONS,
+                    help="subsample245 reproduces the committed artifact; clean_test is the split")
     args = ap.parse_args()
+    args.out = tagged_out(args.out, args.population)
 
     rules = shared_rules()
     print(f"rules held by both banks: {len(rules)}", flush=True)
     if len(rules) != 152:
         raise SystemExit(f"expected the 152 shared rules, selected {len(rules)}")
 
-    subs = [r["sub"] for r in
-            json.loads((ROOT / "results/filter_vs_prior_ci.json").read_text())["per_substrate"]]
-    truth = json.loads((ROOT / "results/test_references.json").read_text())
-    items = [(s, truth[s]) for s in subs if truth.get(s)]
+    items = population_items(args.population)
     if args.limit:
         items = items[: args.limit]
     print(f"substrates: {len(items)}", flush=True)
@@ -291,7 +292,7 @@ def main() -> int:
           f"engine term {rep_vs['committed_engine_term_micro']:+.4f}, both micro")
 
     reaches = [v["reach"] for v in res.values() if v is not res.get("sygma_engine")]
-    rep = {"config": {**_code_version(), "n_rules": len(rules), "n_substrates": len(rows),
+    rep = {"config": {**_code_version(), "population": args.population, "n_rules": len(rules), "n_substrates": len(rows),
                       "match": "inchikey_tautomer", "n_boot": N_BOOT, "seed": SEED,
                       "default": DEFAULT, "gate": f"default reproduces arm A ({arm_a})"},
            "default_reach": res[dflt]["reach"],

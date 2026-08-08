@@ -35,6 +35,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 from rdkit import Chem, RDLogger
 
+from _population import POPULATIONS, population_items, load_population, tagged_out
 from bank_engine_replication import load_bank
 from engine_knobs import apply_with
 from run_benchmark import _tautomer_recovered
@@ -95,13 +96,13 @@ def _worker(item):
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default=str(ROOT / "results" / "ceiling_norm_check.json"))
+    ap.add_argument("--population", default="clean_test", choices=POPULATIONS,
+                    help="subsample245 reproduces the committed artifact; clean_test is the split")
     args = ap.parse_args()
+    args.out = tagged_out(args.out, args.population)
 
     rules = load_bank("grail_full")
-    subs = [r["sub"] for r in
-            json.loads((ROOT / "results/filter_vs_prior_ci.json").read_text())["per_substrate"]]
-    truth = json.loads((ROOT / "results/test_references.json").read_text())
-    items = [(s, truth[s]) for s in subs if truth.get(s)]
+    items = population_items(args.population)
     print(f"{len(rules)} rules over {len(items)} substrates, normalisation canonical", flush=True)
 
     workers = max(1, (os.cpu_count() or 4) - 2)
@@ -123,7 +124,7 @@ def main() -> int:
     # Both normalisations are measured here, on one population and through one set of primitives.
     # Reading one of them out of another artifact would reintroduce exactly the hazard this file
     # documents: two numbers compared across a convention neither of them names.
-    rep = {"config": {**_code_version(), "n_rules": len(rules), "n_substrates": len(rows),
+    rep = {"config": {**_code_version(), "population": args.population, "n_rules": len(rules), "n_substrates": len(rows),
                       "match": "inchikey_tautomer", "add_hs": False, "drop_invalid": False,
                       "normalisation": "both, measured in this run",
                       "gate": "must reproduce the committed ceiling on these substrates, "

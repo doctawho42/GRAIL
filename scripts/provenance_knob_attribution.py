@@ -47,6 +47,7 @@ if str(ROOT) not in sys.path:
 from rdkit import Chem, RDLogger
 
 from bank_engine_replication import load_bank
+from _population import POPULATIONS, population_items, tagged_out
 from engine_knobs import apply_with
 from hydrogen_dispatch import MAJORITY_CONVENTION, classify
 from run_benchmark import _tautomer_recovered   # the paper's own per-substrate recovery count
@@ -114,11 +115,13 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--bank", default="grail_metabolism/resources/extended_smirks.txt")
     ap.add_argument("--mined", default="grail_metabolism/resources/mined_only.txt")
-    ap.add_argument("--substrates", default="results/filter_vs_prior_ci.json")
     ap.add_argument("--limit", type=int, default=0, help="0 uses every substrate in the source")
     ap.add_argument("--workers", type=int, default=2)
     ap.add_argument("--out", default=str(ROOT / "results" / "provenance_knob_attribution.json"))
+    ap.add_argument("--population", default="clean_test", choices=POPULATIONS,
+                    help="subsample245 reproduces the committed artifact; clean_test is the split")
     args = ap.parse_args()
+    args.out = tagged_out(args.out, args.population)
 
     bank = [l.strip() for l in open(ROOT / args.bank) if l.strip()]
     mined_all = {l.strip() for l in open(ROOT / args.mined) if l.strip()}
@@ -159,9 +162,7 @@ def main() -> int:
     for g in dict.fromkeys(g for g, _ in cells):
         print(f"  group {g:16} {len(groups[g]):>5} rules")
 
-    src = json.loads((ROOT / args.substrates).read_text())["per_substrate"]
-    refs = json.loads((ROOT / "results" / "test_references.json").read_text())
-    items = [(r["sub"], refs[r["sub"]], cells) for r in src if refs.get(r["sub"])]
+    items = [(sub, trues, cells) for sub, trues in population_items(args.population)]
     if args.limit:
         items = items[:args.limit]
     print(f"substrates: {len(items)}   workers: {args.workers}", flush=True)
@@ -221,7 +222,7 @@ def main() -> int:
 
     rep = {"config": {**_code_version(), "n_substrates": len(rows), "references": U,
                       "match": "inchikey_tautomer", "aggregation": "micro, ratio of sums",
-                      "substrate_source": args.substrates,
+                      "population": args.population,
                       "switches": "engine_knobs.apply_with(add_hs, 'canonical', drop_invalid=False)",
                       "endpoints": "deployed cell from results/ceiling_by_provenance.json; "
                                    "expanded-and-floored cell from its predecessor under git"},

@@ -39,6 +39,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 import sygma
 from rdkit import Chem, RDLogger
 
+from _population import POPULATIONS, population_items, load_population, tagged_out
 from engine_knobs import DEFAULT, apply_with
 from run_benchmark import _tautomer_recovered
 
@@ -174,12 +175,12 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--banks", nargs="+", default=["sygma_175", "biotransformer", "grail_full"])
     ap.add_argument("--out", default=str(ROOT / "results" / "bank_engine_replication.json"))
+    ap.add_argument("--population", default="clean_test", choices=POPULATIONS,
+                    help="subsample245 reproduces the committed artifact; clean_test is the split")
     args = ap.parse_args()
+    args.out = tagged_out(args.out, args.population)
 
-    subs = [r["sub"] for r in
-            json.loads((ROOT / "results/filter_vs_prior_ci.json").read_text())["per_substrate"]]
-    truth = json.loads((ROOT / "results/test_references.json").read_text())
-    items = [(s, truth[s]) for s in subs if truth.get(s)]
+    items = population_items(args.population)
     workers = max(1, (os.cpu_count() or 4) - 2)
 
     out_path = Path(args.out)
@@ -188,7 +189,7 @@ def main() -> int:
         banks[name] = run_bank(name, items, workers)
         # written after each bank so a long grail_full arm never loses the cheap ones
         out_path.write_text(json.dumps(
-            {"config": {**_code_version(), "banks_this_invocation": list(args.banks),
+            {"config": {**_code_version(), "population": args.population, "banks_this_invocation": list(args.banks),
                         "n_substrates": len(items), "match": "inchikey_tautomer",
                         "n_boot": N_BOOT, "seed": SEED, "knobs_held": {k: v for k, v in DEFAULT.items()
                                                                        if k != "add_hs"},

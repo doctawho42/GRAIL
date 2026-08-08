@@ -16,6 +16,7 @@ subset alone says how much of GRAIL's ceiling is chemistry SyGMa also has.
 from __future__ import annotations
 
 import json
+import pathlib
 import multiprocessing
 import os
 import sys
@@ -32,6 +33,7 @@ if str(ROOT) not in sys.path:
 sys.path.insert(0, str(ROOT / "scripts"))
 
 from grail_metabolism.utils.preparation import apply_rules_to_molecule
+from _population import POPULATIONS, population_items, tagged_out
 from run_benchmark import _tautomer_recovered
 
 RDLogger.DisableLog("rdApp.*")
@@ -73,6 +75,11 @@ def _worker(item):
 
 
 def main() -> int:
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--population", default="clean_test", choices=POPULATIONS,
+                    help="subsample245 reproduces the committed artifact; clean_test is the split")
+    args = ap.parse_args()
     bank = [l.strip() for l in open(ROOT / "grail_metabolism/resources/extended_smirks.txt") if l.strip()]
     mined = {l.strip() for l in open(ROOT / "grail_metabolism/resources/mined_only.txt") if l.strip()}
     curated = [r for r in bank if r not in mined]
@@ -82,9 +89,7 @@ def main() -> int:
     print(f"SyGMa rules {len(sy)}; in bank {len(inside)}; in the curated subset "
           f"{sum(1 for r in sy if r in cs)}", flush=True)
 
-    src = json.loads((ROOT / "results/filter_vs_prior_ci.json").read_text())["per_substrate"]
-    refs = json.loads((ROOT / "results/test_references.json").read_text())
-    items = [(r["sub"], refs[r["sub"]]) for r in src if refs.get(r["sub"])]
+    items = population_items(args.population)
     print(f"substrates: {len(items)}", flush=True)
 
     ctx = multiprocessing.get_context("spawn")
@@ -108,7 +113,7 @@ def main() -> int:
     bt = np.array([H[j].sum() / U[j].sum() for j in idx])
     rep = {
         "match": "inchikey_tautomer", "n": len(items), "n_boot": N_BOOT, "seed": SEED,
-        "substrate_source": "results/filter_vs_prior_ci.json",
+        "population": args.population,
         "containment": {
             "sygma_rules": len(sy),
             "in_grail_bank": len(inside),
@@ -126,7 +131,8 @@ def main() -> int:
                     "results/ceiling_by_provenance.json (full bank 0.7284, curated 0.6596)",
         },
     }
-    OUT.write_text(json.dumps(rep, indent=1))
+    out = pathlib.Path(tagged_out(OUT, args.population))
+    out.write_text(json.dumps(rep, indent=1))
     print(json.dumps(rep, indent=1))
     return 0
 

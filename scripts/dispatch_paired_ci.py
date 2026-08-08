@@ -32,6 +32,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 from rdkit import Chem, RDLogger
 
+from _population import POPULATIONS, population_items, load_population, tagged_out
 from bank_engine_replication import load_bank
 from engine_knobs import DEFAULT, apply_with
 from hydrogen_dispatch import MAJORITY_CONVENTION, _apply, classify
@@ -81,14 +82,14 @@ def _worker(item):
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default=str(ROOT / "results" / "dispatch_paired_ci.json"))
+    ap.add_argument("--population", default="clean_test", choices=POPULATIONS,
+                    help="subsample245 reproduces the committed artifact; clean_test is the split")
     args = ap.parse_args()
+    args.out = tagged_out(args.out, args.population)
 
     rules = load_bank(BANK)
     wants = classify(rules, MAJORITY_CONVENTION[BANK])
-    subs = [r["sub"] for r in
-            json.loads((ROOT / "results/filter_vs_prior_ci.json").read_text())["per_substrate"]]
-    truth = json.loads((ROOT / "results/test_references.json").read_text())
-    items = [(s, truth[s]) for s in subs if truth.get(s)]
+    items = population_items(args.population)
     print(f"{BANK}: {len(rules)} rules, {sum(wants)} dispatched, {len(items)} substrates", flush=True)
 
     workers = max(1, (os.cpu_count() or 4) - 2)
@@ -122,7 +123,7 @@ def main() -> int:
     abt = macro[idx].mean(axis=1)
     alo, ahi = float(np.quantile(abt, .025)), float(np.quantile(abt, .975))
 
-    rep = {"config": {**_code_version(), "bank": BANK, "n_rules": len(rules),
+    rep = {"config": {**_code_version(), "population": args.population, "bank": BANK, "n_rules": len(rules),
                       "dispatched": int(sum(wants)), "n_substrates": len(rows),
                       "match": "inchikey_tautomer", "n_boot": N_BOOT, "seed": SEED,
                       "policy": "docs/DISPATCH_PREREGISTRATION.md",

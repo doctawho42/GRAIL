@@ -41,6 +41,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 from rdkit import Chem, RDLogger
 
+from _population import POPULATIONS, population_items, load_population, tagged_out
 from bank_engine_replication import load_bank
 from engine_knobs import DEFAULT
 from explicit_h_mechanism import _ATOM_TOKEN, needs_explicit_hydrogen
@@ -162,12 +163,12 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--banks", nargs="+", default=["sygma_175", "biotransformer", "grail_full"])
     ap.add_argument("--out", default=str(ROOT / "results" / "hydrogen_dispatch.json"))
+    ap.add_argument("--population", default="clean_test", choices=POPULATIONS,
+                    help="subsample245 reproduces the committed artifact; clean_test is the split")
     args = ap.parse_args()
+    args.out = tagged_out(args.out, args.population)
 
-    subs = [r["sub"] for r in
-            json.loads((ROOT / "results/filter_vs_prior_ci.json").read_text())["per_substrate"]]
-    truth = json.loads((ROOT / "results/test_references.json").read_text())
-    items = [(s, truth[s]) for s in subs if truth.get(s)]
+    items = population_items(args.population)
     workers = max(1, (os.cpu_count() or 4) - 2)
 
     out_path = Path(args.out)
@@ -175,7 +176,7 @@ def main() -> int:
     for name in args.banks:
         banks[name] = run_bank(name, items, workers)
         out_path.write_text(json.dumps(
-            {"config": {**_code_version(), "n_substrates": len(items),
+            {"config": {**_code_version(), "population": args.population, "n_substrates": len(items),
                         "match": "inchikey_tautomer", "n_boot": N_BOOT, "seed": SEED,
                         "policy": "docs/DISPATCH_PREREGISTRATION.md",
                         "recursive_smarts_convention": MAJORITY_CONVENTION,

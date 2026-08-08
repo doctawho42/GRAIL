@@ -38,6 +38,7 @@ import os
 from rdkit import Chem, RDLogger
 
 sys.path.insert(0, str(ROOT / "scripts"))
+from _population import POPULATIONS, population_items, tagged_out
 from engine_knobs import apply_with
 from grail_metabolism.utils.preparation import apply_rules_to_molecule
 from run_benchmark import _tautomer_recovered   # the paper's own per-substrate recovery count
@@ -114,12 +115,13 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--bank", default="grail_metabolism/resources/extended_smirks.txt")
     ap.add_argument("--mined", default="grail_metabolism/resources/mined_only.txt")
-    ap.add_argument("--substrates", default="results/filter_vs_prior_ci.json",
-                    help="artifact whose per_substrate block fixes the substrate set")
     ap.add_argument("--out", default=str(ROOT / "results" / "ceiling_by_provenance.json"))
     ap.add_argument("--workers", type=int, default=0,
                     help="0 leaves two cores free; set it lower to share the machine with other runs")
+    ap.add_argument("--population", default="clean_test", choices=POPULATIONS,
+                    help="subsample245 reproduces the committed artifact; clean_test is the split")
     args = ap.parse_args()
+    args.out = tagged_out(args.out, args.population)
 
     bank = [l.strip() for l in open(ROOT / args.bank) if l.strip()]
     mined_all = {l.strip() for l in open(ROOT / args.mined) if l.strip()}
@@ -128,10 +130,7 @@ def main() -> int:
     assert len(mined) + len(curated) == len(bank), "the split does not partition the bank"
     print(f"bank {len(bank)}: mined {len(mined)}, curated {len(curated)}", flush=True)
 
-    src = json.loads((ROOT / args.substrates).read_text())["per_substrate"]
-    subs = [r["sub"] for r in src]
-    refs_raw = json.loads((ROOT / "results" / "test_references.json").read_text())
-    items = [(s, refs_raw[s]) for s in subs if refs_raw.get(s)]
+    items = population_items(args.population)
     print(f"substrates: {len(items)}", flush=True)
 
     ap_workers = args.workers if args.workers > 0 else max(1, (os.cpu_count() or 4) - 2)
@@ -159,7 +158,7 @@ def main() -> int:
     rep = {"config": {**_code_version(), "bank": _rel(ROOT / args.bank),
                       "mined_list": _rel(ROOT / args.mined), "n_rules": len(bank),
                       "n_mined": len(mined), "n_curated": len(curated),
-                      "substrate_source": args.substrates},
+                      "population": args.population},
            "n": len(items), "match": "inchikey_tautomer", "subsets": {}}
     per = {}
     for name in subsets:
