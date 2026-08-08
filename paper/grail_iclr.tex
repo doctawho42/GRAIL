@@ -28,8 +28,8 @@
 \newcommand{\interB}{+0.063}          % MetaTrans<->SyGMa interaction
 \newcommand{\interBci}{[+0.022,\,+0.106]}
 
-\title{Measured, Not Estimated: Decomposing Recall\\
-on a Metabolite-Prediction Leaderboard}
+\title{Measured, Not Estimated: Undeclared Conventions\\
+Decide Molecular Machine-Learning Leaderboards}
 
 % double-blind: authors stay anonymous until camera-ready
 \author{Anonymous authors \\ Paper under double-blind review}
@@ -44,68 +44,57 @@ on a Metabolite-Prediction Leaderboard}
 \maketitle
 
 \begin{abstract}
-Computational prediction of drug metabolites is assessed almost universally by top-$k$ recall, and a
-single number cannot say why a method scores what it does: a metabolite is missed because no rule in
-the knowledge base expresses the transformation, because the applicable rule is not selected, or
-because the correct product is generated and then ranked too low to report. Those are three
-different research programmes, and recall does not indicate which is warranted.
+A position on a molecular machine-learning leaderboard is decided partly by choices no paper
+declares: the rule for when two structures are the same molecule, how many candidates a method may
+emit, and --- wherever reaction templates are involved --- how the engine applying them spells a
+hydrogen. We measure all three on frozen predictions: nothing is retrained and only the convention varies. Re-scoring seven published retrosynthesis systems on the $4{,}999$ reactions they share, the
+top-1 order changes: a system fourth under canonical matching is first under stereo-blind matching,
+five of twenty-one pairs exchange, and $109$ of $448$ paired interaction tests survive Holm.
 
-For a method whose rule base can be enumerated, recall factorises exactly into coverage, selection
-and ranking. The identity is arithmetic, and staging a pipeline this way is not new; what an
-enumerable candidate set changes is that the first factor stops being estimated from a sample or
-bounded by a beam and becomes an exhaustive measurement, so all three are measured rather than
-inferred. Applied to two such methods it explains a leaderboard
-instead of restating one: the wider system reaches $\ceiling$ of the annotated chemistry against
-$0.539$ and converts a third of that reach, while the narrower converts nearly all of its own,
-having no selection stage to lose anything at. The gap is the price of \emph{this} selection stage,
-which loses more than no selection stage does at the same budget, and which recall charges only to
-methods that select --- a claim about benchmark design rather than chemistry, predicted from a
-structural property rather than observed after the fact. It survives its own counterfactual:
-with the selection stage removed and the output budget matched, the wider bank passes its competitor
-by $0.167$ $[0.112,0.223]$, though only above the budget the field uses.
+A single recall number cannot say which of three failure modes is responsible. Where the rule base
+can be enumerated it factorises \emph{exactly} into coverage, selection and ranking, and
+enumerability makes the first factor an exhaustive measurement rather than a sample estimate or a
+beam bound. On metabolite prediction this explains a leaderboard instead of restating one: the wider
+system reaches \ceiling\ against $0.539$ and converts a third of it, while the narrower converts
+nearly all of its own, having no selection stage to lose anything at.
 
-The first factor is not a property of the rule base at all. Holding fixed the $152$ rules two banks
-share and swapping only the engine that applies them moves what they reach by $+0.192$
-$[+0.152,+0.236]$, as large as the entire gap between the banks, and the whole of that term is one
-line of preprocessing neither paper reports. Which way it points belongs to the bank rather than to
-the engine: the same switch is worth $+0.307$ to one published bank and $-0.342$ to another. Nor is
-the dependence this field's --- every one of the $42{,}554$ patterns in the standard retrosynthesis
-template library constrains atoms by degree, and the same call costs that library $82\%$ of its
-applicability.
+The first factor is not a property of the rule base. Holding fixed the $152$ rules two banks share
+and swapping only the engine moves what they reach by $+0.192$ $[+0.152,+0.236]$, as large as the
+whole gap between the banks, and it is one line of preprocessing neither paper reports. What depends
+on the convention is a class of construct rather than a domain, with three mechanisms and one
+measured instance each: a primitive counting explicit structure breaks the match before any
+product exists (all $42{,}554$ patterns of a standard retrosynthesis library); a rewrite not naming the
+hydrogen it consumes breaks the product (metabolite banks); and a bank assembled from two
+conventions has no right answer at all. Only the third is repairable, and
+dispatching the convention per template recovers $+0.016$ $[+0.006,+0.028]$.
 
-Turned on the leaderboard itself, the same instrument finds two variables sitting between a set of
-predictions and a position on it, neither of them declared: the rule for when two structures are the
-same molecule, and how many candidates a method emits. Varying the first with predictions held fixed
-erases a statistically significant advantage between two published tools on the external set. The
-second reorders the field, and every reversal that reporting F1 or an output budget certifies runs
-through the one system emitting $81$ candidates against everyone else's $8$ to $11$; truncating a
-fixed pair reorders it three times as that count alone changes. The two are independent, since at a
-matched emitted count the criterion sensitivities still separate, the extremes by $-0.025$
-$[-0.035,-0.015]$. We release the protocol, the audited split and the frozen predictions that make
-every measurement repeatable.
+A fourth undeclared choice is which population a familiar name means: the eleven published
+prediction files re-scored here sit on three disjoint test sets, and this paper's own copy of the
+name is one of the deviations. Output size is the plainest --- every certified reversal runs through
+the one system emitting $81$ candidates against everyone else's $8$ to $11$ --- and independent of
+the matching rule. We release the protocol, the split, the frozen predictions and the checks.
 \end{abstract}
 
 \section{Introduction}
 \label{sec:intro}
 
-When a drug enters the body, enzymes, principally in the liver, oxidise, cleave and conjugate it
-into new molecules called metabolites. Which ones form is a central question in drug development: a
-metabolite may be inactive, may carry the therapeutic effect, or may be toxic in ways the parent
-compound is not. Regulatory review attends closely to major human metabolites and identifying them
-experimentally is slow, so predicting metabolite structures computationally has direct practical
-value: given an administered compound, predict what the body will produce from it.
-Rule-based systems encode known biotransformations as reaction templates and rank the products of
-every applicable one \citep{Ridder_2008, de_Bruyn_Kops_2020, Djoumbou_Feunang_2019}; learned systems
-predict the transformation directly \citep{Litsa_2020, Zhu_2024}; hybrids use a learned model to
-decide which templates to apply (\S\ref{sec:related}). All are compared on the same quantity: top-$k$
-recall, the fraction of experimentally observed metabolites appearing among a method's $k$
-highest-ranked predictions.
+A leaderboard in molecular machine learning ranks methods by how often a prediction matches a
+reference. Between a set of predictions and a position on it sit choices that no paper declares:
+when two structures count as the same molecule, how many candidates a method may emit, how an engine
+applies a reaction template, and which population a familiar dataset name refers to. We measure each
+on frozen predictions, in two fields, and each decides positions.
 
-That comparison hides what it is measuring: recall confounds the three failure modes above, so a low
-score identifies no deficiency and suggests no remedy. This work separates them: for a method whose
-rule base can be enumerated, recall
-factorises exactly into coverage, selection and ranking, the coverage term obtained by applying the
-entire bank and asking what it reaches. Applied to two such methods it explains a leaderboard instead of
+Metabolite prediction is where they can be measured \emph{exactly}, which is why the deep case study
+is there. When a drug enters the body, enzymes oxidise, cleave and conjugate it into metabolites;
+which ones form is a regulatory question and identifying them experimentally is slow. Rule-based
+systems encode known biotransformations as templates and rank the products of every applicable one
+\citep{Ridder_2008, de_Bruyn_Kops_2020, Djoumbou_Feunang_2019}, learned systems predict the
+transformation directly \citep{Litsa_2020, Zhu_2024}, and hybrids use a learned model to choose
+templates (\S\ref{sec:related}); all are compared on top-$k$ recall. That comparison confounds three
+failure modes --- no rule expresses the transformation, the rule is not selected, the product is
+ranked too low --- so a low score identifies no deficiency and suggests no remedy. Where the rule
+base can be enumerated, recall factorises exactly into coverage, selection and ranking, the coverage
+term obtained by applying the entire bank and asking what it reaches. Applied to two such methods it explains a leaderboard instead of
 restating one: the wider system reaches more chemistry and converts a third of it, while the
 narrower has no selection stage in which to lose anything and wins for that reason alone. An aggregate counting hits without charging
 for the volume emitted is therefore not neutral between architectures, since recall charges the cost
@@ -629,6 +618,7 @@ rests on $\nshared$ shared substrates: MetaTrans's inference pipeline no longer 
 BioTransformer's configuration is unscripted, so both are frozen predictions. The other three are
 scored on the full $\ntest$, the external replication on $n=\nglory$.
 
+\looseness=-1
 \paragraph{Precision is a lower bound, not an estimate.} An unannotated but chemically real product
 scores as a false positive, so every precision and F1 figure is pessimistic; \S\ref{sec:metric} ranks
 on them only under a uniform-propensity model, assumed rather than estimated.
@@ -637,19 +627,19 @@ on them only under a uniform-propensity model, assumed rather than estimated.
 application reaches; depth-2 lifts the ceiling by ${\sim}0.012$ at $8.5$ times the cost, so
 $\ceiling$ bounds this formulation rather than the task.
 
+\looseness=-1
 \paragraph{Evaluation hygiene of this paper itself.} Headline numbers come from one evaluation of
 the deployed configuration, and selection is on validation but for the two exceptions
-\S\ref{sec:tame} names: the filter's encoder variant, chosen on test, which reaches every GRAIL
-number including the headline, and Appendix~\ref{app:negative}'s exploratory analyses.
+\S\ref{sec:tame} names: the filter's encoder variant, chosen on test, and
+Appendix~\ref{app:negative}'s exploratory analyses.
 
 \section{Conclusion}
 \label{sec:conclusion}
 
 \looseness=-2
-Two things decide a leaderboard position before any model does, and only one is a reporting choice:
-the matching rule. The other is output size, which the aggregate and the budget merely expose.
-Declare both, and report the ceiling with the engine that realised it, down to how it spells a
-hydrogen.
+Four things decide a leaderboard position before any model does: the matching rule, the output size,
+the convention an engine applies rules in, and which population a dataset name means. Each is
+readable from a released file, none is declared, and one caught this paper.
 
 \subsubsection*{Reproducibility statement}
 
