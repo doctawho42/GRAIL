@@ -388,9 +388,9 @@ SyGMa's rules by a factor of two under the expansion, and the same expansion app
 costs it $0.082$ of reach on the clean test split --- which is why $\ceiling$ is quoted under the
 convention the pipeline fires rules in rather than under that one, and why the headline that the
 bank is not the binding constraint is strengthened rather than weakened. The $152$ are curated, and
-the expansion is what the curated half is robust to and the mined majority is not
+the expansion is what the curated half gains from and the mined majority loses to
 (\S\ref{app:provenance}), so the factor of two is the size of an effect our own hand-written rules
-largely escape --- the asymmetry runs against us here, not for us. The mined majority was itself
+do not suffer --- the asymmetry runs against us here, not for us. The mined majority was itself
 kept only if applying it through this engine regenerated its own annotated product
 (Appendix~\ref{app:arch}), so it was validated against this engine rather than a foreign one and
 supplies no offsetting overstatement.
@@ -863,7 +863,8 @@ the two slopes are equal.
 A second stratification points the same way and carries its own confound rather than removing it.
 The fraction of a substrate's references the rule bank reaches at all rises from $0.712$ below
 similarity $0.3$ to $0.819$ above $0.6$. That is not a quantity untouched by training: $5{,}866$ of
-the $\nbank$ rules are mined from the training split (\S\ref{app:provenance}), and
+the $\nbank$ rules are mined from the training split, and those are the rules that do the reaching,
+covering $0.785$ of the references against the curated remainder's $0.471$ (\S\ref{app:provenance}), and
 Appendix~\ref{app:external} says in terms that applying the bank to a substrate it was partly mined
 from is not independent of training, so a coverage gradient in similarity to training is exactly
 what a training-derived rule set would produce. It cannot serve as the leg of the argument that no
