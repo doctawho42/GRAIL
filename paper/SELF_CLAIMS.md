@@ -392,6 +392,11 @@ the moment the gate was written, and it keeps passing after its subject has move
 
 ```bash
 grep -rn "^[A-Z_]*\(CEILING\|COMMITTED\|EXPECTED\|TARGET\|BASELINE\)[A-Z_]* *=" scripts/*.py
+# and the half the line above misses: a gate whose reference is READ from a neighbouring artifact
+grep -ln "raise SystemExit" scripts/*.py | while read f; do
+  r=$(grep -o 'results/[a-z_]*\.json' "$f" | sort -u | grep -v recall_factorization | tr '\n' ' ')
+  [ -n "$r" ] && printf "%-32s reference may come from: %s\n" "$(basename "$f")" "$r"
+done
 ```
 
 **Status: PASS as of 2026-08-08, after unfreezing four literals of twelve.** The paragraph above
@@ -415,6 +420,17 @@ reading — that the hand-curated fifth earns the ceiling and the mined tail re-
 artifact of measuring the rule bank through the data-preparation helper while the system it
 describes uses the inference path. Both are correct arithmetic. They differ in a convention neither
 subset is asked about.
+
+**The second command exists because the first one's scope was narrower than the row's claim, for the
+fifth time in this document.** It greps for literals, and the worst instance was not a literal.
+`bank_engine_replication.py` read its ceiling out of `results/reach_engine_vs_bank.json`, which
+looks like the responsible thing to do and is not: the value there was $0.7284$, superseded by the
+convention correction *and* measured on the other population, and the gate kept passing. In the same
+sweep `hydrogen_dispatch.py` was found computing its dispatch arm on whichever population it was
+given while reading the two global arms it must beat out of subsample literals — so run on the full
+split it reported a residual that was a difference between two populations. Both now measure or read
+their reference for the population they are running on. The distinction that matters is not literal
+versus lookup; it is whether the reference tracks the thing it certifies.
 
 The surviving literals are the legitimate use — a gate asserting a *fixed* property or a *published
 claim*, which fires when the measurement moves instead of hiding it. `bank_engine_replication.py`

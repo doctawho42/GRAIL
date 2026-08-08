@@ -33,7 +33,7 @@ if str(ROOT) not in sys.path:
 sys.path.insert(0, str(ROOT / "scripts"))
 
 from grail_metabolism.utils.preparation import apply_rules_to_molecule
-from _population import POPULATIONS, population_items, tagged_out
+from _population import POPULATIONS, ceiling_target, population_items, tagged_out
 from run_benchmark import _tautomer_recovered
 
 RDLogger.DisableLog("rdApp.*")
@@ -127,8 +127,9 @@ def main() -> int:
             "n_rules": len(inside),
             "coverage": round(float(cov), 4),
             "ci95": [round(float(np.quantile(bt, .025)), 4), round(float(np.quantile(bt, .975)), 4)],
-            "note": "GRAIL's own depth-1 primitives and matcher, same substrates as "
-                    "results/ceiling_by_provenance.json (full bank 0.7284, curated 0.6596)",
+            "note": "GRAIL's own depth-1 primitives and matcher, on the same substrates as "
+                    "results/ceiling_by_provenance.json for this population",
+            "full_bank_ceiling_here": round(ceiling_target([sub for sub, _ in items]), 4),
         },
     }
     out = pathlib.Path(tagged_out(OUT, args.population))
