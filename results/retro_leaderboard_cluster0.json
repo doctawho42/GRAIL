@@ -1,0 +1,3235 @@
+{
+ "config": {
+  "script": "retro_leaderboard.py",
+  "git_commit": "2cf7b5142fc0e5475d8e8e6ea017f8042c71e3f2",
+  "git_dirty": true,
+  "cluster": "cluster0",
+  "systems": [
+   "g2retro",
+   "gln",
+   "graph2smiles",
+   "graphretro",
+   "localretro",
+   "retroformer",
+   "retroxpert"
+  ],
+  "n_reactions": 4999,
+  "max_rank": 10,
+  "modes": [
+   "canonical",
+   "nostereo",
+   "inchikey",
+   "tautomer"
+  ],
+  "ks": [
+   1,
+   3,
+   5,
+   10
+  ],
+  "n_boot": 10000,
+  "seed": 0,
+  "source": "EvalRetro, doi:10.6084/m9.figshare.25325623, CC BY 4.0",
+  "estimator": "paired bootstrap over reactions; the interaction is the claim"
+ },
+ "accuracy": {
+  "g2retro": {
+   "canonical": {
+    "top1": 0.5147,
+    "top3": 0.7223,
+    "top5": 0.7828,
+    "top10": 0.8368
+   },
+   "nostereo": {
+    "top1": 0.5291,
+    "top3": 0.7405,
+    "top5": 0.8026,
+    "top10": 0.8578
+   },
+   "inchikey": {
+    "top1": 0.5147,
+    "top3": 0.7223,
+    "top5": 0.7828,
+    "top10": 0.8368
+   },
+   "tautomer": {
+    "top1": 0.5309,
+    "top3": 0.7431,
+    "top5": 0.806,
+    "top10": 0.8622
+   }
+  },
+  "gln": {
+   "canonical": {
+    "top1": 0.5247,
+    "top3": 0.6897,
+    "top5": 0.7556,
+    "top10": 0.8368
+   },
+   "nostereo": {
+    "top1": 0.5377,
+    "top3": 0.7019,
+    "top5": 0.768,
+    "top10": 0.8494
+   },
+   "inchikey": {
+    "top1": 0.5247,
+    "top3": 0.6897,
+    "top5": 0.7556,
+    "top10": 0.8368
+   },
+   "tautomer": {
+    "top1": 0.5397,
+    "top3": 0.7049,
+    "top5": 0.7712,
+    "top10": 0.852
+   }
+  },
+  "graph2smiles": {
+   "canonical": {
+    "top1": 0.5293,
+    "top3": 0.6611,
+    "top5": 0.6945,
+    "top10": 0.7235
+   },
+   "nostereo": {
+    "top1": 0.5571,
+    "top3": 0.6795,
+    "top5": 0.7113,
+    "top10": 0.7379
+   },
+   "inchikey": {
+    "top1": 0.5293,
+    "top3": 0.6611,
+    "top5": 0.6945,
+    "top10": 0.7235
+   },
+   "tautomer": {
+    "top1": 0.5595,
+    "top3": 0.6819,
+    "top5": 0.7137,
+    "top10": 0.7399
+   }
+  },
+  "graphretro": {
+   "canonical": {
+    "top1": 0.5377,
+    "top3": 0.6769,
+    "top5": 0.7155,
+    "top10": 0.7447
+   },
+   "nostereo": {
+    "top1": 0.5501,
+    "top3": 0.6927,
+    "top5": 0.7325,
+    "top10": 0.762
+   },
+   "inchikey": {
+    "top1": 0.5377,
+    "top3": 0.6769,
+    "top5": 0.7155,
+    "top10": 0.7447
+   },
+   "tautomer": {
+    "top1": 0.5555,
+    "top3": 0.7005,
+    "top5": 0.7407,
+    "top10": 0.7704
+   }
+  },
+  "localretro": {
+   "canonical": {
+    "top1": 0.5339,
+    "top3": 0.7694,
+    "top5": 0.8424,
+    "top10": 0.91
+   },
+   "nostereo": {
+    "top1": 0.5469,
+    "top3": 0.7878,
+    "top5": 0.8622,
+    "top10": 0.9302
+   },
+   "inchikey": {
+    "top1": 0.5339,
+    "top3": 0.7694,
+    "top5": 0.8424,
+    "top10": 0.91
+   },
+   "tautomer": {
+    "top1": 0.5495,
+    "top3": 0.7912,
+    "top5": 0.8646,
+    "top10": 0.932
+   }
+  },
+  "retroformer": {
+   "canonical": {
+    "top1": 0.5325,
+    "top3": 0.7061,
+    "top5": 0.7614,
+    "top10": 0.8192
+   },
+   "nostereo": {
+    "top1": 0.5541,
+    "top3": 0.7217,
+    "top5": 0.7756,
+    "top10": 0.8322
+   },
+   "inchikey": {
+    "top1": 0.5325,
+    "top3": 0.7063,
+    "top5": 0.7616,
+    "top10": 0.8194
+   },
+   "tautomer": {
+    "top1": 0.5559,
+    "top3": 0.7241,
+    "top5": 0.7776,
+    "top10": 0.8344
+   }
+  },
+  "retroxpert": {
+   "canonical": {
+    "top1": 0.4467,
+    "top3": 0.5981,
+    "top5": 0.6441,
+    "top10": 0.6941
+   },
+   "nostereo": {
+    "top1": 0.4619,
+    "top3": 0.6101,
+    "top5": 0.6555,
+    "top10": 0.7029
+   },
+   "inchikey": {
+    "top1": 0.4467,
+    "top3": 0.5983,
+    "top5": 0.6443,
+    "top10": 0.6941
+   },
+   "tautomer": {
+    "top1": 0.4631,
+    "top3": 0.6115,
+    "top5": 0.6569,
+    "top10": 0.7053
+   }
+  }
+ },
+ "orderings": {
+  "top1": {
+   "canonical": [
+    "graphretro",
+    "localretro",
+    "retroformer",
+    "graph2smiles",
+    "gln",
+    "g2retro",
+    "retroxpert"
+   ],
+   "nostereo": [
+    "graph2smiles",
+    "retroformer",
+    "graphretro",
+    "localretro",
+    "gln",
+    "g2retro",
+    "retroxpert"
+   ],
+   "inchikey": [
+    "graphretro",
+    "localretro",
+    "retroformer",
+    "graph2smiles",
+    "gln",
+    "g2retro",
+    "retroxpert"
+   ],
+   "tautomer": [
+    "graph2smiles",
+    "retroformer",
+    "graphretro",
+    "localretro",
+    "gln",
+    "g2retro",
+    "retroxpert"
+   ]
+  },
+  "top3": {
+   "canonical": [
+    "localretro",
+    "g2retro",
+    "retroformer",
+    "gln",
+    "graphretro",
+    "graph2smiles",
+    "retroxpert"
+   ],
+   "nostereo": [
+    "localretro",
+    "g2retro",
+    "retroformer",
+    "gln",
+    "graphretro",
+    "graph2smiles",
+    "retroxpert"
+   ],
+   "inchikey": [
+    "localretro",
+    "g2retro",
+    "retroformer",
+    "gln",
+    "graphretro",
+    "graph2smiles",
+    "retroxpert"
+   ],
+   "tautomer": [
+    "localretro",
+    "g2retro",
+    "retroformer",
+    "gln",
+    "graphretro",
+    "graph2smiles",
+    "retroxpert"
+   ]
+  },
+  "top5": {
+   "canonical": [
+    "localretro",
+    "g2retro",
+    "retroformer",
+    "gln",
+    "graphretro",
+    "graph2smiles",
+    "retroxpert"
+   ],
+   "nostereo": [
+    "localretro",
+    "g2retro",
+    "retroformer",
+    "gln",
+    "graphretro",
+    "graph2smiles",
+    "retroxpert"
+   ],
+   "inchikey": [
+    "localretro",
+    "g2retro",
+    "retroformer",
+    "gln",
+    "graphretro",
+    "graph2smiles",
+    "retroxpert"
+   ],
+   "tautomer": [
+    "localretro",
+    "g2retro",
+    "retroformer",
+    "gln",
+    "graphretro",
+    "graph2smiles",
+    "retroxpert"
+   ]
+  },
+  "top10": {
+   "canonical": [
+    "localretro",
+    "g2retro",
+    "gln",
+    "retroformer",
+    "graphretro",
+    "graph2smiles",
+    "retroxpert"
+   ],
+   "nostereo": [
+    "localretro",
+    "g2retro",
+    "gln",
+    "retroformer",
+    "graphretro",
+    "graph2smiles",
+    "retroxpert"
+   ],
+   "inchikey": [
+    "localretro",
+    "g2retro",
+    "gln",
+    "retroformer",
+    "graphretro",
+    "graph2smiles",
+    "retroxpert"
+   ],
+   "tautomer": [
+    "localretro",
+    "g2retro",
+    "gln",
+    "retroformer",
+    "graphretro",
+    "graph2smiles",
+    "retroxpert"
+   ]
+  }
+ },
+ "pairs_that_exchange": {
+  "top1": [
+   "graph2smiles vs graphretro",
+   "graph2smiles vs localretro",
+   "graph2smiles vs retroformer",
+   "graphretro vs retroformer",
+   "localretro vs retroformer"
+  ],
+  "top3": [],
+  "top5": [],
+  "top10": []
+ },
+ "n_interaction_tests": 448,
+ "certified_interactions": {
+  "top1|g2retro vs graph2smiles|canonical vs nostereo": {
+   "delta": 0.0134,
+   "ci95": [
+    0.0088,
+    0.0182
+   ],
+   "p": 0.0001
+  },
+  "top1|g2retro vs graph2smiles|canonical vs tautomer": {
+   "delta": 0.014,
+   "ci95": [
+    0.0094,
+    0.0188
+   ],
+   "p": 0.0001
+  },
+  "top1|g2retro vs graph2smiles|nostereo vs inchikey": {
+   "delta": -0.0134,
+   "ci95": [
+    -0.0182,
+    -0.0088
+   ],
+   "p": 0.0001
+  },
+  "top1|g2retro vs graph2smiles|inchikey vs tautomer": {
+   "delta": 0.014,
+   "ci95": [
+    0.0094,
+    0.0188
+   ],
+   "p": 0.0001
+  },
+  "top1|g2retro vs graphretro|nostereo vs tautomer": {
+   "delta": 0.0036,
+   "ci95": [
+    0.0016,
+    0.0056
+   ],
+   "p": 0.0001
+  },
+  "top1|g2retro vs retroformer|canonical vs nostereo": {
+   "delta": 0.0072,
+   "ci95": [
+    0.0032,
+    0.0114
+   ],
+   "p": 0.0008
+  },
+  "top1|g2retro vs retroformer|canonical vs tautomer": {
+   "delta": 0.0072,
+   "ci95": [
+    0.003,
+    0.0116
+   ],
+   "p": 0.0012
+  },
+  "top1|g2retro vs retroformer|nostereo vs inchikey": {
+   "delta": -0.0072,
+   "ci95": [
+    -0.0114,
+    -0.0032
+   ],
+   "p": 0.0008
+  },
+  "top1|g2retro vs retroformer|inchikey vs tautomer": {
+   "delta": 0.0072,
+   "ci95": [
+    0.003,
+    0.0116
+   ],
+   "p": 0.0012
+  },
+  "top1|gln vs graph2smiles|canonical vs nostereo": {
+   "delta": 0.0148,
+   "ci95": [
+    0.0104,
+    0.0194
+   ],
+   "p": 0.0001
+  },
+  "top1|gln vs graph2smiles|canonical vs tautomer": {
+   "delta": 0.0152,
+   "ci95": [
+    0.0106,
+    0.02
+   ],
+   "p": 0.0001
+  },
+  "top1|gln vs graph2smiles|nostereo vs inchikey": {
+   "delta": -0.0148,
+   "ci95": [
+    -0.0194,
+    -0.0104
+   ],
+   "p": 0.0001
+  },
+  "top1|gln vs graph2smiles|inchikey vs tautomer": {
+   "delta": 0.0152,
+   "ci95": [
+    0.0106,
+    0.02
+   ],
+   "p": 0.0001
+  },
+  "top1|gln vs graphretro|nostereo vs tautomer": {
+   "delta": 0.0034,
+   "ci95": [
+    0.0014,
+    0.0054
+   ],
+   "p": 0.0012
+  },
+  "top1|gln vs retroformer|canonical vs nostereo": {
+   "delta": 0.0086,
+   "ci95": [
+    0.0048,
+    0.0124
+   ],
+   "p": 0.0001
+  },
+  "top1|gln vs retroformer|canonical vs tautomer": {
+   "delta": 0.0084,
+   "ci95": [
+    0.0044,
+    0.0124
+   ],
+   "p": 0.0001
+  },
+  "top1|gln vs retroformer|nostereo vs inchikey": {
+   "delta": -0.0086,
+   "ci95": [
+    -0.0124,
+    -0.0048
+   ],
+   "p": 0.0001
+  },
+  "top1|gln vs retroformer|inchikey vs tautomer": {
+   "delta": 0.0084,
+   "ci95": [
+    0.0044,
+    0.0124
+   ],
+   "p": 0.0001
+  },
+  "top1|graph2smiles vs graphretro|canonical vs nostereo": {
+   "delta": -0.0154,
+   "ci95": [
+    -0.02,
+    -0.011
+   ],
+   "p": 0.0001
+  },
+  "top1|graph2smiles vs graphretro|canonical vs tautomer": {
+   "delta": -0.0124,
+   "ci95": [
+    -0.0174,
+    -0.0076
+   ],
+   "p": 0.0001
+  },
+  "top1|graph2smiles vs graphretro|nostereo vs inchikey": {
+   "delta": 0.0154,
+   "ci95": [
+    0.011,
+    0.02
+   ],
+   "p": 0.0001
+  },
+  "top1|graph2smiles vs graphretro|nostereo vs tautomer": {
+   "delta": 0.003,
+   "ci95": [
+    0.0012,
+    0.005
+   ],
+   "p": 0.0022
+  },
+  "top1|graph2smiles vs graphretro|inchikey vs tautomer": {
+   "delta": -0.0124,
+   "ci95": [
+    -0.0174,
+    -0.0076
+   ],
+   "p": 0.0001
+  },
+  "top1|graph2smiles vs localretro|canonical vs nostereo": {
+   "delta": -0.0148,
+   "ci95": [
+    -0.0198,
+    -0.0102
+   ],
+   "p": 0.0001
+  },
+  "top1|graph2smiles vs localretro|canonical vs tautomer": {
+   "delta": -0.0146,
+   "ci95": [
+    -0.0198,
+    -0.0098
+   ],
+   "p": 0.0001
+  },
+  "top1|graph2smiles vs localretro|nostereo vs inchikey": {
+   "delta": 0.0148,
+   "ci95": [
+    0.0102,
+    0.0198
+   ],
+   "p": 0.0001
+  },
+  "top1|graph2smiles vs localretro|inchikey vs tautomer": {
+   "delta": -0.0146,
+   "ci95": [
+    -0.0198,
+    -0.0098
+   ],
+   "p": 0.0001
+  },
+  "top1|graph2smiles vs retroformer|canonical vs nostereo": {
+   "delta": -0.0062,
+   "ci95": [
+    -0.011,
+    -0.0016
+   ],
+   "p": 0.009
+  },
+  "top1|graph2smiles vs retroformer|canonical vs tautomer": {
+   "delta": -0.0068,
+   "ci95": [
+    -0.0116,
+    -0.0022
+   ],
+   "p": 0.0054
+  },
+  "top1|graph2smiles vs retroformer|nostereo vs inchikey": {
+   "delta": 0.0062,
+   "ci95": [
+    0.0016,
+    0.011
+   ],
+   "p": 0.009
+  },
+  "top1|graph2smiles vs retroformer|inchikey vs tautomer": {
+   "delta": -0.0068,
+   "ci95": [
+    -0.0116,
+    -0.0022
+   ],
+   "p": 0.0054
+  },
+  "top1|graph2smiles vs retroxpert|canonical vs nostereo": {
+   "delta": -0.0126,
+   "ci95": [
+    -0.0174,
+    -0.008
+   ],
+   "p": 0.0001
+  },
+  "top1|graph2smiles vs retroxpert|canonical vs tautomer": {
+   "delta": -0.0138,
+   "ci95": [
+    -0.0186,
+    -0.009
+   ],
+   "p": 0.0001
+  },
+  "top1|graph2smiles vs retroxpert|nostereo vs inchikey": {
+   "delta": 0.0126,
+   "ci95": [
+    0.008,
+    0.0174
+   ],
+   "p": 0.0001
+  },
+  "top1|graph2smiles vs retroxpert|inchikey vs tautomer": {
+   "delta": -0.0138,
+   "ci95": [
+    -0.0186,
+    -0.009
+   ],
+   "p": 0.0001
+  },
+  "top1|graphretro vs localretro|nostereo vs tautomer": {
+   "delta": -0.0028,
+   "ci95": [
+    -0.0046,
+    -0.001
+   ],
+   "p": 0.0012
+  },
+  "top1|graphretro vs retroformer|canonical vs nostereo": {
+   "delta": 0.0092,
+   "ci95": [
+    0.0054,
+    0.013
+   ],
+   "p": 0.0001
+  },
+  "top1|graphretro vs retroformer|canonical vs tautomer": {
+   "delta": 0.0056,
+   "ci95": [
+    0.0014,
+    0.0098
+   ],
+   "p": 0.0098
+  },
+  "top1|graphretro vs retroformer|nostereo vs inchikey": {
+   "delta": -0.0092,
+   "ci95": [
+    -0.013,
+    -0.0054
+   ],
+   "p": 0.0001
+  },
+  "top1|graphretro vs retroformer|nostereo vs tautomer": {
+   "delta": -0.0036,
+   "ci95": [
+    -0.0056,
+    -0.0018
+   ],
+   "p": 0.0001
+  },
+  "top1|graphretro vs retroformer|inchikey vs tautomer": {
+   "delta": 0.0056,
+   "ci95": [
+    0.0014,
+    0.0098
+   ],
+   "p": 0.0098
+  },
+  "top1|graphretro vs retroxpert|nostereo vs tautomer": {
+   "delta": -0.0042,
+   "ci95": [
+    -0.0064,
+    -0.0022
+   ],
+   "p": 0.0001
+  },
+  "top1|localretro vs retroformer|canonical vs nostereo": {
+   "delta": 0.0086,
+   "ci95": [
+    0.0048,
+    0.0126
+   ],
+   "p": 0.0001
+  },
+  "top1|localretro vs retroformer|canonical vs tautomer": {
+   "delta": 0.0078,
+   "ci95": [
+    0.0038,
+    0.012
+   ],
+   "p": 0.0002
+  },
+  "top1|localretro vs retroformer|nostereo vs inchikey": {
+   "delta": -0.0086,
+   "ci95": [
+    -0.0126,
+    -0.0048
+   ],
+   "p": 0.0001
+  },
+  "top1|localretro vs retroformer|inchikey vs tautomer": {
+   "delta": 0.0078,
+   "ci95": [
+    0.0038,
+    0.012
+   ],
+   "p": 0.0002
+  },
+  "top1|retroformer vs retroxpert|canonical vs nostereo": {
+   "delta": -0.0064,
+   "ci95": [
+    -0.0104,
+    -0.0024
+   ],
+   "p": 0.0018
+  },
+  "top1|retroformer vs retroxpert|canonical vs tautomer": {
+   "delta": -0.007,
+   "ci95": [
+    -0.0112,
+    -0.003
+   ],
+   "p": 0.0016
+  },
+  "top1|retroformer vs retroxpert|nostereo vs inchikey": {
+   "delta": 0.0064,
+   "ci95": [
+    0.0024,
+    0.0104
+   ],
+   "p": 0.0018
+  },
+  "top1|retroformer vs retroxpert|inchikey vs tautomer": {
+   "delta": -0.007,
+   "ci95": [
+    -0.0112,
+    -0.003
+   ],
+   "p": 0.0016
+  },
+  "top3|g2retro vs gln|canonical vs nostereo": {
+   "delta": -0.006,
+   "ci95": [
+    -0.0088,
+    -0.0034
+   ],
+   "p": 0.0001
+  },
+  "top3|g2retro vs gln|canonical vs tautomer": {
+   "delta": -0.0056,
+   "ci95": [
+    -0.0088,
+    -0.0026
+   ],
+   "p": 0.0001
+  },
+  "top3|g2retro vs gln|nostereo vs inchikey": {
+   "delta": 0.006,
+   "ci95": [
+    0.0034,
+    0.0088
+   ],
+   "p": 0.0001
+  },
+  "top3|g2retro vs gln|inchikey vs tautomer": {
+   "delta": -0.0056,
+   "ci95": [
+    -0.0088,
+    -0.0026
+   ],
+   "p": 0.0001
+  },
+  "top3|g2retro vs graphretro|canonical vs nostereo": {
+   "delta": -0.0024,
+   "ci95": [
+    -0.0046,
+    -0.0002
+   ],
+   "p": 0.0374
+  },
+  "top3|g2retro vs graphretro|nostereo vs inchikey": {
+   "delta": 0.0024,
+   "ci95": [
+    0.0002,
+    0.0046
+   ],
+   "p": 0.0374
+  },
+  "top3|g2retro vs graphretro|nostereo vs tautomer": {
+   "delta": 0.0052,
+   "ci95": [
+    0.003,
+    0.0076
+   ],
+   "p": 0.0001
+  },
+  "top3|g2retro vs retroxpert|canonical vs nostereo": {
+   "delta": -0.0062,
+   "ci95": [
+    -0.0098,
+    -0.0026
+   ],
+   "p": 0.0008
+  },
+  "top3|g2retro vs retroxpert|canonical vs tautomer": {
+   "delta": -0.0074,
+   "ci95": [
+    -0.0114,
+    -0.0034
+   ],
+   "p": 0.0002
+  },
+  "top3|g2retro vs retroxpert|nostereo vs inchikey": {
+   "delta": 0.0064,
+   "ci95": [
+    0.0028,
+    0.01
+   ],
+   "p": 0.0006
+  },
+  "top3|g2retro vs retroxpert|inchikey vs tautomer": {
+   "delta": -0.0076,
+   "ci95": [
+    -0.0116,
+    -0.0038
+   ],
+   "p": 0.0002
+  },
+  "top3|gln vs graph2smiles|canonical vs nostereo": {
+   "delta": 0.0062,
+   "ci95": [
+    0.0024,
+    0.0102
+   ],
+   "p": 0.0032
+  },
+  "top3|gln vs graph2smiles|canonical vs tautomer": {
+   "delta": 0.0056,
+   "ci95": [
+    0.0016,
+    0.0098
+   ],
+   "p": 0.0092
+  },
+  "top3|gln vs graph2smiles|nostereo vs inchikey": {
+   "delta": -0.0062,
+   "ci95": [
+    -0.0102,
+    -0.0024
+   ],
+   "p": 0.0032
+  },
+  "top3|gln vs graph2smiles|inchikey vs tautomer": {
+   "delta": 0.0056,
+   "ci95": [
+    0.0016,
+    0.0098
+   ],
+   "p": 0.0092
+  },
+  "top3|gln vs graphretro|canonical vs nostereo": {
+   "delta": 0.0036,
+   "ci95": [
+    0.0012,
+    0.0062
+   ],
+   "p": 0.005
+  },
+  "top3|gln vs graphretro|canonical vs tautomer": {
+   "delta": 0.0084,
+   "ci95": [
+    0.0052,
+    0.0118
+   ],
+   "p": 0.0001
+  },
+  "top3|gln vs graphretro|nostereo vs inchikey": {
+   "delta": -0.0036,
+   "ci95": [
+    -0.0062,
+    -0.0012
+   ],
+   "p": 0.005
+  },
+  "top3|gln vs graphretro|nostereo vs tautomer": {
+   "delta": 0.0048,
+   "ci95": [
+    0.0026,
+    0.0072
+   ],
+   "p": 0.0002
+  },
+  "top3|gln vs graphretro|inchikey vs tautomer": {
+   "delta": 0.0084,
+   "ci95": [
+    0.0052,
+    0.0118
+   ],
+   "p": 0.0001
+  },
+  "top3|gln vs localretro|canonical vs nostereo": {
+   "delta": 0.0062,
+   "ci95": [
+    0.0036,
+    0.0088
+   ],
+   "p": 0.0001
+  },
+  "top3|gln vs localretro|canonical vs tautomer": {
+   "delta": 0.0066,
+   "ci95": [
+    0.0036,
+    0.0098
+   ],
+   "p": 0.0001
+  },
+  "top3|gln vs localretro|nostereo vs inchikey": {
+   "delta": -0.0062,
+   "ci95": [
+    -0.0088,
+    -0.0036
+   ],
+   "p": 0.0001
+  },
+  "top3|gln vs localretro|inchikey vs tautomer": {
+   "delta": 0.0066,
+   "ci95": [
+    0.0036,
+    0.0098
+   ],
+   "p": 0.0001
+  },
+  "top3|gln vs retroformer|canonical vs nostereo": {
+   "delta": 0.0034,
+   "ci95": [
+    0.0006,
+    0.0062
+   ],
+   "p": 0.0206
+  },
+  "top3|gln vs retroformer|nostereo vs inchikey": {
+   "delta": -0.0032,
+   "ci95": [
+    -0.0062,
+    -0.0004
+   ],
+   "p": 0.0324
+  },
+  "top3|gln vs retroxpert|nostereo vs tautomer": {
+   "delta": -0.0016,
+   "ci95": [
+    -0.0032,
+    -0.0002
+   ],
+   "p": 0.0394
+  },
+  "top3|graph2smiles vs graphretro|nostereo vs tautomer": {
+   "delta": 0.0054,
+   "ci95": [
+    0.0032,
+    0.0078
+   ],
+   "p": 0.0001
+  },
+  "top3|graph2smiles vs retroxpert|canonical vs nostereo": {
+   "delta": -0.0064,
+   "ci95": [
+    -0.0104,
+    -0.0024
+   ],
+   "p": 0.0028
+  },
+  "top3|graph2smiles vs retroxpert|canonical vs tautomer": {
+   "delta": -0.0074,
+   "ci95": [
+    -0.0116,
+    -0.0032
+   ],
+   "p": 0.0008
+  },
+  "top3|graph2smiles vs retroxpert|nostereo vs inchikey": {
+   "delta": 0.0066,
+   "ci95": [
+    0.0026,
+    0.0106
+   ],
+   "p": 0.002
+  },
+  "top3|graph2smiles vs retroxpert|inchikey vs tautomer": {
+   "delta": -0.0076,
+   "ci95": [
+    -0.0118,
+    -0.0034
+   ],
+   "p": 0.0006
+  },
+  "top3|graphretro vs localretro|canonical vs nostereo": {
+   "delta": 0.0026,
+   "ci95": [
+    0.001,
+    0.0044
+   ],
+   "p": 0.0014
+  },
+  "top3|graphretro vs localretro|nostereo vs inchikey": {
+   "delta": -0.0026,
+   "ci95": [
+    -0.0044,
+    -0.001
+   ],
+   "p": 0.0014
+  },
+  "top3|graphretro vs localretro|nostereo vs tautomer": {
+   "delta": -0.0044,
+   "ci95": [
+    -0.0068,
+    -0.0022
+   ],
+   "p": 0.0002
+  },
+  "top3|graphretro vs retroformer|canonical vs tautomer": {
+   "delta": -0.0056,
+   "ci95": [
+    -0.0096,
+    -0.0016
+   ],
+   "p": 0.0068
+  },
+  "top3|graphretro vs retroformer|nostereo vs tautomer": {
+   "delta": -0.0054,
+   "ci95": [
+    -0.0078,
+    -0.003
+   ],
+   "p": 0.0001
+  },
+  "top3|graphretro vs retroformer|inchikey vs tautomer": {
+   "delta": -0.0058,
+   "ci95": [
+    -0.0098,
+    -0.0018
+   ],
+   "p": 0.0044
+  },
+  "top3|graphretro vs retroxpert|canonical vs nostereo": {
+   "delta": -0.0038,
+   "ci95": [
+    -0.0074,
+    -0.0004
+   ],
+   "p": 0.0352
+  },
+  "top3|graphretro vs retroxpert|canonical vs tautomer": {
+   "delta": -0.0102,
+   "ci95": [
+    -0.0144,
+    -0.006
+   ],
+   "p": 0.0001
+  },
+  "top3|graphretro vs retroxpert|nostereo vs inchikey": {
+   "delta": 0.004,
+   "ci95": [
+    0.0006,
+    0.0076
+   ],
+   "p": 0.0268
+  },
+  "top3|graphretro vs retroxpert|nostereo vs tautomer": {
+   "delta": -0.0064,
+   "ci95": [
+    -0.009,
+    -0.004
+   ],
+   "p": 0.0001
+  },
+  "top3|graphretro vs retroxpert|inchikey vs tautomer": {
+   "delta": -0.0104,
+   "ci95": [
+    -0.0146,
+    -0.0062
+   ],
+   "p": 0.0001
+  },
+  "top3|localretro vs retroformer|canonical vs tautomer": {
+   "delta": -0.0038,
+   "ci95": [
+    -0.0074,
+    -0.0002
+   ],
+   "p": 0.0472
+  },
+  "top3|localretro vs retroformer|inchikey vs tautomer": {
+   "delta": -0.004,
+   "ci95": [
+    -0.0076,
+    -0.0004
+   ],
+   "p": 0.0342
+  },
+  "top3|localretro vs retroxpert|canonical vs nostereo": {
+   "delta": -0.0064,
+   "ci95": [
+    -0.0102,
+    -0.0028
+   ],
+   "p": 0.0012
+  },
+  "top3|localretro vs retroxpert|canonical vs tautomer": {
+   "delta": -0.0084,
+   "ci95": [
+    -0.0126,
+    -0.0044
+   ],
+   "p": 0.0001
+  },
+  "top3|localretro vs retroxpert|nostereo vs inchikey": {
+   "delta": 0.0066,
+   "ci95": [
+    0.003,
+    0.0104
+   ],
+   "p": 0.0008
+  },
+  "top3|localretro vs retroxpert|nostereo vs tautomer": {
+   "delta": -0.002,
+   "ci95": [
+    -0.0038,
+    -0.0004
+   ],
+   "p": 0.0222
+  },
+  "top3|localretro vs retroxpert|inchikey vs tautomer": {
+   "delta": -0.0086,
+   "ci95": [
+    -0.0128,
+    -0.0046
+   ],
+   "p": 0.0001
+  },
+  "top3|retroformer vs retroxpert|canonical vs nostereo": {
+   "delta": -0.0036,
+   "ci95": [
+    -0.007,
+    -0.0004
+   ],
+   "p": 0.0312
+  },
+  "top3|retroformer vs retroxpert|canonical vs tautomer": {
+   "delta": -0.0046,
+   "ci95": [
+    -0.0082,
+    -0.0012
+   ],
+   "p": 0.0102
+  },
+  "top3|retroformer vs retroxpert|nostereo vs inchikey": {
+   "delta": 0.0036,
+   "ci95": [
+    0.0004,
+    0.007
+   ],
+   "p": 0.0324
+  },
+  "top3|retroformer vs retroxpert|inchikey vs tautomer": {
+   "delta": -0.0046,
+   "ci95": [
+    -0.0082,
+    -0.0012
+   ],
+   "p": 0.0088
+  },
+  "top5|g2retro vs gln|canonical vs nostereo": {
+   "delta": -0.0074,
+   "ci95": [
+    -0.0102,
+    -0.0048
+   ],
+   "p": 0.0001
+  },
+  "top5|g2retro vs gln|canonical vs tautomer": {
+   "delta": -0.0076,
+   "ci95": [
+    -0.0108,
+    -0.0044
+   ],
+   "p": 0.0001
+  },
+  "top5|g2retro vs gln|nostereo vs inchikey": {
+   "delta": 0.0074,
+   "ci95": [
+    0.0048,
+    0.0102
+   ],
+   "p": 0.0001
+  },
+  "top5|g2retro vs gln|inchikey vs tautomer": {
+   "delta": -0.0076,
+   "ci95": [
+    -0.0108,
+    -0.0044
+   ],
+   "p": 0.0001
+  },
+  "top5|g2retro vs graphretro|canonical vs nostereo": {
+   "delta": -0.0028,
+   "ci95": [
+    -0.005,
+    -0.0008
+   ],
+   "p": 0.01
+  },
+  "top5|g2retro vs graphretro|nostereo vs inchikey": {
+   "delta": 0.0028,
+   "ci95": [
+    0.0008,
+    0.005
+   ],
+   "p": 0.01
+  },
+  "top5|g2retro vs graphretro|nostereo vs tautomer": {
+   "delta": 0.0048,
+   "ci95": [
+    0.0024,
+    0.0074
+   ],
+   "p": 0.0002
+  },
+  "top5|g2retro vs retroformer|canonical vs nostereo": {
+   "delta": -0.0056,
+   "ci95": [
+    -0.0092,
+    -0.002
+   ],
+   "p": 0.0018
+  },
+  "top5|g2retro vs retroformer|canonical vs tautomer": {
+   "delta": -0.007,
+   "ci95": [
+    -0.0108,
+    -0.0032
+   ],
+   "p": 0.0002
+  },
+  "top5|g2retro vs retroformer|nostereo vs inchikey": {
+   "delta": 0.0058,
+   "ci95": [
+    0.0022,
+    0.0094
+   ],
+   "p": 0.0014
+  },
+  "top5|g2retro vs retroformer|inchikey vs tautomer": {
+   "delta": -0.0072,
+   "ci95": [
+    -0.011,
+    -0.0034
+   ],
+   "p": 0.0002
+  },
+  "top5|g2retro vs retroxpert|canonical vs nostereo": {
+   "delta": -0.0084,
+   "ci95": [
+    -0.0124,
+    -0.0046
+   ],
+   "p": 0.0001
+  },
+  "top5|g2retro vs retroxpert|canonical vs tautomer": {
+   "delta": -0.0104,
+   "ci95": [
+    -0.0146,
+    -0.0062
+   ],
+   "p": 0.0001
+  },
+  "top5|g2retro vs retroxpert|nostereo vs inchikey": {
+   "delta": 0.0086,
+   "ci95": [
+    0.0048,
+    0.0126
+   ],
+   "p": 0.0001
+  },
+  "top5|g2retro vs retroxpert|nostereo vs tautomer": {
+   "delta": -0.002,
+   "ci95": [
+    -0.0036,
+    -0.0006
+   ],
+   "p": 0.0076
+  },
+  "top5|g2retro vs retroxpert|inchikey vs tautomer": {
+   "delta": -0.0106,
+   "ci95": [
+    -0.0148,
+    -0.0066
+   ],
+   "p": 0.0001
+  },
+  "top5|gln vs graph2smiles|canonical vs nostereo": {
+   "delta": 0.0044,
+   "ci95": [
+    0.0004,
+    0.0082
+   ],
+   "p": 0.0326
+  },
+  "top5|gln vs graph2smiles|nostereo vs inchikey": {
+   "delta": -0.0044,
+   "ci95": [
+    -0.0082,
+    -0.0004
+   ],
+   "p": 0.0326
+  },
+  "top5|gln vs graphretro|canonical vs nostereo": {
+   "delta": 0.0046,
+   "ci95": [
+    0.0018,
+    0.0074
+   ],
+   "p": 0.0012
+  },
+  "top5|gln vs graphretro|canonical vs tautomer": {
+   "delta": 0.0096,
+   "ci95": [
+    0.006,
+    0.0134
+   ],
+   "p": 0.0001
+  },
+  "top5|gln vs graphretro|nostereo vs inchikey": {
+   "delta": -0.0046,
+   "ci95": [
+    -0.0074,
+    -0.0018
+   ],
+   "p": 0.0012
+  },
+  "top5|gln vs graphretro|nostereo vs tautomer": {
+   "delta": 0.005,
+   "ci95": [
+    0.0026,
+    0.0076
+   ],
+   "p": 0.0001
+  },
+  "top5|gln vs graphretro|inchikey vs tautomer": {
+   "delta": 0.0096,
+   "ci95": [
+    0.006,
+    0.0134
+   ],
+   "p": 0.0001
+  },
+  "top5|gln vs localretro|canonical vs nostereo": {
+   "delta": 0.0074,
+   "ci95": [
+    0.0048,
+    0.0102
+   ],
+   "p": 0.0001
+  },
+  "top5|gln vs localretro|canonical vs tautomer": {
+   "delta": 0.0066,
+   "ci95": [
+    0.0034,
+    0.01
+   ],
+   "p": 0.0001
+  },
+  "top5|gln vs localretro|nostereo vs inchikey": {
+   "delta": -0.0074,
+   "ci95": [
+    -0.0102,
+    -0.0048
+   ],
+   "p": 0.0001
+  },
+  "top5|gln vs localretro|inchikey vs tautomer": {
+   "delta": 0.0066,
+   "ci95": [
+    0.0034,
+    0.01
+   ],
+   "p": 0.0001
+  },
+  "top5|graph2smiles vs graphretro|canonical vs tautomer": {
+   "delta": 0.006,
+   "ci95": [
+    0.0012,
+    0.0108
+   ],
+   "p": 0.0124
+  },
+  "top5|graph2smiles vs graphretro|nostereo vs tautomer": {
+   "delta": 0.0058,
+   "ci95": [
+    0.0034,
+    0.0084
+   ],
+   "p": 0.0001
+  },
+  "top5|graph2smiles vs graphretro|inchikey vs tautomer": {
+   "delta": 0.006,
+   "ci95": [
+    0.0012,
+    0.0108
+   ],
+   "p": 0.0124
+  },
+  "top5|graph2smiles vs retroxpert|canonical vs nostereo": {
+   "delta": -0.0054,
+   "ci95": [
+    -0.0092,
+    -0.0016
+   ],
+   "p": 0.0052
+  },
+  "top5|graph2smiles vs retroxpert|canonical vs tautomer": {
+   "delta": -0.0064,
+   "ci95": [
+    -0.0104,
+    -0.0024
+   ],
+   "p": 0.0018
+  },
+  "top5|graph2smiles vs retroxpert|nostereo vs inchikey": {
+   "delta": 0.0056,
+   "ci95": [
+    0.0018,
+    0.0094
+   ],
+   "p": 0.004
+  },
+  "top5|graph2smiles vs retroxpert|inchikey vs tautomer": {
+   "delta": -0.0066,
+   "ci95": [
+    -0.0106,
+    -0.0026
+   ],
+   "p": 0.0014
+  },
+  "top5|graphretro vs localretro|canonical vs nostereo": {
+   "delta": 0.0028,
+   "ci95": [
+    0.0012,
+    0.0046
+   ],
+   "p": 0.0006
+  },
+  "top5|graphretro vs localretro|nostereo vs inchikey": {
+   "delta": -0.0028,
+   "ci95": [
+    -0.0046,
+    -0.0012
+   ],
+   "p": 0.0006
+  },
+  "top5|graphretro vs localretro|nostereo vs tautomer": {
+   "delta": -0.0058,
+   "ci95": [
+    -0.0084,
+    -0.0034
+   ],
+   "p": 0.0001
+  },
+  "top5|graphretro vs retroformer|canonical vs tautomer": {
+   "delta": -0.009,
+   "ci95": [
+    -0.0134,
+    -0.0048
+   ],
+   "p": 0.0002
+  },
+  "top5|graphretro vs retroformer|nostereo vs tautomer": {
+   "delta": -0.0062,
+   "ci95": [
+    -0.0088,
+    -0.0038
+   ],
+   "p": 0.0001
+  },
+  "top5|graphretro vs retroformer|inchikey vs tautomer": {
+   "delta": -0.0092,
+   "ci95": [
+    -0.0136,
+    -0.005
+   ],
+   "p": 0.0002
+  },
+  "top5|graphretro vs retroxpert|canonical vs nostereo": {
+   "delta": -0.0056,
+   "ci95": [
+    -0.0094,
+    -0.002
+   ],
+   "p": 0.0038
+  },
+  "top5|graphretro vs retroxpert|canonical vs tautomer": {
+   "delta": -0.0124,
+   "ci95": [
+    -0.0168,
+    -0.008
+   ],
+   "p": 0.0001
+  },
+  "top5|graphretro vs retroxpert|nostereo vs inchikey": {
+   "delta": 0.0058,
+   "ci95": [
+    0.0022,
+    0.0096
+   ],
+   "p": 0.0022
+  },
+  "top5|graphretro vs retroxpert|nostereo vs tautomer": {
+   "delta": -0.0068,
+   "ci95": [
+    -0.0094,
+    -0.0044
+   ],
+   "p": 0.0001
+  },
+  "top5|graphretro vs retroxpert|inchikey vs tautomer": {
+   "delta": -0.0126,
+   "ci95": [
+    -0.017,
+    -0.0082
+   ],
+   "p": 0.0001
+  },
+  "top5|localretro vs retroformer|canonical vs nostereo": {
+   "delta": -0.0056,
+   "ci95": [
+    -0.009,
+    -0.0022
+   ],
+   "p": 0.002
+  },
+  "top5|localretro vs retroformer|canonical vs tautomer": {
+   "delta": -0.006,
+   "ci95": [
+    -0.0098,
+    -0.0024
+   ],
+   "p": 0.0014
+  },
+  "top5|localretro vs retroformer|nostereo vs inchikey": {
+   "delta": 0.0058,
+   "ci95": [
+    0.0024,
+    0.0094
+   ],
+   "p": 0.0012
+  },
+  "top5|localretro vs retroformer|inchikey vs tautomer": {
+   "delta": -0.0062,
+   "ci95": [
+    -0.01,
+    -0.0026
+   ],
+   "p": 0.0012
+  },
+  "top5|localretro vs retroxpert|canonical vs nostereo": {
+   "delta": -0.0084,
+   "ci95": [
+    -0.0124,
+    -0.0046
+   ],
+   "p": 0.0001
+  },
+  "top5|localretro vs retroxpert|canonical vs tautomer": {
+   "delta": -0.0094,
+   "ci95": [
+    -0.0136,
+    -0.0052
+   ],
+   "p": 0.0001
+  },
+  "top5|localretro vs retroxpert|nostereo vs inchikey": {
+   "delta": 0.0086,
+   "ci95": [
+    0.0046,
+    0.0126
+   ],
+   "p": 0.0001
+  },
+  "top5|localretro vs retroxpert|inchikey vs tautomer": {
+   "delta": -0.0096,
+   "ci95": [
+    -0.0138,
+    -0.0054
+   ],
+   "p": 0.0001
+  },
+  "top10|g2retro vs gln|canonical vs nostereo": {
+   "delta": -0.0084,
+   "ci95": [
+    -0.0112,
+    -0.0058
+   ],
+   "p": 0.0001
+  },
+  "top10|g2retro vs gln|canonical vs tautomer": {
+   "delta": -0.0102,
+   "ci95": [
+    -0.0136,
+    -0.007
+   ],
+   "p": 0.0001
+  },
+  "top10|g2retro vs gln|nostereo vs inchikey": {
+   "delta": 0.0084,
+   "ci95": [
+    0.0058,
+    0.0112
+   ],
+   "p": 0.0001
+  },
+  "top10|g2retro vs gln|inchikey vs tautomer": {
+   "delta": -0.0102,
+   "ci95": [
+    -0.0136,
+    -0.007
+   ],
+   "p": 0.0001
+  },
+  "top10|g2retro vs graph2smiles|canonical vs nostereo": {
+   "delta": -0.0066,
+   "ci95": [
+    -0.011,
+    -0.0022
+   ],
+   "p": 0.0036
+  },
+  "top10|g2retro vs graph2smiles|canonical vs tautomer": {
+   "delta": -0.009,
+   "ci95": [
+    -0.0136,
+    -0.0044
+   ],
+   "p": 0.0002
+  },
+  "top10|g2retro vs graph2smiles|nostereo vs inchikey": {
+   "delta": 0.0066,
+   "ci95": [
+    0.0022,
+    0.011
+   ],
+   "p": 0.0036
+  },
+  "top10|g2retro vs graph2smiles|nostereo vs tautomer": {
+   "delta": -0.0024,
+   "ci95": [
+    -0.0042,
+    -0.0008
+   ],
+   "p": 0.0048
+  },
+  "top10|g2retro vs graph2smiles|inchikey vs tautomer": {
+   "delta": -0.009,
+   "ci95": [
+    -0.0136,
+    -0.0044
+   ],
+   "p": 0.0002
+  },
+  "top10|g2retro vs graphretro|canonical vs nostereo": {
+   "delta": -0.0038,
+   "ci95": [
+    -0.006,
+    -0.0018
+   ],
+   "p": 0.0002
+  },
+  "top10|g2retro vs graphretro|nostereo vs inchikey": {
+   "delta": 0.0038,
+   "ci95": [
+    0.0018,
+    0.006
+   ],
+   "p": 0.0002
+  },
+  "top10|g2retro vs graphretro|nostereo vs tautomer": {
+   "delta": 0.004,
+   "ci95": [
+    0.0014,
+    0.0068
+   ],
+   "p": 0.003
+  },
+  "top10|g2retro vs localretro|canonical vs tautomer": {
+   "delta": -0.0034,
+   "ci95": [
+    -0.006,
+    -0.0008
+   ],
+   "p": 0.0102
+  },
+  "top10|g2retro vs localretro|nostereo vs tautomer": {
+   "delta": -0.0026,
+   "ci95": [
+    -0.0046,
+    -0.0008
+   ],
+   "p": 0.005
+  },
+  "top10|g2retro vs localretro|inchikey vs tautomer": {
+   "delta": -0.0034,
+   "ci95": [
+    -0.006,
+    -0.0008
+   ],
+   "p": 0.0102
+  },
+  "top10|g2retro vs retroformer|canonical vs nostereo": {
+   "delta": -0.008,
+   "ci95": [
+    -0.0116,
+    -0.0044
+   ],
+   "p": 0.0001
+  },
+  "top10|g2retro vs retroformer|canonical vs tautomer": {
+   "delta": -0.0102,
+   "ci95": [
+    -0.0142,
+    -0.0062
+   ],
+   "p": 0.0001
+  },
+  "top10|g2retro vs retroformer|nostereo vs inchikey": {
+   "delta": 0.0082,
+   "ci95": [
+    0.0046,
+    0.012
+   ],
+   "p": 0.0001
+  },
+  "top10|g2retro vs retroformer|nostereo vs tautomer": {
+   "delta": -0.0022,
+   "ci95": [
+    -0.004,
+    -0.0006
+   ],
+   "p": 0.01
+  },
+  "top10|g2retro vs retroformer|inchikey vs tautomer": {
+   "delta": -0.0104,
+   "ci95": [
+    -0.0144,
+    -0.0064
+   ],
+   "p": 0.0001
+  },
+  "top10|g2retro vs retroxpert|canonical vs nostereo": {
+   "delta": -0.0122,
+   "ci95": [
+    -0.0162,
+    -0.0084
+   ],
+   "p": 0.0001
+  },
+  "top10|g2retro vs retroxpert|canonical vs tautomer": {
+   "delta": -0.0142,
+   "ci95": [
+    -0.0186,
+    -0.01
+   ],
+   "p": 0.0001
+  },
+  "top10|g2retro vs retroxpert|nostereo vs inchikey": {
+   "delta": 0.0122,
+   "ci95": [
+    0.0084,
+    0.0162
+   ],
+   "p": 0.0001
+  },
+  "top10|g2retro vs retroxpert|nostereo vs tautomer": {
+   "delta": -0.002,
+   "ci95": [
+    -0.0038,
+    -0.0002
+   ],
+   "p": 0.0402
+  },
+  "top10|g2retro vs retroxpert|inchikey vs tautomer": {
+   "delta": -0.0142,
+   "ci95": [
+    -0.0186,
+    -0.01
+   ],
+   "p": 0.0001
+  },
+  "top10|gln vs graphretro|canonical vs nostereo": {
+   "delta": 0.0046,
+   "ci95": [
+    0.002,
+    0.0074
+   ],
+   "p": 0.0006
+  },
+  "top10|gln vs graphretro|canonical vs tautomer": {
+   "delta": 0.0104,
+   "ci95": [
+    0.0066,
+    0.0142
+   ],
+   "p": 0.0001
+  },
+  "top10|gln vs graphretro|nostereo vs inchikey": {
+   "delta": -0.0046,
+   "ci95": [
+    -0.0074,
+    -0.002
+   ],
+   "p": 0.0006
+  },
+  "top10|gln vs graphretro|nostereo vs tautomer": {
+   "delta": 0.0058,
+   "ci95": [
+    0.0032,
+    0.0086
+   ],
+   "p": 0.0002
+  },
+  "top10|gln vs graphretro|inchikey vs tautomer": {
+   "delta": 0.0104,
+   "ci95": [
+    0.0066,
+    0.0142
+   ],
+   "p": 0.0001
+  },
+  "top10|gln vs localretro|canonical vs nostereo": {
+   "delta": 0.0076,
+   "ci95": [
+    0.0052,
+    0.0102
+   ],
+   "p": 0.0001
+  },
+  "top10|gln vs localretro|canonical vs tautomer": {
+   "delta": 0.0068,
+   "ci95": [
+    0.0038,
+    0.01
+   ],
+   "p": 0.0001
+  },
+  "top10|gln vs localretro|nostereo vs inchikey": {
+   "delta": -0.0076,
+   "ci95": [
+    -0.0102,
+    -0.0052
+   ],
+   "p": 0.0001
+  },
+  "top10|gln vs localretro|inchikey vs tautomer": {
+   "delta": 0.0068,
+   "ci95": [
+    0.0038,
+    0.01
+   ],
+   "p": 0.0001
+  },
+  "top10|gln vs retroxpert|canonical vs nostereo": {
+   "delta": -0.0038,
+   "ci95": [
+    -0.007,
+    -0.0008
+   ],
+   "p": 0.0164
+  },
+  "top10|gln vs retroxpert|canonical vs tautomer": {
+   "delta": -0.004,
+   "ci95": [
+    -0.0076,
+    -0.0004
+   ],
+   "p": 0.0292
+  },
+  "top10|gln vs retroxpert|nostereo vs inchikey": {
+   "delta": 0.0038,
+   "ci95": [
+    0.0008,
+    0.007
+   ],
+   "p": 0.0164
+  },
+  "top10|gln vs retroxpert|inchikey vs tautomer": {
+   "delta": -0.004,
+   "ci95": [
+    -0.0076,
+    -0.0004
+   ],
+   "p": 0.0292
+  },
+  "top10|graph2smiles vs graphretro|canonical vs tautomer": {
+   "delta": 0.0092,
+   "ci95": [
+    0.0048,
+    0.0138
+   ],
+   "p": 0.0001
+  },
+  "top10|graph2smiles vs graphretro|nostereo vs tautomer": {
+   "delta": 0.0064,
+   "ci95": [
+    0.004,
+    0.0088
+   ],
+   "p": 0.0001
+  },
+  "top10|graph2smiles vs graphretro|inchikey vs tautomer": {
+   "delta": 0.0092,
+   "ci95": [
+    0.0048,
+    0.0138
+   ],
+   "p": 0.0001
+  },
+  "top10|graph2smiles vs localretro|canonical vs nostereo": {
+   "delta": 0.0058,
+   "ci95": [
+    0.0018,
+    0.0098
+   ],
+   "p": 0.0056
+  },
+  "top10|graph2smiles vs localretro|canonical vs tautomer": {
+   "delta": 0.0056,
+   "ci95": [
+    0.0012,
+    0.01
+   ],
+   "p": 0.0112
+  },
+  "top10|graph2smiles vs localretro|nostereo vs inchikey": {
+   "delta": -0.0058,
+   "ci95": [
+    -0.0098,
+    -0.0018
+   ],
+   "p": 0.0056
+  },
+  "top10|graph2smiles vs localretro|inchikey vs tautomer": {
+   "delta": 0.0056,
+   "ci95": [
+    0.0012,
+    0.01
+   ],
+   "p": 0.0112
+  },
+  "top10|graph2smiles vs retroxpert|canonical vs nostereo": {
+   "delta": -0.0056,
+   "ci95": [
+    -0.009,
+    -0.0024
+   ],
+   "p": 0.0008
+  },
+  "top10|graph2smiles vs retroxpert|canonical vs tautomer": {
+   "delta": -0.0052,
+   "ci95": [
+    -0.0088,
+    -0.0016
+   ],
+   "p": 0.0048
+  },
+  "top10|graph2smiles vs retroxpert|nostereo vs inchikey": {
+   "delta": 0.0056,
+   "ci95": [
+    0.0024,
+    0.009
+   ],
+   "p": 0.0008
+  },
+  "top10|graph2smiles vs retroxpert|inchikey vs tautomer": {
+   "delta": -0.0052,
+   "ci95": [
+    -0.0088,
+    -0.0016
+   ],
+   "p": 0.0048
+  },
+  "top10|graphretro vs localretro|canonical vs nostereo": {
+   "delta": 0.003,
+   "ci95": [
+    0.0014,
+    0.0046
+   ],
+   "p": 0.0002
+  },
+  "top10|graphretro vs localretro|canonical vs tautomer": {
+   "delta": -0.0036,
+   "ci95": [
+    -0.0066,
+    -0.0006
+   ],
+   "p": 0.0202
+  },
+  "top10|graphretro vs localretro|nostereo vs inchikey": {
+   "delta": -0.003,
+   "ci95": [
+    -0.0046,
+    -0.0014
+   ],
+   "p": 0.0002
+  },
+  "top10|graphretro vs localretro|nostereo vs tautomer": {
+   "delta": -0.0066,
+   "ci95": [
+    -0.0094,
+    -0.004
+   ],
+   "p": 0.0001
+  },
+  "top10|graphretro vs localretro|inchikey vs tautomer": {
+   "delta": -0.0036,
+   "ci95": [
+    -0.0066,
+    -0.0006
+   ],
+   "p": 0.0202
+  },
+  "top10|graphretro vs retroformer|canonical vs nostereo": {
+   "delta": -0.0042,
+   "ci95": [
+    -0.0076,
+    -0.0008
+   ],
+   "p": 0.0212
+  },
+  "top10|graphretro vs retroformer|canonical vs tautomer": {
+   "delta": -0.0104,
+   "ci95": [
+    -0.0148,
+    -0.0062
+   ],
+   "p": 0.0001
+  },
+  "top10|graphretro vs retroformer|nostereo vs inchikey": {
+   "delta": 0.0044,
+   "ci95": [
+    0.0008,
+    0.008
+   ],
+   "p": 0.0182
+  },
+  "top10|graphretro vs retroformer|nostereo vs tautomer": {
+   "delta": -0.0062,
+   "ci95": [
+    -0.0088,
+    -0.0036
+   ],
+   "p": 0.0001
+  },
+  "top10|graphretro vs retroformer|inchikey vs tautomer": {
+   "delta": -0.0106,
+   "ci95": [
+    -0.015,
+    -0.0064
+   ],
+   "p": 0.0001
+  },
+  "top10|graphretro vs retroxpert|canonical vs nostereo": {
+   "delta": -0.0084,
+   "ci95": [
+    -0.0122,
+    -0.0048
+   ],
+   "p": 0.0001
+  },
+  "top10|graphretro vs retroxpert|canonical vs tautomer": {
+   "delta": -0.0144,
+   "ci95": [
+    -0.019,
+    -0.01
+   ],
+   "p": 0.0001
+  },
+  "top10|graphretro vs retroxpert|nostereo vs inchikey": {
+   "delta": 0.0084,
+   "ci95": [
+    0.0048,
+    0.0122
+   ],
+   "p": 0.0001
+  },
+  "top10|graphretro vs retroxpert|nostereo vs tautomer": {
+   "delta": -0.006,
+   "ci95": [
+    -0.0088,
+    -0.0034
+   ],
+   "p": 0.0001
+  },
+  "top10|graphretro vs retroxpert|inchikey vs tautomer": {
+   "delta": -0.0144,
+   "ci95": [
+    -0.019,
+    -0.01
+   ],
+   "p": 0.0001
+  },
+  "top10|localretro vs retroformer|canonical vs nostereo": {
+   "delta": -0.0072,
+   "ci95": [
+    -0.0108,
+    -0.0038
+   ],
+   "p": 0.0002
+  },
+  "top10|localretro vs retroformer|canonical vs tautomer": {
+   "delta": -0.0068,
+   "ci95": [
+    -0.0106,
+    -0.0032
+   ],
+   "p": 0.0004
+  },
+  "top10|localretro vs retroformer|nostereo vs inchikey": {
+   "delta": 0.0074,
+   "ci95": [
+    0.004,
+    0.011
+   ],
+   "p": 0.0001
+  },
+  "top10|localretro vs retroformer|inchikey vs tautomer": {
+   "delta": -0.007,
+   "ci95": [
+    -0.0108,
+    -0.0034
+   ],
+   "p": 0.0004
+  },
+  "top10|localretro vs retroxpert|canonical vs nostereo": {
+   "delta": -0.0114,
+   "ci95": [
+    -0.0154,
+    -0.0078
+   ],
+   "p": 0.0001
+  },
+  "top10|localretro vs retroxpert|canonical vs tautomer": {
+   "delta": -0.0108,
+   "ci95": [
+    -0.015,
+    -0.0068
+   ],
+   "p": 0.0001
+  },
+  "top10|localretro vs retroxpert|nostereo vs inchikey": {
+   "delta": 0.0114,
+   "ci95": [
+    0.0078,
+    0.0154
+   ],
+   "p": 0.0001
+  },
+  "top10|localretro vs retroxpert|inchikey vs tautomer": {
+   "delta": -0.0108,
+   "ci95": [
+    -0.015,
+    -0.0068
+   ],
+   "p": 0.0001
+  },
+  "top10|retroformer vs retroxpert|canonical vs nostereo": {
+   "delta": -0.0042,
+   "ci95": [
+    -0.0074,
+    -0.001
+   ],
+   "p": 0.0144
+  },
+  "top10|retroformer vs retroxpert|canonical vs tautomer": {
+   "delta": -0.004,
+   "ci95": [
+    -0.0076,
+    -0.0004
+   ],
+   "p": 0.033
+  },
+  "top10|retroformer vs retroxpert|nostereo vs inchikey": {
+   "delta": 0.004,
+   "ci95": [
+    0.0008,
+    0.0074
+   ],
+   "p": 0.0198
+  },
+  "top10|retroformer vs retroxpert|inchikey vs tautomer": {
+   "delta": -0.0038,
+   "ci95": [
+    -0.0074,
+    -0.0002
+   ],
+   "p": 0.0408
+  }
+ },
+ "holm_survivors": {
+  "top1|g2retro vs graph2smiles|canonical vs nostereo": {
+   "delta": 0.0134,
+   "ci95": [
+    0.0088,
+    0.0182
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000112
+  },
+  "top1|g2retro vs graph2smiles|canonical vs tautomer": {
+   "delta": 0.014,
+   "ci95": [
+    0.0094,
+    0.0188
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000112
+  },
+  "top1|g2retro vs graph2smiles|nostereo vs inchikey": {
+   "delta": -0.0134,
+   "ci95": [
+    -0.0182,
+    -0.0088
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000112
+  },
+  "top1|g2retro vs graph2smiles|inchikey vs tautomer": {
+   "delta": 0.014,
+   "ci95": [
+    0.0094,
+    0.0188
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000112
+  },
+  "top1|g2retro vs graphretro|nostereo vs tautomer": {
+   "delta": 0.0036,
+   "ci95": [
+    0.0016,
+    0.0056
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000113
+  },
+  "top1|gln vs graph2smiles|canonical vs nostereo": {
+   "delta": 0.0148,
+   "ci95": [
+    0.0104,
+    0.0194
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000113
+  },
+  "top1|gln vs graph2smiles|canonical vs tautomer": {
+   "delta": 0.0152,
+   "ci95": [
+    0.0106,
+    0.02
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000113
+  },
+  "top1|gln vs graph2smiles|nostereo vs inchikey": {
+   "delta": -0.0148,
+   "ci95": [
+    -0.0194,
+    -0.0104
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000113
+  },
+  "top1|gln vs graph2smiles|inchikey vs tautomer": {
+   "delta": 0.0152,
+   "ci95": [
+    0.0106,
+    0.02
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000114
+  },
+  "top1|gln vs retroformer|canonical vs nostereo": {
+   "delta": 0.0086,
+   "ci95": [
+    0.0048,
+    0.0124
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000114
+  },
+  "top1|gln vs retroformer|canonical vs tautomer": {
+   "delta": 0.0084,
+   "ci95": [
+    0.0044,
+    0.0124
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000114
+  },
+  "top1|gln vs retroformer|nostereo vs inchikey": {
+   "delta": -0.0086,
+   "ci95": [
+    -0.0124,
+    -0.0048
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000114
+  },
+  "top1|gln vs retroformer|inchikey vs tautomer": {
+   "delta": 0.0084,
+   "ci95": [
+    0.0044,
+    0.0124
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000115
+  },
+  "top1|graph2smiles vs graphretro|canonical vs nostereo": {
+   "delta": -0.0154,
+   "ci95": [
+    -0.02,
+    -0.011
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000115
+  },
+  "top1|graph2smiles vs graphretro|canonical vs tautomer": {
+   "delta": -0.0124,
+   "ci95": [
+    -0.0174,
+    -0.0076
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000115
+  },
+  "top1|graph2smiles vs graphretro|nostereo vs inchikey": {
+   "delta": 0.0154,
+   "ci95": [
+    0.011,
+    0.02
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000115
+  },
+  "top1|graph2smiles vs graphretro|inchikey vs tautomer": {
+   "delta": -0.0124,
+   "ci95": [
+    -0.0174,
+    -0.0076
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000116
+  },
+  "top1|graph2smiles vs localretro|canonical vs nostereo": {
+   "delta": -0.0148,
+   "ci95": [
+    -0.0198,
+    -0.0102
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000116
+  },
+  "top1|graph2smiles vs localretro|canonical vs tautomer": {
+   "delta": -0.0146,
+   "ci95": [
+    -0.0198,
+    -0.0098
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000116
+  },
+  "top1|graph2smiles vs localretro|nostereo vs inchikey": {
+   "delta": 0.0148,
+   "ci95": [
+    0.0102,
+    0.0198
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000117
+  },
+  "top1|graph2smiles vs localretro|inchikey vs tautomer": {
+   "delta": -0.0146,
+   "ci95": [
+    -0.0198,
+    -0.0098
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000117
+  },
+  "top1|graph2smiles vs retroxpert|canonical vs nostereo": {
+   "delta": -0.0126,
+   "ci95": [
+    -0.0174,
+    -0.008
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000117
+  },
+  "top1|graph2smiles vs retroxpert|canonical vs tautomer": {
+   "delta": -0.0138,
+   "ci95": [
+    -0.0186,
+    -0.009
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000117
+  },
+  "top1|graph2smiles vs retroxpert|nostereo vs inchikey": {
+   "delta": 0.0126,
+   "ci95": [
+    0.008,
+    0.0174
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000118
+  },
+  "top1|graph2smiles vs retroxpert|inchikey vs tautomer": {
+   "delta": -0.0138,
+   "ci95": [
+    -0.0186,
+    -0.009
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000118
+  },
+  "top1|graphretro vs retroformer|canonical vs nostereo": {
+   "delta": 0.0092,
+   "ci95": [
+    0.0054,
+    0.013
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000118
+  },
+  "top1|graphretro vs retroformer|nostereo vs inchikey": {
+   "delta": -0.0092,
+   "ci95": [
+    -0.013,
+    -0.0054
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000118
+  },
+  "top1|graphretro vs retroformer|nostereo vs tautomer": {
+   "delta": -0.0036,
+   "ci95": [
+    -0.0056,
+    -0.0018
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000119
+  },
+  "top1|graphretro vs retroxpert|nostereo vs tautomer": {
+   "delta": -0.0042,
+   "ci95": [
+    -0.0064,
+    -0.0022
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000119
+  },
+  "top1|localretro vs retroformer|canonical vs nostereo": {
+   "delta": 0.0086,
+   "ci95": [
+    0.0048,
+    0.0126
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000119
+  },
+  "top1|localretro vs retroformer|nostereo vs inchikey": {
+   "delta": -0.0086,
+   "ci95": [
+    -0.0126,
+    -0.0048
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.00012
+  },
+  "top3|g2retro vs gln|canonical vs nostereo": {
+   "delta": -0.006,
+   "ci95": [
+    -0.0088,
+    -0.0034
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.00012
+  },
+  "top3|g2retro vs gln|canonical vs tautomer": {
+   "delta": -0.0056,
+   "ci95": [
+    -0.0088,
+    -0.0026
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.00012
+  },
+  "top3|g2retro vs gln|nostereo vs inchikey": {
+   "delta": 0.006,
+   "ci95": [
+    0.0034,
+    0.0088
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.00012
+  },
+  "top3|g2retro vs gln|inchikey vs tautomer": {
+   "delta": -0.0056,
+   "ci95": [
+    -0.0088,
+    -0.0026
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000121
+  },
+  "top3|g2retro vs graphretro|nostereo vs tautomer": {
+   "delta": 0.0052,
+   "ci95": [
+    0.003,
+    0.0076
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000121
+  },
+  "top3|gln vs graphretro|canonical vs tautomer": {
+   "delta": 0.0084,
+   "ci95": [
+    0.0052,
+    0.0118
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000121
+  },
+  "top3|gln vs graphretro|inchikey vs tautomer": {
+   "delta": 0.0084,
+   "ci95": [
+    0.0052,
+    0.0118
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000122
+  },
+  "top3|gln vs localretro|canonical vs nostereo": {
+   "delta": 0.0062,
+   "ci95": [
+    0.0036,
+    0.0088
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000122
+  },
+  "top3|gln vs localretro|canonical vs tautomer": {
+   "delta": 0.0066,
+   "ci95": [
+    0.0036,
+    0.0098
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000122
+  },
+  "top3|gln vs localretro|nostereo vs inchikey": {
+   "delta": -0.0062,
+   "ci95": [
+    -0.0088,
+    -0.0036
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000123
+  },
+  "top3|gln vs localretro|inchikey vs tautomer": {
+   "delta": 0.0066,
+   "ci95": [
+    0.0036,
+    0.0098
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000123
+  },
+  "top3|graph2smiles vs graphretro|nostereo vs tautomer": {
+   "delta": 0.0054,
+   "ci95": [
+    0.0032,
+    0.0078
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000123
+  },
+  "top3|graphretro vs retroformer|nostereo vs tautomer": {
+   "delta": -0.0054,
+   "ci95": [
+    -0.0078,
+    -0.003
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000123
+  },
+  "top3|graphretro vs retroxpert|canonical vs tautomer": {
+   "delta": -0.0102,
+   "ci95": [
+    -0.0144,
+    -0.006
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000124
+  },
+  "top3|graphretro vs retroxpert|nostereo vs tautomer": {
+   "delta": -0.0064,
+   "ci95": [
+    -0.009,
+    -0.004
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000124
+  },
+  "top3|graphretro vs retroxpert|inchikey vs tautomer": {
+   "delta": -0.0104,
+   "ci95": [
+    -0.0146,
+    -0.0062
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000124
+  },
+  "top3|localretro vs retroxpert|canonical vs tautomer": {
+   "delta": -0.0084,
+   "ci95": [
+    -0.0126,
+    -0.0044
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000125
+  },
+  "top3|localretro vs retroxpert|inchikey vs tautomer": {
+   "delta": -0.0086,
+   "ci95": [
+    -0.0128,
+    -0.0046
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000125
+  },
+  "top5|g2retro vs gln|canonical vs nostereo": {
+   "delta": -0.0074,
+   "ci95": [
+    -0.0102,
+    -0.0048
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000125
+  },
+  "top5|g2retro vs gln|canonical vs tautomer": {
+   "delta": -0.0076,
+   "ci95": [
+    -0.0108,
+    -0.0044
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000126
+  },
+  "top5|g2retro vs gln|nostereo vs inchikey": {
+   "delta": 0.0074,
+   "ci95": [
+    0.0048,
+    0.0102
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000126
+  },
+  "top5|g2retro vs gln|inchikey vs tautomer": {
+   "delta": -0.0076,
+   "ci95": [
+    -0.0108,
+    -0.0044
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000126
+  },
+  "top5|g2retro vs retroxpert|canonical vs nostereo": {
+   "delta": -0.0084,
+   "ci95": [
+    -0.0124,
+    -0.0046
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000127
+  },
+  "top5|g2retro vs retroxpert|canonical vs tautomer": {
+   "delta": -0.0104,
+   "ci95": [
+    -0.0146,
+    -0.0062
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000127
+  },
+  "top5|g2retro vs retroxpert|nostereo vs inchikey": {
+   "delta": 0.0086,
+   "ci95": [
+    0.0048,
+    0.0126
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000127
+  },
+  "top5|g2retro vs retroxpert|inchikey vs tautomer": {
+   "delta": -0.0106,
+   "ci95": [
+    -0.0148,
+    -0.0066
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000128
+  },
+  "top5|gln vs graphretro|canonical vs tautomer": {
+   "delta": 0.0096,
+   "ci95": [
+    0.006,
+    0.0134
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000128
+  },
+  "top5|gln vs graphretro|nostereo vs tautomer": {
+   "delta": 0.005,
+   "ci95": [
+    0.0026,
+    0.0076
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000128
+  },
+  "top5|gln vs graphretro|inchikey vs tautomer": {
+   "delta": 0.0096,
+   "ci95": [
+    0.006,
+    0.0134
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000129
+  },
+  "top5|gln vs localretro|canonical vs nostereo": {
+   "delta": 0.0074,
+   "ci95": [
+    0.0048,
+    0.0102
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000129
+  },
+  "top5|gln vs localretro|canonical vs tautomer": {
+   "delta": 0.0066,
+   "ci95": [
+    0.0034,
+    0.01
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000129
+  },
+  "top5|gln vs localretro|nostereo vs inchikey": {
+   "delta": -0.0074,
+   "ci95": [
+    -0.0102,
+    -0.0048
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.00013
+  },
+  "top5|gln vs localretro|inchikey vs tautomer": {
+   "delta": 0.0066,
+   "ci95": [
+    0.0034,
+    0.01
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.00013
+  },
+  "top5|graph2smiles vs graphretro|nostereo vs tautomer": {
+   "delta": 0.0058,
+   "ci95": [
+    0.0034,
+    0.0084
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.00013
+  },
+  "top5|graphretro vs localretro|nostereo vs tautomer": {
+   "delta": -0.0058,
+   "ci95": [
+    -0.0084,
+    -0.0034
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000131
+  },
+  "top5|graphretro vs retroformer|nostereo vs tautomer": {
+   "delta": -0.0062,
+   "ci95": [
+    -0.0088,
+    -0.0038
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000131
+  },
+  "top5|graphretro vs retroxpert|canonical vs tautomer": {
+   "delta": -0.0124,
+   "ci95": [
+    -0.0168,
+    -0.008
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000131
+  },
+  "top5|graphretro vs retroxpert|nostereo vs tautomer": {
+   "delta": -0.0068,
+   "ci95": [
+    -0.0094,
+    -0.0044
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000132
+  },
+  "top5|graphretro vs retroxpert|inchikey vs tautomer": {
+   "delta": -0.0126,
+   "ci95": [
+    -0.017,
+    -0.0082
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000132
+  },
+  "top5|localretro vs retroxpert|canonical vs nostereo": {
+   "delta": -0.0084,
+   "ci95": [
+    -0.0124,
+    -0.0046
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000132
+  },
+  "top5|localretro vs retroxpert|canonical vs tautomer": {
+   "delta": -0.0094,
+   "ci95": [
+    -0.0136,
+    -0.0052
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000133
+  },
+  "top5|localretro vs retroxpert|nostereo vs inchikey": {
+   "delta": 0.0086,
+   "ci95": [
+    0.0046,
+    0.0126
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000133
+  },
+  "top5|localretro vs retroxpert|inchikey vs tautomer": {
+   "delta": -0.0096,
+   "ci95": [
+    -0.0138,
+    -0.0054
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000133
+  },
+  "top10|g2retro vs gln|canonical vs nostereo": {
+   "delta": -0.0084,
+   "ci95": [
+    -0.0112,
+    -0.0058
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000134
+  },
+  "top10|g2retro vs gln|canonical vs tautomer": {
+   "delta": -0.0102,
+   "ci95": [
+    -0.0136,
+    -0.007
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000134
+  },
+  "top10|g2retro vs gln|nostereo vs inchikey": {
+   "delta": 0.0084,
+   "ci95": [
+    0.0058,
+    0.0112
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000134
+  },
+  "top10|g2retro vs gln|inchikey vs tautomer": {
+   "delta": -0.0102,
+   "ci95": [
+    -0.0136,
+    -0.007
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000135
+  },
+  "top10|g2retro vs retroformer|canonical vs nostereo": {
+   "delta": -0.008,
+   "ci95": [
+    -0.0116,
+    -0.0044
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000135
+  },
+  "top10|g2retro vs retroformer|canonical vs tautomer": {
+   "delta": -0.0102,
+   "ci95": [
+    -0.0142,
+    -0.0062
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000136
+  },
+  "top10|g2retro vs retroformer|nostereo vs inchikey": {
+   "delta": 0.0082,
+   "ci95": [
+    0.0046,
+    0.012
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000136
+  },
+  "top10|g2retro vs retroformer|inchikey vs tautomer": {
+   "delta": -0.0104,
+   "ci95": [
+    -0.0144,
+    -0.0064
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000136
+  },
+  "top10|g2retro vs retroxpert|canonical vs nostereo": {
+   "delta": -0.0122,
+   "ci95": [
+    -0.0162,
+    -0.0084
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000137
+  },
+  "top10|g2retro vs retroxpert|canonical vs tautomer": {
+   "delta": -0.0142,
+   "ci95": [
+    -0.0186,
+    -0.01
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000137
+  },
+  "top10|g2retro vs retroxpert|nostereo vs inchikey": {
+   "delta": 0.0122,
+   "ci95": [
+    0.0084,
+    0.0162
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000137
+  },
+  "top10|g2retro vs retroxpert|inchikey vs tautomer": {
+   "delta": -0.0142,
+   "ci95": [
+    -0.0186,
+    -0.01
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000138
+  },
+  "top10|gln vs graphretro|canonical vs tautomer": {
+   "delta": 0.0104,
+   "ci95": [
+    0.0066,
+    0.0142
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000138
+  },
+  "top10|gln vs graphretro|inchikey vs tautomer": {
+   "delta": 0.0104,
+   "ci95": [
+    0.0066,
+    0.0142
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000139
+  },
+  "top10|gln vs localretro|canonical vs nostereo": {
+   "delta": 0.0076,
+   "ci95": [
+    0.0052,
+    0.0102
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000139
+  },
+  "top10|gln vs localretro|canonical vs tautomer": {
+   "delta": 0.0068,
+   "ci95": [
+    0.0038,
+    0.01
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000139
+  },
+  "top10|gln vs localretro|nostereo vs inchikey": {
+   "delta": -0.0076,
+   "ci95": [
+    -0.0102,
+    -0.0052
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.00014
+  },
+  "top10|gln vs localretro|inchikey vs tautomer": {
+   "delta": 0.0068,
+   "ci95": [
+    0.0038,
+    0.01
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.00014
+  },
+  "top10|graph2smiles vs graphretro|canonical vs tautomer": {
+   "delta": 0.0092,
+   "ci95": [
+    0.0048,
+    0.0138
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.00014
+  },
+  "top10|graph2smiles vs graphretro|nostereo vs tautomer": {
+   "delta": 0.0064,
+   "ci95": [
+    0.004,
+    0.0088
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000141
+  },
+  "top10|graph2smiles vs graphretro|inchikey vs tautomer": {
+   "delta": 0.0092,
+   "ci95": [
+    0.0048,
+    0.0138
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000141
+  },
+  "top10|graphretro vs localretro|nostereo vs tautomer": {
+   "delta": -0.0066,
+   "ci95": [
+    -0.0094,
+    -0.004
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000142
+  },
+  "top10|graphretro vs retroformer|canonical vs tautomer": {
+   "delta": -0.0104,
+   "ci95": [
+    -0.0148,
+    -0.0062
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000142
+  },
+  "top10|graphretro vs retroformer|nostereo vs tautomer": {
+   "delta": -0.0062,
+   "ci95": [
+    -0.0088,
+    -0.0036
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000142
+  },
+  "top10|graphretro vs retroformer|inchikey vs tautomer": {
+   "delta": -0.0106,
+   "ci95": [
+    -0.015,
+    -0.0064
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000143
+  },
+  "top10|graphretro vs retroxpert|canonical vs nostereo": {
+   "delta": -0.0084,
+   "ci95": [
+    -0.0122,
+    -0.0048
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000143
+  },
+  "top10|graphretro vs retroxpert|canonical vs tautomer": {
+   "delta": -0.0144,
+   "ci95": [
+    -0.019,
+    -0.01
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000144
+  },
+  "top10|graphretro vs retroxpert|nostereo vs inchikey": {
+   "delta": 0.0084,
+   "ci95": [
+    0.0048,
+    0.0122
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000144
+  },
+  "top10|graphretro vs retroxpert|nostereo vs tautomer": {
+   "delta": -0.006,
+   "ci95": [
+    -0.0088,
+    -0.0034
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000145
+  },
+  "top10|graphretro vs retroxpert|inchikey vs tautomer": {
+   "delta": -0.0144,
+   "ci95": [
+    -0.019,
+    -0.01
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000145
+  },
+  "top10|localretro vs retroformer|nostereo vs inchikey": {
+   "delta": 0.0074,
+   "ci95": [
+    0.004,
+    0.011
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000145
+  },
+  "top10|localretro vs retroxpert|canonical vs nostereo": {
+   "delta": -0.0114,
+   "ci95": [
+    -0.0154,
+    -0.0078
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000146
+  },
+  "top10|localretro vs retroxpert|canonical vs tautomer": {
+   "delta": -0.0108,
+   "ci95": [
+    -0.015,
+    -0.0068
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000146
+  },
+  "top10|localretro vs retroxpert|nostereo vs inchikey": {
+   "delta": 0.0114,
+   "ci95": [
+    0.0078,
+    0.0154
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000147
+  },
+  "top10|localretro vs retroxpert|inchikey vs tautomer": {
+   "delta": -0.0108,
+   "ci95": [
+    -0.015,
+    -0.0068
+   ],
+   "p": 0.0001,
+   "holm_threshold": 0.000147
+  }
+ }
+}

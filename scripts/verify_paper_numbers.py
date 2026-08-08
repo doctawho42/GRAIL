@@ -203,7 +203,70 @@ def main() -> int:
         check("gap counts printed in the text", m and m.group(1).replace("{,}", ""), unc)
         check("reference total printed in the text", m and m.group(2).replace("{,}", ""), total)
 
-    # 10. intervals printed beside the factors
+    # 10. the cross-domain split structure. These are counts a reader could not recompute without
+    # the released files, which is exactly when a printed number needs a check behind it.
+    ing = ROOT / "results/evalretro_ingest.json"
+    if ing.exists():
+        cl = json.loads(ing.read_text())["clusters"]
+        flat = re.sub(r"\s+", " ", whole)
+        by_size = sorted(cl.values(), key=lambda c: -len(c["systems"]))
+        names = {7: "seven-system", 3: "three-system", 1: "one-system"}
+        for c in by_size:
+            row = names.get(len(c["systems"]))
+            if row is None:
+                continue
+            m = re.search(row + r"\s*&\s*(\d+)\s*&\s*\$([\d,{}]+)\$\s*&\s*\$([\d.]+)\$", flat)
+            check(f"cluster {row}, systems", m and m.group(1), len(c["systems"]),
+                  "from results/evalretro_ingest.json")
+            check(f"cluster {row}, reactions", m and m.group(2).replace("{,}", ""),
+                  c["reactions"], "reactions its members agree on")
+            checks.append((close(m and m.group(3), c["share_of_products_in_repo_test_split"], 5e-3),
+                           f"cluster {row}, share in our split", m and m.group(3),
+                           c["share_of_products_in_repo_test_split"], ""))
+        m = re.search(r"ranked outputs of (\w+) single-step retrosynthesis systems", flat)
+        WORDS = {"twelve": 12, "eleven": 11}
+        check("systems in the released benchmark", m and WORDS.get(m.group(1)), 12,
+              "twelve published, eleven as CSV")
+
+    # 11. the cross-domain leaderboard: the run the paper specified in advance and then ran. Its
+    # counts are the load-bearing part -- an exchange is visible, a certified interaction is not --
+    # so every one of them is recomputed here rather than trusted to a paragraph.
+    lb = ROOT / "results/retro_leaderboard_cluster0.json"
+    if lb.exists():
+        L = json.loads(lb.read_text())
+        flat = re.sub(r"\s+", " ", whole)
+        acc, sysl = L["accuracy"], L["config"]["systems"]
+        for label, pat, value in (
+                ("interaction tests", r"Of \$(\d+)\$ paired interaction tests", L["n_interaction_tests"]),
+                ("intervals excluding zero", r"\$(\d+)\$ have intervals excluding zero",
+                 len(L["certified_interactions"])),
+                ("Holm survivors", r"\\textbf\{\$(\d+)\$ survive Holm", len(L["holm_survivors"])),
+                ("Holm survivors, main body", r"with \$(\d+)\$ of \$\d+\$\s*paired interactions surviving Holm",
+                 len(L["holm_survivors"])),
+                ("interaction tests, main body", r"paired interactions surviving Holm", None),
+                ("pairs exchanging at top-1", r"Five of the twenty-one pairs exchange",
+                 None)):
+            if value is None:
+                checks.append((bool(re.search(pat, flat)), label, "present", "phrase present", ""))
+                continue
+            m = re.search(pat, flat)
+            check(label, m and m.group(1), value, "from results/retro_leaderboard_cluster0.json")
+        # the printed word must match the measured count of exchanging pairs
+        WORDS = {"Five": 5, "Four": 4, "Six": 6, "Three": 3, "Seven": 7}
+        m = re.search(r"(\w+) of the twenty-one pairs exchange", flat)
+        check("exchanging pairs, counted", m and WORDS.get(m.group(1)),
+              len(L["pairs_that_exchange"]["top1"]), "pairs that exchange at top-1")
+        # every accuracy the table prints, against the artifact that produced it
+        NAMES = {"Graph2SMILES": "graph2smiles", "GraphRetro": "graphretro",
+                 "Retroformer": "retroformer", "LocalRetro": "localretro", "GLN": "gln",
+                 "G2Retro": "g2retro", "RetroXpert": "retroxpert"}
+        for shown, key in NAMES.items():
+            m = re.search(shown + r"\s*&\s*(?:\\textbf\{)?\$?([\d.]+)\$?\}?\s*&", flat)
+            check(f"top-1 canonical, {shown}", m and m.group(1), acc[key]["canonical"]["top1"])
+        if set(NAMES.values()) != set(sysl):
+            checks.append((False, "leaderboard systems named", sorted(NAMES.values()), sorted(sysl), ""))
+
+    # 12. intervals printed beside the factors
     for label, key in (("ceiling interval", "coverage_bank"), ("ranking interval", "ranking_conversion")):
         lo, hi = f[key]["lo"], f[key]["hi"]
         pat = re.compile(r"\$\[" + f"{lo:.3f}" + r",\s*" + f"{hi:.3f}" + r"\]\$")

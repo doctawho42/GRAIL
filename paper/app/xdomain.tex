@@ -399,14 +399,13 @@ re-ranking gain of $+0.0165$, 95\% confidence interval $[0.006,0.027]$, on the f
 Closing the larger gap to SyGMa still requires a broader rule bank, which is outside the scope of
 this paper.
 
-\subsection{The rank-flip result is established within one domain}
+\subsection{The rank-flip result, and the run that decides whether it leaves metabolism}
+\label{app:xdomainflip}
 
-The reordering under different matching conventions is demonstrated for metabolite prediction. Whether
-matching conventions reorder leaderboards in other molecular-machine-learning tasks, such as
-retrosynthesis or molecular generation, is an open question, and the run that would settle it is
-specific: re-score the frozen predictions of at least two comparable published models in another
-domain under the same five conventions. If the ordering does not move, with an interaction interval
-covering zero, the broader claim fails.
+The test was specified before it could be run, and specified so that it could fail: re-score the
+frozen predictions of at least two comparable published models in another domain under the same
+conventions, and if the ordering does not move, with an interaction interval covering zero, the
+broader claim fails.
 
 That run needs at least two models of comparable strength whose match sensitivity differs and
 whose raw ranked predictions are public. Such predictions are public: the EvalRetro benchmark
@@ -442,12 +441,53 @@ single-model probe reported later in this appendix is measured on that set and n
 one; we say which set each number is on rather than letting the shared name imply they are the same
 population.
 
-Two measurements outside metabolism both come back negative, and they are negative about different
-things. Only the first carries a leaderboard: it scores eight models and can therefore exhibit an
-exchange or fail to. The second carries one model, and one model has no ordering to disturb, so it
-cannot test reordering at all --- what it measures is how far the convention moves a score in that
-domain, which is an upper bound on what any pair separated by more than that could suffer, and a
-bound is not an observation. We keep it for the bound and label it as one.
+\paragraph{The run comes back positive, and at the budget this field headlines.} Seven systems,
+$4{,}999$ reactions, frozen predictions, nothing trained. Top-1 accuracy under each convention:
+
+\begin{center}
+\footnotesize
+\begin{tabular}{lcccc}
+\toprule
+system & canonical & \textsc{inchikey} & no-stereo & tautomer \\
+\midrule
+Graph2SMILES & 0.5293 & 0.5293 & \textbf{0.5571} & \textbf{0.5595} \\
+GraphRetro   & \textbf{0.5377} & \textbf{0.5377} & 0.5501 & 0.5555 \\
+Retroformer  & 0.5325 & 0.5325 & 0.5541 & 0.5559 \\
+LocalRetro   & 0.5339 & 0.5339 & 0.5469 & 0.5495 \\
+GLN          & 0.5247 & 0.5247 & 0.5377 & 0.5397 \\
+G2Retro      & 0.5147 & 0.5147 & 0.5291 & 0.5309 \\
+RetroXpert   & 0.4467 & 0.4467 & 0.4619 & 0.4631 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The leader changes. Under canonical matching --- and identically under \textsc{inchikey}, which on
+these predictions separates nothing that canonical SMILES does not --- the order runs GraphRetro,
+LocalRetro, Retroformer, Graph2SMILES. Disregard stereochemistry and Graph2SMILES goes from fourth
+to first, with Retroformer second and GraphRetro third. Five of the twenty-one pairs exchange, on
+predictions that never change.
+
+The exchange is the visible part; the interaction is the claim, and it is certified under the
+strictest correction this paper applies anywhere. Of $448$ paired interaction tests --- every pair
+of systems, every pair of conventions, every $k$ --- $233$ have intervals excluding zero and
+\textbf{$109$ survive Holm at $0.05$ across the whole family}. The largest is Graph2SMILES against
+GraphRetro between canonical and stereo-blind matching, $-0.0154$ $[-0.020,-0.011]$.
+
+Two qualifications travel with it. The effect is concentrated at top-1: at $k=3$, $5$ and $10$ the
+seven take a single ordering under all four conventions and no pair exchanges. And what moves the
+ordering here is stereochemistry, with tautomer canonicalisation adding little on top --- the same
+asymmetry the external metabolite set shows, and the opposite of the internal one. Top-1 is the
+number this field leads with, so a criterion that reorders only there reorders the reported
+leaderboard; but the honest statement is that the reordering is a top-1 phenomenon on this
+benchmark, not a property of the whole accuracy curve.
+
+Two earlier measurements outside metabolism come back negative, and they are negative about
+different things. The first carries a leaderboard: it scores eight generative models and can
+therefore exhibit an exchange or fail to. The second carries one model, and one model has no
+ordering to disturb, so it cannot test reordering at all --- what it measures is how far the
+convention moves a score in that domain, which is an upper bound on what any pair separated by more
+than that could suffer, and a bound is not an observation. We keep it for the bound and label it as
+one.
 
 The first targets molecular generation, where the matching criterion is not a way of checking an
 answer but the metric itself: MOSES reports Unique@$k$ as the count of distinct canonical SMILES
@@ -477,21 +517,23 @@ accuracy across canonical, stereo-stripped, InChIKey and tautomer matching, betw
 0.715, roughly an order of magnitude less than the interaction we measure in metabolism. A
 plausible reason is that retrosynthesis references are canonical, clean small molecules, whereas a
 metabolism rule engine emits tautomer and stereochemical variants of its references. What this
-licenses is narrow. A leaderboard reorders when the convention moves two methods by \emph{different}
-amounts, and one model cannot show a differential; it shows only that the criterion has little
-purchase on these predictions. If other retrosynthesis models behave as this one does, no pair
-separated by more than about $0.02$ can be exchanged --- but that antecedent is untested, and a
-second model would test it.
+licenses is narrow, and the seven-system result above says how narrow. A leaderboard reorders when
+the convention moves two methods by \emph{different} amounts, and one model cannot show a
+differential. It is tempting to read one model's small movement as a bound on what a pair could
+suffer, and that reading is arithmetically true and practically empty: the movement here is about
+$0.02$, the seven published systems sit within $0.005$ of one another, and five pairs exchange. A
+bound larger than the gaps it is supposed to protect protects nothing.
 
-The reading we take from these is not that matching conventions reorder leaderboards everywhere.
-Both point at the same precondition, and it is a property of the reference set rather
-than of the task: the effect needs references that carry representational variety for a generator
-to diverge from. Metabolite references are experimental records, written with whatever tautomer and
-stereochemistry the reporting assay produced, while a rule engine emits whatever its templates
-produce. ZINC molecules and retrosynthesis targets are canonical by construction, so there is
-nothing for a generator to diverge from and the criterion has nothing to change. Whether the convention reorders
-results in another domain of comparable tautomer ambiguity, rather than only shifting them,
-remains the open test, and it needs only public multi-model predictions in a re-scorable form.
+\paragraph{What the three measurements say together.} Matching conventions do not reorder every
+leaderboard, and the condition is a property of the references rather than of the task --- but it is
+narrower than we first wrote it. The effect needs references carrying representational variety
+\emph{of a kind the compared systems differ on}. Generative models trained on canonical ZINC SMILES
+reproduce that canonical form, so there is nothing to diverge from and the ordering barely moves.
+Retrosynthesis references are canonical, which is why the earlier single-model probe found so
+little, but they carry stereochemistry and the systems differ in reproducing it --- and that alone
+reorders the top-1 table. Metabolite references carry tautomeric \emph{and} stereochemical variety,
+written with whatever the reporting assay produced, and there the effect is largest. Canonical is
+not the same as variety-free, which is the distinction our own earlier reading missed.
 
 \subsection{The external set is not external to GRAIL}
 
