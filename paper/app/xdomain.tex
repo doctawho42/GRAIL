@@ -409,9 +409,38 @@ domain under the same five conventions. If the ordering does not move, with an i
 covering zero, the broader claim fails.
 
 That run needs at least two models of comparable strength whose match sensitivity differs and
-whose raw ranked predictions are public. Such pairs do not currently exist in a re-scorable form:
-the checkpoints that are readily runnable are either from the same family or badly mismatched in
-strength. We therefore defer the comparison rather than force it.
+whose raw ranked predictions are public. Such predictions are public: the EvalRetro benchmark
+releases the ranked outputs of twelve single-step retrosynthesis systems on what it presents as the
+USPTO-50k test set \citep{Hastedt_2024}, eleven of them as CSV, under a licence that permits
+re-scoring. Nothing needs training, and no checkpoint needs to run.
+
+\paragraph{The eleven are not on one test set, and that decides what can be compared.}
+Reading the released files rather than their table shows three disjoint populations. Clustering the
+eleven by which products they contain, the within-cluster overlap is $1.00$ and the between-cluster
+overlap is $0.10$, which leaves no room for a judgement call:
+
+\begin{center}
+\footnotesize
+\begin{tabular}{lccc}
+\toprule
+group & systems & reactions agreed & share of its products in our split \\
+\midrule
+seven-system  & 7 & $4{,}999$ & $0.10$ \\
+three-system  & 3 & $4{,}982$ & $1.00$ \\
+one-system    & 1 & $4{,}998$ & $0.10$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+A leaderboard is a leaderboard only within a group, so we do not assemble the eleven into one table
+and neither should a reader of the released files. Two consequences follow and we take both. The
+comparison below runs on the seven-system group, reconstructing its test set from the reactions all
+seven carry and agree the answer to, rather than trusting any one file's ordering or its index
+column --- which means a running prediction counter in one file, a reaction index in another and a
+float in a third. And our own USPTO-50k split turns out to be the three-system group's, so the
+single-model probe reported later in this appendix is measured on that set and not on the larger
+one; we say which set each number is on rather than letting the shared name imply they are the same
+population.
 
 Two measurements outside metabolism both come back negative, and they are negative about different
 things. Only the first carries a leaderboard: it scores eight models and can therefore exhibit an

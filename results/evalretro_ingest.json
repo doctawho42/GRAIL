@@ -1,0 +1,59 @@
+{
+ "config": {
+  "script": "evalretro_ingest.py",
+  "git_commit": "2d258731daaff28ccc6607dd848cd534d64902e2",
+  "git_dirty": true,
+  "source": "EvalRetro, doi:10.6084/m9.figshare.25325623, CC BY 4.0",
+  "repo_split": "grail_metabolism/data/USPTO_50k/test.csv",
+  "cluster_rule": "product-set overlap >= 0.9",
+  "alignment": "reaction identified by (product, ground-truth reactants); file order and index column never used"
+ },
+ "n_systems": 11,
+ "n_test_sets": 3,
+ "clusters": {
+  "cluster0": {
+   "systems": [
+    "g2retro",
+    "gln",
+    "graph2smiles",
+    "graphretro",
+    "localretro",
+    "retroformer",
+    "retroxpert"
+   ],
+   "reactions": 4999,
+   "share_of_products_in_repo_test_split": 0.1009,
+   "ranks_per_reaction": [
+    12,
+    50
+   ],
+   "test_csv": "grail_metabolism/data/evalretro/cluster0_test.csv"
+  },
+  "cluster1": {
+   "systems": [
+    "chemformer",
+    "gta",
+    "tiedtransformer"
+   ],
+   "reactions": 4982,
+   "share_of_products_in_repo_test_split": 1.0,
+   "ranks_per_reaction": [
+    20,
+    50
+   ],
+   "test_csv": "grail_metabolism/data/evalretro/cluster1_test.csv"
+  },
+  "cluster2": {
+   "systems": [
+    "mhnreact"
+   ],
+   "reactions": 4998,
+   "share_of_products_in_repo_test_split": 0.1,
+   "ranks_per_reaction": [
+    50,
+    50
+   ],
+   "test_csv": "grail_metabolism/data/evalretro/cluster2_test.csv"
+  }
+ }
+}

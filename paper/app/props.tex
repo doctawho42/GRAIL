@@ -433,6 +433,30 @@ matching, a template that rewrites without naming the hydrogen it consumes break
 are readable from the rule file without running anything, and neither is declared by any library we
 have looked at.
 
+\paragraph{Three ways the choice bites, and one of them can be repaired.} A third mechanism turned
+up inside our own measurement rather than in someone else's library, and the three together are
+what makes this a class rather than three defects. Each has one measured instance:
+
+\begin{center}
+\footnotesize
+\begin{tabular}{lll}
+\toprule
+what breaks & the construct responsible & measured on \\
+\midrule
+the match, before any product & a primitive counting explicit structure & $42{,}554$ retro templates \\
+the product, once built       & a rewrite not naming its hydrogen        & three metabolite banks \\
+which answer the bank gives   & a union of two written conventions       & our own $\nbank$ rules \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The first two are read off a rule file and avoided by declaring the convention. The third is not
+avoidable by any declaration, because no single setting is right for an object assembled from two:
+one collection is mismeasured whichever is chosen, and the choice does not shift the answer so much
+as exchange it, which is what \S\ref{app:provenance} shows it doing to the two halves of our bank.
+It is also the only one of the three that can be \emph{recovered} rather than merely avoided, by
+dispatching the convention per template (Appendix~\ref{app:negative}).
+
 Two things this does not claim. It is applicability rather than coverage against references, which
 is the first step of reach and not the whole of it. And no retrosynthesis system expands its target
 by convention, so this is a latent hazard in that field rather than an error in it --- the point is
