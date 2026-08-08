@@ -413,7 +413,7 @@ releases the ranked outputs of twelve single-step retrosynthesis systems on what
 USPTO-50k test set \citep{Hastedt_2024}, eleven of them as CSV, under a licence that permits
 re-scoring. Nothing needs training, and no checkpoint needs to run.
 
-\paragraph{The eleven are not on one test set, and that decides what can be compared.}
+\paragraph{The eleven are not on one test set, and one of the odd ones out is ours.}
 Reading the released files rather than their table shows three disjoint populations. Clustering the
 eleven by which products they contain, the within-cluster overlap is $1.00$ and the between-cluster
 overlap is $0.10$, which leaves no room for a judgement call:
@@ -431,14 +431,21 @@ one-system    & 1 & $4{,}998$ & $0.10$ \\
 \end{tabular}
 \end{center}
 
+Which group is the intended one is not in doubt: the benchmark's own instructions point at the typed
+Schneider USPTO-50k, and the seven-system group carries the $5{,}007$ test reactions that set is
+commonly cited with. The three-system group carries $5{,}004$ --- and so does the copy of
+``USPTO-50k'' in this repository, whose three splits total $50{,}037$ reactions against the $50{,}016$
+of the set the name refers to. We are one of the deviations, which is the useful part of finding
+it: a shared name that does not fix a population is not a lapse by whoever assembled a table, it is
+a hazard of the ecosystem, and it caught us as readily as anyone.
+
 A leaderboard is a leaderboard only within a group, so we do not assemble the eleven into one table
-and neither should a reader of the released files. Two consequences follow and we take both. The
-comparison below runs on the seven-system group, reconstructing its test set from the reactions all
-seven carry and agree the answer to, rather than trusting any one file's ordering or its index
-column --- which means a running prediction counter in one file, a reaction index in another and a
-float in a third. And our own USPTO-50k split turns out to be the three-system group's, so the
-single-model probe reported later in this appendix is measured on that set and not on the larger
-one; we say which set each number is on rather than letting the shared name imply they are the same
+and neither should a reader of the released files. The comparison below runs on the seven-system
+group, reconstructing its test set from the reactions all seven carry and agree the answer to,
+rather than trusting any one file's ordering or its index column --- which means a running
+prediction counter in one file, a reaction index in another and a float in a third. The
+single-model probe reported later in this appendix predates this and is on our own $5{,}004$-reaction
+copy; it stays, labelled, because the alternative is to quietly restate an old number on a new
 population.
 
 \paragraph{The run comes back positive, and at the budget this field headlines.} Seven systems,
