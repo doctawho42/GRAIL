@@ -38,15 +38,30 @@ import os
 from rdkit import Chem, RDLogger
 
 sys.path.insert(0, str(ROOT / "scripts"))
+from engine_knobs import apply_with
 from grail_metabolism.utils.preparation import apply_rules_to_molecule
 from run_benchmark import _tautomer_recovered   # the paper's own per-substrate recovery count
 
 RDLogger.DisableLog("rdApp.*")
 N_BOOT, SEED = 10000, 0
-# The union of the two subsets is the whole bank, so it must reproduce the ceiling already
-# stored per substrate in recall_factorization.json for exactly these 245. Anything else
-# means this pass applies rules differently from the one the paper reports.
-CEILING_SUBSET, TOL = 0.7284, 0.002
+# The union of the two subsets is the whole bank, so it must reproduce the ceiling already stored
+# per substrate in recall_factorization.json for exactly these 245. Anything else means this pass
+# applies rules differently from the one the paper reports.
+#
+# The target is READ from that artifact rather than frozen here. A literal goes stale the moment the
+# measurement moves, and then the gate passes self-consistently on a superseded number, which is
+# worse than failing: it certifies the old value silently. This gate held 0.7284 through a ceiling
+# correction that took the same quantity to 0.8171.
+TOL = 0.002
+
+
+def ceiling_target(subs) -> float:
+    """The committed ceiling restricted to exactly these substrates, micro."""
+    rows = {r["sub"]: r for r in
+            json.loads((ROOT / "results/recall_factorization.json").read_text())["per_substrate"]}
+    hit = sum(rows[s]["Cfull"] for s in subs if s in rows)
+    ref = sum(rows[s]["U"] for s in subs if s in rows)
+    return hit / max(ref, 1)
 _CUR: list = []
 _MIN: list = []
 
@@ -85,8 +100,10 @@ def _worker(item):
     mol = Chem.MolFromSmiles(sub)
     if mol is None or not trues:
         return (sub, 0, 0, 0, 0)
-    pc = list(apply_rules_to_molecule(mol, _CUR, normalization_mode="canonical").keys())
-    pm = list(apply_rules_to_molecule(mol, _MIN, normalization_mode="canonical").keys())
+    # the ceiling's own primitives: hydrogens as the deployed generator fires rules, no validity
+    # floor, so the union of the two subsets is the same object the ceiling measures
+    pc = apply_with(mol, _CUR, False, "canonical", False)
+    pm = apply_with(mol, _MIN, False, "canonical", False)
     u, c_cur, _ = _tautomer_recovered(trues, pc, audit=False)
     _, c_min, _ = _tautomer_recovered(trues, pm, audit=False)
     _, c_all, _ = _tautomer_recovered(trues, pc + pm, audit=False)
@@ -100,6 +117,8 @@ def main() -> int:
     ap.add_argument("--substrates", default="results/filter_vs_prior_ci.json",
                     help="artifact whose per_substrate block fixes the substrate set")
     ap.add_argument("--out", default=str(ROOT / "results" / "ceiling_by_provenance.json"))
+    ap.add_argument("--workers", type=int, default=0,
+                    help="0 leaves two cores free; set it lower to share the machine with other runs")
     args = ap.parse_args()
 
     bank = [l.strip() for l in open(ROOT / args.bank) if l.strip()]
@@ -115,7 +134,7 @@ def main() -> int:
     items = [(s, refs_raw[s]) for s in subs if refs_raw.get(s)]
     print(f"substrates: {len(items)}", flush=True)
 
-    ap_workers = max(1, (os.cpu_count() or 4) - 2)
+    ap_workers = args.workers if args.workers > 0 else max(1, (os.cpu_count() or 4) - 2)
     print(f"applying both subsets to every substrate on {ap_workers} workers", flush=True)
     ctx = multiprocessing.get_context("spawn")
     t = time.perf_counter()
@@ -162,10 +181,12 @@ def main() -> int:
               f"{rep['subsets'][name]['ci95_macro']}", flush=True)
 
     c, m, f = (rep["subsets"][k]["coverage"] for k in ("curated", "mined", "full"))
-    if abs(f - CEILING_SUBSET) > TOL:
-        raise SystemExit(f"union of the subsets covers {f:.4f} against a stored {CEILING_SUBSET} on "
+    target = ceiling_target([r[0] for r in rows])
+    if abs(f - target) > TOL:
+        raise SystemExit(f"union of the subsets covers {f:.4f} against the committed {target:.4f} on "
                          f"these substrates -- this pass is not the one the ceiling came from")
-    rep["ceiling_gate"] = {"stored": CEILING_SUBSET, "reproduced": f}
+    rep["ceiling_gate"] = {"committed": round(target, 4), "reproduced": f,
+                           "source": "results/recall_factorization.json, restricted to these substrates"}
     rep["exclusive"] = {"curated_only": round(f - m, 4), "mined_only": round(f - c, 4),
                         "shared": round(c + m - f, 4)}
     rep["per_substrate"] = [{"sub": r[0], "u": int(r[1]), "curated": int(r[2]),

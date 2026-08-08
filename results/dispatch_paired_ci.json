@@ -1,0 +1,42 @@
+{
+ "config": {
+  "script": "dispatch_paired_ci.py",
+  "git_commit": "4b3169e38c0368076550a852e76159ba99e78f83",
+  "git_dirty": true,
+  "bank": "grail_full",
+  "n_rules": 7581,
+  "dispatched": 675,
+  "n_substrates": 245,
+  "match": "inchikey_tautomer",
+  "n_boot": 10000,
+  "seed": 0,
+  "policy": "docs/DISPATCH_PREREGISTRATION.md",
+  "gate": "both arms reproduce their committed reach"
+ },
+ "references": 567,
+ "recovered": {
+  "dispatch": 462,
+  "implicit": 453
+ },
+ "reach": {
+  "dispatch": 0.8148,
+  "implicit": 0.7989
+ },
+ "paired_residual": {
+  "delta": 0.0159,
+  "ci95": [
+   0.0056,
+   0.0284
+  ],
+  "excludes_zero": true,
+  "estimator": "micro",
+  "macro": {
+   "delta": 0.0205,
+   "ci95": [
+    0.0055,
+    0.0388
+   ],
+   "excludes_zero": true
+  }
+ }
+}

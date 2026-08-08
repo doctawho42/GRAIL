@@ -67,7 +67,7 @@ from grail_metabolism.workflows.factory import build_filter, build_generator
 
 # SyGMa + ceiling references (macro/oracle tautomer, full clean test), for context in the table.
 SYGMA_15 = 0.572
-CEILING = 0.735
+CEILING = json.loads((ROOT / "results/recall_factorization.json").read_text())["macro_coverage_bank"]
 DEPLOYED_15 = 0.330
 KS = [5, 10, 15]
 

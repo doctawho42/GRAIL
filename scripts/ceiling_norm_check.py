@@ -4,20 +4,19 @@
 scripts/engine_knobs.py gates its loop against committed arm A, which is measured over the $152$
 rules two banks share. That gate is passed by a loop that is right about those rules and wrong about
 the other $7{,}429$, so the grail_full arm of scripts/bank_engine_replication.py needs a gate of its
-own, and when it was first run it failed one: it returned $0.7302$ where the committed ceiling for
-the same substrates is $0.7284$.
+own -- and the first time it was given one, the gate failed for a reason that had nothing to do with
+the loop: the two figures being compared had been produced under different normalisation modes, one
+"canonical" and one "standardize", and nothing in either recorded which.
 
-The failure was the gate's, not the loop's. The committed ceiling comes from
-scripts/ceiling_by_provenance.py, which passes normalization_mode="canonical", while the replication
-arm ran under "standardize" -- the default of apply_rules_to_molecule itself. Two different
-configurations were being compared. This script closes that by running the full bank under the
-configuration the committed figure was actually measured in, and it must reproduce it exactly.
+This script closes that hazard by measuring both modes itself, on one population, through one set of
+primitives -- the ones the deployed generator fires rules with -- and gating the result against the
+committed ceiling restricted to the same substrates, read out of the factorization artifact rather
+than frozen here.
 
 The residue is worth keeping rather than rounding away. Across the $152$ shared rules the two
 normalisation modes are identical to four decimals, which is one of the three rows engine_knobs
-reports; across all $7{,}581$ they differ by a single recovered reference. A knob can be inert on a
-subset of a bank and not on the bank, so "this choice does not matter" is a claim about the rule set
-it was measured on.
+reports; across the whole bank they need not be. A knob can be inert on a subset of a bank and not
+on the bank, so "this choice does not matter" is a claim about the rule set it was measured on.
 """
 from __future__ import annotations
 
@@ -41,10 +40,21 @@ from engine_knobs import apply_with
 from run_benchmark import _tautomer_recovered
 
 RDLogger.DisableLog("rdApp.*")
-# results/ceiling_by_provenance.json -> subsets.full.coverage, measured under normalization_mode
-# "canonical" on these same 245 substrates
-COMMITTED_CEILING = 0.7284
 _CTX: dict = {}
+
+
+def ceiling_target(subs) -> float:
+    """The committed ceiling restricted to exactly these substrates.
+
+    Read from the artifact rather than frozen in this file. A literal is a snapshot of the answer at
+    the moment the gate was written, and it goes on passing after its subject has moved -- which is
+    the failure this gate was itself built to catch one instance of.
+    """
+    rows = {r["sub"]: r for r in
+            json.loads((ROOT / "results/recall_factorization.json").read_text())["per_substrate"]}
+    hit = sum(rows[s]["Cfull"] for s in subs if s in rows)
+    ref = sum(rows[s]["U"] for s in subs if s in rows)
+    return hit / max(ref, 1)
 
 
 def _code_version() -> dict:
@@ -71,9 +81,15 @@ def _worker(item):
     mol = Chem.MolFromSmiles(sub)
     if mol is None or not trues:
         return sub, 0, 0
-    products = apply_with(mol, _CTX["rules"], True, "canonical", True)
-    usable, hit, _ = _tautomer_recovered(trues, products, audit=False)
-    return sub, int(usable), int(hit)
+    out = [sub, 0]
+    for norm in ("canonical", "standardize"):
+        # the primitives the deployed generator fires rules with, so the only thing varying across
+        # the two passes is the normalisation this script exists to isolate
+        products = apply_with(mol, _CTX["rules"], False, norm, False)
+        usable, hit, _ = _tautomer_recovered(trues, products, audit=False)
+        out[1] = int(usable)
+        out.append(int(hit))
+    return tuple(out)
 
 
 def main() -> int:
@@ -98,28 +114,33 @@ def main() -> int:
     rows.sort(key=lambda r: r[0])
 
     usable = sum(r[1] for r in rows)
-    hit = sum(r[2] for r in rows)
-    reach = round(hit / max(usable, 1), 4)
+    hit_can = sum(r[2] for r in rows)
+    hit_std = sum(r[3] for r in rows)
+    reach = round(hit_can / max(usable, 1), 4)
+    reach_std = round(hit_std / max(usable, 1), 4)
+    target = ceiling_target([r[0] for r in rows])
 
-    # the same bank and substrates under the other normalisation, as already committed
-    replication = json.loads((ROOT / "results/bank_engine_replication.json").read_text())
-    standardize = replication["banks"]["grail_full"]["deployed"]
+    # Both normalisations are measured here, on one population and through one set of primitives.
+    # Reading one of them out of another artifact would reintroduce exactly the hazard this file
+    # documents: two numbers compared across a convention neither of them names.
     rep = {"config": {**_code_version(), "n_rules": len(rules), "n_substrates": len(rows),
-                      "match": "inchikey_tautomer", "add_hs": True, "drop_invalid": True,
-                      "normalisation": "canonical",
-                      "gate": f"must reproduce the committed ceiling {COMMITTED_CEILING}"},
-           "canonical": {"references": usable, "recovered": hit, "reach": reach},
-           "standardize": {"reach": standardize["reach"],
-                           "source": "results/bank_engine_replication.json banks.grail_full.deployed",
+                      "match": "inchikey_tautomer", "add_hs": False, "drop_invalid": False,
+                      "normalisation": "both, measured in this run",
+                      "gate": "must reproduce the committed ceiling on these substrates, "
+                              "read from results/recall_factorization.json"},
+           "canonical": {"references": usable, "recovered": hit_can, "reach": reach},
+           "standardize": {"references": usable, "recovered": hit_std, "reach": reach_std,
                            "normalisation_is_the_pipeline_default": True},
-           "difference_across_the_whole_bank": round(standardize["reach"] - reach, 4),
+           "ceiling_gate": {"committed": round(target, 4), "reproduced": reach},
+           "difference_across_the_whole_bank": round(reach_std - reach, 4),
+           "references_moved": hit_std - hit_can,
            "difference_across_the_152_shared_rules": 0.0}
-    print(f"\nreach {hit}/{usable} = {reach} against the committed ceiling {COMMITTED_CEILING}")
-    if abs(reach - COMMITTED_CEILING) > 1e-4:
+    print(f"\nreach {hit_can}/{usable} = {reach} against the committed ceiling {target:.4f}")
+    if abs(reach - target) > 1e-4:
         raise SystemExit("the reimplemented loop is not the deployed one at the scale of the bank")
     print(f"gate passed; the same bank under the pipeline's default normalisation reaches "
-          f"{standardize['reach']}, a difference of {rep['difference_across_the_whole_bank']} "
-          f"over {usable} references, against exactly 0 over the 152 shared rules")
+          f"{reach_std}, a difference of {rep['difference_across_the_whole_bank']} and "
+          f"{rep['references_moved']} references over {usable}, against exactly 0 over the 152 shared rules")
     Path(args.out).write_text(json.dumps(rep, indent=1))
     print(f"wrote {args.out}")
     return 0

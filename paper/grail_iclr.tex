@@ -368,10 +368,10 @@ select.
 \looseness=-1
 The frame also bounds this architecture: a perfect selector and ranker would stop at \ceiling\ as
 our own engine realises it (\S\ref{sec:enginereach}), limited by the corpus rather than by tuning,
-$53\%$ of uncovered transformations being reaction types absent from the bank. It is carried by the
-curated fifth --- on $245$ substrates the $1{,}715$ curated rules reach $0.660$ against the
-$5{,}866$ mined ones' $0.328$ --- and the inert-looking tail is still not prunable
-(Appendices~\ref{app:props},~\ref{app:negative}).
+$71\%$ of uncovered transformations being types absent from the bank, so generalising the templates
+it holds is worth $0.038$. It is carried by the mined majority, $0.785$ on $245$ substrates against
+the curated fifth's $0.471$, four published collections adding under two per cent beyond what
+mining the training split reaches (Appendices~\ref{app:props},~\ref{app:negative}).
 
 \paragraph{The coverage factor belongs to the system, not the rule base.}
 \label{sec:enginereach}
@@ -529,9 +529,9 @@ responsible: here stereochemistry alone, every separating gain realised by the s
 references carry stereocentres that several of these systems cannot emit; internally, where
 references are already stereo-stripped, tautomerism fails instead. Which relaxation dominates is therefore a
 property of the reference set, and we state that as the effect's condition rather than as a caveat:
-it needs references carrying representational variety to diverge from. Whether the convention reorders another domain remains open: molecular
-generation admits one exchange, between models $0.002$ apart, and the one retrosynthesis model
-measured admits none --- its references being canonical and stereochemically explicit
+it needs references carrying representational variety to diverge from. Whether the convention reorders another domain remains open: eight generative
+models admit one exchange, between models $0.002$ apart, and one retrosynthesis model moves by
+$0.02$ across the criteria --- a bound on a pair, not an observed exchange
 (Appendix~\ref{app:xdomain}).
 
 

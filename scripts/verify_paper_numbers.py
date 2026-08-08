@@ -135,7 +135,75 @@ def main() -> int:
             m = re.search(pat, whole)
             check(label, m and m.group(1), sp[key]["coverage"])
 
-    # 8. intervals printed beside the factors
+    # 8. the provenance split, whose own gate only proves it reproduces the ceiling -- nothing until
+    # now proved the manuscript prints what it produced. This is the pairing that failed before: a
+    # measurement guarded by a frozen literal, and a paper quoting the superseded value it certified.
+    prov = ROOT / "results/ceiling_by_provenance.json"
+    if prov.exists():
+        pv = json.loads(prov.read_text())
+        for subset in ("curated", "mined", "full"):
+            v = pv["subsets"][subset]["coverage"]
+            row = re.search(r"^\s*" + ("union" if subset == "full" else subset)
+                            + r"\s*&[^&]*&[^&]*&\s*\$([\d.]+)\$", whole, re.M)
+            check(f"provenance, {subset}", row and row.group(1), v)
+            share = re.search(r"^\s*" + ("union" if subset == "full" else subset)
+                              + r"\s*&[^&]*&[^&]*&[^&]*&\s*\$([\d.]+)\\%\$", whole, re.M)
+            check(f"provenance, {subset} share of ceiling", share and float(share.group(1)) / 100,
+                  v / pv["subsets"]["full"]["coverage"], "subset coverage / union coverage")
+        check("provenance gate reproduces the ceiling", pv["ceiling_gate"]["reproduced"],
+              pv["ceiling_gate"]["committed"], "read from the factorization, not frozen")
+        # Anchored on the sentence's own wording, so a rewrite that drops a figure fails loudly
+        # rather than silently matching nothing -- a regex that finds no number reports None, and
+        # None never compares equal.
+        flat = re.sub(r"\s+", " ", whole)
+        for label, key, pat in (
+                ("exclusively mined", "mined_only",
+                 r"mined templates reach \$([\d.]+)\$ of the references that the curated sets do not"),
+                ("exclusively curated", "curated_only",
+                 r"the curated sets reach \$([\d.]+)\$ that the mined templates do not"),
+                ("reachable by both", "shared", r"and \$([\d.]+)\$ is reachable by both")):
+            m = re.search(pat, flat)
+            check(label, m and m.group(1), pv["exclusive"][key])
+
+    # 9. the coverage gap and everything the appendix derives from it. These moved when the
+    # ceiling's convention was corrected, and a perturbation test found that nothing here was
+    # checked -- the in-bank ceiling could be edited to any value and this script stayed green.
+    gap = ROOT / "results/coverage_gap_types.json"
+    if gap.exists():
+        g = json.loads(gap.read_text())
+        cov_pairs, unc = g["covered_pairs"], g["uncovered_pairs"]
+        total = cov_pairs + unc
+        known, novel, untyped = (g["gap"][k] for k in ("known_type", "novel_type", "untypeable"))
+        flat = re.sub(r"\s+", " ", whole)
+        for label, pat, value in (
+                ("uncovered transformations", r"splits the \$([\d,{}]+)\$ uncovered test", unc),
+                ("gap, known type", r"into \$(\d+)\$ \(\$\d+\\%\$\) whose reaction type the bank", known),
+                ("gap, novel type", r"and \$(\d+)\$ \(\$\d+\\%\$\) whose type is absent", novel),
+                ("gap, untypeable", r"the remaining \$(\d+)\$ admit no radius-0 type", untyped),
+                ("gap, novel share", r"and \$\d+\$ \(\$(\d+)\\%\$\) whose type is absent",
+                 round(100 * novel / max(unc, 1))),
+                ("gap, known share", r"into \$\d+\$ \(\$(\d+)\\%\$\) whose reaction type",
+                 round(100 * known / max(unc, 1))),
+                ("in-bank ceiling", r"= ([\d.]+)\$; closing both groups", (cov_pairs + known) / total),
+                ("both groups closed", r"closing both groups would bound it at \$([\d.]+)\$",
+                 (cov_pairs + known + novel) / total),
+                ("template-generalisation headroom", r"tightly bounded gain of \$([\d.]+)\$",
+                 (cov_pairs + known) / total - g["coverage"]),
+                ("uncovered share of references", r"default, \$([\d.]+)\\%\$ of reference metabolites",
+                 100 * unc / total),
+                ("novel share, main body", r"\$(\d+)\\%\$ of uncovered transformations being",
+                 round(100 * novel / max(unc, 1)))):
+            m = re.search(pat, flat)
+            # a percentage carries its tolerance in its own units, not the ratio's
+            tol = 0.05 if value > 1.5 else args.tol
+            checks.append((close(m and m.group(1).replace("{,}", "").replace(",", ""), value, tol),
+                           label, m and m.group(1), value,
+                           "from results/coverage_gap_types.json"))
+        m = re.search(r"--- \$([\d,{}]+)\$ of \$([\d,{}]+)\$, the complement", flat)
+        check("gap counts printed in the text", m and m.group(1).replace("{,}", ""), unc)
+        check("reference total printed in the text", m and m.group(2).replace("{,}", ""), total)
+
+    # 10. intervals printed beside the factors
     for label, key in (("ceiling interval", "coverage_bank"), ("ranking interval", "ranking_conversion")):
         lo, hi = f[key]["lo"], f[key]["hi"]
         pat = re.compile(r"\$\[" + f"{lo:.3f}" + r",\s*" + f"{hi:.3f}" + r"\]\$")

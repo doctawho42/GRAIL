@@ -384,9 +384,48 @@ distinguish from no reaction at all.
 already parent-dropped, so the five-method table, the rank-flip result and every external figure
 are untouched. Only full-split analyses moved.
 
----
+## 13. No check certifies its subject against a value frozen in the checker
 
-**Rows 10, 11 and 12 were each added after the defect they name had already shipped, which is
+**Check:** for every gate that compares a measurement against a reference number, ask where the
+reference comes from. A literal in the source is not a reference; it is a snapshot of the answer at
+the moment the gate was written, and it keeps passing after its subject has moved.
+
+```bash
+grep -rn "^[A-Z_]*\(CEILING\|COMMITTED\|EXPECTED\|TARGET\|BASELINE\)[A-Z_]* *=" scripts/*.py
+```
+
+**Status: PASS as of 2026-08-08, after unfreezing four literals of twelve.** The paragraph above
+this one first said "one gate, and the other two confirmed", written before the command below was
+run. The command found twelve, and the count was not the only thing wrong with the sentence.
+
+`ceiling_by_provenance.py` gated its rule-subset pass against `CEILING_SUBSET = 0.7284`, and the
+gate held while the ceiling it names was corrected to $0.8171$ — passing self-consistently on a
+superseded number, which is worse than failing, because a failure is visible and this was a green
+tick. It now reads the target out of `results/recall_factorization.json`, restricted to the same
+substrates, and reproduces it to four decimals on 245 of 245. Three more held the same superseded
+value or an ancestor of it: `ceiling_norm_check.py` gated on `0.7284` and in the wrong convention,
+`bank_without_selection.py` and `selection_ablation.py` reported a ceiling beside live numbers with
+nothing to catch them, and `make_diagnostic_figures.py` drew one as a line on a figure. All four now
+read the artifact.
+
+**What the frozen gate was hiding is the largest single correction in this document.** Re-run in the
+convention the deployed generator fires rules in, the appendix's provenance table does not shift, it
+inverts: curated $0.660$ / mined $0.328$ becomes curated $0.471$ / mined $0.785$. The published
+reading — that the hand-curated fifth earns the ceiling and the mined tail re-derives it — was an
+artifact of measuring the rule bank through the data-preparation helper while the system it
+describes uses the inference path. Both are correct arithmetic. They differ in a convention neither
+subset is asked about.
+
+The surviving literals are the legitimate use — a gate asserting a *fixed* property or a *published
+claim*, which fires when the measurement moves instead of hiding it. `bank_engine_replication.py`
+checks each bank parses to the rule count the paper reports; `external_ceiling_split.py` holds
+`COMMITTED_SPLIT = (24, 13)` to check it reconstructed the same parents the overlap audit counted, a
+property of two fixed corpora; `ordering_stability.py` holds the pairs whose reversal the paper
+certifies; `hydrogen_dispatch.py` holds SyGMa's two arms so the identity map has something to fail
+against. The distinction is not literal versus lookup. It is whether the literal is the claim being
+tested or a stale copy of the answer.
+
+**Rows 10, 11, 12 and 13 were each added after the defect they name had already shipped, which is
 the pattern worth reading: every row here exists because something got through.** Every row passes, and every one of them passes only
 because it was run: the previous round closed the subsample-provenance item and found an author name
 and email in `pyproject.toml`, and this one --- run because new results were added, not because

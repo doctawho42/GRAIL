@@ -1,26 +1,32 @@
 {
  "config": {
   "script": "ceiling_norm_check.py",
-  "git_commit": "c4b17e178e68a58eebbf70d7fbd9355973f6a1da",
+  "git_commit": "4b3169e38c0368076550a852e76159ba99e78f83",
   "git_dirty": true,
   "n_rules": 7581,
   "n_substrates": 245,
   "match": "inchikey_tautomer",
-  "add_hs": true,
-  "drop_invalid": true,
-  "normalisation": "canonical",
-  "gate": "must reproduce the committed ceiling 0.7284"
+  "add_hs": false,
+  "drop_invalid": false,
+  "normalisation": "both, measured in this run",
+  "gate": "must reproduce the committed ceiling on these substrates, read from results/recall_factorization.json"
  },
  "canonical": {
   "references": 567,
-  "recovered": 413,
-  "reach": 0.7284
+  "recovered": 454,
+  "reach": 0.8007
  },
  "standardize": {
-  "reach": 0.7302,
-  "source": "results/bank_engine_replication.json banks.grail_full.deployed",
+  "references": 567,
+  "recovered": 454,
+  "reach": 0.8007,
   "normalisation_is_the_pipeline_default": true
  },
- "difference_across_the_whole_bank": 0.0018,
+ "ceiling_gate": {
+  "committed": 0.8007,
+  "reproduced": 0.8007
+ },
+ "difference_across_the_whole_bank": 0.0,
+ "references_moved": 0,
  "difference_across_the_152_shared_rules": 0.0
 }

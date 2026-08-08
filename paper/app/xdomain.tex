@@ -413,8 +413,12 @@ whose raw ranked predictions are public. Such pairs do not currently exist in a 
 the checkpoints that are readily runnable are either from the same family or badly mismatched in
 strength. We therefore defer the comparison rather than force it.
 
-Two measurements outside metabolism both come back negative, and together they say something the
-paper could not say from one.
+Two measurements outside metabolism both come back negative, and they are negative about different
+things. Only the first carries a leaderboard: it scores eight models and can therefore exhibit an
+exchange or fail to. The second carries one model, and one model has no ordering to disturb, so it
+cannot test reordering at all --- what it measures is how far the convention moves a score in that
+domain, which is an upper bound on what any pair separated by more than that could suffer, and a
+bound is not an observation. We keep it for the bound and label it as one.
 
 The first targets molecular generation, where the matching criterion is not a way of checking an
 answer but the metric itself: MOSES reports Unique@$k$ as the count of distinct canonical SMILES
@@ -443,10 +447,15 @@ substrates from the USPTO-50k test set, the same predictions move only about 0.0
 accuracy across canonical, stereo-stripped, InChIKey and tautomer matching, between 0.695 and
 0.715, roughly an order of magnitude less than the interaction we measure in metabolism. A
 plausible reason is that retrosynthesis references are canonical, clean small molecules, whereas a
-metabolism rule engine emits tautomer and stereochemical variants of its references.
+metabolism rule engine emits tautomer and stereochemical variants of its references. What this
+licenses is narrow. A leaderboard reorders when the convention moves two methods by \emph{different}
+amounts, and one model cannot show a differential; it shows only that the criterion has little
+purchase on these predictions. If other retrosynthesis models behave as this one does, no pair
+separated by more than about $0.02$ can be exchanged --- but that antecedent is untested, and a
+second model would test it.
 
 The reading we take from these is not that matching conventions reorder leaderboards everywhere.
-Both negatives point at the same precondition, and it is a property of the reference set rather
+Both point at the same precondition, and it is a property of the reference set rather
 than of the task: the effect needs references that carry representational variety for a generator
 to diverge from. Metabolite references are experimental records, written with whatever tautomer and
 stereochemistry the reporting assay produced, while a rule engine emits whatever its templates

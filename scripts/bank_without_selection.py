@@ -47,7 +47,20 @@ from grail_metabolism.workflows.data import load_dataset_bundle
 from grail_metabolism.workflows.factory import build_filter, build_generator
 
 N_BOOT, SEED = 10000, 0
-CEILING_SUBSET = 0.7284  # measured on these same 245 from recall_factorization.json
+def ceiling_subset(subs) -> dict:
+    """The committed ceiling restricted to exactly these substrates, both aggregations.
+
+    Read from the artifact rather than frozen here. A literal is a snapshot of the answer at the
+    moment it was written; this one sat at 0.7284 through a correction that took the same quantity
+    to 0.8007, and the value it reported went on looking committed.
+    """
+    rows = {r["sub"]: r for r in
+            json.loads((ROOT / "results/recall_factorization.json").read_text())["per_substrate"]}
+    hit = [rows[s] for s in subs if s in rows]
+    micro = sum(r["Cfull"] for r in hit) / max(sum(r["U"] for r in hit), 1)
+    macro = sum(r["Cfull"] / r["U"] for r in hit if r["U"]) / max(len(hit), 1)
+    return {"n_matched": len(hit), "micro": round(micro, 4), "macro": round(macro, 4),
+            "source": "results/recall_factorization.json, restricted to these substrates"}
 
 
 def _rel(p) -> str:
@@ -202,7 +215,7 @@ def main() -> int:
                       "prior_strength": args.prior_strength, "gen_ckpt": _rel(args.gen_ckpt),
                       "filter_ckpt": _rel(args.filter_ckpt)},
            "n": len(items), "match": "inchikey_tautomer",
-           "ceiling_on_this_subset": CEILING_SUBSET, "arms": {}}
+           "ceiling_on_this_subset": ceiling_subset([s for s, _ in items]), "arms": {}}
 
     rng = np.random.default_rng(SEED)
     idx = rng.integers(0, len(items), (N_BOOT, len(items)))

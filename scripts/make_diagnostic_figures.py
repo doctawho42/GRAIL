@@ -7,6 +7,7 @@ ranking, not data. Writes PNG + SVG under docs/benchmark/.
 """
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import matplotlib
@@ -14,14 +15,16 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-OUT = Path(__file__).resolve().parents[1] / "docs" / "benchmark"
+ROOT = Path(__file__).resolve().parents[1]
+OUT = ROOT / "docs" / "benchmark"
 OUT.mkdir(parents=True, exist_ok=True)
 
 # recall@15, tautomer-canonical InChIKey, rank-only, single-mode filter (clean split).
 train_sizes = [400, 2418, 4787]
 grail_recall = [0.10, 0.330, 0.334]
 SYGMA = 0.558       # same-split SyGMa baseline (run_benchmark)
-CEILING = 0.718     # rule-bank single-step recall ceiling (measured)
+# read from the artifact: a ceiling written as a literal here outlived two corrections of it
+CEILING = json.loads((ROOT / "results/recall_factorization.json").read_text())["macro_coverage_bank"]
 
 
 def main() -> int:

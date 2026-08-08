@@ -23,7 +23,7 @@ recall $0.330 \to 0.334$, inside the $\pm0.010$ seed spread \\
 depth-2 rule application & coverage & single &
 ceiling $+0.012$, at $8.5\times$ the candidate cost ($n{=}150$) \\
 composition of the uncovered set & coverage & single &
-$26.9\%$ of references outside the bank; the largest mass bin holds $6.0\%$ of it \\
+$18.3\%$ of references outside the bank ($n{=}\ntest$); the largest mass bin holds $6.0\%$ of it \\
 site-of-metabolism prior & ranking & bound &
 $+0.011$ at the best of five weightings, itself chosen here ($n{=}245$) \\
 abstention on filter score & ranking & single &
@@ -45,10 +45,11 @@ Three of the nine measurements are reported here; the remaining six are expanded
 subsections that follow and in Propositions 2 and 3.
 
 \paragraph{Composition of the uncovered set.}
-Measured on 500 substrates, 26.9\% of reference metabolites lie outside what the bank
-reaches in one step under InChIKey matching, and about 25\% under tautomer-aware matching.
+On the full clean test split under the tautomer-aware default, $18.3\%$ of reference metabolites
+lie outside what the bank reaches in one step --- $475$ of $2{,}597$, the complement of \ceiling.
 The misses are a diverse tail rather than one absent rule family. Binning them by the
-substrate-to-metabolite mass difference, the largest bin holds $6.0\%$ of the uncovered set. We
+substrate-to-metabolite mass difference, on a $500$-substrate subset under strict \textsc{inchikey}
+matching where that binning was run, the largest bin holds $6.0\%$ of the uncovered set. We
 report the distribution rather than named reaction classes, because a mass difference does not
 identify a transformation: the same $+14$ is produced by an N-methylation and by an oxidation of a
 methylene to a carbonyl. Proposition 3 types
@@ -322,13 +323,15 @@ $+0.196$, and the residual $+0.010$ $[-0.000,+0.024]$ rather than $+0.004$, an i
 zero less comfortably. The separability claim is the micro one, and the two estimators should not
 be quoted against each other.
 
-That the other two choices move nothing is a statement about these $152$ rules, and it does not
-survive being generalised. Across the whole $\nbank$ the same loop reaches $0.7284$ under
-\textsc{canonical} normalisation and $0.7302$ under \textsc{standardize}, one recovered reference
-in $567$ --- the first being the mode the published ceiling was measured in and the second the
-pipeline's own default, which is how the discrepancy came to light. Reproducing the committed
-ceiling to four decimals is also what certifies this loop at the scale of the bank rather than of
-the shared subset. A knob inert on part of a bank need not be inert on the bank.
+That the other two choices move nothing is a statement about these $152$ rules under one setting of
+the first choice, and it generalises in neither direction on its own. Across the whole $\nbank$,
+under the convention the pipeline fires rules in, the normalisation knob is inert exactly:
+\textsc{canonical} and \textsc{standardize} both recover $454$ of $567$, the same references, and
+reproduce the committed ceiling to four decimals --- which is also what certifies this loop at the
+scale of the bank rather than of the shared subset. Expand the hydrogens first and the same two
+modes separate by one recovered reference. Whether a discretionary choice matters is therefore
+conditional on the other discretionary choices, and ``this one does not matter'' is a claim about a
+configuration rather than about a knob.
 
 \paragraph{What the switch does.} Not matching, which is the natural guess and is wrong. Over the
 corpus the $152$ templates fire $4{,}259$ times with hydrogens explicit against $4{,}124$ without,
@@ -382,13 +385,15 @@ decomposition itself is unaffected. What it does not license is reading the firs
 together, which is what \S\ref{sec:decomp} says. The direction is worth stating plainly, because it
 is not in our favour rhetorically and is in our favour substantively: our engine under-realises
 SyGMa's rules by a factor of two under the expansion, and the same expansion applied to our own bank
-costs it $0.081$ of reach on the clean test split --- which is why $\ceiling$ is quoted under the
+costs it $0.082$ of reach on the clean test split --- which is why $\ceiling$ is quoted under the
 convention the pipeline fires rules in rather than under that one, and why the headline that the
-bank is not the binding constraint is strengthened rather than weakened. The $152$ are curated, and on the $245$ substrates of \S\ref{app:provenance} the
-$1{,}715$ curated rules reach $0.660$ against the whole bank's $0.728$; the mined majority was
-itself kept only if applying it through
-this engine regenerated its own annotated product (Appendix~\ref{app:arch}), so it was validated
-against this engine rather than a foreign one and supplies no offsetting overstatement.
+bank is not the binding constraint is strengthened rather than weakened. The $152$ are curated, and
+the expansion is what the curated half is robust to and the mined majority is not
+(\S\ref{app:provenance}), so the factor of two is the size of an effect our own hand-written rules
+largely escape --- the asymmetry runs against us here, not for us. The mined majority was itself
+kept only if applying it through this engine regenerated its own annotated product
+(Appendix~\ref{app:arch}), so it was validated against this engine rather than a foreign one and
+supplies no offsetting overstatement.
 
 \subsection{The same choice outside metabolism, failing the other way}
 \label{app:retroconvention}
@@ -492,10 +497,11 @@ $0.4134$ against the $107.6$ and $0.413$ of Table~\ref{tab:selection-breadth}. T
 counterfactual and not an operating point: $82$ candidates per substrate drawn from $661.7$ is not a
 system anyone would deploy, and its precision would be worse than SyGMa's.
 
-Read against the ceiling rather than against SyGMa, the arm reaches $0.760$ of a macro ceiling of
-$0.803$ on these substrates, so what remains after selection is removed is ranking and the cut-off,
-not coverage. The micro ceiling quoted elsewhere for the same substrates, $0.728$, is a different
-aggregation and not comparable with either.
+Read against the ceiling rather than against SyGMa, the arm reaches $0.760$ against a macro ceiling
+of $0.854$ on these substrates, both per-substrate means, so $0.094$ of the ceiling is still
+unreached with the selector gone and the rest of what separates the arm from it is ranking and the
+cut-off. The micro ceiling for the same substrates, $0.801$, is a different aggregation and not
+comparable with either.
 
 \subsection{Which half of the bank earns the ceiling}
 \label{app:provenance}
@@ -512,22 +518,72 @@ itself:
 \toprule
 subset & rules & share of bank & coverage & share of ceiling \\
 \midrule
-curated & $1{,}715$ & $22.6\%$ & $0.660$ $[0.614,0.709]$ & $90.6\%$ \\
-mined   & $5{,}866$ & $77.4\%$ & $0.328$ $[0.282,0.379]$ & $45.0\%$ \\
-union   & $7{,}581$ & $100\%$  & $0.728$ $[0.684,0.776]$ & $100\%$ \\
+curated & $1{,}715$ & $22.6\%$ & $0.471$ $[0.422,0.525]$ & $58.8\%$ \\
+mined   & $5{,}866$ & $77.4\%$ & $0.785$ $[0.739,0.832]$ & $98.0\%$ \\
+union   & $7{,}581$ & $100\%$  & $0.801$ $[0.759,0.844]$ & $100\%$ \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-The union reproduces the $0.7284$ already stored per substrate for exactly these substrates, which
-is the gate the measurement refuses to report without. Exclusively, curated rules reach $0.400$ of
-the references that mined ones do not; mined rules reach $0.069$ that curated ones do not. Seventy-seven
-per cent of the bank contributes nine per cent of the ceiling that nothing else reaches, and $0.259$
-is reachable by both: the mined tail is largely re-deriving curated chemistry.
+The union reproduces the value already stored per substrate for exactly these substrates, to four
+decimals, which is the gate the measurement refuses to report without. Exclusively, mined templates
+reach $0.330$ of the references that the curated sets do not; the curated sets reach $0.016$ that
+the mined templates do not. Four published rule collections, restricted to this corpus, add under
+two per cent of the ceiling beyond what mining the training split already reaches, and $0.455$ is
+reachable by both.
 
 This does not contradict Appendix~\ref{app:negative}, where discarding the $4{,}271$ rules that
 never carry a positive label costs recall. Contributing to a deployed pool and contributing to the
-ceiling are different things, and the tail does the first while barely moving the second.
+ceiling are different things.
+
+\paragraph{This table said the opposite until its hydrogens were counted the way the pipeline
+counts them.} Applied through the helper the data-preparation path uses, which expands hydrogens
+onto the substrate before matching, the same rules on the same substrates give curated $0.660$
+against mined $0.328$ --- the curated fifth carrying the ceiling and the mined majority
+re-deriving it. Both passes are correct arithmetic; they differ only in a convention neither
+subset is asked about, and it does not move a number, it exchanges the two halves of the answer.
+That is the same defect this paper names on the leaderboard, met inside our own measurement, and it
+is why the primitives are now fixed at the ones \S\ref{sec:enginereach} deploys.
+
+Which of the helper's two steps does it can be read off by holding one fixed and moving the other.
+The gap between the subsets is $+0.314$ as deployed and $-0.332$ expanded; the validity floor
+carries $+0.002$ of that and expanding hydrogens carries the remaining $-0.647$. The floor is
+inert here in the strict sense --- it removes about one product in four hundred from either
+subset --- and the whole of the reversal is the hydrogen convention.
+
+Why that convention should divide the bank along its provenance line is answered by a test this
+paper already fixed in advance. The dispatch criterion of Appendix~\ref{app:negative} asks a purely
+syntactic question of each template: does its reactant pattern carry the hydrogen \emph{atom}
+primitive, \texttt{[H]} or \texttt{[\#1]}, which matches nothing at all unless the substrate's
+hydrogens are drawn. It never sees a provenance label, and it separates the bank as if it had:
+$675$ of the $7{,}581$ templates require the expansion, every one of them curated and none of the
+$5{,}866$ mined. The bank is a union of two collections written under different hydrogen
+conventions, and any single global setting is the wrong one for one of them.
+
+That the notation and not the provenance is doing the work can be checked by holding provenance
+fixed. Splitting the curated subset in two by the same criterion, on the same substrates:
+
+\begin{center}
+\begin{tabular}{lccc}
+\toprule
+curated templates & rules & as deployed & hydrogens expanded \\
+\midrule
+carrying the hydrogen atom primitive & $675$   & $0.044$ & $0.554$ \\
+not carrying it                      & $1{,}040$ & $0.471$ & $0.258$ \\
+\midrule
+mined, for comparison                & $5{,}866$ & $0.785$ & $0.328$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The two halves of one provenance move in opposite directions, by a factor of twelve up and a factor
+of two down, and the half that carries no hydrogen atom behaves like the mined majority it shares no
+provenance with. What decides which convention a template needs is how the template is written, and
+provenance predicts it only because hand-written collections use the primitive and extracted ones
+never do. This is also why the per-template dispatch of Appendix~\ref{app:negative} beats the better
+of the two global settings rather than tying it: the residual it recovers, $+0.016$
+$[+0.006,+0.028]$ paired, is the coverage the losing half forfeits under whichever single setting is
+chosen.
 
 \subsection{Selection as measured against selection as deployed}
 
@@ -617,18 +673,18 @@ its references include multi-generation metabolites that no single step can reac
 \end{center}
 \caption{What the bank fails to reach in one step, typed by element-aware changed-bond multiset.
 Only the first group is reachable by generalising an existing template, which is what bounds the
-in-bank ceiling at $0.843$.}
+in-bank ceiling at $0.855$.}
 \label{fig:gap}
 \end{figure}
 
 The composition of the gap determines how much of it template generalisation could close. Typing
 each uncovered transformation by its element-aware changed-bond multiset, and comparing against
-the 4{,}417 types the bank already contains, splits the 687 uncovered test transformations into
-280 (41\%) whose reaction type the bank already has and 366 (53\%) whose type is
-absent from it; the remaining 41 admit no radius-0 type and stay unclassified. The first group is reachable in principle by a more general template, which
-bounds an in-bank ceiling at $(1910+280)/2597 = 0.843$; closing both groups would bound it at
-0.984. Template generalisation is therefore a real but bounded gain of about 0.11 in ceiling
-headroom, and the majority of the residual is genuinely out-of-bank chemistry rather than an
+the 4{,}417 types the bank already contains, splits the $475$ uncovered test transformations into
+$98$ ($21\%$) whose reaction type the bank already has and $337$ ($71\%$) whose type is
+absent from it; the remaining $40$ admit no radius-0 type and stay unclassified. The first group is reachable in principle by a more general template, which
+bounds an in-bank ceiling at $(2122+98)/2597 = 0.855$; closing both groups would bound it at
+$0.985$. Template generalisation is therefore a real but tightly bounded gain of $0.038$ in ceiling
+headroom, and seven-tenths of the residual is genuinely out-of-bank chemistry rather than an
 artefact of template specificity. The bound is conditional on single-step application: it
 constrains the paradigm, not the problem.
 
