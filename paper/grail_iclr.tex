@@ -141,12 +141,11 @@ evaluated on overlapping but non-identical datasets and, as discussed below, und
 notions of a correct prediction.
 
 \paragraph{Comparative evaluations in this domain.} Several studies have placed these tools side by
-side. \citet{Scholz_2023} benchmarked five predictors on 85 agrochemical parents and reported low
-first-generation precision and wide divergence between rule-based and learned systems;
-\citet{Boyce_2022} compared six tools on 37 chemicals and found the broadest-coverage system also
-produced the most incorrect predictions; \citet{Gao_2026} saw the same coverage--precision
-trade-off against human radiolabelled ADME data. Each fixes a single criterion for judging a
-prediction correct, and none reports how sensitive its conclusions are to it.
+side and found the same coverage--precision trade-off: five predictors on 85 agrochemical parents
+\citep{Scholz_2023}, six tools on 37 chemicals where the broadest-coverage system also produced the
+most incorrect predictions \citep{Boyce_2022}, and human radiolabelled ADME data \citep{Gao_2026}.
+Each fixes a single criterion for judging a prediction correct, and none reports how sensitive its
+conclusions are to it.
 
 \looseness=-1
 \paragraph{Structure standardisation.} The difficulty of deciding when two molecular structures
@@ -163,24 +162,27 @@ apparent ordering of methods is recognised more broadly, along every axis this p
 On the matching rule, \citet{Maziarz_2025} re-evaluated retrosynthesis models under a standardised
 procedure and reversed a published ordering, partly because one model had been scored under a
 relaxed stereochemistry criterion its baselines did not get; it is the closest precedent here, and
-the only one that varies a structure-matching rule. \citet{liu2026massspecgymwild} audit published
+the only one that varies a structure-matching rule. What differs is what is held fixed. There the
+ordering moved because two papers had scored under different criteria, and standardising is the
+remedy; here every system is scored under every criterion, so the ordering is a function of the
+criterion itself, the interaction is certified pairwise and corrected across the family, and
+standardising relocates the problem rather than removing it --- some criterion still has to be
+chosen. \citet{Hastedt_2024} make that measurable at all by releasing the ranked predictions of
+twelve retrosynthesis systems; \S\ref{app:xdomain} re-scores eleven of them and reports what reading
+the files also shows, that they sit on three different test sets. \citet{liu2026massspecgymwild} audit published
 mass-spectrometry work and name the mechanism directly, divergent metric implementations and
-stereochemistry handling in InChIKey matching among them. Outside chemistry, re-scoring frozen
-text-to-SQL submissions under denotation equivalence rather than exact match shows exact match
-misrepresenting the state of the art \citep{Zhong_2020}, and re-scoring frozen question-answering
-outputs under four answer-equivalence rules makes one system best under a rule it had lost under
-\citep{Kamalloo_2023}. On the aggregate, \citet{agarwal2026metric} show for drug-response
-prediction that the choice of scoring metric inverts which model wins. The closest precedent to
-what we find is \citet{Gao_2025_reframing}. There, structure-based drug design's standard score
-rises with a structural property of the output, its atom count, rather than with quality, so
-re-evaluating under practically aligned metrics changes which models look good. The same field's
-benchmark was rebuilt around four complementary axes for the same reason
+stereochemistry handling in InChIKey matching among them. Outside chemistry, re-scoring frozen submissions under a
+different equivalence rule misrepresents the state of the art in text-to-SQL \citep{Zhong_2020} and
+changes which question-answering system leads \citep{Kamalloo_2023}. On the aggregate, the choice of
+metric inverts the winner in drug-response prediction \citep{agarwal2026metric}; in structure-based
+drug design the standard score rises with the output's atom count rather than its quality
+\citep{Gao_2025_reframing}, which is why that benchmark was rebuilt around four axes
 \citep{Lin_2025_cbgbench}, and weighting examples by difficulty reorders natural-language
-leaderboards \citep{Mishra_2021, Rodriguez_2021}. On the budget the prior work is older and not ours: retrieval
-and recommendation have long evaluated ranked output at a declared cut-off \citep{Jarvelin_2002},
-scored it under incomplete relevance judgements \citep{Buckley_2004}, corrected it for the
-propensity with which a relevant item is recorded \citep{Joachims_2017}, and shown a cut-off
-metric's winner changing with how the candidates entering it are counted \citep{Krichene_2020}.
+leaderboards \citep{Mishra_2021, Rodriguez_2021}. On the budget the prior work is older and not
+ours: retrieval and recommendation have long evaluated ranked output at a declared cut-off
+\citep{Jarvelin_2002}, under incomplete relevance judgements \citep{Buckley_2004}, corrected for
+recording propensity \citep{Joachims_2017}, and shown a cut-off metric's winner changing with how
+the candidates entering it are counted \citep{Krichene_2020}.
 That an unpenalised recall@$k$ rewards enumeration is a property of the measure that literature
 settled decades ago; we re-instantiate it here rather than discover it.
 
@@ -624,13 +626,11 @@ BioTransformer's configuration is unscripted, so both are frozen predictions. Th
 scored on the full $\ntest$, the external replication on $n=\nglory$.
 
 \looseness=-1
-\paragraph{Precision is a lower bound, not an estimate.} An unannotated but chemically real product
-scores as a false positive, so every precision and F1 figure is pessimistic; \S\ref{sec:metric} ranks
-on them only under a uniform-propensity model, assumed rather than estimated.
-
-\paragraph{The single-step bound.} Some references are multi-generation products no single rule
-application reaches; depth-2 lifts the ceiling by ${\sim}0.012$ at $8.5$ times the cost, so
-$\ceiling$ bounds this formulation rather than the task.
+\paragraph{Two bounds on the metabolite numbers.} An unannotated but chemically real product scores
+as a false positive, so every precision and F1 figure is pessimistic and \S\ref{sec:metric} ranks on
+them only under a uniform-propensity model, assumed rather than estimated. And some references are
+multi-generation products no single rule application reaches: depth-2 lifts the ceiling by
+${\sim}0.012$ at $8.5$ times the cost, so $\ceiling$ bounds this formulation rather than the task.
 
 \looseness=-1
 \paragraph{Evaluation hygiene of this paper itself.} Headline numbers come from one evaluation of
