@@ -561,3 +561,43 @@ def test_the_released_checker_and_the_paper_census_cannot_disagree():
             "unclassified_recursive_smarts"], (
             f"{bank}: the checker and the paper disagree on the residual category, which is the one "
             f"a dispatch policy has to guess at")
+
+
+def test_the_retrosynthesis_block_convention_is_proven_not_assumed():
+    """Every cross-domain number rests on the first row of a block being the recorded answer.
+
+    Seven files agreeing among themselves would agree just as well if all seven were read wrongly,
+    so the reading is checked where an independent ground truth exists: the three systems whose
+    reactions are in this repository's own USPTO-50k copy.
+    """
+    import csv, sys
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[2]
+    for p in (str(root), str(root / "scripts")):
+        if p not in sys.path:
+            sys.path.insert(0, p)
+    d = root / "grail_metabolism" / "data" / "evalretro"
+    split = root / "grail_metabolism" / "data" / "USPTO_50k" / "test.csv"
+    if not d.exists() or not split.exists():
+        import pytest
+        pytest.skip("the released prediction files are not present")
+
+    from evalretro_ingest import canonical_set, parse_blocks
+
+    # keyed on the PAIR: a product does not identify a reaction, since one product can be made more
+    # than one way and this split contains such cases. Keying on the product alone made this check
+    # fail on 22 reactions that are in fact read correctly.
+    pairs = {(canonical_set(r["PRODUCT"]), canonical_set(r["REACTANT"]))
+             for r in csv.DictReader(open(split))}
+    products = {p for p, _ in pairs}
+    for name in ("chemformer", "gta", "tiedtransformer"):
+        blocks = parse_blocks(d / f"{name}_pred.csv")
+        shared = [b for b in blocks if canonical_set(b["product"]) in products]
+        agree = sum(1 for b in shared
+                    if (canonical_set(b["product"]), canonical_set(b["true"])) in pairs)
+        assert shared, f"{name}: none of its reactions is in our split"
+        assert agree == len(shared), (
+            f"{name}: the first row of a block is the recorded answer on only {agree} of "
+            f"{len(shared)} reactions; the block convention does not hold and every cross-domain "
+            f"number computed from these files is meaningless")
