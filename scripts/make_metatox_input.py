@@ -52,19 +52,40 @@ OUTDIR = ROOT / "results" / "metatox_input"
 
 
 def main() -> int:
-    OUTDIR.mkdir(parents=True, exist_ok=True)
+    # One code path for every batch. A second builder would let the submission format drift between
+    # batches, and the join back to ground truth is exactly what must not drift.
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--predictions", default=str(GRAIL_CSV),
+                    help="GRAIL prediction CSV whose substrate column supplies the eval keys")
+    ap.add_argument("--outdir", default=str(OUTDIR))
+    ap.add_argument("--split", default="test", help="named in the README so a batch says what it is")
+    ap.add_argument("--purpose", default="the GRAIL vs MetaTox comparison",
+                    help="one line for the README, so a returned file can be traced to its request")
+    ap.add_argument("--limit", type=int, default=0, help="0 sends every substrate available")
+    ap.add_argument("--seed", type=int, default=0, help="only used when --limit subsamples")
+    args = ap.parse_args()
+    outdir = Path(args.outdir)
+    outdir.mkdir(parents=True, exist_ok=True)
 
     # eval keys = substrate strings exactly as GRAIL's prediction CSV holds them
-    with open(GRAIL_CSV) as fh:
+    with open(args.predictions) as fh:
         subs = sorted({row["substrate"] for row in csv.DictReader(fh) if row["substrate"]})
-    shared150 = set(json.loads(SYGMA_RAW.read_text()))
-    print(f"GRAIL test substrates: {len(subs)}  |  shared-with-SyGMa: {len(shared150 & set(subs))}", flush=True)
+    if args.limit and args.limit < len(subs):
+        # a subsample is unrecoverable without its cap and seed, and this repository has paid for
+        # that once; both are written into the map and the README
+        import random
+        random.Random(args.seed).shuffle(subs)
+        subs = sorted(subs[: args.limit])
+    shared150 = set(json.loads(SYGMA_RAW.read_text())) if SYGMA_RAW.exists() else set()
+    print(f"GRAIL {args.split} substrates: {len(subs)}  |  "
+          f"shared-with-SyGMa: {len(shared150 & set(subs))}", flush=True)
 
     te = rdMolStandardize.TautomerEnumerator()
     rows = []
     unparseable = []
     identity_broken = []  # tautomerization changed the molecule (must never happen) -> excluded
-    writer = Chem.SDWriter(str(OUTDIR / "substrates.sdf"))
+    writer = Chem.SDWriter(str(outdir / "substrates.sdf"))
     for i, key in enumerate(subs, 1):
         sid = f"SUB{i:04d}"
         mol = Chem.MolFromSmiles(key)
@@ -96,25 +117,32 @@ def main() -> int:
     writer.close()
 
     # .smi : submission SMILES <TAB> id
-    with open(OUTDIR / "substrates.smi", "w") as fh:
+    with open(outdir / "substrates.smi", "w") as fh:
         for r in rows:
             fh.write(f"{r['submission_smiles']}\t{r['id']}\n")
 
     # join map
-    with open(OUTDIR / "substrate_map.csv", "w", newline="") as fh:
+    with open(outdir / "substrate_map.csv", "w", newline="") as fh:
         w = csv.DictWriter(fh, fieldnames=["id", "substrate_smiles", "submission_smiles", "in_shared_150", "retautomerized"])
         w.writeheader()
         w.writerows(rows)
 
     n = len(rows)
     n150 = sum(r["in_shared_150"] for r in rows)
+    shared_note = (f"\n{n150} of them are also in the SyGMa-shared subset (`in_shared_150=1`), so "
+                   f"this set supports the tighter 3-way (GRAIL / SyGMa / MetaTox) as well."
+                   if n150 else "")
+    fallback = (f"Prioritize the {n150} rows with `in_shared_150=1` -- that subset still answers "
+                f"the grant question against **both** GRAIL and SyGMa."
+                if n150 else
+                "Any contiguous prefix of `substrate_map.csv` by `id` is a usable subset: the ids "
+                "are assigned by sorted eval key, so a prefix is reproducible from this file alone "
+                "and I can score whatever comes back. Tell me where you stopped.")
     n_retaut = sum(r["retautomerized"] for r in rows)
-    readme = f"""# MetaTox submission set ({n} substrates)
+    readme = f"""# MetaTox submission set ({n} substrates, GRAIL {args.split} split)
 
-The grant-deciding comparison: **GRAIL vs MetaTox** on the GRAIL test set.
-GRAIL already has ranked predictions for all {n} of these substrates;
-{n150} of them are also in the SyGMa-shared subset (`in_shared_150=1`), so this set
-supports the tighter 3-way (GRAIL / SyGMa / MetaTox) as well.
+Purpose: {args.purpose}.
+GRAIL already has ranked predictions for all {n} of these substrates.{shared_note}
 
 ## Files
 - `substrates.smi`  -- `<SMILES>\\t<id>`, one per line. Use for a SMILES/text upload.
@@ -128,6 +156,9 @@ each is guaranteed the same molecule as its eval key under our tautomer-InChIKey
 
 ## What to run in MetaTox
 Predict metabolites (Phase I + Phase II as MetaTox offers) for each of the {n} substrates.
+**Please run the SMIRKS-rule variant**, the same configuration as the previous batch: that is the
+one whose predictions we scored, and mixing configurations between batches would make the two
+populations incomparable in the one way that matters here.
 
 ## What to return to me (so I can score it apples-to-apples)
 A JSON keyed by **id** (preferred) or by the exact **submission_smiles**, mapping each substrate
@@ -143,17 +174,16 @@ include it as a parallel list or `[[smiles, score], ...]` and I'll rank by score
 an unranked set, that's fine too -- tell me, and I'll report it at matched output budget so an
 unranked pool isn't flattered at large k.
 
-## Fallback if batch submission is limited
-Prioritize the {n150} rows with `in_shared_150=1` -- that subset still answers the grant
-question against **both** GRAIL and SyGMa.
+## Fallback if the batch is too large
+{fallback}
 
 Notes: {n_retaut} of {n} re-tautomerized for submission (identity preserved under tautomer-InChIKey).
 {len(unparseable)} substrates failed to parse (excluded); {len(identity_broken)} dropped because
 tautomerization changed molecular identity (should be 0).
 """
-    (OUTDIR / "README.md").write_text(readme)
+    (outdir / "README.md").write_text(readme)
 
-    print(f"wrote {n} rows -> {OUTDIR}", flush=True)
+    print(f"wrote {n} rows -> {outdir}", flush=True)
     print(f"  substrates.smi / substrates.sdf / substrate_map.csv / README.md", flush=True)
     print(f"  shared-150 flagged: {n150}   re-tautomerized: {n_retaut}   "
           f"unparseable(excluded): {len(unparseable)}   identity-broken(excluded): {len(identity_broken)}", flush=True)
