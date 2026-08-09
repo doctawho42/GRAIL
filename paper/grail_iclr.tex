@@ -72,12 +72,11 @@ instance each: a primitive counting explicit structure breaks the match before a
 consumes breaks the product instead; and a bank assembled from two conventions has no right answer
 at all. Only the third is repairable: dispatching per template recovers $+0.006$ $[+0.003,+0.010]$.
 
-A fourth undeclared choice is which population a familiar name means: those eleven files sit on
-three disjoint test sets, this paper's own copy of the name is one of the deviations, and changing
-only which substrates are in reorders $10$ of $60$ comparisons on our own split. Output
-size is the plainest --- every certified reversal runs through the one system emitting $81$
-candidates against everyone else's $8$ to $11$. We release the protocol, the split, the frozen
-predictions and the checks.
+A fourth is which population a familiar name means: those eleven files sit on three disjoint test
+sets, our own copy of the name is one of the deviations, and changing only which substrates are in
+reorders $10$ of $60$ comparisons on our split. Output size is the plainest --- every certified
+reversal runs through the one system emitting $81$ candidates against everyone else's $8$ to $11$.
+We release the protocol, the split, the frozen predictions and the checks.
 \end{abstract}
 
 \section{Introduction}
@@ -114,14 +113,11 @@ differing in the position of a mobile hydrogen. Appendix~\ref{app:worked} works 
 predictions through all of them, scoring a near-total miss or a full hit with the chemistry fixed.
 Evaluations here adopt one each without saying why, and none has varied it; varying it erases a
 significant advantage between two published tools. Two more follow: the aggregate and the budget.
-What generalises past this benchmark is the decomposition rather than the numbers --- and within it,
-not the identity, which is arithmetic and is already used to stage retrieval pipelines
-(\S\ref{sec:related}), but what an enumerable candidate set does to it. Recall factorises exactly
-wherever that set can be enumerated, and the coverage term then stops being estimated and becomes an
-exhaustive measurement rather than a sampled or beam-bounded one, so it is reportable for any such
-method, a rule bank or a wide decode alike. Exhaustiveness removes sampling and beam-budget error,
-not dependence on the engine applying the rules (\S\ref{sec:decomp}). Adding a sixth method to what
-we release needs that method's ranked output and nothing else.
+What generalises past this benchmark is not the identity, which is arithmetic and already stages
+retrieval pipelines (\S\ref{sec:related}), but what an enumerable candidate set does to it: the
+coverage term stops being a sample estimate or a beam bound and becomes an exhaustive measurement,
+reportable for a rule bank or a wide decode alike. That removes sampling error, not dependence on
+the engine applying the rules (\S\ref{sec:decomp}).
 
 \section{Related Work}
 \label{sec:related}
@@ -466,17 +462,16 @@ along two protocol axes, BioTransformer gaining \interA\ \interAci\ more than GR
 canonical$\rightarrow$tautomer and SyGMa \interB\ \interBci\ more than MetaTrans from
 canonical$\rightarrow$InChIKey; the first survives the correction at that family size, the second
 misses its threshold and is reported as an uncorrected interval from here on.
-The convention is a \textbf{method-dependent confounder}, not a
-neutral scoring choice. Two pairs do exchange places between criteria on this subset, though every
-pairwise $\Delta$ spans zero at $n=\nshared$ (Appendix~\ref{app:xdomain}): the interaction is
-established, the reversals illustrate it.
+The convention is a \textbf{method-dependent confounder}, not a neutral scoring choice: two pairs
+exchange places between criteria here, though every pairwise $\Delta$ spans zero at $n=\nshared$
+(Appendix~\ref{app:xdomain}), so the interaction is established and the reversals illustrate it.
 
 \looseness=-1
 \paragraph{External replication.} The results above live on a $\nshared$-substrate subset of our own
 split, so we repeated the analysis on the field's de-facto external hold-out, the \nglory\ GLORYx
 drugs \citep{de_Bruyn_Kops_2020}, whose own tool is not scored here for want of runnable weights. It is
-external for three of the four methods and not for ours, which we checked late: $24$ of the $37$ are
-in GRAIL's train or validation split, so its row uses the $13$ unseen (Table~\ref{tab:matchsens}).
+external for three of the four methods and not for ours: $24$ of the $37$ are in GRAIL's train or
+validation split, so its row uses the $13$ unseen (Table~\ref{tab:matchsens}).
 
 \looseness=-1
 The result this section rests on involves neither contaminated arm. Under strict InChIKey SyGMa
@@ -486,14 +481,13 @@ result with a null one, but the interaction: MetaPredictor gains $+0.135$ $[+0.0
 than SyGMa across the stereo step, rejected at either family size (Appendix~\ref{app:holm}). That interval is what is certified: the relaxed gap covers zero
 and still admits SyGMa ahead by $0.071$, so a criterion erases a significant advantage here rather
 than reversing it.
-Unequal headroom runs \emph{with} the effect here rather than against it, and normalised by the
-headroom left it does not vanish, at $+0.209$ $[+0.111,+0.322]$ (Appendix~\ref{app:holm}). On the uncontaminated drugs GRAIL's stereo sensitivity survives at $+0.126$
+Normalised by the headroom left it does not vanish but grows, to $+0.209$ $[+0.111,+0.322]$
+(Appendix~\ref{app:holm}). On the uncontaminated drugs GRAIL's stereo sensitivity survives at $+0.126$
 $[+0.028,+0.239]$, as does its interaction with SyGMa, whose stereo step here is zero; the
 \emph{external} interaction with BioTransformer does not survive there and is not claimed.
-This set's coverage ceiling stays on all $\nglory$ for a measured reason: most of the bank is mined
-from training pairs, so applying it is \emph{not} independent of training, yet the ceiling is
-$0.719$ on the twenty-four seen drugs against $0.684$ on the thirteen unseen, a difference
-whose interval spans zero (Appendix~\ref{app:external}).
+The set's coverage ceiling stays on all $\nglory$: it is $0.719$ on the twenty-four seen drugs
+against $0.684$ on the thirteen unseen, a difference whose interval spans zero
+(Appendix~\ref{app:external}).
 
 
 
@@ -623,32 +617,32 @@ transfers better off distribution (Appendix~\ref{app:props}).
 \section{Limitations}
 \label{sec:limitations}
 
-\looseness=-1
-\paragraph{Sample sizes differ, and two comparators cannot be re-run here.} MetaTrans's inference
-pipeline no longer reproduces and BioTransformer's configuration is unscripted, so the five-method
-table rests on $\nshared$ shared substrates of frozen predictions; the other three are scored on the
-full $\ntest$.
-
-\looseness=-1
-\paragraph{Two bounds on the metabolite numbers.} An unannotated but chemically real product scores
+\looseness=-2
+\paragraph{What the metabolite numbers bound.} The five-method table rests on $\nshared$ shared
+substrates of frozen predictions --- MetaTrans's pipeline no longer reproduces and BioTransformer's
+configuration is unscripted --- and the other three methods on the full $\ntest$;
+Appendix~\ref{app:xdomain} states which figure is on which. An unannotated but real product scores
 as a false positive, so every precision and F1 figure is pessimistic and \S\ref{sec:metric} ranks on
-them only under a uniform-propensity model, assumed rather than estimated. And some references are
-multi-generation products no single rule application reaches: depth-2 lifts the ceiling by
-${\sim}0.012$ at $8.5$ times the cost, so $\ceiling$ bounds this formulation rather than the task.
+them only under a uniform-propensity model. Some references are multi-generation products no single
+rule reaches: depth-2 lifts the ceiling by ${\sim}0.012$ at $8.5$ times the cost, so $\ceiling$
+bounds this formulation rather than the task.
 
-\looseness=-1
-\paragraph{Evaluation hygiene of this paper itself.} Headline numbers come from one evaluation of
-the deployed configuration, and selection is on validation but for the two exceptions
-\S\ref{sec:tame} names: the filter's encoder variant, chosen on test, and
-Appendix~\ref{app:negative}'s exploratory analyses.
+\looseness=-2
+\paragraph{What the newer results rest on.} The cross-domain numbers come from eleven files we did
+not produce, read under an assumption proven where an independent ground truth exists rather than
+inferred from those files agreeing (Appendix~\ref{app:xdomain}); the reordering there is a top-1
+phenomenon; and two axes are thin, the packing measured across four leaderboards and the population
+across two of one split --- enough to move an answer where all else is pinned, not enough for a rate.
+Our own headline is one evaluation of the deployed configuration, selection on validation but for
+the two exceptions \S\ref{sec:tame} names.
 
 \section{Conclusion}
 \label{sec:conclusion}
 
 \looseness=-2
 Four things decide a leaderboard position before any model does: the matching rule, the output size,
-the convention an engine applies rules in, and which population a dataset name means. Each is
-readable from a released file, none is declared, and one caught this paper.
+the engine's convention, and which population a dataset name means. None is declared, each is
+readable from a released file, and one caught this paper.
 
 \subsubsection*{Reproducibility statement}
 

@@ -536,8 +536,9 @@ The bank is a deduplicated union of four published rule sets and a much larger b
 mined from the training split, and nothing so far says which part reaches the chemistry.
 \texttt{mined\_only.txt} lists the mined templates verbatim, so the split is exact rather than
 estimated: $5{,}866$ mined and $1{,}715$ curated, partitioning the $7{,}581$ with nothing left over.
-Applying each subset alone, through the same primitives and on the same substrates as the ceiling
-itself:
+Applying each subset alone, through the same primitives, on the $245$-substrate subsample the
+diagnostic family of this appendix shares. The ceiling restricted to those substrates is $0.801$
+rather than the $\ceiling$ of the split, and every figure in this subsection is against that one:
 
 \begin{center}
 \begin{tabular}{lcccc}
@@ -618,9 +619,9 @@ one measurable way, and it was registered before any arm existed
 loss the residual is \emph{superadditive} across the partition, $\mathrm{res}(\text{full}) >
 \mathrm{res}(\text{curated}) + \mathrm{res}(\text{mined})$.
 
-It is subadditive. On the full split the whole bank's residual is $+0.006$ $[+0.003,+0.010]$ and the
-curated subset's alone is $+0.012$ $[+0.008,+0.017]$, against a mined residual of exactly $+0.000$
-$[0.000,0.000]$. That last is zero on any population by construction, since none of its $5{,}866$
+It is subadditive. On the full split the whole bank's residual is $+0.0062$ $[+0.0032,+0.0095]$ and
+the curated subset's alone is $+0.0123$ $[+0.0079,+0.0170]$, against a mined residual of exactly
+$+0.0000$ $[0.0000,0.0000]$. The fourth decimal is carried because the third is what separates them. That last is zero on any population by construction, since none of its $5{,}866$
 templates is dispatched anywhere, so it was measured on the $245$-substrate subsample rather than
 the split: it checks that the subsetting does what it says rather than contributing a quantity. Of
 the three registered predictions the null and the curated one hold and the superadditivity does not,

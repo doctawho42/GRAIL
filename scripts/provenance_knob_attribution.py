@@ -102,12 +102,13 @@ def _worker(item):
     if mol is None or not trues:
         return None
     out = {"sub": sub, "u": 0, "pool": {}}
-    for group, add_hs in cells:
-        pool = apply_with(mol, _GROUPS[group], add_hs, "canonical", False)
+    for group, add_hs, floor in cells:
+        pool = apply_with(mol, _GROUPS[group], add_hs, "canonical", floor)
         u, hit, _ = _tautomer_recovered(trues, pool, audit=False)
+        key = f"{group}|addhs={int(add_hs)}" + ("|floor" if floor else "")
         out["u"] = int(u)
-        out[f"{group}|addhs={int(add_hs)}"] = int(hit)
-        out["pool"][f"{group}|addhs={int(add_hs)}"] = len(pool)
+        out[key] = int(hit)
+        out["pool"][key] = len(pool)
     return out
 
 
@@ -153,13 +154,15 @@ def main() -> int:
     census["atom_and_count_primitives_overlap_in_curated"] = overlap
     print(f"  the two primitives are not the same split: {overlap} curated patterns carry both")
 
-    # Only the cells no committed artifact already holds. The two pure conventions for the whole
-    # subsets live in results/ceiling_by_provenance.json and in its predecessor under git, both
-    # gated against the ceiling; recomputing them here would cost several times this run and prove
-    # nothing the gate has not.
-    cells = [("curated_needs_h", False), ("curated_needs_h", True),
-             ("curated_plain", False), ("curated_plain", True)]
-    for g in dict.fromkeys(g for g, _ in cells):
+    # Every cell the attribution reports, measured on the population that is asked for. The
+    # deployed endpoints come from the provenance artifact for that same population; the expanded
+    # and floored ones are measured here, because freezing them to a literal is how one artifact
+    # came to hold two populations at once -- the defect this paper is about, in its own appendix.
+    cells = [("curated_needs_h", False, False), ("curated_needs_h", True, False),
+             ("curated_plain", False, False), ("curated_plain", True, False),
+             ("curated", True, False), ("mined", True, False),
+             ("curated", True, True), ("mined", True, True)]
+    for g in dict.fromkeys(g for g, _, _ in cells):
         print(f"  group {g:16} {len(groups[g]):>5} rules")
 
     items = [(sub, trues, cells) for sub, trues in population_items(args.population)]
@@ -177,7 +180,7 @@ def main() -> int:
                 print(f"  {i}/{len(items)}", flush=True)
 
     U = sum(r["u"] for r in rows)
-    keys = [f"{g}|addhs={int(h)}" for g, h in cells]
+    keys = [f"{g}|addhs={int(h)}" + ("|floor" if f else "") for g, h, f in cells]
     cov = {k: round(sum(r[k] for r in rows) / max(U, 1), 4) for k in keys}
     mean_pool = {k: round(sum(r["pool"][k] for r in rows) / max(len(rows), 1), 1) for k in keys}
 
@@ -186,11 +189,11 @@ def main() -> int:
         print(f"    {k:28} {cov[k]:.4f}   mean pool {mean_pool[k]:>7}")
 
     # The two committed endpoints, so the attribution is arithmetic a reader can follow.
-    committed = json.loads((ROOT / "results/ceiling_by_provenance.json").read_text())["subsets"]
+    src = ROOT / tagged_out(str(ROOT / "results/ceiling_by_provenance.json"), args.population)
+    committed = json.loads(pathlib.Path(src).read_text())["subsets"]
     deployed = {g: committed[g]["coverage"] for g in ("curated", "mined")}
-    helper = {"curated": 0.6596, "mined": 0.3280}   # the superseded artifact, still in git
-
-    expanded = {"curated": 0.6614, "mined": 0.3280}   # measured in the preceding pass of this script
+    helper = {g: cov[f"{g}|addhs=1|floor"] for g in ("curated", "mined")}
+    expanded = {g: cov[f"{g}|addhs=1"] for g in ("curated", "mined")}
     gap_deployed = deployed["mined"] - deployed["curated"]
     gap_expanded = expanded["mined"] - expanded["curated"]
     gap_helper = helper["mined"] - helper["curated"]
@@ -224,8 +227,8 @@ def main() -> int:
                       "match": "inchikey_tautomer", "aggregation": "micro, ratio of sums",
                       "population": args.population,
                       "switches": "engine_knobs.apply_with(add_hs, 'canonical', drop_invalid=False)",
-                      "endpoints": "deployed cell from results/ceiling_by_provenance.json; "
-                                   "expanded-and-floored cell from its predecessor under git"},
+                      "endpoints": f"deployed cell from {pathlib.Path(src).name}; expanded and "
+                                   f"floored cells measured in this run on the same population"},
            "rule_census": census, "coverage": cov, "mean_pool": mean_pool,
            "committed_endpoints": {"deployed": deployed, "helper": helper},
            "gap_attribution": attribution, "within_curated": within,

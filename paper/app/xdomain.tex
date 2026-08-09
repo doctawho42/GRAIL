@@ -508,6 +508,19 @@ LocalRetro, Retroformer, Graph2SMILES. Disregard stereochemistry and Graph2SMILE
 to first, with Retroformer second and GraphRetro third. Five of the twenty-one pairs exchange, on
 predictions that never change.
 
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=0.52\textwidth]{fig_xdomain}
+\end{center}
+\caption{The same slope plot in another field, on files their authors released rather than
+predictions we produced: seven retrosynthesis systems, four criteria, top-1 accuracy on the
+$4{,}999$ reactions they share. Graph2SMILES enters fourth under canonical matching and leaves
+first under every more tolerant one, crossing GraphRetro, LocalRetro and Retroformer; the three
+systems that never exchange are drawn in grey. The canonical-to-InChIKey step is flat for all
+seven, which is the criterion pair that costs nothing here.}
+\label{fig:xdomain}
+\end{figure}
+
 The exchange is the visible part; the interaction is the claim, and it is certified under the
 strictest correction this paper applies anywhere. Of $448$ paired interaction tests --- every pair
 of systems, every pair of conventions, every $k$ --- $233$ have intervals excluding zero and

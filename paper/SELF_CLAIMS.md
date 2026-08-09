@@ -133,7 +133,33 @@ every unmatched comparison in it is a self-contradiction, and the reader finds i
 does. Known instances: precision@15 quoted beside untruncated output size 81; a full-split reranker
 figure labelled n=245; a curation emitting 6.0 compared against a model emitting 10.6.
 
-**Status: PASS for the audited claims.** No automated check exists; this is a read-through.
+```bash
+python scripts/population_matching_scan.py
+```
+
+The scan does not replace the reading, it bounds it. The prose pass reports every paragraph that
+compares and names more than one population, which is where an unmatched comparison can hide; three
+paragraphs qualify and all three declare their move. The artifact pass is a hard gate: a file that
+declares a population must not source a number from one that declares another, and it resolves the
+question by reading the referenced file rather than its name, so a file holding several populations
+contradicts nobody and a stratified file is not flagged for having strata.
+
+**Status: PASS, after the read-through found one violation and one latent one.** Re-running the row
+against the manuscript as it now stands, the provenance appendix declared itself measured *on the
+same substrates as the ceiling itself* while reporting the 245-substrate subsample, and the paper's
+ceiling is on the 1,170. Every comparison inside that appendix was matched --- all of them on the
+subsample --- so the row's own wording passed while the section named the wrong population to the
+reader. Underneath it, `provenance_knob_attribution.py` measured its cells on whichever population
+it was given and read its endpoints from a file named for a different one, writing two populations
+into one artifact; two further endpoints were frozen literals with no population at all. The script
+now measures every endpoint on the population it is asked for, and the appendix reports the split.
+
+**The count-based version of this check would not have caught it.** The copied endpoints were bare
+floats carrying no sample size, so a scan comparing the `n` values inside a file finds nothing here
+and flags every stratified artifact instead --- eighteen of them, all correct by construction. What
+made the defect visible was the provenance string in the config naming its source file. A check
+that fires on the wrong things and stays silent on the right one is worse than no check, because it
+is the one that gets ignored.
 
 ## 4. Every comparative claim carries an interval on the *difference*
 

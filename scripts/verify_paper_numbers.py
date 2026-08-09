@@ -186,6 +186,59 @@ def main() -> int:
             m = re.search(pat, flat)
             check(label, m and m.group(1), pv["exclusive"][key])
 
+    # 8b. The knob attribution: the table that reversed, the endpoints it reversed between, and
+    # what carries the reversal. None of this was checked, and the section it backs was the one
+    # that turned out to name a population it was not measured on -- so it is anchored on the
+    # sentences' own wording, and on the artifact for the split the appendix now reports.
+    kn = ROOT / "results/provenance_knob_attribution.json"
+    if kn.exists():
+        K = json.loads(kn.read_text())
+        cov, ends, att = K["coverage"], K["committed_endpoints"], K["gap_attribution"]
+        flat = re.sub(r"\s+", " ", whole)
+        for label, pat, value in (
+                ("primitive table, carrying it as deployed",
+                 r"carrying the hydrogen atom primitive & \$675\$ *& \$([\d.]+)\$",
+                 cov["curated_needs_h|addhs=0"]),
+                ("primitive table, carrying it expanded",
+                 r"carrying the hydrogen atom primitive & \$675\$ *& \$[\d.]+\$ & \$([\d.]+)\$",
+                 cov["curated_needs_h|addhs=1"]),
+                ("primitive table, not carrying it as deployed",
+                 r"not carrying it & \$1\{,\}040\$ & \$([\d.]+)\$", cov["curated_plain|addhs=0"]),
+                ("primitive table, not carrying it expanded",
+                 r"not carrying it & \$1\{,\}040\$ & \$[\d.]+\$ & \$([\d.]+)\$",
+                 cov["curated_plain|addhs=1"]),
+                ("primitive table, mined as deployed",
+                 r"mined, for comparison & \$5\{,\}866\$ & \$([\d.]+)\$", ends["deployed"]["mined"]),
+                ("primitive table, mined expanded",
+                 r"mined, for comparison & \$5\{,\}866\$ & \$[\d.]+\$ & \$([\d.]+)\$",
+                 ends["helper"]["mined"]),
+                ("the reversal, curated through the helper",
+                 r"give curated \$([\d.]+)\$ against mined", ends["helper"]["curated"]),
+                ("the reversal, mined through the helper",
+                 r"give curated \$[\d.]+\$ against mined \$([\d.]+)\$", ends["helper"]["mined"]),
+                ("attribution, gap as deployed",
+                 r"between the subsets is \$\+([\d.]+)\$ as deployed", att["gap_deployed"]),
+                # "expanded" in the manuscript is the helper convention, expansion and validity
+                # floor together -- the same arm the sentence above it quotes as 0.660 against
+                # 0.328 -- not the floor-free intermediate the attribution decomposes through.
+                ("attribution, gap expanded",
+                 r"as deployed and \$-([\d.]+)\$ expanded", -att["gap_helper"]),
+                ("attribution, the validity floor",
+                 r"validity floor carries \$\+([\d.]+)\$", att["moved_by_the_validity_floor"]),
+                ("attribution, expanding hydrogens",
+                 r"expanding hydrogens carries the remaining \$-([\d.]+)\$",
+                 -att["moved_by_expanding_hydrogens"])):
+            m = re.search(pat, flat)
+            check(label, m and m.group(1), value)
+        # The attribution is an accounting identity, so it has to close on its own numbers before
+        # any of them is quoted: the two terms must sum to the distance between the endpoints.
+        checks.append((abs((att["moved_by_expanding_hydrogens"] + att["moved_by_the_validity_floor"])
+                           - (att["gap_helper"] - att["gap_deployed"])) < 1e-9,
+                       "attribution closes: the two terms carry the whole distance",
+                       round(att["moved_by_expanding_hydrogens"] + att["moved_by_the_validity_floor"], 4),
+                       round(att["gap_helper"] - att["gap_deployed"], 4),
+                       "hydrogens plus floor, against helper minus deployed"))
+
     # 9. the coverage gap and everything the appendix derives from it. These moved when the
     # ceiling's convention was corrected, and a perturbation test found that nothing here was
     # checked -- the in-bank ceiling could be edited to any value and this script stayed green.
@@ -334,7 +387,7 @@ def main() -> int:
         m = re.search(r"Of the \$(\d+)\$ comparisons that gives, \$(\d+)\$ reorder", flat)
         check("population axis, comparisons", m and m.group(1), P["comparisons"])
         check("population axis, reordered", m and m.group(2), P["reordered"])
-        m = re.search(r"reorders \$(\d+)\$ of \$(\d+)\$ comparisons on our own split", flat)
+        m = re.search(r"reorders \$(\d+)\$ of \$(\d+)\$ comparisons on our", flat)
         check("population axis, abstract count", m and m.group(1), P["reordered"])
         check("population axis, abstract total", m and m.group(2), P["comparisons"])
         m = re.search(r"median change in a pair's gap between the two populations is \$([\d.]+)\$",

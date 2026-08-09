@@ -10,6 +10,8 @@ accompanies, and each is checked against the number the paper prints before it i
                reaches, what the selector keeps of that, what the ranker returns of that.
   fig_ladder   the five matching criteria as a slope plot. The message is which lines cross and
                which stay parallel, which a table of the same numbers does not show.
+  fig_xdomain  the same slope plot for seven released retrosynthesis systems under four
+               criteria, which is where the reordering is visible rather than argued.
   fig_budget   macro F1 against the output budget, with the regions where the ordering changes
                shaded. The appendix currently states these crossings in prose.
 
@@ -100,6 +102,56 @@ def fig_ladder():
     return {m: (v[0], v[-1]) for m, v in vals.items()}
 
 
+def fig_xdomain():
+    """The same slope plot in another field, on files we did not produce.
+
+    Seven retrosynthesis systems released their own top-k predictions on one shared USPTO-50k test
+    set; re-scoring those files under four matching criteria moves every system and reorders the
+    leading four. The message is the same one \\S\\ref{app:xdomain} makes in prose --- the lines are
+    not parallel, so which system is first is a property of the criterion --- and it is drawn from
+    the ingest artifact rather than retyped, so it cannot drift from the table beside it.
+    """
+    d = _load("retro_leaderboard_cluster0")
+    A, crit = d["accuracy"], ["canonical", "inchikey", "nostereo", "tautomer"]
+    short = ["canonical", "InChIKey", "no-stereo", "tautomer"]
+    moving = sorted({s for pair in d["pairs_that_exchange"]["top1"] for s in pair.split(" vs ")})
+    palette = [ACC, ALT, "#2e6f3e", "#6a3d9a"]
+    colours = dict(zip(moving, palette))
+
+    fig, ax = plt.subplots(figsize=(3.3, 2.6))
+    vals = {}
+    for sys_ in sorted(A, key=lambda m: -A[m]["canonical"]["top1"]):
+        y = [A[sys_][c]["top1"] for c in crit]
+        vals[sys_] = y
+        c = colours.get(sys_, GREY)
+        ax.plot(range(len(crit)), y, marker="o", ms=3, lw=1.5 if sys_ in colours else 1.0,
+                color=c, alpha=1.0 if sys_ in colours else 0.45,
+                zorder=3 if sys_ in colours else 2)
+        ax.text(len(crit) - 0.92, y[-1], f" {sys_}", fontsize=6.5, color=c, va="center")
+    ax.set_xticks(range(len(crit)))
+    ax.set_xticklabels(short, fontsize=7, rotation=20, ha="right")
+    ax.set_ylabel("top-1 accuracy", fontsize=8)
+    ax.tick_params(labelsize=7.5)
+    ax.set_xlim(-0.25, len(crit) + 1.5)
+    for side in ("top", "right"):
+        ax.spines[side].set_visible(False)
+    fig.tight_layout()
+    fig.savefig(OUT / "fig_xdomain.pdf")
+    plt.close(fig)
+
+    # The drawing has to show the reordering the artifact records, and no other: a pair the
+    # artifact calls exchanged must cross somewhere between two adjacent criteria, and a pair it
+    # does not must never cross. A figure that agrees with its caption but not with its source is
+    # the failure this file exists to prevent.
+    def crosses(a, b):
+        signs = {(vals[a][i] > vals[b][i]) for i in range(len(crit)) if vals[a][i] != vals[b][i]}
+        return len(signs) > 1
+    recorded = {frozenset(p.split(" vs ")) for p in d["pairs_that_exchange"]["top1"]}
+    drawn = {frozenset((a, b)) for a in vals for b in vals if a < b and crosses(a, b)}
+    assert drawn == recorded, f"drawn crossings {drawn} != the artifact's {recorded}"
+    return {"systems": len(vals), "criteria": len(crit), "exchanging pairs": len(recorded)}
+
+
 def fig_budget():
     """Macro F1 against k, with the region where the ordering differs from the field's k=15."""
     d = _load("budget_curves")
@@ -136,7 +188,7 @@ def fig_budget():
 
 
 def main() -> int:
-    for fn in (fig_decomp, fig_ladder, fig_budget, fig_transfer, fig_propensity,
+    for fn in (fig_decomp, fig_ladder, fig_xdomain, fig_budget, fig_transfer, fig_propensity,
                fig_gap, fig_curators):
         info = fn()
         print(f"{fn.__name__:12} -> paper/{fn.__name__.replace('fig_', 'fig_')}.pdf   {info}")
