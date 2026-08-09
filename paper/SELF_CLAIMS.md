@@ -194,6 +194,45 @@ for f in ('population_axis','retro_population_axis'):
           '| Holm survivors', d['holm_survivors'])"
 ```
 
+## 3b. The manuscript reads as a paper, not as a record of how it was written
+
+**Check:** the prose carries no trace of its own production. No file names or code paths, no address
+to a reader, no deferral to later work, no sentence that recounts what an earlier version said, and
+no construction that marks machine drafting. The abstract states qualitative conclusions and carries
+no figures; the introduction enters the field before it enters the method and ends with a roadmap;
+related work describes prior work and names the present study only in its final paragraph; captions
+describe what is shown.
+
+```bash
+python - <<'EOF'
+import pathlib, re
+PAT = {
+ "code path": r"\\texttt\{[^}]*\.(?:py|json|txt|md|sh|csv)\}|scripts/|docs/|results/",
+ "reader address": r"\b(?:a reader|the reader|referee|reviewer)\b",
+ "deferral": r"\b(?:future work|we leave|will be addressed)\b",
+ "hedge": r"\b(?:we do not claim|the honest|caveat travels|cannot sign|worth stating)\b",
+ "em dash": r"---",
+}
+for f in [pathlib.Path("paper/grail_iclr.tex")] + sorted(pathlib.Path("paper/app").glob("*.tex")):
+    t = f.read_text()
+    hits = {k: len(re.findall(v, t, re.I)) for k, v in PAT.items()}
+    if any(hits.values()):
+        print(f.name, {k: n for k, n in hits.items() if n})
+EOF
+```
+
+**Status: PASS.** The document holds no match on any of the five patterns. The abstract and the
+introduction contain no numeric expression at all.
+
+**Two failures are recorded because the checks that caught them were added afterwards.** A pass that
+varied one repeated construction computed replacement offsets against a string it was mutating and
+corrupted sixty sites, each losing the last letter of the preceding word; LaTeX compiled and all
+number checks passed throughout, because the damage fell entirely inside prose, and only a targeted
+scan found it. Separately, the fourth of the four choices the paper names was asserted in the
+abstract, the introduction, the contributions and the limitations while its measurement lived only
+in an appendix, which reviewers are under no obligation to read. Neither failure is visible to a
+check that reads numbers.
+
 ## 4. Every comparative claim carries an interval on the *difference*
 
 **Check:** marginal intervals overlapping says nothing about the paired difference in either
