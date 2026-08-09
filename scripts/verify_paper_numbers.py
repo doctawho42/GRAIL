@@ -422,11 +422,9 @@ def main() -> int:
         m = re.search(r"Not one of the \$(\d+)\$ interactions survives Holm", flat)
         check("the family both instances form", m and m.group(1),
               P["comparisons"] + R["comparisons"])
-        m = re.search(r"\$(\d+)\$ of \$380\$ orderings change on their data and \$(\d+)\$ of "
-                      r"\$60\$ on ours", flat)
-        check("abstract, their reorderings", m and m.group(1), R["reordered"])
-        check("abstract, our reorderings", m and m.group(2), P["reordered"])
-        m = re.search(r"none of the \$(\d+)\$ interactions survives correction", flat)
+        # The abstract states the negative once and carries only the family size; the two counts
+        # it used to repeat are checked where they are reported, in the appendix above.
+        m = re.search(r"of \$(\d+)\$ interactions varying nothing but", flat)
         check("abstract, the family size", m and m.group(1),
               P["comparisons"] + R["comparisons"])
         # The claim the paper now rests on: nothing survives. This is a gate, not a comparison --

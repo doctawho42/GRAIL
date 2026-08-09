@@ -28,8 +28,9 @@
 \newcommand{\interB}{+0.063}          % MetaTrans<->SyGMa interaction
 \newcommand{\interBci}{[+0.022,\,+0.106]}
 
-\title{Measured, Not Estimated: Undeclared Conventions\\
-Decide Molecular Machine-Learning Leaderboards}
+\title{Three Undeclared Choices Reorder a\\
+Molecular Machine-Learning Leaderboard;\\
+a Fourth Only Makes One Unreadable}
 
 % double-blind: authors stay anonymous until camera-ready
 \author{Anonymous authors \\ Paper under double-blind review}
@@ -52,9 +53,11 @@ varies. Re-scoring eleven published retrosynthesis systems on the test sets they
 criterion moves systems by certifiably different amounts in both groups and reorders the tighter
 one: among seven separated by a median $0.013$, a system fourth under canonical matching is first
 under stereo-blind matching, five of twenty-one pairs exchange and $109$ of $448$ paired
-interactions survive Holm; among three separated by $0.047$, none exchange. Reordering needs a
-leaderboard packed tighter than the criterion's differential effect --- which is what a benchmark
-looks like as it matures.
+interactions survive Holm; among three separated by $0.047$, none exchange. Reordering needs the
+criterion to move two systems by more than the gap between them, so a leaderboard becomes vulnerable
+exactly as it matures. Over $439$ method-pair by criterion-pair comparisons on four leaderboards in
+three domains, with nothing re-scored, the movement exceeds the gap once in nine and reverses the
+pair once in seventeen --- and never reverses one where the gap survives it.
 
 A single recall number cannot say which of three failure modes is responsible. Where the rule base
 can be enumerated it factorises \emph{exactly} into coverage, selection and ranking, and
@@ -72,15 +75,11 @@ instance each: a primitive counting explicit structure breaks the match before a
 consumes breaks the product instead; and a bank assembled from two conventions has no right answer
 at all. Only the third is repairable: dispatching per template recovers $+0.0062$ $[+0.0032,+0.0095]$.
 
-A fourth choice is undeclared without being shown to decide anything, and we can separate the two
-only because we tested it. Those eleven files sit on three test sets sharing a tenth of their
-reactions, fifteen products carry a different recorded reaction in two of them, and our own copy of
-the name is one of the deviations. Holding method, criterion and budget fixed and varying only which
-reactions or substrates are in, $44$ of $380$ orderings change on their data and $10$ of $60$ on
-ours --- and none of the $440$ interactions survives correction, so those changes are what a subset
-this size produces on its own. Output size is the plainest of the four: every certified reversal
-runs through the one system emitting $81$ candidates against everyone else's $8$ to $11$. We release
-the protocol, the split, the frozen predictions and the checks.
+A fourth choice is undeclared without deciding anything, and only testing tells those apart: those
+eleven files sit on three test sets under one name, and of $440$ interactions varying nothing but
+which reactions or substrates are in, none survives correction. Output size is the plainest of the
+four: every certified reversal runs through the one system emitting $81$ candidates against everyone
+else's $8$ to $11$. We release the protocol, the split, the frozen predictions and the checks.
 \end{abstract}
 
 \section{Introduction}
@@ -94,17 +93,23 @@ on frozen predictions, in two fields. Three of them decide positions. The fourth
 ambiguous, and we report it as not shown to decide anything, which is a distinction this paper is
 equipped to make and the reason for making it here.
 
-Metabolite prediction is where they can be measured \emph{exactly}, which is why the deep case study
-is there. When a drug enters the body, enzymes oxidise, cleave and conjugate it into metabolites;
+Metabolite prediction is where they can be measured \emph{exactly}, and that is the reason for the
+case study rather than familiarity with the domain. Everywhere else in this paper the quantity a
+convention acts on is itself estimated: a beam is a budget that widens with compute, a sampled
+corpus is a sample, and a criterion's effect on either is confounded with how much of the space was
+searched. A finite enumerable rule bank removes that. Applying all of it answers exhaustively what
+the method could ever reach, so the convention is the only thing left varying --- which is how a
+hydrogen convention turned out to have reversed one of our own published conclusions
+(\S\ref{sec:enginereach}), a check no beam-bounded setting would have supported.
+
+When a drug enters the body, enzymes oxidise, cleave and conjugate it into metabolites;
 which ones form is a regulatory question and identifying them experimentally is slow. Rule-based
 systems encode known biotransformations as templates and rank the products of every applicable one
 \citep{Ridder_2008, de_Bruyn_Kops_2020, Djoumbou_Feunang_2019}, learned systems predict the
 transformation directly \citep{Litsa_2020, Zhu_2024}, and hybrids use a learned model to choose
 templates (\S\ref{sec:related}); all are compared on top-$k$ recall. That comparison confounds three
 failure modes --- no rule expresses the transformation, the rule is not selected, the product is
-ranked too low --- so a low score identifies no deficiency and suggests no remedy. Where the rule
-base can be enumerated, recall factorises exactly into coverage, selection and ranking, the coverage
-term obtained by applying the entire bank and asking what it reaches. Applied to two such methods it explains a leaderboard instead of
+ranked too low --- so a low score identifies no deficiency and suggests no remedy. Recall factorises exactly into those three. Applied to two such methods it explains a leaderboard instead of
 restating one: the wider system reaches more chemistry and converts a third of it, while the
 narrower has no selection stage in which to lose anything and wins for that reason alone. An aggregate counting hits without charging
 for the volume emitted is therefore not neutral between architectures, since recall charges the cost
@@ -178,7 +183,7 @@ separate single-step accuracy from search. What is unestablished is how far any 
 ranking when it is the only thing changing, and whether a criterion \emph{reorders} a published
 leaderboard rather than shifting every system on it.
 
-\section{TAME: an evaluation protocol with a declared matching criterion}
+\section{TAME: what is declared, and what is held fixed}
 \label{sec:tame}
 
 TAME is a \emph{protocol, an audited split and a re-scoring harness}, not a leaderboard service: the
