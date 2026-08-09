@@ -306,6 +306,18 @@ other end: on eight published molecular generators the same criterion certifies 
 interactions and yields one exchange, a metric scoring seven of eight above $0.986$ leaving almost
 nothing close enough to cross (Appendix~\ref{app:xdomain}).
 
+\looseness=-1
+\paragraph{Which population a familiar name refers to.} The same eleven files answer the fourth
+question, and the answer is different in kind. Two of the three groups share $490$ reactions on
+which they agree about the recorded reaction, nested inside each group's own five thousand, so two
+systems can be compared on the subset and on the whole with method, criterion and budget all fixed.
+Of the $380$ comparisons this gives, $44$ change the ordering; on the metabolite split of
+\S\ref{sec:results} the same test gives $10$ of $60$. Neither instance survives correction. None of
+the $440$ interactions passes Holm at $0.05$, and on the metabolite split none has an interval
+excluding zero before correction. The population is therefore ambiguous in released work without
+being shown to decide a ranking, and the two statements are separable only because the same test is
+applied to all four choices (Appendix~\ref{app:popaxis}).
+
 \section{The decomposition and the coverage ceiling}
 \label{sec:decomp}
 
@@ -358,10 +370,10 @@ back: the deployed pair caps the pipeline near $0.41$, macro on $245$ substrates
 (Appendix~\ref{app:props}).
 
 \looseness=-1
-Removing selection entirely tests that reading rather than restating it. Applying the bank with no
-selector and no threshold, ranking the whole pool and truncating at SyGMa's output, the bank passes
-SyGMa by $0.167$ $[0.112,0.223]$ at $k=82$ and already by $0.063$ $[0.001,0.125]$ at $k=32$. It is
-behind at $k=8$ and indistinguishable at the field's $k=15$, so it converts only above the budget the convention sets, which is the variable of \S\ref{sec:metric} acting in favour of this system where it later acts against it (Appendix~\ref{app:noselect}).
+Removing selection entirely tests that reading. With no selector and no threshold, ranking the whole
+pool, the bank passes SyGMa by $0.167$ $[0.112,0.223]$ at $k=82$ and by $0.063$ $[0.001,0.125]$ at
+$k=32$, while remaining behind at $k=8$ and indistinguishable at the field's $k=15$
+(Appendix~\ref{app:noselect}).
 
 \looseness=-1
 Applied to a second method it stops being self-diagnosis: SyGMa decomposes on the same split in the
@@ -557,47 +569,45 @@ survives to $c\approx0.055$ (Appendix~\ref{app:props}).
 \label{sec:diagnosis}
 
 \looseness=-1
-GRAIL trails both published comparators and leads at no output budget: SyGMa reaches $0.572$ on the
-$1{,}168$ substrates they share, a paired $-0.242$ $[-0.271,\,-0.212]$. The second confirmatory
-comparison locates that shortfall in selection: through the same enumeration and filter, a learned
-selector reaches $0.266$ where rule-firing frequency alone reaches $0.410$, a paired $-0.144$
-$[-0.196,\,-0.095]$, and the remedy the regime prescribes fails too, inverse-propensity weighting
-moving it to $0.249$. Choosing which of \nbank\ rules apply is extreme multi-label classification
-with a near-empty positive set, where frequency baselines are hard to beat \citep{Jain_2016}; they
-are not beaten here.
+GRAIL trails both published comparators at the field's budget and leads at none: SyGMa reaches
+$0.572$ on the $1{,}168$ substrates they share, a paired $-0.242$ $[-0.271,\,-0.212]$. The second
+confirmatory comparison locates that shortfall in selection. Through the same enumeration and
+filter, a learned selector reaches $0.266$ where rule-firing frequency alone reaches $0.410$, a
+paired $-0.144$ $[-0.196,\,-0.095]$, and inverse-propensity weighting moves it to $0.249$.
+Choosing which of \nbank\ rules apply is extreme multi-label classification with a near-empty
+positive set, where frequency baselines are hard to beat \citep{Jain_2016}.
 \label{sec:evidence}
-The diagnosis rests on nine measurements, six of which failed and are the more useful half
-(Appendix~\ref{app:props}).
 
 \section{Limitations}
 \label{sec:limitations}
 
 \looseness=-2
-\paragraph{What the metabolite numbers bound.} The five-method table rests on $\nshared$ shared substrates of frozen predictions, because MetaTrans's pipeline no longer reproduces and BioTransformer's configuration is unscripted, and the other three on the full $\ntest$;
-Appendix~\ref{app:xdomain} states which figure is on which. An unannotated but real product scores
-as a false positive, so every precision and F1 figure is pessimistic. Some references are
-multi-generation products no single rule reaches: depth-2 lifts the ceiling by ${\sim}0.012$ at
-$8.5$ times the cost, so $\ceiling$ bounds this formulation rather than the task.
+\paragraph{What the metabolite numbers bound.} The five-method table rests on $\nshared$ shared
+substrates of frozen predictions, because MetaTrans's pipeline no longer reproduces and
+BioTransformer's configuration is unscripted; the other three methods are scored on the full
+$\ntest$. An unannotated but real product counts as a false positive, so every precision and F1
+figure is pessimistic. Some references are multi-generation products that no single rule reaches,
+and depth-2 application lifts the ceiling by ${\sim}0.012$ at $8.5$ times the cost, so $\ceiling$
+bounds this formulation and not the task.
 
 \looseness=-2
-\paragraph{What the newer results rest on.} The cross-domain numbers come from eleven files we did
-not produce, read under an assumption proven where an independent ground truth exists, not inferred from those files agreeing, and the reordering there is a top-1 phenomenon. Packing is
-measured across four leaderboards, which is few. The population axis is reported as a negative and
-inherits that design's weakness: two nested populations in each of two instances bound how large an
-interaction would have had to be to show, not whether one exists. The headline figure for this system is a single evaluation of the deployed configuration, selection on validation but for the two exceptions
-\S\ref{sec:tame} names.
+\paragraph{What the newer results rest on.} The cross-domain numbers come from eleven files
+produced elsewhere, read under an assumption proven where an independent ground truth exists, and
+the reordering there is a top-1 phenomenon. Packing is measured across four leaderboards, which is
+few. The population negative bounds how large an interaction would have had to be to show, not
+whether one exists. The figure reported for this system is a single evaluation of the deployed
+configuration.
 
 \section{Conclusion}
 \label{sec:conclusion}
 
 \looseness=-2
-Four choices are settled before any model is compared: the rule that decides when two structures
-are the same molecule, the number of candidates a method may emit, the convention by which an engine
-applies a reaction template, and the population a dataset name refers to. None is routinely
-declared, and three of them move a published ordering. Each can be read from files that are already
-public, so what the evidence supports is a requirement to declare them rather than a standard that
-fixes them, and a released checker reports all four from a template bank and a set of prediction
-files.
+Four choices are settled before any model is compared: when two structures count as the same
+molecule, how many candidates a method may emit, how an engine applies a reaction template, and
+which population a dataset name refers to. None is routinely declared and three of them move a
+published ordering. All four can be read from files that are already public, and the checker
+released with this work reports them from a template bank and a set of prediction files, so the
+evidence supports a requirement to declare them and not a standard that fixes them.
 
 \subsubsection*{Reproducibility statement}
 
