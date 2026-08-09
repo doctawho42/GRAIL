@@ -292,7 +292,7 @@ def main() -> int:
             checks.append((close(m and m.group(1).replace("{,}", "").replace(",", ""), value, tol),
                            label, m and m.group(1), value,
                            "from results/coverage_gap_types.json"))
-        m = re.search(r"--- \$([\d,{}]+)\$ of \$([\d,{}]+)\$, the complement", flat)
+        m = re.search(r"one step: \$([\d,{}]+)\$ of \$([\d,{}]+)\$, the complement", flat)
         check("gap counts printed in the text", m and m.group(1).replace("{,}", ""), unc)
         check("reference total printed in the text", m and m.group(2).replace("{,}", ""), total)
 

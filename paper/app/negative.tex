@@ -25,7 +25,7 @@ Against this, the noisy-or aggregation used at inference pools the duplicated sc
 partially restores what training divided. The ablation reported below shows in addition that the
 per-rule embedding component is not load-bearing, which removes the mechanism by which the divided
 signal would matter. We therefore treat deduplication as a housekeeping measure affecting startup
-cost and memory rather than as a route to better accuracy.
+cost and memory, not as a route to better accuracy.
 
 \subsection{Rules that never contribute}
 
@@ -77,10 +77,10 @@ replicate on validation, and we do not report it as a result.
 \S\ref{app:enginereach} shows that what a bank reaches depends on a convention its engine applies
 globally, and that banks disagree about which convention they want. The obvious repair is to stop
 having a global one and apply each template under the convention it was written in. The policy was
-fixed before anything was measured --- a template gets the expanded substrate if and only if its
+fixed before anything was measured (a template gets the expanded substrate if and only if its
 reactant side carries a bracket-hydrogen atom, blind to the product side, to the hydrogen-count
 primitive and to negations, with the $238$ templates whose recursive \textsc{smarts} that test
-cannot see inside taking their own bank's majority convention --- because a policy chosen after
+cannot see inside taking their own bank's majority convention) because a policy chosen after
 seeing which setting wins would beat any global setting by construction and would measure nothing.
 
 The quantity that decides the claim is the residual rather than the win: reach under dispatch minus
@@ -102,13 +102,13 @@ BioTransformer & $994$    & $726$ & 0.487 $[0.462,0.513]$ & 0.487 & $+0.000$ $[0
 
 One prediction was structural, one held and one failed. SyGMa is the null: none of its templates is
 dispatched, so dispatch is the identity map and has to reproduce its implicit-hydrogen arm to four
-decimals, which it does --- that is the check that the classifier is not sending templates somewhere
+decimals, which it does: that is the check that the classifier is not sending templates somewhere
 it should not. BioTransformer was predicted to clear its better global setting, because $268$ of its
 templates want the convention the deployed arm denies them; it does not clear it. Those templates do
 add products, and the products are real, but almost none of them recovers a reference these
 substrates carry: its residual is $+0.000$ $[0.000,0.001]$, an interval whose upper bound is a
 single reference. Our own bank clears it by $+0.006$ $[+0.003,+0.010]$, all three arms measured in
-one pass over the same substrates so the residual is a paired difference rather than a gap between
+one pass over the same substrates so the residual is a paired difference r, nota gap between
 marginals, which is the wrong test for a within-bank contrast. Where that residual comes from was
 registered as a prediction and the prediction failed: it is not created by the bank being mixed, but
 by the $675$ hand-written templates that want an expansion the bank's global setting denies them,
@@ -117,7 +117,7 @@ and it is \emph{larger} on those templates alone than on the bank containing the
 
 The reading we take from this remains the recommendation \S\ref{sec:decomp}
 already makes: declare the convention. Dispatching it is worth having for one bank in three, and
-only for a bank that is genuinely mixed --- ours, at $675$ templates in $\nbank$ against none of
+only for a bank that is genuinely mixed: ours, at $675$ templates in $\nbank$ against none of
 SyGMa's. For a bank written in one convention there is nothing for a cleverer engine to recover, and
 the failure of the BioTransformer prediction is the useful half of this: a bank can be mixed in its
 syntax and single-convention in what it reaches.

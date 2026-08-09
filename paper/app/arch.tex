@@ -7,7 +7,7 @@ filter and generator scores, combining a judgement about the plausibility of the
 generator's confidence in the rule that made it.
 
 Both learned stages train on positive-unlabelled data. Annotated metabolites are the only
-positives; rule-applicable products that carry no annotation are unlabelled rather than negative,
+positives; rule-applicable products that carry no annotation are unlabelled, not negative,
 because a missing annotation does not establish that a transformation does not occur. The filter
 exposes its raw classifier outputs so that a non-negative positive-unlabelled surrogate is never
 applied on top of a sigmoid when that estimator is selected, and the generator down-weights
@@ -61,7 +61,7 @@ the resulting 2304-dimensional vector is mapped through a three-layer perceptron
 
 An alternative variant encodes one merged substrate--product graph, whose 18-dimensional nodes
 are joined by cross-edges placed according to an element-aware maximum-common-substructure
-correspondence between atoms rather than by index order, so that chemically meaningful atom
+correspondence between atoms r, notby index order, so that chemically meaningful atom
 mappings are preserved across the reaction. We measured the two rather than assuming which should
 be the default, and report the comparison below.
 
@@ -128,7 +128,7 @@ Support across mined templates is heavily skewed. The positional miner alone ext
 unique self-tested templates from the training positives. Of these, 4{,}274 (73\%)
 rest on a single training pair, and only 457 on five or more; the single best-supported template
 covers 1{,}531 pairs. The bank is therefore dominated by highly specific, near-single-example
-templates rather than by broad general reactions.
+templates r, notby broad general reactions.
 
 Re-running the miner independently over the same training split re-derives templates that are all
 already in the bank: 5{,}856 of 5{,}856, none new. Mining is deterministic and, on this corpus,
