@@ -1,7 +1,7 @@
 {
  "config": {
   "script": "evalretro_ingest.py",
-  "git_commit": "2d258731daaff28ccc6607dd848cd534d64902e2",
+  "git_commit": "efa321fb77e6141241b0199a70a76361d1c45473",
   "git_dirty": true,
   "source": "EvalRetro, doi:10.6084/m9.figshare.25325623, CC BY 4.0",
   "repo_split": "grail_metabolism/data/USPTO_50k/test.csv",
@@ -54,6 +54,23 @@
     50
    ],
    "test_csv": "grail_metabolism/data/evalretro/cluster2_test.csv"
+  }
+ },
+ "population_overlap": {
+  "cluster0 n cluster1": {
+   "shared": 505,
+   "share_of_smaller": 0.1014
+  },
+  "cluster0 n cluster2": {
+   "shared": 507,
+   "share_of_smaller": 0.1014
+  },
+  "cluster1 n cluster2": {
+   "shared": 500,
+   "share_of_smaller": 0.1004
+  },
+  "all": {
+   "shared": 45
   }
  }
 }

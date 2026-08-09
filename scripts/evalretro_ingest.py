@@ -35,6 +35,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import itertools
 import json
 import pathlib
 import sys
@@ -196,12 +197,34 @@ def main() -> int:
             "ranks_per_reaction": [min(depths), max(depths)],
             "test_csv": str(csv_path.relative_to(ROOT))}
 
+    # How far apart the populations actually are. The clustering threshold only says that two
+    # files below it are not the same set; it does not say they share nothing, and calling them
+    # disjoint without measuring it is the same unmeasured assertion this paper is about.
+    prod_sets = {label: {product for _, _, product in
+                         [(r[0], r[1], canonical_set(r[1])) for r in
+                          csv.reader((ROOT / g["test_csv"]).open())][1:]}
+                 for label, g in report_groups.items()}
+    overlap = {}
+    for a_, b_ in itertools.combinations(sorted(prod_sets), 2):
+        inter = prod_sets[a_] & prod_sets[b_]
+        overlap[f"{a_} n {b_}"] = {
+            "shared": len(inter),
+            "share_of_smaller": round(len(inter) / max(min(len(prod_sets[a_]),
+                                                           len(prod_sets[b_])), 1), 4)}
+    if len(prod_sets) > 2:
+        overlap["all"] = {"shared": len(set.intersection(*prod_sets.values()))}
+    print("\n  how far apart the populations are, on canonical product sets")
+    for k, v in overlap.items():
+        print(f"    {k:22} {v['shared']:>5}" + (f"   {v['share_of_smaller']:.3f} of the smaller"
+                                                if "share_of_smaller" in v else ""))
+
     rep = {"config": {**_code_version(), "source": SOURCE,
                       "repo_split": str(REPO_SPLIT.relative_to(ROOT)),
                       "cluster_rule": f"product-set overlap >= {SAME_SET}",
                       "alignment": "reaction identified by (product, ground-truth reactants); "
                                    "file order and index column never used"},
-           "n_systems": len(parsed), "n_test_sets": len(groups), "clusters": report_groups}
+           "n_systems": len(parsed), "n_test_sets": len(groups), "clusters": report_groups,
+           "population_overlap": overlap}
     Path(args.report).write_text(json.dumps(rep, indent=1))
     print(f"\nwrote {args.report}")
     return 0

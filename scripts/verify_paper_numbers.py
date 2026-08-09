@@ -186,6 +186,25 @@ def main() -> int:
             m = re.search(pat, flat)
             check(label, m and m.group(1), pv["exclusive"][key])
 
+    # 8a. The three populations, and how far apart they are. The appendix printed 0.10 two lines
+    # under the word "disjoint", so the number was right and the description was not; both are now
+    # tied to the same measurement.
+    ing = ROOT / "results/evalretro_ingest.json"
+    if ing.exists():
+        G = json.loads(ing.read_text())
+        flat = re.sub(r"\s+", " ", whole)
+        pair = [v for k, v in G["population_overlap"].items() if k != "all"]
+        worst = max(v["share_of_smaller"] for v in pair)
+        m = re.search(r"the between-cluster\s*overlap is \$([\d.]+)\$", flat)
+        check("between-cluster overlap", m and m.group(1), worst,
+              "the largest of the pairwise shares, so the printed figure bounds them all")
+        check("test sets the eleven sit on", str(G["n_test_sets"]), 3.0, "clusters the ingest found")
+        checks.append((all(0.0 < v["share_of_smaller"] < 0.9 for v in pair),
+                       "the three populations are neither disjoint nor the same set",
+                       f"pairwise shares {[v['share_of_smaller'] for v in pair]}",
+                       "strictly between 0 and the clustering threshold",
+                       "which is why the manuscript may not call them disjoint"))
+
     # 8b. The knob attribution: the table that reversed, the endpoints it reversed between, and
     # what carries the reversal. None of this was checked, and the section it backs was the one
     # that turned out to name a population it was not measured on -- so it is anchored on the
