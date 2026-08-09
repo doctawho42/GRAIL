@@ -326,6 +326,27 @@ def main() -> int:
                                               ("move over gap", v["closer_than_the_move"]))):
                 check(f"packing, {shown} {label}", row and row.group(i + 1), val)
 
+    # 10e. the population axis, the fourth choice, measured rather than demonstrated
+    pa = ROOT / "results/population_axis.json"
+    if pa.exists():
+        P = json.loads(pa.read_text())
+        flat = re.sub(r"\s+", " ", whole)
+        m = re.search(r"Of the \$(\d+)\$ comparisons that gives, \$(\d+)\$ reorder", flat)
+        check("population axis, comparisons", m and m.group(1), P["comparisons"])
+        check("population axis, reordered", m and m.group(2), P["reordered"])
+        m = re.search(r"reorders \$(\d+)\$ of \$(\d+)\$ comparisons on our own split", flat)
+        check("population axis, abstract count", m and m.group(1), P["reordered"])
+        check("population axis, abstract total", m and m.group(2), P["comparisons"])
+        m = re.search(r"median change in a pair's gap between the two populations is \$([\d.]+)\$",
+                      flat)
+        check("population axis, median change", m and m.group(1), P["median_gap_change"])
+        m = re.search(r"Precision reorders (\w+) comparisons and F1 (\w+)", flat)
+        WORDS = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "none": 0}
+        check("population axis, precision", m and WORDS.get(m.group(1)),
+              P["by_metric"]["precision"]["reordered"])
+        check("population axis, f1", m and WORDS.get(m.group(2)),
+              P["by_metric"]["f1"]["reordered"])
+
     # 11. the cross-domain leaderboard: the run the paper specified in advance and then ran. Its
     # counts are the load-bearing part -- an exchange is visible, a certified interaction is not --
     # so every one of them is recomputed here rather than trusted to a paragraph.

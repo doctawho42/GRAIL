@@ -1,0 +1,595 @@
+{
+ "config": {
+  "script": "population_axis.py",
+  "git_commit": "3d9dc66a196e9e8d30d691cb52829e3e4214cd7b",
+  "git_dirty": true,
+  "source": "results/set_metrics_by_criterion.json",
+  "populations": {
+   "shared150": 150,
+   "full1170": 1170
+  },
+  "methods": [
+   "GRAIL",
+   "MetaPredictor",
+   "SyGMa"
+  ],
+  "criteria": [
+   "canonical",
+   "inchi_no_stereo",
+   "inchikey",
+   "inchikey_tautomer",
+   "tanimoto1"
+  ],
+  "metrics": [
+   "recall",
+   "f1",
+   "precision",
+   "jaccard"
+  ],
+  "note": "the same methods, criteria and estimator on two populations of one split; two populations is a weak design and is not offered as a general claim"
+ },
+ "comparisons": 60,
+ "reordered": 10,
+ "ties_skipped": 0,
+ "median_gap_change": 0.0058,
+ "by_metric": {
+  "recall": {
+   "comparisons": 15,
+   "reordered": 5
+  },
+  "f1": {
+   "comparisons": 15,
+   "reordered": 1
+  },
+  "precision": {
+   "comparisons": 15,
+   "reordered": 4
+  },
+  "jaccard": {
+   "comparisons": 15,
+   "reordered": 0
+  }
+ },
+ "rows": [
+  {
+   "metric": "recall",
+   "criterion": "canonical",
+   "pair": "GRAIL vs MetaPredictor",
+   "gap_shared150": -0.1824,
+   "gap_full1170": -0.2072,
+   "change": 0.0248,
+   "reordered": false
+  },
+  {
+   "metric": "recall",
+   "criterion": "canonical",
+   "pair": "GRAIL vs SyGMa",
+   "gap_shared150": -0.1655,
+   "gap_full1170": -0.2274,
+   "change": 0.0619,
+   "reordered": false
+  },
+  {
+   "metric": "recall",
+   "criterion": "canonical",
+   "pair": "MetaPredictor vs SyGMa",
+   "gap_shared150": 0.0169,
+   "gap_full1170": -0.0202,
+   "change": 0.0371,
+   "reordered": true
+  },
+  {
+   "metric": "recall",
+   "criterion": "inchi_no_stereo",
+   "pair": "GRAIL vs MetaPredictor",
+   "gap_shared150": -0.2197,
+   "gap_full1170": -0.2264,
+   "change": 0.0067,
+   "reordered": false
+  },
+  {
+   "metric": "recall",
+   "criterion": "inchi_no_stereo",
+   "pair": "GRAIL vs SyGMa",
+   "gap_shared150": -0.1978,
+   "gap_full1170": -0.2501,
+   "change": 0.0523,
+   "reordered": false
+  },
+  {
+   "metric": "recall",
+   "criterion": "inchi_no_stereo",
+   "pair": "MetaPredictor vs SyGMa",
+   "gap_shared150": 0.0219,
+   "gap_full1170": -0.0237,
+   "change": 0.0456,
+   "reordered": true
+  },
+  {
+   "metric": "recall",
+   "criterion": "inchikey",
+   "pair": "GRAIL vs MetaPredictor",
+   "gap_shared150": -0.219,
+   "gap_full1170": -0.2225,
+   "change": 0.0035,
+   "reordered": false
+  },
+  {
+   "metric": "recall",
+   "criterion": "inchikey",
+   "pair": "GRAIL vs SyGMa",
+   "gap_shared150": -0.1981,
+   "gap_full1170": -0.2463,
+   "change": 0.0482,
+   "reordered": false
+  },
+  {
+   "metric": "recall",
+   "criterion": "inchikey",
+   "pair": "MetaPredictor vs SyGMa",
+   "gap_shared150": 0.0209,
+   "gap_full1170": -0.0238,
+   "change": 0.0447,
+   "reordered": true
+  },
+  {
+   "metric": "recall",
+   "criterion": "inchikey_tautomer",
+   "pair": "GRAIL vs MetaPredictor",
+   "gap_shared150": -0.2193,
+   "gap_full1170": -0.2299,
+   "change": 0.0106,
+   "reordered": false
+  },
+  {
+   "metric": "recall",
+   "criterion": "inchikey_tautomer",
+   "pair": "GRAIL vs SyGMa",
+   "gap_shared150": -0.1965,
+   "gap_full1170": -0.2528,
+   "change": 0.0563,
+   "reordered": false
+  },
+  {
+   "metric": "recall",
+   "criterion": "inchikey_tautomer",
+   "pair": "MetaPredictor vs SyGMa",
+   "gap_shared150": 0.0228,
+   "gap_full1170": -0.0229,
+   "change": 0.0457,
+   "reordered": true
+  },
+  {
+   "metric": "recall",
+   "criterion": "tanimoto1",
+   "pair": "GRAIL vs MetaPredictor",
+   "gap_shared150": -0.1826,
+   "gap_full1170": -0.2097,
+   "change": 0.0271,
+   "reordered": false
+  },
+  {
+   "metric": "recall",
+   "criterion": "tanimoto1",
+   "pair": "GRAIL vs SyGMa",
+   "gap_shared150": -0.1659,
+   "gap_full1170": -0.2275,
+   "change": 0.0616,
+   "reordered": false
+  },
+  {
+   "metric": "recall",
+   "criterion": "tanimoto1",
+   "pair": "MetaPredictor vs SyGMa",
+   "gap_shared150": 0.0167,
+   "gap_full1170": -0.0178,
+   "change": 0.0345,
+   "reordered": true
+  },
+  {
+   "metric": "f1",
+   "criterion": "canonical",
+   "pair": "GRAIL vs MetaPredictor",
+   "gap_shared150": -0.0209,
+   "gap_full1170": -0.0183,
+   "change": 0.0026,
+   "reordered": false
+  },
+  {
+   "metric": "f1",
+   "criterion": "canonical",
+   "pair": "GRAIL vs SyGMa",
+   "gap_shared150": 0.091,
+   "gap_full1170": 0.0852,
+   "change": 0.0058,
+   "reordered": false
+  },
+  {
+   "metric": "f1",
+   "criterion": "canonical",
+   "pair": "MetaPredictor vs SyGMa",
+   "gap_shared150": 0.1119,
+   "gap_full1170": 0.1035,
+   "change": 0.0084,
+   "reordered": false
+  },
+  {
+   "metric": "f1",
+   "criterion": "inchi_no_stereo",
+   "pair": "GRAIL vs MetaPredictor",
+   "gap_shared150": -0.0309,
+   "gap_full1170": -0.0255,
+   "change": 0.0054,
+   "reordered": false
+  },
+  {
+   "metric": "f1",
+   "criterion": "inchi_no_stereo",
+   "pair": "GRAIL vs SyGMa",
+   "gap_shared150": 0.0901,
+   "gap_full1170": 0.0851,
+   "change": 0.005,
+   "reordered": false
+  },
+  {
+   "metric": "f1",
+   "criterion": "inchi_no_stereo",
+   "pair": "MetaPredictor vs SyGMa",
+   "gap_shared150": 0.121,
+   "gap_full1170": 0.1106,
+   "change": 0.0104,
+   "reordered": false
+  },
+  {
+   "metric": "f1",
+   "criterion": "inchikey",
+   "pair": "GRAIL vs MetaPredictor",
+   "gap_shared150": -0.0028,
+   "gap_full1170": 0.0032,
+   "change": 0.006,
+   "reordered": true
+  },
+  {
+   "metric": "f1",
+   "criterion": "inchikey",
+   "pair": "GRAIL vs SyGMa",
+   "gap_shared150": 0.0897,
+   "gap_full1170": 0.0852,
+   "change": 0.0045,
+   "reordered": false
+  },
+  {
+   "metric": "f1",
+   "criterion": "inchikey",
+   "pair": "MetaPredictor vs SyGMa",
+   "gap_shared150": 0.0925,
+   "gap_full1170": 0.082,
+   "change": 0.0105,
+   "reordered": false
+  },
+  {
+   "metric": "f1",
+   "criterion": "inchikey_tautomer",
+   "pair": "GRAIL vs MetaPredictor",
+   "gap_shared150": -0.0306,
+   "gap_full1170": -0.0259,
+   "change": 0.0047,
+   "reordered": false
+  },
+  {
+   "metric": "f1",
+   "criterion": "inchikey_tautomer",
+   "pair": "GRAIL vs SyGMa",
+   "gap_shared150": 0.0918,
+   "gap_full1170": 0.0874,
+   "change": 0.0044,
+   "reordered": false
+  },
+  {
+   "metric": "f1",
+   "criterion": "inchikey_tautomer",
+   "pair": "MetaPredictor vs SyGMa",
+   "gap_shared150": 0.1224,
+   "gap_full1170": 0.1133,
+   "change": 0.0091,
+   "reordered": false
+  },
+  {
+   "metric": "f1",
+   "criterion": "tanimoto1",
+   "pair": "GRAIL vs MetaPredictor",
+   "gap_shared150": -0.0223,
+   "gap_full1170": -0.0204,
+   "change": 0.0019,
+   "reordered": false
+  },
+  {
+   "metric": "f1",
+   "criterion": "tanimoto1",
+   "pair": "GRAIL vs SyGMa",
+   "gap_shared150": 0.0907,
+   "gap_full1170": 0.0851,
+   "change": 0.0056,
+   "reordered": false
+  },
+  {
+   "metric": "f1",
+   "criterion": "tanimoto1",
+   "pair": "MetaPredictor vs SyGMa",
+   "gap_shared150": 0.113,
+   "gap_full1170": 0.1055,
+   "change": 0.0075,
+   "reordered": false
+  },
+  {
+   "metric": "precision",
+   "criterion": "canonical",
+   "pair": "GRAIL vs MetaPredictor",
+   "gap_shared150": -0.0004,
+   "gap_full1170": 0.0054,
+   "change": 0.0058,
+   "reordered": true
+  },
+  {
+   "metric": "precision",
+   "criterion": "canonical",
+   "pair": "GRAIL vs SyGMa",
+   "gap_shared150": 0.079,
+   "gap_full1170": 0.076,
+   "change": 0.003,
+   "reordered": false
+  },
+  {
+   "metric": "precision",
+   "criterion": "canonical",
+   "pair": "MetaPredictor vs SyGMa",
+   "gap_shared150": 0.0794,
+   "gap_full1170": 0.0706,
+   "change": 0.0088,
+   "reordered": false
+  },
+  {
+   "metric": "precision",
+   "criterion": "inchi_no_stereo",
+   "pair": "GRAIL vs MetaPredictor",
+   "gap_shared150": -0.0068,
+   "gap_full1170": 0.0006,
+   "change": 0.0074,
+   "reordered": true
+  },
+  {
+   "metric": "precision",
+   "criterion": "inchi_no_stereo",
+   "pair": "GRAIL vs SyGMa",
+   "gap_shared150": 0.079,
+   "gap_full1170": 0.0763,
+   "change": 0.0027,
+   "reordered": false
+  },
+  {
+   "metric": "precision",
+   "criterion": "inchi_no_stereo",
+   "pair": "MetaPredictor vs SyGMa",
+   "gap_shared150": 0.0858,
+   "gap_full1170": 0.0757,
+   "change": 0.0101,
+   "reordered": false
+  },
+  {
+   "metric": "precision",
+   "criterion": "inchikey",
+   "pair": "GRAIL vs MetaPredictor",
+   "gap_shared150": 0.0164,
+   "gap_full1170": 0.0229,
+   "change": 0.0065,
+   "reordered": false
+  },
+  {
+   "metric": "precision",
+   "criterion": "inchikey",
+   "pair": "GRAIL vs SyGMa",
+   "gap_shared150": 0.0787,
+   "gap_full1170": 0.0765,
+   "change": 0.0022,
+   "reordered": false
+  },
+  {
+   "metric": "precision",
+   "criterion": "inchikey",
+   "pair": "MetaPredictor vs SyGMa",
+   "gap_shared150": 0.0623,
+   "gap_full1170": 0.0536,
+   "change": 0.0087,
+   "reordered": false
+  },
+  {
+   "metric": "precision",
+   "criterion": "inchikey_tautomer",
+   "pair": "GRAIL vs MetaPredictor",
+   "gap_shared150": -0.0064,
+   "gap_full1170": 0.0006,
+   "change": 0.007,
+   "reordered": true
+  },
+  {
+   "metric": "precision",
+   "criterion": "inchikey_tautomer",
+   "pair": "GRAIL vs SyGMa",
+   "gap_shared150": 0.0802,
+   "gap_full1170": 0.0783,
+   "change": 0.0019,
+   "reordered": false
+  },
+  {
+   "metric": "precision",
+   "criterion": "inchikey_tautomer",
+   "pair": "MetaPredictor vs SyGMa",
+   "gap_shared150": 0.0866,
+   "gap_full1170": 0.0777,
+   "change": 0.0089,
+   "reordered": false
+  },
+  {
+   "metric": "precision",
+   "criterion": "tanimoto1",
+   "pair": "GRAIL vs MetaPredictor",
+   "gap_shared150": -0.0014,
+   "gap_full1170": 0.0038,
+   "change": 0.0052,
+   "reordered": true
+  },
+  {
+   "metric": "precision",
+   "criterion": "tanimoto1",
+   "pair": "GRAIL vs SyGMa",
+   "gap_shared150": 0.0788,
+   "gap_full1170": 0.0759,
+   "change": 0.0029,
+   "reordered": false
+  },
+  {
+   "metric": "precision",
+   "criterion": "tanimoto1",
+   "pair": "MetaPredictor vs SyGMa",
+   "gap_shared150": 0.0802,
+   "gap_full1170": 0.0721,
+   "change": 0.0081,
+   "reordered": false
+  },
+  {
+   "metric": "jaccard",
+   "criterion": "canonical",
+   "pair": "GRAIL vs MetaPredictor",
+   "gap_shared150": -0.0037,
+   "gap_full1170": -0.001,
+   "change": 0.0027,
+   "reordered": false
+  },
+  {
+   "metric": "jaccard",
+   "criterion": "canonical",
+   "pair": "GRAIL vs SyGMa",
+   "gap_shared150": 0.0635,
+   "gap_full1170": 0.0613,
+   "change": 0.0022,
+   "reordered": false
+  },
+  {
+   "metric": "jaccard",
+   "criterion": "canonical",
+   "pair": "MetaPredictor vs SyGMa",
+   "gap_shared150": 0.0672,
+   "gap_full1170": 0.0623,
+   "change": 0.0049,
+   "reordered": false
+  },
+  {
+   "metric": "jaccard",
+   "criterion": "inchi_no_stereo",
+   "pair": "GRAIL vs MetaPredictor",
+   "gap_shared150": -0.0095,
+   "gap_full1170": -0.0053,
+   "change": 0.0042,
+   "reordered": false
+  },
+  {
+   "metric": "jaccard",
+   "criterion": "inchi_no_stereo",
+   "pair": "GRAIL vs SyGMa",
+   "gap_shared150": 0.0632,
+   "gap_full1170": 0.0615,
+   "change": 0.0017,
+   "reordered": false
+  },
+  {
+   "metric": "jaccard",
+   "criterion": "inchi_no_stereo",
+   "pair": "MetaPredictor vs SyGMa",
+   "gap_shared150": 0.0727,
+   "gap_full1170": 0.0668,
+   "change": 0.0059,
+   "reordered": false
+  },
+  {
+   "metric": "jaccard",
+   "criterion": "inchikey",
+   "pair": "GRAIL vs MetaPredictor",
+   "gap_shared150": 0.0092,
+   "gap_full1170": 0.0135,
+   "change": 0.0043,
+   "reordered": false
+  },
+  {
+   "metric": "jaccard",
+   "criterion": "inchikey",
+   "pair": "GRAIL vs SyGMa",
+   "gap_shared150": 0.0628,
+   "gap_full1170": 0.0616,
+   "change": 0.0012,
+   "reordered": false
+  },
+  {
+   "metric": "jaccard",
+   "criterion": "inchikey",
+   "pair": "MetaPredictor vs SyGMa",
+   "gap_shared150": 0.0536,
+   "gap_full1170": 0.0481,
+   "change": 0.0055,
+   "reordered": false
+  },
+  {
+   "metric": "jaccard",
+   "criterion": "inchikey_tautomer",
+   "pair": "GRAIL vs MetaPredictor",
+   "gap_shared150": -0.0093,
+   "gap_full1170": -0.0056,
+   "change": 0.0037,
+   "reordered": false
+  },
+  {
+   "metric": "jaccard",
+   "criterion": "inchikey_tautomer",
+   "pair": "GRAIL vs SyGMa",
+   "gap_shared150": 0.0642,
+   "gap_full1170": 0.063,
+   "change": 0.0012,
+   "reordered": false
+  },
+  {
+   "metric": "jaccard",
+   "criterion": "inchikey_tautomer",
+   "pair": "MetaPredictor vs SyGMa",
+   "gap_shared150": 0.0735,
+   "gap_full1170": 0.0686,
+   "change": 0.0049,
+   "reordered": false
+  },
+  {
+   "metric": "jaccard",
+   "criterion": "tanimoto1",
+   "pair": "GRAIL vs MetaPredictor",
+   "gap_shared150": -0.0047,
+   "gap_full1170": -0.0023,
+   "change": 0.0024,
+   "reordered": false
+  },
+  {
+   "metric": "jaccard",
+   "criterion": "tanimoto1",
+   "pair": "GRAIL vs SyGMa",
+   "gap_shared150": 0.0633,
+   "gap_full1170": 0.0613,
+   "change": 0.002,
+   "reordered": false
+  },
+  {
+   "metric": "jaccard",
+   "criterion": "tanimoto1",
+   "pair": "MetaPredictor vs SyGMa",
+   "gap_shared150": 0.068,
+   "gap_full1170": 0.0636,
+   "change": 0.0044,
+   "reordered": false
+  }
+ ]
+}

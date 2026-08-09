@@ -33,6 +33,28 @@ convention. The comparisons in this paper remain valid, because every method is 
 under the same criterion and all three rungs are reported, but a system that does emit
 stereochemistry is not rewarded for doing so anywhere in this evaluation.
 
+\subsection{The population reorders this paper's own leaderboard}
+\label{app:popaxis}
+
+Three of the four choices this paper names are varied with everything else held fixed. The fourth,
+which population a familiar name refers to, is so far demonstrated rather than varied: eleven
+published files sitting on three test sets shows the hazard exists, but it is a fact about someone
+else's release. It is measurable here, because the same three methods are scored under the same five
+criteria by the same estimator on two populations of our own split --- the $\nshared$ substrates all
+five methods share and the full $\ntest$ --- with nothing differing but which substrates are in.
+
+Of the $60$ comparisons that gives, $10$ reorder. They are not scattered: MetaPredictor against
+SyGMa on recall reverses under \emph{every one} of the five criteria, MetaPredictor ahead by about
+$0.02$ on the shared subset and behind by about $0.02$ on the full split. Precision reorders four
+comparisons and F1 one; Jaccard none. The median change in a pair's gap between the two populations
+is $0.0058$, which against gaps of that size is the same story the criterion tells: the movement is
+small and the leaderboard is packed tightly enough for it to matter.
+
+Two populations is a weak design and we do not offer it as a general claim. It says the axis moves
+the answer on a case where everything else is pinned, which is more than the three-splits finding
+can say and less than the criterion and budget results say. It also explains a coincidence the next
+subsection would otherwise leave hanging.
+
 \subsection{Which number is which}
 
 Recall figures in this paper differ by population, aggregation, truncation and whether duplicate
