@@ -659,7 +659,7 @@ subset sits close to the deployed macro recall of $\grailmacro$ on the full test
 subset inflation noted above rather than reproducing it exactly.
 
 At that operating point the deployed system is close to prior-independent. Two checkpoints
-differing only in whether a trained prior buffer was present gave 0.335 and 0.334 on an earlier
+differing only in whether a trained prior buffer was present gave 0.335 and 0.334 on a
 291-substrate evaluation. Deployed recall is therefore limited by coverage, not by the
 prior term, even though the selection experiment shows the learned selector losing to the prior
 when selection is what is measured. The experiment exposes a weakness that deployment conceals
@@ -987,8 +987,8 @@ P_{\text{obs}} = \frac{ct}{n} = c\,P_{\text{true}},
 F1_{\text{obs}} = \frac{2ct}{n + cT}.
 \]
 
-Three consequences follow. Recall is unbiased, so the field's reliance on it is defensible for a
-reason not previously stated. Precision is the truth scaled by a factor common to every method, so
+Three consequences follow. Recall is unbiased, so the field's reliance on it is defensible on
+this ground. Precision is the truth scaled by a factor common to every method, so
 while its level is unidentified its \emph{ordering} is identified for any $c$. F1 is neither, since
 $c$ enters numerator and denominator differently, and its ordering is therefore a function of $c$
 that has to be checked rather than assumed.
