@@ -37,7 +37,7 @@ stereochemistry is not rewarded for doing so anywhere in this evaluation.
 \label{app:popaxis}
 
 Three of the four choices this paper names move an ordering. The fourth is the one we could not
-show does, and separating those two statements is the whole point of testing it r, notasserting it from the other three.
+show does, and separating those two statements is the whole point of testing it, not asserting it from the other three.
 
 That it is undeclared is not in doubt. Eleven released files sit on three test sets sharing about a
 tenth of their reactions (\S\ref{app:xdomainsets}), our own copy of a familiar name is one of the
@@ -125,7 +125,7 @@ exactly.
 \subsection{The headline is one checkpoint}
 
 The deployed headline, recall@15 of $\realised$ micro and $\grailmacro$ macro, comes from a single
-checkpoint r, notan average over seeds. The certification bounds variance in the evaluation
+checkpoint, not an average over seeds. The certification bounds variance in the evaluation
 (resampling and discordance over a fixed model), not variance in training across independently
 seeded runs. Retraining on three seeds confirms the headline is stable, at $0.344\pm0.010$ macro
 and $0.269\pm0.006$ micro, but the headline itself remains a single-checkpoint number.
@@ -263,7 +263,7 @@ ourselves included.
 
 Which axis does the work is visible in the slices, and it is the one \S\ref{sec:metric} says it is.
 Holding the aggregate at recall, the criterion alone moves two pairs and certifies none: it erases
-gaps r, notreordering. Holding the criterion fixed, the aggregate alone yields four distinct
+gaps, not reordering. Holding the criterion fixed, the aggregate alone yields four distinct
 orderings from four cells, a different leaderboard for every aggregate, and certifies one. The
 count of orderings is not a property of how finely a sweep was gridded, since both axes here are
 enumerable and small; what a finer budget sweep would add is more cells, not more information.
@@ -302,7 +302,7 @@ declares above its own threshold, and the rest keep the order the file gives the
 expresses no preference among predictions it declines to score.
 
 Each method's own parent is dropped from its ranked list before the budget applies, and the choice
-runs in our favour r, notagainst it. GRAIL returns the substrate itself on $80$ of the $291$,
+runs in our favour, not against it. GRAIL returns the substrate itself on $80$ of the $291$,
 MetaPredictor on $52$ and MetaTox on $14$; SyGMa's zero is a property of the released artifact
 rather than of SyGMa, whose tree is rooted at the substrate and whose parent was stripped when those
 predictions were frozen. A slot spent on the parent cannot score, so dropping it helps whichever
@@ -314,7 +314,7 @@ from $0.265$ to $0.263$.
 \label{app:holm}
 
 \S\ref{sec:rankflip} corrects for multiplicity post hoc, and both inputs to that correction belong
-here r, notin a sentence. The p-values are normal approximations to the stored paired-bootstrap
+here, not in a sentence. The p-values are normal approximations to the stored paired-bootstrap
 intervals, $\mathrm{se}=(\mathrm{hi}-\mathrm{lo})/2z$; the intervals themselves remain the primary
 evidence and the approximation is adequate only because most decisions sit far from their threshold: the one that does not is stated as such below.
 
@@ -410,7 +410,7 @@ protocol $\times$ method interaction, so it belongs to neither family above: the
 rule-selection gap of \S\ref{sec:xmc}, $-0.144$ $[-0.196,-0.095]$ macro at $k=15$ on $245$ test
 substrates. No family was pre-specified for it either, and the
 committed artifact spans three selector modes and two stages, so a conservative family
-here is not of size one. Saying so is the answer r, notan evasion: a
+here is not of size one. Saying so is the answer, not an evasion: a
 comparison the paper declares corrected has to appear here with its threshold, and at
 $p=2.0\times10^{-8}$ against $0.05$ the correction changes nothing whatever family it is put in.
 
@@ -424,7 +424,7 @@ rather than as a law that transfers.
 \subsection{One assumption behind Proposition 2 is not measured}
 
 Proposition 2's explanation assumes that the probability of a rule being labelled is proportional
-to its marginal firing rate. That propensity model is asserted r, notestimated from data.
+to its marginal firing rate. That propensity model is asserted, not estimated from data.
 The identifiability argument for why a learned selector underperforms a frequency prior is
 therefore consistent with the stated mechanism, not proof of it.
 
@@ -459,7 +459,7 @@ USPTO-50k test set \citep{Hastedt_2024}, eleven of them as CSV, under a licence 
 re-scoring. Nothing needs training, and no checkpoint needs to run.
 
 \paragraph{The eleven are not on one test set, and one of the odd ones out is ours.}\label{app:xdomainsets}
-Reading the released files r, nottheir table shows three populations where the name promises
+Reading the released files, not their table shows three populations where the name promises
 one. Clustering the eleven by which products they contain, the within-cluster overlap is $1.00$ and
 the between-cluster overlap is $0.10$: they are not disjoint and not the same set, and no
 threshold between those two numbers changes the grouping:
@@ -551,7 +551,7 @@ criterion. Fifteen of its $66$ paired interactions survive Holm, so the criterio
 by certifiably different amounts too, and by almost exactly the same amounts as in the seven, a
 largest differential of $0.013$ against $0.015$.
 
-What differs is how tightly the leaderboard is packed, and that, r, notthe criterion, is
+What differs is how tightly the leaderboard is packed, and that,, not the criterion, is
 what decides the outcome.
 
 \paragraph{The inequality is arithmetic; how often it is met is not.} A criterion reverses a pair
@@ -630,7 +630,7 @@ not whether the criterion acts but how much of the leaderboard is close enough t
 
 The second targets retrosynthesis. Scoring ReactionT5v2 on 200
 substrates from the USPTO-50k test set this repository holds, which is the three-system
-group's r, notthe seven-system one scored above, the same predictions move only about 0.02 in top-1
+group's, not the seven-system one scored above, the same predictions move only about 0.02 in top-1
 accuracy across canonical, stereo-stripped, InChIKey and tautomer matching, between 0.695 and
 0.715, roughly an order of magnitude less than the interaction we measure in metabolism. A
 plausible reason is that retrosynthesis references are canonical, clean small molecules, whereas a
@@ -672,7 +672,7 @@ The audit is scoped to GRAIL's splits because that is the only overlap that can 
 this paper, and one might still ask whether a learned comparator had seen these well-known drugs.
 The reported effect is the wrong shape for that: a method that had memorised stereo-bearing
 reference structures would match them under strict \textsc{inchikey} and have \emph{less} left for a
-stereo-blind criterion to recover, so memorisation attenuates a stereo-step gain r, notproducing one. MetaPredictor enters that step at $0.362$, below the rule engine's $0.492$, which is
+stereo-blind criterion to recover, so memorisation attenuates a stereo-step gain, not producing one. MetaPredictor enters that step at $0.362$, below the rule engine's $0.492$, which is
 the opposite signature. Nor is the comparator arm a system that trained on nothing: SyGMa's rule
 probabilities are themselves fitted to an observed-metabolite database \citep{Ridder_2008}.
 
@@ -683,7 +683,7 @@ under strict \textsc{inchikey}, $0.310 \to 0.185$ once stereochemistry is disreg
 the sample change rather than a correction.
 
 Two claims survive and one does not. GRAIL's stereo step remains significant at $+0.126$
-$[+0.028,+0.239]$ against $+0.155$ on the full set, so the mechanism is real r, notmemorised:
+$[+0.028,+0.239]$ against $+0.155$ on the full set, so the mechanism is real, not memorised:
 GRAIL cannot emit a stereocentre, and a stereo-blind criterion rewards that whether or not it has
 seen the drug. Its interaction with SyGMa survives too, but carries no information beyond that step
 and should not be counted as a second result: SyGMa's own stereo step on these thirteen is exactly
@@ -742,7 +742,7 @@ Where models sit against that level is a statement about budget, and the budget 
 \S\ref{sec:metric} declares. Uncapped, scored against the corpus annotation with the same matcher,
 MetaPredictor recovers $0.562$ $[0.443,0.676]$, SyGMa $0.524$, BioTransformer $0.480$, GRAIL
 $0.338$; MetaPredictor's paired gap to the curation is $-0.023$ $[-0.153,+0.123]$, a tie inside
-noise r, nota lead, and it is bought with $10.6$ metabolites per drug against the curation's
+noise, not a lead, and it is bought with $10.6$ metabolites per drug against the curation's
 $6.0$, SyGMa's near-tie with $95.9$. Capped instead at each drug's own curated set size (the
 budget the curation actually spent, with the curation itself not truncated) its $0.539$ stands
 against MetaPredictor's $0.301$, SyGMa's $0.271$, GRAIL's $0.284$ and BioTransformer's $0.193$, and

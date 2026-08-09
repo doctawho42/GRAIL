@@ -58,7 +58,7 @@ the gap by reaction type and bounds how much of it a more general template could
 \paragraph{Training-set size.}
 Recall moves from 0.330 to 0.334 between 2{,}418 and 4{,}787 training substrates. Both are ablation
 runs rather than the deployed checkpoint, so neither is $\grailmacro$ and neither should be read
-against it. They are also two single runs r, nota paired comparison, so we give no interval; the change is smaller than the
+against it. They are also two single runs, not a paired comparison, so we give no interval; the change is smaller than the
 $\pm0.010$ spread the same configuration shows across three seeds, which is the sense in which it
 is flat. Doubling the number of substrates does not move selection, which rules out under-training as the
 explanation for the shortfall. Proposition 2 accounts for that: with one to three rules firing per
@@ -105,7 +105,7 @@ fifteen output slots can carry, so what selection recovers, the cut-off gives ba
 
 Abstention moves in the opposite direction and gains little. Dropping candidates whose filter
 score falls below a threshold, then ranking the survivors as usual, traces a frontier along which
-precision barely moves. It is measured on the broad pool r, notthe deployed one (all $300$
+precision barely moves. It is measured on the broad pool, not the deployed one (all $300$
 applicable rules, as in the last row of Table~\ref{tab:selection-breadth}) which is why its
 no-threshold baseline sits above the deployed macro recall of $\grailmacro$ at a larger output size.
 With no threshold, recall@15 is 0.388 at precision 0.098 and 9.96 outputs
@@ -121,7 +121,7 @@ abstains.
 On the same broad pools, the learned ranker can be compared directly against the frequency prior
 (Table~\ref{tab:ranker-vs-prior}). At narrow breadth the two are indistinguishable; as the pool
 broadens the learned filter pulls ahead while the prior plateaus. Substituting the prior for the
-learned score at the ranking stage would cost recall r, notgain it.
+learned score at the ranking stage would cost recall, not gain it.
 
 \begin{table}[h]
 \centering
@@ -174,7 +174,7 @@ SyGMa          & 0.520 & \multicolumn{2}{c}{0.947}   & 0.493 & a rule bank \\
 
 Read across the row the arithmetic holds exactly, $0.612\times0.804\times1.000 = 0.492$, which is
 the realised micro recall to four places. Read down the first column it does not mean the same
-thing twice, and that is the caveat the analogy needs r, nota detail. A beam is a budget, so $0.612$ bounds \emph{this
+thing twice, and that is the caveat the analogy needs, not a detail. A beam is a budget, so $0.612$ bounds \emph{this
 decode} and rises with a wider one; a rule bank is a fixed object, but its reach is not, and
 \S\ref{app:enginereach} measures how much of it belongs to the engine rather than the rules. The
 two columns are structurally parallel and semantically different, and putting them in one column of
@@ -196,7 +196,7 @@ All three rows are the $\nshared$ shared substrates; the full-split figures for 
 
 The decomposition runs on two methods and one of them is degenerate in the factor the paper is
 about, SyGMa's selection being $1$ by construction. BioTransformer supplies a third rule-grounded
-row, and a non-degenerate one: it selects, conditioning reactions on biosystem and enzyme r, notfiring
+row, and a non-degenerate one: it selects, conditioning reactions on biosystem and enzyme, not firing
 everything applicable, and its templates ship enumerably: $994$ distinct SMIRKS across its
 human, environmental-microbial and standardisation reaction files, of which $16$ occur only inside
 records the shipped database comments out. Every reach figure here is computed over all $994$ and is
@@ -231,7 +231,7 @@ state the mechanism as the two-system contrast \S\ref{sec:decomp} draws until a 
 comparable provenance exists. The three reach figures here are of mixed provenance in any case: two
 are through their own engines and one through ours.
 
-The two properties that follow are the row's actual claim r, notcaveats on it. Applying
+The two properties that follow are the row's actual claim, not caveats on it. Applying
 BioTransformer's templates uniformly with RDKit is not its own Java implementation, which layers
 enzyme predicates, cofactor logic and depth control on the same SMIRKS; this is therefore what the
 template set expresses under a stated application procedure, not what its pipeline enumerates. And
@@ -255,8 +255,7 @@ under; the comparison here is between two \emph{applications} at fixed rules, an
 expansion fixed across both arms is what makes it one.
 
 \paragraph{The two banks are not separate objects.} SyGMa's published rule set is one of the curated
-banks our own is a deduplicated union of, so containment is testable by verbatim string membership
-r, notinference: $152$ of its $175$ rules are present in the bank, all in the
+banks our own is a deduplicated union of, so containment is testable by verbatim string membership, not inference: $152$ of its $175$ rules are present in the bank, all in the
 curated portion and none among the mined templates. The comparison is a superset against a subset.
 
 \paragraph{Depth is not the confound.} The expanded-convention ceiling used here is one uncapped
@@ -316,7 +315,7 @@ these rules. SyGMa's source calls neither \texttt{AddHs} nor \texttt{RemoveHs} a
 contrast is between what the two programs do and not an inference from what they emit. Every figure
 in this paragraph is micro, a difference of ratio-of-sums, which is the estimator the engine term
 itself uses. The macro counterparts sit beside them in the artifact because they are a different
-quantity and not a rounding of the same one: the switch is worth $+0.159$ under it r, not$+0.190$, and the residual $+0.006$ $[+0.002,+0.010]$ rather than $+0.002$: an interval that
+quantity and not a rounding of the same one: the switch is worth $+0.159$ under it, not $+0.190$, and the residual $+0.006$ $[+0.002,+0.010]$ rather than $+0.002$: an interval that
 excludes zero where the micro one does not. The separability claim is the micro one, and the two estimators should not
 be quoted against each other.
 
@@ -325,7 +324,7 @@ the first choice, and it generalises in neither direction on its own. Across the
 under the convention the pipeline fires rules in, the normalisation knob is inert exactly:
 \textsc{canonical} and \textsc{standardize} both recover $454$ of $567$, the same references, and
 reproduce the committed ceiling to four decimals, which is also what certifies this loop at the
-scale of the bank r, notof the shared subset. Expand the hydrogens first and the same two
+scale of the bank, not of the shared subset. Expand the hydrogens first and the same two
 modes separate by one recovered reference. Whether a discretionary choice matters is therefore
 conditional on the other discretionary choices, and ``this one does not matter'' is a claim about a
 configuration rather than about a knob.
@@ -335,7 +334,7 @@ corpus the $152$ templates fire $4{,}259$ times with hydrogens explicit against 
 and every firing writes a SMILES either way. The loss is one step later and it is a valence
 violation: of the $4{,}588$ fragments those products separate into, $2{,}891$ are structures RDKit
 will not read back, against $23$ of $4{,}453$: $63\%$ against $0.5\%$, and $99.9\%$ of the excess
-is that r, notthe heavy-atom floor. A
+is that, not the heavy-atom floor. A
 substitution template written against implicit hydrogens does not mention the hydrogen it replaces;
 it attaches the new group and lets RDKit decrement a count held as a property rather than an atom.
 Expand the substrate first and that hydrogen is an atom, nothing removes it, and the product carries
@@ -383,13 +382,13 @@ together, which is what \S\ref{sec:decomp} says. The direction of the effect is 
 suit the present system rhetorically: our engine under-realises
 SyGMa's rules by a factor of two under the expansion, and the same expansion applied to our own bank
 costs it $0.082$ of reach on the clean test split, which is why $\ceiling$ is quoted under the
-convention the pipeline fires rules in r, notunder that one, and why the headline that the
+convention the pipeline fires rules in, not under that one, and why the headline that the
 bank is not the binding constraint is strengthened rather than weakened. The $152$ are curated, and
 the expansion is what the curated half gains from and the mined majority loses to
 (\S\ref{app:provenance}), so the factor of two is the size of an effect our own hand-written rules
 do not suffer: the asymmetry runs against us here, not for us. The mined majority was itself
 kept only if applying it through this engine regenerated its own annotated product
-(Appendix~\ref{app:arch}), so it was validated against this engine r, nota foreign one and
+(Appendix~\ref{app:arch}), so it was validated against this engine, not a foreign one and
 supplies no offsetting overstatement.
 
 \subsection{The same choice outside metabolism, failing the other way}
@@ -426,14 +425,14 @@ So a degree primitive counts explicit connections, expanding a molecule changes 
 and a library built on them stops matching before it can build anything. That is a different failure
 from the metabolite one, where the patterns fire just as often and the product is what will not
 parse, and the two together give the claim its general form. What is convention-dependent is a class
-of \textsc{smarts} construct r, nota domain: a primitive that counts explicit structure breaks
+of \textsc{smarts} construct, not a domain: a primitive that counts explicit structure breaks
 matching, a template that rewrites without naming the hydrogen it consumes breaks the product. Both
 are readable from the rule file without running anything, and neither is declared by any library we
 have looked at.
 
 \paragraph{Three ways the choice bites, and one of them can be repaired.} A third mechanism turned
 up inside our own measurement rather than in someone else's library, and the three together are
-what makes this a class r, notthree defects. Each has one measured instance:
+what makes this a class, not three defects. Each has one measured instance:
 
 \begin{center}
 \footnotesize
@@ -455,7 +454,7 @@ as exchange it, which is what \S\ref{app:provenance} shows it doing to the two h
 It is also the only one of the three that can be \emph{recovered} rather than merely avoided, by
 dispatching the convention per template (Appendix~\ref{app:negative}).
 
-Two things this does not claim. It is applicability r, notcoverage against references, which
+Two things this does not claim. It is applicability, not coverage against references, which
 is the first step of reach and not the whole of it. And no retrosynthesis system expands its target
 by convention, so this is a latent hazard in that field rather than an error in it: the point is
 that the dependence is a property of the patterns, and the patterns are not ours.
@@ -473,7 +472,7 @@ large $\mathit{top\text{-}k}$ is.
 
 Dropping both, the bank produces $661.7$ raw products per substrate, $81.6$ distinct under the
 matching criterion; the $661.7$ is what enters the ranker, not what is emitted. The budget is set to
-SyGMa's emitted count r, notto its pool: at $k=82$ this arm emits $81.6$ distinct structures
+SyGMa's emitted count, not to its pool: at $k=82$ this arm emits $81.6$ distinct structures
 against the $80.7$ SyGMa emits, both counted after the harness's deduplication, which is applied
 identically to all five methods (Appendix~\ref{app:xdomain}). The two counts are on different
 populations, this arm's $245$ substrates against SyGMa's full split, so the arm's budget of $82$ was chosen
@@ -519,7 +518,7 @@ $0.4134$ against the $107.6$ and $0.413$ of Table~\ref{tab:selection-breadth}. T
 counterfactual and not an operating point: $82$ candidates per substrate drawn from $661.7$ is not a
 system anyone would deploy, and its precision would be worse than SyGMa's.
 
-Read against the ceiling r, notagainst SyGMa, the arm reaches $0.760$ against a macro ceiling
+Read against the ceiling, not against SyGMa, the arm reaches $0.760$ against a macro ceiling
 of $0.854$ on these substrates, both per-substrate means, so $0.094$ of the ceiling is still
 unreached with the selector gone and the rest of what separates the arm from it is ranking and the
 cut-off. The micro ceiling for the same substrates, $0.801$, is a different aggregation and not
@@ -544,7 +543,7 @@ select.
 
 \looseness=-1
 The frame also bounds this architecture: a perfect selector and ranker would stop at \ceiling\ as
-our own engine realises it (\S\ref{sec:enginereach}), limited by the corpus r, notby tuning,
+our own engine realises it (\S\ref{sec:enginereach}), limited by the corpus, not by tuning,
 $71\%$ of uncovered transformations being types absent from the bank, so generalising the templates
 it holds is worth $0.038$. It is carried by the mined majority, $0.785$ on $245$ substrates against
 the curated fifth's $0.471$, four published collections adding under two per cent beyond what
@@ -640,7 +639,7 @@ loss the residual is \emph{superadditive} across the partition, $\mathrm{res}(\t
 It is subadditive. On the full split the whole bank's residual is $+0.0062$ $[+0.0032,+0.0095]$ and
 the curated subset's alone is $+0.0123$ $[+0.0079,+0.0170]$, against a mined residual of exactly
 $+0.0000$ $[0.0000,0.0000]$. The fourth decimal is carried because the third is what separates them. That last is zero on any population by construction, since none of its $5{,}866$
-templates is dispatched anywhere, so it was measured on the $245$-substrate subsample r, notthe split: it checks that the subsetting does what it says rather than contributing a quantity. Of
+templates is dispatched anywhere, so it was measured on the $245$-substrate subsample, not the split: it checks that the subsetting does what it says rather than contributing a quantity. Of
 the three registered predictions the null and the curated one hold and the superadditivity does not,
 so the second account is the one that survives. Mixing does not create the loss, it \emph{dilutes}
 it: the mined majority independently reaches part of what the expanded curated templates would have
@@ -648,7 +647,7 @@ recovered, so their repair is partly redundant once both are present. What the d
 therefore the expansion those $675$ templates require and the bank's global setting denies them: a smaller claim than a mixing account would have supported, and the one the measurement carries.
 
 The per-template dispatch of Appendix~\ref{app:negative} still beats the better of the two global
-settings r, nottying it, and by more on the half that wants the expansion than on the bank
+settings, not tying it, and by more on the half that wants the expansion than on the bank
 that contains it.
 
 \subsection{Selection as measured against selection as deployed}
@@ -662,7 +661,7 @@ subset inflation noted above rather than reproducing it exactly.
 
 At that operating point the deployed system is close to prior-independent. Two checkpoints
 differing only in whether a trained prior buffer was present gave 0.335 and 0.334 on an earlier
-291-substrate evaluation. Deployed recall is therefore limited by coverage r, notby the
+291-substrate evaluation. Deployed recall is therefore limited by coverage, not by the
 prior term, even though the selection experiment shows the learned selector losing to the prior
 when selection is what is measured. The experiment exposes a weakness that deployment conceals
 by not depending on the selector's ordering.
@@ -771,7 +770,7 @@ $[0.464,0.514]$ on the full test against $\grailmacro$ for the deployed pipeline
 $14.0$ candidates per substrate against $8.4$, so that pair is not budget-matched and we do not
 claim it. The conservative comparison is: truncated to five candidates it reaches $0.337$, matching
 the deployed pipeline's $\grailmacro$ while emitting fewer than half as many, and at ten it reaches
-$0.432$. Both runs were scored separately r, notpaired, so no interval is quoted on a
+$0.432$. Both runs were scored separately, not paired, so no interval is quoted on a
 difference. The convention this is measured in is the one the deployed generator fires rules in;
 under the expanding one the same model reaches $0.256$ and emits $8.0$, with $46$ substrates
 receiving no prediction at all against $2$ here, which is the size of the artefact rather than a
@@ -794,7 +793,7 @@ in tension with the summary above or with \S\ref{sec:decomp}, which put the domi
 loss at the deployed operating point in selection. The two statements are about different
 quantities (where the deployed pipeline is losing recoverable recall, and what caps a generator
 rebuilt to fix selection) and \S\ref{sec:decomp} gives the reconciled verdict, that selection
-binds jointly with the cut-off r, notalone.
+binds jointly with the cut-off, not alone.
 
 \paragraph{Set generation with a GFlowNet does not win here, and the reason is cardinality.}
 We formulated the generator as a set-terminal GFlowNet trained by Trajectory Balance against a
@@ -807,7 +806,7 @@ the reward pays a size penalty and recall@$k$ does not charge one. The diagnosis
 rather than mis-specification: $\beta$ cancels in the argmax, so the reward is the \emph{more}
 conservative of the two, and what happened is that the policy emitted $14.2$ against a configured
 maximum of $15$, leaving the size term almost no room to act. Set-level training without an explicit
-cardinality estimate is therefore untested here r, notrefuted, and predicting set size is the
+cardinality estimate is therefore untested here, not refuted, and predicting set size is the
 component this architecture was missing.
 
 \subsection{The output budget is mis-set, and adapting it per substrate does not help}
@@ -851,7 +850,7 @@ decides. The magnitude is not a rounding effect: SyGMa's F1 at its best budget o
 $k \in [1,32]$ is $5.4$ times its F1 scored at the full output it emits.
 
 The binding is partial well below $15$ too, which is why the certified comparison is reported at
-several budgets r, notone. GRAIL is cut on $63.5\%$ of substrates at $k=5$ and $45.6\%$ at
+several budgets, not one. GRAIL is cut on $63.5\%$ of substrates at $k=5$ and $45.6\%$ at
 $k=8$, against SyGMa's $98.8\%$ and $96.5\%$. Against GRAIL, SyGMa is ahead by $0.083$
 $[0.065,0.100]$ at $k=3$, $0.071$ $[0.057,0.086]$ at $k=5$, $0.039$ $[0.026,0.052]$ at $k=8$ and
 $0.022$ $[0.010,0.034]$ at $k=10$, every interval excluding zero, so the reversal is not an artifact
@@ -900,7 +899,7 @@ can only lose.
 
 Rule-encoded chemistry is general where learned patterns are not, so a rule-grounded method might be
 expected to lose less on substrates far from its training data. That would be a claim about the
-paradigm r, nota leaderboard position, and it is testable on frozen predictions by stratifying
+paradigm, not a leaderboard position, and it is testable on frozen predictions by stratifying
 the test split on maximum Morgan--Tanimoto similarity to any training substrate. It does not
 survive, and the way it fails is the part worth reporting.
 
@@ -937,7 +936,7 @@ what a training-derived rule set would produce. It cannot serve as the leg of th
 learning touches, and we do not use it as one; the control above is what carries the section. The common cause is visible in the
 same stratification: reference sets are smaller at the far end too, $2.40$ annotated metabolites
 above $0.6$ against $1.90$ below $0.3$, though across all five strata the series is not monotone
-and the contrast is between its endpoints r, nota trend. Training corpus, rule bank and annotation all derive from the
+and the contrast is between its endpoints, not a trend. Training corpus, rule bank and annotation all derive from the
 literature of well-studied metabolism, so the axis measures how well studied a substrate is and
 moves all three together.
 
@@ -976,7 +975,7 @@ Section~\ref{sec:metric} ranks methods by F1, and every precision figure feeding
 bound: a predicted structure that is a genuine metabolite nobody recorded is charged as a false
 positive. The threat is not symmetric. The method the metric demotes is the one emitting eighty
 candidates per substrate, so it is the one with the most room for unrecorded hits, and an ordering
-that only holds because the references are incomplete would be an artifact r, nota result.
+that only holds because the references are incomplete would be an artifact, not a result.
 
 Model the annotation as a uniform propensity: for a substrate with $T$ true metabolites, each is
 recorded independently with probability $c$. Fix a prediction set of size $n$ covering $t$ of the
@@ -1037,7 +1036,7 @@ metabolite set would still be scored against the annotated subset, so with compl
 measures Jaccard $c$ and F1 $2c/(1+c)$ however good it is. At $c=0.5$ that is a Jaccard ceiling of
 $0.5$ and an F1 ceiling of $0.667$; at $c=0.3$, $0.30$ and $0.462$. Set-agreement endpoints are
 therefore bounded by annotation completeness in a way recall is not, which is a reason to report
-them beside recall r, notin place of it, and a caution for any method trained directly on set
+them beside recall, not in place of it, and a caution for any method trained directly on set
 agreement: optimising it on incomplete references trains partly on which metabolites were recorded.
 
 The assumption doing the work is uniformity. A propensity that fell systematically with how
@@ -1083,12 +1082,12 @@ a single seed against a seed-to-seed spread of $\pm0.010$ and is not corroborate
 selection, so it supports no claim. Both figures are on the $300$-substrate evaluation
 that configuration runs and are not comparable with the full-split numbers elsewhere in this paper.
 
-The reading we take is about the domain r, notthe method. Inverse-propensity weighting exists
+The reading we take is about the domain, not the method. Inverse-propensity weighting exists
 to correct a label's rarity when that rarity is an artifact of incomplete annotation. In metabolism
 a rule's firing frequency is substantially not an artifact: common rules are common because the
 transformations they encode are common in the chemistry. Down-weighting them by a factor of five,
 which is what the fitted propensities do at the head of the distribution, therefore discards signal
-rather than correcting bias. This is a candidate explanation for the original finding r, nota
+rather than correcting bias. This is a candidate explanation for the original finding, not a
 demonstration of it: separating the annotation and chemistry components of rule frequency would
 need an exhaustively annotated reference set, which is the same object whose absence creates the
 positive-unlabelled problem throughout this paper.

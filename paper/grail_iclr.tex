@@ -66,7 +66,7 @@ estimate or a search bound. That term is a property of the system rather than of
 holding fixed the rules that two published banks share and changing only the engine that applies
 them moves what those rules reach by as much as the entire difference between the banks, through a
 preprocessing step that neither of the two papers reports. Applied to metabolite prediction, the
-decomposition explains a leaderboard r, notrestating it, and assigns the shortfall of each
+decomposition explains a leaderboard, not restating it, and assigns the shortfall of each
 system to a stage of its pipeline.
 
 We release the evaluation protocol, the audited split, the frozen predictions of every method
@@ -107,7 +107,7 @@ intact and a reordering does not.
 
 We answer that question by re-scoring predictions that other groups have already released, so that
 nothing is retrained and no method is reimplemented. Three of the four choices reorder a published
-leaderboard, and the reorderings are certified as interactions between method and choice r, notasserted from a change in rank. The fourth choice is undeclared but produces no interaction that
+leaderboard, and the reorderings are certified as interactions between method and choice, not asserted from a change in rank. The fourth choice is undeclared but produces no interaction that
 survives correction, and separating those two statements is possible only because the same test is
 applied to all four. A single condition governs when a reordering occurs: the choice must move two
 systems apart by more than the margin between them, which makes a benchmark more vulnerable as its
@@ -184,7 +184,7 @@ matching. Outside chemistry, re-scoring frozen submissions under a different equ
 misrepresents the state of the art in text-to-SQL \citep{Zhong_2020} and changes which
 question-answering system leads \citep{Kamalloo_2023}. On the aggregate, the choice of metric
 inverts the winner in drug-response prediction \citep{agarwal2026metric}; in structure-based drug
-design the standard score rises with the atom count of the output r, notwith its quality
+design the standard score rises with the atom count of the output, not with its quality
 \citep{Gao_2025_reframing}, which motivated rebuilding that benchmark around four axes
 \citep{Lin_2025_cbgbench}; and weighting examples by difficulty reorders natural-language
 leaderboards \citep{Mishra_2021, Rodriguez_2021}. On the output budget the relevant literature is
@@ -206,7 +206,7 @@ how far a single evaluation choice moves a ranking when it is the only quantity 
 whether it reorders a leaderboard rather than shifting every system on it; prior demonstrations
 compare studies that differed in several respects at once, so the effect of any one choice is not
 identified. The second is what the first term of a staged decomposition can be when the candidate
-set is finite and enumerable r, notsampled, and whether a coverage figure obtained that way is
+set is finite and enumerable, not sampled, and whether a coverage figure obtained that way is
 comparable across papers. The present work addresses both.
 
 \section{TAME: what is declared, and what is held fixed}
@@ -271,7 +271,7 @@ is performed on validation data, with two exceptions stated in Appendix~\ref{app
 
 \looseness=-1
 \citet{Hastedt_2024} released the ranked predictions of twelve retrosynthesis systems, of which
-eleven parse. Reading those files r, notthe accompanying table shows that they were produced
+eleven parse. Reading those files, not the accompanying table shows that they were produced
 on three different test sets (Appendix~\ref{app:xdomainsets}). Within the largest group sharing
 one, seven systems scored on their $4{,}999$ common reactions change places at top-1, on predictions that never move and under a rule applied identically to all seven. Under canonical matching
 the leaders run GraphRetro $0.5377$, LocalRetro $0.5339$, Retroformer $0.5325$, Graph2SMILES
@@ -346,20 +346,13 @@ the coverage factor rather than flattering it.
 \nbank\ rules to every test substrate and ask what fraction of references appears anywhere in the
 union. That \textbf{coverage ceiling} is the best recall achievable if selection and ranking were
 both perfect, and on the clean test split it is \ceiling\ (cluster-bootstrap 95\% CI
-$[0.794,0.839]$). It should be
-reported alongside recall for any rule-grounded method, and as \emph{system} reach, meaning a rule set together with a declared application procedure, and not as what a knowledge base can express, since swapping only the engine moves it by as much as the reach gap below: a ceiling quoted
-without its engine is not comparable across papers. Inside one system it
+$[0.794,0.839]$). It should be reported alongside recall for any rule-grounded method, and reported as system reach: a rule set together with a declared application procedure, not what a knowledge base can express. Swapping only the engine moves it by as much as the reach gap below, so a ceiling quoted without its engine is not comparable across papers. Inside one system it
 is exactly what it claims, and no ranking improvement can exceed it.
 
-\paragraph{What the decomposition says.}\looseness=-1 Figure~\ref{fig:decomp} localises the loss: the deployed
-pipeline converts only $32.5\%$ of its own ceiling into realised recall, the three factors separate
-with no pair of intervals overlapping (split across selector breadths in
-Table~\ref{tab:selection-breadth}), and selection is where the loss sits at this operating point:
-barely a third of what the bank can reach survives the selector's rule budget, while ranking is
-close to lossless at $0.960$ $[0.941,0.976]$. That third factor is truncation at GRAIL's own output
+\paragraph{What the decomposition says.}\looseness=-1 Figure~\ref{fig:decomp} localises the loss. The deployed pipeline converts only $32.5\%$ of its own ceiling into realised recall, and the three factors separate with no pair of intervals overlapping. Selection is where the loss sits at this operating point: barely a third of what the bank can reach survives the selector's rule budget. Ranking is close to lossless, at $0.960$ $[0.941,0.976]$. That third factor is truncation at GRAIL's own output
 policy, itself a cap at $k=15$: it emits at the cap on $308$ of \ntest\ substrates ($26.3\%$), and all $29$
 references lost between the budgeted pool and the emitted output fall on those. Selection binds
-jointly with the cut-off r, notalone.
+jointly with the cut-off, not alone.
 Widening the selector moves the loss downstream, since what selection recovers the cut-off gives
 back: the deployed pair caps the pipeline near $0.41$, macro on $245$ substrates
 (Appendix~\ref{app:props}).
@@ -373,7 +366,7 @@ behind at $k=8$ and indistinguishable at the field's $k=15$, so it converts only
 \looseness=-1
 Applied to a second method it stops being self-diagnosis: SyGMa decomposes on the same split in the
 same frame with the inverse profile, converting nearly all of a narrower reach where we convert a
-third of a wider one, so what separates us is the cost of \emph{this} selection stage r, nota
+third of a wider one, so what separates us is the cost of \emph{this} selection stage, not a
 worse rule base, and the bank's own bound is the corpus rather than tuning
 (Appendix~\ref{app:decompsygma}).
 
@@ -395,10 +388,7 @@ $[0.000,+0.005]$ micro between the two programs, though a macro estimator separa
 $[+0.002,+0.010]$. The loop's other two choices move reach by nothing
 (Appendix~\ref{app:enginereach}).
 The term is thus not a fact about two particular programs but about one decision neither reports: what a bank covers is uninterpretable without the engine
-that realised the figure (Appendix~\ref{app:props}). Nor is the dependence metabolism's: every one of the
-$42{,}554$ patterns in the standard retrosynthesis template library constrains atoms by degree and
-none names a hydrogen, so the same call costs that library $82\%$ of its applicability, by the second of the two mechanisms: a match lost before a product is built
-(Appendix~\ref{app:retroconvention}).
+that realised the figure (Appendix~\ref{app:props}). The dependence is not specific to metabolism. Every one of the $42{,}554$ patterns in the standard retrosynthesis template library constrains atoms by degree and none names a hydrogen, so the same step costs that library $82\%$ of its applicability. That is the second of the two mechanisms: a match lost before a product is built (Appendix~\ref{app:retroconvention}).
 
 \section{Results}
 \label{sec:results}
@@ -461,7 +451,7 @@ On the $\nshared$-substrate subset two pairs separate along two criterion steps,
 gaining \interA\ \interAci\ more than GRAIL from canonical to tautomer matching and SyGMa
 \interB\ \interBci\ more than MetaTrans from canonical to InChIKey; the first survives correction
 at that family size and the second does not. The criterion is therefore a \textbf{method-dependent
-confounder} r, nota neutral scoring choice. The declared families, every raw and adjusted
+confounder}, not a neutral scoring choice. The declared families, every raw and adjusted
 $p$-value, and the pre-specification of the design are given in Appendix~\ref{app:holm}.
 
 \looseness=-1
@@ -491,11 +481,7 @@ against $0.684$ on the thirteen unseen, a difference whose interval spans zero
 
 \paragraph{The criterion moves human agreement, and that agreement bounds what a recall figure
 means.} The
-strongest evidence for declaring the criterion involves no model. Twenty-five external drugs are
-independently curated by our corpus too, so the two metabolite lists compare as a prediction does to
-a reference: the two expert curations of one drug agree at a Jaccard of $0.145$ under strict
-\textsc{inchikey} matching and $0.406$ under the tautomer-aware default, on the same drugs
-either way. Most of what
+strongest evidence for declaring the criterion involves no model. Twenty-five of the external drugs are independently curated by our corpus as well, so the two metabolite lists can be compared as a prediction is compared to a reference. On the same drugs, the two expert curations agree at a Jaccard of $0.145$ under strict \textsc{inchikey} matching and at $0.406$ under the tautomer-aware default. Most of what
 looks like disagreement about observed chemistry is disagreement about notation.
 
 \looseness=-1
@@ -503,12 +489,7 @@ They also bound what a recall figure means rather than what it can reach: a comp
 curation records only $0.539$ of the corpus annotation, so past that level recall measures one
 source's inclusion choices. That $0.539$ is measured on the $25$ drugs both sources chose to
 curate, which carry $5.7$ to $6.5$ references each against $2.2$ across the clean test split. Where models sit against it depends on
-the budget, and both matched-budget analyses belong here, not only the significant one. MetaPredictor's uncapped $0.562$ is a tie inside noise bought
-with $10.6$ metabolites per drug against the curation's $6.0$; capped at each drug's own curated set
-size it recovers $0.301$, behind by $0.238$ $[0.123,0.354]$, while under the more conservative
-symmetric match, a fixed $k{=}6$ that truncates the curation too, it reaches $0.394$ against
-$0.472$, a gap of $+0.078$ $[-0.050,+0.210]$ that does not reach significance
-(Appendix~\ref{app:xdomain}).
+the budget, and both matched-budget analyses belong here, not only the significant one. MetaPredictor's uncapped $0.562$ is a tie inside noise, bought with $10.6$ metabolites per drug against the curation's $6.0$. Capped at each drug's own curated set size it recovers $0.301$, behind by $0.238$ $[0.123,0.354]$. Under a symmetric match, a fixed $k{=}6$ that truncates the curation as well, it reaches $0.394$ against $0.472$, a gap of $+0.078$ $[-0.050,+0.210]$ that does not reach significance (Appendix~\ref{app:xdomain}).
 
 \looseness=-1
 \paragraph{Mechanism.} The spread tracks how far a method's outputs diverge
@@ -562,7 +543,7 @@ split the recall@15 ordering is stable to within noise, the leading pair exchang
 most $0.0014$ with a differential sensitivity of $-0.001$ $[-0.009,+0.006]$. The F1 gap between
 GRAIL and MetaPredictor is another matter: it is certified under four criteria, at $-0.026$ $[-0.038,-0.013]$ under the
 tautomer-aware default, and indistinguishable from zero under plain \textsc{inchikey}, at
-$+0.003$ $[-0.009,+0.015]$. That is an erased gap r, nota certified reversal, and we claim it
+$+0.003$ $[-0.009,+0.015]$. That is an erased gap, not a certified reversal, and we claim it
 as no more than that: the matching rule and the output size do not act on the same comparisons.
 Precision here is a lower bound and threatens this result most, since the method the metric demotes
 emits the most candidates; under a uniform-propensity model its ordering is identified and F1's
@@ -601,7 +582,7 @@ $8.5$ times the cost, so $\ceiling$ bounds this formulation rather than the task
 
 \looseness=-2
 \paragraph{What the newer results rest on.} The cross-domain numbers come from eleven files we did
-not produce, read under an assumption proven where an independent ground truth exists r, notinferred from those files agreeing, and the reordering there is a top-1 phenomenon. Packing is
+not produce, read under an assumption proven where an independent ground truth exists, not inferred from those files agreeing, and the reordering there is a top-1 phenomenon. Packing is
 measured across four leaderboards, which is few. The population axis is reported as a negative and
 inherits that design's weakness: two nested populations in each of two instances bound how large an
 interaction would have had to be to show, not whether one exists. Our own headline is one evaluation
@@ -637,13 +618,13 @@ trained checkpoints, which the anonymised archive contains together with the fro
 every method compared, the audits, the evaluation harness, the split construction and the analysis
 code.
 
-Three constraints bear on exact r, notapproximate reproduction. One result depends on a
+Three constraints bear on exact, not approximate reproduction. One result depends on a
 third-party distribution that is not redistributed here: the reach of BioTransformer's template set
 is computed from the $994$ SMIRKS shipped with that tool, which an installed copy supplies; its
 weights and those of MetaPredictor are likewise third-party and are cited rather than shipped.
 Results measured on a subsample of a split record the cap and the seed that drew it, without which
 the substrate set is not recoverable, since sampling proceeds without replacement and a different
-cap yields a different set of the same size r, nota subset. Confidence intervals are
+cap yields a different set of the same size, not a subset. Confidence intervals are
 regenerable as well: per-substrate rows are sorted before resampling, so a repeated run reproduces
 an artifact exactly.
 
