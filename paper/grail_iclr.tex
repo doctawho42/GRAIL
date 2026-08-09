@@ -255,6 +255,49 @@ scored on test before this discipline was tightened, which support no claim. Eve
 decomposition, the learned-versus-prior comparison, the breadth sweep --- is measurement, not
 selection.
 
+\section{The criterion reorders a published leaderboard in another field}
+\label{sec:xdomainmain}
+
+\looseness=-1
+Nothing in this subsection is ours. \citet{Hastedt_2024} released the ranked predictions of twelve
+retrosynthesis systems; eleven parse, and reading them rather than their table shows they sit on
+three test sets rather than one (Appendix~\ref{app:xdomainsets}). Within the largest group sharing
+one, seven systems scored on their $4{,}999$ common reactions change places at top-1 --- on
+predictions that never move, under a rule applied identically to all seven. Under canonical matching
+the leaders run GraphRetro $0.5377$, LocalRetro $0.5339$, Retroformer $0.5325$, Graph2SMILES
+$0.5293$; disregard stereochemistry and they run Graph2SMILES $0.5571$, Retroformer $0.5541$,
+GraphRetro $0.5501$, LocalRetro $0.5469$. Fourth becomes first (Figure~\ref{fig:xdomain}).
+Five of twenty-one pairs exchange in all.
+
+The exchange is what a reader sees; the claim is the interaction, and it is corrected under the
+strictest family this paper declares anywhere. Of $448$ paired tests --- every pair of systems,
+every pair of conventions, every $k$ --- $233$ have intervals excluding zero, $109$ of $448$
+paired interactions surviving Holm at $0.05$ across the whole family. Two qualifications travel with it: the effect is
+concentrated at top-1, which is the number this field leads with but not the whole accuracy curve,
+and what moves the ordering here is stereochemistry rather than tautomer canonicalisation, the
+opposite of the internal asymmetry.
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=0.52\textwidth]{fig_xdomain}
+\end{center}
+\caption{Seven retrosynthesis systems, four matching criteria, top-1 accuracy on the $4{,}999$
+reactions they share, from files their authors released. Graph2SMILES enters fourth under canonical
+matching and leaves first under every more tolerant one; the three systems that never exchange are
+grey. The canonical-to-InChIKey step is flat for all seven, which is the criterion pair that costs
+nothing here.}
+\label{fig:xdomain}
+\end{figure}
+
+\looseness=-1
+\paragraph{The condition is packing, and it is arithmetic before it is empirical.} An exchange needs
+the criterion to move two systems by more than the gap between them, so a leaderboard becomes
+vulnerable exactly as it matures. These seven sit a median $0.013$ apart against a differential of
+$0.015$ and reorder; three $0.047$ apart are moved as much and do not. Over $439$
+method-pair by criterion-pair comparisons across four leaderboards in three domains, with nothing
+re-scored, the movement exceeds the gap once in nine and reverses the pair once in seventeen, and no
+reversal occurs where the gap survives the movement (Appendix~\ref{app:xdomain}).
+
 \section{The decomposition and the coverage ceiling}
 \label{sec:decomp}
 
@@ -358,50 +401,7 @@ other of two mechanisms, a match lost before a product is built
 \section{Results}
 \label{sec:results}
 
-\subsection{The criterion reorders a published leaderboard in another field}
-\label{sec:xdomainmain}
-
-\looseness=-1
-Nothing in this subsection is ours. \citet{Hastedt_2024} released the ranked predictions of twelve
-retrosynthesis systems; eleven parse, and reading them rather than their table shows they sit on
-three test sets rather than one (Appendix~\ref{app:xdomainsets}). Within the largest group sharing
-one, seven systems scored on their $4{,}999$ common reactions change places at top-1 --- on
-predictions that never move, under a rule applied identically to all seven. Under canonical matching
-the leaders run GraphRetro $0.5377$, LocalRetro $0.5339$, Retroformer $0.5325$, Graph2SMILES
-$0.5293$; disregard stereochemistry and they run Graph2SMILES $0.5571$, Retroformer $0.5541$,
-GraphRetro $0.5501$, LocalRetro $0.5469$. Fourth becomes first (Figure~\ref{fig:xdomain}).
-Five of twenty-one pairs exchange in all.
-
-The exchange is what a reader sees; the claim is the interaction, and it is corrected under the
-strictest family this paper declares anywhere. Of $448$ paired tests --- every pair of systems,
-every pair of conventions, every $k$ --- $233$ have intervals excluding zero, $109$ of $448$
-paired interactions surviving Holm at $0.05$ across the whole family. Two qualifications travel with it: the effect is
-concentrated at top-1, which is the number this field leads with but not the whole accuracy curve,
-and what moves the ordering here is stereochemistry rather than tautomer canonicalisation, the
-opposite of the internal asymmetry.
-
-\begin{figure}[h]
-\begin{center}
-\includegraphics[width=0.52\textwidth]{fig_xdomain}
-\end{center}
-\caption{Seven retrosynthesis systems, four matching criteria, top-1 accuracy on the $4{,}999$
-reactions they share, from files their authors released. Graph2SMILES enters fourth under canonical
-matching and leaves first under every more tolerant one; the three systems that never exchange are
-grey. The canonical-to-InChIKey step is flat for all seven, which is the criterion pair that costs
-nothing here.}
-\label{fig:xdomain}
-\end{figure}
-
-\looseness=-1
-\paragraph{The condition is packing, and it is arithmetic before it is empirical.} An exchange needs
-the criterion to move two systems by more than the gap between them, so a leaderboard becomes
-vulnerable exactly as it matures. These seven sit a median $0.013$ apart against a differential of
-$0.015$ and reorder; three $0.047$ apart are moved as much and do not. Over $439$
-method-pair by criterion-pair comparisons across four leaderboards in three domains, with nothing
-re-scored, the movement exceeds the gap once in nine and reverses the pair once in seventeen, and no
-reversal occurs where the gap survives the movement (Appendix~\ref{app:xdomain}).
-
-\subsection{The criterion the decomposition rests on}
+\subsection{The same axis inside one benchmark, where the ceiling is measured}
 \label{sec:rankflip}
 
 \looseness=-2
