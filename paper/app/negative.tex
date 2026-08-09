@@ -93,9 +93,9 @@ choosing correctly is the whole story. Above zero says no global setting express
 \toprule
 bank & rules & dispatched & dispatch & best global & residual \\
 \midrule
-SyGMa          & $175$    & $0$   & 0.527 $[0.473,0.584]$ & 0.527 & $+0.000$ \\
-ours           & $\nbank$ & $675$ & 0.815 $[0.774,0.857]$ & 0.799 & $+0.016$ \\
-BioTransformer & $994$    & $726$ & 0.473 $[0.426,0.524]$ & 0.473 & $+0.000$ \\
+SyGMa          & $175$    & $0$   & 0.535 $[0.510,0.561]$ & 0.535 & $+0.000$ $[0.000,0.000]$ \\
+ours           & $\nbank$ & $675$ & 0.823 $[0.801,0.844]$ & 0.816 & $+0.006$ $[0.003,0.010]$ \\
+BioTransformer & $994$    & $726$ & 0.487 $[0.462,0.513]$ & 0.487 & $+0.000$ $[0.000,0.001]$ \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -105,13 +105,15 @@ dispatched, so dispatch is the identity map and has to reproduce its implicit-hy
 decimals, which it does --- that is the check that the classifier is not sending templates somewhere
 it should not. BioTransformer was predicted to clear its better global setting, because $268$ of its
 templates want the convention the deployed arm denies them; it does not clear it. Those templates do
-add products, and the products are real, but none of them recovers a reference these substrates
-carry. Our own bank clears it by $+0.016$ $[+0.006,+0.028]$, the two arms run in one pass over the
-same substrates and resampled as a paired difference, since the marginal intervals overlap heavily
-and a marginal comparison is the wrong test for a within-bank contrast. The macro counterpart is
-$+0.021$ $[+0.006,+0.039]$. What that residual is made of is measured separately: the bank's two
-halves want opposite conventions, and the recovered coverage is what the losing half forfeits under
-whichever single setting is chosen (Appendix~\ref{app:provenance}).
+add products, and the products are real, but almost none of them recovers a reference these
+substrates carry: its residual is $+0.000$ $[0.000,0.001]$, an interval whose upper bound is a
+single reference. Our own bank clears it by $+0.006$ $[+0.003,+0.010]$, all three arms measured in
+one pass over the same substrates so the residual is a paired difference rather than a gap between
+marginals, which is the wrong test for a within-bank contrast. Where that residual comes from was
+registered as a prediction and the prediction failed: it is not created by the bank being mixed, but
+by the $675$ hand-written templates that want an expansion the bank's global setting denies them,
+and it is \emph{larger} on those templates alone than on the bank containing them
+(Appendix~\ref{app:provenance}).
 
 The reading we take from this remains the recommendation \S\ref{sec:decomp}
 already makes: declare the convention. Dispatching it is worth having for one bank in three, and

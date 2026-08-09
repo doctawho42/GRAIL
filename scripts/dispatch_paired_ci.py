@@ -155,7 +155,9 @@ def main() -> int:
     # The committed values were measured on the 245-substrate subsample, so they gate that
     # population and no other. Asserting them against a run on the full split would be a comparison
     # across populations -- the defect this paper names -- dressed as a reproducibility check.
-    if args.population == "subsample245":
+    # ...and the whole bank only: the committed pair is a whole-bank measurement, so asserting it
+    # against a subset arm compares two different rule sets as well as, possibly, two populations.
+    if args.population == "subsample245" and args.subset == "full":
         print(f"\ngate: dispatch {reach_d} against committed {COMMITTED['dispatch']}, "
               f"implicit {reach_i} against {COMMITTED['implicit']}")
         for got, want, name in ((reach_d, COMMITTED["dispatch"], "dispatch"),

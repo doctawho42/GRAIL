@@ -1,0 +1,48 @@
+{
+ "config": {
+  "script": "dispatch_paired_ci.py",
+  "git_commit": "9630e586ab71675cca0f3d198eccde315c068fae",
+  "git_dirty": false,
+  "population": "clean_test",
+  "bank": "grail_full",
+  "n_rules": 1715,
+  "dispatched": 675,
+  "n_substrates": 1170,
+  "match": "inchikey_tautomer",
+  "n_boot": 10000,
+  "seed": 0,
+  "subset": "curated",
+  "policy": "docs/DISPATCH_PREREGISTRATION.md and docs/PROVENANCE_DISPATCH_PREREGISTRATION.md",
+  "residual_is_against": "all_explicit",
+  "gate": "on subsample245 both arms reproduce their committed reach"
+ },
+ "references": 2597,
+ "recovered": {
+  "dispatch": 1766,
+  "all_explicit": 1734,
+  "all_implicit": 1263
+ },
+ "reach": {
+  "dispatch": 0.68,
+  "all_explicit": 0.6677,
+  "all_implicit": 0.4863,
+  "best_global": 0.6677
+ },
+ "paired_residual": {
+  "delta": 0.0123,
+  "ci95": [
+   0.0079,
+   0.017
+  ],
+  "excludes_zero": true,
+  "estimator": "micro",
+  "macro": {
+   "delta": 0.0097,
+   "ci95": [
+    0.0054,
+    0.0147
+   ],
+   "excludes_zero": true
+  }
+ }
+}

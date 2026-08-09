@@ -1,0 +1,26 @@
+{
+ "match": "inchikey_tautomer",
+ "n": 1170,
+ "n_boot": 10000,
+ "seed": 0,
+ "population": "clean_test",
+ "containment": {
+  "sygma_rules": 175,
+  "in_grail_bank": 152,
+  "in_grail_curated_subset": 152,
+  "in_grail_mined_subset": 0,
+  "share_of_sygma_inside": 0.8686,
+  "share_of_grail_curated_that_is_sygma": 0.0886,
+  "test": "verbatim string membership in extended_smirks.txt"
+ },
+ "reach_of_contained_subset": {
+  "n_rules": 152,
+  "coverage": 0.1998,
+  "ci95": [
+   0.1817,
+   0.2188
+  ],
+  "note": "GRAIL's own depth-1 primitives and matcher, on the same substrates as results/ceiling_by_provenance.json for this population",
+  "full_bank_ceiling_here": 0.8171
+ }
+}

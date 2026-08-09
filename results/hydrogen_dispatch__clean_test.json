@@ -1,0 +1,88 @@
+{
+ "config": {
+  "script": "hydrogen_dispatch.py",
+  "git_commit": "9630e586ab71675cca0f3d198eccde315c068fae",
+  "git_dirty": false,
+  "population": "clean_test",
+  "n_substrates": 1170,
+  "match": "inchikey_tautomer",
+  "n_boot": 10000,
+  "seed": 0,
+  "policy": "docs/DISPATCH_PREREGISTRATION.md",
+  "recursive_smarts_convention": {
+   "grail_full": false,
+   "sygma_175": false,
+   "biotransformer": true
+  },
+  "banks_this_invocation": [
+   "sygma_175",
+   "biotransformer",
+   "grail_full"
+  ]
+ },
+ "banks": {
+  "sygma_175": {
+   "n_rules": 175,
+   "dispatched_to_expanded": 0,
+   "references": 2597,
+   "recovered": 1390,
+   "reach": 0.5352,
+   "ci95": [
+    0.5099,
+    0.5611
+   ],
+   "global_arms": {
+    "all_explicit": 0.2229,
+    "all_implicit": 0.5352
+   },
+   "best_global": 0.5352,
+   "residual_convention_dependence": 0.0,
+   "residual_ci95": [
+    0.0,
+    0.0
+   ]
+  },
+  "biotransformer": {
+   "n_rules": 994,
+   "dispatched_to_expanded": 726,
+   "references": 2597,
+   "recovered": 1265,
+   "reach": 0.4871,
+   "ci95": [
+    0.4618,
+    0.5125
+   ],
+   "global_arms": {
+    "all_explicit": 0.4867,
+    "all_implicit": 0.1221
+   },
+   "best_global": 0.4867,
+   "residual_convention_dependence": 0.0004,
+   "residual_ci95": [
+    0.0,
+    0.0012
+   ]
+  },
+  "grail_full": {
+   "n_rules": 7581,
+   "dispatched_to_expanded": 675,
+   "references": 2597,
+   "recovered": 2136,
+   "reach": 0.8225,
+   "ci95": [
+    0.8006,
+    0.8441
+   ],
+   "global_arms": {
+    "all_explicit": 0.7351,
+    "all_implicit": 0.8163
+   },
+   "best_global": 0.8163,
+   "residual_convention_dependence": 0.0062,
+   "residual_ci95": [
+    0.0032,
+    0.0095
+   ]
+  }
+ }
+}

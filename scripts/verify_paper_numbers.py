@@ -228,6 +228,28 @@ def main() -> int:
         check("systems in the released benchmark", m and WORDS.get(m.group(1)), 12,
               "twelve published, eleven as CSV")
 
+    # 10b. the dispatch table and the pre-registered subset arms, on whichever population each ran
+    hd = ROOT / "results/hydrogen_dispatch__clean_test.json"
+    cur = ROOT / "results/dispatch_paired_ci__clean_test__curated.json"
+    if hd.exists():
+        H = json.loads(hd.read_text())["banks"]
+        flat = re.sub(r"\s+", " ", whole)
+        for shown, key in (("SyGMa", "sygma_175"), ("ours", "grail_full"),
+                           ("BioTransformer", "biotransformer")):
+            m = re.search(shown + r" & \$?[\\a-z{},0-9]+\$? & \$(\d+)\$ & ([\d.]+) \$\[[\d.,]+\]\$ & "
+                          r"([\d.]+) & \$\+([\d.]+)\$", flat)
+            v = H[key]
+            check(f"dispatch table, {shown} dispatched", m and m.group(1), v["dispatched_to_expanded"])
+            check(f"dispatch table, {shown} reach", m and m.group(2), v["reach"], "", )
+            check(f"dispatch table, {shown} best global", m and m.group(3), v["best_global"])
+            check(f"dispatch table, {shown} residual", m and m.group(4),
+                  abs(v["residual_convention_dependence"]), "measured in the same run")
+    if hd.exists() and cur.exists():
+        full = json.loads(hd.read_text())["banks"]["grail_full"]["residual_convention_dependence"]
+        curr = json.loads(cur.read_text())["paired_residual"]["delta"]
+        checks.append((curr > full, "P3 refuted, as the appendix states", f"curated {curr}",
+                       f"full {full}", "residual is subadditive across the partition"))
+
     # 11. the cross-domain leaderboard: the run the paper specified in advance and then ran. Its
     # counts are the load-bearing part -- an exchange is visible, a certified interaction is not --
     # so every one of them is recomputed here rather than trusted to a paragraph.

@@ -1,0 +1,68 @@
+{
+ "match": "inchikey_tautomer (run_benchmark._tautomer_recovered, as in bank_overlap_sygma.py)",
+ "n": 1170,
+ "n_boot": 10000,
+ "seed": 0,
+ "population": "clean_test",
+ "arms": {
+  "A_grail_engine_152_rules": {
+   "point": 0.1998,
+   "ci95": [
+    0.1822,
+    0.2184
+   ]
+  },
+  "B_sygma_engine_152_rules_one_step": {
+   "point": 0.3874,
+   "ci95": [
+    0.3646,
+    0.4104
+   ]
+  },
+  "C_sygma_engine_175_rules_one_step": {
+   "point": 0.5325,
+   "ci95": [
+    0.5069,
+    0.5583
+   ]
+  },
+  "D_sygma_engine_175_rules_composed": {
+   "point": 0.5391,
+   "ci95": [
+    0.5137,
+    0.5646
+   ]
+  }
+ },
+ "contrasts": {
+  "engine_at_fixed_rules_B_minus_A": {
+   "point": 0.1875,
+   "ci95": [
+    0.1701,
+    0.2054
+   ]
+  },
+  "the_23_rules_at_fixed_engine_C_minus_B": {
+   "point": 0.1452,
+   "ci95": [
+    0.1284,
+    0.1621
+   ]
+  },
+  "composition_D_minus_C": {
+   "point": 0.0065,
+   "ci95": [
+    0.0038,
+    0.0096
+   ]
+  }
+ },
+ "gates": {
+  "bank_overlap_sygma_committed_A": 0.1887,
+  "grail_full_bank_same_substrates": 0.7284
+ },
+ "n_rules": {
+  "sygma_total": 175,
+  "contained": 152
+ }
+}

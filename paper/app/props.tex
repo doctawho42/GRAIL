@@ -219,7 +219,7 @@ BioTransformer & $994$     & 0.479 & 0.444 & 0.93 \\
 
 The row is a bound on what this template set expresses through \emph{our} engine, and it is not a
 third point on a trend. Its reach carries an interval, $0.479$ $[0.414,0.550]$, and
-\S\ref{app:enginereach} measures the engine term at fixed rules at $+0.192$ $[+0.152,+0.236]$ --- a
+\S\ref{app:enginereach} measures the engine term at fixed rules at $+0.188$ $[+0.170,+0.205]$ --- a
 term the size of the $0.479$-to-$0.701$ spread among the three reach figures above, though measured
 on a different population, and larger than this row's own interval. The direction of that bias is
 not known for this row, and the reason is instructive. Our engine under-realises SyGMa's rules by
@@ -584,7 +584,7 @@ primitive, \texttt{[H]} or \texttt{[\#1]}, which matches nothing at all unless t
 hydrogens are drawn. It never sees a provenance label, and it separates the bank as if it had:
 $675$ of the $7{,}581$ templates require the expansion, every one of them curated and none of the
 $5{,}866$ mined. The bank is a union of two collections written under different hydrogen
-conventions, and any single global setting is the wrong one for one of them.
+conventions, and one of them is mismeasured under whichever single global setting is chosen.
 
 That the notation and not the provenance is doing the work can be checked by holding provenance
 fixed. Splitting the curated subset in two by the same criterion, on the same substrates:
@@ -606,10 +606,30 @@ The two halves of one provenance move in opposite directions, by a factor of twe
 of two down, and the half that carries no hydrogen atom behaves like the mined majority it shares no
 provenance with. What decides which convention a template needs is how the template is written, and
 provenance predicts it only because hand-written collections use the primitive and extracted ones
-never do. This is also why the per-template dispatch of Appendix~\ref{app:negative} beats the better
-of the two global settings rather than tying it: the residual it recovers, $+0.016$
-$[+0.006,+0.028]$ paired, is the coverage the losing half forfeits under whichever single setting is
-chosen.
+never do.
+
+\paragraph{The account we wrote for this, pre-registered and then refuted.} The paragraph above
+originally read that a bank assembled from two conventions has no right answer because \emph{mixing}
+creates the loss, one collection being mismeasured whichever global setting is chosen. That reading
+and a duller one --- that $675$ hand-written templates simply want the expansion, and the mined
+majority has nothing to do with either the loss or its repair --- fit every number then in hand and
+differ in exactly one measurable way, so the difference was registered in advance
+(\texttt{docs/PRO\-VE\-NANCE\_DIS\-PATCH\_PRE\-RE\-GI\-STRA\-TION.md}): the residual should be
+\emph{superadditive} across the partition, $\mathrm{res}(\text{full}) >
+\mathrm{res}(\text{curated}) + \mathrm{res}(\text{mined})$, if mixing is what creates it.
+
+It is subadditive. On the full split the whole bank's residual is $+0.006$ $[+0.003,+0.010]$ and the
+curated subset's alone is $+0.012$ $[+0.008,+0.017]$, against a mined residual that is zero by
+construction, since none of its $5{,}866$ templates is dispatched anywhere. Mixing does not create
+the loss; it \emph{dilutes} it, because the mined majority independently reaches part of what the
+expanded curated templates would have recovered, so their repair is partly redundant once both are
+present. The registered restatement therefore stands in place of the original: $675$ hand-written
+templates require the expansion that the bank's global setting denies them --- a real result, a
+smaller one, and not the one we first wrote.
+
+The per-template dispatch of Appendix~\ref{app:negative} still beats the better of the two global
+settings rather than tying it, and by more on the half that wants the expansion than on the bank
+that contains it.
 
 \subsection{Selection as measured against selection as deployed}
 

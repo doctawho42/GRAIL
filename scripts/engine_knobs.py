@@ -224,11 +224,17 @@ def main() -> int:
     arm_b = committed["arms"]["B_sygma_engine_152_rules_one_step"]["point"]
     print(f"\ngate: default config {res[dflt]['reach']} against committed arm A {arm_a}")
     print(f"gate: comparator arm {res['sygma_engine']['reach']} against committed arm B {arm_b}")
-    if abs(res[dflt]["reach"] - arm_a) > 1e-4:
-        raise SystemExit("the reimplemented loop is not the deployed engine -- the other arms are "
-                         "not interpretable")
-    if abs(res["sygma_engine"]["reach"] - arm_b) > 1e-4:
-        raise SystemExit("the comparator arm does not reproduce the committed arm B")
+    # The committed arms were measured on the 245-substrate subsample, so they gate that population
+    # and no other. Asserting them against a run on the full split compares two populations, which
+    # is the defect this paper names; on any other population the arms are simply reported.
+    if args.population == "subsample245":
+        if abs(res[dflt]["reach"] - arm_a) > 1e-4:
+            raise SystemExit("the reimplemented loop is not the deployed engine -- the other arms "
+                             "are not interpretable")
+        if abs(res["sygma_engine"]["reach"] - arm_b) > 1e-4:
+            raise SystemExit("the comparator arm does not reproduce the committed arm B")
+    else:
+        print(f"(the committed arms {arm_a} and {arm_b} gate the 245-substrate subsample only)")
 
     # The committed engine term is a difference of ratio-of-sums (micro); a mean of per-substrate
     # ratios (macro) is a different estimand and the two disagree here by a sixth. Both are reported,
@@ -274,11 +280,21 @@ def main() -> int:
     switch_hits = int((res[no_hs]["_H"] - res[dflt]["_H"]).sum())
     engine_hits = int((res["sygma_engine"]["_H"] - res[dflt]["_H"]).sum())
     rep_vs["engine_term_micro_recomputed"] = round(float(engine_hits / U0.sum()), 4)
-    rep_vs["committed_engine_term_micro"] = committed["contrasts"][
+    # The engine term this run must reproduce is the one measured on the SAME population. The
+    # committed artifact holds the subsample's; a clean_test run reads the clean_test one, which
+    # reach_engine_vs_bank writes beside it. Reproducing a term across populations is not a
+    # reproducibility check, it is the comparison this paper exists to warn about -- and this is the
+    # fourth gate in this family to have been written that way.
+    peer = ROOT / f"results/reach_engine_vs_bank{'' if args.population == 'subsample245' else '__' + args.population}.json"
+    if not peer.exists():
+        raise SystemExit(f"{peer.name} is missing; run reach_engine_vs_bank.py on this population "
+                         f"first, or this run has no engine term to reproduce")
+    rep_vs["committed_engine_term_micro"] = json.loads(peer.read_text())["contrasts"][
         "engine_at_fixed_rules_B_minus_A"]["point"]
+    rep_vs["engine_term_source"] = peer.name
     if abs(rep_vs["engine_term_micro_recomputed"]
            - rep_vs["committed_engine_term_micro"]) > 1e-4:
-        raise SystemExit("this run does not reproduce the committed engine term")
+        raise SystemExit(f"this run does not reproduce the engine term in {peer.name}")
     rep_vs["share_of_engine_term_carried_by_the_switch"] = round(switch_hits / engine_hits, 3)
     rep_vs["hit_counts"] = {"references": int(U0.sum()), "deployed": int(res[dflt]["_H"].sum()),
                             "without_explicit_h": int(res[no_hs]["_H"].sum()),
