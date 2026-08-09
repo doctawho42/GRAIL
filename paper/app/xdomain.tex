@@ -157,9 +157,7 @@ MetaPredictor    & 0.531 & 0.570 & 0.578 & 0.532 & 0.585 & 11.2 \\
 \begin{center}
 \includegraphics[width=0.52\textwidth]{fig_ladder}
 \end{center}
-\caption{The five criteria as a slope plot on the shared subset. What matters is which lines cross:
-BioTransformer passes GRAIL between canonical and InChIKey matching, and MetaTrans passes SyGMa in
-the other direction, on predictions that never change.}
+\caption{Recall@15 of five methods under the five matching criteria, on the shared subset. Predictions are identical across criteria.}
 \label{fig:ladder}
 \end{figure}
 
@@ -301,8 +299,7 @@ delivery is named for; PASS writes that score only for the $5{,}178$ of $10{,}60
 declares above its own threshold, and the rest keep the order the file gives them, since PASS
 expresses no preference among predictions it declines to score.
 
-Each method's own parent is dropped from its ranked list before the budget applies, and the choice
-runs in our favour, not against it. GRAIL returns the substrate itself on $80$ of the $291$,
+Each method's own parent is dropped from its ranked list before the budget applies, and the choice runs in favour of this system and not against it. GRAIL returns the substrate itself on $80$ of the $291$,
 MetaPredictor on $52$ and MetaTox on $14$; SyGMa's zero is a property of the released artifact
 rather than of SyGMa, whose tree is rooted at the substrate and whose parent was stripped when those
 predictions were frozen. A slot spent on the parent cannot score, so dropping it helps whichever
@@ -418,8 +415,7 @@ $p=2.0\times10^{-8}$ against $0.05$ the correction changes nothing whatever fami
 
 The external ceiling is measured on 37 GLORYx parent substrates, so its 95\% interval is wide by
 construction, at $[0.616,0.804]$. The regression that partially explains the gap between internal
-and external coverage is fit on the same small external population. We report it as suggestive
-rather than as a law that transfers.
+and external coverage is fit on the same small external population. It is reported as suggestive and not as a law that transfers.
 
 \subsection{One assumption behind Proposition 2 is not measured}
 
@@ -438,7 +434,7 @@ chemistry and chemistry outside the bank remain open sources of coverage.
 
 The factorised redesign of the generator reaches recall@15 of $0.489$ $[0.464,0.514]$ on the full
 test split against the deployed $\grailmacro$, at $14.0$ candidates per substrate against $8.4$.
-That pair is not budget-matched, so what we claim is the conservative reading: truncated to five
+That pair is not budget-matched, so the conservative reading is the one stated: truncated to five
 candidates it matches $\grailmacro$ while emitting fewer than half as many. It also contributes a
 re-ranking gain of $+0.0165$, 95\% confidence interval $[0.006,0.027]$, on the full clean test.
 Closing the larger gap to SyGMa still requires a broader rule bank, which is outside the scope of
@@ -637,7 +633,7 @@ plausible reason is that retrosynthesis references are canonical, clean small mo
 metabolism rule engine emits tautomer and stereochemical variants of its references. What this
 licenses is narrow, and the seven-system result above says how narrow. A leaderboard reorders when
 the convention moves two methods by \emph{different} amounts, and one model cannot show a
-differential. It is tempting to read one model's small movement as a bound on what a pair could
+differential. One model's small movement might be read as a bound on what a pair could
 suffer, and that reading is arithmetically true and practically empty: the movement here is about
 $0.02$, the seven published systems sit within $0.005$ of one another, and five pairs exchange. A
 bound larger than the gaps it is supposed to protect protects nothing.
@@ -669,7 +665,7 @@ own favour. Restricting the other three to the thirteen would have been an error
 direction, discarding two thirds of the sample to correct a bias they do not have.
 
 The audit is scoped to GRAIL's splits because that is the only overlap that can inflate a number in
-this paper, and one might still ask whether a learned comparator had seen these well-known drugs.
+this paper, and it remains open whether a learned comparator had seen these well-known drugs.
 The reported effect is the wrong shape for that: a method that had memorised stereo-bearing
 reference structures would match them under strict \textsc{inchikey} and have \emph{less} left for a
 stereo-blind criterion to recover, so memorisation attenuates a stereo-step gain, not producing one. MetaPredictor enters that step at $0.362$, below the rule engine's $0.492$, which is
@@ -779,6 +775,6 @@ Two limits bear on the interpretation. Twenty-five drugs give intervals
 around $\pm0.1$, and these are drugs two sources both chose to curate, so they carry $5.7$ to $6.5$
 references each against $2.2$ across the corpus. Better-studied compounds are exactly where two
 curations have the most opportunity to agree, so $0.539$ is more likely an upper bound on
-inter-source agreement than a typical value. Which way that biases the ceiling we cannot say: on
+inter-source agreement than a typical value. The direction of that bias is not identified: on
 less-studied chemistry both the curations and the models have less to go on, and we have not
 measured which of the two degrades faster.

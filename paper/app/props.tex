@@ -58,7 +58,7 @@ the gap by reaction type and bounds how much of it a more general template could
 \paragraph{Training-set size.}
 Recall moves from 0.330 to 0.334 between 2{,}418 and 4{,}787 training substrates. Both are ablation
 runs rather than the deployed checkpoint, so neither is $\grailmacro$ and neither should be read
-against it. They are also two single runs, not a paired comparison, so we give no interval; the change is smaller than the
+against it. They are also two single runs, not a paired comparison, so no interval is quoted; the change is smaller than the
 $\pm0.010$ spread the same configuration shows across three seeds, which is the sense in which it
 is flat. Doubling the number of substrates does not move selection, which rules out under-training as the
 explanation for the shortfall. Proposition 2 accounts for that: with one to three rules firing per
@@ -283,8 +283,7 @@ D & all $175$, SyGMa's composed & 0.527 $[0.473,0.582]$ \\
 \end{tabular}
 \end{center}
 
-The engine at fixed rules is worth $+0.188$ $[+0.170,+0.205]$, the $23$ rules we do not hold
-$+0.143$ $[+0.107,+0.180]$, and composition $+0.004$. The engine term alone is the size of the
+The engine at fixed rules is worth $+0.188$ $[+0.170,+0.205]$, the $23$ rules absent from our bank $+0.143$ $[+0.107,+0.180]$, and composition $+0.004$. The engine term alone is the size of the
 entire reach gap the main text reports.
 
 \paragraph{The term is a single decision.} The application loop makes three discretionary choices
@@ -507,7 +506,7 @@ quantity: no second engine and no second bank enter it.
 The cross-method claim survives its own test, and the condition survives with it. The bank does convert into
 recall above SyGMa once the selector is gone, but only above the budget the field uses. At $k=15$
 the two are indistinguishable and below it SyGMa wins, so the advantage is bought with output, which
-is the parameter of \S\ref{sec:metric} acting in our favour where \S\ref{sec:metric} has it acting
+is the parameter of \S\ref{sec:metric} acting in favour of this system where \S\ref{sec:metric} has it acting
 against us. Reporting only the $k=82$ row would apply a standard to ourselves that this paper
 refuses to apply to SyGMa.
 
@@ -767,8 +766,7 @@ proposition's prediction.
 
 Coverage does not bind it. As a replacement generator the pipeline reaches recall@15 $0.489$
 $[0.464,0.514]$ on the full test against $\grailmacro$ for the deployed pipeline, but it emits
-$14.0$ candidates per substrate against $8.4$, so that pair is not budget-matched and we do not
-claim it. The conservative comparison is: truncated to five candidates it reaches $0.337$, matching
+$14.0$ candidates per substrate against $8.4$, so that pair is not budget-matched and supports no claim. The conservative comparison is: truncated to five candidates it reaches $0.337$, matching
 the deployed pipeline's $\grailmacro$ while emitting fewer than half as many, and at ten it reaches
 $0.432$. Both runs were scored separately, not paired, so no interval is quoted on a
 difference. The convention this is measured in is the one the deployed generator fires rules in;
@@ -800,8 +798,7 @@ We formulated the generator as a set-terminal GFlowNet trained by Trajectory Bal
 positive-unlabelled set-coverage reward $\log R(S) = \beta(\mathrm{TP} - \lambda|S|)$ with an
 analytic backward policy; the formulation is new for this domain and is released for reuse. Across
 three seeds on 40 validation substrates its single-set recall@15 is $0.292\pm0.032$, indistinguishable
-from beam search at $0.311\pm0.039$ and below a reranker at $0.411\pm0.044$. We report it as a
-negative result and claim little from it, because the endpoint is one its objective works against:
+from beam search at $0.311\pm0.039$ and below a reranker at $0.411\pm0.044$. It is reported as a negative result, because the endpoint is one its objective works against:
 the reward pays a size penalty and recall@$k$ does not charge one. The diagnosis is cardinality
 rather than mis-specification: $\beta$ cancels in the argmax, so the reward is the \emph{more}
 conservative of the two, and what happened is that the policy emitted $14.2$ against a configured
@@ -933,7 +930,7 @@ covering $0.785$ of the references against the curated remainder's $0.471$ (\S\r
 Appendix~\ref{app:external} says in terms that applying the bank to a substrate it was partly mined
 from is not independent of training, so a coverage gradient in similarity to training is exactly
 what a training-derived rule set would produce. It cannot serve as the leg of the argument that no
-learning touches, and we do not use it as one; the control above is what carries the section. The common cause is visible in the
+learning touches, and is not used as one; the control above is what carries the section. The common cause is visible in the
 same stratification: reference sets are smaller at the far end too, $2.40$ annotated metabolites
 above $0.6$ against $1.90$ below $0.3$, though across all five strata the series is not monotone
 and the contrast is between its endpoints, not a trend. Training corpus, rule bank and annotation all derive from the
@@ -1070,8 +1067,7 @@ weighting. Its deficit to the frequency prior widens from $-0.144$ $[-0.196,-0.0
 $[-0.215,-0.107]$; both are significant and the intervals overlap heavily, so the change itself is
 not distinguishable while the absence of improvement is clear. The prior-only arm returns $0.410$
 in both runs, identical to four decimal places, which confirms the comparison isolates the training
-objective. Per-substrate scores from the two runs were not retained jointly, so we do not quote a
-paired interval on the $-0.017$ difference itself.
+objective. Per-substrate scores from the two runs were not retained jointly, so no paired interval is quoted on the $-0.017$ difference itself.
 
 The intervention was also run end to end, not only in the isolated probe, and there the discipline
 this paper argues for is what decides it. Retraining the deployed configuration with the propensity
@@ -1082,7 +1078,7 @@ a single seed against a seed-to-seed spread of $\pm0.010$ and is not corroborate
 selection, so it supports no claim. Both figures are on the $300$-substrate evaluation
 that configuration runs and are not comparable with the full-split numbers elsewhere in this paper.
 
-The reading we take is about the domain, not the method. Inverse-propensity weighting exists
+The conclusion concerns the domain and not the method. Inverse-propensity weighting exists
 to correct a label's rarity when that rarity is an artifact of incomplete annotation. In metabolism
 a rule's firing frequency is substantially not an artifact: common rules are common because the
 transformations they encode are common in the chemistry. Down-weighting them by a factor of five,

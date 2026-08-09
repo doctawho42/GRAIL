@@ -379,7 +379,7 @@ changes: a depth-1 enumeration that expands the substrate with explicit hydrogen
 own, which does not, same substrates, same matcher, one step each. They reach $0.189$
 $[0.151,0.230]$ under the first and $0.381$ $[0.333,0.433]$ under the second,
 an engine term of $+0.188$ $[+0.170,+0.205]$ paired, against an entire bank-to-bank gap of
-$0.201$ on those substrates, with the $23$ rules we do not hold worth $+0.143$ $[+0.107,+0.180]$ at
+$0.201$ on those substrates, with the $23$ rules absent from our bank worth $+0.143$ $[+0.107,+0.180]$ at
 fixed engine and depth no confound. Almost all of what reads as a difference between knowledge
 bases is a difference between the programs that query them, and that difference is a single preprocessing step, the expansion itself. Our own generator does not expand, which is why \ceiling\ is quoted without it;
 measured with it the same bank reaches $0.735$. Toggling that one call, bank and substrates
@@ -543,8 +543,7 @@ split the recall@15 ordering is stable to within noise, the leading pair exchang
 most $0.0014$ with a differential sensitivity of $-0.001$ $[-0.009,+0.006]$. The F1 gap between
 GRAIL and MetaPredictor is another matter: it is certified under four criteria, at $-0.026$ $[-0.038,-0.013]$ under the
 tautomer-aware default, and indistinguishable from zero under plain \textsc{inchikey}, at
-$+0.003$ $[-0.009,+0.015]$. That is an erased gap, not a certified reversal, and we claim it
-as no more than that: the matching rule and the output size do not act on the same comparisons.
+$+0.003$ $[-0.009,+0.015]$. That is an erased gap and not a certified reversal. The matching rule and the output size do not act on the same comparisons.
 Precision here is a lower bound and threatens this result most, since the method the metric demotes
 emits the most candidates; under a uniform-propensity model its ordering is identified and F1's
 survives to $c\approx0.055$ (Appendix~\ref{app:props}).
@@ -585,8 +584,7 @@ $8.5$ times the cost, so $\ceiling$ bounds this formulation rather than the task
 not produce, read under an assumption proven where an independent ground truth exists, not inferred from those files agreeing, and the reordering there is a top-1 phenomenon. Packing is
 measured across four leaderboards, which is few. The population axis is reported as a negative and
 inherits that design's weakness: two nested populations in each of two instances bound how large an
-interaction would have had to be to show, not whether one exists. Our own headline is one evaluation
-of the deployed configuration, selection on validation but for the two exceptions
+interaction would have had to be to show, not whether one exists. The headline figure for this system is a single evaluation of the deployed configuration, selection on validation but for the two exceptions
 \S\ref{sec:tame} names.
 
 \section{Conclusion}
