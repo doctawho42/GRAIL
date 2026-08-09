@@ -297,6 +297,35 @@ def main() -> int:
         m3 = re.search(r"The engine term is \$\+([\d.]+)\$, so that one call carries all of it", flat)
         check("engine term, appendix", m3 and m3.group(1), c["committed_engine_term_micro"])
 
+    # 10d. the packing measurement: the empirical half of the reordering condition
+    pk = ROOT / "results/packing_vs_differential.json"
+    if pk.exists():
+        P = json.loads(pk.read_text())
+        flat = re.sub(r"\s+", " ", whole)
+        t = P["totals"]
+        m = re.search(r"\$(\d+)\$ method-pair by criterion-pair comparisons across three domains", flat)
+        check("packing, comparisons", m and m.group(1), t["comparisons"])
+        m = re.search(r"exceeds the gap in \$(\d+)\$ of the \$(\d+)\$", flat)
+        check("packing, move exceeds gap", m and m.group(1), t["closer_than_the_move"])
+        check("packing, denominator", m and m.group(2), t["comparisons"])
+        m = re.search(r"a reversal follows in \$(\d+)\$ of those", flat)
+        check("packing, reversals", m and m.group(1), t["exchanged"])
+        NAMES = {"generation, MOSES": "molecular generation, MOSES",
+                 "metabolites, GLORYx": "metabolites, external GLORYx",
+                 "retrosynthesis, seven": "retrosynthesis, seven-system group",
+                 "retrosynthesis, three": "retrosynthesis, three-system group"}
+        for shown, key in NAMES.items():
+            v = P["per_leaderboard"].get(key)
+            if not v:
+                continue
+            row = re.search(re.escape(shown) + r" & (\d+) & (\d+) & \$([\d.]+)\$ & \$([\d.]+)\$ & \$(\d+)\$", flat)
+            for i, (label, val) in enumerate((("methods", v["methods"]),
+                                              ("comparisons", v["comparisons"]),
+                                              ("median gap", v["median_gap"]),
+                                              ("median move", v["median_differential"]),
+                                              ("move over gap", v["closer_than_the_move"]))):
+                check(f"packing, {shown} {label}", row and row.group(i + 1), val)
+
     # 11. the cross-domain leaderboard: the run the paper specified in advance and then ran. Its
     # counts are the load-bearing part -- an exchange is visible, a certified interaction is not --
     # so every one of them is recomputed here rather than trusted to a paragraph.
@@ -359,11 +388,11 @@ def main() -> int:
                          "pairs": len(per_pair),
                          "exchanged": len(L2["pairs_that_exchange"]["top1"])}
         # the main body states the same condition in words; both of its numbers are checked too
-        mb = re.search(r"within a median \$([\d.]+)\$ of each other", flat)
+        mb = re.search(r"a median \$([\d.]+)\$ apart against a differential", flat)
         checks.append((close(mb and mb.group(1), rows["seven-system"]["median_gap"], 5e-4),
                        "median gap, main body", mb and mb.group(1),
                        round(rows["seven-system"]["median_gap"], 4), ""))
-        mb2 = re.search(r"three systems? \$([\d.]+)\$\s*apart", flat)
+        mb2 = re.search(r"three \$([\d.]+)\$ apart", flat)
         checks.append((close(mb2 and mb2.group(1), rows["three-system"]["median_gap"], 5e-4),
                        "three-system gap, main body", mb2 and mb2.group(1),
                        round(rows["three-system"]["median_gap"], 4), ""))
@@ -382,16 +411,13 @@ def main() -> int:
             checks.append((any(close(h, want, 5e-4) for h in hits),
                            f"body ordering, {shown} {mode}", hits or None, round(want, 4),
                            "printed in the two orderings"))
-        for tag, v in rows.items():
-            m = re.search(tag + r" & \$([\d.]+)\$ & \$([\d.]+)\$ & \$(\d+)\$ of \$(\d+)\$ & \$(\d+)\$", flat)
-            for i, (label, val) in enumerate((("median gap", v["median_gap"]),
-                                              ("differential move", v["max_diff"]),
-                                              ("pairs closer than the move", v["closer"]),
-                                              ("pairs in the group", v["pairs"]),
-                                              ("pairs exchanged", v["exchanged"]))):
-                checks.append((close(m and m.group(i + 1), val, 5e-4 if i < 2 else 0),
-                               f"{tag}, {label}", m and m.group(i + 1), round(val, 4),
-                               "from the two leaderboard artifacts"))
+        # The per-group table these checked is superseded by the packing measurement over all
+        # four leaderboards. What the body still prints from the two groups is checked above; the
+        # count of exchanging pairs is checked here so the phrasing cannot drift from the artifact.
+        m = re.search(r"Five of twenty-one pairs exchange", flat)
+        checks.append((bool(m) and len(json.loads(lb.read_text())["pairs_that_exchange"]["top1"]) == 5,
+                       "exchanging pairs, body phrasing", "Five of twenty-one",
+                       len(json.loads(lb.read_text())["pairs_that_exchange"]["top1"]), ""))
 
     # 12. intervals printed beside the factors
     for label, key in (("ceiling interval", "coverage_bank"), ("ranking interval", "ranking_conversion")):

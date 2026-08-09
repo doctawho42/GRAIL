@@ -507,27 +507,45 @@ criterion. Fifteen of its $66$ paired interactions survive Holm, so the criterio
 by certifiably different amounts too --- and by almost exactly the same amounts as in the seven, a
 largest differential of $0.013$ against $0.015$.
 
-What differs is how tightly the leaderboard is packed:
+What differs is how tightly the leaderboard is packed --- and that, rather than the criterion, is
+what decides the outcome.
+
+\paragraph{The inequality is arithmetic; how often it is met is not.} A criterion reverses a pair
+exactly when it moves the two apart by more than the gap between them, since a difference changes
+sign only if the change exceeds it. That needs no evidence. What needs evidence is whether real
+leaderboards are packed tightly enough for it to happen, which is a fact about how a field's methods
+converge. Both quantities are already computed for every leaderboard in this paper, so we compare
+them on all of them --- $439$ method-pair by criterion-pair comparisons across three domains, with
+nothing re-scored:
 
 \begin{center}
 \footnotesize
-\begin{tabular}{lcccc}
+\begin{tabular}{lccccc}
 \toprule
-group & median pairwise gap & largest differential move & pairs with gap $<$ move & exchanged \\
+leaderboard & methods & comparisons & med.\ gap & med.\ move & move $>$ gap \\
 \midrule
-seven-system & $0.013$ & $0.015$ & $7$ of $21$ & $5$ \\
-three-system & $0.047$ & $0.013$ & $0$ of $3$  & $0$ \\
+generation, MOSES        & 8 & 277 & $0.0094$ & $0.0001$ & $16$ \\
+metabolites, GLORYx      & 4 & 18  & $0.1303$ & $0.0361$ & $4$ \\
+retrosynthesis, seven    & 7 & 126 & $0.0130$ & $0.0016$ & $28$ \\
+retrosynthesis, three    & 3 & 18  & $0.0470$ & $0.0011$ & $0$ \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-That is the condition, and it is the useful form of the result. A convention reorders a leaderboard
-when it moves two methods by more than the gap between them, so the quantity that decides the
-outcome is not how far a criterion moves scores --- which is the same in both groups --- but how far
-it moves them \emph{relative to how close the methods already are}. Seven systems within a median
-$0.013$ of each other are reordered by a differential of $0.015$; three systems $0.047$ apart are
-not. The reading is uncomfortable rather than reassuring: a leaderboard becomes vulnerable to an
-undeclared convention exactly as it matures and its entries converge.
+The movement exceeds the gap in $48$ of the $439$, about one comparison in nine, and a reversal
+follows in $26$ of those $48$ --- the rest being movements that widen a gap instead of closing it,
+which is why the inequality is necessary and not sufficient. No reversal occurs where the gap
+survives the movement, on any of the $439$, which is the arithmetic holding and is checked rather
+than assumed.
+
+The distribution across leaderboards is the finding. The seven-system group is the tightest and
+supplies $28$ of the $48$; the three-system group, whose members sit three and a half times further
+apart while the criterion moves them just as much, supplies none. Generation contributes $16$ from
+$277$ comparisons because its median movement is $0.0001$ --- the criterion has almost no purchase
+there --- and the external metabolite set contributes $4$ from $18$ for the opposite reason, a
+movement of $0.036$ large enough to cross even gaps of $0.13$. The reading is uncomfortable rather
+than reassuring: a leaderboard becomes vulnerable to an undeclared convention exactly as it matures
+and its entries converge.
 
 Two earlier measurements outside metabolism come back negative, and they are negative about
 different things. The first carries a leaderboard: it scores eight generative models and can
