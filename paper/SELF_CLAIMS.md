@@ -399,7 +399,7 @@ grep -ln "raise SystemExit" scripts/*.py | while read f; do
 done
 ```
 
-**Status: PASS as of 2026-08-08, after unfreezing four literals of twelve.** The paragraph above
+**Status: PASS as of 2026-08-10, after unfreezing four literals of twelve and scoping four gates.** The paragraph above
 this one first said "one gate, and the other two confirmed", written before the command below was
 run. The command found twelve, and the count was not the only thing wrong with the sentence.
 
@@ -431,6 +431,19 @@ given while reading the two global arms it must beat out of subsample literals �
 split it reported a residual that was a difference between two populations. Both now measure or read
 their reference for the population they are running on. The distinction that matters is not literal
 versus lookup; it is whether the reference tracks the thing it certifies.
+
+**Widening the measurements to the full split found two more, and both fired rather than being
+spotted.** `engine_knobs.py` compared a full-split run against arms measured on the subsample, and
+then required it to reproduce an engine term measured there; each now reads the peer artifact for
+its own population and refuses to run when that artifact does not exist, rather than silently
+falling back on the one that does. `dispatch_paired_ci.py` asserted a whole-bank pair against a
+subset arm. Counting the two above, four gates in this family had been written to compare across
+populations — which is the comparison the paper exists to warn about, made by its own checks.
+
+The pattern across all four is worth stating once. A gate is safe when its reference is a *fixed
+property* (a rule count, a corpus overlap) or a *published claim*; it is unsafe when the reference is
+a measurement that can move, and every unsafe one here moved in the same way — the subject was
+re-measured on a new population or convention and the reference was not.
 
 The surviving literals are the legitimate use — a gate asserting a *fixed* property or a *published
 claim*, which fires when the measurement moves instead of hiding it. `bank_engine_replication.py`

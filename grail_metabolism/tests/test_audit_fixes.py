@@ -528,3 +528,36 @@ def test_the_manuscript_agrees_with_the_artifact_it_cites():
     assert result.returncode == 0, (
         "a manuscript number does not follow from results/recall_factorization.json:\n"
         + result.stdout[-2000:])
+
+
+def test_the_released_checker_and_the_paper_census_cannot_disagree():
+    """scripts/declare_conventions.py is what a reader runs; it must count what the paper counted.
+
+    The tool exists so the paper's recommendation can be acted on, which makes any drift between
+    its census and the manuscript's worse than no tool at all -- a reader would get a different
+    number from the same file and have no way to tell which is the paper's. The first version drifted
+    immediately: it counted a template carrying both a hydrogen atom and a recursive SMARTS in two
+    categories at once and reported 332 unclassifiable where the paper reports 126.
+    """
+    import sys
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[2]
+    for p in (str(root), str(root / "scripts")):
+        if p not in sys.path:
+            sys.path.insert(0, p)
+
+    from declare_conventions import classify_template
+    from explicit_h_mechanism import hydrogen_convention
+    from bank_engine_replication import load_bank
+
+    census = hydrogen_convention()
+    for bank in ("grail_full", "sygma_175", "biotransformer"):
+        rules = load_bank(bank)
+        tags = [classify_template(r) for r in rules]
+        assert sum("wants_expanded" in t for t in tags) == census[bank]["with_explicit_hydrogen"], (
+            f"{bank}: the checker and the paper disagree on how many templates want the expansion")
+        assert sum("unclassifiable" in t for t in tags) == census[bank][
+            "unclassified_recursive_smarts"], (
+            f"{bank}: the checker and the paper disagree on the residual category, which is the one "
+            f"a dispatch policy has to guess at")

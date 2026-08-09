@@ -649,7 +649,12 @@ readable from a released file, none is declared, and one caught this paper.
 \subsubsection*{Reproducibility statement}
 
 Every number in this paper traces to a committed artifact and regenerates from what we release, and
-the checks that establish it are released as scripts rather than asserted. What regeneration costs
+the checks that establish it are released as scripts rather than asserted. One of them is meant for
+other people's files rather than ours: given a template bank it reports which templates are
+convention-dependent and whether the bank is mixed, and given two or more prediction files it
+reports whether they are on the same population at all and how far apart their output sizes are.
+It needs no reference data and no model, and on the eleven released retrosynthesis files it recovers
+the three populations in seconds. What regeneration costs
 differs by analysis: every split-level result regenerates from the committed artifacts alone ---
 frozen predictions, key tables, per-substrate records --- while the ablations that rank or re-select
 candidates require running a trained model and so also need the GRAIL checkpoints. The anonymised
