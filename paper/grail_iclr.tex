@@ -183,9 +183,10 @@ the candidates entering it are counted \citep{Krichene_2020}.
 That an unpenalised recall@$k$ rewards enumeration is a property of the measure that literature
 settled decades ago; we re-instantiate it here rather than discover it.
 
-\paragraph{Remaining gap.} \looseness=-1 None of the three axes is in doubt in general, and none has been varied
-for metabolite predictors. What is unestablished is how far each moves this field's rankings when it
-is the only thing changing. For the budget the new content is therefore measurement, not the
+\paragraph{Remaining gap.} \looseness=-1 None of the four axes is in doubt in general, and none has been varied
+with everything else held fixed --- neither for metabolite predictors, nor to ask whether a
+criterion \emph{reorders} a leaderboard elsewhere rather than shifting it. What is unestablished is
+how far each moves a ranking when it is the only thing changing. For the budget the new content is therefore measurement, not the
 trade-off. Three distinct orderings appear across the sweep, and at $k=5$ both pairs involving our
 own system separate while the other two do not. The budget truncates SyGMa on $92.7\%$ of substrates
 and GRAIL's emitted list on none, so the comparison made at it is not budget-matched. And a
@@ -265,10 +266,11 @@ rather than standing as independent evidence.
 precision alone: under incomplete annotation precision is a \emph{pessimistic lower bound}, an
 unannotated but real metabolite scoring as a false positive,
 while recall without output size misleads in the other direction, a method being able to buy recall
-by enumerating (Appendix~\ref{app:budget}). We designate two comparisons confirmatory and correct
-those for multiplicity, the differential sensitivity of \S\ref{sec:rankflip} and the
-learned-versus-prior gap of \S\ref{sec:xmc}, and treat every other interval as exploratory. The
-designation is made here; the pre-registered design specified no correction. Selection
+by enumerating (Appendix~\ref{app:budget}). Three comparisons are confirmatory and each is corrected for multiplicity: the differential
+sensitivity of \S\ref{sec:rankflip}, the learned-versus-prior gap of \S\ref{sec:xmc}, and the
+cross-domain interaction, whose $448$ paired tests form one family (Appendix~\ref{app:xdomain}).
+Every other interval is exploratory. The first two designations are made here; the third was
+specified with its run. Selection
 happens on validation, with two exceptions we name rather than imply: the deployed filter's encoder
 variant, chosen by comparing both on test (Appendix~\ref{app:arch}), which reaches every GRAIL
 number here including the headline; and the exploratory analyses of Appendix~\ref{app:negative},
@@ -619,10 +621,10 @@ transfers better off distribution (Appendix~\ref{app:props}).
 \label{sec:limitations}
 
 \looseness=-1
-\paragraph{Sample sizes differ, and two comparators cannot be re-run here.} The five-method table
-rests on $\nshared$ shared substrates: MetaTrans's inference pipeline no longer reproduces and
-BioTransformer's configuration is unscripted, so both are frozen predictions. The other three are
-scored on the full $\ntest$, the external replication on $n=\nglory$.
+\paragraph{Sample sizes differ, and two comparators cannot be re-run here.} MetaTrans's inference
+pipeline no longer reproduces and BioTransformer's configuration is unscripted, so the five-method
+table rests on $\nshared$ shared substrates of frozen predictions; the other three are scored on the
+full $\ntest$.
 
 \looseness=-1
 \paragraph{Two bounds on the metabolite numbers.} An unannotated but chemically real product scores
