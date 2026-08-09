@@ -316,10 +316,25 @@ def main() -> int:
         checks.append((close(mb and mb.group(1), rows["seven-system"]["median_gap"], 5e-4),
                        "median gap, main body", mb and mb.group(1),
                        round(rows["seven-system"]["median_gap"], 4), ""))
-        mb2 = re.search(r"three sitting \$([\d.]+)\$ apart", flat)
+        mb2 = re.search(r"three systems? \$([\d.]+)\$\s*apart", flat)
         checks.append((close(mb2 and mb2.group(1), rows["three-system"]["median_gap"], 5e-4),
                        "three-system gap, main body", mb2 and mb2.group(1),
                        round(rows["three-system"]["median_gap"], 4), ""))
+        # the two orderings the body prints in words: every number, against the artifact
+        L0 = json.loads(lb.read_text())["accuracy"]
+        for shown, key, mode in (("GraphRetro", "graphretro", "canonical"),
+                                 ("LocalRetro", "localretro", "canonical"),
+                                 ("Retroformer", "retroformer", "canonical"),
+                                 ("Graph2SMILES", "graph2smiles", "canonical"),
+                                 ("Graph2SMILES", "graph2smiles", "nostereo"),
+                                 ("Retroformer", "retroformer", "nostereo"),
+                                 ("GraphRetro", "graphretro", "nostereo"),
+                                 ("LocalRetro", "localretro", "nostereo")):
+            want = L0[key][mode]["top1"]
+            hits = re.findall(shown + r" \$([\d.]+)\$", flat)
+            checks.append((any(close(h, want, 5e-4) for h in hits),
+                           f"body ordering, {shown} {mode}", hits or None, round(want, 4),
+                           "printed in the two orderings"))
         for tag, v in rows.items():
             m = re.search(tag + r" & \$([\d.]+)\$ & \$([\d.]+)\$ & \$(\d+)\$ of \$(\d+)\$ & \$(\d+)\$", flat)
             for i, (label, val) in enumerate((("median gap", v["median_gap"]),
