@@ -1,0 +1,182 @@
+{
+ "config": {
+  "script": "engine_knobs.py",
+  "git_commit": "25cb3bd72d4190770b5a4a00d621780f64574f84",
+  "git_dirty": false,
+  "population": "clean_test",
+  "n_rules": 152,
+  "n_substrates": 1170,
+  "match": "inchikey_tautomer",
+  "n_boot": 10000,
+  "seed": 0,
+  "default": {
+   "add_hs": true,
+   "norm": "standardize",
+   "drop_invalid": true
+  },
+  "gate": "default reproduces arm A (0.1887)"
+ },
+ "default_reach": 0.1998,
+ "one_knob_at_a_time": {
+  "explicit_hydrogens": {
+   "from": "True",
+   "to": "False",
+   "reach": 0.3897,
+   "paired_vs_default": {
+    "delta": 0.1898,
+    "ci95": [
+     0.1729,
+     0.2075
+    ],
+    "excludes_zero": true,
+    "estimator": "micro",
+    "macro": {
+     "delta": 0.1589,
+     "ci95": [
+      0.1415,
+      0.1765
+     ],
+     "excludes_zero": true
+    }
+   }
+  },
+  "product_normalisation": {
+   "from": "standardize",
+   "to": "canonical",
+   "reach": 0.1998,
+   "paired_vs_default": {
+    "delta": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ],
+    "excludes_zero": false,
+    "estimator": "micro",
+    "macro": {
+     "delta": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ],
+     "excludes_zero": false
+    }
+   }
+  },
+  "validity_filter": {
+   "from": "True",
+   "to": "False",
+   "reach": 0.1998,
+   "paired_vs_default": {
+    "delta": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ],
+    "excludes_zero": false,
+    "estimator": "micro",
+    "macro": {
+     "delta": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ],
+     "excludes_zero": false
+    }
+   }
+  }
+ },
+ "all_configurations": {
+  "add_hs=True,norm=standardize,drop_invalid=True": {
+   "reach": 0.1998,
+   "ci95": [
+    0.1817,
+    0.2188
+   ]
+  },
+  "add_hs=True,norm=standardize,drop_invalid=False": {
+   "reach": 0.1998,
+   "ci95": [
+    0.1817,
+    0.2188
+   ]
+  },
+  "add_hs=True,norm=canonical,drop_invalid=True": {
+   "reach": 0.1998,
+   "ci95": [
+    0.1817,
+    0.2188
+   ]
+  },
+  "add_hs=True,norm=canonical,drop_invalid=False": {
+   "reach": 0.1998,
+   "ci95": [
+    0.1817,
+    0.2188
+   ]
+  },
+  "add_hs=False,norm=standardize,drop_invalid=True": {
+   "reach": 0.3897,
+   "ci95": [
+    0.3667,
+    0.4126
+   ]
+  },
+  "add_hs=False,norm=standardize,drop_invalid=False": {
+   "reach": 0.3897,
+   "ci95": [
+    0.3667,
+    0.4126
+   ]
+  },
+  "add_hs=False,norm=canonical,drop_invalid=True": {
+   "reach": 0.3897,
+   "ci95": [
+    0.3667,
+    0.4126
+   ]
+  },
+  "add_hs=False,norm=canonical,drop_invalid=False": {
+   "reach": 0.3897,
+   "ci95": [
+    0.3667,
+    0.4126
+   ]
+  }
+ },
+ "spread": {
+  "min": 0.1998,
+  "max": 0.3897,
+  "range": 0.1899
+ },
+ "against_the_comparator_engine": {
+  "our_engine_without_explicit_h": 0.3897,
+  "comparator_engine_same_rules": 0.3874,
+  "paired_difference": {
+   "delta": 0.0023,
+   "ci95": [
+    0.0,
+    0.0051
+   ],
+   "excludes_zero": false,
+   "estimator": "micro",
+   "macro": {
+    "delta": 0.0055,
+    "ci95": [
+     0.0019,
+     0.0099
+    ],
+    "excludes_zero": true
+   }
+  },
+  "engine_term_micro_recomputed": 0.1875,
+  "committed_engine_term_micro": 0.1875,
+  "engine_term_source": "reach_engine_vs_bank__clean_test.json",
+  "share_of_engine_term_carried_by_the_switch": 1.012,
+  "hit_counts": {
+   "references": 2597,
+   "deployed": 519,
+   "without_explicit_h": 1012,
+   "comparator_engine": 1006
+  }
+ }
+}

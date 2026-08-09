@@ -37,7 +37,28 @@ def macro(name: str, text: str):
 
 
 def close(a, b, tol=5e-4):
-    return a is not None and b is not None and abs(float(a) - float(b)) <= tol
+    """Does the manuscript's printed value follow from the artifact's?
+
+    A printed number is correct when it is the artifact rounded to the precision it is printed at,
+    so that is what is compared. A fixed tolerance gets the boundary cases wrong in both directions:
+    0.1875 printed as 0.188 differs by exactly 5e-4 and fails a 5e-4 tolerance, while a value printed
+    at two decimals passes a tolerance far tighter than its own precision. Both showed up here.
+    """
+    if a is None or b is None:
+        return False
+    try:
+        av, bv = float(a), float(b)
+    except (TypeError, ValueError):
+        return False
+    # Only a value READ FROM THE MANUSCRIPT arrives as a string, and only for those is the printed
+    # precision the right yardstick. Artifact-against-artifact comparisons pass floats and keep the
+    # tolerance they were given -- applying the rule to them made a deliberate 2e-3 convention check
+    # into a four-decimal one, which this check caught on itself.
+    text = a.strip() if isinstance(a, str) else ""
+    if "." in text and text.replace(".", "").replace("-", "").replace("+", "").isdigit():
+        places = len(text.split(".")[1])
+        return f"{round(bv, places):.{places}f}" == f"{av:.{places}f}"
+    return abs(av - bv) <= tol
 
 
 def main() -> int:
@@ -249,6 +270,25 @@ def main() -> int:
         curr = json.loads(cur.read_text())["paired_residual"]["delta"]
         checks.append((curr > full, "P3 refuted, as the appendix states", f"curated {curr}",
                        f"full {full}", "residual is subadditive across the partition"))
+
+    # 10c. the engine knobs: the paper's largest single finding and the two knobs that move nothing
+    ek = ROOT / "results/engine_knobs__clean_test.json"
+    if ek.exists():
+        K = json.loads(ek.read_text())
+        flat = re.sub(r"\s+", " ", whole)
+        h = K["one_knob_at_a_time"]["explicit_hydrogens"]
+        m = re.search(r"explicit hydrogens & yes \$\\to\$ no & ([\d.]+) & \$\+([\d.]+)\$", flat)
+        check("knob table, expanded-off reach", m and m.group(1), h["reach"])
+        check("knob table, hydrogen knob", m and m.group(2), h["paired_vs_default"]["delta"])
+        for label, pat in (("normalisation moves nothing",
+                            r"product normalisation & tautomer \$\\to\$ canonical & ([\d.]+) & \$0.000\$"),
+                           ("validity floor moves nothing",
+                            r"validity floor & on \$\\to\$ off & ([\d.]+) & \$0.000\$")):
+            m2 = re.search(pat, flat)
+            check(label, m2 and m2.group(1), K["default_reach"], "must equal the default exactly")
+        c = K["against_the_comparator_engine"]
+        m3 = re.search(r"The engine term is \$\+([\d.]+)\$, so that one call carries all of it", flat)
+        check("engine term, appendix", m3 and m3.group(1), c["committed_engine_term_micro"])
 
     # 11. the cross-domain leaderboard: the run the paper specified in advance and then ran. Its
     # counts are the load-bearing part -- an exchange is visible, a certified interaction is not --

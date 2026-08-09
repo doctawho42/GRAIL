@@ -286,7 +286,7 @@ D & all $175$, SyGMa's composed & 0.527 $[0.473,0.582]$ \\
 \end{tabular}
 \end{center}
 
-The engine at fixed rules is worth $+0.192$ $[+0.152,+0.236]$, the $23$ rules we do not hold
+The engine at fixed rules is worth $+0.188$ $[+0.170,+0.205]$, the $23$ rules we do not hold
 $+0.143$ $[+0.107,+0.180]$, and composition $+0.004$. The engine term alone is the size of the
 entire reach gap the main text reports.
 
@@ -305,22 +305,22 @@ exactly. That is the second and third rows of the table rather than a gap in the
 \toprule
 choice & from $\to$ to & reach & against the default \\
 \midrule
-explicit hydrogens    & yes $\to$ no             & 0.384 & $+0.196$ $[+0.155,+0.239]$ \\
-product normalisation & tautomer $\to$ canonical & 0.189 & $0.000$ \\
-validity floor        & on $\to$ off             & 0.189 & $0.000$ \\
+explicit hydrogens    & yes $\to$ no             & 0.390 & $+0.190$ $[+0.173,+0.208]$ \\
+product normalisation & tautomer $\to$ canonical & 0.200 & $0.000$ \\
+validity floor        & on $\to$ off             & 0.200 & $0.000$ \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-The engine term is $+0.192$, so that one call carries all of it, and what remains against SyGMa's own
-engine is $+0.004$ $[-0.003,+0.011]$: at that setting the two programs are no longer separable on
+The engine term is $+0.188$, so that one call carries all of it, and what remains against SyGMa's own
+engine is $+0.002$ $[0.000,+0.005]$: at that setting the two programs are no longer separable on
 these rules. SyGMa's source calls neither \texttt{AddHs} nor \texttt{RemoveHs} anywhere, so the
 contrast is between what the two programs do and not an inference from what they emit. Every figure
 in this paragraph is micro, a difference of ratio-of-sums, which is the estimator the engine term
 itself uses. The macro counterparts sit beside them in the artifact because they are a different
-quantity and not a rounding of the same one: the switch is worth $+0.169$ under it rather than
-$+0.196$, and the residual $+0.010$ $[-0.000,+0.024]$ rather than $+0.004$, an interval that spans
-zero less comfortably. The separability claim is the micro one, and the two estimators should not
+quantity and not a rounding of the same one: the switch is worth $+0.159$ under it rather than
+$+0.190$, and the residual $+0.006$ $[+0.002,+0.010]$ rather than $+0.002$ --- an interval that
+excludes zero where the micro one does not. The separability claim is the micro one, and the two estimators should not
 be quoted against each other.
 
 That the other two choices move nothing is a statement about these $152$ rules under one setting of
