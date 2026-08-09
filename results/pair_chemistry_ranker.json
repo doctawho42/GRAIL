@@ -1,0 +1,160 @@
+{
+ "config": {
+  "script": "pair_chemistry_ranker.py",
+  "git_commit": "4aa33c82dbe5814ff1940190c1f20ec8a8d4057d",
+  "git_dirty": true,
+  "n_substrates": 291,
+  "references": 665,
+  "pairs_scored": 11601,
+  "filter_ckpt": "artifacts/full5000_single/checkpoints/filter.pt",
+  "match": "inchikey_tautomer",
+  "aggregation": "micro, ratio of sums",
+  "n_boot": 10000,
+  "seed": 0,
+  "note": "the deployed filter, applied unchanged to candidates from a rule bank it does not have; nothing is trained here"
+ },
+ "score_separation_by_provenance": {
+  "grail": {
+   "candidates": 1824,
+   "references": 23,
+   "mean_on_references": 0.3419,
+   "mean_on_others": 0.0753
+  },
+  "metatox": {
+   "candidates": 8680,
+   "references": 270,
+   "mean_on_references": 0.1682,
+   "mean_on_others": 0.0439
+  },
+  "both": {
+   "candidates": 1097,
+   "references": 155,
+   "mean_on_references": 0.26,
+   "mean_on_others": 0.0834
+  }
+ },
+ "recall": {
+  "metatox": {
+   "1": 0.0406,
+   "3": 0.1323,
+   "5": 0.218,
+   "10": 0.3895,
+   "15": 0.5203,
+   "30": 0.618
+  },
+  "pair_chemistry": {
+   "1": 0.0752,
+   "3": 0.1925,
+   "5": 0.2827,
+   "10": 0.4316,
+   "15": 0.5158,
+   "30": 0.6256
+  },
+  "pair_then_agreement": {
+   "1": 0.1158,
+   "3": 0.2271,
+   "5": 0.2992,
+   "10": 0.4256,
+   "15": 0.5218,
+   "30": 0.6271
+  },
+  "oracle": {
+   "1": 0.3759,
+   "3": 0.5669,
+   "5": 0.6241,
+   "10": 0.6602,
+   "15": 0.6737,
+   "30": 0.6737
+  }
+ },
+ "gain_over_metatox": {
+  "pair_chemistry": {
+   "1": {
+    "delta": 0.0346,
+    "ci95": [
+     0.0105,
+     0.0589
+    ]
+   },
+   "3": {
+    "delta": 0.0602,
+    "ci95": [
+     0.0237,
+     0.0959
+    ]
+   },
+   "5": {
+    "delta": 0.0647,
+    "ci95": [
+     0.0263,
+     0.1035
+    ]
+   },
+   "10": {
+    "delta": 0.0421,
+    "ci95": [
+     0.003,
+     0.0808
+    ]
+   },
+   "15": {
+    "delta": -0.0045,
+    "ci95": [
+     -0.0394,
+     0.0314
+    ]
+   },
+   "30": {
+    "delta": 0.0075,
+    "ci95": [
+     -0.0136,
+     0.0298
+    ]
+   }
+  },
+  "pair_then_agreement": {
+   "1": {
+    "delta": 0.0752,
+    "ci95": [
+     0.05,
+     0.102
+    ]
+   },
+   "3": {
+    "delta": 0.0947,
+    "ci95": [
+     0.0566,
+     0.1339
+    ]
+   },
+   "5": {
+    "delta": 0.0812,
+    "ci95": [
+     0.0392,
+     0.1246
+    ]
+   },
+   "10": {
+    "delta": 0.0361,
+    "ci95": [
+     -0.0049,
+     0.0773
+    ]
+   },
+   "15": {
+    "delta": 0.0015,
+    "ci95": [
+     -0.036,
+     0.0397
+    ]
+   },
+   "30": {
+    "delta": 0.009,
+    "ci95": [
+     -0.0125,
+     0.0312
+    ]
+   }
+  }
+ }
+}
