@@ -529,6 +529,32 @@ unreached with the selector gone and the rest of what separates the arm from it 
 cut-off. The micro ceiling for the same substrates, $0.801$, is a different aggregation and not
 comparable with either.
 
+\subsection{The decomposition applied to the comparator, and what it bounds}
+\label{app:decompsygma}
+
+\looseness=-1
+Applied to a second method it stops being self-diagnosis. SyGMa is rule-grounded with an enumerable
+bank and decomposes on the same split in the same frame, with the inverse profile. Its reach is the
+lower, $0.539$ against $\ceiling$, comparator minus GRAIL throughout. The two are measured through
+their own engines and the paired interval on that difference is reported with the engine term it
+contains (Appendix~\ref{app:enginereach}) rather than here. But it applies every applicable rule and emits the result, converting almost all of that
+reach where we convert a third of a wider one. Its selection factor is $1$ by construction, because it
+emits every product its applicable rules generate; the same computation returns $0.539$ for its
+coverage and $0.953$ for its ranking, and those two are measured. The gap between us is therefore
+not a worse rule base but the cost of \emph{this} selection stage, which loses more than no
+selection stage does at the same budget --- $0.352$ against $0.528$, macro at $k=15$ on the same
+$245$ substrates (Appendix~\ref{app:noselect}) --- and which recall charges only to methods that
+select.
+
+\looseness=-1
+The frame also bounds this architecture: a perfect selector and ranker would stop at \ceiling\ as
+our own engine realises it (\S\ref{sec:enginereach}), limited by the corpus rather than by tuning,
+$71\%$ of uncovered transformations being types absent from the bank, so generalising the templates
+it holds is worth $0.038$. It is carried by the mined majority, $0.785$ on $245$ substrates against
+the curated fifth's $0.471$, four published collections adding under two per cent beyond what
+mining the training split reaches (Appendices~\ref{app:props},~\ref{app:negative}).
+
+
 \subsection{Which half of the bank earns the ceiling}
 \label{app:provenance}
 
@@ -536,28 +562,27 @@ The bank is a deduplicated union of four published rule sets and a much larger b
 mined from the training split, and nothing so far says which part reaches the chemistry.
 \texttt{mined\_only.txt} lists the mined templates verbatim, so the split is exact rather than
 estimated: $5{,}866$ mined and $1{,}715$ curated, partitioning the $7{,}581$ with nothing left over.
-Applying each subset alone, through the same primitives, on the $245$-substrate subsample the
-diagnostic family of this appendix shares. The ceiling restricted to those substrates is $0.801$
-rather than the $\ceiling$ of the split, and every figure in this subsection is against that one:
+Applying each subset alone, through the same primitives and on the same substrates as the ceiling
+itself, the full clean test split:
 
 \begin{center}
 \begin{tabular}{lcccc}
 \toprule
 subset & rules & share of bank & coverage & share of ceiling \\
 \midrule
-curated & $1{,}715$ & $22.6\%$ & $0.471$ $[0.422,0.525]$ & $58.8\%$ \\
-mined   & $5{,}866$ & $77.4\%$ & $0.785$ $[0.739,0.832]$ & $98.0\%$ \\
-union   & $7{,}581$ & $100\%$  & $0.801$ $[0.759,0.844]$ & $100\%$ \\
+curated & $1{,}715$ & $22.6\%$ & $0.487$ $[0.463,0.512]$ & $59.6\%$ \\
+mined   & $5{,}866$ & $77.4\%$ & $0.800$ $[0.777,0.824]$ & $98.0\%$ \\
+union   & $7{,}581$ & $100\%$  & $0.817$ $[0.795,0.839]$ & $100\%$ \\
 \bottomrule
 \end{tabular}
 \end{center}
 
 The union reproduces the value already stored per substrate for exactly these substrates, to four
 decimals, which is the gate the measurement refuses to report without. Exclusively, mined templates
-reach $0.330$ of the references that the curated sets do not; the curated sets reach $0.016$ that
+reach $0.330$ of the references that the curated sets do not; the curated sets reach $0.017$ that
 the mined templates do not. Four published rule collections, restricted to this corpus, add under
-two per cent of the ceiling beyond what mining the training split already reaches, and $0.455$ is
-reachable by both.
+two per cent of the ceiling beyond what mining the training split already reaches, and $0.4705$ is
+reachable by both, carrying the fourth decimal because the third falls exactly on a half.
 
 This does not contradict Appendix~\ref{app:negative}, where discarding the $4{,}271$ rules that
 never carry a positive label costs recall. Contributing to a deployed pool and contributing to the
@@ -565,16 +590,16 @@ ceiling are different things.
 
 \paragraph{This table said the opposite until its hydrogens were counted the way the pipeline
 counts them.} Applied through the helper the data-preparation path uses, which expands hydrogens
-onto the substrate before matching, the same rules on the same substrates give curated $0.660$
-against mined $0.328$ --- the curated fifth carrying the ceiling and the mined majority
+onto the substrate before matching, the same rules on the same substrates give curated $0.668$
+against mined $0.332$ --- the curated fifth carrying the ceiling and the mined majority
 re-deriving it. Both passes are correct arithmetic; they differ only in a convention neither
 subset is asked about, and it does not move a number, it exchanges the two halves of the answer.
 That is the same defect this paper names on the leaderboard, met inside our own measurement, and it
 is why the primitives are now fixed at the ones \S\ref{sec:enginereach} deploys.
 
 Which of the helper's two steps does it can be read off by holding one fixed and moving the other.
-The gap between the subsets is $+0.314$ as deployed and $-0.332$ expanded; the validity floor
-carries $+0.002$ of that and expanding hydrogens carries the remaining $-0.647$. The floor is
+The gap between the subsets is $+0.313$ as deployed and $-0.336$ expanded; the validity floor
+carries $+0.000$ of that and expanding hydrogens carries the remaining $-0.650$. The floor is
 inert here in the strict sense --- it removes about one product in four hundred from either
 subset --- and the whole of the reversal is the hydrogen convention.
 
@@ -595,16 +620,16 @@ fixed. Splitting the curated subset in two by the same criterion, on the same su
 \toprule
 curated templates & rules & as deployed & hydrogens expanded \\
 \midrule
-carrying the hydrogen atom primitive & $675$   & $0.044$ & $0.554$ \\
-not carrying it                      & $1{,}040$ & $0.471$ & $0.258$ \\
+carrying the hydrogen atom primitive & $675$   & $0.032$ & $0.558$ \\
+not carrying it                      & $1{,}040$ & $0.486$ & $0.265$ \\
 \midrule
-mined, for comparison                & $5{,}866$ & $0.785$ & $0.328$ \\
+mined, for comparison                & $5{,}866$ & $0.800$ & $0.332$ \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-The two halves of one provenance move in opposite directions, by a factor of twelve up and a factor
-of two down, and the half that carries no hydrogen atom behaves like the mined majority it shares no
+The two halves of one provenance move in opposite directions, by a factor of seventeen up and a
+factor of two down, and the half that carries no hydrogen atom behaves like the mined majority it shares no
 provenance with. What decides which convention a template needs is how the template is written, and
 provenance predicts it only because hand-written collections use the primitive and extracted ones
 never do.

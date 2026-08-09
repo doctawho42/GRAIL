@@ -159,7 +159,7 @@ def main() -> int:
     # 8. the provenance split, whose own gate only proves it reproduces the ceiling -- nothing until
     # now proved the manuscript prints what it produced. This is the pairing that failed before: a
     # measurement guarded by a frozen literal, and a paper quoting the superseded value it certified.
-    prov = ROOT / "results/ceiling_by_provenance.json"
+    prov = ROOT / "results/ceiling_by_provenance__clean_test.json"
     if prov.exists():
         pv = json.loads(prov.read_text())
         for subset in ("curated", "mined", "full"):
@@ -209,7 +209,7 @@ def main() -> int:
     # what carries the reversal. None of this was checked, and the section it backs was the one
     # that turned out to name a population it was not measured on -- so it is anchored on the
     # sentences' own wording, and on the artifact for the split the appendix now reports.
-    kn = ROOT / "results/provenance_knob_attribution.json"
+    kn = ROOT / "results/provenance_knob_attribution__clean_test.json"
     if kn.exists():
         K = json.loads(kn.read_text())
         cov, ends, att = K["coverage"], K["committed_endpoints"], K["gap_attribution"]
@@ -398,26 +398,47 @@ def main() -> int:
                                               ("move over gap", v["closer_than_the_move"]))):
                 check(f"packing, {shown} {label}", row and row.group(i + 1), val)
 
-    # 10e. the population axis, the fourth choice, measured rather than demonstrated
+    # 10e. The fourth choice, and the only one that did not survive being tested. Both instances
+    # are checked, and so is the count that matters most -- the number of interactions surviving
+    # correction, which is zero. A checker that only tied the reorderings would let the paper keep
+    # claiming an effect the correction removed.
     pa = ROOT / "results/population_axis.json"
-    if pa.exists():
-        P = json.loads(pa.read_text())
+    rp = ROOT / "results/retro_population_axis.json"
+    if pa.exists() and rp.exists():
+        P, R = json.loads(pa.read_text()), json.loads(rp.read_text())
         flat = re.sub(r"\s+", " ", whole)
-        m = re.search(r"Of the \$(\d+)\$ comparisons that gives, \$(\d+)\$ reorder", flat)
-        check("population axis, comparisons", m and m.group(1), P["comparisons"])
-        check("population axis, reordered", m and m.group(2), P["reordered"])
-        m = re.search(r"reorders \$(\d+)\$ of \$(\d+)\$ comparisons on our", flat)
-        check("population axis, abstract count", m and m.group(1), P["reordered"])
-        check("population axis, abstract total", m and m.group(2), P["comparisons"])
-        m = re.search(r"median change in a pair's gap between the two populations is \$([\d.]+)\$",
-                      flat)
-        check("population axis, median change", m and m.group(1), P["median_gap_change"])
-        m = re.search(r"Precision reorders (\w+) comparisons and F1 (\w+)", flat)
-        WORDS = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "none": 0}
-        check("population axis, precision", m and WORDS.get(m.group(1)),
-              P["by_metric"]["precision"]["reordered"])
-        check("population axis, f1", m and WORDS.get(m.group(2)),
-              P["by_metric"]["f1"]["reordered"])
+        m = re.search(r"of \$(\d+)\$ comparisons \$(\d+)\$ reorder", flat)
+        check("our split, comparisons", m and m.group(1), P["comparisons"])
+        check("our split, reordered", m and m.group(2), P["reordered"])
+        m = re.search(r"giving \$(\d+)\$\s*comparisons of which \$(\d+)\$ reorder", flat)
+        check("their files, comparisons", m and m.group(1), R["comparisons"])
+        check("their files, reordered", m and m.group(2), R["reordered"])
+        m = re.search(r"share \$(\d+)\$ products, \$(\d+)\$ of which agree", flat)
+        check("products in both", m and m.group(1), R["products_in_both"])
+        check("agreeing reactions", m and m.group(2), R["agreeing_reactions"])
+        m = re.search(r"\$(\d+)\$ of \$380\$ have intervals excluding zero", flat)
+        check("their files, marginal intervals", m and m.group(1),
+              R["interactions_excluding_zero"])
+        m = re.search(r"Not one of the \$(\d+)\$ interactions survives Holm", flat)
+        check("the family both instances form", m and m.group(1),
+              P["comparisons"] + R["comparisons"])
+        m = re.search(r"\$(\d+)\$ of \$380\$ orderings change on their data and \$(\d+)\$ of "
+                      r"\$60\$ on ours", flat)
+        check("abstract, their reorderings", m and m.group(1), R["reordered"])
+        check("abstract, our reorderings", m and m.group(2), P["reordered"])
+        m = re.search(r"none of the \$(\d+)\$ interactions survives correction", flat)
+        check("abstract, the family size", m and m.group(1),
+              P["comparisons"] + R["comparisons"])
+        # The claim the paper now rests on: nothing survives. This is a gate, not a comparison --
+        # a single survivor in either instance makes the sentence false, whatever it prints.
+        checks.append((P["holm_survivors"] == 0 and R["holm_survivors"] == 0,
+                       "no population interaction survives Holm in either instance",
+                       f"ours {P['holm_survivors']}, theirs {R['holm_survivors']}", "0 and 0",
+                       "the manuscript says none does, in the abstract and the appendix"))
+        checks.append((P["interactions_excluding_zero"] == 0,
+                       "our split has no marginal interval either",
+                       P["interactions_excluding_zero"], 0,
+                       "which the appendix states as the stronger half of the negative"))
 
     # 11. the cross-domain leaderboard: the run the paper specified in advance and then ran. Its
     # counts are the load-bearing part -- an exchange is visible, a certified interaction is not --

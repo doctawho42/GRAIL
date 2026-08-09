@@ -161,6 +161,39 @@ made the defect visible was the provenance string in the config naming its sourc
 that fires on the wrong things and stays silent on the right one is worse than no check, because it
 is the one that gets ignored.
 
+## 3a. A reordering is a description; only an interval makes it a claim
+
+**Check:** wherever the paper counts orderings that change, ask what estimand the count belongs to
+and whether that estimand was tested. A count of reorderings is a summary of the data, not evidence
+that anything reorders.
+
+**This row exists because the population axis failed it.** The paper reported that changing only
+which substrates are in reorders 10 of 60 comparisons on our split, and offered that as one of four
+headline choices. It carried no interval, and the reason it carried none is structural: the smaller
+population is nested inside the larger, so the two gaps are dependent and their difference has no
+honest interval. The fix is the complement --- what the larger population has and the subset does
+not --- which is disjoint from the subset and admits one.
+
+Tested that way, in both instances, the axis produces nothing. On our split none of the 60
+interactions has an interval excluding zero. On eleven released retrosynthesis files, where two
+clusters share 490 reactions nested inside each cluster's five thousand, 44 of 380 orderings change
+and 18 have intervals excluding zero --- about what 380 tests give by chance --- and none survives
+Holm. The paper now reports the population as undeclared and ambiguous, and as not shown to move a
+ranking, which is a different and smaller claim than the one it made before.
+
+**Status: PASS after the correction.** The criterion axis passes the same test, which is what makes
+the contrast worth stating: 109 of its 448 interactions survive the same correction under the same
+estimator.
+
+```bash
+python -c "
+import json
+for f in ('population_axis','retro_population_axis'):
+    d = json.load(open(f'results/{f}.json'))
+    print(f, 'reordered', d['reordered'], 'of', d['comparisons'],
+          '| Holm survivors', d['holm_survivors'])"
+```
+
 ## 4. Every comparative claim carries an interval on the *difference*
 
 **Check:** marginal intervals overlapping says nothing about the paired difference in either

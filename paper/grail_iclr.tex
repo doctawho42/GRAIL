@@ -72,11 +72,15 @@ instance each: a primitive counting explicit structure breaks the match before a
 consumes breaks the product instead; and a bank assembled from two conventions has no right answer
 at all. Only the third is repairable: dispatching per template recovers $+0.0062$ $[+0.0032,+0.0095]$.
 
-A fourth is which population a familiar name means: those eleven files sit on three test sets that
-share a tenth of their reactions, our own copy of the name is one of the deviations, and changing
-only which substrates are in reorders $10$ of $60$ comparisons on our split. Output size is the plainest --- every certified
-reversal runs through the one system emitting $81$ candidates against everyone else's $8$ to $11$.
-We release the protocol, the split, the frozen predictions and the checks.
+A fourth choice is undeclared without being shown to decide anything, and we can separate the two
+only because we tested it. Those eleven files sit on three test sets sharing a tenth of their
+reactions, fifteen products carry a different recorded reaction in two of them, and our own copy of
+the name is one of the deviations. Holding method, criterion and budget fixed and varying only which
+reactions or substrates are in, $44$ of $380$ orderings change on their data and $10$ of $60$ on
+ours --- and none of the $440$ interactions survives correction, so those changes are what a subset
+this size produces on its own. Output size is the plainest of the four: every certified reversal
+runs through the one system emitting $81$ candidates against everyone else's $8$ to $11$. We release
+the protocol, the split, the frozen predictions and the checks.
 \end{abstract}
 
 \section{Introduction}
@@ -86,7 +90,9 @@ A leaderboard in molecular machine learning ranks methods by how often a predict
 reference. Between a set of predictions and a position on it sit choices that no paper declares:
 when two structures count as the same molecule, how many candidates a method may emit, how an engine
 applies a reaction template, and which population a familiar dataset name refers to. We measure each
-on frozen predictions, in two fields, and each decides positions.
+on frozen predictions, in two fields. Three of them decide positions. The fourth is undeclared and
+ambiguous, and we report it as not shown to decide anything, which is a distinction this paper is
+equipped to make and the reason for making it here.
 
 Metabolite prediction is where they can be measured \emph{exactly}, which is why the deep case study
 is there. When a drug enters the body, enzymes oxidise, cleave and conjugate it into metabolites;
@@ -122,86 +128,55 @@ the engine applying the rules (\S\ref{sec:decomp}).
 \section{Related Work}
 \label{sec:related}
 
-\paragraph{Metabolite-structure prediction.} Rule-based prediction of metabolite structures was
-established by SyGMa \citep{Ridder_2008}, which encodes phase I (oxidation, reduction, hydrolysis) and phase II
-(conjugation) biotransformations as reaction templates and scores the resulting products by the empirical frequency with which each
-template yields an observed metabolite. GLORYx \citep{de_Bruyn_Kops_2020} couples a comparable
-template library to a machine-learned model of sites of metabolism, the atoms at which an enzyme acts, and BioTransformer
-\citep{Djoumbou_Feunang_2019} extends the template approach to microbial and environmental
-transformations. Learned alternatives dispense with templates: MetaTrans \citep{Litsa_2020} treats
-metabolite prediction as sequence-to-sequence translation between molecular strings, and
-MetaPredictor \citep{Zhu_2024} combines a transformer with a filtering stage. These systems are
-evaluated on overlapping but non-identical datasets and, as discussed below, under non-identical
-notions of a correct prediction.
-
-\paragraph{Comparative evaluations in this domain.} Several studies have placed these tools side by
-side and found the same coverage--precision trade-off: five predictors on 85 agrochemical parents
-\citep{Scholz_2023}, six tools on 37 chemicals where the broadest-coverage system also produced the
-most incorrect predictions \citep{Boyce_2022}, and human radiolabelled ADME data \citep{Gao_2026}.
-Each fixes a single criterion for judging a prediction correct, and none reports how sensitive its
-conclusions are to it.
+\paragraph{The domain, and what has been compared in it.} Rule-based metabolite prediction was
+established by SyGMa \citep{Ridder_2008}, which encodes phase I and phase II biotransformations as
+reaction templates and scores products by the empirical frequency with which each template yields an
+observed metabolite. GLORYx \citep{de_Bruyn_Kops_2020} couples a comparable library to a learned
+model of sites of metabolism; BioTransformer \citep{Djoumbou_Feunang_2019} extends templates to
+microbial and environmental transformations; MetaTrans \citep{Litsa_2020} and MetaPredictor
+\citep{Zhu_2024} dispense with templates for sequence-to-sequence translation and a transformer with
+a filtering stage. Comparative studies recover the same coverage--precision trade-off --- five
+predictors on 85 agrochemical parents \citep{Scholz_2023}, six tools on 37 chemicals where the
+broadest-coverage system also produced the most incorrect predictions \citep{Boyce_2022}, human
+radiolabelled ADME data \citep{Gao_2026} --- each fixing one criterion for a correct prediction, and
+none reporting how sensitive its conclusion is to that choice. That one structure can be written
+more than one way is documented independently of this domain: \citet{Dhaked_2020} catalogue
+tautomeric transformations that the standard InChI identifier normalises only a subset of,
+\citet{Hahnke_2018} report roughly $60\%$ of PubChem records differing from their canonical InChI
+representation, and \citet{Mansouri_2024} describe a standardisation pipeline for
+structure-activity modelling. That literature treats standardisation as preprocessing applied
+before an analysis, not as a parameter of the analysis.
 
 \looseness=-1
-\paragraph{Structure standardisation.} The difficulty of deciding when two molecular structures
-denote the same compound is documented independently of metabolite prediction: \citet{Dhaked_2020}
-catalogue tautomeric transformations and show the standard InChI identifier normalising only a
-subset of them, \citet{Hahnke_2018} report roughly 60\% of PubChem records differing from their
-canonical InChI representation, predominantly through tautomer choice, and \citet{Mansouri_2024}
-describe a standardisation pipeline for quantitative structure-activity modelling. This literature
-treats standardisation as preprocessing applied before analysis rather than as a parameter of the
-evaluation itself.
-
-\paragraph{Evaluation methodology in adjacent fields.} \looseness=-1 That methodological choices alter the
-apparent ordering of methods is recognised more broadly, along every axis this paper varies.
-On the matching rule, \citet{Maziarz_2025} re-evaluated retrosynthesis models under a standardised
-procedure and reversed a published ordering, partly because one model had been scored under a
-relaxed stereochemistry criterion its baselines did not get; it is the closest precedent here, and
-the only one that varies a structure-matching rule. What differs is what is held fixed. There the
-ordering moved because two papers had scored under different criteria, and standardising is the
-remedy; here every system is scored under every criterion, so the ordering is a function of the
-criterion itself, the interaction is certified pairwise and corrected across the family, and
-standardising relocates the problem rather than removing it --- some criterion still has to be
-chosen. \citet{Hastedt_2024} make that measurable at all by releasing the ranked predictions of
-twelve retrosynthesis systems; \S\ref{app:xdomain} re-scores eleven of them and reports what reading
-the files also shows, that they sit on three different test sets. \citet{liu2026massspecgymwild} audit published
-mass-spectrometry work and name the mechanism directly, divergent metric implementations and
-stereochemistry handling in InChIKey matching among them. Outside chemistry, re-scoring frozen submissions under a
-different equivalence rule misrepresents the state of the art in text-to-SQL \citep{Zhong_2020} and
-changes which question-answering system leads \citep{Kamalloo_2023}. On the aggregate, the choice of
-metric inverts the winner in drug-response prediction \citep{agarwal2026metric}; in structure-based
-drug design the standard score rises with the output's atom count rather than its quality
+\paragraph{The four choices elsewhere, and what is left unestablished.} None of the four is in doubt
+in general. On the matching rule, \citet{Maziarz_2025} re-evaluated retrosynthesis models under a
+standardised procedure and reversed a published ordering, partly because one model had been scored
+under a relaxed stereochemistry criterion its baselines did not get; it is the closest precedent
+here, and what differs is what is held fixed. There the ordering moved because two papers had scored
+under different criteria and standardising is the remedy; here every system is scored under every
+criterion, so the ordering is a function of the criterion itself, the interaction is certified
+pairwise and corrected across the family, and standardising relocates the choice rather than
+removing it. \citet{Hastedt_2024} make any of it measurable by releasing the ranked predictions of
+twelve retrosynthesis systems. \citet{liu2026massspecgymwild} audit published mass-spectrometry work
+and name the mechanism directly, divergent metric implementations and stereochemistry handling in
+InChIKey matching among them. Outside chemistry, re-scoring frozen submissions under a different
+equivalence rule misrepresents the state of the art in text-to-SQL \citep{Zhong_2020} and changes
+which question-answering system leads \citep{Kamalloo_2023}. On the aggregate, the choice of metric
+inverts the winner in drug-response prediction \citep{agarwal2026metric}; in structure-based drug
+design the standard score rises with the output's atom count rather than its quality
 \citep{Gao_2025_reframing}, which is why that benchmark was rebuilt around four axes
-\citep{Lin_2025_cbgbench}, and weighting examples by difficulty reorders natural-language
+\citep{Lin_2025_cbgbench}; and weighting examples by difficulty reorders natural-language
 leaderboards \citep{Mishra_2021, Rodriguez_2021}. On the budget the prior work is older and not
 ours: retrieval and recommendation have long evaluated ranked output at a declared cut-off
 \citep{Jarvelin_2002}, under incomplete relevance judgements \citep{Buckley_2004}, corrected for
 recording propensity \citep{Joachims_2017}, and shown a cut-off metric's winner changing with how
-the candidates entering it are counted \citep{Krichene_2020}.
-That an unpenalised recall@$k$ rewards enumeration is a property of the measure that literature
-settled decades ago; we re-instantiate it here rather than discover it.
-
-\paragraph{Remaining gap.} \looseness=-1 None of the four axes is in doubt in general, and none has been varied
-with everything else held fixed --- neither for metabolite predictors, nor to ask whether a
-criterion \emph{reorders} a leaderboard elsewhere rather than shifting it. What is unestablished is
-how far each moves a ranking when it is the only thing changing. For the budget the new content is therefore measurement, not the
-trade-off. Three distinct orderings appear across the sweep, and at $k=5$ both pairs involving our
-own system separate while the other two do not. The budget truncates SyGMa on $92.7\%$ of substrates
-and GRAIL's emitted list on none, so the comparison made at it is not budget-matched. And a
-per-substrate budget from descriptors recovers almost none of the oracle headroom out of sample,
-which bounds that direction rather than refuting it (Appendix~\ref{app:props}). The decomposition is likewise not ours in general, and the priority is
-worth conceding as plainly as on the budget axis. Splitting a staged system's recall into what
-candidate generation reaches and what a later stage retains is standard practice. Cascade ranking in
-retrieval prunes the candidate set stage by stage \citep{Wang_2011_cascade}; recommendation is built
-and evaluated as candidate generation followed by ranking \citep{Covington_2016};
-\citet{Maziarz_2025} separate single-step accuracy from search in retrosynthesis. Open-domain
-question answering reports retriever recall@$k$ beside end-task accuracy \citep{Karpukhin_2020}, at
-a retrieval budget rather than over everything the retriever could return. What differs here is not
-the identity but what its first factor can be. A sampled corpus quotes first-stage recall at a
-budget, and a beam is a budget that widens with compute, so in both the term is estimated or
-bounded. A finite enumerable rule bank makes it an exhaustive measurement, which is what makes it
-reportable as a ceiling. No
-stage-wise attribution of a predictor's score has been reported for metabolite predictors either,
-and that is what would let the two be explained rather than only reported.
+the candidates entering it are counted \citep{Krichene_2020}. The decomposition is standard too ---
+cascade ranking prunes stage by stage \citep{Wang_2011_cascade}, recommendation is built as
+candidate generation then ranking \citep{Covington_2016}, open-domain question answering reports
+retriever recall@$k$ beside end-task accuracy \citep{Karpukhin_2020}, and \citet{Maziarz_2025}
+separate single-step accuracy from search. What is unestablished is how far any of the four moves a
+ranking when it is the only thing changing, and whether a criterion \emph{reorders} a published
+leaderboard rather than shifting every system on it.
 
 \section{TAME: an evaluation protocol with a declared matching criterion}
 \label{sec:tame}
@@ -344,26 +319,11 @@ the convention sets --- \S\ref{sec:metric}'s variable acting for us here where i
 later (Appendix~\ref{app:noselect}).
 
 \looseness=-1
-Applied to a second method it stops being self-diagnosis. SyGMa is rule-grounded with an enumerable
-bank and decomposes on the same split in the same frame, with the inverse profile. Its reach is the
-lower, $0.539$ against $\ceiling$, comparator minus GRAIL throughout. The two are measured through
-their own engines and the paired interval on that difference is reported with the engine term it
-contains (Appendix~\ref{app:enginereach}) rather than here. But it applies every applicable rule and emits the result, converting almost all of that
-reach where we convert a third of a wider one. Its selection factor is $1$ by construction, because it
-emits every product its applicable rules generate; the same computation returns $0.539$ for its
-coverage and $0.953$ for its ranking, and those two are measured. The gap between us is therefore
-not a worse rule base but the cost of \emph{this} selection stage, which loses more than no
-selection stage does at the same budget --- $0.352$ against $0.528$, macro at $k=15$ on the same
-$245$ substrates (Appendix~\ref{app:noselect}) --- and which recall charges only to methods that
-select.
-
-\looseness=-1
-The frame also bounds this architecture: a perfect selector and ranker would stop at \ceiling\ as
-our own engine realises it (\S\ref{sec:enginereach}), limited by the corpus rather than by tuning,
-$71\%$ of uncovered transformations being types absent from the bank, so generalising the templates
-it holds is worth $0.038$. It is carried by the mined majority, $0.785$ on $245$ substrates against
-the curated fifth's $0.471$, four published collections adding under two per cent beyond what
-mining the training split reaches (Appendices~\ref{app:props},~\ref{app:negative}).
+Applied to a second method it stops being self-diagnosis: SyGMa decomposes on the same split in the
+same frame with the inverse profile, converting nearly all of a narrower reach where we convert a
+third of a wider one, so what separates us is the cost of \emph{this} selection stage rather than a
+worse rule base, and the bank's own bound is the corpus rather than tuning
+(Appendix~\ref{app:decompsygma}).
 
 \paragraph{The coverage factor belongs to the system, not the rule base.}
 \label{sec:enginereach}
@@ -392,6 +352,49 @@ other of two mechanisms, a match lost before a product is built
 
 \section{Results}
 \label{sec:results}
+
+\subsection{The criterion reorders a published leaderboard in another field}
+\label{sec:xdomainmain}
+
+\looseness=-1
+Nothing in this subsection is ours. \citet{Hastedt_2024} released the ranked predictions of twelve
+retrosynthesis systems; eleven parse, and reading them rather than their table shows they sit on
+three test sets rather than one (Appendix~\ref{app:xdomainsets}). Within the largest group sharing
+one, seven systems scored on their $4{,}999$ common reactions change places at top-1 --- on
+predictions that never move, under a rule applied identically to all seven. Under canonical matching
+the leaders run GraphRetro $0.5377$, LocalRetro $0.5339$, Retroformer $0.5325$, Graph2SMILES
+$0.5293$; disregard stereochemistry and they run Graph2SMILES $0.5571$, Retroformer $0.5541$,
+GraphRetro $0.5501$, LocalRetro $0.5469$. Fourth becomes first (Figure~\ref{fig:xdomain}).
+Five of twenty-one pairs exchange in all.
+
+The exchange is what a reader sees; the claim is the interaction, and it is corrected under the
+strictest family this paper declares anywhere. Of $448$ paired tests --- every pair of systems,
+every pair of conventions, every $k$ --- $233$ have intervals excluding zero, $109$ of $448$
+paired interactions surviving Holm at $0.05$ across the whole family. Two qualifications travel with it: the effect is
+concentrated at top-1, which is the number this field leads with but not the whole accuracy curve,
+and what moves the ordering here is stereochemistry rather than tautomer canonicalisation, the
+opposite of the internal asymmetry.
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=0.52\textwidth]{fig_xdomain}
+\end{center}
+\caption{Seven retrosynthesis systems, four matching criteria, top-1 accuracy on the $4{,}999$
+reactions they share, from files their authors released. Graph2SMILES enters fourth under canonical
+matching and leaves first under every more tolerant one; the three systems that never exchange are
+grey. The canonical-to-InChIKey step is flat for all seven, which is the criterion pair that costs
+nothing here.}
+\label{fig:xdomain}
+\end{figure}
+
+\looseness=-1
+\paragraph{The condition is packing, and it is arithmetic before it is empirical.} An exchange needs
+the criterion to move two systems by more than the gap between them, so a leaderboard becomes
+vulnerable exactly as it matures. These seven sit a median $0.013$ apart against a differential of
+$0.015$ and reorder; three $0.047$ apart are moved as much and do not. Over $439$
+method-pair by criterion-pair comparisons across four leaderboards in three domains, with nothing
+re-scored, the movement exceeds the gap once in nine and reverses the pair once in seventeen, and no
+reversal occurs where the gap survives the movement (Appendix~\ref{app:xdomain}).
 
 \subsection{The criterion the decomposition rests on}
 \label{sec:rankflip}
@@ -523,18 +526,6 @@ property of the reference set, and we state that as the effect's condition rathe
 it needs references carrying representational variety to diverge from, and a leaderboard packed
 tighter than the differential it produces.
 
-\paragraph{It reorders a published leaderboard in another field.} Eleven released retrosynthesis
-prediction sets sit on three test sets; within the largest group sharing one, seven systems scored
-on their $4{,}999$ common reactions change places at top-1 on predictions that never move. Under
-canonical matching the leaders run GraphRetro $0.5377$, LocalRetro $0.5339$, Retroformer $0.5325$,
-Graph2SMILES $0.5293$; disregard stereochemistry and they run Graph2SMILES $0.5571$, Retroformer
-$0.5541$, GraphRetro $0.5501$, LocalRetro $0.5469$ --- fourth becomes first. Five of twenty-one pairs
-exchange, $109$ of $448$ paired interactions surviving Holm. The condition is the packing: these
-seven sit a median $0.013$ apart against a differential of $0.015$, while three $0.047$ apart are
-moved as much and not reordered. Over $439$ such comparisons in three domains the movement exceeds
-the gap once in nine and reverses the pair once in seventeen, so a leaderboard becomes vulnerable
-exactly as it matures (Appendix~\ref{app:xdomain}).
-
 
 \subsection{The aggregate and the budget are one variable, and the decomposition predicts it}
 \label{sec:metric}
@@ -600,19 +591,16 @@ survives to $c\approx0.055$ (Appendix~\ref{app:props}).
 
 \looseness=-1
 GRAIL trails both published comparators and leads at no output budget --- SyGMa at $0.572$ on the
-$1{,}168$ substrates they share, a paired $-0.242$ $[-0.271,\,-0.212]$. Selection being its dominant
-shortfall, what makes selection hard is structural: choosing which of \nbank\ rules apply is
-\textbf{extreme multi-label classification} with a near-empty positive set, a median of five per
-substrate against far more applicable --- a regime where frequency baselines are hard to beat
-\citep{Jain_2016}. They are not beaten here. Through the same enumeration and filter, a learned
+$1{,}168$ substrates they share, a paired $-0.242$ $[-0.271,\,-0.212]$. The second confirmatory
+comparison locates that shortfall in selection: through the same enumeration and filter, a learned
 selector reaches $0.266$ where rule-firing frequency alone reaches $0.410$, a paired $-0.144$
-$[-0.196,\,-0.095]$; the prescribed remedy fails too, inverse-propensity weighting moving it to
-$0.249$ (Appendix~\ref{app:props}).
-
+$[-0.196,\,-0.095]$, and the remedy the regime prescribes fails too, inverse-propensity weighting
+moving it to $0.249$. Choosing which of \nbank\ rules apply is extreme multi-label classification
+with a near-empty positive set, where frequency baselines are hard to beat \citep{Jain_2016}; they
+are not beaten here.
 \label{sec:evidence}
-The diagnosis rests on nine measurements (Table~\ref{tab:levers}), each designed to move one factor;
-six failed and are the more useful half, among them the stratification meant to show a rule bank
-transfers better off distribution (Appendix~\ref{app:props}).
+The diagnosis rests on nine measurements, six of which failed and are the more useful half
+(Appendix~\ref{app:props}).
 
 \section{Limitations}
 \label{sec:limitations}
@@ -620,29 +608,31 @@ transfers better off distribution (Appendix~\ref{app:props}).
 \looseness=-2
 \paragraph{What the metabolite numbers bound.} The five-method table rests on $\nshared$ shared
 substrates of frozen predictions --- MetaTrans's pipeline no longer reproduces and BioTransformer's
-configuration is unscripted --- and the other three methods on the full $\ntest$;
+configuration is unscripted --- and the other three on the full $\ntest$;
 Appendix~\ref{app:xdomain} states which figure is on which. An unannotated but real product scores
-as a false positive, so every precision and F1 figure is pessimistic and \S\ref{sec:metric} ranks on
-them only under a uniform-propensity model. Some references are multi-generation products no single
-rule reaches: depth-2 lifts the ceiling by ${\sim}0.012$ at $8.5$ times the cost, so $\ceiling$
-bounds this formulation rather than the task.
+as a false positive, so every precision and F1 figure is pessimistic. Some references are
+multi-generation products no single rule reaches: depth-2 lifts the ceiling by ${\sim}0.012$ at
+$8.5$ times the cost, so $\ceiling$ bounds this formulation rather than the task.
 
 \looseness=-2
 \paragraph{What the newer results rest on.} The cross-domain numbers come from eleven files we did
 not produce, read under an assumption proven where an independent ground truth exists rather than
-inferred from those files agreeing (Appendix~\ref{app:xdomain}); the reordering there is a top-1
-phenomenon; and two axes are thin, the packing measured across four leaderboards and the population
-across two of one split --- enough to move an answer where all else is pinned, not enough for a rate.
-Our own headline is one evaluation of the deployed configuration, selection on validation but for
-the two exceptions \S\ref{sec:tame} names.
+inferred from those files agreeing, and the reordering there is a top-1 phenomenon. Packing is
+measured across four leaderboards, which is few. The population axis is reported as a negative and
+inherits that design's weakness: two nested populations in each of two instances bound how large an
+interaction would have had to be to show, not whether one exists. Our own headline is one evaluation
+of the deployed configuration, selection on validation but for the two exceptions
+\S\ref{sec:tame} names.
 
 \section{Conclusion}
 \label{sec:conclusion}
 
 \looseness=-2
-Four things decide a leaderboard position before any model does: the matching rule, the output size,
-the engine's convention, and which population a dataset name means. None is declared, each is
-readable from a released file, and one caught this paper.
+Four things are decided before any model is: the matching rule, the output size, the engine's
+convention, and which population a dataset name means. None is declared, three of them move an
+ordering, and one caught this paper. Each is readable from files that are already public, which is
+why the ask is a declaration and not a standard: \texttt{declare\_conventions.py} reports all four
+from a template bank and a set of prediction files, with no reference data and no model.
 
 \subsubsection*{Reproducibility statement}
 
@@ -651,8 +641,8 @@ the checks that establish it are released as scripts rather than asserted. One o
 other people's files rather than ours: given a template bank it reports which templates are
 convention-dependent and whether the bank is mixed, and given two or more prediction files it
 reports whether they are on the same population at all and how far apart their output sizes are.
-It needs no reference data and no model, and on the eleven released retrosynthesis files it recovers
-the three populations in seconds. What regeneration costs
+That checker is \texttt{declare\_conventions.py}; it needs no reference data and no model, and on
+the eleven released retrosynthesis files it recovers the three populations in seconds. What regeneration costs
 differs by analysis: every split-level result regenerates from the committed artifacts alone ---
 frozen predictions, key tables, per-substrate records --- while the ablations that rank or re-select
 candidates require running a trained model and so also need the GRAIL checkpoints. The anonymised

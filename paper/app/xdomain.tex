@@ -33,27 +33,54 @@ convention. The comparisons in this paper remain valid, because every method is 
 under the same criterion and all three rungs are reported, but a system that does emit
 stereochemistry is not rewarded for doing so anywhere in this evaluation.
 
-\subsection{The population reorders this paper's own leaderboard}
+\subsection{The population is undeclared, and does not survive being tested}
 \label{app:popaxis}
 
-Three of the four choices this paper names are varied with everything else held fixed. The fourth,
-which population a familiar name refers to, is so far demonstrated rather than varied: eleven
-published files sitting on three test sets shows the hazard exists, but it is a fact about someone
-else's release. It is measurable here, because the same three methods are scored under the same five
-criteria by the same estimator on two populations of our own split --- the $\nshared$ substrates all
-five methods share and the full $\ntest$ --- with nothing differing but which substrates are in.
+Three of the four choices this paper names move an ordering. The fourth is the one we could not
+show does, and separating those two statements is the whole point of testing it rather than
+asserting it from the other three.
 
-Of the $60$ comparisons that gives, $10$ reorder. They are not scattered: MetaPredictor against
-SyGMa on recall reverses under \emph{every one} of the five criteria, MetaPredictor ahead by about
-$0.02$ on the shared subset and behind by about $0.02$ on the full split. Precision reorders four
-comparisons and F1 one; Jaccard none. The median change in a pair's gap between the two populations
-is $0.0058$, which against gaps of that size is the same story the criterion tells: the movement is
-small and the leaderboard is packed tightly enough for it to matter.
+That it is undeclared is not in doubt. Eleven released files sit on three test sets sharing about a
+tenth of their reactions (\S\ref{app:xdomainsets}), our own copy of a familiar name is one of the
+deviations, and fifteen products that appear in two of those files carry a \emph{different} recorded
+reaction in each --- a disagreement about the answer and not merely about the sample. A number
+quoted against one of those names cannot be read without knowing which set produced it.
 
-Two populations is a weak design and we do not offer it as a general claim. It says the axis moves
-the answer on a case where everything else is pinned, which is more than the three-splits finding
-can say and less than the criterion and budget results say. It also explains a coincidence the next
-subsection would otherwise leave hanging.
+Whether it \emph{reorders} is a separate question with an estimand, and the estimand needs care. The
+smaller population is nested inside the larger, so a gap measured on the subset and a gap measured
+on the whole are not independent and their difference carries no honest interval. The complement ---
+what the larger population has and the subset does not --- is disjoint from the subset, so the
+contrast between subset and complement does. Reorderings below are reported against the whole,
+because that is the number a reader of the published table holds; interactions are certified against
+the complement, because that is the contrast that can be.
+
+Both instances are run this way. On our split the same three methods are scored under the same five
+criteria by the same estimator on the $\nshared$ substrates all five methods share and on the full
+$\ntest$: of $60$ comparisons $10$ reorder, and they are not scattered --- MetaPredictor against
+SyGMa on recall reverses under every one of the five criteria, ahead by about $0.02$ on the shared
+subset and behind by about $0.02$ on the full split, with precision reordering four and F1 one. On
+the released retrosynthesis files the two clusters share $505$ products, $490$ of which agree on the
+recorded reaction; those $490$ are nested inside each cluster's own five thousand, giving $380$
+comparisons of which $44$ reorder.
+
+\textbf{Not one of the $440$ interactions survives Holm at $0.05$, and on our split not one has an
+interval excluding zero even before correction.} On the released files $18$ of $380$ have intervals
+excluding zero, which is about what $380$ tests produce by chance. The reorderings are what a subset
+of four hundred and ninety reactions, or a hundred and fifty substrates, does on its own.
+
+So the axis is reported as a hazard to declaration and not as a lever on ranking. Two things follow.
+The reorderings a reader would find by re-scoring on a subset are not evidence that the population
+matters, which is worth saying because they look like evidence; and the criterion result is not
+explained away by the same mechanism, since it was measured with a certified interaction on the same
+estimator and $109$ of its $448$ tests survive the same correction.
+
+The shared reactions do settle one thing no released table can. The three clusters have no system in
+common, so no published number compares a system in one against a system in another. On the $490$
+they share, all ten are comparable at once: \texttt{gln} leads at $0.574$ top-1 under canonical
+matching, ahead of \texttt{chemformer} at $0.567$ and \texttt{gta} at $0.551$. On its own cluster's
+five thousand reactions \texttt{gln} is fifth of seven at $0.525$. We state this ordering and
+decline to defend it, for exactly the reason above: it is measured on four hundred and ninety
+reactions, and nothing here certifies that it is not the same noise.
 
 \subsection{Which number is which}
 
@@ -438,7 +465,7 @@ releases the ranked outputs of twelve single-step retrosynthesis systems on what
 USPTO-50k test set \citep{Hastedt_2024}, eleven of them as CSV, under a licence that permits
 re-scoring. Nothing needs training, and no checkpoint needs to run.
 
-\paragraph{The eleven are not on one test set, and one of the odd ones out is ours.}
+\paragraph{The eleven are not on one test set, and one of the odd ones out is ours.}\label{app:xdomainsets}
 Reading the released files rather than their table shows three populations where the name promises
 one. Clustering the eleven by which products they contain, the within-cluster overlap is $1.00$ and
 the between-cluster overlap is $0.10$ --- they are not disjoint and not the same set, and no
@@ -509,18 +536,6 @@ LocalRetro, Retroformer, Graph2SMILES. Disregard stereochemistry and Graph2SMILE
 to first, with Retroformer second and GraphRetro third. Five of the twenty-one pairs exchange, on
 predictions that never change.
 
-\begin{figure}[h]
-\begin{center}
-\includegraphics[width=0.52\textwidth]{fig_xdomain}
-\end{center}
-\caption{The same slope plot in another field, on files their authors released rather than
-predictions we produced: seven retrosynthesis systems, four criteria, top-1 accuracy on the
-$4{,}999$ reactions they share. Graph2SMILES enters fourth under canonical matching and leaves
-first under every more tolerant one, crossing GraphRetro, LocalRetro and Retroformer; the three
-systems that never exchange are drawn in grey. The canonical-to-InChIKey step is flat for all
-seven, which is the criterion pair that costs nothing here.}
-\label{fig:xdomain}
-\end{figure}
 
 The exchange is the visible part; the interaction is the claim, and it is certified under the
 strictest correction this paper applies anywhere. Of $448$ paired interaction tests --- every pair

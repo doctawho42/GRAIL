@@ -14,10 +14,13 @@ Reported per method pair and criterion:
 
     gap on each population, the change between them, and whether the ordering survives
 
-The comparison is deliberately narrow. Two populations is a weak design for a general claim, and it
-is not offered as one: it says whether the axis moves the answer at all on a case where everything
-else is pinned, which is more than the three-splits finding can say and less than the criterion and
-budget results say.
+A reordering is a description and not a result, and this script used to stop at the description.
+The shared subset is nested inside the full split, so a gap on one and a gap on the other are not
+independent and their difference carries no honest interval. The complement -- the substrates the
+full split has and the shared subset does not -- is disjoint from the subset, so that contrast does.
+The reorderings are reported against the full split, because that is the number a reader has; the
+interaction is certified against the complement, because that is the one that can be, and it is
+corrected across the whole family at the same Holm threshold this paper applies elsewhere.
 """
 from __future__ import annotations
 
@@ -31,9 +34,48 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
+if str(Path(__file__).resolve().parent) not in sys.path:
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+import numpy as np
+
+from set_metrics_by_criterion import MODES, per_substrate
 
 SRC = ROOT / "results" / "set_metrics_by_criterion.json"
 METRICS = ("recall", "f1", "precision", "jaccard")
+N_BOOT, SEED = 10000, 0
+
+
+def _vectors():
+    """Per-substrate scores for the methods both populations carry, on the subset and its
+    complement. Read from the same prediction files the artifact was built from, because the
+    artifact stores only point estimates and an interval cannot be recovered from those."""
+    truth = json.loads((ROOT / "results" / "test_references.json").read_text())
+    grail = {r["sub"]: r["deployed_top15"] for r in
+             json.loads((ROOT / "results" / "recall_factorization.json").read_text())["per_substrate"]}
+    methods = {
+        "GRAIL": grail,
+        "SyGMa": json.loads((ROOT / "results" / "sygma_fulltest_predictions.json").read_text()),
+        "MetaPredictor": json.loads(
+            (ROOT / "artifacts" / "tier2_1170" / "metapredictor_preds.json").read_text()),
+    }
+    five = dict(methods)
+    t2 = ROOT / "artifacts" / "tier2"
+    for n, f in (("BioTransformer", "biotransformer_preds.json"),
+                 ("MetaTrans", "metatrans_preds.json")):
+        five[n] = json.loads((t2 / f).read_text())
+    full = sorted(set.intersection(*(set(m) for m in methods.values())) & set(truth))
+    full = [s for s in full if truth[s]]
+    shared = sorted(set.intersection(*(set(m) for m in five.values())) & set(truth))
+    shared = [s for s in shared if truth[s]]
+    rest = [s for s in full if s not in set(shared)]
+    out = {}
+    for mode in MODES:
+        table = json.loads((ROOT / "results" / "key_tables" / f"{mode}.json").read_text())
+        out[mode] = {"shared": {n: per_substrate(p, truth, shared, table)
+                                for n, p in methods.items()},
+                     "rest": {n: per_substrate(p, truth, rest, table) for n, p in methods.items()}}
+    return out, len(shared), len(rest)
 
 
 def _code_version() -> dict:
@@ -65,6 +107,22 @@ def main() -> int:
     print(f"{small} (n={d[small]['n_substrates']}) against {big} (n={d[big]['n_substrates']})")
     print(f"  methods on both: {methods}\n  criteria on both: {modes}", flush=True)
 
+    vec, n_shared, n_rest = _vectors()
+    print(f"  certifying against the complement: {n_shared} shared, {n_rest} remaining", flush=True)
+    rng = np.random.default_rng(SEED)
+    si = rng.integers(0, n_shared, (N_BOOT, n_shared))
+    ci = rng.integers(0, n_rest, (N_BOOT, n_rest))
+
+    def interaction(mode, a_, b_, metric):
+        ds = vec[mode]["shared"][a_][metric] - vec[mode]["shared"][b_][metric]
+        dc = vec[mode]["rest"][a_][metric] - vec[mode]["rest"][b_][metric]
+        bt = ds[si].mean(axis=1) - dc[ci].mean(axis=1)
+        pv = 2.0 * min((bt <= 0).mean(), (bt >= 0).mean())
+        return {"delta": round(float(ds.mean() - dc.mean()), 4),
+                "ci95": [round(float(np.quantile(bt, .025)), 4),
+                         round(float(np.quantile(bt, .975)), 4)],
+                "p": round(max(float(pv), 1.0 / N_BOOT), 6)}
+
     rows, flips, ties = [], 0, 0
     for metric in METRICS:
         for mode in modes:
@@ -77,11 +135,12 @@ def main() -> int:
                 if gs == 0 or gb == 0:
                     ties += 1
                     continue
-                flip = (gs > 0) != (gb > 0)
-                flips += flip
+                flip = bool((gs > 0) != (gb > 0))
+                flips += int(flip)
                 rows.append({"metric": metric, "criterion": mode, "pair": f"{a} vs {b}",
                              f"gap_{small}": round(gs, 4), f"gap_{big}": round(gb, 4),
-                             "change": round(abs(gb - gs), 4), "reordered": bool(flip)})
+                             "change": round(abs(gb - gs), 4), "reordered": flip,
+                             "interaction": interaction(mode, a, b, metric)})
 
     print(f"\n  {len(rows)} comparisons, method and criterion and budget all held fixed")
     print(f"  the ordering changes with the population in {flips} of them")
@@ -89,6 +148,17 @@ def main() -> int:
         if r["reordered"]:
             print(f"    {r['metric']:9} {r['criterion']:18} {r['pair']:28} "
                   f"{r[f'gap_{small}']:+.4f} -> {r[f'gap_{big}']:+.4f}")
+
+    ordered = sorted(rows, key=lambda r: r["interaction"]["p"])
+    survivors = []
+    for i, r in enumerate(ordered):
+        if r["interaction"]["p"] <= 0.05 / (len(ordered) - i):
+            survivors.append(r)
+        else:
+            break
+    excl = [r for r in rows if r["interaction"]["ci95"][0] * r["interaction"]["ci95"][1] > 0]
+    print(f"\n  of {len(rows)} interactions against the complement, {len(excl)} have intervals "
+          f"excluding zero and {len(survivors)} survive Holm at 0.05")
 
     med = sorted(r["change"] for r in rows)
     print(f"\n  median change in a pair's gap between the two populations: "
@@ -105,7 +175,9 @@ def main() -> int:
                       "note": "the same methods, criteria and estimator on two populations of one "
                               "split; two populations is a weak design and is not offered as a "
                               "general claim"},
-           "comparisons": len(rows), "reordered": flips, "ties_skipped": ties,
+           "comparisons": len(rows), "reordered": int(flips), "ties_skipped": int(ties),
+           "n_shared": n_shared, "n_complement": n_rest,
+           "interactions_excluding_zero": len(excl), "holm_survivors": len(survivors),
            "median_gap_change": round(med[len(med) // 2], 4),
            "by_metric": by_metric, "rows": rows}
     Path(args.out).write_text(json.dumps(rep, indent=1))
