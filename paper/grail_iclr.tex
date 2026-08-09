@@ -272,14 +272,12 @@ Five of twenty-one pairs exchange in all.
 The exchange is what a reader sees; the claim is the interaction, and it is corrected under the
 strictest family this paper declares anywhere. Of $448$ paired tests --- every pair of systems,
 every pair of conventions, every $k$ --- $233$ have intervals excluding zero, $109$ of $448$
-paired interactions surviving Holm at $0.05$ across the whole family. Two qualifications travel with it: the effect is
-concentrated at top-1, which is the number this field leads with but not the whole accuracy curve,
-and what moves the ordering here is stereochemistry rather than tautomer canonicalisation, the
-opposite of the internal asymmetry.
+paired interactions surviving Holm at $0.05$ across the whole family. The effect is concentrated at top-1, the number this
+field leads with but not the whole accuracy curve.
 
 \begin{figure}[h]
 \begin{center}
-\includegraphics[width=0.52\textwidth]{fig_xdomain}
+\includegraphics[width=0.47\textwidth]{fig_xdomain}
 \end{center}
 \caption{Seven retrosynthesis systems, four matching criteria, top-1 accuracy on the $4{,}999$
 reactions they share, from files their authors released. Graph2SMILES enters fourth under canonical
@@ -296,7 +294,10 @@ vulnerable exactly as it matures. These seven sit a median $0.013$ apart against
 $0.015$ and reorder; three $0.047$ apart are moved as much and do not. Over $439$
 method-pair by criterion-pair comparisons across four leaderboards in three domains, with nothing
 re-scored, the movement exceeds the gap once in nine and reverses the pair once in seventeen, and no
-reversal occurs where the gap survives the movement (Appendix~\ref{app:xdomain}).
+reversal occurs where the gap survives the movement. The third domain shows the condition from its
+other end: on eight published molecular generators the same criterion certifies $19$ of $112$
+interactions and yields one exchange, a metric scoring seven of eight above $0.986$ leaving almost
+nothing close enough to cross (Appendix~\ref{app:xdomain}).
 
 \section{The decomposition and the coverage ceiling}
 \label{sec:decomp}
@@ -635,9 +636,9 @@ of the deployed configuration, selection on validation but for the two exception
 \looseness=-2
 Four things are decided before any model is: the matching rule, the output size, the engine's
 convention, and which population a dataset name means. None is declared, three of them move an
-ordering, and one caught this paper. Each is readable from files that are already public, which is
-why the ask is a declaration and not a standard: \texttt{declare\_conventions.py} reports all four
-from a template bank and a set of prediction files, with no reference data and no model.
+ordering, and one caught this paper. Each is readable from files that are already
+public, so the ask is a declaration rather than a standard: \texttt{declare\_conventions.py} reports
+all four from a template bank and a set of prediction files.
 
 \subsubsection*{Reproducibility statement}
 

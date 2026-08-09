@@ -612,21 +612,28 @@ among a model's generations \citep{Polykovskiy_2020}. A model that emits a keto 
 one compound is credited with two molecules. We re-scored the published generations of all eight
 models MOSES ships samples for, 240{,}208 molecules, under the same five criteria.
 
-Tautomer matching is inert on this set. Every one of the eight returns its canonical Unique@10{,}000
-to within $0.0001$, the single non-zero difference being JT-VAE's $0.9992$ against $0.9991$. The
-relaxation that does something is stereochemistry, and what it does is small: the hidden Markov
-baseline falls $0.923 \to 0.888$ and the $n$-gram baseline $0.986 \to 0.957$, while four of the
-remaining six move by $0.001$ or less and a fifth by $0.0011$. That is enough for one rank exchange, LatentGAN dropping
-$0.998 \to 0.988$ past a combinatorial baseline that does not move from $0.990$, so two adjacent
-mid-table models swap positions 5 and 6 under stereo-blind matching and under no other criterion.
+The criterion's effect here is certified and it is entirely stereochemical. Of $112$ paired
+interactions --- every pair of models against every criterion step --- $22$ have intervals excluding
+zero and $19$ survive Holm at $0.05$ across the family, and \textbf{all nineteen are the step from
+canonical to stereo-blind}. Not one interaction survives under InChIKey, Tanimoto or tautomer
+matching. Tautomer canonicalisation is inert to four decimals on every one of the eight, the single
+non-zero difference being JT-VAE's $0.9992$ against $0.9991$.
 
-We report this as a negative control rather than a null. The ordering is stable under four of five
-criteria and the one exchange it admits is between models $0.002$ apart, against a metabolism
-result in which a significant advantage between two published tools is erased outright. The reason
-is visible in the numbers: seven of the eight sit at $0.986$ or above, so there is little room to
-collapse anything, and generators trained on canonical SMILES from ZINC reproduce that canonical
-form. The asymmetry is the same one the external metabolite set shows, stereochemistry doing the
-work and tautomerism doing none; what differs between the domains is how much is at stake.
+What stereo-blindness does is visible per model and explains itself. The hidden Markov baseline
+falls $0.9226 \to 0.8884$ and the $n$-gram baseline $0.9856 \to 0.9565$; LatentGAN falls
+$0.9975 \to 0.9880$; and the combinatorial baseline moves by exactly $0.00000$
+$[0.00000,0.00000]$, because it enumerates without stereocentres and a stereo-blind rule has nothing
+of its to collapse. A criterion that is inert on one model by construction and costs another a
+point is a differential effect in the strict sense, and it produces the one rank exchange this set
+admits: LatentGAN past the combinatorial baseline, an interaction of $-0.0093$
+$[-0.0109,-0.0076]$ that survives the same correction, swapping positions 5 and 6 under stereo-blind
+matching and under no other criterion.
+
+One exchange from a certified effect is the packing condition rather than a weak result. Seven of
+the eight sit at $0.986$ or above, so almost every pair is separated by less than the effect can
+close --- and the pair that is not, exchanges. This is the same asymmetry the external metabolite
+set shows, stereochemistry doing the work and tautomerism none; what differs between the domains is
+not whether the criterion acts but how much of the leaderboard is close enough to feel it.
 
 The second targets retrosynthesis. Scoring ReactionT5v2 on 200
 substrates from the USPTO-50k test set this repository holds, which is the three-system

@@ -438,6 +438,49 @@ def main() -> int:
                        P["interactions_excluding_zero"], 0,
                        "which the appendix states as the stronger half of the negative"))
 
+    # 10f. The third domain. Its intervals were computed by resampling with replacement, which
+    # collides on its own, so every one of the forty sat far below the estimate it belonged to; the
+    # gate below is against that returning, and the counts are against the effect being restated
+    # without its correction.
+    mo = ROOT / "results/moses_uniqueness.json"
+    if mo.exists():
+        M = json.loads(mo.read_text())
+        flat = re.sub(r"\s+", " ", whole)
+        m = re.search(r"Of \$(\d+)\$ paired\s*interactions", flat)
+        check("MOSES, interactions", m and m.group(1), M["n_interactions"])
+        m = re.search(r"\$(\d+)\$ have intervals excluding\s*zero and \$(\d+)\$ survive Holm", flat)
+        check("MOSES, excluding zero", m and m.group(1), M["interactions_excluding_zero"])
+        check("MOSES, Holm survivors", m and m.group(2), M["holm_survivors"])
+        ex = M["interactions"]["inchi_no_stereo"]["combinatorial vs latent_gan"]
+        m = re.search(r"an interaction of \$-([\d.]+)\$", flat)
+        check("MOSES, the exchange", m and m.group(1), abs(ex["delta"]))
+        u = M["uniqueness"]
+        for label, model, pat in (
+                ("MOSES, hidden Markov under stereo", "hmm",
+                 r"falls \$([\d.]+) \\to ([\d.]+)\$ and the \$n\$-gram"),
+                ("MOSES, n-gram under stereo", "ngram",
+                 r"\$n\$-gram baseline \$([\d.]+) \\to ([\d.]+)\$"),
+                ("MOSES, LatentGAN under stereo", "latent_gan",
+                 r"LatentGAN falls \$([\d.]+) \\to ([\d.]+)\$")):
+            mm = re.search(pat, flat)
+            check(label + ", canonical", mm and mm.group(1), u["canonical"][model]["unique@10000"])
+            check(label + ", stereo-blind", mm and mm.group(2),
+                  u["inchi_no_stereo"][model]["unique@10000"])
+        # Every survivor is the stereo step: the sentence says so in bold, and a survivor anywhere
+        # else would make it false however the counts print.
+        elsewhere = [f"{mode}|{pair}" for mode, pairs in M["interactions"].items()
+                     if mode != "inchi_no_stereo"
+                     for pair, v in pairs.items() if v["survives_holm"]]
+        checks.append((not elsewhere, "MOSES, every survivor is the stereo step",
+                       f"{len(elsewhere)} elsewhere", "0 elsewhere",
+                       "the appendix claims all nineteen are that one step"))
+        # The defect that was there: an interval that does not contain the estimate it belongs to.
+        offenders = [(mode, mdl) for mode in u for mdl, v in u[mode].items()
+                     if not (v["ci95_at_10000"][0] <= v["unique@10000"] <= v["ci95_at_10000"][1])]
+        checks.append((not offenders, "MOSES, every interval contains its own estimate",
+                       f"{len(offenders)} do not", "0", "resampling without replacement, at the "
+                       "reported size, from three times as many generations"))
+
     # 11. the cross-domain leaderboard: the run the paper specified in advance and then ran. Its
     # counts are the load-bearing part -- an exchange is visible, a certified interaction is not --
     # so every one of them is recomputed here rather than trusted to a paragraph.
