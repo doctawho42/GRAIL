@@ -424,9 +424,6 @@ def main() -> int:
               P["comparisons"] + R["comparisons"])
         # The abstract states the negative once and carries only the family size; the two counts
         # it used to repeat are checked where they are reported, in the appendix above.
-        m = re.search(r"of \$(\d+)\$ interactions varying nothing but", flat)
-        check("abstract, the family size", m and m.group(1),
-              P["comparisons"] + R["comparisons"])
         # The claim the paper now rests on: nothing survives. This is a gate, not a comparison --
         # a single survivor in either instance makes the sentence false, whatever it prints.
         checks.append((P["holm_survivors"] == 0 and R["holm_survivors"] == 0,

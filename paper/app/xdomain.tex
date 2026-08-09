@@ -50,9 +50,7 @@ Whether it \emph{reorders} is a separate question with an estimand, and the esti
 smaller population is nested inside the larger, so a gap measured on the subset and a gap measured
 on the whole are not independent and their difference carries no honest interval. The complement ---
 what the larger population has and the subset does not --- is disjoint from the subset, so the
-contrast between subset and complement does. Reorderings below are reported against the whole,
-because that is the number a reader of the published table holds; interactions are certified against
-the complement, because that is the contrast that can be.
+contrast between subset and complement does. Reorderings below are reported against the whole population, which is the quantity a published table states; interactions are certified against the complement, which is the contrast that admits an interval.
 
 Both instances are run this way. On our split the same three methods are scored under the same five
 criteria by the same estimator on the $\nshared$ substrates all five methods share and on the full
@@ -68,9 +66,7 @@ interval excluding zero even before correction.} On the released files $18$ of $
 excluding zero, which is about what $380$ tests produce by chance. The reorderings are what a subset
 of four hundred and ninety reactions, or a hundred and fifty substrates, does on its own.
 
-So the axis is reported as a hazard to declaration and not as a lever on ranking. Two things follow.
-The reorderings a reader would find by re-scoring on a subset are not evidence that the population
-matters, which is worth saying because they look like evidence; and the criterion result is not
+So the axis is reported as a hazard to declaration and not as a lever on ranking. Two consequences follow. Reorderings obtained by re-scoring on a subset are not evidence that the population matters, although they resemble such evidence; and the criterion result is not
 explained away by the same mechanism, since it was measured with a certified interaction on the same
 estimator and $109$ of its $448$ tests survive the same correction.
 
@@ -186,7 +182,7 @@ substrates, so the columns are paired on identical inputs.
 
 MetaPredictor has since been re-scored on $1{,}169$ of the test substrates, at recall@15 of 0.568, close to
 SyGMa, which indicates its subset value is representative. BioTransformer and MetaTrans remain on
-the subset. A full five-method rerun at a single sample size is future work: BioTransformer's
+the subset. A five-method rerun at a single sample size is not available here, because BioTransformer's
 subset configuration was not scripted, and MetaTrans's inference pipeline no longer reproduces
 in-tree.
 
@@ -228,7 +224,7 @@ $[-0.274,-0.120]$ against GRAIL. Those two pairs are the certified reversals: ea
 in one direction on recall and in the other on F1.
 
 The remaining exchanges of place, MetaTrans past MetaPredictor at the top and BioTransformer past
-GRAIL below it, are within noise and we do not claim them. The reading is not that the aggregate
+GRAIL below it, are within noise and support no claim. The reading is not that the aggregate
 shuffles a leaderboard arbitrarily. It is that the aggregate is decisive for exactly the
 architecture the factorisation identifies, the one with no selection stage, and not detectably
 different among the architectures that select. That last is a failure to detect rather than a
@@ -415,8 +411,8 @@ predictions and is well defined --- and this is a robustness column beside it.
 The last row of Table~\ref{tab:holm} is the second comparison \S\ref{sec:tame} declares confirmatory, and it is not a
 protocol $\times$ method interaction, so it belongs to neither family above: the learned-versus-prior
 rule-selection gap of \S\ref{sec:xmc}, $-0.144$ $[-0.196,-0.095]$ macro at $k=15$ on $245$ test
-substrates. No family was pre-specified for it either, and
-results/prior\_vs\_learned.json spans three selector modes and two stages, so a conservative family
+substrates. No family was pre-specified for it either, and the
+committed artifact spans three selector modes and two stages, so a conservative family
 here is not of size one. Saying so is the answer rather than an evasion: a
 comparison the paper declares corrected has to appear here with its threshold, and at
 $p=2.0\times10^{-8}$ against $0.05$ the correction changes nothing whatever family it is put in.
@@ -492,8 +488,8 @@ of the set the name refers to. We are one of the deviations, which is the useful
 it: a shared name that does not fix a population is not a lapse by whoever assembled a table, it is
 a hazard of the ecosystem, and it caught us as readily as anyone.
 
-A leaderboard is a leaderboard only within a group, so we do not assemble the eleven into one table
-and neither should a reader of the released files. The comparison below runs on the seven-system
+A leaderboard is a leaderboard only within a group, so the eleven released files are not
+assembled into a single table. The comparison below runs on the seven-system
 group, reconstructing its test set from the reactions all seven carry and agree the answer to,
 rather than trusting any one file's ordering or its index column --- which means a running
 prediction counter in one file, a reaction index in another and a float in a third. The
@@ -783,7 +779,7 @@ reading of the same chemistry omits $46\%$ of what the corpus records, which is 
 level is increasingly a measurement of one source's inclusion criteria. It is not evidence about
 whether models have caught up with expert judgement, and should not be read as any.
 
-Two limits are worth stating rather than leaving to be found. Twenty-five drugs give intervals
+Two limits bear on the interpretation. Twenty-five drugs give intervals
 around $\pm0.1$, and these are drugs two sources both chose to curate, so they carry $5.7$ to $6.5$
 references each against $2.2$ across the corpus. Better-studied compounds are exactly where two
 curations have the most opportunity to agree, so $0.539$ is more likely an upper bound on

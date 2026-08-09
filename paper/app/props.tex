@@ -258,7 +258,7 @@ expansion fixed across both arms is what makes it one.
 
 \paragraph{The two banks are not separate objects.} SyGMa's published rule set is one of the curated
 banks our own is a deduplicated union of, so containment is testable by verbatim string membership
-rather than inference: $152$ of its $175$ rules are in \texttt{extended\_smirks.txt}, all in the
+rather than inference: $152$ of its $175$ rules are present in the bank, all in the
 curated portion and none among the mined templates. The comparison is a superset against a subset.
 
 \paragraph{Depth is not the confound.} The expanded-convention ceiling used here is one uncapped
@@ -382,8 +382,8 @@ $152$ are the expanded ones, and each is labelled where it appears.
 factors are measured through its own application and multiply to its own realised recall, so the
 decomposition itself is unaffected. What it does not license is reading the first factor
 \emph{across} methods as a property of their rule sets: it is a property of rule set and engine
-together, which is what \S\ref{sec:decomp} says. The direction is worth stating plainly, because it
-is not in our favour rhetorically and is in our favour substantively: our engine under-realises
+together, which is what \S\ref{sec:decomp} says. The direction of the effect is opposite to the one that would
+suit the present system rhetorically: our engine under-realises
 SyGMa's rules by a factor of two under the expansion, and the same expansion applied to our own bank
 costs it $0.082$ of reach on the clean test split --- which is why $\ceiling$ is quoted under the
 convention the pipeline fires rules in rather than under that one, and why the headline that the
@@ -398,8 +398,8 @@ supplies no offsetting overstatement.
 \subsection{The same choice outside metabolism, failing the other way}
 \label{app:retroconvention}
 
-Everything above is measured on metabolite rule banks, which a reader may fairly take as a fact
-about one small literature. The USPTO retrosynthesis templates are a library from another field,
+Everything above is measured on metabolite rule banks, which alone would establish a fact about
+one small literature. The USPTO retrosynthesis templates are a library from another field,
 extracted by other people from other reactions for another task, and the instrument applies to them
 unchanged. What it finds is not a repetition, because the mechanism is the other one.
 
@@ -560,8 +560,7 @@ mining the training split reaches (Appendices~\ref{app:props},~\ref{app:negative
 
 The bank is a deduplicated union of four published rule sets and a much larger body of templates
 mined from the training split, and nothing so far says which part reaches the chemistry.
-\texttt{mined\_only.txt} lists the mined templates verbatim, so the split is exact rather than
-estimated: $5{,}866$ mined and $1{,}715$ curated, partitioning the $7{,}581$ with nothing left over.
+The mined templates are recorded verbatim, so the partition is exact rather than estimated: $5{,}866$ mined and $1{,}715$ curated, partitioning the $7{,}581$ with nothing left over.
 Applying each subset alone, through the same primitives and on the same substrates as the ceiling
 itself, the full clean test split:
 
@@ -588,8 +587,7 @@ This does not contradict Appendix~\ref{app:negative}, where discarding the $4{,}
 never carry a positive label costs recall. Contributing to a deployed pool and contributing to the
 ceiling are different things.
 
-\paragraph{This table said the opposite until its hydrogens were counted the way the pipeline
-counts them.} Applied through the helper the data-preparation path uses, which expands hydrogens
+\paragraph{The ordering of the two subsets depends on the hydrogen convention.} Applied through the helper the data-preparation path uses, which expands hydrogens
 onto the substrate before matching, the same rules on the same substrates give curated $0.668$
 against mined $0.332$ --- the curated fifth carrying the ceiling and the mined majority
 re-deriving it. Both passes are correct arithmetic; they differ only in a convention neither
@@ -639,8 +637,7 @@ accounts fit a bank whose halves want opposite conventions. On the first, \emph{
 loss: one collection is mismeasured whichever global setting is chosen, and the repair returns what
 the losing half forfeits. On the second and duller, $675$ hand-written templates simply want the
 expansion, and the mined majority bears on neither the loss nor its repair. They differ in exactly
-one measurable way, and it was registered before any arm existed
-(\texttt{docs/PRO\-VE\-NANCE\_DIS\-PATCH\_PRE\-RE\-GI\-STRA\-TION.md}): if mixing creates the
+one measurable way, and that difference was registered in advance of any measurement: if mixing creates the
 loss the residual is \emph{superadditive} across the partition, $\mathrm{res}(\text{full}) >
 \mathrm{res}(\text{curated}) + \mathrm{res}(\text{mined})$.
 
@@ -929,7 +926,7 @@ engine that never saw the training split, so if the axis measures transfer its c
 It is not: SyGMa degrades at $+0.180$ on F1 and $+0.291$ on recall against GRAIL's $+0.158$ and
 $+0.307$. Resampled on the same draws, so that the comparison is paired, the difference is $+0.022$
 $[-0.041,+0.086]$ on F1 and $-0.016$ $[-0.144,+0.115]$ on recall. Those are failures to detect a
-difference, not demonstrations that none exists, and the width is the part worth stating: the F1
+difference, not demonstrations that none exists, and the width of the interval is the informative part: the F1
 interval still admits a gap of $0.086$ and the recall interval one of $0.144$, against slopes of
 $0.158$ and $0.307$ themselves. What the data support is that a rule engine with nothing to
 transfer from falls on a slope this measurement cannot separate from a learned method's --- not that
@@ -1088,8 +1085,8 @@ this paper argues for is what decides it. Retraining the deployed configuration 
 objective and evaluating it as deployed gives $0.348$ against $0.334$ on test, which read alone
 looks like a gain of $+0.014$. On validation, the split model selection is permitted to touch, the
 same comparison gives $0.343$ against $0.344$, a difference of $-0.001$. The test-split movement is
-a single seed against a seed-to-seed spread of $\pm0.010$ and is not corroborated by the split we
-are allowed to select on, so we do not claim it. Both figures are on the $300$-substrate evaluation
+a single seed against a seed-to-seed spread of $\pm0.010$ and is not corroborated by the split available for
+selection, so it supports no claim. Both figures are on the $300$-substrate evaluation
 that configuration runs and are not comparable with the full-split numbers elsewhere in this paper.
 
 The reading we take is about the domain rather than the method. Inverse-propensity weighting exists
