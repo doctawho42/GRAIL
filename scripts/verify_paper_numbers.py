@@ -265,6 +265,13 @@ def main() -> int:
             check(f"dispatch table, {shown} best global", m and m.group(3), v["best_global"])
             check(f"dispatch table, {shown} residual", m and m.group(4),
                   abs(v["residual_convention_dependence"]), "measured in the same run")
+    mnd = ROOT / "results/dispatch_paired_ci__mined.json"
+    if mnd.exists():
+        M = json.loads(mnd.read_text())
+        checks.append((M["paired_residual"]["delta"] == 0.0 and M["reach"]["dispatch"]
+                       == M["reach"]["all_implicit"],
+                       "P1: mined dispatch is the identity", M["paired_residual"]["delta"],
+                       0.0, "the registered structural null"))
     if hd.exists() and cur.exists():
         full = json.loads(hd.read_text())["banks"]["grail_full"]["residual_convention_dependence"]
         curr = json.loads(cur.read_text())["paired_residual"]["delta"]
