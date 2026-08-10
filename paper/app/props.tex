@@ -268,14 +268,17 @@ same expanded ceiling widens from $0.1964$ to $0.2029$ $[0.185,0.222]$. The re-r
 substrate, which is the gate this was run behind.
 
 \paragraph{Reach is a property of the system, not of the rule base.} Hold the rules fixed at the
-$152$ both systems have and swap only the engine:
+$152$ both systems have and swap only the engine. Arm A is the loop as it stood, without the
+contraction; the paragraph below separates what that costs from what the convention costs, and every
+figure in this subsection measured before that separation describes the loop as it stood:
 
 \begin{center}
 \begin{tabular}{llc}
 \toprule
 & rules, engine & reach \\
 \midrule
-A & $152$ shared, expanded      & 0.200 $[0.182,0.218]$ \\
+A & $152$ shared, expanded, loop as it stood & 0.200 $[0.182,0.218]$ \\
+A$'$ & $152$ shared, expanded, loop completed & 0.342 $[0.320,0.365]$ \\
 B & $152$ shared, SyGMa's       & 0.387 $[0.365,0.410]$ \\
 C & all $175$, SyGMa's          & 0.532 $[0.507,0.558]$ \\
 D & all $175$, SyGMa's composed & 0.539 $[0.514,0.565]$ \\

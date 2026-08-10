@@ -945,7 +945,7 @@ def main() -> int:
         V = json.loads(rv.read_text())
         arms, con = V["arms"], V["contrasts"]
         flat = re.sub(r"\s+", " ", whole)
-        ma = re.search(r"A & \$152\$ shared, expanded & ([\d.]+) .*?"
+        ma = re.search(r"A & \$152\$ shared, expanded, loop as it stood & ([\d.]+) .*?"
                        r"B & \$152\$ shared, SyGMa's & ([\d.]+) .*?"
                        r"C & all \$175\$, SyGMa's & ([\d.]+) .*?"
                        r"D & all \$175\$, SyGMa's composed & ([\d.]+) ", flat)
@@ -976,6 +976,19 @@ def main() -> int:
                     check(f"printed term, {lbl}", said,
                           round(con[key]["point"], 4 if lbl == "composition" else 3),
                           str(rv.relative_to(ROOT)))
+
+    # the appendix's arms table now carries the completed arm, and it must be the same number the
+    # completed-loop run reports rather than a second measurement of the same thing
+    cl2 = ROOT / "results/completed_loop_reach__clean_test.json"
+    if cl2.exists():
+        flat = re.sub(r"\s+", " ", whole)
+        mac = re.search(r"A\$'\$ & \$152\$ shared, expanded, loop completed & ([\d.]+) ", flat)
+        checks.append((bool(mac), "the completed arm row parses", "present",
+                       "matched" if mac else "not matched", ""))
+        if mac:
+            check("arm A-prime, the completed loop", mac.group(1),
+                  round(json.loads(cl2.read_text())["reach"]["completed"]["reach"], 3),
+                  str(cl2.relative_to(ROOT)))
 
     # 10c-o. The engine term split. Three quarters of what section 4 called a convention is an
     # application loop that expands a substrate and never contracts the product; the paper now
