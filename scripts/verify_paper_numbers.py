@@ -854,6 +854,15 @@ def main() -> int:
                   Q["n_pairs_changing_sign"], str(fm2.relative_to(ROOT)))
             check("sign changes certified at both ends", words[mb.group(2).lower()],
                   Q["n_certified_both_ends"], str(fm2.relative_to(ROOT)))
+            H = Q.get("holm", {})
+            if H:
+                check("the declared family for the sweep", 54, H["family_size"],
+                      str(fm2.relative_to(ROOT)))
+                checks.append((H["n_sign_changes_certified_both_ends"] == words[mb.group(2).lower()],
+                               "sign changes surviving Holm at both ends",
+                               str(words[mb.group(2).lower()]),
+                               str(H["n_sign_changes_certified_both_ends"]),
+                               str(fm2.relative_to(ROOT))))
             checks.append((Q["n_certified_both_ends"] >= 1,
                            "at least one budget reversal crosses two certified margins",
                            "at least one", str(Q["n_certified_both_ends"]),

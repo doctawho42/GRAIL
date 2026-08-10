@@ -177,6 +177,42 @@ def main() -> int:
             print(f"    {k_:32} ahead at k={v['ahead_at']} by {v['ahead_margin']['margin']:+.4f}, "
                   f"behind at k={v['behind_at']} by {v['behind_margin']['margin']:+.4f}")
 
+    # Section 3 calls a difference certified only when its interval excludes zero AND it survives
+    # Holm in a declared family. This sweep had intervals and no family, so nothing in it could be
+    # certified under the paper's own rule while the abstract leaned on it. The family is the grid
+    # the axis admits: every method pair at every budget. The p-values are sign-flip rather than a
+    # normal tail on a stored interval, since the per-substrate differences are here.
+    rng2 = np.random.default_rng(SEED)
+    pvals = {}
+    for a, b in itertools.combinations(sorted(rows), 2):
+        for k in KS:
+            d = np.array(rows[a][k], dtype=float) - np.array(rows[b][k], dtype=float)
+            nz = d[d != 0.0]
+            if nz.size == 0:
+                pvals[f"{a} vs {b} @ {k}"] = 1.0
+                continue
+            obs = abs(nz.mean())
+            signs = rng2.choice([-1.0, 1.0], size=(20000, nz.size))
+            null = np.abs((signs * nz).mean(axis=1))
+            pvals[f"{a} vs {b} @ {k}"] = float((1 + (null >= obs - 1e-15).sum()) / 20001)
+    order = sorted(pvals, key=lambda k_: pvals[k_])
+    m_fam, alive, holm = len(order), True, {}
+    for i, k_ in enumerate(order):
+        thr = 0.05 / (m_fam - i)
+        ok = alive and pvals[k_] <= thr
+        alive = ok
+        holm[k_] = {"p": round(pvals[k_], 6), "threshold": round(thr, 6), "survives": bool(ok)}
+    n_holm = sum(v["survives"] for v in holm.values())
+    # a sign change is certified only if BOTH ends survive the correction, not merely the interval
+    for k_, v in reversed(list(reversals.items())):
+        a_, b_ = v["ahead_at"], v["behind_at"]
+        both = (a_ is not None and b_ is not None
+                and holm[f"{k_} @ {a_}"]["survives"] and holm[f"{k_} @ {b_}"]["survives"])
+        v["certified_both_ends_after_holm"] = bool(both)
+    n_holm_rev = sum(v.get("certified_both_ends_after_holm", False) for v in reversals.values())
+    print(f"  Holm over the {m_fam}-cell grid: {n_holm} margins survive")
+    print(f"  sign changes with BOTH ends surviving Holm: {n_holm_rev}")
+
     n_sep = sum(v["separable"] for v in margins.values())
     print(f"\n  {n_sep} of {len(margins)} pairwise margins separate from zero at 95%")
     # the specific claim the sweep is quoted for: is the mover's position certified at either end?
@@ -196,6 +232,8 @@ def main() -> int:
            "pairwise_margins": margins,
            "n_margins": len(margins), "n_separable": n_sep,
            "sign_changes": reversals, "n_certified_both_ends": n_strong,
+           "holm": {"family_size": m_fam, "n_surviving": n_holm,
+                    "n_sign_changes_certified_both_ends": n_holm_rev, "by_cell": holm},
            "n_pairs_changing_sign": len(reversals)}
     Path(args.out).write_text(json.dumps(rep, indent=1))
     print(f"\nwrote {args.out}")

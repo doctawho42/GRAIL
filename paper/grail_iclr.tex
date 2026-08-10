@@ -560,7 +560,7 @@ source's inclusion choices (Appendix~\ref{app:xdomain}).
 \label{sec:metric}
 
 \looseness=-1
-Every interval in this subsection is exploratory. A method that emits eighty candidates to catch a
+Intervals in this subsection are exploratory except the budget sweep, whose family is declared below. A method that emits eighty candidates to catch a
 few more references is rewarded by recall and punished by F1, and on each method's deployed output
 set the two orderings disagree. Against GRAIL the disagreement is certified in both directions:
 SyGMa leads on recall by $0.253$ $[0.222,0.283]$ and sits $0.088$ $[0.076,0.099]$ below it on F1.
@@ -580,8 +580,8 @@ that second half observed rather than certified. A
 fourth method exhausts the field: on $291$ substrates carrying all four, MetaTox at $33.6$
 candidates is last at $k\le5$ and first from $k=15$, the budget this field reports at. Four of the
 six pairs change sign along that sweep and three change it between margins that each separate from
-zero, so here the budget reverses results rather than permuting ties
-(Appendix~\ref{app:fourmethod}). A budget binds a method only when it emits more, so at $k=15$ SyGMa is cut on $92.7\%$ of
+zero and survive Holm over the grid that axis admits, every pair at every budget, so here the budget
+reverses results rather than permuting ties (Appendix~\ref{app:fourmethod}). A budget binds a method only when it emits more, so at $k=15$ SyGMa is cut on $92.7\%$ of
 substrates and GRAIL on none (Appendix~\ref{app:props}).
 
 \looseness=-1

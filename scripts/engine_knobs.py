@@ -105,12 +105,26 @@ def _init(rules):
     _CTX["rules"] = rules
 
 
-def apply_with(mol, rules, add_hs: bool, norm: str, drop_invalid: bool) -> list[str]:
-    """The deployed loop with each discretionary step exposed as a switch."""
+def apply_with(mol, rules, add_hs: bool, norm: str, drop_invalid: bool,
+               remove_hs: bool = False) -> list[str]:
+    """The deployed loop with each discretionary step exposed as a switch.
+
+    `remove_hs` completes the loop rather than varying it. Expanding a substrate and never
+    contracting the product leaves the drawn hydrogen on the reacting atom, and what looked like a
+    convention two banks could each defend is then partly a missing call: with the contraction the
+    same templates return the products the unexpanded arm returns. The switch exists so the
+    difference between an incomplete loop and a complete one can be measured rather than argued.
+    """
     substrate = Chem.AddHs(Chem.Mol(mol)) if add_hs else Chem.Mol(mol)
     seen = set()
     for rule in rules:
         for product in _iter_reaction_products(substrate, rule):
+            if remove_hs:
+                try:
+                    product = Chem.RemoveHs(Chem.Mol(product), sanitize=False)
+                    Chem.SanitizeMol(product)
+                except Exception:
+                    continue
             try:
                 smiles = Chem.MolToSmiles(product)
             except Exception:

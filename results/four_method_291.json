@@ -1,7 +1,7 @@
 {
  "config": {
   "script": "four_method_291.py",
-  "git_commit": "94d276ef0749c044affbdb4fefec12b7e4a79245",
+  "git_commit": "26b6c9de25ce44ed26672139251e0e4b945944e0",
   "git_dirty": true,
   "n_substrates": 291,
   "match": "inchikey_tautomer",
@@ -615,7 +615,8 @@
      -0.3058
     ],
     "separable": true
-   }
+   },
+   "certified_both_ends_after_holm": true
   },
   "MetaPredictor vs MetaTox": {
    "certified_both_ends": true,
@@ -636,14 +637,16 @@
      -0.0983
     ],
     "separable": true
-   }
+   },
+   "certified_both_ends_after_holm": true
   },
   "MetaPredictor vs SyGMa": {
    "certified_both_ends": false,
    "ahead_at": null,
    "behind_at": null,
    "ahead_margin": null,
-   "behind_margin": null
+   "behind_margin": null,
+   "certified_both_ends_after_holm": false
   },
   "MetaTox vs SyGMa": {
    "certified_both_ends": true,
@@ -664,9 +667,287 @@
      -0.0284
     ],
     "separable": true
-   }
+   },
+   "certified_both_ends_after_holm": true
   }
  },
  "n_certified_both_ends": 3,
+ "holm": {
+  "family_size": 54,
+  "n_surviving": 39,
+  "n_sign_changes_certified_both_ends": 3,
+  "by_cell": {
+   "GRAIL vs MetaPredictor @ 5": {
+    "p": 5e-05,
+    "threshold": 0.000926,
+    "survives": true
+   },
+   "GRAIL vs MetaPredictor @ 8": {
+    "p": 5e-05,
+    "threshold": 0.000943,
+    "survives": true
+   },
+   "GRAIL vs MetaPredictor @ 10": {
+    "p": 5e-05,
+    "threshold": 0.000962,
+    "survives": true
+   },
+   "GRAIL vs MetaPredictor @ 15": {
+    "p": 5e-05,
+    "threshold": 0.00098,
+    "survives": true
+   },
+   "GRAIL vs MetaPredictor @ 20": {
+    "p": 5e-05,
+    "threshold": 0.001,
+    "survives": true
+   },
+   "GRAIL vs MetaPredictor @ 30": {
+    "p": 5e-05,
+    "threshold": 0.00102,
+    "survives": true
+   },
+   "GRAIL vs MetaPredictor @ 50": {
+    "p": 5e-05,
+    "threshold": 0.001042,
+    "survives": true
+   },
+   "GRAIL vs MetaTox @ 1": {
+    "p": 5e-05,
+    "threshold": 0.001064,
+    "survives": true
+   },
+   "GRAIL vs MetaTox @ 10": {
+    "p": 5e-05,
+    "threshold": 0.001087,
+    "survives": true
+   },
+   "GRAIL vs MetaTox @ 15": {
+    "p": 5e-05,
+    "threshold": 0.001111,
+    "survives": true
+   },
+   "GRAIL vs MetaTox @ 20": {
+    "p": 5e-05,
+    "threshold": 0.001136,
+    "survives": true
+   },
+   "GRAIL vs MetaTox @ 30": {
+    "p": 5e-05,
+    "threshold": 0.001163,
+    "survives": true
+   },
+   "GRAIL vs MetaTox @ 50": {
+    "p": 5e-05,
+    "threshold": 0.00119,
+    "survives": true
+   },
+   "GRAIL vs SyGMa @ 3": {
+    "p": 5e-05,
+    "threshold": 0.00122,
+    "survives": true
+   },
+   "GRAIL vs SyGMa @ 5": {
+    "p": 5e-05,
+    "threshold": 0.00125,
+    "survives": true
+   },
+   "GRAIL vs SyGMa @ 8": {
+    "p": 5e-05,
+    "threshold": 0.001282,
+    "survives": true
+   },
+   "GRAIL vs SyGMa @ 10": {
+    "p": 5e-05,
+    "threshold": 0.001316,
+    "survives": true
+   },
+   "GRAIL vs SyGMa @ 15": {
+    "p": 5e-05,
+    "threshold": 0.001351,
+    "survives": true
+   },
+   "GRAIL vs SyGMa @ 20": {
+    "p": 5e-05,
+    "threshold": 0.001389,
+    "survives": true
+   },
+   "GRAIL vs SyGMa @ 30": {
+    "p": 5e-05,
+    "threshold": 0.001429,
+    "survives": true
+   },
+   "GRAIL vs SyGMa @ 50": {
+    "p": 5e-05,
+    "threshold": 0.001471,
+    "survives": true
+   },
+   "MetaPredictor vs MetaTox @ 1": {
+    "p": 5e-05,
+    "threshold": 0.001515,
+    "survives": true
+   },
+   "MetaPredictor vs MetaTox @ 3": {
+    "p": 5e-05,
+    "threshold": 0.001563,
+    "survives": true
+   },
+   "MetaPredictor vs MetaTox @ 5": {
+    "p": 5e-05,
+    "threshold": 0.001613,
+    "survives": true
+   },
+   "MetaPredictor vs MetaTox @ 8": {
+    "p": 5e-05,
+    "threshold": 0.001667,
+    "survives": true
+   },
+   "MetaPredictor vs MetaTox @ 30": {
+    "p": 5e-05,
+    "threshold": 0.001724,
+    "survives": true
+   },
+   "MetaPredictor vs MetaTox @ 50": {
+    "p": 5e-05,
+    "threshold": 0.001786,
+    "survives": true
+   },
+   "MetaTox vs SyGMa @ 1": {
+    "p": 5e-05,
+    "threshold": 0.001852,
+    "survives": true
+   },
+   "MetaTox vs SyGMa @ 3": {
+    "p": 5e-05,
+    "threshold": 0.001923,
+    "survives": true
+   },
+   "MetaTox vs SyGMa @ 5": {
+    "p": 5e-05,
+    "threshold": 0.002,
+    "survives": true
+   },
+   "MetaTox vs SyGMa @ 8": {
+    "p": 5e-05,
+    "threshold": 0.002083,
+    "survives": true
+   },
+   "MetaTox vs SyGMa @ 30": {
+    "p": 5e-05,
+    "threshold": 0.002174,
+    "survives": true
+   },
+   "MetaTox vs SyGMa @ 50": {
+    "p": 5e-05,
+    "threshold": 0.002273,
+    "survives": true
+   },
+   "GRAIL vs MetaPredictor @ 3": {
+    "p": 0.0001,
+    "threshold": 0.002381,
+    "survives": true
+   },
+   "MetaPredictor vs MetaTox @ 10": {
+    "p": 0.00045,
+    "threshold": 0.0025,
+    "survives": true
+   },
+   "GRAIL vs SyGMa @ 1": {
+    "p": 0.00085,
+    "threshold": 0.002632,
+    "survives": true
+   },
+   "MetaTox vs SyGMa @ 10": {
+    "p": 0.0012,
+    "threshold": 0.002778,
+    "survives": true
+   },
+   "MetaTox vs SyGMa @ 20": {
+    "p": 0.0028,
+    "threshold": 0.002941,
+    "survives": true
+   },
+   "MetaPredictor vs MetaTox @ 20": {
+    "p": 0.00295,
+    "threshold": 0.003125,
+    "survives": true
+   },
+   "GRAIL vs MetaTox @ 3": {
+    "p": 0.00655,
+    "threshold": 0.003333,
+    "survives": false
+   },
+   "GRAIL vs MetaPredictor @ 1": {
+    "p": 0.009,
+    "threshold": 0.003571,
+    "survives": false
+   },
+   "GRAIL vs MetaTox @ 8": {
+    "p": 0.014949,
+    "threshold": 0.003846,
+    "survives": false
+   },
+   "MetaTox vs SyGMa @ 15": {
+    "p": 0.121994,
+    "threshold": 0.004167,
+    "survives": false
+   },
+   "MetaPredictor vs SyGMa @ 50": {
+    "p": 0.154392,
+    "threshold": 0.004545,
+    "survives": false
+   },
+   "MetaPredictor vs MetaTox @ 15": {
+    "p": 0.158142,
+    "threshold": 0.005,
+    "survives": false
+   },
+   "MetaPredictor vs SyGMa @ 30": {
+    "p": 0.223939,
+    "threshold": 0.005556,
+    "survives": false
+   },
+   "MetaPredictor vs SyGMa @ 5": {
+    "p": 0.336183,
+    "threshold": 0.00625,
+    "survives": false
+   },
+   "MetaPredictor vs SyGMa @ 1": {
+    "p": 0.355782,
+    "threshold": 0.007143,
+    "survives": false
+   },
+   "MetaPredictor vs SyGMa @ 20": {
+    "p": 0.39143,
+    "threshold": 0.008333,
+    "survives": false
+   },
+   "MetaPredictor vs SyGMa @ 10": {
+    "p": 0.503125,
+    "threshold": 0.01,
+    "survives": false
+   },
+   "MetaPredictor vs SyGMa @ 3": {
+    "p": 0.544023,
+    "threshold": 0.0125,
+    "survives": false
+   },
+   "GRAIL vs MetaTox @ 5": {
+    "p": 0.711464,
+    "threshold": 0.016667,
+    "survives": false
+   },
+   "MetaPredictor vs SyGMa @ 8": {
+    "p": 0.760062,
+    "threshold": 0.025,
+    "survives": false
+   },
+   "MetaPredictor vs SyGMa @ 15": {
+    "p": 0.877456,
+    "threshold": 0.05,
+    "survives": false
+   }
+  }
+ },
  "n_pairs_changing_sign": 4
 }
