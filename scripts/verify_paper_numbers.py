@@ -921,8 +921,8 @@ def main() -> int:
                        f"mover {sorted(mover)}, widest {widest} at "
                        f"{P[widest]['mean_emitted_uncapped']}", str(fm.relative_to(ROOT))))
         flat_a = re.sub(r"\s+", " ", whole)
-        said = ("one method is last at tight budgets and first at the budget the field reports, "
-                "with every method and its ranking held fixed")
+        said = ("one method is last at tight budgets and first at the budget the "
+                "field reports with its ranking held fixed")
         checks.append((said in flat_a, "the abstract says what the sweep shows",
                        "present", "present" if said in flat_a else "not matched", ""))
 
