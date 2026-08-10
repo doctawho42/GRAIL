@@ -213,6 +213,30 @@ def main() -> int:
     print(f"  Holm over the {m_fam}-cell grid: {n_holm} margins survive")
     print(f"  sign changes with BOTH ends surviving Holm: {n_holm_rev}")
 
+    # The same instrument as scripts/robust_order.py, on the budget axis alone: a pair survives
+    # when the method the field's budget ranks higher is ahead at every budget in the sweep.
+    published = sorted(rows, key=lambda m: -per[m]["recall"][15])
+    prank = {m: i for i, m in enumerate(published)}
+    robust = {}
+    for a, b in itertools.combinations(sorted(rows), 2):
+        hi_, lo_ = (a, b) if prank[a] < prank[b] else (b, a)
+        cells = {}
+        for k in KS:
+            v = margins[f"{min(hi_, lo_)} vs {max(hi_, lo_)} @ {k}"]
+            sign = 1 if hi_ < lo_ else -1
+            cells[k] = {"margin": round(sign * v["margin"], 4),
+                        "positive": (sign * v["margin"]) > 0,
+                        "certified": v["separable"] and (sign * v["margin"]) > 0}
+        robust[f"{hi_} over {lo_}"] = {
+            "dominates": all(c["positive"] for c in cells.values()),
+            "certified": all(c["certified"] for c in cells.values()),
+            "budgets_that_reverse_it": [k for k, c in cells.items() if not c["positive"]]}
+    n_p = len(robust)
+    n_d = sum(v["dominates"] for v in robust.values())
+    n_c = sum(v["certified"] for v in robust.values())
+    print(f"\n  robust order over the budget grid: {n_d}/{n_p} pairs survive every budget, "
+          f"{n_c} certified in every budget")
+
     n_sep = sum(v["separable"] for v in margins.values())
     print(f"\n  {n_sep} of {len(margins)} pairwise margins separate from zero at 95%")
     # the specific claim the sweep is quoted for: is the mover's position certified at either end?
@@ -231,6 +255,10 @@ def main() -> int:
            "orderings": {" > ".join(o): ks for o, ks in seen_orders.items()},
            "pairwise_margins": margins,
            "n_margins": len(margins), "n_separable": n_sep,
+           "robust_order": {"published_order": published, "pairs": robust,
+                            "n_pairs": n_p, "n_dominating": n_d, "n_certified": n_c,
+                            "robustness": round(n_d / max(n_p, 1), 4),
+                            "certified_robustness": round(n_c / max(n_p, 1), 4)},
            "sign_changes": reversals, "n_certified_both_ends": n_strong,
            "holm": {"family_size": m_fam, "n_surviving": n_holm,
                     "n_sign_changes_certified_both_ends": n_holm_rev, "by_cell": holm},
