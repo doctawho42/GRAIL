@@ -77,9 +77,9 @@ molecular generators shows from the other side: almost no pair on it is close en
 one adjacent pair exchanges.
 
 Where the candidate set can be enumerated, recall decomposes exactly into coverage, selection and
-ranking, and enumerability turns the first term into an exhaustive measurement rather than a sample
-estimate or a search bound. We release the evaluation protocol, the audited split, the frozen
-predictions of every method compared here, and the analysis code.
+ranking, and enumerability makes the first term an exhaustive measurement rather than a sample
+estimate. We release the protocol, the audited split, the frozen predictions of every method
+compared here, and the analysis code.
 
 \end{abstract}
 
@@ -161,9 +161,8 @@ The remainder of this article is organised as follows. Section~\ref{sec:related}
 on the four choices and on staged evaluation, and Section~\ref{sec:tame} defines the protocol, the
 matching criteria and the split. Section~\ref{sec:enginereach} shows that what a published rule base
 reaches is decided by the engine applying it, and surveys how far that dependence extends across
-released template libraries. Section~\ref{sec:robust} asks what part of a published ranking
-survives every choice in a declared grid, and re-scores released retrosynthesis predictions to show
-how one choice breaks an ordering.
+released template libraries. Section~\ref{sec:robust} asks what part of a published ranking survives
+every choice in a declared grid, on released retrosynthesis predictions.
 Section~\ref{sec:decomp} develops the decomposition that makes a coverage figure measurable, and
 Section~\ref{sec:results} applies the remaining choices inside one benchmark.
 Section~\ref{sec:limitations} states the scope of the results and Section~\ref{sec:conclusion}
@@ -611,16 +610,16 @@ the output size do not act on the same comparisons (Appendix~\ref{app:props}).
 
 
 \looseness=-1
-\paragraph{A global budget is the wrong object.} The budget is not only undeclared, it is the wrong
-shape. Enzymes compete for one substrate, so its annotated products are alternatives drawn from a
-shared pool: the median substrate here has one and the mean $2.22$, while the deployed policy emits
-$8.4$ for every substrate alike. Holding the ranking fixed and changing only how many are emitted,
+\paragraph{A global budget is the wrong object.} The budget is not only undeclared, it is the wrong shape.
+Enzymes compete for one substrate, so its annotated products are alternatives from a shared pool:
+the median substrate here has one and the mean $2.22$, while the deployed policy emits $8.4$ for
+every substrate alike. Holding the ranking fixed and changing only how many are emitted,
 the deployed $k=15$ scores $0.136$ macro F1, the best global constant $0.195$, and truncating each
 substrate at its own annotated count $0.214$. A rule that reads the pool instead of a constant recovers
 almost all of that: emitting while a candidate scores within half the leader's score gives $0.209$,
-a paired $+0.074$ $[+0.059,+0.089]$ over the deployed policy and above every global constant. Forecasting the count from the substrate alone does not work and is reported with the
-weightings it fails at (Appendix~\ref{app:negative}); what the pool supports is a relative rule, not
-an absolute one, which is what a model normalised over siblings would learn.
+a paired $+0.074$ $[+0.059,+0.089]$ over the deployed policy and above every global constant. Forecasting the count from the substrate alone fails and is reported as such
+(Appendix~\ref{app:negative}): what the pool supports is a relative rule, which is what a model
+normalised over siblings would learn.
 
 \paragraph{Where this system's own shortfall sits.} GRAIL trails both published comparators at
 the field's budget, by a paired $-0.242$ $[-0.271,\,-0.212]$ against SyGMa. The second confirmatory
@@ -646,8 +645,8 @@ on that (Appendix~\ref{app:enginereach}).
 
 \looseness=-2
 \paragraph{What the newer results rest on.} The cross-domain numbers come from files produced
-elsewhere and the reordering there is a top-1 phenomenon; the margin condition is measured across
-four leaderboards, which is few, and the population result is a bounded null.
+elsewhere, the reordering there is a top-1 phenomenon, the robust order is measured on three
+leaderboards, and the population result is a bounded null.
 
 \section{Conclusion}
 \label{sec:conclusion}
@@ -655,12 +654,12 @@ four leaderboards, which is few, and the population result is a bounded null.
 \looseness=-2
 Four choices are settled before any model is compared: when two structures count as the same
 molecule, how many candidates a method may emit, how an engine applies a reaction template, and
-which population a dataset name refers to. Two move a published ordering and none is routinely declared.
-The budget reverses margins a paired interval separates from zero; the criterion exchanges systems a
-mature benchmark never separated, which is a finding about that benchmark as much as about the
-choice; the engine convention decides what a rule base reaches without deciding which reaches
-further. All four can be read from files that are already public by the checker released here, so
-the evidence supports a requirement to declare them rather than a standard that fixes them.
+which population a dataset name refers to. None is routinely declared, all four can be read from
+files that are already public, and the part of a published ranking that survives every one of them
+is about a third. Two move a published ordering and they break it differently: the budget reverses
+margins an interval separates from zero, the criterion exchanges systems a mature benchmark never
+separated. Declaring them is what the evidence supports; the budget supports more, since a set sized
+to the candidate pool beats every global budget on the same predictions.
 
 \subsubsection*{Reproducibility statement}
 
