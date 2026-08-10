@@ -444,6 +444,45 @@ and it is the one a reviewer can check in a minute.
 record. The right way to keep it closed is to run the passage walk again before submission, since
 nothing enforces it: a number added tomorrow will not fail any check in this document.
 
+## 11a. No number in the main text is an orphan
+
+**Check:** the named checks verify that a number matches the artifact it cites. They cannot see a
+number that cites nothing. This gate is the complement: every decimal printed in the nine pages must
+round to some value recorded in some committed artifact.
+
+```bash
+python - <<'EOF'
+import pathlib, re, json
+s = pathlib.Path("paper/grail_iclr.tex").read_text()
+body = re.sub(r"(?m)^\s*%.*$", "", s[s.index("\\section{Introduction}"):s.index("\\appendix")])
+nums = sorted({m.group(1) for m in re.finditer(r"\$[+-]?(\d*\.\d+)\$", body)})
+vals = set()
+def collect(o):
+    if isinstance(o, float): vals.add(round(o, 6))
+    elif isinstance(o, dict):
+        for k, v in o.items():
+            if k != "per_substrate": collect(v)
+    elif isinstance(o, list):
+        for v in o[:4000]: collect(v)
+for p in pathlib.Path("results").glob("*.json"):
+    try: collect(json.loads(p.read_text()))
+    except Exception: pass
+bad = [n for n in nums if not any(abs(v - float(n)) <= 0.5 * 10 ** -len(n.split(".")[1]) + 1e-12
+                                 for v in vals)]
+print(f"{len(bad)} of {len(nums)} orphaned:", bad)
+EOF
+```
+
+**What it establishes and what it does not.** It is necessary, not sufficient. With tens of thousands
+of floats in the artifacts a coincidental match is likely, so a number passing this gate is not
+thereby verified against the right source; that is what the named checks do. What it catches is the
+case they structurally cannot: a figure that no artifact produced.
+
+**Status: PASS, after it found one.** The engine result was stated against a bank-to-bank gap that
+appeared in no artifact, in no appendix and in no check, inside one of the paper's headline
+sentences. The sentence now reports the decomposition that was computed, every term with an
+interval, and five checks hold it.
+
 ## 12. Every entry point that generates a comparator's predictions applies the same rules
 
 **Check:** for each external tool, list every script that invokes it and diff what each does to the
