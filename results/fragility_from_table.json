@@ -1,0 +1,39 @@
+{
+ "config": {
+  "script": "fragility_from_table.py",
+  "git_commit": "e0176ef152b044dcb829f22f942afc61e83c1498",
+  "git_dirty": true,
+  "note": "the movement is estimated on each leaderboard's own grid, then the prediction uses only the published column"
+ },
+ "leaderboards": {
+  "cluster0": {
+   "n_pairs": 21,
+   "published_cell": "('canonical', 1)",
+   "median_margin": 0.013,
+   "median_movement": 0.085,
+   "predicted_fragile": 18,
+   "expected_fragile": 18.05,
+   "observed_fragile": 13,
+   "predicted_share": 0.8571,
+   "observed_share": 0.619
+  },
+  "cluster1": {
+   "n_pairs": 3,
+   "published_cell": "('canonical', 1)",
+   "median_margin": 0.047,
+   "median_movement": 0.2176,
+   "predicted_fragile": 3,
+   "expected_fragile": 2.67,
+   "observed_fragile": 3,
+   "predicted_share": 1.0,
+   "observed_share": 1.0
+  }
+ },
+ "totals": {
+  "threshold_rule": 21,
+  "expected_count": 20.72,
+  "observed": 16,
+  "error_threshold": 5,
+  "error_expected": 4.72
+ }
+}

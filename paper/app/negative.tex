@@ -127,6 +127,17 @@ The exploratory measurements in this appendix were scored on the test split befo
 described in the main text was tightened; the pruning and ablation results were subsequently
 repeated on validation, and those are the values reported above. They support no claim in the main
 text.
+\paragraph{Estimating a leaderboard's fragility from the published table alone.} The instrument of
+\S\ref{sec:robust} needs released prediction files, and most tables come with none. A pair reorders
+when a choice moves the two systems apart by more than the margin between them, and the margins are
+printed, so the share of pairs whose margin falls below a domain-level movement should predict the
+share that reorder. It does not. On the two retrosynthesis leaderboards the threshold rule predicts
+$21$ fragile pairs against $16$ observed, and replacing the single movement with its own
+distribution and summing the expected count gives $20.7$: both over-predict by about a third, and by
+the same third on each, because a movement large enough to cross a margin need not be in the
+direction that flips it. A calibration factor fitted on two leaderboards would be an overfit, so
+none is offered. The instrument needs the predictions, which is one more reason for releasing them.
+
 \paragraph{Forecasting how many metabolites a substrate has, from the substrate.} If the emitted
 set should be sized per substrate, the obvious way is to predict the size. Least squares on heavy
 atoms, rings and rotatable bonds, fitted on the training split and applied to test, reaches $0.181$
