@@ -375,6 +375,40 @@ and 4 both pass on an artifact whose interval is not reproducible: one asks whet
 committed, the other whether the difference carries an interval at all. A check narrower than its
 claim, for the fourth time in this document.
 
+## 10a. Every artifact identifies code that still exists
+
+**Check:** each artifact records the commit it was produced at. Ask git whether that commit is in
+this history, and whether the tree was clean when it ran.
+
+```bash
+python - <<'EOF'
+import json, pathlib, subprocess
+for p in sorted(pathlib.Path("results").glob("*.json")):
+    try: c = json.loads(p.read_text()).get("config", {})
+    except Exception: continue
+    if not isinstance(c, dict) or "git_commit" not in c: continue
+    sha = c["git_commit"]
+    anc = subprocess.run(["git", "merge-base", "--is-ancestor", sha, "HEAD"],
+                         capture_output=True).returncode == 0
+    if not anc or c.get("git_dirty"):
+        print(f"{p.name:52} {sha[:8]} ancestor={anc} dirty={c.get('git_dirty')}")
+EOF
+```
+
+**Status: PARTIAL, and the partial part is stated rather than repaired.** Of 51 artifacts recording
+a commit, one named a commit reachable from no branch: `decompose_biotransformer.json`, produced at
+`022781d`, which a later amend removed from the history. The code that made an appendix table was
+therefore not in the release. Re-run from the current tree it reproduces every value outside the
+config block exactly, so nothing was wrong with the number; the artifact now records a commit that
+exists.
+
+Forty-four of the fifty-one record `git_dirty: true`. That flag is set by any uncommitted change in
+the tree, including to an unrelated artifact being written by another run, so it is a weak signal and
+most of these are benign. It is not nothing: a dirty flag means the recorded commit is a lower bound
+on the code that ran, not an identification of it, and this document should not claim more than that.
+What holds the numbers is not the commit field but Row 10, which asks whether a re-run reproduces the
+file, and the widening to the full split re-ran a third of these under that question.
+
 ## 11. Every numeric passage traces back to the artifact that produced it
 
 **Check:** walk each passage of the manuscript that prints four or more numerals back to the
