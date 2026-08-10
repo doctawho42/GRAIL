@@ -95,17 +95,90 @@
    "source": "grail_metabolism/uspto_templates.csv.gz"
   },
   "BioTransformer": {
-   "templates": 994,
-   "hydrogen_atom_primitive": 690,
-   "share_atom": 0.6942,
-   "hydrogen_count_primitive": null,
-   "share_count": null,
-   "degree_primitive": null,
-   "share_degree": null,
-   "recursive_smarts": 36,
-   "partial": "atom primitive only; the tool is not installed here",
-   "source": "third-party distribution, census carried forward"
+   "templates": 976,
+   "hydrogen_atom_primitive": 679,
+   "share_atom": 0.6957,
+   "hydrogen_count_primitive": 428,
+   "share_count": 0.4385,
+   "degree_primitive": 7,
+   "share_degree": 0.0072,
+   "atom_and_degree": 3,
+   "none_of_the_three": 137,
+   "recursive_smarts": 194,
+   "exposed_needs_expansion": 679,
+   "exposed_broken_by_expansion": 7,
+   "source": "its own distribution, metabolic and standardisation rules"
+  },
+  "GLORY, CYP rules": {
+   "templates": 73,
+   "hydrogen_atom_primitive": 41,
+   "share_atom": 0.5616,
+   "hydrogen_count_primitive": 6,
+   "share_count": 0.0822,
+   "degree_primitive": 0,
+   "share_degree": 0.0,
+   "atom_and_degree": 0,
+   "none_of_the_three": 29,
+   "recursive_smarts": 22,
+   "exposed_needs_expansion": 41,
+   "exposed_broken_by_expansion": 0,
+   "source": "GLORYx release, rules attributed to GLORY"
+  },
+  "GLORYx, own rules": {
+   "templates": 9,
+   "hydrogen_atom_primitive": 4,
+   "share_atom": 0.4444,
+   "hydrogen_count_primitive": 1,
+   "share_count": 0.1111,
+   "degree_primitive": 0,
+   "share_degree": 0.0,
+   "atom_and_degree": 0,
+   "none_of_the_three": 5,
+   "recursive_smarts": 5,
+   "exposed_needs_expansion": 4,
+   "exposed_broken_by_expansion": 0,
+   "source": "GLORYx release, rules new in that work"
+  },
+  "GLORYx, SyGMa portion": {
+   "templates": 178,
+   "hydrogen_atom_primitive": 88,
+   "share_atom": 0.4944,
+   "hydrogen_count_primitive": 133,
+   "share_count": 0.7472,
+   "degree_primitive": 0,
+   "share_degree": 0.0,
+   "atom_and_degree": 0,
+   "none_of_the_three": 34,
+   "recursive_smarts": 76,
+   "exposed_needs_expansion": 88,
+   "exposed_broken_by_expansion": 0,
+   "source": "GLORYx release, rules attributed to SyGMa"
+  },
+  "RetroSim extracted templates": {
+   "templates": 1351,
+   "hydrogen_atom_primitive": 0,
+   "share_atom": 0.0,
+   "hydrogen_count_primitive": 1190,
+   "share_count": 0.8808,
+   "degree_primitive": 0,
+   "share_degree": 0.0,
+   "atom_and_degree": 0,
+   "none_of_the_three": 161,
+   "recursive_smarts": 0,
+   "exposed_needs_expansion": 0,
+   "exposed_broken_by_expansion": 0,
+   "source": "a second extraction from the same reaction corpus as the USPTO row"
   }
+ },
+ "transcription": {
+  "attributed": 178,
+  "identical": 57,
+  "rewritten": 121,
+  "identical_with_atom": 0,
+  "rewritten_with_atom": 88,
+  "source_rules": 175,
+  "source_with_atom": 0,
+  "note": "same attributed source; only whether the string was copied or re-typed differs"
  },
  "nested_not_counted": {
   "hand-written collection, largest": {
@@ -124,19 +197,58 @@
    "share_inside_curated_partition": 1.0
   }
  },
+ "derived_not_counted": {
+  "GLORYx, SyGMa portion": {
+   "derives_from": "SyGMa",
+   "templates": 178,
+   "hydrogen_atom_primitive": 88,
+   "share_atom": 0.4944,
+   "hydrogen_count_primitive": 133,
+   "share_count": 0.7472,
+   "degree_primitive": 0,
+   "share_degree": 0.0,
+   "atom_and_degree": 0,
+   "none_of_the_three": 34,
+   "recursive_smarts": 76,
+   "exposed_needs_expansion": 88,
+   "exposed_broken_by_expansion": 0,
+   "source": "GLORYx release, rules attributed to SyGMa"
+  },
+  "RetroSim extracted templates": {
+   "derives_from": "USPTO",
+   "templates": 1351,
+   "hydrogen_atom_primitive": 0,
+   "share_atom": 0.0,
+   "hydrogen_count_primitive": 1190,
+   "share_count": 0.8808,
+   "degree_primitive": 0,
+   "share_degree": 0.0,
+   "atom_and_degree": 0,
+   "none_of_the_three": 161,
+   "recursive_smarts": 0,
+   "exposed_needs_expansion": 0,
+   "exposed_broken_by_expansion": 0,
+   "source": "a second extraction from the same reaction corpus as the USPTO row"
+  }
+ },
  "summary": {
-  "independent_libraries": 4,
+  "independent_libraries": 6,
   "sources": [
    "BioTransformer",
+   "GLORY",
+   "GLORYx",
    "SyGMa",
    "USPTO",
    "this work"
   ],
-  "templates": 51304,
+  "templates": 51368,
   "need_expansion": [
    "this work, full bank",
    "this work, curated half",
-   "BioTransformer"
+   "BioTransformer",
+   "GLORY, CYP rules",
+   "GLORYx, own rules",
+   "GLORYx, SyGMa portion"
   ],
   "broken_by_expansion": [
    "USPTO extracted templates"

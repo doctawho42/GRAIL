@@ -586,24 +586,47 @@ def main() -> int:
     if cc.exists():
         C = json.loads(cc.read_text())
         flat = re.sub(r"\s+", " ", whole)
-        m = re.search(r"Across four independent\s*libraries and \$([\d,{}]+)\$ templates", flat)
+        m = re.search(r"Across six\s*independent libraries and \$([\d,{}]+)\$ templates", flat)
         check("census, templates", m and m.group(1).replace("{,}", ""), C["summary"]["templates"])
-        checks.append((C["summary"]["independent_libraries"] == 4,
-                       "census, independent libraries", C["summary"]["independent_libraries"], 4,
+        checks.append((C["summary"]["independent_libraries"] == 6,
+                       "census, independent libraries", C["summary"]["independent_libraries"], 6,
                        ", ".join(C["summary"]["sources"])))
+        # The transcription result: within one release, rules copied verbatim keep the source's
+        # convention and rules re-typed acquire one the source never uses.
+        tr = C.get("transcription")
+        if tr:
+            m = re.search(r"the \$(\d+)\$ copied verbatim carry the atom primitive not once, while\s*"
+                          r"\$(\d+)\$ of the \$(\d+)\$ re-typed do, a construct absent "
+                          r"from all \$(\d+)\$ rules", flat)
+            check("transcription, copied verbatim", m and m.group(1), tr["identical"])
+            check("transcription, re-typed carrying it", m and m.group(2), tr["rewritten_with_atom"])
+            check("transcription, re-typed", m and m.group(3), tr["rewritten"])
+            check("transcription, source rules", m and m.group(4), tr["source_rules"])
+            checks.append((tr["identical_with_atom"] == 0 and tr["source_with_atom"] == 0,
+                           "neither the source nor the verbatim copies use the primitive",
+                           f"{tr['source_with_atom']} and {tr['identical_with_atom']}", "0 and 0",
+                           "which is what makes the re-typed share a change of convention"))
+        # The range the main text once printed is now carried by the appendix table, whose rows are
+        # each checked below; the claim that survives in the nine pages is the ordering of the
+        # three constructs, gated separately.
         IND = {"this work, full bank", "SyGMa phase1", "SyGMa phase2",
-               "USPTO extracted templates", "BioTransformer"}
-        shares = [v["share_count"] for k, v in C["banks"].items()
-                  if k in IND and v.get("share_count") is not None]
-        m = re.search(r"appearing in between \$(\d+)\\%\$ and \$(\d+)\\%\$ of each library", flat)
-        check("census, lowest count-primitive share", m and m.group(1),
-              round(min(shares) * 100), "as a percentage")
-        check("census, highest count-primitive share", m and m.group(2),
-              round(max(shares) * 100), "as a percentage")
+               "USPTO extracted templates", "BioTransformer", "GLORY, CYP rules",
+               "GLORYx, own rules"}
+        atom = [C["banks"][k]["share_atom"] for k in IND if k in C["banks"]]
+        cnt = [C["banks"][k]["share_count"] for k in IND
+               if k in C["banks"] and C["banks"][k].get("share_count") is not None]
+        checks.append((max(cnt) > max(atom),
+                       "the inert construct is the most widely used one",
+                       f"count reaches {max(cnt)}", f"atom reaches {max(atom)}",
+                       "which is what the sentence asserts"))
         # every row of the appendix table, against the census that produced it
         ROWS = {"this work": "this work, full bank", "curated partition": "this work, curated half",
                 "mined partition": "this work, mined half", "SyGMa, phase 1": "SyGMa phase1",
-                "SyGMa, phase 2": "SyGMa phase2", "USPTO extracted": "USPTO extracted templates"}
+                "SyGMa, phase 2": "SyGMa phase2", "USPTO extracted": "USPTO extracted templates",
+                "BioTransformer": "BioTransformer", "GLORY, CYP rules": "GLORY, CYP rules",
+                "GLORYx, own rules": "GLORYx, own rules",
+                "GLORYx, rules attributed to SyGMa": "GLORYx, SyGMa portion",
+                "RetroSim, same corpus as USPTO": "RetroSim extracted templates"}
         for shown, key in ROWS.items():
             v = C["banks"][key]
             mm = re.search(re.escape(shown) + r" & \$[\d,{}]+\$ & \$([\d.]+)\$ & \$([\d.]+)\$ & "
@@ -623,27 +646,35 @@ def main() -> int:
     # The census of which templates carry the primitive is its own measurement, distinct from how
     # many the dispatch classifier sends anywhere; the two differ and must not be substituted.
     hd_b = ROOT / "results/explicit_h_mechanism.json"
-    if hd_b.exists():
+    hy_b = ROOT / "results/hydrogen_dispatch__clean_test.json"
+    if hd_b.exists() and hy_b.exists():
         B = json.loads(hd_b.read_text())["hydrogen_convention_by_bank"]
+        H = json.loads(hy_b.read_text())["banks"]
         flat = re.sub(r"\s+", " ", whole)
-        m = re.search(r"SyGMa, none\s*of whose \$(\d+)\$ templates carries a hydrogen atom, goes from "
-                      r"\$(\d+)\$ recovered references to \$(\d+)\$,? (?:while )?BioTransformer, where \$(\d+)\$ "
-                      r"of \$(\d+)\$ do, goes from \$(\d+)\$ down to \$(\d+)\$", flat)
+        m = re.search(r"with hydrogens drawn, BioTransformer recovers \$([\d,{}]+)\$ references and "
+                      r"SyGMa\s*\$(\d+)\$; with hydrogens left implicit, SyGMa recovers "
+                      r"\$([\d,{}]+)\$ and BioTransformer \$(\d+)\$", flat)
         checks.append((bool(m), "the three-bank sentence parses", "present",
                        "matched" if m else "not matched", ""))
         if m:
-            check("SyGMa rules", m.group(1), B["sygma_175"]["rules"])
-            check("SyGMa carries none", "0", B["sygma_175"]["with_explicit_hydrogen"])
-            check("BioTransformer carrying the primitive", m.group(4),
-                  B["biotransformer"]["with_explicit_hydrogen"])
-            check("BioTransformer rules", m.group(5), B["biotransformer"]["rules"])
-            # the reversal itself: one bank gains, the other loses, and they cross
-            sy_lo, sy_hi = int(m.group(2)), int(m.group(3))
-            bt_hi, bt_lo = int(m.group(6)), int(m.group(7))
-            checks.append((sy_lo < bt_hi and sy_hi > bt_lo,
-                           "the two banks cross between the conventions",
-                           f"SyGMa {sy_lo}->{sy_hi}, BioTransformer {bt_hi}->{bt_lo}",
-                           "they must exchange, which is the claim", ""))
+            num = lambda g: g.replace("{,}", "")
+            def recovered(bank, arm):
+                v = H[bank]
+                return round(v["global_arms"][arm] * v["references"])
+            check("BioTransformer, hydrogens drawn", num(m.group(1)),
+                  recovered("biotransformer", "all_explicit"))
+            check("SyGMa, hydrogens drawn", num(m.group(2)),
+                  recovered("sygma_175", "all_explicit"))
+            check("SyGMa, hydrogens implicit", num(m.group(3)),
+                  recovered("sygma_175", "all_implicit"))
+            check("BioTransformer, hydrogens implicit", num(m.group(4)),
+                  recovered("biotransformer", "all_implicit"))
+            # the reversal itself, not merely the four counts
+            checks.append((int(num(m.group(1))) > int(num(m.group(2)))
+                           and int(num(m.group(3))) > int(num(m.group(4))),
+                           "the two banks exchange between the conventions",
+                           f"drawn {m.group(1)} vs {m.group(2)}, implicit {m.group(3)} vs {m.group(4)}",
+                           "one leads under each", ""))
 
     # 10c-c. The confirmatory family, reconstructible from the main text: the grid the axes admit,
     # less the cells where two conventions coincide and there is nothing to test.

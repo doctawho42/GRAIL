@@ -148,13 +148,62 @@ def main() -> int:
                                 "share_inside_curated_partition": round(
                                     len(set(r) & curated_set) / len(r), 4)}
 
-    # BioTransformer ships its templates with the tool, which is not installed here; its census was
-    # taken from that distribution and is carried forward rather than recomputed.
-    prior = ROOT / "results" / "explicit_h_mechanism.json"
-    if prior.exists():
-        bt = json.loads(prior.read_text())["hydrogen_convention_by_bank"].get("biotransformer")
-        if bt:
-            banks["BioTransformer"] = (None, "third-party distribution, census carried forward")
+    # Libraries retrieved from their own public distributions. Each is recorded with the file it
+    # came from so the census can be re-taken against the same release.
+    ext = res / "external"
+
+    def _strip_comments(txt: str) -> str:
+        return "\n".join(l for l in txt.splitlines() if not l.lstrip().startswith("//"))
+
+    def _reactions(obj, out):
+        if isinstance(obj, str) and ">>" in obj:
+            out.append(obj)
+        elif isinstance(obj, dict):
+            for v in obj.values():
+                _reactions(v, out)
+        elif isinstance(obj, list):
+            for v in obj:
+                _reactions(v, out)
+
+    bt = []
+    for f in ("bt_database_metabolicReactions.json", "bt_database_ENVMICRO_metabolicReactions.json",
+              "bt_database_standardizationReactions.json"):
+        q = ext / f
+        if q.exists():
+            try:
+                _reactions(json.loads(_strip_comments(q.read_text())), bt)
+            except Exception:
+                pass
+    if bt:
+        banks["BioTransformer"] = (sorted(set(bt)),
+                                   "its own distribution, metabolic and standardisation rules")
+
+    # GLORYx publishes the provenance of each of its rules, so the parts that are not SyGMa's can
+    # be separated instead of being counted as a fresh library.
+    g = ext / "gloryx_reactionrules.csv"
+    if g.exists():
+        import csv as _csv
+        rows = list(_csv.DictReader(g.open()))
+        by_src: dict[str, list[str]] = {}
+        for r in rows:
+            by_src.setdefault(r["Rule source"].strip(), []).append(r["SMIRKS"].strip())
+        if by_src.get("GLORY"):
+            banks["GLORY, CYP rules"] = (by_src["GLORY"], "GLORYx release, rules attributed to GLORY")
+        if by_src.get("Current work"):
+            banks["GLORYx, own rules"] = (by_src["Current work"],
+                                          "GLORYx release, rules new in that work")
+        if by_src.get("SyGMa"):
+            banks["GLORYx, SyGMa portion"] = (by_src["SyGMa"],
+                                              "GLORYx release, rules attributed to SyGMa")
+
+    rs = ext / "retrosim_templates_general.json"
+    if rs.exists():
+        try:
+            banks["RetroSim extracted templates"] = (
+                sorted(json.loads(rs.read_text())),
+                "a second extraction from the same reaction corpus as the USPTO row")
+        except Exception:
+            pass
 
     rep = {"config": {"script": pathlib.Path(__file__).name,
                       "note": "no rule set is downloaded; installed tools are read in place"},
@@ -180,13 +229,44 @@ def main() -> int:
 
     # Independent sources, not rows: this work's two partitions are inside its own bank, and
     # SyGMa ships its rule set as two phase files that together are the 175 it publishes.
+    # An independent source is one whose templates were written or extracted separately. GLORYx's
+    # SyGMa portion and RetroSim's re-extraction of the USPTO corpus are neither, and are reported
+    # beside the sources they derive from instead of being added to them.
     INDEPENDENT = {"this work, full bank": "this work",
                    "SyGMa phase1": "SyGMa", "SyGMa phase2": "SyGMa",
-                   "USPTO extracted templates": "USPTO", "BioTransformer": "BioTransformer"}
+                   "USPTO extracted templates": "USPTO", "BioTransformer": "BioTransformer",
+                   "GLORY, CYP rules": "GLORY", "GLORYx, own rules": "GLORYx"}
+    DERIVED = {"GLORYx, SyGMa portion": "SyGMa", "RetroSim extracted templates": "USPTO"}
     sources = sorted(set(INDEPENDENT.values()))
     n_lib = len(sources)
     n_tpl = sum(v["templates"] for k, v in rep["banks"].items() if k in INDEPENDENT)
+    # Within one release, rules copied verbatim from another tool against rules re-typed from it.
+    # The split is a control on the claim: the chemistry is the same by attribution, and only the
+    # transcription differs.
+    if (ext / "gloryx_reactionrules.csv").exists():
+        sy_rules = set()
+        for k in ("SyGMa phase1", "SyGMa phase2"):
+            if k in banks:
+                sy_rules |= set(banks[k][0])
+        attributed = banks.get("GLORYx, SyGMa portion", ([], ""))[0]
+        ident = [r for r in attributed if r in sy_rules]
+        rew = [r for r in attributed if r not in sy_rules]
+        has = lambda r: any(needs_explicit_hydrogen(t) for t in _ATOM_TOKEN.findall(_reactant_side(r)))
+        rep["transcription"] = {
+            "attributed": len(attributed), "identical": len(ident), "rewritten": len(rew),
+            "identical_with_atom": sum(has(r) for r in ident),
+            "rewritten_with_atom": sum(has(r) for r in rew),
+            "source_rules": len(sy_rules), "source_with_atom": sum(has(r) for r in sy_rules),
+            "note": "same attributed source; only whether the string was copied or re-typed differs"}
+        tr = rep["transcription"]
+        print(f"\n  transcription control: {tr['identical']} copied verbatim "
+              f"({tr['identical_with_atom']} carry the atom primitive), {tr['rewritten']} re-typed "
+              f"({tr['rewritten_with_atom']} carry it); the source itself has "
+              f"{tr['source_with_atom']} of {tr['source_rules']}")
+
     rep["nested_not_counted"] = nested
+    rep["derived_not_counted"] = {k: {"derives_from": v, **rep["banks"][k]}
+                                  for k, v in DERIVED.items() if k in rep["banks"]}
     exposed_up = [k for k, v in rep["banks"].items() if (v["share_atom"] or 0) > 0.05]
     exposed_dn = [k for k, v in rep["banks"].items() if (v["share_degree"] or 0) > 0.05]
     print(f"\n  {n_lib} independent libraries ({', '.join(sources)}), {n_tpl} templates")

@@ -423,13 +423,16 @@ them. The check is a gate, the measurement is refused below $90\%$, and it retur
 Three \textsc{smarts} constructs behave differently under the expansion and are counted separately
 in Table~\ref{tab:census}: the hydrogen \emph{atom} primitive, which matches only a drawn hydrogen;
 the hydrogen \emph{count} primitive inside a bracket, which the expansion leaves untouched; and the
-connection count, which it changes. Across the four independent libraries reachable without
-re-deriving one, the count primitive is both the most widely used and the inert one, and the two
-that do move are used by disjoint sets of libraries.
+connection count, which it changes. Across the six independent libraries the count primitive is both the most widely used and the inert
+one, and the two that do move are used by disjoint sets of libraries. The last two rows are the
+controls. One release's copy of another tool's rules carries the atom primitive in half of them
+where the tool itself carries it in none, and a second extraction from the corpus that pins a
+connection count in every template pins it in none.
 
 \begin{table}[h]
 \caption{Share of templates carrying each construct, by library.
-BioTransformer's distribution is not installed here, so only its atom census is carried forward.}
+Rows below the rule are not counted as independent libraries: one is another release's copy of a
+library already listed, the other a second extraction from the corpus already listed.}
 \label{tab:census}
 \begin{center}
 \footnotesize
@@ -442,8 +445,14 @@ this work & $7{,}581$ & $0.089$ & $0.075$ & $0.000$ \\
 \quad mined partition & $5{,}866$ & $0.000$ & $0.002$ & $0.000$ \\
 SyGMa, phase 1 & $148$ & $0.000$ & $0.797$ & $0.000$ \\
 SyGMa, phase 2 & $27$ & $0.000$ & $0.926$ & $0.000$ \\
+BioTransformer & $976$ & $0.696$ & $0.439$ & $0.007$ \\
+GLORY, CYP rules & $73$ & $0.562$ & $0.082$ & $0.000$ \\
+GLORYx, own rules & $9$ & $0.444$ & $0.111$ & $0.000$ \\
 USPTO extracted & $42{,}554$ & $0.000$ & $0.967$ & $1.000$ \\
-BioTransformer & $994$ & $0.694$ & --- & --- \\
+\midrule
+\multicolumn{5}{l}{\emph{not counted as independent, and reported beside what they derive from}} \\
+GLORYx, rules attributed to SyGMa & $178$ & $0.494$ & $0.747$ & $0.000$ \\
+RetroSim, same corpus as USPTO & $1{,}351$ & $0.000$ & $0.881$ & $0.000$ \\
 \bottomrule
 \end{tabular}
 \end{center}

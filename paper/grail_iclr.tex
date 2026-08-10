@@ -287,9 +287,7 @@ return identical results for that pair and budget, so the contrast is identicall
 exists. Of the $448$ tests that remain, $233$ have intervals excluding zero and $109$ survive Holm
 at $0.05$ across the whole family. The effect is concentrated at top-1, the number this field leads with but not the whole accuracy
 curve. Stereo-blind matching is a candidate convention here and not a straw one: GLORYx scores on a
-stereo-blind skeleton, several systems compared here cannot emit a stereocentre at all, and
-\citet{Maziarz_2025} report a model scored under a relaxed stereochemistry rule its baselines were
-not given.
+stereo-blind skeleton and several systems compared here cannot emit a stereocentre at all.
 
 \begin{figure}[h]
 \begin{center}
@@ -415,12 +413,13 @@ larger than every rule the two banks do not share. Almost all of what reads as a
 bases is a difference between the programs that query them, and that difference is a single preprocessing step, the expansion itself. Our own generator does not expand, which is why \ceiling\ is quoted without it. Toggling that one
 call, with bank and substrates untouched, carries reach from $0.200$ to $0.390$, the whole of the
 engine term; the loop's other two choices move reach by nothing
-(Appendix~\ref{app:enginereach}). The direction is not a property of our engine, and the split is the notation. Applied to the same substrates under both conventions, SyGMa, none of whose $175$ templates carries
-a hydrogen atom, goes from $125$ recovered references to $299$, while BioTransformer, where $690$ of
-$994$ do, goes from $268$ down to $74$. Which of two published rule bases reaches further is
-therefore decided by a step that neither paper states.
+(Appendix~\ref{app:enginereach}). The direction is not a property of our engine, and the split is the notation. On the full split, with hydrogens drawn, BioTransformer recovers $1{,}264$ references and SyGMa
+$579$; with hydrogens left implicit, SyGMa recovers $1{,}390$ and BioTransformer $317$. Which of two
+published rule bases reaches further is decided by a step that neither paper states.
 
-The dependence is not specific to metabolism, and three constructs must be told apart to see it. A template may carry the hydrogen \emph{atom} primitive, which matches only a drawn hydrogen; pin a hydrogen \emph{count} inside a bracket, which the expansion leaves untouched; or pin a connection count, which the expansion changes. Across four independent libraries and $51{,}304$ templates, the construct almost everyone uses is the inert one, appearing in between $8\%$ and $97\%$ of each library, while the two that do move under the step are used by disjoint sets of libraries. Every one of the $42{,}554$ patterns in the standard retrosynthesis template library pins a connection count and none carries the atom primitive, so the same step costs that library $82\%$ of its applicability: the second of the two mechanisms, a match lost before a product is built (Appendix~\ref{app:retroconvention}).
+The dependence is not specific to metabolism, and three constructs must be told apart to see it: the hydrogen \emph{atom} primitive, which matches only a drawn hydrogen; the hydrogen \emph{count} inside a bracket, which the expansion leaves untouched; and the connection count, which it changes. Across six independent libraries and $51{,}368$ templates the construct almost everyone uses is the inert one, and the two that do move are used by disjoint sets of libraries. The convention travels with the transcription, which one release shows within itself: of the rules
+it attributes to another tool, the $57$ copied verbatim carry the atom primitive not once, while
+$88$ of the $121$ re-typed do, a construct absent from all $175$ rules of the tool they came from. Those rules write an aromatic carbon as \texttt{[cH1]([H])}, pinning the hydrogen count and then naming the hydrogen again: a token redundant as chemistry and decisive as notation. Every one of the $42{,}554$ patterns in the standard retrosynthesis template library pins a connection count and none carries the atom primitive, so the same step costs that library $82\%$ of its applicability: the second of the two mechanisms, a match lost before a product is built (Appendix~\ref{app:retroconvention}).
 
 \section{Results}
 \label{sec:results}
