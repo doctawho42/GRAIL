@@ -209,13 +209,11 @@ end-task accuracy \citep{Karpukhin_2020}, and \citet{Maziarz_2025} separate sing
 from search. In each of these the first term is estimated from a sample or bounded by a search
 budget.
 
-\paragraph{What is left unestablished.} Two questions remain open in this literature. The first is
-how far a single evaluation choice moves a ranking when it is the only quantity that varies, and
-whether it reorders a leaderboard rather than shifting every system on it; prior demonstrations
-compare studies that differed in several respects at once, so the effect of any one choice is not
-identified. The second is what the first term of a staged decomposition can be when the candidate
-set is finite and enumerable, not sampled, and whether a coverage figure obtained that way is
-comparable across papers. The present work addresses both.
+\paragraph{What is left unestablished.} The demonstrations above compare studies that differed in
+several respects at once, so the effect of any one choice is not identified. Nor is it known what
+the first term of a staged decomposition can be when the candidate set is finite and enumerable
+rather than sampled, or whether a coverage figure obtained that way is comparable across papers.
+The present work addresses both.
 
 \section{The evaluation protocol: what is declared and what is held fixed}
 \label{sec:tame}
@@ -439,15 +437,13 @@ $Y_s$:
 where $C_{\text{full}}$ are references recovered by applying the \emph{entire} bank without a
 budget, $C_{\text{bud}}$ those surviving the selector's budgeted pool, and $H$ those actually
 returned in the top $k$. The first factor requires an enumerable candidate set: the bank for rule-grounded methods, a wide
-decode for a sequence-to-sequence one, where the same three gates apply: MetaPredictor factorises
-$0.612\times0.804\times1.000$, exactly its realised recall, though a beam is a budget rather than a
-knowledge base and bounds that decode instead of the model (Appendix~\ref{app:seq2seq}). The identity is exact by construction (each set contains the next), so
-the three factors partition the loss with no residual: it is an accounting device, not a model. Two
-aggregations are in use and every figure states which. The identity is written in \emph{micro}, the
-pooled ratio of sums, because only that form multiplies out exactly; head-to-head comparisons use
-\emph{macro}, the comparator tools' convention. The macro ceiling is the higher of the two,
-$\ceilingmacro$ against $\ceiling$, so writing the identity in micro understates the coverage
-factor (Appendix~\ref{app:formal}).
+decode for a sequence-to-sequence one, where the same gates apply and MetaPredictor factorises
+$0.612\times0.804\times1.000$, exactly its realised recall, though a beam bounds that decode rather
+than the model (Appendix~\ref{app:seq2seq}). The identity is exact by construction, so the three
+factors partition the loss with no residual: an accounting device, not a model. The identity is
+written in \emph{micro}, the pooled ratio of sums, because only that form multiplies out exactly;
+head-to-head comparisons use \emph{macro}, and every figure states which. The macro ceiling is the
+higher of the two, $\ceilingmacro$ against $\ceiling$ (Appendix~\ref{app:formal}).
 
 \paragraph{The ceiling as a primitive.} The first factor is measurable without any model: apply all
 \nbank\ rules to every test substrate and ask what fraction of references appears anywhere in the
@@ -457,7 +453,7 @@ $[0.794,0.839]$). It should be reported alongside recall for any rule-grounded m
 as system reach in the sense of \S\ref{sec:enginereach}. Inside one system it is exactly what it
 claims, and no ranking improvement can exceed it.
 
-\paragraph{What the decomposition says.}\looseness=-1 The deployed pipeline converts only $32.5\%$ of its own ceiling into realised recall, and the three factors separate with no pair of intervals overlapping (Figure~\ref{fig:decomp}). Selection is where the loss sits: barely a third of what the bank reaches survives the selector's rule budget, while ranking is close to lossless at $0.960$ $[0.941,0.976]$. It does not bind alone. The output policy caps $k$ at $15$ and binds on $308$ of \ntest\ substrates, and all $29$ references lost between the budgeted pool and the emitted output fall on those, so widening the selector moves the loss downstream (Appendix~\ref{app:props}).
+\paragraph{What the decomposition says.}\looseness=-1 The deployed pipeline converts only $32.5\%$ of its own ceiling into realised recall, drawn as a waterfall beside SyGMa's in Appendix~\ref{app:formal}. Selection is where the loss sits: barely a third of what the bank reaches survives the selector's rule budget, while ranking is close to lossless at $0.960$ $[0.941,0.976]$. It does not bind alone: the output cap binds on $308$ of \ntest\ substrates and all $29$ references lost between the budgeted pool and the emitted output fall on those, so widening the selector moves the loss downstream (Appendix~\ref{app:props}).
 
 \looseness=-1
 Removing selection entirely tests that reading: with no selector and no threshold, ranking the whole

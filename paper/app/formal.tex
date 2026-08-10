@@ -3,6 +3,16 @@ follow from one compact generative model, which also gives the three proposition
 Appendix~\ref{app:props} a common home. The model is a single likelihood together with an exact
 decomposition of recall and a map from each diagnostic to the factor it constrains.
 
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=0.72\textwidth]{fig_decomp}
+\end{center}
+\caption{Coverage, selection and ranking on the clean test split ($n=\ntest$). Grey marks what each
+gate discards; each bar ends at the realised recall, in micro. The first bar of each waterfall is
+that method's reach through its \emph{own} engine (\S\ref{sec:enginereach}).}
+\label{fig:decomp}
+\end{figure}
+
 \paragraph{A latent-reaction mixture.}
 For a substrate $s$, a metabolite $m$ arises by choosing a transformation rule, choosing a site at
 which it fires, and applying it:
@@ -45,19 +55,6 @@ on any numbers. This is an accounting identity, not a theorem, and its use is to
 where recall is lost. The coverage factor coincides with the rule-bank ceiling reported in the
 main text.
 
-\begin{figure}[h]
-\begin{center}
-\includegraphics[width=0.72\textwidth]{fig_decomp}
-\end{center}
-\caption{Coverage, selection and ranking on the clean test split ($n=\ntest$). Grey marks what each gate discards, each bar ends at the realised recall (micro). GRAIL's bank reaches
-further and its selector gives most of it back; SyGMa's reaches less and keeps nearly all of it,
-having no selection stage. Each waterfall's first bar is that method's reach through its \emph{own}
-application engine rather than through a common one, so the two first bars are not a comparison of
-rule sets (Appendix~\ref{app:enginereach}). Cluster-bootstrap 95\% intervals, GRAIL then SyGMa: coverage
-$[0.794,0.839]$/$[0.514,0.565]$, selection $[0.315,0.363]$/$1$ by construction, ranking
-$[0.941,0.976]$/$[0.939,0.966]$; outputs $8.4$ against $80.7$.}
-\label{fig:decomp}
-\end{figure}
 
 \paragraph{Which measurement constrains which factor.}
 Every diagnostic in Appendix~\ref{app:props}, and each of the three propositions, constrains
