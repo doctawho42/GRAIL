@@ -75,7 +75,15 @@ def _productive(substrate, refs) -> set[int]:
             except Exception:
                 continue
             for fragment in _clean_product_smiles(smiles):
-                if _normalize_smiles_cached(fragment, "standardize") in refs:
+                # Normalising a fragment can raise on exactly the products this audit is about:
+                # an expanded substrate yields rings the toolkit will not kekulise. A fragment that
+                # cannot be normalised cannot equal a normalised reference either, so it is not a
+                # match in either arm, and swallowing it here favours neither convention.
+                try:
+                    key = _normalize_smiles_cached(fragment, "standardize")
+                except Exception:
+                    continue
+                if key in refs:
                     out.add(i)
                     break
             if i in out:
@@ -88,7 +96,14 @@ def _worker(item):
     mol = Chem.MolFromSmiles(sub)
     if mol is None or not refs:
         return sub, None, None
-    keys = {k for k in (_normalize_smiles_cached(r, "standardize") for r in refs) if k}
+    keys = set()
+    for r in refs:
+        try:
+            k = _normalize_smiles_cached(r, "standardize")
+        except Exception:
+            continue
+        if k:
+            keys.add(k)
     if not keys:
         return sub, None, None
     implicit = _productive(Chem.Mol(mol), keys)          # the convention the pipeline fires in

@@ -459,7 +459,7 @@ $[0.794,0.839]$). It should be reported alongside recall for any rule-grounded m
 as system reach in the sense of \S\ref{sec:enginereach}. Inside one system it is exactly what it
 claims, and no ranking improvement can exceed it.
 
-\paragraph{What the decomposition says.}\looseness=-1 The deployed pipeline converts only $32.5\%$ of its own ceiling into realised recall, and the three factors separate with no pair of intervals overlapping (Figure~\ref{fig:decomp}). Selection is where the loss sits: barely a third of what the bank reaches survives the selector's rule budget, while ranking is close to lossless at $0.960$ $[0.941,0.976]$. It does not bind alone. The output policy caps $k$ at $15$ and binds on $308$ of \ntest\ substrates, and all $29$ references lost between the budgeted pool and the emitted output fall on those, so widening the selector moves the loss downstream instead of removing it (Appendix~\ref{app:props}).
+\paragraph{What the decomposition says.}\looseness=-1 The deployed pipeline converts only $32.5\%$ of its own ceiling into realised recall, and the three factors separate with no pair of intervals overlapping (Figure~\ref{fig:decomp}). Selection is where the loss sits: barely a third of what the bank reaches survives the selector's rule budget, while ranking is close to lossless at $0.960$ $[0.941,0.976]$. It does not bind alone. The output policy caps $k$ at $15$ and binds on $308$ of \ntest\ substrates, and all $29$ references lost between the budgeted pool and the emitted output fall on those, so widening the selector moves the loss downstream (Appendix~\ref{app:props}).
 
 \looseness=-1
 Removing selection entirely tests that reading: with no selector and no threshold, ranking the whole
@@ -486,10 +486,11 @@ substrates (Table~\ref{tab:matchsens}); BioTransformer \citep{Djoumbou_Feunang_2
 \looseness=-1
 Methods are not equally sensitive to the convention. Over the full split GRAIL gains $0.016$
 $[0.010,0.023]$ from canonical to tautomer matching against MetaPredictor's $0.040$
-$[0.030,0.050]$, a differential of $+0.024$ $[0.014,0.034]$ surviving Holm--Bonferroni over the
-three pairs. Unequal headroom runs against the effect: GRAIL enters from the lower baseline, has
-more left to recover, and gains the less. Output size is a second and orthogonal confound, SyGMa
-emitting $81$ candidates per substrate against GRAIL's $8.4$ (Appendix~\ref{app:budget}).
+$[0.030,0.050]$, a differential of $+0.024$ $[0.014,0.034]$, which survives Holm--Bonferroni
+over the three method pairs and over the thirty cells the rule declared for the other families,
+every pair by every criterion step, admits here. Unequal headroom runs against the effect: GRAIL enters lower, has more left
+to recover, and gains the less. Output size is a second and orthogonal confound, SyGMa emitting $81$
+candidates per substrate against GRAIL's $8.4$ (Appendix~\ref{app:budget}).
 
 
 
@@ -537,7 +538,7 @@ it, and are declared conservatively as the grid the axes admit.
 \paragraph{External replication.} The analysis is repeated on the field's de-facto external
 hold-out, the \nglory\ GLORYx drugs \citep{de_Bruyn_Kops_2020}. It is external for three of the four
 methods and not for ours: $24$ of the $37$ are in GRAIL's train or validation split, so its row uses
-the $13$ unseen (Table~\ref{tab:matchsens}).
+the $13$ unseen.
 
 \looseness=-1
 The result this section rests on involves neither contaminated arm. Under strict InChIKey matching
@@ -591,18 +592,17 @@ substrates and GRAIL on none (Appendix~\ref{app:props}).
 
 \looseness=-1
 Every certified reversal along the sweep involves the one method that overproduces, and none
-certifies among methods emitting alike; that second half is a failure to detect, those pairs leaving
-intervals up to $0.158$ open. The matching rule acts independently of the budget: matched at about
+certifies among methods emitting alike, which is a failure to detect: those pairs leave intervals up
+to $0.158$ open. The matching rule acts independently of the budget: matched at about
 eight emitted candidates, GRAIL's sensitivity sits below both comparators by $-0.0195$
 $[-0.029,-0.010]$ and $-0.025$ $[-0.035,-0.015]$, so the criterion separates methods at fixed
 output size (Appendix~\ref{app:matchedemission}).
 
 \looseness=-1
-The decomposition says why. SyGMa's selection factor is $1$ (\S\ref{sec:decomp}), which is what
-recall rewards and precision punishes, so a pipeline with no selection stage is scored relatively higher by the first than by the second, although reach remains free and it need not lead on recall.
-
-\looseness=-1
-The matching criterion acts on these metrics as well, and it acts where it barely touched recall.
+The decomposition says why: SyGMa's selection factor is $1$ (\S\ref{sec:decomp}), which is what
+recall rewards and precision punishes, so a pipeline with no selection stage is scored relatively
+higher by the first than by the second. The matching criterion acts on these metrics as well, and it
+acts where it barely touched recall.
 The F1 gap between GRAIL and MetaPredictor is certified under four of the five criteria, at $-0.026$
 $[-0.038,-0.013]$ under the tautomer-aware default, and is indistinguishable from zero under plain
 \textsc{inchikey}. That is an erased gap and not a reversal, and it shows that the matching rule and

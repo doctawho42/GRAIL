@@ -720,6 +720,28 @@ def main() -> int:
         checks.append((not both, "no library is exposed to the step in both directions",
                        f"{len(both)} are", "0", "which is what 'disjoint sets' asserts"))
 
+    # 10c-l. The full-split family. It was corrected at m=3 while the rule the paper declares for
+    # its other families -- the grid the axes admit -- gives 3 method pairs by 10 criterion steps.
+    # The conclusion holds at either size, and the paper now says so rather than quoting the
+    # smaller one alone, which is the size a reader would ask about first.
+    from math import erf as _erf, sqrt as _sq
+    flat = re.sub(r"\s+", " ", whole)
+    mf = re.search(r"a differential of \$\+([\d.]+)\$ \$\[([\d.]+),([\d.]+)\]\$, which survives "
+                   r"Holm--Bonferroni over the three method pairs and over the (\w+) cells", flat)
+    checks.append((bool(mf), "the full-split family sentence parses", "present",
+                   "matched" if mf else "not matched", ""))
+    if mf:
+        words = {"thirty": 30, "three": 3, "twenty": 20, "twelve": 12}
+        m_big = words[mf.group(4).lower()]
+        checks.append((m_big == 3 * 10, "the declared rule's family size for this panel",
+                       "3 pairs by 10 criterion steps", str(m_big), "the rule stated in the paper"))
+        d, lo, hi = (float(mf.group(1)), float(mf.group(2)), float(mf.group(3)))
+        se = (hi - lo) / (2 * 1.959964)
+        z = d / se if se > 0 else float("inf")
+        pv = 2 * (1 - 0.5 * (1 + _erf(z / _sq(2))))
+        checks.append((pv <= 0.05 / m_big, "the differential survives the stricter family",
+                       f"p <= {0.05 / m_big:.5f}", f"p = {pv:.2e}", "from the reported interval"))
+
     # 10c-k. The matched-emission arm. Its two intervals sit in the main text under a pointer to
     # an appendix that did not contain them, and no check read them; the numbers were exact and
     # unfindable, which is the same defect as a number that is wrong for anyone checking the paper.
