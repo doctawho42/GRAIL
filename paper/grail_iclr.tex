@@ -54,8 +54,8 @@ predictions, retraining nothing and varying only the choice under study.
 Each of the first three changes a published ordering, and each changes a different one. Re-scoring
 the released predictions of eleven retrosynthesis systems under four matching criteria exchanges
 positions inside the largest group that shares a test set, at the top-1 accuracy those tables lead
-with and not at wider budgets. The exchanges are certified as interactions between method and
-criterion, not read off a change in rank. Varying the output budget
+with and not at wider budgets. The exchanges are certified as interactions between method and criterion,
+not read off a change in rank. Varying the output budget
 alone reorders a metabolite leaderboard, the system that emits most moving from last to first as the
 budget widens. The engine convention reverses which of two published rule banks reaches further:
 under one convention the larger bank recovers more references, under the other the smaller recovers
@@ -251,16 +251,11 @@ standardise their output without stereocentres and therefore cannot emit one. St
 this kind is established preprocessing; adopting it as the \emph{matching} rule is not.
 
 \looseness=-1
-\paragraph{Split and leakage audit.} All splits are substrate-disjoint: no substrate in test or
-validation appears in train, and no test substrate appears in validation. Clean triples are then
-audited read-only by a separate script that canonicalises SMILES and verifies zero substrate and
-zero positive-pair overlap across every split pair, emitting a machine-checkable report.
-Leakage-aware splitting is itself not novel, since DataSAIL \citep{Joeres_2025} minimises
-cross-split similarity on MoleculeNet-style tasks; the leak that matters here is
-substrate--metabolite \emph{identity} overlap, which is domain-specific. As a secondary check, the deployed configuration
-gives macro recall@15 $=0.344$ on validation against $0.334$ on test (293 and 291 substrates). The
-$+0.010$ gap matches the seed-to-seed standard deviation, so it corroborates the zero-overlap audit
-rather than standing as independent evidence.
+\paragraph{Split and leakage audit.} All splits are substrate-disjoint, and a separate read-only
+audit canonicalises every SMILES and verifies zero substrate and zero positive-pair overlap across
+each split pair. Leakage-aware splitting is not itself novel, since DataSAIL \citep{Joeres_2025}
+minimises cross-split similarity on comparable tasks; the leak that matters here is
+substrate-metabolite \emph{identity} overlap, which is specific to this domain.
 
 \looseness=-1
 \paragraph{Metrics and inference.} Results are reported as recall@$k$ together with the mean output
@@ -286,12 +281,15 @@ GraphRetro $0.5501$, LocalRetro $0.5469$. Fourth becomes first (Figure~\ref{fig:
 Five of twenty-one pairs exchange in all.
 
 An exchange of positions is a description of the data; the claim is the interaction, corrected
-across the largest family declared in this work. Of $448$ paired tests, one for every pair of systems, every pair of conventions and every $k$, $233$ have intervals excluding zero, $109$ of $448$
-paired interactions surviving Holm at $0.05$ across the whole family. The effect is concentrated at top-1, the number this field leads with but not the whole accuracy
-curve. Stereo-blind matching is a candidate convention in this setting rather than a straw one:
-GLORYx scores on a stereo-blind InChIKey skeleton, several of the systems compared here standardise
-their output without stereocentres and cannot emit one, and \citet{Maziarz_2025} report a published
-model having been scored under a relaxed stereochemistry rule its baselines were not given.
+across the largest family declared in this work. The family is the grid the two axes admit: twenty-one system pairs, six pairs drawn from the four
+conventions, and four budgets, which is $504$ cells less the $56$ in which the two conventions
+return identical results for that pair and budget, so the contrast is identically zero and no test
+exists. Of the $448$ tests that remain, $233$ have intervals excluding zero and $109$ survive Holm
+at $0.05$ across the whole family. The effect is concentrated at top-1, the number this field leads with but not the whole accuracy
+curve. Stereo-blind matching is a candidate convention here and not a straw one: GLORYx scores on a
+stereo-blind skeleton, several systems compared here cannot emit a stereocentre at all, and
+\citet{Maziarz_2025} report a model scored under a relaxed stereochemistry rule its baselines were
+not given.
 
 \begin{figure}[h]
 \begin{center}

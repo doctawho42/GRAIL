@@ -454,7 +454,8 @@ def main() -> int:
         flat = re.sub(r"\s+", " ", whole)
         m = re.search(r"Of \$(\d+)\$ paired\s*interactions", flat)
         check("MOSES, interactions", m and m.group(1), M["n_interactions"])
-        m = re.search(r"\$(\d+)\$ have intervals excluding\s*zero and \$(\d+)\$ survive Holm", flat)
+        m = re.search(r"Of \$112\$ paired\s*interactions[^.]*?\$(\d+)\$ have intervals excluding\s*"
+                      r"zero and \$(\d+)\$ survive Holm", flat)
         check("MOSES, excluding zero", m and m.group(1), M["interactions_excluding_zero"])
         check("MOSES, Holm survivors", m and m.group(2), M["holm_survivors"])
         ex = M["interactions"]["inchi_no_stereo"]["combinatorial vs latent_gan"]
@@ -500,9 +501,12 @@ def main() -> int:
                 ("intervals excluding zero", r"\$(\d+)\$ have intervals excluding zero",
                  len(L["certified_interactions"])),
                 ("Holm survivors", r"\\textbf\{\$(\d+)\$ survive Holm", len(L["holm_survivors"])),
-                ("Holm survivors, main body", r"\$(\d+)\$ of \$\d+\$ paired interactions surviving Holm",
-                 len(L["holm_survivors"])),
-                ("interaction tests, main body", r"paired interactions surviving Holm", None),
+                ("Holm survivors, main body",
+                 r"Of the \$448\$ tests that remain, \$\d+\$ have intervals excluding zero and "
+                 r"\$(\d+)\$ survive Holm", len(L["holm_survivors"])),
+                ("intervals excluding zero, main body",
+                 r"Of the \$448\$ tests that remain, \$(\d+)\$ have intervals excluding zero",
+                 len(L["certified_interactions"])),
                 ("pairs exchanging at top-1", r"Five of the twenty-one pairs exchange",
                  None)):
             if value is None:
@@ -575,6 +579,20 @@ def main() -> int:
                        round(sum(v["point"] for v in C.values()), 4),
                        round(A["D_sygma_engine_175_rules_composed"]["point"]
                              - A["A_grail_engine_152_rules"]["point"], 4), ""))
+
+    # 10c-c. The confirmatory family, reconstructible from the main text: the grid the axes admit,
+    # less the cells where two conventions coincide and there is nothing to test.
+    lb_f = ROOT / "results/retro_leaderboard_cluster0.json"
+    if lb_f.exists():
+        Lf = json.loads(lb_f.read_text())
+        cfg = Lf["config"]
+        n_sys = len(cfg["systems"])
+        grid = (n_sys * (n_sys - 1) // 2) * (len(cfg["modes"]) * (len(cfg["modes"]) - 1) // 2) \
+               * len(cfg["ks"])
+        flat = re.sub(r"\s+", " ", whole)
+        m = re.search(r"which is \$(\d+)\$ cells less the \$(\d+)\$ in which", flat)
+        check("the grid the two axes admit", m and m.group(1), grid)
+        check("cells with nothing to test", m and m.group(2), grid - Lf["n_interaction_tests"])
 
     # 10d-b. The resolution floor: which published margins this benchmark can separate at all. The
     # paper's condition rests on it, so every figure it states is tied to the measurement.
