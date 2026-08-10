@@ -591,6 +591,19 @@ def main() -> int:
         checks.append((C["summary"]["independent_libraries"] == 6,
                        "census, independent libraries", C["summary"]["independent_libraries"], 6,
                        ", ".join(C["summary"]["sources"])))
+        # The structural claim that survives version drift: the commented-out records hold exactly
+        # sixteen templates that appear nowhere else, in the snapshot the paper measured and in the
+        # release retrieved for the census alike.
+        br = C.get("biotransformer_release")
+        if br:
+            m = re.search(r"which holds \$(\d+)\$ active\s*templates against the \$(\d+)\$ of the "
+                          r"snapshot", flat)
+            check("BioTransformer, active in the retrieved release", m and m.group(1), br["active"])
+            checks.append((br["commented_out_only"] == 16,
+                           "the sixteen commented-out templates reproduce",
+                           br["commented_out_only"], 16,
+                           "the same gap the earlier snapshot recorded"))
+
         # The transcription result: within one release, rules copied verbatim keep the source's
         # convention and rules re-typed acquire one the source never uses.
         tr = C.get("transcription")

@@ -175,6 +175,21 @@ def main() -> int:
             except Exception:
                 pass
     if bt:
+        # The reach figures elsewhere were computed over the snapshot that shipped 994 templates,
+        # 978 of them outside commented-out records. The release retrieved here holds 992 and 976,
+        # and the 16-template gap between the two counts reproduces exactly, so the structure is
+        # confirmed and the difference is version drift. The count is not substituted into figures
+        # measured on the earlier snapshot.
+        import re as _re
+        raw = set()
+        for f in ("bt_database_metabolicReactions.json",
+                  "bt_database_ENVMICRO_metabolicReactions.json",
+                  "bt_database_standardizationReactions.json"):
+            q = ext / f
+            if q.exists():
+                raw |= set(_re.findall(r'"([^"]*>>[^"]*)"', q.read_text()))
+        rep_bt = {"active": len(set(bt)), "including_commented_out": len(raw),
+                  "commented_out_only": len(raw) - len(set(bt))}
         banks["BioTransformer"] = (sorted(set(bt)),
                                    "its own distribution, metabolic and standardisation rules")
 
@@ -264,6 +279,8 @@ def main() -> int:
               f"({tr['rewritten_with_atom']} carry it); the source itself has "
               f"{tr['source_with_atom']} of {tr['source_rules']}")
 
+    if "rep_bt" in dir():
+        rep["biotransformer_release"] = rep_bt
     rep["nested_not_counted"] = nested
     rep["derived_not_counted"] = {k: {"derives_from": v, **rep["banks"][k]}
                                   for k, v in DERIVED.items() if k in rep["banks"]}
