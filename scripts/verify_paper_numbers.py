@@ -990,6 +990,48 @@ def main() -> int:
                   round(json.loads(cl2.read_text())["reach"]["completed"]["reach"], 3),
                   str(cl2.relative_to(ROOT)))
 
+    # 10c-q. The robust order. The share of a leaderboard's pairwise claims that survive every cell
+    # of the declared grid is the paper's answer to seven rounds of "no new metric", so every figure
+    # of it is held to the run, and so is the split between reversal and non-resolution.
+    ro = ROOT / "results/robust_order.json"
+    fm3 = ROOT / "results/four_method_291.json"
+    if ro.exists() and fm3.exists():
+        RO = json.loads(ro.read_text())["leaderboards"]
+        FM = json.loads(fm3.read_text()).get("robust_order", {})
+        flat = re.sub(r"\s+", " ", whole)
+        mr = re.search(r"retrosynthesis, seven systems & \$4\$ criteria \$\\times\$ \$4\$ budgets "
+                       r"& \$(\d+)\$ of \$(\d+)\$ & \$(\d+)\$ .*?"
+                       r"retrosynthesis, three systems & \$4\$ criteria \$\\times\$ \$4\$ budgets "
+                       r"& \$(\d+)\$ of \$(\d+)\$ & \$(\d+)\$ .*?"
+                       r"metabolites, four methods & \$9\$ budgets & \$(\d+)\$ of \$(\d+)\$ & \$(\d+)\$",
+                       flat)
+        checks.append((bool(mr), "the robust-order table parses", "present",
+                       "matched" if mr else "not matched", ""))
+        if mr:
+            src = str(ro.relative_to(ROOT))
+            c0, c1 = RO["cluster0"], RO["cluster1"]
+            for lbl, said, got, s in (
+                    ("seven systems, dominate", mr.group(1), c0["n_dominating"], src),
+                    ("seven systems, pairs", mr.group(2), c0["n_pairs"], src),
+                    ("seven systems, certified", mr.group(3), c0["n_certified"], src),
+                    ("three systems, dominate", mr.group(4), c1["n_dominating"], src),
+                    ("three systems, pairs", mr.group(5), c1["n_pairs"], src),
+                    ("three systems, certified", mr.group(6), c1["n_certified"], src),
+                    ("four methods, dominate", mr.group(7), FM.get("n_dominating"), str(fm3.relative_to(ROOT))),
+                    ("four methods, pairs", mr.group(8), FM.get("n_pairs"), str(fm3.relative_to(ROOT))),
+                    ("four methods, certified", mr.group(9), FM.get("n_certified"), str(fm3.relative_to(ROOT)))):
+                check(f"robust order, {lbl}", said, got, s)
+            # the grid the table names must be the grid the run used
+            g = json.loads(ro.read_text())["config"]["grid"]
+            checks.append((len(g["criteria"]) == 4 and len(g["budgets"]) == 4,
+                           "the declared grid is four criteria by four budgets",
+                           "4 by 4", f"{len(g['criteria'])} by {len(g['budgets'])}", src))
+            ms = re.search(r"Only one of the twenty-one on the seven-system leaderboard is of the "
+                           r"second kind", flat)
+            checks.append((bool(ms) and c0["unresolved_though_never_reversed"] == 1,
+                           "one pair is unresolved rather than reversed", "one",
+                           str(c0["unresolved_though_never_reversed"]), src))
+
     # 10c-p. The count of choices that reorder, everywhere it appears. It was three in the
     # introduction and two in the abstract and conclusion for one revision, because the engine axis
     # was removed from the count in some places and not others. A count stated in four places is a
@@ -999,7 +1041,8 @@ def main() -> int:
     checks.append((not bad, "no passage says three choices reorder", "none",
                    f"{len(bad)} found: {bad[:1]}" if bad else "none", "the manuscript"))
     two = re.findall(r"[Tt]wo of the four choices[^.]*reorder|[Tt]wo of them change a published "
-                     r"ordering|[Tt]wo move a published ordering", flat_c)
+                     r"ordering|[Tt]wo move a published ordering|[Tt]wo of the four choices change a "
+                     r"published ordering", flat_c)
     checks.append((len(two) >= 3, "the count of two is stated where the claim is staked",
                    "abstract, introduction and conclusion", f"{len(two)} passages", "the manuscript"))
 
@@ -1164,7 +1207,7 @@ def main() -> int:
                        "paired bootstrap on each margin, predictions frozen"))
         m = re.search(r"benchmark certifies is \$([\d.]+)\$", flat)
         check("resolution floor, seven-system", m and m.group(1), c0["resolution_floor"])
-        m = re.search(r"whose narrowest\s*margin is \$([\d.]+)\$", flat)
+        m = re.search(r"three-system group's narrowest is \$([\d.]+)\$", flat)
         smallest = min(abs(v["margin"]) for v in c1["pairs"].values())
         check("three-system narrowest margin", m and m.group(1), smallest)
         checks.append((abs(smallest - c1["resolution_floor"]) < 1e-9,

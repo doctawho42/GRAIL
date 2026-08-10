@@ -28,9 +28,9 @@
 \newcommand{\interB}{+0.063}          % MetaTrans<->SyGMa interaction
 \newcommand{\interBci}{[+0.022,\,+0.106]}
 
-\title{Two Undeclared Choices Reorder a\\
-Molecular Machine-Learning Leaderboard;\\
-a Third Decides What a Rule Base Reaches}
+\title{A Third of a Molecular Machine-Learning\\
+Leaderboard Survives the Evaluation Choices\\
+Its Own Papers Leave Undeclared}
 
 % double-blind: authors stay anonymous until camera-ready
 \author{Anonymous authors \\ Paper under double-blind review}
@@ -51,10 +51,16 @@ candidates a method may emit, the convention by which a rule engine applies reac
 the population that a familiar dataset name refers to. We measure the effect of each on frozen
 predictions, retraining nothing and varying only the choice under study.
 
-Two of them change a published ordering and they change different ones. The output budget reverses
-margins that a paired interval separates from zero: one method is last at tight budgets and first at
-the budget the field reports, with its ranking held fixed. The matching criterion does something
-else. Re-scoring the released predictions of eleven
+Each of them is a cell of a grid that leaderboards are computed in and papers do not report, so a
+published ordering can be asked a question it is never asked: does it also hold in every other cell?
+The pairs for which it does are the part of a ranking that can be quoted without naming the cell,
+and they are a minority. On three leaderboards in two fields, roughly a third of the pairwise
+orderings survive every cell of a grid drawn from choices those fields already vary between papers;
+on one of the three, none do. The share is computable from released prediction files alone.
+Two of the four choices change a published ordering and they differ in how they break it. The
+output budget reverses margins that a paired
+interval separates from zero: one method is last at tight budgets and first at the budget the field
+reports, with its ranking held fixed. The matching criterion does something else. Re-scoring the released predictions of eleven
 retrosynthesis systems exchanges positions inside the largest group that shares a test set, at the
 top-1 accuracy those tables lead with, and every pair it exchanges is one the benchmark never
 separated; where a separation is certified, the criterion erases it instead of reversing it. The engine convention decides no ordering but decides what a bank reaches: one
@@ -66,11 +72,9 @@ three test sets under a single name, and no interaction that varies only the pop
 correction, although that null excludes only effects much larger than the ones the criterion
 produces.
 
-One condition governs when a choice reorders rather than shifts: it must move two systems apart by
-more than the margin between them. A benchmark therefore becomes vulnerable to an undeclared choice
-as it matures and its leading systems converge, which a table of eight published molecular
-generators shows from the other side, exchanging a single adjacent pair because almost no pair on it
-is close enough to cross.
+A benchmark is most exposed where its leading systems are closest, which a table of eight published
+molecular generators shows from the other side: almost no pair on it is close enough to cross, and
+one adjacent pair exchanges.
 
 Where the candidate set can be enumerated, recall decomposes exactly into coverage, selection and
 ranking, and enumerability turns the first term into an exhaustive measurement rather than a sample
@@ -141,9 +145,9 @@ a stage.
   interactions and corrected for multiplicity across the whole family of tests.
 \item The output budget reorders a metabolite leaderboard on its own, with every method and its
   ranking held fixed.
-\item A choice reorders a leaderboard only when it moves two systems apart by more than the margin
-  between them. Across four leaderboards in three domains, no reordering occurs where the margin
-  exceeds the movement, so a benchmark becomes more vulnerable as its leading systems converge.
+\item The part of a published ranking that no declared choice can contradict is a partial order,
+  computable from released prediction files alone. On three leaderboards in two fields roughly a
+  third of the pairwise orderings belong to it, and on one of them none do.
 \item Which population a dataset name refers to is ambiguous in released work, and the ambiguity is
   not shown to reorder anything: eleven released prediction files sit on three test sets, and no
   interaction that varies only the population survives correction.
@@ -157,8 +161,9 @@ The remainder of this article is organised as follows. Section~\ref{sec:related}
 on the four choices and on staged evaluation, and Section~\ref{sec:tame} defines the protocol, the
 matching criteria and the split. Section~\ref{sec:enginereach} shows that what a published rule base
 reaches is decided by the engine applying it, and surveys how far that dependence extends across
-released template libraries. Section~\ref{sec:xdomainmain} re-scores released retrosynthesis
-predictions and establishes when a matching criterion can reorder a leaderboard.
+released template libraries. Section~\ref{sec:robust} asks what part of a published ranking
+survives every choice in a declared grid, and re-scores released retrosynthesis predictions to show
+how one choice breaks an ordering.
 Section~\ref{sec:decomp} develops the decomposition that makes a coverage figure measurable, and
 Section~\ref{sec:results} applies the remaining choices inside one benchmark.
 Section~\ref{sec:limitations} states the scope of the results and Section~\ref{sec:conclusion}
@@ -370,9 +375,44 @@ which answer the bank gives   & a union of two written conventions       & our o
 
 
 
-\section{The criterion reorders a published leaderboard in another field}
-\label{sec:xdomainmain}
+\section{What part of a published ranking is safe to quote}
+\label{sec:robust}\label{sec:xdomainmain}
 
+\looseness=-1
+A leaderboard reports a total order. It is computed in one cell of a grid of choices its paper does
+not report, because the cell is not thought of as a parameter. Fix the items and the predictions and
+ask of each pair whether the ordering the table asserts also holds in every other cell. Say the
+higher system \emph{dominates} the lower when the margin is positive in every cell of the declared
+grid, and that the domination is \emph{certified} when a paired interval excludes zero in every
+cell. Domination is the intersection of the per-cell orders, so it is transitive and it is the
+finest relation no declared choice can contradict; certified domination is a sub-relation of it and
+is reported separately, because an interval condition is not transitive.
+
+\looseness=-1
+The share of a leaderboard's pairwise claims that dominate is what a reader can quote without
+naming the cell. It is computable from released prediction files alone: no reference data beyond
+what the leaderboard already uses, nothing retrained, nothing the authors did not publish.
+
+\begin{center}
+\begin{tabular}{lccc}
+\toprule
+leaderboard & grid & dominate & certified \\
+\midrule
+retrosynthesis, seven systems & $4$ criteria $\times$ $4$ budgets & $8$ of $21$ & $7$ \\
+retrosynthesis, three systems & $4$ criteria $\times$ $4$ budgets & $0$ of $3$  & $0$ \\
+metabolites, four methods     & $9$ budgets                       & $2$ of $6$  & $2$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\looseness=-1
+About a third in each case, on grids drawn from the choices these fields already vary between
+papers. The remainder divides into two kinds, and the instrument separates them: pairs some cell
+reverses, and pairs no cell reverses but the benchmark cannot resolve at its own sample size. Only
+one of the twenty-one on the seven-system leaderboard is of the second kind, so on that table the
+loss is reversal rather than resolution.
+
+\paragraph{How one choice breaks an ordering.}
 \looseness=-1
 \citet{Hastedt_2024} released the ranked predictions of twelve retrosynthesis systems, of which
 eleven parse. Reading those files rather than the accompanying table shows that they were produced
@@ -394,16 +434,14 @@ GLORYx scores on a stereo-blind skeleton, and GRAIL and SyGMa cannot emit a ster
 criterion (Figure~\ref{fig:xdomain}, Appendix~\ref{app:xdomain}).
 
 \looseness=-1
-\paragraph{The condition is the margin, and most of these margins were never resolvable.} An exchange
-requires the criterion to move two systems apart by more than the margin between them, and the
-predictions are frozen, so a paired bootstrap gives an interval on each margin directly. \textbf{Eleven of the twenty-one margins do not separate from zero, and five of
-the six adjacent margins in the published order do not.} The smallest margin this benchmark certifies is
-$0.0146$ against a criterion movement of $0.015$; the three-system group, whose narrowest margin is
-$0.0213$, separates every pair and exchanges none. Over $439$ comparisons across four leaderboards in three
-domains the movement exceeds the margin once in nine and reverses the pair once in seventeen, and no reversal occurs where the margin
-survives it. That holds for the criterion and not for the other axes: the budget changes the sign
-of three pairs between margins that each separate from zero (\S\ref{sec:metric}). Eight published molecular generators show it from the other side: seven sit above
-$0.986$, and one adjacent pair exchanges.
+\looseness=-1
+\paragraph{Most of these margins were never resolvable.} Since the predictions are frozen, a paired
+bootstrap gives an interval on each margin directly. \textbf{Eleven of the twenty-one margins do not
+separate from zero, and five of the six adjacent margins in the published order do not.} The
+smallest margin this benchmark certifies is $0.0146$ against a criterion movement of $0.015$, and
+the three-system group's narrowest is $0.0213$, so
+what the criterion exchanges are pairs the benchmark never separated, and where a separation is
+certified it erases the gap instead of reversing it.
 
 \looseness=-1
 \paragraph{Which population a familiar name refers to.} Two of the three groups share $490$
