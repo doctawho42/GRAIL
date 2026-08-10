@@ -1,0 +1,154 @@
+{
+ "config": {
+  "script": "setsize_headroom.py",
+  "git_commit": "16016a40cee14253aada5eb6edc7bf11c233e245",
+  "git_dirty": true,
+  "n_substrates": 1170,
+  "n_boot": 10000,
+  "seed": 0,
+  "match": "inchikey",
+  "population": "all",
+  "note": "ranking untouched in every arm; only the number emitted changes",
+  "count_model": "least squares on heavy atoms, rings, rotatable bonds, fitted on the training split"
+ },
+ "arms": {
+  "fixed k=1": {
+   "precision": 0.253,
+   "recall": 0.173,
+   "f1": 0.1903,
+   "f1_gain_over_k15": 0.0574,
+   "ci95": [
+    0.0409,
+    0.0744
+   ],
+   "certified": true
+  },
+  "fixed k=2": {
+   "precision": 0.1825,
+   "recall": 0.2242,
+   "f1": 0.1823,
+   "f1_gain_over_k15": 0.0495,
+   "ci95": [
+    0.0386,
+    0.0605
+   ],
+   "certified": true
+  },
+  "fixed k=3": {
+   "precision": 0.1538,
+   "recall": 0.2576,
+   "f1": 0.1726,
+   "f1_gain_over_k15": 0.0398,
+   "ci95": [
+    0.0317,
+    0.0479
+   ],
+   "certified": true
+  },
+  "fixed k=5": {
+   "precision": 0.1283,
+   "recall": 0.2968,
+   "f1": 0.157,
+   "f1_gain_over_k15": 0.0241,
+   "ci95": [
+    0.0197,
+    0.0287
+   ],
+   "certified": true
+  },
+  "fixed k=8": {
+   "precision": 0.1121,
+   "recall": 0.3179,
+   "f1": 0.1423,
+   "f1_gain_over_k15": 0.0095,
+   "ci95": [
+    0.0074,
+    0.0116
+   ],
+   "certified": true
+  },
+  "fixed k=15": {
+   "precision": 0.1038,
+   "recall": 0.3308,
+   "f1": 0.1328,
+   "f1_gain_over_k15": 0.0,
+   "ci95": [
+    0.0,
+    0.0
+   ],
+   "certified": false
+  },
+  "oracle count": {
+   "precision": 0.2152,
+   "recall": 0.2068,
+   "f1": 0.2089,
+   "f1_gain_over_k15": 0.0761,
+   "ci95": [
+    0.0605,
+    0.0921
+   ],
+   "certified": true
+  },
+  "predicted count": {
+   "precision": 0.1682,
+   "recall": 0.2376,
+   "f1": 0.1769,
+   "f1_gain_over_k15": 0.0441,
+   "ci95": [
+    0.0345,
+    0.0539
+   ],
+   "certified": true
+  },
+  "gap rule a=0.9": {
+   "precision": 0.2484,
+   "recall": 0.179,
+   "f1": 0.1926,
+   "f1_gain_over_k15": 0.0598,
+   "ci95": [
+    0.0434,
+    0.0763
+   ],
+   "certified": true
+  },
+  "gap rule a=0.75": {
+   "precision": 0.2438,
+   "recall": 0.1941,
+   "f1": 0.1976,
+   "f1_gain_over_k15": 0.0648,
+   "ci95": [
+    0.049,
+    0.0808
+   ],
+   "certified": true
+  },
+  "gap rule a=0.5": {
+   "precision": 0.2332,
+   "recall": 0.2278,
+   "f1": 0.2053,
+   "f1_gain_over_k15": 0.0725,
+   "ci95": [
+    0.0582,
+    0.0873
+   ],
+   "certified": true
+  },
+  "gap rule a=0.25": {
+   "precision": 0.205,
+   "recall": 0.2631,
+   "f1": 0.1996,
+   "f1_gain_over_k15": 0.0667,
+   "ci95": [
+    0.0545,
+    0.0793
+   ],
+   "certified": true
+  }
+ },
+ "count_model_coefficients": [
+  -0.01149,
+  0.03795,
+  -0.02199,
+  2.78719
+ ]
+}

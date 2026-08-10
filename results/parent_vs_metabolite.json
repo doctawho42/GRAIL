@@ -1,0 +1,192 @@
+{
+ "config": {
+  "script": "parent_vs_metabolite.py",
+  "git_commit": "ad94a7dfe35480d2ca3d7180b7ff4315f37854e2",
+  "git_dirty": false,
+  "k": 15,
+  "n_boot": 10000,
+  "seed": 0,
+  "match": "inchikey_tautomer",
+  "methods": [
+   "GRAIL",
+   "MetaPredictor",
+   "SyGMa"
+  ],
+  "split": "a substrate counts as a metabolite when it is an annotated product of another substrate in the same split"
+ },
+ "by_population": {
+  "parents": {
+   "n": 845,
+   "GRAIL": {
+    "recall": 0.3816,
+    "ci95": [
+     0.3519,
+     0.4118
+    ]
+   },
+   "MetaPredictor": {
+    "recall": 0.5692,
+    "ci95": [
+     0.5405,
+     0.5982
+    ]
+   },
+   "SyGMa": {
+    "recall": 0.5805,
+    "ci95": [
+     0.5513,
+     0.6105
+    ]
+   }
+  },
+  "metabolites": {
+   "n": 325,
+   "GRAIL": {
+    "recall": 0.23,
+    "ci95": [
+     0.1901,
+     0.2728
+    ]
+   },
+   "MetaPredictor": {
+    "recall": 0.5678,
+    "ci95": [
+     0.521,
+     0.6159
+    ]
+   },
+   "SyGMa": {
+    "recall": 0.5441,
+    "ci95": [
+     0.4966,
+     0.5918
+    ]
+   }
+  }
+ },
+ "orderings": {
+  "parents": [
+   "SyGMa",
+   "MetaPredictor",
+   "GRAIL"
+  ],
+  "metabolites": [
+   "MetaPredictor",
+   "SyGMa",
+   "GRAIL"
+  ]
+ },
+ "pairs": {
+  "GRAIL vs MetaPredictor": {
+   "parents": {
+    "margin": -0.1876,
+    "ci95": [
+     -0.225,
+     -0.1499
+    ],
+    "certified": true
+   },
+   "metabolites": {
+    "margin": -0.3379,
+    "ci95": [
+     -0.393,
+     -0.2828
+    ],
+    "certified": true
+   }
+  },
+  "GRAIL vs SyGMa": {
+   "parents": {
+    "margin": -0.1989,
+    "ci95": [
+     -0.2355,
+     -0.1627
+    ],
+    "certified": true
+   },
+   "metabolites": {
+    "margin": -0.3141,
+    "ci95": [
+     -0.3685,
+     -0.2586
+    ],
+    "certified": true
+   }
+  },
+  "MetaPredictor vs SyGMa": {
+   "parents": {
+    "margin": -0.0113,
+    "ci95": [
+     -0.0381,
+     0.0151
+    ],
+    "certified": false
+   },
+   "metabolites": {
+    "margin": 0.0238,
+    "ci95": [
+     -0.0181,
+     0.0661
+    ],
+    "certified": false
+   }
+  }
+ },
+ "population_drop": {
+  "GRAIL": {
+   "parents_minus_metabolites": 0.1516,
+   "ci95": [
+    0.1011,
+    0.2015
+   ],
+   "certified": true
+  },
+  "MetaPredictor": {
+   "parents_minus_metabolites": 0.0013,
+   "ci95": [
+    -0.0526,
+    0.0565
+   ],
+   "certified": false
+  },
+  "SyGMa": {
+   "parents_minus_metabolites": 0.0364,
+   "ci95": [
+    -0.0195,
+    0.0911
+   ],
+   "certified": false
+  }
+ },
+ "drop_differs_by_method": {
+  "GRAIL vs MetaPredictor": {
+   "delta": 0.1505,
+   "ci95": [
+    0.084,
+    0.2165
+   ],
+   "certified": true
+  },
+  "GRAIL vs SyGMa": {
+   "delta": 0.116,
+   "ci95": [
+    0.0513,
+    0.1809
+   ],
+   "certified": true
+  },
+  "MetaPredictor vs SyGMa": {
+   "delta": -0.0346,
+   "ci95": [
+    -0.085,
+    0.0141
+   ],
+   "certified": false
+  }
+ },
+ "ordering_is_the_same": false,
+ "pairs_that_change_sign": [
+  "MetaPredictor vs SyGMa"
+ ],
+ "pairs_certified_on_both_sides": []
+}

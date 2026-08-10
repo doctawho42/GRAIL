@@ -990,6 +990,45 @@ def main() -> int:
                   round(json.loads(cl2.read_text())["reach"]["completed"]["reach"], 3),
                   str(cl2.relative_to(ROOT)))
 
+    # 10c-v. The population inside one split. The paper's fourth axis was a bounded null about
+    # which released test set a name refers to; this is a different question with a certified
+    # answer, and the gate keeps the two apart by requiring both to appear.
+    pv = ROOT / "results/parent_vs_metabolite.json"
+    if pv.exists():
+        PV = json.loads(pv.read_text())
+        flat = re.sub(r"\s+", " ", whole)
+        mp2 = re.search(r"\$(\d+)\$ are parent drugs and \$(\d+)\$ are themselves annotated products"
+                        r".*?GRAIL loses \$([\d.]+)\$ \$\[([\d.]+),([\d.]+)\]\$ of recall while "
+                        r"MetaPredictor loses \$([\d.]+)\$ \$\[(-[\d.]+),([\d.]+)\]\$, an "
+                        r"interaction of \$\+([\d.]+)\$ \$\[\+([\d.]+),\+([\d.]+)\]\$, and against "
+                        r"SyGMa \$\+([\d.]+)\$ \$\[\+([\d.]+),\+([\d.]+)\]\$", flat)
+        checks.append((bool(mp2), "the two-population sentence parses", "present",
+                       "matched" if mp2 else "not matched", ""))
+        if mp2:
+            src = str(pv.relative_to(ROOT))
+            D, I = PV["population_drop"], PV["drop_differs_by_method"]
+            check("parents in the split", mp2.group(1), PV["by_population"]["parents"]["n"], src)
+            check("metabolites in the split", mp2.group(2),
+                  PV["by_population"]["metabolites"]["n"], src)
+            check("GRAIL's loss", mp2.group(3),
+                  round(D["GRAIL"]["parents_minus_metabolites"], 3), src)
+            check("GRAIL's loss, lower", mp2.group(4), round(D["GRAIL"]["ci95"][0], 3), src)
+            check("GRAIL's loss, upper", mp2.group(5), round(D["GRAIL"]["ci95"][1], 3), src)
+            check("MetaPredictor's loss", mp2.group(6),
+                  round(D["MetaPredictor"]["parents_minus_metabolites"], 3), src)
+            k1 = "GRAIL vs MetaPredictor"
+            check("the interaction", mp2.group(9), round(I[k1]["delta"], 3), src)
+            check("the interaction, lower", mp2.group(10), round(I[k1]["ci95"][0], 3), src)
+            check("the interaction, upper", mp2.group(11), round(I[k1]["ci95"][1], 3), src)
+            k2 = "GRAIL vs SyGMa"
+            check("the second interaction", mp2.group(12), round(I[k2]["delta"], 3), src)
+            checks.append((I[k1]["certified"] and I[k2]["certified"],
+                           "both interactions with GRAIL are certified", "certified",
+                           f"{I[k1]['certified']} and {I[k2]['certified']}", src))
+            checks.append(("Which published population a familiar name refers to" in flat,
+                           "the bounded null keeps its own paragraph", "present",
+                           "present", "the manuscript"))
+
     # 10c-u. Where the emission rule does not hold. It beats every global constant on parent drugs
     # and does not on substrates that are themselves metabolites, and the paragraph says so; this
     # gate fails if the manuscript ever states the advantage without the population it holds on.
