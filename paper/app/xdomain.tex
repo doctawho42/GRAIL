@@ -1,3 +1,24 @@
+\subsection{Recall by criterion on the external set}
+\label{app:matchsensext}
+
+\begin{table}[h]
+\caption{Recall@15 by matching criterion on the external GLORYx set ($n=37$), the lower panel of
+Table~\ref{tab:matchsens}. $^\dagger$GRAIL trained on $19$ and validated on $5$ of the $37$ drugs,
+so its row is computed on the $13$ it has not seen.}
+\label{tab:matchsensext}
+\centering
+\begin{tabular}{lccc l}
+\toprule
+\textbf{method} & InChIKey & no-stereo & tautomer & stereo step (95\% CI) \\
+\midrule
+SyGMa          & 0.492 & 0.498 & 0.498 & $+0.007$ $[+0.000,+0.020]$ \\
+BioTransformer & 0.346 & 0.374 & 0.374 & $+0.028$ $[+0.002,+0.064]$ \\
+MetaPredictor  & 0.362 & 0.504 & 0.504 & $+0.142$ $[+0.079,+0.215]$ \\
+\textbf{GRAIL}$^\dagger$ & 0.059 & 0.185 & 0.223 & $+0.126$ $[+0.028,+0.239]$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \paragraph{The exchange in full.} Under canonical matching the leaders run GraphRetro $0.5377$,
 LocalRetro $0.5339$, Retroformer $0.5325$, Graph2SMILES $0.5293$; disregard stereochemistry and they
 run Graph2SMILES $0.5571$, Retroformer $0.5541$, GraphRetro $0.5501$, LocalRetro $0.5469$, so fourth

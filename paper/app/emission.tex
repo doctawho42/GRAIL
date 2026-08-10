@@ -61,10 +61,11 @@ replaces by an interval that excludes zero, so the count is not predictable from
 the way the pool ordering is (Appendix~\ref{app:negative}).
 
 \paragraph{Where it does not hold.} The advantage is not uniform across the split's two populations
-(\S\ref{sec:robust}). On the $845$ parent drugs the rule reaches $0.236$ against the best constant's
-$0.215$; on the $325$ substrates that are themselves metabolites of another substrate here it
-reaches $0.140$ against $0.141$, so on the stratum where the model is weaker its scores say nothing
-about how many to emit. Under strict \textsc{inchikey} matching rather than the tautomer-aware
-default the rule reaches $0.205$ against $0.190$. The result is a property of one method's frozen
-scores on one corpus: it says that this pool is informative about this set size, not that relative
-emission is generally preferable.
+(\S\ref{sec:robust}). On the $845$ parent drugs the rule beats the best constant by $+0.0210$
+$[+0.0101,+0.0316]$; on the $325$ substrates that are themselves metabolites of another substrate
+here it does not, at $-0.0016$ $[-0.0160,+0.0126]$, so on the stratum where the model is weaker its
+scores say nothing about how many to emit. Under strict \textsc{inchikey} matching rather than the
+tautomer-aware default the margin is $+0.0151$ $[+0.0063,+0.0241]$, so the result is not an artifact
+of the most permissive criterion. It remains a property of one method's frozen scores on one corpus:
+it says that this pool is informative about this set size, not that relative emission is generally
+preferable.

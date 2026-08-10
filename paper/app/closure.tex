@@ -1,0 +1,47 @@
+\label{app:closureappendix}
+
+Every paper in this field defends a low precision figure the same way: the references are
+incomplete, so a chemically real product that no curator recorded is counted as an error. This
+paper has leaned on that defence too (\S\ref{sec:tame}). It is untestable in general, because what
+was never annotated is not observable. One component of it is testable, and this appendix measures
+it.
+
+Metabolism composes. The corpus records conversions as edges, substrate to product, and those edges
+form a graph rather than a list of independent rows. If it records $A \to B$ and, elsewhere,
+$B \to C$, then it asserts a two-step route from $A$ to $C$ without any curator having written the
+edge $A \to C$. A method that emits $C$ for $A$ is scored wrong, and whether that is right depends
+on a fact about how the corpus was assembled rather than on the chemistry.
+
+\paragraph{The corpus is a graph and it is not transitively closed.} Node identity is the
+tautomer-aware InChIKey used throughout, so the structure is not an artifact of how a curator drew a
+molecule, and the graph is taken over all three clean splits, because the corpus is what asserts the
+second edge while a split only asks about the first. It carries $21{,}964$ edges and $7{,}296$
+two-step compositions, which resolve to $7{,}234$ distinct composed pairs. The direct edge is
+annotated for $302$ of them. The remaining $6{,}932$ are routes the corpus asserts in two steps and
+denies in one.
+
+\paragraph{What that is worth to a method, measured.} If the defence carried weight, a method's
+scored-wrong output would be full of these. It is not. Of everything the metric counts wrong, the
+share the corpus itself reaches from that substrate in two steps is $0.0016$ $[0.0007,0.0028]$ for
+GRAIL, $0.0035$ $[0.0021,0.0052]$ for MetaPredictor and $0.0015$ $[0.0009,0.0023]$ for SyGMa. The
+quantity is method-dependent in the way the argument predicts, and two of the three pairwise
+differences have intervals excluding zero, the largest being MetaPredictor over SyGMa at $+0.0020$
+$[+0.0008,+0.0034]$. It is also two orders of magnitude too small to matter. Crediting a method for
+everything the annotation graph reaches in two steps raises precision from $0.1060$ to $0.1075$ for
+GRAIL, from $0.1061$ to $0.1090$ for MetaPredictor and from $0.0777$ to $0.0791$ for SyGMa; a third
+step adds a further $0.0002$; and the ordering by F1 is the same at every depth.
+
+\paragraph{Why it is worth reporting a null.} The point is not that annotation is complete; it is
+that the one part of the incompleteness the data can audit is small, so a precision figure on this
+corpus cannot be explained away by it. That removes an excuse rather than supplying one, including
+from this paper, which has used it. It also settles a design question cheaply: a benchmark rebuilt
+by closing its annotation graph under composition would turn $302$ annotated compositions into
+$7{,}234$ and would not change what any of these methods is measured to do, because none of them
+emits the difference.
+
+\paragraph{One further reading.} The corpus is closed at $4.2\%$ and the test split alone at
+$9.7\%$, on $390$ composed pairs against the corpus's $7{,}234$. The gap between the two is not
+noise about depth: within one split, chains tend to be annotated together because they come from one
+record, while a composition that crosses splits joins records from different sources that no curator
+ever linked. Which of the two a substrate falls under is another undeclared property of the
+population it sits in (\S\ref{sec:robust}).

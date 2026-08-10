@@ -1,7 +1,7 @@
 {
  "config": {
   "script": "packing_vs_differential.py",
-  "git_commit": "730e3d8730706e0fe8715054f42389249b364316",
+  "git_commit": "df40e6da66ab4021fbcc95b9faba94169c343c00",
   "git_dirty": true,
   "inputs": "committed leaderboards; nothing is re-scored here",
   "note": "differential > gap is necessary for an exchange and not sufficient; the empirical question is how often real leaderboards meet it"
@@ -47,6 +47,17 @@
    "exchanged": 0,
    "tied": 0
   }
+ },
+ "screening_test": {
+  "flagged": 48,
+  "exchanged_and_flagged": 26,
+  "exchanged_and_missed": 0,
+  "not_exchanged_and_flagged": 22,
+  "not_exchanged_and_not_flagged": 391,
+  "sensitivity": 1.0,
+  "specificity": 0.9467,
+  "precision": 0.5417,
+  "share_of_comparisons_flagged": 0.1093
  },
  "totals": {
   "comparisons": 439,

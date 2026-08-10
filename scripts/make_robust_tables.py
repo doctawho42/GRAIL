@@ -114,7 +114,7 @@ def hasse(r: dict) -> str:
     red = {a: {c for c in edge[a] if not any(c in edge[b] for b in edge[a] if b != c)}
            for a in systems}
 
-    out = ["\\begin{tikzpicture}[x=1.05cm,y=1.15cm,every node/.style={font=\\scriptsize}]"]
+    out = ["\\begin{tikzpicture}[x=1.55cm,y=0.80cm,every node/.style={font=\\scriptsize}]"]
     pos = {}
     for lvl in sorted(rows):
         row = rows[lvl]

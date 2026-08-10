@@ -1,0 +1,751 @@
+{
+ "config": {
+  "script": "robust_order_metabolite.py",
+  "git_commit": "df40e6da66ab4021fbcc95b9faba94169c343c00",
+  "git_dirty": true,
+  "n_boot": 10000,
+  "seed": 0,
+  "n_substrates": 1170,
+  "grid": {
+   "criteria": [
+    "canonical",
+    "inchikey",
+    "nostereo",
+    "tautomer"
+   ],
+   "budgets": [
+    1,
+    5,
+    10,
+    15
+   ]
+  },
+  "instrument": "robust_order.analyse"
+ },
+ "system_accuracy_by_cell": {
+  "GRAIL": {
+   "('canonical', 1)": 0.2479,
+   "('canonical', 5)": 0.4026,
+   "('canonical', 10)": 0.4308,
+   "('canonical', 15)": 0.4393,
+   "('inchikey', 1)": 0.253,
+   "('inchikey', 5)": 0.4111,
+   "('inchikey', 10)": 0.4402,
+   "('inchikey', 15)": 0.4487,
+   "('nostereo', 1)": 0.2547,
+   "('nostereo', 5)": 0.4128,
+   "('nostereo', 10)": 0.4419,
+   "('nostereo', 15)": 0.4504,
+   "('tautomer', 1)": 0.259,
+   "('tautomer', 5)": 0.4205,
+   "('tautomer', 10)": 0.4504,
+   "('tautomer', 15)": 0.459
+  },
+  "MetaPredictor": {
+   "('canonical', 1)": 0.3316,
+   "('canonical', 5)": 0.5624,
+   "('canonical', 10)": 0.6487,
+   "('canonical', 15)": 0.6718,
+   "('inchikey', 1)": 0.3419,
+   "('inchikey', 5)": 0.5846,
+   "('inchikey', 10)": 0.6726,
+   "('inchikey', 15)": 0.6966,
+   "('nostereo', 1)": 0.353,
+   "('nostereo', 5)": 0.5906,
+   "('nostereo', 10)": 0.6769,
+   "('nostereo', 15)": 0.7017,
+   "('tautomer', 1)": 0.3573,
+   "('tautomer', 5)": 0.6017,
+   "('tautomer', 10)": 0.688,
+   "('tautomer', 15)": 0.7111
+  },
+  "SyGMa": {
+   "('canonical', 1)": 0.3128,
+   "('canonical', 5)": 0.5906,
+   "('canonical', 10)": 0.6419,
+   "('canonical', 15)": 0.6581,
+   "('inchikey', 1)": 0.3342,
+   "('inchikey', 5)": 0.6145,
+   "('inchikey', 10)": 0.6684,
+   "('inchikey', 15)": 0.6846,
+   "('nostereo', 1)": 0.3342,
+   "('nostereo', 5)": 0.6154,
+   "('nostereo', 10)": 0.6692,
+   "('nostereo', 15)": 0.688,
+   "('tautomer', 1)": 0.3402,
+   "('tautomer', 5)": 0.6256,
+   "('tautomer', 10)": 0.6812,
+   "('tautomer', 15)": 0.6983
+  }
+ },
+ "n_items": 1170,
+ "published_order": [
+  "MetaPredictor",
+  "SyGMa",
+  "GRAIL"
+ ],
+ "published_cell": "('tautomer', 15)",
+ "n_systems": 3,
+ "n_cells": 16,
+ "n_pairs": 3,
+ "n_dominating": 2,
+ "n_separated_in_every_cell": 2,
+ "n_contested": 1,
+ "tiers_distinguished": 2,
+ "distinct_orderings_across_the_grid": 2,
+ "robustness": 0.6667,
+ "robustness_ci95": [
+  0.6667,
+  0.6667
+ ],
+ "separated_share": 0.6667,
+ "reversed_by_some_cell": 1,
+ "reversed_with_an_interval": 1,
+ "unresolved_though_never_reversed": 0,
+ "n_resolved_in_the_published_cell": 2,
+ "robustness_among_resolved": 1.0,
+ "sub_grids": {
+  "criteria only, at the published budget": {
+   "n_cells": 4,
+   "n_dominating": 3,
+   "share": 1.0,
+   "n_separated_in_every_cell": 2,
+   "tiers": 3,
+   "distinct_orderings": 1
+  },
+  "budgets only, at the published criterion": {
+   "n_cells": 4,
+   "n_dominating": 2,
+   "share": 0.6667,
+   "n_separated_in_every_cell": 2,
+   "tiers": 2,
+   "distinct_orderings": 2
+  },
+  "the product": {
+   "n_cells": 16,
+   "n_dominating": 2,
+   "share": 0.6667,
+   "n_separated_in_every_cell": 2,
+   "tiers": 2,
+   "distinct_orderings": 2
+  }
+ },
+ "per_cell_orders": {
+  "('canonical', 1)": [
+   "MetaPredictor",
+   "SyGMa",
+   "GRAIL"
+  ],
+  "('canonical', 5)": [
+   "SyGMa",
+   "MetaPredictor",
+   "GRAIL"
+  ],
+  "('canonical', 10)": [
+   "MetaPredictor",
+   "SyGMa",
+   "GRAIL"
+  ],
+  "('canonical', 15)": [
+   "MetaPredictor",
+   "SyGMa",
+   "GRAIL"
+  ],
+  "('inchikey', 1)": [
+   "MetaPredictor",
+   "SyGMa",
+   "GRAIL"
+  ],
+  "('inchikey', 5)": [
+   "SyGMa",
+   "MetaPredictor",
+   "GRAIL"
+  ],
+  "('inchikey', 10)": [
+   "MetaPredictor",
+   "SyGMa",
+   "GRAIL"
+  ],
+  "('inchikey', 15)": [
+   "MetaPredictor",
+   "SyGMa",
+   "GRAIL"
+  ],
+  "('nostereo', 1)": [
+   "MetaPredictor",
+   "SyGMa",
+   "GRAIL"
+  ],
+  "('nostereo', 5)": [
+   "SyGMa",
+   "MetaPredictor",
+   "GRAIL"
+  ],
+  "('nostereo', 10)": [
+   "MetaPredictor",
+   "SyGMa",
+   "GRAIL"
+  ],
+  "('nostereo', 15)": [
+   "MetaPredictor",
+   "SyGMa",
+   "GRAIL"
+  ],
+  "('tautomer', 1)": [
+   "MetaPredictor",
+   "SyGMa",
+   "GRAIL"
+  ],
+  "('tautomer', 5)": [
+   "SyGMa",
+   "MetaPredictor",
+   "GRAIL"
+  ],
+  "('tautomer', 10)": [
+   "MetaPredictor",
+   "SyGMa",
+   "GRAIL"
+  ],
+  "('tautomer', 15)": [
+   "MetaPredictor",
+   "SyGMa",
+   "GRAIL"
+  ]
+ },
+ "pairs": {
+  "MetaPredictor over GRAIL": {
+   "dominates": true,
+   "separated_in_every_cell": true,
+   "contested": false,
+   "resolved_in_the_published_cell": true,
+   "cells_that_reverse_it": [],
+   "cells_that_reverse_it_with_an_interval": [],
+   "cells_it_is_not_resolved_in": [],
+   "per_cell": {
+    "('canonical', 1)": {
+     "margin": 0.0838,
+     "ci95": [
+      0.0513,
+      0.1163
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('canonical', 5)": {
+     "margin": 0.1598,
+     "ci95": [
+      0.1248,
+      0.1957
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('canonical', 10)": {
+     "margin": 0.2179,
+     "ci95": [
+      0.1829,
+      0.2538
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('canonical', 15)": {
+     "margin": 0.2325,
+     "ci95": [
+      0.1983,
+      0.2675
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('inchikey', 1)": {
+     "margin": 0.0889,
+     "ci95": [
+      0.0556,
+      0.1222
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('inchikey', 5)": {
+     "margin": 0.1735,
+     "ci95": [
+      0.1384,
+      0.2094
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('inchikey', 10)": {
+     "margin": 0.2325,
+     "ci95": [
+      0.1974,
+      0.2684
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('inchikey', 15)": {
+     "margin": 0.2479,
+     "ci95": [
+      0.2137,
+      0.2838
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('nostereo', 1)": {
+     "margin": 0.0983,
+     "ci95": [
+      0.065,
+      0.1316
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('nostereo', 5)": {
+     "margin": 0.1778,
+     "ci95": [
+      0.1427,
+      0.2145
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('nostereo', 10)": {
+     "margin": 0.235,
+     "ci95": [
+      0.1991,
+      0.2718
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('nostereo', 15)": {
+     "margin": 0.2513,
+     "ci95": [
+      0.2171,
+      0.2872
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('tautomer', 1)": {
+     "margin": 0.0983,
+     "ci95": [
+      0.0641,
+      0.1316
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('tautomer', 5)": {
+     "margin": 0.1812,
+     "ci95": [
+      0.1453,
+      0.2179
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('tautomer', 10)": {
+     "margin": 0.2376,
+     "ci95": [
+      0.2017,
+      0.2735
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('tautomer', 15)": {
+     "margin": 0.2521,
+     "ci95": [
+      0.2179,
+      0.288
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    }
+   }
+  },
+  "SyGMa over GRAIL": {
+   "dominates": true,
+   "separated_in_every_cell": true,
+   "contested": false,
+   "resolved_in_the_published_cell": true,
+   "cells_that_reverse_it": [],
+   "cells_that_reverse_it_with_an_interval": [],
+   "cells_it_is_not_resolved_in": [],
+   "per_cell": {
+    "('canonical', 1)": {
+     "margin": 0.065,
+     "ci95": [
+      0.0333,
+      0.0966
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('canonical', 5)": {
+     "margin": 0.188,
+     "ci95": [
+      0.1556,
+      0.2205
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('canonical', 10)": {
+     "margin": 0.2111,
+     "ci95": [
+      0.1778,
+      0.2453
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('canonical', 15)": {
+     "margin": 0.2188,
+     "ci95": [
+      0.1855,
+      0.2522
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('inchikey', 1)": {
+     "margin": 0.0812,
+     "ci95": [
+      0.0487,
+      0.1137
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('inchikey', 5)": {
+     "margin": 0.2034,
+     "ci95": [
+      0.1709,
+      0.2359
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('inchikey', 10)": {
+     "margin": 0.2282,
+     "ci95": [
+      0.194,
+      0.2615
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('inchikey', 15)": {
+     "margin": 0.2359,
+     "ci95": [
+      0.2026,
+      0.2701
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('nostereo', 1)": {
+     "margin": 0.0795,
+     "ci95": [
+      0.047,
+      0.112
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('nostereo', 5)": {
+     "margin": 0.2026,
+     "ci95": [
+      0.1701,
+      0.235
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('nostereo', 10)": {
+     "margin": 0.2274,
+     "ci95": [
+      0.1932,
+      0.2615
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('nostereo', 15)": {
+     "margin": 0.2376,
+     "ci95": [
+      0.2034,
+      0.2718
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('tautomer', 1)": {
+     "margin": 0.0812,
+     "ci95": [
+      0.0487,
+      0.1137
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('tautomer', 5)": {
+     "margin": 0.2051,
+     "ci95": [
+      0.1726,
+      0.2376
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('tautomer', 10)": {
+     "margin": 0.2308,
+     "ci95": [
+      0.1966,
+      0.265
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('tautomer', 15)": {
+     "margin": 0.2393,
+     "ci95": [
+      0.2051,
+      0.2735
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    }
+   }
+  },
+  "MetaPredictor over SyGMa": {
+   "dominates": false,
+   "separated_in_every_cell": false,
+   "contested": true,
+   "resolved_in_the_published_cell": false,
+   "cells_that_reverse_it": [
+    "('canonical', 5)",
+    "('inchikey', 5)",
+    "('nostereo', 5)",
+    "('tautomer', 5)"
+   ],
+   "cells_that_reverse_it_with_an_interval": [
+    "('canonical', 5)",
+    "('inchikey', 5)"
+   ],
+   "cells_it_is_not_resolved_in": [
+    "('canonical', 1)",
+    "('canonical', 10)",
+    "('canonical', 15)",
+    "('inchikey', 1)",
+    "('inchikey', 10)",
+    "('inchikey', 15)",
+    "('nostereo', 1)",
+    "('nostereo', 10)",
+    "('nostereo', 15)",
+    "('tautomer', 1)",
+    "('tautomer', 10)",
+    "('tautomer', 15)"
+   ],
+   "per_cell": {
+    "('canonical', 1)": {
+     "margin": 0.0188,
+     "ci95": [
+      -0.0111,
+      0.0496
+     ],
+     "positive": true,
+     "separated": false,
+     "separated_the_other_way": false
+    },
+    "('canonical', 5)": {
+     "margin": -0.0282,
+     "ci95": [
+      -0.0547,
+      -0.0009
+     ],
+     "positive": false,
+     "separated": false,
+     "separated_the_other_way": true
+    },
+    "('canonical', 10)": {
+     "margin": 0.0068,
+     "ci95": [
+      -0.0171,
+      0.0316
+     ],
+     "positive": true,
+     "separated": false,
+     "separated_the_other_way": false
+    },
+    "('canonical', 15)": {
+     "margin": 0.0137,
+     "ci95": [
+      -0.0094,
+      0.0376
+     ],
+     "positive": true,
+     "separated": false,
+     "separated_the_other_way": false
+    },
+    "('inchikey', 1)": {
+     "margin": 0.0077,
+     "ci95": [
+      -0.0231,
+      0.0385
+     ],
+     "positive": true,
+     "separated": false,
+     "separated_the_other_way": false
+    },
+    "('inchikey', 5)": {
+     "margin": -0.0299,
+     "ci95": [
+      -0.0573,
+      -0.0017
+     ],
+     "positive": false,
+     "separated": false,
+     "separated_the_other_way": true
+    },
+    "('inchikey', 10)": {
+     "margin": 0.0043,
+     "ci95": [
+      -0.0197,
+      0.0291
+     ],
+     "positive": true,
+     "separated": false,
+     "separated_the_other_way": false
+    },
+    "('inchikey', 15)": {
+     "margin": 0.012,
+     "ci95": [
+      -0.0111,
+      0.0359
+     ],
+     "positive": true,
+     "separated": false,
+     "separated_the_other_way": false
+    },
+    "('nostereo', 1)": {
+     "margin": 0.0188,
+     "ci95": [
+      -0.012,
+      0.0496
+     ],
+     "positive": true,
+     "separated": false,
+     "separated_the_other_way": false
+    },
+    "('nostereo', 5)": {
+     "margin": -0.0248,
+     "ci95": [
+      -0.0521,
+      0.0034
+     ],
+     "positive": false,
+     "separated": false,
+     "separated_the_other_way": false
+    },
+    "('nostereo', 10)": {
+     "margin": 0.0077,
+     "ci95": [
+      -0.0162,
+      0.0325
+     ],
+     "positive": true,
+     "separated": false,
+     "separated_the_other_way": false
+    },
+    "('nostereo', 15)": {
+     "margin": 0.0137,
+     "ci95": [
+      -0.0094,
+      0.0376
+     ],
+     "positive": true,
+     "separated": false,
+     "separated_the_other_way": false
+    },
+    "('tautomer', 1)": {
+     "margin": 0.0171,
+     "ci95": [
+      -0.0137,
+      0.0479
+     ],
+     "positive": true,
+     "separated": false,
+     "separated_the_other_way": false
+    },
+    "('tautomer', 5)": {
+     "margin": -0.0239,
+     "ci95": [
+      -0.0513,
+      0.0043
+     ],
+     "positive": false,
+     "separated": false,
+     "separated_the_other_way": false
+    },
+    "('tautomer', 10)": {
+     "margin": 0.0068,
+     "ci95": [
+      -0.0171,
+      0.0316
+     ],
+     "positive": true,
+     "separated": false,
+     "separated_the_other_way": false
+    },
+    "('tautomer', 15)": {
+     "margin": 0.0128,
+     "ci95": [
+      -0.0103,
+      0.0368
+     ],
+     "positive": true,
+     "separated": false,
+     "separated_the_other_way": false
+    }
+   }
+  }
+ }
+}

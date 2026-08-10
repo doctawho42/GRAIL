@@ -1,0 +1,311 @@
+{
+ "config": {
+  "script": "reference_closure.py",
+  "git_commit": "11a103f586d30a6c54d1cc6cb44b9db7accb445f",
+  "git_dirty": true,
+  "n_boot": 10000,
+  "seed": 0,
+  "k": 15,
+  "node_identity": "inchikey_tautomer",
+  "graph": "clean triples of all three splits; the corpus is what asserts the second edge, the split only asks about the first"
+ },
+ "edges_per_split": {
+  "train": 17338,
+  "val": 2073,
+  "test": 2576
+ },
+ "corpus_graph": {
+  "nodes": 28657,
+  "edges": 21964,
+  "two_step_compositions": 7296,
+  "distinct_composed_pairs": 7234,
+  "composed_pairs_not_annotated": 6932,
+  "share_not_annotated": 0.9583,
+  "reversible_two_paths": 128
+ },
+ "test_only_graph": {
+  "nodes": 3439,
+  "edges": 2576,
+  "two_step_compositions": 401,
+  "distinct_composed_pairs": 390,
+  "composed_pairs_not_annotated": 352,
+  "share_not_annotated": 0.9026,
+  "reversible_two_paths": 6
+ },
+ "scored_wrong_but_corpus_derivable": {
+  "GRAIL": {
+   "mean_emitted": 8.397,
+   "mean_derivable_per_substrate": 0.012,
+   "share_of_wrong_output": 0.0016,
+   "ci95": [
+    0.0007,
+    0.0028
+   ]
+  },
+  "MetaPredictor": {
+   "mean_emitted": 10.703,
+   "mean_derivable_per_substrate": 0.0316,
+   "share_of_wrong_output": 0.0035,
+   "ci95": [
+    0.0021,
+    0.0052
+   ]
+  },
+  "SyGMa": {
+   "mean_emitted": 14.524,
+   "mean_derivable_per_substrate": 0.0214,
+   "share_of_wrong_output": 0.0015,
+   "ci95": [
+    0.0009,
+    0.0023
+   ]
+  }
+ },
+ "derivable_share_differs_by_method": {
+  "GRAIL vs MetaPredictor": {
+   "delta": -0.0019,
+   "ci95": [
+    -0.0034,
+    -0.0005
+   ],
+   "certified": true
+  },
+  "GRAIL vs SyGMa": {
+   "delta": 0.0001,
+   "ci95": [
+    -0.0009,
+    0.0013
+   ],
+   "certified": false
+  },
+  "MetaPredictor vs SyGMa": {
+   "delta": 0.002,
+   "ci95": [
+    0.0008,
+    0.0034
+   ],
+   "certified": true
+  }
+ },
+ "by_closure_depth": {
+  "1": {
+   "GRAIL": {
+    "precision": 0.106,
+    "precision_ci95": [
+     0.0958,
+     0.1166
+    ],
+    "f1": 0.1358,
+    "f1_ci95": [
+     0.1246,
+     0.1474
+    ]
+   },
+   "MetaPredictor": {
+    "precision": 0.1061,
+    "precision_ci95": [
+     0.1,
+     0.1122
+    ],
+    "f1": 0.1625,
+    "f1_ci95": [
+     0.1547,
+     0.1703
+    ]
+   },
+   "SyGMa": {
+    "precision": 0.0777,
+    "precision_ci95": [
+     0.0729,
+     0.0825
+    ],
+    "f1": 0.1259,
+    "f1_ci95": [
+     0.1193,
+     0.1324
+    ]
+   },
+   "ordering_by_f1": [
+    "MetaPredictor",
+    "GRAIL",
+    "SyGMa"
+   ]
+  },
+  "2": {
+   "GRAIL": {
+    "precision": 0.1075,
+    "precision_ci95": [
+     0.0973,
+     0.1182
+    ],
+    "f1": 0.1364,
+    "f1_ci95": [
+     0.1252,
+     0.1479
+    ]
+   },
+   "MetaPredictor": {
+    "precision": 0.109,
+    "precision_ci95": [
+     0.1027,
+     0.1153
+    ],
+    "f1": 0.1649,
+    "f1_ci95": [
+     0.1569,
+     0.1728
+    ]
+   },
+   "SyGMa": {
+    "precision": 0.0791,
+    "precision_ci95": [
+     0.0743,
+     0.0839
+    ],
+    "f1": 0.127,
+    "f1_ci95": [
+     0.1203,
+     0.1335
+    ]
+   },
+   "ordering_by_f1": [
+    "MetaPredictor",
+    "GRAIL",
+    "SyGMa"
+   ]
+  },
+  "3": {
+   "GRAIL": {
+    "precision": 0.1077,
+    "precision_ci95": [
+     0.0975,
+     0.1184
+    ],
+    "f1": 0.1365,
+    "f1_ci95": [
+     0.1253,
+     0.148
+    ]
+   },
+   "MetaPredictor": {
+    "precision": 0.1091,
+    "precision_ci95": [
+     0.1028,
+     0.1153
+    ],
+    "f1": 0.165,
+    "f1_ci95": [
+     0.157,
+     0.173
+    ]
+   },
+   "SyGMa": {
+    "precision": 0.0793,
+    "precision_ci95": [
+     0.0745,
+     0.0841
+    ],
+    "f1": 0.1272,
+    "f1_ci95": [
+     0.1206,
+     0.1338
+    ]
+   },
+   "ordering_by_f1": [
+    "MetaPredictor",
+    "GRAIL",
+    "SyGMa"
+   ]
+  }
+ },
+ "ordering_changes_with_depth": false,
+ "pairs_that_change_sign_with_depth": {
+  "GRAIL vs MetaPredictor": {
+   "flips": false,
+   "by_depth": {
+    "1": {
+     "margin": -0.0267,
+     "ci95": [
+      -0.039,
+      -0.0144
+     ],
+     "certified": true
+    },
+    "2": {
+     "margin": -0.0285,
+     "ci95": [
+      -0.0411,
+      -0.016
+     ],
+     "certified": true
+    },
+    "3": {
+     "margin": -0.0285,
+     "ci95": [
+      -0.0411,
+      -0.0161
+     ],
+     "certified": true
+    }
+   }
+  },
+  "GRAIL vs SyGMa": {
+   "flips": false,
+   "by_depth": {
+    "1": {
+     "margin": 0.0099,
+     "ci95": [
+      -0.0019,
+      0.0218
+     ],
+     "certified": false
+    },
+    "2": {
+     "margin": 0.0095,
+     "ci95": [
+      -0.0023,
+      0.0215
+     ],
+     "certified": false
+    },
+    "3": {
+     "margin": 0.0093,
+     "ci95": [
+      -0.0025,
+      0.0213
+     ],
+     "certified": false
+    }
+   }
+  },
+  "MetaPredictor vs SyGMa": {
+   "flips": false,
+   "by_depth": {
+    "1": {
+     "margin": 0.0366,
+     "ci95": [
+      0.0308,
+      0.0426
+     ],
+     "certified": true
+    },
+    "2": {
+     "margin": 0.038,
+     "ci95": [
+      0.032,
+      0.0442
+     ],
+     "certified": true
+    },
+    "3": {
+     "margin": 0.0378,
+     "ci95": [
+      0.0319,
+      0.044
+     ],
+     "certified": true
+    }
+   }
+  }
+ }
+}

@@ -334,7 +334,8 @@ def main() -> int:
             v = H[key]
             check(f"dispatch table, {shown} dispatched", m and m.group(1), v["dispatched_to_expanded"])
             check(f"dispatch table, {shown} reach", m and m.group(2), v["reach"], "", )
-            check(f"dispatch table, {shown} best global", m and m.group(3), v["best_global"])
+            check(f"dispatch table, {shown} best global", m and m.group(3), v["best_global"],
+                  "over legitimate settings only")
             check(f"dispatch table, {shown} residual", m and m.group(4),
                   abs(v["residual_convention_dependence"]), "measured in the same run")
     mnd = ROOT / "results/dispatch_paired_ci__mined.json"
@@ -779,8 +780,8 @@ def main() -> int:
     # 0.261 of 0.855, about a third. The share is now computed from the two figures the sentence
     # prints, so the wording cannot drift from them again.
     flat = re.sub(r"\s+", " ", whole)
-    mc = re.search(r"agree at a Jaccard of \$([\d.]+)\$ under strict \\textsc\{inchikey\} matching and "
-                   r"at \$([\d.]+)\$ under the tautomer-aware default, so notation accounts for "
+    mc = re.search(r"agreeing at\s*a Jaccard of \$([\d.]+)\$ under strict \\textsc\{inchikey\} matching "
+                   r"and \$([\d.]+)\$ under the tautomer-aware\s*default, so notation accounts for "
                    r"(a third|a half|most) of what reads as disagreement", flat)
     checks.append((bool(mc), "the curator-agreement sentence parses", "present",
                    "matched" if mc else "not matched", ""))
@@ -843,8 +844,8 @@ def main() -> int:
     if fm2.exists():
         Q = json.loads(fm2.read_text())
         flat = re.sub(r"\s+", " ", whole)
-        mb = re.search(r"(Four|Three|Five|Six) of the six pairs change sign along that sweep and "
-                       r"(three|two|four|one) change it between margins that each separate from zero",
+        mb = re.search(r"(four|three|five|six) of the six pairs change sign along that\s*sweep and "
+                       r"(three|two|four|one) do so between margins that each separate from zero",
                        flat)
         checks.append((bool(mb), "the budget-reversal sentence parses", "present",
                        "matched" if mb else "not matched", ""))
@@ -996,8 +997,8 @@ def main() -> int:
     if ro2.exists():
         R2 = json.loads(ro2.read_text())["leaderboards"]
         flat = re.sub(r"\s+", " ", whole)
-        mt = re.search(r"asserts seven places and supports \$(\d+)\$ tiers, and the three-system "
-                       r"table asserts three and supports \$(\d+)\$", flat)
+        mt = re.search(r"a table of seven places supports \$(\d+)\$\s*tiers, one of three supports "
+                       r"\$(\d+)\$", flat)
         checks.append((bool(mt), "the tier sentence parses", "present",
                        "matched" if mt else "not matched", ""))
         if mt:
@@ -1065,51 +1066,78 @@ def main() -> int:
                            "both controls are certifiably worse", "certified",
                            f"{SB['dissimilarity']['certified']} and {SB['random']['certified']}", src))
 
-    # 10c-w. Guaranteed reach: the least a bank recovers over the conventions it might be run
-    # under. It is the constructive half of the incomparability claim, so it is held to the same
-    # artifact as the arms it minimises over, and the gate recomputes the minimum rather than
-    # trusting the sentence to have taken it.
+    # 10d. The packing condition as a screening test. The main text promotes it from a tally to a
+    # rule a maintainer can run on their own table, so every rate it quotes is recomputed from the
+    # artifact rather than restated, including the sensitivity that the arithmetic forces to one.
+    pk = ROOT / "results/packing_vs_differential.json"
+    if pk.exists():
+        PK = json.loads(pk.read_text())
+        S, T = PK["screening_test"], PK["totals"]
+        flat = re.sub(r"\s+", " ", whole)
+        mpk = re.search(r"over the \$(\d+)\$ method-pair by criterion-pair comparisons this paper "
+                        r"spans\s*in three domains, it flags \$([\d.]+)\\%\$ of them\. Every one of "
+                        r"the \$(\d+)\$ exchanges falls inside the\s*flagged set and none outside it, "
+                        r"so its sensitivity is \$([\d.]+)\$ .*?its specificity is \$([\d.]+)\$ and "
+                        r"its precision \$([\d.]+)\$", flat)
+        checks.append((bool(mpk), "the packing screening sentence parses", "present",
+                       "matched" if mpk else "not matched", ""))
+        if mpk:
+            src = str(pk.relative_to(ROOT))
+            check("comparisons spanned", mpk.group(1), T["comparisons"], src)
+            check("share flagged", mpk.group(2), round(S["share_of_comparisons_flagged"] * 100, 1), src)
+            check("exchanges", mpk.group(3), T["exchanged"], src)
+            check("sensitivity", mpk.group(4), S["sensitivity"], src)
+            check("specificity", mpk.group(5), S["specificity"], src)
+            check("precision", mpk.group(6), S["precision"], src)
+            checks.append((S["exchanged_and_missed"] == 0,
+                           "the screening test has no false negatives", "0",
+                           str(S["exchanged_and_missed"]), src))
+
+    # 10c-w. Reach under per-template dispatch, which the paper reports as the primitive, and the
+    # worst case over global settings, which it reports as a diagnostic. Both range only over
+    # settings someone might choose: the arm that expands a substrate and never contracts the
+    # product is a defect by Section 4's own account, and taking a minimum or a baseline over it
+    # would credit the instrument with repairing a bug. The gate refuses that arm outright.
     hy2 = ROOT / "results/hydrogen_dispatch__clean_test.json"
     if hy2.exists():
         H2 = json.loads(hy2.read_text())["banks"]
         flat = re.sub(r"\s+", " ", whole)
-        mg = re.search(r"its \\emph\{guaranteed reach\}: \$([\d.]+)\$ for ours against a best of "
-                       r"\$([\d.]+)\$, \$([\d.]+)\$ for SyGMa against \$([\d.]+)\$, and \$([\d.]+)\$ "
-                       r"for BioTransformer against \$([\d.]+)\$", flat)
-        checks.append((bool(mg), "the guaranteed-reach sentence parses", "present",
+        mg = re.search(r"beats the better of the two global settings by \$\+([\d.]+)\$ "
+                       r"\$\[\+([\d.]+),\+([\d.]+)\]\$.*?\$(\d+)\$ of its \$(\d+)\$ templates want "
+                       r"the other presentation.*?\$([\d.]+)\$ for\s*BioTransformer against the "
+                       r"\$([\d.]+)\$ its best single setting reaches", flat)
+        checks.append((bool(mg), "the dispatch sentence parses", "present",
                        "matched" if mg else "not matched", ""))
-        if mg:
+        if mg and "biotransformer" in H2:
+            B = H2["biotransformer"]
             src = str(hy2.relative_to(ROOT))
-            # The minimum is over CONVENTIONS a bank might legitimately be run under, which are the
-            # implicit substrate and the expanded one with the product contracted again. The third
-            # arm in the artifact expands and never contracts; Section 4 calls that a defect, so
-            # taking a minimum over it would report a program's bug as a property of a rule base --
-            # the same control-arm defect this paper names. A bank whose completed arm is missing
-            # has no guaranteed reach to report and the gate says so rather than substituting.
-            def legit(bank):
-                a = H2[bank]["global_arms"]
-                if a.get("all_explicit_completed") is None:
-                    raise KeyError(f"{bank}: no completed-loop arm; rerun hydrogen_dispatch")
-                return {k: v for k, v in a.items()
-                        if v is not None and k != "all_explicit"}
-
-            for bank, lo_g, hi_g in (("grail_full", 1, 2), ("sygma_175", 3, 4),
-                                     ("biotransformer", 5, 6)):
-                try:
-                    arms = legit(bank)
-                except KeyError as e:
-                    checks.append((False, f"guaranteed reach, {bank}", "a completed-loop arm",
-                                   str(e), src))
-                    continue
-                check(f"guaranteed reach, {bank}", mg.group(lo_g), round(min(arms.values()), 3), src)
-                check(f"best reach, {bank}", mg.group(hi_g), round(max(arms.values()), 3), src)
-            try:
-                bt = legit("biotransformer")
-            except KeyError:
-                bt = {"x": 1.0}
-            ratio = max(bt.values()) / max(min(bt.values()), 1e-9)
-            checks.append((3.5 <= ratio <= 4.5, "BioTransformer's published figure is four times "
-                           "its guarantee", "about four", f"{ratio:.2f}x", src))
+            if B["global_arms"].get("all_explicit_completed") is None:
+                checks.append((False, "BioTransformer has a completed-loop arm", "present",
+                               "absent; rerun hydrogen_dispatch", src))
+            else:
+                legit = {k: v for k, v in B["global_arms"].items()
+                         if v is not None and k != "all_explicit"}
+                check("dispatch residual", mg.group(1), B["residual_convention_dependence"], src)
+                check("residual, lower", mg.group(2), B["residual_ci95"][0], src)
+                check("residual, upper", mg.group(3), B["residual_ci95"][1], src)
+                check("templates dispatched", mg.group(4), B["dispatched_to_expanded"], src)
+                check("templates in the bank", mg.group(5), B["n_rules"], src)
+                check("guaranteed reach", mg.group(6), round(min(legit.values()), 4), src)
+                check("best single setting", mg.group(7), round(max(legit.values()), 4), src)
+                checks.append((B["residual_ci95"][0] > 0,
+                               "dispatch beats every legitimate global setting", "interval clear "
+                               "of zero", str(B["residual_ci95"]), src))
+                ratio = max(legit.values()) / max(min(legit.values()), 1e-9)
+                checks.append((3.5 <= ratio <= 4.5, "BioTransformer's published figure is four "
+                               "times its guarantee", "about four", f"{ratio:.2f}x", src))
+        if "sygma_175" in H2:
+            S_ = H2["sygma_175"]
+            src = str(hy2.relative_to(ROOT))
+            checks.append((S_["dispatched_to_expanded"] == 0
+                           and abs(S_["residual_convention_dependence"]) < 1e-9,
+                           "on SyGMa dispatch is the identity, as pre-registered", "0 dispatched, "
+                           "0 residual", f"{S_['dispatched_to_expanded']} dispatched, "
+                           f"{S_['residual_convention_dependence']} residual", src))
 
     # 10c-v. The population inside one split. The paper's fourth axis was a bounded null about
     # which released test set a name refers to; this is a different question with a certified
@@ -1163,32 +1191,33 @@ def main() -> int:
     me2 = ROOT / "results/setsize_headroom__tautomer_metabolites.json"
     if pa.exists() and me2.exists():
         flat = re.sub(r"\s+", " ", whole)
-        mq = re.search(r"on the \$(\d+)\$ parent drugs the rule reaches \$([\d.]+)\$ against the best "
-                       r"constant's \$([\d.]+)\$, and on the \$(\d+)\$ substrates that are themselves "
-                       r"metabolites \$([\d.]+)\$ against \$([\d.]+)\$", flat)
+        mq = re.search(r"The\s*advantage holds on the \$(\d+)\$ parent drugs, \$\+([\d.]+)\$ "
+                       r"\$\[\+([\d.]+),\+([\d.]+)\]\$, and not on the \$(\d+)\$\s*substrates that are "
+                       r"themselves metabolites, \$-([\d.]+)\$ \$\[-([\d.]+),\+([\d.]+)\]\$", flat)
         checks.append((bool(mq), "the population qualification parses", "present",
                        "matched" if mq else "not matched", ""))
         if mq:
-            for lbl, path, n_g, gap_g, const_g in (("parents", pa, 1, 2, 3),
-                                                   ("metabolites", me2, 4, 5, 6)):
+            # the margin against the best constant is what the claim is about on each population,
+            # and the arm is the one the sweep names rather than whichever gap rule happens to win
+            def margin(path):
                 D = json.loads(path.read_text())
-                A = D["arms"]
-                bg = max(v["f1"] for k, v in A.items() if k.startswith("gap"))
-                bc = max(v["f1"] for k, v in A.items() if k.startswith("fixed"))
-                src = str(path.relative_to(ROOT))
-                check(f"{lbl}, substrates", mq.group(n_g), D["config"]["n_substrates"], src)
-                check(f"{lbl}, the rule", mq.group(gap_g), round(bg, 3), src)
-                check(f"{lbl}, the best constant", mq.group(const_g), round(bc, 3), src)
-            Dp, Dm = json.loads(pa.read_text())["arms"], json.loads(me2.read_text())["arms"]
-            gp = max(v["f1"] for k, v in Dp.items() if k.startswith("gap"))
-            cp = max(v["f1"] for k, v in Dp.items() if k.startswith("fixed"))
-            gm = max(v["f1"] for k, v in Dm.items() if k.startswith("gap"))
-            cm = max(v["f1"] for k, v in Dm.items() if k.startswith("fixed"))
-            checks.append((gp > cp and gm <= cm,
+                a_ = D["arms"]["gap rule a=0.5"]
+                return (D, a_["f1_gain_over_best_constant"], a_["ci95_vs_best_constant"],
+                        a_["separated_vs_best_constant"])
+            Dp, mp_, cip, sp = margin(pa)
+            Dm, mm_, cim, sm = margin(me2)
+            check("parents, substrates", mq.group(1), Dp["config"]["n_substrates"], str(pa.relative_to(ROOT)))
+            check("parents, margin", mq.group(2), round(mp_, 3), str(pa.relative_to(ROOT)))
+            check("parents, lower", mq.group(3), round(cip[0], 3), str(pa.relative_to(ROOT)))
+            check("parents, upper", mq.group(4), round(cip[1], 3), str(pa.relative_to(ROOT)))
+            check("metabolites, substrates", mq.group(5), Dm["config"]["n_substrates"], str(me2.relative_to(ROOT)))
+            check("metabolites, margin", mq.group(6), round(abs(mm_), 3), str(me2.relative_to(ROOT)))
+            check("metabolites, lower", mq.group(7), round(abs(cim[0]), 3), str(me2.relative_to(ROOT)))
+            check("metabolites, upper", mq.group(8), round(cim[1], 3), str(me2.relative_to(ROOT)))
+            checks.append((sp and not sm,
                            "the rule wins on parents and not on metabolites",
-                           "wins on one population only",
-                           f"parents {gp:.3f} vs {cp:.3f}, metabolites {gm:.3f} vs {cm:.3f}",
-                           str(pa.relative_to(ROOT))))
+                           "separated on one population only",
+                           f"parents {sp}, metabolites {sm}", str(pa.relative_to(ROOT))))
 
     # 10c-t. The volume claim about the method that leads the field's budget. Recall at a fixed
     # cut-off pays for emitting more, so the aggregate that charges for it is where the lead is
@@ -1197,16 +1226,14 @@ def main() -> int:
     if fm4.exists():
         F4 = json.loads(fm4.read_text()).get("macro_f1_by_budget", {})
         flat = re.sub(r"\s+", " ", whole)
-        mv = re.search(r"MetaTox is second at \$([\d.]+)\$ behind MetaPredictor's \$([\d.]+)\$, and "
-                       r"at \$k=1\$ it is last at \$([\d.]+)\$ against SyGMa's \$([\d.]+)\$", flat)
+        mv = re.search(r"it is\s*second at \$([\d.]+)\$ behind MetaPredictor's \$([\d.]+)\$ and last "
+                       r"at \$k=1\$", flat)
         checks.append((bool(mv), "the volume sentence parses", "present",
                        "matched" if mv else "not matched", ""))
         if mv and F4:
             src = str(fm4.relative_to(ROOT))
             check("MetaTox F1 at 15", mv.group(1), F4["MetaTox"]["15"], src)
             check("MetaPredictor F1 at 15", mv.group(2), F4["MetaPredictor"]["15"], src)
-            check("MetaTox F1 at 1", mv.group(3), F4["MetaTox"]["1"], src)
-            check("SyGMa F1 at 1", mv.group(4), F4["SyGMa"]["1"], src)
             at15 = sorted(F4, key=lambda m: -F4[m]["15"])
             at1 = sorted(F4, key=lambda m: -F4[m]["1"])
             checks.append((at15.index("MetaTox") == 1, "MetaTox is second on F1 at fifteen",
@@ -1249,8 +1276,8 @@ def main() -> int:
         flat = re.sub(r"\s+", " ", whole)
         me = re.search(r"the deployed \$k=15\$ scores \$([\d.]+)\$ macro F1, the best global "
                        r"constant \$([\d.]+)\$, and truncating each substrate at its own annotated "
-                       r"count \$([\d.]+)\$.*?within half the leader's score gives \$([\d.]+)\$\..*?"
-                       r"beats by \$\+([\d.]+)\$ \$\[\+([\d.]+),\+([\d.]+)\]\$", flat)
+                       r"count \$([\d.]+)\$\..*?within half the leader's score gives \$([\d.]+)\$, "
+                       r"and the arm.*?split: \$\+([\d.]+)\$ \$\[\+([\d.]+),\+([\d.]+)\]\$", flat)
         checks.append((bool(me), "the emission sentence parses", "present",
                        "matched" if me else "not matched", ""))
         if me:
@@ -1260,12 +1287,17 @@ def main() -> int:
             check("best global constant", me.group(2), round(best_const[0], 3), src)
             check("oracle count", me.group(3), round(S["oracle count"]["f1"], 3), src)
             check("the sibling rule", me.group(4), round(S["gap rule a=0.5"]["f1"], 3), src)
+            # the margin the sentence states is the one against the best constant, which is the
+            # arm the claim turns on; the deployed-budget margin is reported only in the appendix
             check("the sibling rule, gain", me.group(5),
-                  round(S["gap rule a=0.5"]["f1_gain_over_k15"], 3), src)
+                  round(S["gap rule a=0.5"]["f1_gain_over_best_constant"], 4), src)
             check("the sibling rule, lower", me.group(6),
-                  round(S["gap rule a=0.5"]["ci95"][0], 3), src)
+                  round(S["gap rule a=0.5"]["ci95_vs_best_constant"][0], 4), src)
             check("the sibling rule, upper", me.group(7),
-                  round(S["gap rule a=0.5"]["ci95"][1], 3), src)
+                  round(S["gap rule a=0.5"]["ci95_vs_best_constant"][1], 4), src)
+            checks.append((S["gap rule a=0.5"]["separated_vs_best_constant"],
+                           "the rule is separated from the best constant", "separated",
+                           str(S["gap rule a=0.5"]["separated_vs_best_constant"]), src))
             gaps = [v["f1"] for k, v in S.items() if k.startswith("gap")]
             checks.append((max(gaps) > best_const[0],
                            "the sibling rule beats every global constant", "above every constant",
@@ -1276,44 +1308,69 @@ def main() -> int:
 
     # 10c-q. The robust order. The share of a leaderboard's pairwise claims that survive every cell
     # of the declared grid is the paper's answer to seven rounds of "no new metric", so every figure
-    # of it is held to the run, and so is the split between reversal and non-resolution.
+    # of it is held to the run: the count that dominates, the count some cell reverses with an
+    # interval, how many pairs the leaderboard's own cell resolves at all, and the share among those.
     ro = ROOT / "results/robust_order.json"
-    fm3 = ROOT / "results/four_method_291.json"
-    if ro.exists() and fm3.exists():
+    rm = ROOT / "results/robust_order_metabolite.json"
+    if ro.exists() and rm.exists():
         RO = json.loads(ro.read_text())["leaderboards"]
-        FM = json.loads(fm3.read_text()).get("robust_order", {})
+        RM = json.loads(rm.read_text())
         flat = re.sub(r"\s+", " ", whole)
-        mr = re.search(r"retrosynthesis, seven systems & \$4\$ criteria \$\\times\$ \$4\$ budgets "
-                       r"& \$(\d+)\$ of \$(\d+)\$ & \$(\d+)\$ .*?"
-                       r"retrosynthesis, three systems & \$4\$ criteria \$\\times\$ \$4\$ budgets "
-                       r"& \$(\d+)\$ of \$(\d+)\$ & \$(\d+)\$ .*?"
-                       r"metabolites, four methods & \$9\$ budgets & \$(\d+)\$ of \$(\d+)\$ & \$(\d+)\$",
-                       flat)
+        row = (r"& \$([\d,{}]+)\$ & \$(\d+)\$ of \$(\d+)\$ & \$(\d+)\$ & \$(\d+)\$ "
+               r"& \$([\d.]+)\$ & \$(\d+)\$ of \$(\d+)\$")
+        mr = re.search(r"retrosynthesis, seven systems " + row + r".*?"
+                       r"retrosynthesis, three systems " + row + r".*?"
+                       r"metabolites, three methods " + row, flat)
         checks.append((bool(mr), "the robust-order table parses", "present",
                        "matched" if mr else "not matched", ""))
         if mr:
             src = str(ro.relative_to(ROOT))
-            c0, c1 = RO["cluster0"], RO["cluster1"]
-            for lbl, said, got, s in (
-                    ("seven systems, dominate", mr.group(1), c0["n_dominating"], src),
-                    ("seven systems, pairs", mr.group(2), c0["n_pairs"], src),
-                    ("seven systems, certified", mr.group(3), c0["n_certified"], src),
-                    ("three systems, dominate", mr.group(4), c1["n_dominating"], src),
-                    ("three systems, pairs", mr.group(5), c1["n_pairs"], src),
-                    ("three systems, certified", mr.group(6), c1["n_certified"], src),
-                    ("four methods, dominate", mr.group(7), FM.get("n_dominating"), str(fm3.relative_to(ROOT))),
-                    ("four methods, pairs", mr.group(8), FM.get("n_pairs"), str(fm3.relative_to(ROOT))),
-                    ("four methods, certified", mr.group(9), FM.get("n_certified"), str(fm3.relative_to(ROOT)))):
-                check(f"robust order, {lbl}", said, got, s)
-            # the grid the table names must be the grid the run used
-            g = json.loads(ro.read_text())["config"]["grid"]
-            checks.append((len(g["criteria"]) == 4 and len(g["budgets"]) == 4,
-                           "the declared grid is four criteria by four budgets",
-                           "4 by 4", f"{len(g['criteria'])} by {len(g['budgets'])}", src))
-            ms = re.search(r"Only one of the twenty-one is of the second kind", flat)
-            checks.append((bool(ms) and c0["unresolved_though_never_reversed"] == 1,
-                           "one pair is unresolved rather than reversed", "one",
-                           str(c0["unresolved_though_never_reversed"]), src))
+            srm = str(rm.relative_to(ROOT))
+            boards = ((("seven systems", RO["cluster0"], src), 0),
+                      (("three systems", RO["cluster1"], src), 8),
+                      (("three methods", RM, srm), 16))
+            for (lbl, r_, s), off in boards:
+                check(f"robust order, {lbl}, items", mr.group(off + 1).replace("{,}", ""),
+                      r_["n_items"], s)
+                check(f"robust order, {lbl}, dominate", mr.group(off + 2), r_["n_dominating"], s)
+                check(f"robust order, {lbl}, pairs", mr.group(off + 3), r_["n_pairs"], s)
+                check(f"robust order, {lbl}, contested", mr.group(off + 4), r_["n_contested"], s)
+                check(f"robust order, {lbl}, resolved", mr.group(off + 5),
+                      r_["n_resolved_in_the_published_cell"], s)
+                check(f"robust order, {lbl}, share among resolved", mr.group(off + 6),
+                      r_["robustness_among_resolved"], s)
+                check(f"robust order, {lbl}, tiers", mr.group(off + 7), r_["tiers_distinguished"], s)
+                check(f"robust order, {lbl}, systems", mr.group(off + 8), r_["n_systems"], s)
+            for name, r_, s in (("retro", RO["cluster0"], src), ("metabolite", RM, srm)):
+                g = (json.loads(ro.read_text())["config"]["grid"] if name == "retro"
+                     else RM["config"]["grid"])
+                checks.append((len(g["criteria"]) == 4 and len(g["budgets"]) == 4,
+                               f"the {name} grid is four criteria by four budgets", "4 by 4",
+                               f"{len(g['criteria'])} by {len(g['budgets'])}", s))
+            # the claim that most of the table was never resolved, and the two-axis split
+            checks.append((RO["cluster0"]["n_pairs"] - RO["cluster0"][
+                "n_resolved_in_the_published_cell"] == 11,
+                           "eleven of the twenty-one were never resolved", "11",
+                           str(RO["cluster0"]["n_pairs"]
+                               - RO["cluster0"]["n_resolved_in_the_published_cell"]), src))
+            crit = "criteria only, at the published budget"
+            bud = "budgets only, at the published criterion"
+            for name, r_, s in (("three systems", RO["cluster1"], src),
+                                ("three methods", RM, srm)):
+                checks.append((r_["sub_grids"][crit]["n_dominating"] == r_["n_pairs"]
+                               and r_["sub_grids"][bud]["n_dominating"] < r_["n_pairs"],
+                               f"on {name} the criterion axis leaves the order intact and the "
+                               f"budget axis does not",
+                               f"criteria {r_['n_pairs']}, budgets fewer",
+                               f"criteria {r_['sub_grids'][crit]['n_dominating']}, "
+                               f"budgets {r_['sub_grids'][bud]['n_dominating']}", s))
+            m4 = re.search(r"take \$(\d+)\$ different total orders across \$(\d+)\$\s*cells", flat)
+            checks.append((bool(m4), "the distinct-orderings sentence parses", "present",
+                           "matched" if m4 else "not matched", src))
+            if m4:
+                check("distinct orderings", m4.group(1),
+                      RO["cluster0"]["distinct_orderings_across_the_grid"], src)
+                check("cells in the grid", m4.group(2), RO["cluster0"]["n_cells"], src)
 
     # 10c-p. The count of choices that reorder, everywhere it appears. It was three in the
     # introduction and two in the abstract and conclusion for one revision, because the engine axis

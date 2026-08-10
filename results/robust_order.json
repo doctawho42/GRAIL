@@ -1,7 +1,7 @@
 {
  "config": {
   "script": "robust_order.py",
-  "git_commit": "0d6eb1ad3b53dd890453afec47ae02c65ee942b9",
+  "git_commit": "df40e6da66ab4021fbcc95b9faba94169c343c00",
   "git_dirty": true,
   "n_boot": 10000,
   "seed": 0,
@@ -23,6 +23,135 @@
  },
  "leaderboards": {
   "cluster0": {
+   "system_accuracy_by_cell": {
+    "g2retro": {
+     "('canonical', 1)": 0.5147,
+     "('canonical', 3)": 0.7223,
+     "('canonical', 5)": 0.7828,
+     "('canonical', 10)": 0.8368,
+     "('nostereo', 1)": 0.5291,
+     "('nostereo', 3)": 0.7405,
+     "('nostereo', 5)": 0.8026,
+     "('nostereo', 10)": 0.8578,
+     "('inchikey', 1)": 0.5147,
+     "('inchikey', 3)": 0.7223,
+     "('inchikey', 5)": 0.7828,
+     "('inchikey', 10)": 0.8368,
+     "('tautomer', 1)": 0.5309,
+     "('tautomer', 3)": 0.7431,
+     "('tautomer', 5)": 0.806,
+     "('tautomer', 10)": 0.8622
+    },
+    "gln": {
+     "('canonical', 1)": 0.5247,
+     "('canonical', 3)": 0.6897,
+     "('canonical', 5)": 0.7556,
+     "('canonical', 10)": 0.8368,
+     "('nostereo', 1)": 0.5377,
+     "('nostereo', 3)": 0.7019,
+     "('nostereo', 5)": 0.768,
+     "('nostereo', 10)": 0.8494,
+     "('inchikey', 1)": 0.5247,
+     "('inchikey', 3)": 0.6897,
+     "('inchikey', 5)": 0.7556,
+     "('inchikey', 10)": 0.8368,
+     "('tautomer', 1)": 0.5397,
+     "('tautomer', 3)": 0.7049,
+     "('tautomer', 5)": 0.7712,
+     "('tautomer', 10)": 0.852
+    },
+    "graph2smiles": {
+     "('canonical', 1)": 0.5293,
+     "('canonical', 3)": 0.6611,
+     "('canonical', 5)": 0.6945,
+     "('canonical', 10)": 0.7235,
+     "('nostereo', 1)": 0.5571,
+     "('nostereo', 3)": 0.6795,
+     "('nostereo', 5)": 0.7113,
+     "('nostereo', 10)": 0.7379,
+     "('inchikey', 1)": 0.5293,
+     "('inchikey', 3)": 0.6611,
+     "('inchikey', 5)": 0.6945,
+     "('inchikey', 10)": 0.7235,
+     "('tautomer', 1)": 0.5595,
+     "('tautomer', 3)": 0.6819,
+     "('tautomer', 5)": 0.7137,
+     "('tautomer', 10)": 0.7399
+    },
+    "graphretro": {
+     "('canonical', 1)": 0.5377,
+     "('canonical', 3)": 0.6769,
+     "('canonical', 5)": 0.7155,
+     "('canonical', 10)": 0.7447,
+     "('nostereo', 1)": 0.5501,
+     "('nostereo', 3)": 0.6927,
+     "('nostereo', 5)": 0.7325,
+     "('nostereo', 10)": 0.762,
+     "('inchikey', 1)": 0.5377,
+     "('inchikey', 3)": 0.6769,
+     "('inchikey', 5)": 0.7155,
+     "('inchikey', 10)": 0.7447,
+     "('tautomer', 1)": 0.5555,
+     "('tautomer', 3)": 0.7005,
+     "('tautomer', 5)": 0.7407,
+     "('tautomer', 10)": 0.7704
+    },
+    "localretro": {
+     "('canonical', 1)": 0.5339,
+     "('canonical', 3)": 0.7694,
+     "('canonical', 5)": 0.8424,
+     "('canonical', 10)": 0.91,
+     "('nostereo', 1)": 0.5469,
+     "('nostereo', 3)": 0.7878,
+     "('nostereo', 5)": 0.8622,
+     "('nostereo', 10)": 0.9302,
+     "('inchikey', 1)": 0.5339,
+     "('inchikey', 3)": 0.7694,
+     "('inchikey', 5)": 0.8424,
+     "('inchikey', 10)": 0.91,
+     "('tautomer', 1)": 0.5495,
+     "('tautomer', 3)": 0.7912,
+     "('tautomer', 5)": 0.8646,
+     "('tautomer', 10)": 0.932
+    },
+    "retroformer": {
+     "('canonical', 1)": 0.5325,
+     "('canonical', 3)": 0.7061,
+     "('canonical', 5)": 0.7614,
+     "('canonical', 10)": 0.8192,
+     "('nostereo', 1)": 0.5541,
+     "('nostereo', 3)": 0.7217,
+     "('nostereo', 5)": 0.7756,
+     "('nostereo', 10)": 0.8322,
+     "('inchikey', 1)": 0.5325,
+     "('inchikey', 3)": 0.7063,
+     "('inchikey', 5)": 0.7616,
+     "('inchikey', 10)": 0.8194,
+     "('tautomer', 1)": 0.5559,
+     "('tautomer', 3)": 0.7241,
+     "('tautomer', 5)": 0.7776,
+     "('tautomer', 10)": 0.8344
+    },
+    "retroxpert": {
+     "('canonical', 1)": 0.4467,
+     "('canonical', 3)": 0.5981,
+     "('canonical', 5)": 0.6441,
+     "('canonical', 10)": 0.6941,
+     "('nostereo', 1)": 0.4619,
+     "('nostereo', 3)": 0.6101,
+     "('nostereo', 5)": 0.6555,
+     "('nostereo', 10)": 0.7029,
+     "('inchikey', 1)": 0.4467,
+     "('inchikey', 3)": 0.5983,
+     "('inchikey', 5)": 0.6443,
+     "('inchikey', 10)": 0.6941,
+     "('tautomer', 1)": 0.4631,
+     "('tautomer', 3)": 0.6115,
+     "('tautomer', 5)": 0.6569,
+     "('tautomer', 10)": 0.7053
+    }
+   },
+   "n_items": 4999,
    "published_order": [
     "graphretro",
     "localretro",
@@ -37,16 +166,199 @@
    "n_cells": 16,
    "n_pairs": 21,
    "n_dominating": 8,
-   "n_certified": 7,
+   "n_separated_in_every_cell": 7,
+   "n_contested": 9,
    "tiers_distinguished": 3,
+   "distinct_orderings_across_the_grid": 4,
    "robustness": 0.381,
-   "certified_robustness": 0.3333,
+   "robustness_ci95": [
+    0.3333,
+    0.5238
+   ],
+   "separated_share": 0.3333,
    "reversed_by_some_cell": 13,
+   "reversed_with_an_interval": 9,
    "unresolved_though_never_reversed": 1,
+   "n_resolved_in_the_published_cell": 10,
+   "robustness_among_resolved": 0.7,
+   "sub_grids": {
+    "criteria only, at the published budget": {
+     "n_cells": 4,
+     "n_dominating": 16,
+     "share": 0.7619,
+     "n_separated_in_every_cell": 10,
+     "tiers": 5,
+     "distinct_orderings": 2
+    },
+    "budgets only, at the published criterion": {
+     "n_cells": 4,
+     "n_dominating": 12,
+     "share": 0.5714,
+     "n_separated_in_every_cell": 7,
+     "tiers": 4,
+     "distinct_orderings": 3
+    },
+    "the product": {
+     "n_cells": 16,
+     "n_dominating": 8,
+     "share": 0.381,
+     "n_separated_in_every_cell": 7,
+     "tiers": 3,
+     "distinct_orderings": 4
+    }
+   },
+   "per_cell_orders": {
+    "('canonical', 1)": [
+     "graphretro",
+     "localretro",
+     "retroformer",
+     "graph2smiles",
+     "gln",
+     "g2retro",
+     "retroxpert"
+    ],
+    "('canonical', 3)": [
+     "localretro",
+     "g2retro",
+     "retroformer",
+     "gln",
+     "graphretro",
+     "graph2smiles",
+     "retroxpert"
+    ],
+    "('canonical', 5)": [
+     "localretro",
+     "g2retro",
+     "retroformer",
+     "gln",
+     "graphretro",
+     "graph2smiles",
+     "retroxpert"
+    ],
+    "('canonical', 10)": [
+     "localretro",
+     "g2retro",
+     "gln",
+     "retroformer",
+     "graphretro",
+     "graph2smiles",
+     "retroxpert"
+    ],
+    "('nostereo', 1)": [
+     "graph2smiles",
+     "retroformer",
+     "graphretro",
+     "localretro",
+     "gln",
+     "g2retro",
+     "retroxpert"
+    ],
+    "('nostereo', 3)": [
+     "localretro",
+     "g2retro",
+     "retroformer",
+     "gln",
+     "graphretro",
+     "graph2smiles",
+     "retroxpert"
+    ],
+    "('nostereo', 5)": [
+     "localretro",
+     "g2retro",
+     "retroformer",
+     "gln",
+     "graphretro",
+     "graph2smiles",
+     "retroxpert"
+    ],
+    "('nostereo', 10)": [
+     "localretro",
+     "g2retro",
+     "gln",
+     "retroformer",
+     "graphretro",
+     "graph2smiles",
+     "retroxpert"
+    ],
+    "('inchikey', 1)": [
+     "graphretro",
+     "localretro",
+     "retroformer",
+     "graph2smiles",
+     "gln",
+     "g2retro",
+     "retroxpert"
+    ],
+    "('inchikey', 3)": [
+     "localretro",
+     "g2retro",
+     "retroformer",
+     "gln",
+     "graphretro",
+     "graph2smiles",
+     "retroxpert"
+    ],
+    "('inchikey', 5)": [
+     "localretro",
+     "g2retro",
+     "retroformer",
+     "gln",
+     "graphretro",
+     "graph2smiles",
+     "retroxpert"
+    ],
+    "('inchikey', 10)": [
+     "localretro",
+     "g2retro",
+     "gln",
+     "retroformer",
+     "graphretro",
+     "graph2smiles",
+     "retroxpert"
+    ],
+    "('tautomer', 1)": [
+     "graph2smiles",
+     "retroformer",
+     "graphretro",
+     "localretro",
+     "gln",
+     "g2retro",
+     "retroxpert"
+    ],
+    "('tautomer', 3)": [
+     "localretro",
+     "g2retro",
+     "retroformer",
+     "gln",
+     "graphretro",
+     "graph2smiles",
+     "retroxpert"
+    ],
+    "('tautomer', 5)": [
+     "localretro",
+     "g2retro",
+     "retroformer",
+     "gln",
+     "graphretro",
+     "graph2smiles",
+     "retroxpert"
+    ],
+    "('tautomer', 10)": [
+     "localretro",
+     "g2retro",
+     "gln",
+     "retroformer",
+     "graphretro",
+     "graph2smiles",
+     "retroxpert"
+    ]
+   },
    "pairs": {
     "gln over g2retro": {
      "dominates": false,
-     "certified": false,
+     "separated_in_every_cell": false,
+     "contested": true,
+     "resolved_in_the_published_cell": false,
      "cells_that_reverse_it": [
       "('canonical', 3)",
       "('canonical', 5)",
@@ -60,6 +372,16 @@
       "('tautomer', 3)",
       "('tautomer', 5)",
       "('tautomer', 10)"
+     ],
+     "cells_that_reverse_it_with_an_interval": [
+      "('canonical', 3)",
+      "('canonical', 5)",
+      "('nostereo', 3)",
+      "('nostereo', 5)",
+      "('inchikey', 3)",
+      "('inchikey', 5)",
+      "('tautomer', 3)",
+      "('tautomer', 5)"
      ],
      "cells_it_is_not_resolved_in": [
       "('canonical', 1)",
@@ -75,7 +397,8 @@
         0.024
        ],
        "positive": true,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('canonical', 3)": {
        "margin": -0.0326,
@@ -84,7 +407,8 @@
         -0.02
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('canonical', 5)": {
        "margin": -0.0272,
@@ -93,7 +417,8 @@
         -0.0152
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('canonical', 10)": {
        "margin": 0.0,
@@ -102,7 +427,8 @@
         0.0106
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('nostereo', 1)": {
        "margin": 0.0086,
@@ -111,7 +437,8 @@
         0.023
        ],
        "positive": true,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('nostereo', 3)": {
        "margin": -0.0386,
@@ -120,7 +447,8 @@
         -0.0258
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('nostereo', 5)": {
        "margin": -0.0346,
@@ -129,7 +457,8 @@
         -0.0228
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('nostereo', 10)": {
        "margin": -0.0084,
@@ -138,7 +467,8 @@
         0.0022
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('inchikey', 1)": {
        "margin": 0.01,
@@ -147,7 +477,8 @@
         0.024
        ],
        "positive": true,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('inchikey', 3)": {
        "margin": -0.0326,
@@ -156,7 +487,8 @@
         -0.02
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('inchikey', 5)": {
        "margin": -0.0272,
@@ -165,7 +497,8 @@
         -0.0152
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('inchikey', 10)": {
        "margin": 0.0,
@@ -174,7 +507,8 @@
         0.0106
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('tautomer', 1)": {
        "margin": 0.0088,
@@ -183,7 +517,8 @@
         0.023
        ],
        "positive": true,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('tautomer', 3)": {
        "margin": -0.0382,
@@ -192,7 +527,8 @@
         -0.0256
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('tautomer', 5)": {
        "margin": -0.0348,
@@ -201,7 +537,8 @@
         -0.023
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('tautomer', 10)": {
        "margin": -0.0102,
@@ -210,14 +547,31 @@
         0.0002
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       }
      }
     },
     "graph2smiles over g2retro": {
      "dominates": false,
-     "certified": false,
+     "separated_in_every_cell": false,
+     "contested": true,
+     "resolved_in_the_published_cell": true,
      "cells_that_reverse_it": [
+      "('canonical', 3)",
+      "('canonical', 5)",
+      "('canonical', 10)",
+      "('nostereo', 3)",
+      "('nostereo', 5)",
+      "('nostereo', 10)",
+      "('inchikey', 3)",
+      "('inchikey', 5)",
+      "('inchikey', 10)",
+      "('tautomer', 3)",
+      "('tautomer', 5)",
+      "('tautomer', 10)"
+     ],
+     "cells_that_reverse_it_with_an_interval": [
       "('canonical', 3)",
       "('canonical', 5)",
       "('canonical', 10)",
@@ -240,7 +594,8 @@
         0.0282
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('canonical', 3)": {
        "margin": -0.0612,
@@ -249,7 +604,8 @@
         -0.0478
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('canonical', 5)": {
        "margin": -0.0882,
@@ -258,7 +614,8 @@
         -0.0754
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('canonical', 10)": {
        "margin": -0.1132,
@@ -267,7 +624,8 @@
         -0.1004
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('nostereo', 1)": {
        "margin": 0.028,
@@ -276,7 +634,8 @@
         0.0412
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('nostereo', 3)": {
        "margin": -0.061,
@@ -285,7 +644,8 @@
         -0.0482
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('nostereo', 5)": {
        "margin": -0.0912,
@@ -294,7 +654,8 @@
         -0.079
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('nostereo', 10)": {
        "margin": -0.1198,
@@ -303,7 +664,8 @@
         -0.1076
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('inchikey', 1)": {
        "margin": 0.0146,
@@ -312,7 +674,8 @@
         0.0282
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('inchikey', 3)": {
        "margin": -0.0612,
@@ -321,7 +684,8 @@
         -0.0478
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('inchikey', 5)": {
        "margin": -0.0882,
@@ -330,7 +694,8 @@
         -0.0754
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('inchikey', 10)": {
        "margin": -0.1132,
@@ -339,7 +704,8 @@
         -0.1004
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('tautomer', 1)": {
        "margin": 0.0286,
@@ -348,7 +714,8 @@
         0.0418
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('tautomer', 3)": {
        "margin": -0.0612,
@@ -357,7 +724,8 @@
         -0.0484
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('tautomer', 5)": {
        "margin": -0.0922,
@@ -366,7 +734,8 @@
         -0.08
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('tautomer', 10)": {
        "margin": -0.1222,
@@ -375,14 +744,31 @@
         -0.11
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       }
      }
     },
     "graphretro over g2retro": {
      "dominates": false,
-     "certified": false,
+     "separated_in_every_cell": false,
+     "contested": true,
+     "resolved_in_the_published_cell": true,
      "cells_that_reverse_it": [
+      "('canonical', 3)",
+      "('canonical', 5)",
+      "('canonical', 10)",
+      "('nostereo', 3)",
+      "('nostereo', 5)",
+      "('nostereo', 10)",
+      "('inchikey', 3)",
+      "('inchikey', 5)",
+      "('inchikey', 10)",
+      "('tautomer', 3)",
+      "('tautomer', 5)",
+      "('tautomer', 10)"
+     ],
+     "cells_that_reverse_it_with_an_interval": [
       "('canonical', 3)",
       "('canonical', 5)",
       "('canonical', 10)",
@@ -405,7 +791,8 @@
         0.0358
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('canonical', 3)": {
        "margin": -0.0454,
@@ -414,7 +801,8 @@
         -0.0334
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('canonical', 5)": {
        "margin": -0.0672,
@@ -423,7 +811,8 @@
         -0.0554
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('canonical', 10)": {
        "margin": -0.092,
@@ -432,7 +821,8 @@
         -0.0806
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('nostereo', 1)": {
        "margin": 0.021,
@@ -441,7 +831,8 @@
         0.034
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('nostereo', 3)": {
        "margin": -0.0478,
@@ -450,7 +841,8 @@
         -0.0354
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('nostereo', 5)": {
        "margin": -0.07,
@@ -459,7 +851,8 @@
         -0.0578
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('nostereo', 10)": {
        "margin": -0.0958,
@@ -468,7 +861,8 @@
         -0.0842
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('inchikey', 1)": {
        "margin": 0.023,
@@ -477,7 +871,8 @@
         0.0358
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('inchikey', 3)": {
        "margin": -0.0454,
@@ -486,7 +881,8 @@
         -0.0334
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('inchikey', 5)": {
        "margin": -0.0672,
@@ -495,7 +891,8 @@
         -0.0554
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('inchikey', 10)": {
        "margin": -0.092,
@@ -504,7 +901,8 @@
         -0.0806
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('tautomer', 1)": {
        "margin": 0.0246,
@@ -513,7 +911,8 @@
         0.0376
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('tautomer', 3)": {
        "margin": -0.0426,
@@ -522,7 +921,8 @@
         -0.0304
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('tautomer', 5)": {
        "margin": -0.0652,
@@ -531,7 +931,8 @@
         -0.0532
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('tautomer', 10)": {
        "margin": -0.0918,
@@ -540,14 +941,18 @@
         -0.0806
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       }
      }
     },
     "localretro over g2retro": {
      "dominates": true,
-     "certified": true,
+     "separated_in_every_cell": true,
+     "contested": false,
+     "resolved_in_the_published_cell": true,
      "cells_that_reverse_it": [],
+     "cells_that_reverse_it_with_an_interval": [],
      "cells_it_is_not_resolved_in": [],
      "per_cell": {
       "('canonical', 1)": {
@@ -557,7 +962,8 @@
         0.0326
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('canonical', 3)": {
        "margin": 0.047,
@@ -566,7 +972,8 @@
         0.0586
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('canonical', 5)": {
        "margin": 0.0596,
@@ -575,7 +982,8 @@
         0.0702
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('canonical', 10)": {
        "margin": 0.0732,
@@ -584,7 +992,8 @@
         0.0824
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('nostereo', 1)": {
        "margin": 0.0178,
@@ -593,7 +1002,8 @@
         0.0314
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('nostereo', 3)": {
        "margin": 0.0472,
@@ -602,7 +1012,8 @@
         0.059
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('nostereo', 5)": {
        "margin": 0.0596,
@@ -611,7 +1022,8 @@
         0.0702
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('nostereo', 10)": {
        "margin": 0.0724,
@@ -620,7 +1032,8 @@
         0.0816
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('inchikey', 1)": {
        "margin": 0.0192,
@@ -629,7 +1042,8 @@
         0.0326
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('inchikey', 3)": {
        "margin": 0.047,
@@ -638,7 +1052,8 @@
         0.0586
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('inchikey', 5)": {
        "margin": 0.0596,
@@ -647,7 +1062,8 @@
         0.0702
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('inchikey', 10)": {
        "margin": 0.0732,
@@ -656,7 +1072,8 @@
         0.0824
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('tautomer', 1)": {
        "margin": 0.0186,
@@ -665,7 +1082,8 @@
         0.0324
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('tautomer', 3)": {
        "margin": 0.048,
@@ -674,7 +1092,8 @@
         0.0596
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('tautomer', 5)": {
        "margin": 0.0586,
@@ -683,7 +1102,8 @@
         0.0692
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('tautomer', 10)": {
        "margin": 0.0698,
@@ -692,14 +1112,31 @@
         0.0788
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       }
      }
     },
     "retroformer over g2retro": {
      "dominates": false,
-     "certified": false,
+     "separated_in_every_cell": false,
+     "contested": true,
+     "resolved_in_the_published_cell": true,
      "cells_that_reverse_it": [
+      "('canonical', 3)",
+      "('canonical', 5)",
+      "('canonical', 10)",
+      "('nostereo', 3)",
+      "('nostereo', 5)",
+      "('nostereo', 10)",
+      "('inchikey', 3)",
+      "('inchikey', 5)",
+      "('inchikey', 10)",
+      "('tautomer', 3)",
+      "('tautomer', 5)",
+      "('tautomer', 10)"
+     ],
+     "cells_that_reverse_it_with_an_interval": [
       "('canonical', 3)",
       "('canonical', 5)",
       "('canonical', 10)",
@@ -722,7 +1159,8 @@
         0.0316
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('canonical', 3)": {
        "margin": -0.0162,
@@ -731,7 +1169,8 @@
         -0.0034
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('canonical', 5)": {
        "margin": -0.0214,
@@ -740,7 +1179,8 @@
         -0.0092
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('canonical', 10)": {
        "margin": -0.0176,
@@ -749,7 +1189,8 @@
         -0.0064
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('nostereo', 1)": {
        "margin": 0.025,
@@ -758,7 +1199,8 @@
         0.0386
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('nostereo', 3)": {
        "margin": -0.0188,
@@ -767,7 +1209,8 @@
         -0.0064
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('nostereo', 5)": {
        "margin": -0.027,
@@ -776,7 +1219,8 @@
         -0.015
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('nostereo', 10)": {
        "margin": -0.0256,
@@ -785,7 +1229,8 @@
         -0.0148
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('inchikey', 1)": {
        "margin": 0.0178,
@@ -794,7 +1239,8 @@
         0.0316
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('inchikey', 3)": {
        "margin": -0.016,
@@ -803,7 +1249,8 @@
         -0.0032
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('inchikey', 5)": {
        "margin": -0.0212,
@@ -812,7 +1259,8 @@
         -0.009
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('inchikey', 10)": {
        "margin": -0.0174,
@@ -821,7 +1269,8 @@
         -0.006
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('tautomer', 1)": {
        "margin": 0.025,
@@ -830,7 +1279,8 @@
         0.0384
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('tautomer', 3)": {
        "margin": -0.019,
@@ -839,7 +1289,8 @@
         -0.0064
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('tautomer', 5)": {
        "margin": -0.0284,
@@ -848,7 +1299,8 @@
         -0.0166
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('tautomer', 10)": {
        "margin": -0.0278,
@@ -857,14 +1309,18 @@
         -0.0172
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       }
      }
     },
     "g2retro over retroxpert": {
      "dominates": true,
-     "certified": true,
+     "separated_in_every_cell": true,
+     "contested": false,
+     "resolved_in_the_published_cell": true,
      "cells_that_reverse_it": [],
+     "cells_that_reverse_it_with_an_interval": [],
      "cells_it_is_not_resolved_in": [],
      "per_cell": {
       "('canonical', 1)": {
@@ -874,7 +1330,8 @@
         0.0828
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('canonical', 3)": {
        "margin": 0.1242,
@@ -883,7 +1340,8 @@
         0.1386
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('canonical', 5)": {
        "margin": 0.1386,
@@ -892,7 +1350,8 @@
         0.1522
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('canonical', 10)": {
        "margin": 0.1426,
@@ -901,7 +1360,8 @@
         0.1556
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('nostereo', 1)": {
        "margin": 0.0672,
@@ -910,7 +1370,8 @@
         0.082
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('nostereo', 3)": {
        "margin": 0.1304,
@@ -919,7 +1380,8 @@
         0.1444
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('nostereo', 5)": {
        "margin": 0.147,
@@ -928,7 +1390,8 @@
         0.1602
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('nostereo', 10)": {
        "margin": 0.1548,
@@ -937,7 +1400,8 @@
         0.1676
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('inchikey', 1)": {
        "margin": 0.068,
@@ -946,7 +1410,8 @@
         0.0828
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('inchikey', 3)": {
        "margin": 0.124,
@@ -955,7 +1420,8 @@
         0.1384
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('inchikey', 5)": {
        "margin": 0.1384,
@@ -964,7 +1430,8 @@
         0.152
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('inchikey', 10)": {
        "margin": 0.1426,
@@ -973,7 +1440,8 @@
         0.1556
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('tautomer', 1)": {
        "margin": 0.0678,
@@ -982,7 +1450,8 @@
         0.0826
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('tautomer', 3)": {
        "margin": 0.1316,
@@ -991,7 +1460,8 @@
         0.1458
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('tautomer', 5)": {
        "margin": 0.149,
@@ -1000,7 +1470,8 @@
         0.1624
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('tautomer', 10)": {
        "margin": 0.1568,
@@ -1009,14 +1480,31 @@
         0.1696
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       }
      }
     },
     "graph2smiles over gln": {
      "dominates": false,
-     "certified": false,
+     "separated_in_every_cell": false,
+     "contested": true,
+     "resolved_in_the_published_cell": false,
      "cells_that_reverse_it": [
+      "('canonical', 3)",
+      "('canonical', 5)",
+      "('canonical', 10)",
+      "('nostereo', 3)",
+      "('nostereo', 5)",
+      "('nostereo', 10)",
+      "('inchikey', 3)",
+      "('inchikey', 5)",
+      "('inchikey', 10)",
+      "('tautomer', 3)",
+      "('tautomer', 5)",
+      "('tautomer', 10)"
+     ],
+     "cells_that_reverse_it_with_an_interval": [
       "('canonical', 3)",
       "('canonical', 5)",
       "('canonical', 10)",
@@ -1042,7 +1530,8 @@
         0.018
        ],
        "positive": true,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('canonical', 3)": {
        "margin": -0.0286,
@@ -1051,7 +1540,8 @@
         -0.0158
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('canonical', 5)": {
        "margin": -0.061,
@@ -1060,7 +1550,8 @@
         -0.0484
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('canonical', 10)": {
        "margin": -0.1132,
@@ -1069,7 +1560,8 @@
         -0.101
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('nostereo', 1)": {
        "margin": 0.0194,
@@ -1078,7 +1570,8 @@
         0.0326
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('nostereo', 3)": {
        "margin": -0.0224,
@@ -1087,7 +1580,8 @@
         -0.0098
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('nostereo', 5)": {
        "margin": -0.0566,
@@ -1096,7 +1590,8 @@
         -0.0442
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('nostereo', 10)": {
        "margin": -0.1114,
@@ -1105,7 +1600,8 @@
         -0.0994
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('inchikey', 1)": {
        "margin": 0.0046,
@@ -1114,7 +1610,8 @@
         0.018
        ],
        "positive": true,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('inchikey', 3)": {
        "margin": -0.0286,
@@ -1123,7 +1620,8 @@
         -0.0158
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('inchikey', 5)": {
        "margin": -0.061,
@@ -1132,7 +1630,8 @@
         -0.0484
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('inchikey', 10)": {
        "margin": -0.1132,
@@ -1141,7 +1640,8 @@
         -0.101
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('tautomer', 1)": {
        "margin": 0.0198,
@@ -1150,7 +1650,8 @@
         0.033
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('tautomer', 3)": {
        "margin": -0.023,
@@ -1159,7 +1660,8 @@
         -0.0102
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('tautomer', 5)": {
        "margin": -0.0574,
@@ -1168,7 +1670,8 @@
         -0.0452
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('tautomer', 10)": {
        "margin": -0.112,
@@ -1177,13 +1680,16 @@
         -0.1
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       }
      }
     },
     "graphretro over gln": {
      "dominates": false,
-     "certified": false,
+     "separated_in_every_cell": false,
+     "contested": true,
+     "resolved_in_the_published_cell": false,
      "cells_that_reverse_it": [
       "('canonical', 3)",
       "('canonical', 5)",
@@ -1195,6 +1701,16 @@
       "('inchikey', 5)",
       "('inchikey', 10)",
       "('tautomer', 3)",
+      "('tautomer', 5)",
+      "('tautomer', 10)"
+     ],
+     "cells_that_reverse_it_with_an_interval": [
+      "('canonical', 5)",
+      "('canonical', 10)",
+      "('nostereo', 5)",
+      "('nostereo', 10)",
+      "('inchikey', 5)",
+      "('inchikey', 10)",
       "('tautomer', 5)",
       "('tautomer', 10)"
      ],
@@ -1211,7 +1727,8 @@
         0.0266
        ],
        "positive": true,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('canonical', 3)": {
        "margin": -0.0128,
@@ -1220,7 +1737,8 @@
         0.0006
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('canonical', 5)": {
        "margin": -0.04,
@@ -1229,7 +1747,8 @@
         -0.0268
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('canonical', 10)": {
        "margin": -0.092,
@@ -1238,7 +1757,8 @@
         -0.0796
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('nostereo', 1)": {
        "margin": 0.0124,
@@ -1247,7 +1767,8 @@
         0.0258
        ],
        "positive": true,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('nostereo', 3)": {
        "margin": -0.0092,
@@ -1256,7 +1777,8 @@
         0.0044
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('nostereo', 5)": {
        "margin": -0.0354,
@@ -1265,7 +1787,8 @@
         -0.0222
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('nostereo', 10)": {
        "margin": -0.0874,
@@ -1274,7 +1797,8 @@
         -0.075
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('inchikey', 1)": {
        "margin": 0.013,
@@ -1283,7 +1807,8 @@
         0.0266
        ],
        "positive": true,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('inchikey', 3)": {
        "margin": -0.0128,
@@ -1292,7 +1817,8 @@
         0.0006
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('inchikey', 5)": {
        "margin": -0.04,
@@ -1301,7 +1827,8 @@
         -0.0268
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('inchikey', 10)": {
        "margin": -0.092,
@@ -1310,7 +1837,8 @@
         -0.0796
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('tautomer', 1)": {
        "margin": 0.0158,
@@ -1319,7 +1847,8 @@
         0.0292
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('tautomer', 3)": {
        "margin": -0.0044,
@@ -1328,7 +1857,8 @@
         0.009
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('tautomer', 5)": {
        "margin": -0.0304,
@@ -1337,7 +1867,8 @@
         -0.0174
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('tautomer', 10)": {
        "margin": -0.0816,
@@ -1346,14 +1877,18 @@
         -0.0692
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       }
      }
     },
     "localretro over gln": {
      "dominates": true,
-     "certified": false,
+     "separated_in_every_cell": false,
+     "contested": false,
+     "resolved_in_the_published_cell": false,
      "cells_that_reverse_it": [],
+     "cells_that_reverse_it_with_an_interval": [],
      "cells_it_is_not_resolved_in": [
       "('canonical', 1)",
       "('nostereo', 1)",
@@ -1368,7 +1903,8 @@
         0.0222
        ],
        "positive": true,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('canonical', 3)": {
        "margin": 0.0796,
@@ -1377,7 +1913,8 @@
         0.0912
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('canonical', 5)": {
        "margin": 0.0868,
@@ -1386,7 +1923,8 @@
         0.098
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('canonical', 10)": {
        "margin": 0.0732,
@@ -1395,7 +1933,8 @@
         0.0824
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('nostereo', 1)": {
        "margin": 0.0092,
@@ -1404,7 +1943,8 @@
         0.022
        ],
        "positive": true,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('nostereo', 3)": {
        "margin": 0.0858,
@@ -1413,7 +1953,8 @@
         0.0974
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('nostereo', 5)": {
        "margin": 0.0942,
@@ -1422,7 +1963,8 @@
         0.1052
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('nostereo', 10)": {
        "margin": 0.0808,
@@ -1431,7 +1973,8 @@
         0.09
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('inchikey', 1)": {
        "margin": 0.0092,
@@ -1440,7 +1983,8 @@
         0.0222
        ],
        "positive": true,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('inchikey', 3)": {
        "margin": 0.0796,
@@ -1449,7 +1993,8 @@
         0.0912
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('inchikey', 5)": {
        "margin": 0.0868,
@@ -1458,7 +2003,8 @@
         0.098
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('inchikey', 10)": {
        "margin": 0.0732,
@@ -1467,7 +2013,8 @@
         0.0824
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('tautomer', 1)": {
        "margin": 0.0098,
@@ -1476,7 +2023,8 @@
         0.0226
        ],
        "positive": true,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('tautomer', 3)": {
        "margin": 0.0862,
@@ -1485,7 +2033,8 @@
         0.0978
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('tautomer', 5)": {
        "margin": 0.0934,
@@ -1494,7 +2043,8 @@
         0.1046
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('tautomer', 10)": {
        "margin": 0.08,
@@ -1503,14 +2053,23 @@
         0.0892
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       }
      }
     },
     "retroformer over gln": {
      "dominates": false,
-     "certified": false,
+     "separated_in_every_cell": false,
+     "contested": true,
+     "resolved_in_the_published_cell": false,
      "cells_that_reverse_it": [
+      "('canonical', 10)",
+      "('nostereo', 10)",
+      "('inchikey', 10)",
+      "('tautomer', 10)"
+     ],
+     "cells_that_reverse_it_with_an_interval": [
       "('canonical', 10)",
       "('nostereo', 10)",
       "('inchikey', 10)",
@@ -1532,7 +2091,8 @@
         0.0206
        ],
        "positive": true,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('canonical', 3)": {
        "margin": 0.0164,
@@ -1541,7 +2101,8 @@
         0.0286
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('canonical', 5)": {
        "margin": 0.0058,
@@ -1550,7 +2111,8 @@
         0.0178
        ],
        "positive": true,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('canonical', 10)": {
        "margin": -0.0176,
@@ -1559,7 +2121,8 @@
         -0.007
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('nostereo', 1)": {
        "margin": 0.0164,
@@ -1568,7 +2131,8 @@
         0.0292
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('nostereo', 3)": {
        "margin": 0.0198,
@@ -1577,7 +2141,8 @@
         0.032
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('nostereo', 5)": {
        "margin": 0.0076,
@@ -1586,7 +2151,8 @@
         0.0192
        ],
        "positive": true,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('nostereo', 10)": {
        "margin": -0.0172,
@@ -1595,7 +2161,8 @@
         -0.0066
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('inchikey', 1)": {
        "margin": 0.0078,
@@ -1604,7 +2171,8 @@
         0.0206
        ],
        "positive": true,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('inchikey', 3)": {
        "margin": 0.0166,
@@ -1613,7 +2181,8 @@
         0.0288
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('inchikey', 5)": {
        "margin": 0.006,
@@ -1622,7 +2191,8 @@
         0.0178
        ],
        "positive": true,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('inchikey', 10)": {
        "margin": -0.0174,
@@ -1631,7 +2201,8 @@
         -0.0068
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('tautomer', 1)": {
        "margin": 0.0162,
@@ -1640,7 +2211,8 @@
         0.029
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('tautomer', 3)": {
        "margin": 0.0192,
@@ -1649,7 +2221,8 @@
         0.0314
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('tautomer', 5)": {
        "margin": 0.0064,
@@ -1658,7 +2231,8 @@
         0.018
        ],
        "positive": true,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('tautomer', 10)": {
        "margin": -0.0176,
@@ -1667,14 +2241,18 @@
         -0.0072
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       }
      }
     },
     "gln over retroxpert": {
      "dominates": true,
-     "certified": true,
+     "separated_in_every_cell": true,
+     "contested": false,
+     "resolved_in_the_published_cell": true,
      "cells_that_reverse_it": [],
+     "cells_that_reverse_it_with_an_interval": [],
      "cells_it_is_not_resolved_in": [],
      "per_cell": {
       "('canonical', 1)": {
@@ -1684,7 +2262,8 @@
         0.092
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('canonical', 3)": {
        "margin": 0.0916,
@@ -1693,7 +2272,8 @@
         0.1052
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('canonical', 5)": {
        "margin": 0.1114,
@@ -1702,7 +2282,8 @@
         0.1248
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('canonical', 10)": {
        "margin": 0.1426,
@@ -1711,7 +2292,8 @@
         0.1556
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('nostereo', 1)": {
        "margin": 0.0758,
@@ -1720,7 +2302,8 @@
         0.0898
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('nostereo', 3)": {
        "margin": 0.0918,
@@ -1729,7 +2312,8 @@
         0.1056
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('nostereo', 5)": {
        "margin": 0.1124,
@@ -1738,7 +2322,8 @@
         0.1258
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('nostereo', 10)": {
        "margin": 0.1464,
@@ -1747,7 +2332,8 @@
         0.1592
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('inchikey', 1)": {
        "margin": 0.078,
@@ -1756,7 +2342,8 @@
         0.092
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('inchikey', 3)": {
        "margin": 0.0914,
@@ -1765,7 +2352,8 @@
         0.105
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('inchikey', 5)": {
        "margin": 0.1112,
@@ -1774,7 +2362,8 @@
         0.1246
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('inchikey', 10)": {
        "margin": 0.1426,
@@ -1783,7 +2372,8 @@
         0.1556
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('tautomer', 1)": {
        "margin": 0.0766,
@@ -1792,7 +2382,8 @@
         0.0906
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('tautomer', 3)": {
        "margin": 0.0934,
@@ -1801,7 +2392,8 @@
         0.107
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('tautomer', 5)": {
        "margin": 0.1142,
@@ -1810,7 +2402,8 @@
         0.1276
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('tautomer', 10)": {
        "margin": 0.1466,
@@ -1819,17 +2412,21 @@
         0.1594
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       }
      }
     },
     "graphretro over graph2smiles": {
      "dominates": false,
-     "certified": false,
+     "separated_in_every_cell": false,
+     "contested": false,
+     "resolved_in_the_published_cell": false,
      "cells_that_reverse_it": [
       "('nostereo', 1)",
       "('tautomer', 1)"
      ],
+     "cells_that_reverse_it_with_an_interval": [],
      "cells_it_is_not_resolved_in": [
       "('canonical', 1)",
       "('nostereo', 3)",
@@ -1843,7 +2440,8 @@
         0.0218
        ],
        "positive": true,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('canonical', 3)": {
        "margin": 0.0158,
@@ -1852,7 +2450,8 @@
         0.0292
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('canonical', 5)": {
        "margin": 0.021,
@@ -1861,7 +2460,8 @@
         0.0344
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('canonical', 10)": {
        "margin": 0.0212,
@@ -1870,7 +2470,8 @@
         0.0346
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('nostereo', 1)": {
        "margin": -0.007,
@@ -1879,7 +2480,8 @@
         0.0062
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('nostereo', 3)": {
        "margin": 0.0132,
@@ -1888,7 +2490,8 @@
         0.0264
        ],
        "positive": true,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('nostereo', 5)": {
        "margin": 0.0212,
@@ -1897,7 +2500,8 @@
         0.0342
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('nostereo', 10)": {
        "margin": 0.024,
@@ -1906,7 +2510,8 @@
         0.0372
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('inchikey', 1)": {
        "margin": 0.0084,
@@ -1915,7 +2520,8 @@
         0.0218
        ],
        "positive": true,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('inchikey', 3)": {
        "margin": 0.0158,
@@ -1924,7 +2530,8 @@
         0.0292
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('inchikey', 5)": {
        "margin": 0.021,
@@ -1933,7 +2540,8 @@
         0.0344
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('inchikey', 10)": {
        "margin": 0.0212,
@@ -1942,7 +2550,8 @@
         0.0346
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('tautomer', 1)": {
        "margin": -0.004,
@@ -1951,7 +2560,8 @@
         0.009
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('tautomer', 3)": {
        "margin": 0.0186,
@@ -1960,7 +2570,8 @@
         0.0318
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('tautomer', 5)": {
        "margin": 0.027,
@@ -1969,7 +2580,8 @@
         0.04
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('tautomer', 10)": {
        "margin": 0.0304,
@@ -1978,17 +2590,21 @@
         0.0434
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       }
      }
     },
     "localretro over graph2smiles": {
      "dominates": false,
-     "certified": false,
+     "separated_in_every_cell": false,
+     "contested": false,
+     "resolved_in_the_published_cell": false,
      "cells_that_reverse_it": [
       "('nostereo', 1)",
       "('tautomer', 1)"
      ],
+     "cells_that_reverse_it_with_an_interval": [],
      "cells_it_is_not_resolved_in": [
       "('canonical', 1)",
       "('inchikey', 1)"
@@ -2001,7 +2617,8 @@
         0.018
        ],
        "positive": true,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('canonical', 3)": {
        "margin": 0.1082,
@@ -2010,7 +2627,8 @@
         0.1206
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('canonical', 5)": {
        "margin": 0.1478,
@@ -2019,7 +2637,8 @@
         0.16
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('canonical', 10)": {
        "margin": 0.1864,
@@ -2028,7 +2647,8 @@
         0.1982
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('nostereo', 1)": {
        "margin": -0.0102,
@@ -2037,7 +2657,8 @@
         0.0032
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('nostereo', 3)": {
        "margin": 0.1082,
@@ -2046,7 +2667,8 @@
         0.1204
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('nostereo', 5)": {
        "margin": 0.1508,
@@ -2055,7 +2677,8 @@
         0.1628
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('nostereo', 10)": {
        "margin": 0.1922,
@@ -2064,7 +2687,8 @@
         0.2036
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('inchikey', 1)": {
        "margin": 0.0046,
@@ -2073,7 +2697,8 @@
         0.018
        ],
        "positive": true,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('inchikey', 3)": {
        "margin": 0.1082,
@@ -2082,7 +2707,8 @@
         0.1206
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('inchikey', 5)": {
        "margin": 0.1478,
@@ -2091,7 +2717,8 @@
         0.16
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('inchikey', 10)": {
        "margin": 0.1864,
@@ -2100,7 +2727,8 @@
         0.1982
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('tautomer', 1)": {
        "margin": -0.01,
@@ -2109,7 +2737,8 @@
         0.0034
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('tautomer', 3)": {
        "margin": 0.1092,
@@ -2118,7 +2747,8 @@
         0.1212
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('tautomer', 5)": {
        "margin": 0.1508,
@@ -2127,7 +2757,8 @@
         0.1626
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('tautomer', 10)": {
        "margin": 0.192,
@@ -2136,17 +2767,21 @@
         0.2034
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       }
      }
     },
     "retroformer over graph2smiles": {
      "dominates": false,
-     "certified": false,
+     "separated_in_every_cell": false,
+     "contested": false,
+     "resolved_in_the_published_cell": false,
      "cells_that_reverse_it": [
       "('nostereo', 1)",
       "('tautomer', 1)"
      ],
+     "cells_that_reverse_it_with_an_interval": [],
      "cells_it_is_not_resolved_in": [
       "('canonical', 1)",
       "('inchikey', 1)"
@@ -2159,7 +2794,8 @@
         0.015
        ],
        "positive": true,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('canonical', 3)": {
        "margin": 0.045,
@@ -2168,7 +2804,8 @@
         0.057
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('canonical', 5)": {
        "margin": 0.0668,
@@ -2177,7 +2814,8 @@
         0.079
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('canonical', 10)": {
        "margin": 0.0956,
@@ -2186,7 +2824,8 @@
         0.1072
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('nostereo', 1)": {
        "margin": -0.003,
@@ -2195,7 +2834,8 @@
         0.009
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('nostereo', 3)": {
        "margin": 0.0422,
@@ -2204,7 +2844,8 @@
         0.054
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('nostereo', 5)": {
        "margin": 0.0642,
@@ -2213,7 +2854,8 @@
         0.076
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('nostereo', 10)": {
        "margin": 0.0942,
@@ -2222,7 +2864,8 @@
         0.106
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('inchikey', 1)": {
        "margin": 0.0032,
@@ -2231,7 +2874,8 @@
         0.015
        ],
        "positive": true,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('inchikey', 3)": {
        "margin": 0.0452,
@@ -2240,7 +2884,8 @@
         0.0574
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('inchikey', 5)": {
        "margin": 0.067,
@@ -2249,7 +2894,8 @@
         0.0792
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('inchikey', 10)": {
        "margin": 0.0958,
@@ -2258,7 +2904,8 @@
         0.1076
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('tautomer', 1)": {
        "margin": -0.0036,
@@ -2267,7 +2914,8 @@
         0.0082
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('tautomer', 3)": {
        "margin": 0.0422,
@@ -2276,7 +2924,8 @@
         0.054
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('tautomer', 5)": {
        "margin": 0.0638,
@@ -2285,7 +2934,8 @@
         0.0758
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('tautomer', 10)": {
        "margin": 0.0944,
@@ -2294,14 +2944,18 @@
         0.106
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       }
      }
     },
     "graph2smiles over retroxpert": {
      "dominates": true,
-     "certified": true,
+     "separated_in_every_cell": true,
+     "contested": false,
+     "resolved_in_the_published_cell": true,
      "cells_that_reverse_it": [],
+     "cells_that_reverse_it_with_an_interval": [],
      "cells_it_is_not_resolved_in": [],
      "per_cell": {
       "('canonical', 1)": {
@@ -2311,7 +2965,8 @@
         0.096
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('canonical', 3)": {
        "margin": 0.063,
@@ -2320,7 +2975,8 @@
         0.0766
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('canonical', 5)": {
        "margin": 0.0504,
@@ -2329,7 +2985,8 @@
         0.0636
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('canonical', 10)": {
        "margin": 0.0294,
@@ -2338,7 +2995,8 @@
         0.042
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('nostereo', 1)": {
        "margin": 0.0952,
@@ -2347,7 +3005,8 @@
         0.1086
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('nostereo', 3)": {
        "margin": 0.0694,
@@ -2356,7 +3015,8 @@
         0.0826
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('nostereo', 5)": {
        "margin": 0.0558,
@@ -2365,7 +3025,8 @@
         0.069
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('nostereo', 10)": {
        "margin": 0.035,
@@ -2374,7 +3035,8 @@
         0.0476
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('inchikey', 1)": {
        "margin": 0.0826,
@@ -2383,7 +3045,8 @@
         0.096
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('inchikey', 3)": {
        "margin": 0.0628,
@@ -2392,7 +3055,8 @@
         0.0764
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('inchikey', 5)": {
        "margin": 0.0502,
@@ -2401,7 +3065,8 @@
         0.0634
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('inchikey', 10)": {
        "margin": 0.0294,
@@ -2410,7 +3075,8 @@
         0.042
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('tautomer', 1)": {
        "margin": 0.0964,
@@ -2419,7 +3085,8 @@
         0.1098
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('tautomer', 3)": {
        "margin": 0.0704,
@@ -2428,7 +3095,8 @@
         0.0838
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('tautomer', 5)": {
        "margin": 0.0568,
@@ -2437,7 +3105,8 @@
         0.0698
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('tautomer', 10)": {
        "margin": 0.0346,
@@ -2446,14 +3115,31 @@
         0.0472
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       }
      }
     },
     "graphretro over localretro": {
      "dominates": false,
-     "certified": false,
+     "separated_in_every_cell": false,
+     "contested": true,
+     "resolved_in_the_published_cell": false,
      "cells_that_reverse_it": [
+      "('canonical', 3)",
+      "('canonical', 5)",
+      "('canonical', 10)",
+      "('nostereo', 3)",
+      "('nostereo', 5)",
+      "('nostereo', 10)",
+      "('inchikey', 3)",
+      "('inchikey', 5)",
+      "('inchikey', 10)",
+      "('tautomer', 3)",
+      "('tautomer', 5)",
+      "('tautomer', 10)"
+     ],
+     "cells_that_reverse_it_with_an_interval": [
       "('canonical', 3)",
       "('canonical', 5)",
       "('canonical', 10)",
@@ -2481,7 +3167,8 @@
         0.017
        ],
        "positive": true,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('canonical', 3)": {
        "margin": -0.0924,
@@ -2490,7 +3177,8 @@
         -0.0802
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('canonical', 5)": {
        "margin": -0.1268,
@@ -2499,7 +3187,8 @@
         -0.1152
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('canonical', 10)": {
        "margin": -0.1652,
@@ -2508,7 +3197,8 @@
         -0.154
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('nostereo', 1)": {
        "margin": 0.0032,
@@ -2517,7 +3207,8 @@
         0.0164
        ],
        "positive": true,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('nostereo', 3)": {
        "margin": -0.095,
@@ -2526,7 +3217,8 @@
         -0.0826
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('nostereo', 5)": {
        "margin": -0.1296,
@@ -2535,7 +3227,8 @@
         -0.118
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('nostereo', 10)": {
        "margin": -0.1682,
@@ -2544,7 +3237,8 @@
         -0.1568
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('inchikey', 1)": {
        "margin": 0.0038,
@@ -2553,7 +3247,8 @@
         0.017
        ],
        "positive": true,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('inchikey', 3)": {
        "margin": -0.0924,
@@ -2562,7 +3257,8 @@
         -0.0802
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('inchikey', 5)": {
        "margin": -0.1268,
@@ -2571,7 +3267,8 @@
         -0.1152
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('inchikey', 10)": {
        "margin": -0.1652,
@@ -2580,7 +3277,8 @@
         -0.154
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('tautomer', 1)": {
        "margin": 0.006,
@@ -2589,7 +3287,8 @@
         0.0192
        ],
        "positive": true,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('tautomer', 3)": {
        "margin": -0.0906,
@@ -2598,7 +3297,8 @@
         -0.0782
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('tautomer', 5)": {
        "margin": -0.1238,
@@ -2607,7 +3307,8 @@
         -0.1122
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('tautomer', 10)": {
        "margin": -0.1616,
@@ -2616,13 +3317,16 @@
         -0.1504
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       }
      }
     },
     "graphretro over retroformer": {
      "dominates": false,
-     "certified": false,
+     "separated_in_every_cell": false,
+     "contested": true,
+     "resolved_in_the_published_cell": false,
      "cells_that_reverse_it": [
       "('canonical', 3)",
       "('canonical', 5)",
@@ -2639,6 +3343,20 @@
       "('tautomer', 5)",
       "('tautomer', 10)"
      ],
+     "cells_that_reverse_it_with_an_interval": [
+      "('canonical', 3)",
+      "('canonical', 5)",
+      "('canonical', 10)",
+      "('nostereo', 3)",
+      "('nostereo', 5)",
+      "('nostereo', 10)",
+      "('inchikey', 3)",
+      "('inchikey', 5)",
+      "('inchikey', 10)",
+      "('tautomer', 3)",
+      "('tautomer', 5)",
+      "('tautomer', 10)"
+     ],
      "cells_it_is_not_resolved_in": [
       "('canonical', 1)",
       "('inchikey', 1)"
@@ -2651,7 +3369,8 @@
         0.0188
        ],
        "positive": true,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('canonical', 3)": {
        "margin": -0.0292,
@@ -2660,7 +3379,8 @@
         -0.016
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('canonical', 5)": {
        "margin": -0.0458,
@@ -2669,7 +3389,8 @@
         -0.0328
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('canonical', 10)": {
        "margin": -0.0744,
@@ -2678,7 +3399,8 @@
         -0.0618
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('nostereo', 1)": {
        "margin": -0.004,
@@ -2687,7 +3409,8 @@
         0.0094
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('nostereo', 3)": {
        "margin": -0.029,
@@ -2696,7 +3419,8 @@
         -0.0158
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('nostereo', 5)": {
        "margin": -0.043,
@@ -2705,7 +3429,8 @@
         -0.03
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('nostereo', 10)": {
        "margin": -0.0702,
@@ -2714,7 +3439,8 @@
         -0.0576
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('inchikey', 1)": {
        "margin": 0.0052,
@@ -2723,7 +3449,8 @@
         0.0188
        ],
        "positive": true,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('inchikey', 3)": {
        "margin": -0.0294,
@@ -2732,7 +3459,8 @@
         -0.0162
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('inchikey', 5)": {
        "margin": -0.046,
@@ -2741,7 +3469,8 @@
         -0.033
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('inchikey', 10)": {
        "margin": -0.0746,
@@ -2750,7 +3479,8 @@
         -0.062
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('tautomer', 1)": {
        "margin": -0.0004,
@@ -2759,7 +3489,8 @@
         0.013
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('tautomer', 3)": {
        "margin": -0.0236,
@@ -2768,7 +3499,8 @@
         -0.0104
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('tautomer', 5)": {
        "margin": -0.0368,
@@ -2777,7 +3509,8 @@
         -0.0238
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('tautomer', 10)": {
        "margin": -0.064,
@@ -2786,14 +3519,18 @@
         -0.0516
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       }
      }
     },
     "graphretro over retroxpert": {
      "dominates": true,
-     "certified": true,
+     "separated_in_every_cell": true,
+     "contested": false,
+     "resolved_in_the_published_cell": true,
      "cells_that_reverse_it": [],
+     "cells_that_reverse_it_with_an_interval": [],
      "cells_it_is_not_resolved_in": [],
      "per_cell": {
       "('canonical', 1)": {
@@ -2803,7 +3540,8 @@
         0.1054
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('canonical', 3)": {
        "margin": 0.0788,
@@ -2812,7 +3550,8 @@
         0.0932
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('canonical', 5)": {
        "margin": 0.0714,
@@ -2821,7 +3560,8 @@
         0.086
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('canonical', 10)": {
        "margin": 0.0506,
@@ -2830,7 +3570,8 @@
         0.065
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('nostereo', 1)": {
        "margin": 0.0882,
@@ -2839,7 +3580,8 @@
         0.1026
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('nostereo', 3)": {
        "margin": 0.0826,
@@ -2848,7 +3590,8 @@
         0.097
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('nostereo', 5)": {
        "margin": 0.077,
@@ -2857,7 +3600,8 @@
         0.0912
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('nostereo', 10)": {
        "margin": 0.059,
@@ -2866,7 +3610,8 @@
         0.0734
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('inchikey', 1)": {
        "margin": 0.091,
@@ -2875,7 +3620,8 @@
         0.1054
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('inchikey', 3)": {
        "margin": 0.0786,
@@ -2884,7 +3630,8 @@
         0.093
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('inchikey', 5)": {
        "margin": 0.0712,
@@ -2893,7 +3640,8 @@
         0.0858
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('inchikey', 10)": {
        "margin": 0.0506,
@@ -2902,7 +3650,8 @@
         0.065
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('tautomer', 1)": {
        "margin": 0.0924,
@@ -2911,7 +3660,8 @@
         0.1066
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('tautomer', 3)": {
        "margin": 0.089,
@@ -2920,7 +3670,8 @@
         0.1034
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('tautomer', 5)": {
        "margin": 0.0838,
@@ -2929,7 +3680,8 @@
         0.098
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('tautomer', 10)": {
        "margin": 0.065,
@@ -2938,17 +3690,21 @@
         0.0792
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       }
      }
     },
     "localretro over retroformer": {
      "dominates": false,
-     "certified": false,
+     "separated_in_every_cell": false,
+     "contested": false,
+     "resolved_in_the_published_cell": false,
      "cells_that_reverse_it": [
       "('nostereo', 1)",
       "('tautomer', 1)"
      ],
+     "cells_that_reverse_it_with_an_interval": [],
      "cells_it_is_not_resolved_in": [
       "('canonical', 1)",
       "('inchikey', 1)"
@@ -2961,7 +3717,8 @@
         0.014
        ],
        "positive": true,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('canonical', 3)": {
        "margin": 0.0632,
@@ -2970,7 +3727,8 @@
         0.075
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('canonical', 5)": {
        "margin": 0.081,
@@ -2979,7 +3737,8 @@
         0.0922
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('canonical', 10)": {
        "margin": 0.0908,
@@ -2988,7 +3747,8 @@
         0.1008
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('nostereo', 1)": {
        "margin": -0.0072,
@@ -2997,7 +3757,8 @@
         0.0054
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('nostereo', 3)": {
        "margin": 0.066,
@@ -3006,7 +3767,8 @@
         0.0776
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('nostereo', 5)": {
        "margin": 0.0866,
@@ -3015,7 +3777,8 @@
         0.0974
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('nostereo', 10)": {
        "margin": 0.098,
@@ -3024,7 +3787,8 @@
         0.1074
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('inchikey', 1)": {
        "margin": 0.0014,
@@ -3033,7 +3797,8 @@
         0.014
        ],
        "positive": true,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('inchikey', 3)": {
        "margin": 0.063,
@@ -3042,7 +3807,8 @@
         0.0748
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('inchikey', 5)": {
        "margin": 0.0808,
@@ -3051,7 +3817,8 @@
         0.092
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('inchikey', 10)": {
        "margin": 0.0906,
@@ -3060,7 +3827,8 @@
         0.1004
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('tautomer', 1)": {
        "margin": -0.0064,
@@ -3069,7 +3837,8 @@
         0.0062
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('tautomer', 3)": {
        "margin": 0.067,
@@ -3078,7 +3847,8 @@
         0.0786
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('tautomer', 5)": {
        "margin": 0.087,
@@ -3087,7 +3857,8 @@
         0.0976
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('tautomer', 10)": {
        "margin": 0.0976,
@@ -3096,14 +3867,18 @@
         0.107
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       }
      }
     },
     "localretro over retroxpert": {
      "dominates": true,
-     "certified": true,
+     "separated_in_every_cell": true,
+     "contested": false,
+     "resolved_in_the_published_cell": true,
      "cells_that_reverse_it": [],
+     "cells_that_reverse_it_with_an_interval": [],
      "cells_it_is_not_resolved_in": [],
      "per_cell": {
       "('canonical', 1)": {
@@ -3113,7 +3888,8 @@
         0.1012
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('canonical', 3)": {
        "margin": 0.1712,
@@ -3122,7 +3898,8 @@
         0.1846
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('canonical', 5)": {
        "margin": 0.1982,
@@ -3131,7 +3908,8 @@
         0.2114
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('canonical', 10)": {
        "margin": 0.2158,
@@ -3140,7 +3918,8 @@
         0.2286
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('nostereo', 1)": {
        "margin": 0.085,
@@ -3149,7 +3928,8 @@
         0.0992
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('nostereo', 3)": {
        "margin": 0.1776,
@@ -3158,7 +3938,8 @@
         0.191
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('nostereo', 5)": {
        "margin": 0.2066,
@@ -3167,7 +3948,8 @@
         0.2196
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('nostereo', 10)": {
        "margin": 0.2272,
@@ -3176,7 +3958,8 @@
         0.2396
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('inchikey', 1)": {
        "margin": 0.0872,
@@ -3185,7 +3968,8 @@
         0.1012
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('inchikey', 3)": {
        "margin": 0.171,
@@ -3194,7 +3978,8 @@
         0.1846
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('inchikey', 5)": {
        "margin": 0.198,
@@ -3203,7 +3988,8 @@
         0.2114
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('inchikey', 10)": {
        "margin": 0.2158,
@@ -3212,7 +3998,8 @@
         0.2286
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('tautomer', 1)": {
        "margin": 0.0864,
@@ -3221,7 +4008,8 @@
         0.1006
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('tautomer', 3)": {
        "margin": 0.1796,
@@ -3230,7 +4018,8 @@
         0.1932
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('tautomer', 5)": {
        "margin": 0.2076,
@@ -3239,7 +4028,8 @@
         0.2206
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('tautomer', 10)": {
        "margin": 0.2266,
@@ -3248,14 +4038,18 @@
         0.239
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       }
      }
     },
     "retroformer over retroxpert": {
      "dominates": true,
-     "certified": true,
+     "separated_in_every_cell": true,
+     "contested": false,
+     "resolved_in_the_published_cell": true,
      "cells_that_reverse_it": [],
+     "cells_that_reverse_it_with_an_interval": [],
      "cells_it_is_not_resolved_in": [],
      "per_cell": {
       "('canonical', 1)": {
@@ -3265,7 +4059,8 @@
         0.0992
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('canonical', 3)": {
        "margin": 0.108,
@@ -3274,7 +4069,8 @@
         0.1216
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('canonical', 5)": {
        "margin": 0.1172,
@@ -3283,7 +4079,8 @@
         0.13
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('canonical', 10)": {
        "margin": 0.125,
@@ -3292,7 +4089,8 @@
         0.1376
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('nostereo', 1)": {
        "margin": 0.0922,
@@ -3301,7 +4099,8 @@
         0.1056
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('nostereo', 3)": {
        "margin": 0.1116,
@@ -3310,7 +4109,8 @@
         0.1252
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('nostereo', 5)": {
        "margin": 0.12,
@@ -3319,7 +4119,8 @@
         0.133
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('nostereo', 10)": {
        "margin": 0.1292,
@@ -3328,7 +4129,8 @@
         0.1418
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('inchikey', 1)": {
        "margin": 0.0858,
@@ -3337,7 +4139,8 @@
         0.0992
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('inchikey', 3)": {
        "margin": 0.108,
@@ -3346,7 +4149,8 @@
         0.1216
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('inchikey', 5)": {
        "margin": 0.1172,
@@ -3355,7 +4159,8 @@
         0.13
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('inchikey', 10)": {
        "margin": 0.1252,
@@ -3364,7 +4169,8 @@
         0.1378
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('tautomer', 1)": {
        "margin": 0.0928,
@@ -3373,7 +4179,8 @@
         0.1064
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('tautomer', 3)": {
        "margin": 0.1126,
@@ -3382,7 +4189,8 @@
         0.1262
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('tautomer', 5)": {
        "margin": 0.1206,
@@ -3391,7 +4199,8 @@
         0.1336
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('tautomer', 10)": {
        "margin": 0.129,
@@ -3400,13 +4209,71 @@
         0.1414
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       }
      }
     }
    }
   },
   "cluster1": {
+   "system_accuracy_by_cell": {
+    "chemformer": {
+     "('canonical', 1)": 0.5389,
+     "('canonical', 3)": 0.6094,
+     "('canonical', 5)": 0.6184,
+     "('canonical', 10)": 0.624,
+     "('nostereo', 1)": 0.55,
+     "('nostereo', 3)": 0.6206,
+     "('nostereo', 5)": 0.6303,
+     "('nostereo', 10)": 0.6359,
+     "('inchikey', 1)": 0.5389,
+     "('inchikey', 3)": 0.6094,
+     "('inchikey', 5)": 0.6184,
+     "('inchikey', 10)": 0.624,
+     "('tautomer', 1)": 0.5532,
+     "('tautomer', 3)": 0.624,
+     "('tautomer', 5)": 0.6339,
+     "('tautomer', 10)": 0.6395
+    },
+    "gta": {
+     "('canonical', 1)": 0.5177,
+     "('canonical', 3)": 0.6782,
+     "('canonical', 5)": 0.7483,
+     "('canonical', 10)": 0.8177,
+     "('nostereo', 1)": 0.5403,
+     "('nostereo', 3)": 0.6969,
+     "('nostereo', 5)": 0.7666,
+     "('nostereo', 10)": 0.8322,
+     "('inchikey', 1)": 0.5177,
+     "('inchikey', 3)": 0.6784,
+     "('inchikey', 5)": 0.7485,
+     "('inchikey', 10)": 0.8179,
+     "('tautomer', 1)": 0.5442,
+     "('tautomer', 3)": 0.7015,
+     "('tautomer', 5)": 0.7708,
+     "('tautomer', 10)": 0.835
+    },
+    "tiedtransformer": {
+     "('canonical', 1)": 0.4707,
+     "('canonical', 3)": 0.6786,
+     "('canonical', 5)": 0.7427,
+     "('canonical', 10)": 0.7983,
+     "('nostereo', 1)": 0.4807,
+     "('nostereo', 3)": 0.6929,
+     "('nostereo', 5)": 0.7565,
+     "('nostereo', 10)": 0.8109,
+     "('inchikey', 1)": 0.4707,
+     "('inchikey', 3)": 0.6786,
+     "('inchikey', 5)": 0.7427,
+     "('inchikey', 10)": 0.7983,
+     "('tautomer', 1)": 0.4839,
+     "('tautomer', 3)": 0.6973,
+     "('tautomer', 5)": 0.7613,
+     "('tautomer', 10)": 0.8145
+    }
+   },
+   "n_items": 4982,
    "published_order": [
     "chemformer",
     "gta",
@@ -3417,17 +4284,150 @@
    "n_cells": 16,
    "n_pairs": 3,
    "n_dominating": 0,
-   "n_certified": 0,
+   "n_separated_in_every_cell": 0,
+   "n_contested": 2,
    "tiers_distinguished": 1,
+   "distinct_orderings_across_the_grid": 3,
    "robustness": 0.0,
-   "certified_robustness": 0.0,
+   "robustness_ci95": [
+    0.0,
+    0.3333
+   ],
+   "separated_share": 0.0,
    "reversed_by_some_cell": 3,
+   "reversed_with_an_interval": 2,
    "unresolved_though_never_reversed": 0,
+   "n_resolved_in_the_published_cell": 3,
+   "robustness_among_resolved": 0.0,
+   "sub_grids": {
+    "criteria only, at the published budget": {
+     "n_cells": 4,
+     "n_dominating": 3,
+     "share": 1.0,
+     "n_separated_in_every_cell": 2,
+     "tiers": 3,
+     "distinct_orderings": 1
+    },
+    "budgets only, at the published criterion": {
+     "n_cells": 4,
+     "n_dominating": 0,
+     "share": 0.0,
+     "n_separated_in_every_cell": 0,
+     "tiers": 1,
+     "distinct_orderings": 3
+    },
+    "the product": {
+     "n_cells": 16,
+     "n_dominating": 0,
+     "share": 0.0,
+     "n_separated_in_every_cell": 0,
+     "tiers": 1,
+     "distinct_orderings": 3
+    }
+   },
+   "per_cell_orders": {
+    "('canonical', 1)": [
+     "chemformer",
+     "gta",
+     "tiedtransformer"
+    ],
+    "('canonical', 3)": [
+     "tiedtransformer",
+     "gta",
+     "chemformer"
+    ],
+    "('canonical', 5)": [
+     "gta",
+     "tiedtransformer",
+     "chemformer"
+    ],
+    "('canonical', 10)": [
+     "gta",
+     "tiedtransformer",
+     "chemformer"
+    ],
+    "('nostereo', 1)": [
+     "chemformer",
+     "gta",
+     "tiedtransformer"
+    ],
+    "('nostereo', 3)": [
+     "gta",
+     "tiedtransformer",
+     "chemformer"
+    ],
+    "('nostereo', 5)": [
+     "gta",
+     "tiedtransformer",
+     "chemformer"
+    ],
+    "('nostereo', 10)": [
+     "gta",
+     "tiedtransformer",
+     "chemformer"
+    ],
+    "('inchikey', 1)": [
+     "chemformer",
+     "gta",
+     "tiedtransformer"
+    ],
+    "('inchikey', 3)": [
+     "tiedtransformer",
+     "gta",
+     "chemformer"
+    ],
+    "('inchikey', 5)": [
+     "gta",
+     "tiedtransformer",
+     "chemformer"
+    ],
+    "('inchikey', 10)": [
+     "gta",
+     "tiedtransformer",
+     "chemformer"
+    ],
+    "('tautomer', 1)": [
+     "chemformer",
+     "gta",
+     "tiedtransformer"
+    ],
+    "('tautomer', 3)": [
+     "gta",
+     "tiedtransformer",
+     "chemformer"
+    ],
+    "('tautomer', 5)": [
+     "gta",
+     "tiedtransformer",
+     "chemformer"
+    ],
+    "('tautomer', 10)": [
+     "gta",
+     "tiedtransformer",
+     "chemformer"
+    ]
+   },
    "pairs": {
     "chemformer over gta": {
      "dominates": false,
-     "certified": false,
+     "separated_in_every_cell": false,
+     "contested": true,
+     "resolved_in_the_published_cell": true,
      "cells_that_reverse_it": [
+      "('canonical', 3)",
+      "('canonical', 5)",
+      "('canonical', 10)",
+      "('nostereo', 3)",
+      "('nostereo', 5)",
+      "('nostereo', 10)",
+      "('inchikey', 3)",
+      "('inchikey', 5)",
+      "('inchikey', 10)",
+      "('tautomer', 3)",
+      "('tautomer', 5)",
+      "('tautomer', 10)"
+     ],
+     "cells_that_reverse_it_with_an_interval": [
       "('canonical', 3)",
       "('canonical', 5)",
       "('canonical', 10)",
@@ -3453,7 +4453,8 @@
         0.0335
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('canonical', 3)": {
        "margin": -0.0688,
@@ -3462,7 +4463,8 @@
         -0.0568
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('canonical', 5)": {
        "margin": -0.1299,
@@ -3471,7 +4473,8 @@
         -0.1176
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('canonical', 10)": {
        "margin": -0.1937,
@@ -3480,7 +4483,8 @@
         -0.1811
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('nostereo', 1)": {
        "margin": 0.0096,
@@ -3489,7 +4493,8 @@
         0.0217
        ],
        "positive": true,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('nostereo', 3)": {
        "margin": -0.0763,
@@ -3498,7 +4503,8 @@
         -0.0644
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('nostereo', 5)": {
        "margin": -0.1363,
@@ -3507,7 +4513,8 @@
         -0.124
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('nostereo', 10)": {
        "margin": -0.1963,
@@ -3516,7 +4523,8 @@
         -0.1839
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('inchikey', 1)": {
        "margin": 0.0213,
@@ -3525,7 +4533,8 @@
         0.0335
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('inchikey', 3)": {
        "margin": -0.069,
@@ -3534,7 +4543,8 @@
         -0.057
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('inchikey', 5)": {
        "margin": -0.1301,
@@ -3543,7 +4553,8 @@
         -0.1178
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('inchikey', 10)": {
        "margin": -0.1939,
@@ -3552,7 +4563,8 @@
         -0.1813
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('tautomer', 1)": {
        "margin": 0.009,
@@ -3561,7 +4573,8 @@
         0.0211
        ],
        "positive": true,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('tautomer', 3)": {
        "margin": -0.0775,
@@ -3570,7 +4583,8 @@
         -0.0656
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('tautomer', 5)": {
        "margin": -0.1369,
@@ -3579,7 +4593,8 @@
         -0.1248
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('tautomer', 10)": {
        "margin": -0.1955,
@@ -3588,14 +4603,31 @@
         -0.1831
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       }
      }
     },
     "chemformer over tiedtransformer": {
      "dominates": false,
-     "certified": false,
+     "separated_in_every_cell": false,
+     "contested": true,
+     "resolved_in_the_published_cell": true,
      "cells_that_reverse_it": [
+      "('canonical', 3)",
+      "('canonical', 5)",
+      "('canonical', 10)",
+      "('nostereo', 3)",
+      "('nostereo', 5)",
+      "('nostereo', 10)",
+      "('inchikey', 3)",
+      "('inchikey', 5)",
+      "('inchikey', 10)",
+      "('tautomer', 3)",
+      "('tautomer', 5)",
+      "('tautomer', 10)"
+     ],
+     "cells_that_reverse_it_with_an_interval": [
       "('canonical', 3)",
       "('canonical', 5)",
       "('canonical', 10)",
@@ -3618,7 +4650,8 @@
         0.0815
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('canonical', 3)": {
        "margin": -0.0692,
@@ -3627,7 +4660,8 @@
         -0.056
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('canonical', 5)": {
        "margin": -0.1242,
@@ -3636,7 +4670,8 @@
         -0.111
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('canonical', 10)": {
        "margin": -0.1742,
@@ -3645,7 +4680,8 @@
         -0.1612
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('nostereo', 1)": {
        "margin": 0.0692,
@@ -3654,7 +4690,8 @@
         0.0823
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('nostereo', 3)": {
        "margin": -0.0723,
@@ -3663,7 +4700,8 @@
         -0.059
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('nostereo', 5)": {
        "margin": -0.1263,
@@ -3672,7 +4710,8 @@
         -0.1128
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('nostereo', 10)": {
        "margin": -0.175,
@@ -3681,7 +4720,8 @@
         -0.1618
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('inchikey', 1)": {
        "margin": 0.0682,
@@ -3690,7 +4730,8 @@
         0.0815
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('inchikey', 3)": {
        "margin": -0.0692,
@@ -3699,7 +4740,8 @@
         -0.056
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('inchikey', 5)": {
        "margin": -0.1242,
@@ -3708,7 +4750,8 @@
         -0.111
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('inchikey', 10)": {
        "margin": -0.1742,
@@ -3717,7 +4760,8 @@
         -0.1612
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('tautomer', 1)": {
        "margin": 0.0692,
@@ -3726,7 +4770,8 @@
         0.0825
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('tautomer', 3)": {
        "margin": -0.0733,
@@ -3735,7 +4780,8 @@
         -0.0598
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('tautomer', 5)": {
        "margin": -0.1275,
@@ -3744,7 +4790,8 @@
         -0.114
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       },
       "('tautomer', 10)": {
        "margin": -0.175,
@@ -3753,17 +4800,21 @@
         -0.1616
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": true
       }
      }
     },
     "gta over tiedtransformer": {
      "dominates": false,
-     "certified": false,
+     "separated_in_every_cell": false,
+     "contested": false,
+     "resolved_in_the_published_cell": true,
      "cells_that_reverse_it": [
       "('canonical', 3)",
       "('inchikey', 3)"
      ],
+     "cells_that_reverse_it_with_an_interval": [],
      "cells_it_is_not_resolved_in": [
       "('canonical', 5)",
       "('nostereo', 3)",
@@ -3780,7 +4831,8 @@
         0.0596
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('canonical', 3)": {
        "margin": -0.0004,
@@ -3789,7 +4841,8 @@
         0.0114
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('canonical', 5)": {
        "margin": 0.0056,
@@ -3798,7 +4851,8 @@
         0.0169
        ],
        "positive": true,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('canonical', 10)": {
        "margin": 0.0195,
@@ -3807,7 +4861,8 @@
         0.0297
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('nostereo', 1)": {
        "margin": 0.0596,
@@ -3816,7 +4871,8 @@
         0.0725
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('nostereo', 3)": {
        "margin": 0.004,
@@ -3825,7 +4881,8 @@
         0.0157
        ],
        "positive": true,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('nostereo', 5)": {
        "margin": 0.01,
@@ -3834,7 +4891,8 @@
         0.0215
        ],
        "positive": true,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('nostereo', 10)": {
        "margin": 0.0213,
@@ -3843,7 +4901,8 @@
         0.0315
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('inchikey', 1)": {
        "margin": 0.047,
@@ -3852,7 +4911,8 @@
         0.0596
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('inchikey', 3)": {
        "margin": -0.0002,
@@ -3861,7 +4921,8 @@
         0.0116
        ],
        "positive": false,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('inchikey', 5)": {
        "margin": 0.0058,
@@ -3870,7 +4931,8 @@
         0.0173
        ],
        "positive": true,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('inchikey', 10)": {
        "margin": 0.0197,
@@ -3879,7 +4941,8 @@
         0.0299
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('tautomer', 1)": {
        "margin": 0.0602,
@@ -3888,7 +4951,8 @@
         0.0729
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       },
       "('tautomer', 3)": {
        "margin": 0.0042,
@@ -3897,7 +4961,8 @@
         0.0159
        ],
        "positive": true,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('tautomer', 5)": {
        "margin": 0.0094,
@@ -3906,7 +4971,8 @@
         0.0207
        ],
        "positive": true,
-       "certified": false
+       "separated": false,
+       "separated_the_other_way": false
       },
       "('tautomer', 10)": {
        "margin": 0.0205,
@@ -3915,7 +4981,8 @@
         0.0307
        ],
        "positive": true,
-       "certified": true
+       "separated": true,
+       "separated_the_other_way": false
       }
      }
     }

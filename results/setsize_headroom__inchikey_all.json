@@ -1,7 +1,7 @@
 {
  "config": {
   "script": "setsize_headroom.py",
-  "git_commit": "16016a40cee14253aada5eb6edc7bf11c233e245",
+  "git_commit": "11a103f586d30a6c54d1cc6cb44b9db7accb445f",
   "git_dirty": true,
   "n_substrates": 1170,
   "n_boot": 10000,
@@ -9,7 +9,9 @@
   "match": "inchikey",
   "population": "all",
   "note": "ranking untouched in every arm; only the number emitted changes",
-  "count_model": "least squares on heavy atoms, rings, rotatable bonds, fitted on the training split"
+  "count_model": "least squares on heavy atoms, rings, rotatable bonds, fitted on the training split",
+  "best_global_constant": "fixed k=1",
+  "baseline_note": "gains are reported against the deployed budget and against the best global constant; the second is the comparator a claim about the pool has to beat"
  },
  "arms": {
   "fixed k=1": {
@@ -21,7 +23,13 @@
     0.0409,
     0.0744
    ],
-   "certified": true
+   "separated": true,
+   "f1_gain_over_best_constant": 0.0,
+   "ci95_vs_best_constant": [
+    0.0,
+    0.0
+   ],
+   "separated_vs_best_constant": false
   },
   "fixed k=2": {
    "precision": 0.1825,
@@ -32,7 +40,13 @@
     0.0386,
     0.0605
    ],
-   "certified": true
+   "separated": true,
+   "f1_gain_over_best_constant": -0.008,
+   "ci95_vs_best_constant": [
+    -0.0188,
+    0.0029
+   ],
+   "separated_vs_best_constant": false
   },
   "fixed k=3": {
    "precision": 0.1538,
@@ -43,7 +57,13 @@
     0.0317,
     0.0479
    ],
-   "certified": true
+   "separated": true,
+   "f1_gain_over_best_constant": -0.0176,
+   "ci95_vs_best_constant": [
+    -0.031,
+    -0.004
+   ],
+   "separated_vs_best_constant": true
   },
   "fixed k=5": {
    "precision": 0.1283,
@@ -54,7 +74,13 @@
     0.0197,
     0.0287
    ],
-   "certified": true
+   "separated": true,
+   "f1_gain_over_best_constant": -0.0333,
+   "ci95_vs_best_constant": [
+    -0.0486,
+    -0.0177
+   ],
+   "separated_vs_best_constant": true
   },
   "fixed k=8": {
    "precision": 0.1121,
@@ -65,7 +91,13 @@
     0.0074,
     0.0116
    ],
-   "certified": true
+   "separated": true,
+   "f1_gain_over_best_constant": -0.048,
+   "ci95_vs_best_constant": [
+    -0.0641,
+    -0.0319
+   ],
+   "separated_vs_best_constant": true
   },
   "fixed k=15": {
    "precision": 0.1038,
@@ -76,7 +108,13 @@
     0.0,
     0.0
    ],
-   "certified": false
+   "separated": false,
+   "f1_gain_over_best_constant": -0.0574,
+   "ci95_vs_best_constant": [
+    -0.0744,
+    -0.0409
+   ],
+   "separated_vs_best_constant": true
   },
   "oracle count": {
    "precision": 0.2152,
@@ -87,7 +125,13 @@
     0.0605,
     0.0921
    ],
-   "certified": true
+   "separated": true,
+   "f1_gain_over_best_constant": 0.0186,
+   "ci95_vs_best_constant": [
+    0.0125,
+    0.0251
+   ],
+   "separated_vs_best_constant": true
   },
   "predicted count": {
    "precision": 0.1682,
@@ -98,7 +142,30 @@
     0.0345,
     0.0539
    ],
-   "certified": true
+   "separated": true,
+   "f1_gain_over_best_constant": -0.0134,
+   "ci95_vs_best_constant": [
+    -0.0255,
+    -0.0013
+   ],
+   "separated_vs_best_constant": true
+  },
+  "gap rule a=0.95": {
+   "precision": 0.2507,
+   "recall": 0.1761,
+   "f1": 0.1916,
+   "f1_gain_over_k15": 0.0587,
+   "ci95": [
+    0.0422,
+    0.0755
+   ],
+   "separated": true,
+   "f1_gain_over_best_constant": 0.0013,
+   "ci95_vs_best_constant": [
+    -0.0007,
+    0.0036
+   ],
+   "separated_vs_best_constant": false
   },
   "gap rule a=0.9": {
    "precision": 0.2484,
@@ -109,7 +176,30 @@
     0.0434,
     0.0763
    ],
-   "certified": true
+   "separated": true,
+   "f1_gain_over_best_constant": 0.0023,
+   "ci95_vs_best_constant": [
+    -0.0004,
+    0.0054
+   ],
+   "separated_vs_best_constant": false
+  },
+  "gap rule a=0.8": {
+   "precision": 0.2454,
+   "recall": 0.1907,
+   "f1": 0.1964,
+   "f1_gain_over_k15": 0.0635,
+   "ci95": [
+    0.0477,
+    0.0796
+   ],
+   "separated": true,
+   "f1_gain_over_best_constant": 0.0061,
+   "ci95_vs_best_constant": [
+    0.0012,
+    0.0113
+   ],
+   "separated_vs_best_constant": true
   },
   "gap rule a=0.75": {
    "precision": 0.2438,
@@ -120,7 +210,30 @@
     0.049,
     0.0808
    ],
-   "certified": true
+   "separated": true,
+   "f1_gain_over_best_constant": 0.0074,
+   "ci95_vs_best_constant": [
+    0.0019,
+    0.0129
+   ],
+   "separated_vs_best_constant": true
+  },
+  "gap rule a=0.6": {
+   "precision": 0.2386,
+   "recall": 0.2105,
+   "f1": 0.2015,
+   "f1_gain_over_k15": 0.0687,
+   "ci95": [
+    0.0535,
+    0.0841
+   ],
+   "separated": true,
+   "f1_gain_over_best_constant": 0.0113,
+   "ci95_vs_best_constant": [
+    0.004,
+    0.0187
+   ],
+   "separated_vs_best_constant": true
   },
   "gap rule a=0.5": {
    "precision": 0.2332,
@@ -131,7 +244,47 @@
     0.0582,
     0.0873
    ],
-   "certified": true
+   "separated": true,
+   "f1_gain_over_best_constant": 0.0151,
+   "ci95_vs_best_constant": [
+    0.0063,
+    0.0241
+   ],
+   "separated_vs_best_constant": true
+  },
+  "gap rule a=0.4": {
+   "precision": 0.2207,
+   "recall": 0.2348,
+   "f1": 0.2017,
+   "f1_gain_over_k15": 0.0689,
+   "ci95": [
+    0.0551,
+    0.083
+   ],
+   "separated": true,
+   "f1_gain_over_best_constant": 0.0115,
+   "ci95_vs_best_constant": [
+    0.0023,
+    0.021
+   ],
+   "separated_vs_best_constant": true
+  },
+  "gap rule a=0.3": {
+   "precision": 0.2117,
+   "recall": 0.2524,
+   "f1": 0.2012,
+   "f1_gain_over_k15": 0.0684,
+   "ci95": [
+    0.0556,
+    0.0815
+   ],
+   "separated": true,
+   "f1_gain_over_best_constant": 0.0109,
+   "ci95_vs_best_constant": [
+    0.0004,
+    0.0216
+   ],
+   "separated_vs_best_constant": true
   },
   "gap rule a=0.25": {
    "precision": 0.205,
@@ -142,7 +295,30 @@
     0.0545,
     0.0793
    ],
-   "certified": true
+   "separated": true,
+   "f1_gain_over_best_constant": 0.0093,
+   "ci95_vs_best_constant": [
+    -0.0019,
+    0.0205
+   ],
+   "separated_vs_best_constant": false
+  },
+  "gap rule a=0.1": {
+   "precision": 0.1724,
+   "recall": 0.3005,
+   "f1": 0.186,
+   "f1_gain_over_k15": 0.0531,
+   "ci95": [
+    0.0441,
+    0.0625
+   ],
+   "separated": true,
+   "f1_gain_over_best_constant": -0.0043,
+   "ci95_vs_best_constant": [
+    -0.0174,
+    0.0085
+   ],
+   "separated_vs_best_constant": false
   }
  },
  "count_model_coefficients": [

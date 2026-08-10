@@ -161,11 +161,33 @@ def main() -> int:
           f"{exch / len(allrows):.1%} of all)")
     print("  no exchange occurs where the gap survives the movement, as arithmetic requires")
 
+    # Read as a screening test, the inequality is what a benchmark's maintainer can actually use:
+    # it is computable from a published table of scores and one measurement of how far the criterion
+    # moves a system, without re-scoring anything, and it flags the pairs that could exchange. Its
+    # value is that it has no false negatives -- the arithmetic forbids them -- so the flagged set is
+    # guaranteed to contain every pair at risk. What it costs is the false positives: movements that
+    # widen a gap rather than close it.
+    tp = sum(r["exchanged"] and r["closer_than_the_move"] for r in allrows)
+    fp = sum(not r["exchanged"] and r["closer_than_the_move"] for r in allrows)
+    fn = sum(r["exchanged"] and not r["closer_than_the_move"] for r in allrows)
+    tn = len(allrows) - tp - fp - fn
+    screen = {"flagged": tp + fp, "exchanged_and_flagged": tp,
+              "exchanged_and_missed": fn, "not_exchanged_and_flagged": fp,
+              "not_exchanged_and_not_flagged": tn,
+              "sensitivity": round(tp / max(tp + fn, 1), 4),
+              "specificity": round(tn / max(tn + fp, 1), 4),
+              "precision": round(tp / max(tp + fp, 1), 4),
+              "share_of_comparisons_flagged": round((tp + fp) / max(len(allrows), 1), 4)}
+    print(f"  as a screening test: sensitivity {screen['sensitivity']}, "
+          f"specificity {screen['specificity']}, precision {screen['precision']}; "
+          f"it flags {screen['share_of_comparisons_flagged']:.1%} of comparisons")
+
     rep = {"config": {**_code_version(),
                       "inputs": "committed leaderboards; nothing is re-scored here",
                       "note": "differential > gap is necessary for an exchange and not sufficient; "
                               "the empirical question is how often real leaderboards meet it"},
            "per_leaderboard": report,
+           "screening_test": screen,
            "totals": {"comparisons": len(allrows), "closer_than_the_move": closer,
                       "exchanged": exch, "tied": sum(r["tied"] for r in allrows),
                       "domains": sorted({r["domain"] for r in allrows})},
