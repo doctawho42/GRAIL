@@ -291,11 +291,10 @@ procedure changes: a depth-1 enumeration that expands the substrate with explici
 SyGMa's own, which does not. On the clean test split they reach $0.200$ $[0.182,0.218]$ under the
 first and $0.387$ $[0.365,0.410]$ under the second, a paired $+0.190$ $[+0.173,+0.208]$. Most of
 that is not the convention. Expanding a substrate and never contracting the product leaves the drawn
-hydrogen on the reacting atom, and one call restores it: completing the loop lifts the expanded arm
-to $0.342$ $[0.320,0.365]$, worth $+0.142$ $[+0.125,+0.160]$, and what survives against the
-unexpanded arm is $+0.047$ $[+0.038,+0.057]$. Three quarters of the apparent engine effect is a missing call
-and a quarter the convention, both certified, and only the quarter is a difference between two
-defensible ways of applying the same rules. The whole distance between the two
+hydrogen on the reacting atom; one call restores it, lifting the expanded arm to $0.342$
+$[0.320,0.365]$, worth $+0.142$ $[+0.125,+0.160]$, and what survives against the unexpanded arm is
+$+0.047$ $[+0.038,+0.057]$. Three quarters of the apparent effect is a missing call and a quarter
+the convention, both certified. The whole distance between the two
 configurations is $+0.339$: the engine term as the two programs stand, $+0.188$ $[+0.170,+0.205]$,
 $+0.145$ $[+0.128,+0.162]$ from the $23$ rules our bank lacks, and $+0.0065$ $[+0.0038,+0.0096]$
 from composing steps.
@@ -320,22 +319,18 @@ validity floor        & on $\to$ off             & 0.200 & $0.000$ \\
 \end{center}
 
 \looseness=-1
-\paragraph{The two parts fail in opposite ways.} The larger part is not a matching effect. The
-shared templates fire equally often with the substrate expanded and every firing writes a product;
-the toolkit then refuses $63\%$ of the fragments those products separate into, against $0.4\%$
-without the expansion, because a template written against implicit hydrogens does not name the
-hydrogen it replaces and the drawn one is never removed. Contract the product and that number is
-zero: not one fragment of the completed loop is unreadable. The smaller part is a matching effect
-and nothing else. The completed loop fires the same templates and yields $20{,}601$ fragments
-against the unexpanded arm's $21{,}106$, so what survives as convention is that a substrate carrying
-its hydrogens matches a little less, which is the disagreement about how a hydrogen is spelled. The convention belongs to the bank rather than to our engine, and it decides what a
-bank reaches without deciding which bank reaches further. With the loop complete, BioTransformer
-recovers $1{,}235$ references with hydrogens drawn and $317$ with them implicit, a swing of
-$-0.353$; SyGMa recovers $1{,}260$ and $1{,}390$, a swing of $+0.050$ the other way. A coverage
-figure is the value of a bank together with a convention, and is not comparable across papers that
-state only the bank. It is not an exchange: SyGMa leads in both arms once the loop is complete, and
-the exchange an incomplete loop produces is that loop crippling the bank written for implicit
-hydrogens.
+\paragraph{The two parts fail in opposite ways.} The larger is not a matching effect: the
+templates fire equally often expanded, and the toolkit then refuses $63\%$ of the fragments those
+products separate into, against $0.4\%$ without the expansion, because a template written against
+implicit hydrogens does not name the hydrogen it replaces and the drawn one is never removed.
+Contract the product and that number is zero. The smaller is a matching effect and nothing else: the
+completed loop yields $20{,}601$ fragments against the unexpanded arm's $21{,}106$, so a substrate
+carrying its hydrogens matches a little less. The convention decides what a bank reaches without deciding which reaches
+further. With the loop complete, BioTransformer recovers $1{,}235$ references with hydrogens drawn
+and $317$ with them implicit, a swing of $-0.353$; SyGMa recovers $1{,}260$ and $1{,}390$, a swing
+of $+0.050$ the other way. A coverage figure is the value of a bank together with a convention, not
+comparable across papers that state only the bank. It is not an exchange: SyGMa leads in both arms
+once the loop is complete.
 
 \looseness=-1
 \paragraph{What is convention-dependent is a construct, not a domain.} Which \textsc{smarts} constructs

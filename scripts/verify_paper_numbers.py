@@ -997,7 +997,7 @@ def main() -> int:
     if cl.exists():
         CL = json.loads(cl.read_text())
         flat = re.sub(r"\s+", " ", whole)
-        mcl = re.search(r"completing the loop lifts the expanded arm to \$([\d.]+)\$ "
+        mcl = re.search(r"one call restores it, lifting the expanded arm to \$([\d.]+)\$ "
                         r"\$\[([\d.]+),([\d.]+)\]\$, worth \$\+([\d.]+)\$ "
                         r"\$\[\+([\d.]+),\+([\d.]+)\]\$, and what survives against the unexpanded "
                         r"arm is \$\+([\d.]+)\$ \$\[\+([\d.]+),\+([\d.]+)\]\$", flat)
