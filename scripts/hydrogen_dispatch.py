@@ -98,11 +98,22 @@ def _init(rules, wants):
     _CTX["rest"] = [r for r, w in zip(rules, wants) if not w]
 
 
-def _apply(substrates, rules, wants) -> list[str]:
-    """The deployed loop with the expansion decided per template rather than per run."""
+def _apply(substrates, rules, wants, complete=False) -> list[str]:
+    """The deployed loop with the expansion decided per template rather than per run.
+
+    `complete` contracts the product before sanitisation. Expanding a substrate and leaving the
+    drawn hydrogen on the reacting atom refuses most of the fragments that follow, so an arm run
+    without the contraction measures an unfinished loop as well as a convention.
+    """
     seen = set()
     for rule, want in zip(rules, wants):
         for product in _iter_reaction_products(substrates[want], rule):
+            if complete:
+                try:
+                    product = Chem.RemoveHs(Chem.Mol(product), sanitize=False)
+                    Chem.SanitizeMol(product)
+                except Exception:
+                    continue
             try:
                 smiles = Chem.MolToSmiles(product)
             except Exception:
@@ -131,20 +142,24 @@ def _worker(item):
     sub, trues = item
     mol = Chem.MolFromSmiles(sub)
     if mol is None or not trues:
-        return sub, 0, 0, 0, 0
+        return sub, 0, 0, 0, 0, 0
     substrates = {True: Chem.AddHs(Chem.Mol(mol)), False: Chem.Mol(mol)}
     want, rest = _CTX["want"], _CTX["rest"]
     e_want = set(_apply(substrates, want, [True] * len(want)))
     e_rest = set(_apply(substrates, rest, [True] * len(rest)))
     i_want = set(_apply(substrates, want, [False] * len(want)))
     i_rest = set(_apply(substrates, rest, [False] * len(rest)))
+    c_want = set(_apply(substrates, want, [True] * len(want), complete=True))
+    c_rest = set(_apply(substrates, rest, [True] * len(rest), complete=True))
     arms = {"dispatch": e_want | i_rest,
             "explicit": e_want | e_rest,
-            "implicit": i_want | i_rest}
+            "implicit": i_want | i_rest,
+            "explicit_completed": c_want | c_rest}
     usable, hits = 0, {}
     for k, pool in arms.items():
         usable, hits[k], _ = _tautomer_recovered(trues, sorted(pool), audit=False)
-    return sub, int(usable), int(hits["dispatch"]), int(hits["explicit"]), int(hits["implicit"])
+    return (sub, int(usable), int(hits["dispatch"]), int(hits["explicit"]),
+            int(hits["implicit"]), int(hits["explicit_completed"]))
 
 
 def run_bank(name: str, items, workers: int) -> dict:
@@ -165,6 +180,7 @@ def run_bank(name: str, items, workers: int) -> dict:
     H = np.array([r[2] for r in rows])
     E = np.array([r[3] for r in rows])
     I = np.array([r[4] for r in rows])
+    Ccomp = np.array([r[5] for r in rows])
     rng = np.random.default_rng(SEED)
     idx = rng.integers(0, len(rows), (N_BOOT, len(rows)))
 
@@ -173,7 +189,8 @@ def run_bank(name: str, items, workers: int) -> dict:
 
     bt = np.array([H[j].sum() / max(U[j].sum(), 1) for j in idx])
     reach = reach_of(H)
-    arms = {"all_explicit": reach_of(E), "all_implicit": reach_of(I)}
+    arms = {"all_explicit": reach_of(E), "all_implicit": reach_of(I),
+            "all_explicit_completed": reach_of(Ccomp)}
     best_global = max(arms.values())
     # The two global arms carry a claim of their own: which of two published banks reaches further
     # is decided by the convention. That claim is a paired difference on the same substrates, so it
@@ -185,6 +202,7 @@ def run_bank(name: str, items, workers: int) -> dict:
     arm_lo, arm_hi = (float(np.quantile(bt_arm, .025)), float(np.quantile(bt_arm, .975)))
     arm_detail = {
         "recovered_explicit": int(E.sum()), "recovered_implicit": int(I.sum()),
+        "recovered_explicit_completed": int(Ccomp.sum()),
         "explicit_minus_implicit": round(float(d_arm.sum() / max(U.sum(), 1)), 4),
         "ci95": [round(arm_lo, 4), round(arm_hi, 4)],
         "excludes_zero": bool(arm_lo * arm_hi > 0)}
