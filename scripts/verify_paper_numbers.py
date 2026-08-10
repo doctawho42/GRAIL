@@ -555,7 +555,7 @@ def main() -> int:
         E = json.loads(re_b.read_text())
         flat = re.sub(r"\s+", " ", whole)
         C, A = E["contrasts"], E["arms"]
-        m = re.search(r"an engine term of \$\+([\d.]+)\$", flat)
+        m = re.search(r"the engine term as the two programs stand, \$\+([\d.]+)\$", flat)
         check("engine term, main body", m and m.group(1), C["engine_at_fixed_rules_B_minus_A"]["point"])
         m = re.search(r"whole distance between\s*the two configurations is \$\+([\d.]+)\$", flat)
         check("engine decomposition, total", m and m.group(1),
@@ -977,6 +977,35 @@ def main() -> int:
                           round(con[key]["point"], 4 if lbl == "composition" else 3),
                           str(rv.relative_to(ROOT)))
 
+    # 10c-o. The engine term split. Three quarters of what section 4 called a convention is an
+    # application loop that expands a substrate and never contracts the product; the paper now
+    # reports both parts and this holds each to the run that measured them.
+    cl = ROOT / "results/completed_loop_reach__clean_test.json"
+    if cl.exists():
+        CL = json.loads(cl.read_text())
+        flat = re.sub(r"\s+", " ", whole)
+        mcl = re.search(r"completing the loop lifts the expanded arm to \$([\d.]+)\$ "
+                        r"\$\[([\d.]+),([\d.]+)\]\$, worth \$\+([\d.]+)\$ "
+                        r"\$\[\+([\d.]+),\+([\d.]+)\]\$, and what survives against the unexpanded "
+                        r"arm is \$\+([\d.]+)\$ \$\[\+([\d.]+),\+([\d.]+)\]\$", flat)
+        checks.append((bool(mcl), "the completed-loop sentence parses", "present",
+                       "matched" if mcl else "not matched", ""))
+        if mcl:
+            src = str(cl.relative_to(ROOT))
+            comp, miss, conv = CL["reach"]["completed"], CL["the_missing_call"], CL["what_survives_as_convention"]
+            check("completed arm, reach", mcl.group(1), round(comp["reach"], 3), src)
+            check("completed arm, lower", mcl.group(2), round(comp["ci95"][0], 3), src)
+            check("completed arm, upper", mcl.group(3), round(comp["ci95"][1], 3), src)
+            check("the missing call", mcl.group(4), round(miss["delta"], 3), src)
+            check("the missing call, lower", mcl.group(5), round(miss["ci95"][0], 3), src)
+            check("the missing call, upper", mcl.group(6), round(miss["ci95"][1], 3), src)
+            check("what survives as convention", mcl.group(7), round(conv["delta"], 3), src)
+            check("convention, lower", mcl.group(8), round(conv["ci95"][0], 3), src)
+            check("convention, upper", mcl.group(9), round(conv["ci95"][1], 3), src)
+            checks.append((miss["delta"] > conv["delta"] * 2,
+                           "the missing call is the larger part",
+                           "call exceeds convention", f"{miss['delta']:.4f} against {conv['delta']:.4f}", src))
+
     # 10c-f. The mechanism, promoted to the main text without its numbers. A sentence that says
     # "most" and "a half-percent" instead of two integers is still a quantitative claim, and a
     # quantitative claim with no gate is how a number drifts away from what produced it. The words
@@ -989,7 +1018,7 @@ def main() -> int:
         M = json.loads(mech.read_text())["pipeline"]
         exp, imp = M["deployed"], M["without_explicit_h"]
         flat = re.sub(r"\s+", " ", whole)
-        m = re.search(r"the toolkit refuses the result: \$(\d+)\\%\$ of the fragments the expanded products "
+        m = re.search(r"the toolkit refuses the result: \$(\d+)\\%\$ of the fragments the products of the incomplete loop "
                       r"separate into are structures the toolkit will not read back, against "
                       r"\$([\d.]+)\\%\$ without the expansion", flat)
         checks.append((bool(m), "the mechanism sentence parses",

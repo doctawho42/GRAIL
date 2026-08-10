@@ -128,10 +128,11 @@ a stage.
 
 \paragraph{Contributions.}
 \begin{itemize}\itemsep2pt \parskip0pt
-\item The convention by which an engine applies reaction templates reverses which of two published
-  rule bases reaches further, through a preprocessing step that neither of the two papers reports. A
-  coverage figure is a property of a rule set together with a procedure, and is not comparable
-  across papers that leave the procedure unstated.
+\item A coverage figure is a property of a rule set together with the procedure that applies it,
+  and is not comparable across papers that leave the procedure unstated. Which of two published rule
+  bases reaches further exchanges with a preprocessing step neither paper reports, in a comparison
+  neither paper makes; a quarter of that step is the convention and three quarters is an application
+  loop left unfinished, which is itself readable from the rule file.
 \item The matching criterion exchanges positions in a published leaderboard of retrosynthesis
   systems, on predictions their authors released. The exchanges are certified as method-by-criterion
   interactions and corrected for multiplicity across the whole family of tests.
@@ -279,22 +280,24 @@ exceptions stated in Appendix~\ref{app:arch}.
 
 \looseness=-1
 A paper that publishes a rule base usually publishes a figure for what it covers: the fraction of
-reference products that applying every rule recovers, which we call the base's \emph{reach}. It is
-quoted as a property of the rules and it is not one, because applying a rule requires deciding how
-the substrate is presented to the matcher, and one such decision, whether hydrogen atoms are drawn
-before matching, is made silently by every engine and reported by none.
+reference products that applying every rule recovers, its \emph{reach}. It is quoted as a property
+of the rules and it is not one, because applying a rule requires deciding how the substrate is
+presented to the matcher, and that decision is made silently by every engine and reported by none.
 
 \looseness=-1
 $152$ of SyGMa's $175$ rules sit verbatim in ours, so those can be held fixed while only the
 procedure changes: a depth-1 enumeration that expands the substrate with explicit hydrogens against
 SyGMa's own, which does not. On the clean test split they reach $0.200$ $[0.182,0.218]$ under the
-first and $0.387$ $[0.365,0.410]$ under the second, an engine term of $+0.188$
-$[+0.170,+0.205]$, paired. The whole
-distance between the two configurations is $+0.339$: that engine term, $+0.145$ $[+0.128,+0.162]$
-from the $23$ rules our bank does not hold at fixed engine and depth, and $+0.0065$
-$[+0.0038,+0.0096]$ from composing steps. The single preprocessing step is therefore larger than
-every rule the two banks do not share: almost all of what reads as a difference between knowledge
-bases is a difference between the programs that query them.
+first and $0.387$ $[0.365,0.410]$ under the second, a paired $+0.190$ $[+0.173,+0.208]$. Most of
+that is not the convention. Expanding a substrate and never contracting the product leaves the drawn
+hydrogen on the reacting atom, and one call restores it: completing the loop lifts the expanded arm
+to $0.342$ $[0.320,0.365]$, worth $+0.142$ $[+0.125,+0.160]$, and what survives against the
+unexpanded arm is $+0.047$ $[+0.038,+0.057]$. Three quarters of the apparent engine effect is a missing call
+and a quarter the convention, both certified, and only the quarter is a difference between two
+defensible ways of applying the same rules. The whole distance between the two
+configurations is $+0.339$: the engine term as the two programs stand, $+0.188$ $[+0.170,+0.205]$,
+$+0.145$ $[+0.128,+0.162]$ from the $23$ rules our bank lacks, and $+0.0065$ $[+0.0038,+0.0096]$
+from composing steps.
 
 \looseness=-1
 \paragraph{The term is one call out of three.} The application loop makes three discretionary
@@ -316,26 +319,25 @@ validity floor        & on $\to$ off             & 0.200 & $0.000$ \\
 \end{center}
 
 \looseness=-1
-\paragraph{What the switch costs is not matching.} The shared templates fire almost equally often
-either way and every firing writes a product. The loss is one step later and the toolkit refuses
-the result: $63\%$ of the fragments the expanded products separate into are structures the toolkit
-will not read back, against $0.4\%$ without the expansion. A substitution template written against
-implicit hydrogens does not name the hydrogen it replaces, so expanding the substrate first leaves
-an aromatic carbon holding both its own hydrogen and the new substituent. The template is not wrong
-and the engine is not wrong. They disagree about how a
-hydrogen is spelled. And the direction belongs to the bank rather than to our engine: on the full
+\paragraph{What the incomplete loop costs is not matching.} The shared templates fire almost
+equally often either way and every firing writes a product. The loss is one step later and the
+toolkit refuses the result: $63\%$ of the fragments the products of the incomplete loop separate
+into are structures the toolkit will not read back, against $0.4\%$ without the expansion. A
+template written against implicit hydrogens does not name the hydrogen it replaces, so expanding the
+substrate and not contracting the product leaves an aromatic carbon holding both its own hydrogen
+and the new substituent. The template is not wrong; the engine was missing a step, and what remains
+once it is put back is the genuine disagreement about how a hydrogen is spelled. And the direction belongs to the bank rather than to our engine: on the full
 split, with hydrogens drawn, BioTransformer recovers $1{,}264$ references and SyGMa $579$; with hydrogens left implicit,
 SyGMa recovers $1{,}390$ and BioTransformer $317$; paired over substrates the step is worth
 $-0.312$ $[-0.334,-0.291]$ to SyGMa and $+0.365$ $[+0.341,+0.389]$ to BioTransformer. It does not
-move the two together, it exchanges them, and which of two published rule bases reaches further is
-decided by a step that neither paper states.
+move the two together, it exchanges them. That measurement is through the loop as it stood, so part
+of it is the missing call rather than the convention.
 
 \looseness=-1
-\paragraph{What is convention-dependent is a construct, not a domain.} Which \textsc{smarts}
-constructs an expansion touches is readable from a rule file. Counts that already include the
-hydrogens about to be drawn are inert; counts that read what the expansion takes away, of explicit
-connections or of implicit hydrogens, lose every match; and the hydrogen \emph{atom} primitive and
-the wildcard fire more often rather than less. Across six independent libraries and $51{,}368$
+\paragraph{What is convention-dependent is a construct, not a domain.} Which \textsc{smarts} constructs
+an expansion touches is readable from a rule file. Counts that already include the hydrogens about
+to be drawn are inert; counts of explicit connections or of implicit hydrogens lose every match; the
+hydrogen \emph{atom} primitive and the wildcard fire more often rather than less. Across six independent libraries and $51{,}368$
 templates the construct almost everyone uses is the inert one, and the two that move are used by
 disjoint sets of libraries. Every one of the $42{,}554$ patterns in the standard retrosynthesis
 template library pins a connection count and none carries the atom primitive, so the same step costs
