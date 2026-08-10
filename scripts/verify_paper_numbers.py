@@ -580,6 +580,27 @@ def main() -> int:
                        round(A["D_sygma_engine_175_rules_composed"]["point"]
                              - A["A_grail_engine_152_rules"]["point"], 4), ""))
 
+    # 10a-b. The full-split criterion family. The main text says the differential survives Holm
+    # over three pairs; that family is a different one from the subset and external families the
+    # appendix tabulates, and it was the only correction in the paper with nothing reading it.
+    fp = ROOT / "results/match_sensitivity_fulln_paired.json"
+    if fp.exists():
+        F = json.loads(fp.read_text())
+        flat = re.sub(r"\s+", " ", whole)
+        sens = F["sensitivity"]
+        m = re.search(r"GRAIL gains \$([\d.]+)\$\s*\$\[[\d.,]+\]\$ from canonical to tautomer "
+                      r"matching against MetaPredictor's \$([\d.]+)\$", flat)
+        check("full-split sensitivity, GRAIL", m and m.group(1), sens["GRAIL"]["gain"])
+        check("full-split sensitivity, MetaPredictor", m and m.group(2),
+              sens["MetaPredictor"]["gain"])
+        m = re.search(r"a differential of \$\+([\d.]+)\$", flat)
+        gm = next(r for r in F["pairwise"] if r["pair"] == "GRAIL_vs_MetaPredictor")
+        check("full-split differential", m and m.group(1), gm["interaction_b_minus_a"])
+        checks.append((len(F["pairwise"]) == 3 and gm["rejected"],
+                       "the full-split family is three pairs and this one is rejected in it",
+                       f"{len(F['pairwise'])} pairs, rejected={gm['rejected']}",
+                       "3 and True", "the family the main text names"))
+
     # 10b-a. The two harnesses compute the canonical key differently, which the protocol section
     # now states. A check pins each to what is claimed, since a silent change either way would make
     # the same column heading mean two things without saying so.
