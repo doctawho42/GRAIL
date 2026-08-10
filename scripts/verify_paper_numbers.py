@@ -720,6 +720,23 @@ def main() -> int:
         checks.append((not both, "no library is exposed to the step in both directions",
                        f"{len(both)} are", "0", "which is what 'disjoint sets' asserts"))
 
+    # 10c-m. The curator agreement. The text said notation explains most of the disagreement; two
+    # Jaccards of 0.145 and 0.406 leave 0.594 of the union still disagreeing, so notation explains
+    # 0.261 of 0.855, about a third. The share is now computed from the two figures the sentence
+    # prints, so the wording cannot drift from them again.
+    flat = re.sub(r"\s+", " ", whole)
+    mc = re.search(r"agree at a Jaccard of \$([\d.]+)\$ under strict \\textsc\{inchikey\} matching and "
+                   r"at \$([\d.]+)\$ under the tautomer-aware default, so notation accounts for "
+                   r"(a third|a half|most) of what reads as disagreement", flat)
+    checks.append((bool(mc), "the curator-agreement sentence parses", "present",
+                   "matched" if mc else "not matched", ""))
+    if mc:
+        j1, j2 = float(mc.group(1)), float(mc.group(2))
+        share = (j2 - j1) / (1 - j1)
+        band = "a third" if 0.25 <= share < 0.42 else ("a half" if 0.42 <= share < 0.6 else "most")
+        checks.append((mc.group(3) == band, "the share notation explains", mc.group(3), band,
+                       f"{share:.3f} of the disagreement, from the two printed Jaccards"))
+
     # 10c-l. The full-split family. It was corrected at m=3 while the rule the paper declares for
     # its other families -- the grid the axes admit -- gives 3 method pairs by 10 criterion steps.
     # The conclusion holds at either size, and the paper now says so rather than quoting the
