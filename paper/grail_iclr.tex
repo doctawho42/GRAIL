@@ -233,13 +233,12 @@ structures are mapped through one of
 q \in \{\textsc{canonical},\ \textsc{inchikey},\ \textsc{inchi-no-stereo},\ \textsc{tanimoto1},\
 \textsc{inchikey-tautomer}\}
 \]
-and a prediction counts as a hit iff $q(\hat{y}) = q(y)$ for some reference $y$. Each map is
-computed with RDKit 2022.09.5, the version that reproduces the columns reported here. A ceiling
+and a prediction counts as a hit iff $q(\hat{y}) = q(y)$ for some reference $y$. Each map is computed with RDKit 2022.09.5, the version that reproduces
+the columns reported here. A ceiling
 reported under this protocol declares the \emph{application} procedure too: the engine and its
 version, sanitisation, the enumeration and filtering policy, and the depth (\S\ref{sec:enginereach}).
 \textsc{canonical} is canonical SMILES equality, \textsc{inchikey} the full InChIKey and
-\textsc{inchi-no-stereo} its first block, the connectivity skeleton blind to stereochemistry, charge
-and isotopes. One caution attaches to the first. Canonical SMILES equality is
+\textsc{inchi-no-stereo} its first block, blind to stereochemistry, charge and isotopes. One caution attaches to the first. Canonical SMILES equality is
 computed without stereochemistry on the metabolite corpus, whose references carry none, and with it
 in the two cross-domain harnesses, whose references do: the same rule applied to corpora that differ
 in what they record, so the heading means the stricter thing wherever stereochemistry is present.
@@ -254,27 +253,28 @@ All five criteria are reported for every comparison. The default for this corpus
 \textsc{inchikey-tautomer}, chosen because the references neither carry stereochemistry nor
 distinguish tautomers, and because standard InChI normalises only a subset of tautomers
 \citep{Dhaked_2020}: an engine that emits the keto form of an enol reference fails to match under
-plain \textsc{inchikey} while producing the same substance. This default is the most permissive of
-the five and is blind to stereochemistry as well as to tautomerism, which also suits methods that
-standardise their output without stereocentres and therefore cannot emit one. Standardisation of
+plain \textsc{inchikey} while producing the same substance. This default is the most permissive of the five and blind to
+stereochemistry as well as tautomerism, which also suits methods that standardise their output
+without stereocentres and so cannot emit one. Standardisation of
 this kind is established preprocessing; adopting it as the \emph{matching} rule is not.
 
 \looseness=-1
 \paragraph{Split and leakage audit.} All splits are substrate-disjoint, and a separate read-only
 audit canonicalises every SMILES and verifies zero substrate and zero positive-pair overlap across
-each split pair. Leakage-aware splitting is not itself novel, since DataSAIL \citep{Joeres_2025}
-minimises cross-split similarity on comparable tasks; the leak that matters here is
-substrate-metabolite \emph{identity} overlap, which is specific to this domain.
+each split pair. Leakage-aware splitting is not novel, since DataSAIL \citep{Joeres_2025} minimises
+cross-split similarity on comparable tasks; the leak that matters here is substrate-metabolite
+\emph{identity} overlap, specific to this domain.
 
 \looseness=-1
 \paragraph{Metrics and inference.} Results are reported as recall@$k$ together with the mean output
 size. Precision alone is unsuitable under incomplete annotation, where an unannotated but real
-metabolite is counted as a false positive; recall alone is unsuitable because a method can raise it
-by emitting more (Appendix~\ref{app:budget}). Three comparisons are confirmatory and each is
-corrected for multiplicity: the differential criterion sensitivity of \S\ref{sec:rankflip}, the
-learned-against-prior gap of \S\ref{sec:xmc}, and the cross-domain interaction, whose $448$ paired
-tests form one family. All remaining intervals are exploratory. Model and configuration selection
-is performed on validation data, with two exceptions stated in Appendix~\ref{app:arch}.
+metabolite counts as a false positive; recall alone is unsuitable because a method can raise it by
+emitting more (Appendix~\ref{app:budget}). Three comparisons are confirmatory and each is corrected for
+multiplicity: the differential criterion sensitivity of \S\ref{sec:rankflip}, the learned-against-prior
+gap of \S\ref{sec:xmc}, and the cross-domain interaction, whose $448$ tests form one family. All remaining intervals are exploratory. A difference is called
+\emph{certified} below when its paired interval excludes zero and it survives Holm correction in its
+declared family; others are called observed. Model and configuration selection is on validation data, with two
+exceptions stated in Appendix~\ref{app:arch}.
 
 \section{What a rule base reaches depends on the engine that applies it}
 \label{sec:enginereach}
@@ -302,8 +302,8 @@ bases is a difference between the programs that query them.
 \paragraph{The term is one call out of three.} The application loop makes three discretionary
 choices before it reports a product: whether the substrate is expanded with explicit hydrogens
 before the templates fire, whether products are normalised by tautomer canonicalisation or left as
-plain canonical \textsc{smiles}, and what counts as a valid fragment. Toggled one at a time over the
-same rules and the same substrates, the first carries the entire term and the other two are inert.
+plain canonical \textsc{smiles}, and what counts as a valid fragment. Toggled one at a time over the $152$ shared rules on the clean test
+split, the first carries the entire term and the other two are inert.
 
 \begin{center}
 \begin{tabular}{llcc}
@@ -349,10 +349,9 @@ $57$ copied verbatim carry the atom primitive not once, while $88$ of the $121$ 
 from.
 
 \looseness=-1
-A third mechanism turned up inside our own measurement rather than in another group's library, and
-the three together are what makes this a class rather than three defects. Each has one measured
-instance, and only the third can be repaired rather than merely declared
-(Appendix~\ref{app:retroconvention}).
+A third mechanism turned up inside our own measurement rather than in another group's library. The
+three ways the choice bites, with one measured instance each, are these, and only the third can be
+repaired rather than merely declared (Appendix~\ref{app:retroconvention}).
 
 \begin{center}
 \footnotesize
