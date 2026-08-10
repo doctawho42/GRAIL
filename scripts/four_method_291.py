@@ -215,6 +215,27 @@ def main() -> int:
 
     # The same instrument as scripts/robust_order.py, on the budget axis alone: a pair survives
     # when the method the field's budget ranks higher is ahead at every budget in the sweep.
+    # Macro F1 at each budget, which recall alone cannot show: the method that leads at the field's
+    # budget emits three times what the next one does, and F1 is where that is paid for.
+    f1 = {}
+    for name in rows:
+        f1[name] = {}
+        for k in KS:
+            vals = []
+            for i in range(len(rows[name]["U"])):
+                u = rows[name]["U"][i]
+                if not u:
+                    continue
+                h = rows[name][k][i]
+                e = min(k, per[name]["after_dedup_and_parent_drop"] / max(len(rows[name]["U"]), 1))
+                e = max(e, 1e-9)
+                pr, rc = h / e, h / u
+                vals.append(2 * pr * rc / (pr + rc) if (pr + rc) else 0.0)
+            f1[name][k] = round(float(np.mean(vals)) if vals else 0.0, 4)
+    print("\n  macro F1 by budget:")
+    for name in sorted(f1):
+        print(f"    {name:15} " + "  ".join(f"k{k}:{f1[name][k]:.3f}" for k in (1, 5, 15, 50)))
+
     published = sorted(rows, key=lambda m: -per[m]["recall"][15])
     prank = {m: i for i, m in enumerate(published)}
     robust = {}
@@ -255,6 +276,7 @@ def main() -> int:
            "orderings": {" > ".join(o): ks for o, ks in seen_orders.items()},
            "pairwise_margins": margins,
            "n_margins": len(margins), "n_separable": n_sep,
+           "macro_f1_by_budget": f1,
            "robust_order": {"published_order": published, "pairs": robust,
                             "n_pairs": n_p, "n_dominating": n_d, "n_certified": n_c,
                             "robustness": round(n_d / max(n_p, 1), 4),
