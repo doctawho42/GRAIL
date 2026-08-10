@@ -317,11 +317,11 @@ conditional on the other discretionary choices, and ``this one does not matter''
 configuration rather than about a knob.
 
 \paragraph{What the switch does.} Not matching, which is the natural guess and is wrong. Over the
-corpus the $152$ templates fire $4{,}259$ times with hydrogens explicit against $4{,}124$ without,
-and every firing writes a SMILES either way. The loss is one step later and it is a valence
-violation: of the $4{,}588$ fragments those products separate into, $2{,}891$ are structures RDKit
-will not read back, against $23$ of $4{,}453$: $63\%$ against $0.5\%$, and $99.9\%$ of the excess
-is that, not the heavy-atom floor. A
+clean test split the $152$ templates fire $20{,}372$ times with hydrogens explicit against
+$19{,}629$ without, and every firing writes a SMILES either way. The loss is one step later and it
+is a valence violation: of the $21{,}905$ fragments those products separate into, $13{,}804$ are
+structures RDKit will not read back, against $87$ of $21{,}106$: $63\%$ against $0.4\%$, and
+$99.6\%$ of the excess is that, not the heavy-atom floor. A
 substitution template written against implicit hydrogens does not mention the hydrogen it replaces;
 it attaches the new group and lets RDKit decrement a count held as a property rather than an atom.
 Expand the substrate first and that hydrogen is an atom, nothing removes it, and the product carries

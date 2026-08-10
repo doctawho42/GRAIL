@@ -739,6 +739,52 @@ def main() -> int:
         checks.append((not both, "no library is exposed to the step in both directions",
                        f"{len(both)} are", "0", "which is what 'disjoint sets' asserts"))
 
+    # 10c-f. The mechanism, promoted to the main text without its numbers. A sentence that says
+    # "most" and "a half-percent" instead of two integers is still a quantitative claim, and a
+    # quantitative claim with no gate is how a number drifts away from what produced it. The words
+    # are therefore bound to the measurement: firing within a tenth either way, a majority of
+    # fragments unreadable under the expansion, and a rate that rounds to half a percent without it.
+    mech = next((ROOT / f"results/{n}" for n in
+                 ("explicit_h_mechanism__clean_test.json", "explicit_h_mechanism.json")
+                 if (ROOT / f"results/{n}").exists()), None)
+    if mech is not None:
+        M = json.loads(mech.read_text())["pipeline"]
+        exp, imp = M["deployed"], M["without_explicit_h"]
+        flat = re.sub(r"\s+", " ", whole)
+        m = re.search(r"valence violation: \$(\d+)\\%\$ of the fragments the expanded products "
+                      r"separate into are structures the toolkit will not read back, against "
+                      r"\$([\d.]+)\\%\$ without the expansion", flat)
+        checks.append((bool(m), "the mechanism sentence parses",
+                       "present", "matched" if m else "not matched", ""))
+        fire = exp["fired"] / max(imp["fired"], 1)
+        checks.append((0.9 <= fire <= 1.1, "templates fire almost equally often either way",
+                       "within a tenth", f"ratio {fire:.3f}", str(mech.relative_to(ROOT))))
+        if m:
+            check("fragments unreadable under the expansion", m.group(1),
+                  round(exp["unparseable"] / max(exp["fragments"], 1) * 100),
+                  str(mech.relative_to(ROOT)))
+            check("fragments unreadable without it", m.group(2),
+                  round(imp["unparseable"] / max(imp["fragments"], 1) * 100, 1),
+                  str(mech.relative_to(ROOT)))
+        m2 = re.search(r"against \$[\d{},]+\$ of \$[\d{},]+\$: \$\d+\\%\$ against \$[\d.]+\\%\$, and\s*"
+                       r"\$([\d.]+)\\%\$ of the excess", flat)
+        if m2:
+            check("the excess that is a valence violation", m2.group(1),
+                  round(json.loads(mech.read_text())["where_it_is_lost"]
+                        ["share_of_the_drop_that_is_unparseable"] * 100, 1),
+                  str(mech.relative_to(ROOT)))
+        # the appendix quotes the same measurement as integers, on the same population
+        for name, want in (("fired with hydrogens explicit", exp["fired"]),
+                           ("fired without them", imp["fired"]),
+                           ("fragments under the expansion", exp["fragments"]),
+                           ("fragments RDKit refuses", exp["unparseable"]),
+                           ("fragments without the expansion", imp["fragments"]),
+                           ("fragments refused without it", imp["unparseable"])):
+            lit = f"{want:,}".replace(",", "{,}")
+            checks.append((f"${lit}$" in flat, name, f"${lit}$",
+                           "present" if f"${lit}$" in flat else "absent",
+                           str(mech.relative_to(ROOT))))
+
     # 10c-d. The three-bank reversal, now in the main text: the claim rests on the direction, so
     # the direction is what is checked, not only the six counts.
     # The census of which templates carry the primitive is its own measurement, distinct from how

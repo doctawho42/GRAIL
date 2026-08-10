@@ -1,0 +1,63 @@
+{
+ "config": {
+  "script": "explicit_h_mechanism.py",
+  "git_commit": "a932e106b759d163ab60cd673de9f4c8e59eeb76",
+  "git_dirty": false,
+  "population": "clean_test",
+  "n_rules": 152,
+  "n_substrates": 1170,
+  "knobs_held": {
+   "norm": "standardize",
+   "drop_invalid": true
+  }
+ },
+ "pipeline": {
+  "deployed": {
+   "fired": 20372,
+   "written": 20372,
+   "kept": 8033,
+   "unparseable": 13804,
+   "below_heavy_atom_floor": 68,
+   "fragments": 21905,
+   "distinct_after_normalisation": 4965
+  },
+  "without_explicit_h": {
+   "fired": 19629,
+   "written": 19629,
+   "kept": 21002,
+   "unparseable": 87,
+   "below_heavy_atom_floor": 17,
+   "fragments": 21106,
+   "distinct_after_normalisation": 13699
+  }
+ },
+ "products_in_both": 4661,
+ "where_it_is_lost": {
+  "firing_ratio": 1.038,
+  "written_ratio": 1.038,
+  "kept_ratio": 0.382,
+  "extra_fragments_rdkit_refuses": 13717,
+  "extra_fragments_below_the_floor": 51,
+  "share_of_the_drop_that_is_unparseable": 0.996
+ },
+ "hydrogen_convention_by_bank": {
+  "grail_full": {
+   "rules": 7581,
+   "with_explicit_hydrogen": 675,
+   "share": 0.089,
+   "unclassified_recursive_smarts": 126
+  },
+  "sygma_175": {
+   "rules": 175,
+   "with_explicit_hydrogen": 0,
+   "share": 0.0,
+   "unclassified_recursive_smarts": 76
+  },
+  "biotransformer": {
+   "rules": 994,
+   "with_explicit_hydrogen": 690,
+   "share": 0.694,
+   "unclassified_recursive_smarts": 36
+  }
+ }
+}
