@@ -1,7 +1,7 @@
 {
  "config": {
   "script": "hydrogen_dispatch.py",
-  "git_commit": "2fcd2c548d83eedfa354e4183960139da72b109c",
+  "git_commit": "30a291a15e858a20fe461d44d0708328927a3ec6",
   "git_dirty": true,
   "population": "clean_test",
   "n_substrates": 1170,
@@ -16,8 +16,7 @@
   },
   "banks_this_invocation": [
    "sygma_175",
-   "biotransformer",
-   "grail_full"
+   "biotransformer"
   ]
  },
  "banks": {
@@ -33,11 +32,13 @@
    ],
    "global_arms": {
     "all_explicit": 0.2229,
-    "all_implicit": 0.5352
+    "all_implicit": 0.5352,
+    "all_explicit_completed": 0.4852
    },
    "global_arms_paired": {
     "recovered_explicit": 579,
     "recovered_implicit": 1390,
+    "recovered_explicit_completed": 1260,
     "explicit_minus_implicit": -0.3123,
     "ci95": [
      -0.3339,
@@ -64,11 +65,13 @@
    ],
    "global_arms": {
     "all_explicit": 0.4867,
-    "all_implicit": 0.1221
+    "all_implicit": 0.1221,
+    "all_explicit_completed": 0.4755
    },
    "global_arms_paired": {
     "recovered_explicit": 1264,
     "recovered_implicit": 317,
+    "recovered_explicit_completed": 1235,
     "explicit_minus_implicit": 0.3647,
     "ci95": [
      0.3408,
