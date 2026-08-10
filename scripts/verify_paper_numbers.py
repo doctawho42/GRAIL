@@ -1025,9 +1025,15 @@ def main() -> int:
             checks.append((I[k1]["certified"] and I[k2]["certified"],
                            "both interactions with GRAIL are certified", "certified",
                            f"{I[k1]['certified']} and {I[k2]['certified']}", src))
-            checks.append(("Which published population a familiar name refers to" in flat,
-                           "the bounded null keeps its own paragraph", "present",
-                           "present", "the manuscript"))
+            # what this protects is that the two population questions stay distinguishable, not
+            # that either keeps a heading: one is certified and one is a bounded null, and a
+            # manuscript that merged them into a single claim would be overstating half of it
+            null_said = "The other population question is a null." in flat
+            cert_said = "differs certifiably by method" in flat or "an interaction of" in flat
+            checks.append((null_said and cert_said,
+                           "the null and the certified population result stay distinct",
+                           "both stated", f"null {null_said}, certified {cert_said}",
+                           "the manuscript"))
 
     # 10c-u. Where the emission rule does not hold. It beats every global constant on parent drugs
     # and does not on substrates that are themselves metabolites, and the paragraph says so; this
@@ -1036,9 +1042,9 @@ def main() -> int:
     me2 = ROOT / "results/setsize_headroom__tautomer_metabolites.json"
     if pa.exists() and me2.exists():
         flat = re.sub(r"\s+", " ", whole)
-        mq = re.search(r"On the \$(\d+)\$ substrates that are parent drugs it reaches \$([\d.]+)\$ "
-                       r"against the best constant's \$([\d.]+)\$; on the \$(\d+)\$ that are "
-                       r"themselves metabolites[^.]*it reaches \$([\d.]+)\$ against \$([\d.]+)\$", flat)
+        mq = re.search(r"on the \$(\d+)\$ parent drugs the rule reaches \$([\d.]+)\$ against the best "
+                       r"constant's \$([\d.]+)\$, and on the \$(\d+)\$ substrates that are themselves "
+                       r"metabolites \$([\d.]+)\$ against \$([\d.]+)\$", flat)
         checks.append((bool(mq), "the population qualification parses", "present",
                        "matched" if mq else "not matched", ""))
         if mq:

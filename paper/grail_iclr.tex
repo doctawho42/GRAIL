@@ -126,13 +126,11 @@ applied to all four. A single condition governs when a reordering occurs: the ch
 systems apart by more than the margin between them, which makes a benchmark more vulnerable as its
 leading methods converge.
 
-The deepest case study is metabolite prediction, where the effect of a choice can be measured
-against a quantity that is itself exact. In that setting the set of candidates a rule-based method
-could ever propose is finite and can be enumerated, so the best score the method could achieve with
-perfect selection and ranking is not estimated but computed. Recall then decomposes exactly into
-what the rule base reaches, what selection retains of that, and what ranking returns of what
-remains, which turns a single score that admits no diagnosis into an attribution of the shortfall to
-a stage.
+The deepest case study is metabolite prediction, where a choice can be measured against a quantity
+that is itself exact: the candidates a rule-based method could ever propose are finite and can be
+enumerated, so the best score perfect selection and ranking would reach is computed rather than
+estimated, and recall decomposes exactly into what the bank reaches, what selection retains and what
+ranking returns.
 
 \paragraph{Contributions.}
 \begin{itemize}\itemsep2pt \parskip0pt
@@ -195,29 +193,27 @@ before an analysis, not as a parameter of the analysis.
 \paragraph{Evaluation choices in adjacent fields.} None of the four choices is in doubt in general.
 On the matching rule, \citet{Maziarz_2025} re-evaluated retrosynthesis models under a standardised
 procedure and reversed a published ordering, in part because one model had been scored under a
-relaxed stereochemistry criterion that its baselines were not given; \citet{Hastedt_2024} release
-the ranked predictions of twelve such systems, which makes comparisons possible without
-reimplementation; and \citet{liu2026massspecgymwild} identify divergent metric implementations and
-inconsistent stereochemistry handling in published mass-spectrometry work. Outside chemistry,
-re-scoring frozen submissions under a different equivalence rule misrepresents the state of the art
-in text-to-SQL \citep{Zhong_2020} and changes which question-answering system leads
-\citep{Kamalloo_2023}. On the aggregate, the choice of metric inverts the winner in drug-response
-prediction \citep{agarwal2026metric}, the standard score in structure-based drug design rises with
-the atom count of the output instead of its quality \citep{Gao_2025_reframing}, which motivated
-rebuilding that benchmark \citep{Lin_2025_cbgbench}, and weighting examples by difficulty reorders
-natural-language leaderboards \citep{Mishra_2021, Rodriguez_2021}. On the output budget the relevant
+relaxed stereochemistry criterion its baselines were not given; \citet{Hastedt_2024} release the
+ranked predictions of twelve such systems; and \citet{liu2026massspecgymwild} identify divergent
+metric implementations in published mass-spectrometry work. Outside chemistry, re-scoring frozen
+submissions under a different equivalence rule misrepresents the state of the art in text-to-SQL
+\citep{Zhong_2020} and changes which question-answering system leads \citep{Kamalloo_2023}. On the
+aggregate, the choice of metric inverts the winner in drug-response prediction
+\citep{agarwal2026metric}, the standard score in structure-based drug design rises with the atom
+count of the output rather than its quality \citep{Gao_2025_reframing}, which motivated rebuilding
+that benchmark \citep{Lin_2025_cbgbench}, and weighting examples by difficulty reorders
+natural-language leaderboards \citep{Mishra_2021, Rodriguez_2021}. On the output budget the
 literature is older, having long evaluated ranked output at a declared cut-off
 \citep{Jarvelin_2002}, under incomplete relevance judgements \citep{Buckley_2004}, corrected for
 recording propensity \citep{Joachims_2017}, and with the winner of a cut-off metric changing with
 how the candidates entering it are counted \citep{Krichene_2020}.
 
 \paragraph{Staged evaluation.} Separating what a candidate generator reaches from what a later
-stage retains is standard practice: cascade ranking prunes stage by stage \citep{Wang_2011_cascade},
-recommendation is built and evaluated as candidate generation followed by ranking
-\citep{Covington_2016}, open-domain question answering reports retriever recall at a budget beside
-end-task accuracy \citep{Karpukhin_2020}, and \citet{Maziarz_2025} separate single-step accuracy
-from search. In each of these the first term is estimated from a sample or bounded by a search
-budget.
+stage retains is standard: cascade ranking prunes stage by stage \citep{Wang_2011_cascade},
+recommendation is built as candidate generation followed by ranking \citep{Covington_2016},
+open-domain question answering reports retriever recall at a budget beside end-task accuracy
+\citep{Karpukhin_2020}, and \citet{Maziarz_2025} separate single-step accuracy from search. In each
+the first term is estimated from a sample or bounded by a search budget.
 
 \paragraph{What is left unestablished.} The demonstrations above compare studies that differed in
 several respects at once, so the effect of any one choice is not identified. Nor is it known what
@@ -390,26 +386,21 @@ some cell reverses, and pairs no cell reverses but the benchmark cannot resolve 
 size. Only one of the twenty-one on the seven-system leaderboard is of the second kind, so there the
 loss is reversal rather than resolution.
 
-\paragraph{How one choice breaks an ordering.}
-\looseness=-1
+\paragraph{How one choice breaks an ordering.} \looseness=-1
 \citet{Hastedt_2024} released the ranked predictions of twelve retrosynthesis systems, of which
-eleven parse. Reading those files rather than the accompanying table shows that they were produced
-on three different test sets (Appendix~\ref{app:xdomainsets}). Within the largest group sharing one,
-seven systems scored on their $4{,}999$ common reactions change places at top-1, on predictions that
-never move and under a rule applied identically to all seven. Under canonical matching the leaders
-run GraphRetro $0.5377$, LocalRetro $0.5339$, Retroformer $0.5325$, Graph2SMILES $0.5293$; disregard
-stereochemistry and they run Graph2SMILES $0.5571$, Retroformer $0.5541$, GraphRetro $0.5501$,
-LocalRetro $0.5469$, so fourth becomes first. Five of twenty-one pairs exchange in all.
-
-\looseness=-1
-An exchange of positions describes the data; the claim is the interaction, corrected across the
-largest family declared in this work. That family is the grid the two axes admit, twenty-one system pairs
-by six pairs drawn from the four conventions by four budgets, which is $504$ cells less the $56$ in
-which two conventions return identical results and no test exists. Of the $448$ that remain, $233$ have intervals excluding zero and $109$ survive
-Holm at $0.05$. The effect is concentrated at top-1, the number this field leads with but not the
-whole accuracy curve, and stereo-blind matching is a candidate convention here and not a straw one:
-GLORYx scores on a stereo-blind skeleton, and GRAIL and SyGMa cannot emit a stereocentre under any
-criterion (Figure~\ref{fig:xdomain}, Appendix~\ref{app:xdomain}).
+eleven parse, produced on three different test sets (Appendix~\ref{app:xdomainsets}). Within the
+largest group, seven systems on their $4{,}999$ common reactions change places at top-1 on
+predictions that never move: under canonical matching the leaders run GraphRetro $0.5377$, LocalRetro
+$0.5339$, Retroformer $0.5325$, Graph2SMILES $0.5293$; disregard stereochemistry and they run
+Graph2SMILES $0.5571$, Retroformer $0.5541$, GraphRetro $0.5501$, LocalRetro $0.5469$, so fourth
+becomes first. Five of twenty-one pairs exchange in all. An exchange describes the data; the claim is the interaction, corrected across the
+largest family declared in this work. That family is the grid the two axes admit, twenty-one system
+pairs by six pairs drawn from the four conventions by four budgets, which is $504$ cells less the
+$56$ in which two conventions return identical results and no test exists. Of the $448$ that remain,
+$233$ have intervals excluding zero and $109$ survive Holm at $0.05$. The effect is concentrated at
+top-1, the number this field leads with, and stereo-blind matching is a candidate convention here and
+not a straw one: GLORYx scores on a stereo-blind skeleton, and GRAIL and SyGMa cannot emit a
+stereocentre under any criterion (Figure~\ref{fig:xdomain}, Appendix~\ref{app:xdomain}).
 
 \looseness=-1
 \looseness=-1
@@ -433,14 +424,13 @@ comparators exchanges between the populations, though that exchange is not certi
 reporting a number on this split reports the mixture it is averaged over.
 
 \looseness=-1
-\paragraph{Which published population a familiar name refers to.} Two of the three groups share $490$
-reactions nested inside each group's own five thousand, so two systems can be compared on the subset
-and on the whole with method, criterion and budget fixed. Of the $380$ comparisons this gives, $44$
-change the ordering; on the metabolite split the same test gives $10$ of $60$. Neither instance
-survives correction: none of the $440$ interactions passes Holm at $0.05$. The null is bounded rather
-than absolute, since at the family's own threshold and $80\%$ power these designs would have detected
-an interaction of about $0.10$ on the released files and $0.07$ on the metabolite split, an order of
-magnitude larger than the criterion interactions that do survive (Appendix~\ref{app:popaxis}).
+The other population question is a null. Two of the three groups share $490$ reactions nested inside
+each group's own five thousand, so two systems can be compared on the subset and on the whole with
+everything else fixed; of the $380$ comparisons this gives, $44$ change the ordering, and on the
+metabolite split $10$ of $60$. Neither survives correction: none of the $440$ interactions passes
+Holm at $0.05$. The null is bounded rather than absolute, since at $80\%$ power these designs would
+have detected about $0.10$ and $0.07$, an order of magnitude above the criterion interactions that do
+survive (Appendix~\ref{app:popaxis}).
 
 \section{The decomposition and the coverage ceiling}
 \label{sec:decomp}
@@ -569,7 +559,7 @@ reads as disagreement about observed chemistry and most of it survives the relax
 means, since one records only $0.539$ of the other and beyond that level recall measures one
 source's inclusion choices (Appendix~\ref{app:xdomain}).
 
-\paragraph{Mechanism.} Which relaxation dominates is a property of the reference set: here stereochemistry alone, and internally, where references are already stereo-stripped, tautomerism instead. The effect requires references that carry representational variety and a leaderboard whose margins are narrower than the differential it produces.
+\paragraph{Mechanism.} Which relaxation dominates is a property of the reference set: stereochemistry here, tautomerism internally where references are already stereo-stripped. The effect needs references carrying representational variety and margins narrower than the differential.
 
 
 \subsection{The aggregate and the budget are one variable, and the decomposition predicts it}
@@ -625,26 +615,26 @@ the output size do not act on the same comparisons (Appendix~\ref{app:props}).
 
 
 \looseness=-1
-\paragraph{A global budget is the wrong object.} The budget is not only undeclared, it is the wrong shape.
-Enzymes compete for one substrate, so its annotated products are alternatives from a shared pool:
-the median substrate here has one and the mean $2.22$, while the deployed policy emits $8.4$ for
-every substrate alike. Holding the ranking fixed and changing only how many are emitted,
-the deployed $k=15$ scores $0.136$ macro F1, the best global constant $0.195$, and truncating each
-substrate at its own annotated count $0.214$. A rule that reads the pool instead of a constant recovers
-almost all of that: emitting while a candidate scores within half the leader's score gives $0.209$,
-a paired $+0.074$ $[+0.059,+0.089]$ over the deployed policy and above every global constant. Forecasting the count from the substrate alone fails and is reported as such
-(Appendix~\ref{app:negative}): what the pool supports is a relative rule, which is what a model
-normalised over siblings would learn. The rule's advantage over a constant is not uniform. On the
-$845$ substrates that are parent drugs it reaches $0.236$ against the best constant's $0.215$; on
-the $325$ that are themselves metabolites of another substrate in the same split it reaches $0.140$
-against $0.141$, so where the model is weaker its score distribution says less about how many to
-emit.
+\looseness=-1
+\paragraph{A global budget is the wrong object.} The budget is not only undeclared, it is the wrong
+shape. Enzymes compete for one substrate, so its annotated products are alternatives from a shared
+pool: the median substrate here has one and the mean $2.22$, while the deployed policy emits $8.4$
+for every substrate alike. Holding the ranking fixed and changing only how many are emitted, the
+deployed $k=15$ scores $0.136$ macro F1, the best global constant $0.195$, and truncating each
+substrate at its own annotated count $0.214$. A rule that reads the pool instead of a constant
+recovers almost all of that: emitting while a candidate scores within half the leader's score gives
+$0.209$, a paired $+0.074$ $[+0.059,+0.089]$ over the deployed policy and above every global
+constant. Forecasting the count from the substrate alone fails instead
+(Appendix~\ref{app:negative}), so what the pool supports is a relative rule, which is what a model
+normalised over siblings would learn. The advantage is not uniform: on the $845$ parent drugs the
+rule reaches $0.236$ against the best constant's $0.215$, and on the $325$ substrates that are
+themselves metabolites $0.140$ against $0.141$, so where the model is weaker its scores say less
+about how many to emit.
 
-\paragraph{Where this system's own shortfall sits.} GRAIL trails both published comparators at
-the field's budget, by a paired $-0.242$ $[-0.271,\,-0.212]$ against SyGMa. The second confirmatory
-comparison locates that shortfall in selection: a learned selector reaches $0.266$ where rule-firing
-frequency alone reaches $0.410$ through the same enumeration and filter, a paired $-0.144$
-$[-0.196,\,-0.095]$ (Appendix~\ref{app:props}).
+\paragraph{Where this system's own shortfall sits.} GRAIL trails both comparators at the field's
+budget by a paired $-0.242$ $[-0.271,\,-0.212]$ against SyGMa, and the second confirmatory comparison
+locates it in selection: a learned selector reaches $0.266$ where rule-firing frequency alone reaches
+$0.410$ through the same enumeration and filter (Appendix~\ref{app:props}).
 \label{sec:xmc}\label{sec:diagnosis}\label{sec:evidence}
 
 \section{Limitations}
