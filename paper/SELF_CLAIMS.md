@@ -330,8 +330,11 @@ claim, again.
 
 ## 8. Main body within the page limit
 
-**Check:** the reproducibility statement does **not** count (ICLR author guide, max 1 page);
-everything through the Conclusion must fit in 9.
+**Check:** everything through the Conclusion must fit in 9 pages. The ICLR 2026 author guide sets
+the submission limit at 9 pages of main text, raised to 10 at camera-ready, and excludes references
+and an optional reproducibility or ethics statement from the count. The appendix is unlimited, and
+the same guide states that reviewers are not required to read it, which is the reason every
+load-bearing claim is stated in the nine pages rather than pointed at.
 
 ```bash
 pdftotext -layout paper/grail_iclr.pdf - | awk 'BEGIN{RS="\f"} NR==9' | tail -3
