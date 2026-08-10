@@ -990,6 +990,19 @@ def main() -> int:
                   round(json.loads(cl2.read_text())["reach"]["completed"]["reach"], 3),
                   str(cl2.relative_to(ROOT)))
 
+    # 10c-p. The count of choices that reorder, everywhere it appears. It was three in the
+    # introduction and two in the abstract and conclusion for one revision, because the engine axis
+    # was removed from the count in some places and not others. A count stated in four places is a
+    # number like any other and gets a gate: no passage may say three choices reorder.
+    flat_c = re.sub(r"\s+", " ", whole)
+    bad = re.findall(r"[Tt]hree of the four choices[^.]*(?:reorder|move an ordering)", flat_c)
+    checks.append((not bad, "no passage says three choices reorder", "none",
+                   f"{len(bad)} found: {bad[:1]}" if bad else "none", "the manuscript"))
+    two = re.findall(r"[Tt]wo of the four choices[^.]*reorder|[Tt]wo of them change a published "
+                     r"ordering|[Tt]wo move a published ordering", flat_c)
+    checks.append((len(two) >= 3, "the count of two is stated where the claim is staked",
+                   "abstract, introduction and conclusion", f"{len(two)} passages", "the manuscript"))
+
     # 10c-o. The engine term split. Three quarters of what section 4 called a convention is an
     # application loop that expands a substrate and never contracts the product; the paper now
     # reports both parts and this holds each to the run that measured them.
