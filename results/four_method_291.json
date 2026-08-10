@@ -1,10 +1,12 @@
 {
  "config": {
   "script": "four_method_291.py",
-  "git_commit": "e5da75350e64a7551c33b4bef34e301ac230a4c2",
+  "git_commit": "94d276ef0749c044affbdb4fefec12b7e4a79245",
   "git_dirty": true,
   "n_substrates": 291,
   "match": "inchikey_tautomer",
+  "n_boot": 10000,
+  "seed": 0,
   "aggregation": "micro, ratio of sums",
   "k_sweep": [
    1,
@@ -156,5 +158,515 @@
    30,
    50
   ]
- }
+ },
+ "pairwise_margins": {
+  "GRAIL vs MetaPredictor @ 1": {
+   "margin": -0.0391,
+   "ci95": [
+    -0.0685,
+    -0.0104
+   ],
+   "separable": true
+  },
+  "GRAIL vs MetaPredictor @ 3": {
+   "margin": -0.0887,
+   "ci95": [
+    -0.1306,
+    -0.0489
+   ],
+   "separable": true
+  },
+  "GRAIL vs MetaPredictor @ 5": {
+   "margin": -0.1263,
+   "ci95": [
+    -0.1747,
+    -0.0793
+   ],
+   "separable": true
+  },
+  "GRAIL vs MetaPredictor @ 8": {
+   "margin": -0.1895,
+   "ci95": [
+    -0.2401,
+    -0.1393
+   ],
+   "separable": true
+  },
+  "GRAIL vs MetaPredictor @ 10": {
+   "margin": -0.218,
+   "ci95": [
+    -0.2688,
+    -0.1679
+   ],
+   "separable": true
+  },
+  "GRAIL vs MetaPredictor @ 15": {
+   "margin": -0.215,
+   "ci95": [
+    -0.2656,
+    -0.164
+   ],
+   "separable": true
+  },
+  "GRAIL vs MetaPredictor @ 20": {
+   "margin": -0.2135,
+   "ci95": [
+    -0.2645,
+    -0.1621
+   ],
+   "separable": true
+  },
+  "GRAIL vs MetaPredictor @ 30": {
+   "margin": -0.212,
+   "ci95": [
+    -0.2633,
+    -0.1601
+   ],
+   "separable": true
+  },
+  "GRAIL vs MetaPredictor @ 50": {
+   "margin": -0.212,
+   "ci95": [
+    -0.2633,
+    -0.1601
+   ],
+   "separable": true
+  },
+  "GRAIL vs MetaTox @ 1": {
+   "margin": 0.0602,
+   "ci95": [
+    0.0354,
+    0.0859
+   ],
+   "separable": true
+  },
+  "GRAIL vs MetaTox @ 3": {
+   "margin": 0.0556,
+   "ci95": [
+    0.0172,
+    0.0944
+   ],
+   "separable": true
+  },
+  "GRAIL vs MetaTox @ 5": {
+   "margin": 0.0105,
+   "ci95": [
+    -0.0356,
+    0.0582
+   ],
+   "separable": false
+  },
+  "GRAIL vs MetaTox @ 8": {
+   "margin": -0.0662,
+   "ci95": [
+    -0.1165,
+    -0.0163
+   ],
+   "separable": true
+  },
+  "GRAIL vs MetaTox @ 10": {
+   "margin": -0.1353,
+   "ci95": [
+    -0.188,
+    -0.0847
+   ],
+   "separable": true
+  },
+  "GRAIL vs MetaTox @ 15": {
+   "margin": -0.2496,
+   "ci95": [
+    -0.3036,
+    -0.1968
+   ],
+   "separable": true
+  },
+  "GRAIL vs MetaTox @ 20": {
+   "margin": -0.2857,
+   "ci95": [
+    -0.3393,
+    -0.2337
+   ],
+   "separable": true
+  },
+  "GRAIL vs MetaTox @ 30": {
+   "margin": -0.3338,
+   "ci95": [
+    -0.3848,
+    -0.2816
+   ],
+   "separable": true
+  },
+  "GRAIL vs MetaTox @ 50": {
+   "margin": -0.3594,
+   "ci95": [
+    -0.4122,
+    -0.3058
+   ],
+   "separable": true
+  },
+  "GRAIL vs SyGMa @ 1": {
+   "margin": -0.0526,
+   "ci95": [
+    -0.0832,
+    -0.0228
+   ],
+   "separable": true
+  },
+  "GRAIL vs SyGMa @ 3": {
+   "margin": -0.1008,
+   "ci95": [
+    -0.1404,
+    -0.0626
+   ],
+   "separable": true
+  },
+  "GRAIL vs SyGMa @ 5": {
+   "margin": -0.1459,
+   "ci95": [
+    -0.1883,
+    -0.1039
+   ],
+   "separable": true
+  },
+  "GRAIL vs SyGMa @ 8": {
+   "margin": -0.182,
+   "ci95": [
+    -0.2271,
+    -0.1377
+   ],
+   "separable": true
+  },
+  "GRAIL vs SyGMa @ 10": {
+   "margin": -0.203,
+   "ci95": [
+    -0.2494,
+    -0.157
+   ],
+   "separable": true
+  },
+  "GRAIL vs SyGMa @ 15": {
+   "margin": -0.2195,
+   "ci95": [
+    -0.2675,
+    -0.1713
+   ],
+   "separable": true
+  },
+  "GRAIL vs SyGMa @ 20": {
+   "margin": -0.2331,
+   "ci95": [
+    -0.2795,
+    -0.1862
+   ],
+   "separable": true
+  },
+  "GRAIL vs SyGMa @ 30": {
+   "margin": -0.2391,
+   "ci95": [
+    -0.2862,
+    -0.1915
+   ],
+   "separable": true
+  },
+  "GRAIL vs SyGMa @ 50": {
+   "margin": -0.2436,
+   "ci95": [
+    -0.291,
+    -0.1955
+   ],
+   "separable": true
+  },
+  "MetaPredictor vs MetaTox @ 1": {
+   "margin": 0.0992,
+   "ci95": [
+    0.0738,
+    0.1276
+   ],
+   "separable": true
+  },
+  "MetaPredictor vs MetaTox @ 3": {
+   "margin": 0.1444,
+   "ci95": [
+    0.1119,
+    0.1798
+   ],
+   "separable": true
+  },
+  "MetaPredictor vs MetaTox @ 5": {
+   "margin": 0.1368,
+   "ci95": [
+    0.0994,
+    0.177
+   ],
+   "separable": true
+  },
+  "MetaPredictor vs MetaTox @ 8": {
+   "margin": 0.1233,
+   "ci95": [
+    0.0817,
+    0.1653
+   ],
+   "separable": true
+  },
+  "MetaPredictor vs MetaTox @ 10": {
+   "margin": 0.0827,
+   "ci95": [
+    0.0399,
+    0.1268
+   ],
+   "separable": true
+  },
+  "MetaPredictor vs MetaTox @ 15": {
+   "margin": -0.0346,
+   "ci95": [
+    -0.0784,
+    0.0111
+   ],
+   "separable": false
+  },
+  "MetaPredictor vs MetaTox @ 20": {
+   "margin": -0.0722,
+   "ci95": [
+    -0.1146,
+    -0.0279
+   ],
+   "separable": true
+  },
+  "MetaPredictor vs MetaTox @ 30": {
+   "margin": -0.1218,
+   "ci95": [
+    -0.1661,
+    -0.0757
+   ],
+   "separable": true
+  },
+  "MetaPredictor vs MetaTox @ 50": {
+   "margin": -0.1474,
+   "ci95": [
+    -0.1963,
+    -0.0983
+   ],
+   "separable": true
+  },
+  "MetaPredictor vs SyGMa @ 1": {
+   "margin": -0.0135,
+   "ci95": [
+    -0.0393,
+    0.0123
+   ],
+   "separable": false
+  },
+  "MetaPredictor vs SyGMa @ 3": {
+   "margin": -0.012,
+   "ci95": [
+    -0.0462,
+    0.0221
+   ],
+   "separable": false
+  },
+  "MetaPredictor vs SyGMa @ 5": {
+   "margin": -0.0195,
+   "ci95": [
+    -0.0566,
+    0.0171
+   ],
+   "separable": false
+  },
+  "MetaPredictor vs SyGMa @ 8": {
+   "margin": 0.0075,
+   "ci95": [
+    -0.0311,
+    0.0469
+   ],
+   "separable": false
+  },
+  "MetaPredictor vs SyGMa @ 10": {
+   "margin": 0.015,
+   "ci95": [
+    -0.0244,
+    0.0547
+   ],
+   "separable": false
+  },
+  "MetaPredictor vs SyGMa @ 15": {
+   "margin": -0.0045,
+   "ci95": [
+    -0.0426,
+    0.0345
+   ],
+   "separable": false
+  },
+  "MetaPredictor vs SyGMa @ 20": {
+   "margin": -0.0195,
+   "ci95": [
+    -0.0586,
+    0.0206
+   ],
+   "separable": false
+  },
+  "MetaPredictor vs SyGMa @ 30": {
+   "margin": -0.0271,
+   "ci95": [
+    -0.0662,
+    0.0134
+   ],
+   "separable": false
+  },
+  "MetaPredictor vs SyGMa @ 50": {
+   "margin": -0.0316,
+   "ci95": [
+    -0.0701,
+    0.0093
+   ],
+   "separable": false
+  },
+  "MetaTox vs SyGMa @ 1": {
+   "margin": -0.1128,
+   "ci95": [
+    -0.1415,
+    -0.0857
+   ],
+   "separable": true
+  },
+  "MetaTox vs SyGMa @ 3": {
+   "margin": -0.1564,
+   "ci95": [
+    -0.1953,
+    -0.1199
+   ],
+   "separable": true
+  },
+  "MetaTox vs SyGMa @ 5": {
+   "margin": -0.1564,
+   "ci95": [
+    -0.1985,
+    -0.1166
+   ],
+   "separable": true
+  },
+  "MetaTox vs SyGMa @ 8": {
+   "margin": -0.1158,
+   "ci95": [
+    -0.1553,
+    -0.0773
+   ],
+   "separable": true
+  },
+  "MetaTox vs SyGMa @ 10": {
+   "margin": -0.0677,
+   "ci95": [
+    -0.1065,
+    -0.0284
+   ],
+   "separable": true
+  },
+  "MetaTox vs SyGMa @ 15": {
+   "margin": 0.0301,
+   "ci95": [
+    -0.0063,
+    0.0663
+   ],
+   "separable": false
+  },
+  "MetaTox vs SyGMa @ 20": {
+   "margin": 0.0526,
+   "ci95": [
+    0.0195,
+    0.0864
+   ],
+   "separable": true
+  },
+  "MetaTox vs SyGMa @ 30": {
+   "margin": 0.0947,
+   "ci95": [
+    0.0631,
+    0.1274
+   ],
+   "separable": true
+  },
+  "MetaTox vs SyGMa @ 50": {
+   "margin": 0.1158,
+   "ci95": [
+    0.0829,
+    0.1499
+   ],
+   "separable": true
+  }
+ },
+ "n_margins": 54,
+ "n_separable": 42,
+ "sign_changes": {
+  "GRAIL vs MetaTox": {
+   "certified_both_ends": true,
+   "ahead_at": 1,
+   "behind_at": 50,
+   "ahead_margin": {
+    "margin": 0.0602,
+    "ci95": [
+     0.0354,
+     0.0859
+    ],
+    "separable": true
+   },
+   "behind_margin": {
+    "margin": -0.3594,
+    "ci95": [
+     -0.4122,
+     -0.3058
+    ],
+    "separable": true
+   }
+  },
+  "MetaPredictor vs MetaTox": {
+   "certified_both_ends": true,
+   "ahead_at": 1,
+   "behind_at": 50,
+   "ahead_margin": {
+    "margin": 0.0992,
+    "ci95": [
+     0.0738,
+     0.1276
+    ],
+    "separable": true
+   },
+   "behind_margin": {
+    "margin": -0.1474,
+    "ci95": [
+     -0.1963,
+     -0.0983
+    ],
+    "separable": true
+   }
+  },
+  "MetaPredictor vs SyGMa": {
+   "certified_both_ends": false,
+   "ahead_at": null,
+   "behind_at": null,
+   "ahead_margin": null,
+   "behind_margin": null
+  },
+  "MetaTox vs SyGMa": {
+   "certified_both_ends": true,
+   "ahead_at": 20,
+   "behind_at": 10,
+   "ahead_margin": {
+    "margin": 0.0526,
+    "ci95": [
+     0.0195,
+     0.0864
+    ],
+    "separable": true
+   },
+   "behind_margin": {
+    "margin": -0.0677,
+    "ci95": [
+     -0.1065,
+     -0.0284
+    ],
+    "separable": true
+   }
+  }
+ },
+ "n_certified_both_ends": 3,
+ "n_pairs_changing_sign": 4
 }

@@ -720,6 +720,30 @@ def main() -> int:
         checks.append((not both, "no library is exposed to the step in both directions",
                        f"{len(both)} are", "0", "which is what 'disjoint sets' asserts"))
 
+    # 10c-i. The budget axis is the one place a reversal crosses margins certified at both ends,
+    # which is the distinction three reviewers said the paper asserts without testing. It is not
+    # asserted here: the sweep's pairwise margins carry paired intervals and the count of sign
+    # changes that survive them is read from the artifact.
+    fm2 = ROOT / "results/four_method_291.json"
+    if fm2.exists():
+        Q = json.loads(fm2.read_text())
+        flat = re.sub(r"\s+", " ", whole)
+        mb = re.search(r"(Four|Three|Five|Six) of the six pairs change sign along that sweep and "
+                       r"(three|two|four|one) change it between margins that each separate from zero",
+                       flat)
+        checks.append((bool(mb), "the budget-reversal sentence parses", "present",
+                       "matched" if mb else "not matched", ""))
+        if mb:
+            words = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6}
+            check("pairs changing sign along the sweep", words[mb.group(1).lower()],
+                  Q["n_pairs_changing_sign"], str(fm2.relative_to(ROOT)))
+            check("sign changes certified at both ends", words[mb.group(2).lower()],
+                  Q["n_certified_both_ends"], str(fm2.relative_to(ROOT)))
+            checks.append((Q["n_certified_both_ends"] >= 1,
+                           "at least one budget reversal crosses two certified margins",
+                           "at least one", str(Q["n_certified_both_ends"]),
+                           str(fm2.relative_to(ROOT))))
+
     # 10c-h. The minimum detectable effect: the quantile, the two summaries, and which one the
     # bound is asserted at. The quantiles stated in the appendix were the pooled family's and a
     # hand-computed value, neither matching the m the sentence names; the code always used the
@@ -786,6 +810,48 @@ def main() -> int:
                 "with every method and its ranking held fixed")
         checks.append((said in flat_a, "the abstract says what the sweep shows",
                        "present", "present" if said in flat_a else "not matched", ""))
+
+    # 10c-j. The arms table itself, which no check parsed. The existing engine block compared the
+    # main-text prose against the artifact and then verified the artifact's own additivity, which
+    # is a self-check: it passes while the appendix table carries three terms from two populations
+    # and fails to add up. This reads the four printed arms, ties each to the artifact, and
+    # requires the three printed contrasts to sum to the printed endpoint difference.
+    rv = ROOT / "results/reach_engine_vs_bank__clean_test.json"
+    if rv.exists():
+        V = json.loads(rv.read_text())
+        arms, con = V["arms"], V["contrasts"]
+        flat = re.sub(r"\s+", " ", whole)
+        ma = re.search(r"A & \$152\$ shared, expanded & ([\d.]+) .*?"
+                       r"B & \$152\$ shared, SyGMa's & ([\d.]+) .*?"
+                       r"C & all \$175\$, SyGMa's & ([\d.]+) .*?"
+                       r"D & all \$175\$, SyGMa's composed & ([\d.]+) ", flat)
+        checks.append((bool(ma), "the arms table parses", "present",
+                       "matched" if ma else "not matched", ""))
+        if ma:
+            for lbl, said, key in (("A", ma.group(1), "A_grail_engine_152_rules"),
+                                   ("B", ma.group(2), "B_sygma_engine_152_rules_one_step"),
+                                   ("C", ma.group(3), "C_sygma_engine_175_rules_one_step"),
+                                   ("D", ma.group(4), "D_sygma_engine_175_rules_composed")):
+                check(f"arm {lbl}, on the split", said, round(arms[key]["point"], 3),
+                      str(rv.relative_to(ROOT)))
+            mt = re.search(r"The engine at fixed rules is worth \$\+([\d.]+)\$ .*?"
+                           r"the \$23\$ rules absent from our bank \$\+([\d.]+)\$ .*?"
+                           r"and composition \$\+([\d.]+)\$", flat)
+            checks.append((bool(mt), "the three printed terms parse", "present",
+                           "matched" if mt else "not matched", ""))
+            if mt:
+                terms = [float(g) for g in mt.groups()]
+                endpoints = float(ma.group(4)) - float(ma.group(1))
+                checks.append((abs(sum(terms) - endpoints) <= 0.001,
+                               "the printed terms sum to the printed endpoints",
+                               f"{endpoints:.4f}", f"{sum(terms):.4f}", "the table itself"))
+                for lbl, said, key in (("engine", terms[0], "engine_at_fixed_rules_B_minus_A"),
+                                       ("the 23 rules", terms[1],
+                                        "the_23_rules_at_fixed_engine_C_minus_B"),
+                                       ("composition", terms[2], "composition_D_minus_C")):
+                    check(f"printed term, {lbl}", said,
+                          round(con[key]["point"], 4 if lbl == "composition" else 3),
+                          str(rv.relative_to(ROOT)))
 
     # 10c-f. The mechanism, promoted to the main text without its numbers. A sentence that says
     # "most" and "a half-percent" instead of two integers is still a quantitative claim, and a

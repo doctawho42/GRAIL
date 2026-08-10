@@ -155,6 +155,28 @@ def main() -> int:
             margins[f"{a} vs {b} @ {k}"] = {
                 "margin": round(float(d.sum() / max(U.sum(), 1)), 4),
                 "ci95": [round(lo, 4), round(hi, 4)], "separable": bool(lo * hi > 0)}
+    # A sign change is a description; a sign change between two margins that each separate from
+    # zero is a reversal of a result. The distinction is the one this paper insists on elsewhere and
+    # it has to be applied to our own claim, so it is computed rather than asserted.
+    reversals = {}
+    for a, b in itertools.combinations(sorted(rows), 2):
+        vals = [(k, margins[f"{a} vs {b} @ {k}"]) for k in KS]
+        pos = [(k, v) for k, v in vals if v["margin"] > 0 and v["separable"]]
+        neg = [(k, v) for k, v in vals if v["margin"] < 0 and v["separable"]]
+        if len({v["margin"] > 0 for _, v in vals}) > 1:
+            reversals[f"{a} vs {b}"] = {
+                "certified_both_ends": bool(pos and neg),
+                "ahead_at": (pos[0][0] if pos else None), "behind_at": (neg[-1][0] if neg else None),
+                "ahead_margin": (pos[0][1] if pos else None),
+                "behind_margin": (neg[-1][1] if neg else None)}
+    n_strong = sum(v["certified_both_ends"] for v in reversals.values())
+    print(f"\n  {len(reversals)} pairs change sign across the sweep, "
+          f"{n_strong} across margins certified at both ends")
+    for k_, v in reversals.items():
+        if v["certified_both_ends"]:
+            print(f"    {k_:32} ahead at k={v['ahead_at']} by {v['ahead_margin']['margin']:+.4f}, "
+                  f"behind at k={v['behind_at']} by {v['behind_margin']['margin']:+.4f}")
+
     n_sep = sum(v["separable"] for v in margins.values())
     print(f"\n  {n_sep} of {len(margins)} pairwise margins separate from zero at 95%")
     # the specific claim the sweep is quoted for: is the mover's position certified at either end?
@@ -172,7 +194,9 @@ def main() -> int:
            "per_method": per,
            "orderings": {" > ".join(o): ks for o, ks in seen_orders.items()},
            "pairwise_margins": margins,
-           "n_margins": len(margins), "n_separable": n_sep}
+           "n_margins": len(margins), "n_separable": n_sep,
+           "sign_changes": reversals, "n_certified_both_ends": n_strong,
+           "n_pairs_changing_sign": len(reversals)}
     Path(args.out).write_text(json.dumps(rep, indent=1))
     print(f"\nwrote {args.out}")
     return 0

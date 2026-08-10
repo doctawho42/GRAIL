@@ -289,8 +289,9 @@ before matching, is made silently by every engine and reported by none.
 \looseness=-1
 $152$ of SyGMa's $175$ rules sit verbatim in ours, so those can be held fixed while only the
 procedure changes: a depth-1 enumeration that expands the substrate with explicit hydrogens against
-SyGMa's own, which does not. They reach $0.189$ $[0.151,0.230]$ under the first and $0.381$
-$[0.333,0.433]$ under the second, an engine term of $+0.188$ $[+0.170,+0.205]$, paired. The whole
+SyGMa's own, which does not. On the clean test split they reach $0.200$ $[0.182,0.218]$ under the
+first and $0.387$ $[0.365,0.410]$ under the second, an engine term of $+0.188$
+$[+0.170,+0.205]$, paired. The whole
 distance between the two configurations is $+0.339$: that engine term, $+0.145$ $[+0.128,+0.162]$
 from the $23$ rules our bank does not hold at fixed engine and depth, and $+0.0065$
 $[+0.0038,+0.0096]$ from composing steps. The single preprocessing step is therefore larger than
@@ -580,7 +581,9 @@ model fixed too, $10.9$ distinct candidates to $34.3$ at a wider beam (Appendix~
 reorders without any budget having to be chosen: swept over $k$ the three methods take three
 distinct orderings, SyGMa above GRAIL at every budget up to $13$, certified from $k=1$ to $k=10$ and by $0.071$ $[0.057,0.086]$ at $k=5$, and below only from $14$ on, where the field's $15$ sits. A
 fourth method exhausts the field: on $291$ substrates carrying all four, MetaTox at $33.6$
-candidates is last at $k\le5$ and first from $k=15$, the budget this field reports at
+candidates is last at $k\le5$ and first from $k=15$, the budget this field reports at. Four of the
+six pairs change sign along that sweep and three change it between margins that each separate from
+zero, so here the budget reverses results rather than permuting ties
 (Appendix~\ref{app:fourmethod}). A budget binds a method only when it emits more, so at $k=15$ SyGMa is cut on $92.7\%$ of
 substrates and GRAIL on none (Appendix~\ref{app:props}).
 
