@@ -53,8 +53,9 @@ predictions, retraining nothing and varying only the choice under study.
 
 Each of the first three changes a published ordering, and each changes a different one. Re-scoring
 the released predictions of eleven retrosynthesis systems under four matching criteria exchanges
-positions inside the largest group that shares a test set, and the exchanges are certified as
-interactions between method and criterion, not read off a change in rank. Varying the output budget
+positions inside the largest group that shares a test set, at the top-1 accuracy those tables lead
+with and not at wider budgets. The exchanges are certified as interactions between method and
+criterion, not read off a change in rank. Varying the output budget
 alone reorders a metabolite leaderboard, the system that emits most moving from last to first as the
 budget widens. The engine convention reverses which of two published rule banks reaches further:
 under one convention the larger bank recovers more references, under the other the smaller recovers
@@ -286,8 +287,11 @@ Five of twenty-one pairs exchange in all.
 
 An exchange of positions is a description of the data; the claim is the interaction, corrected
 across the largest family declared in this work. Of $448$ paired tests, one for every pair of systems, every pair of conventions and every $k$, $233$ have intervals excluding zero, $109$ of $448$
-paired interactions surviving Holm at $0.05$ across the whole family. The effect is concentrated at top-1, the number this
-field leads with but not the whole accuracy curve.
+paired interactions surviving Holm at $0.05$ across the whole family. The effect is concentrated at top-1, the number this field leads with but not the whole accuracy
+curve. Stereo-blind matching is a candidate convention in this setting rather than a straw one:
+GLORYx scores on a stereo-blind InChIKey skeleton, several of the systems compared here standardise
+their output without stereocentres and cannot emit one, and \citet{Maziarz_2025} report a published
+model having been scored under a relaxed stereochemistry rule its baselines were not given.
 
 \begin{figure}[h]
 \begin{center}
@@ -306,9 +310,9 @@ what matters is how large the margins are relative to what the benchmark can mea
 predictions are frozen, that is answerable directly: a paired bootstrap over the $4{,}999$ reactions
 gives an interval on each pairwise margin. \textbf{Eleven of the twenty-one margins do not separate
 from zero, and five of the six adjacent margins in the published order do not.} The smallest margin
-this benchmark certifies is $0.0146$, and the criterion moves systems apart by $0.015$. The
-three-system group is the control: its margins start at $0.021$, above its own floor of $0.0213$,
-and none of its pairs exchanges under any criterion. Over $439$ method-pair by criterion-pair
+this benchmark certifies is $0.0146$, and the criterion moves systems apart by $0.015$. The three-system group is the control: every one of
+its pairs separates, its narrowest margin being $0.0213$, and none of them exchanges under any
+criterion. Over $439$ method-pair by criterion-pair
 comparisons across four leaderboards in three domains, the movement exceeds the margin once in nine
 and reverses the pair once in seventeen, and no reversal occurs where the margin survives the
 movement. A table of eight published molecular generators shows the same condition from the other
@@ -485,16 +489,15 @@ confounder}, not a neutral scoring choice. The declared families, every raw and 
 $p$-value, and the pre-specification of the design are given in Appendix~\ref{app:holm}.
 
 \looseness=-1
-\paragraph{External replication.} The results above live on a $\nshared$-substrate subset of our own
-split, so we repeated the analysis on the field's de-facto external hold-out, the \nglory\ GLORYx
-drugs \citep{de_Bruyn_Kops_2020}, whose own tool is not scored here for want of runnable weights. It is
-external for three of the four methods and not for ours: $24$ of the $37$ are in GRAIL's train or
-validation split, so its row uses the $13$ unseen (Table~\ref{tab:matchsens}).
+\paragraph{External replication.} The analysis is repeated on the field's de-facto external
+hold-out, the \nglory\ GLORYx drugs \citep{de_Bruyn_Kops_2020}. It is external for three of the four
+methods and not for ours: $24$ of the $37$ are in GRAIL's train or validation split, so its row uses
+the $13$ unseen (Table~\ref{tab:matchsens}).
 
 \looseness=-1
-The result this section rests on involves neither contaminated arm. Under strict InChIKey SyGMa
-leads MetaPredictor by $-0.130$ $[-0.196,-0.065]$; one rung later the advantage is gone ($+0.005$
-$[-0.071,+0.086]$). The endpoint is not that transition, which contrasts a significant
+The result this section rests on involves neither contaminated arm. Under strict InChIKey matching MetaPredictor trails SyGMa
+by $0.130$, an interval of $[-0.196,-0.065]$ on the signed difference; one rung later the advantage
+is gone, at $+0.005$ $[-0.071,+0.086]$. The endpoint is not that transition, which contrasts a significant
 result with a null one, but the interaction: MetaPredictor gains $+0.135$ $[+0.072,+0.209]$ more
 than SyGMa across the stereo step, rejected at either family size (Appendix~\ref{app:holm}). That interval is what is certified: the relaxed gap covers zero
 and still admits SyGMa ahead by $0.071$, so a criterion erases a significant advantage here rather
@@ -523,13 +526,12 @@ and capped at each drug's own curated set size it recovers $0.301$, behind by $0
 $[0.123,0.354]$ (Appendix~\ref{app:xdomain}).
 
 \looseness=-1
-\paragraph{Mechanism.} The spread tracks how far a method's outputs diverge
-\emph{representationally} from the references, and the intermediate column says which divergence is
-responsible: here stereochemistry alone, every separating gain realised by the stereo step. GLORYx
-references carry stereocentres that several of these systems cannot emit; internally, where
-references are already stereo-stripped, tautomerism fails instead. Which relaxation dominates is therefore a property of the reference set. The effect requires
-references that carry representational variety, and a leaderboard whose margins are narrower than
-the differential it produces.
+\paragraph{Mechanism.} The spread tracks how far a method's outputs diverge representationally from
+the references, and the intermediate column identifies which divergence is responsible: here
+stereochemistry alone. Internally, where references are already stereo-stripped, tautomerism fails
+instead, so which relaxation dominates is a property of the reference set. The effect requires
+references carrying representational variety and a leaderboard whose margins are narrower than the
+differential it produces.
 
 
 \subsection{The aggregate and the budget are one variable, and the decomposition predicts it}
@@ -579,19 +581,14 @@ the output size do not act on the same comparisons (Appendix~\ref{app:props}).
 
 
 
-\subsection{Selection as extreme multi-label classification}
-\label{sec:xmc}
-\label{sec:diagnosis}
-
-\looseness=-1
-GRAIL trails both published comparators at the field's budget and leads at none: SyGMa reaches
-$0.572$ on the $1{,}168$ substrates they share, a paired $-0.242$ $[-0.271,\,-0.212]$. The second
-confirmatory comparison locates that shortfall in selection. Through the same enumeration and
-filter, a learned selector reaches $0.266$ where rule-firing frequency alone reaches $0.410$, a
-paired $-0.144$ $[-0.196,\,-0.095]$, and inverse-propensity weighting moves it to $0.249$.
-Choosing which of \nbank\ rules apply is extreme multi-label classification with a near-empty
-positive set, where frequency baselines are hard to beat \citep{Jain_2016}.
-\label{sec:evidence}
+\paragraph{Where this system's own shortfall sits.} GRAIL trails both published comparators at the
+field's budget and leads at none: SyGMa reaches $0.572$ on the $1{,}168$ substrates they share, a
+paired $-0.242$ $[-0.271,\,-0.212]$. The second confirmatory comparison locates that shortfall in
+selection, where a learned selector reaches $0.266$ through the same enumeration and filter that
+rule-firing frequency alone carries to $0.410$, a paired $-0.144$ $[-0.196,\,-0.095]$. Choosing
+which of \nbank\ rules apply is extreme multi-label classification with a near-empty positive set,
+a regime in which frequency baselines are hard to beat \citep{Jain_2016}.
+\label{sec:xmc}\label{sec:diagnosis}\label{sec:evidence}
 
 \section{Limitations}
 \label{sec:limitations}
@@ -606,13 +603,11 @@ and depth-2 application lifts the ceiling by ${\sim}0.012$ at $8.5$ times the co
 bounds this formulation and not the task.
 
 \looseness=-2
-\paragraph{What the newer results rest on.} The cross-domain numbers come from eleven files
-produced elsewhere, read under an assumption proven where an independent ground truth exists, and
-the reordering there is a top-1 phenomenon. Packing is measured across four leaderboards, which is
-few. The population result is a bounded null: the design detects an interaction of about a
-tenth and the criterion's are a tenth of that, so it excludes a large effect and not a comparable
-one. The figure reported for this system is a single evaluation of the deployed
-configuration.
+\paragraph{What the newer results rest on.} The cross-domain numbers come from eleven files produced
+elsewhere, read under an assumption proven where an independent ground truth exists, and the
+reordering there is a top-1 phenomenon. The margin condition is measured across four leaderboards,
+which is few. The population result is a bounded null that excludes a large effect and not one the
+size the criterion produces.
 
 \section{Conclusion}
 \label{sec:conclusion}

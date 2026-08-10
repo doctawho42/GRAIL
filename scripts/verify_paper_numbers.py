@@ -594,10 +594,13 @@ def main() -> int:
                        "paired bootstrap on each margin, predictions frozen"))
         m = re.search(r"benchmark certifies is \$([\d.]+)\$", flat)
         check("resolution floor, seven-system", m and m.group(1), c0["resolution_floor"])
-        m = re.search(r"its margins start at \$([\d.]+)\$, above its own floor of \$([\d.]+)\$", flat)
+        m = re.search(r"its narrowest margin being \$([\d.]+)\$", flat)
         smallest = min(abs(v["margin"]) for v in c1["pairs"].values())
-        check("three-system smallest margin", m and m.group(1), smallest)
-        check("three-system floor", m and m.group(2), c1["resolution_floor"])
+        check("three-system narrowest margin", m and m.group(1), smallest)
+        checks.append((abs(smallest - c1["resolution_floor"]) < 1e-9,
+                       "the control's floor is its narrowest margin, every pair separating",
+                       smallest, c1["resolution_floor"],
+                       "which is why the two must not be stated as different numbers"))
         checks.append((c1["not_separable"] == 0, "the control group separates every pair",
                        c1["not_separable"], 0, "which is why no criterion exchanges it"))
         # the two orderings the body prints in words: every number, against the artifact
