@@ -228,39 +228,34 @@ The protocol used throughout is a matching specification, an audited split and a
 harness. It is referred to below as \textsc{tame}, for tautomer-aware matched evaluation, and it
 fixes what every number in \S\ref{sec:results} is measured under.
 
-\paragraph{The matching criterion.} The field has never agreed what counts as a match. GLORYx uses a stereo-blind InChIKey skeleton,
-MetaTrans compares Morgan fingerprints, and rule-based systems that canonicalise their own output,
-SyGMa among them, effectively compare canonical SMILES. Each is a different equivalence relation,
-and each is applied silently. \textsc{tame} states all five as named equivalence relations: predicted and reference
-structures are mapped through one of
+\paragraph{The matching criterion.} The field has never agreed what counts as a match. GLORYx uses
+a stereo-blind InChIKey skeleton, MetaTrans compares Morgan fingerprints, and rule-based systems
+that canonicalise their own output compare canonical SMILES. Each is a different equivalence
+relation, applied silently. \textsc{tame} states all five as named relations: predicted and
+reference structures are mapped through one of
 \[
 q \in \{\textsc{canonical},\ \textsc{inchikey},\ \textsc{inchi-no-stereo},\ \textsc{tanimoto1},\
 \textsc{inchikey-tautomer}\}
 \]
-and a prediction counts as a hit iff $q(\hat{y}) = q(y)$ for some reference $y$. Each map is computed with RDKit 2022.09.5, the version that reproduces
-the columns reported here. A ceiling
-reported under this protocol declares the \emph{application} procedure too: the engine and its
-version, sanitisation, the enumeration and filtering policy, and the depth (\S\ref{sec:enginereach}).
-\textsc{canonical} is canonical SMILES equality, \textsc{inchikey} the full InChIKey and
-\textsc{inchi-no-stereo} its first block, blind to stereochemistry, charge and isotopes. One caution attaches to the first. Canonical SMILES equality is
-computed without stereochemistry on the metabolite corpus, whose references carry none, and with it
-in the two cross-domain harnesses, whose references do: the same rule applied to corpora that differ
-in what they record, so the heading means the stricter thing wherever stereochemistry is present.
-That is why the cross-domain step to \textsc{inchi-no-stereo} moves those systems and the
-metabolite step cannot.
-
- \textsc{tanimoto1} is Tanimoto similarity of one over Morgan fingerprints at radius 2
-over 2048 bits; \textsc{inchikey-tautomer} standardises both sides before hashing, taking the
-fragment parent, neutralising charges, canonicalising tautomers and dropping stereochemistry.
+and a prediction counts as a hit iff $q(\hat{y}) = q(y)$ for some reference $y$, computed with RDKit
+2022.09.5. A ceiling reported under this protocol declares the \emph{application} procedure too: the
+engine and its version, sanitisation, the enumeration and filtering policy, and the depth
+(\S\ref{sec:enginereach}). \textsc{canonical} is canonical SMILES equality, \textsc{inchikey} the
+full InChIKey and \textsc{inchi-no-stereo} its first block, blind to stereochemistry, charge and
+isotopes; \textsc{tanimoto1} is Tanimoto similarity of one over Morgan fingerprints at radius 2 over
+2048 bits; \textsc{inchikey-tautomer} standardises both sides before hashing. One caution attaches to
+the first: canonical SMILES equality is computed without stereochemistry on the metabolite corpus,
+whose references carry none, and with it in the two cross-domain harnesses, whose references do, so
+the heading means the stricter thing wherever stereochemistry is present, which is why the
+cross-domain step to \textsc{inchi-no-stereo} moves those systems and the metabolite step cannot.
 
 All five criteria are reported for every comparison. The default for this corpus is
 \textsc{inchikey-tautomer}, chosen because the references neither carry stereochemistry nor
 distinguish tautomers, and because standard InChI normalises only a subset of tautomers
-\citep{Dhaked_2020}: an engine that emits the keto form of an enol reference fails to match under
-plain \textsc{inchikey} while producing the same substance. This default is the most permissive of the five and blind to
-stereochemistry as well as tautomerism, which also suits methods that standardise their output
-without stereocentres and so cannot emit one. Standardisation of
-this kind is established preprocessing; adopting it as the \emph{matching} rule is not.
+\citep{Dhaked_2020}: an engine emitting the keto form of an enol reference fails to match under
+plain \textsc{inchikey} while producing the same substance. It is the most permissive of the five,
+which also suits methods that cannot emit a stereocentre. Standardisation of this kind is
+established preprocessing; adopting it as the \emph{matching} rule is not.
 
 \looseness=-1
 \paragraph{Split and leakage audit.} All splits are substrate-disjoint, and a separate read-only
@@ -443,36 +438,36 @@ survive (Appendix~\ref{app:popaxis}).
 The deep case study runs on GRAIL, a metabolite predictor built for this work: a learned selector
 chooses which of its \nbank\ rules to apply, an engine applies them, and a learned filter ranks the
 result. A rule-grounded system of this form is the setting in which a coverage figure can be
-measured exhaustively rather than sampled.
-
-\looseness=-1
-A rule-grounded predictor reaches a reference only by passing three gates in sequence: the
-transformation must be \emph{expressible} by some rule, that rule must be \emph{selected} into the
-substrate's pool under a budget, and the product must be \emph{ranked} into the top $k$. Writing
-$C_{\text{full}}$ for the references the whole bank recovers without a budget, $C_{\text{bud}}$ for
-those surviving the selector, and $H$ for those returned:
+measured exhaustively rather than sampled. A predictor of this shape reaches a reference only by
+passing three gates in sequence, so with $C_{\text{full}}$ the references the whole bank recovers
+without a budget, $C_{\text{bud}}$ those surviving the selector and $H$ those returned,
 \[
 \underbrace{\tfrac{|H|}{|U|}}_{\text{recall@}k}
 =\underbrace{\tfrac{|C_{\text{full}}|}{|U|}}_{\text{coverage}}
 \cdot\underbrace{\tfrac{|C_{\text{bud}}|}{|C_{\text{full}}|}}_{\text{selection}}
 \cdot\underbrace{\tfrac{|H|}{|C_{\text{bud}}|}}_{\text{ranking}},
-\qquad |U|=\textstyle\sum_{s\in S}|Y_s| .
+\qquad |U|=\textstyle\sum_{s\in S}|Y_s| ,
 \]
-Each set contains the next, so the identity is exact: an accounting device, not a model. It is
-written in \emph{micro} because only that form multiplies out exactly, head-to-head comparisons use
-\emph{macro}, and every figure states which. The first factor needs an enumerable candidate set,
-which a bank supplies and a wide decode approximates: MetaPredictor factorises
-$0.612\times0.804\times1.000$, exactly its realised recall, though a beam bounds that decode rather
-than the model (Appendix~\ref{app:seq2seq}).
+exact by construction because each set contains the next: an accounting device, not a model, written
+in \emph{micro} because only that form multiplies out, with head-to-head comparisons in \emph{macro}
+and every figure stating which. MetaPredictor factorises $0.612\times0.804\times1.000$, exactly its
+realised recall, though a beam bounds that decode rather than the model (Appendix~\ref{app:seq2seq}).
 
 \paragraph{The ceiling as a primitive.} Apply all \nbank\ rules to every test substrate and ask what
 fraction of references appears anywhere in the union. That \textbf{coverage ceiling} is the best
 recall achievable if selection and ranking were perfect, and on the clean test split it is \ceiling\
-(cluster-bootstrap 95\% CI $[0.794,0.839]$); the macro counterpart is $\ceilingmacro$. It should be
-reported alongside recall for any rule-grounded method, and reported as system reach in the sense of
-\S\ref{sec:enginereach}, since it is a property of bank and engine together.
-
-\paragraph{What the decomposition says.}\looseness=-1 The deployed pipeline converts only $32.5\%$ of its own ceiling into realised recall, drawn as a waterfall beside SyGMa's in Appendix~\ref{app:formal}. Selection is where the loss sits: barely a third of what the bank reaches survives the selector's rule budget, while ranking is close to lossless at $0.960$ $[0.941,0.976]$. It does not bind alone: the output cap binds on $308$ of \ntest\ substrates and all $29$ references lost between the budgeted pool and the emitted output fall on those (Appendix~\ref{app:props}). Removing selection entirely tests that reading: ranking the whole pool with no selector, the bank passes SyGMa by $0.167$ $[0.112,0.223]$ at $k=82$ and is indistinguishable at the field's $k=15$. Applied to a second method the reading stops being self-diagnosis: SyGMa decomposes on the same split with the inverse profile, converting nearly all of a narrower reach where we convert a third of a wider one (Appendices~\ref{app:noselect} and~\ref{app:decompsygma}).
+(cluster-bootstrap 95\% CI $[0.794,0.839]$), macro $\ceilingmacro$. It should be reported alongside
+recall for any rule-grounded method, and reported as system reach in the sense of
+\S\ref{sec:enginereach}. The deployed pipeline converts only $32.5\%$ of its own ceiling into
+realised recall. Selection is where the loss sits, barely a third of what the bank reaches surviving
+the rule budget; the output cap binds on $308$ of \ntest\ substrates and all $29$ references lost
+between the budgeted pool and the emitted output fall on those. Ranking is close to lossless at $0.960$ $[0.941,0.976]$, and it is
+also close to free: re-ranking the same pool by Tanimoto similarity to the substrate, with nothing
+trained, reaches $0.342$ against the filter's $0.340$, a difference of $+0.002$ $[-0.004,+0.009]$,
+while reversing that order costs $0.040$ and shuffling it costs $0.015$. The learned filter has
+found the scaffold and, at this budget, not much past it. Applied to a second method the
+decomposition stops being self-diagnosis, since SyGMa decomposes on the same split with the inverse
+profile (Appendices~\ref{app:noselect} and~\ref{app:decompsygma}).
 
 \section{Results}
 \label{sec:results}

@@ -1,0 +1,51 @@
+{
+ "config": {
+  "script": "scaffold_baseline.py",
+  "git_commit": "a1b1d96ee9c0c30ae3d43b98a4732a2f32887ab4",
+  "git_dirty": true,
+  "k": 15,
+  "n_substrates": 1170,
+  "n_boot": 10000,
+  "seed": 0,
+  "fingerprint": "Morgan radius 2, 2048 bits",
+  "note": "same pool, same matching rule, same budget; only the order varies"
+ },
+ "arms": {
+  "deployed": {
+   "recall": 0.3395,
+   "vs_deployed": 0.0,
+   "ci95": [
+    0.0,
+    0.0
+   ],
+   "certified": false
+  },
+  "similarity": {
+   "recall": 0.3419,
+   "vs_deployed": 0.0024,
+   "ci95": [
+    -0.004,
+    0.0091
+   ],
+   "certified": false
+  },
+  "dissimilarity": {
+   "recall": 0.2992,
+   "vs_deployed": -0.0403,
+   "ci95": [
+    -0.0512,
+    -0.0303
+   ],
+   "certified": true
+  },
+  "random": {
+   "recall": 0.3243,
+   "vs_deployed": -0.0152,
+   "ci95": [
+    -0.0232,
+    -0.0073
+   ],
+   "certified": true
+  }
+ }
+}

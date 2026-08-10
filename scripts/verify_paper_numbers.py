@@ -990,6 +990,37 @@ def main() -> int:
                   round(json.loads(cl2.read_text())["reach"]["completed"]["reach"], 3),
                   str(cl2.relative_to(ROOT)))
 
+    # 10c-x. The scaffold baseline. If an untrained similarity ranks the same pool as well as the
+    # trained filter, the filter has learned the scaffold and little else, and the controls have to
+    # be in the gate too: reversing the order and shuffling it must both be certifiably worse, or
+    # the comparison says nothing about what similarity contains.
+    sb = ROOT / "results/scaffold_baseline.json"
+    if sb.exists():
+        SB = json.loads(sb.read_text())["arms"]
+        flat = re.sub(r"\s+", " ", whole)
+        msb = re.search(r"reaches \$([\d.]+)\$ against the filter's \$([\d.]+)\$, a difference of "
+                        r"\$\+([\d.]+)\$ \$\[(-[\d.]+),\+([\d.]+)\]\$, while reversing that order "
+                        r"costs \$([\d.]+)\$ and shuffling it costs \$([\d.]+)\$", flat)
+        checks.append((bool(msb), "the scaffold-baseline sentence parses", "present",
+                       "matched" if msb else "not matched", ""))
+        if msb:
+            src = str(sb.relative_to(ROOT))
+            check("similarity ranking", msb.group(1), round(SB["similarity"]["recall"], 3), src)
+            check("the filter's ranking", msb.group(2), round(SB["deployed"]["recall"], 3), src)
+            check("the difference", msb.group(3), round(SB["similarity"]["vs_deployed"], 3), src)
+            check("difference, lower", msb.group(4), round(SB["similarity"]["ci95"][0], 3), src)
+            check("difference, upper", msb.group(5), round(SB["similarity"]["ci95"][1], 3), src)
+            check("cost of reversing", msb.group(6),
+                  round(abs(SB["dissimilarity"]["vs_deployed"]), 3), src)
+            check("cost of shuffling", msb.group(7),
+                  round(abs(SB["random"]["vs_deployed"]), 3), src)
+            checks.append((not SB["similarity"]["certified"],
+                           "the filter and similarity are not separable", "not certified",
+                           str(SB["similarity"]["certified"]), src))
+            checks.append((SB["dissimilarity"]["certified"] and SB["random"]["certified"],
+                           "both controls are certifiably worse", "certified",
+                           f"{SB['dissimilarity']['certified']} and {SB['random']['certified']}", src))
+
     # 10c-w. Guaranteed reach: the least a bank recovers over the conventions it might be run
     # under. It is the constructive half of the incomparability claim, so it is held to the same
     # artifact as the arms it minimises over, and the gate recomputes the minimum rather than
