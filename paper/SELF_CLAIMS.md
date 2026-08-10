@@ -606,3 +606,14 @@ The document is subject to its own rule. The paragraph above the row-2 command o
 open items remain" while row 2 was open. Both were caught by running the check rather than by
 rereading the prose, which is the entire argument for keeping the commands in here next to the
 claims they support.
+
+**A third variant, found while promoting the reversal into the main text.** The four
+recovered-reference counts in that sentence are checked, and the check computes them as the reach
+recorded in the artifact, rounded to four decimals, times the reference total: which is exactly how
+the sentence was written. Nothing was frozen and nothing was read from the wrong population, yet the
+gate tests arithmetic rather than provenance, and it would go on passing if the underlying pass were
+re-run and the counts changed, because both sides move together. At this reference total the rounding
+is worth a tenth of a reference, so no number was wrong. The measurement now records the integers,
+and the check compares the manuscript against a recorded count. The rule the three variants share:
+a reference must be produced by the measurement, not reconstructed from the manuscript's own
+arithmetic.
