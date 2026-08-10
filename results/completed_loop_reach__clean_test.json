@@ -1,0 +1,66 @@
+{
+ "config": {
+  "script": "completed_loop_reach.py",
+  "git_commit": "034807d28db9b2ecefc683fa2169ed9ad8493817",
+  "git_dirty": false,
+  "population": "clean_test",
+  "n_substrates": 1170,
+  "n_rules": 152,
+  "match": "inchikey_tautomer",
+  "n_boot": 10000,
+  "seed": 0,
+  "arms": {
+   "expanded": "AddHs -> RunReactants -> sanitize, as the loop stands",
+   "completed": "AddHs -> RunReactants -> RemoveHs -> sanitize",
+   "implicit": "RunReactants -> sanitize"
+  }
+ },
+ "references": 2597,
+ "reach": {
+  "expanded": {
+   "reach": 0.1998,
+   "ci95": [
+    0.1817,
+    0.2188
+   ]
+  },
+  "completed": {
+   "reach": 0.3423,
+   "ci95": [
+    0.32,
+    0.3649
+   ]
+  },
+  "implicit": {
+   "reach": 0.3897,
+   "ci95": [
+    0.3667,
+    0.4126
+   ]
+  }
+ },
+ "the_missing_call": {
+  "delta": 0.1425,
+  "ci95": [
+   0.1251,
+   0.1598
+  ],
+  "excludes_zero": true
+ },
+ "what_survives_as_convention": {
+  "delta": 0.0474,
+  "ci95": [
+   0.0377,
+   0.0574
+  ],
+  "excludes_zero": true
+ },
+ "the_whole_gap_as_published": {
+  "delta": 0.1898,
+  "ci95": [
+   0.1729,
+   0.2075
+  ],
+  "excludes_zero": true
+ }
+}
