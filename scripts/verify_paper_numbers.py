@@ -990,6 +990,32 @@ def main() -> int:
                   round(json.loads(cl2.read_text())["reach"]["completed"]["reach"], 3),
                   str(cl2.relative_to(ROOT)))
 
+    # 10c-s. The design appendix quotes two measured numbers and one dataset fact, and marks the
+    # boundary between them and what it proposes. The boundary is what the gate protects: the
+    # appendix must state that nothing in it is trained or evaluated here.
+    flat_d = re.sub(r"\s+", " ", whole)
+    ss2 = ROOT / "results/setsize_headroom.json"
+    lc2 = ROOT / "results/label_convention_audit.json"
+    if ss2.exists():
+        S2 = json.loads(ss2.read_text())["arms"]["gap rule a=0.5"]
+        md = re.search(r"beats every global budget on frozen scores, by \$\+([\d.]+)\$ "
+                       r"\$\[\+([\d.]+),\+([\d.]+)\]\$ macro F1, and takes \$(\d+)\\%\$", flat_d)
+        checks.append((bool(md), "the design appendix's measured claim parses", "present",
+                       "matched" if md else "not matched", ""))
+        if md:
+            src = str(ss2.relative_to(ROOT))
+            check("design appendix, the gain", md.group(1),
+                  round(S2["f1_gain_over_k15"], 3), src)
+            check("design appendix, lower", md.group(2), round(S2["ci95"][0], 3), src)
+            check("design appendix, upper", md.group(3), round(S2["ci95"][1], 3), src)
+            orac = json.loads(ss2.read_text())["arms"]["oracle count"]["f1_gain_over_k15"]
+            check("design appendix, share of the oracle", md.group(4),
+                  round(S2["f1_gain_over_k15"] / orac * 100), src)
+        checks.append(("None of this is trained or evaluated in this paper." in flat_d,
+                       "the design appendix marks what it does not claim", "present",
+                       "present" if "None of this is trained or evaluated in this paper." in flat_d
+                       else "absent", "the manuscript"))
+
     # 10c-r. The emission policy. Every arm holds the ranking fixed and changes only the number
     # emitted, so a gain is attributable to the size of the set; the gate additionally requires the
     # sibling-relative rule to beat every global constant, which is the claim the paragraph makes.

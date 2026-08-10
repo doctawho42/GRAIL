@@ -149,6 +149,37 @@ def main() -> int:
                 "margin": round(float(d.mean()), 4), "ci95": [round(lo, 4), round(hi, 4)],
                 "certified": bool(lo * hi > 0)}
 
+    # The sharper question is not whether the ordering changes but whether the two populations are
+    # the same task. A method that loses on metabolites what it keeps on parents is being averaged
+    # over two questions, and the size of that gap differs by method: an interaction, unpaired
+    # because the populations are disjoint, so the two bootstraps are drawn independently.
+    ip = rng.integers(0, len(per["parents"]["subs"]), (N_BOOT, len(per["parents"]["subs"])))
+    im = rng.integers(0, len(per["metabolites"]["subs"]), (N_BOOT, len(per["metabolites"]["subs"])))
+    drop = {}
+    for m in methods:
+        bt = per["parents"][m][ip].mean(axis=1) - per["metabolites"][m][im].mean(axis=1)
+        lo, hi = float(np.quantile(bt, .025)), float(np.quantile(bt, .975))
+        drop[m] = {"parents_minus_metabolites": round(float(per["parents"][m].mean()
+                                                            - per["metabolites"][m].mean()), 4),
+                   "ci95": [round(lo, 4), round(hi, 4)], "certified": bool(lo * hi > 0)}
+    inter = {}
+    for a, b in itertools.combinations(methods, 2):
+        bt = ((per["parents"][a][ip].mean(axis=1) - per["metabolites"][a][im].mean(axis=1))
+              - (per["parents"][b][ip].mean(axis=1) - per["metabolites"][b][im].mean(axis=1)))
+        lo, hi = float(np.quantile(bt, .025)), float(np.quantile(bt, .975))
+        inter[f"{a} vs {b}"] = {"delta": round(float(bt.mean()), 4),
+                                "ci95": [round(lo, 4), round(hi, 4)],
+                                "certified": bool(lo * hi > 0)}
+    rep["population_drop"] = drop
+    rep["drop_differs_by_method"] = inter
+    print("\n  recall lost from parents to metabolites, by method:")
+    for m, v in drop.items():
+        print(f"    {m:16} {v['parents_minus_metabolites']:+.4f} {v['ci95']}  "
+              f"certified {v['certified']}")
+    print("  the loss differs by method:")
+    for k, v in inter.items():
+        print(f"    {k:34} {v['delta']:+.4f} {v['ci95']}  certified {v['certified']}")
+
     same = rep["orderings"]["parents"] == rep["orderings"]["metabolites"]
     flips = [p for p, v in rep["pairs"].items()
              if v["parents"]["margin"] * v["metabolites"]["margin"] < 0]

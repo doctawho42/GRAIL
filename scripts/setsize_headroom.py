@@ -84,16 +84,25 @@ def evaluate(rows, truth_keys, counts, keyer):
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default=str(ROOT / "results" / "setsize_headroom.json"))
+    ap.add_argument("--match", default="tautomer", choices=("tautomer", "inchikey"),
+                    help="a result that only holds under the most permissive rule is not a result")
+    ap.add_argument("--population", default="all", choices=("all", "parents", "metabolites"),
+                    help="the split silently mixes parent drugs with their own metabolites")
     args = ap.parse_args()
 
     from grail_metabolism.metrics import _tautomer_inchikey
+    from rdkit.Chem import inchi
 
     cache: dict = {}
 
     def keyer(s):
         if s not in cache:
             try:
-                cache[s] = _tautomer_inchikey(s)
+                if args.match == "tautomer":
+                    cache[s] = _tautomer_inchikey(s)
+                else:
+                    m = Chem.MolFromSmiles(s)
+                    cache[s] = inchi.MolToInchiKey(m) if m is not None else None
             except Exception:
                 cache[s] = None
         return cache[s]
@@ -101,6 +110,18 @@ def main() -> int:
     scored = json.loads((ROOT / "results/scored_predictions.json").read_text())
     rows = scored["rows"]
     truth = json.loads((ROOT / "results/test_references.json").read_text())
+    if args.population != "all":
+        smi = [Chem.MolToSmiles(m) if m is not None else None
+               for m in Chem.SDMolSupplier(str(ROOT / "grail_metabolism/data/test.sdf"))]
+        prods = set()
+        for line in (ROOT / "grail_metabolism/data/test_triples_clean.txt").read_text().splitlines():
+            a_, b_, r_ = line.split()
+            a_, b_ = int(a_), int(b_)
+            if r_ == "1" and a_ < len(smi) and b_ < len(smi) and smi[a_] and smi[b_]:
+                prods.add(smi[b_])
+        keep = (lambda s: s in prods) if args.population == "metabolites" else (lambda s: s not in prods)
+        truth = {s: v for s, v in truth.items() if keep(s)}
+        rows = [r for r in rows if r["sub"] in truth]
     truth_keys = {s: {k for k in (keyer(y) for y in ys) if k} for s, ys in truth.items()}
 
     # the count predictor: trained on the training split, applied to test. Deliberately the
@@ -176,6 +197,7 @@ def main() -> int:
     idx = rng.integers(0, n, (N_BOOT, n))
 
     rep = {"config": {**_code_version(), "n_substrates": int(n), "n_boot": N_BOOT, "seed": SEED,
+                      "match": args.match, "population": args.population,
                       "note": "ranking untouched in every arm; only the number emitted changes",
                       "count_model": "least squares on heavy atoms, rings, rotatable bonds, "
                                      "fitted on the training split"},
