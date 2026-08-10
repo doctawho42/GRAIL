@@ -628,7 +628,10 @@ BioTransformer's configuration is unscripted; the other three are scored on the 
 unannotated but real product counts as a false positive, so every precision and F1 figure is
 pessimistic, depth-2 application lifts the ceiling by ${\sim}0.012$ at $8.5$ times the cost, so
 $\ceiling$ bounds this formulation rather than the task, and the figure reported for this system is
-a single evaluation of the deployed configuration.
+a single evaluation of the deployed configuration. Its rule labels are built with the substrate
+expanded and its rules are fired without the expansion, so the two agree on about half the
+rule--substrate positives, and the reading that locates the shortfall in selection is conditioned
+on that (Appendix~\ref{app:enginereach}).
 
 \looseness=-2
 \paragraph{What the newer results rest on.} The cross-domain numbers come from files produced

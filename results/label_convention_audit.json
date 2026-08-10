@@ -1,0 +1,1301 @@
+{
+ "config": {
+  "script": "label_convention_audit.py",
+  "git_commit": "8e9ef156f4aff63e85580e50f44c51ec8eee81c6",
+  "git_dirty": false,
+  "n_substrates_requested": 150,
+  "seed": 0,
+  "n_substrates_scored": 150,
+  "n_rules": 7581,
+  "split": "train, clean triples",
+  "note": "a rule counts as positive for a substrate when applying it under that convention yields an annotated metabolite; this is what MolFrame.label_reactions computes, and it computes it expanded"
+ },
+ "positives": {
+  "implicit_only": 142,
+  "expanded_only": 25,
+  "both": 140,
+  "union": 307,
+  "implicit_total": 282,
+  "expanded_total": 165
+ },
+ "agreement": {
+  "jaccard": 0.456,
+  "share_of_union_lost_by_expanding": 0.4625,
+  "share_of_union_added_by_expanding": 0.0814,
+  "substrates_whose_label_row_changes": 29,
+  "substrates_scored": 150
+ },
+ "per_substrate": [
+  {
+   "substrate": "C#CC1(O)CCC2C3CC=C4CC(=O)CCC4(C)C3CCC21C",
+   "implicit": [
+    1844,
+    2335
+   ],
+   "expanded": [
+    1844,
+    2335
+   ]
+  },
+  {
+   "substrate": "C#CC1(OC2OC(C(=O)O)C(O)C(O)C2O)CCC2C3CCC4Cc5nn(S(C)(=O)=O)cc5CC4(C)C3CCC21C",
+   "implicit": [
+    4471
+   ],
+   "expanded": [
+    4471
+   ]
+  },
+  {
+   "substrate": "C#CC1(OS(=O)(=O)O)CCC2C3C(C)CC4=C(CCC(OS(=O)(=O)O)C4)C3CCC21C",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "C#Cc1cc(Nc2ncnc3cc(OCCOC)c(OCCOC)cc23)cc(SCC(N=C(O)CCC(N)C(=O)O)C(O)=NCC(=O)O)c1O",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "C=C(CC(NC(=O)c1ccc(CCc2nc3c(N)[nH]c(=N)[nH]c-3nc2=O)cc1)C(=O)O)C(=O)O",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "C=C(c1ccc(C(=O)O)cc1)c1cc2c(cc1C)C(C)(C)C(OC1OC(C(=O)O)C(O)C(O)C1O)CC2(C)C",
+   "implicit": [],
+   "expanded": [
+    2,
+    1709
+   ]
+  },
+  {
+   "substrate": "C=C1C(O)C2OC3(CCC(C=CC(C)C4OC5(C=C(C)C4O)OC(CC(C)(O)C(=O)O)CCC5O)O3)CCC2OC1C(O)CC(C)C1OC2(CCCCO2)CCC1C",
+   "implicit": [
+    1042,
+    3348,
+    4150
+   ],
+   "expanded": [
+    1042
+   ]
+  },
+  {
+   "substrate": "C=C1ON=C(c2c(C)cccc2C)C1=NC(O)=NCc1c(F)cccc1Cl",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "C=CC1CC1(N=C(O)C1CC2CN1C(=O)C(C(C)(C)C)/N=C(/O)OC1CC1CCCCCc1nc3cc(O)c(OC)cc3cc1O2)C(O)=NS(=O)(=O)C1CC1O",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "CC#CCn1c(N2CCCC(N=C(C)O)C2)nc2c1c(=O)n(Cc1nc(C)c3ccccc3n1)c(=O)n2C",
+   "implicit": [
+    864,
+    909,
+    1042,
+    1820,
+    2399,
+    2473,
+    3239,
+    3240,
+    3325,
+    3348,
+    3951,
+    4150,
+    4202,
+    4670,
+    4941,
+    5332,
+    5468,
+    5469,
+    5470,
+    6269
+   ],
+   "expanded": [
+    3,
+    158,
+    909,
+    1042,
+    3239,
+    4202,
+    4670,
+    4941,
+    5468,
+    5469,
+    5470
+   ]
+  },
+  {
+   "substrate": "CC(=CCC(O)C(C)=Cc1csc(C)n1)CCCC(C)C(O)C(C)C(=O)C(C)(C)C(O)CC(=O)O",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "CC(=O)C1(O)CCC2C3=CC(Cl)=C4CC(=O)CCC4(C)C3CCC21C",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "CC(=O)OC12COC1CC(O)C1(C)C(=O)/C(OC(=O)N(C)C)=C3/C(C)C(OC(=O)C(=O)C(CC(C)CO)N=C(O)OC(C)(C)C)CC(O)(C(OC(=O)c4ccccc4)C21)C3(C)C",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "CC(=O)SCCOP(=O)(O)COCCn1cnc2c(N)ncnc21",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "CC(=O)c1cc(C(O)=Nc2cc(Cl)c3c(c2Cl)C(O)NC=C3)ccc1OC(C)C",
+   "implicit": [
+    4785
+   ],
+   "expanded": []
+  },
+  {
+   "substrate": "CC(C(O)c1ccc(OC2OC(C(=O)O)C(O)C(O)C2O)cc1)N1CCC(O)(c2ccccc2)CC1",
+   "implicit": [
+    4471
+   ],
+   "expanded": [
+    4471
+   ]
+  },
+  {
+   "substrate": "CC(C)(c1[nH]cnc1Cc1[nH]c(=O)c(Cc2ccccc2O)nc1O)C1CO1",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "CC(C)=CCCC(C)CCOC1OC(C(=O)O)C(O)C(O)C1O",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "CC(C)C1(CC(O)CO)C(O)=NC(=O)N=C1O",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "CC(C)NCCOC(=O)C1(c2ccccc2)CCCC1",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "CC(C)c1nc(COC(=N)O)n(Cc2ccncc2)c1S(=O)c1cc(Cl)cc(Cl)c1",
+   "implicit": [
+    474,
+    1179,
+    1194,
+    1726,
+    1737,
+    1753,
+    1768,
+    1773,
+    1774,
+    1784,
+    1785,
+    1810,
+    1815,
+    1855,
+    1869,
+    2132,
+    2143,
+    2228,
+    2234,
+    2305,
+    2318,
+    2327,
+    2346,
+    2545,
+    2697,
+    3054,
+    3610,
+    3613,
+    5281,
+    5633,
+    5841,
+    5843,
+    5844,
+    7142,
+    7336,
+    7376
+   ],
+   "expanded": [
+    0,
+    24,
+    69,
+    90,
+    142,
+    224
+   ]
+  },
+  {
+   "substrate": "CC(C=CC(C)C(C)(C)O)C1CCC2C(=CC=C3CC(O)CC(O)C3C)CCCC21C",
+   "implicit": [
+    1042,
+    3348,
+    4150
+   ],
+   "expanded": [
+    1042
+   ]
+  },
+  {
+   "substrate": "CC(O)=NC(CSCCCO)C(=O)O",
+   "implicit": [
+    909,
+    1042,
+    1736,
+    2012,
+    2218,
+    3211,
+    3212,
+    3348,
+    3353,
+    4150,
+    4809,
+    4836,
+    5332,
+    7231
+   ],
+   "expanded": [
+    12,
+    19,
+    111,
+    158,
+    909,
+    1042
+   ]
+  },
+  {
+   "substrate": "CC(O)=NCc1ccc(C(=O)O)cc1",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "CC(OC1OC(C(=O)O)C(O)C(O)C1O)c1cc(C(F)(F)F)cc(C(F)(F)F)c1",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "CC1(C(=O)O)CCC(=O)O1",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "CC12C=CC(=O)C=C1CCC1C2C(=O)CC2(C)C1CCC2(O)C(O)CO",
+   "implicit": [
+    1003,
+    1042,
+    1233,
+    2097,
+    2649,
+    3348,
+    4150
+   ],
+   "expanded": [
+    261,
+    1042
+   ]
+  },
+  {
+   "substrate": "CC12CCC(O)CC1=CCC1C2CCC2(C)C(c3cccnc3)=CCC12",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "CC1CCC(O)C(C)C1",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "CCC(=O)OC1CC(=O)OC(C)C/C=C\\C=C/C(O)C(C)CC(CC=O)C(OC2OC(C)C(OC3CC(C)(O)C(O)C(C)O3)C(N(C)C)C2O)C1OC",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "CCC(=O)OCC(=O)C1(O)C(C)CC2C3CC=C4CC(=O)C=CC4(C)C3(Cl)C(O)CC21C",
+   "implicit": [
+    5,
+    13,
+    1042,
+    1697,
+    1718,
+    1724,
+    1744,
+    1840,
+    1898,
+    1967,
+    2108,
+    2125,
+    2256,
+    2615,
+    2649,
+    3348,
+    3502,
+    3791,
+    4150,
+    4661,
+    4662,
+    5093
+   ],
+   "expanded": [
+    5,
+    13,
+    1042,
+    1697,
+    1718,
+    1724,
+    1744,
+    1840,
+    1898,
+    1967,
+    2108,
+    2125,
+    2256,
+    2615,
+    3502,
+    3791,
+    4661,
+    4662,
+    5093
+   ]
+  },
+  {
+   "substrate": "CCC(O)CCn1cc(C(=O)CC(C)(C)C2(C)CO2)c2ccccc21",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "CCC1CC2C(CCC3(C)C(=O)CCC23)c2ccc(O)cc21",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "CCC1CN2CCc3c([nH]c4cccc(OC)c34)C2CC1C(CO)C(=O)OC",
+   "implicit": [
+    917,
+    1209,
+    1756,
+    1965,
+    2024,
+    2841,
+    3019,
+    3531,
+    4159,
+    4436,
+    5620,
+    5944,
+    7048
+   ],
+   "expanded": [
+    37
+   ]
+  },
+  {
+   "substrate": "CCC1OC(=O)C(C)C(OC2CC(C)(OC)C(O)C(C)O2)C(C)C(OC2OC(C)CC(N(C)C)C2O)C(C)(O)CC(C)C(N)C(C)C(O)C1(C)O",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "CCCC1(CCc2ccccc2)CC(=O)C(C(CC)c2cccc(NS(=O)(=O)C3(SCC(N=C(O)CCC(N)C(=O)O)C(O)=NCC(=O)O)C=CC(=C=N)C=N3)c2)C(=O)O1",
+   "implicit": [
+    4421
+   ],
+   "expanded": [
+    4421
+   ]
+  },
+  {
+   "substrate": "CCCC1OC2CC3C4CCC5CC(=O)C=CC5(C)C4C(O)CC3(C)C2(C(=O)CO)O1",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "CCCCCCCCCC(CC(=O)CCc1ccc(OC2OC(C(=O)O)C(O)C(O)C2O)c(OC)c1)OS(=O)(=O)O",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "CCCCCN(CC(O)COC)C(=O)C(CCC(=O)O)N=C(O)c1ccc(Cl)c(Cl)c1",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "CCN(CC(O)=NC(CC(=O)O)C(O)=NC(CC1CCCCC1)C(=O)O)C(=O)CCCC1CCNCC1",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "CCN(CC)CCOc1ccc2c(c1)C(O)c1cc(OCCN(CC)CC)ccc1-2",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "CCNC(=O)c1ccc(C(=C2CC3CCC(C2)N3CCc2ccccc2)c2ccccc2)cc1",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "CCOC(=O)c1c(CN2CCOCC2)nc(-c2nccs2)nc1-c1ccc(F)cc1Br",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "CCOP(=S)(OCC)SCS(=O)CC",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "CCOP(O)(=S)OCC",
+   "implicit": [
+    211,
+    259,
+    1146,
+    1921
+   ],
+   "expanded": [
+    211,
+    259,
+    1146,
+    1921
+   ]
+  },
+  {
+   "substrate": "CCOc1cc2[nH]cc(C#N)c(=Nc3ccc(OCc4ccccn4)c(Cl)c3)c2cc1N=C(O)C=CCNC",
+   "implicit": [
+    5419
+   ],
+   "expanded": []
+  },
+  {
+   "substrate": "CCS(=O)(=O)CCSP(=O)(OC)OC",
+   "implicit": [
+    7132
+   ],
+   "expanded": [
+    7132
+   ]
+  },
+  {
+   "substrate": "CCS(C)=O",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "CCc1c(O)nc(O)nc1O",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "CCc1c2c(nc3ccc(OC4OC(C(=O)O)C(O)C(O)C4O)cc13)-c1cc3c(c(=O)n1C2)COC(=O)C3(O)CC",
+   "implicit": [
+    1042,
+    3348,
+    4150,
+    6534
+   ],
+   "expanded": [
+    1042,
+    6534
+   ]
+  },
+  {
+   "substrate": "CCn1c(O)nc(-c2ccc(O)cc2)c1O",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "CN(C(=O)C=Cc1ccoc1)C1CCC2(O)C3Cc4ccc(OC5OC(C(=O)O)C(O)C(O)C5O)c5c4C2(CCN3CC2CC2)C1O5",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "CN(C)S(=O)(=O)c1ccc2c(c1)C(=CCCN1CC[N+](C)(C3OC(C(=O)[O-])C(O)C(O)C3O)CC1)c1ccccc1S2",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "CN1C(=O)N=C(O)C(C)(C2=CC(OC3OC(C(=O)O)C(O)C(O)C3O)CCC2)C1=O",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "CN1CCC23c4c5ccc(O)c4OC2C(=O)CCC3C1C5",
+   "implicit": [
+    25,
+    40,
+    1042,
+    1800,
+    1851,
+    2047,
+    2082,
+    2129,
+    2154,
+    2185,
+    2280,
+    2764,
+    2928,
+    3065,
+    3277,
+    3348,
+    4150,
+    5332,
+    6492,
+    7305
+   ],
+   "expanded": [
+    25,
+    40,
+    1042,
+    1800,
+    1851,
+    2047,
+    2082,
+    2129,
+    2154,
+    2185,
+    2280,
+    2764,
+    2928,
+    3065,
+    3277,
+    6492,
+    7305
+   ]
+  },
+  {
+   "substrate": "CN1CCC23c4c5ccc(OCCN6CCOC(O)C6)c4OC2C(O)C=CC3C1C5",
+   "implicit": [
+    16,
+    49,
+    1162,
+    1718,
+    1724,
+    1736,
+    1744,
+    1898,
+    2108,
+    2218,
+    2761,
+    2808,
+    2992,
+    3113,
+    3119,
+    3211,
+    3212,
+    3268,
+    3502,
+    3791,
+    4144,
+    4188,
+    4202,
+    4321,
+    4669,
+    4670,
+    4671,
+    4672,
+    4941,
+    5010,
+    5093,
+    5553,
+    5900,
+    6447,
+    6723,
+    6953,
+    7297,
+    7298,
+    7299,
+    7452
+   ],
+   "expanded": [
+    2,
+    6,
+    12,
+    16,
+    19,
+    49,
+    1709,
+    1718,
+    1724,
+    1744,
+    1898,
+    2108,
+    2761,
+    2992,
+    3113,
+    3119,
+    3502,
+    3791,
+    4144,
+    4188,
+    4202,
+    4321,
+    4669,
+    4670,
+    4671,
+    4672,
+    4941,
+    5093,
+    5553,
+    5900,
+    6723,
+    6953,
+    7297,
+    7298,
+    7299,
+    7452
+   ]
+  },
+  {
+   "substrate": "CN1CCCC1=NC(=Nc1ccc(OC2OC(C(=O)O)C(O)C(O)C2O)cc1)N1CCCC1",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "CN1CCN(C(=O)C2CCN(c3ccc(Nc4ncc5ccc(-c6ccccc6N(C)S(C)(=O)=O)n5n4)cc3SCC(N=C(O)CCC(N)C(=O)O)C(O)=NCC(=O)O)CC2)CC1",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "CN1CCN(C2=Nc3cc(F)c(OC4OC(C(=O)O)C(O)C(O)C4O)cc3Cc3ccccc32)CC1",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "CN1CCN(C2Cc3ccccc3S(=O)c3ccc(S(C)(=O)=O)cc32)CC1",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "CN1N=C2CCN(C(=O)C(CO)N=C(O)C(C)(C)N)CC2(Cc2ccc(O)cc2)C1=O",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "CNCCCN1c2ccccc2CCc2cc(O)c(Cl)cc21",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "COC(=O)CCC(NP(=O)(OCC1OC(n2cc(C)c(O)nc2=O)CC1N=[N+]=[N-])Oc1ccccc1)C(=O)O",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "COC(=O)c1c(C)nc(C)c(C(=O)OC)c1-c1ccc(C(F)(F)F)cc1",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "COC(=O)c1ccc(O)cc1",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "COC(=O)c1ccc2c(c1)N=C(O)C2=C(Nc1ccc(N(C)C(=O)CN2CC[N+](C)(O)CC2)cc1)c1ccccc1",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "COC(=O)c1nc(-c2ccc3c(O)cc(N)c(O)c3n2)c2[nH]c3ccc(O)cc3c2c1C",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "COC1CC2C3CCC(=O)C3(C)CCC2C2(CO)CCC(=O)C=C12",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "COCc1c(-c2ccc(F)c(O)c2)c(=CCC(O)CC(O)CC(=O)O)c(C(C)C)nc1=C(C)C",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "COc1cc(-c2oc3cc(=O)cc(O)c-3cc2OC2OC(COC3OC(C)C(O)C(O)C3O)C(O)C(O)C2OC2OCC(O)C(O)C2O)ccc1O",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "COc1cc(C2=C3C(=O)OCC3C(OC3OC4COC(c5cccs5)OC4C(O)C3O)c3cc4c(cc32)OCO4)cc(O)c1O",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "COc1cc(C2Oc3cc(O)c(C4c5c(O)cc(O)cc5OC(c5ccc(O)c(O)c5)C4O)c(O)c3CC2O)ccc1O",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "COc1cc(C2c3cc4c(cc3C(O)C3COC(=O)C23)OCO4)cc(OC)c1O",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "COc1cc(CC(O)CO)cc(OC)c1OC",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "COc1cc(CN=C(O)CCCCCCCC(C)CO)ccc1O",
+   "implicit": [
+    2349,
+    2351,
+    2699,
+    3348,
+    4150,
+    4152
+   ],
+   "expanded": [
+    4152
+   ]
+  },
+  {
+   "substrate": "COc1cc(OC)c(OC)cc1C=CCOC1OC(C(=O)O)C(O)C(O)C1O",
+   "implicit": [
+    949,
+    6140,
+    6698,
+    7049
+   ],
+   "expanded": []
+  },
+  {
+   "substrate": "COc1cc2c(CCN3CCN(c4ccc(O)c(Cl)c4C)CC3)nn(CC(N=CO)C(=N)O)c2cc1OC",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "COc1ccc(-c2c(C)[nH]n3c(=O)nc(C)nc23)c(C)n1",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "COc1ccc(C(=O)Nc2cccc(OC3OC(C(=O)O)C(O)C(O)C3O)c2NC(=O)c2ccc(N3CCCNCC3)cc2)cc1",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "COc1ccc(CC(CC(N)C(O)CC(C(O)=NCC(C)(C)C(=N)O)C(C)C)C(C)C)cc1O",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "COc1ccc2c(CC(=O)N3CCCC3C(O)=NC(CC(C)C)C(O)=NCC(=O)O)cc(=O)oc2c1",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "COc1cccc2c(O)c3c(c(O)c12)C(=O)C1=C(CC(O)(C(=O)CO)CC1OC1CC(N=C(O)C(F)(F)F)C(O)C(C)O1)C3=O",
+   "implicit": [
+    25,
+    40,
+    1042,
+    1800,
+    1851,
+    2047,
+    2082,
+    2129,
+    2154,
+    2185,
+    2280,
+    2764,
+    2928,
+    3065,
+    3277,
+    6492,
+    7305
+   ],
+   "expanded": [
+    25,
+    40,
+    1042,
+    1800,
+    1851,
+    2047,
+    2082,
+    2129,
+    2154,
+    2185,
+    2280,
+    2764,
+    2928,
+    3065,
+    3277,
+    6492,
+    7305
+   ]
+  },
+  {
+   "substrate": "COc1cccc2c(O)c3c(c(O)c12)C(=O)C1=C(CC(O)(C(O)CO)CC1OC1CC(NCO)C(O)C(C)O1)C3=O",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "COc1cncnc1N1CCNCC1",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "CS(=O)(=O)c1cc(Cl)c(Cl)c(-c2ccc(Cl)c(Cl)c2)c1Cl",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "CSCCCO",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "C[N-]C(=O)C(c1ccccc1)[NH+]1C=CC2=CC(=O)C(OC3OC(C(=O)O)C(O)C(O)C3O)=CC2=C1CCc1ccc(C(F)(F)F)cc1",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "Cc1c(-c2ccc(OC3OC(C(=O)O)C(O)C(O)C3O)cc2)n(Cc2ccc(OCCN3CCCCCC3)cc2)c2ccc(OC3OC(C(=O)O)C(O)C(O)C3O)cc12",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "Cc1cc(O)c(O)c(C)c1Cl",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "Cc1cc(OCCN(C)C)c(C(C)C)cc1OS(=O)(=O)O",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "Cc1ccc(N)cc1[N+](=O)[O-]",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "Cc1ccc(S(=O)(=O)NC(O)=NCCCCO)cc1",
+   "implicit": [
+    1839,
+    2709,
+    3032,
+    3565,
+    3650,
+    3839,
+    5020,
+    5933
+   ],
+   "expanded": [
+    3,
+    1839,
+    2709,
+    3032,
+    3565,
+    3650,
+    3839,
+    5020,
+    5933
+   ]
+  },
+  {
+   "substrate": "Cc1cccc(C(=O)O)c1C",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "Cc1cn(C2CC(O)C(CO)O2)c(=O)nc1O",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "Cc1nc[nH]c1CN1CCc2c(c3cccc(OC4OC(C(=O)O)C(O)C(O)C4O)c3n2C)C1=O",
+   "implicit": [
+    2297,
+    4471
+   ],
+   "expanded": [
+    2297,
+    4471
+   ]
+  },
+  {
+   "substrate": "Cc1ncn(C2OC(C(=O)O)C(O)C(O)C2O)c1CN1CCc2c(c3ccccc3n2CO)C1=O",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "Cn1cc(C2=C(c3c[nH]c4ccccc34)C(O)=NC2=O)c2ccc([N+](=O)[O-])cc21",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "N#Cc1cc(O)cc2sc(C(=O)NC(=N)N)cc12",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "N=C(O)N1c2ccccc2C=Cc2c1ccc(SCC(N=C(O)CCC(N)C(=O)O)C(O)=NCC(=O)O)c2O",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "N=C(O)NN=C(O)c1ccc(Oc2ccc(F)cc2)cc1",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "N=C(O)NNc1ccc2ccccc2c1OC1OC(C(=O)O)C(O)C(O)C1O",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "N=c1[nH]c(=N)[nH]c(=N)[nH]1",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "N=c1ccn(C2OC(CO)C(O)C2F)c(O)n1",
+   "implicit": [
+    2138,
+    2817,
+    3678,
+    4913
+   ],
+   "expanded": []
+  },
+  {
+   "substrate": "N=c1nc(O)c2ncn(CCC(CO)COP(=O)(O)O)c2[nH]1",
+   "implicit": [
+    2200
+   ],
+   "expanded": []
+  },
+  {
+   "substrate": "N=c1nnc2ccccc2[nH]1",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "NC(=O)c1cc(Oc2ccc(NC(O)=Nc3ccc(Cl)c(C(F)(F)F)c3)cc2)cc[n+]1[O-]",
+   "implicit": [
+    1042
+   ],
+   "expanded": [
+    158,
+    1042
+   ]
+  },
+  {
+   "substrate": "NC(CCC(O)=NC(CS)C(O)=NCC(=O)O)C(=O)O",
+   "implicit": [
+    1042,
+    2916,
+    3348,
+    4150,
+    5332
+   ],
+   "expanded": [
+    158,
+    1042
+   ]
+  },
+  {
+   "substrate": "NC(CCC(O)=NC(CSC1C=Cc2ccccc2C1O)C(O)=NCC(=O)O)C(=O)O",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "NC(CN=c1[nH]c(SCC(N=C(O)CCC(N)C(=O)O)C(O)=NCC(=O)O)c(-c2cnc3[nH]c(O)cc3c2)s1)Cc1ccc(C(F)(F)F)nc1",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "NC(CSN=O)C(O)=NCC(=O)O",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "NCC1(CC(=O)O)CCCCC1",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "NCCc1c[nH]c2ccc(O)cc12",
+   "implicit": [
+    2692,
+    3348,
+    3838,
+    4150
+   ],
+   "expanded": []
+  },
+  {
+   "substrate": "NCCc1ccc(NS(=O)(=O)c2ccc(C3=NC(c4ccc(C(F)(F)F)cc4)=CC3)cc2)cc1",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "Nc1cc(Cl)c(S(N)(=O)=O)cc1S(N)(=O)=O",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "O=C(CCc1ccco1)N=C(Cc1ccccc1)C(=O)O",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "O=C(N1CC(=O)N2CCc3ccccc3C2C1)N1CCC(O)CC1O",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "O=C(Nc1cccc2c(=O)cc(-c3nn[nH]n3)oc12)c1ccc(OCCCCc2ccc(O)cc2)cc1",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "O=C(O)C(O)c1ccc(O)cc1",
+   "implicit": [
+    1042,
+    1966,
+    3754,
+    4764,
+    5516,
+    7317
+   ],
+   "expanded": [
+    1042
+   ]
+  },
+  {
+   "substrate": "O=C(O)C1(c2ccccc2)CCNCC1",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "O=C(O)C1OC(Nc2nc(Cl)nc3c2ncn3C2CC(O)C(CO)O2)C(O)C(O)C1O",
+   "implicit": [
+    234,
+    251,
+    2199,
+    4483
+   ],
+   "expanded": [
+    234,
+    251,
+    2199,
+    4483
+   ]
+  },
+  {
+   "substrate": "O=C(O)C1OC(ONS(=O)(=O)c2ccc(S(=O)(=O)Nc3cccc4c(Cl)c[nH]c34)cc2)C(O)C(O)C1O",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "O=C(O)C1OC(Oc2ccc(C3CN4CCSC4=N3)cc2)C(O)C(O)C1O",
+   "implicit": [
+    4471
+   ],
+   "expanded": [
+    4471
+   ]
+  },
+  {
+   "substrate": "O=C(O)C1OC(Oc2ccc(CCN3CCCC(OC(c4ccccc4)c4ccccc4)C3)cc2O)C(O)C(O)C1O",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "O=C(O)C1OC(Oc2ccc(OCC(O)CN3CCN(C4c5ccccc5C5C(c6ccccc64)C5(F)F)CC3)c3cccnc23)C(O)C(O)C1O",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "O=C(O)C1OC(Oc2cccc3c2cc2ccc4cccc5ccc3c2c45)C(O)C(O)C1O",
+   "implicit": [
+    1042,
+    4471,
+    6534
+   ],
+   "expanded": [
+    1042,
+    4471,
+    6534
+   ]
+  },
+  {
+   "substrate": "O=C(O)CCCCCCCCCCCCCCCCCCCCCO",
+   "implicit": [
+    480,
+    513,
+    7285,
+    7286
+   ],
+   "expanded": [
+    480,
+    513,
+    7285,
+    7286
+   ]
+  },
+  {
+   "substrate": "O=C(O)CCCCCCCc1ccc2ccc3cccc4ccc1c2c34",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "O=C(O)CCN(CCO)Cc1ccc2c(c1)-c1nnc(O)c3cccc(c13)O2",
+   "implicit": [
+    1042,
+    3348,
+    4150
+   ],
+   "expanded": [
+    1042
+   ]
+  },
+  {
+   "substrate": "O=C(O)c1cc(O)c2c(O)c3c(O)cccc3c(-c3c4cccc(O)c4c(O)c4c(O)cc(C(=O)O)cc34)c2c1",
+   "implicit": [
+    1042,
+    5295
+   ],
+   "expanded": [
+    179,
+    1042
+   ]
+  },
+  {
+   "substrate": "O=C(O)c1cc(S)ccc1[N+](=O)[O-]",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "O=C(O)c1ccc(Cl)nc1",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "O=C(O)c1cccc2cn(-c3ccc(C4CCCNC4)cc3)nc12",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "O=C(O)c1ccccc1C1c2ccc(O)cc2Oc2cc(O)ccc21",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "O=C(OC1CCC(O)C(O)C1)N1CCN(CCCC(O)c2ccc(F)cc2)CC1",
+   "implicit": [
+    5264
+   ],
+   "expanded": []
+  },
+  {
+   "substrate": "O=C1C(C(O)=Nc2ccc(Oc3cc[nH]c4nccc3-4)c(F)c2)=CC2OC2N1c1ccc(F)cc1",
+   "implicit": [
+    2180
+   ],
+   "expanded": []
+  },
+  {
+   "substrate": "O=C1CCN(Cc2ccc3c(c2)-c2nnc(O)c4cccc(c24)O3)CC1",
+   "implicit": [
+    2929,
+    3749,
+    3750,
+    5793,
+    5794,
+    6533,
+    6565
+   ],
+   "expanded": []
+  },
+  {
+   "substrate": "O=C1N=C(c2ccccc2Cl)c2cc(Br)ccc2NC1O",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "O=C1N=c2ccccc2=C1c1c(O)[nH]c2ccccc12",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "O=P(O)(O)OC1OC(CO)C(O)C(O)C1O",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "O=P(O)(Oc1ccccc1)Oc1ccccc1",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "O=[N+]1C=C(O)Nc2ccc(Cl)cc2C1c1ccccc1",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "O=c1nc(O)ncn1C1OC(CO)C(O)C1O",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "OCCCl",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "O[N+]1(Cc2ccc(F)c(F)c2)CCC(N=c2ccc(C(F)(F)F)n[nH]2)CC1",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "O[N+]1=CCN2CC3CCCC3c3cccc(c32)C1",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "Oc1c(Cl)cc(-c2cc(Cl)c(Cl)c(Cl)c2Cl)cc1Cl",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "Oc1ccc2ccc(OCCCCN3CCN(c4cccc(Cl)c4Cl)CC3)cc2n1",
+   "implicit": [
+    1042,
+    3348,
+    4150
+   ],
+   "expanded": [
+    1042
+   ]
+  },
+  {
+   "substrate": "On1c2ccccc2c2ccncc21",
+   "implicit": [
+    3452
+   ],
+   "expanded": [
+    3452
+   ]
+  },
+  {
+   "substrate": "[O]c1ccc(O)c2c(O)cccc12",
+   "implicit": [],
+   "expanded": []
+  },
+  {
+   "substrate": "c1ccc(C(c2ccccc2)N2CCNCC2)cc1",
+   "implicit": [],
+   "expanded": []
+  }
+ ]
+}

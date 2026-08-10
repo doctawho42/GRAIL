@@ -364,6 +364,25 @@ expanded and $453$ without. \ceiling\ is therefore quoted without the expansion,
 convention the deployed generator fires rules in; the figures this appendix reports for the shared
 $152$ are the expanded ones, and each is labelled where it appears.
 
+\paragraph{The supervision is built in the other convention, and this is where it costs us most.}
+The label matrix the generator learns from asks, for each training substrate and each rule, whether
+applying that rule yields an annotated metabolite. It applies the rule to the substrate expanded
+with explicit hydrogens. The deployed pipeline fires rules on the substrate as written. Applying the
+whole bank both ways to $150$ training substrates, of the $282$ rule--substrate positives that exist
+in the convention the pipeline fires in, the supervision sees $140$ and misses $142$, and asserts a
+further $25$ that do not exist at inference; the two matrices agree at a Jaccard of $0.456$, and
+$29$ of the $150$ substrates carry a different row. The selector is therefore taught about rules
+other than the ones it will fire, roughly half the time.
+
+What this does and does not touch. The decomposition of \S\ref{sec:decomp} measures the deployed
+system through its own application, so the selection factor is what that system achieves and the
+identity still holds. What it undermines is the reading: ``selection is where the loss sits'' and
+the learned selector's deficit to the frequency prior are both conditioned on supervision that
+disagrees with the firing convention on half its positives, and the prior inherits the same matrix,
+so neither arm of that comparison is pointed at the rules the pipeline runs. Rebuilding the labels
+and retraining is the measurement that would settle it and is not reported here. The defect is the
+one this paper is named for, in our own pipeline, found by applying the paper's own question to it.
+
 \paragraph{What the decomposition survives, and what it does not license.} Each method's three
 factors are measured through its own application and multiply to its own realised recall, so the
 decomposition itself is unaffected. What it does not license is reading the first factor

@@ -720,6 +720,41 @@ def main() -> int:
         checks.append((not both, "no library is exposed to the step in both directions",
                        f"{len(both)} are", "0", "which is what 'disjoint sets' asserts"))
 
+    # 10c-n. The label-convention audit. The paper's own pipeline labels its rules in one hydrogen
+    # convention and fires them in the other; this binds every figure of that audit to the run.
+    lc = ROOT / "results/label_convention_audit.json"
+    if lc.exists():
+        L = json.loads(lc.read_text())
+        P, A, C = L["positives"], L["agreement"], L["config"]
+        flat = re.sub(r"\s+", " ", whole)
+        ml = re.search(r"whole bank both ways to \$(\d+)\$ training substrates, of the \$(\d+)\$ "
+                       r"rule--substrate positives that exist in the convention the pipeline fires "
+                       r"in, the supervision sees \$(\d+)\$ and misses \$(\d+)\$, and asserts a "
+                       r"further \$(\d+)\$ that do not exist at inference; the two matrices agree at "
+                       r"a Jaccard of \$([\d.]+)\$, and \$(\d+)\$ of the \$(\d+)\$ substrates carry "
+                       r"a different row", flat)
+        checks.append((bool(ml), "the label-convention passage parses", "present",
+                       "matched" if ml else "not matched", ""))
+        if ml:
+            src = str(lc.relative_to(ROOT))
+            for lbl, said, got in (
+                    ("substrates audited", ml.group(1), C["n_substrates_scored"]),
+                    ("positives where the pipeline fires", ml.group(2), P["implicit_total"]),
+                    ("positives the supervision sees", ml.group(3), P["both"]),
+                    ("positives it misses", ml.group(4), P["implicit_only"]),
+                    ("positives it asserts and inference lacks", ml.group(5), P["expanded_only"]),
+                    ("Jaccard between the two matrices", ml.group(6), A["jaccard"]),
+                    ("substrates whose row changes", ml.group(7),
+                     A["substrates_whose_label_row_changes"]),
+                    ("substrates in the denominator", ml.group(8), A["substrates_scored"])):
+                check(f"label convention, {lbl}", said, got, src)
+            # the headline reading in the limitations must not overstate the agreement
+            share = P["both"] / max(P["implicit_total"], 1)
+            checks.append((0.4 <= share <= 0.6 and "about half the\nrule--substrate positives"
+                           .replace("\n", " ") in re.sub(r"\s+", " ", whole),
+                           "the limitations say about half", "about half",
+                           f"{share:.3f} of the fired-convention positives", src))
+
     # 10c-m. The curator agreement. The text said notation explains most of the disagreement; two
     # Jaccards of 0.145 and 0.406 leave 0.594 of the union still disagreeing, so notation explains
     # 0.261 of 0.855, about a third. The share is now computed from the two figures the sentence
