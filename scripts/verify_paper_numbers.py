@@ -151,8 +151,8 @@ def main() -> int:
         sp = json.loads(spl.read_text())
         for label, key, pat in (
                 ("external, seen in training", "seen_in_training",
-                 r"\$([\d.]+)\$[^.]{0,80}?on the twenty-four seen"),
-                ("external, unseen", "unseen", r"against \$([\d.]+)\$ on the thirteen unseen")):
+                 r"gives \$([\d.]+)\$ \$\[[\d.,]+\]\$ on the twenty-four seen"),
+                ("external, unseen", "unseen", r"against \$([\d.]+)\$ \$\[[\d.,]+\]\$ on the thirteen unseen")):
             m = re.search(pat, whole)
             check(label, m and m.group(1), sp[key]["coverage"])
 
@@ -567,7 +567,7 @@ def main() -> int:
         m = re.search(r"whole distance between\s*the two configurations is \$\+([\d.]+)\$", flat)
         check("engine decomposition, total", m and m.group(1),
               A["D_sygma_engine_175_rules_composed"]["point"] - A["A_grail_engine_152_rules"]["point"])
-        m = re.search(r"the \$\+([\d.]+)\$\s*\$\[\+[\d.]+,\+[\d.]+\]\$ contributed by the \$23\$ rules", flat)
+        m = re.search(r"\$\+([\d.]+)\$ \$\[\+[\d.]+,\+[\d.]+\]\$\s*from the \$23\$ rules", flat)
         check("engine decomposition, the 23 rules", m and m.group(1),
               C["the_23_rules_at_fixed_engine_C_minus_B"]["point"])
         m = re.search(r"and \$\+([\d.]+)\$ \$\[\+[\d.]+,\+[\d.]+\]\$ from composing steps", flat)
@@ -579,6 +579,24 @@ def main() -> int:
                        round(sum(v["point"] for v in C.values()), 4),
                        round(A["D_sygma_engine_175_rules_composed"]["point"]
                              - A["A_grail_engine_152_rules"]["point"], 4), ""))
+
+    # 10b-a. The two harnesses compute the canonical key differently, which the protocol section
+    # now states. A check pins each to what is claimed, since a silent change either way would make
+    # the same column heading mean two things without saying so.
+    mk = ROOT / "grail_metabolism" / "metrics.py"
+    if mk.exists():
+        src = mk.read_text()
+        m = re.search(r"def _canonical_key.*?(?=\n@|\ndef )", src, re.S)
+        checks.append((bool(m) and "isomericSmiles=False" in m.group(0),
+                       "the metabolite key is computed without stereochemistry",
+                       "isomericSmiles=False", "as the protocol states", ""))
+    rl = ROOT / "scripts/retro_leaderboard.py"
+    if rl.exists():
+        src = rl.read_text()
+        checks.append(('out["canonical"] = Chem.MolToSmiles(m)' in src
+                       and 'out["canonical"] = Chem.MolToSmiles(m, isomericSmiles=False)' not in src,
+                       "the cross-domain key retains stereochemistry",
+                       "MolToSmiles at its default", "as the protocol states", ""))
 
     # 10b-b. The external decisions under a test that assumes no distribution, and the degenerate
     # comparisons the approximation mishandles. Both claims are gates, not counts.
@@ -744,7 +762,7 @@ def main() -> int:
                        "paired bootstrap on each margin, predictions frozen"))
         m = re.search(r"benchmark certifies is \$([\d.]+)\$", flat)
         check("resolution floor, seven-system", m and m.group(1), c0["resolution_floor"])
-        m = re.search(r"its narrowest margin being \$([\d.]+)\$", flat)
+        m = re.search(r"whose narrowest\s*margin is \$([\d.]+)\$", flat)
         smallest = min(abs(v["margin"]) for v in c1["pairs"].values())
         check("three-system narrowest margin", m and m.group(1), smallest)
         checks.append((abs(smallest - c1["resolution_floor"]) < 1e-9,

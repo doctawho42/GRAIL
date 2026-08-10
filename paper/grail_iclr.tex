@@ -128,14 +128,15 @@ a stage.
 
 \paragraph{Contributions.}
 \begin{itemize}\itemsep2pt \parskip0pt
+\item The convention by which an engine applies reaction templates reverses which of two published
+  rule bases reaches further, through a preprocessing step that neither of the two papers reports. A
+  coverage figure is a property of a rule set together with a procedure, and is not comparable
+  across papers that leave the procedure unstated.
 \item The matching criterion exchanges positions in a published leaderboard of retrosynthesis
   systems, on predictions their authors released. The exchanges are certified as method-by-criterion
   interactions and corrected for multiplicity across the whole family of tests.
 \item The output budget reorders a metabolite leaderboard on its own, with every method and its
   ranking held fixed.
-\item The convention by which an engine applies reaction templates reverses which of two published
-  rule banks reaches further. A coverage figure is therefore a property of a rule set together with
-  a procedure, and is not comparable across papers that do not state the procedure.
 \item A choice reorders a leaderboard only when it moves two systems apart by more than the margin
   between them. Across four leaderboards in three domains, no reordering occurs where the margin
   exceeds the movement, so a benchmark becomes more vulnerable as its leading systems converge.
@@ -149,13 +150,15 @@ a stage.
 \end{itemize}
 
 The remainder of this article is organised as follows. Section~\ref{sec:related} reviews prior work
-on the four choices and on staged evaluation. Section~\ref{sec:tame} defines the protocol, the
-matching criteria and the split. Section~\ref{sec:xdomainmain} re-scores released retrosynthesis
-predictions and establishes the condition under which a criterion reorders a leaderboard.
-Section~\ref{sec:decomp} develops the decomposition and the coverage ceiling, and shows that the
-ceiling depends on the engine. Section~\ref{sec:results} applies the four choices inside one
-benchmark. Section~\ref{sec:limitations} states the scope of the results and
-Section~\ref{sec:conclusion} concludes.
+on the four choices and on staged evaluation, and Section~\ref{sec:tame} defines the protocol, the
+matching criteria and the split. Section~\ref{sec:enginereach} shows that what a published rule base
+reaches is decided by the engine applying it, and surveys how far that dependence extends across
+released template libraries. Section~\ref{sec:xdomainmain} re-scores released retrosynthesis
+predictions and establishes when a matching criterion can reorder a leaderboard.
+Section~\ref{sec:decomp} develops the decomposition that makes a coverage figure measurable, and
+Section~\ref{sec:results} applies the remaining choices inside one benchmark.
+Section~\ref{sec:limitations} states the scope of the results and Section~\ref{sec:conclusion}
+concludes.
 
 \section{Related Work}
 \label{sec:related}
@@ -237,7 +240,15 @@ sanitisation, the enumeration and filtering policy and the depth, since at fixed
 procedure moves reach by as much as the reach gap reported here (Appendix~\ref{app:enginereach}).
 \textsc{canonical} is canonical SMILES equality, \textsc{inchikey} the full InChIKey and
 \textsc{inchi-no-stereo} its first block, the connectivity skeleton blind to stereochemistry, charge
-and isotopes; \textsc{tanimoto1} is Tanimoto similarity of one over Morgan fingerprints at radius 2
+and isotopes. One caution attaches to the first of these. Canonical SMILES equality is computed
+without stereochemistry on the metabolite corpus, whose references carry none, and with it in the
+two cross-domain harnesses, whose references do; the relation is therefore the same rule applied to
+corpora that differ in what they record, and the column heading means the stricter thing wherever
+stereochemistry is present. Where that matters it is stated: the cross-domain step from
+\textsc{canonical} to \textsc{inchi-no-stereo} removes a layer those corpora carry, which is why it
+moves them, and the corresponding metabolite step cannot.
+
+ \textsc{tanimoto1} is Tanimoto similarity of one over Morgan fingerprints at radius 2
 over 2048 bits; \textsc{inchikey-tautomer} standardises both sides before hashing, taking the
 fragment parent, neutralising charges, canonicalising tautomers and dropping stereochemistry.
 
@@ -266,6 +277,41 @@ corrected for multiplicity: the differential criterion sensitivity of \S\ref{sec
 learned-against-prior gap of \S\ref{sec:xmc}, and the cross-domain interaction, whose $448$ paired
 tests form one family. All remaining intervals are exploratory. Model and configuration selection
 is performed on validation data, with two exceptions stated in Appendix~\ref{app:arch}.
+
+\section{What a rule base reaches depends on the engine that applies it}
+\label{sec:enginereach}
+
+\looseness=-1
+A paper that publishes a rule base usually publishes a figure for what it covers: the fraction of
+reference products that applying every rule recovers, which we call the base's \emph{reach}. It is
+quoted as a property of the rules and it is not one, because applying a rule requires deciding how
+the substrate is presented to the matcher, and one such decision, whether hydrogen atoms are drawn
+before matching, is made silently by every engine and reported by none.
+
+\looseness=-1
+$152$ of SyGMa's $175$ rules sit verbatim in ours, so those can be held fixed while only the
+procedure changes: a depth-1 enumeration that expands the substrate with explicit hydrogens against
+SyGMa's own, which does not. They reach $0.189$ $[0.151,0.230]$ under the first and $0.381$
+$[0.333,0.433]$ under the second, an engine term of $+0.188$ $[+0.170,+0.205]$, paired. The whole
+distance between the two configurations is $+0.339$: that engine term, $+0.145$ $[+0.128,+0.162]$
+from the $23$ rules our bank does not hold at fixed engine and depth, and $+0.0065$
+$[+0.0038,+0.0096]$ from composing steps. The single preprocessing step is therefore
+larger than every rule the two banks do not share: almost all of what reads as a difference between
+knowledge bases is a difference between the programs that query them. Toggling that one call, with
+bank and substrates untouched, carries reach from $0.200$ to $0.390$, and the loop's other two
+choices move reach by nothing (Appendix~\ref{app:enginereach}).
+
+\looseness=-1
+The direction is not a property of our engine but of how a bank is written. On the full split, with
+hydrogens drawn, BioTransformer recovers $1{,}264$ references and SyGMa $579$; with hydrogens left
+implicit, SyGMa recovers $1{,}390$ and BioTransformer $317$. Which of two published rule bases
+reaches further is decided by a step that neither paper states.
+
+\looseness=-1
+The dependence is not specific to metabolism, and three constructs must be told apart to see it: the hydrogen \emph{atom} primitive, which matches only a drawn hydrogen; the hydrogen \emph{count} inside a bracket, which the expansion leaves untouched; and the connection count, which it changes. Across six independent libraries and $51{,}368$ templates the construct almost everyone uses is the inert one, and the two that move are used by disjoint sets of libraries. Every one of the $42{,}554$ patterns in the standard retrosynthesis template library pins a connection count and none carries the atom primitive, so the same step costs that library $82\%$ of its applicability by the second mechanism, a match lost before a product is built.
+
+\looseness=-1
+The convention travels with the transcription, which one release shows within itself. Of the rules it attributes to another tool, the $57$ copied verbatim carry the atom primitive not once, while $88$ of the $121$ re-typed do, a construct absent from all $175$ rules of the tool they came from. Those rules write an aromatic carbon as \texttt{[cH1]([H])}, pinning the hydrogen count and then naming the hydrogen again: a token redundant as chemistry and decisive as notation (Appendix~\ref{app:retroconvention}).
 
 \section{The criterion reorders a published leaderboard in another field}
 \label{sec:xdomainmain}
@@ -302,18 +348,16 @@ in colour, the remainder in grey.}
 \looseness=-1
 \paragraph{The condition is the margin, and most of these margins were never resolvable.} An
 exchange requires the criterion to move two systems apart by more than the margin between them, so
-what matters is how large the margins are relative to what the benchmark can measure. Because the
-predictions are frozen, that is answerable directly: a paired bootstrap over the $4{,}999$ reactions
-gives an interval on each pairwise margin. \textbf{Eleven of the twenty-one margins do not separate
-from zero, and five of the six adjacent margins in the published order do not.} The smallest margin
-this benchmark certifies is $0.0146$, and the criterion moves systems apart by $0.015$. The three-system group is the control: every one of
-its pairs separates, its narrowest margin being $0.0213$, and none of them exchanges under any
-criterion. Over $439$ method-pair by criterion-pair
-comparisons across four leaderboards in three domains, the movement exceeds the margin once in nine
-and reverses the pair once in seventeen, and no reversal occurs where the margin survives the
-movement. A table of eight published molecular generators shows the same condition from the other
-side, exchanging one adjacent pair because seven of the eight sit above $0.986$ and almost no pair
-on it is close enough to cross (Appendix~\ref{app:xdomain}).
+what matters is the size of the margins relative to what the benchmark can measure. Since the
+predictions are frozen, a paired bootstrap over the $4{,}999$ reactions gives an interval on each
+margin directly. \textbf{Eleven of the twenty-one margins do not separate from zero, and five of the
+six adjacent margins in the published order do not.} The smallest margin this benchmark certifies is
+$0.0146$ against a criterion movement of $0.015$, while the three-system group, whose narrowest
+margin is $0.0213$, separates every pair and exchanges none. Over $439$ method-pair by criterion-pair
+comparisons across four leaderboards in three domains the movement exceeds the margin once in nine
+and reverses the pair once in seventeen, and no reversal occurs where the margin survives it. Eight
+published molecular generators show the condition from the other side, exchanging one adjacent pair
+because seven of the eight sit above $0.986$ (Appendix~\ref{app:xdomain}).
 
 \looseness=-1
 \paragraph{Which population a familiar name refers to.} The same eleven files answer the fourth
@@ -374,8 +418,9 @@ factor (Appendix~\ref{app:formal}).
 \nbank\ rules to every test substrate and ask what fraction of references appears anywhere in the
 union. That \textbf{coverage ceiling} is the best recall achievable if selection and ranking were
 both perfect, and on the clean test split it is \ceiling\ (cluster-bootstrap 95\% CI
-$[0.794,0.839]$). It should be reported alongside recall for any rule-grounded method, and reported as system reach: a rule set together with a declared application procedure, not what a knowledge base can express. Swapping only the engine moves it by as much as the reach gap below, so a ceiling quoted without its engine is not comparable across papers. Inside one system it
-is exactly what it claims, and no ranking improvement can exceed it.
+$[0.794,0.839]$). It should be reported alongside recall for any rule-grounded method, and reported
+as system reach in the sense of \S\ref{sec:enginereach}. Inside one system it is exactly what it
+claims, and no ranking improvement can exceed it.
 
 \paragraph{What the decomposition says.}\looseness=-1 The decomposition localises the loss. The deployed pipeline converts only $32.5\%$ of its own ceiling into realised recall, and the three factors separate with no pair of intervals overlapping (Figure~\ref{fig:decomp}). Selection is where the loss sits at this operating point: barely a third of what the bank can reach survives the selector's rule budget. Ranking is close to lossless, at $0.960$ $[0.941,0.976]$. That third factor is truncation at GRAIL's own output
 policy, itself a cap at $k=15$: it emits at the cap on $308$ of \ntest\ substrates ($26.3\%$), and all $29$
@@ -398,29 +443,6 @@ third of a wider one, so what separates us is the cost of \emph{this} selection 
 worse rule base, and the bank's own bound is the corpus rather than tuning
 (Appendix~\ref{app:decompsygma}).
 
-\paragraph{The coverage factor belongs to the system, not the rule base.}
-\label{sec:enginereach}
-\looseness=-3
-Reporting a ceiling presumes it is a property of the bank, and it is not. $152$ of SyGMa's $175$
-rules sit verbatim in ours, so those can be held fixed while only the procedure changes: a depth-1
-enumeration that expands the substrate with explicit hydrogens against SyGMa's own, which does not. They reach $0.189$
-$[0.151,0.230]$ under the first and $0.381$ $[0.333,0.433]$ under the second,
-an engine term of $+0.188$ $[+0.170,+0.205]$, paired. The whole distance between
-the two configurations is $+0.339$, and it decomposes into that engine term, the $+0.145$
-$[+0.128,+0.162]$ contributed by the $23$ rules our bank does not hold at fixed engine and depth,
-and $+0.0065$ $[+0.0038,+0.0096]$ from composing steps. The single preprocessing step is therefore
-larger than every rule the two banks do not share. Almost all of what reads as a difference between knowledge
-bases is a difference between the programs that query them, and that difference is a single preprocessing step, the expansion itself. Our own generator does not expand, which is why \ceiling\ is quoted without it. Toggling that one
-call, with bank and substrates untouched, carries reach from $0.200$ to $0.390$, the whole of the
-engine term; the loop's other two choices move reach by nothing
-(Appendix~\ref{app:enginereach}). The direction is not a property of our engine, and the split is the notation. On the full split, with hydrogens drawn, BioTransformer recovers $1{,}264$ references and SyGMa
-$579$; with hydrogens left implicit, SyGMa recovers $1{,}390$ and BioTransformer $317$. Which of two
-published rule bases reaches further is decided by a step that neither paper states.
-
-The dependence is not specific to metabolism, and three constructs must be told apart to see it: the hydrogen \emph{atom} primitive, which matches only a drawn hydrogen; the hydrogen \emph{count} inside a bracket, which the expansion leaves untouched; and the connection count, which it changes. Across six independent libraries and $51{,}368$ templates the construct almost everyone uses is the inert one, and the two that do move are used by disjoint sets of libraries. The convention travels with the transcription, which one release shows within itself: of the rules
-it attributes to another tool, the $57$ copied verbatim carry the atom primitive not once, while
-$88$ of the $121$ re-typed do, a construct absent from all $175$ rules of the tool they came from. Those rules write an aromatic carbon as \texttt{[cH1]([H])}, pinning the hydrogen count and then naming the hydrogen again: a token redundant as chemistry and decisive as notation. Every one of the $42{,}554$ patterns in the standard retrosynthesis template library pins a connection count and none carries the atom primitive, so the same step costs that library $82\%$ of its applicability: the second of the two mechanisms, a match lost before a product is built (Appendix~\ref{app:retroconvention}).
-
 \section{Results}
 \label{sec:results}
 
@@ -428,22 +450,19 @@ $88$ of the $121$ re-typed do, a construct absent from all $175$ rules of the to
 \label{sec:rankflip}
 
 \looseness=-2
-Every factor counts matched references, so the criterion is settled first: published methods have
-their \emph{frozen} predictions re-scored under all five criteria, so only the match rule changes
-across columns, never the chemistry. GRAIL, SyGMa \citep{Ridder_2008} and MetaPredictor
-\citep{Zhu_2024} are compared on the whole clean test split, paired on identical substrates
-(Table~\ref{tab:matchsens}); BioTransformer \citep{Djoumbou_Feunang_2019} and MetaTrans
-\citep{Litsa_2020} on the $\nshared$-substrate shared subset (Appendix~\ref{app:xdomain}).
+Published methods have their \emph{frozen} predictions re-scored under all five criteria, so only
+the match rule changes across columns and never the chemistry. GRAIL, SyGMa \citep{Ridder_2008} and
+MetaPredictor \citep{Zhu_2024} are compared on the whole clean test split, paired on identical
+substrates (Table~\ref{tab:matchsens}); BioTransformer \citep{Djoumbou_Feunang_2019} and MetaTrans
+\citep{Litsa_2020} on the $\nshared$-substrate shared subset.
 
 \looseness=-1
 Methods are not equally sensitive to the convention. Over the full split GRAIL gains $0.016$
 $[0.010,0.023]$ from canonical to tautomer matching against MetaPredictor's $0.040$
 $[0.030,0.050]$, a differential of $+0.024$ $[0.014,0.034]$ surviving Holm--Bonferroni over the
-three pairs. Unequal headroom runs the wrong way here: GRAIL enters from the
-lower baseline, so has more left to recover, and gains the less (Table~\ref{tab:matchsens}). The same differential against BioTransformer on the $\nshared$-substrate subset is $+0.120$, five
-times larger; the full-split figure is the estimate, the subset having been chosen for data
-availability. Output size is a second, orthogonal confound: SyGMa emits $81$
-candidates per substrate against GRAIL's $8.4$ (Appendix~\ref{app:budget}).
+three pairs. Unequal headroom runs against the effect: GRAIL enters from the lower baseline, has
+more left to recover, and gains the less. Output size is a second and orthogonal confound, SyGMa
+emitting $81$ candidates per substrate against GRAIL's $8.4$ (Appendix~\ref{app:budget}).
 
 
 
@@ -493,39 +512,24 @@ the $13$ unseen (Table~\ref{tab:matchsens}).
 
 \looseness=-1
 The result this section rests on involves neither contaminated arm. Under strict InChIKey matching
-MetaPredictor trails SyGMa by $0.130$; one rung later the advantage is gone. The endpoint is the
-interaction, not that transition: MetaPredictor gains $+0.135$ $[+0.072,+0.209]$ more than SyGMa
-across the stereo step, rejected at either family size. The relaxed gap covers zero and still admits
-SyGMa ahead by $0.071$, so a criterion erases a significant advantage here instead of reversing it
+MetaPredictor trails SyGMa by $0.130$, and one rung later the advantage is gone. The endpoint is the
+interaction rather than that transition: MetaPredictor gains $+0.135$ $[+0.072,+0.209]$ more than
+SyGMa across the stereo step, rejected at either family size, and rejected again by a sign-flip test
+that assumes no distribution. A criterion therefore erases a significant advantage here instead of
+reversing it, since the relaxed gap covers zero while still admitting SyGMa ahead by $0.071$
 (Appendix~\ref{app:holm}).
-Normalised by the headroom left it does not vanish but grows, to $+0.209$ $[+0.111,+0.322]$
-(Appendix~\ref{app:holm}). On the uncontaminated drugs GRAIL's stereo sensitivity survives at $+0.126$
-$[+0.028,+0.239]$, as does its interaction with SyGMa, whose stereo step here is zero; the
-\emph{external} interaction with BioTransformer does not survive there and is not claimed.
-The set's coverage ceiling stays on all $\nglory$: it is $0.719$ on the twenty-four seen drugs
-against $0.684$ on the thirteen unseen, a difference whose interval spans zero
-(Appendix~\ref{app:external}).
 
 
 
 \paragraph{The criterion moves human agreement.} The strongest evidence for declaring the criterion
 involves no model. Twenty-five external drugs are curated independently by two sources, and on the
 same drugs the two expert lists agree at a Jaccard of $0.145$ under strict \textsc{inchikey}
-matching and at $0.406$ under the tautomer-aware default. Most of what looks like disagreement about
-observed chemistry is disagreement about notation.
+matching and at $0.406$ under the tautomer-aware default: most of what reads as disagreement about
+observed chemistry is disagreement about notation. The two curations also bound what a recall figure
+means, since one records only $0.539$ of the other and beyond that level recall measures one
+source's inclusion choices (Appendix~\ref{app:xdomain}).
 
-\looseness=-1
-The two curations also bound what a recall figure means: one competent independent curation records
-only $0.539$ of the other, so beyond that level recall measures one source's inclusion choices.
-Where a model sits against that bound depends on its budget (Appendix~\ref{app:xdomain}).
-
-\looseness=-1
-\paragraph{Mechanism.} The spread tracks how far a method's outputs diverge representationally from
-the references, and the intermediate column identifies which divergence is responsible: here
-stereochemistry alone. Internally, where references are already stereo-stripped, tautomerism fails
-instead, so which relaxation dominates is a property of the reference set. The effect requires
-references carrying representational variety and a leaderboard whose margins are narrower than the
-differential it produces.
+\paragraph{Mechanism.} Which relaxation dominates is a property of the reference set: here stereochemistry alone, and internally, where references are already stereo-stripped, tautomerism instead. The effect requires references that carry representational variety and a leaderboard whose margins are narrower than the differential it produces.
 
 
 \subsection{The aggregate and the budget are one variable, and the decomposition predicts it}
@@ -575,13 +579,11 @@ the output size do not act on the same comparisons (Appendix~\ref{app:props}).
 
 
 
-\paragraph{Where this system's own shortfall sits.} GRAIL trails both published comparators at the
-field's budget and leads at none: SyGMa reaches $0.572$ on the $1{,}168$ substrates they share, a
-paired $-0.242$ $[-0.271,\,-0.212]$. The second confirmatory comparison locates that shortfall in
-selection, where a learned selector reaches $0.266$ through the same enumeration and filter that
-rule-firing frequency alone carries to $0.410$, a paired $-0.144$ $[-0.196,\,-0.095]$. Choosing
-which of \nbank\ rules apply is extreme multi-label classification with a near-empty positive set,
-a regime in which frequency baselines are hard to beat \citep{Jain_2016}.
+\paragraph{Where this system's own shortfall sits.} GRAIL trails both published comparators at
+the field's budget, by a paired $-0.242$ $[-0.271,\,-0.212]$ against SyGMa. The second confirmatory
+comparison locates that shortfall in selection: a learned selector reaches $0.266$ where rule-firing
+frequency alone reaches $0.410$ through the same enumeration and filter, a paired $-0.144$
+$[-0.196,\,-0.095]$ (Appendix~\ref{app:props}).
 \label{sec:xmc}\label{sec:diagnosis}\label{sec:evidence}
 
 \section{Limitations}
@@ -597,11 +599,11 @@ and depth-2 application lifts the ceiling by ${\sim}0.012$ at $8.5$ times the co
 bounds this formulation and not the task.
 
 \looseness=-2
-\paragraph{What the newer results rest on.} The cross-domain numbers come from eleven files produced
+\paragraph{What the newer results rest on.} The cross-domain numbers come from files produced
 elsewhere, read under an assumption proven where an independent ground truth exists, and the
 reordering there is a top-1 phenomenon. The margin condition is measured across four leaderboards,
-which is few. The population result is a bounded null that excludes a large effect and not one the
-size the criterion produces.
+which is few, and the population result is a bounded null that excludes a large effect and not one
+the size the criterion produces.
 
 \section{Conclusion}
 \label{sec:conclusion}
@@ -609,10 +611,9 @@ size the criterion produces.
 \looseness=-2
 Four choices are settled before any model is compared: when two structures count as the same
 molecule, how many candidates a method may emit, how an engine applies a reaction template, and
-which population a dataset name refers to. None is routinely declared and three of them move a
-published ordering. All four can be read from files that are already public, and the checker
-released with this work reports them from a template bank and a set of prediction files, so the
-evidence supports a requirement to declare them and not a standard that fixes them.
+which population a dataset name refers to. Three move a published ordering, none is routinely
+declared, and all four can be read from files that are already public by the checker released here.
+The evidence therefore supports a requirement to declare them, not a standard that fixes them.
 
 \subsubsection*{Reproducibility statement}
 
