@@ -127,3 +127,11 @@ The exploratory measurements in this appendix were scored on the test split befo
 described in the main text was tightened; the pruning and ablation results were subsequently
 repeated on validation, and those are the values reported above. They support no claim in the main
 text.
+\paragraph{Forecasting how many metabolites a substrate has, from the substrate.} If the emitted
+set should be sized per substrate, the obvious way is to predict the size. Least squares on heavy
+atoms, rings and rotatable bonds, fitted on the training split and applied to test, reaches $0.181$
+macro F1 against the deployed policy's $0.136$ -- and against $0.195$ for simply emitting one
+candidate to every substrate. The forecast is worse than the constant it was meant to beat, so the
+count is not recoverable from the substrate's own descriptors. What works is relative: reading the
+candidate pool rather than the molecule (\S\ref{sec:metric}).
+

@@ -675,7 +675,7 @@ def main() -> int:
         tr = C.get("transcription")
         if tr:
             m = re.search(r"the \$(\d+)\$ copied verbatim carry the atom primitive not once, while\s*"
-                          r"\$(\d+)\$ of the \$(\d+)\$ re-typed do, a construct absent "
+                          r"\$(\d+)\$ of the \$(\d+)\$ re-typed do, absent "
                           r"from all \$(\d+)\$ rules", flat)
             check("transcription, copied verbatim", m and m.group(1), tr["identical"])
             check("transcription, re-typed carrying it", m and m.group(2), tr["rewritten_with_atom"])
@@ -989,6 +989,40 @@ def main() -> int:
             check("arm A-prime, the completed loop", mac.group(1),
                   round(json.loads(cl2.read_text())["reach"]["completed"]["reach"], 3),
                   str(cl2.relative_to(ROOT)))
+
+    # 10c-r. The emission policy. Every arm holds the ranking fixed and changes only the number
+    # emitted, so a gain is attributable to the size of the set; the gate additionally requires the
+    # sibling-relative rule to beat every global constant, which is the claim the paragraph makes.
+    ss = ROOT / "results/setsize_headroom.json"
+    if ss.exists():
+        S = json.loads(ss.read_text())["arms"]
+        flat = re.sub(r"\s+", " ", whole)
+        me = re.search(r"the deployed \$k=15\$ scores \$([\d.]+)\$ macro F1, the best global "
+                       r"constant \$([\d.]+)\$, and truncating each substrate at its own annotated "
+                       r"count \$([\d.]+)\$.*?within half the leader's score gives \$([\d.]+)\$, a "
+                       r"paired \$\+([\d.]+)\$ \$\[\+([\d.]+),\+([\d.]+)\]\$", flat)
+        checks.append((bool(me), "the emission sentence parses", "present",
+                       "matched" if me else "not matched", ""))
+        if me:
+            src = str(ss.relative_to(ROOT))
+            best_const = max((v["f1"], k) for k, v in S.items() if k.startswith("fixed"))
+            check("deployed policy, macro F1", me.group(1), round(S["fixed k=15"]["f1"], 3), src)
+            check("best global constant", me.group(2), round(best_const[0], 3), src)
+            check("oracle count", me.group(3), round(S["oracle count"]["f1"], 3), src)
+            check("the sibling rule", me.group(4), round(S["gap rule a=0.5"]["f1"], 3), src)
+            check("the sibling rule, gain", me.group(5),
+                  round(S["gap rule a=0.5"]["f1_gain_over_k15"], 3), src)
+            check("the sibling rule, lower", me.group(6),
+                  round(S["gap rule a=0.5"]["ci95"][0], 3), src)
+            check("the sibling rule, upper", me.group(7),
+                  round(S["gap rule a=0.5"]["ci95"][1], 3), src)
+            gaps = [v["f1"] for k, v in S.items() if k.startswith("gap")]
+            checks.append((max(gaps) > best_const[0],
+                           "the sibling rule beats every global constant", "above every constant",
+                           f"{max(gaps):.4f} against {best_const[0]:.4f} at {best_const[1]}", src))
+            checks.append((S["predicted count"]["f1"] < best_const[0],
+                           "forecasting the count from the substrate fails", "below the best constant",
+                           f"{S['predicted count']['f1']:.4f}", src))
 
     # 10c-q. The robust order. The share of a leaderboard's pairwise claims that survive every cell
     # of the declared grid is the paper's answer to seven rounds of "no new metric", so every figure

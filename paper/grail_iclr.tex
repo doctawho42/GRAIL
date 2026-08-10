@@ -307,25 +307,6 @@ $+0.145$ $[+0.128,+0.162]$ from the $23$ rules our bank lacks, and $+0.0065$ $[+
 from composing steps.
 
 \looseness=-1
-\paragraph{The term is one call out of three.} The application loop makes three discretionary
-choices before it reports a product: whether the substrate is expanded with explicit hydrogens
-before the templates fire, whether products are normalised by tautomer canonicalisation or left as
-plain canonical \textsc{smiles}, and what counts as a valid fragment. Toggled one at a time over the $152$ shared rules on the clean test
-split, the first carries the entire term and the other two are inert.
-
-\begin{center}
-\begin{tabular}{llcc}
-\toprule
-choice & from $\to$ to & reach & against the default \\
-\midrule
-explicit hydrogens    & yes $\to$ no             & 0.390 & $+0.190$ $[+0.173,+0.208]$ \\
-product normalisation & tautomer $\to$ canonical & 0.200 & $0.000$ \\
-validity floor        & on $\to$ off             & 0.200 & $0.000$ \\
-\bottomrule
-\end{tabular}
-\end{center}
-
-\looseness=-1
 \paragraph{The two parts fail in opposite ways.} The larger is not a matching effect: the
 templates fire equally often expanded, and the toolkit then refuses $63\%$ of the fragments those
 products separate into, against $0.4\%$ without the expansion, because a template written against
@@ -340,19 +321,18 @@ comparable across papers that state only the bank. It is not an exchange: SyGMa 
 once the loop is complete.
 
 \looseness=-1
-\paragraph{What is convention-dependent is a construct, not a domain.} Which \textsc{smarts} constructs
-an expansion touches is readable from a rule file. Counts that already include the hydrogens about
-to be drawn are inert; counts of explicit connections or of implicit hydrogens lose every match; the
-hydrogen \emph{atom} primitive and the wildcard fire more often rather than less. Across six independent libraries and $51{,}368$
-templates the construct almost everyone uses is the inert one, and the two that move are used by
-disjoint sets of libraries. Every one of the $42{,}554$ patterns in the standard retrosynthesis
-template library pins a connection count and none carries the atom primitive, so the same step costs
-that library $82\%$ of the template--product pairs it can match at all, by a second mechanism: a
-match lost before a product is built. That is applicability rather than coverage, and a hazard
-latent in that field rather than an error in it, since no system there expands its target. The
-convention travels with the transcription: of the rules one release attributes to another tool, the
-$57$ copied verbatim carry the atom primitive not once, while $88$ of the $121$ re-typed do, a construct absent from all $175$ rules of the tool they came
-from.
+\paragraph{What is convention-dependent is a construct, not a domain.} Which \textsc{smarts} constructs an
+expansion touches is readable from a rule file: counts that already include the hydrogens about to
+be drawn are inert, counts of explicit connections or of implicit hydrogens lose every match, and
+the hydrogen \emph{atom} primitive and the wildcard fire more often rather than less. Across six
+independent libraries and $51{,}368$ templates the construct almost everyone uses is the inert one,
+and the two that move are used by disjoint sets of libraries. Every one of the $42{,}554$ patterns
+in the standard retrosynthesis template library pins a connection count and none carries the atom
+primitive, so the same step costs that library $82\%$ of the template--product pairs it can match at
+all: a match lost before a product is built, applicability rather than coverage, and a hazard latent
+in that field rather than an error in it. The convention travels with the transcription: of the
+rules one release attributes to another tool, the $57$ copied verbatim carry the atom primitive not
+once, while $88$ of the $121$ re-typed do, absent from all $175$ rules of the tool they came from.
 
 \looseness=-1
 A third turned up inside our own measurement rather than in another group's library. The three ways
@@ -379,19 +359,17 @@ which answer the bank gives   & a union of two written conventions       & our o
 \label{sec:robust}\label{sec:xdomainmain}
 
 \looseness=-1
-A leaderboard reports a total order. It is computed in one cell of a grid of choices its paper does
-not report, because the cell is not thought of as a parameter. Fix the items and the predictions and
-ask of each pair whether the ordering the table asserts also holds in every other cell. Say the
-higher system \emph{dominates} the lower when the margin is positive in every cell of the declared
-grid, and that the domination is \emph{certified} when a paired interval excludes zero in every
-cell. Domination is the intersection of the per-cell orders, so it is transitive and it is the
-finest relation no declared choice can contradict; certified domination is a sub-relation of it and
-is reported separately, because an interval condition is not transitive.
+A leaderboard reports a total order, computed in one cell of a grid of choices its paper does not
+report because the cell is not thought of as a parameter. Fix the items and the predictions and ask
+of each pair whether the ordering the table asserts holds in every other cell too. Say the higher system \emph{dominates} the lower when the margin is positive in every cell, and
+that the domination is \emph{certified} when a paired interval excludes zero in every cell.
+Domination is the intersection of the per-cell orders, so it is transitive and is the finest
+relation no declared choice can contradict; certified domination is a sub-relation of it, reported
+separately because an interval condition is not transitive.
 
 \looseness=-1
-The share of a leaderboard's pairwise claims that dominate is what a reader can quote without
-naming the cell. It is computable from released prediction files alone: no reference data beyond
-what the leaderboard already uses, nothing retrained, nothing the authors did not publish.
+The share that dominate is what a reader can quote without naming the cell, and it is computable
+from released prediction files alone: nothing retrained, nothing the authors did not publish.
 
 \begin{center}
 \begin{tabular}{lccc}
@@ -406,10 +384,9 @@ metabolites, four methods     & $9$ budgets                       & $2$ of $6$  
 \end{center}
 
 \looseness=-1
-About a third in each case, on grids drawn from the choices these fields already vary between
-papers. The remainder divides into two kinds, and the instrument separates them: pairs some cell
-reverses, and pairs no cell reverses but the benchmark cannot resolve at its own sample size. Only
-one of the twenty-one on the seven-system leaderboard is of the second kind, so on that table the
+About a third in each case. The remainder divides into two kinds the instrument separates: pairs
+some cell reverses, and pairs no cell reverses but the benchmark cannot resolve at its own sample
+size. Only one of the twenty-one on the seven-system leaderboard is of the second kind, so there the
 loss is reversal rather than resolution.
 
 \paragraph{How one choice breaks an ordering.}
@@ -457,18 +434,17 @@ magnitude larger than the criterion interactions that do survive (Appendix~\ref{
 \label{sec:decomp}
 
 \looseness=-1
-The deep case study runs on GRAIL, a metabolite predictor built for this work. It has three stages:
-a learned selector chooses which of its \nbank\ reaction rules to apply to a substrate, an engine
-applies the selected rules to enumerate candidate products, and a learned filter scores and ranks
-those candidates. It is used here because a rule-grounded system of this form is the setting in
-which a coverage figure can be measured exhaustively, and it is compared throughout against
-published systems on frozen predictions.
+The deep case study runs on GRAIL, a metabolite predictor built for this work: a learned selector
+chooses which of its \nbank\ rules to apply, an engine applies them, and a learned filter ranks the
+result. A rule-grounded system of this form is the setting in which a coverage figure can be
+measured exhaustively rather than sampled.
 
-A rule-grounded predictor reaches a reference metabolite only by passing three gates in sequence:
-the transformation must be \emph{expressible} by some rule in the bank, that rule must be
-\emph{selected} into the substrate's candidate pool under a finite budget, and the resulting
-product must be \emph{ranked} into the top $k$. Write, for a substrate set $S$ with reference sets
-$Y_s$:
+\looseness=-1
+A rule-grounded predictor reaches a reference only by passing three gates in sequence: the
+transformation must be \emph{expressible} by some rule, that rule must be \emph{selected} into the
+substrate's pool under a budget, and the product must be \emph{ranked} into the top $k$. Writing
+$C_{\text{full}}$ for the references the whole bank recovers without a budget, $C_{\text{bud}}$ for
+those surviving the selector, and $H$ for those returned:
 \[
 \underbrace{\tfrac{|H|}{|U|}}_{\text{recall@}k}
 =\underbrace{\tfrac{|C_{\text{full}}|}{|U|}}_{\text{coverage}}
@@ -476,35 +452,21 @@ $Y_s$:
 \cdot\underbrace{\tfrac{|H|}{|C_{\text{bud}}|}}_{\text{ranking}},
 \qquad |U|=\textstyle\sum_{s\in S}|Y_s| .
 \]
-where $C_{\text{full}}$ are references recovered by applying the \emph{entire} bank without a
-budget, $C_{\text{bud}}$ those surviving the selector's budgeted pool, and $H$ those actually
-returned in the top $k$. The first factor requires an enumerable candidate set: the bank for rule-grounded methods, a wide
-decode for a sequence-to-sequence one, where the same gates apply and MetaPredictor factorises
+Each set contains the next, so the identity is exact: an accounting device, not a model. It is
+written in \emph{micro} because only that form multiplies out exactly, head-to-head comparisons use
+\emph{macro}, and every figure states which. The first factor needs an enumerable candidate set,
+which a bank supplies and a wide decode approximates: MetaPredictor factorises
 $0.612\times0.804\times1.000$, exactly its realised recall, though a beam bounds that decode rather
-than the model (Appendix~\ref{app:seq2seq}). The identity is exact by construction, so the three
-factors partition the loss with no residual: an accounting device, not a model. The identity is
-written in \emph{micro}, the pooled ratio of sums, because only that form multiplies out exactly;
-head-to-head comparisons use \emph{macro}, and every figure states which. The macro ceiling is the
-higher of the two, $\ceilingmacro$ against $\ceiling$ (Appendix~\ref{app:formal}).
+than the model (Appendix~\ref{app:seq2seq}).
 
-\paragraph{The ceiling as a primitive.} The first factor is measurable without any model: apply all
-\nbank\ rules to every test substrate and ask what fraction of references appears anywhere in the
-union. That \textbf{coverage ceiling} is the best recall achievable if selection and ranking were
-both perfect, and on the clean test split it is \ceiling\ (cluster-bootstrap 95\% CI
-$[0.794,0.839]$). It should be reported alongside recall for any rule-grounded method, and reported
-as system reach in the sense of \S\ref{sec:enginereach}. Inside one system it is exactly what it
-claims, and no ranking improvement can exceed it.
+\paragraph{The ceiling as a primitive.} Apply all \nbank\ rules to every test substrate and ask what
+fraction of references appears anywhere in the union. That \textbf{coverage ceiling} is the best
+recall achievable if selection and ranking were perfect, and on the clean test split it is \ceiling\
+(cluster-bootstrap 95\% CI $[0.794,0.839]$); the macro counterpart is $\ceilingmacro$. It should be
+reported alongside recall for any rule-grounded method, and reported as system reach in the sense of
+\S\ref{sec:enginereach}, since it is a property of bank and engine together.
 
-\paragraph{What the decomposition says.}\looseness=-1 The deployed pipeline converts only $32.5\%$ of its own ceiling into realised recall, drawn as a waterfall beside SyGMa's in Appendix~\ref{app:formal}. Selection is where the loss sits: barely a third of what the bank reaches survives the selector's rule budget, while ranking is close to lossless at $0.960$ $[0.941,0.976]$. It does not bind alone: the output cap binds on $308$ of \ntest\ substrates and all $29$ references lost between the budgeted pool and the emitted output fall on those, so widening the selector moves the loss downstream (Appendix~\ref{app:props}).
-
-\looseness=-1
-Removing selection entirely tests that reading: with no selector and no threshold, ranking the whole
-pool, the bank passes SyGMa by $0.167$ $[0.112,0.223]$ at $k=82$ and by $0.063$ $[0.001,0.125]$ at
-$k=32$, while remaining behind at $k=8$ and indistinguishable at the field's $k=15$. Applied to a
-second method the reading stops being self-diagnosis: SyGMa decomposes on the same split in the same
-frame with the inverse profile, converting nearly all of a narrower reach where we convert a third
-of a wider one, so what separates the two is the cost of \emph{this} selection stage rather than a
-worse rule base (Appendices~\ref{app:noselect} and~\ref{app:decompsygma}).
+\paragraph{What the decomposition says.}\looseness=-1 The deployed pipeline converts only $32.5\%$ of its own ceiling into realised recall, drawn as a waterfall beside SyGMa's in Appendix~\ref{app:formal}. Selection is where the loss sits: barely a third of what the bank reaches survives the selector's rule budget, while ranking is close to lossless at $0.960$ $[0.941,0.976]$. It does not bind alone: the output cap binds on $308$ of \ntest\ substrates and all $29$ references lost between the budgeted pool and the emitted output fall on those (Appendix~\ref{app:props}). Removing selection entirely tests that reading: ranking the whole pool with no selector, the bank passes SyGMa by $0.167$ $[0.112,0.223]$ at $k=82$ and is indistinguishable at the field's $k=15$. Applied to a second method the reading stops being self-diagnosis: SyGMa decomposes on the same split with the inverse profile, converting nearly all of a narrower reach where we convert a third of a wider one (Appendices~\ref{app:noselect} and~\ref{app:decompsygma}).
 
 \section{Results}
 \label{sec:results}
@@ -647,6 +609,18 @@ the output size do not act on the same comparisons (Appendix~\ref{app:props}).
 
 
 
+
+\looseness=-1
+\paragraph{A global budget is the wrong object.} The budget is not only undeclared, it is the wrong
+shape. Enzymes compete for one substrate, so its annotated products are alternatives drawn from a
+shared pool: the median substrate here has one and the mean $2.22$, while the deployed policy emits
+$8.4$ for every substrate alike. Holding the ranking fixed and changing only how many are emitted,
+the deployed $k=15$ scores $0.136$ macro F1, the best global constant $0.195$, and truncating each
+substrate at its own annotated count $0.214$. A rule that reads the pool instead of a constant recovers
+almost all of that: emitting while a candidate scores within half the leader's score gives $0.209$,
+a paired $+0.074$ $[+0.059,+0.089]$ over the deployed policy and above every global constant. Forecasting the count from the substrate alone does not work and is reported with the
+weightings it fails at (Appendix~\ref{app:negative}); what the pool supports is a relative rule, not
+an absolute one, which is what a model normalised over siblings would learn.
 
 \paragraph{Where this system's own shortfall sits.} GRAIL trails both published comparators at
 the field's budget, by a paired $-0.242$ $[-0.271,\,-0.212]$ against SyGMa. The second confirmatory

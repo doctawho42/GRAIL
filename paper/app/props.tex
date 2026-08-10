@@ -301,6 +301,24 @@ sanitises and the completed one yields three, which are the three the unexpanded
 figure in this subsection that predates that measurement describes the loop as it stood, and is
 labelled where it appears.
 
+\paragraph{One call out of three.} The loop makes three discretionary choices before it reports a
+product: whether the substrate is expanded, whether products are normalised by tautomer
+canonicalisation or left as plain canonical \textsc{smiles}, and what counts as a valid fragment.
+Toggled one at a time over the $152$ shared rules on the clean test split, the first carries the
+entire term and the other two are inert.
+
+\begin{center}
+\begin{tabular}{llcc}
+\toprule
+choice & from $\to$ to & reach & against the default \\
+\midrule
+explicit hydrogens    & yes $\to$ no             & 0.390 & $+0.190$ $[+0.173,+0.208]$ \\
+product normalisation & tautomer $\to$ canonical & 0.200 & $0.000$ \\
+validity floor        & on $\to$ off             & 0.200 & $0.000$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
 \paragraph{The term is a single decision.} The three choices are toggled one at a time over the same
 $152$ rules, with the default configuration gated to reproduce arm A to four decimals and the
 comparator arm gated against arm B, which puts the whole term on the first
