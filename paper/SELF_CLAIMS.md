@@ -409,6 +409,52 @@ on the code that ran, not an identification of it, and this document should not 
 What holds the numbers is not the commit field but Row 10, which asks whether a re-run reproduces the
 file, and the widening to the full split re-ran a third of these under that question.
 
+## 10b. A measured difference is between two procedures, and both have to be complete
+
+**Check:** when a result is a difference between two ways of doing something, ask whether the losing
+arm is a defensible alternative or an unfinished version of the winning one. A comparison against an
+incomplete procedure measures the incompleteness.
+
+```bash
+python - <<'EOF'
+from rdkit import Chem
+from rdkit.Chem import rdChemReactions
+sub = Chem.AddHs(Chem.MolFromSmiles("O=C(O)c1ccccc1"))
+rxn = rdChemReactions.ReactionFromSmarts("[cH1:1]>>[c:1]O")
+for label, repair in (("as the loop stands", False), ("with RemoveHs first", True)):
+    ok = 0
+    for tup in rxn.RunReactants((sub,)):
+        for p in tup:
+            try:
+                q = Chem.RemoveHs(Chem.Mol(p), sanitize=False) if repair else Chem.Mol(p)
+                Chem.SanitizeMol(q); ok += 1
+            except Exception:
+                pass
+    print(f"{label}: {ok} of 5 products sanitise")
+EOF
+```
+
+**Status: FAIL, found by an area chair and confirmed here.** Section 4 reports that the same rules
+through two engines differ by $+0.188$ of reach and calls the difference a hydrogen convention,
+concluding that "the template is not wrong and the engine is not wrong". The expanding arm never
+contracts the product. One call, `RemoveHs(sanitize=False)` before sanitisation, takes the worked
+example from 0 of 5 products sanitising to 5 of 5, and the three it then yields are byte-for-byte
+the three the unexpanded arm yields. At 300 rules against five substrates the share that sanitises
+goes from 7.2% to 67.5%, and 88% of firings give exactly the unexpanded arm's products.
+
+The engine axis is therefore a comparison between a complete loop and an incomplete one until
+measured otherwise. The re-measurement is running on the full split; whichever way it lands, the
+mechanism sentence is wrong as written, because the engine is missing a step.
+
+**What this does not touch:** the census over six libraries, the construct taxonomy, the
+transcription control, the criterion axis, the budget axis, the population null, the decomposition
+and the coverage ceiling are measured elsewhere and do not pass through this loop.
+
+**The general form.** This document already records gates that certify against a frozen literal, a
+value from the wrong population, and a re-derivation of the manuscript's own arithmetic. This is the
+fourth: a measurement whose control arm is not the alternative it is named after. None of the four is
+caught by asking whether a number matches its artifact, which is what every check here does.
+
 ## 11. Every numeric passage traces back to the artifact that produced it
 
 **Check:** walk each passage of the manuscript that prints four or more numerals back to the
