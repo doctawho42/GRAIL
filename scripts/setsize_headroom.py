@@ -38,6 +38,7 @@ for p in (str(ROOT), str(Path(__file__).resolve().parent)):
         sys.path.insert(0, p)
 
 from rdkit import Chem, RDLogger
+from rdkit.Chem import rdMolDescriptors
 
 RDLogger.DisableLog("rdApp.*")
 N_BOOT, SEED = 10000, 0
@@ -145,8 +146,8 @@ def main() -> int:
             m = Chem.MolFromSmiles(s)
             if m is None:
                 continue
-            feats.append([m.GetNumHeavyAtoms(), Chem.rdMolDescriptors.CalcNumRings(m),
-                          Chem.rdMolDescriptors.CalcNumRotatableBonds(m), 1.0])
+            feats.append([m.GetNumHeavyAtoms(), rdMolDescriptors.CalcNumRings(m),
+                          rdMolDescriptors.CalcNumRotatableBonds(m), 1.0])
             targets.append(len(ys))
     beta = None
     if len(feats) > 50:
@@ -159,8 +160,8 @@ def main() -> int:
         m = Chem.MolFromSmiles(sub)
         if m is None:
             return 2
-        x = np.array([m.GetNumHeavyAtoms(), Chem.rdMolDescriptors.CalcNumRings(m),
-                      Chem.rdMolDescriptors.CalcNumRotatableBonds(m), 1.0], dtype=float)
+        x = np.array([m.GetNumHeavyAtoms(), rdMolDescriptors.CalcNumRings(m),
+                      rdMolDescriptors.CalcNumRotatableBonds(m), 1.0], dtype=float)
         return int(round(min(max(float(x @ beta), 1.0), 15.0)))
 
     # The architectural question is not whether fewer is better but whether HOW MANY should depend

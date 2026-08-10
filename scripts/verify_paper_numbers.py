@@ -990,6 +990,64 @@ def main() -> int:
                   round(json.loads(cl2.read_text())["reach"]["completed"]["reach"], 3),
                   str(cl2.relative_to(ROOT)))
 
+    # 10c-u. Where the emission rule does not hold. It beats every global constant on parent drugs
+    # and does not on substrates that are themselves metabolites, and the paragraph says so; this
+    # gate fails if the manuscript ever states the advantage without the population it holds on.
+    pa = ROOT / "results/setsize_headroom__tautomer_parents.json"
+    me2 = ROOT / "results/setsize_headroom__tautomer_metabolites.json"
+    if pa.exists() and me2.exists():
+        flat = re.sub(r"\s+", " ", whole)
+        mq = re.search(r"On the \$(\d+)\$ substrates that are parent drugs it reaches \$([\d.]+)\$ "
+                       r"against the best constant's \$([\d.]+)\$; on the \$(\d+)\$ that are "
+                       r"themselves metabolites[^.]*it reaches \$([\d.]+)\$ against \$([\d.]+)\$", flat)
+        checks.append((bool(mq), "the population qualification parses", "present",
+                       "matched" if mq else "not matched", ""))
+        if mq:
+            for lbl, path, n_g, gap_g, const_g in (("parents", pa, 1, 2, 3),
+                                                   ("metabolites", me2, 4, 5, 6)):
+                D = json.loads(path.read_text())
+                A = D["arms"]
+                bg = max(v["f1"] for k, v in A.items() if k.startswith("gap"))
+                bc = max(v["f1"] for k, v in A.items() if k.startswith("fixed"))
+                src = str(path.relative_to(ROOT))
+                check(f"{lbl}, substrates", mq.group(n_g), D["config"]["n_substrates"], src)
+                check(f"{lbl}, the rule", mq.group(gap_g), round(bg, 3), src)
+                check(f"{lbl}, the best constant", mq.group(const_g), round(bc, 3), src)
+            Dp, Dm = json.loads(pa.read_text())["arms"], json.loads(me2.read_text())["arms"]
+            gp = max(v["f1"] for k, v in Dp.items() if k.startswith("gap"))
+            cp = max(v["f1"] for k, v in Dp.items() if k.startswith("fixed"))
+            gm = max(v["f1"] for k, v in Dm.items() if k.startswith("gap"))
+            cm = max(v["f1"] for k, v in Dm.items() if k.startswith("fixed"))
+            checks.append((gp > cp and gm <= cm,
+                           "the rule wins on parents and not on metabolites",
+                           "wins on one population only",
+                           f"parents {gp:.3f} vs {cp:.3f}, metabolites {gm:.3f} vs {cm:.3f}",
+                           str(pa.relative_to(ROOT))))
+
+    # 10c-t. The volume claim about the method that leads the field's budget. Recall at a fixed
+    # cut-off pays for emitting more, so the aggregate that charges for it is where the lead is
+    # tested; every figure of that comparison is held to the run.
+    fm4 = ROOT / "results/four_method_291.json"
+    if fm4.exists():
+        F4 = json.loads(fm4.read_text()).get("macro_f1_by_budget", {})
+        flat = re.sub(r"\s+", " ", whole)
+        mv = re.search(r"MetaTox is second at \$([\d.]+)\$ behind MetaPredictor's \$([\d.]+)\$, and "
+                       r"at \$k=1\$ it is last at \$([\d.]+)\$ against SyGMa's \$([\d.]+)\$", flat)
+        checks.append((bool(mv), "the volume sentence parses", "present",
+                       "matched" if mv else "not matched", ""))
+        if mv and F4:
+            src = str(fm4.relative_to(ROOT))
+            check("MetaTox F1 at 15", mv.group(1), F4["MetaTox"]["15"], src)
+            check("MetaPredictor F1 at 15", mv.group(2), F4["MetaPredictor"]["15"], src)
+            check("MetaTox F1 at 1", mv.group(3), F4["MetaTox"]["1"], src)
+            check("SyGMa F1 at 1", mv.group(4), F4["SyGMa"]["1"], src)
+            at15 = sorted(F4, key=lambda m: -F4[m]["15"])
+            at1 = sorted(F4, key=lambda m: -F4[m]["1"])
+            checks.append((at15.index("MetaTox") == 1, "MetaTox is second on F1 at fifteen",
+                           "second", f"{at15.index('MetaTox') + 1}", src))
+            checks.append((at1[-1] == "MetaTox", "and last on F1 at one", "last",
+                           at1[-1], src))
+
     # 10c-s. The design appendix quotes two measured numbers and one dataset fact, and marks the
     # boundary between them and what it proposes. The boundary is what the gate protects: the
     # appendix must state that nothing in it is trained or evaluated here.
