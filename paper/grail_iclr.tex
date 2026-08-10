@@ -578,8 +578,10 @@ The budget does the same work, and it is what identifies the variable. Truncatin
 moves the emitted count with the method and its ranking held fixed, so a reordering along the sweep
 cannot be a property of any one system. MetaPredictor's count has been moved the other way with the
 model fixed too, $10.9$ distinct candidates to $34.3$ at a wider beam (Appendix~\ref{app:seq2seq}). It
-reorders without any budget having to be chosen: swept over $k$ the three methods take three
-distinct orderings, SyGMa above GRAIL at every budget up to $13$, certified from $k=1$ to $k=10$ and by $0.071$ $[0.057,0.086]$ at $k=5$, and below only from $14$ on, where the field's $15$ sits. A
+reorders without any budget having to be chosen: swept over $k$ in macro F1 the three methods take
+three distinct orderings, SyGMa above GRAIL at every budget up to $13$, certified from $k=1$ to
+$k=10$ and by $0.071$ $[0.057,0.086]$ at $k=5$, and below from $14$ on, where the field's $15$ sits,
+that second half observed rather than certified. A
 fourth method exhausts the field: on $291$ substrates carrying all four, MetaTox at $33.6$
 candidates is last at $k\le5$ and first from $k=15$, the budget this field reports at. Four of the
 six pairs change sign along that sweep and three change it between margins that each separate from
@@ -591,9 +593,9 @@ substrates and GRAIL on none (Appendix~\ref{app:props}).
 Every certified reversal along the sweep involves the one method that overproduces, and none
 certifies among methods emitting alike; that second half is a failure to detect, those pairs leaving
 intervals up to $0.158$ open. The matching rule acts independently of the budget: matched at about
-eight emitted candidates, GRAIL's sensitivity sits below both comparators by $-0.020$
-$[-0.029,-0.010]$ and $-0.025$ $[-0.035,-0.015]$, so the criterion separates methods at fixed output
-size (Appendix~\ref{app:xdomain}).
+eight emitted candidates, GRAIL's sensitivity sits below both comparators by $-0.0195$
+$[-0.029,-0.010]$ and $-0.025$ $[-0.035,-0.015]$, so the criterion separates methods at fixed
+output size (Appendix~\ref{app:matchedemission}).
 
 \looseness=-1
 The decomposition says why. SyGMa's selection factor is $1$ (\S\ref{sec:decomp}), which is what

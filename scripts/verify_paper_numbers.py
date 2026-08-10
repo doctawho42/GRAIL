@@ -720,6 +720,28 @@ def main() -> int:
         checks.append((not both, "no library is exposed to the step in both directions",
                        f"{len(both)} are", "0", "which is what 'disjoint sets' asserts"))
 
+    # 10c-k. The matched-emission arm. Its two intervals sit in the main text under a pointer to
+    # an appendix that did not contain them, and no check read them; the numbers were exact and
+    # unfindable, which is the same defect as a number that is wrong for anyone checking the paper.
+    cw = ROOT / "results/criterion_within_method.json"
+    if cw.exists():
+        W = json.loads(cw.read_text())["matched_emission"]["paired_differences_at_matched_emission"]
+        flat = re.sub(r"\s+", " ", whole)
+        mw = re.search(r"below both comparators by \$(-[\d.]+)\$ \$\[(-[\d.]+),(-[\d.]+)\]\$ and "
+                       r"\$(-[\d.]+)\$ \$\[(-[\d.]+),(-[\d.]+)\]\$", flat)
+        checks.append((bool(mw), "the matched-emission sentence parses", "present",
+                       "matched" if mw else "not matched", ""))
+        if mw:
+            for key, base in (("GRAIL-SyGMa", 1), ("GRAIL-MetaPredictor", 4)):
+                g = W[key]
+                said = mw.group(base)
+                check(f"matched emission, {key}", said,
+                      round(g["delta"], len(said.split(".")[1])), str(cw.relative_to(ROOT)))
+                check(f"matched emission, {key}, lower", mw.group(base + 1),
+                      round(g["ci95"][0], 3), str(cw.relative_to(ROOT)))
+                check(f"matched emission, {key}, upper", mw.group(base + 2),
+                      round(g["ci95"][1], 3), str(cw.relative_to(ROOT)))
+
     # 10c-i. The budget axis is the one place a reversal crosses margins certified at both ends,
     # which is the distinction three reviewers said the paper asserts without testing. It is not
     # asserted here: the sweep's pairwise margins carry paired intervals and the count of sign
