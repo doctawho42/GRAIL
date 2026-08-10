@@ -930,8 +930,8 @@ def main() -> int:
                        f"mover {sorted(mover)}, widest {widest} at "
                        f"{P[widest]['mean_emitted_uncapped']}", str(fm.relative_to(ROOT))))
         flat_a = re.sub(r"\s+", " ", whole)
-        said = ("one method is last at tight budgets and first at the budget the "
-                "field reports with its ranking held fixed")
+        said = ("one method is last at tight budgets and first at "
+                "the budget the field reports, with its ranking held fixed")
         checks.append((said in flat_a, "the abstract says what the sweep shows",
                        "present", "present" if said in flat_a else "not matched", ""))
 
@@ -1084,66 +1084,40 @@ def main() -> int:
         B = json.loads(hd_b.read_text())["hydrogen_convention_by_bank"]
         H = json.loads(hy_b.read_text())["banks"]
         flat = re.sub(r"\s+", " ", whole)
-        m = re.search(r"with hydrogens drawn, BioTransformer recovers \$([\d,{}]+)\$ references and "
-                      r"SyGMa\s*\$(\d+)\$; with hydrogens left implicit, SyGMa recovers "
-                      r"\$([\d,{}]+)\$ and BioTransformer \$(\d+)\$", flat)
-        checks.append((bool(m), "the three-bank sentence parses", "present",
+        m = re.search(r"BioTransformer recovers \$([\d,{}]+)\$ references with hydrogens drawn and "
+                      r"\$(\d+)\$ with them implicit, a swing of \$(-[\d.]+)\$; SyGMa recovers "
+                      r"\$([\d,{}]+)\$ and \$([\d,{}]+)\$, a swing of \$\+([\d.]+)\$", flat)
+        checks.append((bool(m), "the two-bank sentence parses", "present",
                        "matched" if m else "not matched", ""))
         if m:
-            num = lambda g: g.replace("{,}", "")
+            num = lambda g: int(g.replace("{,}", ""))
+            R = H["sygma_175"]["references"]
             def recovered(bank, arm):
-                v = H[bank]
-                return round(v["global_arms"][arm] * v["references"])
-            check("BioTransformer, hydrogens drawn", num(m.group(1)),
-                  recovered("biotransformer", "all_explicit"))
-            check("SyGMa, hydrogens drawn", num(m.group(2)),
-                  recovered("sygma_175", "all_explicit"))
-            check("SyGMa, hydrogens implicit", num(m.group(3)),
-                  recovered("sygma_175", "all_implicit"))
-            check("BioTransformer, hydrogens implicit", num(m.group(4)),
-                  recovered("biotransformer", "all_implicit"))
-            # The counts are recorded rather than re-derived. A check that multiplies a rounded
-            # reach by the reference total reproduces the arithmetic the sentence was written with
-            # and tests nothing about provenance; where the measurement records the integer, the
-            # integer is what the manuscript is held to.
-            rec = {b: H[b].get("global_arms_paired") for b in ("biotransformer", "sygma_175")}
-            if all(rec.values()):
-                for lbl, bank, key, grp in (
-                        ("BioTransformer drawn, recorded", "biotransformer", "recovered_explicit", 1),
-                        ("SyGMa drawn, recorded", "sygma_175", "recovered_explicit", 2),
-                        ("SyGMa implicit, recorded", "sygma_175", "recovered_implicit", 3),
-                        ("BioTransformer implicit, recorded", "biotransformer", "recovered_implicit", 4)):
-                    check(lbl, num(m.group(grp)), rec[bank][key], str(hy_b.relative_to(ROOT)))
-                # the exchange is a paired difference in each bank, and the two run opposite ways
-                mi = re.search(r"paired over substrates the step is worth \$([-+][\d.]+)\$ "
-                               r"\$\[([-+][\d.]+),([-+][\d.]+)\]\$ to SyGMa and \$([-+][\d.]+)\$ "
-                               r"\$\[([-+][\d.]+),([-+][\d.]+)\]\$ to BioTransformer", flat)
-                checks.append((bool(mi), "the reversal interval sentence parses",
-                               "present", "matched" if mi else "not matched", ""))
-                if mi:
-                    for bank, base in (("sygma_175", 1), ("biotransformer", 4)):
-                        g = rec[bank]
-                        check(f"{bank}, explicit minus implicit", mi.group(base),
-                              round(g["explicit_minus_implicit"], 3), str(hy_b.relative_to(ROOT)))
-                        check(f"{bank}, lower bound", mi.group(base + 1),
-                              round(g["ci95"][0], 3), str(hy_b.relative_to(ROOT)))
-                        check(f"{bank}, upper bound", mi.group(base + 2),
-                              round(g["ci95"][1], 3), str(hy_b.relative_to(ROOT)))
-                    checks.append((rec["sygma_175"]["explicit_minus_implicit"] *
-                                   rec["biotransformer"]["explicit_minus_implicit"] < 0
-                                   and rec["sygma_175"]["excludes_zero"]
-                                   and rec["biotransformer"]["excludes_zero"],
-                                   "the step moves the two banks in opposite directions",
-                                   "opposite signs, both certified",
-                                   f"{rec['sygma_175']['explicit_minus_implicit']:+.3f} against "
-                                   f"{rec['biotransformer']['explicit_minus_implicit']:+.3f}",
-                                   str(hy_b.relative_to(ROOT))))
-            # the reversal itself, not merely the four counts
-            checks.append((int(num(m.group(1))) > int(num(m.group(2)))
-                           and int(num(m.group(3))) > int(num(m.group(4))),
-                           "the two banks exchange between the conventions",
-                           f"drawn {m.group(1)} vs {m.group(2)}, implicit {m.group(3)} vs {m.group(4)}",
-                           "one leads under each", ""))
+                return round(H[bank]["global_arms"][arm] * R)
+            check("BioTransformer, completed, drawn", num(m.group(1)),
+                  recovered("biotransformer", "all_explicit_completed"), str(hy_b.relative_to(ROOT)))
+            check("BioTransformer, implicit", num(m.group(2)),
+                  recovered("biotransformer", "all_implicit"), str(hy_b.relative_to(ROOT)))
+            check("SyGMa, completed and drawn", num(m.group(4)),
+                  recovered("sygma_175", "all_explicit_completed"), str(hy_b.relative_to(ROOT)))
+            check("SyGMa, implicit", num(m.group(5)),
+                  recovered("sygma_175", "all_implicit"), str(hy_b.relative_to(ROOT)))
+            for lbl, said, bank in (("BioTransformer", m.group(3), "biotransformer"),
+                                    ("SyGMa", m.group(6), "sygma_175")):
+                a = H[bank]["global_arms"]
+                # the sentence reads from the drawn arm to the implicit one, so the swing is
+                # implicit minus drawn: negative where a bank loses by dropping the hydrogens
+                got = round(a["all_implicit"] - a["all_explicit_completed"], 3)
+                checks.append((abs(float(said) - got) < 5e-4, f"{lbl}, the swing",
+                               said, f"{got:+.3f}", str(hy_b.relative_to(ROOT))))
+            # the claim the section now makes is that there is NO exchange once the loop is complete
+            sc = H["sygma_175"]["global_arms"]; bc = H["biotransformer"]["global_arms"]
+            checks.append((sc["all_explicit_completed"] > bc["all_explicit_completed"]
+                           and sc["all_implicit"] > bc["all_implicit"],
+                           "SyGMa leads in both completed arms", "no exchange",
+                           f"{sc['all_explicit_completed']} vs {bc['all_explicit_completed']} drawn, "
+                           f"{sc['all_implicit']} vs {bc['all_implicit']} implicit",
+                           str(hy_b.relative_to(ROOT))))
 
     # 10c-c. The confirmatory family, reconstructible from the main text: the grid the axes admit,
     # less the cells where two conventions coincide and there is nothing to test.
