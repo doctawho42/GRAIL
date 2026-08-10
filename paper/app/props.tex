@@ -318,15 +318,18 @@ configuration rather than about a knob.
 
 \paragraph{What the switch does.} Not matching, which is the natural guess and is wrong. Over the
 clean test split the $152$ templates fire $20{,}372$ times with hydrogens explicit against
-$19{,}629$ without, and every firing writes a SMILES either way. The loss is one step later and it
-is a valence violation: of the $21{,}905$ fragments those products separate into, $13{,}804$ are
-structures RDKit will not read back, against $87$ of $21{,}106$: $63\%$ against $0.4\%$, and
+$19{,}629$ without, and every firing writes a SMILES either way. The loss is one step later and it is
+a structure the toolkit refuses: of the $21{,}905$ fragments those products separate into,
+$13{,}804$ are structures RDKit will not read back, against $87$ of $21{,}106$: $63\%$ against $0.4\%$, and
 $99.6\%$ of the excess is that, not the heavy-atom floor. A
 substitution template written against implicit hydrogens does not mention the hydrogen it replaces;
 it attaches the new group and lets RDKit decrement a count held as a property rather than an atom.
 Expand the substrate first and that hydrogen is an atom, nothing removes it, and the product carries
 an aromatic carbon holding both its hydrogen and the new substituent: benzoic acid under aromatic
-hydroxylation gives \texttt{[H]OC(=O)c1c([H])c([H])c([H])(O)c([H])c1[H]}, which does not parse. The
+hydroxylation gives \texttt{[H]OC(=O)c1c([H])c([H])c([H])(O)c([H])c1[H]}, which does not parse. On
+an aromatic carbon the toolkit reports the failure as an unkekulisable ring rather than as a valence
+error, since the over-substituted atom leaves the ring without a kekul\'e structure; on an aliphatic
+one it is a valence error directly. The repair is the same and the diagnostic is not. The
 template is not wrong and the engine is not wrong. They disagree about how a hydrogen is spelled.
 
 \paragraph{The decision belongs to the bank as much as to the engine.} It does not follow that the

@@ -47,11 +47,26 @@ RDLogger.DisableLog("rdApp.*")
 # shipped with the package; a worktree symlinks it as the datasets are symlinked
 TEMPLATES = ROOT / "grail_metabolism" / "uspto_templates.csv.gz"
 PRODUCTS = ROOT / "grail_metabolism" / "data" / "USPTO_50k" / "test.csv"
-DEGREE = re.compile(r";D\d+")
-# an atom primitive that counts explicit structure, so its meaning moves with the expansion
-COUNTS_EXPLICIT = re.compile(r"\[[^\]]*;D\d")
+# A primitive is a primitive however it is separated. Requiring a semicolon before D matched
+# [C;D1:1] and missed [CD1:1], [#6D2:1] and [C&D1:1], all of which RDKit reads as the same degree
+# constraint and all of which lose every match under AddHs. No element symbol is a capital D, X or
+# a bare lowercase h followed by a digit, so scanning inside the brackets is unambiguous.
+# Detection and deletion are different patterns and were the same one. The detector asks whether a
+# bracket carries the primitive anywhere; the deletion has to remove the primitive and leave the
+# bracket standing, so it matches the primitive together with the separator in front of it.
+COUNTS_EXPLICIT = re.compile(r"\[[^\]]*D\d")
+DEGREE = re.compile(r"[;&]?D\d+")
+# the implicit-hydrogen count. It reads the hydrogens the expansion just took away, so unlike the
+# bracketed H count it is not inert: [c;h1] matches five sites before AddHs and none after.
+IMPLICIT_H_COUNT = re.compile(r"\[[^\]]*(?<![A-Za-z])h\d")
+# total connections, the inert twin of the degree primitive: X counts neighbours including the
+# implicit hydrogens, so drawing them changes nothing. Distinguished here because Daylight calls
+# X the connectivity and D the degree, and a census that conflates them reads backwards.
+TOTAL_CONNECTIONS = re.compile(r"\[[^\]]*X\d")
 # [H] or [#1] as an atom, the construct the metabolite banks use and this library does not
 H_ATOM = re.compile(r"\[(?:#1|H)[;:\]+-]")
+# a wildcard, which matches the drawn hydrogens once they exist and so fires more often, not less
+WILDCARD = re.compile(r"(?:^|[^\[])\*|\[\*")
 _CTX: dict = {}
 
 

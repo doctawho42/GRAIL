@@ -58,23 +58,18 @@ def _code_version() -> dict:
 
 
 def _init(rules):
-    from rdkit.Chem import rdChemReactions
-    rxns = []
-    for r in rules:
-        try:
-            rxns.append(rdChemReactions.ReactionFromSmarts(r))
-        except Exception:
-            rxns.append(None)
-    _CTX["rxns"] = rxns
+    # `_iter_reaction_products` takes the rule as a SMIRKS string and compiles both a match pattern
+    # and a reaction from it. Handing it a pre-compiled reaction makes its pattern compile fail and
+    # every rule returns nothing, silently: the run reports zero positives under both conventions,
+    # which reads like a measurement and is a broken one.
+    _CTX["rules"] = list(rules)
 
 
 def _productive(substrate, refs) -> set[int]:
     """Indices of rules that yield an annotated metabolite from this presentation of the substrate."""
     out = set()
-    for i, rxn in enumerate(_CTX["rxns"]):
-        if rxn is None:
-            continue
-        for product in _iter_reaction_products(substrate, rxn):
+    for i, rule in enumerate(_CTX["rules"]):
+        for product in _iter_reaction_products(substrate, rule):
             try:
                 smiles = Chem.MolToSmiles(product)
             except Exception:

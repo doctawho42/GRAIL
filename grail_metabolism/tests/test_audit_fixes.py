@@ -601,3 +601,59 @@ def test_the_retrosynthesis_block_convention_is_proven_not_assumed():
             f"{name}: the first row of a block is the recorded answer on only {agree} of "
             f"{len(shared)} reactions; the block convention does not hold and every cross-domain "
             f"number computed from these files is meaningless")
+
+
+def test_released_checker_sees_a_degree_primitive_however_it_is_spelled():
+    """The checker's own regex once required a semicolon before D.
+
+    RDKit reads [CD1:1], [#6D2:1], [C&D1:1] and [C;D1:1] as the same degree constraint, and all
+    four lose every match when the substrate is expanded with explicit hydrogens. A bank written
+    in any of the first three got a clean bill of health from the tool this paper ships, which is
+    the one artifact a practitioner is meant to run on a bank we have never seen.
+    """
+    import sys
+    from pathlib import Path
+
+    scripts = Path(__file__).resolve().parents[2] / "scripts"
+    if str(scripts) not in sys.path:
+        sys.path.insert(0, str(scripts))
+    from retro_template_convention import (COUNTS_EXPLICIT, DEGREE, IMPLICIT_H_COUNT,
+                                           TOTAL_CONNECTIONS)
+
+    for spelling in ("[C;D1:1]", "[CD1:1]", "[C&D1:1]", "[#6D2:1]"):
+        assert COUNTS_EXPLICIT.search(spelling), f"{spelling} is a degree constraint and was missed"
+
+    # the two constructs that were absent from the taxonomy: one moves, one does not
+    assert IMPLICIT_H_COUNT.search("[c;h1:1]"), "the implicit-hydrogen count is not inert"
+    assert not IMPLICIT_H_COUNT.search("[cH1:1]"), "the bracketed H count is a different primitive"
+    assert TOTAL_CONNECTIONS.search("[c;X3:1]"), "X counts neighbours including implicit hydrogens"
+    assert not COUNTS_EXPLICIT.search("[c;X3:1]"), "X is not D and must not be counted as it"
+
+    # deletion is a different job from detection: it must leave a parseable bracket behind
+    from rdkit import Chem
+    for spelling, expected in (("[C;D1:1]", "[C:1]"), ("[CD1:1]", "[C:1]"),
+                               ("[C&D1:1]", "[C:1]"), ("[#6D2:1]", "[#6:1]")):
+        stripped = DEGREE.sub("", spelling)
+        assert stripped == expected, f"{spelling} stripped to {stripped}"
+        assert Chem.MolFromSmarts(stripped) is not None
+
+
+def test_the_expansion_breaks_and_over_matches_as_the_paper_says():
+    """The three directions a convention bites, checked against the toolkit rather than asserted."""
+    from rdkit import Chem, RDLogger
+
+    RDLogger.DisableLog("rdApp.*")
+    mol = Chem.MolFromSmiles("O=C(O)c1ccccc1")
+    expanded = Chem.AddHs(Chem.Mol(mol))
+
+    def matches(smarts, m):
+        return len(m.GetSubstructMatches(Chem.MolFromSmarts(smarts)))
+
+    # inert: the bracketed hydrogen count and the total connection count
+    assert matches("[cH1]", mol) == matches("[cH1]", expanded)
+    assert matches("[c;X3]", mol) == matches("[c;X3]", expanded)
+    # broken: the degree and the implicit-hydrogen count both read what the expansion removed
+    assert matches("[c;D2]", mol) > 0 and matches("[c;D2]", expanded) == 0
+    assert matches("[c;h1]", mol) > 0 and matches("[c;h1]", expanded) == 0
+    # over-matching: a wildcard gains the drawn hydrogens as neighbours
+    assert matches("[c]~[*]", expanded) > matches("[c]~[*]", mol)

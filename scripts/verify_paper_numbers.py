@@ -865,7 +865,7 @@ def main() -> int:
         M = json.loads(mech.read_text())["pipeline"]
         exp, imp = M["deployed"], M["without_explicit_h"]
         flat = re.sub(r"\s+", " ", whole)
-        m = re.search(r"valence violation: \$(\d+)\\%\$ of the fragments the expanded products "
+        m = re.search(r"the toolkit refuses the result: \$(\d+)\\%\$ of the fragments the expanded products "
                       r"separate into are structures the toolkit will not read back, against "
                       r"\$([\d.]+)\\%\$ without the expansion", flat)
         checks.append((bool(m), "the mechanism sentence parses",
