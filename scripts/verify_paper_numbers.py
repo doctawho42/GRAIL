@@ -990,6 +990,25 @@ def main() -> int:
                   round(json.loads(cl2.read_text())["reach"]["completed"]["reach"], 3),
                   str(cl2.relative_to(ROOT)))
 
+    # 10c-z. The tier count. It is the longest chain in the dominance order and therefore the same
+    # measurement as the share of surviving pairs, read in the unit a leaderboard is quoted in.
+    ro2 = ROOT / "results/robust_order.json"
+    if ro2.exists():
+        R2 = json.loads(ro2.read_text())["leaderboards"]
+        flat = re.sub(r"\s+", " ", whole)
+        mt = re.search(r"asserts seven places and supports \$(\d+)\$ tiers, and the three-system "
+                       r"table asserts three and supports \$(\d+)\$", flat)
+        checks.append((bool(mt), "the tier sentence parses", "present",
+                       "matched" if mt else "not matched", ""))
+        if mt:
+            src = str(ro2.relative_to(ROOT))
+            check("tiers, seven-system", mt.group(1), R2["cluster0"]["tiers_distinguished"], src)
+            check("tiers, three-system", mt.group(2), R2["cluster1"]["tiers_distinguished"], src)
+            checks.append((R2["cluster0"]["tiers_distinguished"] < R2["cluster0"]["n_systems"],
+                           "the seven-system table supports fewer tiers than places",
+                           "fewer", f"{R2['cluster0']['tiers_distinguished']} of "
+                           f"{R2['cluster0']['n_systems']}", src))
+
     # 10c-y. The ceiling's gap, split by whether the bank has the transformation type at all. The
     # two halves call for different work, so the split is the useful form of the number and every
     # part of it is held to the run, including that they sum to the uncovered total.

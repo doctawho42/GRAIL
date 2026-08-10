@@ -99,9 +99,28 @@ def analyse(hits: dict, systems: list[str], cells: list, published_cell) -> dict
     n_pairs = len(pairs)
     n_dom = sum(v["dominates"] for v in pairs.values())
     n_cert = sum(v["certified"] for v in pairs.values())
+
+    # The share of surviving pairs is the honest number and not the readable one. The readable one
+    # is how many places the leaderboard still distinguishes: the longest chain in the dominance
+    # order, which is the number of tiers a reader may quote. A total order of n places whose
+    # longest robust chain is t is a table asserting n ranks and supporting t.
+    edges: dict = {}
+    for k, v in pairs.items():
+        hi_, lo_ = k.split(" over ")
+        if v["dominates"]:
+            edges.setdefault(hi_, set()).add(lo_)
+    memo: dict = {}
+
+    def chain(n):
+        if n not in memo:
+            memo[n] = 1 + max((chain(c) for c in edges.get(n, ())), default=0)
+        return memo[n]
+
+    tiers = max(chain(n) for n in systems)
     return {"published_order": published, "published_cell": str(published_cell),
             "n_systems": len(systems), "n_cells": len(cells), "n_pairs": n_pairs,
             "n_dominating": n_dom, "n_certified": n_cert,
+            "tiers_distinguished": tiers,
             "robustness": round(n_dom / max(n_pairs, 1), 4),
             "certified_robustness": round(n_cert / max(n_pairs, 1), 4),
             "reversed_by_some_cell": n_pairs - n_dom,
@@ -174,6 +193,8 @@ def main() -> int:
               f"= {r['robustness']}")
         print(f"  and certified in every cell:   {r['n_certified']}/{r['n_pairs']} "
               f"= {r['certified_robustness']}")
+        print(f"  tiers it still distinguishes:  {r['tiers_distinguished']} "
+              f"of {r['n_systems']} published places")
         print(f"  reversed by some cell:         {r['reversed_by_some_cell']}")
         print(f"  never reversed but unresolved: {r['unresolved_though_never_reversed']}")
 
