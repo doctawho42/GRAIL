@@ -60,7 +60,26 @@ recorded reaction; those $490$ are nested inside each cluster's own five thousan
 comparisons of which $44$ reorder.
 
 \textbf{Not one of the $440$ interactions survives Holm at $0.05$, and on our split not one has an
-interval excluding zero even before correction.} On the released files $18$ of $380$ have intervals
+interval excluding zero even before correction.}
+
+\paragraph{What the null could have detected.} A non-detection is a statement about the design as
+much as about the data, so the size it would have caught is computed rather than asserted. For each
+interaction the paired bootstrap already yields a sampling distribution; its standard deviation
+$\hat\sigma$ is the standard error of that interaction, estimated from the same resamples that give
+the interval and requiring no variance model beyond them. The two populations enter the contrast
+through disjoint sets of items, the shared subset and the complement, so the resampling is
+independent across them and no inter-arm correlation has to be assumed; where the two overlap, as
+the subset does with the whole, the contrast is not used. A two-sided test at the family's own Holm
+threshold rejects when the estimate exceeds $z_{1-\alpha/2m}\,\hat\sigma$ with $\alpha=0.05$ and $m$
+the family size, and reaches power $1-\beta$ against an effect of
+\[
+\mathrm{MDE} \;=\; \bigl(z_{1-\alpha/2m} + z_{1-\beta}\bigr)\,\hat\sigma ,
+\]
+evaluated at $\beta=0.2$. With $m=380$ on the released files the critical quantile is $z\approx3.86$,
+and with $m=60$ on our split $z\approx3.44$. Taking the median over each family gives $0.100$ and
+$0.066$. Both are an order of magnitude above the criterion interactions that do survive correction,
+so these designs exclude a large effect and are silent about one of the size this paper certifies
+elsewhere. That is the sense in which the null is bounded, and it is the only sense claimed. On the released files $18$ of $380$ have intervals
 excluding zero, which is about what $380$ tests produce by chance. The reorderings are what a subset
 of four hundred and ninety reactions, or a hundred and fifty substrates, does on its own.
 
@@ -535,6 +554,17 @@ LocalRetro, Retroformer, Graph2SMILES. Disregard stereochemistry and Graph2SMILE
 to first, with Retroformer second and GraphRetro third. Five of the twenty-one pairs exchange, on
 predictions that never change.
 
+
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=0.52\textwidth]{fig_xdomain}
+\end{center}
+\caption{Top-1 accuracy of seven retrosynthesis systems under four matching criteria, on
+the $4{,}999$ reactions their released prediction files share. Systems that exchange
+positions are drawn in colour, the remainder in grey.}
+\label{fig:xdomain}
+\end{figure}
 
 The exchange is the visible part; the interaction is the claim, and it is certified under the
 strictest correction this paper applies anywhere. Of $448$ paired interaction tests (every pair

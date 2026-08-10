@@ -105,7 +105,7 @@ def main() -> int:
     check("references lost to truncation", lost and lost.group(1), S["Cbud"] - S["H"],
           "Cbud - H")
     cap = sum(1 for r in rows if len(r.get("deployed_top15") or []) >= 15)
-    atcap = re.search(r"emits at the cap on \$(\d+)\$ of", whole)
+    atcap = re.search(r"binds on \$(\d+)\$ of", re.sub(r"\s+", " ", whole))
     check("substrates at the cap", atcap and atcap.group(1), cap)
 
     # 5. the nesting the identity needs, which a clamp used to supply silently
@@ -433,6 +433,18 @@ def main() -> int:
         # A null is a result only with a stated detectable size; the manuscript now prints one,
         # so it is tied to the design that produced it.
         flat = re.sub(r"\s+", " ", whole)
+        # the derivation's own numbers, so the appendix cannot state a threshold the run did not use
+        flat2 = re.sub(r"\s+", " ", whole)
+        mm = re.search(r"With \$m=(\d+)\$ on the released files the critical quantile is "
+                       r"\$z\\approx([\d.]+)\$,\s*and with \$m=(\d+)\$ on our split "
+                       r"\$z\\approx([\d.]+)\$\. Taking the median over each family gives "
+                       r"\$([\d.]+)\$ and\s*\$([\d.]+)\$", flat2)
+        check("MDE derivation, family on the released files", mm and mm.group(1), R["comparisons"])
+        check("MDE derivation, family on our split", mm and mm.group(3), P["comparisons"])
+        check("MDE derivation, median on the released files", mm and mm.group(5),
+              R["minimum_detectable_interaction"]["median"])
+        check("MDE derivation, median on our split", mm and mm.group(6),
+              P["minimum_detectable_interaction"]["median"])
         m = re.search(r"detected an interaction of about \$([\d.]+)\$ on the\s*released files and "
                       r"\$([\d.]+)\$ on the metabolite split", flat)
         check("minimum detectable, released files", m and m.group(1),
@@ -502,10 +514,10 @@ def main() -> int:
                  len(L["certified_interactions"])),
                 ("Holm survivors", r"\\textbf\{\$(\d+)\$ survive Holm", len(L["holm_survivors"])),
                 ("Holm survivors, main body",
-                 r"Of the \$448\$ tests that remain, \$\d+\$ have intervals excluding zero and "
+                 r"Of the \$448\$ that remain, \$\d+\$ have intervals excluding zero and "
                  r"\$(\d+)\$ survive Holm", len(L["holm_survivors"])),
                 ("intervals excluding zero, main body",
-                 r"Of the \$448\$ tests that remain, \$(\d+)\$ have intervals excluding zero",
+                 r"Of the \$448\$ that remain, \$(\d+)\$ have intervals excluding zero",
                  len(L["certified_interactions"])),
                 ("pairs exchanging at top-1", r"Five of the twenty-one pairs exchange",
                  None)):
@@ -579,6 +591,17 @@ def main() -> int:
                        round(sum(v["point"] for v in C.values()), 4),
                        round(A["D_sygma_engine_175_rules_composed"]["point"]
                              - A["A_grail_engine_152_rules"]["point"], 4), ""))
+
+    # 10a-a. The main text and the appendix must agree about what was fixed in advance. They did
+    # not: one claimed the design's pre-specification was tabulated where the other stated that no
+    # family had been pre-specified at all.
+    flat = re.sub(r"\s+", " ", whole)
+    claims_prespec = bool(re.search(r"pre-specification of the design are given", flat))
+    denies = bool(re.search(r"[Nn]o family was pre-specified", flat))
+    checks.append((not (claims_prespec and denies),
+                   "the main text does not claim a pre-specification the appendix denies",
+                   f"claims={claims_prespec}, denies={denies}",
+                   "the two may not both hold", ""))
 
     # 10a-b. The full-split criterion family. The main text says the differential survives Holm
     # over three pairs; that family is a different one from the subset and external families the
@@ -761,7 +784,7 @@ def main() -> int:
         grid = (n_sys * (n_sys - 1) // 2) * (len(cfg["modes"]) * (len(cfg["modes"]) - 1) // 2) \
                * len(cfg["ks"])
         flat = re.sub(r"\s+", " ", whole)
-        m = re.search(r"which is \$(\d+)\$ cells less the \$(\d+)\$ in which", flat)
+        m = re.search(r"which is \$(\d+)\$\s*cells less the \$(\d+)\$ in which", flat)
         check("the grid the two axes admit", m and m.group(1), grid)
         check("cells with nothing to test", m and m.group(2), grid - Lf["n_interaction_tests"])
 
