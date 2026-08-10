@@ -149,6 +149,26 @@ def main() -> int:
             print(f"    {r['metric']:9} {r['criterion']:18} {r['pair']:28} "
                   f"{r[f'gap_{small}']:+.4f} -> {r[f'gap_{big}']:+.4f}")
 
+    # What this design could have detected, so the null is a bound and not an absence.
+    try:
+        from scipy.stats import norm
+        zc = float(norm.ppf(1 - 0.05 / (2 * max(len(rows), 1))))
+        zp = float(norm.ppf(0.80))
+    except Exception:
+        zc, zp = 3.5, 0.8416
+    ses = []
+    for r in rows:
+        a_, b_ = r["pair"].split(" vs ")
+        ds = vec[r["criterion"]]["shared"][a_][r["metric"]] - vec[r["criterion"]]["shared"][b_][r["metric"]]
+        dc = vec[r["criterion"]]["rest"][a_][r["metric"]] - vec[r["criterion"]]["rest"][b_][r["metric"]]
+        ses.append(float((ds[si].mean(axis=1) - dc[ci].mean(axis=1)).std(ddof=1)))
+    ses.sort()
+    mde = sorted((zc + zp) * x for x in ses)
+    mde_rep = {"median": round(mde[len(mde) // 2], 4), "smallest": round(mde[0], 4),
+               "largest": round(mde[-1], 4), "power": 0.80}
+    print(f"\n  minimum detectable interaction at the family's Holm threshold, 80% power: "
+          f"median {mde_rep['median']:.4f}, range {mde_rep['smallest']:.4f} to {mde_rep['largest']:.4f}")
+
     ordered = sorted(rows, key=lambda r: r["interaction"]["p"])
     survivors = []
     for i, r in enumerate(ordered):
@@ -178,6 +198,7 @@ def main() -> int:
            "comparisons": len(rows), "reordered": int(flips), "ties_skipped": int(ties),
            "n_shared": n_shared, "n_complement": n_rest,
            "interactions_excluding_zero": len(excl), "holm_survivors": len(survivors),
+           "minimum_detectable_interaction": mde_rep,
            "median_gap_change": round(med[len(med) // 2], 4),
            "by_metric": by_metric, "rows": rows}
     Path(args.out).write_text(json.dumps(rep, indent=1))

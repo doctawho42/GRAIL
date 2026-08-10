@@ -190,6 +190,36 @@ def main() -> int:
             print(f"    {r['cluster']} {r['criterion']:10} k={r['k']:<3} {r['pair']:32} "
                   f"{r['gap_own_set']:+.4f} -> {r['gap_shared']:+.4f}")
 
+    # A null is only a result if it states what it could have detected. The bootstrap gives each
+    # interaction's standard error directly, so the smallest effect this design would have rejected
+    # at the family's own Holm threshold, with 80% power, is a property of the design and not of
+    # the data. Reported beside the null it turns "we found nothing" into a bound.
+    from math import sqrt
+    try:
+        from scipy.stats import norm
+        zc = float(norm.ppf(1 - 0.05 / (2 * max(len(rowsout), 1))))
+        zp = float(norm.ppf(0.80))
+    except Exception:
+        zc, zp = 3.9, 0.8416
+    ses = []
+    for c in names:
+        for a_, b_ in itertools.combinations(systems[c], 2):
+            for m in MODES:
+                for k in KS:
+                    ds = sub[c][a_][m][k] - sub[c][b_][m][k]
+                    dc = comp[c][a_][m][k] - comp[c][b_][m][k]
+                    si, ci = draws[c]
+                    bt = ds[si].mean(axis=1) - dc[ci].mean(axis=1)
+                    ses.append(float(bt.std(ddof=1)))
+    ses.sort()
+    mde = [(zc + zp) * se for se in ses]
+    rep_mde = {"median": round(mde[len(mde) // 2], 4), "smallest": round(mde[0], 4),
+               "largest": round(mde[-1], 4), "power": 0.80,
+               "alpha_per_test": round(0.05 / max(len(rowsout), 1), 8)}
+    print(f"\n  minimum detectable interaction at the family's Holm threshold, 80% power: "
+          f"median {rep_mde['median']:.4f}, range {rep_mde['smallest']:.4f} to "
+          f"{rep_mde['largest']:.4f}")
+
     # Holm across the whole family, at the correction this paper applies to its other one.
     ordered = sorted(rowsout, key=lambda r: r["interaction"]["p"])
     n_fam, survivors = len(ordered), []
@@ -233,6 +263,7 @@ def main() -> int:
            "dropped_disagreeing": len(disagree),
            "comparisons": len(rowsout), "reordered": int(flips), "ties_skipped": int(ties),
            "interactions_excluding_zero": len(excl), "holm_survivors": len(survivors),
+           "minimum_detectable_interaction": rep_mde,
            "rows": rowsout, "joint_leaderboard": joint,
            "systems_per_cluster": systems}
     Path(args.out).write_text(json.dumps(rep, indent=1))

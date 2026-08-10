@@ -1,7 +1,7 @@
 {
  "config": {
   "script": "population_axis.py",
-  "git_commit": "b740558042fe17ea120cb073866d2cb23aa19563",
+  "git_commit": "2d6b5bbfb0a4860513ba1a86702503390bf02499",
   "git_dirty": true,
   "source": "results/set_metrics_by_criterion.json",
   "populations": {
@@ -35,6 +35,12 @@
  "n_complement": 1020,
  "interactions_excluding_zero": 0,
  "holm_survivors": 0,
+ "minimum_detectable_interaction": {
+  "median": 0.0661,
+  "smallest": 0.0226,
+  "largest": 0.2015,
+  "power": 0.8
+ },
  "median_gap_change": 0.0058,
  "by_metric": {
   "recall": {

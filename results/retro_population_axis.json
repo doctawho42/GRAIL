@@ -1,7 +1,7 @@
 {
  "config": {
   "script": "retro_leaderboard.py",
-  "git_commit": "b740558042fe17ea120cb073866d2cb23aa19563",
+  "git_commit": "2d6b5bbfb0a4860513ba1a86702503390bf02499",
   "git_dirty": true,
   "clusters": [
    "cluster0",
@@ -31,6 +31,13 @@
  "ties_skipped": 4,
  "interactions_excluding_zero": 18,
  "holm_survivors": 0,
+ "minimum_detectable_interaction": {
+  "median": 0.1002,
+  "smallest": 0.0638,
+  "largest": 0.1157,
+  "power": 0.8,
+  "alpha_per_test": 0.00013158
+ },
  "rows": [
   {
    "cluster": "cluster0",

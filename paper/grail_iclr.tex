@@ -61,7 +61,8 @@ under one convention the larger bank recovers more references, under the other t
 four times as many, so a coverage figure quoted without the procedure that produced it is not
 comparable across papers. The fourth choice is undeclared without being shown to decide anything.
 Eleven released files sit on three test sets under a single name, and no interaction that varies
-only the population survives correction for multiplicity.
+only the population survives correction for multiplicity, although that null excludes only effects
+much larger than the ones the criterion produces.
 
 One condition governs when a choice reorders rather than shifts: it must move two systems apart by
 more than the margin between them. A benchmark therefore becomes vulnerable to an undeclared choice
@@ -322,9 +323,12 @@ systems can be compared on the subset and on the whole with method, criterion an
 Of the $380$ comparisons this gives, $44$ change the ordering; on the metabolite split of
 \S\ref{sec:results} the same test gives $10$ of $60$. Neither instance survives correction. None of
 the $440$ interactions passes Holm at $0.05$, and on the metabolite split none has an interval
-excluding zero before correction. The population is therefore ambiguous in released work without
-being shown to decide a ranking, and the two statements are separable only because the same test is
-applied to all four choices (Appendix~\ref{app:popaxis}).
+excluding zero before correction. The null is bounded rather than absolute: at the family's own
+threshold and $80\%$ power this design would have detected an interaction of about $0.10$ on the
+released files and $0.07$ on the metabolite split, an order of magnitude larger than the criterion
+interactions that do survive. The population is therefore ambiguous in released work without being
+shown to decide a ranking, and an effect of the size the criterion produces would not have been
+visible here (Appendix~\ref{app:popaxis}).
 
 \section{The decomposition and the coverage ceiling}
 \label{sec:decomp}
@@ -603,8 +607,9 @@ bounds this formulation and not the task.
 \paragraph{What the newer results rest on.} The cross-domain numbers come from eleven files
 produced elsewhere, read under an assumption proven where an independent ground truth exists, and
 the reordering there is a top-1 phenomenon. Packing is measured across four leaderboards, which is
-few. The population negative bounds how large an interaction would have had to be to show, not
-whether one exists. The figure reported for this system is a single evaluation of the deployed
+few. The population result is a bounded null: the design detects an interaction of about a
+tenth and the criterion's are a tenth of that, so it excludes a large effect and not a comparable
+one. The figure reported for this system is a single evaluation of the deployed
 configuration.
 
 \section{Conclusion}

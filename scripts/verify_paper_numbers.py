@@ -430,6 +430,15 @@ def main() -> int:
                        "no population interaction survives Holm in either instance",
                        f"ours {P['holm_survivors']}, theirs {R['holm_survivors']}", "0 and 0",
                        "the manuscript says none does, in the abstract and the appendix"))
+        # A null is a result only with a stated detectable size; the manuscript now prints one,
+        # so it is tied to the design that produced it.
+        flat = re.sub(r"\s+", " ", whole)
+        m = re.search(r"detected an interaction of about \$([\d.]+)\$ on the\s*released files and "
+                      r"\$([\d.]+)\$ on the metabolite split", flat)
+        check("minimum detectable, released files", m and m.group(1),
+              R["minimum_detectable_interaction"]["median"], "median over the family, 80% power")
+        check("minimum detectable, our split", m and m.group(2),
+              P["minimum_detectable_interaction"]["median"], "median over the family, 80% power")
         checks.append((P["interactions_excluding_zero"] == 0,
                        "our split has no marginal interval either",
                        P["interactions_excluding_zero"], 0,
