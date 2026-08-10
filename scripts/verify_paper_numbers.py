@@ -580,6 +580,44 @@ def main() -> int:
                        round(A["D_sygma_engine_175_rules_composed"]["point"]
                              - A["A_grail_engine_152_rules"]["point"], 4), ""))
 
+    # 10c-e. The census across independent libraries. The claim is that the widely used construct
+    # is the inert one, so the check is on the separation and not only on the counts.
+    cc = ROOT / "results/convention_census.json"
+    if cc.exists():
+        C = json.loads(cc.read_text())
+        flat = re.sub(r"\s+", " ", whole)
+        m = re.search(r"Across four independent\s*libraries and \$([\d,{}]+)\$ templates", flat)
+        check("census, templates", m and m.group(1).replace("{,}", ""), C["summary"]["templates"])
+        checks.append((C["summary"]["independent_libraries"] == 4,
+                       "census, independent libraries", C["summary"]["independent_libraries"], 4,
+                       ", ".join(C["summary"]["sources"])))
+        IND = {"this work, full bank", "SyGMa phase1", "SyGMa phase2",
+               "USPTO extracted templates", "BioTransformer"}
+        shares = [v["share_count"] for k, v in C["banks"].items()
+                  if k in IND and v.get("share_count") is not None]
+        m = re.search(r"appearing in between \$(\d+)\\%\$ and \$(\d+)\\%\$ of each library", flat)
+        check("census, lowest count-primitive share", m and m.group(1),
+              round(min(shares) * 100), "as a percentage")
+        check("census, highest count-primitive share", m and m.group(2),
+              round(max(shares) * 100), "as a percentage")
+        # every row of the appendix table, against the census that produced it
+        ROWS = {"this work": "this work, full bank", "curated partition": "this work, curated half",
+                "mined partition": "this work, mined half", "SyGMa, phase 1": "SyGMa phase1",
+                "SyGMa, phase 2": "SyGMa phase2", "USPTO extracted": "USPTO extracted templates"}
+        for shown, key in ROWS.items():
+            v = C["banks"][key]
+            mm = re.search(re.escape(shown) + r" & \$[\d,{}]+\$ & \$([\d.]+)\$ & \$([\d.]+)\$ & "
+                           r"\$([\d.]+)\$", flat)
+            check(f"census table, {shown}, atom", mm and mm.group(1), v["share_atom"])
+            check(f"census table, {shown}, count", mm and mm.group(2), v["share_count"])
+            check(f"census table, {shown}, degree", mm and mm.group(3), v["share_degree"])
+
+        # the separation itself: no library is exposed both ways
+        both = [k for k, v in C["banks"].items()
+                if (v.get("share_atom") or 0) > 0.05 and (v.get("share_degree") or 0) > 0.05]
+        checks.append((not both, "no library is exposed to the step in both directions",
+                       f"{len(both)} are", "0", "which is what 'disjoint sets' asserts"))
+
     # 10c-d. The three-bank reversal, now in the main text: the claim rests on the direction, so
     # the direction is what is checked, not only the six counts.
     # The census of which templates carry the primitive is its own measurement, distinct from how
@@ -589,7 +627,7 @@ def main() -> int:
         B = json.loads(hd_b.read_text())["hydrogen_convention_by_bank"]
         flat = re.sub(r"\s+", " ", whole)
         m = re.search(r"SyGMa, none\s*of whose \$(\d+)\$ templates carries a hydrogen atom, goes from "
-                      r"\$(\d+)\$ recovered references to \$(\d+)\$; BioTransformer, where \$(\d+)\$ "
+                      r"\$(\d+)\$ recovered references to \$(\d+)\$,? (?:while )?BioTransformer, where \$(\d+)\$ "
                       r"of \$(\d+)\$ do, goes from \$(\d+)\$ down to \$(\d+)\$", flat)
         checks.append((bool(m), "the three-bank sentence parses", "present",
                        "matched" if m else "not matched", ""))

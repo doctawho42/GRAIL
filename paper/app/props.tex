@@ -420,6 +420,35 @@ the attribution is exact rather than approximate: of the $119{,}558$ matches the
 $119{,}558$ come back when the degree constraint alone is deleted from the very patterns that lost
 them. The check is a gate, the measurement is refused below $90\%$, and it returns $100\%$.
 
+Three \textsc{smarts} constructs behave differently under the expansion and are counted separately
+in Table~\ref{tab:census}: the hydrogen \emph{atom} primitive, which matches only a drawn hydrogen;
+the hydrogen \emph{count} primitive inside a bracket, which the expansion leaves untouched; and the
+connection count, which it changes. Across the four independent libraries reachable without
+re-deriving one, the count primitive is both the most widely used and the inert one, and the two
+that do move are used by disjoint sets of libraries.
+
+\begin{table}[h]
+\caption{Share of templates carrying each construct, by library.
+BioTransformer's distribution is not installed here, so only its atom census is carried forward.}
+\label{tab:census}
+\begin{center}
+\footnotesize
+\begin{tabular}{lcccc}
+\toprule
+library & templates & atom & hydrogen count & connection count \\
+\midrule
+this work & $7{,}581$ & $0.089$ & $0.075$ & $0.000$ \\
+\quad curated partition & $1{,}715$ & $0.394$ & $0.327$ & $0.001$ \\
+\quad mined partition & $5{,}866$ & $0.000$ & $0.002$ & $0.000$ \\
+SyGMa, phase 1 & $148$ & $0.000$ & $0.797$ & $0.000$ \\
+SyGMa, phase 2 & $27$ & $0.000$ & $0.926$ & $0.000$ \\
+USPTO extracted & $42{,}554$ & $0.000$ & $0.967$ & $1.000$ \\
+BioTransformer & $994$ & $0.694$ & --- & --- \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table}
+
 So a degree primitive counts explicit connections, expanding a molecule changes every degree in it,
 and a library built on them stops matching before it can build anything. That is a different failure
 from the metabolite one, where the patterns fire just as often and the product is what will not

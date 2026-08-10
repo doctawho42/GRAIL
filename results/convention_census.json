@@ -1,0 +1,145 @@
+{
+ "config": {
+  "script": "convention_census.py",
+  "note": "no rule set is downloaded; installed tools are read in place"
+ },
+ "banks": {
+  "this work, full bank": {
+   "templates": 7581,
+   "hydrogen_atom_primitive": 675,
+   "share_atom": 0.089,
+   "hydrogen_count_primitive": 569,
+   "share_count": 0.0751,
+   "degree_primitive": 1,
+   "share_degree": 0.0001,
+   "atom_and_degree": 1,
+   "none_of_the_three": 6664,
+   "recursive_smarts": 332,
+   "exposed_needs_expansion": 675,
+   "exposed_broken_by_expansion": 1,
+   "source": "resources/extended_smirks.txt"
+  },
+  "this work, mined half": {
+   "templates": 5866,
+   "hydrogen_atom_primitive": 0,
+   "share_atom": 0.0,
+   "hydrogen_count_primitive": 9,
+   "share_count": 0.0015,
+   "degree_primitive": 0,
+   "share_degree": 0.0,
+   "atom_and_degree": 0,
+   "none_of_the_three": 5857,
+   "recursive_smarts": 0,
+   "exposed_needs_expansion": 0,
+   "exposed_broken_by_expansion": 0,
+   "source": "mined partition"
+  },
+  "this work, curated half": {
+   "templates": 1715,
+   "hydrogen_atom_primitive": 675,
+   "share_atom": 0.3936,
+   "hydrogen_count_primitive": 560,
+   "share_count": 0.3265,
+   "degree_primitive": 1,
+   "share_degree": 0.0006,
+   "atom_and_degree": 1,
+   "none_of_the_three": 807,
+   "recursive_smarts": 332,
+   "exposed_needs_expansion": 675,
+   "exposed_broken_by_expansion": 1,
+   "source": "curated partition"
+  },
+  "SyGMa phase1": {
+   "templates": 148,
+   "hydrogen_atom_primitive": 0,
+   "share_atom": 0.0,
+   "hydrogen_count_primitive": 118,
+   "share_count": 0.7973,
+   "degree_primitive": 0,
+   "share_degree": 0.0,
+   "atom_and_degree": 0,
+   "none_of_the_three": 30,
+   "recursive_smarts": 67,
+   "exposed_needs_expansion": 0,
+   "exposed_broken_by_expansion": 0,
+   "source": "installed package: sygma/rules/phase1.txt"
+  },
+  "SyGMa phase2": {
+   "templates": 27,
+   "hydrogen_atom_primitive": 0,
+   "share_atom": 0.0,
+   "hydrogen_count_primitive": 25,
+   "share_count": 0.9259,
+   "degree_primitive": 0,
+   "share_degree": 0.0,
+   "atom_and_degree": 0,
+   "none_of_the_three": 2,
+   "recursive_smarts": 9,
+   "exposed_needs_expansion": 0,
+   "exposed_broken_by_expansion": 0,
+   "source": "installed package: sygma/rules/phase2.txt"
+  },
+  "USPTO extracted templates": {
+   "templates": 42554,
+   "hydrogen_atom_primitive": 0,
+   "share_atom": 0.0,
+   "hydrogen_count_primitive": 41142,
+   "share_count": 0.9668,
+   "degree_primitive": 42554,
+   "share_degree": 1.0,
+   "atom_and_degree": 0,
+   "none_of_the_three": 0,
+   "recursive_smarts": 0,
+   "exposed_needs_expansion": 0,
+   "exposed_broken_by_expansion": 42554,
+   "source": "grail_metabolism/uspto_templates.csv.gz"
+  },
+  "BioTransformer": {
+   "templates": 994,
+   "hydrogen_atom_primitive": 690,
+   "share_atom": 0.6942,
+   "hydrogen_count_primitive": null,
+   "share_count": null,
+   "degree_primitive": null,
+   "share_degree": null,
+   "recursive_smarts": 36,
+   "partial": "atom primitive only; the tool is not installed here",
+   "source": "third-party distribution, census carried forward"
+  }
+ },
+ "nested_not_counted": {
+  "hand-written collection, largest": {
+   "templates": 1051,
+   "source": "resources/notebooks_rules.txt",
+   "share_inside_curated_partition": 1.0
+  },
+  "hand-written collection, middle": {
+   "templates": 656,
+   "source": "data/merged_smirks.txt",
+   "share_inside_curated_partition": 1.0
+  },
+  "hand-written collection, smallest": {
+   "templates": 474,
+   "source": "data/smirks.txt",
+   "share_inside_curated_partition": 1.0
+  }
+ },
+ "summary": {
+  "independent_libraries": 4,
+  "sources": [
+   "BioTransformer",
+   "SyGMa",
+   "USPTO",
+   "this work"
+  ],
+  "templates": 51304,
+  "need_expansion": [
+   "this work, full bank",
+   "this work, curated half",
+   "BioTransformer"
+  ],
+  "broken_by_expansion": [
+   "USPTO extracted templates"
+  ]
+ }
+}

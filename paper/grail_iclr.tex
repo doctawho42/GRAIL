@@ -404,9 +404,8 @@ worse rule base, and the bank's own bound is the corpus rather than tuning
 \label{sec:enginereach}
 \looseness=-3
 Reporting a ceiling presumes it is a property of the bank, and it is not. $152$ of SyGMa's $175$
-rules sit verbatim in ours, so those can be held fixed while only the procedure applying them
-changes: a depth-1 enumeration that expands the substrate with explicit hydrogens against SyGMa's
-own, which does not, same substrates, same matcher, one step each. They reach $0.189$
+rules sit verbatim in ours, so those can be held fixed while only the procedure changes: a depth-1
+enumeration that expands the substrate with explicit hydrogens against SyGMa's own, which does not. They reach $0.189$
 $[0.151,0.230]$ under the first and $0.381$ $[0.333,0.433]$ under the second,
 an engine term of $+0.188$ $[+0.170,+0.205]$, paired. The whole distance between
 the two configurations is $+0.339$, and it decomposes into that engine term, the $+0.145$
@@ -416,15 +415,12 @@ larger than every rule the two banks do not share. Almost all of what reads as a
 bases is a difference between the programs that query them, and that difference is a single preprocessing step, the expansion itself. Our own generator does not expand, which is why \ceiling\ is quoted without it. Toggling that one
 call, with bank and substrates untouched, carries reach from $0.200$ to $0.390$, the whole of the
 engine term; the loop's other two choices move reach by nothing
-(Appendix~\ref{app:enginereach}). The direction is not a property of our engine, and the split is the notation. Applying three
-published banks to the same substrates under both conventions moves them opposite ways: SyGMa, none
-of whose $175$ templates carries a hydrogen atom, goes from $125$ recovered references to $299$;
-BioTransformer, where $690$ of $994$ do, goes from $268$ down to $74$; ours, with $675$ of \nbank,
-moves from $414$ to $453$. Under one convention BioTransformer recovers more than twice what SyGMa
-does, and under the other SyGMa recovers four times what BioTransformer does. Which of two published
-rule bases reaches further is therefore decided by a step that neither paper states.
+(Appendix~\ref{app:enginereach}). The direction is not a property of our engine, and the split is the notation. Applied to the same substrates under both conventions, SyGMa, none of whose $175$ templates carries
+a hydrogen atom, goes from $125$ recovered references to $299$, while BioTransformer, where $690$ of
+$994$ do, goes from $268$ down to $74$. Which of two published rule bases reaches further is
+therefore decided by a step that neither paper states.
 
-The dependence is not specific to metabolism. Every one of the $42{,}554$ patterns in the standard retrosynthesis template library constrains atoms by degree and none names a hydrogen, so the same step costs that library $82\%$ of its applicability. That is the second of the two mechanisms: a match lost before a product is built (Appendix~\ref{app:retroconvention}).
+The dependence is not specific to metabolism, and three constructs must be told apart to see it. A template may carry the hydrogen \emph{atom} primitive, which matches only a drawn hydrogen; pin a hydrogen \emph{count} inside a bracket, which the expansion leaves untouched; or pin a connection count, which the expansion changes. Across four independent libraries and $51{,}304$ templates, the construct almost everyone uses is the inert one, appearing in between $8\%$ and $97\%$ of each library, while the two that do move under the step are used by disjoint sets of libraries. Every one of the $42{,}554$ patterns in the standard retrosynthesis template library pins a connection count and none carries the atom primitive, so the same step costs that library $82\%$ of its applicability: the second of the two mechanisms, a match lost before a product is built (Appendix~\ref{app:retroconvention}).
 
 \section{Results}
 \label{sec:results}
