@@ -1,4 +1,16 @@
 {
+ "frequency_prior": {
+  "rules_positive_where_it_fires": 202,
+  "rules_positive_where_it_is_labelled": 109,
+  "rules_that_fire_but_are_never_labelled": 110,
+  "rules_labelled_that_never_fire": 17,
+  "spearman_between_the_two_priors": 0.3557,
+  "top_k_overlap": {
+   "10": 6,
+   "30": 22,
+   "100": 39
+  }
+ },
  "config": {
   "script": "label_convention_audit.py",
   "git_commit": "8e9ef156f4aff63e85580e50f44c51ec8eee81c6",

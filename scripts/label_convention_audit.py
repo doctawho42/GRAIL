@@ -171,7 +171,37 @@ def main() -> int:
     union = both + only_impl + only_exp
     subs_disagree = sum(1 for r in rows if set(r[1]) != set(r[2]))
 
-    rep = {"config": {**_code_version(), "n_substrates_requested": args.limit, "seed": args.seed,
+    # The frequency prior is the per-rule share of positives in this matrix, so a matrix built in
+    # the other convention is a different prior over different rules. The learned-against-prior
+    # comparison has both arms reading it, which is why this is computed here rather than assumed.
+    from collections import Counter
+    imp_c, exp_c = Counter(), Counter()
+    for _, i_, e_ in rows:
+        imp_c.update(i_)
+        exp_c.update(e_)
+    allr = sorted(set(imp_c) | set(exp_c))
+    def _rank(c):
+        order = sorted(allr, key=lambda r: (-c.get(r, 0), r))
+        return {r: i for i, r in enumerate(order)}
+    ra, rb = _rank(imp_c), _rank(exp_c)
+    n_u = len(allr)
+    mu = (n_u - 1) / 2 if n_u else 0.0
+    num = sum((ra[r] - mu) * (rb[r] - mu) for r in allr)
+    den = (sum((ra[r] - mu) ** 2 for r in allr) * sum((rb[r] - mu) ** 2 for r in allr)) ** 0.5
+    prior = {"rules_positive_where_it_fires": len(imp_c),
+             "rules_positive_where_it_is_labelled": len(exp_c),
+             "rules_that_fire_but_are_never_labelled": len(set(imp_c) - set(exp_c)),
+             "rules_labelled_that_never_fire": len(set(exp_c) - set(imp_c)),
+             "spearman_between_the_two_priors": round(num / den, 4) if den else None,
+             "top_k_overlap": {str(k): len({r for r, _ in imp_c.most_common(k)} &
+                                           {r for r, _ in exp_c.most_common(k)})
+                               for k in (10, 30, 100)}}
+    print(f"\n  frequency prior: {prior['rules_that_fire_but_are_never_labelled']} rules fire "
+          f"productively and are never labelled positive; Spearman "
+          f"{prior['spearman_between_the_two_priors']}")
+
+    rep = {"frequency_prior": prior,
+           "config": {**_code_version(), "n_substrates_requested": args.limit, "seed": args.seed,
                       "n_substrates_scored": len(rows), "n_rules": len(rules),
                       "split": "train, clean triples",
                       "note": "a rule counts as positive for a substrate when applying it under "

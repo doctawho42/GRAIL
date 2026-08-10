@@ -380,7 +380,12 @@ identity still holds. What it undermines is the reading: ``selection is where th
 the learned selector's deficit to the frequency prior are both conditioned on supervision that
 disagrees with the firing convention on half its positives, and the prior inherits the same matrix,
 so neither arm of that comparison is pointed at the rules the pipeline runs. Rebuilding the labels
-and retraining is the measurement that would settle it and is not reported here. The defect is the
+and retraining is the measurement that would settle it and is not reported here. The cheap half of
+that measurement is reported: the frequency prior is the per-rule share of positives in this matrix
+and needs no gradient step to recompute. Over the same $150$ substrates, $202$ rules fire
+productively and $110$ of them are never labelled positive, while $17$ carry a label and never fire;
+the two priors rank the rules at a Spearman of $0.356$ and share $39$ of their top hundred. The prior
+arm is therefore not a weaker reading of the same ranking, it is a different one. The defect is the
 one this paper is named for, in our own pipeline, found by applying the paper's own question to it.
 
 \paragraph{What the decomposition survives, and what it does not license.} Each method's three

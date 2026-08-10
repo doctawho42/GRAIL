@@ -748,6 +748,25 @@ def main() -> int:
                      A["substrates_whose_label_row_changes"]),
                     ("substrates in the denominator", ml.group(8), A["substrates_scored"])):
                 check(f"label convention, {lbl}", said, got, src)
+            mp = re.search(r"Over the same \$150\$ substrates, \$(\d+)\$ rules fire productively and "
+                           r"\$(\d+)\$ of them are never labelled positive, while \$(\d+)\$ carry a "
+                           r"label and never fire; the two priors rank the rules at a Spearman of "
+                           r"\$([\d.]+)\$ and share \$(\d+)\$ of their top hundred", flat)
+            checks.append((bool(mp), "the frequency-prior passage parses", "present",
+                           "matched" if mp else "not matched", ""))
+            if mp:
+                F = L["frequency_prior"]
+                for lbl, said, got in (
+                        ("rules that fire productively", mp.group(1),
+                         F["rules_positive_where_it_fires"]),
+                        ("of those, never labelled", mp.group(2),
+                         F["rules_that_fire_but_are_never_labelled"]),
+                        ("labelled but never firing", mp.group(3),
+                         F["rules_labelled_that_never_fire"]),
+                        ("Spearman between the two priors", mp.group(4),
+                         F["spearman_between_the_two_priors"]),
+                        ("shared in the top hundred", mp.group(5), F["top_k_overlap"]["100"])):
+                    check(f"frequency prior, {lbl}", said, got, src)
             # the headline reading in the limitations must not overstate the agreement
             share = P["both"] / max(P["implicit_total"], 1)
             checks.append((0.4 <= share <= 0.6 and "about half the\nrule--substrate positives"
