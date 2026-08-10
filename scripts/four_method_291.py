@@ -28,6 +28,7 @@ if str(ROOT) not in sys.path:
 from grail_metabolism.metrics import _tautomer_inchikey as _tk
 
 KEYS = ROOT / "results" / "key_tables" / "inchikey_tautomer.json"
+N_BOOT, SEED = 10000, 0
 KS = (1, 3, 5, 8, 10, 15, 20, 30, 50)
 
 
@@ -83,6 +84,10 @@ def main() -> int:
     print("  substrates where a method returns its own parent:",
           {k: v for k, v in parent_in_own.items()})
 
+    # Per-substrate rows, kept so a margin can carry an interval. This paper's own standard is
+    # that a reordering is a description until a paired interval makes it a claim; the sweep below
+    # is a reordering claim and was reported without one.
+    rows = {name: {"U": [], **{k: [] for k in KS}} for name in pools}
     per = {}
     for name, pool in pools.items():
         U = 0
@@ -103,9 +108,12 @@ def main() -> int:
                 seq.append(k)
             raw += len(pool.get(s, []))
             dedup += len(seq)
+            rows[name]["U"].append(len(refs))
             for k in KS:
-                hits[k] += len(refs & set(seq[:k]))
+                h = len(refs & set(seq[:k]))
+                hits[k] += h
                 emitted[k] += min(k, len(seq))
+                rows[name][k].append(h)
         per[name] = {"references": U,
                      "raw_predictions": raw, "after_dedup_and_parent_drop": dedup,
                      "mean_emitted_uncapped": round(dedup / len(subs), 2),
@@ -127,14 +135,44 @@ def main() -> int:
     for o, ks in seen_orders.items():
         print(f"    {' > '.join(o)}   at k in {ks}")
 
+    # Paired bootstrap on every pairwise margin at every budget. The substrates are shared by all
+    # four methods by construction of the population, so one index draw resamples every method
+    # together and the margin is a paired quantity rather than a difference of two marginals.
+    import itertools
+    import numpy as np
+    U = np.array(rows[next(iter(rows))]["U"], dtype=float)
+    assert all(np.array_equal(U, np.array(r["U"], dtype=float)) for r in rows.values()), \
+        "the four methods are not scored against the same per-substrate reference counts"
+    rng = np.random.default_rng(SEED)
+    idx = rng.integers(0, len(U), (N_BOOT, len(U)))
+    denom = U[idx].sum(axis=1)
+    margins = {}
+    for a, b in itertools.combinations(sorted(rows), 2):
+        for k in KS:
+            d = np.array(rows[a][k], dtype=float) - np.array(rows[b][k], dtype=float)
+            bt = d[idx].sum(axis=1) / np.maximum(denom, 1)
+            lo, hi = float(np.quantile(bt, .025)), float(np.quantile(bt, .975))
+            margins[f"{a} vs {b} @ {k}"] = {
+                "margin": round(float(d.sum() / max(U.sum(), 1)), 4),
+                "ci95": [round(lo, 4), round(hi, 4)], "separable": bool(lo * hi > 0)}
+    n_sep = sum(v["separable"] for v in margins.values())
+    print(f"\n  {n_sep} of {len(margins)} pairwise margins separate from zero at 95%")
+    # the specific claim the sweep is quoted for: is the mover's position certified at either end?
+    mover_rows = {kk: v for kk, v in margins.items() if "MetaTox" in kk}
+    print(f"  of those involving the mover, {sum(v['separable'] for v in mover_rows.values())} "
+          f"of {len(mover_rows)} are separable")
+
     rep = {"config": {**_code_version(), "n_substrates": len(subs), "match": "inchikey_tautomer",
+                      "n_boot": N_BOOT, "seed": SEED,
                       "aggregation": "micro, ratio of sums", "k_sweep": list(KS),
                       "population": "the 291 MetaTox submission substrates, all of which carry "
                                     "references and predictions from every method here",
                       "parent_and_duplicates": "dropped before the budget is applied"},
            "parent_returned_by_method": parent_in_own,
            "per_method": per,
-           "orderings": {" > ".join(o): ks for o, ks in seen_orders.items()}}
+           "orderings": {" > ".join(o): ks for o, ks in seen_orders.items()},
+           "pairwise_margins": margins,
+           "n_margins": len(margins), "n_separable": n_sep}
     Path(args.out).write_text(json.dumps(rep, indent=1))
     print(f"\nwrote {args.out}")
     return 0

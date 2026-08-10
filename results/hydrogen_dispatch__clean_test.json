@@ -1,8 +1,8 @@
 {
  "config": {
   "script": "hydrogen_dispatch.py",
-  "git_commit": "9630e586ab71675cca0f3d198eccde315c068fae",
-  "git_dirty": false,
+  "git_commit": "2fcd2c548d83eedfa354e4183960139da72b109c",
+  "git_dirty": true,
   "population": "clean_test",
   "n_substrates": 1170,
   "match": "inchikey_tautomer",
@@ -35,6 +35,16 @@
     "all_explicit": 0.2229,
     "all_implicit": 0.5352
    },
+   "global_arms_paired": {
+    "recovered_explicit": 579,
+    "recovered_implicit": 1390,
+    "explicit_minus_implicit": -0.3123,
+    "ci95": [
+     -0.3339,
+     -0.2912
+    ],
+    "excludes_zero": true
+   },
    "best_global": 0.5352,
    "residual_convention_dependence": 0.0,
    "residual_ci95": [
@@ -55,6 +65,16 @@
    "global_arms": {
     "all_explicit": 0.4867,
     "all_implicit": 0.1221
+   },
+   "global_arms_paired": {
+    "recovered_explicit": 1264,
+    "recovered_implicit": 317,
+    "explicit_minus_implicit": 0.3647,
+    "ci95": [
+     0.3408,
+     0.3889
+    ],
+    "excludes_zero": true
    },
    "best_global": 0.4867,
    "residual_convention_dependence": 0.0004,

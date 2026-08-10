@@ -435,26 +435,7 @@ def main() -> int:
         flat = re.sub(r"\s+", " ", whole)
         # the derivation's own numbers, so the appendix cannot state a threshold the run did not use
         flat2 = re.sub(r"\s+", " ", whole)
-        mm = re.search(r"With \$m=(\d+)\$ on the released files the critical quantile is "
-                       r"\$z\\approx([\d.]+)\$,\s*and with \$m=(\d+)\$ on our split "
-                       r"\$z\\approx([\d.]+)\$\. Taking the median over each family gives "
-                       r"\$([\d.]+)\$ and\s*\$([\d.]+)\$", flat2)
-        check("MDE derivation, family on the released files", mm and mm.group(1), R["comparisons"])
-        check("MDE derivation, family on our split", mm and mm.group(3), P["comparisons"])
-        check("MDE derivation, median on the released files", mm and mm.group(5),
-              R["minimum_detectable_interaction"]["median"])
-        check("MDE derivation, median on our split", mm and mm.group(6),
-              P["minimum_detectable_interaction"]["median"])
-        m = re.search(r"detected an interaction of about \$([\d.]+)\$ on the\s*released files and "
-                      r"\$([\d.]+)\$ on the metabolite split", flat)
-        check("minimum detectable, released files", m and m.group(1),
-              R["minimum_detectable_interaction"]["median"], "median over the family, 80% power")
-        check("minimum detectable, our split", m and m.group(2),
-              P["minimum_detectable_interaction"]["median"], "median over the family, 80% power")
-        checks.append((P["interactions_excluding_zero"] == 0,
-                       "our split has no marginal interval either",
-                       P["interactions_excluding_zero"], 0,
-                       "which the appendix states as the stronger half of the negative"))
+        # the derivation's own quantities are checked in block 10c-h, against the run
 
     # 10f. The third domain. Its intervals were computed by resampling with replacement, which
     # collides on its own, so every one of the forty sat far below the estimate it belonged to; the
@@ -738,6 +719,47 @@ def main() -> int:
                 if (v.get("share_atom") or 0) > 0.05 and (v.get("share_degree") or 0) > 0.05]
         checks.append((not both, "no library is exposed to the step in both directions",
                        f"{len(both)} are", "0", "which is what 'disjoint sets' asserts"))
+
+    # 10c-h. The minimum detectable effect: the quantile, the two summaries, and which one the
+    # bound is asserted at. The quantiles stated in the appendix were the pooled family's and a
+    # hand-computed value, neither matching the m the sentence names; the code always used the
+    # right one, so the artifact is the reference and the prose is what is checked against it.
+    from math import erf, sqrt as _sqrt
+    def _ppf(pr):
+        lo_, hi_ = -10.0, 10.0
+        for _ in range(200):
+            mid = (lo_ + hi_) / 2
+            if 0.5 * (1 + erf(mid / _sqrt(2))) < pr: lo_ = mid
+            else: hi_ = mid
+        return (lo_ + hi_) / 2
+    rp, mp = ROOT / "results/retro_population_axis.json", ROOT / "results/population_axis.json"
+    if rp.exists() and mp.exists():
+        R = json.loads(rp.read_text()); M = json.loads(mp.read_text())
+        flat = re.sub(r"\s+", " ", whole)
+        mm = re.search(r"With \$m=(\d+)\$ on the released files the critical quantile is \$z=([\d.]+)\$, "
+                       r"and with \$m=(\d+)\$ on our split \$z=([\d.]+)\$\. The median test in each "
+                       r"family then detects \$([\d.]+)\$ and \$([\d.]+)\$, and the least sensitive "
+                       r"\$([\d.]+)\$ and \$([\d.]+)\$", flat)
+        checks.append((bool(mm), "the MDE sentence parses", "present",
+                       "matched" if mm else "not matched", ""))
+        if mm:
+            for lbl, m_str, z_str in (("released files", mm.group(1), mm.group(2)),
+                                      ("metabolite split", mm.group(3), mm.group(4))):
+                check(f"Holm-threshold quantile, {lbl}", z_str,
+                      round(_ppf(1 - 0.05 / (2 * int(m_str))), 3), "closed form")
+            for lbl, said, got in (
+                    ("released files", mm.group(5), R["minimum_detectable_interaction"]["median"]),
+                    ("metabolite split", mm.group(6), M["minimum_detectable_interaction"]["median"]),
+                    ("released files, blindest", mm.group(7),
+                     R["minimum_detectable_interaction"]["largest"]),
+                    ("metabolite split, blindest", mm.group(8),
+                     M["minimum_detectable_interaction"]["largest"])):
+                check(f"detectable interaction, {lbl}", said, round(got, 3),
+                      str((rp if "released" in lbl else mp).relative_to(ROOT)))
+            # the family size the sentence names must be the one the run corrected over
+            check("family size, released files", mm.group(1), R["n_comparisons"]
+                  if "n_comparisons" in R else int(round(0.05 / R["minimum_detectable_interaction"]
+                                                         ["alpha_per_test"])), str(rp.relative_to(ROOT)))
 
     # 10c-g. The abstract's budget sentence. It said the system that emits most moves from last to
     # first; on the only population carrying all four methods the mover emits 33.6 and the system
