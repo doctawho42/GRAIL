@@ -539,15 +539,33 @@ def main() -> int:
                          "closer": sum(1 for g, d2 in per_pair if g < d2),
                          "pairs": len(per_pair),
                          "exchanged": len(L2["pairs_that_exchange"]["top1"])}
-        # the main body states the same condition in words; both of its numbers are checked too
-        mb = re.search(r"a median \$([\d.]+)\$ apart against a differential", flat)
-        checks.append((close(mb and mb.group(1), rows["seven-system"]["median_gap"], 5e-4),
-                       "median gap, main body", mb and mb.group(1),
-                       round(rows["seven-system"]["median_gap"], 4), ""))
-        mb2 = re.search(r"three \$([\d.]+)\$ apart", flat)
-        checks.append((close(mb2 and mb2.group(1), rows["three-system"]["median_gap"], 5e-4),
-                       "three-system gap, main body", mb2 and mb2.group(1),
-                       round(rows["three-system"]["median_gap"], 4), ""))
+        # The main body states the condition in terms of the resolution floor; the median margin
+        # it replaced is checked in the packing table above, where it is still printed.
+
+    # 10d-b. The resolution floor: which published margins this benchmark can separate at all. The
+    # paper's condition rests on it, so every figure it states is tied to the measurement.
+    rf = ROOT / "results/resolution_floor.json"
+    if rf.exists():
+        F = json.loads(rf.read_text())["leaderboards"]
+        flat = re.sub(r"\s+", " ", whole)
+        c0, c1 = F["cluster0"], F["cluster1"]
+        m = re.search(r"\\textbf\{Eleven of the twenty-one margins do not separate\s*from zero, and "
+                      r"five of the six adjacent margins in the published order do not\.\}", flat)
+        checks.append((bool(m) and c0["not_separable"] == 11 and c0["n_pairs"] == 21
+                       and c0["adjacent_not_separable"] == 5 and c0["adjacent_pairs"] == 6,
+                       "resolution, the sentence matches the artifact",
+                       "eleven of twenty-one, five of six",
+                       f"{c0['not_separable']} of {c0['n_pairs']}, "
+                       f"{c0['adjacent_not_separable']} of {c0['adjacent_pairs']}",
+                       "paired bootstrap on each margin, predictions frozen"))
+        m = re.search(r"benchmark certifies is \$([\d.]+)\$", flat)
+        check("resolution floor, seven-system", m and m.group(1), c0["resolution_floor"])
+        m = re.search(r"its margins start at \$([\d.]+)\$, above its own floor of \$([\d.]+)\$", flat)
+        smallest = min(abs(v["margin"]) for v in c1["pairs"].values())
+        check("three-system smallest margin", m and m.group(1), smallest)
+        check("three-system floor", m and m.group(2), c1["resolution_floor"])
+        checks.append((c1["not_separable"] == 0, "the control group separates every pair",
+                       c1["not_separable"], 0, "which is why no criterion exchanges it"))
         # the two orderings the body prints in words: every number, against the artifact
         L0 = json.loads(lb.read_text())["accuracy"]
         for shown, key, mode in (("GraphRetro", "graphretro", "canonical"),

@@ -1,0 +1,262 @@
+{
+ "config": {
+  "script": "retro_leaderboard.py",
+  "git_commit": "c128b916332d0485466a704774267539a954e472",
+  "git_dirty": true,
+  "criterion": "canonical",
+  "k": 1,
+  "n_boot": 10000,
+  "seed": 0,
+  "note": "paired bootstrap over reactions; predictions frozen, nothing trained"
+ },
+ "leaderboards": {
+  "cluster0": {
+   "systems": [
+    "graphretro",
+    "localretro",
+    "retroformer",
+    "graph2smiles",
+    "gln",
+    "g2retro",
+    "retroxpert"
+   ],
+   "n_reactions": 4999,
+   "accuracy": {
+    "graphretro": 0.5377,
+    "localretro": 0.5339,
+    "retroformer": 0.5325,
+    "graph2smiles": 0.5293,
+    "gln": 0.5247,
+    "g2retro": 0.5147,
+    "retroxpert": 0.4467
+   },
+   "pairs": {
+    "graphretro vs localretro": {
+     "margin": 0.0038,
+     "ci95": [
+      -0.0096,
+      0.017
+     ],
+     "separable": false
+    },
+    "graphretro vs retroformer": {
+     "margin": 0.0052,
+     "ci95": [
+      -0.0082,
+      0.0188
+     ],
+     "separable": false
+    },
+    "graphretro vs graph2smiles": {
+     "margin": 0.0084,
+     "ci95": [
+      -0.0048,
+      0.0218
+     ],
+     "separable": false
+    },
+    "graphretro vs gln": {
+     "margin": 0.013,
+     "ci95": [
+      -0.0006,
+      0.0266
+     ],
+     "separable": false
+    },
+    "graphretro vs g2retro": {
+     "margin": 0.023,
+     "ci95": [
+      0.0102,
+      0.0358
+     ],
+     "separable": true
+    },
+    "graphretro vs retroxpert": {
+     "margin": 0.091,
+     "ci95": [
+      0.0768,
+      0.1054
+     ],
+     "separable": true
+    },
+    "localretro vs retroformer": {
+     "margin": 0.0014,
+     "ci95": [
+      -0.011,
+      0.014
+     ],
+     "separable": false
+    },
+    "localretro vs graph2smiles": {
+     "margin": 0.0046,
+     "ci95": [
+      -0.0086,
+      0.018
+     ],
+     "separable": false
+    },
+    "localretro vs gln": {
+     "margin": 0.0092,
+     "ci95": [
+      -0.0036,
+      0.0222
+     ],
+     "separable": false
+    },
+    "localretro vs g2retro": {
+     "margin": 0.0192,
+     "ci95": [
+      0.0062,
+      0.0326
+     ],
+     "separable": true
+    },
+    "localretro vs retroxpert": {
+     "margin": 0.0872,
+     "ci95": [
+      0.0734,
+      0.1012
+     ],
+     "separable": true
+    },
+    "retroformer vs graph2smiles": {
+     "margin": 0.0032,
+     "ci95": [
+      -0.0086,
+      0.015
+     ],
+     "separable": false
+    },
+    "retroformer vs gln": {
+     "margin": 0.0078,
+     "ci95": [
+      -0.0054,
+      0.0206
+     ],
+     "separable": false
+    },
+    "retroformer vs g2retro": {
+     "margin": 0.0178,
+     "ci95": [
+      0.004,
+      0.0316
+     ],
+     "separable": true
+    },
+    "retroformer vs retroxpert": {
+     "margin": 0.0858,
+     "ci95": [
+      0.0724,
+      0.0992
+     ],
+     "separable": true
+    },
+    "graph2smiles vs gln": {
+     "margin": 0.0046,
+     "ci95": [
+      -0.0086,
+      0.018
+     ],
+     "separable": false
+    },
+    "graph2smiles vs g2retro": {
+     "margin": 0.0146,
+     "ci95": [
+      0.0014,
+      0.0282
+     ],
+     "separable": true
+    },
+    "graph2smiles vs retroxpert": {
+     "margin": 0.0826,
+     "ci95": [
+      0.0694,
+      0.096
+     ],
+     "separable": true
+    },
+    "gln vs g2retro": {
+     "margin": 0.01,
+     "ci95": [
+      -0.004,
+      0.024
+     ],
+     "separable": false
+    },
+    "gln vs retroxpert": {
+     "margin": 0.078,
+     "ci95": [
+      0.0642,
+      0.092
+     ],
+     "separable": true
+    },
+    "g2retro vs retroxpert": {
+     "margin": 0.068,
+     "ci95": [
+      0.0534,
+      0.0828
+     ],
+     "separable": true
+    }
+   },
+   "n_pairs": 21,
+   "not_separable": 11,
+   "resolution_floor": 0.0146,
+   "adjacent_pairs": 6,
+   "adjacent_not_separable": 5,
+   "adjacent_unresolved": [
+    "graphretro vs localretro",
+    "localretro vs retroformer",
+    "retroformer vs graph2smiles",
+    "graph2smiles vs gln",
+    "gln vs g2retro"
+   ]
+  },
+  "cluster1": {
+   "systems": [
+    "chemformer",
+    "gta",
+    "tiedtransformer"
+   ],
+   "n_reactions": 4982,
+   "accuracy": {
+    "chemformer": 0.5389,
+    "gta": 0.5177,
+    "tiedtransformer": 0.4707
+   },
+   "pairs": {
+    "chemformer vs gta": {
+     "margin": 0.0213,
+     "ci95": [
+      0.0086,
+      0.0335
+     ],
+     "separable": true
+    },
+    "chemformer vs tiedtransformer": {
+     "margin": 0.0682,
+     "ci95": [
+      0.0552,
+      0.0815
+     ],
+     "separable": true
+    },
+    "gta vs tiedtransformer": {
+     "margin": 0.047,
+     "ci95": [
+      0.0341,
+      0.0596
+     ],
+     "separable": true
+    }
+   },
+   "n_pairs": 3,
+   "not_separable": 0,
+   "resolution_floor": 0.0213,
+   "adjacent_pairs": 2,
+   "adjacent_not_separable": 0,
+   "adjacent_unresolved": []
+  }
+ }
+}

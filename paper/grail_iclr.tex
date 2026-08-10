@@ -299,16 +299,20 @@ in colour, the remainder in grey.}
 \end{figure}
 
 \looseness=-1
-\paragraph{The condition is packing, and it is arithmetic before it is empirical.} An exchange needs
-the criterion to move two systems by more than the gap between them, so a leaderboard becomes
-vulnerable exactly as it matures. These seven sit a median $0.013$ apart against a differential of
-$0.015$ and reorder; three $0.047$ apart are moved as much and do not. Over $439$
-method-pair by criterion-pair comparisons across four leaderboards in three domains, with nothing
-re-scored, the movement exceeds the gap once in nine and reverses the pair once in seventeen, and no
-reversal occurs where the gap survives the movement. The third domain shows the condition from its
-other end: on eight published molecular generators the same criterion certifies $19$ of $112$
-interactions and yields one exchange, a metric scoring seven of eight above $0.986$ leaving almost
-nothing close enough to cross (Appendix~\ref{app:xdomain}).
+\paragraph{The condition is the margin, and most of these margins were never resolvable.} An
+exchange requires the criterion to move two systems apart by more than the margin between them, so
+what matters is how large the margins are relative to what the benchmark can measure. Because the
+predictions are frozen, that is answerable directly: a paired bootstrap over the $4{,}999$ reactions
+gives an interval on each pairwise margin. \textbf{Eleven of the twenty-one margins do not separate
+from zero, and five of the six adjacent margins in the published order do not.} The smallest margin
+this benchmark certifies is $0.0146$, and the criterion moves systems apart by $0.015$. The
+three-system group is the control: its margins start at $0.021$, above its own floor of $0.0213$,
+and none of its pairs exchanges under any criterion. Over $439$ method-pair by criterion-pair
+comparisons across four leaderboards in three domains, the movement exceeds the margin once in nine
+and reverses the pair once in seventeen, and no reversal occurs where the margin survives the
+movement. A table of eight published molecular generators shows the same condition from the other
+side, exchanging one adjacent pair because seven of the eight sit above $0.986$ and almost no pair
+on it is close enough to cross (Appendix~\ref{app:xdomain}).
 
 \looseness=-1
 \paragraph{Which population a familiar name refers to.} The same eleven files answer the fourth
@@ -505,11 +509,12 @@ strongest evidence for declaring the criterion involves no model. Twenty-five of
 looks like disagreement about observed chemistry is disagreement about notation.
 
 \looseness=-1
-They also bound what a recall figure means rather than what it can reach: a competent independent
-curation records only $0.539$ of the corpus annotation, so past that level recall measures one
-source's inclusion choices. That $0.539$ is measured on the $25$ drugs both sources chose to
-curate, which carry $5.7$ to $6.5$ references each against $2.2$ across the clean test split. Where models sit against it depends on
-the budget, and both matched-budget analyses belong here, not only the significant one. MetaPredictor's uncapped $0.562$ is a tie inside noise, bought with $10.6$ metabolites per drug against the curation's $6.0$. Capped at each drug's own curated set size it recovers $0.301$, behind by $0.238$ $[0.123,0.354]$. Under a symmetric match, a fixed $k{=}6$ that truncates the curation as well, it reaches $0.394$ against $0.472$, a gap of $+0.078$ $[-0.050,+0.210]$ that does not reach significance (Appendix~\ref{app:xdomain}).
+The two curations also bound what a recall figure means. A competent independent curation records
+only $0.539$ of the corpus annotation, so beyond that level recall measures one source's inclusion
+choices. Where a model sits against that bound depends on the budget: MetaPredictor's uncapped
+$0.562$ is a tie inside noise bought with $10.6$ metabolites per drug against the curation's $6.0$,
+and capped at each drug's own curated set size it recovers $0.301$, behind by $0.238$
+$[0.123,0.354]$ (Appendix~\ref{app:xdomain}).
 
 \looseness=-1
 \paragraph{Mechanism.} The spread tracks how far a method's outputs diverge
