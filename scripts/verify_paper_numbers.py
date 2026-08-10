@@ -551,6 +551,31 @@ def main() -> int:
         # The main body states the condition in terms of the resolution floor; the median margin
         # it replaced is checked in the packing table above, where it is still printed.
 
+    # 10c-b. The engine decomposition in the main text. The figure it previously compared against
+    # appeared in no artifact and was covered by no check, which is the defect this file exists for.
+    re_b = ROOT / "results/reach_engine_vs_bank__clean_test.json"
+    if re_b.exists():
+        E = json.loads(re_b.read_text())
+        flat = re.sub(r"\s+", " ", whole)
+        C, A = E["contrasts"], E["arms"]
+        m = re.search(r"an engine term of \$\+([\d.]+)\$", flat)
+        check("engine term, main body", m and m.group(1), C["engine_at_fixed_rules_B_minus_A"]["point"])
+        m = re.search(r"whole distance between\s*the two configurations is \$\+([\d.]+)\$", flat)
+        check("engine decomposition, total", m and m.group(1),
+              A["D_sygma_engine_175_rules_composed"]["point"] - A["A_grail_engine_152_rules"]["point"])
+        m = re.search(r"the \$\+([\d.]+)\$\s*\$\[\+[\d.]+,\+[\d.]+\]\$ contributed by the \$23\$ rules", flat)
+        check("engine decomposition, the 23 rules", m and m.group(1),
+              C["the_23_rules_at_fixed_engine_C_minus_B"]["point"])
+        m = re.search(r"and \$\+([\d.]+)\$ \$\[\+[\d.]+,\+[\d.]+\]\$ from composing steps", flat)
+        check("engine decomposition, composition", m and m.group(1), C["composition_D_minus_C"]["point"])
+        checks.append((abs(sum(v["point"] for v in C.values())
+                           - (A["D_sygma_engine_175_rules_composed"]["point"]
+                              - A["A_grail_engine_152_rules"]["point"])) < 5e-4,
+                       "the three terms sum to the distance they decompose",
+                       round(sum(v["point"] for v in C.values()), 4),
+                       round(A["D_sygma_engine_175_rules_composed"]["point"]
+                             - A["A_grail_engine_152_rules"]["point"], 4), ""))
+
     # 10d-b. The resolution floor: which published margins this benchmark can separate at all. The
     # paper's condition rests on it, so every figure it states is tied to the measurement.
     rf = ROOT / "results/resolution_floor.json"

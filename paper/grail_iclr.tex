@@ -406,9 +406,11 @@ rules sit verbatim in ours, so those can be held fixed while only the procedure 
 changes: a depth-1 enumeration that expands the substrate with explicit hydrogens against SyGMa's
 own, which does not, same substrates, same matcher, one step each. They reach $0.189$
 $[0.151,0.230]$ under the first and $0.381$ $[0.333,0.433]$ under the second,
-an engine term of $+0.188$ $[+0.170,+0.205]$ paired, against an entire bank-to-bank gap of
-$0.201$ on those substrates, with the $23$ rules absent from our bank worth $+0.143$ $[+0.107,+0.180]$ at
-fixed engine and depth no confound. Almost all of what reads as a difference between knowledge
+an engine term of $+0.188$ $[+0.170,+0.205]$, paired. The whole distance between
+the two configurations is $+0.339$, and it decomposes into that engine term, the $+0.145$
+$[+0.128,+0.162]$ contributed by the $23$ rules our bank does not hold at fixed engine and depth,
+and $+0.0065$ $[+0.0038,+0.0096]$ from composing steps. The single preprocessing step is therefore
+larger than every rule the two banks do not share. Almost all of what reads as a difference between knowledge
 bases is a difference between the programs that query them, and that difference is a single preprocessing step, the expansion itself. Our own generator does not expand, which is why \ceiling\ is quoted without it;
 measured with it the same bank reaches $0.735$. Toggling that one call, bank and substrates
 untouched, carries reach from $0.200$ to $0.390$, the whole of the engine term, leaving $+0.002$
