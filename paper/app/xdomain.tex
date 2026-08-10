@@ -312,7 +312,17 @@ from $0.265$ to $0.263$.
 
 \S\ref{sec:rankflip} corrects for multiplicity post hoc, and both inputs to that correction belong
 here, not in a sentence. The p-values are normal approximations to the stored paired-bootstrap
-intervals, $\mathrm{se}=(\mathrm{hi}-\mathrm{lo})/2z$; the intervals themselves remain the primary
+intervals, $\mathrm{se}=(\mathrm{hi}-\mathrm{lo})/2z$, and the external decisions do not depend on
+that approximation. Recomputed from the per-substrate vectors by flipping the sign of each
+substrate's difference-of-differences, which assumes nothing about the distribution, the same four
+interactions are rejected, and they are rejected in a family of twelve rather than six, since the
+sign-flip run tests both criterion steps rather than the one the table reports. The approximation
+does fail, and where it fails is instructive: three comparisons on the tautomer step move both
+methods by exactly the same amount on every substrate, so their bootstrap interval has zero width,
+and dividing by it turns the least informative comparison in the set into the most significant one.
+The sign-flip test returns $p=1$ for all three, which is what a contrast carrying no evidence about
+its own sign deserves. None of the three enters any family this paper declares. The intervals
+themselves remain the primary
 evidence and the approximation is adequate only because most decisions sit far from their threshold: the one that does not is stated as such below.
 
 We declare the family conservatively as the grid the two axes admit rather than the comparisons we

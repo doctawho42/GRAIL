@@ -580,6 +580,29 @@ def main() -> int:
                        round(A["D_sygma_engine_175_rules_composed"]["point"]
                              - A["A_grail_engine_152_rules"]["point"], 4), ""))
 
+    # 10b-b. The external decisions under a test that assumes no distribution, and the degenerate
+    # comparisons the approximation mishandles. Both claims are gates, not counts.
+    ex = ROOT / "results/external_exact_tests.json"
+    mh = ROOT / "results/multiplicity_holm.json"
+    if ex.exists() and mh.exists():
+        X = json.loads(ex.read_text())
+        M = json.loads(mh.read_text())
+        paper_four = {r["pair"].replace("_vs_", " vs ")
+                      for r in M["external"]["result"] if r["rejected"]}
+        signflip = {s.split(" | ", 1)[1] for s in X["holm_signflip"]}
+        checks.append((paper_four == signflip and len(paper_four) == 4,
+                       "the external rejections survive a sign-flip test",
+                       f"{len(signflip)} survive, matching {len(paper_four)}",
+                       "the same four", "family of twelve against the declared six"))
+        degenerate = [r for r in X["rows"] if r["n_informative"] == 0]
+        checks.append((len(degenerate) == 3
+                       and all(r["p_signflip"] == 1.0 for r in degenerate)
+                       and all(r["p_normal_approx"] == 0.0 for r in degenerate),
+                       "the degenerate comparisons are the ones the approximation inverts",
+                       f"{len(degenerate)} with no informative substrate",
+                       "3, each p=1 by sign-flip and p=0 by the approximation",
+                       "none of them enters a declared family"))
+
     # 10c-e. The census across independent libraries. The claim is that the widely used construct
     # is the inert one, so the check is on the separation and not only on the counts.
     cc = ROOT / "results/convention_census.json"

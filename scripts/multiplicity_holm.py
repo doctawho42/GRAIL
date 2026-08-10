@@ -28,9 +28,18 @@ Z = 1.959964
 
 
 def p_from_ci(mean: float, lo: float, hi: float) -> float:
+    """A two-sided p from a stored interval, with the degenerate case decided the right way.
+
+    A contrast whose bootstrap interval has zero width carries no evidence about its sign: every
+    resample returned the same value, which happens here when a criterion step moves two methods by
+    exactly the same amount on every substrate. Reading that as se = 0 and dividing makes the least
+    informative comparison the most significant one, so it is reported as p = 1 unless the point
+    estimate is itself non-zero, in which case the interval and the estimate disagree and the
+    comparison is not usable either.
+    """
     se = (hi - lo) / (2 * Z)
     if se <= 0:
-        return 0.0
+        return 1.0
     z = abs(mean) / se
     return 2 * (1 - 0.5 * (1 + math.erf(z / math.sqrt(2))))
 
