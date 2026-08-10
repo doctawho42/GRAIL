@@ -990,6 +990,31 @@ def main() -> int:
                   round(json.loads(cl2.read_text())["reach"]["completed"]["reach"], 3),
                   str(cl2.relative_to(ROOT)))
 
+    # 10c-w. Guaranteed reach: the least a bank recovers over the conventions it might be run
+    # under. It is the constructive half of the incomparability claim, so it is held to the same
+    # artifact as the arms it minimises over, and the gate recomputes the minimum rather than
+    # trusting the sentence to have taken it.
+    hy2 = ROOT / "results/hydrogen_dispatch__clean_test.json"
+    if hy2.exists():
+        H2 = json.loads(hy2.read_text())["banks"]
+        flat = re.sub(r"\s+", " ", whole)
+        mg = re.search(r"its \\emph\{guaranteed reach\}: \$([\d.]+)\$ for ours against a best of "
+                       r"\$([\d.]+)\$, \$([\d.]+)\$ for SyGMa against \$([\d.]+)\$, and \$([\d.]+)\$ "
+                       r"for BioTransformer against \$([\d.]+)\$", flat)
+        checks.append((bool(mg), "the guaranteed-reach sentence parses", "present",
+                       "matched" if mg else "not matched", ""))
+        if mg:
+            src = str(hy2.relative_to(ROOT))
+            for bank, lo_g, hi_g in (("grail_full", 1, 2), ("sygma_175", 3, 4),
+                                     ("biotransformer", 5, 6)):
+                arms = {k: v for k, v in H2[bank]["global_arms"].items() if v is not None}
+                check(f"guaranteed reach, {bank}", mg.group(lo_g), round(min(arms.values()), 3), src)
+                check(f"best reach, {bank}", mg.group(hi_g), round(max(arms.values()), 3), src)
+            bt = {k: v for k, v in H2["biotransformer"]["global_arms"].items() if v is not None}
+            ratio = max(bt.values()) / max(min(bt.values()), 1e-9)
+            checks.append((3.5 <= ratio <= 4.5, "BioTransformer's published figure is four times "
+                           "its guarantee", "about four", f"{ratio:.2f}x", src))
+
     # 10c-v. The population inside one split. The paper's fourth axis was a bounded null about
     # which released test set a name refers to; this is a different question with a certified
     # answer, and the gate keeps the two apart by requiring both to appear.
