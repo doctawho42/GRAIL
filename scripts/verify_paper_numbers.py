@@ -739,6 +739,32 @@ def main() -> int:
         checks.append((not both, "no library is exposed to the step in both directions",
                        f"{len(both)} are", "0", "which is what 'disjoint sets' asserts"))
 
+    # 10c-g. The abstract's budget sentence. It said the system that emits most moves from last to
+    # first; on the only population carrying all four methods the mover emits 33.6 and the system
+    # that emits most is a different one that does not move that way. A sentence in the abstract is
+    # the most-read claim in the paper and had no gate at all, so it gets one: whoever is last at
+    # the tight budgets and first at the field's must be a single method, and must not be the one
+    # emitting most.
+    fm = ROOT / "results/four_method_291.json"
+    if fm.exists():
+        P = json.loads(fm.read_text())["per_method"]
+        rec = {m: v["recall"] for m, v in P.items()}
+        last_tight = {m for m in P if all(rec[m][k] == min(rec[x][k] for x in P) for k in ("1", "5"))}
+        first_wide = {m for m in P if rec[m]["15"] == max(rec[x]["15"] for x in P)}
+        mover = last_tight & first_wide
+        widest = max(P, key=lambda m: P[m]["mean_emitted_uncapped"])
+        checks.append((len(mover) == 1, "one method is last at tight budgets and first at 15",
+                       "exactly one", f"{sorted(mover) or 'none'}", str(fm.relative_to(ROOT))))
+        checks.append((widest not in mover, "the mover is not the method that emits most",
+                       "different methods",
+                       f"mover {sorted(mover)}, widest {widest} at "
+                       f"{P[widest]['mean_emitted_uncapped']}", str(fm.relative_to(ROOT))))
+        flat_a = re.sub(r"\s+", " ", whole)
+        said = ("one method is last at tight budgets and first at the budget the field reports, "
+                "with every method and its ranking held fixed")
+        checks.append((said in flat_a, "the abstract says what the sweep shows",
+                       "present", "present" if said in flat_a else "not matched", ""))
+
     # 10c-f. The mechanism, promoted to the main text without its numbers. A sentence that says
     # "most" and "a half-percent" instead of two integers is still a quantitative claim, and a
     # quantitative claim with no gate is how a number drifts away from what produced it. The words
