@@ -580,6 +580,33 @@ def main() -> int:
                        round(A["D_sygma_engine_175_rules_composed"]["point"]
                              - A["A_grail_engine_152_rules"]["point"], 4), ""))
 
+    # 10c-d. The three-bank reversal, now in the main text: the claim rests on the direction, so
+    # the direction is what is checked, not only the six counts.
+    # The census of which templates carry the primitive is its own measurement, distinct from how
+    # many the dispatch classifier sends anywhere; the two differ and must not be substituted.
+    hd_b = ROOT / "results/explicit_h_mechanism.json"
+    if hd_b.exists():
+        B = json.loads(hd_b.read_text())["hydrogen_convention_by_bank"]
+        flat = re.sub(r"\s+", " ", whole)
+        m = re.search(r"SyGMa, none\s*of whose \$(\d+)\$ templates carries a hydrogen atom, goes from "
+                      r"\$(\d+)\$ recovered references to \$(\d+)\$; BioTransformer, where \$(\d+)\$ "
+                      r"of \$(\d+)\$ do, goes from \$(\d+)\$ down to \$(\d+)\$", flat)
+        checks.append((bool(m), "the three-bank sentence parses", "present",
+                       "matched" if m else "not matched", ""))
+        if m:
+            check("SyGMa rules", m.group(1), B["sygma_175"]["rules"])
+            check("SyGMa carries none", "0", B["sygma_175"]["with_explicit_hydrogen"])
+            check("BioTransformer carrying the primitive", m.group(4),
+                  B["biotransformer"]["with_explicit_hydrogen"])
+            check("BioTransformer rules", m.group(5), B["biotransformer"]["rules"])
+            # the reversal itself: one bank gains, the other loses, and they cross
+            sy_lo, sy_hi = int(m.group(2)), int(m.group(3))
+            bt_hi, bt_lo = int(m.group(6)), int(m.group(7))
+            checks.append((sy_lo < bt_hi and sy_hi > bt_lo,
+                           "the two banks cross between the conventions",
+                           f"SyGMa {sy_lo}->{sy_hi}, BioTransformer {bt_hi}->{bt_lo}",
+                           "they must exchange, which is the claim", ""))
+
     # 10c-c. The confirmatory family, reconstructible from the main text: the grid the axes admit,
     # less the cells where two conventions coincide and there is nothing to test.
     lb_f = ROOT / "results/retro_leaderboard_cluster0.json"

@@ -413,14 +413,18 @@ the two configurations is $+0.339$, and it decomposes into that engine term, the
 $[+0.128,+0.162]$ contributed by the $23$ rules our bank does not hold at fixed engine and depth,
 and $+0.0065$ $[+0.0038,+0.0096]$ from composing steps. The single preprocessing step is therefore
 larger than every rule the two banks do not share. Almost all of what reads as a difference between knowledge
-bases is a difference between the programs that query them, and that difference is a single preprocessing step, the expansion itself. Our own generator does not expand, which is why \ceiling\ is quoted without it;
-measured with it the same bank reaches $0.735$. Toggling that one call, bank and substrates
-untouched, carries reach from $0.200$ to $0.390$, the whole of the engine term, leaving $+0.002$
-$[0.000,+0.005]$ micro between the two programs, though a macro estimator separates them at $+0.006$
-$[+0.002,+0.010]$. The loop's other two choices move reach by nothing
-(Appendix~\ref{app:enginereach}).
-The term is thus not a fact about two particular programs but about one decision neither reports: what a bank covers is uninterpretable without the engine
-that realised the figure (Appendix~\ref{app:props}). The dependence is not specific to metabolism. Every one of the $42{,}554$ patterns in the standard retrosynthesis template library constrains atoms by degree and none names a hydrogen, so the same step costs that library $82\%$ of its applicability. That is the second of the two mechanisms: a match lost before a product is built (Appendix~\ref{app:retroconvention}).
+bases is a difference between the programs that query them, and that difference is a single preprocessing step, the expansion itself. Our own generator does not expand, which is why \ceiling\ is quoted without it. Toggling that one
+call, with bank and substrates untouched, carries reach from $0.200$ to $0.390$, the whole of the
+engine term; the loop's other two choices move reach by nothing
+(Appendix~\ref{app:enginereach}). The direction is not a property of our engine, and the split is the notation. Applying three
+published banks to the same substrates under both conventions moves them opposite ways: SyGMa, none
+of whose $175$ templates carries a hydrogen atom, goes from $125$ recovered references to $299$;
+BioTransformer, where $690$ of $994$ do, goes from $268$ down to $74$; ours, with $675$ of \nbank,
+moves from $414$ to $453$. Under one convention BioTransformer recovers more than twice what SyGMa
+does, and under the other SyGMa recovers four times what BioTransformer does. Which of two published
+rule bases reaches further is therefore decided by a step that neither paper states.
+
+The dependence is not specific to metabolism. Every one of the $42{,}554$ patterns in the standard retrosynthesis template library constrains atoms by degree and none names a hydrogen, so the same step costs that library $82\%$ of its applicability. That is the second of the two mechanisms: a match lost before a product is built (Appendix~\ref{app:retroconvention}).
 
 \section{Results}
 \label{sec:results}
@@ -493,13 +497,12 @@ methods and not for ours: $24$ of the $37$ are in GRAIL's train or validation sp
 the $13$ unseen (Table~\ref{tab:matchsens}).
 
 \looseness=-1
-The result this section rests on involves neither contaminated arm. Under strict InChIKey matching MetaPredictor trails SyGMa
-by $0.130$, an interval of $[-0.196,-0.065]$ on the signed difference; one rung later the advantage
-is gone, at $+0.005$ $[-0.071,+0.086]$. The endpoint is not that transition, which contrasts a significant
-result with a null one, but the interaction: MetaPredictor gains $+0.135$ $[+0.072,+0.209]$ more
-than SyGMa across the stereo step, rejected at either family size (Appendix~\ref{app:holm}). That interval is what is certified: the relaxed gap covers zero
-and still admits SyGMa ahead by $0.071$, so a criterion erases a significant advantage here rather
-than reversing it.
+The result this section rests on involves neither contaminated arm. Under strict InChIKey matching
+MetaPredictor trails SyGMa by $0.130$; one rung later the advantage is gone. The endpoint is the
+interaction, not that transition: MetaPredictor gains $+0.135$ $[+0.072,+0.209]$ more than SyGMa
+across the stereo step, rejected at either family size. The relaxed gap covers zero and still admits
+SyGMa ahead by $0.071$, so a criterion erases a significant advantage here instead of reversing it
+(Appendix~\ref{app:holm}).
 Normalised by the headroom left it does not vanish but grows, to $+0.209$ $[+0.111,+0.322]$
 (Appendix~\ref{app:holm}). On the uncontaminated drugs GRAIL's stereo sensitivity survives at $+0.126$
 $[+0.028,+0.239]$, as does its interaction with SyGMa, whose stereo step here is zero; the
@@ -510,18 +513,16 @@ against $0.684$ on the thirteen unseen, a difference whose interval spans zero
 
 
 
-\paragraph{The criterion moves human agreement, and that agreement bounds what a recall figure
-means.} The
-strongest evidence for declaring the criterion involves no model. Twenty-five of the external drugs are independently curated by our corpus as well, so the two metabolite lists can be compared as a prediction is compared to a reference. On the same drugs, the two expert curations agree at a Jaccard of $0.145$ under strict \textsc{inchikey} matching and at $0.406$ under the tautomer-aware default. Most of what
-looks like disagreement about observed chemistry is disagreement about notation.
+\paragraph{The criterion moves human agreement.} The strongest evidence for declaring the criterion
+involves no model. Twenty-five external drugs are curated independently by two sources, and on the
+same drugs the two expert lists agree at a Jaccard of $0.145$ under strict \textsc{inchikey}
+matching and at $0.406$ under the tautomer-aware default. Most of what looks like disagreement about
+observed chemistry is disagreement about notation.
 
 \looseness=-1
-The two curations also bound what a recall figure means. A competent independent curation records
-only $0.539$ of the corpus annotation, so beyond that level recall measures one source's inclusion
-choices. Where a model sits against that bound depends on the budget: MetaPredictor's uncapped
-$0.562$ is a tie inside noise bought with $10.6$ metabolites per drug against the curation's $6.0$,
-and capped at each drug's own curated set size it recovers $0.301$, behind by $0.238$
-$[0.123,0.354]$ (Appendix~\ref{app:xdomain}).
+The two curations also bound what a recall figure means: one competent independent curation records
+only $0.539$ of the other, so beyond that level recall measures one source's inclusion choices.
+Where a model sits against that bound depends on its budget (Appendix~\ref{app:xdomain}).
 
 \looseness=-1
 \paragraph{Mechanism.} The spread tracks how far a method's outputs diverge representationally from
