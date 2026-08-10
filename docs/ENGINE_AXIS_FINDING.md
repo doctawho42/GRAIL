@@ -36,6 +36,36 @@ substrate:
 Of the firings that produce anything under either arm, 58 of 66 (88%) give the repaired expanded arm
 exactly the implicit arm's product set.
 
+## Measured on the full split
+
+`results/completed_loop_reach__clean_test.json`, the 152 shared rules over all 1,170 clean test
+substrates, three arms of the same loop:
+
+| arm | reach |
+|---|---|
+| expanded, loop as it stood | 0.1998 [0.182, 0.219] |
+| expanded, loop completed | 0.3423 [0.320, 0.365] |
+| implicit | 0.3897 [0.367, 0.413] |
+
+The published engine term of +0.1898 [0.173, 0.208] splits into **+0.1425 [0.125, 0.160] from the
+missing call** and **+0.0474 [0.038, 0.057] that survives it**. Both intervals exclude zero. Three
+quarters of what section 4 called a convention was an unfinished loop.
+
+`results/explicit_h_mechanism__clean_test.json` adds a third arm to the mechanism and inverts its
+story:
+
+| arm | fragments | unreadable |
+|---|---|---|
+| loop as it stood | 21,905 | 13,804 (63.0%) |
+| loop completed | 20,601 | **0 (0.0%)** |
+| implicit | 21,106 | 87 (0.4%) |
+
+Completing the loop removes every unreadable fragment, cleaner than the unexpanded arm. So the
+product-breakage mechanism is not a convention effect at all. What survives is the opposite kind of
+failure: the completed loop fires the same templates and yields 20,601 fragments against 21,106, so
+a substrate carrying its hydrogens matches slightly less. The section's sentence "what the switch
+costs is not matching" was right about the defect and backwards about the convention.
+
 ## What this costs the paper
 
 The engine axis is one of the three the title counts and the one the abstract leads with as a
