@@ -286,15 +286,13 @@ D & all $175$, SyGMa's composed & 0.527 $[0.473,0.582]$ \\
 The engine at fixed rules is worth $+0.188$ $[+0.170,+0.205]$, the $23$ rules absent from our bank $+0.143$ $[+0.107,+0.180]$, and composition $+0.004$. The engine term alone is the size of the
 entire reach gap the main text reports.
 
-\paragraph{The term is a single decision.} The application loop makes three discretionary choices
-before it reports a product: whether the substrate is expanded with explicit hydrogens before the
-templates fire, whether products are normalised by tautomer canonicalisation or as plain canonical
-SMILES, and what counts as a valid fragment. Toggling them one at a time over the same $152$ rules,
-with the default configuration gated to reproduce arm A to four decimals and the comparator arm
-gated against arm B, puts the whole term on the first (\S\ref{sec:enginereach}). The gate binds the rule set, the substrates,
-the matcher and the hydrogen decision, because moving any of those moves the number it checks; it
-cannot bind the other two, since every configuration with hydrogens explicit returns that number
-exactly. That is the second and third rows of the table rather than a gap in the check.
+\paragraph{The term is a single decision.} The three choices are toggled one at a time over the same
+$152$ rules, with the default configuration gated to reproduce arm A to four decimals and the
+comparator arm gated against arm B, which puts the whole term on the first
+(\S\ref{sec:enginereach}). The gate binds the rule set, the substrates, the matcher and the hydrogen
+decision, because moving any of those moves the number it checks; it cannot bind the other two,
+since every configuration with hydrogens explicit returns that number exactly. That is the second
+and third rows of that table rather than a gap in the check.
 
 The engine term is $+0.188$, so that one call carries all of it, and what remains against SyGMa's own
 engine is $+0.002$ $[0.000,+0.005]$: at that setting the two programs are no longer separable on

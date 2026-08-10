@@ -813,6 +813,42 @@ def main() -> int:
                   recovered("sygma_175", "all_implicit"))
             check("BioTransformer, hydrogens implicit", num(m.group(4)),
                   recovered("biotransformer", "all_implicit"))
+            # The counts are recorded rather than re-derived. A check that multiplies a rounded
+            # reach by the reference total reproduces the arithmetic the sentence was written with
+            # and tests nothing about provenance; where the measurement records the integer, the
+            # integer is what the manuscript is held to.
+            rec = {b: H[b].get("global_arms_paired") for b in ("biotransformer", "sygma_175")}
+            if all(rec.values()):
+                for lbl, bank, key, grp in (
+                        ("BioTransformer drawn, recorded", "biotransformer", "recovered_explicit", 1),
+                        ("SyGMa drawn, recorded", "sygma_175", "recovered_explicit", 2),
+                        ("SyGMa implicit, recorded", "sygma_175", "recovered_implicit", 3),
+                        ("BioTransformer implicit, recorded", "biotransformer", "recovered_implicit", 4)):
+                    check(lbl, num(m.group(grp)), rec[bank][key], str(hy_b.relative_to(ROOT)))
+                # the exchange is a paired difference in each bank, and the two run opposite ways
+                mi = re.search(r"paired over substrates the step is worth \$([-+][\d.]+)\$ "
+                               r"\$\[([-+][\d.]+),([-+][\d.]+)\]\$ to SyGMa and \$([-+][\d.]+)\$ "
+                               r"\$\[([-+][\d.]+),([-+][\d.]+)\]\$ to BioTransformer", flat)
+                checks.append((bool(mi), "the reversal interval sentence parses",
+                               "present", "matched" if mi else "not matched", ""))
+                if mi:
+                    for bank, base in (("sygma_175", 1), ("biotransformer", 4)):
+                        g = rec[bank]
+                        check(f"{bank}, explicit minus implicit", mi.group(base),
+                              round(g["explicit_minus_implicit"], 3), str(hy_b.relative_to(ROOT)))
+                        check(f"{bank}, lower bound", mi.group(base + 1),
+                              round(g["ci95"][0], 3), str(hy_b.relative_to(ROOT)))
+                        check(f"{bank}, upper bound", mi.group(base + 2),
+                              round(g["ci95"][1], 3), str(hy_b.relative_to(ROOT)))
+                    checks.append((rec["sygma_175"]["explicit_minus_implicit"] *
+                                   rec["biotransformer"]["explicit_minus_implicit"] < 0
+                                   and rec["sygma_175"]["excludes_zero"]
+                                   and rec["biotransformer"]["excludes_zero"],
+                                   "the step moves the two banks in opposite directions",
+                                   "opposite signs, both certified",
+                                   f"{rec['sygma_175']['explicit_minus_implicit']:+.3f} against "
+                                   f"{rec['biotransformer']['explicit_minus_implicit']:+.3f}",
+                                   str(hy_b.relative_to(ROOT))))
             # the reversal itself, not merely the four counts
             checks.append((int(num(m.group(1))) > int(num(m.group(2)))
                            and int(num(m.group(3))) > int(num(m.group(4))),
