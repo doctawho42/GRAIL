@@ -235,18 +235,16 @@ q \in \{\textsc{canonical},\ \textsc{inchikey},\ \textsc{inchi-no-stereo},\ \tex
 \]
 and a prediction counts as a hit iff $q(\hat{y}) = q(y)$ for some reference $y$. Each map is
 computed with RDKit 2022.09.5, the version that reproduces the columns reported here. A ceiling
-reported under this protocol declares the \emph{application} procedure too, namely the engine and its version,
-sanitisation, the enumeration and filtering policy and the depth, since at fixed rules that
-procedure moves reach by as much as the reach gap reported here (Appendix~\ref{app:enginereach}).
+reported under this protocol declares the \emph{application} procedure too: the engine and its
+version, sanitisation, the enumeration and filtering policy, and the depth (\S\ref{sec:enginereach}).
 \textsc{canonical} is canonical SMILES equality, \textsc{inchikey} the full InChIKey and
 \textsc{inchi-no-stereo} its first block, the connectivity skeleton blind to stereochemistry, charge
-and isotopes. One caution attaches to the first of these. Canonical SMILES equality is computed
-without stereochemistry on the metabolite corpus, whose references carry none, and with it in the
-two cross-domain harnesses, whose references do; the relation is therefore the same rule applied to
-corpora that differ in what they record, and the column heading means the stricter thing wherever
-stereochemistry is present. Where that matters it is stated: the cross-domain step from
-\textsc{canonical} to \textsc{inchi-no-stereo} removes a layer those corpora carry, which is why it
-moves them, and the corresponding metabolite step cannot.
+and isotopes. One caution attaches to the first. Canonical SMILES equality is
+computed without stereochemistry on the metabolite corpus, whose references carry none, and with it
+in the two cross-domain harnesses, whose references do: the same rule applied to corpora that differ
+in what they record, so the heading means the stricter thing wherever stereochemistry is present.
+That is why the cross-domain step to \textsc{inchi-no-stereo} moves those systems and the
+metabolite step cannot.
 
  \textsc{tanimoto1} is Tanimoto similarity of one over Morgan fingerprints at radius 2
 over 2048 bits; \textsc{inchikey-tautomer} standardises both sides before hashing, taking the
@@ -295,23 +293,78 @@ SyGMa's own, which does not. They reach $0.189$ $[0.151,0.230]$ under the first 
 $[0.333,0.433]$ under the second, an engine term of $+0.188$ $[+0.170,+0.205]$, paired. The whole
 distance between the two configurations is $+0.339$: that engine term, $+0.145$ $[+0.128,+0.162]$
 from the $23$ rules our bank does not hold at fixed engine and depth, and $+0.0065$
-$[+0.0038,+0.0096]$ from composing steps. The single preprocessing step is therefore
-larger than every rule the two banks do not share: almost all of what reads as a difference between
-knowledge bases is a difference between the programs that query them. Toggling that one call, with
-bank and substrates untouched, carries reach from $0.200$ to $0.390$, and the loop's other two
-choices move reach by nothing (Appendix~\ref{app:enginereach}).
+$[+0.0038,+0.0096]$ from composing steps. The single preprocessing step is therefore larger than
+every rule the two banks do not share: almost all of what reads as a difference between knowledge
+bases is a difference between the programs that query them.
 
 \looseness=-1
-The direction is not a property of our engine but of how a bank is written. On the full split, with
-hydrogens drawn, BioTransformer recovers $1{,}264$ references and SyGMa $579$; with hydrogens left
-implicit, SyGMa recovers $1{,}390$ and BioTransformer $317$. Which of two published rule bases
-reaches further is decided by a step that neither paper states.
+\paragraph{The term is one call out of three.} The application loop makes three discretionary
+choices before it reports a product: whether the substrate is expanded with explicit hydrogens
+before the templates fire, whether products are normalised by tautomer canonicalisation or left as
+plain canonical \textsc{smiles}, and what counts as a valid fragment. Toggled one at a time over the
+same rules and the same substrates, the first carries the entire term and the other two are inert.
+
+\begin{center}
+\begin{tabular}{llcc}
+\toprule
+choice & from $\to$ to & reach & against the default \\
+\midrule
+explicit hydrogens    & yes $\to$ no             & 0.390 & $+0.190$ $[+0.173,+0.208]$ \\
+product normalisation & tautomer $\to$ canonical & 0.200 & $0.000$ \\
+validity floor        & on $\to$ off             & 0.200 & $0.000$ \\
+\bottomrule
+\end{tabular}
+\end{center}
 
 \looseness=-1
-The dependence is not specific to metabolism, and three constructs must be told apart to see it: the hydrogen \emph{atom} primitive, which matches only a drawn hydrogen; the hydrogen \emph{count} inside a bracket, which the expansion leaves untouched; and the connection count, which it changes. Across six independent libraries and $51{,}368$ templates the construct almost everyone uses is the inert one, and the two that move are used by disjoint sets of libraries. Every one of the $42{,}554$ patterns in the standard retrosynthesis template library pins a connection count and none carries the atom primitive, so the same step costs that library $82\%$ of the template-product pairs it can match at all, by the second mechanism: a match lost before a product is built. That is applicability and not coverage against references, and it is a hazard latent in that field rather than an error in it, since no system there expands its target by convention.
+\paragraph{What the switch costs is not matching.} The shared templates fire almost equally often
+either way and every firing writes a product. The loss is one step later and it is a valence
+violation: most of the fragments the expanded products separate into are structures the toolkit will
+not read back, against a half-percent without the expansion. A substitution template written against
+implicit hydrogens does not name the hydrogen it replaces, so expanding the substrate first leaves
+an aromatic carbon holding both its own hydrogen and the new substituent. The template is not wrong
+and the engine is not wrong. They disagree about how a
+hydrogen is spelled. And the direction belongs to the bank rather than to our engine: on the full
+split, with hydrogens drawn, BioTransformer recovers $1{,}264$ references and SyGMa $579$; with hydrogens left implicit,
+SyGMa recovers $1{,}390$ and BioTransformer $317$. Which of two published rule bases reaches further
+is decided by a step that neither paper states.
 
 \looseness=-1
-The convention travels with the transcription, which one release shows within itself. Of the rules it attributes to another tool, the $57$ copied verbatim carry the atom primitive not once, while $88$ of the $121$ re-typed do, a construct absent from all $175$ rules of the tool they came from. Those rules write an aromatic carbon as \texttt{[cH1]([H])}, pinning the hydrogen count and then naming the hydrogen again: a token redundant as chemistry and decisive as notation (Appendix~\ref{app:retroconvention}).
+\paragraph{What is convention-dependent is a construct, not a domain.} Three \textsc{smarts}
+constructs must be told apart to see this: the hydrogen \emph{atom} primitive, which matches only a
+drawn hydrogen; the hydrogen \emph{count} inside a bracket, which the expansion leaves untouched;
+and the connection count, which it changes. Across six independent libraries and $51{,}368$
+templates the construct almost everyone uses is the inert one, and the two that move are used by
+disjoint sets of libraries. Every one of the $42{,}554$ patterns in the standard retrosynthesis
+template library pins a connection count and none carries the atom primitive, so the same step costs
+that library $82\%$ of the template--product pairs it can match at all, by a second mechanism: a
+match lost before a product is built. That is applicability rather than coverage against references,
+and a hazard latent in that field rather than an error in it, since no system there expands its
+target. The convention travels with the transcription, which one release shows within itself: of the
+rules it attributes to another tool, the $57$ copied verbatim carry the atom primitive not once,
+while $88$ of the $121$ re-typed do, a construct absent from all $175$ rules of the tool they came
+from.
+
+\looseness=-1
+A third mechanism turned up inside our own measurement rather than in another group's library, and
+the three together are what makes this a class rather than three defects. Each has one measured
+instance, and only the third can be repaired rather than merely declared
+(Appendix~\ref{app:retroconvention}).
+
+\begin{center}
+\footnotesize
+\begin{tabular}{lll}
+\toprule
+what breaks & the construct responsible & measured on \\
+\midrule
+the match, before any product & a primitive counting explicit structure & $42{,}554$ retro templates \\
+the product, once built       & a rewrite not naming its hydrogen        & three metabolite banks \\
+which answer the bank gives   & a union of two written conventions       & our own $\nbank$ rules \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+
 
 \section{The criterion reorders a published leaderboard in another field}
 \label{sec:xdomainmain}
@@ -324,46 +377,40 @@ seven systems scored on their $4{,}999$ common reactions change places at top-1,
 never move and under a rule applied identically to all seven. Under canonical matching the leaders
 run GraphRetro $0.5377$, LocalRetro $0.5339$, Retroformer $0.5325$, Graph2SMILES $0.5293$; disregard
 stereochemistry and they run Graph2SMILES $0.5571$, Retroformer $0.5541$, GraphRetro $0.5501$,
-LocalRetro $0.5469$, so fourth becomes first (Figure~\ref{fig:xdomain}, Appendix~\ref{app:xdomain}). Five of twenty-one pairs exchange in all.
+LocalRetro $0.5469$, so fourth becomes first. Five of twenty-one pairs exchange in all.
 
 \looseness=-1
-An exchange of positions is a description of the data; the claim is the interaction, corrected
-across the largest family declared in this work. That family is the grid the two axes admit,
-twenty-one system pairs by six pairs drawn from the four conventions by four budgets, which is $504$
-cells less the $56$ in which two conventions return identical results and no test exists. Of the
-$448$ that remain, $233$ have intervals excluding zero and $109$ survive Holm at $0.05$. The effect
-is concentrated at top-1, the number this field leads with but not the whole accuracy curve, and
-stereo-blind matching is a candidate convention here and not a straw one: GLORYx scores on a
-stereo-blind skeleton, and GRAIL and SyGMa cannot emit a stereocentre under any criterion.
-
-
+An exchange of positions describes the data; the claim is the interaction, corrected across the
+largest family declared in this work. That family is the grid the two axes admit, twenty-one system
+pairs by six pairs drawn from the four conventions by four budgets, which is $504$ cells less the
+$56$ in which two conventions return identical results and no test exists. Of the $448$ that remain, $233$ have intervals excluding zero and $109$ survive
+Holm at $0.05$. The effect is concentrated at top-1, the number this field leads with but not the
+whole accuracy curve, and stereo-blind matching is a candidate convention here and not a straw one:
+GLORYx scores on a stereo-blind skeleton, and GRAIL and SyGMa cannot emit a stereocentre under any
+criterion (Figure~\ref{fig:xdomain}, Appendix~\ref{app:xdomain}).
 
 \looseness=-1
 \paragraph{The condition is the margin, and most of these margins were never resolvable.} An
-exchange requires the criterion to move two systems apart by more than the margin between them, so
-what matters is the size of the margins relative to what the benchmark can measure. Since the
-predictions are frozen, a paired bootstrap over the $4{,}999$ reactions gives an interval on each
-margin directly. \textbf{Eleven of the twenty-one margins do not separate from zero, and five of the
-six adjacent margins in the published order do not.} The smallest margin this benchmark certifies is
-$0.0146$ against a criterion movement of $0.015$, while the three-system group, whose narrowest
-margin is $0.0213$, separates every pair and exchanges none. Over $439$ method-pair by criterion-pair
-comparisons across four leaderboards in three domains the movement exceeds the margin once in nine
-and reverses the pair once in seventeen, and no reversal occurs where the margin survives it. Eight
-published molecular generators show the condition from the other side, exchanging one adjacent pair
-because seven of the eight sit above $0.986$ (Appendix~\ref{app:xdomain}).
+exchange requires the criterion to move two systems apart by more than the margin between them, and
+the predictions are frozen, so a paired bootstrap over the $4{,}999$ reactions gives an interval on
+each margin directly. \textbf{Eleven of the twenty-one margins do not separate from zero, and five of
+the six adjacent margins in the published order do not.} The smallest margin this benchmark
+certifies is $0.0146$ against a criterion movement of $0.015$, while the three-system group, whose
+narrowest margin is $0.0213$, separates every pair and exchanges none. Over $439$ method-pair by
+criterion-pair comparisons across four leaderboards in three domains the movement exceeds the margin
+once in nine and reverses the pair once in seventeen, and no reversal occurs where the margin
+survives it. Eight published molecular generators show the condition from the other side: seven of
+the eight sit above $0.986$, and one adjacent pair exchanges.
 
 \looseness=-1
-\paragraph{Which population a familiar name refers to.} The same eleven files answer the fourth
-question differently. Two of the three groups share $490$ reactions on which they agree about the
-recorded reaction, nested inside each group's own five thousand, so two systems can be compared on
-the subset and on the whole with method, criterion and budget fixed. Of the $380$ comparisons this
-gives, $44$ change the ordering; on the metabolite split of \S\ref{sec:results} the same test gives
-$10$ of $60$. Neither instance survives correction: none of the $440$ interactions passes Holm at
-$0.05$, and on the metabolite split none has an interval excluding zero before it. The null is
-bounded rather than absolute, since at the family's own threshold and $80\%$ power these designs
-would have detected an interaction of about $0.10$ on the released files and $0.07$ on the metabolite
-split, an order of magnitude larger than the criterion interactions that do survive
-(Appendix~\ref{app:popaxis}).
+\paragraph{Which population a familiar name refers to.} Two of the three groups share $490$
+reactions nested inside each group's own five thousand, so two systems can be compared on the subset
+and on the whole with method, criterion and budget fixed. Of the $380$ comparisons this gives, $44$
+change the ordering; on the metabolite split the same test gives $10$ of $60$. Neither instance
+survives correction: none of the $440$ interactions passes Holm at $0.05$. The null is bounded rather
+than absolute, since at the family's own threshold and $80\%$ power these designs would have detected
+an interaction of about $0.10$ on the released files and $0.07$ on the metabolite split, an order of
+magnitude larger than the criterion interactions that do survive (Appendix~\ref{app:popaxis}).
 
 \section{The decomposition and the coverage ceiling}
 \label{sec:decomp}
@@ -382,15 +429,11 @@ the transformation must be \emph{expressible} by some rule in the bank, that rul
 product must be \emph{ranked} into the top $k$. Write, for a substrate set $S$ with reference sets
 $Y_s$:
 \[
-\underbrace{\frac{|H|}{|U|}}_{\text{recall@}k}
-\;=\;
-\underbrace{\frac{|C_{\text{full}}|}{|U|}}_{\text{coverage}}
-\;\cdot\;
-\underbrace{\frac{|C_{\text{bud}}|}{|C_{\text{full}}|}}_{\text{selection}}
-\;\cdot\;
-\underbrace{\frac{|H|}{|C_{\text{bud}}|}}_{\text{ranking}},
-\qquad
-|U|=\textstyle\sum_{s\in S}|Y_s| ,
+\underbrace{\tfrac{|H|}{|U|}}_{\text{recall@}k}
+=\underbrace{\tfrac{|C_{\text{full}}|}{|U|}}_{\text{coverage}}
+\cdot\underbrace{\tfrac{|C_{\text{bud}}|}{|C_{\text{full}}|}}_{\text{selection}}
+\cdot\underbrace{\tfrac{|H|}{|C_{\text{bud}}|}}_{\text{ranking}},
+\qquad |U|=\textstyle\sum_{s\in S}|Y_s| .
 \]
 where $C_{\text{full}}$ are references recovered by applying the \emph{entire} bank without a
 budget, $C_{\text{bud}}$ those surviving the selector's budgeted pool, and $H$ those actually
@@ -416,17 +459,13 @@ claims, and no ranking improvement can exceed it.
 \paragraph{What the decomposition says.}\looseness=-1 The deployed pipeline converts only $32.5\%$ of its own ceiling into realised recall, and the three factors separate with no pair of intervals overlapping (Figure~\ref{fig:decomp}). Selection is where the loss sits: barely a third of what the bank reaches survives the selector's rule budget, while ranking is close to lossless at $0.960$ $[0.941,0.976]$. It does not bind alone. The output policy caps $k$ at $15$ and binds on $308$ of \ntest\ substrates, and all $29$ references lost between the budgeted pool and the emitted output fall on those, so widening the selector moves the loss downstream instead of removing it (Appendix~\ref{app:props}).
 
 \looseness=-1
-Removing selection entirely tests that reading. With no selector and no threshold, ranking the whole
+Removing selection entirely tests that reading: with no selector and no threshold, ranking the whole
 pool, the bank passes SyGMa by $0.167$ $[0.112,0.223]$ at $k=82$ and by $0.063$ $[0.001,0.125]$ at
-$k=32$, while remaining behind at $k=8$ and indistinguishable at the field's $k=15$
-(Appendix~\ref{app:noselect}).
-
-\looseness=-1
-Applied to a second method it stops being self-diagnosis: SyGMa decomposes on the same split in the
-same frame with the inverse profile, converting nearly all of a narrower reach where we convert a
-third of a wider one, so what separates us is the cost of \emph{this} selection stage, not a
-worse rule base, and the bank's own bound is the corpus rather than tuning
-(Appendix~\ref{app:decompsygma}).
+$k=32$, while remaining behind at $k=8$ and indistinguishable at the field's $k=15$. Applied to a
+second method the reading stops being self-diagnosis: SyGMa decomposes on the same split in the same
+frame with the inverse profile, converting nearly all of a narrower reach where we convert a third
+of a wider one, so what separates the two is the cost of \emph{this} selection stage rather than a
+worse rule base (Appendices~\ref{app:noselect} and~\ref{app:decompsygma}).
 
 \section{Results}
 \label{sec:results}
@@ -581,15 +620,14 @@ $[-0.196,\,-0.095]$ (Appendix~\ref{app:props}).
 substrates of frozen predictions, because MetaTrans's pipeline no longer reproduces and
 BioTransformer's configuration is unscripted; the other three are scored on the full $\ntest$. An
 unannotated but real product counts as a false positive, so every precision and F1 figure is
-pessimistic, and depth-2 application lifts the ceiling by ${\sim}0.012$ at $8.5$ times the cost, so
-$\ceiling$ bounds this formulation and not the task.
+pessimistic, and depth-2 application lifts the ceiling by ${\sim}0.012$ at $8.5$ times the cost:
+$\ceiling$ bounds this formulation, not the task.
 
 \looseness=-2
 \paragraph{What the newer results rest on.} The cross-domain numbers come from files produced
 elsewhere, read under an assumption proven where an independent ground truth exists, and the
 reordering there is a top-1 phenomenon. The margin condition is measured across four leaderboards,
-which is few, and the population result is a bounded null. The figure reported for this system is a
-single evaluation of the deployed configuration.
+which is few, and the population result is a bounded null.
 
 \section{Conclusion}
 \label{sec:conclusion}

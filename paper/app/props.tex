@@ -291,22 +291,10 @@ before it reports a product: whether the substrate is expanded with explicit hyd
 templates fire, whether products are normalised by tautomer canonicalisation or as plain canonical
 SMILES, and what counts as a valid fragment. Toggling them one at a time over the same $152$ rules,
 with the default configuration gated to reproduce arm A to four decimals and the comparator arm
-gated against arm B, puts the whole term on the first. The gate binds the rule set, the substrates,
+gated against arm B, puts the whole term on the first (\S\ref{sec:enginereach}). The gate binds the rule set, the substrates,
 the matcher and the hydrogen decision, because moving any of those moves the number it checks; it
 cannot bind the other two, since every configuration with hydrogens explicit returns that number
 exactly. That is the second and third rows of the table rather than a gap in the check.
-
-\begin{center}
-\begin{tabular}{llcc}
-\toprule
-choice & from $\to$ to & reach & against the default \\
-\midrule
-explicit hydrogens    & yes $\to$ no             & 0.390 & $+0.190$ $[+0.173,+0.208]$ \\
-product normalisation & tautomer $\to$ canonical & 0.200 & $0.000$ \\
-validity floor        & on $\to$ off             & 0.200 & $0.000$ \\
-\bottomrule
-\end{tabular}
-\end{center}
 
 The engine term is $+0.188$, so that one call carries all of it, and what remains against SyGMa's own
 engine is $+0.002$ $[0.000,+0.005]$: at that setting the two programs are no longer separable on
@@ -420,12 +408,8 @@ the attribution is exact rather than approximate: of the $119{,}558$ matches the
 $119{,}558$ come back when the degree constraint alone is deleted from the very patterns that lost
 them. The check is a gate, the measurement is refused below $90\%$, and it returns $100\%$.
 
-Three \textsc{smarts} constructs behave differently under the expansion and are counted separately
-in Table~\ref{tab:census}: the hydrogen \emph{atom} primitive, which matches only a drawn hydrogen;
-the hydrogen \emph{count} primitive inside a bracket, which the expansion leaves untouched; and the
-connection count, which it changes. Across the six independent libraries the count primitive is both the most widely used and the inert
-one, and the two that do move are used by disjoint sets of libraries. The last two rows are the
-controls. One release's copy of another tool's rules carries the atom primitive in half of them
+The three constructs of Table~\ref{tab:census} behave differently under the expansion, and the last
+two rows of it are the controls. One release's copy of another tool's rules carries the atom primitive in half of them
 where the tool itself carries it in none, and a second extraction from the corpus that pins a
 connection count in every template pins it in none.
 
@@ -439,6 +423,7 @@ that occur only inside commented-out records reproduce exactly in both.}
 \label{tab:census}
 \begin{center}
 \footnotesize
+\renewcommand{\arraystretch}{0.95}
 \begin{tabular}{lcccc}
 \toprule
 library & templates & atom & hydrogen count & connection count \\
@@ -461,6 +446,7 @@ RetroSim, same corpus as USPTO & $1{,}351$ & $0.000$ & $0.881$ & $0.000$ \\
 \end{center}
 \end{table}
 
+
 So a degree primitive counts explicit connections, expanding a molecule changes every degree in it,
 and a library built on them stops matching before it can build anything. That is a different failure
 from the metabolite one, where the patterns fire just as often and the product is what will not
@@ -472,20 +458,8 @@ have looked at.
 
 \paragraph{Three ways the choice bites, and one of them can be repaired.} A third mechanism turned
 up inside our own measurement rather than in someone else's library, and the three together are
-what makes this a class, not three defects. Each has one measured instance:
-
-\begin{center}
-\footnotesize
-\begin{tabular}{lll}
-\toprule
-what breaks & the construct responsible & measured on \\
-\midrule
-the match, before any product & a primitive counting explicit structure & $42{,}554$ retro templates \\
-the product, once built       & a rewrite not naming its hydrogen        & three metabolite banks \\
-which answer the bank gives   & a union of two written conventions       & our own $\nbank$ rules \\
-\bottomrule
-\end{tabular}
-\end{center}
+what makes this a class, not three defects, and each has one measured instance
+(\S\ref{sec:enginereach}).
 
 The first two are read off a rule file and avoided by declaring the convention. The third is not
 avoidable by any declaration, because no single setting is right for an object assembled from two:

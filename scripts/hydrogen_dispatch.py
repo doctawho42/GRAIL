@@ -175,6 +175,19 @@ def run_bank(name: str, items, workers: int) -> dict:
     reach = reach_of(H)
     arms = {"all_explicit": reach_of(E), "all_implicit": reach_of(I)}
     best_global = max(arms.values())
+    # The two global arms carry a claim of their own: which of two published banks reaches further
+    # is decided by the convention. That claim is a paired difference on the same substrates, so it
+    # gets the same treatment as the residual rather than a comparison of two marginal intervals.
+    # The recovered counts are recorded here because they are quoted directly; deriving them by
+    # multiplying a rounded reach by the reference total is the provenance defect this paper names.
+    d_arm = E - I
+    bt_arm = np.array([d_arm[j].sum() / max(U[j].sum(), 1) for j in idx])
+    arm_lo, arm_hi = (float(np.quantile(bt_arm, .025)), float(np.quantile(bt_arm, .975)))
+    arm_detail = {
+        "recovered_explicit": int(E.sum()), "recovered_implicit": int(I.sum()),
+        "explicit_minus_implicit": round(float(d_arm.sum() / max(U.sum(), 1)), 4),
+        "ci95": [round(arm_lo, 4), round(arm_hi, 4)],
+        "excludes_zero": bool(arm_lo * arm_hi > 0)}
     # the residual is paired: the same substrates carry both arms in the same run, so the
     # difference can be resampled rather than compared across two marginal intervals
     better = E if arms["all_explicit"] >= arms["all_implicit"] else I
@@ -184,7 +197,7 @@ def run_bank(name: str, items, workers: int) -> dict:
            "references": int(U.sum()), "recovered": int(H.sum()), "reach": reach,
            "ci95": [round(float(np.quantile(bt, .025)), 4),
                     round(float(np.quantile(bt, .975)), 4)],
-           "global_arms": arms, "best_global": best_global,
+           "global_arms": arms, "global_arms_paired": arm_detail, "best_global": best_global,
            "residual_convention_dependence": round(reach - best_global, 4),
            "residual_ci95": [round(float(np.quantile(bt_d, .025)), 4),
                              round(float(np.quantile(bt_d, .975)), 4)]}
