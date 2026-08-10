@@ -101,7 +101,7 @@ def main() -> int:
     conv = re.search(r"converts only \$([\d.]+)\\%\$ of its own ceiling", whole)
     check("conversion percentage", conv and float(conv.group(1)) / 100, S["H"] / S["Cfull"],
           "H / Cfull")
-    lost = re.search(r"and all \$(\d+)\$\s*\n?references lost between the budgeted pool", whole)
+    lost = re.search(r"and all \$(\d+)\$ references lost\s*\n?between the budgeted pool", whole)
     check("references lost to truncation", lost and lost.group(1), S["Cbud"] - S["H"],
           "Cbud - H")
     cap = sum(1 for r in rows if len(r.get("deployed_top15") or []) >= 15)
@@ -495,12 +495,12 @@ def main() -> int:
                  len(L["certified_interactions"])),
                 ("Holm survivors", r"\\textbf\{\$(\d+)\$ survive Holm", len(L["holm_survivors"])),
                 ("Holm survivors, main body",
-                 r"Of the \$448\$ that remain, \$\d+\$ have intervals excluding zero and "
+                 r"Of its \$448\$ testable cells, \$\d+\$ have intervals excluding zero and "
                  r"\$(\d+)\$ survive Holm", len(L["holm_survivors"])),
                 ("intervals excluding zero, main body",
-                 r"Of the \$448\$ that remain, \$(\d+)\$ have intervals excluding zero",
+                 r"Of its \$448\$ testable cells, \$(\d+)\$ have intervals excluding zero",
                  len(L["certified_interactions"])),
-                ("pairs exchanging at top-1", r"Five of the twenty-one pairs exchange",
+                ("pairs exchanging at top-1", r"five of twenty-one pairs exchange",
                  None)):
             if value is None:
                 checks.append((bool(re.search(pat, flat)), label, "present", "phrase present", ""))
@@ -1245,8 +1245,7 @@ def main() -> int:
             checks.append((len(g["criteria"]) == 4 and len(g["budgets"]) == 4,
                            "the declared grid is four criteria by four budgets",
                            "4 by 4", f"{len(g['criteria'])} by {len(g['budgets'])}", src))
-            ms = re.search(r"Only one of the twenty-one on the seven-system leaderboard is of the "
-                           r"second kind", flat)
+            ms = re.search(r"Only one of the twenty-one is of the second kind", flat)
             checks.append((bool(ms) and c0["unresolved_though_never_reversed"] == 1,
                            "one pair is unresolved rather than reversed", "one",
                            str(c0["unresolved_though_never_reversed"]), src))
@@ -1453,7 +1452,7 @@ def main() -> int:
         # The per-group table these checked is superseded by the packing measurement over all
         # four leaderboards. What the body still prints from the two groups is checked above; the
         # count of exchanging pairs is checked here so the phrasing cannot drift from the artifact.
-        m = re.search(r"Five of twenty-one pairs exchange", flat)
+        m = re.search(r"[Ff]ive of twenty-one pairs exchange", flat)
         checks.append((bool(m) and len(json.loads(lb.read_text())["pairs_that_exchange"]["top1"]) == 5,
                        "exchanging pairs, body phrasing", "Five of twenty-one",
                        len(json.loads(lb.read_text())["pairs_that_exchange"]["top1"]), ""))

@@ -152,9 +152,7 @@ ranking returns.
   not shown to reorder anything: eleven released prediction files sit on three test sets, and no
   interaction that varies only the population survives correction.
 \item An evaluation protocol, an audited split, the frozen predictions of every method compared, a
-  checker that reports these choices from files alone, and the analysis code are released. Where the
-  candidate set is enumerable, the coverage term of the decomposition is measured exhaustively,
-  which no sampled or search-bounded setting supplies.
+  checker that reports these choices from files alone, and the analysis code are released.
 \end{itemize}
 
 The remainder of this article is organised as follows. Section~\ref{sec:related} reviews prior work
@@ -331,23 +329,10 @@ rules one release attributes to another tool, the $57$ copied verbatim carry the
 once, while $88$ of the $121$ re-typed do, absent from all $175$ rules of the tool they came from.
 
 \looseness=-1
-A third turned up inside our own measurement rather than in another group's library. The three ways
-this bites, with one measured instance each, are these; the second is a defect and the third is
-repairable, so only the first has to be declared rather than fixed
+A third way the choice bites turned up inside our own measurement rather than in another group's
+library, and of the three only the first has to be declared rather than fixed: the second is a
+defect and the third is repairable by dispatching the convention per template
 (Appendix~\ref{app:retroconvention}).
-
-\begin{center}
-\footnotesize
-\begin{tabular}{lll}
-\toprule
-what breaks & the construct responsible & measured on \\
-\midrule
-the match, before any product & a primitive counting explicit structure & $42{,}554$ retro templates \\
-the product, once built       & an application loop left unfinished      & this work's own engine \\
-which answer the bank gives   & a union of two written conventions       & our own $\nbank$ rules \\
-\bottomrule
-\end{tabular}
-\end{center}
 
 
 
@@ -364,8 +349,8 @@ relation no declared choice can contradict; certified domination is a sub-relati
 separately because an interval condition is not transitive.
 
 \looseness=-1
-The share that dominate is what a reader can quote without naming the cell, and it is computable
-from released prediction files alone: nothing retrained, nothing the authors did not publish.
+The share that dominate is what a reader can quote without naming the cell, computable from released
+prediction files alone.
 
 \begin{center}
 \begin{tabular}{lccc}
@@ -381,27 +366,19 @@ metabolites, four methods     & $9$ budgets                       & $2$ of $6$  
 
 \looseness=-1
 About a third in each case. The remainder divides into two kinds the instrument separates: pairs
-some cell reverses, and pairs no cell reverses but the benchmark cannot resolve at its own sample
-size. Only one of the twenty-one on the seven-system leaderboard is of the second kind, so there the
-loss is reversal rather than resolution.
+some cell reverses, and pairs no cell reverses but the benchmark cannot resolve. Only one of the
+twenty-one is of the second kind, so there the loss is reversal rather than resolution.
 
 \paragraph{How one choice breaks an ordering.} \looseness=-1
 \citet{Hastedt_2024} released the ranked predictions of twelve retrosynthesis systems, of which
 eleven parse, produced on three different test sets (Appendix~\ref{app:xdomainsets}). Within the
 largest group, seven systems on their $4{,}999$ common reactions change places at top-1 on
-predictions that never move: under canonical matching the leaders run GraphRetro $0.5377$, LocalRetro
-$0.5339$, Retroformer $0.5325$, Graph2SMILES $0.5293$; disregard stereochemistry and they run
-Graph2SMILES $0.5571$, Retroformer $0.5541$, GraphRetro $0.5501$, LocalRetro $0.5469$, so fourth
-becomes first. Five of twenty-one pairs exchange in all. An exchange describes the data; the claim is the interaction, corrected across the
-largest family declared in this work. That family is the grid the two axes admit, twenty-one system
-pairs by six pairs drawn from the four conventions by four budgets, which is $504$ cells less the
-$56$ in which two conventions return identical results and no test exists. Of the $448$ that remain,
-$233$ have intervals excluding zero and $109$ survive Holm at $0.05$. The effect is concentrated at
-top-1, the number this field leads with, and stereo-blind matching is a candidate convention here and
-not a straw one: GLORYx scores on a stereo-blind skeleton, and GRAIL and SyGMa cannot emit a
-stereocentre under any criterion (Figure~\ref{fig:xdomain}, Appendix~\ref{app:xdomain}).
+predictions that never move: five of twenty-one pairs exchange, and disregarding stereochemistry
+takes the fourth-placed system to first. An exchange describes the data; the claim is the
+interaction, corrected across the largest family declared in this work, the grid the two axes admit.
+Of its $448$ testable cells, $233$ have intervals excluding zero and $109$ survive Holm at $0.05$,
+concentrated at top-1, the number this field leads with (Appendix~\ref{app:xdomain}).
 
-\looseness=-1
 \looseness=-1
 \paragraph{Most of these margins were never resolvable.} Since the predictions are frozen, a paired
 bootstrap gives an interval on each margin directly. \textbf{Eleven of the twenty-one margins do not
@@ -448,10 +425,10 @@ without a budget, $C_{\text{bud}}$ those surviving the selector and $H$ those re
 \cdot\underbrace{\tfrac{|H|}{|C_{\text{bud}}|}}_{\text{ranking}},
 \qquad |U|=\textstyle\sum_{s\in S}|Y_s| ,
 \]
-exact by construction because each set contains the next: an accounting device, not a model, written
-in \emph{micro} because only that form multiplies out, with head-to-head comparisons in \emph{macro}
-and every figure stating which. MetaPredictor factorises $0.612\times0.804\times1.000$, exactly its
-realised recall, though a beam bounds that decode rather than the model (Appendix~\ref{app:seq2seq}).
+exact by construction because each set contains the next: an accounting device, not a model, in
+\emph{micro} because only that form multiplies out, with head-to-head comparisons in \emph{macro}.
+MetaPredictor factorises $0.612\times0.804\times1.000$, exactly its realised recall, though a beam
+bounds that decode rather than the model (Appendix~\ref{app:seq2seq}).
 
 \paragraph{The ceiling as a primitive.} Apply all \nbank\ rules to every test substrate and ask what
 fraction of references appears anywhere in the union. That \textbf{coverage ceiling} is the best
@@ -461,13 +438,13 @@ recall for any rule-grounded method, and reported as system reach in the sense o
 \S\ref{sec:enginereach}. The deployed pipeline converts only $32.5\%$ of its own ceiling into
 realised recall. Selection is where the loss sits, barely a third of what the bank reaches surviving
 the rule budget; the output cap binds on $308$ of \ntest\ substrates and all $29$ references lost
-between the budgeted pool and the emitted output fall on those. Ranking is close to lossless at $0.960$ $[0.941,0.976]$, and it is
-also close to free: re-ranking the same pool by Tanimoto similarity to the substrate, with nothing
-trained, reaches $0.342$ against the filter's $0.340$, a difference of $+0.002$ $[-0.004,+0.009]$,
-while reversing that order costs $0.040$ and shuffling it costs $0.015$. The learned filter has
-found the scaffold and, at this budget, not much past it. Applied to a second method the
-decomposition stops being self-diagnosis, since SyGMa decomposes on the same split with the inverse
-profile (Appendices~\ref{app:noselect} and~\ref{app:decompsygma}).
+between the budgeted pool and the emitted output fall on those. Ranking is close to lossless at $0.960$ $[0.941,0.976]$ and also
+close to free: re-ranking the same pool by Tanimoto similarity to the substrate, nothing trained,
+reaches $0.342$ against the filter's $0.340$, a difference of $+0.002$ $[-0.004,+0.009]$, while
+reversing that order costs $0.040$ and shuffling it costs $0.015$. The filter has found the scaffold
+and little past it. Applied to a second method the decomposition stops being self-diagnosis, since
+SyGMa decomposes with the inverse profile (Appendices~\ref{app:noselect}
+and~\ref{app:decompsygma}).
 
 \section{Results}
 \label{sec:results}
@@ -522,22 +499,21 @@ MetaPredictor  & & 0.362 & 0.504 & 0.504 & & $+0.142$ $[+0.079,+0.215]$ \\
 
 \looseness=-1
 \paragraph{Primary endpoint.} The endpoint is the differential sensitivity, the interaction between
-criterion and method, estimated by a paired bootstrap over substrates with $10{,}000$ resamples.
-Every method gains under a more tolerant criterion, so only the differential can change an ordering.
-On the $\nshared$-substrate subset two pairs separate along two criterion steps, BioTransformer
-gaining \interA\ \interAci\ more than GRAIL from canonical to tautomer matching and SyGMa
-\interB\ \interBci\ more than MetaTrans from canonical to InChIKey; the first survives correction
-at that family size and the second does not. The criterion is therefore a \textbf{method-dependent
-confounder}, not a neutral scoring choice. The declared families, every raw and adjusted
-$p$-value, and what was fixed in advance against what was not, are given in
-Appendix~\ref{app:holm}. The design was specified before the data; the families were declared after
-it, and are declared conservatively as the grid the axes admit.
+criterion and method, by a paired bootstrap over substrates with $10{,}000$ resamples. Every method
+gains under a more tolerant criterion, so only the differential can change an ordering. On the
+$\nshared$-substrate subset two pairs separate along two criterion steps, BioTransformer gaining
+\interA\ \interAci\ more than GRAIL from canonical to tautomer matching and SyGMa \interB\
+\interBci\ more than MetaTrans from canonical to InChIKey; the first survives correction at that
+family size and the second does not. The criterion is therefore a \textbf{method-dependent
+confounder}, not a neutral scoring choice. The declared families, every raw and adjusted $p$-value,
+and what was fixed in advance against what was not are in Appendix~\ref{app:holm}: the design was
+specified before the data, the families after it, declared as the grid the axes admit.
 
 \looseness=-1
 \paragraph{External replication.} The analysis is repeated on the field's de-facto external
-hold-out, the \nglory\ GLORYx drugs \citep{de_Bruyn_Kops_2020}. It is external for three of the four
-methods and not for ours: $24$ of the $37$ are in GRAIL's train or validation split, so its row uses
-the $13$ unseen.
+hold-out, the \nglory\ GLORYx drugs \citep{de_Bruyn_Kops_2020}: external for three of the four
+methods and not for ours, since $24$ of the $37$ are in GRAIL's train or validation split and its
+row uses the $13$ unseen.
 
 \looseness=-1
 The result this section rests on involves neither contaminated arm. Under strict InChIKey matching
@@ -551,12 +527,11 @@ reversing it, since the relaxed gap covers zero while still admitting SyGMa ahea
 
 
 \paragraph{The criterion moves human agreement.} The strongest evidence for declaring the criterion
-involves no model. Twenty-five external drugs are curated independently by two sources, and on the
-same drugs the two expert lists agree at a Jaccard of $0.145$ under strict \textsc{inchikey}
-matching and at $0.406$ under the tautomer-aware default, so notation accounts for a third of what
-reads as disagreement about observed chemistry and most of it survives the relaxation. The two curations also bound what a recall figure
-means, since one records only $0.539$ of the other and beyond that level recall measures one
-source's inclusion choices (Appendix~\ref{app:xdomain}).
+involves no model. Twenty-five external drugs are curated independently by two sources, and the two
+expert lists agree at a Jaccard of $0.145$ under strict \textsc{inchikey} matching and at $0.406$
+under the tautomer-aware default, so notation accounts for a third of what reads as disagreement
+about observed chemistry and most of it survives the relaxation. The two curations also bound what a
+recall figure means, since one records only $0.539$ of the other (Appendix~\ref{app:xdomain}).
 
 \paragraph{Mechanism.} Which relaxation dominates is a property of the reference set: stereochemistry here, tautomerism internally where references are already stereo-stripped. The effect needs references carrying representational variety and margins narrower than the differential.
 
@@ -660,16 +635,12 @@ leaderboards, and the population result is a bounded null.
 \label{sec:conclusion}
 
 \looseness=-2
-Four choices are settled before any model is compared: when two structures count as the same
-molecule, how many candidates a method may emit, how an engine applies a reaction template, and
-which population a dataset name refers to. None is routinely declared, all four can be read from files
-that are already public, and the part of a published ranking that survives every one of them is
-about a third. The fourth is two questions, and only one of them is a null: a split that mixes
-parent drugs with their own metabolites is one benchmark reporting one number for two tasks that
-methods are certifiably unequal at. Two move a published ordering and they break it differently: the budget reverses
-margins an interval separates from zero, the criterion exchanges systems a mature benchmark never
-separated. Declaring them is what the evidence supports; the budget supports more, since a set sized
-to the candidate pool beats every global budget on the same predictions.
+Four choices are settled before any model is compared, none is routinely declared, and the part of a
+published ranking that survives all four is about a third. Two of the four choices reorder a published leaderboard, and they do it
+differently: the budget reverses margins an interval separates from zero, the criterion exchanges
+systems a mature benchmark never separated. The remedy is not only to declare them. A bank's
+guaranteed reach restores the comparison its convention destroys, and a set sized to the candidate
+pool beats every global budget on the same predictions.
 
 \subsubsection*{Reproducibility statement}
 
