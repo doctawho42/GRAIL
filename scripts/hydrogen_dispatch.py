@@ -15,11 +15,17 @@ this from an oracle that would beat any global setting by construction.
 
 What the run reports is the residual, not the win:
 
-    residual = reach(dispatch) - max(reach(all explicit), reach(all implicit))
+    residual = reach(dispatch) - max over legitimate global settings
 
-Zero says the bank is single-convention and choosing the right global setting is the whole story;
-above zero says no global setting can express the bank and its reach is only well defined once the
-convention travels with the template. SyGMa is the null -- none of its 175 templates carries a
+The maximum ranges over the two settings someone might choose -- the implicit substrate, and the
+expanded one with the product contracted again -- and not over the arm that expands and never
+contracts, which is a defect rather than a convention. Measuring against that arm would credit
+dispatch with repairing a bug. The same restriction defines the guaranteed reach reported beside
+it, the least a bank recovers over the settings it might be run under.
+
+Zero residual says the bank is single-convention and choosing the right global setting is the whole
+story; above zero says no global setting can express the bank and its reach is only well defined
+once the convention travels with the template. SyGMa is the null -- none of its 175 templates carries a
 hydrogen atom, so dispatch must reduce to the identity and reproduce its implicit arm exactly.
 """
 from __future__ import annotations
@@ -98,46 +104,59 @@ def _init(rules, wants):
     _CTX["rest"] = [r for r, w in zip(rules, wants) if not w]
 
 
-def _apply(substrates, rules, wants, complete=False) -> list[str]:
+def _fragments(product, complete: bool):
+    """Readable fragments of one product, optionally contracting it first."""
+    if complete:
+        try:
+            product = Chem.RemoveHs(Chem.Mol(product), sanitize=False)
+            Chem.SanitizeMol(product)
+        except Exception:
+            return
+    try:
+        smiles = Chem.MolToSmiles(product)
+    except Exception:
+        return
+    for fragment in _clean_product_smiles(smiles):
+        try:
+            key = _normalize_smiles_cached(fragment, DEFAULT["norm"])
+        except Exception:
+            continue
+        if key:
+            yield key
+
+
+def _apply(substrates, rules, wants, both=False):
     """The deployed loop with the expansion decided per template rather than per run.
 
-    `complete` contracts the product before sanitisation. Expanding a substrate and leaving the
-    drawn hydrogen on the reacting atom refuses most of the fragments that follow, so an arm run
-    without the contraction measures an unfinished loop as well as a convention.
+    Contracting the product before sanitisation is what completes the loop: expanding a substrate
+    and leaving the drawn hydrogen on the reacting atom refuses most of the fragments that follow,
+    so an arm run without the contraction measures an unfinished loop as well as a convention.
+
+    The two arms differ only in that contraction, which happens after the templates have fired, so
+    `both` returns them from a single enumeration. Running them as separate passes would enumerate
+    the same reactions twice and cost half as much again for nothing.
     """
-    seen = set()
+    seen, completed = set(), set()
     for rule, want in zip(rules, wants):
         for product in _iter_reaction_products(substrates[want], rule):
-            if complete:
-                try:
-                    product = Chem.RemoveHs(Chem.Mol(product), sanitize=False)
-                    Chem.SanitizeMol(product)
-                except Exception:
-                    continue
-            try:
-                smiles = Chem.MolToSmiles(product)
-            except Exception:
-                continue
-            for fragment in _clean_product_smiles(smiles):
-                try:
-                    seen.add(_normalize_smiles_cached(fragment, DEFAULT["norm"]))
-                except Exception:
-                    continue
-    return [s for s in seen if s]
+            seen.update(_fragments(product, complete=False))
+            if both:
+                completed.update(_fragments(product, complete=True))
+    return (seen, completed) if both else seen
 
 
 def _worker(item):
-    """All three arms from two passes over the bank, on one substrate and one population.
+    """All four arms from two enumerations of the bank, on one substrate and one population.
 
-    The dispatch arm is only meaningful against the two global arms it is supposed to beat, so the
-    three have to be the same measurement with one thing varied. Reading a global arm out of another
-    artifact makes the residual a difference between populations, which is the defect this paper is
-    about; it is also unnecessary. Splitting the bank into the templates that want the expansion and
-    those that do not, and applying each subset under both conventions, costs exactly two passes
-    over the bank and yields all three arms by union:
+    The dispatch arm is only meaningful against the global arms it is supposed to beat, so they have
+    to be the same measurement with one thing varied. Reading a global arm out of another artifact
+    makes the residual a difference between populations, which is the defect this paper is about; it
+    is also unnecessary. Splitting the bank into the templates that want the expansion and those that
+    do not, and applying each subset to each presentation of the substrate, yields every arm by
+    union, and the contracted arm comes free from the expanded enumeration:
 
-        all-explicit = E(want) u E(rest)      all-implicit = I(want) u I(rest)
-        dispatch     = E(want) u I(rest)
+        all-explicit = E(want) u E(rest)      all-implicit  = I(want) u I(rest)
+        dispatch     = E(want) u I(rest)      completed     = C(want) u C(rest)
     """
     sub, trues = item
     mol = Chem.MolFromSmiles(sub)
@@ -145,12 +164,10 @@ def _worker(item):
         return sub, 0, 0, 0, 0, 0
     substrates = {True: Chem.AddHs(Chem.Mol(mol)), False: Chem.Mol(mol)}
     want, rest = _CTX["want"], _CTX["rest"]
-    e_want = set(_apply(substrates, want, [True] * len(want)))
-    e_rest = set(_apply(substrates, rest, [True] * len(rest)))
-    i_want = set(_apply(substrates, want, [False] * len(want)))
-    i_rest = set(_apply(substrates, rest, [False] * len(rest)))
-    c_want = set(_apply(substrates, want, [True] * len(want), complete=True))
-    c_rest = set(_apply(substrates, rest, [True] * len(rest), complete=True))
+    e_want, c_want = _apply(substrates, want, [True] * len(want), both=True)
+    e_rest, c_rest = _apply(substrates, rest, [True] * len(rest), both=True)
+    i_want = _apply(substrates, want, [False] * len(want))
+    i_rest = _apply(substrates, rest, [False] * len(rest))
     arms = {"dispatch": e_want | i_rest,
             "explicit": e_want | e_rest,
             "implicit": i_want | i_rest,
@@ -191,7 +208,6 @@ def run_bank(name: str, items, workers: int) -> dict:
     reach = reach_of(H)
     arms = {"all_explicit": reach_of(E), "all_implicit": reach_of(I),
             "all_explicit_completed": reach_of(Ccomp)}
-    best_global = max(arms.values())
     # The two global arms carry a claim of their own: which of two published banks reaches further
     # is decided by the convention. That claim is a paired difference on the same substrates, so it
     # gets the same treatment as the residual rather than a comparison of two marginal intervals.
@@ -206,20 +222,32 @@ def run_bank(name: str, items, workers: int) -> dict:
         "explicit_minus_implicit": round(float(d_arm.sum() / max(U.sum(), 1)), 4),
         "ci95": [round(arm_lo, 4), round(arm_hi, 4)],
         "excludes_zero": bool(arm_lo * arm_hi > 0)}
-    # the residual is paired: the same substrates carry both arms in the same run, so the
-    # difference can be resampled rather than compared across two marginal intervals
-    better = E if arms["all_explicit"] >= arms["all_implicit"] else I
+    # The residual is what dispatch adds over the best a single global setting could have done, so
+    # "best" has to range over settings someone might actually choose. `all_explicit` expands the
+    # substrate and never contracts the product; Section 4 calls that a defect, and measuring
+    # against it would credit dispatch with repairing a bug rather than with handling a mixed bank.
+    # The comparison is therefore against the two real conventions, and the same restriction gives
+    # the guaranteed reach: the least a bank recovers over the settings it might be run under.
+    legitimate = {"all_implicit": I, "all_explicit_completed": Ccomp}
+    best_name = max(legitimate, key=lambda k: reach_of(legitimate[k]))
+    better = legitimate[best_name]
+    best_global = reach_of(better)
+    worst_global = min(reach_of(v) for v in legitimate.values())
     d = H - better
     bt_d = np.array([d[j].sum() / max(U[j].sum(), 1) for j in idx])
     out = {"n_rules": len(rules), "dispatched_to_expanded": n_exp,
            "references": int(U.sum()), "recovered": int(H.sum()), "reach": reach,
            "ci95": [round(float(np.quantile(bt, .025)), 4),
                     round(float(np.quantile(bt, .975)), 4)],
-           "global_arms": arms, "global_arms_paired": arm_detail, "best_global": best_global,
+           "global_arms": arms, "global_arms_paired": arm_detail,
+           "legitimate_global_arms": list(legitimate),
+           "best_global": best_global, "best_global_arm": best_name,
+           "guaranteed_reach": worst_global,
            "residual_convention_dependence": round(reach - best_global, 4),
            "residual_ci95": [round(float(np.quantile(bt_d, .025)), 4),
                              round(float(np.quantile(bt_d, .975)), 4)]}
-    print(f"  {name}: dispatch {reach}, globals {arms}, "
+    print(f"  {name}: {int(H.sum())}/{int(U.sum())} references under dispatch = {reach}; "
+          f"globals {arms}; best legitimate {best_name} {best_global}, guaranteed {worst_global}; "
           f"residual {out['residual_convention_dependence']:+.4f} {out['residual_ci95']}", flush=True)
     return out
 

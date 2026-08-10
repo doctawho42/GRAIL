@@ -23,8 +23,7 @@ its uncapped emitted count: at $k=15$ SyGMa emits $14.53$ of the $80.83$ it woul
 
 \subsection{GRAIL does not win on recall}
 
-GRAIL loses on recall everywhere in this paper. Against SyGMa the margin is significant and
-certified: a paired difference of $-0.242$ in mean per-substrate recall, 95\%
+GRAIL loses on recall everywhere in this paper. Against SyGMa the margin is significant and separated: a paired difference of $-0.242$ in mean per-substrate recall, 95\%
 confidence interval $[-0.271,-0.212]$. A McNemar test on a different endpoint, whether each
 substrate yields any hit at all within the top 15, rejects at $p\approx1.7\times10^{-44}$; it
 corroborates the direction, not testing the margin. It also loses to the learned transformer baselines
@@ -72,7 +71,7 @@ quoted against one of those names cannot be read without knowing which set produ
 Whether it \emph{reorders} is a separate question with an estimand, and the estimand needs care. The
 smaller population is nested inside the larger, so a gap measured on the subset and a gap measured
 on the whole are not independent and their difference carries no honest interval. The complement, what the larger population has and the subset does not, is disjoint from the subset, so the
-contrast between subset and complement does. Reorderings below are reported against the whole population, which is the quantity a published table states; interactions are certified against the complement, which is the contrast that admits an interval.
+contrast between subset and complement does. Reorderings below are reported against the whole population, which is the quantity a published table states; interactions are tested against the complement, which is the contrast that admits an interval.
 
 Both instances are run this way. On our split the same three methods are scored under the same five
 criteria by the same estimator on the $\nshared$ substrates all five methods share and on the full
@@ -105,8 +104,7 @@ and the least sensitive $0.116$ and $0.202$. The median describes a typical comp
 maximum is what the family-wide statement needs, since a claim that no interaction of a given size is
 present anywhere must hold at the blindest test in the family, so the bound this appendix asserts is
 the second pair. Both are an order of magnitude above the criterion interactions that do survive
-correction, so these designs exclude a large effect and are silent about one of the size this paper
-certifies elsewhere. That is the sense in which the null is bounded, and it is the only sense
+correction, so these designs exclude a large effect and are silent about one of the size this paper corrects elsewhere. That is the sense in which the null is bounded, and it is the only sense
 claimed. On the released files $18$ of $380$ have intervals
 excluding zero, which is about what $380$ tests produce by chance. The reorderings are what a subset
 of four hundred and ninety reactions, or a hundred and fifty substrates, does on its own.
@@ -121,7 +119,7 @@ they share, all ten are comparable at once: \texttt{gln} leads at $0.574$ top-1 
 matching, ahead of \texttt{chemformer} at $0.567$ and \texttt{gta} at $0.551$. On its own cluster's
 five thousand reactions \texttt{gln} is fifth of seven at $0.525$. We state this ordering and
 decline to defend it, for exactly the reason above: it is measured on four hundred and ninety
-reactions, and nothing here certifies that it is not the same noise.
+reactions, and nothing here separates it from the same noise.
 
 \subsection{Which number is which}
 
@@ -129,7 +127,7 @@ Recall figures in this paper differ by population, aggregation, truncation and w
 predictions are collapsed, and several coincide in value without being the same quantity.
 Table~\ref{tab:provenance} states each one. Two readings follow from it directly. GRAIL's untruncated and $k{=}15$ figures are identical because it never emits more than fifteen, so
 the budget does not bind it. The SyGMa--MetaPredictor gap all but closes between the two
-rows, SyGMa ahead by $0.023$ untruncated and by $0.002$ at $k{=}15$, neither margin certified. That
+rows, SyGMa ahead by $0.023$ untruncated and by $0.002$ at $k{=}15$, neither margin separated. That
 is the budget parameter of \S\ref{sec:metric} acting on the leading pair rather than on ours.
 
 \begin{table}[h]
@@ -172,7 +170,7 @@ exactly.
 \subsection{The headline is one checkpoint}
 
 The deployed headline, recall@15 of $\realised$ micro and $\grailmacro$ macro, comes from a single
-checkpoint, not an average over seeds. The certification bounds variance in the evaluation
+checkpoint, not an average over seeds. The correction bounds variance in the evaluation
 (resampling and discordance over a fixed model), not variance in training across independently
 seeded runs. Retraining on three seeds confirms the headline is stable, at $0.344\pm0.010$ macro
 and $0.269\pm0.006$ micro, but the headline itself remains a single-checkpoint number.
@@ -258,12 +256,12 @@ SyGMa            & 0.029 & 0.562 & 0.051 & 0.028 & 74.2 & 3 & 5 \\
 \end{center}
 \end{table}
 
-Only one method moves with certification, and it is the one the decomposition names. On F1 the four
+Only one method moves by more than its own interval, and it is the one the decomposition names. On F1 the four
 selecting methods are mutually indistinguishable, every pairwise interval covering zero, the widest
 separation being GRAIL against MetaTrans at $-0.033$ $[-0.071,+0.004]$. SyGMa is below all four,
 $+0.092$ $[+0.063,+0.123]$ against GRAIL rising to $+0.125$ $[+0.103,+0.147]$ against MetaTrans.
 On recall it is above two of them, $-0.109$ $[-0.168,-0.052]$ against BioTransformer and $-0.197$
-$[-0.274,-0.120]$ against GRAIL. Those two pairs are the certified reversals: each is significant
+$[-0.274,-0.120]$ against GRAIL. Those two pairs are the separated reversals: each is significant
 in one direction on recall and in the other on F1.
 
 The remaining exchanges of place, MetaTrans past MetaPredictor at the top and BioTransformer past
@@ -289,7 +287,7 @@ stands on it.
 \small
 \begin{tabular}{lcccc}
 \toprule
-what is allowed to vary & cells & orderings & pairs changing sign & certified both ways \\
+what is allowed to vary & cells & orderings & pairs changing sign & separated both ways \\
 \midrule
 criterion and aggregate            & $20$ & $11$ & $9/10$ & $2/10$ \\
 criterion alone, at recall         & $5$  & $3$  & $2/10$ & $0/10$ \\
@@ -307,9 +305,9 @@ is the fallacy \S\ref{sec:rankflip} rejects, and it is available here to anyone 
 ourselves included.
 
 Which axis does the work is visible in the slices, and it is the one \S\ref{sec:metric} says it is.
-Holding the aggregate at recall, the criterion alone moves two pairs and certifies none: it erases
+Holding the aggregate at recall, the criterion alone moves two pairs and separates none: it erases
 gaps, not reordering. Holding the criterion fixed, the aggregate alone yields four distinct
-orderings from four cells, a different leaderboard for every aggregate, and certifies one. The
+orderings from four cells, a different leaderboard for every aggregate, and separates one. The
 count of orderings is not a property of how finely a sweep was gridded, since both axes here are
 enumerable and small; what a finer budget sweep would add is more cells, not more information.
 
@@ -353,6 +351,19 @@ predictions were frozen. A slot spent on the parent cannot score, so dropping it
 method spends one, which is ours most of all. It does not carry the result: with the parent left in,
 the four methods take the same three orderings at the same budgets and GRAIL's recall@$15$ moves
 from $0.265$ to $0.263$.
+
+\subsection{Every sentence that uses the word, and what entitles it}
+\label{app:claimwords}
+
+Section~\ref{sec:tame} reserves \emph{certified} for a difference that is separated and survives a
+correction inside a declared family, and lets \emph{separated} stand alone anywhere. A definition
+of that kind is worth nothing unless the manuscript obeys it, so obedience is checked rather than
+asserted: a released script scans every source file, finds every sentence carrying the stronger
+word, and matches it against the declared confirmatory comparisons or against a correction the
+sentence names itself. It exits non-zero on a sentence that does neither, which is what an earlier
+draft of this paper did in twenty-four places.
+
+\input{app/claimwords}
 
 \subsection{The multiplicity correction, and the family it is taken over}
 \label{app:holm}
@@ -416,7 +427,7 @@ $m=6$ and at $m=12$, and the two that fail are nowhere near their thresholds at 
 internal one is not. At $m=2$ or $m=10$ both internal interactions survive; at the family the
 search actually spanned, the GRAIL--BioTransformer interaction survives with room to spare while
 MetaTrans--SyGMa misses its threshold of $0.0026$ at $p=0.00335$. We report that second interaction
-as an uncorrected interval from here on and do not count it as certified. This is the one decision
+as an uncorrected interval from here on and do not count it as confirmatory. This is the one decision
 close enough to its threshold that the normal approximation matters, and it is decided against us,
 which is the direction in which an approximation is safe to use.
 
@@ -669,7 +680,7 @@ among a model's generations \citep{Polykovskiy_2020}. A model that emits a keto 
 one compound is credited with two molecules. We re-scored the published generations of all eight
 models MOSES ships samples for, 240{,}208 molecules, under the same five criteria.
 
-The criterion's effect here is certified and it is entirely stereochemical. Of $112$ paired
+The criterion's effect here is certified across a family of $112$ interactions and it is entirely stereochemical. Of $112$ paired
 interactions, every pair of models against every criterion step, $22$ have intervals excluding
 zero and $19$ survive Holm at $0.05$ across the family, and \textbf{all nineteen are the step from
 canonical to stereo-blind}. Not one interaction survives under InChIKey, Tanimoto or tautomer
@@ -686,7 +697,7 @@ admits: LatentGAN past the combinatorial baseline, an interaction of $-0.0093$
 $[-0.0109,-0.0076]$ that survives the same correction, swapping positions 5 and 6 under stereo-blind
 matching and under no other criterion.
 
-One exchange from a certified effect is the packing condition rather than a weak result. Seven of
+One exchange from a corrected effect is the packing condition rather than a weak result. Seven of
 the eight sit at $0.986$ or above, so almost every pair is separated by less than the effect can
 close, and the pair that is not, exchanges. This is the same asymmetry the external metabolite
 set shows, stereochemistry doing the work and tautomerism none; what differs between the domains is

@@ -347,7 +347,7 @@ That the other two choices move nothing is a statement about these $152$ rules u
 the first choice, and it generalises in neither direction on its own. Across the whole $\nbank$,
 under the convention the pipeline fires rules in, the normalisation knob is inert exactly:
 \textsc{canonical} and \textsc{standardize} both recover $454$ of $567$, the same references, and
-reproduce the committed ceiling to four decimals, which is also what certifies this loop at the
+reproduce the committed ceiling to four decimals, which is also what gates this loop at the
 scale of the bank, not of the shared subset. Expand the hydrogens first and the same two
 modes separate by one recovered reference. Whether a discretionary choice matters is therefore
 conditional on the other discretionary choices, and ``this one does not matter'' is a claim about a
@@ -916,7 +916,7 @@ measurement behind that, and the negative result that follows from it.
 
 Every method here emits a number of candidates fixed by convention rather than by the substrate, and
 no budget is selected in what follows: the F1-versus-$k$ curve is swept for each method, the
-orderings are read off the curves, and the one certified comparison is made at a $k$ fixed in
+orderings are read off the curves, and the one pre-fixed comparison is made at a $k$ fixed in
 advance. A budget chosen against the numbers it is reported on would be optimistically biased, and
 a reordering could be an artifact of the choice, so the choice is removed instead of corrected.
 
@@ -949,7 +949,7 @@ whichever methods emit less than the budget, and it is the budget rather than th
 decides. The magnitude is not a rounding effect: SyGMa's F1 at its best budget over
 $k \in [1,32]$ is $5.4$ times its F1 scored at the full output it emits.
 
-The binding is partial well below $15$ too, which is why the certified comparison is reported at
+The binding is partial well below $15$ too, which is why the comparison is reported at
 several budgets, not one. GRAIL is cut on $63.5\%$ of substrates at $k=5$ and $45.6\%$ at
 $k=8$, against SyGMa's $98.8\%$ and $96.5\%$. Against GRAIL, SyGMa is ahead by $0.083$
 $[0.065,0.100]$ at $k=3$, $0.071$ $[0.057,0.086]$ at $k=5$, $0.039$ $[0.026,0.052]$ at $k=8$ and
@@ -959,7 +959,7 @@ of one budget inside the region.
 \paragraph{What a compact output is and is not worth.} GRAIL returns $8.4$ candidates against
 SyGMa's $80.7$, which we have described as an operating point recall@$k$ does not express. The sweep
 prices it, and against us throughout. Truncation is free: any user preferring a shorter list can
-take SyGMa's top-$k$, and at every budget up to $13$ that shorter list beats GRAIL's, certified
+take SyGMa's top-$k$, and at every budget up to $13$ that shorter list beats GRAIL's, separated
 from $k=1$ to $k=10$. Emitting few candidates therefore confers no advantage that cutting a longer
 list would not also confer, at any budget below the field's, and GRAIL's lead at $k=15$ is the cap
 declining to bind it.
@@ -969,7 +969,7 @@ substrates, and SyGMa leads there too, by $0.038$ $[0.011,0.064]$. Every ranked 
 the parent removed, on tautomer-InChIKey equality with the substrate, so a method is never credited
 or charged for returning the compound it was given.
 
-For GRAIL the deployed operating point can also be certified against a fixed cut, because
+For GRAIL the deployed operating point can also be checked against a fixed cut, because
 its per-candidate ranking scores are released with the frozen predictions. Over the $1{,}166$ scored
 substrates, emitting as deployed scores $0.137$ against $0.196$ at $k=1$: a paired difference of
 $-0.058$, 95\% interval $[-0.075,-0.042]$.
@@ -1065,7 +1065,7 @@ transformer is the more robust of the two: a conclusion against our own system, 
 kind that attracts least scrutiny, resting on a measurement that cannot carry it. That conclusion
 would not even have been a marginal one: paired, the transformer's recall slope is shallower than
 GRAIL's by $-0.190$ $[-0.330,-0.044]$, an interval excluding zero. The axis would have delivered a
-certified transfer claim from a quantity that does not measure transfer, which is why the control
+confirmatory transfer claim from a quantity that does not measure transfer, which is why the control
 and not the interval width is what decides here.
 
 \subsection{Partial identification of the metric ordering under incomplete annotation}

@@ -657,3 +657,86 @@ def test_the_expansion_breaks_and_over_matches_as_the_paper_says():
     assert matches("[c;h1]", mol) > 0 and matches("[c;h1]", expanded) == 0
     # over-matching: a wildcard gains the drawn hydrogens as neighbours
     assert matches("[c]~[*]", expanded) > matches("[c]~[*]", mol)
+
+
+def test_contracting_a_product_does_not_depend_on_how_it_is_contracted():
+    """Completing the expanded loop is one call, and the alternative to it agrees with it.
+
+    An expanded substrate yields an expanded product, and the paper's engine term rests on
+    contracting that product before it is read. The contraction is a single ``RemoveHs``; the
+    objection to it is that ``AddHs`` marks heavy atoms as taking no implicit hydrogens, so
+    removing the drawn ones could leave an atom short of the hydrogens it should carry, and
+    silently, for whole reaction classes rather than for odd molecules.
+
+    The alternative restores that capacity first. If the objection held, the two would disagree on
+    some class; across the classes a metabolite bank is made of -- aliphatic and aromatic
+    hydroxylation, dealkylation that exposes an N-H, oxidation that changes charge, alkylation of
+    an aromatic N-H, S-oxidation, and a template that writes the hydrogen on both sides -- they do
+    not, so the term is not an artifact of the contraction.
+    """
+    from rdkit import Chem
+    from rdkit.Chem import AllChem
+
+    def contract_by_removing(product):
+        m = Chem.RemoveHs(Chem.Mol(product), sanitize=False)
+        Chem.SanitizeMol(m)
+        return Chem.MolToSmiles(m)
+
+    def contract_by_restoring_capacity(product):
+        m = Chem.Mol(product)
+        for atom in m.GetAtoms():
+            if atom.GetAtomicNum() > 1:
+                atom.SetNoImplicit(False)
+                atom.SetNumExplicitHs(0)
+        m = Chem.RemoveHs(m, sanitize=False)
+        Chem.SanitizeMol(m)
+        return Chem.MolToSmiles(m)
+
+    cases = [("[C:1][H]>>[C:1][OH]", "CC(C)=O"),
+             ("[c:1][H]>>[c:1][OH]", "C=Cc1ccccc1"),
+             ("[C:1]([H])>>[C:1]([H])O", "CC(C)=O"),
+             ("[N:1]>>[N+:1][O-]", "C1CCNCC1"),
+             ("[N:1][CH3:2]>>[N:1].[CH3:2]O", "CN1CCCCC1"),
+             ("[n:1][H]>>[n:1]C", "c1cc[nH]c1"),
+             ("[S:1]>>[S:1](=O)", "CSC"),
+             ("[C:1][H]>>[C:1]F", "CC(=O)Nc1ccc(O)cc1")]
+    compared = 0
+    for smirks, substrate in cases:
+        reaction = AllChem.ReactionFromSmarts(smirks)
+        expanded = Chem.AddHs(Chem.MolFromSmiles(substrate))
+        for products in reaction.RunReactants((expanded,)):
+            assert contract_by_removing(products[0]) == \
+                   contract_by_restoring_capacity(products[0]), smirks
+            compared += 1
+    assert compared >= 8
+
+
+def test_a_similarity_threshold_is_not_an_identity_relation():
+    """Tanimoto equal to one identifies molecules that are not the same molecule.
+
+    Published work compares Morgan fingerprints, so the criterion is reported; it is kept out of
+    the grid of candidate conventions because a cell of that grid has to be a possible answer to
+    "are these the same compound", and this one answers yes for a homologue and for an enantiomer.
+    """
+    from rdkit import Chem, DataStructs
+    from rdkit.Chem import rdFingerprintGenerator
+
+    generator = rdFingerprintGenerator.GetMorganGenerator(radius=2, fpSize=2048)
+
+    def fingerprint(smiles):
+        return generator.GetFingerprint(Chem.MolFromSmiles(smiles))
+
+    collisions = [("CCCCCCCCCC", "CCCCCCCCCCC"),      # decane against undecane
+                  ("CCCCCCCCC", "CCCCCCCCCCCC"),      # nonane against dodecane
+                  ("C[C@@H](N)C(=O)O", "C[C@H](N)C(=O)O")]  # D- against L-alanine
+    for left, right in collisions:
+        assert DataStructs.TanimotoSimilarity(fingerprint(left), fingerprint(right)) >= 1.0
+        assert Chem.MolToSmiles(Chem.MolFromSmiles(left)) != \
+               Chem.MolToSmiles(Chem.MolFromSmiles(right))
+
+    import sys
+    sys.path.insert(0, "scripts")
+    import robust_order_metabolite
+    assert "tanimoto1" not in robust_order_metabolite.MODES
+    import robust_order
+    assert "tanimoto1" not in robust_order.MODES

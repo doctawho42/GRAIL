@@ -1,0 +1,73 @@
+\label{app:robustorder}
+
+Fix a set of systems $S$, a set of items, and a grid $C$ of evaluation cells. In cell $c$ each
+system has a mean score, and those means induce a total order $\prec_c$ on $S$. A published table
+reports $\prec_{c_0}$ for one cell $c_0$ that its paper does not name. Write
+\[
+  \prec_{\!*} \;=\; \bigcap_{c\in C} \prec_c ,
+\]
+and say $a$ \emph{dominates} $b$ when $a \prec_{\!*} b$. Say the pair is \emph{separated in every
+cell} when in addition the paired bootstrap interval on the margin excludes zero in each $c$.
+
+\begin{quote}
+\textbf{Proposition 1.} $\prec_{\!*}$ is a strict partial order, and it is the finest relation on
+$S$ that no cell of $C$ can contradict.
+
+\emph{Proof.} An intersection of transitive, irreflexive relations is transitive and irreflexive.
+Any relation not contained in some $\prec_c$ contains a pair that cell orders the other way.
+\hfill$\square$
+\end{quote}
+
+\begin{quote}
+\textbf{Proposition 2.} If $C \subseteq C'$ then $\prec_{\!*}^{C'} \subseteq \prec_{\!*}^{C}$: the
+dominating set is monotone non-increasing in the grid, and so is the number of tiers.
+
+\emph{Proof.} Immediate from the definition as an intersection; the tier count is the longest chain
+of a smaller relation. \hfill$\square$
+\end{quote}
+
+Proposition 2 is the reason a single share is not a property of a leaderboard. It is a property of
+the pair (leaderboard, grid), it can only fall as a grid is widened, and any paper reporting one
+number could have reported a larger one by declaring fewer choices. The remedy used here is to
+report the curve rather than a point: each declared axis alone, and their product. The tables below
+give that curve for every leaderboard in the paper, together with the accuracy of every system in
+every cell, which is the table all the derived quantities are computed from.
+
+\paragraph{Three verdicts, not two.} A pair that does not dominate has failed in one of two ways
+that should not be added together. Some cell may put the two systems the other way round with a
+paired interval excluding zero, which is a choice deciding against the published ordering; or no
+cell may do so, in which case the published ordering merely fails to hold everywhere on a margin
+the benchmark cannot resolve. The first is called \emph{contested} and the second
+\emph{unresolved}, and only the count of contested pairs is evidence that a choice reverses
+anything. Counting sign changes alone would let noise on a tied pair read as a reversal, which is
+the error this instrument exists to avoid.
+
+\paragraph{A dual statistic.} The tier count says what survives; the number of distinct total
+orders the same systems take across the grid says how much varies. Neither is recoverable from the
+other: a leaderboard can take many orderings and still support several tiers if the systems that
+move are adjacent, and it can take few and support one if the pairs that never move are also never
+resolved.
+
+\paragraph{Which leaderboards the grid applies to, decided before the shares were read.} A grid
+cell has to be a choice the evaluation could have been made under. Two conditions decide it, and
+both exclude cells rather than admit them. First, a matching criterion has to be an identity
+relation: \textsc{tanimoto1} is reported in Table~\ref{tab:matchsens}, because published work
+compares Morgan fingerprints, but it is not a grid cell, since at radius $2$ over $2048$ bits it
+returns $1$ for decane against undecane and for D- against L-alanine, and a rule that identifies a
+homologue with its reference is not a candidate answer to whether two structures are the same
+compound. Second, the metric must be defined independently of the criterion. That is what excludes
+the molecular-generation set: its headline quantity counts \emph{distinct} canonical strings, so the
+criterion is not a parameter of the evaluation but part of the definition of what is being counted,
+and re-scoring it under another criterion changes the metric rather than the convention. The
+generation results are therefore reported in Appendix~\ref{app:xdomain} as a criterion sensitivity
+and not as a row here. Both rules were fixed before the shares below were read, and the second
+excludes the one leaderboard whose pairs are furthest apart, which would have raised the shares.
+
+\paragraph{What the share does not measure.} It is not an error rate and no cell is privileged.
+The instrument takes the grid as declared and says what part of a published ordering is invariant
+to it; whether a given cell is one a field would defend is a question about the field, argued in
+the text and not settled by the instrument. Nor is the interval on a share a statement about the
+grid: it resamples items with the grid held fixed, so it reports how much of the share is the
+sample. The grid's contribution is what Proposition 2 and the curve below report.
+
+\input{app/robust_tables}

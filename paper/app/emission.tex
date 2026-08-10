@@ -1,0 +1,70 @@
+\label{app:emissionrule}
+
+Every method compared here emits a number of candidates fixed by convention rather than by the
+substrate: a budget the field reports at, or whatever a threshold admits. The references are not
+shaped that way. Enzymes compete for one substrate, so its annotated products are alternatives drawn
+from a shared pool, and how many there are varies: the median substrate on the clean test split has
+one and the mean $2.22$, against a deployed policy that emits $8.4$ for every substrate alike.
+
+This appendix reports what that costs, with the ranking held fixed in every arm so that any
+difference is attributable to the size of the emitted set and to nothing else. Three quantities
+bound the question. The deployed budget is what the system ships. The best global constant is the
+best any budget-based policy could have done, chosen by looking at this split. Truncating each
+substrate at its own annotated count is the oracle: it is what perfect knowledge of the set size
+would be worth at this ranking quality, and it is not achievable.
+
+\paragraph{The comparison that decides the claim.} A relative rule emits while a candidate scores
+within a factor $\alpha$ of the leader, which is what a model normalised over its siblings does at
+inference. Against the deployed budget it gains $+0.074$ $[+0.059,+0.089]$ in macro F1, but that is
+the weak arm and the paper does not rest on it: the deployed budget is a policy this appendix is
+arguing against, and beating it shows only that fifteen is too many. The arm that decides whether
+the \emph{pool} is the right object is the best global constant, because a constant is precisely the
+policy that ignores the pool. Both arms are chosen with the same hindsight on the same split, which
+is stated rather than hidden, since neither is a forecast.
+
+\begin{center}\small
+\begin{tabular}{lcccl}
+\toprule
+policy & macro F1 & over the best constant & 95\% CI & separated \\
+\midrule
+deployed budget, $k=15$        & $0.136$ & $-0.059$ & --- & --- \\
+best global constant, $k=1$    & $0.195$ & --- & --- & --- \\
+\midrule
+relative rule, $\alpha=0.8$    & $0.201$ & $+0.0061$ & $[+0.0012,+0.0113]$ & yes \\
+relative rule, $\alpha=0.75$   & $0.202$ & $+0.0074$ & $[+0.0019,+0.0129]$ & yes \\
+relative rule, $\alpha=0.6$    & $0.206$ & $+0.0114$ & $[+0.0042,+0.0188]$ & yes \\
+\textbf{relative rule, $\alpha=0.5$} & $\mathbf{0.209}$ & $\mathbf{+0.0147}$ & $[+0.0059,+0.0237]$ & yes \\
+relative rule, $\alpha=0.4$    & $0.206$ & $+0.0108$ & $[+0.0015,+0.0204]$ & yes \\
+relative rule, $\alpha=0.3$    & $0.206$ & $+0.0113$ & $[+0.0005,+0.0221]$ & yes \\
+\midrule
+oracle: each substrate's own count & $0.214$ & $+0.0189$ & $[+0.0126,+0.0256]$ & yes \\
+forecast of that count             & $0.181$ & $-0.0140$ & $[-0.0262,-0.0015]$ & yes, worse \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\paragraph{The threshold is not fitted.} A rule that works at one value of a free parameter is a fit
+to the split it was tuned on. Sweeping $\alpha$ over ten values from $0.95$ to $0.1$ gives a
+plateau, not a spike: six consecutive values from $0.8$ down to $0.3$ beat the best constant with an
+interval excluding zero, the gain rises to $\alpha=0.5$ and falls away symmetrically, and the two
+extremes fail in the two ways they should. At $\alpha=0.95$ the rule is a constant of one and gains
+$+0.0013$ $[-0.0007,+0.0036]$; at $\alpha=0.1$ it admits nearly everything and loses. What the
+sweep shows is that the pool carries information about how many to emit across a wide band of
+thresholds, which is the claim; $0.5$ is where it is largest and is reported as such rather than
+as a tuned value.
+
+\paragraph{Four fifths of the oracle, without the oracle.} The relative rule reaches $+0.0147$ of
+an available $+0.0189$. That is the useful form of the result: the headroom over the best constant
+is small in absolute terms, and almost all of it is reachable without knowing anything the evaluator
+knows. Forecasting the count directly from the substrate, in contrast, is worse than the constant it
+replaces by an interval that excludes zero, so the count is not predictable from the substrate in
+the way the pool ordering is (Appendix~\ref{app:negative}).
+
+\paragraph{Where it does not hold.} The advantage is not uniform across the split's two populations
+(\S\ref{sec:robust}). On the $845$ parent drugs the rule reaches $0.236$ against the best constant's
+$0.215$; on the $325$ substrates that are themselves metabolites of another substrate here it
+reaches $0.140$ against $0.141$, so on the stratum where the model is weaker its scores say nothing
+about how many to emit. Under strict \textsc{inchikey} matching rather than the tautomer-aware
+default the rule reaches $0.205$ against $0.190$. The result is a property of one method's frozen
+scores on one corpus: it says that this pool is informative about this set size, not that relative
+emission is generally preferable.

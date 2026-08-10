@@ -24,6 +24,19 @@ A pair that does not dominate is one whose published ordering some declared choi
 that dominates without being certified is one the benchmark cannot resolve at its own sample size,
 which is a different failure and is counted separately rather than folded in.
 
+Sweeping a declared grid of defensible analytic choices and reporting what survives all of them is
+multiverse analysis (Steegen et al., 2016) and specification-curve analysis (Simonsohn et al., 2020);
+in machine learning the neighbouring practice is accounting for the variance a benchmark's own
+sources induce (Bouthillier et al., 2021). What is added here is specific and small: the object
+swept is a total ORDER rather than an estimate, the intersection of per-cell orders is therefore
+a partial order rather than a distribution, its share and its longest chain are two scalars, and
+both are computable from files the field has already released.
+
+Since domination is an intersection over cells, the share falls as cells are added and is a
+property of the pair (leaderboard, grid) rather than of the leaderboard. That is measured here
+rather than conceded: each declared axis is reported alone and against the product, so a reader can
+see the whole curve instead of one point on it.
+
 The point is not that these leaderboards are wrong. It is that the part of them that is safe to
 quote is computable from files that are already public, and is smaller than what is quoted.
 """
@@ -63,8 +76,28 @@ def _code_version() -> dict:
             "git_dirty": bool(_git("status", "--porcelain"))}
 
 
-def analyse(hits: dict, systems: list[str], cells: list, published_cell) -> dict:
-    """hits[(system, cell)] -> 0/1 vector over items, aligned across systems."""
+def _tiers(systems: list[str], edges: dict) -> int:
+    """Longest chain in a strict partial order: how many places the order still distinguishes."""
+    memo: dict = {}
+
+    def chain(n):
+        if n not in memo:
+            memo[n] = 1 + max((chain(c) for c in edges.get(n, ())), default=0)
+        return memo[n]
+
+    return max(chain(n) for n in systems)
+
+
+def analyse(hits: dict, systems: list[str], cells: list, published_cell,
+            sub_grids: dict | None = None) -> dict:
+    """hits[(system, cell)] -> 0/1 vector over items, aligned across systems.
+
+    A pair is classified three ways rather than two. It *dominates* when the published ordering has
+    a positive margin in every cell; it is *contested* when some cell puts the two systems the other
+    way round with an interval excluding zero; and it is *unresolved* when neither holds, which is
+    the benchmark failing to decide rather than a choice deciding against it. Reporting only the
+    first would let sign noise on a tied pair count as evidence that a choice reversed something.
+    """
     n = len(next(iter(hits.values())))
     rng = np.random.default_rng(SEED)
     idx = rng.integers(0, n, (N_BOOT, n))
@@ -72,33 +105,42 @@ def analyse(hits: dict, systems: list[str], cells: list, published_cell) -> dict
     published = sorted(systems, key=lambda s: -float(hits[(s, published_cell)].mean()))
     rank = {s: i for i, s in enumerate(published)}
 
-    pairs = {}
+    pairs, boot = {}, {}
     for a, b in itertools.combinations(systems, 2):
         # orient the pair the way the published cell orders it, so "survives" means what a reader
         # of that table would have concluded is still true in every other cell
         hi_, lo_ = (a, b) if rank[a] < rank[b] else (b, a)
+        name = f"{hi_} over {lo_}"
         per_cell = {}
         for c in cells:
             d = hits[(hi_, c)] - hits[(lo_, c)]
             bt = d[idx].mean(axis=1)
+            boot[(name, str(c))] = bt
             l, h = float(np.quantile(bt, .025)), float(np.quantile(bt, .975))
             per_cell[str(c)] = {"margin": round(float(d.mean()), 4),
                                 "ci95": [round(l, 4), round(h, 4)],
                                 "positive": bool(d.mean() > 0),
-                                "certified": bool(l > 0)}
+                                "separated": bool(l > 0),
+                                "separated_the_other_way": bool(h < 0)}
         dominates = all(v["positive"] for v in per_cell.values())
-        certified = all(v["certified"] for v in per_cell.values())
+        separated = all(v["separated"] for v in per_cell.values())
+        contested = any(v["separated_the_other_way"] for v in per_cell.values())
         flips = [k for k, v in per_cell.items() if not v["positive"]]
-        pairs[f"{hi_} over {lo_}"] = {
-            "dominates": dominates, "certified": certified,
+        pairs[name] = {
+            "dominates": dominates, "separated_in_every_cell": separated,
+            "contested": contested,
+            "resolved_in_the_published_cell": per_cell[str(published_cell)]["separated"],
             "cells_that_reverse_it": flips,
+            "cells_that_reverse_it_with_an_interval": [k for k, v in per_cell.items()
+                                                       if v["separated_the_other_way"]],
             "cells_it_is_not_resolved_in": [k for k, v in per_cell.items()
-                                            if v["positive"] and not v["certified"]],
+                                            if v["positive"] and not v["separated"]],
             "per_cell": per_cell}
 
     n_pairs = len(pairs)
     n_dom = sum(v["dominates"] for v in pairs.values())
-    n_cert = sum(v["certified"] for v in pairs.values())
+    n_sep = sum(v["separated_in_every_cell"] for v in pairs.values())
+    n_con = sum(v["contested"] for v in pairs.values())
 
     # The share of surviving pairs is the honest number and not the readable one. The readable one
     # is how many places the leaderboard still distinguishes: the longest chain in the dominance
@@ -109,22 +151,61 @@ def analyse(hits: dict, systems: list[str], cells: list, published_cell) -> dict
         hi_, lo_ = k.split(" over ")
         if v["dominates"]:
             edges.setdefault(hi_, set()).add(lo_)
-    memo: dict = {}
+    tiers = _tiers(systems, edges)
 
-    def chain(n):
-        if n not in memo:
-            memo[n] = 1 + max((chain(c) for c in edges.get(n, ())), default=0)
-        return memo[n]
+    # The dual statistic: how many different total orders the same systems take across the grid.
+    # Tiers say what is invariant, this says how much varies, and neither is recoverable from the
+    # other.
+    per_cell_orders = {str(c): tuple(sorted(systems, key=lambda s: -float(hits[(s, c)].mean())))
+                       for c in cells}
+    distinct = len(set(per_cell_orders.values()))
 
-    tiers = max(chain(n) for n in systems)
-    return {"published_order": published, "published_cell": str(published_cell),
+    # An interval on the share itself. Resampling items and recomputing the whole classification
+    # says how much of the share is the sample rather than the systems; it says nothing about the
+    # grid, which is what the sub-grid curve below is for.
+    stack = np.stack([np.stack([boot[(p, str(c))] for c in cells]) for p in pairs])  # pair,cell,B
+    share_bt = (stack > 0).all(axis=1).mean(axis=0)
+    share_ci = [round(float(np.quantile(share_bt, .025)), 4),
+                round(float(np.quantile(share_bt, .975)), 4)]
+
+    # Domination is an intersection over cells, so the share can only fall as cells are added. That
+    # makes it a property of (leaderboard, grid) and not of the leaderboard, which is worth
+    # measuring rather than conceding: each declared axis is reported alone and against the product.
+    curve = {}
+    for label, sub in (sub_grids or {}).items():
+        keys = [str(c) for c in sub]
+        d_ = sum(all(pairs[p]["per_cell"][k]["positive"] for k in keys) for p in pairs)
+        s_ = sum(all(pairs[p]["per_cell"][k]["separated"] for k in keys) for p in pairs)
+        e_: dict = {}
+        for p in pairs:
+            if all(pairs[p]["per_cell"][k]["positive"] for k in keys):
+                hi_, lo_ = p.split(" over ")
+                e_.setdefault(hi_, set()).add(lo_)
+        curve[label] = {"n_cells": len(sub), "n_dominating": d_,
+                        "share": round(d_ / max(n_pairs, 1), 4),
+                        "n_separated_in_every_cell": s_,
+                        "tiers": _tiers(systems, e_),
+                        "distinct_orderings": len({per_cell_orders[k] for k in keys})}
+
+    resolvable = [p for p, v in pairs.items() if v["resolved_in_the_published_cell"]]
+    # Every derived quantity above is a function of this table, so releasing it is what makes the
+    # share reconstructible rather than asserted.
+    acc = {s: {str(c): round(float(hits[(s, c)].mean()), 4) for c in cells} for s in systems}
+    return {"system_accuracy_by_cell": acc, "n_items": int(n),
+            "published_order": published, "published_cell": str(published_cell),
             "n_systems": len(systems), "n_cells": len(cells), "n_pairs": n_pairs,
-            "n_dominating": n_dom, "n_certified": n_cert,
-            "tiers_distinguished": tiers,
+            "n_dominating": n_dom, "n_separated_in_every_cell": n_sep, "n_contested": n_con,
+            "tiers_distinguished": tiers, "distinct_orderings_across_the_grid": distinct,
             "robustness": round(n_dom / max(n_pairs, 1), 4),
-            "certified_robustness": round(n_cert / max(n_pairs, 1), 4),
+            "robustness_ci95": share_ci,
+            "separated_share": round(n_sep / max(n_pairs, 1), 4),
             "reversed_by_some_cell": n_pairs - n_dom,
-            "unresolved_though_never_reversed": n_dom - n_cert,
+            "reversed_with_an_interval": n_con,
+            "unresolved_though_never_reversed": n_dom - n_sep,
+            "n_resolved_in_the_published_cell": len(resolvable),
+            "robustness_among_resolved": round(
+                sum(pairs[p]["dominates"] for p in resolvable) / max(len(resolvable), 1), 4),
+            "sub_grids": curve, "per_cell_orders": {k: list(v) for k, v in per_cell_orders.items()},
             "pairs": pairs}
 
 
@@ -147,6 +228,10 @@ def retro_leaderboard(cluster: str, directory: Path, max_rank: int, workers: int
         cache_path.write_text(json.dumps(cached))
 
     cells = [(m, k) for m in MODES for k in KS]
+    published_cell = ("canonical", 1)
+    sub_grids = {"criteria only, at the published budget": [(m, published_cell[1]) for m in MODES],
+                 "budgets only, at the published criterion": [(published_cell[0], k) for k in KS],
+                 "the product": cells}
     hits = {(n, c): np.zeros(len(rows)) for n in systems for c in cells}
     for j, row in enumerate(rows):
         for mode in MODES:
@@ -166,7 +251,7 @@ def retro_leaderboard(cluster: str, directory: Path, max_rank: int, workers: int
                     if first <= k:
                         hits[(n, (mode, k))][j] = 1.0
     # the cell these tables are published in: strict matching at the budget the field leads with
-    return analyse(hits, systems, cells, ("canonical", 1))
+    return analyse(hits, systems, cells, published_cell, sub_grids)
 
 
 def main() -> int:
@@ -190,13 +275,21 @@ def main() -> int:
         print(f"\n{cluster}: {r['n_systems']} systems, {r['n_cells']} cells, {r['n_pairs']} pairs")
         print(f"  published order at {r['published_cell']}: {' > '.join(r['published_order'])}")
         print(f"  survive every cell:            {r['n_dominating']}/{r['n_pairs']} "
-              f"= {r['robustness']}")
-        print(f"  and certified in every cell:   {r['n_certified']}/{r['n_pairs']} "
-              f"= {r['certified_robustness']}")
+              f"= {r['robustness']} {r['robustness_ci95']}")
+        print(f"  and separated in every cell:   {r['n_separated_in_every_cell']}/{r['n_pairs']}")
+        print(f"  reversed with an interval:     {r['reversed_with_an_interval']}")
+        print(f"  reversed on sign alone:        "
+              f"{r['reversed_by_some_cell'] - r['reversed_with_an_interval']}")
+        print(f"  never reversed but unresolved: {r['unresolved_though_never_reversed']}")
         print(f"  tiers it still distinguishes:  {r['tiers_distinguished']} "
               f"of {r['n_systems']} published places")
-        print(f"  reversed by some cell:         {r['reversed_by_some_cell']}")
-        print(f"  never reversed but unresolved: {r['unresolved_though_never_reversed']}")
+        print(f"  distinct orderings on the grid:{r['distinct_orderings_across_the_grid']} "
+              f"of {r['n_cells']} cells")
+        print(f"  among pairs its own cell resolves: {r['robustness_among_resolved']} "
+              f"({r['n_resolved_in_the_published_cell']} pairs)")
+        for lab, v in r["sub_grids"].items():
+            print(f"    {lab:44} {v['n_cells']:2} cells -> {v['n_dominating']}/{r['n_pairs']} "
+                  f"= {v['share']}, {v['tiers']} tiers, {v['distinct_orderings']} orderings")
 
     Path(args.out).write_text(json.dumps(rep, indent=1))
     print(f"\nwrote {args.out}")

@@ -63,7 +63,7 @@ interval separates from zero: one method is last at tight budgets and first at t
 reports, with its ranking held fixed. The matching criterion does something else. Re-scoring the released predictions of eleven
 retrosynthesis systems exchanges positions inside the largest group that shares a test set, at the
 top-1 accuracy those tables lead with, and every pair it exchanges is one the benchmark never
-separated; where a separation is certified, the criterion erases it instead of reversing it. The engine convention decides no ordering but decides what a bank reaches: one
+separated; where a separation holds, the criterion erases it instead of reversing it. The engine convention decides no ordering but decides what a bank reaches: one
 published rule base loses three quarters of its references when the hydrogens it was written for are
 withdrawn, another gains slightly, so a coverage figure is the value of a bank together with a
 convention and is not comparable across papers that state only the bank. The fourth choice is two
@@ -72,7 +72,7 @@ decide anything: eleven files sit on three sets under one name and no interactio
 the population survives correction, a null that excludes only effects much larger than the ones the
 criterion produces. Which population a single split mixes is undeclared and does decide: one split
 here is part parent drugs and part their own metabolites, and how much a method loses between the
-two differs certifiably by method.
+two differs by method by more than a paired interval admits.
 
 A benchmark is most exposed where its leading systems are closest, which a table of eight published
 molecular generators shows from the other side: almost no pair on it is close enough to cross, and
@@ -207,6 +207,17 @@ literature is older, having long evaluated ranked output at a declared cut-off
 recording propensity \citep{Joachims_2017}, and with the winner of a cut-off metric changing with
 how the candidates entering it are counted \citep{Krichene_2020}.
 
+\looseness=-1
+\paragraph{Sweeping the choices rather than fixing them.} Computing a result in every cell of a
+declared grid of defensible analytic choices, and reporting what survives all of them, is multiverse
+analysis \citep{Steegen_2016} and specification-curve analysis \citep{Simonsohn_2020}; the
+machine-learning counterparts account for the variance a benchmark's own sources induce
+\citep{Bouthillier_2021} and test a claim jointly across datasets \citep{Dror_2017}. Those designs
+sweep an \emph{estimate}. Section~\ref{sec:robust} sweeps an \emph{order}, which behaves
+differently: the intersection of the per-cell orders is a partial order rather than a distribution,
+so what survives is a relation with a share and a longest chain, both scalars and both computable
+from released prediction files without rerunning any system.
+
 \paragraph{Staged evaluation.} Separating what a candidate generator reaches from what a later
 stage retains is standard: cascade ranking prunes stage by stage \citep{Wang_2011_cascade},
 recommendation is built as candidate generation followed by ranking \citep{Covington_2016},
@@ -267,12 +278,21 @@ cross-split similarity on comparable tasks; the leak that matters here is substr
 \paragraph{Metrics and inference.} Results are reported as recall@$k$ together with the mean output
 size. Precision alone is unsuitable under incomplete annotation, where an unannotated but real
 metabolite counts as a false positive; recall alone is unsuitable because a method can raise it by
-emitting more (Appendix~\ref{app:budget}). Three comparisons are confirmatory and each is corrected for
-multiplicity: the differential criterion sensitivity of \S\ref{sec:rankflip}, the learned-against-prior
-gap of \S\ref{sec:xmc}, and the cross-domain interaction, whose $448$ tests form one family. All remaining intervals are exploratory. A difference is called
-\emph{certified} below when its paired interval excludes zero and it survives Holm correction in its
-declared family; others are called observed. Model and configuration selection is on validation data, with two
-exceptions stated in Appendix~\ref{app:arch}.
+emitting more (Appendix~\ref{app:budget}).
+
+\looseness=-1
+Two words are used throughout and they are not interchangeable. A difference is \emph{separated}
+when its paired bootstrap interval excludes zero, which needs no family and is the only claim made
+about an exploratory quantity. A difference is \emph{certified} when it is separated \emph{and}
+survives Holm correction inside a family declared in advance of reading it. Three comparisons are
+confirmatory and only they are ever called certified: the differential criterion sensitivity of
+\S\ref{sec:rankflip}, the learned-against-prior gap of \S\ref{sec:xmc}, and the cross-domain
+interaction, whose $448$ tests form one family. Two further families are corrected without being
+confirmatory, the $54$-cell budget sweep and the $440$ population interactions, and are called
+corrected rather than certified. Every remaining interval is exploratory, and every use of either
+word is listed against its family and adjusted $p$ in Appendix~\ref{app:holm}. Model and
+configuration selection is on validation data, with two exceptions stated in
+Appendix~\ref{app:arch}.
 
 \section{What a rule base reaches depends on the engine that applies it}
 \label{sec:enginereach}
@@ -292,7 +312,7 @@ that is not the convention. Expanding a substrate and never contracting the prod
 hydrogen on the reacting atom; one call restores it, lifting the expanded arm to $0.342$
 $[0.320,0.365]$, worth $+0.142$ $[+0.125,+0.160]$, and what survives against the unexpanded arm is
 $+0.047$ $[+0.038,+0.057]$. Three quarters of the apparent effect is a missing call and a quarter
-the convention, both certified. The whole distance between the two
+the convention, both separated. The whole distance between the two
 configurations is $+0.339$: the engine term as the two programs stand, $+0.188$ $[+0.170,+0.205]$,
 $+0.145$ $[+0.128,+0.162]$ from the $23$ rules our bank lacks, and $+0.0065$ $[+0.0038,+0.0096]$
 from composing steps.
@@ -344,10 +364,10 @@ defect and the third is repairable by dispatching the convention per template
 A leaderboard reports a total order, computed in one cell of a grid of choices its paper does not
 report because the cell is not thought of as a parameter. Fix the items and the predictions and ask
 of each pair whether the ordering the table asserts holds in every other cell too. Say the higher system \emph{dominates} the lower when the margin is positive in every cell, and
-that the domination is \emph{certified} when a paired interval excludes zero in every cell.
+that it is \emph{separated in every cell} when a paired interval excludes zero in each.
 Domination is the intersection of the per-cell orders, so it is transitive and is the finest
-relation no declared choice can contradict; certified domination is a sub-relation of it, reported
-separately because an interval condition is not transitive.
+relation no declared choice can contradict; separation in every cell is a sub-relation of it,
+reported separately because an interval condition is not transitive.
 
 \looseness=-1
 The share that dominate is what a reader can quote without naming the cell, computable from released
@@ -356,7 +376,7 @@ prediction files alone.
 \begin{center}
 \begin{tabular}{lccc}
 \toprule
-leaderboard & grid & dominate & certified \\
+leaderboard & grid & dominate & separated \\
 \midrule
 retrosynthesis, seven systems & $4$ criteria $\times$ $4$ budgets & $8$ of $21$ & $7$ \\
 retrosynthesis, three systems & $4$ criteria $\times$ $4$ budgets & $0$ of $3$  & $0$ \\
@@ -387,10 +407,10 @@ concentrated at top-1, the number this field leads with (Appendix~\ref{app:xdoma
 \paragraph{Most of these margins were never resolvable.} Since the predictions are frozen, a paired
 bootstrap gives an interval on each margin directly. \textbf{Eleven of the twenty-one margins do not
 separate from zero, and five of the six adjacent margins in the published order do not.} The
-smallest margin this benchmark certifies is $0.0146$ against a criterion movement of $0.015$, and
+smallest margin this benchmark separates is $0.0146$ against a criterion movement of $0.015$, and
 the three-system group's narrowest is $0.0213$, so
 what the criterion exchanges are pairs the benchmark never separated, and where a separation is
-certified it erases the gap instead of reversing it.
+separated it erases the gap instead of reversing it.
 
 \looseness=-1
 \paragraph{One split, two populations.} A benchmark can mix populations without changing its name.
@@ -400,7 +420,7 @@ swallows and another about what is left of it, and both are averaged into one nu
 not interchangeable and methods do not treat them alike: between them GRAIL loses $0.152$
 $[0.101,0.202]$ of recall while MetaPredictor loses $0.001$ $[-0.053,0.057]$, an interaction of
 $+0.150$ $[+0.084,+0.216]$, and against SyGMa $+0.116$ $[+0.051,+0.181]$. The ordering of the two
-comparators exchanges between the populations, though that exchange is not certified. No paper
+comparators exchanges between the populations, though that exchange is not separated. No paper
 reporting a number on this split reports the mixture it is averaged over.
 
 \looseness=-1
@@ -546,9 +566,9 @@ recall figure means, since one records only $0.539$ of the other (Appendix~\ref{
 \looseness=-1
 Intervals in this subsection are exploratory except the budget sweep, whose family is declared below. A method that emits eighty candidates to catch a
 few more references is rewarded by recall and punished by F1, and on each method's deployed output
-set the two orderings disagree. Against GRAIL the disagreement is certified in both directions:
+set the two orderings disagree. Against GRAIL the disagreement is separated in both directions:
 SyGMa leads on recall by $0.253$ $[0.222,0.283]$ and sits $0.088$ $[0.076,0.099]$ below it on F1.
-Against MetaPredictor only the F1 direction is certified, at $0.113$ $[0.107,0.120]$, while SyGMa's
+Against MetaPredictor only the F1 direction is separated, at $0.113$ $[0.107,0.120]$, while SyGMa's
 recall lead of $0.023$ rests on an interval bounded at zero and is bought by emitting $80.7$
 candidates against $10.8$.
 
@@ -558,9 +578,9 @@ moves the emitted count with the method and its ranking held fixed, so a reorder
 cannot be a property of any one system. MetaPredictor's count has been moved the other way with the
 model fixed too, $10.9$ distinct candidates to $34.3$ at a wider beam (Appendix~\ref{app:seq2seq}). It
 reorders without any budget having to be chosen: swept over $k$ in macro F1 the three methods take
-three distinct orderings, SyGMa above GRAIL at every budget up to $13$, certified from $k=1$ to
+three distinct orderings, SyGMa above GRAIL at every budget up to $13$, separated from $k=1$ to
 $k=10$ and by $0.071$ $[0.057,0.086]$ at $k=5$, and below from $14$ on, where the field's $15$ sits,
-that second half observed rather than certified. A
+that second half neither separated nor corrected. A
 fourth method exhausts the field: on $291$ substrates carrying all four, MetaTox at $33.6$
 candidates is last at $k\le5$ and first from $k=15$, the budget this field reports at. Four of the
 six pairs change sign along that sweep and three change it between margins that each separate from
@@ -571,8 +591,8 @@ $0.072$ against SyGMa's $0.239$. The F1 ordering changes along the sweep too
 substrates and GRAIL on none (Appendix~\ref{app:props}).
 
 \looseness=-1
-Every certified reversal along the sweep involves the one method that overproduces, and none
-certifies among methods emitting alike, which is a failure to detect: those pairs leave intervals up
+Every corrected reversal along the sweep involves the one method that overproduces, and none
+survives correction among methods emitting alike, which is a failure to detect: those pairs leave intervals up
 to $0.158$ open. The matching rule acts independently of the budget: matched at about
 eight emitted candidates, GRAIL's sensitivity sits below both comparators by $-0.0195$
 $[-0.029,-0.010]$ and $-0.025$ $[-0.035,-0.015]$, so the criterion separates methods at fixed
@@ -583,7 +603,7 @@ The decomposition says why: SyGMa's selection factor is $1$ (\S\ref{sec:decomp})
 recall rewards and precision punishes, so a pipeline with no selection stage is scored relatively
 higher by the first than by the second. The matching criterion acts on these metrics as well, and it
 acts where it barely touched recall.
-The F1 gap between GRAIL and MetaPredictor is certified under four of the five criteria, at $-0.026$
+The F1 gap between GRAIL and MetaPredictor is separated under four of the five criteria, at $-0.026$
 $[-0.038,-0.013]$ under the tautomer-aware default, and is indistinguishable from zero under plain
 \textsc{inchikey}. That is an erased gap and not a reversal, and it shows that the matching rule and
 the output size do not act on the same comparisons (Appendix~\ref{app:props}).
@@ -601,9 +621,13 @@ for every substrate alike. Holding the ranking fixed and changing only how many 
 deployed $k=15$ scores $0.136$ macro F1, the best global constant $0.195$, and truncating each
 substrate at its own annotated count $0.214$. A rule that reads the pool instead of a constant
 recovers almost all of that: emitting while a candidate scores within half the leader's score gives
-$0.209$, a paired $+0.074$ $[+0.059,+0.089]$ over the deployed policy and above every global
-constant. Forecasting the count from the substrate alone fails instead
-(Appendix~\ref{app:negative}), so what the pool supports is a relative rule, which is what a model
+$0.209$. The comparison that decides the claim is not against the deployed policy, which the same
+paragraph discredits and beats by $+0.074$ $[+0.059,+0.089]$, but against the best constant, which
+is chosen with the same hindsight on the same split and is therefore the harder arm: $+0.0147$
+$[+0.0059,+0.0237]$, separated, against an oracle headroom over that constant of $0.019$. Four
+fifths of what knowing each substrate's own count would be worth is available without knowing it.
+Forecasting the count from the substrate alone fails instead
+(Appendices~\ref{app:emission} and~\ref{app:negative}), so what the pool supports is a relative rule, which is what a model
 normalised over siblings would learn. The advantage is not uniform: on the $845$ parent drugs the
 rule reaches $0.236$ against the best constant's $0.215$, and on the $325$ substrates that are
 themselves metabolites $0.140$ against $0.141$, so where the model is weaker its scores say less
@@ -697,6 +721,10 @@ none of its $150$. The audit is released as a script.
 \label{app:formal}
 \input{app/formal}
 
+\section{The robust order: definitions, propositions and the tables behind the share}
+\label{app:robust}
+\input{app/robust}
+
 \section{Diagnosis of the recall shortfall}
 \label{app:props}
 \input{app/props}
@@ -720,6 +748,10 @@ none of its $150$. The audit is released as a script.
 \section{Budget-matched comparison}
 \label{app:budget}
 \input{app/budget}
+
+\section{The pool-relative emission rule}
+\label{app:emission}
+\input{app/emission}
 
 \section{What the measurements point at, and what they do not}
 \label{app:design}

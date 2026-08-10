@@ -1080,12 +1080,33 @@ def main() -> int:
                        "matched" if mg else "not matched", ""))
         if mg:
             src = str(hy2.relative_to(ROOT))
+            # The minimum is over CONVENTIONS a bank might legitimately be run under, which are the
+            # implicit substrate and the expanded one with the product contracted again. The third
+            # arm in the artifact expands and never contracts; Section 4 calls that a defect, so
+            # taking a minimum over it would report a program's bug as a property of a rule base --
+            # the same control-arm defect this paper names. A bank whose completed arm is missing
+            # has no guaranteed reach to report and the gate says so rather than substituting.
+            def legit(bank):
+                a = H2[bank]["global_arms"]
+                if a.get("all_explicit_completed") is None:
+                    raise KeyError(f"{bank}: no completed-loop arm; rerun hydrogen_dispatch")
+                return {k: v for k, v in a.items()
+                        if v is not None and k != "all_explicit"}
+
             for bank, lo_g, hi_g in (("grail_full", 1, 2), ("sygma_175", 3, 4),
                                      ("biotransformer", 5, 6)):
-                arms = {k: v for k, v in H2[bank]["global_arms"].items() if v is not None}
+                try:
+                    arms = legit(bank)
+                except KeyError as e:
+                    checks.append((False, f"guaranteed reach, {bank}", "a completed-loop arm",
+                                   str(e), src))
+                    continue
                 check(f"guaranteed reach, {bank}", mg.group(lo_g), round(min(arms.values()), 3), src)
                 check(f"best reach, {bank}", mg.group(hi_g), round(max(arms.values()), 3), src)
-            bt = {k: v for k, v in H2["biotransformer"]["global_arms"].items() if v is not None}
+            try:
+                bt = legit("biotransformer")
+            except KeyError:
+                bt = {"x": 1.0}
             ratio = max(bt.values()) / max(min(bt.values()), 1e-9)
             checks.append((3.5 <= ratio <= 4.5, "BioTransformer's published figure is four times "
                            "its guarantee", "about four", f"{ratio:.2f}x", src))
@@ -1228,8 +1249,8 @@ def main() -> int:
         flat = re.sub(r"\s+", " ", whole)
         me = re.search(r"the deployed \$k=15\$ scores \$([\d.]+)\$ macro F1, the best global "
                        r"constant \$([\d.]+)\$, and truncating each substrate at its own annotated "
-                       r"count \$([\d.]+)\$.*?within half the leader's score gives \$([\d.]+)\$, a "
-                       r"paired \$\+([\d.]+)\$ \$\[\+([\d.]+),\+([\d.]+)\]\$", flat)
+                       r"count \$([\d.]+)\$.*?within half the leader's score gives \$([\d.]+)\$\..*?"
+                       r"beats by \$\+([\d.]+)\$ \$\[\+([\d.]+),\+([\d.]+)\]\$", flat)
         checks.append((bool(me), "the emission sentence parses", "present",
                        "matched" if me else "not matched", ""))
         if me:
@@ -1467,7 +1488,7 @@ def main() -> int:
                        f"{c0['not_separable']} of {c0['n_pairs']}, "
                        f"{c0['adjacent_not_separable']} of {c0['adjacent_pairs']}",
                        "paired bootstrap on each margin, predictions frozen"))
-        m = re.search(r"benchmark certifies is \$([\d.]+)\$", flat)
+        m = re.search(r"benchmark separates is \$([\d.]+)\$", flat)
         check("resolution floor, seven-system", m and m.group(1), c0["resolution_floor"])
         m = re.search(r"three-system group's narrowest is \$([\d.]+)\$", flat)
         smallest = min(abs(v["margin"]) for v in c1["pairs"].values())

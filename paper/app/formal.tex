@@ -23,8 +23,7 @@ P(r \mid s) \cdot P(\text{site} \mid r, s) \cdot
 \]
 Application is deterministic, so the indicator collapses to the enumerable support of products.
 The latent variables are which rule fired and where; the observation, an annotated metabolite set,
-is positive-unlabelled, since a rule-applicable product without an annotation is unlabelled rather
-than a certified negative.
+is positive-unlabelled, since a rule-applicable product without an annotation is unlabelled rather than a confirmed negative.
 
 The three deployed stages approximate the marginal likelihood of this model. The generator
 approximates $P(r\mid s)$, and the frequency prior it stores is the marginal probability $\pi(r)$

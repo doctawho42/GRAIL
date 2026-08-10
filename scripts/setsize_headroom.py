@@ -189,7 +189,9 @@ def main() -> int:
     arms["oracle count"] = evaluate(rows, truth_keys,
                                     lambda s, r: len(truth_keys.get(s, ())), keyer)
     arms["predicted count"] = evaluate(rows, truth_keys, predicted, keyer)
-    for alpha in (0.9, 0.75, 0.5, 0.25):
+    # The threshold is swept rather than chosen: a rule that only works at one value of a free
+    # parameter is a fit to this split, and the curve is what says whether it is one.
+    for alpha in (0.95, 0.9, 0.8, 0.75, 0.6, 0.5, 0.4, 0.3, 0.25, 0.1):
         arms[f"gap rule a={alpha}"] = evaluate(rows, truth_keys, gap_rule(alpha), keyer)
 
     rng = np.random.default_rng(SEED)
@@ -197,23 +199,44 @@ def main() -> int:
     n = len(base[0])
     idx = rng.integers(0, n, (N_BOOT, n))
 
+    # The deployed budget is the policy this system ships, so it is the baseline the paper's claim
+    # is about -- but it is also a weak one, and a rule that only beats it has shown nothing about
+    # whether the pool is the right object. The comparator that decides that is the best global
+    # constant, so every arm is reported against both. The constant is chosen by looking at this
+    # split, and so is the gap rule's threshold; the comparison is between two arms given the same
+    # hindsight, which is stated rather than hidden because neither is a forecast.
+    const_names = [k for k in arms if k.startswith("fixed k=")]
+    best_const = max(const_names, key=lambda k: float(arms[k][2].mean()))
+    cbase = arms[best_const][2]
+
     rep = {"config": {**_code_version(), "n_substrates": int(n), "n_boot": N_BOOT, "seed": SEED,
                       "match": args.match, "population": args.population,
                       "note": "ranking untouched in every arm; only the number emitted changes",
                       "count_model": "least squares on heavy atoms, rings, rotatable bonds, "
-                                     "fitted on the training split"},
+                                     "fitted on the training split",
+                      "best_global_constant": best_const,
+                      "baseline_note": "gains are reported against the deployed budget and against "
+                                       "the best global constant; the second is the comparator a "
+                                       "claim about the pool has to beat"},
            "arms": {}}
     for name, (P, R, F) in arms.items():
         d = F - base[2]
         bt = d[idx].mean(axis=1)
         lo, hi = float(np.quantile(bt, .025)), float(np.quantile(bt, .975))
+        dc = F - cbase
+        btc = dc[idx].mean(axis=1)
+        clo, chi = float(np.quantile(btc, .025)), float(np.quantile(btc, .975))
         rep["arms"][name] = {
             "precision": round(float(P.mean()), 4), "recall": round(float(R.mean()), 4),
             "f1": round(float(F.mean()), 4),
             "f1_gain_over_k15": round(float(d.mean()), 4),
-            "ci95": [round(lo, 4), round(hi, 4)], "certified": bool(lo * hi > 0)}
+            "ci95": [round(lo, 4), round(hi, 4)], "separated": bool(lo * hi > 0),
+            "f1_gain_over_best_constant": round(float(dc.mean()), 4),
+            "ci95_vs_best_constant": [round(clo, 4), round(chi, 4)],
+            "separated_vs_best_constant": bool(clo * chi > 0)}
         print(f"  {name:18} P {P.mean():.4f}  R {R.mean():.4f}  F1 {F.mean():.4f}  "
-              f"dF1 {d.mean():+.4f} [{lo:+.4f},{hi:+.4f}]")
+              f"vs k15 {d.mean():+.4f} [{lo:+.4f},{hi:+.4f}]  "
+              f"vs {best_const} {dc.mean():+.4f} [{clo:+.4f},{chi:+.4f}]")
 
     if beta is not None:
         rep["count_model_coefficients"] = [round(float(b), 5) for b in beta]
