@@ -319,14 +319,15 @@ validity floor        & on $\to$ off             & 0.200 & $0.000$ \\
 \end{center}
 
 \looseness=-1
-\paragraph{What the incomplete loop costs is not matching.} The shared templates fire almost
-equally often either way and every firing writes a product. The loss is one step later and the
-toolkit refuses the result: $63\%$ of the fragments the products of the incomplete loop separate
-into are structures the toolkit will not read back, against $0.4\%$ without the expansion. A
-template written against implicit hydrogens does not name the hydrogen it replaces, so expanding the
-substrate and not contracting the product leaves an aromatic carbon holding both its own hydrogen
-and the new substituent. The template is not wrong; the engine was missing a step, and what remains
-once it is put back is the genuine disagreement about how a hydrogen is spelled. And the direction belongs to the bank rather than to our engine: on the full
+\paragraph{The two parts fail in opposite ways.} The larger part is not a matching effect. The
+shared templates fire equally often with the substrate expanded and every firing writes a product;
+the toolkit then refuses $63\%$ of the fragments those products separate into, against $0.4\%$
+without the expansion, because a template written against implicit hydrogens does not name the
+hydrogen it replaces and the drawn one is never removed. Contract the product and that number is
+zero: not one fragment of the completed loop is unreadable. The smaller part is a matching effect
+and nothing else. The completed loop fires the same templates and yields $20{,}601$ fragments
+against the unexpanded arm's $21{,}106$, so what survives as convention is that a substrate carrying
+its hydrogens matches a little less, which is the disagreement about how a hydrogen is spelled. And the direction belongs to the bank rather than to our engine: on the full
 split, with hydrogens drawn, BioTransformer recovers $1{,}264$ references and SyGMa $579$; with hydrogens left implicit,
 SyGMa recovers $1{,}390$ and BioTransformer $317$; paired over substrates the step is worth
 $-0.312$ $[-0.334,-0.291]$ to SyGMa and $+0.365$ $[+0.341,+0.389]$ to BioTransformer. It does not

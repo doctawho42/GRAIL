@@ -1,8 +1,8 @@
 {
  "config": {
   "script": "explicit_h_mechanism.py",
-  "git_commit": "a932e106b759d163ab60cd673de9f4c8e59eeb76",
-  "git_dirty": false,
+  "git_commit": "ca95a0b548974a9931edaed4a26838e14de4b5b5",
+  "git_dirty": true,
   "population": "clean_test",
   "n_rules": 152,
   "n_substrates": 1170,
@@ -20,6 +20,15 @@
    "below_heavy_atom_floor": 68,
    "fragments": 21905,
    "distinct_after_normalisation": 4965
+  },
+  "loop_completed": {
+   "fired": 20372,
+   "written": 19079,
+   "kept": 20539,
+   "unparseable": 0,
+   "below_heavy_atom_floor": 62,
+   "fragments": 20601,
+   "distinct_after_normalisation": 12921
   },
   "without_explicit_h": {
    "fired": 19629,

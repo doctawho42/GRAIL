@@ -134,9 +134,12 @@ def _worker(smiles: str):
     mol = Chem.MolFromSmiles(smiles)
     if mol is None:
         return None
+    # Three arms now, not two: the incomplete loop, the same loop with the product contracted, and
+    # the unexpanded one. The first two differ by one call, and the fate counts below are what
+    # decides whether the unreadable fragments are the convention or the missing call.
     stage: dict = {}
-    for add_hs in (True, False):
-        substrate = Chem.AddHs(Chem.Mol(mol)) if add_hs else Chem.Mol(mol)
+    for add_hs in (True, "completed", False):
+        substrate = (Chem.AddHs(Chem.Mol(mol)) if add_hs is not False else Chem.Mol(mol))
         c = dict.fromkeys(_STAGES, 0)
         for rule in _CTX["rules"]:
             try:
@@ -145,6 +148,12 @@ def _worker(smiles: str):
                 continue
             c["fired"] += len(generated)
             for product in generated:
+                if add_hs == "completed":
+                    try:
+                        product = Chem.RemoveHs(Chem.Mol(product), sanitize=False)
+                        Chem.SanitizeMol(product)
+                    except Exception:
+                        continue
                 try:
                     out = Chem.MolToSmiles(product)
                 except Exception:
@@ -153,9 +162,9 @@ def _worker(smiles: str):
                 for fragment in (f.strip() for f in out.split(".") if f.strip()):
                     c[_fate(fragment)] += 1
         stage[add_hs] = c
-    prods = {add_hs: set(apply_with(mol, _CTX["rules"], add_hs, DEFAULT["norm"],
-                                    DEFAULT["drop_invalid"]))
-             for add_hs in (True, False)}
+    prods = {add_hs: set(apply_with(mol, _CTX["rules"], add_hs is not False, DEFAULT["norm"],
+                                    DEFAULT["drop_invalid"], remove_hs=(add_hs == "completed")))
+             for add_hs in (True, "completed", False)}
     return {"stage": stage, "distinct": {k: len(v) for k, v in prods.items()},
             "shared": len(prods[True] & prods[False])}
 
@@ -183,8 +192,9 @@ def main() -> int:
         return sum(fn(r) for r in rows)
 
     pipeline = {}
-    for add_hs in (True, False):
-        key = "deployed" if add_hs else "without_explicit_h"
+    for add_hs in (True, "completed", False):
+        key = ({True: "deployed", "completed": "loop_completed",
+                False: "without_explicit_h"})[add_hs]
         pipeline[key] = {k: tot(lambda r, h=add_hs, k=k: r["stage"][h][k]) for k in _STAGES}
         # the denominator for the validity split is fragments, not products: one product can
         # separate into several, so quoting the product count against it would be the wrong ratio

@@ -1018,28 +1018,37 @@ def main() -> int:
         M = json.loads(mech.read_text())["pipeline"]
         exp, imp = M["deployed"], M["without_explicit_h"]
         flat = re.sub(r"\s+", " ", whole)
-        m = re.search(r"the toolkit refuses the result: \$(\d+)\\%\$ of the fragments the products of the incomplete loop "
-                      r"separate into are structures the toolkit will not read back, against "
-                      r"\$([\d.]+)\\%\$ without the expansion", flat)
+        m = re.search(r"the toolkit then refuses \$(\d+)\\%\$ of the fragments those products "
+                      r"separate into, against \$([\d.]+)\\%\$ without the expansion", flat)
         checks.append((bool(m), "the mechanism sentence parses",
                        "present", "matched" if m else "not matched", ""))
         fire = exp["fired"] / max(imp["fired"], 1)
         checks.append((0.9 <= fire <= 1.1, "templates fire almost equally often either way",
                        "within a tenth", f"ratio {fire:.3f}", str(mech.relative_to(ROOT))))
         if m:
-            check("fragments unreadable under the expansion", m.group(1),
+            check("fragments unreadable under the incomplete loop", m.group(1),
                   round(exp["unparseable"] / max(exp["fragments"], 1) * 100),
                   str(mech.relative_to(ROOT)))
-            check("fragments unreadable without it", m.group(2),
+            check("fragments unreadable without the expansion", m.group(2),
                   round(imp["unparseable"] / max(imp["fragments"], 1) * 100, 1),
                   str(mech.relative_to(ROOT)))
-        m2 = re.search(r"against \$[\d{},]+\$ of \$[\d{},]+\$: \$\d+\\%\$ against \$[\d.]+\\%\$, and\s*"
-                       r"\$([\d.]+)\\%\$ of the excess", flat)
-        if m2:
-            check("the excess that is a valence violation", m2.group(1),
-                  round(json.loads(mech.read_text())["where_it_is_lost"]
-                        ["share_of_the_drop_that_is_unparseable"] * 100, 1),
-                  str(mech.relative_to(ROOT)))
+        # completing the loop must remove every one of them, which is the claim that inverts the
+        # section: the larger part is a defect and only the remainder is a convention
+        comp = json.loads(mech.read_text())["pipeline"].get("loop_completed")
+        if comp:
+            checks.append((comp["unparseable"] == 0,
+                           "the completed loop leaves no unreadable fragment", "zero",
+                           str(comp["unparseable"]), str(mech.relative_to(ROOT))))
+            mfr = re.search(r"yields \$([\d,{}]+)\$ fragments against the unexpanded arm's "
+                            r"\$([\d,{}]+)\$", flat)
+            checks.append((bool(mfr), "the surviving-matching sentence parses", "present",
+                           "matched" if mfr else "not matched", ""))
+            if mfr:
+                num = lambda g: int(g.replace("{,}", ""))
+                check("fragments from the completed loop", num(mfr.group(1)), comp["fragments"],
+                      str(mech.relative_to(ROOT)))
+                check("fragments without the expansion", num(mfr.group(2)), imp["fragments"],
+                      str(mech.relative_to(ROOT)))
         # the appendix quotes the same measurement as integers, on the same population
         for name, want in (("fired with hydrogens explicit", exp["fired"]),
                            ("fired without them", imp["fired"]),
