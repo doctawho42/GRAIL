@@ -47,7 +47,13 @@ subsections that follow and in Propositions 2 and 3.
 \paragraph{Composition of the uncovered set.}
 On the full clean test split under the tautomer-aware default, $18.3\%$ of reference metabolites
 lie outside what the bank reaches in one step: $475$ of $2{,}597$, the complement of \ceiling.
-The misses are a diverse tail rather than one absent rule family. Binning them by the
+The misses are a diverse tail rather than one absent rule family. They divide into two kinds that call for
+different fixes. Typing each missed transformation by the reaction-centre change it requires and
+asking whether the bank holds any rule of that type: $337$ of the $475$ need a type the bank does
+not have at all, $98$ need a type it does have but whose rule did not fire on that substrate, and
+$40$ cannot be typed. So a fifth of the ceiling's gap is reachable by loosening rules that already
+exist and three quarters of it is missing chemistry, and a bank-builder choosing between writing new
+templates and generalising old ones has the split rather than a single number. Binning them by the
 substrate-to-metabolite mass difference, on a $500$-substrate subset under strict \textsc{inchikey}
 matching where that binning was run, the largest bin holds $6.0\%$ of the uncovered set. We
 report the distribution, not named reaction classes, because a mass difference does not

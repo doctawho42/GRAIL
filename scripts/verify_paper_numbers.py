@@ -990,6 +990,31 @@ def main() -> int:
                   round(json.loads(cl2.read_text())["reach"]["completed"]["reach"], 3),
                   str(cl2.relative_to(ROOT)))
 
+    # 10c-y. The ceiling's gap, split by whether the bank has the transformation type at all. The
+    # two halves call for different work, so the split is the useful form of the number and every
+    # part of it is held to the run, including that they sum to the uncovered total.
+    cg = ROOT / "results/coverage_gap_types.json"
+    if cg.exists():
+        CG = json.loads(cg.read_text())
+        flat = re.sub(r"\s+", " ", whole)
+        mcg = re.search(r"\$(\d+)\$ of the \$(\d+)\$ need a type the bank does not have at all, "
+                        r"\$(\d+)\$ need a type it does have[^,]*, and \$(\d+)\$ cannot be typed",
+                        flat)
+        checks.append((bool(mcg), "the gap-decomposition sentence parses", "present",
+                       "matched" if mcg else "not matched", ""))
+        if mcg:
+            src = str(cg.relative_to(ROOT))
+            g = CG["gap"]
+            check("gap, novel type", mcg.group(1), g["novel_type"], src)
+            check("gap, uncovered total", mcg.group(2), CG["uncovered_pairs"], src)
+            check("gap, known type", mcg.group(3), g["known_type"], src)
+            check("gap, untypeable", mcg.group(4), g["untypeable"], src)
+            checks.append((g["novel_type"] + g["known_type"] + g["untypeable"]
+                           == CG["uncovered_pairs"],
+                           "the three kinds sum to the uncovered set", "they sum",
+                           f"{g['novel_type'] + g['known_type'] + g['untypeable']} against "
+                           f"{CG['uncovered_pairs']}", src))
+
     # 10c-x. The scaffold baseline. If an untrained similarity ranks the same pool as well as the
     # trained filter, the filter has learned the scaffold and little else, and the controls have to
     # be in the gate too: reversing the order and shuffling it must both be certifiably worse, or
