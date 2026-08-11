@@ -9,6 +9,7 @@
 \usepackage[table]{xcolor}
 \usepackage{multirow}
 \usepackage{hyperref}
+\usepackage{tikz}
 
 \usepackage{xspace}
 \sloppy
@@ -87,12 +88,11 @@ analysis code.
 \section{Introduction}
 \label{sec:intro}
 
-Machine learning is used to predict the chemistry that a molecule will undergo. Given a drug, a
-model predicts the metabolites into which enzymes will convert it; given a target compound, a model
-predicts the reactants from which it can be synthesised; given a design objective, a model proposes
-molecules that meet it. All three tasks are evaluated in the same way. A method proposes a ranked
-list of structures, a curated reference records the structures that are correct, and the method is
-scored by how often the two agree.
+Machine learning is used to predict the chemistry a molecule will undergo: the metabolites enzymes
+will convert a drug into, the reactants a target compound can be made from, the molecules that meet
+a design objective. All three are evaluated the same way. A method proposes a ranked list of
+structures, a curated reference records which are correct, and the method is scored by how often the
+two agree.
 
 Whether two structures agree is not self-evident. A single compound can be drawn in several ways
 that a chemist reads as one substance: as either of two tautomers, which differ in the position of a
@@ -123,12 +123,11 @@ leading methods converge.
 
 \paragraph{Contributions.}
 \begin{itemize}\itemsep2pt \parskip0pt
-\item A coverage figure is a property of a rule set together with the procedure that applies it,
-  and is not comparable across papers that leave the procedure unstated. How far a published rule
-  base reaches moves by up to $0.353$ with a preprocessing step neither paper reports, and moves in
-  opposite directions for banks written in opposite conventions; which of the two reaches further
-  does not change. Three quarters of what that step first appeared to be worth was an application
-  loop left unfinished, readable from the rule file without running anything.
+\item A coverage figure is a property of a rule set together with the procedure that applies it, and
+  is not comparable across papers that leave the procedure unstated: reach moves by up to $0.353$
+  with a preprocessing step neither paper reports, and in opposite directions for banks written in
+  opposite conventions. Dispatching that step per template restores the figure as a property of the
+  bank, and beats the best single setting on a published bank assembled from two conventions.
 \item The matching criterion exchanges positions in a published leaderboard of retrosynthesis
   systems, on predictions their authors released. The exchanges are certified as method-by-criterion
   interactions and corrected for multiplicity across the whole family of tests.
@@ -144,11 +143,11 @@ leading methods converge.
   before anything is re-scored. Read as a screening test over $439$ comparisons in three domains it
   has no false negatives, flags one comparison in nine, and shows the tightest leaderboard supplying
   most of the exposure and the widest none.
-\item Which population a dataset name refers to is ambiguous in released work, and the ambiguity is
-  not shown to reorder anything: eleven released prediction files sit on three test sets, and no
-  interaction that varies only the population survives correction.
-\item An evaluation protocol, an audited split, the frozen predictions of every method compared, a
-  checker that reports these choices from files alone, and the analysis code are released.
+\item Which population a dataset name refers to is ambiguous in released work and is not shown to
+  reorder anything: eleven released prediction files sit on three test sets, and no interaction
+  varying only the population survives correction. A protocol, an audited split, the frozen
+  predictions of every method compared, a checker that reports these choices from files alone, and
+  the analysis code are released.
 \end{itemize}
 
 \section{Related Work}
@@ -199,18 +198,13 @@ differently: the intersection of the per-cell orders is a partial order rather t
 so what survives is a relation with a share and a longest chain, both scalars and both computable
 from released prediction files without rerunning any system.
 
-\paragraph{Staged evaluation.} Separating what a candidate generator reaches from what a later
-stage retains is standard: cascade ranking prunes stage by stage \citep{Wang_2011_cascade},
-recommendation is built as candidate generation followed by ranking \citep{Covington_2016},
-open-domain question answering reports retriever recall at a budget beside end-task accuracy
-\citep{Karpukhin_2020}, and \citet{Maziarz_2025} separate single-step accuracy from search. In each
-the first term is estimated from a sample or bounded by a search budget.
-
-\paragraph{What is left unestablished.} The demonstrations above compare studies that differed in
-several respects at once, so the effect of any one choice is not identified. Nor is it known what
-the first term of a staged decomposition can be when the candidate set is finite and enumerable
-rather than sampled, or whether a coverage figure obtained that way is comparable across papers.
-The present work addresses both.
+\paragraph{Staged evaluation, and what is left unestablished.} Separating what a candidate generator
+reaches from what a later stage retains is standard \citep{Wang_2011_cascade, Covington_2016,
+Karpukhin_2020, Maziarz_2025}, and in each case the first term is estimated from a sample or bounded
+by a search budget. The demonstrations above, meanwhile, compare studies differing in several
+respects at once, so the effect of any one choice is not identified. Nor is it known what the first
+term of a staged decomposition can be when the candidate set is finite and enumerable, or whether a
+coverage figure obtained that way is comparable across papers. The present work addresses both.
 
 \section{The evaluation protocol: what is declared and what is held fixed}
 \label{sec:tame}
@@ -243,11 +237,10 @@ fails to match under plain \textsc{inchikey} while producing the same substance.
 this kind is established preprocessing; adopting it as the \emph{matching} rule is not.
 
 \looseness=-1
-\paragraph{Split and leakage audit.} All splits are substrate-disjoint, and a separate read-only
-audit canonicalises every SMILES and verifies zero substrate and zero positive-pair overlap across
-each split pair. Leakage-aware splitting is not novel, since DataSAIL \citep{Joeres_2025} minimises
-cross-split similarity on comparable tasks; the leak that matters here is substrate-metabolite
-\emph{identity} overlap, specific to this domain.
+\paragraph{Split and leakage audit.} All splits are substrate-disjoint, and a read-only audit
+canonicalises every SMILES and verifies zero substrate and zero positive-pair overlap across each
+split pair. Leakage-aware splitting is not novel \citep{Joeres_2025}; the leak that matters here is
+substrate-metabolite \emph{identity} overlap, specific to this domain.
 
 \looseness=-1
 \paragraph{Metrics and inference.} Results are reported as recall@$k$ together with the mean output
@@ -273,66 +266,60 @@ Appendix~\ref{app:arch}.
 \label{sec:enginereach}
 
 \looseness=-1
-A paper that publishes a rule base usually publishes a figure for what it covers: the fraction of
-reference products that applying every rule recovers, its \emph{reach}. It is quoted as a property
-of the rules and it is not one, because applying a rule requires deciding how the substrate is
-presented to the matcher, and that decision is made silently by every engine and reported by none.
+A paper that publishes a rule base usually publishes a figure for what it covers, the fraction of
+reference products applying every rule recovers: its \emph{reach}. It is quoted as a property of the
+rules and it is not one, because applying a rule requires deciding how the substrate is presented to
+the matcher, and that decision is made silently by every engine and reported by none.
 
 \looseness=-1
 $152$ of SyGMa's $175$ rules sit verbatim in ours, so those can be held fixed while only the
 procedure changes: a depth-1 enumeration that expands the substrate with explicit hydrogens against
 SyGMa's own, which does not. On the clean test split they reach $0.200$ $[0.182,0.218]$ under the
-first and $0.387$ $[0.365,0.410]$ under the second, a paired $+0.190$ $[+0.173,+0.208]$. Most of
+first and $0.387$ $[0.365,0.410]$ under the second, a paired $+0.190$ $[+0.173,+0.208]$, and most of
 that is not the convention. Expanding a substrate and never contracting the product leaves the drawn
 hydrogen on the reacting atom; one call restores it, lifting the expanded arm to $0.342$
 $[0.320,0.365]$, worth $+0.142$ $[+0.125,+0.160]$, and what survives against the unexpanded arm is
 $+0.047$ $[+0.038,+0.057]$. Three quarters of the apparent effect is a missing call and a quarter
-the convention, both separated. The whole distance between the two
-configurations is $+0.339$: the engine term as the two programs stand, $+0.188$ $[+0.170,+0.205]$,
-$+0.145$ $[+0.128,+0.162]$ from the $23$ rules our bank lacks, and $+0.0065$ $[+0.0038,+0.0096]$
-from composing steps.
+the convention, both separated. The whole distance between the two configurations is $+0.339$: the
+engine term as the two programs stand, $+0.188$ $[+0.170,+0.205]$, $+0.145$ $[+0.128,+0.162]$ from
+the $23$ rules our bank lacks, and $+0.0065$ $[+0.0038,+0.0096]$ from composing steps.
 
 \looseness=-1
-\paragraph{The two parts fail in opposite ways.} The larger is not a matching effect: the
-templates fire equally often expanded, and the toolkit then refuses $63\%$ of the fragments those
-products separate into, against $0.4\%$ without the expansion, because a template written against
-implicit hydrogens does not name the hydrogen it replaces and the drawn one is never removed.
-Contract the product and that number is zero. The smaller is a matching effect and nothing else: the
-completed loop yields $20{,}601$ fragments against the unexpanded arm's $21{,}106$, so a substrate
-carrying its hydrogens matches a little less. The convention decides what a bank reaches without deciding which reaches
-further. With the loop complete, BioTransformer recovers $1{,}235$ references with hydrogens drawn
-and $317$ with them implicit, a swing of $-0.353$; SyGMa recovers $1{,}260$ and $1{,}390$, a swing
-of $+0.050$ the other way. A coverage figure is the value of a bank together with a convention, not
-comparable across papers that state only the bank. It is not an exchange: SyGMa leads in both arms
-once the loop is complete, and the swing decides the magnitude rather than the order.
+\paragraph{The two parts fail in opposite ways.} The larger is not a matching effect: the templates
+fire equally often expanded, and the toolkit then refuses $63\%$ of the fragments those products
+separate into against $0.4\%$ without the expansion, because a template written against implicit
+hydrogens does not name the hydrogen it replaces and the drawn one is never removed. Contract the
+product and that number is zero. The smaller is a matching effect and nothing else, the completed
+loop yielding $20{,}601$ fragments against the unexpanded arm's $21{,}106$. The convention then
+decides what a bank reaches without deciding which reaches further: with the loop complete
+BioTransformer recovers $1{,}235$ references with hydrogens drawn and $317$ with them implicit, a
+swing of $-0.353$, while SyGMa recovers $1{,}260$ and $1{,}390$, a swing of $+0.050$ the other way,
+and SyGMa leads in both arms. A coverage figure is the value of a bank together with a convention
+and is not comparable across papers that state only the bank.
 
 \looseness=-1
 What is comparable is reach with the convention dispatched per template rather than per run. A
 one-line syntactic test on each rule, whether its reactant side names a hydrogen \emph{atom},
-decides which presentation of the substrate that rule sees; it consults no outcome, and it was
-registered before the run. On SyGMa it is the identity, because none of its $175$ templates names
-one, and it reproduces that bank's implicit arm exactly, which is the pre-registered null. On
-BioTransformer it beats the better of the two global settings by $+0.0116$ $[+0.0049,+0.0195]$, so
-no single convention expresses that bank at all: it was assembled from collections written in
-different ones, and $726$ of its $994$ templates want the other presentation from the rest. The
-worst case over global settings is then a diagnostic rather than a remedy, and it is what a reader
-of a coverage figure quoted without its application procedure is entitled to assume: $0.1221$ for
-BioTransformer against the $0.4755$ its best single setting reaches, a published figure four times
-what any one convention guarantees.
+decides which presentation that rule sees; it consults no outcome and was registered before the run.
+On SyGMa it is the identity, none of whose $175$ templates names one, reproducing that bank's
+implicit arm exactly, which is the pre-registered null. On BioTransformer it beats the better of the
+two global settings by $+0.0116$ $[+0.0049,+0.0195]$: no single convention expresses that bank at
+all, since it was assembled from collections written in two and $726$ of its $994$ templates want
+the other presentation from the rest. The worst case over global settings is then a diagnostic
+rather than a remedy, and is what a reader of a coverage figure quoted without its application
+procedure is entitled to assume: $0.1221$ for BioTransformer against the $0.4755$ its best single
+setting reaches, a published figure four times what any one convention guarantees.
 
 \looseness=-1
-\paragraph{What is convention-dependent is a construct, not a domain.} Which \textsc{smarts} constructs an
-expansion touches is readable from a rule file: counts that already include the hydrogens about to
-be drawn are inert, counts of explicit connections or of implicit hydrogens lose every match, and
-the hydrogen \emph{atom} primitive and the wildcard fire more often rather than less. Across six
-independent libraries and $51{,}368$ templates the construct almost everyone uses is the inert one,
-and the two that move are used by disjoint sets of libraries. Every one of the $42{,}554$ patterns
-in the standard retrosynthesis template library pins a connection count and none carries the atom
-primitive, so the same step costs that library $82\%$ of the template--product pairs it can match at
-all: a match lost before a product is built, applicability rather than coverage, and a hazard latent
-in that field rather than an error in it. The convention travels with the transcription: of the
-rules one release attributes to another tool, the $57$ copied verbatim carry the atom primitive not
-once, while $88$ of the $121$ re-typed do, absent from all $175$ rules of the tool they came from.
+\paragraph{What is convention-dependent is a construct, not a domain.} Which \textsc{smarts}
+constructs an expansion touches is readable from a rule file without running anything: counts that
+already include the hydrogens about to be drawn are inert, counts of explicit connections or of
+implicit hydrogens lose every match, and the hydrogen \emph{atom} primitive fires more often rather
+than less. Across six libraries and $51{,}368$ templates the construct almost everyone uses is the
+inert one, and the two that move are used by disjoint sets of libraries. Every one of the $42{,}554$
+patterns in the standard retrosynthesis template library pins a connection count and none carries
+the atom primitive, so the same step costs that library $82\%$ of the template--product pairs it can
+match at all: a hazard latent in that field rather than an error in it.
 
 
 
@@ -340,13 +327,14 @@ once, while $88$ of the $121$ re-typed do, absent from all $175$ rules of the to
 \label{sec:robust}\label{sec:xdomainmain}
 
 \looseness=-1
-A leaderboard reports a total order, computed in one cell of a grid of choices its paper does not
-report because the cell is not thought of as a parameter. Fix the items and the predictions and ask
-of each pair whether the ordering the table asserts holds in every other cell too. Say the higher system \emph{dominates} the lower when the margin is positive in every cell, and
-that it is \emph{separated in every cell} when a paired interval excludes zero in each.
-Domination is the intersection of the per-cell orders, so it is transitive and is the finest
-relation no declared choice can contradict; separation in every cell is a sub-relation of it,
-reported separately because an interval condition is not transitive.
+A leaderboard reports a total order computed in one cell of a grid its paper does not report,
+because the cell is not thought of as a parameter. Fix the items and the predictions and ask of each
+pair whether the ordering the table asserts holds in every other cell. Say the higher system
+\emph{dominates} the lower when the margin is positive in every cell, and that it is
+\emph{separated in every cell} when a paired interval excludes zero in each. Domination is the
+intersection of the per-cell orders, so it is transitive and is the finest relation no declared
+choice can contradict; separation is a sub-relation of it, reported apart because an interval
+condition is not transitive.
 
 \looseness=-1
 A pair that does not dominate has failed in one of two ways that should not be added together.
@@ -357,8 +345,8 @@ to hold everywhere on a margin the benchmark cannot resolve. Only the first is c
 run on one grid of the same sixteen cells, four matching criteria by four budgets
 (Appendix~\ref{app:robust}).
 
-\begin{center}
-\small
+\begin{table}[t]
+\centering\small
 \begin{tabular}{lcccccc}
 \toprule
 leaderboard & items & dominate & contested & \multicolumn{2}{c}{its own cell resolves} & tiers \\
@@ -369,7 +357,16 @@ retrosynthesis, three systems & $4{,}982$ & $0$ of $3$  & $2$ & $3$  & $0.00$ & 
 metabolites, three methods    & $1{,}170$ & $2$ of $3$  & $1$ & $2$  & $1.00$ & $2$ of $3$ \\
 \bottomrule
 \end{tabular}
-\end{center}
+\vspace{4pt}
+
+\input{app/robust_hasse}
+\caption{What a leaderboard entitles a reader to quote, on one grid of four criteria by four
+budgets. Below, the seven-system table's surviving order as its transitive reduction: an arrow means
+the left system beats the right in all sixteen cells, systems drawn together are ones the grid does
+not order, and seven published places become three tiers.}
+\label{tab:robust}
+\end{table}
+
 
 \looseness=-1
 The last two columns are the ones a reader should take away, because most of what a leaderboard
@@ -386,24 +383,23 @@ destroys them.
 
 \looseness=-1
 \paragraph{Which pairs are at risk is decided before any of this is run.} The share above is
-measured by re-scoring. It does not have to be predicted that way. Two systems exchange under a
-change of criterion exactly when the criterion moves them apart by more than the gap between them:
-writing $d$ for their margin under the first criterion and $\delta_a,\delta_b$ for how far each
-moves, the sign of $d$ survives iff $|\delta_a-\delta_b| \le |d|$. The inequality is arithmetic, not
-a model, and both of its sides are quantities a published table and a single re-scoring of one
-system already contain, so the pairs that could exchange are computable without re-scoring the
-leaderboard at all.
+measured by re-scoring; it need not be predicted that way. Two systems exchange under a change of
+criterion exactly when the criterion moves them apart by more than the gap between them: writing $d$
+for their margin and $\delta_a,\delta_b$ for how far each moves, the sign of $d$ survives iff
+$|\delta_a-\delta_b| \le |d|$. The inequality is arithmetic rather than a model, and both sides are
+quantities a published table and one re-scored system already contain, so the pairs that could
+exchange follow without re-scoring the leaderboard.
 
 \looseness=-1
 Read as a screening test over the $439$ method-pair by criterion-pair comparisons this paper spans
 in three domains, it flags $10.9\%$ of them. Every one of the $26$ exchanges falls inside the
 flagged set and none outside it, so its sensitivity is $1.000$ by arithmetic and is checked rather
-than assumed; its specificity is $0.947$ and its precision $0.542$, the misses being movements that
-widen a gap instead of closing it. A maintainer can therefore bound their own leaderboard's exposure
-from its published margins, and the bound has no false negatives. What the distribution says is
-less comfortable: the tightest of the four leaderboards supplies $28$ of the $48$ flagged
-comparisons and the widest supplies none, so a benchmark becomes vulnerable to an undeclared
-convention exactly as it matures and its entries converge (Appendix~\ref{app:xdomain}).
+than assumed; its specificity is $0.947$ and its precision $0.542$, the false alarms being movements
+that widen a gap instead of closing it. A maintainer can therefore bound a leaderboard's exposure
+from its own published margins, with no false negatives. The distribution is the less comfortable
+part: the tightest of the four leaderboards supplies $28$ of the $48$ flagged comparisons and the
+widest none, so a benchmark becomes vulnerable to an undeclared convention exactly as its entries
+converge (Appendix~\ref{app:xdomain}).
 
 \paragraph{How one choice breaks an ordering.} \looseness=-1
 \citet{Hastedt_2024} released the ranked predictions of twelve retrosynthesis systems, of which
@@ -427,20 +423,18 @@ separated it erases the gap instead of reversing it.
 \looseness=-1
 \paragraph{One split, two populations.} A benchmark can mix populations without changing its name.
 Of the \ntest\ substrates here, $845$ are parent drugs and $325$ are themselves annotated products
-of another substrate in the same split, so a method is asked one question about a compound a patient
-swallows and another about what is left of it, and both are averaged into one number. Methods do not
-treat them alike: between the two GRAIL loses $0.152$ $[0.101,0.202]$ of recall while MetaPredictor
-loses $0.001$ $[-0.053,0.057]$, an interaction of $+0.150$ $[+0.084,+0.216]$, and against SyGMa
-$+0.116$ $[+0.051,+0.181]$. No paper reporting a number on this split reports the mixture it is
-averaged over.
+of another substrate in the same split, so one question is about a compound a patient swallows and
+the other about what is left of it, averaged into one number. Methods do not treat them alike:
+between the two GRAIL loses $0.152$ $[0.101,0.202]$ of recall while MetaPredictor loses $0.001$
+$[-0.053,0.057]$, an interaction of $+0.150$ $[+0.084,+0.216]$, and against SyGMa $+0.116$
+$[+0.051,+0.181]$. No paper reporting on this split reports the mixture.
 
 \looseness=-1
 The other population question is a null. Comparing two systems on $490$ shared reactions and on each
-group's own five thousand, with everything else fixed, changes the ordering in $44$ of $380$
-comparisons and in $10$ of $60$ on the metabolite split, and none of the $440$ interactions survives
-Holm at $0.05$. The null is bounded rather than absolute: at $80\%$ power these designs would have
-detected about $0.10$ and $0.07$, an order of magnitude above the criterion interactions that do
-survive (Appendix~\ref{app:popaxis}).
+group's own five thousand changes the ordering in $44$ of $380$ comparisons and in $10$ of $60$ on
+the metabolite split, and none of the $440$ interactions survives Holm at $0.05$; at $80\%$ power
+these designs would have detected about $0.10$ and $0.07$, an order of magnitude above the criterion
+interactions that do (Appendix~\ref{app:popaxis}).
 
 \section{The decomposition and the coverage ceiling}
 \label{sec:decomp}
@@ -466,18 +460,16 @@ bounds that decode rather than the model (Appendix~\ref{app:seq2seq}).
 
 \paragraph{The ceiling as a primitive.} Apply all \nbank\ rules to every test substrate and ask what
 fraction of references appears anywhere in the union. That \textbf{coverage ceiling} is the best
-recall achievable if selection and ranking were perfect, and on the clean test split it is \ceiling\
-(cluster-bootstrap 95\% CI $[0.794,0.839]$), macro $\ceilingmacro$. It should be reported alongside
-recall for any rule-grounded method, and reported as system reach in the sense of
-\S\ref{sec:enginereach}. The deployed pipeline converts only $32.5\%$ of its own ceiling into
-realised recall. Selection is where the loss sits, barely a third of what the bank reaches surviving
-the rule budget; the output cap binds on $308$ of \ntest\ substrates and all $29$ references lost
-between the budgeted pool and the emitted output fall on those. Ranking is close to lossless at $0.960$ $[0.941,0.976]$ and also
-close to free: re-ranking the same pool by Tanimoto similarity to the substrate, nothing trained,
-reaches $0.342$ against the filter's $0.340$, a difference of $+0.002$ $[-0.004,+0.009]$, while
-reversing that order costs $0.040$ and shuffling it costs $0.015$. The filter has found the scaffold
-and little past it. Applied to a second method the decomposition stops being self-diagnosis, since
-SyGMa decomposes with the inverse profile (Appendices~\ref{app:noselect}
+recall perfect selection and ranking would reach, here \ceiling\ (cluster-bootstrap 95\% CI
+$[0.794,0.839]$), macro $\ceilingmacro$, and it should be reported alongside recall for any
+rule-grounded method, as system reach in the sense of \S\ref{sec:enginereach}. The deployed pipeline
+converts $32.5\%$ of its own ceiling into realised recall, and selection is where the loss sits,
+barely a third of what the bank reaches surviving the rule budget. Ranking is close to lossless at
+$0.960$ $[0.941,0.976]$ and close to free: re-ranking the same pool by Tanimoto similarity to the
+substrate, nothing trained, reaches $0.342$ against the filter's $0.340$, $+0.002$
+$[-0.004,+0.009]$, while reversing that order costs $0.040$ and shuffling it $0.015$. The filter has
+found the scaffold and little past it. Applied to a second method the decomposition stops being
+self-diagnosis, since SyGMa decomposes with the inverse profile (Appendices~\ref{app:noselect}
 and~\ref{app:decompsygma}).
 
 \section{Results}
@@ -524,15 +516,15 @@ SyGMa          & 0.532 & 0.558 & 0.563 & 0.533 & 0.571 & $+0.038$ $[0.029,0.048]
 
 \looseness=-1
 \paragraph{Primary endpoint.} The endpoint is the differential sensitivity, the interaction between
-criterion and method, by a paired bootstrap over substrates with $10{,}000$ resamples. Every method
+criterion and method, by a paired bootstrap over substrates with $10{,}000$ resamples; every method
 gains under a more tolerant criterion, so only the differential can change an ordering. On the
 $\nshared$-substrate subset two pairs separate along two criterion steps, BioTransformer gaining
 \interA\ \interAci\ more than GRAIL from canonical to tautomer matching and SyGMa \interB\
-\interBci\ more than MetaTrans from canonical to InChIKey; the first survives correction at that
-family size and the second does not. The criterion is therefore a \textbf{method-dependent
-confounder}, not a neutral scoring choice. The declared families, every raw and adjusted $p$-value,
-and what was fixed in advance against what was not are in Appendix~\ref{app:holm}: the design was
-specified before the data, the families after it, declared as the grid the axes admit.
+\interBci\ more than MetaTrans from canonical to InChIKey, the first surviving correction at that
+family size and the second not. The criterion is therefore a \textbf{method-dependent confounder}
+rather than a neutral scoring choice, and it moves human agreement as well as model scores: two independent curations of twenty-five external drugs agree at a Jaccard of $0.145$ under strict \textsc{inchikey} matching and $0.406$ under the tautomer-aware default, a third of what reads as disagreement about observed chemistry (Appendix~\ref{app:xdomain}). Every declared family, raw and adjusted $p$-value, and what
+was fixed in advance are in Appendix~\ref{app:holm}: the design was specified before the data and
+the families after it, as the grid the axes admit.
 
 \looseness=-1
 \paragraph{External replication.} The analysis repeats on the field's de-facto external hold-out,
@@ -547,13 +539,6 @@ ahead by $0.071$ (Appendix~\ref{app:holm}).
 
 
 
-\paragraph{The criterion moves human agreement.} The strongest evidence for declaring it involves no
-model. Twenty-five external drugs curated independently by two sources give expert lists agreeing at
-a Jaccard of $0.145$ under strict \textsc{inchikey} matching and $0.406$ under the tautomer-aware
-default, so notation accounts for a third of what reads as disagreement about observed chemistry and
-most of it survives the relaxation. The two curations also bound what a recall figure means, one
-recording only $0.539$ of the other (Appendix~\ref{app:xdomain}).
-
 
 
 \subsection{The aggregate and the budget are one variable, and the decomposition predicts it}
@@ -562,11 +547,9 @@ recording only $0.539$ of the other (Appendix~\ref{app:xdomain}).
 \looseness=-1
 Intervals here are exploratory except the budget sweep, whose family is declared below. A method
 emitting eighty candidates to catch a few more references is rewarded by recall and punished by F1,
-and on each method's deployed output the two orderings disagree. Against GRAIL the disagreement is
-separated both ways, SyGMa leading on recall by $0.253$ $[0.222,0.283]$ and sitting $0.088$
-$[0.076,0.099]$ below on F1; against MetaPredictor only the F1 direction is, at $0.113$
-$[0.107,0.120]$, SyGMa's recall lead of $0.023$ resting on an interval bounded at zero and bought by
-emitting $80.7$ candidates against $10.8$.
+so on deployed output the two aggregates order the methods differently: against GRAIL the
+disagreement is separated both ways, SyGMa leading on recall by $0.253$ $[0.222,0.283]$ and sitting
+$0.088$ $[0.076,0.099]$ below on F1 (Appendix~\ref{app:props}).
 
 \looseness=-1
 The budget does the same work and it is what identifies the variable, because truncating a ranked
@@ -632,22 +615,20 @@ conditioned on a mismatch of about half the rule--substrate positives
 \looseness=-2
 \paragraph{What the newer results rest on.} The cross-domain numbers come from files produced
 elsewhere, the reordering there is a top-1 phenomenon, the robust order is measured on three
-leaderboards, and the population result is a bounded null.
+leaderboards, and two of the results are bounded nulls.
 
 \section{Conclusion}
 \label{sec:conclusion}
 
 \looseness=-2
 Four choices are settled before any model is compared and none is routinely declared. What a
-published ranking entitles a reader to quote is smaller than the ranking, and smaller in two ways:
-most of its pairs were never resolved by the benchmark at all, and of those that were, some are
-reversed by a choice no paper reports. Two of the four choices change a published ordering and they do it differently, the
-budget by reversing margins an interval separates from zero and the criterion by exchanging systems
-a mature benchmark never separated; which pairs either can reach is decided by an inequality between
-a gap and a movement, so a maintainer can bound that exposure from a published table. The remedy is
-not only to declare the choices. Reach with the convention dispatched per template is a property of
-a bank rather than of a pair, and a set sized to the candidate pool beats every global budget on the
-same predictions.
+published ranking entitles a reader to quote is smaller than the ranking, in two ways: most of its
+pairs were never resolved at all, and some that were are reversed by a choice no paper reports. Two of the four choices change a published ordering and do it differently, the budget by
+reversing margins an interval separates from zero and the criterion by exchanging systems a mature
+benchmark never separated; which pairs either can reach follows from an inequality between a gap and
+a movement, so exposure is boundable from a published table. Declaring the choices is not the whole
+remedy: reach with the convention dispatched per template is a property of a bank, and a set sized
+to the pool beats every constant.
 
 \subsubsection*{Reproducibility statement}
 
