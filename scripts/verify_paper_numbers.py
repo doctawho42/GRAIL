@@ -1419,15 +1419,19 @@ def main() -> int:
                                - RO["cluster0"]["n_resolved_in_the_published_cell"]), src))
             crit = "criteria only, at the published budget"
             bud = "budgets only, at the published criterion"
+            # the sentence says the budget takes all three from one table and one from the other,
+            # which is a stronger and more falsifiable claim than "the budget axis does not"
+            losses = []
             for name, r_, s in (("three systems", RO["cluster1"], src),
                                 ("three methods", RM, srm)):
-                checks.append((r_["sub_grids"][crit]["n_dominating"] == r_["n_pairs"]
-                               and r_["sub_grids"][bud]["n_dominating"] < r_["n_pairs"],
-                               f"on {name} the criterion axis leaves the order intact and the "
-                               f"budget axis does not",
-                               f"criteria {r_['n_pairs']}, budgets fewer",
-                               f"criteria {r_['sub_grids'][crit]['n_dominating']}, "
-                               f"budgets {r_['sub_grids'][bud]['n_dominating']}", s))
+                checks.append((r_["sub_grids"][crit]["n_dominating"] == r_["n_pairs"],
+                               f"on {name} the criterion axis leaves the order intact",
+                               str(r_["n_pairs"]),
+                               str(r_["sub_grids"][crit]["n_dominating"]), s))
+                losses.append(r_["n_pairs"] - r_["sub_grids"][bud]["n_dominating"])
+            checks.append((sorted(losses) == [1, 3],
+                           "the budget takes all three from one table and one from the other",
+                           "3 and 1", f"{losses[0]} and {losses[1]}", src))
             # the published leader is not in the top tier of the surviving order, which is the
             # instrument's sharpest consequence and is recomputed here rather than asserted
             pub = RO["cluster0"]["published_order"]
