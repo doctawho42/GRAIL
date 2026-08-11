@@ -434,6 +434,41 @@ def main() -> int:
             check(f"survey printing {i}, places", pl, places, "the manuscript")
             check(f"survey printing {i}, tiers", ti, tiers, "the manuscript")
 
+    # 10d-c. What a certified reversal reverses. A pair whose published cell never separated it was
+    # not an ordering the table asserted, so counting its reversal under the second claim would be
+    # counting the first claim twice. Both halves are stated and both are held.
+    _cert = _res = 0
+    for _fn, _key in (("robust_order.json", "cluster0"), ("robust_order.json", "cluster1"),
+                      ("robust_order_metabolite.json", None),
+                      ("robust_order_posebusters.json", None),
+                      ("robust_order_wmt24_en-de.json", None),
+                      ("robust_order_wmt24_ja-zh.json", None)):
+        _q = ROOT / "results" / _fn
+        if _q.exists():
+            _d = json.loads(_q.read_text())
+            _b = _d["leaderboards"][_key] if _key else _d
+            for _pair in _b.get("contested_after_correction", []):
+                _cert += 1
+                _res += bool(_b["pairs"][_pair].get("resolved_in_the_published_cell"))
+    for _src in ("robust_order_wmt24_esa.json", "robust_order_wmt23.json"):
+        _q = ROOT / "results" / _src
+        if _q.exists():
+            for _b in json.loads(_q.read_text())["boards"].values():
+                for _pair in _b.get("contested_after_correction", []):
+                    _cert += 1
+                    _res += bool(_b["pairs"][_pair].get("resolved_in_the_published_cell"))
+    if _cert:
+        flat = re.sub(r"\s+", " ", whole)
+        _mc = re.search(r"Of those \$(\d+)\$, only \$(\d+)\$ reverse an ordering the published "
+                        r"cell separated from zero; the other \$(\d+)\$", flat)
+        checks.append((bool(_mc), "the certified-reversal qualifier parses", "present",
+                       "matched" if _mc else "not matched", ""))
+        if _mc:
+            src = "results/robust_order_*.json"
+            check("certified, total", _mc.group(1), _cert, src)
+            check("certified, resolved in the published cell", _mc.group(2), _res, src)
+            check("certified, not resolved there", _mc.group(3), _cert - _res, src)
+
     # 10d-m. The MQM boards' orientation. The published cell must be the aggregation the task
     # actually ranks by, and the check of that must not recompute the board's own quantity: it did,
     # and reported a self-comparison as evidence for a page. Both are held here.
