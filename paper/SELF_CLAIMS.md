@@ -743,3 +743,30 @@ section rather than on a sentence. The repair is not to delete them: each now se
 manuscript and passes silently when the claim is absent, so a moved claim is still checked where it
 is made and a dropped one is not a false alarm. A gate that cannot tell the two apart is a gate
 someone eventually switches off.
+
+---
+
+**A fifth variant, and it is the mirror of the fourth.** The dispatch instrument compares one arm
+against the best of two global settings. The completed loop was added to the global settings and
+not to the dispatch arm, which kept sending its templates to the expanded substrate and never
+contracting what came back. So a repaired control was being compared against an unrepaired
+treatment, and the residual reported that asymmetry rather than the policy. It was visible only
+because the contraction itself was corrected: the sign of the residual moved, which is what a
+comparison does when only one of its two sides has been fixed.
+
+```bash
+grep -n '"dispatch":' scripts/hydrogen_dispatch.py   # must build from the contracted half
+```
+
+**The rule: a repair applied to a control must be applied to the treatment in the same commit.**
+Fixing one side of a comparison and not the other produces a number that looks like a measurement of
+the thing being compared and is a measurement of the repair. The fourth variant was a control that
+was an unfinished version of the treatment; this is a treatment left as an unfinished version of
+itself. Both are found the same way, by asking of every arm in a comparison what would have to be
+true for it to be a configuration someone would choose.
+
+**And a note on how it was found.** Four reviewers reported that Section 4 and its appendix
+disagreed about one number. The disagreement was real, and repairing it exposed two further defects
+underneath: the contraction that both sides used, and the asymmetry above. A contradiction between
+two statements of the same quantity is worth chasing past the point where the two agree, because
+what made them disagree is rarely the last thing wrong.

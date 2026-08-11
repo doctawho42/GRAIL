@@ -168,7 +168,12 @@ def _worker(item):
     e_rest, c_rest = _apply(substrates, rest, [True] * len(rest), both=True)
     i_want = _apply(substrates, want, [False] * len(want))
     i_rest = _apply(substrates, rest, [False] * len(rest))
-    arms = {"dispatch": e_want | i_rest,
+    # Dispatch sends a template to the expanded substrate; it does not thereby inherit the defect of
+    # never contracting what comes back. Completing the loop is a correctness requirement and not a
+    # convention, so the expanded half of the dispatch arm is the contracted one. Built from the
+    # uncontracted half instead, dispatch would be measured under the unfinished loop on exactly the
+    # templates it was introduced to help, and its residual would report that rather than the policy.
+    arms = {"dispatch": c_want | i_rest,
             "explicit": e_want | e_rest,
             "implicit": i_want | i_rest,
             "explicit_completed": c_want | c_rest}
