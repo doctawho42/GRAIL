@@ -1,7 +1,7 @@
 {
  "config": {
   "script": "hydrogen_dispatch.py",
-  "git_commit": "dfc7306f30cae7f7a332893cc981a90ec4bdb649",
+  "git_commit": "294b76b1e1ea7bb3faf25a04a9f84cb0d1e6bc67",
   "git_dirty": true,
   "population": "clean_test",
   "n_substrates": 1170,
@@ -21,6 +21,11 @@
  },
  "banks": {
   "sygma_175": {
+   "measured_by": {
+    "script": "hydrogen_dispatch.py",
+    "git_commit": "294b76b1e1ea7bb3faf25a04a9f84cb0d1e6bc67",
+    "git_dirty": true
+   },
    "n_rules": 175,
    "dispatched_to_expanded": 0,
    "references": 2597,
@@ -60,6 +65,11 @@
    ]
   },
   "biotransformer": {
+   "measured_by": {
+    "script": "hydrogen_dispatch.py",
+    "git_commit": "294b76b1e1ea7bb3faf25a04a9f84cb0d1e6bc67",
+    "git_dirty": true
+   },
    "n_rules": 994,
    "dispatched_to_expanded": 726,
    "references": 2597,

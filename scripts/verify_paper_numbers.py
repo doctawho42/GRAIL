@@ -1275,8 +1275,12 @@ def main() -> int:
         flat = re.sub(r"\s+", " ", whole)
         versions = {k: (v.get("measured_by") or {}).get("git_commit") for k, v in H4.items()}
         quoted = {"sygma_175": "SyGMa", "biotransformer": "BioTransformer", "grail_full": "ours"}
+        # the row must be a dispatch row and not merely a line starting with the same word: the
+        # census table elsewhere begins "ours & ... & $675$ &" too, and matching that made the
+        # check fire on a bank the manuscript had already withdrawn
         cited = {k for k, shown in quoted.items()
-                 if re.search(shown + r" & \$?[\\a-z{},0-9]+\$? & \$\d+\$ &", flat)}
+                 if re.search(shown + r" & \$?[\\a-z{},0-9]+\$? & \$\d+\$ & [\d.]+ "
+                              r"\$\[[\d.,]+\]\$ &", flat)}
         stale = sorted(k for k in cited if versions.get(k) is None
                        or (len({versions[c] for c in cited if versions.get(c)}) > 1
                            and versions[k] != max((versions[c] for c in cited if versions.get(c)),
