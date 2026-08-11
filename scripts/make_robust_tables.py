@@ -23,7 +23,11 @@ SHORT = {"canonical": "canon", "inchikey": "IK", "nostereo": "no-st",
 def cell_label(s: str) -> str:
     try:
         mode, k = ast.literal_eval(s)
-        return f"{SHORT.get(mode, mode)}@{k}"
+        # the second axis is a budget in the prediction domains and a post-processing setting in
+        # docking; "@15" reads as a cut-off and would misread as one on a board that has none
+        if isinstance(k, int):
+            return f"{SHORT.get(mode, mode)}@{k}"
+        return f"{SHORT.get(mode, mode)} / {SHORT.get(k, k)}"
     except Exception:
         return s.replace("_", " ")
 
@@ -146,6 +150,10 @@ def main() -> int:
     if rm.exists():
         r = json.loads(rm.read_text())
         boards.append((f"metabolites, {r['n_systems']} methods", r))
+    rp = ROOT / "results/robust_order_posebusters.json"
+    if rp.exists():
+        r = json.loads(rp.read_text())
+        boards.append((f"docking, {r['n_systems']} programs", r))
     if not boards:
         raise SystemExit("no robust-order artifact to render")
 

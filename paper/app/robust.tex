@@ -48,12 +48,15 @@ other: a leaderboard can take many orderings and still support several tiers if 
 move are adjacent, and it can take few and support one if the pairs that never move are also never
 resolved.
 
-\paragraph{The grid is the same shape and not the same cells.} The criterion axis is the four
-identity relations in every domain. The budget axis is not transferable: retrosynthesis tables are
-read at top-1 through top-10 and metabolite work at fifteen, so each leaderboard is swept over the
-budgets its own field reports at. Fixing one set of budgets across domains would have measured
-robustness to a budget nobody uses. What this costs is that the three shares are comparable in
-construction rather than in cells, which is why they are reported as three numbers and not averaged.
+\paragraph{The grid is the same shape and not the same cells.} The criterion axis is four identity
+relations in every domain: which strings name the same compound in the prediction domains, and which
+poses count as the crystal one in docking. The second axis is not transferable. Retrosynthesis
+tables are read at top-1 through top-10 and metabolite work at fifteen, so each leaderboard is swept
+over the budgets its own field reports at; docking reports a single pose and has no budget, and the
+choice its papers leave undeclared instead is whether that pose is energy-minimised before it is
+scored. Fixing one set of budgets across domains would have measured robustness to a budget nobody
+uses. What this costs is that the four shares are comparable in construction rather than in cells,
+which is why they are reported as four numbers and not averaged.
 One consequence is worth stating because it bounds how much the grid can find: on the seven-system
 board exactly one of the $120$ pairs of cells gives identical hit vectors for every system,
 canonical and InChIKey at top-1, so the sixteen cells are sixteen and not fewer.
@@ -72,6 +75,30 @@ and re-scoring it under another criterion changes the metric rather than the con
 generation results are therefore reported in Appendix~\ref{app:xdomain} as a criterion sensitivity
 and not as a row here. Both rules were fixed before the shares below were read, and the second
 excludes the one leaderboard whose pairs are furthest apart, which would have raised the shares.
+
+\paragraph{Docking is a control, and is included for that reason.} Three of the four boards are
+audited here for the first time, which leaves the instrument's verdicts unvouched for: a rule that
+reports little surviving everywhere cannot be told apart from a rule that reports little. Docking
+supplies the missing arm. Its own field published this reversal before we ran anything:
+\citet{Buttenschoen_2024} argued that a pose can sit within the field's distance tolerance of the
+crystal one and still be chemically impossible, that deep-learning programs produce such poses far
+more often than search-based ones, and released the per-pose table behind the argument. Reading that
+table through the dominance order, without reference to the argument, contests exactly two of the
+$21$ pairs, and both are the same program against the two it outranks on distance alone --- the
+program whose poses are close and invalid. Everything else stands: $17$ pairs dominate, none is
+merely unresolved, and the order keeps $4$ tiers of the published $7$. A leaderboard that is
+well separated and honestly scored survives this grid, which is what makes the other three rows
+evidence rather than an artefact of the instrument.
+
+Two conventions the released table forces are declared rather than chosen. Its two flatness checks
+are recorded only in the un-minimised arm, so a criterion using them would not exist in half the
+grid; they are dropped from every cell rather than from one, which keeps each criterion the same
+object in each cell. A row with no scorable pose is a miss and not an absent observation, since
+dropping those rows would score each program on the subset it managed to produce output for. The
+crystal ligand ships as an eighth row, is the reference re-scored through the same pipeline rather
+than a method, and is excluded; the second population the source distributes is a population and not
+a cell, and the grid holds the population fixed, so the $85$ items of that set are left out and said
+to be.
 
 \paragraph{What the share does not measure.} It is not an error rate and no cell is privileged.
 The instrument takes the grid as declared and says what part of a published ordering is invariant

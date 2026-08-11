@@ -25,6 +25,7 @@ and how often an exchange follows.
 from __future__ import annotations
 
 import argparse
+import ast
 import itertools
 import json
 import pathlib
@@ -75,6 +76,19 @@ def leaderboards() -> dict:
             for m, v in models.items():
                 per.setdefault(m, {})[crit] = v["unique@10000"]
         out["molecular generation, MOSES"] = ("generation", per)
+
+    d = _load("robust_order_posebusters.json")
+    if d and "system_accuracy_by_cell" in d:
+        # the criterion axis at the post-processing the source publishes at, so the unit compared
+        # here is a pair of criteria, as it is on every other board
+        post = ast.literal_eval(d["published_cell"])[1]
+        per = {}
+        for m, cells in d["system_accuracy_by_cell"].items():
+            for cell, v in cells.items():
+                crit, p_ = ast.literal_eval(cell)
+                if p_ == post:
+                    per.setdefault(m, {})[crit] = v
+        out["docking, PoseBusters"] = ("docking", per)
 
     d = _load("gloryx_criterion_ladder.json")
     if d:

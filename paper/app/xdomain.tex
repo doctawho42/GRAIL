@@ -660,7 +660,7 @@ exactly when it moves the two apart by more than the gap between them, since a d
 sign only if the change exceeds it. That needs no evidence. What needs evidence is whether real
 leaderboards are packed tightly enough for it to happen, which is a fact about how a field's methods
 converge. Both quantities are already computed for every leaderboard in this paper, so we compare
-them on all of them ($439$ method-pair by criterion-pair comparisons across three domains, with
+them on all of them ($562$ method-pair by criterion-pair comparisons across four domains, with
 nothing re-scored:
 
 \begin{center}
@@ -669,6 +669,7 @@ nothing re-scored:
 \toprule
 leaderboard & methods & comparisons & med.\ gap & med.\ move & move $>$ gap \\
 \midrule
+docking, PoseBusters     & 7 & 123 & $0.1986$ & $0.0724$ & $28$ \\
 generation, MOSES        & 8 & 277 & $0.0094$ & $0.0001$ & $16$ \\
 metabolites, GLORYx      & 4 & 18  & $0.1303$ & $0.0361$ & $4$ \\
 retrosynthesis, seven    & 7 & 126 & $0.0130$ & $0.0016$ & $28$ \\
@@ -677,14 +678,15 @@ retrosynthesis, three    & 3 & 18  & $0.0470$ & $0.0011$ & $0$ \\
 \end{tabular}
 \end{center}
 
-The movement exceeds the gap in $48$ of the $439$, about one comparison in nine, and a reversal
-follows in $26$ of those $48$) the rest being movements that widen a gap instead of closing it,
+The movement exceeds the gap in $76$ of the $562$, about one comparison in seven, and a reversal
+follows in $33$ of those $76$) the rest being movements that widen a gap instead of closing it,
 which is why the inequality is necessary and not sufficient. No reversal occurs where the gap
-survives the movement, on any of the $439$, which is the arithmetic holding and is checked rather
+survives the movement, on any of the $562$, which is the arithmetic holding and is checked rather
 than assumed.
 
-The distribution across leaderboards is the finding. The seven-system group is the tightest and
-supplies $28$ of the $48$; the three-system group, whose members sit three and a half times further
+The distribution across leaderboards is the finding. Docking and the seven-system retrosynthesis
+group each supply $28$ of the $76$ for opposite reasons, one because the criterion moves programs
+by a fifth of their range and the other because its systems sit a hundredth apart; the three-system group, whose members sit three and a half times further
 apart while the criterion moves them just as much, supplies none. Generation contributes $16$ from
 $277$ comparisons because its median movement is $0.0001$, the criterion has almost no purchase
 there, and the external metabolite set contributes $4$ from $18$ for the opposite reason, a

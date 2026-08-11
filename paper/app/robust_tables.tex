@@ -18,6 +18,10 @@ retrosynthesis, 3 systems & criteria only, at the published budget & 4 & 3 of 3 
 metabolites, 3 methods & criteria only, at the published budget & 4 & 3 of 3 & 3 & 1 \\
  & budgets only, at the published criterion & 4 & 2 of 3 & 2 & 2 \\
  & the product & 16 & 2 of 3 & 2 & 2 \\
+\midrule
+docking, 7 programs & criteria only, at the published post-processing & 4 & 18 of 21 & 5 & 3 \\
+ & post-processing only, at the published criterion & 2 & 18 of 21 & 5 & 2 \\
+ & the product & 8 & 17 of 21 & 4 & 5 \\
 \bottomrule\end{tabular}\end{center}
 
 \paragraph{retrosynthesis, 7 systems.} Published order at ('canonical', 1): graphretro $>$ localretro $>$ retroformer $>$ graph2smiles $>$ gln $>$ g2retro $>$ retroxpert. 4999 items. Accuracy by system and cell, from which every quantity below follows:
@@ -143,4 +147,50 @@ pair (as the published cell orders it) & verdict & sep.\ every cell & cells reve
 MetaPredictor over GRAIL & dominates & yes & 0 & 0 & yes \\
 SyGMa over GRAIL & dominates & yes & 0 & 0 & yes \\
 MetaPredictor over SyGMa & contested & no & 4 & 2 & no \\
+\bottomrule\end{tabular}\end{center}
+
+\paragraph{docking, 7 programs.} Published order at ('rmsd2+valid', 'none'): vina $>$ gold $>$ diffdock $>$ deepdock $>$ tankbind $>$ unimol $>$ equibind. 428 items. Accuracy by system and cell, from which every quantity below follows:
+
+\begin{center}\small
+\begin{tabular}{lcccccccc}
+\toprule
+system & rmsd2 / none & rmsd2 / energy minimization & rmsd2+valid / none & rmsd2+valid / energy minimization & rmsd1 / none & rmsd1 / energy minimization & rmsd2+chem / none & rmsd2+chem / energy minimization \\
+\midrule
+vina & 0.523 & 0.484 & 0.512 & 0.421 & 0.344 & 0.306 & 0.519 & 0.458 \\
+gold & 0.512 & 0.479 & 0.477 & 0.423 & 0.344 & 0.292 & 0.509 & 0.470 \\
+diffdock & 0.379 & 0.381 & 0.136 & 0.334 & 0.145 & 0.187 & 0.355 & 0.357 \\
+deepdock & 0.178 & 0.196 & 0.047 & 0.129 & 0.047 & 0.072 & 0.133 & 0.154 \\
+tankbind & 0.149 & 0.199 & 0.026 & 0.119 & 0.026 & 0.072 & 0.072 & 0.133 \\
+unimol & 0.229 & 0.280 & 0.019 & 0.175 & 0.042 & 0.101 & 0.063 & 0.194 \\
+equibind & 0.026 & 0.054 & 0.002 & 0.047 & 0.000 & 0.023 & 0.026 & 0.051 \\
+\bottomrule\end{tabular}\end{center}
+
+Per-pair classification. A pair is \emph{contested} only when some cell puts it the other way round with an interval excluding zero; a pair that is neither dominating nor contested is one the benchmark does not resolve, which is a different failure and is not counted as a reversal.
+
+\begin{center}\small
+\begin{tabular}{llccccl}
+\toprule
+pair (as the published cell orders it) & verdict & sep.\ every cell & cells reversing & with an interval & own cell resolves \\
+\midrule
+diffdock over deepdock & dominates & yes & 0 & 0 & yes \\
+deepdock over equibind & dominates & yes & 0 & 0 & yes \\
+gold over deepdock & dominates & yes & 0 & 0 & yes \\
+deepdock over tankbind & unresolved & no & 2 & 0 & no \\
+deepdock over unimol & contested & no & 5 & 2 & yes \\
+vina over deepdock & dominates & yes & 0 & 0 & yes \\
+diffdock over equibind & dominates & yes & 0 & 0 & yes \\
+gold over diffdock & dominates & yes & 0 & 0 & yes \\
+diffdock over tankbind & dominates & yes & 0 & 0 & yes \\
+diffdock over unimol & dominates & yes & 0 & 0 & yes \\
+vina over diffdock & dominates & yes & 0 & 0 & yes \\
+gold over equibind & dominates & yes & 0 & 0 & yes \\
+tankbind over equibind & dominates & yes & 0 & 0 & yes \\
+unimol over equibind & dominates & yes & 0 & 0 & yes \\
+vina over equibind & dominates & yes & 0 & 0 & yes \\
+gold over tankbind & dominates & yes & 0 & 0 & yes \\
+gold over unimol & dominates & yes & 0 & 0 & yes \\
+vina over gold & unresolved & no & 3 & 0 & no \\
+tankbind over unimol & contested & no & 6 & 4 & no \\
+vina over tankbind & dominates & yes & 0 & 0 & yes \\
+vina over unimol & dominates & yes & 0 & 0 & yes \\
 \bottomrule\end{tabular}\end{center}

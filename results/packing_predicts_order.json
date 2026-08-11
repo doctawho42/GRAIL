@@ -1,7 +1,7 @@
 {
  "config": {
   "script": "packing_predicts_order.py",
-  "git_commit": "cd4d4cc47a5d96c1258804525c0dd7dc81a517fb",
+  "git_commit": "dab157a24f217d1411685945febad10398c093c1",
   "git_dirty": true,
   "note": "the screen uses only the published cell and the movement to each other cell; the outcome comes from the full grid"
  },
@@ -290,16 +290,219 @@
      "contested": false
     }
    ]
+  },
+  "docking, 7 programs": {
+   "n_pairs": 21,
+   "flagged": 11,
+   "failed": 4,
+   "flagged_and_failed": 4,
+   "flagged_but_survived": 7,
+   "failed_but_not_flagged": 0,
+   "neither": 10,
+   "sensitivity": 1.0,
+   "precision": 0.3636,
+   "specificity": 0.5882,
+   "pairs": [
+    {
+     "pair": "vina over gold",
+     "gap": 0.0351,
+     "largest_move": 0.0468,
+     "cell_of_that_move": "('rmsd2+chem', 'energy minimization')",
+     "flagged": true,
+     "failed_to_dominate": true,
+     "contested": false
+    },
+    {
+     "pair": "vina over diffdock",
+     "gap": 0.3762,
+     "largest_move": 0.2897,
+     "cell_of_that_move": "('rmsd2+valid', 'energy minimization')",
+     "flagged": false,
+     "failed_to_dominate": false,
+     "contested": false
+    },
+    {
+     "pair": "vina over deepdock",
+     "gap": 0.465,
+     "largest_move": 0.2313,
+     "cell_of_that_move": "('rmsd1', 'energy minimization')",
+     "flagged": false,
+     "failed_to_dominate": false,
+     "contested": false
+    },
+    {
+     "pair": "vina over tankbind",
+     "gap": 0.486,
+     "largest_move": 0.2523,
+     "cell_of_that_move": "('rmsd1', 'energy minimization')",
+     "flagged": false,
+     "failed_to_dominate": false,
+     "contested": false
+    },
+    {
+     "pair": "vina over unimol",
+     "gap": 0.493,
+     "largest_move": 0.2898,
+     "cell_of_that_move": "('rmsd2', 'energy minimization')",
+     "flagged": false,
+     "failed_to_dominate": false,
+     "contested": false
+    },
+    {
+     "pair": "vina over equibind",
+     "gap": 0.5094,
+     "largest_move": 0.2267,
+     "cell_of_that_move": "('rmsd1', 'energy minimization')",
+     "flagged": false,
+     "failed_to_dominate": false,
+     "contested": false
+    },
+    {
+     "pair": "gold over diffdock",
+     "gap": 0.3411,
+     "largest_move": 0.2523,
+     "cell_of_that_move": "('rmsd2+valid', 'energy minimization')",
+     "flagged": false,
+     "failed_to_dominate": false,
+     "contested": false
+    },
+    {
+     "pair": "gold over deepdock",
+     "gap": 0.4299,
+     "largest_move": 0.2102,
+     "cell_of_that_move": "('rmsd1', 'energy minimization')",
+     "flagged": false,
+     "failed_to_dominate": false,
+     "contested": false
+    },
+    {
+     "pair": "gold over tankbind",
+     "gap": 0.4509,
+     "largest_move": 0.2312,
+     "cell_of_that_move": "('rmsd1', 'energy minimization')",
+     "flagged": false,
+     "failed_to_dominate": false,
+     "contested": false
+    },
+    {
+     "pair": "gold over unimol",
+     "gap": 0.4579,
+     "largest_move": 0.2663,
+     "cell_of_that_move": "('rmsd1', 'energy minimization')",
+     "flagged": false,
+     "failed_to_dominate": false,
+     "contested": false
+    },
+    {
+     "pair": "gold over equibind",
+     "gap": 0.4743,
+     "largest_move": 0.2056,
+     "cell_of_that_move": "('rmsd1', 'energy minimization')",
+     "flagged": false,
+     "failed_to_dominate": false,
+     "contested": false
+    },
+    {
+     "pair": "diffdock over deepdock",
+     "gap": 0.0888,
+     "largest_move": 0.1331,
+     "cell_of_that_move": "('rmsd2+chem', 'none')",
+     "flagged": true,
+     "failed_to_dominate": false,
+     "contested": false
+    },
+    {
+     "pair": "diffdock over tankbind",
+     "gap": 0.1098,
+     "largest_move": 0.1729,
+     "cell_of_that_move": "('rmsd2+chem', 'none')",
+     "flagged": true,
+     "failed_to_dominate": false,
+     "contested": false
+    },
+    {
+     "pair": "diffdock over unimol",
+     "gap": 0.1168,
+     "largest_move": 0.1752,
+     "cell_of_that_move": "('rmsd2+chem', 'none')",
+     "flagged": true,
+     "failed_to_dominate": false,
+     "contested": false
+    },
+    {
+     "pair": "diffdock over equibind",
+     "gap": 0.1332,
+     "largest_move": 0.2196,
+     "cell_of_that_move": "('rmsd2', 'none')",
+     "flagged": true,
+     "failed_to_dominate": false,
+     "contested": false
+    },
+    {
+     "pair": "deepdock over tankbind",
+     "gap": 0.021,
+     "largest_move": 0.0398,
+     "cell_of_that_move": "('rmsd2+chem', 'none')",
+     "flagged": true,
+     "failed_to_dominate": true,
+     "contested": false
+    },
+    {
+     "pair": "deepdock over unimol",
+     "gap": 0.028,
+     "largest_move": 0.1121,
+     "cell_of_that_move": "('rmsd2', 'energy minimization')",
+     "flagged": true,
+     "failed_to_dominate": true,
+     "contested": true
+    },
+    {
+     "pair": "deepdock over equibind",
+     "gap": 0.0444,
+     "largest_move": 0.1075,
+     "cell_of_that_move": "('rmsd2', 'none')",
+     "flagged": true,
+     "failed_to_dominate": false,
+     "contested": false
+    },
+    {
+     "pair": "tankbind over unimol",
+     "gap": 0.007,
+     "largest_move": 0.0888,
+     "cell_of_that_move": "('rmsd2', 'energy minimization')",
+     "flagged": true,
+     "failed_to_dominate": true,
+     "contested": true
+    },
+    {
+     "pair": "tankbind over equibind",
+     "gap": 0.0234,
+     "largest_move": 0.1215,
+     "cell_of_that_move": "('rmsd2', 'energy minimization')",
+     "flagged": true,
+     "failed_to_dominate": false,
+     "contested": false
+    },
+    {
+     "pair": "unimol over equibind",
+     "gap": 0.0164,
+     "largest_move": 0.2103,
+     "cell_of_that_move": "('rmsd2', 'energy minimization')",
+     "flagged": true,
+     "failed_to_dominate": false,
+     "contested": false
+    }
+   ]
   }
  },
  "totals": {
-  "n_pairs": 27,
-  "flagged": 21,
-  "failed": 17,
-  "flagged_and_failed": 17,
-  "flagged_but_survived": 4,
+  "n_pairs": 48,
+  "flagged": 32,
+  "failed": 21,
+  "flagged_and_failed": 21,
+  "flagged_but_survived": 11,
   "failed_but_not_flagged": 0,
   "sensitivity": 1.0,
-  "precision": 0.8095
+  "precision": 0.6562
  }
 }

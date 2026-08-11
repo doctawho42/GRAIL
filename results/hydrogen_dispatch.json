@@ -1,8 +1,9 @@
 {
  "config": {
   "script": "hydrogen_dispatch.py",
-  "git_commit": "a227873afa32a6f4017e161ffb2841f008616a88",
+  "git_commit": "df40e6da66ab4021fbcc95b9faba94169c343c00",
   "git_dirty": true,
+  "population": "subsample245",
   "n_substrates": 245,
   "match": "inchikey_tautomer",
   "n_boot": 10000,
@@ -32,10 +33,32 @@
    ],
    "global_arms": {
     "all_explicit": 0.2205,
-    "all_implicit": 0.5273
+    "all_implicit": 0.5273,
+    "all_explicit_completed": 0.485
    },
+   "global_arms_paired": {
+    "recovered_explicit": 125,
+    "recovered_implicit": 299,
+    "recovered_explicit_completed": 275,
+    "explicit_minus_implicit": -0.3069,
+    "ci95": [
+     -0.3553,
+     -0.2603
+    ],
+    "excludes_zero": true
+   },
+   "legitimate_global_arms": [
+    "all_implicit",
+    "all_explicit_completed"
+   ],
    "best_global": 0.5273,
-   "residual_convention_dependence": 0.0
+   "best_global_arm": "all_implicit",
+   "guaranteed_reach": 0.485,
+   "residual_convention_dependence": 0.0,
+   "residual_ci95": [
+    0.0,
+    0.0
+   ]
   },
   "biotransformer": {
    "n_rules": 994,
@@ -49,10 +72,32 @@
    ],
    "global_arms": {
     "all_explicit": 0.4727,
-    "all_implicit": 0.1305
+    "all_implicit": 0.1305,
+    "all_explicit_completed": 0.4586
    },
-   "best_global": 0.4727,
-   "residual_convention_dependence": 0.0
+   "global_arms_paired": {
+    "recovered_explicit": 268,
+    "recovered_implicit": 74,
+    "recovered_explicit_completed": 260,
+    "explicit_minus_implicit": 0.3422,
+    "ci95": [
+     0.2979,
+     0.3879
+    ],
+    "excludes_zero": true
+   },
+   "legitimate_global_arms": [
+    "all_implicit",
+    "all_explicit_completed"
+   ],
+   "best_global": 0.4586,
+   "best_global_arm": "all_explicit_completed",
+   "guaranteed_reach": 0.1305,
+   "residual_convention_dependence": 0.0141,
+   "residual_ci95": [
+    0.005,
+    0.0256
+   ]
   },
   "grail_full": {
    "n_rules": 7581,

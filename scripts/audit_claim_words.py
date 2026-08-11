@@ -44,7 +44,11 @@ CONFIRMATORY = [
 # The paragraph that defines the words is allowed to use them: it is the definition, not a claim.
 DEFINITION_MARKERS = ["Two words are used throughout", "A difference is \\emph{separated}",
                       "A difference is \\emph{certified}", "corrected rather than certified",
-                      "only they are ever called certified"]
+                      "only they are ever called certified",
+                      # the appendix that enumerates the word has to name it to introduce itself;
+                      # keyed on its label rather than its wording, so an edit cannot silently
+                      # widen the exemption to a neighbouring sentence
+                      "\\label{app:claimwords}"]
 
 
 def sentences(text: str):

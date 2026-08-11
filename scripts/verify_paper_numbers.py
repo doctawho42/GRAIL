@@ -391,7 +391,7 @@ def main() -> int:
         P = json.loads(pk.read_text())
         flat = re.sub(r"\s+", " ", whole)
         t = P["totals"]
-        m = re.search(r"\$(\d+)\$ method-pair by criterion-pair comparisons across three domains", flat)
+        m = re.search(r"\$(\d+)\$ method-pair by criterion-pair comparisons across four domains", flat)
         check("packing, comparisons", m and m.group(1), t["comparisons"])
         m = re.search(r"exceeds the gap in \$(\d+)\$ of the \$(\d+)\$", flat)
         check("packing, move exceeds gap", m and m.group(1), t["closer_than_the_move"])
@@ -1421,7 +1421,7 @@ def main() -> int:
         S, T = PK["screening_test"], PK["totals"]
         flat = re.sub(r"\s+", " ", whole)
         mpk = re.search(r"over the \$(\d+)\$ method-pair by criterion-pair comparisons this paper "
-                        r"spans in\s*three domains it flags \$([\d.]+)\\%\$, and all \$(\d+)\$ "
+                        r"spans in\s*four domains it flags \$([\d.]+)\\%\$, and all \$(\d+)\$ "
                         r"exchanges fall inside the flagged set: sensitivity\s*\$([\d.]+)\$ .*?"
                         r"specificity \$([\d.]+)\$, precision \$([\d.]+)\$", flat)
         checks.append((bool(mpk), "the packing screening sentence parses", "present",
@@ -1676,15 +1676,18 @@ def main() -> int:
     # interval, how many pairs the leaderboard's own cell resolves at all, and the share among those.
     ro = ROOT / "results/robust_order.json"
     rm = ROOT / "results/robust_order_metabolite.json"
-    if ro.exists() and rm.exists():
+    rp = ROOT / "results/robust_order_posebusters.json"
+    if ro.exists() and rm.exists() and rp.exists():
         RO = json.loads(ro.read_text())["leaderboards"]
         RM = json.loads(rm.read_text())
+        RP = json.loads(rp.read_text())
         flat = re.sub(r"\s+", " ", whole)
         row = (r"& \$([\d,{}]+)\$ & \$(\d+)\$ of \$(\d+)\$ & \$(\d+)\$ & \$(\d+)\$ "
                r"& \$([\d.]+)\$ & \$(\d+)\$ of \$(\d+)\$")
         mr = re.search(r"retrosynthesis, seven systems " + row + r".*?"
                        r"retrosynthesis, three systems " + row + r".*?"
-                       r"metabolites, three methods " + row, flat)
+                       r"metabolites, three methods " + row + r".*?"
+                       r"docking, seven programs " + row, flat)
         checks.append((bool(mr), "the robust-order table parses", "present",
                        "matched" if mr else "not matched", ""))
         if mr:
@@ -1692,7 +1695,8 @@ def main() -> int:
             srm = str(rm.relative_to(ROOT))
             boards = ((("seven systems", RO["cluster0"], src), 0),
                       (("three systems", RO["cluster1"], src), 8),
-                      (("three methods", RM, srm), 16))
+                      (("three methods", RM, srm), 16),
+                      (("seven programs", RP, str(rp.relative_to(ROOT))), 24))
             for (lbl, r_, s), off in boards:
                 check(f"robust order, {lbl}, items", mr.group(off + 1).replace("{,}", ""),
                       r_["n_items"], s)
@@ -1702,7 +1706,7 @@ def main() -> int:
                 check(f"robust order, {lbl}, resolved", mr.group(off + 5),
                       r_["n_resolved_in_the_published_cell"], s)
                 check(f"robust order, {lbl}, share among resolved", mr.group(off + 6),
-                      r_["robustness_among_resolved"], s)
+                      round(r_["robustness_among_resolved"], 2), s)
                 check(f"robust order, {lbl}, tiers", mr.group(off + 7), r_["tiers_distinguished"], s)
                 check(f"robust order, {lbl}, systems", mr.group(off + 8), r_["n_systems"], s)
             for name, r_, s in (("retro", RO["cluster0"], src), ("metabolite", RM, srm)):

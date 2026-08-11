@@ -96,6 +96,11 @@ def main() -> int:
         r = json.loads(rm.read_text())
         if "system_accuracy_by_cell" in r:
             boards[f"metabolites, {r['n_systems']} methods"] = r
+    rp = ROOT / "results/robust_order_posebusters.json"
+    if rp.exists():
+        r = json.loads(rp.read_text())
+        if "system_accuracy_by_cell" in r:
+            boards[f"docking, {r['n_systems']} programs"] = r
     if not boards:
         raise SystemExit("no robust-order artifact carrying per-cell accuracies")
 

@@ -51,3 +51,7 @@ xtr.txt
 # Local tooling output
 qodana.yaml
 logs/
+
+# externally distributed evaluation tables, fetched not redistributed; the artifact that
+# reads one records its sha256 so a reader can confirm they hold the same file
+data/external/

@@ -778,3 +778,64 @@ def test_a_template_naming_a_bracket_hydrogen_cannot_fire_on_the_substrate_as_pa
     assert 0 not in fired_implicit, "a bracket-hydrogen template cannot fire on an implicit mol"
     assert 0 in fired_expanded, "and it does fire once the hydrogens are drawn"
     assert 1 in fired_implicit, "a template naming no hydrogen fires under the deployed convention"
+
+
+def test_the_docking_control_scores_a_close_but_invalid_pose_as_the_two_criteria_differ():
+    """The docking board exists to be a control, and it only works if it can tell the two apart.
+
+    Its whole value is that one criterion counts a pose the other refuses: close to the crystal
+    ligand and chemically impossible. If the criteria collapsed onto each other the board would
+    report a robust order for a trivial reason and vouch for nothing. This also pins the three
+    conventions the released table forces, each of which would silently change every number: the
+    re-scored reference is not a method, a row with no pose is a miss rather than an absent
+    observation, and no criterion may name a column the source records in only one arm.
+    """
+    import importlib.util
+    import sys
+    from pathlib import Path
+
+    import pandas as pd
+
+    root = Path(__file__).resolve().parents[2]
+    spec = importlib.util.spec_from_file_location(
+        "posebusters_board", root / "scripts" / "posebusters_board.py")
+    pbb = importlib.util.module_from_spec(spec)
+    sys.modules["posebusters_board"] = pbb
+    spec.loader.exec_module(pbb)
+
+    # a criterion may only name columns present in every cell of the grid
+    named = {c for _, _, cols in pbb.CRITERIA.values() for c in cols}
+    assert not (named & set(pbb.FLATNESS)), (
+        "a criterion names a check the source records only under one post-processing value, so it "
+        "does not exist in half the grid")
+
+    checks = (pbb.LOAD,) + pbb.INTRA + pbb.INTER
+    def row(method, post, pdb, rmsd, valid):
+        d = {"dataset": pbb.POPULATION, "method": method, "post-processing": post,
+             "pdb_id": pdb, "rmsd": rmsd}
+        d.update({c: (True if valid else False) if rmsd == rmsd else None for c in checks})
+        d.update({c: None for c in pbb.FLATNESS})
+        return d
+
+    rows = []
+    for post in pbb.POSTPROC:
+        rows += [row("alpha", post, "1abc", 0.5, True),    # close and valid
+                 row("alpha", post, "2abc", 9.0, True),    # valid and far
+                 row("alpha", post, "3abc", 0.5, True),
+                 row("beta", post, "1abc", 0.5, False),    # close and impossible
+                 row("beta", post, "2abc", 0.5, False),
+                 row("beta", post, "3abc", float("nan"), False)]  # no pose at all
+    rows += [row("crystal_structures", "none", p, 0.0, True) for p in ("1abc", "2abc", "3abc")]
+
+    hits, systems, items, cells = pbb.build_hits(pd.DataFrame(rows))
+    assert systems == ["alpha", "beta"], "the re-scored reference is being treated as a method"
+    assert items == ["1abc", "2abc", "3abc"]
+
+    near = hits[("beta", ("rmsd2", "none"))]
+    valid = hits[("beta", ("rmsd2+valid", "none"))]
+    assert near.tolist() == [1.0, 1.0, 0.0], "a missing pose must score as a miss, not be dropped"
+    assert valid.tolist() == [0.0, 0.0, 0.0], (
+        "a pose within the tolerance and failing every validity check is being counted as a hit, "
+        "so the two criteria cannot disagree and the control vouches for nothing")
+    assert hits[("alpha", ("rmsd2", "none"))].tolist() == [1.0, 0.0, 1.0]
+    assert hits[("alpha", ("rmsd1", "none"))].tolist() == [1.0, 0.0, 1.0]

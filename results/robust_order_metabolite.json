@@ -1,7 +1,7 @@
 {
  "config": {
   "script": "robust_order_metabolite.py",
-  "git_commit": "df40e6da66ab4021fbcc95b9faba94169c343c00",
+  "git_commit": "d3649b53bc0e9e946c606e3f3704c711c5f280bf",
   "git_dirty": true,
   "n_boot": 10000,
   "seed": 0,
@@ -92,6 +92,10 @@
  "n_separated_in_every_cell": 2,
  "n_contested": 1,
  "tiers_distinguished": 2,
+ "tiers_ci95": [
+  2,
+  2
+ ],
  "distinct_orderings_across_the_grid": 2,
  "robustness": 0.6667,
  "robustness_ci95": [

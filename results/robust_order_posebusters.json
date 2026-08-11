@@ -1,0 +1,2189 @@
+{
+ "system_accuracy_by_cell": {
+  "deepdock": {
+   "('rmsd2', 'none')": 0.1776,
+   "('rmsd2', 'energy minimization')": 0.1963,
+   "('rmsd2+valid', 'none')": 0.0467,
+   "('rmsd2+valid', 'energy minimization')": 0.1285,
+   "('rmsd1', 'none')": 0.0467,
+   "('rmsd1', 'energy minimization')": 0.0724,
+   "('rmsd2+chem', 'none')": 0.1332,
+   "('rmsd2+chem', 'energy minimization')": 0.1542
+  },
+  "diffdock": {
+   "('rmsd2', 'none')": 0.3785,
+   "('rmsd2', 'energy minimization')": 0.3808,
+   "('rmsd2+valid', 'none')": 0.1355,
+   "('rmsd2+valid', 'energy minimization')": 0.3341,
+   "('rmsd1', 'none')": 0.1449,
+   "('rmsd1', 'energy minimization')": 0.1869,
+   "('rmsd2+chem', 'none')": 0.3551,
+   "('rmsd2+chem', 'energy minimization')": 0.3575
+  },
+  "equibind": {
+   "('rmsd2', 'none')": 0.0257,
+   "('rmsd2', 'energy minimization')": 0.0537,
+   "('rmsd2+valid', 'none')": 0.0023,
+   "('rmsd2+valid', 'energy minimization')": 0.0467,
+   "('rmsd1', 'none')": 0.0,
+   "('rmsd1', 'energy minimization')": 0.0234,
+   "('rmsd2+chem', 'none')": 0.0257,
+   "('rmsd2+chem', 'energy minimization')": 0.0514
+  },
+  "gold": {
+   "('rmsd2', 'none')": 0.5117,
+   "('rmsd2', 'energy minimization')": 0.479,
+   "('rmsd2+valid', 'none')": 0.4766,
+   "('rmsd2+valid', 'energy minimization')": 0.4229,
+   "('rmsd1', 'none')": 0.3435,
+   "('rmsd1', 'energy minimization')": 0.2921,
+   "('rmsd2+chem', 'none')": 0.5093,
+   "('rmsd2+chem', 'energy minimization')": 0.4696
+  },
+  "tankbind": {
+   "('rmsd2', 'none')": 0.1495,
+   "('rmsd2', 'energy minimization')": 0.1986,
+   "('rmsd2+valid', 'none')": 0.0257,
+   "('rmsd2+valid', 'energy minimization')": 0.1192,
+   "('rmsd1', 'none')": 0.0257,
+   "('rmsd1', 'energy minimization')": 0.0724,
+   "('rmsd2+chem', 'none')": 0.0724,
+   "('rmsd2+chem', 'energy minimization')": 0.1332
+  },
+  "unimol": {
+   "('rmsd2', 'none')": 0.229,
+   "('rmsd2', 'energy minimization')": 0.2804,
+   "('rmsd2+valid', 'none')": 0.0187,
+   "('rmsd2+valid', 'energy minimization')": 0.1752,
+   "('rmsd1', 'none')": 0.0421,
+   "('rmsd1', 'energy minimization')": 0.1005,
+   "('rmsd2+chem', 'none')": 0.0631,
+   "('rmsd2+chem', 'energy minimization')": 0.1939
+  },
+  "vina": {
+   "('rmsd2', 'none')": 0.5234,
+   "('rmsd2', 'energy minimization')": 0.4836,
+   "('rmsd2+valid', 'none')": 0.5117,
+   "('rmsd2+valid', 'energy minimization')": 0.4206,
+   "('rmsd1', 'none')": 0.3435,
+   "('rmsd1', 'energy minimization')": 0.3061,
+   "('rmsd2+chem', 'none')": 0.5187,
+   "('rmsd2+chem', 'energy minimization')": 0.4579
+  }
+ },
+ "n_items": 428,
+ "published_order": [
+  "vina",
+  "gold",
+  "diffdock",
+  "deepdock",
+  "tankbind",
+  "unimol",
+  "equibind"
+ ],
+ "published_cell": "('rmsd2+valid', 'none')",
+ "n_systems": 7,
+ "n_cells": 8,
+ "n_pairs": 21,
+ "n_dominating": 17,
+ "n_separated_in_every_cell": 17,
+ "n_contested": 2,
+ "tiers_distinguished": 4,
+ "tiers_ci95": [
+  4,
+  6
+ ],
+ "distinct_orderings_across_the_grid": 5,
+ "robustness": 0.8095,
+ "robustness_ci95": [
+  0.8095,
+  0.9048
+ ],
+ "separated_share": 0.8095,
+ "reversed_by_some_cell": 4,
+ "reversed_with_an_interval": 2,
+ "unresolved_though_never_reversed": 0,
+ "n_resolved_in_the_published_cell": 18,
+ "robustness_among_resolved": 0.9444,
+ "sub_grids": {
+  "criteria only, at the published post-processing": {
+   "n_cells": 4,
+   "n_dominating": 18,
+   "share": 0.8571,
+   "n_separated_in_every_cell": 17,
+   "tiers": 5,
+   "distinct_orderings": 3
+  },
+  "post-processing only, at the published criterion": {
+   "n_cells": 2,
+   "n_dominating": 18,
+   "share": 0.8571,
+   "n_separated_in_every_cell": 17,
+   "tiers": 5,
+   "distinct_orderings": 2
+  },
+  "the product": {
+   "n_cells": 8,
+   "n_dominating": 17,
+   "share": 0.8095,
+   "n_separated_in_every_cell": 17,
+   "tiers": 4,
+   "distinct_orderings": 5
+  }
+ },
+ "per_cell_orders": {
+  "('rmsd2', 'none')": [
+   "vina",
+   "gold",
+   "diffdock",
+   "unimol",
+   "deepdock",
+   "tankbind",
+   "equibind"
+  ],
+  "('rmsd2', 'energy minimization')": [
+   "vina",
+   "gold",
+   "diffdock",
+   "unimol",
+   "tankbind",
+   "deepdock",
+   "equibind"
+  ],
+  "('rmsd2+valid', 'none')": [
+   "vina",
+   "gold",
+   "diffdock",
+   "deepdock",
+   "tankbind",
+   "unimol",
+   "equibind"
+  ],
+  "('rmsd2+valid', 'energy minimization')": [
+   "gold",
+   "vina",
+   "diffdock",
+   "unimol",
+   "deepdock",
+   "tankbind",
+   "equibind"
+  ],
+  "('rmsd1', 'none')": [
+   "gold",
+   "vina",
+   "diffdock",
+   "deepdock",
+   "unimol",
+   "tankbind",
+   "equibind"
+  ],
+  "('rmsd1', 'energy minimization')": [
+   "vina",
+   "gold",
+   "diffdock",
+   "unimol",
+   "deepdock",
+   "tankbind",
+   "equibind"
+  ],
+  "('rmsd2+chem', 'none')": [
+   "vina",
+   "gold",
+   "diffdock",
+   "deepdock",
+   "tankbind",
+   "unimol",
+   "equibind"
+  ],
+  "('rmsd2+chem', 'energy minimization')": [
+   "gold",
+   "vina",
+   "diffdock",
+   "unimol",
+   "deepdock",
+   "tankbind",
+   "equibind"
+  ]
+ },
+ "pairs": {
+  "diffdock over deepdock": {
+   "dominates": true,
+   "separated_in_every_cell": true,
+   "contested": false,
+   "resolved_in_the_published_cell": true,
+   "cells_that_reverse_it": [],
+   "cells_that_reverse_it_with_an_interval": [],
+   "cells_it_is_not_resolved_in": [],
+   "per_cell": {
+    "('rmsd2', 'none')": {
+     "margin": 0.2009,
+     "ci95": [
+      0.1495,
+      0.2523
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2', 'energy minimization')": {
+     "margin": 0.1846,
+     "ci95": [
+      0.1308,
+      0.2383
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+valid', 'none')": {
+     "margin": 0.0888,
+     "ci95": [
+      0.0537,
+      0.1238
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+valid', 'energy minimization')": {
+     "margin": 0.2056,
+     "ci95": [
+      0.1565,
+      0.2547
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd1', 'none')": {
+     "margin": 0.0981,
+     "ci95": [
+      0.0607,
+      0.1355
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd1', 'energy minimization')": {
+     "margin": 0.1145,
+     "ci95": [
+      0.0748,
+      0.1565
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+chem', 'none')": {
+     "margin": 0.222,
+     "ci95": [
+      0.1729,
+      0.271
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+chem', 'energy minimization')": {
+     "margin": 0.2033,
+     "ci95": [
+      0.1519,
+      0.257
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    }
+   }
+  },
+  "deepdock over equibind": {
+   "dominates": true,
+   "separated_in_every_cell": true,
+   "contested": false,
+   "resolved_in_the_published_cell": true,
+   "cells_that_reverse_it": [],
+   "cells_that_reverse_it_with_an_interval": [],
+   "cells_it_is_not_resolved_in": [],
+   "per_cell": {
+    "('rmsd2', 'none')": {
+     "margin": 0.1519,
+     "ci95": [
+      0.1168,
+      0.1893
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2', 'energy minimization')": {
+     "margin": 0.1425,
+     "ci95": [
+      0.1005,
+      0.1846
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+valid', 'none')": {
+     "margin": 0.0444,
+     "ci95": [
+      0.0257,
+      0.0654
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+valid', 'energy minimization')": {
+     "margin": 0.0818,
+     "ci95": [
+      0.0444,
+      0.1192
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd1', 'none')": {
+     "margin": 0.0467,
+     "ci95": [
+      0.028,
+      0.0678
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd1', 'energy minimization')": {
+     "margin": 0.0491,
+     "ci95": [
+      0.021,
+      0.0771
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+chem', 'none')": {
+     "margin": 0.1075,
+     "ci95": [
+      0.0748,
+      0.1402
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+chem', 'energy minimization')": {
+     "margin": 0.1028,
+     "ci95": [
+      0.0631,
+      0.1425
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    }
+   }
+  },
+  "gold over deepdock": {
+   "dominates": true,
+   "separated_in_every_cell": true,
+   "contested": false,
+   "resolved_in_the_published_cell": true,
+   "cells_that_reverse_it": [],
+   "cells_that_reverse_it_with_an_interval": [],
+   "cells_it_is_not_resolved_in": [],
+   "per_cell": {
+    "('rmsd2', 'none')": {
+     "margin": 0.3341,
+     "ci95": [
+      0.278,
+      0.3902
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2', 'energy minimization')": {
+     "margin": 0.2827,
+     "ci95": [
+      0.2266,
+      0.3388
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+valid', 'none')": {
+     "margin": 0.4299,
+     "ci95": [
+      0.3808,
+      0.4813
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+valid', 'energy minimization')": {
+     "margin": 0.2944,
+     "ci95": [
+      0.2407,
+      0.3481
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd1', 'none')": {
+     "margin": 0.2967,
+     "ci95": [
+      0.2477,
+      0.3458
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd1', 'energy minimization')": {
+     "margin": 0.2196,
+     "ci95": [
+      0.1729,
+      0.2664
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+chem', 'none')": {
+     "margin": 0.3762,
+     "ci95": [
+      0.3224,
+      0.4322
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+chem', 'energy minimization')": {
+     "margin": 0.3154,
+     "ci95": [
+      0.2617,
+      0.3715
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    }
+   }
+  },
+  "deepdock over tankbind": {
+   "dominates": false,
+   "separated_in_every_cell": false,
+   "contested": false,
+   "resolved_in_the_published_cell": false,
+   "cells_that_reverse_it": [
+    "('rmsd2', 'energy minimization')",
+    "('rmsd1', 'energy minimization')"
+   ],
+   "cells_that_reverse_it_with_an_interval": [],
+   "cells_it_is_not_resolved_in": [
+    "('rmsd2', 'none')",
+    "('rmsd2+valid', 'none')",
+    "('rmsd2+valid', 'energy minimization')",
+    "('rmsd1', 'none')",
+    "('rmsd2+chem', 'energy minimization')"
+   ],
+   "per_cell": {
+    "('rmsd2', 'none')": {
+     "margin": 0.028,
+     "ci95": [
+      -0.0164,
+      0.0724
+     ],
+     "positive": true,
+     "separated": false,
+     "separated_the_other_way": false
+    },
+    "('rmsd2', 'energy minimization')": {
+     "margin": -0.0023,
+     "ci95": [
+      -0.0514,
+      0.0467
+     ],
+     "positive": false,
+     "separated": false,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+valid', 'none')": {
+     "margin": 0.021,
+     "ci95": [
+      -0.0023,
+      0.0444
+     ],
+     "positive": true,
+     "separated": false,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+valid', 'energy minimization')": {
+     "margin": 0.0093,
+     "ci95": [
+      -0.0304,
+      0.0491
+     ],
+     "positive": true,
+     "separated": false,
+     "separated_the_other_way": false
+    },
+    "('rmsd1', 'none')": {
+     "margin": 0.021,
+     "ci95": [
+      -0.0023,
+      0.0467
+     ],
+     "positive": true,
+     "separated": false,
+     "separated_the_other_way": false
+    },
+    "('rmsd1', 'energy minimization')": {
+     "margin": 0.0,
+     "ci95": [
+      -0.0327,
+      0.0327
+     ],
+     "positive": false,
+     "separated": false,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+chem', 'none')": {
+     "margin": 0.0607,
+     "ci95": [
+      0.0234,
+      0.0981
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+chem', 'energy minimization')": {
+     "margin": 0.021,
+     "ci95": [
+      -0.0234,
+      0.0654
+     ],
+     "positive": true,
+     "separated": false,
+     "separated_the_other_way": false
+    }
+   }
+  },
+  "deepdock over unimol": {
+   "dominates": false,
+   "separated_in_every_cell": false,
+   "contested": true,
+   "resolved_in_the_published_cell": true,
+   "cells_that_reverse_it": [
+    "('rmsd2', 'none')",
+    "('rmsd2', 'energy minimization')",
+    "('rmsd2+valid', 'energy minimization')",
+    "('rmsd1', 'energy minimization')",
+    "('rmsd2+chem', 'energy minimization')"
+   ],
+   "cells_that_reverse_it_with_an_interval": [
+    "('rmsd2', 'energy minimization')",
+    "('rmsd2+valid', 'energy minimization')"
+   ],
+   "cells_it_is_not_resolved_in": [
+    "('rmsd1', 'none')"
+   ],
+   "per_cell": {
+    "('rmsd2', 'none')": {
+     "margin": -0.0514,
+     "ci95": [
+      -0.1005,
+      0.0
+     ],
+     "positive": false,
+     "separated": false,
+     "separated_the_other_way": false
+    },
+    "('rmsd2', 'energy minimization')": {
+     "margin": -0.0841,
+     "ci95": [
+      -0.1355,
+      -0.035
+     ],
+     "positive": false,
+     "separated": false,
+     "separated_the_other_way": true
+    },
+    "('rmsd2+valid', 'none')": {
+     "margin": 0.028,
+     "ci95": [
+      0.0047,
+      0.0514
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+valid', 'energy minimization')": {
+     "margin": -0.0467,
+     "ci95": [
+      -0.0888,
+      -0.0047
+     ],
+     "positive": false,
+     "separated": false,
+     "separated_the_other_way": true
+    },
+    "('rmsd1', 'none')": {
+     "margin": 0.0047,
+     "ci95": [
+      -0.0234,
+      0.0304
+     ],
+     "positive": true,
+     "separated": false,
+     "separated_the_other_way": false
+    },
+    "('rmsd1', 'energy minimization')": {
+     "margin": -0.028,
+     "ci95": [
+      -0.0631,
+      0.007
+     ],
+     "positive": false,
+     "separated": false,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+chem', 'none')": {
+     "margin": 0.0701,
+     "ci95": [
+      0.035,
+      0.1075
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+chem', 'energy minimization')": {
+     "margin": -0.0397,
+     "ci95": [
+      -0.0841,
+      0.0047
+     ],
+     "positive": false,
+     "separated": false,
+     "separated_the_other_way": false
+    }
+   }
+  },
+  "vina over deepdock": {
+   "dominates": true,
+   "separated_in_every_cell": true,
+   "contested": false,
+   "resolved_in_the_published_cell": true,
+   "cells_that_reverse_it": [],
+   "cells_that_reverse_it_with_an_interval": [],
+   "cells_it_is_not_resolved_in": [],
+   "per_cell": {
+    "('rmsd2', 'none')": {
+     "margin": 0.3458,
+     "ci95": [
+      0.2921,
+      0.3995
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2', 'energy minimization')": {
+     "margin": 0.2874,
+     "ci95": [
+      0.2313,
+      0.3435
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+valid', 'none')": {
+     "margin": 0.465,
+     "ci95": [
+      0.4136,
+      0.5164
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+valid', 'energy minimization')": {
+     "margin": 0.2921,
+     "ci95": [
+      0.2407,
+      0.3458
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd1', 'none')": {
+     "margin": 0.2967,
+     "ci95": [
+      0.25,
+      0.3435
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd1', 'energy minimization')": {
+     "margin": 0.2336,
+     "ci95": [
+      0.1869,
+      0.2804
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+chem', 'none')": {
+     "margin": 0.3855,
+     "ci95": [
+      0.3318,
+      0.4393
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+chem', 'energy minimization')": {
+     "margin": 0.3037,
+     "ci95": [
+      0.25,
+      0.3575
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    }
+   }
+  },
+  "diffdock over equibind": {
+   "dominates": true,
+   "separated_in_every_cell": true,
+   "contested": false,
+   "resolved_in_the_published_cell": true,
+   "cells_that_reverse_it": [],
+   "cells_that_reverse_it_with_an_interval": [],
+   "cells_it_is_not_resolved_in": [],
+   "per_cell": {
+    "('rmsd2', 'none')": {
+     "margin": 0.3528,
+     "ci95": [
+      0.3061,
+      0.3995
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2', 'energy minimization')": {
+     "margin": 0.3271,
+     "ci95": [
+      0.2804,
+      0.3738
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+valid', 'none')": {
+     "margin": 0.1332,
+     "ci95": [
+      0.1028,
+      0.1659
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+valid', 'energy minimization')": {
+     "margin": 0.2874,
+     "ci95": [
+      0.2429,
+      0.3341
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd1', 'none')": {
+     "margin": 0.1449,
+     "ci95": [
+      0.1145,
+      0.1799
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd1', 'energy minimization')": {
+     "margin": 0.1636,
+     "ci95": [
+      0.1262,
+      0.2009
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+chem', 'none')": {
+     "margin": 0.3294,
+     "ci95": [
+      0.285,
+      0.3762
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+chem', 'energy minimization')": {
+     "margin": 0.3061,
+     "ci95": [
+      0.2593,
+      0.3528
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    }
+   }
+  },
+  "gold over diffdock": {
+   "dominates": true,
+   "separated_in_every_cell": true,
+   "contested": false,
+   "resolved_in_the_published_cell": true,
+   "cells_that_reverse_it": [],
+   "cells_that_reverse_it_with_an_interval": [],
+   "cells_it_is_not_resolved_in": [],
+   "per_cell": {
+    "('rmsd2', 'none')": {
+     "margin": 0.1332,
+     "ci95": [
+      0.0701,
+      0.194
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2', 'energy minimization')": {
+     "margin": 0.0981,
+     "ci95": [
+      0.0397,
+      0.1565
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+valid', 'none')": {
+     "margin": 0.3411,
+     "ci95": [
+      0.2874,
+      0.3949
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+valid', 'energy minimization')": {
+     "margin": 0.0888,
+     "ci95": [
+      0.0327,
+      0.1449
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd1', 'none')": {
+     "margin": 0.1986,
+     "ci95": [
+      0.1472,
+      0.25
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd1', 'energy minimization')": {
+     "margin": 0.1051,
+     "ci95": [
+      0.0561,
+      0.1542
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+chem', 'none')": {
+     "margin": 0.1542,
+     "ci95": [
+      0.0935,
+      0.215
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+chem', 'energy minimization')": {
+     "margin": 0.1121,
+     "ci95": [
+      0.0537,
+      0.1706
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    }
+   }
+  },
+  "diffdock over tankbind": {
+   "dominates": true,
+   "separated_in_every_cell": true,
+   "contested": false,
+   "resolved_in_the_published_cell": true,
+   "cells_that_reverse_it": [],
+   "cells_that_reverse_it_with_an_interval": [],
+   "cells_it_is_not_resolved_in": [],
+   "per_cell": {
+    "('rmsd2', 'none')": {
+     "margin": 0.229,
+     "ci95": [
+      0.1869,
+      0.2734
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2', 'energy minimization')": {
+     "margin": 0.1822,
+     "ci95": [
+      0.1402,
+      0.2266
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+valid', 'none')": {
+     "margin": 0.1098,
+     "ci95": [
+      0.0771,
+      0.1425
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+valid', 'energy minimization')": {
+     "margin": 0.215,
+     "ci95": [
+      0.1706,
+      0.2593
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd1', 'none')": {
+     "margin": 0.1192,
+     "ci95": [
+      0.0864,
+      0.1519
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd1', 'energy minimization')": {
+     "margin": 0.1145,
+     "ci95": [
+      0.0748,
+      0.1542
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+chem', 'none')": {
+     "margin": 0.2827,
+     "ci95": [
+      0.2407,
+      0.3271
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+chem', 'energy minimization')": {
+     "margin": 0.2243,
+     "ci95": [
+      0.1799,
+      0.271
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    }
+   }
+  },
+  "diffdock over unimol": {
+   "dominates": true,
+   "separated_in_every_cell": true,
+   "contested": false,
+   "resolved_in_the_published_cell": true,
+   "cells_that_reverse_it": [],
+   "cells_that_reverse_it_with_an_interval": [],
+   "cells_it_is_not_resolved_in": [],
+   "per_cell": {
+    "('rmsd2', 'none')": {
+     "margin": 0.1495,
+     "ci95": [
+      0.0958,
+      0.2033
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2', 'energy minimization')": {
+     "margin": 0.1005,
+     "ci95": [
+      0.0491,
+      0.1519
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+valid', 'none')": {
+     "margin": 0.1168,
+     "ci95": [
+      0.0841,
+      0.1519
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+valid', 'energy minimization')": {
+     "margin": 0.1589,
+     "ci95": [
+      0.1121,
+      0.2056
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd1', 'none')": {
+     "margin": 0.1028,
+     "ci95": [
+      0.0678,
+      0.1379
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd1', 'energy minimization')": {
+     "margin": 0.0864,
+     "ci95": [
+      0.0491,
+      0.1262
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+chem', 'none')": {
+     "margin": 0.2921,
+     "ci95": [
+      0.243,
+      0.3411
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+chem', 'energy minimization')": {
+     "margin": 0.1636,
+     "ci95": [
+      0.1168,
+      0.2103
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    }
+   }
+  },
+  "vina over diffdock": {
+   "dominates": true,
+   "separated_in_every_cell": true,
+   "contested": false,
+   "resolved_in_the_published_cell": true,
+   "cells_that_reverse_it": [],
+   "cells_that_reverse_it_with_an_interval": [],
+   "cells_it_is_not_resolved_in": [],
+   "per_cell": {
+    "('rmsd2', 'none')": {
+     "margin": 0.1449,
+     "ci95": [
+      0.0818,
+      0.2079
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2', 'energy minimization')": {
+     "margin": 0.1028,
+     "ci95": [
+      0.0421,
+      0.1636
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+valid', 'none')": {
+     "margin": 0.3762,
+     "ci95": [
+      0.3201,
+      0.4322
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+valid', 'energy minimization')": {
+     "margin": 0.0864,
+     "ci95": [
+      0.028,
+      0.1472
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd1', 'none')": {
+     "margin": 0.1986,
+     "ci95": [
+      0.1495,
+      0.25
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd1', 'energy minimization')": {
+     "margin": 0.1192,
+     "ci95": [
+      0.0701,
+      0.1659
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+chem', 'none')": {
+     "margin": 0.1636,
+     "ci95": [
+      0.1028,
+      0.2266
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+chem', 'energy minimization')": {
+     "margin": 0.1005,
+     "ci95": [
+      0.0397,
+      0.1636
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    }
+   }
+  },
+  "gold over equibind": {
+   "dominates": true,
+   "separated_in_every_cell": true,
+   "contested": false,
+   "resolved_in_the_published_cell": true,
+   "cells_that_reverse_it": [],
+   "cells_that_reverse_it_with_an_interval": [],
+   "cells_it_is_not_resolved_in": [],
+   "per_cell": {
+    "('rmsd2', 'none')": {
+     "margin": 0.486,
+     "ci95": [
+      0.4369,
+      0.5374
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2', 'energy minimization')": {
+     "margin": 0.4252,
+     "ci95": [
+      0.3762,
+      0.4766
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+valid', 'none')": {
+     "margin": 0.4743,
+     "ci95": [
+      0.4276,
+      0.5234
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+valid', 'energy minimization')": {
+     "margin": 0.3762,
+     "ci95": [
+      0.3271,
+      0.4252
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd1', 'none')": {
+     "margin": 0.3435,
+     "ci95": [
+      0.2967,
+      0.3879
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd1', 'energy minimization')": {
+     "margin": 0.2687,
+     "ci95": [
+      0.2266,
+      0.3131
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+chem', 'none')": {
+     "margin": 0.4836,
+     "ci95": [
+      0.4346,
+      0.5327
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+chem', 'energy minimization')": {
+     "margin": 0.4182,
+     "ci95": [
+      0.3692,
+      0.4673
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    }
+   }
+  },
+  "tankbind over equibind": {
+   "dominates": true,
+   "separated_in_every_cell": true,
+   "contested": false,
+   "resolved_in_the_published_cell": true,
+   "cells_that_reverse_it": [],
+   "cells_that_reverse_it_with_an_interval": [],
+   "cells_it_is_not_resolved_in": [],
+   "per_cell": {
+    "('rmsd2', 'none')": {
+     "margin": 0.1238,
+     "ci95": [
+      0.0911,
+      0.1565
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2', 'energy minimization')": {
+     "margin": 0.1449,
+     "ci95": [
+      0.1051,
+      0.1846
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+valid', 'none')": {
+     "margin": 0.0234,
+     "ci95": [
+      0.0093,
+      0.0397
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+valid', 'energy minimization')": {
+     "margin": 0.0724,
+     "ci95": [
+      0.0374,
+      0.1075
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd1', 'none')": {
+     "margin": 0.0257,
+     "ci95": [
+      0.0117,
+      0.0421
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd1', 'energy minimization')": {
+     "margin": 0.0491,
+     "ci95": [
+      0.0234,
+      0.0771
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+chem', 'none')": {
+     "margin": 0.0467,
+     "ci95": [
+      0.021,
+      0.0724
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+chem', 'energy minimization')": {
+     "margin": 0.0818,
+     "ci95": [
+      0.0467,
+      0.1192
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    }
+   }
+  },
+  "unimol over equibind": {
+   "dominates": true,
+   "separated_in_every_cell": true,
+   "contested": false,
+   "resolved_in_the_published_cell": true,
+   "cells_that_reverse_it": [],
+   "cells_that_reverse_it_with_an_interval": [],
+   "cells_it_is_not_resolved_in": [],
+   "per_cell": {
+    "('rmsd2', 'none')": {
+     "margin": 0.2033,
+     "ci95": [
+      0.1612,
+      0.2453
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2', 'energy minimization')": {
+     "margin": 0.2266,
+     "ci95": [
+      0.1799,
+      0.2734
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+valid', 'none')": {
+     "margin": 0.0164,
+     "ci95": [
+      0.0047,
+      0.0304
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+valid', 'energy minimization')": {
+     "margin": 0.1285,
+     "ci95": [
+      0.0888,
+      0.1682
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd1', 'none')": {
+     "margin": 0.0421,
+     "ci95": [
+      0.0234,
+      0.0631
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd1', 'energy minimization')": {
+     "margin": 0.0771,
+     "ci95": [
+      0.0444,
+      0.1098
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+chem', 'none')": {
+     "margin": 0.0374,
+     "ci95": [
+      0.0117,
+      0.0654
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+chem', 'energy minimization')": {
+     "margin": 0.1425,
+     "ci95": [
+      0.1028,
+      0.1846
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    }
+   }
+  },
+  "vina over equibind": {
+   "dominates": true,
+   "separated_in_every_cell": true,
+   "contested": false,
+   "resolved_in_the_published_cell": true,
+   "cells_that_reverse_it": [],
+   "cells_that_reverse_it_with_an_interval": [],
+   "cells_it_is_not_resolved_in": [],
+   "per_cell": {
+    "('rmsd2', 'none')": {
+     "margin": 0.4977,
+     "ci95": [
+      0.4486,
+      0.5491
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2', 'energy minimization')": {
+     "margin": 0.4299,
+     "ci95": [
+      0.3785,
+      0.4813
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+valid', 'none')": {
+     "margin": 0.5093,
+     "ci95": [
+      0.4626,
+      0.5584
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+valid', 'energy minimization')": {
+     "margin": 0.3738,
+     "ci95": [
+      0.3248,
+      0.4252
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd1', 'none')": {
+     "margin": 0.3435,
+     "ci95": [
+      0.2991,
+      0.3902
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd1', 'energy minimization')": {
+     "margin": 0.2827,
+     "ci95": [
+      0.2383,
+      0.3271
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+chem', 'none')": {
+     "margin": 0.493,
+     "ci95": [
+      0.4439,
+      0.5444
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+chem', 'energy minimization')": {
+     "margin": 0.4065,
+     "ci95": [
+      0.3551,
+      0.4579
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    }
+   }
+  },
+  "gold over tankbind": {
+   "dominates": true,
+   "separated_in_every_cell": true,
+   "contested": false,
+   "resolved_in_the_published_cell": true,
+   "cells_that_reverse_it": [],
+   "cells_that_reverse_it_with_an_interval": [],
+   "cells_it_is_not_resolved_in": [],
+   "per_cell": {
+    "('rmsd2', 'none')": {
+     "margin": 0.3621,
+     "ci95": [
+      0.3084,
+      0.4182
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2', 'energy minimization')": {
+     "margin": 0.2804,
+     "ci95": [
+      0.2266,
+      0.3341
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+valid', 'none')": {
+     "margin": 0.4509,
+     "ci95": [
+      0.4019,
+      0.5
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+valid', 'energy minimization')": {
+     "margin": 0.3037,
+     "ci95": [
+      0.2523,
+      0.3551
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd1', 'none')": {
+     "margin": 0.3178,
+     "ci95": [
+      0.2734,
+      0.3621
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd1', 'energy minimization')": {
+     "margin": 0.2196,
+     "ci95": [
+      0.1729,
+      0.2664
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+chem', 'none')": {
+     "margin": 0.4369,
+     "ci95": [
+      0.3855,
+      0.4883
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+chem', 'energy minimization')": {
+     "margin": 0.3364,
+     "ci95": [
+      0.285,
+      0.3902
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    }
+   }
+  },
+  "gold over unimol": {
+   "dominates": true,
+   "separated_in_every_cell": true,
+   "contested": false,
+   "resolved_in_the_published_cell": true,
+   "cells_that_reverse_it": [],
+   "cells_that_reverse_it_with_an_interval": [],
+   "cells_it_is_not_resolved_in": [],
+   "per_cell": {
+    "('rmsd2', 'none')": {
+     "margin": 0.2827,
+     "ci95": [
+      0.222,
+      0.3435
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2', 'energy minimization')": {
+     "margin": 0.1986,
+     "ci95": [
+      0.1402,
+      0.2593
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+valid', 'none')": {
+     "margin": 0.4579,
+     "ci95": [
+      0.4089,
+      0.5093
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+valid', 'energy minimization')": {
+     "margin": 0.2477,
+     "ci95": [
+      0.1939,
+      0.3037
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd1', 'none')": {
+     "margin": 0.3014,
+     "ci95": [
+      0.2523,
+      0.3481
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd1', 'energy minimization')": {
+     "margin": 0.1916,
+     "ci95": [
+      0.1449,
+      0.2407
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+chem', 'none')": {
+     "margin": 0.4463,
+     "ci95": [
+      0.3949,
+      0.4977
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+chem', 'energy minimization')": {
+     "margin": 0.2757,
+     "ci95": [
+      0.222,
+      0.3318
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    }
+   }
+  },
+  "vina over gold": {
+   "dominates": false,
+   "separated_in_every_cell": false,
+   "contested": false,
+   "resolved_in_the_published_cell": false,
+   "cells_that_reverse_it": [
+    "('rmsd2+valid', 'energy minimization')",
+    "('rmsd1', 'none')",
+    "('rmsd2+chem', 'energy minimization')"
+   ],
+   "cells_that_reverse_it_with_an_interval": [],
+   "cells_it_is_not_resolved_in": [
+    "('rmsd2', 'none')",
+    "('rmsd2', 'energy minimization')",
+    "('rmsd2+valid', 'none')",
+    "('rmsd1', 'energy minimization')",
+    "('rmsd2+chem', 'none')"
+   ],
+   "per_cell": {
+    "('rmsd2', 'none')": {
+     "margin": 0.0117,
+     "ci95": [
+      -0.0374,
+      0.0584
+     ],
+     "positive": true,
+     "separated": false,
+     "separated_the_other_way": false
+    },
+    "('rmsd2', 'energy minimization')": {
+     "margin": 0.0047,
+     "ci95": [
+      -0.0444,
+      0.0537
+     ],
+     "positive": true,
+     "separated": false,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+valid', 'none')": {
+     "margin": 0.035,
+     "ci95": [
+      -0.014,
+      0.0841
+     ],
+     "positive": true,
+     "separated": false,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+valid', 'energy minimization')": {
+     "margin": -0.0023,
+     "ci95": [
+      -0.0491,
+      0.0444
+     ],
+     "positive": false,
+     "separated": false,
+     "separated_the_other_way": false
+    },
+    "('rmsd1', 'none')": {
+     "margin": 0.0,
+     "ci95": [
+      -0.0444,
+      0.0444
+     ],
+     "positive": false,
+     "separated": false,
+     "separated_the_other_way": false
+    },
+    "('rmsd1', 'energy minimization')": {
+     "margin": 0.014,
+     "ci95": [
+      -0.028,
+      0.0561
+     ],
+     "positive": true,
+     "separated": false,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+chem', 'none')": {
+     "margin": 0.0093,
+     "ci95": [
+      -0.0397,
+      0.0584
+     ],
+     "positive": true,
+     "separated": false,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+chem', 'energy minimization')": {
+     "margin": -0.0117,
+     "ci95": [
+      -0.0631,
+      0.0374
+     ],
+     "positive": false,
+     "separated": false,
+     "separated_the_other_way": false
+    }
+   }
+  },
+  "tankbind over unimol": {
+   "dominates": false,
+   "separated_in_every_cell": false,
+   "contested": true,
+   "resolved_in_the_published_cell": false,
+   "cells_that_reverse_it": [
+    "('rmsd2', 'none')",
+    "('rmsd2', 'energy minimization')",
+    "('rmsd2+valid', 'energy minimization')",
+    "('rmsd1', 'none')",
+    "('rmsd1', 'energy minimization')",
+    "('rmsd2+chem', 'energy minimization')"
+   ],
+   "cells_that_reverse_it_with_an_interval": [
+    "('rmsd2', 'none')",
+    "('rmsd2', 'energy minimization')",
+    "('rmsd2+valid', 'energy minimization')",
+    "('rmsd2+chem', 'energy minimization')"
+   ],
+   "cells_it_is_not_resolved_in": [
+    "('rmsd2+valid', 'none')",
+    "('rmsd2+chem', 'none')"
+   ],
+   "per_cell": {
+    "('rmsd2', 'none')": {
+     "margin": -0.0794,
+     "ci95": [
+      -0.1262,
+      -0.0327
+     ],
+     "positive": false,
+     "separated": false,
+     "separated_the_other_way": true
+    },
+    "('rmsd2', 'energy minimization')": {
+     "margin": -0.0818,
+     "ci95": [
+      -0.1332,
+      -0.0327
+     ],
+     "positive": false,
+     "separated": false,
+     "separated_the_other_way": true
+    },
+    "('rmsd2+valid', 'none')": {
+     "margin": 0.007,
+     "ci95": [
+      -0.0117,
+      0.028
+     ],
+     "positive": true,
+     "separated": false,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+valid', 'energy minimization')": {
+     "margin": -0.0561,
+     "ci95": [
+      -0.1005,
+      -0.014
+     ],
+     "positive": false,
+     "separated": false,
+     "separated_the_other_way": true
+    },
+    "('rmsd1', 'none')": {
+     "margin": -0.0164,
+     "ci95": [
+      -0.0421,
+      0.007
+     ],
+     "positive": false,
+     "separated": false,
+     "separated_the_other_way": false
+    },
+    "('rmsd1', 'energy minimization')": {
+     "margin": -0.028,
+     "ci95": [
+      -0.0654,
+      0.007
+     ],
+     "positive": false,
+     "separated": false,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+chem', 'none')": {
+     "margin": 0.0093,
+     "ci95": [
+      -0.0234,
+      0.0421
+     ],
+     "positive": true,
+     "separated": false,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+chem', 'energy minimization')": {
+     "margin": -0.0607,
+     "ci95": [
+      -0.1051,
+      -0.0164
+     ],
+     "positive": false,
+     "separated": false,
+     "separated_the_other_way": true
+    }
+   }
+  },
+  "vina over tankbind": {
+   "dominates": true,
+   "separated_in_every_cell": true,
+   "contested": false,
+   "resolved_in_the_published_cell": true,
+   "cells_that_reverse_it": [],
+   "cells_that_reverse_it_with_an_interval": [],
+   "cells_it_is_not_resolved_in": [],
+   "per_cell": {
+    "('rmsd2', 'none')": {
+     "margin": 0.3738,
+     "ci95": [
+      0.3201,
+      0.4299
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2', 'energy minimization')": {
+     "margin": 0.285,
+     "ci95": [
+      0.229,
+      0.3411
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+valid', 'none')": {
+     "margin": 0.486,
+     "ci95": [
+      0.4369,
+      0.535
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+valid', 'energy minimization')": {
+     "margin": 0.3014,
+     "ci95": [
+      0.25,
+      0.3551
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd1', 'none')": {
+     "margin": 0.3178,
+     "ci95": [
+      0.2734,
+      0.3645
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd1', 'energy minimization')": {
+     "margin": 0.2336,
+     "ci95": [
+      0.1893,
+      0.2804
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+chem', 'none')": {
+     "margin": 0.4463,
+     "ci95": [
+      0.3949,
+      0.4977
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+chem', 'energy minimization')": {
+     "margin": 0.3248,
+     "ci95": [
+      0.2687,
+      0.3785
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    }
+   }
+  },
+  "vina over unimol": {
+   "dominates": true,
+   "separated_in_every_cell": true,
+   "contested": false,
+   "resolved_in_the_published_cell": true,
+   "cells_that_reverse_it": [],
+   "cells_that_reverse_it_with_an_interval": [],
+   "cells_it_is_not_resolved_in": [],
+   "per_cell": {
+    "('rmsd2', 'none')": {
+     "margin": 0.2944,
+     "ci95": [
+      0.2359,
+      0.3528
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2', 'energy minimization')": {
+     "margin": 0.2033,
+     "ci95": [
+      0.1449,
+      0.2617
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+valid', 'none')": {
+     "margin": 0.493,
+     "ci95": [
+      0.4439,
+      0.5444
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+valid', 'energy minimization')": {
+     "margin": 0.2453,
+     "ci95": [
+      0.1939,
+      0.2967
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd1', 'none')": {
+     "margin": 0.3014,
+     "ci95": [
+      0.2523,
+      0.3505
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd1', 'energy minimization')": {
+     "margin": 0.2056,
+     "ci95": [
+      0.1612,
+      0.2523
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+chem', 'none')": {
+     "margin": 0.4556,
+     "ci95": [
+      0.4042,
+      0.507
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    },
+    "('rmsd2+chem', 'energy minimization')": {
+     "margin": 0.264,
+     "ci95": [
+      0.2103,
+      0.3178
+     ],
+     "positive": true,
+     "separated": true,
+     "separated_the_other_way": false
+    }
+   }
+  }
+ },
+ "config": {
+  "script": "posebusters_board.py",
+  "git_commit": "dab157a24f217d1411685945febad10398c093c1",
+  "git_dirty": true,
+  "n_boot": 10000,
+  "seed": 0,
+  "n_items": 428,
+  "source": "PoseBusters, Zenodo 8278563, posebusters_paper_results.csv, CC-BY-4.0",
+  "source_sha256": "613f941c5f9beca14497acb16d6bb601ddd4e7aa94aafed8852b48038ea11efb",
+  "source_bytes": 1298703,
+  "population": "posebuster benchmark set; 1275 rows of the astex set excluded as a second population rather than a second cell",
+  "excluded_rows": "crystal_structures: the re-scored reference, not a method, and it has no minimised arm",
+  "criteria": {
+   "rmsd2": "distance alone at the field's default tolerance",
+   "rmsd2+valid": "distance and every recorded validity check",
+   "rmsd1": "distance alone at half the tolerance",
+   "rmsd2+chem": "distance and the intramolecular checks only"
+  },
+  "declared_conventions": [
+   "the flatness checks ('aromatic_ring_flatness_passes', 'double_bond_flatness_passes') are recorded only under post-processing 'none', so they are dropped from every cell rather than from one",
+   "a row with no scorable pose counts as a miss, not as an absent observation"
+  ]
+ }
+}
