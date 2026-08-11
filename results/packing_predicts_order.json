@@ -1,0 +1,305 @@
+{
+ "config": {
+  "script": "packing_predicts_order.py",
+  "git_commit": "cd4d4cc47a5d96c1258804525c0dd7dc81a517fb",
+  "git_dirty": true,
+  "note": "the screen uses only the published cell and the movement to each other cell; the outcome comes from the full grid"
+ },
+ "per_leaderboard": {
+  "retrosynthesis, 7 systems": {
+   "n_pairs": 21,
+   "flagged": 17,
+   "failed": 13,
+   "flagged_and_failed": 13,
+   "flagged_but_survived": 4,
+   "failed_but_not_flagged": 0,
+   "neither": 4,
+   "sensitivity": 1.0,
+   "precision": 0.7647,
+   "specificity": 0.5,
+   "pairs": [
+    {
+     "pair": "graphretro over localretro",
+     "gap": 0.0038,
+     "largest_move": 0.172,
+     "cell_of_that_move": "('nostereo', 10)",
+     "flagged": true,
+     "failed_to_dominate": true,
+     "contested": true
+    },
+    {
+     "pair": "graphretro over retroformer",
+     "gap": 0.0052,
+     "largest_move": 0.0799,
+     "cell_of_that_move": "('inchikey', 10)",
+     "flagged": true,
+     "failed_to_dominate": true,
+     "contested": true
+    },
+    {
+     "pair": "graphretro over graph2smiles",
+     "gap": 0.0084,
+     "largest_move": 0.0221,
+     "cell_of_that_move": "('tautomer', 10)",
+     "flagged": true,
+     "failed_to_dominate": true,
+     "contested": false
+    },
+    {
+     "pair": "graphretro over gln",
+     "gap": 0.013,
+     "largest_move": 0.1051,
+     "cell_of_that_move": "('canonical', 10)",
+     "flagged": true,
+     "failed_to_dominate": true,
+     "contested": true
+    },
+    {
+     "pair": "graphretro over g2retro",
+     "gap": 0.023,
+     "largest_move": 0.1188,
+     "cell_of_that_move": "('nostereo', 10)",
+     "flagged": true,
+     "failed_to_dominate": true,
+     "contested": true
+    },
+    {
+     "pair": "graphretro over retroxpert",
+     "gap": 0.091,
+     "largest_move": 0.0404,
+     "cell_of_that_move": "('canonical', 10)",
+     "flagged": false,
+     "failed_to_dominate": false,
+     "contested": false
+    },
+    {
+     "pair": "localretro over retroformer",
+     "gap": 0.0014,
+     "largest_move": 0.0966,
+     "cell_of_that_move": "('nostereo', 10)",
+     "flagged": true,
+     "failed_to_dominate": true,
+     "contested": false
+    },
+    {
+     "pair": "localretro over graph2smiles",
+     "gap": 0.0046,
+     "largest_move": 0.1877,
+     "cell_of_that_move": "('nostereo', 10)",
+     "flagged": true,
+     "failed_to_dominate": true,
+     "contested": false
+    },
+    {
+     "pair": "localretro over gln",
+     "gap": 0.0092,
+     "largest_move": 0.085,
+     "cell_of_that_move": "('nostereo', 5)",
+     "flagged": true,
+     "failed_to_dominate": false,
+     "contested": false
+    },
+    {
+     "pair": "localretro over g2retro",
+     "gap": 0.0192,
+     "largest_move": 0.054,
+     "cell_of_that_move": "('canonical', 10)",
+     "flagged": true,
+     "failed_to_dominate": false,
+     "contested": false
+    },
+    {
+     "pair": "localretro over retroxpert",
+     "gap": 0.0872,
+     "largest_move": 0.1401,
+     "cell_of_that_move": "('nostereo', 10)",
+     "flagged": true,
+     "failed_to_dominate": false,
+     "contested": false
+    },
+    {
+     "pair": "retroformer over graph2smiles",
+     "gap": 0.0032,
+     "largest_move": 0.0927,
+     "cell_of_that_move": "('inchikey', 10)",
+     "flagged": true,
+     "failed_to_dominate": true,
+     "contested": false
+    },
+    {
+     "pair": "retroformer over gln",
+     "gap": 0.0078,
+     "largest_move": 0.0254,
+     "cell_of_that_move": "('canonical', 10)",
+     "flagged": true,
+     "failed_to_dominate": true,
+     "contested": true
+    },
+    {
+     "pair": "retroformer over g2retro",
+     "gap": 0.0178,
+     "largest_move": 0.0462,
+     "cell_of_that_move": "('tautomer', 5)",
+     "flagged": true,
+     "failed_to_dominate": true,
+     "contested": true
+    },
+    {
+     "pair": "retroformer over retroxpert",
+     "gap": 0.0858,
+     "largest_move": 0.0435,
+     "cell_of_that_move": "('nostereo', 10)",
+     "flagged": false,
+     "failed_to_dominate": false,
+     "contested": false
+    },
+    {
+     "pair": "graph2smiles over gln",
+     "gap": 0.0046,
+     "largest_move": 0.1179,
+     "cell_of_that_move": "('canonical', 10)",
+     "flagged": true,
+     "failed_to_dominate": true,
+     "contested": true
+    },
+    {
+     "pair": "graph2smiles over g2retro",
+     "gap": 0.0146,
+     "largest_move": 0.1369,
+     "cell_of_that_move": "('tautomer', 10)",
+     "flagged": true,
+     "failed_to_dominate": true,
+     "contested": true
+    },
+    {
+     "pair": "graph2smiles over retroxpert",
+     "gap": 0.0826,
+     "largest_move": 0.0532,
+     "cell_of_that_move": "('canonical', 10)",
+     "flagged": false,
+     "failed_to_dominate": false,
+     "contested": false
+    },
+    {
+     "pair": "gln over g2retro",
+     "gap": 0.01,
+     "largest_move": 0.0486,
+     "cell_of_that_move": "('nostereo', 3)",
+     "flagged": true,
+     "failed_to_dominate": true,
+     "contested": true
+    },
+    {
+     "pair": "gln over retroxpert",
+     "gap": 0.078,
+     "largest_move": 0.0687,
+     "cell_of_that_move": "('tautomer', 10)",
+     "flagged": false,
+     "failed_to_dominate": false,
+     "contested": false
+    },
+    {
+     "pair": "g2retro over retroxpert",
+     "gap": 0.068,
+     "largest_move": 0.0889,
+     "cell_of_that_move": "('tautomer', 10)",
+     "flagged": true,
+     "failed_to_dominate": false,
+     "contested": false
+    }
+   ]
+  },
+  "retrosynthesis, 3 systems": {
+   "n_pairs": 3,
+   "flagged": 3,
+   "failed": 3,
+   "flagged_and_failed": 3,
+   "flagged_but_survived": 0,
+   "failed_but_not_flagged": 0,
+   "neither": 0,
+   "sensitivity": 1.0,
+   "precision": 1.0,
+   "specificity": 0.0,
+   "pairs": [
+    {
+     "pair": "chemformer over gta",
+     "gap": 0.0212,
+     "largest_move": 0.2175,
+     "cell_of_that_move": "('nostereo', 10)",
+     "flagged": true,
+     "failed_to_dominate": true,
+     "contested": true
+    },
+    {
+     "pair": "chemformer over tiedtransformer",
+     "gap": 0.0682,
+     "largest_move": 0.2432,
+     "cell_of_that_move": "('tautomer', 10)",
+     "flagged": true,
+     "failed_to_dominate": true,
+     "contested": true
+    },
+    {
+     "pair": "gta over tiedtransformer",
+     "gap": 0.047,
+     "largest_move": 0.0474,
+     "cell_of_that_move": "('canonical', 3)",
+     "flagged": true,
+     "failed_to_dominate": true,
+     "contested": false
+    }
+   ]
+  },
+  "metabolites, 3 methods": {
+   "n_pairs": 3,
+   "flagged": 1,
+   "failed": 1,
+   "flagged_and_failed": 1,
+   "flagged_but_survived": 0,
+   "failed_but_not_flagged": 0,
+   "neither": 2,
+   "sensitivity": 1.0,
+   "precision": 1.0,
+   "specificity": 1.0,
+   "pairs": [
+    {
+     "pair": "MetaPredictor over SyGMa",
+     "gap": 0.0128,
+     "largest_move": 0.0427,
+     "cell_of_that_move": "('inchikey', 5)",
+     "flagged": true,
+     "failed_to_dominate": true,
+     "contested": true
+    },
+    {
+     "pair": "MetaPredictor over GRAIL",
+     "gap": 0.2521,
+     "largest_move": 0.1684,
+     "cell_of_that_move": "('canonical', 1)",
+     "flagged": false,
+     "failed_to_dominate": false,
+     "contested": false
+    },
+    {
+     "pair": "SyGMa over GRAIL",
+     "gap": 0.2393,
+     "largest_move": 0.1744,
+     "cell_of_that_move": "('canonical', 1)",
+     "flagged": false,
+     "failed_to_dominate": false,
+     "contested": false
+    }
+   ]
+  }
+ },
+ "totals": {
+  "n_pairs": 27,
+  "flagged": 21,
+  "failed": 17,
+  "flagged_and_failed": 17,
+  "flagged_but_survived": 4,
+  "failed_but_not_flagged": 0,
+  "sensitivity": 1.0,
+  "precision": 0.8095
+ }
+}

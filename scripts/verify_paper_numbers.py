@@ -1085,6 +1085,74 @@ def main() -> int:
                            "both controls are certifiably worse", "certified",
                            f"{SB['dissimilarity']['certified']} and {SB['random']['certified']}", src))
 
+    # 10g. Composition. The claim is that a one-step predictor already contains part of what a
+    # one-step evaluation scores as missed, and the whole weight of it rests on the control: a
+    # random intermediate must recover nothing, or the effect is set size. The gate holds the
+    # control to zero as well as the effect to its interval.
+    cr = ROOT / "results/composition_recovery.json"
+    if cr.exists():
+        CR = json.loads(cr.read_text())
+        P_, D_ = CR["per_method"], CR["differs_by_method"]
+        flat = re.sub(r"\s+", " ", whole)
+        mc2 = re.search(r"leaves \$(\d+)\$ substrates for GRAIL,\s*\$(\d+)\$ for MetaPredictor and "
+                        r"\$(\d+)\$ for SyGMa", flat)
+        checks.append((bool(mc2), "the composition-eligibility sentence parses", "present",
+                       "matched" if mc2 else "not matched", ""))
+        src = str(cr.relative_to(ROOT))
+        if mc2:
+            for i, m_ in enumerate(("GRAIL", "MetaPredictor", "SyGMa")):
+                check(f"composition, eligible {m_}", mc2.group(i + 1),
+                      P_[m_]["substrates_with_a_predicted_intermediate"], src)
+        mc3 = re.search(r"recovers \$([\d.]+)\$ \$\[([\d.]+),([\d.]+)\]\$ for GRAIL, \$([\d.]+)\$ "
+                        r"\$\[([\d.]+),([\d.]+)\]\$ for MetaPredictor and\s*\$([\d.]+)\$ "
+                        r"\$\[([\d.]+),([\d.]+)\]\$ for SyGMa", flat)
+        checks.append((bool(mc3), "the composition-recovery sentence parses", "present",
+                       "matched" if mc3 else "not matched", ""))
+        if mc3:
+            for i, m_ in enumerate(("GRAIL", "MetaPredictor", "SyGMa")):
+                check(f"composition, {m_}", mc3.group(1 + 3 * i), P_[m_]["over_the_random_control"], src)
+                check(f"composition, {m_} lower", mc3.group(2 + 3 * i), P_[m_]["ci95"][0], src)
+                check(f"composition, {m_} upper", mc3.group(3 + 3 * i), P_[m_]["ci95"][1], src)
+        checks.append((all(P_[m_]["same_through_random_intermediates"] == 0.0 for m_ in P_),
+                       "the random-intermediate control recovers nothing", "0.0000",
+                       ", ".join(f"{P_[m_]['same_through_random_intermediates']}" for m_ in P_), src))
+        checks.append((all(P_[m_]["separated"] for m_ in P_),
+                       "every method's recovery is separated from its control", "all separated",
+                       ", ".join(f"{m_} {P_[m_]['separated']}" for m_ in P_), src))
+        mc4 = re.search(r"costs \$(\d+)\$ additional candidates for MetaPredictor and\s*\$(\d+)\$ "
+                        r"for GRAIL", flat)
+        if mc4:
+            check("composition cost, MetaPredictor", mc4.group(1),
+                  round(P_["MetaPredictor"]["candidates_added_per_reference_recovered"]), src)
+            check("composition cost, GRAIL", mc4.group(2),
+                  round(P_["GRAIL"]["candidates_added_per_reference_recovered"]), src)
+
+    # 10f. The screen against the measurement. The paper's two instruments describe the same thing
+    # from opposite ends, and the claim that one predicts the other is checked rather than asserted:
+    # the screen sees only the published cell and the movement to each other cell, the outcome comes
+    # from the full grid, and the arithmetic forbids a miss, so a miss here means one of the two
+    # quantities is computed wrongly.
+    pp = ROOT / "results/packing_predicts_order.json"
+    if pp.exists():
+        PP = json.loads(pp.read_text())["totals"]
+        flat = re.sub(r"\s+", " ", whole)
+        mpp = re.search(r"run on the\s*published cell alone it flags \$(\d+)\$ of the \$(\d+)\$ pairs "
+                        r"in the table above, of which \$(\d+)\$ are exactly\s*the ones the full grid "
+                        r"removes", flat)
+        checks.append((bool(mpp), "the screen-predicts-order sentence parses", "present",
+                       "matched" if mpp else "not matched", ""))
+        if mpp:
+            src = str(pp.relative_to(ROOT))
+            check("screen, flagged", mpp.group(1), PP["flagged"], src)
+            check("screen, pairs", mpp.group(2), PP["n_pairs"], src)
+            check("screen, flagged and failed", mpp.group(3), PP["flagged_and_failed"], src)
+            checks.append((PP["failed_but_not_flagged"] == 0,
+                           "the screen misses nothing, as the arithmetic requires", "0",
+                           str(PP["failed_but_not_flagged"]), src))
+            checks.append((PP["flagged_and_failed"] == PP["failed"],
+                           "every pair the grid removes is flagged", str(PP["failed"]),
+                           str(PP["flagged_and_failed"]), src))
+
     # 10e. The reference set as a graph. The appendix argues that the standard defence of a low
     # precision figure -- incomplete annotation -- is measurable in one component and small, so the
     # gate holds both halves: the corpus structure, which involves no model, and the share of each

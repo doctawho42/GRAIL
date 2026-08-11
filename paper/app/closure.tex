@@ -39,6 +39,28 @@ by closing its annotation graph under composition would turn $302$ annotated com
 $7{,}234$ and would not change what any of these methods is measured to do, because none of them
 emits the difference.
 
+\paragraph{The model's own output is a graph too, and it composes.} The corpus is not the only thing
+here with edges. A method that predicts $A \to B$ and, separately, $B \to C$ has predicted a two-step
+route from $A$ to $C$ without emitting $C$ for $A$, and a one-step evaluation scores that as a miss.
+Composition is restricted to intermediates that are themselves substrates of this split, the only
+molecules every method has a prediction to compose with, which leaves $389$ substrates for GRAIL,
+$428$ for MetaPredictor and $367$ for SyGMa.
+
+Composing enlarges the emitted set, and a larger set matches more for no good reason, so the
+recovery is reported against a control that enlarges it by the same amount: composing through the
+same number of substrates drawn at random. That control recovers $0.0000$ for all three methods, to
+four decimals, which is what makes the rest a statement about the method rather than about set size.
+Of the references a one-step evaluation records as missed, composing the method's own predictions
+recovers $0.0086$ $[0.0041,0.0138]$ for GRAIL, $0.0243$ $[0.0169,0.0328]$ for MetaPredictor and
+$0.0136$ $[0.0080,0.0202]$ for SyGMa, every one of them separated from its control. The quantity
+differs by method: MetaPredictor recovers $0.0158$ $[0.0069,0.0249]$ more than GRAIL and $0.0107$
+$[0.0028,0.0188]$ more than SyGMa, both separated.
+
+It is not a policy. Recovering one reference costs $86$ additional candidates for MetaPredictor and
+$187$ for GRAIL, so emitting the composition would destroy precision many times over what it buys.
+What it is is a property of a method that recall does not report: how nearly its one-step output is
+closed under its own dynamics. Two methods with the same recall can differ in it, and here they do.
+
 \paragraph{One further reading.} The corpus is closed at $4.2\%$ and the test split alone at
 $9.7\%$, on $390$ composed pairs against the corpus's $7{,}234$. The gap between the two is not
 noise about depth: within one split, chains tend to be annotated together because they come from one

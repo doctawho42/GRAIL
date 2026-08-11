@@ -338,11 +338,11 @@ condition is not transitive.
 
 \looseness=-1
 A pair that does not dominate has failed in one of two ways that should not be added together. Some
-cell may order the two the other way with an interval excluding zero, which is a choice deciding
-against the published table; or no cell may, in which case the ordering fails to hold everywhere on
-a margin the benchmark cannot resolve. Only the first is called \emph{contested}, so noise on a tied
-pair is not counted as a reversal. All three leaderboards run on one grid of sixteen cells, four
-matching criteria by four budgets (Appendix~\ref{app:robust}).
+cell may order the two the other way with an interval excluding zero, a choice deciding against the
+published table; or no cell may, in which case the ordering fails to hold everywhere on a margin the
+benchmark cannot resolve. Only the first is \emph{contested}, so noise on a tied pair is not counted
+as a reversal. All three leaderboards run one grid of sixteen cells, four criteria by four budgets
+(Appendix~\ref{app:robust}).
 
 \begin{table}[t]
 \centering\small
@@ -396,10 +396,12 @@ three domains, it flags $10.9\%$. Every one of the $26$ exchanges falls inside t
 flagged set and none outside it, so its sensitivity is $1.000$ by arithmetic and is checked rather
 than assumed; its specificity is $0.947$ and its precision $0.542$, the false alarms being movements
 that widen a gap instead of closing it. A maintainer can therefore bound a leaderboard's exposure
-from its own published margins, with no false negatives. The distribution is the less comfortable
-part: the tightest of the four leaderboards supplies $28$ of the $48$ flagged comparisons and the
-widest none, so a benchmark becomes vulnerable to an undeclared convention exactly as its entries
-converge (Appendix~\ref{app:xdomain}).
+from its own published margins, with no false negatives, and the bound is not vacuous: run on the
+published cell alone it flags $21$ of the $27$ pairs in the table above, of which $17$ are exactly
+the ones the full grid removes. The distribution is the less comfortable part: the tightest of the
+four leaderboards supplies $28$ of the $48$ flagged comparisons and the widest none, so a benchmark
+becomes vulnerable to an undeclared convention exactly as its entries converge
+(Appendix~\ref{app:xdomain}).
 
 \paragraph{How one choice breaks an ordering.} \looseness=-1
 \citet{Hastedt_2024} released the ranked predictions of twelve retrosynthesis systems, of which
