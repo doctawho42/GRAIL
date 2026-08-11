@@ -177,6 +177,15 @@ def _eval_mode(generator, filter_model, items, top_k, cap, mo, label):
     return {"gen_only": pack(gm), "gen_x_filter": pack(fm)}, {"gen": gen_vec, "filter": filt_vec}
 
 
+def _label_presentation() -> str:
+    """The presentation the training labels were built under, if the code still records it."""
+    try:
+        from grail_metabolism.utils.preparation import LABEL_PRESENTATION
+        return str(LABEL_PRESENTATION)
+    except Exception:
+        return "unknown"
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--ckpt-dir", type=str, default=str(ROOT / "artifacts" / "full5000_single" / "checkpoints"))
@@ -193,26 +202,45 @@ def main() -> int:
     ap.add_argument("--filter-cap", type=int, default=32)
     ap.add_argument("--max-output", type=int, default=15)
     ap.add_argument("--threads", type=int, default=4)
+    ap.add_argument("--gen-ckpt", type=str, default=None,
+                    help="generator checkpoint; defaults to ckpt-dir/generator.pt. Split from the "
+                         "filter so a selector ablation does not swap both models at once")
+    ap.add_argument("--filter-ckpt", type=str, default=None,
+                    help="filter checkpoint; hold this fixed across arms of a selector comparison")
     ap.add_argument("--out", type=str, default=str(ROOT / "results" / "prior_vs_learned.json"))
     args = ap.parse_args()
     torch.set_num_threads(args.threads)
 
     ck = Path(args.ckpt_dir)
-    generator = _load(ck / "generator.pt", lambda a, r: build_generator(GeneratorConfig(**a), r))
+    gen_path = Path(args.gen_ckpt) if args.gen_ckpt else ck / "generator.pt"
+    filter_path = Path(args.filter_ckpt) if args.filter_ckpt else ck / "filter.pt"
+    generator = _load(gen_path, lambda a, r: build_generator(GeneratorConfig(**a), r))
     generator.gen_normalization = "canonical"
-    filter_model = _load(ck / "filter.pt", lambda a, r: build_filter(FilterConfig(**a)))
+    filter_model = _load(filter_path, lambda a, r: build_filter(FilterConfig(**a)))
 
-    # The headline full5000_single generator.pt predates the persistent rule_prior_logits fix, so
-    # loading it strict=False leaves that buffer at its zero init -> prior-only would be a degenerate
-    # uniform baseline and blend would trivially equal learned. Copy the TRAINED prior from the
-    # byte-identical-weights full5000_priors checkpoint, then hard-guard against a degenerate prior.
-    priors_state = torch.load(args.priors_generator, map_location="cpu", weights_only=False)["state_dict"]
-    assert "rule_prior_logits" in priors_state, f"no rule_prior_logits in {args.priors_generator}"
-    trained_prior = priors_state["rule_prior_logits"].to(generator.rule_prior_logits.dtype)
-    assert trained_prior.shape == generator.rule_prior_logits.shape, "rule count / bank mismatch"
-    with torch.no_grad():
-        generator.rule_prior_logits.copy_(trained_prior)
+    # The prior is not an external baseline. It is a deterministic function of the label matrix the
+    # generator was trained on (Generator._update_rule_statistics), so a prior taken from another
+    # run is a prior over another matrix, and comparing a model against it measures two changes at
+    # once. Each arm therefore uses the prior its own checkpoint carries; the graft below exists
+    # only for checkpoints written before rule_prior_logits was persistent, where the buffer loads
+    # at its zero init and the prior arm would otherwise be a degenerate uniform baseline.
+    own = generator.rule_prior_logits
+    prior_is_own = bool(float(own.abs().max()) > 0 and float(own.std()) > 0)
+    if prior_is_own:
+        prior_source = str(gen_path)
+    else:
+        priors_state = torch.load(args.priors_generator, map_location="cpu",
+                                  weights_only=False)["state_dict"]
+        assert "rule_prior_logits" in priors_state, f"no rule_prior_logits in {args.priors_generator}"
+        trained_prior = priors_state["rule_prior_logits"].to(generator.rule_prior_logits.dtype)
+        assert trained_prior.shape == generator.rule_prior_logits.shape, "rule count / bank mismatch"
+        with torch.no_grad():
+            generator.rule_prior_logits.copy_(trained_prior)
+        prior_source = str(args.priors_generator)
+        print(f"WARNING: {gen_path} carries no trained prior; grafted from {prior_source}. "
+              f"Any comparison against this arm spans two label matrices.", flush=True)
     rp = generator.rule_prior_logits
+    prior_checksum = float(rp.double().sum())
     assert float(rp.abs().max()) > 0 and float(rp.std()) > 0, \
         "rule_prior_logits is degenerate (zero/constant) -- prior comparison would be invalid"
     print(f"loaded trained prior: nonzero={int((rp != 0).sum())}/{rp.numel()} std={float(rp.std()):.3f} "
@@ -244,7 +272,15 @@ def main() -> int:
                "rules_path": "grail_metabolism/resources/extended_smirks.txt",
                "candidate_top_k": args.candidate_top_k, "filter_cap": args.filter_cap,
                "max_output": args.max_output, "ckpt_dir": _rel(args.ckpt_dir),
-               "priors_generator": _rel(args.priors_generator)},
+               "priors_generator": _rel(args.priors_generator),
+               # which checkpoint each arm's prior came from, and a checksum, because a prior
+               # silently taken from another run is a comparison across two label matrices
+               "generator_checkpoint": _rel(str(gen_path)),
+               "filter_checkpoint": _rel(str(filter_path)),
+               "prior_source": _rel(prior_source),
+               "prior_is_the_evaluated_checkpoints_own": prior_is_own,
+               "prior_checksum": round(prior_checksum, 6),
+               "label_presentation": _label_presentation()},
               "split": args.split, "n": len(items), "candidate_top_k": top_k, "filter_cap": cap,
               "max_output": mo, "match": "inchikey_tautomer", "sygma_recall@": SYGMA, "modes": {}}
 

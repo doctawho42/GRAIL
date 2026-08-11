@@ -56,7 +56,7 @@ from grail_metabolism.workflows.factory import build_filter, build_generator
 RDLogger.DisableLog("rdApp.*")
 
 VAL_CSV = ROOT / "artifacts" / "full5000_single" / "predictions" / "val_predictions.csv"
-TRAIN_LABELS = ROOT / "artifacts" / "preprocessed" / "train" / "ea9ee257861324be" / "reaction_labels.pt"
+TRAIN_LABELS = ROOT / "artifacts" / "preprocessed" / "train" / "ea9ee257861324be" / "reaction_labels.expanded.pt"
 DEPLOYED_GEN = ROOT / "artifacts" / "full5000_priors" / "checkpoints" / "generator.pt"
 DEPLOYED_FILTER = ROOT / "artifacts" / "full5000_single" / "checkpoints" / "filter.pt"
 OUT = ROOT / "results" / "prune_and_rerank_val.json"

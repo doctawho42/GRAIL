@@ -631,8 +631,12 @@ class Generator(GGenerator):
             return
         targets = torch.stack([record.y.float() for record in records], dim=0).view(len(records), self.num_rules)
         mask = torch.stack([record.rule_mask.float() for record in records], dim=0).view(len(records), self.num_rules)
-        positives = targets.sum(dim=0)
+        # Counted under the same mask as the exposures they are divided by. Unmasked positives over
+        # masked exposures is a ratio of two different populations: a rule labelled positive on a
+        # substrate where it is not applicable inflates the numerator only, and prior_prob can
+        # exceed one, which _safe_logit then pins to its clamp. Three rules of this bank sat there.
         exposures = mask.sum(dim=0)
+        positives = (targets * mask).sum(dim=0)
         negatives = ((1.0 - targets) * mask).sum(dim=0)
         pos_weight = ((negatives + 1.0) / (positives + 1.0)).clamp(1.0, 25.0)
         prior_prob = torch.where(

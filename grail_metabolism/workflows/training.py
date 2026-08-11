@@ -37,6 +37,13 @@ def _training_report(model, extra: Optional[Dict[str, Any]] = None) -> Dict[str,
     return report
 
 
+def _label_presentation() -> str:
+    """The presentation the training labels were built under, recorded beside arch and rules."""
+    from ..utils.preparation import LABEL_PRESENTATION
+
+    return str(LABEL_PRESENTATION)
+
+
 @dataclass
 class GeneratorTrainingWorkflow:
     config: ExperimentConfig
@@ -86,6 +93,9 @@ class GeneratorTrainingWorkflow:
             "calibration_metric": metric,
             "arch": asdict(self.config.generator),
             "rules": list(getattr(generator, "rule_names", [])),
+            # the presentation the label matrix was built under: an expanded-label and an
+            # implicit-label generator are otherwise indistinguishable on disk
+            "label_presentation": _label_presentation(),
         }
         if gflownet_info is not None:
             checkpoint["gflownet_logz"] = gflownet_info["logz"]

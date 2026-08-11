@@ -199,8 +199,13 @@ def _prepare_cache_dir(
     if not config.cache_preprocessed:
         return None
 
+    from ..utils.preparation import LABEL_PRESENTATION
+
     signature = {
-        "schema_version": 1,
+        # bumped when the label presentation entered the signature: two matrices built under
+        # different presentations must not share a cache directory, and before this they did
+        "schema_version": 2,
+        "label_presentation": LABEL_PRESENTATION,
         "split": split_name,
         "dataset": {
             "sdf": _path_signature(split_sources.get("sdf")),

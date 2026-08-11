@@ -159,9 +159,9 @@ def main() -> int:
                     help="substrates to audit; the full training set is the same measurement, slower")
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--workers", type=int, default=max(1, (os.cpu_count() or 4) - 2))
-    ap.add_argument("--out", default=str(ROOT / "results" / "label_convention_audit.json"),
-                    help="a smoke run must pass this: the default path is a committed artifact and "
-                         "a short run silently replaces a long one that backs a paper number")
+    ap.add_argument("--out", default=str(ROOT / "results" / "label_convention_audit_3arm.json"),
+                    help="the two-arm artifact this script used to write backs certified text and "
+                         "is not overwritten: this version emits a third arm and writes beside it")
     args = ap.parse_args()
 
     rules = load_default_rules()

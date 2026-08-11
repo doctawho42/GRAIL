@@ -31,7 +31,7 @@ import numpy as np
 import torch
 
 ROOT = Path(__file__).resolve().parents[1]
-LABELS = ROOT / "artifacts" / "preprocessed" / "train" / "ea9ee257861324be" / "reaction_labels.pt"
+LABELS = ROOT / "artifacts" / "preprocessed" / "train" / "ea9ee257861324be" / "reaction_labels.expanded.pt"
 # published in results/rule_train_positives.json; the gate that says this is the right cache
 PUBLISHED = {"train_substrates": 4787, "rules": 7581, "never_positive": 4271,
              "pos_eq_1": 1520, "pos_ge2": 1790, "useful_ge1": 3310}

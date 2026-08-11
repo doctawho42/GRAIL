@@ -31,7 +31,7 @@ import numpy as np
 import torch
 
 ROOT = Path(__file__).resolve().parents[1]
-LABELS = ROOT / "artifacts" / "preprocessed" / "train" / "ea9ee257861324be" / "reaction_labels.pt"
+LABELS = ROOT / "artifacts" / "preprocessed" / "train" / "ea9ee257861324be" / "reaction_labels.expanded.pt"
 # grail_metabolism/config.py: GeneratorOptimConfig.propensity_a / .propensity_b
 A, B = 0.55, 1.5
 CLAMP = (0.1, 25.0)

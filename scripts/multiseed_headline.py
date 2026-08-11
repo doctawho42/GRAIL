@@ -54,6 +54,10 @@ def main() -> int:
                     help="deployed ExperimentConfig yaml (default: the full5000_single headline config)")
     ap.add_argument("--seeds", type=int, nargs="+", default=[0, 1, 2])
     ap.add_argument("--section", default="ensemble", help="metrics section to summarize")
+    ap.add_argument("--name-suffix", default="",
+                    help="appended to the run name. ArtifactStore.create writes in place, so a "
+                         "second arm run without this destroys the first arm's checkpoints, which "
+                         "are the control it is being compared against")
     ap.add_argument("--out", default=str(ROOT / "results" / "multiseed_headline.json"))
     ap.add_argument("--smoke", action="store_true",
                     help="tiny/fast harness validation: max_train=40, max_test=20, gen/filter epochs=2, seeds 0 1")
@@ -77,7 +81,7 @@ def main() -> int:
 
     for seed in seeds:
         overrides: Dict[str, object] = {
-            "name": f"multiseed_full5000_seed{seed}",
+            "name": f"multiseed_full5000{args.name_suffix}_seed{seed}",
             "seed": seed,
             "dataset": dataset_overrides,
         }
