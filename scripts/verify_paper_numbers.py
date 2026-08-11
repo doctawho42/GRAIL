@@ -1127,6 +1127,36 @@ def main() -> int:
             check("composition cost, GRAIL", mc4.group(2),
                   round(P_["GRAIL"]["candidates_added_per_reference_recovered"]), src)
 
+    # 10h. The appendix that reports the dispatch pre-registration must not contradict the section
+    # that states its outcome. Four reviewers found it doing exactly that, because a table row was
+    # updated and the prose beside it was not, so the two are now tied to one artifact and to each
+    # other: the residual quoted in the appendix must be the residual the run recorded, and the
+    # count of dispatched templates must reconcile with the census that explains it.
+    hy3 = ROOT / "results/hydrogen_dispatch__clean_test.json"
+    if hy3.exists():
+        H3 = json.loads(hy3.read_text())["banks"]
+        flat = re.sub(r"\s+", " ", whole)
+        mdp = re.search(r"It clears it by \$\+([\d.]+)\$\s*\$\[\+([\d.]+),\+([\d.]+)\]\$", flat)
+        checks.append((bool(mdp), "the appendix states the dispatch outcome", "present",
+                       "matched" if mdp else "not matched", ""))
+        if mdp and "biotransformer" in H3:
+            src = str(hy3.relative_to(ROOT))
+            B3 = H3["biotransformer"]
+            check("appendix residual", mdp.group(1), B3["residual_convention_dependence"], src)
+            check("appendix residual, lower", mdp.group(2), B3["residual_ci95"][0], src)
+            check("appendix residual, upper", mdp.group(3), B3["residual_ci95"][1], src)
+            mrec = re.search(r"the \$(\d+)\$ that name a hydrogen\s*atom on their reactant side, and "
+                             r"the \$(\d+)\$ recursive patterns", flat)
+            if mrec:
+                checks.append((int(mrec.group(1)) + int(mrec.group(2))
+                               == B3["dispatched_to_expanded"],
+                               "the dispatched count reconciles with the census",
+                               str(B3["dispatched_to_expanded"]),
+                               f"{mrec.group(1)} + {mrec.group(2)}", src))
+        stale = re.findall(r"does not clear it|worth having for one bank in three", flat)
+        checks.append((not stale, "no passage still reports the dispatch prediction as failed",
+                       "none", f"{len(stale)} found", "the manuscript"))
+
     # 10f. The screen against the measurement. The paper's two instruments describe the same thing
     # from opposite ends, and the claim that one predicts the other is checked rather than asserted:
     # the screen sees only the published cell and the movement to each other cell, the outcome comes
