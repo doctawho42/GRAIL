@@ -1,7 +1,7 @@
 {
  "config": {
   "script": "hydrogen_dispatch.py",
-  "git_commit": "294b76b1e1ea7bb3faf25a04a9f84cb0d1e6bc67",
+  "git_commit": "95238192ab5e78e005c09233a7c171dee12e9caf",
   "git_dirty": true,
   "population": "clean_test",
   "n_substrates": 1170,
@@ -15,8 +15,7 @@
    "biotransformer": true
   },
   "banks_this_invocation": [
-   "sygma_175",
-   "biotransformer"
+   "grail_full"
   ]
  },
  "banks": {
@@ -109,24 +108,47 @@
    ]
   },
   "grail_full": {
+   "measured_by": {
+    "script": "hydrogen_dispatch.py",
+    "git_commit": "95238192ab5e78e005c09233a7c171dee12e9caf",
+    "git_dirty": true
+   },
    "n_rules": 7581,
    "dispatched_to_expanded": 675,
    "references": 2597,
-   "recovered": 2136,
-   "reach": 0.8225,
+   "recovered": 2137,
+   "reach": 0.8229,
    "ci95": [
-    0.8006,
-    0.8441
+    0.8009,
+    0.8445
    ],
    "global_arms": {
     "all_explicit": 0.7351,
-    "all_implicit": 0.8163
+    "all_implicit": 0.8163,
+    "all_explicit_completed": 0.8194
    },
-   "best_global": 0.8163,
-   "residual_convention_dependence": 0.0062,
+   "global_arms_paired": {
+    "recovered_explicit": 1909,
+    "recovered_implicit": 2120,
+    "recovered_explicit_completed": 2128,
+    "explicit_minus_implicit": -0.0812,
+    "ci95": [
+     -0.0957,
+     -0.0679
+    ],
+    "excludes_zero": true
+   },
+   "legitimate_global_arms": [
+    "all_implicit",
+    "all_explicit_completed"
+   ],
+   "best_global": 0.8194,
+   "best_global_arm": "all_explicit_completed",
+   "guaranteed_reach": 0.8163,
+   "residual_convention_dependence": 0.0035,
    "residual_ci95": [
-    0.0032,
-    0.0095
+    0.0015,
+    0.0058
    ]
   }
  }

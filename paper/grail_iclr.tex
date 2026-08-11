@@ -304,17 +304,19 @@ way, and SyGMa leads in both. A coverage figure is the value of a bank together 
 and is not comparable across papers that state only the bank.
 
 \looseness=-1
-The obvious repair does not work, and it was registered before it was tried. Dispatch the convention
-per template rather than per run: a one-line syntactic test on each rule, whether its reactant side
-names a hydrogen \emph{atom}, decides which presentation that rule sees, consulting no outcome. On
-SyGMa it is the identity, none of whose $175$ templates names one, and it reproduces that bank's
-implicit arm exactly, which is the structural null the design needs. On BioTransformer, whose $726$
-of $994$ templates make it the one genuinely mixed bank available to test on, it \emph{loses} to the
-better single setting by $-0.0038$ $[-0.0067,-0.0015]$. A bank can be mixed in its syntax and
-single-convention in what it reaches.
+The repair we registered for this works on one bank of the three and not on either published one.
+Dispatch the convention per template rather than per run: a one-line syntactic test on each rule,
+whether its reactant side names a hydrogen \emph{atom}, decides which presentation that rule sees,
+consulting no outcome. On SyGMa it is the identity, none of whose $175$ templates names one, which
+is the structural null the design needs. On BioTransformer, whose $726$ of $994$ templates make it
+the mixed bank by that syntax, it \emph{loses} to the better single setting by $-0.0038$
+$[-0.0067,-0.0015]$. It clears that setting only on our own bank, by $+0.0035$ $[+0.0015,+0.0058]$,
+whose $675$ dispatched templates were written by hand. A bank can be mixed in its syntax and
+single-convention in what it reaches, and the one case where dispatch pays is the bank whose
+provenance we control, which is the weakest place for an existence proof.
 
 \looseness=-1
-What is left is a bound rather than a repair, and it is what a reader of a coverage figure quoted
+What is comparable without that is a bound, and it is what a reader of a coverage figure quoted
 without its procedure may assume: the least a bank recovers over the settings it might run under.
 For BioTransformer that is $0.1221$ against the $0.4963$ its best single setting reaches, a published
 figure four times what any one convention guarantees.

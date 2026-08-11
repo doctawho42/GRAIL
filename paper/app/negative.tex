@@ -93,6 +93,7 @@ choosing correctly is the whole story. Above zero says no global setting express
 bank & rules & dispatched & dispatch & best global & residual \\
 \midrule
 SyGMa          & $175$    & $0$   & 0.535 $[0.510,0.561]$ & 0.535 & $+0.000$ $[0.000,0.000]$ \\
+ours           & $\\nbank$ & $675$ & 0.8229 $[0.8009,0.8445]$ & 0.8194 & $+0.0035$ $[0.0015,0.0058]$ \\\\
 BioTransformer & $994$    & $726$ & 0.4925 $[0.4669,0.5182]$ & 0.4963 & $-0.0038$ $[-0.0067,-0.0015]$ \\
 \bottomrule
 \end{tabular}
@@ -109,10 +110,10 @@ take the bank's majority convention by the rule registered before the run. It do
 loses by $-0.0038$ $[-0.0067,-0.0015]$, a paired difference measured in one pass over the same
 substrates rather than a gap between marginals, which is the wrong test for a within-bank contrast.
 Those templates do add products, and the products are real; almost none of them recovers a reference
-these substrates carry. Our own bank is absent from the table above: its arms have not been
-re-measured since the contraction was corrected, and an entry produced by an earlier revision of the
-loop is exactly the mixture this appendix is about. A released check compares the revision recorded
-against each bank and refuses a citation of one that does not match.
+these substrates carry. Our own bank does clear it, by $+0.0035$ $[+0.0015,+0.0058]$. Every bank in
+the table records the revision that measured it and a released check refuses a citation of one whose
+revision does not match the others, because an entry produced by an earlier revision of the loop is
+exactly the mixture this appendix is about.
 
 What ``better global setting'' means decides the second result, and getting it wrong is how this
 prediction was first reported as holding. An arm that expands the substrate and never contracts the
@@ -124,10 +125,12 @@ sides completed the prediction fails, which is what the appendix reported before
 found, though not for the reason it gave. A comparison in which one side has been repaired and the
 other has not measures the repair.
 
-The conclusion is the recommendation \S\ref{sec:decomp} already makes, and no more: declare the
+The conclusion is close to the recommendation \S\ref{sec:decomp} already makes: declare the
 convention. Dispatching it per template is not worth having on either published bank tested here,
-being the identity on the single-convention one and a loss on the mixed one, and the failure is the
-useful half: a bank can be mixed in its syntax and single-convention in what it reaches. For a bank written in one convention there is
+being the identity on the single-convention one and a loss on the mixed one, and it pays only on
+ours. The failure is the useful half: a bank can be mixed in its syntax and single-convention in
+what it reaches, and the one bank where dispatch pays is the one whose $675$ dispatched templates
+were written by hand for it. For a bank written in one convention there is
 nothing for a cleverer engine to recover, and SyGMa is the demonstration that the classifier knows
 the difference. Where our own residual comes from was registered as a further prediction and that
 one failed: it is not created by the bank being mixed but by the $675$ hand-written templates that

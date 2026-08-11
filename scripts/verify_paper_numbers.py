@@ -1447,10 +1447,11 @@ def main() -> int:
     if hy2.exists():
         H2 = json.loads(hy2.read_text())["banks"]
         flat = re.sub(r"\s+", " ", whole)
-        mg = re.search(r"whose \$(\d+)\$\s*of \$(\d+)\$ templates make it the one genuinely mixed "
-                       r"bank available to test on, it \\emph\{loses\} to the\s*better single setting "
-                       r"by \$-([\d.]+)\$ \$\[-([\d.]+),-([\d.]+)\]\$.*?\$([\d.]+)\$ against the "
-                       r"\$([\d.]+)\$ its best single setting\s*reaches", flat)
+        mg = re.search(r"whose \$(\d+)\$ of \$(\d+)\$ templates make it\s*the mixed bank by that "
+                       r"syntax, it \\emph\{loses\} to the better single setting by \$-([\d.]+)\$\s*"
+                       r"\$\[-([\d.]+),-([\d.]+)\]\$\. It clears that setting only on our own bank, by "
+                       r"\$\+([\d.]+)\$ \$\[\+([\d.]+),\+([\d.]+)\]\$.*?\$([\d.]+)\$ against the "
+                       r"\$([\d.]+)\$ its best single setting reaches", flat)
         checks.append((bool(mg), "the dispatch sentence parses", "present",
                        "matched" if mg else "not matched", ""))
         if mg and "biotransformer" in H2:
@@ -1468,8 +1469,17 @@ def main() -> int:
                       abs(B["residual_convention_dependence"]), src)
                 check("residual, lower", mg.group(4), abs(B["residual_ci95"][0]), src)
                 check("residual, upper", mg.group(5), abs(B["residual_ci95"][1]), src)
-                check("guaranteed reach", mg.group(6), round(min(legit.values()), 4), src)
-                check("best single setting", mg.group(7), round(max(legit.values()), 4), src)
+                G = H2.get("grail_full", {})
+                if (G.get("measured_by") or {}).get("git_commit"):
+                    check("our own bank, residual", mg.group(6),
+                          G["residual_convention_dependence"], src)
+                    check("our own bank, lower", mg.group(7), G["residual_ci95"][0], src)
+                    check("our own bank, upper", mg.group(8), G["residual_ci95"][1], src)
+                    checks.append((G["residual_ci95"][0] > 0,
+                                   "dispatch clears the best global setting on our own bank",
+                                   "interval above zero", str(G["residual_ci95"]), src))
+                check("guaranteed reach", mg.group(9), round(min(legit.values()), 4), src)
+                check("best single setting", mg.group(10), round(max(legit.values()), 4), src)
                 checks.append((B["residual_ci95"][1] < 0,
                                "the registered repair fails on the one mixed bank", "interval "
                                "below zero", str(B["residual_ci95"]), src))
