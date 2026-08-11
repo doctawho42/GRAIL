@@ -223,25 +223,23 @@ fixes what every number in \S\ref{sec:results} is measured under.
 
 \paragraph{The matching criterion.} The field has never agreed what counts as a match. GLORYx uses a
 stereo-blind InChIKey skeleton, MetaTrans compares Morgan fingerprints, and rule-based systems that
-canonicalise their own output compare canonical SMILES, each silently. \textsc{tame} names all five
-and maps both sides through one of $q \in \{\textsc{canonical}, \textsc{inchikey},
-\textsc{inchi-no-stereo}, \textsc{tanimoto1}, \textsc{inchikey-tautomer}\}$, a prediction counting as
-a hit iff $q(\hat{y}) = q(y)$ for some reference $y$, under RDKit 2022.09.5. They are canonical SMILES
+canonicalise their own output compare canonical SMILES, each silently. \textsc{tame} names all five and maps both
+sides through one of $q \in \{\textsc{canonical}, \textsc{inchikey}, \textsc{inchi-no-stereo},
+\textsc{tanimoto1}, \textsc{inchikey-tautomer}\}$, a prediction counting as a hit iff
+$q(\hat{y}) = q(y)$ for some reference $y$, under RDKit 2022.09.5. They are canonical SMILES
 equality; the full InChIKey; its first block, blind to stereochemistry, charge and isotopes;
-Tanimoto similarity of one over Morgan fingerprints at radius 2 over 2048 bits; and standardising
-both sides before hashing. A ceiling reported here declares the \emph{application} procedure too:
-engine and version, sanitisation, enumeration and filtering policy, and depth
-(\S\ref{sec:enginereach}). One caution attaches to the first, which is computed without
-stereochemistry on the metabolite corpus, whose references carry none, and with it in the
-cross-domain harnesses, whose references do; that is why the cross-domain step to
-\textsc{inchi-no-stereo} moves those systems and the metabolite step cannot. The fourth is a
+Tanimoto similarity of one over Morgan fingerprints; and standardising both sides before hashing. A
+ceiling declares the \emph{application} procedure too (\S\ref{sec:enginereach}). One caution attaches
+to the first: it is computed without stereochemistry on the metabolite corpus, whose references carry
+none, and with it in the cross-domain harnesses, whose references do, which is why the cross-domain
+step to \textsc{inchi-no-stereo} moves those systems and the metabolite step cannot. The fourth is a
 similarity threshold rather than an identity relation and is reported but never treated as a
 candidate convention (Appendix~\ref{app:robust}).
 
-All five are reported for every comparison. The default here is \textsc{inchikey-tautomer}, because
-the references neither carry stereochemistry nor distinguish tautomers and standard InChI normalises
-only a subset of them \citep{Dhaked_2020}: an engine emitting the keto form of an enol reference
-fails to match under plain \textsc{inchikey} while producing the same substance. Standardisation of
+All five are reported for every comparison. The default is \textsc{inchikey-tautomer}: the references
+neither carry stereochemistry nor distinguish tautomers, and standard InChI normalises only a subset
+of them \citep{Dhaked_2020}, so an engine emitting the keto form of an enol reference fails to match
+under plain \textsc{inchikey} while producing the same substance. Standardisation of
 this kind is established preprocessing; adopting it as the \emph{matching} rule is not.
 
 \looseness=-1
@@ -356,7 +354,11 @@ whether a docked pose is minimised first, whether an error score is floored, whe
 standardised within the annotator who gave it (Appendix~\ref{app:robust}).
 
 \begin{table}[t]
-\centering\footnotesize
+\centering
+\input{app/share_figure}
+\vspace{2pt}
+
+\footnotesize
 \begin{tabular}{lccccc}
 \toprule
 leaderboard & items & dominate & contested (certified) & unresolved & tiers \\
@@ -372,11 +374,13 @@ translation, nine further pairs & $634$--$1{,}954$ & $559$ of $689$ & $37$ (8) &
 translation, the year before & $716$--$1{,}302$ & $808$ of $909$ & $24$ (3) & $77$ & $80$ of $124$ \\
 \bottomrule
 \end{tabular}
-\caption{What a leaderboard entitles a reader to quote, on a grid of four criteria by a second
-axis. \emph{Certified} counts the contested pairs surviving Holm over the family each grid creates.
-The seven-system table's surviving order, drawn as its transitive reduction, is
-Figure~\ref{fig:hasse}: seven published places become three tiers.}
-\label{tab:robust}
+\caption{Above, every leaderboard as one dot at the share of its pairwise orderings no cell of its
+declared grid contradicts, dot area proportional to the pairs it carries; the two editions of the
+translation task are drawn apart because five of their language pairs are the same pair scored twice
+by different people. Below, the boards the text discusses one at a time. \emph{Certified} counts the
+contested pairs surviving Holm over the family each grid creates. The seven-system table's surviving
+order, as its transitive reduction, is Figure~\ref{fig:hasse}.}
+\label{tab:robust}\label{fig:shares}
 \end{table}
 
 
@@ -453,9 +457,9 @@ whose blindest test would see $0.116$ and $0.202$ at $80\%$ power (Appendix~\ref
 The deep case study runs on GRAIL, a metabolite predictor built for this work: a learned selector
 chooses which of its \nbank\ rules to apply, an engine applies them, and a learned filter ranks the
 result. A system of this shape is where a coverage figure can be measured exhaustively rather than
-sampled, because it reaches a reference only by passing three gates in sequence. With
-$C_{\text{full}}$ the references the whole bank recovers without a budget, $C_{\text{bud}}$ those
-surviving the selector and $H$ those returned,
+sampled, because it reaches a reference only by passing three gates in sequence. With $C_{\text{full}}$
+the references the whole bank recovers without a budget, $C_{\text{bud}}$ those surviving the selector
+and $H$ those returned,
 \[
 \underbrace{\tfrac{|H|}{|U|}}_{\text{recall@}k}
 =\underbrace{\tfrac{|C_{\text{full}}|}{|U|}}_{\text{coverage}}
@@ -464,22 +468,22 @@ surviving the selector and $H$ those returned,
 \qquad |U|=\textstyle\sum_{s\in S}|Y_s| ,
 \]
 exact by construction because each set contains the next: an accounting device, not a model, in
-\emph{micro} because only that form multiplies out, with head-to-head comparisons in \emph{macro}.
-MetaPredictor factorises $0.612\times0.804\times1.000$, exactly its realised recall, though a beam
-bounds that decode rather than the model (Appendix~\ref{app:seq2seq}).
+\emph{micro} because only that form multiplies out. MetaPredictor factorises
+$0.612\times0.804\times1.000$, exactly its realised recall, though a beam bounds that decode rather
+than the model (Appendix~\ref{app:seq2seq}).
 
 \paragraph{The ceiling as a primitive.} Apply all \nbank\ rules to every test substrate and ask what
-fraction of references appears anywhere in the union. That \textbf{coverage ceiling} is the best
-recall perfect selection and ranking would reach, here \ceiling\ (cluster-bootstrap 95\% CI
+fraction of references appears anywhere in the union. That \textbf{coverage ceiling} is the best recall
+perfect selection and ranking would reach, here \ceiling\ (cluster-bootstrap 95\% CI
 $[0.794,0.839]$), macro $\ceilingmacro$, and should be reported alongside recall for any
-rule-grounded method, as system reach in the sense of \S\ref{sec:enginereach}. The deployed pipeline
+rule-grounded method. The deployed pipeline
 converts $32.5\%$ of its own ceiling, and selection is where the loss sits, barely a third of what
 the bank reaches surviving the rule budget. Ranking is close to lossless at $0.960$ $[0.941,0.976]$
-and close to free: re-ranking the same pool by Tanimoto similarity to the substrate, nothing
-trained, reaches $0.342$ against the filter's $0.340$, $+0.002$ $[-0.004,+0.009]$, while reversing
-that order costs $0.040$ and shuffling it $0.015$. The filter has found the scaffold and little past
-it. Applied to a second method the decomposition stops being self-diagnosis, since SyGMa decomposes
-with the inverse profile (Appendices~\ref{app:noselect} and~\ref{app:decompsygma}).
+and close to free: re-ranking the same pool by Tanimoto similarity to the substrate, nothing trained,
+reaches $0.342$ against the filter's $0.340$, $+0.002$ $[-0.004,+0.009]$, while reversing that order
+costs $0.040$ and shuffling it $0.015$. Applied to a second method the decomposition stops being
+self-diagnosis, since SyGMa decomposes with the inverse profile (Appendices~\ref{app:noselect}
+and~\ref{app:decompsygma}).
 
 \section{Results}
 \label{sec:results}
