@@ -1,7 +1,7 @@
 {
  "config": {
   "script": "robust_order.py",
-  "git_commit": "a7301248968f533ace1e2a256dc10e5e40f727ce",
+  "git_commit": "2cfcccda95188a1e1468bae1c7736f910bbf30f3",
   "git_dirty": true,
   "n_boot": 10000,
   "seed": 0,
@@ -182,9 +182,9 @@
    "multiplicity": {
     "family_size": 336,
     "alpha": 0.05,
-    "n_tests_surviving": 241,
-    "n_reversals_surviving": 78,
-    "largest_surviving_reversal_p": 0.0001
+    "n_tests_surviving": 246,
+    "n_reversals_surviving": 80,
+    "largest_surviving_reversal_p": 0.00055
    },
    "tiers_distinguished": 3,
    "tiers_ci95": [
@@ -4346,7 +4346,7 @@
     "alpha": 0.05,
     "n_tests_surviving": 38,
     "n_reversals_surviving": 24,
-    "largest_surviving_reversal_p": 0.0001
+    "largest_surviving_reversal_p": 0.0
    },
    "tiers_distinguished": 1,
    "tiers_ci95": [

@@ -43,7 +43,7 @@ CONFIRMATORY = [
      "match": ["method-by-criterion", "interactions between method and choice",
                "as interactions between method"],
      "family": "criterion steps by system pairs by leaderboards", "size": "448",
-     "p": "$109$ survive at $\\alpha=0.05$"},
+     "p": "$114$ survive at $\\alpha=0.05$"},
 ]
 # The paragraph that defines the words is allowed to use them: it is the definition, not a claim.
 DEFINITION_MARKERS = ["Two words are used throughout", "A difference is \\emph{separated}",

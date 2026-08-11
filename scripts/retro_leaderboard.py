@@ -38,6 +38,8 @@ import pathlib
 import sys
 from pathlib import Path
 
+import math
+
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -52,6 +54,20 @@ RDLogger.DisableLog("rdApp.*")
 MODES = ("canonical", "nostereo", "inchikey", "tautomer")
 KS = (1, 3, 5, 10)
 N_BOOT, SEED = 10000, 0
+
+
+def _paired_p(d) -> float:
+    """Two-sided p for a paired mean from the normal approximation, which has no floor.
+
+    A bootstrap tail cannot resolve past $1/B$, and Holm compares the $i$-th smallest against
+    $\\alpha/(m-i)$. With a family of this size every surviving test sat exactly on that floor, so
+    the count was of empty tails rather than of separated effects and moved with $B$ alone.
+    """
+    n = len(d)
+    se = float(np.std(d, ddof=1)) / np.sqrt(n)
+    if se == 0.0:
+        return 1.0
+    return float(math.erfc(abs(float(np.mean(d))) / se / np.sqrt(2.0)))
 
 
 def _code_version() -> dict:
@@ -217,12 +233,17 @@ def main() -> int:
                     continue
                 bt = d[idx].mean(axis=1)
                 lo, hi = float(np.quantile(bt, .025)), float(np.quantile(bt, .975))
-                # a two-sided bootstrap p-value, so the family can be corrected rather than
-                # counted: 233 intervals excluding zero out of five hundred tests is not a result
-                pv = 2.0 * min((bt <= 0).mean(), (bt >= 0).mean())
+                # A two-sided p, so the family can be corrected rather than counted: 233 intervals
+                # excluding zero out of five hundred tests is not a result. It is NOT the bootstrap
+                # tail. That tail is floored at 1/B, and every test the correction used to keep sat
+                # exactly on the floor -- so the count was the number of empty tails, identical
+                # whatever their true p, and at B=8{,}000 the floor would have exceeded Holm's first
+                # threshold and left nothing. The floor is a property of the resample count and was
+                # deciding a published number. This is the analytic p that robust_order uses.
+                pv = _paired_p(d)
                 tested[f"top{k}|{a} vs {b}|{m1} vs {m2}"] = {
                     "delta": round(float(d.mean()), 4), "ci95": [round(lo, 4), round(hi, 4)],
-                    "p": float(max(pv, 1.0 / N_BOOT))}
+                    "p": pv}
                 if lo > 0 or hi < 0:
                     interactions[f"top{k}|{a} vs {b}|{m1} vs {m2}"] = tested[
                         f"top{k}|{a} vs {b}|{m1} vs {m2}"]
