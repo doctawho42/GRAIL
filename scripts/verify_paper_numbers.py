@@ -431,6 +431,32 @@ def main() -> int:
             check(f"survey printing {i}, places", pl, places, "the manuscript")
             check(f"survey printing {i}, tiers", ti, tiers, "the manuscript")
 
+    # 10d-e. The nine ESA boards, whose totals the appendix states in prose. They are the paper's
+    # answer to "your share is one number from one table", so the aggregate is held to the run.
+    ea = ROOT / "results/robust_order_wmt24_esa.json"
+    if ea.exists():
+        EA = json.loads(ea.read_text())
+        BB = EA["boards"]
+        flat = re.sub(r"\s+", " ", whole)
+        me = re.search(r"Across the nine, \$(\d+)\$ of \$(\d+)\$ pairs dominate, \$(\d+)\$ are "
+                       r"contested of which \$(\d+)\$ survive correction, and \$(\d+)\$ published "
+                       r"places support \$(\d+)\$\. The share runs from \$([\d.]+)\$ to "
+                       r"\$([\d.]+)\$ with a median of \$([\d.]+)\$", flat)
+        checks.append((bool(me), "the nine-board aggregate sentence parses", "present",
+                       "matched" if me else "not matched", ""))
+        if me:
+            src = str(ea.relative_to(ROOT))
+            check("esa, dominate", me.group(1), sum(b["n_dominating"] for b in BB.values()), src)
+            check("esa, pairs", me.group(2), EA["n_pairs_total"], src)
+            check("esa, contested", me.group(3), sum(b["n_contested"] for b in BB.values()), src)
+            check("esa, certified", me.group(4), EA["n_certified_total"], src)
+            check("esa, places", me.group(5), EA["places_published"], src)
+            check("esa, tiers", me.group(6), EA["places_supported"], src)
+            check("esa, share low", me.group(7), round(EA["share_min"], 2), src)
+            check("esa, share high", me.group(8), round(EA["share_max"], 2), src)
+            check("esa, share median", me.group(9), round(EA["share_median"], 2), src)
+            checks.append((len(BB) == 9, "there are nine boards", "9", str(len(BB)), src))
+
     # 10d. the packing measurement: the empirical half of the reordering condition
     pk = ROOT / "results/packing_vs_differential.json"
     if pk.exists():
