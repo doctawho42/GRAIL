@@ -1,7 +1,7 @@
 {
  "config": {
   "script": "hydrogen_dispatch.py",
-  "git_commit": "d3649b53bc0e9e946c606e3f3704c711c5f280bf",
+  "git_commit": "dfc7306f30cae7f7a332893cc981a90ec4bdb649",
   "git_dirty": true,
   "population": "clean_test",
   "n_substrates": 1170,
@@ -63,21 +63,21 @@
    "n_rules": 994,
    "dispatched_to_expanded": 726,
    "references": 2597,
-   "recovered": 1265,
-   "reach": 0.4871,
+   "recovered": 1279,
+   "reach": 0.4925,
    "ci95": [
-    0.4618,
-    0.5125
+    0.4669,
+    0.5182
    ],
    "global_arms": {
     "all_explicit": 0.4867,
     "all_implicit": 0.1221,
-    "all_explicit_completed": 0.4755
+    "all_explicit_completed": 0.4963
    },
    "global_arms_paired": {
     "recovered_explicit": 1264,
     "recovered_implicit": 317,
-    "recovered_explicit_completed": 1235,
+    "recovered_explicit_completed": 1289,
     "explicit_minus_implicit": 0.3647,
     "ci95": [
      0.3408,
@@ -89,13 +89,13 @@
     "all_implicit",
     "all_explicit_completed"
    ],
-   "best_global": 0.4755,
+   "best_global": 0.4963,
    "best_global_arm": "all_explicit_completed",
    "guaranteed_reach": 0.1221,
-   "residual_convention_dependence": 0.0116,
+   "residual_convention_dependence": -0.0038,
    "residual_ci95": [
-    0.0049,
-    0.0195
+    -0.0067,
+    -0.0015
    ]
   },
   "grail_full": {

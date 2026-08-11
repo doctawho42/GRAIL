@@ -125,10 +125,11 @@ leading methods converge.
 \paragraph{Contributions.}
 \begin{itemize}\itemsep2pt \parskip0pt
 \item A coverage figure is a property of a rule set together with the procedure that applies it, and
-  is not comparable across papers that leave the procedure unstated: reach moves by up to $0.353$
+  is not comparable across papers that leave the procedure unstated: reach moves by up to $0.374$
   with a preprocessing step neither paper reports, and in opposite directions for banks written in
-  opposite conventions. Dispatching that step per template restores the figure as a property of the
-  bank, and beats the best single setting on a published bank assembled from two conventions.
+  opposite conventions. A registered repair, dispatching that step per template, is measured and
+  fails; what is comparable is the least a bank recovers over the settings it might be run under,
+  which for one published bank is a quarter of the figure it reports.
 \item The matching criterion exchanges positions in a published leaderboard of retrosynthesis
   systems, on predictions their authors released. The exchanges are certified as method-by-criterion
   interactions and corrected for multiplicity across the whole family of tests.
@@ -294,24 +295,28 @@ fire equally often expanded, and the toolkit then refuses $63\%$ of the fragment
 separate into against $0.4\%$ without the expansion, because a template written against implicit
 hydrogens does not name the hydrogen it replaces and the drawn one is never removed. Contract the
 product and that number is zero. The smaller is a matching effect and nothing else, the completed
-loop yielding $20{,}601$ fragments against the unexpanded arm's $21{,}106$. The convention then decides what a bank
+loop yielding $21{,}302$ fragments against the unexpanded arm's $21{,}106$. The convention then decides what a bank
 reaches without deciding which reaches further: with the loop complete BioTransformer recovers
-$1{,}235$ references with hydrogens drawn against $317$ with them implicit, a swing of $-0.353$,
+$1{,}289$ references with hydrogens drawn against $317$ with them implicit, a swing of $-0.374$,
 while SyGMa recovers $1{,}350$ against $1{,}390$, a swing of $+0.015$ the other way, and SyGMa leads
 in both. A coverage figure is the value of a bank together with a convention
 and is not comparable across papers that state only the bank.
 
 \looseness=-1
-What is comparable is reach with the convention dispatched per template rather than per run. A
-one-line syntactic test on each rule, whether its reactant side names a hydrogen \emph{atom},
-decides which presentation that rule sees; it consults no outcome and was registered before the run.
-On SyGMa it is the identity, none of whose $175$ templates names one, reproducing that bank's
-implicit arm exactly, which is the pre-registered null. On BioTransformer it beats the better of the
-two global settings by $+0.0116$ $[+0.0049,+0.0195]$: no single convention expresses that bank at
-all, since it was assembled from collections written in two and $726$ of its $994$ templates want
-the other presentation from the rest. The worst case over global settings is a diagnostic rather
-than a remedy, and is what a reader of a coverage figure quoted without its procedure may assume: $0.1221$ for BioTransformer against the $0.4755$ its best single
-setting reaches, a published figure four times what any one convention guarantees.
+The obvious repair does not work, and it was registered before it was tried. Dispatch the convention
+per template rather than per run: a one-line syntactic test on each rule, whether its reactant side
+names a hydrogen \emph{atom}, decides which presentation that rule sees, consulting no outcome. On
+SyGMa it is the identity, none of whose $175$ templates names one, and it reproduces that bank's
+implicit arm exactly, which is the structural null the design needs. On BioTransformer, whose $726$
+of $994$ templates make it the one genuinely mixed bank available to test on, it \emph{loses} to the
+better single setting by $-0.0038$ $[-0.0067,-0.0015]$. A bank can be mixed in its syntax and
+single-convention in what it reaches.
+
+\looseness=-1
+What is left is a bound rather than a repair, and it is the number a reader of a coverage figure
+quoted without its procedure may assume: the least a bank recovers over the settings it might be run
+under. For BioTransformer that is $0.1221$ against the $0.4963$ its best single setting reaches, a
+published figure four times what any one convention guarantees.
 
 \looseness=-1
 What a bank has to lose is readable from its rule file without running anything, and the hazard is

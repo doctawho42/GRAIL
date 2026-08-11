@@ -94,7 +94,7 @@ bank & rules & dispatched & dispatch & best global & residual \\
 \midrule
 SyGMa          & $175$    & $0$   & 0.535 $[0.510,0.561]$ & 0.535 & $+0.000$ $[0.000,0.000]$ \\
 ours           & $\nbank$ & $675$ & 0.823 $[0.801,0.844]$ & 0.816 & $+0.006$ $[0.003,0.010]$ \\
-BioTransformer & $994$    & $726$ & 0.4871 $[0.4618,0.5125]$ & 0.4755 & $+0.0116$ $[0.0049,0.0195]$ \\
+BioTransformer & $994$    & $726$ & 0.4925 $[0.4669,0.5182]$ & 0.4963 & $-0.0038$ $[-0.0067,-0.0015]$ \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -106,25 +106,26 @@ and that is the check that the classifier is not sending templates somewhere it 
 BioTransformer was predicted to clear its better global setting, because $726$ of its $994$
 templates want the convention a single global arm would deny them: the $690$ that name a hydrogen
 atom on their reactant side, and the $36$ recursive patterns the classifier cannot see inside, which
-take the bank's majority convention by the rule registered before the run. It clears it by $+0.0116$
-$[+0.0049,+0.0195]$. Our own bank clears it by $+0.006$ $[+0.003,+0.010]$. Every arm is measured in
-one pass over the same substrates, so each residual is a paired difference rather than a gap between
-marginals, which is the wrong test for a within-bank contrast.
+take the bank's majority convention by the rule registered before the run. It does not clear it. It
+loses by $-0.0038$ $[-0.0067,-0.0015]$, a paired difference measured in one pass over the same
+substrates rather than a gap between marginals, which is the wrong test for a within-bank contrast.
+Those templates do add products, and the products are real; almost none of them recovers a reference
+these substrates carry.
 
-What ``better global setting'' means is the whole of the second result, and it is the defect this
-paper names, found in its own instrument. An arm that expands the substrate and never contracts the
+What ``better global setting'' means decides the second result, and getting it wrong is how this
+prediction was first reported as holding. An arm that expands the substrate and never contracts the
 product is not a setting anyone would choose; \S\ref{sec:enginereach} calls it an unfinished loop.
-Measured against that arm BioTransformer's residual is $+0.000$ $[0.000,0.001]$ and the prediction
-reads as failed, because the arm it is asked to beat is a program with a bug in it and the bug
-happens to inflate what that bank recovers. Measured against the settings a person might actually
-run --- the implicit substrate, or the expanded one with the product contracted again --- the same
-run gives $+0.0116$. A worst case or a baseline taken over an unfinished version of the treatment
-measures the implementation, not the object.
+Two defects followed from it. Measured against that arm, the residual is a comparison with a program
+that has a bug in it. And the dispatch arm itself was built from the uncontracted half of its own
+enumeration, so a repaired control was being compared against an unrepaired treatment. With both
+sides completed the prediction fails, which is what the appendix reported before either defect was
+found, though not for the reason it gave. A comparison in which one side has been repaired and the
+other has not measures the repair.
 
-The conclusion is therefore stronger than the recommendation \S\ref{sec:decomp} makes on its own.
-Declaring the convention is necessary; dispatching it per template is worth having wherever a bank
-is genuinely mixed, which is two of the three tested, at $726$ of BioTransformer's $994$ templates
-and $675$ of our $\nbank$ against none of SyGMa's. For a bank written in one convention there is
+The conclusion is the recommendation \S\ref{sec:decomp} already makes, and no more: declare the
+convention. Dispatching it per template is not worth having on either published bank tested here,
+being the identity on the single-convention one and a loss on the mixed one, and the failure is the
+useful half: a bank can be mixed in its syntax and single-convention in what it reaches. For a bank written in one convention there is
 nothing for a cleverer engine to recover, and SyGMa is the demonstration that the classifier knows
 the difference. Where our own residual comes from was registered as a further prediction and that
 one failed: it is not created by the bank being mixed but by the $675$ hand-written templates that

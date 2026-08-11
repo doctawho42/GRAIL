@@ -341,7 +341,7 @@ def main() -> int:
         for shown, key in (("SyGMa", "sygma_175"), ("ours", "grail_full"),
                            ("BioTransformer", "biotransformer")):
             m = re.search(shown + r" & \$?[\\a-z{},0-9]+\$? & \$(\d+)\$ & ([\d.]+) \$\[[\d.,]+\]\$ & "
-                          r"([\d.]+) & \$\+([\d.]+)\$", flat)
+                          r"([\d.]+) & \$[-+]?([\d.]+)\$", flat)
             v = H[key]
             check(f"dispatch table, {shown} dispatched", m and m.group(1), v["dispatched_to_expanded"])
             check(f"dispatch table, {shown} reach", m and m.group(2), v["reach"], "", )
@@ -1136,15 +1136,17 @@ def main() -> int:
     if hy3.exists():
         H3 = json.loads(hy3.read_text())["banks"]
         flat = re.sub(r"\s+", " ", whole)
-        mdp = re.search(r"It clears it by \$\+([\d.]+)\$\s*\$\[\+([\d.]+),\+([\d.]+)\]\$", flat)
+        mdp = re.search(r"It does not clear it\. It\s*loses by \$-([\d.]+)\$ "
+                        r"\$\[-([\d.]+),-([\d.]+)\]\$", flat)
         checks.append((bool(mdp), "the appendix states the dispatch outcome", "present",
                        "matched" if mdp else "not matched", ""))
         if mdp and "biotransformer" in H3:
             src = str(hy3.relative_to(ROOT))
             B3 = H3["biotransformer"]
-            check("appendix residual", mdp.group(1), B3["residual_convention_dependence"], src)
-            check("appendix residual, lower", mdp.group(2), B3["residual_ci95"][0], src)
-            check("appendix residual, upper", mdp.group(3), B3["residual_ci95"][1], src)
+            check("appendix residual", mdp.group(1),
+                  abs(B3["residual_convention_dependence"]), src)
+            check("appendix residual, lower", mdp.group(2), abs(B3["residual_ci95"][0]), src)
+            check("appendix residual, upper", mdp.group(3), abs(B3["residual_ci95"][1]), src)
             mrec = re.search(r"the \$(\d+)\$ that name a hydrogen\s*atom on their reactant side, and "
                              r"the \$(\d+)\$ recursive patterns", flat)
             if mrec:
@@ -1153,8 +1155,8 @@ def main() -> int:
                                "the dispatched count reconciles with the census",
                                str(B3["dispatched_to_expanded"]),
                                f"{mrec.group(1)} + {mrec.group(2)}", src))
-        stale = re.findall(r"does not clear it|worth having for one bank in three", flat)
-        checks.append((not stale, "no passage still reports the dispatch prediction as failed",
+        stale = re.findall(r"worth having for one bank in three|beats the best single setting", flat)
+        checks.append((not stale, "no passage still reports the prediction as holding",
                        "none", f"{len(stale)} found", "the manuscript"))
 
     # 10i. The exposure distribution. An earlier wording said the widest leaderboard supplies none;
@@ -1365,10 +1367,10 @@ def main() -> int:
     if hy2.exists():
         H2 = json.loads(hy2.read_text())["banks"]
         flat = re.sub(r"\s+", " ", whole)
-        mg = re.search(r"beats the better of the two global settings by \$\+([\d.]+)\$ "
-                       r"\$\[\+([\d.]+),\+([\d.]+)\]\$.*?\$(\d+)\$ of its \$(\d+)\$ templates want "
-                       r"the other presentation.*?\$([\d.]+)\$ for\s*BioTransformer against the "
-                       r"\$([\d.]+)\$ its best single setting reaches", flat)
+        mg = re.search(r"whose \$(\d+)\$\s*of \$(\d+)\$ templates make it the one genuinely mixed "
+                       r"bank available to test on, it \\emph\{loses\} to the\s*better single setting "
+                       r"by \$-([\d.]+)\$ \$\[-([\d.]+),-([\d.]+)\]\$.*?\$([\d.]+)\$ against the "
+                       r"\$([\d.]+)\$ its best single setting\s*reaches", flat)
         checks.append((bool(mg), "the dispatch sentence parses", "present",
                        "matched" if mg else "not matched", ""))
         if mg and "biotransformer" in H2:
@@ -1380,16 +1382,17 @@ def main() -> int:
             else:
                 legit = {k: v for k, v in B["global_arms"].items()
                          if v is not None and k != "all_explicit"}
-                check("dispatch residual", mg.group(1), B["residual_convention_dependence"], src)
-                check("residual, lower", mg.group(2), B["residual_ci95"][0], src)
-                check("residual, upper", mg.group(3), B["residual_ci95"][1], src)
-                check("templates dispatched", mg.group(4), B["dispatched_to_expanded"], src)
-                check("templates in the bank", mg.group(5), B["n_rules"], src)
+                check("templates dispatched", mg.group(1), B["dispatched_to_expanded"], src)
+                check("templates in the bank", mg.group(2), B["n_rules"], src)
+                check("dispatch residual", mg.group(3),
+                      abs(B["residual_convention_dependence"]), src)
+                check("residual, lower", mg.group(4), abs(B["residual_ci95"][0]), src)
+                check("residual, upper", mg.group(5), abs(B["residual_ci95"][1]), src)
                 check("guaranteed reach", mg.group(6), round(min(legit.values()), 4), src)
                 check("best single setting", mg.group(7), round(max(legit.values()), 4), src)
-                checks.append((B["residual_ci95"][0] > 0,
-                               "dispatch beats every legitimate global setting", "interval clear "
-                               "of zero", str(B["residual_ci95"]), src))
+                checks.append((B["residual_ci95"][1] < 0,
+                               "the registered repair fails on the one mixed bank", "interval "
+                               "below zero", str(B["residual_ci95"]), src))
                 ratio = max(legit.values()) / max(min(legit.values()), 1e-9)
                 checks.append((3.5 <= ratio <= 4.5, "BioTransformer's published figure is four "
                                "times its guarantee", "about four", f"{ratio:.2f}x", src))
