@@ -192,6 +192,18 @@ def main() -> int:
                 f"({r['n_contested_after_correction']}) & {r['n_unresolved']} & "
                 f"{r['tiers_distinguished']} \\\\")
 
+    w23 = ROOT / "results/robust_order_wmt23.json"
+    w23_rows = []
+    if w23.exists():
+        W = json.loads(w23.read_text())
+        for lp, r in sorted(W["boards"].items()):
+            w23_rows.append(
+                f"{lp} & {r['n_systems']} & {r['n_items']} & {r.get('n_annotators', '--')} & "
+                f"{r.get('ratings_per_system_segment', '--')} & "
+                f"{r['n_dominating']} of {r['n_pairs']} & {r['n_contested']} "
+                f"({r['n_contested_after_correction']}) & {r['n_unresolved']} & "
+                f"{r['tiers_distinguished']} \\\\")
+
     if esa_rows:
         body += ["\\paragraph{The nine \\textsc{esa} translation boards.} Their per-cell accuracy "
                  "matrices are not printed: nine boards of eleven to sixteen systems by eight cells "
@@ -203,6 +215,16 @@ def main() -> int:
                  "pair & systems & segments & annotators & dominate & contested (cert.) & "
                  "unresolved & tiers \\\\", "\\midrule",
                  *esa_rows, "\\bottomrule", "\\end{tabular}", "\\end{center}", ""]
+    if w23_rows:
+        body += ["\\paragraph{The eight boards of the previous edition.} Same treatment, and the "
+                 "column a reader wants that the later edition cannot supply is the last but one: "
+                 "how many ratings a segment carries, which is what gives this protocol its "
+                 "criterion axis.",
+                 "\\begin{center}\\footnotesize",
+                 "\\begin{tabular}{lccccccc c}", "\\toprule",
+                 "pair & systems & segments & annotators & ratings & dominate & "
+                 "contested (cert.) & unresolved & tiers \\\\", "\\midrule",
+                 *w23_rows, "\\bottomrule", "\\end{tabular}", "\\end{center}", ""]
     OUT.write_text("\n\n".join(body) + "\n")
     # the figure in the body is the seven-system retrosynthesis board, named rather than
     # picked by size: adding a larger board must not silently redraw the paper's figure
