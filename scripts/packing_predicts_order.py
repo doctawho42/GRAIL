@@ -118,6 +118,12 @@ def main() -> int:
             if "system_accuracy_by_cell" in r:
                 boards[f"translation, WMT24 {lp}"] = r
 
+    r23 = ROOT / "results/robust_order_wmt23.json"
+    if r23.exists():
+        for lp, r in json.loads(r23.read_text())["boards"].items():
+            if "system_accuracy_by_cell" in r:
+                boards[f"translation, WMT23 {lp}"] = r
+
     re_ = ROOT / "results/robust_order_wmt24_esa.json"
     if re_.exists():
         for lp, r in json.loads(re_.read_text())["boards"].items():

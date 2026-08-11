@@ -402,6 +402,9 @@ def main() -> int:
                 _d = json.loads(_q.read_text())
                 survey_boards.append(_d["leaderboards"][_key] if _key else _d)
         survey_boards += list(E["boards"].values())
+        _w23 = ROOT / "results/robust_order_wmt23.json"
+        if _w23.exists():
+            survey_boards += list(json.loads(_w23.read_text())["boards"].values())
         flat = re.sub(r"\s+", " ", whole)
         mc = re.search(r"Measured on \$(\d+)\$ leaderboards in four domains and "
                        r"\$([\d,{}]+)\$ pairs: they publish \$(\d+)\$ places and what survives "
@@ -456,6 +459,48 @@ def main() -> int:
             check("esa, share high", me.group(8), round(EA["share_max"], 2), src)
             check("esa, share median", me.group(9), round(EA["share_median"], 2), src)
             checks.append((len(BB) == 9, "there are nine boards", "9", str(len(BB)), src))
+
+    # 10d-r. The cross-edition replication. It is the paper's answer to "is the share a property of
+    # the benchmark or of your grid", so both the aggregate and the spread it rests on are held.
+    rr = ROOT / "results/robust_order_wmt23.json"
+    if rr.exists():
+        RR = json.loads(rr.read_text()); RB = RR["boards"]
+        flat = re.sub(r"\s+", " ", whole)
+        mrr = re.search(r"moves by \$([\d.]+)\$ on average and by as much as \$([\d.]+)\$; "
+                        r"\\textsc\{en-zh\} is at \$([\d.]+)\$ in one edition and \$([\d.]+)\$ in "
+                        r"the next\..*?Across the eight, \$(\d+)\$ of \$(\d+)\$ pairs dominate, "
+                        r"\$(\d+)\$ are contested of which \$(\d+)\$ survive correction, and "
+                        r"\$(\d+)\$ published places support \$(\d+)\$", flat)
+        checks.append((bool(mrr), "the replication sentence parses", "present",
+                       "matched" if mrr else "not matched", ""))
+        if mrr:
+            src = str(rr.relative_to(ROOT))
+            E24 = json.loads((ROOT / "results/robust_order_wmt24_esa.json").read_text())["boards"]
+            M24 = {"en-de": json.loads((ROOT / "results/robust_order_wmt24_en-de.json").read_text())}
+            ISO = {"eng-deu": "en-de", "eng-ces": "en-cs", "eng-zho": "en-zh",
+                   "eng-jpn": "en-ja", "ces-ukr": "cs-uk"}
+            deltas = []
+            for k23, k24 in ISO.items():
+                b24 = M24.get(k24) or E24.get(k24)
+                if k23 in RB and b24:
+                    deltas.append(abs(b24["robustness"] - RB[k23]["robustness"]))
+            check("replication, mean shift", mrr.group(1),
+                  round(sum(deltas) / max(len(deltas), 1), 3), src)
+            check("replication, largest shift", mrr.group(2), round(max(deltas), 3), src)
+            check("replication, en-zh before", mrr.group(3),
+                  round(RB["eng-zho"]["robustness"], 3), src)
+            check("replication, en-zh after", mrr.group(4),
+                  round(E24["en-zh"]["robustness"], 3), src)
+            check("replication, dominate", mrr.group(5),
+                  sum(b["n_dominating"] for b in RB.values()), src)
+            check("replication, pairs", mrr.group(6), RR["n_pairs_total"], src)
+            check("replication, contested", mrr.group(7),
+                  sum(b["n_contested"] for b in RB.values()), src)
+            check("replication, certified", mrr.group(8), RR["n_certified_total"], src)
+            check("replication, places", mrr.group(9), RR["places_published"], src)
+            check("replication, tiers", mrr.group(10), RR["places_supported"], src)
+            checks.append((len(deltas) == 5, "five pairs are scored in both editions", "5",
+                           str(len(deltas)), src))
 
     # 10d. the packing measurement: the empirical half of the reordering condition
     pk = ROOT / "results/packing_vs_differential.json"
@@ -1257,7 +1302,7 @@ def main() -> int:
         flat = re.sub(r"\s+", " ", whole)
         # the body summarises the spread and the appendix enumerates it; the gate holds the
         # enumeration, because that is where the per-board numbers are actually asserted
-        mdi = re.search(r"the sixteen tables run from \$(\d+)\\%\$ flagged to \$([\d.]+)\\%\$", flat)
+        mdi = re.search(r"the twenty-four tables run from \$(\d+)\\%\$ flagged to \$([\d.]+)\\%\$", flat)
         checks.append((bool(mdi), "the exposure-distribution sentence parses", "present",
                        "matched" if mdi else "not matched", ""))
         if mdi:
@@ -1274,8 +1319,8 @@ def main() -> int:
                            "the widest-gapped board is not the least flagged",
                            f"above {min(shares.values())}%",
                            f"{widest} at {shares[widest]}%", src))
-            checks.append((len(L) == 16, "the summary counts every board the artifact has",
-                           "16 boards", f"{len(L)} boards", src))
+            checks.append((len(L) == 24, "the summary counts every board the artifact has",
+                           "24 boards", f"{len(L)} boards", src))
             checks.append((L["retrosynthesis, three-system group"]["closer_than_the_move"] == 0,
                            "the three-system group is flagged on nothing", "0",
                            str(L["retrosynthesis, three-system group"]["closer_than_the_move"]), src))
@@ -1437,7 +1482,7 @@ def main() -> int:
     if pp.exists():
         PP = json.loads(pp.read_text())["totals"]
         flat = re.sub(r"\s+", " ", whole)
-        mpp = re.search(r"Run on the fifteen tables it flags \$(\d+)\$ of their "
+        mpp = re.search(r"Run on the twenty-three tables it flags\s*\$(\d+)\$ of their "
                         r"\$([\d,{}]+)\$ pairs, which are exactly the \$(\d+)\$ some cell "
                         r"reverses", flat)
         checks.append((bool(mpp), "the screen-predicts-order sentence parses", "present",

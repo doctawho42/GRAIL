@@ -89,6 +89,18 @@ def leaderboards() -> dict:
                         per.setdefault(m, {})[crit] = v
             out[f"translation, WMT24 {lp}"] = ("translation", per)
 
+    d = _load("robust_order_wmt23.json")
+    if d:
+        for lp, r in d["boards"].items():
+            norm = ast.literal_eval(r["published_cell"])[1]
+            per = {}
+            for m, cells in r["system_accuracy_by_cell"].items():
+                for cell, v in cells.items():
+                    crit, n_ = ast.literal_eval(cell)
+                    if n_ == norm:
+                        per.setdefault(m, {})[crit] = v
+            out[f"translation, WMT23 {lp}"] = ("translation", per)
+
     d = _load("robust_order_wmt24_esa.json")
     if d:
         for lp, r in d["boards"].items():
