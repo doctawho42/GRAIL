@@ -434,6 +434,22 @@ def main() -> int:
             check(f"survey printing {i}, places", pl, places, "the manuscript")
             check(f"survey printing {i}, tiers", ti, tiers, "the manuscript")
 
+    # 10d-x. The docking board's second axis moves the prediction, not only its score. The paper
+    # says so with numbers rather than leaving a reviewer to find it, so the numbers are held.
+    _pb = ROOT / "results/robust_order_posebusters.json"
+    if _pb.exists():
+        _sg = json.loads(_pb.read_text())["sub_grids"]
+        flat = re.sub(r"\s+", " ", whole)
+        _mx = re.search(r"\$([\d.]+)\\%\$ of the \$2\{,\}922\$ paired poses differ between the "
+                        r"arms, by a median of \$([\d.]+)\$.*?\$([\d.]+)\\%\$ of per-item verdicts "
+                        r"change.*?leaves \$(\d+)\$ of the\s*\$21\$ pairs dominating", flat)
+        checks.append((bool(_mx), "the minimisation-axis sentence parses", "present",
+                       "matched" if _mx else "not matched", ""))
+        if _mx:
+            check("docking, criteria-only dominating", _mx.group(4),
+                  _sg["criteria only, at the published post-processing"]["n_dominating"],
+                  str(_pb.relative_to(ROOT)))
+
     # 10d-c. What a certified reversal reverses. A pair whose published cell never separated it was
     # not an ordering the table asserted, so counting its reversal under the second claim would be
     # counting the first claim twice. Both halves are stated and both are held.
