@@ -93,8 +93,8 @@ def _truthy(frame: pd.DataFrame, columns) -> np.ndarray:
     return out
 
 
-def build_hits(table: pd.DataFrame) -> tuple[dict, list[str], list[str], list]:
-    pop = table[table["dataset"] == POPULATION]
+def build_hits(table: pd.DataFrame, population: str = POPULATION) -> tuple[dict, list[str], list[str], list]:
+    pop = table[table["dataset"] == population]
     items = sorted(pop["pdb_id"].unique())
     systems = sorted(m for m in pop["method"].unique() if m != CONTROL_ROW)
     cells = [(c, p) for c in CRITERIA for p in POSTPROC]
@@ -114,12 +114,16 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--csv", default=str(ROOT / "data/external/posebusters_paper_results.csv"))
     ap.add_argument("--out", default=str(ROOT / "results" / "robust_order_posebusters.json"))
+    # The source distributes two sets. A population is not a cell -- the grid holds the items fixed
+    # -- so the second is run as a separate board and reported as one, which is also the only way to
+    # see how much of a verdict is the items rather than the criterion.
+    ap.add_argument("--population", default=POPULATION, choices=["posebuster", "astex"])
     args = ap.parse_args()
 
     raw = Path(args.csv).read_bytes()
     table = pd.read_csv(args.csv)
-    dropped = int((table["dataset"] != POPULATION).sum())
-    hits, systems, items, cells = build_hits(table)
+    dropped = int((table["dataset"] != args.population).sum())
+    hits, systems, items, cells = build_hits(table, args.population)
 
     sub_grids = {"criteria only, at the published post-processing":
                      [(c, PUBLISHED_CELL[1]) for c in CRITERIA],
@@ -133,7 +137,7 @@ def main() -> int:
         # the file is external and not redistributed here, so the artifact carries its digest and a
         # reader can confirm they are reading the same table this was computed from
         "source_sha256": hashlib.sha256(raw).hexdigest(), "source_bytes": len(raw),
-        "population": f"{POPULATION} benchmark set; {dropped} rows of the astex set excluded as a "
+        "population": f"the {args.population} set; {dropped} rows of the other set excluded, a "
                       f"second population rather than a second cell",
         "excluded_rows": f"{CONTROL_ROW}: the re-scored reference, not a method, and it has no "
                          f"minimised arm",
@@ -145,14 +149,15 @@ def main() -> int:
     }
     Path(args.out).write_text(json.dumps(rep, indent=1))
 
-    print(f"posebusters: {rep['n_systems']} systems, {rep['n_cells']} cells, "
+    print(f"{args.population}: {rep['n_systems']} systems, {rep['n_cells']} cells, "
           f"{rep['n_pairs']} pairs, {len(items)} items")
     print(f"  published order at {rep['published_cell']}: {' > '.join(rep['published_order'])}")
     print(f"  survive every cell:            {rep['n_dominating']}/{rep['n_pairs']} "
           f"= {rep['robustness']} {rep['robustness_ci95']}")
     print(f"  and separated in every cell:   {rep['n_separated_in_every_cell']}/{rep['n_pairs']}")
     print(f"  reversed with an interval:     {rep['reversed_with_an_interval']}")
-    print(f"  never reversed but unresolved: {rep['unresolved_though_never_reversed']}")
+    print(f"  unresolved, neither way:       {rep['n_unresolved']}: "
+          + ", ".join(rep["unresolved"]))
     print(f"  tiers: {rep['tiers_distinguished']} {rep['tiers_ci95']} of {rep['n_systems']}")
     print(f"  distinct orderings across the grid: {rep['distinct_orderings_across_the_grid']}")
     print(f"\nwrote {args.out}")

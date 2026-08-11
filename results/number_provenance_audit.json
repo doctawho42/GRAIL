@@ -1,7 +1,7 @@
 {
  "config": {
   "script": "audit_number_provenance.py",
-  "git_commit": "b4a353911f00b4089d95abd1f2b2563ce9d50051",
+  "git_commit": "a7301248968f533ace1e2a256dc10e5e40f727ce",
   "git_dirty": true,
   "table": "tab:provenance, in paper/app/xdomain.tex as inputted",
   "rule": "the row's figure must appear literally inside the span its target denotes: a float's body, or a sectioning unit down to the next unit at the same or a higher level"
@@ -19,6 +19,7 @@
      "verdict": "found"
     }
    ],
+   "artifact_paths": [],
    "ok": true
   },
   {
@@ -31,6 +32,7 @@
      "verdict": "found"
     }
    ],
+   "artifact_paths": [],
    "ok": true
   },
   {
@@ -43,6 +45,7 @@
      "verdict": "found"
     }
    ],
+   "artifact_paths": [],
    "ok": true
   },
   {
@@ -55,6 +58,7 @@
      "verdict": "found"
     }
    ],
+   "artifact_paths": [],
    "ok": true
   },
   {
@@ -67,6 +71,7 @@
      "verdict": "found"
     }
    ],
+   "artifact_paths": [],
    "ok": true
   },
   {
@@ -79,6 +84,7 @@
      "verdict": "found"
     }
    ],
+   "artifact_paths": [],
    "ok": true
   },
   {
@@ -89,6 +95,15 @@
     {
      "label": "set_metrics_by_criterion",
      "verdict": "found"
+    }
+   ],
+   "artifact_paths": [
+    {
+     "artifact": "set_metrics_by_criterion",
+     "json_paths": [
+      "/populations/full1170/by_mode/inchikey_tautomer/SyGMa/recall/point"
+     ],
+     "n_paths": 1
     }
    ],
    "ok": true
@@ -103,6 +118,7 @@
      "verdict": "found"
     }
    ],
+   "artifact_paths": [],
    "ok": true
   },
   {
@@ -115,6 +131,7 @@
      "verdict": "found"
     }
    ],
+   "artifact_paths": [],
    "ok": true
   },
   {
@@ -127,6 +144,7 @@
      "verdict": "found"
     }
    ],
+   "artifact_paths": [],
    "ok": true
   },
   {
@@ -135,14 +153,11 @@
    "value": "0.569",
    "targets": [
     {
-     "label": "sec:metric",
-     "verdict": "absent"
-    },
-    {
      "label": "tab:matchsens",
      "verdict": "found"
     }
    ],
+   "artifact_paths": [],
    "ok": true
   },
   {
@@ -155,6 +170,7 @@
      "verdict": "found"
     }
    ],
+   "artifact_paths": [],
    "ok": true
   }
  ]

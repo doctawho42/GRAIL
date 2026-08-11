@@ -1,7 +1,7 @@
 {
  "config": {
   "script": "robust_order_metabolite.py",
-  "git_commit": "d3649b53bc0e9e946c606e3f3704c711c5f280bf",
+  "git_commit": "a7301248968f533ace1e2a256dc10e5e40f727ce",
   "git_dirty": true,
   "n_boot": 10000,
   "seed": 0,
@@ -91,6 +91,15 @@
  "n_dominating": 2,
  "n_separated_in_every_cell": 2,
  "n_contested": 1,
+ "n_contested_after_correction": 0,
+ "contested_after_correction": [],
+ "multiplicity": {
+  "family_size": 48,
+  "alpha": 0.05,
+  "n_tests_surviving": 32,
+  "n_reversals_surviving": 0,
+  "largest_surviving_reversal_p": NaN
+ },
  "tiers_distinguished": 2,
  "tiers_ci95": [
   2,
@@ -105,7 +114,9 @@
  "separated_share": 0.6667,
  "reversed_by_some_cell": 1,
  "reversed_with_an_interval": 1,
- "unresolved_though_never_reversed": 0,
+ "n_unresolved": 0,
+ "unresolved": [],
+ "dominating_but_not_separated_everywhere": 0,
  "n_resolved_in_the_published_cell": 2,
  "robustness_among_resolved": 1.0,
  "sub_grids": {
@@ -386,7 +397,8 @@
      "separated": true,
      "separated_the_other_way": false
     }
-   }
+   },
+   "contested_after_correction": false
   },
   "SyGMa over GRAIL": {
    "dominates": true,
@@ -557,7 +569,8 @@
      "separated": true,
      "separated_the_other_way": false
     }
-   }
+   },
+   "contested_after_correction": false
   },
   "MetaPredictor over SyGMa": {
    "dominates": false,
@@ -749,7 +762,8 @@
      "separated": false,
      "separated_the_other_way": false
     }
-   }
+   },
+   "contested_after_correction": false
   }
  }
 }

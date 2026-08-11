@@ -1,7 +1,7 @@
 {
  "config": {
   "script": "robust_order.py",
-  "git_commit": "3ea1de9042fb435d9ee08315a0f2147265186350",
+  "git_commit": "a7301248968f533ace1e2a256dc10e5e40f727ce",
   "git_dirty": true,
   "n_boot": 10000,
   "seed": 0,
@@ -168,6 +168,24 @@
    "n_dominating": 8,
    "n_separated_in_every_cell": 7,
    "n_contested": 9,
+   "n_contested_after_correction": 8,
+   "contested_after_correction": [
+    "gln over g2retro",
+    "graph2smiles over g2retro",
+    "graph2smiles over gln",
+    "graphretro over g2retro",
+    "graphretro over gln",
+    "graphretro over localretro",
+    "graphretro over retroformer",
+    "retroformer over g2retro"
+   ],
+   "multiplicity": {
+    "family_size": 336,
+    "alpha": 0.05,
+    "n_tests_surviving": 241,
+    "n_reversals_surviving": 78,
+    "largest_surviving_reversal_p": 0.0001
+   },
    "tiers_distinguished": 3,
    "tiers_ci95": [
     3,
@@ -182,7 +200,14 @@
    "separated_share": 0.3333,
    "reversed_by_some_cell": 13,
    "reversed_with_an_interval": 9,
-   "unresolved_though_never_reversed": 1,
+   "n_unresolved": 4,
+   "unresolved": [
+    "graphretro over graph2smiles",
+    "localretro over graph2smiles",
+    "localretro over retroformer",
+    "retroformer over graph2smiles"
+   ],
+   "dominating_but_not_separated_everywhere": 1,
    "n_resolved_in_the_published_cell": 10,
    "robustness_among_resolved": 0.7,
    "sub_grids": {
@@ -554,7 +579,8 @@
        "separated": false,
        "separated_the_other_way": false
       }
-     }
+     },
+     "contested_after_correction": true
     },
     "graph2smiles over g2retro": {
      "dominates": false,
@@ -751,7 +777,8 @@
        "separated": false,
        "separated_the_other_way": true
       }
-     }
+     },
+     "contested_after_correction": true
     },
     "graphretro over g2retro": {
      "dominates": false,
@@ -948,7 +975,8 @@
        "separated": false,
        "separated_the_other_way": true
       }
-     }
+     },
+     "contested_after_correction": true
     },
     "localretro over g2retro": {
      "dominates": true,
@@ -1119,7 +1147,8 @@
        "separated": true,
        "separated_the_other_way": false
       }
-     }
+     },
+     "contested_after_correction": false
     },
     "retroformer over g2retro": {
      "dominates": false,
@@ -1316,7 +1345,8 @@
        "separated": false,
        "separated_the_other_way": true
       }
-     }
+     },
+     "contested_after_correction": true
     },
     "g2retro over retroxpert": {
      "dominates": true,
@@ -1487,7 +1517,8 @@
        "separated": true,
        "separated_the_other_way": false
       }
-     }
+     },
+     "contested_after_correction": false
     },
     "graph2smiles over gln": {
      "dominates": false,
@@ -1687,7 +1718,8 @@
        "separated": false,
        "separated_the_other_way": true
       }
-     }
+     },
+     "contested_after_correction": true
     },
     "graphretro over gln": {
      "dominates": false,
@@ -1884,7 +1916,8 @@
        "separated": false,
        "separated_the_other_way": true
       }
-     }
+     },
+     "contested_after_correction": true
     },
     "localretro over gln": {
      "dominates": true,
@@ -2060,7 +2093,8 @@
        "separated": true,
        "separated_the_other_way": false
       }
-     }
+     },
+     "contested_after_correction": false
     },
     "retroformer over gln": {
      "dominates": false,
@@ -2248,7 +2282,8 @@
        "separated": false,
        "separated_the_other_way": true
       }
-     }
+     },
+     "contested_after_correction": false
     },
     "gln over retroxpert": {
      "dominates": true,
@@ -2419,7 +2454,8 @@
        "separated": true,
        "separated_the_other_way": false
       }
-     }
+     },
+     "contested_after_correction": false
     },
     "graphretro over graph2smiles": {
      "dominates": false,
@@ -2597,7 +2633,8 @@
        "separated": true,
        "separated_the_other_way": false
       }
-     }
+     },
+     "contested_after_correction": false
     },
     "localretro over graph2smiles": {
      "dominates": false,
@@ -2774,7 +2811,8 @@
        "separated": true,
        "separated_the_other_way": false
       }
-     }
+     },
+     "contested_after_correction": false
     },
     "retroformer over graph2smiles": {
      "dominates": false,
@@ -2951,7 +2989,8 @@
        "separated": true,
        "separated_the_other_way": false
       }
-     }
+     },
+     "contested_after_correction": false
     },
     "graph2smiles over retroxpert": {
      "dominates": true,
@@ -3122,7 +3161,8 @@
        "separated": true,
        "separated_the_other_way": false
       }
-     }
+     },
+     "contested_after_correction": false
     },
     "graphretro over localretro": {
      "dominates": false,
@@ -3324,7 +3364,8 @@
        "separated": false,
        "separated_the_other_way": true
       }
-     }
+     },
+     "contested_after_correction": true
     },
     "graphretro over retroformer": {
      "dominates": false,
@@ -3526,7 +3567,8 @@
        "separated": false,
        "separated_the_other_way": true
       }
-     }
+     },
+     "contested_after_correction": true
     },
     "graphretro over retroxpert": {
      "dominates": true,
@@ -3697,7 +3739,8 @@
        "separated": true,
        "separated_the_other_way": false
       }
-     }
+     },
+     "contested_after_correction": false
     },
     "localretro over retroformer": {
      "dominates": false,
@@ -3874,7 +3917,8 @@
        "separated": true,
        "separated_the_other_way": false
       }
-     }
+     },
+     "contested_after_correction": false
     },
     "localretro over retroxpert": {
      "dominates": true,
@@ -4045,7 +4089,8 @@
        "separated": true,
        "separated_the_other_way": false
       }
-     }
+     },
+     "contested_after_correction": false
     },
     "retroformer over retroxpert": {
      "dominates": true,
@@ -4216,7 +4261,8 @@
        "separated": true,
        "separated_the_other_way": false
       }
-     }
+     },
+     "contested_after_correction": false
     }
    }
   },
@@ -4290,6 +4336,18 @@
    "n_dominating": 0,
    "n_separated_in_every_cell": 0,
    "n_contested": 2,
+   "n_contested_after_correction": 2,
+   "contested_after_correction": [
+    "chemformer over gta",
+    "chemformer over tiedtransformer"
+   ],
+   "multiplicity": {
+    "family_size": 48,
+    "alpha": 0.05,
+    "n_tests_surviving": 38,
+    "n_reversals_surviving": 24,
+    "largest_surviving_reversal_p": 0.0001
+   },
    "tiers_distinguished": 1,
    "tiers_ci95": [
     1,
@@ -4304,7 +4362,11 @@
    "separated_share": 0.0,
    "reversed_by_some_cell": 3,
    "reversed_with_an_interval": 2,
-   "unresolved_though_never_reversed": 0,
+   "n_unresolved": 1,
+   "unresolved": [
+    "gta over tiedtransformer"
+   ],
+   "dominating_but_not_separated_everywhere": 0,
    "n_resolved_in_the_published_cell": 3,
    "robustness_among_resolved": 0.0,
    "sub_grids": {
@@ -4614,7 +4676,8 @@
        "separated": false,
        "separated_the_other_way": true
       }
-     }
+     },
+     "contested_after_correction": true
     },
     "chemformer over tiedtransformer": {
      "dominates": false,
@@ -4811,7 +4874,8 @@
        "separated": false,
        "separated_the_other_way": true
       }
-     }
+     },
+     "contested_after_correction": true
     },
     "gta over tiedtransformer": {
      "dominates": false,
@@ -4992,7 +5056,8 @@
        "separated": true,
        "separated_the_other_way": false
       }
-     }
+     },
+     "contested_after_correction": false
     }
    }
   }

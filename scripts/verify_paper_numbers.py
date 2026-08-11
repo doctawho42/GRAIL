@@ -393,11 +393,21 @@ def main() -> int:
         t = P["totals"]
         m = re.search(r"\$(\d+)\$ method-pair by criterion-pair comparisons across four domains", flat)
         check("packing, comparisons", m and m.group(1), t["comparisons"])
-        m = re.search(r"exceeds the gap in \$(\d+)\$ of the \$(\d+)\$", flat)
-        check("packing, move exceeds gap", m and m.group(1), t["closer_than_the_move"])
+        m = re.search(r"exceeds the larger margin in \$(\d+)\$ of the \$(\d+)\$", flat)
+        check("packing, move exceeds the larger margin", m and m.group(1),
+              t["closer_than_the_move"])
         check("packing, denominator", m and m.group(2), t["comparisons"])
-        m = re.search(r"a reversal follows in \$(\d+)\$ of those", flat)
-        check("packing, reversals", m and m.group(1), t["exchanged"])
+        # the equivalence is the claim, so the gate refuses a sentence that leaves either
+        # side of it unstated: every flagged comparison exchanges and every exchange is flagged
+        checks.append((t["closer_than_the_move"] == t["exchanged"],
+                       "the condition and the exchange are the same set",
+                       str(t["exchanged"]), str(t["closer_than_the_move"]),
+                       str(pk.relative_to(ROOT))))
+        m = re.search(r"flag \$(\d+)\$, of which \$(\d+)\$ are movements that widen", flat)
+        check("packing, one-sided flags", m and m.group(1),
+              P["screening_test"]["one_sided_for_comparison"]["flagged"])
+        check("packing, one-sided false alarms", m and m.group(2),
+              P["screening_test"]["one_sided_for_comparison"]["not_exchanged_and_flagged"])
         NAMES = {"generation, MOSES": "molecular generation, MOSES",
                  "metabolites, GLORYx": "metabolites, external GLORYx",
                  "retrosynthesis, seven": "retrosynthesis, seven-system group",
@@ -1171,10 +1181,9 @@ def main() -> int:
     if pk2.exists():
         L = json.loads(pk2.read_text())["per_leaderboard"]
         flat = re.sub(r"\s+", " ", whole)
-        mdi = re.search(r"seven-system group is flagged on \$([\d.]+)\\%\$ of its\s*comparisons at a "
-                        r"median gap of \$([\d.]+)\$; the three-system group.*?on none; the "
-                        r"molecular-generation set,\s*whose gaps are narrower still at \$([\d.]+)\$, "
-                        r"on \$([\d.]+)\\%\$.*?external metabolite set.*?on \$([\d.]+)\\%\$", flat)
+        # the body summarises the spread and the appendix enumerates it; the gate holds the
+        # enumeration, because that is where the per-board numbers are actually asserted
+        mdi = re.search(r"the five tables here run from \$(\d+)\\%\$ flagged to \$([\d.]+)\\%\$", flat)
         checks.append((bool(mdi), "the exposure-distribution sentence parses", "present",
                        "matched" if mdi else "not matched", ""))
         if mdi:
@@ -1182,13 +1191,17 @@ def main() -> int:
             def share(key):
                 v = L[key]
                 return round(100 * v["closer_than_the_move"] / v["comparisons"], 1)
-            check("seven-system share", mdi.group(1), share("retrosynthesis, seven-system group"), src)
-            check("seven-system median gap", mdi.group(2),
-                  L["retrosynthesis, seven-system group"]["median_gap"], src)
-            check("generation median gap", mdi.group(3),
-                  L["molecular generation, MOSES"]["median_gap"], src)
-            check("generation share", mdi.group(4), share("molecular generation, MOSES"), src)
-            check("external share", mdi.group(5), share("metabolites, external GLORYx"), src)
+            shares = {k: share(k) for k in L}
+            check("lowest board share", mdi.group(1), min(shares.values()), src)
+            check("highest board share", mdi.group(2), max(shares.values()), src)
+            # and the claim the summary rests on: the widest-gapped board is not the least flagged
+            widest = max(L, key=lambda k: L[k]["median_gap"])
+            checks.append((shares[widest] > min(shares.values()),
+                           "the widest-gapped board is not the least flagged",
+                           f"above {min(shares.values())}%",
+                           f"{widest} at {shares[widest]}%", src))
+            checks.append((len(L) == 5, "the summary counts every board the artifact has",
+                           "5 boards", f"{len(L)} boards", src))
             checks.append((L["retrosynthesis, three-system group"]["closer_than_the_move"] == 0,
                            "the three-system group is flagged on nothing", "0",
                            str(L["retrosynthesis, three-system group"]["closer_than_the_move"]), src))
@@ -1350,9 +1363,8 @@ def main() -> int:
     if pp.exists():
         PP = json.loads(pp.read_text())["totals"]
         flat = re.sub(r"\s+", " ", whole)
-        mpp = re.search(r"run on the published cell alone it flags \$(\d+)\$ of the \$(\d+)\$ pairs "
-                        r"in the table above, of which \$(\d+)\$ are exactly the ones the full grid "
-                        r"removes", flat)
+        mpp = re.search(r"Run on the four tables above it flags \$(\d+)\$ of their \$(\d+)\$ "
+                        r"pairs, which are exactly the \$(\d+)\$ the full grid removes", flat)
         checks.append((bool(mpp), "the screen-predicts-order sentence parses", "present",
                        "matched" if mpp else "not matched", ""))
         if mpp:
@@ -1420,23 +1432,23 @@ def main() -> int:
         PK = json.loads(pk.read_text())
         S, T = PK["screening_test"], PK["totals"]
         flat = re.sub(r"\s+", " ", whole)
-        mpk = re.search(r"over the \$(\d+)\$ method-pair by criterion-pair comparisons this paper "
-                        r"spans in\s*four domains it flags \$([\d.]+)\\%\$, and all \$(\d+)\$ "
-                        r"exchanges fall inside the flagged set: sensitivity\s*\$([\d.]+)\$ .*?"
-                        r"specificity \$([\d.]+)\$, precision \$([\d.]+)\$", flat)
+        mpk = re.search(r"over the \$(\d+)\$ method-pair by criterion-pair comparisons this "
+                        r"paper spans in four domains the one-sided form flags \$(\d+)\$ where "
+                        r"\$(\d+)\$ exchange, and the two-sided form flags the \$(\d+)\$ and "
+                        r"nothing else", flat)
         checks.append((bool(mpk), "the packing screening sentence parses", "present",
                        "matched" if mpk else "not matched", ""))
         if mpk:
             src = str(pk.relative_to(ROOT))
             check("comparisons spanned", mpk.group(1), T["comparisons"], src)
-            check("share flagged", mpk.group(2), round(S["share_of_comparisons_flagged"] * 100, 1), src)
+            check("one-sided flags", mpk.group(2),
+                  S["one_sided_for_comparison"]["flagged"], src)
             check("exchanges", mpk.group(3), T["exchanged"], src)
-            check("sensitivity", mpk.group(4), S["sensitivity"], src)
-            check("specificity", mpk.group(5), S["specificity"], src)
-            check("precision", mpk.group(6), S["precision"], src)
-            checks.append((S["exchanged_and_missed"] == 0,
-                           "the screening test has no false negatives", "0",
-                           str(S["exchanged_and_missed"]), src))
+            check("two-sided flags", mpk.group(4), T["exchanged"], src)
+            checks.append((S["exact"], "the two-sided condition is exact on every comparison",
+                           "no false alarm and no miss",
+                           f"{S['not_exchanged_and_flagged']} false, "
+                           f"{S['exchanged_and_missed']} missed", src))
 
     # 10c-w. Reach under per-template dispatch, which the paper reports as the primitive, and the
     # worst case over global settings, which it reports as a diagnostic. Both range only over

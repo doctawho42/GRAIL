@@ -106,6 +106,15 @@ def main() -> int:
     pairs = sorted({r["pair"] for r in reversals})
     contested = sorted(n for n, v in board["pairs"].items() if v["contested"])
 
+    # robust_order.analyse now folds the same correction into every board, so this script is a
+    # second implementation of one number. That is the point: it is written from the hits matrix
+    # rather than from analyse's internals, so agreement is evidence and disagreement is a bug in
+    # one of the two. Drift is what makes duplicated statistics dangerous, and this refuses to drift.
+    theirs = board.get("multiplicity", {})
+    agrees = (theirs.get("family_size") == m
+              and theirs.get("n_reversals_surviving") == len(reversals)
+              and sorted(board.get("contested_after_correction", [])) == pairs)
+
     rep = {"config": {**_code_version(), "n_boot": N_BOOT, "seed": SEED, "alpha": ALPHA,
                       "family": "every cell-level test the contested verdict is read from",
                       "family_size": m, "n_pairs": len(list(itertools.combinations(systems, 2))),
@@ -116,6 +125,7 @@ def main() -> int:
            "pairs_still_contested": pairs,
            "pairs_contested_before_correction": contested,
            "every_contested_pair_survives": sorted(pairs) == contested,
+           "agrees_with_the_board_artifact": agrees, "board_says": theirs,
            "surviving_reversals": reversals, "tests": rows}
     Path(args.out).write_text(json.dumps(rep, indent=1))
 
@@ -124,6 +134,10 @@ def main() -> int:
     print(f"  still contested: {', '.join(pairs) if pairs else 'none'}")
     for r in reversals:
         print(f"     {r['pair']:26s} {r['cell']:40s} {r['margin']:+.4f}  p={r['p']:.4f}")
+    print(f"  independent of robust_order.analyse, which computes the same thing: "
+          f"{'agrees' if agrees else 'DISAGREES -- one of the two is wrong'}")
+    if not agrees:
+        return 1
     if not rep["every_contested_pair_survives"]:
         print("\n  NOT every contested pair survives; the paper's control sentence overstates it")
     print(f"\nwrote {args.out}")

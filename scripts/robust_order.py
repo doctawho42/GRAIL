@@ -60,6 +60,12 @@ for p in (str(ROOT), str(Path(__file__).resolve().parent)):
 from retro_leaderboard import KS, MODES, build_keys, set_key
 
 N_BOOT, SEED = 10000, 0
+ALPHA = 0.05
+
+
+def _boot_p(draws) -> float:
+    """Two-sided bootstrap p, floored at 1/B: a resample cannot resolve past its own resolution."""
+    return max(2 * min(float((draws >= 0).mean()), float((draws <= 0).mean())), 1.0 / N_BOOT)
 
 
 def _code_version() -> dict:
@@ -137,10 +143,30 @@ def analyse(hits: dict, systems: list[str], cells: list, published_cell,
                                             if v["positive"] and not v["separated"]],
             "per_cell": per_cell}
 
+    # A contested verdict is read out of every pair by every cell, so it is read out of a family
+    # whose size is the grid. On a seven-system board that is $168$ looks, and two reversals from
+    # that many is close to what noise alone would give: an uncorrected interval is the wrong object
+    # to hang the claim on. Holm is applied across the whole family and reported alongside, never
+    # instead of, the uncorrected verdict -- correcting one board and not another, or redefining the
+    # verdict so a count moves, would make the four rows incomparable.
+    tests = [(name, str(c), v["per_cell"][str(c)]["margin"], _boot_p(boot[(name, str(c))]))
+             for name, v in pairs.items() for c in cells]
+    order = sorted(range(len(tests)), key=lambda i: tests[i][3])
+    m, kept = len(tests), set()
+    for step, i in enumerate(order):
+        if tests[i][3] > ALPHA / (m - step):
+            break
+        kept.add(i)
+    surviving = [tests[i] for i in sorted(kept)]
+    corrected = sorted({nm for nm, _, margin, _ in surviving if margin < 0})
+    for name, v in pairs.items():
+        v["contested_after_correction"] = name in corrected
+
     n_pairs = len(pairs)
     n_dom = sum(v["dominates"] for v in pairs.values())
     n_sep = sum(v["separated_in_every_cell"] for v in pairs.values())
     n_con = sum(v["contested"] for v in pairs.values())
+    n_con_corr = len(corrected)
 
     # The share of surviving pairs is the honest number and not the readable one. The readable one
     # is how many places the leaderboard still distinguishes: the longest chain in the dominance
@@ -211,6 +237,14 @@ def analyse(hits: dict, systems: list[str], cells: list, published_cell,
             "published_order": published, "published_cell": str(published_cell),
             "n_systems": len(systems), "n_cells": len(cells), "n_pairs": n_pairs,
             "n_dominating": n_dom, "n_separated_in_every_cell": n_sep, "n_contested": n_con,
+            "n_contested_after_correction": n_con_corr,
+            "contested_after_correction": corrected,
+            "multiplicity": {"family_size": m, "alpha": ALPHA,
+                             "n_tests_surviving": len(surviving),
+                             "n_reversals_surviving": sum(1 for _, _, mg, _ in surviving if mg < 0),
+                             "largest_surviving_reversal_p":
+                                 round(max((pv for _, _, mg, pv in surviving if mg < 0),
+                                           default=float("nan")), 5)},
             "tiers_distinguished": tiers, "tiers_ci95": tier_ci,
             "distinct_orderings_across_the_grid": distinct,
             "robustness": round(n_dom / max(n_pairs, 1), 4),
@@ -218,7 +252,15 @@ def analyse(hits: dict, systems: list[str], cells: list, published_cell,
             "separated_share": round(n_sep / max(n_pairs, 1), 4),
             "reversed_by_some_cell": n_pairs - n_dom,
             "reversed_with_an_interval": n_con,
-            "unresolved_though_never_reversed": n_dom - n_sep,
+            # A pair that neither dominates nor is contested is unresolved: the published ordering
+            # fails somewhere on a margin no cell can separate. That is the third verdict, and the
+            # three counts partition the pairs. The quantity below it is a different population --
+            # pairs that dominate without being separated everywhere -- and was once named as though
+            # it were this one, which put a false sentence in the appendix on three boards of four.
+            "n_unresolved": n_pairs - n_dom - n_con,
+            "unresolved": sorted(k for k, v in pairs.items()
+                                 if not v["dominates"] and not v["contested"]),
+            "dominating_but_not_separated_everywhere": n_dom - n_sep,
             "n_resolved_in_the_published_cell": len(resolvable),
             "robustness_among_resolved": round(
                 sum(pairs[p]["dominates"] for p in resolvable) / max(len(resolvable), 1), 4),
@@ -297,7 +339,7 @@ def main() -> int:
         print(f"  reversed with an interval:     {r['reversed_with_an_interval']}")
         print(f"  reversed on sign alone:        "
               f"{r['reversed_by_some_cell'] - r['reversed_with_an_interval']}")
-        print(f"  never reversed but unresolved: {r['unresolved_though_never_reversed']}")
+        print(f"  unresolved, neither way:       {r['n_unresolved']}")
         print(f"  tiers it still distinguishes:  {r['tiers_distinguished']} {r['tiers_ci95']} "
               f"of {r['n_systems']} published places")
         print(f"  distinct orderings on the grid:{r['distinct_orderings_across_the_grid']} "

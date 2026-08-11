@@ -1,22 +1,22 @@
 {
  "config": {
   "script": "packing_predicts_order.py",
-  "git_commit": "dab157a24f217d1411685945febad10398c093c1",
+  "git_commit": "a7301248968f533ace1e2a256dc10e5e40f727ce",
   "git_dirty": true,
   "note": "the screen uses only the published cell and the movement to each other cell; the outcome comes from the full grid"
  },
  "per_leaderboard": {
   "retrosynthesis, 7 systems": {
    "n_pairs": 21,
-   "flagged": 17,
+   "flagged": 13,
    "failed": 13,
    "flagged_and_failed": 13,
-   "flagged_but_survived": 4,
+   "flagged_but_survived": 0,
    "failed_but_not_flagged": 0,
-   "neither": 4,
+   "neither": 8,
    "sensitivity": 1.0,
-   "precision": 0.7647,
-   "specificity": 0.5,
+   "precision": 1.0,
+   "specificity": 1.0,
    "pairs": [
     {
      "pair": "graphretro over localretro",
@@ -39,8 +39,8 @@
     {
      "pair": "graphretro over graph2smiles",
      "gap": 0.0084,
-     "largest_move": 0.0221,
-     "cell_of_that_move": "('tautomer', 10)",
+     "largest_move": 0.0154,
+     "cell_of_that_move": "('nostereo', 1)",
      "flagged": true,
      "failed_to_dominate": true,
      "contested": false
@@ -66,8 +66,8 @@
     {
      "pair": "graphretro over retroxpert",
      "gap": 0.091,
-     "largest_move": 0.0404,
-     "cell_of_that_move": "('canonical', 10)",
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
      "flagged": false,
      "failed_to_dominate": false,
      "contested": false
@@ -75,8 +75,8 @@
     {
      "pair": "localretro over retroformer",
      "gap": 0.0014,
-     "largest_move": 0.0966,
-     "cell_of_that_move": "('nostereo', 10)",
+     "largest_move": 0.0086,
+     "cell_of_that_move": "('nostereo', 1)",
      "flagged": true,
      "failed_to_dominate": true,
      "contested": false
@@ -84,8 +84,8 @@
     {
      "pair": "localretro over graph2smiles",
      "gap": 0.0046,
-     "largest_move": 0.1877,
-     "cell_of_that_move": "('nostereo', 10)",
+     "largest_move": 0.0148,
+     "cell_of_that_move": "('nostereo', 1)",
      "flagged": true,
      "failed_to_dominate": true,
      "contested": false
@@ -93,35 +93,35 @@
     {
      "pair": "localretro over gln",
      "gap": 0.0092,
-     "largest_move": 0.085,
-     "cell_of_that_move": "('nostereo', 5)",
-     "flagged": true,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
      "failed_to_dominate": false,
      "contested": false
     },
     {
      "pair": "localretro over g2retro",
      "gap": 0.0192,
-     "largest_move": 0.054,
-     "cell_of_that_move": "('canonical', 10)",
-     "flagged": true,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
      "failed_to_dominate": false,
      "contested": false
     },
     {
      "pair": "localretro over retroxpert",
      "gap": 0.0872,
-     "largest_move": 0.1401,
-     "cell_of_that_move": "('nostereo', 10)",
-     "flagged": true,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
      "failed_to_dominate": false,
      "contested": false
     },
     {
      "pair": "retroformer over graph2smiles",
      "gap": 0.0032,
-     "largest_move": 0.0927,
-     "cell_of_that_move": "('inchikey', 10)",
+     "largest_move": 0.0068,
+     "cell_of_that_move": "('tautomer', 1)",
      "flagged": true,
      "failed_to_dominate": true,
      "contested": false
@@ -147,8 +147,8 @@
     {
      "pair": "retroformer over retroxpert",
      "gap": 0.0858,
-     "largest_move": 0.0435,
-     "cell_of_that_move": "('nostereo', 10)",
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
      "flagged": false,
      "failed_to_dominate": false,
      "contested": false
@@ -174,8 +174,8 @@
     {
      "pair": "graph2smiles over retroxpert",
      "gap": 0.0826,
-     "largest_move": 0.0532,
-     "cell_of_that_move": "('canonical', 10)",
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
      "flagged": false,
      "failed_to_dominate": false,
      "contested": false
@@ -192,8 +192,8 @@
     {
      "pair": "gln over retroxpert",
      "gap": 0.078,
-     "largest_move": 0.0687,
-     "cell_of_that_move": "('tautomer', 10)",
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
      "flagged": false,
      "failed_to_dominate": false,
      "contested": false
@@ -201,9 +201,9 @@
     {
      "pair": "g2retro over retroxpert",
      "gap": 0.068,
-     "largest_move": 0.0889,
-     "cell_of_that_move": "('tautomer', 10)",
-     "flagged": true,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
      "failed_to_dominate": false,
      "contested": false
     }
@@ -274,8 +274,8 @@
     {
      "pair": "MetaPredictor over GRAIL",
      "gap": 0.2521,
-     "largest_move": 0.1684,
-     "cell_of_that_move": "('canonical', 1)",
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
      "flagged": false,
      "failed_to_dominate": false,
      "contested": false
@@ -283,8 +283,8 @@
     {
      "pair": "SyGMa over GRAIL",
      "gap": 0.2393,
-     "largest_move": 0.1744,
-     "cell_of_that_move": "('canonical', 1)",
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
      "flagged": false,
      "failed_to_dominate": false,
      "contested": false
@@ -293,15 +293,15 @@
   },
   "docking, 7 programs": {
    "n_pairs": 21,
-   "flagged": 11,
+   "flagged": 4,
    "failed": 4,
    "flagged_and_failed": 4,
-   "flagged_but_survived": 7,
+   "flagged_but_survived": 0,
    "failed_but_not_flagged": 0,
-   "neither": 10,
+   "neither": 17,
    "sensitivity": 1.0,
-   "precision": 0.3636,
-   "specificity": 0.5882,
+   "precision": 1.0,
+   "specificity": 1.0,
    "pairs": [
     {
      "pair": "vina over gold",
@@ -315,8 +315,8 @@
     {
      "pair": "vina over diffdock",
      "gap": 0.3762,
-     "largest_move": 0.2897,
-     "cell_of_that_move": "('rmsd2+valid', 'energy minimization')",
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
      "flagged": false,
      "failed_to_dominate": false,
      "contested": false
@@ -324,8 +324,8 @@
     {
      "pair": "vina over deepdock",
      "gap": 0.465,
-     "largest_move": 0.2313,
-     "cell_of_that_move": "('rmsd1', 'energy minimization')",
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
      "flagged": false,
      "failed_to_dominate": false,
      "contested": false
@@ -333,8 +333,8 @@
     {
      "pair": "vina over tankbind",
      "gap": 0.486,
-     "largest_move": 0.2523,
-     "cell_of_that_move": "('rmsd1', 'energy minimization')",
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
      "flagged": false,
      "failed_to_dominate": false,
      "contested": false
@@ -342,8 +342,8 @@
     {
      "pair": "vina over unimol",
      "gap": 0.493,
-     "largest_move": 0.2898,
-     "cell_of_that_move": "('rmsd2', 'energy minimization')",
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
      "flagged": false,
      "failed_to_dominate": false,
      "contested": false
@@ -351,8 +351,8 @@
     {
      "pair": "vina over equibind",
      "gap": 0.5094,
-     "largest_move": 0.2267,
-     "cell_of_that_move": "('rmsd1', 'energy minimization')",
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
      "flagged": false,
      "failed_to_dominate": false,
      "contested": false
@@ -360,8 +360,8 @@
     {
      "pair": "gold over diffdock",
      "gap": 0.3411,
-     "largest_move": 0.2523,
-     "cell_of_that_move": "('rmsd2+valid', 'energy minimization')",
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
      "flagged": false,
      "failed_to_dominate": false,
      "contested": false
@@ -369,8 +369,8 @@
     {
      "pair": "gold over deepdock",
      "gap": 0.4299,
-     "largest_move": 0.2102,
-     "cell_of_that_move": "('rmsd1', 'energy minimization')",
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
      "flagged": false,
      "failed_to_dominate": false,
      "contested": false
@@ -378,8 +378,8 @@
     {
      "pair": "gold over tankbind",
      "gap": 0.4509,
-     "largest_move": 0.2312,
-     "cell_of_that_move": "('rmsd1', 'energy minimization')",
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
      "flagged": false,
      "failed_to_dominate": false,
      "contested": false
@@ -387,8 +387,8 @@
     {
      "pair": "gold over unimol",
      "gap": 0.4579,
-     "largest_move": 0.2663,
-     "cell_of_that_move": "('rmsd1', 'energy minimization')",
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
      "flagged": false,
      "failed_to_dominate": false,
      "contested": false
@@ -396,8 +396,8 @@
     {
      "pair": "gold over equibind",
      "gap": 0.4743,
-     "largest_move": 0.2056,
-     "cell_of_that_move": "('rmsd1', 'energy minimization')",
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
      "flagged": false,
      "failed_to_dominate": false,
      "contested": false
@@ -405,44 +405,44 @@
     {
      "pair": "diffdock over deepdock",
      "gap": 0.0888,
-     "largest_move": 0.1331,
-     "cell_of_that_move": "('rmsd2+chem', 'none')",
-     "flagged": true,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
      "failed_to_dominate": false,
      "contested": false
     },
     {
      "pair": "diffdock over tankbind",
      "gap": 0.1098,
-     "largest_move": 0.1729,
-     "cell_of_that_move": "('rmsd2+chem', 'none')",
-     "flagged": true,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
      "failed_to_dominate": false,
      "contested": false
     },
     {
      "pair": "diffdock over unimol",
      "gap": 0.1168,
-     "largest_move": 0.1752,
-     "cell_of_that_move": "('rmsd2+chem', 'none')",
-     "flagged": true,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
      "failed_to_dominate": false,
      "contested": false
     },
     {
      "pair": "diffdock over equibind",
      "gap": 0.1332,
-     "largest_move": 0.2196,
-     "cell_of_that_move": "('rmsd2', 'none')",
-     "flagged": true,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
      "failed_to_dominate": false,
      "contested": false
     },
     {
      "pair": "deepdock over tankbind",
      "gap": 0.021,
-     "largest_move": 0.0398,
-     "cell_of_that_move": "('rmsd2+chem', 'none')",
+     "largest_move": 0.0233,
+     "cell_of_that_move": "('rmsd2', 'energy minimization')",
      "flagged": true,
      "failed_to_dominate": true,
      "contested": false
@@ -459,9 +459,9 @@
     {
      "pair": "deepdock over equibind",
      "gap": 0.0444,
-     "largest_move": 0.1075,
-     "cell_of_that_move": "('rmsd2', 'none')",
-     "flagged": true,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
      "failed_to_dominate": false,
      "contested": false
     },
@@ -477,18 +477,18 @@
     {
      "pair": "tankbind over equibind",
      "gap": 0.0234,
-     "largest_move": 0.1215,
-     "cell_of_that_move": "('rmsd2', 'energy minimization')",
-     "flagged": true,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
      "failed_to_dominate": false,
      "contested": false
     },
     {
      "pair": "unimol over equibind",
      "gap": 0.0164,
-     "largest_move": 0.2103,
-     "cell_of_that_move": "('rmsd2', 'energy minimization')",
-     "flagged": true,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
      "failed_to_dominate": false,
      "contested": false
     }
@@ -497,12 +497,12 @@
  },
  "totals": {
   "n_pairs": 48,
-  "flagged": 32,
+  "flagged": 21,
   "failed": 21,
   "flagged_and_failed": 21,
-  "flagged_but_survived": 11,
+  "flagged_but_survived": 0,
   "failed_but_not_flagged": 0,
   "sensitivity": 1.0,
-  "precision": 0.6562
+  "precision": 1.0
  }
 }

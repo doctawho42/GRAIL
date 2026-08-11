@@ -123,9 +123,17 @@ def analyse(scores: dict) -> list[dict]:
             # A pair that becomes exactly tied under the second criterion has lost its order
             # without reversing it. Counting that as an exchange makes the arithmetic look violated,
             # because the movement then equals the gap rather than exceeding it.
+            #
+            # The movement is compared against the LARGER of the two gaps, not against the first.
+            # Which gap is "first" is the alphabetical order of two criterion names, and a rule that
+            # turns on that is not a rule; and the one-sided form is strictly weaker, since a sign
+            # change forces the movement past both gaps and therefore past their maximum. Against
+            # the maximum the condition is not a screen at all but an identity -- it holds exactly
+            # when the sign changes -- which is reported alongside so the difference is visible.
             rows.append({"pair": f"{a} vs {b}", "criteria": f"{c1} vs {c2}",
-                         "gap": abs(d1), "differential": abs(d2 - d1),
-                         "closer_than_the_move": abs(d2 - d1) > abs(d1),
+                         "gap": abs(d1), "other_gap": abs(d2), "differential": abs(d2 - d1),
+                         "closer_than_the_move": abs(d2 - d1) > max(abs(d1), abs(d2)),
+                         "closer_than_the_move_one_sided": abs(d2 - d1) > abs(d1),
                          "tied": d2 == 0,
                          "exchanged": d2 != 0 and (d1 > 0) != (d2 > 0)})
     return rows
@@ -175,12 +183,19 @@ def main() -> int:
           f"{exch / len(allrows):.1%} of all)")
     print("  no exchange occurs where the gap survives the movement, as arithmetic requires")
 
-    # Read as a screening test, the inequality is what a benchmark's maintainer can actually use:
-    # it is computable from a published table of scores and one measurement of how far the criterion
-    # moves a system, without re-scoring anything, and it flags the pairs that could exchange. Its
-    # value is that it has no false negatives -- the arithmetic forbids them -- so the flagged set is
-    # guaranteed to contain every pair at risk. What it costs is the false positives: movements that
-    # widen a gap rather than close it.
+    # Compared against the larger of the two gaps the inequality is not a screen but a decision
+    # procedure: a sign change forces the movement past both gaps and so past their maximum, and
+    # gaps of one sign put the movement below the larger of them, so the condition holds exactly
+    # when the pair exchanges. It stays worth computing, because it is computable from a published
+    # table of scores and one measurement of how far the criterion moves each system, with no
+    # pairwise statistic and nothing re-scored. The one-sided form -- the movement against
+    # whichever gap is named first -- is reported beside it, because its false alarms are the cost
+    # of discarding the second gap and not a property of leaderboards.
+    one = {"flagged": sum(r["closer_than_the_move_one_sided"] for r in allrows)}
+    one["exchanged_and_flagged"] = sum(r["exchanged"] and r["closer_than_the_move_one_sided"]
+                                       for r in allrows)
+    one["not_exchanged_and_flagged"] = one["flagged"] - one["exchanged_and_flagged"]
+    one["precision"] = round(one["exchanged_and_flagged"] / max(one["flagged"], 1), 4)
     tp = sum(r["exchanged"] and r["closer_than_the_move"] for r in allrows)
     fp = sum(not r["exchanged"] and r["closer_than_the_move"] for r in allrows)
     fn = sum(r["exchanged"] and not r["closer_than_the_move"] for r in allrows)
@@ -191,15 +206,21 @@ def main() -> int:
               "sensitivity": round(tp / max(tp + fn, 1), 4),
               "specificity": round(tn / max(tn + fp, 1), 4),
               "precision": round(tp / max(tp + fp, 1), 4),
-              "share_of_comparisons_flagged": round((tp + fp) / max(len(allrows), 1), 4)}
-    print(f"  as a screening test: sensitivity {screen['sensitivity']}, "
+              "share_of_comparisons_flagged": round((tp + fp) / max(len(allrows), 1), 4),
+              "exact": fp == 0 and fn == 0,
+              "one_sided_for_comparison": one}
+    print(f"  against the larger gap: sensitivity {screen['sensitivity']}, "
           f"specificity {screen['specificity']}, precision {screen['precision']}; "
-          f"it flags {screen['share_of_comparisons_flagged']:.1%} of comparisons")
+          f"it flags {screen['share_of_comparisons_flagged']:.1%} of comparisons"
+          + ("  -- exact on every comparison" if screen["exact"] else ""))
+    print(f"  against the first-named gap only: {one['flagged']} flagged, "
+          f"{one['not_exchanged_and_flagged']} of them false, precision {one['precision']}")
 
     rep = {"config": {**_code_version(),
                       "inputs": "committed leaderboards; nothing is re-scored here",
-                      "note": "differential > gap is necessary for an exchange and not sufficient; "
-                              "the empirical question is how often real leaderboards meet it"},
+                      "note": "against the larger of the two gaps the inequality holds exactly "
+                              "when the pair exchanges; against one of them it is necessary and "
+                              "not sufficient, and the difference is the false-alarm count"},
            "per_leaderboard": report,
            "screening_test": screen,
            "totals": {"comparisons": len(allrows), "closer_than_the_move": closer,

@@ -108,6 +108,26 @@ def spans(sources: dict) -> dict:
     return out
 
 
+def _leaves_equal(obj, wanted: str, path: str = "") -> list:
+    """Paths of numeric leaves equal to the printed figure at the precision it is printed to."""
+    try:
+        target = float(wanted)
+    except ValueError:
+        return []
+    places = len(wanted.split(".")[1]) if "." in wanted else 0
+    out = []
+    if isinstance(obj, dict):
+        for k, v in obj.items():
+            out += _leaves_equal(v, wanted, f"{path}/{k}")
+    elif isinstance(obj, list):
+        for i, v in enumerate(obj):
+            out += _leaves_equal(v, wanted, f"{path}[{i}]")
+    elif isinstance(obj, (int, float)) and not isinstance(obj, bool):
+        if round(float(obj), places) == target:
+            out.append(path)
+    return out
+
+
 def census_rows(text: str, caption_label: str) -> list:
     m = re.search(r"\\begin\{tabular\}.*?\\end\{tabular\}", text[text.index(caption_label):], re.S)
     if m is None:
@@ -139,25 +159,42 @@ def main() -> int:
         wanted = expand(value, table).strip("$ ")
         # the census prints a mean and its spread; the text states the same pair
         wanted = wanted.split("\\pm")[0].strip("$ ")
-        seen = []
+        seen, where_found = [], []
         for t in targets:
             body = where.get(t)
             if body is None:
                 seen.append((t, "no such label"))
                 continue
             seen.append((t, "found" if wanted in expand(body, table) else "absent"))
-        # a row may source a figure to a released artifact instead: the paper does not print it, so
-        # the check is that the file exists and carries the value, which is stronger than a section
+        # A row may source a figure to a released artifact instead, when the paper does not print
+        # it. Substring containment was the obvious check and is close to vacuous: a three-decimal
+        # string appears somewhere in a large JSON about a third of the time by chance, which makes
+        # it far weaker than the section branch and not stronger. So the value has to equal a
+        # numeric leaf at the precision the row prints it to, and the paths where it does are
+        # recorded, because a reader who cannot find it has not been given provenance either.
         for name in artifacts:
             f = ROOT / "results" / f"{name}.json"
             if not f.exists():
                 seen.append((name, "no such artifact"))
-            else:
-                seen.append((name, "found" if wanted in f.read_text() else "absent"))
-        ok = any(s == "found" for _, s in seen)
+                continue
+            paths = _leaves_equal(json.loads(f.read_text()), wanted)
+            # Equality with some leaf is still not provenance: a large artifact holds many numbers
+            # and several may round to the same three decimals. The row names a method, so require
+            # the leaf to sit under it and to be the only such leaf. Perturbing the row to another
+            # method's figure then fails, which substring containment and bare equality both allow.
+            paths = [q for q in paths if method.lower() in q.lower()]
+            found = len(paths) == 1
+            seen.append((name, "found" if found else "absent"))
+            if found:
+                where_found.append({"artifact": name, "json_paths": paths[:8],
+                                    "n_paths": len(paths)})
+        # every target a row names has to hold the figure: a row naming two and carrying it in one
+        # still sends half its readers to text that states something else
+        ok = bool(seen) and all(s == "found" for _, s in seen)
         bad += not ok
         findings.append({"figure": figure, "method": method, "value": wanted,
-                         "targets": [{"label": t, "verdict": s} for t, s in seen], "ok": ok})
+                         "targets": [{"label": t, "verdict": s} for t, s in seen],
+                         "artifact_paths": where_found, "ok": ok})
 
     rep = {"config": {**_code_version(), "table": "tab:provenance, in paper/app/xdomain.tex as inputted",
                       "rule": "the row's figure must appear literally inside the span its target "

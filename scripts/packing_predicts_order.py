@@ -54,17 +54,22 @@ def analyse_board(r: dict) -> dict:
 
     rows = []
     for a, b in itertools.combinations(systems, 2):
+        # The movement is compared against the larger of the two margins it connects, not against
+        # the published one alone. Against one margin the condition is necessary and not
+        # sufficient, and which margin that is would here be an accident of which cell a paper
+        # happened to print; against the larger it holds exactly when the cell reverses the pair.
         gap = abs(acc[a][published] - acc[b][published])
         worst, worst_cell = 0.0, None
         for c in cells:
-            move = abs((acc[a][c] - acc[a][published]) - (acc[b][c] - acc[b][published]))
-            if move > worst:
+            here = acc[a][c] - acc[b][c]
+            move = abs(here - (acc[a][published] - acc[b][published]))
+            if move > max(gap, abs(here)) and move > worst:
                 worst, worst_cell = move, c
         hi, lo = (a, b) if systems.index(a) < systems.index(b) else (b, a)
         name = f"{hi} over {lo}"
         v = r["pairs"][name]
         rows.append({"pair": name, "gap": round(gap, 4), "largest_move": round(worst, 4),
-                     "cell_of_that_move": worst_cell, "flagged": bool(worst > gap),
+                     "cell_of_that_move": worst_cell, "flagged": worst_cell is not None,
                      "failed_to_dominate": not v["dominates"], "contested": v["contested"]})
 
     tp = sum(x["flagged"] and x["failed_to_dominate"] for x in rows)

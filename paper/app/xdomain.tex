@@ -157,7 +157,8 @@ rows, SyGMa ahead by $0.023$ untruncated and by $0.002$ at $k{=}15$, neither mar
 is the budget parameter of \S\ref{sec:metric} acting on the leading pair rather than on ours.
 
 \begin{table}[h]
-\caption{Every recall figure this paper reports for the three full-split methods, with what
+\caption{Every recall figure this paper reports for the three full-split methods on a distinct
+footing of population, aggregation and truncation, with what
 distinguishes it. A row whose second cell names a file rather than a section is a figure the
 released artifact carries and the paper does not print. \textsc{i-taut} is \textsc{inchikey-tautomer} throughout.}
 \label{tab:provenance}
@@ -179,7 +180,7 @@ SyGMa $0.571$              & Table~\ref{tab:matchsens} & $\ntest$ & macro & $k{=
 SyGMa $0.572$              & \S\ref{sec:xmc} & $1{,}168$ common & macro & $k{=}15$ & yes \\
 SyGMa $0.554$              & Table~\ref{tab:matchsens-subset} & $\nshared$ & macro & $k{=}15$ & yes \\
 \midrule
-MetaPredictor $0.569$      & \S\ref{sec:metric}, Table~\ref{tab:matchsens} & $\ntest$ & macro & either & yes \\
+MetaPredictor $0.569$      & Table~\ref{tab:matchsens} & $\ntest$ & macro & either & yes \\
 MetaPredictor $0.585$      & Table~\ref{tab:matchsens-subset} & $\nshared$ & macro & $k{=}15$ & yes \\
 \bottomrule
 \end{tabular}
@@ -658,8 +659,12 @@ What differs is how tightly the leaderboard is packed, and that, not the criteri
 what decides the outcome.
 
 \paragraph{The inequality is arithmetic; how often it is met is not.} A criterion reverses a pair
-exactly when it moves the two apart by more than the gap between them, since a difference changes
-sign only if the change exceeds it. That needs no evidence. What needs evidence is whether real
+exactly when it moves the two apart by more than the larger of the margins it connects. One
+direction is the familiar one: a difference changes sign only if the change exceeds it, so the
+movement must pass both margins and therefore their maximum. The other closes it: if the two
+margins share a sign, the movement between them is their difference, which is below the larger. So
+the condition is an equivalence and not a screen, and comparing the movement against one margin
+rather than the larger of the two is what produces false alarms. That needs no evidence. What needs evidence is whether real
 leaderboards are packed tightly enough for it to happen, which is a fact about how a field's methods
 converge. Both quantities are already computed for every leaderboard in this paper, so we compare
 them on all of them ($562$ method-pair by criterion-pair comparisons across four domains, with
@@ -669,32 +674,37 @@ nothing re-scored:
 \footnotesize
 \begin{tabular}{lccccc}
 \toprule
-leaderboard & methods & comparisons & med.\ gap & med.\ move & move $>$ gap \\
+leaderboard & methods & comparisons & med.\ gap & med.\ move & exchanges \\
 \midrule
-docking, PoseBusters     & 7 & 123 & $0.1986$ & $0.0724$ & $28$ \\
-generation, MOSES        & 8 & 277 & $0.0094$ & $0.0001$ & $16$ \\
-metabolites, GLORYx      & 4 & 18  & $0.1303$ & $0.0361$ & $4$ \\
-retrosynthesis, seven    & 7 & 126 & $0.0130$ & $0.0016$ & $28$ \\
+docking, PoseBusters     & 7 & 123 & $0.1986$ & $0.0724$ & $7$ \\
+generation, MOSES        & 8 & 277 & $0.0094$ & $0.0001$ & $4$ \\
+metabolites, GLORYx      & 4 & 18  & $0.1303$ & $0.0361$ & $2$ \\
+retrosynthesis, seven    & 7 & 126 & $0.0130$ & $0.0016$ & $20$ \\
 retrosynthesis, three    & 3 & 18  & $0.0470$ & $0.0011$ & $0$ \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-The movement exceeds the gap in $76$ of the $562$, about one comparison in seven, and a reversal
-follows in $33$ of those $76$) the rest being movements that widen a gap instead of closing it,
-which is why the inequality is necessary and not sufficient. No reversal occurs where the gap
-survives the movement, on any of the $562$, which is the arithmetic holding and is checked rather
-than assumed.
+The movement exceeds the larger margin in $33$ of the $562$, about one
+comparison in seventeen, and a reversal follows in every one of them and in none of the rest, which
+is the equivalence holding and is checked rather than assumed. Against the first-named margin alone
+the same comparisons flag $76$, of which
+$43$ are movements that widen a gap
+instead of closing it; that count is the price of discarding the second margin and is not a
+property of any leaderboard.
 
-The distribution across leaderboards is the finding. Docking and the seven-system retrosynthesis
-group each supply $28$ of the $76$ for opposite reasons, one because the criterion moves programs
-by a fifth of their range and the other because its systems sit a hundredth apart; the three-system group, whose members sit three and a half times further
-apart while the criterion moves them just as much, supplies none. Generation contributes $16$ from
-$277$ comparisons because its median movement is $0.0001$, the criterion has almost no purchase
-there, and the external metabolite set contributes $4$ from $18$ for the opposite reason, a
-movement of $0.036$ large enough to cross even gaps of $0.13$. The reading is uncomfortable rather
-than reassuring: a leaderboard becomes vulnerable to an undeclared convention exactly as it matures
-and its entries converge.
+The distribution across leaderboards is the finding, and it is a ratio rather than a level. The
+seven-system retrosynthesis group supplies $20$
+of the $33$ because its systems sit a hundredth apart; the three-system group, whose
+members sit three and a half times further apart while the criterion moves them just as much,
+supplies none. Generation contributes $4$
+from $277$ comparisons because its median movement is $0.0001$ and the criterion has almost no
+purchase there. Docking has the widest gaps here, a median of $0.1986$, and the largest movements,
+$0.0724$, and contributes $7$; the external
+metabolite set, with a third of those gaps and half those movements, contributes
+$2$ from $18$. Neither the gap nor the
+movement decides it alone, which is why the exposed leaderboard is the one whose entries converge
+faster than the conventions separating them rather than the one whose entries are simply close.
 
 Two earlier measurements outside metabolism come back negative, and they are negative about
 different things. The first carries a leaderboard: it scores eight generative models and can

@@ -58,12 +58,13 @@ which it does are what can be quoted without naming the cell. Most of a leaderbo
 to have been resolved at all: eleven of the twenty-one pairwise orderings on a seven-system
 retrosynthesis table carry margins its own benchmark cannot separate. Of the ten it does separate,
 seven tenths survive every cell, and on three further tables that share is none of three, both of
-two, and seventeen of eighteen, so it is a property of a leaderboard and not a constant; the last is
-a docking table included as a control, whose field published the reversal we recover. Which pairs are at risk needs no pairwise statistic: two systems
-exchange under a change of criterion exactly when it moves them apart by more than the gap between
-them, so scoring each system once in the alternative cell settles every pair by arithmetic. That
-screen flags one comparison in seven across $562$ in four domains and cannot miss. A benchmark therefore
-becomes vulnerable to an undeclared convention exactly as its entries converge.
+two, and seventeen of eighteen, so it is a property of a leaderboard and not a constant; the last is a
+docking control, whose field published a reversal of this kind first. Which pairs are at risk needs no pairwise statistic: two systems
+exchange under a change of criterion exactly when it moves them apart by more than the larger of the
+two margins it connects, so scoring each system once in the alternative cell settles every pair by
+arithmetic, and on the $562$ comparisons this paper spans in four domains the condition holds on the
+$33$ that exchange and on nothing else. Exposure is a ratio and not a stage of maturity: the board
+here with the widest margins is not the one least at risk.
 Two of the four choices change a published ordering and they break it differently. The output budget
 reverses margins a paired interval separates from zero: one method is last at tight budgets and
 first at the budget the field reports, with its ranking held fixed. The matching criterion instead
@@ -367,13 +368,9 @@ metabolites, three methods    & $1{,}170$ & $2$ of $3$  & $1$ & $2$  & $1.00$ & 
 docking, seven programs       & $428$     & $17$ of $21$ & $2$ & $18$ & $0.94$ & $4$ of $7$ \\
 \bottomrule
 \end{tabular}
-\vspace{4pt}
-
-\input{app/robust_hasse}
-\caption{What a leaderboard entitles a reader to quote, on a grid of four criteria by a
-second axis. Below, the seven-system table's surviving order as its transitive reduction: an arrow means
-the left system beats the right in all sixteen cells, systems drawn together are ones the grid does
-not order, and seven published places become three tiers.}
+\caption{What a leaderboard entitles a reader to quote, on a grid of four criteria by a second
+axis. The seven-system table's surviving order, drawn as its transitive reduction, is
+Figure~\ref{fig:hasse}: seven published places become three tiers.}
 \label{tab:robust}
 \end{table}
 
@@ -389,32 +386,30 @@ systems take $4$ different total orders across $16$ cells. The system the table 
 in the top tier of what survives; the one it places second is the only system that is
 (Figure~\ref{tab:robust}). The docking row is a control and not a finding: that field has published
 this reversal already \citep{Buttenschoen_2024}, and the two pairs the grid contests are the two its
-criterion was introduced to expose, on a board four fifths of whose order does survive. Because domination is an intersection, all of this can only shrink as cells are added, so each axis
+criterion was introduced to expose. Four fifths of that board's order does survive, and what does not
+includes its own top pair, which no cell separates. Because domination is an intersection, all of this can only shrink as cells are added, so each axis
 is reported alone (Appendix~\ref{app:robust}), which is where the two separate: the criterion alone
 leaves both three-system tables intact, while the budget alone takes all three from one and one from
 the other.
 
 \looseness=-1
-\paragraph{Which pairs are at risk follows from an inequality.} Two systems exchange under a change
-of criterion exactly when it moves them apart by more than the gap between them: with $d$ their
-margin and $\delta_a,\delta_b$ how far each moves, the sign of $d$ survives iff
-$|\delta_a-\delta_b| \le |d|$. Scoring the $n$ systems once in the alternative cell therefore settles
-all $n(n-1)/2$ pairs with no paired statistic anywhere; replacing the per-system movement by a
-typical one for the domain, which a published table supplies alone, over-predicts fragility by a
-third and is reported as a failure (Appendix~\ref{app:negative}). As a screening test over the
-$562$ method-pair by criterion-pair comparisons this paper spans in four domains it flags
-$13.5\%$, and all $33$ exchanges fall inside the flagged set: sensitivity $1.000$ by arithmetic and
-checked rather than assumed, specificity $0.9187$, precision $0.4342$, the false alarms being
-movements that widen a gap. The bound is not vacuous: run on the published cell alone it flags $32$
-of the $48$ pairs in the table above, of which $21$ are exactly the ones the full grid removes. Where the flags fall says which benchmarks are exposed, and
-neither quantity decides that alone. The seven-system group is flagged on $22.2\%$ of its
-comparisons at a median gap of $0.0130$; the three-system group, whose systems sit three and a half
-times further apart while the criterion moves them as much, on none; the molecular-generation set,
-whose gaps are narrower still at $0.0094$, on $5.8\%$, because the criterion barely moves its models
-at all; and the external metabolite set, whose gaps are ten times the widest of these, on $22.2\%$,
-because its movements are larger than those gaps. A benchmark is exposed when its entries converge
-faster than the conventions separating them, which is a statement about a ratio and can be evaluated
-before any of them is varied (Appendix~\ref{app:xdomain}).
+\paragraph{Which pairs are at risk follows from an inequality, and it is an equivalence.} Two
+systems exchange under a change of criterion exactly when the change moves them apart by more than
+the larger of the two margins it connects: with $d$ their margin in the published cell, $d'$ their
+margin in the other and $\delta_a,\delta_b$ how far each system moves, $d'=d+(\delta_a-\delta_b)$ and
+the sign survives iff $|\delta_a-\delta_b|\le\max(|d|,|d'|)$. Against $|d|$ alone it is necessary and not
+sufficient, and the difference is not a technicality: over the $562$ method-pair by criterion-pair
+comparisons this paper spans in four domains the one-sided form flags $76$ where $33$ exchange, and
+the two-sided form flags the $33$ and nothing else. The $n$ systems are therefore scored once in the
+other cell and every one of the $n(n-1)/2$ pairs is settled exactly, with no paired statistic; a
+resample is needed only for whether an exchange clears zero. A typical movement for the domain in
+place of the per-system one, which a published table supplies alone, over-predicts fragility by a
+third and is reported as a failure (Appendix~\ref{app:negative}). Run on the four tables above it
+flags $21$ of their $48$ pairs, which are exactly the $21$ the full grid removes. Where the flags fall says which benchmarks are exposed, and
+neither the gap nor the movement decides that alone: the five tables here run from $0\%$ flagged to
+$15.9\%$, and the widest-gapped of them is not the safest. A benchmark is exposed when its entries
+converge faster than the conventions separating them, which is a ratio, and it can be evaluated
+before any convention is varied (Appendix~\ref{app:xdomain}).
 
 \paragraph{How one choice breaks an ordering.} \looseness=-1
 \citet{Hastedt_2024} released the ranked predictions of twelve retrosynthesis systems, of which
@@ -620,21 +615,19 @@ of about half the rule--substrate positives (Appendix~\ref{app:enginereach}).
 
 \looseness=-2
 The cross-domain numbers come from files produced elsewhere, the reordering there is a top-1
-phenomenon, the robust order rests on three leaderboards, and two results are bounded nulls.
+phenomenon, the robust order rests on four leaderboards, one of them a control, and two results are bounded nulls.
 
 \section{Conclusion}
 \label{sec:conclusion}
-\looseness=-2
 
 \looseness=-2
-\looseness=-3
-Four choices are settled before any model is compared and none is routinely declared. What a published
-ranking entitles a reader to quote is smaller than the ranking in two ways: most of its pairs were
-never resolved, and some that were are reversed by a choice no paper reports. Two of the four
-choices change a published ordering, differently: the budget reverses margins an interval separates from zero, the
-criterion exchanges systems a mature benchmark never separated, and which pairs either can reach
-follows from an inequality between a gap and a movement. Declaring is not the whole remedy: per-template
-dispatch loses to the best single setting on the one mixed bank there is.
+Four choices are settled before any model is compared and none is routinely declared. What a
+published ranking entitles a reader to quote is smaller than the ranking in two ways: most of its
+pairs were never resolved, and some that were are reversed by a choice no paper reports. Two of the
+four choices change a published ordering: the budget reverses margins an interval separates from
+zero, the criterion exchanges systems a mature benchmark never separated, and which pairs either can reach follows from an equivalence between a
+movement and the margins it connects. Declaring is not the whole remedy: per-template dispatch loses
+to the best single setting on the one mixed bank there is.
 
 \subsubsection*{Reproducibility statement}
 
