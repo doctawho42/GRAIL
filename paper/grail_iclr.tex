@@ -275,9 +275,10 @@ A pair that does not dominate has failed in one of two ways that should not be a
 cell may order the two the other way with an interval excluding zero, a choice deciding against the
 published table; or none may, leaving an ordering that fails on a margin the benchmark cannot
 resolve. Only the first is \emph{contested}, so noise on a tie is not a reversal. All twenty-three run a grid of four
-criteria crossed with a second axis their own field leaves undeclared: the budget a table is read at,
-whether a docked pose is minimised first, whether an error score is floored, whether a human score is
-standardised within the annotator who gave it (Appendix~\ref{app:robust}).
+criteria crossed with a second axis their own field leaves undeclared. That axis is the budget a
+table is read at, or whether a docked pose is minimised first, or whether an error score is floored,
+or whether a human score is standardised within the annotator who gave it
+(Appendix~\ref{app:robust}).
 
 \begin{table}[t]
 \centering
@@ -556,11 +557,11 @@ SyGMa ahead by $0.071$ (Appendix~\ref{app:holm}).
 \label{sec:metric}
 
 \looseness=-1
-Intervals here are exploratory except the budget sweep, whose family is declared below. A method
-emitting eighty candidates to catch a few more references is rewarded by recall and punished by F1,
-so on deployed output the two aggregates order the methods differently: against GRAIL the
-disagreement is separated both ways, SyGMa leading on recall by $0.253$ $[0.222,0.283]$ and sitting
-$0.088$ $[0.076,0.099]$ below on F1 (Appendix~\ref{app:props}).
+Intervals here are exploratory except the budget sweep, whose family is declared below. A method emitting
+eighty candidates to catch a few more references is rewarded by recall and punished by F1. So on
+deployed output the two aggregates order the methods differently: against GRAIL the disagreement is
+separated both ways, SyGMa leading on recall by $0.253$ $[0.222,0.283]$ and sitting $0.088$
+$[0.076,0.099]$ below on F1 (Appendix~\ref{app:props}).
 
 \looseness=-1
 The budget does the same work and it is what identifies the variable, because truncating a ranked
@@ -613,11 +614,11 @@ and~\ref{app:negative}).
 substrates of frozen predictions, because MetaTrans's pipeline no longer reproduces and
 BioTransformer's configuration is unscripted; the other three are scored on the full $\ntest$. An
 unannotated but real product counts as a false positive, so every precision and F1 figure is
-pessimistic by a bounded amount the annotation graph measures (Appendix~\ref{app:closure}). Depth-2
-application lifts the ceiling by ${\sim}0.012$ at $8.5$ times the cost, so $\ceiling$ bounds this
-formulation and not the task; and this system's rule labels are built with the substrate expanded
-while its rules fire without it, so locating its shortfall in selection is conditioned on a mismatch
-of about half the rule--substrate positives (Appendix~\ref{app:enginereach}).
+pessimistic by a bounded amount the annotation graph measures (Appendix~\ref{app:closure}). Depth-2 application
+lifts the ceiling by ${\sim}0.012$ at $8.5$ times the cost, so $\ceiling$ bounds this formulation and
+not the task. And this system's rule labels are built with the substrate expanded while its rules
+fire without it, so locating its shortfall in selection is conditioned on a mismatch of about half
+the rule--substrate positives (Appendix~\ref{app:enginereach}).
 
 \looseness=-2
 The cross-domain numbers come from files produced elsewhere, the reordering there is a top-1
