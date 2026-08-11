@@ -1,7 +1,7 @@
 {
  "config": {
   "script": "robust_order.py",
-  "git_commit": "df40e6da66ab4021fbcc95b9faba94169c343c00",
+  "git_commit": "3ea1de9042fb435d9ee08315a0f2147265186350",
   "git_dirty": true,
   "n_boot": 10000,
   "seed": 0,
@@ -169,6 +169,10 @@
    "n_separated_in_every_cell": 7,
    "n_contested": 9,
    "tiers_distinguished": 3,
+   "tiers_ci95": [
+    3,
+    3
+   ],
    "distinct_orderings_across_the_grid": 4,
    "robustness": 0.381,
    "robustness_ci95": [
@@ -4287,6 +4291,10 @@
    "n_separated_in_every_cell": 0,
    "n_contested": 2,
    "tiers_distinguished": 1,
+   "tiers_ci95": [
+    1,
+    2
+   ],
    "distinct_orderings_across_the_grid": 3,
    "robustness": 0.0,
    "robustness_ci95": [

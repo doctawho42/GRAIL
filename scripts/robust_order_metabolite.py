@@ -147,7 +147,7 @@ def main() -> int:
           f"{r['robustness_ci95']}")
     print(f"  separated in every cell: {r['n_separated_in_every_cell']}   "
           f"reversed with an interval: {r['reversed_with_an_interval']}")
-    print(f"  tiers {r['tiers_distinguished']} of {r['n_systems']};  "
+    print(f"  tiers {r['tiers_distinguished']} {r['tiers_ci95']} of {r['n_systems']};  "
           f"distinct orderings {r['distinct_orderings_across_the_grid']} of {r['n_cells']} cells")
     print(f"  among pairs its own cell resolves: {r['robustness_among_resolved']} "
           f"({r['n_resolved_in_the_published_cell']} pairs)")

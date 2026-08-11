@@ -164,9 +164,25 @@ def analyse(hits: dict, systems: list[str], cells: list, published_cell,
     # says how much of the share is the sample rather than the systems; it says nothing about the
     # grid, which is what the sub-grid curve below is for.
     stack = np.stack([np.stack([boot[(p, str(c))] for c in cells]) for p in pairs])  # pair,cell,B
-    share_bt = (stack > 0).all(axis=1).mean(axis=0)
+    dom_bt = (stack > 0).all(axis=1)                                                 # pair,B
+    share_bt = dom_bt.mean(axis=0)
     share_ci = [round(float(np.quantile(share_bt, .025)), 4),
                 round(float(np.quantile(share_bt, .975)), 4)]
+
+    # The tier count is the headline in the unit a leaderboard is quoted in, so it gets the same
+    # treatment as the share: rebuild the dominance relation on every resample and take the longest
+    # chain again. A count with no interval invites the reader to treat an integer as exact when it
+    # is a statistic of this sample.
+    names = list(pairs)
+    tier_bt = np.empty(N_BOOT, dtype=int)
+    for b in range(N_BOOT):
+        e: dict = {}
+        for i, nm in enumerate(names):
+            if dom_bt[i, b]:
+                hi_, lo_ = nm.split(" over ")
+                e.setdefault(hi_, set()).add(lo_)
+        tier_bt[b] = _tiers(systems, e)
+    tier_ci = [int(np.quantile(tier_bt, .025)), int(np.quantile(tier_bt, .975))]
 
     # Domination is an intersection over cells, so the share can only fall as cells are added. That
     # makes it a property of (leaderboard, grid) and not of the leaderboard, which is worth
@@ -195,7 +211,8 @@ def analyse(hits: dict, systems: list[str], cells: list, published_cell,
             "published_order": published, "published_cell": str(published_cell),
             "n_systems": len(systems), "n_cells": len(cells), "n_pairs": n_pairs,
             "n_dominating": n_dom, "n_separated_in_every_cell": n_sep, "n_contested": n_con,
-            "tiers_distinguished": tiers, "distinct_orderings_across_the_grid": distinct,
+            "tiers_distinguished": tiers, "tiers_ci95": tier_ci,
+            "distinct_orderings_across_the_grid": distinct,
             "robustness": round(n_dom / max(n_pairs, 1), 4),
             "robustness_ci95": share_ci,
             "separated_share": round(n_sep / max(n_pairs, 1), 4),
@@ -281,7 +298,7 @@ def main() -> int:
         print(f"  reversed on sign alone:        "
               f"{r['reversed_by_some_cell'] - r['reversed_with_an_interval']}")
         print(f"  never reversed but unresolved: {r['unresolved_though_never_reversed']}")
-        print(f"  tiers it still distinguishes:  {r['tiers_distinguished']} "
+        print(f"  tiers it still distinguishes:  {r['tiers_distinguished']} {r['tiers_ci95']} "
               f"of {r['n_systems']} published places")
         print(f"  distinct orderings on the grid:{r['distinct_orderings_across_the_grid']} "
               f"of {r['n_cells']} cells")

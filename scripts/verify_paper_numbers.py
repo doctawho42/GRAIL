@@ -1014,14 +1014,16 @@ def main() -> int:
     if ro2.exists():
         R2 = json.loads(ro2.read_text())["leaderboards"]
         flat = re.sub(r"\s+", " ", whole)
-        mt = re.search(r"a table of seven places supports \$(\d+)\$\s*tiers, one of three supports "
-                       r"\$(\d+)\$", flat)
+        mt = re.search(r"a table of seven places supports \$(\d+)\$\s*tiers, resampling to "
+                       r"\$\[(\d+),(\d+)\]\$, one of three supports \$(\d+)\$", flat)
         checks.append((bool(mt), "the tier sentence parses", "present",
                        "matched" if mt else "not matched", ""))
         if mt:
             src = str(ro2.relative_to(ROOT))
             check("tiers, seven-system", mt.group(1), R2["cluster0"]["tiers_distinguished"], src)
-            check("tiers, three-system", mt.group(2), R2["cluster1"]["tiers_distinguished"], src)
+            check("tiers, seven-system lower", mt.group(2), R2["cluster0"]["tiers_ci95"][0], src)
+            check("tiers, seven-system upper", mt.group(3), R2["cluster0"]["tiers_ci95"][1], src)
+            check("tiers, three-system", mt.group(4), R2["cluster1"]["tiers_distinguished"], src)
             checks.append((R2["cluster0"]["tiers_distinguished"] < R2["cluster0"]["n_systems"],
                            "the seven-system table supports fewer tiers than places",
                            "fewer", f"{R2['cluster0']['tiers_distinguished']} of "
