@@ -57,7 +57,10 @@ def test_dataset_bundle_prepare_creates_split_cache(tmp_path):
     assert len(train_meta) == 1
     assert len(val_meta) == 1
     assert list((tmp_path / "train").glob("*/single_graphs.pt"))
-    assert list((tmp_path / "train").glob("*/reaction_labels.pt"))
+    # the label cache is keyed by the presentation it was built under, so the test asks for the
+    # name the code would write rather than a literal that a convention change would strand
+    from grail_metabolism.utils.preparation import LABEL_PRESENTATION
+    assert list((tmp_path / "train").glob(f"*/reaction_labels.{LABEL_PRESENTATION}.pt"))
 
 
 def test_load_dataset_bundle_uses_clean_paths_and_rules(monkeypatch, tmp_path):

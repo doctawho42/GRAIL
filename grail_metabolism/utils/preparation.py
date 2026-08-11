@@ -359,16 +359,30 @@ def _clean_product_smiles(smiles: str) -> List[str]:
     return valid
 
 
+# How a substrate is presented to the matcher. Every deployed firing path -- ModelWrapper.generate,
+# Generator.generate, factorized_infer with FACTORIZED_EXPANDS False -- passes the molecule as
+# parsed, hydrogens implicit, while this function has always expanded it. That mismatch is what
+# LABEL_PRESENTATION exists to correct, and it is deliberately NOT applied globally: every artifact
+# in results/ was produced through the historical default, so flipping one constant would change
+# what a dozen unrelated scripts measure without any of them saying so. The default therefore stays
+# where it was and the label path asks for the other presentation by name.
+DEFAULT_APPLICATION_PRESENTATION: Literal["implicit", "expanded"] = "expanded"
+LABEL_PRESENTATION: Literal["implicit", "expanded"] = "implicit"
+
+
 def apply_rules_to_molecule(
     mol: Chem.Mol,
     rules: Sequence[str],
     normalization_mode: Literal["standardize", "canonical"] = "standardize",
+    presentation: Optional[Literal["implicit", "expanded"]] = None,
 ) -> DefaultDict[str, Set[int]]:
     products: DefaultDict[str, Set[int]] = defaultdict(set)
     if mol is None:
         return products
 
-    substrate = Chem.AddHs(Chem.Mol(mol))
+    presentation = presentation or DEFAULT_APPLICATION_PRESENTATION
+    substrate = (Chem.AddHs(Chem.Mol(mol)) if presentation == "expanded"
+                 else Chem.Mol(mol))
     for rule_index, rule in enumerate(rules):
         for product in _iter_reaction_products(substrate, rule):
             try:
@@ -1041,6 +1055,10 @@ class MolFrame:
     ) -> None:
         selected_rules = list(rules)
         cache_file = _normalize_cache_path(cache_path)
+        if cache_file is not None:
+            # the presentation is part of what the matrix means, so it is part of where it lives
+            cache_file = cache_file.with_name(
+                f"{cache_file.stem}.{LABEL_PRESENTATION}{cache_file.suffix}")
         self.reaction_labels = {}
         if cache_file is not None:
             cached = _load_cached_mapping(cache_file)
@@ -1064,7 +1082,9 @@ class MolFrame:
             mol = self.mol_structs.get(substrate)
             if mol is None:
                 continue
-            generated = apply_rules_to_molecule(mol, selected_rules, normalization_mode=self.normalization_mode)
+            generated = apply_rules_to_molecule(mol, selected_rules,
+                                                normalization_mode=self.normalization_mode,
+                                                presentation=LABEL_PRESENTATION)
             vector = [0] * len(selected_rules)
             allowed = self.map.get(substrate, set())
             for product, indexes in generated.items():

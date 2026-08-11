@@ -35,6 +35,7 @@ for p in (str(ROOT), str(Path(__file__).resolve().parent)):
 
 from rdkit import Chem, RDLogger
 
+from _contract import contract
 from grail_metabolism.utils.preparation import (_clean_product_smiles, _iter_reaction_products,
                                                 _normalize_smiles_cached, load_default_rules)
 
@@ -65,11 +66,22 @@ def _init(rules):
     _CTX["rules"] = list(rules)
 
 
-def _productive(substrate, refs) -> set[int]:
-    """Indices of rules that yield an annotated metabolite from this presentation of the substrate."""
+def _productive(substrate, refs, contract_first=False) -> set[int]:
+    """Indices of rules that yield an annotated metabolite from this presentation of the substrate.
+
+    `contract_first` puts back the hydrogens an expansion drew before the product is read. Without
+    it an expanded arm measures an unfinished loop as well as a convention, which is the split
+    Section 4 of the paper reports; here it separates how much of the label disagreement is the
+    convention from how much is the missing call.
+    """
     out = set()
     for i, rule in enumerate(_CTX["rules"]):
         for product in _iter_reaction_products(substrate, rule):
+            if contract_first:
+                try:
+                    product = contract(product)
+                except Exception:
+                    continue
             try:
                 smiles = Chem.MolToSmiles(product)
             except Exception:
@@ -95,7 +107,7 @@ def _worker(item):
     sub, refs = item
     mol = Chem.MolFromSmiles(sub)
     if mol is None or not refs:
-        return sub, None, None
+        return sub, None, None, None
     keys = set()
     for r in refs:
         try:
@@ -105,10 +117,11 @@ def _worker(item):
         if k:
             keys.add(k)
     if not keys:
-        return sub, None, None
-    implicit = _productive(Chem.Mol(mol), keys)          # the convention the pipeline fires in
+        return sub, None, None, None
+    implicit = _productive(Chem.Mol(mol), keys)              # the convention the pipeline fires in
     expanded = _productive(Chem.AddHs(Chem.Mol(mol)), keys)  # the convention the labels are built in
-    return sub, sorted(implicit), sorted(expanded)
+    completed = _productive(Chem.AddHs(Chem.Mol(mol)), keys, contract_first=True)
+    return sub, sorted(implicit), sorted(expanded), sorted(completed)
 
 
 def load_training_pairs(limit: int, seed: int) -> list[tuple[str, list[str]]]:
@@ -146,7 +159,9 @@ def main() -> int:
                     help="substrates to audit; the full training set is the same measurement, slower")
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--workers", type=int, default=max(1, (os.cpu_count() or 4) - 2))
-    ap.add_argument("--out", default=str(ROOT / "results" / "label_convention_audit.json"))
+    ap.add_argument("--out", default=str(ROOT / "results" / "label_convention_audit.json"),
+                    help="a smoke run must pass this: the default path is a committed artifact and "
+                         "a short run silently replaces a long one that backs a paper number")
     args = ap.parse_args()
 
     rules = load_default_rules()
@@ -165,7 +180,11 @@ def main() -> int:
 
     n_impl = sum(len(r[1]) for r in rows)
     n_exp = sum(len(r[2]) for r in rows)
+    n_comp = sum(len(r[3]) for r in rows)
     both = sum(len(set(r[1]) & set(r[2])) for r in rows)
+    both_comp = sum(len(set(r[1]) & set(r[3])) for r in rows)
+    union_comp = sum(len(set(r[1]) | set(r[3])) for r in rows)
+    subs_disagree_comp = sum(1 for r in rows if set(r[1]) != set(r[3]))
     only_impl = n_impl - both
     only_exp = n_exp - both
     union = both + only_impl + only_exp
@@ -176,7 +195,7 @@ def main() -> int:
     # comparison has both arms reading it, which is why this is computed here rather than assumed.
     from collections import Counter
     imp_c, exp_c = Counter(), Counter()
-    for _, i_, e_ in rows:
+    for _, i_, e_, _c in rows:
         imp_c.update(i_)
         exp_c.update(e_)
     allr = sorted(set(imp_c) | set(exp_c))
@@ -200,7 +219,18 @@ def main() -> int:
           f"productively and are never labelled positive; Spearman "
           f"{prior['spearman_between_the_two_priors']}")
 
-    rep = {"frequency_prior": prior,
+    # The expanded arm as the labels are built today never contracts the product, so it carries the
+    # unfinished loop as well as the convention. Completing it separates the two: what remains
+    # between the completed arm and the fired one is the convention alone.
+    completed_block = {
+        "positives_completed": n_comp,
+        "agreeing_with_the_fired_convention": both_comp,
+        "jaccard": round(both_comp / max(union_comp, 1), 4),
+        "substrates_whose_label_row_changes": subs_disagree_comp,
+        "note": "the arm the labels would have if the expansion were completed; the gap from this "
+                "to the fired convention is the convention alone, the gap from the uncompleted "
+                "arm additionally carries the missing contraction"}
+    rep = {"frequency_prior": prior, "completed_expansion": completed_block,
            "config": {**_code_version(), "n_substrates_requested": args.limit, "seed": args.seed,
                       "n_substrates_scored": len(rows), "n_rules": len(rules),
                       "split": "train, clean triples",
@@ -215,7 +245,8 @@ def main() -> int:
                          "share_of_union_added_by_expanding": round(only_exp / max(union, 1), 4),
                          "substrates_whose_label_row_changes": subs_disagree,
                          "substrates_scored": len(rows)},
-           "per_substrate": [{"substrate": s, "implicit": i, "expanded": e} for s, i, e in rows]}
+           "per_substrate": [{"substrate": s, "implicit": i, "expanded": e, "completed": c}
+                             for s, i, e, c in rows]}
     Path(args.out).write_text(json.dumps(rep, indent=1))
 
     print(f"\n  positives under the fired convention: {n_impl}")
@@ -223,6 +254,8 @@ def main() -> int:
     print(f"  agreeing: {both}   fired-only: {only_impl}   labelled-only: {only_exp}")
     print(f"  Jaccard between the two label matrices: {rep['agreement']['jaccard']}")
     print(f"  substrates whose label row changes: {subs_disagree} of {len(rows)}")
+    print(f"\n  completing the expansion: {n_comp} positives, Jaccard against the fired convention "
+          f"{completed_block['jaccard']}, rows still differing {subs_disagree_comp} of {len(rows)}")
     print(f"\nwrote {args.out}")
     return 0
 

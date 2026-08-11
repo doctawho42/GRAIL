@@ -729,3 +729,52 @@ def test_a_similarity_threshold_is_not_an_identity_relation():
     assert "tanimoto1" not in robust_order_metabolite.MODES
     import robust_order
     assert "tanimoto1" not in robust_order.MODES
+
+
+def test_a_label_matrix_cannot_be_read_back_under_the_other_presentation():
+    """The presentation is part of what the matrix means, so it is part of where it lives.
+
+    The label cache used to be validated by vector length alone, which is identical under both
+    presentations because the bank is the same size. A run that changed the presentation would have
+    loaded the other matrix and measured nothing, silently. The name now carries the presentation.
+    """
+    import grail_metabolism.utils.preparation as preparation
+
+    other = "expanded" if preparation.LABEL_PRESENTATION == "implicit" else "implicit"
+    stem = "reaction_labels"
+    written = f"{stem}.{preparation.LABEL_PRESENTATION}.pt"
+    would_be_read_under_the_other = f"{stem}.{other}.pt"
+    assert written != would_be_read_under_the_other
+
+    # and the presentation is an argument, not a global: flipping it must not change what every
+    # other caller of apply_rules_to_molecule measures
+    assert preparation.DEFAULT_APPLICATION_PRESENTATION == "expanded"
+    assert preparation.LABEL_PRESENTATION == "implicit"
+
+
+def test_a_template_naming_a_bracket_hydrogen_cannot_fire_on_the_substrate_as_parsed():
+    """Which is why the label matrix and the deployed engine have to agree on the presentation.
+
+    Every deployed firing path passes the molecule as parsed. A template whose reactant side names
+    a hydrogen ATOM has nothing to match there, so it can never contribute a product at inference.
+    Labelling it positive from an expanded substrate teaches the selector to spend budget on a rule
+    that will fire nothing, which is the mismatch this change removes.
+    """
+    from rdkit import Chem
+
+    from grail_metabolism.utils.preparation import apply_rules_to_molecule
+
+    rules = ["[c:1][H]>>[c:1][OH]",                    # names a hydrogen atom
+             "[c:1][OH]>>[c:1]OC(C)=O"]               # names none
+    mol = Chem.MolFromSmiles("CC(=O)Nc1ccc(O)cc1")
+
+    fired_implicit = set()
+    for indexes in apply_rules_to_molecule(mol, rules, presentation="implicit").values():
+        fired_implicit.update(indexes)
+    fired_expanded = set()
+    for indexes in apply_rules_to_molecule(mol, rules, presentation="expanded").values():
+        fired_expanded.update(indexes)
+
+    assert 0 not in fired_implicit, "a bracket-hydrogen template cannot fire on an implicit mol"
+    assert 0 in fired_expanded, "and it does fire once the hydrogens are drawn"
+    assert 1 in fired_implicit, "a template naming no hydrogen fires under the deployed convention"

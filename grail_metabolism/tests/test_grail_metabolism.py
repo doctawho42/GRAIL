@@ -138,7 +138,12 @@ def test_full_setup_reuses_persistent_stage_cache(tmp_path, monkeypatch):
     expected_labels = dict(frame.reaction_labels)
 
     assert single_cache.exists()
-    assert reaction_cache.exists()
+    # label_reactions writes beside the requested path, suffixed with the presentation the matrix
+    # was built under, so a matrix cannot be read back under the other one
+    from grail_metabolism.utils.preparation import LABEL_PRESENTATION
+    written = reaction_cache.with_name(
+        f"{reaction_cache.stem}.{LABEL_PRESENTATION}{reaction_cache.suffix}")
+    assert written.exists()
 
     def fail_from_rdmol(*args, **kwargs):
         raise AssertionError("singlegraphs should be restored from cache")
