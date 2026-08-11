@@ -158,7 +158,8 @@ is the budget parameter of \S\ref{sec:metric} acting on the leading pair rather 
 
 \begin{table}[h]
 \caption{Every recall figure this paper reports for the three full-split methods, with what
-distinguishes it. \textsc{i-taut} is \textsc{inchikey-tautomer} throughout.}
+distinguishes it. A row whose second cell names a file rather than a section is a figure the
+released artifact carries and the paper does not print. \textsc{i-taut} is \textsc{inchikey-tautomer} throughout.}
 \label{tab:provenance}
 \begin{center}
 \footnotesize
@@ -167,15 +168,15 @@ distinguishes it. \textsc{i-taut} is \textsc{inchikey-tautomer} throughout.}
 figure & where & $n$ & aggregation & truncation & collapsed \\
 \midrule
 GRAIL $\realised$          & Figure~\ref{fig:decomp} & $\ntest$ & micro & $k{=}15$ & no \\
-GRAIL $\grailmacro$        & \S\ref{sec:diagnosis}  & $\ntest$ & macro & $k{=}15$ & no \\
+GRAIL $\grailmacro$        & \S\ref{app:headline}  & $\ntest$ & macro & $k{=}15$ & no \\
 GRAIL $0.340$              & Table~\ref{tab:matchsens} & $\ntest$ & macro & $k{=}15$ & yes \\
-GRAIL $0.344\pm0.010$      & \S\ref{sec:diagnosis}  & $\ntest$ & macro, 3 seeds & $k{=}15$ & yes \\
+GRAIL $0.344\pm0.010$      & \S\ref{app:headline}  & $\ntest$ & macro, 3 seeds & $k{=}15$ & yes \\
 GRAIL $0.365$              & Table~\ref{tab:matchsens-subset} & $\nshared$ & macro & $k{=}15$ & yes \\
 GRAIL $0.318$              & Appendix~\ref{app:budget} & $\nshared$ & micro & $k{=}15$ & yes \\
 \midrule
-SyGMa $0.592$              & \S\ref{sec:metric} & $\ntest$ & macro & none & yes \\
+SyGMa $0.592$              & \texttt{set\_metrics\_by\_criterion} & $\ntest$ & macro & none & yes \\
 SyGMa $0.571$              & Table~\ref{tab:matchsens} & $\ntest$ & macro & $k{=}15$ & yes \\
-SyGMa $0.572$              & \S\ref{sec:diagnosis} & $1{,}168$ common & macro & $k{=}15$ & yes \\
+SyGMa $0.572$              & \S\ref{sec:xmc} & $1{,}168$ common & macro & $k{=}15$ & yes \\
 SyGMa $0.554$              & Table~\ref{tab:matchsens-subset} & $\nshared$ & macro & $k{=}15$ & yes \\
 \midrule
 MetaPredictor $0.569$      & \S\ref{sec:metric}, Table~\ref{tab:matchsens} & $\ntest$ & macro & either & yes \\
@@ -194,6 +195,7 @@ of hits to references, lower because substrates with many references weigh more.
 exactly.
 
 \subsection{The headline is one checkpoint}
+\label{app:headline}
 
 The deployed headline, recall@15 of $\realised$ micro and $\grailmacro$ macro, comes from a single
 checkpoint, not an average over seeds. The correction bounds variance in the evaluation

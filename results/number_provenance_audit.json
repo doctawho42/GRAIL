@@ -1,0 +1,161 @@
+{
+ "config": {
+  "script": "audit_number_provenance.py",
+  "git_commit": "b4a353911f00b4089d95abd1f2b2563ce9d50051",
+  "git_dirty": true,
+  "table": "tab:provenance, in paper/app/xdomain.tex as inputted",
+  "rule": "the row's figure must appear literally inside the span its target denotes: a float's body, or a sectioning unit down to the next unit at the same or a higher level"
+ },
+ "n_rows": 12,
+ "n_unreachable": 0,
+ "rows": [
+  {
+   "figure": "GRAIL $\\realised$",
+   "method": "GRAIL",
+   "value": "0.265",
+   "targets": [
+    {
+     "label": "fig:decomp",
+     "verdict": "found"
+    }
+   ],
+   "ok": true
+  },
+  {
+   "figure": "GRAIL $\\grailmacro$",
+   "method": "GRAIL",
+   "value": "0.339",
+   "targets": [
+    {
+     "label": "app:headline",
+     "verdict": "found"
+    }
+   ],
+   "ok": true
+  },
+  {
+   "figure": "GRAIL $0.340$",
+   "method": "GRAIL",
+   "value": "0.340",
+   "targets": [
+    {
+     "label": "tab:matchsens",
+     "verdict": "found"
+    }
+   ],
+   "ok": true
+  },
+  {
+   "figure": "GRAIL $0.344\\pm0.010$",
+   "method": "GRAIL",
+   "value": "0.344",
+   "targets": [
+    {
+     "label": "app:headline",
+     "verdict": "found"
+    }
+   ],
+   "ok": true
+  },
+  {
+   "figure": "GRAIL $0.365$",
+   "method": "GRAIL",
+   "value": "0.365",
+   "targets": [
+    {
+     "label": "tab:matchsens-subset",
+     "verdict": "found"
+    }
+   ],
+   "ok": true
+  },
+  {
+   "figure": "GRAIL $0.318$",
+   "method": "GRAIL",
+   "value": "0.318",
+   "targets": [
+    {
+     "label": "app:budget",
+     "verdict": "found"
+    }
+   ],
+   "ok": true
+  },
+  {
+   "figure": "SyGMa $0.592$",
+   "method": "SyGMa",
+   "value": "0.592",
+   "targets": [
+    {
+     "label": "set_metrics_by_criterion",
+     "verdict": "found"
+    }
+   ],
+   "ok": true
+  },
+  {
+   "figure": "SyGMa $0.571$",
+   "method": "SyGMa",
+   "value": "0.571",
+   "targets": [
+    {
+     "label": "tab:matchsens",
+     "verdict": "found"
+    }
+   ],
+   "ok": true
+  },
+  {
+   "figure": "SyGMa $0.572$",
+   "method": "SyGMa",
+   "value": "0.572",
+   "targets": [
+    {
+     "label": "sec:xmc",
+     "verdict": "found"
+    }
+   ],
+   "ok": true
+  },
+  {
+   "figure": "SyGMa $0.554$",
+   "method": "SyGMa",
+   "value": "0.554",
+   "targets": [
+    {
+     "label": "tab:matchsens-subset",
+     "verdict": "found"
+    }
+   ],
+   "ok": true
+  },
+  {
+   "figure": "MetaPredictor $0.569$",
+   "method": "MetaPredictor",
+   "value": "0.569",
+   "targets": [
+    {
+     "label": "sec:metric",
+     "verdict": "absent"
+    },
+    {
+     "label": "tab:matchsens",
+     "verdict": "found"
+    }
+   ],
+   "ok": true
+  },
+  {
+   "figure": "MetaPredictor $0.585$",
+   "method": "MetaPredictor",
+   "value": "0.585",
+   "targets": [
+    {
+     "label": "tab:matchsens-subset",
+     "verdict": "found"
+    }
+   ],
+   "ok": true
+  }
+ ]
+}
