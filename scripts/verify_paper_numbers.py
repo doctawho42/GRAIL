@@ -434,6 +434,32 @@ def main() -> int:
             check(f"survey printing {i}, places", pl, places, "the manuscript")
             check(f"survey printing {i}, tiers", ti, tiers, "the manuscript")
 
+    # 10d-m. The MQM boards' orientation. The published cell must be the aggregation the task
+    # actually ranks by, and the check of that must not recompute the board's own quantity: it did,
+    # and reported a self-comparison as evidence for a page. Both are held here.
+    for _lp in ("en-de", "ja-zh"):
+        _q = ROOT / f"results/robust_order_wmt24_{_lp}.json"
+        if _q.exists():
+            _d = json.loads(_q.read_text())["config"]
+            checks.append((_d.get("published_cell_reproduces_the_official_ranking") is True,
+                           f"wmt24 {_lp}, the published cell is the task's own ranking", "reproduces",
+                           str(_d.get("published_cell_reproduces_the_official_ranking")),
+                           f"results/robust_order_wmt24_{_lp}.json"))
+    _mv = ROOT / "results/robust_order_wmt24_en-de.json"
+    if _mv.exists():
+        _e = json.loads(_mv.read_text())
+        flat = re.sub(r"\s+", " ", whole)
+        _mm = re.search(r"moved the nineteen-system board from \$(\d+)\$ dominating pairs to "
+                        r"\$(\d+)\$ and from no certified reversal to (\w+)", flat)
+        checks.append((bool(_mm), "the orientation-correction sentence parses", "present",
+                       "matched" if _mm else "not matched", ""))
+        if _mm:
+            check("orientation, dominating after", _mm.group(2), _e["n_dominating"],
+                  "results/robust_order_wmt24_en-de.json")
+            _words = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7}
+            check("orientation, certified after", _words.get(_mm.group(3), -1),
+                  _e["n_contested_after_correction"], "results/robust_order_wmt24_en-de.json")
+
     # 10d-e. The nine ESA boards, whose totals the appendix states in prose. They are the paper's
     # answer to "your share is one number from one table", so the aggregate is held to the run.
     ea = ROOT / "results/robust_order_wmt24_esa.json"

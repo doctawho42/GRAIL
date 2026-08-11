@@ -82,7 +82,8 @@ def main() -> int:
             hit = next((c for c in CONFIRMATORY if any(m in s for m in c["match"])), None)
             if hit is not None:
                 rows.append((path.name, hit["key"], hit["size"], hit["p"]))
-            elif re.search(r"Holm|strictest correction|survive the same correction|family of \$?\d+\$? interaction", s):
+            elif re.search(r"Holm|strictest correction|survive the same correction|"
+                           r"family of \$?\d+\$? interaction|cell-level tests", s):
                 # the sentence carries its own warrant: it names the correction and the family size
                 size = re.search(r"\$?(\d{2,4})\$? (?:paired )?(?:interaction|test)", s)
                 rows.append((path.name, "names its own correction",

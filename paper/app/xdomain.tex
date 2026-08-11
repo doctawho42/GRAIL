@@ -667,7 +667,7 @@ the condition is an equivalence and not a screen, and comparing the movement aga
 rather than the larger of the two is what produces false alarms. That needs no evidence. What needs evidence is whether real
 leaderboards are packed tightly enough for it to happen, which is a fact about how a field's methods
 converge. Both quantities are already computed for every leaderboard in this paper, so we compare
-them on all of them ($11{,}794$ method-pair by criterion-pair comparisons across five domains, with
+them on all of them ($11{,}804$ method-pair by criterion-pair comparisons across five domains, with
 nothing re-scored:
 
 \begin{center}
@@ -676,10 +676,10 @@ nothing re-scored:
 \toprule
 leaderboard & methods & comparisons & med.\ gap & med.\ move & exchanges \\
 \midrule
-translation, en-de         & 19 & 1022  & $0.2881$ & $0.3498$ & $94$ \\
-translation, ja-zh         & 15 & 624   & $0.4151$ & $0.7120$ & $24$ \\
-translation, nine more     & 11--16 & 4132  & --- & --- & $337$ \\
-translation, 2023, eight   & 13--18 & 5454  & --- & --- & $165$ \\
+translation, en-de         & 19 & 1026  & $0.3881$ & $0.4464$ & $131$ \
+translation, ja-zh         & 15 & 630   & $0.4469$ & $0.8183$ & $29$ \
+translation, nine more     & 11--16 & 4132  & --- & --- & $337$ \
+translation, 2023, eight   & 13--18 & 5454  & --- & --- & $165$ \
 docking, PoseBusters       & 7 & 123   & $0.1986$ & $0.0724$ & $7$ \\
 generation, MOSES          & 8 & 277   & $0.0094$ & $0.0001$ & $4$ \\
 metabolites, GLORYx        & 4 & 18    & $0.1303$ & $0.0361$ & $2$ \\
@@ -689,11 +689,12 @@ retrosynthesis, three      & 3 & 18    & $0.0470$ & $0.0011$ & $0$ \\
 \end{tabular}
 \end{center}
 
-The movement exceeds the larger margin in $653$ of the $11{,}794$, about one comparison in
-eighteen, and a reversal follows in every one of them and in none of the rest, which is the
-equivalence holding and is checked rather than assumed. Against the first-named margin alone the same
-comparisons flag $3{,}602$, of which $2{,}949$ are movements that widen a gap instead of closing it;
-that count is the price of discarding the second margin and is not a property of any leaderboard.
+The movement exceeds the larger margin in $695$ of the $11{,}804$, about one
+comparison in seventeen, and a reversal follows in every one of them and in none of the rest, which is
+the equivalence holding and is checked rather than assumed. Against the first-named margin alone the
+same comparisons flag $3{,}621$, of which $2{,}926$ are movements that widen a gap instead of
+closing it; that count is the price of discarding the second margin and is not a property of any
+leaderboard.
 
 The distribution across leaderboards is the finding, and it is a ratio rather than a level. The
 seven-system retrosynthesis group is the most exposed at

@@ -132,8 +132,16 @@ as a structure-matching rule is, with the metric fixed as the mean of the per-se
 the second axis is whether that sum is floored at the non-translation weight, an \textsc{mqm} score
 being otherwise unbounded below.
 
-The published cell is checked rather than assumed: in it, both boards reproduce the ranking the
-shared task published, system for system. What the grid then reports is the paper's first claim
+The published cell is checked rather than assumed, and the check had to be rebuilt before it was
+one. The task does not rank by the mean over segments: it takes the mean within each domain and then
+the mean of those, which its own clustering script does by default. Our cell was the segment mean and
+the function that checked it recomputed the same segment mean, so the agreement it reported was a
+comparison of a quantity with itself. The cell is now weighted so that its mean is the task's average
+over domains, and the check rebuilds that average independently, per domain and then across them. In
+it, both boards reproduce the published ranking system for system --- which is now a fact about the
+data rather than about the code. Correcting the orientation moved the nineteen-system board from
+$135$ dominating pairs to $125$ and from no certified reversal to six, each surviving Holm over the
+$1{,}368$ cell-level tests its own grid creates. What the grid then reports is the paper's first claim
 without its second. On $171$ pairs of $19$ systems, $135$ dominate and $23$ are unresolved, so a
 table of nineteen places supports eleven; on $105$ pairs of $15$, $97$ dominate and the table
 supports nine. Thirteen pairs and one are contested --- and none survives Holm over the family its
@@ -172,7 +180,7 @@ several ratings per segment, and between $116$ and $207$ annotators --- and five
 pairs the later edition also scored. That is the one place in this paper where the same question is
 put twice to independent data.
 
-The answer is that the share does not carry over. Across the five repeated pairs it moves by $0.097$
+The answer is that the share does not carry over. Across the five repeated pairs it moves by $0.109$
 on average and by as much as $0.251$; \textsc{en-zh} is at $0.892$ in one edition and $0.641$ in the
 next. Nothing about the language, the domain or the difficulty changed enough to explain that, and
 the two campaigns were run by the same organisers on comparable data. What changed is the protocol and the

@@ -26,6 +26,7 @@ task published, the board is measuring something else and the run says so.
 from __future__ import annotations
 
 import argparse
+import collections
 import csv
 import hashlib
 import itertools
@@ -118,10 +119,34 @@ def load(path: Path) -> pd.DataFrame:
     return d
 
 
+def domain_of(doc: str) -> str:
+    """The task averages over domains, and the domain is the first field of a document id."""
+    stem = doc.split("_", 1)[0]
+    return stem.split("-")[-1] if "-" in stem else stem
+
+
+def _macro_weights(d: pd.DataFrame, items: list[str]) -> np.ndarray:
+    """Per-item weights whose plain mean is the task's macro average over domains.
+
+    The published ranking is not the mean over segments. It is the mean over domains of the mean
+    over that domain's segments (``humeval/calculate_clusters.py`` defaults ``micro`` to false and
+    averages ``per_domain`` twice). Weighting item $i$ by $1/(G\,n_{g(i)})$ and rescaling by the
+    item count makes an unweighted mean of the rescaled vector equal that average, so the rest of
+    the machinery -- paired differences, the item bootstrap -- is unchanged.
+    """
+    dom = {str(s): domain_of(str(doc))
+           for s, doc in zip(d["globalSegId"], d["doc"])}
+    sizes = collections.Counter(dom[i] for i in items if i in dom)
+    G = len(sizes)
+    w = np.array([1.0 / (G * sizes[dom[i]]) if i in dom else 0.0 for i in items])
+    return w * len(items)
+
+
 def build_hits(d: pd.DataFrame) -> tuple[dict, list[str], list[str], list]:
     systems = sorted(d["system"].unique())
     items = sorted(d["globalSegId"].unique(), key=int)
     cells = [(c, f) for c in CRITERIA for f in FLOORS]
+    scale = _macro_weights(d, items)
 
     hits = {}
     for criterion, (_, weight) in CRITERIA.items():
@@ -132,16 +157,25 @@ def build_hits(d: pd.DataFrame) -> tuple[dict, list[str], list[str], list]:
             v = per_seg.to_numpy(dtype=float)
             if floor == "clipped":
                 v = np.maximum(v, FLOOR)
+            v = v * scale
             for i, name in enumerate(systems):
                 hits[(name, (criterion, floor))] = v[i]
     return hits, systems, items, cells
 
 
 def official_order(d: pd.DataFrame) -> list[str]:
-    """The task's published ranking, recomputed from its own function, to check the board against."""
-    charged = d.assign(w=[w_wmt(c, s) for c, s in zip(d["category"], d["severity"])])
-    per_seg = charged.groupby(["system", "globalSegId"])["w"].sum()
-    return list(per_seg.groupby("system").mean().sort_values(ascending=False).index)
+    """The task's published ranking, rebuilt the way the task builds it, to check the board against.
+
+    Independently of ``build_hits``: per-segment sums, then the mean within each domain, then the
+    mean of those. Recomputing the board's own quantity here and calling the agreement a check is a
+    self-comparison, which is what this function used to be.
+    """
+    charged = d.assign(w=[w_wmt(c, s) for c, s in zip(d["category"], d["severity"])],
+                       dom=[domain_of(str(x)) for x in d["doc"]])
+    per_seg = charged.groupby(["system", "dom", "globalSegId"])["w"].sum().reset_index()
+    per_dom = per_seg.groupby(["system", "dom"])["w"].mean().reset_index()
+    macro = per_dom.groupby("system")["w"].mean()
+    return list(macro.sort_values(ascending=False).index)
 
 
 def main() -> int:
