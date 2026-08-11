@@ -1137,7 +1137,7 @@ def main() -> int:
         S, T = PK["screening_test"], PK["totals"]
         flat = re.sub(r"\s+", " ", whole)
         mpk = re.search(r"over the \$(\d+)\$ method-pair by criterion-pair comparisons this paper "
-                        r"spans\s*in three domains, it flags \$([\d.]+)\\%\$ of them\. Every one of "
+                        r"spans in\s*three domains, it flags \$([\d.]+)\\%\$\. Every one of "
                         r"the \$(\d+)\$ exchanges falls inside the\s*flagged set and none outside it, "
                         r"so its sensitivity is \$([\d.]+)\$ .*?its specificity is \$([\d.]+)\$ and "
                         r"its precision \$([\d.]+)\$", flat)
@@ -1426,6 +1426,32 @@ def main() -> int:
                                f"criteria {r_['n_pairs']}, budgets fewer",
                                f"criteria {r_['sub_grids'][crit]['n_dominating']}, "
                                f"budgets {r_['sub_grids'][bud]['n_dominating']}", s))
+            # the published leader is not in the top tier of the surviving order, which is the
+            # instrument's sharpest consequence and is recomputed here rather than asserted
+            pub = RO["cluster0"]["published_order"]
+            e_: dict = {s: set() for s in pub}
+            for p_, v_ in RO["cluster0"]["pairs"].items():
+                if v_["dominates"]:
+                    hi_, lo_ = p_.split(" over ")
+                    e_[hi_].add(lo_)
+            memo_: dict = {}
+
+            def _chain(n):
+                if n not in memo_:
+                    memo_[n] = 1 + max((_chain(c) for c in e_[n]), default=0)
+                return memo_[n]
+
+            depth_ = {s: _chain(s) for s in pub}
+            top_ = max(depth_.values())
+            first_in_top = depth_[pub[0]] == top_
+            second_in_top = depth_[pub[1]] == top_
+            alone = sum(1 for s in pub if depth_[s] == top_) == 1
+            checks.append((not first_in_top and second_in_top and alone,
+                           "the published leader is not in the top tier and the runner-up alone is",
+                           "first out, second alone in",
+                           f"first tier {top_ - depth_[pub[0]] + 1}, "
+                           f"second tier {top_ - depth_[pub[1]] + 1}, "
+                           f"{sum(1 for s in pub if depth_[s] == top_)} in the top tier", src))
             m4 = re.search(r"take \$(\d+)\$ different total orders across \$(\d+)\$\s*cells", flat)
             checks.append((bool(m4), "the distinct-orderings sentence parses", "present",
                            "matched" if m4 else "not matched", src))
