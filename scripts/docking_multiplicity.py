@@ -8,8 +8,9 @@ paper's control on: with that many looks, two reversals is close to what noise a
 
 This runs the correction the paper reserves the word \emph{certified} for. Each cell-level test gets
 a two-sided bootstrap $p$ from the same paired resampling the intervals come from --- twice the
-smaller tail mass of the resampled margin, floored at $1/B$ since a bootstrap cannot resolve past
-its own resolution --- and Holm is applied across all $168$ at $0.05$.
+normal approximation to its sampling distribution, since a resampled tail is floored at $1/B$
+and that floor, not the data, would decide the correction on any family larger than $B\alpha$ ---
+and Holm is applied across all $168$ at $0.05$.
 
 The answer decides what the paper may say. If no reversal survives, the control recovers nothing and
 the sentence claiming it does has to be withdrawn; the grid would still be reporting that the order
@@ -33,7 +34,7 @@ for p in (str(ROOT), str(Path(__file__).resolve().parent)):
     if p not in sys.path:
         sys.path.insert(0, p)
 
-from robust_order import N_BOOT, SEED  # noqa: E402
+from robust_order import N_BOOT, SEED, _paired_p  # noqa: E402
 
 ALPHA = 0.05
 
@@ -73,21 +74,14 @@ def main() -> int:
     board = json.loads(Path(args.board).read_text())
     rank = {s: i for i, s in enumerate(board["published_order"])}
 
-    # the same resampling the intervals came from: one index matrix, reused for every test, so the
-    # per-cell margins are paired across cells as well as across systems
-    rng = np.random.default_rng(SEED)
-    idx = rng.integers(0, len(items), (N_BOOT, len(items)))
-
     rows = []
     for a, b in itertools.combinations(systems, 2):
         hi, lo = (a, b) if rank[a] < rank[b] else (b, a)
         for c in cells:
             d = hits[(hi, c)] - hits[(lo, c)]
-            bt = d[idx].mean(axis=1)
-            p = 2 * min(float((bt >= 0).mean()), float((bt <= 0).mean()))
             rows.append({"pair": f"{hi} over {lo}", "cell": str(c),
                          "margin": round(float(d.mean()), 4),
-                         "p": max(p, 1.0 / N_BOOT),
+                         "p": _paired_p(d),
                          "against_the_published_order": bool(d.mean() < 0)})
 
     order = sorted(range(len(rows)), key=lambda i: rows[i]["p"])
@@ -119,7 +113,9 @@ def main() -> int:
                       "family": "every cell-level test the contested verdict is read from",
                       "family_size": m, "n_pairs": len(list(itertools.combinations(systems, 2))),
                       "n_cells": len(cells),
-                      "p": "two-sided bootstrap, twice the smaller tail mass, floored at 1/B"},
+                      "p": "two-sided, from the normal approximation to the paired mean; a bootstrap "
+                           "tail is floored at 1/B and that floor decides the whole "
+                           "correction once the family exceeds B*alpha"},
            "family_size": m, "n_surviving_tests": len(survivors),
            "n_surviving_reversals": len(reversals),
            "pairs_still_contested": pairs,

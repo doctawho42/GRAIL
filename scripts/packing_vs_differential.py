@@ -77,6 +77,18 @@ def leaderboards() -> dict:
                 per.setdefault(m, {})[crit] = v["unique@10000"]
         out["molecular generation, MOSES"] = ("generation", per)
 
+    for lp in ("en-de", "ja-zh"):
+        d = _load(f"robust_order_wmt24_{lp}.json")
+        if d and "system_accuracy_by_cell" in d:
+            floor = ast.literal_eval(d["published_cell"])[1]
+            per = {}
+            for m, cells in d["system_accuracy_by_cell"].items():
+                for cell, v in cells.items():
+                    crit, f_ = ast.literal_eval(cell)
+                    if f_ == floor:
+                        per.setdefault(m, {})[crit] = v
+            out[f"translation, WMT24 {lp}"] = ("translation", per)
+
     d = _load("robust_order_posebusters.json")
     if d and "system_accuracy_by_cell" in d:
         # the criterion axis at the post-processing the source publishes at, so the unit compared

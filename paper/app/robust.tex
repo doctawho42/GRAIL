@@ -119,6 +119,29 @@ scorable pose is a miss and not an absent observation, since dropping those rows
 program on the subset it managed to produce output for. The crystal ligand ships as an eighth row,
 is the reference re-scored through the same pipeline rather than a method, and is excluded.
 
+\paragraph{A leaderboard from outside chemistry, whose convention ships as a function.} The two
+translation rows are the same instrument on a domain sharing none of this paper's data: the ranking
+is human, the items are sentences, and the systems are machine-translation models. WMT's general
+task publishes an expert annotation of every error in every segment, its category and its severity,
+and turns those annotations into a number. The turning is the convention, and it is a function in
+the task's own repository. It makes four decisions a paper quoting an \textsc{mqm} score does not
+repeat: an error in the source text is charged nothing, a creative reinterpretation is charged
+nothing, a minor punctuation error is charged a tenth of an ordinary minor, and a non-translation is
+charged five times a major. So the criterion axis is which annotations are charged --- membership,
+as a structure-matching rule is, with the metric fixed as the mean of the per-segment sums --- and
+the second axis is whether that sum is floored at the non-translation weight, an \textsc{mqm} score
+being otherwise unbounded below.
+
+The published cell is checked rather than assumed: in it, both boards reproduce the ranking the
+shared task published, system for system. What the grid then reports is the paper's first claim
+without its second. On $171$ pairs of $19$ systems, $135$ dominate and $23$ are unresolved, so a
+table of nineteen places supports eleven; on $105$ pairs of $15$, $97$ dominate and the table
+supports nine. Thirteen pairs and one are contested --- and none survives Holm over the family its
+grid creates, $1{,}368$ cell-level tests on the first board and $840$ on the second. That is an
+honest null and is reported as one: on these two boards the conventions move signs and do not move
+them beyond what the looking explains. It is also the reason the correction is applied to every
+board and not only where it pays.
+
 \paragraph{What the share does not measure.} It is not an error rate and no cell is privileged.
 The instrument takes the grid as declared and says what part of a published ordering is invariant
 to it; whether a given cell is one a field would defend is a question about the field, argued in

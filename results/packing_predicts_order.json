@@ -1,7 +1,7 @@
 {
  "config": {
   "script": "packing_predicts_order.py",
-  "git_commit": "a7301248968f533ace1e2a256dc10e5e40f727ce",
+  "git_commit": "6efbf2609c4501b9f114bebc7d0b07b51b7fa32e",
   "git_dirty": true,
   "note": "the screen uses only the published cell and the movement to each other cell; the outcome comes from the full grid"
  },
@@ -10,6 +10,7 @@
    "n_pairs": 21,
    "flagged": 13,
    "failed": 13,
+   "failed_on_a_tie_alone": 0,
    "flagged_and_failed": 13,
    "flagged_but_survived": 0,
    "failed_but_not_flagged": 0,
@@ -24,7 +25,9 @@
      "largest_move": 0.172,
      "cell_of_that_move": "('nostereo', 10)",
      "flagged": true,
+     "reversed_by_some_cell": true,
      "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
      "contested": true
     },
     {
@@ -33,7 +36,9 @@
      "largest_move": 0.0799,
      "cell_of_that_move": "('inchikey', 10)",
      "flagged": true,
+     "reversed_by_some_cell": true,
      "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
      "contested": true
     },
     {
@@ -42,7 +47,9 @@
      "largest_move": 0.0154,
      "cell_of_that_move": "('nostereo', 1)",
      "flagged": true,
+     "reversed_by_some_cell": true,
      "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
      "contested": false
     },
     {
@@ -51,7 +58,9 @@
      "largest_move": 0.1051,
      "cell_of_that_move": "('canonical', 10)",
      "flagged": true,
+     "reversed_by_some_cell": true,
      "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
      "contested": true
     },
     {
@@ -60,7 +69,9 @@
      "largest_move": 0.1188,
      "cell_of_that_move": "('nostereo', 10)",
      "flagged": true,
+     "reversed_by_some_cell": true,
      "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
      "contested": true
     },
     {
@@ -69,7 +80,9 @@
      "largest_move": 0.0,
      "cell_of_that_move": null,
      "flagged": false,
+     "reversed_by_some_cell": false,
      "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
      "contested": false
     },
     {
@@ -78,7 +91,9 @@
      "largest_move": 0.0086,
      "cell_of_that_move": "('nostereo', 1)",
      "flagged": true,
+     "reversed_by_some_cell": true,
      "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
      "contested": false
     },
     {
@@ -87,7 +102,9 @@
      "largest_move": 0.0148,
      "cell_of_that_move": "('nostereo', 1)",
      "flagged": true,
+     "reversed_by_some_cell": true,
      "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
      "contested": false
     },
     {
@@ -96,7 +113,9 @@
      "largest_move": 0.0,
      "cell_of_that_move": null,
      "flagged": false,
+     "reversed_by_some_cell": false,
      "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
      "contested": false
     },
     {
@@ -105,7 +124,9 @@
      "largest_move": 0.0,
      "cell_of_that_move": null,
      "flagged": false,
+     "reversed_by_some_cell": false,
      "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
      "contested": false
     },
     {
@@ -114,7 +135,9 @@
      "largest_move": 0.0,
      "cell_of_that_move": null,
      "flagged": false,
+     "reversed_by_some_cell": false,
      "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
      "contested": false
     },
     {
@@ -123,7 +146,9 @@
      "largest_move": 0.0068,
      "cell_of_that_move": "('tautomer', 1)",
      "flagged": true,
+     "reversed_by_some_cell": true,
      "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
      "contested": false
     },
     {
@@ -132,7 +157,9 @@
      "largest_move": 0.0254,
      "cell_of_that_move": "('canonical', 10)",
      "flagged": true,
+     "reversed_by_some_cell": true,
      "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
      "contested": true
     },
     {
@@ -141,7 +168,9 @@
      "largest_move": 0.0462,
      "cell_of_that_move": "('tautomer', 5)",
      "flagged": true,
+     "reversed_by_some_cell": true,
      "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
      "contested": true
     },
     {
@@ -150,7 +179,9 @@
      "largest_move": 0.0,
      "cell_of_that_move": null,
      "flagged": false,
+     "reversed_by_some_cell": false,
      "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
      "contested": false
     },
     {
@@ -159,7 +190,9 @@
      "largest_move": 0.1179,
      "cell_of_that_move": "('canonical', 10)",
      "flagged": true,
+     "reversed_by_some_cell": true,
      "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
      "contested": true
     },
     {
@@ -168,7 +201,9 @@
      "largest_move": 0.1369,
      "cell_of_that_move": "('tautomer', 10)",
      "flagged": true,
+     "reversed_by_some_cell": true,
      "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
      "contested": true
     },
     {
@@ -177,7 +212,9 @@
      "largest_move": 0.0,
      "cell_of_that_move": null,
      "flagged": false,
+     "reversed_by_some_cell": false,
      "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
      "contested": false
     },
     {
@@ -186,7 +223,9 @@
      "largest_move": 0.0486,
      "cell_of_that_move": "('nostereo', 3)",
      "flagged": true,
+     "reversed_by_some_cell": true,
      "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
      "contested": true
     },
     {
@@ -195,7 +234,9 @@
      "largest_move": 0.0,
      "cell_of_that_move": null,
      "flagged": false,
+     "reversed_by_some_cell": false,
      "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
      "contested": false
     },
     {
@@ -204,7 +245,9 @@
      "largest_move": 0.0,
      "cell_of_that_move": null,
      "flagged": false,
+     "reversed_by_some_cell": false,
      "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
      "contested": false
     }
    ]
@@ -213,6 +256,7 @@
    "n_pairs": 3,
    "flagged": 3,
    "failed": 3,
+   "failed_on_a_tie_alone": 0,
    "flagged_and_failed": 3,
    "flagged_but_survived": 0,
    "failed_but_not_flagged": 0,
@@ -227,7 +271,9 @@
      "largest_move": 0.2175,
      "cell_of_that_move": "('nostereo', 10)",
      "flagged": true,
+     "reversed_by_some_cell": true,
      "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
      "contested": true
     },
     {
@@ -236,7 +282,9 @@
      "largest_move": 0.2432,
      "cell_of_that_move": "('tautomer', 10)",
      "flagged": true,
+     "reversed_by_some_cell": true,
      "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
      "contested": true
     },
     {
@@ -245,7 +293,9 @@
      "largest_move": 0.0474,
      "cell_of_that_move": "('canonical', 3)",
      "flagged": true,
+     "reversed_by_some_cell": true,
      "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
      "contested": false
     }
    ]
@@ -254,6 +304,7 @@
    "n_pairs": 3,
    "flagged": 1,
    "failed": 1,
+   "failed_on_a_tie_alone": 0,
    "flagged_and_failed": 1,
    "flagged_but_survived": 0,
    "failed_but_not_flagged": 0,
@@ -268,7 +319,9 @@
      "largest_move": 0.0427,
      "cell_of_that_move": "('inchikey', 5)",
      "flagged": true,
+     "reversed_by_some_cell": true,
      "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
      "contested": true
     },
     {
@@ -277,7 +330,9 @@
      "largest_move": 0.0,
      "cell_of_that_move": null,
      "flagged": false,
+     "reversed_by_some_cell": false,
      "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
      "contested": false
     },
     {
@@ -286,7 +341,3075 @@
      "largest_move": 0.0,
      "cell_of_that_move": null,
      "flagged": false,
+     "reversed_by_some_cell": false,
      "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    }
+   ]
+  },
+  "translation, WMT24 en-de": {
+   "n_pairs": 171,
+   "flagged": 35,
+   "failed": 35,
+   "failed_on_a_tie_alone": 1,
+   "flagged_and_failed": 35,
+   "flagged_but_survived": 0,
+   "failed_but_not_flagged": 0,
+   "neither": 136,
+   "sensitivity": 1.0,
+   "precision": 1.0,
+   "specificity": 1.0,
+   "pairs": [
+    {
+     "pair": "Dubformer over GPT-4",
+     "gap": 0.0024,
+     "largest_move": 0.0662,
+     "cell_of_that_move": "('plain', 'none')",
+     "flagged": true,
+     "reversed_by_some_cell": true,
+     "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Dubformer over Unbabel-Tower70B",
+     "gap": 0.0642,
+     "largest_move": 0.3441,
+     "cell_of_that_move": "('plain', 'clipped')",
+     "flagged": true,
+     "reversed_by_some_cell": true,
+     "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
+     "contested": true
+    },
+    {
+     "pair": "Dubformer over TranssionMT",
+     "gap": 0.229,
+     "largest_move": 0.4039,
+     "cell_of_that_move": "('count', 'none')",
+     "flagged": true,
+     "reversed_by_some_cell": true,
+     "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
+     "contested": true
+    },
+    {
+     "pair": "Dubformer over ONLINE-B",
+     "gap": 0.2331,
+     "largest_move": 0.3957,
+     "cell_of_that_move": "('count', 'none')",
+     "flagged": true,
+     "reversed_by_some_cell": true,
+     "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
+     "contested": true
+    },
+    {
+     "pair": "Dubformer over refB",
+     "gap": 0.2631,
+     "largest_move": 0.366,
+     "cell_of_that_move": "('plain', 'clipped')",
+     "flagged": true,
+     "reversed_by_some_cell": true,
+     "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Dubformer over Mistral-Large",
+     "gap": 0.3456,
+     "largest_move": 0.358,
+     "cell_of_that_move": "('count', 'none')",
+     "flagged": true,
+     "reversed_by_some_cell": true,
+     "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Dubformer over CommandR-plus",
+     "gap": 0.4261,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Dubformer over refA",
+     "gap": 0.5368,
+     "largest_move": 0.5656,
+     "cell_of_that_move": "('count', 'clipped')",
+     "flagged": true,
+     "reversed_by_some_cell": true,
+     "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Dubformer over Gemini-1.5-Pro",
+     "gap": 0.6201,
+     "largest_move": 0.8135,
+     "cell_of_that_move": "('count', 'none')",
+     "flagged": true,
+     "reversed_by_some_cell": true,
+     "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
+     "contested": true
+    },
+    {
+     "pair": "Dubformer over ONLINE-W",
+     "gap": 0.6399,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Dubformer over Claude-3.5",
+     "gap": 0.6971,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Dubformer over IOL-Research",
+     "gap": 0.808,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Dubformer over Aya23",
+     "gap": 1.5103,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Dubformer over ONLINE-A",
+     "gap": 1.7199,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Dubformer over Llama3-70B",
+     "gap": 2.0456,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Dubformer over IKUN",
+     "gap": 2.2851,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Dubformer over IKUN-C",
+     "gap": 3.4971,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Dubformer over MSLC",
+     "gap": 11.8987,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "GPT-4 over Unbabel-Tower70B",
+     "gap": 0.0618,
+     "largest_move": 0.3046,
+     "cell_of_that_move": "('count', 'none')",
+     "flagged": true,
+     "reversed_by_some_cell": true,
+     "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
+     "contested": true
+    },
+    {
+     "pair": "GPT-4 over TranssionMT",
+     "gap": 0.2266,
+     "largest_move": 0.4611,
+     "cell_of_that_move": "('count', 'none')",
+     "flagged": true,
+     "reversed_by_some_cell": true,
+     "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
+     "contested": true
+    },
+    {
+     "pair": "GPT-4 over ONLINE-B",
+     "gap": 0.2307,
+     "largest_move": 0.4529,
+     "cell_of_that_move": "('count', 'none')",
+     "flagged": true,
+     "reversed_by_some_cell": true,
+     "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
+     "contested": true
+    },
+    {
+     "pair": "GPT-4 over refB",
+     "gap": 0.2607,
+     "largest_move": 0.4211,
+     "cell_of_that_move": "('count', 'clipped')",
+     "flagged": true,
+     "reversed_by_some_cell": true,
+     "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
+     "contested": true
+    },
+    {
+     "pair": "GPT-4 over Mistral-Large",
+     "gap": 0.3432,
+     "largest_move": 0.4152,
+     "cell_of_that_move": "('count', 'none')",
+     "flagged": true,
+     "reversed_by_some_cell": true,
+     "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "GPT-4 over CommandR-plus",
+     "gap": 0.4237,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "GPT-4 over refA",
+     "gap": 0.5344,
+     "largest_move": 0.6249,
+     "cell_of_that_move": "('count', 'clipped')",
+     "flagged": true,
+     "reversed_by_some_cell": true,
+     "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "GPT-4 over Gemini-1.5-Pro",
+     "gap": 0.6177,
+     "largest_move": 0.8707,
+     "cell_of_that_move": "('count', 'none')",
+     "flagged": true,
+     "reversed_by_some_cell": true,
+     "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
+     "contested": true
+    },
+    {
+     "pair": "GPT-4 over ONLINE-W",
+     "gap": 0.6375,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "GPT-4 over Claude-3.5",
+     "gap": 0.6947,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "GPT-4 over IOL-Research",
+     "gap": 0.8056,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "GPT-4 over Aya23",
+     "gap": 1.5079,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "GPT-4 over ONLINE-A",
+     "gap": 1.7175,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "GPT-4 over Llama3-70B",
+     "gap": 2.0432,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "GPT-4 over IKUN",
+     "gap": 2.2827,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "GPT-4 over IKUN-C",
+     "gap": 3.4947,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "GPT-4 over MSLC",
+     "gap": 11.8963,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Unbabel-Tower70B over TranssionMT",
+     "gap": 0.1648,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Unbabel-Tower70B over ONLINE-B",
+     "gap": 0.1689,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Unbabel-Tower70B over refB",
+     "gap": 0.1989,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Unbabel-Tower70B over Mistral-Large",
+     "gap": 0.2814,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Unbabel-Tower70B over CommandR-plus",
+     "gap": 0.3619,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Unbabel-Tower70B over refA",
+     "gap": 0.4726,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Unbabel-Tower70B over Gemini-1.5-Pro",
+     "gap": 0.5559,
+     "largest_move": 0.5661,
+     "cell_of_that_move": "('count', 'none')",
+     "flagged": true,
+     "reversed_by_some_cell": true,
+     "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Unbabel-Tower70B over ONLINE-W",
+     "gap": 0.5757,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Unbabel-Tower70B over Claude-3.5",
+     "gap": 0.6329,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Unbabel-Tower70B over IOL-Research",
+     "gap": 0.7438,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Unbabel-Tower70B over Aya23",
+     "gap": 1.4461,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Unbabel-Tower70B over ONLINE-A",
+     "gap": 1.6557,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Unbabel-Tower70B over Llama3-70B",
+     "gap": 1.9814,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Unbabel-Tower70B over IKUN",
+     "gap": 2.2209,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Unbabel-Tower70B over IKUN-C",
+     "gap": 3.4329,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Unbabel-Tower70B over MSLC",
+     "gap": 11.8345,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "TranssionMT over ONLINE-B",
+     "gap": 0.0041,
+     "largest_move": 0.0473,
+     "cell_of_that_move": "('plain', 'clipped')",
+     "flagged": true,
+     "reversed_by_some_cell": true,
+     "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "TranssionMT over refB",
+     "gap": 0.0341,
+     "largest_move": 0.0981,
+     "cell_of_that_move": "('wmt', 'clipped')",
+     "flagged": true,
+     "reversed_by_some_cell": true,
+     "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "TranssionMT over Mistral-Large",
+     "gap": 0.1166,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "TranssionMT over CommandR-plus",
+     "gap": 0.1971,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "TranssionMT over refA",
+     "gap": 0.3078,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "TranssionMT over Gemini-1.5-Pro",
+     "gap": 0.3911,
+     "largest_move": 0.4919,
+     "cell_of_that_move": "('plain', 'none')",
+     "flagged": true,
+     "reversed_by_some_cell": true,
+     "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "TranssionMT over ONLINE-W",
+     "gap": 0.4109,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "TranssionMT over Claude-3.5",
+     "gap": 0.4681,
+     "largest_move": 0.4692,
+     "cell_of_that_move": "('wmt', 'clipped')",
+     "flagged": true,
+     "reversed_by_some_cell": true,
+     "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "TranssionMT over IOL-Research",
+     "gap": 0.579,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "TranssionMT over Aya23",
+     "gap": 1.2813,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "TranssionMT over ONLINE-A",
+     "gap": 1.4909,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "TranssionMT over Llama3-70B",
+     "gap": 1.8166,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "TranssionMT over IKUN",
+     "gap": 2.0561,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "TranssionMT over IKUN-C",
+     "gap": 3.2681,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "TranssionMT over MSLC",
+     "gap": 11.6697,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "ONLINE-B over refB",
+     "gap": 0.03,
+     "largest_move": 0.0878,
+     "cell_of_that_move": "('wmt', 'clipped')",
+     "flagged": true,
+     "reversed_by_some_cell": true,
+     "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "ONLINE-B over Mistral-Large",
+     "gap": 0.1125,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "ONLINE-B over CommandR-plus",
+     "gap": 0.193,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "ONLINE-B over refA",
+     "gap": 0.3037,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "ONLINE-B over Gemini-1.5-Pro",
+     "gap": 0.387,
+     "largest_move": 0.4508,
+     "cell_of_that_move": "('plain', 'none')",
+     "flagged": true,
+     "reversed_by_some_cell": true,
+     "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "ONLINE-B over ONLINE-W",
+     "gap": 0.4068,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "ONLINE-B over Claude-3.5",
+     "gap": 0.464,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "ONLINE-B over IOL-Research",
+     "gap": 0.5749,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "ONLINE-B over Aya23",
+     "gap": 1.2772,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "ONLINE-B over ONLINE-A",
+     "gap": 1.4868,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "ONLINE-B over Llama3-70B",
+     "gap": 1.8125,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "ONLINE-B over IKUN",
+     "gap": 2.052,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "ONLINE-B over IKUN-C",
+     "gap": 3.264,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "ONLINE-B over MSLC",
+     "gap": 11.6656,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "refB over Mistral-Large",
+     "gap": 0.0825,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": true,
+     "failed_on_a_tie_alone": true,
+     "contested": false
+    },
+    {
+     "pair": "refB over CommandR-plus",
+     "gap": 0.163,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "refB over refA",
+     "gap": 0.2737,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "refB over Gemini-1.5-Pro",
+     "gap": 0.357,
+     "largest_move": 0.571,
+     "cell_of_that_move": "('plain', 'none')",
+     "flagged": true,
+     "reversed_by_some_cell": true,
+     "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "refB over ONLINE-W",
+     "gap": 0.3768,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "refB over Claude-3.5",
+     "gap": 0.434,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "refB over IOL-Research",
+     "gap": 0.5449,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "refB over Aya23",
+     "gap": 1.2472,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "refB over ONLINE-A",
+     "gap": 1.4568,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "refB over Llama3-70B",
+     "gap": 1.7825,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "refB over IKUN",
+     "gap": 2.022,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "refB over IKUN-C",
+     "gap": 3.234,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "refB over MSLC",
+     "gap": 11.6356,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Mistral-Large over CommandR-plus",
+     "gap": 0.0805,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Mistral-Large over refA",
+     "gap": 0.1912,
+     "largest_move": 0.2097,
+     "cell_of_that_move": "('count', 'clipped')",
+     "flagged": true,
+     "reversed_by_some_cell": true,
+     "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Mistral-Large over Gemini-1.5-Pro",
+     "gap": 0.2745,
+     "largest_move": 0.5811,
+     "cell_of_that_move": "('plain', 'clipped')",
+     "flagged": true,
+     "reversed_by_some_cell": true,
+     "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
+     "contested": true
+    },
+    {
+     "pair": "Mistral-Large over ONLINE-W",
+     "gap": 0.2943,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Mistral-Large over Claude-3.5",
+     "gap": 0.3515,
+     "largest_move": 0.4729,
+     "cell_of_that_move": "('plain', 'clipped')",
+     "flagged": true,
+     "reversed_by_some_cell": true,
+     "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Mistral-Large over IOL-Research",
+     "gap": 0.4624,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Mistral-Large over Aya23",
+     "gap": 1.1647,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Mistral-Large over ONLINE-A",
+     "gap": 1.3743,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Mistral-Large over Llama3-70B",
+     "gap": 1.7,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Mistral-Large over IKUN",
+     "gap": 1.9395,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Mistral-Large over IKUN-C",
+     "gap": 3.1515,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Mistral-Large over MSLC",
+     "gap": 11.5531,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "CommandR-plus over refA",
+     "gap": 0.1107,
+     "largest_move": 0.2115,
+     "cell_of_that_move": "('count', 'clipped')",
+     "flagged": true,
+     "reversed_by_some_cell": true,
+     "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "CommandR-plus over Gemini-1.5-Pro",
+     "gap": 0.194,
+     "largest_move": 0.6137,
+     "cell_of_that_move": "('plain', 'none')",
+     "flagged": true,
+     "reversed_by_some_cell": true,
+     "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
+     "contested": true
+    },
+    {
+     "pair": "CommandR-plus over ONLINE-W",
+     "gap": 0.2138,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "CommandR-plus over Claude-3.5",
+     "gap": 0.271,
+     "largest_move": 0.4486,
+     "cell_of_that_move": "('wmt', 'clipped')",
+     "flagged": true,
+     "reversed_by_some_cell": true,
+     "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "CommandR-plus over IOL-Research",
+     "gap": 0.3819,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "CommandR-plus over Aya23",
+     "gap": 1.0842,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "CommandR-plus over ONLINE-A",
+     "gap": 1.2938,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "CommandR-plus over Llama3-70B",
+     "gap": 1.6195,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "CommandR-plus over IKUN",
+     "gap": 1.859,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "CommandR-plus over IKUN-C",
+     "gap": 3.071,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "CommandR-plus over MSLC",
+     "gap": 11.4726,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "refA over Gemini-1.5-Pro",
+     "gap": 0.0833,
+     "largest_move": 0.5401,
+     "cell_of_that_move": "('plain', 'none')",
+     "flagged": true,
+     "reversed_by_some_cell": true,
+     "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
+     "contested": true
+    },
+    {
+     "pair": "refA over ONLINE-W",
+     "gap": 0.1031,
+     "largest_move": 0.1072,
+     "cell_of_that_move": "('major-only', 'none')",
+     "flagged": true,
+     "reversed_by_some_cell": true,
+     "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "refA over Claude-3.5",
+     "gap": 0.1603,
+     "largest_move": 0.3447,
+     "cell_of_that_move": "('wmt', 'clipped')",
+     "flagged": true,
+     "reversed_by_some_cell": true,
+     "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "refA over IOL-Research",
+     "gap": 0.2712,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "refA over Aya23",
+     "gap": 0.9735,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "refA over ONLINE-A",
+     "gap": 1.1831,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "refA over Llama3-70B",
+     "gap": 1.5088,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "refA over IKUN",
+     "gap": 1.7483,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "refA over IKUN-C",
+     "gap": 2.9603,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "refA over MSLC",
+     "gap": 11.3619,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Gemini-1.5-Pro over ONLINE-W",
+     "gap": 0.0198,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Gemini-1.5-Pro over Claude-3.5",
+     "gap": 0.077,
+     "largest_move": 0.0989,
+     "cell_of_that_move": "('wmt', 'clipped')",
+     "flagged": true,
+     "reversed_by_some_cell": true,
+     "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Gemini-1.5-Pro over IOL-Research",
+     "gap": 0.1879,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Gemini-1.5-Pro over Aya23",
+     "gap": 0.8902,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Gemini-1.5-Pro over ONLINE-A",
+     "gap": 1.0998,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Gemini-1.5-Pro over Llama3-70B",
+     "gap": 1.4255,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Gemini-1.5-Pro over IKUN",
+     "gap": 1.665,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Gemini-1.5-Pro over IKUN-C",
+     "gap": 2.877,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Gemini-1.5-Pro over MSLC",
+     "gap": 11.2786,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "ONLINE-W over Claude-3.5",
+     "gap": 0.0572,
+     "largest_move": 0.4523,
+     "cell_of_that_move": "('plain', 'clipped')",
+     "flagged": true,
+     "reversed_by_some_cell": true,
+     "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
+     "contested": true
+    },
+    {
+     "pair": "ONLINE-W over IOL-Research",
+     "gap": 0.1681,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "ONLINE-W over Aya23",
+     "gap": 0.8704,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "ONLINE-W over ONLINE-A",
+     "gap": 1.08,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "ONLINE-W over Llama3-70B",
+     "gap": 1.4057,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "ONLINE-W over IKUN",
+     "gap": 1.6452,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "ONLINE-W over IKUN-C",
+     "gap": 2.8572,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "ONLINE-W over MSLC",
+     "gap": 11.2588,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Claude-3.5 over IOL-Research",
+     "gap": 0.1109,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Claude-3.5 over Aya23",
+     "gap": 0.8132,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Claude-3.5 over ONLINE-A",
+     "gap": 1.0228,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Claude-3.5 over Llama3-70B",
+     "gap": 1.3485,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Claude-3.5 over IKUN",
+     "gap": 1.588,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Claude-3.5 over IKUN-C",
+     "gap": 2.8,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Claude-3.5 over MSLC",
+     "gap": 11.2016,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "IOL-Research over Aya23",
+     "gap": 0.7023,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "IOL-Research over ONLINE-A",
+     "gap": 0.9119,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "IOL-Research over Llama3-70B",
+     "gap": 1.2376,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "IOL-Research over IKUN",
+     "gap": 1.4771,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "IOL-Research over IKUN-C",
+     "gap": 2.6891,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "IOL-Research over MSLC",
+     "gap": 11.0907,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Aya23 over ONLINE-A",
+     "gap": 0.2096,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Aya23 over Llama3-70B",
+     "gap": 0.5353,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Aya23 over IKUN",
+     "gap": 0.7748,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Aya23 over IKUN-C",
+     "gap": 1.9868,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Aya23 over MSLC",
+     "gap": 10.3884,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "ONLINE-A over Llama3-70B",
+     "gap": 0.3257,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "ONLINE-A over IKUN",
+     "gap": 0.5652,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "ONLINE-A over IKUN-C",
+     "gap": 1.7772,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "ONLINE-A over MSLC",
+     "gap": 10.1788,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Llama3-70B over IKUN",
+     "gap": 0.2395,
+     "largest_move": 0.3239,
+     "cell_of_that_move": "('count', 'none')",
+     "flagged": true,
+     "reversed_by_some_cell": true,
+     "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Llama3-70B over IKUN-C",
+     "gap": 1.4515,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Llama3-70B over MSLC",
+     "gap": 9.8531,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "IKUN over IKUN-C",
+     "gap": 1.212,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "IKUN over MSLC",
+     "gap": 9.6136,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "IKUN-C over MSLC",
+     "gap": 8.4016,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    }
+   ]
+  },
+  "translation, WMT24 ja-zh": {
+   "n_pairs": 105,
+   "flagged": 8,
+   "failed": 8,
+   "failed_on_a_tie_alone": 0,
+   "flagged_and_failed": 8,
+   "flagged_but_survived": 0,
+   "failed_but_not_flagged": 0,
+   "neither": 97,
+   "sensitivity": 1.0,
+   "precision": 1.0,
+   "specificity": 1.0,
+   "pairs": [
+    {
+     "pair": "Claude-3.5 over refA",
+     "gap": 0.1009,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Claude-3.5 over GPT-4",
+     "gap": 0.2315,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Claude-3.5 over DLUT-GTCOM",
+     "gap": 0.2946,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Claude-3.5 over Unbabel-Tower70B",
+     "gap": 0.471,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Claude-3.5 over Gemini-1.5-Pro",
+     "gap": 0.556,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Claude-3.5 over CommandR-plus",
+     "gap": 0.6916,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Claude-3.5 over IOL-Research",
+     "gap": 0.8844,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Claude-3.5 over Aya23",
+     "gap": 1.8155,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Claude-3.5 over Llama3-70B",
+     "gap": 1.8477,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Claude-3.5 over Team-J",
+     "gap": 2.695,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Claude-3.5 over NTTSU",
+     "gap": 3.1239,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Claude-3.5 over ONLINE-B",
+     "gap": 4.0588,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Claude-3.5 over IKUN-C",
+     "gap": 5.3864,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Claude-3.5 over MSLC",
+     "gap": 7.9817,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "refA over GPT-4",
+     "gap": 0.1306,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "refA over DLUT-GTCOM",
+     "gap": 0.1937,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "refA over Unbabel-Tower70B",
+     "gap": 0.3701,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "refA over Gemini-1.5-Pro",
+     "gap": 0.4551,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "refA over CommandR-plus",
+     "gap": 0.5907,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "refA over IOL-Research",
+     "gap": 0.7835,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "refA over Aya23",
+     "gap": 1.7146,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "refA over Llama3-70B",
+     "gap": 1.7468,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "refA over Team-J",
+     "gap": 2.5941,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "refA over NTTSU",
+     "gap": 3.023,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "refA over ONLINE-B",
+     "gap": 3.9579,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "refA over IKUN-C",
+     "gap": 5.2855,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "refA over MSLC",
+     "gap": 7.8808,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "GPT-4 over DLUT-GTCOM",
+     "gap": 0.0631,
+     "largest_move": 0.1257,
+     "cell_of_that_move": "('count', 'none')",
+     "flagged": true,
+     "reversed_by_some_cell": true,
+     "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "GPT-4 over Unbabel-Tower70B",
+     "gap": 0.2395,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "GPT-4 over Gemini-1.5-Pro",
+     "gap": 0.3245,
+     "largest_move": 0.371,
+     "cell_of_that_move": "('count', 'none')",
+     "flagged": true,
+     "reversed_by_some_cell": true,
+     "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "GPT-4 over CommandR-plus",
+     "gap": 0.4601,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "GPT-4 over IOL-Research",
+     "gap": 0.6529,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "GPT-4 over Aya23",
+     "gap": 1.584,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "GPT-4 over Llama3-70B",
+     "gap": 1.6162,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "GPT-4 over Team-J",
+     "gap": 2.4635,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "GPT-4 over NTTSU",
+     "gap": 2.8924,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "GPT-4 over ONLINE-B",
+     "gap": 3.8273,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "GPT-4 over IKUN-C",
+     "gap": 5.1549,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "GPT-4 over MSLC",
+     "gap": 7.7502,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "DLUT-GTCOM over Unbabel-Tower70B",
+     "gap": 0.1764,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "DLUT-GTCOM over Gemini-1.5-Pro",
+     "gap": 0.2614,
+     "largest_move": 0.2883,
+     "cell_of_that_move": "('plain', 'clipped')",
+     "flagged": true,
+     "reversed_by_some_cell": true,
+     "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "DLUT-GTCOM over CommandR-plus",
+     "gap": 0.397,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "DLUT-GTCOM over IOL-Research",
+     "gap": 0.5898,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "DLUT-GTCOM over Aya23",
+     "gap": 1.5209,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "DLUT-GTCOM over Llama3-70B",
+     "gap": 1.5531,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "DLUT-GTCOM over Team-J",
+     "gap": 2.4004,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "DLUT-GTCOM over NTTSU",
+     "gap": 2.8293,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "DLUT-GTCOM over ONLINE-B",
+     "gap": 3.7642,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "DLUT-GTCOM over IKUN-C",
+     "gap": 5.0918,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "DLUT-GTCOM over MSLC",
+     "gap": 7.6871,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Unbabel-Tower70B over Gemini-1.5-Pro",
+     "gap": 0.085,
+     "largest_move": 0.3194,
+     "cell_of_that_move": "('plain', 'clipped')",
+     "flagged": true,
+     "reversed_by_some_cell": true,
+     "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Unbabel-Tower70B over CommandR-plus",
+     "gap": 0.2206,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Unbabel-Tower70B over IOL-Research",
+     "gap": 0.4134,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Unbabel-Tower70B over Aya23",
+     "gap": 1.3445,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Unbabel-Tower70B over Llama3-70B",
+     "gap": 1.3767,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Unbabel-Tower70B over Team-J",
+     "gap": 2.224,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Unbabel-Tower70B over NTTSU",
+     "gap": 2.6529,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Unbabel-Tower70B over ONLINE-B",
+     "gap": 3.5878,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Unbabel-Tower70B over IKUN-C",
+     "gap": 4.9154,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Unbabel-Tower70B over MSLC",
+     "gap": 7.5107,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Gemini-1.5-Pro over CommandR-plus",
+     "gap": 0.1356,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Gemini-1.5-Pro over IOL-Research",
+     "gap": 0.3284,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Gemini-1.5-Pro over Aya23",
+     "gap": 1.2595,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Gemini-1.5-Pro over Llama3-70B",
+     "gap": 1.2917,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Gemini-1.5-Pro over Team-J",
+     "gap": 2.139,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Gemini-1.5-Pro over NTTSU",
+     "gap": 2.5679,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Gemini-1.5-Pro over ONLINE-B",
+     "gap": 3.5028,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Gemini-1.5-Pro over IKUN-C",
+     "gap": 4.8304,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Gemini-1.5-Pro over MSLC",
+     "gap": 7.4257,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "CommandR-plus over IOL-Research",
+     "gap": 0.1928,
+     "largest_move": 0.1964,
+     "cell_of_that_move": "('plain', 'clipped')",
+     "flagged": true,
+     "reversed_by_some_cell": true,
+     "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "CommandR-plus over Aya23",
+     "gap": 1.1239,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "CommandR-plus over Llama3-70B",
+     "gap": 1.1561,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "CommandR-plus over Team-J",
+     "gap": 2.0034,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "CommandR-plus over NTTSU",
+     "gap": 2.4323,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "CommandR-plus over ONLINE-B",
+     "gap": 3.3672,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "CommandR-plus over IKUN-C",
+     "gap": 4.6948,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "CommandR-plus over MSLC",
+     "gap": 7.2901,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "IOL-Research over Aya23",
+     "gap": 0.9311,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "IOL-Research over Llama3-70B",
+     "gap": 0.9633,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "IOL-Research over Team-J",
+     "gap": 1.8106,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "IOL-Research over NTTSU",
+     "gap": 2.2395,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "IOL-Research over ONLINE-B",
+     "gap": 3.1744,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "IOL-Research over IKUN-C",
+     "gap": 4.502,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "IOL-Research over MSLC",
+     "gap": 7.0973,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Aya23 over Llama3-70B",
+     "gap": 0.0322,
+     "largest_move": 0.0518,
+     "cell_of_that_move": "('plain', 'none')",
+     "flagged": true,
+     "reversed_by_some_cell": true,
+     "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Aya23 over Team-J",
+     "gap": 0.8795,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Aya23 over NTTSU",
+     "gap": 1.3084,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Aya23 over ONLINE-B",
+     "gap": 2.2433,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Aya23 over IKUN-C",
+     "gap": 3.5709,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Aya23 over MSLC",
+     "gap": 6.1662,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Llama3-70B over Team-J",
+     "gap": 0.8473,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Llama3-70B over NTTSU",
+     "gap": 1.2762,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Llama3-70B over ONLINE-B",
+     "gap": 2.2111,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Llama3-70B over IKUN-C",
+     "gap": 3.5387,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Llama3-70B over MSLC",
+     "gap": 6.134,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Team-J over NTTSU",
+     "gap": 0.4289,
+     "largest_move": 0.6671,
+     "cell_of_that_move": "('wmt', 'clipped')",
+     "flagged": true,
+     "reversed_by_some_cell": true,
+     "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Team-J over ONLINE-B",
+     "gap": 1.3638,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Team-J over IKUN-C",
+     "gap": 2.6914,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Team-J over MSLC",
+     "gap": 5.2867,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "NTTSU over ONLINE-B",
+     "gap": 0.9349,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "NTTSU over IKUN-C",
+     "gap": 2.2625,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "NTTSU over MSLC",
+     "gap": 4.8578,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "ONLINE-B over IKUN-C",
+     "gap": 1.3276,
+     "largest_move": 1.5565,
+     "cell_of_that_move": "('count', 'none')",
+     "flagged": true,
+     "reversed_by_some_cell": true,
+     "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
+     "contested": true
+    },
+    {
+     "pair": "ONLINE-B over MSLC",
+     "gap": 3.9229,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "IKUN-C over MSLC",
+     "gap": 2.5953,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
      "contested": false
     }
    ]
@@ -295,6 +3418,7 @@
    "n_pairs": 21,
    "flagged": 4,
    "failed": 4,
+   "failed_on_a_tie_alone": 0,
    "flagged_and_failed": 4,
    "flagged_but_survived": 0,
    "failed_but_not_flagged": 0,
@@ -309,7 +3433,9 @@
      "largest_move": 0.0468,
      "cell_of_that_move": "('rmsd2+chem', 'energy minimization')",
      "flagged": true,
+     "reversed_by_some_cell": true,
      "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
      "contested": false
     },
     {
@@ -318,7 +3444,9 @@
      "largest_move": 0.0,
      "cell_of_that_move": null,
      "flagged": false,
+     "reversed_by_some_cell": false,
      "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
      "contested": false
     },
     {
@@ -327,7 +3455,9 @@
      "largest_move": 0.0,
      "cell_of_that_move": null,
      "flagged": false,
+     "reversed_by_some_cell": false,
      "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
      "contested": false
     },
     {
@@ -336,7 +3466,9 @@
      "largest_move": 0.0,
      "cell_of_that_move": null,
      "flagged": false,
+     "reversed_by_some_cell": false,
      "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
      "contested": false
     },
     {
@@ -345,7 +3477,9 @@
      "largest_move": 0.0,
      "cell_of_that_move": null,
      "flagged": false,
+     "reversed_by_some_cell": false,
      "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
      "contested": false
     },
     {
@@ -354,7 +3488,9 @@
      "largest_move": 0.0,
      "cell_of_that_move": null,
      "flagged": false,
+     "reversed_by_some_cell": false,
      "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
      "contested": false
     },
     {
@@ -363,7 +3499,9 @@
      "largest_move": 0.0,
      "cell_of_that_move": null,
      "flagged": false,
+     "reversed_by_some_cell": false,
      "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
      "contested": false
     },
     {
@@ -372,7 +3510,9 @@
      "largest_move": 0.0,
      "cell_of_that_move": null,
      "flagged": false,
+     "reversed_by_some_cell": false,
      "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
      "contested": false
     },
     {
@@ -381,7 +3521,9 @@
      "largest_move": 0.0,
      "cell_of_that_move": null,
      "flagged": false,
+     "reversed_by_some_cell": false,
      "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
      "contested": false
     },
     {
@@ -390,7 +3532,9 @@
      "largest_move": 0.0,
      "cell_of_that_move": null,
      "flagged": false,
+     "reversed_by_some_cell": false,
      "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
      "contested": false
     },
     {
@@ -399,7 +3543,9 @@
      "largest_move": 0.0,
      "cell_of_that_move": null,
      "flagged": false,
+     "reversed_by_some_cell": false,
      "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
      "contested": false
     },
     {
@@ -408,7 +3554,9 @@
      "largest_move": 0.0,
      "cell_of_that_move": null,
      "flagged": false,
+     "reversed_by_some_cell": false,
      "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
      "contested": false
     },
     {
@@ -417,7 +3565,9 @@
      "largest_move": 0.0,
      "cell_of_that_move": null,
      "flagged": false,
+     "reversed_by_some_cell": false,
      "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
      "contested": false
     },
     {
@@ -426,7 +3576,9 @@
      "largest_move": 0.0,
      "cell_of_that_move": null,
      "flagged": false,
+     "reversed_by_some_cell": false,
      "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
      "contested": false
     },
     {
@@ -435,7 +3587,9 @@
      "largest_move": 0.0,
      "cell_of_that_move": null,
      "flagged": false,
+     "reversed_by_some_cell": false,
      "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
      "contested": false
     },
     {
@@ -444,7 +3598,9 @@
      "largest_move": 0.0233,
      "cell_of_that_move": "('rmsd2', 'energy minimization')",
      "flagged": true,
+     "reversed_by_some_cell": true,
      "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
      "contested": false
     },
     {
@@ -453,7 +3609,9 @@
      "largest_move": 0.1121,
      "cell_of_that_move": "('rmsd2', 'energy minimization')",
      "flagged": true,
+     "reversed_by_some_cell": true,
      "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
      "contested": true
     },
     {
@@ -462,7 +3620,9 @@
      "largest_move": 0.0,
      "cell_of_that_move": null,
      "flagged": false,
+     "reversed_by_some_cell": false,
      "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
      "contested": false
     },
     {
@@ -471,7 +3631,9 @@
      "largest_move": 0.0888,
      "cell_of_that_move": "('rmsd2', 'energy minimization')",
      "flagged": true,
+     "reversed_by_some_cell": true,
      "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
      "contested": true
     },
     {
@@ -480,7 +3642,9 @@
      "largest_move": 0.0,
      "cell_of_that_move": null,
      "flagged": false,
+     "reversed_by_some_cell": false,
      "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
      "contested": false
     },
     {
@@ -489,19 +3653,22 @@
      "largest_move": 0.0,
      "cell_of_that_move": null,
      "flagged": false,
+     "reversed_by_some_cell": false,
      "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
      "contested": false
     }
    ]
   }
  },
  "totals": {
-  "n_pairs": 48,
-  "flagged": 21,
-  "failed": 21,
-  "flagged_and_failed": 21,
+  "n_pairs": 324,
+  "flagged": 64,
+  "failed": 64,
+  "flagged_and_failed": 64,
   "flagged_but_survived": 0,
   "failed_but_not_flagged": 0,
+  "failed_on_a_tie_alone": 1,
   "sensitivity": 1.0,
   "precision": 1.0
  }

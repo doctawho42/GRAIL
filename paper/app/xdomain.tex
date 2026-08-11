@@ -667,7 +667,7 @@ the condition is an equivalence and not a screen, and comparing the movement aga
 rather than the larger of the two is what produces false alarms. That needs no evidence. What needs evidence is whether real
 leaderboards are packed tightly enough for it to happen, which is a fact about how a field's methods
 converge. Both quantities are already computed for every leaderboard in this paper, so we compare
-them on all of them ($562$ method-pair by criterion-pair comparisons across four domains, with
+them on all of them ($2{,}208$ method-pair by criterion-pair comparisons across five domains{,} with
 nothing re-scored:
 
 \begin{center}
@@ -676,33 +676,39 @@ nothing re-scored:
 \toprule
 leaderboard & methods & comparisons & med.\ gap & med.\ move & exchanges \\
 \midrule
-docking, PoseBusters     & 7 & 123 & $0.1986$ & $0.0724$ & $7$ \\
-generation, MOSES        & 8 & 277 & $0.0094$ & $0.0001$ & $4$ \\
-metabolites, GLORYx      & 4 & 18  & $0.1303$ & $0.0361$ & $2$ \\
-retrosynthesis, seven    & 7 & 126 & $0.0130$ & $0.0016$ & $20$ \\
-retrosynthesis, three    & 3 & 18  & $0.0470$ & $0.0011$ & $0$ \\
+translation, en-de       & 19 & 1022 & $0.2881$ & $0.3498$ & $94$ \\
+translation, ja-zh       & 15 & 624  & $0.4151$ & $0.7120$ & $24$ \\
+docking, PoseBusters     & 7 & 123  & $0.1986$ & $0.0724$ & $7$ \\
+generation, MOSES        & 8 & 277  & $0.0094$ & $0.0001$ & $4$ \\
+metabolites, GLORYx      & 4 & 18   & $0.1303$ & $0.0361$ & $2$ \\
+retrosynthesis, seven    & 7 & 126  & $0.0130$ & $0.0016$ & $20$ \\
+retrosynthesis, three    & 3 & 18   & $0.0470$ & $0.0011$ & $0$ \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-The movement exceeds the larger margin in $33$ of the $562$, about one
-comparison in seventeen, and a reversal follows in every one of them and in none of the rest, which
-is the equivalence holding and is checked rather than assumed. Against the first-named margin alone
-the same comparisons flag $76$, of which
-$43$ are movements that widen a gap
-instead of closing it; that count is the price of discarding the second margin and is not a
-property of any leaderboard.
+The movement exceeds the larger margin in $151$ of the
+$2{,}208$, about one comparison in fifteen, and a reversal follows in every one of them
+and in none of the rest{,} which is the equivalence holding and is checked rather than assumed.
+Against the first-named margin alone the same comparisons flag
+$1{,}135$, of which $984$ are movements that widen a gap
+instead of closing it; that count is the price of discarding the second margin and is not a property
+of any leaderboard.
 
 The distribution across leaderboards is the finding, and it is a ratio rather than a level. The
-seven-system retrosynthesis group supplies $20$
-of the $33$ because its systems sit a hundredth apart; the three-system group, whose
-members sit three and a half times further apart while the criterion moves them just as much,
-supplies none. Generation contributes $4$
-from $277$ comparisons because its median movement is $0.0001$ and the criterion has almost no
-purchase there. Docking has the widest gaps here, a median of $0.1986$, and the largest movements,
-$0.0724$, and contributes $7$; the external
-metabolite set, with a third of those gaps and half those movements, contributes
-$2$ from $18$. Neither the gap nor the
+seven-system retrosynthesis group is the most exposed at
+$15.9\%$
+because its systems sit a hundredth apart; the three-system group, whose members sit three and a
+half times further apart while the criterion moves them just as much, exchanges nothing. Generation
+is the least exposed at
+$1.4\%$
+because its median movement is $0.0001$ and the criterion has almost no purchase there. The two
+translation tables have the widest margins here by a factor of two, a median of $0.2881$ and
+$0.4151$, and are exposed at
+$9.2\%$
+and
+$3.8\%$,
+because a change in what counts as an error moves a system further still. Neither the gap nor the
 movement decides it alone, which is why the exposed leaderboard is the one whose entries converge
 faster than the conventions separating them rather than the one whose entries are simply close.
 

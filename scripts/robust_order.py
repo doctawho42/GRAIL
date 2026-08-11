@@ -46,6 +46,7 @@ import argparse
 import csv
 import itertools
 import json
+import math
 import pathlib
 import sys
 from pathlib import Path
@@ -63,9 +64,23 @@ N_BOOT, SEED = 10000, 0
 ALPHA = 0.05
 
 
-def _boot_p(draws) -> float:
-    """Two-sided bootstrap p, floored at 1/B: a resample cannot resolve past its own resolution."""
-    return max(2 * min(float((draws >= 0).mean()), float((draws <= 0).mean())), 1.0 / N_BOOT)
+def _paired_p(d) -> float:
+    """Two-sided p for a paired mean, from the normal approximation to its sampling distribution.
+
+    Not from the bootstrap draws. A resampled tail cannot resolve past $1/B$, so a bootstrap p is
+    floored there, and Holm over a family of $m$ tests compares against $\\alpha/m$: once
+    $m > B\\alpha$ -- which is $500$ families here at $B=10^4$ -- *no* test can survive the
+    correction, and a board with many pairs would report a null that is a property of the resample
+    count and not of the data. The floor was in place when this was written and did exactly that on
+    a $1368$-test family. The intervals stay bootstrap; only the $p$ used for multiplicity is
+    analytic, and the two agree on every family small enough for the floor not to bind.
+    """
+    n = len(d)
+    se = float(np.std(d, ddof=1)) / np.sqrt(n)
+    if se == 0.0:
+        return 1.0
+    z = abs(float(np.mean(d))) / se
+    return float(math.erfc(z / np.sqrt(2.0)))
 
 
 def _code_version() -> dict:
@@ -149,7 +164,8 @@ def analyse(hits: dict, systems: list[str], cells: list, published_cell,
     # to hang the claim on. Holm is applied across the whole family and reported alongside, never
     # instead of, the uncorrected verdict -- correcting one board and not another, or redefining the
     # verdict so a count moves, would make the four rows incomparable.
-    tests = [(name, str(c), v["per_cell"][str(c)]["margin"], _boot_p(boot[(name, str(c))]))
+    tests = [(name, str(c), v["per_cell"][str(c)]["margin"],
+              _paired_p(hits[(name.split(" over ")[0], c)] - hits[(name.split(" over ")[1], c)]))
              for name, v in pairs.items() for c in cells]
     order = sorted(range(len(tests)), key=lambda i: tests[i][3])
     m, kept = len(tests), set()

@@ -68,15 +68,25 @@ def analyse_board(r: dict) -> dict:
         hi, lo = (a, b) if systems.index(a) < systems.index(b) else (b, a)
         name = f"{hi} over {lo}"
         v = r["pairs"][name]
+        # Dominance requires a strictly positive margin in every cell, so an exact tie in one cell
+        # ends it without any cell ordering the pair the other way. The inequality detects sign
+        # changes and cannot detect a tie -- the movement then equals the gap rather than exceeding
+        # it -- so the set it is checked against is the strictly reversed pairs, and tie-only
+        # failures are counted apart rather than scored as misses of a thing that did not happen.
+        reversed_strictly = any(c["margin"] < 0 for c in v["per_cell"].values())
         rows.append({"pair": name, "gap": round(gap, 4), "largest_move": round(worst, 4),
                      "cell_of_that_move": worst_cell, "flagged": worst_cell is not None,
-                     "failed_to_dominate": not v["dominates"], "contested": v["contested"]})
+                     "reversed_by_some_cell": reversed_strictly,
+                     "failed_to_dominate": not v["dominates"],
+                     "failed_on_a_tie_alone": (not v["dominates"]) and not reversed_strictly,
+                     "contested": v["contested"]})
 
-    tp = sum(x["flagged"] and x["failed_to_dominate"] for x in rows)
-    fp = sum(x["flagged"] and not x["failed_to_dominate"] for x in rows)
-    fn = sum(not x["flagged"] and x["failed_to_dominate"] for x in rows)
+    tp = sum(x["flagged"] and x["reversed_by_some_cell"] for x in rows)
+    fp = sum(x["flagged"] and not x["reversed_by_some_cell"] for x in rows)
+    fn = sum(not x["flagged"] and x["reversed_by_some_cell"] for x in rows)
     tn = len(rows) - tp - fp - fn
     return {"n_pairs": len(rows), "flagged": tp + fp, "failed": tp + fn,
+            "failed_on_a_tie_alone": sum(x["failed_on_a_tie_alone"] for x in rows),
             "flagged_and_failed": tp, "flagged_but_survived": fp,
             "failed_but_not_flagged": fn, "neither": tn,
             "sensitivity": round(tp / max(tp + fn, 1), 4),
@@ -101,6 +111,13 @@ def main() -> int:
         r = json.loads(rm.read_text())
         if "system_accuracy_by_cell" in r:
             boards[f"metabolites, {r['n_systems']} methods"] = r
+    for lp in ("en-de", "ja-zh"):
+        rw = ROOT / f"results/robust_order_wmt24_{lp}.json"
+        if rw.exists():
+            r = json.loads(rw.read_text())
+            if "system_accuracy_by_cell" in r:
+                boards[f"translation, WMT24 {lp}"] = r
+
     rp = ROOT / "results/robust_order_posebusters.json"
     if rp.exists():
         r = json.loads(rp.read_text())
@@ -114,7 +131,7 @@ def main() -> int:
                               "other cell; the outcome comes from the full grid"},
            "per_leaderboard": {}}
     tot = {"n_pairs": 0, "flagged": 0, "failed": 0, "flagged_and_failed": 0,
-           "flagged_but_survived": 0, "failed_but_not_flagged": 0}
+           "flagged_but_survived": 0, "failed_but_not_flagged": 0, "failed_on_a_tie_alone": 0}
     for name, r in boards.items():
         v = analyse_board(r)
         rep["per_leaderboard"][name] = v

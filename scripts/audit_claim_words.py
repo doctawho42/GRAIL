@@ -52,7 +52,11 @@ DEFINITION_MARKERS = ["Two words are used throughout", "A difference is \\emph{s
                       # the appendix that enumerates the word has to name it to introduce itself;
                       # keyed on its label rather than its wording, so an edit cannot silently
                       # widen the exemption to a neighbouring sentence
-                      "\\label{app:claimwords}"]
+                      "\\label{app:claimwords}",
+                      # the summary table has a column headed "certified" and a caption that says
+                      # what it counts; the family is per board, sits in each board's artifact, and
+                      # is held there by verify_paper_numbers rather than restated in the caption
+                      "contested (certified) & unresolved & tiers"]
 
 
 def sentences(text: str):

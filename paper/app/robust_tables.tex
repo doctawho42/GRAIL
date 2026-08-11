@@ -19,6 +19,14 @@ metabolites, 3 methods & criteria only, at the published budget & 4 & 3 of 3 & 3
  & budgets only, at the published criterion & 4 & 2 of 3 & 2 & 2 \\
  & the product & 16 & 2 of 3 & 2 & 2 \\
 \midrule
+translation, WMT24 en-de, 19 systems & criteria only, unfloored & 4 & 141 of 171 & 11 & 4 \\
+ & the floor only, at the published criterion & 2 & 159 of 171 & 15 & 2 \\
+ & the product & 8 & 135 of 171 & 11 & 6 \\
+\midrule
+translation, WMT24 ja-zh, 15 systems & criteria only, unfloored & 4 & 97 of 105 & 9 & 3 \\
+ & the floor only, at the published criterion & 2 & 102 of 105 & 12 & 2 \\
+ & the product & 8 & 97 of 105 & 9 & 5 \\
+\midrule
 docking, 7 programs & criteria only, at the published post-processing & 4 & 18 of 21 & 5 & 3 \\
  & post-processing only, at the published criterion & 2 & 18 of 21 & 5 & 2 \\
  & the product & 8 & 17 of 21 & 4 & 5 \\
@@ -147,6 +155,352 @@ pair (as the published cell orders it) & verdict & sep.\ every cell & cells reve
 MetaPredictor over GRAIL & dominates & yes & 0 & 0 & yes \\
 SyGMa over GRAIL & dominates & yes & 0 & 0 & yes \\
 MetaPredictor over SyGMa & contested & no & 4 & 2 & no \\
+\bottomrule\end{tabular}\end{center}
+
+\paragraph{translation, WMT24 en-de, 19 systems.} Published order at ('wmt', 'none'): Dubformer $>$ GPT-4 $>$ Unbabel-Tower70B $>$ TranssionMT $>$ ONLINE-B $>$ refB $>$ Mistral-Large $>$ CommandR-plus $>$ refA $>$ Gemini-1.5-Pro $>$ ONLINE-W $>$ Claude-3.5 $>$ IOL-Research $>$ Aya23 $>$ ONLINE-A $>$ Llama3-70B $>$ IKUN $>$ IKUN-C $>$ MSLC. 486 items. Accuracy by system and cell, from which every quantity below follows:
+
+\begin{center}\small
+\begin{tabular}{lcccccccc}
+\toprule
+system & wmt / none & wmt / clipped & plain / none & plain / clipped & major-only / none & major-only / clipped & count / none & count / clipped \\
+\midrule
+Dubformer & -1.584 & -1.583 & -2.432 & -2.346 & -0.292 & -0.292 & -1.263 & -1.261 \\
+GPT-4 & -1.587 & -1.587 & -2.368 & -2.294 & -0.261 & -0.261 & -1.323 & -1.323 \\
+Unbabel-Tower70B & -1.649 & -1.625 & -2.249 & -2.066 & -0.292 & -0.292 & -1.080 & -1.080 \\
+TranssionMT & -1.813 & -1.813 & -2.397 & -2.286 & -0.327 & -0.327 & -1.089 & -1.089 \\
+ONLINE-B & -1.817 & -1.807 & -2.360 & -2.243 & -0.315 & -0.315 & -1.101 & -1.101 \\
+refB & -1.847 & -1.749 & -2.510 & -2.243 & -0.333 & -0.333 & -1.177 & -1.163 \\
+Mistral-Large & -1.930 & -1.930 & -2.584 & -2.523 & -0.333 & -0.333 & -1.251 & -1.251 \\
+CommandR-plus & -2.010 & -1.990 & -2.716 & -2.578 & -0.346 & -0.346 & -1.333 & -1.333 \\
+refA & -2.121 & -1.997 & -2.753 & -2.545 & -0.377 & -0.377 & -1.247 & -1.232 \\
+Gemini-1.5-Pro & -2.204 & -1.834 & -2.296 & -2.216 & -0.307 & -0.307 & -1.070 & -1.070 \\
+ONLINE-W & -2.224 & -2.193 & -2.934 & -2.796 & -0.372 & -0.372 & -1.444 & -1.444 \\
+Claude-3.5 & -2.281 & -1.812 & -2.763 & -2.401 & -0.354 & -0.354 & -1.348 & -1.348 \\
+IOL-Research & -2.392 & -2.351 & -3.136 & -2.965 & -0.401 & -0.401 & -1.531 & -1.531 \\
+Aya23 & -3.095 & -3.080 & -3.753 & -3.646 & -0.533 & -0.533 & -1.621 & -1.621 \\
+ONLINE-A & -3.304 & -3.273 & -4.078 & -3.922 & -0.568 & -0.568 & -1.807 & -1.807 \\
+Llama3-70B & -3.630 & -3.501 & -4.496 & -4.189 & -0.636 & -0.636 & -1.953 & -1.940 \\
+IKUN & -3.869 & -3.706 & -4.576 & -4.232 & -0.677 & -0.677 & -1.868 & -1.868 \\
+IKUN-C & -5.082 & -4.897 & -5.590 & -5.288 & -0.872 & -0.872 & -2.101 & -2.101 \\
+MSLC & -13.483 & -10.940 & -13.412 & -10.726 & -2.442 & -2.442 & -3.642 & -3.634 \\
+\bottomrule\end{tabular}\end{center}
+
+Per-pair classification. A pair is \emph{contested} only when some cell puts it the other way round with an interval excluding zero; a pair that is neither dominating nor contested is one the benchmark does not resolve, which is a different failure and is not counted as a reversal.
+
+\begin{center}\small
+\begin{tabular}{llccccl}
+\toprule
+pair (as the published cell orders it) & verdict & sep.\ every cell & cells reversing & with an interval & own cell resolves \\
+\midrule
+Claude-3.5 over Aya23 & dominates & yes & 0 & 0 & yes \\
+CommandR-plus over Aya23 & dominates & yes & 0 & 0 & yes \\
+Dubformer over Aya23 & dominates & yes & 0 & 0 & yes \\
+GPT-4 over Aya23 & dominates & yes & 0 & 0 & yes \\
+Gemini-1.5-Pro over Aya23 & dominates & yes & 0 & 0 & yes \\
+Aya23 over IKUN & dominates & yes & 0 & 0 & yes \\
+Aya23 over IKUN-C & dominates & yes & 0 & 0 & yes \\
+IOL-Research over Aya23 & dominates & no & 0 & 0 & yes \\
+Aya23 over Llama3-70B & dominates & no & 0 & 0 & yes \\
+Aya23 over MSLC & dominates & yes & 0 & 0 & yes \\
+Mistral-Large over Aya23 & dominates & yes & 0 & 0 & yes \\
+Aya23 over ONLINE-A & dominates & no & 0 & 0 & no \\
+ONLINE-B over Aya23 & dominates & yes & 0 & 0 & yes \\
+ONLINE-W over Aya23 & dominates & yes & 0 & 0 & yes \\
+TranssionMT over Aya23 & dominates & yes & 0 & 0 & yes \\
+Unbabel-Tower70B over Aya23 & dominates & yes & 0 & 0 & yes \\
+refA over Aya23 & dominates & yes & 0 & 0 & yes \\
+refB over Aya23 & dominates & yes & 0 & 0 & yes \\
+CommandR-plus over Claude-3.5 & unresolved & no & 2 & 0 & no \\
+Dubformer over Claude-3.5 & dominates & no & 0 & 0 & yes \\
+GPT-4 over Claude-3.5 & dominates & no & 0 & 0 & yes \\
+Gemini-1.5-Pro over Claude-3.5 & unresolved & no & 1 & 0 & no \\
+Claude-3.5 over IKUN & dominates & yes & 0 & 0 & yes \\
+Claude-3.5 over IKUN-C & dominates & yes & 0 & 0 & yes \\
+Claude-3.5 over IOL-Research & dominates & no & 0 & 0 & no \\
+Claude-3.5 over Llama3-70B & dominates & yes & 0 & 0 & yes \\
+Claude-3.5 over MSLC & dominates & yes & 0 & 0 & yes \\
+Mistral-Large over Claude-3.5 & unresolved & no & 2 & 0 & no \\
+Claude-3.5 over ONLINE-A & dominates & yes & 0 & 0 & yes \\
+ONLINE-B over Claude-3.5 & dominates & no & 0 & 0 & no \\
+ONLINE-W over Claude-3.5 & contested & no & 7 & 2 & no \\
+TranssionMT over Claude-3.5 & unresolved & no & 1 & 0 & no \\
+Unbabel-Tower70B over Claude-3.5 & dominates & no & 0 & 0 & yes \\
+refA over Claude-3.5 & unresolved & no & 4 & 0 & no \\
+refB over Claude-3.5 & dominates & no & 0 & 0 & no \\
+Dubformer over CommandR-plus & dominates & no & 0 & 0 & yes \\
+GPT-4 over CommandR-plus & dominates & no & 0 & 0 & yes \\
+CommandR-plus over Gemini-1.5-Pro & contested & no & 7 & 2 & no \\
+CommandR-plus over IKUN & dominates & yes & 0 & 0 & yes \\
+CommandR-plus over IKUN-C & dominates & yes & 0 & 0 & yes \\
+CommandR-plus over IOL-Research & dominates & no & 0 & 0 & yes \\
+CommandR-plus over Llama3-70B & dominates & yes & 0 & 0 & yes \\
+CommandR-plus over MSLC & dominates & yes & 0 & 0 & yes \\
+Mistral-Large over CommandR-plus & dominates & no & 0 & 0 & no \\
+CommandR-plus over ONLINE-A & dominates & yes & 0 & 0 & yes \\
+ONLINE-B over CommandR-plus & dominates & no & 0 & 0 & no \\
+CommandR-plus over ONLINE-W & dominates & no & 0 & 0 & no \\
+TranssionMT over CommandR-plus & dominates & no & 0 & 0 & no \\
+Unbabel-Tower70B over CommandR-plus & dominates & no & 0 & 0 & yes \\
+CommandR-plus over refA & unresolved & no & 3 & 0 & no \\
+refB over CommandR-plus & dominates & no & 0 & 0 & no \\
+Dubformer over GPT-4 & unresolved & no & 4 & 0 & no \\
+Dubformer over Gemini-1.5-Pro & contested & no & 4 & 2 & no \\
+Dubformer over IKUN & dominates & yes & 0 & 0 & yes \\
+Dubformer over IKUN-C & dominates & yes & 0 & 0 & yes \\
+Dubformer over IOL-Research & dominates & yes & 0 & 0 & yes \\
+Dubformer over Llama3-70B & dominates & yes & 0 & 0 & yes \\
+Dubformer over MSLC & dominates & yes & 0 & 0 & yes \\
+Dubformer over Mistral-Large & unresolved & no & 2 & 0 & no \\
+Dubformer over ONLINE-A & dominates & yes & 0 & 0 & yes \\
+Dubformer over ONLINE-B & contested & no & 4 & 2 & no \\
+Dubformer over ONLINE-W & dominates & yes & 0 & 0 & yes \\
+Dubformer over TranssionMT & contested & no & 4 & 2 & no \\
+Dubformer over Unbabel-Tower70B & contested & no & 6 & 2 & no \\
+Dubformer over refA & unresolved & no & 2 & 0 & yes \\
+Dubformer over refB & unresolved & no & 3 & 0 & no \\
+GPT-4 over Gemini-1.5-Pro & contested & no & 4 & 2 & yes \\
+GPT-4 over IKUN & dominates & yes & 0 & 0 & yes \\
+GPT-4 over IKUN-C & dominates & yes & 0 & 0 & yes \\
+GPT-4 over IOL-Research & dominates & yes & 0 & 0 & yes \\
+GPT-4 over Llama3-70B & dominates & yes & 0 & 0 & yes \\
+GPT-4 over MSLC & dominates & yes & 0 & 0 & yes \\
+GPT-4 over Mistral-Large & unresolved & no & 2 & 0 & yes \\
+GPT-4 over ONLINE-A & dominates & yes & 0 & 0 & yes \\
+GPT-4 over ONLINE-B & contested & no & 4 & 2 & no \\
+GPT-4 over ONLINE-W & dominates & no & 0 & 0 & yes \\
+GPT-4 over TranssionMT & contested & no & 3 & 2 & no \\
+GPT-4 over Unbabel-Tower70B & contested & no & 4 & 2 & no \\
+GPT-4 over refA & unresolved & no & 2 & 0 & yes \\
+GPT-4 over refB & contested & no & 3 & 1 & no \\
+Gemini-1.5-Pro over IKUN & dominates & yes & 0 & 0 & yes \\
+Gemini-1.5-Pro over IKUN-C & dominates & yes & 0 & 0 & yes \\
+Gemini-1.5-Pro over IOL-Research & dominates & no & 0 & 0 & no \\
+Gemini-1.5-Pro over Llama3-70B & dominates & yes & 0 & 0 & yes \\
+Gemini-1.5-Pro over MSLC & dominates & yes & 0 & 0 & yes \\
+Mistral-Large over Gemini-1.5-Pro & contested & no & 7 & 2 & no \\
+Gemini-1.5-Pro over ONLINE-A & dominates & yes & 0 & 0 & yes \\
+ONLINE-B over Gemini-1.5-Pro & unresolved & no & 6 & 0 & no \\
+Gemini-1.5-Pro over ONLINE-W & dominates & no & 0 & 0 & no \\
+TranssionMT over Gemini-1.5-Pro & unresolved & no & 6 & 0 & no \\
+Unbabel-Tower70B over Gemini-1.5-Pro & unresolved & no & 2 & 0 & no \\
+refA over Gemini-1.5-Pro & contested & no & 7 & 2 & no \\
+refB over Gemini-1.5-Pro & unresolved & no & 6 & 0 & no \\
+IKUN over IKUN-C & dominates & yes & 0 & 0 & yes \\
+IOL-Research over IKUN & dominates & yes & 0 & 0 & yes \\
+Llama3-70B over IKUN & unresolved & no & 2 & 0 & no \\
+IKUN over MSLC & dominates & yes & 0 & 0 & yes \\
+Mistral-Large over IKUN & dominates & yes & 0 & 0 & yes \\
+ONLINE-A over IKUN & dominates & no & 0 & 0 & yes \\
+ONLINE-B over IKUN & dominates & yes & 0 & 0 & yes \\
+ONLINE-W over IKUN & dominates & yes & 0 & 0 & yes \\
+TranssionMT over IKUN & dominates & yes & 0 & 0 & yes \\
+Unbabel-Tower70B over IKUN & dominates & yes & 0 & 0 & yes \\
+refA over IKUN & dominates & yes & 0 & 0 & yes \\
+refB over IKUN & dominates & yes & 0 & 0 & yes \\
+IOL-Research over IKUN-C & dominates & yes & 0 & 0 & yes \\
+Llama3-70B over IKUN-C & dominates & no & 0 & 0 & yes \\
+IKUN-C over MSLC & dominates & yes & 0 & 0 & yes \\
+Mistral-Large over IKUN-C & dominates & yes & 0 & 0 & yes \\
+ONLINE-A over IKUN-C & dominates & yes & 0 & 0 & yes \\
+ONLINE-B over IKUN-C & dominates & yes & 0 & 0 & yes \\
+ONLINE-W over IKUN-C & dominates & yes & 0 & 0 & yes \\
+TranssionMT over IKUN-C & dominates & yes & 0 & 0 & yes \\
+Unbabel-Tower70B over IKUN-C & dominates & yes & 0 & 0 & yes \\
+refA over IKUN-C & dominates & yes & 0 & 0 & yes \\
+refB over IKUN-C & dominates & yes & 0 & 0 & yes \\
+IOL-Research over Llama3-70B & dominates & yes & 0 & 0 & yes \\
+IOL-Research over MSLC & dominates & yes & 0 & 0 & yes \\
+Mistral-Large over IOL-Research & dominates & no & 0 & 0 & yes \\
+IOL-Research over ONLINE-A & dominates & yes & 0 & 0 & yes \\
+ONLINE-B over IOL-Research & dominates & no & 0 & 0 & yes \\
+ONLINE-W over IOL-Research & dominates & no & 0 & 0 & no \\
+TranssionMT over IOL-Research & dominates & no & 0 & 0 & yes \\
+Unbabel-Tower70B over IOL-Research & dominates & yes & 0 & 0 & yes \\
+refA over IOL-Research & dominates & no & 0 & 0 & no \\
+refB over IOL-Research & dominates & no & 0 & 0 & yes \\
+Llama3-70B over MSLC & dominates & yes & 0 & 0 & yes \\
+Mistral-Large over Llama3-70B & dominates & yes & 0 & 0 & yes \\
+ONLINE-A over Llama3-70B & dominates & no & 0 & 0 & no \\
+ONLINE-B over Llama3-70B & dominates & yes & 0 & 0 & yes \\
+ONLINE-W over Llama3-70B & dominates & yes & 0 & 0 & yes \\
+TranssionMT over Llama3-70B & dominates & yes & 0 & 0 & yes \\
+Unbabel-Tower70B over Llama3-70B & dominates & yes & 0 & 0 & yes \\
+refA over Llama3-70B & dominates & yes & 0 & 0 & yes \\
+refB over Llama3-70B & dominates & yes & 0 & 0 & yes \\
+Mistral-Large over MSLC & dominates & yes & 0 & 0 & yes \\
+ONLINE-A over MSLC & dominates & yes & 0 & 0 & yes \\
+ONLINE-B over MSLC & dominates & yes & 0 & 0 & yes \\
+ONLINE-W over MSLC & dominates & yes & 0 & 0 & yes \\
+TranssionMT over MSLC & dominates & yes & 0 & 0 & yes \\
+Unbabel-Tower70B over MSLC & dominates & yes & 0 & 0 & yes \\
+refA over MSLC & dominates & yes & 0 & 0 & yes \\
+refB over MSLC & dominates & yes & 0 & 0 & yes \\
+Mistral-Large over ONLINE-A & dominates & yes & 0 & 0 & yes \\
+ONLINE-B over Mistral-Large & dominates & no & 0 & 0 & no \\
+Mistral-Large over ONLINE-W & dominates & no & 0 & 0 & no \\
+TranssionMT over Mistral-Large & dominates & no & 0 & 0 & no \\
+Unbabel-Tower70B over Mistral-Large & dominates & no & 0 & 0 & no \\
+Mistral-Large over refA & unresolved & no & 2 & 0 & no \\
+refB over Mistral-Large & unresolved & no & 2 & 0 & no \\
+ONLINE-B over ONLINE-A & dominates & yes & 0 & 0 & yes \\
+ONLINE-W over ONLINE-A & dominates & yes & 0 & 0 & yes \\
+TranssionMT over ONLINE-A & dominates & yes & 0 & 0 & yes \\
+Unbabel-Tower70B over ONLINE-A & dominates & yes & 0 & 0 & yes \\
+refA over ONLINE-A & dominates & yes & 0 & 0 & yes \\
+refB over ONLINE-A & dominates & yes & 0 & 0 & yes \\
+ONLINE-B over ONLINE-W & dominates & no & 0 & 0 & yes \\
+TranssionMT over ONLINE-B & unresolved & no & 5 & 0 & no \\
+Unbabel-Tower70B over ONLINE-B & dominates & no & 0 & 0 & no \\
+ONLINE-B over refA & dominates & no & 0 & 0 & no \\
+ONLINE-B over refB & unresolved & no & 2 & 0 & no \\
+TranssionMT over ONLINE-W & dominates & no & 0 & 0 & yes \\
+Unbabel-Tower70B over ONLINE-W & dominates & yes & 0 & 0 & yes \\
+refA over ONLINE-W & unresolved & no & 2 & 0 & no \\
+refB over ONLINE-W & dominates & no & 0 & 0 & no \\
+Unbabel-Tower70B over TranssionMT & dominates & no & 0 & 0 & no \\
+TranssionMT over refA & dominates & no & 0 & 0 & no \\
+TranssionMT over refB & unresolved & no & 2 & 0 & no \\
+Unbabel-Tower70B over refA & dominates & no & 0 & 0 & yes \\
+Unbabel-Tower70B over refB & dominates & no & 0 & 0 & no \\
+refB over refA & dominates & no & 0 & 0 & no \\
+\bottomrule\end{tabular}\end{center}
+
+\paragraph{translation, WMT24 ja-zh, 15 systems.} Published order at ('wmt', 'none'): Claude-3.5 $>$ refA $>$ GPT-4 $>$ DLUT-GTCOM $>$ Unbabel-Tower70B $>$ Gemini-1.5-Pro $>$ CommandR-plus $>$ IOL-Research $>$ Aya23 $>$ Llama3-70B $>$ Team-J $>$ NTTSU $>$ ONLINE-B $>$ IKUN-C $>$ MSLC. 559 items. Accuracy by system and cell, from which every quantity below follows:
+
+\begin{center}\small
+\begin{tabular}{lcccccccc}
+\toprule
+system & wmt / none & wmt / clipped & plain / none & plain / clipped & major-only / none & major-only / clipped & count / none & count / clipped \\
+\midrule
+Claude-3.5 & -1.224 & -1.188 & -1.234 & -1.195 & -0.163 & -0.163 & -0.583 & -0.583 \\
+refA & -1.325 & -1.307 & -1.300 & -1.290 & -0.179 & -0.179 & -0.585 & -0.585 \\
+GPT-4 & -1.456 & -1.456 & -1.487 & -1.487 & -0.190 & -0.190 & -0.728 & -0.728 \\
+DLUT-GTCOM & -1.519 & -1.449 & -1.531 & -1.506 & -0.216 & -0.216 & -0.665 & -0.665 \\
+Unbabel-Tower70B & -1.695 & -1.673 & -1.734 & -1.714 & -0.240 & -0.240 & -0.775 & -0.775 \\
+Gemini-1.5-Pro & -1.780 & -1.601 & -1.512 & -1.479 & -0.207 & -0.207 & -0.682 & -0.682 \\
+CommandR-plus & -1.916 & -1.826 & -1.978 & -1.887 & -0.286 & -0.286 & -0.834 & -0.834 \\
+IOL-Research & -2.108 & -1.999 & -1.978 & -1.884 & -0.286 & -0.286 & -0.834 & -0.834 \\
+Aya23 & -3.039 & -2.889 & -2.817 & -2.750 & -0.413 & -0.413 & -1.165 & -1.165 \\
+Llama3-70B & -3.072 & -2.954 & -2.798 & -2.746 & -0.404 & -0.404 & -1.181 & -1.181 \\
+Team-J & -3.919 & -3.744 & -3.537 & -3.433 & -0.585 & -0.585 & -1.197 & -1.197 \\
+NTTSU & -4.348 & -3.505 & -3.374 & -3.268 & -0.531 & -0.531 & -1.249 & -1.249 \\
+ONLINE-B & -5.283 & -4.784 & -4.798 & -4.528 & -0.798 & -0.798 & -1.606 & -1.606 \\
+IKUN-C & -6.610 & -5.944 & -4.934 & -4.766 & -0.889 & -0.889 & -1.377 & -1.377 \\
+MSLC & -9.206 & -7.226 & -6.676 & -6.379 & -1.166 & -1.166 & -2.011 & -2.011 \\
+\bottomrule\end{tabular}\end{center}
+
+Per-pair classification. A pair is \emph{contested} only when some cell puts it the other way round with an interval excluding zero; a pair that is neither dominating nor contested is one the benchmark does not resolve, which is a different failure and is not counted as a reversal.
+
+\begin{center}\small
+\begin{tabular}{llccccl}
+\toprule
+pair (as the published cell orders it) & verdict & sep.\ every cell & cells reversing & with an interval & own cell resolves \\
+\midrule
+Claude-3.5 over Aya23 & dominates & yes & 0 & 0 & yes \\
+CommandR-plus over Aya23 & dominates & yes & 0 & 0 & yes \\
+DLUT-GTCOM over Aya23 & dominates & yes & 0 & 0 & yes \\
+GPT-4 over Aya23 & dominates & yes & 0 & 0 & yes \\
+Gemini-1.5-Pro over Aya23 & dominates & yes & 0 & 0 & yes \\
+Aya23 over IKUN-C & dominates & yes & 0 & 0 & yes \\
+IOL-Research over Aya23 & dominates & yes & 0 & 0 & yes \\
+Aya23 over Llama3-70B & unresolved & no & 4 & 0 & no \\
+Aya23 over MSLC & dominates & yes & 0 & 0 & yes \\
+Aya23 over NTTSU & dominates & no & 0 & 0 & yes \\
+Aya23 over ONLINE-B & dominates & yes & 0 & 0 & yes \\
+Aya23 over Team-J & dominates & no & 0 & 0 & yes \\
+Unbabel-Tower70B over Aya23 & dominates & yes & 0 & 0 & yes \\
+refA over Aya23 & dominates & yes & 0 & 0 & yes \\
+Claude-3.5 over CommandR-plus & dominates & yes & 0 & 0 & yes \\
+Claude-3.5 over DLUT-GTCOM & dominates & no & 0 & 0 & no \\
+Claude-3.5 over GPT-4 & dominates & no & 0 & 0 & no \\
+Claude-3.5 over Gemini-1.5-Pro & dominates & no & 0 & 0 & yes \\
+Claude-3.5 over IKUN-C & dominates & yes & 0 & 0 & yes \\
+Claude-3.5 over IOL-Research & dominates & yes & 0 & 0 & yes \\
+Claude-3.5 over Llama3-70B & dominates & yes & 0 & 0 & yes \\
+Claude-3.5 over MSLC & dominates & yes & 0 & 0 & yes \\
+Claude-3.5 over NTTSU & dominates & yes & 0 & 0 & yes \\
+Claude-3.5 over ONLINE-B & dominates & yes & 0 & 0 & yes \\
+Claude-3.5 over Team-J & dominates & yes & 0 & 0 & yes \\
+Claude-3.5 over Unbabel-Tower70B & dominates & yes & 0 & 0 & yes \\
+Claude-3.5 over refA & dominates & no & 0 & 0 & no \\
+DLUT-GTCOM over CommandR-plus & dominates & yes & 0 & 0 & yes \\
+GPT-4 over CommandR-plus & dominates & yes & 0 & 0 & yes \\
+Gemini-1.5-Pro over CommandR-plus & dominates & no & 0 & 0 & no \\
+CommandR-plus over IKUN-C & dominates & yes & 0 & 0 & yes \\
+CommandR-plus over IOL-Research & unresolved & no & 6 & 0 & no \\
+CommandR-plus over Llama3-70B & dominates & yes & 0 & 0 & yes \\
+CommandR-plus over MSLC & dominates & yes & 0 & 0 & yes \\
+CommandR-plus over NTTSU & dominates & yes & 0 & 0 & yes \\
+CommandR-plus over ONLINE-B & dominates & yes & 0 & 0 & yes \\
+CommandR-plus over Team-J & dominates & yes & 0 & 0 & yes \\
+Unbabel-Tower70B over CommandR-plus & dominates & no & 0 & 0 & no \\
+refA over CommandR-plus & dominates & yes & 0 & 0 & yes \\
+GPT-4 over DLUT-GTCOM & unresolved & no & 3 & 0 & no \\
+DLUT-GTCOM over Gemini-1.5-Pro & unresolved & no & 4 & 0 & no \\
+DLUT-GTCOM over IKUN-C & dominates & yes & 0 & 0 & yes \\
+DLUT-GTCOM over IOL-Research & dominates & yes & 0 & 0 & yes \\
+DLUT-GTCOM over Llama3-70B & dominates & yes & 0 & 0 & yes \\
+DLUT-GTCOM over MSLC & dominates & yes & 0 & 0 & yes \\
+DLUT-GTCOM over NTTSU & dominates & yes & 0 & 0 & yes \\
+DLUT-GTCOM over ONLINE-B & dominates & yes & 0 & 0 & yes \\
+DLUT-GTCOM over Team-J & dominates & yes & 0 & 0 & yes \\
+DLUT-GTCOM over Unbabel-Tower70B & dominates & no & 0 & 0 & no \\
+refA over DLUT-GTCOM & dominates & no & 0 & 0 & no \\
+GPT-4 over Gemini-1.5-Pro & unresolved & no & 3 & 0 & no \\
+GPT-4 over IKUN-C & dominates & yes & 0 & 0 & yes \\
+GPT-4 over IOL-Research & dominates & yes & 0 & 0 & yes \\
+GPT-4 over Llama3-70B & dominates & yes & 0 & 0 & yes \\
+GPT-4 over MSLC & dominates & yes & 0 & 0 & yes \\
+GPT-4 over NTTSU & dominates & yes & 0 & 0 & yes \\
+GPT-4 over ONLINE-B & dominates & yes & 0 & 0 & yes \\
+GPT-4 over Team-J & dominates & yes & 0 & 0 & yes \\
+GPT-4 over Unbabel-Tower70B & dominates & no & 0 & 0 & no \\
+refA over GPT-4 & dominates & no & 0 & 0 & no \\
+Gemini-1.5-Pro over IKUN-C & dominates & yes & 0 & 0 & yes \\
+Gemini-1.5-Pro over IOL-Research & dominates & no & 0 & 0 & no \\
+Gemini-1.5-Pro over Llama3-70B & dominates & yes & 0 & 0 & yes \\
+Gemini-1.5-Pro over MSLC & dominates & yes & 0 & 0 & yes \\
+Gemini-1.5-Pro over NTTSU & dominates & yes & 0 & 0 & yes \\
+Gemini-1.5-Pro over ONLINE-B & dominates & yes & 0 & 0 & yes \\
+Gemini-1.5-Pro over Team-J & dominates & yes & 0 & 0 & yes \\
+Unbabel-Tower70B over Gemini-1.5-Pro & unresolved & no & 7 & 0 & no \\
+refA over Gemini-1.5-Pro & dominates & no & 0 & 0 & yes \\
+IOL-Research over IKUN-C & dominates & yes & 0 & 0 & yes \\
+Llama3-70B over IKUN-C & dominates & yes & 0 & 0 & yes \\
+IKUN-C over MSLC & dominates & yes & 0 & 0 & yes \\
+NTTSU over IKUN-C & dominates & no & 0 & 0 & yes \\
+ONLINE-B over IKUN-C & contested & no & 2 & 2 & yes \\
+Team-J over IKUN-C & dominates & yes & 0 & 0 & yes \\
+Unbabel-Tower70B over IKUN-C & dominates & yes & 0 & 0 & yes \\
+refA over IKUN-C & dominates & yes & 0 & 0 & yes \\
+IOL-Research over Llama3-70B & dominates & yes & 0 & 0 & yes \\
+IOL-Research over MSLC & dominates & yes & 0 & 0 & yes \\
+IOL-Research over NTTSU & dominates & yes & 0 & 0 & yes \\
+IOL-Research over ONLINE-B & dominates & yes & 0 & 0 & yes \\
+IOL-Research over Team-J & dominates & yes & 0 & 0 & yes \\
+Unbabel-Tower70B over IOL-Research & dominates & no & 0 & 0 & yes \\
+refA over IOL-Research & dominates & yes & 0 & 0 & yes \\
+Llama3-70B over MSLC & dominates & yes & 0 & 0 & yes \\
+Llama3-70B over NTTSU & dominates & no & 0 & 0 & yes \\
+Llama3-70B over ONLINE-B & dominates & yes & 0 & 0 & yes \\
+Llama3-70B over Team-J & dominates & no & 0 & 0 & yes \\
+Unbabel-Tower70B over Llama3-70B & dominates & yes & 0 & 0 & yes \\
+refA over Llama3-70B & dominates & yes & 0 & 0 & yes \\
+NTTSU over MSLC & dominates & yes & 0 & 0 & yes \\
+ONLINE-B over MSLC & dominates & yes & 0 & 0 & yes \\
+Team-J over MSLC & dominates & yes & 0 & 0 & yes \\
+Unbabel-Tower70B over MSLC & dominates & yes & 0 & 0 & yes \\
+refA over MSLC & dominates & yes & 0 & 0 & yes \\
+NTTSU over ONLINE-B & dominates & no & 0 & 0 & no \\
+Team-J over NTTSU & unresolved & no & 5 & 0 & no \\
+Unbabel-Tower70B over NTTSU & dominates & yes & 0 & 0 & yes \\
+refA over NTTSU & dominates & yes & 0 & 0 & yes \\
+Team-J over ONLINE-B & dominates & yes & 0 & 0 & yes \\
+Unbabel-Tower70B over ONLINE-B & dominates & yes & 0 & 0 & yes \\
+refA over ONLINE-B & dominates & yes & 0 & 0 & yes \\
+Unbabel-Tower70B over Team-J & dominates & yes & 0 & 0 & yes \\
+refA over Team-J & dominates & yes & 0 & 0 & yes \\
+refA over Unbabel-Tower70B & dominates & yes & 0 & 0 & yes \\
 \bottomrule\end{tabular}\end{center}
 
 \paragraph{docking, 7 programs.} Published order at ('rmsd2+valid', 'none'): vina $>$ gold $>$ diffdock $>$ deepdock $>$ tankbind $>$ unimol $>$ equibind. 428 items. Accuracy by system and cell, from which every quantity below follows:

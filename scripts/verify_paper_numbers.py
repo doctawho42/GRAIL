@@ -391,22 +391,22 @@ def main() -> int:
         P = json.loads(pk.read_text())
         flat = re.sub(r"\s+", " ", whole)
         t = P["totals"]
-        m = re.search(r"\$(\d+)\$ method-pair by criterion-pair comparisons across four domains", flat)
-        check("packing, comparisons", m and m.group(1), t["comparisons"])
-        m = re.search(r"exceeds the larger margin in \$(\d+)\$ of the \$(\d+)\$", flat)
+        m = re.search(r"\$([\d,{}]+)\$ method-pair by criterion-pair comparisons across five domains", flat)
+        check("packing, comparisons", m and m.group(1).replace("{,}", ""), t["comparisons"])
+        m = re.search(r"exceeds the larger margin in \$(\d+)\$ of the \$([\d,{}]+)\$", flat)
         check("packing, move exceeds the larger margin", m and m.group(1),
               t["closer_than_the_move"])
-        check("packing, denominator", m and m.group(2), t["comparisons"])
+        check("packing, denominator", m and m.group(2).replace("{,}", ""), t["comparisons"])
         # the equivalence is the claim, so the gate refuses a sentence that leaves either
         # side of it unstated: every flagged comparison exchanges and every exchange is flagged
         checks.append((t["closer_than_the_move"] == t["exchanged"],
                        "the condition and the exchange are the same set",
                        str(t["exchanged"]), str(t["closer_than_the_move"]),
                        str(pk.relative_to(ROOT))))
-        m = re.search(r"flag \$(\d+)\$, of which \$(\d+)\$ are movements that widen", flat)
-        check("packing, one-sided flags", m and m.group(1),
+        m = re.search(r"flag \$([\d,{}]+)\$, of which \$([\d,{}]+)\$ are movements that widen", flat)
+        check("packing, one-sided flags", m and m.group(1).replace("{,}", ""),
               P["screening_test"]["one_sided_for_comparison"]["flagged"])
-        check("packing, one-sided false alarms", m and m.group(2),
+        check("packing, one-sided false alarms", m and m.group(2).replace("{,}", ""),
               P["screening_test"]["one_sided_for_comparison"]["not_exchanged_and_flagged"])
         NAMES = {"generation, MOSES": "molecular generation, MOSES",
                  "metabolites, GLORYx": "metabolites, external GLORYx",
@@ -1028,8 +1028,8 @@ def main() -> int:
     if ro2.exists():
         R2 = json.loads(ro2.read_text())["leaderboards"]
         flat = re.sub(r"\s+", " ", whole)
-        mt = re.search(r"a table of seven places supports \$(\d+)\$\s*tiers, resampling to "
-                       r"\$\[(\d+),(\d+)\]\$, one of three supports \$(\d+)\$", flat)
+        mt = re.search(r"seven published places support \$(\d+)\$ tiers, resampling to "
+                       r"\$\[(\d+),(\d+)\]\$; nineteen support \$(\d+)\$", flat)
         checks.append((bool(mt), "the tier sentence parses", "present",
                        "matched" if mt else "not matched", ""))
         if mt:
@@ -1037,7 +1037,9 @@ def main() -> int:
             check("tiers, seven-system", mt.group(1), R2["cluster0"]["tiers_distinguished"], src)
             check("tiers, seven-system lower", mt.group(2), R2["cluster0"]["tiers_ci95"][0], src)
             check("tiers, seven-system upper", mt.group(3), R2["cluster0"]["tiers_ci95"][1], src)
-            check("tiers, three-system", mt.group(4), R2["cluster1"]["tiers_distinguished"], src)
+            RW = json.loads((ROOT / "results/robust_order_wmt24_en-de.json").read_text())
+            check("tiers, nineteen-system", mt.group(4), RW["tiers_distinguished"],
+                  "results/robust_order_wmt24_en-de.json")
             checks.append((R2["cluster0"]["tiers_distinguished"] < R2["cluster0"]["n_systems"],
                            "the seven-system table supports fewer tiers than places",
                            "fewer", f"{R2['cluster0']['tiers_distinguished']} of "
@@ -1183,7 +1185,7 @@ def main() -> int:
         flat = re.sub(r"\s+", " ", whole)
         # the body summarises the spread and the appendix enumerates it; the gate holds the
         # enumeration, because that is where the per-board numbers are actually asserted
-        mdi = re.search(r"the five tables here run from \$(\d+)\\%\$ flagged to \$([\d.]+)\\%\$", flat)
+        mdi = re.search(r"the seven tables here run from \$(\d+)\\%\$ flagged\s*to \$([\d.]+)\\%\$", flat)
         checks.append((bool(mdi), "the exposure-distribution sentence parses", "present",
                        "matched" if mdi else "not matched", ""))
         if mdi:
@@ -1200,8 +1202,8 @@ def main() -> int:
                            "the widest-gapped board is not the least flagged",
                            f"above {min(shares.values())}%",
                            f"{widest} at {shares[widest]}%", src))
-            checks.append((len(L) == 5, "the summary counts every board the artifact has",
-                           "5 boards", f"{len(L)} boards", src))
+            checks.append((len(L) == 7, "the summary counts every board the artifact has",
+                           "7 boards", f"{len(L)} boards", src))
             checks.append((L["retrosynthesis, three-system group"]["closer_than_the_move"] == 0,
                            "the three-system group is flagged on nothing", "0",
                            str(L["retrosynthesis, three-system group"]["closer_than_the_move"]), src))
@@ -1363,8 +1365,8 @@ def main() -> int:
     if pp.exists():
         PP = json.loads(pp.read_text())["totals"]
         flat = re.sub(r"\s+", " ", whole)
-        mpp = re.search(r"Run on the four tables above it flags \$(\d+)\$ of their \$(\d+)\$ "
-                        r"pairs, which are exactly the \$(\d+)\$ the full grid removes", flat)
+        mpp = re.search(r"Run on the six tables above it flags \$(\d+)\$ of their \$(\d+)\$ "
+                        r"pairs, which are exactly the \$(\d+)\$ some cell reverses", flat)
         checks.append((bool(mpp), "the screen-predicts-order sentence parses", "present",
                        "matched" if mpp else "not matched", ""))
         if mpp:
@@ -1432,16 +1434,16 @@ def main() -> int:
         PK = json.loads(pk.read_text())
         S, T = PK["screening_test"], PK["totals"]
         flat = re.sub(r"\s+", " ", whole)
-        mpk = re.search(r"over the \$(\d+)\$ method-pair by criterion-pair comparisons this "
-                        r"paper spans in four domains the one-sided form flags \$(\d+)\$ where "
-                        r"\$(\d+)\$ exchange, and the two-sided form flags the \$(\d+)\$ and "
-                        r"nothing else", flat)
+        mpk = re.search(r"over the \$([\d,{}]+)\$ method-pair by criterion-pair comparisons this "
+                        r"paper spans in five domains the one-sided form flags \$([\d,{}]+)\$ "
+                        r"where \$(\d+)\$ exchange, and the two-sided form flags the \$(\d+)\$ "
+                        r"and nothing else", flat)
         checks.append((bool(mpk), "the packing screening sentence parses", "present",
                        "matched" if mpk else "not matched", ""))
         if mpk:
             src = str(pk.relative_to(ROOT))
-            check("comparisons spanned", mpk.group(1), T["comparisons"], src)
-            check("one-sided flags", mpk.group(2),
+            check("comparisons spanned", mpk.group(1).replace("{,}", ""), T["comparisons"], src)
+            check("one-sided flags", mpk.group(2).replace("{,}", ""),
                   S["one_sided_for_comparison"]["flagged"], src)
             check("exchanges", mpk.group(3), T["exchanged"], src)
             check("two-sided flags", mpk.group(4), T["exchanged"], src)
@@ -1715,17 +1717,22 @@ def main() -> int:
     ro = ROOT / "results/robust_order.json"
     rm = ROOT / "results/robust_order_metabolite.json"
     rp = ROOT / "results/robust_order_posebusters.json"
-    if ro.exists() and rm.exists() and rp.exists():
+    rwe = ROOT / "results/robust_order_wmt24_en-de.json"
+    rwj = ROOT / "results/robust_order_wmt24_ja-zh.json"
+    if ro.exists() and rm.exists() and rp.exists() and rwe.exists() and rwj.exists():
         RO = json.loads(ro.read_text())["leaderboards"]
         RM = json.loads(rm.read_text())
         RP = json.loads(rp.read_text())
+        RWE, RWJ = json.loads(rwe.read_text()), json.loads(rwj.read_text())
         flat = re.sub(r"\s+", " ", whole)
-        row = (r"& \$([\d,{}]+)\$ & \$(\d+)\$ of \$(\d+)\$ & \$(\d+)\$ & \$(\d+)\$ "
-               r"& \$([\d.]+)\$ & \$(\d+)\$ of \$(\d+)\$")
+        row = (r"& \$([\d,{}]+)\$ & \$(\d+)\$ of \$(\d+)\$ & \$(\d+)\$ \((\d+)\) & "
+               r"\$(\d+)\$ & \$(\d+)\$ of \$(\d+)\$")
         mr = re.search(r"retrosynthesis, seven systems " + row + r".*?"
                        r"retrosynthesis, three systems " + row + r".*?"
                        r"metabolites, three methods " + row + r".*?"
-                       r"docking, seven programs " + row, flat)
+                       r"docking, seven programs " + row + r".*?"
+                       r"translation, nineteen systems " + row + r".*?"
+                       r"translation, fifteen systems " + row, flat)
         checks.append((bool(mr), "the robust-order table parses", "present",
                        "matched" if mr else "not matched", ""))
         if mr:
@@ -1734,17 +1741,22 @@ def main() -> int:
             boards = ((("seven systems", RO["cluster0"], src), 0),
                       (("three systems", RO["cluster1"], src), 8),
                       (("three methods", RM, srm), 16),
-                      (("seven programs", RP, str(rp.relative_to(ROOT))), 24))
+                      (("seven programs", RP, str(rp.relative_to(ROOT))), 24),
+                      (("nineteen systems", RWE, str(rwe.relative_to(ROOT))), 32),
+                      (("fifteen systems", RWJ, str(rwj.relative_to(ROOT))), 40))
             for (lbl, r_, s), off in boards:
                 check(f"robust order, {lbl}, items", mr.group(off + 1).replace("{,}", ""),
                       r_["n_items"], s)
                 check(f"robust order, {lbl}, dominate", mr.group(off + 2), r_["n_dominating"], s)
                 check(f"robust order, {lbl}, pairs", mr.group(off + 3), r_["n_pairs"], s)
                 check(f"robust order, {lbl}, contested", mr.group(off + 4), r_["n_contested"], s)
-                check(f"robust order, {lbl}, resolved", mr.group(off + 5),
-                      r_["n_resolved_in_the_published_cell"], s)
-                check(f"robust order, {lbl}, share among resolved", mr.group(off + 6),
-                      round(r_["robustness_among_resolved"], 2), s)
+                check(f"robust order, {lbl}, certified", mr.group(off + 5),
+                      r_["n_contested_after_correction"], s)
+                check(f"robust order, {lbl}, unresolved", mr.group(off + 6), r_["n_unresolved"], s)
+                checks.append((r_["n_dominating"] + r_["n_contested"] + r_["n_unresolved"]
+                               == r_["n_pairs"], f"robust order, {lbl}, the verdicts partition",
+                               str(r_["n_pairs"]),
+                               str(r_["n_dominating"] + r_["n_contested"] + r_["n_unresolved"]), s))
                 check(f"robust order, {lbl}, tiers", mr.group(off + 7), r_["tiers_distinguished"], s)
                 check(f"robust order, {lbl}, systems", mr.group(off + 8), r_["n_systems"], s)
             for name, r_, s in (("retro", RO["cluster0"], src), ("metabolite", RM, srm)):
