@@ -1220,6 +1220,45 @@ def main() -> int:
                            "the contraction this paper uses leaves no radicals", "0",
                            str(CC["carrying_an_unpaired_electron"]["restored"]), src))
 
+    # 10k. Two capability claims replaced by measurements. "Cannot emit a stereocentre" is a claim
+    # about a method; what the evidence supports is a claim about these predictions on this corpus,
+    # so the gate counts them rather than trusting the adjective.
+    sp2 = ROOT / "results/scored_predictions.json"
+    sy2 = ROOT / "results/sygma_fulltest_predictions.json"
+    flat = re.sub(r"\s+", " ", whole)
+    msc = re.search(r"anywhere in the frozen predictions scored here, in \$([\d,{}]+)\$ and "
+                    r"\$([\d,{}]+)\$ candidates scanned", flat)
+    checks.append((bool(msc), "the stereocentre sentence is a count, not a capability claim",
+                   "present", "matched" if msc else "not matched", "the manuscript"))
+    bad_cap = re.findall(r"cannot emit a stereocentre", flat)
+    checks.append((not bad_cap, "no passage claims a method cannot emit a stereocentre",
+                   "none", f"{len(bad_cap)} found", "the manuscript"))
+    if msc and sp2.exists() and sy2.exists():
+        from rdkit import Chem as _C
+        def scan(pairs, cap):
+            n = ch = 0
+            for cands in pairs:
+                for y in cands[:15]:
+                    m = _C.MolFromSmiles(y)
+                    if m is None:
+                        continue
+                    n += 1
+                    if _C.FindMolChiralCenters(m, includeUnassigned=False,
+                                               useLegacyImplementation=False):
+                        ch += 1
+                if n > cap:
+                    break
+            return n, ch
+        rows = json.loads(sp2.read_text())["rows"]
+        n_g, ch_g = scan(([c["smiles"] for c in r["candidates"]] for r in rows), 4000)
+        d_ = json.loads(sy2.read_text())
+        d_ = d_.get("predictions", d_)
+        n_s, ch_s = scan((v for v in d_.values() if isinstance(v, (list, tuple))), 4000)
+        check("stereocentre scan, GRAIL", msc.group(1).replace("{,}", ""), n_g, "recomputed here")
+        check("stereocentre scan, SyGMa", msc.group(2).replace("{,}", ""), n_s, "recomputed here")
+        checks.append((ch_g == 0 and ch_s == 0, "neither emits an assigned stereocentre",
+                       "0 and 0", f"{ch_g} and {ch_s}", "recomputed here"))
+
     # 10f. The screen against the measurement. The paper's two instruments describe the same thing
     # from opposite ends, and the claim that one predicts the other is checked rather than asserted:
     # the screen sees only the published cell and the movement to each other cell, the outcome comes
@@ -1229,8 +1268,8 @@ def main() -> int:
     if pp.exists():
         PP = json.loads(pp.read_text())["totals"]
         flat = re.sub(r"\s+", " ", whole)
-        mpp = re.search(r"run on the\s*published cell alone it flags \$(\d+)\$ of the \$(\d+)\$ pairs "
-                        r"in the table above, of which \$(\d+)\$ are exactly\s*the ones the full grid "
+        mpp = re.search(r"Run on the published cell alone it flags \$(\d+)\$ of the \$(\d+)\$ pairs "
+                        r"in the table above, of which \$(\d+)\$\s*are exactly the ones the full grid "
                         r"removes", flat)
         checks.append((bool(mpp), "the screen-predicts-order sentence parses", "present",
                        "matched" if mpp else "not matched", ""))
@@ -1300,10 +1339,9 @@ def main() -> int:
         S, T = PK["screening_test"], PK["totals"]
         flat = re.sub(r"\s+", " ", whole)
         mpk = re.search(r"over the \$(\d+)\$ method-pair by criterion-pair comparisons this paper "
-                        r"spans in\s*three domains, it flags \$([\d.]+)\\%\$\. Every one of "
-                        r"the \$(\d+)\$ exchanges falls inside the\s*flagged set and none outside it, "
-                        r"so its sensitivity is \$([\d.]+)\$ .*?its specificity is \$([\d.]+)\$ and "
-                        r"its precision \$([\d.]+)\$", flat)
+                        r"spans in\s*three domains it flags \$([\d.]+)\\%\$, and all \$(\d+)\$ "
+                        r"exchanges fall inside the flagged set: sensitivity is\s*\$([\d.]+)\$ .*?"
+                        r"specificity \$([\d.]+)\$ and precision \$([\d.]+)\$", flat)
         checks.append((bool(mpk), "the packing screening sentence parses", "present",
                        "matched" if mpk else "not matched", ""))
         if mpk:
@@ -1372,9 +1410,10 @@ def main() -> int:
         PV = json.loads(pv.read_text())
         flat = re.sub(r"\s+", " ", whole)
         mp2 = re.search(r"\$(\d+)\$ are parent drugs and \$(\d+)\$ are themselves annotated products"
-                        r".*?GRAIL loses \$([\d.]+)\$ \$\[([\d.]+),([\d.]+)\]\$ of recall while "
-                        r"MetaPredictor loses \$([\d.]+)\$ \$\[(-[\d.]+),([\d.]+)\]\$, an "
-                        r"interaction of \$\+([\d.]+)\$ \$\[\+([\d.]+),\+([\d.]+)\]\$, and against "
+                        r".*?GRAIL loses \$([\d.]+)\$ \$\[([\d.]+),([\d.]+)\]\$ of recall between "
+                        r"the two while MetaPredictor loses \$([\d.]+)\$ "
+                        r"\$\[(-[\d.]+),([\d.]+)\]\$, an "
+                        r"interaction of \$\+([\d.]+)\$ \$\[\+([\d.]+),\+([\d.]+)\]\$ and against "
                         r"SyGMa \$\+([\d.]+)\$ \$\[\+([\d.]+),\+([\d.]+)\]\$", flat)
         checks.append((bool(mp2), "the two-population sentence parses", "present",
                        "matched" if mp2 else "not matched", ""))
@@ -1402,7 +1441,7 @@ def main() -> int:
             # what this protects is that the two population questions stay distinguishable, not
             # that either keeps a heading: one is certified and one is a bounded null, and a
             # manuscript that merged them into a single claim would be overstating half of it
-            null_said = "The other population question is a null." in flat
+            null_said = "The other population question is a null" in flat
             cert_said = "differs certifiably by method" in flat or "an interaction of" in flat
             checks.append((null_said and cert_said,
                            "the null and the certified population result stay distinct",

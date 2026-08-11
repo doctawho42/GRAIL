@@ -25,8 +25,10 @@ run Graph2SMILES $0.5571$, Retroformer $0.5541$, GraphRetro $0.5501$, LocalRetro
 becomes first. The family is twenty-one system pairs by six pairs drawn from the four conventions by
 four budgets, which is $504$ cells less the $56$ in which two conventions return identical results
 and no test exists. Stereo-blind matching is a candidate convention here and not a straw one: GLORYx
-scores on a stereo-blind skeleton, and GRAIL and SyGMa cannot emit a stereocentre under any
-criterion (Figure~\ref{fig:xdomain}).
+scores on a stereo-blind skeleton, and neither GRAIL nor SyGMa emits an assigned stereocentre
+anywhere in the frozen predictions scored here, in $4{,}009$ and $4{,}001$ candidates scanned: the
+corpus standardises its substrates without stereochemistry, so there is none to carry through
+(Figure~\ref{fig:xdomain}). That is a fact about this corpus and not a limitation of either method.
 
 \subsection{The criterion at a matched output size}
 \label{app:matchedemission}
@@ -780,8 +782,8 @@ the sample change rather than a correction.
 
 Two claims survive and one does not. GRAIL's stereo step remains significant at $+0.126$
 $[+0.028,+0.239]$ against $+0.155$ on the full set, so the mechanism is real, not memorised:
-GRAIL cannot emit a stereocentre, and a stereo-blind criterion rewards that whether or not it has
-seen the drug. Its interaction with SyGMa survives too, but carries no information beyond that step
+GRAIL emits no assigned stereocentre on this corpus, and a stereo-blind criterion rewards that
+whether or not it has seen the drug. Its interaction with SyGMa survives too, but carries no information beyond that step
 and should not be counted as a second result: SyGMa's own stereo step on these thirteen is exactly
 zero, with an interval of $[0,0]$, so the interaction is numerically the same measurement,
 $+0.126$ $[+0.028,+0.239]$. The

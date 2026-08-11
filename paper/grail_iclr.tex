@@ -29,9 +29,9 @@
 \newcommand{\interB}{+0.063}          % MetaTrans<->SyGMa interaction
 \newcommand{\interBci}{[+0.022,\,+0.106]}
 
-\title{What Part of a Molecular Leaderboard Survives\\
-the Evaluation Choices Its Papers Leave Undeclared,\\
-and How to Tell Without Re-Scoring It}
+\title{Most of a Molecular Leaderboard Was Never Resolved,\\
+and What Was Is Reversed by Evaluation Choices\\
+Its Own Papers Leave Undeclared}
 
 % double-blind: authors stay anonymous until camera-ready
 \author{Anonymous authors \\ Paper under double-blind review}
@@ -59,10 +59,10 @@ Most of a leaderboard turns out never to have been resolved at all: eleven of th
 pairwise orderings on a seven-system retrosynthesis table carry margins its own benchmark cannot
 separate. Of the ten it does separate, seven tenths survive every cell of the grid, and on two
 smaller tables the surviving share is none of three and all of two, so it is a property of a
-leaderboard and not a constant. Which pairs are at risk does not require re-scoring anything: two
-systems exchange under a change of criterion exactly when it moves them apart by more than the gap
-between them, an inequality computable from a published table, and across $439$ comparisons in
-three domains it flags one in nine and contains every exchange that occurs. A benchmark therefore
+leaderboard and not a constant. Which pairs are at risk needs no pairwise statistic: two systems
+exchange under a change of criterion exactly when it moves them apart by more than the gap between
+them, so scoring each system once in the alternative cell settles every pair by arithmetic. That
+screen flags one comparison in nine across $439$ in three domains and cannot miss. A benchmark therefore
 becomes vulnerable to an undeclared convention exactly as its entries converge.
 Two of the four choices change a published ordering and they break it differently. The output budget
 reverses margins a paired interval separates from zero: one method is last at tight budgets and
@@ -140,10 +140,11 @@ leading methods converge.
   cells it can only shrink as a grid widens, so it is reported as a curve over the declared axes
   rather than as one number.
 \item Which pairs a criterion can exchange is decided by an inequality between the gap separating
-  two systems and the distance the criterion moves them, so it is computable from a published table
-  before anything is re-scored. Read as a screening test over $439$ comparisons in three domains it
-  has no false negatives, flags one comparison in nine, and shows the tightest leaderboard supplying
-  most of the exposure and the widest none.
+  two systems and the distance the criterion moves them, so scoring each system once in the
+  alternative cell settles every pair on the table without a paired statistic. Read as a screening
+  test over $439$ comparisons in three domains it flags one comparison in nine, cannot miss by
+  construction, and shows exposure to be the ratio of the two quantities rather than the size of
+  either.
 \item Which population a dataset name refers to is ambiguous in released work and is not shown to
   reorder anything: eleven released prediction files sit on three test sets, and no interaction
   varying only the population survives correction. A protocol, an audited split, the frozen
@@ -190,14 +191,13 @@ metric whose winner changes with how the candidates entering it are counted \cit
 
 \looseness=-1
 \paragraph{Sweeping the choices rather than fixing them.} Computing a result in every cell of a
-declared grid of defensible analytic choices, and reporting what survives all of them, is multiverse
+declared grid of defensible analytic choices and reporting what survives all of them is multiverse
 analysis \citep{Steegen_2016} and specification-curve analysis \citep{Simonsohn_2020}; the
 machine-learning counterparts account for the variance a benchmark's own sources induce
 \citep{Bouthillier_2021} and test a claim jointly across datasets \citep{Dror_2017}. Those designs
-sweep an \emph{estimate}. Section~\ref{sec:robust} sweeps an \emph{order}, which behaves
-differently: the intersection of the per-cell orders is a partial order rather than a distribution,
-so what survives is a relation with a share and a longest chain, both scalars and both computable
-from released prediction files without rerunning any system.
+sweep an \emph{estimate}. Section~\ref{sec:robust} sweeps an \emph{order}, whose intersection over
+cells is a partial order rather than a distribution, so what survives has a share and a longest
+chain, both scalars and both computable from released prediction files.
 
 \paragraph{Staged evaluation, and what is left unestablished.} Separating what a candidate generator
 reaches from what a later stage retains is standard \citep{Wang_2011_cascade, Covington_2016,
@@ -253,10 +253,13 @@ emitting more (Appendix~\ref{app:budget}).
 Two words are used throughout and they are not interchangeable. A difference is \emph{separated}
 when its paired bootstrap interval excludes zero, which needs no family and is the only claim made
 about an exploratory quantity. A difference is \emph{certified} when it is separated \emph{and}
-survives Holm correction inside a family declared in advance of reading it. Three comparisons are
-confirmatory and only they are ever called certified: the differential criterion sensitivity of
-\S\ref{sec:rankflip}, the learned-against-prior gap of \S\ref{sec:xmc}, and the cross-domain
-interaction, whose $448$ tests form one family. Two further families are corrected without being
+survives Holm correction inside a family fixed by a rule stated before the correction was computed,
+the grid the declared axes admit, rather than by the comparisons that turned out to be worth
+reporting; no family here was pre-registered and Appendix~\ref{app:holm} says so. Three comparisons are confirmatory: the
+differential criterion sensitivity of \S\ref{sec:rankflip}, the learned-against-prior gap of
+\S\ref{sec:xmc}, and the cross-domain interaction, whose $448$ tests form one family. The word is used of those three and of any
+sentence naming its own correction and family size, which two appendix families of $66$ and $112$
+do, and nowhere else; a released check permits exactly those two forms. Two further families are corrected without being
 confirmatory, the $54$-cell budget sweep and the $440$ population interactions, and are called
 corrected rather than certified. Every remaining interval is exploratory, and every use of either
 word is listed against its family and adjusted $p$ in Appendix~\ref{app:holm}. Model and
@@ -322,14 +325,13 @@ template--product pairs it can match at all (Appendix~\ref{app:retroconvention})
 \label{sec:robust}\label{sec:xdomainmain}
 
 \looseness=-1
-A leaderboard reports a total order computed in one cell of a grid its paper does not report,
-because the cell is not thought of as a parameter. Fix the items and the predictions and ask of each
-pair whether the ordering the table asserts holds in every other cell. Say the higher system
-\emph{dominates} the lower when the margin is positive in every cell, and that it is
-\emph{separated in every cell} when a paired interval excludes zero in each. Domination is the
-intersection of the per-cell orders, so it is transitive and is the finest relation no declared
-choice can contradict; separation is a sub-relation of it, reported apart because an interval
-condition is not transitive.
+A leaderboard reports a total order computed in one cell of a grid its paper does not report, the
+cell not being thought of as a parameter. Fix the items and the predictions and ask of each pair
+whether the ordering the table asserts holds in every other cell. The higher system
+\emph{dominates} the lower when the margin is positive in every cell, and is \emph{separated in
+every cell} when a paired interval excludes zero in each. Domination is the intersection of the
+per-cell orders, so it is transitive and is the finest relation no declared choice can contradict;
+separation is a sub-relation reported apart, an interval condition not being transitive.
 
 \looseness=-1
 A pair that does not dominate has failed in one of two ways that should not be added together. Some
@@ -364,9 +366,9 @@ not order, and seven published places become three tiers.}
 
 \looseness=-1
 The last two columns are the ones to take away, because most of what a leaderboard prints was never
-resolved in the first place: eleven of the seven-system table's twenty-one pairs carry margins its
-own benchmark cannot separate, before any choice is varied, and of the ten it does separate seven
-tenths survive every cell. The share ranges from none of three to all of two across the three
+resolved at all: eleven of the seven-system table's twenty-one pairs carry margins its own benchmark
+cannot separate before any choice is varied, and of the ten it does separate, seven tenths survive
+every cell. The share ranges from none of three to all of two across the three
 tables, so it is not a constant of the field and none is reported. The
 longest chain is the readable form of the same measurement: a table of seven places supports $3$
 tiers, resampling to $[3,3]$, one of three supports $1$, and the same systems take $4$ different
@@ -377,23 +379,21 @@ alone leaves every pair of both three-system tables intact, while the budget alo
 from one of them and one from the other.
 
 \looseness=-1
-\paragraph{Which pairs are at risk is decided before any of this is run.} The share above is
-measured by re-scoring; it need not be predicted that way. Two systems exchange under a change of
-criterion exactly when the criterion moves them apart by more than the gap between them: writing $d$
-for their margin and $\delta_a,\delta_b$ for how far each moves, the sign of $d$ survives iff
-$|\delta_a-\delta_b| \le |d|$. The inequality is arithmetic rather than a model, and both sides are
-quantities a published table and one re-scored system already contain, so the pairs that could
-exchange follow without re-scoring the leaderboard.
+\paragraph{Which pairs are at risk follows from an inequality.} Two systems exchange under a change
+of criterion exactly when it moves them apart by more than the gap between them: with $d$ their
+margin and $\delta_a,\delta_b$ how far each moves, the sign of $d$ survives iff
+$|\delta_a-\delta_b| \le |d|$. Scoring the $n$ systems once in the alternative cell therefore settles
+all $n(n-1)/2$ pairs with no paired statistic anywhere; replacing the per-system movement by a
+typical one for the domain, which a published table supplies alone, over-predicts fragility by a
+third and is reported as a failure (Appendix~\ref{app:negative}).
 
 \looseness=-1
-Read as a screening test over the $439$ method-pair by criterion-pair comparisons this paper spans in
-three domains, it flags $10.9\%$. Every one of the $26$ exchanges falls inside the
-flagged set and none outside it, so its sensitivity is $1.000$ by arithmetic and is checked rather
-than assumed; its specificity is $0.947$ and its precision $0.542$, the false alarms being movements
-that widen a gap instead of closing it. A maintainer can therefore bound a leaderboard's exposure
-from its own published margins, with no false negatives, and the bound is not vacuous: run on the
-published cell alone it flags $21$ of the $27$ pairs in the table above, of which $17$ are exactly
-the ones the full grid removes. Where the flags fall says which benchmarks are exposed, and
+As a screening test over the $439$ method-pair by criterion-pair comparisons this paper spans in
+three domains it flags $10.9\%$, and all $26$ exchanges fall inside the flagged set: sensitivity is
+$1.000$ by arithmetic and checked rather than assumed, specificity $0.947$ and precision $0.542$,
+the false alarms being movements that widen a gap instead of closing it. The bound is not vacuous.
+Run on the published cell alone it flags $21$ of the $27$ pairs in the table above, of which $17$
+are exactly the ones the full grid removes. Where the flags fall says which benchmarks are exposed, and
 neither quantity decides that alone. The seven-system group is flagged on $22.2\%$ of its
 comparisons at a median gap of $0.0130$; the three-system group, whose systems sit three and a half
 times further apart while the criterion moves them as much, on none; the molecular-generation set,
@@ -424,19 +424,18 @@ separated it erases the gap instead of reversing it.
 
 \looseness=-1
 \paragraph{One split, two populations.} A benchmark can mix populations without changing its name.
-Of the \ntest\ substrates here, $845$ are parent drugs and $325$ are themselves annotated products
-of another substrate in the same split, so one question is about a compound a patient swallows and
-the other about what is left of it, averaged into one number. Methods do not treat them alike:
-between the two GRAIL loses $0.152$ $[0.101,0.202]$ of recall while MetaPredictor loses $0.001$
-$[-0.053,0.057]$, an interaction of $+0.150$ $[+0.084,+0.216]$, and against SyGMa $+0.116$
+Of the \ntest\ substrates here $845$ are parent drugs and $325$ are themselves annotated products of
+another substrate in the split, so one question is about a compound a patient swallows and the other
+about what is left of it, averaged into one number. Methods do not treat them alike: GRAIL loses
+$0.152$ $[0.101,0.202]$ of recall between the two while MetaPredictor loses $0.001$
+$[-0.053,0.057]$, an interaction of $+0.150$ $[+0.084,+0.216]$ and against SyGMa $+0.116$
 $[+0.051,+0.181]$. No paper reporting on this split reports the mixture.
 
 \looseness=-1
-The other population question is a null. Comparing two systems on $490$ shared reactions and on each
-group's own five thousand changes the ordering in $44$ of $380$ comparisons and in $10$ of $60$ on
-the metabolite split, and none of the $440$ interactions survives Holm at $0.05$; at $80\%$ power
-these designs would have detected about $0.10$ and $0.07$, an order of magnitude above the criterion
-interactions that do (Appendix~\ref{app:popaxis}).
+The other population question is a null: comparing two systems on $490$ shared reactions and on each
+group's own five thousand changes the ordering in $44$ of $380$ comparisons and $10$ of $60$ on the
+metabolite split, and none of the $440$ interactions survives Holm at $0.05$, in designs that at
+$80\%$ power would have detected about $0.10$ and $0.07$ (Appendix~\ref{app:popaxis}).
 
 \section{The decomposition and the coverage ceiling}
 \label{sec:decomp}
@@ -530,14 +529,13 @@ the families after it, as the grid the axes admit.
 
 \looseness=-1
 \paragraph{External replication.} The analysis repeats on the field's de-facto external hold-out,
-the \nglory\ GLORYx drugs \citep{de_Bruyn_Kops_2020}, and the result it rests on involves neither
-contaminated arm: $24$ of the $37$ sit in GRAIL's own train or validation split, so its row uses the
-$13$ unseen. Under strict InChIKey matching MetaPredictor trails SyGMa by $0.130$ and one rung later
-the advantage is gone. The endpoint is the interaction rather than the transition: MetaPredictor
-gains $+0.135$ $[+0.072,+0.209]$ more than SyGMa across the stereo step, rejected at either family
-size and again by a sign-flip test assuming no distribution. The criterion erases a significant
-advantage here instead of reversing it, the relaxed gap covering zero while still admitting SyGMa
-ahead by $0.071$ (Appendix~\ref{app:holm}).
+the \nglory\ GLORYx drugs \citep{de_Bruyn_Kops_2020}, and rests on neither contaminated arm: $24$ of
+the $37$ sit in GRAIL's own train or validation split, so its row uses the $13$ unseen. Under strict
+InChIKey matching MetaPredictor trails SyGMa by $0.130$ and one rung later the advantage is gone.
+The endpoint is the interaction: MetaPredictor gains $+0.135$ $[+0.072,+0.209]$ more than SyGMa
+across the stereo step, rejected at either family size and again by a sign-flip test. The criterion
+erases a significant advantage instead of reversing it, the relaxed gap covering zero while still
+admitting SyGMa ahead by $0.071$ (Appendix~\ref{app:holm}).
 
 
 
