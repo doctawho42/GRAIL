@@ -1,0 +1,1399 @@
+{
+ "config": {
+  "script": "docking_multiplicity.py",
+  "git_commit": "b49f788811ed68b6610b8b817eefec2b026dca40",
+  "git_dirty": true,
+  "n_boot": 10000,
+  "seed": 0,
+  "alpha": 0.05,
+  "family": "every cell-level test the contested verdict is read from",
+  "family_size": 168,
+  "n_pairs": 21,
+  "n_cells": 8,
+  "p": "two-sided bootstrap, twice the smaller tail mass, floored at 1/B"
+ },
+ "family_size": 168,
+ "n_surviving_tests": 136,
+ "n_surviving_reversals": 3,
+ "pairs_still_contested": [
+  "deepdock over unimol",
+  "tankbind over unimol"
+ ],
+ "pairs_contested_before_correction": [
+  "deepdock over unimol",
+  "tankbind over unimol"
+ ],
+ "every_contested_pair_survives": true,
+ "surviving_reversals": [
+  {
+   "pair": "tankbind over unimol",
+   "cell": "('rmsd2', 'none')",
+   "margin": -0.0794,
+   "p": 0.0004,
+   "against_the_published_order": true,
+   "holm": "survives"
+  },
+  {
+   "pair": "deepdock over unimol",
+   "cell": "('rmsd2', 'energy minimization')",
+   "margin": -0.0841,
+   "p": 0.0012,
+   "against_the_published_order": true,
+   "holm": "survives"
+  },
+  {
+   "pair": "tankbind over unimol",
+   "cell": "('rmsd2', 'energy minimization')",
+   "margin": -0.0818,
+   "p": 0.0014,
+   "against_the_published_order": true,
+   "holm": "survives"
+  }
+ ],
+ "tests": [
+  {
+   "pair": "diffdock over deepdock",
+   "cell": "('rmsd2', 'none')",
+   "margin": 0.2009,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "diffdock over deepdock",
+   "cell": "('rmsd2', 'energy minimization')",
+   "margin": 0.1846,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "diffdock over deepdock",
+   "cell": "('rmsd2+valid', 'none')",
+   "margin": 0.0888,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "diffdock over deepdock",
+   "cell": "('rmsd2+valid', 'energy minimization')",
+   "margin": 0.2056,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "diffdock over deepdock",
+   "cell": "('rmsd1', 'none')",
+   "margin": 0.0981,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "diffdock over deepdock",
+   "cell": "('rmsd1', 'energy minimization')",
+   "margin": 0.1145,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "diffdock over deepdock",
+   "cell": "('rmsd2+chem', 'none')",
+   "margin": 0.222,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "diffdock over deepdock",
+   "cell": "('rmsd2+chem', 'energy minimization')",
+   "margin": 0.2033,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "deepdock over equibind",
+   "cell": "('rmsd2', 'none')",
+   "margin": 0.1519,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "deepdock over equibind",
+   "cell": "('rmsd2', 'energy minimization')",
+   "margin": 0.1425,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "deepdock over equibind",
+   "cell": "('rmsd2+valid', 'none')",
+   "margin": 0.0444,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "deepdock over equibind",
+   "cell": "('rmsd2+valid', 'energy minimization')",
+   "margin": 0.0818,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "deepdock over equibind",
+   "cell": "('rmsd1', 'none')",
+   "margin": 0.0467,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "deepdock over equibind",
+   "cell": "('rmsd1', 'energy minimization')",
+   "margin": 0.0491,
+   "p": 0.0002,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "deepdock over equibind",
+   "cell": "('rmsd2+chem', 'none')",
+   "margin": 0.1075,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "deepdock over equibind",
+   "cell": "('rmsd2+chem', 'energy minimization')",
+   "margin": 0.1028,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "gold over deepdock",
+   "cell": "('rmsd2', 'none')",
+   "margin": 0.3341,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "gold over deepdock",
+   "cell": "('rmsd2', 'energy minimization')",
+   "margin": 0.2827,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "gold over deepdock",
+   "cell": "('rmsd2+valid', 'none')",
+   "margin": 0.4299,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "gold over deepdock",
+   "cell": "('rmsd2+valid', 'energy minimization')",
+   "margin": 0.2944,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "gold over deepdock",
+   "cell": "('rmsd1', 'none')",
+   "margin": 0.2967,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "gold over deepdock",
+   "cell": "('rmsd1', 'energy minimization')",
+   "margin": 0.2196,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "gold over deepdock",
+   "cell": "('rmsd2+chem', 'none')",
+   "margin": 0.3762,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "gold over deepdock",
+   "cell": "('rmsd2+chem', 'energy minimization')",
+   "margin": 0.3154,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "deepdock over tankbind",
+   "cell": "('rmsd2', 'none')",
+   "margin": 0.028,
+   "p": 0.2292,
+   "against_the_published_order": false,
+   "holm": "does not survive"
+  },
+  {
+   "pair": "deepdock over tankbind",
+   "cell": "('rmsd2', 'energy minimization')",
+   "margin": -0.0023,
+   "p": 0.9464,
+   "against_the_published_order": true,
+   "holm": "does not survive"
+  },
+  {
+   "pair": "deepdock over tankbind",
+   "cell": "('rmsd2+valid', 'none')",
+   "margin": 0.021,
+   "p": 0.1162,
+   "against_the_published_order": false,
+   "holm": "does not survive"
+  },
+  {
+   "pair": "deepdock over tankbind",
+   "cell": "('rmsd2+valid', 'energy minimization')",
+   "margin": 0.0093,
+   "p": 0.7014,
+   "against_the_published_order": false,
+   "holm": "does not survive"
+  },
+  {
+   "pair": "deepdock over tankbind",
+   "cell": "('rmsd1', 'none')",
+   "margin": 0.021,
+   "p": 0.109,
+   "against_the_published_order": false,
+   "holm": "does not survive"
+  },
+  {
+   "pair": "deepdock over tankbind",
+   "cell": "('rmsd1', 'energy minimization')",
+   "margin": 0.0,
+   "p": 1.0472,
+   "against_the_published_order": false,
+   "holm": "does not survive"
+  },
+  {
+   "pair": "deepdock over tankbind",
+   "cell": "('rmsd2+chem', 'none')",
+   "margin": 0.0607,
+   "p": 0.0008,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "deepdock over tankbind",
+   "cell": "('rmsd2+chem', 'energy minimization')",
+   "margin": 0.021,
+   "p": 0.369,
+   "against_the_published_order": false,
+   "holm": "does not survive"
+  },
+  {
+   "pair": "deepdock over unimol",
+   "cell": "('rmsd2', 'none')",
+   "margin": -0.0514,
+   "p": 0.0506,
+   "against_the_published_order": true,
+   "holm": "does not survive"
+  },
+  {
+   "pair": "deepdock over unimol",
+   "cell": "('rmsd2', 'energy minimization')",
+   "margin": -0.0841,
+   "p": 0.0012,
+   "against_the_published_order": true,
+   "holm": "survives"
+  },
+  {
+   "pair": "deepdock over unimol",
+   "cell": "('rmsd2+valid', 'none')",
+   "margin": 0.028,
+   "p": 0.0202,
+   "against_the_published_order": false,
+   "holm": "does not survive"
+  },
+  {
+   "pair": "deepdock over unimol",
+   "cell": "('rmsd2+valid', 'energy minimization')",
+   "margin": -0.0467,
+   "p": 0.0324,
+   "against_the_published_order": true,
+   "holm": "does not survive"
+  },
+  {
+   "pair": "deepdock over unimol",
+   "cell": "('rmsd1', 'none')",
+   "margin": 0.0047,
+   "p": 0.7858,
+   "against_the_published_order": false,
+   "holm": "does not survive"
+  },
+  {
+   "pair": "deepdock over unimol",
+   "cell": "('rmsd1', 'energy minimization')",
+   "margin": -0.028,
+   "p": 0.1262,
+   "against_the_published_order": true,
+   "holm": "does not survive"
+  },
+  {
+   "pair": "deepdock over unimol",
+   "cell": "('rmsd2+chem', 'none')",
+   "margin": 0.0701,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "deepdock over unimol",
+   "cell": "('rmsd2+chem', 'energy minimization')",
+   "margin": -0.0397,
+   "p": 0.0884,
+   "against_the_published_order": true,
+   "holm": "does not survive"
+  },
+  {
+   "pair": "vina over deepdock",
+   "cell": "('rmsd2', 'none')",
+   "margin": 0.3458,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "vina over deepdock",
+   "cell": "('rmsd2', 'energy minimization')",
+   "margin": 0.2874,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "vina over deepdock",
+   "cell": "('rmsd2+valid', 'none')",
+   "margin": 0.465,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "vina over deepdock",
+   "cell": "('rmsd2+valid', 'energy minimization')",
+   "margin": 0.2921,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "vina over deepdock",
+   "cell": "('rmsd1', 'none')",
+   "margin": 0.2967,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "vina over deepdock",
+   "cell": "('rmsd1', 'energy minimization')",
+   "margin": 0.2336,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "vina over deepdock",
+   "cell": "('rmsd2+chem', 'none')",
+   "margin": 0.3855,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "vina over deepdock",
+   "cell": "('rmsd2+chem', 'energy minimization')",
+   "margin": 0.3037,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "diffdock over equibind",
+   "cell": "('rmsd2', 'none')",
+   "margin": 0.3528,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "diffdock over equibind",
+   "cell": "('rmsd2', 'energy minimization')",
+   "margin": 0.3271,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "diffdock over equibind",
+   "cell": "('rmsd2+valid', 'none')",
+   "margin": 0.1332,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "diffdock over equibind",
+   "cell": "('rmsd2+valid', 'energy minimization')",
+   "margin": 0.2874,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "diffdock over equibind",
+   "cell": "('rmsd1', 'none')",
+   "margin": 0.1449,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "diffdock over equibind",
+   "cell": "('rmsd1', 'energy minimization')",
+   "margin": 0.1636,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "diffdock over equibind",
+   "cell": "('rmsd2+chem', 'none')",
+   "margin": 0.3294,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "diffdock over equibind",
+   "cell": "('rmsd2+chem', 'energy minimization')",
+   "margin": 0.3061,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "gold over diffdock",
+   "cell": "('rmsd2', 'none')",
+   "margin": 0.1332,
+   "p": 0.0002,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "gold over diffdock",
+   "cell": "('rmsd2', 'energy minimization')",
+   "margin": 0.0981,
+   "p": 0.0016,
+   "against_the_published_order": false,
+   "holm": "does not survive"
+  },
+  {
+   "pair": "gold over diffdock",
+   "cell": "('rmsd2+valid', 'none')",
+   "margin": 0.3411,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "gold over diffdock",
+   "cell": "('rmsd2+valid', 'energy minimization')",
+   "margin": 0.0888,
+   "p": 0.003,
+   "against_the_published_order": false,
+   "holm": "does not survive"
+  },
+  {
+   "pair": "gold over diffdock",
+   "cell": "('rmsd1', 'none')",
+   "margin": 0.1986,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "gold over diffdock",
+   "cell": "('rmsd1', 'energy minimization')",
+   "margin": 0.1051,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "gold over diffdock",
+   "cell": "('rmsd2+chem', 'none')",
+   "margin": 0.1542,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "gold over diffdock",
+   "cell": "('rmsd2+chem', 'energy minimization')",
+   "margin": 0.1121,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "diffdock over tankbind",
+   "cell": "('rmsd2', 'none')",
+   "margin": 0.229,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "diffdock over tankbind",
+   "cell": "('rmsd2', 'energy minimization')",
+   "margin": 0.1822,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "diffdock over tankbind",
+   "cell": "('rmsd2+valid', 'none')",
+   "margin": 0.1098,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "diffdock over tankbind",
+   "cell": "('rmsd2+valid', 'energy minimization')",
+   "margin": 0.215,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "diffdock over tankbind",
+   "cell": "('rmsd1', 'none')",
+   "margin": 0.1192,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "diffdock over tankbind",
+   "cell": "('rmsd1', 'energy minimization')",
+   "margin": 0.1145,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "diffdock over tankbind",
+   "cell": "('rmsd2+chem', 'none')",
+   "margin": 0.2827,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "diffdock over tankbind",
+   "cell": "('rmsd2+chem', 'energy minimization')",
+   "margin": 0.2243,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "diffdock over unimol",
+   "cell": "('rmsd2', 'none')",
+   "margin": 0.1495,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "diffdock over unimol",
+   "cell": "('rmsd2', 'energy minimization')",
+   "margin": 0.1005,
+   "p": 0.0002,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "diffdock over unimol",
+   "cell": "('rmsd2+valid', 'none')",
+   "margin": 0.1168,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "diffdock over unimol",
+   "cell": "('rmsd2+valid', 'energy minimization')",
+   "margin": 0.1589,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "diffdock over unimol",
+   "cell": "('rmsd1', 'none')",
+   "margin": 0.1028,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "diffdock over unimol",
+   "cell": "('rmsd1', 'energy minimization')",
+   "margin": 0.0864,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "diffdock over unimol",
+   "cell": "('rmsd2+chem', 'none')",
+   "margin": 0.2921,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "diffdock over unimol",
+   "cell": "('rmsd2+chem', 'energy minimization')",
+   "margin": 0.1636,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "vina over diffdock",
+   "cell": "('rmsd2', 'none')",
+   "margin": 0.1449,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "vina over diffdock",
+   "cell": "('rmsd2', 'energy minimization')",
+   "margin": 0.1028,
+   "p": 0.0012,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "vina over diffdock",
+   "cell": "('rmsd2+valid', 'none')",
+   "margin": 0.3762,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "vina over diffdock",
+   "cell": "('rmsd2+valid', 'energy minimization')",
+   "margin": 0.0864,
+   "p": 0.005,
+   "against_the_published_order": false,
+   "holm": "does not survive"
+  },
+  {
+   "pair": "vina over diffdock",
+   "cell": "('rmsd1', 'none')",
+   "margin": 0.1986,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "vina over diffdock",
+   "cell": "('rmsd1', 'energy minimization')",
+   "margin": 0.1192,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "vina over diffdock",
+   "cell": "('rmsd2+chem', 'none')",
+   "margin": 0.1636,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "vina over diffdock",
+   "cell": "('rmsd2+chem', 'energy minimization')",
+   "margin": 0.1005,
+   "p": 0.0014,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "gold over equibind",
+   "cell": "('rmsd2', 'none')",
+   "margin": 0.486,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "gold over equibind",
+   "cell": "('rmsd2', 'energy minimization')",
+   "margin": 0.4252,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "gold over equibind",
+   "cell": "('rmsd2+valid', 'none')",
+   "margin": 0.4743,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "gold over equibind",
+   "cell": "('rmsd2+valid', 'energy minimization')",
+   "margin": 0.3762,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "gold over equibind",
+   "cell": "('rmsd1', 'none')",
+   "margin": 0.3435,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "gold over equibind",
+   "cell": "('rmsd1', 'energy minimization')",
+   "margin": 0.2687,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "gold over equibind",
+   "cell": "('rmsd2+chem', 'none')",
+   "margin": 0.4836,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "gold over equibind",
+   "cell": "('rmsd2+chem', 'energy minimization')",
+   "margin": 0.4182,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "tankbind over equibind",
+   "cell": "('rmsd2', 'none')",
+   "margin": 0.1238,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "tankbind over equibind",
+   "cell": "('rmsd2', 'energy minimization')",
+   "margin": 0.1449,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "tankbind over equibind",
+   "cell": "('rmsd2+valid', 'none')",
+   "margin": 0.0234,
+   "p": 0.0014,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "tankbind over equibind",
+   "cell": "('rmsd2+valid', 'energy minimization')",
+   "margin": 0.0724,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "tankbind over equibind",
+   "cell": "('rmsd1', 'none')",
+   "margin": 0.0257,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "tankbind over equibind",
+   "cell": "('rmsd1', 'energy minimization')",
+   "margin": 0.0491,
+   "p": 0.0004,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "tankbind over equibind",
+   "cell": "('rmsd2+chem', 'none')",
+   "margin": 0.0467,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "tankbind over equibind",
+   "cell": "('rmsd2+chem', 'energy minimization')",
+   "margin": 0.0818,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "unimol over equibind",
+   "cell": "('rmsd2', 'none')",
+   "margin": 0.2033,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "unimol over equibind",
+   "cell": "('rmsd2', 'energy minimization')",
+   "margin": 0.2266,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "unimol over equibind",
+   "cell": "('rmsd2+valid', 'none')",
+   "margin": 0.0164,
+   "p": 0.0182,
+   "against_the_published_order": false,
+   "holm": "does not survive"
+  },
+  {
+   "pair": "unimol over equibind",
+   "cell": "('rmsd2+valid', 'energy minimization')",
+   "margin": 0.1285,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "unimol over equibind",
+   "cell": "('rmsd1', 'none')",
+   "margin": 0.0421,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "unimol over equibind",
+   "cell": "('rmsd1', 'energy minimization')",
+   "margin": 0.0771,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "unimol over equibind",
+   "cell": "('rmsd2+chem', 'none')",
+   "margin": 0.0374,
+   "p": 0.0068,
+   "against_the_published_order": false,
+   "holm": "does not survive"
+  },
+  {
+   "pair": "unimol over equibind",
+   "cell": "('rmsd2+chem', 'energy minimization')",
+   "margin": 0.1425,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "vina over equibind",
+   "cell": "('rmsd2', 'none')",
+   "margin": 0.4977,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "vina over equibind",
+   "cell": "('rmsd2', 'energy minimization')",
+   "margin": 0.4299,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "vina over equibind",
+   "cell": "('rmsd2+valid', 'none')",
+   "margin": 0.5093,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "vina over equibind",
+   "cell": "('rmsd2+valid', 'energy minimization')",
+   "margin": 0.3738,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "vina over equibind",
+   "cell": "('rmsd1', 'none')",
+   "margin": 0.3435,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "vina over equibind",
+   "cell": "('rmsd1', 'energy minimization')",
+   "margin": 0.2827,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "vina over equibind",
+   "cell": "('rmsd2+chem', 'none')",
+   "margin": 0.493,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "vina over equibind",
+   "cell": "('rmsd2+chem', 'energy minimization')",
+   "margin": 0.4065,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "gold over tankbind",
+   "cell": "('rmsd2', 'none')",
+   "margin": 0.3621,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "gold over tankbind",
+   "cell": "('rmsd2', 'energy minimization')",
+   "margin": 0.2804,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "gold over tankbind",
+   "cell": "('rmsd2+valid', 'none')",
+   "margin": 0.4509,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "gold over tankbind",
+   "cell": "('rmsd2+valid', 'energy minimization')",
+   "margin": 0.3037,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "gold over tankbind",
+   "cell": "('rmsd1', 'none')",
+   "margin": 0.3178,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "gold over tankbind",
+   "cell": "('rmsd1', 'energy minimization')",
+   "margin": 0.2196,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "gold over tankbind",
+   "cell": "('rmsd2+chem', 'none')",
+   "margin": 0.4369,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "gold over tankbind",
+   "cell": "('rmsd2+chem', 'energy minimization')",
+   "margin": 0.3364,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "gold over unimol",
+   "cell": "('rmsd2', 'none')",
+   "margin": 0.2827,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "gold over unimol",
+   "cell": "('rmsd2', 'energy minimization')",
+   "margin": 0.1986,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "gold over unimol",
+   "cell": "('rmsd2+valid', 'none')",
+   "margin": 0.4579,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "gold over unimol",
+   "cell": "('rmsd2+valid', 'energy minimization')",
+   "margin": 0.2477,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "gold over unimol",
+   "cell": "('rmsd1', 'none')",
+   "margin": 0.3014,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "gold over unimol",
+   "cell": "('rmsd1', 'energy minimization')",
+   "margin": 0.1916,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "gold over unimol",
+   "cell": "('rmsd2+chem', 'none')",
+   "margin": 0.4463,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "gold over unimol",
+   "cell": "('rmsd2+chem', 'energy minimization')",
+   "margin": 0.2757,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "vina over gold",
+   "cell": "('rmsd2', 'none')",
+   "margin": 0.0117,
+   "p": 0.6658,
+   "against_the_published_order": false,
+   "holm": "does not survive"
+  },
+  {
+   "pair": "vina over gold",
+   "cell": "('rmsd2', 'energy minimization')",
+   "margin": 0.0047,
+   "p": 0.8754,
+   "against_the_published_order": false,
+   "holm": "does not survive"
+  },
+  {
+   "pair": "vina over gold",
+   "cell": "('rmsd2+valid', 'none')",
+   "margin": 0.035,
+   "p": 0.1652,
+   "against_the_published_order": false,
+   "holm": "does not survive"
+  },
+  {
+   "pair": "vina over gold",
+   "cell": "('rmsd2+valid', 'energy minimization')",
+   "margin": -0.0023,
+   "p": 0.9738,
+   "against_the_published_order": true,
+   "holm": "does not survive"
+  },
+  {
+   "pair": "vina over gold",
+   "cell": "('rmsd1', 'none')",
+   "margin": 0.0,
+   "p": 1.0306,
+   "against_the_published_order": false,
+   "holm": "does not survive"
+  },
+  {
+   "pair": "vina over gold",
+   "cell": "('rmsd1', 'energy minimization')",
+   "margin": 0.014,
+   "p": 0.549,
+   "against_the_published_order": false,
+   "holm": "does not survive"
+  },
+  {
+   "pair": "vina over gold",
+   "cell": "('rmsd2+chem', 'none')",
+   "margin": 0.0093,
+   "p": 0.724,
+   "against_the_published_order": false,
+   "holm": "does not survive"
+  },
+  {
+   "pair": "vina over gold",
+   "cell": "('rmsd2+chem', 'energy minimization')",
+   "margin": -0.0117,
+   "p": 0.6886,
+   "against_the_published_order": true,
+   "holm": "does not survive"
+  },
+  {
+   "pair": "tankbind over unimol",
+   "cell": "('rmsd2', 'none')",
+   "margin": -0.0794,
+   "p": 0.0004,
+   "against_the_published_order": true,
+   "holm": "survives"
+  },
+  {
+   "pair": "tankbind over unimol",
+   "cell": "('rmsd2', 'energy minimization')",
+   "margin": -0.0818,
+   "p": 0.0014,
+   "against_the_published_order": true,
+   "holm": "survives"
+  },
+  {
+   "pair": "tankbind over unimol",
+   "cell": "('rmsd2+valid', 'none')",
+   "margin": 0.007,
+   "p": 0.5722,
+   "against_the_published_order": false,
+   "holm": "does not survive"
+  },
+  {
+   "pair": "tankbind over unimol",
+   "cell": "('rmsd2+valid', 'energy minimization')",
+   "margin": -0.0561,
+   "p": 0.0114,
+   "against_the_published_order": true,
+   "holm": "does not survive"
+  },
+  {
+   "pair": "tankbind over unimol",
+   "cell": "('rmsd1', 'none')",
+   "margin": -0.0164,
+   "p": 0.2222,
+   "against_the_published_order": true,
+   "holm": "does not survive"
+  },
+  {
+   "pair": "tankbind over unimol",
+   "cell": "('rmsd1', 'energy minimization')",
+   "margin": -0.028,
+   "p": 0.1332,
+   "against_the_published_order": true,
+   "holm": "does not survive"
+  },
+  {
+   "pair": "tankbind over unimol",
+   "cell": "('rmsd2+chem', 'none')",
+   "margin": 0.0093,
+   "p": 0.6132,
+   "against_the_published_order": false,
+   "holm": "does not survive"
+  },
+  {
+   "pair": "tankbind over unimol",
+   "cell": "('rmsd2+chem', 'energy minimization')",
+   "margin": -0.0607,
+   "p": 0.0074,
+   "against_the_published_order": true,
+   "holm": "does not survive"
+  },
+  {
+   "pair": "vina over tankbind",
+   "cell": "('rmsd2', 'none')",
+   "margin": 0.3738,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "vina over tankbind",
+   "cell": "('rmsd2', 'energy minimization')",
+   "margin": 0.285,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "vina over tankbind",
+   "cell": "('rmsd2+valid', 'none')",
+   "margin": 0.486,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "vina over tankbind",
+   "cell": "('rmsd2+valid', 'energy minimization')",
+   "margin": 0.3014,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "vina over tankbind",
+   "cell": "('rmsd1', 'none')",
+   "margin": 0.3178,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "vina over tankbind",
+   "cell": "('rmsd1', 'energy minimization')",
+   "margin": 0.2336,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "vina over tankbind",
+   "cell": "('rmsd2+chem', 'none')",
+   "margin": 0.4463,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "vina over tankbind",
+   "cell": "('rmsd2+chem', 'energy minimization')",
+   "margin": 0.3248,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "vina over unimol",
+   "cell": "('rmsd2', 'none')",
+   "margin": 0.2944,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "vina over unimol",
+   "cell": "('rmsd2', 'energy minimization')",
+   "margin": 0.2033,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "vina over unimol",
+   "cell": "('rmsd2+valid', 'none')",
+   "margin": 0.493,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "vina over unimol",
+   "cell": "('rmsd2+valid', 'energy minimization')",
+   "margin": 0.2453,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "vina over unimol",
+   "cell": "('rmsd1', 'none')",
+   "margin": 0.3014,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "vina over unimol",
+   "cell": "('rmsd1', 'energy minimization')",
+   "margin": 0.2056,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "vina over unimol",
+   "cell": "('rmsd2+chem', 'none')",
+   "margin": 0.4556,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  },
+  {
+   "pair": "vina over unimol",
+   "cell": "('rmsd2+chem', 'energy minimization')",
+   "margin": 0.264,
+   "p": 0.0001,
+   "against_the_published_order": false,
+   "holm": "survives"
+  }
+ ]
+}

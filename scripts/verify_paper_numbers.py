@@ -1670,6 +1670,32 @@ def main() -> int:
                            "forecasting the count from the substrate fails", "below the best constant",
                            f"{S['predicted count']['f1']:.4f}", src))
 
+    # 10c-p. The docking control's reversals, after correcting for the family they were read in.
+    # The control is the paper's answer to "your instrument finds nothing everywhere", so the two
+    # exchanges it recovers have to survive the multiplicity the grid creates, not just an interval.
+    dm = ROOT / "results/docking_multiplicity.json"
+    if dm.exists():
+        DM = json.loads(dm.read_text())
+        flat = re.sub(r"\s+", " ", whole)
+        md = re.search(r"read out of \$(\d+)\$ pairs by \$(\d+)\$ cells, so it is granted inside a "
+                       r"family of \$(\d+)\$ cell-level tests.*?both reversals are certified, "
+                       r"surviving Holm at \$\\alpha=0\.05\$ over the whole family, the largest at "
+                       r"\$p=([\d.]+)\\times10\^\{-(\d+)\}\$", flat)
+        checks.append((bool(md), "the docking multiplicity sentence parses", "present",
+                       "matched" if md else "not matched", ""))
+        if md:
+            src = str(dm.relative_to(ROOT))
+            check("docking family, pairs", md.group(1), DM["config"]["n_pairs"], src)
+            check("docking family, cells", md.group(2), DM["config"]["n_cells"], src)
+            check("docking family, size", md.group(3), DM["family_size"], src)
+            worst = max(r["p"] for r in DM["surviving_reversals"])
+            check("docking, largest surviving p", float(md.group(4)) * 10 ** -int(md.group(5)),
+                  round(worst, 5), src)
+            checks.append((DM["every_contested_pair_survives"],
+                           "every contested docking pair survives the correction", "all survive",
+                           f"{DM['pairs_still_contested']} of "
+                           f"{DM['pairs_contested_before_correction']}", src))
+
     # 10c-q. The robust order. The share of a leaderboard's pairwise claims that survive every cell
     # of the declared grid is the paper's answer to seven rounds of "no new metric", so every figure
     # of it is held to the run: the count that dominates, the count some cell reverses with an
