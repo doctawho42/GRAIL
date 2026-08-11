@@ -1,8 +1,8 @@
 {
  "config": {
   "script": "completed_loop_reach.py",
-  "git_commit": "034807d28db9b2ecefc683fa2169ed9ad8493817",
-  "git_dirty": false,
+  "git_commit": "d3649b53bc0e9e946c606e3f3704c711c5f280bf",
+  "git_dirty": true,
   "population": "clean_test",
   "n_substrates": 1170,
   "n_rules": 152,
@@ -25,10 +25,10 @@
    ]
   },
   "completed": {
-   "reach": 0.3423,
+   "reach": 0.3766,
    "ci95": [
-    0.32,
-    0.3649
+    0.3537,
+    0.3998
    ]
   },
   "implicit": {
@@ -40,18 +40,18 @@
   }
  },
  "the_missing_call": {
-  "delta": 0.1425,
+  "delta": 0.1767,
   "ci95": [
-   0.1251,
-   0.1598
+   0.1593,
+   0.1947
   ],
   "excludes_zero": true
  },
  "what_survives_as_convention": {
-  "delta": 0.0474,
+  "delta": 0.0131,
   "ci95": [
-   0.0377,
-   0.0574
+   0.0067,
+   0.0197
   ],
   "excludes_zero": true
  },

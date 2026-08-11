@@ -46,6 +46,7 @@ if str(ROOT) not in sys.path:
 sys.path.insert(0, str(ROOT / "scripts"))
 
 from rdkit import Chem, RDLogger
+from _contract import contract
 
 from _population import POPULATIONS, population_items, load_population, tagged_out
 from bank_engine_replication import load_bank
@@ -108,8 +109,7 @@ def _fragments(product, complete: bool):
     """Readable fragments of one product, optionally contracting it first."""
     if complete:
         try:
-            product = Chem.RemoveHs(Chem.Mol(product), sanitize=False)
-            Chem.SanitizeMol(product)
+            product = contract(product)
         except Exception:
             return
     try:

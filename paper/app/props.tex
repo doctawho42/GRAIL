@@ -284,7 +284,7 @@ figure in this subsection measured before that separation describes the loop as 
 & rules, engine & reach \\
 \midrule
 A & $152$ shared, expanded, loop as it stood & 0.200 $[0.182,0.218]$ \\
-A$'$ & $152$ shared, expanded, loop completed & 0.342 $[0.320,0.365]$ \\
+A$'$ & $152$ shared, expanded, loop completed & 0.377 $[0.354,0.400]$ \\
 B & $152$ shared, SyGMa's       & 0.387 $[0.365,0.410]$ \\
 C & all $175$, SyGMa's          & 0.532 $[0.507,0.558]$ \\
 D & all $175$, SyGMa's composed & 0.539 $[0.514,0.565]$ \\
@@ -297,15 +297,28 @@ the $23$ rules absent from our bank $+0.145$ $[+0.128,+0.162]$, and composition 
 $[+0.0038,+0.0096]$; the three sum to $D-A$ because they are constructed as its consecutive
 differences. The engine term alone is the size of the entire reach gap the main text reports.
 
-\paragraph{Three quarters of the term is an unfinished loop.} The arms above expand the substrate
-and never contract the product. Restoring the contraction, \texttt{RemoveHs} before sanitisation,
-lifts the expanded arm from $0.200$ $[0.182,0.219]$ to $0.342$ $[0.320,0.365]$ against the
-unexpanded arm's $0.389$ $[0.367,0.413]$: the missing call is worth $+0.142$ $[+0.125,+0.160]$ and
-the convention $+0.047$ $[+0.038,+0.057]$, both paired and both clear of zero. On the worked example
-below, benzoic acid under aromatic hydroxylation, the incomplete loop yields no product that
-sanitises and the completed one yields three, which are the three the unexpanded arm yields. Every
-figure in this subsection that predates that measurement describes the loop as it stood, and is
-labelled where it appears.
+\paragraph{Almost all of the term is an unfinished loop.} The arms above expand the substrate and
+never contract the product. Restoring the contraction lifts the expanded arm from $0.200$
+$[0.182,0.219]$ to $0.377$ $[0.354,0.400]$ against the unexpanded arm's $0.389$ $[0.367,0.413]$: the
+unfinished loop is worth $+0.177$ $[+0.159,+0.195]$ and the convention $+0.013$ $[+0.007,+0.020]$,
+both paired and both clear of zero. On the worked example below, benzoic acid under aromatic
+hydroxylation, the incomplete loop yields no product that sanitises and the completed one yields
+three, which are the three the unexpanded arm yields.
+
+\paragraph{Completing the loop is itself an undeclared choice, and its obvious implementation is
+wrong.} The contraction is one line and there are two of them. \texttt{AddHs} marks every heavy atom
+as taking no implicit hydrogens; \texttt{RemoveHs} then deletes the drawn hydrogens without lifting
+that mark, so a template that consumes a mapped hydrogen and puts nothing in its place leaves the
+atom one short, and the toolkit records an unpaired electron rather than refilling the valence.
+Clearing the mark first restores the capacity the expansion suspended. Applying the deployed bank to
+twelve substrates of the clean test split gives $69{,}468$ firings, of which the one-line version
+yields $30{,}434$ products that sanitise and the other $34{,}503$; $6{,}880$ of the first carry an
+unpaired electron and none of the second do; and of the $30{,}371$ both produce, $6{,}854$ differ,
+which is the same population. A metabolite corpus contains no radicals, so a product that acquires
+one cannot match any reference and is lost without an error. This is a third undeclared choice of
+the kind \S\ref{sec:enginereach} is about, found inside the repair of the second, and unlike the
+first two it is not a fork between defensible options: an engine predicting metabolites should not
+emit radicals. Every arm reported here uses the contraction that does not.
 
 \paragraph{One call out of three.} The loop makes three discretionary choices before it reports a
 product: whether the substrate is expanded, whether products are normalised by tautomer
@@ -441,6 +454,14 @@ do not suffer: the asymmetry runs against us here, not for us. The mined majorit
 kept only if applying it through this engine regenerated its own annotated product
 (Appendix~\ref{app:arch}), so it was validated against this engine, not a foreign one and
 supplies no offsetting overstatement.
+
+\paragraph{What is convention-dependent is a construct, not a domain.} Which \textsc{smarts}
+constructs an expansion touches is readable from a rule file: counts that already include the
+hydrogens about to be drawn are inert, counts of explicit connections or of implicit hydrogens lose
+every match, and the hydrogen \emph{atom} primitive fires more often rather than less. Across six
+libraries and $51{,}368$ templates the construct almost everyone uses is the inert one, and the two
+that move are used by disjoint sets of libraries, so a survey by domain would have found nothing:
+what predicts exposure is which construct a library was written with.
 
 \subsection{The same choice outside metabolism, failing the other way}
 \label{app:retroconvention}

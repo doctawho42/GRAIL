@@ -1,0 +1,29 @@
+{
+ "config": {
+  "script": "contraction_choice.py",
+  "git_commit": "d3649b53bc0e9e946c606e3f3704c711c5f280bf",
+  "git_dirty": true,
+  "n_substrates": 12,
+  "seed": 0,
+  "n_rules": 7581,
+  "population": "clean_test",
+  "note": "one_call is RemoveHs then sanitise; restored clears the no-implicit mark and zeroes explicit counts first"
+ },
+ "firings": 69468,
+ "parseable": {
+  "one_call": 30434,
+  "restored": 34503
+ },
+ "carrying_an_unpaired_electron": {
+  "one_call": 6880,
+  "restored": 0
+ },
+ "radical_share": {
+  "one_call": 0.2261,
+  "restored": 0.0
+ },
+ "products_only_the_restored_contraction_yields": 4069,
+ "both_parsed": 30371,
+ "both_parsed_and_differ": 6854,
+ "share_of_shared_products_that_differ": 0.2257
+}

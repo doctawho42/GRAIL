@@ -664,7 +664,7 @@ def main() -> int:
     if cc.exists():
         C = json.loads(cc.read_text())
         flat = re.sub(r"\s+", " ", whole)
-        m = re.search(r"Across six\s*(?:independent )?libraries and \$([\d,{}]+)\$ templates", flat)
+        m = re.search(r"[Aa]cross six\s*libraries and \$([\d,{}]+)\$ templates", flat)
         check("census, templates", m and m.group(1).replace("{,}", ""), C["summary"]["templates"])
         checks.append((C["summary"]["independent_libraries"] == 6,
                        "census, independent libraries", C["summary"]["independent_libraries"], 6,
@@ -1157,6 +1157,69 @@ def main() -> int:
         checks.append((not stale, "no passage still reports the dispatch prediction as failed",
                        "none", f"{len(stale)} found", "the manuscript"))
 
+    # 10i. The exposure distribution. An earlier wording said the widest leaderboard supplies none;
+    # the artifact says it supplies four, and the one supplying none is neither the widest nor the
+    # tightest. The claim is now that neither quantity decides alone, so the gate holds each of the
+    # four shares and each median gap to the run.
+    pk2 = ROOT / "results/packing_vs_differential.json"
+    if pk2.exists():
+        L = json.loads(pk2.read_text())["per_leaderboard"]
+        flat = re.sub(r"\s+", " ", whole)
+        mdi = re.search(r"seven-system group is flagged on \$([\d.]+)\\%\$ of its\s*comparisons at a "
+                        r"median gap of \$([\d.]+)\$; the three-system group.*?on none; the "
+                        r"molecular-generation set,\s*whose gaps are narrower still at \$([\d.]+)\$, "
+                        r"on \$([\d.]+)\\%\$.*?external metabolite set.*?on \$([\d.]+)\\%\$", flat)
+        checks.append((bool(mdi), "the exposure-distribution sentence parses", "present",
+                       "matched" if mdi else "not matched", ""))
+        if mdi:
+            src = str(pk2.relative_to(ROOT))
+            def share(key):
+                v = L[key]
+                return round(100 * v["closer_than_the_move"] / v["comparisons"], 1)
+            check("seven-system share", mdi.group(1), share("retrosynthesis, seven-system group"), src)
+            check("seven-system median gap", mdi.group(2),
+                  L["retrosynthesis, seven-system group"]["median_gap"], src)
+            check("generation median gap", mdi.group(3),
+                  L["molecular generation, MOSES"]["median_gap"], src)
+            check("generation share", mdi.group(4), share("molecular generation, MOSES"), src)
+            check("external share", mdi.group(5), share("metabolites, external GLORYx"), src)
+            checks.append((L["retrosynthesis, three-system group"]["closer_than_the_move"] == 0,
+                           "the three-system group is flagged on nothing", "0",
+                           str(L["retrosynthesis, three-system group"]["closer_than_the_move"]), src))
+            widest = max(L.values(), key=lambda v: v["median_gap"])
+            checks.append((widest["closer_than_the_move"] > 0,
+                           "no passage claims the widest leaderboard is exposure-free",
+                           "it is not", str(widest["closer_than_the_move"]), src))
+
+    # 10j. The contraction. Section 4's engine term depends on a step with two one-line
+    # implementations that disagree, so the disagreement is measured and gated rather than assumed
+    # away; an earlier version of this repository asserted they were equivalent on eight templates.
+    cc = ROOT / "results/contraction_choice.json"
+    if cc.exists():
+        CC = json.loads(cc.read_text())
+        flat = re.sub(r"\s+", " ", whole)
+        mcc = re.search(r"gives \$([\d,{}]+)\$ firings, of which the one-line version\s*yields "
+                        r"\$([\d,{}]+)\$ products that sanitise and the other \$([\d,{}]+)\$; "
+                        r"\$([\d,{}]+)\$ of the first carry an\s*unpaired electron and none of the "
+                        r"second do; and of the \$([\d,{}]+)\$ both produce, \$([\d,{}]+)\$ differ",
+                        flat)
+        checks.append((bool(mcc), "the contraction sentence parses", "present",
+                       "matched" if mcc else "not matched", ""))
+        if mcc:
+            src = str(cc.relative_to(ROOT))
+            un = lambda s: s.replace("{,}", "")
+            check("contraction, firings", un(mcc.group(1)), CC["firings"], src)
+            check("contraction, one call parses", un(mcc.group(2)), CC["parseable"]["one_call"], src)
+            check("contraction, restored parses", un(mcc.group(3)),
+                  CC["parseable"]["restored"], src)
+            check("contraction, radicals", un(mcc.group(4)),
+                  CC["carrying_an_unpaired_electron"]["one_call"], src)
+            check("contraction, both parse", un(mcc.group(5)), CC["both_parsed"], src)
+            check("contraction, differ", un(mcc.group(6)), CC["both_parsed_and_differ"], src)
+            checks.append((CC["carrying_an_unpaired_electron"]["restored"] == 0,
+                           "the contraction this paper uses leaves no radicals", "0",
+                           str(CC["carrying_an_unpaired_electron"]["restored"]), src))
+
     # 10f. The screen against the measurement. The paper's two instruments describe the same thing
     # from opposite ends, and the claim that one predicts the other is checked rather than asserted:
     # the screen sees only the published cell and the movement to each other cell, the outcome comes
@@ -1585,10 +1648,10 @@ def main() -> int:
     if cl.exists():
         CL = json.loads(cl.read_text())
         flat = re.sub(r"\s+", " ", whole)
-        mcl = re.search(r"one call restores it, lifting the expanded arm to \$([\d.]+)\$ "
+        mcl = re.search(r"contracting it lifts the expanded arm to \$([\d.]+)\$\s*"
                         r"\$\[([\d.]+),([\d.]+)\]\$, worth \$\+([\d.]+)\$ "
                         r"\$\[\+([\d.]+),\+([\d.]+)\]\$, and what survives against the unexpanded "
-                        r"arm is \$\+([\d.]+)\$ \$\[\+([\d.]+),\+([\d.]+)\]\$", flat)
+                        r"arm is\s*\$\+([\d.]+)\$ \$\[\+([\d.]+),\+([\d.]+)\]\$", flat)
         checks.append((bool(mcl), "the completed-loop sentence parses", "present",
                        "matched" if mcl else "not matched", ""))
         if mcl:
@@ -1672,9 +1735,9 @@ def main() -> int:
         B = json.loads(hd_b.read_text())["hydrogen_convention_by_bank"]
         H = json.loads(hy_b.read_text())["banks"]
         flat = re.sub(r"\s+", " ", whole)
-        m = re.search(r"BioTransformer recovers \$([\d,{}]+)\$ references with hydrogens drawn and "
-                      r"\$(\d+)\$ with them implicit, a\s*swing of \$(-[\d.]+)\$, while SyGMa recovers "
-                      r"\$([\d,{}]+)\$ and \$([\d,{}]+)\$, a swing of \$\+([\d.]+)\$", flat)
+        m = re.search(r"BioTransformer recovers\s*\$([\d,{}]+)\$ references with hydrogens drawn "
+                      r"against \$(\d+)\$ with them implicit, a swing of \$(-[\d.]+)\$,\s*while SyGMa "
+                      r"recovers \$([\d,{}]+)\$ against \$([\d,{}]+)\$, a swing of \$\+([\d.]+)\$", flat)
         checks.append((bool(m), "the two-bank sentence parses", "present",
                        "matched" if m else "not matched", ""))
         if m:

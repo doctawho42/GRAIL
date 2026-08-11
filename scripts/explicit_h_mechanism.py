@@ -50,6 +50,7 @@ if str(ROOT) not in sys.path:
 sys.path.insert(0, str(ROOT / "scripts"))
 
 from rdkit import Chem, RDLogger
+from _contract import contract
 
 from _population import POPULATIONS, population_items, load_population, tagged_out
 from engine_knobs import DEFAULT, apply_with, shared_rules
@@ -150,8 +151,7 @@ def _worker(smiles: str):
             for product in generated:
                 if add_hs == "completed":
                     try:
-                        product = Chem.RemoveHs(Chem.Mol(product), sanitize=False)
-                        Chem.SanitizeMol(product)
+                        product = contract(product)
                     except Exception:
                         continue
                 try:

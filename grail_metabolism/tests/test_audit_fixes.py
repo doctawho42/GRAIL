@@ -659,56 +659,45 @@ def test_the_expansion_breaks_and_over_matches_as_the_paper_says():
     assert matches("[c]~[*]", expanded) > matches("[c]~[*]", mol)
 
 
-def test_contracting_a_product_does_not_depend_on_how_it_is_contracted():
-    """Completing the expanded loop is one call, and the alternative to it agrees with it.
+def test_contracting_an_expanded_product_needs_more_than_removing_the_hydrogens():
+    """The two ways of contracting an expanded product are not the same, and one makes radicals.
 
-    An expanded substrate yields an expanded product, and the paper's engine term rests on
-    contracting that product before it is read. The contraction is a single ``RemoveHs``; the
-    objection to it is that ``AddHs`` marks heavy atoms as taking no implicit hydrogens, so
-    removing the drawn ones could leave an atom short of the hydrogens it should carry, and
-    silently, for whole reaction classes rather than for odd molecules.
+    An arm that expands the substrate has to put the hydrogens back before the product is read.
+    Doing that with ``RemoveHs`` alone looks right on simple templates and is wrong in general:
+    ``AddHs`` marks every heavy atom as taking no implicit hydrogens, so when a template consumes a
+    mapped hydrogen and puts nothing in its place, removing the drawn ones leaves the atom one short
+    and RDKit records an unpaired electron instead of refilling the valence. A metabolite corpus
+    contains no radicals, so such a product cannot match any reference; it is lost silently.
 
-    The alternative restores that capacity first. If the objection held, the two would disagree on
-    some class; across the classes a metabolite bank is made of -- aliphatic and aromatic
-    hydroxylation, dealkylation that exposes an N-H, oxidation that changes charge, alkylation of
-    an aromatic N-H, S-oxidation, and a template that writes the hydrogen on both sides -- they do
-    not, so the term is not an artifact of the contraction.
+    Clearing the flag first restores the capacity ``AddHs`` suspended. This asserts the difference
+    rather than the equivalence, because the equivalence is what an earlier version of this file
+    asserted on eight hand-picked templates and it does not hold on the bank.
     """
+    import sys
+
     from rdkit import Chem
     from rdkit.Chem import AllChem
 
-    def contract_by_removing(product):
-        m = Chem.RemoveHs(Chem.Mol(product), sanitize=False)
-        Chem.SanitizeMol(m)
-        return Chem.MolToSmiles(m)
+    sys.path.insert(0, "scripts")
+    from _contract import contract, contract_by_removing_only
 
-    def contract_by_restoring_capacity(product):
-        m = Chem.Mol(product)
-        for atom in m.GetAtoms():
-            if atom.GetAtomicNum() > 1:
-                atom.SetNoImplicit(False)
-                atom.SetNumExplicitHs(0)
-        m = Chem.RemoveHs(m, sanitize=False)
-        Chem.SanitizeMol(m)
-        return Chem.MolToSmiles(m)
-
-    cases = [("[C:1][H]>>[C:1][OH]", "CC(C)=O"),
-             ("[c:1][H]>>[c:1][OH]", "C=Cc1ccccc1"),
-             ("[C:1]([H])>>[C:1]([H])O", "CC(C)=O"),
-             ("[N:1]>>[N+:1][O-]", "C1CCNCC1"),
-             ("[N:1][CH3:2]>>[N:1].[CH3:2]O", "CN1CCCCC1"),
-             ("[n:1][H]>>[n:1]C", "c1cc[nH]c1"),
-             ("[S:1]>>[S:1](=O)", "CSC"),
-             ("[C:1][H]>>[C:1]F", "CC(=O)Nc1ccc(O)cc1")]
-    compared = 0
-    for smirks, substrate in cases:
-        reaction = AllChem.ReactionFromSmarts(smirks)
-        expanded = Chem.AddHs(Chem.MolFromSmiles(substrate))
-        for products in reaction.RunReactants((expanded,)):
-            assert contract_by_removing(products[0]) == \
-                   contract_by_restoring_capacity(products[0]), smirks
+    # a template that takes a hydrogen off a mapped carbon and puts nothing back
+    reaction = AllChem.ReactionFromSmarts("[C:1][C:2]=[C:3][C:4]>>[C:1][C:2][C:3][C:4]")
+    substrate = Chem.AddHs(Chem.MolFromSmiles("CC=CCO"))
+    radicals_one_call = radicals_reset = compared = 0
+    for products in reaction.RunReactants((substrate,)):
+        for product in products:
+            try:
+                a = contract_by_removing_only(product)
+                b = contract(product)
+            except Exception:
+                continue
             compared += 1
-    assert compared >= 8
+            radicals_one_call += sum(x.GetNumRadicalElectrons() for x in a.GetAtoms())
+            radicals_reset += sum(x.GetNumRadicalElectrons() for x in b.GetAtoms())
+    assert compared, "the template fired on nothing, so the test asserts nothing"
+    assert radicals_one_call > 0, "the one-call contraction is expected to strand a valence here"
+    assert radicals_reset == 0, "restoring implicit capacity must not leave an unpaired electron"
 
 
 def test_a_similarity_threshold_is_not_an_identity_relation():

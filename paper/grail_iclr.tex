@@ -67,8 +67,9 @@ becomes vulnerable to an undeclared convention exactly as its entries converge.
 Two of the four choices change a published ordering and they break it differently. The output budget
 reverses margins a paired interval separates from zero: one method is last at tight budgets and
 first at the budget the field reports, with its ranking held fixed. The matching criterion instead
-exchanges positions the benchmark never separated, on the released predictions of eleven
-retrosynthesis systems at the top-1 accuracy those tables lead with, and where a separation does
+exchanges positions the benchmark never separated, inside the largest group of the eleven released
+retrosynthesis prediction files that shares a test set, seven systems at the top-1 accuracy those
+tables lead with, and where a separation does
 hold it erases the gap rather than reversing it. The engine convention decides no ordering but
 decides what a rule bank reaches: one published base loses three quarters of its references when the
 hydrogens it was written for are withdrawn, so a coverage figure is the value of a bank together
@@ -268,19 +269,19 @@ Appendix~\ref{app:arch}.
 \looseness=-1
 A paper that publishes a rule base usually publishes a figure for what it covers, the fraction of
 reference products applying every rule recovers: its \emph{reach}. It is quoted as a property of the
-rules and it is not one, because applying a rule requires deciding how the substrate is presented to
-the matcher, and that decision is made silently by every engine and reported by none.
+rules and is not one: applying a rule means deciding how the substrate is presented to the matcher,
+and every engine decides that silently and none reports it.
 
 \looseness=-1
 $152$ of SyGMa's $175$ rules sit verbatim in ours, so those can be held fixed while only the
 procedure changes: a depth-1 enumeration that expands the substrate with explicit hydrogens against
 SyGMa's own, which does not. On the clean test split they reach $0.200$ $[0.182,0.218]$ under the
-first and $0.387$ $[0.365,0.410]$ under the second, a paired $+0.190$ $[+0.173,+0.208]$, and most of
-that is not the convention. Expanding a substrate and never contracting the product leaves the drawn
-hydrogen on the reacting atom; one call restores it, lifting the expanded arm to $0.342$
-$[0.320,0.365]$, worth $+0.142$ $[+0.125,+0.160]$, and what survives against the unexpanded arm is
-$+0.047$ $[+0.038,+0.057]$. Three quarters of the apparent effect is a missing call and a quarter
-the convention, both separated. The whole distance between the two configurations is $+0.339$: the
+first and $0.390$ $[0.367,0.413]$ under the second, a paired $+0.190$ $[+0.173,+0.208]$, and almost
+none of that is the convention. Expanding a substrate and never contracting the product leaves the
+drawn hydrogen on the reacting atom; contracting it lifts the expanded arm to $0.377$
+$[0.354,0.400]$, worth $+0.177$ $[+0.159,+0.195]$, and what survives against the unexpanded arm is
+$+0.013$ $[+0.007,+0.020]$. Thirteen fourteenths of it is an unfinished loop and the
+remainder the convention, both separated. The whole distance between the two configurations is $+0.339$: the
 engine term as the two programs stand, $+0.188$ $[+0.170,+0.205]$, $+0.145$ $[+0.128,+0.162]$ from
 the $23$ rules our bank lacks, and $+0.0065$ $[+0.0038,+0.0096]$ from composing steps.
 
@@ -290,11 +291,11 @@ fire equally often expanded, and the toolkit then refuses $63\%$ of the fragment
 separate into against $0.4\%$ without the expansion, because a template written against implicit
 hydrogens does not name the hydrogen it replaces and the drawn one is never removed. Contract the
 product and that number is zero. The smaller is a matching effect and nothing else, the completed
-loop yielding $20{,}601$ fragments against the unexpanded arm's $21{,}106$. The convention then
-decides what a bank reaches without deciding which reaches further: with the loop complete
-BioTransformer recovers $1{,}235$ references with hydrogens drawn and $317$ with them implicit, a
-swing of $-0.353$, while SyGMa recovers $1{,}260$ and $1{,}390$, a swing of $+0.050$ the other way,
-and SyGMa leads in both arms. A coverage figure is the value of a bank together with a convention
+loop yielding $20{,}601$ fragments against the unexpanded arm's $21{,}106$. The convention then decides what a bank
+reaches without deciding which reaches further: with the loop complete BioTransformer recovers
+$1{,}235$ references with hydrogens drawn against $317$ with them implicit, a swing of $-0.353$,
+while SyGMa recovers $1{,}350$ against $1{,}390$, a swing of $+0.015$ the other way, and SyGMa leads
+in both. A coverage figure is the value of a bank together with a convention
 and is not comparable across papers that state only the bank.
 
 \looseness=-1
@@ -305,21 +306,15 @@ On SyGMa it is the identity, none of whose $175$ templates names one, reproducin
 implicit arm exactly, which is the pre-registered null. On BioTransformer it beats the better of the
 two global settings by $+0.0116$ $[+0.0049,+0.0195]$: no single convention expresses that bank at
 all, since it was assembled from collections written in two and $726$ of its $994$ templates want
-the other presentation from the rest. The worst case over global settings is then a diagnostic
-rather than a remedy, and is what a reader of a coverage figure quoted without its application
-procedure is entitled to assume: $0.1221$ for BioTransformer against the $0.4755$ its best single
+the other presentation from the rest. The worst case over global settings is a diagnostic rather
+than a remedy, and is what a reader of a coverage figure quoted without its procedure may assume: $0.1221$ for BioTransformer against the $0.4755$ its best single
 setting reaches, a published figure four times what any one convention guarantees.
 
 \looseness=-1
-\paragraph{What is convention-dependent is a construct, not a domain.} Which \textsc{smarts}
-constructs an expansion touches is readable from a rule file without running anything: counts that
-already include the hydrogens about to be drawn are inert, counts of explicit connections or of
-implicit hydrogens lose every match, and the hydrogen \emph{atom} primitive fires more often rather
-than less. Across six libraries and $51{,}368$ templates the construct almost everyone uses is the
-inert one, and the two that move are used by disjoint sets of libraries. Every one of the $42{,}554$
-patterns in the standard retrosynthesis template library pins a connection count and none carries
-the atom primitive, so the same step costs that library $82\%$ of the template--product pairs it can
-match at all: a hazard latent in that field rather than an error in it.
+What a bank has to lose is readable from its rule file without running anything, and the hazard is
+not confined to this domain: every one of the $42{,}554$ patterns in the standard retrosynthesis
+template library pins a connection count, so the same step costs that library $82\%$ of the
+template--product pairs it can match at all (Appendix~\ref{app:retroconvention}).
 
 
 
@@ -398,10 +393,15 @@ than assumed; its specificity is $0.947$ and its precision $0.542$, the false al
 that widen a gap instead of closing it. A maintainer can therefore bound a leaderboard's exposure
 from its own published margins, with no false negatives, and the bound is not vacuous: run on the
 published cell alone it flags $21$ of the $27$ pairs in the table above, of which $17$ are exactly
-the ones the full grid removes. The distribution is the less comfortable part: the tightest of the
-four leaderboards supplies $28$ of the $48$ flagged comparisons and the widest none, so a benchmark
-becomes vulnerable to an undeclared convention exactly as its entries converge
-(Appendix~\ref{app:xdomain}).
+the ones the full grid removes. Where the flags fall says which benchmarks are exposed, and
+neither quantity decides that alone. The seven-system group is flagged on $22.2\%$ of its
+comparisons at a median gap of $0.0130$; the three-system group, whose systems sit three and a half
+times further apart while the criterion moves them as much, on none; the molecular-generation set,
+whose gaps are narrower still at $0.0094$, on $5.8\%$, because the criterion barely moves its models
+at all; and the external metabolite set, whose gaps are ten times the widest of these, on $22.2\%$,
+because its movements are larger than those gaps. A benchmark is exposed when its entries converge
+faster than the conventions separating them, which is a statement about a ratio and can be evaluated
+before any of them is varied (Appendix~\ref{app:xdomain}).
 
 \paragraph{How one choice breaks an ordering.} \looseness=-1
 \citet{Hastedt_2024} released the ranked predictions of twelve retrosynthesis systems, of which

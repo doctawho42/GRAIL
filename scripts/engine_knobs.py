@@ -52,6 +52,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 import sygma
 from grail_metabolism.metrics import _tautomer_inchikey as _tk
 from rdkit import Chem, RDLogger
+from _contract import contract
 
 from grail_metabolism.utils.preparation import (
     _clean_product_smiles, _iter_reaction_products, _normalize_smiles_cached, iscorrect)
@@ -121,8 +122,7 @@ def apply_with(mol, rules, add_hs: bool, norm: str, drop_invalid: bool,
         for product in _iter_reaction_products(substrate, rule):
             if remove_hs:
                 try:
-                    product = Chem.RemoveHs(Chem.Mol(product), sanitize=False)
-                    Chem.SanitizeMol(product)
+                    product = contract(product)
                 except Exception:
                     continue
             try:
