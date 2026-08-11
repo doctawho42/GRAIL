@@ -1185,7 +1185,7 @@ def main() -> int:
         flat = re.sub(r"\s+", " ", whole)
         # the body summarises the spread and the appendix enumerates it; the gate holds the
         # enumeration, because that is where the per-board numbers are actually asserted
-        mdi = re.search(r"the seven tables here run from \$(\d+)\\%\$ flagged\s*to \$([\d.]+)\\%\$", flat)
+        mdi = re.search(r"the sixteen tables run from \$(\d+)\\%\$ flagged to \$([\d.]+)\\%\$", flat)
         checks.append((bool(mdi), "the exposure-distribution sentence parses", "present",
                        "matched" if mdi else "not matched", ""))
         if mdi:
@@ -1202,8 +1202,8 @@ def main() -> int:
                            "the widest-gapped board is not the least flagged",
                            f"above {min(shares.values())}%",
                            f"{widest} at {shares[widest]}%", src))
-            checks.append((len(L) == 7, "the summary counts every board the artifact has",
-                           "7 boards", f"{len(L)} boards", src))
+            checks.append((len(L) == 16, "the summary counts every board the artifact has",
+                           "16 boards", f"{len(L)} boards", src))
             checks.append((L["retrosynthesis, three-system group"]["closer_than_the_move"] == 0,
                            "the three-system group is flagged on nothing", "0",
                            str(L["retrosynthesis, three-system group"]["closer_than_the_move"]), src))
@@ -1365,14 +1365,15 @@ def main() -> int:
     if pp.exists():
         PP = json.loads(pp.read_text())["totals"]
         flat = re.sub(r"\s+", " ", whole)
-        mpp = re.search(r"Run on the six tables above it flags \$(\d+)\$ of their \$(\d+)\$ "
-                        r"pairs, which are exactly the \$(\d+)\$ some cell reverses", flat)
+        mpp = re.search(r"Run on the fifteen tables it flags \$(\d+)\$ of their "
+                        r"\$([\d,{}]+)\$ pairs, which are exactly the \$(\d+)\$ some cell "
+                        r"reverses", flat)
         checks.append((bool(mpp), "the screen-predicts-order sentence parses", "present",
                        "matched" if mpp else "not matched", ""))
         if mpp:
             src = str(pp.relative_to(ROOT))
             check("screen, flagged", mpp.group(1), PP["flagged"], src)
-            check("screen, pairs", mpp.group(2), PP["n_pairs"], src)
+            check("screen, pairs", mpp.group(2).replace("{,}", ""), PP["n_pairs"], src)
             check("screen, flagged and failed", mpp.group(3), PP["flagged_and_failed"], src)
             checks.append((PP["failed_but_not_flagged"] == 0,
                            "the screen misses nothing, as the arithmetic requires", "0",
@@ -1812,7 +1813,7 @@ def main() -> int:
                            f"first tier {top_ - depth_[pub[0]] + 1}, "
                            f"second tier {top_ - depth_[pub[1]] + 1}, "
                            f"{sum(1 for s in pub if depth_[s] == top_)} in the top tier", src))
-            m4 = re.search(r"take \$(\d+)\$ different total orders across \$(\d+)\$\s*cells", flat)
+            m4 = re.search(r"take \$(\d+)\$ total orders across \$(\d+)\$ cells", flat)
             checks.append((bool(m4), "the distinct-orderings sentence parses", "present",
                            "matched" if m4 else "not matched", src))
             if m4:

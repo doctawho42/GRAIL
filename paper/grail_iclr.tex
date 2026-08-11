@@ -57,13 +57,13 @@ ordering can be asked a question it is never asked: does it hold in every other 
 which it does are what can be quoted without naming the cell. Most of a leaderboard turns out never
 to have been resolved at all: eleven of the twenty-one pairwise orderings on a seven-system
 retrosynthesis table carry margins its own benchmark cannot separate. Of the ten it does separate,
-seven tenths survive every cell. Across six leaderboards in four domains and $324$ pairs the share
-runs from none of three to nine tenths, so it is a property of a leaderboard and not a constant, and
-the $19$-system translation table at the top of that range still supports only $11$ of its places. Which pairs are at risk needs no pairwise statistic: two systems
+seven tenths survive every cell. Across fifteen leaderboards in four domains and $1{,}013$ pairs
+the share runs from none of three to nine tenths, so it is a property of a leaderboard and not a
+constant; summed, those leaderboards publish $169$ places and what survives supports $96$. Which pairs are at risk needs no pairwise statistic: two systems
 exchange under a change of criterion exactly when it moves them apart by more than the larger of the
 two margins it connects, so scoring each system once in the alternative cell settles every pair by
-arithmetic, and on the $2{,}208$ comparisons this paper spans in five domains the condition holds
-on the $151$ that exchange and on nothing else. Exposure is a ratio and not a stage of maturity: the board
+arithmetic, and on the $6{,}340$ comparisons this paper spans in five domains the condition holds
+on the $488$ that exchange and on nothing else. Exposure is a ratio and not a stage of maturity: the board
 here with the widest margins is not the one least at risk.
 Two of the four choices change a published ordering and they break it differently. The output budget
 reverses margins a paired interval separates from zero: one method is last at tight budgets and
@@ -351,13 +351,13 @@ not being transitive.
 A pair that does not dominate has failed in one of two ways that should not be added together. Some
 cell may order the two the other way with an interval excluding zero, a choice deciding against the
 published table; or none may, leaving an ordering that fails on a margin the benchmark cannot
-resolve. Only the first is \emph{contested}, so noise on a tie is not a reversal. All six run a grid of
-four criteria crossed with a second axis its own field leaves undeclared: the budget a table is read
-at, whether a docked pose is minimised first, whether a translation's error score is floored
-(Appendix~\ref{app:robust}).
+resolve. Only the first is \emph{contested}, so noise on a tie is not a reversal. All fifteen run a grid of four
+criteria crossed with a second axis their own field leaves undeclared: the budget a table is read at,
+whether a docked pose is minimised first, whether an error score is floored, whether a human score is
+standardised within the annotator who gave it (Appendix~\ref{app:robust}).
 
 \begin{table}[t]
-\centering\small
+\centering\footnotesize
 \begin{tabular}{lccccc}
 \toprule
 leaderboard & items & dominate & contested (certified) & unresolved & tiers \\
@@ -368,6 +368,8 @@ metabolites, three methods    & $1{,}170$ & $2$ of $3$ & $1$ (0) & $0$ & $2$ of 
 docking, seven programs       & $428$ & $17$ of $21$ & $2$ (2) & $2$ & $4$ of $7$ \\
 translation, nineteen systems & $486$ & $135$ of $171$ & $13$ (0) & $23$ & $11$ of $19$ \\
 translation, fifteen systems  & $559$ & $97$ of $105$ & $1$ (0) & $7$ & $9$ of $15$ \\
+\midrule
+translation, nine further pairs & $634$--$1{,}954$ & $559$ of $689$ & $37$ (8) & $93$ & $66$ of $115$ \\
 \bottomrule
 \end{tabular}
 \caption{What a leaderboard entitles a reader to quote, on a grid of four criteria by a second
@@ -381,11 +383,11 @@ Figure~\ref{fig:hasse}: seven published places become three tiers.}
 \looseness=-2
 The last three columns are the ones to take away, because most of what a leaderboard prints was
 never resolved at all: eleven of the seven-system table's twenty-one pairs carry margins its own
-benchmark cannot separate before any choice is varied. The share ranges from none of three to nine
-tenths across the six tables, so it is not a constant of the field and none is reported. The longest
-chain is the readable form of the same measurement: seven published places support $3$ tiers,
-resampling to $[3,3]$; nineteen support $11$; and on the seven-system table the same systems take
-$4$ different total orders across $16$ cells. The system that table places first is not in the top
+benchmark cannot separate before any choice is varied. Across all fifteen leaderboards the share
+runs from none of three to nine tenths with a median of $0.81$, so it is not a constant of the
+field and none is reported. Summed, they publish $169$ places and support $96$. The longest chain is the readable
+form of the same measurement: seven published places support $3$ tiers, resampling to $[3,3]$;
+nineteen support $11$; and the same seven systems take $4$ total orders across $16$ cells. The system that table places first is not in the top
 tier of what survives; the one it places second is the only system that is
 (Figure~\ref{fig:hasse}). Docking and translation are controls: docking's field published its
 reversal already \citep{Buttenschoen_2024} and the grid recovers it, while the translation tables,
@@ -400,18 +402,18 @@ systems exchange under a change of criterion exactly when the change moves them 
 the larger of the two margins it connects: with $d$ their margin in the published cell, $d'$ their
 margin in the other and $\delta_a,\delta_b$ how far each system moves, $d'=d+(\delta_a-\delta_b)$ and
 the sign survives iff $|\delta_a-\delta_b|\le\max(|d|,|d'|)$. Against $|d|$ alone it is necessary and not
-sufficient, and the difference is not a technicality: over the $2{,}208$ method-pair by criterion-pair
-comparisons this paper spans in five domains the one-sided form flags $1{,}135$ where $151$ exchange,
-and the two-sided form flags the $151$ and nothing else. The $n$ systems are therefore scored once in the other
+sufficient, and the difference is not a technicality: over the $6{,}340$ method-pair by criterion-pair
+comparisons this paper spans in five domains the one-sided form flags $3{,}318$ where $488$ exchange,
+and the two-sided form flags the $488$ and nothing else. The $n$ systems are therefore scored once in the other
 cell and every one of the $n(n-1)/2$ pairs is settled exactly, with no paired statistic; a resample
 is needed only for whether an exchange clears zero. A typical movement for the domain in place of the
 per-system one over-predicts fragility by a third and is reported as a failure
-(Appendix~\ref{app:negative}). Run on the six tables above it flags
-$64$ of their $324$ pairs, which are exactly the $64$ some cell reverses. Where the flags fall says which benchmarks are exposed, and
-neither the gap nor the movement decides that alone: the seven tables here run from $0\%$ flagged
-to $15.9\%$, and the widest-gapped of them is not the safest. A benchmark is exposed when its entries
-converge faster than the conventions separating them, which is a ratio, and it can be evaluated
-before any convention is varied (Appendix~\ref{app:xdomain}).
+(Appendix~\ref{app:negative}). Run on the fifteen tables it flags $194$
+of their $1{,}013$ pairs, which are exactly the $194$ some cell reverses. Where the flags fall says which benchmarks are exposed, and neither
+the gap nor the movement decides alone: the sixteen tables run from $0\%$ flagged to $15.9\%$, and
+the widest-gapped is not the safest. A benchmark is exposed when its entries converge faster than the
+conventions separating them, a ratio evaluable before any convention is varied
+(Appendix~\ref{app:xdomain}).
 
 \paragraph{How one choice breaks an ordering.} \looseness=-1
 \citet{Hastedt_2024} released the ranked predictions of twelve retrosynthesis systems, of which
@@ -608,16 +610,15 @@ and~\ref{app:negative}).
 substrates of frozen predictions, because MetaTrans's pipeline no longer reproduces and
 BioTransformer's configuration is unscripted; the other three are scored on the full $\ntest$. An
 unannotated but real product counts as a false positive, so every precision and F1 figure is
-pessimistic, though by a bounded amount the annotation graph itself measures
-(Appendix~\ref{app:closure}). Depth-2 application lifts the ceiling by ${\sim}0.012$ at $8.5$ times
-the cost, so $\ceiling$ bounds this formulation rather than the task; this system's figure is one
-evaluation of the deployed configuration; and its rule labels are built with the substrate expanded
+pessimistic by a bounded amount the annotation graph measures (Appendix~\ref{app:closure}). Depth-2
+application lifts the ceiling by ${\sim}0.012$ at $8.5$ times the cost, so $\ceiling$ bounds this
+formulation and not the task; and this system's rule labels are built with the substrate expanded
 while its rules fire without it, so locating its shortfall in selection is conditioned on a mismatch
 of about half the rule--substrate positives (Appendix~\ref{app:enginereach}).
 
 \looseness=-2
 The cross-domain numbers come from files produced elsewhere, the reordering there is a top-1
-phenomenon, the robust order rests on six leaderboards in four domains, one of them a control, and two results are bounded nulls.
+phenomenon, the robust order rests on fifteen leaderboards in four domains, and two results are bounded nulls.
 
 \section{Conclusion}
 \label{sec:conclusion}
@@ -626,10 +627,10 @@ phenomenon, the robust order rests on six leaderboards in four domains, one of t
 Four choices are settled before any model is compared and none is routinely declared. What a
 published ranking entitles a reader to quote is smaller than the ranking in two ways: most of its
 pairs were never resolved, and some that were are reversed by a choice no paper reports. Two of the
-four choices change a published ordering: the budget reverses margins an interval separates from
-zero, the criterion exchanges systems a mature benchmark never separated, and which pairs either can reach follows from an equivalence between a
-movement and the margins it connects. Declaring is not the whole remedy: per-template dispatch loses
-to the best single setting on the one mixed bank there is.
+four choices change a published ordering --- the budget reverses margins an interval separates from
+zero, the criterion exchanges systems a mature benchmark never separated --- and which pairs either
+reaches follows from an equivalence. Declaring is not the whole remedy, as the one bank of mixed
+provenance here shows.
 
 \subsubsection*{Reproducibility statement}
 
