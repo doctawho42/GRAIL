@@ -426,10 +426,10 @@ def main() -> int:
         # must fail rather than pass quietly.
         places = sum(b["n_systems"] for b in survey_boards)
         tiers = sum(b["tiers_distinguished"] for b in survey_boards)
-        printings = re.findall(r"publish \$(\d+)\$ places and (?:what survives )?supports? "
-                               r"\$(\d+)\$", flat)
-        checks.append((len(printings) >= 3, "every printing of the survey total is found",
-                       "3 or more", str(len(printings)), "the manuscript"))
+        printings = re.findall(r"[Pp]ublish \$?(\d+)\$? [Pp]laces\\?\\?\s*and (?:what survives )?"
+                               r"[Ss]upports? \$?(\d+)\$?", flat)
+        checks.append((len(printings) >= 4, "every printing of the survey total is found",
+                       "4 or more, the title among them", str(len(printings)), "the manuscript"))
         for i, (pl, ti) in enumerate(printings, 1):
             check(f"survey printing {i}, places", pl, places, "the manuscript")
             check(f"survey printing {i}, tiers", ti, tiers, "the manuscript")
