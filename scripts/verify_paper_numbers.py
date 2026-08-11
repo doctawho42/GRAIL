@@ -543,6 +543,11 @@ def main() -> int:
     if rr.exists():
         RR = json.loads(rr.read_text()); RB = RR["boards"]
         flat = re.sub(r"\s+", " ", whole)
+        # the body states the same pair of numbers in its own words; both printings are held, since
+        # a figure that appears twice and agrees once is the defect this paper is about
+        mbody = re.search(r"it moves by \$([\d.]+)\$ on average and by \$([\d.]+)\$ at the widest", flat)
+        checks.append((bool(mbody), "the body's replication sentence parses", "present",
+                       "matched" if mbody else "not matched", ""))
         mrr = re.search(r"moves by \$([\d.]+)\$ on average and by as much as \$([\d.]+)\$; "
                         r"\\textsc\{en-zh\} is at \$([\d.]+)\$ in one edition and \$([\d.]+)\$ in "
                         r"the next\..*?Across the eight, \$(\d+)\$ of \$(\d+)\$ pairs dominate, "
@@ -564,6 +569,11 @@ def main() -> int:
             check("replication, mean shift", mrr.group(1),
                   round(sum(deltas) / max(len(deltas), 1), 3), src)
             check("replication, largest shift", mrr.group(2), round(max(deltas), 3), src)
+            if mbody:
+                check("replication in the body, mean shift", mbody.group(1),
+                      round(sum(deltas) / max(len(deltas), 1), 3), src)
+                check("replication in the body, largest shift", mbody.group(2),
+                      round(max(deltas), 3), src)
             check("replication, en-zh before", mrr.group(3),
                   round(RB["eng-zho"]["robustness"], 3), src)
             check("replication, en-zh after", mrr.group(4),
