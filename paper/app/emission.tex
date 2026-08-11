@@ -50,8 +50,20 @@ interval excluding zero, the gain rises to $\alpha=0.5$ and falls away symmetric
 extremes fail in the two ways they should. At $\alpha=0.95$ the rule is a constant of one and gains
 $+0.0013$ $[-0.0007,+0.0036]$; at $\alpha=0.1$ it admits nearly everything and loses. What the
 sweep shows is that the pool carries information about how many to emit across a wide band of
-thresholds, which is the claim; $0.5$ is where it is largest and is reported as such rather than
-as a tuned value.
+thresholds, which is the claim. But $0.5$ is an argmax over the sweep, which is a
+tuned value whatever the plateau around it looks like, so it is cross-fitted rather than defended.
+Choosing both $\alpha$ and the competing constant on four fifths of the substrates and comparing
+only on the remaining fifth, over $100$ random splits, reproduces the point estimate at $+0.0151$
+and selects $\alpha=0.5$ as the training-part argmax in all $100$. The spread across held-out fifths
+is wide, $[-0.0015,+0.0334]$, as a fifth of a thousand substrates must give; what this establishes
+is that the threshold is not a fit to this split, and it is not a second interval on the gain.
+
+A companion sweep over \emph{absolute} thresholds is released beside it
+(\texttt{results/stopping\_rule.json}) and is a negative result: cutting the pool at a fixed score
+gains $+0.0035$ $[-0.0047,+0.0120]$ and calibrating it $+0.0039$ $[-0.0042,+0.0122]$, neither
+separated from zero. Only the two pool-relative rules separate --- the one reported here and an
+expected-F1 rule at $+0.0126$ $[+0.0041,+0.0214]$. That is the comparison the claim needs: the
+information is in where a candidate sits relative to the pool, not in its score.
 
 \paragraph{Four fifths of the oracle, without the oracle.} The relative rule reaches $+0.0147$ of
 an available $+0.0189$. That is the useful form of the result: the headroom over the best constant

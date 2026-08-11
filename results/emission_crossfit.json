@@ -1,0 +1,45 @@
+{
+ "config": {
+  "script": "emission_crossfit.py",
+  "git_commit": "5c9e87251ce45c2f8f222f36aa74c82f438d9325",
+  "git_dirty": true,
+  "splits": 100,
+  "train_share": 0.8,
+  "seed": 0,
+  "alphas": [
+   0.95,
+   0.9,
+   0.8,
+   0.75,
+   0.6,
+   0.5,
+   0.4,
+   0.3,
+   0.25,
+   0.1
+  ],
+  "constants": [
+   1,
+   2,
+   3,
+   5,
+   8,
+   15
+  ],
+  "note": "both the threshold and the competing constant are chosen on the training part of each split and compared only on the held-out part"
+ },
+ "held_out_gain_mean": 0.0151,
+ "held_out_gain_ci95": [
+  -0.0015,
+  0.0334
+ ],
+ "share_of_splits_choosing_alpha_0.5": 1.0,
+ "alpha_chosen": {
+  "0.5": 100
+ },
+ "constant_chosen": {
+  "1": 99,
+  "2": 1
+ },
+ "separated_from_zero": false
+}

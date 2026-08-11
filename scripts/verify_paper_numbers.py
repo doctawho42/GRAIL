@@ -434,6 +434,55 @@ def main() -> int:
             check(f"survey printing {i}, places", pl, places, "the manuscript")
             check(f"survey printing {i}, tiers", ti, tiers, "the manuscript")
 
+    # 10d-f. The emission threshold, cross-fitted. The paper must not read the held-out spread as a
+    # second interval on the gain -- it is a fifth of the substrates -- so the gate holds both the
+    # reproduced point estimate and the fact that the interval is NOT claimed to exclude zero.
+    xf = ROOT / "results/emission_crossfit.json"
+    if xf.exists():
+        XF = json.loads(xf.read_text())
+        flat = re.sub(r"\s+", " ", whole)
+        mxf = re.search(r"reproduces the point estimate at \$\+([\d.]+)\$ and selects "
+                        r"\$\\alpha=0\.5\$ as the training-part argmax in all \$(\d+)\$\. The "
+                        r"spread across held-out fifths is wide, \$\[(-[\d.]+),\+([\d.]+)\]\$", flat)
+        checks.append((bool(mxf), "the cross-fitting sentence parses", "present",
+                       "matched" if mxf else "not matched", ""))
+        if mxf:
+            src = str(xf.relative_to(ROOT))
+            check("cross-fit, held-out gain", mxf.group(1), XF["held_out_gain_mean"], src)
+            check("cross-fit, splits", mxf.group(2), XF["config"]["splits"], src)
+            check("cross-fit, interval low", "-" + mxf.group(3).lstrip("-"),
+                  XF["held_out_gain_ci95"][0], src)
+            check("cross-fit, interval high", mxf.group(4), XF["held_out_gain_ci95"][1], src)
+            checks.append((XF["share_of_splits_choosing_alpha_0.5"] == 1.0,
+                           "the threshold is the training-part argmax in every split", "1.0",
+                           str(XF["share_of_splits_choosing_alpha_0.5"]), src))
+            checks.append((not XF["separated_from_zero"],
+                           "the held-out spread is not claimed to exclude zero", "not separated",
+                           str(XF["separated_from_zero"]), src))
+
+    # 10d-s. The absolute-threshold sweep, which is a released negative result the paper had never
+    # cited. An uncited artifact that bears on a claim is what makes an objection constructible.
+    sr = ROOT / "results/stopping_rule.json"
+    if sr.exists():
+        SR = json.loads(sr.read_text())["paired_vs_constant"]
+        flat = re.sub(r"\s+", " ", whole)
+        msr = re.search(r"gains \$\+([\d.]+)\$ \$\[(-[\d.]+),\+([\d.]+)\]\$ and calibrating it "
+                        r"\$\+([\d.]+)\$ \$\[(-[\d.]+),\+([\d.]+)\]\$, neither\s*separated from "
+                        r"zero.*?expected-F1 rule at \$\+([\d.]+)\$ \$\[\+([\d.]+),\+([\d.]+)\]\$", flat)
+        checks.append((bool(msr), "the absolute-threshold sentence parses", "present",
+                       "matched" if msr else "not matched", ""))
+        if msr:
+            src = str(sr.relative_to(ROOT))
+            check("threshold rule, gain", msr.group(1), SR["threshold"]["delta"], src)
+            check("calibrated rule, gain", msr.group(4), SR["calibrated"]["delta"], src)
+            check("expected-F1 rule, gain", msr.group(7), SR["expected_f1"]["delta"], src)
+            checks.append((not SR["threshold"]["excludes_zero"]
+                           and not SR["calibrated"]["excludes_zero"],
+                           "the absolute rules are the null the paper says they are",
+                           "neither separated",
+                           f"threshold {SR['threshold']['excludes_zero']}, "
+                           f"calibrated {SR['calibrated']['excludes_zero']}", src))
+
     # 10d-x. The docking board's second axis moves the prediction, not only its score. The paper
     # says so with numbers rather than leaving a reviewer to find it, so the numbers are held.
     _pb = ROOT / "results/robust_order_posebusters.json"

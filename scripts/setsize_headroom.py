@@ -65,6 +65,27 @@ def _prf(hits: int, emitted: int, refs: int):
     return p, r, f
 
 
+# The architectural question is not whether fewer is better but whether HOW MANY should depend on
+# the substrate. A global constant answers no; a rule relative to the pool answers yes only if it
+# beats the best constant. The gap rule emits while a candidate scores within a factor of the
+# leader, which is what normalising over siblings does at inference. It is module level so that the
+# cross-fitting check selects the same rule this script reports rather than a copy of it.
+def gap_rule(alpha):
+    def f(sub, row):
+        cs = row["candidates"]
+        if not cs:
+            return 1
+        top = cs[0]["combined"]
+        n_ = 1
+        for c in cs[1:]:
+            if c["combined"] >= alpha * top:
+                n_ += 1
+            else:
+                break
+        return n_
+    return f
+
+
 def evaluate(rows, truth_keys, counts, keyer):
     """counts[sub] -> how many candidates to emit. Macro precision, recall and F1."""
     P, R, F = [], [], []
@@ -163,25 +184,6 @@ def main() -> int:
         x = np.array([m.GetNumHeavyAtoms(), rdMolDescriptors.CalcNumRings(m),
                       rdMolDescriptors.CalcNumRotatableBonds(m), 1.0], dtype=float)
         return int(round(min(max(float(x @ beta), 1.0), 15.0)))
-
-    # The architectural question is not whether fewer is better but whether HOW MANY should depend
-    # on the substrate. A global constant answers no; a rule relative to the pool answers yes only
-    # if it beats the best constant. The gap rule emits while a candidate scores within a factor of
-    # the leader, which is what normalising over siblings does at inference.
-    def gap_rule(alpha):
-        def f(sub, row):
-            cs = row["candidates"]
-            if not cs:
-                return 1
-            top = cs[0]["combined"]
-            n_ = 1
-            for c in cs[1:]:
-                if c["combined"] >= alpha * top:
-                    n_ += 1
-                else:
-                    break
-            return n_
-        return f
 
     arms = {}
     for k in (1, 2, 3, 5, 8, 15):
