@@ -697,3 +697,49 @@ is worth a tenth of a reference, so no number was wrong. The measurement now rec
 and the check compares the manuscript against a recorded count. The rule the three variants share:
 a reference must be produced by the measurement, not reconstructed from the manuscript's own
 arithmetic.
+
+---
+
+**A fourth variant, and it is the one the paper's own thesis predicts.** `guaranteed reach` was
+defined as the least a bank recovers over the conventions it might be run under, and computed as a
+minimum over the arms recorded in the artifact. One of those arms expands the substrate and never
+contracts the product. Section 4 calls that a defect in our own loop, in the same section, three
+sentences earlier. So the minimum ranged over two conventions and one bug, and reported the bug: for
+SyGMa it printed $0.223$ where the conventions alone give $0.485$. Three reviewers found it
+independently, by the arithmetic not matching the counts printed beside it.
+
+```bash
+python -c "
+import json; b=json.load(open('results/hydrogen_dispatch__clean_test.json'))['banks']
+for k,v in b.items():
+    a=v['global_arms']; print(k, 'arms', a, 'legitimate min',
+        min(x for n,x in a.items() if n!='all_explicit' and x is not None))"
+```
+
+The gate now refuses the arm by name and demands a completed loop, failing loudly on a bank that
+lacks one rather than substituting. The residual that dispatch is measured by had the same defect and
+has the same repair. **The rule this adds: a control arm must be a configuration someone might
+choose. An unfinished version of the treatment is not a control, and a worst case taken over one
+measures the implementation rather than the object.** This is the fourth kind of bad reference the
+document records, after the frozen literal, the value from the wrong population, and the
+re-derivation of the manuscript's own arithmetic.
+
+**One word, checked mechanically.** The manuscript reserves *certified* for three confirmatory
+comparisons and lets *separated* stand for an interval alone. That distinction is worth nothing
+unless the text obeys it, so obedience is a gate:
+
+```bash
+python scripts/audit_claim_words.py
+```
+
+It enumerates every sentence carrying the stronger word, matches each against a declared family or
+against a correction the sentence names itself, and exits non-zero otherwise. On the draft that went
+to the eighth panel it found twenty-four sentences claiming the word without one, in a paper whose
+thesis is that undeclared conventions corrupt comparisons.
+
+**A gate must distinguish a claim that moved from a claim that was cut.** Cutting the body to nine
+pages moved several claims into appendices, and five checks failed because they anchored on a
+section rather than on a sentence. The repair is not to delete them: each now searches the whole
+manuscript and passes silently when the claim is absent, so a moved claim is still checked where it
+is made and a dropped one is not a false alarm. A gate that cannot tell the two apart is a gate
+someone eventually switches off.

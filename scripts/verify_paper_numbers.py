@@ -1083,6 +1083,51 @@ def main() -> int:
                            "both controls are certifiably worse", "certified",
                            f"{SB['dissimilarity']['certified']} and {SB['random']['certified']}", src))
 
+    # 10e. The reference set as a graph. The appendix argues that the standard defence of a low
+    # precision figure -- incomplete annotation -- is measurable in one component and small, so the
+    # gate holds both halves: the corpus structure, which involves no model, and the share of each
+    # method's scored-wrong output the corpus itself reaches, which is what makes it a null.
+    rc = ROOT / "results/reference_closure.json"
+    if rc.exists():
+        RC = json.loads(rc.read_text())
+        G = RC["corpus_graph"]
+        flat = re.sub(r"\s+", " ", whole)
+        mrc = re.search(r"It carries \$([\d,{}]+)\$ edges and \$([\d,{}]+)\$ two-step compositions, "
+                        r"which resolve to \$([\d,{}]+)\$ distinct composed pairs\. The direct edge is "
+                        r"annotated for \$(\d+)\$ of them\. The remaining \$([\d,{}]+)\$", flat)
+        checks.append((bool(mrc), "the closure-structure sentence parses", "present",
+                       "matched" if mrc else "not matched", ""))
+        if mrc:
+            src = str(rc.relative_to(ROOT))
+            un = lambda s: s.replace("{,}", "")
+            check("closure, edges", un(mrc.group(1)), G["edges"], src)
+            check("closure, compositions", un(mrc.group(2)), G["two_step_compositions"], src)
+            check("closure, composed pairs", un(mrc.group(3)), G["distinct_composed_pairs"], src)
+            check("closure, annotated", mrc.group(4),
+                  G["distinct_composed_pairs"] - G["composed_pairs_not_annotated"], src)
+            check("closure, not annotated", un(mrc.group(5)), G["composed_pairs_not_annotated"], src)
+        D = RC["scored_wrong_but_corpus_derivable"]
+        msh = re.search(r"share the corpus itself reaches from that substrate in two steps is "
+                        r"\$([\d.]+)\$ \$\[([\d.]+),([\d.]+)\]\$ for\s*GRAIL, \$([\d.]+)\$ "
+                        r"\$\[([\d.]+),([\d.]+)\]\$ for MetaPredictor and \$([\d.]+)\$ "
+                        r"\$\[([\d.]+),([\d.]+)\]\$ for SyGMa", flat)
+        checks.append((bool(msh), "the closure-share sentence parses", "present",
+                       "matched" if msh else "not matched", ""))
+        if msh:
+            src = str(rc.relative_to(ROOT))
+            for i, m_ in enumerate(("GRAIL", "MetaPredictor", "SyGMa")):
+                check(f"closure share, {m_}", msh.group(1 + 3 * i),
+                      D[m_]["share_of_wrong_output"], src)
+                check(f"closure share, {m_} lower", msh.group(2 + 3 * i), D[m_]["ci95"][0], src)
+                check(f"closure share, {m_} upper", msh.group(3 + 3 * i), D[m_]["ci95"][1], src)
+            checks.append((not RC["ordering_changes_with_depth"],
+                           "no ordering changes with the closure depth", "unchanged",
+                           str(RC["ordering_changes_with_depth"]), src))
+            checks.append((max(v["share_of_wrong_output"] for v in D.values()) < 0.01,
+                           "the corpus-derivable share is below one percent for every method",
+                           "under 0.01",
+                           f"{max(v['share_of_wrong_output'] for v in D.values()):.4f}", src))
+
     # 10d. The packing condition as a screening test. The main text promotes it from a tally to a
     # rule a maintainer can run on their own table, so every rate it quotes is recomputed from the
     # artifact rather than restated, including the sensitivity that the arithmetic forces to one.
