@@ -220,11 +220,11 @@ stereo-blind InChIKey skeleton, MetaTrans compares Morgan fingerprints, and rule
 canonicalise their own output compare canonical SMILES, each silently. \textsc{tame} names all five
 and maps both sides through one of $q \in \{\textsc{canonical}, \textsc{inchikey},
 \textsc{inchi-no-stereo}, \textsc{tanimoto1}, \textsc{inchikey-tautomer}\}$, a prediction counting as
-a hit iff $q(\hat{y}) = q(y)$ for some reference $y$, under RDKit 2022.09.5. They are canonical
-SMILES equality; the full InChIKey; its first block, blind to stereochemistry, charge and isotopes;
+a hit iff $q(\hat{y}) = q(y)$ for some reference $y$, under RDKit 2022.09.5. They are canonical SMILES
+equality; the full InChIKey; its first block, blind to stereochemistry, charge and isotopes;
 Tanimoto similarity of one over Morgan fingerprints at radius 2 over 2048 bits; and standardising
-both sides before hashing. A ceiling reported under this protocol declares the \emph{application}
-procedure too: engine and version, sanitisation, enumeration and filtering policy, and depth
+both sides before hashing. A ceiling reported here declares the \emph{application} procedure too:
+engine and version, sanitisation, enumeration and filtering policy, and depth
 (\S\ref{sec:enginereach}). One caution attaches to the first, which is computed without
 stereochemistry on the metabolite corpus, whose references carry none, and with it in the
 cross-domain harnesses, whose references do; that is why the cross-domain step to
@@ -255,12 +255,12 @@ Two words are used throughout and they are not interchangeable. A difference is 
 when its paired bootstrap interval excludes zero, which needs no family and is the only claim made
 about an exploratory quantity. A difference is \emph{certified} when it is separated \emph{and}
 survives Holm correction inside a family fixed by a rule stated before the correction was computed,
-the grid the declared axes admit, rather than by the comparisons that turned out to be worth
-reporting; no family here was pre-registered and Appendix~\ref{app:holm} says so. Three comparisons are confirmatory: the
+the grid the declared axes admit, and not by which comparisons proved worth reporting; no family
+here was pre-registered and Appendix~\ref{app:holm} says so. Three comparisons are confirmatory: the
 differential criterion sensitivity of \S\ref{sec:rankflip}, the learned-against-prior gap of
-\S\ref{sec:xmc}, and the cross-domain interaction, whose $448$ tests form one family. The word is used of those three and of any
-sentence naming its own correction and family size, which two appendix families of $66$ and $112$
-do, and nowhere else; a released check permits exactly those two forms. Two further families are corrected without being
+\S\ref{sec:xmc}, and the cross-domain interaction, whose $448$ tests form one family. The word is used of those three and of any sentence
+naming its own correction and family size, which two appendix families do, and nowhere else; a
+released check permits exactly those forms. Two further families are corrected without being
 confirmatory, the $54$-cell budget sweep and the $440$ population interactions, and are called
 corrected rather than certified. Every remaining interval is exploratory, and every use of either
 word is listed against its family and adjusted $p$ in Appendix~\ref{app:holm}. Model and
@@ -341,9 +341,9 @@ separation is a sub-relation reported apart, an interval condition not being tra
 \looseness=-1
 A pair that does not dominate has failed in one of two ways that should not be added together. Some
 cell may order the two the other way with an interval excluding zero, a choice deciding against the
-published table; or no cell may, in which case the ordering fails to hold everywhere on a margin the
-benchmark cannot resolve. Only the first is \emph{contested}, so noise on a tied pair is not counted
-as a reversal. All three leaderboards run one grid of sixteen cells, four criteria by four budgets
+published table; or none may, leaving an ordering that fails on a margin the benchmark cannot
+resolve. Only the first is \emph{contested}, so noise on a tied pair is not a reversal. All three run
+a grid of the same shape, four criteria by four budgets, at the budgets each field reports at
 (Appendix~\ref{app:robust}).
 
 \begin{table}[t]
@@ -394,11 +394,11 @@ third and is reported as a failure (Appendix~\ref{app:negative}).
 
 \looseness=-1
 As a screening test over the $439$ method-pair by criterion-pair comparisons this paper spans in
-three domains it flags $10.9\%$, and all $26$ exchanges fall inside the flagged set: sensitivity is
-$1.000$ by arithmetic and checked rather than assumed, specificity $0.947$ and precision $0.542$,
-the false alarms being movements that widen a gap instead of closing it. The bound is not vacuous.
-Run on the published cell alone it flags $21$ of the $27$ pairs in the table above, of which $17$
-are exactly the ones the full grid removes. Where the flags fall says which benchmarks are exposed, and
+three domains it flags $10.9\%$, and all $26$ exchanges fall inside the flagged set: sensitivity
+$1.000$ by arithmetic and checked rather than assumed, specificity $0.947$, precision $0.542$, the
+false alarms being movements that widen a gap. The bound is not vacuous: run on the published cell
+alone it flags $21$ of the $27$ pairs in the table above, of which $17$ are exactly the ones the
+full grid removes. Where the flags fall says which benchmarks are exposed, and
 neither quantity decides that alone. The seven-system group is flagged on $22.2\%$ of its
 comparisons at a median gap of $0.0130$; the three-system group, whose systems sit three and a half
 times further apart while the criterion moves them as much, on none; the molecular-generation set,
@@ -627,12 +627,13 @@ phenomenon, the robust order rests on three leaderboards, and two results are bo
 \looseness=-2
 Four choices are settled before any model is compared and none is routinely declared. What a
 published ranking entitles a reader to quote is smaller than the ranking, in two ways: most of its
-pairs were never resolved at all, and some that were are reversed by a choice no paper reports. Two of the four choices change a published ordering and do it differently, the budget by reversing
-margins an interval separates from zero and the criterion by exchanging systems a mature benchmark
-never separated; which pairs either can reach follows from an inequality between a gap and a
-movement, so exposure is boundable from a published table. Declaring is not the whole remedy:
-dispatching a convention per template makes reach a property of a bank, and a set sized to the pool
-beats every constant.
+pairs were never resolved at all, and some that were are reversed by a choice no paper reports. Two of the four choices change a published ordering and do it differently,
+the budget by reversing margins an interval separates from zero and the criterion by exchanging systems
+a mature benchmark never separated; which pairs either can reach follows from an inequality between
+a gap and a movement. Declaring is not the whole remedy, and the obvious alternative fails:
+dispatching the convention per template loses to the best single setting on the one mixed bank there
+is to test it on. What survives is a bound, the least a bank recovers over the settings it
+might run under, and a set sized to the pool beating every constant.
 
 \subsubsection*{Reproducibility statement}
 

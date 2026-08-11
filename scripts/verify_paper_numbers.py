@@ -1301,8 +1301,8 @@ def main() -> int:
     if pp.exists():
         PP = json.loads(pp.read_text())["totals"]
         flat = re.sub(r"\s+", " ", whole)
-        mpp = re.search(r"Run on the published cell alone it flags \$(\d+)\$ of the \$(\d+)\$ pairs "
-                        r"in the table above, of which \$(\d+)\$\s*are exactly the ones the full grid "
+        mpp = re.search(r"run on the published cell alone it flags \$(\d+)\$ of the \$(\d+)\$ pairs "
+                        r"in the table above, of which \$(\d+)\$ are exactly the ones the full grid "
                         r"removes", flat)
         checks.append((bool(mpp), "the screen-predicts-order sentence parses", "present",
                        "matched" if mpp else "not matched", ""))
@@ -1373,8 +1373,8 @@ def main() -> int:
         flat = re.sub(r"\s+", " ", whole)
         mpk = re.search(r"over the \$(\d+)\$ method-pair by criterion-pair comparisons this paper "
                         r"spans in\s*three domains it flags \$([\d.]+)\\%\$, and all \$(\d+)\$ "
-                        r"exchanges fall inside the flagged set: sensitivity is\s*\$([\d.]+)\$ .*?"
-                        r"specificity \$([\d.]+)\$ and precision \$([\d.]+)\$", flat)
+                        r"exchanges fall inside the flagged set: sensitivity\s*\$([\d.]+)\$ .*?"
+                        r"specificity \$([\d.]+)\$, precision \$([\d.]+)\$", flat)
         checks.append((bool(mpk), "the packing screening sentence parses", "present",
                        "matched" if mpk else "not matched", ""))
         if mpk:
@@ -1547,19 +1547,26 @@ def main() -> int:
     lc2 = ROOT / "results/label_convention_audit.json"
     if ss2.exists():
         S2 = json.loads(ss2.read_text())["arms"]["gap rule a=0.5"]
-        md = re.search(r"beats every global budget on frozen scores, by \$\+([\d.]+)\$ "
-                       r"\$\[\+([\d.]+),\+([\d.]+)\]\$ macro F1, and takes \$(\d+)\\%\$", flat_d)
+        md = re.search(r"beats the best global\s*constant on frozen scores by \$\+([\d.]+)\$ "
+                       r"\$\[\+([\d.]+),\+([\d.]+)\]\$ macro F1, which is (four fifths|three "
+                       r"quarters|half) of what an", flat_d)
         checks.append((bool(md), "the design appendix's measured claim parses", "present",
                        "matched" if md else "not matched", ""))
         if md:
             src = str(ss2.relative_to(ROOT))
             check("design appendix, the gain", md.group(1),
-                  round(S2["f1_gain_over_k15"], 3), src)
-            check("design appendix, lower", md.group(2), round(S2["ci95"][0], 3), src)
-            check("design appendix, upper", md.group(3), round(S2["ci95"][1], 3), src)
-            orac = json.loads(ss2.read_text())["arms"]["oracle count"]["f1_gain_over_k15"]
-            check("design appendix, share of the oracle", md.group(4),
-                  round(S2["f1_gain_over_k15"] / orac * 100), src)
+                  round(S2["f1_gain_over_best_constant"], 4), src)
+            check("design appendix, lower", md.group(2),
+                  round(S2["ci95_vs_best_constant"][0], 4), src)
+            check("design appendix, upper", md.group(3),
+                  round(S2["ci95_vs_best_constant"][1], 4), src)
+            orac = json.loads(ss2.read_text())["arms"]["oracle count"][
+                "f1_gain_over_best_constant"]
+            share = S2["f1_gain_over_best_constant"] / orac
+            band = ("four fifths" if 0.72 <= share < 0.87
+                    else ("three quarters" if 0.62 <= share < 0.72 else "half"))
+            checks.append((md.group(4) == band, "design appendix, share of the oracle",
+                           md.group(4), band, f"{share:.3f} of the oracle headroom"))
         checks.append(("None of this is trained or evaluated in this paper." in flat_d,
                        "the design appendix marks what it does not claim", "present",
                        "present" if "None of this is trained or evaluated in this paper." in flat_d

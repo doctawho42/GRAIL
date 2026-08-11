@@ -2,18 +2,20 @@ Two measurements in this paper constrain how a rule-grounded metabolite predicto
 and neither of them is a statement about the model that produced them. This appendix states the
 design they point at and marks the boundary between what is measured here and what is proposed.
 
-\paragraph{What is measured.} Emitting a set sized to the candidate pool beats every global budget
-on frozen scores, by $+0.074$ $[+0.059,+0.089]$ macro F1, and takes $95\%$ of what an oracle count
-would take (\S\ref{sec:metric}). Forecasting that count from the substrate's own descriptors is
-worse than emitting a single candidate to everything (Appendix~\ref{app:negative}). So the number of
-metabolites a substrate has is not recoverable from the substrate; it is recoverable from the
-distribution of scores over the candidates the substrate generates.
+\paragraph{What is measured.} Emitting a set sized to the candidate pool beats the best global
+constant on frozen scores by $+0.0147$ $[+0.0059,+0.0237]$ macro F1, which is four fifths of what an
+oracle count would take over the same constant (Appendix~\ref{app:emission}). Against the deployed
+budget the margin is $+0.074$, but that is the arm \S\ref{sec:metric} discredits and it is not what
+this design rests on. Forecasting the count from the substrate's own descriptors is worse than the
+constant it replaces (Appendix~\ref{app:negative}). So the number of metabolites a substrate has is
+not recoverable from the substrate; it is recoverable from the distribution of scores over the
+candidates the substrate generates.
 
 \paragraph{What that rules out.} A scorer that maps a (substrate, product) pair to an independent
 probability cannot express it. Its output for one candidate does not change when a better sibling
 appears, so the size of the emitted set has to come from a threshold or a budget, and both are
 global objects for a quantity that is not global. The deployed filter here is such a scorer, and the
-$0.074$ is the price.
+$+0.0147$ over the best constant it cannot express is the price.
 
 \paragraph{What it points at.} Score the candidates of one substrate against each other. Encode the
 substrate once, score each candidate from the atom it fires at and the rule that fires, and take a
