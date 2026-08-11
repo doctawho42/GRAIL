@@ -139,16 +139,15 @@ leading methods converge.
 \item The output budget reorders a metabolite leaderboard on its own, with every method and its
   ranking held fixed.
 \item The part of a published ranking that no declared choice can contradict is a partial order,
-  computable from released prediction files alone, together with its longest chain: a table of seven
-  systems supports three tiers and a table of three supports one. Because it is an intersection over
-  cells it can only shrink as a grid widens, so it is reported as a curve over the declared axes
-  rather than as one number.
-\item Which pairs a criterion can exchange is decided by an inequality between the gap separating
-  two systems and the distance the criterion moves them, so scoring each system once in the
-  alternative cell settles every pair on the table without a paired statistic. Read as a screening
-  test over $562$ comparisons in four domains it flags one comparison in seven, cannot miss by
-  construction, and shows exposure to be the ratio of the two quantities rather than the size of
-  either.
+  computable from released prediction files alone, together with its longest chain. Measured on
+  $15$ leaderboards in four domains and $1{,}013$ pairs: they publish $169$ places and what survives
+  supports $96$. Because it is an intersection over cells it can only shrink as a grid widens, so it
+  is reported as a curve over the declared axes rather than as one number.
+\item Which pairs a criterion exchanges is not estimated but decided: it exchanges a pair exactly
+  when it moves the two apart by more than the larger of the margins it connects, so scoring each
+  system once in the alternative cell settles every pair without a paired statistic. On the
+  $6{,}340$ comparisons here the condition holds on the $488$ that exchange and on nothing else,
+  and exposure is the ratio of movement to gap rather than the size of either.
 \item Which population a dataset name refers to is ambiguous in released work and is not shown to
   reorder anything: eleven released prediction files sit on three test sets, and no interaction
   varying only the population survives correction. A protocol, an audited split, the frozen

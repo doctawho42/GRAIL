@@ -385,6 +385,52 @@ def main() -> int:
         m3 = re.search(r"The engine term is \$\+([\d.]+)\$, so that one call carries all of it", flat)
         check("engine term, appendix", m3 and m3.group(1), c["committed_engine_term_micro"])
 
+    # 10d-0. The contributions list quotes the survey totals, and a headline in a bulleted list is
+    # the number a reviewer reads first and the one least likely to be re-checked when the artifacts
+    # move. It was stale for a day behind a green suite because nothing held it.
+    survey_esa = ROOT / "results/robust_order_wmt24_esa.json"
+    if survey_esa.exists():
+        E = json.loads(survey_esa.read_text())
+        survey_boards = []
+        for _fn, _key in (("robust_order.json", "cluster0"), ("robust_order.json", "cluster1"),
+                          ("robust_order_metabolite.json", None),
+                          ("robust_order_posebusters.json", None),
+                          ("robust_order_wmt24_en-de.json", None),
+                          ("robust_order_wmt24_ja-zh.json", None)):
+            _q = ROOT / "results" / _fn
+            if _q.exists():
+                _d = json.loads(_q.read_text())
+                survey_boards.append(_d["leaderboards"][_key] if _key else _d)
+        survey_boards += list(E["boards"].values())
+        flat = re.sub(r"\s+", " ", whole)
+        mc = re.search(r"Measured on \$(\d+)\$ leaderboards in four domains and "
+                       r"\$([\d,{}]+)\$ pairs: they publish \$(\d+)\$ places and what survives "
+                       r"supports \$(\d+)\$", flat)
+        checks.append((bool(mc), "the survey-total sentence parses", "present",
+                       "matched" if mc else "not matched", ""))
+        if mc:
+            src = "results/robust_order_*.json"
+            check("survey, leaderboards", mc.group(1), len(survey_boards), src)
+            check("survey, pairs", mc.group(2).replace("{,}", ""),
+                  sum(b["n_pairs"] for b in survey_boards), src)
+            check("survey, published places", mc.group(3),
+                  sum(b["n_systems"] for b in survey_boards), src)
+            check("survey, tiers supported", mc.group(4),
+                  sum(b["tiers_distinguished"] for b in survey_boards), src)
+        # The same pair of numbers is printed in the abstract, the contributions and Section 5.
+        # A gate on one of three printings is what let an arm be printed three ways once already,
+        # so every printing is found and checked, and the count of them is held too: dropping one
+        # must fail rather than pass quietly.
+        places = sum(b["n_systems"] for b in survey_boards)
+        tiers = sum(b["tiers_distinguished"] for b in survey_boards)
+        printings = re.findall(r"publish \$(\d+)\$ places and (?:what survives )?supports? "
+                               r"\$(\d+)\$", flat)
+        checks.append((len(printings) >= 3, "every printing of the survey total is found",
+                       "3 or more", str(len(printings)), "the manuscript"))
+        for i, (pl, ti) in enumerate(printings, 1):
+            check(f"survey printing {i}, places", pl, places, "the manuscript")
+            check(f"survey printing {i}, tiers", ti, tiers, "the manuscript")
+
     # 10d. the packing measurement: the empirical half of the reordering condition
     pk = ROOT / "results/packing_vs_differential.json"
     if pk.exists():
