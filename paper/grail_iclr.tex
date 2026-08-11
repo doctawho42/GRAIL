@@ -379,9 +379,9 @@ longest chain is the readable form of the same measurement: a table of seven pla
 tiers, resampling to $[3,3]$, one of three supports $1$, and the same systems take $4$ different
 total orders across $16$ cells. The system the table places first is not in the top tier of what survives, and the system it
 places second is the only one that is (Figure~\ref{tab:robust}). Because domination is an intersection, all of this can only shrink as cells are added, so each axis
-is also reported alone (Appendix~\ref{app:robust}), which is where the two separate: the criterion
-alone leaves every pair of both three-system tables intact, while the budget alone takes all three
-from one of them and one from the other.
+is reported alone (Appendix~\ref{app:robust}), which is where the two separate: the criterion alone
+leaves both three-system tables intact, while the budget alone takes all three from one and one from
+the other.
 
 \looseness=-1
 \paragraph{Which pairs are at risk follows from an inequality.} Two systems exchange under a change
@@ -429,18 +429,15 @@ separated it erases the gap instead of reversing it.
 
 \looseness=-1
 \paragraph{One split, two populations.} A benchmark can mix populations without changing its name.
-Of the \ntest\ substrates here $845$ are parent drugs and $325$ are themselves annotated products of
-another substrate in the split, so one question is about a compound a patient swallows and the other
-about what is left of it, averaged into one number. Methods do not treat them alike: GRAIL loses
-$0.152$ $[0.101,0.202]$ of recall between the two while MetaPredictor loses $0.001$
-$[-0.053,0.057]$, an interaction of $+0.150$ $[+0.084,+0.216]$ and against SyGMa $+0.116$
-$[+0.051,+0.181]$. No paper reporting on this split reports the mixture.
-
-\looseness=-1
-The other population question is a null: comparing two systems on $490$ shared reactions and on each
-group's own five thousand changes the ordering in $44$ of $380$ comparisons and $10$ of $60$ on the
-metabolite split, and none of the $440$ interactions survives Holm at $0.05$, in designs that at
-$80\%$ power would have detected about $0.10$ and $0.07$ (Appendix~\ref{app:popaxis}).
+Of the \ntest\ substrates here $845$ are parent drugs and $325$ are annotated products of another
+substrate in the split, so one question is about a compound a patient swallows and the other about
+what is left of it, averaged into one number. Methods do not treat them alike: GRAIL loses $0.152$
+$[0.101,0.202]$ of recall between the two while MetaPredictor loses $0.001$ $[-0.053,0.057]$, an
+interaction of $+0.150$ $[+0.084,+0.216]$ and against SyGMa $+0.116$ $[+0.051,+0.181]$. No paper
+reporting on this split reports the mixture. The other population question is a null: which released
+test set a familiar name refers to changes an ordering in $44$ of $380$ comparisons and $10$ of $60$
+on the metabolite split, and none of the $440$ interactions survives Holm at $0.05$, in a design
+whose blindest test would see $0.116$ and $0.202$ at $80\%$ power (Appendix~\ref{app:popaxis}).
 
 \section{The decomposition and the coverage ceiling}
 \label{sec:decomp}

@@ -1292,6 +1292,32 @@ def main() -> int:
                        or "none cited",
                        str(hy4.relative_to(ROOT))))
 
+    # 10m. The bounded null must quote the bound the design supports. The appendix derives two
+    # detectable effects per family, the median test's and the blindest test's, and says the
+    # family-wide statement needs the second; the main text quoted the first for one revision.
+    flat_b = re.sub(r"\s+", " ", whole)
+    mbd = re.search(r"in a design\s*whose blindest test would see \$([\d.]+)\$ and \$([\d.]+)\$ "
+                    r"at \$80\\%\$ power", flat_b)
+    checks.append((bool(mbd), "the bounded null quotes the blindest test", "present",
+                   "matched" if mbd else "not matched", "the manuscript"))
+    if mbd:
+        mapp = re.search(r"the least sensitive \$([\d.]+)\$ and \$([\d.]+)\$", flat_b)
+        checks.append((bool(mapp), "the appendix derives the same two numbers", "present",
+                       "matched" if mapp else "not matched", "the manuscript"))
+        if mapp:
+            check("bounded null, first family", mbd.group(1), mapp.group(1), "the appendix")
+            check("bounded null, second family", mbd.group(2), mapp.group(2), "the appendix")
+        med = re.search(r"The median test in each family then detects \$([\d.]+)\$ and \$([\d.]+)\$",
+                        flat_b)
+        if med:
+            checks.append((mbd.group(1) != med.group(1) and mbd.group(2) != med.group(2),
+                           "the main text does not quote the median where the maximum is needed",
+                           "the maximum", f"{mbd.group(1)},{mbd.group(2)} against median "
+                           f"{med.group(1)},{med.group(2)}", "the appendix"))
+        overclaim = re.findall(r"[Bb]oth are an order of magnitude above the criterion", flat_b)
+        checks.append((not overclaim, "the null's margin over the criterion is not overstated",
+                       "none", f"{len(overclaim)} found", "the manuscript"))
+
     # 10f. The screen against the measurement. The paper's two instruments describe the same thing
     # from opposite ends, and the claim that one predicts the other is checked rather than asserted:
     # the screen sees only the published cell and the movement to each other cell, the outcome comes
@@ -1443,7 +1469,7 @@ def main() -> int:
     if pv.exists():
         PV = json.loads(pv.read_text())
         flat = re.sub(r"\s+", " ", whole)
-        mp2 = re.search(r"\$(\d+)\$ are parent drugs and \$(\d+)\$ are themselves annotated products"
+        mp2 = re.search(r"\$(\d+)\$ are parent drugs and \$(\d+)\$ are annotated products"
                         r".*?GRAIL loses \$([\d.]+)\$ \$\[([\d.]+),([\d.]+)\]\$ of recall between "
                         r"the two while MetaPredictor loses \$([\d.]+)\$ "
                         r"\$\[(-[\d.]+),([\d.]+)\]\$, an "
