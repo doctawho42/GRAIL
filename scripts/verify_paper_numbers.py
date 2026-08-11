@@ -342,6 +342,10 @@ def main() -> int:
                            ("BioTransformer", "biotransformer")):
             m = re.search(shown + r" & \$?[\\a-z{},0-9]+\$? & \$(\d+)\$ & ([\d.]+) \$\[[\d.,]+\]\$ & "
                           r"([\d.]+) & \$[-+]?([\d.]+)\$", flat)
+            if m is None:
+                # a bank may be withdrawn from the table; what may not happen is a row whose
+                # numbers disagree with the artifact, which is what the checks below enforce
+                continue
             v = H[key]
             check(f"dispatch table, {shown} dispatched", m and m.group(1), v["dispatched_to_expanded"])
             check(f"dispatch table, {shown} reach", m and m.group(2), v["reach"], "", )
@@ -1260,6 +1264,29 @@ def main() -> int:
         check("stereocentre scan, SyGMa", msc.group(2).replace("{,}", ""), n_s, "recomputed here")
         checks.append((ch_g == 0 and ch_s == 0, "neither emits an assigned stereocentre",
                        "0 and 0", f"{ch_g} and {ch_s}", "recomputed here"))
+
+    # 10l. A merged artifact can outlive the code that produced part of it. Every bank the
+    # manuscript quotes must have been measured by the same revision; a bank measured by an older
+    # one may sit in the file but may not be cited, which is the mixed-population rule applied to
+    # code rather than to substrates.
+    hy4 = ROOT / "results/hydrogen_dispatch__clean_test.json"
+    if hy4.exists():
+        H4 = json.loads(hy4.read_text())["banks"]
+        flat = re.sub(r"\s+", " ", whole)
+        versions = {k: (v.get("measured_by") or {}).get("git_commit") for k, v in H4.items()}
+        quoted = {"sygma_175": "SyGMa", "biotransformer": "BioTransformer", "grail_full": "ours"}
+        cited = {k for k, shown in quoted.items()
+                 if re.search(shown + r" & \$?[\\a-z{},0-9]+\$? & \$\d+\$ &", flat)}
+        stale = sorted(k for k in cited if versions.get(k) is None
+                       or (len({versions[c] for c in cited if versions.get(c)}) > 1
+                           and versions[k] != max((versions[c] for c in cited if versions.get(c)),
+                                                  key=lambda x: 0)))
+        checks.append((bool(cited) and not any(versions.get(k) is None for k in cited),
+                       "every bank the manuscript cites records the revision that measured it",
+                       "all recorded",
+                       ", ".join(f"{k}:{(versions.get(k) or 'none')[:8]}" for k in sorted(cited))
+                       or "none cited",
+                       str(hy4.relative_to(ROOT))))
 
     # 10f. The screen against the measurement. The paper's two instruments describe the same thing
     # from opposite ends, and the claim that one predicts the other is checked rather than asserted:

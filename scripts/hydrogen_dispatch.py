@@ -240,7 +240,11 @@ def run_bank(name: str, items, workers: int) -> dict:
     worst_global = min(reach_of(v) for v in legitimate.values())
     d = H - better
     bt_d = np.array([d[j].sum() / max(U[j].sum(), 1) for j in idx])
-    out = {"n_rules": len(rules), "dispatched_to_expanded": n_exp,
+    # Banks are run one at a time and merged into one file, so an entry can outlive the code that
+    # produced it. Recording the version per bank makes a mixed artifact detectable instead of
+    # leaving it to be noticed, which is how the last two defects survived as long as they did.
+    out = {"measured_by": _code_version(),
+           "n_rules": len(rules), "dispatched_to_expanded": n_exp,
            "references": int(U.sum()), "recovered": int(H.sum()), "reach": reach,
            "ci95": [round(float(np.quantile(bt, .025)), 4),
                     round(float(np.quantile(bt, .975)), 4)],
