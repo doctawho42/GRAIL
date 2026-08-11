@@ -299,7 +299,7 @@ differences. The engine term alone is the size of the entire reach gap the main 
 
 \paragraph{Almost all of the term is an unfinished loop.} The arms above expand the substrate and
 never contract the product. Restoring the contraction lifts the expanded arm from $0.200$
-$[0.182,0.219]$ to $0.377$ $[0.354,0.400]$ against the unexpanded arm's $0.389$ $[0.367,0.413]$: the
+$[0.182,0.219]$ to $0.377$ $[0.354,0.400]$ against the unexpanded arm's $0.390$ $[0.367,0.413]$: the
 unfinished loop is worth $+0.177$ $[+0.159,+0.195]$ and the convention $+0.013$ $[+0.007,+0.020]$,
 both paired and both clear of zero. On the worked example below, benzoic acid under aromatic
 hydroxylation, the incomplete loop yields no product that sanitises and the completed one yields
@@ -402,8 +402,11 @@ BioTransformer & $994$    & $690$ & $268 \to 74$  & $-0.342$ $[-0.388,-0.298]$ \
 \end{tabular}
 \end{center}
 
-Not one of SyGMa's $175$ templates carries a hydrogen \emph{atom} on its reactant side, and its
-reach more than doubles once the hydrogens are gone. $690$ of BioTransformer's $994$ do, and its
+The comparison in that table is the expanded arm \emph{without} the contraction against the implicit
+one, which is what a paper reporting a bank's coverage without an application procedure would
+produce; \S\ref{sec:enginereach} compares the contracted arm instead, and the two answer different
+questions. Not one of SyGMa's $175$ templates carries a hydrogen \emph{atom} on its reactant side,
+and its reach more than doubles once the hydrogens are gone under the uncontracted comparison. $690$ of BioTransformer's $994$ do, and its
 reach falls to a quarter of itself. Ours lies between them on both counts, and that row was written
 down before it was measured: at $675$ templates in $\nbank$ our bank is in SyGMa's convention and
 should move the same way by much less, which is what it does. Three banks cannot establish the share
@@ -755,8 +758,13 @@ one measurable way, and that difference was registered in advance of any measure
 loss the residual is \emph{superadditive} across the partition, $\mathrm{res}(\text{full}) >
 \mathrm{res}(\text{curated}) + \mathrm{res}(\text{mined})$.
 
-It is subadditive. On the full split the whole bank's residual is $+0.0062$ $[+0.0032,+0.0095]$ and
-the curated subset's alone is $+0.0123$ $[+0.0079,+0.0170]$, against a mined residual of exactly
+\textbf{This adjudication is withdrawn.} It is decided on our own bank's dispatch residuals, and
+those were measured before the contraction of \S\ref{sec:enginereach} was corrected. On the two
+published banks that have been re-measured since, the residual changed sign, so a verdict resting on
+the uncorrected numbers cannot stand whichever way it went. The numbers are printed here because
+they are what was registered against and what a re-measurement will be compared to, and not as a
+result: on the full split the whole bank's residual was $+0.0062$ $[+0.0032,+0.0095]$ and the
+curated subset's alone $+0.0123$ $[+0.0079,+0.0170]$, against a mined residual of exactly
 $+0.0000$ $[0.0000,0.0000]$. The fourth decimal is carried because the third is what separates them. That last is zero on any population by construction, since none of its $5{,}866$
 templates is dispatched anywhere, so it was measured on the $245$-substrate subsample, not the split: it checks that the subsetting does what it says rather than contributing a quantity. Of
 the three registered predictions the null and the curated one hold and the superadditivity does not,
@@ -765,9 +773,9 @@ it: the mined majority independently reaches part of what the expanded curated t
 recovered, so their repair is partly redundant once both are present. What the dispatch recovers is
 therefore the expansion those $675$ templates require and the bank's global setting denies them: a smaller claim than a mixing account would have supported, and the one the measurement carries.
 
-The per-template dispatch of Appendix~\ref{app:negative} still beats the better of the two global
-settings, not tying it, and by more on the half that wants the expansion than on the bank
-that contains it.
+On the two published banks measured since the correction, per-template dispatch does not beat the
+better global setting at all (Appendix~\ref{app:negative}), which is a further reason this
+subsection's verdict waits on a re-measurement rather than being restated.
 
 \subsection{The shortfall of the system used as the case study}
 

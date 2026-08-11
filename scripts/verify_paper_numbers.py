@@ -1318,6 +1318,29 @@ def main() -> int:
         checks.append((not overclaim, "the null's margin over the criterion is not overstated",
                        "none", f"{len(overclaim)} found", "the manuscript"))
 
+    # 10n. One arm, one printed value. Three loci quoted the same unexpanded arm as 0.387, 0.389
+    # and 0.390, of which two were the same number rounded differently and the third was another
+    # engine entirely; Section 4 attributed the third to the wrong program. The gate fixes the
+    # rounding and requires the two arms to be distinguished wherever both appear.
+    clr2 = ROOT / "results/completed_loop_reach__clean_test.json"
+    if clr2.exists():
+        C2 = json.loads(clr2.read_text())["reach"]
+        flat_a = re.sub(r"\s+", " ", whole)
+        implicit = round(C2["implicit"]["reach"], 3)
+        printed = set(re.findall(r"unexpanded arm's \$([\d.]+)\$", flat_a))
+        checks.append((printed <= {f"{implicit:.3f}"},
+                       "the unexpanded arm is printed at one value everywhere",
+                       f"{implicit:.3f}", ", ".join(sorted(printed)) or "not printed",
+                       str(clr2.relative_to(ROOT))))
+        msy = re.search(r"SyGMa's own program on\s*the same rules reaches \$([\d.]+)\$", flat_a)
+        checks.append((bool(msy), "the section distinguishes our engine from SyGMa's own",
+                       "present", "matched" if msy else "not matched", "the manuscript"))
+        if msy:
+            arm_b = re.search(r"B & \$152\$ shared, SyGMa's\s*& ([\d.]+) ", flat_a)
+            if arm_b:
+                check("SyGMa's own program on the shared rules", msy.group(1), arm_b.group(1),
+                      "the appendix arm table")
+
     # 10f. The screen against the measurement. The paper's two instruments describe the same thing
     # from opposite ends, and the claim that one predicts the other is checked rather than asserted:
     # the screen sees only the published cell and the movement to each other cell, the outcome comes
