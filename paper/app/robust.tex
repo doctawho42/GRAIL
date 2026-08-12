@@ -189,8 +189,8 @@ several ratings per segment, and between $116$ and $207$ annotators --- and five
 pairs the later edition also scored. That is the one place in this paper where the same question is
 put twice to independent data.
 
-The answer is that the share does not carry over. Across the five repeated pairs it moves by $0.109$
-on average and by as much as $0.251$; \textsc{en-zh} is at $0.892$ in one edition and $0.641$ in the
+The answer is that the share does not carry over. Across the five repeated pairs it moves by $0.111$
+on average and by as much as $0.259$; \textsc{en-zh} is at $0.900$ in one edition and $0.641$ in the
 next. Nothing about the language, the domain or the difficulty changed enough to explain that, and
 the two campaigns were run by the same organisers on comparable data. What changed is the protocol and the
 pool, which is to say the leaderboard. The pools cannot be shown to be disjoint --- each campaign
@@ -198,8 +198,19 @@ anonymises its annotators into its own identifier space, so the two share no ide
 construction and a rater who worked on both would be invisible --- and the claim made here is only
 that the campaigns are separate, which is what the editions are. So a share is a fact about a table and its grid, and
 quoting one as a benchmark's fingerprint --- ours included --- would be an error of the same shape
-as the one this paper is about. Across the eight, $808$ of $909$ pairs dominate, $24$ are contested
-of which $3$ survive correction, and $124$ published places support $80$.
+as the one this paper is about. These eight boards are built on the release put through the preprocessing its own README
+documents --- a quality-control filter that discards a rater's whole document when a planted item in
+it was failed, and the removal of document-level meta scores --- and reading the file without it, as
+we did first, inflates every board by between a ninth and two fifths. With the filter the per-system
+rating counts match the task's published file exactly on all eight. The scores match to within
+$1.4276$ on a hundred-point scale but not to the digit, because the published
+number involves a step past the mean that the release does not carry, and the two orders disagree on
+$16$ of $909$ pairs. That disagreement is reported
+rather than reconciled: it is an aggregation choice nobody declares, which is this paper's subject,
+and these boards are our reconstruction of the published cell rather than the published cell itself.
+
+Across the eight, $798$ of $909$ pairs dominate, $22$ are contested
+of which $2$ survive correction, and $124$ published places support $77$.
 
 \paragraph{What the share does not measure.} It is not an error rate and no cell is privileged.
 The instrument takes the grid as declared and says what part of a published ordering is invariant

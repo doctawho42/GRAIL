@@ -27,6 +27,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import re
 import json
 import pathlib
 import sys
@@ -67,8 +68,60 @@ def _code_version() -> dict:
             "git_dirty": bool(_git("status", "--porcelain"))}
 
 
+OFFICIAL = re.compile(r"^\d+\.\d+ \('([^']+)', (\d+), (-?[\d.]+), (-?[\d.]+)")
+
+
+def official_scores(path: Path) -> dict:
+    """{lp: [(system, ratings, raw mean), ...]} from the task's own published results file."""
+    out, lp = {}, None
+    for line in path.read_text().splitlines():
+        m = re.match(r"^\[(\w+)-->(\w+)\]", line)
+        if m:
+            lp = f"{m.group(1)}-{m.group(2)}"
+            out[lp] = []
+            continue
+        m = OFFICIAL.match(line)
+        if m and lp:
+            out[lp].append((m.group(1), int(m.group(2)), float(m.group(4))))
+    return {k: v for k, v in out.items() if v}
+
+
 def load(path: Path) -> pd.DataFrame:
-    d = pd.read_csv(path, names=COLS, header=None, low_memory=False)
+    """The released table put through the preprocessing its own README documents.
+
+    ``cat scores_all.csv | python3 scripts/rm_bad_docs.py | grep -v ",True," > scores_noqc_nodoc.csv``
+
+    Two steps, and skipping either changes the ranking. ``rm_bad_docs`` drops a whole
+    (annotator, system, document) group when any of its rows is a planted quality-control item, so a
+    rater who failed the check loses that document rather than that row; and the grep removes the
+    document-level meta scores, which are not segment judgements at all. Reading only ``type==TGT``
+    keeps both --- it inflated every board here by between a ninth and two fifths, and left the
+    published order disagreeing with the one the task published.
+    """
+    # rm_bad_docs is sequential and order-dependent: it flushes a run of lines when the
+    # (annotator, system, document) key changes or the previous line was a document-level score,
+    # and discards the run if any line in it was a planted control. Reading it as "drop every row
+    # sharing a key with a control" is a different and stricter filter -- it leaves 840 ratings per
+    # system on en-de where the task's own file reports 1094 -- so the algorithm is transcribed
+    # rather than paraphrased, and the counts it produces match the published ones exactly.
+    raw = [ln.rstrip("\n").split(",") for ln in path.read_text().splitlines() if ln.strip()]
+    raw = [f for f in raw if len(f) == len(COLS)]
+    I_TYPE, I_DOCTYPE = COLS.index("type"), COLS.index("isdoc")
+    dkey = lambda f: (f[COLS.index("annotator")], f[COLS.index("system")], f[COLS.index("doc")])
+    kept, run, isbad = [], [], False
+    for f in raw:
+        if run and (run[-1][I_DOCTYPE] == "True" or dkey(f) != dkey(run[-1])):
+            if not isbad:
+                kept.extend(run)
+            run, isbad = [], False
+        if f[I_TYPE] == "BAD":
+            isbad = True
+        run.append(f)
+    if run and not isbad:
+        kept.extend(run)
+
+    d = pd.DataFrame(kept, columns=COLS)
+    d = d[d["isdoc"].astype(str) != "True"]
     d = d[d["type"] == "TGT"].copy()
     d["score"] = pd.to_numeric(d["score"], errors="coerce")
     for c in ("t0", "t1"):
@@ -91,6 +144,17 @@ def build_board(sub: pd.DataFrame) -> tuple[dict, list[str], list[str], list]:
     sub = sub.assign(z=(z / sd).fillna(0.0))
 
     cut = sub["secs"].quantile(0.10)
+    # The task averages over ratings, not over segments, and segments carry between one and several
+    # ratings. Weighting a segment by how many it carries makes the plain mean of the item vector
+    # the rating mean, which is what the published table ranks by; the machinery above is untouched.
+    # per system, because systems do not carry the same number of ratings on the same segments;
+    # weighting a system's own vector by its own counts makes that vector's mean its rating mean,
+    # which is the number the task ranks by. The paired difference is still a difference of the two
+    # estimands the margin is about, and the item bootstrap resamples both together.
+    cnt = (sub.groupby(["system", "item"]).size().unstack()
+           .reindex(index=systems, columns=items).fillna(0.0).to_numpy(dtype=float))
+    w_sys = cnt / np.maximum(cnt.sum(axis=1, keepdims=True), 1.0) * len(items)
+
     hits = {}
     for criterion in CRITERIA:
         frame = sub[sub["secs"] > cut] if criterion == "not-hasty" else sub
@@ -104,6 +168,8 @@ def build_board(sub: pd.DataFrame) -> tuple[dict, list[str], list[str], list]:
             if g.isna().to_numpy().any():
                 g = g.apply(lambda c: c.fillna(c.mean()), axis=0).fillna(0.0)
             v = g.to_numpy(dtype=float)
+            if criterion == "mean":
+                v = np.nan_to_num(v) * w_sys
             for i, name in enumerate(systems):
                 hits[(name, (criterion, norm))] = v[i]
     return hits, systems, items, cells
@@ -119,6 +185,7 @@ def main() -> int:
     raw = Path(args.csv).read_bytes()
     d = load(Path(args.csv))
 
+    OFF = official_scores(Path(args.csv).with_name("WMT23.results.txt"))
     boards = {}
     for (src, tgt), sub in d.groupby(["src", "tgt"]):
         lp = f"{src}-{tgt}"
@@ -128,6 +195,29 @@ def main() -> int:
                          [(PUBLISHED_CELL[0], n) for n in NORMS],
                      "the product": cells}
         r = analyse(hits, systems, cells, PUBLISHED_CELL, sub_grids)
+        off = OFF.get(lp, [])
+        off_order = [s for s, _, _ in sorted(off, key=lambda x: -x[2])]
+        common = [s for s in off_order if s in r["published_order"]]
+        ours = [s for s in r["published_order"] if s in set(common)]
+        r["official_order"] = off_order
+        r["published_cell_reproduces_the_official_ranking"] = bool(common) and ours == common
+        # The filter is exact -- per-system rating counts match the task's file to the unit -- and
+        # the scores agree to a few tenths on a hundred-point scale, but the published number
+        # involves a step past the mean that is not in the release. So the agreement is measured
+        # rather than asserted: how far the scores are apart, and how many pairs the two orders
+        # disagree on. That disagreement is itself an instance of what this paper is about.
+        acc = r["system_accuracy_by_cell"]
+        cell = r["published_cell"]
+        gaps = [abs(acc[s][cell] - sc) for s, _, sc in off if s in acc]
+        pos = {s: i for i, s in enumerate(r["published_order"])}
+        r["agreement_with_official"] = {
+            "max_score_gap": round(max(gaps), 4) if gaps else None,
+            "pairs_ordered_differently": sum(
+                1 for i in range(len(common)) for j in range(i + 1, len(common))
+                if pos[common[i]] > pos[common[j]]),
+            "pairs_compared": len(common) * (len(common) - 1) // 2,
+            "rating_counts_match": all(
+                int(n) == int((sub["system"] == s).sum()) for s, n, _ in off if s in acc)}
         r["n_annotators"] = int(sub["annotator"].nunique())
         r["ratings_per_system_segment"] = round(
             float(len(sub) / max(sub.groupby(["system", "doc", "seg"]).ngroups, 1)), 3)
@@ -136,8 +226,17 @@ def main() -> int:
               f"{r['n_annotators']:3d} annotators, {r['n_pairs']:4d} pairs: "
               f"{r['n_dominating']:4d} dominate, {r['n_contested']:2d} contested "
               f"({r['n_contested_after_correction']} certified), {r['n_unresolved']:3d} unresolved, "
-              f"{r['tiers_distinguished']:2d} tiers", flush=True)
+              f"{r['tiers_distinguished']:2d} tiers"
+              + ("" if r["published_cell_reproduces_the_official_ranking"]
+                 else "  [DOES NOT REPRODUCE THE OFFICIAL ORDER]"), flush=True)
 
+    inv = sum(b["agreement_with_official"]["pairs_ordered_differently"] for b in boards.values())
+    cmp_ = sum(b["agreement_with_official"]["pairs_compared"] for b in boards.values())
+    gap = max(b["agreement_with_official"]["max_score_gap"] or 0.0 for b in boards.values())
+    counts_ok = all(b["agreement_with_official"]["rating_counts_match"] for b in boards.values())
+    print(f"\n  against the task's published scores: rating counts match exactly on every board: "
+          f"{counts_ok}; largest score gap {gap:.3f} on a hundred-point scale; "
+          f"{inv} of {cmp_} pairs ordered differently")
     shares = {lp: r["robustness"] for lp, r in boards.items()}
     rep = {"config": {**_code_version(),
                       "source": "WMT23 general MT, humaneval/DA+SQM/WMT23.scores_all.csv, from "
@@ -153,6 +252,9 @@ def main() -> int:
            "share_min": round(min(shares.values()), 4),
            "share_median": round(float(np.median(list(shares.values()))), 4),
            "share_max": round(max(shares.values()), 4),
+           "official_agreement": {"rating_counts_match_on_every_board": counts_ok,
+                                  "largest_score_gap": round(gap, 4),
+                                  "pairs_ordered_differently": inv, "pairs_compared": cmp_},
            "n_certified_total": sum(r["n_contested_after_correction"] for r in boards.values()),
            "places_published": sum(r["n_systems"] for r in boards.values()),
            "places_supported": sum(r["tiers_distinguished"] for r in boards.values()),

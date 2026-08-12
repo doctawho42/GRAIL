@@ -586,6 +586,28 @@ def main() -> int:
             check("esa, share median", me.group(9), round(EA["share_median"], 2), src)
             checks.append((len(BB) == 9, "there are nine boards", "9", str(len(BB)), src))
 
+    # 10d-w23. The previous edition's boards are a reconstruction, not the published cell, and the
+    # distance between the two is stated rather than left for a reviewer to find. The filter is the
+    # part that must be exact, and the artifact records whether it is.
+    w23 = ROOT / "results/robust_order_wmt23.json"
+    if w23.exists():
+        A = json.loads(w23.read_text())["official_agreement"]
+        flat = re.sub(r"\s+", " ", whole)
+        ma = re.search(r"match to within \$([\d.]+)\$ on a hundred-point scale.*?disagree on "
+                       r"\$(\d+)\$ of \$(\d+)\$ pairs", flat)
+        checks.append((bool(ma), "the reconstruction caveat parses", "present",
+                       "matched" if ma else "not matched", ""))
+        if ma:
+            src = str(w23.relative_to(ROOT))
+            check("wmt23, largest score gap", ma.group(1), A["largest_score_gap"], src)
+            check("wmt23, pairs ordered differently", ma.group(2),
+                  A["pairs_ordered_differently"], src)
+            check("wmt23, pairs compared", ma.group(3), A["pairs_compared"], src)
+            checks.append((A["rating_counts_match_on_every_board"],
+                           "the documented filter reproduces the task's rating counts",
+                           "exact on every board",
+                           str(A["rating_counts_match_on_every_board"]), src))
+
     # 10d-r. The cross-edition replication. It is the paper's answer to "is the share a property of
     # the benchmark or of your grid", so both the aggregate and the spread it rests on are held.
     rr = ROOT / "results/robust_order_wmt23.json"
