@@ -187,6 +187,26 @@ each lost reversal misses its own rank threshold outright. A step-down procedure
 lose a small-$p$ test to an earlier failure, and on this vector it does not --- no test beyond the
 cutoff would have passed its own threshold --- so the losses cannot be charged to the stopping rule.
 
+\paragraph{A test that assumes nothing about the shape.} Where a board scores an item a hit or a
+miss, the paired difference takes three values and the $p$ a correction reads is the exact
+conditional test on the discordant items. The translation boards are not like that: a segment score
+is continuous, zero-inflated and long-tailed on one side, and their $p$ is the normal approximation
+to a paired mean, read at thresholds between $10^{-6}$ and $10^{-3}$ --- which is doing work no
+central limit theorem promises on a few hundred items with one catastrophic output in them.
+
+Under exchangeability there is a test that assumes nothing: flipping the sign of each paired
+difference leaves the null distribution alone, so the sign-flip distribution of the mean is exact by
+construction. Its tail is the hard part, and a resample cannot reach it --- at $10^{-5}$ the draw
+count that would resolve it is the draw count that cannot be run --- so the tail is taken from the
+saddlepoint instead, which is uniformly accurate far out. Computed for every certified reversal and
+every test within a factor of ten of its board's cutoff, $42$ tests of which $25$ are certified, it
+never returns a larger $p$ than the analytic one: the ratio runs from $0.0166$ to $0.9967$, so on
+these boards the approximation is the conservative of the two and not, as on a hit board, the
+anti-conservative one. No certified reversal is lost to it, and one further pair on the
+nineteen-system board would be certified under it. On the $13$ tests whose tail a resample can
+resolve at all, the saddlepoint and $200{,}000$ draws agree to within the resample's own resolution
+there.
+
 \paragraph{The task's own answer to the same question.} A count no one else computes is a count no
 one else can check, and the objection that the instrument is idiosyncratic is answered by the one
 domain that computes its own version and publishes it. The translation task tests every pair with a

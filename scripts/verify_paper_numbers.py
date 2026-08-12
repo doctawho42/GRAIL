@@ -1058,6 +1058,49 @@ def main() -> int:
             check("the figure's median label", _fm and _fm.group(1), _med,
                   "paper/app/share_figure.tex")
 
+    # 10c-9b. The shape-free check on the boards whose scores are continuous.
+    pcj = ROOT / "results/permutation_check.json"
+    if pcj.exists():
+        PC = json.loads(pcj.read_text())
+        flat = re.sub(r"\s+", " ", whole)
+        m = re.search(r"cutoff, \$(\d+)\$ tests of which \$(\d+)\$ are certified, it\s*never returns "
+                      r"a larger \$p\$ than the analytic one: the ratio runs from \$([\d.]+)\$ to "
+                      r"\$([\d.]+)\$", flat)
+        checks.append((bool(m), "the permutation paragraph parses", "present",
+                       "matched" if m else "not matched", ""))
+        if m:
+            check("permutation, tests checked", m.group(1), PC["n_tests_checked"],
+                  "results/permutation_check.json")
+            check("permutation, certified among them", m.group(2), PC["n_certified_checked"],
+                  "results/permutation_check.json")
+            _rat = [r["permutation_p"] / r["analytic_p"] for r in PC["tests"] if r["analytic_p"]]
+            check("permutation, the smallest ratio", m.group(3), min(_rat),
+                  "results/permutation_check.json")
+            check("permutation, the largest ratio", m.group(4), max(_rat),
+                  "results/permutation_check.json")
+            checks.append((max(_rat) <= 1.0,
+                           "the analytic p is never the smaller of the two", "never above 1",
+                           f"{max(_rat):.4f}", "results/permutation_check.json"))
+        # the two claims the paragraph rests on: nothing certified is lost, and one pair is gained
+        _lost = [r for r in PC["tests"]
+                 if r["certified_analytic"] and not r["certified_permutation"]]
+        _gained = {(r["board"], r["pair"]) for r in PC["tests"]
+                   if r["certified_permutation"] and not r["certified_analytic"]}
+        checks.append((not _lost, "no certified reversal is lost to the permutation test", "0",
+                       str(len(_lost)), "results/permutation_check.json"))
+        checks.append((len(_gained) == 1 and all(b == "en-de" for b, _ in _gained),
+                       "one further pair on the nineteen-system board would be certified",
+                       "1 on en-de", str(sorted(_gained)), "results/permutation_check.json"))
+        m = re.search(r"On the \$(\d+)\$ tests whose tail a resample can\s*resolve at all, the "
+                      r"saddlepoint and \$([\d,{}]+)\$ draws", flat)
+        checks.append((bool(m), "the resample-validation sentence parses", "present",
+                       "matched" if m else "not matched", ""))
+        if m:
+            check("permutation, tests a resample can resolve", m.group(1),
+                  PC["n_validated_against_a_resample"], "results/permutation_check.json")
+            check("permutation, the draw count", m.group(2).replace("{,}", ""),
+                  PC["config"]["draws"], "results/permutation_check.json")
+
     # 10c-9. The correction across boards. The paragraph's whole point is that a per-board Holm
     # is not the family the paper's claim ranges over, so every one of its numbers is bound, and
     # the reproduction of the quoted 23 is bound too: if the union script stopped agreeing with
