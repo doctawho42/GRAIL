@@ -206,6 +206,8 @@ comparable across papers. The present work addresses both.
 \section{What part of a published ranking is safe to quote}
 \label{sec:robust}\label{sec:xdomainmain}
 
+\subsection{The instrument}
+
 \looseness=-1
 A leaderboard reports a total order computed in one cell of a grid its paper does not report. Fix
 the items and the predictions and ask of each pair whether the ordering the table asserts holds in
@@ -341,6 +343,8 @@ the benchmark cannot resolve. The first is called \emph{contested} and the secon
 anything. Counting sign changes alone would let noise on a tied pair read as a reversal, which is
 the error this instrument exists to avoid.
 
+\subsection{A control with a published answer}
+
 \paragraph{Docking is a control, and is included for that reason.} Three of the four boards are
 audited here for the first time, which leaves the instrument's verdicts unvouched for: a rule that
 reports little surviving everywhere cannot be told apart from a rule that reports little. Docking
@@ -394,6 +398,8 @@ scorable pose is a miss and not an absent observation, since dropping those rows
 program on the subset it managed to produce output for. The crystal ligand ships as an eighth row,
 is the reference re-scored through the same pipeline rather than a method, and is excluded.
 
+\subsection{Which axis moves what, and what the gap is made of}
+
 \paragraph{Which axis certifies a reversal, which is not the one the paper is named after.} Five
 of the twenty-one certified reversals reverse an ordering the published cell had separated; the
 other sixteen reverse pairs the table never established, which is the first claim reached by a
@@ -430,6 +436,8 @@ the share is a fact about a table and its grid, not about a benchmark or a langu
 quoting one as a fingerprint --- this one included --- would repeat the error it is about
 (Appendix~\ref{app:robustorder}).
 
+\subsection{Why the verdicts need no pairwise statistic}
+
 \paragraph{What decides a dominance verdict is arithmetic, and what needs a resample is smaller
 than it looks.} Write $d$ for a pair's margin in the published cell, $d'$ for its margin in another,
 and $\delta_a,\delta_b$ for how far each system moves between them, so $d'=d+(\delta_a-\delta_b)$.
@@ -449,6 +457,8 @@ widest-gapped of them is not the safest: exposure is what happens when entries c
 separating them, readable before any convention is varied (Appendix~\ref{app:xdomain}). Substituting a typical movement for the domain in place of the
 per-system one, which is what a published table alone supports, over-predicts fragility by a third
 and is reported as a failure (Appendix~\ref{app:negative}).
+
+\subsection{The case study the choices were found in}
 
 \paragraph{How one choice breaks an ordering.} \looseness=-1
 \citet{Hastedt_2024} released the ranked predictions of twelve retrosynthesis systems, of which
