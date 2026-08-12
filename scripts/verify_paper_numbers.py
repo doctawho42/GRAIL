@@ -645,6 +645,84 @@ def main() -> int:
                        "as stated" if "unit test on the weighting and not evidence about the data"
                        in flat else "claimed as evidence", "the manuscript"))
 
+    # 10c-7. Table 1, every row and every column. Six of its eight rows were bound one figure at
+    # a time by checks written for the prose that quotes them; the two rows standing for nine and
+    # eight boards were bound by nothing, which is how the same table in the appendix stopped
+    # summing to its own totals.
+    def _load_boards():
+        out = {}
+        for _fn, _key in (("robust_order.json", "cluster0"), ("robust_order.json", "cluster1"),
+                          ("robust_order_metabolite.json", None),
+                          ("robust_order_posebusters.json", None),
+                          ("robust_order_wmt24_en-de.json", None),
+                          ("robust_order_wmt24_ja-zh.json", None)):
+            _q = ROOT / "results" / _fn
+            if _q.exists():
+                _d = json.loads(_q.read_text())
+                out[f"{_fn[:-5]}:{_key}" if _key else _fn[:-5]] = (_d["leaderboards"][_key]
+                                                                   if _key else _d)
+        for _src in ("robust_order_wmt24_esa.json", "robust_order_wmt23.json"):
+            _q = ROOT / "results" / _src
+            if _q.exists():
+                for _lp, _b in json.loads(_q.read_text())["boards"].items():
+                    out[f"{_src[:-5]}:{_lp}"] = _b
+        return out
+
+    _BD = _load_boards()
+    if _BD:
+        flat = re.sub(r"\s+", " ", whole)
+        _ROWS = {
+            "retrosynthesis, seven systems": ["robust_order:cluster0"],
+            "retrosynthesis, three systems": ["robust_order:cluster1"],
+            "metabolites, three methods": ["robust_order_metabolite"],
+            "docking, seven programs": ["robust_order_posebusters"],
+            "translation, nineteen systems": ["robust_order_wmt24_en-de"],
+            "translation, fifteen systems": ["robust_order_wmt24_ja-zh"],
+            "translation, nine further pairs": [k for k in _BD if "esa:" in k],
+            "translation, the year before": [k for k in _BD if "wmt23:" in k],
+        }
+        _seen = 0
+        for _label, _keys in _ROWS.items():
+            _bs = [_BD[k] for k in _keys if k in _BD]
+            if not _bs:
+                continue
+            _row = re.search(re.escape(_label) + r"\s*&\s*\$?([\d,{}]+)\$?(?:--\$([\d,{}]+)\$)?"
+                             r"\s*&\s*\$?(\d+)\$? of \$([\d,{}]+)\$\s*&\s*\$?(\d+)\$? "
+                             r"\((\d+)\)\s*&\s*\$?(\d+)\$?\s*&\s*\$(\d+)\$ of \$(\d+)\$",
+                             flat)
+            checks.append((bool(_row), f"table 1, the row for {_label}", "present",
+                           "matched" if _row else "not matched", "results/robust_order_*.json"))
+            if not _row:
+                continue
+            _seen += 1
+            _g = [x.replace("{,}", "") if x else x for x in _row.groups()]
+            if len(_bs) == 1:
+                check(f"table 1, {_label}, items", _g[0], _bs[0]["n_items"],
+                      "results/robust_order_*.json")
+            else:  # an aggregated row gives the range of item counts across its boards
+                _it = [b["n_items"] for b in _bs]
+                check(f"table 1, {_label}, smallest board", _g[0], min(_it),
+                      "results/robust_order_*.json")
+                check(f"table 1, {_label}, largest board", _g[1], max(_it),
+                      "results/robust_order_*.json")
+            check(f"table 1, {_label}, dominating", _g[2],
+                  sum(b["n_dominating"] for b in _bs), "results/robust_order_*.json")
+            check(f"table 1, {_label}, pairs", _g[3], sum(b["n_pairs"] for b in _bs),
+                  "results/robust_order_*.json")
+            check(f"table 1, {_label}, contested", _g[4], sum(b["n_contested"] for b in _bs),
+                  "results/robust_order_*.json")
+            check(f"table 1, {_label}, certified", _g[5],
+                  sum(b["n_contested_after_correction"] for b in _bs),
+                  "results/robust_order_*.json")
+            check(f"table 1, {_label}, unresolved", _g[6], sum(b["n_unresolved"] for b in _bs),
+                  "results/robust_order_*.json")
+            check(f"table 1, {_label}, tiers", _g[7],
+                  sum(b["tiers_distinguished"] for b in _bs), "results/robust_order_*.json")
+            check(f"table 1, {_label}, places", _g[8], sum(b["n_systems"] for b in _bs),
+                  "results/robust_order_*.json")
+        checks.append((_seen == len(_ROWS), "table 1, every row is bound", str(len(_ROWS)),
+                       str(_seen), "results/robust_order_*.json"))
+
     # 10c-8. The share's median across the twenty-three boards. It was printed as 0.85 with no
     # check while the figure drawn from the same artifacts labelled its own dashed line 0.83 --
     # a disagreement inside one document, and the figure was right. The median is recomputed here
