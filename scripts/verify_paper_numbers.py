@@ -615,6 +615,30 @@ def main() -> int:
             check("esa, share median", me.group(9), round(EA["share_median"], 2), src)
             checks.append((len(BB) == 9, "there are nine boards", "9", str(len(BB)), src))
 
+    # 10d-p. The gap between published and supported places, split by cause. The title puts the two
+    # numbers side by side under a subtitle about undeclared choices, which invites the reading that
+    # the choices cost the difference. Most of it is the benchmark's own power, and the paper says so.
+    pdc = ROOT / "results/places_decomposition.json"
+    if pdc.exists():
+        PD = json.loads(pdc.read_text())
+        flat = re.sub(r"\s+", " ", whole)
+        mpd = re.search(r"the \$293\$ published places support \$(\d+)\$: \$(\d+)\$ go before any "
+                        r"convention is varied.*?the grid costs \$(\d+)\$ on top", flat)
+        checks.append((bool(mpd), "the places decomposition parses", "present",
+                       "matched" if mpd else "not matched", ""))
+        if mpd:
+            src = str(pdc.relative_to(ROOT))
+            check("places, own cell separates", mpd.group(1),
+                  PD["supported_when_its_own_cell_separates"], src)
+            check("places, lost before any choice", mpd.group(2),
+                  PD["lost_before_any_choice_is_varied"], src)
+            check("places, lost to the grid", mpd.group(3), PD["lost_to_the_grid"], src)
+            checks.append((PD["lost_before_any_choice_is_varied"] > PD["lost_to_the_grid"],
+                           "the paper does not attribute the gap mainly to the grid",
+                           "power exceeds grid",
+                           f"{PD['lost_before_any_choice_is_varied']} against "
+                           f"{PD['lost_to_the_grid']}", src))
+
     # 10d-w23. The previous edition's boards are a reconstruction, not the published cell, and the
     # distance between the two is stated rather than left for a reviewer to find. The filter is the
     # part that must be exact, and the artifact records whether it is.

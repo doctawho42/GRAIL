@@ -1,0 +1,143 @@
+{
+ "config": {
+  "script": "places_decomposition.py",
+  "git_commit": "bfb486ec2c2ba27d9921297c3d67c1cd9f9d691a",
+  "git_dirty": true,
+  "n_boards": 23,
+  "note": "each figure is a longest chain in a relation on the same systems; they differ only in what an edge requires"
+ },
+ "places_published": 293,
+ "supported_when_its_own_cell_separates": 128,
+ "supported_when_every_cell_separates": 100,
+ "supported_when_every_cell_agrees_in_sign": 170,
+ "lost_before_any_choice_is_varied": 165,
+ "lost_to_the_grid": 28,
+ "per_board": {
+  "('canonical', 1)|graphretro/localretro": {
+   "places": 7,
+   "own_cell_separates": 3,
+   "every_cell_separates": 3,
+   "every_cell_agrees_in_sign": 3
+  },
+  "('canonical', 1)|chemformer/gta": {
+   "places": 3,
+   "own_cell_separates": 3,
+   "every_cell_separates": 1,
+   "every_cell_agrees_in_sign": 1
+  },
+  "('tautomer', 15)|MetaPredictor/SyGMa": {
+   "places": 3,
+   "own_cell_separates": 2,
+   "every_cell_separates": 2,
+   "every_cell_agrees_in_sign": 2
+  },
+  "('rmsd2+valid', 'none')|vina/gold": {
+   "places": 7,
+   "own_cell_separates": 5,
+   "every_cell_separates": 4,
+   "every_cell_agrees_in_sign": 4
+  },
+  "('wmt', 'none')|GPT-4/Dubformer": {
+   "places": 19,
+   "own_cell_separates": 6,
+   "every_cell_separates": 5,
+   "every_cell_agrees_in_sign": 9
+  },
+  "('wmt', 'none')|Claude-3.5/refA": {
+   "places": 15,
+   "own_cell_separates": 8,
+   "every_cell_separates": 5,
+   "every_cell_agrees_in_sign": 8
+  },
+  "('esa', 'raw')|refA/Claude-3.5": {
+   "places": 12,
+   "own_cell_separates": 5,
+   "every_cell_separates": 4,
+   "every_cell_agrees_in_sign": 7
+  },
+  "('esa', 'raw')|refA/Unbabel-Tower70B": {
+   "places": 16,
+   "own_cell_separates": 7,
+   "every_cell_separates": 4,
+   "every_cell_agrees_in_sign": 8
+  },
+  "('esa', 'raw')|refA/Dubformer": {
+   "places": 11,
+   "own_cell_separates": 9,
+   "every_cell_separates": 7,
+   "every_cell_agrees_in_sign": 8
+  },
+  "('esa', 'raw')|Unbabel-Tower70B/TranssionMT": {
+   "places": 11,
+   "own_cell_separates": 6,
+   "every_cell_separates": 4,
+   "every_cell_agrees_in_sign": 7
+  },
+  "('esa', 'raw')|ONLINE-B/refA": {
+   "places": 13,
+   "own_cell_separates": 4,
+   "every_cell_separates": 3,
+   "every_cell_agrees_in_sign": 7
+  },
+  "('esa', 'raw')|Dubformer/Unbabel-Tower70B": {
+   "places": 14,
+   "own_cell_separates": 7,
+   "every_cell_separates": 4,
+   "every_cell_agrees_in_sign": 8
+  },
+  "('esa', 'raw')|Claude-3.5/Dubformer": {
+   "places": 11,
+   "own_cell_separates": 5,
+   "every_cell_separates": 4,
+   "every_cell_agrees_in_sign": 7
+  },
+  "('esa', 'raw')|GPT-4/Unbabel-Tower70B": {
+   "places": 13,
+   "own_cell_separates": 5,
+   "every_cell_separates": 3,
+   "every_cell_agrees_in_sign": 5
+  },
+  "('mean', 'raw')|ONLINE-B/Human-refA": {
+   "places": 14,
+   "own_cell_separates": 4,
+   "every_cell_separates": 4,
+   "every_cell_agrees_in_sign": 8
+  },
+  "('mean', 'raw')|GPT4-5shot/Human-refA": {
+   "places": 18,
+   "own_cell_separates": 7,
+   "every_cell_separates": 7,
+   "every_cell_agrees_in_sign": 13
+  },
+  "('mean', 'raw')|Human-refA/ONLINE-W": {
+   "places": 16,
+   "own_cell_separates": 5,
+   "every_cell_separates": 4,
+   "every_cell_agrees_in_sign": 8
+  },
+  "('mean', 'raw')|GPT4-5shot/ONLINE-B": {
+   "places": 13,
+   "own_cell_separates": 5,
+   "every_cell_separates": 5,
+   "every_cell_agrees_in_sign": 8
+  },
+  "('mean', 'raw')|Human-refA/GPT4-5shot": {
+   "places": 17,
+   "own_cell_separates": 7,
+   "every_cell_separates": 6,
+   "every_cell_agrees_in_sign": 10
+  },
+  "('mean', 'raw')|Yishu/GPT4-5shot": {
+   "places": 16,
+   "own_cell_separates": 6,
+   "every_cell_separates": 6,
+   "every_cell_agrees_in_sign": 11
+  },
+  "('mean', 'raw')|Lan-BridgeMT/GPT4-5shot": {
+   "places": 16,
+   "own_cell_separates": 6,
+   "every_cell_separates": 5,
+   "every_cell_agrees_in_sign": 10
+  }
+ }
+}
