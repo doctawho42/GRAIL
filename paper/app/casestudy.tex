@@ -1,0 +1,283 @@
+% moved out of the body: the case study that motivated the instrument, kept whole.
+% The body carries the survey the paper is named after; these are the measurements on one
+% system in one domain that produced the four choices, and they are reported here in full
+% rather than compressed, because compressing a case study is how its caveats go missing.
+\section{The case study: one predictor, one domain, four choices}
+\label{app:casestudy}
+
+\subsection{The evaluation protocol: what is declared and what is held fixed}
+\label{sec:tame}
+
+The protocol used throughout is a matching specification, an audited split and a re-scoring
+harness. It is referred to below as \textsc{tame}, for tautomer-aware matched evaluation, and it
+fixes what every number in \S\ref{sec:results} is measured under.
+
+\paragraph{The matching criterion.} The field has never agreed what counts as a match. GLORYx uses a
+stereo-blind InChIKey skeleton, MetaTrans compares Morgan fingerprints, and rule-based systems that
+canonicalise their own output compare canonical SMILES, each silently. \textsc{tame} names all five and maps both
+sides through one of $q \in \{\textsc{canonical}, \textsc{inchikey}, \textsc{inchi-no-stereo},
+\textsc{tanimoto1}, \textsc{inchikey-tautomer}\}$, a prediction counting as a hit iff
+$q(\hat{y}) = q(y)$ for some reference $y$, under RDKit 2022.09.5. They are canonical SMILES
+equality; the full InChIKey; its first block, blind to stereochemistry, charge and isotopes;
+Tanimoto similarity of one over Morgan fingerprints; and standardising both sides before hashing. A
+ceiling declares the \emph{application} procedure too (\S\ref{sec:enginereach}). One caution attaches
+to the first: it is computed without stereochemistry on the metabolite corpus, whose references carry
+none, and with it in the cross-domain harnesses, whose references do, which is why the cross-domain
+step to \textsc{inchi-no-stereo} moves those systems and the metabolite step cannot. The fourth is a
+similarity threshold rather than an identity relation and is reported but never treated as a
+candidate convention (Appendix~\ref{app:robust}).
+
+All five are reported for every comparison. The default is \textsc{inchikey-tautomer}: the references
+neither carry stereochemistry nor distinguish tautomers, and standard InChI normalises only a subset
+of them \citep{Dhaked_2020}, so an engine emitting the keto form of an enol reference fails to match
+under plain \textsc{inchikey} while producing the same substance. Standardisation of
+this kind is established preprocessing; adopting it as the \emph{matching} rule is not.
+
+\looseness=-1
+\paragraph{Split and leakage audit.} All splits are substrate-disjoint, and a read-only audit
+canonicalises every SMILES and verifies zero substrate and zero positive-pair overlap across each
+split pair. Leakage-aware splitting is not novel \citep{Joeres_2025}; the leak that matters here is
+substrate-metabolite \emph{identity} overlap, specific to this domain.
+
+\looseness=-1
+\paragraph{Metrics and inference.} Results are reported as recall@$k$ together with the mean output
+size. Precision alone is unsuitable under incomplete annotation, where an unannotated but real
+metabolite counts as a false positive; recall alone is unsuitable because a method can raise it by
+emitting more (Appendix~\ref{app:budget}).
+
+\looseness=-1
+Two words are used throughout and are not interchangeable. A difference is \emph{separated} when its
+paired bootstrap interval excludes zero, which needs no family and is the only claim made about an
+exploratory quantity. It is \emph{certified} when it is separated \emph{and} survives Holm
+correction inside a family fixed by a rule stated before the correction was computed, the grid the
+declared axes admit, and not by which comparisons proved worth reporting; no family here was
+pre-registered and Appendix~\ref{app:holm} says so. Three comparisons are confirmatory: the
+differential criterion sensitivity of \S\ref{sec:rankflip}, the learned-against-prior gap of
+\S\ref{sec:xmc}, and the cross-domain interaction, whose $448$ tests form one family. The word is used of those three and of any sentence
+naming its own correction and family size, which two appendix families do, and nowhere else; a
+released check permits exactly those forms. Two further families are corrected without being
+confirmatory, the $54$-cell budget sweep and the $440$ population interactions, and are called
+corrected rather than certified. Every remaining interval is exploratory, and every use of either
+word is listed against its family and adjusted $p$ in Appendix~\ref{app:holm}. Model and
+configuration selection is on validation data, with two exceptions stated in
+Appendix~\ref{app:arch}.
+
+
+\subsection{What a rule base reaches depends on the engine that applies it}
+\label{sec:enginereach}
+
+\looseness=-1
+A paper that publishes a rule base usually publishes a figure for what it covers, the fraction of
+reference products applying every rule recovers: its \emph{reach}. It is quoted as a property of the
+rules and is not one: applying a rule means deciding how the substrate is presented to the matcher,
+and every engine decides that silently and none reports it.
+
+\looseness=-1
+$152$ of SyGMa's $175$ rules sit verbatim in ours, so those can be held fixed while only the
+procedure changes: one engine, one bank, the substrate expanded with explicit hydrogens or not. On
+the clean test split those two arms reach $0.200$ $[0.182,0.218]$ and $0.390$ $[0.367,0.413]$, a
+paired $+0.190$ $[+0.173,+0.208]$, and almost none of that is the convention. SyGMa's own program on the same rules
+reaches $0.387$, so the switch and not the reimplementation moves this. Expanding a substrate and never contracting the product leaves the
+drawn hydrogen on the reacting atom; contracting it lifts the expanded arm to $0.377$
+$[0.354,0.400]$, worth $+0.177$ $[+0.159,+0.195]$, and what survives against the unexpanded arm is
+$+0.013$ $[+0.007,+0.020]$. Thirteen fourteenths of it is an unfinished loop and the
+remainder the convention, both separated. The whole distance between the two configurations is $+0.339$: the
+engine term as the two programs stand, $+0.188$ $[+0.170,+0.205]$, $+0.145$ $[+0.128,+0.162]$ from
+the $23$ rules our bank lacks, and $+0.0065$ $[+0.0038,+0.0096]$ from composing steps.
+
+\looseness=-1
+\paragraph{The two parts fail in opposite ways.} The larger is not a matching effect: templates fire
+equally often expanded, and the toolkit then refuses $63\%$ of the fragments those products separate
+into against $0.4\%$ without the expansion, because a template written against implicit hydrogens
+does not name the hydrogen it replaces and the drawn one is never removed. Contract the product and
+that number is zero. The smaller is a matching effect and nothing else, the completed loop yielding
+$21{,}302$ fragments against the unexpanded arm's $21{,}106$. The convention then
+decides what a bank reaches without deciding which reaches further: with the loop complete
+BioTransformer recovers $1{,}289$ references with hydrogens drawn against $317$ with them implicit,
+a swing of $-0.374$, while SyGMa recovers $1{,}350$ against $1{,}390$, a swing of $+0.015$ the other
+way, and SyGMa leads in both. A coverage figure is the value of a bank together with a convention
+and is not comparable across papers that state only the bank.
+
+\looseness=-1
+The repair we registered for this works on one bank of three and on neither published one. Dispatch
+the convention per template rather than per run: a one-line syntactic test on each rule, whether its
+reactant side names a hydrogen \emph{atom}, decides which presentation that rule sees, consulting no
+outcome. On SyGMa it is the identity, none of whose $175$ templates names one, which is the
+structural null the design needs. On BioTransformer, whose $726$ of $994$ templates make it the
+mixed bank by that syntax, it \emph{loses} to the better single setting by $-0.0038$
+$[-0.0067,-0.0015]$. It clears that setting only on our own bank, by $+0.0035$ $[+0.0015,+0.0058]$,
+whose $675$ dispatched templates were written by hand. A bank can be mixed in its syntax and
+single-convention in what it reaches, and the one case where dispatch pays is the bank whose
+provenance we control.
+
+\looseness=-1
+What is comparable without that is a bound, and it is what a reader of a coverage figure quoted
+without its procedure may assume: the least a bank recovers over the settings it might run under.
+For BioTransformer that is $0.1221$ against the $0.4963$ its best single setting reaches, four
+times what any one convention guarantees --- and $0.4963$ is our measurement of that bank, not one
+its authors publish.
+
+\looseness=-1
+What a bank has to lose is readable from its rule file without running anything, and the hazard is
+not confined to this domain: every one of the $42{,}554$ patterns in the standard retrosynthesis
+template library pins a connection count, so the same step costs that library $82\%$ of the
+template--product pairs it can match at all (Appendix~\ref{app:retroconvention}).
+
+
+
+\subsection{The decomposition and the coverage ceiling}
+\label{sec:decomp}
+
+\looseness=-1
+The deep case study runs on GRAIL, a metabolite predictor built for this work: a learned selector
+chooses which of its \nbank\ rules to apply, an engine applies them, and a learned filter ranks the
+result. A system of this shape is where a coverage figure can be measured exhaustively rather than
+sampled, because it reaches a reference only by passing three gates in sequence. With $C_{\text{full}}$
+the references the whole bank recovers without a budget, $C_{\text{bud}}$ those surviving the selector
+and $H$ those returned,
+\[
+\underbrace{\tfrac{|H|}{|U|}}_{\text{recall@}k}
+=\underbrace{\tfrac{|C_{\text{full}}|}{|U|}}_{\text{coverage}}
+\cdot\underbrace{\tfrac{|C_{\text{bud}}|}{|C_{\text{full}}|}}_{\text{selection}}
+\cdot\underbrace{\tfrac{|H|}{|C_{\text{bud}}|}}_{\text{ranking}},
+\qquad |U|=\textstyle\sum_{s\in S}|Y_s| ,
+\]
+exact by construction because each set contains the next: an accounting device, not a model, in
+\emph{micro} because only that form multiplies out. MetaPredictor factorises
+$0.612\times0.804\times1.000$, exactly its realised recall, though a beam bounds that decode rather
+than the model (Appendix~\ref{app:seq2seq}).
+
+\paragraph{The ceiling as a primitive.} Apply all \nbank\ rules to every test substrate and ask what
+fraction of references appears anywhere in the union. That \textbf{coverage ceiling} is the best recall
+perfect selection and ranking would reach, here \ceiling\ (cluster-bootstrap 95\% CI
+$[0.794,0.839]$), macro $\ceilingmacro$, and should be reported alongside recall for any
+rule-grounded method. The deployed pipeline
+converts $32.5\%$ of its own ceiling, and selection is where the loss sits, barely a third of what
+the bank reaches surviving the rule budget. Ranking is close to lossless at $0.960$ $[0.941,0.976]$
+and close to free: re-ranking the same pool by Tanimoto similarity to the substrate, nothing trained,
+reaches $0.342$ against the filter's $0.340$, $+0.002$ $[-0.004,+0.009]$, while reversing that order
+costs $0.040$ and shuffling it $0.015$. Applied to a second method the decomposition stops being
+self-diagnosis, since SyGMa decomposes with the inverse profile (Appendices~\ref{app:noselect}
+and~\ref{app:decompsygma}).
+
+\subsection{Results}
+\label{sec:results}
+
+\subsection{The same axis inside one benchmark, where the ceiling is measured}
+\label{sec:rankflip}
+
+\looseness=-2
+Published methods have their \emph{frozen} predictions re-scored under all five criteria, so only
+the match rule changes across columns and never the chemistry. GRAIL, SyGMa \citep{Ridder_2008} and
+MetaPredictor \citep{Zhu_2024} are compared on the whole clean test split, paired on identical
+substrates (Table~\ref{tab:matchsens}); BioTransformer \citep{Djoumbou_Feunang_2019} and MetaTrans
+\citep{Litsa_2020} on the $\nshared$-substrate shared subset.
+
+\looseness=-1
+Methods are not equally sensitive to the convention. Over the full split GRAIL gains $0.016$
+$[0.010,0.023]$ from canonical to tautomer matching against MetaPredictor's $0.040$
+$[0.030,0.050]$, a differential of $+0.024$ $[0.014,0.034]$, which survives Holm--Bonferroni
+over the three method pairs and over the thirty cells the rule declared for the other families,
+every pair by every criterion step, admits here. Unequal headroom runs against the effect: GRAIL enters lower, has more left
+to recover, and gains the less. Output size is a second and orthogonal confound, SyGMa emitting $81$
+candidates per substrate against GRAIL's $8.4$ (Appendix~\ref{app:budget}).
+
+
+
+\begin{table}[tb]
+\caption{Recall@15 by matching criterion on the full clean test split ($n=\ntest$). The final column
+is a paired mean difference, not the difference of the rounded columns. The same table for the
+external GLORYx set is Table~\ref{tab:matchsensext}.}
+\label{tab:matchsens}
+\centering
+\begin{tabular}{lccccc l}
+\toprule
+\textbf{method} & canon. & InChIKey & no-stereo & Tanimoto$=$1 & tautomer & gain (95\% CI) \\
+ & & (strict) & (GLORYx) & (fingerprint) & (ours) & \\
+\midrule
+\textbf{GRAIL} & 0.323 & 0.331 & 0.333 & 0.324 & 0.340 & $+0.016$ $[0.010,0.023]$ \\
+MetaPredictor  & 0.529 & 0.553 & 0.559 & 0.532 & 0.569 & $+0.040$ $[0.030,0.050]$ \\
+SyGMa          & 0.532 & 0.558 & 0.563 & 0.533 & 0.571 & $+0.038$ $[0.029,0.048]$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\looseness=-1
+\paragraph{Primary endpoint.} The endpoint is the interaction between criterion and method, by a
+paired bootstrap over substrates with $10{,}000$ resamples; every method gains under a more tolerant
+criterion, so only the differential can change an ordering. On the $\nshared$-substrate subset two
+pairs separate, BioTransformer gaining \interA\ \interAci\ more than GRAIL from canonical to
+tautomer matching and SyGMa \interB\ \interBci\ more than MetaTrans from canonical to InChIKey,
+the first surviving correction and the second not. The criterion is a \textbf{method-dependent
+confounder} rather than a neutral scoring choice, and it moves human agreement too: two independent
+curations of twenty-five external drugs agree at a Jaccard of $0.145$ under strict
+\textsc{inchikey} matching and $0.406$ under the tautomer-aware default, a third of what reads as
+disagreement about observed chemistry (Appendices~\ref{app:xdomain} and~\ref{app:holm}).
+
+\looseness=-1
+\paragraph{External replication.} On the field's de-facto external hold-out, the \nglory\ GLORYx
+drugs \citep{de_Bruyn_Kops_2020}, the result rests on neither contaminated arm: $24$ of the $37$ sit
+in GRAIL's own train or validation split, so its row uses the $13$ unseen. Under strict InChIKey
+matching MetaPredictor trails SyGMa by $0.130$ and one rung later the advantage is gone. The
+endpoint is the interaction: MetaPredictor gains $+0.135$ $[+0.072,+0.209]$ more than SyGMa across
+the stereo step, rejected at either family size and again by a sign-flip test. The criterion erases
+a significant advantage instead of reversing it, the relaxed gap covering zero while still admitting
+SyGMa ahead by $0.071$ (Appendix~\ref{app:holm}).
+
+
+
+
+
+\subsection{The aggregate and the budget are one variable, and the decomposition predicts it}
+\label{sec:metric}
+
+\looseness=-1
+Intervals here are exploratory except the budget sweep, whose family is declared below. A method emitting
+eighty candidates to catch a few more references is rewarded by recall and punished by F1. So on
+deployed output the two aggregates order the methods differently: against GRAIL the disagreement is
+separated both ways, SyGMa leading on recall by $0.253$ $[0.222,0.283]$ and sitting $0.088$
+$[0.076,0.099]$ below on F1 (Appendix~\ref{app:props}).
+
+\looseness=-1
+The budget does the same work and it is what identifies the variable, because truncating a ranked
+list moves the emitted count with the method and its ranking held fixed, so a reordering along the
+sweep cannot be a property of any one system. Swept over $k$ in macro F1 the three methods take
+three distinct orderings: SyGMa sits above GRAIL at every budget up to $13$, separated from $k=1$ to
+$k=10$ and by $0.071$ $[0.057,0.086]$ at $k=5$, and below from $14$ on, where the field's $15$ sits.
+A fourth method exhausts the field. On $291$ substrates carrying all four, MetaTox at $33.6$
+candidates is last at $k\le5$ and first from $k=15$; four of the six pairs change sign along that
+sweep and three do so between margins that each separate from zero and survive Holm over the
+$54$-cell grid that axis admits. Its lead is volume, since on macro F1 at the same budget it is
+second at $0.125$ behind MetaPredictor's $0.156$ and last at $k=1$
+(Appendices~\ref{app:fourmethod} and~\ref{app:props}).
+
+\looseness=-1
+Every corrected reversal along the sweep involves the one method that overproduces, and none
+survives correction among methods emitting alike, which is a failure to detect rather than a null:
+those pairs leave intervals up to $0.158$ open. The two choices act on different comparisons. The
+matching rule still separates methods at fixed output size, GRAIL's sensitivity sitting below both
+comparators by $-0.0195$ $[-0.029,-0.010]$ and $-0.025$ $[-0.035,-0.015]$ when all are matched at
+about eight emitted candidates (Appendix~\ref{app:matchedemission}); and where the budget reorders,
+the criterion instead erases, the GRAIL--MetaPredictor F1 gap being separated under four of the five
+criteria at $-0.026$ $[-0.038,-0.013]$ and indistinguishable from zero under plain
+\textsc{inchikey}. The decomposition says why the aggregate splits them at all: SyGMa's selection
+factor is $1$ (\S\ref{sec:decomp}), so a pipeline with no selection stage is scored relatively
+higher by recall than by precision (Appendix~\ref{app:props}).
+
+
+\looseness=-1
+\paragraph{A global budget is the wrong object.} It is not only undeclared, it is the wrong shape.
+Enzymes compete for one substrate, so its annotated products are alternatives from a shared pool:
+the median substrate here has one and the mean $2.22$, while the deployed policy emits $8.4$ for
+every substrate alike. Holding the ranking fixed and changing only how many are emitted, the
+deployed $k=15$ scores $0.136$ macro F1, the best global constant $0.195$, and truncating each
+substrate at its own annotated count $0.214$. Emitting while a candidate scores within half the
+leader's score gives $0.209$, and the arm that decides the claim is not the deployed policy this
+paragraph has just discredited but the best constant, chosen with the same hindsight on the same
+split: $+0.0147$ $[+0.0059,+0.0237]$ of an available $+0.019$. Forecasting that count directly is
+worse than the constant it replaces, so what the pool supports is a relative rule. The advantage
+holds on the $845$ parent drugs, $+0.021$ $[+0.010,+0.032]$, and not on the $325$ substrates that
+are themselves metabolites, $-0.002$ $[-0.016,+0.013]$ (Appendices~\ref{app:emission}
+and~\ref{app:negative}).
+
+

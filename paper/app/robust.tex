@@ -34,14 +34,6 @@ report the curve rather than a point: each declared axis alone, and their produc
 give that curve for every leaderboard in the paper, together with the accuracy of every system in
 every cell, which is the table all the derived quantities are computed from.
 
-\paragraph{Three verdicts, not two.} A pair that does not dominate has failed in one of two ways
-that should not be added together. Some cell may put the two systems the other way round with a
-paired interval excluding zero, which is a choice deciding against the published ordering; or no
-cell may do so, in which case the published ordering merely fails to hold everywhere on a margin
-the benchmark cannot resolve. The first is called \emph{contested} and the second
-\emph{unresolved}, and only the count of contested pairs is evidence that a choice reverses
-anything. Counting sign changes alone would let noise on a tied pair read as a reversal, which is
-the error this instrument exists to avoid.
 
 \paragraph{A dual statistic.} The tier count says what survives; the number of distinct total
 orders the same systems take across the grid says how much varies. Neither is recoverable from the
@@ -77,56 +69,6 @@ generation results are therefore reported in Appendix~\ref{app:xdomain} as a cri
 and not as a row here. Both rules were fixed before the shares below were read, and the second
 excludes the one leaderboard whose pairs are furthest apart, which would have raised the shares.
 
-\paragraph{Docking is a control, and is included for that reason.} Three of the four boards are
-audited here for the first time, which leaves the instrument's verdicts unvouched for: a rule that
-reports little surviving everywhere cannot be told apart from a rule that reports little. Docking
-supplies the missing arm, because its own field published a reversal of this kind before we ran
-anything. \citet{Buttenschoen_2024} argued that a pose can sit within the field's distance tolerance
-of the crystal ligand and still be chemically impossible, named \textsc{uni-mol} as the program most
-affected, and released the per-pose table behind the argument. Reading that table through the
-dominance order, without reference to the argument, contests exactly two of the $21$ pairs, and both
-are \textsc{uni-mol} against programs it outranks on distance alone --- which is the source's own
-finding, recovered by an instrument that was not told it.
-
-The verdict is read out of $21$ pairs by $8$ cells, so it is granted inside a family of $168$
-cell-level tests, and it is granted after correcting for them: both reversals are certified,
-surviving Holm at $\alpha=0.05$ over the whole family, the largest at $p=1.4\times10^{-3}$. Two
-exchanges out of $168$ looks is close to what noise alone would produce, which is why the
-uncorrected interval is not the object this control rests on.
-
-What the control shows is not that this board is clean. Of its $21$ pairs, $17$ dominate, $2$ are
-contested and $2$ the grid leaves unresolved --- and one of those two is the board's own top pair,
-\textsc{vina} against \textsc{gold}, whose margin no cell of the grid separates from zero. A
-benchmark can be large, dense, carefully scored and still not entitle a reader to its first place
-over its second. The control is that a well-run board loses four pairs where a mature retrosynthesis
-table loses thirteen, so the instrument distinguishes them; it is not that any board survives whole.
-
-Nothing here is contested between the search-based programs and the learned ones: on these $428$
-items all ten such pairs dominate, because \textsc{vina} and \textsc{gold} lead on distance alone
-before validity is asked for. The exchange the source is best known for lives on the other set it
-distributes, and the grid finds it there: run unchanged on the $85$ astex items, the same eight cells
-contest \textsc{vina} against \textsc{diffdock}, along with two other pairs, and leave $15$ of $21$
-dominating. That run is reported as a second board and not as two more cells, because a population
-is not a choice about how a prediction is scored; and it is reported at all because which reversal a
-grid recovers turns out to depend on which items a benchmark chose, which is the sharpest form of
-the paper's own argument that we have found.
-
-One axis of this board is weaker than a criterion and is labelled so. Minimising a pose before
-scoring it is a step the benchmark applies rather than the program, so it is a choice the evaluation
-could have been made under; but unlike a matching rule it does not leave the prediction alone. Every
-pose moves --- $99.7\%$ of the $2{,}922$ paired poses differ between the arms, by a median of
-$0.354$\,\AA{} --- and $6.5\%$ of per-item verdicts change at the field's tolerance. The conservative
-reading is therefore the criteria alone at the published post-processing, which leaves $18$ of the
-$21$ pairs dominating rather than $17$, and the pair the grid loses to that axis is named in the
-tables below rather than absorbed into the total.
-
-Three conventions the released table forces are declared rather than chosen. Its two flatness checks
-are recorded only in the un-minimised arm, so a criterion using them would not exist in half the
-grid; they are dropped from every cell rather than from one, which keeps each criterion the same
-object in each cell, and including them changes the published cell by $0.0000$. A row with no
-scorable pose is a miss and not an absent observation, since dropping those rows would score each
-program on the subset it managed to produce output for. The crystal ligand ships as an eighth row,
-is the reference re-scored through the same pipeline rather than a method, and is excluded.
 
 \paragraph{A leaderboard from outside chemistry, whose convention ships as a function.} The two
 translation rows are the same instrument on a domain sharing none of this paper's data: the ranking
@@ -215,32 +157,6 @@ published table does.
 Across the eight, $804$ of $909$ pairs dominate, $20$ are contested
 of which $1$ survive correction, and $124$ published places support $78$.
 
-\paragraph{Most of the gap between published and supported places is not the grid.} The two
-numbers in the title sit beside a subtitle about undeclared choices, which invites the reading that
-the choices cost the difference. They do not, and Proposition~2's own discipline --- that the ways a
-pair can fail are different quantities --- applies to the count that rolls them up. Three readings of
-"supported", each a longest chain in a relation on the same systems, differing only in what an edge
-requires. When a leaderboard's \emph{own} cell must separate the pair, the $293$ published places
-support $136$: $157$ go before any convention is varied, to the benchmark's power. When every
-declared cell must separate it, $100$: the grid costs $39$ on top. The $170$ the title quotes is the
-weaker reading an intersection of orders gives, where a cell must agree in sign and need not
-separate, and it is the one quoted because dominance is what the instrument computes. A reader who
-wants the strictest number has $100$, and a reader who wants to know what the conventions cost has
-$28$.
-
-\paragraph{Which axis certifies a reversal, which is not the one the paper is named after.} Six
-of the twenty-three certified reversals reverse an ordering the published cell had separated; the
-other seventeen reverse pairs the table never established, which is the first claim reached by a
-second route. Naming the axis of those six matters more than naming their domain. Five are
-retrosynthesis pairs, and every one of them reverses at top-3 and top-5 under the \emph{published}
-criterion: the budget moves them and the matching rule does not. The sixth is
-\textsc{deepdock} against \textsc{uni-mol} on the docking board, and it reverses only in the two
-minimised cells --- the axis this appendix already says does not leave the prediction alone. So the
-matching criterion certifies no reversal of a separated ordering anywhere in this paper. That is a
-smaller second claim than a reader might expect from a paper about matching rules, and it is the one
-the measurements support: what the criterion does is exchange positions a benchmark never separated,
-which is the first claim, and what reverses an established ordering is a budget nobody reports
-jointly with the ranking it produces.
 
 \paragraph{What the share does not measure.} It is not an error rate and no cell is privileged.
 The instrument takes the grid as declared and says what part of a published ordering is invariant

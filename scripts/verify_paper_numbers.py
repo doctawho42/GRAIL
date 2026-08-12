@@ -406,9 +406,9 @@ def main() -> int:
         if _w23.exists():
             survey_boards += list(json.loads(_w23.read_text())["boards"].values())
         flat = re.sub(r"\s+", " ", whole)
-        mc = re.search(r"Measured on \$(\d+)\$ leaderboards in four domains and "
-                       r"\$([\d,{}]+)\$ pairs: they publish \$(\d+)\$ places and what survives "
-                       r"supports \$(\d+)\$", flat)
+        mc = re.search(r"Measured on \$(\d+)\$ leaderboards in four domains and \$([\d,{}]+)\$ "
+                       r"pairs.*?they publish \$(\d+)\$ places and what survives supports "
+                       r"\$(\d+)\$", flat)
         checks.append((bool(mc), "the survey-total sentence parses", "present",
                        "matched" if mc else "not matched", ""))
         if mc:

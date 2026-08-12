@@ -60,7 +60,11 @@ DEFINITION_MARKERS = ["Two words are used throughout", "A difference is \\emph{s
                       # the appendix that attributes each certification to its axis is about which
                       # family produced them, not a new claim inside one; keyed on its own heading
                       "Which axis certifies a reversal",
-                      "certifies no reversal of a separated ordering anywhere in this paper"]
+                      "certifies no reversal of a separated ordering anywhere in this paper",
+                      # the same two sentences now live in the body, having been promoted with the
+                      # rest of the survey; the exemption follows the text rather than the file
+                      "Six\nof the twenty-three certified reversals",
+                      "Six of the twenty-three certified reversals"]
 
 
 def sentences(text: str):
