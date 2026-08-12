@@ -48,7 +48,8 @@ per-firing probabilities are combined by noisy-OR.
 Training is multi-label rule classification with a margin-ranking auxiliary at weight 0.25 and
 margin 0.45. Rules that match the substrate but carry no annotation are down-weighted by half
 rather than treated as negatives, which is what makes the objective positive-unlabelled.
-Optimisation uses Adam at a learning rate of $10^{-4}$ for at most 8 epochs with early stopping.
+Optimisation uses Adam at a learning rate of $10^{-4}$ for at most 20 epochs with early
+stopping.
 
 \subsection{The filter}
 
@@ -67,7 +68,7 @@ be the default, and report the comparison below.
 
 The estimator is selectable: with the non-negative positive-unlabelled risk it consumes logits
 and with binary cross-entropy it consumes probabilities, and the released configuration trains the
-filter under the second. Optimisation uses Adam at a learning rate of $10^{-4}$ for at most 8 epochs
+filter under the second. Optimisation uses Adam at a learning rate of $10^{-4}$ for at most 20 epochs
 with early stopping at a patience of 7.
 
 \subsection{Choosing between the two filters}
@@ -121,7 +122,7 @@ coverage ceiling reported in the main text remains a held-out quantity.
 \subsection{What the bank contains}
 
 The deployed bank of $\nbank$ templates is the deduplicated union of four earlier curated banks,
-of 473, 656, 500 and 1{,}051 rules, together with the newly mined templates.
+of 474, 656, 500 and 1{,}051 rules, together with the newly mined templates.
 
 Support across mined templates is heavily skewed. The positional miner alone extracts 5{,}856
 unique self-tested templates from the training positives. Of these, 4{,}274 (73\%)

@@ -743,3 +743,67 @@ def register(ctx) -> None:
     _robust(ctx)
     _negative(ctx)
     _closure(ctx)
+    register_orphans_fixed(ctx)
+
+
+def register_orphans_fixed(ctx) -> None:
+    """Five figures the appendix printed that no artifact produced, and four of them disagreed.
+
+    They were found by asking of every unread numeral what leaf it comes from, which is the
+    question the coverage instrument exists to force. Each is bound here to the leaf it should
+    have come from all along.
+    """
+    import json as _json
+    import re as _re
+
+    w = ctx.art("robust_order_wmt23.json")
+    if w:
+        ann = sorted(b["n_annotators"] for b in w["boards"].values())
+        m = _re.search(r"several ratings per segment, and between \$(\d+)\$ and \$(\d+)\$ "
+                       r"annotators", ctx.flat)
+        ctx.checks.append((bool(m), "wmt23, the annotator range is stated", "present",
+                           "matched" if m else "not matched", "results/robust_order_wmt23.json"))
+        if m:
+            ctx.check("wmt23, fewest annotators on a board", m.group(1), ann[0],
+                      "results/robust_order_wmt23.json")
+            ctx.check("wmt23, most annotators on a board", m.group(2), ann[-1],
+                      "results/robust_order_wmt23.json")
+
+    mx = ctx.art("metatox_smirks_preds.json")
+    if mx:
+        m = _re.search(r"PASS writes that score only for the \$([\d,{}]+)\$ of \$([\d,{}]+)\$ "
+                       r"predictions", ctx.flat)
+        ctx.checks.append((bool(m), "PASS, the thresholded share is stated", "present",
+                           "matched" if m else "not matched", "results/metatox_smirks_preds.json"))
+        if m:
+            ctx.check("PASS, predictions carrying a score",
+                      m.group(1).replace("{,}", ""),
+                      round(mx["mean_output_above_threshold"] * mx["n_substrates"]),
+                      "results/metatox_smirks_preds.json")
+            ctx.check("PASS, predictions in total", m.group(2).replace("{,}", ""),
+                      mx["n_predictions"], "results/metatox_smirks_preds.json")
+
+    cen = ctx.art("convention_census.json")
+    if cen:
+        sm = cen["nested_not_counted"]["hand-written collection, smallest"]["templates"]
+        m = _re.search(r"of (\d+), 656, 500 and 1\{,\}051 rules", ctx.flat)
+        ctx.check("arch, the smallest curated bank", m and m.group(1), sm,
+                  "results/convention_census.json")
+
+    bm = ctx.art("budget_matched_leaderboard.json")
+    if bm:
+        ratio = bm["by_method"]["SyGMa"]["mean_output"] / bm["by_method"]["GRAIL"]["mean_output"]
+        m = _re.search(r"([\d.]+)-fold difference in output volume it reflects is real", ctx.flat)
+        ctx.check("budget, the output-volume ratio", m and m.group(1), ratio,
+                  "results/budget_matched_leaderboard.json")
+
+    # the epoch budget is a property of the released preset, so the preset is the artifact
+    pre = ctx.root / "grail_metabolism/experiments/presets.py"
+    if pre.exists():
+        mm = _re.search(r"generator_optim=OptimConfig\(lr=1e-4, epochs=(\d+)", pre.read_text())
+        said = _re.findall(r"Adam at a learning rate of \$10\^\{-4\}\$ for at most (\d+) epochs",
+                           ctx.flat)
+        ctx.checks.append((bool(mm) and len(said) == 2 and all(s == mm.group(1) for s in said),
+                           "arch, the epoch budget both stages state",
+                           mm.group(1) if mm else "?", ", ".join(said) or "not stated",
+                           "grail_metabolism/experiments/presets.py"))
