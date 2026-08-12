@@ -260,7 +260,18 @@ def analyse(hits: dict, systems: list[str], cells: list, published_cell,
                              "n_reversals_surviving": sum(1 for _, _, mg, _ in surviving if mg < 0),
                              "largest_surviving_reversal_p":
                                  round(max((pv for _, _, mg, pv in surviving if mg < 0),
-                                           default=float("nan")), 5)},
+                                           default=float("nan")), 5),
+                             # Holm within a board controls the family that board creates. A paper
+                             # quoting twenty-three boards creates a larger one, and that correction
+                             # cannot be reconstructed from a per-board verdict: it needs the whole
+                             # sorted vector, because a step-down procedure stops at its first
+                             # failure. So the vector is kept, and the reversals are kept with the
+                             # p that decides them.
+                             "p_values": sorted(pv for _, _, _, pv in tests),
+                             "reversal_tests": sorted(
+                                 ({"pair": nm, "cell": c, "p": pv}
+                                  for nm, c, mg, pv in tests if mg < 0),
+                                 key=lambda r: r["p"])},
             "tiers_distinguished": tiers, "tiers_ci95": tier_ci,
             "distinct_orderings_across_the_grid": distinct,
             "robustness": round(n_dom / max(n_pairs, 1), 4),
