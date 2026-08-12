@@ -645,6 +645,42 @@ def main() -> int:
                        "as stated" if "unit test on the weighting and not evidence about the data"
                        in flat else "claimed as evidence", "the manuscript"))
 
+    # 10c-8. The share's median across the twenty-three boards. It was printed as 0.85 with no
+    # check while the figure drawn from the same artifacts labelled its own dashed line 0.83 --
+    # a disagreement inside one document, and the figure was right. The median is recomputed here
+    # over the same boards the survey counts.
+    _sh = []
+    for _fn, _key in (("robust_order.json", "cluster0"), ("robust_order.json", "cluster1"),
+                      ("robust_order_metabolite.json", None),
+                      ("robust_order_posebusters.json", None),
+                      ("robust_order_wmt24_en-de.json", None),
+                      ("robust_order_wmt24_ja-zh.json", None)):
+        _q = ROOT / "results" / _fn
+        if _q.exists():
+            _d = json.loads(_q.read_text())
+            _sh.append((_d["leaderboards"][_key] if _key else _d)["robustness"])
+    for _src in ("robust_order_wmt24_esa.json", "robust_order_wmt23.json"):
+        _q = ROOT / "results" / _src
+        if _q.exists():
+            _sh += [_b["robustness"] for _b in json.loads(_q.read_text())["boards"].values()]
+    if _sh:
+        import statistics as _st
+        flat = re.sub(r"\s+", " ", whole)
+        checks.append((len(_sh) == 23, "the share median is taken over every board", "23",
+                       str(len(_sh)), "results/robust_order_*.json"))
+        _med = _st.median(_sh)
+        m = re.search(r"none of three to nine tenths with a median of \$([\d.]+)\$", flat)
+        check("the share median", m and m.group(1), _med, "results/robust_order_*.json")
+        checks.append((min(_sh) == 0.0 and 0.9 <= max(_sh) < 1.0,
+                       "the range the prose gives in words", "0 to nine tenths",
+                       f"{min(_sh)} to {max(_sh)}", "results/robust_order_*.json"))
+        # and the figure's own label, which is generated from the same numbers
+        _fig = (ROOT / "paper/app/share_figure.tex")
+        if _fig.exists():
+            _fm = re.search(r"median \$([\d.]+)\$", _fig.read_text())
+            check("the figure's median label", _fm and _fm.group(1), _med,
+                  "paper/app/share_figure.tex")
+
     # 10c-9. The correction across boards. The paragraph's whole point is that a per-board Holm
     # is not the family the paper's claim ranges over, so every one of its numbers is bound, and
     # the reproduction of the quoted 23 is bound too: if the union script stopped agreeing with
