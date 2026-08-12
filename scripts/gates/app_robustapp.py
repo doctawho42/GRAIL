@@ -744,6 +744,36 @@ def register(ctx) -> None:
     _negative(ctx)
     _closure(ctx)
     register_orphans_fixed(ctx)
+    register_dedup_split(ctx)
+
+
+def register_dedup_split(ctx) -> None:
+    """The split the redundancy paragraph quotes, which the artifact records and the prose did not.
+
+    It said permutation variants account for "roughly 43\\%" of the redundancy the canonicalising
+    procedure removes, which is a share of a quantity that is structural by construction --- all of
+    it. What the artifact supports is the comparison where both procedures apply, on the rules that
+    fire, and that is what the paragraph now states.
+    """
+    import re as _re
+
+    d = ctx.art("rule_dedup_provable.json")
+    if not d:
+        return
+    f = d["structural_vs_behavioral_on_fired"]
+    struct = f["fired_rules"] - f["structural_distinct_among_fired"]
+    behav = f["fired_rules"] - f["behavioral_distinct_among_fired"]
+    m = _re.search(r"permutation variants account for \$(\d+)\$ of the \$(\d+)\$ functional "
+                   r"collapses there, \$(\d+)\\%\$", ctx.flat)
+    ctx.checks.append((bool(m), "negative, the redundancy split is stated", "present",
+                       "matched" if m else "not matched", "results/rule_dedup_provable.json"))
+    if m:
+        ctx.check("negative, collapses a canonicalisation explains", m.group(1), struct,
+                  "results/rule_dedup_provable.json")
+        ctx.check("negative, functional collapses among the firing rules", m.group(2), behav,
+                  "results/rule_dedup_provable.json")
+        ctx.check("negative, the share that is structural", m.group(3),
+                  100.0 * struct / behav, "results/rule_dedup_provable.json")
 
 
 def register_orphans_fixed(ctx) -> None:
