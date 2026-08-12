@@ -732,6 +732,19 @@ def main() -> int:
             checks.append((_w.get(m.group(3), -1) == _r == _r0,
                            "union, the retrosynthesis boards keep all of theirs",
                            m.group(3), f"{_r} of {_r0}", "results/union_multiplicity.json"))
+        # the paragraph names which of the six goes, so the naming is held to the board, not to
+        # the total: the docking board must be the only one losing a separated-ordering reversal
+        _lost = {k: v for k, v in PBU.items()
+                 if v["separated_pairs_per_board"] > v["separated_pairs_union"]}
+        checks.append((set(_lost) == {"robust_order_posebusters"},
+                       "the reversal the union removes is the docking one",
+                       "robust_order_posebusters", ", ".join(sorted(_lost)) or "none",
+                       "results/union_multiplicity.json"))
+        _survivors = {k for k, v in PBU.items() if v["separated_pairs_union"]}
+        checks.append((_survivors == {"robust_order:cluster0", "robust_order:cluster1"},
+                       "what survives it is retrosynthesis, which is the budget axis",
+                       "the two retrosynthesis boards", ", ".join(sorted(_survivors)) or "none",
+                       "results/union_multiplicity.json"))
         checks.append((PBU["robust_order_posebusters"]["pairs_union"] == 0
                        and PBU["robust_order_posebusters"]["pairs_per_board"] == 2,
                        "union, the docking board's two go", "2 to 0",
