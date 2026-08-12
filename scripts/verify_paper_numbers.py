@@ -615,6 +615,27 @@ def main() -> int:
             check("esa, share median", me.group(9), round(EA["share_median"], 2), src)
             checks.append((len(BB) == 9, "there are nine boards", "9", str(len(BB)), src))
 
+    # 10z. A structural check on the sources, because every gate here reads .tex and none reads the
+    # compiled page. A table row missing its second backslash merges with the next one and the table
+    # collapses exactly where a reader looks for the numbers the prose quotes -- which happened, in
+    # four rows, invisibly to a green suite. Every row inside a tabular must terminate.
+    bad_rows = []
+    for _f in sorted(PAPER.glob("*.tex")) + sorted((PAPER / "app").glob("*.tex")):
+        _in = False
+        for _i, _line in enumerate(_f.read_text().splitlines(), 1):
+            _s = _line.strip()
+            if _s.startswith("\\begin{tabular}"):
+                _in = True
+                continue
+            if _s.startswith("\\end{tabular}"):
+                _in = False
+                continue
+            if _in and "&" in _s and not _s.startswith("%"):
+                if not _s.endswith("\\\\") and not _s.endswith("\\\\[") and "\\\\" not in _s:
+                    bad_rows.append(f"{_f.name}:{_i}")
+    checks.append((not bad_rows, "every table row in the sources terminates", "none unterminated",
+                   ", ".join(bad_rows[:4]) or "none", "the manuscript"))
+
     # 10d-p. The gap between published and supported places, split by cause. The title puts the two
     # numbers side by side under a subtitle about undeclared choices, which invites the reading that
     # the choices cost the difference. Most of it is the benchmark's own power, and the paper says so.
