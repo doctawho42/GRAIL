@@ -337,10 +337,13 @@ the same guide states that reviewers are not required to read it, which is the r
 load-bearing claim is stated in the nine pages rather than pointed at.
 
 ```bash
-pdftotext -layout paper/grail_iclr.pdf - | awk 'BEGIN{RS="\f"} NR==9' | tail -3
+pdftotext -layout paper/grail_iclr.pdf - | awk 'BEGIN{RS="\f"} NR==8' | tail -3
+pdftotext -layout paper/grail_iclr.pdf - | awk 'BEGIN{RS="\f"} NR==9' | head -4
 ```
 
-**Status: PASS.** Conclusion completes on page 9; page 10 opens the reproducibility statement.
+**Status: PASS, with a page to spare.** The Conclusion completes on page 8 and page 9 opens the
+reproducibility statement, so the main text is eight of the nine pages allowed. The margin is there
+on purpose: every figure and definition a reviewer needs is in the body rather than pointed at.
 
 ## 9. Every citation resolves and supports what is attributed to it
 
