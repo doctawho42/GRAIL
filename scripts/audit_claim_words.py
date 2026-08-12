@@ -56,7 +56,11 @@ DEFINITION_MARKERS = ["Two words are used throughout", "A difference is \\emph{s
                       # the summary table has a column headed "certified" and a caption that says
                       # what it counts; the family is per board, sits in each board's artifact, and
                       # is held there by verify_paper_numbers rather than restated in the caption
-                      "contested (certified) & unresolved & tiers"]
+                      "contested (certified) & unresolved & tiers",
+                      # the appendix that attributes each certification to its axis is about which
+                      # family produced them, not a new claim inside one; keyed on its own heading
+                      "Which axis certifies a reversal",
+                      "certifies no reversal of a separated ordering anywhere in this paper"]
 
 
 def sentences(text: str):

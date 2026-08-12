@@ -538,7 +538,8 @@ def main() -> int:
                 _tb += list(json.loads(_q.read_text())["boards"].values())
         _mt = re.search(r"translation's (\w+) boards contest \$(\d+)\$ pairs of which \$(\d+)\$ "
                         r"survive correction\. Not one of the \$(\d+)\$ reverses an ordering its own "
-                        r"published cell had separated from zero: all (\w+) such reversals", flat)
+                        r"published cell had separated from zero: all (\w+) such reversals are "
+                        r"the budget's or the", flat)
         checks.append((bool(_mt), "the translation-subject sentence parses", "present",
                        "matched" if _mt else "not matched", ""))
         if _mt and _tb:
@@ -553,7 +554,8 @@ def main() -> int:
                         if b["pairs"][pr].get("resolved_in_the_published_cell"))
             checks.append((_tres == 0, "no translation certification reverses a resolved ordering",
                            "0", str(_tres), src))
-            check("translation, the six elsewhere", _w.get(_mt.group(5), -1), _res, src)
+            checks.append((_mt.group(5) == "six", "the sentence names the six", "six",
+                           _mt.group(5), src))
 
         # the qualifier moved into the translation sentence, so what is held now is the pair of
         # totals it rests on: how many certifications there are and how many reverse a resolved
@@ -645,6 +647,42 @@ def main() -> int:
                            "power exceeds grid",
                            f"{PD['lost_before_any_choice_is_varied']} against "
                            f"{PD['lost_to_the_grid']}", src))
+
+    # 10d-ax. Which axis certifies a reversal of an ordering the published cell had separated. The
+    # paper now claims the matching criterion certifies none, which is a stronger and more falsifiable
+    # sentence than naming the domains, so it is held to every board rather than to the ones checked.
+    import ast as _ast
+    _crit = _sep = 0
+    _srcs = [("robust_order.json", "cluster0"), ("robust_order.json", "cluster1"),
+             ("robust_order_metabolite.json", None), ("robust_order_posebusters.json", None),
+             ("robust_order_wmt24_en-de.json", None), ("robust_order_wmt24_ja-zh.json", None)]
+    _bs = []
+    for _fn, _k in _srcs:
+        _q = ROOT / "results" / _fn
+        if _q.exists():
+            _d = json.loads(_q.read_text())
+            _bs.append(_d["leaderboards"][_k] if _k else _d)
+    for _fn in ("robust_order_wmt24_esa.json", "robust_order_wmt23.json"):
+        _q = ROOT / "results" / _fn
+        if _q.exists():
+            _bs += list(json.loads(_q.read_text())["boards"].values())
+    for _b in _bs:
+        _pub = _ast.literal_eval(_b["published_cell"])
+        for _n in _b.get("contested_after_correction", []):
+            _v = _b["pairs"][_n]
+            if not _v.get("resolved_in_the_published_cell"):
+                continue
+            _sep += 1
+            _cells = [_ast.literal_eval(_c)
+                      for _c in _v["cells_that_reverse_it_with_an_interval"]]
+            if _cells and all(_c[0] != _pub[0] and _c[1] == _pub[1] for _c in _cells):
+                _crit += 1
+    if _bs:
+        checks.append((_crit == 0,
+                       "the matching criterion certifies no reversal of a separated ordering",
+                       "0", str(_crit), "results/robust_order_*.json"))
+        checks.append((_sep == 6, "six certified reversals are of a separated ordering", "6",
+                       str(_sep), "results/robust_order_*.json"))
 
     # 10d-w23. The previous edition's boards are a reconstruction, not the published cell, and the
     # distance between the two is stated rather than left for a reviewer to find. The filter is the
