@@ -46,34 +46,31 @@ Across the Cells It Was Not Computed In}
 \maketitle
 
 \begin{abstract}
-A position on a leaderboard is decided in part by choices no paper declares: which predictions count
-as the same answer, how many a method may emit, the convention by which a rule engine is applied, and
-which population a familiar dataset name refers to. Each is a cell of a grid that leaderboards are
-computed in and papers do not report, so a published ordering can be asked a question it is never
-asked: does it hold in every other cell? We ask it of $23$ leaderboards in four domains ---
-retrosynthesis, metabolite prediction, protein--ligand docking and machine translation --- over
-$1{,}922$ pairwise orderings, re-scoring frozen predictions and retraining nothing. Summed, those
-leaderboards publish $293$ places and what survives supports $167$.
+A leaderboard reports one total order, computed in one cell of a grid its paper does not report: a
+rule deciding when a prediction counts as the reference, crossed with a choice the field reports
+apart from its ranking and never jointly with it. So a published ordering can be asked a question it
+is never asked --- does it hold in every other cell? --- and the pairs for which it does are what a
+reader may quote without naming the cell. We ask it of $23$ leaderboards in four domains,
+re-scoring frozen predictions and retraining nothing. Summed, they publish $293$ places and what no
+declared choice contradicts supports $167$.
 
-Most of what a leaderboard prints was never resolved at all: eleven of the twenty-one pairs on a
-seven-system retrosynthesis table carry margins its own benchmark cannot separate before any choice
-is varied. The surviving share runs from none of three to nine tenths across the $23$, so it is a
-property of a table rather than a constant of a field --- it does not even replicate between two
-editions of one shared task, moving by up to $0.251$ on the same language pair. What was resolved can
-still be reversed. Two of the four choices change a published ordering and break it differently: the
-output budget reverses margins a paired interval separates from zero, one method being last at tight
-budgets and first at the budget the field reports with its ranking held fixed, while the matching
-criterion exchanges positions the benchmark never separated. The engine convention decides no
-ordering but decides what a rule bank reaches, one published base losing three quarters of its
-references when the hydrogens it was written for are withdrawn; the population question is a bounded
-null.
+The two ways a ranking falls short of what it prints are different sizes and are counted apart. Most
+of it was never resolved at all: requiring only a leaderboard's own cell to separate a pair takes
+$293$ places to $134$, so $157$ go to a benchmark's own power before any convention is varied and
+$34$ more to the grid. The surviving share runs from none of three to nine tenths, and does not
+replicate between two editions of one shared task on the same language pair, so it is a property of
+a table and its grid rather than of a benchmark. Of what a table did establish, $23$ orderings are
+reversed by a declared choice and survive correction --- and the matching rule accounts for none of
+them on any of the $23$ boards, which is a smaller second claim than a paper about matching rules
+invites and the one the measurements support.
 
-Which pairs are at risk needs no pairwise statistic. Two systems exchange under a change of criterion
-exactly when it moves them apart by more than the larger of the two margins it connects, so scoring
-each system once in the alternative cell settles every pair by arithmetic; on the $11{,}804$
-comparisons this paper spans in five domains the condition holds on the $704$ that exchange and on
-nothing else. We release the protocol, the audited split, the frozen predictions of every method
-compared, a checker that reports these choices from released files alone, and the analysis code.
+Which pairs are at risk needs no pairwise statistic: an ordering survives a change of criterion
+unless the change moves the two apart by more than the larger of the margins it connects, so every
+dominance verdict follows from $n$ scorings per cell and a resample enters only to tell a contested
+pair from an unresolved one. The four choices were found by measuring one predictor in one domain,
+and that case study is reported in full. We release the protocol, the audited split, the frozen
+predictions of every method compared, a checker that reports these choices from released files
+alone, and the analysis code.
 \end{abstract}
 
 \section{Introduction}
