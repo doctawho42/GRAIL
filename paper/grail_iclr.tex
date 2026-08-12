@@ -341,23 +341,24 @@ the share is a fact about a table and its grid, not about a benchmark or a langu
 quoting one as a fingerprint --- this one included --- would repeat the error it is about
 (Appendix~\ref{app:robustorder}).
 
-\paragraph{Which pairs are at risk follows from an inequality, and it is an equivalence.} Two
-systems exchange under a change of criterion exactly when the change moves them apart by more than
-the larger of the two margins it connects: with $d$ their margin in the published cell, $d'$ their
-margin in the other and $\delta_a,\delta_b$ how far each system moves, $d'=d+(\delta_a-\delta_b)$ and
-the sign survives iff $|\delta_a-\delta_b|\le\max(|d|,|d'|)$. Against $|d|$ alone it is necessary and not
-sufficient, and the difference is not a technicality: over the $11{,}804$ method-pair by criterion-pair
-comparisons this paper spans in five domains the one-sided form flags $3{,}701$ where $713$ exchange,
-and the two-sided form flags the $713$ and nothing else. The $n$ systems are therefore scored once in the other
-cell and every one of the $n(n-1)/2$ pairs is settled exactly, with no paired statistic; a resample
-is needed only for whether an exchange clears zero. A typical movement for the domain in place of the
-per-system one over-predicts fragility by a third and is reported as a failure
-(Appendix~\ref{app:negative}). Run on the twenty-three tables it flags
-$317$ of their $1{,}922$ pairs, which are exactly the $317$ some cell reverses. Where the flags fall says which benchmarks are exposed, and neither
-the gap nor the movement decides alone: the twenty-four tables run from $0\%$ flagged to $15.9\%$, and
-the widest-gapped is not the safest. A benchmark is exposed when its entries converge faster than the
-conventions separating them, a ratio evaluable before any convention is varied
-(Appendix~\ref{app:xdomain}).
+\paragraph{What decides a dominance verdict is arithmetic, and what needs a resample is smaller
+than it looks.} Write $d$ for a pair's margin in the published cell, $d'$ for its margin in another,
+and $\delta_a,\delta_b$ for how far each system moves between them, so $d'=d+(\delta_a-\delta_b)$.
+The sign survives iff $|\delta_a-\delta_b|\le\max(|d|,|d'|)$. That is an identity rather than a
+finding --- it says only that a difference changes sign when the change exceeds both of the things
+it connects --- and it is stated because of what follows from it, not as a result. Scoring the $n$
+systems once in each cell fixes every one of the $n(n-1)/2$ dominance verdicts with no pairwise
+statistic anywhere; a resample enters only to tell a contested pair from an unresolved one. On the
+twenty-three tables that leaves $317$ of $1{,}922$ pairs failing to dominate, exactly the pairs some
+cell reverses, computed from $n$ numbers per cell rather than from $1{,}922$ paired bootstraps.
+
+What is not arithmetic is where those pairs are, and the answer is a ratio rather than a level. The
+twenty-four leaderboards run from $0\%$ of their comparisons at risk to $15.9\%$, and the
+widest-gapped of them is not the safest: exposure is what happens when entries converge faster than
+the conventions separating them, and it can be read before any convention is varied
+(Appendix~\ref{app:xdomain}). Substituting a typical movement for the domain in place of the
+per-system one, which is what a published table alone supports, over-predicts fragility by a third
+and is reported as a failure (Appendix~\ref{app:negative}).
 
 \paragraph{How one choice breaks an ordering.} \looseness=-1
 \citet{Hastedt_2024} released the ranked predictions of twelve retrosynthesis systems, of which

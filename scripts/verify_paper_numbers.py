@@ -707,11 +707,33 @@ def main() -> int:
                        "the condition and the exchange are the same set",
                        str(t["exchanged"]), str(t["closer_than_the_move"]),
                        str(pk.relative_to(ROOT))))
-        m = re.search(r"flag \$([\d,{}]+)\$, of which \$([\d,{}]+)\$ are movements that widen", flat)
+        m = re.search(r"flags \$([\d,{}]+)\$ instead.*?all \$([\d,{}]+)\$\s*extra flags are "
+                      r"movements that widen", flat)
         check("packing, one-sided flags", m and m.group(1).replace("{,}", ""),
               P["screening_test"]["one_sided_for_comparison"]["flagged"])
         check("packing, one-sided false alarms", m and m.group(2).replace("{,}", ""),
               P["screening_test"]["one_sided_for_comparison"]["not_exchanged_and_flagged"])
+        # the paper says the other naming order gives a materially different count, which is the
+        # reason it rests on nothing; that number is not in any artifact, so it is recomputed here
+        m2 = re.search(r"taking the other gives \$([\d,{}]+)\$", flat)
+        if m2:
+            import itertools as _it
+            import importlib.util as _iu
+            _sp = _iu.spec_from_file_location("_pvd", ROOT / "scripts/packing_vs_differential.py")
+            _pvd = _iu.module_from_spec(_sp)
+            sys.modules["_pvd"] = _pvd
+            _sp.loader.exec_module(_pvd)
+            _n = 0
+            for _dom, _sc in _pvd.leaderboards().values():
+                _ms = sorted(_sc)
+                _cs = sorted(set.intersection(*(set(_sc[x]) for x in _ms)))
+                for _a, _b in _it.combinations(_ms, 2):
+                    for _c1, _c2 in _it.combinations(_cs, 2):
+                        _d1 = _sc[_a][_c1] - _sc[_b][_c1]
+                        _d2 = _sc[_a][_c2] - _sc[_b][_c2]
+                        if _d1 and abs(_d2 - _d1) > abs(_d2):
+                            _n += 1
+            check("packing, the other naming order", m2.group(1).replace("{,}", ""), _n)
         NAMES = {"generation, MOSES": "molecular generation, MOSES",
                  "metabolites, GLORYx": "metabolites, external GLORYx",
                  "retrosynthesis, seven": "retrosynthesis, seven-system group",
@@ -1489,7 +1511,8 @@ def main() -> int:
         flat = re.sub(r"\s+", " ", whole)
         # the body summarises the spread and the appendix enumerates it; the gate holds the
         # enumeration, because that is where the per-board numbers are actually asserted
-        mdi = re.search(r"the twenty-four tables run from \$(\d+)\\%\$ flagged to \$([\d.]+)\\%\$", flat)
+        mdi = re.search(r"twenty-four leaderboards run from \$(\d+)\\%\$ of their comparisons at risk "
+                        r"to \$([\d.]+)\\%\$", flat)
         checks.append((bool(mdi), "the exposure-distribution sentence parses", "present",
                        "matched" if mdi else "not matched", ""))
         if mdi:
@@ -1669,16 +1692,15 @@ def main() -> int:
     if pp.exists():
         PP = json.loads(pp.read_text())["totals"]
         flat = re.sub(r"\s+", " ", whole)
-        mpp = re.search(r"Run on the twenty-three tables it flags\s*\$(\d+)\$ of their "
-                        r"\$([\d,{}]+)\$ pairs, which are exactly the \$(\d+)\$ some cell "
-                        r"reverses", flat)
+        mpp = re.search(r"twenty-three tables that leaves \$(\d+)\$ of \$([\d,{}]+)\$ pairs "
+                        r"failing to dominate, exactly the pairs some cell reverses", flat)
         checks.append((bool(mpp), "the screen-predicts-order sentence parses", "present",
                        "matched" if mpp else "not matched", ""))
         if mpp:
             src = str(pp.relative_to(ROOT))
             check("screen, flagged", mpp.group(1), PP["flagged"], src)
             check("screen, pairs", mpp.group(2).replace("{,}", ""), PP["n_pairs"], src)
-            check("screen, flagged and failed", mpp.group(3), PP["flagged_and_failed"], src)
+            check("screen, flagged and failed", mpp.group(1), PP["flagged_and_failed"], src)
             checks.append((PP["failed_but_not_flagged"] == 0,
                            "the screen misses nothing, as the arithmetic requires", "0",
                            str(PP["failed_but_not_flagged"]), src))
@@ -1738,24 +1760,13 @@ def main() -> int:
     if pk.exists():
         PK = json.loads(pk.read_text())
         S, T = PK["screening_test"], PK["totals"]
-        flat = re.sub(r"\s+", " ", whole)
-        mpk = re.search(r"over the \$([\d,{}]+)\$ method-pair by criterion-pair comparisons this "
-                        r"paper spans in five domains the one-sided form flags \$([\d,{}]+)\$ "
-                        r"where \$(\d+)\$ exchange, and the two-sided form flags the \$(\d+)\$ "
-                        r"and nothing else", flat)
-        checks.append((bool(mpk), "the packing screening sentence parses", "present",
-                       "matched" if mpk else "not matched", ""))
-        if mpk:
-            src = str(pk.relative_to(ROOT))
-            check("comparisons spanned", mpk.group(1).replace("{,}", ""), T["comparisons"], src)
-            check("one-sided flags", mpk.group(2).replace("{,}", ""),
-                  S["one_sided_for_comparison"]["flagged"], src)
-            check("exchanges", mpk.group(3), T["exchanged"], src)
-            check("two-sided flags", mpk.group(4), T["exchanged"], src)
-            checks.append((S["exact"], "the two-sided condition is exact on every comparison",
-                           "no false alarm and no miss",
-                           f"{S['not_exchanged_and_flagged']} false, "
-                           f"{S['exchanged_and_missed']} missed", src))
+        # The identity is no longer sold as an empirical result, so there is no sentence here to
+        # bind. What replaced it -- that the dominance verdicts need no pairwise statistic -- is
+        # checked by the screen-predicts-order block above, which compares the two computations.
+        checks.append((S["exact"], "the two-sided condition is exact, as an identity must be",
+                       "no false alarm and no miss",
+                       f"{S['not_exchanged_and_flagged']} false, {S['exchanged_and_missed']} missed",
+                       str(pk.relative_to(ROOT))))
 
     # 10c-w. Reach under per-template dispatch, which the paper reports as the primitive, and the
     # worst case over global settings, which it reports as a diagnostic. Both range only over
