@@ -824,21 +824,63 @@ def main() -> int:
                         if _d1 and abs(_d2 - _d1) > abs(_d2):
                             _n += 1
             check("packing, the other naming order", m2.group(1).replace("{,}", ""), _n)
-        NAMES = {"generation, MOSES": "molecular generation, MOSES",
-                 "metabolites, GLORYx": "metabolites, external GLORYx",
-                 "retrosynthesis, seven": "retrosynthesis, seven-system group",
-                 "retrosynthesis, three": "retrosynthesis, three-system group"}
-        for shown, key in NAMES.items():
-            v = P["per_leaderboard"].get(key)
-            if not v:
+        # Every row of the printed table, not the four that happened to have a helper. Two rows
+        # aggregate nine and eight boards, and those were the ones that went stale when the
+        # translation boards were reoriented: the row said 4,132 comparisons and 337 exchanges
+        # against 4,131 and 346, and the table stopped summing to its own totals.
+        GROUPS = {"docking, PoseBusters": ["docking, PoseBusters"],
+                  "generation, MOSES": ["molecular generation, MOSES"],
+                  "metabolites, GLORYx": ["metabolites, external GLORYx"],
+                  "retrosynthesis, seven": ["retrosynthesis, seven-system group"],
+                  "retrosynthesis, three": ["retrosynthesis, three-system group"],
+                  "translation, en-de": ["translation, WMT24 en-de"],
+                  "translation, ja-zh": ["translation, WMT24 ja-zh"],
+                  "translation, nine more": [k for k in P["per_leaderboard"] if "(esa)" in k],
+                  "translation, 2023, eight": [k for k in P["per_leaderboard"] if "WMT23" in k]}
+        printed_comps, printed_exch, n_rows = 0, 0, 0
+        for shown, keys in GROUPS.items():
+            vs = [P["per_leaderboard"][k] for k in keys if k in P["per_leaderboard"]]
+            if not vs:
                 continue
-            row = re.search(re.escape(shown) + r" & (\d+) & (\d+) & \$([\d.]+)\$ & \$([\d.]+)\$ & \$(\d+)\$", flat)
-            for i, (label, val) in enumerate((("methods", v["methods"]),
-                                              ("comparisons", v["comparisons"]),
-                                              ("median gap", v["median_gap"]),
-                                              ("median move", v["median_differential"]),
-                                              ("move over gap", v["closer_than_the_move"]))):
-                check(f"packing, {shown} {label}", row and row.group(i + 1), val)
+            row = re.search(re.escape(shown) + r" & ([\d-]+) & (\d+) & (\S+) & (\S+) & \$(\d+)\$",
+                            flat)
+            checks.append((bool(row), f"packing, {shown} is a row of the table",
+                           "present", "found" if row else "missing", str(pk.relative_to(ROOT))))
+            if not row:
+                continue
+            n_rows += 1
+            printed_comps += int(row.group(2))
+            printed_exch += int(row.group(5))
+            if len(vs) == 1:
+                check(f"packing, {shown} methods", row.group(1), vs[0]["methods"])
+                check(f"packing, {shown} median gap", row.group(3).strip("$"),
+                      vs[0]["median_gap"])
+                check(f"packing, {shown} median move", row.group(4).strip("$"),
+                      vs[0]["median_differential"])
+            else:  # an aggregated row states the range of method counts and no median
+                lo, hi = min(v["methods"] for v in vs), max(v["methods"] for v in vs)
+                # a range is not a number, and close() only compares numbers
+                checks.append((row.group(1) == f"{lo}--{hi}", f"packing, {shown} method range",
+                               row.group(1), f"{lo}--{hi}", str(pk.relative_to(ROOT))))
+                checks.append((row.group(3) == "---" and row.group(4) == "---",
+                               f"packing, {shown} prints no median for a group of boards",
+                               "--- ---", f"{row.group(3)} {row.group(4)}",
+                               str(pk.relative_to(ROOT))))
+            check(f"packing, {shown} comparisons", row.group(2),
+                  sum(v["comparisons"] for v in vs))
+            check(f"packing, {shown} move over gap", row.group(5),
+                  sum(v["closer_than_the_move"] for v in vs))
+        checks.append((n_rows == len(GROUPS), "packing, every leaderboard is a row",
+                       str(len(GROUPS)), str(n_rows), str(pk.relative_to(ROOT))))
+        # and the rows have to add up to the total the prose quotes, which is the arithmetic a
+        # reader does and no gate did
+        check("packing, the rows sum to the comparisons quoted", printed_comps, t["comparisons"])
+        check("packing, the rows sum to the exchanges quoted", printed_exch,
+              t["closer_than_the_move"])
+        m = re.search(r"the one-sided form plus a check on the sign recovers\s*the same "
+                      r"\$([\d,{}]+)\$", flat)
+        check("packing, the sign check recovers the exchanges", m and m.group(1).replace("{,}", ""),
+              P["screening_test"]["one_sided_for_comparison"]["exchanged_and_flagged"])
 
     # 10e. The fourth choice, and the only one that did not survive being tested. Both instances
     # are checked, and so is the count that matters most -- the number of interactions surviving
