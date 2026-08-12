@@ -10,6 +10,7 @@
 \usepackage{multirow}
 \usepackage{hyperref}
 \usepackage{tikz}
+\usetikzlibrary{arrows.meta}
 
 \usepackage{xspace}
 \sloppy
@@ -213,6 +214,19 @@ comparable across papers. The present work addresses both.
 \label{sec:robust}\label{sec:xdomainmain}
 
 \subsection{The instrument}
+
+\begin{figure}[t]
+\centering
+\input{app/instrument_schematic}
+\caption{The instrument in miniature, on four systems and a grid of four cells; letters stand for
+systems and no number in it is a measurement. Each cell orders the same systems, and a published
+table reports one of them without saying which. What survives is the intersection: $a$ and $b$ both
+beat $c$ in every cell and $c$ beats $d$ in every cell, but the second axis puts $b$ above $a$ where
+the published cell puts $a$ above $b$ --- so that pair survives nothing, and the four published
+places support three. The criterion axis changes no ordering here, which is the shape the survey
+finds on twenty-three real boards.}
+\label{fig:schematic}
+\end{figure}
 
 Of the four choices of \S\ref{sec:intro}, the twenty-three boards sweep the two a released
 prediction file can be re-scored under: the matching rule, which every domain has, and whichever
