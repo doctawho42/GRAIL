@@ -524,15 +524,44 @@ def main() -> int:
                     _res += bool(_b["pairs"][_pair].get("resolved_in_the_published_cell"))
     if _cert:
         flat = re.sub(r"\s+", " ", whole)
-        _mc = re.search(r"Of those \$(\d+)\$, only \$(\d+)\$ reverse an ordering the published "
-                        r"cell separated from zero; the other \$(\d+)\$", flat)
-        checks.append((bool(_mc), "the certified-reversal qualifier parses", "present",
-                       "matched" if _mc else "not matched", ""))
-        if _mc:
-            src = "results/robust_order_*.json"
-            check("certified, total", _mc.group(1), _cert, src)
-            check("certified, resolved in the published cell", _mc.group(2), _res, src)
-            check("certified, not resolved there", _mc.group(3), _cert - _res, src)
+        # the prose names a SUBJECT ("translation's nineteen boards"), and the gate must bind the
+        # aggregate to that subject rather than to any loop that happens to produce the number --
+        # binding it to an all-board loop is what let a translation sentence carry all-board totals
+        _tb = []
+        for _s in ("robust_order_wmt24_en-de.json", "robust_order_wmt24_ja-zh.json"):
+            _q = ROOT / "results" / _s
+            if _q.exists():
+                _tb.append(json.loads(_q.read_text()))
+        for _s in ("robust_order_wmt24_esa.json", "robust_order_wmt23.json"):
+            _q = ROOT / "results" / _s
+            if _q.exists():
+                _tb += list(json.loads(_q.read_text())["boards"].values())
+        _mt = re.search(r"translation's (\w+) boards contest \$(\d+)\$ pairs of which \$(\d+)\$ "
+                        r"survive correction\. Not one of the \$(\d+)\$ reverses an ordering its own "
+                        r"published cell had separated from zero: all (\w+) such reversals", flat)
+        checks.append((bool(_mt), "the translation-subject sentence parses", "present",
+                       "matched" if _mt else "not matched", ""))
+        if _mt and _tb:
+            src = "results/robust_order_wmt*.json"
+            _w = {"nineteen": 19, "six": 6}
+            check("translation, boards", _w.get(_mt.group(1), -1), len(_tb), src)
+            check("translation, contested", _mt.group(2),
+                  sum(b["n_contested"] for b in _tb), src)
+            check("translation, certified", _mt.group(3),
+                  sum(b["n_contested_after_correction"] for b in _tb), src)
+            _tres = sum(1 for b in _tb for pr in b.get("contested_after_correction", [])
+                        if b["pairs"][pr].get("resolved_in_the_published_cell"))
+            checks.append((_tres == 0, "no translation certification reverses a resolved ordering",
+                           "0", str(_tres), src))
+            check("translation, the six elsewhere", _w.get(_mt.group(5), -1), _res, src)
+
+        # the qualifier moved into the translation sentence, so what is held now is the pair of
+        # totals it rests on: how many certifications there are and how many reverse a resolved
+        # ordering, wherever the prose puts them
+        checks.append((_cert > 0, "there are certified reversals to qualify", "at least one",
+                       str(_cert), "results/robust_order_*.json"))
+        checks.append((_res == 6, "six certifications reverse a resolved ordering", "6",
+                       str(_res), "results/robust_order_*.json"))
 
     # 10d-m. The MQM boards' orientation. The published cell must be the aggregation the task
     # actually ranks by, and the check of that must not recompute the board's own quantity: it did,
