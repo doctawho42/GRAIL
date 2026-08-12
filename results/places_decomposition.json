@@ -1,17 +1,17 @@
 {
  "config": {
   "script": "places_decomposition.py",
-  "git_commit": "bfb486ec2c2ba27d9921297c3d67c1cd9f9d691a",
+  "git_commit": "9d79f1ac238cbe9b180ce04a1dc9c16b69c6cebd",
   "git_dirty": true,
   "n_boards": 23,
   "note": "each figure is a longest chain in a relation on the same systems; they differ only in what an edge requires"
  },
  "places_published": 293,
- "supported_when_its_own_cell_separates": 128,
+ "supported_when_its_own_cell_separates": 134,
  "supported_when_every_cell_separates": 100,
- "supported_when_every_cell_agrees_in_sign": 170,
- "lost_before_any_choice_is_varied": 165,
- "lost_to_the_grid": 28,
+ "supported_when_every_cell_agrees_in_sign": 171,
+ "lost_before_any_choice_is_varied": 159,
+ "lost_to_the_grid": 34,
  "per_board": {
   "('canonical', 1)|graphretro/localretro": {
    "places": 7,
@@ -97,45 +97,51 @@
    "every_cell_separates": 3,
    "every_cell_agrees_in_sign": 5
   },
-  "('mean', 'raw')|ONLINE-B/Human-refA": {
+  "('mean', 'raw')|ONLINE-B/GPT4-5shot": {
    "places": 14,
-   "own_cell_separates": 4,
+   "own_cell_separates": 5,
    "every_cell_separates": 4,
    "every_cell_agrees_in_sign": 8
   },
   "('mean', 'raw')|GPT4-5shot/Human-refA": {
-   "places": 18,
-   "own_cell_separates": 7,
-   "every_cell_separates": 7,
-   "every_cell_agrees_in_sign": 13
+   "places": 14,
+   "own_cell_separates": 5,
+   "every_cell_separates": 4,
+   "every_cell_agrees_in_sign": 10
   },
   "('mean', 'raw')|Human-refA/ONLINE-W": {
    "places": 16,
-   "own_cell_separates": 5,
+   "own_cell_separates": 6,
    "every_cell_separates": 4,
    "every_cell_agrees_in_sign": 8
   },
   "('mean', 'raw')|GPT4-5shot/ONLINE-B": {
    "places": 13,
-   "own_cell_separates": 5,
+   "own_cell_separates": 6,
    "every_cell_separates": 5,
    "every_cell_agrees_in_sign": 8
   },
   "('mean', 'raw')|Human-refA/GPT4-5shot": {
    "places": 17,
-   "own_cell_separates": 7,
+   "own_cell_separates": 8,
    "every_cell_separates": 6,
    "every_cell_agrees_in_sign": 10
   },
-  "('mean', 'raw')|Yishu/GPT4-5shot": {
+  "('mean', 'raw')|Yishu/Human-refA": {
    "places": 16,
    "own_cell_separates": 6,
    "every_cell_separates": 6,
    "every_cell_agrees_in_sign": 11
   },
+  "('mean', 'raw')|GPT4-5shot/SKIM": {
+   "places": 18,
+   "own_cell_separates": 7,
+   "every_cell_separates": 7,
+   "every_cell_agrees_in_sign": 13
+  },
   "('mean', 'raw')|Lan-BridgeMT/GPT4-5shot": {
    "places": 16,
-   "own_cell_separates": 6,
+   "own_cell_separates": 8,
    "every_cell_separates": 5,
    "every_cell_agrees_in_sign": 10
   }

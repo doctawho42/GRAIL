@@ -147,13 +147,11 @@ def build_board(sub: pd.DataFrame) -> tuple[dict, list[str], list[str], list]:
     # The task averages over ratings, not over segments, and segments carry between one and several
     # ratings. Weighting a segment by how many it carries makes the plain mean of the item vector
     # the rating mean, which is what the published table ranks by; the machinery above is untouched.
-    # per system, because systems do not carry the same number of ratings on the same segments;
-    # weighting a system's own vector by its own counts makes that vector's mean its rating mean,
-    # which is the number the task ranks by. The paired difference is still a difference of the two
-    # estimands the margin is about, and the item bootstrap resamples both together.
-    cnt = (sub.groupby(["system", "item"]).size().unstack()
-           .reindex(index=systems, columns=items).fillna(0.0).to_numpy(dtype=float))
-    w_sys = cnt / np.maximum(cnt.sum(axis=1, keepdims=True), 1.0) * len(items)
+    # The task ranks by the mean of the per-segment means, not by the mean over ratings. We first
+    # inferred the opposite from its published per-system counts, which are rating counts, and
+    # weighted each system's vector by its own -- that broke a reproduction that is otherwise exact
+    # to 3e-14 with no inversion on any of the 909 pairs, and the discrepancy was then written up as
+    # underdetermination in WMT rather than as our own weighting. Nothing is weighted here.
 
     hits = {}
     for criterion in CRITERIA:
@@ -168,8 +166,6 @@ def build_board(sub: pd.DataFrame) -> tuple[dict, list[str], list[str], list]:
             if g.isna().to_numpy().any():
                 g = g.apply(lambda c: c.fillna(c.mean()), axis=0).fillna(0.0)
             v = g.to_numpy(dtype=float)
-            if criterion == "mean":
-                v = np.nan_to_num(v) * w_sys
             for i, name in enumerate(systems):
                 hits[(name, (criterion, norm))] = v[i]
     return hits, systems, items, cells

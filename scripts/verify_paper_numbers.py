@@ -653,20 +653,15 @@ def main() -> int:
     if w23.exists():
         A = json.loads(w23.read_text())["official_agreement"]
         flat = re.sub(r"\s+", " ", whole)
-        ma = re.search(r"match to within \$([\d.]+)\$ on a hundred-point scale.*?disagree on "
-                       r"\$(\d+)\$ of \$(\d+)\$ pairs", flat)
-        checks.append((bool(ma), "the reconstruction caveat parses", "present",
-                       "matched" if ma else "not matched", ""))
-        if ma:
-            src = str(w23.relative_to(ROOT))
-            check("wmt23, largest score gap", ma.group(1), A["largest_score_gap"], src)
-            check("wmt23, pairs ordered differently", ma.group(2),
-                  A["pairs_ordered_differently"], src)
-            check("wmt23, pairs compared", ma.group(3), A["pairs_compared"], src)
-            checks.append((A["rating_counts_match_on_every_board"],
-                           "the documented filter reproduces the task's rating counts",
-                           "exact on every board",
-                           str(A["rating_counts_match_on_every_board"]), src))
+        # the caveat this checked is withdrawn: with the task's own preprocessing the boards
+        # reproduce its ranking exactly, so what is held now is that reproduction
+        checks.append((A["rating_counts_match_on_every_board"]
+                       and A["pairs_ordered_differently"] == 0
+                       and A["largest_score_gap"] < 1e-9,
+                       "the previous edition's boards reproduce the published ranking",
+                       "exact, no inversion",
+                       f"gap {A['largest_score_gap']}, {A['pairs_ordered_differently']} inversions",
+                       str(w23.relative_to(ROOT))))
 
     # 10d-r. The cross-edition replication. It is the paper's answer to "is the share a property of
     # the benchmark or of your grid", so both the aggregate and the spread it rests on are held.
