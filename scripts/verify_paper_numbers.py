@@ -631,6 +631,24 @@ def main() -> int:
     if pdc.exists():
         PD = json.loads(pdc.read_text())
         flat = re.sub(r"\s+", " ", whole)
+        # Six reviewers, one defect: the decomposition was printed three times with three different
+        # sets of numbers and none matched the artifact, because this gate matched one printing.
+        # Every printing is found by its own pattern and each is held; missing one now fails.
+        printings_pd = []
+        for _pat in (r"takes \$293\$ places to \$(\d+)\$[,:] (?:so )?\$?(\d+)\$? go to a benchmark's own "
+                     r"power before any convention is varied\s*and \$(\d+)\$ more to the grid",
+                     r"the \$293\$ published places support \$(\d+)\$: \$(\d+)\$ go before any "
+                     r"convention is varied.*?the grid costs \$(\d+)\$ on top"):
+            printings_pd += re.findall(_pat, flat)
+        checks.append((len(printings_pd) >= 3, "every printing of the decomposition is found",
+                       "3 or more", str(len(printings_pd)), "the manuscript"))
+        for _i, (_o, _pw, _g) in enumerate(printings_pd, 1):
+            check(f"decomposition printing {_i}, own cell", _o,
+                  PD["supported_when_its_own_cell_separates"], "the manuscript")
+            check(f"decomposition printing {_i}, to power", _pw,
+                  PD["lost_before_any_choice_is_varied"], "the manuscript")
+            check(f"decomposition printing {_i}, to grid", _g, PD["lost_to_the_grid"],
+                  "the manuscript")
         mpd = re.search(r"the \$293\$ published places support \$(\d+)\$: \$(\d+)\$ go before any "
                         r"convention is varied.*?the grid costs \$(\d+)\$ on top", flat)
         checks.append((bool(mpd), "the places decomposition parses", "present",
@@ -681,6 +699,14 @@ def main() -> int:
         checks.append((_crit == 0,
                        "the matching criterion certifies no reversal of a separated ordering",
                        "0", str(_crit), "results/robust_order_*.json"))
+        # and the abstract has to print that same number: the gate below asserts a property of
+        # the artifacts, which is exactly the kind of gate that stayed green while the prose said
+        # something else.
+        _m_abs = re.search(r"Of what a table did establish, \$(\d+)\$ orderings are reversed by a "
+                           r"declared choice and survive correction", flat)
+        checks.append((bool(_m_abs) and int(_m_abs.group(1)) == _sep,
+                       "the abstract prints the certified-reversal count",
+                       str(_sep), _m_abs.group(1) if _m_abs else "not found", "the manuscript"))
         checks.append((_sep == 6, "six certified reversals are of a separated ordering", "6",
                        str(_sep), "results/robust_order_*.json"))
 
