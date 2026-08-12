@@ -1,7 +1,7 @@
 {
  "config": {
   "script": "criterion_power.py",
-  "git_commit": "50d0444a7a9927bf2624674a9cb63de3fab57208",
+  "git_commit": "b87d6741c436d8068f7f65009294c7be7344423d",
   "git_dirty": true,
   "note": "read out of the per-cell system means the board artifacts carry; the other axis is held at the board's published setting",
   "matching_axis_boards": [
@@ -17,8 +17,8 @@
   "largest_ratio_where_nothing_flips": 0.5755,
   "closest_such_board": "robust_order:cluster1",
   "fold_short_on_that_board": 1.74,
-  "median_of_the_board_maxima": 0.5325,
-  "median_ratio_where_nothing_flips": 0.0159,
+  "median_of_the_board_maxima": 0.3312,
+  "median_ratio_where_nothing_flips": 0.0,
   "boards_with_a_flip": {
    "robust_order_posebusters": 1
   }
@@ -32,15 +32,16 @@
     "inchikey",
     "tautomer"
    ],
-   "max_ratio": 0.4895,
-   "median_ratio": 0.0216,
+   "max_ratio": 0.087,
+   "median_ratio": 0.0,
+   "n_widening": 10,
    "n_flipping": 0,
    "closest_pair": {
-    "pair": "graph2smiles over g2retro",
-    "criterion": "tautomer",
-    "movement": 0.014,
-    "required": 0.0286,
-    "ratio": 0.4895
+    "pair": "graphretro over g2retro",
+    "criterion": "nostereo",
+    "margin": 0.023,
+    "margin_there": 0.021,
+    "ratio": 0.087
    }
   },
   "robust_order:cluster1": {
@@ -52,13 +53,14 @@
     "tautomer"
    ],
    "max_ratio": 0.5755,
-   "median_ratio": 0.0159,
+   "median_ratio": 0.0,
+   "n_widening": 4,
    "n_flipping": 0,
    "closest_pair": {
     "pair": "chemformer over gta",
     "criterion": "tautomer",
-    "movement": 0.0122,
-    "required": 0.0212,
+    "margin": 0.0212,
+    "margin_there": 0.009,
     "ratio": 0.5755
    }
   },
@@ -72,12 +74,13 @@
    ],
    "max_ratio": 0.0857,
    "median_ratio": 0.0154,
+   "n_widening": 0,
    "n_flipping": 0,
    "closest_pair": {
     "pair": "SyGMa over GRAIL",
     "criterion": "canonical",
-    "movement": 0.0205,
-    "required": 0.2393,
+    "margin": 0.2393,
+    "margin_there": 0.2188,
     "ratio": 0.0857
    }
   },
@@ -89,15 +92,16 @@
     "rmsd1",
     "rmsd2+chem"
    ],
-   "max_ratio": 1.5447,
-   "median_ratio": 0.3539,
+   "max_ratio": 2.8357,
+   "median_ratio": 0.054,
+   "n_widening": 24,
    "n_flipping": 1,
    "closest_pair": {
     "pair": "deepdock over unimol",
     "criterion": "rmsd2",
-    "movement": 0.0794,
-    "required": 0.0514,
-    "ratio": 1.5447
+    "margin": 0.028,
+    "margin_there": -0.0514,
+    "ratio": 2.8357
    }
   },
   "robust_order_wmt24_en-de": {
@@ -110,12 +114,13 @@
    ],
    "max_ratio": 1.3326,
    "median_ratio": 0.7397,
+   "n_widening": 46,
    "n_flipping": 5,
    "closest_pair": {
     "pair": "GPT-4 over Mistral-Large",
     "criterion": "count",
-    "movement": 0.6255,
-    "required": 0.4694,
+    "margin": 0.4694,
+    "margin_there": -0.1561,
     "ratio": 1.3326
    }
   },
@@ -129,12 +134,13 @@
    ],
    "max_ratio": 1.1244,
    "median_ratio": 0.8049,
+   "n_widening": 7,
    "n_flipping": 1,
    "closest_pair": {
     "pair": "ONLINE-B over IKUN-C",
     "criterion": "count",
-    "movement": 2.058,
-    "required": 1.8303,
+    "margin": 1.8303,
+    "margin_there": -0.2277,
     "ratio": 1.1244
    }
   },
@@ -148,12 +154,13 @@
    ],
    "max_ratio": 1.0257,
    "median_ratio": 0.9578,
+   "n_widening": 0,
    "n_flipping": 5,
    "closest_pair": {
     "pair": "GPT-4 over IKUN",
     "criterion": "spans",
-    "movement": 1.4609,
-    "required": 1.4243,
+    "margin": 1.4243,
+    "margin_there": -0.0366,
     "ratio": 1.0257
    }
   },
@@ -167,12 +174,13 @@
    ],
    "max_ratio": 1.0335,
    "median_ratio": 0.9145,
+   "n_widening": 0,
    "n_flipping": 2,
    "closest_pair": {
     "pair": "IOL-Research over CUNI-DocTransformer",
     "criterion": "count",
-    "movement": 2.0225,
-    "required": 1.957,
+    "margin": 1.957,
+    "margin_there": -0.0655,
     "ratio": 1.0335
    }
   },
@@ -186,12 +194,13 @@
    ],
    "max_ratio": 1.0458,
    "median_ratio": 0.9121,
+   "n_widening": 0,
    "n_flipping": 2,
    "closest_pair": {
     "pair": "IOL-Research over Claude-3.5",
     "criterion": "spans",
-    "movement": 2.7876,
-    "required": 2.6655,
+    "margin": 2.6655,
+    "margin_there": -0.1221,
     "ratio": 1.0458
    }
   },
@@ -205,12 +214,13 @@
    ],
    "max_ratio": 1.1683,
    "median_ratio": 0.9415,
+   "n_widening": 0,
    "n_flipping": 10,
    "closest_pair": {
     "pair": "ONLINE-B over GPT-4",
     "criterion": "spans",
-    "movement": 2.0176,
-    "required": 1.727,
+    "margin": 1.727,
+    "margin_there": -0.2906,
     "ratio": 1.1683
    }
   },
@@ -224,12 +234,13 @@
    ],
    "max_ratio": 1.1467,
    "median_ratio": 0.9134,
+   "n_widening": 0,
    "n_flipping": 7,
    "closest_pair": {
     "pair": "Dubformer over Claude-3.5",
     "criterion": "spans",
-    "movement": 2.6727,
-    "required": 2.3308,
+    "margin": 2.3308,
+    "margin_there": -0.3419,
     "ratio": 1.1467
    }
   },
@@ -243,12 +254,13 @@
    ],
    "max_ratio": 1.101,
    "median_ratio": 0.9469,
+   "n_widening": 0,
    "n_flipping": 5,
    "closest_pair": {
     "pair": "Aya23 over Team-J",
     "criterion": "count",
-    "movement": 1.3023,
-    "required": 1.1828,
+    "margin": 1.1828,
+    "margin_there": -0.1195,
     "ratio": 1.101
    }
   },
@@ -262,12 +274,13 @@
    ],
    "max_ratio": 1.0702,
    "median_ratio": 0.9391,
+   "n_widening": 0,
    "n_flipping": 7,
    "closest_pair": {
     "pair": "ONLINE-G over IOL-Research",
     "criterion": "spans",
-    "movement": 2.6274,
-    "required": 2.455,
+    "margin": 2.455,
+    "margin_there": -0.1724,
     "ratio": 1.0702
    }
   },
@@ -281,12 +294,13 @@
    ],
    "max_ratio": 1.0761,
    "median_ratio": 0.9389,
+   "n_widening": 0,
    "n_flipping": 5,
    "closest_pair": {
     "pair": "Gemini-1.5-Pro over CommandR-plus",
     "criterion": "spans",
-    "movement": 4.2669,
-    "required": 3.9651,
+    "margin": 3.9651,
+    "margin_there": -0.3018,
     "ratio": 1.0761
    }
   },
@@ -300,12 +314,13 @@
    ],
    "max_ratio": 1.0281,
    "median_ratio": 0.942,
+   "n_widening": 0,
    "n_flipping": 3,
    "closest_pair": {
     "pair": "Llama3-70B over Aya23",
     "criterion": "spans",
-    "movement": 1.292,
-    "required": 1.2567,
+    "margin": 1.2567,
+    "margin_there": -0.0353,
     "ratio": 1.0281
    }
   },
@@ -318,13 +333,14 @@
     "not-hasty"
    ],
    "max_ratio": 0.7849,
-   "median_ratio": 0.0712,
+   "median_ratio": 0.0044,
+   "n_widening": 105,
    "n_flipping": 0,
    "closest_pair": {
     "pair": "CUNI-Transformer over ONLINE-G",
     "criterion": "first",
-    "movement": 1.8051,
-    "required": 2.2997,
+    "margin": 2.2997,
+    "margin_there": 0.4946,
     "ratio": 0.7849
    }
   },
@@ -337,13 +353,14 @@
     "not-hasty"
    ],
    "max_ratio": 0.8062,
-   "median_ratio": 0.0332,
+   "median_ratio": 0.0054,
+   "n_widening": 98,
    "n_flipping": 0,
    "closest_pair": {
     "pair": "ONLINE-G over ONLINE-M",
     "criterion": "first",
-    "movement": 1.9201,
-    "required": 2.3818,
+    "margin": 2.3818,
+    "margin_there": 0.4617,
     "ratio": 0.8062
    }
   },
@@ -356,13 +373,14 @@
     "not-hasty"
    ],
    "max_ratio": 0.8076,
-   "median_ratio": 0.0599,
+   "median_ratio": 0.0126,
+   "n_widening": 90,
    "n_flipping": 0,
    "closest_pair": {
     "pair": "CUNI-Transformer over Lan-BridgeMT",
     "criterion": "first",
-    "movement": 1.9756,
-    "required": 2.4464,
+    "margin": 2.4464,
+    "margin_there": 0.4708,
     "ratio": 0.8076
    }
   },
@@ -375,13 +393,14 @@
     "not-hasty"
    ],
    "max_ratio": 1.7615,
-   "median_ratio": 0.06,
+   "median_ratio": -0.0036,
+   "n_widening": 97,
    "n_flipping": 1,
    "closest_pair": {
     "pair": "ONLINE-B over Human-refA",
     "criterion": "first",
-    "movement": 2.0646,
-    "required": 1.1721,
+    "margin": 1.1721,
+    "margin_there": -0.8925,
     "ratio": 1.7615
    }
   },
@@ -394,13 +413,14 @@
     "not-hasty"
    ],
    "max_ratio": 0.4703,
-   "median_ratio": 0.0353,
+   "median_ratio": 0.0044,
+   "n_widening": 131,
    "n_flipping": 0,
    "closest_pair": {
     "pair": "Human-refA over GPT4-5shot",
     "criterion": "first",
-    "movement": 0.5588,
-    "required": 1.1881,
+    "margin": 1.1881,
+    "margin_there": 0.6293,
     "ratio": 0.4703
    }
   },
@@ -413,13 +433,14 @@
     "not-hasty"
    ],
    "max_ratio": 0.6502,
-   "median_ratio": 0.0228,
+   "median_ratio": 0.0005,
+   "n_widening": 121,
    "n_flipping": 0,
    "closest_pair": {
     "pair": "ONLINE-W over ONLINE-A",
     "criterion": "first",
-    "movement": 1.1223,
-    "required": 1.7261,
+    "margin": 1.7261,
+    "margin_there": 0.6038,
     "ratio": 0.6502
    }
   },
@@ -432,13 +453,14 @@
     "not-hasty"
    ],
    "max_ratio": 0.8175,
-   "median_ratio": 0.0397,
+   "median_ratio": 0.0168,
+   "n_widening": 110,
    "n_flipping": 0,
    "closest_pair": {
     "pair": "SKIM over ONLINE-A",
     "criterion": "first",
-    "movement": 1.0878,
-    "required": 1.3306,
+    "margin": 1.3306,
+    "margin_there": 0.2428,
     "ratio": 0.8175
    }
   },
@@ -451,13 +473,14 @@
     "not-hasty"
    ],
    "max_ratio": 0.6528,
-   "median_ratio": 0.0285,
+   "median_ratio": 0.0039,
+   "n_widening": 134,
    "n_flipping": 0,
    "closest_pair": {
     "pair": "GPT4-5shot over ONLINE-Y",
     "criterion": "first",
-    "movement": 0.8,
-    "required": 1.2254,
+    "margin": 1.2254,
+    "margin_there": 0.4254,
     "ratio": 0.6528
    }
   }

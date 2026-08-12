@@ -172,20 +172,24 @@ prediction re-scored --- rejects $8{,}314$ of them at a cutoff of $p=6.9\times10
 count of certified pairs falls from $23$ to $14$. Splitting $\alpha$ across the boards instead, at
 $\alpha/23$ within each grid, gives $14$ as well. The population the second claim is about survives
 almost intact: of the $6$ certified reversals of an ordering a published cell had separated, $5$
-remain, and the matching rule certifies none under any of the three corrections, which it cannot,
-since each is a subset of the last. The one that goes is the docking pair, \textsc{deepdock}
+remain, and the matching rule certifies none under any of the three corrections. That is checked
+under each rather than inferred from the others: the three are not nested. Splitting $\alpha$ across
+the boards and pooling their grids into one family weight a board by different things --- its own
+size against the total --- and on sixteen of the twenty-three the union is the more permissive of
+the two stricter readings. The one that goes is the docking pair, \textsc{deepdock}
 against \textsc{uni-mol}, so under the strictest of the three every certified reversal of an
 ordering a benchmark had established is the output budget's.
 
 What the union costs is concentrated rather than spread: the docking board's two go, the
-nineteen-system translation board keeps $2$ of $6$, and the retrosynthesis boards keep all ten. Two
-things about that are worth stating rather than leaving to be inferred. The union is step-down, so
+nineteen-system translation board keeps $2$ of $6$, two more go on \textsc{en-hi} and one on
+\textsc{zho-eng}, and the retrosynthesis boards keep all ten. Those four boards are the whole fall
+of nine. Two things about it are worth stating rather than leaving to be inferred. The union is step-down, so
 it stops at its first failure, and a reversal can be lost because thousands of unrelated
 separations on other boards sit below it in the sorted vector --- a property of the procedure, not
 a verdict on the reversal. And the board whose reversal the field had already published in its own
-paper \citep{Buttenschoen_2024} is one of the two that lose everything here, which is the price of a
-correction that does not ask where a test came from: the reversal is in the literature, and the
-union does not know that.
+paper \citep{Buttenschoen_2024} is one of the three that lose every certified reversal they had,
+which is the price of a correction that does not ask where a test came from: the reversal is in the
+literature, and the union does not know that.
 
 \paragraph{The task's own answer to the same question.} A count no one else computes is a count no
 one else can check, and the objection that the instrument is idiosyncratic is answered by the one
@@ -209,22 +213,28 @@ counts comparable at all.
 \paragraph{A null with a size.} The paper's second claim is negative --- the matching rule
 certifies no reversal of an ordering a published cell had separated --- and a negative claim is
 worth whatever its power is. The identity supplies that without another statistic. A criterion
-reverses a pair exactly when it moves the two apart by more than the larger of the margins it
-connects, so the ratio of the movement to that requirement says how close the axis came, and it is
-read straight out of the per-cell means each board already reports. Taken over the pairs the
-published cell separates, which are the only pairs whose ordering can be reversed, and with the
-other axis held at the board's own setting, the matching rule reaches $0.4895$ of what a reversal
-needs on the seven-system retrosynthesis board, $0.5755$ on the three-system one and $0.0857$ on
-the metabolite board; the median comparison on those boards is $0.0159$. On the closest of the
-three the movement would have to be $1.74$ times larger before an ordering flipped at all. The null
-is a size, then, and not a silence: an axis whose movement is well inside the margins it would have
-to cross, rather than a test that failed to reach significance.
+reverses a pair exactly when it erases the whole margin between them and more, so the share of the
+published margin it erases, $1 - d'/d$, says how close it came, and it is read straight out of the
+per-cell means each board already reports. The sign matters: a criterion that moves a margin
+\emph{away} from zero has not come close to reversing it, and a direction-blind ratio scores such a
+comparison as if it had.
 
-Docking is the exception, and is reported as one. There the criterion axis does flip a pair the
-published cell separated --- \textsc{deepdock} over \textsc{unimol}, at $1.5447$ times the
-requirement --- but the interval on the reversed margin includes zero, so nothing is certified from
-it. Of the two reversals that are certified on that board, the one whose ordering the published cell
-had separated needs the minimisation axis; the other is the criterion's alone and reverses a pair the
+Taken over the pairs the published cell separates --- the only pairs with an established ordering to
+reverse --- and with the other axis held at the board's own setting, the matching rule erases at most
+$0.0870$ of a margin on the seven-system retrosynthesis board, $0.5755$ on the three-system one and
+$0.0857$ on the metabolite board, and on all three the median comparison erases $0.0$: half the time
+the criterion leaves the margin exactly where the published cell put it. On the closest of the three
+the movement would have to be $1.74$ times larger before an ordering flipped at all. The null is a
+size, then, and not a silence: an axis whose movement is well inside the margins it would have to
+cross, rather than a test that failed to reach significance. What the axis does instead is exchange
+pairs the benchmark never separated, which is this paper's first claim and is measured separately.
+
+Docking is the exception, and is reported as one. There the criterion axis does erase a margin the
+published cell had separated and then some --- \textsc{deepdock} over \textsc{unimol}, $2.8357$ of
+it, at the published post-processing --- but that reversal does not survive the board's own family of
+$168$ tests, at $p=0.042$ against a threshold of $1.4\times10^{-3}$, so nothing is certified from it.
+Of the two reversals that are certified on that board, the one whose ordering the published cell had
+separated needs the minimisation axis; the other is the criterion's alone and reverses a pair the
 board never established, which is the distinction the whole decomposition rests on. The one field
 that published its own reversal is where one would expect the axis to bite.
 

@@ -5,19 +5,26 @@ The paper's second claim is negative --- on none of the twenty-three boards does
 criterion certify a reversal of an ordering the published cell had separated --- and a negative
 claim with no power behind it is indistinguishable from a measurement that could not have seen
 anything. The identity gives the power statement for free, because it says exactly what a reversal
-requires: the criterion must move the two systems apart by more than the larger of the two margins
-it connects. So the question "was the axis capable of reversing this pair?" has an arithmetic
-answer, one ratio per pair per criterion:
+requires: the criterion must erase the whole margin and then some. So the question "was the axis
+capable of reversing this pair?" has an arithmetic answer, one signed share per pair per criterion:
 
-    movement   |(a - b) under the other criterion - (a - b) under the published one|
-    required   max(|a - b| under either criterion)
-    ratio      movement / required, which reaches $1$ exactly when the ordering flips
+    d      the margin in the published cell
+    d'     the same margin under the other criterion
+    share  1 - d'/d, the part of the published margin the criterion erases
+
+The sign is the point and the first version of this got it wrong. A direction-blind
+|d' - d| / max(|d|,|d'|) tends to 1 both when a margin is annihilated and when it is inflated, so
+it scored the seven-system board's *widest* movement --- a margin that went from $0.0146$ to
+$0.0286$, further from a reversal --- as the one that came closest to reversing. The signed share
+is negative there, is $1$ exactly when the margin is annihilated, and exceeds $1$ exactly when the
+ordering flips.
 
 Nothing here is resampled and nothing re-scored: every quantity is read out of the per-cell system
 means each board artifact already carries, at the board's own second-axis setting, so the criterion
 is the only thing varying. The ratio is reported per board as its maximum and its median over the
 pairs the published cell separates, which is the population the claim is about --- a pair the
-benchmark never resolved cannot have its ordering reversed.
+benchmark never resolved has no established ordering to reverse, though it can certainly be
+exchanged, and that exchange is the paper's first claim rather than this one.
 
 A ratio near $1$ on a board with no certified reversal would mean the axis very nearly did it and
 the test was the only thing in the way. A ratio an order of magnitude below $1$ means something
@@ -96,17 +103,16 @@ def analyse(b: dict) -> dict:
             continue
         hi, lo = name.split(" over ")
         d0 = acc[hi][str(pub)] - acc[lo][str(pub)]
+        if d0 == 0:
+            continue
         for c in siblings:
             d1 = acc[hi][str(c)] - acc[lo][str(c)]
-            required = max(abs(d0), abs(d1))
-            if required == 0:
-                continue
-            rows.append({"pair": name, "criterion": c[0],
-                         "movement": abs(d1 - d0), "required": required,
-                         "ratio": abs(d1 - d0) / required,
+            rows.append({"pair": name, "criterion": c[0], "margin": d0, "margin_there": d1,
+                         "share_erased": 1.0 - d1 / d0,
+                         "widens": abs(d1) > abs(d0),
                          "flips": (d0 > 0) != (d1 > 0)})
-    r = np.array([x["ratio"] for x in rows]) if rows else np.zeros(0)
-    worst = max(rows, key=lambda x: x["ratio"]) if rows else None
+    r = np.array([x["share_erased"] for x in rows]) if rows else np.zeros(0)
+    worst = max(rows, key=lambda x: x["share_erased"]) if rows else None
     separated = sum(1 for v in b["pairs"].values()
                     if v["per_cell"][b["published_cell"]]["separated"])
     return {"n_separated_pairs": separated,
@@ -114,11 +120,12 @@ def analyse(b: dict) -> dict:
             "criteria_compared": [c[0] for c in siblings],
             "max_ratio": round(float(r.max()), 4) if len(r) else None,
             "median_ratio": round(float(np.median(r)), 4) if len(r) else None,
+            "n_widening": int(sum(x["widens"] for x in rows)),
             "n_flipping": int(sum(x["flips"] for x in rows)),
             "closest_pair": ({"pair": worst["pair"], "criterion": worst["criterion"],
-                              "movement": round(worst["movement"], 4),
-                              "required": round(worst["required"], 4),
-                              "ratio": round(worst["ratio"], 4)} if worst else None)}
+                              "margin": round(worst["margin"], 4),
+                              "margin_there": round(worst["margin_there"], 4),
+                              "ratio": round(worst["share_erased"], 4)} if worst else None)}
 
 
 def main() -> int:

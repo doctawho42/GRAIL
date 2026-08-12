@@ -1073,8 +1073,9 @@ def main() -> int:
                   "results/union_multiplicity.json")
         # the sentence naming which boards pay, against the per-board table
         PBU = UN["per_board"]
-        m = re.search(r"the nineteen-system translation board keeps \$(\d+)\$ of \$(\d+)\$, and "
-                      r"the retrosynthesis boards keep all (\w+)", flat)
+        m = re.search(r"the nineteen-system translation board keeps \$(\d+)\$ of \$(\d+)\$, two more "
+                      r"go on \\textsc\{en-hi\} and one on \\textsc\{zho-eng\}, and the "
+                      r"retrosynthesis boards keep all (\w+)", flat)
         checks.append((bool(m), "the sentence naming who pays parses", "present",
                        "matched" if m else "not matched", ""))
         if m:
@@ -1104,6 +1105,29 @@ def main() -> int:
                        "what survives it is retrosynthesis, which is the budget axis",
                        "the two retrosynthesis boards", ", ".join(sorted(_survivors)) or "none",
                        "results/union_multiplicity.json"))
+        # the enumeration is meant to be exhaustive, so the boards it names must account for the
+        # whole fall; a sentence that lists some of the losses reads as if it listed them all
+        _named_loss = sum(PBU[k]["pairs_per_board"] - PBU[k]["pairs_union"]
+                          for k in ("robust_order_posebusters", "robust_order_wmt24_en-de",
+                                    "robust_order_wmt24_esa:en-hi", "robust_order_wmt23:zho-eng")
+                          if k in PBU)
+        _all_loss = UN["certified_pairs"]["per_board"] - UN["certified_pairs"]["union"]
+        checks.append((_named_loss == _all_loss,
+                       "the boards the paragraph names are the whole fall", str(_all_loss),
+                       str(_named_loss), "results/union_multiplicity.json"))
+        m2 = re.search(r"Those four boards are the whole fall\s*of (\w+)", flat)
+        _w2 = {"six": 6, "seven": 7, "eight": 8, "nine": 9, "ten": 10, "eleven": 11}
+        checks.append((bool(m2) and _w2.get(m2.group(1), -1) == _all_loss,
+                       "the size of the fall the paragraph names",
+                       str(_all_loss), m2.group(1) if m2 else "not stated",
+                       "results/union_multiplicity.json"))
+        _lose_all = [k for k, v in PBU.items() if v["pairs_per_board"] and not v["pairs_union"]]
+        _num = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7,
+                "eight": 8, "nine": 9, "ten": 10, "eleven": 11}
+        m3 = re.search(r"is one of the (\w+) that lose every certified reversal they had", flat)
+        checks.append((bool(m3) and _num.get(m3.group(1), -1) == len(_lose_all),
+                       "how many boards lose everything", str(len(_lose_all)),
+                       m3.group(1) if m3 else "not stated", "results/union_multiplicity.json"))
         checks.append((PBU["robust_order_posebusters"]["pairs_union"] == 0
                        and PBU["robust_order_posebusters"]["pairs_per_board"] == 2,
                        "union, the docking board's two go", "2 to 0",
@@ -1148,10 +1172,10 @@ def main() -> int:
         CP = json.loads(cp.read_text())
         flat = re.sub(r"\s+", " ", whole)
         PB = CP["per_board"]
-        m = re.search(r"the matching rule reaches \$([\d.]+)\$ of what a reversal needs on the "
-                      r"seven-system retrosynthesis board, \$([\d.]+)\$ on the three-system one "
-                      r"and \$([\d.]+)\$ on the metabolite board; the median comparison on those "
-                      r"boards is \$([\d.]+)\$", flat)
+        m = re.search(r"the matching rule erases at most \$([\d.]+)\$ of a margin on the "
+                      r"seven-system retrosynthesis board, \$([\d.]+)\$ on the three-system one and "
+                      r"\$([\d.]+)\$ on the metabolite board, and on all three the median comparison "
+                      r"erases \$([\d.]+)\$", flat)
         checks.append((bool(m), "the power sentence parses", "present",
                        "matched" if m else "not matched", ""))
         if m:
@@ -1165,24 +1189,62 @@ def main() -> int:
                   CP["matching_axis"]["median_ratio_where_nothing_flips"],
                   "results/criterion_power.json")
         # the body states the same power in rounded form; both printings are bound
-        m = re.search(r"matching rule's movement never reaches \$([\d.]+)\$ of what reversing a "
-                      r"separated pair would take, and its median comparison is \$([\d.]+)\$", flat)
+        m = re.search(r"the matching rule erases at most \$([\d.]+)\$ of a margin\s*the published "
+                      r"cell had separated, and the median comparison erases none of it", flat)
         checks.append((bool(m), "the body states the size of the null", "present",
                        "matched" if m else "not matched", ""))
         if m:
-            check("power in the body, largest ratio", m.group(1),
+            check("power in the body, largest share erased", m.group(1),
                   CP["matching_axis"]["largest_ratio_where_nothing_flips"],
                   "results/criterion_power.json")
-            check("power in the body, median", m.group(2),
-                  CP["matching_axis"]["median_ratio_where_nothing_flips"],
-                  "results/criterion_power.json")
+            checks.append((CP["matching_axis"]["median_ratio_where_nothing_flips"] == 0.0,
+                           "power in the body, the median erases nothing", "0.0",
+                           str(CP["matching_axis"]["median_ratio_where_nothing_flips"]),
+                           "results/criterion_power.json"))
+        # the body names the three boards rather than counting them, and the naming has to be the
+        # set the artifact found nothing flipping on
+        _named = {"robust_order:cluster0", "robust_order:cluster1", "robust_order_metabolite"}
+        _quiet = {k for k, v in CP["per_board"].items()
+                  if k in CP["config"]["matching_axis_boards"] and v["n_flipping"] == 0}
+        checks.append((_quiet == _named, "the body names the boards where nothing flips",
+                       "the two retrosynthesis boards and the metabolite one",
+                       ", ".join(sorted(_quiet)), "results/criterion_power.json"))
         m = re.search(r"movement would have to be \$([\d.]+)\$ times larger", flat)
         check("power, fold short on the closest board", m and m.group(1),
               CP["matching_axis"]["fold_short_on_that_board"], "results/criterion_power.json")
-        m = re.search(r"over \\textsc\{unimol\}, at \$([\d.]+)\$ times the\s*requirement", flat)
+        m = re.search(r"over \\textsc\{unimol\}, \$([\d.]+)\$ of\s*it, at the published "
+                      r"post-processing", flat)
         check("power, the docking flip", m and m.group(1),
               PB["robust_order_posebusters"]["closest_pair"]["ratio"],
               "results/criterion_power.json")
+        # the reason the flip certifies nothing is the board's own correction, not an interval
+        # whose endpoint sits at exactly zero and moves with the seed
+        _pbj = json.loads((ROOT / "results/robust_order_posebusters.json").read_text())
+        _pt = {r["cell"]: r["p"] for r in _pbj["multiplicity"]["reversal_tests"]
+               if r["pair"] == PB["robust_order_posebusters"]["closest_pair"]["pair"]}
+        _pub_cell = _pbj["published_cell"]
+        m = re.search(r"does not survive the board's own family of\s*\$(\d+)\$ tests, at "
+                      r"\$p=([\d.]+)\$ against a threshold of \$([\d.]+)\\times10\^\{-(\d+)\}\$",
+                      flat)
+        checks.append((bool(m), "the docking exception's reason parses", "present",
+                       "matched" if m else "not matched", ""))
+        if m:
+            check("docking exception, the family", m.group(1),
+                  _pbj["multiplicity"]["family_size"], "results/robust_order_posebusters.json")
+            import ast as _a3
+            _cc = str((PB["robust_order_posebusters"]["closest_pair"]["criterion"],
+                       _a3.literal_eval(_pub_cell)[1]))
+            check("docking exception, the p of the flip", m.group(2), _pt.get(_cc),
+                  "results/robust_order_posebusters.json")
+            import importlib.util as _iu2
+            _sp2 = _iu2.spec_from_file_location("_um2", ROOT / "scripts/union_multiplicity.py")
+            _um2 = _iu2.module_from_spec(_sp2)
+            sys.modules["_um2"] = _um2
+            _sp2.loader.exec_module(_um2)
+            _thr = _um2.cutoff(_pbj["multiplicity"]["p_values"], 0.05)
+            check("docking exception, the threshold",
+                  float(m.group(3)) * 10 ** (-int(m.group(4))), _thr,
+                  "results/robust_order_posebusters.json")
         # the paragraph's two claims about that flip, against the board rather than against prose
         _pb = json.loads((ROOT / "results/robust_order_posebusters.json").read_text())
         _flip = PB["robust_order_posebusters"]["closest_pair"]["pair"]
