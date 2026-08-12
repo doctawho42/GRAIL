@@ -147,6 +147,27 @@ def main() -> int:
             f"they are dropped from every cell rather than from one",
             "a row with no scorable pose counts as a miss, not as an absent observation"],
     }
+    # Dropping the two flatness checks is a declared convention, and the paper says what it costs.
+    # That figure was prose with nothing behind it, so it is computed: the published criterion is
+    # rebuilt with the two columns included, in the arm where they exist, and the largest change to
+    # any system's score in the published cell is recorded.
+    _with = dict(CRITERIA)
+    _with[PUBLISHED_CELL[0]] = (_with[PUBLISHED_CELL[0]][0],
+                                _with[PUBLISHED_CELL[0]][1],
+                                _with[PUBLISHED_CELL[0]][2] + FLATNESS)
+    _saved, globals()["CRITERIA"] = CRITERIA, _with
+    try:
+        _h2, _s2, _i2, _c2 = build_hits(table, args.population)
+    finally:
+        globals()["CRITERIA"] = _saved
+    _delta = {s: float(abs(_h2[(s, PUBLISHED_CELL)].mean() - hits[(s, PUBLISHED_CELL)].mean()))
+              for s in systems}
+    rep["config"]["flatness_checks_included_instead"] = {
+        "largest_change_to_a_system_in_the_published_cell": round(max(_delta.values()), 6),
+        "per_system": {k: round(v, 6) for k, v in _delta.items()},
+        "note": "the two checks exist only in the un-minimised arm; including them changes the "
+                "published cell by this much, which is why dropping them from every cell is the "
+                "convention that keeps a criterion the same object across the grid"}
     Path(args.out).write_text(json.dumps(rep, indent=1))
 
     print(f"{args.population}: {rep['n_systems']} systems, {rep['n_cells']} cells, "

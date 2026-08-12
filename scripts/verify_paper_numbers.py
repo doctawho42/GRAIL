@@ -645,6 +645,82 @@ def main() -> int:
                        "as stated" if "unit test on the weighting and not evidence about the data"
                        in flat else "claimed as evidence", "the manuscript"))
 
+    # 10c-6. The docking control paragraph, which a check reached at exactly one number. Its
+    # figures are the ones a reader meets while deciding whether to believe the instrument, and
+    # they were the largest unread block in the body.
+    _pb = ROOT / "results/robust_order_posebusters.json"
+    _ax = ROOT / "results/robust_order_posebusters_astex.json"
+    if _pb.exists():
+        PB = json.loads(_pb.read_text())
+        flat = re.sub(r"\s+", " ", whole)
+        m = re.search(r"contests exactly two of the \$(\d+)\$ pairs", flat)
+        check("docking, pairs the source's finding is read from", m and m.group(1), PB["n_pairs"],
+              "results/robust_order_posebusters.json")
+        m = re.search(r"read out of \$(\d+)\$ pairs by \$(\d+)\$ cells, so it is granted inside a "
+                      r"family of \$(\d+)\$", flat)
+        checks.append((bool(m), "the docking family sentence parses", "present",
+                       "matched" if m else "not matched", ""))
+        if m:
+            check("docking, pairs", m.group(1), PB["n_pairs"],
+                  "results/robust_order_posebusters.json")
+            check("docking, cells", m.group(2), PB["n_cells"],
+                  "results/robust_order_posebusters.json")
+            check("docking, family", m.group(3), PB["multiplicity"]["family_size"],
+                  "results/robust_order_posebusters.json")
+        m = re.search(r"Two exchanges out of \$(\d+)\$ looks", flat)
+        check("docking, the family the exchanges came from", m and m.group(1),
+              PB["multiplicity"]["family_size"], "results/robust_order_posebusters.json")
+        m = re.search(r"Of its \$(\d+)\$ pairs, \$(\d+)\$ dominate, \$(\d+)\$ are contested and "
+                      r"\$(\d+)\$ the grid leaves unresolved", flat)
+        checks.append((bool(m), "the docking breakdown parses", "present",
+                       "matched" if m else "not matched", ""))
+        if m:
+            for _i, (_lab, _val) in enumerate((("pairs", PB["n_pairs"]),
+                                               ("dominating", PB["n_dominating"]),
+                                               ("contested", PB["n_contested"]),
+                                               ("unresolved", PB["n_unresolved"]))):
+                check(f"docking breakdown, {_lab}", m.group(_i + 1), _val,
+                      "results/robust_order_posebusters.json")
+        m = re.search(r"on these \$([\d,{}]+)\$ items all ten such pairs dominate", flat)
+        check("docking, items", m and m.group(1).replace("{,}", ""), PB["n_items"],
+              "results/robust_order_posebusters.json")
+        # the convention the paper says costs nothing, which was prose with no artifact behind it
+        _fl = PB["config"].get("flatness_checks_included_instead", {})
+        m = re.search(r"including them changes the published cell by \$([\d.]+)\$", flat)
+        check("docking, what including the flatness checks costs", m and m.group(1),
+              _fl.get("largest_change_to_a_system_in_the_published_cell"),
+              "results/robust_order_posebusters.json")
+        m = re.search(r"which leaves \$(\d+)\$ of the \$(\d+)\$ pairs dominating rather than "
+                      r"\$(\d+)\$", flat)
+        checks.append((bool(m), "the conservative-reading sentence parses", "present",
+                       "matched" if m else "not matched", ""))
+        if m:
+            _crit_only = PB["sub_grids"]["criteria only, at the published post-processing"]
+            check("docking, dominating on the criteria alone", m.group(1),
+                  _crit_only["n_dominating"], "results/robust_order_posebusters.json")
+            check("docking, pairs in that reading", m.group(2), PB["n_pairs"],
+                  "results/robust_order_posebusters.json")
+            check("docking, dominating across the whole grid", m.group(3), PB["n_dominating"],
+                  "results/robust_order_posebusters.json")
+    if _ax.exists():
+        AX = json.loads(_ax.read_text())
+        flat = re.sub(r"\s+", " ", whole)
+        m = re.search(r"run unchanged on the \$(\d+)\$ astex items, the same eight cells contest "
+                      r".*?and leave \$(\d+)\$ of \$(\d+)\$\s*dominating", flat)
+        checks.append((bool(m), "the astex sentence parses", "present",
+                       "matched" if m else "not matched", ""))
+        if m:
+            check("astex, items", m.group(1), AX["n_items"],
+                  "results/robust_order_posebusters_astex.json")
+            check("astex, dominating", m.group(2), AX["n_dominating"],
+                  "results/robust_order_posebusters_astex.json")
+            check("astex, pairs", m.group(3), AX["n_pairs"],
+                  "results/robust_order_posebusters_astex.json")
+            # "along with two other pairs" -- three contested in total on that board
+            checks.append((AX["n_contested"] == 3, "astex, three pairs are contested",
+                           "3", str(AX["n_contested"]),
+                           "results/robust_order_posebusters_astex.json"))
+
     # 10c-7. Table 1, every row and every column. Six of its eight rows were bound one figure at
     # a time by checks written for the prose that quotes them; the two rows standing for nine and
     # eight boards were bound by nothing, which is how the same table in the appendix stopped

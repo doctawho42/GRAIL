@@ -2445,7 +2445,7 @@
  },
  "config": {
   "script": "posebusters_board.py",
-  "git_commit": "71bd82fb7a75c02227497782698715836316c82c",
+  "git_commit": "a26a1956bbf36902e2ee77991e2c7fad803d7a97",
   "git_dirty": true,
   "n_boot": 10000,
   "seed": 0,
@@ -2464,6 +2464,19 @@
   "declared_conventions": [
    "the flatness checks ('aromatic_ring_flatness_passes', 'double_bond_flatness_passes') are recorded only under post-processing 'none', so they are dropped from every cell rather than from one",
    "a row with no scorable pose counts as a miss, not as an absent observation"
-  ]
+  ],
+  "flatness_checks_included_instead": {
+   "largest_change_to_a_system_in_the_published_cell": 0.0,
+   "per_system": {
+    "deepdock": 0.0,
+    "diffdock": 0.0,
+    "equibind": 0.0,
+    "gold": 0.0,
+    "tankbind": 0.0,
+    "unimol": 0.0,
+    "vina": 0.0
+   },
+   "note": "the two checks exist only in the un-minimised arm; including them changes the published cell by this much, which is why dropping them from every cell is the convention that keeps a criterion the same object across the grid"
+  }
  }
 }
