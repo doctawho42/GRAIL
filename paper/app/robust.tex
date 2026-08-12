@@ -193,9 +193,8 @@ domain that computes its own version and publishes it. The translation task test
 Wilcoxon signed-rank test on the paired per-segment scores within each domain, combines the domains
 by Stouffer's $Z$, and merges systems into a cluster whenever that test does not separate them at
 $0.05$; the number of clusters is its answer to how many ranks its table supports. Their code is
-imported rather than reimplemented --- \texttt{get\_pvalues} and \texttt{get\_clusters} as written ---
-and run on the two \textsc{mqm} boards, which is where the task ships this clustering in the form we
-can execute.
+imported rather than reimplemented --- \texttt{get\_pvalues} and \texttt{get\_clusters} as written
+--- and run on all $11$ boards it covers, the two \textsc{mqm} ones and the nine \textsc{esa} pairs.
 
 Setting the two counts side by side settles nothing, because they differ in two places at once. The
 test that decides whether a pair is separated is one; the construction that turns pairwise verdicts
@@ -222,16 +221,18 @@ our test, our construction       & $6$  & $8$ \\
 Read down the first two rows: holding the construction fixed, our test is the stricter of the two,
 resolving one place fewer on each board. Read the next two: holding the test fixed, our construction
 is the more generous, because a longest chain counts a place whenever some pair is separated while
-a cluster refuses to close over an unresolved tie anywhere below it. The number this paper reports
-is the last row, and the difference between it and the task's own is those two effects pulling
-against each other rather than either one alone.
+a cluster refuses to close over an unresolved tie anywhere below it. Across all eleven boards
+neither direction ever reverses: our test is stricter on $10$ and never more permissive, and our
+construction is more generous on $10$ and never less. The number this paper reports is the last row,
+and the difference between it and the task's own is those two effects pulling against each other
+rather than either one alone.
 
-What that establishes is narrower than the objection it answers, and worth stating narrowly. It is
-run on two boards of the nineteen, since those are the two the task ships in a form this can be
-executed on. Neither side corrects for multiplicity here, so both counts are the optimistic ones,
-which is what makes them comparable at all. And the ordering our published cell produces is theirs
-system for system on both boards --- that is the weighting check of the previous section arriving
-again, not an agreement between two instruments, which the table above shows there is not.
+The two rankings themselves agree system for system on $7$ of the $11$. On the other four they
+disagree about $6$ pairs in total, and our published cell separates none of them --- so where the
+instruments order systems differently, they are ordering systems neither can tell apart, which is
+this paper's first claim arriving inside its own external check. Neither side corrects for
+multiplicity in any of this, so both counts are the optimistic ones, which is what makes them
+comparable at all.
 
 \paragraph{A null with a size.} The paper's second claim is negative --- the matching rule
 certifies no reversal of an ordering a published cell had separated --- and a negative claim is

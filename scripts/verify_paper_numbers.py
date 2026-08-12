@@ -1008,7 +1008,9 @@ def main() -> int:
     # checking them -- and a constant that changes silently is the cheapest error to ship.
     flat = re.sub(r"\s+", " ", whole)
     _nb = len(_BD)
-    _saidb = re.findall(r"\$(\d+)\$ (?:leaderboards|boards)", flat)
+    # "$11$ boards it covers" is the translation task's own clustering, not this paper's survey,
+    # and it is checked against that artifact rather than against the board count
+    _saidb = [x for x in re.findall(r"\$(\d+)\$ (?:leaderboards|boards)(?! it covers)", flat)]
     checks.append((len(_saidb) >= 3 and all(int(x) == _nb for x in _saidb),
                    "every count of leaderboards is the number there are", str(_nb),
                    ", ".join(sorted(set(_saidb))) or "none found", "results/robust_order_*.json"))
@@ -1226,20 +1228,44 @@ def main() -> int:
         checks.append((_rows == len(_CELLS), "clusters, the crossed table is complete",
                        str(len(_CELLS)), str(_rows), "results/wmt_official_clusters.json"))
         # the two readings the prose draws from the table, in the direction it draws them
-        checks.append((all(b["their_construction_our_test"] < b["n_clusters"]
-                           for b in OC.values()),
-                       "at a fixed construction, our test is the stricter", "ours < theirs",
-                       str({k: (b["their_construction_our_test"], b["n_clusters"])
-                            for k, b in OC.items()}), "results/wmt_official_clusters.json"))
-        checks.append((all(b["our_construction_their_test"] > b["n_clusters"]
-                           for b in OC.values()),
-                       "at a fixed test, our construction is the more generous", "ours > theirs",
-                       str({k: (b["our_construction_their_test"], b["n_clusters"])
-                            for k, b in OC.items()}), "results/wmt_official_clusters.json"))
-        checks.append((all(b["orders_agree"] for b in OC.values()),
-                       "the published cell's ordering is theirs system for system", "both agree",
-                       str({k: b["orders_agree"] for k, b in OC.items()}),
+        S = json.loads((ROOT / "results/wmt_official_clusters.json").read_text())["summary"]
+        m = re.search(r"run on all \$(\d+)\$ boards it covers", flat)
+        check("clusters, the boards their code covers", m and m.group(1), S["n_boards"],
+              "results/wmt_official_clusters.json")
+        m = re.search(r"our test is stricter on\s*\$(\d+)\$ and never more permissive, and our "
+                      r"construction is more generous on \$(\d+)\$ and never less", flat)
+        checks.append((bool(m), "the two directions parse", "present",
+                       "matched" if m else "not matched", ""))
+        if m:
+            check("clusters, boards where our test is stricter", m.group(1),
+                  S["n_boards_our_test_is_stricter"], "results/wmt_official_clusters.json")
+            check("clusters, boards where our construction is more generous", m.group(2),
+                  S["n_boards_our_construction_is_more_generous"],
+                  "results/wmt_official_clusters.json")
+        checks.append((S["our_test_never_more_permissive"],
+                       "at a fixed construction, our test is never the more permissive",
+                       "never", str(S["our_test_never_more_permissive"]),
                        "results/wmt_official_clusters.json"))
+        checks.append((S["our_construction_never_less_generous"],
+                       "at a fixed test, our construction is never the less generous",
+                       "never", str(S["our_construction_never_less_generous"]),
+                       "results/wmt_official_clusters.json"))
+        m = re.search(r"agree system for system on \$(\d+)\$ of the \$(\d+)\$\. On the other "
+                      r"\w+ they\s*disagree about \$(\d+)\$ pairs in total, and our published cell "
+                      r"separates none of them", flat)
+        checks.append((bool(m), "the ordering-agreement sentence parses", "present",
+                       "matched" if m else "not matched", ""))
+        if m:
+            check("clusters, boards whose orders agree", m.group(1), S["n_orders_agreeing"],
+                  "results/wmt_official_clusters.json")
+            check("clusters, boards compared", m.group(2), S["n_boards"],
+                  "results/wmt_official_clusters.json")
+            check("clusters, pairs ordered differently", m.group(3),
+                  S["pairs_ordered_differently"], "results/wmt_official_clusters.json")
+            checks.append((S["of_those_our_cell_separates"] == 0,
+                           "none of the discordant pairs is one our cell separates", "0",
+                           str(S["of_those_our_cell_separates"]),
+                           "results/wmt_official_clusters.json"))
 
     # 10d-0. The power behind the negative claim. Every figure in the paragraph is one of the
     # artifact's, and the two facts that keep the docking exception honest -- the flip is not
@@ -3241,6 +3267,31 @@ def main() -> int:
                             or re.search(r"\[" + f"{lo:.3f}" + r"," + f"{hi:.3f}" + r"\]",
                                          whole.replace(" ", ""))),
                        label, f"[{lo:.3f},{hi:.3f}]", "present in the manuscript", ""))
+
+    # 13. the per-appendix modules. They are separate files so that checks for one appendix can be
+    # written without touching the checks for another, and so the coverage question -- which of an
+    # appendix's numerals no check reads -- is answerable file by file.
+    try:
+        sys.path.insert(0, str(ROOT / "scripts"))
+        from gates import Ctx, register_all  # noqa: E402
+
+        _cache: dict = {}
+
+        def _art(name):
+            if name not in _cache:
+                _q = ROOT / "results" / name
+                _cache[name] = json.loads(_q.read_text()) if _q.exists() else None
+            return _cache[name]
+
+        _ctx = Ctx(flat=re.sub(r"\s+", " ", whole), root=ROOT, check=check, checks=checks,
+                   art=_art, tex={p.name: p.read_text() for p in TEX})
+        _ran = register_all(_ctx)
+        if _ran:
+            checks.append((True, "the per-appendix modules that ran", ", ".join(_ran),
+                           f"{len(_ran)} modules", "scripts/gates/"))
+    except Exception as _e:  # a broken module must fail loudly, not be skipped
+        checks.append((False, "the per-appendix modules load", "all load", repr(_e)[:60],
+                       "scripts/gates/"))
 
     width = max(len(c[1]) for c in checks)
     bad = 0
