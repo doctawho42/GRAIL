@@ -1,0 +1,135 @@
+{
+ "note": "training reports of the runs the appendices describe, copied out of artifacts/ so the figures they carry are regenerable from a committed file; artifacts/ is gitignored apart from a force-tracked subset, and a loss curve quoted in the paper cannot live only there",
+ "runs": {
+  "deployed": {
+   "generator_training": {
+    "best_loss": 0.6125854756434759,
+    "best_val_loss": 0.5712650924921036,
+    "epochs_trained": 8,
+    "early_stopped_epoch": null,
+    "loss_history": [
+     0.7637572091817856,
+     0.7301826751232148,
+     0.7078435748815537,
+     0.6802537399530411,
+     0.6563040365775427,
+     0.6408952059348424,
+     0.6264823695023854,
+     0.6125854756434759
+    ],
+    "val_loss_history": [
+     0.6371750652790069,
+     0.6230115935206413,
+     0.6166056454181671,
+     0.5938720703125,
+     0.5983421444892884,
+     0.57874626070261,
+     0.5754115469753742,
+     0.5712650924921036
+    ],
+    "stop_reason": "completed",
+    "calibrated_threshold": 0.46
+   },
+   "filter_training": {
+    "best_loss": 0.11532623914646636,
+    "best_val_loss": 0.15552568174280168,
+    "epochs_trained": 8,
+    "early_stopped_epoch": null,
+    "loss_history": [
+     0.19889977721291968,
+     0.1770378288488435,
+     0.1654457537929471,
+     0.1538511701193526,
+     0.1436782559499667,
+     0.13419654906351172,
+     0.124189615534677,
+     0.11532623914646636
+    ],
+    "val_loss_history": [
+     0.17777199718511838,
+     0.16766426852254881,
+     0.1639160528431603,
+     0.1609794835258981,
+     0.16132979181575138,
+     0.1566664466437942,
+     0.15787952792707075,
+     0.15552568174280168
+    ],
+    "stop_reason": "completed",
+    "calibrated_threshold": 0.29
+   },
+   "runtime_seconds": {
+    "data_prepare_seconds": 34856.01989504206,
+    "pretrain_seconds": 1.3583921827375889e-05,
+    "generator_train_seconds": 7144.272992708022,
+    "filter_train_seconds": 2549.1717068749713,
+    "evaluation_seconds": 205.78629516705405
+   }
+  },
+  "propensity": {
+   "generator_training": {
+    "best_loss": 0.4994873863458633,
+    "best_val_loss": 0.4724008418619633,
+    "epochs_trained": 8,
+    "early_stopped_epoch": null,
+    "loss_history": [
+     0.6237405828634898,
+     0.5981920021772384,
+     0.5819724492232005,
+     0.5608975179990132,
+     0.5401366090774536,
+     0.5259284885724386,
+     0.512027944723765,
+     0.4994873863458633
+    ],
+    "val_loss_history": [
+     0.5296267956495285,
+     0.5202298171818256,
+     0.5154039271175861,
+     0.4974503070116043,
+     0.49512613862752913,
+     0.4808602899312973,
+     0.47863670587539675,
+     0.4724008418619633
+    ],
+    "stop_reason": "completed",
+    "calibrated_threshold": 0.31
+   },
+   "filter_training": {
+    "best_loss": 0.11521486973102898,
+    "best_val_loss": 0.15686876800782557,
+    "epochs_trained": 8,
+    "early_stopped_epoch": null,
+    "loss_history": [
+     0.19837392625719352,
+     0.17669670397267453,
+     0.1647763454672997,
+     0.15355726472429326,
+     0.14349412047314417,
+     0.1339147389969136,
+     0.1243250316928683,
+     0.11521486973102898
+    ],
+    "val_loss_history": [
+     0.17787832389840333,
+     0.16797153642773993,
+     0.16601721158003785,
+     0.16001587113269125,
+     0.1626807869412005,
+     0.16117074482199314,
+     0.15686876800782557,
+     0.16221705806697173
+    ],
+    "stop_reason": "completed",
+    "calibrated_threshold": 0.25
+   },
+   "runtime_seconds": {
+    "data_prepare_seconds": 31.67304333401262,
+    "pretrain_seconds": 2.9332994017750025e-05,
+    "generator_train_seconds": 8131.714419458003,
+    "filter_train_seconds": 3094.1232298749965,
+    "evaluation_seconds": 249.38541516597616
+   }
+  }
+ }
+}

@@ -48,8 +48,8 @@ per-firing probabilities are combined by noisy-OR.
 Training is multi-label rule classification with a margin-ranking auxiliary at weight 0.25 and
 margin 0.45. Rules that match the substrate but carry no annotation are down-weighted by half
 rather than treated as negatives, which is what makes the objective positive-unlabelled.
-Optimisation uses Adam at a learning rate of $10^{-4}$ for at most 20 epochs with early
-stopping.
+Optimisation uses Adam at a learning rate of $10^{-4}$ with early stopping: the released
+preset budgets $20$ epochs and the deployed generator trained for $8$.
 
 \subsection{The filter}
 
@@ -68,7 +68,8 @@ be the default, and report the comparison below.
 
 The estimator is selectable: with the non-negative positive-unlabelled risk it consumes logits
 and with binary cross-entropy it consumes probabilities, and the released configuration trains the
-filter under the second. Optimisation uses Adam at a learning rate of $10^{-4}$ for at most 20 epochs
+filter under the second. Optimisation uses Adam at a learning rate of $10^{-4}$ under the same budget, the deployed
+filter having trained for $8$ epochs
 with early stopping at a patience of 7.
 
 \subsection{Choosing between the two filters}

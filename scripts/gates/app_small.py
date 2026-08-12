@@ -688,8 +688,8 @@ def _arch(ctx) -> None:
 
     m = _need(ctx, "arch, the filter's early stopping",
               r"filter under the second\. Optimisation uses Adam at a learning rate of "
-              r"\$10\^\{(-\d+)\}\$ for at most \d+ epochs with early stopping at a patience of "
-              r"(\d+)")
+              r"\$10\^\{(-\d+)\}\$ under the same budget, the deployed\s*filter having trained for "
+              r"\$\d+\$ epochs\s*with early stopping at a patience of (\d+)")
     if m:
         s = _src(ctx, "arch, the optimiser defaults", "grail_metabolism/config.py",
                  r"class OptimConfig:\s*\n\s*lr: float = 1e-0*(\d+)[\s\S]*?patience: int = (\d+)")

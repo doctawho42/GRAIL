@@ -797,13 +797,42 @@ def register_orphans_fixed(ctx) -> None:
         ctx.check("budget, the output-volume ratio", m and m.group(1), ratio,
                   "results/budget_matched_leaderboard.json")
 
-    # the epoch budget is a property of the released preset, so the preset is the artifact
+    # The epoch budget is a property of the released preset and the epochs actually run are a
+    # property of the deployed checkpoints, and the two differ: the appendix said "at most 8",
+    # which is neither the budget nor a number the preset would give anyone re-running it.
     pre = ctx.root / "grail_metabolism/experiments/presets.py"
-    if pre.exists():
+    tr = ctx.art("training_reports.json")
+    if pre.exists() and tr:
         mm = _re.search(r"generator_optim=OptimConfig\(lr=1e-4, epochs=(\d+)", pre.read_text())
-        said = _re.findall(r"Adam at a learning rate of \$10\^\{-4\}\$ for at most (\d+) epochs",
-                           ctx.flat)
-        ctx.checks.append((bool(mm) and len(said) == 2 and all(s == mm.group(1) for s in said),
-                           "arch, the epoch budget both stages state",
-                           mm.group(1) if mm else "?", ", ".join(said) or "not stated",
-                           "grail_metabolism/experiments/presets.py"))
+        m = _re.search(r"the released\s*preset budgets \$(\d+)\$ epochs and the deployed generator "
+                       r"trained for \$(\d+)\$", ctx.flat)
+        ctx.checks.append((bool(m), "arch, the epoch sentence is present", "present",
+                           "matched" if m else "not matched", "results/training_reports.json"))
+        if m and mm:
+            ctx.check("arch, the preset's epoch budget", m.group(1), int(mm.group(1)),
+                      "grail_metabolism/experiments/presets.py")
+            ctx.check("arch, the epochs the deployed generator ran", m.group(2),
+                      tr["runs"]["deployed"]["generator_training"]["epochs_trained"],
+                      "results/training_reports.json")
+        m2 = _re.search(r"the deployed\s*filter having trained for \$(\d+)\$ epochs", ctx.flat)
+        ctx.check("arch, the epochs the deployed filter ran", m2 and m2.group(1),
+                  tr["runs"]["deployed"]["filter_training"]["epochs_trained"],
+                  "results/training_reports.json")
+
+    # the propensity run's loss curve, which lived only under a gitignored artifacts/ directory
+    if tr and "propensity" in tr["runs"]:
+        vh = tr["runs"]["propensity"]["generator_training"]["val_loss_history"]
+        m = _re.search(r"generator trained to completion over eight epochs with validation loss "
+                       r"falling monotonically from\s*\$([\d.]+)\$ to \$([\d.]+)\$", ctx.flat)
+        ctx.checks.append((bool(m), "props, the propensity loss curve is stated", "present",
+                           "matched" if m else "not matched", "results/training_reports.json"))
+        if m:
+            ctx.check("props, the propensity run's first validation loss", m.group(1), vh[0],
+                      "results/training_reports.json")
+            ctx.check("props, its last validation loss", m.group(2), vh[-1],
+                      "results/training_reports.json")
+            ctx.checks.append((len(vh) == 8 and all(b < a for a, b in zip(vh, vh[1:])),
+                               "props, that curve falls monotonically over eight epochs",
+                               "8, monotone", f"{len(vh)}, "
+                               f"{'monotone' if all(b < a for a, b in zip(vh, vh[1:])) else 'not'}",
+                               "results/training_reports.json"))
