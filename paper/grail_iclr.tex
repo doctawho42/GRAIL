@@ -60,9 +60,9 @@ of it was never resolved at all: requiring only a leaderboard's own cell to sepa
 $293$ places to $136$, so $157$ go to a benchmark's own power before any convention is varied
 and $39$ more to the grid. The surviving share runs from none of three to nine tenths, and does not
 replicate between two editions of one shared task on the same language pair, so it is a property of
-a table and its grid rather than of a benchmark. Of what a table did establish, $6$ orderings are reversed by a
-declared choice and survive correction, $5$ of them under a single correction over all $23$ grids
-at once. None of the six is the matching rule's, on any of the $23$
+a table and its grid rather than of a benchmark. Of what a table did establish, $5$ orderings are reversed by a
+declared choice and survive correction, and all five survive a single correction over all $23$ grids
+at once. None of the five is the matching rule's, on any of the $23$
 boards --- a smaller second claim than a paper about matching rules invites, and the one the
 measurements support.
 
@@ -128,8 +128,8 @@ leading methods converge.
   benchmark's own power before any convention is varied and $39$ more to the grid. The matching
   criterion certifies no reversal of an ordering a published cell had separated, on any of the $23$
   boards --- each board's verdict corrected by Holm over the cell-level tests its own grid creates,
-  and $14$ of the $23$ certified reversals surviving one correction over the union of all
-  twenty-three grids; what the criterion does is exchange positions a benchmark never established.
+  and $14$ of the $21$ certified reversals of every kind surviving one correction over the union
+  of all twenty-three grids; what the criterion does is exchange positions a benchmark never established.
 \item \textbf{The arithmetic.} A pair's ordering survives a change of criterion unless the change
   moves the two apart by more than the larger of the margins it connects. That identity is why every
   dominance verdict follows from $n$ scorings per cell with no pairwise statistic, and a resample
@@ -221,6 +221,13 @@ is the intersection of the per-cell orders, so it is transitive and is the fines
 declared choice can contradict; separation is a sub-relation reported apart, an interval condition
 not being transitive.
 
+Written out: fix a set of systems $S$, a set of items, and a grid $C$ of cells. In cell $c$ each
+system has a mean score, and those means induce a total preorder $\prec_c$ on $S$; a published table
+reports $\prec_{c_0}$ for one cell $c_0$ its paper does not name. Write $\prec_{\!*} = \bigcap_{c \in
+C} \prec_c$. A board ranking $n$ systems prints $n$ \emph{places}, the rank slots a reader takes
+away from it, and what $\prec_{\!*}$ still supports is its longest chain: the number of places that
+survive is the length of the longest sequence of systems each of which dominates the next.
+
 \begin{quote}
 \textbf{Proposition 1.} $\prec_{\!*}$ is a strict partial order, and it is the finest relation on
 $S$ that no cell of $C$ can contradict.
@@ -244,43 +251,59 @@ declaring fewer choices. The remedy is to report the curve rather than the point
 axis alone and then their product (Appendix~\ref{app:robustorder}).
 
 \looseness=-2
-A pair that does not dominate has failed in one of two ways that should not be added together. Some
-cell may order the two the other way with an interval excluding zero, a choice deciding against the
-published table; or none may, leaving an ordering that fails on a margin the benchmark cannot
-resolve. Only the first is \emph{contested}, so noise on a tie is not a reversal. All twenty-three run a grid of four
+All twenty-three run a grid of four
 criteria crossed with a second axis their field reports apart and never jointly: the budget a
 table is read at, or whether a docked pose is minimised first, or whether an error score is floored,
 or whether a human score is standardised within the annotator who gave it
 (Appendix~\ref{app:robust}).
 
-\begin{table}[t]
+\begin{figure}[t]
 \centering
 \input{app/share_figure}
-\vspace{2pt}
+\caption{Every leaderboard as one dot at the share of its pairwise orderings that no cell of its own
+declared grid contradicts, from none of three to nine tenths; dot area is proportional to the pairs
+the board carries. The two editions of the translation task are drawn apart because five of their
+language pairs are the same pair scored twice, a year apart, under different protocols.}
+\label{fig:shares}
+\end{figure}
 
+\begin{figure}[t]
+\centering
+\input{app/robust_hasse}
+\caption{What the seven-system retrosynthesis table still supports: the dominance order drawn as its
+transitive reduction. An arrow means the left system beats the right in all sixteen cells of the
+declared grid; systems drawn together are ones the grid does not order, so a reader may not quote
+one above another. The table publishes seven places in a line; three survive.}
+\label{fig:hasse}
+\end{figure}
+
+\begin{table}[t]
+\centering
 \footnotesize
-\begin{tabular}{lccccc}
+\begin{tabular}{lcccccc}
 \toprule
-leaderboard & items & dominate & contested (certified) & unresolved & tiers \\
+leaderboard & places & items & dominate & contested (certified) & unresolved & places supported \\
 \midrule
-retrosynthesis, seven systems & $4{,}999$ & $8$ of $21$ & $9$ (8) & $4$ & $3$ of $7$ \\
-retrosynthesis, three systems & $4{,}982$ & $0$ of $3$ & $2$ (2) & $1$ & $1$ of $3$ \\
-metabolites, three methods    & $1{,}170$ & $2$ of $3$ & $1$ (0) & $0$ & $2$ of $3$ \\
-docking, seven programs       & $428$ & $17$ of $21$ & $2$ (2) & $2$ & $4$ of $7$ \\
-translation, nineteen systems & $486$ & $125$ of $171$ & $17$ (6) & $29$ & $9$ of $19$ \\
-translation, fifteen systems  & $559$ & $96$ of $105$ & $1$ (0) & $8$ & $8$ of $15$ \\
+retrosynthesis, seven systems & $7$ & $4{,}999$ & $8$ of $21$ & $9$ (8) & $4$ & $3$ \\
+retrosynthesis, three systems & $3$ & $4{,}982$ & $0$ of $3$ & $2$ (2) & $1$ & $1$ \\
+metabolites, three methods    & $3$ & $1{,}170$ & $2$ of $3$ & $1$ (0) & $0$ & $2$ \\
+docking, seven programs       & $7$ & $428$ & $17$ of $21$ & $2$ (0) & $2$ & $4$ \\
+translation, nineteen systems & $19$ & $486$ & $125$ of $171$ & $17$ (6) & $29$ & $9$ \\
+translation, fifteen systems  & $15$ & $559$ & $96$ of $105$ & $1$ (0) & $8$ & $8$ \\
 \midrule
-translation, nine further pairs & $634$--$1{,}954$ & 553 of $689$ & 33 (4) & 103 & $62$ of $115$ \\
-translation, the year before & $509$--$1{,}120$ & $804$ of $909$ & $20$ (1) & $85$ & $78$ of $124$ \\
+translation, nine further pairs & $115$ & $634$--$1{,}954$ & 553 of $689$ & 33 (4) & 103 & $62$ \\
+translation, the year before & $124$ & $509$--$1{,}120$ & $804$ of $909$ & $20$ (1) & $85$ & $78$ \\
+\midrule
+all twenty-three & $\mathbf{293}$ & --- & $1{,}605$ of $1{,}922$ & $85$ (21) & $232$ & $\mathbf{167}$ \\
 \bottomrule
 \end{tabular}
-\caption{Above, every leaderboard as one dot at the share of its pairwise orderings no cell of its
-declared grid contradicts, dot area proportional to the pairs it carries; the two editions of the
-translation task are drawn apart because five of their language pairs are the same pair scored twice,
-a year apart, under different protocols. Below, the boards the text discusses one at a time. \emph{Certified} counts the
-contested pairs surviving Holm over the family each grid creates. The seven-system table's surviving
-order, as its transitive reduction, is Figure~\ref{fig:hasse}.}
-\label{tab:robust}\label{fig:shares}
+\caption{What each leaderboard publishes and what survives its own grid. \emph{Places} is the number
+of systems the table ranks; \emph{places supported} is the longest chain of the dominance order, the
+ranks a reader may quote without naming a cell. \emph{Certified} counts the contested pairs
+surviving Holm over the family each grid creates; over all twenty-three grids at once, $14$ of the
+$21$ survive (Appendix~\ref{app:robustorder}). The last row is the paper's title. The seven-system
+table's surviving order, as its transitive reduction, is Figure~\ref{fig:hasse}.}
+\label{tab:robust}
 \end{table}
 
 
@@ -297,8 +320,8 @@ tier of what survives; the one it places second is the only system that is
 (Figure~\ref{fig:hasse}). Docking and translation are controls: docking's field
 published its reversal already \citep{Buttenschoen_2024} and the grid recovers it, while translation's nineteen boards
 contest $71$ pairs of which $11$ survive correction. Not one of the $11$ reverses an ordering its own
-published cell had separated from zero: all six such reversals are the budget's or the
-minimisation axis's, never the matching criterion's (Appendix~\ref{app:robustorder}). A null of
+published cell had separated from zero: all five such reversals are the budget's, never the
+matching criterion's (Appendix~\ref{app:robustorder}). A null of
 that shape has to have a size, and the identity supplies one without another statistic: on the two
 retrosynthesis boards and the metabolite one the matching rule erases at most $0.5755$ of a margin
 the published cell had separated, and the median comparison erases none of it; docking is the
@@ -329,10 +352,12 @@ are \textsc{uni-mol} against programs it outranks on distance alone --- which is
 finding, recovered by an instrument that was not told it.
 
 The verdict is read out of $21$ pairs by $8$ cells, so it is granted inside a family of $168$
-cell-level tests, and it is granted after correcting for them: both reversals are certified,
-surviving Holm at $\alpha=0.05$ over the whole family, the largest at $p=1.4\times10^{-3}$. Two
-exchanges out of $168$ looks is close to what noise alone would produce, which is why the
-uncorrected interval is not the object this control rests on.
+cell-level tests --- and correcting for them takes it back. Neither reversal survives Holm at
+$\alpha=0.05$ over that family: the board scores each item a hit or a miss, so the exact conditional
+test on the discordant items is available and is what these $p$ are, and the smallest reversal
+reaches $1.5\times10^{-3}$ against a threshold of $9.8\times10^{-4}$. Two exchanges out of $168$
+looks is about what noise alone would produce, so what this control establishes is that the grid
+recovers the source's finding as a contested verdict, and that it certifies neither half of it.
 
 What the control shows is not that this board is clean. Of its $21$ pairs, $17$ dominate, $2$ are
 contested and $2$ the grid leaves unresolved --- and one of those two is the board's own top pair,
@@ -368,14 +393,12 @@ scorable pose is a miss and not an absent observation, since dropping those rows
 program on the subset it managed to produce output for. The crystal ligand ships as an eighth row,
 is the reference re-scored through the same pipeline rather than a method, and is excluded.
 
-\paragraph{Which axis certifies a reversal, which is not the one the paper is named after.} Six
-of the twenty-three certified reversals reverse an ordering the published cell had separated; the
-other seventeen reverse pairs the table never established, which is the first claim reached by a
-second route. Naming the axis of those six matters more than naming their domain. Five are
+\paragraph{Which axis certifies a reversal, which is not the one the paper is named after.} Five
+of the twenty-one certified reversals reverse an ordering the published cell had separated; the
+other sixteen reverse pairs the table never established, which is the first claim reached by a
+second route. Naming the axis of those five matters more than naming their domain. All five are
 retrosynthesis pairs, and every one of them reverses at top-3 and top-5 under the \emph{published}
-criterion: the budget moves them and the matching rule does not. The sixth is
-\textsc{deepdock} against \textsc{uni-mol} on the docking board, and it reverses only in the two
-minimised cells --- the axis this appendix already says does not leave the prediction alone. So the
+criterion: the budget moves them and the matching rule does not. So the
 matching criterion certifies no reversal of a separated ordering anywhere in this paper. That is a
 smaller second claim than a reader might expect from a paper about matching rules, and it is the one
 the measurements support: what the criterion does is exchange positions a benchmark never separated,
@@ -433,7 +456,7 @@ largest group, seven systems on their $4{,}999$ common reactions change places a
 predictions that never move: five of twenty-one pairs exchange, and disregarding stereochemistry
 takes the fourth-placed system to first. An exchange describes the data; the claim is the
 interaction, corrected across the largest family declared in this work, the grid the two axes admit.
-Of its $448$ testable cells, $233$ have intervals excluding zero and $114$ survive Holm at $0.05$,
+Of its $448$ testable cells, $233$ have intervals excluding zero and $110$ survive Holm at $0.05$,
 concentrated at top-1, the number this field leads with (Appendix~\ref{app:xdomain}).
 
 \looseness=-1

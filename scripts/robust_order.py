@@ -65,7 +65,7 @@ ALPHA = 0.05
 
 
 def _paired_p(d) -> float:
-    """Two-sided p for a paired mean, from the normal approximation to its sampling distribution.
+    """Two-sided p for a paired comparison: exact where the data are hits, normal where they are not.
 
     Not from the bootstrap draws. A resampled tail cannot resolve past $1/B$, so a bootstrap p is
     floored there, and Holm over a family of $m$ tests compares against $\\alpha/m$: once
@@ -73,9 +73,36 @@ def _paired_p(d) -> float:
     correction, and a board with many pairs would report a null that is a property of the resample
     count and not of the data. The floor was in place when this was written and did exactly that on
     a $1368$-test family. The intervals stay bootstrap; only the $p$ used for multiplicity is
-    analytic, and the two agree on every family small enough for the floor not to bind.
+    analytic.
+
+    Where a board scores each item $0$ or $1$ --- every chemistry and docking board here --- the
+    paired difference takes three values and its mean is a difference of proportions on matched
+    items, for which the exact conditional test is the sign test on the discordant pairs. That
+    matters at these thresholds and not elsewhere: Holm is comparing against $10^{-6}$ to
+    $10^{-3}$, which is precisely the tail where a normal approximation to a mean of few discordant
+    items is least reliable, and it errs low. On the docking board the exact $p$ runs $1.3$ to
+    $1.6$ times the approximate one, enough to move three tests across that board's own cutoff. So
+    the exact test is used wherever the data admit it, and the approximation only where the scores
+    are continuous and no exact conditional test is available.
     """
+    d = np.asarray(d, dtype=float)
     n = len(d)
+    if n == 0:
+        return 1.0
+    if np.all(np.isin(d, (-1.0, 0.0, 1.0))):
+        pos = int((d > 0).sum())
+        neg = int((d < 0).sum())
+        k = pos + neg
+        if k == 0:
+            return 1.0
+        # Two-sided exact binomial at p=1/2, summed in log space: a board with thousands of
+        # discordant items overflows the direct form, since 2**k leaves the float range at k=1024.
+        lo = min(pos, neg)
+        log2 = math.log(2.0)
+        tail = math.fsum(math.exp(math.lgamma(k + 1) - math.lgamma(i + 1)
+                                  - math.lgamma(k - i + 1) - k * log2)
+                         for i in range(lo + 1))
+        return float(min(1.0, 2.0 * tail))
     se = float(np.std(d, ddof=1)) / np.sqrt(n)
     if se == 0.0:
         return 1.0

@@ -168,29 +168,24 @@ of which $1$ survive correction, and $124$ published places support $78$.
 within each grid, which controls the error rate of a claim about \emph{that} leaderboard and not of
 the claim this paper makes. The honest family is the union of the grids: $15{,}592$ cell-level
 tests. Re-applying the same procedure to the concatenated $p$-vectors --- no board re-analysed, no
-prediction re-scored --- rejects $8{,}314$ of them at a cutoff of $p=6.9\times10^{-6}$, and the
-count of certified pairs falls from $23$ to $14$. Splitting $\alpha$ across the boards instead, at
-$\alpha/23$ within each grid, gives $14$ as well. The population the second claim is about survives
-almost intact: of the $6$ certified reversals of an ordering a published cell had separated, $5$
-remain, and the matching rule certifies none under any of the three corrections. That is checked
-under each rather than inferred from the others: the three are not nested. Splitting $\alpha$ across
+prediction re-scored --- rejects $8{,}313$ of them at a cutoff of $p=6.9\times10^{-6}$, and the
+count of certified pairs falls from $21$ to $14$. Splitting $\alpha$ across the boards instead, at
+$\alpha/23$ within each grid, gives $14$ as well. What the second claim is about does not move at
+all: all $5$ certified reversals of an ordering a published cell had separated survive every one of
+the three, and the matching rule certifies none under any of them. That is checked under each
+rather than inferred from the others, because the three are not nested: splitting $\alpha$ across
 the boards and pooling their grids into one family weight a board by different things --- its own
 size against the total --- and on sixteen of the twenty-three the union is the more permissive of
-the two stricter readings. The one that goes is the docking pair, \textsc{deepdock}
-against \textsc{uni-mol}, so under the strictest of the three every certified reversal of an
-ordering a benchmark had established is the output budget's.
+the two stricter readings.
 
-What the union costs is concentrated rather than spread: the docking board's two go, the
-nineteen-system translation board keeps $2$ of $6$, two more go on \textsc{en-hi} and one on
-\textsc{zho-eng}, and the retrosynthesis boards keep all ten. Those four boards are the whole fall
-of nine. Two things about it are worth stating rather than leaving to be inferred. What removes them is the size of the family and
-nothing subtler: every threshold tightens by roughly the factor the family grew by, and each lost
-reversal misses its own rank threshold outright. A step-down procedure can additionally lose a
-small-$p$ test to an earlier failure, and on this vector it does not --- no test beyond the cutoff
-would have passed its own threshold --- so the losses cannot be charged to the stopping rule. And the board whose reversal the field had already published in its own
-paper \citep{Buttenschoen_2024} is one of the three that lose every certified reversal they had,
-which is the price of a correction that does not ask where a test came from: the reversal is in the
-literature, and the union does not know that.
+What the union costs is concentrated rather than spread: the nineteen-system translation board
+keeps $2$ of $6$, two more go on \textsc{en-hi} and one on \textsc{zho-eng}, and the retrosynthesis
+boards keep all ten. Those three boards are the whole fall of seven, and every pair that goes is the
+reversal of an ordering its own board had never established. What removes them is the size of the
+family and nothing subtler: every threshold tightens by roughly the factor the family grew by, and
+each lost reversal misses its own rank threshold outright. A step-down procedure can additionally
+lose a small-$p$ test to an earlier failure, and on this vector it does not --- no test beyond the
+cutoff would have passed its own threshold --- so the losses cannot be charged to the stopping rule.
 
 \paragraph{The task's own answer to the same question.} A count no one else computes is a count no
 one else can check, and the objection that the instrument is idiosyncratic is answered by the one
@@ -259,12 +254,12 @@ pairs the benchmark never separated, which is this paper's first claim and is me
 
 Docking is the exception, and is reported as one. There the criterion axis does erase a margin the
 published cell had separated and then some --- \textsc{deepdock} over \textsc{unimol}, $2.8357$ of
-it, at the published post-processing --- but that reversal does not survive the board's own family of
-$168$ tests, at $p=0.042$ against a threshold of $1.4\times10^{-3}$, so nothing is certified from it.
-Of the two reversals that are certified on that board, the one whose ordering the published cell had
-separated needs the minimisation axis; the other is the criterion's alone and reverses a pair the
-board never established, which is the distinction the whole decomposition rests on. The one field
-that published its own reversal is where one would expect the axis to bite.
+it, at the published post-processing --- so on that board the matching rule is capable of the
+reversal the null denies elsewhere. What it is not capable of is surviving the family it was read
+in: that test reaches $p=0.053$ against the board's threshold of $9.8\times10^{-4}$, and no reversal
+on that board survives, which is why its certified column reads zero. The one field that published
+its own reversal is where one would expect the axis to bite, and it bites hard enough to move an
+established margin and not hard enough to be certified.
 
 \paragraph{What the share does not measure.} It is not an error rate and no cell is privileged.
 The instrument takes the grid as declared and says what part of a published ordering is invariant
@@ -272,14 +267,5 @@ to it; whether a given cell is one a field would defend is a question about the 
 the text and not settled by the instrument. Nor is the interval on a share a statement about the
 grid: it resamples items with the grid held fixed, so it reports how much of the share is the
 sample. The grid's contribution is what Proposition 2 and the curve below report.
-
-\begin{figure}[h]
-\centering
-\input{app/robust_hasse}
-\caption{The seven-system retrosynthesis table's surviving order, as the transitive reduction of the
-dominance relation. An arrow means the left system beats the right in all sixteen cells; systems
-drawn together are ones the grid does not order.}
-\label{fig:hasse}
-\end{figure}
 
 \input{app/robust_tables}

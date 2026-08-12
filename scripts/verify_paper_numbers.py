@@ -539,7 +539,7 @@ def main() -> int:
         _mt = re.search(r"translation's (\w+) boards contest \$(\d+)\$ pairs of which \$(\d+)\$ "
                         r"survive correction\. Not one of the \$(\d+)\$ reverses an ordering its own "
                         r"published cell had separated from zero: all (\w+) such reversals are "
-                        r"the budget's or the", flat)
+                        r"the budget's, never the", flat)
         checks.append((bool(_mt), "the translation-subject sentence parses", "present",
                        "matched" if _mt else "not matched", ""))
         if _mt and _tb:
@@ -554,16 +554,27 @@ def main() -> int:
                         if b["pairs"][pr].get("resolved_in_the_published_cell"))
             checks.append((_tres == 0, "no translation certification reverses a resolved ordering",
                            "0", str(_tres), src))
-            checks.append((_mt.group(5) == "six", "the sentence names the six", "six",
+            _wordn = {"three": 3, "four": 4, "five": 5, "six": 6, "seven": 7}
+            checks.append((_wordn.get(_mt.group(5), -1) == _res,
+                           "the sentence names as many as there are", str(_res),
                            _mt.group(5), src))
 
         # the qualifier moved into the translation sentence, so what is held now is the pair of
         # totals it rests on: how many certifications there are and how many reverse a resolved
         # ordering, wherever the prose puts them
+        _wordnum = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7,
+                    "eight": 8, "nine": 9}
         checks.append((_cert > 0, "there are certified reversals to qualify", "at least one",
                        str(_cert), "results/robust_order_*.json"))
-        checks.append((_res == 6, "six certifications reverse a resolved ordering", "6",
-                       str(_res), "results/robust_order_*.json"))
+        checks.append((_cert == 21, "the certified total the body quotes", "21", str(_cert),
+                       "results/robust_order_*.json"))
+        # how many certifications reverse an ordering the published cell had established is a
+        # number the prose quotes in three places, so it is computed here and each printing is
+        # held against it rather than against a literal
+        _mres = re.findall(r"(\w+)\s*of the twenty-one certified reversals reverse an ordering", flat)
+        checks.append((bool(_mres) and all(_wordnum.get(x.lower(), -1) == _res for x in _mres),
+                       "the body's count of certifications of a separated ordering", str(_res),
+                       ", ".join(_mres) or "not stated", "results/robust_order_*.json"))
 
     # 10d-m. The MQM boards' orientation. The published cell must be the aggregation the task
     # actually ranks by, and the check of that must not recompute the board's own quantity: it did,
@@ -914,42 +925,76 @@ def main() -> int:
             _bs = [_BD[k] for k in _keys if k in _BD]
             if not _bs:
                 continue
-            _row = re.search(re.escape(_label) + r"\s*&\s*\$?([\d,{}]+)\$?(?:--\$([\d,{}]+)\$)?"
-                             r"\s*&\s*\$?(\d+)\$? of \$([\d,{}]+)\$\s*&\s*\$?(\d+)\$? "
-                             r"\((\d+)\)\s*&\s*\$?(\d+)\$?\s*&\s*\$(\d+)\$ of \$(\d+)\$",
-                             flat)
+            # places | items (or a range) | dominate of pairs | contested (certified) |
+            # unresolved | places supported
+            _row = re.search(re.escape(_label) + r"\s*&\s*\$(\d+)\$\s*&\s*\$?([\d,{}]+)\$?"
+                             r"(?:--\$([\d,{}]+)\$)?\s*&\s*\$?(\d+)\$? of \$([\d,{}]+)\$"
+                             r"\s*&\s*\$?(\d+)\$? \((\d+)\)\s*&\s*\$?(\d+)\$?\s*&\s*"
+                             r"\$(\d+)\$", flat)
             checks.append((bool(_row), f"table 1, the row for {_label}", "present",
                            "matched" if _row else "not matched", "results/robust_order_*.json"))
             if not _row:
                 continue
             _seen += 1
             _g = [x.replace("{,}", "") if x else x for x in _row.groups()]
+            check(f"table 1, {_label}, places", _g[0], sum(b["n_systems"] for b in _bs),
+                  "results/robust_order_*.json")
             if len(_bs) == 1:
-                check(f"table 1, {_label}, items", _g[0], _bs[0]["n_items"],
+                check(f"table 1, {_label}, items", _g[1], _bs[0]["n_items"],
                       "results/robust_order_*.json")
             else:  # an aggregated row gives the range of item counts across its boards
                 _it = [b["n_items"] for b in _bs]
-                check(f"table 1, {_label}, smallest board", _g[0], min(_it),
+                check(f"table 1, {_label}, smallest board", _g[1], min(_it),
                       "results/robust_order_*.json")
-                check(f"table 1, {_label}, largest board", _g[1], max(_it),
+                check(f"table 1, {_label}, largest board", _g[2], max(_it),
                       "results/robust_order_*.json")
-            check(f"table 1, {_label}, dominating", _g[2],
+            check(f"table 1, {_label}, dominating", _g[3],
                   sum(b["n_dominating"] for b in _bs), "results/robust_order_*.json")
-            check(f"table 1, {_label}, pairs", _g[3], sum(b["n_pairs"] for b in _bs),
+            check(f"table 1, {_label}, pairs", _g[4], sum(b["n_pairs"] for b in _bs),
                   "results/robust_order_*.json")
-            check(f"table 1, {_label}, contested", _g[4], sum(b["n_contested"] for b in _bs),
+            check(f"table 1, {_label}, contested", _g[5], sum(b["n_contested"] for b in _bs),
                   "results/robust_order_*.json")
-            check(f"table 1, {_label}, certified", _g[5],
+            check(f"table 1, {_label}, certified", _g[6],
                   sum(b["n_contested_after_correction"] for b in _bs),
                   "results/robust_order_*.json")
-            check(f"table 1, {_label}, unresolved", _g[6], sum(b["n_unresolved"] for b in _bs),
+            check(f"table 1, {_label}, unresolved", _g[7], sum(b["n_unresolved"] for b in _bs),
                   "results/robust_order_*.json")
-            check(f"table 1, {_label}, tiers", _g[7],
+            check(f"table 1, {_label}, supported", _g[8],
                   sum(b["tiers_distinguished"] for b in _bs), "results/robust_order_*.json")
-            check(f"table 1, {_label}, places", _g[8], sum(b["n_systems"] for b in _bs),
-                  "results/robust_order_*.json")
+        # the caption quotes the union count beside the per-board one, and both are the artifact's
+        _cap = re.search(r"over all twenty-three grids at once, \$(\d+)\$ of the\s*\$(\d+)\$ survive",
+                         flat)
+        _unj = ROOT / "results/union_multiplicity.json"
+        if _cap and _unj.exists():
+            _UNC = json.loads(_unj.read_text())["certified_pairs"]
+            check("table 1 caption, surviving the union", _cap.group(1), _UNC["union"],
+                  "results/union_multiplicity.json")
+            check("table 1 caption, certified per board", _cap.group(2), _UNC["per_board"],
+                  "results/union_multiplicity.json")
+        else:
+            checks.append((False, "table 1 caption, the union sentence", "present",
+                           "not matched", "results/union_multiplicity.json"))
         checks.append((_seen == len(_ROWS), "table 1, every row is bound", str(len(_ROWS)),
                        str(_seen), "results/robust_order_*.json"))
+        # the totals row is the paper's title, so it is held to the sum over every board and not
+        # to the sum of the rows above it
+        _all = list(_BD.values())
+        _tot = re.search(r"all twenty-three & \$\\mathbf\{(\d+)\}\$ & --- & \$([\d,{}]+)\$ of "
+                         r"\$([\d,{}]+)\$ & \$(\d+)\$ \((\d+)\) & \$(\d+)\$ & "
+                         r"\$\\mathbf\{(\d+)\}\$", flat)
+        checks.append((bool(_tot), "table 1, the totals row is present", "present",
+                       "matched" if _tot else "not matched", "results/robust_order_*.json"))
+        if _tot:
+            for _i, (_lab, _val) in enumerate((
+                    ("places", sum(b["n_systems"] for b in _all)),
+                    ("dominating", sum(b["n_dominating"] for b in _all)),
+                    ("pairs", sum(b["n_pairs"] for b in _all)),
+                    ("contested", sum(b["n_contested"] for b in _all)),
+                    ("certified", sum(b["n_contested_after_correction"] for b in _all)),
+                    ("unresolved", sum(b["n_unresolved"] for b in _all)),
+                    ("supported", sum(b["tiers_distinguished"] for b in _all)))):
+                check(f"table 1, totals, {_lab}", _tot.group(_i + 1).replace("{,}", ""), _val,
+                      "results/robust_order_*.json")
 
     # 10c-4. The two figures the body repeats most often: how many leaderboards there are, and
     # the level every correction is taken at. Both are constants, which is exactly why nothing was
@@ -1044,13 +1089,16 @@ def main() -> int:
                   "results/union_multiplicity.json")
         # the abstract and the contributions quote the same two numbers; both are bound here, so
         # a correction that moves cannot be corrected in the appendix alone
-        m2 = re.search(r"survive correction, \$(\d+)\$ of them under a single correction over all "
+        m2 = re.search(r"survive correction, and all (\w+) survive a single correction over all "
                        r"\$23\$ grids", flat)
-        check("union, the abstract's surviving separated reversals", m2 and m2.group(1),
-              UN["certified_pairs_the_published_cell_had_separated"]["union"],
-              "results/union_multiplicity.json")
-        m2 = re.search(r"and \$(\d+)\$ of the \$(\d+)\$ certified reversals surviving one "
-                       r"correction over the union", flat)
+        _w5 = {"three": 3, "four": 4, "five": 5, "six": 6, "seven": 7}
+        checks.append((bool(m2) and _w5.get(m2.group(1), -1)
+                       == UN["certified_pairs_the_published_cell_had_separated"]["union"],
+                       "the abstract's surviving separated reversals",
+                       str(UN["certified_pairs_the_published_cell_had_separated"]["union"]),
+                       m2.group(1) if m2 else "not stated", "results/union_multiplicity.json"))
+        m2 = re.search(r"and \$(\d+)\$ of the \$(\d+)\$ certified reversals of every kind surviving "
+                       r"one correction over the union", flat)
         checks.append((bool(m2), "the contribution states the union correction", "present",
                        "matched" if m2 else "not matched", ""))
         if m2:
@@ -1061,16 +1109,19 @@ def main() -> int:
         m = re.search(r"at\s*\$\\alpha/23\$ within each grid, gives \$(\d+)\$", flat)
         check("union, the alpha split", m and m.group(1), UN["certified_pairs"]["alpha_split"],
               "results/union_multiplicity.json")
-        m = re.search(r"of the \$(\d+)\$ certified reversals of an ordering a published cell had "
-                      r"separated, \$(\d+)\$\s*remain", flat)
+        m = re.search(r"all \$(\d+)\$ certified reversals of an ordering a published cell had "
+                      r"separated survive every one of\s*the three", flat)
         checks.append((bool(m), "the separated-ordering survival parses", "present",
                        "matched" if m else "not matched", ""))
         if m:
             S = UN["certified_pairs_the_published_cell_had_separated"]
-            check("union, separated before", m.group(1), S["per_board"],
+            check("union, separated reversals", m.group(1), S["per_board"],
                   "results/union_multiplicity.json")
-            check("union, separated after", m.group(2), S["union"],
-                  "results/union_multiplicity.json")
+            checks.append((S["per_board"] == S["alpha_split"] == S["union"],
+                           "they survive all three corrections",
+                           f"{S['per_board']} throughout",
+                           f"{S['per_board']}, {S['alpha_split']}, {S['union']}",
+                           "results/union_multiplicity.json"))
         # the sentence naming which boards pay, against the per-board table
         PBU = UN["per_board"]
         m = re.search(r"the nineteen-system translation board keeps \$(\d+)\$ of \$(\d+)\$, two more "
@@ -1094,22 +1145,16 @@ def main() -> int:
                            m.group(3), f"{_r} of {_r0}", "results/union_multiplicity.json"))
         # the paragraph names which of the six goes, so the naming is held to the board, not to
         # the total: the docking board must be the only one losing a separated-ordering reversal
-        _lost = {k: v for k, v in PBU.items()
-                 if v["separated_pairs_per_board"] > v["separated_pairs_union"]}
-        checks.append((set(_lost) == {"robust_order_posebusters"},
-                       "the reversal the union removes is the docking one",
-                       "robust_order_posebusters", ", ".join(sorted(_lost)) or "none",
-                       "results/union_multiplicity.json"))
         _survivors = {k for k, v in PBU.items() if v["separated_pairs_union"]}
         checks.append((_survivors == {"robust_order:cluster0", "robust_order:cluster1"},
-                       "what survives it is retrosynthesis, which is the budget axis",
+                       "what survives every correction is retrosynthesis, the budget axis",
                        "the two retrosynthesis boards", ", ".join(sorted(_survivors)) or "none",
                        "results/union_multiplicity.json"))
         # the enumeration is meant to be exhaustive, so the boards it names must account for the
         # whole fall; a sentence that lists some of the losses reads as if it listed them all
         _named_loss = sum(PBU[k]["pairs_per_board"] - PBU[k]["pairs_union"]
-                          for k in ("robust_order_posebusters", "robust_order_wmt24_en-de",
-                                    "robust_order_wmt24_esa:en-hi", "robust_order_wmt23:zho-eng")
+                          for k in ("robust_order_wmt24_en-de", "robust_order_wmt24_esa:en-hi",
+                                    "robust_order_wmt23:zho-eng")
                           if k in PBU)
         _all_loss = UN["certified_pairs"]["per_board"] - UN["certified_pairs"]["union"]
         checks.append((_named_loss == _all_loss,
@@ -1130,24 +1175,22 @@ def main() -> int:
         checks.append((_late == 0 and "would have passed its own threshold" in flat,
                        "the stopping rule is said to have cost nothing, and did", "0",
                        str(_late), "results/union_multiplicity.json"))
-        m2 = re.search(r"Those four boards are the whole fall\s*of (\w+)", flat)
+        m2 = re.search(r"Those three boards are the whole fall\s*of (\w+)", flat)
         _w2 = {"six": 6, "seven": 7, "eight": 8, "nine": 9, "ten": 10, "eleven": 11}
         checks.append((bool(m2) and _w2.get(m2.group(1), -1) == _all_loss,
                        "the size of the fall the paragraph names",
                        str(_all_loss), m2.group(1) if m2 else "not stated",
                        "results/union_multiplicity.json"))
-        _lose_all = [k for k, v in PBU.items() if v["pairs_per_board"] and not v["pairs_union"]]
-        _num = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7,
-                "eight": 8, "nine": 9, "ten": 10, "eleven": 11}
-        m3 = re.search(r"is one of the (\w+) that lose every certified reversal they had", flat)
-        checks.append((bool(m3) and _num.get(m3.group(1), -1) == len(_lose_all),
-                       "how many boards lose everything", str(len(_lose_all)),
-                       m3.group(1) if m3 else "not stated", "results/union_multiplicity.json"))
-        checks.append((PBU["robust_order_posebusters"]["pairs_union"] == 0
-                       and PBU["robust_order_posebusters"]["pairs_per_board"] == 2,
-                       "union, the docking board's two go", "2 to 0",
-                       f"{PBU['robust_order_posebusters']['pairs_per_board']} to "
-                       f"{PBU['robust_order_posebusters']['pairs_union']}",
+        # every pair the union removes is a reversal of something the board never established,
+        # which is what lets the second claim stand unchanged under all three corrections
+        _lost_sep = sum(v["separated_pairs_per_board"] - v["separated_pairs_union"]
+                        for v in PBU.values())
+        checks.append((_lost_sep == 0 and "never established" in flat,
+                       "nothing the union removes was an established ordering", "0",
+                       str(_lost_sep), "results/union_multiplicity.json"))
+        checks.append((PBU["robust_order_posebusters"]["pairs_per_board"] == 0,
+                       "the docking board certifies nothing before the union is reached", "0",
+                       str(PBU["robust_order_posebusters"]["pairs_per_board"]),
                        "results/union_multiplicity.json"))
 
     # 10c-10. The shared task's own clustering, which is the external check on the tier count.
@@ -1244,24 +1287,21 @@ def main() -> int:
         check("power, the docking flip", m and m.group(1),
               PB["robust_order_posebusters"]["closest_pair"]["ratio"],
               "results/criterion_power.json")
-        # the reason the flip certifies nothing is the board's own correction, not an interval
-        # whose endpoint sits at exactly zero and moves with the seed
+        # the reason the flip certifies nothing is the board's own correction, and after the test
+        # changed nothing on that board is certified at all -- which the paragraph has to say
         _pbj = json.loads((ROOT / "results/robust_order_posebusters.json").read_text())
         _pt = {r["cell"]: r["p"] for r in _pbj["multiplicity"]["reversal_tests"]
                if r["pair"] == PB["robust_order_posebusters"]["closest_pair"]["pair"]}
         _pub_cell = _pbj["published_cell"]
-        m = re.search(r"does not survive the board's own family of\s*\$(\d+)\$ tests, at "
-                      r"\$p=([\d.]+)\$ against a threshold of \$([\d.]+)\\times10\^\{-(\d+)\}\$",
-                      flat)
+        m = re.search(r"that test reaches \$p=([\d.]+)\$ against the board's threshold of "
+                      r"\$([\d.]+)\\times10\^\{-(\d+)\}\$", flat)
         checks.append((bool(m), "the docking exception's reason parses", "present",
                        "matched" if m else "not matched", ""))
         if m:
-            check("docking exception, the family", m.group(1),
-                  _pbj["multiplicity"]["family_size"], "results/robust_order_posebusters.json")
             import ast as _a3
             _cc = str((PB["robust_order_posebusters"]["closest_pair"]["criterion"],
                        _a3.literal_eval(_pub_cell)[1]))
-            check("docking exception, the p of the flip", m.group(2), _pt.get(_cc),
+            check("docking exception, the p of the flip", m.group(1), _pt.get(_cc),
                   "results/robust_order_posebusters.json")
             import importlib.util as _iu2
             _sp2 = _iu2.spec_from_file_location("_um2", ROOT / "scripts/union_multiplicity.py")
@@ -1269,40 +1309,14 @@ def main() -> int:
             sys.modules["_um2"] = _um2
             _sp2.loader.exec_module(_um2)
             _thr = _um2.cutoff(_pbj["multiplicity"]["p_values"], 0.05)
-            check("docking exception, the threshold",
-                  float(m.group(3)) * 10 ** (-int(m.group(4))), _thr,
-                  "results/robust_order_posebusters.json")
-        # the paragraph's two claims about that flip, against the board rather than against prose
-        _pb = json.loads((ROOT / "results/robust_order_posebusters.json").read_text())
-        _flip = PB["robust_order_posebusters"]["closest_pair"]["pair"]
-        _cells = _pb["pairs"][_flip]["cells_that_reverse_it_with_an_interval"]
-        _pubcell = _pb["published_cell"]
-        checks.append((all(_pubcell.split(", ")[1] not in c for c in _cells),
-                       "the docking flip is not certified at the published post-processing",
-                       "no interval at the published setting",
-                       "; ".join(_cells) or "none", "results/robust_order_posebusters.json"))
-        import ast as _a
-        # the two certified reversals on that board are not the same kind, and the paragraph says
-        # so: one is of an ordering the published cell separated and needs the other axis, the
-        # other is the criterion's alone and is of a pair the board never established
-        _sep_cert, _uns_cert = [], []
-        for nm in _pb["contested_after_correction"]:
-            _cells = [_a.literal_eval(c)
-                      for c in _pb["pairs"][nm]["cells_that_reverse_it_with_an_interval"]]
-            (_sep_cert if _pb["pairs"][nm]["per_cell"][_pubcell]["separated"]
-             else _uns_cert).append((nm, _cells))
-        _pub_second = _a.literal_eval(_pubcell)[1]
-        checks.append((len(_sep_cert) == 1 and all(c[1] != _pub_second for _, cs in _sep_cert
-                                                   for c in cs),
-                       "the certified reversal of a separated ordering needs the other axis",
-                       "one, and never at the published setting",
-                       str([(nm, cs) for nm, cs in _sep_cert]),
-                       "results/robust_order_posebusters.json"))
-        checks.append((len(_uns_cert) == 1 and any(c[1] == _pub_second for _, cs in _uns_cert
-                                                   for c in cs),
-                       "the other certified reversal is the criterion's alone",
-                       "one, at the published setting",
-                       str([(nm, cs) for nm, cs in _uns_cert]),
+            _saidthr = float(m.group(2)) * 10 ** (-int(m.group(3)))
+            checks.append((abs(_saidthr - _thr) <= 0.05 * _thr, "docking exception, the threshold",
+                           f"{_saidthr:.3g}", f"{_thr:.3g}",
+                           "results/robust_order_posebusters.json"))
+        checks.append((_pbj["n_contested_after_correction"] == 0
+                       and "no reversal on that board survives" in flat,
+                       "the docking board certifies nothing, and the paragraph says so", "0",
+                       str(_pbj["n_contested_after_correction"]),
                        "results/robust_order_posebusters.json"))
 
     # 10d-e. The nine ESA boards, whose totals the appendix states in prose. They are the paper's
@@ -1421,7 +1435,7 @@ def main() -> int:
         checks.append((bool(_m_abs) and int(_m_abs.group(1)) == _sep,
                        "the abstract prints the certified-reversal count",
                        str(_sep), _m_abs.group(1) if _m_abs else "not found", "the manuscript"))
-        checks.append((_sep == 6, "six certified reversals are of a separated ordering", "6",
+        checks.append((_sep == 5, "five certified reversals are of a separated ordering", "5",
                        str(_sep), "results/robust_order_*.json"))
 
     # 10d-w23. The previous edition's boards are a reconstruction, not the published cell, and the
@@ -2852,16 +2866,18 @@ def main() -> int:
                            f"{S['predicted count']['f1']:.4f}", src))
 
     # 10c-p. The docking control's reversals, after correcting for the family they were read in.
-    # The control is the paper's answer to "your instrument finds nothing everywhere", so the two
-    # exchanges it recovers have to survive the multiplicity the grid creates, not just an interval.
+    # The control is the paper's answer to "your instrument finds nothing everywhere", and what it
+    # establishes changed when the test did: on hit data the exact conditional test is available,
+    # and under it neither reversal survives the board's own family.
     dm = ROOT / "results/docking_multiplicity.json"
     if dm.exists():
         DM = json.loads(dm.read_text())
         flat = re.sub(r"\s+", " ", whole)
         md = re.search(r"read out of \$(\d+)\$ pairs by \$(\d+)\$ cells, so it is granted inside a "
-                       r"family of \$(\d+)\$ cell-level tests.*?both reversals are certified, "
-                       r"surviving Holm at \$\\alpha=0\.05\$ over the whole family, the largest at "
-                       r"\$p=([\d.]+)\\times10\^\{-(\d+)\}\$", flat)
+                       r"family of \$(\d+)\$\s*cell-level tests --- and correcting for them takes it "
+                       r"back\. Neither reversal survives Holm.*?the smallest reversal\s*reaches "
+                       r"\$([\d.]+)\\times10\^\{-(\d+)\}\$ against a threshold of "
+                       r"\$([\d.]+)\\times10\^\{-(\d+)\}\$", flat)
         checks.append((bool(md), "the docking multiplicity sentence parses", "present",
                        "matched" if md else "not matched", ""))
         if md:
@@ -2869,13 +2885,25 @@ def main() -> int:
             check("docking family, pairs", md.group(1), DM["config"]["n_pairs"], src)
             check("docking family, cells", md.group(2), DM["config"]["n_cells"], src)
             check("docking family, size", md.group(3), DM["family_size"], src)
-            worst = max(r["p"] for r in DM["surviving_reversals"])
-            check("docking, largest surviving p", float(md.group(4)) * 10 ** -int(md.group(5)),
-                  round(worst, 5), src)
-            checks.append((DM["every_contested_pair_survives"],
-                           "every contested docking pair survives the correction", "all survive",
-                           f"{DM['pairs_still_contested']} of "
-                           f"{DM['pairs_contested_before_correction']}", src))
+            checks.append((DM["n_surviving_reversals"] == 0,
+                           "no docking reversal survives the board's own correction", "0",
+                           str(DM["n_surviving_reversals"]), src))
+            _pbj2 = json.loads((ROOT / "results/robust_order_posebusters.json").read_text())
+            _small = min(r["p"] for r in _pbj2["multiplicity"]["reversal_tests"])
+            _said = float(md.group(4)) * 10 ** (-int(md.group(5)))
+            checks.append((abs(_said - _small) <= 0.05 * _small,
+                           "docking, the smallest reversal p", f"{_said:.3g}", f"{_small:.3g}",
+                           src))
+            import importlib.util as _iu4
+            _sp4 = _iu4.spec_from_file_location("_um4", ROOT / "scripts/union_multiplicity.py")
+            _um4 = _iu4.module_from_spec(_sp4)
+            sys.modules["_um4"] = _um4
+            _sp4.loader.exec_module(_um4)
+            _cut4 = _um4.cutoff(_pbj2["multiplicity"]["p_values"], 0.05)
+            _saidt = float(md.group(6)) * 10 ** (-int(md.group(7)))
+            checks.append((abs(_saidt - _cut4) <= 0.05 * _cut4,
+                           "docking, the threshold it misses", f"{_saidt:.3g}", f"{_cut4:.3g}",
+                           src))
 
     # 10c-q. The robust order. The share of a leaderboard's pairwise claims that survive every cell
     # of the declared grid is the paper's answer to seven rounds of "no new metric", so every figure
@@ -2892,8 +2920,9 @@ def main() -> int:
         RP = json.loads(rp.read_text())
         RWE, RWJ = json.loads(rwe.read_text()), json.loads(rwj.read_text())
         flat = re.sub(r"\s+", " ", whole)
-        row = (r"& \$([\d,{}]+)\$ & \$(\d+)\$ of \$(\d+)\$ & \$(\d+)\$ \((\d+)\) & "
-               r"\$(\d+)\$ & \$(\d+)\$ of \$(\d+)\$")
+        # places | items | dominate of pairs | contested (certified) | unresolved | supported
+        row = (r"& \$(\d+)\$ & \$([\d,{}]+)\$ & \$(\d+)\$ of \$(\d+)\$ & \$(\d+)\$ \((\d+)\) & "
+               r"\$(\d+)\$ & \$(\d+)\$")
         mr = re.search(r"retrosynthesis, seven systems " + row + r".*?"
                        r"retrosynthesis, three systems " + row + r".*?"
                        r"metabolites, three methods " + row + r".*?"
@@ -2912,20 +2941,20 @@ def main() -> int:
                       (("nineteen systems", RWE, str(rwe.relative_to(ROOT))), 32),
                       (("fifteen systems", RWJ, str(rwj.relative_to(ROOT))), 40))
             for (lbl, r_, s), off in boards:
-                check(f"robust order, {lbl}, items", mr.group(off + 1).replace("{,}", ""),
+                check(f"robust order, {lbl}, items", mr.group(off + 2).replace("{,}", ""),
                       r_["n_items"], s)
-                check(f"robust order, {lbl}, dominate", mr.group(off + 2), r_["n_dominating"], s)
-                check(f"robust order, {lbl}, pairs", mr.group(off + 3), r_["n_pairs"], s)
-                check(f"robust order, {lbl}, contested", mr.group(off + 4), r_["n_contested"], s)
-                check(f"robust order, {lbl}, certified", mr.group(off + 5),
+                check(f"robust order, {lbl}, dominate", mr.group(off + 3), r_["n_dominating"], s)
+                check(f"robust order, {lbl}, pairs", mr.group(off + 4), r_["n_pairs"], s)
+                check(f"robust order, {lbl}, contested", mr.group(off + 5), r_["n_contested"], s)
+                check(f"robust order, {lbl}, certified", mr.group(off + 6),
                       r_["n_contested_after_correction"], s)
-                check(f"robust order, {lbl}, unresolved", mr.group(off + 6), r_["n_unresolved"], s)
+                check(f"robust order, {lbl}, unresolved", mr.group(off + 7), r_["n_unresolved"], s)
                 checks.append((r_["n_dominating"] + r_["n_contested"] + r_["n_unresolved"]
                                == r_["n_pairs"], f"robust order, {lbl}, the verdicts partition",
                                str(r_["n_pairs"]),
                                str(r_["n_dominating"] + r_["n_contested"] + r_["n_unresolved"]), s))
-                check(f"robust order, {lbl}, tiers", mr.group(off + 7), r_["tiers_distinguished"], s)
-                check(f"robust order, {lbl}, systems", mr.group(off + 8), r_["n_systems"], s)
+                check(f"robust order, {lbl}, tiers", mr.group(off + 8), r_["tiers_distinguished"], s)
+                check(f"robust order, {lbl}, systems", mr.group(off + 1), r_["n_systems"], s)
             for name, r_, s in (("retro", RO["cluster0"], src), ("metabolite", RM, srm)):
                 g = (json.loads(ro.read_text())["config"]["grid"] if name == "retro"
                      else RM["config"]["grid"])

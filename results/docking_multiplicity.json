@@ -1,7 +1,7 @@
 {
  "config": {
   "script": "docking_multiplicity.py",
-  "git_commit": "6efbf2609c4501b9f114bebc7d0b07b51b7fa32e",
+  "git_commit": "0aa044ec2020f3fb23e62ef0c2b9299c9c7289f0",
   "git_dirty": true,
   "n_boot": 10000,
   "seed": 0,
@@ -13,57 +13,271 @@
   "p": "two-sided, from the normal approximation to the paired mean; a bootstrap tail is floored at 1/B and that floor decides the whole correction once the family exceeds B*alpha"
  },
  "family_size": 168,
- "n_surviving_tests": 136,
- "n_surviving_reversals": 3,
- "pairs_still_contested": [
-  "deepdock over unimol",
-  "tankbind over unimol"
- ],
+ "n_surviving_tests": 129,
+ "n_surviving_reversals": 0,
+ "pairs_still_contested": [],
  "pairs_contested_before_correction": [
   "deepdock over unimol",
   "tankbind over unimol"
  ],
- "every_contested_pair_survives": true,
+ "every_contested_pair_survives": false,
  "agrees_with_the_board_artifact": true,
  "board_says": {
   "family_size": 168,
   "alpha": 0.05,
-  "n_tests_surviving": 136,
-  "n_reversals_surviving": 3,
-  "largest_surviving_reversal_p": 0.0013
+  "n_tests_surviving": 129,
+  "n_reversals_surviving": 0,
+  "largest_surviving_reversal_p": NaN,
+  "p_values": [
+   2.623150589765931e-64,
+   1.5557538194652714e-61,
+   1.2409339681952791e-58,
+   6.668976088853405e-58,
+   1.706941622405985e-57,
+   2.549588922583075e-57,
+   2.549588922583075e-57,
+   3.3509627262757447e-57,
+   3.2698211475995866e-54,
+   5.869444461048681e-53,
+   3.9199816243007326e-51,
+   7.382913530568374e-49,
+   1.87684788691276e-48,
+   5.632733128837864e-48,
+   1.0984535005110164e-47,
+   2.4811145320028236e-47,
+   4.1009866034316607e-47,
+   3.2677712171184497e-46,
+   1.1148076779325983e-44,
+   1.121038771459865e-44,
+   1.121038771459865e-44,
+   7.910334321357754e-43,
+   6.531606291816672e-42,
+   7.06247857433123e-42,
+   5.936393551939525e-39,
+   1.056948028742921e-38,
+   1.4164190352745354e-38,
+   1.4164190352745354e-38,
+   4.593945777927527e-36,
+   3.26165564322893e-35,
+   1.2517224272498301e-33,
+   2.255860572919059e-33,
+   1.0895042428717354e-32,
+   2.232175138058676e-32,
+   3.340539241823491e-32,
+   3.340539241823491e-32,
+   4.253378590381342e-32,
+   2.222056719664638e-31,
+   3.6147289851473163e-31,
+   6.7679171794416165e-31,
+   1.345719088298332e-30,
+   3.2925632541791705e-30,
+   1.1468743946656218e-29,
+   1.2192257795213684e-29,
+   2.0422697887538746e-29,
+   3.8051037415902836e-29,
+   4.865181652870067e-28,
+   2.6761625167886987e-27,
+   1.3363888293328e-26,
+   1.4951776241157473e-26,
+   2.3851293661283385e-26,
+   2.717495122973356e-25,
+   7.78447708320802e-25,
+   1.3707653241288554e-24,
+   4.196039194564944e-24,
+   5.722965936636455e-23,
+   3.482861931712066e-21,
+   4.2381162032058754e-21,
+   4.5244713849043276e-21,
+   4.5244713849043276e-21,
+   4.60010535310954e-21,
+   1.2888168226724572e-20,
+   1.7801264728411286e-20,
+   2.6124651194145644e-20,
+   5.1097973728199877e-20,
+   5.995604906978238e-20,
+   6.919847271973535e-20,
+   1.2151446016071778e-19,
+   1.3531388272750627e-19,
+   1.4958728419663312e-19,
+   4.3368086899420096e-19,
+   7.36193018572813e-19,
+   8.670257546981891e-19,
+   7.648942300150092e-18,
+   1.387778780781446e-17,
+   1.497768181474585e-17,
+   4.2528659050717437e-17,
+   5.4984416435915116e-17,
+   1.3899721832973497e-16,
+   2.4422670374773003e-16,
+   1.4016007077149593e-15,
+   5.036722408450491e-15,
+   1.0754075870962604e-14,
+   6.447032586619001e-14,
+   1.0497375514567564e-13,
+   1.592219907094667e-13,
+   4.854944571364018e-13,
+   5.924261607140148e-13,
+   1.6979681549677883e-12,
+   2.249093820117022e-12,
+   2.972584851879052e-11,
+   3.010910358637663e-11,
+   3.010910358637663e-11,
+   3.8029690507811444e-11,
+   4.1019145103949954e-11,
+   6.40186514910833e-11,
+   7.999412780845702e-11,
+   8.443958194827062e-11,
+   9.290972176028146e-11,
+   1.9859524397641802e-10,
+   6.802593482929889e-10,
+   1.996498223786306e-08,
+   3.641398627788739e-08,
+   1.2351631890149983e-07,
+   1.4461330447992584e-07,
+   4.3028401315357984e-07,
+   5.544139314504349e-07,
+   5.663739625418555e-07,
+   1.118554857720936e-06,
+   1.2143807700186105e-06,
+   1.9073486328125e-06,
+   3.2837572373981516e-06,
+   3.3888279489246337e-06,
+   7.629394531250002e-06,
+   1.2497992572921459e-05,
+   1.5717029852739423e-05,
+   2.098083496093749e-05,
+   2.168923876071665e-05,
+   2.2429642158969942e-05,
+   3.7092661643540456e-05,
+   5.267330937066257e-05,
+   6.530630444913374e-05,
+   0.00019194241357169188,
+   0.000226882382883293,
+   0.0002636516495278312,
+   0.0007528970600105867,
+   0.0007528970600105867,
+   0.0008213953115045994,
+   0.0009765624999999999,
+   0.0014563008113308463,
+   0.0015330525764723614,
+   0.0017094927839214414,
+   0.0018001997935475796,
+   0.0018730949300322303,
+   0.001935229247666048,
+   0.0021862431776862143,
+   0.0025735692598785314,
+   0.005745647150665606,
+   0.006347656249999991,
+   0.008780930806975076,
+   0.011330984183587117,
+   0.01486675294562666,
+   0.02895927429199241,
+   0.037529533634412054,
+   0.0390624999999999,
+   0.05274834967739063,
+   0.10017333048675531,
+   0.13604594767093534,
+   0.13604594767093534,
+   0.14089542359848392,
+   0.16188140552559513,
+   0.18365717190177633,
+   0.2513221034748479,
+   0.2649308964610076,
+   0.3965701581455125,
+   0.5900356111485435,
+   0.647605895996095,
+   0.6778086391424759,
+   0.699174984007852,
+   0.7093227303228091,
+   0.7343420330298752,
+   0.7729885295985449,
+   0.864166240440685,
+   0.924097391798255,
+   0.9999999999999615,
+   0.999999999999998,
+   1.0,
+   1.0
+  ],
+  "reversal_tests": [
+   {
+    "pair": "tankbind over unimol",
+    "cell": "('rmsd2', 'none')",
+    "p": 0.0015330525764723614
+   },
+   {
+    "pair": "deepdock over unimol",
+    "cell": "('rmsd2', 'energy minimization')",
+    "p": 0.0017094927839214414
+   },
+   {
+    "pair": "tankbind over unimol",
+    "cell": "('rmsd2', 'energy minimization')",
+    "p": 0.0018730949300322303
+   },
+   {
+    "pair": "tankbind over unimol",
+    "cell": "('rmsd2+chem', 'energy minimization')",
+    "p": 0.008780930806975076
+   },
+   {
+    "pair": "tankbind over unimol",
+    "cell": "('rmsd2+valid', 'energy minimization')",
+    "p": 0.01486675294562666
+   },
+   {
+    "pair": "deepdock over unimol",
+    "cell": "('rmsd2+valid', 'energy minimization')",
+    "p": 0.037529533634412054
+   },
+   {
+    "pair": "deepdock over unimol",
+    "cell": "('rmsd2', 'none')",
+    "p": 0.05274834967739063
+   },
+   {
+    "pair": "deepdock over unimol",
+    "cell": "('rmsd2+chem', 'energy minimization')",
+    "p": 0.10017333048675531
+   },
+   {
+    "pair": "deepdock over unimol",
+    "cell": "('rmsd1', 'energy minimization')",
+    "p": 0.14089542359848392
+   },
+   {
+    "pair": "tankbind over unimol",
+    "cell": "('rmsd1', 'energy minimization')",
+    "p": 0.16188140552559513
+   },
+   {
+    "pair": "tankbind over unimol",
+    "cell": "('rmsd1', 'none')",
+    "p": 0.2649308964610076
+   },
+   {
+    "pair": "vina over gold",
+    "cell": "('rmsd2+chem', 'energy minimization')",
+    "p": 0.7093227303228091
+   },
+   {
+    "pair": "vina over gold",
+    "cell": "('rmsd2+valid', 'energy minimization')",
+    "p": 0.9999999999999615
+   },
+   {
+    "pair": "deepdock over tankbind",
+    "cell": "('rmsd2', 'energy minimization')",
+    "p": 0.999999999999998
+   }
+  ]
  },
- "surviving_reversals": [
-  {
-   "pair": "tankbind over unimol",
-   "cell": "('rmsd2', 'none')",
-   "margin": -0.0794,
-   "p": 0.0010436647064112376,
-   "against_the_published_order": true,
-   "holm": "survives"
-  },
-  {
-   "pair": "deepdock over unimol",
-   "cell": "('rmsd2', 'energy minimization')",
-   "margin": -0.0841,
-   "p": 0.001184501987791136,
-   "against_the_published_order": true,
-   "holm": "survives"
-  },
-  {
-   "pair": "tankbind over unimol",
-   "cell": "('rmsd2', 'energy minimization')",
-   "margin": -0.0818,
-   "p": 0.0012982480244144176,
-   "against_the_published_order": true,
-   "holm": "survives"
-  }
- ],
+ "surviving_reversals": [],
  "tests": [
   {
    "pair": "diffdock over deepdock",
    "cell": "('rmsd2', 'none')",
    "margin": 0.2009,
-   "p": 5.773623770277239e-14,
+   "p": 5.924261607140148e-13,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -71,7 +285,7 @@
    "pair": "diffdock over deepdock",
    "cell": "('rmsd2', 'energy minimization')",
    "margin": 0.1846,
-   "p": 1.4195533067488828e-11,
+   "p": 7.999412780845702e-11,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -79,7 +293,7 @@
    "pair": "diffdock over deepdock",
    "cell": "('rmsd2+valid', 'none')",
    "margin": 0.0888,
-   "p": 7.154384786519188e-07,
+   "p": 1.2143807700186105e-06,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -87,7 +301,7 @@
    "pair": "diffdock over deepdock",
    "cell": "('rmsd2+valid', 'energy minimization')",
    "margin": 0.2056,
-   "p": 3.2321410425909176e-16,
+   "p": 5.036722408450491e-15,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -95,7 +309,7 @@
    "pair": "diffdock over deepdock",
    "cell": "('rmsd1', 'none')",
    "margin": 0.0981,
-   "p": 2.359058360190052e-07,
+   "p": 4.3028401315357984e-07,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -103,7 +317,7 @@
    "pair": "diffdock over deepdock",
    "cell": "('rmsd1', 'energy minimization')",
    "margin": 0.1145,
-   "p": 5.794494496115968e-08,
+   "p": 1.2351631890149983e-07,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -111,7 +325,7 @@
    "pair": "diffdock over deepdock",
    "cell": "('rmsd2+chem', 'none')",
    "margin": 0.222,
-   "p": 4.504894641135858e-18,
+   "p": 1.3899721832973497e-16,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -119,7 +333,7 @@
    "pair": "diffdock over deepdock",
    "cell": "('rmsd2+chem', 'energy minimization')",
    "margin": 0.2033,
-   "p": 1.3456254642034943e-14,
+   "p": 1.592219907094667e-13,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -127,7 +341,7 @@
    "pair": "deepdock over equibind",
    "cell": "('rmsd2', 'none')",
    "margin": 0.1519,
-   "p": 3.0501241825390106e-16,
+   "p": 2.4422670374773003e-16,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -135,7 +349,7 @@
    "pair": "deepdock over equibind",
    "cell": "('rmsd2', 'energy minimization')",
    "margin": 0.1425,
-   "p": 1.0531751845724919e-11,
+   "p": 3.010910358637663e-11,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -143,7 +357,7 @@
    "pair": "deepdock over equibind",
    "cell": "('rmsd2+valid', 'none')",
    "margin": 0.0444,
-   "p": 2.3677246275391533e-05,
+   "p": 2.098083496093749e-05,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -151,7 +365,7 @@
    "pair": "deepdock over equibind",
    "cell": "('rmsd2+valid', 'energy minimization')",
    "margin": 0.0818,
-   "p": 1.2701379776737094e-05,
+   "p": 2.168923876071665e-05,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -159,7 +373,7 @@
    "pair": "deepdock over equibind",
    "cell": "('rmsd1', 'none')",
    "margin": 0.0467,
-   "p": 4.76034186379513e-06,
+   "p": 1.9073486328125e-06,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -167,7 +381,7 @@
    "pair": "deepdock over equibind",
    "cell": "('rmsd1', 'energy minimization')",
    "margin": 0.0491,
-   "p": 0.00046984404837461407,
+   "p": 0.0007528970600105867,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -175,7 +389,7 @@
    "pair": "deepdock over equibind",
    "cell": "('rmsd2+chem', 'none')",
    "margin": 0.1075,
-   "p": 5.3809698135097057e-11,
+   "p": 3.8029690507811444e-11,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -183,7 +397,7 @@
    "pair": "deepdock over equibind",
    "cell": "('rmsd2+chem', 'energy minimization')",
    "margin": 0.1028,
-   "p": 2.942704113047187e-07,
+   "p": 5.663739625418555e-07,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -191,7 +405,7 @@
    "pair": "gold over deepdock",
    "cell": "('rmsd2', 'none')",
    "margin": 0.3341,
-   "p": 1.390356213710067e-31,
+   "p": 1.4951776241157473e-26,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -199,7 +413,7 @@
    "pair": "gold over deepdock",
    "cell": "('rmsd2', 'energy minimization')",
    "margin": 0.2827,
-   "p": 1.9550153749947652e-23,
+   "p": 1.2888168226724572e-20,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -207,7 +421,7 @@
    "pair": "gold over deepdock",
    "cell": "('rmsd2+valid', 'none')",
    "margin": 0.4299,
-   "p": 9.670521769977448e-64,
+   "p": 1.0984535005110164e-47,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -215,7 +429,7 @@
    "pair": "gold over deepdock",
    "cell": "('rmsd2+valid', 'energy minimization')",
    "margin": 0.2944,
-   "p": 1.4879866311277034e-28,
+   "p": 7.78447708320802e-25,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -223,7 +437,7 @@
    "pair": "gold over deepdock",
    "cell": "('rmsd1', 'none')",
    "margin": 0.2967,
-   "p": 7.093154469645595e-34,
+   "p": 1.1468743946656218e-29,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -231,7 +445,7 @@
    "pair": "gold over deepdock",
    "cell": "('rmsd1', 'energy minimization')",
    "margin": 0.2196,
-   "p": 2.574170095676506e-20,
+   "p": 8.670257546981891e-19,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -239,7 +453,7 @@
    "pair": "gold over deepdock",
    "cell": "('rmsd2+chem', 'none')",
    "margin": 0.3762,
-   "p": 6.038791022074007e-42,
+   "p": 1.2517224272498301e-33,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -247,7 +461,7 @@
    "pair": "gold over deepdock",
    "cell": "('rmsd2+chem', 'energy minimization')",
    "margin": 0.3154,
-   "p": 1.3260161476534663e-29,
+   "p": 2.717495122973356e-25,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -255,7 +469,7 @@
    "pair": "deepdock over tankbind",
    "cell": "('rmsd2', 'none')",
    "margin": 0.028,
-   "p": 0.2106007162075939,
+   "p": 0.2513221034748479,
    "against_the_published_order": false,
    "holm": "does not survive"
   },
@@ -263,7 +477,7 @@
    "pair": "deepdock over tankbind",
    "cell": "('rmsd2', 'energy minimization')",
    "margin": -0.0023,
-   "p": 0.9244690405094297,
+   "p": 0.999999999999998,
    "against_the_published_order": true,
    "holm": "does not survive"
   },
@@ -271,7 +485,7 @@
    "pair": "deepdock over tankbind",
    "cell": "('rmsd2+valid', 'none')",
    "margin": 0.021,
-   "p": 0.0939777584896293,
+   "p": 0.13604594767093534,
    "against_the_published_order": false,
    "holm": "does not survive"
   },
@@ -279,7 +493,7 @@
    "pair": "deepdock over tankbind",
    "cell": "('rmsd2+valid', 'energy minimization')",
    "margin": 0.0093,
-   "p": 0.6509161327375257,
+   "p": 0.7343420330298752,
    "against_the_published_order": false,
    "holm": "does not survive"
   },
@@ -287,7 +501,7 @@
    "pair": "deepdock over tankbind",
    "cell": "('rmsd1', 'none')",
    "margin": 0.021,
-   "p": 0.0939777584896293,
+   "p": 0.13604594767093534,
    "against_the_published_order": false,
    "holm": "does not survive"
   },
@@ -303,15 +517,15 @@
    "pair": "deepdock over tankbind",
    "cell": "('rmsd2+chem', 'none')",
    "margin": 0.0607,
-   "p": 0.001440047233480105,
+   "p": 0.0021862431776862143,
    "against_the_published_order": false,
-   "holm": "survives"
+   "holm": "does not survive"
   },
   {
    "pair": "deepdock over tankbind",
    "cell": "('rmsd2+chem', 'energy minimization')",
    "margin": 0.021,
-   "p": 0.34013543039069477,
+   "p": 0.3965701581455125,
    "against_the_published_order": false,
    "holm": "does not survive"
   },
@@ -319,7 +533,7 @@
    "pair": "deepdock over unimol",
    "cell": "('rmsd2', 'none')",
    "margin": -0.0514,
-   "p": 0.04208686918952231,
+   "p": 0.05274834967739063,
    "against_the_published_order": true,
    "holm": "does not survive"
   },
@@ -327,15 +541,15 @@
    "pair": "deepdock over unimol",
    "cell": "('rmsd2', 'energy minimization')",
    "margin": -0.0841,
-   "p": 0.001184501987791136,
+   "p": 0.0017094927839214414,
    "against_the_published_order": true,
-   "holm": "survives"
+   "holm": "does not survive"
   },
   {
    "pair": "deepdock over unimol",
    "cell": "('rmsd2+valid', 'none')",
    "margin": 0.028,
-   "p": 0.01798139648101144,
+   "p": 0.02895927429199241,
    "against_the_published_order": false,
    "holm": "does not survive"
   },
@@ -343,7 +557,7 @@
    "pair": "deepdock over unimol",
    "cell": "('rmsd2+valid', 'energy minimization')",
    "margin": -0.0467,
-   "p": 0.028389943953773512,
+   "p": 0.037529533634412054,
    "against_the_published_order": true,
    "holm": "does not survive"
   },
@@ -351,7 +565,7 @@
    "pair": "deepdock over unimol",
    "cell": "('rmsd1', 'none')",
    "margin": 0.0047,
-   "p": 0.7318667976592717,
+   "p": 0.864166240440685,
    "against_the_published_order": false,
    "holm": "does not survive"
   },
@@ -359,7 +573,7 @@
    "pair": "deepdock over unimol",
    "cell": "('rmsd1', 'energy minimization')",
    "margin": -0.028,
-   "p": 0.10815831811633932,
+   "p": 0.14089542359848392,
    "against_the_published_order": true,
    "holm": "does not survive"
   },
@@ -367,7 +581,7 @@
    "pair": "deepdock over unimol",
    "cell": "('rmsd2+chem', 'none')",
    "margin": 0.0701,
-   "p": 0.000139694109410944,
+   "p": 0.000226882382883293,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -375,7 +589,7 @@
    "pair": "deepdock over unimol",
    "cell": "('rmsd2+chem', 'energy minimization')",
    "margin": -0.0397,
-   "p": 0.08040363007629459,
+   "p": 0.10017333048675531,
    "against_the_published_order": true,
    "holm": "does not survive"
   },
@@ -383,7 +597,7 @@
    "pair": "vina over deepdock",
    "cell": "('rmsd2', 'none')",
    "margin": 0.3458,
-   "p": 3.817306183469165e-35,
+   "p": 3.8051037415902836e-29,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -391,7 +605,7 @@
    "pair": "vina over deepdock",
    "cell": "('rmsd2', 'energy minimization')",
    "margin": 0.2874,
-   "p": 4.957073390365569e-24,
+   "p": 4.60010535310954e-21,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -399,7 +613,7 @@
    "pair": "vina over deepdock",
    "cell": "('rmsd2+valid', 'none')",
    "margin": 0.465,
-   "p": 3.959650754280197e-72,
+   "p": 3.9199816243007326e-51,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -407,7 +621,7 @@
    "pair": "vina over deepdock",
    "cell": "('rmsd2+valid', 'energy minimization')",
    "margin": 0.2921,
-   "p": 3.255615219855814e-28,
+   "p": 1.3707653241288554e-24,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -415,7 +629,7 @@
    "pair": "vina over deepdock",
    "cell": "('rmsd1', 'none')",
    "margin": 0.2967,
-   "p": 4.254129568751433e-35,
+   "p": 6.7679171794416165e-31,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -423,7 +637,7 @@
    "pair": "vina over deepdock",
    "cell": "('rmsd1', 'energy minimization')",
    "margin": 0.2336,
-   "p": 6.252387753937123e-23,
+   "p": 4.5244713849043276e-21,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -431,7 +645,7 @@
    "pair": "vina over deepdock",
    "cell": "('rmsd2+chem', 'none')",
    "margin": 0.3855,
-   "p": 1.5327967151773952e-45,
+   "p": 4.593945777927527e-36,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -439,7 +653,7 @@
    "pair": "vina over deepdock",
    "cell": "('rmsd2+chem', 'energy minimization')",
    "margin": 0.3037,
-   "p": 6.35263679963181e-28,
+   "p": 4.196039194564944e-24,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -447,7 +661,7 @@
    "pair": "diffdock over equibind",
    "cell": "('rmsd2', 'none')",
    "margin": 0.3528,
-   "p": 1.2825451224980081e-49,
+   "p": 7.06247857433123e-42,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -455,7 +669,7 @@
    "pair": "diffdock over equibind",
    "cell": "('rmsd2', 'energy minimization')",
    "margin": 0.3271,
-   "p": 3.385735409832797e-41,
+   "p": 3.26165564322893e-35,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -463,7 +677,7 @@
    "pair": "diffdock over equibind",
    "cell": "('rmsd2+valid', 'none')",
    "margin": 0.1332,
-   "p": 5.513309568258489e-16,
+   "p": 1.387778780781446e-17,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -471,7 +685,7 @@
    "pair": "diffdock over equibind",
    "cell": "('rmsd2+valid', 'energy minimization')",
    "margin": 0.2874,
-   "p": 8.298804098965697e-35,
+   "p": 3.6147289851473163e-31,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -479,7 +693,7 @@
    "pair": "diffdock over equibind",
    "cell": "('rmsd1', 'none')",
    "margin": 0.1449,
-   "p": 1.8175132859817706e-17,
+   "p": 4.3368086899420096e-19,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -487,7 +701,7 @@
    "pair": "diffdock over equibind",
    "cell": "('rmsd1', 'energy minimization')",
    "margin": 0.1636,
-   "p": 3.049441303072361e-17,
+   "p": 4.2528659050717437e-17,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -495,7 +709,7 @@
    "pair": "diffdock over equibind",
    "cell": "('rmsd2+chem', 'none')",
    "margin": 0.3294,
-   "p": 8.265318039589048e-45,
+   "p": 5.936393551939525e-39,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -503,7 +717,7 @@
    "pair": "diffdock over equibind",
    "cell": "('rmsd2+chem', 'energy minimization')",
    "margin": 0.3061,
-   "p": 2.2563613826146123e-37,
+   "p": 1.0895042428717354e-32,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -511,7 +725,7 @@
    "pair": "gold over diffdock",
    "cell": "('rmsd2', 'none')",
    "margin": 0.1332,
-   "p": 2.132479592158086e-05,
+   "p": 3.7092661643540456e-05,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -519,15 +733,15 @@
    "pair": "gold over diffdock",
    "cell": "('rmsd2', 'energy minimization')",
    "margin": 0.0981,
-   "p": 0.0012880099573027066,
+   "p": 0.0018001997935475796,
    "against_the_published_order": false,
-   "holm": "survives"
+   "holm": "does not survive"
   },
   {
    "pair": "gold over diffdock",
    "cell": "('rmsd2+valid', 'none')",
    "margin": 0.3411,
-   "p": 2.455134055907361e-35,
+   "p": 2.0422697887538746e-29,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -535,7 +749,7 @@
    "pair": "gold over diffdock",
    "cell": "('rmsd2+valid', 'energy minimization')",
    "margin": 0.0888,
-   "p": 0.001849762298858778,
+   "p": 0.0025735692598785314,
    "against_the_published_order": false,
    "holm": "does not survive"
   },
@@ -543,7 +757,7 @@
    "pair": "gold over diffdock",
    "cell": "('rmsd1', 'none')",
    "margin": 0.1986,
-   "p": 9.446913479850513e-15,
+   "p": 1.0497375514567564e-13,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -551,7 +765,7 @@
    "pair": "gold over diffdock",
    "cell": "('rmsd1', 'energy minimization')",
    "margin": 0.1051,
-   "p": 3.0669638150430184e-05,
+   "p": 5.267330937066257e-05,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -559,7 +773,7 @@
    "pair": "gold over diffdock",
    "cell": "('rmsd2+chem', 'none')",
    "margin": 0.1542,
-   "p": 4.92615120333137e-07,
+   "p": 1.118554857720936e-06,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -567,7 +781,7 @@
    "pair": "gold over diffdock",
    "cell": "('rmsd2+chem', 'energy minimization')",
    "margin": 0.1121,
-   "p": 0.00017013275784066932,
+   "p": 0.0002636516495278312,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -575,7 +789,7 @@
    "pair": "diffdock over tankbind",
    "cell": "('rmsd2', 'none')",
    "margin": 0.229,
-   "p": 1.459507705582554e-24,
+   "p": 5.722965936636455e-23,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -583,7 +797,7 @@
    "pair": "diffdock over tankbind",
    "cell": "('rmsd2', 'energy minimization')",
    "margin": 0.1822,
-   "p": 1.9991052102348784e-16,
+   "p": 1.4016007077149593e-15,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -591,7 +805,7 @@
    "pair": "diffdock over tankbind",
    "cell": "('rmsd2+valid', 'none')",
    "margin": 0.1098,
-   "p": 7.02025584423229e-11,
+   "p": 6.40186514910833e-11,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -599,7 +813,7 @@
    "pair": "diffdock over tankbind",
    "cell": "('rmsd2+valid', 'energy minimization')",
    "margin": 0.215,
-   "p": 2.8883568266415912e-21,
+   "p": 6.919847271973535e-20,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -607,7 +821,7 @@
    "pair": "diffdock over tankbind",
    "cell": "('rmsd1', 'none')",
    "margin": 0.1192,
-   "p": 2.5180258528404356e-12,
+   "p": 1.6979681549677883e-12,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -615,7 +829,7 @@
    "pair": "diffdock over tankbind",
    "cell": "('rmsd1', 'energy minimization')",
    "margin": 0.1145,
-   "p": 1.7326394830007865e-08,
+   "p": 3.641398627788739e-08,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -623,7 +837,7 @@
    "pair": "diffdock over tankbind",
    "cell": "('rmsd2+chem', 'none')",
    "margin": 0.2827,
-   "p": 2.210066262070295e-35,
+   "p": 3.340539241823491e-32,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -631,7 +845,7 @@
    "pair": "diffdock over tankbind",
    "cell": "('rmsd2+chem', 'energy minimization')",
    "margin": 0.2243,
-   "p": 4.324949315797179e-22,
+   "p": 1.7801264728411286e-20,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -639,7 +853,7 @@
    "pair": "diffdock over unimol",
    "cell": "('rmsd2', 'none')",
    "margin": 0.1495,
-   "p": 5.534698066914725e-08,
+   "p": 1.4461330447992584e-07,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -647,7 +861,7 @@
    "pair": "diffdock over unimol",
    "cell": "('rmsd2', 'energy minimization')",
    "margin": 0.1005,
-   "p": 0.0001198321202155551,
+   "p": 0.00019194241357169188,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -655,7 +869,7 @@
    "pair": "diffdock over unimol",
    "cell": "('rmsd2+valid', 'none')",
    "margin": 0.1168,
-   "p": 2.6597685687288828e-11,
+   "p": 2.972584851879052e-11,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -663,7 +877,7 @@
    "pair": "diffdock over unimol",
    "cell": "('rmsd2+valid', 'energy minimization')",
    "margin": 0.1589,
-   "p": 2.2929007315394304e-11,
+   "p": 9.290972176028146e-11,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -671,7 +885,7 @@
    "pair": "diffdock over unimol",
    "cell": "('rmsd1', 'none')",
    "margin": 0.1028,
-   "p": 1.2076405051008223e-08,
+   "p": 1.996498223786306e-08,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -679,7 +893,7 @@
    "pair": "diffdock over unimol",
    "cell": "('rmsd1', 'energy minimization')",
    "margin": 0.0864,
-   "p": 1.2922457695644064e-05,
+   "p": 2.2429642158969942e-05,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -687,7 +901,7 @@
    "pair": "diffdock over unimol",
    "cell": "('rmsd2+chem', 'none')",
    "margin": 0.2921,
-   "p": 5.461013073914255e-32,
+   "p": 4.865181652870067e-28,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -695,7 +909,7 @@
    "pair": "diffdock over unimol",
    "cell": "('rmsd2+chem', 'energy minimization')",
    "margin": 0.1636,
-   "p": 1.9359964124234738e-11,
+   "p": 8.443958194827062e-11,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -703,7 +917,7 @@
    "pair": "vina over diffdock",
    "cell": "('rmsd2', 'none')",
    "margin": 0.1449,
-   "p": 6.6578883381487145e-06,
+   "p": 1.2497992572921459e-05,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -711,15 +925,15 @@
    "pair": "vina over diffdock",
    "cell": "('rmsd2', 'energy minimization')",
    "margin": 0.1028,
-   "p": 0.0010362124592154683,
+   "p": 0.0014563008113308463,
    "against_the_published_order": false,
-   "holm": "survives"
+   "holm": "does not survive"
   },
   {
    "pair": "vina over diffdock",
    "cell": "('rmsd2+valid', 'none')",
    "margin": 0.3762,
-   "p": 2.6810038593527717e-40,
+   "p": 2.232175138058676e-32,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -727,7 +941,7 @@
    "pair": "vina over diffdock",
    "cell": "('rmsd2+valid', 'energy minimization')",
    "margin": 0.0864,
-   "p": 0.004331380281734112,
+   "p": 0.005745647150665606,
    "against_the_published_order": false,
    "holm": "does not survive"
   },
@@ -735,7 +949,7 @@
    "pair": "vina over diffdock",
    "cell": "('rmsd1', 'none')",
    "margin": 0.1986,
-   "p": 5.637946614933277e-15,
+   "p": 6.447032586619001e-14,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -743,7 +957,7 @@
    "pair": "vina over diffdock",
    "cell": "('rmsd1', 'energy minimization')",
    "margin": 0.1192,
-   "p": 1.6372971815276666e-06,
+   "p": 3.2837572373981516e-06,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -751,7 +965,7 @@
    "pair": "vina over diffdock",
    "cell": "('rmsd2+chem', 'none')",
    "margin": 0.1636,
-   "p": 2.280979220323319e-07,
+   "p": 5.544139314504349e-07,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -759,15 +973,15 @@
    "pair": "vina over diffdock",
    "cell": "('rmsd2+chem', 'energy minimization')",
    "margin": 0.1005,
-   "p": 0.0013970714038226057,
+   "p": 0.001935229247666048,
    "against_the_published_order": false,
-   "holm": "survives"
+   "holm": "does not survive"
   },
   {
    "pair": "gold over equibind",
    "cell": "('rmsd2', 'none')",
    "margin": 0.486,
-   "p": 1.1270979212723116e-83,
+   "p": 1.706941622405985e-57,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -775,7 +989,7 @@
    "pair": "gold over equibind",
    "cell": "('rmsd2', 'energy minimization')",
    "margin": 0.4252,
-   "p": 1.3633334211999016e-63,
+   "p": 5.632733128837864e-48,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -783,7 +997,7 @@
    "pair": "gold over equibind",
    "cell": "('rmsd2+valid', 'none')",
    "margin": 0.4743,
-   "p": 8.958101456213168e-86,
+   "p": 1.5557538194652714e-61,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -791,7 +1005,7 @@
    "pair": "gold over equibind",
    "cell": "('rmsd2+valid', 'energy minimization')",
    "margin": 0.3762,
-   "p": 7.3638769991098665e-53,
+   "p": 7.910334321357754e-43,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -799,7 +1013,7 @@
    "pair": "gold over equibind",
    "cell": "('rmsd1', 'none')",
    "margin": 0.3435,
-   "p": 1.6586309451864758e-50,
+   "p": 1.121038771459865e-44,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -807,7 +1021,7 @@
    "pair": "gold over equibind",
    "cell": "('rmsd1', 'energy minimization')",
    "margin": 0.2687,
-   "p": 1.0415157482689257e-33,
+   "p": 2.222056719664638e-31,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -815,7 +1029,7 @@
    "pair": "gold over equibind",
    "cell": "('rmsd2+chem', 'none')",
    "margin": 0.4836,
-   "p": 6.5311472297817564e-83,
+   "p": 3.3509627262757447e-57,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -823,7 +1037,7 @@
    "pair": "gold over equibind",
    "cell": "('rmsd2+chem', 'energy minimization')",
    "margin": 0.4182,
-   "p": 8.170451872429515e-62,
+   "p": 4.1009866034316607e-47,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -831,7 +1045,7 @@
    "pair": "tankbind over equibind",
    "cell": "('rmsd2', 'none')",
    "margin": 0.1238,
-   "p": 7.231363892181585e-13,
+   "p": 4.854944571364018e-13,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -839,7 +1053,7 @@
    "pair": "tankbind over equibind",
    "cell": "('rmsd2', 'energy minimization')",
    "margin": 0.1449,
-   "p": 8.685122028793642e-13,
+   "p": 2.249093820117022e-12,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -847,7 +1061,7 @@
    "pair": "tankbind over equibind",
    "cell": "('rmsd2+valid', 'none')",
    "margin": 0.0234,
-   "p": 0.0035927910665255894,
+   "p": 0.006347656249999991,
    "against_the_published_order": false,
    "holm": "does not survive"
   },
@@ -855,7 +1069,7 @@
    "pair": "tankbind over equibind",
    "cell": "('rmsd2+valid', 'energy minimization')",
    "margin": 0.0724,
-   "p": 3.954789620512602e-05,
+   "p": 6.530630444913374e-05,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -863,7 +1077,7 @@
    "pair": "tankbind over equibind",
    "cell": "('rmsd1', 'none')",
    "margin": 0.0257,
-   "p": 0.000790337244823861,
+   "p": 0.0009765624999999999,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -871,7 +1085,7 @@
    "pair": "tankbind over equibind",
    "cell": "('rmsd1', 'energy minimization')",
    "margin": 0.0491,
-   "p": 0.00046984404837461407,
+   "p": 0.0007528970600105867,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -879,7 +1093,7 @@
    "pair": "tankbind over equibind",
    "cell": "('rmsd2+chem', 'none')",
    "margin": 0.0467,
-   "p": 0.0005126814103208172,
+   "p": 0.0008213953115045994,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -887,7 +1101,7 @@
    "pair": "tankbind over equibind",
    "cell": "('rmsd2+chem', 'energy minimization')",
    "margin": 0.0818,
-   "p": 9.21231024028066e-06,
+   "p": 1.5717029852739423e-05,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -895,7 +1109,7 @@
    "pair": "unimol over equibind",
    "cell": "('rmsd2', 'none')",
    "margin": 0.2033,
-   "p": 5.056429373087669e-21,
+   "p": 5.1097973728199877e-20,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -903,7 +1117,7 @@
    "pair": "unimol over equibind",
    "cell": "('rmsd2', 'energy minimization')",
    "margin": 0.2266,
-   "p": 5.429463311872174e-22,
+   "p": 2.6124651194145644e-20,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -911,7 +1125,7 @@
    "pair": "unimol over equibind",
    "cell": "('rmsd2+valid', 'none')",
    "margin": 0.0164,
-   "p": 0.01899789619936783,
+   "p": 0.0390624999999999,
    "against_the_published_order": false,
    "holm": "does not survive"
   },
@@ -919,7 +1133,7 @@
    "pair": "unimol over equibind",
    "cell": "('rmsd2+valid', 'energy minimization')",
    "margin": 0.1285,
-   "p": 2.893702608003556e-10,
+   "p": 6.802593482929889e-10,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -927,7 +1141,7 @@
    "pair": "unimol over equibind",
    "cell": "('rmsd1', 'none')",
    "margin": 0.0421,
-   "p": 1.4930952821091029e-05,
+   "p": 7.629394531250002e-06,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -935,7 +1149,7 @@
    "pair": "unimol over equibind",
    "cell": "('rmsd1', 'energy minimization')",
    "margin": 0.0771,
-   "p": 2.188904347937224e-06,
+   "p": 3.3888279489246337e-06,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -943,7 +1157,7 @@
    "pair": "unimol over equibind",
    "cell": "('rmsd2+chem', 'none')",
    "margin": 0.0374,
-   "p": 0.007232255144122257,
+   "p": 0.011330984183587117,
    "against_the_published_order": false,
    "holm": "does not survive"
   },
@@ -951,7 +1165,7 @@
    "pair": "unimol over equibind",
    "cell": "('rmsd2+chem', 'energy minimization')",
    "margin": 0.1425,
-   "p": 1.0531751845724919e-11,
+   "p": 3.010910358637663e-11,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -959,7 +1173,7 @@
    "pair": "vina over equibind",
    "cell": "('rmsd2', 'none')",
    "margin": 0.4977,
-   "p": 3.972660101493147e-86,
+   "p": 6.668976088853405e-58,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -967,7 +1181,7 @@
    "pair": "vina over equibind",
    "cell": "('rmsd2', 'energy minimization')",
    "margin": 0.4299,
-   "p": 7.735906360108584e-60,
+   "p": 1.1148076779325983e-44,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -975,7 +1189,7 @@
    "pair": "vina over equibind",
    "cell": "('rmsd2+valid', 'none')",
    "margin": 0.5093,
-   "p": 1.2423415726926474e-96,
+   "p": 2.623150589765931e-64,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -983,7 +1197,7 @@
    "pair": "vina over equibind",
    "cell": "('rmsd2+valid', 'energy minimization')",
    "margin": 0.3738,
-   "p": 3.9048418282358243e-48,
+   "p": 1.056948028742921e-38,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -991,7 +1205,7 @@
    "pair": "vina over equibind",
    "cell": "('rmsd1', 'none')",
    "margin": 0.3435,
-   "p": 1.6586309451864758e-50,
+   "p": 1.121038771459865e-44,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -999,7 +1213,7 @@
    "pair": "vina over equibind",
    "cell": "('rmsd1', 'energy minimization')",
    "margin": 0.2827,
-   "p": 2.210066262070295e-35,
+   "p": 3.340539241823491e-32,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -1007,7 +1221,7 @@
    "pair": "vina over equibind",
    "cell": "('rmsd2+chem', 'none')",
    "margin": 0.493,
-   "p": 1.4459663319844397e-84,
+   "p": 2.549588922583075e-57,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -1015,7 +1229,7 @@
    "pair": "vina over equibind",
    "cell": "('rmsd2+chem', 'energy minimization')",
    "margin": 0.4065,
-   "p": 2.221925672938178e-54,
+   "p": 6.531606291816672e-42,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -1023,7 +1237,7 @@
    "pair": "gold over tankbind",
    "cell": "('rmsd2', 'none')",
    "margin": 0.3621,
-   "p": 1.9980773087215406e-39,
+   "p": 4.253378590381342e-32,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -1031,7 +1245,7 @@
    "pair": "gold over tankbind",
    "cell": "('rmsd2', 'energy minimization')",
    "margin": 0.2804,
-   "p": 4.636172521429825e-24,
+   "p": 3.482861931712066e-21,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -1039,7 +1253,7 @@
    "pair": "gold over tankbind",
    "cell": "('rmsd2+valid', 'none')",
    "margin": 0.4509,
-   "p": 3.7189973130296404e-74,
+   "p": 3.2698211475995866e-54,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -1047,7 +1261,7 @@
    "pair": "gold over tankbind",
    "cell": "('rmsd2+valid', 'energy minimization')",
    "margin": 0.3037,
-   "p": 7.891822052079665e-31,
+   "p": 1.3363888293328e-26,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -1055,7 +1269,7 @@
    "pair": "gold over tankbind",
    "cell": "('rmsd1', 'none')",
    "margin": 0.3178,
-   "p": 2.2847401885439766e-43,
+   "p": 1.4164190352745354e-38,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -1063,7 +1277,7 @@
    "pair": "gold over tankbind",
    "cell": "('rmsd1', 'energy minimization')",
    "margin": 0.2196,
-   "p": 4.5353277821009655e-21,
+   "p": 1.4958728419663312e-19,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -1071,7 +1285,7 @@
    "pair": "gold over tankbind",
    "cell": "('rmsd2+chem', 'none')",
    "margin": 0.4369,
-   "p": 1.6448066734068142e-62,
+   "p": 3.2677712171184497e-46,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -1079,7 +1293,7 @@
    "pair": "gold over tankbind",
    "cell": "('rmsd2+chem', 'energy minimization')",
    "margin": 0.3364,
-   "p": 1.3250840725175373e-36,
+   "p": 1.345719088298332e-30,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -1087,7 +1301,7 @@
    "pair": "gold over unimol",
    "cell": "('rmsd2', 'none')",
    "margin": 0.2827,
-   "p": 3.776769512576079e-20,
+   "p": 7.648942300150092e-18,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -1095,7 +1309,7 @@
    "pair": "gold over unimol",
    "cell": "('rmsd2', 'energy minimization')",
    "margin": 0.1986,
-   "p": 3.42069423289608e-11,
+   "p": 1.9859524397641802e-10,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -1103,7 +1317,7 @@
    "pair": "gold over unimol",
    "cell": "('rmsd2+valid', 'none')",
    "margin": 0.4579,
-   "p": 1.1127234802917823e-73,
+   "p": 5.869444461048681e-53,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -1111,7 +1325,7 @@
    "pair": "gold over unimol",
    "cell": "('rmsd2+valid', 'energy minimization')",
    "margin": 0.2477,
-   "p": 1.8634068865401045e-19,
+   "p": 1.497768181474585e-17,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -1119,7 +1333,7 @@
    "pair": "gold over unimol",
    "cell": "('rmsd1', 'none')",
    "margin": 0.3014,
-   "p": 1.1796234664052675e-34,
+   "p": 3.2925632541791705e-30,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -1127,7 +1341,7 @@
    "pair": "gold over unimol",
    "cell": "('rmsd1', 'energy minimization')",
    "margin": 0.1916,
-   "p": 1.0557380985134305e-15,
+   "p": 1.0754075870962604e-14,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -1135,7 +1349,7 @@
    "pair": "gold over unimol",
    "cell": "('rmsd2+chem', 'none')",
    "margin": 0.4463,
-   "p": 6.727993933209545e-65,
+   "p": 2.4811145320028236e-47,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -1143,7 +1357,7 @@
    "pair": "gold over unimol",
    "cell": "('rmsd2+chem', 'energy minimization')",
    "margin": 0.2757,
-   "p": 1.4823004332977592e-22,
+   "p": 5.995604906978238e-20,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -1151,7 +1365,7 @@
    "pair": "vina over gold",
    "cell": "('rmsd2', 'none')",
    "margin": 0.0117,
-   "p": 0.6291418420982698,
+   "p": 0.699174984007852,
    "against_the_published_order": false,
    "holm": "does not survive"
   },
@@ -1159,7 +1373,7 @@
    "pair": "vina over gold",
    "cell": "('rmsd2', 'energy minimization')",
    "margin": 0.0047,
-   "p": 0.8489348100161515,
+   "p": 0.924097391798255,
    "against_the_published_order": false,
    "holm": "does not survive"
   },
@@ -1167,7 +1381,7 @@
    "pair": "vina over gold",
    "cell": "('rmsd2+valid', 'none')",
    "margin": 0.035,
-   "p": 0.154026503301562,
+   "p": 0.18365717190177633,
    "against_the_published_order": false,
    "holm": "does not survive"
   },
@@ -1175,7 +1389,7 @@
    "pair": "vina over gold",
    "cell": "('rmsd2+valid', 'energy minimization')",
    "margin": -0.0023,
-   "p": 0.9215996927472822,
+   "p": 0.9999999999999615,
    "against_the_published_order": true,
    "holm": "does not survive"
   },
@@ -1191,7 +1405,7 @@
    "pair": "vina over gold",
    "cell": "('rmsd1', 'energy minimization')",
    "margin": 0.014,
-   "p": 0.5179189418820962,
+   "p": 0.5900356111485435,
    "against_the_published_order": false,
    "holm": "does not survive"
   },
@@ -1199,7 +1413,7 @@
    "pair": "vina over gold",
    "cell": "('rmsd2+chem', 'none')",
    "margin": 0.0093,
-   "p": 0.7005954310748062,
+   "p": 0.7729885295985449,
    "against_the_published_order": false,
    "holm": "does not survive"
   },
@@ -1207,7 +1421,7 @@
    "pair": "vina over gold",
    "cell": "('rmsd2+chem', 'energy minimization')",
    "margin": -0.0117,
-   "p": 0.6413402568481014,
+   "p": 0.7093227303228091,
    "against_the_published_order": true,
    "holm": "does not survive"
   },
@@ -1215,23 +1429,23 @@
    "pair": "tankbind over unimol",
    "cell": "('rmsd2', 'none')",
    "margin": -0.0794,
-   "p": 0.0010436647064112376,
+   "p": 0.0015330525764723614,
    "against_the_published_order": true,
-   "holm": "survives"
+   "holm": "does not survive"
   },
   {
    "pair": "tankbind over unimol",
    "cell": "('rmsd2', 'energy minimization')",
    "margin": -0.0818,
-   "p": 0.0012982480244144176,
+   "p": 0.0018730949300322303,
    "against_the_published_order": true,
-   "holm": "survives"
+   "holm": "does not survive"
   },
   {
    "pair": "tankbind over unimol",
    "cell": "('rmsd2+valid', 'none')",
    "margin": 0.007,
-   "p": 0.49156397955277836,
+   "p": 0.647605895996095,
    "against_the_published_order": false,
    "holm": "does not survive"
   },
@@ -1239,7 +1453,7 @@
    "pair": "tankbind over unimol",
    "cell": "('rmsd2+valid', 'energy minimization')",
    "margin": -0.0561,
-   "p": 0.010897392832710679,
+   "p": 0.01486675294562666,
    "against_the_published_order": true,
    "holm": "does not survive"
   },
@@ -1247,7 +1461,7 @@
    "pair": "tankbind over unimol",
    "cell": "('rmsd1', 'none')",
    "margin": -0.0164,
-   "p": 0.19328640098275487,
+   "p": 0.2649308964610076,
    "against_the_published_order": true,
    "holm": "does not survive"
   },
@@ -1255,7 +1469,7 @@
    "pair": "tankbind over unimol",
    "cell": "('rmsd1', 'energy minimization')",
    "margin": -0.028,
-   "p": 0.12691843505710707,
+   "p": 0.16188140552559513,
    "against_the_published_order": true,
    "holm": "does not survive"
   },
@@ -1263,7 +1477,7 @@
    "pair": "tankbind over unimol",
    "cell": "('rmsd2+chem', 'none')",
    "margin": 0.0093,
-   "p": 0.579407034133537,
+   "p": 0.6778086391424759,
    "against_the_published_order": false,
    "holm": "does not survive"
   },
@@ -1271,7 +1485,7 @@
    "pair": "tankbind over unimol",
    "cell": "('rmsd2+chem', 'energy minimization')",
    "margin": -0.0607,
-   "p": 0.006313030066396598,
+   "p": 0.008780930806975076,
    "against_the_published_order": true,
    "holm": "does not survive"
   },
@@ -1279,7 +1493,7 @@
    "pair": "vina over tankbind",
    "cell": "('rmsd2', 'none')",
    "margin": 0.3738,
-   "p": 1.6143504954587234e-41,
+   "p": 2.255860572919059e-33,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -1287,7 +1501,7 @@
    "pair": "vina over tankbind",
    "cell": "('rmsd2', 'energy minimization')",
    "margin": 0.285,
-   "p": 4.8932210527493644e-24,
+   "p": 4.2381162032058754e-21,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -1295,7 +1509,7 @@
    "pair": "vina over tankbind",
    "cell": "('rmsd2+valid', 'none')",
    "margin": 0.486,
-   "p": 4.0135431117658755e-85,
+   "p": 1.2409339681952791e-58,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -1303,7 +1517,7 @@
    "pair": "vina over tankbind",
    "cell": "('rmsd2+valid', 'energy minimization')",
    "margin": 0.3014,
-   "p": 1.79516168597881e-30,
+   "p": 2.3851293661283385e-26,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -1311,7 +1525,7 @@
    "pair": "vina over tankbind",
    "cell": "('rmsd1', 'none')",
    "margin": 0.3178,
-   "p": 2.2847401885439766e-43,
+   "p": 1.4164190352745354e-38,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -1319,7 +1533,7 @@
    "pair": "vina over tankbind",
    "cell": "('rmsd1', 'energy minimization')",
    "margin": 0.2336,
-   "p": 6.252387753937123e-23,
+   "p": 4.5244713849043276e-21,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -1327,7 +1541,7 @@
    "pair": "vina over tankbind",
    "cell": "('rmsd2+chem', 'none')",
    "margin": 0.4463,
-   "p": 5.708647393657857e-67,
+   "p": 7.382913530568374e-49,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -1335,7 +1549,7 @@
    "pair": "vina over tankbind",
    "cell": "('rmsd2+chem', 'energy minimization')",
    "margin": 0.3248,
-   "p": 2.90793163720063e-32,
+   "p": 2.6761625167886987e-27,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -1343,7 +1557,7 @@
    "pair": "vina over unimol",
    "cell": "('rmsd2', 'none')",
    "margin": 0.2944,
-   "p": 2.0056785716605128e-22,
+   "p": 1.2151446016071778e-19,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -1351,7 +1565,7 @@
    "pair": "vina over unimol",
    "cell": "('rmsd2', 'energy minimization')",
    "margin": 0.2033,
-   "p": 5.792635420958112e-12,
+   "p": 4.1019145103949954e-11,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -1359,7 +1573,7 @@
    "pair": "vina over unimol",
    "cell": "('rmsd2+valid', 'none')",
    "margin": 0.493,
-   "p": 1.4459663319844397e-84,
+   "p": 2.549588922583075e-57,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -1367,7 +1581,7 @@
    "pair": "vina over unimol",
    "cell": "('rmsd2+valid', 'energy minimization')",
    "margin": 0.2453,
-   "p": 7.151509206467975e-21,
+   "p": 7.36193018572813e-19,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -1375,7 +1589,7 @@
    "pair": "vina over unimol",
    "cell": "('rmsd1', 'none')",
    "margin": 0.3014,
-   "p": 4.5665775662366945e-34,
+   "p": 1.2192257795213684e-29,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -1383,7 +1597,7 @@
    "pair": "vina over unimol",
    "cell": "('rmsd1', 'energy minimization')",
    "margin": 0.2056,
-   "p": 3.117392094389212e-18,
+   "p": 5.4984416435915116e-17,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -1391,7 +1605,7 @@
    "pair": "vina over unimol",
    "cell": "('rmsd2+chem', 'none')",
    "margin": 0.4556,
-   "p": 2.310672091737008e-67,
+   "p": 1.87684788691276e-48,
    "against_the_published_order": false,
    "holm": "survives"
   },
@@ -1399,7 +1613,7 @@
    "pair": "vina over unimol",
    "cell": "('rmsd2+chem', 'energy minimization')",
    "margin": 0.264,
-   "p": 5.572751422582867e-22,
+   "p": 1.3531388272750627e-19,
    "against_the_published_order": false,
    "holm": "survives"
   }

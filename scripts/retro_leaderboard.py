@@ -57,17 +57,19 @@ N_BOOT, SEED = 10000, 0
 
 
 def _paired_p(d) -> float:
-    """Two-sided p for a paired mean from the normal approximation, which has no floor.
+    """The same test ``robust_order._paired_p`` applies, on the same kind of data.
 
     A bootstrap tail cannot resolve past $1/B$, and Holm compares the $i$-th smallest against
     $\\alpha/(m-i)$. With a family of this size every surviving test sat exactly on that floor, so
-    the count was of empty tails rather than of separated effects and moved with $B$ alone.
+    the count was of empty tails rather than of separated effects and moved with $B$ alone. And
+    this board scores each reaction $0$ or $1$, so the paired difference is a matched difference of
+    proportions whose exact conditional test is the sign test on the discordant pairs; a normal
+    approximation errs low exactly in the tail Holm compares against. Both are imported rather than
+    restated, so a repair to one is a repair to both.
     """
-    n = len(d)
-    se = float(np.std(d, ddof=1)) / np.sqrt(n)
-    if se == 0.0:
-        return 1.0
-    return float(math.erfc(abs(float(np.mean(d))) / se / np.sqrt(2.0)))
+    from robust_order import _paired_p as _shared  # imported here: robust_order imports this module
+
+    return _shared(d)
 
 
 def _code_version() -> dict:

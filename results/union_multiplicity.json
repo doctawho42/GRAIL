@@ -1,28 +1,28 @@
 {
  "config": {
   "script": "union_multiplicity.py",
-  "git_commit": "6136e3b619cd944345fcebb74ca0f084f415f2fd",
+  "git_commit": "0aa044ec2020f3fb23e62ef0c2b9299c9c7289f0",
   "git_dirty": true,
   "n_boards": 23,
   "alpha": 0.05,
   "note": "no board is re-analysed; Holm is re-applied to the p-vectors the board artifacts already carry"
  },
  "union_family_size": 15592,
- "union_tests_rejected": 8314,
+ "union_tests_rejected": 8313,
  "union_cutoff_p": 6.8589849597012095e-06,
  "certified_pairs": {
-  "per_board": 23,
+  "per_board": 21,
   "alpha_split": 14,
   "union": 14,
-  "quoted_in_the_paper": 23
+  "quoted_in_the_paper": 21
  },
  "certified_pairs_the_published_cell_had_separated": {
-  "per_board": 6,
+  "per_board": 5,
   "alpha_split": 5,
   "union": 5
  },
  "certified_reversal_tests": {
-  "per_board": 132,
+  "per_board": 128,
   "alpha_split": 109,
   "union": 100
  },
@@ -30,7 +30,7 @@
   "robust_order:cluster0": {
    "family_size": 336,
    "n_reversal_tests": 108,
-   "reversals_per_board": 80,
+   "reversals_per_board": 79,
    "reversals_alpha_split": 77,
    "reversals_union": 69,
    "pairs_per_board": 8,
@@ -72,16 +72,16 @@
   "robust_order_posebusters": {
    "family_size": 168,
    "n_reversal_tests": 14,
-   "reversals_per_board": 3,
+   "reversals_per_board": 0,
    "reversals_alpha_split": 0,
    "reversals_union": 0,
-   "pairs_per_board": 2,
+   "pairs_per_board": 0,
    "pairs_alpha_split": 0,
    "pairs_union": 0,
-   "separated_pairs_per_board": 1,
+   "separated_pairs_per_board": 0,
    "separated_pairs_alpha_split": 0,
    "separated_pairs_union": 0,
-   "certified_in_the_artifact": 2
+   "certified_in_the_artifact": 0
   },
   "robust_order_wmt24_en-de": {
    "family_size": 1368,
