@@ -21,11 +21,10 @@ scores it:
                    practice --- \textsc{wmt} scored with $z$ for years and then stopped --- and a
                    comparison quoting human scores almost never says which it used.
 
-The published cell is the score out of a hundred, unnormalised, averaged over segments. That is the
-task's official number by construction rather than by reproduction, which is stated plainly here
-because the \textsc{mqm} boards are checked against a published ranking and these are not: there,
-the weighting had to be reimplemented and could disagree; here the official score is the mean of the
-column, so agreement carries no information and is not claimed as evidence.
+The published cell is the score out of a hundred, unnormalised, averaged within each domain and then
+across domains, which is how the task ranks under this protocol as under the other. It was first
+built as the mean over segments on the reasoning that the official number is just the mean of the
+column; it is not, and the two orders differ.
 """
 from __future__ import annotations
 
@@ -117,6 +116,17 @@ def build_board(cell_map: dict) -> tuple[dict, list[str], list[str], list]:
     items = sorted({i for _, i in cell_map})
     cells = [(c, n) for c in CRITERIA for n in NORMS]
 
+    # The task ranks by the mean within each domain and then across domains -- its own clustering
+    # script defaults to that for this protocol as well as for MQM, and the domain is the second
+    # field of a document id. Weighting an item by $1/(G\,n_g)$ and rescaling by the item count
+    # makes an unweighted mean of the rescaled vector that average, leaving the paired differences
+    # and the item bootstrap untouched. Without it the published cell is the mean over segments,
+    # which is a different number and a different order.
+    doms = [i.split("_#_")[1] if len(i.split("_#_")) > 1 else "?" for i in items]
+    sizes = collections.Counter(doms)
+    G = len(sizes)
+    w_macro = np.array([1.0 / (G * sizes[g]) for g in doms]) * len(items)
+
     # z is taken within an annotator across everything that annotator scored, which is the only
     # pool that makes the transform about the annotator rather than about the systems they saw
     stats = {}
@@ -148,6 +158,7 @@ def build_board(cell_map: dict) -> tuple[dict, list[str], list[str], list]:
                 col_mean = np.where(seen.any(axis=0), (grid * seen).sum(0) /
                                     np.maximum(seen.sum(0), 1), 0.0)
                 grid = np.where(seen, grid, col_mean)
+            grid = grid * w_macro
             for k, name in enumerate(systems):
                 hits[(name, (criterion, norm))] = grid[k]
     return hits, systems, items, cells
@@ -192,9 +203,9 @@ def main() -> int:
                       "criteria": {k: v[0] for k, v in CRITERIA.items()},
                       "second_axis": "whether a score is used as written or standardised within "
                                      "the annotator who wrote it",
-                      "published_cell": "the score out of a hundred, unnormalised; this is the "
-                                        "task's official number by construction, not by an "
-                                        "independent reproduction, and is not offered as a check",
+                      "published_cell": "the score out of a hundred, unnormalised, averaged within each "
+                                        "domain and then across domains, which is how the task "
+                                        "ranks; the mean over segments is a different number",
                       "skipped": skipped},
            "n_boards": len(boards),
            "n_pairs_total": sum(r["n_pairs"] for r in boards.values()),

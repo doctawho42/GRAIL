@@ -29,7 +29,7 @@
 \newcommand{\interB}{+0.063}          % MetaTrans<->SyGMa interaction
 \newcommand{\interBci}{[+0.022,\,+0.106]}
 
-\title{Twenty-Three Leaderboards Publish $293$ Places and Support $171$:\\
+\title{Twenty-Three Leaderboards Publish $293$ Places and Support $167$:\\
 What a Ranking Entitles a Reader to Quote\\
 Once Its Undeclared Choices Are Varied}
 
@@ -53,7 +53,7 @@ computed in and papers do not report, so a published ordering can be asked a que
 asked: does it hold in every other cell? We ask it of $23$ leaderboards in four domains ---
 retrosynthesis, metabolite prediction, protein--ligand docking and machine translation --- over
 $1{,}922$ pairwise orderings, re-scoring frozen predictions and retraining nothing. Summed, those
-leaderboards publish $293$ places and what survives supports $171$.
+leaderboards publish $293$ places and what survives supports $167$.
 
 Most of what a leaderboard prints was never resolved at all: eleven of the twenty-one pairs on a
 seven-system retrosynthesis table carry margins its own benchmark cannot separate before any choice
@@ -71,7 +71,7 @@ null.
 Which pairs are at risk needs no pairwise statistic. Two systems exchange under a change of criterion
 exactly when it moves them apart by more than the larger of the two margins it connects, so scoring
 each system once in the alternative cell settles every pair by arithmetic; on the $11{,}804$
-comparisons this paper spans in five domains the condition holds on the $695$ that exchange and on
+comparisons this paper spans in five domains the condition holds on the $704$ that exchange and on
 nothing else. We release the protocol, the audited split, the frozen predictions of every method
 compared, a checker that reports these choices from released files alone, and the analysis code.
 \end{abstract}
@@ -128,12 +128,12 @@ leading methods converge.
 \item The part of a published ranking that no declared choice can contradict is a partial order,
   computable from released prediction files alone, together with its longest chain. Measured on
   $23$ leaderboards in four domains and $1{,}922$ pairs: they publish $293$ places and what survives
-  supports $171$. Because it is an intersection over cells it can only shrink as a grid widens, so it
+  supports $167$. Because it is an intersection over cells it can only shrink as a grid widens, so it
   is reported as a curve over the declared axes rather than as one number.
 \item Which pairs a criterion exchanges is not estimated but decided: it exchanges a pair exactly
   when it moves the two apart by more than the larger of the margins it connects, so scoring each
   system once in the alternative cell settles every pair without a paired statistic. On the
-  $11{,}804$ comparisons here the condition holds on the $695$ that exchange and on nothing else,
+  $11{,}803$ comparisons here the condition holds on the $704$ that exchange and on nothing else,
   and exposure is the ratio of movement to gap rather than the size of either.
 \item Which population a dataset name refers to is ambiguous in released work and is not shown to
   reorder anything: eleven released prediction files sit on three test sets, and no interaction
@@ -297,7 +297,7 @@ docking, seven programs       & $428$ & $17$ of $21$ & $2$ (2) & $2$ & $4$ of $7
 translation, nineteen systems & $486$ & $125$ of $171$ & $17$ (6) & $29$ & $9$ of $19$ \\
 translation, fifteen systems  & $559$ & $96$ of $105$ & $1$ (0) & $8$ & $8$ of $15$ \\
 \midrule
-translation, nine further pairs & $634$--$1{,}954$ & $559$ of $689$ & $37$ (8) & $93$ & $66$ of $115$ \\
+translation, nine further pairs & $634$--$1{,}954$ & 553 of $689$ & 33 (4) & 103 & $62$ of $115$ \\
 translation, the year before & $509$--$1{,}120$ & $804$ of $909$ & $20$ (1) & $85$ & $78$ of $124$ \\
 \bottomrule
 \end{tabular}
@@ -316,14 +316,14 @@ The last three columns are the ones to take away, because most of what a leaderb
 never resolved at all: eleven of the seven-system table's twenty-one pairs carry margins its own
 benchmark cannot separate before any choice is varied. Across all twenty-three leaderboards the share runs
 from none of three to nine tenths with a median of $0.85$, so it is not a constant of the field and
-none is reported. Summed, they publish $293$ places and support $171$, most of
+none is reported. Summed, they publish $293$ places and support $167$, most of
 that gap being a benchmark's own power rather than a convention (Appendix~\ref{app:robustorder}). The longest chain is the readable
 form of the same measurement: seven published places support $3$ tiers, resampling to $[3,3]$;
 nineteen support $9$; and the same seven systems take $4$ total orders across $16$ cells. The system that table places first is not in the top
 tier of what survives; the one it places second is the only system that is
 (Figure~\ref{fig:hasse}). Docking and translation are controls: docking's field
 published its reversal already \citep{Buttenschoen_2024} and the grid recovers it, while translation's nineteen boards
-contest $75$ pairs of which $15$ survive correction. Not one of the $15$ reverses an ordering its own
+contest $71$ pairs of which $11$ survive correction. Not one of the $11$ reverses an ordering its own
 published cell had separated from zero: all six such reversals in the paper are chemistry, five in
 retrosynthesis and one in docking. What translation supplies is the first claim at scale --- pairs a
 table never established --- and what chemistry supplies is the second. What does not survive on the docking board includes its own top pair. Because domination is an
@@ -336,8 +336,8 @@ the twenty-three boards come from one shared task, which invites the objection t
 dataset counted nineteen times. Two editions of that task answer it. They ran a year apart under
 different protocols --- error spans and a hundred-point score in one, direct assessments with several
 ratings a segment in the other --- and five language pairs appear in both. The surviving share does
-not carry over: it moves by $0.113$ on average and by $0.259$ at the widest, \textsc{en-zh} standing
-at $0.900$ in one edition and $0.641$ in the next, on the same language with the same organisers. So
+not carry over: it moves by $0.114$ on average and by $0.285$ at the widest, \textsc{en-zh} standing
+at $0.900$ in one edition and $0.615$ in the next, on the same language with the same organisers. So
 the share is a fact about a table and its grid, not about a benchmark or a language, and a paper
 quoting one as a fingerprint --- this one included --- would repeat the error it is about
 (Appendix~\ref{app:robustorder}).
@@ -350,7 +350,7 @@ finding --- it says only that a difference changes sign when the change exceeds 
 it connects --- and it is stated because of what follows from it, not as a result. Scoring the $n$
 systems once in each cell fixes every one of the $n(n-1)/2$ dominance verdicts with no pairwise
 statistic anywhere; a resample enters only to tell a contested pair from an unresolved one. On the
-twenty-three tables that leaves $311$ of $1{,}922$ pairs failing to dominate, exactly the pairs some
+twenty-three tables that leaves $316$ of $1{,}922$ pairs failing to dominate, exactly the pairs some
 cell reverses, computed from $n$ numbers per cell rather than from $1{,}922$ paired bootstraps.
 
 What is not arithmetic is where those pairs are, and the answer is a ratio rather than a level. The
