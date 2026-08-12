@@ -645,6 +645,158 @@ def main() -> int:
                        "as stated" if "unit test on the weighting and not evidence about the data"
                        in flat else "claimed as evidence", "the manuscript"))
 
+    # 10c-5. The rest of what check_coverage.py reported as unread in the body: figures a reader
+    # meets in the introduction, the contributions and the two paragraphs that bound the survey.
+    flat = re.sub(r"\s+", " ", whole)
+    _hd = ROOT / "results/hydrogen_dispatch__clean_test.json"
+    if _hd.exists():
+        HD = json.loads(_hd.read_text())
+        # the same two arms the appendix quotes as a swing of -0.374; the bullet states its size
+        _arm = HD["banks"]["biotransformer"]["global_arms"]
+        _sw = abs(_arm["all_explicit_completed"] - _arm["all_implicit"])
+        m = re.search(r"the engine that applies it, moving by\s*up to \$([\d.]+)\$ with a "
+                      r"preprocessing step", flat)
+        checks.append((bool(m), "the contribution's engine figure parses", "present",
+                       "matched" if m else "not matched", ""))
+        # no "if m and ..." here: a value that cannot be found must fail, not be skipped
+        check("the contribution's engine figure", m.group(1) if m else None, _sw,
+              "results/hydrogen_dispatch__clean_test.json")
+
+    _pd = ROOT / "results/places_decomposition.json"
+    if _pd.exists():
+        PDx = json.loads(_pd.read_text())
+        m = re.search(r"The \$(\d+)\$ the title quotes is the weaker reading.*?strictest number has "
+                      r"\$(\d+)\$, and one who wants what the conventions cost has \$(\d+)\$", flat)
+        checks.append((bool(m), "the decomposition trailer parses", "present",
+                       "matched" if m else "not matched", ""))
+        if m:
+            check("decomposition trailer, the title's number", m.group(1),
+                  PDx["supported_when_every_cell_agrees_in_sign"], "results/places_decomposition.json")
+            check("decomposition trailer, the strictest", m.group(2),
+                  PDx["supported_when_every_cell_separates"], "results/places_decomposition.json")
+            check("decomposition trailer, the grid's cost", m.group(3), PDx["lost_to_the_grid"],
+                  "results/places_decomposition.json")
+
+    # the one language pair scored twice, a year apart, which is the replication claim
+    _e24 = ROOT / "results/robust_order_wmt24_esa.json"
+    _e23 = ROOT / "results/robust_order_wmt23.json"
+    if _e24.exists() and _e23.exists():
+        E24 = json.loads(_e24.read_text())["boards"]
+        E23 = json.loads(_e23.read_text())["boards"]
+        m = re.search(r"\\textsc\{en-zh\} standing at \$([\d.]+)\$ in one edition and \$([\d.]+)\$ "
+                      r"in the next", flat)
+        checks.append((bool(m), "the replication sentence parses", "present",
+                       "matched" if m else "not matched", ""))
+        if m:
+            _a = E24.get("en-zh", {}).get("robustness")
+            _b = next((v["robustness"] for k, v in E23.items() if k in ("eng-zho", "en-zh")), None)
+            _hi, _lo = max(_a, _b), min(_a, _b)
+            check("replication, the higher edition", max(float(m.group(1)), float(m.group(2))), _hi,
+                  "results/robust_order_wmt24_esa.json / robust_order_wmt23.json")
+            check("replication, the lower edition", min(float(m.group(1)), float(m.group(2))), _lo,
+                  "results/robust_order_wmt24_esa.json / robust_order_wmt23.json")
+
+    _pp = ROOT / "results/packing_predicts_order.json"
+    if _pp.exists():
+        PPo = json.loads(_pp.read_text())
+        m = re.search(r"rather than from \$([\d,{}]+)\$ paired bootstraps", flat)
+        check("the pairs the arithmetic replaces a bootstrap on",
+              m and m.group(1).replace("{,}", ""), PPo["totals"]["n_pairs"],
+              "results/packing_predicts_order.json")
+
+    _ro = ROOT / "results/robust_order.json"
+    if _ro.exists():
+        RO = json.loads(_ro.read_text())["leaderboards"]
+        m = re.search(r"seven systems on their \$([\d,{}]+)\$ common reactions", flat)
+        check("the retrosynthesis group's reactions", m and m.group(1).replace("{,}", ""),
+              RO["cluster0"]["n_items"], "results/robust_order.json")
+        # the smallest separable margin against the largest move any criterion makes on that board
+        import ast as _a2
+        _acc = RO["cluster0"]["system_accuracy_by_cell"]
+        _pub = _a2.literal_eval(RO["cluster0"]["published_cell"])
+        _cells = [_a2.literal_eval(c) for c in next(iter(_acc.values()))]
+        _sib = [c for c in _cells if c[1] == _pub[1] and c[0] != _pub[0]]
+        _moves = []
+        for _nm in RO["cluster0"]["pairs"]:
+            _hi2, _lo2 = _nm.split(" over ")
+            _d0 = _acc[_hi2][str(_pub)] - _acc[_lo2][str(_pub)]
+            _moves += [abs((_acc[_hi2][str(_c)] - _acc[_lo2][str(_c)]) - _d0) for _c in _sib]
+        m = re.search(r"largest amount any criterion moves a\s*margin on it is \$([\d.]+)\$", flat)
+        check("the largest criterion movement on that board", m and m.group(1), max(_moves),
+              "results/robust_order.json")
+
+    _pa, _rpa = ROOT / "results/population_axis.json", ROOT / "results/retro_population_axis.json"
+    if _pa.exists() and _rpa.exists():
+        PA, RPA = json.loads(_pa.read_text()), json.loads(_rpa.read_text())
+        m = re.search(r"changes an ordering in \$(\d+)\$ of \$(\d+)\$ comparisons and \$(\d+)\$ of "
+                      r"\$(\d+)\$ on the metabolite split, and none of the \$(\d+)\$ interactions "
+                      r"survives Holm at \$([\d.]+)\$", flat)
+        checks.append((bool(m), "the population sentence parses", "present",
+                       "matched" if m else "not matched", ""))
+        if m:
+            check("population, retro reordered", m.group(1), RPA["reordered"],
+                  "results/retro_population_axis.json")
+            check("population, retro comparisons", m.group(2), RPA["comparisons"],
+                  "results/retro_population_axis.json")
+            check("population, metabolite reordered", m.group(3), PA["reordered"],
+                  "results/population_axis.json")
+            check("population, metabolite comparisons", m.group(4), PA["comparisons"],
+                  "results/population_axis.json")
+            check("population, the interactions tested", m.group(5),
+                  RPA["comparisons"] + PA["comparisons"],
+                  "results/retro_population_axis.json + population_axis.json")
+            checks.append((abs(float(m.group(6)) - 0.05) < 1e-9,
+                           "population, the level", "0.05", m.group(6), "the paper's alpha"))
+            checks.append((RPA["holm_survivors"] == 0 and PA["holm_survivors"] == 0,
+                           "population, nothing survives", "0 and 0",
+                           f"{RPA['holm_survivors']} and {PA['holm_survivors']}",
+                           "results/*population_axis.json"))
+
+    _d2 = ROOT / "results/benchmark_report_depth2.json"
+    if _d2.exists():
+        D2 = json.loads(_d2.read_text())
+        m = re.search(r"lifts the ceiling by \$\{\\sim\}([\d.]+)\$ at \$([\d.]+)\$ times the cost",
+                      flat)
+        checks.append((bool(m), "the depth-2 sentence parses", "present",
+                       "matched" if m else "not matched", ""))
+        if m:
+            check("depth-2, the lift", m.group(1), D2["lift_over_depth1"],
+                  "results/benchmark_report_depth2.json")
+            check("depth-2, the cost", m.group(2),
+                  D2["depth2_ceiling_lower_bound"]["mean_candidates_per_substrate"]
+                  / D2["depth1_ceiling"]["mean_candidates_per_substrate"],
+                  "results/benchmark_report_depth2.json")
+
+    _be = ROOT / "results/bank_engine_replication.json"
+    if _be.exists():
+        BE = json.loads(_be.read_text())
+        m = re.search(r"is computed from the \$(\d+)\$ SMIRKS shipped with that tool", flat)
+        check("the comparator's rule count", m and m.group(1),
+              BE["banks"]["biotransformer"]["n_rules"], "results/bank_engine_replication.json")
+
+    _ov = ROOT / "results/external_overlap_audit.json"
+    if _ov.exists():
+        OV = json.loads(_ov.read_text())
+        m = re.search(r"The GLORYx set overlaps on \$(\d+)\$ of its \$(\d+)\$ drugs.*?reports GRAIL "
+                      r"on the \$(\d+)\$ that do not overlap.*?overlaps on none of its \$(\d+)\$",
+                      flat)
+        checks.append((bool(m), "the overlap sentence parses", "present",
+                       "matched" if m else "not matched", ""))
+        if m:
+            _g = OV["GLORYx external set"]
+            _s = OV["shared 150-substrate subset"]
+            check("overlap, GLORYx drugs inside the split", m.group(1), _g["in_train_or_val"],
+                  "results/external_overlap_audit.json")
+            check("overlap, GLORYx size", m.group(2), _g["n"],
+                  "results/external_overlap_audit.json")
+            check("overlap, the unseen remainder", m.group(3), _g["n"] - _g["in_train_or_val"],
+                  "results/external_overlap_audit.json")
+            check("overlap, the shared subset", m.group(4), _s["n"],
+                  "results/external_overlap_audit.json")
+            checks.append((_s["in_train_or_val"] == 0, "overlap, the shared subset is clean",
+                           "0", str(_s["in_train_or_val"]),
+                           "results/external_overlap_audit.json"))
+
     # 10c-6. The docking control paragraph, which a check reached at exactly one number. Its
     # figures are the ones a reader meets while deciding whether to believe the instrument, and
     # they were the largest unread block in the body.
@@ -798,6 +950,23 @@ def main() -> int:
                   "results/robust_order_*.json")
         checks.append((_seen == len(_ROWS), "table 1, every row is bound", str(len(_ROWS)),
                        str(_seen), "results/robust_order_*.json"))
+
+    # 10c-4. The two figures the body repeats most often: how many leaderboards there are, and
+    # the level every correction is taken at. Both are constants, which is exactly why nothing was
+    # checking them -- and a constant that changes silently is the cheapest error to ship.
+    flat = re.sub(r"\s+", " ", whole)
+    _nb = len(_BD)
+    _saidb = re.findall(r"\$(\d+)\$ (?:leaderboards|boards)", flat)
+    checks.append((len(_saidb) >= 3 and all(int(x) == _nb for x in _saidb),
+                   "every count of leaderboards is the number there are", str(_nb),
+                   ", ".join(sorted(set(_saidb))) or "none found", "results/robust_order_*.json"))
+    _alpha = re.findall(r"Holm at \$?(?:\\alpha=)?\$?([\d.]+)\$", flat)
+    _ro_alpha = float(re.search(r"^ALPHA\s*=\s*([\d.]+)",
+                                (ROOT / "scripts/robust_order.py").read_text(),
+                                re.M).group(1))
+    checks.append((bool(_alpha) and all(abs(float(x) - _ro_alpha) < 1e-12 for x in _alpha),
+                   "every level quoted is the level the code corrects at", str(_ro_alpha),
+                   ", ".join(sorted(set(_alpha))) or "none found", "scripts/robust_order.py"))
 
     # 10c-8. The share's median across the twenty-three boards. It was printed as 0.85 with no
     # check while the figure drawn from the same artifacts labelled its own dashed line 0.83 --
