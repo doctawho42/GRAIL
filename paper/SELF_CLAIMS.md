@@ -770,3 +770,46 @@ disagreed about one number. The disagreement was real, and repairing it exposed 
 underneath: the contraction that both sides used, and the asymmetry above. A contradiction between
 two statements of the same quantity is worth chasing past the point where the two agree, because
 what made them disagree is rarely the last thing wrong.
+
+## 14. A figure printed more than once is bound in every printing
+
+**Check:** for each quantity the manuscript states in more than one place, the checker must locate
+*every* printing and hold each against the artifact — not match one phrasing and stop.
+
+```bash
+python scripts/verify_paper_numbers.py | grep -c "decomposition printing"   # 9: three printings x three figures
+python scripts/verify_paper_numbers.py | grep "every printing of the decomposition is found"
+python scripts/verify_paper_numbers.py | grep "packing, every leaderboard is a row"
+```
+
+**Status: PASS, after failing in the most expensive way available.** The decomposition of published
+places appeared in the abstract, a contribution bullet and the body. The checker matched the body's
+phrasing only, so the other two drifted: three printings, three different sets of figures, none of
+them the artifact's. Six independent panel reviewers named it as the reason to reject, and it was
+the single defect they agreed on.
+
+The same shape in a table: the packing table's nine rows had four bound, the two rows that stand
+for nine and eight boards went stale when those boards were re-oriented, and the printed column
+stopped summing to the printed total — 11,804 against 11,803 — which is arithmetic any reader does
+and no check did.
+
+**The rule: a check that finds one instance of a repeated figure licenses every other instance.**
+Collect all printings by their own patterns, assert how many there are, and hold each. Where a
+printed table has rows, sum the rows and compare against the total the prose quotes.
+
+## 15. Which correction a number carries is stated wherever the number appears
+
+**Check:** the manuscript reports three multiplicity corrections — Holm inside each grid, Holm at
+`alpha/23` inside each grid, and Holm over the union of all twenty-three grids. Every headline
+count must say which one it is.
+
+```bash
+python scripts/union_multiplicity.py     # per-board reading must reproduce the 23 the paper quotes
+python scripts/verify_paper_numbers.py | grep "union,"
+```
+
+**Status: PASS.** The per-board reading reproduces the artifacts' own count exactly, which is what
+makes the other two readings trustworthy: the same code, re-applied to a larger family. The abstract
+and the contributions carry the union figures beside the per-board ones rather than leaving them to
+the appendix, because a correction that only appears where few readers go is a correction the paper
+did not really make.
