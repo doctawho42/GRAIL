@@ -1,0 +1,465 @@
+{
+ "config": {
+  "script": "criterion_power.py",
+  "git_commit": "50d0444a7a9927bf2624674a9cb63de3fab57208",
+  "git_dirty": true,
+  "note": "read out of the per-cell system means the board artifacts carry; the other axis is held at the board's published setting",
+  "matching_axis_boards": [
+   "robust_order:cluster0",
+   "robust_order:cluster1",
+   "robust_order_metabolite",
+   "robust_order_posebusters"
+  ]
+ },
+ "matching_axis": {
+  "n_boards": 4,
+  "n_boards_where_nothing_flips": 3,
+  "largest_ratio_where_nothing_flips": 0.5755,
+  "closest_such_board": "robust_order:cluster1",
+  "fold_short_on_that_board": 1.74,
+  "median_of_the_board_maxima": 0.5325,
+  "median_ratio_where_nothing_flips": 0.0159,
+  "boards_with_a_flip": {
+   "robust_order_posebusters": 1
+  }
+ },
+ "per_board": {
+  "robust_order:cluster0": {
+   "n_separated_pairs": 10,
+   "n_comparisons": 30,
+   "criteria_compared": [
+    "nostereo",
+    "inchikey",
+    "tautomer"
+   ],
+   "max_ratio": 0.4895,
+   "median_ratio": 0.0216,
+   "n_flipping": 0,
+   "closest_pair": {
+    "pair": "graph2smiles over g2retro",
+    "criterion": "tautomer",
+    "movement": 0.014,
+    "required": 0.0286,
+    "ratio": 0.4895
+   }
+  },
+  "robust_order:cluster1": {
+   "n_separated_pairs": 3,
+   "n_comparisons": 9,
+   "criteria_compared": [
+    "nostereo",
+    "inchikey",
+    "tautomer"
+   ],
+   "max_ratio": 0.5755,
+   "median_ratio": 0.0159,
+   "n_flipping": 0,
+   "closest_pair": {
+    "pair": "chemformer over gta",
+    "criterion": "tautomer",
+    "movement": 0.0122,
+    "required": 0.0212,
+    "ratio": 0.5755
+   }
+  },
+  "robust_order_metabolite": {
+   "n_separated_pairs": 2,
+   "n_comparisons": 6,
+   "criteria_compared": [
+    "canonical",
+    "inchikey",
+    "nostereo"
+   ],
+   "max_ratio": 0.0857,
+   "median_ratio": 0.0154,
+   "n_flipping": 0,
+   "closest_pair": {
+    "pair": "SyGMa over GRAIL",
+    "criterion": "canonical",
+    "movement": 0.0205,
+    "required": 0.2393,
+    "ratio": 0.0857
+   }
+  },
+  "robust_order_posebusters": {
+   "n_separated_pairs": 18,
+   "n_comparisons": 54,
+   "criteria_compared": [
+    "rmsd2",
+    "rmsd1",
+    "rmsd2+chem"
+   ],
+   "max_ratio": 1.5447,
+   "median_ratio": 0.3539,
+   "n_flipping": 1,
+   "closest_pair": {
+    "pair": "deepdock over unimol",
+    "criterion": "rmsd2",
+    "movement": 0.0794,
+    "required": 0.0514,
+    "ratio": 1.5447
+   }
+  },
+  "robust_order_wmt24_en-de": {
+   "n_separated_pairs": 102,
+   "n_comparisons": 306,
+   "criteria_compared": [
+    "plain",
+    "major-only",
+    "count"
+   ],
+   "max_ratio": 1.3326,
+   "median_ratio": 0.7397,
+   "n_flipping": 5,
+   "closest_pair": {
+    "pair": "GPT-4 over Mistral-Large",
+    "criterion": "count",
+    "movement": 0.6255,
+    "required": 0.4694,
+    "ratio": 1.3326
+   }
+  },
+  "robust_order_wmt24_ja-zh": {
+   "n_separated_pairs": 86,
+   "n_comparisons": 258,
+   "criteria_compared": [
+    "plain",
+    "major-only",
+    "count"
+   ],
+   "max_ratio": 1.1244,
+   "median_ratio": 0.8049,
+   "n_flipping": 1,
+   "closest_pair": {
+    "pair": "ONLINE-B over IKUN-C",
+    "criterion": "count",
+    "movement": 2.058,
+    "required": 1.8303,
+    "ratio": 1.1244
+   }
+  },
+  "robust_order_wmt24_esa:cs-uk": {
+   "n_separated_pairs": 55,
+   "n_comparisons": 165,
+   "criteria_compared": [
+    "spans",
+    "major-only",
+    "count"
+   ],
+   "max_ratio": 1.0257,
+   "median_ratio": 0.9578,
+   "n_flipping": 5,
+   "closest_pair": {
+    "pair": "GPT-4 over IKUN",
+    "criterion": "spans",
+    "movement": 1.4609,
+    "required": 1.4243,
+    "ratio": 1.0257
+   }
+  },
+  "robust_order_wmt24_esa:en-cs": {
+   "n_separated_pairs": 99,
+   "n_comparisons": 297,
+   "criteria_compared": [
+    "spans",
+    "major-only",
+    "count"
+   ],
+   "max_ratio": 1.0335,
+   "median_ratio": 0.9145,
+   "n_flipping": 2,
+   "closest_pair": {
+    "pair": "IOL-Research over CUNI-DocTransformer",
+    "criterion": "count",
+    "movement": 2.0225,
+    "required": 1.957,
+    "ratio": 1.0335
+   }
+  },
+  "robust_order_wmt24_esa:en-es": {
+   "n_separated_pairs": 74,
+   "n_comparisons": 222,
+   "criteria_compared": [
+    "spans",
+    "major-only",
+    "count"
+   ],
+   "max_ratio": 1.0458,
+   "median_ratio": 0.9121,
+   "n_flipping": 2,
+   "closest_pair": {
+    "pair": "IOL-Research over Claude-3.5",
+    "criterion": "spans",
+    "movement": 2.7876,
+    "required": 2.6655,
+    "ratio": 1.0458
+   }
+  },
+  "robust_order_wmt24_esa:en-hi": {
+   "n_separated_pairs": 40,
+   "n_comparisons": 120,
+   "criteria_compared": [
+    "spans",
+    "major-only",
+    "count"
+   ],
+   "max_ratio": 1.1683,
+   "median_ratio": 0.9415,
+   "n_flipping": 10,
+   "closest_pair": {
+    "pair": "ONLINE-B over GPT-4",
+    "criterion": "spans",
+    "movement": 2.0176,
+    "required": 1.727,
+    "ratio": 1.1683
+   }
+  },
+  "robust_order_wmt24_esa:en-is": {
+   "n_separated_pairs": 52,
+   "n_comparisons": 156,
+   "criteria_compared": [
+    "spans",
+    "major-only",
+    "count"
+   ],
+   "max_ratio": 1.1467,
+   "median_ratio": 0.9134,
+   "n_flipping": 7,
+   "closest_pair": {
+    "pair": "Dubformer over Claude-3.5",
+    "criterion": "spans",
+    "movement": 2.6727,
+    "required": 2.3308,
+    "ratio": 1.1467
+   }
+  },
+  "robust_order_wmt24_esa:en-ja": {
+   "n_separated_pairs": 46,
+   "n_comparisons": 138,
+   "criteria_compared": [
+    "spans",
+    "major-only",
+    "count"
+   ],
+   "max_ratio": 1.101,
+   "median_ratio": 0.9469,
+   "n_flipping": 5,
+   "closest_pair": {
+    "pair": "Aya23 over Team-J",
+    "criterion": "count",
+    "movement": 1.3023,
+    "required": 1.1828,
+    "ratio": 1.101
+   }
+  },
+  "robust_order_wmt24_esa:en-ru": {
+   "n_separated_pairs": 75,
+   "n_comparisons": 225,
+   "criteria_compared": [
+    "spans",
+    "major-only",
+    "count"
+   ],
+   "max_ratio": 1.0702,
+   "median_ratio": 0.9391,
+   "n_flipping": 7,
+   "closest_pair": {
+    "pair": "ONLINE-G over IOL-Research",
+    "criterion": "spans",
+    "movement": 2.6274,
+    "required": 2.455,
+    "ratio": 1.0702
+   }
+  },
+  "robust_order_wmt24_esa:en-uk": {
+   "n_separated_pairs": 43,
+   "n_comparisons": 129,
+   "criteria_compared": [
+    "spans",
+    "major-only",
+    "count"
+   ],
+   "max_ratio": 1.0761,
+   "median_ratio": 0.9389,
+   "n_flipping": 5,
+   "closest_pair": {
+    "pair": "Gemini-1.5-Pro over CommandR-plus",
+    "criterion": "spans",
+    "movement": 4.2669,
+    "required": 3.9651,
+    "ratio": 1.0761
+   }
+  },
+  "robust_order_wmt24_esa:en-zh": {
+   "n_separated_pairs": 47,
+   "n_comparisons": 141,
+   "criteria_compared": [
+    "spans",
+    "major-only",
+    "count"
+   ],
+   "max_ratio": 1.0281,
+   "median_ratio": 0.942,
+   "n_flipping": 3,
+   "closest_pair": {
+    "pair": "Llama3-70B over Aya23",
+    "criterion": "spans",
+    "movement": 1.292,
+    "required": 1.2567,
+    "ratio": 1.0281
+   }
+  },
+  "robust_order_wmt23:ces-ukr": {
+   "n_separated_pairs": 72,
+   "n_comparisons": 216,
+   "criteria_compared": [
+    "median",
+    "first",
+    "not-hasty"
+   ],
+   "max_ratio": 0.7849,
+   "median_ratio": 0.0712,
+   "n_flipping": 0,
+   "closest_pair": {
+    "pair": "CUNI-Transformer over ONLINE-G",
+    "criterion": "first",
+    "movement": 1.8051,
+    "required": 2.2997,
+    "ratio": 0.7849
+   }
+  },
+  "robust_order_wmt23:deu-eng": {
+   "n_separated_pairs": 69,
+   "n_comparisons": 207,
+   "criteria_compared": [
+    "median",
+    "first",
+    "not-hasty"
+   ],
+   "max_ratio": 0.8062,
+   "median_ratio": 0.0332,
+   "n_flipping": 0,
+   "closest_pair": {
+    "pair": "ONLINE-G over ONLINE-M",
+    "criterion": "first",
+    "movement": 1.9201,
+    "required": 2.3818,
+    "ratio": 0.8062
+   }
+  },
+  "robust_order_wmt23:eng-ces": {
+   "n_separated_pairs": 91,
+   "n_comparisons": 273,
+   "criteria_compared": [
+    "median",
+    "first",
+    "not-hasty"
+   ],
+   "max_ratio": 0.8076,
+   "median_ratio": 0.0599,
+   "n_flipping": 0,
+   "closest_pair": {
+    "pair": "CUNI-Transformer over Lan-BridgeMT",
+    "criterion": "first",
+    "movement": 1.9756,
+    "required": 2.4464,
+    "ratio": 0.8076
+   }
+  },
+  "robust_order_wmt23:eng-deu": {
+   "n_separated_pairs": 61,
+   "n_comparisons": 183,
+   "criteria_compared": [
+    "median",
+    "first",
+    "not-hasty"
+   ],
+   "max_ratio": 1.7615,
+   "median_ratio": 0.06,
+   "n_flipping": 1,
+   "closest_pair": {
+    "pair": "ONLINE-B over Human-refA",
+    "criterion": "first",
+    "movement": 2.0646,
+    "required": 1.1721,
+    "ratio": 1.7615
+   }
+  },
+  "robust_order_wmt23:eng-jpn": {
+   "n_separated_pairs": 117,
+   "n_comparisons": 351,
+   "criteria_compared": [
+    "median",
+    "first",
+    "not-hasty"
+   ],
+   "max_ratio": 0.4703,
+   "median_ratio": 0.0353,
+   "n_flipping": 0,
+   "closest_pair": {
+    "pair": "Human-refA over GPT4-5shot",
+    "criterion": "first",
+    "movement": 0.5588,
+    "required": 1.1881,
+    "ratio": 0.4703
+   }
+  },
+  "robust_order_wmt23:eng-zho": {
+   "n_separated_pairs": 93,
+   "n_comparisons": 279,
+   "criteria_compared": [
+    "median",
+    "first",
+    "not-hasty"
+   ],
+   "max_ratio": 0.6502,
+   "median_ratio": 0.0228,
+   "n_flipping": 0,
+   "closest_pair": {
+    "pair": "ONLINE-W over ONLINE-A",
+    "criterion": "first",
+    "movement": 1.1223,
+    "required": 1.7261,
+    "ratio": 0.6502
+   }
+  },
+  "robust_order_wmt23:jpn-eng": {
+   "n_separated_pairs": 129,
+   "n_comparisons": 387,
+   "criteria_compared": [
+    "median",
+    "first",
+    "not-hasty"
+   ],
+   "max_ratio": 0.8175,
+   "median_ratio": 0.0397,
+   "n_flipping": 0,
+   "closest_pair": {
+    "pair": "SKIM over ONLINE-A",
+    "criterion": "first",
+    "movement": 1.0878,
+    "required": 1.3306,
+    "ratio": 0.8175
+   }
+  },
+  "robust_order_wmt23:zho-eng": {
+   "n_separated_pairs": 96,
+   "n_comparisons": 288,
+   "criteria_compared": [
+    "median",
+    "first",
+    "not-hasty"
+   ],
+   "max_ratio": 0.6528,
+   "median_ratio": 0.0285,
+   "n_flipping": 0,
+   "closest_pair": {
+    "pair": "GPT4-5shot over ONLINE-Y",
+    "criterion": "first",
+    "movement": 0.8,
+    "required": 1.2254,
+    "ratio": 0.6528
+   }
+  }
+ }
+}

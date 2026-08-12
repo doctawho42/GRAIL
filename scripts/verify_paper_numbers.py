@@ -645,6 +645,82 @@ def main() -> int:
                        "as stated" if "unit test on the weighting and not evidence about the data"
                        in flat else "claimed as evidence", "the manuscript"))
 
+    # 10d-0. The power behind the negative claim. Every figure in the paragraph is one of the
+    # artifact's, and the two facts that keep the docking exception honest -- the flip is not
+    # certified, and what is certified there needs the other axis -- are read from the board.
+    cp = ROOT / "results/criterion_power.json"
+    if cp.exists():
+        CP = json.loads(cp.read_text())
+        flat = re.sub(r"\s+", " ", whole)
+        PB = CP["per_board"]
+        m = re.search(r"the matching rule reaches \$([\d.]+)\$ of what a reversal needs on the "
+                      r"seven-system retrosynthesis board, \$([\d.]+)\$ on the three-system one "
+                      r"and \$([\d.]+)\$ on the metabolite board; the median comparison on those "
+                      r"boards is \$([\d.]+)\$", flat)
+        checks.append((bool(m), "the power sentence parses", "present",
+                       "matched" if m else "not matched", ""))
+        if m:
+            check("power, seven-system board", m.group(1),
+                  PB["robust_order:cluster0"]["max_ratio"], "results/criterion_power.json")
+            check("power, three-system board", m.group(2),
+                  PB["robust_order:cluster1"]["max_ratio"], "results/criterion_power.json")
+            check("power, metabolite board", m.group(3),
+                  PB["robust_order_metabolite"]["max_ratio"], "results/criterion_power.json")
+            check("power, median comparison", m.group(4),
+                  CP["matching_axis"]["median_ratio_where_nothing_flips"],
+                  "results/criterion_power.json")
+        # the body states the same power in rounded form; both printings are bound
+        m = re.search(r"matching rule's movement never reaches \$([\d.]+)\$ of what reversing a "
+                      r"separated pair would take, and its median comparison is \$([\d.]+)\$", flat)
+        checks.append((bool(m), "the body states the size of the null", "present",
+                       "matched" if m else "not matched", ""))
+        if m:
+            check("power in the body, largest ratio", m.group(1),
+                  CP["matching_axis"]["largest_ratio_where_nothing_flips"],
+                  "results/criterion_power.json")
+            check("power in the body, median", m.group(2),
+                  CP["matching_axis"]["median_ratio_where_nothing_flips"],
+                  "results/criterion_power.json")
+        m = re.search(r"movement would have to be \$([\d.]+)\$ times larger", flat)
+        check("power, fold short on the closest board", m and m.group(1),
+              CP["matching_axis"]["fold_short_on_that_board"], "results/criterion_power.json")
+        m = re.search(r"over \\textsc\{unimol\}, at \$([\d.]+)\$ times the\s*requirement", flat)
+        check("power, the docking flip", m and m.group(1),
+              PB["robust_order_posebusters"]["closest_pair"]["ratio"],
+              "results/criterion_power.json")
+        # the paragraph's two claims about that flip, against the board rather than against prose
+        _pb = json.loads((ROOT / "results/robust_order_posebusters.json").read_text())
+        _flip = PB["robust_order_posebusters"]["closest_pair"]["pair"]
+        _cells = _pb["pairs"][_flip]["cells_that_reverse_it_with_an_interval"]
+        _pubcell = _pb["published_cell"]
+        checks.append((all(_pubcell.split(", ")[1] not in c for c in _cells),
+                       "the docking flip is not certified at the published post-processing",
+                       "no interval at the published setting",
+                       "; ".join(_cells) or "none", "results/robust_order_posebusters.json"))
+        import ast as _a
+        # the two certified reversals on that board are not the same kind, and the paragraph says
+        # so: one is of an ordering the published cell separated and needs the other axis, the
+        # other is the criterion's alone and is of a pair the board never established
+        _sep_cert, _uns_cert = [], []
+        for nm in _pb["contested_after_correction"]:
+            _cells = [_a.literal_eval(c)
+                      for c in _pb["pairs"][nm]["cells_that_reverse_it_with_an_interval"]]
+            (_sep_cert if _pb["pairs"][nm]["per_cell"][_pubcell]["separated"]
+             else _uns_cert).append((nm, _cells))
+        _pub_second = _a.literal_eval(_pubcell)[1]
+        checks.append((len(_sep_cert) == 1 and all(c[1] != _pub_second for _, cs in _sep_cert
+                                                   for c in cs),
+                       "the certified reversal of a separated ordering needs the other axis",
+                       "one, and never at the published setting",
+                       str([(nm, cs) for nm, cs in _sep_cert]),
+                       "results/robust_order_posebusters.json"))
+        checks.append((len(_uns_cert) == 1 and any(c[1] == _pub_second for _, cs in _uns_cert
+                                                   for c in cs),
+                       "the other certified reversal is the criterion's alone",
+                       "one, at the published setting",
+                       str([(nm, cs) for nm, cs in _uns_cert]),
+                       "results/robust_order_posebusters.json"))
+
     # 10d-e. The nine ESA boards, whose totals the appendix states in prose. They are the paper's
     # answer to "your share is one number from one table", so the aggregate is held to the run.
     ea = ROOT / "results/robust_order_wmt24_esa.json"
