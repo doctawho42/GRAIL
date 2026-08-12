@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import decimal
 import re
 import sys
 from pathlib import Path
@@ -46,18 +47,36 @@ def close(a, b, tol=5e-4):
     """
     if a is None or b is None:
         return False
+    # A value read from the manuscript arrives as a string, and it arrives with whatever the
+    # pattern happened to capture around it: the maths delimiters, a thousands separator, the
+    # sentence's own full stop. Those are typography, not the number, and a check that fails on
+    # them is a check that reports a defect the manuscript does not have.
+    text = a.strip() if isinstance(a, str) else ""
+    if text:
+        text = text.replace("$", "").replace("{,}", "").replace(",", "").replace("\\,", "")
+        text = text.strip().rstrip(".;:,") if text.count(".") > 1 or text.endswith(
+            (".", ";", ":", ",")) and not text.rstrip(".;:,").endswith(".") else text.strip()
     try:
-        av, bv = float(a), float(b)
+        av, bv = float(text if text else a), float(b)
     except (TypeError, ValueError):
         return False
-    # Only a value READ FROM THE MANUSCRIPT arrives as a string, and only for those is the printed
-    # precision the right yardstick. Artifact-against-artifact comparisons pass floats and keep the
-    # tolerance they were given -- applying the rule to them made a deliberate 2e-3 convention check
-    # into a four-decimal one, which this check caught on itself.
-    text = a.strip() if isinstance(a, str) else ""
-    if "." in text and text.replace(".", "").replace("-", "").replace("+", "").isdigit():
-        places = len(text.split(".")[1])
-        return f"{round(bv, places):.{places}f}" == f"{av:.{places}f}"
+    # Only for a value read from the manuscript is the printed precision the right yardstick.
+    # Artifact-against-artifact comparisons pass floats and keep the tolerance they were given --
+    # applying the rule to them made a deliberate 2e-3 convention check into a four-decimal one,
+    # which this check caught on itself.
+    if text and text.replace(".", "", 1).replace("-", "", 1).replace("+", "", 1).isdigit():
+        places = len(text.split(".")[1]) if "." in text else 0
+        # half-up, the way a reader rounds: 0.5495 printed at three places is 0.550, and binary
+        # floating point rounds it the other way
+        q = decimal.Decimal(1).scaleb(-places)
+        said = decimal.Decimal(text).quantize(q, rounding=decimal.ROUND_HALF_UP)
+        # An artifact sitting exactly on the boundary -- 0.8005 printed at three places -- is a
+        # number the reader cannot be wrong about either way, and which of the two a script wrote
+        # depends on whether its binary representation fell above or below the half. Both are
+        # accepted there and only there; anything off the boundary still has one right answer.
+        d = decimal.Decimal(repr(bv))
+        return said in (d.quantize(q, rounding=decimal.ROUND_HALF_UP),
+                        d.quantize(q, rounding=decimal.ROUND_HALF_DOWN))
     return abs(av - bv) <= tol
 
 
