@@ -164,6 +164,45 @@ Across the eight, $804$ of $909$ pairs dominate, $20$ are contested
 of which $1$ survive correction, and $124$ published places support $78$.
 
 
+\paragraph{One correction per board, when the claim ranges over twenty-three.} Holm is applied
+within each grid, which controls the error rate of a claim about \emph{that} leaderboard and not of
+the claim this paper makes. The honest family is the union of the grids: $15{,}592$ cell-level
+tests. Re-applying the same procedure to the concatenated $p$-vectors --- no board re-analysed, no
+prediction re-scored --- rejects $8{,}314$ of them at a cutoff of $p=6.9\times10^{-6}$, and the
+count of certified pairs falls from $23$ to $14$. Splitting $\alpha$ across the boards instead, at
+$\alpha/23$ within each grid, gives $14$ as well. The population the second claim is about survives
+almost intact: of the $6$ certified reversals of an ordering a published cell had separated, $5$
+remain, and the matching rule certifies none under any of the three corrections, which it cannot,
+since each is a subset of the last.
+
+What the union costs is concentrated rather than spread: the docking board's two go, the
+nineteen-system translation board keeps $2$ of $6$, and the retrosynthesis boards keep all ten. Two
+things about that are worth stating rather than leaving to be inferred. The union is step-down, so
+it stops at its first failure, and a reversal can be lost because thousands of unrelated
+separations on other boards sit below it in the sorted vector --- a property of the procedure, not
+a verdict on the reversal. And a board whose reversal the field had already published in its own
+paper is among the ones that lose it here, which is the price of a correction that does not ask
+where a test came from.
+
+\paragraph{The task's own answer to the same question.} A count no one else computes is a count no
+one else can check, and the objection that the instrument is idiosyncratic is answered by the one
+domain that computes its own version and publishes it. The translation task tests every pair with a
+Wilcoxon signed-rank test on the paired per-segment scores within each domain, combines the domains
+by Stouffer's $Z$, and merges two systems into a cluster when that test does not separate them at
+$0.05$; the number of clusters is its answer to how many ranks its table supports. Running their
+code --- \texttt{get\_pvalues} and \texttt{get\_clusters} imported, not reimplemented --- on the two
+\textsc{mqm} boards gives $4$ clusters for the nineteen systems and $6$ for the fifteen, against the
+$6$ and $8$ places our instrument supports in the same published cell. The two orders agree system
+for system.
+
+So the field's own machinery is the stricter of the two on both boards, and the direction of this
+paper's claim is the conservative one: where the instruments differ, ours grants a leaderboard more
+than the task itself does. They differ for two reasons that are visible in the code and not worth
+adjudicating here --- a different test, and a different way of turning pairwise verdicts into
+groups, since a longest chain and a merge-downwards clustering need not agree even on identical
+verdicts. Neither side corrects for multiplicity in this comparison, which is what makes the two
+counts comparable at all.
+
 \paragraph{A null with a size.} The paper's second claim is negative --- the matching rule
 certifies no reversal of an ordering a published cell had separated --- and a negative claim is
 worth whatever its power is. The identity supplies that without another statistic. A criterion

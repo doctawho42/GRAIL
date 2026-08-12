@@ -88,6 +88,17 @@ def _surviving_reversals(board: dict, cutoff: float) -> list:
     return [r for r in board["multiplicity"]["reversal_tests"] if r["p"] <= cutoff]
 
 
+def _separated(board: dict, pairs) -> set:
+    """Of those pairs, the ones the board's own published cell had separated from zero.
+
+    This is the population the paper's second claim is about, and it is the one that has to be
+    followed through a stricter correction: a reversal of a pair the benchmark never resolved is a
+    different object and is counted apart everywhere else in the paper.
+    """
+    cell = board["published_cell"]
+    return {p for p in pairs if board["pairs"][p]["per_cell"][cell]["separated"]}
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default=str(ROOT / "results" / "union_multiplicity.json"))
@@ -110,6 +121,7 @@ def main() -> int:
     per = {}
     tot = {"per_board": 0, "alpha_split": 0, "union": 0}
     pairs_tot = {"per_board": 0, "alpha_split": 0, "union": 0}
+    sep_tot = {"per_board": 0, "alpha_split": 0, "union": 0}
     for lab, b in B:
         mult = b["multiplicity"]
         k_own = holm(mult["p_values"], args.alpha)
@@ -123,10 +135,13 @@ def main() -> int:
                     len(mult["reversal_tests"]),
                     **{f"reversals_{k}": len(v) for k, v in r.items()},
                     **{f"pairs_{k}": len({x["pair"] for x in v}) for k, v in r.items()},
+                    **{f"separated_pairs_{k}": len(_separated(b, {x["pair"] for x in v}))
+                       for k, v in r.items()},
                     "certified_in_the_artifact": b["n_contested_after_correction"]}
         for mode in tot:
             tot[mode] += len(r[mode])
             pairs_tot[mode] += len({x["pair"] for x in r[mode]})
+            sep_tot[mode] += len(_separated(b, {x["pair"] for x in r[mode]}))
 
     # the artifacts' own count, which the paper quotes, must be the per-board reading
     quoted = sum(b["n_contested_after_correction"] for _, b in B)
@@ -138,6 +153,7 @@ def main() -> int:
            "union_tests_rejected": k_union,
            "union_cutoff_p": cut_union,
            "certified_pairs": {**pairs_tot, "quoted_in_the_paper": quoted},
+           "certified_pairs_the_published_cell_had_separated": sep_tot,
            "certified_reversal_tests": tot,
            "per_board": per}
     Path(args.out).write_text(json.dumps(rep, indent=1))
@@ -147,6 +163,9 @@ def main() -> int:
     print(f"\n  certified pairs, per board:   {pairs_tot['per_board']}  (paper quotes {quoted})")
     print(f"  certified pairs, alpha/{len(B)}:    {pairs_tot['alpha_split']}")
     print(f"  certified pairs, union Holm:  {pairs_tot['union']}")
+    print(f"\n  of those, reversals of an ordering the published cell separated: "
+          f"{sep_tot['per_board']} per board, {sep_tot['alpha_split']} at alpha/{len(B)}, "
+          f"{sep_tot['union']} under the union")
     for lab, v in per.items():
         if v["pairs_per_board"] or v["pairs_union"]:
             print(f"     {lab:34s} {v['pairs_per_board']:2d} -> {v['pairs_alpha_split']:2d} -> "

@@ -645,6 +645,129 @@ def main() -> int:
                        "as stated" if "unit test on the weighting and not evidence about the data"
                        in flat else "claimed as evidence", "the manuscript"))
 
+    # 10c-9. The correction across boards. The paragraph's whole point is that a per-board Holm
+    # is not the family the paper's claim ranges over, so every one of its numbers is bound, and
+    # the reproduction of the quoted 23 is bound too: if the union script stopped agreeing with
+    # the artifacts under the per-board reading it would be measuring something else.
+    un = ROOT / "results/union_multiplicity.json"
+    if un.exists():
+        UN = json.loads(un.read_text())
+        flat = re.sub(r"\s+", " ", whole)
+        checks.append((UN["certified_pairs"]["per_board"]
+                       == UN["certified_pairs"]["quoted_in_the_paper"],
+                       "the union script reproduces the per-board count",
+                       str(UN["certified_pairs"]["quoted_in_the_paper"]),
+                       str(UN["certified_pairs"]["per_board"]),
+                       "results/union_multiplicity.json"))
+        m = re.search(r"union of the grids: \$([\d,{}]+)\$ cell-level tests", flat)
+        check("union, family size", m and m.group(1).replace("{,}", ""), UN["union_family_size"],
+              "results/union_multiplicity.json")
+        m = re.search(r"rejects \$([\d,{}]+)\$ of them at a cutoff of \$p=([\d.]+)"
+                      r"\\times10\^\{-(\d+)\}\$", flat)
+        checks.append((bool(m), "the union sentence parses", "present",
+                       "matched" if m else "not matched", ""))
+        if m:
+            check("union, tests rejected", m.group(1).replace("{,}", ""),
+                  UN["union_tests_rejected"], "results/union_multiplicity.json")
+            # an absolute tolerance is meaningless at 1e-6: every wrong exponent is within it,
+            # and moving the printed exponent by one was not caught until this was relative
+            _cut = float(m.group(2)) * 10 ** (-int(m.group(3)))
+            checks.append((abs(_cut - UN["union_cutoff_p"]) <= 0.01 * UN["union_cutoff_p"],
+                           "union, cutoff", f"{_cut:.3g}", f"{UN['union_cutoff_p']:.3g}",
+                           "results/union_multiplicity.json"))
+        m = re.search(r"certified pairs falls from \$(\d+)\$ to \$(\d+)\$", flat)
+        checks.append((bool(m), "the union fall parses", "present",
+                       "matched" if m else "not matched", ""))
+        if m:
+            check("union, before", m.group(1), UN["certified_pairs"]["per_board"],
+                  "results/union_multiplicity.json")
+            check("union, after", m.group(2), UN["certified_pairs"]["union"],
+                  "results/union_multiplicity.json")
+        # the abstract and the contributions quote the same two numbers; both are bound here, so
+        # a correction that moves cannot be corrected in the appendix alone
+        m2 = re.search(r"survive correction, \$(\d+)\$ of them under a single correction over all "
+                       r"\$23\$ grids", flat)
+        check("union, the abstract's surviving separated reversals", m2 and m2.group(1),
+              UN["certified_pairs_the_published_cell_had_separated"]["union"],
+              "results/union_multiplicity.json")
+        m2 = re.search(r"and \$(\d+)\$ of the \$(\d+)\$ certified reversals surviving one "
+                       r"correction over the union", flat)
+        checks.append((bool(m2), "the contribution states the union correction", "present",
+                       "matched" if m2 else "not matched", ""))
+        if m2:
+            check("union, the contribution's survivors", m2.group(1),
+                  UN["certified_pairs"]["union"], "results/union_multiplicity.json")
+            check("union, the contribution's total", m2.group(2),
+                  UN["certified_pairs"]["per_board"], "results/union_multiplicity.json")
+        m = re.search(r"at\s*\$\\alpha/23\$ within each grid, gives \$(\d+)\$", flat)
+        check("union, the alpha split", m and m.group(1), UN["certified_pairs"]["alpha_split"],
+              "results/union_multiplicity.json")
+        m = re.search(r"of the \$(\d+)\$ certified reversals of an ordering a published cell had "
+                      r"separated, \$(\d+)\$\s*remain", flat)
+        checks.append((bool(m), "the separated-ordering survival parses", "present",
+                       "matched" if m else "not matched", ""))
+        if m:
+            S = UN["certified_pairs_the_published_cell_had_separated"]
+            check("union, separated before", m.group(1), S["per_board"],
+                  "results/union_multiplicity.json")
+            check("union, separated after", m.group(2), S["union"],
+                  "results/union_multiplicity.json")
+        # the sentence naming which boards pay, against the per-board table
+        PBU = UN["per_board"]
+        m = re.search(r"the nineteen-system translation board keeps \$(\d+)\$ of \$(\d+)\$, and "
+                      r"the retrosynthesis boards keep all (\w+)", flat)
+        checks.append((bool(m), "the sentence naming who pays parses", "present",
+                       "matched" if m else "not matched", ""))
+        if m:
+            _e = PBU["robust_order_wmt24_en-de"]
+            check("union, en-de after", m.group(1), _e["pairs_union"],
+                  "results/union_multiplicity.json")
+            check("union, en-de before", m.group(2), _e["pairs_per_board"],
+                  "results/union_multiplicity.json")
+            _r = sum(PBU[k]["pairs_union"] for k in ("robust_order:cluster0",
+                                                     "robust_order:cluster1"))
+            _r0 = sum(PBU[k]["pairs_per_board"] for k in ("robust_order:cluster0",
+                                                          "robust_order:cluster1"))
+            _w = {"ten": 10, "eight": 8, "nine": 9, "eleven": 11}
+            checks.append((_w.get(m.group(3), -1) == _r == _r0,
+                           "union, the retrosynthesis boards keep all of theirs",
+                           m.group(3), f"{_r} of {_r0}", "results/union_multiplicity.json"))
+        checks.append((PBU["robust_order_posebusters"]["pairs_union"] == 0
+                       and PBU["robust_order_posebusters"]["pairs_per_board"] == 2,
+                       "union, the docking board's two go", "2 to 0",
+                       f"{PBU['robust_order_posebusters']['pairs_per_board']} to "
+                       f"{PBU['robust_order_posebusters']['pairs_union']}",
+                       "results/union_multiplicity.json"))
+
+    # 10c-10. The shared task's own clustering, which is the external check on the tier count.
+    oc = ROOT / "results/wmt_official_clusters.json"
+    if oc.exists():
+        OC = json.loads(oc.read_text())["boards"]
+        flat = re.sub(r"\s+", " ", whole)
+        m = re.search(r"gives \$(\d+)\$ clusters for the nineteen systems and \$(\d+)\$ for the "
+                      r"fifteen, against the \$(\d+)\$ and \$(\d+)\$ places our instrument "
+                      r"supports in the same published cell", flat)
+        checks.append((bool(m), "the clustering comparison parses", "present",
+                       "matched" if m else "not matched", ""))
+        if m:
+            check("clusters, theirs on en-de", m.group(1), OC["en-de"]["n_clusters"],
+                  "results/wmt_official_clusters.json")
+            check("clusters, theirs on ja-zh", m.group(2), OC["ja-zh"]["n_clusters"],
+                  "results/wmt_official_clusters.json")
+            check("clusters, ours on en-de", m.group(3), OC["en-de"]["ours_own_cell_only"],
+                  "results/wmt_official_clusters.json")
+            check("clusters, ours on ja-zh", m.group(4), OC["ja-zh"]["ours_own_cell_only"],
+                  "results/wmt_official_clusters.json")
+        checks.append((all(b["orders_agree"] for b in OC.values()),
+                       "the two orders agree system for system", "both agree",
+                       str({k: b["orders_agree"] for k, b in OC.items()}),
+                       "results/wmt_official_clusters.json"))
+        # the direction of the difference is the claim; it is read, not asserted
+        checks.append((all(b["n_clusters"] < b["ours_own_cell_only"] for b in OC.values()),
+                       "the task's own count is the stricter of the two", "theirs < ours",
+                       str({k: (b["n_clusters"], b["ours_own_cell_only"]) for k, b in OC.items()}),
+                       "results/wmt_official_clusters.json"))
+
     # 10d-0. The power behind the negative claim. Every figure in the paragraph is one of the
     # artifact's, and the two facts that keep the docking exception honest -- the flip is not
     # certified, and what is certified there needs the other axis -- are read from the board.
