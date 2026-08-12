@@ -83,6 +83,28 @@ def holm(ps: list[float], alpha: float) -> int:
     return m
 
 
+def cutoff(ps: list[float], alpha: float) -> float:
+    """The largest $p$ every test carrying it was rejected at, which is not always the $k$-th.
+
+    Membership is decided here by comparing a test's $p$ against a cutoff, and that is the same set
+    the step-down loop rejects only while no tie straddles the boundary. Ties do occur --- two cells
+    of a grid can be the same scoring twice, giving one $p$ exactly twice --- and on four of these
+    boards a tied pair sits astride the stopping point. Taking the $k$-th value would then admit a
+    test the loop refused. The tied group is dropped whole instead, which is the conservative
+    reading and the one that cannot certify something the procedure did not.
+    """
+    s = sorted(ps)
+    k = holm(ps, alpha)
+    if not k:
+        return -1.0
+    c = s[k - 1]
+    rejected_with_c = k - sum(1 for pv in s[:k] if pv < c)
+    if s.count(c) > rejected_with_c:
+        below = [pv for pv in s[:k] if pv < c]
+        return below[-1] if below else -1.0
+    return c
+
+
 def _surviving_reversals(board: dict, cutoff: float) -> list:
     """The board's reversal tests whose $p$ is at or below a rejection cutoff."""
     return [r for r in board["multiplicity"]["reversal_tests"] if r["p"] <= cutoff]
@@ -116,7 +138,7 @@ def main() -> int:
     # the union family, and the cutoff Holm reaches in it
     pooled = sorted(pv for _, b in B for pv in b["multiplicity"]["p_values"])
     k_union = holm(pooled, args.alpha)
-    cut_union = pooled[k_union - 1] if k_union else -1.0
+    cut_union = cutoff(pooled, args.alpha)
 
     per = {}
     tot = {"per_board": 0, "alpha_split": 0, "union": 0}
@@ -124,10 +146,8 @@ def main() -> int:
     sep_tot = {"per_board": 0, "alpha_split": 0, "union": 0}
     for lab, b in B:
         mult = b["multiplicity"]
-        k_own = holm(mult["p_values"], args.alpha)
-        k_split = holm(mult["p_values"], args.alpha / len(B))
-        cut_own = mult["p_values"][k_own - 1] if k_own else -1.0
-        cut_split = mult["p_values"][k_split - 1] if k_split else -1.0
+        cut_own = cutoff(mult["p_values"], args.alpha)
+        cut_split = cutoff(mult["p_values"], args.alpha / len(B))
         r = {mode: _surviving_reversals(b, c)
              for mode, c in (("per_board", cut_own), ("alpha_split", cut_split),
                              ("union", cut_union))}
