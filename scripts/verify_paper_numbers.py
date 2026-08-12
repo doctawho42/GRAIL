@@ -576,20 +576,74 @@ def main() -> int:
                            f"wmt24 {_lp}, the published cell is the task's own ranking", "reproduces",
                            str(_d.get("published_cell_reproduces_the_official_ranking")),
                            f"results/robust_order_wmt24_{_lp}.json"))
+    # The aggregation is a declared choice like the two in the grid, so the board is run under both
+    # readings and the appendix quotes the difference. Both artifacts are held, including the one
+    # the paper argues against: a comparison whose losing arm has no artifact is not a comparison.
     _mv = ROOT / "results/robust_order_wmt24_en-de.json"
-    if _mv.exists():
-        _e = json.loads(_mv.read_text())
+    _sg = ROOT / "results/robust_order_wmt24_en-de__segment.json"
+    if _mv.exists() and _sg.exists():
+        _e, _s = json.loads(_mv.read_text()), json.loads(_sg.read_text())
         flat = re.sub(r"\s+", " ", whole)
-        _mm = re.search(r"moved the nineteen-system board from \$(\d+)\$ dominating pairs to "
-                        r"\$(\d+)\$ and from no certified reversal to (\w+)", flat)
-        checks.append((bool(_mm), "the orientation-correction sentence parses", "present",
+        _words = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7,
+                  "eight": 8, "nine": 9, "no": 0}
+        _mm = re.search(r"nineteen-system leaderboard has \$(\d+)\$ dominating pairs and "
+                        r"(\w+) certified reversals?, against \$(\d+)\$ and (\w+) under the "
+                        r"task's own aggregation", flat)
+        checks.append((bool(_mm), "the aggregation comparison parses", "present",
                        "matched" if _mm else "not matched", ""))
         if _mm:
-            check("orientation, dominating after", _mm.group(2), _e["n_dominating"],
-                  "results/robust_order_wmt24_en-de.json")
-            _words = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7}
-            check("orientation, certified after", _words.get(_mm.group(3), -1),
+            check("aggregation, dominating under the segment mean", _mm.group(1),
+                  _s["n_dominating"], "results/robust_order_wmt24_en-de__segment.json")
+            check("aggregation, certified under the segment mean",
+                  _words.get(_mm.group(2), -1), _s["n_contested_after_correction"],
+                  "results/robust_order_wmt24_en-de__segment.json")
+            check("aggregation, dominating under the task's own", _mm.group(3),
+                  _e["n_dominating"], "results/robust_order_wmt24_en-de.json")
+            check("aggregation, certified under the task's own", _words.get(_mm.group(4), -1),
                   _e["n_contested_after_correction"], "results/robust_order_wmt24_en-de.json")
+        _jz = ROOT / "results/robust_order_wmt24_ja-zh.json"
+        _jzs = ROOT / "results/robust_order_wmt24_ja-zh__segment.json"
+        if _jz.exists() and _jzs.exists():
+            _j, _js = json.loads(_jz.read_text()), json.loads(_jzs.read_text())
+            _mj = re.search(r"fifteen-system board the same reading changes almost nothing --- "
+                            r"\$(\d+)\$ dominating pairs against \$(\d+)\$, and (\w+) certified "
+                            r"reversals? either way", flat)
+            checks.append((bool(_mj), "the second board's aggregation sentence parses", "present",
+                           "matched" if _mj else "not matched", ""))
+            if _mj:
+                check("aggregation, ja-zh under the segment mean", _mj.group(1),
+                      _js["n_dominating"], "results/robust_order_wmt24_ja-zh__segment.json")
+                check("aggregation, ja-zh under the task's own", _mj.group(2), _j["n_dominating"],
+                      "results/robust_order_wmt24_ja-zh.json")
+                checks.append((_words.get(_mj.group(3), -1) == _j["n_contested_after_correction"]
+                               == _js["n_contested_after_correction"],
+                               "aggregation, ja-zh certified either way", _mj.group(3),
+                               f"{_j['n_contested_after_correction']} and "
+                               f"{_js['n_contested_after_correction']}",
+                               "results/robust_order_wmt24_ja-zh*.json"))
+        _mp = re.search(r"no longer reproduces the official ranking: (\w+) systems change place",
+                        flat)
+        _moved = sum(1 for _a, _b in zip(_s["config"]["official_ranking"], _s["published_order"])
+                     if _a != _b)
+        check("aggregation, systems that change place", _words.get(_mp.group(1), -1) if _mp else None,
+              _moved, "results/robust_order_wmt24_en-de__segment.json")
+        checks.append((_s["config"]["published_cell_reproduces_the_official_ranking"] is False,
+                       "the segment mean is not the task's ranking", "does not reproduce",
+                       str(_s["config"]["published_cell_reproduces_the_official_ranking"]),
+                       "results/robust_order_wmt24_en-de__segment.json"))
+        # The agreement between our cell and the official order cannot be evidence, because the
+        # function that checks it charges the annotations with the same transcribed weights. That
+        # is a property of the code, so it is read there, and the prose is held to it.
+        _wb = (ROOT / "scripts/wmt_board.py").read_text()
+        _oo = _wb[_wb.index("def official_order"):]
+        checks.append(("w_wmt(" in _oo, "the ranking check reuses the transcribed weighting",
+                       "w_wmt", "w_wmt" if "w_wmt(" in _oo else "some other function",
+                       "scripts/wmt_board.py"))
+        checks.append(("unit test on the weighting and not evidence about the data" in flat
+                       and "agreement is evidence" not in flat,
+                       "the reproduction is not offered as evidence", "not evidence",
+                       "as stated" if "unit test on the weighting and not evidence about the data"
+                       in flat else "claimed as evidence", "the manuscript"))
 
     # 10d-e. The nine ESA boards, whose totals the appendix states in prose. They are the paper's
     # answer to "your share is one number from one table", so the aggregate is held to the run.

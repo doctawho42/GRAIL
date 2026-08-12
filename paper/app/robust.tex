@@ -83,21 +83,27 @@ as a structure-matching rule is, with the metric fixed as the mean of the per-se
 the second axis is whether that sum is floored at the non-translation weight, an \textsc{mqm} score
 being otherwise unbounded below.
 
-The published cell is checked rather than assumed, and the check had to be rebuilt before it was
-one. The task does not rank by the mean over segments: it takes the mean within each domain and then
-the mean of those, which its own clustering script does by default. Our cell was the segment mean and
-the function that checked it recomputed the same segment mean, so the agreement it reported was a
-comparison of a quantity with itself. The cell is now weighted so that its mean is the task's average
-over domains, which is the aggregation the task's own clustering script computes by default. Both
-boards then reproduce the published ranking system for system --- but that agreement is a unit test
-on the weighting and not evidence about the data: the function that checks it rebuilds the same
-average, and two routes to one quantity must agree. What the reader should take is that the cell is
-the aggregation the task documents, which is checkable against that script and is the claim being
-made; the previous version of this passage offered the agreement itself as evidence, and did not
-have any. Correcting the orientation moved the nineteen-system board from
-$135$ dominating pairs to $125$ and from no certified reversal to six, each surviving Holm over the
-$1{,}368$ cell-level tests its own grid creates. What the grid then reports, on the corrected
-orientation, is this. On $171$ pairs of $19$ systems,
+The published cell is checked rather than assumed. The task does not rank by the mean over
+segments: it takes the mean within each domain and then the mean of those, which is what its own
+clustering script does by default. The cell is weighted so that its mean is that average, and both
+boards then reproduce the published ranking system for system. That agreement is a unit test on the
+weighting and not evidence about the data: the function that checks it rebuilds the same average
+from the same transcribed weights, and two routes to one quantity must agree. What it does
+establish is that the cell is the aggregation the task documents, which a reader can check against
+that script --- as they can check the transcription of the weights, which this run does not.
+
+Reading the published number as the mean of the column instead is a choice of exactly the kind the
+grid varies, and on this board it costs more than either axis in it. Under that reading the
+nineteen-system leaderboard has $135$ dominating pairs and no certified reversal, against $125$ and
+six under the task's own aggregation, and its published cell no longer reproduces the official
+ranking: nine systems change place. On the fifteen-system board the same reading changes almost
+nothing --- $97$ dominating pairs against $96$, and no certified reversal either way --- so the cost
+of getting the aggregation wrong is a fact about the board rather than a constant. Both readings are
+run on both boards and both are kept, so the size of the choice is measured here rather than
+asserted.
+
+What the grid reports, on the aggregation the task
+documents, is this. On $171$ pairs of $19$ systems,
 $125$ dominate, $29$ are unresolved and $17$ are
 contested of which $6$ survive Holm over the $1{,}368$
 cell-level tests that grid creates, so nineteen published places support
@@ -107,7 +113,8 @@ contested, which does not survive the $840$ tests of its own, so fifteen places 
 $8$. The two boards differ in kind and not by accident: the
 larger one carries a reversal past both its own $1{,}368$ cell-level tests, and the smaller one
 supplies a null.
-The correction is applied to every board and not only where it pays.
+The same rule fixes the cell on every board here, including the ones where it
+changes nothing.
 
 \paragraph{Nine more boards from the same task, and why they are nine and not one.} The same task
 annotated nine further language pairs under a lighter protocol, \textsc{esa}, in which one expert
@@ -120,11 +127,11 @@ marked spans as a tally, and whether a score is used as the annotator wrote it o
 within that annotator first. The second is the field's own oldest open question in evaluation
 practice, and a comparison quoting human scores almost never says which it used.
 
-One thing is weaker here than on the \textsc{mqm} boards and is said rather than left to be noticed.
-There, the weighting had to be reimplemented from the task's function and could have disagreed with
-the published ranking; it did not, and that agreement is evidence. Here the official number is the
-mean of the column, so the published cell reproduces the official ranking by construction, and no
-evidence is claimed from it.
+The published cell is the same aggregation as on the \textsc{mqm} boards, the mean within a domain
+and then across domains, and one thing is simpler here: the number the task publishes is the
+annotator's score itself, so there is no weighting function to transcribe and the only convention
+the cell carries is the aggregation. As there, no evidence is claimed from any agreement with the
+published ranking.
 
 Across the nine, $553$ of $689$ pairs dominate, $33$ are contested of which $4$ survive correction, and $115$ published places support $62$. The share runs from $0.62$ to $0.91$ with a median of
 $0.82$: narrower than the spread across domains, which is what one would expect of nine boards from

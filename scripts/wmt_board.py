@@ -142,11 +142,16 @@ def _macro_weights(d: pd.DataFrame, items: list[str]) -> np.ndarray:
     return w * len(items)
 
 
-def build_hits(d: pd.DataFrame) -> tuple[dict, list[str], list[str], list]:
+def build_hits(d: pd.DataFrame, aggregation: str = "macro") -> tuple[dict, list[str], list[str],
+                                                                      list]:
     systems = sorted(d["system"].unique())
     items = sorted(d["globalSegId"].unique(), key=int)
     cells = [(c, f) for c in CRITERIA for f in FLOORS]
-    scale = _macro_weights(d, items)
+    # ``segment`` is the reading a paper takes when it treats the published score as the mean of
+    # the column. It is not what the task computes, and running the grid under it is how the cost
+    # of getting the aggregation wrong is measured rather than asserted.
+    scale = (_macro_weights(d, items) if aggregation == "macro"
+             else np.ones(len(items), dtype=float))
 
     hits = {}
     for criterion, (_, weight) in CRITERIA.items():
@@ -183,13 +188,16 @@ def main() -> int:
     ap.add_argument("--mqm", default=str(ROOT / "data/external/wmt24/humeval/"
                                                 "mqm_generalMT2024_ende.tsv"))
     ap.add_argument("--lp", default="en-de")
+    ap.add_argument("--aggregation", choices=("macro", "segment"), default="macro",
+                    help="macro is the task's own: the mean within each domain, then across them")
     ap.add_argument("--out", default=None)
     args = ap.parse_args()
-    out = Path(args.out or ROOT / "results" / f"robust_order_wmt24_{args.lp}.json")
+    _tag = "" if args.aggregation == "macro" else f"__{args.aggregation}"
+    out = Path(args.out or ROOT / "results" / f"robust_order_wmt24_{args.lp}{_tag}.json")
 
     raw = Path(args.mqm).read_bytes()
     d = load(Path(args.mqm))
-    hits, systems, items, cells = build_hits(d)
+    hits, systems, items, cells = build_hits(d, args.aggregation)
 
     sub_grids = {"criteria only, unfloored": [(c, PUBLISHED_CELL[1]) for c in CRITERIA],
                  "the floor only, at the published criterion":
@@ -201,6 +209,7 @@ def main() -> int:
     agrees = official == rep["published_order"]
     rep["config"] = {
         **_code_version(), "n_items": len(items), "language_pair": args.lp,
+        "aggregation": args.aggregation,
         "source": f"WMT24 general MT, {Path(args.mqm).name}, from "
                   f"github.com/wmt-conference/wmt24-news-systems",
         "source_sha256": hashlib.sha256(raw).hexdigest(), "source_bytes": len(raw),
