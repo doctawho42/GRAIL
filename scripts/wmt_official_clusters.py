@@ -11,11 +11,20 @@ number of clusters is the task's own answer to how many ranks its table supports
 
 So the task's answer is computed with the task's own code -- ``humeval/tools.py`` is imported, not
 paraphrased, and ``get_pvalues`` and ``get_clusters`` are theirs unmodified -- and set beside ours
-on the same boards. Two of ours are comparable, because a tier count is what the same claim looks
-like in this paper's terms:
+on the same boards. Comparing the two counts directly settles nothing, because they differ in two
+places at once: the test that decides whether a pair is separated, and the construction that turns
+pairwise verdicts into a count. Their construction walks the score-sorted table and closes a cluster
+only when nothing at or above the current position is tied with anything below it, so a cluster is
+an interval of the published order and can hold pairs its own test separates; ours is the longest
+chain in the separation relation. On identical verdicts the chain is never shorter than the number
+of clusters, so the raw comparison is decided by the construction before either test is consulted.
 
-    own cell only    what the leaderboard's published cell resolves, which is what they measure
-    the whole grid   the same, required to hold in every declared cell
+The two are therefore crossed, which is the only reading that attributes the difference:
+
+    their test, their construction    the count the task itself would publish
+    our test, their construction      their clustering fed our published-cell verdicts
+    their test, our construction      the longest chain in the relation their p-values induce
+    our test, our construction        the places this paper says the board supports
 
 Only one thing is reimplemented, and only for speed: the domain of a segment, which their
 ``attach_resources`` attaches by iterating the frame row by row and which is read here straight out
@@ -90,7 +99,46 @@ def board(tools, lp: str, tsv: str) -> dict:
             "clusters": {s: int(clusters[s]) for s in order},
             "n_clusters": int(max(clusters.values())),
             "n_systems": len(order),
+            "pvalues": {f"{a}||{b}": float(v) for (a, b), v in pvalues.items()},
             "alpha": tools.ALPHA_THRESHOLD}
+
+
+def _their_clusters_on_our_verdicts(tools, ours: dict, order: list) -> int:
+    """Their construction, fed this paper's separation verdicts in the published cell.
+
+    ``get_clusters`` consults a $p$ only against its own threshold, so a verdict transplants
+    exactly: separated becomes a $p$ below it, unresolved a $p$ above. Nothing else changes, which
+    is what makes this the test's contribution and not the construction's.
+    """
+    import pandas as pd
+
+    cell = ours["published_cell"]
+    pv = {}
+    for name, v in ours["pairs"].items():
+        hi, lo = name.split(" over ")
+        sep = v["per_cell"][cell]["separated"]
+        pv[(hi, lo)] = pv[(lo, hi)] = 0.0 if sep else 1.0
+    df = pd.DataFrame({"system_id": order})
+    return int(max(tools.get_clusters(pv, df).values()))
+
+
+def _our_chain_on_their_verdicts(theirs: dict) -> int:
+    """This paper's construction, fed their test's verdicts: the longest chain they induce."""
+    import importlib.util as _iu
+
+    spec = _iu.spec_from_file_location("_ro", ROOT / "scripts" / "robust_order.py")
+    ro = _iu.module_from_spec(spec)
+    sys.modules["_ro"] = ro
+    spec.loader.exec_module(ro)
+
+    order = theirs["official_order"]
+    rank = {s: i for i, s in enumerate(order)}
+    edges: dict = {}
+    for key, p in theirs["pvalues"].items():
+        a, b = key.split("||")
+        if p <= theirs["alpha"] and rank[a] < rank[b]:
+            edges.setdefault(a, set()).add(b)
+    return ro._tiers(order, edges)
 
 
 def main() -> int:
@@ -112,11 +160,18 @@ def main() -> int:
         theirs["ours_own_cell_only"] = own
         theirs["ours_whole_grid"] = ours["tiers_distinguished"]
         theirs["orders_agree"] = theirs["official_order"] == ours["published_order"]
+        theirs["their_construction_our_test"] = _their_clusters_on_our_verdicts(
+            tools, ours, theirs["official_order"])
+        theirs["our_construction_their_test"] = _our_chain_on_their_verdicts(theirs)
+        theirs.pop("pvalues")
         out[lp] = theirs
-        print(f"  {lp}: {theirs['n_systems']} systems; the task's own clustering supports "
-              f"{theirs['n_clusters']}, ours {own} in the published cell and "
-              f"{ours['tiers_distinguished']} across the grid; "
-              f"the two orders {'agree' if theirs['orders_agree'] else 'DIFFER'}")
+        print(f"  {lp}: {theirs['n_systems']} systems")
+        print(f"      their test, their construction: {theirs['n_clusters']}")
+        print(f"      our test,   their construction: {theirs['their_construction_our_test']}")
+        print(f"      their test, our construction:   {theirs['our_construction_their_test']}")
+        print(f"      our test,   our construction:   {own}")
+        print(f"      the two orders "
+              f"{'agree' if theirs['orders_agree'] else 'DIFFER'}")
 
     rep = {"config": {**_code_version(),
                       "source": "WMT24 humeval/tools.py get_pvalues and get_clusters, imported",

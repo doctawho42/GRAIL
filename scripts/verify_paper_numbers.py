@@ -1115,6 +1115,21 @@ def main() -> int:
         checks.append((_named_loss == _all_loss,
                        "the boards the paragraph names are the whole fall", str(_all_loss),
                        str(_named_loss), "results/union_multiplicity.json"))
+        # the paragraph now blames the family size and says the stopping rule cost nothing; that
+        # is an empirical claim about the pooled vector, so it is computed rather than asserted
+        import importlib.util as _iu3
+        _sp3 = _iu3.spec_from_file_location("_um3", ROOT / "scripts/union_multiplicity.py")
+        _um3 = _iu3.module_from_spec(_sp3)
+        sys.modules["_um3"] = _um3
+        _sp3.loader.exec_module(_um3)
+        _BB = _um3.boards()
+        _pool = sorted(pv for _, _b in _BB for pv in _b["multiplicity"]["p_values"])
+        _M, _K = len(_pool), _um3.holm(_pool, 0.05)
+        _late = sum(1 for _i, _pv in enumerate(_pool, 1)
+                    if _i > _K and _pv <= 0.05 / (_M - _i + 1))
+        checks.append((_late == 0 and "would have passed its own threshold" in flat,
+                       "the stopping rule is said to have cost nothing, and did", "0",
+                       str(_late), "results/union_multiplicity.json"))
         m2 = re.search(r"Those four boards are the whole fall\s*of (\w+)", flat)
         _w2 = {"six": 6, "seven": 7, "eight": 8, "nine": 9, "ten": 10, "eleven": 11}
         checks.append((bool(m2) and _w2.get(m2.group(1), -1) == _all_loss,
@@ -1140,28 +1155,40 @@ def main() -> int:
     if oc.exists():
         OC = json.loads(oc.read_text())["boards"]
         flat = re.sub(r"\s+", " ", whole)
-        m = re.search(r"gives \$(\d+)\$ clusters for the nineteen systems and \$(\d+)\$ for the "
-                      r"fifteen, against the \$(\d+)\$ and \$(\d+)\$ places our instrument "
-                      r"supports in the same published cell", flat)
-        checks.append((bool(m), "the clustering comparison parses", "present",
-                       "matched" if m else "not matched", ""))
-        if m:
-            check("clusters, theirs on en-de", m.group(1), OC["en-de"]["n_clusters"],
+        # the crossed table: four rows, two columns, each cell against the artifact it comes from
+        _CELLS = (("their test, their construction", "n_clusters"),
+                  ("our test, their construction", "their_construction_our_test"),
+                  ("their test, our construction", "our_construction_their_test"),
+                  ("our test, our construction", "ours_own_cell_only"))
+        _rows = 0
+        for _label, _key in _CELLS:
+            _r = re.search(re.escape(_label) + r"\s*&\s*\$(\d+)\$\s*&\s*\$(\d+)\$", flat)
+            checks.append((bool(_r), f"clusters, the row for {_label}", "present",
+                           "matched" if _r else "not matched",
+                           "results/wmt_official_clusters.json"))
+            if not _r:
+                continue
+            _rows += 1
+            check(f"clusters, {_label}, nineteen systems", _r.group(1), OC["en-de"][_key],
                   "results/wmt_official_clusters.json")
-            check("clusters, theirs on ja-zh", m.group(2), OC["ja-zh"]["n_clusters"],
+            check(f"clusters, {_label}, fifteen systems", _r.group(2), OC["ja-zh"][_key],
                   "results/wmt_official_clusters.json")
-            check("clusters, ours on en-de", m.group(3), OC["en-de"]["ours_own_cell_only"],
-                  "results/wmt_official_clusters.json")
-            check("clusters, ours on ja-zh", m.group(4), OC["ja-zh"]["ours_own_cell_only"],
-                  "results/wmt_official_clusters.json")
+        checks.append((_rows == len(_CELLS), "clusters, the crossed table is complete",
+                       str(len(_CELLS)), str(_rows), "results/wmt_official_clusters.json"))
+        # the two readings the prose draws from the table, in the direction it draws them
+        checks.append((all(b["their_construction_our_test"] < b["n_clusters"]
+                           for b in OC.values()),
+                       "at a fixed construction, our test is the stricter", "ours < theirs",
+                       str({k: (b["their_construction_our_test"], b["n_clusters"])
+                            for k, b in OC.items()}), "results/wmt_official_clusters.json"))
+        checks.append((all(b["our_construction_their_test"] > b["n_clusters"]
+                           for b in OC.values()),
+                       "at a fixed test, our construction is the more generous", "ours > theirs",
+                       str({k: (b["our_construction_their_test"], b["n_clusters"])
+                            for k, b in OC.items()}), "results/wmt_official_clusters.json"))
         checks.append((all(b["orders_agree"] for b in OC.values()),
-                       "the two orders agree system for system", "both agree",
+                       "the published cell's ordering is theirs system for system", "both agree",
                        str({k: b["orders_agree"] for k, b in OC.items()}),
-                       "results/wmt_official_clusters.json"))
-        # the direction of the difference is the claim; it is read, not asserted
-        checks.append((all(b["n_clusters"] < b["ours_own_cell_only"] for b in OC.values()),
-                       "the task's own count is the stricter of the two", "theirs < ours",
-                       str({k: (b["n_clusters"], b["ours_own_cell_only"]) for k, b in OC.items()}),
                        "results/wmt_official_clusters.json"))
 
     # 10d-0. The power behind the negative claim. Every figure in the paragraph is one of the
@@ -2332,8 +2359,11 @@ def main() -> int:
         flat = re.sub(r"\s+", " ", whole)
         # the body summarises the spread and the appendix enumerates it; the gate holds the
         # enumeration, because that is where the per-board numbers are actually asserted
-        mdi = re.search(r"twenty-four leaderboards run from \$(\d+)\\%\$ of their comparisons at risk "
-                        r"to \$([\d.]+)\\%\$", flat)
+        mdi = re.search(r"twenty-four leaderboards this can be asked of.*?run from \$(\d+)\\%\$ of "
+                        r"their comparisons at risk to\s*\$([\d.]+)\\%\$", flat)
+        # and the count itself, which is the twenty-three plus the one board the grid does not cover
+        checks.append((len(L) == 24, "the exposure sentence's leaderboards", "24", str(len(L)),
+                       "results/packing_vs_differential.json"))
         checks.append((bool(mdi), "the exposure-distribution sentence parses", "present",
                        "matched" if mdi else "not matched", ""))
         if mdi:

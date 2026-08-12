@@ -183,10 +183,11 @@ ordering a benchmark had established is the output budget's.
 What the union costs is concentrated rather than spread: the docking board's two go, the
 nineteen-system translation board keeps $2$ of $6$, two more go on \textsc{en-hi} and one on
 \textsc{zho-eng}, and the retrosynthesis boards keep all ten. Those four boards are the whole fall
-of nine. Two things about it are worth stating rather than leaving to be inferred. The union is step-down, so
-it stops at its first failure, and a reversal can be lost because thousands of unrelated
-separations on other boards sit below it in the sorted vector --- a property of the procedure, not
-a verdict on the reversal. And the board whose reversal the field had already published in its own
+of nine. Two things about it are worth stating rather than leaving to be inferred. What removes them is the size of the family and
+nothing subtler: every threshold tightens by roughly the factor the family grew by, and each lost
+reversal misses its own rank threshold outright. A step-down procedure can additionally lose a
+small-$p$ test to an earlier failure, and on this vector it does not --- no test beyond the cutoff
+would have passed its own threshold --- so the losses cannot be charged to the stopping rule. And the board whose reversal the field had already published in its own
 paper \citep{Buttenschoen_2024} is one of the three that lose every certified reversal they had,
 which is the price of a correction that does not ask where a test came from: the reversal is in the
 literature, and the union does not know that.
@@ -195,20 +196,47 @@ literature, and the union does not know that.
 one else can check, and the objection that the instrument is idiosyncratic is answered by the one
 domain that computes its own version and publishes it. The translation task tests every pair with a
 Wilcoxon signed-rank test on the paired per-segment scores within each domain, combines the domains
-by Stouffer's $Z$, and merges two systems into a cluster when that test does not separate them at
-$0.05$; the number of clusters is its answer to how many ranks its table supports. Running their
-code --- \texttt{get\_pvalues} and \texttt{get\_clusters} imported, not reimplemented --- on the two
-\textsc{mqm} boards gives $4$ clusters for the nineteen systems and $6$ for the fifteen, against the
-$6$ and $8$ places our instrument supports in the same published cell. The two orders agree system
-for system.
+by Stouffer's $Z$, and merges systems into a cluster whenever that test does not separate them at
+$0.05$; the number of clusters is its answer to how many ranks its table supports. Their code is
+imported rather than reimplemented --- \texttt{get\_pvalues} and \texttt{get\_clusters} as written ---
+and run on the two \textsc{mqm} boards, which is where the task ships this clustering in the form we
+can execute.
 
-So the field's own machinery is the stricter of the two on both boards, and the direction of this
-paper's claim is the conservative one: where the instruments differ, ours grants a leaderboard more
-than the task itself does. They differ for two reasons that are visible in the code and not worth
-adjudicating here --- a different test, and a different way of turning pairwise verdicts into
-groups, since a longest chain and a merge-downwards clustering need not agree even on identical
-verdicts. Neither side corrects for multiplicity in this comparison, which is what makes the two
-counts comparable at all.
+Setting the two counts side by side settles nothing, because they differ in two places at once. The
+test that decides whether a pair is separated is one; the construction that turns pairwise verdicts
+into a count is the other, and theirs walks the score-sorted table and closes a cluster only when
+nothing at or above the current position is tied with anything below it. A cluster is therefore an
+interval of the published order and can contain pairs its own test separates, while ours is the
+longest chain in the separation relation --- which on identical verdicts is never shorter. So the
+two are crossed instead:
+
+\begin{center}
+\footnotesize
+\begin{tabular}{lcc}
+\toprule
+ & nineteen systems & fifteen systems \\
+\midrule
+their test, their construction   & $4$  & $6$ \\
+our test, their construction     & $3$  & $5$ \\
+their test, our construction     & $11$ & $9$ \\
+our test, our construction       & $6$  & $8$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Read down the first two rows: holding the construction fixed, our test is the stricter of the two,
+resolving one place fewer on each board. Read the next two: holding the test fixed, our construction
+is the more generous, because a longest chain counts a place whenever some pair is separated while
+a cluster refuses to close over an unresolved tie anywhere below it. The number this paper reports
+is the last row, and the difference between it and the task's own is those two effects pulling
+against each other rather than either one alone.
+
+What that establishes is narrower than the objection it answers, and worth stating narrowly. It is
+run on two boards of the nineteen, since those are the two the task ships in a form this can be
+executed on. Neither side corrects for multiplicity here, so both counts are the optimistic ones,
+which is what makes them comparable at all. And the ordering our published cell produces is theirs
+system for system on both boards --- that is the weighting check of the previous section arriving
+again, not an agreement between two instruments, which the table above shows there is not.
 
 \paragraph{A null with a size.} The paper's second claim is negative --- the matching rule
 certifies no reversal of an ordering a published cell had separated --- and a negative claim is
