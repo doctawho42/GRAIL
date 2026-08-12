@@ -146,9 +146,13 @@ one. The task does not rank by the mean over segments: it takes the mean within 
 the mean of those, which its own clustering script does by default. Our cell was the segment mean and
 the function that checked it recomputed the same segment mean, so the agreement it reported was a
 comparison of a quantity with itself. The cell is now weighted so that its mean is the task's average
-over domains, and the check rebuilds that average independently, per domain and then across them. In
-it, both boards reproduce the published ranking system for system --- which is now a fact about the
-data rather than about the code. Correcting the orientation moved the nineteen-system board from
+over domains, which is the aggregation the task's own clustering script computes by default. Both
+boards then reproduce the published ranking system for system --- but that agreement is a unit test
+on the weighting and not evidence about the data: the function that checks it rebuilds the same
+average, and two routes to one quantity must agree. What the reader should take is that the cell is
+the aggregation the task documents, which is checkable against that script and is the claim being
+made; the previous version of this passage offered the agreement itself as evidence, and did not
+have any. Correcting the orientation moved the nineteen-system board from
 $135$ dominating pairs to $125$ and from no certified reversal to six, each surviving Holm over the
 $1{,}368$ cell-level tests its own grid creates. What the grid then reports, on the corrected
 orientation, is this. On $171$ pairs of $19$ systems,
