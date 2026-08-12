@@ -537,7 +537,8 @@ def main() -> int:
             if _q.exists():
                 _tb += list(json.loads(_q.read_text())["boards"].values())
         _mt = re.search(r"translation's (\w+) boards contest \$(\d+)\$ pairs of which \$(\d+)\$ "
-                        r"survive correction\. Not one of the \$(\d+)\$ reverses an ordering its own "
+                        r"survive their own boards' correction and \$(\d+)\$ the union of all\s*"
+                        r"twenty-three\. Not one of the \$(\d+)\$ reverses an ordering its own "
                         r"published cell had separated from zero: all (\w+) such reversals are "
                         r"the budget's, never the", flat)
         checks.append((bool(_mt), "the translation-subject sentence parses", "present",
@@ -550,14 +551,20 @@ def main() -> int:
                   sum(b["n_contested"] for b in _tb), src)
             check("translation, certified", _mt.group(3),
                   sum(b["n_contested_after_correction"] for b in _tb), src)
+            _unj2 = ROOT / "results/union_multiplicity.json"
+            if _unj2.exists():
+                _PBT = json.loads(_unj2.read_text())["per_board"]
+                _tru = sum(v["pairs_union"] for k, v in _PBT.items() if "wmt" in k)
+                check("translation, certified under the union", _mt.group(4), _tru,
+                      "results/union_multiplicity.json")
             _tres = sum(1 for b in _tb for pr in b.get("contested_after_correction", [])
                         if b["pairs"][pr].get("resolved_in_the_published_cell"))
             checks.append((_tres == 0, "no translation certification reverses a resolved ordering",
                            "0", str(_tres), src))
             _wordn = {"three": 3, "four": 4, "five": 5, "six": 6, "seven": 7}
-            checks.append((_wordn.get(_mt.group(5), -1) == _res,
+            checks.append((_wordn.get(_mt.group(6), -1) == _res,
                            "the sentence names as many as there are", str(_res),
-                           _mt.group(5), src))
+                           _mt.group(6), src))
 
         # the qualifier moved into the translation sentence, so what is held now is the pair of
         # totals it rests on: how many certifications there are and how many reverse a resolved
