@@ -816,3 +816,40 @@ makes the other two readings trustworthy: the same code, re-applied to a larger 
 and the contributions carry the union figures beside the per-board ones rather than leaving them to
 the appendix, because a correction that only appears where few readers go is a correction the paper
 did not really make.
+
+## 16. Every printed number is read by a check, and the exceptions are named
+
+**Check:** `verify_paper_numbers.py` asks whether a figure follows from the artifact it cites. It
+cannot ask the prior question --- whether any check reads a given figure at all --- so a second
+instrument answers that by recording the span of every regular expression the checker matches
+against the manuscript and reporting the numerals that fall outside all of them.
+
+```bash
+python scripts/check_coverage.py              # the body
+python scripts/check_coverage.py --appendix   # the appendices too
+```
+
+**Status: PASS for the body, with seventeen named exceptions in the appendices.** The body's 159
+numerals are all read. Of the appendices' 684 that were read by nothing, 667 are bound; the
+seventeen that remain are:
+
+- six axis labels and a median label inside a figure this repository generates, plus one figure in
+  another generated file --- machine-written, so they cannot drift from their own source;
+- two figures about the literature's USPTO-50k rather than about a run here: the $5{,}007$ test
+  reactions the seven-system group carries and the $50{,}016$ the name conventionally refers to.
+  The neighbouring $50{,}037$ --- this repository's own copy --- is bound, which is the comparison
+  the passage is making;
+- a worked example of a mass difference, $+14$, which is arithmetic in the sentence rather than a
+  measurement;
+- the decode configuration's $16$ and $64$, whose resulting distinct counts are bound;
+- four figures with no artifact behind them: a one-file reach of $0.399$, a pre-correction residual
+  of $+0.0062$, a bound of $+0.011$ printed twice, and a $0.005$ spread. Each was produced by a run
+  whose outputs were not retained as JSON, and each is disclosed here rather than bound to a leaf
+  that happens to round the same way.
+
+**The rule this row exists for:** an unread number is one that can go stale silently, and this
+paper has shipped that defect --- a decomposition printed three times with three different values,
+a table row that stopped summing to its own total, a median printed 0.85 in a sentence beside a
+figure labelled 0.83. The count is the thing to watch: if it grows, a passage was added that
+nothing reads.
+
