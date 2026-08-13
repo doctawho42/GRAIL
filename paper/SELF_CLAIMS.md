@@ -341,9 +341,11 @@ pdftotext -layout paper/grail_iclr.pdf - | awk 'BEGIN{RS="\f"} NR==8' | tail -3
 pdftotext -layout paper/grail_iclr.pdf - | awk 'BEGIN{RS="\f"} NR==9' | head -4
 ```
 
-**Status: PASS, with a page to spare.** The Conclusion completes on page 8 and page 9 opens the
-reproducibility statement, so the main text is eight of the nine pages allowed. The margin is there
-on purpose: every figure and definition a reviewer needs is in the body rather than pointed at.
+**Status: PASS, at the limit.** The Conclusion and the reproducibility statement both complete on
+page 9 and page 10 opens the references, so the main text is nine of the nine pages allowed. The
+margin that was there was spent deliberately: the instrument's schematic, the dominance order, the
+definition the propositions quantify over and the numbered subsections are all in the body now,
+because a reviewer is not required to read an appendix.
 
 ## 9. Every citation resolves and supports what is attributed to it
 
