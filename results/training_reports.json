@@ -1,5 +1,5 @@
 {
- "note": "training reports of the runs the appendices describe, copied out of artifacts/ so the figures they carry are regenerable from a committed file; artifacts/ is gitignored apart from a force-tracked subset, and a loss curve quoted in the paper cannot live only there",
+ "note": "training reports of the runs the appendices describe, copied out of artifacts/ so the figures they carry are regenerable from a committed file; artifacts/ is gitignored apart from a force-tracked subset, and a loss curve quoted in the paper cannot live only there; the evaluation block carries the ensemble's recall on the split each run evaluated, which is the arm the end-to-end propensity paragraph compares",
  "runs": {
   "deployed": {
    "generator_training": {
@@ -64,6 +64,11 @@
     "generator_train_seconds": 7144.272992708022,
     "filter_train_seconds": 2549.1717068749713,
     "evaluation_seconds": 205.78629516705405
+   },
+   "evaluation": {
+    "max_test_substrates": 300,
+    "ensemble_test_recall@15": 0.33419367955450424,
+    "ensemble_val_recall@15": 0.34392572728750204
    }
   },
   "propensity": {
@@ -129,6 +134,11 @@
     "generator_train_seconds": 8131.714419458003,
     "filter_train_seconds": 3094.1232298749965,
     "evaluation_seconds": 249.38541516597616
+   },
+   "evaluation": {
+    "max_test_substrates": 300,
+    "ensemble_test_recall@15": 0.34771462786926693,
+    "ensemble_val_recall@15": 0.3433243946042581
    }
   }
  }

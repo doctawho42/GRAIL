@@ -745,6 +745,7 @@ def register(ctx) -> None:
     _closure(ctx)
     register_orphans_fixed(ctx)
     register_dedup_split(ctx)
+    register_propensity_end_to_end(ctx)
 
 
 def register_dedup_split(ctx) -> None:
@@ -866,3 +867,52 @@ def register_orphans_fixed(ctx) -> None:
                                "8, monotone", f"{len(vh)}, "
                                f"{'monotone' if all(b < a for a, b in zip(vh, vh[1:])) else 'not'}",
                                "results/training_reports.json"))
+
+
+def register_propensity_end_to_end(ctx) -> None:
+    """The seven figures of the end-to-end propensity arm, which lived in no committed file.
+
+    They are the ensemble's recall on each split for the two runs, and the split size the runs
+    evaluated on. All of it was in ``artifacts/*/reports/metrics.json``, which .gitignore excludes,
+    so the paragraph's own conclusion -- that a single-seed test movement not corroborated on the
+    split selection may touch supports no claim -- rested on numbers a reader could not reach.
+    """
+    import re as _re
+
+    tr = ctx.art("training_reports.json")
+    if not tr or "evaluation" not in tr["runs"].get("deployed", {}):
+        return
+    d = tr["runs"]["deployed"]["evaluation"]
+    p = tr["runs"]["propensity"]["evaluation"]
+    m = _re.search(r"evaluating it as deployed gives \$([\d.]+)\$ against \$([\d.]+)\$ on test, "
+                   r"which read alone\s*looks like a gain of \$\+([\d.]+)\$\. On validation, the "
+                   r"split model selection is permitted to touch, the\s*same comparison gives "
+                   r"\$([\d.]+)\$ against \$([\d.]+)\$, a difference of \$(-[\d.]+)\$", ctx.flat)
+    ctx.checks.append((bool(m), "props, the end-to-end propensity comparison is present", "present",
+                       "matched" if m else "not matched", "results/training_reports.json"))
+    if m:
+        ctx.check("props, the propensity arm on test", m.group(1), p["ensemble_test_recall@15"],
+                  "results/training_reports.json")
+        ctx.check("props, the deployed arm on test", m.group(2), d["ensemble_test_recall@15"],
+                  "results/training_reports.json")
+        ctx.check("props, the difference on test", m.group(3),
+                  p["ensemble_test_recall@15"] - d["ensemble_test_recall@15"],
+                  "results/training_reports.json")
+        ctx.check("props, the propensity arm on validation", m.group(4),
+                  p["ensemble_val_recall@15"], "results/training_reports.json")
+        ctx.check("props, the deployed arm on validation", m.group(5),
+                  d["ensemble_val_recall@15"], "results/training_reports.json")
+        ctx.check("props, the difference on validation", m.group(6),
+                  p["ensemble_val_recall@15"] - d["ensemble_val_recall@15"],
+                  "results/training_reports.json")
+    m = _re.search(r"Both figures are on the \$(\d+)\$-substrate evaluation", ctx.flat)
+    ctx.check("props, the split those two runs evaluated on", m and m.group(1),
+              d["max_test_substrates"], "results/training_reports.json")
+    # the paragraph's point is that the two splits disagree in sign, which is what makes the test
+    # movement uncorroborated; that is a property of the two artifacts, not of the prose
+    ctx.checks.append((((p["ensemble_test_recall@15"] - d["ensemble_test_recall@15"]) > 0)
+                       != ((p["ensemble_val_recall@15"] - d["ensemble_val_recall@15"]) > 0),
+                       "props, the two splits disagree in sign", "they disagree",
+                       f"test {p['ensemble_test_recall@15'] - d['ensemble_test_recall@15']:+.4f}, "
+                       f"val {p['ensemble_val_recall@15'] - d['ensemble_val_recall@15']:+.4f}",
+                       "results/training_reports.json"))
