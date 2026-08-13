@@ -581,7 +581,7 @@ def register(ctx) -> None:  # noqa: C901 -- one function per appendix file is th
     bt_realised = need["budget_matched_leaderboard.json"]["by_method"]["BioTransformer"]["recall@15"]
     n = "the third-method table"
     b.sentence(n,
-               r"GRAIL +& \$([\d{},]+)\$ & ([\d.]+) & ([\d.]+) & ([\d.]+) \\\\ SyGMa +&: & "
+               r"GRAIL +& \$([\d{},]+)\$ & ([\d.]+) & ([\d.]+) & ([\d.]+) \\\\ SyGMa +& \$(\d+)\$ & "
                r"([\d.]+) & ([\d.]+) & ([\d.]+) \\\\ BioTransformer & \$(\d+)\$ +& ([\d.]+) & "
                r"([\d.]+) & ([\d.]+) \\\\",
                [("GRAIL rules", census["banks"]["this work, full bank"]["templates"]),
@@ -589,6 +589,7 @@ def register(ctx) -> None:  # noqa: C901 -- one function per appendix file is th
                 ("GRAIL realised@15", xmd["methods"][0]["recall@15"]),
                 ("GRAIL conversion",
                  xmd["methods"][0]["recall@15"] / xmd["grail_bank_ceiling_on_shared"]),
+                ("SyGMa rules", ctx.art("reach_engine_vs_bank.json")["n_rules"]["sygma_total"]),
                 ("SyGMa bank reach", xmd["methods"][1]["pool_coverage_recall_inf"]),
                 ("SyGMa realised@15", xmd["methods"][1]["recall@15"]),
                 ("SyGMa conversion", xmd["methods"][1]["recall@15"]
@@ -1248,23 +1249,20 @@ def register(ctx) -> None:  # noqa: C901 -- one function per appendix file is th
     n = "the two controls on the counterfactual"
     b.sentence(n,
                r"At \$(\d+)\$ rules the same comparison is negative at every budget, \$([-\d.]+)\$ "
-               r"\$\[([-\d.]+),-0\.049\]\$ at \$k=82\$.*?pool \$([\d.]+)\$ and recall@15 "
+               r"\$\[([-\d.]+),([-\d.]+)\]\$ at \$k=82\$.*?pool \$([\d.]+)\$ and recall@15 "
                r"\$([\d.]+)\$ against the \$([\d.]+)\$ and \$([\d.]+)\$ of "
                r"Table~\\ref\{tab:selection-breadth\}",
                [("the breadth the control is run at", max(sel["config"]["top_ks"])),
-                ("the 300-rule arm's difference",
-                 nosel["arms"]["300"]["by_budget"]["64"]["gap"]),
-                ("its interval low", nosel["arms"]["300"]["by_budget"]["64"]["ci95"][0]),
+                ("the 300-rule arm's difference at that budget",
+                 nosel["arms"]["300"]["by_budget"]["82"]["gap"]),
+                ("its interval low", nosel["arms"]["300"]["by_budget"]["82"]["ci95"][0]),
+                ("its interval high", nosel["arms"]["300"]["by_budget"]["82"]["ci95"][1]),
                 ("the reproduced pool", nosel["arms"]["300"]["mean_pool"]),
                 ("the reproduced recall@15",
                  nosel["arms"]["300"]["by_budget"]["15"]["grail"]),
                 ("the committed pool", sel["by_top_k"]["300"]["mean_pool_size"]),
                 ("the committed recall@15", sel["by_top_k"]["300"]["recall@15"])],
-               "results/bank_without_selection.json + results/selection_ablation.json; the "
-               "printed difference and its lower end are the arm's k=64 row while the sentence "
-               "says k=82, whose own row is -0.118 [-0.188,-0.048]; the upper end is printed "
-               "-0.049 where that row gives -0.0498, so it is left in the pattern rather than "
-               "bound to anything and is reported as unresolved")
+               "results/bank_without_selection.json + results/selection_ablation.json")
     # The sentence's claim is that the arm is negative at every budget, which is checkable
     # whichever row the quoted triple came from.
     b.check("the 300-rule arm is negative at every budget",
