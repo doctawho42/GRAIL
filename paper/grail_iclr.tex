@@ -49,7 +49,8 @@ Publish $293$ Ranks and Support $167$}
 \begin{abstract}
 A leaderboard reports one total order over its methods, computed under evaluation choices that its
 paper does not state: a rule deciding when a predicted structure counts as the reference, crossed
-with a choice the field reports apart from its ranking and never jointly with it. This paper asks
+with a second choice the field reports apart from its ranking and never jointly with it, which is an
+output budget, a post-processing step or a normalisation. This paper asks
 what part of such an ordering survives when those choices are varied and nothing else is. We fix
 the items and the released predictions, re-score them in every cell of a declared grid of choices,
 and keep the pairwise orderings that no cell contradicts.
@@ -111,10 +112,11 @@ similar amount. The distinction matters, because a shift leaves conclusions inta
 does not.
 
 We answer that question by re-scoring predictions that other groups have already released, so that
-nothing is retrained and no method is reimplemented. Two of the four choices reorder a published leaderboard
-and the reorderings are certified as interactions between method and choice, not asserted from a
-change in rank; a third changes a reported quantity, what a rule base reaches, without changing any
-ordering. The fourth is undeclared but produces no interaction that survives correction, and separating those two statements is possible only because the same test is
+nothing is retrained and no method is reimplemented. Two of the four choices reorder a published
+leaderboard, and those reorderings are certified as interactions between method and choice rather
+than asserted from a change in rank. A third changes a reported quantity, what a rule base
+reaches, without changing any ordering. The fourth is undeclared but produces no interaction that
+survives correction. Separating those two statements is possible only because the same test is
 applied to all four. A single condition governs when a reordering occurs: the choice must move two
 systems apart by more than the margin between them, which makes a benchmark more vulnerable as its
 leading methods converge.
@@ -122,41 +124,43 @@ leading methods converge.
 \paragraph{Contributions.}
 \begin{itemize}\itemsep2pt \parskip0pt
 \item \textbf{The instrument.} The part of a published ranking that no declared choice can
-  contradict is a partial order --- the intersection of the per-cell total orders --- computable from
-  released prediction files alone, together with its longest chain. Because it is an intersection it
-  can only fall as a grid widens, so it is reported as a curve over the declared axes and never as
-  one number, and a pair that fails it fails in one of two ways that are counted apart.
-\item \textbf{The survey.} Measured on $23$ leaderboards in four domains and $1{,}922$ pairs, from
-  retrosynthesis, metabolite prediction, protein--ligand docking and two editions of one machine
-  translation task: they publish $293$ places and what survives supports $167$. The share runs from
-  none of three to nine tenths, and does not replicate between two editions of the same task on the
-  same language pair, so it is a property of a table and its grid rather than of a benchmark.
+  contradict is a partial order: the intersection of the per-cell total orders. We compute it and
+  its longest chain from released prediction files alone. Because it is an intersection it can only
+  fall as a grid widens, so we report it as a curve over the declared axes, never as one number. A
+  pair that fails it fails in one of two ways, and we count them apart.
+\item \textbf{The survey.} We run the instrument on $23$ leaderboards and $1{,}922$ pairs in four
+  domains: retrosynthesis, metabolite prediction, protein--ligand docking and two editions of one
+  machine translation task. They publish $293$ places, and what survives supports $167$. The share
+  runs from none of three to nine tenths, and does not replicate between two editions of the same
+  task on the same language pair, so it is a property of a table and its grid rather than of a
+  benchmark.
 \item \textbf{What the gap is made of, which is mostly not the choices.} Requiring only a
-  leaderboard's own cell to separate a pair already takes $293$ places to $136$: $157$ go to a
-  benchmark's own power before any convention is varied and $39$ more to the grid. The matching
-  criterion certifies no reversal of an ordering a published cell had separated, on any of the $23$
-  boards --- each board's verdict corrected by Holm over the cell-level tests its own grid creates,
-  and $14$ of the $21$ certified reversals of every kind surviving one correction over the union
-  of all twenty-three grids; what the criterion does is exchange positions a benchmark never established.
+  leaderboard's own cell to separate a pair already takes $293$ places to $136$, so $157$ ranks go
+  to a benchmark's own power before any convention is varied and $39$ more to the grid. On none of
+  the $23$ boards does the matching criterion certify a reversal of an ordering a published cell had
+  separated. Each board's verdict is corrected by Holm over the cell-level tests its own grid
+  creates, and $14$ of the $21$ certified reversals of every kind survive one correction over the
+  union of all twenty-three grids. What the criterion does is exchange positions a benchmark never
+  established.
 \item \textbf{The arithmetic.} A pair's ordering survives a change of criterion unless the change
   moves the two apart by more than the larger of the margins it connects. That identity is why every
-  dominance verdict follows from $n$ scorings per cell with no pairwise statistic, and a resample
-  enters only to tell a contested pair from an unresolved one.
+  dominance verdict follows from $n$ scorings per cell with no pairwise statistic. A resample enters
+  only to tell a contested pair from an unresolved one.
 \item \textbf{The case study and the release.} The four choices were found by measuring one
-  predictor in one domain, and that case study is reported in full in Appendix~\ref{app:casestudy}:
-  a coverage figure is a property of a rule set together with the engine that applies it, moving by
-  up to $0.374$ with a preprocessing step neither paper reports; the output budget reorders a
-  metabolite leaderboard with every ranking held fixed; and the population a dataset name refers to
-  is ambiguous but reorders nothing that survives correction. We release the protocol, the audited
+  predictor in one domain, and Appendix~\ref{app:casestudy} reports that case study in full. A
+  coverage figure is a property of a rule set together with the engine that applies it, and moves by
+  up to $0.374$ with a preprocessing step neither paper reports. The output budget reorders a
+  metabolite leaderboard with every ranking held fixed. The population a dataset name refers to is
+  ambiguous, but reorders nothing that survives correction. We release the protocol, the audited
   split, the frozen predictions of every method compared, a checker that reports these choices from
   released files alone, and the analysis code.
 \end{itemize}
 
 Two claims follow, and they are different sizes. \textbf{C1}: most of what a leaderboard prints it
-never established --- the pairs its own cell cannot separate from zero. \textbf{C2}: of the pairs it
+never established: the pairs its own cell cannot separate from zero. \textbf{C2}: of the pairs it
 did establish, five orderings are reversed by a declared choice and survive correction, and none of
-the five is the matching rule's. The rest of the paper says which of the two a number belongs to
-whenever both are in view.
+the five is the matching rule's. Whenever both are in view, the rest of the paper says which of the
+two a number belongs to.
 
 \section{Related Work}
 \label{sec:related}
@@ -164,17 +168,17 @@ whenever both are in view.
 \paragraph{The domain, and what has been compared in it.} Rule-based metabolite prediction was
 established by SyGMa \citep{Ridder_2008}, which encodes phase I and phase II biotransformations as
 templates and scores products by how often each template yields an observed metabolite. GLORYx
-\citep{de_Bruyn_Kops_2020} couples a comparable library to a learned model of sites of metabolism;
+\citep{de_Bruyn_Kops_2020} couples a comparable library to a learned model of sites of metabolism.
 BioTransformer \citep{Djoumbou_Feunang_2019} extends templates to microbial and environmental
-transformations; MetaTrans \citep{Litsa_2020} and MetaPredictor \citep{Zhu_2024} dispense with
+transformations. MetaTrans \citep{Litsa_2020} and MetaPredictor \citep{Zhu_2024} dispense with
 templates altogether. Comparative studies recover the same coverage-precision trade-off on 85
 agrochemical parents \citep{Scholz_2023}, on 37 chemicals where the broadest-coverage system also
 produced the most incorrect predictions \citep{Boyce_2022}, and on radiolabelled ADME data
-\citep{Gao_2026}; each fixes one criterion for a correct prediction and none reports how sensitive
+\citep{Gao_2026}. Each fixes one criterion for a correct prediction, and none reports how sensitive
 its conclusion is to that choice. That one structure can be written more than one way is documented
-independently of this domain: \citet{Dhaked_2020} catalogue tautomeric transformations the standard
-identifier normalises only a subset of, \citet{Hahnke_2018} report roughly $60\%$ of PubChem records
-differing from their canonical InChI, and \citet{Mansouri_2024} describe a standardisation pipeline.
+independently of this domain. \citet{Dhaked_2020} catalogue tautomeric transformations the standard
+identifier normalises only a subset of. \citet{Hahnke_2018} report roughly $60\%$ of PubChem records
+differing from their canonical InChI. \citet{Mansouri_2024} describe a standardisation pipeline.
 That literature treats standardisation as preprocessing applied before an analysis, not as a
 parameter of the analysis.
 
@@ -182,40 +186,41 @@ parameter of the analysis.
 \paragraph{Evaluation choices in adjacent fields.} None of the four choices is in doubt in general.
 On the matching rule, \citet{Maziarz_2025} reversed a published retrosynthesis ordering under a
 standardised procedure, in part because one model had been scored under a relaxed stereochemistry
-criterion its baselines were not given; \citet{Hastedt_2024} release the ranked predictions of
-twelve such systems; \citet{liu2026massspecgymwild} find divergent metric implementations in
-mass spectrometry; and outside chemistry a different equivalence rule misrepresents the state of the
-art in text-to-SQL \citep{Zhong_2020} and changes which question-answering system leads
+criterion its baselines were not given. \citet{Hastedt_2024} release the ranked predictions of
+twelve such systems. \citet{liu2026massspecgymwild} find divergent metric implementations in mass
+spectrometry. Outside chemistry, a different equivalence rule misrepresents the state of the art in
+text-to-SQL \citep{Zhong_2020} and changes which question-answering system leads
 \citep{Kamalloo_2023}. On the aggregate, the metric inverts the winner in drug-response prediction
-\citep{agarwal2026metric}, the standard score in structure-based drug design rises with output atom
+\citep{agarwal2026metric}. The standard score in structure-based drug design rises with output atom
 count rather than quality \citep{Gao_2025_reframing}, which motivated rebuilding that benchmark
-\citep{Lin_2025_cbgbench}, and weighting by difficulty reorders natural-language leaderboards
+\citep{Lin_2025_cbgbench}. Weighting by difficulty reorders natural-language leaderboards
 \citep{Mishra_2021, Rodriguez_2021}. On the output budget the literature is older: ranked output
 evaluated at a declared cut-off \citep{Jarvelin_2002}, under incomplete judgements
-\citep{Buckley_2004}, corrected for recording propensity \citep{Joachims_2017}, and a cut-off
-metric whose winner changes with how the candidates entering it are counted \citep{Krichene_2020}.
+\citep{Buckley_2004}, and corrected for recording propensity \citep{Joachims_2017}. It also covers a
+cut-off metric whose winner changes with how the candidates entering it are counted
+\citep{Krichene_2020}.
 
 \looseness=-1
-\paragraph{Sweeping the choices rather than fixing them.} Computing a result in every cell of a
-declared grid of defensible analytic choices and reporting what survives all of them is multiverse
-analysis \citep{Steegen_2016} and specification-curve analysis \citep{Simonsohn_2020}; the
-machine-learning counterparts account for benchmark variance \citep{Bouthillier_2021} and test a
-claim jointly across datasets \citep{Dror_2017}. Those designs sweep an \emph{estimate}.
-Section~\ref{sec:robust} sweeps an \emph{order}, whose intersection over cells is a partial order
-rather than a distribution, so what survives has a share and a longest chain, both computable from
-released prediction files. Closest in aim is work that perturbs a leaderboard and reports how far it
-moves: \citet{Knowles_2021} resamples the human evaluation behind the WMT ranking, and
-\citet{Jin_2026} corrects the annotations of two text-to-SQL benchmarks and reports shifts of up to
-nine places. Both establish that a ranking moves. Neither returns an object a reader can quote in
-its place, nor a rule that says in advance which pairs will move.
+\paragraph{Sweeping the choices rather than fixing them.} Multiverse analysis \citep{Steegen_2016}
+and specification-curve analysis \citep{Simonsohn_2020} compute a result in every cell of a declared
+grid of defensible analytic choices and report what survives all of them. The machine-learning
+counterparts account for benchmark variance \citep{Bouthillier_2021} and test a claim jointly across
+datasets \citep{Dror_2017}. Those designs sweep an \emph{estimate}. Section~\ref{sec:robust} sweeps
+an \emph{order}, whose intersection over cells is a partial order rather than a distribution. So
+what survives has a share and a longest chain, both computable from released prediction files.
+Closest in aim is work that perturbs a leaderboard and reports how far it moves.
+\citet{Knowles_2021} resamples the human evaluation behind the WMT ranking. \citet{Jin_2026}
+corrects the annotations of two text-to-SQL benchmarks and reports shifts of up to nine places. Both
+establish that a ranking moves. Neither returns an object a reader can quote in its place, nor a
+rule that says in advance which pairs will move.
 
 \paragraph{Staged evaluation, and what is left unestablished.} Separating what a candidate generator
 reaches from what a later stage retains is standard \citep{Wang_2011_cascade, Covington_2016,
-Karpukhin_2020, Maziarz_2025}, and in each case the first term is estimated from a sample or bounded
-by a search budget. The demonstrations above compare studies differing in several respects at once,
-so the effect of any one choice is not identified; nor is it known what the first term can be when
-the candidate set is finite and enumerable, or whether a coverage figure obtained that way is
-comparable across papers. The present work addresses both.
+Karpukhin_2020, Maziarz_2025}. In each case the first term is estimated from a sample or bounded by
+a search budget. The demonstrations above compare studies differing in several respects at once, so
+the effect of any one choice is not identified. Nor is it known what the first term can be when the
+candidate set is finite and enumerable, or whether a coverage figure obtained that way is comparable
+across papers. The present work addresses both.
 
 \section{What part of a published ranking is safe to quote}
 \label{sec:robust}\label{sec:xdomainmain}
@@ -531,30 +536,30 @@ $0.202$ at $80\%$ power (Appendix~\ref{app:popaxis}).
 \looseness=-2
 \paragraph{What the metabolite numbers bound.} The five-method table rests on $\nshared$ shared
 substrates of frozen predictions, because MetaTrans's pipeline no longer reproduces and
-BioTransformer's configuration is unscripted; the other three are scored on the full $\ntest$. An
-unannotated but real product counts as a false positive, so every precision and F1 figure is
-pessimistic by a bounded amount the annotation graph measures (Appendix~\ref{app:closure}). Depth-2 application
-lifts the ceiling by ${\sim}0.012$ at $8.5$ times the cost, so $\ceiling$ bounds this formulation and
-not the task. And this system's rule labels are built with the substrate expanded while its rules
-fire without it, so locating its shortfall in selection is conditioned on a mismatch of about half
-the rule--substrate positives (Appendix~\ref{app:enginereach}).
+BioTransformer's configuration is unscripted. The other three are scored on the full
+$\ntest$. An unannotated but real product counts as a false positive, so every precision and F1
+figure is pessimistic by a bounded amount the annotation graph measures
+(Appendix~\ref{app:closure}). Depth-2 application lifts the ceiling by ${\sim}0.012$ at $8.5$ times
+the cost, so $\ceiling$ bounds this formulation and not the task. This system's rule labels are
+built with the substrate expanded, while its rules fire without it. Locating its shortfall in
+selection is therefore conditioned on a mismatch of about half the rule--substrate positives
+(Appendix~\ref{app:enginereach}).
 
 \looseness=-2
-The cross-domain numbers come from files produced elsewhere, the reordering there is a top-1
-phenomenon, the robust order rests on twenty-three leaderboards in four domains, and two results are bounded nulls.
-
+The cross-domain numbers come from files produced elsewhere. The reordering there is a top-1
+phenomenon. The robust order rests on twenty-three leaderboards in four domains. Two results are
+bounded nulls.
 \section{Conclusion}
 \label{sec:conclusion}
 
 \looseness=-2
-Four choices are settled before any model is compared and none is routinely declared. What a published ranking entitles a
-reader to quote is smaller than the ranking in two ways, and they are different sizes: most of its
-pairs were never resolved, and a few that were are reversed by a choice no paper reports. Two of the
-four choices change a published ordering --- the budget reverses margins an interval separates from
-zero, the criterion exchanges systems a mature benchmark never separated --- and which pairs either
-reaches follows from an equivalence. Declaring is not the whole remedy, as the one bank of mixed
-provenance here shows.
-
+Four choices are settled before any model is compared, and none is routinely declared. A published
+ranking entitles a reader to quote fewer ranks than it prints, and it falls short in two ways of
+different sizes: most of its pairs were never resolved, and a few that were are reversed by a choice
+no paper reports. Two of the four choices change a published ordering. The budget reverses margins
+that an interval separates from zero, and the criterion exchanges systems a mature benchmark never
+separated. Which pairs either choice reaches follows from an equivalence. Declaring is not the whole
+remedy, as the one bank of mixed provenance here shows.
 \subsubsection*{Reproducibility statement}
 
 Every quantity reported here derives from a committed artifact and regenerates from the released

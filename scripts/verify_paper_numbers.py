@@ -425,8 +425,8 @@ def main() -> int:
         if _w23.exists():
             survey_boards += list(json.loads(_w23.read_text())["boards"].values())
         flat = re.sub(r"\s+", " ", whole)
-        mc = re.search(r"Measured on \$(\d+)\$ leaderboards in four domains and \$([\d,{}]+)\$ "
-                       r"pairs.*?they publish \$(\d+)\$ places and what survives supports "
+        mc = re.search(r"on \$(\d+)\$ leaderboards (?:in four domains and|and) \$([\d,{}]+)\$ "
+                       r"pairs.*?[Tt]hey publish \$(\d+)\$ places,? and what survives supports "
                        r"\$(\d+)\$", flat)
         checks.append((bool(mc), "the survey-total sentence parses", "present",
                        "matched" if mc else "not matched", ""))
@@ -445,7 +445,7 @@ def main() -> int:
         # must fail rather than pass quietly.
         places = sum(b["n_systems"] for b in survey_boards)
         tiers = sum(b["tiers_distinguished"] for b in survey_boards)
-        printings = re.findall(r"[Pp]ublish \$?(\d+)\$? [Pp]laces\\?\\?\s*and (?:what survives |what no declared "
+        printings = re.findall(r"[Pp]ublish \$?(\d+)\$? [Pp]laces,?\\?\\?\s*and (?:what survives |what no declared "
                                r"choice contradicts )?[Ss]upports? \$?(\d+)\$?|"
                                # the abstract states it as systems ranked and ranks supported
                                r"rank \$(\d+)\$ systems, and the orderings\s*that survive support "
@@ -700,7 +700,7 @@ def main() -> int:
         # the same two arms the appendix quotes as a swing of -0.374; the bullet states its size
         _arm = HD["banks"]["biotransformer"]["global_arms"]
         _sw = abs(_arm["all_explicit_completed"] - _arm["all_implicit"])
-        m = re.search(r"the engine that applies it, moving by\s*up to \$([\d.]+)\$ with a "
+        m = re.search(r"the engine that applies it, (?:moving|and moves) by\s*up to \$([\d.]+)\$ with a "
                       r"preprocessing step", flat)
         checks.append((bool(m), "the contribution's engine figure parses", "present",
                        "matched" if m else "not matched", ""))
@@ -1176,7 +1176,7 @@ def main() -> int:
                        "the abstract says the count holds under both corrections it names",
                        f"{S2['per_board']} under each", f"{S2['per_board']} and {S2['union']}",
                        "results/union_multiplicity.json"))
-        m2 = re.search(r"and \$(\d+)\$ of the \$(\d+)\$ certified reversals of every kind surviving "
+        m2 = re.search(r"and \$(\d+)\$ of the \$(\d+)\$ certified reversals of every kind surviv(?:ing|e) "
                        r"one correction over the union", flat)
         checks.append((bool(m2), "the contribution states the union correction", "present",
                        "matched" if m2 else "not matched", ""))
