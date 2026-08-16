@@ -446,7 +446,13 @@ def main() -> int:
         places = sum(b["n_systems"] for b in survey_boards)
         tiers = sum(b["tiers_distinguished"] for b in survey_boards)
         printings = re.findall(r"[Pp]ublish \$?(\d+)\$? [Pp]laces\\?\\?\s*and (?:what survives |what no declared "
-                               r"choice contradicts )?[Ss]upports? \$?(\d+)\$?", flat)
+                               r"choice contradicts )?[Ss]upports? \$?(\d+)\$?|"
+                               # the abstract states it as systems ranked and ranks supported
+                               r"rank \$(\d+)\$ systems, and the orderings\s*that survive support "
+                               r"\$(\d+)\$ ranks|"
+                               # and the title, which states the same pair
+                               r"Publish \$(\d+)\$ Ranks and Support \$(\d+)\$", flat)
+        printings = [tuple(x for x in pr if x) for pr in printings]
         checks.append((len(printings) >= 4, "every printing of the survey total is found",
                        "4 or more, the title among them", str(len(printings)), "the manuscript"))
         for i, (pl, ti) in enumerate(printings, 1):
@@ -1160,14 +1166,13 @@ def main() -> int:
                   "results/union_multiplicity.json")
         # the abstract and the contributions quote the same two numbers; both are bound here, so
         # a correction that moves cannot be corrected in the appendix alone
-        m2 = re.search(r"survive correction, and all (\w+) survive a single correction over all "
-                       r"\$23\$ grids", flat)
-        _w5 = {"three": 3, "four": 4, "five": 5, "six": 6, "seven": 7}
-        checks.append((bool(m2) and _w5.get(m2.group(1), -1)
-                       == UN["certified_pairs_the_published_cell_had_separated"]["union"],
-                       "the abstract's surviving separated reversals",
-                       str(UN["certified_pairs_the_published_cell_had_separated"]["union"]),
-                       m2.group(1) if m2 else "not stated", "results/union_multiplicity.json"))
+        m2 = re.search(r"survive\s*correction, under each board's own family and under a single "
+                       r"correction over all \$23\$ grids at\s*once", flat)
+        S2 = UN["certified_pairs_the_published_cell_had_separated"]
+        checks.append((bool(m2) and S2["per_board"] == S2["union"],
+                       "the abstract says the count holds under both corrections it names",
+                       f"{S2['per_board']} under each", f"{S2['per_board']} and {S2['union']}",
+                       "results/union_multiplicity.json"))
         m2 = re.search(r"and \$(\d+)\$ of the \$(\d+)\$ certified reversals of every kind surviving "
                        r"one correction over the union", flat)
         checks.append((bool(m2), "the contribution states the union correction", "present",
@@ -1458,8 +1463,9 @@ def main() -> int:
         # sets of numbers and none matched the artifact, because this gate matched one printing.
         # Every printing is found by its own pattern and each is held; missing one now fails.
         printings_pd = []
-        for _pat in (r"takes \$293\$ places to \$(\d+)\$[,:] (?:so )?\$?(\d+)\$? go to a benchmark's own "
-                     r"power before any convention is varied\s*and \$(\d+)\$ more to the grid",
+        for _pat in (r"takes \$293\$ places to \$(\d+)\$[,:] (?:so )?\$?(\d+)\$? (?:go|ranks go) to a "
+                     r"benchmark's own (?:power|resolving power)\s*before any convention is varied "
+                     r"and \$(\d+)\$ more to the grid",
                      r"the \$293\$ published places support \$(\d+)\$: \$(\d+)\$ go before any "
                      r"convention is varied.*?the grid costs \$(\d+)\$ on top"):
             printings_pd += re.findall(_pat, flat)
@@ -1525,8 +1531,8 @@ def main() -> int:
         # and the abstract has to print that same number: the gate below asserts a property of
         # the artifacts, which is exactly the kind of gate that stayed green while the prose said
         # something else.
-        _m_abs = re.search(r"Of what a table did establish, \$(\d+)\$ orderings are reversed by a "
-                           r"declared choice and survive correction", flat)
+        _m_abs = re.search(r"Of the orderings a table did establish, \$(\d+)\$ are reversed by a "
+                           r"declared choice and survive\s*correction", flat)
         checks.append((bool(_m_abs) and int(_m_abs.group(1)) == _sep,
                        "the abstract prints the certified-reversal count",
                        str(_sep), _m_abs.group(1) if _m_abs else "not found", "the manuscript"))

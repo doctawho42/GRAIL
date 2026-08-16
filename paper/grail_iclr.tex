@@ -30,9 +30,9 @@
 \newcommand{\interB}{+0.063}          % MetaTrans<->SyGMa interaction
 \newcommand{\interBci}{[+0.022,\,+0.106]}
 
-\title{Twenty-Three Leaderboards Publish $293$ Places and Support $167$:\\
-What a Ranking Entitles a Reader to Quote\\
-Across the Cells It Was Not Computed In}
+\title{How Much of a Leaderboard Survives Its Undeclared\\
+Evaluation Choices: Twenty-Three Leaderboards\\
+Publish $293$ Ranks and Support $167$}
 
 % double-blind: authors stay anonymous until camera-ready
 \author{Anonymous authors \\ Paper under double-blind review}
@@ -47,29 +47,29 @@ Across the Cells It Was Not Computed In}
 \maketitle
 
 \begin{abstract}
-A leaderboard reports one total order. It is computed in one cell of a grid its paper does not
-report: a rule deciding when a prediction counts as the reference, crossed with a choice the field
-reports apart from its ranking and never jointly with it. So a published ordering can be asked a
-question it is never asked --- does it hold in every other cell? The pairs for which it does are
-what a reader may quote without naming the cell. We ask it of $23$ leaderboards in four domains,
-re-scoring frozen predictions and retraining nothing: summed, they publish $293$ places and what no
-declared choice contradicts supports $167$.
+A leaderboard reports one total order over its methods, computed under evaluation choices that its
+paper does not state: a rule deciding when a predicted structure counts as the reference, crossed
+with a choice the field reports apart from its ranking and never jointly with it. This paper asks
+what part of such an ordering survives when those choices are varied and nothing else is. We fix
+the items and the released predictions, re-score them in every cell of a declared grid of choices,
+and keep the pairwise orderings that no cell contradicts.
 
-The two ways a ranking falls short of what it prints are not the same size, and they are counted
-apart. Most
-of it was never resolved at all: requiring only a leaderboard's own cell to separate a pair takes
-$293$ places to $136$, so $157$ go to a benchmark's own power before any convention is varied
-and $39$ more to the grid. The surviving share runs from none of three to nine tenths, and does not
-replicate between two editions of one shared task on the same language pair, so it is a property of
-a table and its grid rather than of a benchmark. Of what a table did establish, $5$ orderings are reversed by a
-declared choice and survive correction, and all five survive a single correction over all $23$ grids
-at once. None of the five is the matching rule's, on any of the $23$
-boards --- a smaller second claim than a paper about matching rules invites, and the one the
-measurements support.
+We do this for $23$ leaderboards in four domains --- retrosynthesis, metabolite prediction,
+protein--ligand docking, and two editions of one machine-translation shared task --- retraining
+nothing and reimplementing no method. Together those tables rank $293$ systems, and the orderings
+that survive support $167$ ranks. We count the gap in two parts, because they mean different
+things. Most of it is not the choices: requiring a leaderboard's own published cell to separate a
+pair at all takes $293$ places to $136$, so $157$ ranks go to a benchmark's own resolving power
+before any convention is varied and $39$ more to the grid. The surviving share runs from none of
+three to nine tenths, and does not replicate between two editions of the same shared task on the
+same language pair, so it is a property of a table and its grid rather than of a benchmark.
 
-Which pairs are at risk needs no pairwise statistic. An ordering survives a change of criterion
-unless the change moves the two apart by more than the larger of the margins it connects. So every
-dominance verdict follows from $n$ scorings per cell, and a resample enters only to tell a contested
+Of the orderings a table did establish, $5$ are reversed by a declared choice and survive
+correction, under each board's own family and under a single correction over all $23$ grids at
+once. None of the five is the matching rule's, which is the choice this literature discusses most.
+Deciding which orderings are at risk needs no pairwise statistic: a change of criterion reverses a
+pair only if it moves the two systems apart by more than the larger of the margins it connects, so
+every verdict follows from $n$ scorings per cell, and resampling enters only to tell a contested
 pair from an unresolved one. The four choices were found by measuring one predictor in one domain,
 and that case study is reported in full. We release the protocol, the audited split, the frozen
 predictions of every method compared, a checker that reports these choices from released files
@@ -79,11 +79,18 @@ alone, and the analysis code.
 \section{Introduction}
 \label{sec:intro}
 
-Machine learning is used to predict the chemistry a molecule will undergo: the metabolites enzymes
-will convert a drug into, the reactants a target compound can be made from, the molecules that meet
-a design objective. All three are evaluated the same way. A method proposes a ranked list of
-structures, a curated reference records which are correct, and the method is scored by how often the
-two agree.
+This is a survey of published leaderboards and an instrument for reading them. The instrument
+takes a leaderboard's released predictions and a declared set of evaluation choices and returns the
+part of its ordering that no choice contradicts; the survey applies it to twenty-three leaderboards
+in four domains. One predictor in one domain is used to find the choices worth declaring, and that
+predictor is instrumentation rather than a contribution: it is not offered as a state of the art,
+and nothing in the survey depends on how it performs.
+
+The domain the choices were found in evaluates chemistry. Machine learning is used to predict what
+a molecule will undergo: the metabolites enzymes will convert a drug into, the reactants a target
+compound can be made from, the molecules that meet a design objective. All three are evaluated the
+same way. A method proposes a ranked list of structures, a curated reference records which are
+correct, and the method is scored by how often the two agree.
 
 Whether two structures agree is not self-evident. A single compound can be drawn in several ways
 that a chemist reads as one substance: as either of two tautomers, which differ in the position of a
@@ -590,6 +597,17 @@ none of its $150$. The audit is released as a script.
 \bibliography{refs}
 
 \appendix
+
+\section*{How to read the appendices}
+
+They divide in two, and the division matters for what rests on them. Appendices~\ref{app:formal}
+and~\ref{app:robust} carry the instrument: the definitions the propositions quantify over, the
+per-board tables behind every share, the three multiplicity corrections and the checks on the test
+itself. Appendix~\ref{app:xdomain} carries the survey's own scope and the boards outside chemistry.
+Everything else is the case study --- one predictor in one domain, reported in full because that is
+where the four choices were found and because a reader is entitled to see the measurements that
+produced them. No claim of the survey depends on any of it: the case study's own numbers are about
+that predictor, and it is not offered as a state of the art.
 
 \section{Architecture of GRAIL}
 \label{app:arch}
