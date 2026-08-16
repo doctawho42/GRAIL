@@ -96,6 +96,7 @@ def register(ctx) -> None:  # noqa: C901 -- one appendix, one function, read top
     _contamination(ctx)
     _curators(ctx)
     register_file_sizes(ctx)
+    register_gap_scale(ctx)
 
 
 # --------------------------------------------------------------------------------------------
@@ -1310,7 +1311,8 @@ def _other_domains(ctx) -> None:
             _cell(ctx, "xdomain, the probe's highest top-1", m.group(4), max(tops.values()),
                   "results/xdomain_retro_protocol.json accuracy_by_mode")
         m = _blk(ctx, "the probe's movement quoted again as a bound",
-                 r"the movement here is about \$([\d.]+)\$, the seven published systems")
+                 r"the movement here is about\s*\$([\d.]+)\$, while five of the six adjacent "
+                 r"gaps")
         if m:
             _cell(ctx, "xdomain, the probe's spread, second printing", m.group(1),
                   tr["spread_across_modes"]["top1"],
@@ -1679,3 +1681,58 @@ def register_file_sizes(ctx) -> None:
                        "xdomain, no released file carries either conventional size",
                        "no overlap", f"cited {sorted(said)} against sizes {sorted(sizes)}",
                        "results/evalretro_file_sizes.json"))
+
+
+def register_gap_scale(ctx) -> None:
+    """How tight the seven-system order is, against the movement one model can show.
+
+    The paragraph used to say the seven systems "sit within $0.005$ of one another", which their
+    published cell does not support --- the spread is $0.091$. What is true, and is what the
+    argument needs, is that the gaps between neighbours are that small: five of the six are under
+    $0.01$ and their median is $0.0046$. Both are computed from the board's own per-cell means,
+    along with the exchange count the same sentence quotes.
+    """
+    import ast as _ast
+    import re as _re
+
+    ro = ctx.art("robust_order.json")
+    if ro is None:
+        return
+    b = ro["leaderboards"]["cluster0"]
+    acc, pub = b["system_accuracy_by_cell"], b["published_cell"]
+    vals = sorted(acc[s][pub] for s in acc)
+    gaps = sorted(round(y - x, 6) for x, y in zip(vals, vals[1:]))
+    med = gaps[len(gaps) // 2] if len(gaps) % 2 else 0.5 * (gaps[len(gaps) // 2 - 1]
+                                                            + gaps[len(gaps) // 2])
+    cells = [_ast.literal_eval(c) for c in next(iter(acc.values()))]
+    p2 = _ast.literal_eval(pub)
+    sib = [c for c in cells if c[1] == p2[1] and c[0] != p2[0]]
+    exch = set()
+    for nm in b["pairs"]:
+        hi, lo = nm.split(" over ")
+        d0 = acc[hi][pub] - acc[lo][pub]
+        for c in sib:
+            d1 = acc[hi][str(c)] - acc[lo][str(c)]
+            if d0 and (d0 > 0) != (d1 > 0):
+                exch.add(nm)
+
+    m = _re.search(r"while (\w+) of the (\w+) adjacent gaps in the seven-system published order are "
+                   r"at most \$([\d.]+)\$\s*with a median of \$([\d.]+)\$, and (\w+) pairs "
+                   r"exchange", ctx.flat)
+    ctx.checks.append((bool(m), "xdomain, the gap-scale sentence is present", "present",
+                       "matched" if m else "not matched", "results/robust_order.json"))
+    if not m:
+        return
+    w = {"three": 3, "four": 4, "five": 5, "six": 6, "seven": 7}
+    thresh = float(m.group(3))
+    ctx.checks.append((w.get(m.group(1), -1) == sum(1 for g in gaps if g <= thresh + 1e-9),
+                       "xdomain, gaps at or under the threshold it names", m.group(1),
+                       str(sum(1 for g in gaps if g <= thresh + 1e-9)),
+                       "results/robust_order.json"))
+    ctx.checks.append((w.get(m.group(2), -1) == len(gaps),
+                       "xdomain, adjacent gaps in that order", m.group(2), str(len(gaps)),
+                       "results/robust_order.json"))
+    ctx.check("xdomain, the median adjacent gap", m.group(4), med, "results/robust_order.json")
+    ctx.checks.append((w.get(m.group(5), -1) == len(exch),
+                       "xdomain, pairs the criterion axis exchanges", m.group(5), str(len(exch)),
+                       "results/robust_order.json"))

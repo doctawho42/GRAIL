@@ -105,6 +105,7 @@ def register(ctx) -> None:  # noqa: C901 -- one function per appendix file is th
     b = _Binder(ctx)
     note_gate = "scripts/gates/app_props.py"
     register_som_prior(ctx)
+    register_decode_arithmetic(ctx)
 
     need = {
         "prior_vs_learned.json": None,
@@ -639,11 +640,13 @@ def register(ctx) -> None:  # noqa: C901 -- one function per appendix file is th
               mech["hydrogen_convention_by_bank"]["sygma_175"]["with_explicit_hydrogen"], 0,
               "results/explicit_h_mechanism__clean_test.json")
 
-    n = "the inequality that found the missing files"
-    b.sentence(n, r"against a realised \$([\d.]+)\$, which is impossible",
-               [("realised@15", bt_realised)],
-               "results/budget_matched_leaderboard.json; the reach of 0.399 the same sentence "
-               "quotes for the one-file parse is printed by no artifact and is left unbound")
+    # The sentence that motivated this check used to quote a reach from an aborted parse -- a
+    # figure no artifact holds, of a configuration nobody would run. The check it motivates is the
+    # standing one, and that is what the paragraph states now.
+    ctx.checks.append(("a partial bank reaches less than the same system realises" in ctx.flat,
+                       "props, the inequality is stated as a standing check", "stated",
+                       "stated" if "a partial bank reaches less than the same system realises"
+                       in ctx.flat else "missing", note_gate))
 
     n = "the margin at the full template set"
     b.sentence(n,
@@ -2268,3 +2271,31 @@ def register_som_prior(ctx) -> None:
                        "props, five weightings were tried and the quoted one is the best",
                        "5, and the best", f"{len(ranks)}, max {max(ranks.values())}",
                        "results/som_prior_reeval.json"))
+
+
+def register_decode_arithmetic(ctx) -> None:
+    """The decode configuration's own arithmetic, which is what a reader checks and no leaf holds.
+
+    "Decodes in two stages, $8\\times8$ then $2\\times8$, giving $16$ ranked candidates" is not a
+    measurement and no artifact records a beam size; what it is, is arithmetic the sentence prints
+    both sides of, so the product is checked against its own factors. The distinct counts the same
+    passage compares are measurements and are bound elsewhere.
+    """
+    import re as _re
+
+    m = _re.search(r"decodes in two stages, \$(\d+)\\times(\d+)\$ then \$(\d+)\\times(\d+)\$, "
+                   r"giving \$(\d+)\$ ranked candidates\.\s*Re-running it at \$(\d+)\\times(\d+)\$ "
+                   r"then \$(\d+)\\times(\d+)\$.*?yields \$(\d+)\$", ctx.flat)
+    ctx.checks.append((bool(m), "props, the decode configuration is stated", "present",
+                       "matched" if m else "not matched", "scripts/gates/app_props.py"))
+    if not m:
+        return
+    g = [int(x) for x in m.groups()]
+    ctx.checks.append((g[2] * g[3] == g[4], "props, the deployed decode's candidate count",
+                       f"{g[2]}x{g[3]}", str(g[4]), "the sentence's own factors"))
+    ctx.checks.append((g[7] * g[8] == g[9], "props, the widened decode's candidate count",
+                       f"{g[7]}x{g[8]}", str(g[9]), "the sentence's own factors"))
+    ctx.checks.append((g[5] == 2 * g[0] and g[6] == 2 * g[1] and g[7] == 2 * g[2]
+                       and g[8] == 2 * g[3],
+                       "props, the widened run doubles every beam and nothing else",
+                       "each doubled", f"{g[:4]} -> {g[5:9]}", "the sentence's own factors"))
