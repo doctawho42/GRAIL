@@ -104,6 +104,7 @@ class _Binder:
 def register(ctx) -> None:  # noqa: C901 -- one function per appendix file is the contract
     b = _Binder(ctx)
     note_gate = "scripts/gates/app_props.py"
+    register_som_prior(ctx)
 
     need = {
         "prior_vs_learned.json": None,
@@ -1457,13 +1458,13 @@ def register(ctx) -> None:  # noqa: C901 -- one function per appendix file is th
 
     n = "the registered dispatch residuals"
     b.sentence(n,
-               r"to \$\+([\d.]+)\$ \$\[\+([\d.]+),\+([\d.]+)\]\$; the curated and mined",
-               [("the residual after the correction",
+               r"corrected contraction, at \$\+([\d.]+)\$ \$\[\+([\d.]+),\+([\d.]+)\]\$; the "
+               r"curated and\s*mined arms stand as registered",
+               [("the residual under the corrected contraction",
                  dispct["banks"]["grail_full"]["residual_convention_dependence"]),
                 ("its interval low", dispct["banks"]["grail_full"]["residual_ci95"][0]),
                 ("its interval high", dispct["banks"]["grail_full"]["residual_ci95"][1])],
-               "results/hydrogen_dispatch__clean_test.json; the pre-correction +0.0062 the same "
-               "sentence moves from is printed by no artifact and is left unbound")
+               "results/hydrogen_dispatch__clean_test.json")
 
     n = "the two registered subset arms"
     b.sentence(n,
@@ -2221,3 +2222,49 @@ def register(ctx) -> None:  # noqa: C901 -- one function per appendix file is th
                       if bud["macro_f1_by_k"]["SyGMa"][k - 1]
                       > bud["macro_f1_by_k"]["GRAIL"][k - 1]), default=0))],
                "results/budget_curves.json")
+
+
+def register_som_prior(ctx) -> None:
+    """The site-of-metabolism row and its paragraph, which quoted a run that left only a log.
+
+    The measurement was written to ``results/reeval_som.log`` and the JSON it says it wrote was
+    never kept, so three figures --- the baseline, the best weighting and their difference --- were
+    printed by nothing a checker could read. The table in that log is transcribed into
+    ``results/som_prior_reeval.json`` with its own provenance, and all three are held to it,
+    including that the gain is the difference of the other two and that the weighting quoted as
+    best is the best of the five that were tried.
+    """
+    import re as _re
+
+    a = ctx.art("som_prior_reeval.json")
+    if a is None:
+        return
+    base, best, gain = (a["baseline_recall@15"], a["best_weighting_recall@15"], a["gain@15"])
+    m = _re.search(r"lifts\s*recall@15 from ([\d.]+) to ([\d.]+) on (\d+) test substrates", ctx.flat)
+    ctx.checks.append((bool(m), "props, the site-of-metabolism sentence is present", "present",
+                       "matched" if m else "not matched", "results/som_prior_reeval.json"))
+    if m:
+        ctx.check("props, the unweighted recall@15", m.group(1), base,
+                  "results/som_prior_reeval.json")
+        ctx.check("props, the best-weighted recall@15", m.group(2), best,
+                  "results/som_prior_reeval.json")
+        ctx.check("props, the substrates it was measured on", m.group(3),
+                  a["config"]["n_substrates"], "results/som_prior_reeval.json")
+    # the gain is printed twice, in the table row and in the paragraph, and both are the difference
+    said = _re.findall(r"\$\+([\d.]+)\$ (?:at the best of five weightings|is an upper bound)",
+                       ctx.flat)
+    ctx.checks.append((len(said) == 2, "props, the site-of-metabolism gain is printed twice",
+                       "2", str(len(said)), "results/som_prior_reeval.json"))
+    for i, s in enumerate(said, 1):
+        ctx.check(f"props, the site-of-metabolism gain, printing {i}", s, gain,
+                  "results/som_prior_reeval.json")
+    ctx.checks.append((abs((best - base) - gain) < 5e-5,
+                       "props, that gain is the difference of the two recalls",
+                       f"{best - base:.4f}", f"{gain:.4f}", "results/som_prior_reeval.json"))
+    # "the best of five": the artifact has to hold five weightings and the quoted one has to win
+    ranks = {k: v for k, v in a["recall_at_k"]["15"].items() if k.startswith("rk b")}
+    ctx.checks.append((len(ranks) == len(a["config"]["betas"]) == 5
+                       and max(ranks.values()) == best,
+                       "props, five weightings were tried and the quoted one is the best",
+                       "5, and the best", f"{len(ranks)}, max {max(ranks.values())}",
+                       "results/som_prior_reeval.json"))

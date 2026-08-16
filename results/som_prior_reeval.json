@@ -1,0 +1,77 @@
+{
+ "config": {
+  "source": "results/reeval_som.log, transcribed; the run wrote its own JSON to a path that was not kept, and the appendix quotes this table",
+  "n_substrates": 245,
+  "betas": [
+   0.0,
+   1.0,
+   2.0,
+   4.0,
+   8.0
+  ],
+  "match": "inchikey_tautomer",
+  "note": "rk = the prior used to rank, gt = the prior used to gate; beta 0.0 is the unweighted baseline"
+ },
+ "recall_at_k": {
+  "5": {
+   "gen": 0.048,
+   "rk b0.0": 0.083,
+   "gt b0.0": 0.039,
+   "rk b1.0": 0.084,
+   "gt b1.0": 0.037,
+   "rk b2.0": 0.09,
+   "gt b2.0": 0.041,
+   "rk b4.0": 0.092,
+   "gt b4.0": 0.046,
+   "rk b8.0": 0.091,
+   "gt b8.0": 0.049,
+   "SyGMa": 0.47
+  },
+  "10": {
+   "gen": 0.076,
+   "rk b0.0": 0.113,
+   "gt b0.0": 0.049,
+   "rk b1.0": 0.127,
+   "gt b1.0": 0.059,
+   "rk b2.0": 0.116,
+   "gt b2.0": 0.057,
+   "rk b4.0": 0.125,
+   "gt b4.0": 0.064,
+   "rk b8.0": 0.117,
+   "gt b8.0": 0.064,
+   "SyGMa": 0.531
+  },
+  "12": {
+   "gen": 0.08,
+   "rk b0.0": 0.128,
+   "gt b0.0": 0.059,
+   "rk b1.0": 0.137,
+   "gt b1.0": 0.062,
+   "rk b2.0": 0.14,
+   "gt b2.0": 0.066,
+   "rk b4.0": 0.132,
+   "gt b4.0": 0.066,
+   "rk b8.0": 0.127,
+   "gt b8.0": 0.067,
+   "SyGMa": 0.543
+  },
+  "15": {
+   "gen": 0.095,
+   "rk b0.0": 0.147,
+   "gt b0.0": 0.066,
+   "rk b1.0": 0.158,
+   "gt b1.0": 0.073,
+   "rk b2.0": 0.145,
+   "gt b2.0": 0.07,
+   "rk b4.0": 0.145,
+   "gt b4.0": 0.07,
+   "rk b8.0": 0.143,
+   "gt b8.0": 0.069,
+   "SyGMa": 0.558
+  }
+ },
+ "baseline_recall@15": 0.147,
+ "best_weighting_recall@15": 0.158,
+ "best_weighting": "rk b1.0",
+ "gain@15": 0.011
+}
