@@ -1,13 +1,59 @@
 {
  "config": {
   "script": "check_coverage.py",
-  "git_commit": "a846b0ecd6f3c3fdebcbd346d4787d9395574bde",
+  "git_commit": "4c3b865daaac4315ec0e2b19ad8f1aa1033b7728",
   "git_dirty": true,
   "note": "a numeral inside a matched span is not thereby verified; a numeral outside every span is certainly unread by any check",
-  "checker_regex_calls_recorded": 718,
-  "characters_covered": 64061
+  "checker_regex_calls_recorded": 731,
+  "characters_covered": 65063
  },
  "n_body_numerals": 159,
- "n_unread": 0,
- "unread": []
+ "n_unread": 9,
+ "unread": [
+  {
+   "value": "110",
+   "where": "appendix",
+   "context": " \\texttt{grail-iclr.tex} & cross-domain interaction & 448 & $110$ survive at $\\alpha=0.05$ \\\\ \\texttt{grail-iclr.tex} & "
+  },
+  {
+   "value": "15{,}592",
+   "where": "appendix",
+   "context": "xttt{robust.tex} & the correction over every grid at once & $15{,}592$ & cutoff $6.9\\times10^{-6}$ \\\\ \\texttt{robust.tex"
+  },
+  {
+   "value": "+14",
+   "where": "appendix",
+   "context": "ass difference does not identify a transformation: the same $+14$ is produced by an N-methylation and by an oxidation of"
+  },
+  {
+   "value": "0.00",
+   "where": "appendix",
+   "context": "\\node[below,font=\\scriptsize,inner sep=1pt] at (0.0,-0.42) {$0.00$}; \\draw[gray!45] (0.25,-0.30) -- (0.25,-0.42); \\node["
+  },
+  {
+   "value": "0.25",
+   "where": "appendix",
+   "context": "node[below,font=\\scriptsize,inner sep=1pt] at (0.25,-0.42) {$0.25$}; \\draw[gray!45] (0.5,-0.30) -- (0.5,-0.42); \\node[be"
+  },
+  {
+   "value": "0.50",
+   "where": "appendix",
+   "context": "\\node[below,font=\\scriptsize,inner sep=1pt] at (0.5,-0.42) {$0.50$}; \\draw[gray!45] (0.75,-0.30) -- (0.75,-0.42); \\node["
+  },
+  {
+   "value": "0.75",
+   "where": "appendix",
+   "context": "node[below,font=\\scriptsize,inner sep=1pt] at (0.75,-0.42) {$0.75$}; \\draw[gray!45] (1.0,-0.30) -- (1.0,-0.42); \\node[be"
+  },
+  {
+   "value": "1.00",
+   "where": "appendix",
+   "context": "\\node[below,font=\\scriptsize,inner sep=1pt] at (1.0,-0.42) {$1.00$}; \\draw[dashed,gray!70] (0.8333,-0.30) -- (0.8333,1.5"
+  },
+  {
+   "value": "0.83",
+   "where": "appendix",
+   "context": "ve,font=\\scriptsize,gray!70!black] at (0.8333,1.46) {median $0.83$}; \\node[left,font=\\scriptsize] at (-0.012,0.28) {tran"
+  }
+ ]
 }
