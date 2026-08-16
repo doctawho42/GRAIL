@@ -95,6 +95,7 @@ def register(ctx) -> None:  # noqa: C901 -- one appendix, one function, read top
     _other_domains(ctx)
     _contamination(ctx)
     _curators(ctx)
+    register_file_sizes(ctx)
 
 
 # --------------------------------------------------------------------------------------------
@@ -1029,12 +1030,12 @@ def _split_sizes(ctx) -> None:
     if tr is None:
         return
     m = _blk(ctx, "the size of our USPTO-50k copy",
-             r"The three-system group carries \$([\d,{}]+)\$, and so does the copy of "
-             r"``USPTO-50k'' in this repository, whose three splits total \$([\d,{}]+)\$ reactions")
+             r"Our own copy of ``USPTO-50k'' totals \$([\d,{}]+)\$ reactions across\s*its three "
+             r"splits, \$([\d,{}]+)\$ of them in the test split and as many again in validation")
     if not m:
         return
-    per_split = int(m.group(1).replace("{,}", ""))
-    total = int(m.group(2).replace("{,}", ""))
+    total = int(m.group(1).replace("{,}", ""))
+    per_split = int(m.group(2).replace("{,}", ""))
     _cell(ctx, "xdomain, our copy's three splits total what it prints", str(total),
           tr["n_train"] + 2 * per_split,
           "results/retro_transfer.json n_train plus the test and validation splits printed here")
@@ -1057,8 +1058,9 @@ def _split_sizes(ctx) -> None:
         ctx.checks.append((m3.group(1) == m3.group(2),
                            "xdomain, the structural reading holds on every one of them",
                            m3.group(2), m3.group(1), "paper/app/xdomain.tex"))
-    _count(ctx, "our copy's split size is printed four times", r"\$5\{,\}004\$", 4,
-           "the deviation sentence, the probe's population, and both halves of the reading check")
+    _count(ctx, "our copy's split size is printed five times", r"\$5\{,\}004\$", 5,
+           "the set-size sentence, the deviation sentence, the probe's population, and both "
+           "halves of the reading check")
 
 
 # --------------------------------------------------------------------------------------------
@@ -1112,8 +1114,9 @@ def _retro_leaderboard(ctx) -> None:
               pairs * conv * budgets - c0["n_interaction_tests"],
               "the cells above less results/retro_leaderboard_cluster0.json n_interaction_tests")
 
-    _count(ctx, "the seven-system reaction count is printed five times", r"\$4\{,\}999\$", 5,
-           "twice in the body, and in this appendix's group table, run paragraph and figure caption",
+    _count(ctx, "the seven-system reaction count is printed six times", r"\$4\{,\}999\$", 6,
+           "twice in the body, and in this appendix's group table, the set-size paragraph, the run "
+           "paragraph and the figure caption",
            whole=True)
     for i, m in enumerate(re.finditer(
             r"Seven systems, \$([\d,{}]+)\$ reactions, frozen predictions|"
@@ -1626,3 +1629,53 @@ def _curators(ctx) -> None:
                   mp["gain_over_constant"]["predicted_kstar"], src)
             _cell(ctx, "xdomain, what is available", m.group(4),
                   mp["gain_over_constant"]["oracle"], src)
+
+
+def register_file_sizes(ctx) -> None:
+    """What the released files actually carry, against the size the name is cited at.
+
+    The paragraph used to say the seven-system group "carries the 5,007 test reactions that set is
+    commonly cited with" and the three-system group 5,004. Neither is a property of any file: the
+    seven-system files carry 5,001 to 5,004 distinct products and the three-system ones 4,983. The
+    two conventional figures are literature, so they are attributed rather than measured, and the
+    file counts are measured rather than asserted.
+    """
+    import re as _re
+
+    a = ctx.art("evalretro_file_sizes.json")
+    if a is None:
+        return
+    m = _re.search(r"The seven-system group's files\s*carry between \$([\d,{}]+)\$ and "
+                   r"\$([\d,{}]+)\$ distinct products and agree on \$([\d,{}]+)\$ of them; the\s*"
+                   r"three-system group's carry \$([\d,{}]+)\$ each and agree on \$([\d,{}]+)\$",
+                   ctx.flat)
+    ctx.checks.append((bool(m), "xdomain, the file-size sentence is present", "present",
+                       "matched" if m else "not matched", "results/evalretro_file_sizes.json"))
+    if not m:
+        return
+    c0, c1 = a["by_cluster"]["cluster0"], a["by_cluster"]["cluster1"]
+    g = [x.replace("{,}", "") for x in m.groups()]
+    ctx.check("xdomain, the smallest seven-system file", g[0], c0["smallest_file"],
+              "results/evalretro_file_sizes.json")
+    ctx.check("xdomain, the largest seven-system file", g[1], c0["largest_file"],
+              "results/evalretro_file_sizes.json")
+    ctx.check("xdomain, what the seven agree on", g[2], c0["agreed_reactions"],
+              "results/evalretro_file_sizes.json")
+    ctx.check("xdomain, the three-system file size", g[3], c1["smallest_file"],
+              "results/evalretro_file_sizes.json")
+    ctx.check("xdomain, what the three agree on", g[4], c1["agreed_reactions"],
+              "results/evalretro_file_sizes.json")
+    ctx.checks.append((c1["smallest_file"] == c1["largest_file"],
+                       "xdomain, the three files are the same size, as 'each' says",
+                       str(c1["smallest_file"]),
+                       f"{c1['smallest_file']}-{c1['largest_file']}",
+                       "results/evalretro_file_sizes.json"))
+    # and the claim that neither conventional figure is any file's size
+    said = {int(x.replace("{,}", "")) for x in _re.findall(
+        r"usually cited at \$([\d,{}]+)\$ reactions and whose whole is\s*usually cited at "
+        r"\$([\d,{}]+)\$", ctx.flat)[0]} if _re.search(r"usually cited at", ctx.flat) else set()
+    sizes = set(a["distinct_products_per_file"].values())
+    ctx.checks.append((bool(said) and not (said & sizes),
+                       "xdomain, no released file carries either conventional size",
+                       "no overlap", f"cited {sorted(said)} against sizes {sorted(sizes)}",
+                       "results/evalretro_file_sizes.json"))

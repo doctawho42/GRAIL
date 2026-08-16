@@ -1,0 +1,54 @@
+{
+ "config": {
+  "source": "the released prediction files of EvalRetro, doi:10.6084/m9.figshare.25325623",
+  "note": "distinct products per released file, beside the reactions each cluster's files agree on; the conventional size of the Schneider USPTO-50k test split is a literature figure and is not measured here",
+  "key": "the file's product column"
+ },
+ "distinct_products_per_file": {
+  "chemformer": 4983,
+  "g2retro": 5003,
+  "gln": 5004,
+  "graph2smiles": 5004,
+  "graphretro": 5004,
+  "gta": 4983,
+  "localretro": 5004,
+  "mhnreact": 4999,
+  "retroformer": 5001,
+  "retroxpert": 5004,
+  "tiedtransformer": 4983
+ },
+ "by_cluster": {
+  "cluster0": {
+   "systems": [
+    "g2retro",
+    "gln",
+    "graph2smiles",
+    "graphretro",
+    "localretro",
+    "retroformer",
+    "retroxpert"
+   ],
+   "agreed_reactions": 4999,
+   "smallest_file": 5001,
+   "largest_file": 5004
+  },
+  "cluster1": {
+   "systems": [
+    "chemformer",
+    "gta",
+    "tiedtransformer"
+   ],
+   "agreed_reactions": 4982,
+   "smallest_file": 4983,
+   "largest_file": 4983
+  },
+  "cluster2": {
+   "systems": [
+    "mhnreact"
+   ],
+   "agreed_reactions": 4998,
+   "smallest_file": 4999,
+   "largest_file": 4999
+  }
+ }
+}
