@@ -225,43 +225,43 @@ comparable across papers. The present work addresses both.
 \begin{figure}[t]
 \centering
 \input{app/instrument_schematic}
-\caption{The instrument in miniature, on four systems and a grid of four cells; letters stand for
-systems and no number in it is a measurement. Each cell orders the same systems, and a published
-table reports one of them without saying which. What survives is the intersection: $a$ and $b$ both
-beat $c$ in every cell and $c$ beats $d$ in every cell, but the second axis puts $b$ above $a$ where
-the published cell puts $a$ above $b$ --- so that pair survives nothing, and the four published
+\caption{The instrument in miniature: four systems on a grid of four cells. Letters stand for
+systems, and no number in it is a measurement. Each cell orders the same systems, and a published
+table reports one cell without saying which. What survives is the intersection. Here $a$
+and $b$ beat $c$ in every cell and $c$ beats $d$ in every cell, but the second axis puts $b$ above
+$a$ where the published cell puts $a$ above $b$. That pair survives nothing, so the four published
 places support three. The criterion axis changes no ordering here, which is the shape the survey
 finds on twenty-three real boards.}
 \label{fig:schematic}
 \end{figure}
 
-Of the four choices of \S\ref{sec:intro}, the twenty-three boards sweep the two a released
-prediction file can be re-scored under: the matching rule, which every domain has, and whichever
-second choice its field reports apart from its ranking. The other two --- the hydrogen convention a
-template match assumes, and which molecules the test set contains --- cannot be varied without
-re-running the predictors, so they are measured in the case study instead (\S\ref{sec:case}).
+The survey sweeps two of the four choices of \S\ref{sec:intro}, the two a released prediction file
+can be re-scored under: the matching rule, which every domain has, and whichever second choice a
+field reports apart from its ranking. The other two are the hydrogen convention a template
+match assumes and which molecules the test set contains. Neither can be varied without re-running
+the predictors, so both are measured in the case study instead (\S\ref{sec:case}).
 
 \looseness=-1
-A leaderboard reports a total order computed in one cell of a grid its paper does not report. Fix
+A leaderboard reports a total order computed in one cell of a grid its paper does not report. We fix
 the items and the predictions and ask of each pair whether the ordering the table asserts holds in
 every other cell. A cell is a criterion crossed with a second axis. The criterion is the rule
 deciding when a prediction is the reference: in the prediction domains the four are canonical
 \textsc{smiles} equality, the full \textsc{inchikey}, its stereo-blind first block, and a
 tautomer-aware hash; in docking, distance to the crystal pose at two tolerances with and without a
 validity screen; in translation, what an expert annotation is read as. The second axis is what the
-field reports apart and never jointly with its ranking --- a budget, a post-processing step, a
-normalisation (Appendix~\ref{app:robustorder}). The higher system \emph{dominates} the lower when the margin is positive in every
-cell, and is \emph{separated in every cell} when a paired interval excludes zero in each. Domination
-is the intersection of the per-cell orders, so it is transitive and is the finest relation no
-declared choice can contradict; separation is a sub-relation reported apart, an interval condition
-not being transitive.
+field reports apart from its ranking and never jointly with it: a budget, a post-processing step, or
+a normalisation (Appendix~\ref{app:robustorder}). The higher system \emph{dominates} the lower when
+the margin is positive in every cell, and is \emph{separated in every cell} when a paired
+interval excludes zero in each. Dominance is the intersection of the per-cell orders, so it is
+transitive and is the finest relation no declared choice can contradict. Separation is a
+sub-relation, reported apart because an interval condition is not transitive.
 
-Written out: fix a set of systems $S$, a set of items, and a grid $C$ of cells. In cell $c$ each
-system has a mean score, and those means induce a total preorder $\prec_c$ on $S$; a published table
+Formally, fix a set of systems $S$, a set of items, and a grid $C$ of cells. In cell $c$ each system
+has a mean score, and those means induce a total preorder $\prec_c$ on $S$. A published table
 reports $\prec_{c_0}$ for one cell $c_0$ its paper does not name. Write $\prec_{\!*} = \bigcap_{c \in
-C} \prec_c$. A board ranking $n$ systems prints $n$ \emph{places}, the rank slots a reader takes
-away from it, and what $\prec_{\!*}$ still supports is its longest chain: the number of places that
-survive is the length of the longest sequence of systems each of which dominates the next.
+C} \prec_c$. A board ranking $n$ systems prints $n$ \emph{places}, the rank slots a reader takes away
+from it. What $\prec_{\!*}$ supports is its longest chain: the number of places that survive is the
+length of the longest sequence of systems each of which dominates the next.
 
 \begin{quote}
 \textbf{Proposition 1.} $\prec_{\!*}$ is a strict partial order, and it is the finest relation on
@@ -280,35 +280,37 @@ dominating set is monotone non-increasing in the grid, and so is the number of t
 of a smaller relation. \hfill$\square$
 \end{quote}
 
-Proposition~2 is why a share is not a property of a leaderboard but of the pair (leaderboard, grid):
-it can only fall as a grid widens, so any paper reporting one could have reported a larger one by
-declaring fewer choices. The remedy is to report the curve rather than the point --- each declared
-axis alone and then their product (Appendix~\ref{app:robustorder}).
+Proposition~2 has a consequence for reporting. A share is not a property of a leaderboard but of the
+pair (leaderboard, grid), because it can only fall as a grid widens. Any paper reporting one could
+therefore have reported a larger one by declaring fewer choices. The remedy is to report the curve
+rather than the point: each declared axis alone, then their product
+(Appendix~\ref{app:robustorder}).
 
 \looseness=-2
-All twenty-three run a grid of four
+All twenty-three are run on a grid of four
 criteria crossed with a second axis their field reports apart and never jointly: the budget a
-table is read at, or whether a docked pose is minimised first, or whether an error score is floored,
+table is read at, whether a docked pose is minimised first, whether an error score is floored,
 or whether a human score is standardised within the annotator who gave it
 (Appendix~\ref{app:robust}).
 
 \begin{figure}[t]
 \centering
 \input{app/share_figure}
-\caption{Every leaderboard as one dot at the share of its pairwise orderings that no cell of its own
-declared grid contradicts, from none of three to nine tenths; dot area is proportional to the pairs
-the board carries. The two editions of the translation task are drawn apart because five of their
-language pairs are the same pair scored twice, a year apart, under different protocols.}
+\caption{Each leaderboard is one dot at the share of its pairwise orderings that no cell of its own
+declared grid contradicts. The shares run from none of three to nine tenths, and dot area is
+proportional to the pairs the board carries. The two editions of the translation task are drawn
+apart because five of their language pairs are the same pair scored twice, a year apart, under
+different protocols.}
 \label{fig:shares}
 \end{figure}
 
 \begin{figure}[t]
 \centering
 \input{app/robust_hasse}
-\caption{What the seven-system retrosynthesis table still supports: the dominance order drawn as its
-transitive reduction. An arrow means the left system beats the right in all sixteen cells of the
-declared grid; systems drawn together are ones the grid does not order, so a reader may not quote
-one above another. The table publishes seven places in a line; three survive.}
+\caption{The dominance order of the seven-system retrosynthesis table, drawn as its transitive
+reduction. An arrow means the left system beats the right in all sixteen cells of the declared grid.
+Systems drawn together are ones the grid does not order, so a reader may not quote one above
+another. The table publishes seven places in a line, and three survive.}
 \label{fig:hasse}
 \end{figure}
 
@@ -333,197 +335,196 @@ all twenty-three & $\mathbf{293}$ & --- & $1{,}605$ of $1{,}922$ & $85$ (21) & $
 \bottomrule
 \end{tabular}
 \caption{What each leaderboard publishes and what survives its own grid. \emph{Places} is the number
-of systems the table ranks; \emph{places supported} is the longest chain of the dominance order, the
-ranks a reader may quote without naming a cell. \emph{Certified} counts the contested pairs
+of systems the table ranks, and \emph{places supported} is the longest chain of the dominance order:
+the ranks a reader may quote without naming a cell. \emph{Certified} counts the contested pairs
 surviving Holm over the family each grid creates; over all twenty-three grids at once, $14$ of the
-$21$ survive (Appendix~\ref{app:robustorder}). The last row is the paper's title. The seven-system
-table's surviving order, as its transitive reduction, is Figure~\ref{fig:hasse}.}
+$21$ survive (Appendix~\ref{app:robustorder}). The last row is the paper's title.
+Figure~\ref{fig:hasse} draws the seven-system table's surviving order as its transitive reduction.}
 \label{tab:robust}
 \end{table}
 
 
 \looseness=-2
 The last three columns are the ones to take away, because most of what a leaderboard prints was
-never resolved at all: eleven of the seven-system table's twenty-one pairs carry margins its own
-benchmark cannot separate before any choice is varied. Across all twenty-three leaderboards the share runs
-from none of three to nine tenths with a median of $0.83$, so it is not a constant of the field and
-none is reported. Summed, they publish $293$ places and support $167$, most of
-that gap being a benchmark's own power rather than a convention (Appendix~\ref{app:robustorder}). The longest chain is the readable
-form of the same measurement: seven published places support $3$ tiers, resampling to $[3,3]$;
-nineteen support $9$; and the same seven systems take $4$ total orders across $16$ cells. The system that table places first is not in the top
-tier of what survives; the one it places second is the only system that is
-(Figure~\ref{fig:hasse}). Docking and translation are controls: docking's field
-published its reversal already \citep{Buttenschoen_2024} and the grid recovers it, while translation's nineteen boards
-contest $71$ pairs of which $11$ survive their own boards' correction and $4$ the union of all
-twenty-three. Not one of the $11$ reverses an ordering its own
-published cell had separated from zero: all five such reversals are the budget's, never the
-matching criterion's (Appendix~\ref{app:robustorder}). A null of
-that shape has to have a size, and the identity supplies one without another statistic: on the two
-retrosynthesis boards and the metabolite one the matching rule erases at most $0.5755$ of a margin
-the published cell had separated, and the median comparison erases none of it; docking is the
-exception and is reported as one. What translation supplies is the first claim at scale --- pairs a
-table never established --- and what chemistry supplies is the second. What does not survive on the docking board includes its own top pair. Because domination is an
-intersection, all of this can only shrink as cells are added, so each axis is also reported alone
-(Appendix~\ref{app:robust}).
+never resolved at all. Eleven of the seven-system table's twenty-one pairs carry margins its own
+benchmark cannot separate before any choice is varied. Across all twenty-three leaderboards the
+share runs from none of three to nine tenths with a median of $0.83$, so it is not a constant of the
+field, and none is reported. Summed, they publish $293$ places and support $167$. Most of that gap
+is a benchmark's own power rather than a convention (Appendix~\ref{app:robustorder}). The longest
+chain reports the same measurement in a readable form. Seven published places support $3$ tiers,
+resampling to $[3,3]$; nineteen support $9$; and the same seven systems take $4$ total orders across
+$16$ cells. The system that table places first is not in the top tier of what survives; the one it
+places second is the only system that is (Figure~\ref{fig:hasse}). Docking and translation are
+controls. Docking's field published its reversal already \citep{Buttenschoen_2024} and the grid
+recovers it. Translation's nineteen boards contest $71$ pairs, of which $11$ survive their own
+boards' correction and $4$ the union of all twenty-three. Not one of the $11$ reverses an ordering
+its own published cell had separated from zero; all five such reversals are the budget's, never the
+matching criterion's (Appendix~\ref{app:robustorder}). A null of that shape needs a size, and the
+identity supplies one without a further statistic. On the two retrosynthesis boards and the
+metabolite one, the matching rule erases at most $0.5755$ of a margin the published cell had
+separated, and the median comparison erases none of it. Docking is the exception and is reported as
+one. Translation supplies the first claim at scale, on pairs a table never established, and
+chemistry supplies the second. What does not survive on the docking board includes its own top pair.
+Because dominance is an intersection, all of this can only shrink as cells are added, so each axis
+is also reported alone (Appendix~\ref{app:robust}).
 
 \looseness=-1
 \paragraph{Three verdicts, not two.} A pair that does not dominate has failed in one of two ways
-that should not be added together. Some cell may put the two systems the other way round with a
-paired interval excluding zero, which is a choice deciding against the published ordering; or no
-cell may do so, in which case the published ordering merely fails to hold everywhere on a margin
+that should not be added together. In the first, a cell puts the two systems the other way
+round with a paired interval excluding zero, so a choice decides against the published ordering. In
+the second, no cell does so, and the published ordering merely fails to hold everywhere on a margin
 the benchmark cannot resolve. The first is called \emph{contested} and the second
-\emph{unresolved}, and only the count of contested pairs is evidence that a choice reverses
-anything. Counting sign changes alone would let noise on a tied pair read as a reversal, which is
-the error this instrument exists to avoid.
-
+\emph{unresolved}. Only the count of contested pairs is evidence that a choice reverses anything,
+because counting sign changes alone would let noise on a tied pair read as a reversal, the error
+this instrument exists to avoid.
 \subsection{A control with a published answer}
 
 \paragraph{Docking as a control with a published answer.} Three of the four boards are
-audited here for the first time, which leaves the instrument's verdicts unvouched for: a rule that
-reports little surviving everywhere cannot be told apart from a rule that reports little. Docking
-supplies the missing arm, because its own field published a reversal of this kind before we ran
-anything. \citet{Buttenschoen_2024} argued that a pose can sit within the field's distance tolerance
-of the crystal ligand and still be chemically impossible, named \textsc{uni-mol} as the program most
-affected, and released the per-pose table behind the argument. Reading that table through the
-dominance order, without reference to the argument, contests exactly two of the $21$ pairs, and both
-are \textsc{uni-mol} against programs it outranks on distance alone --- which is the source's own
-finding, recovered by an instrument that was not told it.
+audited here for the first time, so the instrument's verdicts there are unvouched for: a rule that
+reports little surviving everywhere cannot be told apart from a rule that reports little because it
+is insensitive. Docking supplies the missing arm, because its own field published a reversal of
+this kind before we ran anything. \citet{Buttenschoen_2024} argued that a pose can sit within the
+field's distance tolerance of the crystal ligand and still be chemically impossible, named
+\textsc{uni-mol} as the program most affected, and released the per-pose table behind that argument.
+That table, read through the dominance order without reference to the argument, contests exactly two
+of the $21$ pairs, and both are \textsc{uni-mol} against programs it outranks on distance alone.
+That is the source's own finding, recovered by an instrument that was not told it.
 
 The verdict is read out of $21$ pairs by $8$ cells, so it is granted inside a family of $168$
-cell-level tests --- and correcting for them takes it back. Neither reversal survives Holm at
-$\alpha=0.05$ over that family: the board scores each item a hit or a miss, so the exact conditional
-test on the discordant items is available and is what these $p$ are, and the smallest reversal
+cell-level tests, and correcting for them takes it back. Neither reversal survives Holm at
+$\alpha=0.05$ over the family. The board scores each item a hit or a miss, so the exact conditional
+test on the discordant items is available, and these $p$ are that test; the smallest reversal
 reaches $1.5\times10^{-3}$ against a threshold of $9.8\times10^{-4}$. Two exchanges out of $168$
-looks is about what noise alone would produce, so what this control establishes is that the grid
+looks is about what noise alone would produce. This control therefore establishes that the grid
 recovers the source's finding as a contested verdict, and that it certifies neither half of it.
 
-What the control shows is not that this board is clean. Of its $21$ pairs, $17$ dominate, $2$ are
-contested and $2$ the grid leaves unresolved --- and one of those two is the board's own top pair,
+The control does not show that this board is clean. Of its $21$ pairs, $17$ dominate, $2$ are
+contested and $2$ the grid leaves unresolved. One of those two is the board's own top pair,
 \textsc{vina} against \textsc{gold}, whose margin no cell of the grid separates from zero. A
-benchmark can be large, dense, carefully scored and still not entitle a reader to its first place
-over its second. The control is that a well-run board loses four pairs where a mature retrosynthesis
-table loses thirteen, so the instrument distinguishes them; it is not that any board survives whole.
+benchmark can be large, dense and carefully scored and still not entitle a reader to its first place
+over its second. The control is that a well-run board loses four pairs where a mature
+retrosynthesis table loses thirteen, so the instrument distinguishes them; it is not that any board
+survives whole.
 
-Nothing here is contested between the search-based programs and the learned ones: on these $428$
-items all ten such pairs dominate, because \textsc{vina} and \textsc{gold} lead on distance alone
-before validity is asked for. The exchange the source is best known for lives on the other set it
-distributes, and the grid finds it there: run unchanged on the $85$ astex items, the same eight cells
-contest \textsc{vina} against \textsc{diffdock}, along with two other pairs, and leave $15$ of $21$
-dominating. That run is reported as a second board and not as two more cells, because a population
-is not a choice about how a prediction is scored; and it is reported at all because which reversal a
-grid recovers turns out to depend on which items a benchmark chose, which is the sharpest form of
+No pair is contested between the search-based programs and the learned ones. On these $428$ items
+all ten such pairs dominate, because \textsc{vina} and \textsc{gold} lead on distance alone before
+validity is asked for. The exchange the source is best known for lives on the other set it
+distributes, and the grid finds it there. Run unchanged on the $85$ astex items, the same eight
+cells contest \textsc{vina} against \textsc{diffdock} along with two other pairs, and leave $15$ of
+$21$ dominating. We report that run as a second board and not as two more cells, because a
+population is not a choice about how a prediction is scored. We report it at all because which
+reversal a grid recovers depends on which items a benchmark chose, which is the sharpest form of
 the paper's own argument that we have found.
 
 One axis of this board is weaker than a criterion and is labelled so. Minimising a pose before
 scoring it is a step the benchmark applies rather than the program, so it is a choice the evaluation
-could have been made under; but unlike a matching rule it does not leave the prediction alone. Every
-pose moves --- $99.7\%$ of the $2{,}922$ paired poses differ between the arms, by a median of
-$0.354$\,\AA{} --- and $6.5\%$ of per-item verdicts change at the field's tolerance. The conservative
-reading is therefore the criteria alone at the published post-processing, which leaves $18$ of the
-$21$ pairs dominating rather than $17$, and the pair the grid loses to that axis is named in the
-tables below rather than absorbed into the total.
+could have been made under. Unlike a matching rule, however, it does not leave the prediction alone:
+$99.7\%$ of the $2{,}922$ paired poses differ between the arms, by a median of $0.354$\,\AA{}, and
+$6.5\%$ of per-item verdicts change at the field's tolerance. The conservative reading is therefore
+the criteria alone at the published post-processing, which leaves $18$ of the $21$ pairs dominating
+rather than $17$. The pair the grid loses to that axis is named in the tables below rather than
+absorbed into the total.
 
-Three conventions the released table forces are declared rather than chosen. Its two flatness checks
-are recorded only in the un-minimised arm, so a criterion using them would not exist in half the
-grid; they are dropped from every cell rather than from one, which keeps each criterion the same
+The released table forces three conventions, which are declared rather than chosen. Its two flatness
+checks are recorded only in the un-minimised arm, so a criterion using them would not exist in half
+the grid; they are dropped from every cell rather than from one, which keeps each criterion the same
 object in each cell, and including them changes the published cell by $0.0000$. A row with no
-scorable pose is a miss and not an absent observation, since dropping those rows would score each
-program on the subset it managed to produce output for. The crystal ligand ships as an eighth row,
-is the reference re-scored through the same pipeline rather than a method, and is excluded.
-
+scorable pose counts as a miss and not as an absent observation, because dropping those rows would
+score each program on the subset it managed to produce output for. The crystal ligand ships as an
+eighth row; it is the reference re-scored through the same pipeline rather than a method, and it is
+excluded.
 \subsection{Which axis moves what, and what the gap is made of}
 
-\paragraph{Which choice the certified reversals belong to.} Five
-of the twenty-one certified reversals reverse an ordering the published cell had separated; the
-other sixteen reverse pairs the table never established, which is the first claim reached by a
-second route. Naming the axis of those five matters more than naming their domain. All five are
-retrosynthesis pairs, and every one of them reverses at top-3 and top-5 under the \emph{published}
-criterion: the budget moves them and the matching rule does not. So the
-matching criterion certifies no reversal of a separated ordering anywhere in this paper. That is a
-smaller second claim than a reader might expect from a paper about matching rules, and it is the one
-the measurements support: what the criterion does is exchange positions a benchmark never separated,
-which is the first claim, and what reverses an established ordering is a budget nobody reports
-jointly with the ranking it produces.
+\paragraph{Which choice the certified reversals belong to.} Of the
+twenty-one certified reversals, five reverse an ordering the published cell had separated. The other
+sixteen reverse pairs the table never established, which reaches the first claim by a second route.
+What matters about the five is the axis that moves them, not their domain. All five are
+retrosynthesis pairs, and each reverses at top-3 and top-5 under the \emph{published} criterion, so
+the budget moves them and the matching rule does not. The matching criterion therefore certifies no
+reversal of a separated ordering anywhere in this paper. That is a smaller second claim than a paper
+about matching rules might suggest, but it is the one the measurements support. The criterion
+exchanges positions a benchmark never separated, which is the first claim. What reverses an
+established ordering is a budget nobody reports jointly with the ranking it produces.
 
 \paragraph{Decomposing the gap between published and supported ranks.} The two
 numbers in the title sit beside a subtitle about undeclared choices, which invites the reading that
-the choices cost the difference. They do not, and Proposition~2's own discipline --- that the ways a
-pair can fail are different quantities --- applies to the count that rolls them up. Three readings of
-"supported", each a longest chain in a relation on the same systems, differing only in what an edge
-requires. When a leaderboard's \emph{own} cell must separate the pair, the $293$ published places
-support $136$: $157$ go before any convention is varied, to the benchmark's power. When every
-declared cell must separate it, $97$: the grid costs $39$ on top. The $167$ the title
-quotes is the weaker reading an intersection of orders gives, where a cell must agree in sign and
-need not separate, and it is the one quoted because dominance is what the instrument computes. A
-reader who wants the strictest number has $97$, and one who wants what the conventions cost has
-$39$.
+the choices cost the difference. They do not. Proposition~2 keeps the ways a pair can fail as
+different quantities, and the same discipline applies to the count that rolls them up. There are
+three readings of "supported". Each is a longest chain in a relation on the same systems; they differ
+only in what an edge requires. When a leaderboard's \emph{own} cell must separate the pair, the $293$
+published places support $136$, and the $157$ lost go to the benchmark's power before any convention
+is varied. When every declared cell must separate it, they support $97$, so the grid costs $39$ on
+top. The $167$ the title quotes is the weaker reading an intersection of orders gives, in which a
+cell must agree in sign and need not separate; it is quoted because dominance is what the instrument
+computes. A reader who wants the strictest number has $97$, and one who wants what the conventions
+cost has $39$.
 
 \paragraph{The share does not replicate across two editions of one task.} Nineteen of
 the twenty-three boards come from one shared task, which invites the objection that they are one
 dataset counted nineteen times. Two editions of that task answer it. They ran a year apart under
 different protocols --- error spans and a hundred-point score in one, direct assessments with several
 ratings a segment in the other --- and five language pairs appear in both. The surviving share does
-not carry over: it moves by $0.114$ on average and by $0.285$ at the widest, \textsc{en-zh} standing
-at $0.900$ in one edition and $0.615$ in the next, on the same language with the same organisers. So
-the share is a fact about a table and its grid, not about a benchmark or a language, and a paper
-quoting one as a fingerprint --- this one included --- would repeat the error it is about
+not carry over. It moves by $0.114$ on average and by $0.285$ at the widest. \textsc{en-zh} stands at
+$0.900$ in one edition and $0.615$ in the next, on the same language with the same organisers. So the
+share is a fact about a table and its grid, not about a benchmark or a language. A paper quoting one
+as a fingerprint, this one included, would repeat the error it is about
 (Appendix~\ref{app:robustorder}).
 
 \subsection{Why the verdicts need no pairwise statistic}
 
 \paragraph{Why the verdicts need no pairwise statistic.} Write $d$ for a pair's margin in the published cell, $d'$ for its margin in another,
 and $\delta_a,\delta_b$ for how far each system moves between them, so $d'=d+(\delta_a-\delta_b)$.
-The sign survives iff $|\delta_a-\delta_b|\le\max(|d|,|d'|)$. That is an identity rather than a
-finding --- it says only that a difference changes sign when the change exceeds both of the things
-it connects --- and it is stated because of what follows from it, not as a result. Scoring the $n$
-systems once in each cell fixes every one of the $n(n-1)/2$ dominance verdicts with no pairwise
-statistic anywhere; a resample enters only to tell a contested pair from an unresolved one. On the
-twenty-three tables that leaves $316$ of $1{,}922$ pairs failing to dominate, exactly the pairs some
-cell reverses, computed from $n$ numbers per cell rather than from $1{,}922$ paired bootstraps.
+The sign survives iff $|\delta_a-\delta_b|\le\max(|d|,|d'|)$. This is an identity, not a finding: it
+says only that a difference changes sign when the movement exceeds both margins. It is stated for
+what follows from it, not as a result. Scoring the $n$ systems once in each cell fixes every one of
+the $n(n-1)/2$ dominance verdicts, with no pairwise statistic anywhere; a resample enters only to
+tell a contested pair from an unresolved one. On the twenty-three tables that leaves $316$ of
+$1{,}922$ pairs failing to dominate, which are exactly the pairs some cell reverses, computed from
+$n$ numbers per cell rather than from $1{,}922$ paired bootstraps.
 
-What is not arithmetic is where those pairs are, and the answer is a ratio rather than a level. The
-twenty-four leaderboards this can be asked of --- the twenty-three plus a molecular-generation board
-whose second axis the grid does not cover --- run from $0\%$ of their comparisons at risk to
-$15.9\%$, and the
-widest-gapped of them is not the safest: exposure is what happens when entries converge faster than the conventions
-separating them, readable before any convention is varied (Appendix~\ref{app:xdomain}). Substituting a typical movement for the domain in place of the
-per-system one, which is what a published table alone supports, over-predicts fragility by a third
-and is reported as a failure (Appendix~\ref{app:negative}).
+The arithmetic does not say where those pairs are, and that answer is a ratio rather than a level.
+The question can be asked of twenty-four leaderboards: the twenty-three plus a molecular-generation
+board whose second axis the grid does not cover. Their comparisons at risk run from $0\%$ to
+$15.9\%$, and the widest-gapped board is not the safest, because exposure is what happens when
+entries converge faster than the conventions separating them. So exposure is readable before any
+convention is varied (Appendix~\ref{app:xdomain}). Substituting a typical movement for the domain in
+place of the per-system one is all a published table alone supports. It over-predicts fragility by a
+third, and is reported as a failure (Appendix~\ref{app:negative}).
 
 \subsection{The case study the choices were found in}
 \label{sec:case}
 
 \paragraph{How one choice breaks an ordering.} \looseness=-1
-\citet{Hastedt_2024} released the ranked predictions of twelve retrosynthesis systems, of which
-eleven parse, produced on three different test sets (Appendix~\ref{app:xdomainsets}). Within the
-largest group, seven systems on their $4{,}999$ common reactions change places at top-1 on
-predictions that never move: five of twenty-one pairs exchange, and disregarding stereochemistry
-takes the fourth-placed system to first. An exchange describes the data; the claim is the
-interaction, corrected across the largest family declared in this work, the grid the two axes admit.
-Of its $448$ testable cells, $233$ have intervals excluding zero and $110$ survive Holm at $0.05$,
-concentrated at top-1, the number this field leads with (Appendix~\ref{app:xdomain}).
+\citet{Hastedt_2024} released the ranked predictions of twelve retrosynthesis systems, eleven of
+which parse, on three different test sets (Appendix~\ref{app:xdomainsets}). The largest group is
+seven systems on their $4{,}999$ common reactions. Their predictions never move, yet they change places at
+top-1: five of twenty-one pairs exchange, and disregarding stereochemistry takes the fourth-placed
+system to first. An exchange describes the data. The claim is the interaction, corrected across the
+largest family declared in this work: the grid the two axes admit. Of its $448$ testable cells,
+$233$ have intervals excluding zero and $110$ survive Holm at $0.05$, concentrated at top-1, the
+number this field leads with (Appendix~\ref{app:xdomain}).
 
 \looseness=-1
-\paragraph{How many of the margins the benchmark resolves at all.} Since the predictions are frozen, a paired
-bootstrap gives an interval on each margin directly. \textbf{Eleven of the twenty-one margins do not
-separate from zero, and five of the six adjacent margins in the published order do not.} The
-smallest margin this benchmark separates is $0.0146$, and the largest amount any criterion moves a
-margin on it is $0.0154$; the three-system group's narrowest is $0.0213$, so
-what the criterion exchanges are pairs the benchmark never separated, and where a separation is
-separated it erases the gap instead of reversing it.
+\paragraph{How many of the margins the benchmark resolves at all.} Since the predictions are
+frozen, a paired bootstrap gives an interval on each margin directly. \textbf{Eleven of the
+twenty-one margins do not separate from zero, and five of the six adjacent margins in the published
+order do not.} The smallest margin this benchmark separates is $0.0146$, the largest amount any
+criterion moves a margin on it is $0.0154$, and the three-system group's narrowest is $0.0213$. The
+criterion therefore exchanges pairs the benchmark never separated, and where a margin is separated
+it erases the gap instead of reversing it.
 
 \looseness=-1
-\paragraph{One split, two populations.} A benchmark can mix populations without changing its name.
-Of the \ntest\ substrates here $845$ are parent drugs and $325$ are annotated products of another
-substrate in the split, so one question is about a compound a patient swallows and the other about
-what is left of it, averaged into one number. Methods do not treat them alike: GRAIL loses $0.152$
+\paragraph{One split, two populations.} A benchmark can mix populations under one name. Of the
+\ntest\ substrates here, $845$ are parent drugs and $325$ are annotated products of another
+substrate in the split. One question is about a compound a patient swallows and the other about what
+is left of it, averaged into one number. Methods do not treat them alike. GRAIL loses $0.152$
 $[0.101,0.202]$ of recall between the two while MetaPredictor loses $0.001$ $[-0.053,0.057]$, an
-interaction of $+0.150$ $[+0.084,+0.216]$ and against SyGMa $+0.116$ $[+0.051,+0.181]$. No paper
-reporting on this split reports the mixture. The other population question is a null: which released
-test set a familiar name refers to changes an ordering in $44$ of $380$ comparisons and $10$ of $60$
-on the metabolite split, and none of the $440$ interactions survives Holm at $0.05$, in a design
-whose blindest test would see $0.116$ and $0.202$ at $80\%$ power (Appendix~\ref{app:popaxis}).
-
+interaction of $+0.150$ $[+0.084,+0.216]$, and $+0.116$ $[+0.051,+0.181]$ against SyGMa. No paper
+reporting on this split reports the mixture. The other population question returns a null. A
+familiar name can refer to more than one released test set; which one it refers to changes an
+ordering in $44$ of $380$ comparisons and $10$ of $60$ on the metabolite split, and none of the
+$440$ interactions survives Holm at $0.05$, in a design whose blindest test would see $0.116$ and
+$0.202$ at $80\%$ power (Appendix~\ref{app:popaxis}).
 \section{Limitations}
 \label{sec:limitations}
 

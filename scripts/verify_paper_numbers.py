@@ -561,10 +561,10 @@ def main() -> int:
             _q = ROOT / "results" / _s
             if _q.exists():
                 _tb += list(json.loads(_q.read_text())["boards"].values())
-        _mt = re.search(r"translation's (\w+) boards contest \$(\d+)\$ pairs of which \$(\d+)\$ "
+        _mt = re.search(r"[Tt]ranslation's (\w+) boards contest \$(\d+)\$ pairs,? of which \$(\d+)\$ "
                         r"survive their own boards' correction and \$(\d+)\$ the union of all\s*"
                         r"twenty-three\. Not one of the \$(\d+)\$ reverses an ordering its own "
-                        r"published cell had separated from zero: all (\w+) such reversals are "
+                        r"published cell had separated from zero[;:] all (\w+) such reversals are "
                         r"the budget's, never the", flat)
         checks.append((bool(_mt), "the translation-subject sentence parses", "present",
                        "matched" if _mt else "not matched", ""))
@@ -603,7 +603,10 @@ def main() -> int:
         # how many certifications reverse an ordering the published cell had established is a
         # number the prose quotes in three places, so it is computed here and each printing is
         # held against it rather than against a literal
-        _mres = re.findall(r"(\w+)\s*of the twenty-one certified reversals reverse an ordering", flat)
+        _mres = re.findall(r"(?:(\w+)\s*of the twenty-one certified reversals reverse an ordering"
+                           r"|Of the twenty-one certified reversals, (\w+) reverse an ordering)",
+                           flat)
+        _mres = [a or b for a, b in _mres]
         checks.append((bool(_mres) and all(_wordnum.get(x.lower(), -1) == _res for x in _mres),
                        "the body's count of certifications of a separated ordering", str(_res),
                        ", ".join(_mres) or "not stated", "results/robust_order_*.json"))
@@ -726,7 +729,7 @@ def main() -> int:
     if _e24.exists() and _e23.exists():
         E24 = json.loads(_e24.read_text())["boards"]
         E23 = json.loads(_e23.read_text())["boards"]
-        m = re.search(r"\\textsc\{en-zh\} standing at \$([\d.]+)\$ in one edition and \$([\d.]+)\$ "
+        m = re.search(r"\\textsc\{en-zh\} stands? at \$([\d.]+)\$ in one edition and \$([\d.]+)\$ "
                       r"in the next", flat)
         checks.append((bool(m), "the replication sentence parses", "present",
                        "matched" if m else "not matched", ""))
@@ -876,7 +879,7 @@ def main() -> int:
                                                ("unresolved", PB["n_unresolved"]))):
                 check(f"docking breakdown, {_lab}", m.group(_i + 1), _val,
                       "results/robust_order_posebusters.json")
-        m = re.search(r"on these \$([\d,{}]+)\$ items all ten such pairs dominate", flat)
+        m = re.search(r"[Oo]n these \$([\d,{}]+)\$ items all ten such pairs dominate", flat)
         check("docking, items", m and m.group(1).replace("{,}", ""), PB["n_items"],
               "results/robust_order_posebusters.json")
         # the convention the paper says costs nothing, which was prose with no artifact behind it
@@ -900,7 +903,7 @@ def main() -> int:
     if _ax.exists():
         AX = json.loads(_ax.read_text())
         flat = re.sub(r"\s+", " ", whole)
-        m = re.search(r"run unchanged on the \$(\d+)\$ astex items, the same eight cells contest "
+        m = re.search(r"[Rr]un unchanged on the \$(\d+)\$ astex items, the same eight cells contest "
                       r".*?and leave \$(\d+)\$ of \$(\d+)\$\s*dominating", flat)
         checks.append((bool(m), "the astex sentence parses", "present",
                        "matched" if m else "not matched", ""))
@@ -1466,8 +1469,9 @@ def main() -> int:
         for _pat in (r"takes \$293\$ places to \$(\d+)\$[,:] (?:so )?\$?(\d+)\$? (?:go|ranks go) to a "
                      r"benchmark's own (?:power|resolving power)\s*before any convention is varied "
                      r"and \$(\d+)\$ more to the grid",
-                     r"the \$293\$ published places support \$(\d+)\$: \$(\d+)\$ go before any "
-                     r"convention is varied.*?the grid costs \$(\d+)\$ on top"):
+                     r"the \$293\$ published places support \$(\d+)\$, and the \$(\d+)\$ lost go to "
+                     r"the benchmark's power before any convention is varied\..*?the grid costs "
+                     r"\$(\d+)\$ on top"):
             printings_pd += re.findall(_pat, flat)
         checks.append((len(printings_pd) >= 3, "every printing of the decomposition is found",
                        "3 or more", str(len(printings_pd)), "the manuscript"))
@@ -1478,8 +1482,9 @@ def main() -> int:
                   PD["lost_before_any_choice_is_varied"], "the manuscript")
             check(f"decomposition printing {_i}, to grid", _g, PD["lost_to_the_grid"],
                   "the manuscript")
-        mpd = re.search(r"the \$293\$ published places support \$(\d+)\$: \$(\d+)\$ go before any "
-                        r"convention is varied.*?the grid costs \$(\d+)\$ on top", flat)
+        mpd = re.search(r"the \$293\$ published places support \$(\d+)\$, and the \$(\d+)\$ lost go to "
+                        r"the benchmark's power before any convention is varied\..*?the grid "
+                        r"costs \$(\d+)\$ on top", flat)
         checks.append((bool(mpd), "the places decomposition parses", "present",
                        "matched" if mpd else "not matched", ""))
         if mpd:
@@ -1564,7 +1569,7 @@ def main() -> int:
         flat = re.sub(r"\s+", " ", whole)
         # the body states the same pair of numbers in its own words; both printings are held, since
         # a figure that appears twice and agrees once is the defect this paper is about
-        mbody = re.search(r"it moves by \$([\d.]+)\$ on average and by \$([\d.]+)\$ at the widest", flat)
+        mbody = re.search(r"[Ii]t moves by \$([\d.]+)\$ on average and by \$([\d.]+)\$ at the widest", flat)
         checks.append((bool(mbody), "the body's replication sentence parses", "present",
                        "matched" if mbody else "not matched", ""))
         mrr = re.search(r"moves by \$([\d.]+)\$ on average and by as much as \$([\d.]+)\$; "
@@ -2317,7 +2322,7 @@ def main() -> int:
     if ro2.exists():
         R2 = json.loads(ro2.read_text())["leaderboards"]
         flat = re.sub(r"\s+", " ", whole)
-        mt = re.search(r"seven published places support \$(\d+)\$ tiers, resampling to "
+        mt = re.search(r"[Ss]even published places support \$(\d+)\$ tiers, resampling to "
                        r"\$\[(\d+),(\d+)\]\$; nineteen support \$(\d+)\$", flat)
         checks.append((bool(mt), "the tier sentence parses", "present",
                        "matched" if mt else "not matched", ""))
@@ -2474,8 +2479,8 @@ def main() -> int:
         flat = re.sub(r"\s+", " ", whole)
         # the body summarises the spread and the appendix enumerates it; the gate holds the
         # enumeration, because that is where the per-board numbers are actually asserted
-        mdi = re.search(r"twenty-four leaderboards this can be asked of.*?run from \$(\d+)\\%\$ of "
-                        r"their comparisons at risk to\s*\$([\d.]+)\\%\$", flat)
+        mdi = re.search(r"twenty-four leaderboards.*?comparisons at risk run from \$(\d+)\\%\$ "
+                        r"to\s*\$([\d.]+)\\%\$", flat)
         # and the count itself, which is the twenty-three plus the one board the grid does not cover
         checks.append((len(L) == 24, "the exposure sentence's leaderboards", "24", str(len(L)),
                        "results/packing_vs_differential.json"))
@@ -2659,7 +2664,7 @@ def main() -> int:
         PP = json.loads(pp.read_text())["totals"]
         flat = re.sub(r"\s+", " ", whole)
         mpp = re.search(r"twenty-three tables that leaves \$(\d+)\$ of \$([\d,{}]+)\$ pairs "
-                        r"failing to dominate, exactly the pairs some cell reverses", flat)
+                        r"failing to dominate, (?:which are )?exactly the pairs some cell reverses", flat)
         checks.append((bool(mpp), "the screen-predicts-order sentence parses", "present",
                        "matched" if mpp else "not matched", ""))
         if mpp:
@@ -2802,8 +2807,9 @@ def main() -> int:
                         r".*?GRAIL loses \$([\d.]+)\$ \$\[([\d.]+),([\d.]+)\]\$ of recall between "
                         r"the two while MetaPredictor loses \$([\d.]+)\$ "
                         r"\$\[(-[\d.]+),([\d.]+)\]\$, an "
-                        r"interaction of \$\+([\d.]+)\$ \$\[\+([\d.]+),\+([\d.]+)\]\$ and against "
-                        r"SyGMa \$\+([\d.]+)\$ \$\[\+([\d.]+),\+([\d.]+)\]\$", flat)
+                        r"interaction of \$\+([\d.]+)\$ \$\[\+([\d.]+),\+([\d.]+)\]\$,? and "
+                        r"(?:against SyGMa )?\$\+([\d.]+)\$ \$\[\+([\d.]+),\+([\d.]+)\]\$"
+                        r"(?: against SyGMa)?", flat)
         checks.append((bool(mp2), "the two-population sentence parses", "present",
                        "matched" if mp2 else "not matched", ""))
         if mp2:
@@ -2830,7 +2836,8 @@ def main() -> int:
             # what this protects is that the two population questions stay distinguishable, not
             # that either keeps a heading: one is certified and one is a bounded null, and a
             # manuscript that merged them into a single claim would be overstating half of it
-            null_said = "The other population question is a null" in flat
+            null_said = ("The other population question is a null" in flat
+                         or "The other population question returns a null" in flat)
             cert_said = "differs certifiably by method" in flat or "an interaction of" in flat
             checks.append((null_said and cert_said,
                            "the null and the certified population result stay distinct",
@@ -2975,7 +2982,7 @@ def main() -> int:
         DM = json.loads(dm.read_text())
         flat = re.sub(r"\s+", " ", whole)
         md = re.search(r"read out of \$(\d+)\$ pairs by \$(\d+)\$ cells, so it is granted inside a "
-                       r"family of \$(\d+)\$\s*cell-level tests --- and correcting for them takes it "
+                       r"family of \$(\d+)\$\s*cell-level tests[,.]? (?:--- )?and correcting for them takes it "
                        r"back\. Neither reversal survives Holm.*?the smallest reversal\s*reaches "
                        r"\$([\d.]+)\\times10\^\{-(\d+)\}\$ against a threshold of "
                        r"\$([\d.]+)\\times10\^\{-(\d+)\}\$", flat)
