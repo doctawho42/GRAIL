@@ -82,9 +82,11 @@ Independent encoders win on accuracy. Recall@15 is 0.366 for the independent var
 for the merged-graph variant, a paired difference of $-0.0090$ with a 95\% paired-bootstrap interval of
 $[-0.017,-0.001]$ over $n=\ntest$ substrates; at recall@5 the margin widens, 0.282 against 0.259.
 
-They also win on cost by roughly twenty-fold. Computing a maximum common substructure for every
-pair makes full-data training take about 14 hours against roughly 40 minutes, and imposes the same
-computation at every candidate at inference. Accuracy and cost point the same way. The merged-graph variant is implemented and available, and is not deployed because it loses on both counts.
+They also win on cost. Encoding a substrate and a product as one merged graph costs
+$3.75\times$ what encoding the two independently costs --- $34.0$\,ms against
+$9.1$\,ms per pair on the released candidates --- because it computes a maximum
+common substructure for every pair, and it pays that at every candidate at inference as well as at
+every training pair. Accuracy and cost point the same way. The merged-graph variant is implemented and available, and is not deployed because it loses on both counts.
 
 \subsection{How the rule bank was built}
 

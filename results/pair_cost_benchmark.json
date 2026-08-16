@@ -1,0 +1,30 @@
+{
+ "config": {
+  "script": "pair_cost_benchmark.py",
+  "git_commit": "003cfcee3da5e353b9b43d4b86bc60f8b5dde798",
+  "git_dirty": true,
+  "n_pairs": 300,
+  "repeats": 3,
+  "source": "artifacts/full5000_single/predictions/test_predictions.csv",
+  "note": "the fastest of the repeats is reported for each arm, which is the usual reading of a microbenchmark; the ratio is what the appendix quotes and the per-pair costs are given so it can be recomputed"
+ },
+ "merged_graph_seconds_per_pair": 0.03395,
+ "independent_seconds_per_pair": 0.009055,
+ "ratio": 3.75,
+ "ratio_across_repeats": [
+  3.77,
+  3.77,
+  3.73
+ ],
+ "merged_seconds": [
+  10.27,
+  10.237,
+  10.185
+ ],
+ "independent_seconds": [
+  2.723,
+  2.716,
+  2.733
+ ],
+ "spread_of_the_ratio": 0.02
+}

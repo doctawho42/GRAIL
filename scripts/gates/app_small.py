@@ -97,6 +97,7 @@ def register(ctx) -> None:
     _external(ctx)
     _design(ctx)
     _arch(ctx)
+    register_pair_cost(ctx)
 
 
 # --------------------------------------------------------------------------------------------
@@ -844,3 +845,39 @@ def _arch(ctx) -> None:
         else:
             ctx.checks.append((False, "arch, the shipped bank is readable",
                               "resources/extended_smirks.txt", "missing", HERE))
+
+
+def register_pair_cost(ctx) -> None:
+    """What the merged-graph filter costs, against the benchmark that measures it.
+
+    The appendix used to give a wall clock -- fourteen hours against forty minutes -- from a run
+    whose outputs were purged, so no committed file held it and no reader could get near it. The
+    claim is about the representation, so it is measured on the representation: both featurisations
+    timed on the same released candidates, with the ratio and both per-pair costs bound here.
+    """
+    import re as _re
+
+    b = ctx.art("pair_cost_benchmark.json")
+    if b is None:
+        return
+    m = _re.search(r"costs\s*\$([\d.]+)\\times\$ what encoding the two independently costs --- "
+                   r"\$([\d.]+)\$\\,ms against\s*\$([\d.]+)\$\\,ms per pair", ctx.flat)
+    ctx.checks.append((bool(m), "arch, the merged-graph cost sentence is present", "present",
+                       "matched" if m else "not matched", "results/pair_cost_benchmark.json"))
+    if not m:
+        return
+    ctx.check("arch, the merged-graph cost ratio", m.group(1), b["ratio"],
+              "results/pair_cost_benchmark.json")
+    ctx.check("arch, the merged featurisation per pair", m.group(2),
+              b["merged_graph_seconds_per_pair"] * 1000, "results/pair_cost_benchmark.json")
+    ctx.check("arch, the independent featurisation per pair", m.group(3),
+              b["independent_seconds_per_pair"] * 1000, "results/pair_cost_benchmark.json")
+    # the ratio has to be the quotient of the two costs the same sentence prints, and stable
+    ctx.checks.append((abs(b["merged_graph_seconds_per_pair"] / b["independent_seconds_per_pair"]
+                           - b["ratio"]) <= 0.01,
+                       "arch, the ratio is the quotient of the two costs", f"{b['ratio']}",
+                       f"{b['merged_graph_seconds_per_pair'] / b['independent_seconds_per_pair']:.2f}",
+                       "results/pair_cost_benchmark.json"))
+    ctx.checks.append((b["spread_of_the_ratio"] <= 0.1,
+                       "arch, the ratio is stable across the repeats", "spread under 0.1",
+                       str(b["spread_of_the_ratio"]), "results/pair_cost_benchmark.json"))

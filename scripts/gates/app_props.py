@@ -106,6 +106,7 @@ def register(ctx) -> None:  # noqa: C901 -- one function per appendix file is th
     note_gate = "scripts/gates/app_props.py"
     register_som_prior(ctx)
     register_decode_arithmetic(ctx)
+    register_training_size(ctx)
 
     need = {
         "prior_vs_learned.json": None,
@@ -2299,3 +2300,50 @@ def register_decode_arithmetic(ctx) -> None:
                        and g[8] == 2 * g[3],
                        "props, the widened run doubles every beam and nothing else",
                        "each doubled", f"{g[:4]} -> {g[5:9]}", "the sentence's own factors"))
+
+
+def register_training_size(ctx) -> None:
+    """The training-size ablation, whose two runs wrote no results/ file of their own.
+
+    "Recall moves from 0.330 to 0.334 between 2,418 and 4,787 training substrates" is four figures
+    from two runs; the larger arm's substrate count was bound elsewhere and the other three were
+    not. Both runs' training reports and evaluations are in ``results/training_reports.json``, so
+    all four are held, along with the claim the sentence rests on: that the move is smaller than
+    the seed spread the same configuration shows.
+    """
+    import re as _re
+
+    tr = ctx.art("training_reports.json")
+    ms = ctx.art("multiseed_headline.json")
+    if tr is None:
+        return
+    half, full = tr["runs"].get("ablation_half"), tr["runs"].get("deployed")
+    if not half or not full:
+        return
+    m = _re.search(r"Recall moves from ([\d.]+) to ([\d.]+) between ([\d,{}]+) and ([\d,{}]+) "
+                   r"training substrates", ctx.flat)
+    ctx.checks.append((bool(m), "props, the training-size sentence is present", "present",
+                       "matched" if m else "not matched", "results/training_reports.json"))
+    if not m:
+        return
+    ctx.check("props, the half-size arm's recall", m.group(1),
+              half["evaluation"]["ensemble_test_recall@15"], "results/training_reports.json")
+    ctx.check("props, the full-size arm's recall", m.group(2),
+              full["evaluation"]["ensemble_test_recall@15"], "results/training_reports.json")
+    ctx.check("props, the half-size arm's substrates", m.group(3).replace("{,}", ""),
+              half["train_substrates"], "results/training_reports.json")
+    ctx.check("props, the full-size arm's substrates", m.group(4).replace("{,}", ""),
+              full["train_substrates"], "results/training_reports.json")
+    ctx.checks.append((2 * half["train_substrates"] >= full["train_substrates"]
+                       > 1.9 * half["train_substrates"],
+                       "props, the larger arm is about twice the smaller, as 'doubling' says",
+                       "about 2x", f"{full['train_substrates'] / half['train_substrates']:.2f}x",
+                       "results/training_reports.json"))
+    if ms:
+        spread = ms.get("spread") or ms.get("seed_spread")
+        move = abs(full["evaluation"]["ensemble_test_recall@15"]
+                   - half["evaluation"]["ensemble_test_recall@15"])
+        if isinstance(spread, (int, float)):
+            ctx.checks.append((move < spread,
+                               "props, the move is smaller than the seed spread it is compared to",
+                               f"{spread}", f"{move:.4f}", "results/multiseed_headline.json"))

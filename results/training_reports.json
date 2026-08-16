@@ -1,5 +1,5 @@
 {
- "note": "training reports of the runs the appendices describe, copied out of artifacts/ so the figures they carry are regenerable from a committed file; artifacts/ is gitignored apart from a force-tracked subset, and a loss curve quoted in the paper cannot live only there; the evaluation block carries the ensemble's recall on the split each run evaluated, which is the arm the end-to-end propensity paragraph compares",
+ "note": "training reports of the runs the appendices describe, copied out of artifacts/ so the figures they carry are regenerable from a committed file; artifacts/ is gitignored apart from a force-tracked subset, and a loss curve quoted in the paper cannot live only there; the evaluation block carries the ensemble's recall on the split each run evaluated, which is the arm the end-to-end propensity paragraph compares The half-size arm is here because the training-size ablation the appendix reports is two runs and neither wrote a results/ file.",
  "runs": {
   "deployed": {
    "generator_training": {
@@ -69,7 +69,8 @@
     "max_test_substrates": 300,
     "ensemble_test_recall@15": 0.33419367955450424,
     "ensemble_val_recall@15": 0.34392572728750204
-   }
+   },
+   "train_substrates": 4787
   },
   "propensity": {
    "generator_training": {
@@ -139,6 +140,27 @@
     "max_test_substrates": 300,
     "ensemble_test_recall@15": 0.34771462786926693,
     "ensemble_val_recall@15": 0.3433243946042581
+   }
+  },
+  "ablation_half": {
+   "train_substrates": 2418,
+   "evaluation": {
+    "ensemble_test_recall@15": 0.33023701670608885
+   },
+   "generator_training": {
+    "best_loss": 0.6236160828879005,
+    "best_val_loss": 0.6366533018648625,
+    "epochs_trained": 8,
+    "val_loss_history": [
+     0.6904579564929009,
+     0.6830105796456337,
+     0.6685795769095421,
+     0.6645714625716209,
+     0.6430630519986152,
+     0.6429107114672661,
+     0.6441605925559998,
+     0.6366533018648625
+    ]
    }
   }
  }
