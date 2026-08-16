@@ -99,6 +99,7 @@ def register(ctx) -> None:
     _arch(ctx)
     register_pair_cost(ctx)
     register_tautomer_limit(ctx)
+    register_product_reappearance(ctx)
 
 
 # --------------------------------------------------------------------------------------------
@@ -917,3 +918,35 @@ def register_tautomer_limit(ctx) -> None:
                        str(a["unique_reference_metabolites"]),
                        str(a["reached_a_canonical_form"] + a["stopped_on_a_limit"]
                            + a["unparseable"]), "results/tautomer_limit_audit.json"))
+
+
+def register_product_reappearance(ctx) -> None:
+    """How many annotated products are themselves annotated as substrates.
+
+    The design appendix rests its "supervision is dense at every node" argument on this share,
+    which was printed as $8.4\\%$ with nothing behind it. It is counted now on the clean training
+    split the deployed configuration trains on, under both identities the paper uses, and the
+    sentence states the two counts rather than the percentage so the reader can see the population.
+    """
+    import re as _re
+
+    a = ctx.art("product_reappearance.json")
+    if a is None:
+        return
+    c = a["canonical_smiles"]
+    m = _re.search(r"appears again as a substrate, which \$([\d,{}]+)\$ of the\s*\$([\d,{}]+)\$ "
+                   r"annotated products in the training split do", ctx.flat)
+    ctx.checks.append((bool(m), "design, the reappearance sentence is present", "present",
+                       "matched" if m else "not matched", "results/product_reappearance.json"))
+    if not m:
+        return
+    ctx.check("design, products that reappear as substrates", m.group(1).replace("{,}", ""),
+              c["products_that_reappear"], "results/product_reappearance.json")
+    ctx.check("design, annotated products in the split", m.group(2).replace("{,}", ""),
+              c["products"], "results/product_reappearance.json")
+    # the two identities agree here, which is worth asserting because elsewhere they do not
+    t = a["tautomer_key"]
+    ctx.checks.append((abs(c["share_percent"] - t["share_percent"]) < 0.05,
+                       "design, the share is the same under either identity",
+                       f"{c['share_percent']:.2f}%", f"{t['share_percent']:.2f}%",
+                       "results/product_reappearance.json"))

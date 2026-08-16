@@ -30,8 +30,8 @@ has no ground truth to be calibrated against, while a relative order does.
 obvious tool for generating one is a flow network trained by trajectory balance, which exists to
 solve credit assignment when only the terminal state is rewarded. That is not this problem. The
 annotations here are edges: a triple names a substrate and one of its direct products, and a
-metabolite that is itself metabolised appears again as a substrate, which is how $8.4\%$ of the
-products in the training split do appear. Supervision is therefore dense at every node of the graph,
+metabolite that is itself metabolised appears again as a substrate, which $1{,}435$ of the
+$17{,}081$ annotated products in the training split do. Supervision is therefore dense at every node of the graph,
 and the objective can be a per-node quantity. The graph follows by recursion: apply the pool softmax
 at the root, expand the candidates that carry mass, and stop where the extra logit does, which makes
 depth a learned quantity rather than the fixed one every system here uses.

@@ -1,0 +1,23 @@
+{
+ "config": {
+  "script": "product_reappearance.py",
+  "git_commit": "34187ebd9383e01d17e3b5b1327309257ad1ede2",
+  "git_dirty": true,
+  "split": "train",
+  "triples": "grail_metabolism/data/train_triples_clean.txt",
+  "note": "a product reappears when it is annotated as a substrate anywhere in the same split; only annotated (is_real=1) triples are edges"
+ },
+ "canonical_smiles": {
+  "substrates": 7323,
+  "products": 17081,
+  "products_that_reappear": 1435,
+  "share_percent": 8.4011
+ },
+ "tautomer_key": {
+  "substrates": 7323,
+  "products": 17078,
+  "products_that_reappear": 1436,
+  "share_percent": 8.4085
+ },
+ "annotated_edges": 22061
+}
