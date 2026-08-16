@@ -98,6 +98,7 @@ def register(ctx) -> None:
     _design(ctx)
     _arch(ctx)
     register_pair_cost(ctx)
+    register_tautomer_limit(ctx)
 
 
 # --------------------------------------------------------------------------------------------
@@ -425,8 +426,8 @@ def _external(ctx) -> None:
     # 191 and the 5 it leaves have no artifact; the denominator does, and the sentence's own
     # arithmetic ties the other two to it, so a lone stale numeral in it fails here.
     m = _need(ctx, "external, the enumerator's transform limit",
-              r"reaches a canonical form for (\d+) of (\d+) unique metabolites and exhausts its "
-              r"transform limit on the remaining (\d+), or (\d+\.\d+)\\%")
+              r"reaches a canonical form for \$(\d+)\$ of \$(\d+)\$ unique\s*metabolites and stops "
+              r"on its transform limit for the remaining \$(\d+)\$, \$(\d+\.\d+)\\%\$")
     if m:
         reached, total, left, pct = (int(m.group(1)), int(m.group(2)), int(m.group(3)),
                                      m.group(4))
@@ -881,3 +882,38 @@ def register_pair_cost(ctx) -> None:
     ctx.checks.append((b["spread_of_the_ratio"] <= 0.1,
                        "arch, the ratio is stable across the repeats", "spread under 0.1",
                        str(b["spread_of_the_ratio"]), "results/pair_cost_benchmark.json"))
+
+
+def register_tautomer_limit(ctx) -> None:
+    """How often the preferred criterion cannot canonicalise at all, against the audit that counts it.
+
+    Three figures with no artifact behind them, on the criterion this paper recommends quoting a
+    leaderboard under. scripts/tautomer_limit_audit.py enumerates every unique external reference
+    and reads the enumerator's own status, so the count, the share and the population are all held.
+    """
+    import re as _re
+
+    a = ctx.art("tautomer_limit_audit.json")
+    if a is None:
+        return
+    m = _re.search(r"the enumerator reaches a canonical form for \$(\d+)\$ of \$(\d+)\$ unique\s*"
+                   r"metabolites and stops on its transform limit for the remaining \$(\d+)\$, "
+                   r"\$([\d.]+)\\%\$", ctx.flat)
+    ctx.checks.append((bool(m), "external, the tautomer-limit sentence is present", "present",
+                       "matched" if m else "not matched", "results/tautomer_limit_audit.json"))
+    if not m:
+        return
+    ctx.check("external, references that canonicalise", m.group(1), a["reached_a_canonical_form"],
+              "results/tautomer_limit_audit.json")
+    ctx.check("external, unique reference metabolites", m.group(2),
+              a["unique_reference_metabolites"], "results/tautomer_limit_audit.json")
+    ctx.check("external, references that stop on a limit", m.group(3), a["stopped_on_a_limit"],
+              "results/tautomer_limit_audit.json")
+    ctx.check("external, the share that stops", m.group(4), a["share_stopped_percent"],
+              "results/tautomer_limit_audit.json")
+    ctx.checks.append((a["reached_a_canonical_form"] + a["stopped_on_a_limit"]
+                       + a["unparseable"] == a["unique_reference_metabolites"],
+                       "external, the three outcomes partition the references",
+                       str(a["unique_reference_metabolites"]),
+                       str(a["reached_a_canonical_form"] + a["stopped_on_a_limit"]
+                           + a["unparseable"]), "results/tautomer_limit_audit.json"))
