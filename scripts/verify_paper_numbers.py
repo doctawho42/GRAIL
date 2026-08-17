@@ -450,11 +450,19 @@ def main() -> int:
                                # the abstract states it as systems ranked and ranks supported
                                r"rank \$(\d+)\$ systems, and the orderings\s*that survive support "
                                r"\$(\d+)\$ ranks|"
-                               # and the title, which states the same pair
-                               r"Publish \$(\d+)\$ Ranks and Support \$(\d+)\$", flat)
+                               # the title no longer quotes the pair: it names the claim the
+                               # decomposition supports rather than a figure the same section deflates
+                               r"(?!x)x", flat)
         printings = [tuple(x for x in pr if x) for pr in printings]
-        checks.append((len(printings) >= 4, "every printing of the survey total is found",
-                       "4 or more, the title among them", str(len(printings)), "the manuscript"))
+        checks.append((len(printings) >= 3, "every printing of the survey total is found",
+                       "3 or more", str(len(printings)), "the manuscript"))
+        # and the title states no figure the body deflates: a title quoting 293 and 167 read
+        # as the cost of the undeclared choices, which is 39 of that gap and not 126
+        _title = re.search(r"\\title\{(.*?)\}", whole, re.S)
+        _tstr = re.sub(r"\s+", " ", _title.group(1)) if _title else ""
+        checks.append((bool(_title) and not re.search(r"\d", _tstr),
+                       "the title quotes no figure the body qualifies", "no digits in the title",
+                       _tstr or "no title", "the manuscript"))
         for i, (pl, ti) in enumerate(printings, 1):
             check(f"survey printing {i}, places", pl, places, "the manuscript")
             check(f"survey printing {i}, tiers", ti, tiers, "the manuscript")
@@ -711,7 +719,7 @@ def main() -> int:
     _pd = ROOT / "results/places_decomposition.json"
     if _pd.exists():
         PDx = json.loads(_pd.read_text())
-        m = re.search(r"The \$(\d+)\$ the title quotes is the weaker reading.*?strictest number has "
+        m = re.search(r"The \$(\d+)\$ the abstract leads with is the weaker reading.*?strictest number has "
                       r"\$(\d+)\$, and one who wants what the conventions cost has \$(\d+)\$", flat)
         checks.append((bool(m), "the decomposition trailer parses", "present",
                        "matched" if m else "not matched", ""))
