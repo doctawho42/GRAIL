@@ -220,7 +220,12 @@ Closest in aim is work that perturbs a leaderboard and reports how far it moves.
 \citet{Knowles_2021} resamples the human evaluation behind the WMT ranking. \citet{Jin_2026}
 corrects the annotations of two text-to-SQL benchmarks and reports shifts of up to nine places. Both
 establish that a ranking moves. Neither returns an object a reader can quote in its place, nor a
-rule that says in advance which pairs will move.
+rule that says in advance which pairs will move. The same fragility is reported outside chemistry:
+holistic re-scoring changes which language model leads \citep{Liang_2023_helm}, a retrieval
+benchmark's zero-shot ordering depends on the suite it is read on \citep{Thakur_2021_beir}, and an
+arena's ranking reflects who was allowed to submit how often \citep{Singh_2025_illusion}.
+Information retrieval has argued the statistical half of this for longer than machine learning has
+\citep{Sakai_2014, Buckley_2004}.
 
 \paragraph{Staged evaluation, and what is left unestablished.} Separating what a candidate generator
 reaches from what a later stage retains is standard \citep{Wang_2011_cascade, Covington_2016,
@@ -252,7 +257,12 @@ The survey sweeps two of the four choices of \S\ref{sec:intro}, the two a releas
 can be re-scored under: the matching rule, which every domain has, and whichever second choice a
 field reports apart from its ranking. The other two are the hydrogen convention a template
 match assumes and which molecules the test set contains. Neither can be varied without re-running
-the predictors, so both are measured in the case study instead (\S\ref{sec:case}).
+the predictors, so both are measured in the case study instead (\S\ref{sec:case}). Which boards enter is
+decided by two rules fixed before any share was read, and one of them excludes a board this paper
+would have benefited from: a molecular-generation set whose headline quantity counts \emph{distinct}
+canonical strings, so its criterion defines the metric rather than parametrising it. Its pairs are
+the furthest apart of any board measured, and admitting it would have raised the shares reported
+below (Appendix~\ref{app:robust}).
 
 \looseness=-1
 A leaderboard reports a total order computed in one cell of a grid its paper does not report. We fix
