@@ -258,25 +258,33 @@ def fig_gap():
     """What the uncovered references are: a type the bank has, a type it lacks, or untypeable."""
     d = _load("coverage_gap_types")
     g, tot = d["gap"], d["uncovered_pairs"]
-    parts = [("type in bank\n(reachable by a\nmore general rule)", g["known_type"], ACC),
-             ("type absent\nfrom bank", g["novel_type"], ALT),
+    # three-line legend entries in three columns, anchored under a 1.5in-tall axes, landed on top
+    # of the axis label; one entry per row and a taller figure keep them apart
+    parts = [("type in bank (reachable by a more general rule)", g["known_type"], ACC),
+             ("type absent from bank", g["novel_type"], ALT),
              ("untypeable", g["untypeable"], GREY)]
-    fig, ax = plt.subplots(figsize=(3.3, 1.5))
+    fig, ax = plt.subplots(figsize=(3.3, 1.9))
     left = 0
     for label, v, c in parts:
         ax.barh(0, v, left=left, color=c, alpha=0.85, edgecolor="none")
-        ax.text(left + v / 2, 0, f"{v}\n{100*v/tot:.0f}%", ha="center", va="center",
-                fontsize=7, color="white" if v > 60 else GREY)
+        # a segment narrower than a tenth of the bar cannot hold its own count
+        if v / tot >= 0.10:
+            ax.text(left + v / 2, 0, f"{v}\n{100*v/tot:.0f}%", ha="center", va="center",
+                    fontsize=7, color="white" if v > 60 else GREY)
+        else:
+            ax.text(left + v / 2, 0.45, f"{v} ({100*v/tot:.0f}%)", ha="center", va="bottom",
+                    fontsize=6.5, color=GREY)
         left += v
-    ax.set_yticks([]); ax.set_xlim(0, tot)
+    ax.set_yticks([]); ax.set_xlim(0, tot); ax.set_ylim(-0.6, 0.95)
     ax.set_xlabel(f"{tot} uncovered references (of {d['covered_pairs']+tot})", fontsize=7.5)
     ax.tick_params(labelsize=7)
     for i, (label, v, c) in enumerate(parts):
         ax.plot([], [], color=c, lw=5, label=label)
-    ax.legend(fontsize=6, frameon=False, loc="upper center", bbox_to_anchor=(0.5, -0.55), ncol=3)
+    ax.legend(fontsize=6.3, frameon=False, loc="upper center", handlelength=1.4,
+              bbox_to_anchor=(0.5, -0.42), ncol=1, borderaxespad=0.0)
     for side in ("top", "right", "left"):
         ax.spines[side].set_visible(False)
-    fig.tight_layout(); fig.savefig(OUT / "fig_gap.pdf"); plt.close(fig)
+    fig.savefig(OUT / "fig_gap.pdf", bbox_inches="tight"); plt.close(fig)
     return {"total": tot, "in-bank ceiling": round((d["covered_pairs"]+g["known_type"])/(d["covered_pairs"]+tot), 3)}
 
 

@@ -36,18 +36,43 @@ def esc(s: str) -> str:
     return s.replace("_", "\\_").replace("&", "\\&")
 
 
+def header_cell(s: str) -> str:
+    """A column head stacked over as many lines as its words need.
+
+    A cell name is a criterion crossed with a second axis, and written on one line the widest of
+    them (``rmsd2+valid / energy minimization``) is alone wider than a quarter of the text block.
+    Set on one line these tables ran up to 444pt past the margin. Nothing is abbreviated here: the
+    words are the same words, broken where they would otherwise run into the next column.
+    """
+    label = cell_label(s)
+    if " / " not in label:
+        return label
+    lines = []
+    for part in label.split(" / "):
+        lines += part.split(" ")
+    return "\\shortstack{" + "\\\\".join(lines) + "}"
+
+
+def _block_width(cells: list) -> int:
+    """How many of these columns fit side by side, which depends on how wide their names are."""
+    widest = max((max(len(w) for w in cell_label(c).replace(" / ", " ").split(" "))
+                  for c in cells), default=0)
+    return 8 if widest <= 8 else 4
+
+
 def accuracy_table(name: str, r: dict) -> str:
     acc = r["system_accuracy_by_cell"]
     systems = r["published_order"]
     cells = list(next(iter(acc.values())))
     out = []
     # split wide grids so the table fits the text block
-    for start in range(0, len(cells), 8):
-        block = cells[start:start + 8]
+    per = _block_width(cells)
+    for start in range(0, len(cells), per):
+        block = cells[start:start + per]
         out.append("\\begin{center}\\small")
         out.append("\\begin{tabular}{l" + "c" * len(block) + "}")
         out.append("\\toprule")
-        out.append("system & " + " & ".join(cell_label(c) for c in block) + " \\\\")
+        out.append("system & " + " & ".join(header_cell(c) for c in block) + " \\\\")
         out.append("\\midrule")
         for s in systems:
             out.append(esc(s) + " & " + " & ".join(f"{acc[s][c]:.3f}" for c in block) + " \\\\")
@@ -66,9 +91,16 @@ def pair_table(r: dict) -> str:
                      str(len(rev)),
                      str(len(v["cells_that_reverse_it_with_an_interval"])),
                      "yes" if v["resolved_in_the_published_cell"] else "no"))
-    out = ["\\begin{center}\\small", "\\begin{tabular}{llccccl}", "\\toprule",
-           "pair (as the published cell orders it) & verdict & sep.\\ every cell & "
-           "cells reversing & with an interval & own cell resolves \\\\", "\\midrule"]
+    # the body rows are short; it is this header that ran past the margin on one line
+    # the widest pair names on the nineteen-system boards do not fit an l column, and with
+    # seven columns the inter-column padding alone is a quarter of the text block
+    out = ["\\begin{center}\\small\\setlength{\\tabcolsep}{4pt}",
+           "\\begin{tabular}{>{\\raggedright\\arraybackslash}p{0.24\\textwidth}lccccl}",
+           "\\toprule",
+           "\\shortstack[l]{pair (as the published\\\\cell orders it)} & verdict & "
+           "\\shortstack{sep.\\ every\\\\cell} & \\shortstack{cells\\\\reversing} & "
+           "\\shortstack{with an\\\\interval} & \\shortstack[l]{own cell\\\\resolves} \\\\",
+           "\\midrule"]
     for row in rows:
         out.append(" & ".join(row) + " \\\\")
     out.append("\\bottomrule\\end{tabular}\\end{center}")
@@ -76,7 +108,10 @@ def pair_table(r: dict) -> str:
 
 
 def subgrid_table(boards: list[tuple[str, dict]]) -> str:
-    out = ["\\begin{center}\\small", "\\begin{tabular}{llcccc}", "\\toprule",
+    out = ["\\begin{center}\\small\\setlength{\\tabcolsep}{4pt}",
+           # the sub-grid labels are phrases, so that column wraps rather than runs on
+           "\\begin{tabular}{l>{\\raggedright\\arraybackslash}p{0.26\\textwidth}cccc}",
+           "\\toprule",
            "leaderboard & sub-grid & cells & dominate & tiers & orderings \\\\", "\\midrule"]
     for name, r in boards:
         first = True
@@ -122,6 +157,9 @@ def hasse(r: dict) -> str:
     # nine-page body, which a top-to-bottom drawing of the same relation does not
     out = ["\\begin{tikzpicture}[x=2.45cm,y=0.62cm,every node/.style={font=\\scriptsize}]"]
     pos = {}
+    # one baseline for every tier label: derived per column they sat at three different heights
+    # and read as annotations on whichever node happened to be lowest in that column
+    caption_y = -(max(len(r) for r in rows.values()) + 1) / 2
     for lvl in sorted(rows):
         row = rows[lvl]
         for i, s in enumerate(row):
@@ -129,7 +167,7 @@ def hasse(r: dict) -> str:
             pos[s] = (lvl, y)
             out.append(f"\\node[draw,rounded corners,inner sep=2pt] ({s.replace(' ', '')}) "
                        f"at ({lvl},{y:.2f}) {{{esc(s)}}};")
-        out.append(f"\\node[font=\\tiny,gray] at ({lvl},{-(len(row) + 1) / 2:.2f}) "
+        out.append(f"\\node[font=\\tiny,gray] at ({lvl},{caption_y:.2f}) "
                    f"{{tier {lvl + 1}}};")
     for a, cs in red.items():
         for c in cs:

@@ -3,6 +3,7 @@
 
 \usepackage{amsmath,amssymb}
 \usepackage{booktabs}
+\usepackage{array}
 \usepackage{graphicx}
 \usepackage{microtype}
 \usepackage{url}
@@ -322,9 +323,11 @@ another. The table publishes seven places in a line, and three survive.}
 \begin{table}[t]
 \centering
 \footnotesize
+\setlength{\tabcolsep}{3.5pt}
 \begin{tabular}{lcccccc}
 \toprule
-leaderboard & places & items & dominate & contested (certified) & unresolved & places supported \\
+leaderboard & places & items & dominate & \shortstack{contested\\(certified)} & unresolved &
+\shortstack{places\\supported} \\
 \midrule
 retrosynthesis, seven systems & $7$ & $4{,}999$ & $8$ of $21$ & $9$ (8) & $4$ & $3$ \\
 retrosynthesis, three systems & $3$ & $4{,}982$ & $0$ of $3$ & $2$ (2) & $1$ & $1$ \\
@@ -614,10 +617,10 @@ where the four choices were found and because a reader is entitled to see the me
 produced them. No claim of the survey depends on any of it: the case study's own numbers are about
 that predictor, and it is not offered as a state of the art.
 
-\section{Architecture of GRAIL}
-\label{app:arch}
 \input{app/casestudy}
 
+\section{Architecture of GRAIL}
+\label{app:arch}
 \input{app/arch}
 
 \section{Formal framework}
