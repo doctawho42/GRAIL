@@ -890,9 +890,27 @@ def register(ctx) -> None:  # noqa: C901 -- one function per appendix file is th
     b.check("the two normalisations recover the same count",
               norm["standardize"]["recovered"], norm["canonical"]["recovered"],
               "results/ceiling_norm_check.json")
-    b.check("and the normalisation check reproduces the committed ceiling",
-              norm["ceiling_gate"]["reproduced"], norm["ceiling_gate"]["committed"],
-              "results/ceiling_norm_check.json")
+    # `ceiling_gate` holds "committed" and "reproduced" side by side, written in one dict literal
+    # by a script that exits before writing if they disagree, so comparing them to each other
+    # cannot fail. The reference has to be reached by another route: recompute the ceiling from the
+    # factorization artifact over the same substrates -- a different file and a different code
+    # path -- and hold the run's number against that.
+    import sys as _sys
+    _sp = str(ctx.root / "scripts")
+    if _sp not in _sys.path:
+        _sys.path.insert(0, _sp)
+    try:
+        from _population import ceiling_target as _ct, load_population as _lp
+        _recomputed = _ct(_lp("subsample245"))
+    except Exception:                                          # noqa: BLE001
+        _recomputed = None
+    b.holds("the reimplemented loop reproduces the ceiling recomputed from the factorization "
+            "artifact",
+            _recomputed is not None
+            and abs(norm["ceiling_gate"]["reproduced"] - _recomputed) <= 1e-4,
+            _recomputed if _recomputed is not None else "recomputation failed",
+            norm["ceiling_gate"]["reproduced"],
+            "results/recall_factorization.json against results/ceiling_norm_check.json")
 
     n = "what the switch does"
     b.sentence(n,

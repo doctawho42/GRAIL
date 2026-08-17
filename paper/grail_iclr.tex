@@ -633,7 +633,10 @@ Two standing reconciliations guard the analyses against the code they analyse. W
 path re-derives a deployed output, the two are verified equal before use, and the released
 per-candidate score dump reproduces the deployed ranking on all $\ntest$ substrates. Where a
 reimplemented loop stands in for the deployed one, it is gated against a figure the deployed loop
-produced, at the scale at which the claim is made.
+produced, at the scale at which the claim is made: the switchable rule applier the engine arms are
+measured with has to reproduce the deployed loop's coverage ceiling of $0.8007$ on the same $245$
+substrates before any of its arms is read, and the released check refuses to write its artifact
+otherwise.
 
 Every set treated here as external or third-party has been audited for overlap with the training and
 validation substrates. The GLORYx set overlaps on $24$ of its $37$ drugs, and \S\ref{sec:rankflip}

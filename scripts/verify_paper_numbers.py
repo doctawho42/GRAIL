@@ -709,6 +709,22 @@ def main() -> int:
         # bound here. The engine term it replaced is not checked against the body any more: this
         # paper's own appendix attributes thirteen fourteenths of that quantity to an unfinished
         # loop rather than to a convention, so it does not belong in a contribution and is not one.
+        # the reproducibility statement names the loop and the figure it is gated against, so
+        # both are
+        # held here; a sentence that names a number a reader cannot check is the thing it was rewritten
+        # to stop being
+        _cn = ROOT / "results/ceiling_norm_check.json"
+        if _cn.exists():
+            CN = json.loads(_cn.read_text())
+            mrl = re.search(r"reproduce the deployed loop's coverage ceiling of \$([\d.]+)\$ on the "
+                            r"same \$(\d+)\$\s*substrates", flat)
+            checks.append((bool(mrl), "the reproducibility statement's gate sentence parses", "present",
+                           "matched" if mrl else "not matched", "results/ceiling_norm_check.json"))
+            check("the ceiling the reimplemented loop is gated against", mrl and mrl.group(1),
+                  CN["ceiling_gate"]["reproduced"], "results/ceiling_norm_check.json")
+            check("the substrates that gate is measured on", mrl and mrl.group(2),
+                  CN["config"]["n_substrates"], "results/ceiling_norm_check.json")
+
         _cp = ROOT / "results/ceiling_by_provenance__clean_test.json"
         _pk = ROOT / "results/provenance_knob_attribution__clean_test.json"
         _rt = ROOT / "results/retro_template_convention.json"
