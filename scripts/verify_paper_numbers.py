@@ -1482,6 +1482,28 @@ def main() -> int:
                   PD["lost_before_any_choice_is_varied"], "the manuscript")
             check(f"decomposition printing {_i}, to grid", _g, PD["lost_to_the_grid"],
                   "the manuscript")
+        # the abstract states the same ladder in its own words and closes it, which is the sentence
+        # a reader reconciles 293-167 against; both of its figures are held here rather than left
+        # to the reader, because the two ladders differ and an unread number is how they drifted
+        mab = re.search(r"stricter ladder on the same \$(\d+)\$.*?more to the grid, leaving \$(\d+)\$",
+                        flat)
+        checks.append((bool(mab), "the abstract's ladder sentence parses", "present",
+                       "matched" if mab else "not matched", "results/places_decomposition.json"))
+        check("the abstract's ladder, places published", mab and mab.group(1),
+              PD["places_published"], "results/places_decomposition.json")
+        check("the abstract's ladder, what every cell separating leaves", mab and mab.group(2),
+              PD["supported_when_every_cell_separates"], "results/places_decomposition.json")
+        checks.append((mab is not None
+                       and PD["places_published"] - PD["supported_when_its_own_cell_separates"]
+                       == PD["lost_before_any_choice_is_varied"]
+                       and PD["supported_when_its_own_cell_separates"]
+                       - PD["supported_when_every_cell_separates"] == PD["lost_to_the_grid"],
+                       "the abstract's ladder closes: 293 - 157 = 136 and 136 - 39 = 97",
+                       "closes",
+                       f"{PD['places_published']}-{PD['lost_before_any_choice_is_varied']}="
+                       f"{PD['supported_when_its_own_cell_separates']}, "
+                       f"-{PD['lost_to_the_grid']}={PD['supported_when_every_cell_separates']}",
+                       "results/places_decomposition.json"))
         mpd = re.search(r"the \$293\$ published places support \$(\d+)\$, and the \$(\d+)\$ lost go to "
                         r"the benchmark's power before any convention is varied\..*?the grid "
                         r"costs \$(\d+)\$ on top", flat)

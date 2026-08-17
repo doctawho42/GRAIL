@@ -59,10 +59,12 @@ and keep the pairwise orderings that no cell contradicts.
 We do this for $23$ leaderboards in four domains --- retrosynthesis, metabolite prediction,
 protein--ligand docking, and two editions of one machine-translation shared task --- retraining
 nothing and reimplementing no method. Together those tables rank $293$ systems, and the orderings
-that survive support $167$ ranks. We count the gap in two parts, because they mean different
-things. Most of it is not the choices: requiring a leaderboard's own published cell to separate a
-pair at all takes $293$ places to $136$, so $157$ ranks go to a benchmark's own resolving power
-before any convention is varied and $39$ more to the grid. The surviving share runs from none of
+that survive support $167$ ranks. That count asks only that no cell contradict the published order.
+Asking each cell to separate the pair instead is a second, stricter ladder on the same $293$, and it
+is the one that says where the gap goes. Most of it is not the choices: requiring a leaderboard's
+own published cell to separate a pair at all takes $293$ places to $136$, so $157$ ranks go to a
+benchmark's own resolving power before any convention is varied and $39$ more to the grid, leaving
+$97$. The surviving share runs from none of
 three to nine tenths, and does not replicate between two editions of the same shared task on the
 same language pair, so it is a property of a table and its grid rather than of a benchmark.
 
