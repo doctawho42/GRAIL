@@ -705,38 +705,64 @@ def main() -> int:
     _hd = ROOT / "results/hydrogen_dispatch__clean_test.json"
     if _hd.exists():
         HD = json.loads(_hd.read_text())
-        # the engine result is stated in the body as its own contribution, so every figure in
-        # that bullet is bound here: the engine term with its interval, the whole distance the two
-        # published configurations are apart, and the template library the same defect recurs on
-        _re = ROOT / "results/reach_engine_vs_bank__clean_test.json"
+        # the body's fifth contribution is the provenance reversal, and every figure in it is
+        # bound here. The engine term it replaced is not checked against the body any more: this
+        # paper's own appendix attributes thirteen fourteenths of that quantity to an unfinished
+        # loop rather than to a convention, so it does not belong in a contribution and is not one.
+        _cp = ROOT / "results/ceiling_by_provenance__clean_test.json"
+        _pk = ROOT / "results/provenance_knob_attribution__clean_test.json"
         _rt = ROOT / "results/retro_template_convention.json"
-        if _re.exists() and _rt.exists():
-            RE, RT = json.loads(_re.read_text()), json.loads(_rt.read_text())
-            _eng = RE["contrasts"]["engine_at_fixed_rules_B_minus_A"]
-            _arms = RE["arms"]
-            _whole = (_arms["D_sygma_engine_175_rules_composed"]["point"]
-                      - _arms["A_grail_engine_152_rules"]["point"])
-            me = re.search(r"moves what\s*it reaches by \$\+([\d.]+)\$ \$\[\+([\d.]+),\+([\d.]+)\]\$ "
-                           r"of the \$\+([\d.]+)\$ that separates two published", flat)
-            checks.append((bool(me), "the contribution's engine bullet parses", "present",
-                           "matched" if me else "not matched",
-                           "results/reach_engine_vs_bank__clean_test.json"))
-            check("the contribution's engine term", me and me.group(1), _eng["point"],
-                  "results/reach_engine_vs_bank__clean_test.json")
-            check("the contribution's engine term, lower", me and me.group(2), _eng["ci95"][0],
-                  "results/reach_engine_vs_bank__clean_test.json")
-            check("the contribution's engine term, upper", me and me.group(3), _eng["ci95"][1],
-                  "results/reach_engine_vs_bank__clean_test.json")
-            check("the contribution's whole distance", me and me.group(4), _whole,
-                  "results/reach_engine_vs_bank__clean_test.json")
-            # the engine term must be the larger part of that distance, which is the bullet's claim
-            checks.append((_eng["point"] > _whole / 2,
-                           "the engine is the larger half of the distance the bullet decomposes",
-                           f"above {_whole / 2:.4f}", f"{_eng['point']:.4f}",
-                           "results/reach_engine_vs_bank__clean_test.json"))
-            mt = re.search(r"all \$([\d,{}]+)\$ patterns in the standard\s*retrosynthesis template "
-                           r"library pin a connection count, and the same step costs that library\s*"
-                           r"\$(\d+)\\%\$", flat)
+        if _cp.exists() and _pk.exists() and _rt.exists():
+            CP = json.loads(_cp.read_text())
+            PK = json.loads(_pk.read_text())
+            RT = json.loads(_rt.read_text())
+            _cur, _min = CP["subsets"]["curated"]["coverage"], CP["subsets"]["mined"]["coverage"]
+            _curx, _minx = PK["coverage"]["curated|addhs=1"], PK["coverage"]["mined|addhs=1"]
+            _curf, _minf = PK["coverage"]["curated|addhs=1|floor"], PK["coverage"]["mined|addhs=1|floor"]
+            mp = re.search(r"its curated fifth\s*reaches \$([\d.]+)\$ against the mined majority's "
+                           r"\$([\d.]+)\$ as deployed, and \$([\d.]+)\$ against \$([\d.]+)\$ with"
+                           r"\s*hydrogens expanded\. The gap is \$\+([\d.]+)\$ one way and "
+                           r"\$-([\d.]+)\$ the other, and the validity floor\s*carries \$([\d.]+)\$",
+                           flat)
+            checks.append((bool(mp), "the contribution's provenance bullet parses", "present",
+                           "matched" if mp else "not matched",
+                           "results/ceiling_by_provenance__clean_test.json"))
+            check("provenance bullet, curated as deployed", mp and mp.group(1), _cur,
+                  "results/ceiling_by_provenance__clean_test.json")
+            check("provenance bullet, mined as deployed", mp and mp.group(2), _min,
+                  "results/ceiling_by_provenance__clean_test.json")
+            # the pair the appendix and the bullet print is the one measured through the
+            # validity floor, which is why 0.6681 and not 0.6688 is what 0.668 has to match
+            check("provenance bullet, curated expanded", mp and mp.group(3), _curf,
+                  "results/provenance_knob_attribution__clean_test.json")
+            check("provenance bullet, mined expanded", mp and mp.group(4), _minf,
+                  "results/provenance_knob_attribution__clean_test.json")
+            check("provenance bullet, the gap as deployed", mp and mp.group(5), _min - _cur,
+                  "results/ceiling_by_provenance__clean_test.json")
+            check("provenance bullet, the gap expanded", mp and mp.group(6), _curf - _minf,
+                  "results/provenance_knob_attribution__clean_test.json")
+            check("provenance bullet, what the validity floor carries", mp and mp.group(7),
+                  abs((_minf - _curf) - (_minx - _curx)),
+                  "results/provenance_knob_attribution__clean_test.json")
+            # the claim is a reversal, not a shift: the two halves must swap sides
+            checks.append((mp is not None and (_min > _cur) and (_curx > _minx),
+                           "the two halves of the bank really do change places",
+                           "mined above curated as deployed, below it expanded",
+                           f"deployed {_min:.4f} vs {_cur:.4f}, expanded {_minx:.4f} vs {_curx:.4f}",
+                           "results/provenance_knob_attribution__clean_test.json"))
+            # both arms must be arithmetic anyone could defend, which is what makes this the
+            # figure to lead with rather than the engine term it replaced
+            checks.append((PK["config"]["match"] == CP["match"]
+                           and PK["config"]["n_substrates"] == CP["n"],
+                           "both conventions are scored on the same substrates under the same key",
+                           f"{CP['n']} substrates, {CP['match']}",
+                           f"{PK['config']['n_substrates']} substrates, {PK['config']['match']}",
+                           "results/provenance_knob_attribution__clean_test.json"))
+            mt = re.search(r"all\s*\$([\d,{}]+)\$ patterns in the standard retrosynthesis template "
+                           r"library pin a connection count, and\s*expanding hydrogens costs that "
+                           r"library \$(\d+)\\%\$ of the template--product pairs it can match, though"
+                           r"\s*only \$(\d+)\$ of \$(\d+)\$ products lose every applicable template",
+                           flat)
             checks.append((bool(mt), "the contribution's template-library sentence parses", "present",
                            "matched" if mt else "not matched",
                            "results/retro_template_convention.json"))
@@ -746,7 +772,17 @@ def main() -> int:
                   round(100 * RT["cause"]["matches_lost_to_the_expansion"]
                         / RT["applicability"]["matches_hydrogens_implicit"]),
                   "results/retro_template_convention.json")
-            # every pattern, not most of them: the bullet says "all", and the census is the source
+            _prod = RT["applicability"]["products_with_any_applicable_template"]
+            check("the products that lose every template", mt and mt.group(3),
+                  _prod["implicit"] - _prod["explicit"], "results/retro_template_convention.json")
+            check("the products the library was asked about", mt and mt.group(4),
+                  _prod["implicit"], "results/retro_template_convention.json")
+            # both scales must be printed: the share of matches alone reads as a catastrophe the
+            # product counts do not support, and the product count alone hides the mechanism
+            checks.append((mt is not None,
+                           "the template-library claim states the loss at both scales",
+                           "matches and products", "both stated" if mt else "not both",
+                           "results/retro_template_convention.json"))
             checks.append((RT["convention_census"]["with_a_degree_primitive"]
                            == RT["convention_census"]["templates"],
                            "every pattern in that library pins a connection count, as the bullet says",

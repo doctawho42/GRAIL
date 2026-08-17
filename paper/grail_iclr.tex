@@ -118,7 +118,7 @@ We answer that question by re-scoring predictions that other groups have already
 nothing is retrained and no method is reimplemented. Two of the four choices reorder a published
 leaderboard, and those reorderings are certified as interactions between method and choice rather
 than asserted from a change in rank. A third changes a reported quantity, what a rule base
-reaches, without changing any ordering. The fourth is undeclared but produces no interaction that
+reaches, and reverses the ordering of the two halves of one bank without touching a leaderboard. The fourth is undeclared but produces no interaction that
 survives correction. Separating those two statements is possible only because the same test is
 applied to all four. A single condition governs when a reordering occurs: the choice must move two
 systems apart by more than the margin between them, which makes a benchmark more vulnerable as its
@@ -149,13 +149,18 @@ leading methods converge.
   moves the two apart by more than the larger of the margins it connects. That identity is why every
   dominance verdict follows from $n$ scorings per cell with no pairwise statistic. A resample enters
   only to tell a contested pair from an unresolved one.
-\item \textbf{What a rule bank reaches is a property of the engine, not of the rules.} Holding
-  one bank's rules fixed and changing only how the substrate is presented to the matcher moves what
-  it reaches by $+0.188$ $[+0.170,+0.205]$ of the $+0.339$ that separates two published
-  configurations, so a coverage figure is not comparable between papers that do not declare the
-  procedure. The hazard is not confined to this domain: all $42{,}554$ patterns in the standard
-  retrosynthesis template library pin a connection count, and the same step costs that library
-  $82\%$ of the template--product pairs it can match at all (Appendix~\ref{app:retroconvention}).
+\item \textbf{The same reversal inside a rule bank, with no leaderboard involved.} The convention
+  a template needs is a property of whoever wrote it, so a bank assembled from several sources has
+  no single setting that suits all of it. Scoring one bank of $\nbank$ rules on the same substrates
+  under two conventions that are both defensible and both correct arithmetic, its curated fifth
+  reaches $0.487$ against the mined majority's $0.800$ as deployed, and $0.668$ against $0.332$ with
+  hydrogens expanded. The gap is $+0.313$ one way and $-0.336$ the other, and the validity floor
+  carries $0.000$ of it: the convention does not move the number, it exchanges which half of the
+  bank carries it (Appendix~\ref{app:provenance}). The hazard is not confined to this domain: all
+  $42{,}554$ patterns in the standard retrosynthesis template library pin a connection count, and
+  expanding hydrogens costs that library $82\%$ of the template--product pairs it can match, though
+  only $11$ of $500$ products lose every applicable template
+  (Appendix~\ref{app:retroconvention}).
 \item \textbf{The case study and the release.} The four choices were found by measuring one
   predictor in one domain, and Appendix~\ref{app:casestudy} reports that case study in full. The
   output budget reorders a metabolite leaderboard with every ranking held fixed. The population a dataset name refers to is
