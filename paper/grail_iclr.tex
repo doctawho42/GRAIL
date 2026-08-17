@@ -149,11 +149,16 @@ leading methods converge.
   moves the two apart by more than the larger of the margins it connects. That identity is why every
   dominance verdict follows from $n$ scorings per cell with no pairwise statistic. A resample enters
   only to tell a contested pair from an unresolved one.
+\item \textbf{What a rule bank reaches is a property of the engine, not of the rules.} Holding
+  one bank's rules fixed and changing only how the substrate is presented to the matcher moves what
+  it reaches by $+0.188$ $[+0.170,+0.205]$ of the $+0.339$ that separates two published
+  configurations, so a coverage figure is not comparable between papers that do not declare the
+  procedure. The hazard is not confined to this domain: all $42{,}554$ patterns in the standard
+  retrosynthesis template library pin a connection count, and the same step costs that library
+  $82\%$ of the template--product pairs it can match at all (Appendix~\ref{app:retroconvention}).
 \item \textbf{The case study and the release.} The four choices were found by measuring one
-  predictor in one domain, and Appendix~\ref{app:casestudy} reports that case study in full. A
-  coverage figure is a property of a rule set together with the engine that applies it, and moves by
-  up to $0.374$ with a preprocessing step neither paper reports. The output budget reorders a
-  metabolite leaderboard with every ranking held fixed. The population a dataset name refers to is
+  predictor in one domain, and Appendix~\ref{app:casestudy} reports that case study in full. The
+  output budget reorders a metabolite leaderboard with every ranking held fixed. The population a dataset name refers to is
   ambiguous, but reorders nothing that survives correction. We release the protocol, the audited
   split, the frozen predictions of every method compared, a checker that reports these choices from
   released files alone, and the analysis code.
@@ -570,6 +575,18 @@ no paper reports. Two of the four choices change a published ordering. The budge
 that an interval separates from zero, and the criterion exchanges systems a mature benchmark never
 separated. Which pairs either choice reaches follows from an equivalence. Declaring is not the whole
 remedy, as the one bank of mixed provenance here shows.
+
+\looseness=-1
+\paragraph{What to declare, and what to do with a partial order.} A leaderboard whose ordering is
+meant to be quoted should print five things: the rule deciding when a prediction counts as the
+reference, with the version of the toolkit implementing it; the number of candidates each method was
+allowed; any post-processing applied before scoring; the population the test set draws from; and
+either a score per cell of that grid or the predictions themselves, from which any cell can be
+recomputed. A reader given those can compute the order reported here. Where that order is partial, a
+claim of the form ``ours is first'' is available only when no other system shares its top tier; where
+one does, the statement that the data support names the tier instead. The share itself should not be
+compared between papers. By Proposition~2 it falls as a grid widens, so a paper declaring fewer
+choices reports a larger one, and a quantity that rewards declaring less is not one to compete on.
 \subsubsection*{Reproducibility statement}
 
 Every quantity reported here derives from a committed artifact and regenerates from the released

@@ -705,16 +705,56 @@ def main() -> int:
     _hd = ROOT / "results/hydrogen_dispatch__clean_test.json"
     if _hd.exists():
         HD = json.loads(_hd.read_text())
-        # the same two arms the appendix quotes as a swing of -0.374; the bullet states its size
-        _arm = HD["banks"]["biotransformer"]["global_arms"]
-        _sw = abs(_arm["all_explicit_completed"] - _arm["all_implicit"])
-        m = re.search(r"the engine that applies it, (?:moving|and moves) by\s*up to \$([\d.]+)\$ with a "
-                      r"preprocessing step", flat)
-        checks.append((bool(m), "the contribution's engine figure parses", "present",
-                       "matched" if m else "not matched", ""))
-        # no "if m and ..." here: a value that cannot be found must fail, not be skipped
-        check("the contribution's engine figure", m.group(1) if m else None, _sw,
-              "results/hydrogen_dispatch__clean_test.json")
+        # the engine result is stated in the body as its own contribution, so every figure in
+        # that bullet is bound here: the engine term with its interval, the whole distance the two
+        # published configurations are apart, and the template library the same defect recurs on
+        _re = ROOT / "results/reach_engine_vs_bank__clean_test.json"
+        _rt = ROOT / "results/retro_template_convention.json"
+        if _re.exists() and _rt.exists():
+            RE, RT = json.loads(_re.read_text()), json.loads(_rt.read_text())
+            _eng = RE["contrasts"]["engine_at_fixed_rules_B_minus_A"]
+            _arms = RE["arms"]
+            _whole = (_arms["D_sygma_engine_175_rules_composed"]["point"]
+                      - _arms["A_grail_engine_152_rules"]["point"])
+            me = re.search(r"moves what\s*it reaches by \$\+([\d.]+)\$ \$\[\+([\d.]+),\+([\d.]+)\]\$ "
+                           r"of the \$\+([\d.]+)\$ that separates two published", flat)
+            checks.append((bool(me), "the contribution's engine bullet parses", "present",
+                           "matched" if me else "not matched",
+                           "results/reach_engine_vs_bank__clean_test.json"))
+            check("the contribution's engine term", me and me.group(1), _eng["point"],
+                  "results/reach_engine_vs_bank__clean_test.json")
+            check("the contribution's engine term, lower", me and me.group(2), _eng["ci95"][0],
+                  "results/reach_engine_vs_bank__clean_test.json")
+            check("the contribution's engine term, upper", me and me.group(3), _eng["ci95"][1],
+                  "results/reach_engine_vs_bank__clean_test.json")
+            check("the contribution's whole distance", me and me.group(4), _whole,
+                  "results/reach_engine_vs_bank__clean_test.json")
+            # the engine term must be the larger part of that distance, which is the bullet's claim
+            checks.append((_eng["point"] > _whole / 2,
+                           "the engine is the larger half of the distance the bullet decomposes",
+                           f"above {_whole / 2:.4f}", f"{_eng['point']:.4f}",
+                           "results/reach_engine_vs_bank__clean_test.json"))
+            mt = re.search(r"all \$([\d,{}]+)\$ patterns in the standard\s*retrosynthesis template "
+                           r"library pin a connection count, and the same step costs that library\s*"
+                           r"\$(\d+)\\%\$", flat)
+            checks.append((bool(mt), "the contribution's template-library sentence parses", "present",
+                           "matched" if mt else "not matched",
+                           "results/retro_template_convention.json"))
+            check("the contribution's template count", mt and mt.group(1).replace("{,}", ""),
+                  RT["config"]["n_templates"], "results/retro_template_convention.json")
+            check("the contribution's share of matches lost", mt and mt.group(2),
+                  round(100 * RT["cause"]["matches_lost_to_the_expansion"]
+                        / RT["applicability"]["matches_hydrogens_implicit"]),
+                  "results/retro_template_convention.json")
+            # every pattern, not most of them: the bullet says "all", and the census is the source
+            checks.append((RT["convention_census"]["with_a_degree_primitive"]
+                           == RT["convention_census"]["templates"],
+                           "every pattern in that library pins a connection count, as the bullet says",
+                           f"{RT['convention_census']['templates']} of "
+                           f"{RT['convention_census']['templates']}",
+                           f"{RT['convention_census']['with_a_degree_primitive']} of "
+                           f"{RT['convention_census']['templates']}",
+                           "results/retro_template_convention.json"))
 
     _pd = ROOT / "results/places_decomposition.json"
     if _pd.exists():
