@@ -1100,19 +1100,19 @@ def main() -> int:
                   "results/robust_order_*.json")
             check(f"table 1, {_label}, supported", _g[8],
                   sum(b["tiers_distinguished"] for b in _bs), "results/robust_order_*.json")
-        # the caption quotes the union count beside the per-board one, and both are the artifact's
-        _cap = re.search(r"over all twenty-four grids at once, \$(\d+)\$ of the\s*\$(\d+)\$ survive",
-                         flat)
+        # Table 1's caption is a legend and no longer restates the union count. The figures it
+        # used to carry are stated once, in the contributions, and are bound there; a second
+        # printing that no check reached is what this suite exists to prevent, so it is not
+        # reinstated here.
         _unj = ROOT / "results/union_multiplicity.json"
-        if _cap and _unj.exists():
+        if _unj.exists():
             _UNC = json.loads(_unj.read_text())["certified_pairs"]
-            check("table 1 caption, surviving the union", _cap.group(1), _UNC["union"],
-                  "results/union_multiplicity.json")
-            check("table 1 caption, certified per board", _cap.group(2), _UNC["per_board"],
-                  "results/union_multiplicity.json")
-        else:
-            checks.append((False, "table 1 caption, the union sentence", "present",
-                           "not matched", "results/union_multiplicity.json"))
+            checks.append((not re.search(r"over all twenty-\w+ grids at once", flat),
+                           "table 1's caption does not restate the union count",
+                           "stated once, in the contributions",
+                           "restated in the caption" if re.search(
+                               r"over all twenty-\w+ grids at once", flat) else "not restated",
+                           "results/union_multiplicity.json"))
         checks.append((_seen == len(_ROWS), "table 1, every row is bound", str(len(_ROWS)),
                        str(_seen), "results/robust_order_*.json"))
         # the totals row is the paper's title, so it is held to the sum over every board and not

@@ -116,8 +116,8 @@ reordering does not.
 
 We answer that question by re-scoring predictions that other groups have released, so nothing is
 retrained and no method is reimplemented. Two of the four choices reorder a published leaderboard.
-Those reorderings are certified as interactions between method and choice rather than asserted from
-a change in rank. A third changes a reported quantity, what a rule base reaches, and reverses the
+Those reorderings are established as interactions between method and choice rather than inferred
+from a change in rank, and they survive a correction for the comparisons the grid creates. A third changes a reported quantity, what a rule base reaches, and reverses the
 ordering of the two halves of one bank without touching a leaderboard. The fourth is undeclared but
 produces no interaction that survives correction. Separating those two statements is possible only
 because the same test is applied to all four. A single condition governs when a reordering occurs:
@@ -155,13 +155,12 @@ more vulnerable as its leading methods converge.
   reaches $0.487$ against the mined majority's $0.800$ as deployed, and $0.668$ against $0.332$ with
   hydrogens expanded. The gap is $+0.313$ one way and $-0.336$ the other, and the validity floor
   carries $0.000$ of it. The convention does not move the number; it exchanges which half of the
-  bank carries it (Appendix~\ref{app:provenance}). The hazard is not confined to this domain. All
+  bank carries it. The hazard is not confined to this domain. All
   $42{,}554$ patterns in the standard retrosynthesis template library pin a connection count.
   Expanding hydrogens costs that library $82\%$ of the template--product pairs it can match, though
-  only $11$ of $500$ products lose every applicable template
-  (Appendix~\ref{app:retroconvention}).
+  only $11$ of $500$ products lose every applicable template.
 \item \textbf{The case study and the release.} The four choices were found by measuring one
-  predictor in one domain, and Appendix~\ref{app:casestudy} reports that case study in full. The
+  predictor in one domain, and that case study is reported in full. The
   output budget reorders a metabolite leaderboard with every ranking held fixed. The population a
   dataset name refers to is ambiguous, but reorders nothing that survives correction. We release the
   protocol, the audited split, the frozen predictions of every method compared, a checker that
@@ -250,13 +249,12 @@ across papers. The present work addresses both.
 \begin{figure}[t]
 \centering
 \input{app/instrument_schematic}
-\caption{The instrument in miniature: four systems on a grid of four cells. Letters stand for
-systems, and no number in it is a measurement. Each cell orders the same systems, and a published
-table reports one cell without saying which. What survives is the intersection. Here $a$
-and $b$ beat $c$ in every cell and $c$ beats $d$ in every cell, but the second axis puts $b$ above
-$a$ where the published cell puts $a$ above $b$. That pair survives nothing, so the four published
-places support three. The criterion axis changes no ordering here, which is the shape the survey
-finds on twenty-four real boards.}
+\caption{The instrument in miniature: four systems on a grid of four cells. Letters stand for systems,
+and no number in the figure is a measurement. Each cell orders the same systems, and a published
+table reports one cell without saying which. What survives is the intersection. Here $a$ and $b$
+beat $c$ in every cell and $c$ beats $d$ in every cell, but the second axis puts $b$ above $a$
+where the published cell puts $a$ above $b$. That pair survives nothing, so the four published
+places support three.}
 \label{fig:schematic}
 \end{figure}
 
@@ -331,20 +329,18 @@ score is standardised within the annotator who gave it.
 \centering
 \input{app/share_figure}
 \caption{Each leaderboard is one dot at the share of its pairwise orderings that no cell of its own
-declared grid contradicts. The shares run from none of three to nine tenths, and dot area is
-proportional to the pairs the board carries. The two editions of the translation task are drawn
-apart because five of their language pairs are the same pair scored twice, a year apart, under
-different protocols.}
+declared grid contradicts. Dot area is proportional to the pairs the board carries. The two
+editions of the translation task are drawn apart because five of their language pairs are the
+same pair scored twice, a year apart, under different protocols.}
 \label{fig:shares}
 \end{figure}
 
 \begin{figure}[t]
 \centering
 \input{app/robust_hasse}
-\caption{The dominance order of the seven-system retrosynthesis table, drawn as its transitive
-reduction. An arrow means the left system beats the right in all sixteen cells of the declared grid.
-Systems drawn together are ones the grid does not order, so a reader may not quote one above
-another. The table publishes seven places in a line, and three survive.}
+\caption{The dominance order of the seven-system retrosynthesis table, drawn as its transitive reduction.
+An arrow means the left system beats the right in all sixteen cells of the declared grid. Systems
+drawn together are ones the grid does not order.}
 \label{fig:hasse}
 \end{figure}
 
@@ -374,9 +370,7 @@ all twenty-four & $\mathbf{298}$ & --- & $1{,}612$ of $1{,}932$ & $88$ (23) & $2
 \caption{What each leaderboard publishes and what survives its own grid. \emph{Places} is the number
 of systems the table ranks, and \emph{places supported} is the longest chain of the dominance order:
 the ranks a reader may quote without naming a cell. \emph{Certified} counts the contested pairs
-surviving Holm over the family each grid creates; over all twenty-four grids at once, $15$ of the
-$23$ survive (Appendix~\ref{app:robustorder}). The last row is the survey's total.
-Figure~\ref{fig:hasse} draws the seven-system table's surviving order as its transitive reduction.}
+surviving Holm over the family each grid creates. The last row is the survey's total.}
 \label{tab:robust}
 \end{table}
 
