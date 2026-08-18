@@ -93,28 +93,24 @@ def main() -> int:
              "\\begin{tikzpicture}[x=%.4fcm, y=1cm]" % (W,)]
     y = 0.0
     # axis
-    lines.append(f"\\draw[gRule!55] (0,{-0.30:.2f}) -- (1,{-0.30:.2f});")
+    lines.append(f"\\draw[gRule!55] (0,{-0.14:.2f}) -- (1,{-0.14:.2f});")
     for tick in (0.0, 0.25, 0.5, 0.75, 1.0):
-        lines.append(f"\\draw[gRule!55] ({tick},{-0.30:.2f}) -- ({tick},{-0.42:.2f});")
-        lines.append(f"\\node[below,font=\\scriptsize,inner sep=1pt] at ({tick},{-0.42:.2f}) "
+        lines.append(f"\\draw[gRule!55] ({tick},{-0.14:.2f}) -- ({tick},{-0.26:.2f});")
+        lines.append(f"\\node[below,font=\\scriptsize,gRule,inner sep=1pt] at ({tick},{-0.26:.2f}) "
                      f"{{${tick:.2f}$}};")
-    lines.append(f"\\draw[dashed,gRule!75,line width=0.5pt] ({median:.4f},{-0.30:.2f}) -- "
-                 f"({median:.4f},{len(rows) * H + 0.10:.2f});")
-    lines.append(f"\\node[above,font=\\scriptsize,gRule] at "
-                 f"({median:.4f},{len(rows) * H + 0.06:.2f}) {{median ${median:.2f}$}};")
 
     for label, boards in reversed(rows):
         y += H
         col = COLOUR.get(label, "gRule")
         # a band behind each row binds its dots to its label without a rule cutting through them
-        lines.append(f"\\fill[{col}!7] (0,{y - H / 2 + 0.03:.2f}) rectangle "
+        lines.append(f"\\fill[{col}!7] (-0.010,{y - H / 2 + 0.03:.2f}) rectangle "
                      f"(1,{y + H / 2 - 0.03:.2f});")
         lines.append(f"\\node[left,font=\\scriptsize,{col}] at (-0.012,{y:.2f}) {{{label}}};")
         for b in sorted(boards, key=lambda x: -x["n_pairs"]):
             # area proportional to the pairs the board carries, so a three-pair board cannot
             # look like a hundred-and-seventy-one-pair one, with a floor so it stays visible
             r = 0.030 + 0.060 * (b["n_pairs"] / 171.0) ** 0.5
-            lines.append(f"\\fill[{col}!85, draw={col}, line width=0.2pt] "
+            lines.append(f"\\fill[{col}!85, draw=white, line width=0.5pt] "
                          f"({b['robustness']:.4f},{y:.2f}) circle ({r:.3f}cm);")
             # a board where nothing at all survives is the strongest single point on the axis
             if b["robustness"] <= 0.0:
@@ -122,11 +118,17 @@ def main() -> int:
                              f"({r + 0.055:.3f}cm);")
                 # a leader from the ring to the label, so the annotation belongs to the dot
                 lines.append(f"\\draw[{col}!70,line width=0.3pt] "
-                             f"({b['robustness']:.4f},{y + 0.115:.2f}) -- "
-                             f"({b['robustness']:.4f},{y + 0.215:.2f}) -- "
-                             f"({b['robustness']:.4f}+0.022,{y + 0.215:.2f});")
+                             f"({b['robustness']:.4f},{y + 0.13:.2f}) -- "
+                             f"({b['robustness']:.4f},{y + 0.30:.2f}) -- "
+                             f"({b['robustness']:.4f}+0.022,{y + 0.30:.2f});")
                 lines.append(f"\\node[font=\\scriptsize,{col},anchor=west] at "
-                             f"({b['robustness']:.4f}+0.024,{y + 0.215:.2f}) {{nothing survives}};")
+                             f"({b['robustness']:.4f}+0.024,{y + 0.30:.2f}) {{nothing survives}};")
+    # after the bands and the dots: drawn before them, the opaque fills left this line visible
+    # only in the gaps between rows, and its label named a line a reader could not see
+    lines.append(f"\\draw[dashed,gRule!60,line width=0.5pt] ({median:.4f},{-0.14:.2f}) -- "
+                 f"({median:.4f},{len(rows) * H + 0.26:.2f});")
+    lines.append(f"\\node[above,font=\\scriptsize,gRule] at "
+                 f"({median:.4f},{len(rows) * H + 0.26:.2f}) {{median ${median:.2f}$}};")
     lines.append("\\end{tikzpicture}")
     Path(args.out).write_text("\n".join(lines) + "\n")
 

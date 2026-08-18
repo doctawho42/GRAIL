@@ -179,23 +179,26 @@ def hasse(r: dict) -> str:
     for lvl in sorted(rows):
         row = rows[lvl]
         col = "gPublished" if lvl == 0 else "gRule"
+        # one width per tier: its systems are mutually unordered peers, and a ragged column
+        # made the widest node overhang the tier rule while the narrowest fell short
+        width = round(0.115 * max(len(x) for x in row) + 0.55, 2)
         for i, s in enumerate(row):
             y = -(i - (len(row) - 1) / 2)
             pos[s] = (lvl, y)
-            out.append(f"\\node[draw={col}, text={col}, rounded corners, inner sep=2.5pt, "
-                       f"fill=white, line width={0.7 if lvl == 0 else 0.4}pt] "
+            # the boxes only name the systems; the edges are the relation, so the edges carry
+            # the weight and the borders step back
+            out.append(f"\\node[draw={col}!30, text={col}, rounded corners, inner sep=2.5pt, "
+                       f"fill=white, line width=0.3pt, minimum width={width}cm] "
                        f"({s.replace(' ', '')}) at ({lvl},{y:.2f}) "
                        f"{{{esc(s)}\\,\\textcolor{{gRule!70}}{{\\tiny({place[s]})}}}};")
-        out.append(f"\\draw[{col}!45] ({lvl - 0.30},{caption_y + 0.42:.2f}) -- "
-                   f"({lvl + 0.30},{caption_y + 0.42:.2f});")
+        out.append(f"\\draw[{col}!45] ({lvl} - {width / 2 / 2.45:.3f},{caption_y + 0.42:.2f}) -- "
+                   f"({lvl} + {width / 2 / 2.45:.3f},{caption_y + 0.42:.2f});")
         out.append(f"\\node[font=\\tiny,{col}] at ({lvl},{caption_y:.2f}) {{tier {lvl + 1}}};")
     for a, cs in red.items():
         for c in cs:
             if pos[a][0] < pos[c][0]:
-                out.append(f"\\draw[->,gRule!55,line width=0.35pt] ({a.replace(' ', '')}) -- "
-                           f"({c.replace(' ', '')});")
-    out.append(f"\\node[font=\\tiny,gRule,anchor=west] at ({max(rows) + 0.45},{caption_y:.2f}) "
-               f"{{({{\\it n}}) is the place the published table gives}};")
+                out.append(f"\\draw[->,gRule!80,line width=0.5pt] "
+                           f"({a.replace(' ', '')}.east) -- ({c.replace(' ', '')}.west);")
     out.append("\\end{tikzpicture}")
     return "\n".join(out)
 

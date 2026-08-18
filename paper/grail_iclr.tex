@@ -13,6 +13,7 @@
 \usepackage{hyperref}
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta}
+\tikzset{>={Latex[length=1.4mm]}}
 
 % One palette for every drawing in the paper, chosen so that hue never carries meaning alone:
 % each domain is also separated by position, and the four hues stay distinguishable in greyscale
@@ -327,7 +328,7 @@ score is standardised within the annotator who gave it.
 \centering
 \input{app/share_figure}
 \caption{Each leaderboard is one dot at the share of its pairwise orderings that no cell of its own
-declared grid contradicts. Dot area is proportional to the pairs the board carries. The two
+declared grid contradicts. Dot area grows with the pairs a board carries, with a floor so that a three-pair board stays visible. The two
 editions of the translation task are drawn apart because five of their language pairs are the
 same pair scored twice, a year apart, under different protocols.}
 \label{fig:shares}
@@ -338,7 +339,8 @@ same pair scored twice, a year apart, under different protocols.}
 \input{app/robust_hasse}
 \caption{The dominance order of the seven-system retrosynthesis table, drawn as its transitive reduction.
 An arrow means the left system beats the right in all sixteen cells of the declared grid. Systems
-drawn together are ones the grid does not order.}
+drawn together are ones the grid does not order. The number after each name is the place its
+published table gives it.}
 \label{fig:hasse}
 \end{figure}
 

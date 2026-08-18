@@ -8,7 +8,7 @@
                     flip/.style={gReversed, font=\scriptsize\bfseries}]
 
 % --- the grid of cells -------------------------------------------------------
-\node[anchor=south west, font=\scriptsize\itshape, gRule] at (-0.15,3.05) {a grid of cells};
+\node[anchor=south west, font=\footnotesize\itshape, gRule] at (-0.15,3.32) {a grid of cells};
 \node[font=\scriptsize, gRule, anchor=south] at (1.6,2.86) {criterion};
 \node[font=\scriptsize, gRule, rotate=90, anchor=south] at (-0.42,1.4) {second axis};
 
@@ -25,21 +25,22 @@
 \node at (0.8,0.7) {\textcolor{gReversed}{$b$}\,\textcolor{gReversed}{$a$}\,$c$\,$d$};
 \node at (2.4,0.7) {\textcolor{gReversed}{$b$}\,\textcolor{gReversed}{$a$}\,$c$\,$d$};
 
-\node[font=\scriptsize, gPublished, anchor=west] at (3.35,2.1) {the cell a paper reports};
-\node[font=\scriptsize, gReversed, anchor=west] at (3.35,0.7) {the second axis exchanges $a$ and $b$};
+\draw[gPublished!70, line width=0.4pt] (0.8,2.80) -- (0.8,2.98);
+\node[font=\scriptsize, gPublished, anchor=south] at (0.8,2.99) {the cell a paper reports};
+\node[font=\scriptsize, gReversed, anchor=west] at (3.35,0.7) {the second axis exchanges $a$, $b$};
 \node[font=\scriptsize, gRule, anchor=north] at (1.6,-0.12)
   {each cell orders the same four systems};
 
 % --- the arrow ---------------------------------------------------------------
-\draw[-{Latex[length=2mm]}, gRule] (6.55,1.75) -- (7.35,1.75);
-\node[font=\scriptsize, gRule, anchor=south] at (6.95,1.85) {intersect};
+\draw[-{Latex[length=2mm]}, gRule] (6.60,1.40) -- (7.40,1.40);
+\node[font=\scriptsize, gRule, anchor=south] at (7.00,1.50) {intersect};
 
 % --- the surviving order -----------------------------------------------------
-\node[anchor=south west, font=\scriptsize\itshape, gRule] at (7.6,3.05)
+\node[anchor=south west, font=\footnotesize\itshape, gRule] at (7.6,3.32)
   {what no cell contradicts};
 
 % tiers as bands, so the surviving structure is read at a glance
-\fill[gPublished!7] (7.75,1.95) rectangle (9.55,2.65);
+\fill[gRule!7] (7.75,2.075) rectangle (9.55,2.625);
 \fill[gRule!7]      (7.75,1.05) rectangle (9.55,1.6);
 \fill[gRule!7]      (7.75,0.15) rectangle (9.55,0.7);
 
