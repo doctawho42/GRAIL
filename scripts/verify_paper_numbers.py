@@ -573,8 +573,8 @@ def main() -> int:
                 _tb += list(json.loads(_q.read_text())["boards"].values())
         _mt = re.search(r"[Tt]ranslation's (\w+) boards contest \$(\d+)\$ pairs,? of which \$(\d+)\$ "
                         r"survive their own boards' correction and \$(\d+)\$ the union of all\s*"
-                        r"twenty-three\. Not one of the \$(\d+)\$ reverses an ordering its own "
-                        r"published cell had separated from zero[;:] all (\w+) such reversals are "
+                        r"twenty-four\. Not one of the \$(\d+)\$ reverses an ordering its own "
+                        r"published cell had separated from zero[;.] All (\w+) such reversals are "
                         r"the budget's, never the", flat)
         checks.append((bool(_mt), "the translation-subject sentence parses", "present",
                        "matched" if _mt else "not matched", ""))
@@ -737,7 +737,7 @@ def main() -> int:
             _cur, _min = CP["subsets"]["curated"]["coverage"], CP["subsets"]["mined"]["coverage"]
             _curx, _minx = PK["coverage"]["curated|addhs=1"], PK["coverage"]["mined|addhs=1"]
             _curf, _minf = PK["coverage"]["curated|addhs=1|floor"], PK["coverage"]["mined|addhs=1|floor"]
-            mp = re.search(r"its curated fifth\s*reaches \$([\d.]+)\$ against the mined majority's "
+            mp = re.search(r"[Ii]ts curated fifth reaches \$([\d.]+)\$ against the mined majority's "
                            r"\$([\d.]+)\$ as deployed, and \$([\d.]+)\$ against \$([\d.]+)\$ with"
                            r"\s*hydrogens expanded\. The gap is \$\+([\d.]+)\$ one way and "
                            r"\$-([\d.]+)\$ the other, and the validity floor\s*carries \$([\d.]+)\$",
@@ -776,8 +776,8 @@ def main() -> int:
                            f"{CP['n']} substrates, {CP['match']}",
                            f"{PK['config']['n_substrates']} substrates, {PK['config']['match']}",
                            "results/provenance_knob_attribution__clean_test.json"))
-            mt = re.search(r"all\s*\$([\d,{}]+)\$ patterns in the standard retrosynthesis template "
-                           r"library pin a connection count, and\s*expanding hydrogens costs that "
+            mt = re.search(r"[Aa]ll\s*\$([\d,{}]+)\$ patterns in the standard retrosynthesis template "
+                           r"library pin a connection count[.,] (?:and )?\s*[Ee]xpanding hydrogens costs that "
                            r"library \$(\d+)\\%\$ of the template--product pairs it can match, though"
                            r"\s*only \$(\d+)\$ of \$(\d+)\$ products lose every applicable template",
                            flat)
@@ -814,7 +814,7 @@ def main() -> int:
     if _pd.exists():
         PDx = json.loads(_pd.read_text())
         m = re.search(r"The \$(\d+)\$ the abstract leads with is the weaker reading.*?strictest number has "
-                      r"\$(\d+)\$, and one who wants what the conventions cost has \$(\d+)\$", flat)
+                      r"\$(\d+)\$[.,] (?:and )?[Oo]ne who wants what the conventions cost has \$(\d+)\$", flat)
         checks.append((bool(m), "the decomposition trailer parses", "present",
                        "matched" if m else "not matched", ""))
         if m:
@@ -877,7 +877,7 @@ def main() -> int:
     if _pa.exists() and _rpa.exists():
         PA, RPA = json.loads(_pa.read_text()), json.loads(_rpa.read_text())
         m = re.search(r"changes an ordering in \$(\d+)\$ of \$(\d+)\$ comparisons and \$(\d+)\$ of "
-                      r"\$(\d+)\$ on the metabolite split, and none of the \$(\d+)\$ interactions "
+                      r"\$(\d+)\$ on the metabolite split[.,] (?:and )?[Nn]one of the \$(\d+)\$ interactions "
                       r"survives Holm at \$([\d.]+)\$", flat)
         checks.append((bool(m), "the population sentence parses", "present",
                        "matched" if m else "not matched", ""))
@@ -956,7 +956,7 @@ def main() -> int:
         m = re.search(r"contests exactly two of the \$(\d+)\$ pairs", flat)
         check("docking, pairs the source's finding is read from", m and m.group(1), PB["n_pairs"],
               "results/robust_order_posebusters.json")
-        m = re.search(r"read out of \$(\d+)\$ pairs by \$(\d+)\$ cells, so it is granted inside a "
+        m = re.search(r"read out of \$(\d+)\$ pairs by \$(\d+)\$ cells[.,] so it is granted inside a "
                       r"family of \$(\d+)\$", flat)
         checks.append((bool(m), "the docking family sentence parses", "present",
                        "matched" if m else "not matched", ""))
@@ -986,7 +986,7 @@ def main() -> int:
               "results/robust_order_posebusters.json")
         # the convention the paper says costs nothing, which was prose with no artifact behind it
         _fl = PB["config"].get("flatness_checks_included_instead", {})
-        m = re.search(r"including them changes the published cell by \$([\d.]+)\$", flat)
+        m = re.search(r"[Ii]ncluding them changes the published cell by \$([\d.]+)\$", flat)
         check("docking, what including the flatness checks costs", m and m.group(1),
               _fl.get("largest_change_to_a_system_in_the_published_cell"),
               "results/robust_order_posebusters.json")
@@ -1277,7 +1277,7 @@ def main() -> int:
         # the larger one: a claim that held under each is not the claim that holds under the union
         m2 = re.search(r"\$(\d+)\$ are reversed by a declared choice and survive their\s*own "
                        r"board's correction, and \$(\d+)\$ of those survive a single correction "
-                       r"over all \$24\$ grids at once", flat)
+                       r"over all \$24\$ grids", flat)
         S2 = UN["certified_pairs_the_published_cell_had_separated"]
         checks.append((bool(m2), "the abstract states both corrections separately", "present",
                        "matched" if m2 else "not matched", "results/union_multiplicity.json"))
@@ -1285,15 +1285,16 @@ def main() -> int:
               "results/union_multiplicity.json")
         check("the abstract's union count", m2 and m2.group(2), S2["union"],
               "results/union_multiplicity.json")
-        m2 = re.search(r"and \$(\d+)\$ of the \$(\d+)\$ certified reversals of every kind surviv(?:ing|e) "
+        m2 = re.search(r"[Oo]f the \$(\d+)\$ certified reversals of every kind, \$(\d+)\$ surviv(?:ing|e) "
                        r"one correction over the union", flat)
         checks.append((bool(m2), "the contribution states the union correction", "present",
                        "matched" if m2 else "not matched", ""))
         if m2:
-            check("union, the contribution's survivors", m2.group(1),
-                  UN["certified_pairs"]["union"], "results/union_multiplicity.json")
-            check("union, the contribution's total", m2.group(2),
+            # the sentence now names the total first and the survivors second
+            check("union, the contribution's total", m2.group(1),
                   UN["certified_pairs"]["per_board"], "results/union_multiplicity.json")
+            check("union, the contribution's survivors", m2.group(2),
+                  UN["certified_pairs"]["union"], "results/union_multiplicity.json")
         m = re.search(r"at\s*\$\\alpha/24\$ within each grid, gives \$(\d+)\$", flat)
         check("union, the alpha split", m and m.group(1), UN["certified_pairs"]["alpha_split"],
               "results/union_multiplicity.json")
@@ -1482,7 +1483,7 @@ def main() -> int:
                   "results/criterion_power.json")
         # the body states the same power in rounded form; both printings are bound
         m = re.search(r"the matching rule erases at most \$([\d.]+)\$ of a margin\s*the published "
-                      r"cell had separated, and the median comparison erases none of it", flat)
+                      r"cell had separated[.,] (?:and )?[Tt]he median comparison erases none of it", flat)
         checks.append((bool(m), "the body states the size of the null", "present",
                        "matched" if m else "not matched", ""))
         if m:
@@ -1585,10 +1586,10 @@ def main() -> int:
         # sets of numbers and none matched the artifact, because this gate matched one printing.
         # Every printing is found by its own pattern and each is held; missing one now fails.
         printings_pd = []
-        for _pat in (r"takes \$298\$ places to \$(\d+)\$[,:] (?:so )?\$?(\d+)\$? (?:go|ranks go) to a "
+        for _pat in (r"takes \$298\$ places to \$(\d+)\$[,:.] (?:[Ss]o )?\$?(\d+)\$? (?:go|ranks go) to a "
                      r"benchmark's own (?:power|resolving power)\s*before any convention is varied "
                      r"and \$(\d+)\$ more to the grid",
-                     r"the \$298\$ published places support \$(\d+)\$, and the \$(\d+)\$ lost go to "
+                     r"the \$298\$ published places support \$(\d+)\$[.,] (?:and )?[Tt]he \$(\d+)\$ lost go to "
                      r"the benchmark's power before any convention is varied\..*?the grid costs "
                      r"\$(\d+)\$ on top"):
             printings_pd += re.findall(_pat, flat)
@@ -1623,7 +1624,7 @@ def main() -> int:
                        f"{PD['supported_when_its_own_cell_separates']}, "
                        f"-{PD['lost_to_the_grid']}={PD['supported_when_every_cell_separates']}",
                        "results/places_decomposition.json"))
-        mpd = re.search(r"the \$298\$ published places support \$(\d+)\$, and the \$(\d+)\$ lost go to "
+        mpd = re.search(r"the \$298\$ published places support \$(\d+)\$[.,] (?:and )?[Tt]he \$(\d+)\$ lost go to "
                         r"the benchmark's power before any convention is varied\..*?the grid "
                         r"costs \$(\d+)\$ on top", flat)
         checks.append((bool(mpd), "the places decomposition parses", "present",
@@ -1960,7 +1961,7 @@ def main() -> int:
                 ("intervals excluding zero, main body",
                  r"Of its \$448\$ testable cells, \$(\d+)\$ have intervals excluding zero",
                  len(L["certified_interactions"])),
-                ("pairs exchanging at top-1", r"five of twenty-one pairs exchange",
+                ("pairs exchanging at top-1", r"[Ff]ive of (?:the )?twenty-one pairs exchange",
                  None)):
             if value is None:
                 checks.append((bool(re.search(pat, flat)), label, "present", "phrase present", ""))
@@ -1969,7 +1970,7 @@ def main() -> int:
             check(label, m and m.group(1), value, "from results/retro_leaderboard_cluster0.json")
         # the printed word must match the measured count of exchanging pairs
         WORDS = {"Five": 5, "Four": 4, "Six": 6, "Three": 3, "Seven": 7}
-        m = re.search(r"(\w+) of the twenty-one pairs exchange", flat)
+        m = re.search(r"(\w+) of (?:the )?twenty-one pairs exchange", flat)
         check("exchanging pairs, counted", m and WORDS.get(m.group(1)),
               len(L["pairs_that_exchange"]["top1"]), "pairs that exchange at top-1")
         # every accuracy the table prints, against the artifact that produced it
@@ -2815,7 +2816,7 @@ def main() -> int:
     if pp.exists():
         PP = json.loads(pp.read_text())["totals"]
         flat = re.sub(r"\s+", " ", whole)
-        mpp = re.search(r"twenty-three tables that leaves \$(\d+)\$ of \$([\d,{}]+)\$ pairs "
+        mpp = re.search(r"twenty-four tables that leaves \$(\d+)\$ of \$([\d,{}]+)\$ pairs "
                         r"failing to dominate, (?:which are )?exactly the pairs some cell reverses", flat)
         checks.append((bool(mpp), "the screen-predicts-order sentence parses", "present",
                        "matched" if mpp else "not matched", ""))
@@ -3133,9 +3134,9 @@ def main() -> int:
     if dm.exists():
         DM = json.loads(dm.read_text())
         flat = re.sub(r"\s+", " ", whole)
-        md = re.search(r"read out of \$(\d+)\$ pairs by \$(\d+)\$ cells, so it is granted inside a "
-                       r"family of \$(\d+)\$\s*cell-level tests[,.]? (?:--- )?and correcting for them takes it "
-                       r"back\. Neither reversal survives Holm.*?the smallest reversal\s*reaches "
+        md = re.search(r"read out of \$(\d+)\$ pairs by \$(\d+)\$ cells[.,] so it is granted inside a "
+                       r"family of \$(\d+)\$\s*cell-level tests[.,] (?:and )?[Cc]orrecting for them takes it "
+                       r"back\. Neither reversal survives Holm.*?[Tt]he smallest reversal\s*reaches "
                        r"\$([\d.]+)\\times10\^\{-(\d+)\}\$ against a threshold of "
                        r"\$([\d.]+)\\times10\^\{-(\d+)\}\$", flat)
         checks.append((bool(md), "the docking multiplicity sentence parses", "present",

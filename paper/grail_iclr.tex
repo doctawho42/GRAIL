@@ -47,36 +47,36 @@ Leaderboard Entitles a Reader to Quote}
 \maketitle
 
 \begin{abstract}
-A leaderboard reports one total order over its methods, computed under evaluation choices that its
-paper does not state: a rule deciding when a predicted structure counts as the reference, crossed
-with a second choice the field reports apart from its ranking and never jointly with it, which is an
-output budget, a post-processing step or a normalisation. This paper asks
-what part of such an ordering survives when those choices are varied and nothing else is. We fix
-the items and the released predictions, re-score them in every cell of a declared grid of choices,
-and keep the pairwise orderings that no cell contradicts.
+A leaderboard reports one total order over its methods, computed under evaluation choices its paper
+does not state. Those choices are a rule deciding when a predicted structure counts as the reference, crossed
+with a second choice the field reports apart from its ranking and never jointly with it. The second
+is an output budget, a post-processing step or a normalisation. We ask what part of such an ordering
+survives when those choices are varied and nothing else is. We fix the items and the released
+predictions, re-score them in every cell of a declared grid of choices, and keep the pairwise
+orderings that no cell contradicts.
 
 We do this for $24$ leaderboards in four domains --- retrosynthesis, metabolite prediction,
 protein--ligand docking, and two editions of one machine-translation shared task --- retraining
 nothing and reimplementing no method. Together those tables rank $298$ systems, and the orderings
 that survive support $170$ ranks. That count asks only that no cell contradict the published order.
-Asking each cell to separate the pair instead is a second, stricter ladder on the same $298$, and it
-is the one that says where the gap goes. Most of it is not the choices: requiring a leaderboard's
-own published cell to separate a pair at all takes $298$ places to $139$, so $159$ ranks go to a
-benchmark's own resolving power before any convention is varied and $40$ more to the grid, leaving
-$99$. The surviving share runs from none of
-three to nine tenths, and does not replicate between two editions of the same shared task on the
-same language pair, so it is a property of a table and its grid rather than of a benchmark.
+Asking each cell to separate the pair instead is a second, stricter ladder on the same $298$. It is
+the one that says where the gap goes. Most of it is not the choices. Requiring a leaderboard's own
+published cell to separate a pair takes $298$ places to $139$. So $159$ ranks go to a benchmark's
+own resolving power before any convention is varied and $40$ more to the grid, leaving $99$. The
+surviving share runs from none of three to nine tenths, and does not replicate between two editions
+of the same shared task on the same language pair. So it is a property of a table and its grid
+rather than of a benchmark.
 
-Of the orderings a table did establish, $6$ are reversed by a declared choice and survive their
-own board's correction, and $5$ of those survive a single correction over all $24$ grids at once.
-None of the six is the matching rule's, which is the choice this literature discusses most.
-Deciding which orderings are at risk needs no pairwise statistic: a change of criterion reverses a
-pair only if it moves the two systems apart by more than the larger of the margins it connects, so
-every verdict follows from $n$ scorings per cell, and resampling enters only to tell a contested
-pair from an unresolved one. The four choices were found by measuring one predictor in one domain,
-and that case study is reported in full. We release the protocol, the audited split, the frozen
-predictions of every method compared, a checker that reports these choices from released files
-alone, and the analysis code.
+Of the orderings a table did establish, $6$ are reversed by a declared choice and survive their own
+board's correction, and $5$ of those survive a single correction over all $24$ grids. None of the
+six is the matching rule's, which is the choice this literature discusses most. Deciding which
+orderings are at risk needs no pairwise statistic. A change of criterion reverses a pair only if it
+moves the two systems apart by more than the larger of the margins it connects. So every verdict
+follows from $n$ scorings per cell. Resampling enters only to tell a contested pair, one a cell
+reverses, from an unresolved one. The four choices were found by measuring one predictor in one
+domain, and that case study is reported in full. We release the protocol, the audited split, the
+frozen predictions of every method compared, a checker that reports these choices from released
+files alone, and the analysis code.
 \end{abstract}
 
 \section{Introduction}
@@ -84,44 +84,44 @@ alone, and the analysis code.
 
 This is a survey of published leaderboards and an instrument for reading them. The instrument
 takes a leaderboard's released predictions and a declared set of evaluation choices and returns the
-part of its ordering that no choice contradicts; the survey applies it to twenty-four leaderboards
-in four domains. One predictor in one domain is used to find the choices worth declaring, and that
+part of its ordering that no choice contradicts. The survey applies it to twenty-four leaderboards
+in four domains. One predictor in one domain is used to find the choices worth declaring. That
 predictor is instrumentation rather than a contribution: it is not offered as a state of the art,
 and nothing in the survey depends on how it performs.
 
-The domain the choices were found in evaluates chemistry. Machine learning is used to predict what
-a molecule will undergo: the metabolites enzymes will convert a drug into, the reactants a target
-compound can be made from, the molecules that meet a design objective. All three are evaluated the
-same way. A method proposes a ranked list of structures, a curated reference records which are
-correct, and the method is scored by how often the two agree.
+The domain the choices were found in evaluates chemistry. Machine learning predicts what a molecule
+will undergo: the metabolites enzymes will convert a drug into, the reactants a target compound can
+be made from, the molecules that meet a design objective. All three are evaluated the same way. A
+method proposes a ranked list of structures, a curated reference records which are correct, and it
+is scored by how often the two agree.
 
-Whether two structures agree is not self-evident. A single compound can be drawn in several ways
-that a chemist reads as one substance: as either of two tautomers, which differ in the position of a
-mobile hydrogen; with or without the three-dimensional arrangement at a stereocentre; as any of
-several equivalent strings. An evaluation must therefore fix a rule that decides when a predicted
+Whether two structures agree is not self-evident. A single compound can be drawn in several ways a
+chemist reads as one substance. It may be drawn as either of two tautomers, which differ in the
+position of a mobile hydrogen; with or without the three-dimensional arrangement at a stereocentre;
+as any of several equivalent strings. An evaluation must fix a rule deciding when a predicted
 structure counts as the reference structure. It must also fix how many candidates a method may
 propose, because a method that proposes more will match more. Where predictions are generated by
 applying reaction templates, it must fix the convention by which a template is matched against a
-molecule, because a template that names a hydrogen explicitly will not match a structure whose
-hydrogens are implicit. And it must fix which molecules the test set contains. These four choices
-are made in every published evaluation and stated in almost none.
+molecule. A template that names a hydrogen explicitly will not match a structure whose hydrogens are
+implicit. And it must fix which molecules the test set contains. These four choices are made in
+every published evaluation and stated in almost none.
 
 That evaluation choices can change conclusions is established in several fields
 \citep{Maziarz_2025, Zhong_2020, Kamalloo_2023, agarwal2026metric}. What is not established is how
-far any single choice moves a ranking when it is the only thing that changes, and in particular
-whether a choice can \emph{reorder} a leaderboard rather than shifting every system on it by a
-similar amount. The distinction matters, because a shift leaves conclusions intact and a reordering
-does not.
+far any single choice moves a ranking when it is the only thing that changes. It is also not
+established whether a choice can \emph{reorder} a leaderboard rather than shifting every system on
+it by a similar amount. The distinction matters, because a shift leaves conclusions intact and a
+reordering does not.
 
-We answer that question by re-scoring predictions that other groups have already released, so that
-nothing is retrained and no method is reimplemented. Two of the four choices reorder a published
-leaderboard, and those reorderings are certified as interactions between method and choice rather
-than asserted from a change in rank. A third changes a reported quantity, what a rule base
-reaches, and reverses the ordering of the two halves of one bank without touching a leaderboard. The fourth is undeclared but produces no interaction that
-survives correction. Separating those two statements is possible only because the same test is
-applied to all four. A single condition governs when a reordering occurs: the choice must move two
-systems apart by more than the margin between them, which makes a benchmark more vulnerable as its
-leading methods converge.
+We answer that question by re-scoring predictions that other groups have released, so nothing is
+retrained and no method is reimplemented. Two of the four choices reorder a published leaderboard.
+Those reorderings are certified as interactions between method and choice rather than asserted from
+a change in rank. A third changes a reported quantity, what a rule base reaches, and reverses the
+ordering of the two halves of one bank without touching a leaderboard. The fourth is undeclared but
+produces no interaction that survives correction. Separating those two statements is possible only
+because the same test is applied to all four. A single condition governs when a reordering occurs:
+the choice must move two systems apart by more than the margin between them. That makes a benchmark
+more vulnerable as its leading methods converge.
 
 \paragraph{Contributions.}
 \begin{itemize}\itemsep2pt \parskip0pt
@@ -134,70 +134,68 @@ leading methods converge.
   domains: retrosynthesis, metabolite prediction, protein--ligand docking and two editions of one
   machine translation task. They publish $298$ places, and what survives supports $170$. The share
   runs from none of three to nine tenths, and does not replicate between two editions of the same
-  task on the same language pair, so it is a property of a table and its grid rather than of a
+  task on the same language pair. So it is a property of a table and its grid rather than of a
   benchmark.
 \item \textbf{What the gap is made of, which is mostly not the choices.} Requiring only a
-  leaderboard's own cell to separate a pair already takes $298$ places to $139$, so $159$ ranks go
-  to a benchmark's own power before any convention is varied and $40$ more to the grid. On none of
+  leaderboard's own cell to separate a pair takes $298$ places to $139$. So $159$ ranks go to a
+  benchmark's own power before any convention is varied and $40$ more to the grid. On none of
   the $24$ boards does the matching criterion certify a reversal of an ordering a published cell had
   separated. Each board's verdict is corrected by Holm over the cell-level tests its own grid
-  creates, and $15$ of the $23$ certified reversals of every kind survive one correction over the
-  union of all twenty-four grids. What the criterion does is exchange positions a benchmark never
-  established.
+  creates. Of the $23$ certified reversals of every kind, $15$ survive one correction over the union
+  of all twenty-four grids. The criterion exchanges positions a benchmark never established.
 \item \textbf{The arithmetic.} A pair's ordering survives a change of criterion unless the change
   moves the two apart by more than the larger of the margins it connects. That identity is why every
   dominance verdict follows from $n$ scorings per cell with no pairwise statistic. A resample enters
   only to tell a contested pair from an unresolved one.
 \item \textbf{The same reversal inside a rule bank, with no leaderboard involved.} The convention
   a template needs is a property of whoever wrote it, so a bank assembled from several sources has
-  no single setting that suits all of it. Scoring one bank of $\nbank$ rules on the same substrates
-  under two conventions that are both defensible and both correct arithmetic, its curated fifth
+  no single setting that suits all of it. One bank of $\nbank$ rules is scored on the same
+  substrates under two conventions, both defensible and both correct arithmetic. Its curated fifth
   reaches $0.487$ against the mined majority's $0.800$ as deployed, and $0.668$ against $0.332$ with
   hydrogens expanded. The gap is $+0.313$ one way and $-0.336$ the other, and the validity floor
-  carries $0.000$ of it: the convention does not move the number, it exchanges which half of the
-  bank carries it (Appendix~\ref{app:provenance}). The hazard is not confined to this domain: all
-  $42{,}554$ patterns in the standard retrosynthesis template library pin a connection count, and
-  expanding hydrogens costs that library $82\%$ of the template--product pairs it can match, though
+  carries $0.000$ of it. The convention does not move the number; it exchanges which half of the
+  bank carries it (Appendix~\ref{app:provenance}). The hazard is not confined to this domain. All
+  $42{,}554$ patterns in the standard retrosynthesis template library pin a connection count.
+  Expanding hydrogens costs that library $82\%$ of the template--product pairs it can match, though
   only $11$ of $500$ products lose every applicable template
   (Appendix~\ref{app:retroconvention}).
 \item \textbf{The case study and the release.} The four choices were found by measuring one
   predictor in one domain, and Appendix~\ref{app:casestudy} reports that case study in full. The
-  output budget reorders a metabolite leaderboard with every ranking held fixed. The population a dataset name refers to is
-  ambiguous, but reorders nothing that survives correction. We release the protocol, the audited
-  split, the frozen predictions of every method compared, a checker that reports these choices from
-  released files alone, and the analysis code.
+  output budget reorders a metabolite leaderboard with every ranking held fixed. The population a
+  dataset name refers to is ambiguous, but reorders nothing that survives correction. We release the
+  protocol, the audited split, the frozen predictions of every method compared, a checker that
+  reports these choices from released files alone, and the analysis code.
 \end{itemize}
 
 Two claims follow, and they are different sizes. \textbf{C1}: most of what a leaderboard prints it
 never established: the pairs its own cell cannot separate from zero. \textbf{C2}: of the pairs it
 did establish, six orderings are reversed by a declared choice and survive their own board's
-correction, five of them the union's as well, and none is the matching rule's. Whenever both are in view, the rest of the paper says which of the
-two a number belongs to.
-
+correction. Five of them survive the union's as well, and none is the matching rule's. Whenever both
+are in view, the rest of the paper says which of the two a number belongs to.
 \section{Related Work}
 \label{sec:related}
 
 \paragraph{The domain, and what has been compared in it.} Rule-based metabolite prediction was
 established by SyGMa \citep{Ridder_2008}, which encodes phase I and phase II biotransformations as
-templates and scores products by how often each template yields an observed metabolite. GLORYx
+templates. It scores products by how often each template yields an observed metabolite. GLORYx
 \citep{de_Bruyn_Kops_2020} couples a comparable library to a learned model of sites of metabolism.
 BioTransformer \citep{Djoumbou_Feunang_2019} extends templates to microbial and environmental
 transformations. MetaTrans \citep{Litsa_2020} and MetaPredictor \citep{Zhu_2024} dispense with
 templates altogether. A further wave has appeared since: a chemical language model
-\citep{Larsson_2025}, a mechanistically informed graph framework \citep{Zhou_2025}, a web server
-predicting pathway, site and product together \citep{Zhou_2026}, and a preprint predicting all
-three jointly \citep{Chavan_2026}. None is on the board below, because that board carries the
-methods this work could run and freeze on this split rather than the methods the field has; the
-board is therefore a weak sample of the field even where the instrument reading it is not. Comparative studies recover the same coverage-precision trade-off on 85
-agrochemical parents \citep{Scholz_2023}, on 37 chemicals where the broadest-coverage system also
-produced the most incorrect predictions \citep{Boyce_2022}, and on radiolabelled ADME data
-\citep{Gao_2026}. Each fixes one criterion for a correct prediction, and none reports how sensitive
-its conclusion is to that choice. That one structure can be written more than one way is documented
-independently of this domain. \citet{Dhaked_2020} catalogue tautomeric transformations the standard
-identifier normalises only a subset of. \citet{Hahnke_2018} report roughly $60\%$ of PubChem records
-differing from their canonical InChI. \citet{Mansouri_2024} describe a standardisation pipeline.
-That literature treats standardisation as preprocessing applied before an analysis, not as a
-parameter of the analysis.
+\citep{Larsson_2025} and a mechanistically informed graph framework \citep{Zhou_2025}. A web server
+predicts pathway, site and product together \citep{Zhou_2026}. A preprint predicts all three jointly
+\citep{Chavan_2026}. None is on the board below, because that board carries the methods this work
+could run and freeze on this split rather than the methods the field has. The board is therefore a
+weak sample of the field even where the instrument reading it is not. Comparative studies recover
+the same coverage-precision trade-off on 85 agrochemical parents \citep{Scholz_2023}. It recurs on
+37 chemicals, where the broadest-coverage system also produced the most incorrect predictions
+\citep{Boyce_2022}, and on radiolabelled ADME data \citep{Gao_2026}. Each fixes one criterion for a
+correct prediction. None reports how sensitive its conclusion is to that choice. That one structure
+can be written more than one way is documented independently of this domain. \citet{Dhaked_2020}
+catalogue tautomeric transformations the standard identifier normalises only a subset of.
+\citet{Hahnke_2018} report roughly $60\%$ of PubChem records differing from their canonical InChI.
+\citet{Mansouri_2024} describe a standardisation pipeline. That literature treats standardisation as
+preprocessing, not as a parameter of the analysis.
 
 \looseness=-1
 \paragraph{Evaluation choices in adjacent fields.} None of the four choices is in doubt in general.
@@ -209,7 +207,7 @@ spectrometry. Outside chemistry, a different equivalence rule misrepresents the 
 text-to-SQL \citep{Zhong_2020} and changes which question-answering system leads
 \citep{Kamalloo_2023}. On the aggregate, the metric inverts the winner in drug-response prediction
 \citep{agarwal2026metric}. The standard score in structure-based drug design rises with output atom
-count rather than quality \citep{Gao_2025_reframing}, which motivated rebuilding that benchmark
+count rather than quality \citep{Gao_2025_reframing}. It motivated rebuilding that benchmark
 \citep{Lin_2025_cbgbench}. Weighting by difficulty reorders natural-language leaderboards
 \citep{Mishra_2021, Rodriguez_2021}. On the output budget the literature is older: ranked output
 evaluated at a declared cut-off \citep{Jarvelin_2002}, under incomplete judgements
@@ -220,21 +218,20 @@ cut-off metric whose winner changes with how the candidates entering it are coun
 \looseness=-1
 \paragraph{Sweeping the choices rather than fixing them.} Multiverse analysis \citep{Steegen_2016}
 and specification-curve analysis \citep{Simonsohn_2020} compute a result in every cell of a declared
-grid of defensible analytic choices and report what survives all of them. The machine-learning
+grid of defensible analytic choices. They report what survives all of them. The machine-learning
 counterparts account for benchmark variance \citep{Bouthillier_2021} and test a claim jointly across
 datasets \citep{Dror_2017}. Those designs sweep an \emph{estimate}. Section~\ref{sec:robust} sweeps
-an \emph{order}, whose intersection over cells is a partial order rather than a distribution. So
-what survives has a share and a longest chain, both computable from released prediction files.
-Closest in aim is work that perturbs a leaderboard and reports how far it moves.
-\citet{Knowles_2021} resamples the human evaluation behind the WMT ranking. \citet{Jin_2026}
-corrects the annotations of two text-to-SQL benchmarks and reports shifts of up to nine places. Both
-establish that a ranking moves. Neither returns an object a reader can quote in its place, nor a
-rule that says in advance which pairs will move. The same fragility is reported outside chemistry:
-holistic re-scoring changes which language model leads \citep{Liang_2023_helm}, a retrieval
-benchmark's zero-shot ordering depends on the suite it is read on \citep{Thakur_2021_beir}, and an
-arena's ranking reflects who was allowed to submit how often \citep{Singh_2025_illusion}.
-Information retrieval has argued the statistical half of this for longer than machine learning has
-\citep{Sakai_2014, Buckley_2004}.
+an \emph{order}, whose intersection over cells is a partial order rather than a distribution. What
+survives has a share and a longest chain, both computable from released prediction files. Closest in
+aim is work that perturbs a leaderboard and reports how far it moves. \citet{Knowles_2021} resamples
+the human evaluation behind the WMT ranking. \citet{Jin_2026} corrects the annotations of two
+text-to-SQL benchmarks and reports shifts of up to nine places. Both establish that a ranking moves.
+Neither returns an object a reader can quote in its place, nor a rule that says in advance which
+pairs will move. The same fragility is reported outside chemistry. Holistic re-scoring changes which
+language model leads \citep{Liang_2023_helm}. A retrieval benchmark's zero-shot ordering depends on
+the suite it is read on \citep{Thakur_2021_beir}. An arena's ranking reflects who was allowed to
+submit how often \citep{Singh_2025_illusion}. Information retrieval has argued the statistical half
+of this for longer than machine learning has \citep{Sakai_2014, Buckley_2004}.
 
 \paragraph{Staged evaluation, and what is left unestablished.} Separating what a candidate generator
 reaches from what a later stage retains is standard \citep{Wang_2011_cascade, Covington_2016,
@@ -258,47 +255,47 @@ table reports one cell without saying which. What survives is the intersection. 
 and $b$ beat $c$ in every cell and $c$ beats $d$ in every cell, but the second axis puts $b$ above
 $a$ where the published cell puts $a$ above $b$. That pair survives nothing, so the four published
 places support three. The criterion axis changes no ordering here, which is the shape the survey
-finds on twenty-three real boards.}
+finds on twenty-four real boards.}
 \label{fig:schematic}
 \end{figure}
 
 The survey sweeps two of the four choices of \S\ref{sec:intro}, the two a released prediction file
-can be re-scored under: the matching rule, which every domain has, and whichever second choice a
-field reports apart from its ranking. The other two are the hydrogen convention a template
+can be re-scored under. They are the matching rule, which every domain has, and whichever second
+choice a field reports apart from its ranking. The other two are the hydrogen convention a template
 match assumes and which molecules the test set contains. Neither can be varied without re-running
-the predictors, so both are measured in the case study instead (\S\ref{sec:case}). Which boards enter is
-decided by two rules fixed before any share was read, and one of them excludes a board this paper
-would have benefited from: a molecular-generation set whose headline quantity counts \emph{distinct}
-canonical strings, so its criterion defines the metric rather than parametrising it. Its pairs are
-the furthest apart of any board measured, and admitting it would have raised the shares reported
-below (Appendix~\ref{app:robust}).
+the predictors, so both are measured in the case study instead (\S\ref{sec:case}). Which boards
+enter is decided by two rules fixed before any share was read. One of them excludes a board this
+paper would have benefited from: a molecular-generation set whose headline quantity counts
+\emph{distinct} canonical strings. Its criterion defines the metric rather than parametrising it.
+Its pairs are the furthest apart of any board measured. Admitting it would have raised the shares
+reported below (Appendix~\ref{app:robust}).
 
 \looseness=-1
 A leaderboard reports a total order computed in one cell of a grid its paper does not report. We fix
 the items and the predictions and ask of each pair whether the ordering the table asserts holds in
 every other cell. A cell is a criterion crossed with a second axis. The criterion is the rule
-deciding when a prediction is the reference: in the prediction domains the four are canonical
+deciding when a prediction is the reference. In the prediction domains the four are canonical
 \textsc{smiles} equality, the full \textsc{inchikey}, its stereo-blind first block, and a
-tautomer-aware hash; in docking, distance to the crystal pose at two tolerances with and without a
-validity screen; in translation, what an expert annotation is read as. The second axis is what the
-field reports apart from its ranking and never jointly with it: a budget, a post-processing step, or
-a normalisation (Appendix~\ref{app:robustorder}). The higher system \emph{dominates} the lower when
-the margin is positive in every cell, and is \emph{separated in every cell} when a paired
+tautomer-aware hash. In docking they are distance to the crystal pose at two tolerances with and
+without a validity screen; in translation, what an expert annotation is read as. The second axis is
+what the field reports apart from its ranking and never jointly with it: a budget, a post-processing
+step, or a normalisation (Appendix~\ref{app:robustorder}). The higher system \emph{dominates} the
+lower when the margin is positive in every cell, and is \emph{separated in every cell} when a paired
 interval excludes zero in each. Dominance is the intersection of the per-cell orders, so it is
-transitive and is the finest relation no declared choice can contradict. Separation is a
+transitive and the finest relation no declared choice can contradict. Separation is a
 sub-relation, reported apart because an interval condition is not transitive.
 
 Formally, fix a set of systems $S$, a set of items, and a grid $C$ of cells. In cell $c$ each system
 has a mean score, and those means induce a total preorder $\prec_c$ on $S$. A published table
-reports $\prec_{c_0}$ for one cell $c_0$ its paper does not name. Write $\prec_{\!*} = \bigcap_{c \in
-C} \prec_c$. A board ranking $n$ systems prints $n$ \emph{places}, the rank slots a reader takes away
-from it. What $\prec_{\!*}$ supports is its longest chain: the number of places that survive is the
+reports $\prec_{c_0}$ for one cell $c_0$ its paper does not name. Write $\prec_{\!*} = \bigcap_{c \in C} \prec_c$.
+A board ranking $n$ systems prints $n$ \emph{places}, the rank slots a reader takes away
+from it. What $\prec_{\!*}$ supports is its longest chain. The number of places that survive is the
 length of the longest sequence of systems each of which dominates the next.
 
 This relation is not new. It is the unanimity, or Pareto, relation on a profile of preorders, which
-social choice has studied since \citet{Arrow_1951} and \citet{Sen_1970}, and the two facts below are
-its standard properties. They are stated because the survey quantifies over them; what this paper
-contributes is the measurement, not the relation.
+social choice has studied since \citet{Arrow_1951} and \citet{Sen_1970}. The two facts below are its
+standard properties. They are stated because the survey quantifies over them. This paper contributes
+the measurement, not the relation.
 
 \begin{quote}
 \textbf{Proposition 1.} $\prec_{\!*}$ is a strict partial order, and it is the finest relation on
@@ -324,11 +321,10 @@ rather than the point: each declared axis alone, then their product
 (Appendix~\ref{app:robustorder}).
 
 \looseness=-2
-All twenty-three are run on a grid of four
-criteria crossed with a second axis their field reports apart and never jointly: the budget a
-table is read at, whether a docked pose is minimised first, whether an error score is floored,
-or whether a human score is standardised within the annotator who gave it
-(Appendix~\ref{app:robust}).
+All twenty-four are run on a grid of four criteria crossed with a second axis their field
+reports apart and never jointly (Appendix~\ref{app:robust}). It is the budget a table is read at,
+whether a docked pose is minimised first, whether an error score is floored, or whether a human
+score is standardised within the annotator who gave it.
 
 \begin{figure}[t]
 \centering
@@ -387,22 +383,22 @@ Figure~\ref{fig:hasse} draws the seven-system table's surviving order as its tra
 \looseness=-2
 The last three columns are the ones to take away, because most of what a leaderboard prints was
 never resolved at all. Eleven of the seven-system table's twenty-one pairs carry margins its own
-benchmark cannot separate before any choice is varied. Across all twenty-three leaderboards the
-share runs from none of three to nine tenths with a median of $0.83$, so it is not a constant of the
+benchmark cannot separate before any choice is varied. Across all twenty-four leaderboards the
+share runs from none of three to nine tenths with a median of $0.83$. It is not a constant of the
 field, and none is reported. Summed, they publish $298$ places and support $170$. Most of that gap
 is a benchmark's own power rather than a convention (Appendix~\ref{app:robustorder}). The longest
 chain reports the same measurement in a readable form. Seven published places support $3$ tiers,
 resampling to $[3,3]$; nineteen support $9$; and the same seven systems take $4$ total orders across
-$16$ cells. The system that table places first is not in the top tier of what survives; the one it
+$16$ cells. The system that table places first is not in the top tier of what survives. The one it
 places second is the only system that is (Figure~\ref{fig:hasse}). Docking and translation are
 controls. Docking's field published its reversal already \citep{Buttenschoen_2024} and the grid
 recovers it. Translation's nineteen boards contest $71$ pairs, of which $11$ survive their own
-boards' correction and $4$ the union of all twenty-three. Not one of the $11$ reverses an ordering
-its own published cell had separated from zero; all six such reversals are the budget's, never the
+boards' correction and $4$ the union of all twenty-four. Not one of the $11$ reverses an ordering
+its own published cell had separated from zero. All six such reversals are the budget's, never the
 matching criterion's (Appendix~\ref{app:robustorder}). A null of that shape needs a size, and the
 identity supplies one without a further statistic. On the two retrosynthesis boards and the
 metabolite one, the matching rule erases at most $0.5755$ of a margin the published cell had
-separated, and the median comparison erases none of it. Docking is the exception and is reported as
+separated. The median comparison erases none of it. Docking is the exception and is reported as
 one. Translation supplies the first claim at scale, on pairs a table never established, and
 chemistry supplies the second. What does not survive on the docking board includes its own top pair.
 Because dominance is an intersection, all of this can only shrink as cells are added, so each axis
@@ -414,13 +410,13 @@ that should not be added together. In the first, a cell puts the two systems the
 round with a paired interval excluding zero, so a choice decides against the published ordering. In
 the second, no cell does so, and the published ordering merely fails to hold everywhere on a margin
 the benchmark cannot resolve. The first is called \emph{contested} and the second
-\emph{unresolved}. Only the count of contested pairs is evidence that a choice reverses anything,
-because counting sign changes alone would let noise on a tied pair read as a reversal, the error
-this instrument exists to avoid.
+\emph{unresolved}. Only the count of contested pairs is evidence that a choice reverses anything.
+Counting sign changes alone would let noise on a tied pair read as a reversal, the error this
+instrument exists to avoid.
 
 \paragraph{The five terms.} Three are verdicts and two are conditions on them. A pair
 \emph{dominates} when the higher system's margin is positive in every cell, which makes dominance an
-intersection of the per-cell orders and therefore transitive; it is \emph{separated in every cell}
+intersection of the per-cell orders and therefore transitive. It is \emph{separated in every cell}
 when a paired interval on that margin also excludes zero in each, reported apart because an interval
 condition is not transitive. A pair that does not dominate is \emph{contested} when some cell
 reverses it with a paired interval excluding zero, and \emph{unresolved} when none does and the
@@ -431,30 +427,30 @@ correction and nothing more.
 \subsection{A control with a published answer}
 
 \paragraph{Docking as a control with a published answer.} Three of the four boards are
-audited here for the first time, so the instrument's verdicts there are unvouched for: a rule that
+audited here for the first time, so the instrument's verdicts there are unvouched for. A rule that
 reports little surviving everywhere cannot be told apart from a rule that reports little because it
 is insensitive. Docking supplies the missing arm, because its own field published a reversal of
 this kind before we ran anything. \citet{Buttenschoen_2024} argued that a pose can sit within the
-field's distance tolerance of the crystal ligand and still be chemically impossible, named
+field's distance tolerance of the crystal ligand and still be chemically impossible. They named
 \textsc{uni-mol} as the program most affected, and released the per-pose table behind that argument.
 That table, read through the dominance order without reference to the argument, contests exactly two
 of the $21$ pairs, and both are \textsc{uni-mol} against programs it outranks on distance alone.
 That is the source's own finding, recovered by an instrument that was not told it.
 
 The verdict is read out of $21$ pairs by $8$ cells, so it is granted inside a family of $168$
-cell-level tests, and correcting for them takes it back. Neither reversal survives Holm at
+cell-level tests. Correcting for them takes it back. Neither reversal survives Holm at
 $\alpha=0.05$ over the family. The board scores each item a hit or a miss, so the exact conditional
-test on the discordant items is available, and these $p$ are that test; the smallest reversal
+test on the discordant items is available, and these $p$ are that test. The smallest reversal
 reaches $1.5\times10^{-3}$ against a threshold of $9.8\times10^{-4}$. Two exchanges out of $168$
-looks is about what noise alone would produce. This control therefore establishes that the grid
-recovers the source's finding as a contested verdict, and that it certifies neither half of it.
+looks is about what noise alone would produce. This control establishes that the grid recovers the
+source's finding as a contested verdict, and that it certifies neither half of it.
 
 The control does not show that this board is clean. Of its $21$ pairs, $17$ dominate, $2$ are
 contested and $2$ the grid leaves unresolved. One of those two is the board's own top pair,
 \textsc{vina} against \textsc{gold}, whose margin no cell of the grid separates from zero. A
 benchmark can be large, dense and carefully scored and still not entitle a reader to its first place
 over its second. The control is that a well-run board loses four pairs where a mature
-retrosynthesis table loses thirteen, so the instrument distinguishes them; it is not that any board
+retrosynthesis table loses thirteen, so the instrument distinguishes them. It is not that any board
 survives whole.
 
 No pair is contested between the search-based programs and the learned ones. On these $428$ items
@@ -465,11 +461,11 @@ cells contest \textsc{vina} against \textsc{diffdock} along with two other pairs
 $21$ dominating. We report that run as a second board and not as two more cells, because a
 population is not a choice about how a prediction is scored. We report it at all because which
 reversal a grid recovers depends on which items a benchmark chose, which is the sharpest form of
-the paper's own argument that we have found.
+the paper's own argument we have found.
 
 One axis of this board is weaker than a criterion and is labelled so. Minimising a pose before
-scoring it is a step the benchmark applies rather than the program, so it is a choice the evaluation
-could have been made under. Unlike a matching rule, however, it does not leave the prediction alone:
+scoring it is a step the benchmark applies rather than the program. It is a choice the evaluation
+could have been made under. Unlike a matching rule, it does not leave the prediction alone.
 $99.7\%$ of the $2{,}922$ paired poses differ between the arms, by a median of $0.354$\,\AA{}, and
 $6.5\%$ of per-item verdicts change at the field's tolerance. The conservative reading is therefore
 the criteria alone at the published post-processing, which leaves $18$ of the $21$ pairs dominating
@@ -478,11 +474,11 @@ absorbed into the total.
 
 The released table forces three conventions, which are declared rather than chosen. Its two flatness
 checks are recorded only in the un-minimised arm, so a criterion using them would not exist in half
-the grid; they are dropped from every cell rather than from one, which keeps each criterion the same
-object in each cell, and including them changes the published cell by $0.0000$. A row with no
+the grid. They are dropped from every cell rather than from one, which keeps each criterion the same
+object in each cell. Including them changes the published cell by $0.0000$. A row with no
 scorable pose counts as a miss and not as an absent observation, because dropping those rows would
 score each program on the subset it managed to produce output for. The crystal ligand ships as an
-eighth row; it is the reference re-scored through the same pipeline rather than a method, and it is
+eighth row. It is the reference re-scored through the same pipeline rather than a method, and it is
 excluded.
 \subsection{Which axis moves what, and what the gap is made of}
 
@@ -490,34 +486,35 @@ excluded.
 twenty-three certified reversals, six reverse an ordering the published cell had separated. The other
 seventeen reverse pairs the table never established, which reaches the first claim by a second route.
 What matters about the six is the axis that moves them, not their domain. All six are
-retrosynthesis pairs, and each reverses at a budget the \emph{published} criterion is held at, so
-the budget moves them and the matching rule does not. Five reverse at top-3 and top-5; the sixth,
-on the extrapolation board, reverses only at top-10 and is the one the union correction removes. The matching criterion therefore certifies no
-reversal of a separated ordering anywhere in this paper. That is a smaller second claim than a paper
-about matching rules might suggest, but it is the one the measurements support. The criterion
-exchanges positions a benchmark never separated, which is the first claim. What reverses an
-established ordering is a budget nobody reports jointly with the ranking it produces.
+retrosynthesis pairs. Each reverses at a budget the \emph{published} criterion is held at, so the
+budget moves them and the matching rule does not. Five reverse at top-3 and top-5. The sixth, on the
+extrapolation board, reverses only at top-10 and is the one the union correction removes. The
+matching criterion therefore certifies no reversal of a separated ordering anywhere in this paper.
+That is a smaller second claim than a paper about matching rules might suggest. It is the one the
+measurements support. The criterion exchanges positions a benchmark never separated, which is the
+first claim. What reverses an established ordering is a budget nobody reports jointly with the
+ranking it produces.
 
 \paragraph{Decomposing the gap between published and supported ranks.} The abstract's two
 numbers stand beside a sentence about undeclared choices, which invites the reading that the choices
-cost the difference. They do not. Proposition~2 keeps the ways a pair can fail as
-different quantities, and the same discipline applies to the count that rolls them up. There are
-three readings of "supported". Each is a longest chain in a relation on the same systems; they differ
-only in what an edge requires. When a leaderboard's \emph{own} cell must separate the pair, the $298$
-published places support $139$, and the $159$ lost go to the benchmark's power before any convention
-is varied. When every declared cell must separate it, they support $99$, so the grid costs $40$ on
-top. The $170$ the abstract leads with is the weaker reading an intersection of orders gives, in which a
-cell must agree in sign and need not separate; it is quoted because dominance is what the instrument
-computes. A reader who wants the strictest number has $99$, and one who wants what the conventions
-cost has $40$.
+cost the difference. They do not. Proposition~2 keeps the ways a pair can fail as different
+quantities. The same discipline applies to the count that rolls them up. There are three readings of
+"supported". Each is a longest chain in a relation on the same systems. They differ only in what an
+edge requires. When a leaderboard's \emph{own} cell must separate the pair, the $298$ published
+places support $139$. The $159$ lost go to the benchmark's power before any convention is varied.
+When every declared cell must separate it, they support $99$, so the grid costs $40$ on top. The
+$170$ the abstract leads with is the weaker reading an intersection of orders gives, in which a cell
+must agree in sign and need not separate. It is quoted because dominance is what the instrument
+computes. A reader who wants the strictest number has $99$. One who wants what the conventions cost
+has $40$.
 
 \paragraph{The share does not replicate across two editions of one task.} Nineteen of
-the twenty-three boards come from one shared task, which invites the objection that they are one
+the twenty-four boards come from one shared task, which invites the objection that they are one
 dataset counted nineteen times. Two editions of that task answer it. They ran a year apart under
 different protocols --- error spans and a hundred-point score in one, direct assessments with several
-ratings a segment in the other --- and five language pairs appear in both. The surviving share does
-not carry over. It moves by $0.114$ on average and by $0.285$ at the widest. \textsc{en-zh} stands at
-$0.900$ in one edition and $0.615$ in the next, on the same language with the same organisers. So the
+ratings a segment in the other. Five language pairs appear in both. The surviving share does not
+carry over. It moves by $0.114$ on average and by $0.285$ at the widest. \textsc{en-zh} stands at
+$0.900$ in one edition and $0.615$ in the next, on the same language with the same organisers. The
 share is a fact about a table and its grid, not about a benchmark or a language. A paper quoting one
 as a fingerprint, this one included, would repeat the error it is about
 (Appendix~\ref{app:robustorder}).
@@ -526,44 +523,44 @@ as a fingerprint, this one included, would repeat the error it is about
 
 \paragraph{Why the verdicts need no pairwise statistic.} Write $d$ for a pair's margin in the published cell, $d'$ for its margin in another,
 and $\delta_a,\delta_b$ for how far each system moves between them, so $d'=d+(\delta_a-\delta_b)$.
-The sign survives iff $|\delta_a-\delta_b|\le\max(|d|,|d'|)$. This is an identity, not a finding: it
+The sign survives iff $|\delta_a-\delta_b|\le\max(|d|,|d'|)$. This is an identity, not a finding. It
 says only that a difference changes sign when the movement exceeds both margins. It is stated for
 what follows from it, not as a result. Scoring the $n$ systems once in each cell fixes every one of
-the $n(n-1)/2$ dominance verdicts, with no pairwise statistic anywhere; a resample enters only to
-tell a contested pair from an unresolved one. On the twenty-three tables that leaves $319$ of
+the $n(n-1)/2$ dominance verdicts, with no pairwise statistic anywhere. A resample enters only to
+tell a contested pair from an unresolved one. On the twenty-four tables that leaves $319$ of
 $1{,}932$ pairs failing to dominate, which are exactly the pairs some cell reverses, computed from
 $n$ numbers per cell rather than from $1{,}932$ paired bootstraps.
 
 The arithmetic does not say where those pairs are, and that answer is a ratio rather than a level.
 The question can be asked of twenty-four leaderboards: the twenty-three plus a molecular-generation
 board whose second axis the grid does not cover. Their comparisons at risk run from $0\%$ to
-$15.9\%$, and the widest-gapped board is not the safest, because exposure is what happens when
-entries converge faster than the conventions separating them. So exposure is readable before any
-convention is varied (Appendix~\ref{app:xdomain}). Substituting a typical movement for the domain in
-place of the per-system one is all a published table alone supports. It over-predicts fragility by a
-third, and is reported as a failure (Appendix~\ref{app:negative}).
+$15.9\%$. The widest-gapped board is not the safest, because exposure is what happens when entries
+converge faster than the conventions separating them. Exposure is readable before any convention is
+varied (Appendix~\ref{app:xdomain}). Substituting a typical movement for the domain in place of the
+per-system one is all a published table alone supports. It over-predicts fragility by a third, and
+is reported as a failure (Appendix~\ref{app:negative}).
 
 \subsection{The case study the choices were found in}
 \label{sec:case}
 
 \paragraph{How one choice breaks an ordering.} \looseness=-1
 \citet{Hastedt_2024} released the ranked predictions of twelve retrosynthesis systems, eleven of
-which parse, on three different test sets (Appendix~\ref{app:xdomainsets}). The largest group is
-seven systems on their $4{,}999$ common reactions. Their predictions never move, yet they change places at
-top-1: five of twenty-one pairs exchange, and disregarding stereochemistry takes the fourth-placed
-system to first. An exchange describes the data. The claim is the interaction, corrected across the
-largest family declared in this work: the grid the two axes admit. Of its $448$ testable cells,
-$233$ have intervals excluding zero and $110$ survive Holm at $0.05$, concentrated at top-1, the
-number this field leads with (Appendix~\ref{app:xdomain}).
+which parse, on three test sets (Appendix~\ref{app:xdomainsets}). The largest group is seven systems
+on their $4{,}999$ common reactions. Their predictions never move, yet they change places at top-1.
+Five of twenty-one pairs exchange, and disregarding stereochemistry takes the fourth-placed system
+to first. An exchange describes the data. The claim is the interaction, corrected across the largest
+family declared in this work: the grid the two axes admit. Of its $448$ testable cells, $233$ have
+intervals excluding zero and $110$ survive Holm at $0.05$, concentrated at top-1, the number this
+field leads with (Appendix~\ref{app:xdomain}).
 
 \looseness=-1
 \paragraph{How many of the margins the benchmark resolves at all.} Since the predictions are
 frozen, a paired bootstrap gives an interval on each margin directly. \textbf{Eleven of the
 twenty-one margins do not separate from zero, and five of the six adjacent margins in the published
-order do not.} The smallest margin this benchmark separates is $0.0146$, the largest amount any
+order do not.} The smallest margin this benchmark separates is $0.0146$. The largest amount any
 criterion moves a margin on it is $0.0154$, and the three-system group's narrowest is $0.0213$. The
-criterion therefore exchanges pairs the benchmark never separated, and where a margin is separated
-it erases the gap instead of reversing it.
+criterion therefore exchanges pairs the benchmark never separated. Where a margin is separated it
+erases the gap instead of reversing it.
 
 \looseness=-1
 \paragraph{One split, two populations.} A benchmark can mix populations under one name. Of the
@@ -573,10 +570,10 @@ is left of it, averaged into one number. Methods do not treat them alike. GRAIL 
 $[0.101,0.202]$ of recall between the two while MetaPredictor loses $0.001$ $[-0.053,0.057]$, an
 interaction of $+0.150$ $[+0.084,+0.216]$, and $+0.116$ $[+0.051,+0.181]$ against SyGMa. No paper
 reporting on this split reports the mixture. The other population question returns a null. A
-familiar name can refer to more than one released test set; which one it refers to changes an
-ordering in $44$ of $380$ comparisons and $10$ of $60$ on the metabolite split, and none of the
-$440$ interactions survives Holm at $0.05$, in a design whose blindest test would see $0.116$ and
-$0.202$ at $80\%$ power (Appendix~\ref{app:popaxis}).
+familiar name can refer to more than one released test set. Which one it refers to changes an
+ordering in $44$ of $380$ comparisons and $10$ of $60$ on the metabolite split. None of the $440$
+interactions survives Holm at $0.05$, in a design whose blindest test would see $0.116$ and $0.202$
+at $80\%$ power (Appendix~\ref{app:popaxis}).
 \section{Limitations}
 \label{sec:limitations}
 
@@ -594,15 +591,15 @@ selection is therefore conditioned on a mismatch of about half the rule--substra
 
 \looseness=-2
 The cross-domain numbers come from files produced elsewhere. The reordering there is a top-1
-phenomenon. The robust order rests on twenty-three leaderboards in four domains. Two results are
+phenomenon. The robust order rests on twenty-four leaderboards in four domains. Two results are
 bounded nulls.
 \section{Conclusion}
 \label{sec:conclusion}
 
 \looseness=-2
 Four choices are settled before any model is compared, and none is routinely declared. A published
-ranking entitles a reader to quote fewer ranks than it prints, and it falls short in two ways of
-different sizes: most of its pairs were never resolved, and a few that were are reversed by a choice
+ranking entitles a reader to quote fewer ranks than it prints. It falls short in two ways of
+different sizes. Most of its pairs were never resolved, and a few that were are reversed by a choice
 no paper reports. Two of the four choices change a published ordering. The budget reverses margins
 that an interval separates from zero, and the criterion exchanges systems a mature benchmark never
 separated. Which pairs either choice reaches follows from an equivalence. Declaring is not the whole
@@ -610,54 +607,54 @@ remedy, as the one bank of mixed provenance here shows.
 
 \looseness=-1
 \paragraph{What to declare, and what to do with a partial order.} A leaderboard whose ordering is
-meant to be quoted should print five things: the rule deciding when a prediction counts as the
-reference, with the version of the toolkit implementing it; the number of candidates each method was
-allowed; any post-processing applied before scoring; the population the test set draws from; and
-either a score per cell of that grid or the predictions themselves, from which any cell can be
-recomputed. A reader given those can compute the order reported here. Where that order is partial, a
-claim of the form ``ours is first'' is available only when no other system shares its top tier; where
-one does, the statement that the data support names the tier instead. The share itself should not be
+meant to be quoted should print five things. The rule deciding when a prediction counts as the
+reference, with the version of the toolkit implementing it. The number of candidates each method was
+allowed. Any post-processing applied before scoring. The population the test set draws from. Either
+a score per cell of that grid or the predictions themselves, from which any cell can be recomputed.
+A reader given those can compute the order reported here. Where that order is partial, a claim of
+the form ``ours is first'' is available only when no other system shares its top tier. Where one
+does, the statement that the data support names the tier instead. The share itself should not be
 compared between papers. By Proposition~2 it falls as a grid widens, so a paper declaring fewer
-choices reports a larger one, and a quantity that rewards declaring less is not one to compete on.
+choices reports a larger one. A quantity that rewards declaring less is not one to compete on.
 \subsubsection*{Reproducibility statement}
 
 Every quantity reported here derives from a committed artifact and regenerates from the released
-material, and the checks that establish this are released as executable scripts. One of them is
-intended for prediction files produced elsewhere: given a template bank it reports which templates
-depend on the hydrogen convention and whether the bank mixes conventions, and given two or more
-prediction files it reports whether they were produced on the same population and how far apart
-their output sizes are. It requires no reference data and no trained model, and applied to the
-eleven released retrosynthesis files it recovers the three test sets in seconds.
+material. The checks that establish this are released as executable scripts. One of them is
+intended for prediction files produced elsewhere. Given a template bank, it reports which templates
+depend on the hydrogen convention and whether the bank mixes conventions. Given two or more
+prediction files, it reports whether they were produced on the same population and how far apart
+their output sizes are. It requires no reference data and no trained model. Applied to the
+eleven released retrosynthesis files, it recovers the three test sets in seconds.
 
 The cost of regeneration differs by analysis. Every split-level result regenerates from the
 committed artifacts alone, which comprise the frozen predictions, the matching-key tables and the
 per-substrate records. The ablations that rank or re-select candidates additionally require the
-trained checkpoints, which the anonymised archive contains together with the frozen predictions of
+trained checkpoints. The anonymised archive contains them together with the frozen predictions of
 every method compared, the audits, the evaluation harness, the split construction and the analysis
 code.
 
 Three constraints bear on exact, not approximate reproduction. One result depends on a
-third-party distribution that is not redistributed here: the reach of BioTransformer's template set
-is computed from the $994$ SMIRKS shipped with that tool, which an installed copy supplies; its
+third-party distribution that is not redistributed here. The reach of BioTransformer's template set
+is computed from the $994$ SMIRKS shipped with that tool, which an installed copy supplies. Its
 weights and those of MetaPredictor are likewise third-party and are cited rather than shipped.
-Results measured on a subsample of a split record the cap and the seed that drew it, without which
+Results measured on a subsample of a split record the cap and the seed that drew it. Without those
 the substrate set is not recoverable, since sampling proceeds without replacement and a different
 cap yields a different set of the same size, not a subset. Confidence intervals are
-regenerable as well: per-substrate rows are sorted before resampling, so a repeated run reproduces
+regenerable: per-substrate rows are sorted before resampling, so a repeated run reproduces
 an artifact exactly.
 
 Two standing reconciliations guard the analyses against the code they analyse. Where an analysis
-path re-derives a deployed output, the two are verified equal before use, and the released
+path re-derives a deployed output, the two are verified equal before use. The released
 per-candidate score dump reproduces the deployed ranking on all $\ntest$ substrates. Where a
 reimplemented loop stands in for the deployed one, it is gated against a figure the deployed loop
-produced, at the scale at which the claim is made: the switchable rule applier the engine arms are
+produced, at the scale at which the claim is made. The switchable rule applier the engine arms are
 measured with has to reproduce the deployed loop's coverage ceiling of $0.8007$ on the same $245$
-substrates before any of its arms is read, and the released check refuses to write its artifact
+substrates before any of its arms is read. The released check refuses to write its artifact
 otherwise.
 
 Every set treated here as external or third-party has been audited for overlap with the training and
 validation substrates. The GLORYx set overlaps on $24$ of its $37$ drugs, and \S\ref{sec:rankflip}
-reports GRAIL on the $13$ that do not overlap; the $\nshared$-substrate shared subset overlaps on
+reports GRAIL on the $13$ that do not overlap. The $\nshared$-substrate shared subset overlaps on
 none of its $150$. The audit is released as a script.
 
 \bibliographystyle{iclr2026_conference}

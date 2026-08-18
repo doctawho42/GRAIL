@@ -99,18 +99,21 @@ def main() -> int:
     test_csv = SRC / "extrapolation50k_test.csv"
     with open(test_csv, "w", newline="") as fh:
         w = csv.writer(fh)
-        w.writerow(["target", "REACTANT"])
+        w.writerow(["PRODUCT", "REACTANT"])
         for prod in order:
             w.writerow([prod, reactants[prod]])
 
     norm = SRC / "normalised"
     norm.mkdir(exist_ok=True)
     for k, name in SYSTEMS.items():
-        rows_out = [{"preds": per_system[k].get(prod, [])} for prod in order]
+        rows_out = [{"product": prod, "preds": per_system[k].get(prod, [])} for prod in order]
         (norm / f"{name}.json").write_text(json.dumps(rows_out))
 
     ingest_path = ROOT / "results" / "retro_extrapolation_ingest.json"
     ingest_path.write_text(json.dumps({
+        "config": {"source": str(SRC.relative_to(ROOT)),
+                   "note": "the release reshaped to the form robust_order.py and "
+                           "retro_leaderboard.py already read"},
         "clusters": {"extrapolation50k": {
             "systems": [SYSTEMS[k] for k in SYSTEMS],
             "test_csv": str(test_csv.relative_to(ROOT)),
