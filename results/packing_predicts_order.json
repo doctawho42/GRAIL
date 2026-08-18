@@ -1,7 +1,7 @@
 {
  "config": {
   "script": "packing_predicts_order.py",
-  "git_commit": "a0a2e8bcf0fb652910c00a305b252b25b8808c07",
+  "git_commit": "2da1ab3e10da29e745f53ce49e8e1db4d47171c2",
   "git_dirty": true,
   "note": "the screen uses only the published cell and the movement to each other cell; the outcome comes from the full grid"
  },
@@ -297,6 +297,131 @@
      "failed_to_dominate": true,
      "failed_on_a_tie_alone": false,
      "contested": false
+    }
+   ]
+  },
+  "retrosynthesis, 5 systems (extrapolation)": {
+   "n_pairs": 10,
+   "flagged": 3,
+   "failed": 3,
+   "failed_on_a_tie_alone": 0,
+   "flagged_and_failed": 3,
+   "flagged_but_survived": 0,
+   "failed_but_not_flagged": 0,
+   "neither": 7,
+   "sensitivity": 1.0,
+   "precision": 1.0,
+   "specificity": 1.0,
+   "pairs": [
+    {
+     "pair": "Chemformer over GraphRetro",
+     "gap": 0.0028,
+     "largest_move": 0.0137,
+     "cell_of_that_move": "('tautomer', 10)",
+     "flagged": true,
+     "reversed_by_some_cell": true,
+     "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
+     "contested": true
+    },
+    {
+     "pair": "Chemformer over Molecular Transformer",
+     "gap": 0.0052,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Chemformer over LocalRetro",
+     "gap": 0.0111,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Chemformer over MEGAN",
+     "gap": 0.0113,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "GraphRetro over Molecular Transformer",
+     "gap": 0.0024,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "GraphRetro over LocalRetro",
+     "gap": 0.0083,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "GraphRetro over MEGAN",
+     "gap": 0.0085,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Molecular Transformer over LocalRetro",
+     "gap": 0.0059,
+     "largest_move": 0.0,
+     "cell_of_that_move": null,
+     "flagged": false,
+     "reversed_by_some_cell": false,
+     "failed_to_dominate": false,
+     "failed_on_a_tie_alone": false,
+     "contested": false
+    },
+    {
+     "pair": "Molecular Transformer over MEGAN",
+     "gap": 0.0061,
+     "largest_move": 0.0183,
+     "cell_of_that_move": "('tautomer', 10)",
+     "flagged": true,
+     "reversed_by_some_cell": true,
+     "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
+     "contested": true
+    },
+    {
+     "pair": "LocalRetro over MEGAN",
+     "gap": 0.0002,
+     "largest_move": 0.0139,
+     "cell_of_that_move": "('canonical', 10)",
+     "flagged": true,
+     "reversed_by_some_cell": true,
+     "failed_to_dominate": true,
+     "failed_on_a_tie_alone": false,
+     "contested": true
     }
    ]
   },
@@ -21495,10 +21620,10 @@
   }
  },
  "totals": {
-  "n_pairs": 1922,
-  "flagged": 316,
-  "failed": 316,
-  "flagged_and_failed": 316,
+  "n_pairs": 1932,
+  "flagged": 319,
+  "failed": 319,
+  "flagged_and_failed": 319,
   "flagged_but_survived": 0,
   "failed_but_not_flagged": 0,
   "failed_on_a_tie_alone": 1,

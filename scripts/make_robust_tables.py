@@ -184,6 +184,10 @@ def main() -> int:
         d = json.loads(ro.read_text())["leaderboards"]
         for cl, r in d.items():
             boards.append((f"retrosynthesis, {r['n_systems']} systems", r))
+    rx = ROOT / "results/robust_order_retro_extrapolation.json"
+    if rx.exists():
+        for cl, r in json.loads(rx.read_text())["leaderboards"].items():
+            boards.append((f"retrosynthesis, {r['n_systems']} systems", r))
     rm = ROOT / "results/robust_order_metabolite.json"
     if rm.exists():
         r = json.loads(rm.read_text())

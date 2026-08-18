@@ -322,8 +322,12 @@ def analyse(hits: dict, systems: list[str], cells: list, published_cell,
             "pairs": pairs}
 
 
-def retro_leaderboard(cluster: str, directory: Path, max_rank: int, workers: int) -> dict:
-    ingest = json.loads((ROOT / "results/evalretro_ingest.json").read_text())
+def retro_leaderboard(cluster: str, directory: Path, max_rank: int, workers: int,
+                      ingest_path: str = "results/evalretro_ingest.json") -> dict:
+    """Score one board. The ingest file is a parameter so a second release can be scored by this
+    same function rather than by a second implementation of it: the criteria, the budgets and the
+    estimator then agree with the boards already surveyed by construction."""
+    ingest = json.loads((ROOT / ingest_path).read_text())
     meta = ingest["clusters"][cluster]
     systems, rows = meta["systems"], list(csv.DictReader(open(ROOT / meta["test_csv"])))
     preds = {n: json.loads((directory / "normalised" / f"{n}.json").read_text()) for n in systems}
@@ -371,6 +375,8 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--dir", default=str(ROOT / "grail_metabolism" / "data" / "evalretro"))
     ap.add_argument("--clusters", default="cluster0,cluster1")
+    ap.add_argument("--ingest", default="results/evalretro_ingest.json",
+                    help="the ingest that names each cluster's systems and test csv")
     ap.add_argument("--max-rank", type=int, default=10)
     ap.add_argument("--workers", type=int, default=6)
     ap.add_argument("--out", default=str(ROOT / "results" / "robust_order.json"))
@@ -383,7 +389,7 @@ def main() -> int:
                               "zero"},
            "leaderboards": {}}
     for cluster in args.clusters.split(","):
-        r = retro_leaderboard(cluster, Path(args.dir), args.max_rank, args.workers)
+        r = retro_leaderboard(cluster, Path(args.dir), args.max_rank, args.workers, args.ingest)
         rep["leaderboards"][cluster] = r
         print(f"\n{cluster}: {r['n_systems']} systems, {r['n_cells']} cells, {r['n_pairs']} pairs")
         print(f"  published order at {r['published_cell']}: {' > '.join(r['published_order'])}")

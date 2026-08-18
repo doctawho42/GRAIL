@@ -83,6 +83,39 @@ def main() -> int:
                            "share_of_that_board": round(len(ov) / max(len(old), 1), 4),
                            "share_of_this_board": round(len(ov) / max(len(shared), 1), 4)}
 
+    # emit the board in the shape scripts/robust_order.py already reads, so the criteria and the
+    # estimator are the same objects that scored the boards already in the survey rather than a
+    # second implementation of them. Rows are the shared products in a fixed order; each system's
+    # file is a list aligned with those rows.
+    order = sorted(shared)
+    reactants = {}
+    for ln in (SRC / "test_50k.txt").read_text().splitlines():
+        if not ln.strip():
+            continue
+        prod, _, rest = ln.partition(",")
+        reactants.setdefault(prod, rest)
+    missing_truth = [p for p in order if not reactants.get(p)]
+
+    test_csv = SRC / "extrapolation50k_test.csv"
+    with open(test_csv, "w", newline="") as fh:
+        w = csv.writer(fh)
+        w.writerow(["target", "REACTANT"])
+        for prod in order:
+            w.writerow([prod, reactants[prod]])
+
+    norm = SRC / "normalised"
+    norm.mkdir(exist_ok=True)
+    for k, name in SYSTEMS.items():
+        rows_out = [{"preds": per_system[k].get(prod, [])} for prod in order]
+        (norm / f"{name}.json").write_text(json.dumps(rows_out))
+
+    ingest_path = ROOT / "results" / "retro_extrapolation_ingest.json"
+    ingest_path.write_text(json.dumps({
+        "clusters": {"extrapolation50k": {
+            "systems": [SYSTEMS[k] for k in SYSTEMS],
+            "test_csv": str(test_csv.relative_to(ROOT)),
+            "n_targets": len(order)}}}, indent=1))
+
     rep = {"config": {**_code_version(), "source": str(SRC.relative_to(ROOT)),
                       "systems": SYSTEMS,
                       "note": "population only; nothing is scored and no criterion is applied"},
@@ -94,7 +127,12 @@ def main() -> int:
                [SYSTEMS[k] for k, v in per_system.items() if set(v) == ref],
            "overlap_with_surveyed_boards": overlap,
            "n_systems": len(SYSTEMS),
-           "n_pairs": len(SYSTEMS) * (len(SYSTEMS) - 1) // 2}
+           "n_pairs": len(SYSTEMS) * (len(SYSTEMS) - 1) // 2,
+           "emitted": {"test_csv": str(test_csv.relative_to(ROOT)),
+                       "normalised_dir": str(norm.relative_to(ROOT)),
+                       "ingest": str(ingest_path.relative_to(ROOT)),
+                       "rows": len(order),
+                       "targets_with_no_recorded_reactants": len(missing_truth)}}
     Path(args.out).write_text(json.dumps(rep, indent=1))
 
     print(f"  {len(SYSTEMS)} systems, {len(shared)} shared targets, {rep['n_pairs']} pairs")

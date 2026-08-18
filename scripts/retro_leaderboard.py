@@ -138,6 +138,8 @@ def set_key(dotjoined: str, mode: str, keys: dict):
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--cluster", default="cluster0")
+    ap.add_argument("--ingest", default="results/evalretro_ingest.json",
+                    help="the ingest naming this cluster's systems and test csv")
     ap.add_argument("--dir", default=str(ROOT / "grail_metabolism" / "data" / "evalretro"))
     ap.add_argument("--max-rank", type=int, default=10)
     ap.add_argument("--workers", type=int, default=2)
@@ -145,7 +147,7 @@ def main() -> int:
     args = ap.parse_args()
     out = args.out or str(ROOT / "results" / f"retro_leaderboard_{args.cluster}.json")
 
-    ingest = json.loads((ROOT / "results/evalretro_ingest.json").read_text())
+    ingest = json.loads((ROOT / args.ingest).read_text())
     meta = ingest["clusters"][args.cluster]
     systems = meta["systems"]
     rows = list(csv.DictReader(open(ROOT / meta["test_csv"])))

@@ -31,6 +31,7 @@ for p in (str(ROOT), str(Path(__file__).resolve().parent)):
 from robust_order import _tiers  # noqa: E402
 
 SOURCES = [("robust_order.json", "cluster0"), ("robust_order.json", "cluster1"),
+           ("robust_order_retro_extrapolation.json", "extrapolation50k"),
            ("robust_order_metabolite.json", None), ("robust_order_posebusters.json", None),
            ("robust_order_wmt24_en-de.json", None), ("robust_order_wmt24_ja-zh.json", None)]
 COLLECTIONS = ("robust_order_wmt24_esa.json", "robust_order_wmt23.json")

@@ -412,6 +412,7 @@ def main() -> int:
         E = json.loads(survey_esa.read_text())
         survey_boards = []
         for _fn, _key in (("robust_order.json", "cluster0"), ("robust_order.json", "cluster1"),
+                          ("robust_order_retro_extrapolation.json", "extrapolation50k"),
                           ("robust_order_metabolite.json", None),
                           ("robust_order_posebusters.json", None),
                           ("robust_order_wmt24_en-de.json", None),
@@ -537,6 +538,7 @@ def main() -> int:
     # counting the first claim twice. Both halves are stated and both are held.
     _cert = _res = 0
     for _fn, _key in (("robust_order.json", "cluster0"), ("robust_order.json", "cluster1"),
+                      ("robust_order_retro_extrapolation.json", "extrapolation50k"),
                       ("robust_order_metabolite.json", None),
                       ("robust_order_posebusters.json", None),
                       ("robust_order_wmt24_en-de.json", None),
@@ -606,13 +608,13 @@ def main() -> int:
                     "eight": 8, "nine": 9}
         checks.append((_cert > 0, "there are certified reversals to qualify", "at least one",
                        str(_cert), "results/robust_order_*.json"))
-        checks.append((_cert == 21, "the certified total the body quotes", "21", str(_cert),
+        checks.append((_cert == 23, "the certified total the body quotes", "23", str(_cert),
                        "results/robust_order_*.json"))
         # how many certifications reverse an ordering the published cell had established is a
         # number the prose quotes in three places, so it is computed here and each printing is
         # held against it rather than against a literal
-        _mres = re.findall(r"(?:(\w+)\s*of the twenty-one certified reversals reverse an ordering"
-                           r"|Of the twenty-one certified reversals, (\w+) reverse an ordering)",
+        _mres = re.findall(r"(?:(\w+)\s*of the twenty-three certified reversals reverse an ordering"
+                           r"|Of the twenty-three certified reversals, (\w+) reverse an ordering)",
                            flat)
         _mres = [a or b for a, b in _mres]
         checks.append((bool(_mres) and all(_wordnum.get(x.lower(), -1) == _res for x in _mres),
@@ -1026,6 +1028,7 @@ def main() -> int:
     def _load_boards():
         out = {}
         for _fn, _key in (("robust_order.json", "cluster0"), ("robust_order.json", "cluster1"),
+                          ("robust_order_retro_extrapolation.json", "extrapolation50k"),
                           ("robust_order_metabolite.json", None),
                           ("robust_order_posebusters.json", None),
                           ("robust_order_wmt24_en-de.json", None),
@@ -1048,6 +1051,7 @@ def main() -> int:
         _ROWS = {
             "retrosynthesis, seven systems": ["robust_order:cluster0"],
             "retrosynthesis, three systems": ["robust_order:cluster1"],
+            "retrosynthesis, five systems": ["robust_order_retro_extrapolation:extrapolation50k"],
             "metabolites, three methods": ["robust_order_metabolite"],
             "docking, seven programs": ["robust_order_posebusters"],
             "translation, nineteen systems": ["robust_order_wmt24_en-de"],
@@ -1097,7 +1101,7 @@ def main() -> int:
             check(f"table 1, {_label}, supported", _g[8],
                   sum(b["tiers_distinguished"] for b in _bs), "results/robust_order_*.json")
         # the caption quotes the union count beside the per-board one, and both are the artifact's
-        _cap = re.search(r"over all twenty-three grids at once, \$(\d+)\$ of the\s*\$(\d+)\$ survive",
+        _cap = re.search(r"over all twenty-four grids at once, \$(\d+)\$ of the\s*\$(\d+)\$ survive",
                          flat)
         _unj = ROOT / "results/union_multiplicity.json"
         if _cap and _unj.exists():
@@ -1114,7 +1118,7 @@ def main() -> int:
         # the totals row is the paper's title, so it is held to the sum over every board and not
         # to the sum of the rows above it
         _all = list(_BD.values())
-        _tot = re.search(r"all twenty-three & \$\\mathbf\{(\d+)\}\$ & --- & \$([\d,{}]+)\$ of "
+        _tot = re.search(r"all twenty-four & \$\\mathbf\{(\d+)\}\$ & --- & \$([\d,{}]+)\$ of "
                          r"\$([\d,{}]+)\$ & \$(\d+)\$ \((\d+)\) & \$(\d+)\$ & "
                          r"\$\\mathbf\{(\d+)\}\$", flat)
         checks.append((bool(_tot), "table 1, the totals row is present", "present",
@@ -1269,13 +1273,18 @@ def main() -> int:
                   "results/union_multiplicity.json")
         # the abstract and the contributions quote the same two numbers; both are bound here, so
         # a correction that moves cannot be corrected in the appendix alone
-        m2 = re.search(r"survive\s*correction, under each board's own family and under a single "
-                       r"correction over all \$23\$ grids at\s*once", flat)
+        # the two corrections no longer agree, and the abstract states both numbers rather than
+        # the larger one: a claim that held under each is not the claim that holds under the union
+        m2 = re.search(r"\$(\d+)\$ are reversed by a declared choice and survive their\s*own "
+                       r"board's correction, and \$(\d+)\$ of those survive a single correction "
+                       r"over all \$24\$ grids at once", flat)
         S2 = UN["certified_pairs_the_published_cell_had_separated"]
-        checks.append((bool(m2) and S2["per_board"] == S2["union"],
-                       "the abstract says the count holds under both corrections it names",
-                       f"{S2['per_board']} under each", f"{S2['per_board']} and {S2['union']}",
-                       "results/union_multiplicity.json"))
+        checks.append((bool(m2), "the abstract states both corrections separately", "present",
+                       "matched" if m2 else "not matched", "results/union_multiplicity.json"))
+        check("the abstract's per-board count", m2 and m2.group(1), S2["per_board"],
+              "results/union_multiplicity.json")
+        check("the abstract's union count", m2 and m2.group(2), S2["union"],
+              "results/union_multiplicity.json")
         m2 = re.search(r"and \$(\d+)\$ of the \$(\d+)\$ certified reversals of every kind surviv(?:ing|e) "
                        r"one correction over the union", flat)
         checks.append((bool(m2), "the contribution states the union correction", "present",
@@ -1285,27 +1294,28 @@ def main() -> int:
                   UN["certified_pairs"]["union"], "results/union_multiplicity.json")
             check("union, the contribution's total", m2.group(2),
                   UN["certified_pairs"]["per_board"], "results/union_multiplicity.json")
-        m = re.search(r"at\s*\$\\alpha/23\$ within each grid, gives \$(\d+)\$", flat)
+        m = re.search(r"at\s*\$\\alpha/24\$ within each grid, gives \$(\d+)\$", flat)
         check("union, the alpha split", m and m.group(1), UN["certified_pairs"]["alpha_split"],
               "results/union_multiplicity.json")
-        m = re.search(r"all \$(\d+)\$ certified reversals of an ordering a published cell had "
-                      r"separated survive every one of\s*the three", flat)
+        m = re.search(r"of the \$(\d+)\$ certified reversals of an ordering a published cell had "
+                      r"separated, \$(\d+)\$ survive\s*every one of the three", flat)
         checks.append((bool(m), "the separated-ordering survival parses", "present",
                        "matched" if m else "not matched", ""))
         if m:
             S = UN["certified_pairs_the_published_cell_had_separated"]
             check("union, separated reversals", m.group(1), S["per_board"],
                   "results/union_multiplicity.json")
-            checks.append((S["per_board"] == S["alpha_split"] == S["union"],
-                           "they survive all three corrections",
-                           f"{S['per_board']} throughout",
-                           f"{S['per_board']}, {S['alpha_split']}, {S['union']}",
+            check("union, separated reversals surviving all three", m.group(2), S["union"],
+                  "results/union_multiplicity.json")
+            checks.append((S["alpha_split"] == S["union"],
+                           "the two stricter corrections agree with each other",
+                           str(S["union"]), str(S["alpha_split"]),
                            "results/union_multiplicity.json"))
         # the sentence naming which boards pay, against the per-board table
         PBU = UN["per_board"]
         m = re.search(r"the nineteen-system translation board keeps \$(\d+)\$ of \$(\d+)\$, two more "
-                      r"go on \\textsc\{en-hi\} and one on \\textsc\{zho-eng\}, and the "
-                      r"retrosynthesis boards keep all (\w+)", flat)
+                      r"go on \\textsc\{en-hi\}, one on \\textsc\{zho-eng\} and one on the"
+                      r"\s*extrapolation board", flat)
         checks.append((bool(m), "the sentence naming who pays parses", "present",
                        "matched" if m else "not matched", ""))
         if m:
@@ -1314,14 +1324,18 @@ def main() -> int:
                   "results/union_multiplicity.json")
             check("union, en-de before", m.group(2), _e["pairs_per_board"],
                   "results/union_multiplicity.json")
+            # the paragraph used to add that the retrosynthesis boards keep everything; the
+            # extrapolation board now loses one, so the sentence no longer says it and the check
+            # holds the remaining claim -- that the two EvalRetro boards lose nothing -- against
+            # the artifact rather than against a word that is no longer printed
             _r = sum(PBU[k]["pairs_union"] for k in ("robust_order:cluster0",
                                                      "robust_order:cluster1"))
             _r0 = sum(PBU[k]["pairs_per_board"] for k in ("robust_order:cluster0",
                                                           "robust_order:cluster1"))
-            _w = {"ten": 10, "eight": 8, "nine": 9, "eleven": 11}
-            checks.append((_w.get(m.group(3), -1) == _r == _r0,
-                           "union, the retrosynthesis boards keep all of theirs",
-                           m.group(3), f"{_r} of {_r0}", "results/union_multiplicity.json"))
+            checks.append((_r == _r0,
+                           "union, the two EvalRetro boards keep all of theirs",
+                           f"{_r0} of {_r0}", f"{_r} of {_r0}",
+                           "results/union_multiplicity.json"))
         # the paragraph names which of the six goes, so the naming is held to the board, not to
         # the total: the docking board must be the only one losing a separated-ordering reversal
         _survivors = {k for k, v in PBU.items() if v["separated_pairs_union"]}
@@ -1333,7 +1347,8 @@ def main() -> int:
         # whole fall; a sentence that lists some of the losses reads as if it listed them all
         _named_loss = sum(PBU[k]["pairs_per_board"] - PBU[k]["pairs_union"]
                           for k in ("robust_order_wmt24_en-de", "robust_order_wmt24_esa:en-hi",
-                                    "robust_order_wmt23:zho-eng")
+                                    "robust_order_wmt23:zho-eng",
+                                    "robust_order_retro_extrapolation:extrapolation50k")
                           if k in PBU)
         _all_loss = UN["certified_pairs"]["per_board"] - UN["certified_pairs"]["union"]
         checks.append((_named_loss == _all_loss,
@@ -1354,7 +1369,7 @@ def main() -> int:
         checks.append((_late == 0 and "would have passed its own threshold" in flat,
                        "the stopping rule is said to have cost nothing, and did", "0",
                        str(_late), "results/union_multiplicity.json"))
-        m2 = re.search(r"Those three boards are the whole fall\s*of (\w+)", flat)
+        m2 = re.search(r"Those four boards are the whole fall\s*of (\w+)", flat)
         _w2 = {"six": 6, "seven": 7, "eight": 8, "nine": 9, "ten": 10, "eleven": 11}
         checks.append((bool(m2) and _w2.get(m2.group(1), -1) == _all_loss,
                        "the size of the fall the paragraph names",
@@ -1364,9 +1379,13 @@ def main() -> int:
         # which is what lets the second claim stand unchanged under all three corrections
         _lost_sep = sum(v["separated_pairs_per_board"] - v["separated_pairs_union"]
                         for v in PBU.values())
-        checks.append((_lost_sep == 0 and "never established" in flat,
-                       "nothing the union removes was an established ordering", "0",
-                       str(_lost_sep), "results/union_multiplicity.json"))
+        # one pair the union removes WAS established, and the paragraph names it rather than
+        # rounding the claim up; the check holds the count and the naming together
+        checks.append((_lost_sep == S2["per_board"] - S2["union"]
+                       and "the exception is named above" in flat,
+                       "the established orderings the union removes are counted and named",
+                       str(S2["per_board"] - S2["union"]), str(_lost_sep),
+                       "results/union_multiplicity.json"))
         checks.append((PBU["robust_order_posebusters"]["pairs_per_board"] == 0,
                        "the docking board certifies nothing before the union is reached", "0",
                        str(PBU["robust_order_posebusters"]["pairs_per_board"]),
@@ -1566,10 +1585,10 @@ def main() -> int:
         # sets of numbers and none matched the artifact, because this gate matched one printing.
         # Every printing is found by its own pattern and each is held; missing one now fails.
         printings_pd = []
-        for _pat in (r"takes \$293\$ places to \$(\d+)\$[,:] (?:so )?\$?(\d+)\$? (?:go|ranks go) to a "
+        for _pat in (r"takes \$298\$ places to \$(\d+)\$[,:] (?:so )?\$?(\d+)\$? (?:go|ranks go) to a "
                      r"benchmark's own (?:power|resolving power)\s*before any convention is varied "
                      r"and \$(\d+)\$ more to the grid",
-                     r"the \$293\$ published places support \$(\d+)\$, and the \$(\d+)\$ lost go to "
+                     r"the \$298\$ published places support \$(\d+)\$, and the \$(\d+)\$ lost go to "
                      r"the benchmark's power before any convention is varied\..*?the grid costs "
                      r"\$(\d+)\$ on top"):
             printings_pd += re.findall(_pat, flat)
@@ -1604,7 +1623,7 @@ def main() -> int:
                        f"{PD['supported_when_its_own_cell_separates']}, "
                        f"-{PD['lost_to_the_grid']}={PD['supported_when_every_cell_separates']}",
                        "results/places_decomposition.json"))
-        mpd = re.search(r"the \$293\$ published places support \$(\d+)\$, and the \$(\d+)\$ lost go to "
+        mpd = re.search(r"the \$298\$ published places support \$(\d+)\$, and the \$(\d+)\$ lost go to "
                         r"the benchmark's power before any convention is varied\..*?the grid "
                         r"costs \$(\d+)\$ on top", flat)
         checks.append((bool(mpd), "the places decomposition parses", "present",
@@ -1628,6 +1647,7 @@ def main() -> int:
     import ast as _ast
     _crit = _sep = 0
     _srcs = [("robust_order.json", "cluster0"), ("robust_order.json", "cluster1"),
+             ("robust_order_retro_extrapolation.json", "extrapolation50k"),
              ("robust_order_metabolite.json", None), ("robust_order_posebusters.json", None),
              ("robust_order_wmt24_en-de.json", None), ("robust_order_wmt24_ja-zh.json", None)]
     _bs = []
@@ -1659,11 +1679,11 @@ def main() -> int:
         # the artifacts, which is exactly the kind of gate that stayed green while the prose said
         # something else.
         _m_abs = re.search(r"Of the orderings a table did establish, \$(\d+)\$ are reversed by a "
-                           r"declared choice and survive\s*correction", flat)
+                           r"declared choice and survive their", flat)
         checks.append((bool(_m_abs) and int(_m_abs.group(1)) == _sep,
                        "the abstract prints the certified-reversal count",
                        str(_sep), _m_abs.group(1) if _m_abs else "not found", "the manuscript"))
-        checks.append((_sep == 5, "five certified reversals are of a separated ordering", "5",
+        checks.append((_sep == 6, "six certified reversals are of a separated ordering", "6",
                        str(_sep), "results/robust_order_*.json"))
 
     # 10d-w23. The previous edition's boards are a reconstruction, not the published cell, and the
@@ -1956,8 +1976,18 @@ def main() -> int:
         NAMES = {"Graph2SMILES": "graph2smiles", "GraphRetro": "graphretro",
                  "Retroformer": "retroformer", "LocalRetro": "localretro", "GLN": "gln",
                  "G2Retro": "g2retro", "RetroXpert": "retroxpert"}
+        # scoped to this table, not to the manuscript: a second board added later carries the same
+        # system names, and an unanchored "Name & number" search finds whichever table comes first
+        _tbl = flat
+        _i = flat.find("Top-1 accuracy under each convention")
+        _j = flat.find("Top-1 accuracy of seven retrosynthesis systems", _i + 1) if _i >= 0 else -1
+        if _i >= 0 and _j > _i:
+            _tbl = flat[_i:_j]
+        checks.append((_i >= 0 and _j > _i, "the seven-system accuracy table is locatable",
+                       "found", "found" if _i >= 0 and _j > _i else "not found",
+                       "results/retro_leaderboard_cluster0.json"))
         for shown, key in NAMES.items():
-            m = re.search(shown + r"\s*&\s*(?:\\textbf\{)?\$?([\d.]+)\$?\}?\s*&", flat)
+            m = re.search(shown + r"\s*&\s*(?:\\textbf\{)?\$?([\d.]+)\$?\}?\s*&", _tbl)
             check(f"top-1 canonical, {shown}", m and m.group(1), acc[key]["canonical"]["top1"])
         if set(NAMES.values()) != set(sysl):
             checks.append((False, "leaderboard systems named", sorted(NAMES.values()), sorted(sysl), ""))

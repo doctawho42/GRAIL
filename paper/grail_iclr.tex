@@ -31,9 +31,8 @@
 \newcommand{\interB}{+0.063}          % MetaTrans<->SyGMa interaction
 \newcommand{\interBci}{[+0.022,\,+0.106]}
 
-\title{Most of What a Leaderboard Publishes\\
-Was Never Established: Rank Support\\
-Across Twenty-Three Boards}
+\title{Not Even Ordered: What a Published\\
+Leaderboard Entitles a Reader to Quote}
 
 % double-blind: authors stay anonymous until camera-ready
 \author{Anonymous authors \\ Paper under double-blind review}
@@ -56,21 +55,21 @@ what part of such an ordering survives when those choices are varied and nothing
 the items and the released predictions, re-score them in every cell of a declared grid of choices,
 and keep the pairwise orderings that no cell contradicts.
 
-We do this for $23$ leaderboards in four domains --- retrosynthesis, metabolite prediction,
+We do this for $24$ leaderboards in four domains --- retrosynthesis, metabolite prediction,
 protein--ligand docking, and two editions of one machine-translation shared task --- retraining
-nothing and reimplementing no method. Together those tables rank $293$ systems, and the orderings
-that survive support $167$ ranks. That count asks only that no cell contradict the published order.
-Asking each cell to separate the pair instead is a second, stricter ladder on the same $293$, and it
+nothing and reimplementing no method. Together those tables rank $298$ systems, and the orderings
+that survive support $170$ ranks. That count asks only that no cell contradict the published order.
+Asking each cell to separate the pair instead is a second, stricter ladder on the same $298$, and it
 is the one that says where the gap goes. Most of it is not the choices: requiring a leaderboard's
-own published cell to separate a pair at all takes $293$ places to $136$, so $157$ ranks go to a
-benchmark's own resolving power before any convention is varied and $39$ more to the grid, leaving
-$97$. The surviving share runs from none of
+own published cell to separate a pair at all takes $298$ places to $139$, so $159$ ranks go to a
+benchmark's own resolving power before any convention is varied and $40$ more to the grid, leaving
+$99$. The surviving share runs from none of
 three to nine tenths, and does not replicate between two editions of the same shared task on the
 same language pair, so it is a property of a table and its grid rather than of a benchmark.
 
-Of the orderings a table did establish, $5$ are reversed by a declared choice and survive
-correction, under each board's own family and under a single correction over all $23$ grids at
-once. None of the five is the matching rule's, which is the choice this literature discusses most.
+Of the orderings a table did establish, $6$ are reversed by a declared choice and survive their
+own board's correction, and $5$ of those survive a single correction over all $24$ grids at once.
+None of the six is the matching rule's, which is the choice this literature discusses most.
 Deciding which orderings are at risk needs no pairwise statistic: a change of criterion reverses a
 pair only if it moves the two systems apart by more than the larger of the margins it connects, so
 every verdict follows from $n$ scorings per cell, and resampling enters only to tell a contested
@@ -85,7 +84,7 @@ alone, and the analysis code.
 
 This is a survey of published leaderboards and an instrument for reading them. The instrument
 takes a leaderboard's released predictions and a declared set of evaluation choices and returns the
-part of its ordering that no choice contradicts; the survey applies it to twenty-three leaderboards
+part of its ordering that no choice contradicts; the survey applies it to twenty-four leaderboards
 in four domains. One predictor in one domain is used to find the choices worth declaring, and that
 predictor is instrumentation rather than a contribution: it is not offered as a state of the art,
 and nothing in the survey depends on how it performs.
@@ -131,19 +130,19 @@ leading methods converge.
   its longest chain from released prediction files alone. Because it is an intersection it can only
   fall as a grid widens, so we report it as a curve over the declared axes, never as one number. A
   pair that fails it fails in one of two ways, and we count them apart.
-\item \textbf{The survey.} We run the instrument on $23$ leaderboards and $1{,}922$ pairs in four
+\item \textbf{The survey.} We run the instrument on $24$ leaderboards and $1{,}932$ pairs in four
   domains: retrosynthesis, metabolite prediction, protein--ligand docking and two editions of one
-  machine translation task. They publish $293$ places, and what survives supports $167$. The share
+  machine translation task. They publish $298$ places, and what survives supports $170$. The share
   runs from none of three to nine tenths, and does not replicate between two editions of the same
   task on the same language pair, so it is a property of a table and its grid rather than of a
   benchmark.
 \item \textbf{What the gap is made of, which is mostly not the choices.} Requiring only a
-  leaderboard's own cell to separate a pair already takes $293$ places to $136$, so $157$ ranks go
-  to a benchmark's own power before any convention is varied and $39$ more to the grid. On none of
-  the $23$ boards does the matching criterion certify a reversal of an ordering a published cell had
+  leaderboard's own cell to separate a pair already takes $298$ places to $139$, so $159$ ranks go
+  to a benchmark's own power before any convention is varied and $40$ more to the grid. On none of
+  the $24$ boards does the matching criterion certify a reversal of an ordering a published cell had
   separated. Each board's verdict is corrected by Holm over the cell-level tests its own grid
-  creates, and $14$ of the $21$ certified reversals of every kind survive one correction over the
-  union of all twenty-three grids. What the criterion does is exchange positions a benchmark never
+  creates, and $15$ of the $23$ certified reversals of every kind survive one correction over the
+  union of all twenty-four grids. What the criterion does is exchange positions a benchmark never
   established.
 \item \textbf{The arithmetic.} A pair's ordering survives a change of criterion unless the change
   moves the two apart by more than the larger of the margins it connects. That identity is why every
@@ -171,8 +170,8 @@ leading methods converge.
 
 Two claims follow, and they are different sizes. \textbf{C1}: most of what a leaderboard prints it
 never established: the pairs its own cell cannot separate from zero. \textbf{C2}: of the pairs it
-did establish, five orderings are reversed by a declared choice and survive correction, and none of
-the five is the matching rule's. Whenever both are in view, the rest of the paper says which of the
+did establish, six orderings are reversed by a declared choice and survive their own board's
+correction, five of them the union's as well, and none is the matching rule's. Whenever both are in view, the rest of the paper says which of the
 two a number belongs to.
 
 \section{Related Work}
@@ -184,7 +183,12 @@ templates and scores products by how often each template yields an observed meta
 \citep{de_Bruyn_Kops_2020} couples a comparable library to a learned model of sites of metabolism.
 BioTransformer \citep{Djoumbou_Feunang_2019} extends templates to microbial and environmental
 transformations. MetaTrans \citep{Litsa_2020} and MetaPredictor \citep{Zhu_2024} dispense with
-templates altogether. Comparative studies recover the same coverage-precision trade-off on 85
+templates altogether. A further wave has appeared since: a chemical language model
+\citep{Larsson_2025}, a mechanistically informed graph framework \citep{Zhou_2025}, a web server
+predicting pathway, site and product together \citep{Zhou_2026}, and a preprint predicting all
+three jointly \citep{Chavan_2026}. None is on the board below, because that board carries the
+methods this work could run and freeze on this split rather than the methods the field has; the
+board is therefore a weak sample of the field even where the instrument reading it is not. Comparative studies recover the same coverage-precision trade-off on 85
 agrochemical parents \citep{Scholz_2023}, on 37 chemicals where the broadest-coverage system also
 produced the most incorrect predictions \citep{Boyce_2022}, and on radiolabelled ADME data
 \citep{Gao_2026}. Each fixes one criterion for a correct prediction, and none reports how sensitive
@@ -357,6 +361,7 @@ leaderboard & places & items & dominate & \shortstack{contested\\(certified)} & 
 \shortstack{places\\supported} \\
 \midrule
 retrosynthesis, seven systems & $7$ & $4{,}999$ & $8$ of $21$ & $9$ (8) & $4$ & $3$ \\
+retrosynthesis, five systems  & $5$ & $4{,}948$ & $7$ of $10$ & $3$ (2) & $0$ & $3$ \\
 retrosynthesis, three systems & $3$ & $4{,}982$ & $0$ of $3$ & $2$ (2) & $1$ & $1$ \\
 metabolites, three methods    & $3$ & $1{,}170$ & $2$ of $3$ & $1$ (0) & $0$ & $2$ \\
 docking, seven programs       & $7$ & $428$ & $17$ of $21$ & $2$ (0) & $2$ & $4$ \\
@@ -366,14 +371,14 @@ translation, fifteen systems  & $15$ & $559$ & $96$ of $105$ & $1$ (0) & $8$ & $
 translation, nine further pairs & $115$ & $634$--$1{,}954$ & 553 of $689$ & 33 (4) & 103 & $62$ \\
 translation, the year before & $124$ & $509$--$1{,}120$ & $804$ of $909$ & $20$ (1) & $85$ & $78$ \\
 \midrule
-all twenty-three & $\mathbf{293}$ & --- & $1{,}605$ of $1{,}922$ & $85$ (21) & $232$ & $\mathbf{167}$ \\
+all twenty-four & $\mathbf{298}$ & --- & $1{,}612$ of $1{,}932$ & $88$ (23) & $232$ & $\mathbf{170}$ \\
 \bottomrule
 \end{tabular}
 \caption{What each leaderboard publishes and what survives its own grid. \emph{Places} is the number
 of systems the table ranks, and \emph{places supported} is the longest chain of the dominance order:
 the ranks a reader may quote without naming a cell. \emph{Certified} counts the contested pairs
-surviving Holm over the family each grid creates; over all twenty-three grids at once, $14$ of the
-$21$ survive (Appendix~\ref{app:robustorder}). The last row is the survey's total.
+surviving Holm over the family each grid creates; over all twenty-four grids at once, $15$ of the
+$23$ survive (Appendix~\ref{app:robustorder}). The last row is the survey's total.
 Figure~\ref{fig:hasse} draws the seven-system table's surviving order as its transitive reduction.}
 \label{tab:robust}
 \end{table}
@@ -384,7 +389,7 @@ The last three columns are the ones to take away, because most of what a leaderb
 never resolved at all. Eleven of the seven-system table's twenty-one pairs carry margins its own
 benchmark cannot separate before any choice is varied. Across all twenty-three leaderboards the
 share runs from none of three to nine tenths with a median of $0.83$, so it is not a constant of the
-field, and none is reported. Summed, they publish $293$ places and support $167$. Most of that gap
+field, and none is reported. Summed, they publish $298$ places and support $170$. Most of that gap
 is a benchmark's own power rather than a convention (Appendix~\ref{app:robustorder}). The longest
 chain reports the same measurement in a readable form. Seven published places support $3$ tiers,
 resampling to $[3,3]$; nineteen support $9$; and the same seven systems take $4$ total orders across
@@ -393,7 +398,7 @@ places second is the only system that is (Figure~\ref{fig:hasse}). Docking and t
 controls. Docking's field published its reversal already \citep{Buttenschoen_2024} and the grid
 recovers it. Translation's nineteen boards contest $71$ pairs, of which $11$ survive their own
 boards' correction and $4$ the union of all twenty-three. Not one of the $11$ reverses an ordering
-its own published cell had separated from zero; all five such reversals are the budget's, never the
+its own published cell had separated from zero; all six such reversals are the budget's, never the
 matching criterion's (Appendix~\ref{app:robustorder}). A null of that shape needs a size, and the
 identity supplies one without a further statistic. On the two retrosynthesis boards and the
 metabolite one, the matching rule erases at most $0.5755$ of a margin the published cell had
@@ -412,6 +417,17 @@ the benchmark cannot resolve. The first is called \emph{contested} and the secon
 \emph{unresolved}. Only the count of contested pairs is evidence that a choice reverses anything,
 because counting sign changes alone would let noise on a tied pair read as a reversal, the error
 this instrument exists to avoid.
+
+\paragraph{The five terms.} Three are verdicts and two are conditions on them. A pair
+\emph{dominates} when the higher system's margin is positive in every cell, which makes dominance an
+intersection of the per-cell orders and therefore transitive; it is \emph{separated in every cell}
+when a paired interval on that margin also excludes zero in each, reported apart because an interval
+condition is not transitive. A pair that does not dominate is \emph{contested} when some cell
+reverses it with a paired interval excluding zero, and \emph{unresolved} when none does and the
+margin is one the benchmark cannot resolve. A contested pair is \emph{certified} when it survives
+Holm at $\alpha=0.05$ over the cell-level tests its own grid creates; the word records that
+correction and nothing more.
+
 \subsection{A control with a published answer}
 
 \paragraph{Docking as a control with a published answer.} Three of the four boards are
@@ -471,11 +487,12 @@ excluded.
 \subsection{Which axis moves what, and what the gap is made of}
 
 \paragraph{Which choice the certified reversals belong to.} Of the
-twenty-one certified reversals, five reverse an ordering the published cell had separated. The other
-sixteen reverse pairs the table never established, which reaches the first claim by a second route.
-What matters about the five is the axis that moves them, not their domain. All five are
-retrosynthesis pairs, and each reverses at top-3 and top-5 under the \emph{published} criterion, so
-the budget moves them and the matching rule does not. The matching criterion therefore certifies no
+twenty-three certified reversals, six reverse an ordering the published cell had separated. The other
+seventeen reverse pairs the table never established, which reaches the first claim by a second route.
+What matters about the six is the axis that moves them, not their domain. All six are
+retrosynthesis pairs, and each reverses at a budget the \emph{published} criterion is held at, so
+the budget moves them and the matching rule does not. Five reverse at top-3 and top-5; the sixth,
+on the extrapolation board, reverses only at top-10 and is the one the union correction removes. The matching criterion therefore certifies no
 reversal of a separated ordering anywhere in this paper. That is a smaller second claim than a paper
 about matching rules might suggest, but it is the one the measurements support. The criterion
 exchanges positions a benchmark never separated, which is the first claim. What reverses an
@@ -486,13 +503,13 @@ numbers stand beside a sentence about undeclared choices, which invites the read
 cost the difference. They do not. Proposition~2 keeps the ways a pair can fail as
 different quantities, and the same discipline applies to the count that rolls them up. There are
 three readings of "supported". Each is a longest chain in a relation on the same systems; they differ
-only in what an edge requires. When a leaderboard's \emph{own} cell must separate the pair, the $293$
-published places support $136$, and the $157$ lost go to the benchmark's power before any convention
-is varied. When every declared cell must separate it, they support $97$, so the grid costs $39$ on
-top. The $167$ the abstract leads with is the weaker reading an intersection of orders gives, in which a
+only in what an edge requires. When a leaderboard's \emph{own} cell must separate the pair, the $298$
+published places support $139$, and the $159$ lost go to the benchmark's power before any convention
+is varied. When every declared cell must separate it, they support $99$, so the grid costs $40$ on
+top. The $170$ the abstract leads with is the weaker reading an intersection of orders gives, in which a
 cell must agree in sign and need not separate; it is quoted because dominance is what the instrument
-computes. A reader who wants the strictest number has $97$, and one who wants what the conventions
-cost has $39$.
+computes. A reader who wants the strictest number has $99$, and one who wants what the conventions
+cost has $40$.
 
 \paragraph{The share does not replicate across two editions of one task.} Nineteen of
 the twenty-three boards come from one shared task, which invites the objection that they are one
@@ -513,9 +530,9 @@ The sign survives iff $|\delta_a-\delta_b|\le\max(|d|,|d'|)$. This is an identit
 says only that a difference changes sign when the movement exceeds both margins. It is stated for
 what follows from it, not as a result. Scoring the $n$ systems once in each cell fixes every one of
 the $n(n-1)/2$ dominance verdicts, with no pairwise statistic anywhere; a resample enters only to
-tell a contested pair from an unresolved one. On the twenty-three tables that leaves $316$ of
-$1{,}922$ pairs failing to dominate, which are exactly the pairs some cell reverses, computed from
-$n$ numbers per cell rather than from $1{,}922$ paired bootstraps.
+tell a contested pair from an unresolved one. On the twenty-three tables that leaves $319$ of
+$1{,}932$ pairs failing to dominate, which are exactly the pairs some cell reverses, computed from
+$n$ numbers per cell rather than from $1{,}932$ paired bootstraps.
 
 The arithmetic does not say where those pairs are, and that answer is a ratio rather than a level.
 The question can be asked of twenty-four leaderboards: the twenty-three plus a molecular-generation

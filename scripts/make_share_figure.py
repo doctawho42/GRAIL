@@ -26,7 +26,8 @@ ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "paper" / "app" / "share_figure.tex"
 
 ROWS = [
-    ("retrosynthesis", [("robust_order.json", "cluster0"), ("robust_order.json", "cluster1")]),
+    ("retrosynthesis", [("robust_order.json", "cluster0"), ("robust_order.json", "cluster1"),
+                        ("robust_order_retro_extrapolation.json", "extrapolation50k")]),
     ("metabolites", [("robust_order_metabolite.json", None)]),
     ("docking", [("robust_order_posebusters.json", None)]),
     ("translation, 2024", [("robust_order_wmt24_en-de.json", None),

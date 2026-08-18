@@ -173,10 +173,10 @@ def _robust(ctx) -> None:
               r"The honest family is the union of the grids: \$([\d,{}]+)\$ cell-level tests",
               "sum over results/robust_order*.json")
     if boards and m:
-        ctx.check("robust, the union family over the twenty-three grids", _num(m.group(1)),
+        ctx.check("robust, the union family over the twenty-four grids", _num(m.group(1)),
                   sum(b["multiplicity"]["family_size"] for b in boards),
                   "sum over results/robust_order*.json")
-        _ok(ctx, "robust, the union is over twenty-three boards", len(boards) == 23, "23",
+        _ok(ctx, "robust, the union is over twenty-four boards", len(boards) == 24, "24",
             str(len(boards)), "results/robust_order*.json")
 
     # The task's own clustering, crossed against ours: every cell of a four-by-two table.
@@ -216,6 +216,7 @@ def _all_boards(ctx) -> list:
     """The twenty-three grids, in the order the survey counts them."""
     out = []
     for fn, key in (("robust_order.json", "cluster0"), ("robust_order.json", "cluster1"),
+                    ("robust_order_retro_extrapolation.json", "extrapolation50k"),
                     ("robust_order_metabolite.json", None),
                     ("robust_order_posebusters.json", None),
                     ("robust_order_wmt24_en-de.json", None),

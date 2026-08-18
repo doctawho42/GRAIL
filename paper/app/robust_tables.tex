@@ -15,6 +15,10 @@ retrosynthesis, 3 systems & criteria only, at the published budget & 4 & 3 of 3 
  & budgets only, at the published criterion & 4 & 0 of 3 & 1 & 3 \\
  & the product & 16 & 0 of 3 & 1 & 3 \\
 \midrule
+retrosynthesis, 5 systems & criteria only, at the published budget & 4 & 9 of 10 & 4 & 1 \\
+ & budgets only, at the published criterion & 4 & 7 of 10 & 3 & 3 \\
+ & the product & 16 & 7 of 10 & 3 & 3 \\
+\midrule
 metabolites, 3 methods & criteria only, at the published budget & 4 & 3 of 3 & 3 & 1 \\
  & budgets only, at the published criterion & 4 & 2 of 3 & 2 & 2 \\
  & the product & 16 & 2 of 3 & 2 & 2 \\
@@ -122,6 +126,50 @@ Per-pair classification. A pair is \emph{contested} only when some cell puts it 
 chemformer over gta & contested & no & 12 & 12 & yes \\
 chemformer over tiedtransformer & contested & no & 12 & 12 & yes \\
 gta over tiedtransformer & unresolved & no & 2 & 0 & yes \\
+\bottomrule\end{tabular}\end{center}
+
+\paragraph{retrosynthesis, 5 systems.} Published order at ('canonical', 1): Chemformer $>$ GraphRetro $>$ Molecular Transformer $>$ LocalRetro $>$ MEGAN. 4948 items. Accuracy by system and cell, from which every quantity below follows:
+
+\begin{center}\small
+\begin{tabular}{lcccccccc}
+\toprule
+system & canon@1 & canon@3 & canon@5 & canon@10 & no-st@1 & no-st@3 & no-st@5 & no-st@10 \\
+\midrule
+Chemformer & 0.020 & 0.038 & 0.046 & 0.051 & 0.020 & 0.038 & 0.046 & 0.052 \\
+GraphRetro & 0.017 & 0.031 & 0.042 & 0.058 & 0.017 & 0.031 & 0.043 & 0.059 \\
+Molecular Transformer & 0.015 & 0.029 & 0.036 & 0.037 & 0.015 & 0.029 & 0.036 & 0.037 \\
+LocalRetro & 0.009 & 0.018 & 0.023 & 0.029 & 0.009 & 0.018 & 0.023 & 0.030 \\
+MEGAN & 0.009 & 0.022 & 0.030 & 0.043 & 0.009 & 0.022 & 0.030 & 0.043 \\
+\bottomrule\end{tabular}\end{center}
+\begin{center}\small
+\begin{tabular}{lcccccccc}
+\toprule
+system & IK@1 & IK@3 & IK@5 & IK@10 & taut@1 & taut@3 & taut@5 & taut@10 \\
+\midrule
+Chemformer & 0.020 & 0.038 & 0.046 & 0.051 & 0.022 & 0.043 & 0.051 & 0.057 \\
+GraphRetro & 0.017 & 0.031 & 0.042 & 0.058 & 0.019 & 0.036 & 0.050 & 0.068 \\
+Molecular Transformer & 0.015 & 0.029 & 0.036 & 0.037 & 0.016 & 0.034 & 0.042 & 0.043 \\
+LocalRetro & 0.009 & 0.018 & 0.023 & 0.029 & 0.011 & 0.025 & 0.031 & 0.042 \\
+MEGAN & 0.009 & 0.022 & 0.030 & 0.043 & 0.011 & 0.028 & 0.039 & 0.055 \\
+\bottomrule\end{tabular}\end{center}
+
+Per-pair classification. A pair is \emph{contested} only when some cell puts it the other way round with an interval excluding zero; a pair that is neither dominating nor contested is one the benchmark does not resolve, which is a different failure and is not counted as a reversal.
+
+\begin{center}\small\setlength{\tabcolsep}{4pt}
+\begin{tabular}{>{\raggedright\arraybackslash}p{0.24\textwidth}lccccl}
+\toprule
+\shortstack[l]{pair (as the published\\cell orders it)} & verdict & \shortstack{sep.\ every\\cell} & \shortstack{cells\\reversing} & \shortstack{with an\\interval} & \shortstack[l]{own cell\\resolves} \\
+\midrule
+Chemformer over LocalRetro & dominates & yes & 0 & 0 & yes \\
+Chemformer over MEGAN & dominates & no & 0 & 0 & yes \\
+Chemformer over GraphRetro & contested & no & 4 & 2 & no \\
+Chemformer over Molecular Transformer & dominates & yes & 0 & 0 & yes \\
+LocalRetro over MEGAN & contested & no & 13 & 11 & no \\
+GraphRetro over LocalRetro & dominates & yes & 0 & 0 & yes \\
+Molecular Transformer over LocalRetro & dominates & no & 0 & 0 & yes \\
+GraphRetro over MEGAN & dominates & yes & 0 & 0 & yes \\
+Molecular Transformer over MEGAN & contested & no & 4 & 4 & yes \\
+GraphRetro over Molecular Transformer & dominates & no & 0 & 0 & no \\
 \bottomrule\end{tabular}\end{center}
 
 \paragraph{metabolites, 3 methods.} Published order at ('tautomer', 15): MetaPredictor $>$ SyGMa $>$ GRAIL. 1170 items. Accuracy by system and cell, from which every quantity below follows:

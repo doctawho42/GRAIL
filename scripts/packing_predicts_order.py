@@ -27,6 +27,7 @@ import argparse
 
 import itertools
 import json
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -106,6 +107,11 @@ def main() -> int:
         for name, r in json.loads(ro.read_text())["leaderboards"].items():
             if "system_accuracy_by_cell" in r:
                 boards[f"retrosynthesis, {r['n_systems']} systems"] = r
+    rx = ROOT / "results/robust_order_retro_extrapolation.json"
+    if rx.exists():
+        for name, r in json.loads(rx.read_text())["leaderboards"].items():
+            if "system_accuracy_by_cell" in r:
+                boards[f"retrosynthesis, {r['n_systems']} systems (extrapolation)"] = r
     rm = ROOT / "results/robust_order_metabolite.json"
     if rm.exists():
         r = json.loads(rm.read_text())
@@ -137,6 +143,11 @@ def main() -> int:
             boards[f"docking, {r['n_systems']} programs"] = r
     if not boards:
         raise SystemExit("no robust-order artifact carrying per-cell accuracies")
+    # this file enumerates the boards for itself, so it is held against the one list
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from _boards import check_agreement
+    check_agreement(len(boards), sum(b["n_pairs"] for b in boards.values()),
+                    "packing_predicts_order.py")
 
     rep = {"config": {**_code_version(),
                       "note": "the screen uses only the published cell and the movement to each "

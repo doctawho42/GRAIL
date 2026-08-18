@@ -68,6 +68,12 @@ def leaderboards() -> dict:
                           {m: {c: v["top1"] for c, v in cs.items()}
                            for m, cs in d["accuracy"].items()})
 
+    d = _load("retro_leaderboard_extrapolation50k.json")
+    if d:
+        out["retrosynthesis, five-system group"] = (
+            "retrosynthesis",
+            {m: {c: v["top1"] for c, v in cs.items()} for m, cs in d["accuracy"].items()})
+
     d = _load("moses_uniqueness.json")
     if d:
         # criterion -> model -> score, transposed; the metric IS the criterion here

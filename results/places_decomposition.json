@@ -1,17 +1,17 @@
 {
  "config": {
   "script": "places_decomposition.py",
-  "git_commit": "0aa044ec2020f3fb23e62ef0c2b9299c9c7289f0",
+  "git_commit": "2da1ab3e10da29e745f53ce49e8e1db4d47171c2",
   "git_dirty": true,
-  "n_boards": 23,
+  "n_boards": 24,
   "note": "each figure is a longest chain in a relation on the same systems; they differ only in what an edge requires"
  },
- "places_published": 293,
- "supported_when_its_own_cell_separates": 136,
- "supported_when_every_cell_separates": 97,
- "supported_when_every_cell_agrees_in_sign": 167,
- "lost_before_any_choice_is_varied": 157,
- "lost_to_the_grid": 39,
+ "places_published": 298,
+ "supported_when_its_own_cell_separates": 139,
+ "supported_when_every_cell_separates": 99,
+ "supported_when_every_cell_agrees_in_sign": 170,
+ "lost_before_any_choice_is_varied": 159,
+ "lost_to_the_grid": 40,
  "per_board": {
   "('canonical', 1)|graphretro/localretro": {
    "places": 7,
@@ -24,6 +24,12 @@
    "own_cell_separates": 3,
    "every_cell_separates": 1,
    "every_cell_agrees_in_sign": 1
+  },
+  "('canonical', 1)|Chemformer/GraphRetro": {
+   "places": 5,
+   "own_cell_separates": 3,
+   "every_cell_separates": 2,
+   "every_cell_agrees_in_sign": 3
   },
   "('tautomer', 15)|MetaPredictor/SyGMa": {
    "places": 3,
