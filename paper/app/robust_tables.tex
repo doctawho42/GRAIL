@@ -260,11 +260,22 @@ MSLC & -2.863 & -2.863 & -4.199 & -4.189 \\
 
 Per-pair classification. A pair is \emph{contested} only when some cell puts it the other way round with an interval excluding zero; a pair that is neither dominating nor contested is one the benchmark does not resolve, which is a different failure and is not counted as a reversal.
 
-\begin{center}\small\setlength{\tabcolsep}{4pt}
-\begin{tabular}{>{\raggedright\arraybackslash}p{0.24\textwidth}lccccl}
+\begingroup\small\setlength{\tabcolsep}{4pt}
+\begin{longtable}{>{\raggedright\arraybackslash}p{0.24\textwidth}lccccl}
 \toprule
 \shortstack[l]{pair (as the published\\cell orders it)} & verdict & \shortstack{sep.\ every\\cell} & \shortstack{cells\\reversing} & \shortstack{with an\\interval} & \shortstack[l]{own cell\\resolves} \\
 \midrule
+\endfirsthead
+\multicolumn{6}{l}{\small\itshape continued from the previous page} \\
+\toprule
+\shortstack[l]{pair (as the published\\cell orders it)} & verdict & \shortstack{sep.\ every\\cell} & \shortstack{cells\\reversing} & \shortstack{with an\\interval} & \shortstack[l]{own cell\\resolves} \\
+\midrule
+\endhead
+\midrule
+\multicolumn{6}{r}{\small\itshape continued on the next page} \\
+\endfoot
+\bottomrule
+\endlastfoot
 Claude-3.5 over Aya23 & dominates & no & 0 & 0 & yes \\
 CommandR-plus over Aya23 & dominates & no & 0 & 0 & yes \\
 Dubformer over Aya23 & dominates & no & 0 & 0 & yes \\
@@ -436,7 +447,7 @@ TranssionMT over refB & unresolved & no & 4 & 0 & no \\
 Unbabel-Tower70B over refA & dominates & no & 0 & 0 & yes \\
 Unbabel-Tower70B over refB & unresolved & no & 1 & 0 & no \\
 refB over refA & dominates & no & 0 & 0 & yes \\
-\bottomrule\end{tabular}\end{center}
+\end{longtable}\endgroup
 
 \paragraph{translation, WMT24 ja-zh, 15 systems.} Published order at ('wmt', 'none'): Claude-3.5 $>$ refA $>$ GPT-4 $>$ DLUT-GTCOM $>$ Unbabel-Tower70B $>$ Gemini-1.5-Pro $>$ CommandR-plus $>$ IOL-Research $>$ Llama3-70B $>$ Aya23 $>$ Team-J $>$ NTTSU $>$ ONLINE-B $>$ IKUN-C $>$ MSLC. 559 items. Accuracy by system and cell, from which every quantity below follows:
 
@@ -485,11 +496,22 @@ MSLC & -1.331 & -1.331 & -2.233 & -2.233 \\
 
 Per-pair classification. A pair is \emph{contested} only when some cell puts it the other way round with an interval excluding zero; a pair that is neither dominating nor contested is one the benchmark does not resolve, which is a different failure and is not counted as a reversal.
 
-\begin{center}\small\setlength{\tabcolsep}{4pt}
-\begin{tabular}{>{\raggedright\arraybackslash}p{0.24\textwidth}lccccl}
+\begingroup\small\setlength{\tabcolsep}{4pt}
+\begin{longtable}{>{\raggedright\arraybackslash}p{0.24\textwidth}lccccl}
 \toprule
 \shortstack[l]{pair (as the published\\cell orders it)} & verdict & \shortstack{sep.\ every\\cell} & \shortstack{cells\\reversing} & \shortstack{with an\\interval} & \shortstack[l]{own cell\\resolves} \\
 \midrule
+\endfirsthead
+\multicolumn{6}{l}{\small\itshape continued from the previous page} \\
+\toprule
+\shortstack[l]{pair (as the published\\cell orders it)} & verdict & \shortstack{sep.\ every\\cell} & \shortstack{cells\\reversing} & \shortstack{with an\\interval} & \shortstack[l]{own cell\\resolves} \\
+\midrule
+\endhead
+\midrule
+\multicolumn{6}{r}{\small\itshape continued on the next page} \\
+\endfoot
+\bottomrule
+\endlastfoot
 Claude-3.5 over Aya23 & dominates & yes & 0 & 0 & yes \\
 CommandR-plus over Aya23 & dominates & yes & 0 & 0 & yes \\
 DLUT-GTCOM over Aya23 & dominates & yes & 0 & 0 & yes \\
@@ -595,7 +617,7 @@ refA over ONLINE-B & dominates & yes & 0 & 0 & yes \\
 Unbabel-Tower70B over Team-J & dominates & yes & 0 & 0 & yes \\
 refA over Team-J & dominates & yes & 0 & 0 & yes \\
 refA over Unbabel-Tower70B & dominates & no & 0 & 0 & no \\
-\bottomrule\end{tabular}\end{center}
+\end{longtable}\endgroup
 
 \paragraph{docking, 7 programs.} Published order at ('rmsd2+valid', 'none'): vina $>$ gold $>$ diffdock $>$ deepdock $>$ tankbind $>$ unimol $>$ equibind. 428 items. Accuracy by system and cell, from which every quantity below follows:
 

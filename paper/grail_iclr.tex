@@ -4,6 +4,7 @@
 \usepackage{amsmath,amssymb}
 \usepackage{booktabs}
 \usepackage{array}
+\usepackage{longtable}
 \usepackage{graphicx}
 \usepackage{microtype}
 \usepackage{url}
@@ -12,6 +13,15 @@
 \usepackage{hyperref}
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta}
+
+% One palette for every drawing in the paper, chosen so that hue never carries meaning alone:
+% each domain is also separated by position, and the four hues stay distinguishable in greyscale
+% and under the common forms of colour blindness.
+\definecolor{gPublished}{HTML}{1F4E79}   % the cell a paper reports, and retrosynthesis
+\definecolor{gReversed}{HTML}{A6301F}    % what a declared choice reverses
+\definecolor{gMeta}{HTML}{2E6F3E}        % metabolite boards
+\definecolor{gDock}{HTML}{6A3D9A}        % docking boards
+\definecolor{gRule}{HTML}{444444}        % rules, axes, and anything not carrying meaning
 
 \usepackage{xspace}
 \sloppy

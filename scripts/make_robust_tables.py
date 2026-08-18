@@ -92,15 +92,30 @@ def pair_table(r: dict) -> str:
                      str(len(v["cells_that_reverse_it_with_an_interval"])),
                      "yes" if v["resolved_in_the_published_cell"] else "no"))
     # the body rows are short; it is this header that ran past the margin on one line
-    # the widest pair names on the nineteen-system boards do not fit an l column, and with
-    # seven columns the inter-column padding alone is a quarter of the text block
+    head = ("\\shortstack[l]{pair (as the published\\\\cell orders it)} & verdict & "
+            "\\shortstack{sep.\\ every\\\\cell} & \\shortstack{cells\\\\reversing} & "
+            "\\shortstack{with an\\\\interval} & \\shortstack[l]{own cell\\\\resolves} \\\\")
+    spec = ">{\\raggedright\\arraybackslash}p{0.24\\textwidth}lccccl"
+    # a tabular is one unbreakable box, and the nineteen-system board has 171 pairs: set that way
+    # it stood 1{,}966pt taller than the page and simply ran off it. longtable breaks across pages
+    # and repeats the header, which is what a table of this length needs.
+    if len(rows) > 30:
+        out = ["\\begingroup\\small\\setlength{\\tabcolsep}{4pt}",
+               "\\begin{longtable}{" + spec + "}",
+               "\\toprule", head, "\\midrule", "\\endfirsthead",
+               "\\multicolumn{6}{l}{\\small\\itshape continued from the previous page} \\\\",
+               "\\toprule", head, "\\midrule", "\\endhead",
+               "\\midrule",
+               "\\multicolumn{6}{r}{\\small\\itshape continued on the next page} \\\\",
+               "\\endfoot",
+               "\\bottomrule", "\\endlastfoot"]
+        for row in rows:
+            out.append(" & ".join(row) + " \\\\")
+        out.append("\\end{longtable}\\endgroup")
+        return "\n".join(out)
+
     out = ["\\begin{center}\\small\\setlength{\\tabcolsep}{4pt}",
-           "\\begin{tabular}{>{\\raggedright\\arraybackslash}p{0.24\\textwidth}lccccl}",
-           "\\toprule",
-           "\\shortstack[l]{pair (as the published\\\\cell orders it)} & verdict & "
-           "\\shortstack{sep.\\ every\\\\cell} & \\shortstack{cells\\\\reversing} & "
-           "\\shortstack{with an\\\\interval} & \\shortstack[l]{own cell\\\\resolves} \\\\",
-           "\\midrule"]
+           "\\begin{tabular}{" + spec + "}", "\\toprule", head, "\\midrule"]
     for row in rows:
         out.append(" & ".join(row) + " \\\\")
     out.append("\\bottomrule\\end{tabular}\\end{center}")
@@ -157,22 +172,30 @@ def hasse(r: dict) -> str:
     # nine-page body, which a top-to-bottom drawing of the same relation does not
     out = ["\\begin{tikzpicture}[x=2.45cm,y=0.62cm,every node/.style={font=\\scriptsize}]"]
     pos = {}
-    # one baseline for every tier label: derived per column they sat at three different heights
-    # and read as annotations on whichever node happened to be lowest in that column
+    # the published place of each system, which is what makes the drawing worth printing: the
+    # table's first place is not in the top tier, and that is visible only if the places are on it
+    place = {s: i + 1 for i, s in enumerate(systems)}
     caption_y = -(max(len(r) for r in rows.values()) + 1) / 2
     for lvl in sorted(rows):
         row = rows[lvl]
+        col = "gPublished" if lvl == 0 else "gRule"
         for i, s in enumerate(row):
             y = -(i - (len(row) - 1) / 2)
             pos[s] = (lvl, y)
-            out.append(f"\\node[draw,rounded corners,inner sep=2pt] ({s.replace(' ', '')}) "
-                       f"at ({lvl},{y:.2f}) {{{esc(s)}}};")
-        out.append(f"\\node[font=\\tiny,gray] at ({lvl},{caption_y:.2f}) "
-                   f"{{tier {lvl + 1}}};")
+            out.append(f"\\node[draw={col}, text={col}, rounded corners, inner sep=2.5pt, "
+                       f"fill=white, line width={0.7 if lvl == 0 else 0.4}pt] "
+                       f"({s.replace(' ', '')}) at ({lvl},{y:.2f}) "
+                       f"{{{esc(s)}\\,\\textcolor{{gRule!70}}{{\\tiny({place[s]})}}}};")
+        out.append(f"\\draw[{col}!45] ({lvl - 0.30},{caption_y + 0.42:.2f}) -- "
+                   f"({lvl + 0.30},{caption_y + 0.42:.2f});")
+        out.append(f"\\node[font=\\tiny,{col}] at ({lvl},{caption_y:.2f}) {{tier {lvl + 1}}};")
     for a, cs in red.items():
         for c in cs:
             if pos[a][0] < pos[c][0]:
-                out.append(f"\\draw[->,gray] ({a.replace(' ', '')}) -- ({c.replace(' ', '')});")
+                out.append(f"\\draw[->,gRule!55,line width=0.35pt] ({a.replace(' ', '')}) -- "
+                           f"({c.replace(' ', '')});")
+    out.append(f"\\node[font=\\tiny,gRule,anchor=west] at ({max(rows) + 0.45},{caption_y:.2f}) "
+               f"{{({{\\it n}}) is the place the published table gives}};")
     out.append("\\end{tikzpicture}")
     return "\n".join(out)
 

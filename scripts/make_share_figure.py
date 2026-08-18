@@ -25,6 +25,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "paper" / "app" / "share_figure.tex"
 
+# one colour per domain, named in the manuscript preamble. Hue never carries meaning alone here:
+# each domain also has its own row, so the drawing reads the same in greyscale.
+COLOUR = {"retrosynthesis": "gPublished", "metabolites": "gMeta", "docking": "gDock",
+          "translation, 2024": "gRule", "translation, 2023": "gRule"}
+
 ROWS = [
     ("retrosynthesis", [("robust_order.json", "cluster0"), ("robust_order.json", "cluster1"),
                         ("robust_order_retro_extrapolation.json", "extrapolation50k")]),
@@ -88,26 +93,35 @@ def main() -> int:
              "\\begin{tikzpicture}[x=%.4fcm, y=1cm]" % (W,)]
     y = 0.0
     # axis
-    lines.append(f"\\draw[gray!45] (0,{-0.30:.2f}) -- (1,{-0.30:.2f});")
+    lines.append(f"\\draw[gRule!55] (0,{-0.30:.2f}) -- (1,{-0.30:.2f});")
     for tick in (0.0, 0.25, 0.5, 0.75, 1.0):
-        lines.append(f"\\draw[gray!45] ({tick},{-0.30:.2f}) -- ({tick},{-0.42:.2f});")
+        lines.append(f"\\draw[gRule!55] ({tick},{-0.30:.2f}) -- ({tick},{-0.42:.2f});")
         lines.append(f"\\node[below,font=\\scriptsize,inner sep=1pt] at ({tick},{-0.42:.2f}) "
                      f"{{${tick:.2f}$}};")
-    lines.append(f"\\draw[dashed,gray!70] ({median:.4f},{-0.30:.2f}) -- "
+    lines.append(f"\\draw[dashed,gRule!75,line width=0.5pt] ({median:.4f},{-0.30:.2f}) -- "
                  f"({median:.4f},{len(rows) * H + 0.10:.2f});")
-    lines.append(f"\\node[above,font=\\scriptsize,gray!70!black] at "
+    lines.append(f"\\node[above,font=\\scriptsize,gRule] at "
                  f"({median:.4f},{len(rows) * H + 0.06:.2f}) {{median ${median:.2f}$}};")
 
     for label, boards in reversed(rows):
         y += H
-        lines.append(f"\\draw[gray!22] (0,{y:.2f}) -- (1,{y:.2f});")
-        lines.append(f"\\node[left,font=\\scriptsize] at (-0.012,{y:.2f}) {{{label}}};")
+        col = COLOUR.get(label, "gRule")
+        # a band behind each row binds its dots to its label without a rule cutting through them
+        lines.append(f"\\fill[{col}!7] (0,{y - H / 2 + 0.03:.2f}) rectangle "
+                     f"(1,{y + H / 2 - 0.03:.2f});")
+        lines.append(f"\\node[left,font=\\scriptsize,{col}] at (-0.012,{y:.2f}) {{{label}}};")
         for b in sorted(boards, key=lambda x: -x["n_pairs"]):
             # area proportional to the pairs the board carries, so a three-pair board cannot
-            # look like a hundred-and-seventy-one-pair one
-            r = 0.026 + 0.062 * (b["n_pairs"] / 171.0) ** 0.5
-            lines.append(f"\\fill[black!62] ({b['robustness']:.4f},{y:.2f}) circle "
-                         f"({r:.3f}cm);")
+            # look like a hundred-and-seventy-one-pair one, with a floor so it stays visible
+            r = 0.030 + 0.060 * (b["n_pairs"] / 171.0) ** 0.5
+            lines.append(f"\\fill[{col}!85, draw={col}, line width=0.2pt] "
+                         f"({b['robustness']:.4f},{y:.2f}) circle ({r:.3f}cm);")
+            # a board where nothing at all survives is the strongest single point on the axis
+            if b["robustness"] <= 0.0:
+                lines.append(f"\\draw[{col}] ({b['robustness']:.4f},{y:.2f}) circle "
+                             f"({r + 0.055:.3f}cm);")
+                lines.append(f"\\node[font=\\scriptsize,{col},anchor=west] at "
+                             f"({b['robustness']:.4f}+0.055,{y + 0.20:.2f}) {{nothing survives}};")
     lines.append("\\end{tikzpicture}")
     Path(args.out).write_text("\n".join(lines) + "\n")
 

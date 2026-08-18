@@ -1,43 +1,60 @@
 % A schematic, not a measurement: four systems, four cells, letters rather than scores.
-\begin{tikzpicture}[x=1cm, y=1cm, font=\footnotesize]
+% Colour carries one thing only -- which pair a declared choice puts the other way round -- and it
+% is redundant with position, so the drawing survives greyscale.
+\begin{tikzpicture}[x=1cm, y=1cm, font=\footnotesize,
+                    cell/.style={draw=gRule!45, minimum width=1.6cm, minimum height=1.4cm},
+                    sys/.style={font=\footnotesize},
+                    keep/.style={gRule},
+                    flip/.style={gReversed, font=\footnotesize\bfseries}]
 
 % --- the grid of cells -------------------------------------------------------
-\node[anchor=south west, font=\scriptsize\itshape] at (-0.15,3.05) {a grid of cells};
-\draw[gray!45] (0,0) rectangle (3.2,2.8);
-\draw[gray!45] (1.6,0) -- (1.6,2.8);
-\draw[gray!45] (0,1.4) -- (3.2,1.4);
-\node[font=\scriptsize, gray!60!black, anchor=north] at (0.8,3.05) {criterion};
-\node[font=\scriptsize, gray!60!black, rotate=90, anchor=south] at (-0.32,1.4)
-  {second axis};
+\node[anchor=south west, font=\scriptsize\itshape, gRule] at (-0.15,3.05) {a grid of cells};
+\node[font=\scriptsize, gRule, anchor=south] at (1.6,2.86) {criterion};
+\node[font=\scriptsize, gRule, rotate=90, anchor=south] at (-0.42,1.4) {second axis};
 
-\node at (0.8,2.1) {$a\,b\,c\,d$};
-\node at (2.4,2.1) {$a\,b\,c\,d$};
-\node at (0.8,0.7) {$b\,a\,c\,d$};
-\node at (2.4,0.7) {$b\,a\,c\,d$};
-\node[font=\scriptsize, gray!60!black, anchor=north] at (1.6,-0.12)
+\node[cell] at (0.8,2.1) {}; \node[cell] at (2.4,2.1) {};
+\node[cell] at (0.8,0.7) {}; \node[cell] at (2.4,0.7) {};
+
+% the published cell: filled, so it is found before anything is read
+\fill[gPublished!8] (0.0,1.4) rectangle (1.6,2.8);
+\draw[gPublished, line width=0.9pt] (0.0,1.4) rectangle (1.6,2.8);
+
+% top row: the order the published cell reports; bottom row: the same four, a and b exchanged
+\node at (0.8,2.1) {\textcolor{gReversed}{$a$}\,\textcolor{gReversed}{$b$}\,$c$\,$d$};
+\node at (2.4,2.1) {\textcolor{gReversed}{$a$}\,\textcolor{gReversed}{$b$}\,$c$\,$d$};
+\node at (0.8,0.7) {\textcolor{gReversed}{$b$}\,\textcolor{gReversed}{$a$}\,$c$\,$d$};
+\node at (2.4,0.7) {\textcolor{gReversed}{$b$}\,\textcolor{gReversed}{$a$}\,$c$\,$d$};
+
+\node[font=\scriptsize, gPublished, anchor=west] at (3.35,2.1) {the cell a paper reports};
+\node[font=\scriptsize, gReversed, anchor=west] at (3.35,0.7) {the second axis exchanges $a$ and $b$};
+\node[font=\scriptsize, gRule, anchor=north] at (1.6,-0.12)
   {each cell orders the same four systems};
-\node[draw=black!70, thick, rounded corners=1pt, minimum width=1.5cm,
-      minimum height=1.3cm] at (0.8,2.1) {};
-\node[font=\scriptsize, anchor=west] at (3.35,2.1) {the cell a paper reports};
 
 % --- the arrow ---------------------------------------------------------------
-\draw[-{Latex[length=2mm]}, gray!70!black] (5.55,1.4) -- (6.35,1.4);
-\node[font=\scriptsize, gray!60!black, anchor=south] at (5.95,1.5) {intersect};
+\draw[-{Latex[length=2mm]}, gRule] (6.55,1.75) -- (7.35,1.75);
+\node[font=\scriptsize, gRule, anchor=south] at (6.95,1.85) {intersect};
 
 % --- the surviving order -----------------------------------------------------
-\node[anchor=south west, font=\scriptsize\itshape] at (6.5,3.05) {what no cell contradicts};
-\node (A) at (7.0,2.3) {$a$};
-\node (B) at (8.1,2.3) {$b$};
-\node (C) at (7.55,1.3) {$c$};
-\node (D) at (7.55,0.4) {$d$};
-\draw[-{Latex[length=1.6mm]}] (A) -- (C);
-\draw[-{Latex[length=1.6mm]}] (B) -- (C);
-\draw[-{Latex[length=1.6mm]}] (C) -- (D);
-\draw[gray!45, rounded corners=2pt] (6.7,1.95) rectangle (8.45,2.65);
-\node[font=\scriptsize, gray!60!black, anchor=west] at (8.6,2.3) {one tier: unordered};
-\node[font=\scriptsize, gray!60!black, anchor=west] at (8.6,1.3) {second tier};
-\node[font=\scriptsize, gray!60!black, anchor=west] at (8.6,0.4) {third tier};
-\node[font=\scriptsize, gray!60!black, anchor=north] at (7.75,-0.12)
+\node[anchor=south west, font=\scriptsize\itshape, gRule] at (7.6,3.05)
+  {what no cell contradicts};
+
+% tiers as bands, so the surviving structure is read at a glance
+\fill[gPublished!7] (7.75,1.95) rectangle (9.55,2.65);
+\fill[gRule!7]      (7.75,1.05) rectangle (9.55,1.6);
+\fill[gRule!7]      (7.75,0.15) rectangle (9.55,0.7);
+
+\node (A) at (8.1,2.3) {\textcolor{gReversed}{$a$}};
+\node (B) at (9.2,2.3) {\textcolor{gReversed}{$b$}};
+\node (C) at (8.65,1.32) {$c$};
+\node (D) at (8.65,0.42) {$d$};
+\draw[-{Latex[length=1.6mm]}, gRule] (A) -- (C);
+\draw[-{Latex[length=1.6mm]}, gRule] (B) -- (C);
+\draw[-{Latex[length=1.6mm]}, gRule] (C) -- (D);
+
+\node[font=\scriptsize, gReversed, anchor=west] at (9.7,2.3) {one tier: unordered};
+\node[font=\scriptsize, gRule, anchor=west] at (9.7,1.32) {second tier};
+\node[font=\scriptsize, gRule, anchor=west] at (9.7,0.42) {third tier};
+\node[font=\scriptsize, gRule, anchor=north] at (8.65,-0.12)
   {four published places, three supported};
 
 \end{tikzpicture}
