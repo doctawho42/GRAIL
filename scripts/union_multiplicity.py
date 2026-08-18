@@ -152,8 +152,17 @@ def main() -> int:
         r = {mode: _surviving_reversals(b, c)
              for mode, c in (("per_board", cut_own), ("alpha_split", cut_split),
                              ("union", cut_union))}
+        # the three cutoffs themselves, because "which reading is more permissive here" is a
+        # statement about thresholds and cannot be recovered from the rejection counts: a board
+        # whose tests all sit far from either threshold rejects the same number under both
         per[lab] = {"family_size": mult["family_size"], "n_reversal_tests":
                     len(mult["reversal_tests"]),
+                    "cutoff_per_board": cut_own,
+                    "cutoff_alpha_split": cut_split,
+                    "cutoff_union": cut_union,
+                    # -1.0 means the reading rejects nothing on this board, so it is not the
+                    # more permissive one; two boards that both reject nothing are neither
+                    "union_is_the_more_permissive": bool(cut_union > cut_split),
                     **{f"reversals_{k}": len(v) for k, v in r.items()},
                     **{f"pairs_{k}": len({x["pair"] for x in v}) for k, v in r.items()},
                     **{f"separated_pairs_{k}": len(_separated(b, {x["pair"] for x in v}))
@@ -167,12 +176,17 @@ def main() -> int:
     # the artifacts' own count, which the paper quotes, must be the per-board reading
     quoted = sum(b["n_contested_after_correction"] for _, b in B)
 
+    _more = sum(1 for v in per.values() if v["union_is_the_more_permissive"])
     rep = {"config": {**_code_version(), "n_boards": len(B), "alpha": args.alpha,
                       "note": "no board is re-analysed; Holm is re-applied to the p-vectors the "
                               "board artifacts already carry"},
            "union_family_size": len(pooled),
            "union_tests_rejected": k_union,
            "union_cutoff_p": cut_union,
+           # the two stricter readings are not nested: on some boards the pooled cutoff is the
+           # larger of the two, so the union admits a test the alpha split refuses
+           "boards_where_the_union_is_the_more_permissive": _more,
+           "n_boards": len(B),
            "certified_pairs": {**pairs_tot, "quoted_in_the_paper": quoted},
            "certified_pairs_the_published_cell_had_separated": sep_tot,
            "certified_reversal_tests": tot,

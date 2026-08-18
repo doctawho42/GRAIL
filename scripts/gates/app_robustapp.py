@@ -747,6 +747,7 @@ def register(ctx) -> None:
     register_orphans_fixed(ctx)
     register_dedup_split(ctx)
     register_propensity_end_to_end(ctx)
+    register_permissiveness(ctx)
 
 
 def register_dedup_split(ctx) -> None:
@@ -917,3 +918,40 @@ def register_propensity_end_to_end(ctx) -> None:
                        f"test {p['ensemble_test_recall@15'] - d['ensemble_test_recall@15']:+.4f}, "
                        f"val {p['ensemble_val_recall@15'] - d['ensemble_val_recall@15']:+.4f}",
                        "results/training_reports.json"))
+
+def register_permissiveness(ctx) -> None:
+    """The claim that the two stricter readings are not nested, held to the cutoffs themselves.
+
+    The sentence says the union is the more permissive reading on some boards. That is a statement
+    about thresholds, not about how many tests each rejects: a board whose p all sit far from both
+    cutoffs rejects the same number under either. It was unverifiable until the cutoffs were
+    recorded, and it is recomputed here from them rather than from a count.
+    """
+    import json as _json
+    art = ctx.root / "results" / "union_multiplicity.json"
+    if not art.exists():
+        ctx.checks.append((False, "robust, the permissiveness artifact is present", "present",
+                           "missing", "results/union_multiplicity.json"))
+        return
+    U = _json.loads(art.read_text())
+    src = "results/union_multiplicity.json"
+    flat = re.sub(r"\s+", " ", ctx.flat)
+
+    m = re.search(r"on \$(\d+)\$ of the \$(\d+)\$ the union is the more permissive of"
+                  r"\s*the two stricter readings", flat)
+    ctx.checks.append((bool(m), "robust, the non-nestedness sentence parses", "present",
+                       "matched" if m else "not matched", src))
+    ctx.check("robust, boards where the union is the more permissive", m and m.group(1),
+              U["boards_where_the_union_is_the_more_permissive"], src)
+    ctx.check("robust, the boards it is counted over", m and m.group(2), U["n_boards"], src)
+    # and the claim it supports: the two readings really are not nested either way round
+    _more = U["boards_where_the_union_is_the_more_permissive"]
+    ctx.checks.append((0 < _more < U["n_boards"],
+                       "robust, the two stricter readings are nested in neither direction",
+                       "strictly between 0 and the board count",
+                       f"{_more} of {U['n_boards']}", src))
+    # every board's recorded verdict must follow from its own two cutoffs, not be asserted
+    _bad = [k for k, v in U["per_board"].items()
+            if v["union_is_the_more_permissive"] != (v["cutoff_union"] > v["cutoff_alpha_split"])]
+    ctx.checks.append((not _bad, "robust, each board's verdict follows from its cutoffs",
+                       "every board", f"{len(_bad)} disagree", src))
