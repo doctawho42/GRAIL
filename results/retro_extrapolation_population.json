@@ -1,0 +1,66 @@
+{
+ "config": {
+  "script": "retro_extrapolation_ingest.py",
+  "git_commit": "4c5004dd3925df5f0464405e01a21c8308567391",
+  "git_dirty": true,
+  "source": "grail_metabolism/data/retro_extrapolation",
+  "systems": {
+   "CF": "Chemformer",
+   "LR": "LocalRetro",
+   "MG": "MEGAN",
+   "GR": "GraphRetro",
+   "MT": "Molecular Transformer"
+  },
+  "note": "population only; nothing is scored and no criterion is applied"
+ },
+ "per_system": {
+  "Chemformer": {
+   "targets": 4964,
+   "predictions": 49730
+  },
+  "LocalRetro": {
+   "targets": 4964,
+   "predictions": 49730
+  },
+  "MEGAN": {
+   "targets": 4964,
+   "predictions": 49730
+  },
+  "GraphRetro": {
+   "targets": 4964,
+   "predictions": 49730
+  },
+  "Molecular Transformer": {
+   "targets": 4964,
+   "predictions": 49730
+  }
+ },
+ "released_test_file_targets": 4964,
+ "shared_targets": 4948,
+ "all_systems_agree_on_the_population": true,
+ "systems_matching_the_released_test_file": [
+  "Molecular Transformer"
+ ],
+ "overlap_with_surveyed_boards": {
+  "cluster0_test": {
+   "targets": 4999,
+   "shared_with_this_board": 507,
+   "share_of_that_board": 0.1014,
+   "share_of_this_board": 0.1025
+  },
+  "cluster1_test": {
+   "targets": 4982,
+   "shared_with_this_board": 484,
+   "share_of_that_board": 0.0971,
+   "share_of_this_board": 0.0978
+  },
+  "cluster2_test": {
+   "targets": 4998,
+   "shared_with_this_board": 467,
+   "share_of_that_board": 0.0934,
+   "share_of_this_board": 0.0944
+  }
+ },
+ "n_systems": 5,
+ "n_pairs": 10
+}

@@ -97,6 +97,7 @@ def register(ctx) -> None:  # noqa: C901 -- one appendix, one function, read top
     _curators(ctx)
     register_file_sizes(ctx)
     register_gap_scale(ctx)
+    register_board_search(ctx)
 
 
 # --------------------------------------------------------------------------------------------
@@ -1736,3 +1737,47 @@ def register_gap_scale(ctx) -> None:
     ctx.checks.append((w.get(m.group(5), -1) == len(exch),
                        "xdomain, pairs the criterion axis exchanges", m.group(5), str(len(exch)),
                        "results/robust_order.json"))
+
+def register_board_search(ctx) -> None:
+    """The recorded search for further boards, whose figures come from the ingest artifact.
+
+    A paragraph explaining why the survey has the boards it has is worth nothing if its numbers are
+    not the ones the ingest measured, so each is held against
+    ``results/retro_extrapolation_population.json`` rather than typed.
+    """
+    art = ctx.root / "results" / "retro_extrapolation_population.json"
+    if not art.exists():
+        ctx.checks.append((False, "xdomain, the board search's artifact is present", "present",
+                           "missing", "results/retro_extrapolation_population.json"))
+        return
+    import json as _json
+    P = _json.loads(art.read_text())
+    src = "results/retro_extrapolation_population.json"
+    flat = re.sub(r"\s+", " ", ctx.flat)
+
+    m = re.search(r"five systems with ranked predictions on an\s*extrapolation split of the same "
+                  r"corpus, sharing \$([\d,{}]+)\$ targets, which is a further \$(\d+)\$ pairs",
+                  flat)
+    ctx.checks.append((bool(m), "xdomain, the board-search sentence parses", "present",
+                       "matched" if m else "not matched", src))
+    ctx.checks.append((m is not None
+                       and m.group(1).replace("{,}", "") == str(P["shared_targets"]),
+                       "xdomain, the shared targets the search found",
+                       m.group(1).replace("{,}", "") if m else "not stated",
+                       str(P["shared_targets"]), src))
+    ctx.checks.append((m is not None and m.group(2) == str(P["n_pairs"]),
+                       "xdomain, the pairs it would add",
+                       m.group(2) if m else "not stated", str(P["n_pairs"]), src))
+
+    mo = re.search(r"sharing \$(\d+)\$, \$(\d+)\$ and \$(\d+)\$ targets", flat)
+    ctx.checks.append((bool(mo), "xdomain, the overlap sentence parses", "present",
+                       "matched" if mo else "not matched", src))
+    got = sorted(v["shared_with_this_board"]
+                 for v in P["overlap_with_surveyed_boards"].values())
+    said = sorted(int(x) for x in mo.groups()) if mo else []
+    ctx.checks.append((said == got, "xdomain, the overlap with the boards already surveyed",
+                       str(said), str(got), src))
+    # the claim that these five agree on one population is the reason it is one board and not three
+    ctx.checks.append((P["all_systems_agree_on_the_population"] is True,
+                       "xdomain, the five systems agree on one population",
+                       "one population", str(P["all_systems_agree_on_the_population"]), src))

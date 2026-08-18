@@ -1,3 +1,36 @@
+\subsection{Which boards the survey could have had, and why it has these}
+\label{app:boardsearch}
+
+The composition of the survey invites a fair question: nineteen of the twenty-three boards come from
+one shared task and four from chemistry. What follows records the search for more, so that the
+composition is evidenced rather than asserted, and so that a reader can repeat it.
+
+The binding constraint is not the criterion or the second axis. It is that a board must have
+released its \emph{per-item} predictions, and most benchmarks never collect them. The Therapeutics
+Data Commons instructs a submitter to use its own evaluator to compute the performance of a model on
+the test set and to submit that performance, so the predictions exist only on the submitter's
+machine. The Open Graph Benchmark enumerates the fields a submission must carry, and every one is
+metadata or an aggregate: the test performance is a mean and a standard deviation over ten seeds.
+MoleculeNet has no submission process at all. In each case the leaderboard is a table of numbers
+whose inputs were never kept, which is a stronger statement than that the files could not be found.
+
+Two further families are excluded by the rules of \S\ref{app:robustorder} rather than by
+availability, and both exclusions are the one the molecular-generation board receives. In property
+and yield prediction the output is a number, so the only candidate criterion is a numeric tolerance,
+which is not a candidate answer to whether two objects are the same; the criterion axis exists only
+where the output is a structure. On the materials-discovery board the headline counts materials
+below a stability threshold, and that threshold is applied to the reference as well as to the
+prediction, so moving it rewrites which materials are stable rather than when a prediction matches
+one. A criterion changes when a prediction counts as hitting the reference; it never changes what
+the reference is.
+
+The search found one further collection that qualifies: five systems with ranked predictions on an
+extrapolation split of the same corpus, sharing $4{,}948$ targets, which is a further $10$ pairs.
+Its items are not disjoint from the boards already surveyed, sharing $507$, $484$ and $467$ targets
+with the three of them, so the families the union correction runs over are dependent. Holm is valid
+under arbitrary dependence, so the correction stands; the overlap is reported because a reader is
+entitled to know the families are not disjoint rather than to assume it.
+
 \subsection{Recall by criterion on the external set}
 \label{app:matchsensext}
 
