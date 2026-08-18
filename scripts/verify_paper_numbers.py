@@ -455,7 +455,10 @@ def main() -> int:
                                # decomposition supports rather than a figure the same section deflates
                                r"(?!x)x", flat)
         printings = [tuple(x for x in pr if x) for pr in printings]
-        checks.append((len(printings) >= 3, "every printing of the survey total is found",
+        # pinned, not floored: the pair is printed in the contributions and in Section 3.2, and
+        # the abstract now states the same fact without the pair, so a third printing is a new
+        # place to bind rather than a count to satisfy
+        checks.append((len(printings) == 2, "every printing of the survey total is found",
                        "3 or more", str(len(printings)), "the manuscript"))
         # and the title states no figure the body deflates: a title quoting 293 and 167 read
         # as the cost of the undeclared choices, which is 39 of that gap and not 126
@@ -1593,8 +1596,11 @@ def main() -> int:
                      r"the benchmark's power before any convention is varied\..*?the grid costs "
                      r"\$(\d+)\$ on top"):
             printings_pd += re.findall(_pat, flat)
-        checks.append((len(printings_pd) >= 3, "every printing of the decomposition is found",
-                       "3 or more", str(len(printings_pd)), "the manuscript"))
+        # the triple is printed twice, in the contributions and in Section 3.3; the abstract
+        # states the ladder in its own words and is bound separately. The count is pinned rather
+        # than given a floor: a third printing must be bound, not merely counted.
+        checks.append((len(printings_pd) == 2, "every printing of the decomposition is found",
+                       "2", str(len(printings_pd)), "the manuscript"))
         for _i, (_o, _pw, _g) in enumerate(printings_pd, 1):
             check(f"decomposition printing {_i}, own cell", _o,
                   PD["supported_when_its_own_cell_separates"], "the manuscript")
@@ -1605,14 +1611,22 @@ def main() -> int:
         # the abstract states the same ladder in its own words and closes it, which is the sentence
         # a reader reconciles 293-167 against; both of its figures are held here rather than left
         # to the reader, because the two ladders differ and an unread number is how they drifted
-        mab = re.search(r"stricter ladder on the same \$(\d+)\$.*?more to the grid, leaving \$(\d+)\$",
-                        flat)
+        mab = re.search(r"Together those tables rank \$(\d+)\$ systems\..*?and \$(\d+)\$ ranks "
+                        r"stand\..*?and \$(\d+)\$ survive\..*?\$(\d+)\$ ranks\s*go to resolving "
+                        r"power a benchmark never had, before any convention is varied, and "
+                        r"\$(\d+)\$ to the grid", flat)
         checks.append((bool(mab), "the abstract's ladder sentence parses", "present",
                        "matched" if mab else "not matched", "results/places_decomposition.json"))
         check("the abstract's ladder, places published", mab and mab.group(1),
               PD["places_published"], "results/places_decomposition.json")
-        check("the abstract's ladder, what every cell separating leaves", mab and mab.group(2),
+        check("the abstract's ladder, the permissive reading", mab and mab.group(2),
+              PD["supported_when_every_cell_agrees_in_sign"], "results/places_decomposition.json")
+        check("the abstract's ladder, what every cell separating leaves", mab and mab.group(3),
               PD["supported_when_every_cell_separates"], "results/places_decomposition.json")
+        check("the abstract's ladder, what goes to resolving power", mab and mab.group(4),
+              PD["lost_before_any_choice_is_varied"], "results/places_decomposition.json")
+        check("the abstract's ladder, what goes to the grid", mab and mab.group(5),
+              PD["lost_to_the_grid"], "results/places_decomposition.json")
         checks.append((mab is not None
                        and PD["places_published"] - PD["supported_when_its_own_cell_separates"]
                        == PD["lost_before_any_choice_is_varied"]

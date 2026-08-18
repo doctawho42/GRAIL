@@ -120,8 +120,13 @@ def main() -> int:
             if b["robustness"] <= 0.0:
                 lines.append(f"\\draw[{col}] ({b['robustness']:.4f},{y:.2f}) circle "
                              f"({r + 0.055:.3f}cm);")
+                # a leader from the ring to the label, so the annotation belongs to the dot
+                lines.append(f"\\draw[{col}!70,line width=0.3pt] "
+                             f"({b['robustness']:.4f},{y + 0.115:.2f}) -- "
+                             f"({b['robustness']:.4f},{y + 0.215:.2f}) -- "
+                             f"({b['robustness']:.4f}+0.022,{y + 0.215:.2f});")
                 lines.append(f"\\node[font=\\scriptsize,{col},anchor=west] at "
-                             f"({b['robustness']:.4f}+0.055,{y + 0.20:.2f}) {{nothing survives}};")
+                             f"({b['robustness']:.4f}+0.024,{y + 0.215:.2f}) {{nothing survives}};")
     lines.append("\\end{tikzpicture}")
     Path(args.out).write_text("\n".join(lines) + "\n")
 

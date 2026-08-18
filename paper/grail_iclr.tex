@@ -58,36 +58,24 @@ Leaderboard Entitles a Reader to Quote}
 
 \begin{abstract}
 A leaderboard reports one total order over its methods, computed under evaluation choices its paper
-does not state. Those choices are a rule deciding when a predicted structure counts as the reference, crossed
-with a second choice the field reports apart from its ranking and never jointly with it. The second
-is an output budget, a post-processing step or a normalisation. We ask what part of such an ordering
-survives when those choices are varied and nothing else is. We fix the items and the released
-predictions, re-score them in every cell of a declared grid of choices, and keep the pairwise
-orderings that no cell contradicts.
+does not state. Those choices are a rule deciding when a prediction counts as the reference, crossed
+with an output budget, a post-processing step or a normalisation. We fix the items and the released
+predictions, re-score them in every cell of a declared grid, and ask what part of the published order
+survives.
 
-We do this for $24$ leaderboards in four domains --- retrosynthesis, metabolite prediction,
-protein--ligand docking, and two editions of one machine-translation shared task --- retraining
-nothing and reimplementing no method. Together those tables rank $298$ systems, and the orderings
-that survive support $170$ ranks. That count asks only that no cell contradict the published order.
-Asking each cell to separate the pair instead is a second, stricter ladder on the same $298$. It is
-the one that says where the gap goes. Most of it is not the choices. Requiring a leaderboard's own
-published cell to separate a pair takes $298$ places to $139$. So $159$ ranks go to a benchmark's
-own resolving power before any convention is varied and $40$ more to the grid, leaving $99$. The
-surviving share runs from none of three to nine tenths, and does not replicate between two editions
-of the same shared task on the same language pair. So it is a property of a table and its grid
-rather than of a benchmark.
+We do this for $24$ leaderboards in four domains, retraining nothing and reimplementing no method.
+Together those tables rank $298$ systems. Read permissively, a pair stands unless some cell
+contradicts it, and $170$ ranks stand. Read strictly, a pair stands only where every cell separates
+it, and $99$ survive. The distance between the two readings is mostly not the choices: $159$ ranks
+go to resolving power a benchmark never had, before any convention is varied, and $40$ to the grid.
 
-Of the orderings a table did establish, $6$ are reversed by a declared choice and survive their own
-board's correction, and $5$ of those survive a single correction over all $24$ grids. None of the
-six is the matching rule's, which is the choice this literature discusses most. Deciding which
-orderings are at risk needs no pairwise statistic. A change of criterion reverses a pair only if it
-moves the two systems apart by more than the larger of the margins it connects. So every verdict
-follows from $n$ scorings per cell. Resampling enters only to tell a \emph{contested} pair, one some cell
-reverses with an interval excluding zero, from an \emph{unresolved} one, whose margin the benchmark
-never separated at all. The four choices were found by measuring one predictor in one
-domain, and that case study is reported in full. We release the protocol, the audited split, the
-frozen predictions of every method compared, a checker that reports these choices from released
-files alone, and the analysis code.
+The surviving share runs from none to nine tenths, and does not replicate between two editions of one
+shared task. Survival is a property of a table and its grid, not of a benchmark. Of the orderings a
+table did establish, $6$ are reversed by a declared choice and survive their own board's correction,
+and $5$ of those survive a single correction over all $24$ grids. None of the six is the matching
+rule's, the choice this literature discusses most. Deciding which orderings are at risk needs no
+pairwise statistic. We release the protocol, the audited split, the frozen predictions, the checker
+and the analysis code.
 \end{abstract}
 
 \section{Introduction}
@@ -500,10 +488,20 @@ measurements support. The criterion exchanges positions a benchmark never separa
 first claim. What reverses an established ordering is a budget nobody reports jointly with the
 ranking it produces.
 
-\paragraph{Decomposing the gap between published and supported ranks.} The abstract's two
-numbers stand beside a sentence about undeclared choices, which invites the reading that the choices
-cost the difference. They do not. Proposition~2 keeps the ways a pair can fail as different
-quantities. The same discipline applies to the count that rolls them up. There are three readings of
+\begin{figure}[t]
+\begin{center}
+\input{app/decomp_figure}
+\end{center}
+\caption{The two readings of what a leaderboard supports, on the same scale of published places.
+The upper bar asks only that no cell contradict the published order. The lower two ask each cell to
+separate the pair, and the places they remove are attributed.}
+\label{fig:decomp}
+\end{figure}
+
+
+\paragraph{Decomposing the gap between published and supported ranks.} Proposition~2 keeps the
+ways a pair can fail as different quantities, and the same discipline applies to the count that
+rolls them up. There are three readings of
 "supported". Each is a longest chain in a relation on the same systems. They differ only in what an
 edge requires. When a leaderboard's \emph{own} cell must separate the pair, the $298$ published
 places support $139$. The $159$ lost go to the benchmark's power before any convention is varied.
