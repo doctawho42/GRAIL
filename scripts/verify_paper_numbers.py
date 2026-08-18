@@ -664,7 +664,7 @@ def main() -> int:
         _jzs = ROOT / "results/robust_order_wmt24_ja-zh__segment.json"
         if _jz.exists() and _jzs.exists():
             _j, _js = json.loads(_jz.read_text()), json.loads(_jzs.read_text())
-            _mj = re.search(r"fifteen-system board the same reading changes almost nothing --- "
+            _mj = re.search(r"fifteen-system board the same reading changes almost nothing[:,] "
                             r"\$(\d+)\$ dominating pairs against \$(\d+)\$, and (\w+) certified "
                             r"reversals? either way", flat)
             checks.append((bool(_mj), "the second board's aggregation sentence parses", "present",

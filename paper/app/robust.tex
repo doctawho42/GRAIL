@@ -78,8 +78,8 @@ and turns those annotations into a number. The turning is the convention, and it
 the task's own repository. It makes four decisions a paper quoting an \textsc{mqm} score does not
 repeat: an error in the source text is charged nothing, a creative reinterpretation is charged
 nothing, a minor punctuation error is charged a tenth of an ordinary minor, and a non-translation is
-charged five times a major. So the criterion axis is which annotations are charged --- membership,
-as a structure-matching rule is, with the metric fixed as the mean of the per-segment sums --- and
+charged five times a major. So the criterion axis is which annotations are charged (membership,
+as a structure-matching rule is, with the metric fixed as the mean of the per-segment sums), and
 the second axis is whether that sum is floored at the non-translation weight, an \textsc{mqm} score
 being otherwise unbounded below.
 
@@ -89,15 +89,14 @@ clustering script does by default. The cell is weighted so that its mean is that
 boards then reproduce the published ranking system for system. That agreement is a unit test on the
 weighting and not evidence about the data: the function that checks it rebuilds the same average
 from the same transcribed weights, and two routes to one quantity must agree. What it does
-establish is that the cell is the aggregation the task documents, which a reader can check against
-that script --- as they can check the transcription of the weights, which this run does not.
+establish is that the cell is the aggregation the task documents, which a reader can check against that script, as they can check the transcription of the weights, which this run does not.
 
 Reading the published number as the mean of the column instead is a choice of exactly the kind the
 grid varies, and on this board it costs more than either axis in it. Under that reading the
 nineteen-system leaderboard has $135$ dominating pairs and no certified reversal, against $125$ and
 six under the task's own aggregation, and its published cell no longer reproduces the official
 ranking: nine systems change place. On the fifteen-system board the same reading changes almost
-nothing --- $97$ dominating pairs against $96$, and no certified reversal either way --- so the cost
+nothing: $97$ dominating pairs against $96$, and no certified reversal either way. So the cost
 of getting the aggregation wrong is a fact about the board rather than a constant. Both readings are
 run on both boards and both are kept, so the size of the choice is measured here rather than
 asserted.
@@ -119,8 +118,7 @@ changes nothing.
 \paragraph{Nine more boards from the same task, and why they are nine and not one.} The same task
 annotated nine further language pairs under a lighter protocol, \textsc{esa}, in which one expert
 marks the error spans in a segment and then scores it out of a hundred. The systems entered differ
-per pair, the annotators differ per pair, and the pairs were run independently, so these are nine
-leaderboards rather than one leaderboard nine times --- which is the condition for reading a share
+per pair, the annotators differ per pair, and the pairs were run independently, so these are nine leaderboards rather than one leaderboard nine times. That is the condition for reading a share
 as a distribution instead of as a number that happened to come out of one table. Both axes are again
 choices left to whoever scores: what the annotation is read as, the number out of a hundred or the
 marked spans as a tally, and whether a score is used as the annotator wrote it or standardised
@@ -140,8 +138,8 @@ one task, and still not a constant.
 \paragraph{The share does not replicate across editions, and that is the strongest form of the
 claim.} Nine boards from one campaign, annotated under one set of instructions by one pool, cannot
 tell a property of a leaderboard from a property of a year. The previous edition of the same task
-annotated eight language pairs under a different protocol --- direct assessments, no error spans,
-several ratings per segment, and between $82$ and $174$ annotators --- and five of its pairs are
+annotated eight language pairs under a different protocol: direct assessments, no error spans,
+several ratings per segment, and between $82$ and $174$ annotators. Five of its pairs are
 pairs the later edition also scored. That is the one place in this paper where the same question is
 put twice to independent data.
 
@@ -149,14 +147,13 @@ The answer is that the share does not carry over. Across the five repeated pairs
 on average and by as much as $0.285$; \textsc{en-zh} is at $0.900$ in one edition and $0.615$ in the
 next. Nothing about the language, the domain or the difficulty changed enough to explain that, and
 the two campaigns were run by the same organisers on comparable data. What changed is the protocol and the
-pool, which is to say the leaderboard. The pools cannot be shown to be disjoint --- each campaign
+pool, which is to say the leaderboard. The pools cannot be shown to be disjoint, because each campaign
 anonymises its annotators into its own identifier space, so the two share no identifier by
-construction and a rater who worked on both would be invisible --- and the claim made here is only
+construction and a rater who worked on both would be invisible. The claim made here is only
 that the campaigns are separate, which is what the editions are. So a share is a fact about a table and its grid, and
-quoting one as a benchmark's fingerprint --- ours included --- would be an error of the same shape
-as the one this paper is about. These eight boards are built on the release put through the preprocessing its own README
-documents --- a quality-control filter that discards a rater's whole document when a planted item in
-it was failed, and the removal of document-level meta scores --- and reading the file without it inflates every board by between a ninth and two fifths. With the filter the published
+quoting one as a benchmark's fingerprint, ours included, would be an error of the same shape
+as the one this paper is about. These eight boards are built on the release put through the preprocessing its own README documents: a quality-control filter that discards a rater's whole document when a planted item in
+it was failed, and the removal of document-level meta scores. Reading the file without it inflates every board by between a ninth and two fifths. With the filter the published
 cell reproduces the task's own scores to $3\times10^{-14}$ and orders all $909$ pairs the way its
 published table does.
 
@@ -167,8 +164,7 @@ of which $1$ survive correction, and $124$ published places support $78$.
 \paragraph{One correction per board, when the claim ranges over twenty-three.} Holm is applied
 within each grid, which controls the error rate of a claim about \emph{that} leaderboard and not of
 the claim this paper makes. The honest family is the union of the grids: $15{,}752$ cell-level
-tests. Re-applying the same procedure to the concatenated $p$-vectors --- no board re-analysed, no
-prediction re-scored --- rejects $8{,}367$ of them at a cutoff of $p=6.72\times10^{-6}$, and the
+tests. Re-applying the same procedure to the concatenated $p$-vectors, with no board re-analysed and no prediction re-scored, rejects $8{,}367$ of them at a cutoff of $p=6.72\times10^{-6}$, and the
 count of certified pairs falls from $23$ to $15$. Splitting $\alpha$ across the boards instead, at
 $\alpha/24$ within each grid, gives $15$ as well. What the second claim is about very nearly does
 not move: of the $6$ certified reversals of an ordering a published cell had separated, $5$ survive
@@ -176,8 +172,7 @@ every one of the three, and the matching rule certifies none under any of them. 
 extrapolation board's, which its own grid certifies and the union does not, and it is the only pair
 either stricter reading removes that its board had established. That is checked under each
 rather than inferred from the others, because the three are not nested: splitting $\alpha$ across
-the boards and pooling their grids into one family weight a board by different things --- its own
-size against the total --- and on $16$ of the $24$ the union is the more permissive of
+the boards and pooling their grids into one family weight a board by different things, its own size against the total, and on $16$ of the $24$ the union is the more permissive of
 the two stricter readings, because its pooled cutoff is the larger one there.
 
 What the union costs is concentrated rather than spread: the nineteen-system translation board
@@ -185,21 +180,19 @@ keeps $2$ of $6$, two more go on \textsc{en-hi}, one on \textsc{zho-eng} and one
 extrapolation board. Those four boards are the whole fall of eight, and every pair that goes but one
 is the reversal of an ordering its own board had never established; the exception is named above. What removes them is the size of the
 family and nothing subtler: every threshold tightens by roughly the factor the family grew by, and
-each lost reversal misses its own rank threshold outright. A step-down procedure can additionally
-lose a small-$p$ test to an earlier failure, and on this vector it does not --- no test beyond the
-cutoff would have passed its own threshold --- so the losses cannot be charged to the stopping rule.
+each lost reversal misses its own rank threshold outright. A step-down procedure can also lose a small-$p$ test to an earlier failure, and on this vector it does not, since no test beyond the
+cutoff would have passed its own threshold. So the losses cannot be charged to the stopping rule.
 
 \paragraph{A test that assumes nothing about the shape.} Where a board scores an item a hit or a
 miss, the paired difference takes three values and the $p$ a correction reads is the exact
 conditional test on the discordant items. The translation boards are not like that: a segment score
 is continuous, zero-inflated and long-tailed on one side, and their $p$ is the normal approximation
-to a paired mean, read at thresholds between $10^{-6}$ and $10^{-3}$ --- which is doing work no
+to a paired mean, read at thresholds between $10^{-6}$ and $10^{-3}$, which is doing work no
 central limit theorem promises on a few hundred items with one catastrophic output in them.
 
 Under exchangeability there is a test that assumes nothing: flipping the sign of each paired
 difference leaves the null distribution alone, so the sign-flip distribution of the mean is exact by
-construction. Its tail is the hard part, and a resample cannot reach it --- at $10^{-5}$ the draw
-count that would resolve it is the draw count that cannot be run --- so the tail is taken from the
+construction. Its tail is the hard part, and a resample cannot reach it: at $10^{-5}$ the draw count that would resolve it is the draw count that cannot be run. So the tail is taken from the
 saddlepoint instead, which is uniformly accurate far out. Computed for every certified reversal and
 every test within a factor of ten of its board's cutoff, $42$ tests of which $25$ are certified, it
 never returns a larger $p$ than the analytic one: the ratio runs from $0.0166$ to $0.9967$, so on
@@ -215,15 +208,13 @@ domain that computes its own version and publishes it. The translation task test
 Wilcoxon signed-rank test on the paired per-segment scores within each domain, combines the domains
 by Stouffer's $Z$, and merges systems into a cluster whenever that test does not separate them at
 $0.05$; the number of clusters is its answer to how many ranks its table supports. Their code is
-imported rather than reimplemented --- \texttt{get\_pvalues} and \texttt{get\_clusters} as written
---- and run on all $11$ boards it covers, the two \textsc{mqm} ones and the nine \textsc{esa} pairs.
+imported rather than reimplemented (\texttt{get\_pvalues} and \texttt{get\_clusters} as written) and run on all $11$ boards it covers, the two \textsc{mqm} ones and the nine \textsc{esa} pairs.
 
 Setting the two counts side by side settles nothing, because they differ in two places at once. The
 test that decides whether a pair is separated is one; the construction that turns pairwise verdicts
 into a count is the other, and theirs walks the score-sorted table and closes a cluster only when
 nothing at or above the current position is tied with anything below it. A cluster is therefore an
-interval of the published order and can contain pairs its own test separates, while ours is the
-longest chain in the separation relation --- which on identical verdicts is never shorter. So the
+interval of the published order and can contain pairs its own test separates, while ours is the longest chain in the separation relation, which on identical verdicts is never shorter. So the
 two are crossed instead:
 
 \begin{center}
@@ -250,14 +241,12 @@ and the difference between it and the task's own is those two effects pulling ag
 rather than either one alone.
 
 The two rankings themselves agree system for system on $7$ of the $11$. On the other four they
-disagree about $6$ pairs in total, and our published cell separates none of them --- so where the
-instruments order systems differently, they are ordering systems neither can tell apart, which is
+disagree about $6$ pairs in total, and our published cell separates none of them. So where the instruments order systems differently, they are ordering systems neither can tell apart, which is
 this paper's first claim arriving inside its own external check. Neither side corrects for
 multiplicity in any of this, so both counts are the optimistic ones, which is what makes them
 comparable at all.
 
-\paragraph{A null with a size.} The paper's second claim is negative --- the matching rule
-certifies no reversal of an ordering a published cell had separated --- and a negative claim is
+\paragraph{A null with a size.} The paper's second claim is negative: the matching rule certifies no reversal of an ordering a published cell had separated. A negative claim is
 worth whatever its power is. The identity supplies that without another statistic. A criterion
 reverses a pair exactly when it erases the whole margin between them and more, so the share of the
 published margin it erases, $1 - d'/d$, says how close it came, and it is read straight out of the
@@ -265,8 +254,7 @@ per-cell means each board already reports. The sign matters: a criterion that mo
 \emph{away} from zero has not come close to reversing it, and a direction-blind ratio scores such a
 comparison as if it had.
 
-Taken over the pairs the published cell separates --- the only pairs with an established ordering to
-reverse --- and with the other axis held at the board's own setting, the matching rule erases at most
+Taken over the pairs the published cell separates, the only pairs with an established ordering to reverse, and with the other axis held at the board's own setting, the matching rule erases at most
 $0.0870$ of a margin on the seven-system retrosynthesis board, $0.5755$ on the three-system one and
 $0.0857$ on the metabolite board, and on all three the median comparison erases $0.0$: half the time
 the criterion leaves the margin exactly where the published cell put it. On the closest of the three
@@ -276,8 +264,7 @@ cross, rather than a test that failed to reach significance. What the axis does 
 pairs the benchmark never separated, which is this paper's first claim and is measured separately.
 
 Docking is the exception, and is reported as one. There the criterion axis does erase a margin the
-published cell had separated and then some --- \textsc{deepdock} over \textsc{unimol}, $2.8357$ of
-it, at the published post-processing --- so on that board the matching rule is capable of the
+published cell had separated and then some: \textsc{deepdock} over \textsc{unimol}, $2.8357$ of it, at the published post-processing. So on that board the matching rule is capable of the
 reversal the null denies elsewhere. What it is not capable of is surviving the family it was read
 in: that test reaches $p=0.053$ against the board's threshold of $9.8\times10^{-4}$, and no reversal
 on that board survives, which is why its certified column reads zero. The one field that published

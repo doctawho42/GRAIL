@@ -258,12 +258,11 @@ about eight emitted candidates (Appendix~\ref{app:matchedemission}); and where t
 the criterion instead erases, the GRAIL--MetaPredictor F1 gap being separated under four of the five
 criteria at $-0.026$ $[-0.038,-0.013]$ and indistinguishable from zero under plain
 \textsc{inchikey}. The decomposition says why the aggregate splits them at all: SyGMa's selection
-factor is $1$ (\S\ref{sec:decomp}), so a pipeline with no selection stage is scored relatively
-higher by recall than by precision (Appendix~\ref{app:props}).
+factor is $1$ (\S\ref{sec:decomp}), so a pipeline with no selection stage is scored higher by recall than by precision (Appendix~\ref{app:props}).
 
 
 \looseness=-1
-\paragraph{A global budget is the wrong object.} It is not only undeclared, it is the wrong shape.
+\paragraph{A global budget is the wrong object.} It is undeclared, and it is also the wrong shape.
 Enzymes compete for one substrate, so its annotated products are alternatives from a shared pool:
 the median substrate here has one and the mean $2.22$, while the deployed policy emits $8.4$ for
 every substrate alike. Holding the ranking fixed and changing only how many are emitted, the
