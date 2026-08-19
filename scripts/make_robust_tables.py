@@ -194,6 +194,13 @@ def hasse(r: dict) -> str:
         out.append(f"\\draw[{col}!45] ({lvl} - {width / 2 / 2.45:.3f},{caption_y + 0.42:.2f}) -- "
                    f"({lvl} + {width / 2 / 2.45:.3f},{caption_y + 0.42:.2f});")
         out.append(f"\\node[font=\\tiny,{col}] at ({lvl},{caption_y:.2f}) {{tier {lvl + 1}}};")
+    # the caption states how many of the next tier the top tier dominates; a drawing whose
+    # edges say otherwise would contradict its own caption, so the count is asserted here
+    if len(rows) > 1:
+        first, second = rows[min(rows)], rows[min(rows) + 1]
+        crossing = sum(1 for a in first for b in second if b in red[a])
+        assert crossing == 2, (f"the caption says the tier-1 system dominates two of the next "
+                               f"tier; the reduction draws {crossing}")
     for a, cs in red.items():
         for c in cs:
             if pos[a][0] < pos[c][0]:

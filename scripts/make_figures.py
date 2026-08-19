@@ -33,6 +33,41 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "paper"
 GREY, ACC, ALT = "#444444", "#1f4e79", "#a6301f"
+MET, DOCK = "#2e6f3e", "#6a3d9a"
+# The manuscript's TikZ preamble defines the same five, and hue never carries meaning alone
+# in either place: every series here also gets its own marker, so the figure survives
+# greyscale and the common forms of colour blindness.
+SERIES = [ACC, ALT, MET, DOCK, GREY]
+MARKERS = ["o", "s", "^", "D", "v"]
+
+# One method keeps one colour and one marker across every figure in the paper. Assigning them
+# per figure -- alphabetically, or by whichever two the figure highlights -- makes GRAIL blue
+# in one drawing and red in the next, which is a worse fault than the grey collision this
+# table was introduced to fix.
+METHOD_STYLE = {
+    "GRAIL": (ACC, "o"), "SyGMa": (ALT, "s"), "MetaPredictor": (MET, "^"),
+    "MetaTrans": (DOCK, "D"), "BioTransformer": (GREY, "v"),
+}
+
+
+def _style(name, i=0):
+    return METHOD_STYLE.get(name, (SERIES[i % len(SERIES)], MARKERS[i % len(MARKERS)]))
+
+
+def _declutter(ax, placed, gap):
+    """Push right-edge series labels apart so two of them cannot print on top of each other.
+
+    `placed` is [(y, text, colour)]. Labels are laid out from the bottom up, each pushed to at
+    least `gap` above the one below it. Without this, two systems within a hundredth of each
+    other overprint into an unreadable smear, which is what fig_xdomain did to `graphretro`
+    and `megan`.
+    """
+    out, last = [], None
+    for y, text, colour in sorted(placed):
+        pos = y if last is None else max(y, last + gap)
+        out.append((pos, text, colour))
+        last = pos
+    return out
 
 
 def _load(name):
@@ -44,9 +79,9 @@ def fig_decomp():
     g = _load("recall_factorization")["factors"]
     s = _load("decompose_sygma")["factors"]
     methods = [("GRAIL", [g["coverage_bank"]["point"], g["selection_retention"]["point"],
-                          g["ranking_conversion"]["point"]], ACC),
+                          g["ranking_conversion"]["point"]], _style("GRAIL")[0]),
                ("SyGMa", [s["coverage_bank"]["point"], s["selection_retention"]["point"],
-                          s["ranking_conversion"]["point"]], ALT)]
+                          s["ranking_conversion"]["point"]], _style("SyGMa")[0])]
     fig, axes = plt.subplots(1, 2, figsize=(5.4, 1.55), sharey=True)
     for ax, (name, f, colour) in zip(axes, methods):
         levels = [1.0, f[0], f[0] * f[1], f[0] * f[1] * f[2]]
@@ -76,19 +111,24 @@ def fig_ladder():
     d = _load("match_sensitivity_5method")
     modes = d["modes"] if isinstance(d.get("modes"), list) else \
         ["canonical", "inchikey", "inchi_no_stereo", "tanimoto1", "inchikey_tautomer"]
-    short = ["canon.", "InChIKey", "no-stereo", "Tanimoto=1", "tautomer"]
+    short = ["canonical", "InChIKey", "no-stereo", "Tanimoto=1", "tautomer"]
     fig, ax = plt.subplots(figsize=(3.3, 2.6))
-    colours = {"GRAIL": ACC, "SyGMa": ALT}
-    vals = {}
-    for meth, rec in d["by_method"].items():
+    vals, labels = {}, []
+    # every method gets its own colour AND marker. Three of the five used to share one grey,
+    # which made the crossings -- the only thing a slope plot is for -- impossible to follow
+    order = sorted(d["by_method"])
+    for i, meth in enumerate(order):
+        rec = d["by_method"][meth]
         y = [rec[m]["recall@15"] if isinstance(rec.get(m), dict) else rec.get(m) for m in modes]
         if any(v is None for v in y):
             continue
         vals[meth] = y
-        c = colours.get(meth, GREY)
-        ax.plot(range(len(modes)), y, marker="o", ms=3, lw=1.4, color=c,
-                alpha=1.0 if meth in colours else 0.55, zorder=3 if meth in colours else 2)
-        ax.text(len(modes) - 0.9, y[-1], f" {meth}", fontsize=7, color=c, va="center")
+        c, mk = _style(meth, i)
+        ax.plot(range(len(modes)), y, marker=mk, ms=3, lw=1.4, color=c, zorder=3)
+        labels.append((y[-1], meth, c))
+    span = max(max(v) for v in vals.values()) - min(min(v) for v in vals.values())
+    for y, meth, c in _declutter(ax, labels, 0.055 * span):
+        ax.text(len(modes) - 0.9, y, f" {meth}", fontsize=7, color=c, va="center")
     ax.set_xticks(range(len(modes)))
     ax.set_xticklabels(short, fontsize=7, rotation=20, ha="right")
     ax.set_ylabel("recall@15", fontsize=8)
@@ -118,24 +158,75 @@ def fig_xdomain():
     palette = [ACC, ALT, "#2e6f3e", "#6a3d9a"]
     colours = dict(zip(moving, palette))
 
-    fig, ax = plt.subplots(figsize=(3.3, 2.6))
-    vals = {}
+    vals = {sys_: [A[sys_][c]["top1"] for c in crit] for sys_ in A}
+
+    # One system sits a tenth below the rest, which stretched the axis until the reordering --
+    # the only thing this figure is for -- was squeezed into a tenth of its height. The axis is
+    # broken at the largest gap between two systems' bands, and the break is drawn rather than
+    # implied. Where there is no such gap the figure stays a single panel.
+    bands = sorted(((min(v), max(v)) for v in vals.values()))
+    gaps = [(bands[i + 1][0] - bands[i][1], i) for i in range(len(bands) - 1)]
+    span = bands[-1][1] - bands[0][0]
+    gap, at = max(gaps) if gaps else (0.0, 0)
+    broken = gap > 0.30 * span
+    pad = 0.06 * span
+
+    if broken:
+        cut_lo, cut_hi = bands[at][1], bands[at + 1][0]
+        # tight_layout cannot lay out a broken axis (it refuses shared spines that are
+        # hidden), and left to it the y label and the rotated ticks fall off the canvas
+        fig, (hi, lo) = plt.subplots(
+            2, 1, figsize=(3.3, 2.6), sharex=True, layout="constrained",
+            gridspec_kw={
+                "height_ratios": [bands[-1][1] - cut_hi + 2 * pad, cut_lo - bands[0][0] + 2 * pad],
+                "hspace": 0.10})
+        hi.set_ylim(cut_hi - pad, bands[-1][1] + pad)
+        lo.set_ylim(bands[0][0] - pad, cut_lo + pad)
+        axes = [hi, lo]
+    else:
+        fig, ax = plt.subplots(figsize=(3.3, 2.6))
+        hi = lo = ax
+        axes = [ax]
+
+    labels = {id(hi): [], id(lo): []}
     for sys_ in sorted(A, key=lambda m: -A[m]["canonical"]["top1"]):
-        y = [A[sys_][c]["top1"] for c in crit]
-        vals[sys_] = y
+        y = vals[sys_]
         c = colours.get(sys_, GREY)
-        ax.plot(range(len(crit)), y, marker="o", ms=3, lw=1.5 if sys_ in colours else 1.0,
-                color=c, alpha=1.0 if sys_ in colours else 0.45,
-                zorder=3 if sys_ in colours else 2)
-        ax.text(len(crit) - 0.92, y[-1], f" {sys_}", fontsize=6.5, color=c, va="center")
-    ax.set_xticks(range(len(crit)))
-    ax.set_xticklabels(short, fontsize=7, rotation=20, ha="right")
-    ax.set_ylabel("top-1 accuracy", fontsize=8)
-    ax.tick_params(labelsize=7.5)
-    ax.set_xlim(-0.25, len(crit) + 1.5)
-    for side in ("top", "right"):
-        ax.spines[side].set_visible(False)
-    fig.tight_layout()
+        target = hi if (not broken or min(y) >= cut_hi - pad) else lo
+        for ax_ in axes:
+            ax_.plot(range(len(crit)), y, marker="o", ms=3,
+                     lw=1.5 if sys_ in colours else 1.0, color=c,
+                     alpha=1.0 if sys_ in colours else 0.45,
+                     zorder=3 if sys_ in colours else 2)
+        labels[id(target)].append((y[-1], sys_, c))
+
+    for ax_ in axes:
+        seen = labels[id(ax_)]
+        if not seen:
+            continue
+        lo_y, hi_y = ax_.get_ylim()
+        for y, sys_, c in _declutter(ax_, seen, 0.085 * (hi_y - lo_y)):
+            ax_.text(len(crit) - 0.92, y, f" {sys_}", fontsize=6.5, color=c, va="center")
+
+    if broken:
+        hi.spines["bottom"].set_visible(False)
+        lo.spines["top"].set_visible(False)
+        hi.tick_params(bottom=False)
+        kw = dict(marker=[(-1, -0.6), (1, 0.6)], markersize=5, linestyle="none",
+                  color=GREY, mec=GREY, mew=0.8, clip_on=False)
+        hi.plot([0], [0], transform=hi.transAxes, **kw)
+        lo.plot([0], [1], transform=lo.transAxes, **kw)
+
+    lo.set_xticks(range(len(crit)))
+    lo.set_xticklabels(short, fontsize=7, rotation=20, ha="right")
+    hi.set_ylabel("top-1 accuracy", fontsize=8)
+    for ax_ in axes:
+        ax_.tick_params(labelsize=7.5)
+        ax_.set_xlim(-0.25, len(crit) + 1.5)
+        for side in ("top", "right"):
+            ax_.spines[side].set_visible(False)
+    if not broken:
+        fig.tight_layout()
     fig.savefig(OUT / "fig_xdomain.pdf")
     plt.close(fig)
 
@@ -159,26 +250,29 @@ def fig_budget():
     methods = sorted(series)
     ks = list(range(1, len(series[methods[0]]) + 1))
     fig, ax = plt.subplots(figsize=(3.3, 2.6))
-    colours = {"GRAIL": ACC, "SyGMa": ALT}
     for m in methods:
         y = series[m]
-        c = colours.get(m, GREY)
-        ax.plot(ks, y, lw=1.4, color=c, alpha=1.0 if m in colours else 0.55,
-                label=m, zorder=3 if m in colours else 2)
+        c, _ = _style(m, methods.index(m))
+        ax.plot(ks, y, lw=1.4, color=c, label=m, zorder=3)
+    # headroom above the curves, so the band's label and the k marker sit in empty space
+    # instead of printing across the series they describe
+    top = max(max(series[m]) for m in methods)
+    bottom = min(min(series[m]) for m in methods)
+    ax.set_ylim(bottom - 0.02 * (top - bottom), top + 0.16 * (top - bottom))
     order = d.get("ordering_by_k", {})
     if order:
         ref = order.get("15") or order.get(str(max(ks)))
         flip = [k for k in ks if order.get(str(k)) is not None and order[str(k)] != ref]
         if flip:
-            ax.axvspan(min(flip) - 0.5, max(flip) + 0.5, color=GREY, alpha=0.12, zorder=1)
-            ax.text((min(flip) + max(flip)) / 2, ax.get_ylim()[1] * 0.97,
-                    "ordering differs", ha="center", va="top", fontsize=6.5, color=GREY)
+            ax.axvspan(min(flip) - 0.5, max(flip) + 0.5, color=GREY, alpha=0.10, zorder=1)
+            ax.text((min(flip) + max(flip)) / 2, ax.get_ylim()[1], " ordering differs",
+                    ha="center", va="top", fontsize=6.5, color=GREY)
     ax.axvline(15, color=GREY, lw=0.8, ls=":", zorder=1)
-    ax.text(15.4, ax.get_ylim()[0] * 1.02 + 0.002, "field's $k$", fontsize=6.5, color=GREY)
+    ax.text(15.6, ax.get_ylim()[1], "field's $k$", fontsize=6.5, color=GREY, va="top")
     ax.set_xlabel("output budget $k$", fontsize=8)
     ax.set_ylabel("macro F1", fontsize=8)
     ax.tick_params(labelsize=7.5)
-    ax.legend(fontsize=6.5, frameon=False, loc="lower right", ncol=2)
+    ax.legend(fontsize=6.5, frameon=False, loc="lower left", ncol=1)
     for side in ("top", "right"):
         ax.spines[side].set_visible(False)
     fig.tight_layout()
@@ -217,10 +311,10 @@ def fig_transfer():
     strata = d["strata"]
     x = [(s["lo"] + min(s["hi"], 1.0)) / 2 for s in strata]
     fig, ax = plt.subplots(figsize=(3.3, 2.5))
-    colours = {"GRAIL": ACC, "SyGMa": ALT, "MetaPredictor": GREY}
-    for m in strata[0]["methods"]:
+    for i, m in enumerate(strata[0]["methods"]):
         y = [s["methods"][m]["recall_at_15"] for s in strata]
-        ax.plot(x, y, marker="o", ms=3, lw=1.5, color=colours.get(m, GREY),
+        c, mk = _style(m, i)
+        ax.plot(x, y, marker=mk, ms=3, lw=1.5, color=c,
                 label=f"{m}{' (never trained)' if m == 'SyGMa' else ''}")
     ax.set_xlabel("max Tanimoto similarity to any training substrate", fontsize=7.5)
     ax.set_ylabel("recall@15", fontsize=8)
@@ -238,12 +332,15 @@ def fig_propensity():
     grid, series = d["grid"], d["macro_f1_by_c"]
     crit = d["crossings"]["GRAIL-SyGMa"]["critical_c"]
     fig, ax = plt.subplots(figsize=(3.3, 2.5))
-    for m, y in series.items():
-        ax.plot(grid, y, lw=1.5, color={"GRAIL": ACC, "SyGMa": ALT}.get(m, GREY), label=m)
+    for i, (m, y) in enumerate(series.items()):
+        ax.plot(grid, y, lw=1.5, color=_style(m, i)[0], label=m)
     if crit:
         ax.axvline(crit, color=GREY, lw=0.8, ls=":")
-        ax.text(crit, ax.get_ylim()[1] * 0.97, f"  flip at $c={crit}$", fontsize=6.5,
-                color=GREY, va="top")
+        # the axis is reversed, so the crossing sits at the right edge of the canvas. The
+        # label is right-aligned on its own line and therefore runs inwards; aligning it left
+        # puts it off the page, which is where it was.
+        ax.text(crit, ax.get_ylim()[1] * 0.99, f"flip at $c={crit}$  ", fontsize=6.5,
+                color=GREY, va="top", ha="right")
     ax.set_xlabel("annotation propensity $c$ (1 = references complete)", fontsize=7.5)
     ax.set_ylabel("macro F1, corrected", fontsize=8)
     ax.invert_xaxis(); ax.tick_params(labelsize=7.5)
@@ -276,7 +373,8 @@ def fig_gap():
                     fontsize=6.5, color=GREY)
         left += v
     ax.set_yticks([]); ax.set_xlim(0, tot); ax.set_ylim(-0.6, 0.95)
-    ax.set_xlabel(f"{tot} uncovered references (of {d['covered_pairs']+tot})", fontsize=7.5)
+    ax.set_xlabel(f"{tot:,} uncovered references (of {d['covered_pairs'] + tot:,})",
+                  fontsize=7.5)
     ax.tick_params(labelsize=7)
     for i, (label, v, c) in enumerate(parts):
         ax.plot([], [], color=c, lw=5, label=label)
@@ -292,7 +390,7 @@ def fig_curators():
     """Two expert curations of the same drugs, agreeing five times better under a tolerant rule."""
     d = _load("annotation_agreement")["by_mode"]
     modes = ["canonical", "inchikey", "tanimoto1", "inchi_no_stereo", "inchikey_tautomer"]
-    short = ["canon.", "InChIKey", "Tanimoto=1", "no-stereo", "tautomer"]
+    short = ["canonical", "InChIKey", "Tanimoto=1", "no-stereo", "tautomer"]
     fig, ax = plt.subplots(figsize=(3.3, 2.3))
     y = [d[m]["jaccard"] for m in modes]
     ax.bar(range(len(modes)), y, width=0.6, color=ACC, alpha=0.85, edgecolor="none")
