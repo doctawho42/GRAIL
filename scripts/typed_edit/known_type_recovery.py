@@ -121,12 +121,20 @@ def phase_b(rules, known_pairs) -> dict:
         wide = [relax(r, dh, dd) for r in rules]
         keep, bad = [], 0
         for original, rewritten in zip(rules, wide):
-            if rewritten != original and \
-                    Chem.rdChemReactions.ReactionFromSmarts(rewritten) is None:
+            usable = rewritten == original
+            if not usable:
+                # ReactionFromSmarts RAISES on a malformed reactant template rather than
+                # returning None, so a rewrite that does not parse has to be caught, not
+                # tested for falsiness
+                try:
+                    usable = Chem.rdChemReactions.ReactionFromSmarts(rewritten) is not None
+                except Exception:
+                    usable = False
+            if usable:
+                keep.append(rewritten)
+            else:
                 bad += 1
                 keep.append(original)          # a rewrite that does not parse falls back
-            else:
-                keep.append(rewritten)
         banks[name], broke[name] = keep, bad
 
     by_sub = {}

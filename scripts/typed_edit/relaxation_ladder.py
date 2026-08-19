@@ -48,41 +48,100 @@ SUBS = ROOT / "results" / "match_sensitivity_fulln.json"
 _TWO_LETTER = re.compile(r"^[HX][efgos]")
 
 
-def _strip_expr(head: str, drop_h: bool, drop_deg: bool) -> str:
+def _split_top(expr: str, sep: str) -> list:
+    """Split on `sep` at the top level, ignoring anything inside [] or ()."""
+    out, depth, cur = [], 0, []
+    for c in expr:
+        if c in "([":
+            depth += 1
+        elif c in ")]":
+            depth -= 1
+        if c == sep and depth == 0:
+            out.append("".join(cur))
+            cur = []
+        else:
+            cur.append(c)
+    out.append("".join(cur))
+    return out
+
+
+def _strip_chain(chunk: str, drop_h: bool, drop_deg: bool, first: bool = True) -> str:
+    """Strip primitives from a chunk with no top-level `,`, so every term is conjunctive.
+
+    `first` says whether this chunk can hold the element symbol, which only the first chunk
+    of an atom expression can. `H` opening the whole expression is the hydrogen ATOM (`[H:2]`,
+    `[H+]`) and dropping it would change the query's topology; `H` opening a later chunk
+    (`[C;!H3]`) is always a count.
+    """
     out, i = [], 0
-    while i < len(head):
-        c = head[i]
-        if c == "$" and i + 1 < len(head) and head[i + 1] == "(":
+    while i < len(chunk):
+        c = chunk[i]
+        if c == "$" and i + 1 < len(chunk) and chunk[i + 1] == "(":
             # a recursive SMARTS: dropping a primitive inside `!$(...)` EXCLUDES more, so
             # the rung would tighten instead of relaxing. Copy the group through untouched.
             depth, j = 0, i + 1
-            while j < len(head):
-                if head[j] == "(":
+            while j < len(chunk):
+                if chunk[j] == "(":
                     depth += 1
-                elif head[j] == ")":
+                elif chunk[j] == ")":
                     depth -= 1
                     if depth == 0:
                         break
                 j += 1
-            out.append(head[i:j + 1])
+            out.append(chunk[i:j + 1])
             i = j + 1
             continue
-        if _TWO_LETTER.match(head[i:]):          # He, Hf, Hg, Ho, Hs, Xe
-            out.append(head[i:i + 2])
+        if _TWO_LETTER.match(chunk[i:]):          # He, Hf, Hg, Ho, Hs, Xe
+            out.append(chunk[i:i + 2])
             i += 2
             continue
-        prev = head[i - 1] if i else ""
-        at_start = not any(ch.isalnum() or ch in "*#" for ch in head[:i])
+        prev = chunk[i - 1] if i else ""
+        at_start = first and not any(ch.isalnum() or ch in "*#" for ch in chunk[:i])
         primitive = (drop_h and c in "Hh") or (drop_deg and c in "DX")
         if primitive and prev != "#" and not at_start:
+            # a negation belongs to the primitive it negates: leaving `!` behind produces
+            # `[#6;!:4]`, which does not parse, and keeping `!H3` while dropping `H3`
+            # would invert the direction of the change
+            if out and out[-1] == "!":
+                out.pop()
             i += 1
-            while i < len(head) and head[i].isdigit():
+            while i < len(chunk) and chunk[i].isdigit():
                 i += 1
             continue
         out.append(c)
         i += 1
-    head = "".join(out)
-    head = re.sub(r"[;&,]{2,}", lambda m: m.group(0)[0], head).strip(";&,")
+    # `MolToSmarts` renders a conjunction with `&`, so removing a primitive from the middle
+    # of `#6&A&X4&!$(...)` leaves `&&` behind, which does not parse. Collapse the runs and
+    # trim the ends rather than leaving the separator the primitive used to sit between.
+    text = re.sub(r"[&;,]{2,}", lambda m: m.group(0)[0], "".join(out))
+    return text.strip("&;,")
+
+
+def _strip_expr(head: str, drop_h: bool, drop_deg: bool) -> str:
+    """Relax one bracket atom expression, or leave it alone where relaxing would tighten.
+
+    SMARTS `,` is a disjunction, and dropping ONE of its alternatives narrows the expression
+    rather than widening it: `[C;!H3,X2]` becomes `[C;X2]`, which matches strictly fewer
+    atoms. A comma group is therefore relaxed only when every one of its alternatives would
+    disappear, in which case the whole group goes and the result is a superset.
+    """
+    chunks = []
+    for n, chunk in enumerate(_split_top(head, ";")):
+        if not chunk:
+            continue
+        first = (n == 0)
+        terms = _split_top(chunk, ",")
+        if len(terms) > 1:
+            if all(t.lstrip("!") and
+                   _strip_chain(t.lstrip("!"), drop_h, drop_deg, first) == ""
+                   for t in terms):
+                continue                      # every alternative goes, so the group goes
+            chunks.append(chunk)              # otherwise leave the disjunction alone
+            continue
+        stripped = _strip_chain(chunk, drop_h, drop_deg, first)
+        if stripped:
+            chunks.append(stripped)
+    head = ";".join(chunks)
     return head or "*"
 
 
@@ -129,6 +188,31 @@ def self_test(probe_smiles=("CC(=O)Nc1ccc(O)cc1", "CC(C)NCC(O)COc1cccc2ccccc12",
        are shorter: the full match is projected onto the centre atoms and compared as a
        set of frozensets, which is how step 0 deduplicates (type, site) pairs anyway.
     """
+    # the rewrite is textual, so the cases that decide its direction are pinned here before
+    # the bank-wide invariants run. Each is a construct where a careless strip inverts the
+    # change: a negation orphaned from its primitive, a disjunction losing one alternative,
+    # a hydrogen that is an atom rather than a count, an element whose symbol starts with H.
+    CASES = [
+        ("[C;$(C[#6!H3]):2](=[O:3])O[#6;!H3:4]", 1, 1,
+         "[C;$(C[#6!H3]):2](=[O:3])O[#6:4]"),
+        ("[C;!H3:1]", 1, 1, "[C:1]"),
+        ("[C;!H3,X2:1]", 1, 1, "[C:1]"),
+        ("[C;!H3,X2:1]", 1, 0, "[C;!H3,X2:1]"),
+        ("[c;H1,H0:1]", 1, 0, "[c:1]"),
+        ("[C;X4:1][H:2]", 1, 0, "[C;X4:1][H:2]"),
+        ("[C;X4:1][H:2]", 1, 1, "[C:1][H:2]"),
+        ("[cH:1]", 1, 0, "[c:1]"),
+        ("[N;X3:1][CH3:2]", 1, 1, "[N:1][C:2]"),
+        ("[He:1]", 1, 1, "[He:1]"), ("[H+:1]", 1, 1, "[H+:1]"),
+        ("[nH:1]c1ccccc1", 1, 0, "[n:1]c1ccccc1"),
+    ]
+    ok_cases = True
+    for expr, dh, dd, want in CASES:
+        got = _strip(expr, bool(dh), bool(dd))
+        if got != want:
+            print(f"FAIL: {expr} h={dh} d={dd} -> {got}, expected {want}")
+            ok_cases = False
+
     rules, _ = load_rules(str(BANK))
     mols = [Chem.MolFromSmiles(s) for s in probe_smiles]
     names = ["as_written", "no_H", "no_H_no_deg"]
@@ -165,8 +249,8 @@ def self_test(probe_smiles=("CC(=O)Nc1ccc(O)cc1", "CC(C)NCC(O)COc1cccc2ccccc12",
             checked += 1
 
     print(f"{checked} comparisons over {len(rules)} templates x {len(mols)} molecules")
-    print(f"{unparsed} rewrites did not parse")
-    ok = True
+    ok = ok_cases
+    print(f"{unparsed} of {len(rules)} rewrites did not parse")
     if bad_rung:
         ok = False
         print(f"FAIL: {len(bad_rung)} rungs are not a superset of the rung below")
