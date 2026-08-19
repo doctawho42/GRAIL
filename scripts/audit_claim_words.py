@@ -65,7 +65,9 @@ CONFIRMATORY = [
      "size": "168",
      "p": f"smallest reversal ${_DOCK_SMALLEST}$ against a ${_DOCK_CUTOFF}$ threshold"},
     {"key": "the correction over every grid at once",
-     "match": ["the count of certified pairs falls f", "count of certified pairs falls"],
+     "match": ["the count of certified pairs falls f", "count of certified pairs falls",
+               # the body states the same correction as a survivor count
+               "survive one correction over the union of all twenty-four grids"],
      "family": "the union of all twenty-three grids", "size": f"${_UNION_FAMILY:,}$".replace(",", "{,}"),
      "p": f"cutoff ${_UNION_CUTOFF}$"},
     {"key": "the shape-free re-test",
@@ -96,10 +98,17 @@ DEFINITION_MARKERS = ["Two words are used throughout", "A difference is \\emph{s
                       # family produced them, not a new claim inside one; keyed on its own heading
                       "Which axis certifies a reversal",
                       "certifies no reversal of a separated ordering anywhere in this paper",
+                      # the same null, in the body's shorter wording: it denies a certification
+                      # rather than making one, and its size is given where it is stated
+                      "does the matching criterion certify a reversal of an ordering a published",
                       # the same two sentences now live in the body, having been promoted with the
                       # rest of the survey; the exemption follows the text rather than the file
                       "Six\nof the twenty-three certified reversals",
                       "Six of the twenty-three certified reversals",
+                      # the same roll-up, reworded when the survey moved into the body: it counts
+                      # certifications already made and attributes them to an axis, and the
+                      # exemption follows the sentence rather than the file it now sits in
+                      "Of the twenty-three certified reversals, six reverse an ordering",
                       "Five of the twenty-one certified reversals",
                       "Five\nof the twenty-one certified reversals",
                       # the power paragraph states what the negative claim is, and the paragraph
@@ -113,13 +122,60 @@ DEFINITION_MARKERS = ["Two words are used throughout", "A difference is \\emph{s
                       "The table publishes seven places in a line"]
 
 
+# Headings, in the order LaTeX prints them, with the label that lets the table point at one.
+_HEAD = re.compile(r"\\(?:sub)?section\*?\{((?:[^{}]|\{[^{}]*\})*)\}\s*(?:\\label\{([^}]*)\})?")
+_PARA = re.compile(r"\\paragraph\{((?:[^{}]|\{[^{}]*\})*)\}")
+# A file that is \input into the body carries its own section's label on its first line.
+_OWN_LABEL = re.compile(r"^\s*\\label\{([^}]*)\}")
+
+
+def _locators(text: str):
+    """[(offset, ref-or-None, section title, paragraph title-or-None)], in file order."""
+    out = []
+    own = _OWN_LABEL.match(text)
+    cur = (own.group(1) if own else None, None)
+    if own:
+        out.append((0, cur[0], None, None))
+    for m in sorted(list(_HEAD.finditer(text)) + list(_PARA.finditer(text)),
+                    key=lambda m: m.start()):
+        if m.re is _HEAD:
+            cur = (m.group(2), m.group(1))
+            out.append((m.start(), cur[0], cur[1], None))
+        else:
+            out.append((m.start(), cur[0], cur[1], m.group(1).rstrip(".")))
+    return out
+
+
+def _where(locs, offset):
+    """The heading a sentence sits under, as the printed document numbers it."""
+    ref = title = para = None
+    for pos, r, t, pa in locs:
+        if pos > offset:
+            break
+        if pa is None:
+            ref, title, para = r, t, None
+        else:
+            para = pa
+    if ref:
+        loc = f"\\S\\ref{{{ref}}}"
+    elif title:
+        loc = f"``{title}''"
+    else:
+        return "--"
+    return f"{loc}, ``{para}''" if para else loc
+
+
 def sentences(text: str):
+    """Yield (offset, sentence). The offset is what ties a sentence to its heading."""
     text = re.sub(r"%.*", "", text)
     text = re.sub(r"\s+", " ", text)
+    pos = 0
     for s in re.split(r"(?<=[.!?]) (?=[A-Z\\$])", text):
+        start = text.index(s, pos) if s else pos
+        pos = start + len(s)
         s = s.strip()
         if s:
-            yield s
+            yield start, s
 
 
 def main() -> int:
@@ -127,15 +183,18 @@ def main() -> int:
     for path in sorted(PAPER.glob("*.tex")) + sorted((PAPER / "app").glob("*.tex")):
         if path.name in ("claimwords.tex", "robust_tables.tex", "robust_hasse.tex"):
             continue
-        for s in sentences(path.read_text()):
+        text = re.sub(r"\s+", " ", re.sub(r"%.*", "", path.read_text()))
+        locs = _locators(text)
+        for off, s in sentences(path.read_text()):
             if "certif" not in s:
                 continue
+            where = _where(locs, off)
             if any(m in s for m in DEFINITION_MARKERS):
-                rows.append((path.name, "the definition itself", "--", "--"))
+                rows.append((where, "the definition itself", "--", "--"))
                 continue
             hit = next((c for c in CONFIRMATORY if any(m in s for m in c["match"])), None)
             if hit is not None:
-                rows.append((path.name, hit["key"], hit["size"], hit["p"]))
+                rows.append((where, hit["key"], hit["size"], hit["p"]))
             elif re.search(r"Holm|strictest correction|survive the same correction|"
                            r"family of \$?\d+\$? interaction|cell-level tests|"
                            # a sentence that names the correction in words, or the family it was
@@ -146,7 +205,7 @@ def main() -> int:
                            r"the task's own aggregation|either way", s):
                 # the sentence carries its own warrant: it names the correction and the family size
                 size = re.search(r"\$?(\d{2,4})\$? (?:paired )?(?:interaction|test)", s)
-                rows.append((path.name, "names its own correction",
+                rows.append((where, "names its own correction",
                              size.group(1) if size else "stated in the sentence", "--"))
             else:
                 violations.append((str(path.relative_to(ROOT)), s[:220]))
@@ -155,17 +214,31 @@ def main() -> int:
              "\\begin{center}\\small",
              # the last two columns carry sentences, not words: set as l they ran 180pt past
              # the margin, so they wrap instead
-             "\\begin{tabular}{l>{\\raggedright\\arraybackslash}p{0.30\\textwidth}l"
-             ">{\\raggedright\\arraybackslash}p{0.28\\textwidth}}", "\\toprule",
-             "file & the comparison it refers to & family size & adjusted $p$ \\\\", "\\midrule"]
+             # the reader has the PDF and not the sources, so a sentence is located by the
+             # section and run-in heading the document prints, not by the file it was typed in
+             "\\begin{tabular}{>{\\raggedright\\arraybackslash}p{0.26\\textwidth}"
+             ">{\\raggedright\\arraybackslash}p{0.22\\textwidth}l"
+             ">{\\raggedright\\arraybackslash}p{0.26\\textwidth}}", "\\toprule",
+             "where it is said & the comparison it refers to & family size & adjusted $p$ \\\\",
+             "\\midrule"]
+    # several sentences can sit under one heading, and repeating the locator down the column
+    # made the table a page long and hid which uses share a place. The locator prints once per
+    # group, with a little air between groups.
+    last = None
     for f, k, n, p in rows:
-        lines.append(f"\\texttt{{{f.replace('_', '-')}}} & {k} & {n} & {p} \\\\")
+        if f != last:
+            if last is not None:
+                lines.append("\\addlinespace[2pt]")
+            cell, last = f, f
+        else:
+            cell = ""
+        lines.append(f"{cell} & {k} & {n} & {p} \\\\")
     lines += ["\\bottomrule\\end{tabular}\\end{center}"]
     OUT.write_text("\n".join(lines) + "\n")
 
     print(f"{len(rows)} uses of the word, all traceable; wrote {OUT}")
     for f, k, _, _ in rows:
-        print(f"  {f:20} {k}")
+        print(f"  {f[:52]:52} {k}")
     if violations:
         print(f"\n{len(violations)} sentences claim the word without a declared family:")
         for f, s in violations:
