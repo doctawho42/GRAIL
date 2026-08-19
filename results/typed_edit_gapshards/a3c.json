@@ -1,0 +1,44 @@
+{
+ "bank": {
+  "n_rules": 7581,
+  "n_types": 4417
+ },
+ "phase_a": {
+  "cov": {
+   "uncovered": 20,
+   "covered": 94
+  },
+  "gap": {
+   "novel_type": 14,
+   "untypeable": 2,
+   "known_type": 4
+  },
+  "known_pairs": [
+   {
+    "substrate": "CC(=O)OC1(C(=O)CO)CCC2C3=CC(Cl)=C4CC(=O)OCC4(C)C3CCC21C",
+    "metabolite": "CC(=O)OCC(=O)C1(O)CCC2C3=CC(Cl)=C4CC(=O)OCC4(C)C3CCC21C",
+    "key": "CSUHXWJNDDIDCZ-UHFFFAOYSA-N"
+   },
+   {
+    "substrate": "O=C(O)c1cccnc1",
+    "metabolite": "C[n+]1cccc(C(=O)[O-])c1",
+    "key": "WWNNZCOKKKDOPX-UHFFFAOYSA-N"
+   },
+   {
+    "substrate": "O=C(O)C(F)Cl",
+    "metabolite": "NC(CCC(O)=NC(CSC(Cl)C(=O)O)C(O)=NCC(=O)O)C(=O)O",
+    "key": "QSJWCVDVLJSMFK-UHFFFAOYSA-N"
+   },
+   {
+    "substrate": "Cn1c(CCCC(=O)O)nc2cc(NCCCl)ccc21",
+    "metabolite": "Cn1c(CCCC(=O)O)nc2cc(NCC=O)ccc21",
+    "key": "ISVGSJUIPPUHNV-UHFFFAOYSA-N"
+   }
+  ],
+  "n_substrates": 49,
+  "slice": [
+   683,
+   732
+  ]
+ }
+}

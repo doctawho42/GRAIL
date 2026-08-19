@@ -1,0 +1,84 @@
+{
+ "bank": {
+  "n_rules": 7581,
+  "n_types": 4417
+ },
+ "phase_a": {
+  "cov": {
+   "uncovered": 63,
+   "covered": 352
+  },
+  "gap": {
+   "novel_type": 47,
+   "known_type": 12,
+   "untypeable": 4
+  },
+  "known_pairs": [
+   {
+    "substrate": "O=[N+]([O-])c1cc2cccc3ccc4cccc1c4c32",
+    "metabolite": "ONc1cc2cccc3ccc4cccc1c4c32",
+    "key": "ZQJYTUYLCZVHME-UHFFFAOYSA-N"
+   },
+   {
+    "substrate": "COc1cc(C=Cc2ccc(OC)c(OP(=O)(O)O)c2OP(=O)(O)O)cc(OC)c1OC",
+    "metabolite": "COc1ccc(C=Cc2cc(OC)c(OC)c(OC)c2)c(O)c1O",
+    "key": "YUSYSJSHVJULID-UHFFFAOYSA-N"
+   },
+   {
+    "substrate": "C=C(C=O)c1ccccc1",
+    "metabolite": "CC(O)=NC(CSCC(CO)c1ccccc1)C(=O)O",
+    "key": "WHUDPBNTVTZBGH-UHFFFAOYSA-N"
+   },
+   {
+    "substrate": "C=C(C=O)c1ccccc1",
+    "metabolite": "NC(CCC(O)=NC(CSCC(C(=O)O)c1ccccc1)C(O)=NCC(=O)O)C(=O)O",
+    "key": "WYHKNSJYEYCXDY-UHFFFAOYSA-N"
+   },
+   {
+    "substrate": "C=C(C=O)c1ccccc1",
+    "metabolite": "CC(O)=NC(CSCC(C(=O)O)c1ccccc1)C(=O)O",
+    "key": "DUCXPMNGCABMPP-UHFFFAOYSA-N"
+   },
+   {
+    "substrate": "CC(C)C1CCC(C(O)=NC(Cc2ccccc2)C(=O)O)CC1",
+    "metabolite": "CC(C)C1CCC(C(O)=NC(Cc2ccccc2)C(=O)OC2C(O)C(O)OC(C(=O)O)C2O)CC1",
+    "key": "WUWPOTQWSLGAIV-UHFFFAOYSA-N"
+   },
+   {
+    "substrate": "CC(C)C1CCC(C(O)=NC(Cc2ccccc2)C(=O)O)CC1",
+    "metabolite": "CC(C)C1CCC(C(O)=NC(Cc2ccccc2)C(=O)OC2C(O)OC(C(=O)O)C(O)C2O)CC1",
+    "key": "NXJCWRGAJDCOGN-UHFFFAOYSA-N"
+   },
+   {
+    "substrate": "Cn1ccnc1S",
+    "metabolite": "CN1C(S)=NC(O)C1O",
+    "key": "PMLULKKCEWWGHV-UHFFFAOYSA-N"
+   },
+   {
+    "substrate": "Cn1ccnc1S",
+    "metabolite": "CN1C(S)=NC2OC21",
+    "key": "CQUKAKIWVATNPG-UHFFFAOYSA-N"
+   },
+   {
+    "substrate": "Brc1ccc(Oc2ccc(Br)cc2Br)c(Br)c1",
+    "metabolite": "BrC1=CC=C(Oc2ccc(Br)cc2Br)C2(Br)OC12",
+    "key": "DBXUYULFKXBMMN-UHFFFAOYSA-N"
+   },
+   {
+    "substrate": "Brc1ccc(Oc2ccc(Br)cc2Br)c(Br)c1",
+    "metabolite": "BrC1=CC(Br)=C(Oc2ccc(Br)cc2Br)C2OC12",
+    "key": "RFIPHDVQYSRBSI-UHFFFAOYSA-N"
+   },
+   {
+    "substrate": "Brc1ccc(Oc2ccc(Br)cc2Br)c(Br)c1",
+    "metabolite": "Oc1cc(Oc2cc(O)c(Br)cc2Br)c(Br)cc1Br",
+    "key": "NHYHSRGMPHHAQX-UHFFFAOYSA-N"
+   }
+  ],
+  "n_substrates": 195,
+  "slice": [
+   780,
+   975
+  ]
+ }
+}

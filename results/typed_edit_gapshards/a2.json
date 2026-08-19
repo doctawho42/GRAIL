@@ -1,0 +1,129 @@
+{
+ "bank": {
+  "n_rules": 7581,
+  "n_types": 4417
+ },
+ "phase_a": {
+  "cov": {
+   "covered": 357,
+   "uncovered": 104
+  },
+  "gap": {
+   "novel_type": 67,
+   "untypeable": 16,
+   "known_type": 21
+  },
+  "known_pairs": [
+   {
+    "substrate": "CS(=O)(=O)OCCN(CCBr)c1c(C(O)=NCCO)cc([N+](=O)[O-])cc1[N+](=O)[O-]",
+    "metabolite": "CS(=O)(=O)OCCN(CCBr)c1c(C(O)=NCCO)cc(NO)cc1[N+](=O)[O-]",
+    "key": "GGQLBTNLBIONTJ-UHFFFAOYSA-N"
+   },
+   {
+    "substrate": "CS(=O)(=O)OCCN(CCBr)c1c(C(O)=NCCO)cc([N+](=O)[O-])cc1[N+](=O)[O-]",
+    "metabolite": "CS(=O)(=O)OCCN(CCBr)c1c(NO)cc([N+](=O)[O-])cc1C(O)=NCCO",
+    "key": "GOKVASUREKIHQS-UHFFFAOYSA-N"
+   },
+   {
+    "substrate": "COc1ccc2c(c1)C13CCCCC1C(C2)N(C)CC3",
+    "metabolite": "COc1cc2c(cc1O)CC1NCCC23CCCCC13",
+    "key": "KFRHWPMUEJYQFE-UHFFFAOYSA-N"
+   },
+   {
+    "substrate": "COc1ccc2c(c1)C13CCCCC1C(C2)N(C)CC3",
+    "metabolite": "COc1ccc2c(c1)C13CC=CCC1C(C2)NCC3",
+    "key": "WRMZEFHXYWSJJI-UHFFFAOYSA-N"
+   },
+   {
+    "substrate": "COc1ccc2c(c1)C13CCCCC1C(C2)N(C)CC3",
+    "metabolite": "CC(=O)Oc1ccc2c(c1)C13CCCCC1C(C2)N(C)CC3",
+    "key": "QUCNGGMVMBNETF-UHFFFAOYSA-N"
+   },
+   {
+    "substrate": "COc1ccc2c(c1)C13CCCCC1C(C2)N(C)CC3",
+    "metabolite": "COc1ccc2c(c1)C13C=CC=CC1C(C2)N(C)CC3",
+    "key": "FSAIYNGWMIQIIP-UHFFFAOYSA-N"
+   },
+   {
+    "substrate": "Cc1cc(OCC2(CONC(=N)N)CC2)cc(OS(=O)(=O)c2ccccc2S(C)(=O)=O)c1",
+    "metabolite": "Cc1cc(OCC2(CONC=N)CC2)cc(OS(=O)(=O)c2ccccc2S(C)(=O)=O)c1",
+    "key": "HPAVJAIZLITWJS-UHFFFAOYSA-N"
+   },
+   {
+    "substrate": "Cc1cc(OCC2(CONC(=N)N)CC2)cc(OS(=O)(=O)c2ccccc2S(C)(=O)=O)c1",
+    "metabolite": "Cc1cc(OCC2(CONC(=N)O)CC2)cc(OS(=O)(=O)c2ccccc2S(C)(=O)=O)c1",
+    "key": "KLIFNNLFMZAZTC-UHFFFAOYSA-N"
+   },
+   {
+    "substrate": "CC(O)(c1ccccc1)c1ccc(Cl)cc1",
+    "metabolite": "O=C(c1ccccc1)c1ccc(Cl)cc1",
+    "key": "UGVRJVHOJNYEHR-UHFFFAOYSA-N"
+   },
+   {
+    "substrate": "N=c1nc(S)c2nc[nH]c2[nH]1",
+    "metabolite": "N=c1nc(S)c2ncn(C3OC(CO)C(O)C3O)c2[nH]1",
+    "key": "OTDJAMXESTUWLO-UHFFFAOYSA-N"
+   },
+   {
+    "substrate": "N=c1nc(S)c2nc[nH]c2[nH]1",
+    "metabolite": "N=c1nc(S)c2ncn(C3OC(COP(=O)(O)O)C(OP(=O)(O)O)C3O)c2[nH]1",
+    "key": "USJTWMXKPXUZKK-UHFFFAOYSA-N"
+   },
+   {
+    "substrate": "CSc1ncnc2[nH]cnc12",
+    "metabolite": "CSc1ncnc2c1ncn2C1OC(COP(=O)(O)O)C(OP(=O)(O)O)C1O",
+    "key": "LUKOBEXUSHLKBO-UHFFFAOYSA-N"
+   },
+   {
+    "substrate": "CSc1ncnc2[nH]cnc12",
+    "metabolite": "CSc1ncnc2c1ncn2C1OC(CO)C(O)C1O",
+    "key": "ZDRFDHHANOYUTE-UHFFFAOYSA-N"
+   },
+   {
+    "substrate": "COC(=O)C(CC(C)C)N=C(O)C(CCC(=O)O)N=C(O)C(CCC(=O)O)N=C(O)OC(C)(C)C",
+    "metabolite": "COC(=O)C(CC(C)C)N=C(O)C(CCC(=O)O)N=C(O)C(CC(C(=O)O)C(=O)O)N=C(O)OC(C)(C)C",
+    "key": "JQJMAJTZIGXMCO-UHFFFAOYSA-N"
+   },
+   {
+    "substrate": "CS(=O)(=O)c1ccccc1-c1ccc(N=C(O)c2cc(C(F)(F)F)nn2-c2cccc(CN)c2)c(F)c1",
+    "metabolite": "CS(=O)(=O)c1ccccc1-c1ccc(N=C(O)c2cc(C(F)(F)F)nn2-c2cccc(C=N)c2)c(F)c1",
+    "key": "OFGWTUCGFWXSLH-UHFFFAOYSA-N"
+   },
+   {
+    "substrate": "CS(=O)(=O)c1ccccc1-c1ccc(N=C(O)c2cc(C(F)(F)F)nn2-c2cccc(C=N)c2)c(F)c1",
+    "metabolite": "CS(=O)(=O)c1ccccc1-c1ccc(N=C(O)c2cc(C(F)(F)F)nn2-c2cccc(C=O)c2)c(F)c1",
+    "key": "IBUZZLPGCXHMQL-UHFFFAOYSA-N"
+   },
+   {
+    "substrate": "CS(=O)(=O)C1=C(c2ccc(N=C(O)c3cc(C(F)(F)F)nn3-c3cccc(CN)c3)c(F)c2)C2OC2C=C1",
+    "metabolite": "CS(=O)(=O)c1ccc(O)cc1-c1ccc(N=C(O)c2cc(C(F)(F)F)nn2-c2cccc(CN)c2)c(F)c1",
+    "key": "LUEBPAGQBCUPJR-UHFFFAOYSA-N"
+   },
+   {
+    "substrate": "CNCCCC12CCC(c3ccccc31)c1ccccc12",
+    "metabolite": "NCCCC12CC(O)C(c3ccccc31)c1ccccc12",
+    "key": "JZGNJENEFVNEQD-UHFFFAOYSA-N"
+   },
+   {
+    "substrate": "CNCCCC12CCC(c3ccccc31)c1ccccc12",
+    "metabolite": "NCCCC12CCC(c3ccccc31)c1cc(O)ccc12",
+    "key": "NZMQOBHXVOMKGN-UHFFFAOYSA-N"
+   },
+   {
+    "substrate": "CNCCCC12CCC(c3ccccc31)c1ccccc12",
+    "metabolite": "NCCCC12CCC(c3ccccc31)c1ccc(O)cc12",
+    "key": "WWYZVWYJIOGFAU-UHFFFAOYSA-N"
+   },
+   {
+    "substrate": "CCn1c(=O)c2c(nc(C=Cc3ccc(OC)c(OC)c3)n2C)n(CC)c1=O",
+    "metabolite": "CCn1c(=O)n(CCO)c(=O)c2c1nc(C=Cc1ccc(O)c(OC)c1)n2C",
+    "key": "NGINERUDNWGTNT-UHFFFAOYSA-N"
+   }
+  ],
+  "n_substrates": 195,
+  "slice": [
+   390,
+   585
+  ]
+ }
+}

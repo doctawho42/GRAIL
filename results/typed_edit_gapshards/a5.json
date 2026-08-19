@@ -1,0 +1,114 @@
+{
+ "bank": {
+  "n_rules": 7581,
+  "n_types": 4417
+ },
+ "phase_a": {
+  "cov": {
+   "covered": 319,
+   "uncovered": 79
+  },
+  "gap": {
+   "novel_type": 54,
+   "known_type": 18,
+   "untypeable": 7
+  },
+  "known_pairs": [
+   {
+    "substrate": "COc1cc(C=CC(=O)O)cc(-c2cc(CCC(=O)O)cc(OC)c2O)c1O",
+    "metabolite": "O=C(O)C=Cc1cc(O)c(O)c(-c2cc(CCC(=O)O)cc(O)c2O)c1",
+    "key": "WTXOKXDJISAJCN-UHFFFAOYSA-N"
+   },
+   {
+    "substrate": "CCN(CC)CCNc1ccc2ncn3c4ccc(OC)cc4c(=O)c1c23",
+    "metabolite": "CC[N+](O)(CC)CC[N-]c1ccc2[nH+]cn3c4ccc(OC)cc4c(=O)c1c23",
+    "key": "XHEOKNRPAHGVIZ-UHFFFAOYSA-N"
+   },
+   {
+    "substrate": "CC12CC=C3C4=C(CCC3C1CCC2=O)CC(=O)CC4",
+    "metabolite": "CC12CCC3=C4CCC(O)C=C4CCC3C1CCC2=O",
+    "key": "QDFACJJKOZIYTJ-UHFFFAOYSA-N"
+   },
+   {
+    "substrate": "CC12CC=C3C4=C(CCC3C1CCC2O)CC(=O)CC4",
+    "metabolite": "CC12CCC3=C4CCC(O)C=C4CCC3C1CCC2O",
+    "key": "IQZLWIPUVJSZIF-UHFFFAOYSA-N"
+   },
+   {
+    "substrate": "COc1ccc2c(c1)CN(C)CCS2",
+    "metabolite": "COc1ccc2c(c1)CN(C)CC(O)S2=O",
+    "key": "WKKLAEOJUVHKIC-UHFFFAOYSA-N"
+   },
+   {
+    "substrate": "NCC(F)C[PH](=O)O",
+    "metabolite": "NCC(F)CP(=O)(O)O",
+    "key": "RXCPDPLWAQULQX-UHFFFAOYSA-N"
+   },
+   {
+    "substrate": "N=C(O)c1nnn(Cc2cc(Cl)c(C(=O)c3ccc(Cl)cc3)c(Cl)c2)c1N",
+    "metabolite": "N=C([O-])c1nn(C2OC(C(=O)O)C(O)C(O)C2O)[n+](Cc2cc(Cl)c(C(=O)c3ccc(Cl)cc3)c(Cl)c2)c1N",
+    "key": "TYTICHGMTQRSOA-UHFFFAOYSA-N"
+   },
+   {
+    "substrate": "CN(C)CCN=c1[nH]c2cc(O)ccc2c2c1C(=O)c1ccccc1-2",
+    "metabolite": "C[N+](C)(O)CCN=c1[nH]c2cc([O-])ccc2c2c1C(=O)c1ccccc1-2",
+    "key": "PWGDJDMUOURRKS-UHFFFAOYSA-N"
+   },
+   {
+    "substrate": "C[N+](C)(O)CCN=c1[nH]c2cc([O-])ccc2c2c1C(=O)c1ccccc1-2",
+    "metabolite": "C[N+](C)(O)CCN=c1[nH]c2cc(OC3OC(C(=O)[O-])C(O)C(O)C3O)ccc2c2c1C(=O)c1ccccc1-2",
+    "key": "RXMRQNKQPDJYPM-UHFFFAOYSA-N"
+   },
+   {
+    "substrate": "CN1CCC23c4c5ccc(O)c4OC2C(=O)CCC3C1C5",
+    "metabolite": "C[N+]1(O)CCC23c4c5ccc([O-])c4OC2C(=O)CCC3C1C5",
+    "key": "NFEOLURXUPSMGA-UHFFFAOYSA-N"
+   },
+   {
+    "substrate": "CC12CCC3C(C(=O)C=C4CC(O)CCC43C)C1CCC2=O",
+    "metabolite": "CC12CCC3C(C(O)C=C4CC(=O)CCC43C)C1CCC2=O",
+    "key": "RLDYRQGMEVXOBC-UHFFFAOYSA-N"
+   },
+   {
+    "substrate": "C=c1c(N)c(O)c2c(C)c3n(c2c1O)CC(NC)C=3",
+    "metabolite": "C=c1c(N)c(O)c2c(CSCC(N)C(=O)O)c3n(c2c1O)CC(NC)C=3",
+    "key": "UJBVLSIIFHHACY-UHFFFAOYSA-N"
+   },
+   {
+    "substrate": "CCc1cc(C(=N)S)ccn1",
+    "metabolite": "CCc1cc(C(=N)O)ccn1",
+    "key": "LWTBJUQFUISATQ-UHFFFAOYSA-N"
+   },
+   {
+    "substrate": "CCc1cc(C(=N)S)cc[n+]1C",
+    "metabolite": "CCc1cc(C(=N)O)cc[n+]1C",
+    "key": "LRHBUKLYLWSDTE-UHFFFAOYSA-O"
+   },
+   {
+    "substrate": "O=P(O)(O)Oc1ccc(-c2nc(O)c3cc(I)ccc3n2)c(OP(=O)(O)O)c1",
+    "metabolite": "Oc1ccc(-c2nc(O)c3cc(I)ccc3n2)c(O)c1",
+    "key": "YLINVTWHWIOHEH-UHFFFAOYSA-N"
+   },
+   {
+    "substrate": "c1ccc2c(c1)oc1ccccc12",
+    "metabolite": "OC1C=Cc2oc3ccccc3c2C1O",
+    "key": "SFFBNOAHWBDWNL-UHFFFAOYSA-N"
+   },
+   {
+    "substrate": "c1ccc2c(c1)oc1ccccc12",
+    "metabolite": "Oc1ccc2oc3cccc(O)c3c2c1",
+    "key": "AAKQUNJLSHPHRF-UHFFFAOYSA-N"
+   },
+   {
+    "substrate": "OC1C=Cc2oc3ccccc3c2C1O",
+    "metabolite": "O=C1C=Cc2oc3ccccc3c2C1=O",
+    "key": "SZBDZGKFEAJNBX-UHFFFAOYSA-N"
+   }
+  ],
+  "n_substrates": 195,
+  "slice": [
+   975,
+   1170
+  ]
+ }
+}
