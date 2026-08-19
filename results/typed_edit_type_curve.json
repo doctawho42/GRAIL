@@ -1,0 +1,123 @@
+{
+ "rule_bank": {
+  "path": "grail_metabolism/resources/extended_smirks.txt",
+  "lines": 7581,
+  "parsed": 7580,
+  "unparseable": 1
+ },
+ "catalog": {
+  "path": "results/mined_rule_catalog_v2.json",
+  "n_rules": 5856,
+  "bank_rules_found_in_catalog": 5856,
+  "total_train_pairs": 19921,
+  "catalog_rules_with_one_pair": 4274
+ },
+ "by_variant": {
+  "as_written": {
+   "n_types": 4588,
+   "n_unsigned_templates": 3,
+   "singleton_type_share": 0.806,
+   "median_templates_per_type": 1,
+   "max_templates_per_type": 137,
+   "types_with_train_pairs": 3578,
+   "types_with_ge5_pairs": 379,
+   "share_types_ge5_pairs": 0.106,
+   "train_pairs_in_dense_types": 0.779,
+   "median_pairs_per_type": 1,
+   "catalog_rules_matched": 5853
+  },
+  "no_explicit_H": {
+   "n_types": 4456,
+   "n_unsigned_templates": 3,
+   "singleton_type_share": 0.805,
+   "median_templates_per_type": 1,
+   "max_templates_per_type": 137,
+   "types_with_train_pairs": 3578,
+   "types_with_ge5_pairs": 379,
+   "share_types_ge5_pairs": 0.106,
+   "train_pairs_in_dense_types": 0.779,
+   "median_pairs_per_type": 1,
+   "catalog_rules_matched": 5853
+  },
+  "no_H_no_size": {
+   "n_types": 4456,
+   "n_unsigned_templates": 3,
+   "singleton_type_share": 0.805,
+   "median_templates_per_type": 1,
+   "max_templates_per_type": 137,
+   "types_with_train_pairs": 3578,
+   "types_with_ge5_pairs": 379,
+   "share_types_ge5_pairs": 0.106,
+   "train_pairs_in_dense_types": 0.779,
+   "median_pairs_per_type": 1,
+   "catalog_rules_matched": 5853
+  },
+  "changed_only": {
+   "n_types": 3802,
+   "n_unsigned_templates": 3,
+   "singleton_type_share": 0.782,
+   "median_templates_per_type": 1,
+   "max_templates_per_type": 177,
+   "types_with_train_pairs": 3078,
+   "types_with_ge5_pairs": 345,
+   "share_types_ge5_pairs": 0.112,
+   "train_pairs_in_dense_types": 0.809,
+   "median_pairs_per_type": 1,
+   "catalog_rules_matched": 5853
+  },
+  "bonds_only": {
+   "n_types": 3912,
+   "n_unsigned_templates": 471,
+   "singleton_type_share": 0.795,
+   "median_templates_per_type": 1,
+   "max_templates_per_type": 166,
+   "types_with_train_pairs": 3514,
+   "types_with_ge5_pairs": 364,
+   "share_types_ge5_pairs": 0.104,
+   "train_pairs_in_dense_types": 0.782,
+   "median_pairs_per_type": 1,
+   "catalog_rules_matched": 5853
+  }
+ },
+ "by_radius": {
+  "0": {
+   "n_types": 4456,
+   "n_unsigned_templates": 3,
+   "singleton_type_share": 0.805,
+   "median_templates_per_type": 1,
+   "max_templates_per_type": 137,
+   "types_with_train_pairs": 3578,
+   "types_with_ge5_pairs": 379,
+   "share_types_ge5_pairs": 0.106,
+   "train_pairs_in_dense_types": 0.779,
+   "median_pairs_per_type": 1,
+   "catalog_rules_matched": 5853
+  },
+  "1": {
+   "n_types": 5483,
+   "n_unsigned_templates": 3,
+   "singleton_type_share": 0.831,
+   "median_templates_per_type": 1,
+   "max_templates_per_type": 34,
+   "types_with_train_pairs": 4251,
+   "types_with_ge5_pairs": 390,
+   "share_types_ge5_pairs": 0.092,
+   "train_pairs_in_dense_types": 0.733,
+   "median_pairs_per_type": 1,
+   "catalog_rules_matched": 5853
+  },
+  "2": {
+   "n_types": 5678,
+   "n_unsigned_templates": 3,
+   "singleton_type_share": 0.839,
+   "median_templates_per_type": 1,
+   "max_templates_per_type": 34,
+   "types_with_train_pairs": 4264,
+   "types_with_ge5_pairs": 393,
+   "share_types_ge5_pairs": 0.092,
+   "train_pairs_in_dense_types": 0.733,
+   "median_pairs_per_type": 1,
+   "catalog_rules_matched": 5853
+  }
+ }
+}
