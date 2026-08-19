@@ -1,0 +1,191 @@
+{
+ "rule_bank": {
+  "path": "grail_metabolism/resources/extended_smirks.txt",
+  "lines": 7581,
+  "parsed": 7580,
+  "unparseable": 1,
+  "rewrites_that_did_not_parse": 17
+ },
+ "substrate_sample": {
+  "source": "results/match_sensitivity_fulln.json",
+  "population": 1170,
+  "cap": 20,
+  "seed": 0,
+  "n": 20
+ },
+ "mean_matches_per_substrate": {
+  "as_written": 5990.5,
+  "no_H": 6145.2,
+  "no_H_no_deg": 6170.5,
+  "skeleton": 93446.0
+ },
+ "relative_to_as_written": {
+  "as_written": 1.0,
+  "no_H": 1.03,
+  "no_H_no_deg": 1.03,
+  "skeleton": 15.6
+ },
+ "monotonicity_violations": [],
+ "rows": [
+  {
+   "substrate": "Cc1cc2c(F)c(Oc3ncnn4cc(OCC(C)OC(=O)CN(C)C)c(C)c34)ccc2[nH]1",
+   "heavy": 33,
+   "as_written": 2971,
+   "no_H": 3083,
+   "no_H_no_deg": 3090,
+   "skeleton": 98217
+  },
+  {
+   "substrate": "Cn1c(CCCC(=O)O)nc2cc(N(CCCl)CCCl)ccc21",
+   "heavy": 23,
+   "as_written": 1866,
+   "no_H": 1972,
+   "no_H_no_deg": 1983,
+   "skeleton": 40677
+  },
+  {
+   "substrate": "CC(=O)OC1=C2C(C)C(OC(=O)C(OC(=O)C(C)(C)CCSSC3OC(CO)C(O)C(O)C3O)C(N=C(O)c3ccccc3)c3ccccc3)CC(O)(C(OC(=O)c3ccccc3)C3C4(OC(C)=O)COC4CC(O)C3(C)C1=O)C2(C)C",
+   "heavy": 82,
+   "as_written": 33619,
+   "no_H": 34209,
+   "no_H_no_deg": 34290,
+   "skeleton": 455145
+  },
+  {
+   "substrate": "CN1C(=O)C=CC2(C)C3CCC4(C)C(C(O)=Nc5ccccc5C(F)(F)F)CCC4C3CCC12",
+   "heavy": 34,
+   "as_written": 13350,
+   "no_H": 13654,
+   "no_H_no_deg": 13735,
+   "skeleton": 116108
+  },
+  {
+   "substrate": "O=P(O)(O)OCC1OC(n2cnc3c(S)ncnc32)C(O)C1O",
+   "heavy": 23,
+   "as_written": 1582,
+   "no_H": 1716,
+   "no_H_no_deg": 1727,
+   "skeleton": 27848
+  },
+  {
+   "substrate": "O=C(O)N1CCN2CC3CC(O)CC3c3cccc(c32)C1",
+   "heavy": 21,
+   "as_written": 3016,
+   "no_H": 3125,
+   "no_H_no_deg": 3153,
+   "skeleton": 47124
+  },
+  {
+   "substrate": "Cc1nc2ccccc2c(=O)n1-c1ccccc1Cl",
+   "heavy": 19,
+   "as_written": 1608,
+   "no_H": 1662,
+   "no_H_no_deg": 1670,
+   "skeleton": 35463
+  },
+  {
+   "substrate": "COc1cc(-c2ccc(N)c(OC)c2)ccc1N",
+   "heavy": 18,
+   "as_written": 1664,
+   "no_H": 1675,
+   "no_H_no_deg": 1675,
+   "skeleton": 33848
+  },
+  {
+   "substrate": "O=C(O)C1OC(N2C(=O)CC3(C(=O)N(Cc4ccc(Br)cc4F)C(=O)c4cccn43)C2=O)C(O)C(O)C1O",
+   "heavy": 38,
+   "as_written": 5194,
+   "no_H": 5414,
+   "no_H_no_deg": 5450,
+   "skeleton": 128506
+  },
+  {
+   "substrate": "CS(=O)(=O)c1ccccc1S(=O)(=O)Oc1cc(CO)cc(OCC2(CONC(=N)N)CC2)c1",
+   "heavy": 33,
+   "as_written": 2671,
+   "no_H": 2735,
+   "no_H_no_deg": 2765,
+   "skeleton": 85514
+  },
+  {
+   "substrate": "CCN(CC)CCNc1ccc2ncn3c4ccc(OC)cc4c(=O)c1c23",
+   "heavy": 27,
+   "as_written": 3247,
+   "no_H": 3393,
+   "no_H_no_deg": 3401,
+   "skeleton": 76226
+  },
+  {
+   "substrate": "O=C1c2ccccc2-c2c1c1ccccc1c(=O)n2CCNCCO",
+   "heavy": 25,
+   "as_written": 2564,
+   "no_H": 2626,
+   "no_H_no_deg": 2636,
+   "skeleton": 72524
+  },
+  {
+   "substrate": "CC1CC2C3CC(F)C4=CC(=O)C=CC4(C)C3(F)C(O)CC2(C)C1(OC(=O)c1ccco1)C(=O)O",
+   "heavy": 35,
+   "as_written": 16015,
+   "no_H": 16398,
+   "no_H_no_deg": 16470,
+   "skeleton": 140839
+  },
+  {
+   "substrate": "CNS(=O)(=O)Cc1ccc2[nH]cc(CCO)c2c1",
+   "heavy": 18,
+   "as_written": 1395,
+   "no_H": 1415,
+   "no_H_no_deg": 1420,
+   "skeleton": 24649
+  },
+  {
+   "substrate": "CC1CC2C3CC(F)C4=CC(=O)C=CC4(C)C3(F)C(O)CC2(C)C1(OC(=O)c1ccco1)C(=O)SCF",
+   "heavy": 37,
+   "as_written": 16402,
+   "no_H": 16786,
+   "no_H_no_deg": 16859,
+   "skeleton": 140760
+  },
+  {
+   "substrate": "CC(N=C(O)C(N=C(O)OCc1ccccc1)C(C)C)C(O)=NC(CC(=O)O)C(=O)Nc1ccc([N+](=O)[O-])cc1",
+   "heavy": 40,
+   "as_written": 3982,
+   "no_H": 4106,
+   "no_H_no_deg": 4133,
+   "skeleton": 136514
+  },
+  {
+   "substrate": "CCc1oc2ccccc2c1C(=O)c1ccc(O)cc1",
+   "heavy": 20,
+   "as_written": 1835,
+   "no_H": 1862,
+   "no_H_no_deg": 1863,
+   "skeleton": 51587
+  },
+  {
+   "substrate": "O=c1cc(-c2cccc(O)c2)oc2cc(O)c(O)cc12",
+   "heavy": 20,
+   "as_written": 1893,
+   "no_H": 1906,
+   "no_H_no_deg": 1906,
+   "skeleton": 46289
+  },
+  {
+   "substrate": "CC1NC(C)(C)COC1(O)c1cccc(Cl)c1",
+   "heavy": 17,
+   "as_written": 2209,
+   "no_H": 2306,
+   "no_H_no_deg": 2312,
+   "skeleton": 27055
+  },
+  {
+   "substrate": "COc1cc(CN(C)CCCN(CC(=N)O)c2cc(C)nc(-n3ccnc3)n2)ccc1O",
+   "heavy": 32,
+   "as_written": 2727,
+   "no_H": 2862,
+   "no_H_no_deg": 2872,
+   "skeleton": 84027
+  }
+ ]
+}
