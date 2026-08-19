@@ -135,18 +135,29 @@ def phase_b(rules, known_pairs) -> dict:
 
     per_arm = {name: {"recovered": [], "still_missed": [], "products": 0}
                for name, _, _ in ARMS}
+    monotonicity = []
     t0 = time.time()
     for i, (sub, rows) in enumerate(by_sub.items(), 1):
         mol = Chem.MolFromSmiles(sub)
         if mol is None:
             continue
+        got = {}
         for name, _, _ in ARMS:
             products = apply_with(mol, banks[name], False, "canonical", False)
             keys = _keys(products)
             per_arm[name]["products"] += len(products)
+            got[name] = {row["key"] for row in rows if row["key"] in keys}
             for row in rows:
                 (per_arm[name]["recovered"] if row["key"] in keys
                  else per_arm[name]["still_missed"]).append(row)
+        # A looser arm cannot recover FEWER references than a tighter one on the same
+        # substrate. Counting matches does not guarantee this: a relaxed query can trade one
+        # site for another, and the trade is invisible in a total. Compared as sets of
+        # reference keys, which is what recovery means.
+        for a, b in zip([n for n, _, _ in ARMS], [n for n, _, _ in ARMS][1:]):
+            if not got[a] <= got[b]:
+                monotonicity.append({"substrate": sub, "tighter": a, "looser": b,
+                                     "lost": sorted(got[a] - got[b])})
         print(f"  B {i}/{len(by_sub)} ({time.time() - t0:.0f}s) " +
               "  ".join(f"{n}={len(per_arm[n]['recovered'])}" for n, _, _ in ARMS),
               file=sys.stderr, flush=True)
@@ -169,9 +180,14 @@ def phase_b(rules, known_pairs) -> dict:
     ctrl = out["arms"]["as_written"]["recovered"]
     out["control_recovers"] = ctrl
     out["control_ok"] = ctrl == 0
+    out["monotonicity_violations"] = monotonicity
+    out["monotonicity_ok"] = not monotonicity
     if ctrl:
         print(f"  CONTROL FAIL: the unrelaxed bank recovers {ctrl} of the misses, so phase A "
               f"and phase B are not applying rules the same way", file=sys.stderr)
+    for v in monotonicity[:5]:
+        print(f"  MONOTONICITY FAIL: {v['looser']} lost {len(v['lost'])} reference(s) that "
+              f"{v['tighter']} recovered on {v['substrate'][:40]}", file=sys.stderr)
     return out
 
 

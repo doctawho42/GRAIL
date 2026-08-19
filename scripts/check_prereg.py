@@ -13,10 +13,16 @@ Two things are checked, and they fail separately.
   preregistration, so a hypothesis missing any of the three is an error in the registry
   itself, before any manuscript is read.
 
-  The manuscript. Every sentence asserting an effect has to name the hypothesis that
-  entitles it, as `\\prereg{H1}` or a bare `H1`. Sentences that attribute an effect to
+  The manuscript, forwards. Every sentence asserting an effect has to name the hypothesis
+  that entitles it, as `\\prereg{H1}` or a bare `H1`. Sentences that attribute an effect to
   someone else's system are counted separately rather than silently exempted, because an
   exemption nobody counts is where unregistered claims go to live.
+
+  The manuscript, backwards. Every registered hypothesis has to appear, either carrying a
+  claim or reported as having failed. A hypothesis that was registered, did not hold, and
+  then quietly left the paper is the violation preregistration exists to prevent, and it is
+  the likeliest of them: the forward direction cannot see it, because the sentence that
+  would have carried it is the one that is gone.
 
 The count of scanned sentences is printed and belongs in the report. A checker whose
 matcher quietly stops matching still exits zero, and the count is what shows it.
@@ -60,6 +66,10 @@ EFFECT_NUMBER = re.compile(r"[+\u2212-]\s*0\.\d{2,}")
 
 TAG = re.compile(r"\\prereg\{(H\d+)\}|\b(H\d+)\b")
 CITED = re.compile(r"\\cite[a-z]*\{|\\citet|\\citep")
+# A hypothesis may leave the paper only by being reported as not having held.
+FAILED = re.compile(
+    r"\b(fail(?:s|ed|ure)?|did not hold|does not hold|not supported|unsupported|refut(?:e|ed|es)|"
+    r"returns? a null|bounded null|is a null|not confirmed|did not replicate)\b", re.I)
 
 
 def sentences(text: str) -> list:
@@ -100,24 +110,48 @@ def parse_registry(path: Path) -> tuple:
 
 def scan(text: str, hyps: dict) -> dict:
     scanned, claims, tagged, attributed, unregistered, unknown = 0, [], [], [], [], []
+    claimed, failed, mentioned = set(), set(), set()
     for s in sentences(text):
         scanned += 1
+        ids = {a or b for a, b in TAG.findall(s)}
+        known = {i for i in ids if i in hyps}
+        mentioned |= known
+        if FAILED.search(s):
+            failed |= known
         if not (EFFECT.search(s) or EFFECT_NUMBER.search(s)):
             continue
         claims.append(s)
-        ids = {a or b for a, b in TAG.findall(s)}
         if ids:
             bad = sorted(i for i in ids if i not in hyps)
             (unknown if bad else tagged).append((sorted(ids), s))
+            if not bad:
+                claimed |= known
             continue
         (attributed if CITED.search(s) else unregistered).append(s)
+
+    # backwards: a registered hypothesis has to carry a claim or be reported as failed
+    outcome, absent, silent = {}, [], []
+    for h in sorted(hyps):
+        if h in claimed:
+            outcome[h] = "claimed"
+        elif h in failed:
+            outcome[h] = "reported as failed"
+        elif h in mentioned:
+            outcome[h] = "mentioned with no outcome"
+            silent.append(h)
+        else:
+            outcome[h] = "absent from the text"
+            absent.append(h)
+
     return {"sentences_scanned": scanned, "effect_sentences": len(claims),
             "tagged": tagged, "attributed": attributed,
-            "unregistered": unregistered, "unknown_hypothesis": unknown}
+            "unregistered": unregistered, "unknown_hypothesis": unknown,
+            "outcome": outcome, "absent": absent, "no_outcome": silent}
 
 
 def report(hyps: dict, problems: list, res: dict, quiet: bool = False) -> int:
-    ok = not problems and not res["unregistered"] and not res["unknown_hypothesis"]
+    ok = not (problems or res["unregistered"] or res["unknown_hypothesis"]
+              or res["absent"] or res["no_outcome"])
     if quiet:
         return 0 if ok else 1
     print(f"  registry: {len(hyps)} hypotheses "
@@ -134,6 +168,14 @@ def report(hyps: dict, problems: list, res: dict, quiet: bool = False) -> int:
         print(f"  FAIL: names {','.join(ids)}, which the registry does not: {s[:100]}")
     for s in res["unregistered"]:
         print(f"  FAIL: claims an effect with no hypothesis: {s[:100]}")
+    for h in res["absent"]:
+        print(f"  FAIL: {h} is registered and never appears; a hypothesis leaves the paper "
+              f"only by being reported as having failed")
+    for h in res["no_outcome"]:
+        print(f"  FAIL: {h} is named but carries neither a claim nor an outcome")
+    if not quiet:
+        for h, o in sorted(res["outcome"].items()):
+            print(f"    {h}: {o}")
     print("check_prereg: OK" if ok else "check_prereg: FAILURES ABOVE")
     return 0 if ok else 1
 
@@ -149,6 +191,11 @@ FIXTURE_REGISTRY = """# Preregistration (fixture)
 **Prediction.** Reactivity and accessibility improve within-type site ordering.
 **Failure:** the standardised inequality does not hold.
 **Family:** H2 alone, m = 1.
+
+## H3 — learned abstention
+**Prediction.** A stop logit reaches the tuned rule's macro F1 with no alpha.
+**Failure:** the learned stop is worse than the tuned constant.
+**Family:** H3 alone, m = 1.
 """
 
 FIXTURE_TEXT = r"""
@@ -157,6 +204,7 @@ The pool holds 82 candidates per substrate on average.
 Node features improve the within-type ordering (H2).
 Removing the selector raises recall by $+0.176$.
 \citet{Larsson_2025} report precision that beats GLORYx by a wide margin.
+The learned stop did not hold against the tuned constant, so H3 is reported as failed.
 """
 
 
@@ -172,7 +220,7 @@ def self_test() -> int:
         reg = Path(d) / "prereg.md"
         reg.write_text(FIXTURE_REGISTRY)
         hyps, problems = parse_registry(reg)
-        if sorted(hyps) != ["H1", "H2"] or problems:
+        if sorted(hyps) != ["H1", "H2", "H3"] or problems:
             print(f"FAIL: the fixture registry did not parse: {sorted(hyps)} {problems}")
             ok = False
         if hyps.get("H1", {}).get("family_size") != 2:
@@ -195,6 +243,26 @@ def self_test() -> int:
         res_h9 = scan(r"Typing lifts recall \prereg{H9}.", hyps)
         if not res_h9["unknown_hypothesis"]:
             print("FAIL: a tag naming an unregistered hypothesis was accepted"); ok = False
+
+        # backwards: H3 is registered, did not hold, and says so -- that is allowed
+        if res["outcome"].get("H3") != "reported as failed":
+            print(f"FAIL: a hypothesis reported as failed was not recognised: "
+                  f"{res['outcome'].get('H3')}")
+            ok = False
+        # and a hypothesis that simply vanished is not
+        gone = scan(FIXTURE_TEXT.replace(
+            "The learned stop did not hold against the tuned constant, so H3 is reported "
+            "as failed.\n", ""), hyps)
+        if gone["absent"] != ["H3"]:
+            print(f"FAIL: a registered hypothesis that vanished was not caught: "
+                  f"{gone['absent']}")
+            ok = False
+        # named in passing, with neither a claim nor an outcome, is not either
+        passing = scan("The design of H3 follows the same shape.", hyps)
+        if passing["no_outcome"] != ["H3"]:
+            print(f"FAIL: a hypothesis named with no outcome was accepted: "
+                  f"{passing['no_outcome']}")
+            ok = False
 
         reg.write_text(FIXTURE_REGISTRY.replace("**Failure:** the contrast is at most zero.\n",
                                                 ""))
