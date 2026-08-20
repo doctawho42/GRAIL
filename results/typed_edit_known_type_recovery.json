@@ -1,0 +1,68 @@
+{
+ "bank": {
+  "n_rules": 7581,
+  "n_types": 4417
+ },
+ "phase_b": {
+  "n_known_pairs": 98,
+  "n_substrates": 65,
+  "arms": {
+   "as_written": {
+    "recovered": 0,
+    "still_missed": 98,
+    "share_recovered": 0.0,
+    "products": 40109,
+    "product_inflation": 1.0,
+    "extra_products_per_reference_recovered": null,
+    "rewrites_that_did_not_parse": 0,
+    "recovered_pairs": []
+   },
+   "no_H": {
+    "recovered": 1,
+    "still_missed": 97,
+    "share_recovered": 0.0102,
+    "products": 40707,
+    "product_inflation": 1.015,
+    "extra_products_per_reference_recovered": 598.0,
+    "rewrites_that_did_not_parse": 0,
+    "recovered_pairs": [
+     {
+      "substrate": "CS(=O)(=O)c1ccccc1-c1ccc(N=C(O)c2cc(C(F)(F)F)nn2-c2cccc(CN)c2)c(F)c1",
+      "metabolite": "CS(=O)(=O)c1ccccc1-c1ccc(N=C(O)c2cc(C(F)(F)F)nn2-c2cccc(C=N)c2)c(F)c1",
+      "key": "OFGWTUCGFWXSLH-UHFFFAOYSA-N"
+     }
+    ]
+   },
+   "no_H_no_deg": {
+    "recovered": 3,
+    "still_missed": 95,
+    "share_recovered": 0.0306,
+    "products": 40830,
+    "product_inflation": 1.018,
+    "extra_products_per_reference_recovered": 240.3,
+    "rewrites_that_did_not_parse": 1,
+    "recovered_pairs": [
+     {
+      "substrate": "Cc1c(Cl)c(C)[n+]([O-])c(Cl)c1-c1noc(-c2cc(O)c(O)c([N+](=O)[O-])c2)n1",
+      "metabolite": "Cc1nc(Cl)c(-c2noc(-c3cc(O)c(O)c([N+](=O)[O-])c3)n2)c(C)c1Cl",
+      "key": "QJOAGGIONCIMFQ-UHFFFAOYSA-N"
+     },
+     {
+      "substrate": "Cc1cc(OCC2(CONC(=N)N)CC2)cc(OS(=O)(=O)c2ccccc2S(C)(=O)=O)c1",
+      "metabolite": "Cc1cc(OCC2(CONC(=N)O)CC2)cc(OS(=O)(=O)c2ccccc2S(C)(=O)=O)c1",
+      "key": "KLIFNNLFMZAZTC-UHFFFAOYSA-N"
+     },
+     {
+      "substrate": "CS(=O)(=O)c1ccccc1-c1ccc(N=C(O)c2cc(C(F)(F)F)nn2-c2cccc(CN)c2)c(F)c1",
+      "metabolite": "CS(=O)(=O)c1ccccc1-c1ccc(N=C(O)c2cc(C(F)(F)F)nn2-c2cccc(C=N)c2)c(F)c1",
+      "key": "OFGWTUCGFWXSLH-UHFFFAOYSA-N"
+     }
+    ]
+   }
+  },
+  "control_recovers": 0,
+  "control_ok": true,
+  "monotonicity_violations": [],
+  "monotonicity_ok": true
+ }
+}

@@ -283,8 +283,10 @@ def main() -> int:
     if "phase_a" in short:
         short["phase_a"]["known_pairs"] = len(short["phase_a"]["known_pairs"])
     if "phase_b" in short:
-        for k in ("recovered_pairs", "still_missed_pairs", "per_substrate_cost"):
-            short["phase_b"][k] = len(short["phase_b"][k])
+        # the per-arm detail moved inside `arms` when phase B gained its rungs; summarising
+        # it at the top level looked for keys that are no longer there
+        for arm in short["phase_b"].get("arms", {}).values():
+            arm["recovered_pairs"] = len(arm.get("recovered_pairs", []))
     print(json.dumps(short, indent=1))
     print(f"wrote {args.out}", file=sys.stderr)
     return 0
