@@ -25,6 +25,8 @@ GATES = [
     # its family size stops being registered, and nothing else would say so
     ("check_prereg.py", ["--prereg", "paper2/preregistration.md"]),
     ("polish_audit.py", []),           # no injected instruction, reader address or diary prose
+    # every number the registration leans on still traces to the code that wrote it
+    ("audit_artifact_provenance.py", []),
 ]
 
 

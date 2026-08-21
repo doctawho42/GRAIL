@@ -51,12 +51,8 @@
   {
    "artifact": "results/typed_edit_step0.json",
    "script": "run_bank.py",
-   "inferred": true,
-   "how": "producer at f538ff28aa6d, the commit that added the artifact",
-   "status": "producer_changed",
-   "detail": "producer was d3ea183d9b57, is now 5a2360f2bdc4",
-   "diff_recovered_by": "source at f538ff28aa6d",
-   "diff": "--- run_bank.py (as recorded)\n+++ run_bank.py (now)\n@@ -18,5 +18,9 @@\n HERE = Path(__file__).resolve().parent\n ROOT = HERE.parents[1]\n-sys.path.insert(0, str(HERE))\n+for _p in (str(ROOT), str(ROOT / \"scripts\"), str(HERE)):\n+    if _p not in sys.path:\n+        sys.path.insert(0, _p)\n+\n+from _provenance import stamp  # noqa: E402\n \n from rdkit import Chem  # noqa: E402\n@@ -50,4 +54,5 @@\n \n     res = run(rules, subs, tuple(int(x) for x in args.radii.split(\",\")))\n+    res[\"provenance\"] = stamp(__file__)\n     res[\"rule_bank\"] = {\"path\": str(Path(args.rules).relative_to(ROOT)), **load_stats}\n     res[\"substrate_sample\"] = {"
+   "how": "recorded source digest",
+   "status": "current"
   },
   {
    "artifact": "results/typed_edit_type_carriers.json",
@@ -72,7 +68,7 @@
   }
  ],
  "n_pinned": 11,
- "n_pinned_stale": 1,
+ "n_pinned_stale": 0,
  "sweep": {},
  "sweep_not_current": []
 }
