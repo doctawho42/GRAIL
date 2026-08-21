@@ -35,6 +35,9 @@ for _p in (str(ROOT), str(ROOT / "scripts"), str(HERE)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
+from _provenance import stamp  # noqa: E402
+
+
 from rdkit import RDLogger, Chem  # noqa: E402,F401
 from rdkit.Chem import rdChemReactions  # noqa: E402
 
@@ -107,7 +110,7 @@ def main() -> int:
         out_rows.append(rec)
 
     n = len(typed)
-    report = {"n_typeable_pairs": n, "dense_at": DENSE, "by_key": {}}
+    report = {"provenance": stamp(__file__), "n_typeable_pairs": n, "dense_at": DENSE, "by_key": {}}
     for key in ("string", "radius2", "radius1"):
         c = stats[key]
         subs = {r["substrate"] for r in out_rows if r["in_stratum"][key]}

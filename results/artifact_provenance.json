@@ -1,0 +1,1178 @@
+{
+ "pinned": [
+  {
+   "artifact": "paper2/split_manifest.json",
+   "script": "freeze_split.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
+   "artifact": "results/emission_leaderboard.json",
+   "script": "emission_leaderboard.py",
+   "inferred": true,
+   "how": "producer at 346640248fc6, the commit that added the artifact",
+   "status": "current"
+  },
+  {
+   "artifact": "results/h1_join_sensitivity.json",
+   "script": "h1_join_sensitivity.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
+   "artifact": "results/h1_stratum.json",
+   "script": "build_h1_stratum.py",
+   "inferred": true,
+   "how": "producer at 03711bd53cdc, the commit that added the artifact",
+   "status": "current"
+  },
+  {
+   "artifact": "results/h6_stratum.json",
+   "script": "build_h6_stratum.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
+   "artifact": "results/typed_edit_known_pairs.json",
+   "script": "known_type_recovery.py",
+   "inferred": true,
+   "how": "producer at 20bd4d3ac944, the commit that added the artifact",
+   "status": "producer_changed",
+   "detail": "producer was 7d8f74006657, is now 8d0e168e16f8"
+  },
+  {
+   "artifact": "results/typed_edit_known_type_recovery.json",
+   "script": "known_type_recovery.py",
+   "inferred": true,
+   "how": "producer at 3fbe0e44dcf0, the commit that added the artifact",
+   "status": "current"
+  },
+  {
+   "artifact": "results/typed_edit_relaxation.json",
+   "script": "relaxation_ladder.py",
+   "inferred": true,
+   "how": "producer at b083291eb5f1, the commit that added the artifact",
+   "status": "producer_changed",
+   "detail": "producer was ab58f612861a, is now 86542b83db3a"
+  },
+  {
+   "artifact": "results/typed_edit_step0.json",
+   "script": "run_bank.py",
+   "inferred": true,
+   "how": "producer at f538ff28aa6d, the commit that added the artifact",
+   "status": "current"
+  },
+  {
+   "artifact": "results/typed_edit_type_carriers.json",
+   "script": "type_carrier_provenance.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
+   "artifact": "results/typed_edit_type_curve.json",
+   "script": "type_curve.py",
+   "how": "recorded source digest",
+   "status": "current"
+  }
+ ],
+ "n_pinned": 11,
+ "n_pinned_stale": 2,
+ "sweep": {
+  "unstamped": 115,
+  "producer_changed": 45,
+  "producer_unknown": 27,
+  "current": 18
+ },
+ "sweep_not_current": [
+  {
+   "artifact": "results/_gbs_backup.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/ablate_id_embedding.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/ablate_id_embedding_val.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/ablation_local_verdict.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/abstention_frontier.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/aggregate_vs_output_size.json",
+   "script": "aggregate_vs_output_size.py",
+   "how": "source at cb1fa8a88a32",
+   "dirty_when_written": true,
+   "status": "producer_changed",
+   "detail": "producer was 8b1d64f23b01, is now 7643b85c5f73"
+  },
+  {
+   "artifact": "results/anchor_certification.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/annotation_agreement.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/annotation_agreement_ci.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/annotation_agreement_criterion_audit.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/bank_engine_replication.json",
+   "script": "bank_engine_replication.py",
+   "how": "source at c4b17e178e68",
+   "dirty_when_written": true,
+   "status": "producer_changed",
+   "detail": "producer was ece43348c83b, is now 443361d0487b"
+  },
+  {
+   "artifact": "results/bank_overlap_sygma.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/bank_overlap_sygma__clean_test.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/bank_without_selection.json",
+   "script": "bank_without_selection.py",
+   "how": "source at cb1fa8a88a32",
+   "dirty_when_written": true,
+   "status": "producer_changed",
+   "detail": "producer was 4c47daaa3969, is now 20bae6e867c6"
+  },
+  {
+   "artifact": "results/benchmark_report.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/benchmark_report_depth2.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/benchmark_report_gap.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/budget_curves.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/budget_matched_frontier.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/budget_matched_leaderboard.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/budget_report.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/cardinality_crossfit.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/cardinality_oracle.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/ceiling_by_provenance.json",
+   "script": "ceiling_by_provenance.py",
+   "how": "source at 4b3169e38c03",
+   "dirty_when_written": true,
+   "status": "producer_changed",
+   "detail": "producer was d0a734dc0a97, is now a5367dfb98f0"
+  },
+  {
+   "artifact": "results/ceiling_by_provenance__clean_test.json",
+   "script": "ceiling_by_provenance.py",
+   "how": "source at 2d258731daaf",
+   "dirty_when_written": true,
+   "status": "producer_changed",
+   "detail": "producer was 9918944896e0, is now a5367dfb98f0"
+  },
+  {
+   "artifact": "results/ceiling_convention_matched.json",
+   "script": "ceiling_convention_matched.py",
+   "status": "producer_unknown",
+   "detail": "commit a227873afa32 does not carry scripts/ceiling_convention_matched.py"
+  },
+  {
+   "artifact": "results/ceiling_external_validity.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/ceiling_gap_by_similarity.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/ceiling_gap_ci.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/ceiling_norm_check.json",
+   "script": "ceiling_norm_check.py",
+   "how": "source at 4b3169e38c03",
+   "dirty_when_written": true,
+   "status": "producer_changed",
+   "detail": "producer was 9ca45b4ae3b5, is now 4f22524824a6"
+  },
+  {
+   "artifact": "results/ceiling_seen_vs_unseen.json",
+   "script": "ceiling_seen_vs_unseen.py",
+   "status": "producer_unknown",
+   "detail": "commit 6e9e3908a43a does not carry scripts/ceiling_seen_vs_unseen.py"
+  },
+  {
+   "artifact": "results/citations_verified.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/claim_word_audit.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/clamp_verification.json",
+   "script": "verify_clamp.py",
+   "status": "producer_unknown",
+   "detail": "commit a227873afa32 does not carry scripts/verify_clamp.py"
+  },
+  {
+   "artifact": "results/closure_keys.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/comparator_acquisition.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/comparator_local_state.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/contraction_choice.json",
+   "script": "contraction_choice.py",
+   "status": "producer_unknown",
+   "detail": "commit d3649b53bc0e does not carry scripts/contraction_choice.py"
+  },
+  {
+   "artifact": "results/convention_census.json",
+   "script": "convention_census.py",
+   "status": "unstamped",
+   "detail": "no digest and no commit to recover one"
+  },
+  {
+   "artifact": "results/coverage_gap_types.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/cross_method_decomposition.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/curator_vs_model.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/decompose_sygma.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/dispatch_paired_ci.json",
+   "script": "dispatch_paired_ci.py",
+   "how": "source at 4b3169e38c03",
+   "dirty_when_written": true,
+   "status": "producer_changed",
+   "detail": "producer was 4c3d85d1adef, is now 14a6821898a6"
+  },
+  {
+   "artifact": "results/dispatch_paired_ci__clean_test__curated.json",
+   "script": "dispatch_paired_ci.py",
+   "how": "source at 9630e586ab71",
+   "dirty_when_written": false,
+   "status": "producer_changed",
+   "detail": "producer was 059dab2750df, is now 14a6821898a6"
+  },
+  {
+   "artifact": "results/emission_crossfit.json",
+   "script": "emission_crossfit.py",
+   "status": "producer_unknown",
+   "detail": "commit 5c9e87251ce4 does not carry scripts/emission_crossfit.py"
+  },
+  {
+   "artifact": "results/engine_knobs.json",
+   "script": "engine_knobs.py",
+   "status": "producer_unknown",
+   "detail": "commit c49fcde23b14 does not carry scripts/engine_knobs.py"
+  },
+  {
+   "artifact": "results/engine_knobs__clean_test.json",
+   "script": "engine_knobs.py",
+   "how": "source at 25cb3bd72d41",
+   "dirty_when_written": false,
+   "status": "producer_changed",
+   "detail": "producer was df61e0c192ad, is now 124bfd998b2f"
+  },
+  {
+   "artifact": "results/ensemble_budget_matched.json",
+   "script": "ensemble_budget_matched.py",
+   "status": "producer_unknown",
+   "detail": "commit 45d1bca8917d does not carry scripts/ensemble_budget_matched.py"
+  },
+  {
+   "artifact": "results/evalretro_file_sizes.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/evalretro_ingest.json",
+   "script": "evalretro_ingest.py",
+   "how": "source at efa321fb77e6",
+   "dirty_when_written": true,
+   "status": "producer_changed",
+   "detail": "producer was c794525b0ad3, is now ad43658c0f3a"
+  },
+  {
+   "artifact": "results/explicit_h_mechanism.json",
+   "script": "explicit_h_mechanism.py",
+   "status": "producer_unknown",
+   "detail": "commit c49fcde23b14 does not carry scripts/explicit_h_mechanism.py"
+  },
+  {
+   "artifact": "results/external_ceiling_split.json",
+   "script": "external_ceiling_split.py",
+   "status": "producer_unknown",
+   "detail": "commit 90f7b9726b07 does not carry scripts/external_ceiling_split.py"
+  },
+  {
+   "artifact": "results/external_exact_tests.json",
+   "script": "external_exact_tests.py",
+   "status": "producer_unknown",
+   "detail": "commit 1636323ce9dc does not carry scripts/external_exact_tests.py"
+  },
+  {
+   "artifact": "results/external_overlap_audit.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/factorized_eval.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/factorized_eval_matched.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/factorized_eval_subset250.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/factorized_val.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/featurizer_convention.json",
+   "script": "featurizer_convention.py",
+   "status": "producer_unknown",
+   "detail": "commit b0587d9f629b does not carry scripts/featurizer_convention.py"
+  },
+  {
+   "artifact": "results/filter_compare_matched_sub800.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/filter_vs_prior_ci.json",
+   "script": "filter_vs_prior_ci.py",
+   "how": "source at 1d56fb8c3272",
+   "dirty_when_written": true,
+   "status": "producer_changed",
+   "detail": "producer was 8393ba5564ed, is now 8a573ade4907"
+  },
+  {
+   "artifact": "results/four_method_291.json",
+   "script": "four_method_291.py",
+   "how": "source at 8a7a6e56c516",
+   "dirty_when_written": true,
+   "status": "producer_changed",
+   "detail": "producer was a9a1a49d9afd, is now 720410949fd9"
+  },
+  {
+   "artifact": "results/fragility_from_table.json",
+   "script": "fragility_from_table.py",
+   "status": "producer_unknown",
+   "detail": "commit e0176ef152b0 does not carry scripts/fragility_from_table.py"
+  },
+  {
+   "artifact": "results/gflownet_seed0_overnight.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/gflownet_seed1_overnight.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/gflownet_seed2_overnight.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/gflownet_set_endpoint.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/gloryx_clean_subset.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/gloryx_criterion_grid.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/gloryx_criterion_ladder.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/gloryx_oracle.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/gloryx_rank_flip_ci.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/grail_vs_metatox.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/headroom_normalised.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/humanize_scan.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/hybrid_rerank.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/hybrid_rerank_full1170.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/hydrogen_dispatch.json",
+   "script": "hydrogen_dispatch.py",
+   "how": "source at df40e6da66ab",
+   "dirty_when_written": true,
+   "status": "producer_changed",
+   "detail": "producer was d8a0a3e1d516, is now 882e4a543feb"
+  },
+  {
+   "artifact": "results/joint_ranker.json",
+   "script": "joint_ranker.py",
+   "status": "producer_unknown",
+   "detail": "commit fb5cf350326e does not carry scripts/joint_ranker.py"
+  },
+  {
+   "artifact": "results/joint_rerank.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/label_convention_audit.json",
+   "script": "label_convention_audit.py",
+   "how": "source at 8e9ef156f4af",
+   "dirty_when_written": false,
+   "status": "producer_changed",
+   "detail": "producer was bab8b6c1bca2, is now 1ab994b2c4fa"
+  },
+  {
+   "artifact": "results/label_density.json",
+   "script": "label_density.py",
+   "status": "producer_unknown",
+   "detail": "commit f4ca46c34ef8 does not carry scripts/label_density.py"
+  },
+  {
+   "artifact": "results/label_flip_inside_mask.json",
+   "script": "label_flip_inside_mask.py",
+   "status": "producer_unknown",
+   "detail": "commit 822211935dc8 does not carry scripts/label_flip_inside_mask.py"
+  },
+  {
+   "artifact": "results/leakage_fix_report.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/match_sensitivity.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/match_sensitivity_3method.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/match_sensitivity_4method.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/match_sensitivity_5method.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/match_sensitivity_fulln.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/match_sensitivity_fulln_paired.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/metapredictor_1170.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/metatox_complementarity.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/metatox_preds.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/metatox_smirks_preds.json",
+   "script": "metatox_smirks_ingest.py",
+   "how": "source at e5da75350e64",
+   "dirty_when_written": true,
+   "status": "producer_changed",
+   "detail": "producer was cd5cd5e7e0b2, is now 82d305fdad5d"
+  },
+  {
+   "artifact": "results/mined_rule_catalog_v2.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/moses_samples.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/moses_uniqueness.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/multiplicity_holm.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/multiseed_headline.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/multiseed_implicit.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/multiseed_micro.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/null_model_lift.json",
+   "script": "null_model_lift.py",
+   "how": "source at 033e9c81f112",
+   "dirty_when_written": true,
+   "status": "producer_changed",
+   "detail": "producer was 6f4ec5073790, is now 6f47b34bab13"
+  },
+  {
+   "artifact": "results/ordering_stability.json",
+   "script": "ordering_stability.py",
+   "status": "producer_unknown",
+   "detail": "commit adc74870fc01 does not carry scripts/ordering_stability.py"
+  },
+  {
+   "artifact": "results/packing_predicts_order.json",
+   "script": "packing_predicts_order.py",
+   "how": "source at 2da1ab3e10da",
+   "dirty_when_written": true,
+   "status": "producer_changed",
+   "detail": "producer was a364ac1b68a4, is now b05cd5267243"
+  },
+  {
+   "artifact": "results/pair_chemistry_ranker.json",
+   "script": "pair_chemistry_ranker.py",
+   "status": "producer_unknown",
+   "detail": "commit 4aa33c82dbe5 does not carry scripts/pair_chemistry_ranker.py"
+  },
+  {
+   "artifact": "results/pair_cost_benchmark.json",
+   "script": "pair_cost_benchmark.py",
+   "status": "producer_unknown",
+   "detail": "commit 003cfcee3da5 does not carry scripts/pair_cost_benchmark.py"
+  },
+  {
+   "artifact": "results/parent_sensitivity.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/permutation_check.json",
+   "script": "permutation_check.py",
+   "status": "producer_unknown",
+   "detail": "commit b94f6892691a does not carry scripts/permutation_check.py"
+  },
+  {
+   "artifact": "results/places_decomposition.json",
+   "script": "places_decomposition.py",
+   "how": "source at 2da1ab3e10da",
+   "dirty_when_written": true,
+   "status": "producer_changed",
+   "detail": "producer was 5591c738d739, is now 9c21dbde1a3c"
+  },
+  {
+   "artifact": "results/polish_audit.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/population_axis.json",
+   "script": "population_axis.py",
+   "how": "source at 2d6b5bbfb0a4",
+   "dirty_when_written": true,
+   "status": "producer_changed",
+   "detail": "producer was fa2fb39e2dd8, is now 1de3691955b7"
+  },
+  {
+   "artifact": "results/prior_vs_learned.json",
+   "script": "prior_vs_learned.py",
+   "how": "source at 1d56fb8c3272",
+   "dirty_when_written": true,
+   "status": "producer_changed",
+   "detail": "producer was 461149c8ba9f, is now 6f47af73b1ea"
+  },
+  {
+   "artifact": "results/prior_vs_learned_propensity.json",
+   "script": "prior_vs_learned.py",
+   "how": "source at 1d56fb8c3272",
+   "dirty_when_written": true,
+   "status": "producer_changed",
+   "detail": "producer was 461149c8ba9f, is now 6f47af73b1ea"
+  },
+  {
+   "artifact": "results/product_reappearance.json",
+   "script": "product_reappearance.py",
+   "status": "producer_unknown",
+   "detail": "commit 34187ebd9383 does not carry scripts/product_reappearance.py"
+  },
+  {
+   "artifact": "results/propensity_weights.json",
+   "script": "propensity_weights.py",
+   "status": "producer_unknown",
+   "detail": "commit d3d6498ad8d1 does not carry scripts/propensity_weights.py"
+  },
+  {
+   "artifact": "results/prose_metrics.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/provenance_knob_attribution.json",
+   "script": "provenance_knob_attribution.py",
+   "status": "producer_unknown",
+   "detail": "commit 4b3169e38c03 does not carry scripts/provenance_knob_attribution.py"
+  },
+  {
+   "artifact": "results/prune_and_rerank_val.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/pu_propensity_bounds.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/rank_flip_ci.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/rank_flip_ci_metatrans_sygma.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/reach_engine_vs_bank.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/reach_engine_vs_bank__clean_test.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/recall_factorization.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/recall_factorization_expanded_convention.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/recall_factorization_matched.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/recall_factorization_rerun.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/redesign_gate_a.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/redesign_gate_c.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/reference_closure.json",
+   "script": "reference_closure.py",
+   "status": "producer_unknown",
+   "detail": "commit 11a103f586d3 does not carry scripts/reference_closure.py"
+  },
+  {
+   "artifact": "results/reranker_gate_bi.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/resolution_floor.json",
+   "script": "retro_leaderboard.py",
+   "how": "source at c128b916332d",
+   "dirty_when_written": true,
+   "status": "producer_changed",
+   "detail": "producer was 479910f638f1, is now 27aaec9c0bcb"
+  },
+  {
+   "artifact": "results/resource_cache_profile.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/retro_extrapolation_ingest.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/retro_extrapolation_population.json",
+   "script": "retro_extrapolation_ingest.py",
+   "how": "source at 73e81d95b8dd",
+   "dirty_when_written": true,
+   "status": "producer_changed",
+   "detail": "producer was 119c0ffac3d4, is now 60a1706e23de"
+  },
+  {
+   "artifact": "results/retro_leaderboard_cluster0.json",
+   "script": "retro_leaderboard.py",
+   "how": "source at 0aa044ec2020",
+   "dirty_when_written": true,
+   "status": "producer_changed",
+   "detail": "producer was 5d99bf59defe, is now 27aaec9c0bcb"
+  },
+  {
+   "artifact": "results/retro_leaderboard_cluster1.json",
+   "script": "retro_leaderboard.py",
+   "how": "source at 2cfcccda9518",
+   "dirty_when_written": true,
+   "status": "producer_changed",
+   "detail": "producer was 479910f638f1, is now 27aaec9c0bcb"
+  },
+  {
+   "artifact": "results/retro_population_axis.json",
+   "script": "retro_leaderboard.py",
+   "how": "source at 2d6b5bbfb0a4",
+   "dirty_when_written": true,
+   "status": "producer_changed",
+   "detail": "producer was 479910f638f1, is now 27aaec9c0bcb"
+  },
+  {
+   "artifact": "results/retro_provenance.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/retro_template_convention.json",
+   "script": "retro_template_convention.py",
+   "status": "producer_unknown",
+   "detail": "commit b0587d9f629b does not carry scripts/retro_template_convention.py"
+  },
+  {
+   "artifact": "results/retro_transfer.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/retro_transfer_preds.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/robust_order.json",
+   "script": "robust_order.py",
+   "how": "source at 0aa044ec2020",
+   "dirty_when_written": true,
+   "status": "producer_changed",
+   "detail": "producer was 62e87d1b950f, is now 15b145248918"
+  },
+  {
+   "artifact": "results/robust_order_posebusters.json",
+   "script": "posebusters_board.py",
+   "how": "recorded source digest",
+   "status": "producer_changed",
+   "detail": "producer was 613f941c5f9b, is now 49020df99ef4"
+  },
+  {
+   "artifact": "results/robust_order_posebusters_astex.json",
+   "script": "posebusters_board.py",
+   "how": "recorded source digest",
+   "status": "producer_changed",
+   "detail": "producer was 613f941c5f9b, is now 49020df99ef4"
+  },
+  {
+   "artifact": "results/robust_order_retro_extrapolation.json",
+   "script": "robust_order.py",
+   "how": "source at 2da1ab3e10da",
+   "dirty_when_written": true,
+   "status": "producer_changed",
+   "detail": "producer was ad3a41b55a98, is now 15b145248918"
+  },
+  {
+   "artifact": "results/robust_order_wmt23.json",
+   "script": "wmt23_boards.py",
+   "how": "recorded source digest",
+   "status": "producer_changed",
+   "detail": "producer was 36131d559ca8, is now 1ecb5b21ad9b"
+  },
+  {
+   "artifact": "results/robust_order_wmt24_en-de.json",
+   "script": "wmt_board.py",
+   "how": "recorded source digest",
+   "status": "producer_changed",
+   "detail": "producer was 4db583da8fa1, is now ec2543f4b7ec"
+  },
+  {
+   "artifact": "results/robust_order_wmt24_en-de__segment.json",
+   "script": "wmt_board.py",
+   "how": "recorded source digest",
+   "status": "producer_changed",
+   "detail": "producer was 4db583da8fa1, is now ec2543f4b7ec"
+  },
+  {
+   "artifact": "results/robust_order_wmt24_esa.json",
+   "script": "wmt_esa_boards.py",
+   "how": "recorded source digest",
+   "status": "producer_changed",
+   "detail": "producer was 561961b46878, is now ca31a2200d34"
+  },
+  {
+   "artifact": "results/robust_order_wmt24_ja-zh.json",
+   "script": "wmt_board.py",
+   "how": "recorded source digest",
+   "status": "producer_changed",
+   "detail": "producer was fb795e19883c, is now ec2543f4b7ec"
+  },
+  {
+   "artifact": "results/robust_order_wmt24_ja-zh__segment.json",
+   "script": "wmt_board.py",
+   "how": "recorded source digest",
+   "status": "producer_changed",
+   "detail": "producer was fb795e19883c, is now ec2543f4b7ec"
+  },
+  {
+   "artifact": "results/rule_collapse.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/rule_collapse_cache.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/rule_dedup_provable.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/rule_embed_decomp.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/rule_prune_probe.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/rule_train_positives.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/scored_predictions.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/selection_ablation.json",
+   "script": "selection_ablation.py",
+   "how": "source at 1d56fb8c3272",
+   "dirty_when_written": true,
+   "status": "producer_changed",
+   "detail": "producer was 7623e93a973b, is now 9a2a34c95080"
+  },
+  {
+   "artifact": "results/selection_ablation_prior300.json",
+   "script": "selection_ablation.py",
+   "how": "source at 1d56fb8c3272",
+   "dirty_when_written": true,
+   "status": "producer_changed",
+   "detail": "producer was 7623e93a973b, is now 9a2a34c95080"
+  },
+  {
+   "artifact": "results/selection_ablation_ranksignal.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/set_metrics_by_criterion.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/setsize_headroom.json",
+   "script": "setsize_headroom.py",
+   "how": "source at 5c9e87251ce4",
+   "dirty_when_written": true,
+   "status": "producer_changed",
+   "detail": "producer was cdd40c5cde65, is now db95da4ab126"
+  },
+  {
+   "artifact": "results/setsize_headroom__inchikey_all.json",
+   "script": "setsize_headroom.py",
+   "how": "source at 11a103f586d3",
+   "dirty_when_written": true,
+   "status": "producer_changed",
+   "detail": "producer was 9cbbf9f935b3, is now db95da4ab126"
+  },
+  {
+   "artifact": "results/setsize_headroom__tautomer_metabolites.json",
+   "script": "setsize_headroom.py",
+   "how": "source at df40e6da66ab",
+   "dirty_when_written": true,
+   "status": "producer_changed",
+   "detail": "producer was cdd40c5cde65, is now db95da4ab126"
+  },
+  {
+   "artifact": "results/setsize_headroom__tautomer_parents.json",
+   "script": "setsize_headroom.py",
+   "how": "source at df40e6da66ab",
+   "dirty_when_written": true,
+   "status": "producer_changed",
+   "detail": "producer was cdd40c5cde65, is now db95da4ab126"
+  },
+  {
+   "artifact": "results/som_prior_reeval.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/stopping_rule.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/subsample_config_recovery.json",
+   "script": "recover_subsample_config.py",
+   "status": "producer_unknown",
+   "detail": "commit 164acc9359c7 does not carry scripts/recover_subsample_config.py"
+  },
+  {
+   "artifact": "results/sygma_depth_matched_reach.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/sygma_fulltest_predictions.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/sygma_robust.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/tautomer_limit_audit.json",
+   "script": "tautomer_limit_audit.py",
+   "status": "producer_unknown",
+   "detail": "commit 03031714c963 does not carry scripts/tautomer_limit_audit.py"
+  },
+  {
+   "artifact": "results/test_references.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/train_val_substrate_keys.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/training_reports.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/transfer_confound.json",
+   "script": "transfer_confound.py",
+   "how": "source at f4ca46c34ef8",
+   "dirty_when_written": true,
+   "status": "producer_changed",
+   "detail": "producer was 69d2a5e12381, is now c34844793777"
+  },
+  {
+   "artifact": "results/transfer_stratified.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/truncation_binding.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/typed_edit_primitive_census.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/typed_edit_recovery_partial.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/union_multiplicity.json",
+   "script": "union_multiplicity.py",
+   "how": "source at e7ee7f5827cc",
+   "dirty_when_written": true,
+   "status": "producer_changed",
+   "detail": "producer was 83e6904b0f9a, is now 3b4ac994ff72"
+  },
+  {
+   "artifact": "results/union_ranker.json",
+   "script": "union_ranker.py",
+   "status": "producer_unknown",
+   "detail": "commit aca41d0beee8 does not carry scripts/union_ranker.py"
+  },
+  {
+   "artifact": "results/wmt_official_clusters.json",
+   "script": "wmt_official_clusters.py",
+   "how": "source at 2c5d9613041c",
+   "dirty_when_written": true,
+   "status": "producer_changed",
+   "detail": "producer was f5dd903daed9, is now e8453e8f61ac"
+  },
+  {
+   "artifact": "results/xdomain_retro_protocol.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  }
+ ]
+}

@@ -39,6 +39,9 @@ for _p in (str(ROOT), str(ROOT / "scripts"), str(HERE)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
+from _provenance import stamp  # noqa: E402
+
+
 from rdkit import Chem, RDLogger  # noqa: E402
 
 from scripts.run_benchmark import load_test_map  # noqa: E402
@@ -114,6 +117,7 @@ def main() -> int:
 
     orb = Counter(r["largest_orbit"] for r in rows)
     report = {
+        "provenance": stamp(__file__),
         "definition": {
             "classes": "Chem.CanonicalRankAtoms(breakTies=False, includeChirality=False)",
             "trivial": "every heavy atom in its own class, so the automorphism group is trivial",

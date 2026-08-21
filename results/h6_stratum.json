@@ -1,4 +1,11 @@
 {
+ "provenance": {
+  "script": "build_h6_stratum.py",
+  "script_path": "scripts/typed_edit/build_h6_stratum.py",
+  "source_sha256": "c86df57c061dc3cd4c518e3426d5e1185e72e9e71cfcba6194a16064507d4e58",
+  "git_commit": "346640248fc6f1b9b7fb16777afbaf9f2ff9562d",
+  "git_dirty": true
+ },
  "definition": {
   "classes": "Chem.CanonicalRankAtoms(breakTies=False, includeChirality=False)",
   "trivial": "every heavy atom in its own class, so the automorphism group is trivial",

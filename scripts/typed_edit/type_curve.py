@@ -35,7 +35,11 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
-sys.path.insert(0, str(HERE))
+for _p in (str(ROOT), str(ROOT / "scripts"), str(HERE)):
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
+
+from _provenance import stamp  # noqa: E402
 
 from step0 import load_rules, reaction_centre  # noqa: E402
 
@@ -181,6 +185,7 @@ def main() -> int:
     radii = tuple(int(x) for x in a.radii.split(","))
 
     out = {
+        "provenance": stamp(__file__),
         "rule_bank": {"path": str(Path(a.rules).relative_to(ROOT)), **load_stats},
         "catalog": {"path": str(CATALOG.relative_to(ROOT)), "n_rules": len(counts),
                     "bank_rules_found_in_catalog": in_bank,

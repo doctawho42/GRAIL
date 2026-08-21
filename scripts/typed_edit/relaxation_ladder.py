@@ -29,7 +29,11 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
-sys.path.insert(0, str(HERE))
+for _p in (str(ROOT), str(ROOT / "scripts"), str(HERE)):
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
+
+from _provenance import stamp  # noqa: E402
 
 from rdkit import Chem, RDLogger  # noqa: E402
 
@@ -312,6 +316,7 @@ def main() -> int:
 
     mean = {k: round(sum(r[k] for r in rows) / max(len(rows), 1), 1) for k in names}
     out = {
+        "provenance": stamp(__file__),
         "rule_bank": {"path": str(BANK.relative_to(ROOT)), **load_stats,
                       "rewrites_that_did_not_parse": broken},
         "substrate_sample": {"source": str(SUBS.relative_to(ROOT)), "population": len(pool),

@@ -35,6 +35,8 @@ for _p in (str(ROOT), str(ROOT / "scripts"), str(HERE)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
+from _provenance import stamp  # noqa: E402
+
 from grail_metabolism.metrics import aggregate_prediction_metrics  # noqa: E402
 from scripts.run_benchmark import load_test_map  # noqa: E402
 from scripts.run_match_sensitivity import _dedup_canon  # noqa: E402
@@ -137,6 +139,7 @@ def main() -> int:
                  for name in table if name != rule}
 
     rep = {
+        "provenance": stamp(__file__),
         "population": {"source": str(SHARED.relative_to(ROOT)), "n": len(subs)},
         "match": MATCH, "alpha": args.alpha,
         "alpha_note": "the value the emission appendix reports, not refitted here",

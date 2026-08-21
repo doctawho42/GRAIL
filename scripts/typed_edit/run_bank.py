@@ -17,7 +17,11 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
-sys.path.insert(0, str(HERE))
+for _p in (str(ROOT), str(ROOT / "scripts"), str(HERE)):
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
+
+from _provenance import stamp  # noqa: E402
 
 from rdkit import Chem  # noqa: E402
 
@@ -49,6 +53,7 @@ def main() -> int:
           file=sys.stderr, flush=True)
 
     res = run(rules, subs, tuple(int(x) for x in args.radii.split(",")))
+    res["provenance"] = stamp(__file__)
     res["rule_bank"] = {"path": str(Path(args.rules).relative_to(ROOT)), **load_stats}
     res["substrate_sample"] = {
         "source": str(SUBS.relative_to(ROOT)), "population": len(pool),

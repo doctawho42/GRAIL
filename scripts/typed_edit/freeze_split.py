@@ -33,6 +33,9 @@ for _p in (str(ROOT), str(ROOT / "scripts"), str(HERE)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
+from _provenance import stamp  # noqa: E402
+
+
 DATA = ROOT / "grail_metabolism" / "data"
 BANK = ROOT / "grail_metabolism" / "resources" / "extended_smirks.txt"
 AUDIT = ROOT / "results" / "leakage_fix_report.json"
@@ -132,7 +135,7 @@ def third_party() -> dict:
 
 
 def build() -> dict:
-    man = {"what_this_pins": "the split, the evaluated test set, the strata, the rule bank "
+    man = {"provenance": stamp(__file__), "what_this_pins": "the split, the evaluated test set, the strata, the rule bank "
                              "and the third-party comparators that can be pinned",
            "splits": {}, "files": {}, "strata": {}, "bank": digest_file(BANK),
            "third_party": third_party()}

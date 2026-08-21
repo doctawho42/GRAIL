@@ -1,4 +1,11 @@
 {
+ "provenance": {
+  "script": "freeze_split.py",
+  "script_path": "scripts/typed_edit/freeze_split.py",
+  "source_sha256": "c3b457dbcdac31a5206e0c73191fedd0411667992b20347d137c2382438a9daf",
+  "git_commit": "346640248fc6f1b9b7fb16777afbaf9f2ff9562d",
+  "git_dirty": true
+ },
  "what_this_pins": "the split, the evaluated test set, the strata, the rule bank and the third-party comparators that can be pinned",
  "splits": {
   "train": {
@@ -198,5 +205,5 @@
   "clean": true,
   "note": "molecule overlap is expected and reported: a product annotated in one split can be a substrate in another. Substrate and positive-pair overlap are the ones that must be zero."
  },
- "git_commit": "f6a451be7eb270aaa7d19f6b9e87ae6bc7d2dfb3"
+ "git_commit": "346640248fc6f1b9b7fb16777afbaf9f2ff9562d"
 }

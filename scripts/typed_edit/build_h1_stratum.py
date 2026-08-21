@@ -45,6 +45,8 @@ for _p in (str(ROOT), str(ROOT / "scripts"), str(HERE)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
+from _provenance import stamp  # noqa: E402
+
 from rdkit import Chem, RDLogger  # noqa: E402
 from rdkit.Chem import rdChemReactions, rdFMCS  # noqa: E402
 
@@ -201,6 +203,7 @@ def merge(pattern, out):
         "\n".join(s for s in all_sub if s not in set(in_sub)) + "\n")
 
     report = {
+        "provenance": stamp(__file__),
         "definition": {
             "rule_label": "the mining route's SMIRKS for the pair, looked up in the mined "
                           "catalog; absent means a support of zero",

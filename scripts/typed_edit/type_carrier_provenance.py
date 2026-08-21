@@ -27,9 +27,11 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
-for p in (str(ROOT), str(HERE)):
+for p in (str(ROOT), str(ROOT / "scripts"), str(HERE)):
     if p not in sys.path:
         sys.path.insert(0, p)
+
+from _provenance import stamp  # noqa: E402
 
 from grail_metabolism.model.reaction_types import canonical_type  # noqa: E402
 
@@ -80,6 +82,7 @@ def main() -> int:
     curated_share = [r["curated"] / r["carriers"] for r in table.values()]
 
     out = {
+        "provenance": stamp(__file__),
         "rule_bank": {"path": str(BANK.relative_to(ROOT)), **load_stats},
         "keyed_by": "grail_metabolism.model.reaction_types.canonical_type",
         "n_types": n_types,
