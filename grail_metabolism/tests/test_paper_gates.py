@@ -21,15 +21,23 @@ ROOT = Path(__file__).resolve().parents[2]
 GATES = [
     ("audit_claim_words.py", []),      # every `certified' traces to a declared family
     ("check_prereg.py", ["--self-test"]),
+    # the registry itself has to stay valid: a hypothesis that loses its failure condition or
+    # its family size stops being registered, and nothing else would say so
+    ("check_prereg.py", ["--prereg", "paper2/preregistration.md"]),
     ("polish_audit.py", []),           # no injected instruction, reader address or diary prose
 ]
 
 
-@pytest.mark.parametrize("script,args", GATES, ids=[g[0] for g in GATES])
+@pytest.mark.parametrize("script,args", GATES,
+                         ids=[f"{g[0]}{'-' + g[1][0].lstrip('-') if g[1] else ''}"
+                              for g in GATES])
 def test_paper_gate_exits_zero(script, args):
     path = ROOT / "scripts" / script
     if not path.exists():
         pytest.skip(f"{script} is not in this checkout")
+    for a in args:
+        if a.endswith(".md") and not (ROOT / a).exists():
+            pytest.skip(f"{a} is not in this checkout")
     run = subprocess.run([sys.executable, str(path), *args], cwd=ROOT,
                          capture_output=True, text=True, timeout=600)
     assert run.returncode == 0, (

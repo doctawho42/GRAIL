@@ -149,9 +149,13 @@ def scan(text: str, hyps: dict) -> dict:
             "outcome": outcome, "absent": absent, "no_outcome": silent}
 
 
-def report(hyps: dict, problems: list, res: dict, quiet: bool = False) -> int:
+def report(hyps: dict, problems: list, res: dict, quiet: bool = False,
+           have_text: bool = True) -> int:
+    # With no manuscript to read, the backwards direction has nothing to say: every
+    # hypothesis is trivially absent. Validating the registry alone is a real check and is
+    # what this reports before the paper exists; it must not masquerade as the full one.
     ok = not (problems or res["unregistered"] or res["unknown_hypothesis"]
-              or res["absent"] or res["no_outcome"])
+              or (have_text and (res["absent"] or res["no_outcome"])))
     if quiet:
         return 0 if ok else 1
     print(f"  registry: {len(hyps)} hypotheses "
@@ -160,6 +164,10 @@ def report(hyps: dict, problems: list, res: dict, quiet: bool = False) -> int:
         print(f"    {h}  family size {e['family_size']}  {e['title'][:58]}")
     for p in problems:
         print(f"  REGISTRY FAIL: {p}")
+    if not have_text:
+        print("  manuscript: none given, so only the registry is checked")
+        print("check_prereg: registry OK" if ok else "check_prereg: FAILURES ABOVE")
+        return 0 if ok else 1
     print(f"  manuscript: {res['sentences_scanned']} sentences scanned, "
           f"{res['effect_sentences']} claim an effect")
     print(f"    registered {len(res['tagged'])}   attributed to others "
@@ -297,7 +305,7 @@ def main() -> int:
     hyps, problems = parse_registry(Path(args.prereg))
     text = "\n".join(Path(t).read_text() for t in args.text)
     res = scan(text, hyps)
-    code = report(hyps, problems, res)
+    code = report(hyps, problems, res, have_text=bool(args.text))
     if args.json:
         Path(args.json).write_text(json.dumps(
             {"prereg": args.prereg, "text": args.text, "hypotheses": hyps,
