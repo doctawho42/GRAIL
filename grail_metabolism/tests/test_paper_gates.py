@@ -77,3 +77,19 @@ def test_stratum_file_matches_its_artifact(artifact, arm, complement, flag):
         f"{arm} holds {len(listed)} substrates, the artifact {len(from_rows)}")
     assert len(listed) + len(other) == d["n_substrates"], f"{arm} and {complement} do not partition"
     assert not set(listed) & set(other), f"{arm} and {complement} overlap"
+
+
+def test_split_manifest_still_matches_the_data():
+    """The freeze is a claim about data the repository does not hold; verify it holds anyway.
+
+    If the external dataset is absent this skips, which is the honest outcome: nothing was
+    checked. If it is present and any fingerprint moved, the preregistration is registered
+    against a split that no longer exists.
+    """
+    manifest = ROOT / "paper2" / "split_manifest.json"
+    data = ROOT / "grail_metabolism" / "data" / "test_triples_clean.txt"
+    if not manifest.exists() or not data.exists():
+        pytest.skip("the split manifest or the external dataset is not in this checkout")
+    run = subprocess.run([sys.executable, str(ROOT / "scripts" / "typed_edit" / "freeze_split.py"),
+                          "--verify"], cwd=ROOT, capture_output=True, text=True, timeout=600)
+    assert run.returncode == 0, f"the split moved since the freeze\n{run.stdout[-3000:]}"

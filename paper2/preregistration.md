@@ -49,6 +49,59 @@ The first version of this file predicted that soft admissibility would return ab
 rewritten below around what the measurement leaves standing, and the mechanism they used to
 name is recorded here as a closed question rather than deleted.
 
+### 0.2 The split, frozen
+
+`paper2/split_manifest.json` fingerprints what is frozen: the content digest of each clean
+triples file, an order-independent digest of each split's substrate set, the digest of the
+evaluated test set and of every stratum file, and the digest of the rule bank, since a bank
+that moves moves every ceiling. `scripts/typed_edit/freeze_split.py --verify` recomputes all of
+it and names any leaf that moved. The dataset is external and cannot live in the repository; a
+fingerprint can, and without one "the split is frozen" is a claim a reader cannot check.
+
+| | substrates | positive pairs |
+|---|---|---|
+| train | 9,011 | 17,454 |
+| validation | 1,020 | 2,085 |
+| test | 1,198 | 2,597 |
+| test, as evaluated | 1,170 | 2,597 |
+
+The evaluated test set is smaller than the split because 28 substrates carry no parseable
+reference; that set, not the triples file, is what every number in this registration is
+computed on, and it has its own digest.
+
+Cross-split overlap, from `results/leakage_fix_report.json`, recomputed rather than asserted:
+substrate overlap and positive-pair overlap are zero for all three split pairs. Molecule
+overlap is not zero and is not meant to be: 2,408 molecules appear in both train and test,
+because a product annotated in one split can be a substrate in another. 243 test substrates
+appear as molecules in train and 115 as annotated metabolites of a train substrate. That is a
+property of a metabolic corpus, not a leak of the label, and it is recorded so that nobody has
+to rediscover it as one.
+
+### 0.3 The comparator set, closed
+
+Adding a comparator after a run is choosing a cell, so the list is closed here. A comparator
+that cannot be obtained by the freeze is reported in the paper as unavailable, with the reason;
+it is not silently dropped, and no comparator is added later.
+
+| comparator | what is pinned | status |
+|---|---|---|
+| SyGMa \citep{Ridder_2008} | `sygma == 1.1.0`, declared in `pyproject.toml`, run in process | pinned |
+| BioTransformer \citep{Djoumbou_Feunang_2019} | an installed copy; its 994 shipped SMIRKS are what the reach figure is computed from | predictions frozen; **the tool version is not recorded in this repository and must be pinned before the freeze** |
+| MetaTrans \citep{Litsa_2020} | frozen predictions only | its pipeline no longer reproduces here, which is why the five-method table rests on 150 shared substrates |
+| MetaPredictor \citep{Zhu_2024} | third-party weights, cited rather than shipped | predictions frozen |
+| GLORYx \citep{de_Bruyn_Kops_2020} | the external 37-substrate set | 24 of the 37 overlap the training substrates; the rank-flip section reports the 13 that do not |
+| LAGOM \citep{Larsson_2025} | DOI 10.1016/j.ailsci.2025.100142 | **not obtained, not run** |
+| DeepMetab \citep{Zhou_2025} | DOI 10.1039/d5sc04631a | **not obtained, not run** |
+| DeepCYP \citep{Zhou_2026} | DOI 10.1093/nar/gkag478 | **not obtained, not run** |
+| Metabolite-Gen \citep{Chavan_2026} | DOI 10.26434/chemrxiv.15002775, preprint, not peer reviewed | **not obtained, not run** |
+| MetaTox | named in the plan | **no run in this repository** |
+
+Five of the ten are pinned or frozen and five are not, which is the honest state of the list on
+the day it is closed. The four systems of the 2025-26 wave are the ones that set the operating
+point this work has to beat, so a claim of a state of the art without them is not available
+whatever the outcome; if they cannot be run, what the paper may claim is dominance over the
+five it did run, named as such.
+
 ---
 
 ## H1 — the label space, not the admissibility gate

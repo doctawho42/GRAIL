@@ -1,0 +1,147 @@
+{
+ "what_this_pins": "the split, the evaluated test set, the strata and the rule bank",
+ "splits": {
+  "train": {
+   "substrates": {
+    "n": 9339,
+    "sha256": "5ac48dfbdfc7809e5e9ad55eec41639579177a1a2155f03cb4eca3adb9cc52ec"
+   },
+   "triples": 345031
+  },
+  "val": {
+   "substrates": {
+    "n": 1028,
+    "sha256": "e34f35c6264d2091bd32ef7545737386d55e7920070af82d32acbc5c99533e9b"
+   },
+   "triples": 37959
+  },
+  "test": {
+   "substrates": {
+    "n": 1246,
+    "sha256": "eba61201d19e9b471e88adb2161f36080d7cfa40004a0f11a19b5e4adf6441d8"
+   },
+   "triples": 43886
+  }
+ },
+ "files": {
+  "train": {
+   "path": "grail_metabolism/data/train_triples_clean.txt",
+   "present": true,
+   "bytes": 5316054,
+   "lines": 345031,
+   "sha256": "4fb611b62630e70d0e810d97a7447d29435149121bd98743833bbf2f0d884c66"
+  },
+  "val": {
+   "path": "grail_metabolism/data/val_triples_clean.txt",
+   "present": true,
+   "bytes": 510413,
+   "lines": 37959,
+   "sha256": "669a0346e9cc542ef888bfb08c01b48e1a55f0d9b924f7caf2bc7bc3d5e61215"
+  },
+  "test": {
+   "path": "grail_metabolism/data/test_triples_clean.txt",
+   "present": true,
+   "bytes": 636521,
+   "lines": 43886,
+   "sha256": "5989734ab81d45ad4c5fde99bd041c53ca17978b7ba37613135fabae9b2e0246"
+  }
+ },
+ "strata": {
+  "nontrivial_automorphism.txt": {
+   "path": "strata/nontrivial_automorphism.txt",
+   "present": true,
+   "bytes": 35549,
+   "lines": 725,
+   "sha256": "108666aacb342d64c19bea78a393596b4d2cdfd8961db584a75308dce395a1ba"
+  },
+  "sparse_at_rule_dense_at_type.txt": {
+   "path": "strata/sparse_at_rule_dense_at_type.txt",
+   "present": true,
+   "bytes": 11025,
+   "lines": 277,
+   "sha256": "39767b500625113490e249532c27a32d2187b0d439068d412ae084d0614712b7"
+  },
+  "sparse_at_rule_dense_at_type_complement.txt": {
+   "path": "strata/sparse_at_rule_dense_at_type_complement.txt",
+   "present": true,
+   "bytes": 41936,
+   "lines": 893,
+   "sha256": "e776564c29d8b186183d794920674bd8528c02549b85c91294c8958ff433e0b5"
+  },
+  "trivial_automorphism.txt": {
+   "path": "strata/trivial_automorphism.txt",
+   "present": true,
+   "bytes": 17412,
+   "lines": 445,
+   "sha256": "534b8e50c15519149feda5b4dd000e029f397368c395224b122d000a11f6f377"
+  }
+ },
+ "bank": {
+  "path": "grail_metabolism/resources/extended_smirks.txt",
+  "present": true,
+  "bytes": 1321831,
+  "lines": 7581,
+  "sha256": "40643d60de93f4dbe3b2eb89bd6b744700d7d2cfff9d8a99bd55377cb71eaca2"
+ },
+ "evaluated_test_set": {
+  "substrates": {
+   "n": 1170,
+   "sha256": "85a1cec17831366c5a2ace30008ac66a0072c1744616f4805039be01d01cc952"
+  },
+  "references": 2597,
+  "pairs": {
+   "n": 2597,
+   "sha256": "22c33beba022af1963a9b72d73cce1546049dbd117f8e7f088ba44421764932e"
+  }
+ },
+ "cross_split_audit": {
+  "source": "results/leakage_fix_report.json",
+  "overlaps": {
+   "train_val": {
+    "substrate_overlap": 0,
+    "molecule_overlap": 2251,
+    "positive_pair_overlap": 0
+   },
+   "train_test": {
+    "substrate_overlap": 0,
+    "molecule_overlap": 2408,
+    "positive_pair_overlap": 0
+   },
+   "val_test": {
+    "substrate_overlap": 0,
+    "molecule_overlap": 700,
+    "positive_pair_overlap": 0
+   }
+  },
+  "sizes": {
+   "train": {
+    "substrates": 9011,
+    "positive_pairs": 17454
+   },
+   "val": {
+    "substrates": 1020,
+    "positive_pairs": 2085
+   },
+   "test": {
+    "substrates": 1198,
+    "positive_pairs": 2597
+   }
+  },
+  "substrate_disjoint": true,
+  "positive_pair_disjoint": true,
+  "structure_leak": {
+   "val_substrate_in_train_molecules": 192,
+   "test_substrate_in_train_molecules": 243,
+   "val_substrate_in_train_metabolites": 75,
+   "test_substrate_in_train_metabolites": 115
+  },
+  "pairs_checked": [
+   "train_test",
+   "train_val",
+   "val_test"
+  ],
+  "clean": true,
+  "note": "molecule overlap is expected and reported: a product annotated in one split can be a substrate in another. Substrate and positive-pair overlap are the ones that must be zero."
+ },
+ "git_commit": "cc771ffee938865ba95e0db9fc56f8c581fc9a25"
+}
