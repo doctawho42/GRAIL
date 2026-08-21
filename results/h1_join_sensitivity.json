@@ -33,6 +33,27 @@
   "stratum_pairs_string_minus_radius2": 227,
   "stratum_substrates_string_minus_radius2": 153
  },
+ "primary": {
+  "definition": "in the stratum under every join key",
+  "keys": [
+   "string",
+   "radius2",
+   "radius1"
+  ],
+  "pairs": 143,
+  "substrates": 118,
+  "share_pairs": 0.0564,
+  "file": "strata/sparse_at_rule_dense_at_type_intersection.txt"
+ },
+ "feasibility": {
+  "N_typeable_references": 2536,
+  "note": "the requirement share_of_gain >= K * p is satisfiable only while the gain G obeys K <= N / G, because the gain inside the stratum cannot exceed the stratum itself. A test that fails because the intervention worked too well is broken by construction.",
+  "max_gain_for_K": {
+   "2.5": 1014,
+   "3.4": 745,
+   "8.9": 284
+  }
+ },
  "rows": [
   {
    "substrate": "CN(CC(=O)N1CCOCC1)Cc1c(Cl)cccc1N=C(O)c1ccccc1",

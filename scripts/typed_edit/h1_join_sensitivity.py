@@ -128,6 +128,35 @@ def main() -> int:
         "stratum_substrates_string_minus_radius2":
             base["in_stratum_substrates"] - report["by_key"]["radius2"]["in_stratum_substrates"],
     }
+    # the primary definition, named in advance: membership confirmed by every key. The
+    # conjunction is the test; the three ratios beside it are the robustness report.
+    keys = ("string", "radius2", "radius1")
+    inter = [r for r in out_rows if all(r["in_stratum"][k] for k in keys)]
+    inter_subs = sorted({r["substrate"] for r in inter})
+    all_subs = sorted({r["substrate"] for r in out_rows})
+    strata = ROOT / "strata"
+    strata.mkdir(exist_ok=True)
+    (strata / "sparse_at_rule_dense_at_type_intersection.txt").write_text(
+        "\n".join(inter_subs) + "\n")
+    (strata / "sparse_at_rule_dense_at_type_intersection_complement.txt").write_text(
+        "\n".join(s for s in all_subs if s not in set(inter_subs)) + "\n")
+    report["primary"] = {
+        "definition": "in the stratum under every join key",
+        "keys": list(keys),
+        "pairs": len(inter),
+        "substrates": len(inter_subs),
+        "share_pairs": round(len(inter) / n, 4),
+        "file": "strata/sparse_at_rule_dense_at_type_intersection.txt",
+    }
+    # the arithmetic ceiling on the enrichment factor: g_S <= S forces K <= N / G
+    report["feasibility"] = {
+        "N_typeable_references": n,
+        "note": "the requirement share_of_gain >= K * p is satisfiable only while the gain G "
+                "obeys K <= N / G, because the gain inside the stratum cannot exceed the "
+                "stratum itself. A test that fails because the intervention worked too well is "
+                "broken by construction.",
+        "max_gain_for_K": {str(K): int(n // K) for K in (2.5, 3.4, 8.9)},
+    }
     report["rows"] = out_rows
     Path(args.out).write_text(json.dumps(report, indent=1))
 
@@ -143,6 +172,12 @@ def main() -> int:
     print(f"the stratum shrinks by {a['stratum_pairs_string_minus_radius2']} pairs and "
           f"{a['stratum_substrates_string_minus_radius2']} substrates when the join stops "
           f"depending on notation")
+    pr = report["primary"]
+    print(f"\nprimary definition (every key): {pr['pairs']} pairs over {pr['substrates']} "
+          f"substrates, {pr['share_pairs']:.1%} of the typeable references")
+    print("arithmetic ceiling on the enrichment factor, K <= N/G:")
+    for K, g in report["feasibility"]["max_gain_for_K"].items():
+        print(f"  K={K:<5} feasible while the gain stays under {g} references")
     return 0
 
 

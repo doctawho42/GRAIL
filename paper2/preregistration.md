@@ -116,39 +116,70 @@ five it did run, named as such.
 ## H1 — the label space, not the admissibility gate
 
 **Prediction.** Scoring a type-indexed candidate pool beats scoring a rule-indexed one on macro
-recall@15, **and at least 50% of the gain falls in the stratum
-`sparse_at_rule_dense_at_type`**: substrates at least one of whose reference transformations
-needs a label that carries fewer than five training pairs when rules are the labels and at
-least five when types are, pooled.
+recall@15, **and the gain concentrates in the substrates whose reference transformation needs a
+label that is sparse as a rule and dense as a type**, by a factor of at least
 
-That stratum is where typing is supposed to act. Rules as labels leave 35.6% of the training
-pairs in labels with fewer than five examples; types as labels leave 22.1%. The prediction is
-that the 13.5 points which move are where the recall moves too.
+    K = 2.5
 
-**Evaluated.** Δ = recall(type-indexed) − recall(rule-indexed) on the full test split;
-Δ_stratum, the same contrast over the references in the stratum only; share =
-Δ_stratum · |stratum| / (Δ · |all|).
+That is: the stratum's share of the gain is at least 2.5 times its share of the references.
+The prediction is registered as an enrichment factor and not as a share, because the stratum's
+size depends on how a mined SMIRKS is matched to the catalog, and a prediction stated as a
+share would move every time that join moved.
 
-**Failure:** Δ ≤ 0, **or** share < 0.5. The second is a substantive failure at a numerical
-success: the model won, and not by the mechanism claimed. The mechanism would then be
-reformulated and re-registered rather than written up after the fact.
+**The three definitions, and which one is primary.** The rule-level lookup can be done by exact
+SMIRKS string, or by a signature that does not depend on how a template was written. All three
+are declared and the prediction must hold under **each** of them: the conjunction is the test,
+and the three ratios with their intervals are the robustness report. The **primary** definition,
+named here in advance, is membership confirmed by every key, which is the most conservative of
+the three and the only one no join choice can inflate.
+
+| key | pairs | substrates | share of the 2,536 typeable references |
+|---|---|---|---|
+| exact string | 376 | 277 | 14.8% |
+| signature, radius 2 | 149 | 124 | 5.9% |
+| signature, radius 1 | 143 | 118 | 5.6% |
+| **primary: every key** | **143** | **118** | **5.6%** |
+
+`strata/sparse_at_rule_dense_at_type_intersection.txt` holds the primary membership and its
+complement sits beside it; the per-key files and the sensitivity are in
+`results/h1_join_sensitivity.json`. At the primary definition K = 2.5 asks for 14% of the gain;
+at the widest it asks for 37%. Both exclude a diffuse effect, and neither is reachable by
+accident.
+
+**Why 2.5 and not the number the stratum suggests.** The factor implied before any of this was
+measured lies in [2.4, 3.4]: the first version of H1 (98 of 475 references, half the gain) is
+2.43, and the string-join stratum with the same half is 3.38. 2.5 sits at the conservative end
+of that interval, so it cannot be a fit to the strata that were later built, and it does not
+inherit the inflation the string join turned out to carry.
+
+**The feasibility check, registered with the prediction.** The gain inside the stratum cannot
+exceed the stratum, so with N typeable references, S in the stratum and a gain of G references,
+the requirement is satisfiable only while
+
+    K <= N / G
+
+At N = 2,536 that is a gain under 1,014 references for K = 2.5, under 746 for 3.4, and under
+285 for 8.9. A factor of 8.9 would therefore be **falsified by its own success**: let the
+intervention recover more than 285 references and the required share runs into an arithmetic
+ceiling. When G is known, K·p is compared against S/G before the verdict is read. If the
+requirement exceeds the ceiling the test was incapable, and that is reported as incapacity and
+not as a failure of the hypothesis, exactly as an MDE is reported for H6.
+
+**Evaluated.** Δ = recall(typed pool) − recall(rule pool) on the full clean test split; the
+share is the same contrast computed over the stratum's references, divided by Δ.
+
+**Failure:** Δ ≤ 0, **or** the enrichment falls below 2.5 under any of the three keys while the
+feasibility check passes. The second is a substantive failure at a numerical success: the model
+won, and not by the mechanism claimed. The mechanism would then be reformulated and
+re-registered rather than written up after the fact.
 
 **Family:** H1 alone, m = 1. It shared a family with H5 while both were about soft
 admissibility; they now test different mechanisms and are corrected apart.
 
-**The stratum, as built.** `strata/sparse_at_rule_dense_at_type.txt` holds **277 of the 1,170
-test substrates (23.7%)**, carrying **376 of the 2,536 typeable reference transformations
-(14.8%)**. Its complement is committed beside it. Of the 2,536, the exact mined rule is in the
-catalog for 1,564 (61.7%), 1,259 (49.6%) are sparse at rule level and 1,653 (65.2%) are dense
-at type level; the stratum is the intersection of the last two. Sixty-one references do not
-type through the mining route and are in neither file.
-
-**Why the threshold is 0.5.** A gain spread uniformly over the split would put 14.8% of itself
-here, that being the stratum's share of the references. Asking for half is asking for 3.4 times
-the uniform expectation, so a typed model that simply scores better everywhere fails this
-hypothesis while passing its own contrast. The threshold was fixed before the stratum was
-built; the enrichment factor it implies is recorded now that the sizes are known, and the
-threshold is not moved to suit them.
+**What this replaces.** The first version predicted that half the gain would fall in a stratum
+of references whose type the bank holds and whose rule did not fire. The stratum behind it was
+built on an exact string join, which put 227 of its 376 pairs there by notation rather than by
+sparsity. The failed construction is recorded rather than removed.
 
 ---
 

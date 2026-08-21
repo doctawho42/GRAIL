@@ -1,0 +1,100 @@
+{
+ "population": {
+  "source": "artifacts/tier2/substrates.json",
+  "n": 150
+ },
+ "match": "inchikey_tautomer",
+ "alpha": 0.5,
+ "alpha_note": "the value the emission appendix reports, not refitted here",
+ "declared": "each method at its own emission policy; the budget-matched view is results/budget_matched_leaderboard.json",
+ "gate": {
+  "reproduces_committed_table": true,
+  "mismatches": []
+ },
+ "table": {
+  "GRAIL, deployed budget": {
+   "recall@15": 0.365,
+   "precision": 0.109,
+   "f1": 0.143,
+   "mean_output": 8.65
+  },
+  "GRAIL, pool-relative alpha=0.5": {
+   "recall@15": 0.219,
+   "precision": 0.222,
+   "f1": 0.192,
+   "mean_output": 2.09
+  },
+  "BioTransformer": {
+   "recall@15": 0.444,
+   "precision": 0.127,
+   "f1": 0.162,
+   "mean_output": 10.77
+  },
+  "MetaPredictor": {
+   "recall@15": 0.585,
+   "precision": 0.116,
+   "f1": 0.174,
+   "mean_output": 11.15
+  },
+  "MetaTrans": {
+   "recall@15": 0.561,
+   "precision": 0.122,
+   "f1": 0.177,
+   "mean_output": 12.71
+  },
+  "SyGMa": {
+   "recall@15": 0.554,
+   "precision": 0.029,
+   "f1": 0.051,
+   "mean_output": 74.15
+  }
+ },
+ "f1_order": [
+  "GRAIL, pool-relative alpha=0.5",
+  "MetaTrans",
+  "MetaPredictor",
+  "BioTransformer",
+  "GRAIL, deployed budget",
+  "SyGMa"
+ ],
+ "leader": "GRAIL, pool-relative alpha=0.5",
+ "paired_f1_contrasts_vs_rule": {
+  "GRAIL, deployed budget": {
+   "delta": 0.0486,
+   "ci95": [
+    0.0134,
+    0.0863
+   ]
+  },
+  "BioTransformer": {
+   "delta": 0.0302,
+   "ci95": [
+    -0.0299,
+    0.0929
+   ]
+  },
+  "MetaPredictor": {
+   "delta": 0.018,
+   "ci95": [
+    -0.0356,
+    0.0751
+   ]
+  },
+  "MetaTrans": {
+   "delta": 0.0153,
+   "ci95": [
+    -0.0391,
+    0.0731
+   ]
+  },
+  "SyGMa": {
+   "delta": 0.1405,
+   "ci95": [
+    0.0904,
+    0.1956
+   ]
+  }
+ },
+ "n_boot": 10000,
+ "seed": 0
+}

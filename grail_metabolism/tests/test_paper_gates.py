@@ -93,3 +93,32 @@ def test_split_manifest_still_matches_the_data():
     run = subprocess.run([sys.executable, str(ROOT / "scripts" / "typed_edit" / "freeze_split.py"),
                           "--verify"], cwd=ROOT, capture_output=True, text=True, timeout=600)
     assert run.returncode == 0, f"the split moved since the freeze\n{run.stdout[-3000:]}"
+
+
+def test_h1_primary_stratum_is_the_intersection():
+    """The primary membership file must be exactly the pairs every join key agrees on.
+
+    H1 names this file as its primary definition in advance, so it cannot be the file that
+    happened to come out best. The two files also have to partition the substrates that carry
+    at least one typeable reference -- not the whole split, because 14 substrates carry none.
+    """
+    import json
+
+    art = ROOT / "results" / "h1_join_sensitivity.json"
+    txt = ROOT / "strata" / "sparse_at_rule_dense_at_type_intersection.txt"
+    comp = ROOT / "strata" / "sparse_at_rule_dense_at_type_intersection_complement.txt"
+    if not art.exists() or not txt.exists():
+        pytest.skip("the join sensitivity has not been computed in this checkout")
+    d = json.loads(art.read_text())
+    keys = d["primary"]["keys"]
+    wanted = sorted({r["substrate"] for r in d["rows"]
+                     if all(r["in_stratum"][k] for k in keys)})
+    listed = [l for l in txt.read_text().splitlines() if l.strip()]
+    other = [l for l in comp.read_text().splitlines() if l.strip()]
+    assert listed == wanted, f"the primary file holds {len(listed)}, the intersection {len(wanted)}"
+    assert len(listed) == d["primary"]["substrates"]
+    typeable = {r["substrate"] for r in d["rows"]}
+    assert len(listed) + len(other) == len(typeable), "the two files do not partition"
+    assert not set(listed) & set(other)
+    # the ceiling the registration quotes has to be the one the arithmetic gives
+    assert d["feasibility"]["max_gain_for_K"]["2.5"] == int(d["n_typeable_pairs"] // 2.5)
