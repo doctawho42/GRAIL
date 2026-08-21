@@ -44,6 +44,8 @@ without naming which.
 | ceiling after relaxing the hydrogen-count primitives | 0.8175 (+0.0004) | `results/typed_edit_known_type_recovery.json` |
 | ceiling after relaxing hydrogen count and connectivity | 0.8183 (+0.0012) | same |
 | of the 98 known-type misses, recovered by that relaxation | 3 | same |
+| the ceiling on that recovery, from the carriers alone | 8.5 of 98 (8.7%) | `results/typed_edit_type_carriers.json` |
+| realised over ceiling | 0.35 | derived from the two rows above |
 | bond-delta types with at least one carrier the relaxation touches | 383 of 4,417 (8.7%) | `results/typed_edit_type_carriers.json` |
 | training pairs in labels with at least five examples, rules as labels | 64.4% | `results/typed_edit_type_curve.json` |
 | the same, signature types as labels | 77.9% | same |
@@ -120,6 +122,24 @@ whatever the outcome; if they cannot be run, what the paper may claim is dominan
 five it did run, named as such.
 
 ---
+
+**The four that do not run, as a table.** Each was pursued to the point where the obstacle was
+identified, and each fact carries the URL and the date it was read from in
+`results/comparator_acquisition.json`; `scripts/check_comparators.py` re-derives the local half,
+so the report cannot drift from the machine it describes.
+
+| system | what is released | what is missing | what running it would take |
+|---|---|---|---|
+| LAGOM \citep{Larsson_2025} | training code, Apache-2.0 | any fine-tuned checkpoint | training it ourselves, which yields our reimplementation and not LAGOM |
+| DeepMetab \citep{Zhou_2025} | weights (81 LFS objects, 307.8 MB, all verified) and site/substrate prediction | `SOM/Reaction.py`, removed by the author for stated copyright reasons; only its 3.7 bytecode remains | the module, or a reimplementation of the step this work compares on |
+| DeepCYP \citep{Zhou_2026} | a web form | any model or documented API | submitting 1,170 substrates to a third party's server, at a scale it does not advertise |
+| Metabolite-Gen \citep{Chavan_2026} | a preprint, not peer reviewed | any code repository found by search or on the author's accounts | the code, or the availability statement the record does not serve |
+
+None of the four is unavailable through neglect: three publish something and one publishes a
+paper. What none publishes is a path from a released artifact to a prediction on our substrates.
+That is the concrete case for the recommendation the first paper makes -- publish either a score
+per cell of the declared grid or the predictions themselves -- and it is worth more coming from
+a failed attempt than from an assertion.
 
 ## H1 — the label space, not the admissibility gate
 
@@ -262,10 +282,17 @@ which this measurement has touched.
 
 On the test split the same relaxation is worth +0.0012, and that number is an input in §0.1,
 not a prediction. What is predicted is that the near-null transfers: the reason it is small is
-structural rather than particular to one split. 82% of the bank's types are carried only by
-mined rules with no relaxable carrier at all, and the mined majority carries such primitives on
-2.8% of its rules against 51.1% of the curated fifth, so a split whose references need mined
-chemistry cannot be helped much by this lever whichever split it is.
+structural rather than particular to one split. 82% of the bank's bond-delta types are carried
+only by mined rules with no relaxable carrier at all, and the mined majority carries such
+primitives on 2.8% of its rules against 51.1% of the curated fifth, so a split whose references
+need mined chemistry cannot be helped much by this lever whichever split it is.
+
+One quantity from that measurement transfers to any other attempt at relaxation and is recorded
+for it. The carriers put a ceiling of about 8.5 of the 98 on what this lever could reach; three
+were reached. **Carrying a relaxable primitive is necessary for recovery and sufficient in about
+a third of cases**, because the rule must also fire on that substrate and build that reference.
+A ceiling computed from carriers alone should be discounted by roughly that factor before it is
+used to justify the work.
 
 **Failure:** the ceiling rises by more than 0.005 on either set. That would mean the near-null
 is a property of the test split rather than of the bank, and the structural account above is
