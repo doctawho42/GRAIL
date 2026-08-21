@@ -2,8 +2,8 @@
  "provenance": {
   "script": "type_curve.py",
   "script_path": "scripts/typed_edit/type_curve.py",
-  "source_sha256": "4fee72c575f00fd9e58a01843b0201a8914eff45192fa134d856ec79e3071c0c",
-  "git_commit": "613721fa55f2f919bc4daedcc9c95aafee5663a0",
+  "source_sha256": "c6cdfcdf6d7cbba539a42f44111cfe537f117ba936aa3ca38a3b380ac5d32302",
+  "git_commit": "6e4be16b7efc90112550f2a342bd147381839442",
   "git_dirty": true
  },
  "rule_bank": {
@@ -19,6 +19,8 @@
   "total_train_pairs": 19921,
   "catalog_rules_with_one_pair": 4274
  },
+ "vocabulary": "signature",
+ "vocabulary_note": "the SIGNATURE vocabulary: a type is the step-0 reaction-centre signature. Its no_explicit_H variant at radius 0 is what the H1 stratum is keyed to. It is NOT the bond-delta vocabulary of reaction_types.canonical_type, which is a different partition of nearly the same size.",
  "by_variant": {
   "as_written": {
    "n_types": 4588,

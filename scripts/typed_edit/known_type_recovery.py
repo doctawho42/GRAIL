@@ -268,7 +268,9 @@ def main() -> int:
     print(f"bank: {len(rules)} rules, {len(bank_types)} radius-0 types",
           file=sys.stderr, flush=True)
 
-    out = {"provenance": stamp(__file__), "bank": {"n_rules": len(rules), "n_types": len(bank_types)}}
+    out = {"provenance": stamp(__file__),
+           "bank": {"n_rules": len(rules), "n_types": len(bank_types),
+                    "vocabulary": "bond-delta"}}
     if args.phase in ("a", "ab"):
         items = list(load_test_map(None, 42).items())
         sl = items[args.start:(args.end or None)]

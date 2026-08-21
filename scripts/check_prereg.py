@@ -18,6 +18,11 @@ Two things are checked, and they fail separately.
   someone else's system are counted separately rather than silently exempted, because an
   exemption nobody counts is where unregistered claims go to live.
 
+  The vocabularies. This project carries two type vocabularies of nearly equal cardinality --
+  4,417 bond-delta types and 4,456 signature types -- and a reader six months later will take
+  them for one number rounded differently. A sentence that quotes a type count must name which
+  vocabulary it counts.
+
   The manuscript, backwards. Every registered hypothesis has to appear, either carrying a
   claim or reported as having failed. A hypothesis that was registered, did not hold, and
   then quietly left the paper is the violation preregistration exists to prevent, and it is
@@ -67,6 +72,42 @@ EFFECT_NUMBER = re.compile(r"[+\u2212-]\s*0\.\d{2,}")
 TAG = re.compile(r"\\prereg\{(H\d+)\}|\b(H\d+)\b")
 CITED = re.compile(r"\\cite[a-z]*\{|\\citet|\\citep")
 # A hypothesis may leave the paper only by being reported as not having held.
+# The counts are read from the artifacts rather than typed, so a vocabulary that grows does not
+# quietly stop being checked.
+VOCAB_WORDS = re.compile(r"bond-delta|signature type|signature-type|signature vocabulary", re.I)
+TYPE_WORD = re.compile(r"\btypes?\b", re.I)
+
+
+def type_counts(root: Path) -> dict:
+    """{count: vocabulary} over every type count the artifacts record."""
+    out = {}
+    carriers = root / "results" / "typed_edit_type_carriers.json"
+    curve = root / "results" / "typed_edit_type_curve.json"
+    if carriers.exists():
+        d = json.loads(carriers.read_text())
+        for k in ("n_types", "types_with_any_relaxable_carrier",
+                  "types_with_any_curated_carrier", "types_carried_only_by_mined_rules"):
+            if isinstance(d.get(k), int):
+                out[d[k]] = "bond-delta"
+    if curve.exists():
+        d = json.loads(curve.read_text())
+        for v in d.get("by_variant", {}).values():
+            for k in ("n_types", "types_with_ge5_pairs"):
+                if isinstance(v.get(k), int):
+                    out.setdefault(v[k], "signature")
+        for v in d.get("by_radius", {}).values():
+            if isinstance(v.get("n_types"), int):
+                out.setdefault(v["n_types"], "signature")
+    return out
+
+
+def _numbers(s: str):
+    for m in re.finditer(r"\b\d[\d,{}]*\b", s):
+        raw = m.group(0).replace(",", "").replace("{", "").replace("}", "")
+        if raw.isdigit():
+            yield int(raw)
+
+
 FAILED = re.compile(
     r"\b(fail(?:s|ed|ure)?|did not hold|does not hold|not supported|unsupported|refut(?:e|ed|es)|"
     r"returns? a null|bounded null|is a null|not confirmed|did not replicate)\b", re.I)
@@ -106,6 +147,36 @@ def parse_registry(path: Path) -> tuple:
     if not hyps:
         problems.append(f"no hypothesis headings found in {path}")
     return hyps, problems
+
+
+def scan_vocabularies(text: str, counts: dict) -> list:
+    """Sentences quoting a type count without saying which vocabulary it belongs to."""
+    if not counts:
+        return []
+    # A markdown table row has no full stop, so sentence splitting swallows a whole table into
+    # one unit and the report points at the table instead of the row. Flowing prose has the
+    # opposite problem: split it by line and a sentence that names its vocabulary on one line
+    # and its count on the next reads as a violation. So table rows are units, prose is
+    # sentences.
+    units, prose = [], []
+    for line in text.splitlines():
+        if line.lstrip().startswith("|"):
+            units.append(line)
+        else:
+            prose.append(line)
+    units.extend(sentences("\n".join(prose)))
+    bad = []
+    for s in units:
+        # markdown emphasis sits between the two words of `**signature** vocabulary', so it is
+        # removed before matching rather than written into the pattern
+        flat = re.sub(r"[*_`]+", "", s)
+        if not TYPE_WORD.search(flat) or VOCAB_WORDS.search(flat):
+            continue
+        hits = sorted({n for n in _numbers(flat) if n in counts})
+        if hits:
+            bad.append({"sentence": s[:180],
+                        "counts": [[n, counts[n]] for n in hits]})
+    return bad
 
 
 def scan(text: str, hyps: dict) -> dict:
@@ -155,6 +226,7 @@ def report(hyps: dict, problems: list, res: dict, quiet: bool = False,
     # hypothesis is trivially absent. Validating the registry alone is a real check and is
     # what this reports before the paper exists; it must not masquerade as the full one.
     ok = not (problems or res["unregistered"] or res["unknown_hypothesis"]
+              or res.get("vocabulary")
               or (have_text and (res["absent"] or res["no_outcome"])))
     if quiet:
         return 0 if ok else 1
@@ -164,8 +236,12 @@ def report(hyps: dict, problems: list, res: dict, quiet: bool = False,
         print(f"    {h}  family size {e['family_size']}  {e['title'][:58]}")
     for p in problems:
         print(f"  REGISTRY FAIL: {p}")
+    for v in res.get("vocabulary", []):
+        named = ", ".join(f"{n} is a {voc} count" for n, voc in v["counts"])
+        print(f"  FAIL: a type count with no vocabulary named ({named}):")
+        print(f"        {v['sentence'][:110]}")
     if not have_text:
-        print("  manuscript: none given, so only the registry is checked")
+        print("  manuscript: none given, so the registry alone is checked")
         print("check_prereg: registry OK" if ok else "check_prereg: FAILURES ABOVE")
         return 0 if ok else 1
     print(f"  manuscript: {res['sentences_scanned']} sentences scanned, "
@@ -285,6 +361,20 @@ def self_test() -> int:
         if not any("no size" in p for p in problems3):
             print(f"FAIL: a family with no size was accepted: {problems3}"); ok = False
 
+        # the vocabulary check, on counts declared here rather than read from artifacts
+        counts = {4417: "bond-delta", 4456: "signature"}
+        named = scan_vocabularies(
+            "The bond-delta vocabulary holds 4,417 types.\n"
+            "| the **signature** vocabulary | 4,456 types |", counts)
+        if named:
+            print(f"FAIL: a count that names its vocabulary was flagged: {named}"); ok = False
+        unnamed = scan_vocabularies("The bank holds 4,417 types.", counts)
+        if len(unnamed) != 1 or unnamed[0]["counts"] != [[4417, "bond-delta"]]:
+            print(f"FAIL: an unnamed type count was not caught: {unnamed}"); ok = False
+        # a number that is not a type count is not the checker's business
+        if scan_vocabularies("The split holds 1,170 types of thing.", counts):
+            print("FAIL: a number that is not a type count was flagged"); ok = False
+
     print("self-test: OK" if ok else "self-test: FAILURES ABOVE")
     return 0 if ok else 1
 
@@ -305,6 +395,10 @@ def main() -> int:
     hyps, problems = parse_registry(Path(args.prereg))
     text = "\n".join(Path(t).read_text() for t in args.text)
     res = scan(text, hyps)
+    counts = type_counts(ROOT)
+    # the registration is scanned for vocabulary too: it quotes these counts itself
+    res["vocabulary"] = scan_vocabularies(
+        text + "\n" + Path(args.prereg).read_text(), counts)
     code = report(hyps, problems, res, have_text=bool(args.text))
     if args.json:
         Path(args.json).write_text(json.dumps(

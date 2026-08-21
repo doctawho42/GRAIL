@@ -191,6 +191,12 @@ def main() -> int:
                     "bank_rules_found_in_catalog": in_bank,
                     "total_train_pairs": sum(counts.values()),
                     "catalog_rules_with_one_pair": sum(1 for v in counts.values() if v == 1)},
+        "vocabulary": "signature",
+        "vocabulary_note": (
+            "the SIGNATURE vocabulary: a type is the step-0 reaction-centre signature. Its "
+            "no_explicit_H variant at radius 0 is what the H1 stratum is keyed to. It is NOT "
+            "the bond-delta vocabulary of reaction_types.canonical_type, which is a different "
+            "partition of nearly the same size."),
         "by_variant": {}, "by_radius": {},
     }
     for v in variants:

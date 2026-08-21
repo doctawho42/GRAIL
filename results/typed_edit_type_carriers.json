@@ -2,8 +2,8 @@
  "provenance": {
   "script": "type_carrier_provenance.py",
   "script_path": "scripts/typed_edit/type_carrier_provenance.py",
-  "source_sha256": "a119e32cdebd4b49a420d738f51676ee3d44d8247fdeafcd80a00ae282f0cb95",
-  "git_commit": "613721fa55f2f919bc4daedcc9c95aafee5663a0",
+  "source_sha256": "dd28db8a8211808538df15a7f932962dd495063aac473bd6d40dd45d195fe22c",
+  "git_commit": "6e4be16b7efc90112550f2a342bd147381839442",
   "git_dirty": true
  },
  "rule_bank": {
@@ -12,7 +12,9 @@
   "parsed": 7580,
   "unparseable": 1
  },
+ "vocabulary": "bond-delta",
  "keyed_by": "grail_metabolism.model.reaction_types.canonical_type",
+ "vocabulary_note": "the BOND-DELTA vocabulary: a type is the multiset of changed bonds between mapped atoms. It is what E.1 means by `the bank holds this type', and it is NOT the signature vocabulary the H1 stratum uses, which has nearly the same cardinality.",
  "n_types": 4417,
  "n_rules_without_a_type": 340,
  "carriers_per_type": {

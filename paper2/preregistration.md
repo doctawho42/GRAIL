@@ -29,6 +29,14 @@ These were measured on the clean test split before this file was written. They a
 prediction whose answer is already in an artifact is not a preregistration, so anything below
 is stated as a fixed quantity and never as a hypothesis.
 
+Two type vocabularies run through this work and they are close in size, so each is named
+wherever it is counted. The **bond-delta** vocabulary keys a type by the multiset of changed
+bonds between mapped atoms (`reaction_types.canonical_type`, 4,417 types); it is what E.1 means
+by "the bank holds this type". The **signature** vocabulary keys a type by the step-0
+reaction-centre signature (4,456 types at radius 0 with hydrogen dropped); it is what the H1
+stratum is built on. `check_prereg.py` fails any sentence that quotes a count from either
+without naming which.
+
 | quantity | value | artifact |
 |---|---|---|
 | coverage ceiling as deployed | 0.8171 | `results/coverage_gap_types.json` |
@@ -36,9 +44,9 @@ is stated as a fixed quantity and never as a hypothesis.
 | ceiling after relaxing the hydrogen-count primitives | 0.8175 (+0.0004) | `results/typed_edit_known_type_recovery.json` |
 | ceiling after relaxing hydrogen count and connectivity | 0.8183 (+0.0012) | same |
 | of the 98 known-type misses, recovered by that relaxation | 3 | same |
-| bank types with at least one carrier the relaxation touches | 383 of 4,417 (8.7%) | `results/typed_edit_type_carriers.json` |
+| bond-delta types with at least one carrier the relaxation touches | 383 of 4,417 (8.7%) | `results/typed_edit_type_carriers.json` |
 | training pairs in labels with at least five examples, rules as labels | 64.4% | `results/typed_edit_type_curve.json` |
-| the same, types as labels | 77.9% | same |
+| the same, signature types as labels | 77.9% | same |
 | test substrates in the H1 stratum | 277 of 1,170 (23.7%) | `results/h1_stratum.json` |
 | test references in the H1 stratum | 376 of 2,536 (14.8%) | same |
 | test substrates with a trivial automorphism group | 445 of 1,170 (38.0%) | `results/h6_stratum.json` |

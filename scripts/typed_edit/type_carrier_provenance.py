@@ -84,7 +84,12 @@ def main() -> int:
     out = {
         "provenance": stamp(__file__),
         "rule_bank": {"path": str(BANK.relative_to(ROOT)), **load_stats},
+        "vocabulary": "bond-delta",
         "keyed_by": "grail_metabolism.model.reaction_types.canonical_type",
+        "vocabulary_note": (
+            "the BOND-DELTA vocabulary: a type is the multiset of changed bonds between mapped "
+            "atoms. It is what E.1 means by `the bank holds this type', and it is NOT the "
+            "signature vocabulary the H1 stratum uses, which has nearly the same cardinality."),
         "n_types": n_types,
         "n_rules_without_a_type": untyped,
         "carriers_per_type": {

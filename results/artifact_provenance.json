@@ -40,7 +40,10 @@
    "artifact": "results/typed_edit_known_type_recovery.json",
    "script": "known_type_recovery.py",
    "how": "recorded source digest",
-   "status": "current"
+   "status": "producer_changed",
+   "detail": "producer was 820132affd67, is now 54bbbfad8258",
+   "diff_recovered_by": "the tree was dirty when written, so the source at 613721fa55f2 is the nearest committed version and not exactly what ran",
+   "diff": "--- known_type_recovery.py (as recorded)\n+++ known_type_recovery.py (now)\n@@ -241,5 +241,6 @@\n               f\"{'   MISMATCH' if got != want else ''}\", file=sys.stderr)\n \n-    out = {\"phase_a\": {\"cov\": dict(cov), \"gap\": dict(gap), \"known_pairs\": pairs,\n+    out = {\"provenance\": stamp(__file__),\n+           \"phase_a\": {\"cov\": dict(cov), \"gap\": dict(gap), \"known_pairs\": pairs,\n                        \"n_substrates\": subs, \"slices\": sorted(slices)},\n            \"reproduces_committed_decomposition\": not bad,\n@@ -268,5 +269,7 @@\n           file=sys.stderr, flush=True)\n \n-    out = {\"provenance\": stamp(__file__), \"bank\": {\"n_rules\": len(rules), \"n_types\": len(bank_types)}}\n+    out = {\"provenance\": stamp(__file__),\n+           \"bank\": {\"n_rules\": len(rules), \"n_types\": len(bank_types),\n+                    \"vocabulary\": \"bond-delta\"}}\n     if args.phase in (\"a\", \"ab\"):\n         items = list(load_test_map(None, 42).items())"
   },
   {
    "artifact": "results/typed_edit_relaxation.json",
@@ -68,7 +71,7 @@
   }
  ],
  "n_pinned": 11,
- "n_pinned_stale": 0,
+ "n_pinned_stale": 1,
  "sweep": {},
  "sweep_not_current": []
 }

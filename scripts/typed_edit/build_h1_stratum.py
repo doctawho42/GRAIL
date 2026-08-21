@@ -207,6 +207,7 @@ def merge(pattern, out):
         "definition": {
             "rule_label": "the mining route's SMIRKS for the pair, looked up in the mined "
                           "catalog; absent means a support of zero",
+            "vocabulary": "signature",
             "type_label": "step-0 signature at radius 0, no_explicit_H, pooled over bank rules",
             "dense_at": DENSE,
             "in_stratum": "rule support < 5 and type support >= 5",
