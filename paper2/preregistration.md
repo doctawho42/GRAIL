@@ -282,47 +282,54 @@ version is recorded here.
 
 ## H6 — a negative control
 
-**Prediction.** Pooling over automorphism classes
-- does **not** change recall@15 on substrates with a trivial automorphism group (the interval
-  on the difference covers zero);
-- **does** improve it on substrates with a non-trivial one.
+**Prediction.** Pooling probability over automorphism classes
 
-**Failure:** it helps on both strata. The mechanism would then not be the one claimed, and
-whatever changed alongside it would have to be found separately.
+- **does not** change macro recall@15 on substrates whose graph has no symmetry: the interval
+  on the paired difference covers zero;
+- **does** improve it on substrates whose largest orbit is three or more.
 
-**Family:** H6 alone, m = 1, both strata inside it.
+**Why the treatment arm is the orbit-three arm and not every symmetric substrate.** Of the 725
+substrates carrying a symmetry, 615 (84.8%) have a largest orbit of two: one pair of equivalent
+atoms and nothing else. Pooling over a pair can at most double one candidate's mass, so a
+prediction made over all 725 is a prediction made mostly where the mechanism can barely act.
+The treatment arm is therefore the 110 substrates with a largest orbit of three or more, named
+here in advance. The 725-substrate contrast is reported beside it as a secondary, because its
+arm is the larger one and its interval the tighter.
 
-**The arms, as built.** Symmetry classes come from RDKit's canonical ranking with ties left
-unbroken and chirality excluded, the latter because the pipeline strips stereochemistry before
-the rules fire. Every heavy atom in its own class means the group is trivial, and that
-direction is exact, which is the direction the control arm needs.
+| arm | file | n | mean recall@15 | sd |
+|---|---|---|---|---|
+| control, trivial group | `strata/trivial_automorphism.txt` | 445 | 0.3046 | 0.4112 |
+| treatment, largest orbit ≥ 3 | `strata/orbit_ge3.txt` | 110 | 0.3455 | 0.4401 |
+| secondary, any symmetry | `strata/nontrivial_automorphism.txt` | 725 | 0.3609 | 0.4379 |
 
-  445 of 1,170 substrates (38.0%) are the control arm; 725 carry a symmetry.
+**The minimum detectable effect, registered with the prediction.** A negative control that
+passes because it could not have failed is worse than no control, so the MDE is reported with
+the verdict whatever the verdict is. At 80% power and α = 0.05 two-sided, the paired MDE is
+2.8·σ_d/√n. σ_d, the spread of the per-substrate paired difference, is not knowable before the
+run; substituting the spread of recall itself gives a conservative upper bound, since a paired
+intervention that changes few substrates has σ_d well below σ:
 
-**What bounds the treatment arm.** Of the 725, **615 (84.8%) have a largest orbit of two**: one
-pair of equivalent atoms and nothing more. Seventy-five reach three, thirty-one reach four,
-three reach six and one reaches eight. Pooling over a pair can at most double one candidate's
-mass, so the effect this hypothesis predicts is small on most of the arm it is predicted on.
-That is recorded here rather than after a null, where it would read as an excuse.
+    control arm    n = 445   MDE ≤ 0.055
+    treatment arm  n = 110   MDE ≤ 0.118
+    secondary      n = 725   MDE ≤ 0.046
+
+The realised σ_d and the MDE it implies are computed from the run and reported in the same
+table as the contrasts. **A null on the control arm is read as evidence only if its realised MDE
+is below the effect the treatment arm shows**; a control too blunt to have seen the effect it is
+controlling for is reported as blunt.
+
+**Failure:** it improves recall on both arms, or on neither while the treatment arm's MDE is
+below the improvement the secondary arm shows. The first says the mechanism is not the one
+claimed and something that changed alongside it is doing the work; the second says the same by
+a different route.
+
+**Family:** H6 alone, m = 1, all three arms inside it.
+
+**The definition.** Symmetry classes come from RDKit's canonical ranking with ties left unbroken
+and chirality excluded, the latter because the pipeline strips stereochemistry before the rules
+fire. Every heavy atom in its own class means the automorphism group is trivial, and that
+direction is exact, which is the direction a control arm needs. The orbit histogram is 445 at
+one, 615 at two, 75 at three, 31 at four, 3 at six and 1 at eight.
 
 ---
 
-## What is not predicted, and why
-
-- **Multi-step.** Depth-2 application lifts the ceiling by about 0.012 at 8.5 times the cost.
-  The architecture supports the recursion; no claim rests on it.
-- **Precision as a headline.** The closure appendix measured the one checkable component of
-  annotation incompleteness at 0.0016–0.0035, two orders below what would be needed. Precision
-  here is bounded by the corpus, not by the model.
-- **Dominance over the grid.** That is a form for stating a result, not a hypothesis: it either
-  holds or it does not, and there is nothing to predict.
-
----
-
-## Compliance check
-
-`scripts/check_prereg.py` reads this file and the final manuscript. A hypothesis is registered
-only if it declares a prediction, a failure condition and a family with a size. Every sentence
-in the manuscript that claims an effect must name the hypothesis entitling it, and every
-registered hypothesis must appear carrying a claim or be reported as having failed. It exits
-non-zero otherwise, and it runs in the default test suite.

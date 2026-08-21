@@ -54,6 +54,25 @@ STRATA = [
     ("h6_stratum.json", "trivial_automorphism.txt", "nontrivial_automorphism.txt", "trivial"),
 ]
 
+ORBIT_ARM = ("h6_stratum.json", "orbit_ge3.txt", "orbit_ge3_complement.txt")
+
+
+def test_h6_treatment_arm_is_the_orbit_three_substrates():
+    """H6 registers its treatment prediction on this file, so it must be exactly that arm."""
+    import json
+
+    art = ROOT / "results" / ORBIT_ARM[0]
+    txt, comp = ROOT / "strata" / ORBIT_ARM[1], ROOT / "strata" / ORBIT_ARM[2]
+    if not art.exists() or not txt.exists():
+        pytest.skip("the H6 arms have not been built in this checkout")
+    d = json.loads(art.read_text())
+    wanted = sorted(r["substrate"] for r in d["rows"] if r["largest_orbit"] >= 3)
+    listed = [l for l in txt.read_text().splitlines() if l.strip()]
+    other = [l for l in comp.read_text().splitlines() if l.strip()]
+    assert listed == wanted, f"the arm holds {len(listed)}, orbit>=3 is {len(wanted)}"
+    assert len(listed) == d["n_orbit_ge3"]
+    assert len(listed) + len(other) == d["n_substrates"], "the arm and its complement do not partition"
+
 
 @pytest.mark.parametrize("artifact,arm,complement,flag", STRATA,
                          ids=[s[1].replace(".txt", "") for s in STRATA])

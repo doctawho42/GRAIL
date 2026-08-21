@@ -2,8 +2,8 @@
  "provenance": {
   "script": "build_h6_stratum.py",
   "script_path": "scripts/typed_edit/build_h6_stratum.py",
-  "source_sha256": "c0d6a804214c739f3f8b68687d98364a819fb24bfb4b1e0fe783e2c421068004",
-  "git_commit": "613721fa55f2f919bc4daedcc9c95aafee5663a0",
+  "source_sha256": "f3f07230419e4b6352a9a9eb0807edec56ff28165d8cef4f2abf825348ad1168",
+  "git_commit": "c9f45fe8886dfc8cf692355a3bc9783555e01c63",
   "git_dirty": true
  },
  "definition": {
@@ -15,6 +15,12 @@
  "unparseable": [],
  "n_trivial": 445,
  "n_nontrivial": 725,
+ "n_orbit_ge3": 110,
+ "arms": {
+  "control": "trivial_automorphism.txt",
+  "treatment": "orbit_ge3.txt",
+  "secondary": "nontrivial_automorphism.txt"
+ },
  "share_trivial": 0.3803,
  "largest_orbit_histogram": {
   "1": 445,

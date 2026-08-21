@@ -3,7 +3,7 @@
   "script": "freeze_split.py",
   "script_path": "scripts/typed_edit/freeze_split.py",
   "source_sha256": "c44c21a790688dee1e3dd8ee26f050bd9a8564e003f011814a426041e08e9638",
-  "git_commit": "6e4be16b7efc90112550f2a342bd147381839442",
+  "git_commit": "c9f45fe8886dfc8cf692355a3bc9783555e01c63",
   "git_dirty": true
  },
  "what_this_pins": "the split, the evaluated test set, the strata, the rule bank and the third-party comparators that can be pinned",
@@ -60,6 +60,20 @@
    "bytes": 35549,
    "lines": 725,
    "sha256": "108666aacb342d64c19bea78a393596b4d2cdfd8961db584a75308dce395a1ba"
+  },
+  "orbit_ge3.txt": {
+   "path": "strata/orbit_ge3.txt",
+   "present": true,
+   "bytes": 6297,
+   "lines": 110,
+   "sha256": "9cf55868bd086cb3870edca28c0a9f9efbdabea9ee666afd4f56ef57ef68ad78"
+  },
+  "orbit_ge3_complement.txt": {
+   "path": "strata/orbit_ge3_complement.txt",
+   "present": true,
+   "bytes": 46664,
+   "lines": 1060,
+   "sha256": "dd2e14ee6d1b4cd6bdcfe6e39c60d9c746ab834b1039f130f762f1ed13c3df9e"
   },
   "sparse_at_rule_dense_at_type.txt": {
    "path": "strata/sparse_at_rule_dense_at_type.txt",
@@ -205,5 +219,5 @@
   "clean": true,
   "note": "molecule overlap is expected and reported: a product annotated in one split can be a substrate in another. Substrate and positive-pair overlap are the ones that must be zero."
  },
- "git_commit": "6e4be16b7efc90112550f2a342bd147381839442"
+ "git_commit": "c9f45fe8886dfc8cf692355a3bc9783555e01c63"
 }

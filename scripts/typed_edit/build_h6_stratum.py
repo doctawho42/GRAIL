@@ -111,9 +111,18 @@ def main() -> int:
 
     trivial = sorted(r["substrate"] for r in rows if r["trivial"])
     nontrivial = sorted(r["substrate"] for r in rows if not r["trivial"])
+    # the treatment arm H6 is registered on. A largest orbit of two is one pair of equivalent
+    # atoms, and pooling over a pair can at most double one candidate's mass; 85% of the
+    # symmetric substrates are that case, so a prediction made over all of them is a prediction
+    # made mostly where the mechanism can barely act.
+    ge3 = sorted(r["substrate"] for r in rows if r["largest_orbit"] >= 3)
     STRATA.mkdir(exist_ok=True)
     (STRATA / "trivial_automorphism.txt").write_text("\n".join(trivial) + "\n")
     (STRATA / "nontrivial_automorphism.txt").write_text("\n".join(nontrivial) + "\n")
+    (STRATA / "orbit_ge3.txt").write_text("\n".join(ge3) + "\n")
+    (STRATA / "orbit_ge3_complement.txt").write_text(
+        "\n".join(r["substrate"] for r in sorted(rows, key=lambda x: x["substrate"])
+                  if r["largest_orbit"] < 3) + "\n")
 
     orb = Counter(r["largest_orbit"] for r in rows)
     report = {
@@ -127,6 +136,10 @@ def main() -> int:
         "unparseable": unparseable,
         "n_trivial": len(trivial),
         "n_nontrivial": len(nontrivial),
+        "n_orbit_ge3": len(ge3),
+        "arms": {"control": "trivial_automorphism.txt",
+                 "treatment": "orbit_ge3.txt",
+                 "secondary": "nontrivial_automorphism.txt"},
         "share_trivial": round(len(trivial) / max(len(rows), 1), 4),
         "largest_orbit_histogram": {str(k): v for k, v in sorted(orb.items())},
         "median_heavy_atoms": sorted(r["heavy_atoms"] for r in rows)[len(rows) // 2],
