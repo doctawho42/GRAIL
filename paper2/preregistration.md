@@ -53,8 +53,9 @@ name is recorded here as a closed question rather than deleted.
 
 `paper2/split_manifest.json` fingerprints what is frozen: the content digest of each clean
 triples file, an order-independent digest of each split's substrate set, the digest of the
-evaluated test set and of every stratum file, and the digest of the rule bank, since a bank
-that moves moves every ceiling. `scripts/typed_edit/freeze_split.py --verify` recomputes all of
+evaluated test set and of every stratum file, the digest of the rule bank, since a bank
+that moves moves every ceiling, and the digests of the third-party comparators that can be
+pinned at all. `scripts/typed_edit/freeze_split.py --verify` recomputes all of
 it and names any leaf that moved. The dataset is external and cannot live in the repository; a
 fingerprint can, and without one "the split is frozen" is a claim a reader cannot check.
 
@@ -86,7 +87,7 @@ it is not silently dropped, and no comparator is added later.
 | comparator | what is pinned | status |
 |---|---|---|
 | SyGMa \citep{Ridder_2008} | `sygma == 1.1.0`, declared in `pyproject.toml`, run in process | pinned |
-| BioTransformer \citep{Djoumbou_Feunang_2019} | an installed copy; its 994 shipped SMIRKS are what the reach figure is computed from | predictions frozen; **the tool version is not recorded in this repository and must be pinned before the freeze** |
+| BioTransformer \citep{Djoumbou_Feunang_2019} | `BioTransformer3.0_20230525.jar`, sha256 `c70cad91…`, from bitbucket.org/wishartlab/biotransformer3.0jar at commit `6432cf88` (2023-05-25); the 994 templates the reach figure reads are three JSON files in this repository, digested in the manifest and loaded to a count of 994 | pinned |
 | MetaTrans \citep{Litsa_2020} | frozen predictions only | its pipeline no longer reproduces here, which is why the five-method table rests on 150 shared substrates |
 | MetaPredictor \citep{Zhu_2024} | third-party weights, cited rather than shipped | predictions frozen |
 | GLORYx \citep{de_Bruyn_Kops_2020} | the external 37-substrate set | 24 of the 37 overlap the training substrates; the rank-flip section reports the 13 that do not |
@@ -96,8 +97,10 @@ it is not silently dropped, and no comparator is added later.
 | Metabolite-Gen \citep{Chavan_2026} | DOI 10.26434/chemrxiv.15002775, preprint, not peer reviewed | **not obtained, not run** |
 | MetaTox | named in the plan | **no run in this repository** |
 
-Five of the ten are pinned or frozen and five are not, which is the honest state of the list on
-the day it is closed. The four systems of the 2025-26 wave are the ones that set the operating
+Six of the ten are pinned or frozen and four are not, which is the honest state of the list on
+the day it is closed. The BioTransformer row is pinned by the digest of the jar itself and by
+the upstream commit, not by a version string: `3.0` names several builds, and the 994 templates
+the appendix reports are counted from files whose digests are in the manifest beside it. The four systems of the 2025-26 wave are the ones that set the operating
 point this work has to beat, so a claim of a state of the art without them is not available
 whatever the outcome; if they cannot be run, what the paper may claim is dominance over the
 five it did run, named as such.

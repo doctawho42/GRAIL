@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import os
 import json
 import subprocess
 import sys
@@ -68,9 +69,73 @@ def substrates_of(triples: Path) -> list:
     return out
 
 
+def find_biotransformer() -> Path | None:
+    """Where the BioTransformer checkout is, if it is anywhere.
+
+    `bt_predict.py` resolves it as `ROOT.parent / GRAIL_baselines / biotransformer`, which is
+    correct from the main checkout and wrong from a worktree, whose parent is the worktrees
+    directory. The candidates are tried in order and the one that exists is recorded, so the
+    manifest pins what was actually read rather than where it was expected.
+    """
+    env = os.environ.get("BIOTRANSFORMER_DIR")
+    cands = [Path(env)] if env else []
+    cands += [ROOT.parent / "GRAIL_baselines" / "biotransformer"]
+    cands += [a / "GRAIL_baselines" / "biotransformer" for a in ROOT.parents]
+    for c in cands:
+        if (c / "BioTransformer3.0_20230525.jar").exists():
+            return c
+    return None
+
+
+def third_party() -> dict:
+    """The comparators the registration closes its list on, pinned by digest where possible."""
+    out = {}
+    bt_dir = find_biotransformer()
+    bt = {"upstream": "https://bitbucket.org/wishartlab/biotransformer3.0jar.git",
+          "found_at": str(bt_dir) if bt_dir else None}
+    if bt_dir:
+        jar = bt_dir / "BioTransformer3.0_20230525.jar"
+        data = jar.read_bytes()
+        bt["jar"] = {"name": jar.name, "bytes": len(data),
+                     "sha256": hashlib.sha256(data).hexdigest()}
+        try:
+            bt["checkout_commit"] = subprocess.run(
+                ["git", "rev-parse", "HEAD"], cwd=bt_dir, capture_output=True,
+                text=True).stdout.strip() or None
+            bt["checkout_date"] = subprocess.run(
+                ["git", "log", "-1", "--format=%ad", "--date=short"], cwd=bt_dir,
+                capture_output=True, text=True).stdout.strip() or None
+        except Exception:  # noqa: BLE001
+            bt["checkout_commit"] = bt["checkout_date"] = None
+    # the template files the reach figure reads, which are in this repository and are what the
+    # 994 in the appendix is counted from
+    db = [ROOT / "artifacts/tier2/biotransformer/database/metabolicReactions.json",
+          ROOT / "artifacts/tier2/biotransformer/database/ENVMICRO/metabolicReactions.json",
+          ROOT / "artifacts/tier2/biotransformer/database/standardizationReactions.json"]
+    bt["template_files"] = [digest_file(f) for f in db]
+    try:
+        sys.path.insert(0, str(ROOT / "scripts"))
+        from decompose_biotransformer import load_bt_templates
+        bt["templates_loaded"] = len(load_bt_templates(db))
+    except Exception as e:  # noqa: BLE001
+        bt["templates_loaded"] = None
+        bt["templates_error"] = str(e)
+    out["biotransformer"] = bt
+
+    try:
+        import sygma
+        out["sygma"] = {"version": getattr(sygma, "__version__", None),
+                        "module": str(Path(sygma.__file__).parent)}
+    except Exception as e:  # noqa: BLE001
+        out["sygma"] = {"error": str(e)}
+    return out
+
+
 def build() -> dict:
-    man = {"what_this_pins": "the split, the evaluated test set, the strata and the rule bank",
-           "splits": {}, "files": {}, "strata": {}, "bank": digest_file(BANK)}
+    man = {"what_this_pins": "the split, the evaluated test set, the strata, the rule bank "
+                             "and the third-party comparators that can be pinned",
+           "splits": {}, "files": {}, "strata": {}, "bank": digest_file(BANK),
+           "third_party": third_party()}
 
     for split in ("train", "val", "test"):
         f = DATA / f"{split}_triples_clean.txt"
@@ -141,7 +206,7 @@ def compare(old: dict, new: dict) -> list:
     def walk(a, b, path):
         if isinstance(a, dict) and isinstance(b, dict):
             for k in sorted(set(a) | set(b)):
-                if k in ("git_commit",):
+                if k in ("git_commit", "found_at", "module"):
                     continue
                 walk(a.get(k), b.get(k), f"{path}.{k}" if path else k)
         elif a != b:

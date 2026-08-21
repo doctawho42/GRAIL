@@ -1,5 +1,5 @@
 {
- "what_this_pins": "the split, the evaluated test set, the strata and the rule bank",
+ "what_this_pins": "the split, the evaluated test set, the strata, the rule bank and the third-party comparators that can be pinned",
  "splits": {
   "train": {
    "substrates": {
@@ -83,6 +83,47 @@
   "lines": 7581,
   "sha256": "40643d60de93f4dbe3b2eb89bd6b744700d7d2cfff9d8a99bd55377cb71eaca2"
  },
+ "third_party": {
+  "biotransformer": {
+   "upstream": "https://bitbucket.org/wishartlab/biotransformer3.0jar.git",
+   "found_at": "/Users/nikitapolomosnov/PycharmProjects/GRAIL_baselines/biotransformer",
+   "jar": {
+    "name": "BioTransformer3.0_20230525.jar",
+    "bytes": 115415197,
+    "sha256": "c70cad913e9c08b90473a26bbb8bb2acf8c2d683c85f463463ef5a07cdb370c5"
+   },
+   "checkout_commit": "6432cf887ed70c7c943c2dfeb60298ccdc788d7d",
+   "checkout_date": "2023-05-25",
+   "template_files": [
+    {
+     "path": "artifacts/tier2/biotransformer/database/metabolicReactions.json",
+     "present": true,
+     "bytes": 779284,
+     "lines": 6311,
+     "sha256": "9bbfa5b8c0fd3d06539381714ca95fc5ff73fc3da821ce96d3f7bfb58915c04d"
+    },
+    {
+     "path": "artifacts/tier2/biotransformer/database/ENVMICRO/metabolicReactions.json",
+     "present": true,
+     "bytes": 171982,
+     "lines": 2736,
+     "sha256": "f586471d0f3674cda4577d95af73c19f5c779b9267fd663484be34ece3521836"
+    },
+    {
+     "path": "artifacts/tier2/biotransformer/database/standardizationReactions.json",
+     "present": true,
+     "bytes": 11040,
+     "lines": 230,
+     "sha256": "749c16a0a0471b18a00cebda01b460839e5d7e10e5e7a8e7d7447f20f51804a8"
+    }
+   ],
+   "templates_loaded": 994
+  },
+  "sygma": {
+   "version": "1.1.0",
+   "module": "/Users/nikitapolomosnov/anaconda3/lib/python3.10/site-packages/sygma"
+  }
+ },
  "evaluated_test_set": {
   "substrates": {
    "n": 1170,
@@ -143,5 +184,5 @@
   "clean": true,
   "note": "molecule overlap is expected and reported: a product annotated in one split can be a substrate in another. Substrate and positive-pair overlap are the ones that must be zero."
  },
- "git_commit": "cc771ffee938865ba95e0db9fc56f8c581fc9a25"
+ "git_commit": "0192466010a8462cdafd43dd9fa8f34e9a9ee22f"
 }
