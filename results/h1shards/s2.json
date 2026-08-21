@@ -16,6 +16,14 @@
  "rows": [
   {
    "substrate": "O=Cc1cccc2ccccc12",
+   "metabolite": "OCc1cccc2ccccc12",
+   "smirks": "[#8:1]=[#6:2]-[#6:3]>>[#8:1]-[#6:2]-[#6:3]",
+   "rule_support": 10,
+   "type_support": 397,
+   "in_stratum": false
+  },
+  {
+   "substrate": "O=Cc1cccc2ccccc12",
    "metabolite": "O=C(O)c1cccc2ccccc12",
    "smirks": "[#8:1]=[#6:2]-[#6:3]>>[#8:1]=[#6:2](-[#8:4])-[#6:3]",
    "rule_support": 33,
@@ -23,11 +31,19 @@
    "in_stratum": false
   },
   {
-   "substrate": "O=Cc1cccc2ccccc12",
-   "metabolite": "OCc1cccc2ccccc12",
-   "smirks": "[#8:1]=[#6:2]-[#6:3]>>[#8:1]-[#6:2]-[#6:3]",
-   "rule_support": 10,
-   "type_support": 397,
+   "substrate": "CC(C)(C)C#CC=CCNCc1cccc2ccccc12",
+   "metabolite": "CC(C)(C)C#CC=CCNCC1=CC(O)C(O)c2ccccc21",
+   "smirks": "[#6:1]-[#6:2]1:[#6:3]:[#6:4]:[#6:5]:[#6:6](:[#6:9]):[#6:7]:1:[#6:8]>>[#6:1]-[#6:2]1=[#6:3]-[#6:4](-[#8:10])-[#6:5](-[#8:11])-[#6:6](:[#6:9]):[#6:7]-1:[#6:8]",
+   "rule_support": 1,
+   "type_support": 51,
+   "in_stratum": true
+  },
+  {
+   "substrate": "CC(C)(C)C#CC=CCNCc1cccc2ccccc12",
+   "metabolite": "CC(C)(C#CC=CCNCc1cccc2ccccc12)C(=O)O",
+   "smirks": "[#6:1]-[#6:2]>>[#6:1]-[#6:2](=[#8:3])-[#8:4]",
+   "rule_support": 41,
+   "type_support": 90,
    "in_stratum": false
   },
   {
@@ -47,22 +63,6 @@
    "in_stratum": false
   },
   {
-   "substrate": "CC(C)(C)C#CC=CCNCc1cccc2ccccc12",
-   "metabolite": "CC(C)(C#CC=CCNCc1cccc2ccccc12)C(=O)O",
-   "smirks": "[#6:1]-[#6:2]>>[#6:1]-[#6:2](=[#8:3])-[#8:4]",
-   "rule_support": 41,
-   "type_support": 90,
-   "in_stratum": false
-  },
-  {
-   "substrate": "CC(C)(C)C#CC=CCNCc1cccc2ccccc12",
-   "metabolite": "CC(C)(C)C#CC=CCNCC1=CC(O)C(O)c2ccccc21",
-   "smirks": "[#6:1]-[#6:2]1:[#6:3]:[#6:4]:[#6:5]:[#6:6](:[#6:9]):[#6:7]:1:[#6:8]>>[#6:1]-[#6:2]1=[#6:3]-[#6:4](-[#8:10])-[#6:5](-[#8:11])-[#6:6](:[#6:9]):[#6:7]-1:[#6:8]",
-   "rule_support": 1,
-   "type_support": 51,
-   "in_stratum": true
-  },
-  {
    "substrate": "CN(CC=CC#CC(C)(C)CO)Cc1cccc2ccccc12",
    "metabolite": "CC(C)(C#CC=CCNCc1cccc2ccccc12)CO",
    "smirks": "[#6:4]-[#7:2](-[#6:1])-[#6:3]>>[#6:1]-[#7:2]-[#6:3]",
@@ -72,18 +72,18 @@
   },
   {
    "substrate": "CN(CC=CC#CC(C)(C)CO)Cc1cccc2ccccc12",
-   "metabolite": "CN(CC=CC#CC(C)(C)COC1OC(C(=O)O)C(O)C(O)C1O)Cc1cccc2ccccc12",
-   "smirks": "[#6:1]-[#8:2]>>[#6:1]-[#8:2]-[#6:3]1-[#8:4]-[#6:5](-[#6:6](=[#8:7])-[#8:8])-[#6:9](-[#8:10])-[#6:11](-[#8:12])-[#6:13]-1-[#8:14]",
-   "rule_support": 1531,
-   "type_support": 2071,
-   "in_stratum": false
-  },
-  {
-   "substrate": "CN(CC=CC#CC(C)(C)CO)Cc1cccc2ccccc12",
    "metabolite": "CN(CC=CC#CC(C)(C)C(=O)O)Cc1cccc2ccccc12",
    "smirks": "[#6:1]-[#6:2]-[#8:3]>>[#6:1]-[#6:2](=[#8:4])-[#8:3]",
    "rule_support": 149,
    "type_support": 357,
+   "in_stratum": false
+  },
+  {
+   "substrate": "CN(CC=CC#CC(C)(C)CO)Cc1cccc2ccccc12",
+   "metabolite": "CN(CC=CC#CC(C)(C)COC1OC(C(=O)O)C(O)C(O)C1O)Cc1cccc2ccccc12",
+   "smirks": "[#6:1]-[#8:2]>>[#6:1]-[#8:2]-[#6:3]1-[#8:4]-[#6:5](-[#6:6](=[#8:7])-[#8:8])-[#6:9](-[#8:10])-[#6:11](-[#8:12])-[#6:13]-1-[#8:14]",
+   "rule_support": 1531,
+   "type_support": 2071,
    "in_stratum": false
   },
   {
@@ -104,10 +104,10 @@
   },
   {
    "substrate": "COc1ccc2c(c1)c(CC(=O)O)c(C)n2C(=O)c1ccc(Cl)cc1",
-   "metabolite": "C=c1[nH]c2ccc(O)cc2c1=CC(=O)O",
-   "smirks": "[#6:11]-[#8:10]-[#6:9].[#6:4]1:[#6:5]:[#6:6](-[#6:7]-[#6:8]):[#6:2](-[#6:1]):[#7:3]:1-[#6:12](=[#8:13])-[#6:14]1:[#6:15]:[#6:16]:[#6:17](-[#17:18]):[#6:19]:[#6:20]:1>>[#6:1]=[#6:2]1:[#7H:3]:[#6:4]:[#6:5]:[#6:6]:1=[#6:7]-[#6:8].[#6:9]-[#8:10]",
-   "rule_support": 0,
-   "type_support": 0,
+   "metabolite": "COc1ccc2c(c1)c(CC(=O)OC1OC(C(=O)O)C(O)C(O)C1O)c(C)n2C(=O)c1ccc(Cl)cc1",
+   "smirks": "[#6:1]-[#8:2]>>[#6:1]-[#8:2]-[#6:3]1-[#8:4]-[#6:5](-[#6:6](=[#8:7])-[#8:8])-[#6:9](-[#8:10])-[#6:11](-[#8:12])-[#6:13]-1-[#8:14]",
+   "rule_support": 1531,
+   "type_support": 2071,
    "in_stratum": false
   },
   {
@@ -120,10 +120,10 @@
   },
   {
    "substrate": "COc1ccc2c(c1)c(CC(=O)O)c(C)n2C(=O)c1ccc(Cl)cc1",
-   "metabolite": "COc1cc2c(CC(=O)O)c(C)n(C(=O)c3ccc(Cl)cc3)c2cc1O",
-   "smirks": "[#6:1]:[#6:2]:[#6:3]>>[#6:1]:[#6:2](:[#6:3])-[#8:4]",
-   "rule_support": 69,
-   "type_support": 3747,
+   "metabolite": "COc1ccc2c(c1)C(CC(=O)O)=C(C)[N+]2(C(=O)c1ccc(Cl)cc1)C1OC(C(=O)[O-])C(O)C(O)C1O",
+   "smirks": "[#6:1]:[#6:2]1:[#6:3](:[#6:4]):[#6:5](-[#6:6]):[#6:7](-[#6:10]):[#7:8]:1-[#6:9]>>[#6:1]:[#6:2]1:[#6:3](:[#6:4])-[#6:5](-[#6:6])=[#6:7](-[#6:10])-[#7+:8]-1(-[#6:9])-[#6:11]1-[#8:12]-[#6:13](-[#6:14](=[#8:15])-[#8-:16])-[#6:17](-[#8:18])-[#6:19](-[#8:20])-[#6:21]-1-[#8:22]",
+   "rule_support": 0,
+   "type_support": 0,
    "in_stratum": false
   },
   {
@@ -136,18 +136,18 @@
   },
   {
    "substrate": "COc1ccc2c(c1)c(CC(=O)O)c(C)n2C(=O)c1ccc(Cl)cc1",
-   "metabolite": "COc1ccc2c(c1)C(CC(=O)O)=C(C)[N+]2(C(=O)c1ccc(Cl)cc1)C1OC(C(=O)[O-])C(O)C(O)C1O",
-   "smirks": "[#6:1]:[#6:2]1:[#6:3](:[#6:4]):[#6:5](-[#6:6]):[#6:7](-[#6:10]):[#7:8]:1-[#6:9]>>[#6:1]:[#6:2]1:[#6:3](:[#6:4])-[#6:5](-[#6:6])=[#6:7](-[#6:10])-[#7+:8]-1(-[#6:9])-[#6:11]1-[#8:12]-[#6:13](-[#6:14](=[#8:15])-[#8-:16])-[#6:17](-[#8:18])-[#6:19](-[#8:20])-[#6:21]-1-[#8:22]",
-   "rule_support": 0,
-   "type_support": 0,
+   "metabolite": "COc1cc2c(CC(=O)O)c(C)n(C(=O)c3ccc(Cl)cc3)c2cc1O",
+   "smirks": "[#6:1]:[#6:2]:[#6:3]>>[#6:1]:[#6:2](:[#6:3])-[#8:4]",
+   "rule_support": 69,
+   "type_support": 3747,
    "in_stratum": false
   },
   {
    "substrate": "COc1ccc2c(c1)c(CC(=O)O)c(C)n2C(=O)c1ccc(Cl)cc1",
-   "metabolite": "COc1ccc2c(c1)c(CC(=O)OC1OC(C(=O)O)C(O)C(O)C1O)c(C)n2C(=O)c1ccc(Cl)cc1",
-   "smirks": "[#6:1]-[#8:2]>>[#6:1]-[#8:2]-[#6:3]1-[#8:4]-[#6:5](-[#6:6](=[#8:7])-[#8:8])-[#6:9](-[#8:10])-[#6:11](-[#8:12])-[#6:13]-1-[#8:14]",
-   "rule_support": 1531,
-   "type_support": 2071,
+   "metabolite": "C=c1[nH]c2ccc(O)cc2c1=CC(=O)O",
+   "smirks": "[#6:11]-[#8:10]-[#6:9].[#6:4]1:[#6:5]:[#6:6](-[#6:7]-[#6:8]):[#6:2](-[#6:1]):[#7:3]:1-[#6:12](=[#8:13])-[#6:14]1:[#6:15]:[#6:16]:[#6:17](-[#17:18]):[#6:19]:[#6:20]:1>>[#6:1]=[#6:2]1:[#7H:3]:[#6:4]:[#6:5]:[#6:6]:1=[#6:7]-[#6:8].[#6:9]-[#8:10]",
+   "rule_support": 0,
+   "type_support": 0,
    "in_stratum": false
   },
   {
@@ -168,19 +168,19 @@
   },
   {
    "substrate": "N=C(O)CN=C(O)C1CCCN1C(=O)CN",
-   "metabolite": "N=C(O)C1CCCN1C(=O)CN",
-   "smirks": "[#7:3]=[#6:4](-[#8:5])-[#6:6]-[#7:1]=[#6:2]>>[#7:1]=[#6:2]",
-   "rule_support": 0,
-   "type_support": 16,
-   "in_stratum": true
-  },
-  {
-   "substrate": "N=C(O)CN=C(O)C1CCCN1C(=O)CN",
    "metabolite": "N=C(O)CN",
    "smirks": "[#6:1]-[#7:2]=[#6:3](-[#8:4])-[#6:5]1-[#6:6]-[#6:7]-[#6:8]-[#7:9]-1-[#6:10](=[#8:11])-[#6:12]-[#7:13]>>[#6:1]-[#7:2]",
    "rule_support": 0,
    "type_support": 1,
    "in_stratum": false
+  },
+  {
+   "substrate": "N=C(O)CN=C(O)C1CCCN1C(=O)CN",
+   "metabolite": "N=C(O)C1CCCN1C(=O)CN",
+   "smirks": "[#7:3]=[#6:4](-[#8:5])-[#6:6]-[#7:1]=[#6:2]>>[#7:1]=[#6:2]",
+   "rule_support": 0,
+   "type_support": 16,
+   "in_stratum": true
   },
   {
    "substrate": "COc1ccc(-c2oc3cc(O)cc(O)c3c(=O)c2OC)cc1OCc1ccccc1",
@@ -288,6 +288,14 @@
   },
   {
    "substrate": "CC(C)C1(C)SC(=NC2CC3CCC2C3)N=C1O",
+   "metabolite": "CC(C)C1(C)SC(=NC2CC3CC2CC3O)N=C1O",
+   "smirks": "[#6:1]-[#6:3]-[#6:2]>>[#6:1]-[#6:3](-[#6:2])-[#8:4]",
+   "rule_support": 71,
+   "type_support": 3747,
+   "in_stratum": false
+  },
+  {
+   "substrate": "CC(C)C1(C)SC(=NC2CC3CCC2C3)N=C1O",
    "metabolite": "CC(CO)C1(C)SC(=NC2CC3CCC2C3)N=C1O",
    "smirks": "[#6:1]-[#6:2]>>[#6:1]-[#6:2]-[#8:3]",
    "rule_support": 358,
@@ -296,17 +304,9 @@
   },
   {
    "substrate": "CC(C)C1(C)SC(=NC2CC3CCC2C3)N=C1O",
-   "metabolite": "CC(C)C1(C)SC(=NC2CC3CC2CC3=O)N=C1O",
-   "smirks": "[#6:1]-[#6:3]-[#6:2]>>[#6:1]-[#6:3](-[#6:2])=[#8:4]",
-   "rule_support": 1,
-   "type_support": 357,
-   "in_stratum": true
-  },
-  {
-   "substrate": "CC(C)C1(C)SC(=NC2CC3CCC2C3)N=C1O",
-   "metabolite": "CC(C)C1(C)SC(=NC2CC3CC2CC3O)N=C1O",
-   "smirks": "[#6:1]-[#6:3]-[#6:2]>>[#6:1]-[#6:3](-[#6:2])-[#8:4]",
-   "rule_support": 71,
+   "metabolite": "CC(C)(O)C1(C)SC(=NC2CC3CCC2C3)N=C1O",
+   "smirks": "[#6:1]-[#6:2](-[#6:3])-[#6:4]>>[#6:1]-[#6:2](-[#6:3])(-[#8:5])-[#6:4]",
+   "rule_support": 28,
    "type_support": 3747,
    "in_stratum": false
   },
@@ -320,11 +320,11 @@
   },
   {
    "substrate": "CC(C)C1(C)SC(=NC2CC3CCC2C3)N=C1O",
-   "metabolite": "CC(C)(O)C1(C)SC(=NC2CC3CCC2C3)N=C1O",
-   "smirks": "[#6:1]-[#6:2](-[#6:3])-[#6:4]>>[#6:1]-[#6:2](-[#6:3])(-[#8:5])-[#6:4]",
-   "rule_support": 28,
-   "type_support": 3747,
-   "in_stratum": false
+   "metabolite": "CC(C)C1(C)SC(=NC2CC3CC2CC3=O)N=C1O",
+   "smirks": "[#6:1]-[#6:3]-[#6:2]>>[#6:1]-[#6:3](-[#6:2])=[#8:4]",
+   "rule_support": 1,
+   "type_support": 357,
+   "in_stratum": true
   },
   {
    "substrate": "O=C(O)CCC(C=CCc1ccc(OCCCCOc2ccccc2)cc1)Sc1ccc(C(=O)O)cc1",
@@ -336,6 +336,14 @@
   },
   {
    "substrate": "CC1=CC(=NO)CCC1",
+   "metabolite": "CC1=CC(NO)(SCC(N=C(O)CCC(N)C(=O)O)C(O)=NCC(=O)O)CCC1",
+   "smirks": "[#6:1]-[#6:2](=[#7:3]-[#8:4])-[#6:5]>>[#6:1]-[#6:2](-[#7:3]-[#8:4])(-[#16:6]-[#6:7]-[#6:8](-[#7:9]=[#6:10](-[#8:11])-[#6:12]-[#6:13]-[#6:14](-[#7:15])-[#6:16](=[#8:17])-[#8:18])-[#6:19](-[#8:20])=[#7:21]-[#6:22]-[#6:23](=[#8:24])-[#8:25])-[#6:5]",
+   "rule_support": 0,
+   "type_support": 3,
+   "in_stratum": false
+  },
+  {
+   "substrate": "CC1=CC(=NO)CCC1",
    "metabolite": "CC12CCCC(=NO)C1O2",
    "smirks": "[#6:1]-[#6:2](=[#6:3]-[#6:4])-[#6:5]>>[#6:1]-[#6:2]1(-[#6:5])-[#6:3](-[#6:4])-[#8:6]-1",
    "rule_support": 1,
@@ -343,11 +351,11 @@
    "in_stratum": true
   },
   {
-   "substrate": "CC1=CC(=NO)CCC1",
-   "metabolite": "CC1=CC(NO)(SCC(N=C(O)CCC(N)C(=O)O)C(O)=NCC(=O)O)CCC1",
-   "smirks": "[#6:1]-[#6:2](=[#7:3]-[#8:4])-[#6:5]>>[#6:1]-[#6:2](-[#7:3]-[#8:4])(-[#16:6]-[#6:7]-[#6:8](-[#7:9]=[#6:10](-[#8:11])-[#6:12]-[#6:13]-[#6:14](-[#7:15])-[#6:16](=[#8:17])-[#8:18])-[#6:19](-[#8:20])=[#7:21]-[#6:22]-[#6:23](=[#8:24])-[#8:25])-[#6:5]",
+   "substrate": "COc1cc2c(c3oc(=O)c4c(c13)CCC4=O)C1C(O2)OC(n2c[n+](C3CC(O)C(CO)O3)c3[nH]c(=N)nc([O-])c32)C1O",
+   "metabolite": "COc1cc2c(c3oc(=O)c4c(c13)CCC4=O)C1C(O2)OC(n2cnc3[nH]c(=N)nc(O)c32)C1O",
+   "smirks": "[#6:1]:[#7+:2](-[#6:6]1-[#6:7]-[#6:8](-[#8:9])-[#6:10](-[#6:11]-[#8:12])-[#8:13]-1):[#6:3].[#6:4]-[#8-:5]>>[#6:1]:[#7:2]:[#6:3].[#6:4]-[#8:5]",
    "rule_support": 0,
-   "type_support": 3,
+   "type_support": 0,
    "in_stratum": false
   },
   {
@@ -359,9 +367,9 @@
    "in_stratum": false
   },
   {
-   "substrate": "COc1cc2c(c3oc(=O)c4c(c13)CCC4=O)C1C(O2)OC(n2c[n+](C3CC(O)C(CO)O3)c3[nH]c(=N)nc([O-])c32)C1O",
-   "metabolite": "COc1cc2c(c3oc(=O)c4c(c13)CCC4=O)C1C(O2)OC(n2cnc3[nH]c(=N)nc(O)c32)C1O",
-   "smirks": "[#6:1]:[#7+:2](-[#6:6]1-[#6:7]-[#6:8](-[#8:9])-[#6:10](-[#6:11]-[#8:12])-[#8:13]-1):[#6:3].[#6:4]-[#8-:5]>>[#6:1]:[#7:2]:[#6:3].[#6:4]-[#8:5]",
+   "substrate": "O=C(O)CCC(=O)OCC(N=C(O)C(Cl)Cl)C(O)c1ccc([N+](=O)[O-])cc1",
+   "metabolite": "CC(=O)OC(c1ccc([N+](=O)[O-])cc1)C(CO)N=C(O)C(Cl)Cl",
+   "smirks": "[#8:5]=[#6:6](-[#8:7])-[#6:8]-[#6:9]-[#6:10](=[#8:11])-[#8:4]-[#6:3].[#6:2]-[#8:1]>>[#6:12]-[#6:13](=[#8:14])-[#8:1]-[#6:2].[#6:3]-[#8:4]",
    "rule_support": 0,
    "type_support": 0,
    "in_stratum": false
@@ -376,32 +384,8 @@
   },
   {
    "substrate": "O=C(O)CCC(=O)OCC(N=C(O)C(Cl)Cl)C(O)c1ccc([N+](=O)[O-])cc1",
-   "metabolite": "O=[N+]([O-])c1ccc(C(O)C(CO)N=C(O)C(Cl)Cl)cc1",
-   "smirks": "[#8:3]=[#6:4](-[#8:5])-[#6:6]-[#6:7]-[#6:8](=[#8:9])-[#8:2]-[#6:1]>>[#6:1]-[#8:2]",
-   "rule_support": 0,
-   "type_support": 11,
-   "in_stratum": true
-  },
-  {
-   "substrate": "O=C(O)CCC(=O)OCC(N=C(O)C(Cl)Cl)C(O)c1ccc([N+](=O)[O-])cc1",
-   "metabolite": "CC(=O)OC(c1ccc([N+](=O)[O-])cc1)C(CO)N=C(O)C(Cl)Cl",
-   "smirks": "[#8:5]=[#6:6](-[#8:7])-[#6:8]-[#6:9]-[#6:10](=[#8:11])-[#8:4]-[#6:3].[#6:2]-[#8:1]>>[#6:12]-[#6:13](=[#8:14])-[#8:1]-[#6:2].[#6:3]-[#8:4]",
-   "rule_support": 0,
-   "type_support": 0,
-   "in_stratum": false
-  },
-  {
-   "substrate": "O=C(O)CCC(=O)OCC(N=C(O)C(Cl)Cl)C(O)c1ccc([N+](=O)[O-])cc1",
-   "metabolite": "Nc1ccc(C(O)C(N)CO)cc1",
-   "smirks": "[#8:7]=[#6:8](-[#8:9])-[#6:10]-[#6:11]-[#6:12](=[#8:13])-[#8:6]-[#6:5]-[#6:3]-[#7:4]=[#6:14](-[#8:15])-[#6:16](-[#17:17])-[#17:18].[#6:2]-[#7+:1](=[#8:19])-[#8-:20]>>[#7:1]-[#6:2].[#6:3](-[#7:4])-[#6:5]-[#8:6]",
-   "rule_support": 0,
-   "type_support": 0,
-   "in_stratum": false
-  },
-  {
-   "substrate": "O=C(O)CCC(=O)OCC(N=C(O)C(Cl)Cl)C(O)c1ccc([N+](=O)[O-])cc1",
-   "metabolite": "O=[N+]([O-])c1ccc(C(O)C(CO)N=C(O)CO)cc1",
-   "smirks": "[#8:5]=[#6:6](-[#8:7])-[#6:8]-[#6:9]-[#6:10](=[#8:11])-[#8:2]-[#6:1].[#6:3]-[#6:4](-[#17:12])-[#17:13]>>[#6:1]-[#8:2].[#6:3]-[#6:4]-[#8:14]",
+   "metabolite": "O=C(O)C(=O)NC(CO)C(O)c1ccc([N+](=O)[O-])cc1",
+   "smirks": "[#8:8]=[#6:9](-[#8:10])-[#6:11]-[#6:12]-[#6:13](=[#8:14])-[#8:7]-[#6:6]-[#6:5]-[#7:4]=[#6:2](-[#8:3])-[#6:1](-[#17:15])-[#17:16]>>[#8:17]=[#6:1](-[#8:18])-[#6:2](=[#8:3])-[#7:4]-[#6:5]-[#6:6]-[#8:7]",
    "rule_support": 0,
    "type_support": 0,
    "in_stratum": false
@@ -416,11 +400,27 @@
   },
   {
    "substrate": "O=C(O)CCC(=O)OCC(N=C(O)C(Cl)Cl)C(O)c1ccc([N+](=O)[O-])cc1",
-   "metabolite": "O=C(O)C(=O)NC(CO)C(O)c1ccc([N+](=O)[O-])cc1",
-   "smirks": "[#8:8]=[#6:9](-[#8:10])-[#6:11]-[#6:12]-[#6:13](=[#8:14])-[#8:7]-[#6:6]-[#6:5]-[#7:4]=[#6:2](-[#8:3])-[#6:1](-[#17:15])-[#17:16]>>[#8:17]=[#6:1](-[#8:18])-[#6:2](=[#8:3])-[#7:4]-[#6:5]-[#6:6]-[#8:7]",
+   "metabolite": "O=[N+]([O-])c1ccc(C(O)C(CO)N=C(O)CO)cc1",
+   "smirks": "[#8:5]=[#6:6](-[#8:7])-[#6:8]-[#6:9]-[#6:10](=[#8:11])-[#8:2]-[#6:1].[#6:3]-[#6:4](-[#17:12])-[#17:13]>>[#6:1]-[#8:2].[#6:3]-[#6:4]-[#8:14]",
    "rule_support": 0,
    "type_support": 0,
    "in_stratum": false
+  },
+  {
+   "substrate": "O=C(O)CCC(=O)OCC(N=C(O)C(Cl)Cl)C(O)c1ccc([N+](=O)[O-])cc1",
+   "metabolite": "Nc1ccc(C(O)C(N)CO)cc1",
+   "smirks": "[#8:7]=[#6:8](-[#8:9])-[#6:10]-[#6:11]-[#6:12](=[#8:13])-[#8:6]-[#6:5]-[#6:3]-[#7:4]=[#6:14](-[#8:15])-[#6:16](-[#17:17])-[#17:18].[#6:2]-[#7+:1](=[#8:19])-[#8-:20]>>[#7:1]-[#6:2].[#6:3](-[#7:4])-[#6:5]-[#8:6]",
+   "rule_support": 0,
+   "type_support": 0,
+   "in_stratum": false
+  },
+  {
+   "substrate": "O=C(O)CCC(=O)OCC(N=C(O)C(Cl)Cl)C(O)c1ccc([N+](=O)[O-])cc1",
+   "metabolite": "O=[N+]([O-])c1ccc(C(O)C(CO)N=C(O)C(Cl)Cl)cc1",
+   "smirks": "[#8:3]=[#6:4](-[#8:5])-[#6:6]-[#6:7]-[#6:8](=[#8:9])-[#8:2]-[#6:1]>>[#6:1]-[#8:2]",
+   "rule_support": 0,
+   "type_support": 11,
+   "in_stratum": true
   },
   {
    "substrate": "NC(CO)C(O)c1ccc([N+](=O)[O-])cc1",
@@ -456,26 +456,10 @@
   },
   {
    "substrate": "O=[N+]([O-])c1ccc(C(O)C(CO)N=C(O)C(Cl)Cl)cc1",
-   "metabolite": "CC(O)=Nc1ccc(C(O)C(CO)N=C(O)C(Cl)Cl)cc1",
-   "smirks": "[#8:3]=[#7+:1](-[#8-:4])-[#6:2]>>[#6:5]-[#6:6](-[#8:7])=[#7:1]-[#6:2]",
-   "rule_support": 0,
-   "type_support": 0,
-   "in_stratum": false
-  },
-  {
-   "substrate": "O=[N+]([O-])c1ccc(C(O)C(CO)N=C(O)C(Cl)Cl)cc1",
-   "metabolite": "NC(CO)C(O)c1ccc([N+](=O)[O-])cc1",
-   "smirks": "[#6:2]-[#7:1]=[#6:3](-[#8:4])-[#6:5](-[#17:6])-[#17:7]>>[#7:1]-[#6:2]",
-   "rule_support": 0,
-   "type_support": 1,
-   "in_stratum": false
-  },
-  {
-   "substrate": "O=[N+]([O-])c1ccc(C(O)C(CO)N=C(O)C(Cl)Cl)cc1",
-   "metabolite": "O=C(O)C(=O)NC(CO)C(O)c1ccc([N+](=O)[O-])cc1",
-   "smirks": "[#6:1]-[#7:2]=[#6:3](-[#8:4])-[#6:5](-[#17:6])-[#17:7]>>[#8:8]=[#6:5](-[#8:9])-[#6:3](=[#8:4])-[#7:2]-[#6:1]",
-   "rule_support": 0,
-   "type_support": 0,
+   "metabolite": "CC(=O)OC(c1ccc([N+](=O)[O-])cc1)C(CO)N=C(O)C(Cl)Cl",
+   "smirks": "[#6:1]-[#8:2]>>[#6:3]-[#6:4](=[#8:5])-[#8:2]-[#6:1]",
+   "rule_support": 5,
+   "type_support": 22,
    "in_stratum": false
   },
   {
@@ -496,10 +480,50 @@
   },
   {
    "substrate": "O=[N+]([O-])c1ccc(C(O)C(CO)N=C(O)C(Cl)Cl)cc1",
-   "metabolite": "CC(=O)OC(c1ccc([N+](=O)[O-])cc1)C(CO)N=C(O)C(Cl)Cl",
+   "metabolite": "CC(O)=Nc1ccc(C(O)C(CO)N=C(O)C(Cl)Cl)cc1",
+   "smirks": "[#8:3]=[#7+:1](-[#8-:4])-[#6:2]>>[#6:5]-[#6:6](-[#8:7])=[#7:1]-[#6:2]",
+   "rule_support": 0,
+   "type_support": 0,
+   "in_stratum": false
+  },
+  {
+   "substrate": "O=[N+]([O-])c1ccc(C(O)C(CO)N=C(O)C(Cl)Cl)cc1",
+   "metabolite": "CC(=O)OCC(N=C(O)C(Cl)Cl)C(O)c1ccc([N+](=O)[O-])cc1",
    "smirks": "[#6:1]-[#8:2]>>[#6:3]-[#6:4](=[#8:5])-[#8:2]-[#6:1]",
    "rule_support": 5,
    "type_support": 22,
+   "in_stratum": false
+  },
+  {
+   "substrate": "O=[N+]([O-])c1ccc(C(O)C(CO)N=C(O)C(Cl)Cl)cc1",
+   "metabolite": "O=[N+]([O-])c1ccc(C(O)C(CO)N=C(O)CO)cc1",
+   "smirks": "[#6:1]-[#6:2](-[#17:3])-[#17:4]>>[#6:1]-[#6:2]-[#8:5]",
+   "rule_support": 0,
+   "type_support": 0,
+   "in_stratum": false
+  },
+  {
+   "substrate": "O=[N+]([O-])c1ccc(C(O)C(CO)N=C(O)C(Cl)Cl)cc1",
+   "metabolite": "O=C(O)C(=O)NC(CO)C(O)c1ccc([N+](=O)[O-])cc1",
+   "smirks": "[#6:1]-[#7:2]=[#6:3](-[#8:4])-[#6:5](-[#17:6])-[#17:7]>>[#8:8]=[#6:5](-[#8:9])-[#6:3](=[#8:4])-[#7:2]-[#6:1]",
+   "rule_support": 0,
+   "type_support": 0,
+   "in_stratum": false
+  },
+  {
+   "substrate": "O=[N+]([O-])c1ccc(C(O)C(CO)N=C(O)C(Cl)Cl)cc1",
+   "metabolite": "O=[N+]([O-])c1ccc(C(O)CCO)cc1",
+   "smirks": "[#6:1]-[#6:2](-[#6:3])-[#7:4]=[#6:5](-[#8:6])-[#6:7](-[#17:8])-[#17:9]>>[#6:1]-[#6:2]-[#6:3]",
+   "rule_support": 0,
+   "type_support": 0,
+   "in_stratum": false
+  },
+  {
+   "substrate": "O=[N+]([O-])c1ccc(C(O)C(CO)N=C(O)C(Cl)Cl)cc1",
+   "metabolite": "CCCC(=O)OCC(N=C(O)C(Cl)Cl)C(O)c1ccc([N+](=O)[O-])cc1",
+   "smirks": "[#6:1]-[#8:2]>>[#6:3]-[#6:4]-[#6:5]-[#6:6](=[#8:7])-[#8:2]-[#6:1]",
+   "rule_support": 0,
+   "type_support": 0,
    "in_stratum": false
   },
   {
@@ -520,34 +544,10 @@
   },
   {
    "substrate": "O=[N+]([O-])c1ccc(C(O)C(CO)N=C(O)C(Cl)Cl)cc1",
-   "metabolite": "O=[N+]([O-])c1ccc(C(O)CCO)cc1",
-   "smirks": "[#6:1]-[#6:2](-[#6:3])-[#7:4]=[#6:5](-[#8:6])-[#6:7](-[#17:8])-[#17:9]>>[#6:1]-[#6:2]-[#6:3]",
+   "metabolite": "NC(CO)C(O)c1ccc([N+](=O)[O-])cc1",
+   "smirks": "[#6:2]-[#7:1]=[#6:3](-[#8:4])-[#6:5](-[#17:6])-[#17:7]>>[#7:1]-[#6:2]",
    "rule_support": 0,
-   "type_support": 0,
-   "in_stratum": false
-  },
-  {
-   "substrate": "O=[N+]([O-])c1ccc(C(O)C(CO)N=C(O)C(Cl)Cl)cc1",
-   "metabolite": "O=[N+]([O-])c1ccc(C(O)C(CO)N=C(O)CO)cc1",
-   "smirks": "[#6:1]-[#6:2](-[#17:3])-[#17:4]>>[#6:1]-[#6:2]-[#8:5]",
-   "rule_support": 0,
-   "type_support": 0,
-   "in_stratum": false
-  },
-  {
-   "substrate": "O=[N+]([O-])c1ccc(C(O)C(CO)N=C(O)C(Cl)Cl)cc1",
-   "metabolite": "CC(=O)OCC(N=C(O)C(Cl)Cl)C(O)c1ccc([N+](=O)[O-])cc1",
-   "smirks": "[#6:1]-[#8:2]>>[#6:3]-[#6:4](=[#8:5])-[#8:2]-[#6:1]",
-   "rule_support": 5,
-   "type_support": 22,
-   "in_stratum": false
-  },
-  {
-   "substrate": "O=[N+]([O-])c1ccc(C(O)C(CO)N=C(O)C(Cl)Cl)cc1",
-   "metabolite": "CCCC(=O)OCC(N=C(O)C(Cl)Cl)C(O)c1ccc([N+](=O)[O-])cc1",
-   "smirks": "[#6:1]-[#8:2]>>[#6:3]-[#6:4]-[#6:5]-[#6:6](=[#8:7])-[#8:2]-[#6:1]",
-   "rule_support": 0,
-   "type_support": 0,
+   "type_support": 1,
    "in_stratum": false
   },
   {
@@ -576,19 +576,19 @@
   },
   {
    "substrate": "CCCOc1ccc(S(=O)(=O)NCCC2CCCN2C)cc1-c1nc2c(CCC)nn(C)c2c(=O)[nH]1",
-   "metabolite": "CCCOc1ccc(S(N)(=O)=O)cc1-c1nc2c(CCC)nn(C)c2c(=O)[nH]1",
-   "smirks": "[#16:1]-[#7:2]-[#6:3]-[#6:4]-[#6:5]1-[#6:6]-[#6:7]-[#6:8]-[#7:9]-1-[#6:10]>>[#16:1]-[#7:2]",
-   "rule_support": 0,
-   "type_support": 2,
-   "in_stratum": false
-  },
-  {
-   "substrate": "CCCOc1ccc(S(=O)(=O)NCCC2CCCN2C)cc1-c1nc2c(CCC)nn(C)c2c(=O)[nH]1",
    "metabolite": "CCCOc1ccc(S(=O)(=O)NCCC2CCCN2C)cc1-c1nc2c(CCC)[nH]nc2c(=O)[nH]1",
    "smirks": "[#6:1]:[#7:2]:[#7:3](-[#6:5]):[#6:4]>>[#6:1]:[#7H:2]:[#7:3]:[#6:4]",
    "rule_support": 1,
    "type_support": 416,
    "in_stratum": true
+  },
+  {
+   "substrate": "CCCOc1ccc(S(=O)(=O)NCCC2CCCN2C)cc1-c1nc2c(CCC)nn(C)c2c(=O)[nH]1",
+   "metabolite": "CCCOc1ccc(S(N)(=O)=O)cc1-c1nc2c(CCC)nn(C)c2c(=O)[nH]1",
+   "smirks": "[#16:1]-[#7:2]-[#6:3]-[#6:4]-[#6:5]1-[#6:6]-[#6:7]-[#6:8]-[#7:9]-1-[#6:10]>>[#16:1]-[#7:2]",
+   "rule_support": 0,
+   "type_support": 2,
+   "in_stratum": false
   },
   {
    "substrate": "COc1ccc([Se]CC(N)C(=O)O)cc1",
@@ -608,18 +608,18 @@
   },
   {
    "substrate": "COc1ccc2c(c1)c(CC(O)=NCCc1ccccc1)c(C)n2C(=O)c1ccc(Cl)cc1",
-   "metabolite": "COc1ccc2c(c1)c(CC(O)=NCC(O)c1ccccc1)c(C)n2C(=O)c1ccc(Cl)cc1",
-   "smirks": "[#6:1]-[#6:2]-[#6:3]>>[#6:1]-[#6:2](-[#8:4])-[#6:3]",
-   "rule_support": 703,
-   "type_support": 3747,
-   "in_stratum": false
-  },
-  {
-   "substrate": "COc1ccc2c(c1)c(CC(O)=NCCc1ccccc1)c(C)n2C(=O)c1ccc(Cl)cc1",
    "metabolite": "Cc1c(CC(O)=NCCc2ccccc2)c2cc(O)ccc2n1C(=O)c1ccc(Cl)cc1",
    "smirks": "[#6:3]-[#8:2]-[#6:1]>>[#6:1]-[#8:2]",
    "rule_support": 252,
    "type_support": 505,
+   "in_stratum": false
+  },
+  {
+   "substrate": "COc1ccc2c(c1)c(CC(O)=NCCc1ccccc1)c(C)n2C(=O)c1ccc(Cl)cc1",
+   "metabolite": "COc1ccc2c(c1)c(CC(O)=NCC(O)c1ccccc1)c(C)n2C(=O)c1ccc(Cl)cc1",
+   "smirks": "[#6:1]-[#6:2]-[#6:3]>>[#6:1]-[#6:2](-[#8:4])-[#6:3]",
+   "rule_support": 703,
+   "type_support": 3747,
    "in_stratum": false
   },
   {
@@ -640,6 +640,14 @@
   },
   {
    "substrate": "CN1C(=O)C=CC2(C)C3CCC4(C)C(C(O)=Nc5ccccc5C(F)(F)F)CCC4C3CCC12",
+   "metabolite": "CC12C=CC(=O)N(CO)C1CCC1C2CCC2(C)C(C(O)=Nc3ccccc3C(F)(F)F)CCC12",
+   "smirks": "[#6:1]-[#7:2]>>[#7:2]-[#6:1]-[#8:3]",
+   "rule_support": 10,
+   "type_support": 3747,
+   "in_stratum": false
+  },
+  {
+   "substrate": "CN1C(=O)C=CC2(C)C3CCC4(C)C(C(O)=Nc5ccccc5C(F)(F)F)CCC4C3CCC12",
    "metabolite": "CN1C(=O)C=CC2(C)C3CCC4(C)C(C(O)=Nc5ccccc5C(F)(F)F)CCC4C3CC(O)C12",
    "smirks": "[#6:3]-[#6:2]-[#6:1]>>[#6:3]-[#6:2](-[#8:4])-[#6:1]",
    "rule_support": 77,
@@ -648,9 +656,9 @@
   },
   {
    "substrate": "CN1C(=O)C=CC2(C)C3CCC4(C)C(C(O)=Nc5ccccc5C(F)(F)F)CCC4C3CCC12",
-   "metabolite": "CC12C=CC(=O)N(CO)C1CCC1C2CCC2(C)C(C(O)=Nc3ccccc3C(F)(F)F)CCC12",
-   "smirks": "[#6:1]-[#7:2]>>[#7:2]-[#6:1]-[#8:3]",
-   "rule_support": 10,
+   "metabolite": "CN1C(=O)C=CC2(C)C3CCC4(C)C(C(O)=Nc5ccc(O)cc5C(F)(F)F)CCC4C3CCC12",
+   "smirks": "[#6:1]:[#6:2]:[#6:3]>>[#6:1]:[#6:2](-[#8:4]):[#6:3]",
+   "rule_support": 790,
    "type_support": 3747,
    "in_stratum": false
   },
@@ -661,14 +669,6 @@
    "rule_support": 1,
    "type_support": 44,
    "in_stratum": true
-  },
-  {
-   "substrate": "CN1C(=O)C=CC2(C)C3CCC4(C)C(C(O)=Nc5ccccc5C(F)(F)F)CCC4C3CCC12",
-   "metabolite": "CN1C(=O)C=CC2(C)C3CCC4(C)C(C(O)=Nc5ccc(O)cc5C(F)(F)F)CCC4C3CCC12",
-   "smirks": "[#6:1]:[#6:2]:[#6:3]>>[#6:1]:[#6:2](-[#8:4]):[#6:3]",
-   "rule_support": 790,
-   "type_support": 3747,
-   "in_stratum": false
   },
   {
    "substrate": "CC12C=CC(=O)N(CO)C1CCC1C2CCC2(C)C(C(O)=Nc3ccccc3C(F)(F)F)CCC12",
@@ -720,14 +720,6 @@
   },
   {
    "substrate": "CNS(=O)(=O)Cc1ccc2[nH]cc(CCN(C)C)c2c1",
-   "metabolite": "CNS(=O)(=O)Cc1ccc2[nH]cc(CCO)c2c1",
-   "smirks": "[#6:1]-[#6:2]-[#7:3](-[#6:4])-[#6:5]>>[#6:1]-[#6:2]-[#8:6]",
-   "rule_support": 2,
-   "type_support": 13,
-   "in_stratum": true
-  },
-  {
-   "substrate": "CNS(=O)(=O)Cc1ccc2[nH]cc(CCN(C)C)c2c1",
    "metabolite": "O=C(NCCO)C(=O)NC(CO)C(O)c1ccc([N+](=O)[O-])cc1",
    "smirks": null,
    "rule_support": null,
@@ -743,6 +735,14 @@
    "in_stratum": true
   },
   {
+   "substrate": "CNS(=O)(=O)Cc1ccc2[nH]cc(CCN(C)C)c2c1",
+   "metabolite": "CNS(=O)(=O)Cc1ccc2[nH]cc(CCO)c2c1",
+   "smirks": "[#6:1]-[#6:2]-[#7:3](-[#6:4])-[#6:5]>>[#6:1]-[#6:2]-[#8:6]",
+   "rule_support": 2,
+   "type_support": 13,
+   "in_stratum": true
+  },
+  {
    "substrate": "CNS(=O)(=O)Cc1ccc2[nH]cc(CCO)c2c1",
    "metabolite": "CNS(=O)(=O)Cc1ccc2[nH]cc(CC(=O)O)c2c1",
    "smirks": "[#6:1]-[#6:2]-[#8:3]>>[#6:1]-[#6:2](=[#8:4])-[#8:3]",
@@ -752,16 +752,16 @@
   },
   {
    "substrate": "C=CC1=C(C)C(=Cc2[nH]c(Cc3[nH]c(C=c4[nH]c(O)c(C)c4=CC)c(C)c3C=CC(=O)O)c(CCC(=O)O)c2C)NC1=O",
-   "metabolite": "C=CC1=C(C)C(Cc2[nH]c(Cc3[nH]c(CC4=NC(=O)C(=C)C4=CC)c(C)c3CCC(=O)OC3OC(C(=O)O)C(O)C(O)C3O)c(CCC(=O)O)c2C)=NC1=O",
-   "smirks": "[#6:1]-[#6:2](=[#6:5]-[#6:6])-[#7:3]-[#6:4].[#6:7]-[#6:13]=[#6:14]1:[#7H:15]:[#6:16](-[#8:21]):[#6:17](-[#6:20]):[#6:18]:1=[#6:19].[#6:8]-[#6:9]=[#6:10]-[#6:11]-[#8:12]>>[#6:1]-[#6:2](-[#6:5]-[#6:6])=[#7:3]-[#6:4].[#6:7]-[#6:13]-[#6:14]1=[#7:15]-[#6:16](=[#8:21])-[#6:17](=[#6:20])-[#6:18]-1=[#6:19].[#6:8]-[#6:9]-[#6:10]-[#6:11]-[#8:12]-[#6:22]1-[#8:23]-[#6:24](-[#6:25](=[#8:26])-[#8:27])-[#6:28](-[#8:29])-[#6:30](-[#8:31])-[#6:32]-1-[#8:33]",
+   "metabolite": "C=CC1=C(C)C(Cc2[nH]c(Cc3[nH]c(CC4=NC(=O)C(=C)C4=CC)c(C)c3CCC(=O)O)c(CCC(=O)OC3OC(C(=O)O)C(O)C(O)C3O)c2C)=NC1=O",
+   "smirks": "[#6:1]-[#6:2](=[#6:5]-[#6:6])-[#7:3]-[#6:4].[#6:9]-[#6:14]=[#6:15]1:[#7H:16]:[#6:17](-[#8:22]):[#6:18](-[#6:21]):[#6:19]:1=[#6:20].[#6:10]-[#6:11]=[#6:12]-[#6:13].[#6:7]-[#8:8]>>[#6:1]-[#6:2](-[#6:5]-[#6:6])=[#7:3]-[#6:4].[#6:9]-[#6:14]-[#6:15]1=[#7:16]-[#6:17](=[#8:22])-[#6:18](=[#6:21])-[#6:19]-1=[#6:20].[#6:10]-[#6:11]-[#6:12]-[#6:13].[#6:7]-[#8:8]-[#6:23]1-[#8:24]-[#6:25](-[#6:26](=[#8:27])-[#8:28])-[#6:29](-[#8:30])-[#6:31](-[#8:32])-[#6:33]-1-[#8:34]",
    "rule_support": 0,
    "type_support": 0,
    "in_stratum": false
   },
   {
    "substrate": "C=CC1=C(C)C(=Cc2[nH]c(Cc3[nH]c(C=c4[nH]c(O)c(C)c4=CC)c(C)c3C=CC(=O)O)c(CCC(=O)O)c2C)NC1=O",
-   "metabolite": "C=CC1=C(C)C(Cc2[nH]c(Cc3[nH]c(CC4=NC(=O)C(=C)C4=CC)c(C)c3CCC(=O)O)c(CCC(=O)OC3OC(C(=O)O)C(O)C(O)C3O)c2C)=NC1=O",
-   "smirks": "[#6:1]-[#6:2](=[#6:5]-[#6:6])-[#7:3]-[#6:4].[#6:9]-[#6:14]=[#6:15]1:[#7H:16]:[#6:17](-[#8:22]):[#6:18](-[#6:21]):[#6:19]:1=[#6:20].[#6:10]-[#6:11]=[#6:12]-[#6:13].[#6:7]-[#8:8]>>[#6:1]-[#6:2](-[#6:5]-[#6:6])=[#7:3]-[#6:4].[#6:9]-[#6:14]-[#6:15]1=[#7:16]-[#6:17](=[#8:22])-[#6:18](=[#6:21])-[#6:19]-1=[#6:20].[#6:10]-[#6:11]-[#6:12]-[#6:13].[#6:7]-[#8:8]-[#6:23]1-[#8:24]-[#6:25](-[#6:26](=[#8:27])-[#8:28])-[#6:29](-[#8:30])-[#6:31](-[#8:32])-[#6:33]-1-[#8:34]",
+   "metabolite": "C=CC1=C(C)C(Cc2[nH]c(Cc3[nH]c(CC4=NC(=O)C(=C)C4=CC)c(C)c3CCC(=O)OC3OC(C(=O)O)C(O)C(O)C3O)c(CCC(=O)O)c2C)=NC1=O",
+   "smirks": "[#6:1]-[#6:2](=[#6:5]-[#6:6])-[#7:3]-[#6:4].[#6:7]-[#6:13]=[#6:14]1:[#7H:15]:[#6:16](-[#8:21]):[#6:17](-[#6:20]):[#6:18]:1=[#6:19].[#6:8]-[#6:9]=[#6:10]-[#6:11]-[#8:12]>>[#6:1]-[#6:2](-[#6:5]-[#6:6])=[#7:3]-[#6:4].[#6:7]-[#6:13]-[#6:14]1=[#7:15]-[#6:16](=[#8:21])-[#6:17](=[#6:20])-[#6:18]-1=[#6:19].[#6:8]-[#6:9]-[#6:10]-[#6:11]-[#8:12]-[#6:22]1-[#8:23]-[#6:24](-[#6:25](=[#8:26])-[#8:27])-[#6:28](-[#8:29])-[#6:30](-[#8:31])-[#6:32]-1-[#8:33]",
    "rule_support": 0,
    "type_support": 0,
    "in_stratum": false
@@ -840,19 +840,19 @@
   },
   {
    "substrate": "CCCCCCCCCC(=O)OC(COC(=O)CCCCCCCCCc1ccc2ccc3cccc4ccc1c2c34)COP(=O)([O-])OCC[N+](C)(C)C",
-   "metabolite": "C[N+](C)(C)CCOP(=O)([O-])OCC(O)COC(=O)CCCCCCCCCc1ccc2ccc3cccc4ccc1c2c34",
-   "smirks": "[#6:3]-[#6:4]-[#6:5]-[#6:6]-[#6:7]-[#6:8]-[#6:9]-[#6:10]-[#6:11]-[#6:12](=[#8:13])-[#8:2]-[#6:1]>>[#6:1]-[#8:2]",
-   "rule_support": 4,
-   "type_support": 5,
-   "in_stratum": true
-  },
-  {
-   "substrate": "CCCCCCCCCC(=O)OC(COC(=O)CCCCCCCCCc1ccc2ccc3cccc4ccc1c2c34)COP(=O)([O-])OCC[N+](C)(C)C",
    "metabolite": "O=C(O)CCCCCCCCCc1ccc2ccc3cccc4ccc1c2c34",
    "smirks": "[#6:5]-[#6:6]-[#6:7]-[#6:8]-[#6:9]-[#6:10]-[#6:11]-[#6:12]-[#6:13]-[#6:14](=[#8:15])-[#8:16]-[#6:17](-[#6:18]-[#8:1]-[#6:2](=[#8:3])-[#6:4])-[#6:19]-[#8:20]-[#15:21](=[#8:22])(-[#8-:23])-[#8:24]-[#6:25]-[#6:26]-[#7+:27](-[#6:28])(-[#6:29])-[#6:30]>>[#8:1]=[#6:2](-[#8:3])-[#6:4]",
    "rule_support": 0,
    "type_support": 1,
    "in_stratum": false
+  },
+  {
+   "substrate": "CCCCCCCCCC(=O)OC(COC(=O)CCCCCCCCCc1ccc2ccc3cccc4ccc1c2c34)COP(=O)([O-])OCC[N+](C)(C)C",
+   "metabolite": "C[N+](C)(C)CCOP(=O)([O-])OCC(O)COC(=O)CCCCCCCCCc1ccc2ccc3cccc4ccc1c2c34",
+   "smirks": "[#6:3]-[#6:4]-[#6:5]-[#6:6]-[#6:7]-[#6:8]-[#6:9]-[#6:10]-[#6:11]-[#6:12](=[#8:13])-[#8:2]-[#6:1]>>[#6:1]-[#8:2]",
+   "rule_support": 4,
+   "type_support": 5,
+   "in_stratum": true
   },
   {
    "substrate": "CC(C=CC12OC1(C)CCCC2(C)C)=CC=CC(C)=CC(=O)O",
@@ -864,10 +864,10 @@
   },
   {
    "substrate": "CC(C)CC(N=C(O)C(Cc1c[nH]c2ccccc12)N=C(O)C(N=C(O)C(C)N=C(O)CCCCCNC(=O)c1ccc(-c2c3nc(c(-c4ccccc4)c4ccc([nH]4)c(-c4ccccc4)c4ccc([nH]4)c(-c4ccccc4)c4nc2CC4)C=C3)cc1)C(C)O)C(=O)N1CCCC1C(=O)N1CCCC1C(O)=NC(CCCNC(=N)N)C(=O)O",
-   "metabolite": "CC(N=C(O)CCCCCNC(=O)c1ccc(-c2c3nc(c(-c4ccccc4)c4ccc([nH]4)c(-c4ccccc4)c4ccc([nH]4)c(-c4ccccc4)c4nc2CC4)C=C3)cc1)C(O)=NC(C(=O)O)C(C)O",
-   "smirks": "[#6:4]-[#6:5](-[#6:6])-[#6:7]-[#6:8](-[#7:9]=[#6:10](-[#8:11])-[#6:12](-[#6:13]-[#6:14]1:[#6:15]:[#7H:16]:[#6:17]2:[#6:18]:[#6:19]:[#6:20]:[#6:21]:[#6:22]:1:2)-[#7:23]=[#6:2](-[#8:3])-[#6:1])-[#6:24](=[#8:25])-[#7:26]1-[#6:27]-[#6:28]-[#6:29]-[#6:30]-1-[#6:31](=[#8:32])-[#7:33]1-[#6:34]-[#6:35]-[#6:36]-[#6:37]-1-[#6:38](-[#8:39])=[#7:40]-[#6:41](-[#6:42]-[#6:43]-[#6:44]-[#7:45]-[#6:46](=[#7:47])-[#7:48])-[#6:49](=[#8:50])-[#8:51]>>[#6:1]-[#6:2](=[#8:52])-[#8:3]",
-   "rule_support": 0,
-   "type_support": 0,
+   "metabolite": "CC(C)CC(N=C(O)C(Cc1c[nH]c2ccccc12)N=C(O)C(N=C(O)C(C)N=C(O)CCCCCNC(=O)c1ccc(-c2c3nc(c(-c4ccccc4)c4ccc([nH]4)c(-c4ccccc4)c4ccc([nH]4)c(-c4ccccc4)c4nc2CC4)C=C3)cc1)C(C)O)C(=O)N1CCCC1C(=O)N1CCCC1C(=O)O",
+   "smirks": "[#6:1]-[#6:2](-[#8:3])=[#7:4]-[#6:5](-[#6:6]-[#6:7]-[#6:8]-[#7:9]-[#6:10](=[#7:11])-[#7:12])-[#6:13](=[#8:14])-[#8:15]>>[#6:1]-[#6:2](=[#8:16])-[#8:3]",
+   "rule_support": 1,
+   "type_support": 2,
    "in_stratum": false
   },
   {
@@ -880,10 +880,10 @@
   },
   {
    "substrate": "CC(C)CC(N=C(O)C(Cc1c[nH]c2ccccc12)N=C(O)C(N=C(O)C(C)N=C(O)CCCCCNC(=O)c1ccc(-c2c3nc(c(-c4ccccc4)c4ccc([nH]4)c(-c4ccccc4)c4ccc([nH]4)c(-c4ccccc4)c4nc2CC4)C=C3)cc1)C(C)O)C(=O)N1CCCC1C(=O)N1CCCC1C(O)=NC(CCCNC(=N)N)C(=O)O",
-   "metabolite": "CC(C)CC(N=C(O)C(Cc1c[nH]c2ccccc12)N=C(O)C(N=C(O)C(C)N=C(O)CCCCCNC(=O)c1ccc(-c2c3nc(c(-c4ccccc4)c4ccc([nH]4)c(-c4ccccc4)c4ccc([nH]4)c(-c4ccccc4)c4nc2CC4)C=C3)cc1)C(C)O)C(=O)N1CCCC1C(=O)N1CCCC1C(=O)O",
-   "smirks": "[#6:1]-[#6:2](-[#8:3])=[#7:4]-[#6:5](-[#6:6]-[#6:7]-[#6:8]-[#7:9]-[#6:10](=[#7:11])-[#7:12])-[#6:13](=[#8:14])-[#8:15]>>[#6:1]-[#6:2](=[#8:16])-[#8:3]",
-   "rule_support": 1,
-   "type_support": 2,
+   "metabolite": "CC(N=C(O)CCCCCNC(=O)c1ccc(-c2c3nc(c(-c4ccccc4)c4ccc([nH]4)c(-c4ccccc4)c4ccc([nH]4)c(-c4ccccc4)c4nc2CC4)C=C3)cc1)C(O)=NC(C(=O)O)C(C)O",
+   "smirks": "[#6:4]-[#6:5](-[#6:6])-[#6:7]-[#6:8](-[#7:9]=[#6:10](-[#8:11])-[#6:12](-[#6:13]-[#6:14]1:[#6:15]:[#7H:16]:[#6:17]2:[#6:18]:[#6:19]:[#6:20]:[#6:21]:[#6:22]:1:2)-[#7:23]=[#6:2](-[#8:3])-[#6:1])-[#6:24](=[#8:25])-[#7:26]1-[#6:27]-[#6:28]-[#6:29]-[#6:30]-1-[#6:31](=[#8:32])-[#7:33]1-[#6:34]-[#6:35]-[#6:36]-[#6:37]-1-[#6:38](-[#8:39])=[#7:40]-[#6:41](-[#6:42]-[#6:43]-[#6:44]-[#7:45]-[#6:46](=[#7:47])-[#7:48])-[#6:49](=[#8:50])-[#8:51]>>[#6:1]-[#6:2](=[#8:52])-[#8:3]",
+   "rule_support": 0,
+   "type_support": 0,
    "in_stratum": false
   },
   {
@@ -904,19 +904,19 @@
   },
   {
    "substrate": "OC(=NCC1CCCCN1)c1cc(O)ccc1OCC(F)(F)F",
-   "metabolite": "OC1=NC(CN=C(O)c2cc(O)ccc2OCC(F)(F)F)CCC1",
-   "smirks": "[#6:1]-[#7:4]-[#6:3]-[#6:2]>>[#8:5]-[#6:3](=[#7:4]-[#6:1])-[#6:2]",
-   "rule_support": 0,
-   "type_support": 30,
-   "in_stratum": true
-  },
-  {
-   "substrate": "OC(=NCC1CCCCN1)c1cc(O)ccc1OCC(F)(F)F",
    "metabolite": "O=C(O)C1OC(Oc2ccc(OCC(F)(F)F)c(C(O)=NCC3CCCCN3)c2)C(O)C(O)C1O",
    "smirks": "[#6:1]-[#8:2]>>[#8:3]=[#6:4](-[#8:5])-[#6:6]1-[#8:7]-[#6:8](-[#8:2]-[#6:1])-[#6:9](-[#8:10])-[#6:11](-[#8:12])-[#6:13]-1-[#8:14]",
    "rule_support": 356,
    "type_support": 2071,
    "in_stratum": false
+  },
+  {
+   "substrate": "OC(=NCC1CCCCN1)c1cc(O)ccc1OCC(F)(F)F",
+   "metabolite": "OC1=NC(CN=C(O)c2cc(O)ccc2OCC(F)(F)F)CCC1",
+   "smirks": "[#6:1]-[#7:4]-[#6:3]-[#6:2]>>[#8:5]-[#6:3](=[#7:4]-[#6:1])-[#6:2]",
+   "rule_support": 0,
+   "type_support": 30,
+   "in_stratum": true
   },
   {
    "substrate": "OC1=NC(CN=C(O)c2cc(O)ccc2OCC(F)(F)F)CCC1",
@@ -1024,6 +1024,14 @@
   },
   {
    "substrate": "Cc1ccsc1-c1ccc(C(C)C(=O)O)cc1",
+   "metabolite": "Cc1cc(O)sc1-c1ccc(C(C)C(=O)O)cc1",
+   "smirks": "[#6:1]:[#6:2]:[#16:3]>>[#6:1]:[#6:2](-[#8:4]):[#16:3]",
+   "rule_support": 6,
+   "type_support": 3747,
+   "in_stratum": false
+  },
+  {
+   "substrate": "Cc1ccsc1-c1ccc(C(C)C(=O)O)cc1",
    "metabolite": "CC1=CC(=O)SC1c1ccc(C(C)C(=O)O)cc1",
    "smirks": "[#6:1]-[#6:2]1:[#6:3]:[#6:4]:[#16:5]:[#6:6]:1-[#6:7]>>[#6:1]-[#6:2]1=[#6:3]-[#6:4](=[#8:8])-[#16:5]-[#6:6]-1-[#6:7]",
    "rule_support": 0,
@@ -1036,14 +1044,6 @@
    "smirks": "[#6:1]-[#6:2]1:[#6:3]:[#6:4]:[#16:5]:[#6:6]:1-[#6:7]>>[#6:1]-[#6:2]1=[#6:6](-[#6:7])-[#16:5]-[#6:4](-[#8:8])-[#6:3]-1",
    "rule_support": 0,
    "type_support": 0,
-   "in_stratum": false
-  },
-  {
-   "substrate": "Cc1ccsc1-c1ccc(C(C)C(=O)O)cc1",
-   "metabolite": "Cc1cc(O)sc1-c1ccc(C(C)C(=O)O)cc1",
-   "smirks": "[#6:1]:[#6:2]:[#16:3]>>[#6:1]:[#6:2](-[#8:4]):[#16:3]",
-   "rule_support": 6,
-   "type_support": 3747,
    "in_stratum": false
   },
   {
@@ -1064,30 +1064,6 @@
   },
   {
    "substrate": "CNC(C)Cc1ccccc1",
-   "metabolite": "O=C(O)c1ccccc1",
-   "smirks": "[#6:3]-[#7:4]-[#6:5](-[#6:6])-[#6:1]-[#6:2]>>[#8:7]=[#6:1](-[#8:8])-[#6:2]",
-   "rule_support": 0,
-   "type_support": 6,
-   "in_stratum": true
-  },
-  {
-   "substrate": "CNC(C)Cc1ccccc1",
-   "metabolite": "CC(Cc1ccccc1)N(C)CC#N",
-   "smirks": "[#6:1]-[#7:2]-[#6:3]>>[#6:3]-[#7:2](-[#6:1])-[#6:4]-[#6:5]#[#7:6]",
-   "rule_support": 0,
-   "type_support": 0,
-   "in_stratum": false
-  },
-  {
-   "substrate": "CNC(C)Cc1ccccc1",
-   "metabolite": "CNC(C)Cc1ccc(O)cc1",
-   "smirks": "[#6:1]:[#6:2]:[#6:3]>>[#6:1]:[#6:2](-[#8:4]):[#6:3]",
-   "rule_support": 790,
-   "type_support": 3747,
-   "in_stratum": false
-  },
-  {
-   "substrate": "CNC(C)Cc1ccccc1",
    "metabolite": "CC(Cc1ccccc1)N(C)C",
    "smirks": "[#6:1]-[#7:2]-[#6:3]>>[#6:3]-[#7:2](-[#6:1])-[#6:4]",
    "rule_support": 0,
@@ -1104,11 +1080,35 @@
   },
   {
    "substrate": "CNC(C)Cc1ccccc1",
+   "metabolite": "CC(Cc1ccccc1)N(C)CC#N",
+   "smirks": "[#6:1]-[#7:2]-[#6:3]>>[#6:3]-[#7:2](-[#6:1])-[#6:4]-[#6:5]#[#7:6]",
+   "rule_support": 0,
+   "type_support": 0,
+   "in_stratum": false
+  },
+  {
+   "substrate": "CNC(C)Cc1ccccc1",
    "metabolite": "CNC(C)C(O)c1ccccc1",
    "smirks": "[#6:1]-[#6:2]-[#6:3]>>[#6:1]-[#6:2](-[#8:4])-[#6:3]",
    "rule_support": 703,
    "type_support": 3747,
    "in_stratum": false
+  },
+  {
+   "substrate": "CNC(C)Cc1ccccc1",
+   "metabolite": "CNC(C)Cc1ccc(O)cc1",
+   "smirks": "[#6:1]:[#6:2]:[#6:3]>>[#6:1]:[#6:2](-[#8:4]):[#6:3]",
+   "rule_support": 790,
+   "type_support": 3747,
+   "in_stratum": false
+  },
+  {
+   "substrate": "CNC(C)Cc1ccccc1",
+   "metabolite": "O=C(O)c1ccccc1",
+   "smirks": "[#6:3]-[#7:4]-[#6:5](-[#6:6])-[#6:1]-[#6:2]>>[#8:7]=[#6:1](-[#8:8])-[#6:2]",
+   "rule_support": 0,
+   "type_support": 6,
+   "in_stratum": true
   },
   {
    "substrate": "N=c1[nH]cnc2c(C3OC(CO)C(O)C3O)c[nH]c12",
@@ -1216,6 +1216,22 @@
   },
   {
    "substrate": "Cc1nccn1CCC(C(=N)O)(c1ccccc1)c1ccccc1",
+   "metabolite": "CC1NC(=O)C(=O)N1CCC(C(=N)O)(c1ccccc1)c1ccccc1",
+   "smirks": "[#6:1]-[#6:2]1:[#7:3]:[#6:4]:[#6:5]:[#7:6]:1-[#6:7]>>[#6:1]-[#6:2]1-[#7:3]-[#6:4](=[#8:8])-[#6:5](=[#8:9])-[#7:6]-1-[#6:7]",
+   "rule_support": 0,
+   "type_support": 2,
+   "in_stratum": false
+  },
+  {
+   "substrate": "Cc1nccn1CCC(C(=N)O)(c1ccccc1)c1ccccc1",
+   "metabolite": "CC1=NC(O)C(O)N1CCC(C(=N)O)(c1ccccc1)c1ccccc1",
+   "smirks": "[#6:1]-[#6:2]1:[#7:3]:[#6:4]:[#6:5]:[#7:6]:1-[#6:7]>>[#6:1]-[#6:2]1=[#7:3]-[#6:4](-[#8:8])-[#6:5](-[#8:9])-[#7:6]-1-[#6:7]",
+   "rule_support": 1,
+   "type_support": 2,
+   "in_stratum": false
+  },
+  {
+   "substrate": "Cc1nccn1CCC(C(=N)O)(c1ccccc1)c1ccccc1",
    "metabolite": "Cc1n(C2OC(C(=O)O)C(O)C(O)C2O)cc[n+]1CCC(C(=N)[O-])(c1ccccc1)c1ccccc1",
    "smirks": "[#6:1]1:[#7:2]:[#6:3]:[#6:4]:[#7:5]:1-[#6:6].[#6:7]-[#8:8]>>[#6:1]1:[#7:2](-[#6:9]2-[#8:10]-[#6:11](-[#6:12](=[#8:13])-[#8:14])-[#6:15](-[#8:16])-[#6:17](-[#8:18])-[#6:19]-2-[#8:20]):[#6:3]:[#6:4]:[#7+:5]:1-[#6:6].[#6:7]-[#8-:8]",
    "rule_support": 0,
@@ -1232,26 +1248,10 @@
   },
   {
    "substrate": "Cc1nccn1CCC(C(=N)O)(c1ccccc1)c1ccccc1",
-   "metabolite": "CC1=NC(O)C(O)N1CCC(C(=N)O)(c1ccccc1)c1ccccc1",
-   "smirks": "[#6:1]-[#6:2]1:[#7:3]:[#6:4]:[#6:5]:[#7:6]:1-[#6:7]>>[#6:1]-[#6:2]1=[#7:3]-[#6:4](-[#8:8])-[#6:5](-[#8:9])-[#7:6]-1-[#6:7]",
-   "rule_support": 1,
-   "type_support": 2,
-   "in_stratum": false
-  },
-  {
-   "substrate": "Cc1nccn1CCC(C(=N)O)(c1ccccc1)c1ccccc1",
    "metabolite": "Cc1n(CCC(C(=N)O)(c2ccccc2)c2ccccc2)cc[n+]1[O-]",
    "smirks": "[#6:1]:[#7:2]:[#6:3]>>[#6:1]:[#7+:2](:[#6:3])-[#8-:4]",
    "rule_support": 5,
    "type_support": 95,
-   "in_stratum": false
-  },
-  {
-   "substrate": "Cc1nccn1CCC(C(=N)O)(c1ccccc1)c1ccccc1",
-   "metabolite": "CC1NC(=O)C(=O)N1CCC(C(=N)O)(c1ccccc1)c1ccccc1",
-   "smirks": "[#6:1]-[#6:2]1:[#7:3]:[#6:4]:[#6:5]:[#7:6]:1-[#6:7]>>[#6:1]-[#6:2]1-[#7:3]-[#6:4](=[#8:8])-[#6:5](=[#8:9])-[#7:6]-1-[#6:7]",
-   "rule_support": 0,
-   "type_support": 2,
    "in_stratum": false
   },
   {
@@ -1272,16 +1272,16 @@
   },
   {
    "substrate": "CC1NC(=O)C(=O)N1CCC(C(=N)O)(c1ccccc1)c1ccccc1",
-   "metabolite": "N=C(O)C(CCNC(=O)C(=O)O)(c1ccccc1)c1ccccc1",
-   "smirks": "[#6:3]-[#6:4]1-[#7:5]-[#6:6](=[#8:7])-[#6:8](=[#8:9])-[#7:10]-1-[#6:2]-[#6:1]>>[#6:1]-[#6:2]-[#7:11]-[#6:12](=[#8:13])-[#6:14](=[#8:15])-[#8:16]",
+   "metabolite": "N=C(O)C(CCNC(=O)C(N)=O)(c1ccccc1)c1ccccc1",
+   "smirks": "[#6:3]-[#6:4]1-[#7:5]-[#6:6](=[#8:7])-[#6:8](=[#8:9])-[#7:10]-1-[#6:2]-[#6:1]>>[#6:1]-[#6:2]-[#7:11]-[#6:12](=[#8:13])-[#6:14](-[#7:15])=[#8:16]",
    "rule_support": 0,
    "type_support": 0,
    "in_stratum": false
   },
   {
    "substrate": "CC1NC(=O)C(=O)N1CCC(C(=N)O)(c1ccccc1)c1ccccc1",
-   "metabolite": "N=C(O)C(CCNC(=O)C(N)=O)(c1ccccc1)c1ccccc1",
-   "smirks": "[#6:3]-[#6:4]1-[#7:5]-[#6:6](=[#8:7])-[#6:8](=[#8:9])-[#7:10]-1-[#6:2]-[#6:1]>>[#6:1]-[#6:2]-[#7:11]-[#6:12](=[#8:13])-[#6:14](-[#7:15])=[#8:16]",
+   "metabolite": "N=C(O)C(CCNC(=O)C(=O)O)(c1ccccc1)c1ccccc1",
+   "smirks": "[#6:3]-[#6:4]1-[#7:5]-[#6:6](=[#8:7])-[#6:8](=[#8:9])-[#7:10]-1-[#6:2]-[#6:1]>>[#6:1]-[#6:2]-[#7:11]-[#6:12](=[#8:13])-[#6:14](=[#8:15])-[#8:16]",
    "rule_support": 0,
    "type_support": 0,
    "in_stratum": false
@@ -1296,14 +1296,6 @@
   },
   {
    "substrate": "O=C(C=Cc1ccc(O)c(O)c1)OC(Cc1ccc(O)c(O)c1)C(=O)O",
-   "metabolite": "O=C(O)C=Cc1ccc(O)c(O)c1",
-   "smirks": "[#6:1]-[#8:2]-[#6:3](-[#6:4]-[#6:5]1:[#6:6]:[#6:7]:[#6:8](-[#8:9]):[#6:10](-[#8:11]):[#6:12]:1)-[#6:13](=[#8:14])-[#8:15]>>[#6:1]-[#8:2]",
-   "rule_support": 0,
-   "type_support": 0,
-   "in_stratum": false
-  },
-  {
-   "substrate": "O=C(C=Cc1ccc(O)c(O)c1)OC(Cc1ccc(O)c(O)c1)C(=O)O",
    "metabolite": "O=C(O)Cc1ccc(O)c(O)c1",
    "smirks": "[#8:4]=[#6:5](-[#6:6]=[#6:7]-[#6:8]1:[#6:9]:[#6:10]:[#6:11](-[#8:12]):[#6:13](-[#8:14]):[#6:15]:1)-[#8:1]-[#6:2](-[#6:3])-[#6:16](=[#8:17])-[#8:18]>>[#8:1]=[#6:2](-[#8:19])-[#6:3]",
    "rule_support": 0,
@@ -1311,19 +1303,11 @@
    "in_stratum": false
   },
   {
-   "substrate": "O=C(O)Cc1ccc(O)c(O)c1",
-   "metabolite": "O=C(O)Cc1cccc(O)c1",
-   "smirks": "[#6:1]:[#6:2](-[#8:4]):[#6:3]>>[#6:1]:[#6:2]:[#6:3]",
-   "rule_support": 20,
-   "type_support": 33,
-   "in_stratum": false
-  },
-  {
-   "substrate": "O=C(O)Cc1ccc(O)c(O)c1",
-   "metabolite": "O=C(O)Cc1ccc(O)cc1",
-   "smirks": "[#6:1]:[#6:2](-[#8:4]):[#6:3]>>[#6:1]:[#6:2]:[#6:3]",
-   "rule_support": 20,
-   "type_support": 33,
+   "substrate": "O=C(C=Cc1ccc(O)c(O)c1)OC(Cc1ccc(O)c(O)c1)C(=O)O",
+   "metabolite": "O=C(O)C=Cc1ccc(O)c(O)c1",
+   "smirks": "[#6:1]-[#8:2]-[#6:3](-[#6:4]-[#6:5]1:[#6:6]:[#6:7]:[#6:8](-[#8:9]):[#6:10](-[#8:11]):[#6:12]:1)-[#6:13](=[#8:14])-[#8:15]>>[#6:1]-[#8:2]",
+   "rule_support": 0,
+   "type_support": 0,
    "in_stratum": false
   },
   {
@@ -1359,51 +1343,19 @@
    "in_stratum": false
   },
   {
-   "substrate": "O=C(O)C=Cc1ccc(O)c(O)c1",
-   "metabolite": "O=C(O)C=Cc1cc(O)c(O)cc1O",
-   "smirks": "[#6:1]:[#6:2]:[#6:3]>>[#6:1]:[#6:2](:[#6:3])-[#8:4]",
-   "rule_support": 69,
-   "type_support": 3747,
+   "substrate": "O=C(O)Cc1ccc(O)c(O)c1",
+   "metabolite": "O=C(O)Cc1cccc(O)c1",
+   "smirks": "[#6:1]:[#6:2](-[#8:4]):[#6:3]>>[#6:1]:[#6:2]:[#6:3]",
+   "rule_support": 20,
+   "type_support": 33,
    "in_stratum": false
   },
   {
-   "substrate": "O=C(O)C=Cc1ccc(O)c(O)c1",
-   "metabolite": "COC(=O)C=Cc1ccc(O)c(O)c1",
-   "smirks": "[#8:1]=[#6:2](-[#8:3])-[#6:4]>>[#6:5]-[#8:1]-[#6:2](=[#8:3])-[#6:4]",
-   "rule_support": 0,
-   "type_support": 5,
-   "in_stratum": true
-  },
-  {
-   "substrate": "O=C(O)C=Cc1ccc(O)c(O)c1",
-   "metabolite": "O=C(O)C=Cc1ccc(O)c(OS(=O)(=O)O)c1",
-   "smirks": "[#6:1]-[#8:2]>>[#6:1]-[#8:2]-[#16:3](=[#8:4])(=[#8:5])-[#8:6]",
-   "rule_support": 657,
-   "type_support": 767,
-   "in_stratum": false
-  },
-  {
-   "substrate": "O=C(O)C=Cc1ccc(O)c(O)c1",
-   "metabolite": "O=C(O)CCc1ccc(O)c(O)c1",
-   "smirks": "[#6:1]-[#6:2]=[#6:3]-[#6:4]>>[#6:1]-[#6:2]-[#6:3]-[#6:4]",
-   "rule_support": 69,
-   "type_support": 134,
-   "in_stratum": false
-  },
-  {
-   "substrate": "O=C(O)C=Cc1ccc(O)c(O)c1",
-   "metabolite": "COc1cc(C=CC(=O)O)ccc1O",
-   "smirks": "[#6:1]-[#8:2]>>[#6:3]-[#8:2]-[#6:1]",
-   "rule_support": 178,
-   "type_support": 238,
-   "in_stratum": false
-  },
-  {
-   "substrate": "O=C(O)C=Cc1ccc(O)c(O)c1",
-   "metabolite": "COc1ccc(C=CC(=O)O)cc1O",
-   "smirks": "[#6:1]-[#8:2]>>[#6:3]-[#8:2]-[#6:1]",
-   "rule_support": 178,
-   "type_support": 238,
+   "substrate": "O=C(O)Cc1ccc(O)c(O)c1",
+   "metabolite": "O=C(O)Cc1ccc(O)cc1",
+   "smirks": "[#6:1]:[#6:2](-[#8:4]):[#6:3]>>[#6:1]:[#6:2]:[#6:3]",
+   "rule_support": 20,
+   "type_support": 33,
    "in_stratum": false
   },
   {
@@ -1416,6 +1368,22 @@
   },
   {
    "substrate": "O=C(O)C=Cc1ccc(O)c(O)c1",
+   "metabolite": "COc1cc(C=CC(=O)O)ccc1O",
+   "smirks": "[#6:1]-[#8:2]>>[#6:3]-[#8:2]-[#6:1]",
+   "rule_support": 178,
+   "type_support": 238,
+   "in_stratum": false
+  },
+  {
+   "substrate": "O=C(O)C=Cc1ccc(O)c(O)c1",
+   "metabolite": "O=C(O)CCc1ccc(O)c(O)c1",
+   "smirks": "[#6:1]-[#6:2]=[#6:3]-[#6:4]>>[#6:1]-[#6:2]-[#6:3]-[#6:4]",
+   "rule_support": 69,
+   "type_support": 134,
+   "in_stratum": false
+  },
+  {
+   "substrate": "O=C(O)C=Cc1ccc(O)c(O)c1",
    "metabolite": "O=C(O)C=Cc1ccc(OS(=O)(=O)O)c(O)c1",
    "smirks": "[#6:1]-[#8:2]>>[#6:1]-[#8:2]-[#16:3](=[#8:4])(=[#8:5])-[#8:6]",
    "rule_support": 657,
@@ -1424,26 +1392,10 @@
   },
   {
    "substrate": "O=C(O)C=Cc1ccc(O)c(O)c1",
-   "metabolite": "COc1cc(CCC(=O)N=CC(=O)O)ccc1O",
-   "smirks": "[#8:1]=[#6:2](-[#8:8])-[#6:3]=[#6:4]-[#6:5].[#6:6]-[#8:7]>>[#6:9]-[#8:7]-[#6:6].[#6:5]-[#6:4]-[#6:3]-[#6:2](=[#8:1])-[#7:10]=[#6:11]-[#6:12](=[#8:13])-[#8:14]",
-   "rule_support": 0,
-   "type_support": 0,
-   "in_stratum": false
-  },
-  {
-   "substrate": "O=C(O)C=Cc1ccc(O)c(O)c1",
-   "metabolite": "COc1ccc(C=CC(=O)O)cc1OS(=O)(=O)O",
-   "smirks": "[#6:1](-[#8:4]):[#6:2]-[#8:3]>>[#6:5]-[#8:4]-[#6:1]:[#6:2]-[#8:3]-[#16:6](=[#8:7])(=[#8:8])-[#8:9]",
-   "rule_support": 0,
-   "type_support": 0,
-   "in_stratum": false
-  },
-  {
-   "substrate": "O=C(O)C=Cc1ccc(O)c(O)c1",
-   "metabolite": "O=C(O)C=Cc1cccc(O)c1",
-   "smirks": "[#6:1]:[#6:2](-[#8:4]):[#6:3]>>[#6:1]:[#6:2]:[#6:3]",
-   "rule_support": 20,
-   "type_support": 33,
+   "metabolite": "NC(CCC(O)=NC(CSc1cc(C=CC(=O)O)cc(O)c1O)C(O)=NCC(=O)O)C(=O)O",
+   "smirks": "[#6:1]:[#6:2]:[#6:3]>>[#7:4]-[#6:5](-[#6:6]-[#6:7]-[#6:8](-[#8:9])=[#7:10]-[#6:11](-[#6:12]-[#16:13]-[#6:2](:[#6:1]):[#6:3])-[#6:14](-[#8:15])=[#7:16]-[#6:17]-[#6:18](=[#8:19])-[#8:20])-[#6:21](=[#8:22])-[#8:23]",
+   "rule_support": 7,
+   "type_support": 113,
    "in_stratum": false
   },
   {
@@ -1456,10 +1408,26 @@
   },
   {
    "substrate": "O=C(O)C=Cc1ccc(O)c(O)c1",
-   "metabolite": "NC(CCC(O)=NC(CSc1cc(C=CC(=O)O)cc(O)c1O)C(O)=NCC(=O)O)C(=O)O",
-   "smirks": "[#6:1]:[#6:2]:[#6:3]>>[#7:4]-[#6:5](-[#6:6]-[#6:7]-[#6:8](-[#8:9])=[#7:10]-[#6:11](-[#6:12]-[#16:13]-[#6:2](:[#6:1]):[#6:3])-[#6:14](-[#8:15])=[#7:16]-[#6:17]-[#6:18](=[#8:19])-[#8:20])-[#6:21](=[#8:22])-[#8:23]",
-   "rule_support": 7,
-   "type_support": 113,
+   "metabolite": "O=C(O)C=Cc1cc(O)c(O)cc1O",
+   "smirks": "[#6:1]:[#6:2]:[#6:3]>>[#6:1]:[#6:2](:[#6:3])-[#8:4]",
+   "rule_support": 69,
+   "type_support": 3747,
+   "in_stratum": false
+  },
+  {
+   "substrate": "O=C(O)C=Cc1ccc(O)c(O)c1",
+   "metabolite": "O=C(O)C=Cc1ccc(O)c(OS(=O)(=O)O)c1",
+   "smirks": "[#6:1]-[#8:2]>>[#6:1]-[#8:2]-[#16:3](=[#8:4])(=[#8:5])-[#8:6]",
+   "rule_support": 657,
+   "type_support": 767,
+   "in_stratum": false
+  },
+  {
+   "substrate": "O=C(O)C=Cc1ccc(O)c(O)c1",
+   "metabolite": "COc1ccc(C=CC(=O)O)cc1OS(=O)(=O)O",
+   "smirks": "[#6:1](-[#8:4]):[#6:2]-[#8:3]>>[#6:5]-[#8:4]-[#6:1]:[#6:2]-[#8:3]-[#16:6](=[#8:7])(=[#8:8])-[#8:9]",
+   "rule_support": 0,
+   "type_support": 0,
    "in_stratum": false
   },
   {
@@ -1472,11 +1440,11 @@
   },
   {
    "substrate": "O=C(O)C=Cc1ccc(O)c(O)c1",
-   "metabolite": "O=C(O)C=Cc1ccc(OC2OC(C(=O)O)C(O)C(O)C2O)c(O)c1",
-   "smirks": "[#6:1]-[#8:2]>>[#6:1]-[#8:2]-[#6:3]1-[#8:4]-[#6:5](-[#6:6](=[#8:7])-[#8:8])-[#6:9](-[#8:10])-[#6:11](-[#8:12])-[#6:13]-1-[#8:14]",
-   "rule_support": 1531,
-   "type_support": 2071,
-   "in_stratum": false
+   "metabolite": "COC(=O)C=Cc1ccc(O)c(O)c1",
+   "smirks": "[#8:1]=[#6:2](-[#8:3])-[#6:4]>>[#6:5]-[#8:1]-[#6:2](=[#8:3])-[#6:4]",
+   "rule_support": 0,
+   "type_support": 5,
+   "in_stratum": true
   },
   {
    "substrate": "O=C(O)C=Cc1ccc(O)c(O)c1",
@@ -1484,6 +1452,38 @@
    "smirks": "[#6:1](-[#8:4]):[#6:2]-[#8:3]>>[#6:5]-[#8:3]-[#6:2]:[#6:1]-[#8:4]-[#16:6](=[#8:7])(=[#8:8])-[#8:9]",
    "rule_support": 0,
    "type_support": 0,
+   "in_stratum": false
+  },
+  {
+   "substrate": "O=C(O)C=Cc1ccc(O)c(O)c1",
+   "metabolite": "COc1cc(CCC(=O)N=CC(=O)O)ccc1O",
+   "smirks": "[#8:1]=[#6:2](-[#8:8])-[#6:3]=[#6:4]-[#6:5].[#6:6]-[#8:7]>>[#6:9]-[#8:7]-[#6:6].[#6:5]-[#6:4]-[#6:3]-[#6:2](=[#8:1])-[#7:10]=[#6:11]-[#6:12](=[#8:13])-[#8:14]",
+   "rule_support": 0,
+   "type_support": 0,
+   "in_stratum": false
+  },
+  {
+   "substrate": "O=C(O)C=Cc1ccc(O)c(O)c1",
+   "metabolite": "COc1ccc(C=CC(=O)O)cc1O",
+   "smirks": "[#6:1]-[#8:2]>>[#6:3]-[#8:2]-[#6:1]",
+   "rule_support": 178,
+   "type_support": 238,
+   "in_stratum": false
+  },
+  {
+   "substrate": "O=C(O)C=Cc1ccc(O)c(O)c1",
+   "metabolite": "O=C(O)C=Cc1cccc(O)c1",
+   "smirks": "[#6:1]:[#6:2](-[#8:4]):[#6:3]>>[#6:1]:[#6:2]:[#6:3]",
+   "rule_support": 20,
+   "type_support": 33,
+   "in_stratum": false
+  },
+  {
+   "substrate": "O=C(O)C=Cc1ccc(O)c(O)c1",
+   "metabolite": "O=C(O)C=Cc1ccc(OC2OC(C(=O)O)C(O)C(O)C2O)c(O)c1",
+   "smirks": "[#6:1]-[#8:2]>>[#6:1]-[#8:2]-[#6:3]1-[#8:4]-[#6:5](-[#6:6](=[#8:7])-[#8:8])-[#6:9](-[#8:10])-[#6:11](-[#8:12])-[#6:13]-1-[#8:14]",
+   "rule_support": 1531,
+   "type_support": 2071,
    "in_stratum": false
   },
   {
@@ -1496,18 +1496,18 @@
   },
   {
    "substrate": "CCC1C(=O)OCC1Cc1cncn1C",
-   "metabolite": "CCC1(O)C(=O)OCC1Cc1cncn1C",
-   "smirks": "[#6:1]-[#6:2](-[#6:3])-[#6:4]>>[#6:1]-[#6:2](-[#8:5])(-[#6:3])-[#6:4]",
-   "rule_support": 24,
-   "type_support": 3747,
-   "in_stratum": false
-  },
-  {
-   "substrate": "CCC1C(=O)OCC1Cc1cncn1C",
    "metabolite": "CCC(C(=O)O)C(CO)Cc1cncn1C",
    "smirks": "[#6:3]-[#6:4]-[#6:5]1-[#6:6](=[#8:7])-[#8:8]-[#6:9]-[#6:10]-1-[#6:1]-[#6:2]>>[#6:11]-[#6:12]-[#6:13](-[#6:14](=[#8:15])-[#8:16])-[#6:17](-[#6:18]-[#8:19])-[#6:1]-[#6:2]",
    "rule_support": 0,
    "type_support": 0,
+   "in_stratum": false
+  },
+  {
+   "substrate": "CCC1C(=O)OCC1Cc1cncn1C",
+   "metabolite": "CCC1(O)C(=O)OCC1Cc1cncn1C",
+   "smirks": "[#6:1]-[#6:2](-[#6:3])-[#6:4]>>[#6:1]-[#6:2](-[#8:5])(-[#6:3])-[#6:4]",
+   "rule_support": 24,
+   "type_support": 3747,
    "in_stratum": false
   },
   {
@@ -1592,16 +1592,16 @@
   },
   {
    "substrate": "NCC(=O)CCC(=O)O",
-   "metabolite": "C=C1C(=CC)c2cc3[nH]c(cc4[nH]c(cc5nc(cc1n2)C(CC)=C5C)c(C)c4CCC(=O)O)c(C=CC(=O)O)c3C",
-   "smirks": "[#7:3]-[#6:4]-[#6:5](=[#8:6])-[#6:1]-[#6:2]>>[#6:7]=[#6:8]1-[#6:9](=[#6:10]-[#6:11])-[#6:12]2:[#6:13]:[#6:14]3:[#7H:15]:[#6:16](:[#6:17]:[#6:18]4:[#7H:19]:[#6:20](:[#6:21]:[#6:22]5:[#7:23]:[#6:24](:[#6:25]:[#6:26]-1:[#7:27]:2)-[#6:28](-[#6:29]-[#6:30])=[#6:31]-5-[#6:32]):[#6:33](-[#6:34]):[#6:35]:4-[#6:1]-[#6:2]):[#6:36](-[#6:37]=[#6:38]-[#6:39](=[#8:40])-[#8:41]):[#6:42]:3-[#6:43]",
+   "metabolite": "C=CC1=C(C)c2cc3[nH]c(cc4[nH]c(cc5nc(cc1n2)C(C)=C5C=C)c(C)c4CCC(=O)O)c(CCC(=O)O)c3C",
+   "smirks": "[#7:3]-[#6:4]-[#6:5](=[#8:6])-[#6:1]-[#6:2]>>[#6:7]=[#6:8]-[#6:9]1=[#6:10](-[#6:11])-[#6:12]2:[#6:13]:[#6:14]3:[#7H:15]:[#6:16](:[#6:17]:[#6:18]4:[#7H:19]:[#6:20](:[#6:21]:[#6:22]5:[#7:23]:[#6:24](:[#6:25]:[#6:26]-1:[#7:27]:2)-[#6:28](-[#6:29])=[#6:30]-5-[#6:31]=[#6:32]):[#6:33](-[#6:34]):[#6:35]:4-[#6:1]-[#6:2]):[#6:36](-[#6:37]-[#6:38]-[#6:39](=[#8:40])-[#8:41]):[#6:42]:3-[#6:43]",
    "rule_support": 0,
    "type_support": 0,
    "in_stratum": false
   },
   {
    "substrate": "NCC(=O)CCC(=O)O",
-   "metabolite": "C=CC1=C(C)c2cc3[nH]c(cc4[nH]c(cc5nc(cc1n2)C(C)=C5C=C)c(C)c4CCC(=O)O)c(CCC(=O)O)c3C",
-   "smirks": "[#7:3]-[#6:4]-[#6:5](=[#8:6])-[#6:1]-[#6:2]>>[#6:7]=[#6:8]-[#6:9]1=[#6:10](-[#6:11])-[#6:12]2:[#6:13]:[#6:14]3:[#7H:15]:[#6:16](:[#6:17]:[#6:18]4:[#7H:19]:[#6:20](:[#6:21]:[#6:22]5:[#7:23]:[#6:24](:[#6:25]:[#6:26]-1:[#7:27]:2)-[#6:28](-[#6:29])=[#6:30]-5-[#6:31]=[#6:32]):[#6:33](-[#6:34]):[#6:35]:4-[#6:1]-[#6:2]):[#6:36](-[#6:37]-[#6:38]-[#6:39](=[#8:40])-[#8:41]):[#6:42]:3-[#6:43]",
+   "metabolite": "C=C1C(=CC)c2cc3[nH]c(cc4[nH]c(cc5nc(cc1n2)C(CC)=C5C)c(C)c4CCC(=O)O)c(C=CC(=O)O)c3C",
+   "smirks": "[#7:3]-[#6:4]-[#6:5](=[#8:6])-[#6:1]-[#6:2]>>[#6:7]=[#6:8]1-[#6:9](=[#6:10]-[#6:11])-[#6:12]2:[#6:13]:[#6:14]3:[#7H:15]:[#6:16](:[#6:17]:[#6:18]4:[#7H:19]:[#6:20](:[#6:21]:[#6:22]5:[#7:23]:[#6:24](:[#6:25]:[#6:26]-1:[#7:27]:2)-[#6:28](-[#6:29]-[#6:30])=[#6:31]-5-[#6:32]):[#6:33](-[#6:34]):[#6:35]:4-[#6:1]-[#6:2]):[#6:36](-[#6:37]=[#6:38]-[#6:39](=[#8:40])-[#8:41]):[#6:42]:3-[#6:43]",
    "rule_support": 0,
    "type_support": 0,
    "in_stratum": false
@@ -1640,16 +1640,16 @@
   },
   {
    "substrate": "CC(CN1CC(=O)N=C(O)C1)N1CC(=O)N=C(O)C1",
-   "metabolite": "CC(CN(CC(=N)O)CC(=O)O)N1CC(=O)N=C(O)C1",
-   "smirks": "[#6:1]-[#6:2]-[#7:3]1-[#6:4]-[#6:5](=[#8:6])-[#7:7]=[#6:8](-[#8:9])-[#6:10]-1>>[#6:1]-[#6:2]-[#7:11](-[#6:12]-[#6:13](=[#7:14])-[#8:15])-[#6:16]-[#6:17](=[#8:18])-[#8:19]",
+   "metabolite": "CC(CN1CC(=O)N=C(O)C1)N(CC(=N)O)CC(=O)O",
+   "smirks": "[#6:1]-[#6:2](-[#6:3])-[#7:4]1-[#6:5]-[#6:6](=[#8:7])-[#7:8]=[#6:9](-[#8:10])-[#6:11]-1>>[#6:1]-[#6:2](-[#6:3])-[#7:12](-[#6:13]-[#6:14](=[#7:15])-[#8:16])-[#6:17]-[#6:18](=[#8:19])-[#8:20]",
    "rule_support": 0,
    "type_support": 0,
    "in_stratum": false
   },
   {
    "substrate": "CC(CN1CC(=O)N=C(O)C1)N1CC(=O)N=C(O)C1",
-   "metabolite": "CC(CN1CC(=O)N=C(O)C1)N(CC(=N)O)CC(=O)O",
-   "smirks": "[#6:1]-[#6:2](-[#6:3])-[#7:4]1-[#6:5]-[#6:6](=[#8:7])-[#7:8]=[#6:9](-[#8:10])-[#6:11]-1>>[#6:1]-[#6:2](-[#6:3])-[#7:12](-[#6:13]-[#6:14](=[#7:15])-[#8:16])-[#6:17]-[#6:18](=[#8:19])-[#8:20]",
+   "metabolite": "CC(CN(CC(=N)O)CC(=O)O)N1CC(=O)N=C(O)C1",
+   "smirks": "[#6:1]-[#6:2]-[#7:3]1-[#6:4]-[#6:5](=[#8:6])-[#7:7]=[#6:8](-[#8:9])-[#6:10]-1>>[#6:1]-[#6:2]-[#7:11](-[#6:12]-[#6:13](=[#7:14])-[#8:15])-[#6:16]-[#6:17](=[#8:18])-[#8:19]",
    "rule_support": 0,
    "type_support": 0,
    "in_stratum": false
@@ -1672,26 +1672,18 @@
   },
   {
    "substrate": "CCCn1c(Cn2ccnc2-c2cccc(F)n2)nc2cc(C#N)ccc21",
-   "metabolite": "Fc1cccc(-c2ncc[nH]2)n1",
-   "smirks": "[#6:4]-[#6:5]-[#6:6]-[#7:7]1:[#6:8](-[#6:9]-[#7:3](:[#6:2]):[#6:1]):[#7:10]:[#6:11]2:[#6:12]:[#6:13](-[#6:14]#[#7:15]):[#6:16]:[#6:17]:[#6:18]:1:2>>[#6:1]:[#7H:3]:[#6:2]",
-   "rule_support": 0,
-   "type_support": 0,
-   "in_stratum": false
-  },
-  {
-   "substrate": "CCCn1c(Cn2ccnc2-c2cccc(F)n2)nc2cc(C#N)ccc21",
-   "metabolite": "CCCn1c(Cn2cc(O)nc2-c2cccc(F)n2)nc2cc(C#N)ccc21",
-   "smirks": "[#6:1]:[#6:2]:[#7:3]>>[#6:1]:[#6:2](-[#8:4]):[#7:3]",
-   "rule_support": 22,
-   "type_support": 3747,
-   "in_stratum": false
-  },
-  {
-   "substrate": "CCCn1c(Cn2ccnc2-c2cccc(F)n2)nc2cc(C#N)ccc21",
    "metabolite": "CCCn1c(Cn2ccnc2-c2cccc(F)n2)nc2cc(C#N)c(O)cc21",
    "smirks": "[#6:3]:[#6:2]:[#6:1]>>[#6:3]:[#6:2](-[#8:4]):[#6:1]",
    "rule_support": 274,
    "type_support": 3747,
+   "in_stratum": false
+  },
+  {
+   "substrate": "CCCn1c(Cn2ccnc2-c2cccc(F)n2)nc2cc(C#N)ccc21",
+   "metabolite": "Fc1cccc(-c2ncc[nH]2)n1",
+   "smirks": "[#6:4]-[#6:5]-[#6:6]-[#7:7]1:[#6:8](-[#6:9]-[#7:3](:[#6:2]):[#6:1]):[#7:10]:[#6:11]2:[#6:12]:[#6:13](-[#6:14]#[#7:15]):[#6:16]:[#6:17]:[#6:18]:1:2>>[#6:1]:[#7H:3]:[#6:2]",
+   "rule_support": 0,
+   "type_support": 0,
    "in_stratum": false
   },
   {
@@ -1703,12 +1695,12 @@
    "in_stratum": false
   },
   {
-   "substrate": "CCCn1c(Cn2cc(O)nc2-c2cccc(F)n2)nc2cc(C#N)ccc21",
-   "metabolite": "CCCn1c(Cn2c(-c3cccc(F)n3)nc(O)c2O)nc2cc(C#N)ccc21",
-   "smirks": "[#7:1]:[#6:2]:[#6:3]>>[#7:1]:[#6:2](:[#6:3])-[#8:4]",
-   "rule_support": 0,
+   "substrate": "CCCn1c(Cn2ccnc2-c2cccc(F)n2)nc2cc(C#N)ccc21",
+   "metabolite": "CCCn1c(Cn2cc(O)nc2-c2cccc(F)n2)nc2cc(C#N)ccc21",
+   "smirks": "[#6:1]:[#6:2]:[#7:3]>>[#6:1]:[#6:2](-[#8:4]):[#7:3]",
+   "rule_support": 22,
    "type_support": 3747,
-   "in_stratum": true
+   "in_stratum": false
   },
   {
    "substrate": "CCCn1c(Cn2cc(O)nc2-c2cccc(F)n2)nc2cc(C#N)ccc21",
@@ -1717,6 +1709,14 @@
    "rule_support": 0,
    "type_support": 0,
    "in_stratum": false
+  },
+  {
+   "substrate": "CCCn1c(Cn2cc(O)nc2-c2cccc(F)n2)nc2cc(C#N)ccc21",
+   "metabolite": "CCCn1c(Cn2c(-c3cccc(F)n3)nc(O)c2O)nc2cc(C#N)ccc21",
+   "smirks": "[#7:1]:[#6:2]:[#6:3]>>[#7:1]:[#6:2](:[#6:3])-[#8:4]",
+   "rule_support": 0,
+   "type_support": 3747,
+   "in_stratum": true
   },
   {
    "substrate": "CC(C)(C)C(=O)OCOP(=O)(OCOC(=O)C(C)(C)C)C(CCCc1cccc(Oc2ccccc2)c1)S(=O)(=O)O",
@@ -1744,30 +1744,6 @@
   },
   {
    "substrate": "CC1CCC2C(C)C(OCc3ccc(C(=O)O)cc3)OC3OC4(C)CCC1C32OO4",
-   "metabolite": "CC1CCC2C(C)C(O)OC3OC4(C)CCC1C32OO4",
-   "smirks": "[#6:1]-[#8:2]-[#6:3]-[#6:4]1:[#6:5]:[#6:6]:[#6:7](-[#6:8](=[#8:9])-[#8:10]):[#6:11]:[#6:12]:1>>[#6:1]-[#8:2]",
-   "rule_support": 0,
-   "type_support": 5,
-   "in_stratum": true
-  },
-  {
-   "substrate": "CC1CCC2C(C)C(OCc3ccc(C(=O)O)cc3)OC3OC4(C)CCC1C32OO4",
-   "metabolite": "CC1C(OCc2ccc(C(=O)O)cc2)OC2OC3(C)CCC4C(CO)CCC1C24OO3",
-   "smirks": "[#6:1]-[#6:2]>>[#6:2]-[#6:1]-[#8:3]",
-   "rule_support": 207,
-   "type_support": 3747,
-   "in_stratum": false
-  },
-  {
-   "substrate": "CC1CCC2C(C)C(OCc3ccc(C(=O)O)cc3)OC3OC4(C)CCC1C32OO4",
-   "metabolite": "CC1CCC2C(C)C(OCc3ccc(C(=O)O)cc3)OC3OC4(C)OC32C1CC4O",
-   "smirks": null,
-   "rule_support": null,
-   "type_support": null,
-   "in_stratum": false
-  },
-  {
-   "substrate": "CC1CCC2C(C)C(OCc3ccc(C(=O)O)cc3)OC3OC4(C)CCC1C32OO4",
    "metabolite": "CC1CCC2C(C)C(OCc3ccc(C(=O)O)cc3)OC3OC4(CO)CCC1C32OO4",
    "smirks": "[#6:1]-[#6:2]>>[#6:1]-[#6:2]-[#8:3]",
    "rule_support": 358,
@@ -1783,6 +1759,30 @@
    "in_stratum": false
   },
   {
+   "substrate": "CC1CCC2C(C)C(OCc3ccc(C(=O)O)cc3)OC3OC4(C)CCC1C32OO4",
+   "metabolite": "CC1C(OCc2ccc(C(=O)O)cc2)OC2OC3(C)CCC4C(CO)CCC1C24OO3",
+   "smirks": "[#6:1]-[#6:2]>>[#6:2]-[#6:1]-[#8:3]",
+   "rule_support": 207,
+   "type_support": 3747,
+   "in_stratum": false
+  },
+  {
+   "substrate": "CC1CCC2C(C)C(OCc3ccc(C(=O)O)cc3)OC3OC4(C)CCC1C32OO4",
+   "metabolite": "CC1CCC2C(C)C(O)OC3OC4(C)CCC1C32OO4",
+   "smirks": "[#6:1]-[#8:2]-[#6:3]-[#6:4]1:[#6:5]:[#6:6]:[#6:7](-[#6:8](=[#8:9])-[#8:10]):[#6:11]:[#6:12]:1>>[#6:1]-[#8:2]",
+   "rule_support": 0,
+   "type_support": 5,
+   "in_stratum": true
+  },
+  {
+   "substrate": "CC1CCC2C(C)C(OCc3ccc(C(=O)O)cc3)OC3OC4(C)CCC1C32OO4",
+   "metabolite": "CC1CCC2C(C)C(OCc3ccc(C(=O)O)cc3)OC3OC4(C)OC32C1CC4O",
+   "smirks": null,
+   "rule_support": null,
+   "type_support": null,
+   "in_stratum": false
+  },
+  {
    "substrate": "COCCOc1cnc2c(NCc3nnc4ccc(-c5cc(C)ns5)nn34)ccnc2c1",
    "metabolite": "COCCOc1cnc2c(NCc3nnc4ccc(C5=CC(C)=NS5=O)nn34)ccnc2c1",
    "smirks": "[#6:1]-[#6:2]1:[#6:3]:[#6:4](-[#6:7]):[#7:5]:[#16:6]:1>>[#6:1]-[#6:2]1=[#6:3]-[#6:4](-[#6:7])=[#7:5]-[#16:6]-1=[#8:8]",
@@ -1792,18 +1792,18 @@
   },
   {
    "substrate": "COCCOc1cnc2c(NCc3nnc4ccc(-c5cc(C)ns5)nn34)ccnc2c1",
-   "metabolite": "COCCOc1cnc2c(NCc3nnc4ccc(-c5cc(CO)ns5)nn34)ccnc2c1",
-   "smirks": "[#6:1]-[#6:2]>>[#6:1]-[#6:2]-[#8:3]",
-   "rule_support": 358,
-   "type_support": 3747,
-   "in_stratum": false
-  },
-  {
-   "substrate": "COCCOc1cnc2c(NCc3nnc4ccc(-c5cc(C)ns5)nn34)ccnc2c1",
    "metabolite": "Cc1cc(-c2ccc3nnc(CNc4ccnc5cc(OCCO)cnc45)n3n2)sn1",
    "smirks": "[#6:3]-[#8:2]-[#6:1]>>[#6:1]-[#8:2]",
    "rule_support": 252,
    "type_support": 505,
+   "in_stratum": false
+  },
+  {
+   "substrate": "COCCOc1cnc2c(NCc3nnc4ccc(-c5cc(C)ns5)nn34)ccnc2c1",
+   "metabolite": "COCCOc1cnc2c(NCc3nnc4ccc(-c5cc(CO)ns5)nn34)ccnc2c1",
+   "smirks": "[#6:1]-[#6:2]>>[#6:1]-[#6:2]-[#8:3]",
+   "rule_support": 358,
+   "type_support": 3747,
    "in_stratum": false
   },
   {
@@ -1832,14 +1832,6 @@
   },
   {
    "substrate": "CCCC(NC(C)C(=O)N1C(C(=O)O)CC2CCCCC21)C(=O)OCC",
-   "metabolite": "CCCC(NC(C)C(=O)N1C(C(=O)OC2OC(C(=O)O)C(O)C(O)C2O)CC2CCCCC21)C(=O)OCC",
-   "smirks": "[#6:1]-[#8:2]>>[#6:1]-[#8:2]-[#6:3]1-[#8:4]-[#6:5](-[#6:6](=[#8:7])-[#8:8])-[#6:9](-[#8:10])-[#6:11](-[#8:12])-[#6:13]-1-[#8:14]",
-   "rule_support": 1531,
-   "type_support": 2071,
-   "in_stratum": false
-  },
-  {
-   "substrate": "CCCC(NC(C)C(=O)N1C(C(=O)O)CC2CCCCC21)C(=O)OCC",
    "metabolite": "CCCC(NC(C)C(=O)N1C(C(=O)O)CC2CCCCC21)C(=O)O",
    "smirks": "[#6:1]-[#8:2]-[#6:3]-[#6:4]>>[#6:1]-[#8:2]",
    "rule_support": 20,
@@ -1847,11 +1839,11 @@
    "in_stratum": false
   },
   {
-   "substrate": "CCCC(NC(C)C(=O)N1C(C(=O)O)CC2CCCCC21)C(=O)O",
-   "metabolite": "CCCC(C(=O)O)N1C(=O)C2CC3CCCCC3N2C(=O)C1C",
-   "smirks": null,
-   "rule_support": null,
-   "type_support": null,
+   "substrate": "CCCC(NC(C)C(=O)N1C(C(=O)O)CC2CCCCC21)C(=O)OCC",
+   "metabolite": "CCCC(NC(C)C(=O)N1C(C(=O)OC2OC(C(=O)O)C(O)C(O)C2O)CC2CCCCC21)C(=O)OCC",
+   "smirks": "[#6:1]-[#8:2]>>[#6:1]-[#8:2]-[#6:3]1-[#8:4]-[#6:5](-[#6:6](=[#8:7])-[#8:8])-[#6:9](-[#8:10])-[#6:11](-[#8:12])-[#6:13]-1-[#8:14]",
+   "rule_support": 1531,
+   "type_support": 2071,
    "in_stratum": false
   },
   {
@@ -1860,6 +1852,14 @@
    "smirks": "[#6:1]-[#8:2]>>[#6:1]-[#8:2]-[#6:3]1-[#8:4]-[#6:5](-[#6:6](=[#8:7])-[#8:8])-[#6:9](-[#8:10])-[#6:11](-[#8:12])-[#6:13]-1-[#8:14]",
    "rule_support": 1531,
    "type_support": 2071,
+   "in_stratum": false
+  },
+  {
+   "substrate": "CCCC(NC(C)C(=O)N1C(C(=O)O)CC2CCCCC21)C(=O)O",
+   "metabolite": "CCCC(C(=O)O)N1C(=O)C2CC3CCCCC3N2C(=O)C1C",
+   "smirks": null,
+   "rule_support": null,
+   "type_support": null,
    "in_stratum": false
   },
   {
@@ -1896,9 +1896,9 @@
   },
   {
    "substrate": "CC(=O)OC1(C(C)=O)CCC2C3=CC(Cl)=C4CC(=O)OCC4(C)C3CCC21C",
-   "metabolite": "CC(=O)OC1(C(C)=O)CC(O)C2C3=CC(Cl)=C4CC(=O)OCC4(C)C3CCC21C",
-   "smirks": "[#6:1]-[#6:2]-[#6:3]>>[#6:1]-[#6:2](-[#8:4])-[#6:3]",
-   "rule_support": 703,
+   "metabolite": "CC(=O)OC1(C(=O)CO)CCC2C3=CC(Cl)=C4CC(=O)OCC4(C)C3CCC21C",
+   "smirks": "[#6:1]-[#6:2]>>[#6:1]-[#6:2]-[#8:3]",
+   "rule_support": 358,
    "type_support": 3747,
    "in_stratum": false
   },
@@ -1912,17 +1912,17 @@
   },
   {
    "substrate": "CC(=O)OC1(C(C)=O)CCC2C3=CC(Cl)=C4CC(=O)OCC4(C)C3CCC21C",
-   "metabolite": "CC(=O)OC1(C(C)=O)CCC2C3=CC(Cl)=C4CC(=O)OCC4(C)C3C(O)CC21C",
-   "smirks": "[#6:3]-[#6:2]-[#6:1]>>[#6:3]-[#6:2](-[#8:4])-[#6:1]",
-   "rule_support": 77,
+   "metabolite": "CC(=O)OC1(C(C)=O)CC(O)C2C3=CC(Cl)=C4CC(=O)OCC4(C)C3CCC21C",
+   "smirks": "[#6:1]-[#6:2]-[#6:3]>>[#6:1]-[#6:2](-[#8:4])-[#6:3]",
+   "rule_support": 703,
    "type_support": 3747,
    "in_stratum": false
   },
   {
    "substrate": "CC(=O)OC1(C(C)=O)CCC2C3=CC(Cl)=C4CC(=O)OCC4(C)C3CCC21C",
-   "metabolite": "CC(=O)OC1(C(=O)CO)CCC2C3=CC(Cl)=C4CC(=O)OCC4(C)C3CCC21C",
-   "smirks": "[#6:1]-[#6:2]>>[#6:1]-[#6:2]-[#8:3]",
-   "rule_support": 358,
+   "metabolite": "CC(=O)OC1(C(C)=O)CCC2C3=CC(Cl)=C4CC(=O)OCC4(C)C3C(O)CC21C",
+   "smirks": "[#6:3]-[#6:2]-[#6:1]>>[#6:3]-[#6:2](-[#8:4])-[#6:1]",
+   "rule_support": 77,
    "type_support": 3747,
    "in_stratum": false
   },
@@ -1944,16 +1944,16 @@
   },
   {
    "substrate": "CC(=O)OC1(C(=O)CO)CCC2C3=CC(Cl)=C4CC(=O)OCC4(C)C3CCC21C",
-   "metabolite": "CC(=O)OC1(C(=O)CO)CCC2C3CC(O)C4=CC(=O)OCC4(C)C3CCC21C",
-   "smirks": "[#6:1]-[#6:3]1=[#6:4]-[#6:5](-[#17:10])=[#6:6](-[#6:9]-[#6:8])-[#6:7]-[#6:2]-1>>[#6:1]-[#6:3]1-[#6:4]-[#6:5](-[#8:11])-[#6:6](=[#6:9]-[#6:8])-[#6:7]-[#6:2]-1",
+   "metabolite": "CC12COC(=O)C=C1C(Cl)=CC1C2CCC2(C)C1CCC2(O)C(=O)CO",
+   "smirks": "[#6:13]-[#6:14](=[#8:15])-[#8:12]-[#6:11].[#6:10]-[#6:8]1=[#6:7]-[#6:5](-[#17:6])=[#6:4](-[#6:3]-[#6:2])-[#6:1]-[#6:9]-1>>[#6:1]1-[#6:4](=[#6:3]-[#6:2])-[#6:5](-[#17:6])=[#6:7]-[#6:8](-[#6:9]-1)-[#6:10].[#6:11]-[#8:12]",
    "rule_support": 0,
    "type_support": 0,
    "in_stratum": false
   },
   {
    "substrate": "CC(=O)OC1(C(=O)CO)CCC2C3=CC(Cl)=C4CC(=O)OCC4(C)C3CCC21C",
-   "metabolite": "CC12COC(=O)C=C1C(Cl)=CC1C2CCC2(C)C1CCC2(O)C(=O)CO",
-   "smirks": "[#6:13]-[#6:14](=[#8:15])-[#8:12]-[#6:11].[#6:10]-[#6:8]1=[#6:7]-[#6:5](-[#17:6])=[#6:4](-[#6:3]-[#6:2])-[#6:1]-[#6:9]-1>>[#6:1]1-[#6:4](=[#6:3]-[#6:2])-[#6:5](-[#17:6])=[#6:7]-[#6:8](-[#6:9]-1)-[#6:10].[#6:11]-[#8:12]",
+   "metabolite": "CC(=O)OC1(C(=O)CO)CCC2C3CC(O)C4=CC(=O)OCC4(C)C3CCC21C",
+   "smirks": "[#6:1]-[#6:3]1=[#6:4]-[#6:5](-[#17:10])=[#6:6](-[#6:9]-[#6:8])-[#6:7]-[#6:2]-1>>[#6:1]-[#6:3]1-[#6:4]-[#6:5](-[#8:11])-[#6:6](=[#6:9]-[#6:8])-[#6:7]-[#6:2]-1",
    "rule_support": 0,
    "type_support": 0,
    "in_stratum": false
@@ -2000,22 +2000,6 @@
   },
   {
    "substrate": "O=C(O)c1cccnc1",
-   "metabolite": "C[n+]1cccc(C(=O)[O-])c1",
-   "smirks": "[#6:1]-[#8:2].[#6:3]:[#7:4]:[#6:5]>>[#6:6]-[#7+:4](:[#6:3]):[#6:5].[#6:1]-[#8-:2]",
-   "rule_support": 0,
-   "type_support": 0,
-   "in_stratum": false
-  },
-  {
-   "substrate": "O=C(O)c1cccnc1",
-   "metabolite": "N=C(O)c1ccc[n+]([O-])c1",
-   "smirks": "[#8:7]=[#6:2](-[#8:1])-[#6:3]:[#6:6]:[#7:5]:[#6:4]>>[#7:8]=[#6:2](-[#8:1])-[#6:3]:[#6:6]:[#7+:5](:[#6:4])-[#8-:9]",
-   "rule_support": 0,
-   "type_support": 0,
-   "in_stratum": false
-  },
-  {
-   "substrate": "O=C(O)c1cccnc1",
    "metabolite": "Cn1cc(C(=N)O)ccc1=O",
    "smirks": "[#8:8]=[#6:2](-[#8:1])-[#6:3]:[#6:7]:[#7:6]:[#6:5]:[#6:4]>>[#6:9]-[#7:6](:[#6:7]:[#6:3]-[#6:2](=[#7:10])-[#8:1]):[#6:5](:[#6:4])=[#8:11]",
    "rule_support": 0,
@@ -2024,8 +2008,8 @@
   },
   {
    "substrate": "O=C(O)c1cccnc1",
-   "metabolite": "Cn1ccc(=O)c(C(=N)O)c1",
-   "smirks": "[#8:9]=[#6:2](-[#8:1])-[#6:3]1:[#6:4]:[#6:5]:[#6:6]:[#7:7]:[#6:8]:1>>[#6:10]-[#7:7]1:[#6:6]:[#6:5]:[#6:4](=[#8:11]):[#6:3](-[#6:2](=[#7:12])-[#8:1]):[#6:8]:1",
+   "metabolite": "C[n+]1cccc(C(=O)[O-])c1",
+   "smirks": "[#6:1]-[#8:2].[#6:3]:[#7:4]:[#6:5]>>[#6:6]-[#7+:4](:[#6:3]):[#6:5].[#6:1]-[#8-:2]",
    "rule_support": 0,
    "type_support": 0,
    "in_stratum": false
@@ -2040,8 +2024,24 @@
   },
   {
    "substrate": "O=C(O)c1cccnc1",
+   "metabolite": "N=C(O)c1ccc[n+]([O-])c1",
+   "smirks": "[#8:7]=[#6:2](-[#8:1])-[#6:3]:[#6:6]:[#7:5]:[#6:4]>>[#7:8]=[#6:2](-[#8:1])-[#6:3]:[#6:6]:[#7+:5](:[#6:4])-[#8-:9]",
+   "rule_support": 0,
+   "type_support": 0,
+   "in_stratum": false
+  },
+  {
+   "substrate": "O=C(O)c1cccnc1",
    "metabolite": "N=C(O)c1cccnc1",
    "smirks": "[#8:4]=[#6:2](-[#8:1])-[#6:3]>>[#7:5]=[#6:2](-[#8:1])-[#6:3]",
+   "rule_support": 0,
+   "type_support": 0,
+   "in_stratum": false
+  },
+  {
+   "substrate": "O=C(O)c1cccnc1",
+   "metabolite": "Cn1ccc(=O)c(C(=N)O)c1",
+   "smirks": "[#8:9]=[#6:2](-[#8:1])-[#6:3]1:[#6:4]:[#6:5]:[#6:6]:[#7:7]:[#6:8]:1>>[#6:10]-[#7:7]1:[#6:6]:[#6:5]:[#6:4](=[#8:11]):[#6:3](-[#6:2](=[#7:12])-[#8:1]):[#6:8]:1",
    "rule_support": 0,
    "type_support": 0,
    "in_stratum": false
@@ -2056,14 +2056,6 @@
   },
   {
    "substrate": "CC(SC(=O)c1cccs1)C(O)=NCC(=O)O",
-   "metabolite": "O=C(O)c1cccs1",
-   "smirks": "[#6:4]-[#6:5](-[#16:6]-[#6:2](=[#8:1])-[#6:3])-[#6:7](-[#8:8])=[#7:9]-[#6:10]-[#6:11](=[#8:12])-[#8:13]>>[#8:1]=[#6:2](-[#8:14])-[#6:3]",
-   "rule_support": 0,
-   "type_support": 0,
-   "in_stratum": false
-  },
-  {
-   "substrate": "CC(SC(=O)c1cccs1)C(O)=NCC(=O)O",
    "metabolite": "CC(S)C(O)=NCC(=O)O",
    "smirks": "[#6:1]-[#16:2]-[#6:3](=[#8:4])-[#6:5]1:[#6:6]:[#6:7]:[#6:8]:[#16:9]:1>>[#6:1]-[#16:2]",
    "rule_support": 0,
@@ -2071,11 +2063,11 @@
    "in_stratum": false
   },
   {
-   "substrate": "CC(S)C(O)=NCC(=O)O",
-   "metabolite": "CC(S)C(=O)O",
-   "smirks": "[#6:1]-[#6:2](-[#8:3])=[#7:4]-[#6:5]-[#6:6](=[#8:7])-[#8:8]>>[#6:1]-[#6:2](=[#8:9])-[#8:3]",
-   "rule_support": 2,
-   "type_support": 2,
+   "substrate": "CC(SC(=O)c1cccs1)C(O)=NCC(=O)O",
+   "metabolite": "O=C(O)c1cccs1",
+   "smirks": "[#6:4]-[#6:5](-[#16:6]-[#6:2](=[#8:1])-[#6:3])-[#6:7](-[#8:8])=[#7:9]-[#6:10]-[#6:11](=[#8:12])-[#8:13]>>[#8:1]=[#6:2](-[#8:14])-[#6:3]",
+   "rule_support": 0,
+   "type_support": 0,
    "in_stratum": false
   },
   {
@@ -2087,11 +2079,11 @@
    "in_stratum": true
   },
   {
-   "substrate": "COC(=O)N1CCC2C1CC(O)CC2(O)C#Cc1cccc(C)c1",
-   "metabolite": "COC(=O)N1CCC2C1CC(OC1OC(C(=O)O)C(O)C(O)C1O)CC2(O)C#Cc1cccc(C)c1",
-   "smirks": "[#6:1]-[#8:2]>>[#6:1]-[#8:2]-[#6:3]1-[#8:4]-[#6:5](-[#6:6](=[#8:7])-[#8:8])-[#6:9](-[#8:10])-[#6:11](-[#8:12])-[#6:13]-1-[#8:14]",
-   "rule_support": 1531,
-   "type_support": 2071,
+   "substrate": "CC(S)C(O)=NCC(=O)O",
+   "metabolite": "CC(S)C(=O)O",
+   "smirks": "[#6:1]-[#6:2](-[#8:3])=[#7:4]-[#6:5]-[#6:6](=[#8:7])-[#8:8]>>[#6:1]-[#6:2](=[#8:9])-[#8:3]",
+   "rule_support": 2,
+   "type_support": 2,
    "in_stratum": false
   },
   {
@@ -2100,6 +2092,14 @@
    "smirks": "[#6:1]:[#6:3]:[#6:2]>>[#6:1]:[#6:3](:[#6:2])-[#8:4]",
    "rule_support": 66,
    "type_support": 3747,
+   "in_stratum": false
+  },
+  {
+   "substrate": "COC(=O)N1CCC2C1CC(O)CC2(O)C#Cc1cccc(C)c1",
+   "metabolite": "COC(=O)N1CCC2C1CC(OC1OC(C(=O)O)C(O)C(O)C1O)CC2(O)C#Cc1cccc(C)c1",
+   "smirks": "[#6:1]-[#8:2]>>[#6:1]-[#8:2]-[#6:3]1-[#8:4]-[#6:5](-[#6:6](=[#8:7])-[#8:8])-[#6:9](-[#8:10])-[#6:11](-[#8:12])-[#6:13]-1-[#8:14]",
+   "rule_support": 1531,
+   "type_support": 2071,
    "in_stratum": false
   },
   {
@@ -2144,18 +2144,34 @@
   },
   {
    "substrate": "CS(=O)(=O)CCNCc1ccc(-c2ccc3ncnc(Nc4ccc(OCc5cccc(F)c5)c(Cl)c4)c3c2)o1",
-   "metabolite": "CS(=O)(=O)CCN(O)Cc1ccc(-c2ccc3ncnc(Nc4ccc(OCc5cccc(F)c5)c(Cl)c4)c3c2)o1",
-   "smirks": "[#6:1]-[#7:2]-[#6:3]>>[#6:1]-[#7:2](-[#8:4])-[#6:3]",
-   "rule_support": 11,
-   "type_support": 66,
-   "in_stratum": false
-  },
-  {
-   "substrate": "CS(=O)(=O)CCNCc1ccc(-c2ccc3ncnc(Nc4ccc(OCc5cccc(F)c5)c(Cl)c4)c3c2)o1",
    "metabolite": "CS(=O)(=O)CCN=CC(=O)CCC(=O)c1ccc2ncnc(Nc3ccc(OCc4cccc(F)c4)c(Cl)c3)c2c1",
    "smirks": "[#6:4]-[#16:5](=[#8:6])(=[#8:7])-[#6:8]-[#6:9]-[#7:10]-[#6:11]-[#6:12]1:[#6:13]:[#6:14]:[#6:15](-[#6:1](:[#6:2]):[#6:3]):[#8:16]:1>>[#6:17]-[#16:18](=[#8:19])(=[#8:20])-[#6:21]-[#6:22]-[#7:23]=[#6:24]-[#6:25](=[#8:26])-[#6:27]-[#6:28]-[#6:29](=[#8:30])-[#6:1](:[#6:2]):[#6:3]",
    "rule_support": 0,
    "type_support": 0,
+   "in_stratum": false
+  },
+  {
+   "substrate": "CS(=O)(=O)CCNCc1ccc(-c2ccc3ncnc(Nc4ccc(OCc5cccc(F)c5)c(Cl)c4)c3c2)o1",
+   "metabolite": "O=Cc1ccc(-c2ccc3ncnc(Nc4ccc(OCc5cccc(F)c5)c(Cl)c4)c3c2)o1",
+   "smirks": "[#6:3]-[#16:4](=[#8:5])(=[#8:6])-[#6:7]-[#6:8]-[#7:9]-[#6:1]-[#6:2]>>[#8:10]=[#6:1]-[#6:2]",
+   "rule_support": 0,
+   "type_support": 0,
+   "in_stratum": false
+  },
+  {
+   "substrate": "CS(=O)(=O)CCNCc1ccc(-c2ccc3ncnc(Nc4ccc(OCc5cccc(F)c5)c(Cl)c4)c3c2)o1",
+   "metabolite": "NCc1ccc(-c2ccc3ncnc(Nc4ccc(OCc5cccc(F)c5)c(Cl)c4)c3c2)o1",
+   "smirks": "[#6:3]-[#16:4](=[#8:5])(=[#8:6])-[#6:7]-[#6:8]-[#7:1]-[#6:2]>>[#7:1]-[#6:2]",
+   "rule_support": 0,
+   "type_support": 0,
+   "in_stratum": false
+  },
+  {
+   "substrate": "CS(=O)(=O)CCNCc1ccc(-c2ccc3ncnc(Nc4ccc(OCc5cccc(F)c5)c(Cl)c4)c3c2)o1",
+   "metabolite": "CS(=O)(=O)CCNCc1ccc(-c2ccc3ncnc(Nc4ccc(O)c(Cl)c4)c3c2)o1",
+   "smirks": "[#6:1]-[#8:2]-[#6:3]-[#6:4]1:[#6:5]:[#6:6]:[#6:7]:[#6:8](-[#9:9]):[#6:10]:1>>[#6:1]-[#8:2]",
+   "rule_support": 0,
+   "type_support": 2,
    "in_stratum": false
   },
   {
@@ -2176,14 +2192,6 @@
   },
   {
    "substrate": "CS(=O)(=O)CCNCc1ccc(-c2ccc3ncnc(Nc4ccc(OCc5cccc(F)c5)c(Cl)c4)c3c2)o1",
-   "metabolite": "NCc1ccc(-c2ccc3ncnc(Nc4ccc(OCc5cccc(F)c5)c(Cl)c4)c3c2)o1",
-   "smirks": "[#6:3]-[#16:4](=[#8:5])(=[#8:6])-[#6:7]-[#6:8]-[#7:1]-[#6:2]>>[#7:1]-[#6:2]",
-   "rule_support": 0,
-   "type_support": 0,
-   "in_stratum": false
-  },
-  {
-   "substrate": "CS(=O)(=O)CCNCc1ccc(-c2ccc3ncnc(Nc4ccc(OCc5cccc(F)c5)c(Cl)c4)c3c2)o1",
    "metabolite": "CS(=O)(=O)CC(O)NCc1ccc(-c2ccc3ncnc(Nc4ccc(OCc5cccc(F)c5)c(Cl)c4)c3c2)o1",
    "smirks": "[#6:1]-[#6:2]-[#7:3]>>[#6:1]-[#6:2](-[#8:4])-[#7:3]",
    "rule_support": 44,
@@ -2192,27 +2200,11 @@
   },
   {
    "substrate": "CS(=O)(=O)CCNCc1ccc(-c2ccc3ncnc(Nc4ccc(OCc5cccc(F)c5)c(Cl)c4)c3c2)o1",
-   "metabolite": "CS(=O)(=O)CCNCc1ccc(-c2ccc3ncnc(Nc4ccc(O)c(Cl)c4)c3c2)o1",
-   "smirks": "[#6:1]-[#8:2]-[#6:3]-[#6:4]1:[#6:5]:[#6:6]:[#6:7]:[#6:8](-[#9:9]):[#6:10]:1>>[#6:1]-[#8:2]",
-   "rule_support": 0,
-   "type_support": 2,
+   "metabolite": "CS(=O)(=O)CCN(O)Cc1ccc(-c2ccc3ncnc(Nc4ccc(OCc5cccc(F)c5)c(Cl)c4)c3c2)o1",
+   "smirks": "[#6:1]-[#7:2]-[#6:3]>>[#6:1]-[#7:2](-[#8:4])-[#6:3]",
+   "rule_support": 11,
+   "type_support": 66,
    "in_stratum": false
-  },
-  {
-   "substrate": "CS(=O)(=O)CCNCc1ccc(-c2ccc3ncnc(Nc4ccc(OCc5cccc(F)c5)c(Cl)c4)c3c2)o1",
-   "metabolite": "O=Cc1ccc(-c2ccc3ncnc(Nc4ccc(OCc5cccc(F)c5)c(Cl)c4)c3c2)o1",
-   "smirks": "[#6:3]-[#16:4](=[#8:5])(=[#8:6])-[#6:7]-[#6:8]-[#7:9]-[#6:1]-[#6:2]>>[#8:10]=[#6:1]-[#6:2]",
-   "rule_support": 0,
-   "type_support": 0,
-   "in_stratum": false
-  },
-  {
-   "substrate": "CS(=O)(=O)CCNCc1ccc(-c2ccc3ncnc(Nc4ccc(O)c(Cl)c4)c3c2)o1",
-   "metabolite": "CS(=O)(=O)CCNCc1ccc(-c2ccc3nc(O)[nH]c(=Nc4ccc(O)c(Cl)c4)c3c2)o1",
-   "smirks": "[#7:5]:[#6:4]:[#7:3]:[#6:2](-[#7:6]-[#6:7]):[#6:1]>>[#7:5]:[#6:4](-[#8:8]):[#7H:3]:[#6:2](=[#7:6]-[#6:7]):[#6:1]",
-   "rule_support": 0,
-   "type_support": 8,
-   "in_stratum": true
   },
   {
    "substrate": "CS(=O)(=O)CCNCc1ccc(-c2ccc3ncnc(Nc4ccc(O)c(Cl)c4)c3c2)o1",
@@ -2232,6 +2224,14 @@
   },
   {
    "substrate": "CS(=O)(=O)CCNCc1ccc(-c2ccc3ncnc(Nc4ccc(O)c(Cl)c4)c3c2)o1",
+   "metabolite": "CS(=O)(=O)CCNCc1ccc(-c2ccc3nc(O)[nH]c(=Nc4ccc(O)c(Cl)c4)c3c2)o1",
+   "smirks": "[#7:5]:[#6:4]:[#7:3]:[#6:2](-[#7:6]-[#6:7]):[#6:1]>>[#7:5]:[#6:4](-[#8:8]):[#7H:3]:[#6:2](=[#7:6]-[#6:7]):[#6:1]",
+   "rule_support": 0,
+   "type_support": 8,
+   "in_stratum": true
+  },
+  {
+   "substrate": "CS(=O)(=O)CCNCc1ccc(-c2ccc3ncnc(Nc4ccc(O)c(Cl)c4)c3c2)o1",
    "metabolite": "CS(=O)(=O)CCNCc1ccc(-c2ccc3ncnc(N=C4C=CC(=O)C(Cl)=C4)c3c2)o1",
    "smirks": "[#6:1]-[#7:2]-[#6:3]1:[#6:4]:[#6:5]:[#6:6](-[#8:10]):[#6:7](-[#17:9]):[#6:8]:1>>[#6:1]-[#7:2]=[#6:3]1-[#6:4]=[#6:5]-[#6:6](=[#8:10])-[#6:7](-[#17:9])=[#6:8]-1",
    "rule_support": 0,
@@ -2240,18 +2240,18 @@
   },
   {
    "substrate": "O=Cc1ccc(-c2ccc3ncnc(Nc4ccc(OCc5cccc(F)c5)c(Cl)c4)c3c2)o1",
-   "metabolite": "O=C(O)c1ccc(-c2ccc3ncnc(Nc4ccc(OCc5cccc(F)c5)c(Cl)c4)c3c2)o1",
-   "smirks": "[#8:1]=[#6:2]-[#6:3]>>[#8:1]=[#6:2](-[#8:4])-[#6:3]",
-   "rule_support": 33,
-   "type_support": 3747,
-   "in_stratum": false
-  },
-  {
-   "substrate": "O=Cc1ccc(-c2ccc3ncnc(Nc4ccc(OCc5cccc(F)c5)c(Cl)c4)c3c2)o1",
    "metabolite": "OCc1ccc(-c2ccc3ncnc(Nc4ccc(OCc5cccc(F)c5)c(Cl)c4)c3c2)o1",
    "smirks": "[#8:1]=[#6:2]-[#6:3]>>[#8:1]-[#6:2]-[#6:3]",
    "rule_support": 10,
    "type_support": 397,
+   "in_stratum": false
+  },
+  {
+   "substrate": "O=Cc1ccc(-c2ccc3ncnc(Nc4ccc(OCc5cccc(F)c5)c(Cl)c4)c3c2)o1",
+   "metabolite": "O=C(O)c1ccc(-c2ccc3ncnc(Nc4ccc(OCc5cccc(F)c5)c(Cl)c4)c3c2)o1",
+   "smirks": "[#8:1]=[#6:2]-[#6:3]>>[#8:1]=[#6:2](-[#8:4])-[#6:3]",
+   "rule_support": 33,
+   "type_support": 3747,
    "in_stratum": false
   },
   {
@@ -2328,14 +2328,6 @@
   },
   {
    "substrate": "C=C1CC23CC4C5C6(C)CC(OC(C)=O)CC57C2C(O)C1C(OC(C)=O)C3(O)C7N4C6",
-   "metabolite": "C=C1CC23CC4C5C6(C)CC(OC(C)=O)CC57C2C(O)C1C(OC(C)=O)C3(O)C7[N+]4(O)C6",
-   "smirks": "[#6:1]-[#7:3](-[#6:2])-[#6:4]>>[#6:1]-[#7+:3](-[#6:2])(-[#8:5])-[#6:4]",
-   "rule_support": 0,
-   "type_support": 131,
-   "in_stratum": true
-  },
-  {
-   "substrate": "C=C1CC23CC4C5C6(C)CC(OC(C)=O)CC57C2C(O)C1C(OC(C)=O)C3(O)C7N4C6",
    "metabolite": "C=C1CC23CC4C5C6(C)CC(OC(C)=O)CC57C2C(O)C1C(O)C3(O)C7N4C6",
    "smirks": "[#6:1]-[#8:2]-[#6:3](-[#6:4])=[#8:5]>>[#6:1]-[#8:2]",
    "rule_support": 70,
@@ -2344,11 +2336,11 @@
   },
   {
    "substrate": "C=C1CC23CC4C5C6(C)CC(OC(C)=O)CC57C2C(O)C1C(OC(C)=O)C3(O)C7N4C6",
-   "metabolite": "C=C1CC23CC4C5C6(C)CC(OC(C)=O)CC57C2C(OC2OC(C(=O)O)C(O)C(O)C2O)C1C(OC(C)=O)C3(O)C7N4C6",
-   "smirks": "[#6:1]-[#8:2]>>[#6:1]-[#8:2]-[#6:3]1-[#8:4]-[#6:5](-[#6:6](=[#8:7])-[#8:8])-[#6:9](-[#8:10])-[#6:11](-[#8:12])-[#6:13]-1-[#8:14]",
-   "rule_support": 1531,
-   "type_support": 2071,
-   "in_stratum": false
+   "metabolite": "C=C1CC23CC4C5C6(C)CC(OC(C)=O)CC57C2C(O)C1C(OC(C)=O)C3(O)C7[N+]4(O)C6",
+   "smirks": "[#6:1]-[#7:3](-[#6:2])-[#6:4]>>[#6:1]-[#7+:3](-[#6:2])(-[#8:5])-[#6:4]",
+   "rule_support": 0,
+   "type_support": 131,
+   "in_stratum": true
   },
   {
    "substrate": "C=C1CC23CC4C5C6(C)CC(OC(C)=O)CC57C2C(O)C1C(OC(C)=O)C3(O)C7N4C6",
@@ -2359,43 +2351,11 @@
    "in_stratum": false
   },
   {
-   "substrate": "Cn1c(CCCC(=O)O)nc2cc(N(CCCl)CCCl)ccc21",
-   "metabolite": "Cn1c(CCCC(=O)O)nc2cc(N(CCCl)CCSCC(N=C(O)CCC(N)C(=O)O)C(O)=NCC(=O)O)ccc21",
-   "smirks": "[#6:1]-[#6:2]-[#17:3]>>[#6:1]-[#6:2]-[#16:4]-[#6:5]-[#6:6](-[#7:7]=[#6:8](-[#8:9])-[#6:10]-[#6:11]-[#6:12](-[#7:13])-[#6:14](=[#8:15])-[#8:16])-[#6:17](-[#8:18])=[#7:19]-[#6:20]-[#6:21](=[#8:22])-[#8:23]",
-   "rule_support": 3,
-   "type_support": 25,
-   "in_stratum": true
-  },
-  {
-   "substrate": "Cn1c(CCCC(=O)O)nc2cc(N(CCCl)CCCl)ccc21",
-   "metabolite": "O=C(O)CCCc1nc2ccc(N(CCCl)CCCl)cc2[nH]1",
-   "smirks": "[#6:6]-[#7:2]1:[#6:1]:[#7:5]:[#6:4]:[#6:3]:1>>[#6:1]1:[#7:2]:[#6:3]:[#6:4]:[#7H:5]:1",
-   "rule_support": 0,
-   "type_support": 416,
-   "in_stratum": true
-  },
-  {
-   "substrate": "Cn1c(CCCC(=O)O)nc2cc(N(CCCl)CCCl)ccc21",
-   "metabolite": "Cn1c(CCCC(=O)O)nc2cc(N(CCO)CCCl)ccc21",
-   "smirks": "[#6:1]-[#6:2]-[#17:3]>>[#6:1]-[#6:2]-[#8:4]",
-   "rule_support": 7,
-   "type_support": 25,
-   "in_stratum": false
-  },
-  {
-   "substrate": "Cn1c(CCCC(=O)O)nc2cc(N(CCCl)CCCl)ccc21",
-   "metabolite": "Cn1c(CCCC(=O)O)nc2cc(NCCCl)ccc21",
-   "smirks": "[#6:1]-[#7:2](-[#6:3])-[#6:4]-[#6:5]-[#17:6]>>[#6:1]-[#7:2]-[#6:3]",
-   "rule_support": 0,
-   "type_support": 4,
-   "in_stratum": false
-  },
-  {
-   "substrate": "Cn1c(CCCC(=O)O)nc2cc(N(CCCl)CCCl)ccc21",
-   "metabolite": "Cn1c(CC(O)CC(=O)O)nc2cc(N(CCCl)CCCl)ccc21",
-   "smirks": "[#6:1]-[#6:2]-[#6:3]>>[#6:1]-[#6:2](-[#8:4])-[#6:3]",
-   "rule_support": 703,
-   "type_support": 3747,
+   "substrate": "C=C1CC23CC4C5C6(C)CC(OC(C)=O)CC57C2C(O)C1C(OC(C)=O)C3(O)C7N4C6",
+   "metabolite": "C=C1CC23CC4C5C6(C)CC(OC(C)=O)CC57C2C(OC2OC(C(=O)O)C(O)C(O)C2O)C1C(OC(C)=O)C3(O)C7N4C6",
+   "smirks": "[#6:1]-[#8:2]>>[#6:1]-[#8:2]-[#6:3]1-[#8:4]-[#6:5](-[#6:6](=[#8:7])-[#8:8])-[#6:9](-[#8:10])-[#6:11](-[#8:12])-[#6:13]-1-[#8:14]",
+   "rule_support": 1531,
+   "type_support": 2071,
    "in_stratum": false
   },
   {
@@ -2408,6 +2368,14 @@
   },
   {
    "substrate": "Cn1c(CCCC(=O)O)nc2cc(N(CCCl)CCCl)ccc21",
+   "metabolite": "Cn1c(CCCC(=O)O)nc2cc(N(CCCl)CCSCC(N=C(O)CCC(N)C(=O)O)C(O)=NCC(=O)O)ccc21",
+   "smirks": "[#6:1]-[#6:2]-[#17:3]>>[#6:1]-[#6:2]-[#16:4]-[#6:5]-[#6:6](-[#7:7]=[#6:8](-[#8:9])-[#6:10]-[#6:11]-[#6:12](-[#7:13])-[#6:14](=[#8:15])-[#8:16])-[#6:17](-[#8:18])=[#7:19]-[#6:20]-[#6:21](=[#8:22])-[#8:23]",
+   "rule_support": 3,
+   "type_support": 25,
+   "in_stratum": true
+  },
+  {
+   "substrate": "Cn1c(CCCC(=O)O)nc2cc(N(CCCl)CCCl)ccc21",
    "metabolite": "Cn1c(CCCC(=O)O)nc2cc(N(CCCl)CCCl)cc(O)c21",
    "smirks": "[#6:3]:[#6:2]:[#6:1]>>[#6:3]:[#6:2](-[#8:4]):[#6:1]",
    "rule_support": 274,
@@ -2416,9 +2384,41 @@
   },
   {
    "substrate": "Cn1c(CCCC(=O)O)nc2cc(N(CCCl)CCCl)ccc21",
+   "metabolite": "Cn1c(CCCC(=O)O)nc2cc(NCCCl)ccc21",
+   "smirks": "[#6:1]-[#7:2](-[#6:3])-[#6:4]-[#6:5]-[#17:6]>>[#6:1]-[#7:2]-[#6:3]",
+   "rule_support": 0,
+   "type_support": 4,
+   "in_stratum": false
+  },
+  {
+   "substrate": "Cn1c(CCCC(=O)O)nc2cc(N(CCCl)CCCl)ccc21",
+   "metabolite": "Cn1c(CCCC(=O)O)nc2cc(N(CCO)CCCl)ccc21",
+   "smirks": "[#6:1]-[#6:2]-[#17:3]>>[#6:1]-[#6:2]-[#8:4]",
+   "rule_support": 7,
+   "type_support": 25,
+   "in_stratum": false
+  },
+  {
+   "substrate": "Cn1c(CCCC(=O)O)nc2cc(N(CCCl)CCCl)ccc21",
+   "metabolite": "O=C(O)CCCc1nc2ccc(N(CCCl)CCCl)cc2[nH]1",
+   "smirks": "[#6:6]-[#7:2]1:[#6:1]:[#7:5]:[#6:4]:[#6:3]:1>>[#6:1]1:[#7:2]:[#6:3]:[#6:4]:[#7H:5]:1",
+   "rule_support": 0,
+   "type_support": 416,
+   "in_stratum": true
+  },
+  {
+   "substrate": "Cn1c(CCCC(=O)O)nc2cc(N(CCCl)CCCl)ccc21",
    "metabolite": "Cn1c(CCCC(=O)O)nc2cc(N(CCCl)CCCl)c(O)cc21",
    "smirks": "[#6:3]:[#6:2]:[#6:1]>>[#6:3]:[#6:2](-[#8:4]):[#6:1]",
    "rule_support": 274,
+   "type_support": 3747,
+   "in_stratum": false
+  },
+  {
+   "substrate": "Cn1c(CCCC(=O)O)nc2cc(N(CCCl)CCCl)ccc21",
+   "metabolite": "Cn1c(C(O)CCC(=O)O)nc2cc(N(CCCl)CCCl)ccc21",
+   "smirks": "[#6:1]-[#6:2]-[#6:3]>>[#6:1]-[#6:2](-[#8:4])-[#6:3]",
+   "rule_support": 703,
    "type_support": 3747,
    "in_stratum": false
   },
@@ -2432,7 +2432,7 @@
   },
   {
    "substrate": "Cn1c(CCCC(=O)O)nc2cc(N(CCCl)CCCl)ccc21",
-   "metabolite": "Cn1c(C(O)CCC(=O)O)nc2cc(N(CCCl)CCCl)ccc21",
+   "metabolite": "Cn1c(CC(O)CC(=O)O)nc2cc(N(CCCl)CCCl)ccc21",
    "smirks": "[#6:1]-[#6:2]-[#6:3]>>[#6:1]-[#6:2](-[#8:4])-[#6:3]",
    "rule_support": 703,
    "type_support": 3747,
@@ -2456,22 +2456,6 @@
   },
   {
    "substrate": "Cn1c(CCCC(=O)O)nc2cc(N(CCO)CCCl)ccc21",
-   "metabolite": "Cn1c(C(O)CCC(=O)O)nc2cc(N(CCO)CCCl)ccc21",
-   "smirks": "[#6:1]-[#6:2]-[#6:3]>>[#6:1]-[#6:2](-[#8:4])-[#6:3]",
-   "rule_support": 703,
-   "type_support": 3747,
-   "in_stratum": false
-  },
-  {
-   "substrate": "Cn1c(CCCC(=O)O)nc2cc(N(CCO)CCCl)ccc21",
-   "metabolite": "Cn1c(CCCC(=O)O)nc2cc(N(CCO)CCSCC(N)C(=O)O)ccc21",
-   "smirks": "[#6:1]-[#6:2]-[#17:3]>>[#6:1]-[#6:2]-[#16:4]-[#6:5]-[#6:6](-[#7:7])-[#6:8](=[#8:9])-[#8:10]",
-   "rule_support": 0,
-   "type_support": 3,
-   "in_stratum": false
-  },
-  {
-   "substrate": "Cn1c(CCCC(=O)O)nc2cc(N(CCO)CCCl)ccc21",
    "metabolite": "Cn1c(CCCC(=O)O)nc2cc(N(CCCl)CCOP(=O)(O)O)ccc21",
    "smirks": "[#6:1]-[#8:2]>>[#6:1]-[#8:2]-[#15:3](=[#8:4])(-[#8:5])-[#8:6]",
    "rule_support": 74,
@@ -2480,10 +2464,10 @@
   },
   {
    "substrate": "Cn1c(CCCC(=O)O)nc2cc(N(CCO)CCCl)ccc21",
-   "metabolite": "Cn1c(CCCC(=O)O)nc2cc(N(CCO)CCO)ccc21",
-   "smirks": "[#6:1]-[#6:2]-[#17:3]>>[#6:1]-[#6:2]-[#8:4]",
-   "rule_support": 7,
-   "type_support": 25,
+   "metabolite": "Cn1c(C(O)CCC(=O)O)nc2cc(N(CCO)CCCl)ccc21",
+   "smirks": "[#6:1]-[#6:2]-[#6:3]>>[#6:1]-[#6:2](-[#8:4])-[#6:3]",
+   "rule_support": 703,
+   "type_support": 3747,
    "in_stratum": false
   },
   {
@@ -2495,11 +2479,35 @@
    "in_stratum": true
   },
   {
+   "substrate": "Cn1c(CCCC(=O)O)nc2cc(N(CCO)CCCl)ccc21",
+   "metabolite": "Cn1c(CCCC(=O)O)nc2cc(N(CCO)CCO)ccc21",
+   "smirks": "[#6:1]-[#6:2]-[#17:3]>>[#6:1]-[#6:2]-[#8:4]",
+   "rule_support": 7,
+   "type_support": 25,
+   "in_stratum": false
+  },
+  {
+   "substrate": "Cn1c(CCCC(=O)O)nc2cc(N(CCO)CCCl)ccc21",
+   "metabolite": "Cn1c(CCCC(=O)O)nc2cc(N(CCO)CCSCC(N)C(=O)O)ccc21",
+   "smirks": "[#6:1]-[#6:2]-[#17:3]>>[#6:1]-[#6:2]-[#16:4]-[#6:5]-[#6:6](-[#7:7])-[#6:8](=[#8:9])-[#8:10]",
+   "rule_support": 0,
+   "type_support": 3,
+   "in_stratum": false
+  },
+  {
    "substrate": "Cn1c(CCCC(=O)O)nc2cc(N(CCO)CCO)ccc21",
    "metabolite": "Cn1c(C(O)CCC(=O)O)nc2cc(N(CCO)CCO)ccc21",
    "smirks": "[#6:1]-[#6:2]-[#6:3]>>[#6:1]-[#6:2](-[#8:4])-[#6:3]",
    "rule_support": 703,
    "type_support": 3747,
+   "in_stratum": false
+  },
+  {
+   "substrate": "Cn1c(CCCC(=O)O)nc2cc(N(CCO)CCO)ccc21",
+   "metabolite": "Cn1c(CCCC(=O)O)nc2cc(N(CCO)CCOP(=O)(O)O)ccc21",
+   "smirks": "[#6:1]-[#8:2]>>[#6:1]-[#8:2]-[#15:3](=[#8:4])(-[#8:5])-[#8:6]",
+   "rule_support": 74,
+   "type_support": 156,
    "in_stratum": false
   },
   {
@@ -2511,28 +2519,20 @@
    "in_stratum": true
   },
   {
-   "substrate": "Cn1c(CCCC(=O)O)nc2cc(N(CCO)CCO)ccc21",
-   "metabolite": "Cn1c(CCCC(=O)O)nc2cc(N(CCO)CCOP(=O)(O)O)ccc21",
-   "smirks": "[#6:1]-[#8:2]>>[#6:1]-[#8:2]-[#15:3](=[#8:4])(-[#8:5])-[#8:6]",
-   "rule_support": 74,
-   "type_support": 156,
-   "in_stratum": false
-  },
-  {
-   "substrate": "Cn1c(CCCC(=O)O)nc2cc(N(CCCl)CCSCC(N)C(=O)O)ccc21",
-   "metabolite": "Cn1c(CCCC(=O)O)nc2cc(N(CCO)CCSCC(N)C(=O)O)ccc21",
-   "smirks": "[#6:1]-[#6:2]-[#17:3]>>[#6:1]-[#6:2]-[#8:4]",
-   "rule_support": 7,
-   "type_support": 25,
-   "in_stratum": false
-  },
-  {
    "substrate": "Cn1c(CCCC(=O)O)nc2cc(N(CCCl)CCSCC(N)C(=O)O)ccc21",
    "metabolite": "Cn1c(CCCC(=O)O)nc2cc(N(CCS)CCCl)ccc21",
    "smirks": "[#6:1]-[#16:2]-[#6:3]-[#6:4](-[#7:5])-[#6:6](=[#8:7])-[#8:8]>>[#6:1]-[#16:2]",
    "rule_support": 0,
    "type_support": 1,
    "in_stratum": false
+  },
+  {
+   "substrate": "Cn1c(CCCC(=O)O)nc2cc(N(CCCl)CCSCC(N)C(=O)O)ccc21",
+   "metabolite": "Cn1c(CCCC(=O)O)nc2cc(N(CCSCC(N)C(=O)O)CCSCC(N=C(O)CCC(N)C(=O)O)C(O)=NCC(=O)O)ccc21",
+   "smirks": "[#6:1]-[#6:2]-[#17:3]>>[#6:1]-[#6:2]-[#16:4]-[#6:5]-[#6:6](-[#7:7]=[#6:8](-[#8:9])-[#6:10]-[#6:11]-[#6:12](-[#7:13])-[#6:14](=[#8:15])-[#8:16])-[#6:17](-[#8:18])=[#7:19]-[#6:20]-[#6:21](=[#8:22])-[#8:23]",
+   "rule_support": 3,
+   "type_support": 25,
+   "in_stratum": true
   },
   {
    "substrate": "Cn1c(CCCC(=O)O)nc2cc(N(CCCl)CCSCC(N)C(=O)O)ccc21",
@@ -2544,11 +2544,11 @@
   },
   {
    "substrate": "Cn1c(CCCC(=O)O)nc2cc(N(CCCl)CCSCC(N)C(=O)O)ccc21",
-   "metabolite": "Cn1c(CCCC(=O)O)nc2cc(N(CCSCC(N)C(=O)O)CCSCC(N=C(O)CCC(N)C(=O)O)C(O)=NCC(=O)O)ccc21",
-   "smirks": "[#6:1]-[#6:2]-[#17:3]>>[#6:1]-[#6:2]-[#16:4]-[#6:5]-[#6:6](-[#7:7]=[#6:8](-[#8:9])-[#6:10]-[#6:11]-[#6:12](-[#7:13])-[#6:14](=[#8:15])-[#8:16])-[#6:17](-[#8:18])=[#7:19]-[#6:20]-[#6:21](=[#8:22])-[#8:23]",
-   "rule_support": 3,
+   "metabolite": "Cn1c(CCCC(=O)O)nc2cc(N(CCO)CCSCC(N)C(=O)O)ccc21",
+   "smirks": "[#6:1]-[#6:2]-[#17:3]>>[#6:1]-[#6:2]-[#8:4]",
+   "rule_support": 7,
    "type_support": 25,
-   "in_stratum": true
+   "in_stratum": false
   },
   {
    "substrate": "Cn1c(CCCC(=O)O)nc2cc(N(CCCl)CCCl)c(O)cc21",
@@ -2592,18 +2592,18 @@
   },
   {
    "substrate": "Cn1c(C(O)CCC(=O)O)nc2cc(N(CCCl)CCCl)ccc21",
-   "metabolite": "Cn1c(C(O)CCC(=O)O)nc2cc(NCCCl)ccc21",
-   "smirks": "[#6:1]-[#7:2](-[#6:3])-[#6:4]-[#6:5]-[#17:6]>>[#6:1]-[#7:2]-[#6:3]",
-   "rule_support": 0,
-   "type_support": 4,
-   "in_stratum": false
-  },
-  {
-   "substrate": "Cn1c(C(O)CCC(=O)O)nc2cc(N(CCCl)CCCl)ccc21",
    "metabolite": "Cn1c(C(O)CCC(=O)O)nc2cc(N(CCO)CCCl)ccc21",
    "smirks": "[#6:1]-[#6:2]-[#17:3]>>[#6:1]-[#6:2]-[#8:4]",
    "rule_support": 7,
    "type_support": 25,
+   "in_stratum": false
+  },
+  {
+   "substrate": "Cn1c(C(O)CCC(=O)O)nc2cc(N(CCCl)CCCl)ccc21",
+   "metabolite": "Cn1c(C(O)CCC(=O)O)nc2cc(NCCCl)ccc21",
+   "smirks": "[#6:1]-[#7:2](-[#6:3])-[#6:4]-[#6:5]-[#17:6]>>[#6:1]-[#7:2]-[#6:3]",
+   "rule_support": 0,
+   "type_support": 4,
    "in_stratum": false
   },
   {
@@ -2672,18 +2672,18 @@
   },
   {
    "substrate": "CC(C)=CCCC(C)(OC1OC(COC2OCC(O)C(O)C2O)C(O)C(O)C1O)C1CCC2(C)C1C(O)CC1C3(C)CCC(OC4OC(CO)C(O)C(O)C4OC4OC(CO)C(O)C(O)C4O)C(C)(C)C3CCC12C",
-   "metabolite": "CC(C)=CCCC(C)(OC1OC(COC2OCC(O)C(O)C2O)C(O)C(O)C1O)C1CCC2(C)C1C(O)CC1C3(C)CCC(O)C(C)(C)C3CCC12C",
-   "smirks": "[#6:1]-[#8:2]-[#6:3]1-[#8:4]-[#6:5](-[#6:6]-[#8:7])-[#6:8](-[#8:9])-[#6:10](-[#8:11])-[#6:12]-1-[#8:13]-[#6:14]1-[#8:15]-[#6:16](-[#6:17]-[#8:18])-[#6:19](-[#8:20])-[#6:21](-[#8:22])-[#6:23]-1-[#8:24]>>[#6:1]-[#8:2]",
-   "rule_support": 2,
-   "type_support": 4,
-   "in_stratum": false
-  },
-  {
-   "substrate": "CC(C)=CCCC(C)(OC1OC(COC2OCC(O)C(O)C2O)C(O)C(O)C1O)C1CCC2(C)C1C(O)CC1C3(C)CCC(OC4OC(CO)C(O)C(O)C4OC4OC(CO)C(O)C(O)C4O)C(C)(C)C3CCC12C",
    "metabolite": "CC(C)=CCCC(C)(OC1OC(CO)C(O)C(O)C1O)C1CCC2(C)C1C(O)CC1C3(C)CCC(O)C(C)(C)C3CCC12C",
    "smirks": "[#6:1]-[#8:2]-[#6:5]1-[#8:6]-[#6:7]-[#6:8](-[#8:9])-[#6:10](-[#8:11])-[#6:12]-1-[#8:13].[#6:3]-[#8:4]-[#6:14]1-[#8:15]-[#6:16](-[#6:17]-[#8:18])-[#6:19](-[#8:20])-[#6:21](-[#8:22])-[#6:23]-1-[#8:24]-[#6:25]1-[#8:26]-[#6:27](-[#6:28]-[#8:29])-[#6:30](-[#8:31])-[#6:32](-[#8:33])-[#6:34]-1-[#8:35]>>[#6:1]-[#8:2].[#6:3]-[#8:4]",
    "rule_support": 0,
    "type_support": 0,
+   "in_stratum": false
+  },
+  {
+   "substrate": "CC(C)=CCCC(C)(OC1OC(COC2OCC(O)C(O)C2O)C(O)C(O)C1O)C1CCC2(C)C1C(O)CC1C3(C)CCC(OC4OC(CO)C(O)C(O)C4OC4OC(CO)C(O)C(O)C4O)C(C)(C)C3CCC12C",
+   "metabolite": "CC(C)=CCCC(C)(OC1OC(COC2OCC(O)C(O)C2O)C(O)C(O)C1O)C1CCC2(C)C1C(O)CC1C3(C)CCC(O)C(C)(C)C3CCC12C",
+   "smirks": "[#6:1]-[#8:2]-[#6:3]1-[#8:4]-[#6:5](-[#6:6]-[#8:7])-[#6:8](-[#8:9])-[#6:10](-[#8:11])-[#6:12]-1-[#8:13]-[#6:14]1-[#8:15]-[#6:16](-[#6:17]-[#8:18])-[#6:19](-[#8:20])-[#6:21](-[#8:22])-[#6:23]-1-[#8:24]>>[#6:1]-[#8:2]",
+   "rule_support": 2,
+   "type_support": 4,
    "in_stratum": false
   },
   {
@@ -2720,16 +2720,16 @@
   },
   {
    "substrate": "Cc1nc(Nc2ncc(C(O)=Nc3c(C)cccc3C)s2)cc(N2CCN(CCO)CC2)n1",
-   "metabolite": "C=C1C=CC=C(C)C1=NC(=O)c1cnc(Nc2cc(N3CCN(CCO)CC3)nc(C)n2)s1",
-   "smirks": "[#6:1]-[#6:2](-[#8:3])=[#7:4]-[#6:5]1:[#6:6](-[#6:7]):[#6:8]:[#6:9]:[#6:10]:[#6:11]:1-[#6:12]>>[#6:12]=[#6:11]1-[#6:10]=[#6:9]-[#6:8]=[#6:6](-[#6:7])-[#6:5]-1=[#7:4]-[#6:2](=[#8:3])-[#6:1]",
+   "metabolite": "CC1=CC(=O)C=C(C)C1=NC(=O)c1cnc(Nc2cc(N3CCN(CCO)CC3)nc(C)n2)s1",
+   "smirks": "[#6:1]-[#6:2](-[#8:3])=[#7:4]-[#6:5]1:[#6:6](-[#6:7]):[#6:8]:[#6:9]:[#6:10]:[#6:11]:1-[#6:12]>>[#6:12]-[#6:11]1=[#6:10]-[#6:9](=[#8:13])-[#6:8]=[#6:6](-[#6:7])-[#6:5]-1=[#7:4]-[#6:2](=[#8:3])-[#6:1]",
    "rule_support": 0,
    "type_support": 3,
    "in_stratum": false
   },
   {
    "substrate": "Cc1nc(Nc2ncc(C(O)=Nc3c(C)cccc3C)s2)cc(N2CCN(CCO)CC2)n1",
-   "metabolite": "CC1=CC(=O)C=C(C)C1=NC(=O)c1cnc(Nc2cc(N3CCN(CCO)CC3)nc(C)n2)s1",
-   "smirks": "[#6:1]-[#6:2](-[#8:3])=[#7:4]-[#6:5]1:[#6:6](-[#6:7]):[#6:8]:[#6:9]:[#6:10]:[#6:11]:1-[#6:12]>>[#6:12]-[#6:11]1=[#6:10]-[#6:9](=[#8:13])-[#6:8]=[#6:6](-[#6:7])-[#6:5]-1=[#7:4]-[#6:2](=[#8:3])-[#6:1]",
+   "metabolite": "C=C1C=CC=C(C)C1=NC(=O)c1cnc(Nc2cc(N3CCN(CCO)CC3)nc(C)n2)s1",
+   "smirks": "[#6:1]-[#6:2](-[#8:3])=[#7:4]-[#6:5]1:[#6:6](-[#6:7]):[#6:8]:[#6:9]:[#6:10]:[#6:11]:1-[#6:12]>>[#6:12]=[#6:11]1-[#6:10]=[#6:9]-[#6:8]=[#6:6](-[#6:7])-[#6:5]-1=[#7:4]-[#6:2](=[#8:3])-[#6:1]",
    "rule_support": 0,
    "type_support": 3,
    "in_stratum": false
@@ -2744,14 +2744,6 @@
   },
   {
    "substrate": "CC1=CC(=O)C=C(C)C1=NC(=O)c1cnc(Nc2cc(N3CCN(CCO)CC3)nc(C)n2)s1",
-   "metabolite": "Cc1nc(Nc2ncc(C(O)=Nc3c(C)cc(O)c(SCC(N=C(O)CCC(N)C(=O)O)C(O)=NCC(=O)O)c3C)s2)cc(N2CCN(CCO)CC2)n1",
-   "smirks": "[#6:1]-[#6:2]1=[#6:3]-[#6:4](=[#8:5])-[#6:6]=[#6:7](-[#6:13])-[#6:8]-1=[#7:9]-[#6:10](=[#8:11])-[#6:12]>>[#6:12]-[#6:10](-[#8:11])=[#7:9]-[#6:8]1:[#6:2](-[#6:1]):[#6:3]:[#6:4](-[#8:5]):[#6:6](-[#16:14]-[#6:15]-[#6:16](-[#7:17]=[#6:18](-[#8:19])-[#6:20]-[#6:21]-[#6:22](-[#7:23])-[#6:24](=[#8:25])-[#8:26])-[#6:27](-[#8:28])=[#7:29]-[#6:30]-[#6:31](=[#8:32])-[#8:33]):[#6:7]:1-[#6:13]",
-   "rule_support": 0,
-   "type_support": 5,
-   "in_stratum": true
-  },
-  {
-   "substrate": "CC1=CC(=O)C=C(C)C1=NC(=O)c1cnc(Nc2cc(N3CCN(CCO)CC3)nc(C)n2)s1",
    "metabolite": "Cc1nc(Nc2ncc(C(O)=Nc3c(C)c(O)c(O)c(SCC(N=C(O)CCC(N)C(=O)O)C(O)=NCC(=O)O)c3C)s2)cc(N2CCN(CCO)CC2)n1",
    "smirks": "[#6:1]-[#6:2]1=[#6:3]-[#6:4](=[#8:5])-[#6:6]=[#6:7](-[#6:13])-[#6:8]-1=[#7:9]-[#6:10](=[#8:11])-[#6:12]>>[#6:12]-[#6:10](-[#8:11])=[#7:9]-[#6:8]1:[#6:2](-[#6:1]):[#6:3](-[#8:14]):[#6:4](-[#8:5]):[#6:6](-[#16:15]-[#6:16]-[#6:17](-[#7:18]=[#6:19](-[#8:20])-[#6:21]-[#6:22]-[#6:23](-[#7:24])-[#6:25](=[#8:26])-[#8:27])-[#6:28](-[#8:29])=[#7:30]-[#6:31]-[#6:32](=[#8:33])-[#8:34]):[#6:7]:1-[#6:13]",
    "rule_support": 0,
@@ -2759,11 +2751,27 @@
    "in_stratum": false
   },
   {
+   "substrate": "CC1=CC(=O)C=C(C)C1=NC(=O)c1cnc(Nc2cc(N3CCN(CCO)CC3)nc(C)n2)s1",
+   "metabolite": "Cc1nc(Nc2ncc(C(O)=Nc3c(C)cc(O)c(SCC(N=C(O)CCC(N)C(=O)O)C(O)=NCC(=O)O)c3C)s2)cc(N2CCN(CCO)CC2)n1",
+   "smirks": "[#6:1]-[#6:2]1=[#6:3]-[#6:4](=[#8:5])-[#6:6]=[#6:7](-[#6:13])-[#6:8]-1=[#7:9]-[#6:10](=[#8:11])-[#6:12]>>[#6:12]-[#6:10](-[#8:11])=[#7:9]-[#6:8]1:[#6:2](-[#6:1]):[#6:3]:[#6:4](-[#8:5]):[#6:6](-[#16:14]-[#6:15]-[#6:16](-[#7:17]=[#6:18](-[#8:19])-[#6:20]-[#6:21]-[#6:22](-[#7:23])-[#6:24](=[#8:25])-[#8:26])-[#6:27](-[#8:28])=[#7:29]-[#6:30]-[#6:31](=[#8:32])-[#8:33]):[#6:7]:1-[#6:13]",
+   "rule_support": 0,
+   "type_support": 5,
+   "in_stratum": true
+  },
+  {
    "substrate": "CCS(=O)(=O)NC1CC2(C)OC1(C)c1c2c(O)n(-c2ccc(C#N)c(C(F)(F)F)c2)c1O",
    "metabolite": "CC12CC(O)C(C)(O1)c1c2c(O)n(-c2ccc(C#N)c(C(F)(F)F)c2)c1O",
    "smirks": "[#6:4]-[#6:5]-[#16:6](=[#8:7])(=[#8:8])-[#7:9]-[#6:2](-[#6:1])-[#6:3]>>[#6:1]-[#6:2](-[#8:10])-[#6:3]",
    "rule_support": 0,
    "type_support": 0,
+   "in_stratum": false
+  },
+  {
+   "substrate": "N=C(O)C1c2ccccc2CCc2ccccc21",
+   "metabolite": "N=C(O)C1c2ccccc2CCc2ccc(O)cc21",
+   "smirks": "[#6:3]:[#6:2]:[#6:1]>>[#6:3]:[#6:2](-[#8:4]):[#6:1]",
+   "rule_support": 274,
+   "type_support": 3747,
    "in_stratum": false
   },
   {
@@ -2777,14 +2785,6 @@
   {
    "substrate": "N=C(O)C1c2ccccc2CCc2ccccc21",
    "metabolite": "N=C(O)C1c2ccccc2CCc2cc(O)ccc21",
-   "smirks": "[#6:3]:[#6:2]:[#6:1]>>[#6:3]:[#6:2](-[#8:4]):[#6:1]",
-   "rule_support": 274,
-   "type_support": 3747,
-   "in_stratum": false
-  },
-  {
-   "substrate": "N=C(O)C1c2ccccc2CCc2ccccc21",
-   "metabolite": "N=C(O)C1c2ccccc2CCc2ccc(O)cc21",
    "smirks": "[#6:3]:[#6:2]:[#6:1]>>[#6:3]:[#6:2](-[#8:4]):[#6:1]",
    "rule_support": 274,
    "type_support": 3747,
@@ -2824,18 +2824,18 @@
   },
   {
    "substrate": "CC1=CC(=O)c2ccccc2C1=O",
-   "metabolite": "CC(C)=CCCC(C)=CCCC(C)=CCC=C(C)C=Cc1c(C)c(O)c2ccccc2c1O",
-   "smirks": "[#6:1]-[#6:2]1=[#6:3]-[#6:4](=[#8:5])-[#6:6](:[#6:11]):[#6:7](:[#6:10])-[#6:8]-1=[#8:9]>>[#6:12]-[#6:13](-[#6:14])=[#6:15]-[#6:16]-[#6:17]-[#6:18](-[#6:19])=[#6:20]-[#6:21]-[#6:22]-[#6:23](-[#6:24])=[#6:25]-[#6:26]-[#6:27]=[#6:28](-[#6:29])-[#6:30]=[#6:31]-[#6:3]1:[#6:2](-[#6:1]):[#6:8](-[#8:9]):[#6:7](:[#6:10]):[#6:6](:[#6:11]):[#6:4]:1-[#8:5]",
-   "rule_support": 0,
-   "type_support": 0,
-   "in_stratum": false
-  },
-  {
-   "substrate": "CC1=CC(=O)c2ccccc2C1=O",
    "metabolite": "Cc1cc(O)c2ccccc2c1O",
    "smirks": "[#6:1]-[#6:2]1=[#6:3]-[#6:4](=[#8:5])-[#6:6](:[#6:11]):[#6:7](:[#6:10])-[#6:8]-1=[#8:9]>>[#6:1]-[#6:2]1:[#6:3]:[#6:4](-[#8:5]):[#6:6](:[#6:11]):[#6:7](:[#6:10]):[#6:8]:1-[#8:9]",
    "rule_support": 0,
    "type_support": 2,
+   "in_stratum": false
+  },
+  {
+   "substrate": "CC1=CC(=O)c2ccccc2C1=O",
+   "metabolite": "CC(C)=CCCC(C)=CCCC(C)=CCC=C(C)C=Cc1c(C)c(O)c2ccccc2c1O",
+   "smirks": "[#6:1]-[#6:2]1=[#6:3]-[#6:4](=[#8:5])-[#6:6](:[#6:11]):[#6:7](:[#6:10])-[#6:8]-1=[#8:9]>>[#6:12]-[#6:13](-[#6:14])=[#6:15]-[#6:16]-[#6:17]-[#6:18](-[#6:19])=[#6:20]-[#6:21]-[#6:22]-[#6:23](-[#6:24])=[#6:25]-[#6:26]-[#6:27]=[#6:28](-[#6:29])-[#6:30]=[#6:31]-[#6:3]1:[#6:2](-[#6:1]):[#6:8](-[#8:9]):[#6:7](:[#6:10]):[#6:6](:[#6:11]):[#6:4]:1-[#8:5]",
+   "rule_support": 0,
+   "type_support": 0,
    "in_stratum": false
   },
   {
@@ -2856,6 +2856,14 @@
   },
   {
    "substrate": "CC12CCC3c4ccc(O)cc4CCC3C1CC(O)C2O",
+   "metabolite": "CC12CCC3c4ccc(OC5OC(C(=O)O)C(O)C(O)C5O)cc4CCC3C1CC(O)C2O",
+   "smirks": "[#6:1]-[#8:2]>>[#6:1]-[#8:2]-[#6:3]1-[#8:4]-[#6:5](-[#6:6](=[#8:7])-[#8:8])-[#6:9](-[#8:10])-[#6:11](-[#8:12])-[#6:13]-1-[#8:14]",
+   "rule_support": 1531,
+   "type_support": 2071,
+   "in_stratum": false
+  },
+  {
+   "substrate": "CC12CCC3c4ccc(O)cc4CCC3C1CC(O)C2O",
    "metabolite": "CC12CCC3c4ccc(O)cc4CCC3C1CC(OC1OC(C(=O)O)C(O)C(O)C1O)C2O",
    "smirks": "[#6:1]-[#8:2]>>[#6:1]-[#8:2]-[#6:3]1-[#8:4]-[#6:5](-[#6:6](=[#8:7])-[#8:8])-[#6:9](-[#8:10])-[#6:11](-[#8:12])-[#6:13]-1-[#8:14]",
    "rule_support": 1531,
@@ -2868,14 +2876,6 @@
    "smirks": "[#6:3]-[#8:4].[#6:1]-[#8:2]>>[#6:3]-[#8:4]-[#16:5](=[#8:6])(=[#8:7])-[#8:8].[#6:1]-[#8:2]-[#6:9]1-[#8:10]-[#6:11](-[#6:12](=[#8:13])-[#8:14])-[#6:15](-[#8:16])-[#6:17](-[#8:18])-[#6:19]-1-[#8:20]",
    "rule_support": 0,
    "type_support": 0,
-   "in_stratum": false
-  },
-  {
-   "substrate": "CC12CCC3c4ccc(O)cc4CCC3C1CC(O)C2O",
-   "metabolite": "CC12CCC3c4ccc(OC5OC(C(=O)O)C(O)C(O)C5O)cc4CCC3C1CC(O)C2O",
-   "smirks": "[#6:1]-[#8:2]>>[#6:1]-[#8:2]-[#6:3]1-[#8:4]-[#6:5](-[#6:6](=[#8:7])-[#8:8])-[#6:9](-[#8:10])-[#6:11](-[#8:12])-[#6:13]-1-[#8:14]",
-   "rule_support": 1531,
-   "type_support": 2071,
    "in_stratum": false
   },
   {
@@ -2920,23 +2920,7 @@
   },
   {
    "substrate": "COC12CCC3(CC1C(C)(O)C(C)(C)C)C1Cc4ccc(O)c5c4C3(CCN1CC1CC1)C2O5",
-   "metabolite": "COC12CCC3(CC1C(C)(O)C(C)(C)C)C1Cc4ccc(OS(=O)(=O)O)c5c4C3(CCN1CC1CC1)C2O5",
-   "smirks": "[#6:1]-[#8:2]>>[#6:1]-[#8:2]-[#16:3](=[#8:4])(=[#8:5])-[#8:6]",
-   "rule_support": 657,
-   "type_support": 767,
-   "in_stratum": false
-  },
-  {
-   "substrate": "COC12CCC3(CC1C(C)(O)C(C)(C)C)C1Cc4ccc(O)c5c4C3(CCN1CC1CC1)C2O5",
-   "metabolite": "COC12CCC3(CC1C(C)(O)C(C)(C)C)C1Cc4ccc(O)c5c4C3(CCN1CC1CC1O)C2O5",
-   "smirks": "[#6:1]1-[#6:2]-[#6:3]-1>>[#6:1]1-[#6:2]-[#6:3]-1-[#8:4]",
-   "rule_support": 5,
-   "type_support": 3747,
-   "in_stratum": false
-  },
-  {
-   "substrate": "COC12CCC3(CC1C(C)(O)C(C)(C)C)C1Cc4ccc(O)c5c4C3(CCN1CC1CC1)C2O5",
-   "metabolite": "COC12CCC3(CC1C(C)(O)C(C)(C)C)C1Cc4cc(O)c(O)c5c4C3(CCN1CC1CC1)C2O5",
+   "metabolite": "COC12CCC3(CC1C(C)(O)C(C)(C)C)C1Cc4c(O)cc(O)c5c4C3(CCN1CC1CC1)C2O5",
    "smirks": "[#6:1]:[#6:2]:[#6:3]>>[#6:1]:[#6:2](-[#8:4]):[#6:3]",
    "rule_support": 790,
    "type_support": 3747,
@@ -2952,6 +2936,22 @@
   },
   {
    "substrate": "COC12CCC3(CC1C(C)(O)C(C)(C)C)C1Cc4ccc(O)c5c4C3(CCN1CC1CC1)C2O5",
+   "metabolite": "COC12CCC3(CC1C(C)(O)C(C)(C)C)C1Cc4cc(O)c(O)c5c4C3(CCN1CC1CC1)C2O5",
+   "smirks": "[#6:1]:[#6:2]:[#6:3]>>[#6:1]:[#6:2](-[#8:4]):[#6:3]",
+   "rule_support": 790,
+   "type_support": 3747,
+   "in_stratum": false
+  },
+  {
+   "substrate": "COC12CCC3(CC1C(C)(O)C(C)(C)C)C1Cc4ccc(O)c5c4C3(CCN1CC1CC1)C2O5",
+   "metabolite": "COC12CCC3(CC1C(C)(O)C(C)(C)C)C1Cc4ccc(O)c5c4C3(CCN1CC1CC1O)C2O5",
+   "smirks": "[#6:1]1-[#6:2]-[#6:3]-1>>[#6:1]1-[#6:2]-[#6:3]-1-[#8:4]",
+   "rule_support": 5,
+   "type_support": 3747,
+   "in_stratum": false
+  },
+  {
+   "substrate": "COC12CCC3(CC1C(C)(O)C(C)(C)C)C1Cc4ccc(O)c5c4C3(CCN1CC1CC1)C2O5",
    "metabolite": "COC12CCC3(CC1C(C)(O)C(C)(C)CO)C1Cc4ccc(O)c5c4C3(CCN1CC1CC1)C2O5",
    "smirks": "[#6:1]-[#6:2]>>[#6:1]-[#6:2]-[#8:3]",
    "rule_support": 358,
@@ -2960,10 +2960,10 @@
   },
   {
    "substrate": "COC12CCC3(CC1C(C)(O)C(C)(C)C)C1Cc4ccc(O)c5c4C3(CCN1CC1CC1)C2O5",
-   "metabolite": "COC12CCC3(CC1C(C)(O)C(C)(C)C)C1Cc4c(O)cc(O)c5c4C3(CCN1CC1CC1)C2O5",
-   "smirks": "[#6:1]:[#6:2]:[#6:3]>>[#6:1]:[#6:2](-[#8:4]):[#6:3]",
-   "rule_support": 790,
-   "type_support": 3747,
+   "metabolite": "COC12CCC3(CC1C(C)(O)C(C)(C)C)C1Cc4ccc(OS(=O)(=O)O)c5c4C3(CCN1CC1CC1)C2O5",
+   "smirks": "[#6:1]-[#8:2]>>[#6:1]-[#8:2]-[#16:3](=[#8:4])(=[#8:5])-[#8:6]",
+   "rule_support": 657,
+   "type_support": 767,
    "in_stratum": false
   },
   {
@@ -2984,10 +2984,10 @@
   },
   {
    "substrate": "COc1cccc(CCc2ccccc2OCC(CN(C)C)OC(=O)CCC(=O)O)c1",
-   "metabolite": "COc1cccc(CCc2ccccc2OCC(O)CN(C)C)c1",
-   "smirks": "[#6:1]-[#8:2]-[#6:3](=[#8:4])-[#6:5]-[#6:6]-[#6:7](=[#8:8])-[#8:9]>>[#6:1]-[#8:2]",
+   "metabolite": "COc1cccc(CCc2ccccc2OCC(C[N+](C)(C)C2OC(C(=O)[O-])C(O)C(O)C2O)OC(=O)CCC(=O)O)c1",
+   "smirks": "[#6:1]-[#7:2](-[#6:3])-[#6:4]>>[#6:1]-[#7+:2](-[#6:3])(-[#6:4])-[#6:5]1-[#8:6]-[#6:7](-[#6:8](=[#8:9])-[#8-:10])-[#6:11](-[#8:12])-[#6:13](-[#8:14])-[#6:15]-1-[#8:16]",
    "rule_support": 11,
-   "type_support": 11,
+   "type_support": 75,
    "in_stratum": false
   },
   {
@@ -3000,10 +3000,10 @@
   },
   {
    "substrate": "COc1cccc(CCc2ccccc2OCC(CN(C)C)OC(=O)CCC(=O)O)c1",
-   "metabolite": "COc1cccc(CCc2ccccc2OCC(C[N+](C)(C)C2OC(C(=O)[O-])C(O)C(O)C2O)OC(=O)CCC(=O)O)c1",
-   "smirks": "[#6:1]-[#7:2](-[#6:3])-[#6:4]>>[#6:1]-[#7+:2](-[#6:3])(-[#6:4])-[#6:5]1-[#8:6]-[#6:7](-[#6:8](=[#8:9])-[#8-:10])-[#6:11](-[#8:12])-[#6:13](-[#8:14])-[#6:15]-1-[#8:16]",
+   "metabolite": "COc1cccc(CCc2ccccc2OCC(O)CN(C)C)c1",
+   "smirks": "[#6:1]-[#8:2]-[#6:3](=[#8:4])-[#6:5]-[#6:6]-[#6:7](=[#8:8])-[#8:9]>>[#6:1]-[#8:2]",
    "rule_support": 11,
-   "type_support": 75,
+   "type_support": 11,
    "in_stratum": false
   },
   {
@@ -3048,7 +3048,7 @@
   },
   {
    "substrate": "Oc1ccc(C(=C2CCCCC2)c2ccc(O)cc2)cc1",
-   "metabolite": "Oc1ccc(C(=C2CCC(O)CC2)c2ccc(O)cc2)cc1",
+   "metabolite": "Oc1ccc(C(=C2CCCC(O)C2)c2ccc(O)cc2)cc1",
    "smirks": "[#6:1]-[#6:2]-[#6:3]>>[#6:1]-[#6:2](-[#8:4])-[#6:3]",
    "rule_support": 703,
    "type_support": 3747,
@@ -3056,9 +3056,9 @@
   },
   {
    "substrate": "Oc1ccc(C(=C2CCCCC2)c2ccc(O)cc2)cc1",
-   "metabolite": "Oc1ccc(C(=C2CCCC(O)C2)c2ccc(O)cc2)cc1",
-   "smirks": "[#6:1]-[#6:2]-[#6:3]>>[#6:1]-[#6:2](-[#8:4])-[#6:3]",
-   "rule_support": 703,
+   "metabolite": "Oc1ccc(C(=C2CCCCC2O)c2ccc(O)cc2)cc1",
+   "smirks": "[#6:1]-[#6:3]-[#6:2]>>[#6:1]-[#6:3](-[#6:2])-[#8:4]",
+   "rule_support": 71,
    "type_support": 3747,
    "in_stratum": false
   },
@@ -3072,9 +3072,9 @@
   },
   {
    "substrate": "Oc1ccc(C(=C2CCCCC2)c2ccc(O)cc2)cc1",
-   "metabolite": "Oc1ccc(C(=C2CCCCC2O)c2ccc(O)cc2)cc1",
-   "smirks": "[#6:1]-[#6:3]-[#6:2]>>[#6:1]-[#6:3](-[#6:2])-[#8:4]",
-   "rule_support": 71,
+   "metabolite": "Oc1ccc(C(=C2CCC(O)CC2)c2ccc(O)cc2)cc1",
+   "smirks": "[#6:1]-[#6:2]-[#6:3]>>[#6:1]-[#6:2](-[#8:4])-[#6:3]",
+   "rule_support": 703,
    "type_support": 3747,
    "in_stratum": false
   },
@@ -3104,10 +3104,26 @@
   },
   {
    "substrate": "CC(=O)N1CCN(c2ccc(OCC3COC(Cn4ccnc4)(c4ccc(Cl)cc4Cl)O3)cc2)CC1",
-   "metabolite": "CC(=O)N1CCN(c2ccc(OCC3COC(Cn4ccnc4)(c4ccc(Cl)cc4Cl)O3)cc2)C(O)C1",
-   "smirks": "[#7:1]-[#6:2]-[#6:3]>>[#7:1]-[#6:2](-[#8:4])-[#6:3]",
-   "rule_support": 57,
-   "type_support": 3747,
+   "metabolite": "CC(=O)N1CCN(c2ccc(OCC3COC(CN4C=NC(O)C4O)(c4ccc(Cl)cc4Cl)O3)cc2)CC1",
+   "smirks": "[#6:1]-[#7:2]1:[#6:3]:[#6:4]:[#7:5]:[#6:6]:1>>[#6:1]-[#7:2]1-[#6:6]=[#7:5]-[#6:4](-[#8:7])-[#6:3]-1-[#8:8]",
+   "rule_support": 0,
+   "type_support": 2,
+   "in_stratum": false
+  },
+  {
+   "substrate": "CC(=O)N1CCN(c2ccc(OCC3COC(Cn4ccnc4)(c4ccc(Cl)cc4Cl)O3)cc2)CC1",
+   "metabolite": "CC(=O)N1CCN(c2ccc(OCC3COC(CNC=N)(c4ccc(Cl)cc4Cl)O3)cc2)CC1",
+   "smirks": "[#6:1]-[#6:2]-[#7:3]1:[#6:4]:[#6:5]:[#7:6]:[#6:7]:1>>[#6:1]-[#6:2]-[#7:8]-[#6:9]=[#7:10]",
+   "rule_support": 0,
+   "type_support": 0,
+   "in_stratum": false
+  },
+  {
+   "substrate": "CC(=O)N1CCN(c2ccc(OCC3COC(Cn4ccnc4)(c4ccc(Cl)cc4Cl)O3)cc2)CC1",
+   "metabolite": "CC(O)=NCCNc1ccc(OCC2COC(Cn3ccnc3)(c3ccc(Cl)cc3Cl)O2)cc1",
+   "smirks": "[#6:4]-[#6:5](=[#8:6])-[#7:7]1-[#6:8]-[#6:9]-[#7:10](-[#6:1](:[#6:2]):[#6:3])-[#6:11]-[#6:12]-1>>[#6:13]-[#6:14](-[#8:15])=[#7:16]-[#6:17]-[#6:18]-[#7:19]-[#6:1](:[#6:2]):[#6:3]",
+   "rule_support": 0,
+   "type_support": 0,
    "in_stratum": false
   },
   {
@@ -3128,10 +3144,10 @@
   },
   {
    "substrate": "CC(=O)N1CCN(c2ccc(OCC3COC(Cn4ccnc4)(c4ccc(Cl)cc4Cl)O3)cc2)CC1",
-   "metabolite": "CC(O)=NCCNc1ccc(OCC2COC(Cn3ccnc3)(c3ccc(Cl)cc3Cl)O2)cc1",
-   "smirks": "[#6:4]-[#6:5](=[#8:6])-[#7:7]1-[#6:8]-[#6:9]-[#7:10](-[#6:1](:[#6:2]):[#6:3])-[#6:11]-[#6:12]-1>>[#6:13]-[#6:14](-[#8:15])=[#7:16]-[#6:17]-[#6:18]-[#7:19]-[#6:1](:[#6:2]):[#6:3]",
+   "metabolite": "CC(=O)N1CCN(c2ccc(OCC3COC(CN4C=NC5OC54)(c4ccc(Cl)cc4Cl)O3)cc2)CC1",
+   "smirks": "[#6:1]-[#7:2]1:[#6:3]:[#6:4]:[#7:5]:[#6:6]:1>>[#6:1]-[#7:2]1-[#6:6]=[#7:5]-[#6:4]2-[#8:7]-[#6:3]-1-2",
    "rule_support": 0,
-   "type_support": 0,
+   "type_support": 1,
    "in_stratum": false
   },
   {
@@ -3144,26 +3160,10 @@
   },
   {
    "substrate": "CC(=O)N1CCN(c2ccc(OCC3COC(Cn4ccnc4)(c4ccc(Cl)cc4Cl)O3)cc2)CC1",
-   "metabolite": "CC(=O)N1CCN(c2ccc(OCC3COC(CN4C=NC(O)C4O)(c4ccc(Cl)cc4Cl)O3)cc2)CC1",
-   "smirks": "[#6:1]-[#7:2]1:[#6:3]:[#6:4]:[#7:5]:[#6:6]:1>>[#6:1]-[#7:2]1-[#6:6]=[#7:5]-[#6:4](-[#8:7])-[#6:3]-1-[#8:8]",
-   "rule_support": 0,
-   "type_support": 2,
-   "in_stratum": false
-  },
-  {
-   "substrate": "CC(=O)N1CCN(c2ccc(OCC3COC(Cn4ccnc4)(c4ccc(Cl)cc4Cl)O3)cc2)CC1",
-   "metabolite": "CC(=O)N1CCN(c2ccc(OCC3COC(CN4C=NC5OC54)(c4ccc(Cl)cc4Cl)O3)cc2)CC1",
-   "smirks": "[#6:1]-[#7:2]1:[#6:3]:[#6:4]:[#7:5]:[#6:6]:1>>[#6:1]-[#7:2]1-[#6:6]=[#7:5]-[#6:4]2-[#8:7]-[#6:3]-1-2",
-   "rule_support": 0,
-   "type_support": 1,
-   "in_stratum": false
-  },
-  {
-   "substrate": "CC(=O)N1CCN(c2ccc(OCC3COC(Cn4ccnc4)(c4ccc(Cl)cc4Cl)O3)cc2)CC1",
-   "metabolite": "CC(=O)N1CCN(c2ccc(OCC3COC(CNC=N)(c4ccc(Cl)cc4Cl)O3)cc2)CC1",
-   "smirks": "[#6:1]-[#6:2]-[#7:3]1:[#6:4]:[#6:5]:[#7:6]:[#6:7]:1>>[#6:1]-[#6:2]-[#7:8]-[#6:9]=[#7:10]",
-   "rule_support": 0,
-   "type_support": 0,
+   "metabolite": "CC(=O)N1CCN(c2ccc(OCC3COC(Cn4ccnc4)(c4ccc(Cl)cc4Cl)O3)cc2)C(O)C1",
+   "smirks": "[#7:1]-[#6:2]-[#6:3]>>[#7:1]-[#6:2](-[#8:4])-[#6:3]",
+   "rule_support": 57,
+   "type_support": 3747,
    "in_stratum": false
   },
   {
@@ -3184,16 +3184,16 @@
   },
   {
    "substrate": "CC1(C)S[C]2C(=C(C(=O)O)C3=C(SC(C)(C)S3)C2=C(c2c3c(c(C(=O)O)c4c2SC(C)(C)S4)SC(C)(C)S3)c2c3c(c(C(=O)O)c4c2SC(C)(C)S4)SC(C)(C)S3)S1",
-   "metabolite": "CC1(C)Sc2c(c(C(c3c4c(c(C(=O)O)c5c3SC(C)(C)S5)SC(C)(C)S4)c3c4c(c(C(=O)O)c5c3SC(C)(C)S5)SC(C)(C)S4)c3c(c2C(=O)O)SC(C)(C)S3)S1",
-   "smirks": "[#16:1]-[#6:2]1-[#6:3](=[#6:5](-[#6:6])-[#6:7](=[#6:8](-[#16:13])-[#6:9]-1=[#6:10](-[#6:11])-[#6:12])-[#16:14])-[#16:4]>>[#16:4]-[#6:3]1:[#6:2](:[#6:9](-[#6:10](-[#6:11])-[#6:12]):[#6:8](:[#6:7](:[#6:5]:1-[#6:6])-[#16:14])-[#16:13])-[#16:1]",
+   "metabolite": "CC1(C)SC2=C(S1)C(=C(c1c3c(c(C(=O)O)c4c1SC(C)(C)S4)SC(C)(C)S3)c1c3c(c(C(=O)O)c4c1SC(C)(C)S4)SC(C)(C)S3)C1=C(SC(C)(C)S1)C2=O",
+   "smirks": "[#16:4]-[#6:3](-[#6:2](=[#6:7](-[#6:8](=[#8:9])-[#8:10])-[#6:6])-[#16:1])-[#6:5]>>[#16:1]-[#6:2](=[#6:3](-[#16:4])-[#6:5])-[#6:7](-[#6:6])=[#8:11]",
    "rule_support": 0,
    "type_support": 0,
    "in_stratum": false
   },
   {
    "substrate": "CC1(C)S[C]2C(=C(C(=O)O)C3=C(SC(C)(C)S3)C2=C(c2c3c(c(C(=O)O)c4c2SC(C)(C)S4)SC(C)(C)S3)c2c3c(c(C(=O)O)c4c2SC(C)(C)S4)SC(C)(C)S3)S1",
-   "metabolite": "CC1(C)SC2=C(S1)C(=C(c1c3c(c(C(=O)O)c4c1SC(C)(C)S4)SC(C)(C)S3)c1c3c(c(C(=O)O)c4c1SC(C)(C)S4)SC(C)(C)S3)C1=C(SC(C)(C)S1)C2=O",
-   "smirks": "[#16:4]-[#6:3](-[#6:2](=[#6:7](-[#6:8](=[#8:9])-[#8:10])-[#6:6])-[#16:1])-[#6:5]>>[#16:1]-[#6:2](=[#6:3](-[#16:4])-[#6:5])-[#6:7](-[#6:6])=[#8:11]",
+   "metabolite": "CC1(C)Sc2c(c(C(c3c4c(c(C(=O)O)c5c3SC(C)(C)S5)SC(C)(C)S4)c3c4c(c(C(=O)O)c5c3SC(C)(C)S5)SC(C)(C)S4)c3c(c2C(=O)O)SC(C)(C)S3)S1",
+   "smirks": "[#16:1]-[#6:2]1-[#6:3](=[#6:5](-[#6:6])-[#6:7](=[#6:8](-[#16:13])-[#6:9]-1=[#6:10](-[#6:11])-[#6:12])-[#16:14])-[#16:4]>>[#16:4]-[#6:3]1:[#6:2](:[#6:9](-[#6:10](-[#6:11])-[#6:12]):[#6:8](:[#6:7](:[#6:5]:1-[#6:6])-[#16:14])-[#16:13])-[#16:1]",
    "rule_support": 0,
    "type_support": 0,
    "in_stratum": false
@@ -3240,14 +3240,6 @@
   },
   {
    "substrate": "O=C(Nc1ccc(OC(F)(F)F)cc1)C1=C(NCc2ccnc3ccccc23)C=CS1=O",
-   "metabolite": "NC(CCC(O)=NC(CSC1CC(=NCc2ccnc3ccccc23)C(C(=O)Nc2ccc(OC(F)(F)F)cc2)S1=O)C(O)=NCC(=O)O)C(=O)O",
-   "smirks": "[#6:1]-[#6:2]1=[#6:3](-[#7:4]-[#6:5])-[#6:6]=[#6:7]-[#16:8]-1>>[#7:9]-[#6:10](-[#6:11]-[#6:12]-[#6:13](-[#8:14])=[#7:15]-[#6:16](-[#6:17]-[#16:18]-[#6:7]1-[#6:6]-[#6:3](=[#7:4]-[#6:5])-[#6:2](-[#6:1])-[#16:8]-1)-[#6:19](-[#8:20])=[#7:21]-[#6:22]-[#6:23](=[#8:24])-[#8:25])-[#6:26](=[#8:27])-[#8:28]",
-   "rule_support": 0,
-   "type_support": 0,
-   "in_stratum": false
-  },
-  {
-   "substrate": "O=C(Nc1ccc(OC(F)(F)F)cc1)C1=C(NCc2ccnc3ccccc23)C=CS1=O",
    "metabolite": "CCOC(=O)CN=C(O)C(CSC1CC(=NCc2ccnc3ccccc23)C(C(=O)Nc2ccc(OC(F)(F)F)cc2)S1=O)N=C(O)CCC(N)C(=O)O",
    "smirks": "[#6:1]-[#6:2]1=[#6:3](-[#7:4]-[#6:5])-[#6:6]=[#6:7]-[#16:8]-1>>[#6:9]-[#6:10]-[#8:11]-[#6:12](=[#8:13])-[#6:14]-[#7:15]=[#6:16](-[#8:17])-[#6:18](-[#6:19]-[#16:20]-[#6:7]1-[#6:6]-[#6:3](=[#7:4]-[#6:5])-[#6:2](-[#6:1])-[#16:8]-1)-[#7:21]=[#6:22](-[#8:23])-[#6:24]-[#6:25]-[#6:26](-[#7:27])-[#6:28](=[#8:29])-[#8:30]",
    "rule_support": 0,
@@ -3263,11 +3255,11 @@
    "in_stratum": false
   },
   {
-   "substrate": "CON(C)C(=O)Nc1ccc(Br)cc1",
-   "metabolite": "CN=C(O)Nc1ccc(Br)cc1",
-   "smirks": "[#6:6]-[#8:7]-[#7:2](-[#6:1])-[#6:3](=[#8:4])-[#7:5]>>[#6:1]-[#7:2]=[#6:3](-[#8:4])-[#7:5]",
+   "substrate": "O=C(Nc1ccc(OC(F)(F)F)cc1)C1=C(NCc2ccnc3ccccc23)C=CS1=O",
+   "metabolite": "NC(CCC(O)=NC(CSC1CC(=NCc2ccnc3ccccc23)C(C(=O)Nc2ccc(OC(F)(F)F)cc2)S1=O)C(O)=NCC(=O)O)C(=O)O",
+   "smirks": "[#6:1]-[#6:2]1=[#6:3](-[#7:4]-[#6:5])-[#6:6]=[#6:7]-[#16:8]-1>>[#7:9]-[#6:10](-[#6:11]-[#6:12]-[#6:13](-[#8:14])=[#7:15]-[#6:16](-[#6:17]-[#16:18]-[#6:7]1-[#6:6]-[#6:3](=[#7:4]-[#6:5])-[#6:2](-[#6:1])-[#16:8]-1)-[#6:19](-[#8:20])=[#7:21]-[#6:22]-[#6:23](=[#8:24])-[#8:25])-[#6:26](=[#8:27])-[#8:28]",
    "rule_support": 0,
-   "type_support": 2,
+   "type_support": 0,
    "in_stratum": false
   },
   {
@@ -3276,6 +3268,14 @@
    "smirks": "[#7:1]-[#6:2]>>[#7:1]-[#6:2]-[#8:3]",
    "rule_support": 24,
    "type_support": 3747,
+   "in_stratum": false
+  },
+  {
+   "substrate": "CON(C)C(=O)Nc1ccc(Br)cc1",
+   "metabolite": "CN=C(O)Nc1ccc(Br)cc1",
+   "smirks": "[#6:6]-[#8:7]-[#7:2](-[#6:1])-[#6:3](=[#8:4])-[#7:5]>>[#6:1]-[#7:2]=[#6:3](-[#8:4])-[#7:5]",
+   "rule_support": 0,
+   "type_support": 2,
    "in_stratum": false
   },
   {
@@ -3296,18 +3296,18 @@
   },
   {
    "substrate": "CCOC(=O)C=CC(CC1CCN=C1O)N=C(O)C(CC(=O)C(NC(=O)c1cc(C)on1)C(C)C)Cc1ccc(F)cc1",
-   "metabolite": "CCOC(=O)C=CC(CC1CC(O)N=C1O)N=C(O)C(CC(=O)C(NC(=O)c1cc(C)on1)C(C)C)Cc1ccc(F)cc1",
-   "smirks": "[#6:1]-[#6:2]-[#7:3]>>[#6:1]-[#6:2](-[#8:4])-[#7:3]",
-   "rule_support": 44,
-   "type_support": 3747,
-   "in_stratum": false
-  },
-  {
-   "substrate": "CCOC(=O)C=CC(CC1CCN=C1O)N=C(O)C(CC(=O)C(NC(=O)c1cc(C)on1)C(C)C)Cc1ccc(F)cc1",
    "metabolite": "Cc1cc(C(=O)NC(C(=O)CC(Cc2ccc(F)cc2)C(O)=NC(C=CC(=O)O)CC2CCN=C2O)C(C)C)no1",
    "smirks": "[#6:5]-[#6:6]-[#8:3]-[#6:2](=[#8:4])-[#6:1]>>[#6:1]-[#6:2](=[#8:3])-[#8:4]",
    "rule_support": 66,
    "type_support": 81,
+   "in_stratum": false
+  },
+  {
+   "substrate": "CCOC(=O)C=CC(CC1CCN=C1O)N=C(O)C(CC(=O)C(NC(=O)c1cc(C)on1)C(C)C)Cc1ccc(F)cc1",
+   "metabolite": "CCOC(=O)C=CC(CC1CC(O)N=C1O)N=C(O)C(CC(=O)C(NC(=O)c1cc(C)on1)C(C)C)Cc1ccc(F)cc1",
+   "smirks": "[#6:1]-[#6:2]-[#7:3]>>[#6:1]-[#6:2](-[#8:4])-[#7:3]",
+   "rule_support": 44,
+   "type_support": 3747,
    "in_stratum": false
   },
   {
@@ -3320,17 +3320,17 @@
   },
   {
    "substrate": "Cc1cc(C(=O)NC(C(=O)CC(Cc2ccc(F)cc2)C(O)=NC(C=CC(=O)O)CC2CCN=C2O)C(C)C)no1",
-   "metabolite": "Cc1cc(C(=O)NC(C(=O)CC(Cc2ccc(F)cc2)C(O)=NC(C=CC(=O)O)CC2CC(O)N=C2O)C(C)C)no1",
-   "smirks": "[#6:1]-[#6:2]-[#7:3]>>[#6:1]-[#6:2](-[#8:4])-[#7:3]",
-   "rule_support": 44,
+   "metabolite": "CC(C)C(NC(=O)c1cc(CO)on1)C(=O)CC(Cc1ccc(F)cc1)C(O)=NC(C=CC(=O)O)CC1CCN=C1O",
+   "smirks": "[#6:1]-[#6:2]>>[#6:2]-[#6:1]-[#8:3]",
+   "rule_support": 207,
    "type_support": 3747,
    "in_stratum": false
   },
   {
    "substrate": "Cc1cc(C(=O)NC(C(=O)CC(Cc2ccc(F)cc2)C(O)=NC(C=CC(=O)O)CC2CCN=C2O)C(C)C)no1",
-   "metabolite": "CC(C)C(NC(=O)c1cc(CO)on1)C(=O)CC(Cc1ccc(F)cc1)C(O)=NC(C=CC(=O)O)CC1CCN=C1O",
-   "smirks": "[#6:1]-[#6:2]>>[#6:2]-[#6:1]-[#8:3]",
-   "rule_support": 207,
+   "metabolite": "Cc1cc(C(=O)NC(C(=O)CC(Cc2ccc(F)cc2)C(O)=NC(C=CC(=O)O)CC2CC(O)N=C2O)C(C)C)no1",
+   "smirks": "[#6:1]-[#6:2]-[#7:3]>>[#6:1]-[#6:2](-[#8:4])-[#7:3]",
+   "rule_support": 44,
    "type_support": 3747,
    "in_stratum": false
   },
@@ -3352,6 +3352,14 @@
   },
   {
    "substrate": "O=[N+]([O-])c1cc2cccc3ccc4cccc1c4c32",
+   "metabolite": "ONc1cc2cccc3ccc4cccc1c4c32",
+   "smirks": "[#8:1]=[#7+:2](-[#8-:4])-[#6:3]>>[#8:1]-[#7:2]-[#6:3]",
+   "rule_support": 0,
+   "type_support": 0,
+   "in_stratum": false
+  },
+  {
+   "substrate": "O=[N+]([O-])c1cc2cccc3ccc4cccc1c4c32",
    "metabolite": "O=[N+]([O-])c1cc2cccc3c2c2c(cccc12)C(O)C3O",
    "smirks": "[#6:1]:[#6:2]1:[#6:8]:[#6:7]:[#6:6](:[#6:5]):[#6:4]:[#6:3]:1>>[#6:1]:[#6:2]1:[#6:3]:[#6:4]:[#6:6](:[#6:5])-[#6:7](-[#8:9])-[#6:8]-1-[#8:10]",
    "rule_support": 0,
@@ -3360,8 +3368,8 @@
   },
   {
    "substrate": "O=[N+]([O-])c1cc2cccc3ccc4cccc1c4c32",
-   "metabolite": "ONc1cc2cccc3ccc4cccc1c4c32",
-   "smirks": "[#8:1]=[#7+:2](-[#8-:4])-[#6:3]>>[#8:1]-[#7:2]-[#6:3]",
+   "metabolite": "Nc1cc2cccc3ccc4cccc1c4c32",
+   "smirks": "[#8:3]=[#7+:1](-[#8-:4])-[#6:2]>>[#7:1]-[#6:2]",
    "rule_support": 0,
    "type_support": 0,
    "in_stratum": false
@@ -3372,14 +3380,6 @@
    "smirks": "[#6:1]:[#6:2]:[#6:3]>>[#6:1]:[#6:2](-[#8:4]):[#6:3]",
    "rule_support": 790,
    "type_support": 3747,
-   "in_stratum": false
-  },
-  {
-   "substrate": "O=[N+]([O-])c1cc2cccc3ccc4cccc1c4c32",
-   "metabolite": "Nc1cc2cccc3ccc4cccc1c4c32",
-   "smirks": "[#8:3]=[#7+:1](-[#8-:4])-[#6:2]>>[#7:1]-[#6:2]",
-   "rule_support": 0,
-   "type_support": 0,
    "in_stratum": false
   },
   {
@@ -3456,14 +3456,6 @@
   },
   {
    "substrate": "CC1(C)Oc2ccc3ccc(=O)oc3c2C(OC(=O)C23CCC(C)(C(=O)O2)C3(C)C)C1OC(=O)C12CCC(C)(C(=O)O1)C2(C)C",
-   "metabolite": "CC1(C)Oc2ccc3ccc(=O)oc3c2C(OC(=O)C23CC(O)C(C)(C(=O)O2)C3(C)C)C1OC(=O)C12CCC(C)(C(=O)O1)C2(C)C",
-   "smirks": "[#6:1]-[#6:2]-[#6:3]>>[#6:1]-[#6:2](-[#8:4])-[#6:3]",
-   "rule_support": 703,
-   "type_support": 3747,
-   "in_stratum": false
-  },
-  {
-   "substrate": "CC1(C)Oc2ccc3ccc(=O)oc3c2C(OC(=O)C23CCC(C)(C(=O)O2)C3(C)C)C1OC(=O)C12CCC(C)(C(=O)O1)C2(C)C",
    "metabolite": "CC1(C)Oc2ccc3ccc(=O)oc3c2C(OC(=O)C23CCC(C)(C(=O)O2)C3(C)C)C1OC(=O)C12CCC(CO)(C(=O)O1)C2(C)C",
    "smirks": "[#6:1]-[#6:2]>>[#6:1]-[#6:2]-[#8:3]",
    "rule_support": 358,
@@ -3471,10 +3463,10 @@
    "in_stratum": false
   },
   {
-   "substrate": "CC1(C)Oc2ccc3ccc(=O)oc3c2C(OC(=O)C23CC(O)C(C)(C(=O)O2)C3(C)C)C1OC(=O)C12CCC(C)(C(=O)O1)C2(C)C",
-   "metabolite": "CC1(C)Oc2ccc3ccc(=O)oc3c2C(OC(=O)C23CC(O)C(C)(C(=O)O2)C3(C)C)C1OC(=O)C12CCC(CO)(C(=O)O1)C2(C)C",
-   "smirks": "[#6:1]-[#6:2]>>[#6:1]-[#6:2]-[#8:3]",
-   "rule_support": 358,
+   "substrate": "CC1(C)Oc2ccc3ccc(=O)oc3c2C(OC(=O)C23CCC(C)(C(=O)O2)C3(C)C)C1OC(=O)C12CCC(C)(C(=O)O1)C2(C)C",
+   "metabolite": "CC1(C)Oc2ccc3ccc(=O)oc3c2C(OC(=O)C23CC(O)C(C)(C(=O)O2)C3(C)C)C1OC(=O)C12CCC(C)(C(=O)O1)C2(C)C",
+   "smirks": "[#6:1]-[#6:2]-[#6:3]>>[#6:1]-[#6:2](-[#8:4])-[#6:3]",
+   "rule_support": 703,
    "type_support": 3747,
    "in_stratum": false
   },
@@ -3487,10 +3479,10 @@
    "in_stratum": false
   },
   {
-   "substrate": "CC1(C)Oc2ccc3ccc(=O)oc3c2C(OC(=O)C23CCC(C)(C(=O)O2)C3(C)C)C1OC(=O)C12CCC(CO)(C(=O)O1)C2(C)C",
+   "substrate": "CC1(C)Oc2ccc3ccc(=O)oc3c2C(OC(=O)C23CC(O)C(C)(C(=O)O2)C3(C)C)C1OC(=O)C12CCC(C)(C(=O)O1)C2(C)C",
    "metabolite": "CC1(C)Oc2ccc3ccc(=O)oc3c2C(OC(=O)C23CC(O)C(C)(C(=O)O2)C3(C)C)C1OC(=O)C12CCC(CO)(C(=O)O1)C2(C)C",
-   "smirks": "[#6:1]-[#6:2]-[#6:3]>>[#6:1]-[#6:2](-[#8:4])-[#6:3]",
-   "rule_support": 703,
+   "smirks": "[#6:1]-[#6:2]>>[#6:1]-[#6:2]-[#8:3]",
+   "rule_support": 358,
    "type_support": 3747,
    "in_stratum": false
   },
@@ -3500,6 +3492,14 @@
    "smirks": "[#6:1]-[#6:2]-[#8:3]>>[#6:1]-[#6:2](=[#8:4])-[#8:3]",
    "rule_support": 149,
    "type_support": 357,
+   "in_stratum": false
+  },
+  {
+   "substrate": "CC1(C)Oc2ccc3ccc(=O)oc3c2C(OC(=O)C23CCC(C)(C(=O)O2)C3(C)C)C1OC(=O)C12CCC(CO)(C(=O)O1)C2(C)C",
+   "metabolite": "CC1(C)Oc2ccc3ccc(=O)oc3c2C(OC(=O)C23CC(O)C(C)(C(=O)O2)C3(C)C)C1OC(=O)C12CCC(CO)(C(=O)O1)C2(C)C",
+   "smirks": "[#6:1]-[#6:2]-[#6:3]>>[#6:1]-[#6:2](-[#8:4])-[#6:3]",
+   "rule_support": 703,
+   "type_support": 3747,
    "in_stratum": false
   },
   {
@@ -3528,14 +3528,6 @@
   },
   {
    "substrate": "COc1ccc(C=Cc2cc(OC)c(OC)c(OC)c2)c(O)c1O",
-   "metabolite": "COC1=CC=C(C=Cc2cc(OC)c(OC)c(OC)c2)C(=O)C1=O",
-   "smirks": "[#8:1]-[#6:2]1:[#6:3]:[#6:4]:[#6:5](-[#6:10]):[#6:6](-[#8:9]):[#6:7]:1-[#8:8]>>[#8:1]-[#6:2]1=[#6:3]-[#6:4]=[#6:5](-[#6:10])-[#6:6](=[#8:9])-[#6:7]-1=[#8:8]",
-   "rule_support": 0,
-   "type_support": 62,
-   "in_stratum": true
-  },
-  {
-   "substrate": "COc1ccc(C=Cc2cc(OC)c(OC)c(OC)c2)c(O)c1O",
    "metabolite": "COc1cc(C=Cc2ccc(OC)c(OC3OC(C(=O)O)C(O)C(O)C3O)c2O)cc(OC)c1OC",
    "smirks": "[#6:1]-[#8:2]>>[#6:1]-[#8:2]-[#6:3]1-[#8:4]-[#6:5](-[#6:6](=[#8:7])-[#8:8])-[#6:9](-[#8:10])-[#6:11](-[#8:12])-[#6:13]-1-[#8:14]",
    "rule_support": 1531,
@@ -3551,20 +3543,20 @@
    "in_stratum": false
   },
   {
+   "substrate": "COc1ccc(C=Cc2cc(OC)c(OC)c(OC)c2)c(O)c1O",
+   "metabolite": "COC1=CC=C(C=Cc2cc(OC)c(OC)c(OC)c2)C(=O)C1=O",
+   "smirks": "[#8:1]-[#6:2]1:[#6:3]:[#6:4]:[#6:5](-[#6:10]):[#6:6](-[#8:9]):[#6:7]:1-[#8:8]>>[#8:1]-[#6:2]1=[#6:3]-[#6:4]=[#6:5](-[#6:10])-[#6:6](=[#8:9])-[#6:7]-1=[#8:8]",
+   "rule_support": 0,
+   "type_support": 62,
+   "in_stratum": true
+  },
+  {
    "substrate": "NCCCCC(N)C(=O)Nc1ccc(Oc2ccc(S(=O)(=O)CC3CS3)cc2)cc1",
    "metabolite": "Nc1ccc(Oc2ccc(S(=O)(=O)CC3CS3)cc2)cc1",
    "smirks": "[#7:3]-[#6:4]-[#6:5]-[#6:6]-[#6:7]-[#6:8](-[#7:9])-[#6:10](=[#8:11])-[#7:1]-[#6:2]>>[#7:1]-[#6:2]",
    "rule_support": 1,
    "type_support": 9,
    "in_stratum": true
-  },
-  {
-   "substrate": "Nc1ccc(Oc2ccc(S(=O)(=O)CC3CS3)cc2)cc1",
-   "metabolite": "Nc1ccc(Oc2ccc(S(=O)(=O)CC3CS3)cc2)cc1O",
-   "smirks": "[#6:1]:[#6:3]:[#6:2]>>[#6:1]:[#6:3](:[#6:2])-[#8:4]",
-   "rule_support": 66,
-   "type_support": 3747,
-   "in_stratum": false
   },
   {
    "substrate": "Nc1ccc(Oc2ccc(S(=O)(=O)CC3CS3)cc2)cc1",
@@ -3588,6 +3580,14 @@
    "smirks": "[#7:1]-[#6:2]>>[#6:3]-[#6:4](-[#8:5])=[#7:1]-[#6:2]",
    "rule_support": 59,
    "type_support": 157,
+   "in_stratum": false
+  },
+  {
+   "substrate": "Nc1ccc(Oc2ccc(S(=O)(=O)CC3CS3)cc2)cc1",
+   "metabolite": "Nc1ccc(Oc2ccc(S(=O)(=O)CC3CS3)cc2)cc1O",
+   "smirks": "[#6:1]:[#6:3]:[#6:2]>>[#6:1]:[#6:3](:[#6:2])-[#8:4]",
+   "rule_support": 66,
+   "type_support": 3747,
    "in_stratum": false
   },
   {
@@ -3616,16 +3616,16 @@
   },
   {
    "substrate": "Cc1cc(C)cc(C(CC(C)C)N=C(O)c2cc(C(O)Oc3cccc(Cl)c3)ccc2CCC(=O)O)c1",
-   "metabolite": "Cc1cc(C)cc(C(CC(C)C)N=C(O)c2cc(C=O)ccc2CCC(=O)O)c1",
-   "smirks": "[#6:1]-[#6:2](-[#8:3])-[#8:4]-[#6:5]1:[#6:6]:[#6:7]:[#6:8]:[#6:9](-[#17:10]):[#6:11]:1>>[#6:1]-[#6:2]=[#8:3]",
+   "metabolite": "Cc1cc(C)cc(C(CC(C)C)N=C(O)c2cc(C(=O)O)ccc2CCC(=O)O)c1",
+   "smirks": "[#6:1]-[#6:2](-[#8:3])-[#8:4]-[#6:5]1:[#6:6]:[#6:7]:[#6:8]:[#6:9](-[#17:10]):[#6:11]:1>>[#6:1]-[#6:2](=[#8:3])-[#8:4]",
    "rule_support": 0,
    "type_support": 0,
    "in_stratum": false
   },
   {
    "substrate": "Cc1cc(C)cc(C(CC(C)C)N=C(O)c2cc(C(O)Oc3cccc(Cl)c3)ccc2CCC(=O)O)c1",
-   "metabolite": "Cc1cc(C)cc(C(CC(C)C)N=C(O)c2cc(C(=O)O)ccc2CCC(=O)O)c1",
-   "smirks": "[#6:1]-[#6:2](-[#8:3])-[#8:4]-[#6:5]1:[#6:6]:[#6:7]:[#6:8]:[#6:9](-[#17:10]):[#6:11]:1>>[#6:1]-[#6:2](=[#8:3])-[#8:4]",
+   "metabolite": "Cc1cc(C)cc(C(CC(C)C)N=C(O)c2cc(C=O)ccc2CCC(=O)O)c1",
+   "smirks": "[#6:1]-[#6:2](-[#8:3])-[#8:4]-[#6:5]1:[#6:6]:[#6:7]:[#6:8]:[#6:9](-[#17:10]):[#6:11]:1>>[#6:1]-[#6:2]=[#8:3]",
    "rule_support": 0,
    "type_support": 0,
    "in_stratum": false
@@ -3656,14 +3656,6 @@
   },
   {
    "substrate": "CCOC(=O)N1CCN([N+](=O)NOc2ccc([N+](=O)[O-])cc2[N+](=O)[O-])CC1",
-   "metabolite": "[N]=O",
-   "smirks": "[#6:3]-[#6:4]-[#8:5]-[#6:6](=[#8:7])-[#7:8]1-[#6:9]-[#6:10]-[#7:11](-[#7+:1](=[#8:2])-[#7:12]-[#8:13]-[#6:14]2:[#6:15]:[#6:16]:[#6:17](-[#7+:18](=[#8:19])-[#8-:20]):[#6:21]:[#6:22]:2-[#7+:23](=[#8:24])-[#8-:25])-[#6:26]-[#6:27]-1>>[#7:1]=[#8:2]",
-   "rule_support": 0,
-   "type_support": 0,
-   "in_stratum": false
-  },
-  {
-   "substrate": "CCOC(=O)N1CCN([N+](=O)NOc2ccc([N+](=O)[O-])cc2[N+](=O)[O-])CC1",
    "metabolite": "CCOC(=O)N1CCN(N(O)N=O)CC1",
    "smirks": "[#7:1]-[#7+:2](=[#8:3])-[#7:4]-[#8:5]-[#6:6]1:[#6:7]:[#6:8]:[#6:9](-[#7+:10](=[#8:11])-[#8-:12]):[#6:13]:[#6:14]:1-[#7+:15](=[#8:16])-[#8-:17]>>[#7:1]-[#7:2](-[#8:3])-[#7:4]=[#8:5]",
    "rule_support": 0,
@@ -3671,11 +3663,19 @@
    "in_stratum": false
   },
   {
+   "substrate": "CCOC(=O)N1CCN([N+](=O)NOc2ccc([N+](=O)[O-])cc2[N+](=O)[O-])CC1",
+   "metabolite": "[N]=O",
+   "smirks": "[#6:3]-[#6:4]-[#8:5]-[#6:6](=[#8:7])-[#7:8]1-[#6:9]-[#6:10]-[#7:11](-[#7+:1](=[#8:2])-[#7:12]-[#8:13]-[#6:14]2:[#6:15]:[#6:16]:[#6:17](-[#7+:18](=[#8:19])-[#8-:20]):[#6:21]:[#6:22]:2-[#7+:23](=[#8:24])-[#8-:25])-[#6:26]-[#6:27]-1>>[#7:1]=[#8:2]",
+   "rule_support": 0,
+   "type_support": 0,
+   "in_stratum": false
+  },
+  {
    "substrate": "N=C(O)OCC(COC(=N)O)c1ccccc1",
-   "metabolite": "N=C(O)OCC(CO)c1ccccc1",
-   "smirks": "[#6:1]-[#8:2]-[#6:3](=[#7:4])-[#8:5]>>[#6:1]-[#8:2]",
-   "rule_support": 2,
-   "type_support": 4,
+   "metabolite": "C=C(C=O)c1ccccc1",
+   "smirks": "[#7:6]=[#6:7](-[#8:8])-[#8:9]-[#6:1]-[#6:2](-[#6:3]-[#8:4]-[#6:10](=[#7:11])-[#8:12])-[#6:5]>>[#6:1]=[#6:2](-[#6:3]=[#8:4])-[#6:5]",
+   "rule_support": 0,
+   "type_support": 0,
    "in_stratum": false
   },
   {
@@ -3696,18 +3696,18 @@
   },
   {
    "substrate": "N=C(O)OCC(COC(=N)O)c1ccccc1",
-   "metabolite": "N=C(O)OCC(C(=O)O)c1ccccc1",
-   "smirks": "[#6:1]-[#6:2]-[#8:3]-[#6:4](=[#7:5])-[#8:6]>>[#6:1]-[#6:2](=[#8:7])-[#8:3]",
-   "rule_support": 0,
-   "type_support": 0,
+   "metabolite": "N=C(O)OCC(CO)c1ccccc1",
+   "smirks": "[#6:1]-[#8:2]-[#6:3](=[#7:4])-[#8:5]>>[#6:1]-[#8:2]",
+   "rule_support": 2,
+   "type_support": 4,
    "in_stratum": false
   },
   {
    "substrate": "N=C(O)OCC(COC(=N)O)c1ccccc1",
-   "metabolite": "C=C(C=O)c1ccccc1",
-   "smirks": "[#7:6]=[#6:7](-[#8:8])-[#8:9]-[#6:1]-[#6:2](-[#6:3]-[#8:4]-[#6:10](=[#7:11])-[#8:12])-[#6:5]>>[#6:1]=[#6:2](-[#6:3]=[#8:4])-[#6:5]",
-   "rule_support": 0,
-   "type_support": 0,
+   "metabolite": "N=C(O)OCC(COC(=N)O)c1ccc(O)cc1",
+   "smirks": "[#6:1]:[#6:2]:[#6:3]>>[#6:1]:[#6:2](-[#8:4]):[#6:3]",
+   "rule_support": 790,
+   "type_support": 3747,
    "in_stratum": false
   },
   {
@@ -3720,32 +3720,8 @@
   },
   {
    "substrate": "N=C(O)OCC(COC(=N)O)c1ccccc1",
-   "metabolite": "N=C(O)OCC(COC(=N)O)c1ccc(O)cc1",
-   "smirks": "[#6:1]:[#6:2]:[#6:3]>>[#6:1]:[#6:2](-[#8:4]):[#6:3]",
-   "rule_support": 790,
-   "type_support": 3747,
-   "in_stratum": false
-  },
-  {
-   "substrate": "C=C(C=O)c1ccccc1",
-   "metabolite": "CC(O)=NC(CSCC(C(=O)O)c1ccccc1)C(=O)O",
-   "smirks": "[#6:1]=[#6:2](-[#6:3]=[#8:4])-[#6:5]>>[#6:6]-[#6:7](-[#8:8])=[#7:9]-[#6:10](-[#6:11]-[#16:12]-[#6:1]-[#6:2](-[#6:3](=[#8:4])-[#8:13])-[#6:5])-[#6:14](=[#8:15])-[#8:16]",
-   "rule_support": 0,
-   "type_support": 0,
-   "in_stratum": false
-  },
-  {
-   "substrate": "C=C(C=O)c1ccccc1",
-   "metabolite": "NC(CCC(O)=NC(CSCC(C=O)c1ccccc1)C(O)=NCC(=O)O)C(=O)O",
-   "smirks": "[#6:1]=[#6:2](-[#6:3])-[#6:4]>>[#7:5]-[#6:6](-[#6:7]-[#6:8]-[#6:9](-[#8:10])=[#7:11]-[#6:12](-[#6:13]-[#16:14]-[#6:1]-[#6:2](-[#6:3])-[#6:4])-[#6:15](-[#8:16])=[#7:17]-[#6:18]-[#6:19](=[#8:20])-[#8:21])-[#6:22](=[#8:23])-[#8:24]",
-   "rule_support": 2,
-   "type_support": 41,
-   "in_stratum": true
-  },
-  {
-   "substrate": "C=C(C=O)c1ccccc1",
-   "metabolite": "NC(CCC(O)=NC(CSCC(C(=O)O)c1ccccc1)C(O)=NCC(=O)O)C(=O)O",
-   "smirks": "[#6:1]=[#6:2](-[#6:3]=[#8:4])-[#6:5]>>[#7:6]-[#6:7](-[#6:8]-[#6:9]-[#6:10](-[#8:11])=[#7:12]-[#6:13](-[#6:14]-[#16:15]-[#6:1]-[#6:2](-[#6:3](=[#8:4])-[#8:16])-[#6:5])-[#6:17](-[#8:18])=[#7:19]-[#6:20]-[#6:21](=[#8:22])-[#8:23])-[#6:24](=[#8:25])-[#8:26]",
+   "metabolite": "N=C(O)OCC(C(=O)O)c1ccccc1",
+   "smirks": "[#6:1]-[#6:2]-[#8:3]-[#6:4](=[#7:5])-[#8:6]>>[#6:1]-[#6:2](=[#8:7])-[#8:3]",
    "rule_support": 0,
    "type_support": 0,
    "in_stratum": false
@@ -3760,6 +3736,14 @@
   },
   {
    "substrate": "C=C(C=O)c1ccccc1",
+   "metabolite": "CC(O)=NC(CSCC(C(=O)O)c1ccccc1)C(=O)O",
+   "smirks": "[#6:1]=[#6:2](-[#6:3]=[#8:4])-[#6:5]>>[#6:6]-[#6:7](-[#8:8])=[#7:9]-[#6:10](-[#6:11]-[#16:12]-[#6:1]-[#6:2](-[#6:3](=[#8:4])-[#8:13])-[#6:5])-[#6:14](=[#8:15])-[#8:16]",
+   "rule_support": 0,
+   "type_support": 0,
+   "in_stratum": false
+  },
+  {
+   "substrate": "C=C(C=O)c1ccccc1",
    "metabolite": "C=C(C(=O)O)c1ccccc1",
    "smirks": "[#6:1]-[#6:2]=[#8:3]>>[#6:1]-[#6:2](=[#8:3])-[#8:4]",
    "rule_support": 28,
@@ -3767,25 +3751,17 @@
    "in_stratum": false
   },
   {
-   "substrate": "N=C(O)OCC(C=O)c1ccccc1",
-   "metabolite": "N=C(O)OCC(CO)c1ccccc1",
-   "smirks": "[#6:1]-[#6:2]=[#8:3]>>[#6:1]-[#6:2]-[#8:3]",
-   "rule_support": 26,
-   "type_support": 397,
-   "in_stratum": false
+   "substrate": "C=C(C=O)c1ccccc1",
+   "metabolite": "NC(CCC(O)=NC(CSCC(C=O)c1ccccc1)C(O)=NCC(=O)O)C(=O)O",
+   "smirks": "[#6:1]=[#6:2](-[#6:3])-[#6:4]>>[#7:5]-[#6:6](-[#6:7]-[#6:8]-[#6:9](-[#8:10])=[#7:11]-[#6:12](-[#6:13]-[#16:14]-[#6:1]-[#6:2](-[#6:3])-[#6:4])-[#6:15](-[#8:16])=[#7:17]-[#6:18]-[#6:19](=[#8:20])-[#8:21])-[#6:22](=[#8:23])-[#8:24]",
+   "rule_support": 2,
+   "type_support": 41,
+   "in_stratum": true
   },
   {
-   "substrate": "N=C(O)OCC(C=O)c1ccccc1",
-   "metabolite": "N=C(O)OCC(C(=O)O)c1ccccc1",
-   "smirks": "[#6:1]-[#6:2]=[#8:3]>>[#6:1]-[#6:2](=[#8:3])-[#8:4]",
-   "rule_support": 28,
-   "type_support": 3747,
-   "in_stratum": false
-  },
-  {
-   "substrate": "N=C(O)OCC(C=O)c1ccccc1",
-   "metabolite": "C=C(C(=O)O)c1ccccc1",
-   "smirks": "[#7:6]=[#6:7](-[#8:8])-[#8:9]-[#6:1]-[#6:2](-[#6:3]=[#8:4])-[#6:5]>>[#6:1]=[#6:2](-[#6:3](=[#8:4])-[#8:10])-[#6:5]",
+   "substrate": "C=C(C=O)c1ccccc1",
+   "metabolite": "NC(CCC(O)=NC(CSCC(C(=O)O)c1ccccc1)C(O)=NCC(=O)O)C(=O)O",
+   "smirks": "[#6:1]=[#6:2](-[#6:3]=[#8:4])-[#6:5]>>[#7:6]-[#6:7](-[#6:8]-[#6:9]-[#6:10](-[#8:11])=[#7:12]-[#6:13](-[#6:14]-[#16:15]-[#6:1]-[#6:2](-[#6:3](=[#8:4])-[#8:16])-[#6:5])-[#6:17](-[#8:18])=[#7:19]-[#6:20]-[#6:21](=[#8:22])-[#8:23])-[#6:24](=[#8:25])-[#8:26]",
    "rule_support": 0,
    "type_support": 0,
    "in_stratum": false
@@ -3807,27 +3783,35 @@
    "in_stratum": false
   },
   {
+   "substrate": "N=C(O)OCC(C=O)c1ccccc1",
+   "metabolite": "C=C(C(=O)O)c1ccccc1",
+   "smirks": "[#7:6]=[#6:7](-[#8:8])-[#8:9]-[#6:1]-[#6:2](-[#6:3]=[#8:4])-[#6:5]>>[#6:1]=[#6:2](-[#6:3](=[#8:4])-[#8:10])-[#6:5]",
+   "rule_support": 0,
+   "type_support": 0,
+   "in_stratum": false
+  },
+  {
+   "substrate": "N=C(O)OCC(C=O)c1ccccc1",
+   "metabolite": "N=C(O)OCC(CO)c1ccccc1",
+   "smirks": "[#6:1]-[#6:2]=[#8:3]>>[#6:1]-[#6:2]-[#8:3]",
+   "rule_support": 26,
+   "type_support": 397,
+   "in_stratum": false
+  },
+  {
+   "substrate": "N=C(O)OCC(C=O)c1ccccc1",
+   "metabolite": "N=C(O)OCC(C(=O)O)c1ccccc1",
+   "smirks": "[#6:1]-[#6:2]=[#8:3]>>[#6:1]-[#6:2](=[#8:3])-[#8:4]",
+   "rule_support": 28,
+   "type_support": 3747,
+   "in_stratum": false
+  },
+  {
    "substrate": "O=C1N=C(O)C(c2ccccc2)CO1",
    "metabolite": "C=C(C(=N)O)c1ccccc1",
    "smirks": "[#8:4]=[#6:5]1-[#7:6]=[#6:7](-[#8:8])-[#6:9](-[#6:1](:[#6:2]):[#6:3])-[#6:10]-[#8:11]-1>>[#6:12]=[#6:13](-[#6:14](=[#7:15])-[#8:16])-[#6:1](:[#6:2]):[#6:3]",
    "rule_support": 0,
    "type_support": 0,
-   "in_stratum": false
-  },
-  {
-   "substrate": "N=C(O)OCC(CO)c1ccccc1",
-   "metabolite": "OC1=NC(O)C(c2ccccc2)CO1",
-   "smirks": "[#7:4]=[#6:5](-[#8:6])-[#8:7]-[#6:8]-[#6:9](-[#6:10]-[#8:11])-[#6:1](:[#6:2]):[#6:3]>>[#8:12]-[#6:13]1=[#7:14]-[#6:15](-[#8:16])-[#6:17](-[#6:1](:[#6:2]):[#6:3])-[#6:18]-[#8:19]-1",
-   "rule_support": 0,
-   "type_support": 0,
-   "in_stratum": false
-  },
-  {
-   "substrate": "N=C(O)OCC(CO)c1ccccc1",
-   "metabolite": "N=C(O)OCC(C(=O)O)c1ccccc1",
-   "smirks": "[#6:1]-[#6:2]-[#8:3]>>[#6:1]-[#6:2](=[#8:4])-[#8:3]",
-   "rule_support": 149,
-   "type_support": 357,
    "in_stratum": false
   },
   {
@@ -3840,10 +3824,26 @@
   },
   {
    "substrate": "N=C(O)OCC(CO)c1ccccc1",
+   "metabolite": "N=C(O)OCC(C(=O)O)c1ccccc1",
+   "smirks": "[#6:1]-[#6:2]-[#8:3]>>[#6:1]-[#6:2](=[#8:4])-[#8:3]",
+   "rule_support": 149,
+   "type_support": 357,
+   "in_stratum": false
+  },
+  {
+   "substrate": "N=C(O)OCC(CO)c1ccccc1",
    "metabolite": "N=C(O)OCC(C=O)c1ccccc1",
    "smirks": "[#6:1]-[#6:2]-[#8:3]>>[#6:1]-[#6:2]=[#8:3]",
    "rule_support": 41,
    "type_support": 275,
+   "in_stratum": false
+  },
+  {
+   "substrate": "N=C(O)OCC(CO)c1ccccc1",
+   "metabolite": "OC1=NC(O)C(c2ccccc2)CO1",
+   "smirks": "[#7:4]=[#6:5](-[#8:6])-[#8:7]-[#6:8]-[#6:9](-[#6:10]-[#8:11])-[#6:1](:[#6:2]):[#6:3]>>[#8:12]-[#6:13]1=[#7:14]-[#6:15](-[#8:16])-[#6:17](-[#6:1](:[#6:2]):[#6:3])-[#6:18]-[#8:19]-1",
+   "rule_support": 0,
+   "type_support": 0,
    "in_stratum": false
   },
   {
@@ -3904,16 +3904,16 @@
   },
   {
    "substrate": "O=[N+]([O-])c1cn2c(n1)OCC(OCc1ccc(OC(F)(F)F)cc1)C2",
-   "metabolite": "[O-][N+](O)=C1CN2CC(OCc3ccc(OC(F)(F)F)cc3)COC2=N1",
-   "smirks": "[#8:1]=[#7+:2](-[#8-:3])-[#6:4]1:[#6:5]:[#7:6](:[#6:7](:[#7:8]:1)-[#8:9])-[#6:10]>>[#8-:1]-[#7+:2](-[#8:3])=[#6:4]1-[#6:5]-[#7:6](-[#6:10])-[#6:7](-[#8:9])=[#7:8]-1",
+   "metabolite": "O=[N+]([O-])c1cn2c(n1)OCC(O)C2",
+   "smirks": "[#6:1]-[#8:2]-[#6:3]-[#6:4]1:[#6:5]:[#6:6]:[#6:7](-[#8:8]-[#6:9](-[#9:10])(-[#9:11])-[#9:12]):[#6:13]:[#6:14]:1>>[#6:1]-[#8:2]",
    "rule_support": 0,
    "type_support": 0,
    "in_stratum": false
   },
   {
    "substrate": "O=[N+]([O-])c1cn2c(n1)OCC(OCc1ccc(OC(F)(F)F)cc1)C2",
-   "metabolite": "O=[N+]([O-])c1cn2c(n1)OCC(O)C2",
-   "smirks": "[#6:1]-[#8:2]-[#6:3]-[#6:4]1:[#6:5]:[#6:6]:[#6:7](-[#8:8]-[#6:9](-[#9:10])(-[#9:11])-[#9:12]):[#6:13]:[#6:14]:1>>[#6:1]-[#8:2]",
+   "metabolite": "[O-][N+](O)=C1CN2CC(OCc3ccc(OC(F)(F)F)cc3)COC2=N1",
+   "smirks": "[#8:1]=[#7+:2](-[#8-:3])-[#6:4]1:[#6:5]:[#7:6](:[#6:7](:[#7:8]:1)-[#8:9])-[#6:10]>>[#8-:1]-[#7+:2](-[#8:3])=[#6:4]1-[#6:5]-[#7:6](-[#6:10])-[#6:7](-[#8:9])=[#7:8]-1",
    "rule_support": 0,
    "type_support": 0,
    "in_stratum": false
@@ -3960,10 +3960,10 @@
   },
   {
    "substrate": "CCOP(=O)(COc1ccc(CC(N=C(O)OC2COC3OCCC23)C(O)CN(CC(C)C)S(=O)(=O)c2ccc(OC)cc2)cc1)OCC",
-   "metabolite": "CCOP(=O)(COc1ccc(CC(N=C(O)OC2COC3OCCC23)C(O)CN(CC(C)C)S(=O)(=O)c2ccc(O)cc2)cc1)OCC",
-   "smirks": "[#6:1]-[#8:2]-[#6:3]>>[#6:1]-[#8:2]",
-   "rule_support": 219,
-   "type_support": 505,
+   "metabolite": "CCOP(=O)(COc1ccc(CC(N)C(O)CN(CC(C)C)S(=O)(=O)c2ccc(OC)cc2)cc1)OCC",
+   "smirks": "[#6:1]-[#7:2]=[#6:3](-[#8:4])-[#8:5]-[#6:6]1-[#6:7]-[#8:8]-[#6:9]2-[#8:10]-[#6:11]-[#6:12]-[#6:13]-1-2>>[#6:1]-[#7:2]",
+   "rule_support": 3,
+   "type_support": 3,
    "in_stratum": false
   },
   {
@@ -3976,25 +3976,25 @@
   },
   {
    "substrate": "CCOP(=O)(COc1ccc(CC(N=C(O)OC2COC3OCCC23)C(O)CN(CC(C)C)S(=O)(=O)c2ccc(OC)cc2)cc1)OCC",
-   "metabolite": "CCOP(=O)(COc1ccc(CC(N=C(O)OC2COC3OCCC23)C(O)CN(CC(C)CO)S(=O)(=O)c2ccc(OC)cc2)cc1)OCC",
-   "smirks": "[#6:1]-[#6:2]>>[#6:1]-[#6:2]-[#8:3]",
-   "rule_support": 358,
+   "metabolite": "CCOP(=O)(COc1ccc(C(O)C(N=C(O)OC2COC3OCCC23)C(O)CN(CC(C)C)S(=O)(=O)c2ccc(OC)cc2)cc1)OCC",
+   "smirks": "[#6:1]-[#6:2]-[#6:3]>>[#6:1]-[#6:2](-[#8:4])-[#6:3]",
+   "rule_support": 703,
    "type_support": 3747,
    "in_stratum": false
   },
   {
    "substrate": "CCOP(=O)(COc1ccc(CC(N=C(O)OC2COC3OCCC23)C(O)CN(CC(C)C)S(=O)(=O)c2ccc(OC)cc2)cc1)OCC",
-   "metabolite": "CCOP(=O)(COc1ccc(CC(N)C(O)CN(CC(C)C)S(=O)(=O)c2ccc(OC)cc2)cc1)OCC",
-   "smirks": "[#6:1]-[#7:2]=[#6:3](-[#8:4])-[#8:5]-[#6:6]1-[#6:7]-[#8:8]-[#6:9]2-[#8:10]-[#6:11]-[#6:12]-[#6:13]-1-2>>[#6:1]-[#7:2]",
-   "rule_support": 3,
-   "type_support": 3,
+   "metabolite": "CCOP(=O)(COc1ccc(CC(N=C(O)OC2COC3OCCC23)C(O)CN(CC(C)C)S(=O)(=O)c2ccc(O)cc2)cc1)OCC",
+   "smirks": "[#6:1]-[#8:2]-[#6:3]>>[#6:1]-[#8:2]",
+   "rule_support": 219,
+   "type_support": 505,
    "in_stratum": false
   },
   {
    "substrate": "CCOP(=O)(COc1ccc(CC(N=C(O)OC2COC3OCCC23)C(O)CN(CC(C)C)S(=O)(=O)c2ccc(OC)cc2)cc1)OCC",
-   "metabolite": "CCOP(=O)(COc1ccc(C(O)C(N=C(O)OC2COC3OCCC23)C(O)CN(CC(C)C)S(=O)(=O)c2ccc(OC)cc2)cc1)OCC",
-   "smirks": "[#6:1]-[#6:2]-[#6:3]>>[#6:1]-[#6:2](-[#8:4])-[#6:3]",
-   "rule_support": 703,
+   "metabolite": "CCOP(=O)(COc1ccc(CC(N=C(O)OC2COC3OCCC23)C(O)CN(CC(C)CO)S(=O)(=O)c2ccc(OC)cc2)cc1)OCC",
+   "smirks": "[#6:1]-[#6:2]>>[#6:1]-[#6:2]-[#8:3]",
+   "rule_support": 358,
    "type_support": 3747,
    "in_stratum": false
   },
@@ -4016,22 +4016,6 @@
   },
   {
    "substrate": "Clc1ccc(Cl)c(-c2ccc(Cl)c(Cl)c2)c1",
-   "metabolite": "CS(=O)(=O)c1cc(Cl)cc(-c2ccc(Cl)c(Cl)c2)c1Cl",
-   "smirks": "[#6:1]:[#6:2]:[#6:3]>>[#6:4]-[#16:5](=[#8:6])(=[#8:7])-[#6:2](:[#6:1]):[#6:3]",
-   "rule_support": 8,
-   "type_support": 16,
-   "in_stratum": false
-  },
-  {
-   "substrate": "Clc1ccc(Cl)c(-c2ccc(Cl)c(Cl)c2)c1",
-   "metabolite": "CS(=O)(=O)c1cc(Cl)c(-c2ccc(Cl)c(Cl)c2)cc1Cl",
-   "smirks": "[#6:1]:[#6:2]:[#6:3]>>[#6:4]-[#16:5](=[#8:6])(=[#8:7])-[#6:2](:[#6:3]):[#6:1]",
-   "rule_support": 8,
-   "type_support": 16,
-   "in_stratum": false
-  },
-  {
-   "substrate": "Clc1ccc(Cl)c(-c2ccc(Cl)c(Cl)c2)c1",
    "metabolite": "ClC1=CC2OC2(Cl)C=C1c1ccc(Cl)c(Cl)c1",
    "smirks": "[#17:1]-[#6:2]1:[#6:3]:[#6:4]:[#6:5](-[#17:9]):[#6:6](-[#6:8]):[#6:7]:1>>[#17:9]-[#6:5]1=[#6:4]-[#6:3]2-[#8:10]-[#6:2]-2(-[#17:1])-[#6:7]=[#6:6]-1-[#6:8]",
    "rule_support": 2,
@@ -4040,10 +4024,26 @@
   },
   {
    "substrate": "Clc1ccc(Cl)c(-c2ccc(Cl)c(Cl)c2)c1",
+   "metabolite": "CS(=O)(=O)c1cc(Cl)cc(-c2ccc(Cl)c(Cl)c2)c1Cl",
+   "smirks": "[#6:1]:[#6:2]:[#6:3]>>[#6:4]-[#16:5](=[#8:6])(=[#8:7])-[#6:2](:[#6:1]):[#6:3]",
+   "rule_support": 8,
+   "type_support": 16,
+   "in_stratum": false
+  },
+  {
+   "substrate": "Clc1ccc(Cl)c(-c2ccc(Cl)c(Cl)c2)c1",
    "metabolite": "ClC1=CC(c2ccc(Cl)c(Cl)c2)=C(Cl)C2OC12",
    "smirks": "[#17:1]-[#6:2]1:[#6:3]:[#6:4]:[#6:5](-[#17:9]):[#6:6](-[#6:8]):[#6:7]:1>>[#17:1]-[#6:2]1=[#6:7]-[#6:6](-[#6:8])=[#6:5](-[#17:9])-[#6:4]2-[#8:10]-[#6:3]-1-2",
    "rule_support": 5,
    "type_support": 70,
+   "in_stratum": false
+  },
+  {
+   "substrate": "Clc1ccc(Cl)c(-c2ccc(Cl)c(Cl)c2)c1",
+   "metabolite": "CS(=O)(=O)c1cc(Cl)c(-c2ccc(Cl)c(Cl)c2)cc1Cl",
+   "smirks": "[#6:1]:[#6:2]:[#6:3]>>[#6:4]-[#16:5](=[#8:6])(=[#8:7])-[#6:2](:[#6:3]):[#6:1]",
+   "rule_support": 8,
+   "type_support": 16,
    "in_stratum": false
   },
   {
@@ -4072,10 +4072,10 @@
   },
   {
    "substrate": "O=c1ccc2ccc(O)c(O)c2o1",
-   "metabolite": "O=C(O)C1OC(Oc2ccc3ccc(=O)oc3c2O)C(O)C(O)C1O",
-   "smirks": "[#6:1]-[#8:2]>>[#8:3]=[#6:4](-[#8:5])-[#6:6]1-[#8:7]-[#6:8](-[#8:2]-[#6:1])-[#6:9](-[#8:10])-[#6:11](-[#8:12])-[#6:13]-1-[#8:14]",
-   "rule_support": 356,
-   "type_support": 2071,
+   "metabolite": "COc1ccc2ccc(=O)oc2c1O",
+   "smirks": "[#6:1]-[#8:2]>>[#6:3]-[#8:2]-[#6:1]",
+   "rule_support": 178,
+   "type_support": 238,
    "in_stratum": false
   },
   {
@@ -4088,10 +4088,10 @@
   },
   {
    "substrate": "O=c1ccc2ccc(O)c(O)c2o1",
-   "metabolite": "COc1ccc2ccc(=O)oc2c1O",
-   "smirks": "[#6:1]-[#8:2]>>[#6:3]-[#8:2]-[#6:1]",
-   "rule_support": 178,
-   "type_support": 238,
+   "metabolite": "O=C(O)C1OC(Oc2ccc3ccc(=O)oc3c2O)C(O)C(O)C1O",
+   "smirks": "[#6:1]-[#8:2]>>[#8:3]=[#6:4](-[#8:5])-[#6:6]1-[#8:7]-[#6:8](-[#8:2]-[#6:1])-[#6:9](-[#8:10])-[#6:11](-[#8:12])-[#6:13]-1-[#8:14]",
+   "rule_support": 356,
+   "type_support": 2071,
    "in_stratum": false
   },
   {
@@ -4112,9 +4112,33 @@
   },
   {
    "substrate": "Cc1cc2c3ccccc3ccc2c2ccccc12",
+   "metabolite": "OCc1cc2c3ccccc3ccc2c2ccccc12",
+   "smirks": "[#6:1]-[#6:2]>>[#8:3]-[#6:1]-[#6:2]",
+   "rule_support": 32,
+   "type_support": 3747,
+   "in_stratum": false
+  },
+  {
+   "substrate": "Cc1cc2c3ccccc3ccc2c2ccccc12",
+   "metabolite": "Cc1cc2c(ccc3ccccc32)c2c1C(O)C(O)C=C2",
+   "smirks": "[#6:1]:[#6:4]1:[#6:3](:[#6:2]):[#6:8]:[#6:7]:[#6:6]:[#6:5]:1>>[#6:1]:[#6:4]1:[#6:3](:[#6:2])-[#6:8]=[#6:7]-[#6:6](-[#6:5]-1-[#8:9])-[#8:10]",
+   "rule_support": 4,
+   "type_support": 51,
+   "in_stratum": true
+  },
+  {
+   "substrate": "Cc1cc2c3ccccc3ccc2c2ccccc12",
    "metabolite": "Cc1cc2c(ccc3cccc(O)c32)c2ccccc12",
    "smirks": "[#6:1]:[#6:2]:[#6:3]>>[#6:3]:[#6:2](-[#8:4]):[#6:1]",
    "rule_support": 18,
+   "type_support": 3747,
+   "in_stratum": false
+  },
+  {
+   "substrate": "Cc1cc2c3ccccc3ccc2c2ccccc12",
+   "metabolite": "Cc1cc2c3cccc(O)c3ccc2c2ccccc12",
+   "smirks": "[#6:1]:[#6:2]:[#6:3]>>[#6:1]:[#6:2](-[#8:4]):[#6:3]",
+   "rule_support": 790,
    "type_support": 3747,
    "in_stratum": false
   },
@@ -4136,35 +4160,11 @@
   },
   {
    "substrate": "Cc1cc2c3ccccc3ccc2c2ccccc12",
-   "metabolite": "Cc1cc2c3cccc(O)c3ccc2c2ccccc12",
-   "smirks": "[#6:1]:[#6:2]:[#6:3]>>[#6:1]:[#6:2](-[#8:4]):[#6:3]",
-   "rule_support": 790,
-   "type_support": 3747,
-   "in_stratum": false
-  },
-  {
-   "substrate": "Cc1cc2c3ccccc3ccc2c2ccccc12",
-   "metabolite": "Cc1cc2c3c(ccc2c2ccccc12)C=CC(O)C3O",
-   "smirks": "[#6:1]:[#6:2]1:[#6:3]:[#6:4]:[#6:5]:[#6:6]:[#6:7]:1:[#6:8]>>[#6:1]:[#6:2]1:[#6:7](:[#6:8])-[#6:6]=[#6:5]-[#6:4](-[#8:9])-[#6:3]-1-[#8:10]",
-   "rule_support": 3,
-   "type_support": 51,
-   "in_stratum": true
-  },
-  {
-   "substrate": "Cc1cc2c3ccccc3ccc2c2ccccc12",
    "metabolite": "Cc1cc2c3c(ccc2c2ccccc12)C(O)C(O)C=C3",
    "smirks": "[#6:1]:[#6:2]1:[#6:3]:[#6:4]:[#6:5]:[#6:6]:[#6:7]:1:[#6:8]>>[#6:1]:[#6:2]1:[#6:7](:[#6:8])-[#6:6](-[#8:9])-[#6:5](-[#8:10])-[#6:4]=[#6:3]-1",
    "rule_support": 2,
    "type_support": 51,
    "in_stratum": true
-  },
-  {
-   "substrate": "Cc1cc2c3ccccc3ccc2c2ccccc12",
-   "metabolite": "OCc1cc2c3ccccc3ccc2c2ccccc12",
-   "smirks": "[#6:1]-[#6:2]>>[#8:3]-[#6:1]-[#6:2]",
-   "rule_support": 32,
-   "type_support": 3747,
-   "in_stratum": false
   },
   {
    "substrate": "Cc1cc2c3ccccc3ccc2c2ccccc12",
@@ -4176,9 +4176,9 @@
   },
   {
    "substrate": "Cc1cc2c3ccccc3ccc2c2ccccc12",
-   "metabolite": "Cc1cc2c(ccc3ccccc32)c2c1C(O)C(O)C=C2",
-   "smirks": "[#6:1]:[#6:4]1:[#6:3](:[#6:2]):[#6:8]:[#6:7]:[#6:6]:[#6:5]:1>>[#6:1]:[#6:4]1:[#6:3](:[#6:2])-[#6:8]=[#6:7]-[#6:6](-[#6:5]-1-[#8:9])-[#8:10]",
-   "rule_support": 4,
+   "metabolite": "Cc1cc2c3c(ccc2c2ccccc12)C=CC(O)C3O",
+   "smirks": "[#6:1]:[#6:2]1:[#6:3]:[#6:4]:[#6:5]:[#6:6]:[#6:7]:1:[#6:8]>>[#6:1]:[#6:2]1:[#6:7](:[#6:8])-[#6:6]=[#6:5]-[#6:4](-[#8:9])-[#6:3]-1-[#8:10]",
+   "rule_support": 3,
    "type_support": 51,
    "in_stratum": true
   },
@@ -4240,10 +4240,10 @@
   },
   {
    "substrate": "O=[N+]([O-])OC1COC2C(O[N+](=O)[O-])COC12",
-   "metabolite": "O=[N+]([O-])OC1COC2C(O)COC12",
-   "smirks": "[#6:1]-[#8:2]-[#7+:3](=[#8:4])-[#8-:5]>>[#6:1]-[#8:2]",
-   "rule_support": 9,
-   "type_support": 12,
+   "metabolite": "O=NO",
+   "smirks": "[#8:1]=[#7+:2](-[#8-:3])-[#8:4]-[#6:5]1-[#6:6]-[#8:7]-[#6:8]2-[#6:9](-[#8:10]-[#7+:11](=[#8:12])-[#8-:13])-[#6:14]-[#8:15]-[#6:16]-1-2>>[#8:1]=[#7:2]-[#8:3]",
+   "rule_support": 0,
+   "type_support": 0,
    "in_stratum": false
   },
   {
@@ -4256,10 +4256,10 @@
   },
   {
    "substrate": "O=[N+]([O-])OC1COC2C(O[N+](=O)[O-])COC12",
-   "metabolite": "O=NO",
-   "smirks": "[#8:1]=[#7+:2](-[#8-:3])-[#8:4]-[#6:5]1-[#6:6]-[#8:7]-[#6:8]2-[#6:9](-[#8:10]-[#7+:11](=[#8:12])-[#8-:13])-[#6:14]-[#8:15]-[#6:16]-1-2>>[#8:1]=[#7:2]-[#8:3]",
-   "rule_support": 0,
-   "type_support": 0,
+   "metabolite": "O=[N+]([O-])OC1COC2C(O)COC12",
+   "smirks": "[#6:1]-[#8:2]-[#7+:3](=[#8:4])-[#8-:5]>>[#6:1]-[#8:2]",
+   "rule_support": 9,
+   "type_support": 12,
    "in_stratum": false
   },
   {
@@ -4320,18 +4320,18 @@
   },
   {
    "substrate": "CCCC(C(=O)c1ccc2c(c1)OCO2)N1CCCC1",
-   "metabolite": "CCCC(C(=O)c1ccc(O)c(OC)c1)N1CCCC1",
-   "smirks": "[#6:1]:[#6:2]1:[#6:3](:[#6:4])-[#8:5]-[#6:6]-[#8:7]-1>>[#6:1]:[#6:2](-[#8:8]):[#6:3](-[#8:9]-[#6:10]):[#6:4]",
-   "rule_support": 1,
-   "type_support": 4,
-   "in_stratum": false
-  },
-  {
-   "substrate": "CCCC(C(=O)c1ccc2c(c1)OCO2)N1CCCC1",
    "metabolite": "CCCC(C(=O)c1ccc2c(c1)OCO2)N1CCCC1O",
    "smirks": "[#7:1]-[#6:3]-[#6:2]>>[#7:1]-[#6:3](-[#6:2])-[#8:4]",
    "rule_support": 32,
    "type_support": 3747,
+   "in_stratum": false
+  },
+  {
+   "substrate": "CCCC(C(=O)c1ccc2c(c1)OCO2)N1CCCC1",
+   "metabolite": "CCCC(C(=O)c1ccc(O)c(OC)c1)N1CCCC1",
+   "smirks": "[#6:1]:[#6:2]1:[#6:3](:[#6:4])-[#8:5]-[#6:6]-[#8:7]-1>>[#6:1]:[#6:2](-[#8:8]):[#6:3](-[#8:9]-[#6:10]):[#6:4]",
+   "rule_support": 1,
+   "type_support": 4,
    "in_stratum": false
   },
   {
@@ -4344,18 +4344,10 @@
   },
   {
    "substrate": "CCCC(C(=O)c1ccc(O)c(O)c1)N1CCCC1",
-   "metabolite": "CCCC(C(=O)c1ccc(OC2OC(C(=O)O)C(O)C(O)C2O)c(O)c1)N1CCCC1",
-   "smirks": "[#6:1]-[#8:2]>>[#6:1]-[#8:2]-[#6:3]1-[#8:4]-[#6:5](-[#6:6](=[#8:7])-[#8:8])-[#6:9](-[#8:10])-[#6:11](-[#8:12])-[#6:13]-1-[#8:14]",
-   "rule_support": 1531,
-   "type_support": 2071,
-   "in_stratum": false
-  },
-  {
-   "substrate": "CCCC(C(=O)c1ccc(O)c(O)c1)N1CCCC1",
-   "metabolite": "CCCC(C(=O)c1ccc(O)c(OS(=O)(=O)O)c1)N1CCCC1",
-   "smirks": "[#6:1]-[#8:2]>>[#6:1]-[#8:2]-[#16:3](=[#8:4])(=[#8:5])-[#8:6]",
-   "rule_support": 657,
-   "type_support": 767,
+   "metabolite": "CC(O)CC(C(=O)c1ccc(O)c(O)c1)N1CCCC1",
+   "smirks": "[#6:1]-[#6:2]-[#6:3]>>[#6:1]-[#6:2](-[#8:4])-[#6:3]",
+   "rule_support": 703,
+   "type_support": 3747,
    "in_stratum": false
   },
   {
@@ -4368,7 +4360,15 @@
   },
   {
    "substrate": "CCCC(C(=O)c1ccc(O)c(O)c1)N1CCCC1",
-   "metabolite": "CCCC(C(=O)c1ccc(O)c(OC2OC(C(=O)O)C(O)C(O)C2O)c1)N1CCCC1",
+   "metabolite": "CCCC(C(=O)c1ccc(O)c(OS(=O)(=O)O)c1)N1CCCC1",
+   "smirks": "[#6:1]-[#8:2]>>[#6:1]-[#8:2]-[#16:3](=[#8:4])(=[#8:5])-[#8:6]",
+   "rule_support": 657,
+   "type_support": 767,
+   "in_stratum": false
+  },
+  {
+   "substrate": "CCCC(C(=O)c1ccc(O)c(O)c1)N1CCCC1",
+   "metabolite": "CCCC(C(=O)c1ccc(OC2OC(C(=O)O)C(O)C(O)C2O)c(O)c1)N1CCCC1",
    "smirks": "[#6:1]-[#8:2]>>[#6:1]-[#8:2]-[#6:3]1-[#8:4]-[#6:5](-[#6:6](=[#8:7])-[#8:8])-[#6:9](-[#8:10])-[#6:11](-[#8:12])-[#6:13]-1-[#8:14]",
    "rule_support": 1531,
    "type_support": 2071,
@@ -4376,26 +4376,10 @@
   },
   {
    "substrate": "CCCC(C(=O)c1ccc(O)c(O)c1)N1CCCC1",
-   "metabolite": "CC(O)CC(C(=O)c1ccc(O)c(O)c1)N1CCCC1",
-   "smirks": "[#6:1]-[#6:2]-[#6:3]>>[#6:1]-[#6:2](-[#8:4])-[#6:3]",
-   "rule_support": 703,
-   "type_support": 3747,
-   "in_stratum": false
-  },
-  {
-   "substrate": "CCCC(C(=O)c1ccc(O)c(OC)c1)N1CCCC1",
-   "metabolite": "CCCC(C(=O)c1ccc(OC2OC(C(=O)O)C(O)C(O)C2O)c(OC)c1)N1CCCC1",
+   "metabolite": "CCCC(C(=O)c1ccc(O)c(OC2OC(C(=O)O)C(O)C(O)C2O)c1)N1CCCC1",
    "smirks": "[#6:1]-[#8:2]>>[#6:1]-[#8:2]-[#6:3]1-[#8:4]-[#6:5](-[#6:6](=[#8:7])-[#8:8])-[#6:9](-[#8:10])-[#6:11](-[#8:12])-[#6:13]-1-[#8:14]",
    "rule_support": 1531,
    "type_support": 2071,
-   "in_stratum": false
-  },
-  {
-   "substrate": "CCCC(C(=O)c1ccc(O)c(OC)c1)N1CCCC1",
-   "metabolite": "COc1cc(C(=O)C(CC(C)O)N2CCCC2)ccc1O",
-   "smirks": "[#6:1]-[#6:2]-[#6:3]>>[#6:3]-[#6:2](-[#6:1])-[#8:4]",
-   "rule_support": 48,
-   "type_support": 3747,
    "in_stratum": false
   },
   {
@@ -4408,10 +4392,26 @@
   },
   {
    "substrate": "CCCC(C(=O)c1ccc(O)c(OC)c1)N1CCCC1",
+   "metabolite": "COc1cc(C(=O)C(CC(C)O)N2CCCC2)ccc1O",
+   "smirks": "[#6:1]-[#6:2]-[#6:3]>>[#6:3]-[#6:2](-[#6:1])-[#8:4]",
+   "rule_support": 48,
+   "type_support": 3747,
+   "in_stratum": false
+  },
+  {
+   "substrate": "CCCC(C(=O)c1ccc(O)c(OC)c1)N1CCCC1",
    "metabolite": "CCCC(C(=O)c1ccc(O)c(OC)c1)N1CCCC1O",
    "smirks": "[#7:1]-[#6:3]-[#6:2]>>[#7:1]-[#6:3](-[#6:2])-[#8:4]",
    "rule_support": 32,
    "type_support": 3747,
+   "in_stratum": false
+  },
+  {
+   "substrate": "CCCC(C(=O)c1ccc(O)c(OC)c1)N1CCCC1",
+   "metabolite": "CCCC(C(=O)c1ccc(OC2OC(C(=O)O)C(O)C(O)C2O)c(OC)c1)N1CCCC1",
+   "smirks": "[#6:1]-[#8:2]>>[#6:1]-[#8:2]-[#6:3]1-[#8:4]-[#6:5](-[#6:6](=[#8:7])-[#8:8])-[#6:9](-[#8:10])-[#6:11](-[#8:12])-[#6:13]-1-[#8:14]",
+   "rule_support": 1531,
+   "type_support": 2071,
    "in_stratum": false
   },
   {
@@ -4464,9 +4464,9 @@
   },
   {
    "substrate": "CCCN(CCc1ccc(Cl)c(Cl)c1)CC(O)c1cccnc1",
-   "metabolite": "OCCCN(CCc1ccc(Cl)c(Cl)c1)CC(O)c1cccnc1",
-   "smirks": "[#6:1]-[#6:2]>>[#8:3]-[#6:1]-[#6:2]",
-   "rule_support": 32,
+   "metabolite": "CCCN(CCc1ccc(Cl)c(Cl)c1)CC(O)c1ccc(O)nc1",
+   "smirks": "[#6:1]:[#6:2]:[#7:3]>>[#6:1]:[#6:2](-[#8:4]):[#7:3]",
+   "rule_support": 22,
    "type_support": 3747,
    "in_stratum": false
   },
@@ -4480,9 +4480,9 @@
   },
   {
    "substrate": "CCCN(CCc1ccc(Cl)c(Cl)c1)CC(O)c1cccnc1",
-   "metabolite": "CCCN(CCc1ccc(Cl)c(Cl)c1)CC(O)c1ccc(O)nc1",
-   "smirks": "[#6:1]:[#6:2]:[#7:3]>>[#6:1]:[#6:2](-[#8:4]):[#7:3]",
-   "rule_support": 22,
+   "metabolite": "OCCCN(CCc1ccc(Cl)c(Cl)c1)CC(O)c1cccnc1",
+   "smirks": "[#6:1]-[#6:2]>>[#8:3]-[#6:1]-[#6:2]",
+   "rule_support": 32,
    "type_support": 3747,
    "in_stratum": false
   },
@@ -4520,10 +4520,10 @@
   },
   {
    "substrate": "Cc1c([N+](=O)[O-])cccc1[N+](=O)[O-]",
-   "metabolite": "O=C(O)c1c([N+](=O)[O-])cccc1[N+](=O)[O-]",
-   "smirks": "[#6:1]-[#6:2]>>[#8:3]=[#6:1](-[#8:4])-[#6:2]",
-   "rule_support": 20,
-   "type_support": 90,
+   "metabolite": "O=[N+]([O-])c1cccc([N+](=O)[O-])c1CO",
+   "smirks": "[#6:1]-[#6:2]>>[#6:2]-[#6:1]-[#8:3]",
+   "rule_support": 207,
+   "type_support": 3747,
    "in_stratum": false
   },
   {
@@ -4536,14 +4536,6 @@
   },
   {
    "substrate": "Cc1c([N+](=O)[O-])cccc1[N+](=O)[O-]",
-   "metabolite": "O=[N+]([O-])c1cccc([N+](=O)[O-])c1CO",
-   "smirks": "[#6:1]-[#6:2]>>[#6:2]-[#6:1]-[#8:3]",
-   "rule_support": 207,
-   "type_support": 3747,
-   "in_stratum": false
-  },
-  {
-   "substrate": "Cc1c([N+](=O)[O-])cccc1[N+](=O)[O-]",
    "metabolite": "O=Cc1c([N+](=O)[O-])cccc1[N+](=O)[O-]",
    "smirks": "[#6:1]-[#6:2]>>[#8:3]=[#6:1]-[#6:2]",
    "rule_support": 2,
@@ -4551,11 +4543,11 @@
    "in_stratum": true
   },
   {
-   "substrate": "O=[N+]([O-])c1cccc([N+](=O)[O-])c1CO",
+   "substrate": "Cc1c([N+](=O)[O-])cccc1[N+](=O)[O-]",
    "metabolite": "O=C(O)c1c([N+](=O)[O-])cccc1[N+](=O)[O-]",
-   "smirks": "[#6:1]-[#6:2]-[#8:3]>>[#8:4]=[#6:2](-[#8:3])-[#6:1]",
-   "rule_support": 21,
-   "type_support": 357,
+   "smirks": "[#6:1]-[#6:2]>>[#8:3]=[#6:1](-[#8:4])-[#6:2]",
+   "rule_support": 20,
+   "type_support": 90,
    "in_stratum": false
   },
   {
@@ -4564,6 +4556,14 @@
    "smirks": "[#6:1]-[#8:2]>>[#8:3]=[#6:4](-[#8:5])-[#6:6]1-[#8:7]-[#6:8](-[#8:2]-[#6:1])-[#6:9](-[#8:10])-[#6:11](-[#8:12])-[#6:13]-1-[#8:14]",
    "rule_support": 356,
    "type_support": 2071,
+   "in_stratum": false
+  },
+  {
+   "substrate": "O=[N+]([O-])c1cccc([N+](=O)[O-])c1CO",
+   "metabolite": "O=C(O)c1c([N+](=O)[O-])cccc1[N+](=O)[O-]",
+   "smirks": "[#6:1]-[#6:2]-[#8:3]>>[#8:4]=[#6:2](-[#8:3])-[#6:1]",
+   "rule_support": 21,
+   "type_support": 357,
    "in_stratum": false
   },
   {
@@ -4600,19 +4600,19 @@
   },
   {
    "substrate": "O=[N+]([O-])c1cc2c3ccccc3ccc2c2ccccc12",
-   "metabolite": "O=[N+]([O-])c1cc2c3c(ccc2c2ccccc12)C(O)C(O)C=C3",
-   "smirks": "[#6:1]:[#6:2]1:[#6:3]:[#6:4]:[#6:5]:[#6:6]:[#6:7]:1:[#6:8]>>[#6:1]:[#6:2]1:[#6:7](:[#6:8])-[#6:6](-[#8:9])-[#6:5](-[#8:10])-[#6:4]=[#6:3]-1",
-   "rule_support": 2,
-   "type_support": 51,
-   "in_stratum": true
-  },
-  {
-   "substrate": "O=[N+]([O-])c1cc2c3ccccc3ccc2c2ccccc12",
    "metabolite": "Nc1cc2c3ccccc3ccc2c2ccccc12",
    "smirks": "[#8:3]=[#7+:1](-[#8-:4])-[#6:2]>>[#7:1]-[#6:2]",
    "rule_support": 0,
    "type_support": 0,
    "in_stratum": false
+  },
+  {
+   "substrate": "O=[N+]([O-])c1cc2c3ccccc3ccc2c2ccccc12",
+   "metabolite": "O=[N+]([O-])c1cc2c3c(ccc2c2ccccc12)C(O)C(O)C=C3",
+   "smirks": "[#6:1]:[#6:2]1:[#6:3]:[#6:4]:[#6:5]:[#6:6]:[#6:7]:1:[#6:8]>>[#6:1]:[#6:2]1:[#6:7](:[#6:8])-[#6:6](-[#8:9])-[#6:5](-[#8:10])-[#6:4]=[#6:3]-1",
+   "rule_support": 2,
+   "type_support": 51,
+   "in_stratum": true
   },
   {
    "substrate": "Nc1cc2c3ccccc3ccc2c2ccccc12",
@@ -4632,16 +4632,16 @@
   },
   {
    "substrate": "O=[N+]([O-])c1cc2c3c(ccc2c2ccccc12)C(O)C(O)C=C3",
-   "metabolite": "Nc1cc2c3c(ccc2c2ccccc12)C(O)C(O)C=C3",
-   "smirks": "[#8:3]=[#7+:1](-[#8-:4])-[#6:2]>>[#7:1]-[#6:2]",
+   "metabolite": "O=Nc1cc2c3c(ccc2c2ccccc12)C(O)C(O)CC3",
+   "smirks": "[#8:1]=[#7+:2](-[#8-:8])-[#6:3].[#6:4]-[#6:7]=[#6:6]-[#6:5]>>[#8:1]=[#7:2]-[#6:3].[#6:4]-[#6:7]-[#6:6]-[#6:5]",
    "rule_support": 0,
    "type_support": 0,
    "in_stratum": false
   },
   {
    "substrate": "O=[N+]([O-])c1cc2c3c(ccc2c2ccccc12)C(O)C(O)C=C3",
-   "metabolite": "O=Nc1cc2c3c(ccc2c2ccccc12)C(O)C(O)CC3",
-   "smirks": "[#8:1]=[#7+:2](-[#8-:8])-[#6:3].[#6:4]-[#6:7]=[#6:6]-[#6:5]>>[#8:1]=[#7:2]-[#6:3].[#6:4]-[#6:7]-[#6:6]-[#6:5]",
+   "metabolite": "Nc1cc2c3c(ccc2c2ccccc12)C(O)C(O)C=C3",
+   "smirks": "[#8:3]=[#7+:1](-[#8-:4])-[#6:2]>>[#7:1]-[#6:2]",
    "rule_support": 0,
    "type_support": 0,
    "in_stratum": false
@@ -4680,10 +4680,10 @@
   },
   {
    "substrate": "Oc1ccc(C2Sc3cc(O)ccc3OC2c2ccc(OCCN3CCCCC3)cc2)cc1",
-   "metabolite": "NCCOc1ccc(C2Oc3ccc(O)cc3SC2c2ccc(O)cc2)cc1",
-   "smirks": "[#6:2]-[#6:1]-[#7:3]1-[#6:4]-[#6:5]-[#6:6]-[#6:7]-[#6:8]-1>>[#7:9]-[#6:1]-[#6:2]",
+   "metabolite": "O=C1C=C2OC(c3ccc(OCCN4CCCCC4)cc3)C(c3ccc(O)cc3)SC2=CC1=O",
+   "smirks": "[#16:1]-[#6:2]1:[#6:3]:[#6:4](-[#8:5]):[#6:6]:[#6:7]:[#6:8]:1-[#8:9]>>[#8:10]=[#6:6]1-[#6:7]=[#6:8](-[#8:9])-[#6:2](-[#16:1])=[#6:3]-[#6:4]-1=[#8:5]",
    "rule_support": 0,
-   "type_support": 1,
+   "type_support": 2,
    "in_stratum": false
   },
   {
@@ -4696,18 +4696,10 @@
   },
   {
    "substrate": "Oc1ccc(C2Sc3cc(O)ccc3OC2c2ccc(OCCN3CCCCC3)cc2)cc1",
-   "metabolite": "O=C1C=C2OC(c3ccc(OCCN4CCCCC4)cc3)C(c3ccc(O)cc3)SC2=CC1=O",
-   "smirks": "[#16:1]-[#6:2]1:[#6:3]:[#6:4](-[#8:5]):[#6:6]:[#6:7]:[#6:8]:1-[#8:9]>>[#8:10]=[#6:6]1-[#6:7]=[#6:8](-[#8:9])-[#6:2](-[#16:1])=[#6:3]-[#6:4]-1=[#8:5]",
+   "metabolite": "NCCOc1ccc(C2Oc3ccc(O)cc3SC2c2ccc(O)cc2)cc1",
+   "smirks": "[#6:2]-[#6:1]-[#7:3]1-[#6:4]-[#6:5]-[#6:6]-[#6:7]-[#6:8]-1>>[#7:9]-[#6:1]-[#6:2]",
    "rule_support": 0,
-   "type_support": 2,
-   "in_stratum": false
-  },
-  {
-   "substrate": "Oc1ccc(C2Sc3cc(O)ccc3OC2c2ccc(OCCN3CCCCC3)cc2)cc1",
-   "metabolite": "Oc1ccc2c(c1)SC(c1ccc(O)c(O)c1)C(c1ccc(OCCN3CCCCC3)cc1)O2",
-   "smirks": "[#6:1]:[#6:3]:[#6:2]>>[#6:1]:[#6:3](-[#8:4]):[#6:2]",
-   "rule_support": 57,
-   "type_support": 3747,
+   "type_support": 1,
    "in_stratum": false
   },
   {
@@ -4717,14 +4709,6 @@
    "rule_support": 32,
    "type_support": 3747,
    "in_stratum": false
-  },
-  {
-   "substrate": "Oc1ccc(C2Sc3cc(O)ccc3OC2c2ccc(OCCN3CCCCC3)cc2)cc1",
-   "metabolite": "O=S1c2cc(O)ccc2OC(c2ccc(OCCN3CCCCC3)cc2)C1c1ccc(O)cc1",
-   "smirks": "[#6:1]-[#16:2]-[#6:3]>>[#8:4]=[#16:2](-[#6:3])-[#6:1]",
-   "rule_support": 2,
-   "type_support": 233,
-   "in_stratum": true
   },
   {
    "substrate": "Oc1ccc(C2Sc3cc(O)ccc3OC2c2ccc(OCCN3CCCCC3)cc2)cc1",
@@ -4743,12 +4727,20 @@
    "in_stratum": false
   },
   {
-   "substrate": "CC(C)C1CCC(C(O)=NC(Cc2ccccc2)C(=O)O)CC1",
-   "metabolite": "C=C(C)C1CCC(C(O)=NC(Cc2ccccc2)C(=O)O)CC1",
-   "smirks": "[#6:1]-[#6:2](-[#6:3])-[#6:4]>>[#6:1]=[#6:2](-[#6:3])-[#6:4]",
-   "rule_support": 6,
-   "type_support": 113,
+   "substrate": "Oc1ccc(C2Sc3cc(O)ccc3OC2c2ccc(OCCN3CCCCC3)cc2)cc1",
+   "metabolite": "Oc1ccc2c(c1)SC(c1ccc(O)c(O)c1)C(c1ccc(OCCN3CCCCC3)cc1)O2",
+   "smirks": "[#6:1]:[#6:3]:[#6:2]>>[#6:1]:[#6:3](-[#8:4]):[#6:2]",
+   "rule_support": 57,
+   "type_support": 3747,
    "in_stratum": false
+  },
+  {
+   "substrate": "Oc1ccc(C2Sc3cc(O)ccc3OC2c2ccc(OCCN3CCCCC3)cc2)cc1",
+   "metabolite": "O=S1c2cc(O)ccc2OC(c2ccc(OCCN3CCCCC3)cc2)C1c1ccc(O)cc1",
+   "smirks": "[#6:1]-[#16:2]-[#6:3]>>[#8:4]=[#16:2](-[#6:3])-[#6:1]",
+   "rule_support": 2,
+   "type_support": 233,
+   "in_stratum": true
   },
   {
    "substrate": "CC(C)C1CCC(C(O)=NC(Cc2ccccc2)C(=O)O)CC1",
@@ -4760,19 +4752,27 @@
   },
   {
    "substrate": "CC(C)C1CCC(C(O)=NC(Cc2ccccc2)C(=O)O)CC1",
+   "metabolite": "CC(CO)C1CCC(C(O)=NC(Cc2ccccc2)C(=O)O)CC1",
+   "smirks": "[#6:1]-[#6:2]>>[#6:1]-[#6:2]-[#8:3]",
+   "rule_support": 358,
+   "type_support": 3747,
+   "in_stratum": false
+  },
+  {
+   "substrate": "CC(C)C1CCC(C(O)=NC(Cc2ccccc2)C(=O)O)CC1",
+   "metabolite": "C=C(C)C1CCC(C(O)=NC(Cc2ccccc2)C(=O)O)CC1",
+   "smirks": "[#6:1]-[#6:2](-[#6:3])-[#6:4]>>[#6:1]=[#6:2](-[#6:3])-[#6:4]",
+   "rule_support": 6,
+   "type_support": 113,
+   "in_stratum": false
+  },
+  {
+   "substrate": "CC(C)C1CCC(C(O)=NC(Cc2ccccc2)C(=O)O)CC1",
    "metabolite": "CC(C)C1CCC(C(O)=NC(Cc2ccccc2)C(=O)OC2C(O)OC(C(=O)O)C(O)C2O)CC1",
    "smirks": "[#6:1]-[#8:2]>>[#6:1]-[#8:2]-[#6:3]1-[#6:4](-[#8:5])-[#8:6]-[#6:7](-[#6:8](=[#8:9])-[#8:10])-[#6:11](-[#8:12])-[#6:13]-1-[#8:14]",
    "rule_support": 0,
    "type_support": 2071,
    "in_stratum": true
-  },
-  {
-   "substrate": "CC(C)C1CCC(C(O)=NC(Cc2ccccc2)C(=O)O)CC1",
-   "metabolite": "CC(C)C1CCC(C(O)=NC(Cc2ccccc2)C(=O)OC2OC(C(=O)O)C(O)C(O)C2O)CC1",
-   "smirks": "[#6:1]-[#8:2]>>[#6:1]-[#8:2]-[#6:3]1-[#8:4]-[#6:5](-[#6:6](=[#8:7])-[#8:8])-[#6:9](-[#8:10])-[#6:11](-[#8:12])-[#6:13]-1-[#8:14]",
-   "rule_support": 1531,
-   "type_support": 2071,
-   "in_stratum": false
   },
   {
    "substrate": "CC(C)C1CCC(C(O)=NC(Cc2ccccc2)C(=O)O)CC1",
@@ -4784,10 +4784,10 @@
   },
   {
    "substrate": "CC(C)C1CCC(C(O)=NC(Cc2ccccc2)C(=O)O)CC1",
-   "metabolite": "CC(CO)C1CCC(C(O)=NC(Cc2ccccc2)C(=O)O)CC1",
-   "smirks": "[#6:1]-[#6:2]>>[#6:1]-[#6:2]-[#8:3]",
-   "rule_support": 358,
-   "type_support": 3747,
+   "metabolite": "CC(C)C1CCC(C(O)=NC(Cc2ccccc2)C(=O)OC2OC(C(=O)O)C(O)C(O)C2O)CC1",
+   "smirks": "[#6:1]-[#8:2]>>[#6:1]-[#8:2]-[#6:3]1-[#8:4]-[#6:5](-[#6:6](=[#8:7])-[#8:8])-[#6:9](-[#8:10])-[#6:11](-[#8:12])-[#6:13]-1-[#8:14]",
+   "rule_support": 1531,
+   "type_support": 2071,
    "in_stratum": false
   },
   {

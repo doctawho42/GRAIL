@@ -240,7 +240,8 @@ def merge(pattern: str, out_path: str) -> int:
         print(f"  {k:<16} recomputed {got:>6}   committed {want:>6}"
               f"{'   MISMATCH' if got != want else ''}", file=sys.stderr)
 
-    out = {"phase_a": {"cov": dict(cov), "gap": dict(gap), "known_pairs": pairs,
+    out = {"provenance": stamp(__file__),
+           "phase_a": {"cov": dict(cov), "gap": dict(gap), "known_pairs": pairs,
                        "n_substrates": subs, "slices": sorted(slices)},
            "reproduces_committed_decomposition": not bad,
            "mismatches": {k: {"recomputed": v[0], "committed": v[1]} for k, v in bad.items()}}

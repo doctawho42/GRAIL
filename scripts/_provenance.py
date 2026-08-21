@@ -23,6 +23,8 @@ which is the state the three defects in this project's own history all shared.
 """
 from __future__ import annotations
 
+import ast
+import difflib
 import hashlib
 import json
 import subprocess
@@ -31,6 +33,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 CURRENT = "current"
+COSMETIC = "cosmetic_only"
 CHANGED = "producer_changed"
 UNSTAMPED = "unstamped"
 UNKNOWN = "producer_unknown"
@@ -46,6 +49,64 @@ def _git(*args, cwd=ROOT):
 
 def _digest(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
+
+
+class _StripDocstrings(ast.NodeTransformer):
+    """Remove docstrings, which are the one part of the AST that carries no behaviour."""
+
+    def _strip(self, node):
+        self.generic_visit(node)
+        body = node.body
+        if (body and isinstance(body[0], ast.Expr)
+                and isinstance(body[0].value, ast.Constant)
+                and isinstance(body[0].value.value, str)):
+            node.body = body[1:] or [ast.Pass()]
+        return node
+
+    visit_Module = visit_FunctionDef = _strip
+    visit_AsyncFunctionDef = visit_ClassDef = _strip
+
+
+def _shape(src: str):
+    """The parse tree with docstrings removed. Comments and formatting never enter it."""
+    try:
+        tree = _StripDocstrings().visit(ast.parse(src))
+        return ast.dump(ast.fix_missing_locations(tree))
+    except SyntaxError:
+        return None
+
+
+def semantic_equal(before: str, after: str) -> bool | None:
+    """True when two versions differ only in comments, docstrings or layout.
+
+    This is a proof and not a heuristic: what it compares is the tree the interpreter runs.
+    A changed constant, a moved call, a renamed variable all survive into it. Returns None
+    when either version does not parse, because then nothing has been established.
+    """
+    a, b = _shape(before), _shape(after)
+    return None if a is None or b is None else a == b
+
+
+def producer_diff(before: str, after: str, name: str = "producer", limit: int = 40) -> str:
+    lines = list(difflib.unified_diff(before.splitlines(), after.splitlines(),
+                                      f"{name} (as recorded)", f"{name} (now)",
+                                      lineterm="", n=2))
+    return "\n".join(lines[:limit]) + ("\n  ... diff truncated" if len(lines) > limit else "")
+
+
+def recorded_source(rec: dict, producer: Path) -> tuple:
+    """(source at write time, how it was recovered) or (None, why not)."""
+    commit = rec.get("git_commit")
+    if not commit:
+        return None, "the artifact records no commit, so the old source cannot be recovered"
+    rel = str(producer.relative_to(ROOT))
+    blob = _git("show", f"{commit}:{rel}")
+    if blob is None:
+        return None, f"{rel} is not in commit {commit[:12]}"
+    if rec.get("source_sha256") and _digest(blob.encode()) != rec["source_sha256"]:
+        return blob, (f"the tree was dirty when written, so the source at {commit[:12]} is the "
+                      f"nearest committed version and not exactly what ran")
+    return blob, f"source at {commit[:12]}"
 
 
 def stamp(file: str | Path) -> dict:
@@ -116,12 +177,32 @@ def verify(artifact: str | Path) -> dict:
     else:
         return {**out, "status": UNSTAMPED, "detail": "no digest and no commit to recover one"}
 
-    return _finish(out, recorded, now)
+    return _finish(out, recorded, now, rec, producer)
 
-def _finish(out, recorded, now):
-    out["status"] = CURRENT if recorded == now else CHANGED
-    if out["status"] == CHANGED:
-        out["detail"] = f"producer was {recorded[:12]}, is now {now[:12]}"
+
+def _finish(out, recorded, now, rec=None, producer=None):
+    if recorded == now:
+        out["status"] = CURRENT
+        return out
+    out["status"] = CHANGED
+    out["detail"] = f"producer was {recorded[:12]}, is now {now[:12]}"
+    if rec is None or producer is None:
+        return out
+    before, how = recorded_source(rec, producer)
+    if before is None:
+        out["diff_note"] = how
+        return out
+    after = producer.read_text()
+    same = semantic_equal(before, after)
+    out["diff_recovered_by"] = how
+    out["diff"] = producer_diff(before, after, producer.name)
+    if same is True:
+        out["status"] = COSMETIC
+        out["detail"] = ("the producer changed only in comments, docstrings or layout: the parse "
+                         "tree with docstrings removed is identical, so the numbers cannot have "
+                         "moved")
+    elif same is None:
+        out["detail"] += "; one of the two versions does not parse, so nothing is established"
     return out
 
 
@@ -150,7 +231,9 @@ def infer(artifact: str | Path, producer: str | Path) -> dict:
     if not (ROOT / rel_p).exists():
         return {**out, "status": UNKNOWN, "detail": f"{rel_p} is not in this checkout"}
     out["how"] = f"producer at {intro[:12]}, the commit that added the artifact"
-    return _finish(out, _digest(blob.encode()), _digest((ROOT / rel_p).read_bytes()))
+    return _finish(out, _digest(blob.encode()),
+                   _digest((ROOT / rel_p).read_bytes()),
+                   {"git_commit": intro}, ROOT / rel_p)
 
 
 def read_checked(artifact: str | Path, *, require: bool = True):

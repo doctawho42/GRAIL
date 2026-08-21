@@ -32,7 +32,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
 
-from _provenance import CURRENT, infer, verify  # noqa: E402
+from _provenance import COSMETIC, CURRENT, infer, verify  # noqa: E402
+
+OK = (CURRENT, COSMETIC)
 
 TE = "scripts/typed_edit"
 PINNED = {
@@ -59,7 +61,7 @@ def check(rel: str, producer: str | None) -> dict:
     if not path.exists():
         return {"artifact": rel, "status": "absent", "detail": "not in this checkout"}
     v = verify(path)
-    if v["status"] == CURRENT or producer is None:
+    if v["status"] in OK or producer is None:
         return v
     if v["status"] == "unstamped":
         return infer(path, producer)
@@ -69,17 +71,27 @@ def check(rel: str, producer: str | None) -> dict:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--all", action="store_true", help="also sweep every other artifact")
+    ap.add_argument("--diff", action="store_true",
+                    help="print the producer diff for every artifact whose code moved")
     ap.add_argument("--out", default=str(ROOT / "results" / "artifact_provenance.json"))
     args = ap.parse_args()
 
     pinned = [check(rel, prod) for rel, prod in sorted(PINNED.items())]
-    bad = [r for r in pinned if r["status"] != CURRENT]
+    bad = [r for r in pinned if r["status"] not in OK]
 
     print(f"{'artifact':<46}{'status':<18}evidence")
     for r in pinned:
         how = "recorded" if r.get("how") == "recorded source digest" else (
             "inferred" if r.get("inferred") else r.get("detail", "")[:34])
         print(f"  {r['artifact']:<44}{r['status']:<18}{how}")
+    if args.diff:
+        moved = [r for r in pinned if r.get("diff")]
+        for r in moved:
+            print(f"\n--- {r['artifact']}: {r['status']} "
+                  f"({r.get('diff_recovered_by', '')}) ---")
+            print(r["diff"])
+        if not moved:
+            print("\nno pinned producer has moved, so there is nothing to diff")
 
     sweep = Counter()
     others = []
@@ -90,7 +102,7 @@ def main() -> int:
                 continue
             v = verify(p)
             sweep[v["status"]] += 1
-            if v["status"] != CURRENT:
+            if v["status"] not in OK:
                 others.append(v)
         print(f"\nthe other {sum(sweep.values())} artifacts: " +
               ", ".join(f"{k} {v}" for k, v in sweep.most_common()))
@@ -109,7 +121,9 @@ def main() -> int:
         for r in bad:
             print(f"  {r['artifact']}: {r['status']} -- {r.get('detail','')}")
         return 1
-    print(f"\nall {len(pinned)} pinned artifacts trace to the code that wrote them")
+    cos = [r for r in pinned if r["status"] == COSMETIC]
+    print(f"\nall {len(pinned)} pinned artifacts trace to the code that wrote them"
+          + (f"; {len(cos)} of them through a change proved cosmetic" if cos else ""))
     return 0
 
 

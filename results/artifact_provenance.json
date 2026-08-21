@@ -11,7 +11,10 @@
    "script": "emission_leaderboard.py",
    "inferred": true,
    "how": "producer at 346640248fc6, the commit that added the artifact",
-   "status": "current"
+   "status": "producer_changed",
+   "detail": "producer was 487da56618cd, is now 6f5013e119ed",
+   "diff_recovered_by": "source at 346640248fc6",
+   "diff": "--- emission_leaderboard.py (as recorded)\n+++ emission_leaderboard.py (now)\n@@ -35,4 +35,6 @@\n     if _p not in sys.path:\n         sys.path.insert(0, _p)\n+\n+from _provenance import stamp  # noqa: E402\n \n from grail_metabolism.metrics import aggregate_prediction_metrics  # noqa: E402\n@@ -138,4 +140,5 @@\n \n     rep = {\n+        \"provenance\": stamp(__file__),\n         \"population\": {\"source\": str(SHARED.relative_to(ROOT)), \"n\": len(subs)},\n         \"match\": MATCH, \"alpha\": args.alpha,"
   },
   {
    "artifact": "results/h1_join_sensitivity.json",
@@ -22,8 +25,7 @@
   {
    "artifact": "results/h1_stratum.json",
    "script": "build_h1_stratum.py",
-   "inferred": true,
-   "how": "producer at 03711bd53cdc, the commit that added the artifact",
+   "how": "recorded source digest",
    "status": "current"
   },
   {
@@ -35,32 +37,34 @@
   {
    "artifact": "results/typed_edit_known_pairs.json",
    "script": "known_type_recovery.py",
-   "inferred": true,
-   "how": "producer at 20bd4d3ac944, the commit that added the artifact",
-   "status": "producer_changed",
-   "detail": "producer was 7d8f74006657, is now 8d0e168e16f8"
+   "how": "recorded source digest",
+   "status": "current"
   },
   {
    "artifact": "results/typed_edit_known_type_recovery.json",
    "script": "known_type_recovery.py",
    "inferred": true,
    "how": "producer at 3fbe0e44dcf0, the commit that added the artifact",
-   "status": "current"
+   "status": "producer_changed",
+   "detail": "producer was 8d0e168e16f8, is now 820132affd67",
+   "diff_recovered_by": "source at 3fbe0e44dcf0",
+   "diff": "--- known_type_recovery.py (as recorded)\n+++ known_type_recovery.py (now)\n@@ -39,4 +39,6 @@\n     if p not in sys.path:\n         sys.path.insert(0, p)\n+\n+from _provenance import stamp  # noqa: E402\n \n from rdkit import Chem, RDLogger  # noqa: E402\n@@ -239,5 +241,6 @@\n               f\"{'   MISMATCH' if got != want else ''}\", file=sys.stderr)\n \n-    out = {\"phase_a\": {\"cov\": dict(cov), \"gap\": dict(gap), \"known_pairs\": pairs,\n+    out = {\"provenance\": stamp(__file__),\n+           \"phase_a\": {\"cov\": dict(cov), \"gap\": dict(gap), \"known_pairs\": pairs,\n                        \"n_substrates\": subs, \"slices\": sorted(slices)},\n            \"reproduces_committed_decomposition\": not bad,\n@@ -266,5 +269,5 @@\n           file=sys.stderr, flush=True)\n \n-    out = {\"bank\": {\"n_rules\": len(rules), \"n_types\": len(bank_types)}}\n+    out = {\"provenance\": stamp(__file__), \"bank\": {\"n_rules\": len(rules), \"n_types\": len(bank_types)}}\n     if args.phase in (\"a\", \"ab\"):\n         items = list(load_test_map(None, 42).items())"
   },
   {
    "artifact": "results/typed_edit_relaxation.json",
    "script": "relaxation_ladder.py",
-   "inferred": true,
-   "how": "producer at b083291eb5f1, the commit that added the artifact",
-   "status": "producer_changed",
-   "detail": "producer was ab58f612861a, is now 86542b83db3a"
+   "how": "recorded source digest",
+   "status": "current"
   },
   {
    "artifact": "results/typed_edit_step0.json",
    "script": "run_bank.py",
    "inferred": true,
    "how": "producer at f538ff28aa6d, the commit that added the artifact",
-   "status": "current"
+   "status": "producer_changed",
+   "detail": "producer was d3ea183d9b57, is now 5a2360f2bdc4",
+   "diff_recovered_by": "source at f538ff28aa6d",
+   "diff": "--- run_bank.py (as recorded)\n+++ run_bank.py (now)\n@@ -18,5 +18,9 @@\n HERE = Path(__file__).resolve().parent\n ROOT = HERE.parents[1]\n-sys.path.insert(0, str(HERE))\n+for _p in (str(ROOT), str(ROOT / \"scripts\"), str(HERE)):\n+    if _p not in sys.path:\n+        sys.path.insert(0, _p)\n+\n+from _provenance import stamp  # noqa: E402\n \n from rdkit import Chem  # noqa: E402\n@@ -50,4 +54,5 @@\n \n     res = run(rules, subs, tuple(int(x) for x in args.radii.split(\",\")))\n+    res[\"provenance\"] = stamp(__file__)\n     res[\"rule_bank\"] = {\"path\": str(Path(args.rules).relative_to(ROOT)), **load_stats}\n     res[\"substrate_sample\"] = {"
   },
   {
    "artifact": "results/typed_edit_type_carriers.json",
@@ -76,12 +80,13 @@
   }
  ],
  "n_pinned": 11,
- "n_pinned_stale": 2,
+ "n_pinned_stale": 3,
  "sweep": {
-  "unstamped": 115,
-  "producer_changed": 45,
+  "unstamped": 116,
+  "producer_changed": 37,
   "producer_unknown": 27,
-  "current": 18
+  "current": 18,
+  "cosmetic_only": 8
  },
  "sweep_not_current": [
   {
@@ -115,7 +120,9 @@
    "how": "source at cb1fa8a88a32",
    "dirty_when_written": true,
    "status": "producer_changed",
-   "detail": "producer was 8b1d64f23b01, is now 7643b85c5f73"
+   "detail": "producer was 8b1d64f23b01, is now 7643b85c5f73",
+   "diff_recovered_by": "source at cb1fa8a88a32",
+   "diff": "--- aggregate_vs_output_size.py (as recorded)\n+++ aggregate_vs_output_size.py (now)\n@@ -161,4 +161,37 @@\n     print(f\"  monotone in output size: {monotone}\")\n \n+    # How much does the like-emitting null actually rule out? Counting verdicts says nothing on its\n+    # own -- the difference between a certified result and an uncertified one is not itself a\n+    # result, which is the reasoning this paper rejects elsewhere. So report the widest interval the\n+    # comparable pairs leave open: if it is wide relative to the reversals that do certify, the\n+    # partition is a description and not an identification, and the text must say so.\n+    widths = []\n+    for pop, p_ in rep[\"populations\"].items():\n+        for r in p_[\"pairs\"]:\n+            if not r[\"comparable\"]:\n+                continue\n+            for f in r[\"sign_flips\"]:\n+                for t in (\"1\", \"2\"):\n+                    ci = f[f\"ci_{t}\"]\n+                    if ci:\n+                        widths.append((round(ci[1] - ci[0], 4), pop, tuple(r[\"pair\"])))\n+    certified = [abs(f[\"delta_1\"]) for p_ in rep[\"populations\"].values() for r in p_[\"pairs\"]\n+                 for f in r[\"sign_flips\"] if f[\"certified_both_directions\"]]\n+    rep[\"power\"] = {\n+        \"widest_interval_among_comparable_pairs\": max(widths)[0] if widths else None,\n+        \"where\": {\"population\": max(widths)[1], \"pair\": list(max(widths)[2])} if widths else None,\n+        \"median_certified_reversal_size\": round(float(sorted(certified)[len(certified)//2]), 4)\n+                                          if certified else None,\n+        \"reading\": \"the like-emitting null is a failure to detect, not a demonstration of absence: \"\n+                   \"the widest interval it leaves open is of the same order as the reversals that \"\n+                   \"do certify\",\n+    }\n+    if widths:\n+        w, pop, pair = max(widths)\n+        print(f\"\\npower of the like-emitting null: widest interval {w} \"\n+              f\"({pop}, {pair[0]} vs {pair[1]})\")\n+        print(f\"  against a median certified reversal of {rep['power']['median_certified_reversal_size']}\")\n+        print(\"  -> the null cannot separate absence from lack of power\")\n+\n     tot_c = sum(v[\"certified_reversals_among_comparable\"] for _, v in verdicts)\n     tot_d = sum(v[\"certified_reversals_among_disparate\"] for _, v in verdicts)"
   },
   {
    "artifact": "results/anchor_certification.json",
@@ -138,12 +145,19 @@
    "detail": "no provenance block: nothing records which code wrote this"
   },
   {
+   "artifact": "results/artifact_provenance.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
    "artifact": "results/bank_engine_replication.json",
    "script": "bank_engine_replication.py",
    "how": "source at c4b17e178e68",
    "dirty_when_written": true,
    "status": "producer_changed",
-   "detail": "producer was ece43348c83b, is now 443361d0487b"
+   "detail": "producer was ece43348c83b, is now 443361d0487b",
+   "diff_recovered_by": "source at c4b17e178e68",
+   "diff": "--- bank_engine_replication.py (as recorded)\n+++ bank_engine_replication.py (now)\n@@ -14,7 +14,8 @@\n \n Same substrates, same matcher, same engine, one line different. The grail_full arm doubles as a\n-gate: with the switch in its deployed position it must reproduce the committed\n-results/reach_engine_vs_bank.json ceiling on these substrates, or this is not the engine the paper\n-reports. It also answers a question the paper currently leaves open -- whether the ceiling we\n+gate: with the switch in its deployed position it must reproduce the committed coverage ceiling\n+restricted to these substrates -- read from results/recall_factorization.json, the artifact the\n+published ceiling IS, rather than from a neighbouring file that happens to record one -- or this is\n+not the engine the paper reports. It also answers a question the paper currently leaves open -- whether the ceiling we\n publish understates what our own bank holds, and by how much.\n \"\"\"\n@@ -40,4 +41,6 @@\n from rdkit import Chem, RDLogger\n \n+from _population import (POPULATIONS, ceiling_target, load_population,\n+                         population_items, tagged_out)\n from engine_knobs import DEFAULT, apply_with\n from run_benchmark import _tautomer_recovered\n@@ -175,10 +178,10 @@\n     ap.add_argument(\"--banks\", nargs=\"+\", default=[\"sygma_175\", \"biotransformer\", \"grail_full\"])\n     ap.add_argument(\"--out\", default=str(ROOT / \"results\" / \"bank_engine_replication.json\"))\n+    ap.add_argument(\"--population\", default=\"clean_test\", choices=POPULATIONS,\n+                    help=\"subsample245 reproduces the committed artifact; clean_test is the split\")\n     args = ap.parse_args()\n-\n-    subs = [r[\"sub\"] for r in\n-            json.loads((ROOT / \"results/filter_vs_prior_ci.json\").read_text())[\"per_substrate\"]]\n-    truth = json.loads((ROOT / \"results/test_references.json\").read_text())\n-    items = [(s, truth[s]) for s in subs if truth.get(s)]\n+    args.out = tagged_out(args.out, args.population)\n+\n+    items = population_items(args.population)\n     workers = max(1, (os.cpu_count() or 4) - 2)\n \n@@ -189,5 +192,5 @@\n         # written after each bank so a long grail_full arm never loses the cheap ones\n         out_path.write_text(json.dumps(\n  ... diff truncated"
   },
   {
    "artifact": "results/bank_overlap_sygma.json",
@@ -161,7 +175,9 @@
    "how": "source at cb1fa8a88a32",
    "dirty_when_written": true,
    "status": "producer_changed",
-   "detail": "producer was 4c47daaa3969, is now 20bae6e867c6"
+   "detail": "producer was 4c47daaa3969, is now 20bae6e867c6",
+   "diff_recovered_by": "source at cb1fa8a88a32",
+   "diff": "--- bank_without_selection.py (as recorded)\n+++ bank_without_selection.py (now)\n@@ -48,5 +48,18 @@\n \n N_BOOT, SEED = 10000, 0\n-CEILING_SUBSET = 0.7284  # measured on these same 245 from recall_factorization.json\n+def ceiling_subset(subs) -> dict:\n+    \"\"\"The committed ceiling restricted to exactly these substrates, both aggregations.\n+\n+    Read from the artifact rather than frozen here. A literal is a snapshot of the answer at the\n+    moment it was written; this one sat at 0.7284 through a correction that took the same quantity\n+    to 0.8007, and the value it reported went on looking committed.\n+    \"\"\"\n+    rows = {r[\"sub\"]: r for r in\n+            json.loads((ROOT / \"results/recall_factorization.json\").read_text())[\"per_substrate\"]}\n+    hit = [rows[s] for s in subs if s in rows]\n+    micro = sum(r[\"Cfull\"] for r in hit) / max(sum(r[\"U\"] for r in hit), 1)\n+    macro = sum(r[\"Cfull\"] / r[\"U\"] for r in hit if r[\"U\"]) / max(len(hit), 1)\n+    return {\"n_matched\": len(hit), \"micro\": round(micro, 4), \"macro\": round(macro, 4),\n+            \"source\": \"results/recall_factorization.json, restricted to these substrates\"}\n \n \n@@ -203,5 +216,5 @@\n                       \"filter_ckpt\": _rel(args.filter_ckpt)},\n            \"n\": len(items), \"match\": \"inchikey_tautomer\",\n-           \"ceiling_on_this_subset\": CEILING_SUBSET, \"arms\": {}}\n+           \"ceiling_on_this_subset\": ceiling_subset([s for s, _ in items]), \"arms\": {}}\n \n     rng = np.random.default_rng(SEED)"
   },
   {
    "artifact": "results/benchmark_report.json",
@@ -214,7 +230,9 @@
    "how": "source at 4b3169e38c03",
    "dirty_when_written": true,
    "status": "producer_changed",
-   "detail": "producer was d0a734dc0a97, is now a5367dfb98f0"
+   "detail": "producer was d0a734dc0a97, is now a5367dfb98f0",
+   "diff_recovered_by": "source at 4b3169e38c03",
+   "diff": "--- ceiling_by_provenance.py (as recorded)\n+++ ceiling_by_provenance.py (now)\n@@ -39,4 +39,6 @@\n \n sys.path.insert(0, str(ROOT / \"scripts\"))\n+from _population import POPULATIONS, ceiling_target, population_items, tagged_out\n+from engine_knobs import apply_with\n from grail_metabolism.utils.preparation import apply_rules_to_molecule\n from run_benchmark import _tautomer_recovered   # the paper's own per-substrate recovery count\n@@ -44,10 +46,13 @@\n RDLogger.DisableLog(\"rdApp.*\")\n N_BOOT, SEED = 10000, 0\n-# The union of the two subsets is the whole bank, so it must reproduce the ceiling already\n-# stored per substrate in recall_factorization.json for exactly these 245. Anything else\n-# means this pass applies rules differently from the one the paper reports.\n-CEILING_SUBSET, TOL = 0.7284, 0.002\n-_CUR: list = []\n-_MIN: list = []\n+# The union of the two subsets is the whole bank, so it must reproduce the ceiling already stored\n+# per substrate in recall_factorization.json for exactly these 245. Anything else means this pass\n+# applies rules differently from the one the paper reports.\n+#\n+# The target is READ from that artifact rather than frozen here. A literal goes stale the moment the\n+# measurement moves, and then the gate passes self-consistently on a superseded number, which is\n+# worse than failing: it certifies the old value silently. This gate held 0.7284 through a ceiling\n+# correction that took the same quantity to 0.8171.\n+TOL = 0.002\n \n \n@@ -86,6 +91,8 @@\n     if mol is None or not trues:\n         return (sub, 0, 0, 0, 0)\n-    pc = list(apply_rules_to_molecule(mol, _CUR, normalization_mode=\"canonical\").keys())\n-    pm = list(apply_rules_to_molecule(mol, _MIN, normalization_mode=\"canonical\").keys())\n+    # the ceiling's own primitives: hydrogens as the deployed generator fires rules, no validity\n+    # floor, so the union of the two subsets is the same object the ceiling measures\n+    pc = apply_with(mol, _CUR, False, \"canonical\", False)\n+    pm = apply_with(mol, _MIN, False, \"canonical\", False)\n     u, c_cur, _ = _tautomer_recovered(trues, pc, audit=False)\n     _, c_min, _ = _tautomer_recovered(trues, pm, audit=False)\n  ... diff truncated"
   },
   {
    "artifact": "results/ceiling_by_provenance__clean_test.json",
@@ -222,7 +240,9 @@
    "how": "source at 2d258731daaf",
    "dirty_when_written": true,
    "status": "producer_changed",
-   "detail": "producer was 9918944896e0, is now a5367dfb98f0"
+   "detail": "producer was 9918944896e0, is now a5367dfb98f0",
+   "diff_recovered_by": "source at 2d258731daaf",
+   "diff": "--- ceiling_by_provenance.py (as recorded)\n+++ ceiling_by_provenance.py (now)\n@@ -39,5 +39,5 @@\n \n sys.path.insert(0, str(ROOT / \"scripts\"))\n-from _population import POPULATIONS, population_items, tagged_out\n+from _population import POPULATIONS, ceiling_target, population_items, tagged_out\n from engine_knobs import apply_with\n from grail_metabolism.utils.preparation import apply_rules_to_molecule\n@@ -55,15 +55,4 @@\n # correction that took the same quantity to 0.8171.\n TOL = 0.002\n-\n-\n-def ceiling_target(subs) -> float:\n-    \"\"\"The committed ceiling restricted to exactly these substrates, micro.\"\"\"\n-    rows = {r[\"sub\"]: r for r in\n-            json.loads((ROOT / \"results/recall_factorization.json\").read_text())[\"per_substrate\"]}\n-    hit = sum(rows[s][\"Cfull\"] for s in subs if s in rows)\n-    ref = sum(rows[s][\"U\"] for s in subs if s in rows)\n-    return hit / max(ref, 1)\n-_CUR: list = []\n-_MIN: list = []\n \n "
   },
   {
    "artifact": "results/ceiling_convention_matched.json",
@@ -251,7 +271,9 @@
    "how": "source at 4b3169e38c03",
    "dirty_when_written": true,
    "status": "producer_changed",
-   "detail": "producer was 9ca45b4ae3b5, is now 4f22524824a6"
+   "detail": "producer was 9ca45b4ae3b5, is now 4f22524824a6",
+   "diff_recovered_by": "source at 4b3169e38c03",
+   "diff": "--- ceiling_norm_check.py (as recorded)\n+++ ceiling_norm_check.py (now)\n@@ -5,18 +5,17 @@\n rules two banks share. That gate is passed by a loop that is right about those rules and wrong about\n the other $7{,}429$, so the grail_full arm of scripts/bank_engine_replication.py needs a gate of its\n-own, and when it was first run it failed one: it returned $0.7302$ where the committed ceiling for\n-the same substrates is $0.7284$.\n+own -- and the first time it was given one, the gate failed for a reason that had nothing to do with\n+the loop: the two figures being compared had been produced under different normalisation modes, one\n+\"canonical\" and one \"standardize\", and nothing in either recorded which.\n \n-The failure was the gate's, not the loop's. The committed ceiling comes from\n-scripts/ceiling_by_provenance.py, which passes normalization_mode=\"canonical\", while the replication\n-arm ran under \"standardize\" -- the default of apply_rules_to_molecule itself. Two different\n-configurations were being compared. This script closes that by running the full bank under the\n-configuration the committed figure was actually measured in, and it must reproduce it exactly.\n+This script closes that hazard by measuring both modes itself, on one population, through one set of\n+primitives -- the ones the deployed generator fires rules with -- and gating the result against the\n+committed ceiling restricted to the same substrates, read out of the factorization artifact rather\n+than frozen here.\n \n The residue is worth keeping rather than rounding away. Across the $152$ shared rules the two\n normalisation modes are identical to four decimals, which is one of the three rows engine_knobs\n-reports; across all $7{,}581$ they differ by a single recovered reference. A knob can be inert on a\n-subset of a bank and not on the bank, so \"this choice does not matter\" is a claim about the rule set\n-it was measured on.\n+reports; across the whole bank they need not be. A knob can be inert on a subset of a bank and not\n+on the bank, so \"this choice does not matter\" is a claim about the rule set it was measured on.\n \"\"\"\n from __future__ import annotations\n@@ -37,4 +36,5 @@\n from rdkit import Chem, RDLogger\n \n+from _population import POPULATIONS, population_items, load_population, tagged_out\n from bank_engine_replication import load_bank\n from engine_knobs import apply_with\n@@ -42,7 +42,4 @@\n \n RDLogger.DisableLog(\"rdApp.*\")\n-# results/ceiling_by_provenance.json -> subsets.full.coverage, measured under normalization_mode\n  ... diff truncated"
   },
   {
    "artifact": "results/ceiling_seen_vs_unseen.json",
@@ -328,7 +350,9 @@
    "how": "source at 4b3169e38c03",
    "dirty_when_written": true,
    "status": "producer_changed",
-   "detail": "producer was 4c3d85d1adef, is now 14a6821898a6"
+   "detail": "producer was 4c3d85d1adef, is now 14a6821898a6",
+   "diff_recovered_by": "source at 4b3169e38c03",
+   "diff": "--- dispatch_paired_ci.py (as recorded)\n+++ dispatch_paired_ci.py (now)\n@@ -33,4 +33,5 @@\n from rdkit import Chem, RDLogger\n \n+from _population import POPULATIONS, population_items, load_population, tagged_out\n from bank_engine_replication import load_bank\n from engine_knobs import DEFAULT, apply_with\n@@ -41,5 +42,6 @@\n N_BOOT, SEED = 10000, 0\n BANK = \"grail_full\"\n-# results/hydrogen_dispatch.json and results/bank_engine_replication.json\n+# results/hydrogen_dispatch.json and results/bank_engine_replication.json, both on the\n+# 245-substrate subsample; this pair gates that population and no other.\n COMMITTED = {\"dispatch\": 0.8148, \"implicit\": 0.7989}\n _CTX: dict = {}\n@@ -63,18 +65,38 @@\n         os.environ.setdefault(v, \"1\")\n     _CTX[\"rules\"], _CTX[\"wants\"] = rules, wants\n+    _CTX[\"want\"] = [r for r, w in zip(rules, wants) if w]\n+    _CTX[\"rest\"] = [r for r, w in zip(rules, wants) if not w]\n \n \n def _worker(item):\n+    \"\"\"All three arms of one rule set, from two passes over it, on one substrate.\n+\n+    The residual is dispatch minus the BETTER of the two global settings, and which of the two is\n+    better is not the same for every subset -- implicit wins on the whole bank and expanded wins on\n+    the curated part -- so both have to be measured rather than one assumed. Splitting the rule set\n+    into the templates that want the expansion and those that do not, and applying each subset under\n+    both conventions, gives all three arms by union from exactly two passes:\n+\n+        all-explicit = E(want) u E(rest)     all-implicit = I(want) u I(rest)\n+        dispatch     = E(want) u I(rest)\n+    \"\"\"\n     sub, trues = item\n     mol = Chem.MolFromSmiles(sub)\n     if mol is None or not trues:\n-        return sub, 0, 0, 0\n+        return sub, 0, 0, 0, 0\n  ... diff truncated"
   },
   {
    "artifact": "results/dispatch_paired_ci__clean_test__curated.json",
@@ -336,7 +360,9 @@
    "how": "source at 9630e586ab71",
    "dirty_when_written": false,
    "status": "producer_changed",
-   "detail": "producer was 059dab2750df, is now 14a6821898a6"
+   "detail": "producer was 059dab2750df, is now 14a6821898a6",
+   "diff_recovered_by": "source at 9630e586ab71",
+   "diff": "--- dispatch_paired_ci.py (as recorded)\n+++ dispatch_paired_ci.py (now)\n@@ -156,5 +156,7 @@\n     # population and no other. Asserting them against a run on the full split would be a comparison\n     # across populations -- the defect this paper names -- dressed as a reproducibility check.\n-    if args.population == \"subsample245\":\n+    # ...and the whole bank only: the committed pair is a whole-bank measurement, so asserting it\n+    # against a subset arm compares two different rule sets as well as, possibly, two populations.\n+    if args.population == \"subsample245\" and args.subset == \"full\":\n         print(f\"\\ngate: dispatch {reach_d} against committed {COMMITTED['dispatch']}, \"\n               f\"implicit {reach_i} against {COMMITTED['implicit']}\")"
   },
   {
    "artifact": "results/emission_crossfit.json",
@@ -356,7 +382,9 @@
    "how": "source at 25cb3bd72d41",
    "dirty_when_written": false,
    "status": "producer_changed",
-   "detail": "producer was df61e0c192ad, is now 124bfd998b2f"
+   "detail": "producer was df61e0c192ad, is now 124bfd998b2f",
+   "diff_recovered_by": "source at 25cb3bd72d41",
+   "diff": "--- engine_knobs.py (as recorded)\n+++ engine_knobs.py (now)\n@@ -53,4 +53,5 @@\n from grail_metabolism.metrics import _tautomer_inchikey as _tk\n from rdkit import Chem, RDLogger\n+from _contract import contract\n \n from grail_metabolism.utils.preparation import (\n@@ -106,10 +107,23 @@\n \n \n-def apply_with(mol, rules, add_hs: bool, norm: str, drop_invalid: bool) -> list[str]:\n-    \"\"\"The deployed loop with each discretionary step exposed as a switch.\"\"\"\n+def apply_with(mol, rules, add_hs: bool, norm: str, drop_invalid: bool,\n+               remove_hs: bool = False) -> list[str]:\n+    \"\"\"The deployed loop with each discretionary step exposed as a switch.\n+\n+    `remove_hs` completes the loop rather than varying it. Expanding a substrate and never\n+    contracting the product leaves the drawn hydrogen on the reacting atom, and what looked like a\n+    convention two banks could each defend is then partly a missing call: with the contraction the\n+    same templates return the products the unexpanded arm returns. The switch exists so the\n+    difference between an incomplete loop and a complete one can be measured rather than argued.\n+    \"\"\"\n     substrate = Chem.AddHs(Chem.Mol(mol)) if add_hs else Chem.Mol(mol)\n     seen = set()\n     for rule in rules:\n         for product in _iter_reaction_products(substrate, rule):\n+            if remove_hs:\n+                try:\n+                    product = contract(product)\n+                except Exception:\n+                    continue\n             try:\n                 smiles = Chem.MolToSmiles(product)"
   },
   {
    "artifact": "results/ensemble_budget_matched.json",
@@ -375,7 +403,9 @@
    "how": "source at efa321fb77e6",
    "dirty_when_written": true,
    "status": "producer_changed",
-   "detail": "producer was c794525b0ad3, is now ad43658c0f3a"
+   "detail": "producer was c794525b0ad3, is now ad43658c0f3a",
+   "diff_recovered_by": "source at efa321fb77e6",
+   "diff": "--- evalretro_ingest.py (as recorded)\n+++ evalretro_ingest.py (now)\n@@ -36,4 +36,5 @@\n import argparse\n import csv\n+import itertools\n import json\n import pathlib\n@@ -197,4 +198,25 @@\n             \"test_csv\": str(csv_path.relative_to(ROOT))}\n \n+    # How far apart the populations actually are. The clustering threshold only says that two\n+    # files below it are not the same set; it does not say they share nothing, and calling them\n+    # disjoint without measuring it is the same unmeasured assertion this paper is about.\n+    prod_sets = {label: {product for _, _, product in\n+                         [(r[0], r[1], canonical_set(r[1])) for r in\n+                          csv.reader((ROOT / g[\"test_csv\"]).open())][1:]}\n+                 for label, g in report_groups.items()}\n+    overlap = {}\n+    for a_, b_ in itertools.combinations(sorted(prod_sets), 2):\n+        inter = prod_sets[a_] & prod_sets[b_]\n+        overlap[f\"{a_} n {b_}\"] = {\n+            \"shared\": len(inter),\n+            \"share_of_smaller\": round(len(inter) / max(min(len(prod_sets[a_]),\n+                                                           len(prod_sets[b_])), 1), 4)}\n+    if len(prod_sets) > 2:\n+        overlap[\"all\"] = {\"shared\": len(set.intersection(*prod_sets.values()))}\n+    print(\"\\n  how far apart the populations are, on canonical product sets\")\n+    for k, v in overlap.items():\n+        print(f\"    {k:22} {v['shared']:>5}\" + (f\"   {v['share_of_smaller']:.3f} of the smaller\"\n+                                                if \"share_of_smaller\" in v else \"\"))\n+\n     rep = {\"config\": {**_code_version(), \"source\": SOURCE,\n                       \"repo_split\": str(REPO_SPLIT.relative_to(ROOT)),\n@@ -202,5 +224,6 @@\n                       \"alignment\": \"reaction identified by (product, ground-truth reactants); \"\n                                    \"file order and index column never used\"},\n-           \"n_systems\": len(parsed), \"n_test_sets\": len(groups), \"clusters\": report_groups}\n+           \"n_systems\": len(parsed), \"n_test_sets\": len(groups), \"clusters\": report_groups,\n+           \"population_overlap\": overlap}\n  ... diff truncated"
   },
   {
    "artifact": "results/explicit_h_mechanism.json",
@@ -437,7 +467,9 @@
    "how": "source at 1d56fb8c3272",
    "dirty_when_written": true,
    "status": "producer_changed",
-   "detail": "producer was 8393ba5564ed, is now 8a573ade4907"
+   "detail": "producer was 8393ba5564ed, is now 8a573ade4907",
+   "diff_recovered_by": "source at 1d56fb8c3272",
+   "diff": "--- filter_vs_prior_ci.py (as recorded)\n+++ filter_vs_prior_ci.py (now)\n@@ -38,4 +38,19 @@\n     sys.path.insert(0, str(ROOT))\n \n+\n+\n+def _code_version() -> dict:\n+    \"\"\"Which code wrote this artifact. The published selection_ablation.json carried fields the\n+    current script no longer emits, so it was written by an earlier version -- and nothing in it\n+    said so. Cap and seed pin the data; this pins the analysis.\"\"\"\n+    import subprocess\n+    def _git(*a):\n+        try:\n+            return subprocess.run([\"git\", *a], cwd=ROOT, capture_output=True, text=True,\n+                                  timeout=10).stdout.strip() or None\n+        except Exception:\n+            return None\n+    return {\"script\": pathlib.Path(__file__).name, \"git_commit\": _git(\"rev-parse\", \"HEAD\"),\n+            \"git_dirty\": bool(_git(\"status\", \"--porcelain\"))}\n \n def _rel(p) -> str:\n@@ -160,5 +175,5 @@\n     # reproduced from it. Committing a result file is necessary for regenerability and not\n     # sufficient.\n-    rep = {\"config\": {\"max_substrates\": args.max_substrates, \"sampling_seed\": args.sampling_seed,\n+    rep = {\"config\": {**_code_version(), \"max_substrates\": args.max_substrates, \"sampling_seed\": args.sampling_seed,\n                       \"top_k\": args.top_k, \"prior_strength\": args.prior_strength,\n                       \"filter_cap\": args.filter_cap, \"max_output\": args.max_output,"
   },
   {
    "artifact": "results/four_method_291.json",
@@ -445,7 +477,9 @@
    "how": "source at 8a7a6e56c516",
    "dirty_when_written": true,
    "status": "producer_changed",
-   "detail": "producer was a9a1a49d9afd, is now 720410949fd9"
+   "detail": "producer was a9a1a49d9afd, is now 720410949fd9",
+   "diff_recovered_by": "source at 8a7a6e56c516",
+   "diff": "--- four_method_291.py (as recorded)\n+++ four_method_291.py (now)\n@@ -216,4 +216,25 @@\n     # The same instrument as scripts/robust_order.py, on the budget axis alone: a pair survives\n     # when the method the field's budget ranks higher is ahead at every budget in the sweep.\n+    # Macro F1 at each budget, which recall alone cannot show: the method that leads at the field's\n+    # budget emits three times what the next one does, and F1 is where that is paid for.\n+    f1 = {}\n+    for name in rows:\n+        f1[name] = {}\n+        for k in KS:\n+            vals = []\n+            for i in range(len(rows[name][\"U\"])):\n+                u = rows[name][\"U\"][i]\n+                if not u:\n+                    continue\n+                h = rows[name][k][i]\n+                e = min(k, per[name][\"after_dedup_and_parent_drop\"] / max(len(rows[name][\"U\"]), 1))\n+                e = max(e, 1e-9)\n+                pr, rc = h / e, h / u\n+                vals.append(2 * pr * rc / (pr + rc) if (pr + rc) else 0.0)\n+            f1[name][k] = round(float(np.mean(vals)) if vals else 0.0, 4)\n+    print(\"\\n  macro F1 by budget:\")\n+    for name in sorted(f1):\n+        print(f\"    {name:15} \" + \"  \".join(f\"k{k}:{f1[name][k]:.3f}\" for k in (1, 5, 15, 50)))\n+\n     published = sorted(rows, key=lambda m: -per[m][\"recall\"][15])\n     prank = {m: i for i, m in enumerate(published)}\n@@ -256,4 +277,5 @@\n            \"pairwise_margins\": margins,\n            \"n_margins\": len(margins), \"n_separable\": n_sep,\n+           \"macro_f1_by_budget\": f1,\n            \"robust_order\": {\"published_order\": published, \"pairs\": robust,\n                             \"n_pairs\": n_p, \"n_dominating\": n_d, \"n_certified\": n_c,"
   },
   {
    "artifact": "results/fragility_from_table.json",
@@ -529,7 +563,9 @@
    "how": "source at df40e6da66ab",
    "dirty_when_written": true,
    "status": "producer_changed",
-   "detail": "producer was d8a0a3e1d516, is now 882e4a543feb"
+   "detail": "producer was d8a0a3e1d516, is now 882e4a543feb",
+   "diff_recovered_by": "source at df40e6da66ab",
+   "diff": "--- hydrogen_dispatch.py (as recorded)\n+++ hydrogen_dispatch.py (now)\n@@ -47,4 +47,5 @@\n \n from rdkit import Chem, RDLogger\n+from _contract import contract\n \n from _population import POPULATIONS, population_items, load_population, tagged_out\n@@ -109,6 +110,5 @@\n     if complete:\n         try:\n-            product = Chem.RemoveHs(Chem.Mol(product), sanitize=False)\n-            Chem.SanitizeMol(product)\n+            product = contract(product)\n         except Exception:\n             return\n@@ -169,5 +169,10 @@\n     i_want = _apply(substrates, want, [False] * len(want))\n     i_rest = _apply(substrates, rest, [False] * len(rest))\n-    arms = {\"dispatch\": e_want | i_rest,\n+    # Dispatch sends a template to the expanded substrate; it does not thereby inherit the defect of\n+    # never contracting what comes back. Completing the loop is a correctness requirement and not a\n+    # convention, so the expanded half of the dispatch arm is the contracted one. Built from the\n+    # uncontracted half instead, dispatch would be measured under the unfinished loop on exactly the\n+    # templates it was introduced to help, and its residual would report that rather than the policy.\n+    arms = {\"dispatch\": c_want | i_rest,\n             \"explicit\": e_want | e_rest,\n             \"implicit\": i_want | i_rest,\n@@ -236,5 +241,9 @@\n     d = H - better\n     bt_d = np.array([d[j].sum() / max(U[j].sum(), 1) for j in idx])\n-    out = {\"n_rules\": len(rules), \"dispatched_to_expanded\": n_exp,\n+    # Banks are run one at a time and merged into one file, so an entry can outlive the code that\n+    # produced it. Recording the version per bank makes a mixed artifact detectable instead of\n+    # leaving it to be noticed, which is how the last two defects survived as long as they did.\n+    out = {\"measured_by\": _code_version(),\n+           \"n_rules\": len(rules), \"dispatched_to_expanded\": n_exp,\n            \"references\": int(U.sum()), \"recovered\": int(H.sum()), \"reach\": reach,\n            \"ci95\": [round(float(np.quantile(bt, .025)), 4),"
   },
   {
    "artifact": "results/joint_ranker.json",
@@ -548,7 +584,9 @@
    "how": "source at 8e9ef156f4af",
    "dirty_when_written": false,
    "status": "producer_changed",
-   "detail": "producer was bab8b6c1bca2, is now 1ab994b2c4fa"
+   "detail": "producer was bab8b6c1bca2, is now 1ab994b2c4fa",
+   "diff_recovered_by": "source at 8e9ef156f4af",
+   "diff": "--- label_convention_audit.py (as recorded)\n+++ label_convention_audit.py (now)\n@@ -36,4 +36,5 @@\n from rdkit import Chem, RDLogger\n \n+from _contract import contract\n from grail_metabolism.utils.preparation import (_clean_product_smiles, _iter_reaction_products,\n                                                 _normalize_smiles_cached, load_default_rules)\n@@ -66,9 +67,20 @@\n \n \n-def _productive(substrate, refs) -> set[int]:\n-    \"\"\"Indices of rules that yield an annotated metabolite from this presentation of the substrate.\"\"\"\n+def _productive(substrate, refs, contract_first=False) -> set[int]:\n+    \"\"\"Indices of rules that yield an annotated metabolite from this presentation of the substrate.\n+\n+    `contract_first` puts back the hydrogens an expansion drew before the product is read. Without\n+    it an expanded arm measures an unfinished loop as well as a convention, which is the split\n+    Section 4 of the paper reports; here it separates how much of the label disagreement is the\n+    convention from how much is the missing call.\n+    \"\"\"\n     out = set()\n     for i, rule in enumerate(_CTX[\"rules\"]):\n         for product in _iter_reaction_products(substrate, rule):\n+            if contract_first:\n+                try:\n+                    product = contract(product)\n+                except Exception:\n+                    continue\n             try:\n                 smiles = Chem.MolToSmiles(product)\n@@ -96,5 +108,5 @@\n     mol = Chem.MolFromSmiles(sub)\n     if mol is None or not refs:\n-        return sub, None, None\n+        return sub, None, None, None\n     keys = set()\n     for r in refs:\n@@ -106,8 +118,9 @@\n             keys.add(k)\n  ... diff truncated"
   },
   {
    "artifact": "results/label_density.json",
@@ -618,7 +656,9 @@
    "how": "source at e5da75350e64",
    "dirty_when_written": true,
    "status": "producer_changed",
-   "detail": "producer was cd5cd5e7e0b2, is now 82d305fdad5d"
+   "detail": "producer was cd5cd5e7e0b2, is now 82d305fdad5d",
+   "diff_recovered_by": "source at e5da75350e64",
+   "diff": "--- metatox_smirks_ingest.py (as recorded)\n+++ metatox_smirks_ingest.py (now)\n@@ -48,12 +48,35 @@\n \n \n+def _spectrum(props) -> tuple[float, float] | None:\n+    \"\"\"(Pa, Pi) for the Metabolite class, which is the score the delivery is named after.\n+\n+    PASS writes the pair with a comma as the decimal separator: \"0,370  0,167  Metabolite\". Pa is\n+    the method's own confidence and therefore its ranking signal; ignoring it and taking the file's\n+    record order would score the method in an ordering it never produced, which is the one thing a\n+    frozen-prediction comparison must not do.\n+    \"\"\"\n+    raw = props.get(\"PASS_ACTIVITY_SPECTRUM\")\n+    if raw is None:\n+        return None\n+    for line in str(raw).splitlines():\n+        parts = line.replace(\",\", \".\").split()\n+        if len(parts) >= 3 and parts[2].lower().startswith(\"metabolite\"):\n+            try:\n+                return float(parts[0]), float(parts[1])\n+            except ValueError:\n+                return None\n+    return None\n+\n+\n def parse_sdf(path: Path) -> dict:\n-    \"\"\"{substrate index -> [metabolite SMILES]} from an SDF whose only key is `sub_met`.\"\"\"\n-    out: dict[int, list[str]] = {}\n+    \"\"\"{substrate index -> [(smiles, Pa, Pi)]}, ranked by the method's own confidence.\"\"\"\n+    out: dict[int, list[tuple]] = {}\n     supplier = Chem.SDMolSupplier(str(path), sanitize=True)\n+    n_scored = n_total = n_declared = n_disagree = 0\n     for mol in supplier:\n         if mol is None:\n             continue\n-        raw = mol.GetPropsAsDict().get(\"ID\")\n+        props = mol.GetPropsAsDict()\n+        raw = props.get(\"ID\")\n         if raw is None or \"_\" not in str(raw):\n  ... diff truncated"
   },
   {
    "artifact": "results/mined_rule_catalog_v2.json",
@@ -661,7 +701,9 @@
    "how": "source at 033e9c81f112",
    "dirty_when_written": true,
    "status": "producer_changed",
-   "detail": "producer was 6f4ec5073790, is now 6f47b34bab13"
+   "detail": "producer was 6f4ec5073790, is now 6f47b34bab13",
+   "diff_recovered_by": "source at 033e9c81f112",
+   "diff": "--- null_model_lift.py (as recorded)\n+++ null_model_lift.py (now)\n@@ -20,7 +20,17 @@\n level of one, so a ranking factor near one is free there and earned only where the budget binds.\n \n-The demonstration is the sweep, not the number. Under recall the three methods take several orders\n-across the budget; the claim is that under lift they take fewer. The gate is that both aggregates\n-reproduce the committed micro recall at the field's $k=15$ before any of that is read.\n+That was the motivation, and half of it does not survive the measurement. Lift does NOT stabilise\n+the ordering: sweeping $k$ from 1 to 40, recall gives two orderings of the three methods and lift\n+also gives two. As a remedy for the budget confound this fails, and it is reported as a failure.\n+\n+What it does buy is a different split, and one that runs against us. Recall rewards a pool and an\n+ordering together; lift isolates the ordering. SyGMa's ranking recovers 2.9 times what a uniform\n+draw from its own 81-candidate pool would, while GRAIL reaches 1.06 and MetaPredictor 1.01 -- both\n+within a rounding of chance, because their pools are smaller than the budget and there is almost\n+nothing left to order. So a ranking factor near one is not evidence of ranking; it is evidence that\n+the budget never binds, and the two are indistinguishable in recall@$k$ but not here.\n+\n+The gate is that each method's micro recall@15 is reproduced from its own released pool before any\n+of this is read.\n \"\"\"\n from __future__ import annotations\n@@ -40,6 +50,12 @@\n \n KEYS = ROOT / \"results\" / \"key_tables\" / \"inchikey_tautomer.json\"\n-# committed micro recall@15 on the clean test split, each from its own artifact\n-GATES = {\"GRAIL\": (\"results/recall_factorization.json\", 0.2607),\n+# Micro recall@15 on the clean test split, recomputed from each method's released pool.\n+#\n+# GRAIL's gate is NOT results/recall_factorization.json's stored 0.2607. That figure is the deployed\n+# output's hit count after two monotonicity clamps pulled it down to a ceiling measured in a\n+# different hydrogen convention; a fresh run of the deployed pipeline returns 689 hits, 0.2653, and\n+# results/set_metrics_by_criterion.json -- computed from the same stored output by another script --\n+# agrees at 0.3395 macro. The gate is the reproducible number, not the published one.\n+GATES = {\"GRAIL\": (\"deployed pipeline re-run, results/clamp_verification.json\", 0.2653),\n          \"SyGMa\": (\"results/decompose_sygma.json\", 0.5137)}\n KS = tuple(range(1, 41))"
   },
   {
    "artifact": "results/ordering_stability.json",
@@ -675,7 +717,9 @@
    "how": "source at 2da1ab3e10da",
    "dirty_when_written": true,
    "status": "producer_changed",
-   "detail": "producer was a364ac1b68a4, is now b05cd5267243"
+   "detail": "producer was a364ac1b68a4, is now b05cd5267243",
+   "diff_recovered_by": "source at 2da1ab3e10da",
+   "diff": "--- packing_predicts_order.py (as recorded)\n+++ packing_predicts_order.py (now)\n@@ -28,4 +28,5 @@\n import itertools\n import json\n+import sys\n from pathlib import Path\n \n@@ -107,4 +108,9 @@\n             if \"system_accuracy_by_cell\" in r:\n                 boards[f\"retrosynthesis, {r['n_systems']} systems\"] = r\n+    rx = ROOT / \"results/robust_order_retro_extrapolation.json\"\n+    if rx.exists():\n+        for name, r in json.loads(rx.read_text())[\"leaderboards\"].items():\n+            if \"system_accuracy_by_cell\" in r:\n+                boards[f\"retrosynthesis, {r['n_systems']} systems (extrapolation)\"] = r\n     rm = ROOT / \"results/robust_order_metabolite.json\"\n     if rm.exists():\n@@ -138,4 +144,9 @@\n     if not boards:\n         raise SystemExit(\"no robust-order artifact carrying per-cell accuracies\")\n+    # this file enumerates the boards for itself, so it is held against the one list\n+    sys.path.insert(0, str(Path(__file__).resolve().parent))\n+    from _boards import check_agreement\n+    check_agreement(len(boards), sum(b[\"n_pairs\"] for b in boards.values()),\n+                    \"packing_predicts_order.py\")\n \n     rep = {\"config\": {**_code_version(),"
   },
   {
    "artifact": "results/pair_chemistry_ranker.json",
@@ -706,7 +750,9 @@
    "how": "source at 2da1ab3e10da",
    "dirty_when_written": true,
    "status": "producer_changed",
-   "detail": "producer was 5591c738d739, is now 9c21dbde1a3c"
+   "detail": "producer was 5591c738d739, is now 9c21dbde1a3c",
+   "diff_recovered_by": "source at 2da1ab3e10da",
+   "diff": "--- places_decomposition.py (as recorded)\n+++ places_decomposition.py (now)\n@@ -32,4 +32,5 @@\n \n SOURCES = [(\"robust_order.json\", \"cluster0\"), (\"robust_order.json\", \"cluster1\"),\n+           (\"robust_order_retro_extrapolation.json\", \"extrapolation50k\"),\n            (\"robust_order_metabolite.json\", None), (\"robust_order_posebusters.json\", None),\n            (\"robust_order_wmt24_en-de.json\", None), (\"robust_order_wmt24_ja-zh.json\", None)]"
   },
   {
    "artifact": "results/polish_audit.json",
@@ -719,7 +765,9 @@
    "how": "source at 2d6b5bbfb0a4",
    "dirty_when_written": true,
    "status": "producer_changed",
-   "detail": "producer was fa2fb39e2dd8, is now 1de3691955b7"
+   "detail": "producer was fa2fb39e2dd8, is now 1de3691955b7",
+   "diff_recovered_by": "source at 2d6b5bbfb0a4",
+   "diff": "--- population_axis.py (as recorded)\n+++ population_axis.py (now)\n@@ -150,4 +150,24 @@\n                   f\"{r[f'gap_{small}']:+.4f} -> {r[f'gap_{big}']:+.4f}\")\n \n+    # What this design could have detected, so the null is a bound and not an absence.\n+    try:\n+        from scipy.stats import norm\n+        zc = float(norm.ppf(1 - 0.05 / (2 * max(len(rows), 1))))\n+        zp = float(norm.ppf(0.80))\n+    except Exception:\n+        zc, zp = 3.5, 0.8416\n+    ses = []\n+    for r in rows:\n+        a_, b_ = r[\"pair\"].split(\" vs \")\n+        ds = vec[r[\"criterion\"]][\"shared\"][a_][r[\"metric\"]] - vec[r[\"criterion\"]][\"shared\"][b_][r[\"metric\"]]\n+        dc = vec[r[\"criterion\"]][\"rest\"][a_][r[\"metric\"]] - vec[r[\"criterion\"]][\"rest\"][b_][r[\"metric\"]]\n+        ses.append(float((ds[si].mean(axis=1) - dc[ci].mean(axis=1)).std(ddof=1)))\n+    ses.sort()\n+    mde = sorted((zc + zp) * x for x in ses)\n+    mde_rep = {\"median\": round(mde[len(mde) // 2], 4), \"smallest\": round(mde[0], 4),\n+               \"largest\": round(mde[-1], 4), \"power\": 0.80}\n+    print(f\"\\n  minimum detectable interaction at the family's Holm threshold, 80% power: \"\n+          f\"median {mde_rep['median']:.4f}, range {mde_rep['smallest']:.4f} to {mde_rep['largest']:.4f}\")\n+\n     ordered = sorted(rows, key=lambda r: r[\"interaction\"][\"p\"])\n     survivors = []\n@@ -179,4 +199,5 @@\n            \"n_shared\": n_shared, \"n_complement\": n_rest,\n            \"interactions_excluding_zero\": len(excl), \"holm_survivors\": len(survivors),\n+           \"minimum_detectable_interaction\": mde_rep,\n            \"median_gap_change\": round(med[len(med) // 2], 4),\n            \"by_metric\": by_metric, \"rows\": rows}"
   },
   {
    "artifact": "results/prior_vs_learned.json",
@@ -727,7 +775,9 @@
    "how": "source at 1d56fb8c3272",
    "dirty_when_written": true,
    "status": "producer_changed",
-   "detail": "producer was 461149c8ba9f, is now 6f47af73b1ea"
+   "detail": "producer was 461149c8ba9f, is now 6f47af73b1ea",
+   "diff_recovered_by": "source at 1d56fb8c3272",
+   "diff": "--- prior_vs_learned.py (as recorded)\n+++ prior_vs_learned.py (now)\n@@ -38,4 +38,19 @@\n     sys.path.insert(0, str(ROOT))\n \n+\n+\n+def _code_version() -> dict:\n+    \"\"\"Which code wrote this artifact. The published selection_ablation.json carried fields the\n+    current script no longer emits, so it was written by an earlier version -- and nothing in it\n+    said so. Cap and seed pin the data; this pins the analysis.\"\"\"\n+    import subprocess\n+    def _git(*a):\n+        try:\n+            return subprocess.run([\"git\", *a], cwd=ROOT, capture_output=True, text=True,\n+                                  timeout=10).stdout.strip() or None\n+        except Exception:\n+            return None\n+    return {\"script\": pathlib.Path(__file__).name, \"git_commit\": _git(\"rev-parse\", \"HEAD\"),\n+            \"git_dirty\": bool(_git(\"status\", \"--porcelain\"))}\n \n def _rel(p) -> str:\n@@ -163,4 +178,13 @@\n \n \n+def _label_presentation() -> str:\n+    \"\"\"The presentation the training labels were built under, if the code still records it.\"\"\"\n+    try:\n+        from grail_metabolism.utils.preparation import LABEL_PRESENTATION\n+        return str(LABEL_PRESENTATION)\n+    except Exception:\n+        return \"unknown\"\n+\n+\n def main() -> int:\n     ap = argparse.ArgumentParser()\n@@ -179,4 +203,9 @@\n     ap.add_argument(\"--max-output\", type=int, default=15)\n     ap.add_argument(\"--threads\", type=int, default=4)\n+    ap.add_argument(\"--gen-ckpt\", type=str, default=None,\n  ... diff truncated"
   },
   {
    "artifact": "results/prior_vs_learned_propensity.json",
@@ -735,7 +785,9 @@
    "how": "source at 1d56fb8c3272",
    "dirty_when_written": true,
    "status": "producer_changed",
-   "detail": "producer was 461149c8ba9f, is now 6f47af73b1ea"
+   "detail": "producer was 461149c8ba9f, is now 6f47af73b1ea",
+   "diff_recovered_by": "source at 1d56fb8c3272",
+   "diff": "--- prior_vs_learned.py (as recorded)\n+++ prior_vs_learned.py (now)\n@@ -38,4 +38,19 @@\n     sys.path.insert(0, str(ROOT))\n \n+\n+\n+def _code_version() -> dict:\n+    \"\"\"Which code wrote this artifact. The published selection_ablation.json carried fields the\n+    current script no longer emits, so it was written by an earlier version -- and nothing in it\n+    said so. Cap and seed pin the data; this pins the analysis.\"\"\"\n+    import subprocess\n+    def _git(*a):\n+        try:\n+            return subprocess.run([\"git\", *a], cwd=ROOT, capture_output=True, text=True,\n+                                  timeout=10).stdout.strip() or None\n+        except Exception:\n+            return None\n+    return {\"script\": pathlib.Path(__file__).name, \"git_commit\": _git(\"rev-parse\", \"HEAD\"),\n+            \"git_dirty\": bool(_git(\"status\", \"--porcelain\"))}\n \n def _rel(p) -> str:\n@@ -163,4 +178,13 @@\n \n \n+def _label_presentation() -> str:\n+    \"\"\"The presentation the training labels were built under, if the code still records it.\"\"\"\n+    try:\n+        from grail_metabolism.utils.preparation import LABEL_PRESENTATION\n+        return str(LABEL_PRESENTATION)\n+    except Exception:\n+        return \"unknown\"\n+\n+\n def main() -> int:\n     ap = argparse.ArgumentParser()\n@@ -179,4 +203,9 @@\n     ap.add_argument(\"--max-output\", type=int, default=15)\n     ap.add_argument(\"--threads\", type=int, default=4)\n+    ap.add_argument(\"--gen-ckpt\", type=str, default=None,\n  ... diff truncated"
   },
   {
    "artifact": "results/product_reappearance.json",
@@ -837,7 +889,9 @@
    "how": "source at c128b916332d",
    "dirty_when_written": true,
    "status": "producer_changed",
-   "detail": "producer was 479910f638f1, is now 27aaec9c0bcb"
+   "detail": "producer was 479910f638f1, is now 27aaec9c0bcb",
+   "diff_recovered_by": "source at c128b916332d",
+   "diff": "--- retro_leaderboard.py (as recorded)\n+++ retro_leaderboard.py (now)\n@@ -39,4 +39,6 @@\n from pathlib import Path\n \n+import math\n+\n import numpy as np\n \n@@ -53,4 +55,20 @@\n KS = (1, 3, 5, 10)\n N_BOOT, SEED = 10000, 0\n+\n+\n+def _paired_p(d) -> float:\n+    \"\"\"The same test ``robust_order._paired_p`` applies, on the same kind of data.\n+\n+    A bootstrap tail cannot resolve past $1/B$, and Holm compares the $i$-th smallest against\n+    $\\\\alpha/(m-i)$. With a family of this size every surviving test sat exactly on that floor, so\n+    the count was of empty tails rather than of separated effects and moved with $B$ alone. And\n+    this board scores each reaction $0$ or $1$, so the paired difference is a matched difference of\n+    proportions whose exact conditional test is the sign test on the discordant pairs; a normal\n+    approximation errs low exactly in the tail Holm compares against. Both are imported rather than\n+    restated, so a repair to one is a repair to both.\n+    \"\"\"\n+    from robust_order import _paired_p as _shared  # imported here: robust_order imports this module\n+\n+    return _shared(d)\n \n \n@@ -121,4 +139,6 @@\n     ap = argparse.ArgumentParser()\n     ap.add_argument(\"--cluster\", default=\"cluster0\")\n+    ap.add_argument(\"--ingest\", default=\"results/evalretro_ingest.json\",\n+                    help=\"the ingest naming this cluster's systems and test csv\")\n     ap.add_argument(\"--dir\", default=str(ROOT / \"grail_metabolism\" / \"data\" / \"evalretro\"))\n     ap.add_argument(\"--max-rank\", type=int, default=10)\n@@ -128,5 +148,5 @@\n     out = args.out or str(ROOT / \"results\" / f\"retro_leaderboard_{args.cluster}.json\")\n \n  ... diff truncated"
   },
   {
    "artifact": "results/resource_cache_profile.json",
@@ -855,7 +909,9 @@
    "how": "source at 73e81d95b8dd",
    "dirty_when_written": true,
    "status": "producer_changed",
-   "detail": "producer was 119c0ffac3d4, is now 60a1706e23de"
+   "detail": "producer was 119c0ffac3d4, is now 60a1706e23de",
+   "diff_recovered_by": "source at 73e81d95b8dd",
+   "diff": "--- retro_extrapolation_ingest.py (as recorded)\n+++ retro_extrapolation_ingest.py (now)\n@@ -100,5 +100,5 @@\n     with open(test_csv, \"w\", newline=\"\") as fh:\n         w = csv.writer(fh)\n-        w.writerow([\"target\", \"REACTANT\"])\n+        w.writerow([\"PRODUCT\", \"REACTANT\"])\n         for prod in order:\n             w.writerow([prod, reactants[prod]])\n@@ -107,9 +107,12 @@\n     norm.mkdir(exist_ok=True)\n     for k, name in SYSTEMS.items():\n-        rows_out = [{\"preds\": per_system[k].get(prod, [])} for prod in order]\n+        rows_out = [{\"product\": prod, \"preds\": per_system[k].get(prod, [])} for prod in order]\n         (norm / f\"{name}.json\").write_text(json.dumps(rows_out))\n \n     ingest_path = ROOT / \"results\" / \"retro_extrapolation_ingest.json\"\n     ingest_path.write_text(json.dumps({\n+        \"config\": {\"source\": str(SRC.relative_to(ROOT)),\n+                   \"note\": \"the release reshaped to the form robust_order.py and \"\n+                           \"retro_leaderboard.py already read\"},\n         \"clusters\": {\"extrapolation50k\": {\n             \"systems\": [SYSTEMS[k] for k in SYSTEMS],"
   },
   {
    "artifact": "results/retro_leaderboard_cluster0.json",
@@ -863,7 +919,9 @@
    "how": "source at 0aa044ec2020",
    "dirty_when_written": true,
    "status": "producer_changed",
-   "detail": "producer was 5d99bf59defe, is now 27aaec9c0bcb"
+   "detail": "producer was 5d99bf59defe, is now 27aaec9c0bcb",
+   "diff_recovered_by": "source at 0aa044ec2020",
+   "diff": "--- retro_leaderboard.py (as recorded)\n+++ retro_leaderboard.py (now)\n@@ -58,15 +58,17 @@\n \n def _paired_p(d) -> float:\n-    \"\"\"Two-sided p for a paired mean from the normal approximation, which has no floor.\n+    \"\"\"The same test ``robust_order._paired_p`` applies, on the same kind of data.\n \n     A bootstrap tail cannot resolve past $1/B$, and Holm compares the $i$-th smallest against\n     $\\\\alpha/(m-i)$. With a family of this size every surviving test sat exactly on that floor, so\n-    the count was of empty tails rather than of separated effects and moved with $B$ alone.\n+    the count was of empty tails rather than of separated effects and moved with $B$ alone. And\n+    this board scores each reaction $0$ or $1$, so the paired difference is a matched difference of\n+    proportions whose exact conditional test is the sign test on the discordant pairs; a normal\n+    approximation errs low exactly in the tail Holm compares against. Both are imported rather than\n+    restated, so a repair to one is a repair to both.\n     \"\"\"\n-    n = len(d)\n-    se = float(np.std(d, ddof=1)) / np.sqrt(n)\n-    if se == 0.0:\n-        return 1.0\n-    return float(math.erfc(abs(float(np.mean(d))) / se / np.sqrt(2.0)))\n+    from robust_order import _paired_p as _shared  # imported here: robust_order imports this module\n+\n+    return _shared(d)\n \n \n@@ -137,4 +139,6 @@\n     ap = argparse.ArgumentParser()\n     ap.add_argument(\"--cluster\", default=\"cluster0\")\n+    ap.add_argument(\"--ingest\", default=\"results/evalretro_ingest.json\",\n+                    help=\"the ingest naming this cluster's systems and test csv\")\n     ap.add_argument(\"--dir\", default=str(ROOT / \"grail_metabolism\" / \"data\" / \"evalretro\"))\n     ap.add_argument(\"--max-rank\", type=int, default=10)\n@@ -144,5 +148,5 @@\n     out = args.out or str(ROOT / \"results\" / f\"retro_leaderboard_{args.cluster}.json\")\n \n-    ingest = json.loads((ROOT / \"results/evalretro_ingest.json\").read_text())\n+    ingest = json.loads((ROOT / args.ingest).read_text())\n     meta = ingest[\"clusters\"][args.cluster]\n  ... diff truncated"
   },
   {
    "artifact": "results/retro_leaderboard_cluster1.json",
@@ -871,7 +929,9 @@
    "how": "source at 2cfcccda9518",
    "dirty_when_written": true,
    "status": "producer_changed",
-   "detail": "producer was 479910f638f1, is now 27aaec9c0bcb"
+   "detail": "producer was 479910f638f1, is now 27aaec9c0bcb",
+   "diff_recovered_by": "source at 2cfcccda9518",
+   "diff": "--- retro_leaderboard.py (as recorded)\n+++ retro_leaderboard.py (now)\n@@ -39,4 +39,6 @@\n from pathlib import Path\n \n+import math\n+\n import numpy as np\n \n@@ -53,4 +55,20 @@\n KS = (1, 3, 5, 10)\n N_BOOT, SEED = 10000, 0\n+\n+\n+def _paired_p(d) -> float:\n+    \"\"\"The same test ``robust_order._paired_p`` applies, on the same kind of data.\n+\n+    A bootstrap tail cannot resolve past $1/B$, and Holm compares the $i$-th smallest against\n+    $\\\\alpha/(m-i)$. With a family of this size every surviving test sat exactly on that floor, so\n+    the count was of empty tails rather than of separated effects and moved with $B$ alone. And\n+    this board scores each reaction $0$ or $1$, so the paired difference is a matched difference of\n+    proportions whose exact conditional test is the sign test on the discordant pairs; a normal\n+    approximation errs low exactly in the tail Holm compares against. Both are imported rather than\n+    restated, so a repair to one is a repair to both.\n+    \"\"\"\n+    from robust_order import _paired_p as _shared  # imported here: robust_order imports this module\n+\n+    return _shared(d)\n \n \n@@ -121,4 +139,6 @@\n     ap = argparse.ArgumentParser()\n     ap.add_argument(\"--cluster\", default=\"cluster0\")\n+    ap.add_argument(\"--ingest\", default=\"results/evalretro_ingest.json\",\n+                    help=\"the ingest naming this cluster's systems and test csv\")\n     ap.add_argument(\"--dir\", default=str(ROOT / \"grail_metabolism\" / \"data\" / \"evalretro\"))\n     ap.add_argument(\"--max-rank\", type=int, default=10)\n@@ -128,5 +148,5 @@\n     out = args.out or str(ROOT / \"results\" / f\"retro_leaderboard_{args.cluster}.json\")\n \n  ... diff truncated"
   },
   {
    "artifact": "results/retro_population_axis.json",
@@ -879,7 +939,9 @@
    "how": "source at 2d6b5bbfb0a4",
    "dirty_when_written": true,
    "status": "producer_changed",
-   "detail": "producer was 479910f638f1, is now 27aaec9c0bcb"
+   "detail": "producer was 479910f638f1, is now 27aaec9c0bcb",
+   "diff_recovered_by": "source at 2d6b5bbfb0a4",
+   "diff": "--- retro_leaderboard.py (as recorded)\n+++ retro_leaderboard.py (now)\n@@ -39,4 +39,6 @@\n from pathlib import Path\n \n+import math\n+\n import numpy as np\n \n@@ -53,4 +55,20 @@\n KS = (1, 3, 5, 10)\n N_BOOT, SEED = 10000, 0\n+\n+\n+def _paired_p(d) -> float:\n+    \"\"\"The same test ``robust_order._paired_p`` applies, on the same kind of data.\n+\n+    A bootstrap tail cannot resolve past $1/B$, and Holm compares the $i$-th smallest against\n+    $\\\\alpha/(m-i)$. With a family of this size every surviving test sat exactly on that floor, so\n+    the count was of empty tails rather than of separated effects and moved with $B$ alone. And\n+    this board scores each reaction $0$ or $1$, so the paired difference is a matched difference of\n+    proportions whose exact conditional test is the sign test on the discordant pairs; a normal\n+    approximation errs low exactly in the tail Holm compares against. Both are imported rather than\n+    restated, so a repair to one is a repair to both.\n+    \"\"\"\n+    from robust_order import _paired_p as _shared  # imported here: robust_order imports this module\n+\n+    return _shared(d)\n \n \n@@ -121,4 +139,6 @@\n     ap = argparse.ArgumentParser()\n     ap.add_argument(\"--cluster\", default=\"cluster0\")\n+    ap.add_argument(\"--ingest\", default=\"results/evalretro_ingest.json\",\n+                    help=\"the ingest naming this cluster's systems and test csv\")\n     ap.add_argument(\"--dir\", default=str(ROOT / \"grail_metabolism\" / \"data\" / \"evalretro\"))\n     ap.add_argument(\"--max-rank\", type=int, default=10)\n@@ -128,5 +148,5 @@\n     out = args.out or str(ROOT / \"results\" / f\"retro_leaderboard_{args.cluster}.json\")\n \n  ... diff truncated"
   },
   {
    "artifact": "results/retro_provenance.json",
@@ -908,21 +970,9 @@
    "how": "source at 0aa044ec2020",
    "dirty_when_written": true,
    "status": "producer_changed",
-   "detail": "producer was 62e87d1b950f, is now 15b145248918"
-  },
-  {
-   "artifact": "results/robust_order_posebusters.json",
-   "script": "posebusters_board.py",
-   "how": "recorded source digest",
-   "status": "producer_changed",
-   "detail": "producer was 613f941c5f9b, is now 49020df99ef4"
-  },
-  {
-   "artifact": "results/robust_order_posebusters_astex.json",
-   "script": "posebusters_board.py",
-   "how": "recorded source digest",
-   "status": "producer_changed",
-   "detail": "producer was 613f941c5f9b, is now 49020df99ef4"
+   "detail": "producer was 62e87d1b950f, is now 15b145248918",
+   "diff_recovered_by": "source at 0aa044ec2020",
+   "diff": "--- robust_order.py (as recorded)\n+++ robust_order.py (now)\n@@ -66,5 +66,5 @@\n \n def _paired_p(d) -> float:\n-    \"\"\"Two-sided p for a paired mean, from the normal approximation to its sampling distribution.\n+    \"\"\"Two-sided p for a paired comparison: exact where the data are hits, normal where they are not.\n \n     Not from the bootstrap draws. A resampled tail cannot resolve past $1/B$, so a bootstrap p is\n@@ -74,7 +74,34 @@\n     count and not of the data. The floor was in place when this was written and did exactly that on\n     a $1368$-test family. The intervals stay bootstrap; only the $p$ used for multiplicity is\n-    analytic, and the two agree on every family small enough for the floor not to bind.\n+    analytic.\n+\n+    Where a board scores each item $0$ or $1$ --- every chemistry and docking board here --- the\n+    paired difference takes three values and its mean is a difference of proportions on matched\n+    items, for which the exact conditional test is the sign test on the discordant pairs. That\n+    matters at these thresholds and not elsewhere: Holm is comparing against $10^{-6}$ to\n+    $10^{-3}$, which is precisely the tail where a normal approximation to a mean of few discordant\n+    items is least reliable, and it errs low. On the docking board the exact $p$ runs $1.3$ to\n+    $1.6$ times the approximate one, enough to move three tests across that board's own cutoff. So\n+    the exact test is used wherever the data admit it, and the approximation only where the scores\n+    are continuous and no exact conditional test is available.\n     \"\"\"\n+    d = np.asarray(d, dtype=float)\n     n = len(d)\n+    if n == 0:\n+        return 1.0\n+    if np.all(np.isin(d, (-1.0, 0.0, 1.0))):\n+        pos = int((d > 0).sum())\n+        neg = int((d < 0).sum())\n+        k = pos + neg\n+        if k == 0:\n+            return 1.0\n+        # Two-sided exact binomial at p=1/2, summed in log space: a board with thousands of\n+        # discordant items overflows the direct form, since 2**k leaves the float range at k=1024.\n+        lo = min(pos, neg)\n+        log2 = math.log(2.0)\n+        tail = math.fsum(math.exp(math.lgamma(k + 1) - math.lgamma(i + 1)\n  ... diff truncated"
   },
   {
    "artifact": "results/robust_order_retro_extrapolation.json",
@@ -930,49 +980,9 @@
    "how": "source at 2da1ab3e10da",
    "dirty_when_written": true,
    "status": "producer_changed",
-   "detail": "producer was ad3a41b55a98, is now 15b145248918"
-  },
-  {
-   "artifact": "results/robust_order_wmt23.json",
-   "script": "wmt23_boards.py",
-   "how": "recorded source digest",
-   "status": "producer_changed",
-   "detail": "producer was 36131d559ca8, is now 1ecb5b21ad9b"
-  },
-  {
-   "artifact": "results/robust_order_wmt24_en-de.json",
-   "script": "wmt_board.py",
-   "how": "recorded source digest",
-   "status": "producer_changed",
-   "detail": "producer was 4db583da8fa1, is now ec2543f4b7ec"
-  },
-  {
-   "artifact": "results/robust_order_wmt24_en-de__segment.json",
-   "script": "wmt_board.py",
-   "how": "recorded source digest",
-   "status": "producer_changed",
-   "detail": "producer was 4db583da8fa1, is now ec2543f4b7ec"
-  },
-  {
-   "artifact": "results/robust_order_wmt24_esa.json",
-   "script": "wmt_esa_boards.py",
-   "how": "recorded source digest",
-   "status": "producer_changed",
-   "detail": "producer was 561961b46878, is now ca31a2200d34"
-  },
-  {
-   "artifact": "results/robust_order_wmt24_ja-zh.json",
-   "script": "wmt_board.py",
-   "how": "recorded source digest",
-   "status": "producer_changed",
-   "detail": "producer was fb795e19883c, is now ec2543f4b7ec"
-  },
-  {
-   "artifact": "results/robust_order_wmt24_ja-zh__segment.json",
-   "script": "wmt_board.py",
-   "how": "recorded source digest",
-   "status": "producer_changed",
-   "detail": "producer was fb795e19883c, is now ec2543f4b7ec"
+   "detail": "producer was ad3a41b55a98, is now 15b145248918",
+   "diff_recovered_by": "source at 2da1ab3e10da",
+   "diff": "--- robust_order.py (as recorded)\n+++ robust_order.py (now)\n@@ -323,6 +323,10 @@\n \n \n-def retro_leaderboard(cluster: str, directory: Path, max_rank: int, workers: int) -> dict:\n-    ingest = json.loads((ROOT / \"results/evalretro_ingest.json\").read_text())\n+def retro_leaderboard(cluster: str, directory: Path, max_rank: int, workers: int,\n+                      ingest_path: str = \"results/evalretro_ingest.json\") -> dict:\n+    \"\"\"Score one board. The ingest file is a parameter so a second release can be scored by this\n+    same function rather than by a second implementation of it: the criteria, the budgets and the\n+    estimator then agree with the boards already surveyed by construction.\"\"\"\n+    ingest = json.loads((ROOT / ingest_path).read_text())\n     meta = ingest[\"clusters\"][cluster]\n     systems, rows = meta[\"systems\"], list(csv.DictReader(open(ROOT / meta[\"test_csv\"])))\n@@ -372,4 +376,6 @@\n     ap.add_argument(\"--dir\", default=str(ROOT / \"grail_metabolism\" / \"data\" / \"evalretro\"))\n     ap.add_argument(\"--clusters\", default=\"cluster0,cluster1\")\n+    ap.add_argument(\"--ingest\", default=\"results/evalretro_ingest.json\",\n+                    help=\"the ingest that names each cluster's systems and test csv\")\n     ap.add_argument(\"--max-rank\", type=int, default=10)\n     ap.add_argument(\"--workers\", type=int, default=6)\n@@ -384,5 +390,5 @@\n            \"leaderboards\": {}}\n     for cluster in args.clusters.split(\",\"):\n-        r = retro_leaderboard(cluster, Path(args.dir), args.max_rank, args.workers)\n+        r = retro_leaderboard(cluster, Path(args.dir), args.max_rank, args.workers, args.ingest)\n         rep[\"leaderboards\"][cluster] = r\n         print(f\"\\n{cluster}: {r['n_systems']} systems, {r['n_cells']} cells, {r['n_pairs']} pairs\")"
   },
   {
    "artifact": "results/rule_collapse.json",
@@ -1015,7 +1025,9 @@
    "how": "source at 1d56fb8c3272",
    "dirty_when_written": true,
    "status": "producer_changed",
-   "detail": "producer was 7623e93a973b, is now 9a2a34c95080"
+   "detail": "producer was 7623e93a973b, is now 9a2a34c95080",
+   "diff_recovered_by": "source at 1d56fb8c3272",
+   "diff": "--- selection_ablation.py (as recorded)\n+++ selection_ablation.py (now)\n@@ -35,4 +35,19 @@\n     sys.path.insert(0, str(ROOT))\n \n+\n+\n+def _code_version() -> dict:\n+    \"\"\"Which code wrote this artifact. The published selection_ablation.json carried fields the\n+    current script no longer emits, so it was written by an earlier version -- and nothing in it\n+    said so. Cap and seed pin the data; this pins the analysis.\"\"\"\n+    import subprocess\n+    def _git(*a):\n+        try:\n+            return subprocess.run([\"git\", *a], cwd=ROOT, capture_output=True, text=True,\n+                                  timeout=10).stdout.strip() or None\n+        except Exception:\n+            return None\n+    return {\"script\": pathlib.Path(__file__).name, \"git_commit\": _git(\"rev-parse\", \"HEAD\"),\n+            \"git_dirty\": bool(_git(\"status\", \"--porcelain\"))}\n \n def _rel(p) -> str:\n@@ -53,5 +68,5 @@\n # SyGMa + ceiling references (macro/oracle tautomer, full clean test), for context in the table.\n SYGMA_15 = 0.572\n-CEILING = 0.735\n+CEILING = json.loads((ROOT / \"results/recall_factorization.json\").read_text())[\"macro_coverage_bank\"]\n DEPLOYED_15 = 0.330\n KS = [5, 10, 15]\n@@ -142,5 +157,5 @@\n     # with the cap and seed that drew it. Recorded here because they were not: recovering the n=245\n     # set behind the published figures took a search over caps (see paper/SELF_CLAIMS.md row 2).\n-    \"config\": {\"max_substrates\": args.max_substrates, \"sampling_seed\": args.sampling_seed,\n+    \"config\": {**_code_version(), \"max_substrates\": args.max_substrates, \"sampling_seed\": args.sampling_seed,\n                \"split\": args.split, \"use_clean_splits\": True, \"standardize\": False,\n                \"rules_path\": \"grail_metabolism/resources/extended_smirks.txt\",\n@@ -149,5 +164,6 @@\n                \"rank_by\": args.rank_by, \"gen_ckpt\": _rel(args.gen_ckpt),\n                \"filter_ckpt\": _rel(args.filter_ckpt)},\n-        \"split\": args.split, \"n\": len(items), \"prior_strength\": args.prior_strength, \"rank_by\": args.rank_by,\n  ... diff truncated"
   },
   {
    "artifact": "results/selection_ablation_prior300.json",
@@ -1023,7 +1035,9 @@
    "how": "source at 1d56fb8c3272",
    "dirty_when_written": true,
    "status": "producer_changed",
-   "detail": "producer was 7623e93a973b, is now 9a2a34c95080"
+   "detail": "producer was 7623e93a973b, is now 9a2a34c95080",
+   "diff_recovered_by": "source at 1d56fb8c3272",
+   "diff": "--- selection_ablation.py (as recorded)\n+++ selection_ablation.py (now)\n@@ -35,4 +35,19 @@\n     sys.path.insert(0, str(ROOT))\n \n+\n+\n+def _code_version() -> dict:\n+    \"\"\"Which code wrote this artifact. The published selection_ablation.json carried fields the\n+    current script no longer emits, so it was written by an earlier version -- and nothing in it\n+    said so. Cap and seed pin the data; this pins the analysis.\"\"\"\n+    import subprocess\n+    def _git(*a):\n+        try:\n+            return subprocess.run([\"git\", *a], cwd=ROOT, capture_output=True, text=True,\n+                                  timeout=10).stdout.strip() or None\n+        except Exception:\n+            return None\n+    return {\"script\": pathlib.Path(__file__).name, \"git_commit\": _git(\"rev-parse\", \"HEAD\"),\n+            \"git_dirty\": bool(_git(\"status\", \"--porcelain\"))}\n \n def _rel(p) -> str:\n@@ -53,5 +68,5 @@\n # SyGMa + ceiling references (macro/oracle tautomer, full clean test), for context in the table.\n SYGMA_15 = 0.572\n-CEILING = 0.735\n+CEILING = json.loads((ROOT / \"results/recall_factorization.json\").read_text())[\"macro_coverage_bank\"]\n DEPLOYED_15 = 0.330\n KS = [5, 10, 15]\n@@ -142,5 +157,5 @@\n     # with the cap and seed that drew it. Recorded here because they were not: recovering the n=245\n     # set behind the published figures took a search over caps (see paper/SELF_CLAIMS.md row 2).\n-    \"config\": {\"max_substrates\": args.max_substrates, \"sampling_seed\": args.sampling_seed,\n+    \"config\": {**_code_version(), \"max_substrates\": args.max_substrates, \"sampling_seed\": args.sampling_seed,\n                \"split\": args.split, \"use_clean_splits\": True, \"standardize\": False,\n                \"rules_path\": \"grail_metabolism/resources/extended_smirks.txt\",\n@@ -149,5 +164,6 @@\n                \"rank_by\": args.rank_by, \"gen_ckpt\": _rel(args.gen_ckpt),\n                \"filter_ckpt\": _rel(args.filter_ckpt)},\n-        \"split\": args.split, \"n\": len(items), \"prior_strength\": args.prior_strength, \"rank_by\": args.rank_by,\n  ... diff truncated"
   },
   {
    "artifact": "results/selection_ablation_ranksignal.json",
@@ -1041,7 +1055,9 @@
    "how": "source at 5c9e87251ce4",
    "dirty_when_written": true,
    "status": "producer_changed",
-   "detail": "producer was cdd40c5cde65, is now db95da4ab126"
+   "detail": "producer was cdd40c5cde65, is now db95da4ab126",
+   "diff_recovered_by": "source at 5c9e87251ce4",
+   "diff": "--- setsize_headroom.py (as recorded)\n+++ setsize_headroom.py (now)\n@@ -64,4 +64,25 @@\n     f = 2 * p * r / (p + r) if (p + r) else 0.0\n     return p, r, f\n+\n+\n+# The architectural question is not whether fewer is better but whether HOW MANY should depend on\n+# the substrate. A global constant answers no; a rule relative to the pool answers yes only if it\n+# beats the best constant. The gap rule emits while a candidate scores within a factor of the\n+# leader, which is what normalising over siblings does at inference. It is module level so that the\n+# cross-fitting check selects the same rule this script reports rather than a copy of it.\n+def gap_rule(alpha):\n+    def f(sub, row):\n+        cs = row[\"candidates\"]\n+        if not cs:\n+            return 1\n+        top = cs[0][\"combined\"]\n+        n_ = 1\n+        for c in cs[1:]:\n+            if c[\"combined\"] >= alpha * top:\n+                n_ += 1\n+            else:\n+                break\n+        return n_\n+    return f\n \n \n@@ -165,23 +186,4 @@\n         return int(round(min(max(float(x @ beta), 1.0), 15.0)))\n \n-    # The architectural question is not whether fewer is better but whether HOW MANY should depend\n-    # on the substrate. A global constant answers no; a rule relative to the pool answers yes only\n-    # if it beats the best constant. The gap rule emits while a candidate scores within a factor of\n-    # the leader, which is what normalising over siblings does at inference.\n-    def gap_rule(alpha):\n-        def f(sub, row):\n-            cs = row[\"candidates\"]\n-            if not cs:\n-                return 1\n  ... diff truncated"
   },
   {
    "artifact": "results/setsize_headroom__inchikey_all.json",
@@ -1049,7 +1065,9 @@
    "how": "source at 11a103f586d3",
    "dirty_when_written": true,
    "status": "producer_changed",
-   "detail": "producer was 9cbbf9f935b3, is now db95da4ab126"
+   "detail": "producer was 9cbbf9f935b3, is now db95da4ab126",
+   "diff_recovered_by": "source at 11a103f586d3",
+   "diff": "--- setsize_headroom.py (as recorded)\n+++ setsize_headroom.py (now)\n@@ -64,4 +64,25 @@\n     f = 2 * p * r / (p + r) if (p + r) else 0.0\n     return p, r, f\n+\n+\n+# The architectural question is not whether fewer is better but whether HOW MANY should depend on\n+# the substrate. A global constant answers no; a rule relative to the pool answers yes only if it\n+# beats the best constant. The gap rule emits while a candidate scores within a factor of the\n+# leader, which is what normalising over siblings does at inference. It is module level so that the\n+# cross-fitting check selects the same rule this script reports rather than a copy of it.\n+def gap_rule(alpha):\n+    def f(sub, row):\n+        cs = row[\"candidates\"]\n+        if not cs:\n+            return 1\n+        top = cs[0][\"combined\"]\n+        n_ = 1\n+        for c in cs[1:]:\n+            if c[\"combined\"] >= alpha * top:\n+                n_ += 1\n+            else:\n+                break\n+        return n_\n+    return f\n \n \n@@ -165,23 +186,4 @@\n         return int(round(min(max(float(x @ beta), 1.0), 15.0)))\n \n-    # The architectural question is not whether fewer is better but whether HOW MANY should depend\n-    # on the substrate. A global constant answers no; a rule relative to the pool answers yes only\n-    # if it beats the best constant. The gap rule emits while a candidate scores within a factor of\n-    # the leader, which is what normalising over siblings does at inference.\n-    def gap_rule(alpha):\n-        def f(sub, row):\n-            cs = row[\"candidates\"]\n-            if not cs:\n-                return 1\n  ... diff truncated"
   },
   {
    "artifact": "results/setsize_headroom__tautomer_metabolites.json",
@@ -1057,7 +1075,9 @@
    "how": "source at df40e6da66ab",
    "dirty_when_written": true,
    "status": "producer_changed",
-   "detail": "producer was cdd40c5cde65, is now db95da4ab126"
+   "detail": "producer was cdd40c5cde65, is now db95da4ab126",
+   "diff_recovered_by": "source at df40e6da66ab",
+   "diff": "--- setsize_headroom.py (as recorded)\n+++ setsize_headroom.py (now)\n@@ -64,4 +64,25 @@\n     f = 2 * p * r / (p + r) if (p + r) else 0.0\n     return p, r, f\n+\n+\n+# The architectural question is not whether fewer is better but whether HOW MANY should depend on\n+# the substrate. A global constant answers no; a rule relative to the pool answers yes only if it\n+# beats the best constant. The gap rule emits while a candidate scores within a factor of the\n+# leader, which is what normalising over siblings does at inference. It is module level so that the\n+# cross-fitting check selects the same rule this script reports rather than a copy of it.\n+def gap_rule(alpha):\n+    def f(sub, row):\n+        cs = row[\"candidates\"]\n+        if not cs:\n+            return 1\n+        top = cs[0][\"combined\"]\n+        n_ = 1\n+        for c in cs[1:]:\n+            if c[\"combined\"] >= alpha * top:\n+                n_ += 1\n+            else:\n+                break\n+        return n_\n+    return f\n \n \n@@ -165,23 +186,4 @@\n         return int(round(min(max(float(x @ beta), 1.0), 15.0)))\n \n-    # The architectural question is not whether fewer is better but whether HOW MANY should depend\n-    # on the substrate. A global constant answers no; a rule relative to the pool answers yes only\n-    # if it beats the best constant. The gap rule emits while a candidate scores within a factor of\n-    # the leader, which is what normalising over siblings does at inference.\n-    def gap_rule(alpha):\n-        def f(sub, row):\n-            cs = row[\"candidates\"]\n-            if not cs:\n-                return 1\n  ... diff truncated"
   },
   {
    "artifact": "results/setsize_headroom__tautomer_parents.json",
@@ -1065,7 +1085,9 @@
    "how": "source at df40e6da66ab",
    "dirty_when_written": true,
    "status": "producer_changed",
-   "detail": "producer was cdd40c5cde65, is now db95da4ab126"
+   "detail": "producer was cdd40c5cde65, is now db95da4ab126",
+   "diff_recovered_by": "source at df40e6da66ab",
+   "diff": "--- setsize_headroom.py (as recorded)\n+++ setsize_headroom.py (now)\n@@ -64,4 +64,25 @@\n     f = 2 * p * r / (p + r) if (p + r) else 0.0\n     return p, r, f\n+\n+\n+# The architectural question is not whether fewer is better but whether HOW MANY should depend on\n+# the substrate. A global constant answers no; a rule relative to the pool answers yes only if it\n+# beats the best constant. The gap rule emits while a candidate scores within a factor of the\n+# leader, which is what normalising over siblings does at inference. It is module level so that the\n+# cross-fitting check selects the same rule this script reports rather than a copy of it.\n+def gap_rule(alpha):\n+    def f(sub, row):\n+        cs = row[\"candidates\"]\n+        if not cs:\n+            return 1\n+        top = cs[0][\"combined\"]\n+        n_ = 1\n+        for c in cs[1:]:\n+            if c[\"combined\"] >= alpha * top:\n+                n_ += 1\n+            else:\n+                break\n+        return n_\n+    return f\n \n \n@@ -165,23 +186,4 @@\n         return int(round(min(max(float(x @ beta), 1.0), 15.0)))\n \n-    # The architectural question is not whether fewer is better but whether HOW MANY should depend\n-    # on the substrate. A global constant answers no; a rule relative to the pool answers yes only\n-    # if it beats the best constant. The gap rule emits while a candidate scores within a factor of\n-    # the leader, which is what normalising over siblings does at inference.\n-    def gap_rule(alpha):\n-        def f(sub, row):\n-            cs = row[\"candidates\"]\n-            if not cs:\n-                return 1\n  ... diff truncated"
   },
   {
    "artifact": "results/som_prior_reeval.json",
@@ -1125,7 +1147,9 @@
    "how": "source at f4ca46c34ef8",
    "dirty_when_written": true,
    "status": "producer_changed",
-   "detail": "producer was 69d2a5e12381, is now c34844793777"
+   "detail": "producer was 69d2a5e12381, is now c34844793777",
+   "diff_recovered_by": "source at f4ca46c34ef8",
+   "diff": "--- transfer_confound.py (as recorded)\n+++ transfer_confound.py (now)\n@@ -6,4 +6,10 @@\n falls with distance from the training set, the axis is chemistry difficulty and no transfer claim\n can rest on it.\n+\n+This printed its table to stdout and wrote nothing for as long as the appendix quoted four of its\n+numbers, so none of them was checkable against the record. It writes the table now. Note what the\n+written table shows that the paper's two-endpoint contrast does not: mean reference-set size across\n+the five strata is not monotone in similarity, so \"reference sets shrink the same way\" is a\n+statement about the endpoints and the appendix now says so.\n \"\"\"\n import json, numpy as np\n@@ -35,8 +41,34 @@\n print(f\"{'stratum':>16}{'n':>6}{'bank coverage':>16}{'|refs|':>9}\")\n B = [0, .3, .4, .5, .6, 1.01]\n+strata = []\n for i in range(len(B)-1):\n     m = (sim >= B[i]) & (sim < B[i+1])\n     if m.sum() < 20: continue\n+    strata.append({'lo': B[i], 'hi': B[i+1], 'n': int(m.sum()),\n+                   'bank_coverage': round(float(cov[m].mean()), 4),\n+                   'mean_n_refs': round(float(nref[m].mean()), 2)})\n     print(f'  [{B[i]:.2f},{B[i+1]:.2f}){m.sum():6}{cov[m].mean():16.4f}{nref[m].mean():9.2f}')\n-print(f'\\nslope of BANK COVERAGE on similarity: {np.polyfit(sim, cov, 1)[0]:+.4f}')\n-print(f'corr(similarity, |refs|): {np.corrcoef(sim, nref)[0,1]:+.3f}')\n+slope = float(np.polyfit(sim, cov, 1)[0]); corr = float(np.corrcoef(sim, nref)[0, 1])\n+print(f'\\nslope of BANK COVERAGE on similarity: {slope:+.4f}')\n+print(f'corr(similarity, |refs|): {corr:+.3f}')\n+\n+import subprocess\n+def _git(*a):\n+    try:\n+        return subprocess.run(['git', *a], cwd=R, capture_output=True, text=True,\n+                              timeout=10).stdout.strip() or None\n+    except Exception:\n+        return None\n+OUT = R / 'results' / 'transfer_confound.json'\n+OUT.write_text(json.dumps({\n+    'config': {'script': 'transfer_confound.py', 'git_commit': _git('rev-parse', 'HEAD'),\n  ... diff truncated"
   },
   {
    "artifact": "results/transfer_stratified.json",
@@ -1153,7 +1177,9 @@
    "how": "source at e7ee7f5827cc",
    "dirty_when_written": true,
    "status": "producer_changed",
-   "detail": "producer was 83e6904b0f9a, is now 3b4ac994ff72"
+   "detail": "producer was 83e6904b0f9a, is now 3b4ac994ff72",
+   "diff_recovered_by": "source at e7ee7f5827cc",
+   "diff": "--- union_multiplicity.py (as recorded)\n+++ union_multiplicity.py (now)\n@@ -153,6 +153,15 @@\n              for mode, c in ((\"per_board\", cut_own), (\"alpha_split\", cut_split),\n                              (\"union\", cut_union))}\n+        # the three cutoffs themselves, because \"which reading is more permissive here\" is a\n+        # statement about thresholds and cannot be recovered from the rejection counts: a board\n+        # whose tests all sit far from either threshold rejects the same number under both\n         per[lab] = {\"family_size\": mult[\"family_size\"], \"n_reversal_tests\":\n                     len(mult[\"reversal_tests\"]),\n+                    \"cutoff_per_board\": cut_own,\n+                    \"cutoff_alpha_split\": cut_split,\n+                    \"cutoff_union\": cut_union,\n+                    # -1.0 means the reading rejects nothing on this board, so it is not the\n+                    # more permissive one; two boards that both reject nothing are neither\n+                    \"union_is_the_more_permissive\": bool(cut_union > cut_split),\n                     **{f\"reversals_{k}\": len(v) for k, v in r.items()},\n                     **{f\"pairs_{k}\": len({x[\"pair\"] for x in v}) for k, v in r.items()},\n@@ -168,4 +177,5 @@\n     quoted = sum(b[\"n_contested_after_correction\"] for _, b in B)\n \n+    _more = sum(1 for v in per.values() if v[\"union_is_the_more_permissive\"])\n     rep = {\"config\": {**_code_version(), \"n_boards\": len(B), \"alpha\": args.alpha,\n                       \"note\": \"no board is re-analysed; Holm is re-applied to the p-vectors the \"\n@@ -174,4 +184,8 @@\n            \"union_tests_rejected\": k_union,\n            \"union_cutoff_p\": cut_union,\n+           # the two stricter readings are not nested: on some boards the pooled cutoff is the\n+           # larger of the two, so the union admits a test the alpha split refuses\n+           \"boards_where_the_union_is_the_more_permissive\": _more,\n+           \"n_boards\": len(B),\n            \"certified_pairs\": {**pairs_tot, \"quoted_in_the_paper\": quoted},\n            \"certified_pairs_the_published_cell_had_separated\": sep_tot,"
   },
   {
    "artifact": "results/union_ranker.json",
@@ -1167,7 +1193,9 @@
    "how": "source at 2c5d9613041c",
    "dirty_when_written": true,
    "status": "producer_changed",
-   "detail": "producer was f5dd903daed9, is now e8453e8f61ac"
+   "detail": "producer was f5dd903daed9, is now e8453e8f61ac",
+   "diff_recovered_by": "source at 2c5d9613041c",
+   "diff": "--- wmt_official_clusters.py (as recorded)\n+++ wmt_official_clusters.py (now)\n@@ -50,4 +50,9 @@\n BOARDS = [(\"en-de\", \"mqm_generalMT2024_ende.tsv\", \"results/robust_order_wmt24_en-de.json\"),\n           (\"ja-zh\", \"mqm_generalMT2024_jazh.tsv\", \"results/robust_order_wmt24_ja-zh.json\")]\n+# The task ships the same clustering for its lighter protocol, in four waves covering nine further\n+# language pairs, and runs it through the same load_data/get_pvalues/get_clusters. Leaving those out\n+# would confine the external check to two boards of nineteen for no reason but the file layout.\n+ESA_WAVES = [f\"esa_generalMT2024_wave{i}.csv\" for i in range(4)]\n+ESA_MIN_ANNOTATIONS = 100  # calculate_clusters.py skips a pair below this\n \n \n@@ -142,7 +147,42 @@\n \n \n+def esa_boards(tools) -> dict:\n+    \"\"\"Their clustering on the \\textsc{esa} waves, per language pair, as their own script runs it.\"\"\"\n+    import pandas as pd\n+\n+    frames = [tools.load_data(str(HUMEVAL / w)) for w in ESA_WAVES]\n+    df = pd.concat(frames)\n+    # their main() averages repeated ratings of one segment before testing, and only then\n+    sub = df.groupby([\"annot_id\", \"lp\", \"system_id\", \"orig_segment_id\"])\n+    if len(sub) != len(df):\n+        df = sub.agg({\"overall\": \"mean\"}).reset_index()\n+\n+    out = {}\n+    for lp in sorted(df[\"lp\"].unique()):\n+        d = df[df[\"lp\"] == lp].copy()\n+        if d.groupby(\"system_id\")[\"annot_id\"].count().mean() < ESA_MIN_ANNOTATIONS:\n+            continue\n+        # the domain of a segment, from the same file attach_resources reads\n+        docs = _domains(lp)\n+        # orig_segment_id is doc-segment-lp and the lp itself carries a hyphen, so the language\n+        # pair is stripped from the tail before the segment index is read off\n+        seg = [int(s[: -(len(lp) + 1)].rsplit(\"-\", 1)[-1]) + 1 for s in d[\"orig_segment_id\"]]\n+        d[\"domain_name\"] = [docs[i][0] for i in seg]\n+        per_domain = d.groupby([\"system_id\", \"domain_name\"])[\"overall\"].mean().reset_index()\n+        avg = (per_domain.groupby(\"system_id\")[\"overall\"].mean().reset_index()\n+               .sort_values(\"overall\", ascending=False))\n  ... diff truncated"
   },
   {
    "artifact": "results/xdomain_retro_protocol.json",
