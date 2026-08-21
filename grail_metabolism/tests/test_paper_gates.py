@@ -45,26 +45,35 @@ def test_paper_gate_exits_zero(script, args):
         f"--- stdout ---\n{run.stdout[-4000:]}\n--- stderr ---\n{run.stderr[-2000:]}")
 
 
-def test_h1_stratum_file_matches_its_artifact():
-    """The membership file and the run that produced it cannot drift apart.
+STRATA = [
+    # (artifact, in-arm file, complement file, the row flag that means `in the arm')
+    ("h1_stratum.json", "sparse_at_rule_dense_at_type.txt",
+     "sparse_at_rule_dense_at_type_complement.txt", "in_stratum"),
+    ("h6_stratum.json", "trivial_automorphism.txt", "nontrivial_automorphism.txt", "trivial"),
+]
 
-    H1 is registered on a file of substrate SMILES. If that file were edited, or regenerated
-    under a changed definition, the hypothesis would quietly become a different one. The file
-    has to be exactly the in-stratum substrates of the committed artifact.
+
+@pytest.mark.parametrize("artifact,arm,complement,flag", STRATA,
+                         ids=[s[1].replace(".txt", "") for s in STRATA])
+def test_stratum_file_matches_its_artifact(artifact, arm, complement, flag):
+    """A membership file and the run that produced it cannot drift apart.
+
+    Each hypothesis is registered on a file of substrate SMILES. If one were edited, or
+    regenerated under a changed definition, the hypothesis would quietly become a different
+    one. Each file has to be exactly the in-arm substrates of its committed artifact, and the
+    two files have to partition the split.
     """
     import json
 
-    art = ROOT / "results" / "h1_stratum.json"
-    txt = ROOT / "strata" / "sparse_at_rule_dense_at_type.txt"
-    if not art.exists() or not txt.exists():
-        pytest.skip("the H1 stratum has not been built in this checkout")
+    art = ROOT / "results" / artifact
+    txt, comp = ROOT / "strata" / arm, ROOT / "strata" / complement
+    if not art.exists() or not txt.exists() or not comp.exists():
+        pytest.skip(f"{artifact} has not been built in this checkout")
     d = json.loads(art.read_text())
     listed = [l for l in txt.read_text().splitlines() if l.strip()]
-    from_rows = sorted({r["substrate"] for r in d["rows"] if r["in_stratum"]})
+    other = [l for l in comp.read_text().splitlines() if l.strip()]
+    from_rows = sorted({r["substrate"] for r in d["rows"] if r[flag]})
     assert listed == from_rows, (
-        f"the stratum file holds {len(listed)} substrates, the artifact {len(from_rows)}")
-    assert len(listed) == d["n_stratum_substrates"]
-    complement = [l for l in (ROOT / "strata" /
-                              "sparse_at_rule_dense_at_type_complement.txt").read_text()
-                  .splitlines() if l.strip()]
-    assert len(listed) + len(complement) == d["n_substrates"], "the two files do not partition"
+        f"{arm} holds {len(listed)} substrates, the artifact {len(from_rows)}")
+    assert len(listed) + len(other) == d["n_substrates"], f"{arm} and {complement} do not partition"
+    assert not set(listed) & set(other), f"{arm} and {complement} overlap"

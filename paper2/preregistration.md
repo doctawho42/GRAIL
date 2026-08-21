@@ -18,7 +18,7 @@ each hypothesis names its own.
 |---|---|
 | the train/valid/test split, substrate-disjoint, with the zero-overlap audit | nothing else matters without it |
 | `strata/sparse_at_rule_dense_at_type.txt` and its complement | without them H1 is post hoc |
-| `strata/trivial_automorphism.txt` | the control arm of H6 |
+| `strata/trivial_automorphism.txt` and `strata/nontrivial_automorphism.txt` | the two arms of H6 |
 | the type vocabulary, its signature definition and its radius, plus the curve over both | the choice of signature is itself an undeclared choice |
 | `analyse.py` in full | thresholds cannot move after the numbers are seen |
 | the comparator set, including LAGOM, DeepMetab, DeepCYP and Metabolite-Gen | adding a comparator after a run is choosing a cell |
@@ -41,6 +41,8 @@ is stated as a fixed quantity and never as a hypothesis.
 | the same, types as labels | 77.9% | same |
 | test substrates in the H1 stratum | 277 of 1,170 (23.7%) | `results/h1_stratum.json` |
 | test references in the H1 stratum | 376 of 2,536 (14.8%) | same |
+| test substrates with a trivial automorphism group | 445 of 1,170 (38.0%) | `results/h6_stratum.json` |
+| of the 725 with a symmetry, those whose largest orbit is a pair | 615 (84.8%) | same |
 
 The first version of this file predicted that soft admissibility would return about half of the
 98 and lift the ceiling to 0.836. It returns three and lifts it to 0.8183. H1 and H5 are
@@ -188,6 +190,19 @@ version is recorded here.
 whatever changed alongside it would have to be found separately.
 
 **Family:** H6 alone, m = 1, both strata inside it.
+
+**The arms, as built.** Symmetry classes come from RDKit's canonical ranking with ties left
+unbroken and chirality excluded, the latter because the pipeline strips stereochemistry before
+the rules fire. Every heavy atom in its own class means the group is trivial, and that
+direction is exact, which is the direction the control arm needs.
+
+  445 of 1,170 substrates (38.0%) are the control arm; 725 carry a symmetry.
+
+**What bounds the treatment arm.** Of the 725, **615 (84.8%) have a largest orbit of two**: one
+pair of equivalent atoms and nothing more. Seventy-five reach three, thirty-one reach four,
+three reach six and one reaches eight. Pooling over a pair can at most double one candidate's
+mass, so the effect this hypothesis predicts is small on most of the arm it is predicted on.
+That is recorded here rather than after a null, where it would read as an excuse.
 
 ---
 
