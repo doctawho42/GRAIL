@@ -17,7 +17,7 @@ each hypothesis names its own.
 | artifact | why |
 |---|---|
 | the train/valid/test split, substrate-disjoint, with the zero-overlap audit | nothing else matters without it |
-| `strata/sparse_at_rule_dense_at_type.txt` | without it H1 is post hoc |
+| `strata/sparse_at_rule_dense_at_type.txt` and its complement | without them H1 is post hoc |
 | `strata/trivial_automorphism.txt` | the control arm of H6 |
 | the type vocabulary, its signature definition and its radius, plus the curve over both | the choice of signature is itself an undeclared choice |
 | `analyse.py` in full | thresholds cannot move after the numbers are seen |
@@ -39,6 +39,8 @@ is stated as a fixed quantity and never as a hypothesis.
 | bank types with at least one carrier the relaxation touches | 383 of 4,417 (8.7%) | `results/typed_edit_type_carriers.json` |
 | training pairs in labels with at least five examples, rules as labels | 64.4% | `results/typed_edit_type_curve.json` |
 | the same, types as labels | 77.9% | same |
+| test substrates in the H1 stratum | 277 of 1,170 (23.7%) | `results/h1_stratum.json` |
+| test references in the H1 stratum | 376 of 2,536 (14.8%) | same |
 
 The first version of this file predicted that soft admissibility would return about half of the
 98 and lift the ceiling to 0.836. It returns three and lifts it to 0.8183. H1 and H5 are
@@ -70,10 +72,19 @@ reformulated and re-registered rather than written up after the fact.
 **Family:** H1 alone, m = 1. It shared a family with H5 while both were about soft
 admissibility; they now test different mechanisms and are corrected apart.
 
-**Blocking prerequisite.** `strata/sparse_at_rule_dense_at_type.txt` does not yet exist.
-Building it means typing every one of the 2,597 test reference transformations through the
-mining route and joining each to its rule-level and type-level support, which is a full pass
-over the split. This file cannot be frozen until that membership file is committed.
+**The stratum, as built.** `strata/sparse_at_rule_dense_at_type.txt` holds **277 of the 1,170
+test substrates (23.7%)**, carrying **376 of the 2,536 typeable reference transformations
+(14.8%)**. Its complement is committed beside it. Of the 2,536, the exact mined rule is in the
+catalog for 1,564 (61.7%), 1,259 (49.6%) are sparse at rule level and 1,653 (65.2%) are dense
+at type level; the stratum is the intersection of the last two. Sixty-one references do not
+type through the mining route and are in neither file.
+
+**Why the threshold is 0.5.** A gain spread uniformly over the split would put 14.8% of itself
+here, that being the stratum's share of the references. Asking for half is asking for 3.4 times
+the uniform expectation, so a typed model that simply scores better everywhere fails this
+hypothesis while passing its own contrast. The threshold was fixed before the stratum was
+built; the enrichment factor it implies is recorded now that the sizes are known, and the
+threshold is not moved to suit them.
 
 ---
 

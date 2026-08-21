@@ -43,3 +43,28 @@ def test_paper_gate_exits_zero(script, args):
     assert run.returncode == 0, (
         f"{script} exited {run.returncode}\n"
         f"--- stdout ---\n{run.stdout[-4000:]}\n--- stderr ---\n{run.stderr[-2000:]}")
+
+
+def test_h1_stratum_file_matches_its_artifact():
+    """The membership file and the run that produced it cannot drift apart.
+
+    H1 is registered on a file of substrate SMILES. If that file were edited, or regenerated
+    under a changed definition, the hypothesis would quietly become a different one. The file
+    has to be exactly the in-stratum substrates of the committed artifact.
+    """
+    import json
+
+    art = ROOT / "results" / "h1_stratum.json"
+    txt = ROOT / "strata" / "sparse_at_rule_dense_at_type.txt"
+    if not art.exists() or not txt.exists():
+        pytest.skip("the H1 stratum has not been built in this checkout")
+    d = json.loads(art.read_text())
+    listed = [l for l in txt.read_text().splitlines() if l.strip()]
+    from_rows = sorted({r["substrate"] for r in d["rows"] if r["in_stratum"]})
+    assert listed == from_rows, (
+        f"the stratum file holds {len(listed)} substrates, the artifact {len(from_rows)}")
+    assert len(listed) == d["n_stratum_substrates"]
+    complement = [l for l in (ROOT / "strata" /
+                              "sparse_at_rule_dense_at_type_complement.txt").read_text()
+                  .splitlines() if l.strip()]
+    assert len(listed) + len(complement) == d["n_substrates"], "the two files do not partition"
