@@ -59,6 +59,16 @@ The first version of this file predicted that soft admissibility would return ab
 rewritten below around what the measurement leaves standing, and the mechanism they used to
 name is recorded here as a closed question rather than deleted.
 
+### 0.1a Three of our own
+
+Three numbers produced while building these instruments did not describe what they appeared to
+describe: a rule bank of 7,581 that was silently 844, a ceiling literal that survived the
+correction of the code that wrote it, and this registration's own H1 stratum, 227 of whose 376
+pairs were in it by notation. Each is set out in `paper2/three_instances.md` with its mechanism,
+what caught it, and its fix. They are recorded because they are the only honest explanation of
+why the checks below sit where they sit, and because a methodological claim that has only ever
+been tested on other people's work has not been tested.
+
 ### 0.2 The split, frozen
 
 `paper2/split_manifest.json` fingerprints what is frozen: the content digest of each clean
