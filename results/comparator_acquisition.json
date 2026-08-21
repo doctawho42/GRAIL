@@ -1,0 +1,46 @@
+{
+ "what_this_is": "What each comparator of the closed list publishes, and whether it can be run as released on the frozen test set. The remote facts each name the URL they were read from and the date.",
+ "read_on": "2026-08-21",
+ "comparators": {
+  "LAGOM": {
+   "paper": "10.1016/j.ailsci.2025.100142",
+   "code": "https://github.com/tsofiac/LAGOM",
+   "licence": "Apache-2.0",
+   "weights_published": false,
+   "runnable_as_released": false,
+   "reason": "The repository publishes training code only. Its README points at the base pre-trained Chemformer checkpoint in MolecularAI/chemformer and publishes no LAGOM fine-tuned checkpoint, so running LAGOM means fine-tuning it ourselves on data that includes DrugBank, which needs an academic licence. A model we trained is our reimplementation of LAGOM and not LAGOM, and this project compares released predictions rather than reimplementations."
+  },
+  "DeepMetab": {
+   "paper": "10.1039/d5sc04631a",
+   "code": "https://github.com/YilingZhou/DeepMetab",
+   "licence": "MIT",
+   "weights_published": true,
+   "weights_obtained": "81 Git-LFS objects, 307.8 MB, every one verified against the sha256 its pointer declares",
+   "runnable_as_released": false,
+   "reason": "SOM/Reaction.py, which predict_main.py imports for get_products_all and the reaction typing, is absent from the repository tree; only its Python 3.7 bytecode remains in __pycache__. The author states in issue #1 (2025-12-29): 'Due to copyright and privacy protection policies, I have removed those two parts from the GitHub repository', and directs users to the DeepCYP web server or to email. Site-of-metabolism and substrate prediction do import and run; metabolite generation, which is the axis this work compares on, does not.",
+   "evidence": "https://github.com/YilingZhou/DeepMetab/issues/1",
+   "note_on_the_other_half_of_that_issue": "The reporter's second symptom, `invalid load key, v`, is torch reading an unfetched LFS pointer. That half is solvable and is solved here: the objects were fetched through the LFS batch API and five sampled checkpoints load as chemprop MoleculeModels of 771,184 parameters once torch 2.6's weights_only default is turned off."
+  },
+  "DeepCYP": {
+   "paper": "10.1093/nar/gkag478",
+   "code": null,
+   "service": "https://deepcyp.scbdd.com",
+   "weights_published": false,
+   "runnable_as_released": false,
+   "reason": "Published as a web server, and named by the DeepMetab author as the route to run DeepMetab. No downloadable model or documented API was found. Submitting the 1,170-substrate test set to a third party's web service is an outward-facing action at a scale the service does not advertise, and is not done without the author of this work deciding to."
+  },
+  "Metabolite-Gen": {
+   "paper": "10.26434/chemrxiv.15002775",
+   "code": null,
+   "weights_published": false,
+   "runnable_as_released": false,
+   "reason": "A ChemRxiv preprint, not peer reviewed. No code repository was found by search or on the author's GitHub accounts, and chemrxiv.org serves the record behind a challenge that blocks retrieval, so the availability statement could not be read."
+  }
+ },
+ "summary": {
+  "obtained": 1,
+  "runnable_as_released": 0,
+  "of": 4,
+  "what_follows": "None of the 2025-26 wave can be run end to end as released. Under the rule the registration states, each is reported as unavailable with its reason, and the claim available to this work is dominance over the five comparators that were run, named as such."
+ }
+}

@@ -91,14 +91,20 @@ it is not silently dropped, and no comparator is added later.
 | MetaTrans \citep{Litsa_2020} | frozen predictions only | its pipeline no longer reproduces here, which is why the five-method table rests on 150 shared substrates |
 | MetaPredictor \citep{Zhu_2024} | third-party weights, cited rather than shipped | predictions frozen |
 | GLORYx \citep{de_Bruyn_Kops_2020} | the external 37-substrate set | 24 of the 37 overlap the training substrates; the rank-flip section reports the 13 that do not |
-| LAGOM \citep{Larsson_2025} | DOI 10.1016/j.ailsci.2025.100142 | **not obtained, not run** |
-| DeepMetab \citep{Zhou_2025} | DOI 10.1039/d5sc04631a | **not obtained, not run** |
-| DeepCYP \citep{Zhou_2026} | DOI 10.1093/nar/gkag478 | **not obtained, not run** |
-| Metabolite-Gen \citep{Chavan_2026} | DOI 10.26434/chemrxiv.15002775, preprint, not peer reviewed | **not obtained, not run** |
+| LAGOM \citep{Larsson_2025} | code at github.com/tsofiac/LAGOM, Apache-2.0 | **no fine-tuned checkpoint is published**; running it means training it ourselves, on data including DrugBank |
+| DeepMetab \citep{Zhou_2025} | weights obtained: 81 LFS objects, 307.8\,MB, each verified against its declared sha256 | **the generation module is withheld**: `SOM/Reaction.py` is absent from the tree and the author states it was removed (issue \#1, 2025-12-29) |
+| DeepCYP \citep{Zhou_2026} | a web service, deepcyp.scbdd.com | **web only**, and named by the DeepMetab author as the route to run DeepMetab |
+| Metabolite-Gen \citep{Chavan_2026} | preprint only, not peer reviewed | **no code repository found**, and the record could not be retrieved to read its availability statement |
 | MetaTox | named in the plan | **no run in this repository** |
 
 Six of the ten are pinned or frozen and four are not, which is the honest state of the list on
-the day it is closed. The BioTransformer row is pinned by the digest of the jar itself and by
+the day it is closed. The four were pursued rather than assumed unavailable, and the outcome is
+recorded per comparator in `results/comparator_acquisition.json` with the URL each fact was
+read from: **none of the 2025-26 wave can be run end to end as released.** One of the four
+publishes usable weights and withholds the module that turns a predicted site into a metabolite;
+one publishes code and no checkpoint; one is a web service; one publishes neither. This is a
+fact about that literature and not a difficulty of ours, and it is reported as such rather than
+as a set of comparators we chose to leave out. The BioTransformer row is pinned by the digest of the jar itself and by
 the upstream commit, not by a version string: `3.0` names several builds, and the 994 templates
 the appendix reports are counted from files whose digests are in the manifest beside it. The four systems of the 2025-26 wave are the ones that set the operating
 point this work has to beat, so a claim of a state of the art without them is not available
