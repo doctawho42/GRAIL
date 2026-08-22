@@ -68,6 +68,11 @@ EFFECT = re.compile(
     r"lower than|closes the gap|ahead of)\b", re.I)
 # A signed effect size claims one too, even with no verb: `+0.176`, `$+0.12$`.
 EFFECT_NUMBER = re.compile(r"[+\u2212-]\s*0\.\d{2,}")
+# `recovers a reference' is a claim; `recovered from the commit' is a file operation that
+# happens to share a verb. The sense is fixed by the object, so the object excludes it.
+RETRIEVAL = re.compile(
+    r"recover(?:s|ed|y)?\s+(?:\w+\s+){0,3}from\s+(?:the\s+)?"
+    r"(?:commit|log|git|repository|artifact|release|pointer|blob|tree|checkout)", re.I)
 
 TAG = re.compile(r"\\prereg\{(H\d+)\}|\b(H\d+)\b")
 CITED = re.compile(r"\\cite[a-z]*\{|\\citet|\\citep")
@@ -189,6 +194,8 @@ def scan(text: str, hyps: dict) -> dict:
         mentioned |= known
         if FAILED.search(s):
             failed |= known
+        if RETRIEVAL.search(s):
+            continue
         if not (EFFECT.search(s) or EFFECT_NUMBER.search(s)):
             continue
         claims.append(s)
@@ -221,13 +228,16 @@ def scan(text: str, hyps: dict) -> dict:
 
 
 def report(hyps: dict, problems: list, res: dict, quiet: bool = False,
-           have_text: bool = True) -> int:
+           have_text: bool = True, backwards: bool = True) -> int:
     # With no manuscript to read, the backwards direction has nothing to say: every
     # hypothesis is trivially absent. Validating the registry alone is a real check and is
     # what this reports before the paper exists; it must not masquerade as the full one.
+    # The forward direction reads whatever text it is given, a section included. The backwards
+    # direction is a statement about a COMPLETE manuscript: a hypothesis missing from one
+    # section has not gone missing from the paper.
     ok = not (problems or res["unregistered"] or res["unknown_hypothesis"]
               or res.get("vocabulary")
-              or (have_text and (res["absent"] or res["no_outcome"])))
+              or (have_text and backwards and (res["absent"] or res["no_outcome"])))
     if quiet:
         return 0 if ok else 1
     print(f"  registry: {len(hyps)} hypotheses "
@@ -252,12 +262,15 @@ def report(hyps: dict, problems: list, res: dict, quiet: bool = False,
         print(f"  FAIL: names {','.join(ids)}, which the registry does not: {s[:100]}")
     for s in res["unregistered"]:
         print(f"  FAIL: claims an effect with no hypothesis: {s[:100]}")
-    for h in res["absent"]:
-        print(f"  FAIL: {h} is registered and never appears; a hypothesis leaves the paper "
-              f"only by being reported as having failed")
-    for h in res["no_outcome"]:
-        print(f"  FAIL: {h} is named but carries neither a claim nor an outcome")
-    if not quiet:
+    if backwards:
+        for h in res["absent"]:
+            print(f"  FAIL: {h} is registered and never appears; a hypothesis leaves the paper "
+                  f"only by being reported as having failed")
+        for h in res["no_outcome"]:
+            print(f"  FAIL: {h} is named but carries neither a claim nor an outcome")
+    else:
+        print("    the text is a section, so the backwards direction is not read")
+    if not quiet and backwards:
         for h, o in sorted(res["outcome"].items()):
             print(f"    {h}: {o}")
     print("check_prereg: OK" if ok else "check_prereg: FAILURES ABOVE")
@@ -375,6 +388,23 @@ def self_test() -> int:
         if scan_vocabularies("The split holds 1,170 types of thing.", counts):
             print("FAIL: a number that is not a type count was flagged"); ok = False
 
+        # `recovered from the commit' is a file operation wearing an effect verb
+        retrieval = scan("The producer is recovered from the commit that added the artifact.",
+                         hyps)
+        if retrieval["unregistered"]:
+            print(f"FAIL: a retrieval was read as an effect claim: "
+                  f"{retrieval['unregistered']}")
+            ok = False
+        if not scan("Typing recovers 40 references the bank missed.", hyps)["unregistered"]:
+            print("FAIL: a real recovery claim was excluded with the retrievals"); ok = False
+
+        # the backwards direction is a statement about a whole manuscript
+        section = scan("Soft admissibility raises recall \\prereg{H1}.", hyps)
+        if report(hyps, [], section, quiet=True, backwards=False) != 0:
+            print("FAIL: a section was judged for hypotheses it does not mention"); ok = False
+        if report(hyps, [], section, quiet=True, backwards=True) == 0:
+            print("FAIL: a whole manuscript missing two hypotheses was accepted"); ok = False
+
     print("self-test: OK" if ok else "self-test: FAILURES ABOVE")
     return 0 if ok else 1
 
@@ -383,6 +413,9 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--prereg", help="the preregistration markdown")
     ap.add_argument("--text", nargs="*", default=[], help="manuscript files to scan")
+    ap.add_argument("--partial", action="store_true",
+                    help="the text is a section and not the whole manuscript, so a hypothesis "
+                         "it does not mention is not a hypothesis that has gone missing")
     ap.add_argument("--json", help="where to write the report")
     ap.add_argument("--self-test", action="store_true")
     args = ap.parse_args()
@@ -399,7 +432,8 @@ def main() -> int:
     # the registration is scanned for vocabulary too: it quotes these counts itself
     res["vocabulary"] = scan_vocabularies(
         text + "\n" + Path(args.prereg).read_text(), counts)
-    code = report(hyps, problems, res, have_text=bool(args.text))
+    code = report(hyps, problems, res, have_text=bool(args.text),
+                  backwards=not args.partial)
     if args.json:
         Path(args.json).write_text(json.dumps(
             {"prereg": args.prereg, "text": args.text, "hypotheses": hyps,
