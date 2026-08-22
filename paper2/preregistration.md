@@ -306,6 +306,20 @@ whether the world model the system is built from is right, not whether something
 relaxation of convention-dependent primitives is not on this list and never was; what the
 measurement above closed is H5's mechanism, not this ordering.
 
+**On the floor this list starts from.** The +0.176 is measured on a 245-substrate subsample of
+the test split, drawn at random (`rng.choice`, without replacement, seed 44) and not sliced, so
+it is a sample and not a selection. Its full-split value is being computed and will be recorded
+in §0.1 when it lands. **H4 predicts an ordering, not a magnitude**, so a floor that moves
+without inverting a pair leaves the prediction untouched; a floor that inverts one inverts it
+before the freeze and the registration says so rather than re-deriving the list around the new
+number.
+
+An earlier note in this project asserted that the 245-substrate subsample was systematically
+harder than the split, on the strength of a `ceiling_on_this_subset` of 0.7284. That literal
+predates a correction that took the same quantity to 0.8007 on the same substrates, against
+0.8171 on the full split -- a difference consistent with sampling. The assertion was wrong and
+is retracted here; see `paper2/three_instances.md`.
+
 **Family:** the six pairwise comparisons, m = 6.
 
 ---

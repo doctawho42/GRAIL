@@ -50,8 +50,9 @@ PINNED = {
     "results/typed_edit_known_type_recovery.json": f"{TE}/known_type_recovery.py",
     "results/typed_edit_step0.json": f"{TE}/run_bank.py",
     "results/typed_edit_relaxation.json": f"{TE}/relaxation_ladder.py",
-    # the emission comparison, and the freeze itself
+    # the emission comparison, its grid, and the freeze itself
     "results/emission_leaderboard.json": f"{TE}/emission_leaderboard.py",
+    "results/emission_grid.json": f"{TE}/emission_grid.py",
     "paper2/split_manifest.json": f"{TE}/freeze_split.py",
 }
 
