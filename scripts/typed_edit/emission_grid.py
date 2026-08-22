@@ -99,17 +99,19 @@ def main() -> int:
             cell[name] = row
         grid[crit] = cell
 
-    # the gate: the published cell has to be the committed one
+    # The gate: the published cell has to be the committed one. Every arm is compared UNCAPPED,
+    # because the committed table scores each method at its own emission -- SyGMa's 74 and
+    # BioTransformer's 10.8, not a shared budget. Comparing at k=15 read SyGMa at a budget it
+    # never emits at and reported a mismatch of 0.08 that was the gate's error, not the grid's.
     want = json.loads(COMMITTED.read_text())["table"]
     got = grid[PUBLISHED[0]]
     mism = []
     for name, row in want.items():
-        arm = name if name in got else None
-        if arm is None:
+        if name not in got:
             continue
-        ours = got[arm]["uncapped"] if arm.startswith("GRAIL, pool") else got[arm][str(PUBLISHED[1])]
-        if abs(ours - row["f1"]) > 5e-4:
-            mism.append(f"{arm}: grid {ours} vs committed {row['f1']}")
+        ours = got[name]["uncapped"]
+        if abs(round(ours, 3) - row["f1"]) > 1e-9:
+            mism.append(f"{name}: grid {ours:.4f} vs committed {row['f1']}")
 
     # dominance: the rule, emitting what its scores say, against each comparator in every cell
     others = [n for n in arms if n != rule]
@@ -124,12 +126,31 @@ def main() -> int:
                                           "rule": grid[c][rule]["uncapped"],
                                           "them": grid[c][name][str(k)]} for c, k in cells[:6]]}
 
+    # Where the rule loses is not scattered: it loses at small budgets, where a comparator is
+    # read at an output comparable to the rule's own two candidates and its ranking decides.
+    # The boundary is the finding, so it is derived here rather than left to a reader's eye.
+    by_budget = {}
+    for k in BUDGETS:
+        lost = {n: sum(1 for c in CRITERIA if grid[c][rule]["uncapped"] <= grid[c][n][str(k)])
+                for n in others}
+        by_budget[str(k)] = {"lost_or_tied_per_comparator": lost,
+                             "beats_every_comparator_everywhere": not any(lost.values())}
+    clean = [int(k) for k, v in by_budget.items() if v["beats_every_comparator_everywhere"]]
+    dominance_range = {"budgets_where_it_beats_everything": clean,
+                       "lowest_such_budget": min(clean) if clean else None,
+                       "reading": ("the rule emits about two candidates, so at budgets at or "
+                                   "below its own output a comparator is read at a comparable "
+                                   "size and its ranking decides. Above that the rule's output "
+                                   "policy decides. The lead is a fact about output size, not "
+                                   "about ranking.")}
+
     rep = {"provenance": stamp(__file__), "population": {"n": len(subs)},
            "criteria": CRITERIA, "budgets": BUDGETS, "alpha": args.alpha,
            "mean_output": mean_output,
            "gate": {"published_cell": list(PUBLISHED),
                     "reproduces_emission_leaderboard": not mism, "mismatches": mism},
            "grid": grid, "dominance_of_the_rule": verdict,
+           "dominance_by_budget": by_budget, "dominance_range": dominance_range,
            "caveat": "BioTransformer returns an unranked set, so truncating it at k picks by "
                      "file order and not by confidence"}
     Path(args.out).write_text(json.dumps(rep, indent=1))
@@ -140,6 +161,8 @@ def main() -> int:
         print(f"{name:<26}{v['cells']:>7}{v['lost_or_tied']:>20}  "
               f"{'dominates' if v['dominates'] else 'does NOT dominate'}")
     print(f"\nrule mean output {mean_output[rule]}")
+    print(f"it beats every comparator under every criterion at budgets "
+          f"{dominance_range['budgets_where_it_beats_everything']}")
     if mism:
         print(f"\nGATE FAILED: {mism}")
         return 1

@@ -98,6 +98,32 @@ appear as molecules in train and 115 as annotated metabolites of a train substra
 property of a metabolic corpus, not a leak of the label, and it is recorded so that nobody has
 to rediscover it as one.
 
+### 0.2a What the emission rule is and is not entitled to claim
+
+The pool-relative emission rule leads the five-method table on macro F1 at the published cell:
+0.192 against MetaTrans's 0.177, emitting 2.09 candidates against the deployed 8.65 and SyGMa's
+74.15. Two facts bound what may be said about that, and both are measured.
+
+**The interval.** Of the five paired contrasts, two separate from zero: **+0.049
+[+0.013, +0.086]** against our own deployed output policy and **+0.141 [+0.090, +0.196]**
+against SyGMa's volume strategy. Against the three learned methods the differences are +0.015
+to +0.030 with intervals covering zero. The lead over them is not established and is not
+claimed.
+
+**The grid.** Run in every cell of five criteria crossed with ten budgets the comparators are
+read at, the rule beats every comparator under every criterion at budgets of 15 and above --
+25 cells of 25 -- and loses or ties at 8 and below. The boundary is where the comparators'
+output falls to the rule's own two candidates: below it a comparator is read at a comparable
+size and its ranking decides, above it the rule's output policy decides.
+
+Together these say what the contribution is. It is a declared emission policy that beats an
+undeclared budget and a volume strategy, on the axis and at the budgets the field reports.
+It is not a better ranking: at matched small output the comparators win, which is the same
+thing recall@15 says when it falls from 0.365 to 0.219. A paper claiming an F1 leadership from
+the published cell alone would be selecting a cell, which is the error this series is about.
+
+---
+
 ### 0.3 The comparator set, closed
 
 Adding a comparator after a run is choosing a cell, so the list is closed here. A comparator
