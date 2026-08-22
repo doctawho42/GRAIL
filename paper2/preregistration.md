@@ -51,6 +51,9 @@ without naming which.
 | the same, signature types as labels | 77.9% | same |
 | test substrates in the H1 stratum | 277 of 1,170 (23.7%) | `results/h1_stratum.json` |
 | test references in the H1 stratum | 376 of 2,536 (14.8%) | same |
+| pool coverage, whole bank, no selector, k = 82 | 0.7326 on 1,128 substrates | `results/bank_without_selection_full.json` |
+| the same on the 245-substrate subsample | 0.7602 | `results/bank_without_selection.json` |
+| SyGMa recall@15 on the same 1,128 | 0.5707 | `results/bank_without_selection_full.json` |
 | test substrates with a trivial automorphism group | 445 of 1,170 (38.0%) | `results/h6_stratum.json` |
 | of the 725 with a symmetry, those whose largest orbit is a pair | 615 (84.8%) | same |
 
@@ -68,6 +71,41 @@ pairs were in it by notation. Each is set out in `paper2/three_instances.md` wit
 what caught it, and its fix. They are recorded because they are the only honest explanation of
 why the checks below sit where they sit, and because a methodological claim that has only ever
 been tested on other people's work has not been tested.
+
+### 0.1b The pool, measured on the split rather than on a fifth of it
+
+The project's target function was derived from a 245-substrate subsample: a pool coverage of
+0.7602, a recall@15 of 0.5277 without a selector, and therefore a top-15 retention of 0.694.
+Re-measured on 1,128 substrates -- the full clean test split less 42 the loader drops -- the
+ladder sits lower and one of its conclusions does not survive.
+
+| k | 245: GRAIL | SyGMa | gap | 1,128: GRAIL | SyGMa | gap | interval excludes zero |
+|---|---|---|---|---|---|---|---|
+| 8 | 0.4151 | 0.5208 | −0.106 | 0.3731 | 0.5256 | −0.153 | yes |
+| 15 | 0.5277 | 0.5755 | −0.048 | 0.4714 | 0.5707 | **−0.099** | **yes** |
+| 32 | 0.6519 | 0.5889 | +0.063 | 0.6022 | 0.5880 | **+0.014** | **no** |
+| 64 | 0.7345 | 0.5930 | +0.141 | 0.6971 | 0.5907 | +0.106 | yes |
+| 82 | 0.7602 | 0.5930 | +0.167 | 0.7326 | 0.5920 | +0.141 | yes |
+
+Two readings change. On the subsample the bank without a selector was **statistically
+indistinguishable from SyGMa at the budget the field reports**, which was the strongest form of
+the claim that the bank is not the bottleneck; on the split the gap at k = 15 is −0.099 and its
+interval excludes zero. And the crossover at k = 32 was separated from zero on the subsample and
+is not on the split (+0.014, interval covering zero). The subsample was favourable, not harsh --
+the opposite of what an earlier note in this project asserted, and for a reason that has nothing
+to do with the ceiling literal that note relied on.
+
+**The target arithmetic, restated.** Retention is recall@15 over pool coverage: 0.4714 / 0.7326
+= **0.6435**, against 0.694 on the subsample. Lifting it to 0.85 gives recall@15 = 0.623 and to
+0.90 gives 0.659, against SyGMa's 0.571 on the same substrates.
+
+**What may and may not be frozen from this.** The pool is clean: it is the bank applied without
+a selector, and the generator does not enter it. **Retention is not**: it is ranking, ranking is
+the filter times the generator, and the generator is trained on the label matrix whose
+convention disagrees with the firing convention on a Jaccard of 0.456. The pool coverage of
+0.7326 is therefore a fixed quantity in the sense of §0.1; the retention of 0.6435 is recorded
+as the value under the current supervision and is re-measured after that defect is fixed, before
+any target is set against it.
 
 ### 0.2 The split, frozen
 

@@ -53,6 +53,8 @@ PINNED = {
     # the emission comparison, its grid, and the freeze itself
     "results/emission_leaderboard.json": f"{TE}/emission_leaderboard.py",
     "results/emission_grid.json": f"{TE}/emission_grid.py",
+    # the pool the target function is derived from, measured on the split
+    "results/bank_without_selection_full.json": "scripts/bank_without_selection.py",
     "paper2/split_manifest.json": f"{TE}/freeze_split.py",
 }
 
