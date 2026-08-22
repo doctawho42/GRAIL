@@ -1,0 +1,738 @@
+{
+ "provenance": {
+  "script": "emission_grid.py",
+  "script_path": "scripts/typed_edit/emission_grid.py",
+  "source_sha256": "cbd7f16efe1462cb1540ce97c6f1cef12b6b1e6ba9a856c28e7b3e218fee5b28",
+  "git_commit": "7d1439be8b6e355f6dc4a1ae2bdd0412be686e70",
+  "git_dirty": true
+ },
+ "population": {
+  "n": 150
+ },
+ "criteria": [
+  "canonical",
+  "inchikey",
+  "inchi_no_stereo",
+  "tanimoto1",
+  "inchikey_tautomer"
+ ],
+ "budgets": [
+  1,
+  3,
+  5,
+  8,
+  10,
+  15,
+  20,
+  32,
+  50,
+  74
+ ],
+ "alpha": 0.5,
+ "mean_output": {
+  "GRAIL, pool-relative alpha=0.5": 2.09,
+  "GRAIL, deployed budget": 8.65,
+  "BioTransformer": 10.77,
+  "MetaPredictor": 11.15,
+  "MetaTrans": 12.71,
+  "SyGMa": 74.15
+ },
+ "gate": {
+  "published_cell": [
+   "inchikey_tautomer",
+   15
+  ],
+  "reproduces_emission_leaderboard": true,
+  "mismatches": []
+ },
+ "grid": {
+  "canonical": {
+   "GRAIL, pool-relative alpha=0.5": {
+    "1": 0.1756,
+    "3": 0.1906,
+    "5": 0.1905,
+    "8": 0.1905,
+    "10": 0.1905,
+    "15": 0.1905,
+    "20": 0.1905,
+    "32": 0.1905,
+    "50": 0.1905,
+    "74": 0.1905,
+    "uncapped": 0.1905
+   },
+   "GRAIL, deployed budget": {
+    "1": 0.1756,
+    "3": 0.192,
+    "5": 0.1634,
+    "8": 0.1487,
+    "10": 0.1439,
+    "15": 0.1398,
+    "20": 0.1398,
+    "32": 0.1398,
+    "50": 0.1398,
+    "74": 0.1398,
+    "uncapped": 0.1398
+   },
+   "BioTransformer": {
+    "1": 0.0882,
+    "3": 0.1348,
+    "5": 0.1346,
+    "8": 0.1341,
+    "10": 0.129,
+    "15": 0.1284,
+    "20": 0.1281,
+    "32": 0.1278,
+    "50": 0.1277,
+    "74": 0.1277,
+    "uncapped": 0.1277
+   },
+   "MetaPredictor": {
+    "1": 0.247,
+    "3": 0.2519,
+    "5": 0.2231,
+    "8": 0.1881,
+    "10": 0.1742,
+    "15": 0.1601,
+    "20": 0.1607,
+    "32": 0.1607,
+    "50": 0.1607,
+    "74": 0.1607,
+    "uncapped": 0.1607
+   },
+   "MetaTrans": {
+    "1": 0.2143,
+    "3": 0.2169,
+    "5": 0.1931,
+    "8": 0.1723,
+    "10": 0.1618,
+    "15": 0.1484,
+    "20": 0.1465,
+    "32": 0.1464,
+    "50": 0.1464,
+    "74": 0.1464,
+    "uncapped": 0.1464
+   },
+   "SyGMa": {
+    "1": 0.2569,
+    "3": 0.2543,
+    "5": 0.2272,
+    "8": 0.1835,
+    "10": 0.1654,
+    "15": 0.126,
+    "20": 0.1017,
+    "32": 0.0732,
+    "50": 0.0583,
+    "74": 0.0523,
+    "uncapped": 0.0488
+   }
+  },
+  "inchikey": {
+   "GRAIL, pool-relative alpha=0.5": {
+    "1": 0.1756,
+    "3": 0.1913,
+    "5": 0.1911,
+    "8": 0.1911,
+    "10": 0.1911,
+    "15": 0.1911,
+    "20": 0.1911,
+    "32": 0.1911,
+    "50": 0.1911,
+    "74": 0.1911,
+    "uncapped": 0.1911
+   },
+   "GRAIL, deployed budget": {
+    "1": 0.1756,
+    "3": 0.1936,
+    "5": 0.1648,
+    "8": 0.15,
+    "10": 0.145,
+    "15": 0.1408,
+    "20": 0.1408,
+    "32": 0.1408,
+    "50": 0.1408,
+    "74": 0.1408,
+    "uncapped": 0.1408
+   },
+   "BioTransformer": {
+    "1": 0.1317,
+    "3": 0.1789,
+    "5": 0.1734,
+    "8": 0.1696,
+    "10": 0.161,
+    "15": 0.1586,
+    "20": 0.1575,
+    "32": 0.1573,
+    "50": 0.1573,
+    "74": 0.1573,
+    "uncapped": 0.1573
+   },
+   "MetaPredictor": {
+    "1": 0.2443,
+    "3": 0.2628,
+    "5": 0.2324,
+    "8": 0.1955,
+    "10": 0.1809,
+    "15": 0.1667,
+    "20": 0.1665,
+    "32": 0.1665,
+    "50": 0.1665,
+    "74": 0.1665,
+    "uncapped": 0.1665
+   },
+   "MetaTrans": {
+    "1": 0.2308,
+    "3": 0.229,
+    "5": 0.2098,
+    "8": 0.1831,
+    "10": 0.1659,
+    "15": 0.1488,
+    "20": 0.1472,
+    "32": 0.1472,
+    "50": 0.1472,
+    "74": 0.1472,
+    "uncapped": 0.1472
+   },
+   "SyGMa": {
+    "1": 0.2736,
+    "3": 0.2658,
+    "5": 0.2377,
+    "8": 0.1942,
+    "10": 0.1743,
+    "15": 0.1324,
+    "20": 0.1072,
+    "32": 0.0771,
+    "50": 0.0613,
+    "74": 0.055,
+    "uncapped": 0.0511
+   }
+  },
+  "inchi_no_stereo": {
+   "GRAIL, pool-relative alpha=0.5": {
+    "1": 0.1756,
+    "3": 0.1913,
+    "5": 0.1911,
+    "8": 0.1911,
+    "10": 0.1911,
+    "15": 0.1911,
+    "20": 0.1911,
+    "32": 0.1911,
+    "50": 0.1911,
+    "74": 0.1911,
+    "uncapped": 0.1911
+   },
+   "GRAIL, deployed budget": {
+    "1": 0.1756,
+    "3": 0.1955,
+    "5": 0.1663,
+    "8": 0.1511,
+    "10": 0.146,
+    "15": 0.1415,
+    "20": 0.1415,
+    "32": 0.1415,
+    "50": 0.1415,
+    "74": 0.1415,
+    "uncapped": 0.1415
+   },
+   "BioTransformer": {
+    "1": 0.1317,
+    "3": 0.1797,
+    "5": 0.1741,
+    "8": 0.1719,
+    "10": 0.1638,
+    "15": 0.1624,
+    "20": 0.1624,
+    "32": 0.1615,
+    "50": 0.1614,
+    "74": 0.1614,
+    "uncapped": 0.1614
+   },
+   "MetaPredictor": {
+    "1": 0.247,
+    "3": 0.2677,
+    "5": 0.2377,
+    "8": 0.2019,
+    "10": 0.1868,
+    "15": 0.1726,
+    "20": 0.1724,
+    "32": 0.1724,
+    "50": 0.1724,
+    "74": 0.1724,
+    "uncapped": 0.1724
+   },
+   "MetaTrans": {
+    "1": 0.2341,
+    "3": 0.2499,
+    "5": 0.235,
+    "8": 0.2075,
+    "10": 0.1947,
+    "15": 0.1776,
+    "20": 0.1747,
+    "32": 0.1747,
+    "50": 0.1747,
+    "74": 0.1747,
+    "uncapped": 0.1747
+   },
+   "SyGMa": {
+    "1": 0.2736,
+    "3": 0.2658,
+    "5": 0.2377,
+    "8": 0.1942,
+    "10": 0.1743,
+    "15": 0.1331,
+    "20": 0.1077,
+    "32": 0.0774,
+    "50": 0.0616,
+    "74": 0.0552,
+    "uncapped": 0.0514
+   }
+  },
+  "tanimoto1": {
+   "GRAIL, pool-relative alpha=0.5": {
+    "1": 0.1756,
+    "3": 0.1906,
+    "5": 0.1905,
+    "8": 0.1905,
+    "10": 0.1905,
+    "15": 0.1905,
+    "20": 0.1905,
+    "32": 0.1905,
+    "50": 0.1905,
+    "74": 0.1905,
+    "uncapped": 0.1905
+   },
+   "GRAIL, deployed budget": {
+    "1": 0.1756,
+    "3": 0.192,
+    "5": 0.1634,
+    "8": 0.1487,
+    "10": 0.1439,
+    "15": 0.1398,
+    "20": 0.1398,
+    "32": 0.1398,
+    "50": 0.1398,
+    "74": 0.1398,
+    "uncapped": 0.1398
+   },
+   "BioTransformer": {
+    "1": 0.0882,
+    "3": 0.1348,
+    "5": 0.1352,
+    "8": 0.1345,
+    "10": 0.1292,
+    "15": 0.1285,
+    "20": 0.1283,
+    "32": 0.1279,
+    "50": 0.1278,
+    "74": 0.1278,
+    "uncapped": 0.1278
+   },
+   "MetaPredictor": {
+    "1": 0.247,
+    "3": 0.2528,
+    "5": 0.2252,
+    "8": 0.1899,
+    "10": 0.176,
+    "15": 0.1615,
+    "20": 0.1621,
+    "32": 0.1621,
+    "50": 0.1621,
+    "74": 0.1621,
+    "uncapped": 0.1621
+   },
+   "MetaTrans": {
+    "1": 0.2147,
+    "3": 0.2171,
+    "5": 0.1938,
+    "8": 0.1748,
+    "10": 0.1647,
+    "15": 0.1518,
+    "20": 0.15,
+    "32": 0.1499,
+    "50": 0.1499,
+    "74": 0.1499,
+    "uncapped": 0.1499
+   },
+   "SyGMa": {
+    "1": 0.2569,
+    "3": 0.2543,
+    "5": 0.2272,
+    "8": 0.1837,
+    "10": 0.1659,
+    "15": 0.1266,
+    "20": 0.1026,
+    "32": 0.0737,
+    "50": 0.0586,
+    "74": 0.0526,
+    "uncapped": 0.0491
+   }
+  },
+  "inchikey_tautomer": {
+   "GRAIL, pool-relative alpha=0.5": {
+    "1": 0.1756,
+    "3": 0.1921,
+    "5": 0.1919,
+    "8": 0.1919,
+    "10": 0.1919,
+    "15": 0.1919,
+    "20": 0.1919,
+    "32": 0.1919,
+    "50": 0.1919,
+    "74": 0.1919,
+    "uncapped": 0.1919
+   },
+   "GRAIL, deployed budget": {
+    "1": 0.1756,
+    "3": 0.1996,
+    "5": 0.1692,
+    "8": 0.1532,
+    "10": 0.1479,
+    "15": 0.1432,
+    "20": 0.1432,
+    "32": 0.1432,
+    "50": 0.1432,
+    "74": 0.1432,
+    "uncapped": 0.1432
+   },
+   "BioTransformer": {
+    "1": 0.1317,
+    "3": 0.183,
+    "5": 0.177,
+    "8": 0.1728,
+    "10": 0.1644,
+    "15": 0.1628,
+    "20": 0.1628,
+    "32": 0.1618,
+    "50": 0.1617,
+    "74": 0.1617,
+    "uncapped": 0.1617
+   },
+   "MetaPredictor": {
+    "1": 0.2537,
+    "3": 0.271,
+    "5": 0.2396,
+    "8": 0.2032,
+    "10": 0.1882,
+    "15": 0.174,
+    "20": 0.1738,
+    "32": 0.1738,
+    "50": 0.1738,
+    "74": 0.1738,
+    "uncapped": 0.1738
+   },
+   "MetaTrans": {
+    "1": 0.2408,
+    "3": 0.2543,
+    "5": 0.2377,
+    "8": 0.2106,
+    "10": 0.1958,
+    "15": 0.1791,
+    "20": 0.1767,
+    "32": 0.1766,
+    "50": 0.1766,
+    "74": 0.1766,
+    "uncapped": 0.1766
+   },
+   "SyGMa": {
+    "1": 0.2811,
+    "3": 0.2698,
+    "5": 0.2406,
+    "8": 0.1962,
+    "10": 0.1761,
+    "15": 0.1337,
+    "20": 0.1082,
+    "32": 0.0778,
+    "50": 0.0618,
+    "74": 0.0553,
+    "uncapped": 0.0514
+   }
+  }
+ },
+ "dominance_of_the_rule": {
+  "GRAIL, deployed budget": {
+   "cells": 50,
+   "lost_or_tied": 5,
+   "dominates": false,
+   "worst_cells": [
+    {
+     "criterion": "canonical",
+     "budget": 3,
+     "rule": 0.1905,
+     "them": 0.192
+    },
+    {
+     "criterion": "inchikey",
+     "budget": 3,
+     "rule": 0.1911,
+     "them": 0.1936
+    },
+    {
+     "criterion": "inchi_no_stereo",
+     "budget": 3,
+     "rule": 0.1911,
+     "them": 0.1955
+    },
+    {
+     "criterion": "tanimoto1",
+     "budget": 3,
+     "rule": 0.1905,
+     "them": 0.192
+    },
+    {
+     "criterion": "inchikey_tautomer",
+     "budget": 3,
+     "rule": 0.1919,
+     "them": 0.1996
+    }
+   ]
+  },
+  "BioTransformer": {
+   "cells": 50,
+   "lost_or_tied": 0,
+   "dominates": true,
+   "worst_cells": []
+  },
+  "MetaPredictor": {
+   "cells": 50,
+   "lost_or_tied": 18,
+   "dominates": false,
+   "worst_cells": [
+    {
+     "criterion": "canonical",
+     "budget": 1,
+     "rule": 0.1905,
+     "them": 0.247
+    },
+    {
+     "criterion": "canonical",
+     "budget": 3,
+     "rule": 0.1905,
+     "them": 0.2519
+    },
+    {
+     "criterion": "canonical",
+     "budget": 5,
+     "rule": 0.1905,
+     "them": 0.2231
+    },
+    {
+     "criterion": "inchikey",
+     "budget": 1,
+     "rule": 0.1911,
+     "them": 0.2443
+    },
+    {
+     "criterion": "inchikey",
+     "budget": 3,
+     "rule": 0.1911,
+     "them": 0.2628
+    },
+    {
+     "criterion": "inchikey",
+     "budget": 5,
+     "rule": 0.1911,
+     "them": 0.2324
+    }
+   ]
+  },
+  "MetaTrans": {
+   "cells": 50,
+   "lost_or_tied": 19,
+   "dominates": false,
+   "worst_cells": [
+    {
+     "criterion": "canonical",
+     "budget": 1,
+     "rule": 0.1905,
+     "them": 0.2143
+    },
+    {
+     "criterion": "canonical",
+     "budget": 3,
+     "rule": 0.1905,
+     "them": 0.2169
+    },
+    {
+     "criterion": "canonical",
+     "budget": 5,
+     "rule": 0.1905,
+     "them": 0.1931
+    },
+    {
+     "criterion": "inchikey",
+     "budget": 1,
+     "rule": 0.1911,
+     "them": 0.2308
+    },
+    {
+     "criterion": "inchikey",
+     "budget": 3,
+     "rule": 0.1911,
+     "them": 0.229
+    },
+    {
+     "criterion": "inchikey",
+     "budget": 5,
+     "rule": 0.1911,
+     "them": 0.2098
+    }
+   ]
+  },
+  "SyGMa": {
+   "cells": 50,
+   "lost_or_tied": 18,
+   "dominates": false,
+   "worst_cells": [
+    {
+     "criterion": "canonical",
+     "budget": 1,
+     "rule": 0.1905,
+     "them": 0.2569
+    },
+    {
+     "criterion": "canonical",
+     "budget": 3,
+     "rule": 0.1905,
+     "them": 0.2543
+    },
+    {
+     "criterion": "canonical",
+     "budget": 5,
+     "rule": 0.1905,
+     "them": 0.2272
+    },
+    {
+     "criterion": "inchikey",
+     "budget": 1,
+     "rule": 0.1911,
+     "them": 0.2736
+    },
+    {
+     "criterion": "inchikey",
+     "budget": 3,
+     "rule": 0.1911,
+     "them": 0.2658
+    },
+    {
+     "criterion": "inchikey",
+     "budget": 5,
+     "rule": 0.1911,
+     "them": 0.2377
+    }
+   ]
+  }
+ },
+ "dominance_by_budget": {
+  "1": {
+   "lost_or_tied_per_comparator": {
+    "GRAIL, deployed budget": 0,
+    "BioTransformer": 0,
+    "MetaPredictor": 5,
+    "MetaTrans": 5,
+    "SyGMa": 5
+   },
+   "beats_every_comparator_everywhere": false
+  },
+  "3": {
+   "lost_or_tied_per_comparator": {
+    "GRAIL, deployed budget": 5,
+    "BioTransformer": 0,
+    "MetaPredictor": 5,
+    "MetaTrans": 5,
+    "SyGMa": 5
+   },
+   "beats_every_comparator_everywhere": false
+  },
+  "5": {
+   "lost_or_tied_per_comparator": {
+    "GRAIL, deployed budget": 0,
+    "BioTransformer": 0,
+    "MetaPredictor": 5,
+    "MetaTrans": 5,
+    "SyGMa": 5
+   },
+   "beats_every_comparator_everywhere": false
+  },
+  "8": {
+   "lost_or_tied_per_comparator": {
+    "GRAIL, deployed budget": 0,
+    "BioTransformer": 0,
+    "MetaPredictor": 3,
+    "MetaTrans": 2,
+    "SyGMa": 3
+   },
+   "beats_every_comparator_everywhere": false
+  },
+  "10": {
+   "lost_or_tied_per_comparator": {
+    "GRAIL, deployed budget": 0,
+    "BioTransformer": 0,
+    "MetaPredictor": 0,
+    "MetaTrans": 2,
+    "SyGMa": 0
+   },
+   "beats_every_comparator_everywhere": false
+  },
+  "15": {
+   "lost_or_tied_per_comparator": {
+    "GRAIL, deployed budget": 0,
+    "BioTransformer": 0,
+    "MetaPredictor": 0,
+    "MetaTrans": 0,
+    "SyGMa": 0
+   },
+   "beats_every_comparator_everywhere": true
+  },
+  "20": {
+   "lost_or_tied_per_comparator": {
+    "GRAIL, deployed budget": 0,
+    "BioTransformer": 0,
+    "MetaPredictor": 0,
+    "MetaTrans": 0,
+    "SyGMa": 0
+   },
+   "beats_every_comparator_everywhere": true
+  },
+  "32": {
+   "lost_or_tied_per_comparator": {
+    "GRAIL, deployed budget": 0,
+    "BioTransformer": 0,
+    "MetaPredictor": 0,
+    "MetaTrans": 0,
+    "SyGMa": 0
+   },
+   "beats_every_comparator_everywhere": true
+  },
+  "50": {
+   "lost_or_tied_per_comparator": {
+    "GRAIL, deployed budget": 0,
+    "BioTransformer": 0,
+    "MetaPredictor": 0,
+    "MetaTrans": 0,
+    "SyGMa": 0
+   },
+   "beats_every_comparator_everywhere": true
+  },
+  "74": {
+   "lost_or_tied_per_comparator": {
+    "GRAIL, deployed budget": 0,
+    "BioTransformer": 0,
+    "MetaPredictor": 0,
+    "MetaTrans": 0,
+    "SyGMa": 0
+   },
+   "beats_every_comparator_everywhere": true
+  }
+ },
+ "dominance_range": {
+  "budgets_where_it_beats_everything": [
+   15,
+   20,
+   32,
+   50,
+   74
+  ],
+  "lowest_such_budget": 15,
+  "reading": "the rule emits about two candidates, so at budgets at or below its own output a comparator is read at a comparable size and its ranking decides. Above that the rule's output policy decides. The lead is a fact about output size, not about ranking."
+ },
+ "caveat": "BioTransformer returns an unranked set, so truncating it at k picks by file order and not by confidence"
+}
