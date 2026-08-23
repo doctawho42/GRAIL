@@ -15,9 +15,17 @@ Everything here is frozen except the pool, which is built the way `bank_without_
 builds it: the whole bank applied without a selector and without the calibrated threshold, which
 is itself a selector, ranked by filter times generator.
 
-The gate is the population. The MetaTox recall this reproduces has to match
-`results/four_method_291.json` at every budget, or this is a different set of substrates or a
-different matcher and the comparison means nothing.
+The gate is the population AND the aggregation. The MetaTox recall this reproduces has to match
+`results/four_method_291.json` at every budget, or this is a different set of substrates, a
+different matcher, or a different way of averaging. A first run failed it by exactly that last
+route: it averaged recall per substrate where the committed table takes a ratio of sums, and the
+two differ most where references are unevenly spread. Both are computed here and the micro one
+is gated.
+
+The ranked pools are written out. Building them costs eight hours, and a metric that has to
+change afterwards should not cost eight hours again -- the same pools are what the retention
+decomposition and the score probe need on the wide pool, where the isomers the selector removes
+still exist.
 """
 from __future__ import annotations
 
@@ -104,18 +112,27 @@ def main() -> int:
 
     rng = np.random.default_rng(SEED)
     idx = rng.integers(0, len(subs), (N_BOOT, len(subs)))
+    U = np.array([len(refs[s]) for s in subs], dtype=float)   # references per substrate
+    denom = U[idx].sum(axis=1)
     by_budget = {}
     for b in BUDGETS:
-        g = np.array([recall_at(ranked[s], refs[s], b) for s in subs])
-        m = np.array([recall_at(mt[s], refs[s], b) for s in subs])
-        d = g - m
-        bt = d[idx].mean(axis=1)
+        hits_g = np.array([len(set(ranked[s][:b]) & refs[s]) for s in subs], dtype=float)
+        hits_m = np.array([len(set(mt[s][:b]) & refs[s]) for s in subs], dtype=float)
+        g_macro = np.array([recall_at(ranked[s], refs[s], b) for s in subs])
+        m_macro = np.array([recall_at(mt[s], refs[s], b) for s in subs])
+        d_hits = hits_g - hits_m
+        bt = d_hits[idx].sum(axis=1) / np.maximum(denom, 1)
         lo, hi = float(np.quantile(bt, .025)), float(np.quantile(bt, .975))
-        by_budget[str(b)] = {"bank": round(float(g.mean()), 4),
-                             "metatox": round(float(m.mean()), 4),
-                             "gap": round(float(d.mean()), 4),
-                             "ci95": [round(lo, 4), round(hi, 4)],
-                             "excludes_zero": bool(lo > 0 or hi < 0)}
+        by_budget[str(b)] = {
+            "bank": round(float(hits_g.sum() / U.sum()), 4),
+            "metatox": round(float(hits_m.sum() / U.sum()), 4),
+            "gap": round(float(d_hits.sum() / U.sum()), 4),
+            "ci95": [round(lo, 4), round(hi, 4)],
+            "excludes_zero": bool(lo > 0 or hi < 0),
+            "macro": {"bank": round(float(g_macro.mean()), 4),
+                      "metatox": round(float(m_macro.mean()), 4),
+                      "gap": round(float((g_macro - m_macro).mean()), 4)},
+        }
 
     # The gate: MetaTox here must be MetaTox there. It compares an average over 291 substrates,
     # so it is meaningless on a truncated run and is not run there -- announced rather than
@@ -132,7 +149,16 @@ def main() -> int:
                 and abs(by_budget[str(b)]["metatox"] - four[str(b)]) > 1e-9]
         gate_note = "applied over the full population"
 
-    rep = {"provenance": stamp(__file__),
+    pools_out = Path(args.out).with_name(Path(args.out).stem + "_pools.json")
+    pools_out.write_text(json.dumps(
+        {"provenance": stamp(__file__), "match": "inchikey_tautomer",
+         "note": "ranked candidate keys per substrate, whole bank, no selector, no threshold, "
+                 "ordered by filter x generator; the input the wide-pool analyses need",
+         "budgets_capped_at": cap, "ranked": ranked,
+         "references": {s: sorted(refs[s]) for s in subs}}, indent=1))
+    print(f"wrote {pools_out}", file=sys.stderr)
+
+    rep = {"provenance": stamp(__file__), "aggregation": "micro, ratio of sums; macro beside it",
            "population": {"n": len(subs), "source": "the 291 of results/four_method_291.json"},
            "pool": {"mean_raw": round(float(np.mean(sizes)), 1),
                     "mean_unique": round(float(np.mean([len(v) for v in ranked.values()])), 1),
@@ -147,12 +173,12 @@ def main() -> int:
 
     print(f"\npool: raw {rep['pool']['mean_raw']}, unique {rep['pool']['mean_unique']}, "
           f"coverage {rep['pool']['coverage']}\n")
-    print(f"{'k':>4}{'bank':>9}{'MetaTox':>10}{'gap':>9}   interval")
+    print(f"{'k':>4}{'bank':>9}{'MetaTox':>10}{'gap':>9}   interval            macro gap")
     for b in BUDGETS:
         r = by_budget[str(b)]
         print(f"{b:>4}{r['bank']:>9.4f}{r['metatox']:>10.4f}{r['gap']:>+9.4f}   "
               f"[{r['ci95'][0]:+.4f},{r['ci95'][1]:+.4f}] "
-              f"{'separated' if r['excludes_zero'] else ''}")
+              f"{'sep' if r['excludes_zero'] else '   '}   {r['macro']['gap']:+.4f}")
     if mism:
         print(f"\nGATE FAILED: {mism}")
         return 1

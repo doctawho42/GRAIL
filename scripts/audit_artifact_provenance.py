@@ -55,6 +55,9 @@ PINNED = {
     "results/emission_grid.json": f"{TE}/emission_grid.py",
     # the pool the target function is derived from, measured on the split
     "results/bank_without_selection_full.json": "scripts/bank_without_selection.py",
+    # the comparison that decides the release, and the pools it wrote
+    "results/vs_metatox.json": f"{TE}/vs_metatox.py",
+    "results/vs_metatox_pools.json": f"{TE}/vs_metatox.py",
     "paper2/split_manifest.json": f"{TE}/freeze_split.py",
 }
 

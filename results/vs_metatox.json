@@ -1,0 +1,163 @@
+{
+ "provenance": {
+  "script": "vs_metatox.py",
+  "script_path": "scripts/typed_edit/vs_metatox.py",
+  "source_sha256": "5ec14bf59225205f85cec91dd4003f1e69f98de4027fea38ea4c3108db5e9852",
+  "git_commit": "da7879e345be19cf84efb15922b3a8f2f2682e2f",
+  "git_dirty": true
+ },
+ "aggregation": "micro, ratio of sums; macro beside it",
+ "population": {
+  "n": 291,
+  "source": "the 291 of results/four_method_291.json"
+ },
+ "pool": {
+  "mean_raw": 589.9,
+  "mean_unique": 49.9,
+  "coverage": 0.6106
+ },
+ "gate": {
+  "reproduces_four_method_291_metatox": true,
+  "note": "applied over the full population",
+  "mismatches": []
+ },
+ "by_budget": {
+  "1": {
+   "bank": 0.0722,
+   "metatox": 0.0406,
+   "gap": 0.0316,
+   "ci95": [
+    0.0096,
+    0.054
+   ],
+   "excludes_zero": true,
+   "macro": {
+    "bank": 0.1042,
+    "metatox": 0.066,
+    "gap": 0.0382
+   }
+  },
+  "3": {
+   "bank": 0.1714,
+   "metatox": 0.1323,
+   "gap": 0.0391,
+   "ci95": [
+    0.003,
+    0.075
+   ],
+   "excludes_zero": true,
+   "macro": {
+    "bank": 0.2248,
+    "metatox": 0.1665,
+    "gap": 0.0584
+   }
+  },
+  "5": {
+   "bank": 0.2195,
+   "metatox": 0.218,
+   "gap": 0.0015,
+   "ci95": [
+    -0.0388,
+    0.0417
+   ],
+   "excludes_zero": false,
+   "macro": {
+    "bank": 0.2825,
+    "metatox": 0.252,
+    "gap": 0.0305
+   }
+  },
+  "8": {
+   "bank": 0.2692,
+   "metatox": 0.3113,
+   "gap": -0.0421,
+   "ci95": [
+    -0.0844,
+    0.0014
+   ],
+   "excludes_zero": false,
+   "macro": {
+    "bank": 0.3332,
+    "metatox": 0.3504,
+    "gap": -0.0172
+   }
+  },
+  "10": {
+   "bank": 0.3098,
+   "metatox": 0.388,
+   "gap": -0.0782,
+   "ci95": [
+    -0.1231,
+    -0.032
+   ],
+   "excludes_zero": true,
+   "macro": {
+    "bank": 0.3671,
+    "metatox": 0.4251,
+    "gap": -0.0579
+   }
+  },
+  "15": {
+   "bank": 0.3865,
+   "metatox": 0.5143,
+   "gap": -0.1278,
+   "ci95": [
+    -0.178,
+    -0.0757
+   ],
+   "excludes_zero": true,
+   "macro": {
+    "bank": 0.4425,
+    "metatox": 0.5492,
+    "gap": -0.1067
+   }
+  },
+  "20": {
+   "bank": 0.4361,
+   "metatox": 0.5519,
+   "gap": -0.1158,
+   "ci95": [
+    -0.1651,
+    -0.0647
+   ],
+   "excludes_zero": true,
+   "macro": {
+    "bank": 0.4883,
+    "metatox": 0.5907,
+    "gap": -0.1024
+   }
+  },
+  "30": {
+   "bank": 0.5008,
+   "metatox": 0.6015,
+   "gap": -0.1008,
+   "ci95": [
+    -0.1507,
+    -0.0512
+   ],
+   "excludes_zero": true,
+   "macro": {
+    "bank": 0.5458,
+    "metatox": 0.6441,
+    "gap": -0.0984
+   }
+  },
+  "50": {
+   "bank": 0.5699,
+   "metatox": 0.6271,
+   "gap": -0.0571,
+   "ci95": [
+    -0.1054,
+    -0.0109
+   ],
+   "excludes_zero": true,
+   "macro": {
+    "bank": 0.6106,
+    "metatox": 0.6708,
+    "gap": -0.0602
+   }
+  }
+ },
+ "n_boot": 10000,
+ "seed": 0
+}
