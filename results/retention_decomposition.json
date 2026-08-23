@@ -1,0 +1,49 @@
+{
+ "provenance": {
+  "script": "retention_decomposition.py",
+  "script_path": "scripts/typed_edit/retention_decomposition.py",
+  "source_sha256": "a7c7a15eef84e989db93bf6ddae9da4c30c2198302ac1891c27f1af32fe5031a",
+  "git_commit": "a5297aa72debe141ed11a75be2fe8d1252af34c0",
+  "git_dirty": true
+ },
+ "population": {
+  "n": 1166,
+  "pool": "results/scored_predictions.json",
+  "note": "the deployed pool; retention is within it"
+ },
+ "match": "inchikey_tautomer",
+ "k": 15,
+ "grouping": "identical molecular formula on the same substrate, a proxy for one transformation type that catches every regioisomer and lumps distinct types sharing a formula delta",
+ "arms": {
+  "as_ranked": {
+   "recall@15": 0.3397,
+   "retention": 0.9686
+  },
+  "oracle_within": {
+   "recall@15": 0.3398,
+   "retention": 0.9689
+  },
+  "oracle_between": {
+   "recall@15": 0.35,
+   "retention": 0.998
+  },
+  "oracle_both": {
+   "recall@15": 0.3503,
+   "retention": 0.9989
+  }
+ },
+ "closes": {
+  "oracle_within": 0.0001,
+  "oracle_between": 0.0103,
+  "oracle_both": 0.0106
+ },
+ "within_group_rank_of_the_reference": {
+  "n_cases_with_siblings": 122,
+  "mean_rank": 1.52,
+  "median_rank": 1.0,
+  "top1_share": 0.6393,
+  "mean_group_size": 3.89
+ },
+ "mean_groups_per_substrate": 6.89,
+ "mean_candidates_per_substrate": 10.76
+}

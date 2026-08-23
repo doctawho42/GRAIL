@@ -1,0 +1,53 @@
+{
+ "provenance": {
+  "script": "rank_probe.py",
+  "script_path": "scripts/typed_edit/rank_probe.py",
+  "source_sha256": "e11e8fd644566a3c42a9543c3f4672c7bc092997546487f098d19ac8fa6aabf7",
+  "git_commit": "a5297aa72debe141ed11a75be2fe8d1252af34c0",
+  "git_dirty": true
+ },
+ "why_not_softmax": "softmax within a substrate is a monotone rescaling by a constant denominator, so it preserves the order of the candidates it normalises and cannot change recall@k. A listwise loss changes what a model learns; a listwise normalisation of frozen scores does not.",
+ "population": {
+  "n": 1170,
+  "pool": "results/scored_predictions.json",
+  "note": "the deployed pool, not the selector-free pool of bank_without_selection; retention here is within this pool"
+ },
+ "match": "inchikey_tautomer",
+ "k": 15,
+ "rule_field_present": false,
+ "arms": {
+  "product": {
+   "recall@15": 0.3395,
+   "pool_recall": 0.3495,
+   "retention": 0.9712
+  },
+  "filter": {
+   "recall@15": 0.3403,
+   "pool_recall": 0.3495,
+   "retention": 0.9734
+  },
+  "generator": {
+   "recall@15": 0.3382,
+   "pool_recall": 0.3495,
+   "retention": 0.9676
+  },
+  "rrf": {
+   "recall@15": 0.3417,
+   "pool_recall": 0.3495,
+   "retention": 0.9777
+  },
+  "gen_calibrated": {
+   "recall@15": 0.3348,
+   "pool_recall": 0.3495,
+   "retention": 0.9579
+  }
+ },
+ "best_arm": "rrf",
+ "gain_over_product": {
+  "product": 0.0,
+  "filter": 0.0022,
+  "generator": -0.0036,
+  "rrf": 0.0065,
+  "gen_calibrated": -0.0133
+ }
+}

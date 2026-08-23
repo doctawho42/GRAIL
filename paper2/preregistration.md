@@ -76,16 +76,25 @@ been tested on other people's work has not been tested.
 
 The project's target function was derived from a 245-substrate subsample: a pool coverage of
 0.7602, a recall@15 of 0.5277 without a selector, and therefore a top-15 retention of 0.694.
-Re-measured on 1,128 substrates -- the full clean test split less 42 the loader drops -- the
-ladder sits lower and one of its conclusions does not survive.
+Re-measured on all 1,170 substrates the ladder sits lower and one of its conclusions does not
+survive. (A first re-measurement ran on 1,128: `--max-substrates 1198` was passed in the belief
+that 1,198 was the whole split, but the cap applies to the 1,246 substrate indices in the
+triples, so it sampled. The full run reproduces it to within 0.0002 on every cell, which is
+worth stating because the correction was necessary and changed nothing.)
 
 | k | 245: GRAIL | SyGMa | gap | 1,128: GRAIL | SyGMa | gap | interval excludes zero |
 |---|---|---|---|---|---|---|---|
-| 8 | 0.4151 | 0.5208 | −0.106 | 0.3731 | 0.5256 | −0.153 | yes |
-| 15 | 0.5277 | 0.5755 | −0.048 | 0.4714 | 0.5707 | **−0.099** | **yes** |
-| 32 | 0.6519 | 0.5889 | +0.063 | 0.6022 | 0.5880 | **+0.014** | **no** |
-| 64 | 0.7345 | 0.5930 | +0.141 | 0.6971 | 0.5907 | +0.106 | yes |
-| 82 | 0.7602 | 0.5930 | +0.167 | 0.7326 | 0.5920 | +0.141 | yes |
+| 8 | 0.4151 | 0.5208 | −0.106 | 0.3723 | 0.5259 | −0.154 | yes |
+| 15 | 0.5277 | 0.5755 | −0.048 | 0.4715 | 0.5708 | **−0.099** | **yes** |
+| 32 | 0.6519 | 0.5889 | +0.063 | 0.5994 | 0.5885 | **+0.011** | **no** |
+| 64 | 0.7345 | 0.5930 | +0.141 | 0.6971 | 0.5911 | +0.106 | yes |
+| 82 | 0.7602 | 0.5930 | +0.167 | 0.7327 | 0.5923 | +0.140 | yes |
+
+**The inequality this measures, which is about a class and not about us.** Breadth buys +0.140
+of coverage at k = 82 and is charged 0.2612 on the way down to k = 15, against SyGMa's 0.0215.
+Breadth is bought for 0.140 and paid for with 0.240, a ratio of **1.71 against**. A bank that
+reaches further pays more at truncation than it reaches, and that cannot be seen without a
+ceiling, which nobody else in this field publishes.
 
 Two readings change. On the subsample the bank without a selector was **statistically
 indistinguishable from SyGMa at the budget the field reports**, which was the strongest form of
@@ -95,9 +104,11 @@ is not on the split (+0.014, interval covering zero). The subsample was favourab
 the opposite of what an earlier note in this project asserted, and for a reason that has nothing
 to do with the ceiling literal that note relied on.
 
-**The target arithmetic, restated.** Retention is recall@15 over pool coverage: 0.4714 / 0.7326
-= **0.6435**, against 0.694 on the subsample. Lifting it to 0.85 gives recall@15 = 0.623 and to
-0.90 gives 0.659, against SyGMa's 0.571 on the same substrates.
+**The target arithmetic, restated.** Retention is recall@15 over pool coverage: 0.4715 / 0.7327
+= **0.6435**, against 0.694 on the subsample. The operational number is not the stretch but the
+**break-even**: matching SyGMa at k = 15 needs 0.5708 / 0.7327 = **0.7790**, so a ranker must
+close 13.5 points of retention to reach zero and everything above that is margin. At 0.85 the
+margin over SyGMa is 0.052, not the 0.070 the subsample implied.
 
 **What may and may not be frozen from this.** The pool is clean: it is the bank applied without
 a selector, and the generator does not enter it. **Retention is not**: it is ranking, ranking is
