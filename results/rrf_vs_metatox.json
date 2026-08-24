@@ -1,0 +1,114 @@
+{
+ "provenance": {
+  "script": "rrf_vs_metatox.py",
+  "script_path": "scripts/typed_edit/rrf_vs_metatox.py",
+  "source_sha256": "11f34229e15a1296b7785893e70a998573bd2efbf2161863a3debb4a001b132e",
+  "git_commit": "fb7e5fb2077e44d31b479e634967ab3917ad047b",
+  "git_dirty": true
+ },
+ "arm": "new generator + rank fusion",
+ "population": {
+  "n": 291,
+  "source": "the 291 of results/four_method_291.json"
+ },
+ "aggregation": "micro, ratio of sums",
+ "caveat": "the fusion rule was selected on this population after computing four alternatives on it; this is an upper bound on a declared choice, not a result. Fix the rule in advance and check it on validation before quoting.",
+ "gate": {
+  "reproduces_four_method_291_metatox": true,
+  "mismatches": []
+ },
+ "by_budget": {
+  "1": {
+   "ours": 0.1128,
+   "metatox": 0.0406,
+   "gap": 0.0722,
+   "ci95": [
+    0.0483,
+    0.0982
+   ],
+   "excludes_zero": true
+  },
+  "3": {
+   "ours": 0.2316,
+   "metatox": 0.1323,
+   "gap": 0.0992,
+   "ci95": [
+    0.063,
+    0.1364
+   ],
+   "excludes_zero": true
+  },
+  "5": {
+   "ours": 0.3053,
+   "metatox": 0.218,
+   "gap": 0.0872,
+   "ci95": [
+    0.0487,
+    0.1267
+   ],
+   "excludes_zero": true
+  },
+  "8": {
+   "ours": 0.406,
+   "metatox": 0.3113,
+   "gap": 0.0947,
+   "ci95": [
+    0.0526,
+    0.1388
+   ],
+   "excludes_zero": true
+  },
+  "10": {
+   "ours": 0.4391,
+   "metatox": 0.388,
+   "gap": 0.0511,
+   "ci95": [
+    0.0071,
+    0.0959
+   ],
+   "excludes_zero": true
+  },
+  "15": {
+   "ours": 0.4992,
+   "metatox": 0.5143,
+   "gap": -0.015,
+   "ci95": [
+    -0.0586,
+    0.0292
+   ],
+   "excludes_zero": false
+  },
+  "20": {
+   "ours": 0.5398,
+   "metatox": 0.5519,
+   "gap": -0.012,
+   "ci95": [
+    -0.0529,
+    0.0293
+   ],
+   "excludes_zero": false
+  },
+  "30": {
+   "ours": 0.6,
+   "metatox": 0.6015,
+   "gap": -0.0015,
+   "ci95": [
+    -0.038,
+    0.0367
+   ],
+   "excludes_zero": false
+  },
+  "50": {
+   "ours": 0.6586,
+   "metatox": 0.6271,
+   "gap": 0.0316,
+   "ci95": [
+    -0.0064,
+    0.0698
+   ],
+   "excludes_zero": false
+  }
+ },
+ "n_boot": 10000,
+ "seed": 0
+}
