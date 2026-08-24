@@ -296,6 +296,41 @@ sparsity. The failed construction is recorded rather than removed.
 
 ---
 
+## H7 — the fusion rule, declared before it is checked
+
+**Why this exists.** Ranking the selector-free pool by reciprocal rank fusion of the two
+component scores beat ranking by their product by 0.109 of micro recall@15 on the 291 MetaTox
+substrates. That number is not usable: four combination rules were computed on those substrates
+and the best was taken, which is an argmax over the set it is reported on. The rule is therefore
+fixed here, in advance of any further measurement, and checked where it has not been looked at.
+
+**The rule, fixed.** For a substrate's pool, rank the candidates twice — once by the filter
+score, once by the generator score — and order them by
+
+    score(c) = 1/(60 + rank_filter(c)) + 1/(60 + rank_generator(c))
+
+The constant 60 is the one Cormack, Clarke and Buettcher published with the method in 2009. It
+is not tuned here and no other value is computed. No weighting between the two rankings is
+introduced: an asymmetric fusion would be a second free parameter, and the point of this
+registration is that there is none.
+
+**Prediction.** On the validation split, which no measurement in this project has been read on
+for this purpose, the fusion rule beats the product on micro recall@15 over the same
+selector-free pool, and the margin is **at least +0.05**, half of what it showed on the 291.
+
+**Failure:** the margin is below +0.05, or negative. Either says the 0.109 was a property of
+the substrates it was measured on rather than of the combination, and the deployed product is
+kept.
+
+**What is not claimed.** That rank fusion is the right combination. It is a combination that is
+scale-free, has no fitted parameter, and can be checked; a trained listwise ranker is the thing
+it stands in for, and this registration exists so that the stand-in cannot quietly become the
+result.
+
+**Family:** H7 alone, m = 1.
+
+---
+
 ## H2 — informed node features
 
 **Prediction.** Adding reactivity (hydrogen abstraction energy, SMARTCyp-style) and
