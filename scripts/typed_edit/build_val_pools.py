@@ -51,7 +51,13 @@ def population(cap=CAP, seed=SEED):
     return sorted(s for s in vmap if vmap[s]), vmap
 
 
-def merge(pattern, out):
+def merge(pattern, out, allow_absent=()):
+    """Merge shards into one artifact.
+
+    The shards must tile the declared population. An index may be absent only if it is named
+    on the command line, and the artifact then records which indices are absent and why the
+    caller said so — an absence that is not declared is a failure, not a footnote.
+    """
     paths = sorted(glob.glob(pattern))
     if not paths:
         print("no shard matched", file=sys.stderr)
@@ -61,16 +67,27 @@ def merge(pattern, out):
         d = json.loads(Path(p).read_text())
         pools.update(d["pools"]); refs.update(d["references"]); slices.append(tuple(d["slice"]))
         print(f"  + {Path(p).name}: {d['slice']} {len(d['pools'])}", file=sys.stderr)
-    subs, _ = population()
+    subs, vmap = population()
     covered = set()
     for a, b in slices:
         covered |= set(range(a, b))
-    if sorted(set(range(len(subs))) - covered):
-        print("FAIL: the shards do not tile the population", file=sys.stderr)
+    absent = sorted(set(range(len(subs))) - covered)
+    undeclared = [i for i in absent if i not in set(allow_absent)]
+    if undeclared:
+        print(f"FAIL: the shards do not tile the population; absent and undeclared: "
+              f"{undeclared}", file=sys.stderr)
         return 1
+    if absent:
+        print(f"absent by declaration: {absent}", file=sys.stderr)
     Path(out).write_text(json.dumps(
         {"provenance": stamp(__file__), "match": "inchikey_tautomer", "split": "validation",
-         "population": {"cap": CAP, "seed": SEED, "n": len(pools)},
+         "population": {"cap": CAP, "seed": SEED, "declared_n": len(subs),
+                        "n": len(pools),
+                        "absent_indices": absent,
+                        "absent_substrates": [subs[i] for i in absent],
+                        "absent_references": {subs[i]: sorted(
+                            {k for k in (_key(pr) for pr in vmap[subs[i]]) if k})
+                            for i in absent}},
          "slices": [list(s) for s in sorted(slices)],
          "pools": pools, "references": refs}, indent=1))
     print(f"wrote {out} with {len(pools)} substrates")
@@ -82,13 +99,16 @@ def main() -> int:
     ap.add_argument("--start", type=int, default=0)
     ap.add_argument("--end", type=int, default=0)
     ap.add_argument("--merge", default="")
+    ap.add_argument("--absent", default="",
+                    help="comma-separated population indices the merge may lack")
     ap.add_argument("--gen-ckpt", default=str(ROOT / "artifacts/full5000_implicit/checkpoints/generator.pt"))
     ap.add_argument("--filter-ckpt", default=str(ROOT / "artifacts/full5000_priors/checkpoints/filter.pt"))
     ap.add_argument("--out", default=str(ROOT / "results" / "val_pools.json"))
     args = ap.parse_args()
 
     if args.merge:
-        return merge(args.merge, args.out)
+        allow = tuple(int(x) for x in args.absent.split(",") if x.strip())
+        return merge(args.merge, args.out, allow)
 
     subs, vmap = population()
     sl = subs[args.start:(args.end or None)]

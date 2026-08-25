@@ -1,0 +1,155 @@
+name: full5000_expanded_control
+description: 'The control arm: today''s code trained on the OLD label matrix. The deployed checkpoint predates the correction: its labels were built
+  with the substrate expanded while every deployed firing path passes it implicit,
+  and the two agreed on a Jaccard of 0.456.'
+output_dir: artifacts
+seed: 0
+tags:
+- paper
+- default
+- ensemble
+dataset:
+  train_sdf: grail_metabolism/data/train.sdf
+  train_triples: grail_metabolism/data/train_triples.txt
+  val_sdf: grail_metabolism/data/val.sdf
+  val_triples: grail_metabolism/data/val_triples.txt
+  test_sdf: grail_metabolism/data/test.sdf
+  test_triples: grail_metabolism/data/test_triples.txt
+  rules_path: grail_metabolism/resources/extended_smirks.txt
+  include_phase2_rules: false
+  uspto_csv: grail_metabolism/data/USPTO_FULL.csv
+  use_clean_splits: true
+  standardize: false
+  pca: false
+  augment_negatives: false
+  cache_preprocessed: true
+  cache_dir: artifacts/preprocessed
+  max_uspto_rows: 10000
+  max_train_substrates: 5000
+  max_val_substrates: 300
+  max_test_substrates: 300
+  sampling_seed: 42
+  excluded_substrates: []
+  excluded_substrates_path: grail_metabolism/resources/slow_substrates.txt
+generator:
+  in_channels: 16
+  edge_dim: 18
+  hidden_dims:
+  - 192
+  - 256
+  rule_hidden_dims:
+  - 128
+  - 192
+  - 128
+  projection_dim: 128
+  scoring: retrieval
+  use_pretraining: false
+  freeze_pretrained: false
+  use_maccs_pretraining: false
+  top_k: 30
+  threshold: null
+  conv_kind: gatv2
+  use_fingerprint: true
+  rank_weight: 0.25
+  ranking_margin: 0.45
+  unlabeled_weight: 0.5
+  prior_strength: 0.4
+  use_applicability_mask: true
+  applicability_penalty: 7.5
+  candidate_aggregation: noisy_or
+  training_mode: supervised
+filter:
+  in_channels: 16
+  edge_dim: 18
+  hidden_dims:
+  - 192
+  - 256
+  - 128
+  - 128
+  - 64
+  - 32
+  mode: single
+  model_type: GATv2Filter
+  conv_kind: gatv2
+  use_graph: true
+  use_fingerprint: true
+  dropout: 0.1
+  molpath_cutoff: null
+  molpath_y: null
+  molpath_hidden: null
+  train_on_candidates: false
+  candidate_generation_top_k: 200
+pretrain:
+  enabled: false
+  epochs: 30
+  batch_size: 128
+  lr: 0.0001
+  contrastive_ratio: 0.4
+  maccs_ratio: 0.3
+  masked_ratio: 0.3
+  save_path: null
+generator_optim:
+  lr: 0.0001
+  epochs: 8
+  batch_size: 32
+  weight_decay: 1.0e-06
+  prior: 0.75
+  nnpu: true
+  patience: 7
+  min_delta: 0.0001
+filter_optim:
+  lr: 0.0001
+  epochs: 8
+  batch_size: 64
+  weight_decay: 1.0e-06
+  prior: 0.75
+  nnpu: false
+  patience: 7
+  min_delta: 0.0001
+evaluation:
+  generator_top_k:
+  - 1
+  - 3
+  - 5
+  - 10
+  - 12
+  - 15
+  candidate_top_k: 30
+  max_output: 15
+  match: inchikey_tautomer
+  ranking_policy: rank
+  filter_candidate_cap: 32
+  threshold: null
+  export_predictions: true
+  multistep:
+    enabled: false
+    max_depth: 1
+    beam_width: 25
+    expand_threshold: 0.5
+    node_budget: 2000
+    per_node_top_k: 10
+    prior_aggregation: mean
+    reward_prior_weight: 1.0
+  som:
+    enabled: false
+    beta: 1.0
+    aggregation: max
+    checkpoint: null
+    hidden_dims:
+    - 64
+    - 64
+    out_dim: 64
+    conv_kind: gatv2
+    dropout: 0.1
+gflownet:
+  epochs: 10
+  lr: 0.0001
+  logz_lr: 0.01
+  batch_substrates: 16
+  max_depth: 2
+  per_node_top_k: 12
+  beta: 6.0
+  epsilon: 0.1
+  anchor_weight: 0.0
+  node_budget: 64
+  reward: annotation

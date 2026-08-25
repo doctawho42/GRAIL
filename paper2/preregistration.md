@@ -329,6 +329,26 @@ result.
 
 **Family:** H7 alone, m = 1.
 
+**Outcome, checked 2026-08-25.** Supported. On the validation split, micro recall@15 is
+0.3756 under the product and 0.4489 under rank fusion, a difference of **+0.0733** against the
+registered +0.05, 95% paired-bootstrap CI [+0.0477, +0.1020] over 10,000 resamples of
+substrates. The margin is roughly two thirds of the 0.109 the rule showed on the substrates it
+was chosen on, which is the direction an argmax predicts. Recorded in
+`results/h7_verdict.json`; the pool it reads is `results/val_pools.json`.
+
+**Deviation from the declared population.** 293 of the 294 substrates were measured. Index 83
+is a 291-heavy-atom PEGylated peptide, four times the size of the next largest substrate in the
+population; the pair filter's MCS alignment did not terminate on it in over three hours and it
+holds 2 of the population's 657 references. Rather than drop it, the difference is recomputed
+with both of its references credited first to the product and then to the fusion: the margin
+lies in [+0.0700, +0.0761] whichever way it would have fallen, so the absence cannot have
+produced the verdict. The absent index and its references are recorded in the pool artifact.
+
+**Bias that remains.** The checkpoints were selected on validation, so validation is not clean
+for them in the strict sense. The selection was made on the product-shaped objective the fusion
+rule is being compared against, so the residual bias favours the product and the margin
+reported here is a lower bound rather than an inflated one.
+
 ---
 
 ## H2 — informed node features
