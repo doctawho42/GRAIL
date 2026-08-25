@@ -58,10 +58,24 @@ def shared_subset():
     return list(json.loads(f.read_text())) if f.exists() else []
 
 
+def metatox_291():
+    """The 291 substrates the MetaTox comparison is decided on.
+
+    These carry the release claim, so their membership in training matters more than any other
+    set here. They are read from the pool artifact rather than recomputed, so the audited set is
+    the one the comparison actually ran on.
+    """
+    f = R/'results/vs_metatox_pools.json'
+    if not f.exists():
+        return []
+    return list(json.loads(f.read_text())['ranked'])
+
+
 def main():
     seen = trained_keys()
     print(f'{len(seen)} substrates seen in training or validation\n')
-    sets = {'GLORYx external set': gloryx(), 'shared 150-substrate subset': shared_subset()}
+    sets = {'GLORYx external set': gloryx(), 'shared 150-substrate subset': shared_subset(),
+            'MetaTox 291-substrate comparison set': metatox_291()}
     out = {}
     for name, subs in sets.items():
         if not subs:

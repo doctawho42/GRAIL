@@ -50,22 +50,37 @@ def formula(smiles, cache={}):
     return cache[smiles]
 
 
+def hits(keys, real, k=None):
+    """Number of references recovered in the first k, which micro and macro both need."""
+    return len(set(keys[:k] if k else keys) & real)
+
+
 def rec(keys, real, k=None):
-    return len(set(keys[:k] if k else keys) & real) / len(real) if real else 0.0
+    return hits(keys, real, k) / len(real) if real else 0.0
 
 
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default=str(ROOT / "results" / "wide_pool_analysis.json"))
+    ap.add_argument("--pools", default="",
+                    help="glob of pool shards; empty reads the single merged POOLS file")
     args = ap.parse_args()
 
-    blob = json.loads(POOLS.read_text())
-    pools, refs = blob["pools"], blob["references"]
+    if args.pools:
+        import glob as _glob
+        pools, refs, src = {}, {}, args.pools
+        for f in sorted(_glob.glob(args.pools)):
+            d = json.loads(Path(f).read_text())
+            pools.update(d["pools"]); refs.update(d["references"])
+    else:
+        blob = json.loads(POOLS.read_text())
+        pools, refs, src = blob["pools"], blob["references"], str(POOLS)
     subs = sorted(s for s in pools if refs.get(s))
     print(f"{len(subs)} substrates, pool mean "
           f"{st.mean([len(pools[s]) for s in subs]):.1f}", file=sys.stderr, flush=True)
 
     ceiling, per, ranks, sizes, combo = [], [], [], [], defaultdict(list)
+    n_refs, h_ceiling, h_per, h_combo = [], [], [], defaultdict(list)
     for n, s in enumerate(subs, 1):
         if n % 25 == 0:
             print(f"  {n}/{len(subs)}", file=sys.stderr, flush=True)
@@ -73,14 +88,16 @@ def main() -> int:
         real = set(refs[s])
         keys = [c["key"] for c in cands]
         ceiling.append(rec(keys, real))
+        n_refs.append(len(real))
+        h_ceiling.append(hits(keys, real))
 
         groups = defaultdict(list)
         for i, c in enumerate(cands):
             groups[formula(c["smiles"])].append(i)
         for g, idxs in groups.items():
-            hits = [j for j, i in enumerate(idxs) if keys[i] in real]
-            if hits and len(idxs) > 1:
-                ranks.append(hits[0] + 1)
+            positions = [j for j, i in enumerate(idxs) if keys[i] in real]
+            if positions and len(idxs) > 1:
+                ranks.append(positions[0] + 1)
                 sizes.append(len(idxs))
 
         best = {g: min(i) for g, i in groups.items()}
@@ -96,31 +113,45 @@ def main() -> int:
 
         plain = lambda idxs: idxs
         lift = lambda idxs: sorted(idxs, key=lambda i: keys[i] not in real)
-        row = {"as_ranked": rec(flat(by_score, plain), real, K),
-               "oracle_within": rec(flat(by_score, lift), real, K),
-               "oracle_between": rec(flat(hit_first, plain), real, K),
-               "oracle_both": rec(flat(hit_first, lift), real, K),
-               "pool": ceiling[-1], "n_groups": len(groups)}
+        orders = {"as_ranked": flat(by_score, plain),
+                  "oracle_within": flat(by_score, lift),
+                  "oracle_between": flat(hit_first, plain),
+                  "oracle_both": flat(hit_first, lift)}
+        row = {a: rec(o, real, K) for a, o in orders.items()}
+        row.update({"pool": ceiling[-1], "n_groups": len(groups)})
         per.append(row)
+        h_per.append({a: hits(o, real, K) for a, o in orders.items()})
 
         # the frozen-score recombinations, at the same budget
         for arm, key in (("product", lambda c: -c["combined"]),
                          ("filter", lambda c: -c["filter"]),
                          ("generator", lambda c: -c["generator"])):
-            combo[arm].append(rec([c["key"] for c in sorted(cands, key=key)], real, K))
+            ordered = [c["key"] for c in sorted(cands, key=key)]
+            combo[arm].append(rec(ordered, real, K))
+            h_combo[arm].append(hits(ordered, real, K))
         f = {id(c): i for i, c in enumerate(sorted(cands, key=lambda x: -x["filter"]))}
         g = {id(c): i for i, c in enumerate(sorted(cands, key=lambda x: -x["generator"]))}
         rrf = sorted(cands, key=lambda c: -(1 / (60 + f[id(c)]) + 1 / (60 + g[id(c)])))
         combo["rrf"].append(rec([c["key"] for c in rrf], real, K))
+        h_combo["rrf"].append(hits([c["key"] for c in rrf], real, K))
 
     pool = round(st.mean(ceiling), 4)
+    N = sum(n_refs)
+    pool_micro = round(sum(h_ceiling) / N, 4)
+    ARMS = ("as_ranked", "oracle_within", "oracle_between", "oracle_both")
     arms = {a: {"recall@15": round(st.mean([r[a] for r in per]), 4),
-                "retention": round(st.mean([r[a] for r in per]) / pool, 4)}
-            for a in ("as_ranked", "oracle_within", "oracle_between", "oracle_both")}
+                "retention": round(st.mean([r[a] for r in per]) / pool, 4),
+                "recall@15_micro": round(sum(h[a] for h in h_per) / N, 4),
+                "retention_micro": round(sum(h[a] for h in h_per) / N / pool_micro, 4)}
+            for a in ARMS}
     rep = {
         "provenance": stamp(__file__),
-        "population": {"n": len(subs), "pool": "results/wide_pools.json"},
+        "population": {"n": len(subs), "pool": src},
+        "aggregation": "macro, the mean of per-substrate recall; the _micro fields are the "
+                       "ratio of sums, which is what the MetaTox comparison reports",
         "pool_ceiling_uncapped": pool,
+        "pool_ceiling_uncapped_micro": pool_micro,
+        "n_references": N,
         "mean_pool": round(st.mean([len(pools[s]) for s in subs]), 1),
         "mean_groups_per_substrate": round(st.mean([r["n_groups"] for r in per]), 1),
         "arms": arms,
@@ -134,6 +165,7 @@ def main() -> int:
             "mean_group_size": round(st.mean(sizes), 2) if sizes else None,
         },
         "score_combinations_at_15": {a: round(st.mean(v), 4) for a, v in combo.items()},
+        "score_combinations_at_15_micro": {a: round(sum(h_combo[a]) / N, 4) for a in combo},
     }
     Path(args.out).write_text(json.dumps(rep, indent=1))
     print(f"\npool ceiling (uncapped) {pool}   mean pool {rep['mean_pool']}   "
@@ -144,7 +176,8 @@ def main() -> int:
     w = rep["within_group_rank"]
     print(f"reference inside its formula group: top-1 in {w['top1_share']}, mean rank "
           f"{w['mean_rank']}, {w['n_cases_with_siblings']} cases, mean group {w['mean_group_size']}")
-    print(f"score combinations at k=15: {rep['score_combinations_at_15']}")
+    print(f"score combinations at k=15, macro: {rep['score_combinations_at_15']}")
+    print(f"score combinations at k=15, micro: {rep['score_combinations_at_15_micro']}")
     return 0
 
 
