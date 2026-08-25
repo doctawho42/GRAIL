@@ -40,10 +40,7 @@ BUDGETS = [1, 3, 5, 8, 10, 15, 20, 30, 50]
 N_BOOT, SEED = 10000, 0
 
 
-def rrf_order(cands, k=60):
-    f = {id(c): i for i, c in enumerate(sorted(cands, key=lambda x: -x["filter"]))}
-    g = {id(c): i for i, c in enumerate(sorted(cands, key=lambda x: -x["generator"]))}
-    return sorted(cands, key=lambda c: -(1 / (k + f[id(c)]) + 1 / (k + g[id(c)])))
+from _rrf import rrf_order  # noqa: E402  (the one implementation of the registered rule)
 
 
 def main() -> int:

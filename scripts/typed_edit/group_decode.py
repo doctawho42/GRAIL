@@ -39,6 +39,8 @@ for _p in (str(ROOT), str(ROOT / "scripts")):
 
 from _provenance import stamp  # noqa: E402
 
+from _rrf import rrf_order  # noqa: E402  (the one implementation of the registered rule)
+
 from bank_without_selection import _dedup  # noqa: E402  (keys the SMILES as it dedups)
 
 RDLogger.DisableLog("rdApp.*")
@@ -58,22 +60,6 @@ def formula(smiles: str) -> str:
     return _FORM[smiles]
 
 
-def _ranks(cands, field):
-    order = sorted(range(len(cands)), key=lambda i: -cands[i][field])
-    out, prev, cur = [0] * len(cands), None, 1
-    for pos, i in enumerate(order, 1):
-        v = cands[i][field]
-        if v != prev:
-            prev, cur = v, pos
-        out[i] = cur
-    return out
-
-
-def rrf_order(cands):
-    rf, rg = _ranks(cands, "filter"), _ranks(cands, "generator")
-    idx = sorted(range(len(cands)),
-                 key=lambda i: -(1.0 / (RRF_K + rf[i]) + 1.0 / (RRF_K + rg[i])))
-    return [cands[i] for i in idx]
 
 
 def round_robin(ordered):

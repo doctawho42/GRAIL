@@ -34,6 +34,8 @@ for _p in (str(ROOT), str(ROOT / "scripts"), str(HERE)):
 
 from _provenance import stamp  # noqa: E402
 
+from _rrf import rrf_order  # noqa: E402
+
 from rdkit import Chem, RDLogger  # noqa: E402
 from rdkit.Chem.rdMolDescriptors import CalcMolFormula  # noqa: E402
 
@@ -129,9 +131,7 @@ def main() -> int:
             ordered = [c["key"] for c in sorted(cands, key=key)]
             combo[arm].append(rec(ordered, real, K))
             h_combo[arm].append(hits(ordered, real, K))
-        f = {id(c): i for i, c in enumerate(sorted(cands, key=lambda x: -x["filter"]))}
-        g = {id(c): i for i, c in enumerate(sorted(cands, key=lambda x: -x["generator"]))}
-        rrf = sorted(cands, key=lambda c: -(1 / (60 + f[id(c)]) + 1 / (60 + g[id(c)])))
+        rrf = rrf_order(cands)
         combo["rrf"].append(rec([c["key"] for c in rrf], real, K))
         h_combo["rrf"].append(hits([c["key"] for c in rrf], real, K))
 

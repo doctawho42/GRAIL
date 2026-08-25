@@ -26,30 +26,17 @@ for _p in (str(ROOT), str(ROOT / "scripts")):
 
 from _provenance import stamp  # noqa: E402
 
-RRF_K = 60          # Cormack, Clarke and Buettcher 2009; not tuned here
+from _rrf import RRF_K, rrf_order  # noqa: E402
+
 THRESHOLD = 0.05    # the registered margin
 BOOT, BOOT_SEED = 10000, 0
 
 
-def _ranks(pool, field):
-    """Dense competition ranks, 1-based, descending by `field`; ties share the lower rank."""
-    order = sorted(range(len(pool)), key=lambda i: -pool[i][field])
-    out, prev, cur = [0] * len(pool), None, 1
-    for pos, i in enumerate(order, 1):
-        v = pool[i][field]
-        if v != prev:
-            prev, cur = v, pos
-        out[i] = cur
-    return out
 
 
 def rankings(pool):
     """Return the pool ordered by the product and by rank fusion of the two components."""
-    by_product = sorted(pool, key=lambda c: -c["combined"])
-    rf, rg = _ranks(pool, "filter"), _ranks(pool, "generator")
-    fused = sorted(range(len(pool)),
-                   key=lambda i: -(1.0 / (RRF_K + rf[i]) + 1.0 / (RRF_K + rg[i])))
-    return by_product, [pool[i] for i in fused]
+    return sorted(pool, key=lambda c: -c["combined"]), rrf_order(pool)
 
 
 def hits(ordered, refs, k):
