@@ -60,6 +60,9 @@ PINNED = {
     "results/vs_metatox_pools.json": f"{TE}/vs_metatox.py",
     # the negative result that closes the cheap route to the between-group headroom
     "results/group_decode.json": f"{TE}/group_decode.py",
+    # what the matching's tautomer canonicalisation costs, measured on the data
+    "results/tautomer_near_miss.json": f"{TE}/tautomer_near_miss.py",
+    "results/tautomer_budget.json": f"{TE}/tautomer_budget.py",
     # the cap, its upper-bound table and the check that fixed it
     "results/pool_cap_cost.json": f"{TE}/pool_cap_cost.py",
     "results/h9_verdict.json": f"{TE}/h9_verdict.py",
