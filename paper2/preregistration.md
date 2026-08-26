@@ -475,6 +475,29 @@ the generator first removes them. That is a hypothesis about why, and nothing he
 
 **Family:** H9 alone, m = 1.
 
+**Outcome, checked 2026-08-26.** Supported. On the validation split micro recall@15 is 0.4489
+uncapped and 0.4748 capped, a difference of **+0.0260** against the registered +0.015, 95%
+paired-bootstrap CI [+0.0033, +0.0469] over 10,000 resamples of substrates. The margin is about
+four fifths of the +0.0331 the cap showed on the 291 it was read off. The mean pool falls from
+669.9 to 98.0, so the guard it was registered as holds independently of the gain. Recorded in
+`results/h9_verdict.json`.
+
+The same absent substrate as H7 is bounded rather than excluded: the difference lies in
+[+0.0228, +0.0289] whichever arm its two references are credited to, so the absence cannot have
+produced the verdict.
+
+**The shape of the gain.** The cap costs a little at the tightest budgets and pays increasingly
+with depth: -0.0077 at k=1 and k=5, +0.0061 at k=10, then +0.0259, +0.0397, +0.0641 and +0.0748
+at k=15, 20, 30 and 50. Gating on the generator removes candidates that were occasionally the
+single best answer and removes far more that were crowding the middle of the list.
+
+**On the deployment population**, which the audit in section 0.1c shows is held out from
+training and validation both, the cap turns every budget's gap to MetaTox positive: +0.0917,
++0.0617, +0.0211, +0.0271, +0.0391 and +0.0797 at k = 5, 10, 15, 20, 30 and 50, with the
+bootstrap excluding zero at 5, 10, 30 and 50. Before the cap the comparison lost at 15, 20 and
+30. These are the deployment report and not the evidence for the cap, which is the validation
+check above.
+
 ---
 
 ## H2 — informed node features

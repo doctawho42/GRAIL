@@ -60,6 +60,9 @@ PINNED = {
     "results/vs_metatox_pools.json": f"{TE}/vs_metatox.py",
     # the negative result that closes the cheap route to the between-group headroom
     "results/group_decode.json": f"{TE}/group_decode.py",
+    # the cap, its upper-bound table and the check that fixed it
+    "results/pool_cap_cost.json": f"{TE}/pool_cap_cost.py",
+    "results/h9_verdict.json": f"{TE}/h9_verdict.py",
     # the H7 check and the validation pool it reads
     "results/val_pools.json": f"{TE}/build_val_pools.py",
     "results/h7_verdict.json": f"{TE}/h7_verdict.py",
