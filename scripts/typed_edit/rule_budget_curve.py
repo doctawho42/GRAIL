@@ -47,6 +47,10 @@ def main() -> int:
     ap.add_argument("--n", type=int, default=50, help="substrates drawn from the 291")
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--out", default=str(ROOT / "results/rule_budget_curve.json"))
+    ap.add_argument("--add-metatox", action="store_true",
+                    help="add MetaTox's column on the same draw to an artifact already written; "
+                         "the arms cost hours, so the comparator is attached rather than "
+                         "forcing a re-run")
     args = ap.parse_args()
 
     import random
@@ -65,6 +69,21 @@ def main() -> int:
     real = {s: set(refs[s]) for s in subs}
     N = sum(len(real[s]) for s in subs)
     print(f"{len(subs)} substrates, {N} references", file=sys.stderr, flush=True)
+
+    if args.add_metatox:
+        from bank_without_selection import _dedup
+        mtx = json.loads((ROOT / "results/metatox_smirks_preds.json").read_text())["predictions"]
+        mt = {s: _dedup(mtx.get(s, []), max(KS)) for s in subs}
+        rep = json.loads(Path(args.out).read_text())
+        rep["metatox_recall_micro"] = {
+            str(k): round(sum(len(set(mt[s][:k]) & real[s]) for s in subs) / N, 4) for k in KS}
+        rep["metatox_note"] = ("the same draw the arms ran on, so the columns are comparable to "
+                               "each other; they are not comparable to the 291-substrate table, "
+                               "which is a different and larger population")
+        rep["provenance_metatox"] = stamp(__file__)
+        Path(args.out).write_text(json.dumps(rep, indent=1))
+        print("metatox column added:", rep["metatox_recall_micro"])
+        return 0
 
     generator = _load(Path(args.gen_ckpt), lambda a, r: build_generator(GeneratorConfig(**a), r))
     filt = _load(Path(args.filter_ckpt), lambda a, r: build_filter(FilterConfig(**a)))
