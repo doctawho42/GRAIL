@@ -433,6 +433,30 @@ with knowledge of the answer, and the registered margin is under a third of the 
 
 **Family:** H8 alone, m = 1.
 
+**Scope, fixed before the check.** The oracle numbers this registration is built on are the
+whole-bank pool's. On the pool the trained rule budget produces, which H10 fixed after H8 was
+written, a perfect choice of formula group is worth **+0.0120** of micro recall@15 -- 8.5 groups
+per substrate against the whole bank's 160.4 -- so the registered margin of +0.05 is not
+reachable there and H8 is not testable on the shipped configuration. It is checked on the
+whole-bank pool, where the same oracle is worth +0.1729. The result is therefore about a
+configuration that costs forty times what ships, and any margin it produces is read against
++0.1729 rather than against zero.
+
+**A restriction on the training population, recorded rather than discovered later.** The pipeline
+does not terminate on every substrate: `results/cost_envelope.json` times 106 and the smallest
+that failed to finish in 600 seconds has 42 heavy atoms, while everything below 40 completed.
+Four substrates of the training draw, at 45, 51, 58 and 60 heavy atoms, blocked their shards
+indefinitely. The training population is therefore restricted to substrates of at most **40
+heavy atoms**, the largest round threshold strictly below any observed failure, which removes 37
+of 386 and leaves 349.
+
+The restriction is on training only; the 291 are reported whole. That makes a distribution shift
+between the two, and its size is measured rather than assumed: 17 of the 291 exceed 40 heavy
+atoms, 5.8 per cent of the substrates carrying 6.3 per cent of the references, and the largest
+is 109. The scorer will be asked about molecules larger than any it was trained on, and the
+verdict reports the margin on those seventeen separately so the reader can see whether the shift
+costs anything.
+
 ---
 
 ## H9 — the pool cap, fixed before it is checked
