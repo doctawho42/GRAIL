@@ -128,6 +128,40 @@ class Featuriser:
         return names, by_g, np.stack(rows).astype(np.float32)
 
 
+class Standardiser:
+    """Zero mean and unit variance per feature, fitted on the training split alone.
+
+    The substrate encoding is 128 dimensions of graph-convolution output and the group features
+    are counts and probabilities; without this the network sees one block at a scale the other
+    cannot reach. It adds no information -- the same numbers arrive, differently conditioned --
+    so it is an optimisation detail rather than a feature H8 did not license. It is carried in
+    the checkpoint so inference applies exactly what training fitted.
+    """
+
+    def __init__(self, mean=None, std=None):
+        self.mean, self.std = mean, std
+
+    def fit(self, examples):
+        X = np.concatenate([e["X"] for e in examples], axis=0)
+        self.mean = X.mean(axis=0)
+        self.std = X.std(axis=0)
+        self.std[self.std < 1e-8] = 1.0
+        return self
+
+    def apply(self, examples):
+        for e in examples:
+            e["X"] = ((e["X"] - self.mean) / self.std).astype(np.float32)
+        return examples
+
+    def state(self):
+        return {"mean": self.mean.tolist(), "std": self.std.tolist()}
+
+    @staticmethod
+    def load(d):
+        return Standardiser(np.array(d["mean"], dtype=np.float32),
+                            np.array(d["std"], dtype=np.float32))
+
+
 class GroupScorer(nn.Module):
     def __init__(self, in_dim: int, hidden: int, dropout: float):
         super().__init__()

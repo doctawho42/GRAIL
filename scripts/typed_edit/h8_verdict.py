@@ -12,6 +12,14 @@ One bound the registration did not anticipate and the artifact records: the grou
 pool reaches 0.6752 against fusion's 0.5023, so +0.1729 is the most any reordering of groups can
 buy. A margin near that is the scorer approaching the ceiling; a margin far below it is the
 scorer failing to, and the two readings should not be confused.
+
+A second thing to have in hand before reading the number, stated here rather than after the fact.
+The scorer does not refine the fusion order, it replaces it: the registered feature set carries
+the maximum and mean of the members' raw filter and generator scores and no rank, while fusion is
+built from ranks. So the model has to rebuild a strong baseline out of a representation that
+baseline does not use. That is what was registered and it is not repaired here; it is written
+down so that a failure is read as the feature set failing rather than as groups being
+unrankable.
 """
 from __future__ import annotations
 
@@ -35,7 +43,7 @@ from _provenance import stamp  # noqa: E402
 from bank_without_selection import _dedup, _load  # noqa: E402
 from grail_metabolism.config import GeneratorConfig  # noqa: E402
 from grail_metabolism.workflows.factory import build_generator  # noqa: E402
-from group_scorer import Featuriser, GroupScorer, build_examples  # noqa: E402
+from group_scorer import Featuriser, GroupScorer, Standardiser, build_examples  # noqa: E402
 
 THRESHOLD, N_BOOT, SEED = 0.05, 10000, 0
 KS = (1, 5, 10, 15, 20, 30, 50)
@@ -66,6 +74,7 @@ def main() -> int:
     model.eval()
 
     ex = build_examples(pools, refs, feat)
+    Standardiser.load(ck["standardiser"]).apply(ex)   # exactly what training fitted
     subs = [e["sub"] for e in ex]
     mtx = json.loads(METATOX.read_text())["predictions"]
     mt = {s: _dedup(mtx.get(s, []), max(KS)) for s in subs}

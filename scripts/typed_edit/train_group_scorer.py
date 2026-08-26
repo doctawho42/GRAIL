@@ -28,8 +28,8 @@ from _provenance import stamp  # noqa: E402
 from bank_without_selection import _load  # noqa: E402
 from grail_metabolism.config import GeneratorConfig  # noqa: E402
 from grail_metabolism.workflows.factory import build_generator  # noqa: E402
-from group_scorer import (GROUP_FEATURES, Featuriser, GroupScorer, build_examples,  # noqa: E402
-                          fusion_recall, reorder_recall)
+from group_scorer import (GROUP_FEATURES, Featuriser, GroupScorer, Standardiser,  # noqa: E402
+                          build_examples, fusion_recall, reorder_recall)
 
 GRID = [{"hidden": h, "lr": lr, "dropout": dr}
         for h in (32, 64, 128) for lr in (1e-3, 3e-4) for dr in (0.0, 0.2)]
@@ -97,7 +97,11 @@ def main() -> int:
     va = build_examples(vp, va_refs, feat)
     print(f"usable examples: train {len(tr)}  val {len(va)}", file=sys.stderr, flush=True)
 
+    # fitted on training only, then applied to both; the fusion baseline is computed before it
+    # because it does not read the features at all
     base = fusion_recall(va, 15)
+    scaler = Standardiser().fit(tr)
+    scaler.apply(tr); scaler.apply(va)
     rows = []
     best = None
     for n, cfg in enumerate(GRID, 1):
@@ -120,6 +124,7 @@ def main() -> int:
     cfg, r, model = best
     Path(args.model_out).parent.mkdir(parents=True, exist_ok=True)
     torch.save({"state_dict": model.state_dict(), "config": cfg, "in_dim": in_dim,
+                "standardiser": scaler.state(),
                 "elements_and_group_features": GROUP_FEATURES,
                 "val_recall@15": r, "fusion_baseline": base}, args.model_out)
     print(f"\nfusion baseline on validation: {base:.4f}")
