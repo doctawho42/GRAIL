@@ -71,8 +71,16 @@ def main() -> int:
     generator.generate_scored_with_details("CCO", top_k=7581, threshold=None,
                                            compute_sites=False)   # warm the rule-graph cache
 
+    from grail_metabolism.utils import preparation as prep
+
     rows = {}
     for b in BUDGETS:
+        # Standardisation is 94 to 99 per cent of the generator's cost and it is memoised, so an
+        # arm that runs after another finds the shared products already paid for. Whichever
+        # order the arms run in, the later ones would be measured warm. Clearing the caches
+        # between them makes every arm cold, which is the state a service meets a molecule in.
+        prep._standardize_smiles_cached.cache_clear()
+        prep._canonicalize_smiles_cached.cache_clear()
         hits = {k: 0 for k in KS}
         t_gen = t_filt = 0.0
         n_raw = n_capped = 0
