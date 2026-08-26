@@ -508,6 +508,48 @@ check above.
 
 ---
 
+## H10 — the rule budget, registered while the answer is still running
+
+**Why this exists.** The generator's cost is not the filter's and not RDKit's. Applying all
+7,580 templates to a 109-heavy-atom substrate takes 5.2 seconds; standardising the products they
+produce is 94 to 99 per cent of the generator's cold time, and the number of products is set by
+how many templates are applied. The envelope sweep finds substrates of 42, 43, 56, 57, 61, 67
+and 68 heavy atoms that do not finish in 600 seconds, so this is an operating limit rather than
+an efficiency question.
+
+The budget is already a parameter, `top_k`, and the shipped checkpoint records **30** for it.
+Every pool this project has built passed 7,581 instead, to get a bank-wide pool with no
+selector. Nothing has measured what that costs or buys.
+
+**The operating point, and the rule that picks it.** 30, because it is the value the checkpoint
+records: the configuration the generator was trained and selected under. It is not read off the
+curve this registration is written against, and the curve is deliberately incomplete at the time
+of writing -- two of its six arms have reported, the arm at the whole bank has not started, and
+the prediction below is made without it.
+
+**Prediction.** On the validation split, the whole bank buys **at most +0.05** of micro recall@15
+over the trained budget of 30, both measured with the H9 cap applied and both ranked by the H7
+fusion rule.
+
+**Failure:** the whole bank buys more than +0.05. The rule budget would then not be a free guard,
+and what it costs must be stated as a price rather than adopted as a saving.
+
+**What is measured beside it, and is not a prediction.** The wall clock. At the trained budget a
+substrate costs 1.85 seconds against 56.67 at a budget of 100, and the arms above 100 are slower
+still; whichever way the recall falls, the cost side is a measurement and is reported as one.
+Costs are wall clock on one machine with the standardisation caches cleared between arms, which
+is the state a service meets a molecule in and not the state most of this project's earlier
+timings were taken in.
+
+**What is not claimed.** That 30 is the best budget. The curve exists to show the shape, and its
+draw of 40 substrates carries 92 references, so a difference of 0.03 in recall is three
+references and the arms cannot be separated on it. The shape chooses the operating point; the
+validation split, with 293 substrates and 655 references, decides the margin.
+
+**Family:** H10 alone, m = 1.
+
+---
+
 ## H2 — informed node features
 
 **Prediction.** Adding reactivity (hydrogen abstraction energy, SMARTCyp-style) and
