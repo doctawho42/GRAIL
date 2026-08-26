@@ -62,6 +62,32 @@ The first version of this file predicted that soft admissibility would return ab
 rewritten below around what the measurement leaves standing, and the mechanism they used to
 name is recorded here as a closed question rather than deleted.
 
+### 0.1c The deployment population, and what is already measured on it
+
+The 291 substrates of `results/four_method_291.json` are where the MetaTox comparison is
+decided. They are listed here rather than under 0.1 because they are not the test split, and
+because a set that carries a release claim needs its own membership audit.
+
+| quantity | value | artifact |
+|---|---|---|
+| of the 291, substrates seen in training or validation | **0** | `results/external_overlap_audit.json` |
+| the same audit on the GLORYx external set | 24 of 37 (64.9%) | same |
+| the same on the shared 150-substrate subset | 0 of 150 | same |
+| pool coverage, whole bank, no selector, uncapped | 0.8105 micro / 0.8458 macro | `results/wide_pool_analysis_implicit.json` |
+| references no budget can reach | 126 of 665 (18.9%) | derived from the pool artifact |
+| substrates whose pool holds none of their references | 24 of 291 | same |
+| micro recall@15, filter x generator | 0.3549 | `results/wide_pool_analysis_implicit.json` |
+| micro recall@15, rank fusion | 0.5023 | `results/rrf_vs_metatox.json` |
+| micro recall@15, perfect choice of formula group | 0.6692 | `results/wide_pool_analysis_implicit.json` |
+| micro recall@15, perfect choice of isomer within group | 0.3654 | same |
+| MetaTox micro recall@15 | 0.5143 | `results/four_method_291.json` |
+| capping candidates per group at m = 5, 3, 2, 1 | 0.4902 / 0.4707 / 0.4526 / 0.3850 | `results/group_decode.json` |
+
+The last row is a closed question, not an input to one. Every cap tested falls below the
+uncapped ranking and the family is monotone in how tight the cap is, so spreading the budget
+across formula groups is not an approximation to choosing among them. H8 is registered below on
+what that leaves.
+
 ### 0.1a Three of our own
 
 Three numbers produced while building these instruments did not describe what they appeared to
@@ -348,6 +374,64 @@ produced the verdict. The absent index and its references are recorded in the po
 for them in the strict sense. The selection was made on the product-shaped objective the fusion
 rule is being compared against, so the residual bias favours the product and the margin
 reported here is a lower bound rather than an inflated one.
+
+---
+
+## H8 — the group scorer, registered before it is built
+
+**Why this exists.** The oracle decomposition on the deployment population says the ordering
+loss is almost entirely a question of which molecular formula to spend the budget on. Handing
+the ranker a perfect choice of formula group lifts micro recall@15 from 0.3549 to 0.6692; a
+perfect choice of isomer inside a group lifts it to 0.3654. Rank fusion, registered as H7 and
+confirmed on validation, reaches 0.5023, so 0.167 separates it from the between-group oracle
+(which orders within a group by the deployed product, the ordering worth 0.011). The cheap route
+to that gap is closed: capping how many candidates one group may take in the early slots hurts
+at every strength tested and monotonically in the cap, because the oracle's advantage is
+selective rather than diversifying. What is left is the model H7 already named rank fusion a
+stand-in for, and this registration fixes it before it is written.
+
+**What a group is.** The molecular formula of the candidate, from
+`rdMolDescriptors.CalcMolFormula` on the standardised product. It is the partition the oracle
+decomposition and the decoding measurement were computed on. No second partition is computed,
+so nothing here is evidence about grouping by reaction type.
+
+**The model, fixed.** A scorer over groups rather than candidates. For a substrate and one group
+of its pool it consumes only quantities already available without further chemistry:
+
+- the substrate encoding the generator already produces;
+- the group's size, and the maximum and mean of its members' filter and generator scores;
+- the elemental difference between the group's formula and the substrate's, as a fixed-length
+  count vector over the elements the bank can add or remove.
+
+It is trained with a listwise objective over the groups of one substrate, softmax cross-entropy
+against the indicator of which groups contain an annotated reference. Its output sets the order
+of the groups; inside a group, members keep the order rank fusion gives them, because that
+ordering is worth 0.011 and is not what is being changed.
+
+**Split discipline.** Trained on the training split, every hyperparameter chosen on validation,
+reported on the 291. The audit in section 0.1c shows none of the 291 appears in training or
+validation, so the population is held out from both. One thing was chosen by looking at the 291:
+the direction, because the oracle decomposition that motivates a group scorer was computed
+there. No parameter is, and the threshold below is fixed before the model exists.
+
+**Prediction.** On the 291, micro recall@15 under the group scorer exceeds micro recall@15
+under rank fusion by at least **+0.05**, with a paired-bootstrap CI of the difference that
+excludes zero.
+
+**Operational corollary, registered with it.** At the same budget the gap to MetaTox turns
+positive with a CI excluding zero. MetaTox stands at 0.5143 and rank fusion at 0.5023, so the
+corollary needs 0.012 of the registered 0.05. A primary that holds while the corollary does not
+would mean the scorer helped without reaching the budget where the comparison is decided. Both
+are reported whichever way each falls.
+
+**Failure:** the margin is below +0.05, or negative. That would say the between-group headroom
+is not reachable by a scorer over these features, leaving it a property of the reference set
+rather than of anything the pool carries, and rank fusion stays what ships.
+
+**What is not claimed.** That the oracle's 0.6692 is attainable. It is an upper bound computed
+with knowledge of the answer, and the registered margin is under a third of the distance to it.
+
+**Family:** H8 alone, m = 1.
 
 ---
 
