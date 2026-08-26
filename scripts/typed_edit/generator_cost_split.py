@@ -82,6 +82,7 @@ def main() -> int:
 
     rows = []
     for heavy, s in sample:
+        reps = []
         for rep in range(args.repeat):
             t0 = time.perf_counter()
             generator._prepare_generation(s, 7581, None)
@@ -92,6 +93,8 @@ def main() -> int:
                                                          compute_sites=False)
             t_total = time.perf_counter() - t1
             t_norm, n_norm = box["t"], box["n"]
+            reps.append({"t_total": round(t_total, 3), "t_forward": round(t_forward, 3),
+                         "t_normalize": round(t_norm, 3), "n_normalize_calls": n_norm})
         t_react = t_total - t_forward - t_norm
         rows.append({"heavy": heavy, "n_cands": len(det), "repeat": args.repeat,
                      "t_total": round(t_total, 2), "t_forward": round(t_forward, 2),
@@ -99,11 +102,19 @@ def main() -> int:
                      "n_normalize_calls": n_norm,
                      "share_forward": round(t_forward / t_total, 3) if t_total else None,
                      "share_reactants": round(t_react / t_total, 3) if t_total else None,
-                     "share_normalize": round(t_norm / t_total, 3) if t_total else None})
+                     "share_normalize": round(t_norm / t_total, 3) if t_total else None,
+                     # the first pass pays standardisation for products nothing has seen; the
+                     # last finds them all cached. A service meets molecules cold, so the gap
+                     # between these two is the part of the cost a cache can remove and the
+                     # part it cannot.
+                     "cold": reps[0], "warm": reps[-1],
+                     "cold_over_warm": round(reps[0]["t_total"] / reps[-1]["t_total"], 1)
+                     if reps[-1]["t_total"] else None})
         r = rows[-1]
         print(f"  heavy={heavy:3d}  cands={len(det):5d}  total={r['t_total']:8.2f}s   "
               f"forward={r['share_forward']:.0%}  reactants={r['share_reactants']:.0%}  "
-              f"normalize={r['share_normalize']:.0%}  ({n_norm} normalisations)",
+              f"normalize={r['share_normalize']:.0%}   cold/warm="
+              f"{r['cold_over_warm']}x  ({r['cold']['n_normalize_calls']} normalisations cold)",
               file=sys.stderr, flush=True)
         Path(args.out).write_text(json.dumps(
             {"provenance": stamp(__file__), "checkpoint": args.gen_ckpt,
