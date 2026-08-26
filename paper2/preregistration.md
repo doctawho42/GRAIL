@@ -435,6 +435,48 @@ with knowledge of the answer, and the registered margin is under a third of the 
 
 ---
 
+## H9 — the pool cap, fixed before it is checked
+
+**Why this exists.** The filter builds one pair graph per candidate, so the work a substrate
+causes is proportional to its pool: 588.7 candidates on average over the deployment population,
+4,614 at the worst. A validation substrate of 291 heavy atoms did not finish in over three
+hours. Capping the pool bounds that work, and the cap can be applied on the generator score,
+which is available before any pair graph is built and therefore before the expensive part.
+
+Measured on the 291, the cap does not cost recall; it gains. Eight caps were computed there and
+the table is in `results/pool_cap_cost.json`, which is an argmax over the set it is reported on
+and is recorded as an upper bound rather than a result. This registration fixes the cap and the
+margin before the check.
+
+**The cap, fixed.** Keep the 100 highest-scoring candidates by generator score, then order the
+survivors by the fusion rule H7 registers. 100 is not the best of the eight: 50 scored 0.0015
+higher at k=15, which is inside the noise of either. It is chosen by a rule stated before the
+comparison is quoted -- the smallest round cap that is at least twice the largest budget any
+comparison in this project reports, so that no reported budget is constrained by the cap itself.
+A cap of 50 would make the k=50 column a tautology.
+
+**Prediction.** On the validation split, micro recall@15 under the cap exceeds micro recall@15
+without it by at least **+0.015**, roughly half the +0.0331 it showed on the 291, with a
+paired-bootstrap CI of the difference that excludes zero.
+
+**Failure:** the margin is below +0.015, or negative.
+
+**What the failure does not undo.** The cap is adopted as a cost guard whichever way the margin
+falls, because bounding the pool at 100 bounds the filter's work by six times on the mean and
+forty-six on the worst substrate, and the registration's own prediction is that this costs
+nothing. Only the claim that it *improves* ranking is at stake here. A margin between zero and
++0.015 means the guard is free and the gain was a property of the 291; a margin below zero means
+the guard has a price, and the price is then reported with it.
+
+**What is not claimed.** That 100 is optimal, or that the mechanism is understood. The plausible
+mechanism is that fusion weights the filter's ranking equally with the generator's, so
+candidates the filter likes and the generator does not float up from deep in the pool; gating on
+the generator first removes them. That is a hypothesis about why, and nothing here tests it.
+
+**Family:** H9 alone, m = 1.
+
+---
+
 ## H2 — informed node features
 
 **Prediction.** Adding reactivity (hydrogen abstraction energy, SMARTCyp-style) and
