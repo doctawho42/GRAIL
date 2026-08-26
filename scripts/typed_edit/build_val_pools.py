@@ -104,6 +104,8 @@ def main() -> int:
     ap.add_argument("--gen-ckpt", default=str(ROOT / "artifacts/full5000_implicit/checkpoints/generator.pt"))
     ap.add_argument("--filter-ckpt", default=str(ROOT / "artifacts/full5000_priors/checkpoints/filter.pt"))
     ap.add_argument("--out", default=str(ROOT / "results" / "val_pools.json"))
+    ap.add_argument("--top-k", type=int, default=7581,
+                    help="rule budget; 7581 is the whole bank, 30 is what the checkpoint records")
     args = ap.parse_args()
 
     if args.merge:
@@ -122,7 +124,7 @@ def main() -> int:
     for i, s in enumerate(sl, 1):
         if i == 1 or i % 5 == 0 or i == len(sl):
             print(f"  {i}/{len(sl)} ({time.perf_counter() - t:.0f}s)", file=sys.stderr, flush=True)
-        det = generator.generate_scored_with_details(s, top_k=7581, threshold=None,
+        det = generator.generate_scored_with_details(s, top_k=args.top_k, threshold=None,
                                                      compute_sites=False)
         det.sort(key=lambda d: (-d[1], d[0]))
         cands = [d[0] for d in det]
@@ -139,7 +141,8 @@ def main() -> int:
         refs[s] = sorted({k for k in (_key(p) for p in vmap[s]) if k})
 
     Path(args.out).write_text(json.dumps(
-        {"slice": [args.start, args.end or len(subs)], "pools": pools, "references": refs},
+        {"slice": [args.start, args.end or len(subs)], "top_k": args.top_k,
+         "pools": pools, "references": refs},
         indent=1))
     print(f"wrote {args.out}", file=sys.stderr)
     return 0

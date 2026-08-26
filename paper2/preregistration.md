@@ -548,6 +548,29 @@ validation split, with 293 substrates and 655 references, decides the margin.
 
 **Family:** H10 alone, m = 1.
 
+**Outcome, checked 2026-08-26.** Supported. On validation the whole bank buys **+0.0092** of
+micro recall@15 over the trained budget of 30, against a registered ceiling of +0.05; the 95%
+paired-bootstrap CI is [-0.0231, +0.0399], which contains zero, so at this budget the whole
+bank's advantage is not distinguishable from none. The mean pool falls from 669.9 candidates to
+17.0. Recorded in `results/h10_verdict.json`.
+
+The substrate the whole bank never finished is in the trained arm: all 294 validation substrates
+completed in 1,510 seconds, the 291-heavy-atom peptide among them. The absent substrate is the
+one the whole-bank pool lacks, and bounding its two references both ways puts what the bank buys
+in [+0.0061, +0.0122], so the absence cannot have produced the verdict.
+
+**Where the trained budget cannot answer.** Thirty templates yield seventeen candidates, so above
+a budget of fifteen the arm is not ranking worse, it is running out of things to return. At
+k=15, 167 of 293 substrates already hold fewer candidates than the budget; at k=50, 287 of 293
+do. The whole bank's +0.1863 at k=50 is therefore almost entirely the trained arm's empty list
+and not a ranking difference, and it is not evidence about ordering. What the check establishes
+is bounded to budgets the arm can fill: at fifteen and below the trained budget matches the whole
+bank at a thirty-ninth of the pool, and at fifty it does not compete.
+
+**A provenance gap, recorded rather than assumed away.** The whole-bank pool artifact predates
+the flag that records the rule budget, so it carries none. It was built by `build_val_pools.py`
+when that script passed 7,581 unconditionally, which git records and the artifact does not.
+
 ---
 
 ## H2 — informed node features
