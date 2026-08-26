@@ -571,6 +571,27 @@ bank at a thirty-ninth of the pool, and at fifty it does not compete.
 the flag that records the rule budget, so it carries none. It was built by `build_val_pools.py`
 when that script passed 7,581 unconditionally, which git records and the artifact does not.
 
+**The deployment population does not agree, and the disagreement is the finding.** Repeating the
+same contrast on the 291, where H10 was not registered and which is therefore a report rather
+than a second test, the whole bank buys **+0.0556** at k=15 with a CI of [+0.0235, +0.0876] --
+just past the ceiling that validation cleared at +0.0092. The two populations give the same
+answer at tighter budgets and diverge as the budget widens:
+
+| budget | what the whole bank buys, on the 291 | 95% CI |
+|---|---|---|
+| 5 | -0.0090 | [-0.0394, +0.0224] |
+| 10 | +0.0165 | [-0.0145, +0.0463] |
+| 15 | +0.0556 | [+0.0235, +0.0876] |
+| 20 | +0.0917 | [+0.0574, +0.1262] |
+| 50 | +0.2165 | [+0.1738, +0.2601] |
+
+So the registered threshold is not a property of the system but of the budget it is asked at.
+At ten and below the whole bank buys nothing on either population, both intervals containing
+zero. At fifteen and above it buys, and the amount rises with the budget because the trained
+arm's list runs out: 178 of the 291 hold fewer than fifteen candidates. What H10 establishes is
+that the trained budget is free at the budgets it can fill, and what it does not establish is
+anything about the budgets it cannot.
+
 ---
 
 ## H2 — informed node features

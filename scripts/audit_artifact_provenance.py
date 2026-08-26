@@ -63,6 +63,8 @@ PINNED = {
     # what the matching's tautomer canonicalisation costs, measured on the data
     "results/tautomer_near_miss.json": f"{TE}/tautomer_near_miss.py",
     "results/tautomer_budget.json": f"{TE}/tautomer_budget.py",
+    # the comparison as it would ship, both budgets against MetaTox
+    "results/deployment_table.json": f"{TE}/deployment_table.py",
     # the rule budget: the curve's shape and the check on validation
     "results/h10_verdict.json": f"{TE}/h10_verdict.py",
     # the cap, its upper-bound table and the check that fixed it
