@@ -642,6 +642,33 @@ configuration is the whole bank, and the comparison at matched volume is the one
 
 **Family:** H11 alone, m = 1.
 
+**Outcome, checked 2026-08-26.** Supported. **Zero cells lost** of the fifty declared, and zero
+of the fifty-five once MetaTox's own emission is counted as a column. The rule's macro F1 is
+0.1175 to 0.1531 depending on the matching criterion; MetaTox's best cell under every criterion
+is at a budget of ten and reaches 0.0905 to 0.1343. Recorded in `results/h11_grid.json`.
+
+| criterion | the rule | MetaTox's best cell |
+|---|---|---|
+| canonical | 0.1175 | 0.0905 at k=10 |
+| inchikey | 0.1530 | 0.1215 at k=10 |
+| inchi_no_stereo | 0.1531 | 0.1249 at k=10 |
+| tanimoto1 | 0.1180 | 0.0906 at k=10 |
+| inchikey_tautomer | 0.1530 | 0.1343 at k=10 |
+
+**The part that does not rest on the declared bias.** F1 favours the smaller emitter here and the
+rule emits 16.31 against MetaTox's 36.34, so the F1 lead is not the interesting number. The
+components are, and they say something F1 cannot be blamed for: read at a budget of fifteen,
+where MetaTox emits about what the rule emits, its macro recall is 0.5406 against the rule's
+**0.5672**. At comparable output the rule recovers more, and no accounting of unannotated
+positives changes that comparison, because both sides emit the same amount. At its own emission
+MetaTox recovers more, 0.6868, on 2.2 times the output.
+
+**The gate failed first, on this file's own error.** It was written to compare MetaTox's macro
+recall at its own emission against the 0.6708 recorded in `results/vs_metatox.json`. That number
+is MetaTox capped at fifty, which that artifact does and this grid does not; the k=50 column
+reproduces it exactly. The cell the gate names was corrected to the one the number was computed
+in, and the grid was re-run rather than the discrepancy explained away.
+
 ---
 
 ## H2 — informed node features
