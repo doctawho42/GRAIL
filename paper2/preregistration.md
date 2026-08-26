@@ -437,11 +437,19 @@ with knowledge of the answer, and the registered margin is under a third of the 
 
 ## H9 — the pool cap, fixed before it is checked
 
-**Why this exists.** The filter builds one pair graph per candidate, so the work a substrate
-causes is proportional to its pool: 588.7 candidates on average over the deployment population,
-4,614 at the worst. A validation substrate of 291 heavy atoms did not finish in over three
-hours. Capping the pool bounds that work, and the cap can be applied on the generator score,
-which is available before any pair graph is built and therefore before the expensive part.
+**Why this exists.** The filter builds one pair graph per candidate, so the work it does is
+proportional to the pool: 588.7 candidates on average over the deployment population, 4,614 at
+the worst. Capping the pool bounds that work, and the cap can be applied on the generator score,
+which is available before any pair graph is built.
+
+**What this cap does not bound.** The envelope sweep in `results/cost_envelope.json` shows the
+filter is not where a large substrate spends its time. At 40 heavy atoms the generator takes
+369.6 seconds and the filter 3.4, a ratio of a hundred to one that widens with size, and the
+substrate that did not finish in three hours was not finishing inside the generator. A pool
+cannot be capped before it has been enumerated, so this cap saves nothing on the cost that
+actually grows. The input envelope is a separate question about the generator's rule budget and
+is not addressed by H9; what H9 bounds is the filter's share, and what it is checked on below is
+ranking.
 
 Measured on the 291, the cap does not cost recall; it gains. Eight caps were computed there and
 the table is in `results/pool_cap_cost.json`, which is an argmax over the set it is reported on
