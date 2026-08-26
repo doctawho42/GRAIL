@@ -457,6 +457,35 @@ is 109. The scorer will be asked about molecules larger than any it was trained 
 verdict reports the margin on those seventeen separately so the reader can see whether the shift
 costs anything.
 
+**Outcome, checked 2026-08-27. Failed.** On the 291 the scorer reaches 0.3820 of micro recall@15
+against rank fusion's 0.5023, a margin of **-0.1203** with a CI of [-0.1590, -0.0828] against a
+registered +0.05. The corollary fails with it: against MetaTox the gap is -0.1323. Recorded in
+`results/h8_verdict.json`. Twenty configurations were trained, the grid extended once when its
+winner sat at the widest layer it contained, and every one of them selected on validation.
+
+**The failure has two halves and the registration owns one of them.** H8 fixes that the scorer
+orders the groups and leaves the order inside a group alone. That forces every member of a
+formula group to be emitted adjacently, and blocking is not free: the *same* fusion ranking, with
+group members kept together, scores 0.4376 against 0.5023 interleaved. The design costs
+**-0.0647** before the model does anything, and the model then costs a further **-0.0556**
+relative to that blocked baseline. The +0.1729 of oracle headroom this hypothesis was built on
+was measured in the blocked form, so its first 0.0647 was never headroom at all -- it was the
+design buying back what the design had spent, and nobody had measured that before registering.
+
+**Two explanations that the artifact rules out.** The distribution shift is not it: above 40
+heavy atoms the scorer reaches 0.1667 against fusion's 0.2619, and at or below it reaches 0.3965
+against 0.5185, so it is no worse in proportion on the molecules larger than any it saw. Capacity
+is not it either: validation recall across widths of 32, 64, 128, 256 and 512 runs 0.4117,
+0.4100, 0.4149, 0.4100 and 0.4198, which is flat.
+
+**What the failure is, then.** On validation the scorer beat the blocked baseline by +0.0243; on
+the 291 the same contrast is -0.0556. A margin of that size, picked as the best of twenty
+configurations on one split, does not survive the move to another, which is what selecting on a
+margin near the noise buys. Under it sits the feature set the registration fixed: the maximum and
+mean of the members' raw filter and generator scores and no rank, while the baseline it must beat
+is built from ranks. The scorer was asked to rebuild a strong ordering in a representation that
+ordering does not use, and it did not. That reading was written down before the check, not after.
+
 ---
 
 ## H9 — the pool cap, fixed before it is checked

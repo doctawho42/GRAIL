@@ -31,8 +31,12 @@ from grail_metabolism.workflows.factory import build_generator  # noqa: E402
 from group_scorer import (GROUP_FEATURES, Featuriser, GroupScorer, Standardiser,  # noqa: E402
                           build_examples, fusion_recall, reorder_recall)
 
-GRID = [{"hidden": h, "lr": lr, "dropout": dr}
-        for h in (32, 64, 128) for lr in (1e-3, 3e-4) for dr in (0.0, 0.2)]
+HIDDEN, LRS, DROPOUTS = (32, 64, 128), (1e-3, 3e-4), (0.0, 0.2)
+
+
+def make_grid(hidden, lrs, drops):
+    return [{"hidden": h, "lr": lr, "dropout": d}
+            for h in hidden for lr in lrs for d in drops]
 EPOCHS, PATIENCE, SEED = 60, 12, 0
 
 
@@ -82,6 +86,12 @@ def main() -> int:
                     default=str(ROOT / "artifacts/full5000_implicit/checkpoints/generator.pt"))
     ap.add_argument("--out", default=str(ROOT / "results/group_scorer_selection.json"))
     ap.add_argument("--model-out", default=str(ROOT / "artifacts/group_scorer.pt"))
+    ap.add_argument("--hidden", type=int, nargs="+", default=list(HIDDEN),
+                    help="widths to try; the first pass ended on the largest of 32/64/128, so "
+                         "the grid was extended rather than left at its edge -- selection is on "
+                         "validation and the reported population is untouched by it")
+    ap.add_argument("--append-to", default="",
+                    help="a previous selection artifact whose rows are carried into this one")
     args = ap.parse_args()
 
     device = "cpu"
@@ -99,15 +109,19 @@ def main() -> int:
 
     # fitted on training only, then applied to both; the fusion baseline is computed before it
     # because it does not read the features at all
+    grid = make_grid(args.hidden, LRS, DROPOUTS)
     base = fusion_recall(va, 15)
     scaler = Standardiser().fit(tr)
     scaler.apply(tr); scaler.apply(va)
     rows = []
+    if args.append_to and Path(args.append_to).exists():
+        rows = list(json.loads(Path(args.append_to).read_text())["grid"])
+        print(f"carrying {len(rows)} rows from {args.append_to}", file=sys.stderr)
     best = None
-    for n, cfg in enumerate(GRID, 1):
+    for n, cfg in enumerate(grid, 1):
         model, r, eps = train_one(cfg, tr, va, in_dim, device)
         rows.append({**cfg, "val_recall@15": round(r, 4), "epochs_run": eps})
-        print(f"  [{n}/{len(GRID)}] hidden={cfg['hidden']} lr={cfg['lr']} "
+        print(f"  [{n}/{len(grid)}] hidden={cfg['hidden']} lr={cfg['lr']} "
               f"dropout={cfg['dropout']}  val r@15 {r:.4f}  ({eps} epochs)",
               file=sys.stderr, flush=True)
         if best is None or r > best[1]:
@@ -115,6 +129,10 @@ def main() -> int:
         Path(args.out).write_text(json.dumps(
             {"provenance": stamp(__file__),
              "selected_on": "validation micro recall@15", "grid": rows,
+             "widths_tried": sorted({r["hidden"] for r in rows}),
+             "grid_extended": "the first pass covered 32/64/128 and its winner was the widest, "
+                              "so the grid was extended rather than stopped at its edge; "
+                              "selection is on validation and the 291 are not read here",
              "fusion_baseline_val_recall@15": round(base, 4),
              "n_train_examples": len(tr), "n_val_examples": len(va),
              "in_dim": in_dim, "epochs_max": EPOCHS, "patience": PATIENCE, "seed": SEED,
@@ -131,6 +149,15 @@ def main() -> int:
     print(f"best: hidden={cfg['hidden']} lr={cfg['lr']} dropout={cfg['dropout']}  "
           f"val r@15 {r:.4f}  ({r - base:+.4f} over fusion)")
     print(f"wrote {args.model_out}")
+    carried = [x for x in rows if not any(
+        x["hidden"] == c["hidden"] and x["lr"] == c["lr"] and x["dropout"] == c["dropout"]
+        for c in grid)]
+    if carried:
+        top = max(carried, key=lambda x: x["val_recall@15"])
+        print(f"note: this pass saved only its own best. Carried rows peak at "
+              f"{top['val_recall@15']:.4f} (hidden={top['hidden']} lr={top['lr']} "
+              f"dropout={top['dropout']}); the checkpoint to use is whichever of the two files "
+              f"records the higher val_recall@15, compared explicitly and not by this script.")
     return 0
 
 

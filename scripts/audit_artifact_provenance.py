@@ -63,6 +63,10 @@ PINNED = {
     # what the matching's tautomer canonicalisation costs, measured on the data
     "results/tautomer_near_miss.json": f"{TE}/tautomer_near_miss.py",
     "results/tautomer_budget.json": f"{TE}/tautomer_budget.py",
+    # the group scorer: its selection on validation and its verdict on the 291
+    "results/group_scorer_selection.json": f"{TE}/train_group_scorer.py",
+    "results/h8_verdict.json": f"{TE}/h8_verdict.py",
+    "results/train_pools.json": f"{TE}/build_train_pools.py",
     # the emission rule's grid
     "results/h11_grid.json": f"{TE}/h11_grid.py",
     # why the registered emission threshold does not survive the change of ranking
