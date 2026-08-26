@@ -594,6 +594,56 @@ anything about the budgets it cannot.
 
 ---
 
+## H11 — the emission rule, and why it cannot be a threshold
+
+**Why the old rule does not carry over.** Section 0.2a registers a pool-relative rule: emit every
+candidate scoring at least alpha times the best, with alpha = 0.5. That was defined on the
+product of the filter and generator scores. The ranking is now the rank fusion H7 registers, and
+the rule does not survive the change. On the deployment pools at the trained rule budget, alpha
+= 0.5 emits 2.31 candidates by the product and **16.22 of a pool of 16.3** by fusion. The reason
+is structural rather than incidental: fusion is a rank statistic whose values carry no scale. In
+one pool of seven the fusion scores run from 0.03252 to 0.03055, a ratio of 0.939, where the
+product spans 2.55e-04. A relative threshold on such a quantity is a rank cutoff wearing a
+threshold's clothes, and its knob is violent -- alpha would have to reach 0.98 before the output
+fell to two candidates. Choosing an alpha for fusion would be fitting an output size and calling
+it a policy.
+
+**The rule, fixed.** The service emits, for a substrate, every candidate the trained rule budget
+produces, ordered by the H7 fusion rule, with nothing truncated. There is no emission parameter.
+What decides the size of the answer is the rule budget H10 fixed at the value the checkpoint
+records, and the chemistry of the substrate; on the 291 this emits 15.7 candidates on average
+against MetaTox's 31.0. The H9 cap of 100 remains in the pipeline and does not bind at this
+budget, so it is part of the configuration and not part of the emission.
+
+**What is already known and is therefore not predicted.** The direction of the F1 comparison is
+implied by numbers already in `results/deployment_table.json`: the rule emits half of MetaTox's
+volume and recovers 0.4902 of the references against MetaTox's 0.6271, so it leads on precision
+and trails on recall. Restating that ordering as a prediction would be describing an artifact.
+
+**Prediction.** The lead survives the grid rather than living in a cell. Run over the five
+matching criteria of section 0.2a crossed with the budgets MetaTox is read at, the rule beats
+MetaTox on macro F1 in **every cell**, and the count of cells lost is zero.
+
+**Failure:** any cell is lost. The rule would then be a policy that wins where it is quoted, which
+is the error this series exists to catch, and what may be claimed shrinks to the cells that hold.
+
+**The bias that runs in our favour, declared.** Precision is computed against annotated positives
+only, so an unannotated true metabolite counts as a false positive. That penalises volume, and
+this rule emits half of what it is compared against. The F1 comparison is therefore biased toward
+the rule and the artifact reports precision, recall and mean output beside it so the direction of
+the bias is visible in the same table. No claim about ranking quality is made from F1; the
+ranking claims are H7, H9 and H10, measured at matched budgets.
+
+**What is not claimed.** That emitting the whole pool is the best policy for a user. A service
+that must return thirty candidates cannot use this rule, because at the trained budget 282 of the
+291 pools hold fewer than fifty and 178 hold fewer than fifteen; for that service the
+configuration is the whole bank, and the comparison at matched volume is the one in
+`results/deployment_table.json` rather than this one.
+
+**Family:** H11 alone, m = 1.
+
+---
+
 ## H2 — informed node features
 
 **Prediction.** Adding reactivity (hydrogen abstraction energy, SMARTCyp-style) and

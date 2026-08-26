@@ -63,6 +63,8 @@ PINNED = {
     # what the matching's tautomer canonicalisation costs, measured on the data
     "results/tautomer_near_miss.json": f"{TE}/tautomer_near_miss.py",
     "results/tautomer_budget.json": f"{TE}/tautomer_budget.py",
+    # why the registered emission threshold does not survive the change of ranking
+    "results/emission_rule_transfer.json": f"{TE}/emission_rule_transfer.py",
     # the comparison as it would ship, both budgets against MetaTox
     "results/deployment_table.json": f"{TE}/deployment_table.py",
     # the rule budget: the curve's shape and the check on validation
