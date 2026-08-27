@@ -199,6 +199,32 @@ the published cell alone would be selecting a cell, which is the error this seri
 
 ---
 
+### 0.2b How the comparison with MetaTox may be stated
+
+The comparison is the sweep, not a cell. Every budget the comparators are read at is reported
+together, with the interval on each, and no budget is privileged by being quoted alone.
+
+That rule is not a preference. Paper one is about the error of reading a leaderboard at the cell
+that flatters the reader, and a project that argued the point and then fought for k=15 -- the one
+budget where its own interval covers zero -- would be applying to itself a standard it calls
+substitution in others. So the claim is stated as it falls:
+
+> Under the deployed configuration GRAIL leads MetaTox at k = 1, 3, 5, 8, 10, 30 and 50, with the
+> paired-bootstrap interval excluding zero at 1, 3, 5, 8, 10, 30 and 50 for the whole bank and at
+> 1, 3, 5, 8 and 10 for the trained budget. At k = 15 and k = 20 the point estimate leads and the
+> interval does not separate.
+
+`results/deployment_table.json` carries every budget, both arms, the intervals, and the count of
+substrates whose list is shorter than the budget on each side, so a reader can see the whole
+sweep rather than the row an author chose.
+
+**The consequence for what is open.** "The lead at k=15 is not established" is not an open
+question that further work should close; it is a line in that table. Work aimed at moving that
+one cell would be work aimed at a number rather than at the service, and this file records that
+so the temptation is on paper rather than in someone's head.
+
+---
+
 ### 0.3 The comparator set, closed
 
 Adding a comparator after a run is choosing a cell, so the list is closed here. A comparator
@@ -823,6 +849,94 @@ reported the three-way arm ahead of MetaTox by +0.4901 with the interval excludi
 was run on the 291 and nowhere else, so every one of its lists on validation is empty and that
 figure was the arm's own recall wearing a gap's clothes. The check now counts how many substrates
 the comparator covers and refuses the contrast at zero rather than computing it.
+
+---
+
+## H13 — standardisation off the enumeration loop
+
+**Why this exists.** Standardising products is 94 to 99 per cent of the generator's cold time.
+The enumeration calls it on every product of every rule -- about four thousand per substrate --
+to keep about sixteen after the H9 cap, so between 22 and 50 times more standardisations are paid
+than survive. Applying all 7,581 templates to a 109-heavy-atom substrate takes 5.2 seconds; the
+minutes are spent canonicalising tautomers of products nothing will rank.
+
+This is registered before the group work because its effect is larger. If it holds, the whole-bank
+arm becomes interactive and the two-configuration split may collapse to one; closing the +0.1729
+between groups would not do that.
+
+**The change, fixed.** During enumeration, deduplicate products on the cheap canonical SMILES --
+`MolToSmiles(mol, isomericSmiles=False)`, the `canonical` branch the code already has -- and run
+the full `standardize_mol` only on the candidates that survive the H9 cap of 100. Nothing else
+changes: the same templates, the same budget, the same fusion, the same cap.
+
+**Why this is a hypothesis and not a refactor.** The normalised SMILES is the deduplication key,
+and the candidate score is a noisy-or over every rule that produces the same key. Two tautomers
+of one product collapse under standardisation and do not under canonicalisation, so the change
+splits their evidence and moves the surviving candidates' scores. It also feeds the filter a raw
+tautomer where it was trained on a standardised one. Both are real effects on the numbers and
+neither can be waved through.
+
+**Prediction.** On validation, micro recall@15 falls by at most **0.01**, and the median
+per-substrate generator time falls by at least **ten times**.
+
+**Where 0.01 comes from.** It is below every margin this file's results turn on: H12's +0.02,
+H9's +0.015, and the +0.012 that separates the two-way fusion from MetaTox at k=15. A change
+costing less than that cannot move any claim recorded here, which is the definition of free that
+matters.
+
+**Failure:** recall falls by more than 0.01, or the time does not fall tenfold. A cost above the
+threshold makes this a trade rather than a saving, and the trade is then reported with both sides
+and decided separately.
+
+**What is not claimed.** That the filter is indifferent to being fed a raw tautomer. It was
+trained on standardised inputs and this feeds it something else, which is one of the two
+mechanisms that could produce a failure; the verdict reports recall with the cap applied and
+without it, so a loss concentrated in the filter's scores can be told from one in the
+deduplication.
+
+**Family:** H13 alone, m = 1.
+
+---
+
+## H14 — the group signal as a gate rather than a third ranking
+
+**Why this exists.** H12 works and is bounded. The scorer's group ranking entered as a third
+reciprocal-rank term is worth +0.0286, and a *perfect* group ranking entered the same way is
+worth the same +0.0286: the term is bounded, so however good the ranking is it can only nudge.
+The +0.1729 the oracle shows is real and neither registered composition reaches it -- H8's spent
+more than it drew and H12's barely draws.
+
+The way out is not a multiplicative composition, which would restore the scale sensitivity H7
+just found worse. It is H9's own result: capping the pool did not cost recall, it gained it, by
+removing candidates that were crowding the middle of the list. So the group signal belongs
+*before* the fusion, as what decides which candidates the cap keeps, rather than after it as a
+term the fusion bounds.
+
+**The gate, fixed.** H9 keeps the 100 highest-scoring candidates by generator score. This keeps
+100 candidates too, but chooses them by group: take the formula groups in the order the scorer
+ranks them, admitting each group's members whole, until 100 candidates are admitted; rank the
+admitted set by the H7 fusion. The budget is H9's registered 100 and no new parameter is
+introduced. The last group admitted may take the total past 100, and it is admitted whole rather
+than cut, because cutting it would reintroduce a within-group decision this hypothesis does not
+make.
+
+**Prediction.** On the 291, micro recall@15 exceeds the H9 configuration -- top 100 by generator,
+then fusion -- by at least **+0.02**, with the paired-bootstrap interval excluding zero.
+
+**Where +0.02 comes from.** The same place as H12's: at k=15 the deployed configuration reaches
+0.5353 against MetaTox's 0.5143, and the margin is set at the size that would make the lead
+survive its interval rather than merely lead in point estimate. It is not read off the group
+oracle, which would be reading the answer.
+
+**Failure:** the margin is below +0.02, or negative. Taken with H12 that would say the
+between-group signal is worth about +0.03 however it is composed, and the oracle's +0.1729 is a
+property of knowing the answer rather than of anything these features carry.
+
+**What is not claimed.** That 100 is the right budget for a gate as opposed to a cap. It is
+H9's number, reused so that this hypothesis introduces nothing of its own, and a sweep over it
+would be a different registration.
+
+**Family:** H14 alone, m = 1.
 
 ---
 
