@@ -1034,6 +1034,40 @@ it.
 
 **Family:** H15 alone, m = 1.
 
+**Outcome, checked 2026-08-28. Supported.** Both halves hold, on the 293 substrates the arm and
+the whole-product baseline share. Recorded in `results/h15_verdict.json`.
+
+| | registered | measured | |
+|---|---|---|---|
+| median time before the filter | below 10 s | **5.28 s**, from 49.85 | holds |
+| recall@15 loss | at most 0.01 | **0.0015**, CI [-0.0124, +0.0081] | holds |
+
+At k=10 the arm is worth +0.0092 with the interval excluding zero, and at every other budget the
+change is inside the noise. The whole-bank configuration is interactive: a synchronous request
+at the median now returns in five seconds where it took fifty.
+
+**The factor is not all ours, and the artifact divides it.** The two survivors arms did not run
+under the same machine load -- H13's ran beside the whole-product arm, this one with only its own
+shards -- and the enumeration is *identical* between them, canonical deduplication with no
+tautomer budget in it at all. Its time therefore measures the load and nothing else: 3.59 seconds
+against 2.09, a factor of 1.73. Dividing that out of the standardisation's 4.35 leaves **2.52
+attributable to the budget**, against the 3.93 the budget curve predicted for 1,000 to 200. The
+registered target is absolute and is unaffected by any of this; the factor is not, and would have
+been overstated by a third had nobody looked.
+
+**What the budget actually changed.** Of 27,595 candidates in the bounded arm, **263** -- 0.95
+per cent -- standardise to a different molecule than at the shipped budget. Across all 293
+substrates that moves the pools' key sets by 21: twelve keys appear only at 200 and nine only at
+1,000. The matching key is computed at the shipped 1,000 in both arms and is untouched; a private
+enumerator with a private cache does the survivors, and the global pair is left exactly as it
+ships, which was checked before the run on 96 molecules.
+
+**A diagnostic this file first reported as a tautology.** The first version asked how many
+candidates matched *by SMILES* between the two arms had a different key, and answered zero of
+27,332. That count can only ever be zero: a candidate the lower budget standardised differently
+carries a different SMILES and never enters the comparison. It was replaced by the two numbers
+above, which can be other than zero and are.
+
 ---
 
 ## H2 — informed node features

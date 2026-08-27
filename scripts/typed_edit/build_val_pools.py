@@ -110,6 +110,11 @@ def main() -> int:
                          "of each rule. survivors is the H13 arm: deduplicate on the cheap "
                          "canonical form during enumeration and standardise only the candidates "
                          "that survive the H9 cap, which is where the filter sees them.")
+    ap.add_argument("--tautomer-budget", type=int, default=0,
+                    help="H15: standardise the survivors with a private enumerator at this "
+                         "budget. 0 keeps the shipped 1000. The matching key never uses it: "
+                         "_tautomer_inchikey and this share preparation's cache and its global "
+                         "enumerator, so lowering that would move the keys, which H15 forbids.")
     ap.add_argument("--cap", type=int, default=100,
                     help="the H9 cap, applied before the filter because the generator score is "
                          "known before any pair graph is built")
@@ -137,8 +142,51 @@ def main() -> int:
 
     from grail_metabolism.utils.preparation import _standardize_smiles_cached
 
+    def make_bounded_standardiser(budget):
+        """standardize_mol's pipeline with an enumerator of its own.
+
+        preparation's `_TAUTOMER_ENUMERATOR` is a module singleton and `_standardize_smiles_cached`
+        memoises on the SMILES alone, so lowering the budget there would silently re-key every
+        match: `_tautomer_inchikey` calls the same cached function. This keeps a private
+        enumerator and a private cache, and the global pair is left exactly as it ships.
+        """
+        from functools import lru_cache
+
+        from rdkit import Chem
+        from rdkit.Chem.MolStandardize import rdMolStandardize
+
+        enum = rdMolStandardize.TautomerEnumerator()
+        enum.SetMaxTautomers(budget)
+        enum.SetMaxTransforms(budget)
+        uncharger = rdMolStandardize.Uncharger()
+
+        @lru_cache(maxsize=262144)
+        def standardise(smiles):
+            mol = Chem.MolFromSmiles(smiles)
+            if mol is None:
+                raise ValueError(smiles)
+            out = enum.Canonicalize(uncharger.uncharge(
+                rdMolStandardize.FragmentParent(rdMolStandardize.Cleanup(mol))))
+            if out is None:
+                raise ValueError(smiles)
+            return Chem.MolToSmiles(out, isomericSmiles=False)
+
+        return standardise
+
+    standardise_survivor = (make_bounded_standardiser(args.tautomer_budget)
+                            if args.tautomer_budget else _standardize_smiles_cached)
+
     pools, refs, t = {}, {}, time.perf_counter()
     timing = []
+
+    def dump():
+        """Persist after every substrate. A shard killed on the peptide at index 83 used to
+        take its other 48 with it, twice."""
+        Path(args.out).write_text(json.dumps(
+            {"slice": [args.start, args.end or len(subs)], "top_k": args.top_k,
+             "standardise": args.standardise, "tautomer_budget": args.tautomer_budget or 1000,
+             "cap": args.cap if args.standardise == "survivors" else None,
+             "generator_seconds": timing, "pools": pools, "references": refs}, indent=1))
     for i, s in enumerate(sl, 1):
         if i == 1 or i % 5 == 0 or i == len(sl):
             print(f"  {i}/{len(sl)} ({time.perf_counter() - t:.0f}s)", file=sys.stderr, flush=True)
@@ -154,7 +202,7 @@ def main() -> int:
             fixed = []
             for d in det:
                 try:
-                    fixed.append((_standardize_smiles_cached(d[0]),) + tuple(d[1:]))
+                    fixed.append((standardise_survivor(d[0]),) + tuple(d[1:]))
                 except Exception:
                     fixed.append(d)
             det = fixed
@@ -174,10 +222,12 @@ def main() -> int:
                 seen.add(k); out.append({**c, "key": k})
         pools[s] = out
         refs[s] = sorted({k for k in (_key(p) for p in vmap[s]) if k})
+        dump()
 
     Path(args.out).write_text(json.dumps(
         {"slice": [args.start, args.end or len(subs)], "top_k": args.top_k,
-         "standardise": args.standardise, "cap": args.cap if args.standardise == "survivors"
+         "standardise": args.standardise, "tautomer_budget": args.tautomer_budget or 1000,
+         "cap": args.cap if args.standardise == "survivors"
          else None, "generator_seconds": timing,
          "pools": pools, "references": refs},
         indent=1))

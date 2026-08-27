@@ -71,6 +71,8 @@ PINNED = {
     "results/group_scorer_selection_h12.json": f"{TE}/train_group_scorer.py",
     "results/h12_verdict.json": f"{TE}/h12_verdict.py",
     "results/h12_verdict_validation.json": f"{TE}/h12_verdict.py",
+    # the survivors arm with the tautomer budget bounded
+    "results/h15_verdict.json": f"{TE}/h15_verdict.py",
     # standardisation off the hot loop
     "results/h13_verdict.json": f"{TE}/h13_verdict.py",
     # the emission rule's grid
