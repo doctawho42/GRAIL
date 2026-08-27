@@ -209,14 +209,20 @@ that flatters the reader, and a project that argued the point and then fought fo
 budget where its own interval covers zero -- would be applying to itself a standard it calls
 substitution in others. So the claim is stated as it falls:
 
-> Under the deployed configuration GRAIL leads MetaTox at k = 1, 3, 5, 8, 10, 30 and 50, with the
-> paired-bootstrap interval excluding zero at 1, 3, 5, 8, 10, 30 and 50 for the whole bank and at
-> 1, 3, 5, 8 and 10 for the trained budget. At k = 15 and k = 20 the point estimate leads and the
-> interval does not separate.
+> The whole bank leads MetaTox at k = 1, 3, 5, 8, 10, 15, 20, 30 and 50, with the paired-bootstrap interval excluding zero at k = 1, 3, 5, 8, 10, 30 and 50. At k = 15 and 20 the interval does not separate.
+> The trained budget leads MetaTox at k = 1, 3, 5, 8 and 10, with the paired-bootstrap interval excluding zero at k = 1, 3, 5, 8 and 10. It trails with the interval excluding zero at k = 20, 30 and 50. At k = 15 the interval does not separate.
+> Mean list length: whole bank 98.9, trained budget 15.7, MetaTox 31.0, on 291 substrates.
 
-`results/deployment_table.json` carries every budget, both arms, the intervals, and the count of
-substrates whose list is shorter than the budget on each side, so a reader can see the whole
-sweep rather than the row an author chose.
+That block is generated from `results/deployment_table.json` by `scripts/sweep_claim.py` and a
+test holds this file to containing exactly what it produces. Written by hand it was wrong within
+the hour: it said the point estimate leads at k=15 and k=20, which is true of the whole bank and
+false of the trained budget, where the gaps are -0.0346 and -0.0647 and the second separates
+against us. A sentence that cannot drift from its artifact is worth more than one that happens to
+be right today.
+
+The artifact carries every budget, both arms, the intervals, and the count of substrates whose
+list is shorter than the budget on each side, so a reader sees the whole sweep rather than the
+row an author chose.
 
 **The consequence for what is open.** "The lead at k=15 is not established" is not an open
 question that further work should close; it is a line in that table. Work aimed at moving that
@@ -854,11 +860,14 @@ the comparator covers and refuses the contrast at zero rather than computing it.
 
 ## H13 — standardisation off the enumeration loop
 
-**Why this exists.** Standardising products is 94 to 99 per cent of the generator's cold time.
-The enumeration calls it on every product of every rule -- about four thousand per substrate --
-to keep about sixteen after the H9 cap, so between 22 and 50 times more standardisations are paid
-than survive. Applying all 7,581 templates to a 109-heavy-atom substrate takes 5.2 seconds; the
-minutes are spent canonicalising tautomers of products nothing will rank.
+**Why this exists.** Standardising products is **93.7 to 98.7 per cent** of the generator's cold
+time across the seven substrates measured in `results/generator_cost_split.json`. The enumeration
+calls it on every product of every rule: 366 standardisations on a four-heavy-atom substrate,
+4,976 on a twenty-five-atom one, median 3,571. After the H9 cap at most a hundred survive, so the
+ratio paid to kept runs from 3.7 to 49.8 and is above twenty for every substrate above thirteen
+heavy atoms. Applying all 7,580 templates the checkpoint initialises to a 109-heavy-atom
+substrate takes 5.2 seconds; the minutes are spent canonicalising tautomers of products nothing
+will rank.
 
 This is registered before the group work because its effect is larger. If it holds, the whole-bank
 arm becomes interactive and the two-configuration split may collapse to one; closing the +0.1729
