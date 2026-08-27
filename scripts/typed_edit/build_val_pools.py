@@ -104,6 +104,15 @@ def main() -> int:
     ap.add_argument("--gen-ckpt", default=str(ROOT / "artifacts/full5000_implicit/checkpoints/generator.pt"))
     ap.add_argument("--filter-ckpt", default=str(ROOT / "artifacts/full5000_priors/checkpoints/filter.pt"))
     ap.add_argument("--out", default=str(ROOT / "results" / "val_pools.json"))
+    ap.add_argument("--standardise", choices=("every-product", "survivors"),
+                    default="every-product",
+                    help="every-product is what ships: the enumeration standardises each product "
+                         "of each rule. survivors is the H13 arm: deduplicate on the cheap "
+                         "canonical form during enumeration and standardise only the candidates "
+                         "that survive the H9 cap, which is where the filter sees them.")
+    ap.add_argument("--cap", type=int, default=100,
+                    help="the H9 cap, applied before the filter because the generator score is "
+                         "known before any pair graph is built")
     ap.add_argument("--top-k", type=int, default=7581,
                     help="rule budget; 7581 is the whole bank, 30 is what the checkpoint records")
     args = ap.parse_args()
@@ -120,15 +129,41 @@ def main() -> int:
     generator = _load(Path(args.gen_ckpt), lambda a, r: build_generator(GeneratorConfig(**a), r))
     filt = _load(Path(args.filter_ckpt), lambda a, r: build_filter(FilterConfig(**a)))
 
+    if args.standardise == "survivors":
+        # the enumeration's deduplication key becomes the cheap canonical form; the candidate
+        # score is a noisy-or over the rules sharing a key, so this changes the scores as well as
+        # the cost, which is why H13 is a hypothesis and not a refactor
+        generator.gen_normalization = "canonical"
+
+    from grail_metabolism.utils.preparation import _standardize_smiles_cached
+
     pools, refs, t = {}, {}, time.perf_counter()
+    timing = []
     for i, s in enumerate(sl, 1):
         if i == 1 or i % 5 == 0 or i == len(sl):
             print(f"  {i}/{len(sl)} ({time.perf_counter() - t:.0f}s)", file=sys.stderr, flush=True)
+        t_gen = time.perf_counter()
         det = generator.generate_scored_with_details(s, top_k=args.top_k, threshold=None,
                                                      compute_sites=False)
         det.sort(key=lambda d: (-d[1], d[0]))
+        enum_s = time.perf_counter() - t_gen
+        std_s = 0.0
+        if args.standardise == "survivors":
+            det = det[:args.cap]        # H9's cap, before the expensive part rather than after
+            t_std = time.perf_counter()
+            fixed = []
+            for d in det:
+                try:
+                    fixed.append((_standardize_smiles_cached(d[0]),) + tuple(d[1:]))
+                except Exception:
+                    fixed.append(d)
+            det = fixed
+            std_s = time.perf_counter() - t_std
         cands = [d[0] for d in det]
         fs = filt.score_batch(s, cands) if cands else []
+        timing.append({"substrate": s, "seconds": round(enum_s + std_s, 3),
+                       "enumerate": round(enum_s, 3), "standardise_survivors": round(std_s, 3),
+                       "candidates": len(cands)})
         scored = sorted(({"smiles": c, "generator": float(g[1]), "filter": float(f),
                           "combined": float(f) * float(g[1])}
                          for c, g, f in zip(cands, det, fs)), key=lambda x: -x["combined"])
@@ -142,6 +177,8 @@ def main() -> int:
 
     Path(args.out).write_text(json.dumps(
         {"slice": [args.start, args.end or len(subs)], "top_k": args.top_k,
+         "standardise": args.standardise, "cap": args.cap if args.standardise == "survivors"
+         else None, "generator_seconds": timing,
          "pools": pools, "references": refs},
         indent=1))
     print(f"wrote {args.out}", file=sys.stderr)

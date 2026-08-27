@@ -905,6 +905,38 @@ deduplication.
 
 **Family:** H13 alone, m = 1.
 
+**Outcome, checked 2026-08-28. Failed, on the half that was not about recall.** Recorded in
+`results/h13_verdict.json`, over the 293 substrates both arms hold.
+
+| | registered | measured | |
+|---|---|---|---|
+| recall@15 loss | at most 0.01 | **0.0015**, CI [-0.0124, +0.0081] | holds |
+| median time falls by | at least 10x | **2.95x**, 49.85 s to 16.92 s | fails |
+
+**The mechanism was right and the arithmetic was not.** Enumeration collapses exactly as the
+rationale said it would: against the old median of 49.85 seconds it now takes 3.59, a factor of
+13.9. What the rationale did not carry is that standardising the hundred survivors costs 11.88
+seconds, which is **72 per cent of the new arm**. Removing 94 to 99 per cent of the work does not
+remove 94 to 99 per cent of the time when what remains becomes the new majority.
+
+**Recall is free, and that part stands whatever happens to the timing.** The change costs 0.0015
+at k=15 with the interval covering zero, and at k=10 it is worth +0.0107 with the interval
+excluding zero. Deduplicating on the cheap canonical form during enumeration, which splits
+tautomers that used to merge and moves the noisy-or scores, does not cost accuracy on this split.
+The mechanism the registration warned might break it -- feeding the filter a raw tautomer -- does
+not arise, because the survivors are standardised before the filter sees them.
+
+**What the survivors arm can do that the other cannot.** It finished all 294 validation
+substrates including the 291-heavy-atom peptide at index 83, which the whole-product arm has
+never finished in any run at any budget. That is not what H13 predicted and is not claimed as its
+result, but it is in the artifact.
+
+**Where the remaining time is, for whoever registers the next one.** 11.88 seconds for a hundred
+molecules is 119 milliseconds each, and `results/tautomer_budget.json` already measures what a
+smaller tautomer budget buys: 200 gives 3.9 times the speed for three points of invariance, 500
+gives 1.8 for half a point. Combining this change with a budget would plausibly clear tenfold,
+and would be a different hypothesis with a different cost to declare.
+
 ---
 
 ## H14 — the group signal as a gate rather than a third ranking
