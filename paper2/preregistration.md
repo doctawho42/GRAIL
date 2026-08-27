@@ -1013,7 +1013,9 @@ is absolute.
 
 Both must hold. A single failure is a failure.
 
-**Failure and what it would mean.** If the time holds and the recall does not, the budget has
+**Failure:** the median stays at or above 10 seconds, or micro recall@15 falls by more than 0.01.
+
+Each half means something different. If the time holds and the recall does not, the budget has
 started breaking the tautomer-invariant matching the whole comparison rests on, and the trade is
 reported with both sides rather than taken. If the recall holds and the time does not, the floor
 is the enumeration itself -- 3.59 seconds in H13's artifact, which no tautomer budget touches --
