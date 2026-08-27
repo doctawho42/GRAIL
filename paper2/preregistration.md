@@ -981,6 +981,59 @@ would be a different registration.
 
 ---
 
+## H15 — the survivors arm with a bounded tautomer budget
+
+**Why this exists.** H13 failed on time and not on recall. Standardising only the candidates that
+survive the cap costs 0.0015 of micro recall@15 with the interval covering zero, and moves the
+median from 49.85 seconds to 16.92, a factor of 2.95 against a registered ten. The reason is in
+its artifact: enumeration collapses by 13.9 times and standardising the hundred survivors costs
+11.88 of the remaining 16.92 seconds, 72 per cent of the new arm. What is left to attack is the
+cost of standardising one molecule, and `results/tautomer_budget.json` already measures it
+against the enumerator's budget.
+
+**The budget, fixed at 200.** The rule is stated before the consequence is computed: the largest
+reduction whose invariance on enumerated tautomers stays within three points of the shipped
+setting. The measured curve is 0.9652 at the shipped 1,000, 0.9602 at 500, **0.9353 at 200** and
+0.9005 at 100, so 200 is the last value inside three points and 100 is the first outside it. It
+is not the value that reaches the target below; that value is not consulted in choosing it, and
+if 200 falls short the hypothesis fails rather than the budget moving.
+
+**Why the target is a number of seconds and not a factor.** H13 asked for a tenfold fall and got
+2.95 while removing 94 to 99 per cent of the work, because the remainder became the majority.
+A factor measures the change and the question is whether the arm is usable: a synchronous request
+that returns in ten seconds is slow and possible, one that takes fifty is neither. So the target
+is absolute.
+
+**Prediction.** On validation, with the survivors arm of H13 and the tautomer budget at 200:
+
+1. the median per-substrate time before the filter falls **below 10 seconds**, from 49.85 under
+   the shipped configuration; and
+2. micro recall@15 falls by at most **0.01** against the whole-product baseline, the same ceiling
+   and the same reason as H13 -- it is below every margin this file's results turn on.
+
+Both must hold. A single failure is a failure.
+
+**Failure and what it would mean.** If the time holds and the recall does not, the budget has
+started breaking the tautomer-invariant matching the whole comparison rests on, and the trade is
+reported with both sides rather than taken. If the recall holds and the time does not, the floor
+is the enumeration itself -- 3.59 seconds in H13's artifact, which no tautomer budget touches --
+and the next lever is not standardisation at all.
+
+**The diagnostic that is reported and is not a gate.** `tautomer_near_miss` found zero of 655
+validation references lost to the canonicaliser at the shipped budget, against an upper bound of
+ten from a screen that was too loose. It is re-run at 200 and its count reported beside the
+verdict. It is not a threshold, because a reference that stops matching shows up in the recall
+number already and two gates on one quantity would double-count it.
+
+**What is not claimed.** That 200 is the right budget for the paper's *matching*, which is a
+different question from the budget the generator uses to deduplicate and rank. If this holds, the
+scoring-time criterion stays at the shipped setting unless something separately registered moves
+it.
+
+**Family:** H15 alone, m = 1.
+
+---
+
 ## H2 — informed node features
 
 **Prediction.** Adding reactivity (hydrogen abstraction energy, SMARTCyp-style) and
