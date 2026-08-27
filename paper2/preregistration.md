@@ -797,6 +797,33 @@ lead. The point estimate does lead, 0.5308 against 0.5143, but the paired-bootst
 that contrast is [-0.0238, +0.0586] and covers zero. The margin is established against the
 two-way rule, which is what H12 predicted; the lead over MetaTox it was sized to produce is not.
 
+**The same check on validation, which is not clean for this model.** The hyperparameters were
+selected there, so the number below is the selection's own and is optimistic by construction. It
+is run because the difference between it and the 291 measures what the selection bought.
+Recorded in `results/h12_verdict_validation.json`.
+
+| population | three-way | two-way | margin | 95% CI |
+|---|---|---|---|---|
+| validation, selected on | 0.4901 | 0.4489 | **+0.0412** | [+0.0192, +0.0621] |
+| the 291, held out from train and validation both | 0.5308 | 0.5023 | **+0.0286** | [+0.0085, +0.0502] |
+
+About seventy per cent of the validation margin survives the move, and the +0.0126 that does not
+is what choosing among twenty configurations on that split is worth. H8's margin under its own
+composition was +0.0243 on validation and -0.0556 on the 291; this one keeps its sign and most
+of its size, which is the difference between an effect and a selection.
+
+**`oracle_third` is exceeded on validation, which settles what it is.** The model reaches 0.4901
+against the binary oracle's 0.4748. An arm that can be beaten is not an upper bound: ranking
+groups binarily orders nothing among the groups holding no reference, so a graded ranking has
+room the oracle does not use. The artifact records that beside the ratio so a share above one is
+not read as a model beating a ceiling.
+
+**A comparator absent is not a comparator beaten.** The first run of this check on validation
+reported the three-way arm ahead of MetaTox by +0.4901 with the interval excluding zero. MetaTox
+was run on the 291 and nowhere else, so every one of its lists on validation is empty and that
+figure was the arm's own recall wearing a gap's clothes. The check now counts how many substrates
+the comparator covers and refuses the contrast at zero rather than computing it.
+
 ---
 
 ## H2 — informed node features

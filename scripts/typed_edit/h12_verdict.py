@@ -125,8 +125,16 @@ def main() -> int:
 
     kk = args.k
     primary = contrast(H["three_way"][kk], H["two_way"][kk])
-    vs_mtx = contrast(H["three_way"][kk], H["metatox"][kk])
     ceiling = contrast(H["oracle_third"][kk], H["two_way"][kk])
+
+    # A comparator with no predictions on this population is absent, not beaten. MetaTox was run
+    # on the 291 and nowhere else, so on any other split every one of its lists is empty and a
+    # contrast against it returns this arm's own recall wearing a gap's clothes. Refuse it.
+    covered = sum(1 for s in subs if mtx.get(s))
+    vs_mtx = (contrast(H["three_way"][kk], H["metatox"][kk]) if covered
+              else {"unavailable": "MetaTox has no predictions for this population; it was run "
+                                   "on the 291 and a contrast here would be this arm's recall "
+                                   "against an empty list"})
 
     verdict = "supported" if (primary["gap"] >= THRESHOLD and primary["excludes_zero"]) \
         else "failed"
@@ -142,9 +150,14 @@ def main() -> int:
                             for k in KS},
            "primary_three_way_minus_two_way": primary,
            "three_way_minus_metatox": vs_mtx,
+           "metatox_substrates_covered": covered,
            "ceiling_of_this_composition": ceiling,
            "share_of_ceiling_taken": round(primary["gap"] / ceiling["gap"], 4)
            if ceiling["gap"] else None,
+           "ceiling_note": "oracle_third ranks groups binarily, so it orders nothing among the "
+                           "groups holding no reference; a graded ranking can and does exceed "
+                           "it, and a share above one means that rather than the model beating "
+                           "an upper bound",
            "verdict": verdict}
     Path(args.out).write_text(json.dumps(out, indent=1))
 
@@ -156,6 +169,9 @@ def main() -> int:
     for name, c in (("primary  three - two", primary),
                     ("three_way - metatox", vs_mtx),
                     ("ceiling  oracle - two", ceiling)):
+        if "unavailable" in c:
+            print(f"  {name:<24}not computed: {c['unavailable']}")
+            continue
         print(f"  {name:<24}{c['gap']:+.4f} [{c['ci95'][0]:+.4f}, {c['ci95'][1]:+.4f}]"
               f"{'*' if c['excludes_zero'] else ' '}")
     print(f"  threshold +{THRESHOLD}   share of this composition's ceiling taken: "
