@@ -29,7 +29,8 @@ from bank_without_selection import _load  # noqa: E402
 from grail_metabolism.config import GeneratorConfig  # noqa: E402
 from grail_metabolism.workflows.factory import build_generator  # noqa: E402
 from group_scorer import (GROUP_FEATURES, Featuriser, GroupScorer, Standardiser,  # noqa: E402
-                          build_examples, fusion_recall, reorder_recall)
+                          build_examples, fusion_recall, reorder_recall, three_way_recall,
+                          two_way_recall)
 
 HIDDEN, LRS, DROPOUTS = (32, 64, 128), (1e-3, 3e-4), (0.0, 0.2)
 
@@ -48,7 +49,7 @@ def load_pools(spec):
     return pools, refs
 
 
-def train_one(cfg, tr, va, in_dim, device):
+def train_one(cfg, tr, va, in_dim, device, composition="blocked"):
     torch.manual_seed(SEED)
     model = GroupScorer(in_dim, cfg["hidden"], cfg["dropout"]).to(device)
     opt = torch.optim.Adam(model.parameters(), lr=cfg["lr"])
@@ -66,7 +67,8 @@ def train_one(cfg, tr, va, in_dim, device):
             loss = -(Yt[i] * torch.log_softmax(logits, dim=0)).sum()
             loss.backward()
             opt.step()
-        r = reorder_recall(model, va, 15, device)
+        r = (three_way_recall(model, va, 15, device) if composition == "three_way"
+             else reorder_recall(model, va, 15, device))
         if r > best:
             best, since = r, 0
             best_state = {k: v.detach().clone() for k, v in model.state_dict().items()}
@@ -90,6 +92,10 @@ def main() -> int:
                     help="widths to try; the first pass ended on the largest of 32/64/128, so "
                          "the grid was extended rather than left at its edge -- selection is on "
                          "validation and the reported population is untouched by it")
+    ap.add_argument("--composition", choices=("blocked", "three_way"), default="blocked",
+                    help="blocked selects on the H8 form, where the scorer replaces the group "
+                         "order; three_way selects on the H12 form, where it enters the fusion "
+                         "as a third ranking")
     ap.add_argument("--append-to", default="",
                     help="a previous selection artifact whose rows are carried into this one")
     args = ap.parse_args()
@@ -110,7 +116,8 @@ def main() -> int:
     # fitted on training only, then applied to both; the fusion baseline is computed before it
     # because it does not read the features at all
     grid = make_grid(args.hidden, LRS, DROPOUTS)
-    base = fusion_recall(va, 15)
+    base = (two_way_recall(va, 15) if args.composition == "three_way"
+            else fusion_recall(va, 15))
     scaler = Standardiser().fit(tr)
     scaler.apply(tr); scaler.apply(va)
     rows = []
@@ -119,7 +126,7 @@ def main() -> int:
         print(f"carrying {len(rows)} rows from {args.append_to}", file=sys.stderr)
     best = None
     for n, cfg in enumerate(grid, 1):
-        model, r, eps = train_one(cfg, tr, va, in_dim, device)
+        model, r, eps = train_one(cfg, tr, va, in_dim, device, args.composition)
         rows.append({**cfg, "val_recall@15": round(r, 4), "epochs_run": eps})
         print(f"  [{n}/{len(grid)}] hidden={cfg['hidden']} lr={cfg['lr']} "
               f"dropout={cfg['dropout']}  val r@15 {r:.4f}  ({eps} epochs)",
@@ -128,7 +135,8 @@ def main() -> int:
             best = (cfg, r, model)
         Path(args.out).write_text(json.dumps(
             {"provenance": stamp(__file__),
-             "selected_on": "validation micro recall@15", "grid": rows,
+             "selected_on": "validation micro recall@15", "composition": args.composition,
+             "grid": rows,
              "widths_tried": sorted({r["hidden"] for r in rows}),
              "grid_extended": "the first pass covered 32/64/128 and its winner was the widest, "
                               "so the grid was extended rather than stopped at its edge; "

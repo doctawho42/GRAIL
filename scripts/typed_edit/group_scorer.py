@@ -194,6 +194,53 @@ def build_examples(pools, refs, feat, limit=None):
     return out
 
 
+def three_way_order(scores, example):
+    """Candidate keys under the H12 composition: the group score as a third ranking.
+
+        score(c) = 1/(60 + rank_filter) + 1/(60 + rank_generator) + 1/(60 + rank_group)
+
+    The first two ranks are already carried in the example's member order -- rrf_order produced
+    it -- so what is recomputed here is the two-way fusion value per candidate plus the group's
+    term. Candidates of different groups interleave, which is the whole point: the blocked form
+    H8 registered spends 0.0647 of micro recall@15 before any model acts.
+    """
+    from _rrf import RRF_K, competition_ranks
+    pool, group_of = [], []
+    for gi, g in enumerate(example["names"]):
+        for c in example["by_g"][g]:
+            pool.append(c); group_of.append(gi)
+    rf = competition_ranks(pool, lambda c: c["filter"])
+    rg = competition_ranks(pool, lambda c: c["generator"])
+    gr = competition_ranks(list(range(len(scores))), lambda i: float(scores[i]))
+    total = [1.0 / (RRF_K + rf[i]) + 1.0 / (RRF_K + rg[i])
+             + 1.0 / (RRF_K + gr[group_of[i]]) for i in range(len(pool))]
+    return [pool[i]["key"] for i in sorted(range(len(pool)), key=lambda i: -total[i])]
+
+
+def two_way_order(example):
+    """The same pool under the H7 rule alone, which is what H12 must beat."""
+    from _rrf import rrf_order
+    pool = [c for g in example["names"] for c in example["by_g"][g]]
+    return [c["key"] for c in rrf_order(pool)]
+
+
+def three_way_recall(model, examples, k=15, device="cpu"):
+    hit = tot = 0
+    model.eval()
+    with torch.no_grad():
+        for e in examples:
+            s = model(torch.from_numpy(e["X"]).to(device)).cpu().numpy()
+            hit += len(set(three_way_order(s, e)[:k]) & e["real"]); tot += len(e["real"])
+    return hit / tot if tot else 0.0
+
+
+def two_way_recall(examples, k=15):
+    hit = tot = 0
+    for e in examples:
+        hit += len(set(two_way_order(e)[:k]) & e["real"]); tot += len(e["real"])
+    return hit / tot if tot else 0.0
+
+
 def reorder_recall(model, examples, k=15, device="cpu"):
     """Micro recall@k with groups ordered by the model and members left in fusion order."""
     hit = tot = 0

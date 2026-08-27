@@ -724,6 +724,55 @@ in, and the grid was re-run rather than the discrepancy explained away.
 
 ---
 
+## H12 — the group scorer again, without the constraint that sank it
+
+**Why this exists.** H8 failed by -0.1203 and the artifact splits the failure: -0.0647 of it is
+the design and -0.0556 the model. H8 required the scorer to order groups and leave the order
+inside one alone, which forces every member of a formula group to be emitted adjacently, and the
+same fusion ranking blocked that way scores 0.4376 against 0.5023 interleaved. This registers the
+same scorer under a composition that cannot block.
+
+**What is reused and what is not.** The model is the one H8 registered: the same features, the
+same listwise objective over groups, the same training population. Nothing is refitted on
+anything new. What changes is only how its output enters the ranking, and the hyperparameters
+are re-selected on validation under the new composition, because selecting them under the old one
+would be selecting for a property that no longer decides anything.
+
+**The composition, fixed.** The group score enters as a third ranking of the fusion rule H7
+registers, with the same constant and no weight:
+
+    score(c) = 1/(60 + rank_filter(c)) + 1/(60 + rank_generator(c)) + 1/(60 + rank_group(c))
+
+where `rank_group(c)` is the competition rank of c's formula group under the scorer. This
+introduces no free parameter: 60 is H7's published constant and the three rankings are unweighted
+for the reason H7 gives, that an asymmetric fusion would be a second free parameter. Candidates
+of different groups interleave exactly as they do under the two-way rule, so the design cannot
+spend the 0.0647 that H8's did.
+
+**Prediction.** On the 291, the three-way fusion beats the two-way by at least **+0.02** of micro
+recall@15, with a paired-bootstrap CI of the difference excluding zero.
+
+**Where +0.02 comes from.** It is the margin that decides the comparison this project exists to
+settle, not a number read off a curve. At k=15 the two-way fusion reaches 0.5023 against
+MetaTox's 0.5143, so +0.012 ties and +0.02 leads. A gain smaller than that would be real and
+would not change what may be claimed.
+
+**Failure:** the margin is below +0.02, or negative. That would say the scorer's ordering of
+groups carries nothing the filter and generator rankings do not already carry, and the
+between-group headroom stays a property of an oracle rather than of anything learnable from these
+features. Rank fusion as H7 registers it remains what ships.
+
+**What is not claimed, and what H8 already ruled out.** That a group scorer cannot work. The
+features are the ones H8 fixed -- the maximum and mean of the members' raw filter and generator
+scores, with no rank -- and a scorer given rank information is a different hypothesis that is not
+registered here. H8's artifact already excludes two other explanations: capacity, flat across
+widths from 32 to 512, and the training population's 40-heavy-atom restriction, since the scorer
+was no worse in proportion on the substrates above it.
+
+**Family:** H12 alone, m = 1.
+
+---
+
 ## H2 — informed node features
 
 **Prediction.** Adding reactivity (hydrogen abstraction energy, SMARTCyp-style) and
