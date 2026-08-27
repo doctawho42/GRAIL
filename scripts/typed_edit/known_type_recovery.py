@@ -75,7 +75,7 @@ def _keys(products) -> set:
 
 def phase_a(rules, bank_types, items, log_every=25) -> dict:
     """Reproduce the E.1 split and keep the pairs, not just the counts."""
-    cov, gap, known_pairs = Counter(), Counter(), []
+    cov, gap, known_pairs, novel_pairs = Counter(), Counter(), [], []
     t0 = time.time()
     for i, (sub, true_prods) in enumerate(items, 1):
         if i % log_every == 0 or i == len(items):
@@ -105,8 +105,14 @@ def phase_a(rules, bank_types, items, log_every=25) -> dict:
                 known_pairs.append({"substrate": sub, "metabolite": met, "key": mk})
             else:
                 gap["novel_type"] += 1
+                # The type itself, not only the count. The decomposition has always known which
+                # type each novel miss carries and has always thrown it away, so the question of
+                # how many DISTINCT types the 337 collapse into -- two weeks of hand-written
+                # rules, or a tail no corpus closes -- could not be asked of the artifact.
+                novel_pairs.append({"substrate": sub, "metabolite": met, "key": mk,
+                                    "type": t})
     return {"cov": dict(cov), "gap": dict(gap), "known_pairs": known_pairs,
-            "n_substrates": len(items)}
+            "novel_pairs": novel_pairs, "n_substrates": len(items)}
 
 
 # The rungs of the ladder, as applicable rules rather than as queries. `as_written` is the
@@ -215,12 +221,13 @@ def merge(pattern: str, out_path: str) -> int:
     if not paths:
         print(f"no shard matched {pattern}", file=sys.stderr)
         return 1
-    cov, gap, pairs, subs, slices = Counter(), Counter(), [], 0, []
+    cov, gap, pairs, novel, subs, slices = Counter(), Counter(), [], [], 0, []
     for p in paths:
         blob = json.loads(Path(p).read_text())["phase_a"]
         cov.update(blob["cov"])
         gap.update(blob["gap"])
         pairs.extend(blob["known_pairs"])
+        novel.extend(blob.get("novel_pairs", []))
         subs += blob["n_substrates"]
         slices.append(blob["slice"])
         print(f"  + {Path(p).name}: {blob['n_substrates']} substrates, "
@@ -242,6 +249,7 @@ def merge(pattern: str, out_path: str) -> int:
 
     out = {"provenance": stamp(__file__),
            "phase_a": {"cov": dict(cov), "gap": dict(gap), "known_pairs": pairs,
+                       "novel_pairs": novel,
                        "n_substrates": subs, "slices": sorted(slices)},
            "reproduces_committed_decomposition": not bad,
            "mismatches": {k: {"recomputed": v[0], "committed": v[1]} for k, v in bad.items()}}

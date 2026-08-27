@@ -979,6 +979,39 @@ would be a different registration.
 
 **Family:** H14 alone, m = 1.
 
+**Outcome, checked 2026-08-28. Failed.** On the 291 the gate reaches 0.5068 of micro recall@15
+against the H9 cap's 0.5353, a margin of **-0.0286** with a CI of [-0.0558, -0.0044] against a
+registered +0.02. Recorded in `results/h14_verdict.json`.
+
+**The design is bounded below the thing it must beat.** A *perfect* group ranking used as this
+gate reaches 0.4992, which is **-0.0361** against the cap with the interval excluding zero. No
+scorer can clear the threshold through this gate, because knowing exactly which groups hold a
+reference does not clear it either. That is not a statement about the model.
+
+**Why, measured.** The median substrate has **one** group holding a reference, and the gate must
+admit at least seven groups to reach a hundred candidates -- more in the scorer's own order,
+since it does not take the largest first. So after the single informative group the gate spends
+the rest of the budget on groups its signal cannot order at all, while the cap spends the same
+budget by generator score, which orders every one of them. The gate throws away a graded signal
+to use a nearly binary one.
+
+**Read against H12, which it was meant to improve on.** H12 enters the same group score as a
+third reciprocal-rank term and gains +0.0286; H14 uses it to select and loses 0.0286. The same
+magnitude with the opposite sign, and `gate - three_way` is **-0.0241** measured directly. The
+group signal is worth something as a nudge on top of the generator's ordering and is worth less
+than nothing as a replacement for it over most of the budget.
+
+**The validation grid said so before the 291 did.** One of twenty configurations beat the H9
+baseline there, by +0.0179, and the other nineteen fell below it, spread 0.4781 to 0.5203. H12's
+twenty all beat their baseline in a band of 0.0114. A single winner out of twenty is the shape
+H8 had, and it did not transfer then either.
+
+**What this closes.** Both remaining ways of spending the between-group signal have now been
+registered and checked: as a term inside the fusion, which is bounded to +0.0286 by the fusion's
+own arithmetic, and as a gate on the budget, which is bounded below zero by the signal's
+coarseness. The +0.1729 the blocked oracle showed is not reachable by either, and a third attempt
+would need a mechanism neither of these has rather than another composition of the same score.
+
 ---
 
 ## H15 — the survivors arm with a bounded tautomer budget

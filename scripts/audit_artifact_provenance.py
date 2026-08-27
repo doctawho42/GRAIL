@@ -71,6 +71,9 @@ PINNED = {
     "results/group_scorer_selection_h12.json": f"{TE}/train_group_scorer.py",
     "results/h12_verdict.json": f"{TE}/h12_verdict.py",
     "results/h12_verdict_validation.json": f"{TE}/h12_verdict.py",
+    # the group signal as a gate, and its selection
+    "results/group_scorer_selection_h14.json": f"{TE}/train_group_scorer.py",
+    "results/h14_verdict.json": f"{TE}/h14_verdict.py",
     # the survivors arm with the tautomer budget bounded
     "results/h15_verdict.json": f"{TE}/h15_verdict.py",
     # standardisation off the hot loop

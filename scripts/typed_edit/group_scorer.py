@@ -224,6 +224,52 @@ def two_way_order(example):
     return [c["key"] for c in rrf_order(pool)]
 
 
+def gate_order(scores, example, budget=100):
+    """H14: admit formula groups in the scorer's order until the budget is reached, then fuse.
+
+    This is H9's cap with the group score deciding which candidates it keeps, rather than the
+    generator score. The last group admitted is taken whole even when it carries the total past
+    the budget, because cutting it would be a within-group decision H14 does not make. Nothing
+    is blocked: the admitted set is ranked by the H7 fusion, so groups interleave exactly as
+    they do under the cap.
+    """
+    from _rrf import rrf_order
+    order = sorted(range(len(example["names"])), key=lambda i: -float(scores[i]))
+    admitted, n = [], 0
+    for i in order:
+        g = example["by_g"][example["names"][i]]
+        admitted.extend(g)
+        n += len(g)
+        if n >= budget:
+            break
+    return [c["key"] for c in rrf_order(admitted)]
+
+
+def cap_order(example, budget=100):
+    """The H9 configuration H14 must beat: the top `budget` by generator score, then fusion."""
+    from _rrf import rrf_order
+    pool = [c for g in example["names"] for c in example["by_g"][g]]
+    keep = sorted(pool, key=lambda c: -c["generator"])[:budget]
+    return [c["key"] for c in rrf_order(keep)]
+
+
+def gate_recall(model, examples, k=15, device="cpu", budget=100):
+    hit = tot = 0
+    model.eval()
+    with torch.no_grad():
+        for e in examples:
+            s = model(torch.from_numpy(e["X"]).to(device)).cpu().numpy()
+            hit += len(set(gate_order(s, e, budget)[:k]) & e["real"]); tot += len(e["real"])
+    return hit / tot if tot else 0.0
+
+
+def cap_recall(examples, k=15, budget=100):
+    hit = tot = 0
+    for e in examples:
+        hit += len(set(cap_order(e, budget)[:k]) & e["real"]); tot += len(e["real"])
+    return hit / tot if tot else 0.0
+
+
 def three_way_recall(model, examples, k=15, device="cpu"):
     hit = tot = 0
     model.eval()

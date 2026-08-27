@@ -29,8 +29,8 @@ from bank_without_selection import _load  # noqa: E402
 from grail_metabolism.config import GeneratorConfig  # noqa: E402
 from grail_metabolism.workflows.factory import build_generator  # noqa: E402
 from group_scorer import (GROUP_FEATURES, Featuriser, GroupScorer, Standardiser,  # noqa: E402
-                          build_examples, fusion_recall, reorder_recall, three_way_recall,
-                          two_way_recall)
+                          build_examples, cap_recall, fusion_recall, gate_recall,
+                          reorder_recall, three_way_recall, two_way_recall)
 
 HIDDEN, LRS, DROPOUTS = (32, 64, 128), (1e-3, 3e-4), (0.0, 0.2)
 
@@ -67,7 +67,8 @@ def train_one(cfg, tr, va, in_dim, device, composition="blocked"):
             loss = -(Yt[i] * torch.log_softmax(logits, dim=0)).sum()
             loss.backward()
             opt.step()
-        r = (three_way_recall(model, va, 15, device) if composition == "three_way"
+        r = (gate_recall(model, va, 15, device) if composition == "gate"
+             else three_way_recall(model, va, 15, device) if composition == "three_way"
              else reorder_recall(model, va, 15, device))
         if r > best:
             best, since = r, 0
@@ -92,7 +93,7 @@ def main() -> int:
                     help="widths to try; the first pass ended on the largest of 32/64/128, so "
                          "the grid was extended rather than left at its edge -- selection is on "
                          "validation and the reported population is untouched by it")
-    ap.add_argument("--composition", choices=("blocked", "three_way"), default="blocked",
+    ap.add_argument("--composition", choices=("blocked", "three_way", "gate"), default="blocked",
                     help="blocked selects on the H8 form, where the scorer replaces the group "
                          "order; three_way selects on the H12 form, where it enters the fusion "
                          "as a third ranking")
@@ -116,7 +117,8 @@ def main() -> int:
     # fitted on training only, then applied to both; the fusion baseline is computed before it
     # because it does not read the features at all
     grid = make_grid(args.hidden, LRS, DROPOUTS)
-    base = (two_way_recall(va, 15) if args.composition == "three_way"
+    base = (cap_recall(va, 15) if args.composition == "gate"
+            else two_way_recall(va, 15) if args.composition == "three_way"
             else fusion_recall(va, 15))
     scaler = Standardiser().fit(tr)
     scaler.apply(tr); scaler.apply(va)
