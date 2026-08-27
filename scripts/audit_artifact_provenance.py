@@ -67,6 +67,9 @@ PINNED = {
     "results/group_scorer_selection.json": f"{TE}/train_group_scorer.py",
     "results/h8_verdict.json": f"{TE}/h8_verdict.py",
     "results/train_pools.json": f"{TE}/build_train_pools.py",
+    # the same scorer without the blocking, and its selection
+    "results/group_scorer_selection_h12.json": f"{TE}/train_group_scorer.py",
+    "results/h12_verdict.json": f"{TE}/h12_verdict.py",
     # the emission rule's grid
     "results/h11_grid.json": f"{TE}/h11_grid.py",
     # why the registered emission threshold does not survive the change of ranking

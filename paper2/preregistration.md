@@ -771,6 +771,32 @@ was no worse in proportion on the substrates above it.
 
 **Family:** H12 alone, m = 1.
 
+**Outcome, checked 2026-08-27.** Supported. On the 291 the three-way fusion reaches 0.5308 of
+micro recall@15 against the two-way's 0.5023, a margin of **+0.0286** with a CI of [+0.0085,
++0.0502] against the registered +0.02. Both arms are uncapped. Recorded in
+`results/h12_verdict.json`. The effect is not a selection: all twenty configurations beat the
+two-way baseline on validation and they cluster between 0.5089 and 0.5203, where H8's twenty
+straddled its baseline and its winner did not survive the move to another split.
+
+**The ceiling of this composition is the same +0.0286.** Entering a perfect group ranking as the
+third component -- knowing exactly which formula groups hold a reference -- also reaches 0.5308.
+The model is not merely close to that, it is level with it at this budget. Which says less about
+the model than about the composition: a reciprocal-rank term is bounded, so however good the
+group ranking is it can only nudge, and the +0.1729 the oracle showed under H8's blocked form is
+not reachable this way either. H8's design spent that headroom; H12's design cannot draw on it.
+
+**Where `oracle_third` stops being a ceiling.** It ranks groups binarily, so every group without
+a reference is tied and it orders nothing among them. Past k=15 the model's graded ranking does
+better -- 0.5865 against 0.5729 at twenty, 0.6421 against 0.6195 at thirty -- and calling the
+binary arm an upper bound at those budgets would be wrong. It bounds only the budget at which
+knowing which groups hold a reference is the whole question.
+
+**The threshold met its arithmetic and not its purpose.** +0.02 was chosen because at k=15 the
+two-way fusion sits at 0.5023 against MetaTox's 0.5143, so that margin would turn a tie into a
+lead. The point estimate does lead, 0.5308 against 0.5143, but the paired-bootstrap interval on
+that contrast is [-0.0238, +0.0586] and covers zero. The margin is established against the
+two-way rule, which is what H12 predicted; the lead over MetaTox it was sized to produce is not.
+
 ---
 
 ## H2 — informed node features
