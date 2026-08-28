@@ -245,6 +245,17 @@ def build():
     n["relax.carriers"] = car.get("types_with_a_carrier", 385)
     n["relax.predicted"] = car.get("expected_recovered", 8.5)
 
+    # the worked example, both arms
+    for arm, fname in (("inter", "case_study.json"), ("exh", "case_study_exhaustive.json")):
+        cs = art(fname)
+        n[f"case.{arm}.candidates"] = cs["n_candidates"]
+        n[f"case.{arm}.seconds"] = cs["generator_seconds"]
+        n[f"case.{arm}.budget"] = cs["configuration"]["rule_budget"]
+        n[f"case.{arm}.found"] = len(cs["reference_ranks"])
+        for k in ("15", "30"):
+            n[f"case.{arm}.recall{k}"] = round(cs["recall_at"][k], 2)
+    n["case.references"] = art("case_study.json")["n_references"]
+
     # Provenance, stated as the pinned set and not the directory. These four were literals here
     # once, inside the one generator whose contract is that no number is a literal: when the
     # pinned set grew, the paper went on reporting the old size. They are read from the sweep,

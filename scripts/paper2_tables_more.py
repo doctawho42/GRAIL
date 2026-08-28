@@ -85,8 +85,55 @@ def hypotheses():
             "differences in micro recall@15.}\n\\label{tab:hyp}\n\\end{table}\n")
 
 
+# The four annotated metabolites of the worked example, named so the table reads as chemistry
+# rather than as keys. The names are the corpus's own annotation read back, not an assignment.
+CASE_NAMES = {
+    "FIRDBEQIJQERSE-UHFFFAOYSA-N": "dFdU, deamination",
+    "KNTREFQOVSMROS-UHFFFAOYSA-N": "dFdCMP, 5$^\\prime$-monophosphate",
+    "FRQISCZGNNXEMD-UHFFFAOYSA-N": "dFdCDP, 5$^\\prime$-diphosphate",
+    "YMOXEIOKAJSRQX-UHFFFAOYSA-N": "dFdCTP, 5$^\\prime$-triphosphate",
+}
+
+
+def case_study():
+    """The worked example: one substrate, both modes, the rule and site behind every hit."""
+    inter = json.loads((ROOT / "results/case_study.json").read_text())
+    exh = json.loads((ROOT / "results/case_study_exhaustive.json").read_text())
+
+    def hits(d):
+        return {c["key"]: c for c in d["candidates"] if c["is_reference"]}
+
+    hi, he = hits(inter), hits(exh)
+    rows = []
+    for key, name in CASE_NAMES.items():
+        ci, ce = hi.get(key), he.get(key)
+        rank_i = str(ci["rank"]) if ci else "---"
+        rule_i = str(ci["rule_id"]) if ci else "not produced"
+        rank_e = str(ce["rank"]) if ce else "---"
+        rule_e = (f"{ce['rule_id']} / {','.join(str(a) for a in ce['firing_atoms'])}"
+                  if ce else "not produced")
+        rows.append(f"{name} & {rank_i} & {rule_i} & {rank_e} & {rule_e}")
+    body = " \\\\\n".join(rows)
+
+    return (
+        "\\begin{table}[t]\n\\centering\\small\n\\begin{tabular}{lrrrl}\n\\toprule\n"
+        " & \\multicolumn{2}{c}{interactive} & \\multicolumn{2}{c}{exhaustive} \\\\\n"
+        "\\cmidrule(lr){2-3}\\cmidrule(lr){4-5}\n"
+        "annotated metabolite & rank & rule & rank & rule / site \\\\\n\\midrule\n"
+        f"{body} \\\\\n\\bottomrule\n\\end{{tabular}}\n"
+        "\\caption{The worked example: gemcitabine, its four annotated metabolites, and where "
+        f"each is found. The interactive mode returns {inter['n_candidates']} candidates in "
+        f"{inter['generator_seconds']}~s and reaches only the deamination; the exhaustive mode "
+        f"returns {exh['n_candidates']} in {exh['generator_seconds']}~s and reaches all four, at "
+        f"micro recall {exh['recall_at']['15']:.2f} at $k=15$ and {exh['recall_at']['30']:.2f} at "
+        "$k=30$. Rule is the index into the deployed bank and site the substrate atoms the rule "
+        "fired on: the three phosphorylations fire at the same 5$^\\prime$ position under three "
+        "different rules, and the deamination on the pyrimidine ring.}\n"
+        "\\label{tab:case}\n\\end{table}\n")
+
+
 if __name__ == "__main__":
     for name, fn in (("table_modes", modes), ("table_grain", grain),
-                     ("table_hypotheses", hypotheses)):
+                     ("table_hypotheses", hypotheses), ("table_case", case_study)):
         (ROOT / f"paper2/{name}.tex").write_text(fn())
         print(f"  wrote paper2/{name}.tex")

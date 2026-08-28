@@ -93,12 +93,38 @@ GRAIL predicts in three stages, each separately inspectable:
 Every emitted candidate carries the identity of the rule that produced it and the site at
 which it fired.
 
-⟨CASE_STUDY: a worked example — one substrate submitted to the server, its ranked output with
-the rule and site beside each candidate, and which of them are annotated. The claim that
-predictions are rule-attributable is the paper's main non-numerical claim and is currently
-asserted rather than shown; the released per-substrate pools carry the structure, the two
-component scores and the matching key, and no rule field. Either the example or a re-export of
-the pools with rule identity attached will close it.⟩
+### A worked example
+
+Gemcitabine is annotated in the corpus with four metabolites: the deamination to dFdU that
+inactivates it, and the three sequential 5′ phosphorylations that activate it. Both operating
+modes were run on it and every field the pipeline computes was kept.
+
+| annotated metabolite | interactive: rank / rule | exhaustive: rank / rule / site |
+|---|---|---|
+| dFdU, deamination | 4 / 4913 | 13 / 4913 / atoms 0,1,2,4,15,16,17 |
+| dFdCMP, 5′-monophosphate | not produced | 8 / 2198 / atoms 8,9 |
+| dFdCTP, 5′-triphosphate | not produced | 16 / 1745 / atoms 8,9 |
+| dFdCDP, 5′-diphosphate | not produced | 21 / 2139 / atoms 8,9 |
+
+The interactive mode applies its 30-rule budget in 3.34 s and returns 18 candidates, ranking the
+deamination fourth. The three phosphorylations are not among the rules that budget selects, so no
+ranking could have recovered them. The exhaustive mode applies the whole bank in 14.18 s, returns
+100 candidates and produces all four, at micro recall 0.25 at $k = 10$, 0.50 at $k = 15$ and
+1.00 at $k = 30$. Both timings are one substrate on one run, not the medians of the mode table.
+The division the sweep shows across 291 substrates is visible on this single molecule: the cheap
+arm is right about what it emits and runs out, the wide arm keeps having candidates.
+
+The attribution is the part a score cannot supply. All three phosphorylations fire at the same
+substrate atoms, the 5′ hydroxymethyl, under three different rules, and the deamination fires on
+the pyrimidine ring. A user reading the output sees which transformation is claimed and where,
+and can reject a candidate on chemical grounds rather than on a number. All four rules here are
+mined rather than curated, so the half of the bank with no expert provenance is the half carrying
+this molecule.
+
+The pool artifacts do not carry these two fields. `build_val_pools` calls the generator with
+`compute_sites=False` and keeps two elements of a four-tuple, so the rule identity and the firing
+atoms are computed and discarded on the way to the file. `scripts/typed_edit/case_study.py`
+keeps all four, and `results/case_study.json` holds the whole ranked pool of both arms.
 
 ### Rule bank
 
@@ -610,7 +636,7 @@ Three things, none of which is a recall figure.
 
 Every prediction names the transformation rule that produced it and the site at which it fired,
 so a user can accept or reject a candidate on chemical grounds rather than on a score
-(⟨CASE_STUDY⟩).
+(§A worked example).
 
 The whole output is ranked. MetaTox ranks 5,177 of its 10,601 predictions by a
 metabolite-likeness score and leaves the remainder in file order; more than half of what it
@@ -742,7 +768,6 @@ removed from this list; the closed ones are recorded in the paragraph beneath th
 | `⟨SERVICE_URL⟩` | the deployed URL | yes |
 | `⟨LICENCE⟩` | the licence; NAR requires free non-commercial use under a standard licence | yes |
 | `⟨CONFIRM⟩` | confirmation that the platform requires no login; NAR forbids mandatory registration | yes |
-| `⟨CASE_STUDY⟩` | one worked example: a substrate, its ranked output, the rule and site beside each candidate | yes |
 | `⟨ZENODO_DOI⟩` | the DOI, minted on publishing the deposit; the bundle and manifest are built and verified, the upload needs a token and is the author's action | yes |
 | `⟨AUTHORS⟩` | author list | yes |
 | `⟨AFFILIATIONS⟩` | affiliations | yes |
@@ -762,6 +787,10 @@ Resolved from the artifacts:
 - `⟨POP_H13⟩`, `⟨POP_H15⟩` — validation, 293 paired substrates, from the two verdict artifacts
 - `⟨REGISTRY_URL⟩` — paper2/preregistration.md
 - `⟨ORACLE_BY_TYPE⟩` — computed; see the group-rank section
+- `⟨CASE_STUDY⟩` — gemcitabine, both modes, from `results/case_study.json`. Producing it found
+  that `_firing_atoms` returned an empty tuple for every candidate: the localisation is handed
+  the raw product of `RunReactants`, whose implicit valence is not computed, the MCS inside
+  raises, and the except clause swallowed it. Fixed, with a guard in `test_audit_fixes.py`
 - `⟨CITE_METATOX⟩` — Rudik et al., 2017, JCIM 57(4):638–642, added to `refs.bib` as `Rudik_2017`
 - `⟨BIBTEX⟩` — the reference table above; `cormack2009`, `Rudik_2017` and `de_Bruyn_Kops_2019`
   were missing from `refs.bib` and have been added, the first of them cited by the LaTeX and

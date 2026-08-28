@@ -90,6 +90,8 @@ PINNED = {
     # the comparison as it would ship, both budgets against MetaTox
     "results/deployment_table.json": f"{TE}/deployment_table.py",
     "results/oracle_by_grouping.json": f"{TE}/oracle_by_grouping.py",
+    "results/case_study.json": f"{TE}/case_study.py",
+    "results/case_study_exhaustive.json": f"{TE}/case_study.py",
     # the rule budget: the curve's shape and the check on validation
     "results/h10_verdict.json": f"{TE}/h10_verdict.py",
     # the cap, its upper-bound table and the check that fixed it
@@ -139,17 +141,21 @@ def main() -> int:
         if not moved:
             print("\nno pinned producer has moved, so there is nothing to diff")
 
+    # The sweep is always computed and always written. It used to run only under --all, so an
+    # ordinary invocation replaced the directory counts in the artifact with an empty dict, and
+    # the manuscript's numbers path -- which reads those counts -- could not be regenerated after
+    # anyone ran the audit the plain way. --all now controls the printing and nothing else.
     sweep = Counter()
     others = []
+    for p in sorted(glob.glob(str(ROOT / "results" / "*.json"))):
+        rel = str(Path(p).relative_to(ROOT))
+        if rel in PINNED:
+            continue
+        v = verify(p)
+        sweep[v["status"]] += 1
+        if v["status"] not in OK:
+            others.append(v)
     if args.all:
-        for p in sorted(glob.glob(str(ROOT / "results" / "*.json"))):
-            rel = str(Path(p).relative_to(ROOT))
-            if rel in PINNED:
-                continue
-            v = verify(p)
-            sweep[v["status"]] += 1
-            if v["status"] not in OK:
-                others.append(v)
         print(f"\nthe other {sum(sweep.values())} artifacts: " +
               ", ".join(f"{k} {v}" for k, v in sweep.most_common()))
         changed = [o for o in others if o["status"] == "producer_changed"]

@@ -839,3 +839,47 @@ def test_the_docking_control_scores_a_close_but_invalid_pose_as_the_two_criteria
         "so the two criteria cannot disagree and the control vouches for nothing")
     assert hits[("alpha", ("rmsd2", "none"))].tolist() == [1.0, 0.0, 1.0]
     assert hits[("alpha", ("rmsd1", "none"))].tolist() == [1.0, 0.0, 1.0]
+
+
+def test_firing_atoms_localises_a_raw_reaction_product():
+    """The site half of the rule-attribution claim must survive an unsanitised product.
+
+    `generate_scored_with_details(compute_sites=True)` hands `_firing_atoms` the mol that
+    `RunReactants` returned, which carries no computed implicit valence. The MCS inside raises
+    `Pre-condition Violation` on it, and `_firing_atoms` catches every exception, so the
+    localisation returned an empty tuple for every candidate of every substrate and reported
+    nothing. The regression that matters is the raw product: a test that parses the product from
+    SMILES first passes against the broken version too, which is why the rawness is asserted here
+    rather than assumed.
+    """
+    from rdkit import Chem
+    from rdkit.Chem import AllChem
+
+    from grail_metabolism.model.generator import Generator
+    from grail_metabolism.model.som import _reacting_atoms
+    from grail_metabolism.utils.preparation import safe_run_reactants
+
+    # N-demethylation of a tertiary aromatic amine, applied to N,N-dimethylaniline
+    rule = "[c:1][N:2]([CH3:3])[CH3:4]>>[c:1][NH:2][CH3:3]"
+    substrate = Chem.MolFromSmiles("CN(C)c1ccccc1")
+    products = [p for tup in safe_run_reactants(AllChem.ReactionFromSmarts(rule), substrate)
+                for p in tup]
+    assert products, "the rule did not fire; the fixture no longer exercises the path"
+    raw = products[0]
+
+    # Without this the test is vacuous: if RunReactants ever starts returning sanitised products,
+    # the fixture stops reproducing the bug and would pass on the broken implementation.
+    try:
+        _reacting_atoms(substrate, raw)
+    except Exception:
+        pass
+    else:
+        raise AssertionError(
+            "the raw product no longer breaks the bare MCS, so this fixture does not reproduce "
+            "the bug it guards and would pass against the unfixed _firing_atoms")
+
+    sites = Generator._firing_atoms(Generator.__new__(Generator), substrate, raw)
+    assert sites, ("no atoms localised on a raw RunReactants product; _firing_atoms is swallowing "
+                   "the sanitisation error again and every candidate reports an empty site")
+    assert all(0 <= a < substrate.GetNumAtoms() for a in sites), (
+        "a firing atom is outside the substrate, so the indices address the wrong molecule")

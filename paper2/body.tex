@@ -238,6 +238,30 @@ At a budget of $15$, where MetaTox emits about what the interactive arm emits, i
 so the annotation bias on precision does not explain the difference. That pair is macro; every
 figure in Table~\ref{tab:sweep} is micro.
 
+\subsection{A worked example}
+
+\input{table_case}
+
+Gemcitabine is annotated in the corpus with four metabolites: the deamination to dFdU that
+inactivates it, and the three sequential 5$^\prime$ phosphorylations that activate it.
+Table~\ref{tab:case} is what the server returns for it, with the transformation behind every hit.
+
+The interactive mode applies its \numCaseInterBudget{}-rule budget in
+\numCaseInterSeconds{}~s and returns \numCaseInterCandidates{} candidates, of which the
+deamination is ranked fourth; the three phosphorylations are not among the rules that budget
+selects, so no ranking could have recovered them. The exhaustive mode applies the whole bank in
+\numCaseExhSeconds{}~s, returns \numCaseExhCandidates{} candidates and produces all
+\numCaseExhFound{}, reaching every one of them by $k=30$. Both timings are one substrate on one
+run rather than the medians of Table~\ref{tab:modes}. The division the sweep shows across
+\numPopulationN{} substrates is visible on this one molecule: the cheap arm is right about what
+it emits and runs out, and the wide arm keeps having candidates.
+
+The attribution is what a score cannot supply. All three phosphorylations fire at the same
+substrate atoms, the 5$^\prime$ hydroxymethyl, under three different rules, and the deamination
+fires on the pyrimidine ring; a user reading the output sees which transformation is claimed and
+where, and can reject a candidate on chemical grounds. All four rules here are mined rather than
+curated, so the half of the bank with no expert provenance is the half carrying this molecule.
+
 \subsection{Where the design came from}
 
 Every deployed choice is a registered hypothesis with a threshold and a falsification condition,

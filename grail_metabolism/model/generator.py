@@ -1223,11 +1223,37 @@ class Generator(GGenerator):
 
         Uses the element-aware MCS from ``som._reacting_atoms``.  Returns a sorted
         tuple of ints; empty tuple on any failure (never raises).
+
+        The product arrives straight from ``RunReactants`` and has no computed implicit
+        valence, so the MCS raises ``Pre-condition Violation`` on it and the except clause
+        below turned every localisation into an empty tuple -- silently, for every candidate.
+        Sanitise a copy first, and fall back to the SMILES round trip the rest of the
+        enumeration performs anyway.
         """
-        try:
-            return tuple(sorted(_som_reacting_atoms(sub_mol, product_mol)))
-        except Exception:
+        if _som_reacting_atoms is None:
             return tuple()
+        for candidate in self._sanitized_variants(product_mol):
+            try:
+                return tuple(sorted(_som_reacting_atoms(sub_mol, candidate)))
+            except Exception:
+                continue
+        return tuple()
+
+    @staticmethod
+    def _sanitized_variants(product_mol):
+        """The product in the forms the MCS can read, cheapest first."""
+        try:
+            copy = Chem.Mol(product_mol)
+            Chem.SanitizeMol(copy)
+            yield copy
+        except Exception:
+            pass
+        try:
+            round_trip = Chem.MolFromSmiles(Chem.MolToSmiles(product_mol))
+            if round_trip is not None:
+                yield round_trip
+        except Exception:
+            pass
 
     @torch.no_grad()
     def generate_scored(
