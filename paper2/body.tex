@@ -425,11 +425,20 @@ Source, split manifest, frozen predictions of every comparator, evaluation harne
 sweep and the preregistration with every hypothesis and its outcome are at
 \texttt{github.com/doctawho42/GRAIL}.
 
-A split manifest pins by digest the triple files, the substrate sets, the evaluated test set, the
-rule bank and all third-party artifacts, and a verify mode recomputes and names any leaf that has
-moved. \numProvPinned{} artifacts are pinned: each records the commit that wrote it, a sweep
-recomputes the hash of its producer and refuses the artifact if that producer has changed, and all
-\numProvPinned{} are current. That guarantee covers the pinned set and not the directory: of
-\numProvFiles{} files under \texttt{results/}, \numProvUnstamped{} carry no stamp and
-\numProvChanged{} were written by a producer that has since changed. Every number in this paper
-comes from a pinned artifact.
+\numProvPinned{} artifacts are pinned, and every number in this paper comes from one of them.
+Each records the commit that wrote it; a sweep recomputes the hash of its producer and refuses the
+artifact if that producer has changed, and all \numProvPinned{} are current. A split manifest
+pins by digest the triple files, the substrate sets, the evaluated test set, the rule bank and all
+third-party artifacts, and a verify mode recomputes and names any leaf that has moved.
+
+Two pinned artifacts are too large to commit: the train and validation candidate pools, holding
+every candidate the generator produced for every substrate of their population together with both
+component scores. They are deposited at \ZenodoDoi{} under CC BY 4.0. The repository pins the
+SHA-256 of both the raw file and the uploaded archive in
+\texttt{paper2/zenodo\_manifest.json}, and \texttt{scripts/zenodo\_deposit.py -{}-verify}
+checks a download against it, so the deposit is verifiable against the version used here rather
+than merely available.
+
+The guarantee covers the pinned set and not the directory: of \numProvFiles{} files under
+\texttt{results/}, \numProvUnstamped{} carry no stamp and \numProvChanged{} were written by a
+producer that has since changed. Those files support no number in this paper.

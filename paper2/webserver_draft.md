@@ -681,11 +681,20 @@ sweep and pre-registration: `github.com/doctawho42/GRAIL`.
 
 A split manifest pins by digest the three triple files, the substrate sets, the evaluated test
 set, the stratum files, the rule bank and all third-party artifacts; `--verify` recomputes and
-names any leaf that has moved. Every committed numeric artifact records the commit that wrote
-it, and readers verify that record; the sweep is green on 40 pinned artifacts. That guarantee
-covers the pinned set and not the directory: of 258 files under `results/`, 117 carry no stamp and
-40 were written by a producer that has since changed. Every number in this paper comes from a
-pinned artifact.
+names any leaf that has moved. Every committed numeric artifact records the commit that wrote it,
+and readers verify that record; the sweep is green on 40 pinned artifacts.
+
+Two of the forty are too large to commit: the train and validation candidate pools, 47.2 MB and
+48.6 MB, holding 201,103 and 196,282 candidates with both component scores for each. They are
+deposited at ⟨ZENODO_DOI⟩ under CC BY 4.0, compressed to 9.5 MB and 9.6 MB. `paper2/zenodo_manifest.json`
+pins the SHA-256 of both the raw file and the uploaded archive together with the record counts,
+and `scripts/zenodo_deposit.py --verify --dir <download>` checks a download against it. The
+archive is gzipped at a fixed level with a zero timestamp, so its digest is a function of the
+content alone and can be pinned at all.
+
+That guarantee covers the pinned set and not the directory: of 258 files under `results/`, 117
+carry no stamp and 40 were written by a producer that has since changed. Those files support no
+number in this paper.
 
 ---
 
@@ -734,6 +743,7 @@ removed from this list; the closed ones are recorded in the paragraph beneath th
 | `⟨LICENCE⟩` | the licence; NAR requires free non-commercial use under a standard licence | yes |
 | `⟨CONFIRM⟩` | confirmation that the platform requires no login; NAR forbids mandatory registration | yes |
 | `⟨CASE_STUDY⟩` | one worked example: a substrate, its ranked output, the rule and site beside each candidate | yes |
+| `⟨ZENODO_DOI⟩` | the DOI, minted on publishing the deposit; the bundle and manifest are built and verified, the upload needs a token and is the author's action | yes |
 | `⟨AUTHORS⟩` | author list | yes |
 | `⟨AFFILIATIONS⟩` | affiliations | yes |
 | `⟨TBD⟩` | author contributions, funding, conflicts | yes |

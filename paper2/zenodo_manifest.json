@@ -1,0 +1,54 @@
+{
+ "provenance": {
+  "script": "zenodo_deposit.py",
+  "script_path": "scripts/zenodo_deposit.py",
+  "source_sha256": "f340335c0f71fcbc8a1d86ed1614b5e387e602c5132f9cfa903ac64dff029f51",
+  "git_commit": "12f196c8f6c1894fdad550bfcb9255cccf44f9d4",
+  "git_dirty": true
+ },
+ "deposit": {
+  "title": "GRAIL candidate pools: per-substrate rule-application candidates with generator and filter scores",
+  "license": "cc-by-4.0",
+  "doi": null,
+  "note": "doi is filled by --upload, or by hand from the Zenodo record"
+ },
+ "gzip": {
+  "level": 9,
+  "mtime": 0,
+  "note": "fixed so the compressed digest is a function of the content alone"
+ },
+ "files": [
+  {
+   "name": "train_pools.json.gz",
+   "source": "results/train_pools.json",
+   "bytes_raw": 47178660,
+   "bytes_gz": 9542714,
+   "sha256_raw": "9ee3914c275d9468e0136ddd4c1ad7c0922a11c8f445d379a5b0d7496cef61fe",
+   "sha256_gz": "e9748b42b2936e76a76e569bd95d31fbfa681964b3b45aadba51fbf16828f096",
+   "split": "train",
+   "match": null,
+   "substrates": 349,
+   "candidates": 201103,
+   "references": 681,
+   "producer": "build_train_pools.py",
+   "producer_sha256": "946ca6d67c0597b7c651084c7b33b5c1fb758d5e8aaffd9d3e090aa1ad1144f9",
+   "producer_commit": "e3fbb76d5c6679add2547a849a7d2b79353f3746"
+  },
+  {
+   "name": "val_pools.json.gz",
+   "source": "results/val_pools.json",
+   "bytes_raw": 48645807,
+   "bytes_gz": 9579514,
+   "sha256_raw": "3d1c715c8148139b47b7ad580267dc88df77f7261ffb6bfa8e1fc78328c297ae",
+   "sha256_gz": "b6c74e35261dccffcf01020a4a454b20c6728a9ecf829d67ba3edaa9c194b4a8",
+   "split": "validation",
+   "match": "inchikey_tautomer",
+   "substrates": 293,
+   "candidates": 196282,
+   "references": 655,
+   "producer": "build_val_pools.py",
+   "producer_sha256": "77f16e50422165ea1c108ab2fc3f350ad2bb2eefe4339abada560ab0893b6e3b",
+   "producer_commit": "6be57306c1cf17701729f145cfc72b55bd989cbf"
+  }
+ ]
+}

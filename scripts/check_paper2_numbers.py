@@ -31,6 +31,8 @@ ALLOWED = {
     "0.5", "0.109", "0.0012", "0.012", "8.5", "0.01", "70", "2022.09", "2025", "26",
     "291",                                 # the peptide's heavy-atom count, named in prose
     "0.0556", "10",
+    "256",                                 # SHA-256, the name of a hash function
+    "4.0",                                 # CC BY 4.0, the name of a licence
     # The budget column of the comparison table names the budgets; those are the grid the
     # comparators are read at, not measurements, and every cell beside them is a macro.
     "3", "15", "20", "30", "50",
