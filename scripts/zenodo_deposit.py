@@ -42,7 +42,12 @@ MANIFEST = ROOT / "paper2" / "zenodo_manifest.json"
 GZIP_LEVEL = 9
 
 TITLE = "GRAIL candidate pools: per-substrate rule-application candidates with generator and filter scores"
-LICENSE = "cc-by-4.0"
+# NOT cc-by-4.0. ChEMBL 34 is CC BY-SA 3.0 and DrugBank 5.1.10 is CC BY-NC 4.0, and the
+# deposit holds substrate structures from both. CC BY permits commercial use, which the
+# DrugBank terms forbid, so the earlier value was wrong on its face. The two source
+# licences also do not combine, so no single value here is known to be correct: the
+# upload is blocked until the question is settled rather than published under a guess.
+LICENSE = None
 DESCRIPTION = """<p>Candidate pools for the train and validation populations of GRAIL, a
 rule-grounded predictor of xenobiotic metabolite structures. Each file records, for every
 substrate of its population, every candidate structure produced by applying the rule bank,
@@ -150,6 +155,19 @@ def verify(where=None) -> int:
 
 
 def upload() -> int:
+    if LICENSE is None:
+        raise SystemExit(
+            "The deposit has no settled licence and will not be uploaded.\n"
+            "  ChEMBL 34 is CC BY-SA 3.0: a derivative must carry the same or a compatible\n"
+            "    ShareAlike licence and may not add restrictions.\n"
+            "  DrugBank 5.1.10 is CC BY-NC 4.0: commercial use is forbidden.\n"
+            "  MetXBioDB 1.0 ships with BioTransformer, whose terms require explicit permission\n"
+            "    for redistribution.\n"
+            "These do not combine. The deposit holds corpus substrate structures, hashes of the\n"
+            "annotated metabolites, and candidates produced by this work; the metabolites\n"
+            "themselves are not redistributed in structural form.\n"
+            "Set LICENSE in this file once the position is settled. Publishing a Zenodo record\n"
+            "cannot be undone.")
     token = os.environ.get("ZENODO_TOKEN")
     if not token:
         raise SystemExit(

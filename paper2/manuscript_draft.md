@@ -412,11 +412,12 @@ The tables below name the population in every row.
 
 ### Data and split
 
-The annotated substrate–metabolite pairs are assembled from four sources: ChEMBL, DrugBank,
-MetXBioDB and the GLORYx reference set. Versions and access dates are ⟨CORPUS_VERSIONS⟩, and
-whether the derived corpus and the deposited pools may be redistributed is ⟨CORPUS_LICENCE⟩:
-ChEMBL is CC BY-SA and MetXBioDB ships with BioTransformer, but DrugBank's terms restrict
-redistribution and the pools contain structures that may derive from it.
+The annotated substrate–metabolite pairs are assembled from four sources: ChEMBL 34, DrugBank
+5.1.10, MetXBioDB 1.0 and the GLORYx reference set of 2020. Their licences do not combine into a
+single redistributable derivative: ChEMBL is CC BY-SA 3.0, which forbids adding restrictions to a
+derivative, and DrugBank is CC BY-NC 4.0, which adds one. MetXBioDB ships with BioTransformer,
+whose terms require explicit permission to redistribute. Under which licence the pools may be
+deposited, if any, is ⟨CORPUS_LICENCE⟩.
 
 The corpus is divided into three substrate-disjoint splits: 9,011 training substrates carrying
 17,454 annotated pairs, 1,020 validation substrates carrying 2,085, and 1,198 test substrates
@@ -727,7 +728,7 @@ methods predict, which is a quarter of the evaluated test split and is not a ran
 The data and software underlying this article are publicly available. Source, split manifest,
 frozen predictions of every comparator, evaluation harness, provenance sweep and the
 preregistration with every hypothesis and its outcome: `github.com/doctawho42/GRAIL`, available
-to reviewers at submission. The candidate pools are deposited at ⟨ZENODO_DOI⟩ under CC BY 4.0.
+to reviewers at submission. The candidate pools are prepared for deposit at ⟨ZENODO_DOI⟩, held until the licence position is settled.
 The annotated substrate–metabolite corpus is assembled from ChEMBL, DrugBank, MetXBioDB and the
 GLORYx reference set, at the versions in ⟨CORPUS_VERSIONS⟩. Redistribution of the derived corpus
 and the deposited pools is ⟨CORPUS_LICENCE⟩.
@@ -742,7 +743,7 @@ and readers verify that record; the sweep is green on 40 pinned artifacts.
 
 Two of the forty are too large to commit: the train and validation candidate pools, 47.2 MB and
 48.6 MB, holding 201,103 and 196,282 candidates with both component scores for each. They are
-deposited at ⟨ZENODO_DOI⟩ under CC BY 4.0, compressed to 9.5 MB and 9.6 MB. `paper2/zenodo_manifest.json`
+prepared for deposit at ⟨ZENODO_DOI⟩, compressed to 9.5 MB and 9.6 MB. `paper2/zenodo_manifest.json`
 pins the SHA-256 of both the raw file and the uploaded archive together with the record counts,
 and `scripts/zenodo_deposit.py --verify --dir <download>` checks a download against it. The
 archive is gzipped at a fixed level with a zero timestamp, so its digest is a function of the
@@ -798,8 +799,7 @@ Article, no requirement that a hosted service exist, and no licence or login cri
 
 | marker | what is needed | blocks submission |
 |---|---|---|
-| `⟨CORPUS_VERSIONS⟩` | the release version and access date of each of the four sources. Required by the Data Availability Statement | yes |
-| `⟨CORPUS_LICENCE⟩` | whether the derived corpus and the deposited pools may be redistributed. DrugBank's terms are the constraint, and this decides whether the Zenodo deposit can be CC BY 4.0 | yes |
+| `⟨CORPUS_LICENCE⟩` | under which licence, if any, the pools may be deposited. ChEMBL 34 is CC BY-SA 3.0 and DrugBank 5.1.10 is CC BY-NC 4.0, and the two do not combine into one derivative; the upload tool refuses to run until this is set | yes |
 | `⟨ZENODO_DOI⟩` | the DOI, minted on publishing the deposit; the bundle and manifest are built and verified, the upload needs a token and is the author's action | yes |
 | `⟨AUTHORS⟩` | author list, and which author corresponds | yes |
 | `⟨AFFILIATIONS⟩` | affiliations | yes |
@@ -820,6 +820,9 @@ Resolved from the artifacts:
 - `⟨T_INTERACTIVE⟩` — 0.39 s median over 294 validation substrates, from results/mode_timings.json. The 1.85 s this was to be filled with is a mean over a forty-substrate draw from a different population
 - `⟨POP_H13⟩`, `⟨POP_H15⟩` — validation, 293 paired substrates, from the two verdict artifacts
 - `⟨REGISTRY_URL⟩` — paper2/preregistration.md
+- `⟨CORPUS_VERSIONS⟩` — ChEMBL 34, DrugBank 5.1.10, MetXBioDB 1.0, GLORYx 2020. The version
+  also corrected a citation: the bibliography carried DrugBank 6.0 (Knox 2024) for data taken
+  from the 5.x line, and now carries DrugBank 5.0 (Wishart 2018)
 - `⟨CORPUS⟩` — ChEMBL, DrugBank, MetXBioDB and the GLORYx reference set. Naming them corrected a
   claim rather than filling a blank: the paper presented GLORYx as an external set found to be
   contaminated, when it is one of the corpus's own sources and was never external

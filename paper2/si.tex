@@ -29,12 +29,23 @@
 \input{si_table_splits}
 
 The annotated substrate--metabolite pairs are assembled from four sources: ChEMBL
-\citep{Zdrazil_2024}, DrugBank \citep{Knox_2024}, MetXBioDB \citep{Djoumbou_Feunang_2019} and
-the GLORYx reference set \citep{de_Bruyn_Kops_2020}. The release version and access date of each
-is \CorpusVersions{}. Whether the derived corpus and the deposited candidate pools may be
-redistributed is \CorpusLicence{}: ChEMBL is CC BY-SA and MetXBioDB is distributed with
-BioTransformer, but DrugBank's terms restrict redistribution and the pools contain structures
-that may derive from it.
+\citep{Zdrazil_2024}, DrugBank \citep{Wishart_2018}, MetXBioDB \citep{Djoumbou_Feunang_2019} and
+the GLORYx reference set \citep{de_Bruyn_Kops_2020}. The versions used are \CorpusVersions{}.
+
+Their licences do not combine. ChEMBL~34 is released under CC BY-SA 3.0, which requires a
+derivative to carry the same or a compatible ShareAlike licence and forbids adding restrictions.
+DrugBank~5.1.10 is released under CC BY-NC 4.0, which forbids commercial use. A single derived
+work drawing on both cannot satisfy each: adding the non-commercial clause is a restriction
+ShareAlike does not permit, and dropping it breaches DrugBank's terms. MetXBioDB~1.0 is
+distributed with BioTransformer, whose terms require explicit permission for commercial use or
+redistribution.
+
+What the deposited pools actually contain bears on this and is stated rather than assumed. The
+substrate structures are corpus records. The candidate structures are produced by applying this
+work's rule bank and are not corpus records. The annotated metabolites appear only as
+tautomer-canonical InChIKeys, which are hashes and do not carry the structures. The deposit is
+therefore a list of corpus substrates, hashes of their annotations, and our own predictions.
+Whether that may be redistributed, and under which licence, is \CorpusLicence{}.
 
 The corpus is divided by substrate, so no substrate of one split appears in another. Molecular overlap between splits is non-zero and expected, because a molecule
 that is a substrate in one split may appear as a product in another: \numLeakMolOverlap{}
@@ -327,9 +338,11 @@ moved. Every number in the paper reaches the page through a macro generated from
 artifact, and a checker refuses any numeric literal in the manuscript that is not on a short
 allow-list of constants published elsewhere.
 
-The train and validation candidate pools are deposited at \ZenodoDoi{} under CC BY 4.0. The
+The train and validation candidate pools are prepared for deposit at \ZenodoDoi{}. The
 deposit's manifest pins the SHA-256 of both the raw file and the uploaded archive together with
-the record counts, so a download can be verified against the version used here.
+the record counts, so a download can be verified against the version used here. The upload is
+held until the licence position above is settled, and the tool refuses to run without one: a
+Zenodo record cannot be withdrawn once published.
 
 \bibliography{refs}
 

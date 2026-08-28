@@ -58,9 +58,9 @@ rather than a subset, and cap and seed are recorded with every figure drawn from
 carrying \numPopulationReferences{} references.
 
 The annotated substrate--metabolite pairs are assembled from four sources: ChEMBL
-\citep{Zdrazil_2024}, DrugBank \citep{Knox_2024}, MetXBioDB \citep{Djoumbou_Feunang_2019} and
-the GLORYx reference set \citep{de_Bruyn_Kops_2020}. Versions and access dates are
-\CorpusVersions{}.
+\citep{Zdrazil_2024}, DrugBank \citep{Wishart_2018}, MetXBioDB \citep{Djoumbou_Feunang_2019} and
+the GLORYx reference set \citep{de_Bruyn_Kops_2020}. The versions used are \CorpusVersions{}. Their licences do not
+combine into one redistributable derivative, which the Supporting Information sets out.
 
 The comparison set carries no training contamination: \numPopulationInTrainOrVal{} of its
 \numPopulationN{} substrates appear in train or validation under a canonical key.
@@ -619,11 +619,14 @@ The data and software underlying this article are publicly available. Source cod
 manifest, the frozen per-substrate predictions of every comparator, the evaluation harness, the
 provenance sweep and the preregistration with every hypothesis and its outcome are at
 \texttt{github.com/doctawho42/GRAIL}, and are available to reviewers at submission. The train and
-validation candidate pools are deposited at \ZenodoDoi{} under CC BY 4.0. The annotated
+validation candidate pools are prepared for deposit at \ZenodoDoi{}, held until the licence
+position is settled. The annotated
 substrate--metabolite corpus is assembled from ChEMBL \citep{Zdrazil_2024}, DrugBank
-\citep{Knox_2024}, MetXBioDB \citep{Djoumbou_Feunang_2019} and the GLORYx reference set
-\citep{de_Bruyn_Kops_2020}, at the versions given in the Supporting Information. Whether the
-derived corpus and the deposited candidate pools may be redistributed is \CorpusLicence{}.
+\citep{Wishart_2018}, MetXBioDB \citep{Djoumbou_Feunang_2019} and the GLORYx reference set
+\citep{de_Bruyn_Kops_2020}, at versions \CorpusVersions{}. The deposited pools hold corpus
+substrate structures, tautomer-canonical hashes of the annotated metabolites, and candidate
+structures produced by this work. Whether they may be redistributed, and under which licence, is
+\CorpusLicence{}; the sources' own licences are set out in the Supporting Information.
 
 \numProvPinned{} artifacts are pinned, and every number in this paper comes from one of them.
 Each records the commit that wrote it; a sweep recomputes the hash of its producer and refuses the
