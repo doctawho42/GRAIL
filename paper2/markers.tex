@@ -1,0 +1,8 @@
+% Values the manuscript cannot compute: they come from outside the artifacts and outside the
+% code. Each renders as a conspicuous bracket so it cannot survive to submission unnoticed, and
+% each is defined in exactly one place so filling it is a one-line edit. This file is shared by
+% every journal wrapper, because a marker that lives in a layout preamble goes missing the moment
+% the target journal changes -- which is how \ZenodoDoi came to be undefined.
+\newcommand{\unresolved}[1]{\textbf{[#1]}}
+\newcommand{\ZenodoDoi}{\unresolved{ZENODO DOI, minted on publishing the deposit}}
+\newcommand{\CorpusProvenance}{\unresolved{CORPUS: source, access date and licence of the annotated substrate--metabolite corpus}}

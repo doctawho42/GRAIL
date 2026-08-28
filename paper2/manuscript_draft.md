@@ -3,11 +3,11 @@
 ⟨AUTHORS⟩
 ⟨AFFILIATIONS⟩
 
-**Note on naming.** `GRAIL` is used throughout as a placeholder. The name is publicly
-attached, in a companion manuscript, to a configuration that loses to every comparator,
-and NAR treats a same-named successor to a published tool as an *update*, which carries a
-two-year embargo and a "significant changes" bar. A new name removes both problems at once.
-See §Open decisions.
+**Note on naming.** `GRAIL` is used throughout as a placeholder. The name is publicly attached,
+in a companion manuscript, to a configuration that loses to every comparator, so a reader meeting
+the name a second time meets a different system under it. The two-year interval that also argued
+for renaming was a rule of the NAR Web Server Issue and does not apply at the present target; the
+first reason stands on its own.
 
 ---
 
@@ -33,11 +33,15 @@ $+0.1038$; at $k = 15$ and $k = 20$ the interval includes zero and those two bud
 reported as unresolved. We additionally report the ceiling of the approach:
 18.3% of reference metabolites lie outside what the rule bank reaches in one step, and we
 show this bound is invariant to how a transformation type is defined, making it a property of
-the annotation corpus rather than of our implementation. GRAIL is freely available at
-⟨SERVICE_URL⟩; code, split, frozen predictions and evaluation harness at
-`github.com/doctawho42/GRAIL`.
+the annotation corpus rather than of our implementation. Code, split manifest, frozen
+per-substrate predictions of every comparator and the evaluation harness are at
+`github.com/doctawho42/GRAIL`, and the candidate pools at ⟨ZENODO_DOI⟩.
 
-**Keywords:** xenobiotic metabolism; metabolite prediction; reaction rules; evaluation protocol; web server
+**Keywords:** xenobiotic metabolism; metabolite prediction; reaction rules; evaluation protocol; reproducibility
+
+**Note.** This is the long draft. JCIM asks for an abstract of three to four sentences; the
+manuscript's own abstract is in `paper2/grail_jcim.tex` and is cut to that. This one is kept
+because it states every claim the body has to support.
 
 ---
 
@@ -376,10 +380,10 @@ property of the budget requested, not of the system.**
 
 ### Web server
 
-⟨SERVER: implementation stack, input formats accepted, output formats, batch limits,
-sample-data mechanism, help pages and tutorial, licence — NAR requires free non-commercial
-use under a standard licence such as CC BY-SA and forbids mandatory login. These are hard
-eligibility criteria and must be confirmed against the hosting platform.⟩
+⟨SERVER: if a hosted interface is offered, its implementation stack, accepted input formats,
+output formats, batch limits and licence. This is no longer an eligibility criterion — JCIM
+requires that the software be available for testing by reviewers, which the repository satisfies —
+so the section is optional and the paper stands without it.⟩
 
 ---
 
@@ -708,11 +712,16 @@ methods predict, which is a quarter of the evaluated test split and is not a ran
 
 ---
 
-## Availability
+## Data and software availability
 
-⟨SERVICE_URL⟩ — free, ⟨LICENCE⟩, no registration required ⟨CONFIRM⟩.
-Source, split manifest, frozen predictions of every comparator, evaluation harness, provenance
-sweep and pre-registration: `github.com/doctawho42/GRAIL`.
+The data and software underlying this article are publicly available. Source, split manifest,
+frozen predictions of every comparator, evaluation harness, provenance sweep and the
+preregistration with every hypothesis and its outcome: `github.com/doctawho42/GRAIL`, available
+to reviewers at submission. The candidate pools are deposited at ⟨ZENODO_DOI⟩ under CC BY 4.0.
+The annotated substrate–metabolite corpus the splits are drawn from is ⟨CORPUS⟩.
+
+A hosted interface, if one is offered, would be at ⟨SERVICE_URL⟩; the paper does not depend on
+it.
 
 A split manifest pins by digest the three triple files, the substrate sets, the evaluated test
 set, the stratum files, the rule bank and all third-party artifacts; `--verify` recomputes and
@@ -770,22 +779,26 @@ Everything computable from the released artifacts has been filled and the entrie
 are the ones no run can supply. Each was checked against the artifacts before being
 removed from this list; the closed ones are recorded in the paragraph beneath the table.
 
+The target is JCIM, submitted as an Article. That target sets which of these block: the software
+must be available for testing by reviewers, which the repository satisfies, and a Data Availability
+Statement is required under ACS Research Data Policy Level 2. There is no page limit for an
+Article, no requirement that a hosted service exist, and no licence or login criterion.
+
 | marker | what is needed | blocks submission |
 |---|---|---|
-| `⟨CORPUS⟩` | the provenance of the annotated substrate–metabolite corpus: source, access date, licence | yes |
-| `⟨SERVER⟩` | implementation stack, input and output formats, batch limits, sample data, help pages and tutorial, all of them NAR eligibility criteria | yes |
-| `⟨SERVICE_URL⟩` | the deployed URL | yes |
-| `⟨LICENCE⟩` | the licence; NAR requires free non-commercial use under a standard licence | yes |
-| `⟨CONFIRM⟩` | confirmation that the platform requires no login; NAR forbids mandatory registration | yes |
+| `⟨CORPUS⟩` | the provenance of the annotated substrate–metabolite corpus: source, access date, licence. Required by the Data Availability Statement | yes |
 | `⟨ZENODO_DOI⟩` | the DOI, minted on publishing the deposit; the bundle and manifest are built and verified, the upload needs a token and is the author's action | yes |
-| `⟨AUTHORS⟩` | author list | yes |
+| `⟨AUTHORS⟩` | author list, and which author corresponds | yes |
 | `⟨AFFILIATIONS⟩` | affiliations | yes |
 | `⟨TBD⟩` | author contributions, funding, conflicts | yes |
+| `⟨TOC_GRAPHIC⟩` | the table-of-contents graphic ACS asks for | yes |
+| `⟨SERVICE_URL⟩` | the deployed URL, if a hosted interface is offered | no |
+| `⟨SERVER⟩` | the interface section, if one is offered | no |
 | `⟨ANY_FURTHER⟩` | limitations the authors know of and this draft does not | no |
 
-`⟨CASE_STUDY⟩` is listed as blocking because the claim it would demonstrate — that every
-prediction names its rule and site — is the paper's main non-numerical claim, and no released
-artifact currently carries a rule field per candidate.
+`⟨LICENCE⟩` and `⟨CONFIRM⟩` are struck: both were NAR Web Server eligibility criteria, a free
+non-commercial licence displayed on a landing page and a guarantee of no mandatory login, and
+neither has a counterpart at the present target.
 
 Resolved from the artifacts:
 

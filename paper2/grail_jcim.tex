@@ -1,0 +1,51 @@
+% The Journal of Chemical Information and Modeling, using the publisher's own class rather than
+% an approximation of it: achemso ships with TeX Live and jcisd8 is JCIM's CODEN.
+%
+% Submission type is Article. An Application Note would also admit this work by length -- the
+% category covers software and web servers under 5000 words -- but the contribution that carries
+% the paper is the declared evaluation protocol and the preregistration, including the
+% hypotheses that failed, and that is an Article's claim rather than a note's.
+\documentclass[journal=jcisd8,manuscript=article,layout=twocolumn]{achemso}
+
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{microtype}
+\SectionNumbersOn
+\input{numbers}
+\input{markers}
+
+\author{AUTHORS}
+\affiliation{AFFILIATIONS}
+\email{CORRESPONDING@EMAIL}
+
+% JCIM asks for twelve words or fewer.
+\title[Rule-grounded metabolite prediction]
+      {Rule-grounded metabolite prediction under a fully declared evaluation}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Tools that predict xenobiotic metabolite structures report recall under evaluation choices their
+papers leave unstated, so their numbers are not comparable. We present GRAIL, a rule-grounded
+predictor that names the transformation rule and site behind every prediction and reports its
+performance under five matching criteria and ten output budgets against every comparator with
+predictions on the same substrates. On \numPopulationN{} shared substrates the comparison divides
+by budget rather than resolving into an ordering, with SyGMa ahead at $k\le5$ and GRAIL ahead at
+$k=30$ and $k=50$, each with the paired interval excluding zero. We also bound the approach:
+\numCeilingUncovered{} of \numPopulationTestrefs{} reference metabolites lie outside what the rule
+bank reaches in one step, and that bound is invariant to how a transformation type is defined,
+making it a property of the annotation corpus rather than of our implementation.
+\end{abstract}
+
+\begin{tocentry}
+TOC GRAPHIC
+\end{tocentry}
+
+\input{body}
+
+\bibliography{refs}
+
+\end{document}

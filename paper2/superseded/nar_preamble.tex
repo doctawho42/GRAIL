@@ -23,9 +23,4 @@
 \setlength{\bibsep}{0pt}
 \renewcommand{\bibfont}{\small}
 
-% Unresolved externals. Each renders as a conspicuous bracket so it cannot survive to submission
-% unnoticed, and each is defined in exactly one place so filling it is a one-line edit. The DOI
-% is minted when the Zenodo deposit is published; until then the paper must say so on the page
-% rather than in a comment nobody compiles.
-\newcommand{\unresolved}[1]{\textbf{[#1]}}
-\newcommand{\ZenodoDoi}{\unresolved{ZENODO DOI, minted on publishing the deposit}}
+\input{markers}

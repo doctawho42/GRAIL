@@ -18,7 +18,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-DRAFT = ROOT / "paper2/webserver_draft.md"
+DRAFT = ROOT / "paper2/manuscript_draft.md"
 
 
 def variants(v):

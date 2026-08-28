@@ -26,7 +26,7 @@ def test_every_number_in_the_manuscript_is_a_macro_from_an_artifact():
     assert r.returncode == 0, r.stdout + r.stderr
 
 
-@pytest.mark.skipif(not (ROOT / "paper2/webserver_draft.md").exists(),
+@pytest.mark.skipif(not (ROOT / "paper2/manuscript_draft.md").exists(),
                     reason="the markdown draft is not in this checkout")
 def test_the_draft_numbers_can_be_traced():
     """The markdown manuscript has no macro path, so this reports rather than gates.

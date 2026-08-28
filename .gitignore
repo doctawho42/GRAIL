@@ -72,6 +72,9 @@ paper2/*.fdb_latexmk
 !paper2/fig_cost.pdf
 !paper2/fig_case.pdf
 
+# achemso writes this beside the wrapper on every build
+paper2/acs-*.bib
+
 # scratch stdout from long local runs
 .runlogs/
 

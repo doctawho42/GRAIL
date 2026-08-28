@@ -40,7 +40,12 @@ ALLOWED = {
 
 
 def main() -> int:
-    body = TEX.read_text() + (ROOT / "paper2/grail_nar.tex").read_text()
+    # Every journal wrapper, not one named wrapper. The abstract lives in the wrapper, and when
+    # the target journal changed the checker went on reading the old one: the new abstract, which
+    # is where a hand-typed number is most likely, was outside the gate entirely.
+    wrappers = sorted((ROOT / "paper2").glob("grail_*.tex"))
+    assert wrappers, "no paper2/grail_*.tex wrapper found; the checker would vacuously pass"
+    body = TEX.read_text() + "".join(w.read_text() for w in wrappers)
 
     defined = set(re.findall(r"\\newcommand\{\\(num[A-Za-z]+)\}", NUMS.read_text()))
     used = set(re.findall(r"\\(num[A-Za-z]+)", body))

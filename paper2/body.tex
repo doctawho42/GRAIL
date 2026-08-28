@@ -256,8 +256,8 @@ list is short and correct rather than long and wrong.}
 
 Gemcitabine is annotated in the corpus with four metabolites: the deamination to dFdU that
 inactivates it, and the three sequential 5$^\prime$ phosphorylations that activate it.
-Figure~\ref{fig:case} and Table~\ref{tab:case} are what the server returns for it, with the
-transformation behind every hit.
+Figure~\ref{fig:case} and Table~\ref{tab:case} are what the deployed configuration returns for
+it, with the transformation behind every hit.
 
 The interactive mode applies its \numCaseInterBudget{}-rule budget in
 \numCaseInterSeconds{}~s and returns \numCaseInterCandidates{} candidates, of which the
@@ -290,7 +290,7 @@ threshold chosen after the fact.
 Candidates group by molecular formula. An oracle ordering these groups by whether they contain a
 reference is worth $+\numOracleHeadroom$ over the ranking it is measured against, which is the
 product ordering with each group emitted as a block on the uncapped pool. That is not the deployed
-ranking, so the figure bounds a configuration the server does not run.
+ranking, so the figure bounds a configuration that is not deployed.
 
 H8 trained a listwise group scorer applied to whole groups. Registered threshold $+\numHEightThreshold$; measured
 on the comparison set, $\numHEightDiff$. The deficit splits into $\numHEightDesign$ from the
@@ -413,7 +413,7 @@ single budget would have named a different winner depending on which budget its 
 every one of those choices would have been defensible. This is the argument for reporting the
 sweep rather than a cell, made on our own numbers rather than about someone else's.
 
-\subsection{What the system offers that its predecessor does not}
+\subsection{What the system offers that the incumbent does not}
 
 Three things, none a recall figure. Every prediction names the transformation rule that produced
 it and the site at which it fired, so a user can accept or reject a candidate on chemical grounds.
@@ -445,6 +445,28 @@ our knowledge, not systematically mined as a source of rules. The bound applies 
 predictor trained on a comparable corpus, including sequence-to-sequence systems, which do not
 report it.
 
+\section{Conclusions}
+
+GRAIL predicts metabolite structures by selecting rules from a bank of \numBankRules{} templates,
+applying them, and ranking the products by a reciprocal rank fusion of a pair filter and the rule
+selector. Replacing the product of the two scores with that fusion is worth $+\numHSevenDiff$ of
+recall on held-out data, more than any architectural change we tested: the form in which two
+existing scores are combined mattered more than what produced them.
+
+The comparison against published predictors does not resolve into an ordering, and we do not
+present one. It divides by output budget, with SyGMa ahead at the tightest budgets and GRAIL ahead
+at the widest, each where the paired interval excludes zero. A single recall figure at a single
+budget would have named a different winner depending on which budget its author chose, which is
+the argument for reporting the sweep rather than a cell.
+
+Two boundaries are as much of the result as the recall is. The rule bank misses
+\numCeilingUncovered{} of \numPopulationTestrefs{} references in one step, and that bound holds
+under every definition of a transformation type at which a type still determines a product, which
+makes it a property of the annotation corpus rather than of this implementation. And of
+\numComparatorsUnavailable{} systems published in 2025--26, none could be run on our split as
+released, which is why we release per-substrate predictions for every arm rather than aggregate
+scores alone.
+
 \section{Limitations}
 
 Predictions are single-step; applying the bank at depth two lifts the ceiling by about $0.012$ at
@@ -456,11 +478,14 @@ widest columns measure list length on all sides. The comparison population is th
 \numPopulationN{} substrates on which all methods predict, a quarter of the evaluated test split
 and not a random quarter of it.
 
-\section{Data availability}
+\section{Data and software availability}
 
-Source, split manifest, frozen predictions of every comparator, evaluation harness, provenance
-sweep and the preregistration with every hypothesis and its outcome are at
-\texttt{github.com/doctawho42/GRAIL}.
+The data and software underlying this article are publicly available. Source code, the split
+manifest, the frozen per-substrate predictions of every comparator, the evaluation harness, the
+provenance sweep and the preregistration with every hypothesis and its outcome are at
+\texttt{github.com/doctawho42/GRAIL}, and are available to reviewers at submission. The train and
+validation candidate pools are deposited at \ZenodoDoi{} under CC BY 4.0. The annotated
+substrate--metabolite corpus the splits are drawn from is \CorpusProvenance{}.
 
 \numProvPinned{} artifacts are pinned, and every number in this paper comes from one of them.
 Each records the commit that wrote it; a sweep recomputes the hash of its producer and refuses the
@@ -470,7 +495,7 @@ third-party artifacts, and a verify mode recomputes and names any leaf that has 
 
 Two pinned artifacts are too large to commit: the train and validation candidate pools, holding
 every candidate the generator produced for every substrate of their population together with both
-component scores. They are deposited at \ZenodoDoi{} under CC BY 4.0. The repository pins the
+component scores, and are the deposit named above. The repository pins the
 SHA-256 of both the raw file and the uploaded archive in
 \texttt{paper2/zenodo\_manifest.json}, and \texttt{scripts/zenodo\_deposit.py -{}-verify}
 checks a download against it, so the deposit is verifiable against the version used here rather
