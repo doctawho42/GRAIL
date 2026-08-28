@@ -91,6 +91,7 @@ PINNED = {
     "results/deployment_table.json": f"{TE}/deployment_table.py",
     "results/oracle_by_grouping.json": f"{TE}/oracle_by_grouping.py",
     "results/criterion_sweep.json": f"{TE}/criterion_sweep.py",
+    "results/similarity_baseline.json": f"{TE}/similarity_baseline.py",
     "results/case_study.json": f"{TE}/case_study.py",
     "results/case_study_exhaustive.json": f"{TE}/case_study.py",
     # the rule budget: the curve's shape and the check on validation

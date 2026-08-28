@@ -1,0 +1,418 @@
+{
+ "provenance": {
+  "script": "similarity_baseline.py",
+  "script_path": "scripts/typed_edit/similarity_baseline.py",
+  "source_sha256": "a00d217114fc72bbc691a4850f845e969388c09d2580be88b0ab5330879b1ff1",
+  "git_commit": "69fc2fde417de5857069dff8ac8cdc7b343e5a7e",
+  "git_dirty": true
+ },
+ "aggregation": "micro, ratio of sums",
+ "cap": 100,
+ "n_boot": 10000,
+ "seed": 0,
+ "note": "every arm re-ranks one pool, so pool, matching and budget are fixed and only the order varies; the fusion arm is the deployed ranking",
+ "by_population": {
+  "comparison set": {
+   "population": {
+    "n": 291,
+    "n_references": 665.0,
+    "source": "comparison set"
+   },
+   "recall_micro": {
+    "fusion": {
+     "1": 0.0902,
+     "5": 0.3098,
+     "10": 0.4496,
+     "15": 0.5353,
+     "30": 0.6406,
+     "50": 0.7068
+    },
+    "similarity": {
+     "1": 0.0075,
+     "5": 0.0812,
+     "10": 0.1609,
+     "15": 0.2376,
+     "30": 0.382,
+     "50": 0.5534
+    },
+    "dissimilarity": {
+     "1": 0.0,
+     "5": 0.015,
+     "10": 0.0466,
+     "15": 0.0632,
+     "30": 0.1083,
+     "50": 0.2135
+    },
+    "random": {
+     "1": 0.0075,
+     "5": 0.0571,
+     "10": 0.0857,
+     "15": 0.1173,
+     "30": 0.2316,
+     "50": 0.391
+    }
+   },
+   "fusion_minus": {
+    "similarity": {
+     "1": {
+      "gap": 0.0827,
+      "ci95": [
+       0.061,
+       0.1077
+      ],
+      "separates": true
+     },
+     "5": {
+      "gap": 0.2286,
+      "ci95": [
+       0.1852,
+       0.2766
+      ],
+      "separates": true
+     },
+     "10": {
+      "gap": 0.2887,
+      "ci95": [
+       0.2427,
+       0.3389
+      ],
+      "separates": true
+     },
+     "15": {
+      "gap": 0.2977,
+      "ci95": [
+       0.2497,
+       0.3492
+      ],
+      "separates": true
+     },
+     "30": {
+      "gap": 0.2586,
+      "ci95": [
+       0.2128,
+       0.3086
+      ],
+      "separates": true
+     },
+     "50": {
+      "gap": 0.1534,
+      "ci95": [
+       0.1146,
+       0.1954
+      ],
+      "separates": true
+     }
+    },
+    "dissimilarity": {
+     "1": {
+      "gap": 0.0902,
+      "ci95": [
+       0.0698,
+       0.1137
+      ],
+      "separates": true
+     },
+     "5": {
+      "gap": 0.2947,
+      "ci95": [
+       0.255,
+       0.3397
+      ],
+      "separates": true
+     },
+     "10": {
+      "gap": 0.403,
+      "ci95": [
+       0.3589,
+       0.4511
+      ],
+      "separates": true
+     },
+     "15": {
+      "gap": 0.4722,
+      "ci95": [
+       0.4249,
+       0.5204
+      ],
+      "separates": true
+     },
+     "30": {
+      "gap": 0.5323,
+      "ci95": [
+       0.4783,
+       0.5866
+      ],
+      "separates": true
+     },
+     "50": {
+      "gap": 0.4932,
+      "ci95": [
+       0.4355,
+       0.5503
+      ],
+      "separates": true
+     }
+    },
+    "random": {
+     "1": {
+      "gap": 0.0827,
+      "ci95": [
+       0.0616,
+       0.1064
+      ],
+      "separates": true
+     },
+     "5": {
+      "gap": 0.2526,
+      "ci95": [
+       0.2111,
+       0.2998
+      ],
+      "separates": true
+     },
+     "10": {
+      "gap": 0.3639,
+      "ci95": [
+       0.3212,
+       0.411
+      ],
+      "separates": true
+     },
+     "15": {
+      "gap": 0.418,
+      "ci95": [
+       0.3713,
+       0.4673
+      ],
+      "separates": true
+     },
+     "30": {
+      "gap": 0.409,
+      "ci95": [
+       0.3605,
+       0.4621
+      ],
+      "separates": true
+     },
+     "50": {
+      "gap": 0.3158,
+      "ci95": [
+       0.2732,
+       0.3625
+      ],
+      "separates": true
+     }
+    }
+   },
+   "verdict_at_k": {
+    "1": "the deployed ranking separates from an untrained similarity ordering",
+    "5": "the deployed ranking separates from an untrained similarity ordering",
+    "10": "the deployed ranking separates from an untrained similarity ordering",
+    "15": "the deployed ranking separates from an untrained similarity ordering",
+    "30": "the deployed ranking separates from an untrained similarity ordering",
+    "50": "the deployed ranking separates from an untrained similarity ordering"
+   }
+  },
+  "validation draw": {
+   "population": {
+    "n": 293,
+    "n_references": 655.0,
+    "source": "validation draw"
+   },
+   "recall_micro": {
+    "fusion": {
+     "1": 0.1053,
+     "5": 0.287,
+     "10": 0.3939,
+     "15": 0.4748,
+     "30": 0.6015,
+     "50": 0.6855
+    },
+    "similarity": {
+     "1": 0.0183,
+     "5": 0.1008,
+     "10": 0.1939,
+     "15": 0.2702,
+     "30": 0.4321,
+     "50": 0.6046
+    },
+    "dissimilarity": {
+     "1": 0.0015,
+     "5": 0.0061,
+     "10": 0.0168,
+     "15": 0.0382,
+     "30": 0.0809,
+     "50": 0.1649
+    },
+    "random": {
+     "1": 0.0076,
+     "5": 0.0412,
+     "10": 0.0855,
+     "15": 0.1206,
+     "30": 0.2504,
+     "50": 0.4046
+    }
+   },
+   "fusion_minus": {
+    "similarity": {
+     "1": {
+      "gap": 0.087,
+      "ci95": [
+       0.0612,
+       0.1184
+      ],
+      "separates": true
+     },
+     "5": {
+      "gap": 0.1863,
+      "ci95": [
+       0.1355,
+       0.2443
+      ],
+      "separates": true
+     },
+     "10": {
+      "gap": 0.2,
+      "ci95": [
+       0.1437,
+       0.2629
+      ],
+      "separates": true
+     },
+     "15": {
+      "gap": 0.2046,
+      "ci95": [
+       0.1448,
+       0.2716
+      ],
+      "separates": true
+     },
+     "30": {
+      "gap": 0.1695,
+      "ci95": [
+       0.1173,
+       0.228
+      ],
+      "separates": true
+     },
+     "50": {
+      "gap": 0.0809,
+      "ci95": [
+       0.0429,
+       0.1248
+      ],
+      "separates": true
+     }
+    },
+    "dissimilarity": {
+     "1": {
+      "gap": 0.1038,
+      "ci95": [
+       0.0794,
+       0.1335
+      ],
+      "separates": true
+     },
+     "5": {
+      "gap": 0.2809,
+      "ci95": [
+       0.2322,
+       0.3351
+      ],
+      "separates": true
+     },
+     "10": {
+      "gap": 0.3771,
+      "ci95": [
+       0.321,
+       0.4388
+      ],
+      "separates": true
+     },
+     "15": {
+      "gap": 0.4366,
+      "ci95": [
+       0.3745,
+       0.5009
+      ],
+      "separates": true
+     },
+     "30": {
+      "gap": 0.5206,
+      "ci95": [
+       0.4531,
+       0.592
+      ],
+      "separates": true
+     },
+     "50": {
+      "gap": 0.5206,
+      "ci95": [
+       0.4456,
+       0.5952
+      ],
+      "separates": true
+     }
+    },
+    "random": {
+     "1": {
+      "gap": 0.0977,
+      "ci95": [
+       0.0732,
+       0.1283
+      ],
+      "separates": true
+     },
+     "5": {
+      "gap": 0.2458,
+      "ci95": [
+       0.1962,
+       0.3013
+      ],
+      "separates": true
+     },
+     "10": {
+      "gap": 0.3084,
+      "ci95": [
+       0.2537,
+       0.3703
+      ],
+      "separates": true
+     },
+     "15": {
+      "gap": 0.3542,
+      "ci95": [
+       0.2932,
+       0.4199
+      ],
+      "separates": true
+     },
+     "30": {
+      "gap": 0.3511,
+      "ci95": [
+       0.2881,
+       0.4211
+      ],
+      "separates": true
+     },
+     "50": {
+      "gap": 0.2809,
+      "ci95": [
+       0.221,
+       0.3466
+      ],
+      "separates": true
+     }
+    }
+   },
+   "verdict_at_k": {
+    "1": "the deployed ranking separates from an untrained similarity ordering",
+    "5": "the deployed ranking separates from an untrained similarity ordering",
+    "10": "the deployed ranking separates from an untrained similarity ordering",
+    "15": "the deployed ranking separates from an untrained similarity ordering",
+    "30": "the deployed ranking separates from an untrained similarity ordering",
+    "50": "the deployed ranking separates from an untrained similarity ordering"
+   }
+  }
+ }
+}

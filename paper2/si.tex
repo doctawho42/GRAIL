@@ -204,6 +204,42 @@ untypeable, so the artifact is not byte-reproducible: two runs on the same machi
 2 of approximately 29,100 typings, every figure in Table~\ref{tab:si-oracle} was identical to four
 decimals, and the only cell that moved was the control at $k=1$, by $0.0015$.
 
+\section{When a ranking comparison can measure anything}
+
+Two experiments in this work asked whether a ranking beats an alternative ordering of the same
+pool, and the first of them could not have answered. It compared the product ordering against
+Tanimoto similarity on a pool whose median size is \numSimOldMedianPool{} candidates, at a budget
+of 15. For \numSimOldPoolUnderBudget{} of \numSimOldN{} substrates the entire pool fits inside
+the budget, so every ordering returns the same set and no arm can separate from another. The
+measured difference, $+\numSimOldGap$ with the interval covering zero, is what that design is
+able to produce and not evidence that the two orderings are equivalent.
+
+The same limit governs a null model of the form used elsewhere in this literature, a uniform draw
+of $\min(k, N)$ from a method's own pool of $N$. Its lift tends to one as the budget approaches
+the pool, so at $k=15$ a method emitting about eleven candidates has a lift of $1.055$ whatever
+its ranking is, while a method emitting eighty still has room. Comparing methods by lift at a
+fixed budget therefore ranks them partly by how much they emit, which is the same confound the
+budget sweep in the main text is designed to expose.
+
+The rule both cases give is simple and we state it because neither experiment stated it in
+advance: a ranking comparison carries information only over the substrates whose pool exceeds the
+budget, and the number of such substrates should be reported with the result. The comparison in
+the main text is run on the deployed pool, capped at \numCaseExhCandidates{}, where the budget is
+narrower than the pool for every substrate.
+
+\section{The choice of evaluation population}
+
+The comparison set is a quarter of the evaluated test split and not a random quarter, since it is
+fixed by which substrates every method returns predictions for. A separate analysis re-ran three
+methods, four metrics and five criteria on two populations of one split, the 150 substrates shared
+with a further comparator and the full \numPopulationTestsubs{}, and asked whether the ordering
+of methods changes with the population. Of 60 pairwise comparisons, 10 reverse in point estimate,
+no population-by-method interaction separates from zero, and none survives a Holm correction. The
+design detects an interaction of $0.0661$ at 80\% power, so it excludes large population effects
+and not moderate ones. Two populations is a weak design and we do not offer it as a general
+claim; it is reported because the alternative is to say nothing about a population the reader can
+see is not random.
+
 \section{The worked example in full}
 
 \input{si_table_case}

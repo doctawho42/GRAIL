@@ -270,6 +270,38 @@ def build():
             return False
     n["bank.parses"] = sum(1 for r in bank if _parses(r))
 
+    # the untrained similarity baseline the deployed ranking is measured against
+    sb = art("similarity_baseline.json")
+    for tag, pop in (("cmp", "comparison set"), ("val", "validation draw")):
+        r = sb["by_population"][pop]
+        n[f"sim.{tag}.n"] = r["population"]["n"]
+        n[f"sim.{tag}.fusion15"] = r["recall_micro"]["fusion"]["15"]
+        n[f"sim.{tag}.similarity15"] = r["recall_micro"]["similarity"]["15"]
+        n[f"sim.{tag}.random15"] = r["recall_micro"]["random"]["15"]
+        c = r["fusion_minus"]["similarity"]["15"]
+        n[f"sim.{tag}.gap15"] = c["gap"]
+        n[f"sim.{tag}.lo15"] = c["ci95"][0]
+        n[f"sim.{tag}.hi15"] = c["ci95"][1]
+
+    # the earlier version of this comparison, and why it could not measure an ordering
+    old_sb = art("scaffold_baseline.json")
+    n["sim.old.gap"] = old_sb["arms"]["similarity"]["vs_deployed"]
+    n["sim.old.lo"] = old_sb["arms"]["similarity"]["ci95"][0]
+    n["sim.old.hi"] = old_sb["arms"]["similarity"]["ci95"][1]
+    sp = json.loads((ROOT / "results/scored_predictions.json").read_text())["rows"]
+    sizes = [len(r["candidates"]) for r in sp]
+    n["sim.old.median_pool"] = int(sorted(sizes)[len(sizes) // 2])
+    n["sim.old.pool_under_budget"] = sum(1 for x in sizes if x <= 15)
+    n["sim.old.n"] = len(sizes)
+
+    # retraining variance, so a reader can scale the registered effects against it
+    ms = art("multiseed_micro.json")
+    n["seed.n"] = len(ms["micro_recall_at_15"]["values"])
+    n["seed.macro_mean"] = round(ms["macro_recall_at_15"]["mean"], 4)
+    n["seed.macro_std"] = round(ms["macro_recall_at_15"]["std"], 4)
+    n["seed.micro_mean"] = round(ms["micro_recall_at_15"]["mean"], 4)
+    n["seed.micro_std"] = round(ms["micro_recall_at_15"]["std"], 4)
+
     # the criterion sweep: how much of the comparison's verdict is the criterion
     cs = art("criterion_sweep.json")
     KSW = [1, 3, 5, 8, 10, 15, 20, 30, 50]

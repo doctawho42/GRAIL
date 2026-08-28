@@ -251,6 +251,29 @@ At a budget of $15$, where MetaTox emits about what the interactive arm emits, i
 so the annotation bias on precision does not explain the difference. That pair is macro; every
 figure in Table~\ref{tab:sweep} is micro.
 
+\subsection{A ranking that needs no training}
+
+Metabolism preserves the scaffold. A metabolite differs from its parent by an added oxygen, a
+cleaved bond or a conjugate, so it stays close to what it came from, and closeness is a
+fingerprint away. Any learned ranker over (substrate, candidate) pairs competes against that
+baseline whether or not the baseline is reported, and this literature does not report it.
+
+Re-ranking one pool four ways holds the pool, the matching rule and the budget fixed so that only
+the order varies. Against Tanimoto similarity to the substrate, which needs no training and no
+labels, the deployed fusion gains $+\numSimCmpGapOneFive$ of micro recall at $k=15$ on the
+comparison set, 95\% CI $[+\numSimCmpLoOneFive, +\numSimCmpHiOneFive]$, and
+$+\numSimValGapOneFive$ on the validation draw, $[+\numSimValLoOneFive, +\numSimValHiOneFive]$.
+The interval excludes zero at every budget on both populations. A seeded permutation of the same
+pool reaches \numSimCmpRandomOneFive{} against the fusion's \numSimCmpFusionOneFive{}, so the
+pool alone is not what produces the result.
+
+Asking the same question of the product ordering this paper replaced gives a different answer,
+$+\numSimOldGap$ with the interval covering zero, and the reason is a property of that experiment
+rather than of the two rankings. It ran on a pool whose median size is \numSimOldMedianPool{}
+candidates, where \numSimOldPoolUnderBudget{} of \numSimOldN{} substrates hold no more
+candidates than the budget admits. A ranking comparison run at a budget wider than the pool has
+nothing to order and cannot separate anything.
+
 \subsection{How much of the verdict is the criterion}
 
 The argument above is that a recall figure depends on evaluation choices this literature leaves
@@ -353,6 +376,19 @@ A binary group ordering entered as the third term reaches \numHOneTwoCeilingreca
 trained scorer reaches. That is not an upper bound and we do not use it as one: a binary ordering
 leaves every reference-free group tied and on validation the trained scorer exceeds it,
 $+\numHOneTwoVal$ against $+\numHOneTwoValceiling$.
+
+\subsection{What retraining moves}
+
+Every recall figure in this paper comes from one trained checkpoint, and the intervals throughout
+are paired bootstraps over substrates, which quantify the population and not the training. To
+give the registered effects a scale, the generator and filter were retrained under
+\numSeedN{} seeds and the whole pipeline re-evaluated on the full test split: macro recall@15 is
+\numSeedMacroMean{} with a standard deviation of \numSeedMacroStd{}, and micro
+\numSeedMicroMean{} with \numSeedMicroStd{}. That study ran on an earlier operating point than
+the one reported here, so its level is not comparable to the tables above; its spread is what it
+is offered for. Read against it, the rank fusion of P1 is an order of magnitude larger than
+retraining noise and the pool cap of P2 several times larger, while the rule budget of P3, at
+$+\numHOneZeroBought$ on validation, is within it.
 
 \subsection{Runtime}
 
@@ -518,7 +554,8 @@ and not a random quarter of it.
 
 The Supporting Information is available free of charge at \ZenodoDoi{} and from the publisher.
 
-Corpus sources with their versions and licence position, and the splits with the leakage audit; the five matching criteria defined; the sensitivity of
+Corpus sources with their versions and licence position, and the splits with the leakage audit;
+when a ranking comparison can measure anything, and the choice of evaluation population; the five matching criteria defined; the sensitivity of
 the comparison to the choice among them; the rule bank and its mining procedure; the architecture
 and training of both learned stages; the fifteen registered predictions, including the six this
 paper does not report; the group-ranking oracle under four partitions with a
