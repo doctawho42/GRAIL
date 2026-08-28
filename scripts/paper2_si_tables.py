@@ -121,6 +121,35 @@ def si_oracle():
             "\\label{tab:si-oracle}\n\\end{table}\n")
 
 
+def si_ranking():
+    d = art("ranking_ablation.json")
+    arms = d["arms"]
+    ks = ["1", "5", "10", "15", "30", "50"]
+    label = {"fusion": "fusion (deployed)", "filter": "pair filter alone",
+             "generator": "rule score alone", "product": "their product",
+             "random": "seeded permutation"}
+    blocks = []
+    for pop in d["by_population"]:
+        r = d["by_population"][pop]
+        rows = "\n".join(
+            f"{label[a]} & " + " & ".join(f"{r['recall_micro'][a][k]:.4f}" for k in ks) + " \\\\"
+            for a in arms)
+        blocks.append(f"\\multicolumn{{{len(ks) + 1}}}{{l}}{{\\emph{{{pop}}}, "
+                      f"$n = {r['population']['n']}$}} \\\\\n{rows}")
+    head = " & ".join(f"${k}$" for k in ks)
+    return ("\\begin{table}[h]\n\\centering\\small\n"
+            f"\\begin{{tabular}}{{l{'r' * len(ks)}}}\n\\toprule\n"
+            f"ordering of one pool & \\multicolumn{{{len(ks)}}}{{c}}{{budget $k$}} \\\\\n"
+            f"\\cmidrule(lr){{2-{len(ks) + 1}}}\n & {head} \\\\\n\\midrule\n"
+            + "\n\\midrule\n".join(blocks)
+            + "\n\\bottomrule\n\\end{tabular}\n"
+            "\\caption{Micro recall when the same candidate pool is ordered five ways. The pool "
+            "is built by the deployed configuration and capped by rule score before any arm sees "
+            "it, so the pool, the matching rule and the budget are fixed and only the order "
+            "varies. No model runs: the pools carry both component scores per candidate.}\n"
+            "\\label{tab:si-ranking}\n\\end{table}\n")
+
+
 def si_case():
     d = art("case_study_exhaustive.json")
     i = art("case_study.json")
@@ -146,7 +175,8 @@ def si_case():
 if __name__ == "__main__":
     for name, fn in (("si_table_splits", si_splits), ("si_table_criteria", si_criteria),
                      ("si_table_criterion", si_criterion_sweep), ("si_table_oracle", si_oracle),
-                     ("si_table_case", si_case)):
+                     ("si_table_case", si_case),
+                     ("si_table_ranking", si_ranking)):
         try:
             (OUT / f"{name}.tex").write_text(fn())
             print(f"  wrote paper2/{name}.tex")

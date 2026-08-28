@@ -270,6 +270,19 @@ def build():
             return False
     n["bank.parses"] = sum(1 for r in bank if _parses(r))
 
+    # what each learned scorer contributes to the ORDER, on the deployed configuration
+    ra = art("ranking_ablation.json")
+    for tag, pop in (("cmp", "comparison set"), ("val", "validation draw")):
+        r = ra["by_population"][pop]
+        for arm in ("fusion", "filter", "generator", "product", "random"):
+            n[f"rank.{tag}.{arm}15"] = r["recall_micro"][arm]["15"]
+        for arm in ("filter", "generator", "product"):
+            c = r["fusion_minus"][arm]["15"]
+            n[f"rank.{tag}.vs{arm}"] = c["gap"]
+            n[f"rank.{tag}.vs{arm}lo"] = c["ci95"][0]
+            n[f"rank.{tag}.vs{arm}hi"] = c["ci95"][1]
+        n[f"rank.{tag}.vsproductk1"] = r["fusion_minus"]["product"]["1"]["gap"]
+
     # the untrained similarity baseline the deployed ranking is measured against
     sb = art("similarity_baseline.json")
     for tag, pop in (("cmp", "comparison set"), ("val", "validation draw")):

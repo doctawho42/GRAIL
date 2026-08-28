@@ -204,6 +204,19 @@ untypeable, so the artifact is not byte-reproducible: two runs on the same machi
 2 of approximately 29,100 typings, every figure in Table~\ref{tab:si-oracle} was identical to four
 decimals, and the only cell that moved was the control at $k=1$, by $0.0015$.
 
+\section{Stage ablations on the deployed configuration}
+
+\input{si_table_ranking}
+
+Table~\ref{tab:si-ranking} is the full budget sweep for the ranking ablation of the main text.
+Both learned scorers, their product, the deployed fusion and a seeded permutation order one pool.
+
+An earlier pair of ablations asked related questions of an earlier system: one compared the pair
+filter against the frequency prior and one measured the pool with rule selection switched off.
+Both ran on a 245-substrate subsample under the superseded product ordering, so their levels do
+not transfer to the configuration reported here, and they are superseded by this table and by the
+selection ablation below rather than repeated.
+
 \section{When a ranking comparison can measure anything}
 
 Two experiments in this work asked whether a ranking beats an alternative ordering of the same

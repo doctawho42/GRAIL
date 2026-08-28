@@ -251,6 +251,29 @@ At a budget of $15$, where MetaTox emits about what the interactive arm emits, i
 so the annotation bias on precision does not explain the difference. That pair is macro; every
 figure in Table~\ref{tab:sweep} is micro.
 
+\subsection{What each stage contributes to the order}
+
+The two learned scorers are combined, and neither has been reported alone. Re-ranking one pool
+five ways, with the pool, the matching rule and the budget fixed, separates the contribution of
+each from the contribution of the form in which they are combined. No model runs: the pools carry
+both component scores for every candidate.
+
+At $k=15$ on the comparison set the fusion reaches \numRankCmpFusionOneFive{}, the generator's
+score alone \numRankCmpGeneratorOneFive{}, the filter's alone \numRankCmpFilterOneFive{}, their
+product \numRankCmpProductOneFive{} and a seeded permutation \numRankCmpRandomOneFive{}. The
+fusion separates from every one of them: $+\numRankCmpVsgenerator$
+$[+\numRankCmpVsgeneratorlo, +\numRankCmpVsgeneratorhi]$ over the generator alone,
+$+\numRankCmpVsfilter$ $[+\numRankCmpVsfilterlo, +\numRankCmpVsfilterhi]$ over the filter alone,
+and $+\numRankCmpVsproduct$ $[+\numRankCmpVsproductlo, +\numRankCmpVsproducthi]$ over their
+product. The validation draw gives the same ordering of arms.
+
+Two qualifications belong with that. Which single scorer is better does not transfer: on the
+comparison set the generator's ordering beats the filter's, on validation the two do not separate.
+And the fusion's advantage over the product is a property of depth rather than of the head: at
+$k=1$ the difference is \numRankCmpVsproductkOne{} and the interval covers zero on both
+populations. Neither stage is sufficient alone, and the gain this paper attributes to the form of
+the combination is not an artefact of one population.
+
 \subsection{A ranking that needs no training}
 
 Metabolism preserves the scaffold. A metabolite differs from its parent by an added oxygen, a
