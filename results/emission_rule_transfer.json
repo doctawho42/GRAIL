@@ -1,0 +1,52 @@
+{
+ "provenance": {
+  "script": "emission_rule_transfer.py",
+  "script_path": "scripts/typed_edit/emission_rule_transfer.py",
+  "source_sha256": "bcbc48f0ae5bb8d89a892aa094e6a91e15505ec87ed363f72f9217cd5c789063",
+  "git_commit": "401e1c148c107003d125b6a6a8426fcfca857578",
+  "git_dirty": true
+ },
+ "population": {
+  "n": 291,
+  "pool": "/Users/nikitapolomosnov/PycharmProjects/GRAIL/.claude/worktrees/hungry-pasteur-25d746/results/widepools_k30/all.json"
+ },
+ "mean_pool": 16.31,
+ "registered_alpha": 0.5,
+ "worst_over_best_score_in_a_pool": {
+  "product": {
+   "median": 0.01634398,
+   "max": 0.71905685
+  },
+  "fusion": {
+   "median": 0.8841,
+   "min": 0.3062
+  }
+ },
+ "by_alpha": {
+  "0.5": {
+   "emitted_by_product": 2.31,
+   "emitted_by_fusion": 16.22
+  },
+  "0.8": {
+   "emitted_by_product": 1.31,
+   "emitted_by_fusion": 13.08
+  },
+  "0.9": {
+   "emitted_by_product": 1.14,
+   "emitted_by_fusion": 8.85
+  },
+  "0.95": {
+   "emitted_by_product": 1.07,
+   "emitted_by_fusion": 4.81
+  },
+  "0.98": {
+   "emitted_by_product": 1.02,
+   "emitted_by_fusion": 2.13
+  },
+  "0.99": {
+   "emitted_by_product": 1.01,
+   "emitted_by_fusion": 1.56
+  }
+ },
+ "reading": "the same rule emits about two candidates under the product and nearly the whole pool under fusion, because fusion scores span a few per cent where the product spans orders of magnitude; a relative threshold on a rank statistic is a rank cutoff with a nonlinear knob"
+}

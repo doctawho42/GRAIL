@@ -1,0 +1,120 @@
+{
+ "provenance": {
+  "script": "h8_verdict.py",
+  "script_path": "scripts/typed_edit/h8_verdict.py",
+  "source_sha256": "78a680d1b1c30efb068de5de5fdfd34479d7b010e0cc97b8ff7a1823fc02a3fc",
+  "git_commit": "e3fbb76d5c6679add2547a849a7d2b79353f3746",
+  "git_dirty": true
+ },
+ "hypothesis": "H8",
+ "registered_threshold": 0.05,
+ "k": 15,
+ "population": {
+  "n": 291,
+  "n_references": 665.0,
+  "source": "the 291 of results/four_method_291.json",
+  "note": "every substrate carrying a reference, including those whose pool holds none and those with one group"
+ },
+ "aggregation": "micro, ratio of sums",
+ "model": {
+  "selected_on": "validation",
+  "hidden": 512,
+  "lr": 0.001,
+  "dropout": 0.0,
+  "val_recall@15": 0.419773095623987,
+  "val_fusion_baseline": 0.39546191247974066
+ },
+ "recall_micro": {
+  "1": {
+   "scorer": 0.1143,
+   "fusion": 0.1128,
+   "fusion_blocked": 0.1128,
+   "oracle": 0.2827,
+   "metatox": 0.0406
+  },
+  "5": {
+   "scorer": 0.2526,
+   "fusion": 0.3038,
+   "fusion_blocked": 0.2647,
+   "oracle": 0.5128,
+   "metatox": 0.218
+  },
+  "10": {
+   "scorer": 0.3233,
+   "fusion": 0.4421,
+   "fusion_blocked": 0.3609,
+   "oracle": 0.615,
+   "metatox": 0.388
+  },
+  "15": {
+   "scorer": 0.382,
+   "fusion": 0.5023,
+   "fusion_blocked": 0.4376,
+   "oracle": 0.6752,
+   "metatox": 0.5143
+  },
+  "20": {
+   "scorer": 0.4451,
+   "fusion": 0.5429,
+   "fusion_blocked": 0.4842,
+   "oracle": 0.7158,
+   "metatox": 0.5519
+  },
+  "30": {
+   "scorer": 0.5173,
+   "fusion": 0.5985,
+   "fusion_blocked": 0.5444,
+   "oracle": 0.7594,
+   "metatox": 0.6015
+  },
+  "50": {
+   "scorer": 0.6105,
+   "fusion": 0.6571,
+   "fusion_blocked": 0.609,
+   "oracle": 0.7835,
+   "metatox": 0.6271
+  }
+ },
+ "primary_scorer_minus_fusion": {
+  "gap": -0.1203,
+  "ci95": [
+   -0.159,
+   -0.0828
+  ],
+  "excludes_zero": true
+ },
+ "corollary_scorer_minus_metatox": {
+  "gap": -0.1323,
+  "ci95": [
+   -0.1797,
+   -0.0879
+  ],
+  "excludes_zero": true
+ },
+ "what_the_design_costs_before_the_model_acts": {
+  "gap": -0.0647,
+  "ci95": [
+   -0.1008,
+   -0.0292
+  ],
+  "excludes_zero": true
+ },
+ "what_the_model_adds_given_the_design": {
+  "gap": -0.0556,
+  "ci95": [
+   -0.0969,
+   -0.0166
+  ],
+  "excludes_zero": true
+ },
+ "distribution_shift": {
+  "threshold_heavy_atoms": 40,
+  "substrates_above": 17,
+  "references_above": 42.0,
+  "scorer_above": 0.1667,
+  "fusion_above": 0.2619,
+  "scorer_at_or_below": 0.3965,
+  "fusion_at_or_below": 0.5185
+ },
+ "verdict": "failed"
+}

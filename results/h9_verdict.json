@@ -1,0 +1,75 @@
+{
+ "provenance": {
+  "script": "h9_verdict.py",
+  "script_path": "scripts/typed_edit/h9_verdict.py",
+  "source_sha256": "f8a4793d4a5d88727505eb48c33791f70c25c3b7173be418f7706719be7b1cb1",
+  "git_commit": "007f98bb6d8ccc7f7e1158407e9423364fb24100",
+  "git_dirty": true
+ },
+ "hypothesis": "H9",
+ "registered_threshold": 0.015,
+ "cap": 100,
+ "split": "validation",
+ "match": "inchikey_tautomer",
+ "n_substrates": 293,
+ "n_references": 655.0,
+ "declared_population": 294,
+ "k": 15,
+ "aggregation": "micro, ratio of sums",
+ "mean_pool": {
+  "uncapped": 669.9,
+  "capped": 98.0
+ },
+ "micro": {
+  "uncapped": 0.4489,
+  "capped": 0.4748,
+  "difference": 0.026
+ },
+ "bootstrap": {
+  "n": 10000,
+  "seed": 0,
+  "ci95": [
+   0.0033,
+   0.0469
+  ],
+  "excludes_zero": true
+ },
+ "curves_micro": {
+  "1": {
+   "uncapped": 0.113,
+   "capped": 0.1053
+  },
+  "5": {
+   "uncapped": 0.2947,
+   "capped": 0.287
+  },
+  "10": {
+   "uncapped": 0.3878,
+   "capped": 0.3939
+  },
+  "15": {
+   "uncapped": 0.4489,
+   "capped": 0.4748
+  },
+  "20": {
+   "uncapped": 0.4916,
+   "capped": 0.5313
+  },
+  "30": {
+   "uncapped": 0.5374,
+   "capped": 0.6015
+  },
+  "50": {
+   "uncapped": 0.6107,
+   "capped": 0.6855
+  }
+ },
+ "absence_bound": {
+  "absent_substrates": 1,
+  "absent_references": 2,
+  "worst_case": 0.0228310502283105,
+  "best_case": 0.0289193302891933
+ },
+ "verdict": "supported",
+ "note": "The cap is adopted as a cost guard whichever way this falls; only the claim that it improves the ranking is decided here."
+}

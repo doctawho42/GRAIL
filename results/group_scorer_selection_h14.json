@@ -1,0 +1,174 @@
+{
+ "provenance": {
+  "script": "train_group_scorer.py",
+  "script_path": "scripts/typed_edit/train_group_scorer.py",
+  "source_sha256": "8afa119de034fd900d07a579a1ee53259d71ff761fb5b3cf32cef9e571361314",
+  "git_commit": "40af4de4951fbae8a2caa0ce2e265632bad1cbbd",
+  "git_dirty": true
+ },
+ "selected_on": "validation micro recall@15",
+ "composition": "gate",
+ "grid": [
+  {
+   "hidden": 32,
+   "lr": 0.001,
+   "dropout": 0.0,
+   "val_recall@15": 0.4992,
+   "epochs_run": 25
+  },
+  {
+   "hidden": 32,
+   "lr": 0.001,
+   "dropout": 0.2,
+   "val_recall@15": 0.4781,
+   "epochs_run": 25
+  },
+  {
+   "hidden": 32,
+   "lr": 0.0003,
+   "dropout": 0.0,
+   "val_recall@15": 0.4927,
+   "epochs_run": 46
+  },
+  {
+   "hidden": 32,
+   "lr": 0.0003,
+   "dropout": 0.2,
+   "val_recall@15": 0.4878,
+   "epochs_run": 59
+  },
+  {
+   "hidden": 64,
+   "lr": 0.001,
+   "dropout": 0.0,
+   "val_recall@15": 0.4976,
+   "epochs_run": 24
+  },
+  {
+   "hidden": 64,
+   "lr": 0.001,
+   "dropout": 0.2,
+   "val_recall@15": 0.4862,
+   "epochs_run": 25
+  },
+  {
+   "hidden": 64,
+   "lr": 0.0003,
+   "dropout": 0.0,
+   "val_recall@15": 0.4878,
+   "epochs_run": 23
+  },
+  {
+   "hidden": 64,
+   "lr": 0.0003,
+   "dropout": 0.2,
+   "val_recall@15": 0.4781,
+   "epochs_run": 33
+  },
+  {
+   "hidden": 128,
+   "lr": 0.001,
+   "dropout": 0.0,
+   "val_recall@15": 0.4992,
+   "epochs_run": 18
+  },
+  {
+   "hidden": 128,
+   "lr": 0.001,
+   "dropout": 0.2,
+   "val_recall@15": 0.4797,
+   "epochs_run": 26
+  },
+  {
+   "hidden": 128,
+   "lr": 0.0003,
+   "dropout": 0.0,
+   "val_recall@15": 0.5008,
+   "epochs_run": 41
+  },
+  {
+   "hidden": 128,
+   "lr": 0.0003,
+   "dropout": 0.2,
+   "val_recall@15": 0.4862,
+   "epochs_run": 36
+  },
+  {
+   "hidden": 256,
+   "lr": 0.001,
+   "dropout": 0.0,
+   "val_recall@15": 0.5203,
+   "epochs_run": 29
+  },
+  {
+   "hidden": 256,
+   "lr": 0.001,
+   "dropout": 0.2,
+   "val_recall@15": 0.483,
+   "epochs_run": 24
+  },
+  {
+   "hidden": 256,
+   "lr": 0.0003,
+   "dropout": 0.0,
+   "val_recall@15": 0.4992,
+   "epochs_run": 18
+  },
+  {
+   "hidden": 256,
+   "lr": 0.0003,
+   "dropout": 0.2,
+   "val_recall@15": 0.4862,
+   "epochs_run": 24
+  },
+  {
+   "hidden": 512,
+   "lr": 0.001,
+   "dropout": 0.0,
+   "val_recall@15": 0.5024,
+   "epochs_run": 18
+  },
+  {
+   "hidden": 512,
+   "lr": 0.001,
+   "dropout": 0.2,
+   "val_recall@15": 0.4814,
+   "epochs_run": 24
+  },
+  {
+   "hidden": 512,
+   "lr": 0.0003,
+   "dropout": 0.0,
+   "val_recall@15": 0.5008,
+   "epochs_run": 22
+  },
+  {
+   "hidden": 512,
+   "lr": 0.0003,
+   "dropout": 0.2,
+   "val_recall@15": 0.4814,
+   "epochs_run": 14
+  }
+ ],
+ "widths_tried": [
+  32,
+  64,
+  128,
+  256,
+  512
+ ],
+ "grid_extended": "the first pass covered 32/64/128 and its winner was the widest, so the grid was extended rather than stopped at its edge; selection is on validation and the 291 are not read here",
+ "fusion_baseline_val_recall@15": 0.5024,
+ "n_train_examples": 343,
+ "n_val_examples": 263,
+ "in_dim": 143,
+ "epochs_max": 60,
+ "patience": 12,
+ "seed": 0,
+ "best": {
+  "hidden": 256,
+  "lr": 0.001,
+  "dropout": 0.0,
+  "val_recall@15": 0.5203
+ }
+}

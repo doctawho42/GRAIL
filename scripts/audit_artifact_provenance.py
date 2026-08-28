@@ -89,6 +89,7 @@ PINNED = {
     "results/mode_timings.json": f"{TE}/mode_timings.py",
     # the comparison as it would ship, both budgets against MetaTox
     "results/deployment_table.json": f"{TE}/deployment_table.py",
+    "results/oracle_by_grouping.json": f"{TE}/oracle_by_grouping.py",
     # the rule budget: the curve's shape and the check on validation
     "results/h10_verdict.json": f"{TE}/h10_verdict.py",
     # the cap, its upper-bound table and the check that fixed it

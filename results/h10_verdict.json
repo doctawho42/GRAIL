@@ -1,0 +1,111 @@
+{
+ "provenance": {
+  "script": "h10_verdict.py",
+  "script_path": "scripts/typed_edit/h10_verdict.py",
+  "source_sha256": "f44f01bb0c821816bfc3606d056e16121a26e43ec8e3ddde6904e68b7475614a",
+  "git_commit": "49b249e5b6cbb1395a3928b69edaef3dc31f3840",
+  "git_dirty": true
+ },
+ "hypothesis": "H10",
+ "registered_threshold": 0.05,
+ "direction": "the whole bank must buy no more",
+ "split": "validation",
+ "cap": 100,
+ "top_k": {
+  "whole_bank": null,
+  "trained": 30
+ },
+ "top_k_note": "the whole-bank pool artifact predates the flag that records the rule budget, so it carries none; it was built by build_val_pools.py when that script passed 7581 unconditionally, which git records and the artifact does not",
+ "n_substrates": 293,
+ "n_references": 655.0,
+ "aggregation": "micro, ratio of sums",
+ "mean_pool": {
+  "whole_bank": 669.9,
+  "trained": 17.0
+ },
+ "micro": {
+  "whole_bank": 0.4748,
+  "trained": 0.4656,
+  "bought_by_the_whole_bank": 0.0092
+ },
+ "bootstrap": {
+  "n": 10000,
+  "seed": 0,
+  "ci95": [
+   -0.0231,
+   0.0399
+  ],
+  "excludes_zero": false
+ },
+ "curves_micro": {
+  "1": {
+   "whole_bank": 0.1053,
+   "trained": 0.1069
+  },
+  "5": {
+   "whole_bank": 0.287,
+   "trained": 0.3145
+  },
+  "10": {
+   "whole_bank": 0.3939,
+   "trained": 0.4137
+  },
+  "15": {
+   "whole_bank": 0.4748,
+   "trained": 0.4656
+  },
+  "20": {
+   "whole_bank": 0.5313,
+   "trained": 0.4779
+  },
+  "30": {
+   "whole_bank": 0.6015,
+   "trained": 0.4901
+  },
+  "50": {
+   "whole_bank": 0.6855,
+   "trained": 0.4992
+  }
+ },
+ "substrates_whose_pool_is_smaller_than_the_budget": {
+  "1": {
+   "whole_bank": 0,
+   "trained": 0
+  },
+  "5": {
+   "whole_bank": 0,
+   "trained": 9
+  },
+  "10": {
+   "whole_bank": 0,
+   "trained": 74
+  },
+  "15": {
+   "whole_bank": 0,
+   "trained": 167
+  },
+  "20": {
+   "whole_bank": 1,
+   "trained": 229
+  },
+  "30": {
+   "whole_bank": 1,
+   "trained": 265
+  },
+  "50": {
+   "whole_bank": 8,
+   "trained": 287
+  }
+ },
+ "absence_bound": {
+  "absent_substrates": 1,
+  "absent_references": 2,
+  "worst_case": 0.0121765601217656,
+  "best_case": 0.0060882800608828
+ },
+ "absent_substrates": {
+  "only_in_the_whole_bank_pool": 0,
+  "only_in_the_trained_pool": 1
+ },
+ "verdict": "supported"
+}

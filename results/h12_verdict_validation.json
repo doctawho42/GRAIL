@@ -1,0 +1,93 @@
+{
+ "provenance": {
+  "script": "h12_verdict.py",
+  "script_path": "scripts/typed_edit/h12_verdict.py",
+  "source_sha256": "96ebd258c044e896f93003be540d2a0b4321689d8e14d4d1c313d44029614c0f",
+  "git_commit": "7c4469449156a7fd73c913fc90a55bdf8037a8ad",
+  "git_dirty": true
+ },
+ "hypothesis": "H12",
+ "registered_threshold": 0.02,
+ "k": 15,
+ "population": {
+  "n": 293,
+  "n_references": 655.0,
+  "source": "the 291 of results/four_method_291.json"
+ },
+ "aggregation": "micro, ratio of sums",
+ "model": {
+  "selected_on": "validation under this composition",
+  "hidden": 256,
+  "lr": 0.001,
+  "dropout": 0.0,
+  "val_recall@15": 0.520259319286872,
+  "val_two_way_baseline": 0.47649918962722854
+ },
+ "recall_micro": {
+  "1": {
+   "three_way": 0.1252,
+   "two_way": 0.113,
+   "oracle_third": 0.1282,
+   "metatox": 0.0
+  },
+  "5": {
+   "three_way": 0.3145,
+   "two_way": 0.2947,
+   "oracle_third": 0.316,
+   "metatox": 0.0
+  },
+  "10": {
+   "three_way": 0.4198,
+   "two_way": 0.3878,
+   "oracle_third": 0.4137,
+   "metatox": 0.0
+  },
+  "15": {
+   "three_way": 0.4901,
+   "two_way": 0.4489,
+   "oracle_third": 0.4748,
+   "metatox": 0.0
+  },
+  "20": {
+   "three_way": 0.5298,
+   "two_way": 0.4916,
+   "oracle_third": 0.5115,
+   "metatox": 0.0
+  },
+  "30": {
+   "three_way": 0.5969,
+   "two_way": 0.5374,
+   "oracle_third": 0.5603,
+   "metatox": 0.0
+  },
+  "50": {
+   "three_way": 0.6794,
+   "two_way": 0.6107,
+   "oracle_third": 0.6412,
+   "metatox": 0.0
+  }
+ },
+ "primary_three_way_minus_two_way": {
+  "gap": 0.0412,
+  "ci95": [
+   0.0192,
+   0.0621
+  ],
+  "excludes_zero": true
+ },
+ "three_way_minus_metatox": {
+  "unavailable": "MetaTox has no predictions for this population; it was run on the 291 and a contrast here would be this arm's recall against an empty list"
+ },
+ "metatox_substrates_covered": 0,
+ "ceiling_of_this_composition": {
+  "gap": 0.026,
+  "ci95": [
+   0.0145,
+   0.0372
+  ],
+  "excludes_zero": true
+ },
+ "share_of_ceiling_taken": 1.5846,
+ "ceiling_note": "oracle_third ranks groups binarily, so it orders nothing among the groups holding no reference; a graded ranking can and does exceed it, and a share above one means that rather than the model beating an upper bound",
+ "verdict": "supported"
+}

@@ -1,0 +1,25 @@
+{
+ "provenance": {
+  "script": "mode_timings.py",
+  "script_path": "scripts/typed_edit/mode_timings.py",
+  "source_sha256": "c4369d66df18265326b5463bf32dcc96f46c4edf0a1ff35e219fdf27f736634b",
+  "git_commit": "a17dbadd7ef45b29dd9e50d62991b0886c101efb",
+  "git_dirty": true
+ },
+ "split": "validation",
+ "measures": "seconds per substrate before the filter, the same boundary in both modes",
+ "interactive": {
+  "top_k": 30,
+  "n": 294,
+  "median_s": 0.39,
+  "mean_s": 2.36,
+  "p90_s": 2.59,
+  "max_s": 231.01
+ },
+ "exhaustive": {
+  "top_k": 7581,
+  "median_s": 5.28,
+  "note": "the survivors arm at tautomer budget 200; its median under the load the comparison arm ran at is 9.12 s"
+ },
+ "why_the_mean_is_not_the_median": "the interactive mode's mean is 2.36 s against a median of 0.39 s, and its maximum is 231.01 s: one 291-heavy-atom peptide, which the exhaustive arm has never finished at any budget, moves the mean by six times"
+}

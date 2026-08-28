@@ -1,0 +1,252 @@
+{
+ "provenance": {
+  "script": "uspto_type_overlap.py",
+  "script_path": "scripts/typed_edit/uspto_type_overlap.py",
+  "source_sha256": "81e44a0d3d8a8a68f7edbaa42b4e5f0198c2ab2a477469c4d2c8e2da27ceb110",
+  "git_commit": "2310be527f423f103719b4e878b9551cd62e6c54",
+  "git_dirty": true
+ },
+ "uspto": {
+  "path": "grail_metabolism/uspto_templates.csv.gz",
+  "templates": 42554,
+  "distinct_types_as_written": 5094,
+  "distinct_types_reversed": 5094,
+  "distinct_types_either_direction": 9885,
+  "note": "USPTO templates are retrosynthetic; the metabolic direction is the reversed template, and both are reported"
+ },
+ "bank": {
+  "rules": 7581,
+  "distinct_types": 4417
+ },
+ "missing": {
+  "misses": 337,
+  "distinct_types": 312
+ },
+ "overlap": {
+  "types_in_uspto_as_written": 7,
+  "types_in_uspto_reversed": 8,
+  "types_in_uspto_either_direction": 14,
+  "misses_those_types_carry": 18,
+  "share_of_the_novel_gap": 0.0534
+ },
+ "sanity": {
+  "bank_types_uspto_also_has": 308,
+  "note": "the bank and USPTO must share something; a zero here would mean the two type vocabularies do not meet and the intersection above measures incomparability rather than absence"
+ },
+ "examples_recoverable": [
+  [
+   [
+    [
+     [
+      6,
+      7
+     ],
+     1.0,
+     0.0
+    ],
+    4
+   ]
+  ],
+  [
+   [
+    [
+     [
+      6,
+      16
+     ],
+     0.0,
+     1.0
+    ],
+    2
+   ]
+  ],
+  [
+   [
+    [
+     [
+      6,
+      8
+     ],
+     0.0,
+     1.0
+    ],
+    1
+   ],
+   [
+    [
+     [
+      7,
+      8
+     ],
+     1.0,
+     0.0
+    ],
+    1
+   ]
+  ],
+  [
+   [
+    [
+     [
+      6,
+      7
+     ],
+     1.0,
+     0.0
+    ],
+    1
+   ],
+   [
+    [
+     [
+      6,
+      7
+     ],
+     1.5,
+     1.5
+    ],
+    1
+   ],
+   [
+    [
+     [
+      6,
+      8
+     ],
+     0.0,
+     1.0
+    ],
+    1
+   ],
+   [
+    [
+     [
+      6,
+      8
+     ],
+     2.0,
+     1.0
+    ],
+    1
+   ]
+  ],
+  [
+   [
+    [
+     [
+      6,
+      7
+     ],
+     0.0,
+     1.0
+    ],
+    1
+   ],
+   [
+    [
+     [
+      6,
+      7
+     ],
+     1.5,
+     1.5
+    ],
+    4
+   ]
+  ],
+  [
+   [
+    [
+     [
+      6,
+      6
+     ],
+     1.0,
+     2.0
+    ],
+    1
+   ],
+   [
+    [
+     [
+      6,
+      8
+     ],
+     1.0,
+     0.0
+    ],
+    1
+   ],
+   [
+    [
+     [
+      6,
+      8
+     ],
+     1.0,
+     1.0
+    ],
+    1
+   ]
+  ],
+  [
+   [
+    [
+     [
+      6,
+      7
+     ],
+     1.0,
+     0.0
+    ],
+    1
+   ],
+   [
+    [
+     [
+      6,
+      7
+     ],
+     1.0,
+     1.0
+    ],
+    2
+   ],
+   [
+    [
+     [
+      6,
+      8
+     ],
+     0.0,
+     1.0
+    ],
+    1
+   ]
+  ],
+  [
+   [
+    [
+     [
+      6,
+      7
+     ],
+     1.0,
+     0.0
+    ],
+    1
+   ],
+   [
+    [
+     [
+      6,
+      8
+     ],
+     1.0,
+     0.0
+    ],
+    1
+   ]
+  ]
+ ]
+}

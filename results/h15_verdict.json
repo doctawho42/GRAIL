@@ -1,0 +1,137 @@
+{
+ "provenance": {
+  "script": "h15_verdict.py",
+  "script_path": "scripts/typed_edit/h15_verdict.py",
+  "source_sha256": "6b549d4cc05f4f2f940f837d732da1050370b968e97e8c4e10be66384bba91b8",
+  "git_commit": "a17dbadd7ef45b29dd9e50d62991b0886c101efb",
+  "git_dirty": true
+ },
+ "hypothesis": "H15",
+ "split": "validation",
+ "tautomer_budget": 200,
+ "matching_budget": 1000,
+ "registered": {
+  "median_seconds_below": 10.0,
+  "recall_loss_at_most": 0.01
+ },
+ "population": {
+  "n_paired": 293
+ },
+ "aggregation": "micro, ratio of sums; times are per substrate before the filter",
+ "time": {
+  "whole_product_median_s": 49.85,
+  "h15_median_s": 5.28,
+  "factor": 9.45,
+  "enumerate_median_s": 2.08,
+  "standardise_survivors_median_s": 2.73,
+  "share_spent_standardising": 0.495,
+  "load_correction": {
+   "unbounded_arm_enumerate_median_s": 3.59,
+   "unbounded_arm_standardise_median_s": 11.88,
+   "load_factor_from_the_identical_enumeration": 1.73,
+   "speedup_attributable_to_the_budget": 2.52,
+   "predicted_by_the_budget_curve": 3.93,
+   "median_under_the_other_arms_load": 9.12,
+   "note": "the two survivors arms did not run under the same load; the enumeration is identical between them, so its ratio measures the load and divides out of the standardisation ratio. The registered target is absolute and is unaffected by this."
+  }
+ },
+ "recall_micro": {
+  "1": {
+   "whole_product": 0.1053,
+   "h15": 0.1069
+  },
+  "5": {
+   "whole_product": 0.287,
+   "h15": 0.284
+  },
+  "10": {
+   "whole_product": 0.3939,
+   "h15": 0.4031
+  },
+  "15": {
+   "whole_product": 0.4748,
+   "h15": 0.4733
+  },
+  "20": {
+   "whole_product": 0.5313,
+   "h15": 0.5359
+  },
+  "30": {
+   "whole_product": 0.6015,
+   "h15": 0.6046
+  },
+  "50": {
+   "whole_product": 0.6855,
+   "h15": 0.6901
+  }
+ },
+ "recall_contrasts": {
+  "1": {
+   "change": 0.0015,
+   "ci95": [
+    -0.0033,
+    0.0071
+   ],
+   "excludes_zero": false
+  },
+  "5": {
+   "change": -0.0031,
+   "ci95": [
+    -0.0144,
+    0.0085
+   ],
+   "excludes_zero": false
+  },
+  "10": {
+   "change": 0.0092,
+   "ci95": [
+    0.0016,
+    0.0171
+   ],
+   "excludes_zero": true
+  },
+  "15": {
+   "change": -0.0015,
+   "ci95": [
+    -0.0124,
+    0.0081
+   ],
+   "excludes_zero": false
+  },
+  "20": {
+   "change": 0.0046,
+   "ci95": [
+    -0.0031,
+    0.0127
+   ],
+   "excludes_zero": false
+  },
+  "30": {
+   "change": 0.0031,
+   "ci95": [
+    -0.005,
+    0.0108
+   ],
+   "excludes_zero": false
+  },
+  "50": {
+   "change": 0.0046,
+   "ci95": [
+    -0.0036,
+    0.0135
+   ],
+   "excludes_zero": false
+  }
+ },
+ "key_diagnostic": {
+  "candidates_in_the_bounded_arm": 27595,
+  "whose_standardised_smiles_differs_from_the_shipped_budget": 263,
+  "keys_only_in_the_bounded_arm": 12,
+  "keys_only_at_the_shipped_budget": 9,
+  "symmetric_difference_of_pool_keys": 21,
+  "note": "the matching key is computed at the shipped 1,000 in both arms. Asking whether a candidate matched BY SMILES changed key is a tautology, since a differently standardised candidate carries a different SMILES and is excluded; these count the standardisation difference itself and the difference in the key sets, which is what a recall number would feel."
+ },
+ "time_holds": true,
+ "recall_holds": true,
+ "verdict": "supported"
+}

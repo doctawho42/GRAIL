@@ -1,0 +1,853 @@
+{
+ "provenance": {
+  "script": "group_decode.py",
+  "script_path": "scripts/typed_edit/group_decode.py",
+  "source_sha256": "09dee2cb05fcdcd5232a5387d904eb0812ba9280619ccf1754b05771dc7f808f",
+  "git_commit": "d85ad690ec6a8919210a38a5e9e9072e5ffad5b9",
+  "git_dirty": true
+ },
+ "population": {
+  "n": 291,
+  "source": "the 291 of results/four_method_291.json"
+ },
+ "aggregation": "micro, ratio of sums",
+ "status": "UPPER BOUND. The round-robin rule was chosen after reading the oracle decomposition on these same 291 substrates. It must be registered and checked on the validation split before it is quoted as a result, on the same terms as H7.",
+ "gate": {
+  "reproduces_four_method_291_metatox": true,
+  "mismatches": []
+ },
+ "recall_by_budget": {
+  "1": {
+   "product": 0.0947,
+   "rrf": 0.1128,
+   "rrf+round_robin": 0.1128,
+   "rrf+cap1": 0.1128,
+   "rrf+cap2": 0.1128,
+   "rrf+cap3": 0.1128,
+   "rrf+cap5": 0.1128,
+   "metatox": 0.0406
+  },
+  "3": {
+   "product": 0.1805,
+   "rrf": 0.2331,
+   "rrf+round_robin": 0.215,
+   "rrf+cap1": 0.215,
+   "rrf+cap2": 0.2301,
+   "rrf+cap3": 0.2331,
+   "rrf+cap5": 0.2331,
+   "metatox": 0.1323
+  },
+  "5": {
+   "product": 0.2361,
+   "rrf": 0.3038,
+   "rrf+round_robin": 0.2752,
+   "rrf+cap1": 0.2752,
+   "rrf+cap2": 0.2992,
+   "rrf+cap3": 0.3008,
+   "rrf+cap5": 0.3038,
+   "metatox": 0.218
+  },
+  "8": {
+   "product": 0.3023,
+   "rrf": 0.409,
+   "rrf+round_robin": 0.3444,
+   "rrf+cap1": 0.3444,
+   "rrf+cap2": 0.388,
+   "rrf+cap3": 0.403,
+   "rrf+cap5": 0.403,
+   "metatox": 0.3113
+  },
+  "10": {
+   "product": 0.3263,
+   "rrf": 0.4421,
+   "rrf+round_robin": 0.3594,
+   "rrf+cap1": 0.3594,
+   "rrf+cap2": 0.409,
+   "rrf+cap3": 0.4316,
+   "rrf+cap5": 0.4376,
+   "metatox": 0.388
+  },
+  "15": {
+   "product": 0.3759,
+   "rrf": 0.5023,
+   "rrf+round_robin": 0.385,
+   "rrf+cap1": 0.385,
+   "rrf+cap2": 0.4526,
+   "rrf+cap3": 0.4707,
+   "rrf+cap5": 0.4902,
+   "metatox": 0.5143
+  },
+  "20": {
+   "product": 0.418,
+   "rrf": 0.5429,
+   "rrf+round_robin": 0.4045,
+   "rrf+cap1": 0.4045,
+   "rrf+cap2": 0.4752,
+   "rrf+cap3": 0.5023,
+   "rrf+cap5": 0.5248,
+   "metatox": 0.5519
+  },
+  "30": {
+   "product": 0.4947,
+   "rrf": 0.5985,
+   "rrf+round_robin": 0.4331,
+   "rrf+cap1": 0.4331,
+   "rrf+cap2": 0.5053,
+   "rrf+cap3": 0.5383,
+   "rrf+cap5": 0.5654,
+   "metatox": 0.6015
+  },
+  "50": {
+   "product": 0.5865,
+   "rrf": 0.6571,
+   "rrf+round_robin": 0.4662,
+   "rrf+cap1": 0.4662,
+   "rrf+cap2": 0.5459,
+   "rrf+cap3": 0.585,
+   "rrf+cap5": 0.6165,
+   "metatox": 0.6271
+  }
+ },
+ "contrasts": {
+  "1": {
+   "rrf+round_robin - rrf": {
+    "gap": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ],
+    "excludes_zero": false
+   },
+   "rrf+round_robin - metatox": {
+    "gap": 0.0722,
+    "ci95": [
+     0.0483,
+     0.0982
+    ],
+    "excludes_zero": true
+   },
+   "rrf+cap1 - rrf": {
+    "gap": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ],
+    "excludes_zero": false
+   },
+   "rrf+cap1 - metatox": {
+    "gap": 0.0722,
+    "ci95": [
+     0.0483,
+     0.0982
+    ],
+    "excludes_zero": true
+   },
+   "rrf+cap2 - rrf": {
+    "gap": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ],
+    "excludes_zero": false
+   },
+   "rrf+cap2 - metatox": {
+    "gap": 0.0722,
+    "ci95": [
+     0.0483,
+     0.0982
+    ],
+    "excludes_zero": true
+   },
+   "rrf+cap3 - rrf": {
+    "gap": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ],
+    "excludes_zero": false
+   },
+   "rrf+cap3 - metatox": {
+    "gap": 0.0722,
+    "ci95": [
+     0.0483,
+     0.0982
+    ],
+    "excludes_zero": true
+   },
+   "rrf+cap5 - rrf": {
+    "gap": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ],
+    "excludes_zero": false
+   },
+   "rrf+cap5 - metatox": {
+    "gap": 0.0722,
+    "ci95": [
+     0.0483,
+     0.0982
+    ],
+    "excludes_zero": true
+   }
+  },
+  "3": {
+   "rrf+round_robin - rrf": {
+    "gap": -0.018,
+    "ci95": [
+     -0.0303,
+     -0.007
+    ],
+    "excludes_zero": true
+   },
+   "rrf+round_robin - metatox": {
+    "gap": 0.0827,
+    "ci95": [
+     0.0475,
+     0.119
+    ],
+    "excludes_zero": true
+   },
+   "rrf+cap1 - rrf": {
+    "gap": -0.018,
+    "ci95": [
+     -0.0303,
+     -0.007
+    ],
+    "excludes_zero": true
+   },
+   "rrf+cap1 - metatox": {
+    "gap": 0.0827,
+    "ci95": [
+     0.0475,
+     0.119
+    ],
+    "excludes_zero": true
+   },
+   "rrf+cap2 - rrf": {
+    "gap": -0.003,
+    "ci95": [
+     -0.0079,
+     0.0
+    ],
+    "excludes_zero": false
+   },
+   "rrf+cap2 - metatox": {
+    "gap": 0.0977,
+    "ci95": [
+     0.0617,
+     0.1349
+    ],
+    "excludes_zero": true
+   },
+   "rrf+cap3 - rrf": {
+    "gap": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ],
+    "excludes_zero": false
+   },
+   "rrf+cap3 - metatox": {
+    "gap": 0.1008,
+    "ci95": [
+     0.0654,
+     0.1379
+    ],
+    "excludes_zero": true
+   },
+   "rrf+cap5 - rrf": {
+    "gap": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ],
+    "excludes_zero": false
+   },
+   "rrf+cap5 - metatox": {
+    "gap": 0.1008,
+    "ci95": [
+     0.0654,
+     0.1379
+    ],
+    "excludes_zero": true
+   }
+  },
+  "5": {
+   "rrf+round_robin - rrf": {
+    "gap": -0.0286,
+    "ci95": [
+     -0.0477,
+     -0.0108
+    ],
+    "excludes_zero": true
+   },
+   "rrf+round_robin - metatox": {
+    "gap": 0.0571,
+    "ci95": [
+     0.0189,
+     0.0974
+    ],
+    "excludes_zero": true
+   },
+   "rrf+cap1 - rrf": {
+    "gap": -0.0286,
+    "ci95": [
+     -0.0477,
+     -0.0108
+    ],
+    "excludes_zero": true
+   },
+   "rrf+cap1 - metatox": {
+    "gap": 0.0571,
+    "ci95": [
+     0.0189,
+     0.0974
+    ],
+    "excludes_zero": true
+   },
+   "rrf+cap2 - rrf": {
+    "gap": -0.0045,
+    "ci95": [
+     -0.015,
+     0.0062
+    ],
+    "excludes_zero": false
+   },
+   "rrf+cap2 - metatox": {
+    "gap": 0.0812,
+    "ci95": [
+     0.043,
+     0.1216
+    ],
+    "excludes_zero": true
+   },
+   "rrf+cap3 - rrf": {
+    "gap": -0.003,
+    "ci95": [
+     -0.0078,
+     0.0
+    ],
+    "excludes_zero": false
+   },
+   "rrf+cap3 - metatox": {
+    "gap": 0.0827,
+    "ci95": [
+     0.0438,
+     0.1222
+    ],
+    "excludes_zero": true
+   },
+   "rrf+cap5 - rrf": {
+    "gap": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ],
+    "excludes_zero": false
+   },
+   "rrf+cap5 - metatox": {
+    "gap": 0.0857,
+    "ci95": [
+     0.0469,
+     0.1248
+    ],
+    "excludes_zero": true
+   }
+  },
+  "8": {
+   "rrf+round_robin - rrf": {
+    "gap": -0.0647,
+    "ci95": [
+     -0.09,
+     -0.0412
+    ],
+    "excludes_zero": true
+   },
+   "rrf+round_robin - metatox": {
+    "gap": 0.0331,
+    "ci95": [
+     -0.0115,
+     0.079
+    ],
+    "excludes_zero": false
+   },
+   "rrf+cap1 - rrf": {
+    "gap": -0.0647,
+    "ci95": [
+     -0.09,
+     -0.0412
+    ],
+    "excludes_zero": true
+   },
+   "rrf+cap1 - metatox": {
+    "gap": 0.0331,
+    "ci95": [
+     -0.0115,
+     0.079
+    ],
+    "excludes_zero": false
+   },
+   "rrf+cap2 - rrf": {
+    "gap": -0.0211,
+    "ci95": [
+     -0.0396,
+     -0.0045
+    ],
+    "excludes_zero": true
+   },
+   "rrf+cap2 - metatox": {
+    "gap": 0.0767,
+    "ci95": [
+     0.033,
+     0.1212
+    ],
+    "excludes_zero": true
+   },
+   "rrf+cap3 - rrf": {
+    "gap": -0.006,
+    "ci95": [
+     -0.02,
+     0.0062
+    ],
+    "excludes_zero": false
+   },
+   "rrf+cap3 - metatox": {
+    "gap": 0.0917,
+    "ci95": [
+     0.0489,
+     0.136
+    ],
+    "excludes_zero": true
+   },
+   "rrf+cap5 - rrf": {
+    "gap": -0.006,
+    "ci95": [
+     -0.0141,
+     0.0
+    ],
+    "excludes_zero": false
+   },
+   "rrf+cap5 - metatox": {
+    "gap": 0.0917,
+    "ci95": [
+     0.0489,
+     0.136
+    ],
+    "excludes_zero": true
+   }
+  },
+  "10": {
+   "rrf+round_robin - rrf": {
+    "gap": -0.0827,
+    "ci95": [
+     -0.1079,
+     -0.0584
+    ],
+    "excludes_zero": true
+   },
+   "rrf+round_robin - metatox": {
+    "gap": -0.0286,
+    "ci95": [
+     -0.0748,
+     0.019
+    ],
+    "excludes_zero": false
+   },
+   "rrf+cap1 - rrf": {
+    "gap": -0.0827,
+    "ci95": [
+     -0.1079,
+     -0.0584
+    ],
+    "excludes_zero": true
+   },
+   "rrf+cap1 - metatox": {
+    "gap": -0.0286,
+    "ci95": [
+     -0.0748,
+     0.019
+    ],
+    "excludes_zero": false
+   },
+   "rrf+cap2 - rrf": {
+    "gap": -0.0331,
+    "ci95": [
+     -0.052,
+     -0.0158
+    ],
+    "excludes_zero": true
+   },
+   "rrf+cap2 - metatox": {
+    "gap": 0.0211,
+    "ci95": [
+     -0.0237,
+     0.067
+    ],
+    "excludes_zero": false
+   },
+   "rrf+cap3 - rrf": {
+    "gap": -0.0105,
+    "ci95": [
+     -0.0243,
+     0.0016
+    ],
+    "excludes_zero": false
+   },
+   "rrf+cap3 - metatox": {
+    "gap": 0.0436,
+    "ci95": [
+     -0.0014,
+     0.0891
+    ],
+    "excludes_zero": false
+   },
+   "rrf+cap5 - rrf": {
+    "gap": -0.0045,
+    "ci95": [
+     -0.014,
+     0.0033
+    ],
+    "excludes_zero": false
+   },
+   "rrf+cap5 - metatox": {
+    "gap": 0.0496,
+    "ci95": [
+     0.005,
+     0.0948
+    ],
+    "excludes_zero": true
+   }
+  },
+  "15": {
+   "rrf+round_robin - rrf": {
+    "gap": -0.1173,
+    "ci95": [
+     -0.1481,
+     -0.0866
+    ],
+    "excludes_zero": true
+   },
+   "rrf+round_robin - metatox": {
+    "gap": -0.1293,
+    "ci95": [
+     -0.1821,
+     -0.0745
+    ],
+    "excludes_zero": true
+   },
+   "rrf+cap1 - rrf": {
+    "gap": -0.1173,
+    "ci95": [
+     -0.1481,
+     -0.0866
+    ],
+    "excludes_zero": true
+   },
+   "rrf+cap1 - metatox": {
+    "gap": -0.1293,
+    "ci95": [
+     -0.1821,
+     -0.0745
+    ],
+    "excludes_zero": true
+   },
+   "rrf+cap2 - rrf": {
+    "gap": -0.0496,
+    "ci95": [
+     -0.0757,
+     -0.0241
+    ],
+    "excludes_zero": true
+   },
+   "rrf+cap2 - metatox": {
+    "gap": -0.0617,
+    "ci95": [
+     -0.1115,
+     -0.0106
+    ],
+    "excludes_zero": true
+   },
+   "rrf+cap3 - rrf": {
+    "gap": -0.0316,
+    "ci95": [
+     -0.0515,
+     -0.0126
+    ],
+    "excludes_zero": true
+   },
+   "rrf+cap3 - metatox": {
+    "gap": -0.0436,
+    "ci95": [
+     -0.0898,
+     0.0044
+    ],
+    "excludes_zero": false
+   },
+   "rrf+cap5 - rrf": {
+    "gap": -0.012,
+    "ci95": [
+     -0.0258,
+     0.0015
+    ],
+    "excludes_zero": false
+   },
+   "rrf+cap5 - metatox": {
+    "gap": -0.0241,
+    "ci95": [
+     -0.0685,
+     0.022
+    ],
+    "excludes_zero": false
+   }
+  },
+  "20": {
+   "rrf+round_robin - rrf": {
+    "gap": -0.1383,
+    "ci95": [
+     -0.1713,
+     -0.106
+    ],
+    "excludes_zero": true
+   },
+   "rrf+round_robin - metatox": {
+    "gap": -0.1474,
+    "ci95": [
+     -0.1997,
+     -0.0938
+    ],
+    "excludes_zero": true
+   },
+   "rrf+cap1 - rrf": {
+    "gap": -0.1383,
+    "ci95": [
+     -0.1713,
+     -0.106
+    ],
+    "excludes_zero": true
+   },
+   "rrf+cap1 - metatox": {
+    "gap": -0.1474,
+    "ci95": [
+     -0.1997,
+     -0.0938
+    ],
+    "excludes_zero": true
+   },
+   "rrf+cap2 - rrf": {
+    "gap": -0.0677,
+    "ci95": [
+     -0.0933,
+     -0.043
+    ],
+    "excludes_zero": true
+   },
+   "rrf+cap2 - metatox": {
+    "gap": -0.0767,
+    "ci95": [
+     -0.1256,
+     -0.0268
+    ],
+    "excludes_zero": true
+   },
+   "rrf+cap3 - rrf": {
+    "gap": -0.0406,
+    "ci95": [
+     -0.0618,
+     -0.0194
+    ],
+    "excludes_zero": true
+   },
+   "rrf+cap3 - metatox": {
+    "gap": -0.0496,
+    "ci95": [
+     -0.0946,
+     -0.0017
+    ],
+    "excludes_zero": true
+   },
+   "rrf+cap5 - rrf": {
+    "gap": -0.018,
+    "ci95": [
+     -0.0323,
+     -0.0045
+    ],
+    "excludes_zero": true
+   },
+   "rrf+cap5 - metatox": {
+    "gap": -0.0271,
+    "ci95": [
+     -0.0697,
+     0.0173
+    ],
+    "excludes_zero": false
+   }
+  },
+  "30": {
+   "rrf+round_robin - rrf": {
+    "gap": -0.1654,
+    "ci95": [
+     -0.1986,
+     -0.1324
+    ],
+    "excludes_zero": true
+   },
+   "rrf+round_robin - metatox": {
+    "gap": -0.1684,
+    "ci95": [
+     -0.2193,
+     -0.1164
+    ],
+    "excludes_zero": true
+   },
+   "rrf+cap1 - rrf": {
+    "gap": -0.1654,
+    "ci95": [
+     -0.1986,
+     -0.1324
+    ],
+    "excludes_zero": true
+   },
+   "rrf+cap1 - metatox": {
+    "gap": -0.1684,
+    "ci95": [
+     -0.2193,
+     -0.1164
+    ],
+    "excludes_zero": true
+   },
+   "rrf+cap2 - rrf": {
+    "gap": -0.0932,
+    "ci95": [
+     -0.1203,
+     -0.0671
+    ],
+    "excludes_zero": true
+   },
+   "rrf+cap2 - metatox": {
+    "gap": -0.0962,
+    "ci95": [
+     -0.1452,
+     -0.0466
+    ],
+    "excludes_zero": true
+   },
+   "rrf+cap3 - rrf": {
+    "gap": -0.0602,
+    "ci95": [
+     -0.0815,
+     -0.0394
+    ],
+    "excludes_zero": true
+   },
+   "rrf+cap3 - metatox": {
+    "gap": -0.0632,
+    "ci95": [
+     -0.1081,
+     -0.0175
+    ],
+    "excludes_zero": true
+   },
+   "rrf+cap5 - rrf": {
+    "gap": -0.0331,
+    "ci95": [
+     -0.0495,
+     -0.0178
+    ],
+    "excludes_zero": true
+   },
+   "rrf+cap5 - metatox": {
+    "gap": -0.0361,
+    "ci95": [
+     -0.0777,
+     0.0072
+    ],
+    "excludes_zero": false
+   }
+  },
+  "50": {
+   "rrf+round_robin - rrf": {
+    "gap": -0.191,
+    "ci95": [
+     -0.2294,
+     -0.1536
+    ],
+    "excludes_zero": true
+   },
+   "rrf+round_robin - metatox": {
+    "gap": -0.1609,
+    "ci95": [
+     -0.2144,
+     -0.1076
+    ],
+    "excludes_zero": true
+   },
+   "rrf+cap1 - rrf": {
+    "gap": -0.191,
+    "ci95": [
+     -0.2294,
+     -0.1536
+    ],
+    "excludes_zero": true
+   },
+   "rrf+cap1 - metatox": {
+    "gap": -0.1609,
+    "ci95": [
+     -0.2144,
+     -0.1076
+    ],
+    "excludes_zero": true
+   },
+   "rrf+cap2 - rrf": {
+    "gap": -0.1113,
+    "ci95": [
+     -0.1422,
+     -0.0804
+    ],
+    "excludes_zero": true
+   },
+   "rrf+cap2 - metatox": {
+    "gap": -0.0812,
+    "ci95": [
+     -0.1328,
+     -0.0291
+    ],
+    "excludes_zero": true
+   },
+   "rrf+cap3 - rrf": {
+    "gap": -0.0722,
+    "ci95": [
+     -0.0983,
+     -0.0461
+    ],
+    "excludes_zero": true
+   },
+   "rrf+cap3 - metatox": {
+    "gap": -0.0421,
+    "ci95": [
+     -0.0914,
+     0.0067
+    ],
+    "excludes_zero": false
+   },
+   "rrf+cap5 - rrf": {
+    "gap": -0.0406,
+    "ci95": [
+     -0.0609,
+     -0.021
+    ],
+    "excludes_zero": true
+   },
+   "rrf+cap5 - metatox": {
+    "gap": -0.0105,
+    "ci95": [
+     -0.0544,
+     0.0331
+    ],
+    "excludes_zero": false
+   }
+  }
+ },
+ "n_boot": 10000,
+ "seed": 0
+}

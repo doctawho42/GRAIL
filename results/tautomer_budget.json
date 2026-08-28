@@ -1,0 +1,74 @@
+{
+ "provenance": {
+  "script": "tautomer_budget.py",
+  "script_path": "scripts/typed_edit/tautomer_budget.py",
+  "source_sha256": "2348f24389ee37c0e6008cede4d3b3128eaa2aabf40af3cfcb4966035471dcfc",
+  "git_commit": "2ebab3e3eb0cfb1196afe5bcc1475ba0eea3ed2c",
+  "git_dirty": true
+ },
+ "status": "EXPLORATORY. A curve, not a hypothesis. Any budget adopted from it must be fixed by a stated rule and checked where it was not chosen.",
+ "shipped_budget": 1000,
+ "n_products": 250,
+ "n_families": 201,
+ "variants_per_product": 4,
+ "seed": 0,
+ "invariance_means": "all tautomers of one product canonicalise to one InChIKey, which is the property tautomer-invariant matching rests on",
+ "by_budget": {
+  "1000": {
+   "invariance": 0.9652,
+   "families_evaluated": 201,
+   "ms_per_standardisation": 204.76,
+   "p99_ms_per_family_member": 1188.14,
+   "total_s": 169.3
+  },
+  "500": {
+   "invariance": 0.9602,
+   "families_evaluated": 201,
+   "ms_per_standardisation": 112.31,
+   "p99_ms_per_family_member": 579.48,
+   "total_s": 92.9
+  },
+  "200": {
+   "invariance": 0.9353,
+   "families_evaluated": 201,
+   "ms_per_standardisation": 52.08,
+   "p99_ms_per_family_member": 210.98,
+   "total_s": 43.1
+  },
+  "100": {
+   "invariance": 0.9005,
+   "families_evaluated": 201,
+   "ms_per_standardisation": 30.33,
+   "p99_ms_per_family_member": 104.96,
+   "total_s": 25.1
+  },
+  "50": {
+   "invariance": 0.8507,
+   "families_evaluated": 201,
+   "ms_per_standardisation": 17.95,
+   "p99_ms_per_family_member": 52.24,
+   "total_s": 14.8
+  },
+  "20": {
+   "invariance": 0.7562,
+   "families_evaluated": 201,
+   "ms_per_standardisation": 9.57,
+   "p99_ms_per_family_member": 23.12,
+   "total_s": 7.9
+  },
+  "10": {
+   "invariance": 0.6219,
+   "families_evaluated": 201,
+   "ms_per_standardisation": 6.39,
+   "p99_ms_per_family_member": 13.47,
+   "total_s": 5.3
+  },
+  "5": {
+   "invariance": 0.4478,
+   "families_evaluated": 201,
+   "ms_per_standardisation": 4.62,
+   "p99_ms_per_family_member": 9.38,
+   "total_s": 3.8
+  }
+ }
+}

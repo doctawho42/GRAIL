@@ -1,0 +1,57 @@
+{
+ "provenance": {
+  "script": "tautomer_near_miss.py",
+  "script_path": "scripts/typed_edit/tautomer_near_miss.py",
+  "source_sha256": "22c8fbaf594b3442a1ae599d06e29c8ffc5f603068780a18e916843c09de33df",
+  "git_commit": "9e85c2097a41a90a935e159886b823ff8b2ffcfb",
+  "git_dirty": true
+ },
+ "split": "validation",
+ "population": {
+  "n": 293
+ },
+ "references": 655,
+ "references_the_key_did_not_match": 127,
+ "passed_the_skeleton_and_formula_screen": 10,
+ "rejected_by_the_enumerator": 10,
+ "of_those_present_in_the_pool_as_a_tautomer": 0,
+ "share_of_all_references": 0.0,
+ "share_of_unmatched": 0.0,
+ "screen": "same flattened heavy-atom skeleton and same molecular formula",
+ "confirmation": "the candidate appears in the reference's enumerated tautomer set; the screen alone admits double-bond positional isomers, which is why the confirmation exists",
+ "examples": [],
+ "examples_the_screen_proposed_and_the_enumerator_rejected": [
+  {
+   "reference": "CC12CCC3C(CCC4=C(Cl)C(O)CCC43C)C1CCC2=O",
+   "candidate": "CC12CCC(=O)C(Cl)=C1CCC1C2CCC2(C)C(O)CCC12"
+  },
+  {
+   "reference": "CC(O)(COc1cc(O)c(F)cc1O)C(O)=Nc1ccc(N)c(C(F)(F)F)c1",
+   "candidate": "CC(O)(COC1=CC(=O)C(F)=CC1O)C(=O)Nc1ccc(N)c(C(F)(F)F)c1"
+  },
+  {
+   "reference": "CC1=CC2OC3(CCC4C(=C(C)C3)CC3C4CCC4CC(NS(C)(=O)=O)CCC43C)C(C)C2NC1O",
+   "candidate": "CC1=C2CC3C(CCC4CC(NS(C)(=O)=O)CCC43C)C2CCC2(C1)OC1CC(C)C(=O)NC1C2C"
+  },
+  {
+   "reference": "CCCCCC=CCC=CCC=CCC=CCCCCCC(=O)O",
+   "candidate": "CCCCCC=CCC=CCC=CCCCC=CCCCC(=O)O"
+  },
+  {
+   "reference": "CCCCCC=CCC(=CCC=CCC=CCCCC(=O)O)OO",
+   "candidate": "CCCCCC=CCC(C=CC=CCC=CCCCC(=O)O)OO"
+  },
+  {
+   "reference": "CC(=O)N(O)N(C)C",
+   "candidate": "CC(O)=[N+]([O-])N(C)C"
+  },
+  {
+   "reference": "CN(c1ccccc1-c1ccc2cnc(Nc3cc(SCC(N=C(O)CCC(N)C(=O)O)C(O)=NCC(=O)O)c4c(c3)C(C)(C)C",
+   "candidate": "CN(c1ccccc1-c1ccc2cnc(N=C3C=C4C(=NC(=O)C4(C)C)C(SCC(NC(=O)CCC(N)C(=O)O)C(=O)NCC("
+  },
+  {
+   "reference": "C[n+]1cccc(C(=O)OCC2OC(n3ccc(=O)nc3O)CC2N=[N+]=[N-])c1",
+   "candidate": "C[N+]1=C=CCC(C(=O)OCC2OC(n3ccc(=O)[nH]c3=O)CC2N=[N+]=[N-])=C1"
+  }
+ ]
+}

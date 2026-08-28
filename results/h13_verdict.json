@@ -1,0 +1,132 @@
+{
+ "provenance": {
+  "script": "h13_verdict.py",
+  "script_path": "scripts/typed_edit/h13_verdict.py",
+  "source_sha256": "4045426ea4df4f36748f2f08516d31ba04329a7a8379740aa8111c5f32fff207",
+  "git_commit": "d2dcc4a757fddf848599a48d10d32d923da70293",
+  "git_dirty": true
+ },
+ "hypothesis": "H13",
+ "split": "validation",
+ "registered": {
+  "recall_loss_at_most": 0.01,
+  "median_time_falls_by_at_least": 10.0
+ },
+ "population": {
+  "n_paired": 293,
+  "absent_from_every_product": 1,
+  "absent_note": "the 291-heavy-atom peptide at index 83, which the whole-product arm has never finished in any run"
+ },
+ "aggregation": "micro, ratio of sums; times are per substrate before the filter",
+ "cap": 100,
+ "time": {
+  "every_product_median_s": 49.85,
+  "survivors_median_s": 16.92,
+  "median_factor": 2.95,
+  "every_product_total_h": 12.49,
+  "survivors_total_h": 1.91,
+  "per_substrate_factor": {
+   "median": 2.9,
+   "p90": 8.86,
+   "max": 55.94
+  },
+  "inside_survivors": {
+   "enumerate_median_s": 3.59,
+   "standardise_survivors_median_s": 11.88,
+   "share_spent_standardising": 0.717
+  },
+  "enumeration_alone_against_the_old_total": 13.9
+ },
+ "recall_micro": {
+  "1": {
+   "every_product": 0.1053,
+   "survivors": 0.1069
+  },
+  "5": {
+   "every_product": 0.287,
+   "survivors": 0.284
+  },
+  "10": {
+   "every_product": 0.3939,
+   "survivors": 0.4046
+  },
+  "15": {
+   "every_product": 0.4748,
+   "survivors": 0.4733
+  },
+  "20": {
+   "every_product": 0.5313,
+   "survivors": 0.5359
+  },
+  "30": {
+   "every_product": 0.6015,
+   "survivors": 0.6046
+  },
+  "50": {
+   "every_product": 0.6855,
+   "survivors": 0.687
+  }
+ },
+ "recall_contrasts": {
+  "1": {
+   "change": 0.0015,
+   "ci95": [
+    -0.0033,
+    0.0071
+   ],
+   "excludes_zero": false
+  },
+  "5": {
+   "change": -0.0031,
+   "ci95": [
+    -0.0144,
+    0.0085
+   ],
+   "excludes_zero": false
+  },
+  "10": {
+   "change": 0.0107,
+   "ci95": [
+    0.003,
+    0.0191
+   ],
+   "excludes_zero": true
+  },
+  "15": {
+   "change": -0.0015,
+   "ci95": [
+    -0.0124,
+    0.0081
+   ],
+   "excludes_zero": false
+  },
+  "20": {
+   "change": 0.0046,
+   "ci95": [
+    -0.0031,
+    0.0127
+   ],
+   "excludes_zero": false
+  },
+  "30": {
+   "change": 0.0031,
+   "ci95": [
+    -0.005,
+    0.0108
+   ],
+   "excludes_zero": false
+  },
+  "50": {
+   "change": 0.0015,
+   "ci95": [
+    -0.0051,
+    0.008
+   ],
+   "excludes_zero": false
+  }
+ },
+ "recall_holds": true,
+ "time_holds": false,
+ "reading": "the mechanism registered was right and the total was not: enumeration collapses by 13.9 times, and standardising the hundred survivors is 72 per cent of what remains, so the arm as a whole moves by 2.95",
+ "verdict": "failed"
+}

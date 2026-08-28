@@ -27,7 +27,7 @@ import json
 import statistics as st
 import sys
 import time
-from collections import defaultdict
+from collections import Counter, defaultdict
 from pathlib import Path
 
 import numpy as np
@@ -78,7 +78,14 @@ def main() -> int:
             cache[smiles] = rdMolDescriptors.CalcMolFormula(m) if m else smiles
         return cache[smiles]
 
-    PART = ("formula", "type", "both")
+    # A finer partition wins at an oracle for free: in the limit of one candidate per group the
+    # oracle is a perfect ranker. Type has 51.4 groups per substrate against formula's 41.5, so
+    # its advantage has to be shown to be more than granularity. The control is a RANDOM partition
+    # matched to type's group-size distribution on each substrate: if type beats it, the advantage
+    # is the chemistry and not the count.
+    PART = ("formula", "type", "both", "random_matched")
+    import random as _random
+    rng_local = _random.Random(SEED)
     hits = {p: {k: [] for k in KS} for p in ("fusion",) + PART}
     n_ref, sizes = [], {p: [] for p in PART}
     untyped = 0
@@ -110,6 +117,21 @@ def main() -> int:
             tk = json.dumps(t, sort_keys=True) if t is not None else f"untyped:{f}"
             labels[id(c)] = {"formula": f, "type": tk, "both": f + "|" + tk}
 
+        # the control: shuffle the candidates and cut them into blocks whose sizes are exactly
+        # the sizes of the type groups, so the partition has the same granularity and no meaning
+        block_sizes = sorted(Counter(labels[id(c)]["type"] for c in fused).values(),
+                             reverse=True)
+        order = list(range(len(fused)))
+        rng_local.shuffle(order)
+        pos, gi = 0, 0
+        for sz in block_sizes:
+            for j in order[pos:pos + sz]:
+                labels[id(fused[j])]["random_matched"] = f"r{gi}"
+            pos += sz
+            gi += 1
+        for c in fused:
+            labels[id(c)].setdefault("random_matched", f"r{gi}")
+
         for k in KS:
             hits["fusion"][k].append(len(set(c["key"] for c in fused[:k]) & real))
 
@@ -139,6 +161,12 @@ def main() -> int:
 
     kk = args.k
     head = {p: contrast(H[p][kk], H["fusion"][kk]) for p in PART}
+    # Each arm's interval against fusion is a margin, and two margins that overlap do not
+    # separate. The claim "type beats the granularity-matched control" is a paired contrast
+    # between the arms themselves, on the same substrates, and it is the only one that decides.
+    between = {f"{a}-{b}": contrast(H[a][kk], H[b][kk]) for a, b in
+               (("type", "random_matched"), ("formula", "random_matched"),
+                ("type", "formula"), ("both", "type"))}
     rep = {"provenance": stamp(__file__),
            "population": {"n": len(subs), "n_references": N,
                           "source": "the 291 of results/four_method_291.json"},
@@ -153,6 +181,17 @@ def main() -> int:
            "recall_micro": {str(k): {a: round(float(H[a][k].sum() / N), 4)
                                      for a in ("fusion",) + PART} for k in KS},
            "headroom_over_fusion": head,
+           "contrasts_between_arms": between,
+           "reproducibility": ("pair_to_type runs an MCS under a wall-clock timeout and returns "
+                              "None when it is cancelled, so the typing is load-dependent and "
+                              "this artifact is not byte-reproducible. Two runs on the same "
+                              "machine differed in 2 of ~29,100 typings; every headroom and "
+                              "every k=15 figure was identical to four decimals, and the only "
+                              "cell that moved was random_matched at k=1, by 0.0015"),
+           "control_note": ("random_matched is a random partition whose group-size multiset is "
+                            "exactly type's on each substrate, so it holds granularity fixed and "
+                            "carries no chemistry; type-random_matched is the test of whether the "
+                            "advantage is the transformation or the count of groups"),
            "reading": ("headroom under type comparable to or larger than under formula means the "
                        "signal is about the transformation and is reachable through the typed "
                        "label space H1 registers; headroom under formula alone means it is about "
@@ -163,6 +202,10 @@ def main() -> int:
     for k in KS:
         r = rep["recall_micro"][str(k)]
         print(f"{k:>4}{r['fusion']:>10.4f}{r['formula']:>10.4f}{r['type']:>10.4f}{r['both']:>10.4f}")
+    print(f"\nbetween arms at k={kk}:")
+    for name, c in between.items():
+        print(f"  {name:<26}{c['gap']:+.4f} [{c['ci95'][0]:+.4f}, {c['ci95'][1]:+.4f}]"
+              f"{'*' if c['excludes_zero'] else ' '}")
     print(f"\nheadroom over fusion at k={kk}:")
     for p in PART:
         c = head[p]

@@ -1,0 +1,99 @@
+{
+ "provenance": {
+  "script": "h14_verdict.py",
+  "script_path": "scripts/typed_edit/h14_verdict.py",
+  "source_sha256": "937cea99da4c7834f70c791c1e1d45f7f2520c36d152439993899fe0025ff9e0",
+  "git_commit": "40af4de4951fbae8a2caa0ce2e265632bad1cbbd",
+  "git_dirty": true
+ },
+ "hypothesis": "H14",
+ "registered_threshold": 0.02,
+ "budget": 100,
+ "k": 15,
+ "population": {
+  "n": 291,
+  "n_references": 665.0,
+  "source": "the 291 of results/four_method_291.json"
+ },
+ "aggregation": "micro, ratio of sums",
+ "model": {
+  "selected_on": "validation under this composition",
+  "hidden": 256,
+  "lr": 0.001,
+  "dropout": 0.0,
+  "val_recall@15": 0.520259319286872,
+  "val_cap_baseline": 0.5024311183144247
+ },
+ "recall_micro": {
+  "1": {
+   "gate": 0.0887,
+   "cap": 0.0902,
+   "gate_oracle": 0.0977,
+   "three_way": 0.1188
+  },
+  "5": {
+   "gate": 0.3128,
+   "cap": 0.3098,
+   "gate_oracle": 0.3203,
+   "three_way": 0.3353
+  },
+  "10": {
+   "gate": 0.4421,
+   "cap": 0.4496,
+   "gate_oracle": 0.4301,
+   "three_way": 0.4511
+  },
+  "15": {
+   "gate": 0.5068,
+   "cap": 0.5353,
+   "gate_oracle": 0.4992,
+   "three_way": 0.5308
+  },
+  "20": {
+   "gate": 0.5534,
+   "cap": 0.5789,
+   "gate_oracle": 0.5579,
+   "three_way": 0.5865
+  },
+  "30": {
+   "gate": 0.5925,
+   "cap": 0.6406,
+   "gate_oracle": 0.615,
+   "three_way": 0.6421
+  },
+  "50": {
+   "gate": 0.6436,
+   "cap": 0.7068,
+   "gate_oracle": 0.6887,
+   "three_way": 0.6917
+  }
+ },
+ "primary_gate_minus_cap": {
+  "gap": -0.0286,
+  "ci95": [
+   -0.0558,
+   -0.0044
+  ],
+  "excludes_zero": true
+ },
+ "ceiling_of_this_gate": {
+  "gap": -0.0361,
+  "ci95": [
+   -0.0576,
+   -0.0147
+  ],
+  "excludes_zero": true
+ },
+ "gate_minus_three_way": {
+  "gap": -0.0241,
+  "ci95": [
+   -0.0494,
+   -0.0014
+  ],
+  "excludes_zero": true
+ },
+ "share_of_ceiling_taken": null,
+ "ceiling_is_negative": true,
+ "ceiling_note": "a perfect group ranking used as this gate is itself worse than the H9 cap, so the design is bounded below the thing it must beat and no scorer reaches the threshold through it",
+ "verdict": "failed"
+}

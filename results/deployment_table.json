@@ -1,0 +1,693 @@
+{
+ "provenance": {
+  "script": "deployment_table.py",
+  "script_path": "scripts/typed_edit/deployment_table.py",
+  "source_sha256": "4a6fb99854bd6a1ad9179d64c6681f22020c9ff15334a61e87c2a7869c10eeae",
+  "git_commit": "a17dbadd7ef45b29dd9e50d62991b0886c101efb",
+  "git_dirty": true
+ },
+ "population": {
+  "n": 291,
+  "n_references": 665.0,
+  "source": "the 291 of results/four_method_291.json"
+ },
+ "aggregation": "micro, ratio of sums",
+ "convention": "a prediction whose key equals the substrate's is dropped before the budget, for every arm alike; results/four_method_291.json, which defines this population, does the same",
+ "configuration": {
+  "cap": 100,
+  "fusion": "H7 reciprocal rank fusion, k=60",
+  "top_k": {
+   "whole bank": null,
+   "trained budget": 30
+  }
+ },
+ "gate": {
+  "reproduces_four_method_291_metatox": true,
+  "mismatches": []
+ },
+ "mean_output_length": {
+  "whole bank": 98.1,
+  "trained budget": 15.6,
+  "metatox": 30.9,
+  "sygma": 40.5,
+  "metapredictor": 10.7
+ },
+ "comparators_absent": [],
+ "recall_micro": {
+  "1": {
+   "whole bank": 0.0902,
+   "trained budget": 0.1053,
+   "metatox": 0.0406,
+   "sygma": 0.1534,
+   "metapredictor": 0.1398
+  },
+  "3": {
+   "whole bank": 0.2271,
+   "trained budget": 0.2406,
+   "metatox": 0.1323,
+   "sygma": 0.2887,
+   "metapredictor": 0.2767
+  },
+  "5": {
+   "whole bank": 0.3098,
+   "trained budget": 0.3203,
+   "metatox": 0.218,
+   "sygma": 0.3744,
+   "metapredictor": 0.3549
+  },
+  "8": {
+   "whole bank": 0.415,
+   "trained budget": 0.4015,
+   "metatox": 0.3113,
+   "sygma": 0.4271,
+   "metapredictor": 0.4346
+  },
+  "10": {
+   "whole bank": 0.4526,
+   "trained budget": 0.4331,
+   "metatox": 0.388,
+   "sygma": 0.4556,
+   "metapredictor": 0.4707
+  },
+  "15": {
+   "whole bank": 0.5353,
+   "trained budget": 0.4797,
+   "metatox": 0.5143,
+   "sygma": 0.4842,
+   "metapredictor": 0.4797
+  },
+  "20": {
+   "whole bank": 0.5789,
+   "trained budget": 0.4872,
+   "metatox": 0.5519,
+   "sygma": 0.4992,
+   "metapredictor": 0.4797
+  },
+  "30": {
+   "whole bank": 0.6391,
+   "trained budget": 0.4902,
+   "metatox": 0.6015,
+   "sygma": 0.5068,
+   "metapredictor": 0.4797
+  },
+  "50": {
+   "whole bank": 0.7038,
+   "trained budget": 0.4902,
+   "metatox": 0.6271,
+   "sygma": 0.5113,
+   "metapredictor": 0.4797
+  }
+ },
+ "contrasts": {
+  "1": {
+   "trained budget - whole bank": {
+    "gap": 0.015,
+    "ci95": [
+     -0.0074,
+     0.0382
+    ],
+    "excludes_zero": false
+   },
+   "whole bank - metatox": {
+    "gap": 0.0496,
+    "ci95": [
+     0.0262,
+     0.0743
+    ],
+    "excludes_zero": true
+   },
+   "whole bank - sygma": {
+    "gap": -0.0632,
+    "ci95": [
+     -0.093,
+     -0.0344
+    ],
+    "excludes_zero": true
+   },
+   "whole bank - metapredictor": {
+    "gap": -0.0496,
+    "ci95": [
+     -0.0783,
+     -0.0228
+    ],
+    "excludes_zero": true
+   },
+   "trained budget - metatox": {
+    "gap": 0.0647,
+    "ci95": [
+     0.0399,
+     0.091
+    ],
+    "excludes_zero": true
+   },
+   "trained budget - sygma": {
+    "gap": -0.0481,
+    "ci95": [
+     -0.0761,
+     -0.0207
+    ],
+    "excludes_zero": true
+   },
+   "trained budget - metapredictor": {
+    "gap": -0.0346,
+    "ci95": [
+     -0.0615,
+     -0.0079
+    ],
+    "excludes_zero": true
+   }
+  },
+  "3": {
+   "trained budget - whole bank": {
+    "gap": 0.0135,
+    "ci95": [
+     -0.0163,
+     0.0429
+    ],
+    "excludes_zero": false
+   },
+   "whole bank - metatox": {
+    "gap": 0.0947,
+    "ci95": [
+     0.0577,
+     0.1335
+    ],
+    "excludes_zero": true
+   },
+   "whole bank - sygma": {
+    "gap": -0.0617,
+    "ci95": [
+     -0.0973,
+     -0.0261
+    ],
+    "excludes_zero": true
+   },
+   "whole bank - metapredictor": {
+    "gap": -0.0496,
+    "ci95": [
+     -0.0864,
+     -0.0137
+    ],
+    "excludes_zero": true
+   },
+   "trained budget - metatox": {
+    "gap": 0.1083,
+    "ci95": [
+     0.072,
+     0.1461
+    ],
+    "excludes_zero": true
+   },
+   "trained budget - sygma": {
+    "gap": -0.0481,
+    "ci95": [
+     -0.082,
+     -0.0155
+    ],
+    "excludes_zero": true
+   },
+   "trained budget - metapredictor": {
+    "gap": -0.0361,
+    "ci95": [
+     -0.0736,
+     0.0
+    ],
+    "excludes_zero": false
+   }
+  },
+  "5": {
+   "trained budget - whole bank": {
+    "gap": 0.0105,
+    "ci95": [
+     -0.0207,
+     0.0408
+    ],
+    "excludes_zero": false
+   },
+   "whole bank - metatox": {
+    "gap": 0.0917,
+    "ci95": [
+     0.0504,
+     0.1341
+    ],
+    "excludes_zero": true
+   },
+   "whole bank - sygma": {
+    "gap": -0.0647,
+    "ci95": [
+     -0.1009,
+     -0.0267
+    ],
+    "excludes_zero": true
+   },
+   "whole bank - metapredictor": {
+    "gap": -0.0451,
+    "ci95": [
+     -0.0889,
+     -0.0031
+    ],
+    "excludes_zero": true
+   },
+   "trained budget - metatox": {
+    "gap": 0.1023,
+    "ci95": [
+     0.062,
+     0.1443
+    ],
+    "excludes_zero": true
+   },
+   "trained budget - sygma": {
+    "gap": -0.0541,
+    "ci95": [
+     -0.0899,
+     -0.0199
+    ],
+    "excludes_zero": true
+   },
+   "trained budget - metapredictor": {
+    "gap": -0.0346,
+    "ci95": [
+     -0.0775,
+     0.0066
+    ],
+    "excludes_zero": false
+   }
+  },
+  "8": {
+   "trained budget - whole bank": {
+    "gap": -0.0135,
+    "ci95": [
+     -0.0446,
+     0.0171
+    ],
+    "excludes_zero": false
+   },
+   "whole bank - metatox": {
+    "gap": 0.1038,
+    "ci95": [
+     0.0619,
+     0.1463
+    ],
+    "excludes_zero": true
+   },
+   "whole bank - sygma": {
+    "gap": -0.012,
+    "ci95": [
+     -0.0496,
+     0.026
+    ],
+    "excludes_zero": false
+   },
+   "whole bank - metapredictor": {
+    "gap": -0.0195,
+    "ci95": [
+     -0.0636,
+     0.023
+    ],
+    "excludes_zero": false
+   },
+   "trained budget - metatox": {
+    "gap": 0.0902,
+    "ci95": [
+     0.0488,
+     0.1322
+    ],
+    "excludes_zero": true
+   },
+   "trained budget - sygma": {
+    "gap": -0.0256,
+    "ci95": [
+     -0.062,
+     0.0113
+    ],
+    "excludes_zero": false
+   },
+   "trained budget - metapredictor": {
+    "gap": -0.0331,
+    "ci95": [
+     -0.0785,
+     0.0112
+    ],
+    "excludes_zero": false
+   }
+  },
+  "10": {
+   "trained budget - whole bank": {
+    "gap": -0.0195,
+    "ci95": [
+     -0.0498,
+     0.0117
+    ],
+    "excludes_zero": false
+   },
+   "whole bank - metatox": {
+    "gap": 0.0647,
+    "ci95": [
+     0.0232,
+     0.1057
+    ],
+    "excludes_zero": true
+   },
+   "whole bank - sygma": {
+    "gap": -0.003,
+    "ci95": [
+     -0.0413,
+     0.0352
+    ],
+    "excludes_zero": false
+   },
+   "whole bank - metapredictor": {
+    "gap": -0.018,
+    "ci95": [
+     -0.0605,
+     0.0232
+    ],
+    "excludes_zero": false
+   },
+   "trained budget - metatox": {
+    "gap": 0.0451,
+    "ci95": [
+     0.0031,
+     0.086
+    ],
+    "excludes_zero": true
+   },
+   "trained budget - sygma": {
+    "gap": -0.0226,
+    "ci95": [
+     -0.0585,
+     0.0137
+    ],
+    "excludes_zero": false
+   },
+   "trained budget - metapredictor": {
+    "gap": -0.0376,
+    "ci95": [
+     -0.0816,
+     0.0071
+    ],
+    "excludes_zero": false
+   }
+  },
+  "15": {
+   "trained budget - whole bank": {
+    "gap": -0.0556,
+    "ci95": [
+     -0.0876,
+     -0.0235
+    ],
+    "excludes_zero": true
+   },
+   "whole bank - metatox": {
+    "gap": 0.0211,
+    "ci95": [
+     -0.0185,
+     0.0611
+    ],
+    "excludes_zero": false
+   },
+   "whole bank - sygma": {
+    "gap": 0.0511,
+    "ci95": [
+     0.016,
+     0.0885
+    ],
+    "excludes_zero": true
+   },
+   "whole bank - metapredictor": {
+    "gap": 0.0556,
+    "ci95": [
+     0.0143,
+     0.0956
+    ],
+    "excludes_zero": true
+   },
+   "trained budget - metatox": {
+    "gap": -0.0346,
+    "ci95": [
+     -0.0762,
+     0.0065
+    ],
+    "excludes_zero": false
+   },
+   "trained budget - sygma": {
+    "gap": -0.0045,
+    "ci95": [
+     -0.0408,
+     0.0326
+    ],
+    "excludes_zero": false
+   },
+   "trained budget - metapredictor": {
+    "gap": 0.0,
+    "ci95": [
+     -0.0452,
+     0.0458
+    ],
+    "excludes_zero": false
+   }
+  },
+  "20": {
+   "trained budget - whole bank": {
+    "gap": -0.0917,
+    "ci95": [
+     -0.1262,
+     -0.0574
+    ],
+    "excludes_zero": true
+   },
+   "whole bank - metatox": {
+    "gap": 0.0271,
+    "ci95": [
+     -0.0103,
+     0.0647
+    ],
+    "excludes_zero": false
+   },
+   "whole bank - sygma": {
+    "gap": 0.0797,
+    "ci95": [
+     0.0455,
+     0.1162
+    ],
+    "excludes_zero": true
+   },
+   "whole bank - metapredictor": {
+    "gap": 0.0992,
+    "ci95": [
+     0.0571,
+     0.1403
+    ],
+    "excludes_zero": true
+   },
+   "trained budget - metatox": {
+    "gap": -0.0647,
+    "ci95": [
+     -0.105,
+     -0.0251
+    ],
+    "excludes_zero": true
+   },
+   "trained budget - sygma": {
+    "gap": -0.012,
+    "ci95": [
+     -0.0501,
+     0.0272
+    ],
+    "excludes_zero": false
+   },
+   "trained budget - metapredictor": {
+    "gap": 0.0075,
+    "ci95": [
+     -0.0373,
+     0.0526
+    ],
+    "excludes_zero": false
+   }
+  },
+  "30": {
+   "trained budget - whole bank": {
+    "gap": -0.1489,
+    "ci95": [
+     -0.1844,
+     -0.114
+    ],
+    "excludes_zero": true
+   },
+   "whole bank - metatox": {
+    "gap": 0.0376,
+    "ci95": [
+     0.0046,
+     0.0723
+    ],
+    "excludes_zero": true
+   },
+   "whole bank - sygma": {
+    "gap": 0.1323,
+    "ci95": [
+     0.0976,
+     0.169
+    ],
+    "excludes_zero": true
+   },
+   "whole bank - metapredictor": {
+    "gap": 0.1594,
+    "ci95": [
+     0.117,
+     0.201
+    ],
+    "excludes_zero": true
+   },
+   "trained budget - metatox": {
+    "gap": -0.1113,
+    "ci95": [
+     -0.1523,
+     -0.0706
+    ],
+    "excludes_zero": true
+   },
+   "trained budget - sygma": {
+    "gap": -0.0165,
+    "ci95": [
+     -0.0556,
+     0.0233
+    ],
+    "excludes_zero": false
+   },
+   "trained budget - metapredictor": {
+    "gap": 0.0105,
+    "ci95": [
+     -0.034,
+     0.0555
+    ],
+    "excludes_zero": false
+   }
+  },
+  "50": {
+   "trained budget - whole bank": {
+    "gap": -0.2135,
+    "ci95": [
+     -0.2565,
+     -0.1713
+    ],
+    "excludes_zero": true
+   },
+   "whole bank - metatox": {
+    "gap": 0.0767,
+    "ci95": [
+     0.0455,
+     0.1084
+    ],
+    "excludes_zero": true
+   },
+   "whole bank - sygma": {
+    "gap": 0.1925,
+    "ci95": [
+     0.152,
+     0.2336
+    ],
+    "excludes_zero": true
+   },
+   "whole bank - metapredictor": {
+    "gap": 0.2241,
+    "ci95": [
+     0.1734,
+     0.2734
+    ],
+    "excludes_zero": true
+   },
+   "trained budget - metatox": {
+    "gap": -0.1368,
+    "ci95": [
+     -0.1846,
+     -0.0917
+    ],
+    "excludes_zero": true
+   },
+   "trained budget - sygma": {
+    "gap": -0.0211,
+    "ci95": [
+     -0.0597,
+     0.019
+    ],
+    "excludes_zero": false
+   },
+   "trained budget - metapredictor": {
+    "gap": 0.0105,
+    "ci95": [
+     -0.034,
+     0.0555
+    ],
+    "excludes_zero": false
+   }
+  }
+ },
+ "substrates_whose_list_is_shorter_than_the_budget": {
+  "1": {
+   "whole bank": 0,
+   "trained budget": 0,
+   "metatox": 0,
+   "sygma": 1,
+   "metapredictor": 1
+  },
+  "3": {
+   "whole bank": 0,
+   "trained budget": 1,
+   "metatox": 0,
+   "sygma": 1,
+   "metapredictor": 2
+  },
+  "5": {
+   "whole bank": 0,
+   "trained budget": 6,
+   "metatox": 0,
+   "sygma": 2,
+   "metapredictor": 3
+  },
+  "8": {
+   "whole bank": 0,
+   "trained budget": 53,
+   "metatox": 3,
+   "sygma": 8,
+   "metapredictor": 18
+  },
+  "10": {
+   "whole bank": 0,
+   "trained budget": 92,
+   "metatox": 7,
+   "sygma": 11,
+   "metapredictor": 84
+  },
+  "15": {
+   "whole bank": 0,
+   "trained budget": 181,
+   "metatox": 34,
+   "sygma": 15,
+   "metapredictor": 273
+  },
+  "20": {
+   "whole bank": 0,
+   "trained budget": 237,
+   "metatox": 63,
+   "sygma": 26,
+   "metapredictor": 291
+  },
+  "30": {
+   "whole bank": 0,
+   "trained budget": 272,
+   "metatox": 140,
+   "sygma": 66,
+   "metapredictor": 291
+  },
+  "50": {
+   "whole bank": 2,
+   "trained budget": 282,
+   "metatox": 249,
+   "sygma": 134,
+   "metapredictor": 291
+  }
+ },
+ "status": "H10 was registered and checked on validation; this population is the deployment report, not a second test of it.",
+ "n_boot": 10000,
+ "seed": 0
+}

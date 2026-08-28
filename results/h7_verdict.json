@@ -1,0 +1,97 @@
+{
+ "provenance": {
+  "script": "h7_verdict.py",
+  "script_path": "scripts/typed_edit/h7_verdict.py",
+  "source_sha256": "32f491acfd2fa12bd6fddc048c2b49d7f97b7a0869d462f4a184ddeea0fb9ccd",
+  "git_commit": "d85ad690ec6a8919210a38a5e9e9072e5ffad5b9",
+  "git_dirty": true
+ },
+ "hypothesis": "H7",
+ "registered_threshold": 0.05,
+ "rrf_k": 60,
+ "split": "validation",
+ "match": "inchikey_tautomer",
+ "population": {
+  "cap": 300,
+  "seed": 0,
+  "declared_n": 294,
+  "n": 293,
+  "absent_indices": [
+   83
+  ],
+  "absent_substrates": [
+   "CCC(C)C(N=C(O)C(Cc1ccccc1)N=C(O)C(CCC(=O)O)N=C(O)C(CCCCN=C(O)COCCOCCN=C(O)COCCOCCN=C(O)CCC(N=C(O)CCCCCCCCCCCCCCCCC(=O)O)C(=O)O)N=C(O)C(C)N=C(O)C(C)N=C(O)C(CCC(=N)O)N=C(O)CN=C(O)C(CCC(=O)O)N=C(O)C(CC(C)C)N=C(O)C(Cc1ccc(O)cc1)N=C(O)C(CO)N=C(O)C(CO)N=C(O)C(N=C(O)C(CC(=O)O)N=C(O)C(CO)N=C(O)C(N=C(O)C(Cc1ccccc1)N=C(O)C(N=C(O)CN=C(O)C(CCC(=O)O)N=C(O)C(C)(C)N=C(O)C(N)Cc1cnc[nH]1)C(C)O)C(C)O)C(C)C)C(O)=NC(C)C(O)=NC(Cc1c[nH]c2ccccc12)C(O)=NC(CC(C)C)C(O)=NC(C(O)=NC(CCCNC(=N)N)C(O)=NCC(O)=NC(CCCNC(=N)N)C(O)=NCC(=O)O)C(C)C"
+  ],
+  "absent_references": {
+   "CCC(C)C(N=C(O)C(Cc1ccccc1)N=C(O)C(CCC(=O)O)N=C(O)C(CCCCN=C(O)COCCOCCN=C(O)COCCOCCN=C(O)CCC(N=C(O)CCCCCCCCCCCCCCCCC(=O)O)C(=O)O)N=C(O)C(C)N=C(O)C(C)N=C(O)C(CCC(=N)O)N=C(O)CN=C(O)C(CCC(=O)O)N=C(O)C(CC(C)C)N=C(O)C(Cc1ccc(O)cc1)N=C(O)C(CO)N=C(O)C(CO)N=C(O)C(N=C(O)C(CC(=O)O)N=C(O)C(CO)N=C(O)C(N=C(O)C(Cc1ccccc1)N=C(O)C(N=C(O)CN=C(O)C(CCC(=O)O)N=C(O)C(C)(C)N=C(O)C(N)Cc1cnc[nH]1)C(C)O)C(C)O)C(C)C)C(O)=NC(C)C(O)=NC(Cc1c[nH]c2ccccc12)C(O)=NC(CC(C)C)C(O)=NC(C(O)=NC(CCCNC(=N)N)C(O)=NCC(O)=NC(CCCNC(=N)N)C(O)=NCC(=O)O)C(C)C": [
+    "BXBRBVBQQYLBAG-UHFFFAOYSA-N",
+    "YWIDLFCVKYJAPY-UHFFFAOYSA-N"
+   ]
+  }
+ },
+ "n_substrates": 293,
+ "n_references": 655,
+ "declared_population": 294,
+ "k": 15,
+ "ceiling_micro": 0.8061068702290076,
+ "micro": {
+  "product": 0.3755725190839695,
+  "fusion": 0.4488549618320611,
+  "difference": 0.07328244274809159
+ },
+ "macro": {
+  "product": 0.48494796098188975,
+  "fusion": 0.5590566033011615,
+  "difference": 0.07410864231927172
+ },
+ "bootstrap": {
+  "n": 10000,
+  "seed": 0,
+  "ci95": [
+   0.04767726161369193,
+   0.10196779964221825
+  ],
+  "p_difference_at_least_threshold": 0.9623
+ },
+ "curves_micro": {
+  "1": {
+   "product": 0.08396946564885496,
+   "fusion": 0.11297709923664122
+  },
+  "5": {
+   "product": 0.233587786259542,
+   "fusion": 0.29465648854961835
+  },
+  "10": {
+   "product": 0.3236641221374046,
+   "fusion": 0.38778625954198476
+  },
+  "15": {
+   "product": 0.3755725190839695,
+   "fusion": 0.4488549618320611
+  },
+  "20": {
+   "product": 0.41374045801526715,
+   "fusion": 0.4916030534351145
+  },
+  "30": {
+   "product": 0.4595419847328244,
+   "fusion": 0.5374045801526718
+  },
+  "50": {
+   "product": 0.5328244274809161,
+   "fusion": 0.6106870229007634
+  }
+ },
+ "absence_bound": {
+  "absent_substrates": 1,
+  "absent_references": 2,
+  "worst_case": 0.0700152207001522,
+  "best_case": 0.076103500761035
+ },
+ "verdict": "supported",
+ "caveats": [
+  "The fusion rule was chosen after looking at the 291 MetaTox substrates; this validation check is the out-of-argmax measurement H7 registers, not a second selection.",
+  "The checkpoints were selected on validation, so validation is not fully clean for them. The bias runs against the fusion rule, which the product-shaped selection favours, so the margin measured here is conservative."
+ ]
+}

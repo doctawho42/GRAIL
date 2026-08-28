@@ -1,0 +1,372 @@
+{
+ "provenance": {
+  "script": "h11_grid.py",
+  "script_path": "scripts/typed_edit/h11_grid.py",
+  "source_sha256": "4403283730b1476c2e673c784689bb8c99a257ac32defb4e5fa2a160c299c357",
+  "git_commit": "21077e9d10f220387d7c2866ae2dd1cec2d72239",
+  "git_dirty": true
+ },
+ "hypothesis": "H11",
+ "population": {
+  "n": 291,
+  "source": "the 291 of results/four_method_291.json"
+ },
+ "aggregation": "macro, the mean of per-substrate F1",
+ "rule": "the trained rule budget's pool, ordered by the H7 fusion, untruncated",
+ "criteria": [
+  "canonical",
+  "inchikey",
+  "inchi_no_stereo",
+  "tanimoto1",
+  "inchikey_tautomer"
+ ],
+ "budgets": [
+  1,
+  3,
+  5,
+  8,
+  10,
+  15,
+  20,
+  32,
+  50,
+  74
+ ],
+ "gate": {
+  "reproduces_committed_metatox_recall": true,
+  "mismatches": []
+ },
+ "mean_output": {
+  "rule": 16.31,
+  "metatox": 36.34
+ },
+ "cells_declared": 50,
+ "cells_lost_declared": 0,
+ "cells_including_metatox_own_emission": 55,
+ "cells_lost_including_own_emission": 0,
+ "lost": [],
+ "grid": {
+  "canonical": {
+   "rule": {
+    "f1": 0.1175,
+    "precision": 0.08,
+    "recall": 0.4289
+   },
+   "metatox": {
+    "uncapped": {
+     "f1": 0.0649,
+     "precision": 0.0384,
+     "recall": 0.4576
+    },
+    "1": {
+     "f1": 0.0655,
+     "precision": 0.079,
+     "recall": 0.0605
+    },
+    "3": {
+     "f1": 0.0858,
+     "precision": 0.0756,
+     "recall": 0.1308
+    },
+    "5": {
+     "f1": 0.0887,
+     "precision": 0.0701,
+     "recall": 0.1786
+    },
+    "8": {
+     "f1": 0.0884,
+     "precision": 0.0621,
+     "recall": 0.2427
+    },
+    "10": {
+     "f1": 0.0905,
+     "precision": 0.0609,
+     "recall": 0.2886
+    },
+    "15": {
+     "f1": 0.0857,
+     "precision": 0.0546,
+     "recall": 0.3595
+    },
+    "20": {
+     "f1": 0.0771,
+     "precision": 0.0472,
+     "recall": 0.3865
+    },
+    "32": {
+     "f1": 0.0666,
+     "precision": 0.0398,
+     "recall": 0.4097
+    },
+    "50": {
+     "f1": 0.065,
+     "precision": 0.0385,
+     "recall": 0.4459
+    },
+    "74": {
+     "f1": 0.0649,
+     "precision": 0.0384,
+     "recall": 0.4513
+    }
+   }
+  },
+  "inchikey": {
+   "rule": {
+    "f1": 0.153,
+    "precision": 0.1026,
+    "recall": 0.5672
+   },
+   "metatox": {
+    "uncapped": {
+     "f1": 0.0886,
+     "precision": 0.0526,
+     "recall": 0.6431
+    },
+    "1": {
+     "f1": 0.0723,
+     "precision": 0.0928,
+     "recall": 0.066
+    },
+    "3": {
+     "f1": 0.1045,
+     "precision": 0.0951,
+     "recall": 0.1564
+    },
+    "5": {
+     "f1": 0.1148,
+     "precision": 0.0924,
+     "recall": 0.2273
+    },
+    "8": {
+     "f1": 0.1164,
+     "precision": 0.0821,
+     "recall": 0.3176
+    },
+    "10": {
+     "f1": 0.1215,
+     "precision": 0.0819,
+     "recall": 0.3847
+    },
+    "15": {
+     "f1": 0.1193,
+     "precision": 0.0757,
+     "recall": 0.5015
+    },
+    "20": {
+     "f1": 0.1075,
+     "precision": 0.0655,
+     "recall": 0.5454
+    },
+    "32": {
+     "f1": 0.0924,
+     "precision": 0.055,
+     "recall": 0.5885
+    },
+    "50": {
+     "f1": 0.089,
+     "precision": 0.0527,
+     "recall": 0.6316
+    },
+    "74": {
+     "f1": 0.0886,
+     "precision": 0.0525,
+     "recall": 0.6368
+    }
+   }
+  },
+  "inchi_no_stereo": {
+   "rule": {
+    "f1": 0.1531,
+    "precision": 0.1026,
+    "recall": 0.5689
+   },
+   "metatox": {
+    "uncapped": {
+     "f1": 0.0919,
+     "precision": 0.0545,
+     "recall": 0.6632
+    },
+    "1": {
+     "f1": 0.0723,
+     "precision": 0.0928,
+     "recall": 0.066
+    },
+    "3": {
+     "f1": 0.1056,
+     "precision": 0.0962,
+     "recall": 0.1587
+    },
+    "5": {
+     "f1": 0.1155,
+     "precision": 0.0931,
+     "recall": 0.2296
+    },
+    "8": {
+     "f1": 0.1173,
+     "precision": 0.0831,
+     "recall": 0.3202
+    },
+    "10": {
+     "f1": 0.1249,
+     "precision": 0.0845,
+     "recall": 0.3957
+    },
+    "15": {
+     "f1": 0.1226,
+     "precision": 0.0779,
+     "recall": 0.5162
+    },
+    "20": {
+     "f1": 0.1108,
+     "precision": 0.0677,
+     "recall": 0.5603
+    },
+    "32": {
+     "f1": 0.0961,
+     "precision": 0.0574,
+     "recall": 0.6046
+    },
+    "50": {
+     "f1": 0.0925,
+     "precision": 0.0549,
+     "recall": 0.6479
+    },
+    "74": {
+     "f1": 0.092,
+     "precision": 0.0546,
+     "recall": 0.6569
+    }
+   }
+  },
+  "tanimoto1": {
+   "rule": {
+    "f1": 0.118,
+    "precision": 0.0804,
+    "recall": 0.429
+   },
+   "metatox": {
+    "uncapped": {
+     "f1": 0.0651,
+     "precision": 0.0386,
+     "recall": 0.4578
+    },
+    "1": {
+     "f1": 0.0655,
+     "precision": 0.079,
+     "recall": 0.0605
+    },
+    "3": {
+     "f1": 0.0858,
+     "precision": 0.0756,
+     "recall": 0.1308
+    },
+    "5": {
+     "f1": 0.0887,
+     "precision": 0.0701,
+     "recall": 0.1786
+    },
+    "8": {
+     "f1": 0.0884,
+     "precision": 0.0621,
+     "recall": 0.2427
+    },
+    "10": {
+     "f1": 0.0906,
+     "precision": 0.061,
+     "recall": 0.2886
+    },
+    "15": {
+     "f1": 0.0859,
+     "precision": 0.0548,
+     "recall": 0.3595
+    },
+    "20": {
+     "f1": 0.0773,
+     "precision": 0.0474,
+     "recall": 0.3865
+    },
+    "32": {
+     "f1": 0.0669,
+     "precision": 0.0399,
+     "recall": 0.4098
+    },
+    "50": {
+     "f1": 0.0654,
+     "precision": 0.0388,
+     "recall": 0.4496
+    },
+    "74": {
+     "f1": 0.0652,
+     "precision": 0.0386,
+     "recall": 0.455
+    }
+   }
+  },
+  "inchikey_tautomer": {
+   "rule": {
+    "f1": 0.153,
+    "precision": 0.1026,
+    "recall": 0.5672
+   },
+   "metatox": {
+    "uncapped": {
+     "f1": 0.0971,
+     "precision": 0.0577,
+     "recall": 0.6868
+    },
+    "1": {
+     "f1": 0.0723,
+     "precision": 0.0928,
+     "recall": 0.066
+    },
+    "3": {
+     "f1": 0.1131,
+     "precision": 0.1037,
+     "recall": 0.1665
+    },
+    "5": {
+     "f1": 0.1271,
+     "precision": 0.1022,
+     "recall": 0.2477
+    },
+    "8": {
+     "f1": 0.1269,
+     "precision": 0.09,
+     "recall": 0.3377
+    },
+    "10": {
+     "f1": 0.1343,
+     "precision": 0.0909,
+     "recall": 0.4163
+    },
+    "15": {
+     "f1": 0.1315,
+     "precision": 0.0837,
+     "recall": 0.5406
+    },
+    "20": {
+     "f1": 0.1184,
+     "precision": 0.0724,
+     "recall": 0.5898
+    },
+    "32": {
+     "f1": 0.1024,
+     "precision": 0.0613,
+     "recall": 0.644
+    },
+    "50": {
+     "f1": 0.0978,
+     "precision": 0.0582,
+     "recall": 0.6708
+    },
+    "74": {
+     "f1": 0.0971,
+     "precision": 0.0578,
+     "recall": 0.6794
+    }
+   }
+  }
+ },
+ "bias_note": "precision counts an unannotated true metabolite as a false positive, which penalises volume; the rule emits 16.31 against MetaTox's 36.34, so F1 is biased toward the rule and its components are tabulated beside it",
+ "verdict": "supported"
+}
