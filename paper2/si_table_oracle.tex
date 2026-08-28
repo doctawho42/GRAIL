@@ -1,0 +1,16 @@
+\begin{table}[h]
+\centering\small
+\begin{tabular}{lrlr}
+\toprule
+partition & recall@15 & over the deployed ranking & groups \\
+\midrule
+none (deployed) & 0.5353 & --- & --- \\
+molecular formula & 0.6602 & $+0.1248$ $[+0.0853, +0.1654]$ & 41.5 \\
+random, matched to type & 0.6632 & $+0.1278$ $[+0.0809, +0.1757]$ & 51.4 \\
+transformation type & 0.7128 & $+0.1774$ $[+0.1404, +0.2175]$ & 51.4 \\
+formula and type & 0.7158 & $+0.1805$ $[+0.1454, +0.2180]$ & 53.7 \\
+\bottomrule
+\end{tabular}
+\caption{An oracle that orders candidate groups by whether they contain a reference, under four partitions of one candidate pool. A finer partition wins at an oracle for nothing, so the random partition is a control: its group-size multiset is exactly the transformation type's on each substrate. Read against that control rather than against the deployed ranking, molecular formula does not separate ($-0.0030$, $[-0.0396, +0.0332]$) while transformation type does ($+0.0496$, $[+0.0248, +0.0768]$).}
+\label{tab:si-oracle}
+\end{table}

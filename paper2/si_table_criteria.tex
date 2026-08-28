@@ -1,0 +1,16 @@
+\begin{table}[h]
+\centering\small
+\begin{tabular}{lp{7.2cm}l}
+\toprule
+criterion & what counts as the same structure & strictness \\
+\midrule
+\texttt{canonical} & RDKit canonical SMILES, equality of strings & strictest \\
+\texttt{inchikey} & the full InChIKey, including the stereochemistry block & strict \\
+\texttt{inchi\_no\_stereo} & the first block of the InChIKey, which drops stereochemistry & medium \\
+\texttt{tanimoto1} & Tanimoto similarity of one on 1024-bit Morgan fingerprints & loosest \\
+\texttt{inchikey\_tautomer} & canonical tautomer on both sides, then a canonical SMILES without stereochemistry & the default \\
+\bottomrule
+\end{tabular}
+\caption{The five declared matching criteria. The references carry no stereochemistry and do not distinguish tautomers, and standard InChI normalises only a subset of tautomers, which is why the tautomer-aware key is the default rather than the full InChIKey.}
+\label{tab:si-criteria}
+\end{table}

@@ -1,0 +1,238 @@
+% Supporting Information, submitted as a separate file as ACS requires.
+\documentclass[journal=jcisd8,manuscript=suppinfo,layout=onecolumn]{achemso}
+
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{microtype}
+\SectionNumbersOn
+\input{numbers}
+\input{markers}
+
+\renewcommand{\thepage}{S\arabic{page}}
+\renewcommand{\thesection}{S\arabic{section}}
+\renewcommand{\thetable}{S\arabic{table}}
+\renewcommand{\thefigure}{S\arabic{figure}}
+
+\author{AUTHORS}
+\affiliation{AFFILIATIONS}
+\email{CORRESPONDING@EMAIL}
+% achemso's suppinfo mode prepends "Supporting Information:" itself, so the title must not
+\title{Rule-grounded metabolite prediction under a fully declared evaluation}
+
+\begin{document}
+
+\maketitle
+
+\section{The corpus and its splits}
+
+\input{si_table_splits}
+
+The corpus is \CorpusProvenance{}. It is divided by substrate, so no substrate of one split
+appears in another. Molecular overlap between splits is non-zero and expected, because a molecule
+that is a substrate in one split may appear as a product in another: \numLeakMolOverlap{}
+molecules occur in both train and test, and \numLeakSubAsMol{} test substrates appear as molecules
+in train. Both counts are recorded so that neither is later discovered and mistaken for leakage.
+
+Three evaluation populations are drawn from these splits, and every figure in the paper names
+one. The evaluated test set is the \numPopulationTestsubs{} test substrates that carry at least
+one reference, holding all \numPopulationTestrefs{} references of the split; the
+\numSplitTestSubstrates{} minus \numPopulationTestsubs{} excluded substrates carry none. The
+validation draw is a sample of \numValdrawCap{} substrates at seed \numValdrawSeed{}, of which
+\numValdrawDeclared{} produced a candidate pool and \numValdrawPaired{} are held by both arms of a
+paired comparison. The comparison set is the \numPopulationN{} substrates on which every method
+predicts.
+
+No external evaluation set is reported. Of the \numGloryxN{} GLORYx parent substrates,
+\numGloryxOverlap{} are inside our train or validation splits, so a figure on that set would
+measure memorisation as much as prediction.
+
+\section{The matching criteria}
+
+\input{si_table_criteria}
+
+What counts as a hit is an axis with five declared settings, given in Table~\ref{tab:si-criteria}.
+The paper reports its comparison under the tautomer-aware key and its sensitivity to the other
+four in Section~\ref{sec:si-sensitivity}.
+
+\section{Sensitivity of the comparison to the matching criterion}
+\label{sec:si-sensitivity}
+
+\input{si_table_criterion}
+
+The paper argues that a recall figure depends on evaluation choices that this literature leaves
+unstated. The argument is made about published numbers, and Table~\ref{tab:si-criterion} applies
+it to our own: the same comparison, the same population, the same ranking, the same parent-drop
+convention, with only the criterion moving.
+
+Ranking is settled before any key is taken, so the criterion changes what counts as a hit and
+never what is ranked. The parent-drop convention is re-derived under each criterion so that it
+means the same thing in every column.
+
+\section{The rule bank}
+
+The bank holds \numBankRules{} templates spanning \numBankTypes{} distinct reaction types, of
+which \numBankParses{} parse under RDKit 2022.09.5. It is the deduplicated union of four curated
+collections together with templates mined from the molecule-disjoint training split alone.
+
+Mining locates a ring-aware maximum common substructure for each annotated substrate--product
+pair. Atoms whose element, formal charge, hydrogen count, aromaticity or degree changed, atom
+pairs whose bond order changed, and leaving or entering atoms are flagged as the reaction centre.
+The centre is expanded by one bond and emitted as a mapped SMIRKS template. A template survives
+only if applying it to its own source substrate regenerates the annotated product after
+canonicalisation, and a selectivity filter rejects templates producing more than 200 distinct
+products on average across a 50-substrate sample.
+
+Support across mined templates is heavily skewed: \numMinedSingleton{} of \numMinedRules{} rest on
+a single training pair. Re-running the miner on the same split re-derives every template it
+derived before and none new.
+
+\section{Model architectures and training}
+
+\subsection{Generator}
+
+The generator estimates $P(r \mid s)$, the probability that rule $r$ applies to substrate $s$,
+for the whole bank in one forward pass. Substrate graphs carry 16-dimensional node and
+18-dimensional edge features. A three-layer GATv2 encoder ($16 \to 192 \to 256 \to 128$, batch
+normalisation, ReLU, dropout $0.1$, mean-pooled readout) embeds the substrate, and a parallel
+multilayer perceptron embeds a 1024-bit Morgan fingerprint, the two combined by a gated fusion.
+Each rule is embedded independently by a rule-graph encoder of the same family
+($128 \to 192 \to 128$) alongside a six-dimensional branch of global rule features.
+
+The logit sums four learned terms, each with its own learned scalar: a cross-attention term in
+which the rule embedding queries the substrate's atom states through single-head attention; a
+global term, the cosine similarity between substrate and rule embeddings; a local term, the cosine
+between the attention context and the rule; and a term reflecting whether the rule's SMARTS
+matches. To these are added a per-rule bias and a frequency-prior term at weight $0.4$, the
+log-odds that the rule yields a true metabolite estimated from training statistics. A penalty of
+$7.5$ is subtracted for rules whose SMARTS does not match, which masks inapplicable rules before
+the sigmoid.
+
+Training is multi-label rule classification with a margin-ranking auxiliary at weight $0.25$ and
+margin $0.45$. Optimisation uses Adam at $10^{-4}$ with early stopping on validation.
+
+\subsection{Filter}
+
+The filter scores a (substrate, candidate) pair. Substrate and candidate are embedded
+independently, each through its own three-layer GATv2 encoder of the same dimensions with a
+mean-pooled readout. The two 128-dimensional embeddings are concatenated with both Morgan
+fingerprints, and the resulting 2304-dimensional vector is mapped through a three-layer perceptron
+($\to 128 \to 64 \to 1$) to a single logit. The estimator is selectable between a non-negative
+positive-unlabelled risk on logits and binary cross-entropy on probabilities; the released
+configuration uses the second.
+
+A variant encoding one merged substrate--product graph, with cross-edges placed by an
+element-aware maximum-common-substructure correspondence, was implemented and measured. It loses
+on accuracy (recall@15 $0.357$ against $0.366$, paired difference $-0.0090$, 95\% CI
+$[-0.017, -0.001]$, $n = 1{,}170$) and on cost ($34.0$~ms against $9.1$~ms per pair), and is not
+deployed.
+
+\subsection{The objective is positive-unlabelled}
+
+Rules that match the substrate but carry no annotation are down-weighted by half rather than
+treated as negatives. An annotated metabolite is a positive and a rule-applicable product without
+an annotation is unlabelled, because a missing annotation does not establish that a transformation
+does not occur \citep{Jain_2016}. The consequence for the reported metrics is that precision is
+pessimistic by a bounded but unknown amount, which is why the paper reports it without using it to
+order systems.
+
+\section{The registered predictions}
+
+The register is released in full at \texttt{github.com/doctawho42/GRAIL}, with every prediction as
+it was written, the threshold and falsification condition fixed before the check, and the outcome
+as it was measured. Fifteen predictions are registered. Nine are reported in the paper as P1 to
+P9; the register's own identifiers are given beside them in the main text, since its numbering
+records when each was written rather than where it appears.
+
+The remaining six concern work this paper does not report: a type-indexed rather than
+rule-indexed label space, reactivity and accessibility node features, learned abstention, a
+ranked prediction of intervention sizes, the same null out of sample, and a negative control on
+graph automorphism. They are stated with their thresholds so that a later result on any of them
+cannot be a threshold chosen after the fact.
+
+\section{Group ranking and its oracle}
+
+\input{si_table_oracle}
+
+Candidates group naturally by molecular formula, and an oracle over those groups motivated three
+of the registered predictions. Table~\ref{tab:si-oracle} recomputes that oracle under four
+partitions of one candidate pool, on the deployed configuration rather than on the uncapped pool
+the original measurement used.
+
+The transformation type of a substrate--candidate pair is the multiset of bonds that change
+between mapped atoms, which is the vocabulary the rule bank's coverage is defined on. Typing runs
+a maximum common substructure search under a wall-clock timeout and treats a cancelled search as
+untypeable, so the artifact is not byte-reproducible: two runs on the same machine differed in
+2 of approximately 29,100 typings, every figure in Table~\ref{tab:si-oracle} was identical to four
+decimals, and the only cell that moved was the control at $k=1$, by $0.0015$.
+
+\section{The worked example in full}
+
+\input{si_table_case}
+
+\section{Runtime methodology}
+
+Every timing in the paper is a cold measurement. A cache makes a repeated substrate run 16 to 47
+times faster, so any timing not taken cold measures a mixture of two regimes.
+
+Standardisation is the binding constraint on the generator, at 94 to 99\% of cold generator time.
+Three other candidates were tested against it and rejected by measurement: the pairwise filter's
+maximum-common-substructure step, which does not bind because the generator outruns the filter a
+hundred to one; rule application, which applies all \numBankParses{} parseable templates to a
+109-atom molecule in $5.2$~s, yielding 20{,}655 products at no more than $0.58$~s per rule; and
+substrate size as an axis, which fails as a predictor because two 43-atom substrates take
+$64.7$~s and no completion respectively.
+
+Two of the registered predictions address the constraint. Moving standardisation to surviving
+candidates alone reduces enumeration by a factor of $13.9$, but standardising the hundred
+survivors then becomes 72\% of the new arm, so the whole arm gains only $2.95\times$ against a
+registered $10\times$: removing 94 to 99\% of the work does not remove 94 to 99\% of the time.
+Adding a tautomer enumeration budget of \numHOneFiveBudget{} passes both halves of its
+prediction.
+
+That budget lives in a module-level singleton shared with the tautomer matching key, so setting
+it globally would silently move what counts as a hit. It is applied through a private enumerator
+instead: the global setting is untouched, and matching keys on 96 molecules are identical with and
+without it.
+
+\section{Comparators}
+
+SyGMa 1.1.0 is taken from the installed module. BioTransformer is pinned by digest rather than by
+version string, because ``3.0'' names several builds: jar \texttt{c70cad91}, 115{,}415{,}197
+bytes, upstream commit \texttt{6432cf88} of 2023-05-25, its 994 templates loaded at freeze time
+rather than taken from a constant. MetaTox and MetaPredictor predictions are frozen per substrate
+and released with the code.
+
+Four systems published in 2025--26 could not be run on our split as released. LAGOM
+\citep{Larsson_2025} releases training code under Apache-2.0 but no fine-tuned checkpoint, so
+comparing would mean comparing against our own reimplementation. DeepMetab \citep{Zhou_2025}
+releases weights and site prediction but its reaction module was withdrawn by the author for
+copyright reasons, leaving only Python 3.7 bytecode. DeepCYP \citep{Zhou_2026} offers a web form
+and no models or API, so a comparison would mean submitting \numPopulationTestsubs{} substrates to
+a third-party server. Metabolite-Gen \citep{Chavan_2026} is a preprint with no repository we could
+find. The list is closed by a rule: a comparator that could not be obtained is reported as
+unavailable with its reason, is not dropped silently, and the list is not extended after the
+first run.
+
+\section{Provenance and reproduction}
+
+\numProvPinned{} artifacts are pinned. Each records the script that wrote it, the SHA-256 of that
+script's source, and the commit it ran at; a sweep recomputes the hash of each producer and
+refuses the artifact if that producer has changed. All \numProvPinned{} are current. The guarantee
+covers the pinned set and not the directory: of \numProvFiles{} files under \texttt{results/},
+\numProvUnstamped{} carry no stamp and \numProvChanged{} were written by a producer that has since
+changed, and those files support no number in the paper.
+
+A split manifest pins by digest the triple files, the substrate sets, the evaluated test set, the
+rule bank and every third-party artifact, and a verify mode recomputes and names any leaf that has
+moved. Every number in the paper reaches the page through a macro generated from a pinned
+artifact, and a checker refuses any numeric literal in the manuscript that is not on a short
+allow-list of constants published elsewhere.
+
+The train and validation candidate pools are deposited at \ZenodoDoi{} under CC BY 4.0. The
+deposit's manifest pins the SHA-256 of both the raw file and the uploaded archive together with
+the record counts, so a download can be verified against the version used here.
+
+\bibliography{refs}
+
+\end{document}
