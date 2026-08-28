@@ -238,9 +238,38 @@ about it.
 
 We therefore counted the types. The $\numCeilingNovel$ misses collapse into $\numCensusTypes$
 distinct types; $\numCensusOnce$ of those are seen exactly once and carry $\numCensusOnceShare$ of
-the mass, and half the mass needs $\numCensusHalf$ types. This is a tail at every granularity at
-which a type still determines a product. Coarsening the type until the tail collapses reaches
-levels at which a type no longer names a transformation.
+the mass, and half the mass needs $\numCensusHalf$ types.
+
+A count like that is only as informative as the definition of a type behind it, and ours is a
+multiset of changed bonds with multiplicities, which is nearly a fingerprint of a whole
+transformation. Near-uniqueness could therefore be the definition rather than the chemistry, so we
+report the tail against every coarsening of the definition available to us
+(Table~\ref{tab:grain}), and mark for each whether a type at that level still determines a
+product.
+
+\begin{table}[t]
+\centering
+\begin{tabular}{lrrrl}
+\toprule
+definition of a type & types & seen once & mass in singletons & names a transformation \\
+\midrule
+multiset of changed bonds, with multiplicities & \numGrainExactTypes & \numGrainExactOnce & \numGrainExactMass & \numGrainExactUsable \\
+the same, multiplicities dropped & \numGrainNocountsTypes & \numGrainNocountsOnce & \numGrainNocountsMass & \numGrainNocountsUsable \\
+element pairs that take part & \numGrainElementsTypes & \numGrainElementsOnce & \numGrainElementsMass & \numGrainElementsUsable \\
+number of bonds that change & \numGrainNbondsTypes & \numGrainNbondsOnce & \numGrainNbondsMass & \numGrainNbondsUsable \\
+\bottomrule
+\end{tabular}
+\caption{The novel-type gap against the definition of a type. The tail is present wherever a type
+still names a transformation and collapses only below that.}
+\label{tab:grain}
+\end{table}
+
+The tail survives every definition under which a type still names a transformation, and collapses
+only at levels where it does not: knowing that a carbon-oxygen bond changes somewhere does not
+determine a product. The statement the table supports is therefore not that
+$\numCensusOnceShare$ of the gap is singletons under our definition. It is that the boundary is
+invariant to the definition of a type across the whole range in which the definition is
+meaningful, which makes it a fact about the annotation corpus and not about a choice of ours.
 
 Nor is the chemistry sitting in a library we could import. We typed
 $\numUsptoTemplates$ USPTO retrosynthetic templates in both directions, giving

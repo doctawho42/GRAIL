@@ -142,6 +142,14 @@ def build():
     n["census.once"] = cen["types_seen_once"]
     n["census.once.share"] = cen["share_of_misses_in_types_seen_once"]
     n["census.half"] = cen["types_carrying_half_the_mass"]
+    # the specification curve: the tail against every definition of a type, with a flag for
+    # whether a type at that level still names a transformation
+    for i, g in enumerate(cen["granularity_curve"]):
+        tag = ["exact", "noCounts", "elements", "nbonds"][i]
+        n[f"grain.{tag}.types"] = g["types"]
+        n[f"grain.{tag}.once"] = g["seen_once"]
+        n[f"grain.{tag}.mass"] = g["share_of_mass_in_singletons"]
+        n[f"grain.{tag}.usable"] = g["determines_a_product"]
     n["uspto.templates"] = usp["uspto"]["templates"]
     n["uspto.types"] = usp["uspto"]["distinct_types_either_direction"]
     n["uspto.hit"] = usp["overlap"]["types_in_uspto_either_direction"]
