@@ -19,7 +19,7 @@ under evaluation choices — how a predicted structure is matched to a reference
 candidates a method is allowed to emit — that their papers do not state, so their numbers are
 not comparable to each other. We present GRAIL, a rule-grounded predictor that names the
 transformation rule behind every prediction, ranks its entire output, and reports its
-performance under five matching criteria and eleven output budgets against every comparator
+performance under five matching criteria and ten output budgets against every comparator
 with predictions on the same substrates, with all per-substrate predictions released.
 
 On 291 test substrates the comparison divides by budget rather than resolving into an ordering.
@@ -27,9 +27,10 @@ At the tightest budgets SyGMa leads, at $k = 1$ by 0.1534 against 0.1053 with th
 excluding zero; in the middle MetaPredictor leads without separating; from $k = 15$ GRAIL leads,
 and at $k = 30$ and $k = 50$ its interval excludes zero against every comparator. The advantage
 is at depth: the comparators saturate on lists of 10.7 and 40.5 candidates while GRAIL continues
-to have candidates to rank. Against MetaTox alone, the incumbent web service, GRAIL leads at all
-nine budgets. At an output budget of 15, where MetaTox emits about what GRAIL's interactive mode
-emits, GRAIL recovers 0.5672 of annotated metabolites in macro recall against 0.5406. We additionally report the ceiling of the approach:
+to have candidates to rank. Against MetaTox alone, the incumbent web service, GRAIL is ahead at all nine
+budgets and the paired interval excludes zero at seven of them, by margins from $+0.0376$ to
+$+0.1038$; at $k = 15$ and $k = 20$ the interval includes zero and those two budgets are
+reported as unresolved. We additionally report the ceiling of the approach:
 18.3% of reference metabolites lie outside what the rule bank reaches in one step, and we
 show this bound is invariant to how a transformation type is defined, making it a property of
 the annotation corpus rather than of our implementation. GRAIL is freely available at
@@ -49,7 +50,7 @@ be more toxic, more persistent or more active than the parent.
 
 Two families of computational predictors dominate. Rule-based systems — SyGMa
 [Ridder & Wagener, 2008], BioTransformer [Djoumbou-Feunang et al., 2019], GLORY and GLORYx
-[de Bruyn Kops et al., 2019, 2020], MetaTox — encode biotransformations as reaction templates
+[de Bruyn Kops et al., 2019, 2020], MetaTox [Rudik et al., 2017] — encode biotransformations as reaction templates
 and enumerate products by applying them. Sequence-to-sequence systems — MetaTrans
 [Litsa et al., 2020], MetaPredictor [Zhu et al., 2024] — translate the substrate's string
 representation into metabolite strings. A further wave has appeared recently: a chemical
@@ -91,6 +92,13 @@ GRAIL predicts in three stages, each separately inspectable:
 
 Every emitted candidate carries the identity of the rule that produced it and the site at
 which it fired.
+
+⟨CASE_STUDY: a worked example — one substrate submitted to the server, its ranked output with
+the rule and site beside each candidate, and which of them are annotated. The claim that
+predictions are rule-attributable is the paper's main non-numerical claim and is currently
+asserted rather than shown; the released per-substrate pools carry the structure, the two
+component scores and the matching key, and no rule field. Either the example or a re-export of
+the pools with rule identity attached will close it.⟩
 
 ### Rule bank
 
@@ -168,12 +176,13 @@ not deployed.
 ### Rank fusion
 
 Both stages produce an opinion about each candidate: the filter's pair score and the
-generator's probability for the rule that produced it. The deployed system previously ordered
-candidates by their product. A product is scale-sensitive: if one scorer occupies a narrow
-range and the other a wide one, the wide one determines the order and the narrow one
-contributes almost nothing.
+generator's probability for the rule that produced it. The obvious way to combine two such
+scores is their product, and it is scale-sensitive. If one scorer occupies a narrow range and
+the other a wide one, the wide one determines the order and the narrow one contributes almost
+nothing.
 
-The deployed combination is instead reciprocal rank fusion,
+The deployed combination is instead reciprocal rank fusion
+[Cormack, Clarke & Buettcher, 2009],
 
 $$\mathrm{RRF}(c) \;=\; \sum_{i} \frac{1}{K + r_i(c)}, \qquad K = 60,$$
 
@@ -201,19 +210,20 @@ $0.0015$ higher, inside noise.
 ### Group rank
 
 Candidates group naturally by molecular formula. An oracle that orders these groups by whether
-they contain a reference is worth $+0.1729$ over the ranking it is measured against, which is the
-product ordering with each formula group emitted as a block on the uncapped pool of 588.7
-candidates. That is not the deployed ranking, and the figure is therefore an upper bound on a
-configuration the server does not run; the deployed comparison is the H12 row below. Two mechanisms for exploiting this were registered and
-both are reported here because their failure is informative.
+they contain a reference is worth $+0.1729$ over the ranking it is measured against. That ranking
+is the product ordering with each formula group emitted as a block, on the uncapped pool of 588.7
+candidates, and it is not what the server runs. The figure is therefore an upper bound on a
+configuration nobody deploys, and the comparison that bears on the deployed system is the H12 row
+below. Two mechanisms for spending this headroom were registered before either was built, and
+both are reported here because they fail in different and informative ways.
 
 **H8** trained a listwise group scorer whose ordering was applied to whole groups, emitted as
 blocks. Registered threshold $+0.05$; measured on the 291 comparison substrates, $-0.1203$,
 95% CI $[-0.1590, -0.0828]$. The
-deficit decomposes into $-0.0647$ attributable to the design — block emission is itself worse
-than interleaved emission, $0.4376$ against $0.5023$ — and $-0.0556$ to the model. The oracle
-had been measured in blocked form, so more than a third of the headroom it promised was the
-return of what the design spends.
+deficit decomposes into $-0.0647$ attributable to the design and $-0.0556$ to the model: block
+emission is by itself worse than interleaved emission, $0.4376$ against $0.5023$. Because the
+oracle is measured in blocked form, more than a third of the headroom it promises is the return
+of what the design spends.
 
 **H12** used the same model with nothing retrained, entering its group score as a third
 ranking in the same fusion:
@@ -225,15 +235,17 @@ effect is not selection: all twenty configurations beat the base on the 293-subs
 split, within a band of $0.0114$, and 70% of that validation margin survived the move to the
 291.
 
-**H14** tested the converse composition — the group signal as a gate applied before fusion,
-with the H9 budget and no new parameter. Registered threshold $+0.02$; measured on the 291, $-0.0286$,
-separated from zero against the hypothesis. The mechanism is closed by an oracle rather than by
-model quality: **perfect group ranking through the gate gives $-0.0361$**, worse than the
-generator cap it replaces. The median substrate has one group containing a reference, while
-filling a hundred candidates admits at least seven groups; after the single informative group
-the gate spends its remaining budget on groups its signal cannot separate, whereas the
-generator cap orders every candidate. The group signal is close to binary and the generator
-score is graded, so any mechanism that lets the former decide discards the latter's resolution.
+**H14** tested the converse composition: the group signal as a gate applied before fusion, with
+the H9 budget and no new parameter. Registered threshold $+0.02$; measured on the 291, $-0.0286$,
+separated from zero against the hypothesis.
+
+What closes this mechanism is an oracle rather than model quality. **Perfect group ranking through
+the gate gives $-0.0361$**, worse than the generator cap it replaces. The median substrate has one
+group containing a reference, while filling a hundred candidates admits at least seven groups. After
+the single informative group, the gate spends its remaining budget on groups its signal cannot
+separate; the generator cap, by contrast, orders every candidate. The group signal is close to
+binary and the generator score is graded, so any mechanism that lets the former decide discards
+the latter's resolution.
 
 The two results are symmetric: $+0.0286$ as a nudge on top of the generator's ordering,
 $-0.0286$ as a replacement for it.
@@ -244,24 +256,59 @@ we do not use it as one: a binary ordering leaves every reference-free group tie
 validation the trained scorer exceeds it, $+0.0412$ against $+0.0260$. What the pair does show is
 that the $+0.1729$ measured against the blocked product ordering is not available to either
 registered composition, and the reason differs between them: H8's design spends more than it
-draws, and H14's is bounded below the cap it replaces even under an oracle. ⟨ORACLE_BY_TYPE: whether the same headroom exists under a transformation-type
-grouping rather than a formula grouping — running at time of writing⟩
+draws, and H14's is bounded below the cap it replaces even under an oracle.
+
+**The grouping itself was the untested assumption.** A molecular formula may be standing in for
+the transformation rather than carrying the signal, so the same oracle was recomputed on the
+deployed pool — the H9 cap, ordered by the deployed fusion — under four partitions of one set of
+candidates. A finer partition wins at an oracle for nothing: in the limit of one candidate per
+group the oracle becomes a perfect ranker. The fourth partition is therefore a control, a random
+partition whose group-size multiset is exactly the type partition's on each substrate, so it
+matches the granularity and carries no chemistry.
+
+| partition | recall@15 | over fusion | groups per substrate |
+|---|---:|---|---:|
+| none (fusion, the deployed ranking) | 0.5353 | — | — |
+| molecular formula | 0.6602 | $+0.1248$ $[+0.0853, +0.1654]$ | 41.5 |
+| random, matched to type's group sizes | 0.6632 | $+0.1278$ $[+0.0809, +0.1757]$ | 51.4 |
+| transformation type | 0.7128 | $+0.1774$ $[+0.1404, +0.2175]$ | 51.4 |
+| both | 0.7158 | $+0.1805$ $[+0.1454, +0.2180]$ | 53.7 |
+
+Read against the control rather than against fusion, the four rows separate differently.
+Formula does not beat a random partition of its granularity: $-0.0030$,
+95% CI $[-0.0396, +0.0332]$. **Everything the formula oracle promises is delivered by any
+partition of that shape**, and the chemistry in it is not measurable here. Transformation type
+does beat the control, $+0.0496$, 95% CI $[+0.0248, +0.0768]$, and beats formula directly,
+$+0.0526$, 95% CI $[+0.0269, +0.0824]$. Their conjunction adds nothing to type alone,
+$+0.0030$, 95% CI $[-0.0044, +0.0131]$: type absorbs formula rather than complementing it.
+
+This relocates the headroom without enlarging it. It remains an oracle, and H8 is the standing
+demonstration that a blocked design returns part of what its oracle promises; what changes is
+which label a mechanism would have to learn. That label is the transformation type, which is the
+vocabulary the rule bank's coverage is already defined on and the label space registered as H1,
+so the question is one already on the register rather than a fourth mechanism.
+
+The typing step runs a maximum-common-substructure search under a wall-clock timeout and treats
+a cancelled search as untypeable, so this artifact is not byte-reproducible. Two runs on the same
+machine differed in 2 of approximately 29,100 typings; every figure in the table above was
+identical to four decimals, and the only cell that moved was the control at $k = 1$, by $0.0015$.
 
 ### Emission
 
-Under the product combination, the deployed system emitted candidates scoring within
-$\alpha = 0.5$ of the leader. This rule does not transfer to a rank fusion and the reason is
-structural: the worst candidate scores $0.88$ of the best under fusion against $0.016$ under
-the product, because a reciprocal-rank sum is a rank statistic without scale. At
-$\alpha = 0.5$ the rule admits $16.22$ candidates from a pool of $16.3$ — it truncates nothing.
+The natural emission rule under a product combination is a score ratio: emit every candidate
+scoring within $\alpha = 0.5$ of the leader. It does not transfer to a rank fusion, for a
+structural reason. A reciprocal-rank sum is a rank statistic without scale, so the worst
+candidate scores $0.88$ of the best under fusion against $0.016$ under the product; at
+$\alpha = 0.5$ the rule admits $16.22$ candidates from a pool of $16.3$, truncating nothing.
 
 The deployed emission is therefore the whole pool of the operating budget, with no threshold
 and no parameter; the size of an answer is set by the rule budget and by the substrate's
 chemistry. Two figures for MetaTox's output size appear in this paper and mean different things:
 $30.9$ where its list is truncated at the widest budget reported, and $36.34$ where it is read
 untruncated in the emission grid. The comparison table uses the first, because a budget of fifty
-is the widest column it has. Registered as **H11** with a criterion of zero lost cells over a grid of five
-matching criteria by eleven budgets: 0 of 55.
+is the widest column it has. Registered as **H11** with a criterion of zero lost cells over a grid of five matching
+criteria by ten budgets, 50 cells, together with five further cells that read MetaTox at its own
+untruncated emission rather than at a shared budget: 0 of 55 lost.
 
 ### Two operating modes
 
@@ -305,30 +352,50 @@ eligibility criteria and must be confirmed against the hosting platform.⟩
 
 ### Which population carries which number
 
-Three populations appear in this paper and no figure is stated without one. The **test split** is
-1,170 substrates carrying 2,597 references and is where the coverage ceiling and the type census
-are measured. The **validation split** is 293 substrates carrying 655 references and is where
-every registered ranking and timing threshold is checked, because a threshold checked where its
-rule was chosen is not a check. The **comparison set** is the 291 substrates on which every
-method predicts, and is where the comparison and the group-ranking results are reported. The
-tables below name the population in every row.
+Three evaluation populations appear in this paper, each a stated subset of a split rather
+than the split itself, and no figure is given without naming one.
+
+The **evaluated test set** is the 1,170 substrates of the 1,198-substrate clean test split that
+carry at least one reference, and it holds all 2,597 references of that split; the 28 excluded
+substrates carry none. It is where the coverage ceiling and the type census are measured.
+
+The **validation draw** is a declared sample of 300 substrates at seed 0 from the 1,020-substrate
+clean validation split. Of these, 294 produced a candidate pool and carry 657 references, and the
+293 held by both arms of a paired comparison carry 655. It is where every registered ranking and
+timing threshold is checked, because a threshold checked on the substrates its rule was chosen on
+is not a check. Sampling is without replacement, so a different cap yields a different set of the
+same size rather than a subset, and the cap and seed are recorded with every figure drawn from it.
+
+The **comparison set** is the 291 substrates on which every method predicts, carrying 665
+references. It is where the comparison and the group-ranking results are reported.
+
+The tables below name the population in every row.
 
 ### Data and split
 
-Splits are substrate-disjoint. A read-only audit canonicalises every SMILES and verifies zero
-substrate overlap and zero positive-pair overlap across each split pair; all three pairs return
-zero. Molecular overlap is non-zero and expected — 2,408 molecules occur in both train and
-test, and 243 test substrates appear as molecules in train — and is recorded so that it is not
-later discovered as leakage.
+⟨CORPUS: the provenance of the annotated substrate–metabolite corpus — its source, its release
+or access date, and the licence under which it is used. Nothing in the draft or the repository
+records this, and it is the first question a reader will ask of every number below.⟩
 
-The evaluated test set is 1,170 substrates carrying 2,597 reference metabolites. Of the 1,170,
-845 are parent drugs and 325 are themselves annotated products of another substrate in the
-split; methods do not treat the two alike, and the mixture is reported rather than averaged
-silently.
+The corpus is divided into three substrate-disjoint splits: 9,011 training substrates carrying
+17,454 annotated pairs, 1,020 validation substrates carrying 2,085, and 1,198 test substrates
+carrying 2,597. A read-only audit canonicalises every SMILES and verifies zero substrate overlap
+and zero positive-pair overlap across each split pair; all three pairs return zero. Molecular
+overlap is non-zero and expected, because a molecule that is a substrate in one split may appear
+as a product in another: 2,408 molecules occur in both train and test, and 243 test substrates
+appear as molecules in train. Both counts are recorded so that neither is later discovered and
+mistaken for leakage.
 
-Comparison with MetaTox is on the 291 test substrates for which both systems supply
-predictions. **Populations are never mixed**: every figure below names the set it is computed
-on.
+Of the 1,170 evaluated test substrates, 845 are parent drugs and 325 are themselves annotated
+products of another substrate in the split. Methods do not treat the two alike, so the mixture is
+reported rather than averaged silently.
+
+The comparison set carries no training contamination: 0 of its 291 substrates appear in train or
+validation under a canonical key. The same audit is the reason no external evaluation set is
+reported here — of the 37 GLORYx parent substrates, 24 (64.9%) are inside our train or validation
+splits, so a figure on that set would measure memorisation as much as prediction.
+
+**Populations are never mixed**: every figure below names the set it is computed on.
 
 ### Matching criteria
 
@@ -407,6 +474,7 @@ On the 291 shared test substrates carrying 665 annotated metabolites, micro reca
 | 50 | **0.7038** | 0.4902 | 0.6271 | 0.5113 | 0.4797 |
 
 Mean list length: GRAIL exhaustive 98.1, GRAIL interactive 15.6, MetaTox 30.9, SyGMa 40.5, MetaPredictor 10.7.
+Figure 1 plots the same sweep, shaded by where the paired interval separates.
 
 Read against the strongest comparator at each budget, the picture divides in three.
 
@@ -439,29 +507,35 @@ condition, tested on a population where it was not selected.
 | H13 | standardise survivors only | $\ge 10\times$ | $2.95\times$ | validation, 293 paired |
 | H15 | survivors + tautomer budget 200 | median $< 10$ s | 5.28 s | validation, 293 paired |
 
-Of fifteen registered hypotheses, six are confirmed and three failed. `paper2/preregistration.md`
+Of the fifteen registered hypotheses, nine are checked here: six confirmed and three failed.
+The remaining six (H1–H6) are registered against work this paper does not report — a typed label
+space, informed node features, learned abstention, a ranked prediction of intervention sizes, an
+out-of-sample null and a negative control — and are stated with their thresholds so that a later
+result on any of them cannot be a threshold chosen after the fact. The register, with every
+prediction as it was written and every outcome as it was measured, is
+`paper2/preregistration.md`.
 
 ### Runtime
 
-Standardisation was the binding constraint and its diagnosis was wrong twice before it was
-right. Three hypotheses were tested and rejected by measurement: the pairwise filter's
-maximum-common-substructure step (the generator outruns the filter a hundred to one);
-rule application (all 7,580 templates on a 109-atom molecule in 5.2 s, 20,655 products, at most
-0.58 s per rule); and substrate size as an axis (two 43-atom substrates, 64.7 s and no
-completion). The cause was product standardisation, at 94–99% of cold generator time. A cache
-had concealed it: a repeated substrate runs 16–47 times faster, so all early timings on the
-branch were partly warm.
+Standardisation is the binding constraint. Three other candidates were tested against it and
+rejected by measurement: the pairwise filter's maximum-common-substructure step (the generator
+outruns the filter a hundred to one); rule application (all 7,580 templates on a 109-atom
+molecule in 5.2 s, 20,655 products, at most 0.58 s per rule); and substrate size as an axis (two
+43-atom substrates, 64.7 s and no completion). What remains is product standardisation, at
+94–99% of cold generator time (Figure 2). A cache conceals it in ordinary use: a repeated
+substrate runs 16–47 times faster, so any timing not taken cold measures a mixture of the two
+regimes, and every figure in this section is cold.
 
 Moving standardisation to surviving candidates (**H13**) freed recall ($-0.0015$ against a cap
-of $0.01$) but failed on time: $2.95\times$ against a registered $10\times$. The mechanism was
-right and the arithmetic was not — enumeration collapsed by $13.9\times$, and standardising the
-hundred survivors became 72% of the new arm. Removing 94–99% of the work does not remove
-94–99% of the time; the remainder becomes the new majority.
+of $0.01$) but failed on time: $2.95\times$ against a registered $10\times$. The mechanism holds
+and the arithmetic does not. Enumeration collapses by $13.9\times$, and standardising the hundred
+survivors becomes 72% of the new arm: removing 94–99% of the work does not remove 94–99% of the
+time, because the remainder becomes the new majority.
 
 Adding a tautomer enumeration budget of 200 (**H15**) passes both halves: median time
 $49.85 \to 5.28$ s against a registered target below 10 s, recall loss $0.0015$ against a cap
-of $0.01$. The target was set in seconds rather than as a multiple, precisely because H13 had
-shown a multiple to measure change where the question is fitness for use. Part of the apparent speed-up is machine load. The enumeration stage is identical in the two
+of $0.01$. The target is registered in seconds rather than as a multiple, because a multiple measures
+change where the question is fitness for use. Part of the apparent speed-up is machine load. The enumeration stage is identical in the two
 survivors arms, so the ratio of its medians, $1.73$, measures load and nothing else. Dividing
 that out of the standardisation step's ratio leaves $2.52\times$ attributable to the tautomer
 budget itself, against $3.93$ predicted by the invariance curve; and applying it to the whole arm
@@ -469,9 +543,10 @@ puts the median substrate at $9.12$ s under the load the comparison arm ran at, 
 registered target of ten seconds. The headline $5.28$ s is measured on a machine running only
 this job.
 
-The budget lives in a module-level singleton shared with the tautomer matching key, so lowering
-it would silently have moved what counts as a hit. A private enumerator was introduced; keys on
-96 molecules are identical and the global setting is untouched.
+The budget lives in a module-level singleton shared with the tautomer matching key, so setting
+it globally would silently move what counts as a hit. The budget is therefore applied through a
+private enumerator: the global setting is untouched, and matching keys on 96 molecules are
+identical with and without it.
 
 ### The ceiling, and why it is a property of the corpus
 
@@ -499,7 +574,7 @@ an artifact of how finely a type is defined — is answered by varying the defin
 | number of changed bonds | 44 | 9 | 2.7% | **no** |
 
 The tail holds at every granularity at which a type still determines a product, and collapses
-only where it stops doing so. What this table supports is not that 87.2% of the gap is
+only where it stops doing so (Figure 3). What this table supports is not that 87.2% of the gap is
 singletons under our definition; it is that **the bound is invariant to the definition of a
 type across the whole range in which the definition is meaningful**, which makes it a fact
 about the annotation corpus rather than about our choice.
@@ -534,7 +609,8 @@ the sweep rather than a cell, made on our own numbers rather than about someone 
 Three things, none of which is a recall figure.
 
 Every prediction names the transformation rule that produced it and the site at which it fired,
-so a user can accept or reject a candidate on chemical grounds rather than on a score.
+so a user can accept or reject a candidate on chemical grounds rather than on a score
+(⟨CASE_STUDY⟩).
 
 The whole output is ranked. MetaTox ranks 5,177 of its 10,601 predictions by a
 metabolite-likeness score and leaves the remainder in file order; more than half of what it
@@ -585,8 +661,10 @@ leaderboards publish per-item predictions rather than aggregate scores.
 Predictions are single-step; applying the bank at depth 2 lifts the ceiling by ≈0.012 at 8.5
 times the candidate cost and is not deployed. Precision is bounded by annotation completeness.
 The rule-budget threshold in H10 proved to be a property of the requested budget rather than of
-the system, and is reported as such. The group-ranking headroom of $+0.1729$ is real and
-unreached by both registered compositions for structural reasons. The interactive mode runs out
+the system, and is reported as such. The group-ranking headroom is unreached by both registered
+compositions for structural reasons, and under a granularity-matched control the part of it
+attributable to a molecular formula does not separate from zero; what remains is an oracle over
+transformation types, which bounds a mechanism nobody has built. The interactive mode runs out
 of candidates above $k = 10$, and so do the comparators: at $k = 50$, 291 of MetaPredictor's 291
 lists and 249 of MetaTox's are shorter than the budget, so the widest column measures list length
 on every side and not only on ours. The comparison population is the 291 substrates on which all
@@ -604,7 +682,10 @@ sweep and pre-registration: `github.com/doctawho42/GRAIL`.
 A split manifest pins by digest the three triple files, the substrate sets, the evaluated test
 set, the stratum files, the rule bank and all third-party artifacts; `--verify` recomputes and
 names any leaf that has moved. Every committed numeric artifact records the commit that wrote
-it, and readers verify that record; the sweep is green on 38 pinned artifacts.
+it, and readers verify that record; the sweep is green on 40 pinned artifacts. That guarantee
+covers the pinned set and not the directory: of 258 files under `results/`, 117 carry no stamp and
+40 were written by a producer that has since changed. Every number in this paper comes from a
+pinned artifact.
 
 ---
 
@@ -614,25 +695,55 @@ it, and readers verify that record; the sweep is green on 38 pinned artifacts.
 
 ---
 
+## References
+
+Cited above by name and year. Each is present in `paper2/refs.bib` under the key given, so the
+conversion to LaTeX is a substitution and not a search.
+
+| cited as | key in `refs.bib` |
+|---|---|
+| Chavan, 2026 | `Chavan_2026` |
+| Cormack, Clarke & Buettcher, 2009 | `cormack2009` |
+| de Bruyn Kops et al., 2019 (GLORY) | `de_Bruyn_Kops_2019` |
+| de Bruyn Kops et al., 2020 (GLORYx) | `de_Bruyn_Kops_2020` |
+| Djoumbou-Feunang et al., 2019 (BioTransformer) | `Djoumbou_Feunang_2019` |
+| Larsson et al., 2025 | `Larsson_2025` |
+| Litsa et al., 2020 (MetaTrans) | `Litsa_2020` |
+| Ridder & Wagener, 2008 (SyGMa) | `Ridder_2008` |
+| Rudik et al., 2017 (MetaTox) | `Rudik_2017` |
+| Zhou et al., 2025 | `Zhou_2025` |
+| Zhou et al., 2026 | `Zhou_2026` |
+| Zhu et al., 2024 (MetaPredictor) | `Zhu_2024` |
+
+`refs.bib` holds 53 entries; the 12 above are what this text cites. The remainder support the
+evaluation-methodology argument and are cited in the companion manuscript.
+
+---
+
 # Placeholders to fill
 
 Everything computable from the released artifacts has been filled and the entries below
 are the ones no run can supply. Each was checked against the artifacts before being
 removed from this list; the closed ones are recorded in the paragraph beneath the table.
 
-| marker | what is needed |
-|---|---|
-| `⟨AFFILIATIONS⟩` | affiliations |
-| `⟨ANY_FURTHER⟩` | limitations the authors know of and this draft does not |
-| `⟨AUTHORS⟩` | author list |
-| `⟨CONFIRM⟩` | confirmation that the platform requires no login; NAR forbids mandatory registration |
-| `⟨LICENCE⟩` | the licence; NAR requires free non-commercial use under a standard licence |
-| `⟨ORACLE_BY_TYPE⟩` | the oracle recomputed under a transformation-type grouping, running |
-| `⟨SERVER⟩` | implementation stack, input and output formats, batch limits, sample data, help pages and tutorial, all of them NAR eligibility criteria |
-| `⟨SERVICE_URL⟩` | the deployed URL |
-| `⟨TBD⟩` | author contributions, funding, conflicts |
+| marker | what is needed | blocks submission |
+|---|---|---|
+| `⟨CORPUS⟩` | the provenance of the annotated substrate–metabolite corpus: source, access date, licence | yes |
+| `⟨SERVER⟩` | implementation stack, input and output formats, batch limits, sample data, help pages and tutorial, all of them NAR eligibility criteria | yes |
+| `⟨SERVICE_URL⟩` | the deployed URL | yes |
+| `⟨LICENCE⟩` | the licence; NAR requires free non-commercial use under a standard licence | yes |
+| `⟨CONFIRM⟩` | confirmation that the platform requires no login; NAR forbids mandatory registration | yes |
+| `⟨CASE_STUDY⟩` | one worked example: a substrate, its ranked output, the rule and site beside each candidate | yes |
+| `⟨AUTHORS⟩` | author list | yes |
+| `⟨AFFILIATIONS⟩` | affiliations | yes |
+| `⟨TBD⟩` | author contributions, funding, conflicts | yes |
+| `⟨ANY_FURTHER⟩` | limitations the authors know of and this draft does not | no |
 
-Closed since the first draft:
+`⟨CASE_STUDY⟩` is listed as blocking because the claim it would demonstrate — that every
+prediction names its rule and site — is the paper's main non-numerical claim, and no released
+artifact currently carries a rule field per candidate.
+
+Resolved from the artifacts:
 
 - `⟨VERSION⟩` — RDKit 2022.09.5, the version the bank parses under
 - `⟨N_SHARED⟩` — 291, from results/deployment_table.json
@@ -640,11 +751,18 @@ Closed since the first draft:
 - `⟨T_INTERACTIVE⟩` — 0.39 s median over 294 validation substrates, from results/mode_timings.json. The 1.85 s this was to be filled with is a mean over a forty-substrate draw from a different population
 - `⟨POP_H13⟩`, `⟨POP_H15⟩` — validation, 293 paired substrates, from the two verdict artifacts
 - `⟨REGISTRY_URL⟩` — paper2/preregistration.md
+- `⟨ORACLE_BY_TYPE⟩` — computed; see the group-rank section
+- `⟨CITE_METATOX⟩` — Rudik et al., 2017, JCIM 57(4):638–642, added to `refs.bib` as `Rudik_2017`
+- `⟨BIBTEX⟩` — the reference table above; `cormack2009`, `Rudik_2017` and `de_Bruyn_Kops_2019`
+  were missing from `refs.bib` and have been added, the first of them cited by the LaTeX and
+  therefore rendering as a broken reference until now
 
 **Numbers deliberately not used**, because they belong to the superseded architecture
 (product fusion, $\alpha$ emission) and would be stale here: the F1 table with GRAIL at 0.192,
 recall 0.219, precision 0.222, output 2.09, and its comparators. If a precision or F1 table is
 wanted, it must be recomputed under the deployed fusion.
 
-**Reference list** is by name and year only above; ⟨BIBTEX⟩ to be pulled from the companion
-manuscript, whose bibliography already holds all of them.
+**Citations in the LaTeX manuscript.** `paper2/body.tex` currently cites one work in its whole
+body. Every comparator it names — SyGMa, MetaTox, BioTransformer, GLORYx, MetaTrans,
+MetaPredictor — appears without a citation, though all six are in `refs.bib`. The reference
+table above gives the key for each so the wiring is a substitution.

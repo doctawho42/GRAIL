@@ -14,6 +14,12 @@
    "status": "current"
   },
   {
+   "artifact": "results/deployment_table.json",
+   "script": "deployment_table.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
    "artifact": "results/emission_grid.json",
    "script": "emission_grid.py",
    "how": "recorded source digest",
@@ -22,6 +28,78 @@
   {
    "artifact": "results/emission_leaderboard.json",
    "script": "emission_leaderboard.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
+   "artifact": "results/emission_rule_transfer.json",
+   "script": "emission_rule_transfer.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
+   "artifact": "results/group_decode.json",
+   "script": "group_decode.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
+   "artifact": "results/group_scorer_selection.json",
+   "script": "train_group_scorer.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
+   "artifact": "results/group_scorer_selection_h12.json",
+   "script": "train_group_scorer.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
+   "artifact": "results/group_scorer_selection_h14.json",
+   "script": "train_group_scorer.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
+   "artifact": "results/h10_verdict.json",
+   "script": "h10_verdict.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
+   "artifact": "results/h11_grid.json",
+   "script": "h11_grid.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
+   "artifact": "results/h12_verdict.json",
+   "script": "h12_verdict.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
+   "artifact": "results/h12_verdict_validation.json",
+   "script": "h12_verdict.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
+   "artifact": "results/h13_verdict.json",
+   "script": "h13_verdict.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
+   "artifact": "results/h14_verdict.json",
+   "script": "h14_verdict.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
+   "artifact": "results/h15_verdict.json",
+   "script": "h15_verdict.py",
    "how": "recorded source digest",
    "status": "current"
   },
@@ -40,6 +118,66 @@
   {
    "artifact": "results/h6_stratum.json",
    "script": "build_h6_stratum.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
+   "artifact": "results/h7_verdict.json",
+   "script": "h7_verdict.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
+   "artifact": "results/h8_verdict.json",
+   "script": "h8_verdict.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
+   "artifact": "results/h9_verdict.json",
+   "script": "h9_verdict.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
+   "artifact": "results/mode_timings.json",
+   "script": "mode_timings.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
+   "artifact": "results/novel_type_census.json",
+   "script": "novel_type_census.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
+   "artifact": "results/oracle_by_grouping.json",
+   "script": "oracle_by_grouping.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
+   "artifact": "results/pool_cap_cost.json",
+   "script": "pool_cap_cost.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
+   "artifact": "results/tautomer_budget.json",
+   "script": "tautomer_budget.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
+   "artifact": "results/tautomer_near_miss.json",
+   "script": "tautomer_near_miss.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
+   "artifact": "results/train_pools.json",
+   "script": "build_train_pools.py",
    "how": "recorded source digest",
    "status": "current"
   },
@@ -80,6 +218,18 @@
    "status": "current"
   },
   {
+   "artifact": "results/uspto_type_overlap.json",
+   "script": "uspto_type_overlap.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
+   "artifact": "results/val_pools.json",
+   "script": "build_val_pools.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
    "artifact": "results/vs_metatox.json",
    "script": "vs_metatox.py",
    "how": "recorded source digest",
@@ -92,7 +242,7 @@
    "status": "current"
   }
  ],
- "n_pinned": 15,
+ "n_pinned": 40,
  "n_pinned_stale": 0,
  "sweep": {},
  "sweep_not_current": []

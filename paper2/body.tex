@@ -5,17 +5,23 @@ compounds. Which compounds, as structures and not merely as a count, matters for
 drug design and for environmental fate assessment, because a metabolite can be more toxic, more
 persistent or more active than the parent.
 
-Two families of predictor dominate. Rule-based systems encode biotransformations as reaction
-templates and enumerate products by applying them. Sequence-to-sequence systems translate the
-substrate's string representation into metabolite strings. A further wave has appeared recently,
-including a chemical language model, a mechanistically informed graph framework and a server
-predicting pathway, site and product together.
+Two families of predictor dominate. Rule-based systems, among them
+SyGMa \citep{Ridder_2008}, BioTransformer \citep{Djoumbou_Feunang_2019}, GLORY and
+GLORYx \citep{de_Bruyn_Kops_2019, de_Bruyn_Kops_2020} and MetaTox \citep{Rudik_2017}, encode
+biotransformations as reaction templates and enumerate products by applying them.
+Sequence-to-sequence systems, among them MetaTrans \citep{Litsa_2020} and
+MetaPredictor \citep{Zhu_2024}, translate the substrate's string representation into metabolite
+strings. A further wave has appeared recently: a chemical language
+model \citep{Larsson_2025}, a mechanistically informed graph framework \citep{Zhou_2025}, a
+server predicting pathway, site and product together \citep{Zhou_2026}, and a preprint
+predicting all three jointly \citep{Chavan_2026}.
 
 Comparing any two of these is harder than it looks, and the difficulty is not effort. A recall
 figure depends on at least two settings that papers in this area report apart from their rankings
 or not at all: the rule deciding when a predicted structure counts as the reference, and the
 number of candidates a system may emit. A system emitting seventy candidates and one emitting
-eight are not measured on the same axis.
+eight are not measured on the same axis. Independent comparisons of these tools report the same
+obstacle \citep{Boyce_2022, Scholz_2023, Gao_2026}.
 
 GRAIL is built on the opposite premise: every evaluation choice is declared and the system is
 reported under all of them rather than under one. The claims below are therefore a sweep rather
@@ -31,19 +37,39 @@ $+\numHSevenDiff$ of recall on held-out data, more than any architectural change
 
 \subsection{Which population carries which number}
 
-Three populations appear here and no figure is stated without one. The \emph{test split} is
-\numPopulationTestsubs{} substrates carrying \numPopulationTestrefs{} references and is where the
-coverage ceiling and the type census are measured. The \emph{validation split} is
-\numHOneFiveNpaired{} substrates carrying \numHOneFiveNreferences{} references and is where every
-registered ranking and timing threshold is checked, since a threshold checked where its rule was
-chosen is not a check. The \emph{comparison set} is the \numPopulationN{} substrates on which
-every method predicts.
+The corpus divides into three substrate-disjoint splits: \numSplitTrainSubstrates{} training
+substrates carrying \numSplitTrainPairs{} annotated pairs, \numSplitValSubstrates{} validation
+substrates carrying \numSplitValPairs{}, and \numSplitTestSubstrates{} test substrates carrying
+\numSplitTestPairs{}. Disjointness by substrate is the discipline a molecular dataset requires if
+a held-out figure is to mean anything \citep{Joeres_2025, Kretschmer_2025}, and a read-only audit
+verifies zero substrate and zero positive-pair overlap across all three split pairs.
+
+Three evaluation populations appear here, each a stated subset of a split rather than a split
+itself, and no figure is given without naming one. The \emph{evaluated test set} is the
+\numPopulationTestsubs{} test substrates that carry at least one reference, holding all
+\numPopulationTestrefs{} references of that split; it is where the coverage ceiling and the type
+census are measured. The \emph{validation draw} is a declared sample of \numValdrawCap{} substrates at seed
+\numValdrawSeed{} from the validation split, of which \numValdrawDeclared{} produced a candidate
+pool and \numValdrawPaired{} are held by both arms of a paired comparison, carrying
+\numHOneFiveNreferences{} references; it is where every registered ranking
+and timing threshold is checked, since a threshold checked where its rule was chosen is not a
+check. Sampling is without replacement, so a different cap gives a different set of the same size
+rather than a subset, and cap and seed are recorded with every figure drawn from it. The
+\emph{comparison set} is the \numPopulationN{} substrates on which every method predicts,
+carrying \numPopulationReferences{} references.
+
+The comparison set carries no training contamination: \numPopulationInTrainOrVal{} of its
+\numPopulationN{} substrates appear in train or validation under a canonical key. The same audit
+is why no external evaluation set is reported: of the \numGloryxN{} GLORYx parent substrates,
+\numGloryxOverlap{} are inside our train or validation splits, so a figure on that set would
+measure memorisation as much as prediction.
 
 \subsection{Overview}
 
 GRAIL predicts in three stages, each separately inspectable. A generator scores every rule in a
 bank of \numBankRules{} SMIRKS templates against the substrate; selected rules are applied with
-RDKit 2022.09.5 and the products standardised and deduplicated; a filter scores each
+RDKit 2022.09.5 and the products standardised \citep{Hahnke_2018, Mansouri_2024} and
+deduplicated; a filter scores each
 (substrate, candidate) pair, and candidates are ordered by a rank fusion of the filter and
 generator orderings. Every emitted candidate carries the identity of the rule that produced it and
 the site at which it fired.
@@ -57,7 +83,8 @@ p(c) = 1 - \prod_{r \in R(c)} \left( 1 - p_r \right),
 \end{equation}
 so evidence from independent rules accumulates rather than competing. Equation~\ref{eq:noisyor}
 is why deduplication is not a cosmetic step: the key under which two products are judged the same
-decides which scores are combined, and changing that key moves the ranking.
+decides which scores are combined, and changing that key moves the ranking. Tautomers are the
+hard case, and their treatment is not settled by the standard identifiers \citep{Dhaked_2020}.
 
 \subsection{Rule bank}
 
@@ -139,7 +166,8 @@ criteria by eleven budgets: \numHOneOneLost{} of \numHOneOneCells{}.
 What counts as a hit is a declared axis with five settings: canonical SMILES equality, the full
 InChIKey, its stereochemistry-blind first block, Tanimoto similarity of one over Morgan
 fingerprints, and a tautomer-aware key that canonicalises tautomers on both sides. The last is the
-default, because the references neither carry stereochemistry nor distinguish tautomers. All five
+default, because the references neither carry stereochemistry nor distinguish tautomers, and
+because standard identifiers normalise only a subset of tautomers \citep{Dhaked_2020}. All five
 are reported for every comparison.
 
 Recall at cut-off $k$ for substrate $s$ with references $Y_s$ and the first $k$ predictions
@@ -165,6 +193,9 @@ system emitting fewer candidates is rewarded for reasons unrelated to its chemis
 
 No single budget is privileged. A claim that the system leads is made for a cell only where that
 cell's interval excludes zero, and where an ordering is not established the table says so.
+Reporting the whole space of defensible analysis choices rather than one chosen
+cell is the multiverse and specification-curve discipline \citep{Steegen_2016, Simonsohn_2020},
+applied here to the two choices this literature leaves undeclared.
 
 \section{Results}
 
@@ -210,7 +241,10 @@ figure in Table~\ref{tab:sweep} is micro.
 \subsection{Where the design came from}
 
 Every deployed choice is a registered hypothesis with a threshold and a falsification condition,
-tested where it was not selected. Of fifteen registered, six are confirmed and three failed.
+tested where it was not selected. Of the fifteen registered, nine are checked here: six
+confirmed and three failed. The remaining six are registered against work this paper does not
+report and are stated with their thresholds, so that a later result on any of them cannot be a
+threshold chosen after the fact.
 
 \input{table_hypotheses}
 
@@ -321,7 +355,8 @@ across the whole range in which the definition is meaningful, which makes it a f
 annotation corpus rather than about our choice.
 
 Nor is the missing chemistry available in the largest reaction library we hold. Typing
-\numUsptoTemplates{} retrosynthetic templates in the metabolic direction gives \numUsptoTypes{}
+\numUsptoTemplates{} retrosynthetic templates \citep{Maziarz_2025, Tanovic_2026} in the
+metabolic direction gives \numUsptoTypes{}
 types, of which \numUsptoHit{} are among the \numCensusTypes{} missing, carrying \numUsptoMass{}
 of the \numCeilingNovel{} misses. The control that makes this readable: bank and library share
 \numUsptoSanity{} types, so the intersection measures real absence rather than two incomparable
@@ -353,9 +388,12 @@ reported, which is what makes the comparison reproducible by a third party.
 
 GRAIL does not lead at the tight budgets. At $k=15$ and $20$ no arm separates from the strongest
 comparator. The established lead is at $k=30$ and $50$. The system is not compared against the
-2025--26 wave, because that wave cannot be run as released: of \numComparatorsUnavailable{} such systems, one releases
-training code without a checkpoint, one has a withdrawn module, one offers only a web form and one
-has no repository. Precision figures are bounded by annotation completeness. And the advantage at
+2025--26 wave, because that wave cannot be run as released: of \numComparatorsUnavailable{} such
+systems, one releases training code without a checkpoint \citep{Larsson_2025}, one has a
+withdrawn module \citep{Zhou_2025}, one offers only a web form \citep{Zhou_2026} and one has no
+repository \citep{Chavan_2026}. A reader therefore cannot presently verify any ranking in this
+literature, which is the concrete case for leaderboards releasing per-item predictions rather
+than aggregate scores \citep{Rodriguez_2021, Mishra_2021}. Precision figures are bounded by annotation completeness. And the advantage at
 wide budgets is partly a statement about output length on all sides rather than about ranking.
 
 \subsection{The ceiling bounds this formulation, not the task}
@@ -365,7 +403,8 @@ rather than asserted, and mining is saturated. Extending coverage requires new r
 and the census narrows the search: synthetic corpora are excluded by measurement, leaving
 enzymatic and regulatory sources. Metabolite identifications from radiolabelled human ADME studies
 reported in regulatory submissions are human \emph{in vivo} data on exactly the population
-predicted here and are, to our knowledge, not systematically mined. The bound applies to any
+predicted here, have been used to benchmark this class of tool \citep{Gao_2026}, and are, to
+our knowledge, not systematically mined as a source of rules. The bound applies to any
 predictor trained on a comparable corpus, including sequence-to-sequence systems, which do not
 report it.
 

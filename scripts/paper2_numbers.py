@@ -56,6 +56,21 @@ def build():
     n["gloryx.n"] = ovl["GLORYx external set"]["keyed"]
     n["gloryx.fraction"] = ovl["GLORYx external set"]["fraction"]
 
+    # the splits the three evaluation populations are drawn from. A population described by its
+    # own size alone reads as a whole split; each of these is a stated subset of one.
+    lk = art("leakage_fix_report.json")["clean_split_stats"]
+    for split in ("train", "val", "test"):
+        n[f"split.{split}.substrates"] = lk[split]["remaining_substrates"]
+        n[f"split.{split}.pairs"] = lk[split]["remaining_positive_pairs"]
+
+    # the validation draw is a sample and not the split; its cap and seed are what make the
+    # population reproducible, and a figure that names neither is not checkable
+    vp = art("val_pools.json")["population"]
+    n["valdraw.cap"] = vp["cap"]
+    n["valdraw.seed"] = vp["seed"]
+    n["valdraw.declared"] = vp["declared_n"]
+    n["valdraw.paired"] = vp["n"]
+
     # the deployed comparison, per arm and budget
     ARMS = {"whole bank": "bank", "trained budget": "trained", "metatox": "metatox",
             "sygma": "sygma", "metapredictor": "metapredictor"}
@@ -230,11 +245,19 @@ def build():
     n["relax.carriers"] = car.get("types_with_a_carrier", 385)
     n["relax.predicted"] = car.get("expected_recovered", 8.5)
 
-    # provenance, stated as the pinned set and not the directory
-    n["prov.pinned"] = 39
-    n["prov.files"] = 255
-    n["prov.unstamped"] = 117
-    n["prov.changed"] = 39
+    # Provenance, stated as the pinned set and not the directory. These four were literals here
+    # once, inside the one generator whose contract is that no number is a literal: when the
+    # pinned set grew, the paper went on reporting the old size. They are read from the sweep,
+    # which must be run with --all so the directory counts exist.
+    pv = art("artifact_provenance.json")
+    sweep = pv["sweep"]
+    if not sweep:
+        raise SystemExit("results/artifact_provenance.json carries no directory sweep; "
+                         "run: python scripts/audit_artifact_provenance.py --all")
+    n["prov.pinned"] = pv["n_pinned"]
+    n["prov.files"] = pv["n_pinned"] + sum(sweep.values())
+    n["prov.unstamped"] = sweep.get("unstamped", 0)
+    n["prov.changed"] = sweep.get("producer_changed", 0)
     return n
 
 
