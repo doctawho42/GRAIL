@@ -62,27 +62,37 @@ def grain():
 
 
 def hypotheses():
+    """The registered predictions, numbered in the order the paper reaches them.
+
+    The register's own identifiers run H7 to H15 with H1 to H6 belonging to work this paper does
+    not report, and they are not in the order a reader meets them. That numbering is a record of
+    when each was written, which is information about us and not about the result, so the table
+    numbers them P1 to P9 in reading order and carries the register's identifier beside each so
+    the audit trail survives the rename.
+    """
     n = json.loads((ROOT / "results/paper2_numbers.json").read_text())["numbers"]
-    H = [("H7", "rank fusion instead of product", "$+0.05$", "h7.diff", "validation"),
-         ("H9", "pool cap 100 by generator", "$+0.015$", "h9.diff", "validation"),
-         ("H10", "rule budget 30 from checkpoint", "$\\le +0.05$", "h10.bought", "validation"),
-         ("H11", "emission = whole pool", "0 cells", "h11.lost", "grid $5\\times11$"),
-         ("H12", "group score as third rank", "$+0.02$", "h12.diff", "comparison set"),
-         ("H8", "group score, blocked", "$+0.05$", "h8.diff", "comparison set"),
-         ("H14", "group score as a gate", "$+0.02$", "h14.diff", "comparison set"),
-         ("H13", "standardise survivors only", "$\\ge 10\\times$", "h13.factor", "validation"),
-         ("H15", "survivors + tautomer budget 200", "$<10$ s", "h15.time", "validation")]
+    H = [("H7", "rank fusion instead of a product of scores", "$+0.05$", "h7.diff", "validation"),
+         ("H9", "candidate pool capped at 100", "$+0.015$", "h9.diff", "validation"),
+         ("H10", "rule budget of 30 from the checkpoint", "$\\le +0.05$", "h10.bought", "validation"),
+         ("H11", "emit the whole pool, no threshold", "0 cells", "h11.lost", "grid $5\\times10$"),
+         ("H12", "group score as a third ranking", "$+0.02$", "h12.diff", "comparison set"),
+         ("H8", "group score, groups emitted as blocks", "$+0.05$", "h8.diff", "comparison set"),
+         ("H14", "group score as a gate before fusion", "$+0.02$", "h14.diff", "comparison set"),
+         ("H13", "standardise surviving candidates only", "$\\ge 10\\times$", "h13.factor", "validation"),
+         ("H15", "survivors, tautomer budget 200", "$<10$ s", "h15.time", "validation")]
     rows = []
-    for h, what, thr, key, pop in H:
+    for i, (h, what, thr, key, pop) in enumerate(H, 1):
         v = n[key]
         val = f"{v:+.4f}" if isinstance(v, float) and abs(v) < 1 else str(v)
-        rows.append(f"{h} & {what} & {thr} & ${val}$ & {pop} \\\\")
-    return ("\\begin{table}[t]\n\\centering\\small\n\\begin{tabular}{lllll}\n\\toprule\n"
-            " & what was fixed & threshold & measured & tested on \\\\\n\\midrule\n" +
+        rows.append(f"P{i} & {what} & {thr} & ${val}$ & {pop} & {h} \\\\")
+    return ("\\begin{table}[t]\n\\centering\\small\n\\begin{tabular}{llllll}\n\\toprule\n"
+            " & what was fixed & threshold & measured & tested on & register \\\\\n\\midrule\n" +
             "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n"
-            "\\caption{Every deployed choice as a registered hypothesis, with the population it "
-            "was checked on. H13's figure is a factor and H15's a median in seconds; the rest are "
-            "differences in micro recall@15.}\n\\label{tab:hyp}\n\\end{table}\n")
+            "\\caption{Every deployed choice as a prediction fixed before it was checked, with the "
+            "population it was checked on. P8's figure is a speed-up factor and P9's a median in "
+            "seconds; the rest are differences in micro recall@15. The last column gives the "
+            "identifier each carries in the released register, whose numbering records when each "
+            "was written rather than where it appears here.}\n\\label{tab:hyp}\n\\end{table}\n")
 
 
 # The four annotated metabolites of the worked example, named so the table reads as chemistry

@@ -245,6 +245,31 @@ def build():
     n["relax.carriers"] = car.get("types_with_a_carrier", 385)
     n["relax.predicted"] = car.get("expected_recovered", 8.5)
 
+    # the leakage audit and the bank's composition, for the supporting information
+    lkr = art("leakage_fix_report.json")
+    n["leak.mol_overlap"] = lkr["clean_overlap"]["train_test"]["molecule_overlap"]
+    n["leak.sub_as_mol"] = lkr["structure_leak"]["test_substrate_in_train_molecules"]
+    catalog = json.loads((ROOT / "results/mined_rule_catalog_v2.json").read_text())
+    n["mined.rules"] = len(catalog)
+    # the value is a record, not a count; "count" is the number of training pairs the template
+    # was derived from, and a naive len() over the record silently gave zero singletons
+    n["mined.singleton"] = sum(1 for v in catalog.values() if v["count"] == 1)
+    n["mined.five_or_more"] = sum(1 for v in catalog.values() if v["count"] >= 5)
+    bank = [ln for ln in (ROOT / "grail_metabolism/resources/extended_smirks.txt"
+                          ).read_text().splitlines() if ln.strip()]
+    n["bank.rules"] = len(bank)
+    from rdkit import RDLogger
+    from rdkit.Chem import AllChem
+    RDLogger.DisableLog("rdApp.*")
+    def _parses(smirks):
+        # ReactionFromSmarts raises on a malformed template rather than returning None, so the
+        # count has to catch as well as test; one template in the bank does exactly this
+        try:
+            return AllChem.ReactionFromSmarts(smirks.strip()) is not None
+        except Exception:
+            return False
+    n["bank.parses"] = sum(1 for r in bank if _parses(r))
+
     # the worked example, both arms
     for arm, fname in (("inter", "case_study.json"), ("exh", "case_study_exhaustive.json")):
         cs = art(fname)

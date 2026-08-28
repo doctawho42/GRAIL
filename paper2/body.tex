@@ -49,11 +49,10 @@ itself, and no figure is given without naming one. The \emph{evaluated test set}
 \numPopulationTestsubs{} test substrates that carry at least one reference, holding all
 \numPopulationTestrefs{} references of that split; it is where the coverage ceiling and the type
 census are measured. The \emph{validation draw} is a declared sample of \numValdrawCap{} substrates at seed
-\numValdrawSeed{} from the validation split, of which \numValdrawDeclared{} produced a candidate
-pool and \numValdrawPaired{} are held by both arms of a paired comparison, carrying
-\numHOneFiveNreferences{} references; it is where every registered ranking
-and timing threshold is checked, since a threshold checked where its rule was chosen is not a
-check. Sampling is without replacement, so a different cap gives a different set of the same size
+\numValdrawSeed{} from the validation split. Of these, \numValdrawDeclared{} produced a candidate
+pool, and the \numValdrawPaired{} held by both arms of a paired comparison carry
+\numHOneFiveNreferences{} references. Every registered ranking and timing threshold is checked
+here, since a threshold checked where its rule was chosen is not a check. Sampling is without replacement, so a different cap gives a different set of the same size
 rather than a subset, and cap and seed are recorded with every figure drawn from it. The
 \emph{comparison set} is the \numPopulationN{} substrates on which every method predicts,
 carrying \numPopulationReferences{} references.
@@ -66,10 +65,9 @@ measure memorisation as much as prediction.
 
 \subsection{Overview}
 
-GRAIL predicts in three stages, each separately inspectable. A generator scores every rule in a
-bank of \numBankRules{} SMIRKS templates against the substrate; selected rules are applied with
-RDKit 2022.09.5 and the products standardised \citep{Hahnke_2018, Mansouri_2024} and
-deduplicated; a filter scores each
+GRAIL predicts in three stages, each separately inspectable. A generator scores every rule in a bank of \numBankRules{} SMIRKS templates against the
+substrate. The selected rules are applied with RDKit 2022.09.5, and their products standardised
+\citep{Hahnke_2018, Mansouri_2024} and deduplicated. A filter then scores each
 (substrate, candidate) pair, and candidates are ordered by a rank fusion of the filter and
 generator orderings. Every emitted candidate carries the identity of the rule that produced it and
 the site at which it fired.
@@ -101,9 +99,9 @@ re-derives every template it derived before and none new.
 
 \subsection{Rank fusion}
 
-Both learned stages produce an opinion about each candidate. The deployed system previously
-ordered candidates by the product of the two scores. A product is scale-sensitive: if one scorer
-occupies a narrow range and the other a wide one, the wide one determines the order.
+Both learned stages produce an opinion about each candidate. The obvious way to combine two such
+scores is their product, and a product is scale-sensitive: if one scorer occupies a narrow range
+and the other a wide one, the wide one determines the order.
 
 The deployed combination is reciprocal rank fusion \citep{cormack2009},
 \begin{equation}
@@ -112,10 +110,10 @@ The deployed combination is reciprocal rank fusion \citep{cormack2009},
 where $r_i(c)$ is the rank of $c$ under scorer $i$. Only positions enter, so the two opinions
 contribute equally whatever their scales.
 
-This was registered as hypothesis H7 with a threshold of $+\numHSevenThreshold$ and evaluated on
+This was registered as prediction P1 with a threshold of $+\numHSevenThreshold$ and evaluated on
 the validation split, where it had not been selected: $+\numHSevenDiff$, 95\% CI
-$[+\numHSevenLo, +\numHSevenHi]$. On the set where the variant had been chosen among four it gave
-$+0.109$; the shrinkage to two thirds is the measured cost of that selection.
+$[+\numHSevenLo, +\numHSevenHi]$. On the set where the variant was chosen among four it gives
+$+0.109$, and the shrinkage to two thirds is the measured cost of that selection.
 
 \subsection{Pool cap}
 
@@ -124,7 +122,7 @@ is built:
 \begin{equation}
 \hat{C}(s) = \operatorname*{arg\,top}_{c \in C(s)}{}^{\,\numHNineCap} \; p(c),
 \end{equation}
-where $C(s)$ is everything the applied rules enumerate. Registered as H9 with a threshold of
+where $C(s)$ is everything the applied rules enumerate. Registered as prediction P2 with a threshold of
 $+\numHNineThreshold$; measured $+\numHNineDiff$, 95\% CI $[+\numHNineLo, +\numHNineHi]$, mean
 pool \numHNinePoolBefore{} to \numHNinePoolAfter{}. The cap was registered to gain and it gains:
 it removes a few candidates that were a substrate's only correct answer and many more that were
@@ -134,9 +132,10 @@ tautology.
 
 \subsection{Rule budget and two operating modes}
 
-The trained checkpoint records a rule budget of \numHOneZeroTopk{}, while every pool in the
-project had been built with the whole bank and what that setting costs had never been measured.
-Registered as H10 with a ceiling of $+\numHOneZeroThreshold$ for what the whole bank buys: on validation
+The trained checkpoint records a rule budget of \numHOneZeroTopk{}, and the pools this paper
+reports elsewhere apply the whole bank, so the two differ by a factor of \numBankRules{} to
+\numHOneZeroTopk{} in how much of the bank they consult. What the difference buys was registered
+as prediction P3 with a ceiling of $+\numHOneZeroThreshold$: on validation
 $+\numHOneZeroBought$, 95\% CI $[\numHOneZeroLo, +\numHOneZeroHi]$, mean pool
 \numHOneZeroPoolBank{} to \numHOneZeroPoolTrained{}.
 
@@ -145,7 +144,7 @@ $+\numHOneZeroBought$, 95\% CI $[\numHOneZeroLo, +\numHOneZeroHi]$, mean pool
 On the comparison set the same quantity is $+0.0556$, past the ceiling. The discrepancy is
 reported rather than resolved and it has a reading: at $k \le 10$ the whole bank buys nothing on
 either population, and from $k=15$ it buys more the wider the budget, because the interactive arm
-runs out of candidates. The threshold turned out to be a property of the budget requested rather
+runs out of candidates. The threshold is therefore a property of the budget requested rather
 than of the system.
 
 \subsection{Emission}
@@ -158,7 +157,7 @@ $16.22$ candidates from a pool of $16.3$, truncating nothing.
 
 The deployed emission is therefore $\hat{C}(s)$ itself, ordered by fusion and truncated by
 nothing, so $|\hat{Y}_s| = |\hat{C}(s)|$ is set by the rule budget and the substrate's chemistry
-and by no parameter of ours. Registered as H11 with a criterion of zero lost cells over a grid of five matching
+and by no parameter of ours. Registered as prediction P4 with a criterion of zero lost cells over a grid of five matching
 criteria by eleven budgets: \numHOneOneLost{} of \numHOneOneCells{}.
 
 \subsection{Evaluation}
@@ -266,8 +265,8 @@ selects, so no ranking could have recovered them. The exhaustive mode applies th
 \numCaseExhSeconds{}~s, returns \numCaseExhCandidates{} candidates and produces all
 \numCaseExhFound{}, reaching every one of them by $k=30$. Both timings are one substrate on one
 run rather than the medians of Table~\ref{tab:modes}. The division the sweep shows across
-\numPopulationN{} substrates is visible on this one molecule: the cheap arm is right about what
-it emits and runs out, and the wide arm keeps having candidates.
+\numPopulationN{} substrates is visible on this one molecule: the interactive mode is right about what
+it emits and runs out, and the exhaustive mode keeps having candidates.
 
 The attribution is what a score cannot supply. All three phosphorylations fire at the same
 substrate atoms, the 5$^\prime$ hydroxymethyl, under three different rules, and the deamination
@@ -292,18 +291,18 @@ reference is worth $+\numOracleHeadroom$ over the ranking it is measured against
 product ordering with each group emitted as a block on the uncapped pool. That is not the deployed
 ranking, so the figure bounds a configuration that is not deployed.
 
-H8 trained a listwise group scorer applied to whole groups. Registered threshold $+\numHEightThreshold$; measured
+P6 trained a listwise group scorer applied to whole groups. Registered threshold $+\numHEightThreshold$; measured
 on the comparison set, $\numHEightDiff$. The deficit splits into $\numHEightDesign$ from the
 design, block emission being worse than interleaved (\numHEightBlocked{} against
 \numHEightInterleaved{}), and $\numHEightModel$ from the model. Because the oracle is measured
 in blocked form, a third of the headroom it promises is the return of what the design spends.
 
-H12 used the same model untrained further, entering its group score as a third ranking in the same
+P5 used the same model untrained further, entering its group score as a third ranking in the same
 fusion. Measured $+\numHOneTwoDiff$, 95\% CI $[+\numHOneTwoLo, +\numHOneTwoHi]$. The effect is not
 selection: all twenty configurations beat the base on validation and 70\% of that margin survived
 the move.
 
-H14 tested the converse, the group signal as a gate before fusion, at a registered
+P7 tested the converse, the group signal as a gate before fusion, at a registered
 $+\numHOneFourThreshold$. Measured $\numHOneFourDiff$,
 separated against the hypothesis, and the mechanism is closed by an oracle rather than by model
 quality: a perfect group ranking through the gate gives $\numHOneFourCeiling$, worse than the
@@ -337,21 +336,21 @@ step, rule application, and substrate size as an axis. The cause was product sta
 \numHOneThreeEnumeration{} times the remaining work, run once per product of every template. A
 cache had concealed it, a repeated substrate running many times faster.
 
-Moving standardisation to surviving candidates (H13) freed recall, $\numHOneThreeRecallDiff$
+Moving standardisation to surviving candidates (P8) freed recall, $\numHOneThreeRecallDiff$
 against a cap of $0.01$, but failed on time, $\numHOneThreeFactor\times$ against a registered
 $10\times$. The mechanism was right and the arithmetic was not: enumeration collapsed, and
 standardising the survivors became the majority of the new arm. Removing most of the work does not
 remove most of the time once the remainder is the new majority.
 
-Adding a tautomer enumeration budget of \numHOneFiveBudget{} (H15) passes both halves: median
+Adding a tautomer enumeration budget of \numHOneFiveBudget{} (P9) passes both halves: median
 \numHOneThreeTimeBefore~s to \numHOneFiveTime~s against a registered target below ten, recall loss
 \numHOneFiveRecallDiff{} against a cap of $0.01$. Of \numHOneFiveCandidates{} candidates,
 \numHOneFiveMoved{} standardise to a different molecule under the bounded budget.
 
-Part of the speed-up is machine load. The enumeration step is identical in the two arms, so the
-ratio of its medians, \numHOneFiveLoad{}, measures load alone; dividing it out leaves
-\numHOneFiveAttributable$\times$ attributable to the budget, and applying it to the whole arm puts
-the median at \numHOneFiveMedianUnderload~s under the other arm's load, still inside the target.
+Part of the speed-up is machine load. The enumeration step is identical in the two arms, so the ratio of its medians,
+\numHOneFiveLoad{}, measures load alone. Dividing it out leaves
+\numHOneFiveAttributable$\times$ attributable to the budget. Applying it to the whole arm puts the
+median at \numHOneFiveMedianUnderload~s under the other arm's load, still inside the target.
 
 The budget lives in a module-level singleton shared with the matching key, so lowering it would
 silently have moved what counts as a hit. A private enumerator was introduced and the keys were
@@ -365,8 +364,8 @@ a transformation type the bank does not hold, \numCeilingKnown{} need a type it 
 did not fire, and \numCeilingUntypeable{} cannot be typed.
 
 Relaxing the convention-dependent primitives in the templates recovers three of the
-\numCeilingKnown{}, moving the ceiling by $+0.0012$. The a-priori bound had been computed in
-advance and predicted about eight.
+\numCeilingKnown{}, moving the ceiling by $+0.0012$. A bound computed before the run predicted
+about eight.
 
 The \numCeilingNovel{} misses of absent type collapse into \numCensusTypes{} distinct types, of
 which \numCensusOnce{} occur once and carry \numCensusOnceShare{} of the mass. The objection that
@@ -386,9 +385,9 @@ a transformation.}
 \end{figure*}
 
 The tail holds at every granularity at which a type still determines a product and collapses only
-where it stops doing so. What the table supports is not that \numCensusOnceShare{} of the gap is
-singletons under our definition; it is that the bound is invariant to the definition of a type
-across the whole range in which the definition is meaningful, which makes it a fact about the
+where it stops doing so. The table does not support the claim that \numCensusOnceShare{} of the gap is singletons under
+our definition. It supports a different one: the bound is invariant to the definition of a type
+across the whole range in which that definition is meaningful. That makes it a fact about the
 annotation corpus rather than about our choice.
 
 Nor is the missing chemistry available in the largest reaction library we hold. Typing
@@ -424,11 +423,10 @@ reported, which is what makes the comparison reproducible by a third party.
 \subsection{What the numbers do not support}
 
 GRAIL does not lead at the tight budgets. At $k=15$ and $20$ no arm separates from the strongest
-comparator. The established lead is at $k=30$ and $50$. The system is not compared against the
-2025--26 wave, because that wave cannot be run as released: of \numComparatorsUnavailable{} such
-systems, one releases training code without a checkpoint \citep{Larsson_2025}, one has a
-withdrawn module \citep{Zhou_2025}, one offers only a web form \citep{Zhou_2026} and one has no
-repository \citep{Chavan_2026}. A reader therefore cannot presently verify any ranking in this
+comparator. The established lead is at $k=30$ and $50$. The system is not compared against the 2025--26 wave, because that wave cannot be run as
+released. Of \numComparatorsUnavailable{} such systems, one releases training code without a
+checkpoint \citep{Larsson_2025}, one has a withdrawn module \citep{Zhou_2025}, one offers only a
+web form \citep{Zhou_2026} and one has no repository \citep{Chavan_2026}. A reader therefore cannot presently verify any ranking in this
 literature, which is the concrete case for leaderboards releasing per-item predictions rather
 than aggregate scores \citep{Rodriguez_2021, Mishra_2021}. Precision figures are bounded by annotation completeness. And the advantage at
 wide budgets is partly a statement about output length on all sides rather than about ranking.
@@ -471,8 +469,8 @@ scores alone.
 
 Predictions are single-step; applying the bank at depth two lifts the ceiling by about $0.012$ at
 $8.5$ times the candidate cost and is not deployed. Precision is bounded by annotation
-completeness. The rule-budget threshold in H10 proved to be a property of the requested budget
-rather than of the system. The group-ranking headroom is real and unreached by both registered
+completeness. The rule-budget threshold in P3 is a property of the requested budget rather than
+of the system. The group-ranking headroom is real and unreached by both registered
 compositions for structural reasons. Every method runs out of candidates at wide budgets, so the
 widest columns measure list length on all sides. The comparison population is the
 \numPopulationN{} substrates on which all methods predict, a quarter of the evaluated test split

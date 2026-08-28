@@ -1,20 +1,20 @@
 \begin{table}[t]
 \centering\small
-\begin{tabular}{lllll}
+\begin{tabular}{llllll}
 \toprule
- & what was fixed & threshold & measured & tested on \\
+ & what was fixed & threshold & measured & tested on & register \\
 \midrule
-H7 & rank fusion instead of product & $+0.05$ & $+0.0733$ & validation \\
-H9 & pool cap 100 by generator & $+0.015$ & $+0.0260$ & validation \\
-H10 & rule budget 30 from checkpoint & $\le +0.05$ & $+0.0092$ & validation \\
-H11 & emission = whole pool & 0 cells & $0$ & grid $5\times11$ \\
-H12 & group score as third rank & $+0.02$ & $+0.0286$ & comparison set \\
-H8 & group score, blocked & $+0.05$ & $-0.1203$ & comparison set \\
-H14 & group score as a gate & $+0.02$ & $-0.0286$ & comparison set \\
-H13 & standardise survivors only & $\ge 10\times$ & $2.95$ & validation \\
-H15 & survivors + tautomer budget 200 & $<10$ s & $5.28$ & validation \\
+P1 & rank fusion instead of a product of scores & $+0.05$ & $+0.0733$ & validation & H7 \\
+P2 & candidate pool capped at 100 & $+0.015$ & $+0.0260$ & validation & H9 \\
+P3 & rule budget of 30 from the checkpoint & $\le +0.05$ & $+0.0092$ & validation & H10 \\
+P4 & emit the whole pool, no threshold & 0 cells & $0$ & grid $5\times10$ & H11 \\
+P5 & group score as a third ranking & $+0.02$ & $+0.0286$ & comparison set & H12 \\
+P6 & group score, groups emitted as blocks & $+0.05$ & $-0.1203$ & comparison set & H8 \\
+P7 & group score as a gate before fusion & $+0.02$ & $-0.0286$ & comparison set & H14 \\
+P8 & standardise surviving candidates only & $\ge 10\times$ & $2.95$ & validation & H13 \\
+P9 & survivors, tautomer budget 200 & $<10$ s & $5.28$ & validation & H15 \\
 \bottomrule
 \end{tabular}
-\caption{Every deployed choice as a registered hypothesis, with the population it was checked on. H13's figure is a factor and H15's a median in seconds; the rest are differences in micro recall@15.}
+\caption{Every deployed choice as a prediction fixed before it was checked, with the population it was checked on. P8's figure is a speed-up factor and P9's a median in seconds; the rest are differences in micro recall@15. The last column gives the identifier each carries in the released register, whose numbering records when each was written rather than where it appears here.}
 \label{tab:hyp}
 \end{table}
