@@ -69,6 +69,27 @@ Ranking is settled before any key is taken, so the criterion changes what counts
 never what is ranked. The parent-drop convention is re-derived under each criterion so that it
 means the same thing in every column.
 
+The two criteria under which GRAIL never leads sit at opposite ends of strictness. Canonical
+SMILES equality is the strictest of the five, and under it a hit requires that two pipelines
+produce the same string for the same molecule, which is a property of their standardisation
+conventions rather than of their chemistry. Tanimoto similarity of one on Morgan fingerprints is
+the loosest, and it merges structures a fingerprint cannot separate, which credits every method
+with hits it did not earn and credits the comparators with more of them. Neither is a defensible
+default, and the paper's argument is not that one criterion is right but that the choice has to be
+declared and its consequences shown.
+
+The reference column of Table~\ref{tab:si-criterion} reproduces the verdicts of the main text's
+comparison exactly, though it is computed by a different script from the same frozen predictions.
+The number of references differs by one between criteria, at \numPopulationReferences{} for three
+of them and one fewer for two, and the two cases have different causes. Under the first block of
+the InChIKey, the thiol and thiolate annotated for butyrylthiocholine merge, because that block is
+the skeleton hash and carries neither the protonation layer nor stereochemistry; the full InChIKey
+separates them in its final character. Under Tanimoto similarity of one, four carboxychromanol
+metabolites of $\alpha$-tocopherol collapse to one key, because they differ only in the length
+of a side chain and a 1024-bit Morgan fingerprint does not resolve homologues of that kind. Both
+merges are the criterion acting as declared rather than a defect, and both are the reason the
+count is reported per criterion rather than once.
+
 \section{The rule bank}
 
 The bank holds \numBankRules{} templates spanning \numBankTypes{} distinct reaction types, of

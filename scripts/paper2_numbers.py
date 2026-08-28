@@ -270,6 +270,25 @@ def build():
             return False
     n["bank.parses"] = sum(1 for r in bank if _parses(r))
 
+    # the criterion sweep: how much of the comparison's verdict is the criterion
+    cs = art("criterion_sweep.json")
+    KSW = [1, 3, 5, 8, 10, 15, 20, 30, 50]
+    lead = {c: sum(1 for k in KSW
+                   if cs["by_criterion"][c]["verdict_by_budget"][str(k)] == "leads")
+            for c in cs["criteria"]}
+    order = sorted(cs["criteria"], key=lambda c: lead[c])
+    gaps = sorted(cs["by_criterion"][c]["margin_by_budget"]["15"]["gap"] for c in cs["criteria"])
+    n["crit.budgets"] = len(KSW)
+    n["crit.criteria"] = len(cs["criteria"])
+    n["crit.leads_default"] = lead[cs["reference_criterion"]]
+    n["crit.leads_best"] = max(lead.values())
+    n["crit.never_leads"] = sum(1 for c in lead if lead[c] == 0)
+    n["crit.default_rank"] = order.index(cs["reference_criterion"]) + 1
+    n["crit.swing15"] = round(gaps[-1] - gaps[0], 4)
+    n["crit.worst15"] = gaps[0]
+    n["crit.best15"] = gaps[-1]
+    n["crit.moved_max"] = max(cs["n_budgets_moving"].values())
+
     # the worked example, both arms
     for arm, fname in (("inter", "case_study.json"), ("exh", "case_study_exhaustive.json")):
         cs = art(fname)

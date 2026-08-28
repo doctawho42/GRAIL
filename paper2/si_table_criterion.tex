@@ -1,0 +1,18 @@
+\begin{table}[h]
+\centering\small
+\begin{tabular}{lccccccccc}
+\toprule
+criterion & \multicolumn{9}{c}{output budget $k$} \\
+\cmidrule(lr){2-10}
+ & $1$ & $3$ & $5$ & $8$ & $10$ & $15$ & $20$ & $30$ & $50$ \\
+\midrule
+canonical & $-$ & $-$ & $-$ & $-$ & $-$ & $-$ & $-$ & $\cdot$ & $\cdot$ \\
+InChIKey & $-$ & $-$ & $-$ & $\cdot$ & $\cdot$ & $+$ & $+$ & $+$ & $+$ \\
+InChIKey, no stereo & $-$ & $-$ & $-$ & $\cdot$ & $\cdot$ & $+$ & $+$ & $+$ & $+$ \\
+Tanimoto $=1$ & $-$ & $-$ & $-$ & $-$ & $-$ & $-$ & $-$ & $\cdot$ & $\cdot$ \\
+tautomer (default) & $-$ & $-$ & $-$ & $\cdot$ & $\cdot$ & $\cdot$ & $\cdot$ & $+$ & $+$ \\
+\bottomrule
+\end{tabular}
+\caption{The verdict of the comparison under each declared matching criterion. $+$ marks a budget where GRAIL's better arm leads the strongest comparator with the paired interval excluding zero, $-$ one where it trails on the same terms, and $\cdot$ one where the interval covers zero. Every cell is read from the interval and never from the point estimate. Against the default criterion the verdict moves at 6 of 9 budgets under \texttt{canonical}.}
+\label{tab:si-criterion}
+\end{table}

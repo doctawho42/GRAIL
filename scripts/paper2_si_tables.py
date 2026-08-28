@@ -44,7 +44,9 @@ def si_criteria():
     rows = [
         ("canonical", "RDKit canonical SMILES, equality of strings", "strictest"),
         ("inchikey", "the full InChIKey, including the stereochemistry block", "strict"),
-        ("inchi\\_no\\_stereo", "the first block of the InChIKey, which drops stereochemistry",
+        ("inchi\\_no\\_stereo",
+         "the first block of the InChIKey. This is the skeleton hash, so it drops the "
+         "protonation and isotope layers along with stereochemistry",
          "medium"),
         ("tanimoto1", "Tanimoto similarity of one on 1024-bit Morgan fingerprints", "loosest"),
         ("inchikey\\_tautomer",

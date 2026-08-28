@@ -237,6 +237,30 @@ At a budget of $15$, where MetaTox emits about what the interactive arm emits, i
 so the annotation bias on precision does not explain the difference. That pair is macro; every
 figure in Table~\ref{tab:sweep} is micro.
 
+\subsection{How much of the verdict is the criterion}
+
+The argument above is that a recall figure depends on evaluation choices this literature leaves
+unstated. It is an argument about published numbers, and it applies to ours. Recomputing the whole
+comparison under each of the \numCritCriteria{} declared criteria, holding the population, the
+arms, the ranking and the parent-drop convention fixed, moves the verdict at up to
+\numCritMovedMax{} of \numCritBudgets{} budgets (Table~S3).
+
+At $k=15$ the margin between GRAIL's better arm and the strongest comparator runs from
+$\numCritWorstOneFive$ under canonical SMILES equality to $+\numCritBestOneFive$ under the full
+InChIKey, a range of \numCritSwingOneFive{}, and the sign of the conclusion changes with it. Under
+two of the \numCritCriteria{} criteria GRAIL leads at no budget at all; under two others it leads
+at four.
+
+The criterion this paper reports is not the one that flatters it. Ordered by how many budgets each
+yields a lead, the tautomer-aware key sits \numCritDefaultRank{} of \numCritCriteria{}, exactly
+the median: it gives \numCritLeadsDefault{} against the \numCritLeadsBest{} available. It was
+chosen because the references carry no stereochemistry and do not distinguish tautomers, not
+because of what it returns.
+
+Ranking is settled before any key is taken, so the criterion changes what counts as a hit and
+never what is ranked. A single cell from this grid, reported without its criterion, would have
+supported almost any claim about which system is better.
+
 \subsection{A worked example}
 
 \begin{figure*}[t]
