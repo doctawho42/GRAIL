@@ -412,9 +412,11 @@ The tables below name the population in every row.
 
 ### Data and split
 
-⟨CORPUS: the provenance of the annotated substrate–metabolite corpus — its source, its release
-or access date, and the licence under which it is used. Nothing in the draft or the repository
-records this, and it is the first question a reader will ask of every number below.⟩
+The annotated substrate–metabolite pairs are assembled from four sources: ChEMBL, DrugBank,
+MetXBioDB and the GLORYx reference set. Versions and access dates are ⟨CORPUS_VERSIONS⟩, and
+whether the derived corpus and the deposited pools may be redistributed is ⟨CORPUS_LICENCE⟩:
+ChEMBL is CC BY-SA and MetXBioDB ships with BioTransformer, but DrugBank's terms restrict
+redistribution and the pools contain structures that may derive from it.
 
 The corpus is divided into three substrate-disjoint splits: 9,011 training substrates carrying
 17,454 annotated pairs, 1,020 validation substrates carrying 2,085, and 1,198 test substrates
@@ -430,9 +432,17 @@ products of another substrate in the split. Methods do not treat the two alike, 
 reported rather than averaged silently.
 
 The comparison set carries no training contamination: 0 of its 291 substrates appear in train or
-validation under a canonical key. The same audit is the reason no external evaluation set is
-reported here — of the 37 GLORYx parent substrates, 24 (64.9%) are inside our train or validation
-splits, so a figure on that set would measure memorisation as much as prediction.
+validation under a canonical key.
+
+No external evaluation set is reported, and the reason is the assembly rather than an audit
+finding. GLORYx is one of the four sources, so its 37 parent substrates are not external to this
+corpus, and the 24 of them inside train or validation are there by construction. Holding out one
+source would not produce an external set either, because the sources overlap one another.
+
+That bounds the comparison in a way no split can fix. Rule-based comparators have no training set
+to hold out, and their rules may encode the metabolism these sources report: BioTransformer is
+built on MetXBioDB, and GLORYx was developed against the reference set of that name. Their
+knowledge overlaps our test substrates by construction, in the direction that flatters them.
 
 **Populations are never mixed**: every figure below names the set it is computed on.
 
@@ -718,7 +728,9 @@ The data and software underlying this article are publicly available. Source, sp
 frozen predictions of every comparator, evaluation harness, provenance sweep and the
 preregistration with every hypothesis and its outcome: `github.com/doctawho42/GRAIL`, available
 to reviewers at submission. The candidate pools are deposited at ⟨ZENODO_DOI⟩ under CC BY 4.0.
-The annotated substrate–metabolite corpus the splits are drawn from is ⟨CORPUS⟩.
+The annotated substrate–metabolite corpus is assembled from ChEMBL, DrugBank, MetXBioDB and the
+GLORYx reference set, at the versions in ⟨CORPUS_VERSIONS⟩. Redistribution of the derived corpus
+and the deposited pools is ⟨CORPUS_LICENCE⟩.
 
 A hosted interface, if one is offered, would be at ⟨SERVICE_URL⟩; the paper does not depend on
 it.
@@ -786,7 +798,8 @@ Article, no requirement that a hosted service exist, and no licence or login cri
 
 | marker | what is needed | blocks submission |
 |---|---|---|
-| `⟨CORPUS⟩` | the provenance of the annotated substrate–metabolite corpus: source, access date, licence. Required by the Data Availability Statement | yes |
+| `⟨CORPUS_VERSIONS⟩` | the release version and access date of each of the four sources. Required by the Data Availability Statement | yes |
+| `⟨CORPUS_LICENCE⟩` | whether the derived corpus and the deposited pools may be redistributed. DrugBank's terms are the constraint, and this decides whether the Zenodo deposit can be CC BY 4.0 | yes |
 | `⟨ZENODO_DOI⟩` | the DOI, minted on publishing the deposit; the bundle and manifest are built and verified, the upload needs a token and is the author's action | yes |
 | `⟨AUTHORS⟩` | author list, and which author corresponds | yes |
 | `⟨AFFILIATIONS⟩` | affiliations | yes |
@@ -807,6 +820,9 @@ Resolved from the artifacts:
 - `⟨T_INTERACTIVE⟩` — 0.39 s median over 294 validation substrates, from results/mode_timings.json. The 1.85 s this was to be filled with is a mean over a forty-substrate draw from a different population
 - `⟨POP_H13⟩`, `⟨POP_H15⟩` — validation, 293 paired substrates, from the two verdict artifacts
 - `⟨REGISTRY_URL⟩` — paper2/preregistration.md
+- `⟨CORPUS⟩` — ChEMBL, DrugBank, MetXBioDB and the GLORYx reference set. Naming them corrected a
+  claim rather than filling a blank: the paper presented GLORYx as an external set found to be
+  contaminated, when it is one of the corpus's own sources and was never external
 - `⟨ORACLE_BY_TYPE⟩` — computed; see the group-rank section
 - `⟨TOC_GRAPHIC⟩` — drawn by `scripts/paper2_figures.py` as `paper2/fig_toc.{tif,eps}` at exactly
   3.25 by 1.75 inches, 300 dpi, RGB, sans-serif at 7.5 pt. The specification is asserted against

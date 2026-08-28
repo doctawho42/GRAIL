@@ -57,11 +57,25 @@ rather than a subset, and cap and seed are recorded with every figure drawn from
 \emph{comparison set} is the \numPopulationN{} substrates on which every method predicts,
 carrying \numPopulationReferences{} references.
 
+The annotated substrate--metabolite pairs are assembled from four sources: ChEMBL
+\citep{Zdrazil_2024}, DrugBank \citep{Knox_2024}, MetXBioDB \citep{Djoumbou_Feunang_2019} and
+the GLORYx reference set \citep{de_Bruyn_Kops_2020}. Versions and access dates are
+\CorpusVersions{}.
+
 The comparison set carries no training contamination: \numPopulationInTrainOrVal{} of its
-\numPopulationN{} substrates appear in train or validation under a canonical key. The same audit
-is why no external evaluation set is reported: of the \numGloryxN{} GLORYx parent substrates,
-\numGloryxOverlap{} are inside our train or validation splits, so a figure on that set would
-measure memorisation as much as prediction.
+\numPopulationN{} substrates appear in train or validation under a canonical key.
+
+No external evaluation set is reported, and the reason is the assembly rather than an audit
+finding. GLORYx is one of the four sources, so its \numGloryxN{} parent substrates are not
+external to this corpus at all, and the \numGloryxOverlap{} of them that fall in train or
+validation are there by construction. Holding out a source would not fix this either, because the
+sources overlap one another.
+
+That has a consequence for the comparison which no split can remove. Rule-based comparators have
+no training set to hold out, and their expert rules may encode the same metabolism reported in
+these sources; BioTransformer is built on MetXBioDB, and GLORYx was developed against the
+reference set of the same name. Their knowledge therefore overlaps our test substrates by
+construction, in a direction that flatters them, and we report it rather than control it.
 
 \subsection{Overview}
 
@@ -504,7 +518,7 @@ and not a random quarter of it.
 
 The Supporting Information is available free of charge at \ZenodoDoi{} and from the publisher.
 
-Corpus and splits, with the leakage audit; the five matching criteria defined; the sensitivity of
+Corpus sources with their versions and licence position, and the splits with the leakage audit; the five matching criteria defined; the sensitivity of
 the comparison to the choice among them; the rule bank and its mining procedure; the architecture
 and training of both learned stages; the fifteen registered predictions, including the six this
 paper does not report; the group-ranking oracle under four partitions with a
@@ -520,7 +534,10 @@ manifest, the frozen per-substrate predictions of every comparator, the evaluati
 provenance sweep and the preregistration with every hypothesis and its outcome are at
 \texttt{github.com/doctawho42/GRAIL}, and are available to reviewers at submission. The train and
 validation candidate pools are deposited at \ZenodoDoi{} under CC BY 4.0. The annotated
-substrate--metabolite corpus the splits are drawn from is \CorpusProvenance{}.
+substrate--metabolite corpus is assembled from ChEMBL \citep{Zdrazil_2024}, DrugBank
+\citep{Knox_2024}, MetXBioDB \citep{Djoumbou_Feunang_2019} and the GLORYx reference set
+\citep{de_Bruyn_Kops_2020}, at the versions given in the Supporting Information. Whether the
+derived corpus and the deposited candidate pools may be redistributed is \CorpusLicence{}.
 
 \numProvPinned{} artifacts are pinned, and every number in this paper comes from one of them.
 Each records the commit that wrote it; a sweep recomputes the hash of its producer and refuses the

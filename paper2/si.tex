@@ -28,8 +28,15 @@
 
 \input{si_table_splits}
 
-The corpus is \CorpusProvenance{}. It is divided by substrate, so no substrate of one split
-appears in another. Molecular overlap between splits is non-zero and expected, because a molecule
+The annotated substrate--metabolite pairs are assembled from four sources: ChEMBL
+\citep{Zdrazil_2024}, DrugBank \citep{Knox_2024}, MetXBioDB \citep{Djoumbou_Feunang_2019} and
+the GLORYx reference set \citep{de_Bruyn_Kops_2020}. The release version and access date of each
+is \CorpusVersions{}. Whether the derived corpus and the deposited candidate pools may be
+redistributed is \CorpusLicence{}: ChEMBL is CC BY-SA and MetXBioDB is distributed with
+BioTransformer, but DrugBank's terms restrict redistribution and the pools contain structures
+that may derive from it.
+
+The corpus is divided by substrate, so no substrate of one split appears in another. Molecular overlap between splits is non-zero and expected, because a molecule
 that is a substrate in one split may appear as a product in another: \numLeakMolOverlap{}
 molecules occur in both train and test, and \numLeakSubAsMol{} test substrates appear as molecules
 in train. Both counts are recorded so that neither is later discovered and mistaken for leakage.
@@ -43,9 +50,19 @@ validation draw is a sample of \numValdrawCap{} substrates at seed \numValdrawSe
 paired comparison. The comparison set is the \numPopulationN{} substrates on which every method
 predicts.
 
-No external evaluation set is reported. Of the \numGloryxN{} GLORYx parent substrates,
-\numGloryxOverlap{} are inside our train or validation splits, so a figure on that set would
-measure memorisation as much as prediction.
+No external evaluation set is reported. GLORYx is one of the four sources this corpus is
+assembled from, so its \numGloryxN{} parent substrates are not external to it, and the
+\numGloryxOverlap{} that fall inside train or validation are there by construction rather than by
+leakage. Holding out one source would not produce an external set either, because the sources
+overlap one another: MetXBioDB and the GLORYx reference set both draw on the same published
+metabolism, and DrugBank overlaps both.
+
+The same fact bounds the comparison. Rule-based comparators have no training set that could be
+held out, and their rules may encode the metabolism reported in these sources: BioTransformer is
+built on MetXBioDB, and GLORYx was developed against the reference set of that name. Their
+knowledge overlaps our test substrates by construction. No prior benchmark in this area controls
+this asymmetry, and neither do we; it is reported because a reader comparing these numbers to
+published ones should know that the rule-based figures are, in this respect, optimistic.
 
 \section{The matching criteria}
 
