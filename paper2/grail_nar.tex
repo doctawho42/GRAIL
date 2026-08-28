@@ -1,0 +1,47 @@
+\documentclass[10pt,twocolumn]{article}
+\input{nar_preamble}
+\input{numbers}
+
+\title{\vspace{-2em}\Large\bfseries GRAIL: rule-grounded prediction of xenobiotic metabolite
+structures with a fully declared evaluation}
+\author{\normalsize AUTHORS\thanks{To whom correspondence should be addressed.}\\[-0.3em]
+\small\itshape AFFILIATIONS}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent
+Predicting the metabolite structures a xenobiotic is converted into supports toxicology, drug
+design and environmental risk assessment. Existing tools report a recall figure computed under
+evaluation choices their papers do not state, so their numbers are not comparable to one another.
+We present GRAIL, a rule-grounded predictor that names the transformation rule behind every
+prediction, ranks its entire output, and reports its performance under five matching criteria and
+eleven output budgets against every comparator with predictions on the same substrates.
+
+On \numPopulationN{} test substrates the comparison divides by budget rather than resolving into
+an ordering. At the tightest budgets SyGMa leads, at $k=1$ by \numSweepSygmaOne{} against
+\numSweepTrainedOne{} with the paired interval excluding zero; in the middle MetaPredictor leads
+without separating; from $k=15$ GRAIL leads, and at $k=30$ and $k=50$ its interval excludes zero
+against every comparator. The advantage is at depth: the comparators saturate on lists of
+\numOutputMetapredictor{} and \numOutputSygma{} candidates while GRAIL continues to have
+candidates to rank. Against MetaTox alone, the incumbent web service, GRAIL leads at all nine
+budgets. The server offers an interactive mode (median \numModeInteractiveMedian~s per substrate)
+and an exhaustive mode (\numModeExhaustiveMedian~s). We additionally report the ceiling of the
+approach: \numCeilingUncovered{} of \numPopulationTestrefs{} reference metabolites lie outside
+what the rule bank reaches in one step, and we show this bound is invariant to how a
+transformation type is defined, making it a property of the annotation corpus rather than of our
+implementation.
+
+\vspace{0.5em}
+\noindent\textbf{Availability:} SERVICE\_URL; code, split, frozen predictions and evaluation
+harness at \texttt{github.com/doctawho42/GRAIL}.
+\end{abstract}
+
+\input{body}
+
+\bibliographystyle{plainnat}
+\bibliography{refs}
+\balance
+\end{document}

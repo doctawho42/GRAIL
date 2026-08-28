@@ -1,0 +1,21 @@
+\begin{table}[t]
+\centering\small
+\begin{tabular}{lrr}
+\toprule
+ & interactive & exhaustive \\
+\midrule
+rules applied & 30 & 7{,}581 \\
+mean candidates emitted & \numOutputTrained & \numOutputBank \\
+median s per substrate & 0.39 & 5.28 \\
+mean s per substrate & 2.36 & --- \\
+90th percentile & 2.59 & --- \\
+slowest substrate & 231.01 & did not finish \\
+\bottomrule
+\end{tabular}
+\caption{The two operating modes. Both medians are over the 294 validation substrates and
+measure the same boundary, everything before the filter. The interactive mode's mean is six times
+its median because of one substrate, a 291-heavy-atom peptide taking 231.01~s that the
+exhaustive mode has never finished at any budget. A service must publish the tail as well as the
+median.}
+\label{tab:modes}
+\end{table}

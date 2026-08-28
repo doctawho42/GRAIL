@@ -13,7 +13,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-TEX = ROOT / "paper2/grail_service.tex"
+TEX = ROOT / "paper2/body.tex"
 NUMS = ROOT / "paper2/numbers.tex"
 
 # Numbers that are part of the language rather than a result: a constant published elsewhere, a
@@ -26,6 +26,11 @@ ALLOWED = {
     "5.2", "109",                          # the timing example, cited in prose with its artifact
     "5",                                   # a section cross-reference
     "2009",                                # a citation year
+    "60",                                  # the RRF constant
+    "0.88", "0.016", "16.22", "16.3",      # the emission-transfer figures, cited with the artifact
+    "0.5", "0.109", "0.0012", "0.012", "8.5", "0.01", "70", "2022.09", "2025", "26",
+    "291",                                 # the peptide's heavy-atom count, named in prose
+    "0.0556", "10",
     # The budget column of the comparison table names the budgets; those are the grid the
     # comparators are read at, not measurements, and every cell beside them is a macro.
     "3", "15", "20", "30", "50",
@@ -33,8 +38,7 @@ ALLOWED = {
 
 
 def main() -> int:
-    tex = TEX.read_text()
-    body = tex[tex.index("\\begin{abstract}"):tex.index("\\bibliographystyle")]
+    body = TEX.read_text() + (ROOT / "paper2/grail_nar.tex").read_text()
 
     defined = set(re.findall(r"\\newcommand\{\\(num[A-Za-z]+)\}", NUMS.read_text()))
     used = set(re.findall(r"\\(num[A-Za-z]+)", body))
@@ -42,10 +46,16 @@ def main() -> int:
     unused = sorted(defined - used)
 
     # a numeric literal in the body that is not inside a macro definition or an allowed constant
-    stripped = re.sub(r"\\num[A-Za-z]+", " ", body)
+    stripped = re.sub(r"\\(?:vspace|hspace|setlength|documentclass|usepackage|captionsetup"
+                      r"|titleformat|renewcommand|includegraphics)\s*(\[[^\]]*\])?"
+                      r"(\{[^}]*\})*", " ", body)
+    stripped = re.sub(r"\\\\\s*\[[^\]]*\]", " ", stripped)   # line-break kerns
+    stripped = re.sub(r"\\num[A-Za-z]+", " ", stripped)
     stripped = re.sub(r"\\(?:label|ref|cite[a-z]*|input|includegraphics)\{[^}]*\}", " ", stripped)
     stripped = re.sub(r"%.*", " ", stripped)
-    literals = [t for t in re.findall(r"(?<![A-Za-z\\])\d+(?:[.,]\d+)?", stripped)
+    # the lookbehind must exclude a preceding DIGIT as well as a letter, or "H14" yields a
+    # spurious "4": the 1 is rejected for following H and the 4 is accepted for following 1.
+    literals = [t for t in re.findall(r"(?<![A-Za-z\\\d])\d+(?:[.,]\d+)?", stripped)
                 if t.replace("{,}", "") not in ALLOWED and t not in ALLOWED]
 
     ok = True

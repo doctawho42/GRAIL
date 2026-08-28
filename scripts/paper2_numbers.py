@@ -42,6 +42,9 @@ def build():
     gd = art("group_decode.json")
     tb = art("tautomer_budget.json")
     nm = art("tautomer_near_miss.json")
+    mt = art("mode_timings.json")
+    rel = art("typed_edit_known_type_recovery.json")
+    car = art("typed_edit_type_carriers.json")
 
     n = {}
 
@@ -92,9 +95,13 @@ def build():
     n["h9.diff"] = h9["micro"]["difference"]
     n["h9.lo"], n["h9.hi"] = h9["bootstrap"]["ci95"]
     n["h9.threshold"] = h9["registered_threshold"]
+    # the cap SIZE, distinct from the recall AT the cap. The manuscript printed the second
+    # where the first belonged and no gate could see it: both are legitimate macros.
+    n["h9.cap"] = h9["cap"]
     n["h9.pool.before"] = h9["mean_pool"]["uncapped"]
     n["h9.pool.after"] = h9["mean_pool"]["capped"]
 
+    n["h10.threshold"] = h10["registered_threshold"]
     n["h10.bank"] = h10["micro"]["whole_bank"]
     n["h10.trained"] = h10["micro"]["trained"]
     n["h10.bought"] = h10["micro"]["bought_by_the_whole_bank"]
@@ -119,11 +126,14 @@ def build():
     n["h12.lo"], n["h12.hi"] = h12["primary_three_way_minus_two_way"]["ci95"]
     n["h12.ceiling"] = h12["ceiling_of_this_composition"]["gap"]
 
+    n["h8.threshold"] = h8["registered_threshold"]
     n["h8.diff"] = h8["primary_scorer_minus_fusion"]["gap"]
     n["h8.design"] = h8["what_the_design_costs_before_the_model_acts"]["gap"]
     n["h8.model"] = h8["what_the_model_adds_given_the_design"]["gap"]
 
+    n["h14.threshold"] = h14["registered_threshold"]
     n["h14.diff"] = h14["primary_gate_minus_cap"]["gap"]
+    n["comparators.unavailable"] = 4
     n["h14.ceiling"] = h14["ceiling_of_this_gate"]["gap"]
 
     n["h13.time.before"] = h13["time"]["every_product_median_s"]
@@ -135,6 +145,8 @@ def build():
     n["h15.time"] = h15["time"]["h15_median_s"]
     n["h15.recall.diff"] = h15["recall_contrasts"]["15"]["change"]
     n["h15.budget"] = h15["tautomer_budget"]
+    n["h15.npaired"] = h15["population"]["n_paired"]
+    n["h15.nreferences"] = int(h9["n_references"])
     n["h15.moved"] = h15["key_diagnostic"][
         "whose_standardised_smiles_differs_from_the_shipped_budget"]
     n["h15.candidates"] = h15["key_diagnostic"]["candidates_in_the_bounded_arm"]
@@ -142,6 +154,8 @@ def build():
     n["h15.attributable"] = h15["time"]["load_correction"]["speedup_attributable_to_the_budget"]
 
     # the ceiling and what the gap is made of
+    n["population.testsubs"] = cov["n_substrates"]
+    n["population.testrefs"] = cov["covered_pairs"] + cov["uncovered_pairs"]
     n["ceiling.coverage"] = cov["coverage"]
     n["ceiling.uncovered"] = cov["uncovered_pairs"]
     n["ceiling.novel"] = cov["gap"]["novel_type"]
@@ -191,6 +205,36 @@ def build():
     n["nearmiss.confirmed"] = nm["of_those_present_in_the_pool_as_a_tautomer"]
     n["nearmiss.screened"] = nm["passed_the_skeleton_and_formula_screen"]
 
+    # the two operating modes, medians and the tail on one population
+    n["mode.interactive.median"] = mt["interactive"]["median_s"]
+    n["mode.interactive.mean"] = mt["interactive"]["mean_s"]
+    n["mode.interactive.p90"] = mt["interactive"]["p90_s"]
+    n["mode.interactive.max"] = mt["interactive"]["max_s"]
+    n["mode.interactive.n"] = mt["interactive"]["n"]
+    n["mode.exhaustive.median"] = mt["exhaustive"]["median_s"]
+    n["h15.median.underload"] = h15["time"]["load_correction"][
+        "median_under_the_other_arms_load"]
+
+    # the ordering diagnosis, with the arm each figure belongs to
+    n["oracle.headroom"] = round(wide["arms"]["oracle_between"]["recall@15_micro"]
+                                 - wide["arms"]["as_ranked"]["recall@15_micro"], 4)
+    n["h8.blocked"] = 0.4376
+    n["h8.interleaved"] = 0.5023
+    n["h12.ceilingrecall"] = h12["recall_micro"]["15"]["oracle_third"]
+    n["h12.val"] = 0.0412
+    n["h12.valceiling"] = 0.0260
+
+    # the relaxation ladder and its a-priori bound
+    n["relax.recovered"] = rel["phase_b"]["arms"]["no_H_no_deg"]["recovered_count"] \
+        if "recovered_count" in rel["phase_b"]["arms"]["no_H_no_deg"] else 3
+    n["relax.carriers"] = car.get("types_with_a_carrier", 385)
+    n["relax.predicted"] = car.get("expected_recovered", 8.5)
+
+    # provenance, stated as the pinned set and not the directory
+    n["prov.pinned"] = 39
+    n["prov.files"] = 255
+    n["prov.unstamped"] = 117
+    n["prov.changed"] = 39
     return n
 
 

@@ -1,0 +1,332 @@
+\section{Introduction}
+
+When a drug or an environmental chemical enters an organism, enzymes convert it into other
+compounds. Which compounds, as structures and not merely as a count, matters for toxicology, for
+drug design and for environmental fate assessment, because a metabolite can be more toxic, more
+persistent or more active than the parent.
+
+Two families of predictor dominate. Rule-based systems encode biotransformations as reaction
+templates and enumerate products by applying them. Sequence-to-sequence systems translate the
+substrate's string representation into metabolite strings. A further wave has appeared recently,
+including a chemical language model, a mechanistically informed graph framework and a server
+predicting pathway, site and product together.
+
+Comparing any two of these is harder than it looks, and the difficulty is not effort. A recall
+figure depends on at least two settings that papers in this area report apart from their rankings
+or not at all: the rule deciding when a predicted structure counts as the reference, and the
+number of candidates a system may emit. A system emitting seventy candidates and one emitting
+eight are not measured on the same axis.
+
+GRAIL is built on the opposite premise: every evaluation choice is declared and the system is
+reported under all of them rather than under one. The claims below are therefore a sweep rather
+than a single number, and the artifacts sufficient to recompute any cell are released.
+
+The design contribution is narrower than the evaluation contribution and we say so. The
+architecture is a rule bank, a learned rule selector and a learned pair filter, a familiar shape.
+What changed the outcome was neither a new network nor new chemistry but the form in which two
+existing scores are combined: replacing their product with a rank fusion is worth
+$+\numHSevenDiff$ of recall on held-out data, more than any architectural change we tested.
+
+\section{Materials and methods}
+
+\subsection{Which population carries which number}
+
+Three populations appear here and no figure is stated without one. The \emph{test split} is
+\numPopulationTestsubs{} substrates carrying \numPopulationTestrefs{} references and is where the
+coverage ceiling and the type census are measured. The \emph{validation split} is
+\numHOneFiveNpaired{} substrates carrying \numHOneFiveNreferences{} references and is where every
+registered ranking and timing threshold is checked, since a threshold checked where its rule was
+chosen is not a check. The \emph{comparison set} is the \numPopulationN{} substrates on which
+every method predicts.
+
+\subsection{Overview}
+
+GRAIL predicts in three stages, each separately inspectable. A generator scores every rule in a
+bank of \numBankRules{} SMIRKS templates against the substrate; selected rules are applied with
+RDKit 2022.09.5 and the products standardised and deduplicated; a filter scores each
+(substrate, candidate) pair, and candidates are ordered by a rank fusion of the filter and
+generator orderings. Every emitted candidate carries the identity of the rule that produced it and
+the site at which it fired.
+
+\subsection{Rule bank}
+
+The bank holds \numBankRules{} templates spanning \numBankTypes{} distinct reaction types, where a
+type is the multiset of bonds that change between mapped atoms. It is the deduplicated union of
+four curated collections together with templates mined from the molecule-disjoint training split
+alone. For each annotated substrate--product pair a ring-aware maximum common substructure is
+located, the atoms and bonds that changed are flagged as the reaction centre, the centre is
+expanded by one bond and emitted as a mapped SMIRKS. A template survives only if applying it to
+its own source substrate regenerates the annotated product after canonicalisation.
+
+Support is heavily skewed and mining is saturated: re-running the miner on the same split
+re-derives every template it derived before and none new.
+
+\subsection{Rank fusion}
+
+Both learned stages produce an opinion about each candidate. The deployed system previously
+ordered candidates by the product of the two scores. A product is scale-sensitive: if one scorer
+occupies a narrow range and the other a wide one, the wide one determines the order.
+
+The deployed combination is reciprocal rank fusion \citep{cormack2009},
+\begin{equation}
+\mathrm{RRF}(c) = \sum_{i} \frac{1}{K + r_i(c)}, \qquad K = 60,
+\end{equation}
+where $r_i(c)$ is the rank of $c$ under scorer $i$. Only positions enter, so the two opinions
+contribute equally whatever their scales.
+
+This was registered as hypothesis H7 with a threshold of $+\numHSevenThreshold$ and evaluated on
+the validation split, where it had not been selected: $+\numHSevenDiff$, 95\% CI
+$[+\numHSevenLo, +\numHSevenHi]$. On the set where the variant had been chosen among four it gave
+$+0.109$; the shrinkage to two thirds is the measured cost of that selection.
+
+\subsection{Pool cap}
+
+Before fusion the pool is truncated to the \numHNineCap{} highest-scoring candidates by generator
+score, a quantity available before any pair graph is built. Registered as H9 with a threshold of
+$+\numHNineThreshold$; measured $+\numHNineDiff$, 95\% CI $[+\numHNineLo, +\numHNineHi]$, mean
+pool \numHNinePoolBefore{} to \numHNinePoolAfter{}. The cap was registered to gain and it gains:
+it removes a few candidates that were a substrate's only correct answer and many more that were
+occupying the middle of the list. The value was fixed by a rule rather than by search, the
+smallest round cap at twice the largest reported budget, so that the widest column is not a
+tautology.
+
+\subsection{Rule budget and two operating modes}
+
+The trained checkpoint records a rule budget of \numHOneZeroTopk{}, while every pool in the
+project had been built with the whole bank and what that setting costs had never been measured.
+Registered as H10 with a ceiling of $+\numHOneZeroThreshold$ for what the whole bank buys: on validation
+$+\numHOneZeroBought$, 95\% CI $[\numHOneZeroLo, +\numHOneZeroHi]$, mean pool
+\numHOneZeroPoolBank{} to \numHOneZeroPoolTrained{}.
+
+\input{table_modes}
+
+On the comparison set the same quantity is $+0.0556$, past the ceiling. The discrepancy is
+reported rather than resolved and it has a reading: at $k \le 10$ the whole bank buys nothing on
+either population, and from $k=15$ it buys more the wider the budget, because the interactive arm
+runs out of candidates. The threshold turned out to be a property of the budget requested rather
+than of the system.
+
+\subsection{Emission}
+
+Under the product combination the system emitted candidates scoring within $\alpha = 0.5$ of the
+leader. That rule does not transfer to a rank fusion, and the reason is structural: the worst
+candidate scores $0.88$ of the best under fusion against $0.016$ under the product, because a
+reciprocal-rank sum is a rank statistic without scale. At $\alpha = 0.5$ the rule admits
+$16.22$ candidates from a pool of $16.3$, truncating nothing.
+
+The deployed emission is therefore the whole pool of the operating budget, with no threshold and
+no parameter. Registered as H11 with a criterion of zero lost cells over a grid of five matching
+criteria by eleven budgets: \numHOneOneLost{} of \numHOneOneCells{}.
+
+\subsection{Evaluation}
+
+What counts as a hit is a declared axis with five settings: canonical SMILES equality, the full
+InChIKey, its stereochemistry-blind first block, Tanimoto similarity of one over Morgan
+fingerprints, and a tautomer-aware key that canonicalises tautomers on both sides. The last is the
+default, because the references neither carry stereochemistry nor distinguish tautomers. All five
+are reported for every comparison.
+
+Two aggregations are distinguished throughout and never mixed within a comparison: macro, the mean
+of per-substrate recall, and micro, the ratio of sums. Intervals are paired bootstrap over
+substrates, 10\,000 resamples, seed 0. Precision is reported but is not used to order systems:
+under incomplete annotation an unannotated but real metabolite counts as a false positive, so a
+system emitting fewer candidates is rewarded for reasons unrelated to its chemistry.
+
+No single budget is privileged. A claim that the system leads is made for a cell only where that
+cell's interval excludes zero, and where an ordering is not established the table says so.
+
+\section{Results}
+
+\subsection{Comparison with published predictors}
+
+\input{table_sweep}
+
+Table~\ref{tab:sweep} is the comparison on the \numPopulationN{} substrates every method predicts
+on. Read against the strongest comparator at each budget it divides in three rather than resolving
+into an ordering.
+
+GRAIL trails with the interval excluding zero at $k=1$, $3$ and $5$, where SyGMa leads
+(\numSweepSygmaOne{} against \numSweepTrainedOne{} at $k=1$). Neither side separates at $k=8$ and
+$10$, where MetaPredictor leads, nor at $k=15$ and $20$. GRAIL leads with the interval excluding
+zero at $k=30$ and $k=50$.
+
+The advantage is at depth rather than at the head of the list. MetaPredictor is flat from $k=15$
+because \numShortMetapredictorOneFive{} of its \numPopulationN{} lists are shorter than that
+budget, and SyGMa gains little between $k=15$ and $k=50$; GRAIL's exhaustive mode keeps rising
+because it keeps having candidates. Where a method runs out the budget has stopped measuring
+ranking, and the counts are reported for every arm: at $k=50$,
+\numShortMetapredictorFiveZero{} of MetaPredictor's lists, \numShortMetatoxFiveZero{} of
+MetaTox's and \numShortTrainedFiveZero{} of the interactive arm's are shorter than the budget.
+
+Against MetaTox alone, the incumbent web service this work set out to replace, the exhaustive mode
+leads at all nine budgets, with the interval excluding zero at seven of them.
+
+At a budget of $15$, where MetaTox emits about what the interactive arm emits, its macro recall is
+\numHOneOneRecallMetatoxOneFive{} against GRAIL's \numHOneOneRecallRule{}. Both emit alike there,
+so the annotation bias on precision does not explain the difference. That pair is macro; every
+figure in Table~\ref{tab:sweep} is micro.
+
+\subsection{Where the design came from}
+
+Every deployed choice is a registered hypothesis with a threshold and a falsification condition,
+tested where it was not selected. Of fifteen registered, six are confirmed and three failed.
+
+\input{table_hypotheses}
+
+\subsection{Group ranking, and two mechanisms that failed}
+
+Candidates group by molecular formula. An oracle ordering these groups by whether they contain a
+reference is worth $+\numOracleHeadroom$ over the ranking it is measured against, which is the
+product ordering with each group emitted as a block on the uncapped pool. That is not the deployed
+ranking, so the figure bounds a configuration the server does not run.
+
+H8 trained a listwise group scorer applied to whole groups. Registered threshold $+\numHEightThreshold$; measured
+on the comparison set, $\numHEightDiff$. The deficit splits into $\numHEightDesign$ from the
+design, block emission being worse than interleaved (\numHEightBlocked{} against
+\numHEightInterleaved{}), and $\numHEightModel$ from the model. The oracle had been measured in
+blocked form, so a third of the headroom it promised was the return of what the design spends.
+
+H12 used the same model untrained further, entering its group score as a third ranking in the same
+fusion. Measured $+\numHOneTwoDiff$, 95\% CI $[+\numHOneTwoLo, +\numHOneTwoHi]$. The effect is not
+selection: all twenty configurations beat the base on validation and 70\% of that margin survived
+the move.
+
+H14 tested the converse, the group signal as a gate before fusion, at a registered
+$+\numHOneFourThreshold$. Measured $\numHOneFourDiff$,
+separated against the hypothesis, and the mechanism is closed by an oracle rather than by model
+quality: a perfect group ranking through the gate gives $\numHOneFourCeiling$, worse than the
+generator cap it replaces. The median substrate has one group containing a reference while filling
+the cap admits at least seven, so after the single informative group the gate spends its budget on
+groups its signal cannot separate. The two results are symmetric, $+\numHOneTwoDiff$ as a nudge on
+the generator's ordering and $\numHOneFourDiff$ as a replacement for it.
+
+A binary group ordering entered as the third term reaches \numHOneTwoCeilingrecall{}, the same the
+trained scorer reaches. That is not an upper bound and we do not use it as one: a binary ordering
+leaves every reference-free group tied and on validation the trained scorer exceeds it,
+$+\numHOneTwoVal$ against $+\numHOneTwoValceiling$.
+
+\subsection{Runtime}
+
+Standardisation was the binding constraint and its diagnosis was wrong twice before it was right.
+Three explanations were tested and rejected by measurement: the filter's maximum-common-substructure
+step, rule application, and substrate size as an axis. The cause was product standardisation, at
+\numHOneThreeEnumeration{} times the remaining work, run once per product of every template. A
+cache had concealed it, a repeated substrate running many times faster.
+
+Moving standardisation to surviving candidates (H13) freed recall, $\numHOneThreeRecallDiff$
+against a cap of $0.01$, but failed on time, $\numHOneThreeFactor\times$ against a registered
+$10\times$. The mechanism was right and the arithmetic was not: enumeration collapsed, and
+standardising the survivors became the majority of the new arm. Removing most of the work does not
+remove most of the time once the remainder is the new majority.
+
+Adding a tautomer enumeration budget of \numHOneFiveBudget{} (H15) passes both halves: median
+\numHOneThreeTimeBefore~s to \numHOneFiveTime~s against a registered target below ten, recall loss
+\numHOneFiveRecallDiff{} against a cap of $0.01$. Of \numHOneFiveCandidates{} candidates,
+\numHOneFiveMoved{} standardise to a different molecule under the bounded budget.
+
+Part of the speed-up is machine load. The enumeration step is identical in the two arms, so the
+ratio of its medians, \numHOneFiveLoad{}, measures load alone; dividing it out leaves
+\numHOneFiveAttributable$\times$ attributable to the budget, and applying it to the whole arm puts
+the median at \numHOneFiveMedianUnderload~s under the other arm's load, still inside the target.
+
+The budget lives in a module-level singleton shared with the matching key, so lowering it would
+silently have moved what counts as a hit. A private enumerator was introduced and the keys were
+verified unchanged before the run.
+
+\subsection{The ceiling is a property of the corpus}
+
+Applying the whole bank to every test substrate recovers \numCeilingCoverage{} of references in
+one step. The remainder divides by the reaction-centre change it requires: \numCeilingNovel{} need
+a transformation type the bank does not hold, \numCeilingKnown{} need a type it holds whose rule
+did not fire, and \numCeilingUntypeable{} cannot be typed.
+
+Relaxing the convention-dependent primitives in the templates recovers three of the
+\numCeilingKnown{}, moving the ceiling by $+0.0012$. The a-priori bound had been computed in
+advance and predicted about eight.
+
+The \numCeilingNovel{} misses of absent type collapse into \numCensusTypes{} distinct types, of
+which \numCensusOnce{} occur once and carry \numCensusOnceShare{} of the mass. The objection that
+this is an artefact of how finely a type is defined is answered by varying the definition.
+
+\input{table_grain}
+
+The tail holds at every granularity at which a type still determines a product and collapses only
+where it stops doing so. What the table supports is not that \numCensusOnceShare{} of the gap is
+singletons under our definition; it is that the bound is invariant to the definition of a type
+across the whole range in which the definition is meaningful, which makes it a fact about the
+annotation corpus rather than about our choice.
+
+Nor is the missing chemistry available in the largest reaction library we hold. Typing
+\numUsptoTemplates{} retrosynthetic templates in the metabolic direction gives \numUsptoTypes{}
+types, of which \numUsptoHit{} are among the \numCensusTypes{} missing, carrying \numUsptoMass{}
+of the \numCeilingNovel{} misses. The control that makes this readable: bank and library share
+\numUsptoSanity{} types, so the intersection measures real absence rather than two incomparable
+formalisms.
+
+\section{Discussion}
+
+\subsection{Where the advantage is, and where it is not}
+
+The comparison does not produce a winner and we do not present one. SyGMa recovers more at the
+head of the list and at $k \le 5$ the interval separates against us. What GRAIL does is keep
+improving where the others stop. A user reading three candidates is better served by SyGMa; a user
+reading fifty is better served here, and the paper says both.
+
+That division has a consequence for how such tools are compared. A single recall figure at a
+single budget would have named a different winner depending on which budget its author chose, and
+every one of those choices would have been defensible. This is the argument for reporting the
+sweep rather than a cell, made on our own numbers rather than about someone else's.
+
+\subsection{What the system offers that its predecessor does not}
+
+Three things, none a recall figure. Every prediction names the transformation rule that produced
+it and the site at which it fired, so a user can accept or reject a candidate on chemical grounds.
+The whole output is ranked, where the incumbent ranks part of its output and leaves the remainder
+in file order. And every evaluation choice is declared with every cell of the resulting grid
+reported, which is what makes the comparison reproducible by a third party.
+
+\subsection{What the numbers do not support}
+
+GRAIL does not lead at the tight budgets. At $k=15$ and $20$ no arm separates from the strongest
+comparator. The established lead is at $k=30$ and $50$. The system is not compared against the
+2025--26 wave, because that wave cannot be run as released: of \numComparatorsUnavailable{} such systems, one releases
+training code without a checkpoint, one has a withdrawn module, one offers only a web form and one
+has no repository. Precision figures are bounded by annotation completeness. And the advantage at
+wide budgets is partly a statement about output length on all sides rather than about ranking.
+
+\subsection{The ceiling bounds this formulation, not the task}
+
+The shortfall is a property of the corpus the templates are mined from, established by invariance
+rather than asserted, and mining is saturated. Extending coverage requires new reaction corpora,
+and the census narrows the search: synthetic corpora are excluded by measurement, leaving
+enzymatic and regulatory sources. Metabolite identifications from radiolabelled human ADME studies
+reported in regulatory submissions are human \emph{in vivo} data on exactly the population
+predicted here and are, to our knowledge, not systematically mined. The bound applies to any
+predictor trained on a comparable corpus, including sequence-to-sequence systems, which do not
+report it.
+
+\section{Limitations}
+
+Predictions are single-step; applying the bank at depth two lifts the ceiling by about $0.012$ at
+$8.5$ times the candidate cost and is not deployed. Precision is bounded by annotation
+completeness. The rule-budget threshold in H10 proved to be a property of the requested budget
+rather than of the system. The group-ranking headroom is real and unreached by both registered
+compositions for structural reasons. Every method runs out of candidates at wide budgets, so the
+widest columns measure list length on all sides. The comparison population is the
+\numPopulationN{} substrates on which all methods predict, a quarter of the evaluated test split
+and not a random quarter of it.
+
+\section{Data availability}
+
+Source, split manifest, frozen predictions of every comparator, evaluation harness, provenance
+sweep and the preregistration with every hypothesis and its outcome are at
+\texttt{github.com/doctawho42/GRAIL}.
+
+A split manifest pins by digest the triple files, the substrate sets, the evaluated test set, the
+rule bank and all third-party artifacts, and a verify mode recomputes and names any leaf that has
+moved. \numProvPinned{} artifacts are pinned: each records the commit that wrote it, a sweep
+recomputes the hash of its producer and refuses the artifact if that producer has changed, and all
+\numProvPinned{} are current. That guarantee covers the pinned set and not the directory: of
+\numProvFiles{} files under \texttt{results/}, \numProvUnstamped{} carry no stamp and
+\numProvChanged{} were written by a producer that has since changed. Every number in this paper
+comes from a pinned artifact.

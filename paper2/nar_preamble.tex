@@ -1,0 +1,24 @@
+% Layout approximating the NAR Web Server issue: two columns, Times, 10pt, the section
+% capitalisation the journal uses. The official nar.cls is not installed here. To swap:
+% replace the \documentclass line and this file's \usepackage block with \documentclass{nar},
+% keep \input{numbers}, and delete the \sectionfont definitions below, which nar.cls supplies.
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{mathptmx}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{microtype}
+\usepackage{balance}
+\usepackage[margin=2cm,columnsep=0.7cm]{geometry}
+\usepackage[colorlinks=true,allcolors=black,citecolor=black]{hyperref}
+\usepackage{natbib}
+\usepackage{titlesec}
+\usepackage{caption}
+\captionsetup{font=small,labelfont=bf,labelsep=period}
+\titleformat{\section}{\normalfont\bfseries\uppercase}{\thesection.}{0.6em}{}
+\titleformat{\subsection}{\normalfont\bfseries}{\thesubsection.}{0.6em}{}
+\titleformat{\subsubsection}[runin]{\normalfont\itshape}{}{0em}{}[.]
+\setlength{\parskip}{0pt}
+\setlength{\bibsep}{0pt}
+\renewcommand{\bibfont}{\small}
