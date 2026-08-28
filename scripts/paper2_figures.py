@@ -290,6 +290,118 @@ def fig_case():
     plt.close(fig)
 
 
+def fig_toc():
+    """The ACS table-of-contents graphic.
+
+    The specification constrains this more than the figures do, and two of its rules changed the
+    design. It must give the essence "without providing specific results", so the sweep with its
+    recall values is out; and it must avoid artwork that already appears in the text, so the
+    substrate-with-sites panel of Figure~3 cannot be reused. What is left is the essence stated as
+    chemistry: a substrate, the rules that act on it named on their arrows, the products they
+    produce, and the fact that the output is ordered.
+
+    Hard requirements, from the ACS guidelines of 2024-02-28: at most 3.25 by 1.75 inches at the
+    size submitted, sans-serif type at 8 pt and never below 6, and TIFF at 300 dpi or EPS with
+    fonts embedded -- PDF is not an accepted format for this one graphic, so both are written.
+    """
+    import io
+
+    import matplotlib.image as mpimg
+    from matplotlib.patches import FancyArrowPatch
+
+    # The specification, stated once and never used to build anything. The canvas below is sized
+    # from it today, but the two must stay separate names: an assertion that compares the output
+    # against the same constant that produced it can only catch a process failure, never a wrong
+    # constant, and would pass unchanged if someone widened the canvas.
+    ACS_MAX_W, ACS_MAX_H, ACS_MIN_DPI, ACS_MIN_PT = 3.25, 1.75, 300, 6.0
+    TOC_W, TOC_H, DPI, MIN_PT = 3.25, 1.75, 300, 6.0
+    LABEL_PT, RANK_PT = 7.5, 8.5
+    FONTS_PT = (LABEL_PT, RANK_PT)
+    d = art("case_study_exhaustive.json")
+    hits = {c["key"]: c for c in d["candidates"] if c["is_reference"]}
+    # the two transformations that read as chemistry at this size: one deamination, one
+    # phosphorylation, each labelled with the rule the pipeline reported for it
+    shown = [("FIRDBEQIJQERSE-UHFFFAOYSA-N", "dFdU", DEAMINATION),
+             ("KNTREFQOVSMROS-UHFFFAOYSA-N", "dFdCMP", PHOSPHORYLATION)]
+
+    def draw(smiles, w, h):
+        from rdkit import Chem, RDLogger
+        RDLogger.DisableLog("rdApp.*")
+        from rdkit.Chem.Draw import rdMolDraw2D
+        dr = rdMolDraw2D.MolDraw2DCairo(w, h)
+        o = dr.drawOptions()
+        o.bondLineWidth = 3
+        o.fixedFontSize = 34
+        rdMolDraw2D.PrepareAndDrawMolecule(dr, Chem.MolFromSmiles(smiles))
+        dr.FinishDrawing()
+        return mpimg.imread(io.BytesIO(dr.GetDrawingText()), format="png")
+
+    fig = plt.figure(figsize=(TOC_W, TOC_H))
+    fig.patch.set_facecolor("white")
+    sans = {"family": "DejaVu Sans"}
+
+    ax = fig.add_axes([0, 0, 1, 1])
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1)
+    ax.set_axis_off()
+
+    sub = fig.add_axes([0.005, 0.20, 0.33, 0.62])
+    sub.imshow(draw(d["substrate"], 620, 420))
+    sub.set_axis_off()
+    ax.text(0.17, 0.14, "substrate", ha="center", fontsize=LABEL_PT, color="#333333", **sans)
+
+    for i, (key, name, col) in enumerate(shown):
+        y = 0.70 - 0.42 * i
+        pan = fig.add_axes([0.60, y - 0.20, 0.30, 0.40])
+        pan.imshow(draw(hits[key]["smiles"], 620, 400))
+        pan.set_axis_off()
+        ax.add_patch(FancyArrowPatch((0.355, 0.50), (0.585, y), arrowstyle="-|>",
+                                     mutation_scale=11, lw=1.5, color=col,
+                                     shrinkA=0, shrinkB=2,
+                                     connectionstyle="arc3,rad=%.2f" % (0.16 if i == 0 else -0.16)))
+        ax.text(0.47, 0.50 + (0.16 if i == 0 else -0.155) * 1.05 + (y - 0.50) * 0.5,
+                f"rule {hits[key]['rule_id']}", ha="center", fontsize=LABEL_PT, color=col, **sans)
+        ax.text(0.755, y - 0.235, name, ha="center", fontsize=LABEL_PT, color=col, **sans)
+        ax.text(0.945, y, str(i + 1), ha="center", va="center", fontsize=RANK_PT,
+                color="#333333", **sans)
+    ax.text(0.945, 0.14, "rank", ha="center", fontsize=LABEL_PT, color="#333333", **sans)
+
+    # The rc_context is load-bearing. This module sets savefig.bbox to "tight" for the figures,
+    # and tight adds savefig.pad_inches on every side: the first build came out 3.45 by 1.95,
+    # which is 3.25 by 1.75 plus 0.1 twice. Passing bbox_inches=None does not help, because None
+    # means "read the rcParam". The limit is a maximum at the size submitted, so the canvas has
+    # to be written as it is.
+    with matplotlib.rc_context({"savefig.bbox": "standard", "savefig.pad_inches": 0.0}):
+        # tif and eps are what ACS accepts for this graphic; the pdf exists only so pdflatex can
+        # place it in the manuscript, since pdflatex reads neither of the other two
+        for f, kw in (("fig_toc.tif", {"pil_kwargs": {"compression": "tiff_lzw"}}),
+                      ("fig_toc.eps", {}), ("fig_toc.pdf", {})):
+            fig.savefig(OUT / f, dpi=DPI, facecolor="white", **kw)
+    plt.close(fig)
+
+    # ACS asks for RGB; matplotlib writes RGBA, and an alpha channel in a submitted TIFF is a
+    # production problem rather than an error anyone would see here
+    from PIL import Image
+    with Image.open(OUT / "fig_toc.tif") as im:
+        if im.mode != "RGB":
+            im.convert("RGB").save(OUT / "fig_toc.tif", compression="tiff_lzw",
+                                   dpi=(DPI, DPI))
+
+    # The specification is checked rather than trusted: a graphic over the limit is rejected at
+    # submission, and nothing else here would notice.
+    with Image.open(OUT / "fig_toc.tif") as im:
+        w_in, h_in = im.size[0] / DPI, im.size[1] / DPI
+        assert im.mode == "RGB", f"TOC graphic is {im.mode}, not RGB"
+        assert w_in <= ACS_MAX_W + 1e-6 and h_in <= ACS_MAX_H + 1e-6, (
+            f"TOC graphic is {w_in:.2f} by {h_in:.2f} in, over the ACS maximum of "
+            f"{ACS_MAX_W} by {ACS_MAX_H}")
+        assert im.info.get("dpi", (0, 0))[0] >= ACS_MIN_DPI, (
+            f"TOC graphic is under {ACS_MIN_DPI} dpi")
+    assert min(FONTS_PT) >= ACS_MIN_PT, (
+        f"a TOC label is set at {min(FONTS_PT)} pt, under the ACS floor of {ACS_MIN_PT}")
+    return w_in, h_in, DPI
+
+
 def digest():
     """A hash of the numbers the figures draw.
 
@@ -320,7 +432,9 @@ if __name__ == "__main__":
     fig_ceiling()
     fig_cost()
     fig_case()
+    toc = fig_toc()
     (OUT / "figures.sha256").write_text(digest() + "\n")
     print("  fig_sweep.pdf, fig_ceiling.pdf, fig_cost.pdf, fig_case.pdf")
+    print(f"  fig_toc.tif, fig_toc.eps, fig_toc.pdf  {toc[0]}x{toc[1]} in at {toc[2]} dpi, RGB")
     print(f"  the sweep's shaded regions, from the contrasts: {band}")
     print(f"  data digest {digest()[:24]}")

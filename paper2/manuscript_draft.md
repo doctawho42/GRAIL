@@ -791,7 +791,6 @@ Article, no requirement that a hosted service exist, and no licence or login cri
 | `⟨AUTHORS⟩` | author list, and which author corresponds | yes |
 | `⟨AFFILIATIONS⟩` | affiliations | yes |
 | `⟨TBD⟩` | author contributions, funding, conflicts | yes |
-| `⟨TOC_GRAPHIC⟩` | the table-of-contents graphic ACS asks for | yes |
 | `⟨SERVICE_URL⟩` | the deployed URL, if a hosted interface is offered | no |
 | `⟨SERVER⟩` | the interface section, if one is offered | no |
 | `⟨ANY_FURTHER⟩` | limitations the authors know of and this draft does not | no |
@@ -809,6 +808,10 @@ Resolved from the artifacts:
 - `⟨POP_H13⟩`, `⟨POP_H15⟩` — validation, 293 paired substrates, from the two verdict artifacts
 - `⟨REGISTRY_URL⟩` — paper2/preregistration.md
 - `⟨ORACLE_BY_TYPE⟩` — computed; see the group-rank section
+- `⟨TOC_GRAPHIC⟩` — drawn by `scripts/paper2_figures.py` as `paper2/fig_toc.{tif,eps}` at exactly
+  3.25 by 1.75 inches, 300 dpi, RGB, sans-serif at 7.5 pt. The specification is asserted against
+  the written file rather than assumed, and is held in constants separate from the ones that size
+  the canvas, so the check measures the graphic against ACS and not against itself
 - `⟨CASE_STUDY⟩` — gemcitabine, both modes, from `results/case_study.json`. Producing it found
   that `_firing_atoms` returned an empty tuple for every candidate: the localisation is handed
   the raw product of `RunReactants`, whose implicit valence is not computed, the MCS inside
