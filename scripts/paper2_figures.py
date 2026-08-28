@@ -161,6 +161,135 @@ def fig_cost():
     plt.close(fig)
 
 
+# The worked example's four annotated metabolites. Colour encodes the SITE, not the metabolite:
+# the three phosphorylations fire on the same two substrate atoms under three different rules,
+# which is the point the panel has to make, so giving each its own colour would hide it.
+DEAMINATION, PHOSPHORYLATION = "#b2182b", "#2166ac"
+CASE = [("FIRDBEQIJQERSE-UHFFFAOYSA-N", "dFdU", DEAMINATION),
+        ("KNTREFQOVSMROS-UHFFFAOYSA-N", "dFdCMP", PHOSPHORYLATION),
+        ("FRQISCZGNNXEMD-UHFFFAOYSA-N", "dFdCDP", PHOSPHORYLATION),
+        ("YMOXEIOKAJSRQX-UHFFFAOYSA-N", "dFdCTP", PHOSPHORYLATION)]
+
+
+def _rgb(h, tint=0.0):
+    """The colour, optionally blended toward white.
+
+    MolDraw2DCairo ignores a fourth alpha channel in this RDKit, so a pale highlight has to be a
+    pale colour: the atom labels are drawn over the fill and must stay legible through it.
+    """
+    c = tuple(int(h[k:k + 2], 16) / 255 for k in (1, 3, 5))
+    return tuple(v + (1.0 - v) * tint for v in c)
+
+
+def _substrate_png(smiles, site_groups, width=900, height=520):
+    """The substrate with each firing site shaded in its colour.
+
+    Drawn from the atom indices the pipeline reported, not from a hand-marked depiction: the
+    panel's claim is that the localisation is a computed field of the prediction.
+    """
+    from rdkit import Chem, RDLogger
+    RDLogger.DisableLog("rdApp.*")
+    from rdkit.Chem.Draw import rdMolDraw2D
+
+    mol = Chem.MolFromSmiles(smiles)
+    highlight, colours = [], {}
+    for atoms, rgb in site_groups:
+        for a in atoms:
+            if a < mol.GetNumAtoms():
+                highlight.append(a)
+                colours[a] = rgb
+    d = rdMolDraw2D.MolDraw2DCairo(width, height)
+    o = d.drawOptions()
+    o.bondLineWidth = 2
+    o.highlightRadius = 0.36
+    o.fixedFontSize = 24
+    rdMolDraw2D.PrepareAndDrawMolecule(d, mol, highlightAtoms=highlight,
+                                       highlightAtomColors=colours)
+    d.FinishDrawing()
+    return d.GetDrawingText()
+
+
+def fig_case():
+    """The worked example: where the rules fire, and where the two arms put the four answers."""
+    import io
+
+    import matplotlib.image as mpimg
+    from matplotlib.patches import Circle
+
+    inter, exh = art("case_study.json"), art("case_study_exhaustive.json")
+    hits = {arm: {c["key"]: c for c in d["candidates"] if c["is_reference"]}
+            for arm, d in (("i", inter), ("e", exh))}
+
+    # the two sites, taken from the exhaustive arm, which produces all four metabolites. The
+    # phosphorylation atoms are a set union over three rules and collapse to one site; that
+    # collapse is the observation, so it is computed here rather than asserted.
+    sites = {DEAMINATION: set(), PHOSPHORYLATION: set()}
+    for key, _, col in CASE:
+        c = hits["e"].get(key)
+        if c:
+            sites[col] |= set(c["firing_atoms"])
+    n_phos_rules = len({hits["e"][k]["rule_id"] for k, _, col in CASE
+                        if col == PHOSPHORYLATION and k in hits["e"]})
+
+    fig, (a1, a2) = plt.subplots(1, 2, figsize=(W * 2.06, 2.7),
+                                 gridspec_kw={"width_ratios": [1.0, 1.3]})
+    png = _substrate_png(inter["substrate"],
+                         [(sorted(atoms), _rgb(col, 0.68)) for col, atoms in sites.items()])
+    a1.imshow(mpimg.imread(io.BytesIO(png), format="png"))
+    a1.set_axis_off()
+    a1.set_title("substrate, shaded by the atoms the rules fired on", fontsize=7.5, pad=4)
+    for i, (col, text) in enumerate((
+            (DEAMINATION, "deamination, 1 rule"),
+            (PHOSPHORYLATION, f"phosphorylation, {n_phos_rules} rules"))):
+        a1.add_patch(Circle((0.055, -0.055 - 0.075 * i), 0.018, transform=a1.transAxes,
+                            color=col, clip_on=False))
+        a1.text(0.095, -0.055 - 0.075 * i, text, transform=a1.transAxes, fontsize=7,
+                va="center", color="#333333")
+
+    # the ranks: every candidate as a tick, the annotated ones marked and named
+    rows = [("exhaustive", "e", exh, 1.0), ("interactive", "i", inter, 0.0)]
+    for _, _, d, y in rows:
+        a2.plot([c["rank"] for c in d["candidates"]], [y] * d["n_candidates"], "|",
+                color="#c4c4c4", ms=9, mew=0.8, zorder=2)
+    # labels are staggered by rank order so neighbouring ones cannot overprint
+    for _, arm, d, y in rows:
+        found = sorted((c for c in d["candidates"] if c["is_reference"]),
+                       key=lambda c: c["rank"])
+        for j, c in enumerate(found):
+            col = next(x for k, _, x in CASE if k == c["key"])
+            name = next(x for k, x, _ in CASE if k == c["key"])
+            a2.plot([c["rank"]], [y], "o", ms=5.5, color=col, mec="white", mew=0.9, zorder=4)
+            off = (9, 26, 43)[j % 3] if y else -16
+            a2.annotate(f"{name}\nrule {c['rule_id']}", (c["rank"], y),
+                        textcoords="offset points", xytext=(0, off),
+                        ha="center", va="bottom" if y else "top",
+                        fontsize=6.3, color=col, linespacing=1.15,
+                        arrowprops=dict(arrowstyle="-", lw=0.5, color=col,
+                                        shrinkA=1, shrinkB=3) if y and j % 3 else None)
+    for k in (15, 30):
+        a2.axvline(k, color="#bdbdbd", lw=0.7, ls=":", zorder=0)
+        a2.annotate(f"$k={k}$", (k, -0.62), ha="center", fontsize=6.5, color="#777777")
+    a2.set_yticks([0, 1])
+    a2.set_yticklabels(
+        [f"interactive\n{inter['configuration']['rule_budget']} rules, "
+         f"{inter['n_candidates']} returned\n{inter['n_references'] and len(inter['reference_ranks'])} of "
+         f"{inter['n_references']} found",
+         f"exhaustive\n{exh['configuration']['rule_budget']:,} rules, "
+         f"{exh['n_candidates']} returned\n{len(exh['reference_ranks'])} of "
+         f"{exh['n_references']} found"], fontsize=6.8)
+    a2.set_xlabel("rank in the returned list")
+    a2.set_xlim(0.3, max(exh["n_candidates"], 32) + 4)
+    a2.set_ylim(-0.9, 1.95)
+    a2.set_xscale("symlog", linthresh=30, linscale=1.6)
+    a2.set_xticks([1, 5, 10, 15, 20, 30, 50, 100])
+    a2.set_xticklabels(["1", "5", "10", "15", "20", "30", "50", "100"])
+    a2.spines["left"].set_visible(False)
+    a2.tick_params(axis="y", length=0)
+    a2.set_title("where the four annotated metabolites land", fontsize=7.5, pad=10)
+    fig.savefig(OUT / "fig_case.pdf")
+    plt.close(fig)
+
+
 def digest():
     """A hash of the numbers the figures draw.
 
@@ -179,6 +308,9 @@ def digest():
         "grain": cen["granularity_curve"], "gap": art("coverage_gap_types.json")["gap"],
         "uspto": usp["overlap"], "modes": {"i": mt["interactive"], "e": mt["exhaustive"]},
         "env": [(r["heavy"], r["finished"], r.get("t_generate")) for r in env["rows"]],
+        "case": {a: [(c["rank"], c["key"], c["rule_id"], c["firing_atoms"])
+                     for c in art(f)["candidates"] if c["is_reference"]]
+                 for a, f in (("i", "case_study.json"), ("e", "case_study_exhaustive.json"))},
     }, sort_keys=True).encode()
     return hashlib.sha256(payload).hexdigest()
 
@@ -187,7 +319,8 @@ if __name__ == "__main__":
     band = fig_sweep()
     fig_ceiling()
     fig_cost()
+    fig_case()
     (OUT / "figures.sha256").write_text(digest() + "\n")
-    print("  fig_sweep.pdf, fig_ceiling.pdf, fig_cost.pdf")
+    print("  fig_sweep.pdf, fig_ceiling.pdf, fig_cost.pdf, fig_case.pdf")
     print(f"  the sweep's shaded regions, from the contrasts: {band}")
     print(f"  data digest {digest()[:24]}")

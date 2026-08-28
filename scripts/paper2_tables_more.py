@@ -110,25 +110,23 @@ def case_study():
         rank_i = str(ci["rank"]) if ci else "---"
         rule_i = str(ci["rule_id"]) if ci else "not produced"
         rank_e = str(ce["rank"]) if ce else "---"
-        rule_e = (f"{ce['rule_id']} / {','.join(str(a) for a in ce['firing_atoms'])}"
-                  if ce else "not produced")
+        rule_e = str(ce["rule_id"]) if ce else "not produced"
         rows.append(f"{name} & {rank_i} & {rule_i} & {rank_e} & {rule_e}")
     body = " \\\\\n".join(rows)
 
     return (
-        "\\begin{table}[t]\n\\centering\\small\n\\begin{tabular}{lrrrl}\n\\toprule\n"
+        "\\begin{table}[t]\n\\centering\\small\n\\begin{tabular}{lrrrr}\n\\toprule\n"
         " & \\multicolumn{2}{c}{interactive} & \\multicolumn{2}{c}{exhaustive} \\\\\n"
         "\\cmidrule(lr){2-3}\\cmidrule(lr){4-5}\n"
-        "annotated metabolite & rank & rule & rank & rule / site \\\\\n\\midrule\n"
+        "annotated metabolite & rank & rule & rank & rule \\\\\n\\midrule\n"
         f"{body} \\\\\n\\bottomrule\n\\end{{tabular}}\n"
         "\\caption{The worked example: gemcitabine, its four annotated metabolites, and where "
         f"each is found. The interactive mode returns {inter['n_candidates']} candidates in "
         f"{inter['generator_seconds']}~s and reaches only the deamination; the exhaustive mode "
         f"returns {exh['n_candidates']} in {exh['generator_seconds']}~s and reaches all four, at "
         f"micro recall {exh['recall_at']['15']:.2f} at $k=15$ and {exh['recall_at']['30']:.2f} at "
-        "$k=30$. Rule is the index into the deployed bank and site the substrate atoms the rule "
-        "fired on: the three phosphorylations fire at the same 5$^\\prime$ position under three "
-        "different rules, and the deamination on the pyrimidine ring.}\n"
+        "$k=30$. Rule is the index into the deployed bank; the atoms each one fired on are "
+        "in Figure~\\ref{fig:case}.}\n"
         "\\label{tab:case}\n\\end{table}\n")
 
 

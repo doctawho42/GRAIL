@@ -1,17 +1,17 @@
 \begin{table}[t]
 \centering\small
-\begin{tabular}{lrrrl}
+\begin{tabular}{lrrrr}
 \toprule
  & \multicolumn{2}{c}{interactive} & \multicolumn{2}{c}{exhaustive} \\
 \cmidrule(lr){2-3}\cmidrule(lr){4-5}
-annotated metabolite & rank & rule & rank & rule / site \\
+annotated metabolite & rank & rule & rank & rule \\
 \midrule
-dFdU, deamination & 4 & 4913 & 13 & 4913 / 0,1,2,4,15,16,17 \\
-dFdCMP, 5$^\prime$-monophosphate & --- & not produced & 8 & 2198 / 8,9 \\
-dFdCDP, 5$^\prime$-diphosphate & --- & not produced & 21 & 2139 / 8,9 \\
-dFdCTP, 5$^\prime$-triphosphate & --- & not produced & 16 & 1745 / 8,9 \\
+dFdU, deamination & 4 & 4913 & 13 & 4913 \\
+dFdCMP, 5$^\prime$-monophosphate & --- & not produced & 8 & 2198 \\
+dFdCDP, 5$^\prime$-diphosphate & --- & not produced & 21 & 2139 \\
+dFdCTP, 5$^\prime$-triphosphate & --- & not produced & 16 & 1745 \\
 \bottomrule
 \end{tabular}
-\caption{The worked example: gemcitabine, its four annotated metabolites, and where each is found. The interactive mode returns 18 candidates in 3.34~s and reaches only the deamination; the exhaustive mode returns 100 in 14.18~s and reaches all four, at micro recall 0.50 at $k=15$ and 1.00 at $k=30$. Rule is the index into the deployed bank and site the substrate atoms the rule fired on: the three phosphorylations fire at the same 5$^\prime$ position under three different rules, and the deamination on the pyrimidine ring.}
+\caption{The worked example: gemcitabine, its four annotated metabolites, and where each is found. The interactive mode returns 18 candidates in 3.34~s and reaches only the deamination; the exhaustive mode returns 100 in 14.18~s and reaches all four, at micro recall 0.50 at $k=15$ and 1.00 at $k=30$. Rule is the index into the deployed bank; the atoms each one fired on are in Figure~\ref{fig:case}.}
 \label{tab:case}
 \end{table}

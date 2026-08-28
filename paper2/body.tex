@@ -240,11 +240,24 @@ figure in Table~\ref{tab:sweep} is micro.
 
 \subsection{A worked example}
 
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{fig_case}
+\caption{The worked example. Left: the substrate, with every atom a firing rule reported shaded
+in the colour of the transformation it belongs to. The three phosphorylations report the same two
+atoms under three different rules, so the sites collapse to two where the metabolites do not.
+Right: where the four annotated metabolites fall in each arm's ranked list, every returned
+candidate drawn as a tick. The interactive budget never produces the phosphorylations, so its
+list is short and correct rather than long and wrong.}
+\label{fig:case}
+\end{figure*}
+
 \input{table_case}
 
 Gemcitabine is annotated in the corpus with four metabolites: the deamination to dFdU that
 inactivates it, and the three sequential 5$^\prime$ phosphorylations that activate it.
-Table~\ref{tab:case} is what the server returns for it, with the transformation behind every hit.
+Figure~\ref{fig:case} and Table~\ref{tab:case} are what the server returns for it, with the
+transformation behind every hit.
 
 The interactive mode applies its \numCaseInterBudget{}-rule budget in
 \numCaseInterSeconds{}~s and returns \numCaseInterCandidates{} candidates, of which the
@@ -282,8 +295,8 @@ ranking, so the figure bounds a configuration the server does not run.
 H8 trained a listwise group scorer applied to whole groups. Registered threshold $+\numHEightThreshold$; measured
 on the comparison set, $\numHEightDiff$. The deficit splits into $\numHEightDesign$ from the
 design, block emission being worse than interleaved (\numHEightBlocked{} against
-\numHEightInterleaved{}), and $\numHEightModel$ from the model. The oracle had been measured in
-blocked form, so a third of the headroom it promised was the return of what the design spends.
+\numHEightInterleaved{}), and $\numHEightModel$ from the model. Because the oracle is measured
+in blocked form, a third of the headroom it promises is the return of what the design spends.
 
 H12 used the same model untrained further, entering its group score as a third ranking in the same
 fusion. Measured $+\numHOneTwoDiff$, 95\% CI $[+\numHOneTwoLo, +\numHOneTwoHi]$. The effect is not

@@ -106,6 +106,8 @@ modes were run on it and every field the pipeline computes was kept.
 | dFdCTP, 5′-triphosphate | not produced | 16 / 1745 / atoms 8,9 |
 | dFdCDP, 5′-diphosphate | not produced | 21 / 2139 / atoms 8,9 |
 
+Figure 4 shows where the rules fire and where the two arms put the four answers.
+
 The interactive mode applies its 30-rule budget in 3.34 s and returns 18 candidates, ranking the
 deamination fourth. The three phosphorylations are not among the rules that budget selects, so no
 ranking could have recovered them. The exhaustive mode applies the whole bank in 14.18 s, returns
@@ -236,12 +238,19 @@ $0.0015$ higher, inside noise.
 ### Group rank
 
 Candidates group naturally by molecular formula. An oracle that orders these groups by whether
-they contain a reference is worth $+0.1729$ over the ranking it is measured against. That ranking
+they contain a reference is worth $+0.3143$ of micro recall@15 over the ranking it is measured
+against, and $+0.3814$ in macro. That ranking
 is the product ordering with each formula group emitted as a block, on the uncapped pool of 588.7
 candidates, and it is not what the server runs. The figure is therefore an upper bound on a
 configuration nobody deploys, and the comparison that bears on the deployed system is the H12 row
 below. Two mechanisms for spending this headroom were registered before either was built, and
 both are reported here because they fail in different and informative ways.
+
+The registration of H8 was written against an earlier value of this oracle, $+0.1729$, which
+`paper2/preregistration.md` records and which a later recomputation of
+`wide_pool_analysis_implicit.json` superseded. The registration is left as it was written, since
+a preregistration that is edited to match its outcome registers nothing; the figure above is the
+current artifact's.
 
 **H8** trained a listwise group scorer whose ordering was applied to whole groups, emitted as
 blocks. Registered threshold $+0.05$; measured on the 291 comparison substrates, $-0.1203$,
@@ -280,7 +289,7 @@ Entering a *binary* group ordering — one that knows only which groups hold a r
 third term reaches the same $0.5308$ the trained scorer reaches. That is not an upper bound and
 we do not use it as one: a binary ordering leaves every reference-free group tied, and on
 validation the trained scorer exceeds it, $+0.0412$ against $+0.0260$. What the pair does show is
-that the $+0.1729$ measured against the blocked product ordering is not available to either
+that the headroom measured against the blocked product ordering is not available to either
 registered composition, and the reason differs between them: H8's design spends more than it
 draws, and H14's is bounded below the cap it replaces even under an oracle.
 
