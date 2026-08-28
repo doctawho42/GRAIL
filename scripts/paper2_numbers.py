@@ -54,22 +54,31 @@ def build():
     n["gloryx.fraction"] = ovl["GLORYx external set"]["fraction"]
 
     # the deployed comparison, per arm and budget
+    ARMS = {"whole bank": "bank", "trained budget": "trained", "metatox": "metatox",
+            "sygma": "sygma", "metapredictor": "metapredictor"}
     for k, row in dep["recall_micro"].items():
-        for arm, tag in (("whole bank", "bank"), ("trained budget", "trained"),
-                         ("metatox", "metatox")):
-            n[f"sweep.{tag}.{k}"] = row[arm]
+        for arm, tag in ARMS.items():
+            if arm in row:
+                n[f"sweep.{tag}.{k}"] = row[arm]
     for k, row in dep["contrasts"].items():
-        for arm, tag in (("whole bank - metatox", "bank"), ("trained budget - metatox", "trained")):
-            c = row[arm]
+        for pair, c in row.items():
+            if "unavailable" in c:
+                continue
+            a, b = [x.strip() for x in pair.split(" - ")]
+            if a not in ARMS or b not in ARMS:
+                continue
+            tag = f"{ARMS[a]}{ARMS[b].capitalize()}"
             n[f"gap.{tag}.{k}"] = c["gap"]
             n[f"gap.{tag}.{k}.lo"] = c["ci95"][0]
             n[f"gap.{tag}.{k}.hi"] = c["ci95"][1]
             n[f"gap.{tag}.{k}.sep"] = c["excludes_zero"]
-    for arm, tag in (("whole bank", "bank"), ("trained budget", "trained"), ("metatox", "metatox")):
-        n[f"output.{tag}"] = dep["mean_output_length"][arm]
+    for arm, tag in ARMS.items():
+        if arm in dep["mean_output_length"]:
+            n[f"output.{tag}"] = dep["mean_output_length"][arm]
     for k, row in dep["substrates_whose_list_is_shorter_than_the_budget"].items():
-        n[f"short.trained.{k}"] = row["trained budget"]
-        n[f"short.metatox.{k}"] = row["metatox"]
+        for arm, tag in ARMS.items():
+            if arm in row:
+                n[f"short.{tag}.{k}"] = row[arm]
 
     # the registered checks
     n["h7.product"] = round(h7["micro"]["product"], 4)

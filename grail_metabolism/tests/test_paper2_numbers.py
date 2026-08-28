@@ -18,10 +18,17 @@ def _run(script):
                           capture_output=True, text=True, cwd=ROOT)
 
 
-@pytest.mark.skipif(not (ROOT / "paper2/grail_service.tex").exists(),
+@pytest.mark.skipif(not (ROOT / "paper2/webserver_draft.md").exists(),
                     reason="the manuscript is not in this checkout")
-def test_every_number_in_the_manuscript_is_a_macro_from_an_artifact():
-    r = _run("check_paper2_numbers.py")
+def test_the_draft_numbers_can_be_traced():
+    """The markdown manuscript has no macro path, so this reports rather than gates.
+
+    grail_service.tex reached every figure through a generated macro and a checker refused any
+    literal that was not one. The markdown draft cannot do that, and the loss is real: this runs
+    the tracer and fails only if it cannot run, which is a weaker guarantee and is named as one
+    in paper2/superseded/README.md.
+    """
+    r = _run("check_draft_numbers.py")
     assert r.returncode == 0, r.stdout + r.stderr
 
 

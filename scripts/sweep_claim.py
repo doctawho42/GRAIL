@@ -17,6 +17,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 TABLE = ROOT / "results/deployment_table.json"
 ARMS = {"whole bank": "whole bank", "trained budget": "trained budget"}
+COMPARATORS = ("metatox", "sygma", "metapredictor")
 
 
 def _fmt(ks):
@@ -50,10 +51,30 @@ def claim(table_path: Path = TABLE) -> str:
         if ties:
             line += f" At {_fmt(ties)} the interval does not separate."
         lines.append(line)
+    # every comparator the artifact carries, not the one the author happened to read
+    for comp in COMPARATORS:
+        if comp == "metatox" or f"whole bank - {comp}" not in d["contrasts"][str(budgets[0])]:
+            continue
+        for arm in ARMS:
+            leads, sep, trails = [], [], []
+            for k in budgets:
+                c = d["contrasts"][str(k)][f"{arm} - {comp}"]
+                if c.get("gap", 0) > 0:
+                    leads.append(k)
+                    if c.get("excludes_zero"):
+                        sep.append(k)
+                elif c.get("excludes_zero"):
+                    trails.append(k)
+            line = f"Against {comp}, the {arm} leads at {_fmt(leads)}"
+            line += f", separating at {_fmt(sep)}." if sep else " and separates nowhere."
+            if trails:
+                line += f" It trails with the interval excluding zero at {_fmt(trails)}."
+            lines.append(line)
+
     n = d["population"]["n"]
     mean = d["mean_output_length"]
-    lines.append(f"Mean list length: whole bank {mean['whole bank']}, trained budget "
-                 f"{mean['trained budget']}, MetaTox {mean['metatox']}, on {n} substrates.")
+    lines.append("Mean list length: " +
+                 ", ".join(f"{a} {mean[a]}" for a in mean) + f", on {n} substrates.")
     return "\n".join("> " + x for x in lines)
 
 

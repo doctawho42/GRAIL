@@ -51,6 +51,12 @@ def main() -> int:
     ap.add_argument("--pools", default="results/widepools_implicit/w*.json")
     ap.add_argument("--out", default=str(ROOT / "results/oracle_by_grouping.json"))
     ap.add_argument("--k", type=int, default=15)
+    ap.add_argument("--cap", type=int, default=100,
+                    help="the H9 cap. The oracle asks how well the emitted set could be ordered, "
+                         "and the deployed configuration orders the hundred this keeps; typing "
+                         "the whole 794-candidate pool measures a set nothing ranks and costs "
+                         "65 hours, the tail being one substrate whose 4,614 candidates take "
+                         "869 ms each to type.")
     args = ap.parse_args()
 
     from rdkit import Chem, RDLogger
@@ -84,7 +90,8 @@ def main() -> int:
                   file=sys.stderr, flush=True)
         real = set(refs[s])
         n_ref.append(len(real))
-        fused = rrf_order(pools[s])
+        keep = sorted(pools[s], key=lambda c: -c["generator"])[:args.cap]
+        fused = rrf_order(keep)
         sub_mol = Chem.MolFromSmiles(s)
 
         labels = {}
@@ -135,7 +142,10 @@ def main() -> int:
     rep = {"provenance": stamp(__file__),
            "population": {"n": len(subs), "n_references": N,
                           "source": "the 291 of results/four_method_291.json"},
-           "aggregation": "micro, ratio of sums", "k": kk,
+           "aggregation": "micro, ratio of sums", "k": kk, "cap": args.cap,
+           "cap_note": "every arm including the fusion baseline is computed on the capped pool, "
+                       "so the three partitions are compared on the set the deployed "
+                       "configuration actually ranks",
            "note": "every arm blocks its groups, which is what the oracle over a partition means; "
                    "the fusion arm interleaves and is the baseline all three are read against",
            "untyped_candidates": untyped,

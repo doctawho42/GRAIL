@@ -211,7 +211,11 @@ substitution in others. So the claim is stated as it falls:
 
 > The whole bank leads MetaTox at k = 1, 3, 5, 8, 10, 15, 20, 30 and 50, with the paired-bootstrap interval excluding zero at k = 1, 3, 5, 8, 10, 30 and 50. At k = 15 and 20 the interval does not separate.
 > The trained budget leads MetaTox at k = 1, 3, 5, 8 and 10, with the paired-bootstrap interval excluding zero at k = 1, 3, 5, 8 and 10. It trails with the interval excluding zero at k = 20, 30 and 50. At k = 15 the interval does not separate.
-> Mean list length: whole bank 98.9, trained budget 15.7, MetaTox 31.0, on 291 substrates.
+> Against sygma, the whole bank leads at k = 15, 20, 30 and 50, separating at k = 15, 20, 30 and 50. It trails with the interval excluding zero at k = 1, 3 and 5.
+> Against sygma, the trained budget leads at no budget and separates nowhere. It trails with the interval excluding zero at k = 1, 3 and 5.
+> Against metapredictor, the whole bank leads at k = 15, 20, 30 and 50, separating at k = 15, 20, 30 and 50. It trails with the interval excluding zero at k = 1, 3 and 5.
+> Against metapredictor, the trained budget leads at k = 20, 30 and 50 and separates nowhere. It trails with the interval excluding zero at k = 1.
+> Mean list length: whole bank 98.1, trained budget 15.6, metatox 30.9, sygma 40.5, metapredictor 10.7, on 291 substrates.
 
 That block is generated from `results/deployment_table.json` by `scripts/sweep_claim.py` and a
 test holds this file to containing exactly what it produces. Written by hand it was wrong within

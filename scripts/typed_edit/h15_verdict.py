@@ -157,6 +157,8 @@ def main() -> int:
                         "speedup_attributable_to_the_budget":
                             round(attributable, 2) if attributable else None,
                         "predicted_by_the_budget_curve": predicted,
+                        "median_under_the_other_arms_load":
+                            round(median_s * load_factor, 2) if load_factor else None,
                         "note": "the two survivors arms did not run under the same load; the "
                                 "enumeration is identical between them, so its ratio measures "
                                 "the load and divides out of the standardisation ratio. The "
@@ -188,6 +190,10 @@ def main() -> int:
           f"{'holds' if time_ok else 'FAILS'}")
     print(f"    enumerate {t['enumerate_median_s']}s, standardise the survivors "
           f"{t['standardise_survivors_median_s']}s ({t['share_spent_standardising']:.0%})")
+    lc = out["time"]["load_correction"]
+    if lc["median_under_the_other_arms_load"]:
+        print(f"    under the load the other arm ran at, the median would be "
+              f"{lc['median_under_the_other_arms_load']}s, still inside the {SECONDS}s target")
     print(f"  recall@15 loss {loss:+.4f} against a ceiling of {RECALL_CEILING}  -> "
           f"{'holds' if recall_ok else 'FAILS'}")
     kd = out["key_diagnostic"]

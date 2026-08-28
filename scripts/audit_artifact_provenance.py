@@ -85,6 +85,8 @@ PINNED = {
     "results/h11_grid.json": f"{TE}/h11_grid.py",
     # why the registered emission threshold does not survive the change of ranking
     "results/emission_rule_transfer.json": f"{TE}/emission_rule_transfer.py",
+    # what each operating mode costs, medians and the tail on one population
+    "results/mode_timings.json": f"{TE}/mode_timings.py",
     # the comparison as it would ship, both budgets against MetaTox
     "results/deployment_table.json": f"{TE}/deployment_table.py",
     # the rule budget: the curve's shape and the check on validation

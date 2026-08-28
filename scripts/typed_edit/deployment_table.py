@@ -35,6 +35,16 @@ N_BOOT, SEED = 10000, 0
 METATOX = ROOT / "results/metatox_smirks_preds.json"
 FOUR = ROOT / "results/four_method_291.json"
 
+# results/four_method_291.json is the artifact that DEFINES this population, and it carries four
+# methods. Reporting only MetaTox from it was a defect: SyGMa and MetaPredictor have predictions
+# on the identical substrates and beat both GRAIL arms at the tight budgets this comparison is
+# built on. Every comparator that artifact names is read here.
+COMPARATORS = {
+    "metatox": ("results/metatox_smirks_preds.json", "predictions"),
+    "sygma": ("results/sygma_fulltest_predictions.json", None),
+    "metapredictor": ("artifacts/tier2_1170/metapredictor_preds.json", None),
+}
+
 
 def load(spec):
     pools, refs, tk = {}, {}, set()
@@ -65,14 +75,35 @@ def main() -> int:
     print(f"{len(subs)} substrates, {N:.0f} references "
           f"(whole bank top_k={tk_b}, trained top_k={tk_s})", file=sys.stderr)
 
-    def ranked(pool):
-        keep = sorted(pool, key=lambda c: -c["generator"])[:CAP]
-        return [c["key"] for c in rrf_order(keep)]
+    # The artifact that defines this population drops a prediction equal to the substrate before
+    # the budget bites: returning the parent is not a prediction, though it does consume a slot.
+    # That is a declared convention and it has to be the same for every arm, ours included, or
+    # the arms are not measured on one axis. Without it MetaPredictor's recall here missed the
+    # committed column by two references at three budgets, which the gate caught.
+    from bank_without_selection import _key as _tautkey
+    parent = {s: _tautkey(s) for s in subs}
 
-    mtx = json.loads(METATOX.read_text())["predictions"]
-    arms = {"whole bank": {s: ranked(big[s]) for s in subs},
-            "trained budget": {s: ranked(small[s]) for s in subs},
-            "metatox": {s: _dedup(mtx.get(s, []), max(KS)) for s in subs}}
+    def drop_parent(keys, s):
+        return [k for k in keys if k and k != parent[s]]
+
+    def ranked(pool, s):
+        keep = sorted(pool, key=lambda c: -c["generator"])[:CAP]
+        return drop_parent([c["key"] for c in rrf_order(keep)], s)
+
+    arms = {"whole bank": {s: ranked(big[s], s) for s in subs},
+            "trained budget": {s: ranked(small[s], s) for s in subs}}
+    absent = []
+    for name, (rel, key) in COMPARATORS.items():
+        path = ROOT / rel
+        if not path.exists():
+            absent.append(name)
+            continue
+        blob = json.loads(path.read_text())
+        preds = blob[key] if key else blob
+        arms[name] = {s: drop_parent(_dedup(preds.get(s, []), max(KS) + 5), s)[:max(KS)]
+                      for s in subs}
+    ours = ("whole bank", "trained budget")
+    others = [a for a in arms if a not in ours]
 
     rng = np.random.default_rng(SEED)
     idx = rng.integers(0, len(subs), (N_BOOT, len(subs)))
@@ -93,26 +124,39 @@ def main() -> int:
     for k in KS:
         h = {a: hits(a, k) for a in arms}
         table[str(k)] = {a: round(float(v.sum() / N), 4) for a, v in h.items()}
-        contrasts[str(k)] = {
-            "whole bank - metatox": contrast(h["whole bank"], h["metatox"]),
-            "trained budget - metatox": contrast(h["trained budget"], h["metatox"]),
-            "trained budget - whole bank": contrast(h["trained budget"], h["whole bank"])}
+        row = {"trained budget - whole bank": contrast(h["trained budget"], h["whole bank"])}
+        for a in ours:
+            for b in others:
+                cov = sum(1 for s in subs if arms[b][s])
+                row[f"{a} - {b}"] = (contrast(h[a], h[b]) if cov else
+                                     {"unavailable": f"{b} covers no substrate here"})
+        contrasts[str(k)] = row
         exhausted[str(k)] = {a: int(sum(1 for s in subs if len(arms[a][s]) < k)) for a in arms}
 
-    four = json.loads(FOUR.read_text())["per_method"]["MetaTox"]["recall"]
-    mism = [f"k={k}: {table[str(k)]['metatox']} vs committed {four[str(k)]}"
-            for k in KS if str(k) in four
-            and abs(table[str(k)]["metatox"] - four[str(k)]) > 1e-9]
+    # the gate now covers every comparator the defining artifact records, not just one
+    committed = json.loads(FOUR.read_text())["per_method"]
+    names = {"metatox": "MetaTox", "sygma": "SyGMa", "metapredictor": "MetaPredictor"}
+    mism = []
+    for arm, label in names.items():
+        if arm not in table["1"] or label not in committed:
+            continue
+        r = committed[label]["recall"]
+        mism += [f"{label} k={k}: {table[str(k)][arm]} vs committed {r[str(k)]}"
+                 for k in KS if str(k) in r and abs(table[str(k)][arm] - r[str(k)]) > 1e-9]
 
     mean_pool = {a: round(float(np.mean([len(arms[a][s]) for s in subs])), 1) for a in arms}
     rep = {"provenance": stamp(__file__),
            "population": {"n": len(subs), "n_references": N,
                           "source": "the 291 of results/four_method_291.json"},
            "aggregation": "micro, ratio of sums",
+           "convention": "a prediction whose key equals the substrate's is dropped before the "
+                         "budget, for every arm alike; results/four_method_291.json, which "
+                         "defines this population, does the same",
            "configuration": {"cap": CAP, "fusion": "H7 reciprocal rank fusion, k=60",
                              "top_k": {"whole bank": tk_b, "trained budget": tk_s}},
            "gate": {"reproduces_four_method_291_metatox": not mism, "mismatches": mism},
            "mean_output_length": mean_pool,
+           "comparators_absent": absent,
            "recall_micro": table, "contrasts": contrasts,
            "substrates_whose_list_is_shorter_than_the_budget": exhausted,
            "status": "H10 was registered and checked on validation; this population is the "
@@ -120,16 +164,12 @@ def main() -> int:
            "n_boot": N_BOOT, "seed": SEED}
     Path(args.out).write_text(json.dumps(rep, indent=1))
 
-    order = ["whole bank", "trained budget", "metatox"]
+    order = list(ours) + others
     print(f"\nmean list length: " + "  ".join(f"{a} {mean_pool[a]}" for a in order))
-    print(f"\n{'k':>4}" + "".join(f"{a:>16}" for a in order)
-          + f"{'trained-mtx':>14}{'bank-mtx':>12}")
+    print(f"\n{'k':>4}" + "".join(f"{a:>16}" for a in order))
     for k in KS:
         t, c = table[str(k)], contrasts[str(k)]
-        tm, bm = c["trained budget - metatox"], c["whole bank - metatox"]
-        print(f"{k:>4}" + "".join(f"{t[a]:>16.4f}" for a in order)
-              + f"{tm['gap']:>+13.4f}{'*' if tm['excludes_zero'] else ' '}"
-              + f"{bm['gap']:>+11.4f}{'*' if bm['excludes_zero'] else ' '}")
+        print(f"{k:>4}" + "".join(f"{t[a]:>16.4f}" for a in order))
     print(f"\ngate reproduces the committed MetaTox column: {not mism}")
     print("\nsubstrates whose list is shorter than the budget:")
     for k in KS:
