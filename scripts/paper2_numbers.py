@@ -270,6 +270,21 @@ def build():
             return False
     n["bank.parses"] = sum(1 for r in bank if _parses(r))
 
+    # what the learned rule CHOICE contributes, against unlearned choices of the same size
+    sa = art("selection_ablation_deployed.json")
+    n["sel.budget"] = sa["budget"]
+    n["sel.applicable"] = sa["mean_applicable_rules"]
+    for arm in ("learned", "prior_applicable", "random_applicable", "random"):
+        n[f"sel.{arm}15"] = sa["recall_micro"][arm]["15"]
+        n[f"sel.{arm}1"] = sa["recall_micro"][arm]["1"]
+        n[f"sel.{arm}.pool"] = sa["mean_pool"][arm]
+    for arm in ("prior_applicable", "random_applicable", "random"):
+        c = sa["learned_minus"][arm]["15"]
+        n[f"sel.vs{arm}"] = c["gap"]
+        n[f"sel.vs{arm}lo"] = c["ci95"][0]
+        n[f"sel.vs{arm}hi"] = c["ci95"][1]
+    n["sel.vsprior.k5"] = sa["learned_minus"]["prior_applicable"]["5"]["gap"]
+
     # what each learned scorer contributes to the ORDER, on the deployed configuration
     ra = art("ranking_ablation.json")
     for tag, pop in (("cmp", "comparison set"), ("val", "validation draw")):

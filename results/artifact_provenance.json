@@ -188,6 +188,18 @@
    "status": "current"
   },
   {
+   "artifact": "results/selection_ablation_deployed.json",
+   "script": "selection_verdict.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
+   "artifact": "results/selection_pools_deployed.json",
+   "script": "selection_ablation_deployed.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
    "artifact": "results/similarity_baseline.json",
    "script": "similarity_baseline.py",
    "how": "recorded source digest",
@@ -272,13 +284,13 @@
    "status": "current"
   }
  ],
- "n_pinned": 45,
+ "n_pinned": 47,
  "n_pinned_stale": 0,
  "sweep": {
   "unstamped": 117,
   "producer_changed": 39,
   "producer_unknown": 27,
-  "current": 28,
+  "current": 27,
   "cosmetic_only": 8
  },
  "sweep_not_current": [

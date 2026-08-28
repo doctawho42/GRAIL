@@ -1,0 +1,212 @@
+{
+ "provenance": {
+  "script": "selection_verdict.py",
+  "script_path": "scripts/typed_edit/selection_verdict.py",
+  "source_sha256": "d4cb8aa969f9fc92f76940763e025a3fcde35fbdf5a3d0548cb63a945b2ad9f6",
+  "git_commit": "47f302d79417b3e0402e77d73c64f8129b361865",
+  "git_dirty": true
+ },
+ "population": {
+  "n": 291,
+  "n_references": 665.0,
+  "source": "the comparison set of results/four_method_291.json"
+ },
+ "aggregation": "micro, ratio of sums",
+ "budget": 30,
+ "seed": 0,
+ "mean_applicable_rules": 517.7,
+ "note": "four ways to choose the same number of rules, with application, standardisation, filter and the deployed rank fusion identical downstream; only the choice varies",
+ "mean_pool": {
+  "learned": 16.3,
+  "prior_applicable": 13.7,
+  "random_applicable": 65.9,
+  "random": 4.6
+ },
+ "recall_micro": {
+  "learned": {
+   "1": 0.1053,
+   "5": 0.3188,
+   "10": 0.4331,
+   "15": 0.4797,
+   "30": 0.4902,
+   "50": 0.4902
+  },
+  "prior_applicable": {
+   "1": 0.0947,
+   "5": 0.3038,
+   "10": 0.412,
+   "15": 0.4481,
+   "30": 0.4586,
+   "50": 0.4586
+  },
+  "random_applicable": {
+   "1": 0.0662,
+   "5": 0.2,
+   "10": 0.2692,
+   "15": 0.2917,
+   "30": 0.3278,
+   "50": 0.3429
+  },
+  "random": {
+   "1": 0.0135,
+   "5": 0.0226,
+   "10": 0.0241,
+   "15": 0.0241,
+   "30": 0.0241,
+   "50": 0.0241
+  }
+ },
+ "learned_minus": {
+  "prior_applicable": {
+   "1": {
+    "gap": 0.0105,
+    "ci95": [
+     -0.0068,
+     0.0286
+    ],
+    "separates": false
+   },
+   "5": {
+    "gap": 0.015,
+    "ci95": [
+     -0.0069,
+     0.0377
+    ],
+    "separates": false
+   },
+   "10": {
+    "gap": 0.0211,
+    "ci95": [
+     -0.0015,
+     0.0453
+    ],
+    "separates": false
+   },
+   "15": {
+    "gap": 0.0316,
+    "ci95": [
+     0.0101,
+     0.0547
+    ],
+    "separates": true
+   },
+   "30": {
+    "gap": 0.0316,
+    "ci95": [
+     0.0099,
+     0.0556
+    ],
+    "separates": true
+   },
+   "50": {
+    "gap": 0.0316,
+    "ci95": [
+     0.0099,
+     0.0556
+    ],
+    "separates": true
+   }
+  },
+  "random_applicable": {
+   "1": {
+    "gap": 0.0391,
+    "ci95": [
+     0.0176,
+     0.0626
+    ],
+    "separates": true
+   },
+   "5": {
+    "gap": 0.1188,
+    "ci95": [
+     0.0814,
+     0.1597
+    ],
+    "separates": true
+   },
+   "10": {
+    "gap": 0.1639,
+    "ci95": [
+     0.1202,
+     0.212
+    ],
+    "separates": true
+   },
+   "15": {
+    "gap": 0.188,
+    "ci95": [
+     0.141,
+     0.2382
+    ],
+    "separates": true
+   },
+   "30": {
+    "gap": 0.1624,
+    "ci95": [
+     0.114,
+     0.215
+    ],
+    "separates": true
+   },
+   "50": {
+    "gap": 0.1474,
+    "ci95": [
+     0.0965,
+     0.2021
+    ],
+    "separates": true
+   }
+  },
+  "random": {
+   "1": {
+    "gap": 0.0917,
+    "ci95": [
+     0.0699,
+     0.1171
+    ],
+    "separates": true
+   },
+   "5": {
+    "gap": 0.2962,
+    "ci95": [
+     0.2544,
+     0.3416
+    ],
+    "separates": true
+   },
+   "10": {
+    "gap": 0.409,
+    "ci95": [
+     0.3573,
+     0.4634
+    ],
+    "separates": true
+   },
+   "15": {
+    "gap": 0.4556,
+    "ci95": [
+     0.4009,
+     0.5132
+    ],
+    "separates": true
+   },
+   "30": {
+    "gap": 0.4662,
+    "ci95": [
+     0.411,
+     0.5235
+    ],
+    "separates": true
+   },
+   "50": {
+    "gap": 0.4662,
+    "ci95": [
+     0.411,
+     0.5235
+    ],
+    "separates": true
+   }
+  }
+ },
+ "reading": "learned against prior_applicable is the comparison that decides; the two random arms bound what applicability alone and the bank alone are worth"
+}

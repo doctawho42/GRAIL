@@ -217,6 +217,17 @@ Both ran on a 245-substrate subsample under the superseded product ordering, so 
 not transfer to the configuration reported here, and they are superseded by this table and by the
 selection ablation below rather than repeated.
 
+\subsection{Ties in the deployed ranking}
+
+The deployed configuration caps the pool by rule score before the fusion sees it. On a pool
+smaller than the cap that truncates nothing, but it fixes the order the fusion reads, and that
+matters because the fusion has exact ties: for 14 of the \numPopulationN{} substrates the two
+best candidates receive identical fused scores, so which of them is returned first is decided by
+the order the pool arrives in rather than by the ranking rule. Fusing the pool as stored instead
+of after the cap moves micro recall at $k=1$ from \numSelLearnedOne{} to $0.1068$, a
+difference of $0.0015$. Every arm of every ablation here uses the deployed convention, so the
+differences reported are differences of method and not of tie-breaking.
+
 \section{When a ranking comparison can measure anything}
 
 Two experiments in this work asked whether a ranking beats an alternative ordering of the same

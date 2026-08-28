@@ -274,6 +274,31 @@ $k=1$ the difference is \numRankCmpVsproductkOne{} and the interval covers zero 
 populations. Neither stage is sufficient alone, and the gain this paper attributes to the form of
 the combination is not an artefact of one population.
 
+\subsection{What the learned rule choice contributes}
+
+The rule-budget prediction compared \numSelBudget{} templates against the whole bank, which asks
+about size. What the choice buys is a different question, and it is answered by picking
+\numSelBudget{} rules three other ways with the application, the standardisation, the filter and
+the fusion identical downstream. About \numSelApplicable{} of the \numBankRules{} templates match
+a given substrate, so the choice is made within a large applicable set rather than over the bank.
+
+Against \numSelBudget{} rules drawn at random from the whole bank, the learned choice gains
+$+\numSelVsrandom$ at $k=15$: most of a randomly chosen template does not fire, and that arm
+returns a mean pool of \numSelRandomPool{} candidates. Against \numSelBudget{} drawn at random
+from the applicable set the gain is $+\numSelVsrandomApplicable$
+$[+\numSelVsrandomApplicablelo, +\numSelVsrandomApplicablehi]$, and that arm returns
+\numSelRandomApplicablePool{} candidates against the learned arm's \numSelLearnedPool{}: choosing
+badly among applicable rules produces four times the candidates and recovers far less.
+
+The comparison that decides is against the \numSelBudget{} applicable rules with the highest
+training frequency, which uses the same applicability filter and no learning. There the learned
+choice gains $+\numSelVspriorApplicable$ of micro recall at $k=15$,
+$[+\numSelVspriorApplicablelo, +\numSelVspriorApplicablehi]$, on a base of
+\numSelPriorApplicableOneFive{}. The interval excludes zero from $k=15$ but not below it: at
+$k=5$ the gain is $+\numSelVspriorKFive$ and the interval covers zero. The substrate-specific part
+of stage one is therefore worth a small and budget-dependent amount over a frequency table
+restricted to the same rules, and we report it as such rather than as the stage's justification.
+
 \subsection{A ranking that needs no training}
 
 Metabolism preserves the scaffold. A metabolite differs from its parent by an added oxygen, a
@@ -578,7 +603,8 @@ and not a random quarter of it.
 The Supporting Information is available free of charge at \ZenodoDoi{} and from the publisher.
 
 Corpus sources with their versions and licence position, and the splits with the leakage audit;
-when a ranking comparison can measure anything, and the choice of evaluation population; the five matching criteria defined; the sensitivity of
+the stage ablations in full and the ties in the deployed ranking; when a ranking comparison can
+measure anything, and the choice of evaluation population; the five matching criteria defined; the sensitivity of
 the comparison to the choice among them; the rule bank and its mining procedure; the architecture
 and training of both learned stages; the fifteen registered predictions, including the six this
 paper does not report; the group-ranking oracle under four partitions with a

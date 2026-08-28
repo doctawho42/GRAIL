@@ -93,6 +93,8 @@ PINNED = {
     "results/criterion_sweep.json": f"{TE}/criterion_sweep.py",
     "results/similarity_baseline.json": f"{TE}/similarity_baseline.py",
     "results/ranking_ablation.json": f"{TE}/ranking_ablation.py",
+    "results/selection_ablation_deployed.json": f"{TE}/selection_verdict.py",
+    "results/selection_pools_deployed.json": f"{TE}/selection_ablation_deployed.py",
     "results/case_study.json": f"{TE}/case_study.py",
     "results/case_study_exhaustive.json": f"{TE}/case_study.py",
     # the rule budget: the curve's shape and the check on validation
