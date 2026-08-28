@@ -65,3 +65,8 @@ paper2/*.bbl
 paper2/*.blg
 paper2/*.fls
 paper2/*.fdb_latexmk
+
+# the figures ARE deliverables and are generated from results/
+!paper2/fig_sweep.pdf
+!paper2/fig_ceiling.pdf
+!paper2/fig_cost.pdf

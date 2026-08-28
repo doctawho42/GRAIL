@@ -61,3 +61,20 @@ def test_the_sweep_claim_block_matches_the_artifact():
     for line in claim().splitlines():
         assert line.replace("> ", "") in got, (
             "paper2/claim.tex has drifted from results/deployment_table.json; regenerate it")
+
+
+@pytest.mark.skipif(not (ROOT / "paper2/figures.sha256").exists(),
+                    reason="the figures are not in this checkout")
+def test_the_figures_are_drawn_from_the_current_artifacts():
+    """Matplotlib does not produce byte-identical PDFs, so this compares the data instead.
+
+    A figure is stale when the artifact behind it has moved, not when its timestamp has, and the
+    first draft's comparison table went stale exactly that way.
+    """
+    sys.path.insert(0, str(ROOT / "scripts"))
+    import importlib
+    mod = importlib.import_module("paper2_figures")
+    importlib.reload(mod)
+    want = (ROOT / "paper2/figures.sha256").read_text().strip()
+    assert mod.digest() == want, (
+        "the figures are behind their artifacts; re-run scripts/paper2_figures.py")

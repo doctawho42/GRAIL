@@ -48,6 +48,17 @@ RDKit 2022.09.5 and the products standardised and deduplicated; a filter scores 
 generator orderings. Every emitted candidate carries the identity of the rule that produced it and
 the site at which it fired.
 
+A candidate reachable by several rules, or by one rule firing at several sites, receives a single
+score. Writing $R(c)$ for the rules that produce $c$ and $p_r$ for the generator's probability
+that rule $r$ applies, the aggregation is noisy-or,
+\begin{equation}
+p(c) = 1 - \prod_{r \in R(c)} \left( 1 - p_r \right),
+\label{eq:noisyor}
+\end{equation}
+so evidence from independent rules accumulates rather than competing. Equation~\ref{eq:noisyor}
+is why deduplication is not a cosmetic step: the key under which two products are judged the same
+decides which scores are combined, and changing that key moves the ranking.
+
 \subsection{Rule bank}
 
 The bank holds \numBankRules{} templates spanning \numBankTypes{} distinct reaction types, where a
@@ -81,8 +92,12 @@ $+0.109$; the shrinkage to two thirds is the measured cost of that selection.
 
 \subsection{Pool cap}
 
-Before fusion the pool is truncated to the \numHNineCap{} highest-scoring candidates by generator
-score, a quantity available before any pair graph is built. Registered as H9 with a threshold of
+Before fusion the pool is truncated by generator score, a quantity available before any pair graph
+is built:
+\begin{equation}
+\hat{C}(s) = \operatorname*{arg\,top}_{c \in C(s)}{}^{\,\numHNineCap} \; p(c),
+\end{equation}
+where $C(s)$ is everything the applied rules enumerate. Registered as H9 with a threshold of
 $+\numHNineThreshold$; measured $+\numHNineDiff$, 95\% CI $[+\numHNineLo, +\numHNineHi]$, mean
 pool \numHNinePoolBefore{} to \numHNinePoolAfter{}. The cap was registered to gain and it gains:
 it removes a few candidates that were a substrate's only correct answer and many more that were
@@ -114,8 +129,9 @@ candidate scores $0.88$ of the best under fusion against $0.016$ under the produ
 reciprocal-rank sum is a rank statistic without scale. At $\alpha = 0.5$ the rule admits
 $16.22$ candidates from a pool of $16.3$, truncating nothing.
 
-The deployed emission is therefore the whole pool of the operating budget, with no threshold and
-no parameter. Registered as H11 with a criterion of zero lost cells over a grid of five matching
+The deployed emission is therefore $\hat{C}(s)$ itself, ordered by fusion and truncated by
+nothing, so $|\hat{Y}_s| = |\hat{C}(s)|$ is set by the rule budget and the substrate's chemistry
+and by no parameter of ours. Registered as H11 with a criterion of zero lost cells over a grid of five matching
 criteria by eleven budgets: \numHOneOneLost{} of \numHOneOneCells{}.
 
 \subsection{Evaluation}
@@ -126,9 +142,24 @@ fingerprints, and a tautomer-aware key that canonicalises tautomers on both side
 default, because the references neither carry stereochemistry nor distinguish tautomers. All five
 are reported for every comparison.
 
-Two aggregations are distinguished throughout and never mixed within a comparison: macro, the mean
-of per-substrate recall, and micro, the ratio of sums. Intervals are paired bootstrap over
-substrates, 10\,000 resamples, seed 0. Precision is reported but is not used to order systems:
+Recall at cut-off $k$ for substrate $s$ with references $Y_s$ and the first $k$ predictions
+$\hat{Y}^{(k)}_s$ is $|Y_s \cap \hat{Y}^{(k)}_s| / |Y_s|$. Two aggregations are distinguished
+throughout and never mixed within a comparison,
+\begin{equation}
+\mathrm{macro} = \frac{1}{|S|}\sum_{s \in S} \frac{|Y_s \cap \hat{Y}^{(k)}_s|}{|Y_s|},
+\quad
+\mathrm{micro} = \frac{\sum_{s} |Y_s \cap \hat{Y}^{(k)}_s|}{\sum_{s} |Y_s|},
+\end{equation}
+and every figure states which it is. Intervals are a paired bootstrap over substrates: for each of
+$B = 10\,000$ resamples $S^{(b)}$ drawn with replacement,
+\begin{equation}
+\delta^{(b)} = \frac{\sum_{s \in S^{(b)}} \left( h^A_s - h^B_s \right)}
+                     {\sum_{s \in S^{(b)}} |Y_s|},
+\end{equation}
+with $h^A_s$ and $h^B_s$ the hits of the two arms, and the reported interval is the empirical
+$2.5$ and $97.5$ percentiles of $\{\delta^{(b)}\}$. Resampling substrates rather than
+predictions is what makes the interval one on the \emph{difference} between two arms read on the
+same items. Precision is reported but is not used to order systems:
 under incomplete annotation an unannotated but real metabolite counts as a false positive, so a
 system emitting fewer candidates is rewarded for reasons unrelated to its chemistry.
 
@@ -141,7 +172,17 @@ cell's interval excludes zero, and where an ordering is not established the tabl
 
 \input{table_sweep}
 
-Table~\ref{tab:sweep} is the comparison on the \numPopulationN{} substrates every method predicts
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{fig_sweep}
+\caption{Micro recall against output budget on the \numPopulationN{} substrates every method
+predicts on. Shading is read from the paired intervals and not by eye: red where GRAIL's better
+arm trails the strongest comparator with the interval excluding zero, blue where it leads with the
+interval excluding zero, unshaded where neither separates.}
+\label{fig:sweep}
+\end{figure}
+
+Figure~\ref{fig:sweep} and Table~\ref{tab:sweep} are the comparison on the \numPopulationN{} substrates every method predicts
 on. Read against the strongest comparator at each budget it divides in three rather than resolving
 into an ordering.
 
@@ -207,6 +248,18 @@ $+\numHOneTwoVal$ against $+\numHOneTwoValceiling$.
 
 \subsection{Runtime}
 
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{fig_cost}
+\caption{Left: generator seconds against substrate size at the whole bank, with the substrates
+that did not finish inside the deadline marked at it. Size is a poor predictor: two substrates of
+equal size differ by two orders of magnitude, and the smallest failure carries
+\numEnvelopeSmallestUnfinished{} heavy atoms. Right: the cost of each operating mode on the
+validation split, log scale. The interactive mode's mean is six times its median and its slowest
+substrate is three orders above it.}
+\label{fig:cost}
+\end{figure*}
+
 Standardisation was the binding constraint and its diagnosis was wrong twice before it was right.
 Three explanations were tested and rejected by measurement: the filter's maximum-common-substructure
 step, rule application, and substrate size as an axis. The cause was product standardisation, at
@@ -249,6 +302,17 @@ which \numCensusOnce{} occur once and carry \numCensusOnceShare{} of the mass. T
 this is an artefact of how finely a type is defined is answered by varying the definition.
 
 \input{table_grain}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{fig_ceiling}
+\caption{Left: where the \numCeilingUncovered{} uncovered references go, and how many of them a
+library of \numUsptoTemplates{} synthetic templates could supply. Right: the share of the
+novel-type gap sitting in types seen exactly once, against four definitions of a type, with the
+number of distinct types above each bar. Red marks the definitions under which a type still names
+a transformation.}
+\label{fig:ceiling}
+\end{figure*}
 
 The tail holds at every granularity at which a type still determines a product and collapses only
 where it stops doing so. What the table supports is not that \numCensusOnceShare{} of the gap is

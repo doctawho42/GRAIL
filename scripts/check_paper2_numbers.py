@@ -21,7 +21,7 @@ NUMS = ROOT / "paper2/numbers.tex"
 ALLOWED = {
     "11", "1", "8", "0", "2",              # documentclass, geometry, itemize plumbing
     "60",                                  # the RRF constant, published by Cormack et al.
-    "95",                                  # the confidence level
+    "95", "2.5", "97.5",                   # the confidence level and the percentiles that define it
     "10", "000",                           # 10,000 bootstrap resamples
     "5.2", "109",                          # the timing example, cited in prose with its artifact
     "5",                                   # a section cross-reference
