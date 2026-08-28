@@ -71,6 +71,9 @@ PINNED = {
     "results/group_scorer_selection_h12.json": f"{TE}/train_group_scorer.py",
     "results/h12_verdict.json": f"{TE}/h12_verdict.py",
     "results/h12_verdict_validation.json": f"{TE}/h12_verdict.py",
+    # what the novel-type gap is made of, and whether a library on disk already holds it
+    "results/novel_type_census.json": f"{TE}/novel_type_census.py",
+    "results/uspto_type_overlap.json": f"{TE}/uspto_type_overlap.py",
     # the group signal as a gate, and its selection
     "results/group_scorer_selection_h14.json": f"{TE}/train_group_scorer.py",
     "results/h14_verdict.json": f"{TE}/h14_verdict.py",

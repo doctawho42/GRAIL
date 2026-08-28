@@ -55,3 +55,13 @@ logs/
 # externally distributed evaluation tables, fetched not redistributed; the artifact that
 # reads one records its sha256 so a reader can confirm they hold the same file
 data/external/
+
+# LaTeX build products for paper2
+paper2/*.aux
+paper2/*.log
+paper2/*.out
+paper2/*.pdf
+paper2/*.bbl
+paper2/*.blg
+paper2/*.fls
+paper2/*.fdb_latexmk

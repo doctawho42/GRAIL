@@ -1,0 +1,308 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{microtype}
+\usepackage[margin=1in]{geometry}
+\usepackage[colorlinks=true,allcolors=blue]{hyperref}
+\usepackage{natbib}
+
+\input{numbers}
+
+\title{Predicting xenobiotic metabolite structures at a budget:\\
+what decides the ranking, what bounds it, and what it costs}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+A metabolite-structure predictor is used at a budget: a chemist reads a handful of candidates, not
+a ranked list of six hundred. We report a rule-based-plus-learned predictor evaluated against
+MetaTox on \numPopulationN{} substrates carrying \numPopulationReferences{} annotated metabolites,
+at every output budget the field reports, with a paired bootstrap on each difference.
+
+Two changes to how existing scores are combined account for the result, and neither is a new model.
+Ranking candidates by reciprocal rank fusion of the filter and generator scores rather than by
+their product is worth $\numHSevenDiff$ of micro recall@15 on a held-out split
+($95\%$ CI $[\numHSevenLo, \numHSevenHi]$), and capping the candidate pool at
+$\numHNineCapped$\footnote{See Section~\ref{sec:cap}.} before ranking is worth a further
+$\numHNineDiff$ $[\numHNineLo, \numHNineHi]$ while cutting the pool from
+$\numHNinePoolBefore$ candidates to $\numHNinePoolAfter$. Applying the whole
+$\numBankRules$-template bank rather than the $\numHOneZeroTopk$ templates the trained model records
+buys $\numHOneZeroBought$ $[\numHOneZeroLo, \numHOneZeroHi]$ at that budget, an interval containing zero.
+
+Against MetaTox the deployed configuration leads at every budget, with the interval separating at
+seven of nine, while emitting $\numOutputTrained$ candidates against MetaTox's
+$\numOutputMetatox$. The comparison is reported as the whole sweep because no single budget is
+privileged.
+
+The bound on all of this is the rule bank's coverage, $\numCeilingCoverage$ of annotated
+transformations. We decompose what is missing: $\numCeilingNovel$ of $\numCeilingUncovered$
+uncovered references need a reaction type absent from the bank, and those collapse into
+$\numCensusTypes$ distinct types, $\numCensusOnce$ of them seen once and carrying
+$\numCensusOnceShare$ of the mass. The largest synthetic-chemistry template library available to
+us, $\numUsptoTemplates$ USPTO templates, supplies $\numUsptoHit$ of those types, covering
+$\numUsptoShare$ of the gap. The ceiling is a property of the annotation corpus and not of the
+rule formalism, and we state it as a boundary rather than as future work.
+\end{abstract}
+
+\section{Introduction}
+
+Predicting which structures a xenobiotic becomes in the body is a step in drug safety assessment
+and in environmental fate analysis. Tools that do it fall into two families. Rule-based systems
+apply a curated bank of transformation templates and rank the enumerated products; learned systems
+generate products directly. The rule-based family dominates deployment because its output is
+auditable: every prediction names the template that produced it.
+
+The evaluation of such tools is usually reported at one output budget, most often the top fifteen
+candidates. That is a choice, and it is not the only one a user makes. A screening application
+reads three candidates and a regulatory dossier reads fifty. We therefore report every budget the
+comparators are read at, together, with an interval on each difference, and privilege none.
+
+Our contributions are as follows.
+
+\begin{itemize}
+\item The ranking gains come from combining existing scores differently, not from a new model. We
+  fix each combination rule in a preregistration before checking it, and report the checks whether
+  they hold or fail.
+\item We locate the cost. Standardising enumerated products, not applying templates and not
+  scoring pairs, is $\numHOneThreeEnumeration$ times the rest of the generator's work, and moving
+  it off the enumeration loop with a bounded tautomer budget brings the median substrate from
+  $\numHOneThreeTimeBefore$ seconds to $\numHOneFiveTime$.
+\item We decompose the coverage ceiling into what a template library could supply and what only a
+  new annotation corpus could, and we report the second as a boundary.
+\end{itemize}
+
+\section{System}
+
+The predictor runs in three stages. A \emph{generator} scores each of the bank's
+$\numBankRules$ SMIRKS templates against the substrate graph and selects which to apply. RDKit
+applies the selected templates and enumerates products. A \emph{filter} scores each
+(substrate, product) pair. Candidates carry two scores, one from each learned stage, and the
+ranking is a function of the two.
+
+The bank contains $\numBankTypes$ distinct reaction types, where a type is the multiset of bonds
+that change between mapped atoms. Coverage, ranking and cost are three separate questions about
+this system and the sections below take them in that order.
+
+\subsection{Evaluation}
+
+Predictions and references are matched by tautomer-canonical InChIKey: both sides pass through the
+same standardisation before the key is taken, so a proton shift does not separate a prediction from
+its reference. Recall is micro, the ratio of sums over the population, and every difference carries
+a $95\%$ paired bootstrap over substrates with $10{,}000$ resamples.
+
+The comparison population is the \numPopulationN{} substrates for which MetaTox predictions are
+available, carrying \numPopulationReferences{} annotated metabolites. None of them appears in the
+data the model was trained or selected on. We checked this rather than assumed it: the same audit
+finds $\numGloryxOverlap$ of $\numGloryxN$ substrates of a set this project had called external
+inside the training split, and figures on that set are reported on the remainder.
+
+\section{What decides the ranking}
+
+\subsection{The combination of the two scores}
+
+The deployed system ranked candidates by the product of the filter and generator scores. The
+product is scale-sensitive: a candidate the filter is confident about and the generator is not
+falls to the bottom whatever its rank under either. Reciprocal rank fusion \citep{cormack2009}
+combines the two orderings instead of the two values,
+\[
+\mathrm{score}(c) = \frac{1}{60 + r_{\mathrm{filter}}(c)} + \frac{1}{60 + r_{\mathrm{generator}}(c)},
+\]
+with the published constant and no weight between the terms, so the rule fits nothing.
+
+On a held-out split micro recall@15 is $\numHSevenProduct$ under the product and
+$\numHSevenFusion$ under fusion, a difference of $\numHSevenDiff$ with a $95\%$ interval of
+$[\numHSevenLo, \numHSevenHi]$. The rule and the margin were fixed in advance of this measurement,
+at half the margin the rule showed on the population where four combinations had been compared and
+the best taken.
+
+\subsection{The cap on the pool}
+\label{sec:cap}
+
+The bank enumerates $\numHNinePoolBefore$ candidates for the median substrate. Keeping the
+$\numHNineCapped$ highest by generator score before ranking, a quantity available before any pair
+graph is built, raises micro recall@15 from $\numHNineUncapped$ to $\numHNineCapped$ on the
+held-out split. The difference is $\numHNineDiff$ $[\numHNineLo, \numHNineHi]$ against a
+registered $\numHNineThreshold$.
+
+The cap was expected to cost recall and to be adopted anyway, since it bounds the filter's work.
+It gains instead. The shape says where: the cap costs a little at the tightest budgets and pays
+with depth, which is what removing candidates that crowd the middle of a list looks like.
+
+\subsection{The rule budget}
+
+Every pool in this project had been built by applying all $\numBankRules$ templates, while the
+trained model records $\numHOneZeroTopk$. Nobody had measured the difference. On the held-out split the
+whole bank buys $\numHOneZeroBought$ of micro recall@15 over the trained budget, with an interval of
+$[\numHOneZeroLo, \numHOneZeroHi]$ that contains zero, while the mean pool falls from
+$\numHOneZeroPoolBank$ candidates to $\numHOneZeroPoolTrained$.
+
+That comparison is bounded to budgets the smaller arm can fill. Thirty templates yield seventeen
+candidates, so above a budget of fifteen the arm is not ranking worse, it is returning a short
+list. We report the count of exhausted lists at every budget alongside the recall, on both sides.
+
+\subsection{What did not work}
+
+Two further ways of using the same signals were registered and failed, and both failures are
+informative.
+
+The ordering loss is almost entirely a matter of which product formula to spend the budget on.
+Handing the ranker a perfect choice of formula group lifts micro recall@15 from
+$\numOracleAsranked$ to $\numOracleBetween$; a perfect choice of isomer inside a group lifts it to
+$\numOracleWithin$. That headroom does not yield to a decoding rule: capping how many candidates
+one formula may take in the early slots hurts at every strength tested, from
+$\numDecodeRrf$ uncapped down to $\numDecodeCapOne$ at one per group. The oracle's advantage is
+selective and not diversifying, and spreading a budget across formulas is the opposite of choosing
+among them rather than an approximation to it.
+
+Nor does it yield to a trained group scorer. A listwise model over formula groups, ordering the
+groups and leaving the order inside one alone, scores $\numHEightDiff$ against fusion. The failure
+splits: the design costs $\numHEightDesign$ before the model acts, because ordering groups and
+leaving their interiors alone forces every member of a formula to be emitted adjacently, and the
+same fusion ranking blocked that way is worse than interleaved. The model costs a further
+$\numHEightModel$.
+
+Entering the same group score as a third ranking of the fusion rule works and is bounded. It is
+worth $\numHOneTwoDiff$ $[\numHOneTwoLo, \numHOneTwoHi]$, and a \emph{perfect} group ranking
+entered the same way is worth $\numHOneTwoCeiling$: a reciprocal-rank term is bounded, so however
+good the group ordering is it can only nudge. Using the score to select instead, admitting whole
+groups until the cap is reached, loses $\numHOneFourDiff$, and a perfect group ranking used that
+way loses $\numHOneFourCeiling$. The between-group signal is worth something as a nudge over the
+generator's ordering and less than nothing as a replacement for it.
+
+\section{Comparison}
+
+Both configurations, the whole bank and the trained budget, carry the cap and the fusion rule and
+differ only in how many templates are applied. MetaTox is read from its own predictions with no cap
+imposed by us. Mean list lengths are $\numOutputBank$, $\numOutputTrained$ and
+$\numOutputMetatox$ respectively.
+
+\begin{table}[t]
+\centering
+\begin{tabular}{lrrrrr}
+\toprule
+$k$ & whole bank & trained budget & MetaTox & bank $-$ MetaTox & trained $-$ MetaTox \\
+\midrule
+$1$  & \numSweepBankOne  & \numSweepTrainedOne  & \numSweepMetatoxOne  & $\numGapBankOne$  & $\numGapTrainedOne$ \\
+$3$  & \numSweepBankThree & \numSweepTrainedThree & \numSweepMetatoxThree & $\numGapBankThree$ & $\numGapTrainedThree$ \\
+$5$  & \numSweepBankFive & \numSweepTrainedFive & \numSweepMetatoxFive & $\numGapBankFive$ & $\numGapTrainedFive$ \\
+$8$  & \numSweepBankEight & \numSweepTrainedEight & \numSweepMetatoxEight & $\numGapBankEight$ & $\numGapTrainedEight$ \\
+$10$ & \numSweepBankOneZero & \numSweepTrainedOneZero & \numSweepMetatoxOneZero & $\numGapBankOneZero$ & $\numGapTrainedOneZero$ \\
+$15$ & \numSweepBankOneFive & \numSweepTrainedOneFive & \numSweepMetatoxOneFive & $\numGapBankOneFive$ & $\numGapTrainedOneFive$ \\
+$20$ & \numSweepBankTwoZero & \numSweepTrainedTwoZero & \numSweepMetatoxTwoZero & $\numGapBankTwoZero$ & $\numGapTrainedTwoZero$ \\
+$30$ & \numSweepBankThreeZero & \numSweepTrainedThreeZero & \numSweepMetatoxThreeZero & $\numGapBankThreeZero$ & $\numGapTrainedThreeZero$ \\
+$50$ & \numSweepBankFiveZero & \numSweepTrainedFiveZero & \numSweepMetatoxFiveZero & $\numGapBankFiveZero$ & $\numGapTrainedFiveZero$ \\
+\bottomrule
+\end{tabular}
+\caption{Micro recall at each budget on \numPopulationN{} substrates. Intervals on every
+difference are in the released artifact.}
+\end{table}
+
+\input{claim}
+
+The trained budget leads at the tight budgets while returning lists half the length of MetaTox's
+and running in under two seconds per substrate. Above ten it trails, and the count of short lists
+says why: at $k=15$, $\numShortTrainedOneFive$ of its lists already hold fewer candidates than the
+budget. The same count is reported for MetaTox, $\numShortMetatoxFiveZero$ of whose own lists are
+shorter than fifty, so the widest columns are partly that artefact on its side too.
+
+\subsection{The emitted set}
+
+A ranked list at a fixed budget is an evaluation device. A service returns a set. Our emission rule
+has no parameter: the service returns what the trained rule budget produces, ordered by the fusion
+rule, truncated by nothing, which comes to $\numHOneOneOutputRule$ candidates against MetaTox's
+$\numHOneOneOutputMetatox$.
+
+Compared at each method's own emission over five matching criteria crossed with the budgets MetaTox
+is read at, the rule loses $\numHOneOneLost$ of $\numHOneOneCells$ cells on macro $F_1$. That
+comparison is biased toward the smaller emitter, because precision counts an unannotated true
+metabolite as a false positive and our rule emits less than half as much. The component that is not
+open to that objection: read at a budget of fifteen, where MetaTox emits about what the rule emits,
+its macro recall is $\numHOneOneRecallMetatoxOneFive$ against the rule's
+$\numHOneOneRecallRule$.
+
+\section{The ceiling}
+
+The bank reaches $\numCeilingCoverage$ of annotated transformations on the test split. No ranking
+changes that number, and it bounds everything above.
+
+Of $\numCeilingUncovered$ uncovered references, $\numCeilingKnown$ need a reaction type the bank
+already contains, $\numCeilingUntypeable$ admit no type, and $\numCeilingNovel$ need a type the
+bank lacks. The first group is a template-generalisation problem and the relaxations we tried
+recover three of it. The third is the interesting one, and its size alone does not say what to do
+about it.
+
+We therefore counted the types. The $\numCeilingNovel$ misses collapse into $\numCensusTypes$
+distinct types; $\numCensusOnce$ of those are seen exactly once and carry $\numCensusOnceShare$ of
+the mass, and half the mass needs $\numCensusHalf$ types. This is a tail at every granularity at
+which a type still determines a product. Coarsening the type until the tail collapses reaches
+levels at which a type no longer names a transformation.
+
+Nor is the chemistry sitting in a library we could import. We typed
+$\numUsptoTemplates$ USPTO retrosynthetic templates in both directions, giving
+$\numUsptoTypes$ distinct types, and $\numUsptoHit$ of the $\numCensusTypes$ missing types appear
+among them, carrying $\numUsptoMass$ of the $\numCeilingNovel$ misses. That intersection is small
+and it is not an artefact of incomparable vocabularies: the bank and USPTO share
+$\numUsptoSanity$ types, so the two type systems do meet.
+
+We state the consequence rather than defer it. Closing this gap needs new annotated metabolic
+chemistry, one transformation at a time, and no rearrangement of the rule formalism or of the
+ranking substitutes for it.
+
+\section{Cost}
+
+At the whole bank, $\numEnvelopeUnfinished$ of $\numEnvelopeN$ substrates do not finish within
+$\numEnvelopeDeadline$ seconds, and the smallest that fails carries $\numEnvelopeSmallestUnfinished$
+heavy atoms. The failures are ordinary drug-sized molecules, so the envelope is not an exotic case.
+
+The cost is not where template application or pair scoring would put it. Applying all templates to
+a $109$-heavy-atom substrate takes $5.2$ seconds. Standardising the enumerated products takes the
+rest: it is $\numHOneThreeEnumeration$ times the remaining work, run once per product of every
+template, about four thousand times per substrate to keep the hundred that survive the cap.
+
+Two changes follow. Deduplicating during enumeration on a cheap canonical form and standardising
+only the survivors moves the median substrate from $\numHOneThreeTimeBefore$ seconds to
+$\numHOneThreeTimeAfter$, a factor of $\numHOneThreeFactor$, and costs
+$\numHOneThreeRecallDiff$ of micro recall@15. Bounding the tautomer enumerator to
+$\numHOneFiveBudget$ for those survivors, with the matching key left at the shipped setting and
+computed by a separate enumerator, brings the median to $\numHOneFiveTime$ seconds at a recall
+cost of $\numHOneFiveRecallDiff$. Of $\numHOneFiveCandidates$ candidates, $\numHOneFiveMoved$
+standardise to a different molecule under the bounded budget.
+
+Part of that speed-up is the machine and not the change. The two arms did not run under the same
+load, and their enumeration step is identical, so its ratio measures the load alone:
+$\numHOneFiveLoad$. Dividing it out leaves $\numHOneFiveAttributable$ attributable to the tautomer
+budget.
+
+\section{Limitations}
+
+The ceiling of $\numCeilingCoverage$ is the dominant one and Section~5 is our account of it.
+
+At a budget of fifteen and above, the interval on the difference to MetaTox does not separate for
+either configuration. We report the point estimates and the intervals and make no claim there.
+
+The between-group ordering headroom, worth $\numOracleBetween$ against $\numOracleAsranked$ under
+an oracle, is not reached by either composition we registered. We do not know whether a mechanism
+outside those two reaches it.
+
+Matching is tautomer-canonical and its canonicaliser does not always converge: on enumerated
+tautomers it sends all forms of one molecule to one key for $\numTautInvarianceShipped$ of sampled
+products. Measured on the data instead, of $\numNearmissReferences$ validation references,
+$\numNearmissUnmatched$ are matched by no candidate and $\numNearmissConfirmed$ of those are
+present in the pool as a confirmed tautomer, so the shortfall costs nothing we can detect.
+
+\section{Availability}
+
+The rule bank, the trained checkpoints, the frozen split, the preregistration with every
+hypothesis and its outcome, the per-substrate predictions and every analysis script are released.
+Each reported artifact carries the hash of the code that wrote it, and a sweep refuses any artifact
+whose producer has changed since it was written.
+
+\bibliographystyle{plainnat}
+\bibliography{refs}
+
+\end{document}
