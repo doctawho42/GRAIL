@@ -1,0 +1,1389 @@
+{
+ "provenance": {
+  "script": "dialect_sweep.py",
+  "script_path": "scripts/typed_edit/dialect_sweep.py",
+  "source_sha256": "e192f61eae0daecd687317b89966b011426b762df7c9d71c04da9ab513b4ed70",
+  "git_commit": "cfad5c9b78a079b276418993944892f3e151be0a",
+  "git_dirty": true
+ },
+ "n": 291,
+ "budgets": [
+  1,
+  3,
+  5,
+  8,
+  10,
+  15,
+  20,
+  30,
+  50
+ ],
+ "match": "inchikey_tautomer",
+ "cap": 100,
+ "n_boot": 10000,
+ "seed": 0,
+ "effect_on_each_arm": {
+  "GRAIL exhaustive": {
+   "1": {
+    "stored": 0.0902,
+    "standardised": 0.0902,
+    "difference": 0.0,
+    "ci95": [
+     -0.0085,
+     0.0083
+    ],
+    "separates": false
+   },
+   "3": {
+    "stored": 0.2271,
+    "standardised": 0.2195,
+    "difference": -0.0075,
+    "ci95": [
+     -0.021,
+     0.0061
+    ],
+    "separates": false
+   },
+   "5": {
+    "stored": 0.3098,
+    "standardised": 0.3083,
+    "difference": -0.0015,
+    "ci95": [
+     -0.0157,
+     0.0127
+    ],
+    "separates": false
+   },
+   "8": {
+    "stored": 0.415,
+    "standardised": 0.409,
+    "difference": -0.006,
+    "ci95": [
+     -0.0198,
+     0.0079
+    ],
+    "separates": false
+   },
+   "10": {
+    "stored": 0.4526,
+    "standardised": 0.4541,
+    "difference": 0.0015,
+    "ci95": [
+     -0.011,
+     0.0149
+    ],
+    "separates": false
+   },
+   "15": {
+    "stored": 0.5353,
+    "standardised": 0.5173,
+    "difference": -0.018,
+    "ci95": [
+     -0.0326,
+     -0.0045
+    ],
+    "separates": true
+   },
+   "20": {
+    "stored": 0.5789,
+    "standardised": 0.5654,
+    "difference": -0.0135,
+    "ci95": [
+     -0.0244,
+     -0.0033
+    ],
+    "separates": true
+   },
+   "30": {
+    "stored": 0.6391,
+    "standardised": 0.6376,
+    "difference": -0.0015,
+    "ci95": [
+     -0.0112,
+     0.0081
+    ],
+    "separates": false
+   },
+   "50": {
+    "stored": 0.7038,
+    "standardised": 0.6992,
+    "difference": -0.0045,
+    "ci95": [
+     -0.0134,
+     0.0044
+    ],
+    "separates": false
+   }
+  },
+  "GRAIL interactive": {
+   "1": {
+    "stored": 0.1053,
+    "standardised": 0.0872,
+    "difference": -0.018,
+    "ci95": [
+     -0.0335,
+     -0.0043
+    ],
+    "separates": true
+   },
+   "3": {
+    "stored": 0.2406,
+    "standardised": 0.2241,
+    "difference": -0.0165,
+    "ci95": [
+     -0.0374,
+     0.0035
+    ],
+    "separates": false
+   },
+   "5": {
+    "stored": 0.3203,
+    "standardised": 0.3128,
+    "difference": -0.0075,
+    "ci95": [
+     -0.0286,
+     0.0133
+    ],
+    "separates": false
+   },
+   "8": {
+    "stored": 0.4015,
+    "standardised": 0.403,
+    "difference": 0.0015,
+    "ci95": [
+     -0.0194,
+     0.0234
+    ],
+    "separates": false
+   },
+   "10": {
+    "stored": 0.4331,
+    "standardised": 0.4376,
+    "difference": 0.0045,
+    "ci95": [
+     -0.0148,
+     0.0255
+    ],
+    "separates": false
+   },
+   "15": {
+    "stored": 0.4797,
+    "standardised": 0.4767,
+    "difference": -0.003,
+    "ci95": [
+     -0.0166,
+     0.0112
+    ],
+    "separates": false
+   },
+   "20": {
+    "stored": 0.4872,
+    "standardised": 0.4887,
+    "difference": 0.0015,
+    "ci95": [
+     -0.0097,
+     0.0134
+    ],
+    "separates": false
+   },
+   "30": {
+    "stored": 0.4902,
+    "standardised": 0.4902,
+    "difference": 0.0,
+    "ci95": [
+     -0.0109,
+     0.0114
+    ],
+    "separates": false
+   },
+   "50": {
+    "stored": 0.4902,
+    "standardised": 0.4917,
+    "difference": 0.0015,
+    "ci95": [
+     -0.0091,
+     0.0127
+    ],
+    "separates": false
+   }
+  }
+ },
+ "coverage_ceiling": {
+  "stored": {
+   "recovered": 539,
+   "of": 665,
+   "coverage": 0.8105
+  },
+  "standardised": {
+   "recovered": 534,
+   "of": 665,
+   "coverage": 0.803
+  },
+  "difference": {
+   "value": -0.0075,
+   "ci95": [
+    -0.0176,
+    0.0016
+   ],
+   "separates": false
+  },
+  "note": "measured on the comparison set rather than the full evaluated split, because the uncapped exhaustive pool for this population exists in both drawings and the full split's does not in the second"
+ },
+ "verdicts": {
+  "GRAIL exhaustive vs MetaTox": {
+   "1": {
+    "stored": {
+     "difference": 0.0496,
+     "ci95": [
+      0.0262,
+      0.0743
+     ],
+     "separates": true,
+     "sign": 1
+    },
+    "standardised": {
+     "difference": 0.0496,
+     "ci95": [
+      0.026,
+      0.0738
+     ],
+     "separates": true,
+     "sign": 1
+    },
+    "verdict_moves": false
+   },
+   "3": {
+    "stored": {
+     "difference": 0.0947,
+     "ci95": [
+      0.0577,
+      0.1335
+     ],
+     "separates": true,
+     "sign": 1
+    },
+    "standardised": {
+     "difference": 0.0872,
+     "ci95": [
+      0.0509,
+      0.1248
+     ],
+     "separates": true,
+     "sign": 1
+    },
+    "verdict_moves": false
+   },
+   "5": {
+    "stored": {
+     "difference": 0.0917,
+     "ci95": [
+      0.0504,
+      0.1341
+     ],
+     "separates": true,
+     "sign": 1
+    },
+    "standardised": {
+     "difference": 0.0902,
+     "ci95": [
+      0.0493,
+      0.1322
+     ],
+     "separates": true,
+     "sign": 1
+    },
+    "verdict_moves": false
+   },
+   "8": {
+    "stored": {
+     "difference": 0.1038,
+     "ci95": [
+      0.0619,
+      0.1463
+     ],
+     "separates": true,
+     "sign": 1
+    },
+    "standardised": {
+     "difference": 0.0977,
+     "ci95": [
+      0.0574,
+      0.1388
+     ],
+     "separates": true,
+     "sign": 1
+    },
+    "verdict_moves": false
+   },
+   "10": {
+    "stored": {
+     "difference": 0.0647,
+     "ci95": [
+      0.0232,
+      0.1057
+     ],
+     "separates": true,
+     "sign": 1
+    },
+    "standardised": {
+     "difference": 0.0662,
+     "ci95": [
+      0.0255,
+      0.1069
+     ],
+     "separates": true,
+     "sign": 1
+    },
+    "verdict_moves": false
+   },
+   "15": {
+    "stored": {
+     "difference": 0.0211,
+     "ci95": [
+      -0.0185,
+      0.0611
+     ],
+     "separates": false,
+     "sign": 1
+    },
+    "standardised": {
+     "difference": 0.003,
+     "ci95": [
+      -0.0369,
+      0.0429
+     ],
+     "separates": false,
+     "sign": 1
+    },
+    "verdict_moves": false
+   },
+   "20": {
+    "stored": {
+     "difference": 0.0271,
+     "ci95": [
+      -0.0103,
+      0.0647
+     ],
+     "separates": false,
+     "sign": 1
+    },
+    "standardised": {
+     "difference": 0.0135,
+     "ci95": [
+      -0.0232,
+      0.0503
+     ],
+     "separates": false,
+     "sign": 1
+    },
+    "verdict_moves": false
+   },
+   "30": {
+    "stored": {
+     "difference": 0.0376,
+     "ci95": [
+      0.0046,
+      0.0723
+     ],
+     "separates": true,
+     "sign": 1
+    },
+    "standardised": {
+     "difference": 0.0361,
+     "ci95": [
+      0.0033,
+      0.0695
+     ],
+     "separates": true,
+     "sign": 1
+    },
+    "verdict_moves": false
+   },
+   "50": {
+    "stored": {
+     "difference": 0.0767,
+     "ci95": [
+      0.0455,
+      0.1084
+     ],
+     "separates": true,
+     "sign": 1
+    },
+    "standardised": {
+     "difference": 0.0722,
+     "ci95": [
+      0.0427,
+      0.1024
+     ],
+     "separates": true,
+     "sign": 1
+    },
+    "verdict_moves": false
+   }
+  },
+  "GRAIL exhaustive vs SyGMa": {
+   "1": {
+    "stored": {
+     "difference": -0.0632,
+     "ci95": [
+      -0.093,
+      -0.0344
+     ],
+     "separates": true,
+     "sign": -1
+    },
+    "standardised": {
+     "difference": -0.0632,
+     "ci95": [
+      -0.0932,
+      -0.0345
+     ],
+     "separates": true,
+     "sign": -1
+    },
+    "verdict_moves": false
+   },
+   "3": {
+    "stored": {
+     "difference": -0.0617,
+     "ci95": [
+      -0.0973,
+      -0.0261
+     ],
+     "separates": true,
+     "sign": -1
+    },
+    "standardised": {
+     "difference": -0.0692,
+     "ci95": [
+      -0.1062,
+      -0.0326
+     ],
+     "separates": true,
+     "sign": -1
+    },
+    "verdict_moves": false
+   },
+   "5": {
+    "stored": {
+     "difference": -0.0647,
+     "ci95": [
+      -0.1009,
+      -0.0267
+     ],
+     "separates": true,
+     "sign": -1
+    },
+    "standardised": {
+     "difference": -0.0662,
+     "ci95": [
+      -0.1036,
+      -0.0279
+     ],
+     "separates": true,
+     "sign": -1
+    },
+    "verdict_moves": false
+   },
+   "8": {
+    "stored": {
+     "difference": -0.012,
+     "ci95": [
+      -0.0496,
+      0.026
+     ],
+     "separates": false,
+     "sign": -1
+    },
+    "standardised": {
+     "difference": -0.018,
+     "ci95": [
+      -0.0547,
+      0.0194
+     ],
+     "separates": false,
+     "sign": -1
+    },
+    "verdict_moves": false
+   },
+   "10": {
+    "stored": {
+     "difference": -0.003,
+     "ci95": [
+      -0.0413,
+      0.0352
+     ],
+     "separates": false,
+     "sign": -1
+    },
+    "standardised": {
+     "difference": -0.0015,
+     "ci95": [
+      -0.0386,
+      0.0362
+     ],
+     "separates": false,
+     "sign": -1
+    },
+    "verdict_moves": false
+   },
+   "15": {
+    "stored": {
+     "difference": 0.0511,
+     "ci95": [
+      0.016,
+      0.0885
+     ],
+     "separates": true,
+     "sign": 1
+    },
+    "standardised": {
+     "difference": 0.0331,
+     "ci95": [
+      -0.0018,
+      0.0699
+     ],
+     "separates": false,
+     "sign": 1
+    },
+    "verdict_moves": true
+   },
+   "20": {
+    "stored": {
+     "difference": 0.0797,
+     "ci95": [
+      0.0455,
+      0.1162
+     ],
+     "separates": true,
+     "sign": 1
+    },
+    "standardised": {
+     "difference": 0.0662,
+     "ci95": [
+      0.0315,
+      0.1024
+     ],
+     "separates": true,
+     "sign": 1
+    },
+    "verdict_moves": false
+   },
+   "30": {
+    "stored": {
+     "difference": 0.1323,
+     "ci95": [
+      0.0976,
+      0.169
+     ],
+     "separates": true,
+     "sign": 1
+    },
+    "standardised": {
+     "difference": 0.1308,
+     "ci95": [
+      0.095,
+      0.1678
+     ],
+     "separates": true,
+     "sign": 1
+    },
+    "verdict_moves": false
+   },
+   "50": {
+    "stored": {
+     "difference": 0.1925,
+     "ci95": [
+      0.152,
+      0.2336
+     ],
+     "separates": true,
+     "sign": 1
+    },
+    "standardised": {
+     "difference": 0.188,
+     "ci95": [
+      0.1477,
+      0.2295
+     ],
+     "separates": true,
+     "sign": 1
+    },
+    "verdict_moves": false
+   }
+  },
+  "GRAIL exhaustive vs MetaPredictor": {
+   "1": {
+    "stored": {
+     "difference": -0.0496,
+     "ci95": [
+      -0.0783,
+      -0.0228
+     ],
+     "separates": true,
+     "sign": -1
+    },
+    "standardised": {
+     "difference": -0.0496,
+     "ci95": [
+      -0.0789,
+      -0.0224
+     ],
+     "separates": true,
+     "sign": -1
+    },
+    "verdict_moves": false
+   },
+   "3": {
+    "stored": {
+     "difference": -0.0496,
+     "ci95": [
+      -0.0864,
+      -0.0137
+     ],
+     "separates": true,
+     "sign": -1
+    },
+    "standardised": {
+     "difference": -0.0571,
+     "ci95": [
+      -0.0936,
+      -0.0212
+     ],
+     "separates": true,
+     "sign": -1
+    },
+    "verdict_moves": false
+   },
+   "5": {
+    "stored": {
+     "difference": -0.0451,
+     "ci95": [
+      -0.0889,
+      -0.0031
+     ],
+     "separates": true,
+     "sign": -1
+    },
+    "standardised": {
+     "difference": -0.0466,
+     "ci95": [
+      -0.0895,
+      -0.0046
+     ],
+     "separates": true,
+     "sign": -1
+    },
+    "verdict_moves": false
+   },
+   "8": {
+    "stored": {
+     "difference": -0.0195,
+     "ci95": [
+      -0.0636,
+      0.023
+     ],
+     "separates": false,
+     "sign": -1
+    },
+    "standardised": {
+     "difference": -0.0256,
+     "ci95": [
+      -0.0678,
+      0.0155
+     ],
+     "separates": false,
+     "sign": -1
+    },
+    "verdict_moves": false
+   },
+   "10": {
+    "stored": {
+     "difference": -0.018,
+     "ci95": [
+      -0.0605,
+      0.0232
+     ],
+     "separates": false,
+     "sign": -1
+    },
+    "standardised": {
+     "difference": -0.0165,
+     "ci95": [
+      -0.0578,
+      0.024
+     ],
+     "separates": false,
+     "sign": -1
+    },
+    "verdict_moves": false
+   },
+   "15": {
+    "stored": {
+     "difference": 0.0556,
+     "ci95": [
+      0.0143,
+      0.0956
+     ],
+     "separates": true,
+     "sign": 1
+    },
+    "standardised": {
+     "difference": 0.0376,
+     "ci95": [
+      -0.0059,
+      0.0789
+     ],
+     "separates": false,
+     "sign": 1
+    },
+    "verdict_moves": true
+   },
+   "20": {
+    "stored": {
+     "difference": 0.0992,
+     "ci95": [
+      0.0571,
+      0.1403
+     ],
+     "separates": true,
+     "sign": 1
+    },
+    "standardised": {
+     "difference": 0.0857,
+     "ci95": [
+      0.0435,
+      0.1268
+     ],
+     "separates": true,
+     "sign": 1
+    },
+    "verdict_moves": false
+   },
+   "30": {
+    "stored": {
+     "difference": 0.1594,
+     "ci95": [
+      0.117,
+      0.201
+     ],
+     "separates": true,
+     "sign": 1
+    },
+    "standardised": {
+     "difference": 0.1579,
+     "ci95": [
+      0.1147,
+      0.2009
+     ],
+     "separates": true,
+     "sign": 1
+    },
+    "verdict_moves": false
+   },
+   "50": {
+    "stored": {
+     "difference": 0.2241,
+     "ci95": [
+      0.1734,
+      0.2734
+     ],
+     "separates": true,
+     "sign": 1
+    },
+    "standardised": {
+     "difference": 0.2195,
+     "ci95": [
+      0.1685,
+      0.2697
+     ],
+     "separates": true,
+     "sign": 1
+    },
+    "verdict_moves": false
+   }
+  },
+  "GRAIL interactive vs MetaTox": {
+   "1": {
+    "stored": {
+     "difference": 0.0647,
+     "ci95": [
+      0.0399,
+      0.091
+     ],
+     "separates": true,
+     "sign": 1
+    },
+    "standardised": {
+     "difference": 0.0466,
+     "ci95": [
+      0.0231,
+      0.0707
+     ],
+     "separates": true,
+     "sign": 1
+    },
+    "verdict_moves": false
+   },
+   "3": {
+    "stored": {
+     "difference": 0.1083,
+     "ci95": [
+      0.072,
+      0.1461
+     ],
+     "separates": true,
+     "sign": 1
+    },
+    "standardised": {
+     "difference": 0.0917,
+     "ci95": [
+      0.0546,
+      0.1294
+     ],
+     "separates": true,
+     "sign": 1
+    },
+    "verdict_moves": false
+   },
+   "5": {
+    "stored": {
+     "difference": 0.1023,
+     "ci95": [
+      0.062,
+      0.1443
+     ],
+     "separates": true,
+     "sign": 1
+    },
+    "standardised": {
+     "difference": 0.0947,
+     "ci95": [
+      0.0552,
+      0.1356
+     ],
+     "separates": true,
+     "sign": 1
+    },
+    "verdict_moves": false
+   },
+   "8": {
+    "stored": {
+     "difference": 0.0902,
+     "ci95": [
+      0.0488,
+      0.1322
+     ],
+     "separates": true,
+     "sign": 1
+    },
+    "standardised": {
+     "difference": 0.0917,
+     "ci95": [
+      0.0526,
+      0.1308
+     ],
+     "separates": true,
+     "sign": 1
+    },
+    "verdict_moves": false
+   },
+   "10": {
+    "stored": {
+     "difference": 0.0451,
+     "ci95": [
+      0.0031,
+      0.086
+     ],
+     "separates": true,
+     "sign": 1
+    },
+    "standardised": {
+     "difference": 0.0496,
+     "ci95": [
+      0.0097,
+      0.0902
+     ],
+     "separates": true,
+     "sign": 1
+    },
+    "verdict_moves": false
+   },
+   "15": {
+    "stored": {
+     "difference": -0.0346,
+     "ci95": [
+      -0.0762,
+      0.0065
+     ],
+     "separates": false,
+     "sign": -1
+    },
+    "standardised": {
+     "difference": -0.0376,
+     "ci95": [
+      -0.0766,
+      0.0015
+     ],
+     "separates": false,
+     "sign": -1
+    },
+    "verdict_moves": false
+   },
+   "20": {
+    "stored": {
+     "difference": -0.0647,
+     "ci95": [
+      -0.105,
+      -0.0251
+     ],
+     "separates": true,
+     "sign": -1
+    },
+    "standardised": {
+     "difference": -0.0632,
+     "ci95": [
+      -0.1014,
+      -0.0255
+     ],
+     "separates": true,
+     "sign": -1
+    },
+    "verdict_moves": false
+   },
+   "30": {
+    "stored": {
+     "difference": -0.1113,
+     "ci95": [
+      -0.1523,
+      -0.0706
+     ],
+     "separates": true,
+     "sign": -1
+    },
+    "standardised": {
+     "difference": -0.1113,
+     "ci95": [
+      -0.1506,
+      -0.0711
+     ],
+     "separates": true,
+     "sign": -1
+    },
+    "verdict_moves": false
+   },
+   "50": {
+    "stored": {
+     "difference": -0.1368,
+     "ci95": [
+      -0.1846,
+      -0.0917
+     ],
+     "separates": true,
+     "sign": -1
+    },
+    "standardised": {
+     "difference": -0.1353,
+     "ci95": [
+      -0.1815,
+      -0.0916
+     ],
+     "separates": true,
+     "sign": -1
+    },
+    "verdict_moves": false
+   }
+  },
+  "GRAIL interactive vs SyGMa": {
+   "1": {
+    "stored": {
+     "difference": -0.0481,
+     "ci95": [
+      -0.0761,
+      -0.0207
+     ],
+     "separates": true,
+     "sign": -1
+    },
+    "standardised": {
+     "difference": -0.0662,
+     "ci95": [
+      -0.0951,
+      -0.0384
+     ],
+     "separates": true,
+     "sign": -1
+    },
+    "verdict_moves": false
+   },
+   "3": {
+    "stored": {
+     "difference": -0.0481,
+     "ci95": [
+      -0.082,
+      -0.0155
+     ],
+     "separates": true,
+     "sign": -1
+    },
+    "standardised": {
+     "difference": -0.0647,
+     "ci95": [
+      -0.1003,
+      -0.031
+     ],
+     "separates": true,
+     "sign": -1
+    },
+    "verdict_moves": false
+   },
+   "5": {
+    "stored": {
+     "difference": -0.0541,
+     "ci95": [
+      -0.0899,
+      -0.0199
+     ],
+     "separates": true,
+     "sign": -1
+    },
+    "standardised": {
+     "difference": -0.0617,
+     "ci95": [
+      -0.0978,
+      -0.0261
+     ],
+     "separates": true,
+     "sign": -1
+    },
+    "verdict_moves": false
+   },
+   "8": {
+    "stored": {
+     "difference": -0.0256,
+     "ci95": [
+      -0.062,
+      0.0113
+     ],
+     "separates": false,
+     "sign": -1
+    },
+    "standardised": {
+     "difference": -0.0241,
+     "ci95": [
+      -0.0586,
+      0.0113
+     ],
+     "separates": false,
+     "sign": -1
+    },
+    "verdict_moves": false
+   },
+   "10": {
+    "stored": {
+     "difference": -0.0226,
+     "ci95": [
+      -0.0585,
+      0.0137
+     ],
+     "separates": false,
+     "sign": -1
+    },
+    "standardised": {
+     "difference": -0.018,
+     "ci95": [
+      -0.0541,
+      0.0195
+     ],
+     "separates": false,
+     "sign": -1
+    },
+    "verdict_moves": false
+   },
+   "15": {
+    "stored": {
+     "difference": -0.0045,
+     "ci95": [
+      -0.0408,
+      0.0326
+     ],
+     "separates": false,
+     "sign": -1
+    },
+    "standardised": {
+     "difference": -0.0075,
+     "ci95": [
+      -0.0437,
+      0.0296
+     ],
+     "separates": false,
+     "sign": -1
+    },
+    "verdict_moves": false
+   },
+   "20": {
+    "stored": {
+     "difference": -0.012,
+     "ci95": [
+      -0.0501,
+      0.0272
+     ],
+     "separates": false,
+     "sign": -1
+    },
+    "standardised": {
+     "difference": -0.0105,
+     "ci95": [
+      -0.0482,
+      0.0286
+     ],
+     "separates": false,
+     "sign": -1
+    },
+    "verdict_moves": false
+   },
+   "30": {
+    "stored": {
+     "difference": -0.0165,
+     "ci95": [
+      -0.0556,
+      0.0233
+     ],
+     "separates": false,
+     "sign": -1
+    },
+    "standardised": {
+     "difference": -0.0165,
+     "ci95": [
+      -0.0556,
+      0.0238
+     ],
+     "separates": false,
+     "sign": -1
+    },
+    "verdict_moves": false
+   },
+   "50": {
+    "stored": {
+     "difference": -0.0211,
+     "ci95": [
+      -0.0597,
+      0.019
+     ],
+     "separates": false,
+     "sign": -1
+    },
+    "standardised": {
+     "difference": -0.0195,
+     "ci95": [
+      -0.0582,
+      0.0206
+     ],
+     "separates": false,
+     "sign": -1
+    },
+    "verdict_moves": false
+   }
+  },
+  "GRAIL interactive vs MetaPredictor": {
+   "1": {
+    "stored": {
+     "difference": -0.0346,
+     "ci95": [
+      -0.0615,
+      -0.0079
+     ],
+     "separates": true,
+     "sign": -1
+    },
+    "standardised": {
+     "difference": -0.0526,
+     "ci95": [
+      -0.0806,
+      -0.0261
+     ],
+     "separates": true,
+     "sign": -1
+    },
+    "verdict_moves": false
+   },
+   "3": {
+    "stored": {
+     "difference": -0.0361,
+     "ci95": [
+      -0.0736,
+      0.0
+     ],
+     "separates": false,
+     "sign": -1
+    },
+    "standardised": {
+     "difference": -0.0526,
+     "ci95": [
+      -0.0893,
+      -0.0168
+     ],
+     "separates": true,
+     "sign": -1
+    },
+    "verdict_moves": true
+   },
+   "5": {
+    "stored": {
+     "difference": -0.0346,
+     "ci95": [
+      -0.0775,
+      0.0066
+     ],
+     "separates": false,
+     "sign": -1
+    },
+    "standardised": {
+     "difference": -0.0421,
+     "ci95": [
+      -0.0835,
+      -0.0028
+     ],
+     "separates": true,
+     "sign": -1
+    },
+    "verdict_moves": true
+   },
+   "8": {
+    "stored": {
+     "difference": -0.0331,
+     "ci95": [
+      -0.0785,
+      0.0112
+     ],
+     "separates": false,
+     "sign": -1
+    },
+    "standardised": {
+     "difference": -0.0316,
+     "ci95": [
+      -0.0759,
+      0.0127
+     ],
+     "separates": false,
+     "sign": -1
+    },
+    "verdict_moves": false
+   },
+   "10": {
+    "stored": {
+     "difference": -0.0376,
+     "ci95": [
+      -0.0816,
+      0.0071
+     ],
+     "separates": false,
+     "sign": -1
+    },
+    "standardised": {
+     "difference": -0.0331,
+     "ci95": [
+      -0.0772,
+      0.0114
+     ],
+     "separates": false,
+     "sign": -1
+    },
+    "verdict_moves": false
+   },
+   "15": {
+    "stored": {
+     "difference": 0.0,
+     "ci95": [
+      -0.0452,
+      0.0458
+     ],
+     "separates": false,
+     "sign": 0
+    },
+    "standardised": {
+     "difference": -0.003,
+     "ci95": [
+      -0.0475,
+      0.042
+     ],
+     "separates": false,
+     "sign": -1
+    },
+    "verdict_moves": false
+   },
+   "20": {
+    "stored": {
+     "difference": 0.0075,
+     "ci95": [
+      -0.0373,
+      0.0526
+     ],
+     "separates": false,
+     "sign": 1
+    },
+    "standardised": {
+     "difference": 0.009,
+     "ci95": [
+      -0.0351,
+      0.0539
+     ],
+     "separates": false,
+     "sign": 1
+    },
+    "verdict_moves": false
+   },
+   "30": {
+    "stored": {
+     "difference": 0.0105,
+     "ci95": [
+      -0.034,
+      0.0555
+     ],
+     "separates": false,
+     "sign": 1
+    },
+    "standardised": {
+     "difference": 0.0105,
+     "ci95": [
+      -0.0333,
+      0.055
+     ],
+     "separates": false,
+     "sign": 1
+    },
+    "verdict_moves": false
+   },
+   "50": {
+    "stored": {
+     "difference": 0.0105,
+     "ci95": [
+      -0.034,
+      0.0555
+     ],
+     "separates": false,
+     "sign": 1
+    },
+    "standardised": {
+     "difference": 0.012,
+     "ci95": [
+      -0.0322,
+      0.0568
+     ],
+     "separates": false,
+     "sign": 1
+    },
+    "verdict_moves": false
+   }
+  }
+ },
+ "verdict_cells": 54,
+ "verdict_cells_that_move": 4,
+ "comparators_held_fixed": [
+  "MetaTox",
+  "MetaPredictor",
+  "SyGMa"
+ ],
+ "why_held_fixed": "MetaTox is a web service and MetaPredictor a frozen delivery, so neither can be re-run here; SyGMa is swept separately in results/sygma_by_dialect.json",
+ "reading": "difference is standardised minus stored, so a positive value is recall the corpus's drawing was denying the arm"
+}

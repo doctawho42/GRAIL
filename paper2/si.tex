@@ -320,6 +320,39 @@ asymmetry it leaves is real, and it runs against the arm that took the trouble: 
 drawing its rules expect and SyGMa, whose published templates are written entirely in the amide
 notation, did not.
 
+\paragraph{What it does to the comparison.} The axis is swept like the others. Both GRAIL arms
+were rebuilt on the identical substrates, presented as the declared standardiser draws them, with
+the same checkpoints, the same rule budgets, the same pool cap and the same ranking; the pools
+stay keyed by the corpus string, so the annotation is one annotation and the two drawings are
+paired substrate by substrate. Table~\ref{tab:si-dialect} gives the paired effect on each arm at
+each budget. The largest anywhere is \numDsweepExhLargest{} for the exhaustive mode and
+\numDsweepInterLargest{} for the interactive one; \numDsweepExhSeparating{} of
+\numDsweepExhBudgets{} cells separate from zero for the first and
+\numDsweepInterSeparating{} of \numDsweepInterBudgets{} for the second.
+
+Two properties of that measurement should be stated before it is read. The stored column
+reproduces the comparison table of the main text at every one of its cells, which is the check
+that the sweep measures the same quantity and not a near neighbour of it; and pointing both
+dialects at the same pools returns exactly zero everywhere with every interval collapsed, which is
+the check that the pairing is right. A sweep that could not show a non-difference as zero would
+hide its own defect inside a plausible number.
+
+Carried to the verdicts, the drawing moves \numDsweepMoved{} of \numDsweepCells{}
+arm-against-comparator cells, and none of them is a lead the paper claims: the exhaustive mode's
+leads at $k=30$ and $k=50$ and SyGMa's at $k \le 5$ stand under both drawings. The coverage
+ceiling on this population is \numDsweepCeilingstored{} under the stored drawing and
+\numDsweepCeilingdrawn{} under the standardiser's, a difference of $\numDsweepCeilingdiff$,
+$95\%$ CI $[\numDsweepCeilinglo, \numDsweepCeilinghi]$, which does not separate from zero. It is
+measured here rather than on the full evaluated split because the uncapped exhaustive pool exists
+in both drawings for this population and not for that one.
+
+The three remaining comparators are held at the corpus drawing, because MetaTox is a web service
+and MetaPredictor a frozen delivery and neither can be re-run here. A difference against them
+therefore measures how much of our own margin was the drawing, which is the question that matters
+for reading the comparison.
+
+\input{si_table_dialect}
+
 SyGMa is the one comparator that can be re-run, so what that cost it is measured rather than
 supposed. Given the substrate as the declared standardiser draws it, on the same \numSygdialN{}
 substrates and against the same annotation, its micro recall rises at every budget above the

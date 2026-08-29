@@ -93,7 +93,11 @@ construction, in a direction that flatters them, and we report it rather than co
 GRAIL predicts in three stages, each separately inspectable. A generator scores every rule in a bank of \numBankRules{} SMIRKS templates against the
 substrate. The selected rules are applied with RDKit 2022.09.5 to the substrate exactly as the
 corpus draws it, which is a declared choice and is swept in Section~\ref{SI-sec:si-presentation};
-their products are standardised \citep{Hahnke_2018, Mansouri_2024} and deduplicated. A filter then scores each
+their products are standardised \citep{Hahnke_2018, Mansouri_2024} and deduplicated. The corpus
+draws amides as imidic acids, so that choice is not neutral: rebuilding both arms with every
+substrate drawn as the standardiser would move \numDsweepMoved{} of \numDsweepCells{}
+arm-against-comparator verdicts, none of them a lead this paper claims, and the coverage ceiling
+on that population by $\numDsweepCeilingdiff$ with the interval covering zero. A filter then scores each
 (substrate, candidate) pair, and candidates are ordered by a rank fusion of the filter and
 generator orderings. Every emitted candidate carries the identity of the rule that produced it and
 the site at which it fired.
