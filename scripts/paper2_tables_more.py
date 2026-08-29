@@ -74,7 +74,8 @@ def hypotheses():
     H = [("H7", "rank fusion instead of a product of scores", "$+0.05$", "h7.diff", "validation"),
          ("H9", "candidate pool capped at 100", "$+0.015$", "h9.diff", "validation"),
          ("H10", "rule budget of 30 from the checkpoint", "$\\le +0.05$", "h10.bought", "validation"),
-         ("H11", "emit the whole pool, no threshold", "0 cells", "h11.lost", "grid $5\\times10$"),
+         # the grid is five criteria by eleven budgets, 55 cells, which is what the text reports
+         ("H11", "emit the whole pool, no threshold", "0 cells", "h11.lost", "grid $5\\times11$"),
          ("H12", "group score as a third ranking", "$+0.02$", "h12.diff", "comparison set"),
          ("H8", "group score, groups emitted as blocks", "$+0.05$", "h8.diff", "comparison set"),
          ("H14", "group score as a gate before fusion", "$+0.02$", "h14.diff", "comparison set"),
@@ -140,13 +141,15 @@ def case_study():
         "\\cmidrule(lr){2-3}\\cmidrule(lr){4-5}\n"
         "annotated metabolite & rank & rule & rank & rule \\\\\n\\midrule\n"
         f"{body} \\\\\n\\bottomrule\n\\end{{tabular}}\n"
-        "\\caption{The worked example: gemcitabine, its four annotated metabolites, and where "
+        "\\caption{The worked example: gemcitabine as the corpus draws it, its four annotated "
+        "metabolites, and where "
         f"each is found. The interactive mode returns {inter['n_candidates']} candidates in "
         f"{inter['generator_seconds']}~s and reaches only the deamination; the exhaustive mode "
         f"returns {exh['n_candidates']} in {exh['generator_seconds']}~s and reaches all four, at "
         f"micro recall {exh['recall_at']['15']:.2f} at $k=15$ and {exh['recall_at']['30']:.2f} at "
         "$k=30$. Rule is the index into the deployed bank; the atoms each one fired on are "
-        "in Figure~\\ref{fig:case}.}\n"
+        "in Figure~\\ref{fig:case}. The same example on the molecule as a chemist draws it is in "
+        "the Supporting Information, where the interactive mode reaches none of the four.}\n"
         "\\label{tab:case}\n\\end{table*}\n")
 
 

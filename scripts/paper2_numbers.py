@@ -167,6 +167,12 @@ def build():
     n["h15.candidates"] = h15["key_diagnostic"]["candidates_in_the_bounded_arm"]
     n["h15.load"] = h15["time"]["load_correction"]["load_factor_from_the_identical_enumeration"]
     n["h15.attributable"] = h15["time"]["load_correction"]["speedup_attributable_to_the_budget"]
+    # the two standardisation medians the attributable factor is the load-corrected ratio of.
+    # Without them a reader divides the whole arm's 9.45 by the load factor and gets a third
+    # number, which is what happened.
+    n["h15.stdunbounded"] = h15["time"]["load_correction"][
+        "unbounded_arm_standardise_median_s"]
+    n["h15.stdbounded"] = h15["time"]["standardise_survivors_median_s"]
 
     # the ceiling and what the gap is made of
     n["population.testsubs"] = cov["n_substrates"]
@@ -373,6 +379,12 @@ def build():
     n["pdrop.separating"] = sum(1 for r in pd["effect"].values()
                                 for v in r.values() if v["separates"])
     n["pdrop.selfref"] = pd["substrates_whose_own_key_is_a_reference"]
+    # the largest effect as a share of the narrowest margin the paper claims, which is the
+    # exhaustive arm's lead over MetaTox at k=30. It was in the SI as a hand-typed "eight per cent".
+    _separating = [abs(cell["gap"]) for budget in dep["contrasts"].values()
+                   for cell in budget.values() if cell.get("excludes_zero")]
+    n["pdrop.narrowestmargin"] = round(min(_separating), 4)
+    n["pdrop.shareofmargin"] = round(n["pdrop.max_effect"] / min(_separating), 4)
     for tag, arm in (("bank", "GRAIL exhaustive"), ("trained", "GRAIL interactive"),
                      ("sygma", "SyGMa"), ("metapredictor", "MetaPredictor"),
                      ("metatox", "MetaTox")):
@@ -462,6 +474,7 @@ def build():
     n["refaudit.deltalo"] = ra["heavy_atom_delta"]["p05"]
     n["refaudit.deltahi"] = ra["heavy_atom_delta"]["p95"]
     n["refaudit.elements"] = len(ra["elements"])
+
 
     # How the corpus draws its molecules, which decides which rules can fire on it. This is an
     # axis like the matching criterion and the output budget, and it was undeclared.

@@ -44,8 +44,9 @@ What the deposit contains follows from that, and the decision is taken here rath
 The candidate structures are produced by applying this work's rule bank and are not corpus
 records, so they are released. Every corpus structure --- the substrates as well as the annotated
 metabolites --- appears only as a tautomer-canonical InChIKey, which is a hash and does not carry
-the structure. No source record is redistributed, which is what \CorpusLicence{} means: the
-question does not have to be answered because the deposit does not raise it. The cost is that a
+the structure. No source record is redistributed, and the licence of the derived corpus is
+\CorpusLicence{}. The question does not have to be answered, because the deposit does not raise
+it. The cost is that a
 reader must hold their own licences and rebuild the substrate set to join on the keys, and the
 manifest is what tells them whether their rebuild matches.
 
@@ -59,8 +60,8 @@ bounded absence rather than as silence.
 
 \paragraph{What each record carries.} The three splits hold \numAssemblyRecords{} structure
 records, each with five fields: an identifier, an InChI, a state, a SMILES string and an index.
-The identifier is the one field that could carry a source accession, and it is empty in
-\numAssemblyRecords{} of \numAssemblyRecords{} records. Per-source counts are therefore not
+The identifier is the one field that could carry a source accession, and it is empty in every
+one of the \numAssemblyRecords{}. Per-source counts are therefore not
 recoverable from the data, and none is reported. The state field takes three values, and its
 meaning is checked against the triples rather than assumed: every substrate of a positive triple
 is marked as a substrate and every product of one is marked as annotated, the remaining records
@@ -83,8 +84,8 @@ are matched against it. Section~\ref{sec:si-presentation} treats it as the axis 
 \paragraph{De-duplication, and the conflicts there were none of.} There is no de-duplication
 code, and with the accession field empty there is no source field a conflict rule could have
 arbitrated on. The files show that none was needed. \numAssemblyDuplicated{} substrate
-structures appear under more than one index across the three splits, and in
-\numAssemblyDisagreements{} of them do the two annotation sets differ; \numAssemblyBothways{}
+structures appear under more than one index across the three splits, and the two annotation sets
+differ in \numAssemblyDisagreements{} of them; \numAssemblyBothways{}
 pair in the whole corpus is listed both as positive and as negative. The effective rule is set
 union when the data is loaded, applied to structures after standardisation, with no precedence
 between sources because no source is recorded. This is also why the split table counts
@@ -126,8 +127,8 @@ in train. Both counts are recorded so that neither is later discovered and mista
 
 Three evaluation populations are drawn from these splits, and every figure in the paper names
 one. The evaluated test set is the \numPopulationTestsubs{} test substrates that carry at least
-one reference, holding all \numPopulationTestrefs{} references of the split; the
-\numSplitTestSubstrates{} minus \numPopulationTestsubs{} excluded substrates carry none. The
+one reference, holding all \numPopulationTestrefs{} references of the split; the substrates it
+excludes, \numSplitTestSubstrates{} minus \numPopulationTestsubs{} of them, carry none. The
 validation draw is a sample of \numValdrawCap{} substrates at seed \numValdrawSeed{}, of which
 \numValdrawDeclared{} produced a candidate pool and \numValdrawPaired{} are held by both arms of a
 paired comparison. The comparison set is the \numPopulationN{} substrates on which every method
@@ -161,8 +162,8 @@ a common metabolite of two related drugs is one molecule.
 
 By heavy-atom count against the parent, \numRefauditSmaller{} references are smaller,
 \numRefauditSame{} are the same size and \numRefauditLarger{} are larger. The median change is
-\numRefauditDeltamedian{} heavy atoms and the central ninety per cent runs from
-\numRefauditDeltalo{} to \numRefauditDeltahi{}, but the tails are long in both directions: the
+\numRefauditDeltamedian{} heavy atoms and the fifth and ninety-fifth percentiles are
+\numRefauditDeltalo{} and \numRefauditDeltahi{}, but the tails are long in both directions: the
 extremes are \numRefauditDeltamin{} and $+\numRefauditDeltamax{}$. A bank of single-template edits
 is not the natural instrument for either tail, and the coverage census in the main text is where
 that shows.
@@ -200,8 +201,8 @@ The arms behave very differently. SyGMa never returns the substrate;
 \numPdropReturnsBank{} of \numPopulationN{} exhaustive-mode lists contain it, at a median rank
 of \numPdropMedrankBank{}. The convention could therefore have flattered one arm and not another. It does not: the
 largest effect anywhere in the grid is \numPdropMaxEffect{}, no cell of
-\numPdropCells{} separates from zero, and the effect is at most eight per cent of the narrowest
-margin the paper claims. Where it is negative, the cause is the \numPdropSelfref{} substrates of this population whose
+\numPdropCells{} separates from zero, and the effect is at most \numPdropShareofmargin{} of the narrowest
+separating margin anywhere in the comparison, which is \numPdropNarrowestmargin{}. Where it is negative, the cause is the \numPdropSelfref{} substrates of this population whose
 own tautomer key is among their annotated references, for which the convention discards a hit the
 annotation counts. Across the whole evaluated test set there are \numRefauditSelfref{} such
 substrates; the comparison set holds \numPdropSelfref{} of them.
@@ -218,7 +219,8 @@ The main text reports the level of each arm and the verdict at each budget. Tabl
 gives the quantity those verdicts are read from: the difference between each GRAIL arm and each
 comparator, with the paired interval. Two of them are worth seeing rather than inferring. The
 exhaustive mode's lead over MetaTox at $k=30$ excludes zero by little, and its two unresolved
-budgets, $k=15$ and $k=20$, sit either side of zero rather than far from it.
+budgets, $k=15$ and $k=20$, have intervals straddling zero narrowly rather than lying far from
+it.
 
 \section{Sensitivity of the comparison to the matching criterion}
 \label{sec:si-sensitivity}
@@ -269,17 +271,19 @@ stored as the imidic acid, $\mathrm{R\text{-}C(=O)\text{-}NH\text{-}R'}$ arrivin
 $\mathrm{R\text{-}C(OH)=N\text{-}R'}$, and cytosine as its 4-imino-2-hydroxy lactim. Across the
 evaluated test set, \numDialectEvalMoved{} of \numDialectEvalN{} substrates are not fixed points
 of the declared standardiser and \numDialectEvalImidic{} carry an imidic-drawn amide. The same
-holds split by split: \numDialectTrainMoved{} of \numDialectTrainN{} in train,
+holds split by split, counted over the distinct structures each split marks as a substrate rather
+than over the substrates that carry a clean triple, which is the population
+Table~\ref{tab:si-splits} counts: \numDialectTrainMoved{} of \numDialectTrainN{} in train,
 \numDialectValMoved{} of \numDialectValN{} in validation, \numDialectTestMoved{} of
 \numDialectTestN{} in test. Every one of the \numDialectEvalMoved{} moves is a pure tautomer move,
 invisible to this paper's default matching criterion: the drawing changes which rules fire and
 does not change what molecule it is.
 
 \paragraph{The bank learned that dialect.} Mining reads these pairs, so the templates inherit the
-drawing. Counting templates by what their reactant side requires, the mined half asks for an
+drawing. Counting templates by what their reactant side requires, the mined templates ask for an
 imidic reactant \numDialectBankMinedimidic{} times against \numDialectBankMinedamide{} for a real
 amide: in the half of the bank this work built, the unpopulated tautomer of the amide is the more
-frequently required of the two. The curated half, written by chemists, runs the other way,
+frequently required of the two. The curated collections, written by chemists, run the other way,
 \numDialectBankCuratedamide{} amide against \numDialectBankCuratedimidic{} imidic, and not one of
 SyGMa's \numSygmaRules{} templates requires the imidic form. Amide hydrolysis and amide
 $N$-dealkylation are core phase-I chemistry, so this is not a corner of the bank.
@@ -307,9 +311,10 @@ notation, did not.
 \section{The rule bank}
 
 The bank holds \numBankRules{} templates spanning \numBankTypes{} distinct reaction types, of
-which \numBankParses{} parse under RDKit 2022.09.5. It is the deduplicated union of four curated
-collections together with templates mined from the training split alone, which is disjoint by
-substrate and not by molecule.
+which \numBankParses{} parse under RDKit 2022.09.5. It is the deduplicated union of three curated
+collections, a fourth that was carried as curated and is a second machine extraction, and the
+templates mined from the training split alone, which is disjoint by substrate and not by molecule.
+The paragraphs below count them.
 
 The two halves are counted rather than described, and the split between them turns out to be
 drawn in the wrong place. \numCuratedTotal{} templates are nominally curated and
@@ -324,7 +329,7 @@ They are not curated. Three independent marks identify them, and all three agree
 \numAttribPlaced{} of the \numAttribUnattributed{} are verbatim lines of a file whose one
 commit in the history describes it as extracted reaction rules. They are written in element
 notation with multi-component reactant groups, like that file and unlike every hand-written
-collection here. And they carry the corpus's imidic drawing at the rate the mined half does,
+collection here. And they carry the corpus's imidic drawing at the rate the mined templates do,
 \numAttribUnattributedimidic{} against \numAttribMinedimidic{}, where the named expert
 collections carry it at \numAttribNamedimidic{} --- a factor of thirty-seven, and the
 fingerprint of a template extracted from these annotated pairs rather than written by a chemist.
@@ -332,9 +337,10 @@ The bank therefore holds two machine extractions and one curated body, in two di
 notations, and the curated body is \numAttribNamed{} templates rather than \numCuratedTotal{}.
 The published source and licence of the three named collections is \CuratedProvenance{}.
 
-One further fact about the curated half bears on how the comparison in the main text is read.
+One further fact about the curated collections bears on how the comparison in the main text is read.
 \numSygmaInside{} of SyGMa's \numSygmaRules{} published rules are present in this bank
-verbatim: \numSygmaShare{} of SyGMa's rule set, and \numSygmaOfcurated{} of the curated half.
+verbatim: \numSygmaShare{} of SyGMa's rule set, and \numSygmaOfcurated{} of the
+\numCuratedTotal{} templates nominally carried as curated.
 All \numSygmaIncurated{} fall among the named collections and \numSygmaInmined{} in the mined
 half, so the containment is inherited from an expert collection rather than rediscovered by
 mining. Absorbing a published rule set is ordinary practice and is not the point. The point is
@@ -417,7 +423,8 @@ to molecules rather than to templates. Two instruments do so, and neither alone 
 \paragraph{The first instrument: how many loci.} The reaction centre of the source pair, located
 by the same maximum-common-substructure route the transformation types use, falls in more than one
 piece for \numCompositeLoci{} of the \numCompositeScored{} mined templates,
-\numCompositeLocishare{}. A centre in two pieces is one event when a bond appears or disappears
+\numCompositeLocishare{}. One mined template could not be scored, so the denominator throughout
+this section is \numCompositeScored{} and not \numMinedRules{}. A centre in two pieces is one event when a bond appears or disappears
 between them, which is what a cleavage or a cyclisation looks like, and two independent edits
 otherwise; this instrument counts the pieces and does not separate the two cases. It has a blind
 spot in the other direction as well, and the blind spot is the larger problem: two edits that
@@ -438,7 +445,7 @@ threshold is $E \ge \numCompositeThreshold{}$.
 \paragraph{What the two find together.} The second instrument flags \numCompositeEdits{}
 templates, \numCompositeEditshare{}. The two agree on only \numCompositeBoth{}, which is the
 point of having both: each sees most of what the other misses. Their union is
-\numCompositeUnion{} templates, \numCompositeUnionshare{} of the mined half. The registered bar
+\numCompositeUnion{} templates, \numCompositeUnionshare{} of the mined templates. The registered bar
 was \numCompositeBar{} and the prediction is confirmed. The composite share of the mined bank is
 therefore about a fifth, not the \numCompositeLocishare{} one instrument reports, and both counts
 are reported here so a reader can see how much of the answer is the instrument.
@@ -490,7 +497,7 @@ abstention; H4, a ranked prediction of intervention sizes; H5, the same null out
 H6, a negative control on graph automorphism. Each is stated with its threshold so that a later
 result on any of them cannot be a threshold chosen after the fact. None is reported in this paper
 because none was run for it, which is a different thing from a prediction that was run and did
-not hold; the three of those are P6, P7 and P9 and they are in Table~4 with their measured
+not hold; the three of those are P6, P7 and P8 and they are in Table~4 with their measured
 values.
 
 \section{Group ranking and its oracle}
@@ -650,12 +657,14 @@ moved.
 
 Numbers reach the page through macros generated from pinned artifacts: \numProvMacrosbody{}
 distinct macros in the manuscript and \numProvMacrossi{} here. The claim is not that every
-number does. \numProvHandtyped{} measurements are typed by hand, all of them in this document,
+number does. \numProvHandtyped{} measurements are typed by hand, most of them in this document,
 and they are enumerated in the checker itself rather than folded into a wildcard --- so a number
 typed by hand that is not already on that list still fails the check, and the list is the exact
 statement of what remains to be wired. A checker refuses any other numeric literal in either
-document, refuses any hand-typed pointer from one document into the other, and writes the three
-counts this paragraph quotes.
+document, refuses any hand-typed pointer from the manuscript into this one --- the manuscript
+resolves those through \texttt{xr} against this document's labels, while the few running the
+other way are typed, because this document cannot resolve the manuscript's numbering --- and
+writes the three counts this paragraph quotes.
 
 The train and validation candidate pools are deposited at \ZenodoDoi{}. Every substrate and
 every annotated metabolite in them is replaced by its tautomer-canonical InChIKey before the

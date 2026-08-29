@@ -62,8 +62,9 @@ census are measured. The \emph{validation draw} is a declared sample of \numVald
 \numValdrawSeed{} from the validation split. Of these, \numValdrawDeclared{} produced a candidate
 pool, and the \numValdrawPaired{} held by both arms of a paired comparison carry
 \numHOneFiveNreferences{} references. Every registered ranking and timing threshold is checked
-here, since a threshold checked where its rule was chosen is not a check. Sampling is without replacement, so a different cap gives a different set of the same size
-rather than a subset, and cap and seed are recorded with every figure drawn from it. The
+here, since a threshold checked where its rule was chosen is not a check. Sampling is without replacement and the draws are not nested, so a different seed gives a
+different set of the same size and a different cap one that is not a subset of this one; cap and
+seed are recorded with every figure drawn from it. The
 \emph{comparison set} is the \numPopulationN{} substrates on which every method predicts,
 carrying \numPopulationReferences{} references.
 
@@ -119,7 +120,8 @@ not one: they are an earlier machine extraction from the same annotated pairs, i
 Supporting Information by three marks that agree. The bank therefore holds two extractions and
 one curated body, and the curated body is \numAttribNamed{} templates. The split is disjoint by substrate rather
 than by molecule, so a molecule that is a substrate in training may appear as a product in test;
-the counts are in Section~\ref{sec:populations}. For each annotated substrate--product pair a ring-aware maximum common substructure is
+the split counts are in Section~\ref{sec:populations} and the molecular overlap between splits is
+in the Supporting Information. For each annotated substrate--product pair a ring-aware maximum common substructure is
 located, the atoms and bonds that changed are flagged as the reaction centre, the centre is
 expanded by one bond and emitted as a mapped SMIRKS. A template survives only if applying it to
 its own source substrate regenerates the annotated product after canonicalisation.
@@ -142,13 +144,13 @@ contribute equally whatever their scales.
 
 This was registered as prediction P1 with a threshold of $+\numHSevenThreshold$ and evaluated on
 the validation draw, where it had not been selected: $+\numHSevenDiff$, 95\% CI
-$[+\numHSevenLo, +\numHSevenHi]$. On the set where the variant was chosen among four it gives
-$+0.109$ on the comparison set, and the shrinkage to two thirds is the measured cost of that
+$[+\numHSevenLo, +\numHSevenHi]$. On the comparison set, where the variant was chosen among four,
+it gives $+0.109$, and the shrinkage to two thirds is the measured cost of that
 selection.
 
 That figure is measured on the uncapped pool, because P1 was fixed and checked before the cap of
-P2 existed. On the pool the deployed system actually ranks the same contrast, same population and
-same budget, is $+\numHSevenDeployed$, 95\% CI
+P2 existed. On the pool the deployed system actually ranks, the same contrast on the same
+population and at the same budget is $+\numHSevenDeployed$, 95\% CI
 $[+\numHSevenDeployedLo, +\numHSevenDeployedHi]$ (Table~\ref{SI-tab:si-ranking}). The cap and the fusion recover
 overlapping ground, so the deployed gain is the smaller one, and its point estimate clears the
 registered threshold of $+\numHSevenThreshold$ by four ten-thousandths.
@@ -287,7 +289,7 @@ comparators with the interval excluding zero at $k=30$ and $k=50$.
 One fact about the SyGMa comparison belongs here rather than in a footnote, because it changes
 how the result should be read. \numSygmaInside{} of SyGMa's \numSygmaRules{} published rules,
 \numSygmaShare{} of them, are present verbatim in our rule bank; all \numSygmaIncurated{} sit in
-its curated half and \numSygmaInmined{} in the mined one. The two banks are therefore not
+its curated collections and \numSygmaInmined{} among the mined templates. The two banks are therefore not
 independent objects. SyGMa's lead at the tightest budgets is a ranking result over chemistry the
 two systems largely share, and our advantage at the widest is that shared chemistry with
 \numBankRules{} minus \numSygmaInside{} further templates around it. Neither reading is worse
@@ -300,8 +302,9 @@ because \numShortMetapredictorOneFive{} of its \numPopulationN{} lists are short
 budget, and SyGMa gains little between $k=15$ and $k=50$; GRAIL's exhaustive mode keeps rising
 because it keeps having candidates. Where a method runs out the budget has stopped measuring
 ranking, and the counts are reported for every arm: at $k=50$,
-\numShortMetapredictorFiveZero{} of MetaPredictor's lists, \numShortMetatoxFiveZero{} of
-MetaTox's and \numShortTrainedFiveZero{} of the interactive arm's are shorter than the budget.
+\numShortMetapredictorFiveZero{} of MetaPredictor's lists, \numShortSygmaFiveZero{} of SyGMa's,
+\numShortMetatoxFiveZero{} of MetaTox's, \numShortTrainedFiveZero{} of the interactive arm's and
+\numShortBankFiveZero{} of the exhaustive arm's are shorter than the budget.
 
 Against MetaTox alone, the incumbent web service this work set out to replace, the exhaustive mode
 leads at all nine budgets, with the interval excluding zero at seven of them.
@@ -336,7 +339,7 @@ comparison set the generator's ordering beats the filter's, on validation the tw
 And the fusion's advantage over the product is a property of depth rather than of the head: at
 $k=1$ the difference is \numRankCmpVsproductkOne{} and the interval covers zero on both
 populations. Neither stage is sufficient alone, and the gain this paper attributes to the form of
-the combination is not an artefact of one population.
+the combination is not a property of one population alone.
 
 \subsection{What the learned rule choice contributes}
 
@@ -347,7 +350,7 @@ the fusion identical downstream. About \numSelApplicable{} of the \numBankRules{
 a given substrate, so the choice is made within a large applicable set rather than over the bank.
 
 Against \numSelBudget{} rules drawn at random from the whole bank, the learned choice gains
-$+\numSelVsrandom$ at $k=15$: most of a randomly chosen template does not fire, and that arm
+$+\numSelVsrandom$ at $k=15$: most randomly chosen templates do not fire, and that arm
 returns a mean pool of \numSelRandomPool{} candidates. Against \numSelBudget{} drawn at random
 from the applicable set the gain is $+\numSelVsrandomApplicable$
 $[+\numSelVsrandomApplicablelo, +\numSelVsrandomApplicablehi]$, and that arm returns
@@ -447,15 +450,15 @@ The attribution is what a score cannot supply. All three phosphorylations fire a
 substrate atoms, the 5$^\prime$ hydroxymethyl, under three different rules, and the deamination
 fires on the pyrimidine ring; a user reading the output sees which transformation is claimed and
 where, and can reject a candidate on chemical grounds. All four rules here are mined rather than
-curated, so the three quarters of the bank with no expert provenance is the part carrying this
+curated, so the five sixths of the bank with no expert provenance is the part carrying this
 molecule.
 
 \subsection{Where the design came from}
 
 Every deployed choice is a registered hypothesis with a threshold and a falsification condition,
-tested where it was not selected. Of the fifteen registered, nine are checked here: six
+tested where it was not selected (Table~\ref{tab:hyp}). Of the sixteen registered, ten are checked here: seven
 confirmed and three failed, on the falsification condition each was written with, which compares
-the point estimate to the threshold. Read instead against the interval, three of the six
+the point estimate to the threshold. Read instead against the interval, three of the seven
 confirmations are unresolved rather than clear: P1, P2 and P5 each have a threshold inside their
 own interval, so the data establish that the effect exceeds zero and not that it exceeds the
 registered bar. We report both readings and change neither verdict after the fact. The remaining six are registered against work this paper does not
@@ -524,7 +527,7 @@ substrate is three orders above it.}
 \label{fig:cost}
 \end{figure*}
 
-Standardisation was the binding constraint and its diagnosis was wrong twice before it was right.
+Standardisation was the binding constraint (Figure~\ref{fig:cost}) and its diagnosis was wrong twice before it was right.
 Three explanations were tested and rejected by measurement: the filter's maximum-common-substructure
 step, rule application, and substrate size as an axis. The cause was product standardisation, at
 \numHOneThreeEnumeration{} times the remaining work, run once per product of every template. A
@@ -541,16 +544,19 @@ Adding a tautomer enumeration budget of \numHOneFiveBudget{} (P9) passes both ha
 \numHOneFiveRecallDiff{} against a cap of $0.01$. Of \numHOneFiveCandidates{} candidates,
 \numHOneFiveMoved{} standardise to a different molecule under the bounded budget.
 
-Part of the speed-up is machine load. The enumeration step is identical in the two arms, so the ratio of its medians,
-\numHOneFiveLoad{}, measures load alone. Dividing it out leaves
-\numHOneFiveAttributable$\times$ attributable to the budget. Applying it to the whole arm puts the
-median at \numHOneFiveMedianUnderload~s under the other arm's load, still inside the target.
+Part of the speed-up is machine load, and the two arms did not run under the same. The
+enumeration step is identical between them, so the ratio of its medians, \numHOneFiveLoad{},
+measures load alone. Applying that correction to the step the budget actually changes ---
+standardising the survivors, whose medians are \numHOneFiveStdunbounded~s unbounded against
+\numHOneFiveStdbounded~s under the budget --- leaves \numHOneFiveAttributable$\times$
+attributable to the budget itself. Carried to the whole arm it puts the median at
+\numHOneFiveMedianUnderload~s under the other arm's load, still inside the target.
 
 The budget lives in a module-level singleton shared with the matching key, so lowering it would
 silently have moved what counts as a hit. A private enumerator was introduced and the keys were
 verified unchanged before the run.
 
-\subsection{The ceiling is a property of the corpus}
+\subsection{The ceiling, and how much of it is the corpus}
 
 Applying the whole bank to every test substrate recovers \numCeilingCoverage{} of references in
 one step, under the same tautomer-aware matching criterion the comparison defaults to and on the
@@ -580,7 +586,7 @@ about eight.
 
 The \numCeilingNovel{} misses of absent type collapse into \numCensusTypes{} distinct types, of
 which \numCensusOnce{} occur once and carry \numCensusOnceShare{} of the mass. The objection that
-this is an artefact of how finely a type is defined is answered by varying the definition. What
+this is a consequence of how finely a type is defined is answered by varying the definition. What
 that answer covers should be said exactly: it covers the \numCeilingNovel{} misses of absent
 type and not the other \numCeilingKnown{} plus \numCeilingUntypeable{} of the
 \numCeilingUncovered{}. A miss whose type the bank holds and whose rule did not fire is an
@@ -601,10 +607,13 @@ a transformation.}
 \end{figure*}
 
 The tail holds at every granularity at which a type still determines a product and collapses only
-where it stops doing so. The table does not support the claim that \numCensusOnceShare{} of the gap is singletons under
-our definition. It supports a different one: the bound is invariant to the definition of a type
-across the whole range in which that definition is meaningful. That makes it a fact about the
-annotation corpus rather than about our choice.
+where it stops doing so (Table~\ref{tab:grain}, Figure~\ref{fig:ceiling}). What the table does
+not make definition-free is the share itself: \numCensusOnceShare{} is read under our own
+definition of a type, and a coarser one collapses it. What it supports is the different claim
+that the bound is invariant to the definition across the whole range in which that definition is
+meaningful. That makes the census of the gap a fact about the annotation corpus rather than about
+our own choice of definition; what the engine contributes is the hydrogen convention measured
+above.
 
 Nor is the missing chemistry available in the largest reaction library we hold. Typing
 \numUsptoTemplates{} retrosynthetic templates \citep{Maziarz_2025, Tanovic_2026} in the
@@ -649,8 +658,9 @@ wide budgets is partly a statement about output length on all sides rather than 
 
 \subsection{The ceiling bounds this formulation, not the task}
 
-The shortfall is a property of the corpus the templates are mined from, established by invariance
-rather than asserted, and mining is saturated. Extending coverage requires new reaction corpora,
+The shortfall is mostly a property of the corpus the templates are mined from --- established by
+invariance rather than asserted, though the hydrogen convention moves it by
+\numHydResidualrefs{} references --- and mining is saturated. Extending coverage requires new reaction corpora,
 and the census narrows the search: synthetic corpora are excluded by measurement, leaving
 enzymatic and regulatory sources. Metabolite identifications from radiolabelled human ADME studies
 reported in regulatory submissions are human \emph{in vivo} data on exactly the population
@@ -703,7 +713,7 @@ counts core-incident edits --- bonds between matched atoms whose order or presen
 attachment points gained or lost, with bonds inside an added fragment not counted --- and calls a
 template composite at \numCompositeThreshold{} or more, above every single enzymatic turnover.
 It flags \numCompositeEdits{}, and the two instruments agree on only \numCompositeBoth{}, so
-their union is \numCompositeUnion{} templates, \numCompositeUnionshare{} of the mined half.
+their union is \numCompositeUnion{} templates, \numCompositeUnionshare{} of the mined templates.
 Registered prediction P10 set the bar at \numCompositeBar{} before either count existed and the
 union clears it.
 
@@ -726,7 +736,8 @@ and not a random quarter of it.
 The Supporting Information is available free of charge on the ACS Publications website.
 
 \texttt{grail\_si.pdf}: the corpus, how it was assembled and what of that is recoverable, its
-sources and licence position, and the splits with their leakage audit; the five matching criteria
+sources and licence position, and the splits with their leakage audit; a census of the
+annotation every recall figure is measured against; the five matching criteria
 defined and the sensitivity of the comparison to the choice among them; the parent-drop
 convention measured per arm; precision at every budget; every comparison difference with its
 paired interval; how the substrate is drawn, and what that decides; the rule bank, its mining
@@ -735,7 +746,8 @@ architecture and training of both learned stages; what a single step is, measure
 sixteen registered predictions, including the six this paper does not report; the group-ranking
 oracle under four partitions with a granularity-matched control; the stage ablations in full;
 when a ranking comparison can measure anything; the choice of evaluation population; the worked
-example's full ranked list on both drawings of the substrate; runtime methodology; comparator
+example on both drawings of the substrate, with the head of the exhaustive mode's ranked list;
+runtime methodology; comparator
 versions and digests; and the provenance and reproduction procedure.
 
 \end{suppinfo}
@@ -774,9 +786,9 @@ artifact if that producer has changed, and all \numProvPinned{} are current. A s
 pins by digest the triple files, the substrate sets, the evaluated test set, the rule bank and all
 third-party artifacts, and a verify mode recomputes and names any leaf that has moved.
 
-Two pinned artifacts are too large to commit: the train and validation candidate pools, holding
-every candidate the generator produced for every substrate of their population together with both
-component scores, and are the deposit named above. The repository pins the
+Two pinned artifacts are too large to commit: the train and validation candidate pools, which
+hold every candidate the generator produced for every substrate of their population together with
+both component scores, and which are the deposit named above. The repository pins the
 SHA-256 of both the raw file and the uploaded archive in
 \texttt{paper2/zenodo\_manifest.json}, and \texttt{scripts/zenodo\_deposit.py -{}-verify}
 checks a download against it, so the deposit is verifiable against the version used here rather
