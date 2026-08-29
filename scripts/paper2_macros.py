@@ -38,10 +38,27 @@ def name(key: str) -> str:
     return "num" + "".join(parts)
 
 
-def fmt(v):
+# A share that a table beside it prints as a percentage should not be a bare fraction in the
+# prose. The percentage form is generated for every fraction so a sentence can match the table it
+# points at without anyone typing the conversion.
+def pct(v) -> str:
+    s = f"{v * 100:.1f}".rstrip("0").rstrip(".")
+    return s + "\\%"
+
+
+# A difference or an interval bound is quoted beside others to four places, and stripping its
+# trailing zeros made one read as "+0.2" next to "+0.2932", which looks truncated rather than
+# exact. Differences keep four places; a registered threshold does not, because "0.05" is what
+# was registered and "0.0500" is not.
+MEASURED = re.compile(r"(?:gap|diff|effect|lo|hi)\d*$")
+
+
+def fmt(v, key: str = ""):
     if isinstance(v, bool):
         return "yes" if v else "no"
     if isinstance(v, float):
+        if abs(v) < 1 and MEASURED.search(key.split(".")[-1]):
+            return f"{v:.4f}"
         s = f"{v:.4f}".rstrip("0").rstrip(".")
         return s if s else "0"
     if isinstance(v, int) and abs(v) >= 1000:
@@ -67,8 +84,13 @@ def main() -> int:
         if m in seen:
             raise SystemExit(f"macro collision: {k} and {seen[m]} both give \\{m}")
         seen[m] = k
-        lines.append(f"\\newcommand{{\\{m}}}{{{fmt(nums[k])}}}  % {k}")
+        lines.append(f"\\newcommand{{\\{m}}}{{{fmt(nums[k], k)}}}  % {k}")
         v = nums[k]
+        if isinstance(v, float) and 0.0 <= v <= 1.0:
+            share = m + "Pct"
+            if share not in seen:
+                seen[share] = k + " (as a percentage)"
+                lines.append(f"\\newcommand{{\\{share}}}{{{pct(v)}}}  % {k}, as a percentage")
         if isinstance(v, int) and not isinstance(v, bool) and v in WORDS:
             word = m + "Word"
             if word in seen:
