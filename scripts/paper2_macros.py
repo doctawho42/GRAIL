@@ -50,7 +50,7 @@ def pct(v) -> str:
 # trailing zeros made one read as "+0.2" next to "+0.2932", which looks truncated rather than
 # exact. Differences keep four places; a registered threshold does not, because "0.05" is what
 # was registered and "0.0500" is not.
-MEASURED = re.compile(r"(?:gap|diff|effect|lo|hi)\d*$")
+MEASURED = re.compile(r"(?:gap|diff|effect|lo|hi|stored|drawn|coverage)\d*$")
 # A rule index is a name, not a quantity: "template 4,913" is wrong the way "page 1,024" is.
 INDEX = re.compile(r"(?:rule|rulehit|deamrule|ruleid|index)$")
 
