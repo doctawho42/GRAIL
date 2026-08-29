@@ -215,6 +215,40 @@ def si_precision():
             "flattered.}\n\\label{tab:si-precision}\n\\end{table}\n")
 
 
+def si_parentdrop():
+    d = art("parent_drop_effect.json")
+    eff, pres = d["effect"], d["parent_returned"]
+    arms = list(eff)
+    ks = sorted((int(k) for k in eff[arms[0]]), key=int)
+
+    def trim(x):
+        if abs(x) < 5e-5:
+            return "$0$"
+        return ("$-$" if x < 0 else "$+$") + f"{abs(x):.4f}".lstrip("0")
+
+    rows = []
+    for a in arms:
+        cells = " & ".join(trim(eff[a][str(k)]["effect"]) for k in ks)
+        rows.append(f"{a} & {pres[a]['substrates_returning_the_parent']} & {cells} \\\\")
+    head = " & ".join(f"${k}$" for k in ks)
+    med = ", ".join(f"{a.replace('GRAIL ', '')} {pres[a]['median_rank_when_returned']}"
+                    for a in arms if pres[a]["median_rank_when_returned"])
+    return ("\\begin{table}[h]\n\\centering\\scriptsize\n"
+            f"\\begin{{tabular}}{{lr{'r' * len(ks)}}}\n\\toprule\n"
+            f" & returns & \\multicolumn{{{len(ks)}}}{{c}}{{effect on micro recall at budget "
+            f"$k$}} \\\\\n\\cmidrule(lr){{3-{len(ks) + 2}}}\n"
+            f"arm & parent & {head} \\\\\n\\midrule\n" + "\n".join(rows)
+            + "\n\\bottomrule\n\\end{tabular}\n"
+            "\\caption{What the parent-drop convention gives each arm. \\emph{Returns parent} is "
+            f"the number of the {d['population']['n']} substrates whose returned list contains the "
+            f"substrate itself; where it does, its median rank is {med}. The effect is recall with "
+            "the convention minus recall without it, with leading zeros dropped, so a positive "
+            "value is a hit promoted into the window and a negative one is the convention "
+            f"discarding a reference: {d['substrates_whose_own_key_is_a_reference']} substrates "
+            "carry their own key among their references. No cell separates from zero.}\n"
+            "\\label{tab:si-parentdrop}\n\\end{table}\n")
+
+
 def si_case():
     d = art("case_study_exhaustive.json")
     i = art("case_study.json")
@@ -243,7 +277,8 @@ if __name__ == "__main__":
                      ("si_table_case", si_case),
                      ("si_table_ranking", si_ranking),
                      ("si_table_intervals", si_intervals),
-                     ("si_table_precision", si_precision)):
+                     ("si_table_precision", si_precision),
+                     ("si_table_parentdrop", si_parentdrop)):
         try:
             (OUT / f"{name}.tex").write_text(fn())
             print(f"  wrote paper2/{name}.tex")

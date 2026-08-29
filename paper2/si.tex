@@ -93,6 +93,23 @@ What counts as a hit is an axis with five declared settings, given in Table~\ref
 The paper reports its comparison under the tautomer-aware key and its sensitivity to the other
 four in Section~\ref{sec:si-sensitivity}.
 
+\section{The parent-drop convention}
+
+\input{si_table_parentdrop}
+
+Table~2 declares that a prediction equal to the substrate is dropped before the budget, for every
+method alike. Every other declared choice in this paper is swept, and this one was declared and
+not measured, so Table~\ref{tab:si-parentdrop} measures it.
+
+The arms behave very differently. SyGMa never returns the substrate;
+\numPdropReturnsBank{} of \numPopulationN{} exhaustive-mode lists contain it, at a median rank
+of \numPdropMedrankBank{}. The convention could therefore have flattered one arm and not another. It does not: the
+largest effect anywhere in the grid is \numPdropMaxEffect{}, no cell of
+\numPdropCells{} separates from zero, and the effect is at most eight per cent of the narrowest
+margin the paper claims. Where it is negative, the cause is the \numPdropSelfref{} substrates
+whose own tautomer key is among their annotated references, for which the convention discards a
+hit the annotation counts.
+
 \section{Precision}
 
 \input{si_table_precision}

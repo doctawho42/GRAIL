@@ -1,0 +1,18 @@
+\begin{table}[h]
+\centering\scriptsize
+\begin{tabular}{lrrrrrrrrrr}
+\toprule
+ & returns & \multicolumn{9}{c}{effect on micro recall at budget $k$} \\
+\cmidrule(lr){3-11}
+arm & parent & $1$ & $3$ & $5$ & $8$ & $10$ & $15$ & $20$ & $30$ & $50$ \\
+\midrule
+GRAIL exhaustive & 239 & $0$ & $0$ & $0$ & $+$.0015 & $+$.0030 & $0$ & $0$ & $-$.0015 & $-$.0030 \\
+GRAIL interactive & 26 & $0$ & $0$ & $+$.0015 & $0$ & $0$ & $0$ & $0$ & $0$ & $0$ \\
+MetaTox & 14 & $0$ & $0$ & $0$ & $0$ & $0$ & $0$ & $0$ & $0$ & $0$ \\
+SyGMa & 0 & $0$ & $0$ & $0$ & $0$ & $0$ & $0$ & $0$ & $0$ & $0$ \\
+MetaPredictor & 52 & $0$ & $+$.0030 & $+$.0030 & $0$ & $+$.0030 & $0$ & $0$ & $0$ & $0$ \\
+\bottomrule
+\end{tabular}
+\caption{What the parent-drop convention gives each arm. \emph{Returns parent} is the number of the 291 substrates whose returned list contains the substrate itself; where it does, its median rank is exhaustive 37, interactive 9, MetaTox 13, MetaPredictor 6. The effect is recall with the convention minus recall without it, with leading zeros dropped, so a positive value is a hit promoted into the window and a negative one is the convention discarding a reference: 2 substrates carry their own key among their references. No cell separates from zero.}
+\label{tab:si-parentdrop}
+\end{table}

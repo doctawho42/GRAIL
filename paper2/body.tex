@@ -223,6 +223,12 @@ annotation an unannotated but real metabolite counts as a false positive, so a s
 fewer candidates is rewarded for reasons unrelated to its chemistry. It does order them
 differently, which is the point of printing it.
 
+The parent-drop convention of Table~\ref{tab:sweep} is swept like the other declared choices.
+The arms differ sharply in how often they return the substrate, from none of SyGMa's lists to
+\numPdropReturnsBank{} of the exhaustive mode's \numPopulationN{}, so the convention had room to
+favour one over another. It does not: the largest effect on recall anywhere in the grid is
+\numPdropMaxEffect{} and no cell separates from zero (Table~S4).
+
 Every interval in this paper is a per-comparison 95\% interval with no family-wise adjustment.
 The sweep is \numCritBudgets{} budgets wide and Table~S4 is \numCritCriteria{} criteria deep, so
 a reader treating the grid as a family should discount accordingly; the narrowest lead we claim,

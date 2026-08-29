@@ -365,6 +365,22 @@ def build():
     # so it is computed here rather than written in words.
     n["h8.design_share"] = round(abs(n["h8.design"]) / n["oracle.headroom"], 3)
 
+    # the parent-drop convention, swept per arm like every other declared choice
+    pd = art("parent_drop_effect.json")
+    n["pdrop.max_effect"] = max(abs(v["effect"]) for r in pd["effect"].values()
+                                for v in r.values())
+    n["pdrop.cells"] = sum(len(r) for r in pd["effect"].values())
+    n["pdrop.separating"] = sum(1 for r in pd["effect"].values()
+                                for v in r.values() if v["separates"])
+    n["pdrop.selfref"] = pd["substrates_whose_own_key_is_a_reference"]
+    for tag, arm in (("bank", "GRAIL exhaustive"), ("trained", "GRAIL interactive"),
+                     ("sygma", "SyGMa"), ("metapredictor", "MetaPredictor"),
+                     ("metatox", "MetaTox")):
+        n[f"pdrop.returns.{tag}"] = pd["parent_returned"][arm]["substrates_returning_the_parent"]
+        r = pd["parent_returned"][arm]["median_rank_when_returned"]
+        if r is not None:
+            n[f"pdrop.medrank.{tag}"] = r
+
     # how many mined templates were derived from a pair whose reaction centre is in more than
     # one piece, which bears on what "single-step" means
     cb = art("cascade_by_pairs.json")
