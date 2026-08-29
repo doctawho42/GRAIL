@@ -473,6 +473,26 @@ def build():
     if "arm_presentation" in dia:
         n["dialect.metatoxretaut"] = dia["arm_presentation"]["metatox_retautomerised"]
         n["dialect.metatoxn"] = dia["arm_presentation"]["metatox_substrates"]
+    # The hydrogen presentation the ceiling is measured under, named rather than left implicit,
+    # with the band across the two arms the dispatch artifact admits and the number a reproducer
+    # gets through the public entry point, whose default is the other presentation.
+    hyd = art("hydrogen_dispatch__clean_test.json")["banks"]["grail_full"]
+    n["hyd.references"] = hyd["references"]
+    n["hyd.implicit"] = hyd["global_arms"]["all_implicit"]
+    n["hyd.completed"] = hyd["global_arms"]["all_explicit_completed"]
+    n["hyd.expanded"] = hyd["global_arms"]["all_explicit"]
+    n["hyd.uncoveredimplicit"] = hyd["references"] - hyd["global_arms_paired"]["recovered_implicit"]
+    n["hyd.uncoveredcompleted"] = (hyd["references"]
+                                   - hyd["global_arms_paired"]["recovered_explicit_completed"])
+    n["hyd.uncoveredexpanded"] = (hyd["references"]
+                                  - hyd["global_arms_paired"]["recovered_explicit"])
+    n["hyd.residual"] = hyd["residual_convention_dependence"]
+    # the same quantity in references, which is what the sentence should say: the per-template
+    # dispatch recovers this many more than the best single convention does
+    n["hyd.residualrefs"] = hyd["recovered"] - hyd["global_arms_paired"][
+        "recovered_explicit_completed"]
+    n["hyd.residuallo"] = hyd["residual_ci95"][0]
+    n["hyd.residualhi"] = hyd["residual_ci95"][1]
     sv = art("standardiser_versions.json")
     n["dialect.rdkitversions"] = len(sv["versions_tested"])
     n["dialect.rdkitamide"] = len(sv["versions_returning_the_amide"])
@@ -509,6 +529,7 @@ def build():
     n["composite.editshare"] = ci["shares"]["instrument_2"]
     n["composite.union"] = ci["counts"]["union"]
     n["composite.unionshare"] = ci["shares"]["union"]
+    n["composite.both"] = ci["counts"]["both"]
     n["composite.threshold"] = ci["threshold_E"]
     n["composite.bar"] = ci["registered_bar"]
 

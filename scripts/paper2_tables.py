@@ -34,7 +34,7 @@ def table():
           f"{d['population']['n']} substrates every method predicts on, carrying "
           f"{int(d['population']['n_references'])} annotated metabolites. No cell is marked as a "
           "leader: at four of these budgets no arm separates from the strongest comparator, and "
-          "the verdicts are read from the paired intervals in Table~S3 rather than from these "
+          "the verdicts are read from the paired intervals in Table~\\ref{SI-tab:si-intervals} rather than from these "
           "levels. The last row is the mean number of candidates each method emits. A prediction "
           "equal to the substrate is dropped before the budget for every method alike.}",
           "\\label{tab:sweep}", "\\end{table*}"]

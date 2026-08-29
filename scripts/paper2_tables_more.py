@@ -79,20 +79,25 @@ def hypotheses():
          ("H8", "group score, groups emitted as blocks", "$+0.05$", "h8.diff", "comparison set"),
          ("H14", "group score as a gate before fusion", "$+0.02$", "h14.diff", "comparison set"),
          ("H13", "standardise surviving candidates only", "$\\ge 10\\times$", "h13.factor", "validation"),
-         ("H15", "survivors, tautomer budget 200", "$<10$ s", "h15.time", "validation")]
+         ("H15", "survivors, tautomer budget 200", "$<10$ s", "h15.time", "validation"),
+         ("H16", "composite share, second instrument at $E\\ge5$", "$\\ge 0.134$",
+          "composite.unionshare", "mined bank")]
     rows = []
     for i, (h, what, thr, key, pop) in enumerate(H, 1):
         v = n[key]
-        val = f"{v:+.4f}" if isinstance(v, float) and abs(v) < 1 else str(v)
+        # a share is not a difference and must not carry a sign
+        signed = h != "H16"
+        val = (f"{v:+.4f}" if signed else f"{v:.4f}") if isinstance(v, float) and abs(v) < 1 \
+            else str(v)
         rows.append(f"P{i} & {what} & {thr} & ${val}$ & {pop} & {h} \\\\")
     return ("\\begin{table*}[t]\n\\centering\\small\n\\begin{tabular}{llllll}\n\\toprule\n"
             " & what was fixed & threshold & measured & tested on & register \\\\\n\\midrule\n" +
             "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n"
             "\\caption{Every deployed choice as a prediction fixed before it was checked, with the "
-            "population it was checked on. P8's figure is a speed-up factor and P9's a median in "
-            "seconds; the rest are differences in micro recall@15. P1 to P3 were fixed before the pool cap "
+            "population it was checked on. P8's figure is a speed-up factor, P9's a median in "
+            "seconds and P10's a share of the mined bank; the rest are differences in micro recall@15. P1 to P3 were fixed before the pool cap "
             "of P2 was in place, so they are measured on the uncapped pool; the same contrast for "
-            "P1 on the deployed pool is in Table~S6. Each verdict is the falsification "
+            "P1 on the deployed pool is in Table~\\ref{SI-tab:si-ranking}. Each verdict is the falsification "
             "condition as written, which compares the point estimate to the threshold; "
             "P1, P2 and P5 have their threshold inside their own interval and are "
             "unresolved on the stricter reading. The last column gives the "

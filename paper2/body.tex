@@ -25,7 +25,14 @@ obstacle \citep{Boyce_2022, Scholz_2023, Gao_2026}.
 
 GRAIL is built on the opposite premise: every evaluation choice is declared and the system is
 reported under all of them rather than under one. The claims below are therefore a sweep rather
-than a single number, and the artifacts sufficient to recompute any cell are released.
+than a single number. What is released is stated precisely rather than generally: the source, both
+checkpoints, the rule bank, a digest-pinned split manifest, the frozen per-substrate predictions of
+every comparator, the evaluation harness and the preregistration. A reader holding those can
+recompute every cell of the comparison under the default matching criterion. Two things they
+cannot: the other four criteria, because the annotations are deposited as tautomer-canonical
+InChIKeys rather than structures, and the corpus itself, because the extraction that selected from
+the four sources is not in the repository. Both limits are set out in the Supporting Information
+with what they do and do not block.
 
 The design contribution is narrower than the evaluation contribution and we say so. The
 architecture is a rule bank, a learned rule selector and a learned pair filter, a familiar shape.
@@ -526,6 +533,22 @@ one step. The remainder divides by the reaction-centre change it requires: \numC
 a transformation type the bank does not hold, \numCeilingKnown{} need a type it holds whose rule
 did not fire, and \numCeilingUntypeable{} cannot be typed.
 
+The presentation of hydrogen is part of that measurement and is named here rather than left to the
+code. Templates are matched against the substrate with hydrogens implicit, which is the convention
+every deployed firing path uses. Two conventions are defensible, and across them the uncovered
+count is \numHydUncoveredimplicit{} with hydrogens implicit and \numHydUncoveredcompleted{} with
+them made explicit and the templates completed to match; the figure reported here sits between the
+two, at the conservative end. A third arm, hydrogens made explicit without completing the
+templates, is an incomplete loop rather than a convention and reaches only
+\numHydUncoveredexpanded{}; it is excluded, and it is excluded by the instrument's own record
+rather than by this paragraph. Readers reproducing through the released public entry point should
+note that its default is that third presentation, so calling it without naming the convention
+returns \numHydUncoveredexpanded{} uncovered and not \numCeilingUncovered{}. The residual
+dependence of the bound on the convention, measured per template, is
+$\numHydResidual{}$, 95\% CI $[\numHydResiduallo{}, \numHydResidualhi{}]$, an interval that
+excludes zero: the bound is convention-dependent, by \numHydResidualrefs{} references in
+\numHydReferences{}.
+
 Relaxing the convention-dependent primitives in the templates recovers three of the
 \numCeilingKnown{}, moving the ceiling by $+0.0012$. A bound computed before the run predicted
 about eight.
@@ -623,8 +646,11 @@ the argument for reporting the sweep rather than a cell.
 
 Two boundaries are as much of the result as the recall is. The rule bank misses
 \numCeilingUncovered{} of \numPopulationTestrefs{} references in one step, and that bound holds
-under every definition of a transformation type at which a type still determines a product, which
-makes it a property of the annotation corpus rather than of this implementation. And of
+under every definition of a transformation type at which a type still determines a product. Type
+definition is a choice in the census of the gap rather than in the engine that produces it, so
+that invariance does not by itself make the bound implementation-free; the engine axis we can
+measure, the presentation of hydrogen, moves it by $\numHydResidual{}$ with an interval excluding
+zero, or \numHydResidualrefs{} references in \numHydReferences{}. And of
 \numComparatorsUnavailable{} systems published in 2025--26, none could be run on our split as
 released, which is why we release per-substrate predictions for every arm rather than aggregate
 scores alone.
@@ -632,15 +658,26 @@ scores alone.
 \section{Limitations}
 
 Predictions are single-step in the sense that one template is applied once, which is not the same
-as one enzymatic step. \numCascadeMulti{} of the \numCascadeScored{} mined templates,
-\numCascadeShare{}\%, were derived from an annotated pair whose reaction centre falls in more
-than one piece: the corpus annotates metabolites several enzymatic steps from their parent, and a
-template mined from such a pair performs those steps together. Some of these are one event with
-two loci, a cleavage or a cyclisation, and this measurement does not separate them; inspection of
-the rest finds genuine composites, among them a rule oxidising two ring positions at once and a
-rule that both substitutes and conjugates glutathione. The coverage ceiling this paper reports is
-therefore a one-template ceiling and not a one-enzyme one. Applying the bank at depth two lifts it
-by about $0.012$ at $8.5$ times the candidate cost and is not deployed. Precision is bounded by annotation
+as one enzymatic step, and the gap between the two is larger than one instrument alone shows. The
+first counts the loci of the reaction centre of the pair a template was mined from and flags
+\numCompositeLoci{} of \numCompositeScored{} mined templates, \numCompositeLocishare{}. That is
+a floor and not a bound: two edits that share or neighbour centre atoms arrive as one locus and
+are counted once. A second instrument, whose threshold was registered before it was written,
+counts core-incident edits --- bonds between matched atoms whose order or presence moves, plus
+attachment points gained or lost, with bonds inside an added fragment not counted --- and calls a
+template composite at \numCompositeThreshold{} or more, above every single enzymatic turnover.
+It flags \numCompositeEdits{}, and the two instruments agree on only \numCompositeBoth{}, so
+their union is \numCompositeUnion{} templates, \numCompositeUnionshare{} of the mined half.
+Registered prediction P10 set the bar at \numCompositeBar{} before either count existed and the
+union clears it.
+
+The corpus annotates metabolites several enzymatic steps from their parent, and a template mined
+from such a pair performs those steps together: inspection finds a rule oxidising two ring
+positions at once and a rule that both substitutes and conjugates glutathione. The coverage
+ceiling this paper reports is therefore a one-template ceiling and not a one-enzyme one, and the
+corrected share explains why applying the bank at depth two lifts it by only about $0.012$ at
+$8.5$ times the candidate cost --- a fifth of the mined bank already carries the compositions a
+second application would have to discover, so the second application mostly rediscovers them. Precision is bounded by annotation
 completeness. The rule-budget threshold in P3 is a property of the requested budget rather than
 of the system. The group-ranking headroom is real and unreached by both registered
 compositions for structural reasons. Every method runs out of candidates at wide budgets, so the

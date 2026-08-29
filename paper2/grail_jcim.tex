@@ -38,13 +38,13 @@
 Tools that predict xenobiotic metabolite structures report recall under evaluation choices their
 papers leave unstated, so their numbers are not comparable. We present GRAIL, a rule-grounded
 predictor that names the transformation rule and site behind every prediction and reports its
-performance under five matching criteria and ten output budgets against every comparator with
+performance under \numCritCriteria{} matching criteria and \numCritBudgets{} output budgets against every comparator with
 predictions on the same substrates. On \numPopulationN{} shared substrates the comparison divides
 by budget rather than resolving into an ordering, with SyGMa ahead at $k\le5$ and GRAIL ahead at
 $k=30$ and $k=50$, each with the paired interval excluding zero. We also bound the approach:
 \numCeilingUncovered{} of \numPopulationTestrefs{} reference metabolites lie outside what the rule
-bank reaches in one step, and that bound is invariant to how a transformation type is defined,
-making it a property of the annotation corpus rather than of our implementation.
+bank reaches in one step, and that bound moves by at most eight references across the hydrogen
+conventions our own instrument admits.
 \end{abstract}
 
 % For Table of Contents Only. Written by scripts/paper2_figures.py at exactly 3.25 by 1.75

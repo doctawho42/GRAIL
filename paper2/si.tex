@@ -375,13 +375,37 @@ order systems.
 The paper's predictions are single-step in the sense that one template is applied once. Whether
 that is also one enzymatic step depends on the templates, and it is not always.
 
-Every mined template comes from an annotated substrate--product pair. The reaction centre of that
-pair, located by the same maximum-common-substructure route the transformation types use, falls in
-more than one connected piece for \numCascadeMulti{} of the \numCascadeScored{} mined templates,
-\numCascadeShare{}\%. A centre in two pieces is one event when a bond appears or disappears
+Every mined template comes from an annotated substrate--product pair, so the question can be put
+to molecules rather than to templates. Two instruments do so, and neither alone is enough.
+
+\paragraph{The first instrument: how many loci.} The reaction centre of the source pair, located
+by the same maximum-common-substructure route the transformation types use, falls in more than one
+piece for \numCompositeLoci{} of the \numCompositeScored{} mined templates,
+\numCompositeLocishare{}. A centre in two pieces is one event when a bond appears or disappears
 between them, which is what a cleavage or a cyclisation looks like, and two independent edits
-otherwise; this measurement counts the pieces and does not separate the two cases, so
-\numCascadeShare{}\% is an upper bound on the composite share and not an estimate of it.
+otherwise; this instrument counts the pieces and does not separate the two cases. It has a blind
+spot in the other direction as well, and the blind spot is the larger problem: two edits that
+share or neighbour centre atoms arrive as one piece and are counted once. This share is therefore
+a floor. An earlier version of this paper called it a bound, which it is not.
+
+\paragraph{The second instrument, and its bar, fixed first.} The remedy is a second lens with no
+threshold chosen after the fact, so the threshold was registered as H16 before the instrument was
+written. On the same pair, let \emph{core} be the matched atoms and count $E$: every bond between
+two core atoms whose presence or order differs, plus every attachment point at which a substituent
+is gained or lost, each once. Bonds internal to an added or removed fragment are not edits to the
+substrate and are not counted, so a glucuronide costs one and not twelve. The cut is set from
+chemistry rather than from a histogram: a conjugation breaks one bond and forms one, $E=2$; an
+epoxide hydrolysis reaches $E=3$; an aromatic hydroxylation through the arene oxide within one
+enzyme reaches $E=4$ at worst. Nothing one enzyme does in one turnover reaches five, so the
+threshold is $E \ge \numCompositeThreshold{}$.
+
+\paragraph{What the two find together.} The second instrument flags \numCompositeEdits{}
+templates, \numCompositeEditshare{}. The two agree on only \numCompositeBoth{}, which is the
+point of having both: each sees most of what the other misses. Their union is
+\numCompositeUnion{} templates, \numCompositeUnionshare{} of the mined half. The registered bar
+was \numCompositeBar{} and the prediction is confirmed. The composite share of the mined bank is
+therefore about a fifth, not the \numCompositeLocishare{} one instrument reports, and both counts
+are reported here so a reader can see how much of the answer is the instrument.
 
 Inspection of the flagged pairs finds both kinds. Among the composites are a pair whose product
 carries two new carbonyls on one piperazine ring, a pair in which a ketone is reduced and a
@@ -391,7 +415,11 @@ after a substitution. None of these is one enzyme acting once.
 The consequence for the paper is confined and stated where it bites: the coverage ceiling is a
 one-template ceiling. A rule that performs two edits can reach a metabolite two steps away in one
 application, so the ceiling is not the reach of one enzymatic step, and the depth-two experiment
-in the Limitations measures a second template application rather than a second enzymatic step.
+in the Limitations measures a second template application rather than a second enzymatic step. The
+corrected share also explains that experiment's small effect. If a fifth of the mined bank already
+performs two edits in one application, a second application has little left to discover that the
+first did not already reach, and the observed lift of about $0.012$ is what that predicts rather
+than a surprise.
 
 An earlier attempt read the templates themselves rather than the pairs and was abandoned: a
 cleavage whose bridging atom carries no map number is invisible to a comparison of mapped bonds,
@@ -402,9 +430,14 @@ wrong instrument for this question and its answer disagreed with what the molecu
 
 The register is released in full at \texttt{github.com/doctawho42/GRAIL}, with every prediction as
 it was written, the threshold and falsification condition fixed before the check, and the outcome
-as it was measured. Fifteen predictions are registered. Nine are reported in the paper as P1 to
-P9; the register's own identifiers are given beside them in the main text, since its numbering
+as it was measured. Sixteen predictions are registered. Ten are reported in the paper as P1 to
+P10; the register's own identifiers are given beside them in the main text, since its numbering
 records when each was written rather than where it appears.
+
+P10 is the newest and its order is checkable rather than asserted. Its threshold, its population
+and its falsification condition were committed to the register in a commit of their own, and the
+instrument that measures it was written afterwards in a later commit. The two commits are in the
+released history, in that order, so a reader need not take the sequence on trust.
 
 The remaining six concern work this paper does not report: a type-indexed rather than
 rule-indexed label space, reactivity and accessibility node features, learned abstention, a

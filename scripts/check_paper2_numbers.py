@@ -113,7 +113,11 @@ def main() -> int:
     # there: a literal that reappears fails here, and an unresolved \ref fails the build.
     pointers = []
     for path in [TEX, si, *wrappers, *sorted((ROOT / "paper2").glob("table_*.tex")),
-                 *sorted((ROOT / "paper2").glob("si_table_*.tex"))]:
+                 *sorted((ROOT / "paper2").glob("si_table_*.tex")),
+                 # the generators too: a table file is regenerated, and a literal that survives
+                 # in the script that writes it comes straight back on the next run
+                 *sorted((ROOT / "scripts").glob("paper2_*tables*.py")),
+                 *sorted((ROOT / "scripts").glob("paper2_si_tables.py"))]:
         for hit in re.findall(r"(?:Table|Figure|Section|Equation)~?S\d+", path.read_text()):
             pointers.append(f"{path.name}: {hit}")
 
