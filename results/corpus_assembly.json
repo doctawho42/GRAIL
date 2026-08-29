@@ -2,8 +2,8 @@
  "provenance": {
   "script": "corpus_assembly.py",
   "script_path": "scripts/typed_edit/corpus_assembly.py",
-  "source_sha256": "f9e680d3db20aa222686e2c560ab1a1f1d8600e6ae1076d0c9a98b028c3c06bb",
-  "git_commit": "2a872cfb8c703d62ee08b7adb148992f04d1e779",
+  "source_sha256": "3ccec75fd0ae1ae1a7718a2788f19121012d3c235d25a8d8c28998e09e33b867",
+  "git_commit": "5927d40e9c3320621a07b98181327bfa9751b0f8",
   "git_dirty": true
  },
  "files": {
@@ -45,9 +45,9 @@
   }
  },
  "repository": {
-  "sha": "2a872cf",
-  "committed": "2026-08-29T23:36:37+07:00",
-  "commits_in_history": 839
+  "sha": "5927d40",
+  "committed": "2026-08-30T01:45:58+07:00",
+  "commits_in_history": 857
  },
  "splits": {
   "train": {
@@ -151,6 +151,29 @@
    }
   },
   "molecule_disjoint_recorded": false
+ },
+ "source_overlap": {
+  "corpus_positive_pairs": 22134,
+  "corpus_substrates": 10972,
+  "sources": {
+   "MetXBioDB": {
+    "read_from": "artifacts/tier2/biotransformer/database/MetXBioDB-1-0.json",
+    "distinct_pairs": 2035,
+    "inside_the_corpus": 1248,
+    "share_inside": 0.6133
+   },
+   "GLORYx": {
+    "read_from": "docs/benchmark/data/gloryx_test.json",
+    "parents": 37,
+    "distinct_pairs": 136,
+    "parents_inside_the_corpus": 23,
+    "pairs_inside_the_corpus": 63
+   }
+  },
+  "sources_not_present_here": [
+   "ChEMBL",
+   "DrugBank"
+  ]
  },
  "reading": "the corpus files were written in one run months before this repository's first commit and their producer is not in it, so the extraction cannot be read off code; the source accession field is empty in every record, so per-source counts cannot be recovered from the data either; what can be established is the standardisation the strings carry, the label convention, the absence of any cross-source disagreement to arbitrate, the fraction of each present source that is inside, and that the shipped clean triples come out of the repaired splitter in its substrate-level mode"
 }

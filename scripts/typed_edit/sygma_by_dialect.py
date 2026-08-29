@@ -16,14 +16,14 @@ This measures the size of that. SyGMa is re-run on the same substrates presented
 scored against the same annotation under the same tautomer-aware key, with paired intervals on
 the difference.
 
-    python scripts/typed_edit/sygma_by_dialect.py --threads 6
+    python scripts/typed_edit/sygma_by_dialect.py
 """
 from __future__ import annotations
 
 import argparse
 import json
 import sys
-from multiprocessing import Pool
+import time
 from pathlib import Path
 
 import numpy as np
@@ -41,43 +41,33 @@ N_BOOT, SEED = 10000, 0
 _SC = None
 
 
-def _worker(job):
-    """One substrate in one presentation -> its ranked SyGMa predictions as match keys."""
+def _enumerate(shown: str) -> list[str]:
+    """SyGMa's ranked prediction structures for one presentation of one substrate.
+
+    Only the enumeration happens here. Keying is done by the caller through the project's cached
+    tautomer table: canonicalising a tautomer is a search rather than a lookup and dominates
+    everything else, and the table already holds what SyGMa produces on these substrates.
+    """
     global _SC
     import sygma
     from rdkit import Chem, RDLogger
     RDLogger.DisableLog("rdApp.*")
-    from grail_metabolism.metrics import _tautomer_inchikey as _tk
 
-    key, shown = job
     if _SC is None:
         _SC = sygma.Scenario([[sygma.ruleset["phase1"], 1], [sygma.ruleset["phase2"], 1]])
     mol = Chem.MolFromSmiles(shown)
     if mol is None:
-        return key, []
+        return []
     try:
         tree = _SC.run(mol)
         tree.calc_scores()
-        ranked = [e[0] for e in tree.to_smiles()]
+        return [e[0] for e in tree.to_smiles()]
     except Exception:
-        return key, []
-    # The parent is dropped on the same rule every other arm uses: tautomer-key equality with
-    # the substrate. The key is taken from the corpus string, so the two presentations drop the
-    # same molecule and the convention does not itself become a dialect effect.
-    parent = _tk(key)
-    out, seen = [], set()
-    for smiles in ranked:
-        k = _tk(smiles)
-        if not k or k == parent or k in seen:
-            continue
-        seen.add(k)
-        out.append(k)
-    return key, out
+        return []
 
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--threads", type=int, default=6)
     ap.add_argument("--out", default=str(ROOT / "results" / "sygma_by_dialect.json"))
     args = ap.parse_args()
 
@@ -91,7 +81,7 @@ def main() -> int:
         from vs_metatox import population
         subs, _, _ = population()
     refs_blob = json.loads((ROOT / "results" / "test_references.json").read_text())
-    from bank_without_selection import _key
+    from bank_without_selection import _key  # the cached tautomer table
     refs = {s: {k for k in (_key(p) for p in refs_blob.get(s, [])) if k} for s in subs}
     subs = [s for s in subs if refs[s]]
     print(f"population: {len(subs)} substrates")
@@ -105,12 +95,27 @@ def main() -> int:
     moved = sum(1 for s in subs if presented[s] != Chem.MolToSmiles(Chem.MolFromSmiles(s)))
     print(f"substrates whose drawing changes: {moved} of {len(subs)}")
 
+    parent = {s: _key(s) for s in subs}
     arms = {}
-    with Pool(args.threads) as pool:
-        for name, jobs in (("stored", [(s, s) for s in subs]),
-                           ("standardised", [(s, presented[s]) for s in subs])):
-            arms[name] = dict(pool.map(_worker, jobs))
-            print(f"  {name}: mean list {np.mean([len(v) for v in arms[name].values()]):.1f}")
+    for name in ("stored", "standardised"):
+        per, t0 = {}, time.perf_counter()
+        for i, substrate in enumerate(subs, 1):
+            shown = substrate if name == "stored" else presented[substrate]
+            out, seen = [], set()
+            for smiles in _enumerate(shown):
+                k = _key(smiles)
+                # the parent is dropped on the same rule every other arm uses, and by the corpus
+                # key in both presentations, so the convention cannot itself become a dialect effect
+                if not k or k == parent[substrate] or k in seen:
+                    continue
+                seen.add(k)
+                out.append(k)
+            per[substrate] = out
+            if i % 50 == 0 or i == len(subs):
+                print(f"  {name}: {i}/{len(subs)} ({time.perf_counter() - t0:.0f}s)",
+                      file=sys.stderr, flush=True)
+        arms[name] = per
+        print(f"  {name}: mean list {np.mean([len(v) for v in per.values()]):.1f}")
 
     U = np.array([len(refs[s]) for s in subs], dtype=float)
     rng = np.random.default_rng(SEED)

@@ -549,11 +549,18 @@ def build():
     n["assembly.commits"] = ca["repository"]["commits_in_history"]
     if "source_overlap" in ca:
         so = ca["source_overlap"]
+        n["assembly.corpuspairs"] = so["corpus_positive_pairs"]
         mx = so["sources"].get("MetXBioDB")
         if mx:
             n["assembly.metxpairs"] = mx["distinct_pairs"]
             n["assembly.metxinside"] = mx["inside_the_corpus"]
             n["assembly.metxshare"] = mx["share_inside"]
+        gx = so["sources"].get("GLORYx")
+        if gx:
+            n["assembly.gloryxparents"] = gx["parents"]
+            n["assembly.gloryxpairs"] = gx["distinct_pairs"]
+            n["assembly.gloryxparentsinside"] = gx["parents_inside_the_corpus"]
+            n["assembly.gloryxpairsinside"] = gx["pairs_inside_the_corpus"]
 
     # The composite share, measured twice, the second time under a threshold registered first.
     ci = art("composite_instruments.json")

@@ -91,11 +91,17 @@ union when the data is loaded, applied to structures after standardisation, with
 between sources because no source is recorded. This is also why the split table counts
 \numAssemblyTestids{} test substrates by index and \numAssemblyTeststructures{} by structure.
 
-\paragraph{What is inside, for the sources that can be checked.} Two of the four are physically
-present here and can be intersected with the corpus by structure. That measurement bounds the
-filter without naming it: it shows that the assembly did not ingest either source wholesale.
-ChEMBL and DrugBank are not present and admit no such measurement, so no fraction is claimed for
-them.
+\paragraph{What is inside, for the sources that can be checked.} Two of the four --- MetXBioDB
+and the GLORYx reference set --- are physically present here and can be intersected with the
+corpus by structure skeleton. The corpus holds \numAssemblyCorpuspairs{} distinct annotated
+pairs. Of MetXBioDB's \numAssemblyMetxpairs{}, \numAssemblyMetxinside{} are inside it,
+\numAssemblyMetxshare{}; of the GLORYx set's \numAssemblyGloryxpairs{} pairs over
+\numAssemblyGloryxparents{} parents, \numAssemblyGloryxpairsinside{} pairs and
+\numAssemblyGloryxparentsinside{} parents are. So the assembly ingested neither source
+wholesale: a filter of unknown shape dropped nearly two fifths of MetXBioDB, and the measurement
+bounds that filter without recovering it. What it does not do is attribute any pair to a source,
+because a pair in MetXBioDB may equally have entered through DrugBank. ChEMBL and DrugBank are
+not present here and admit no such measurement, so no fraction is claimed for them.
 
 \paragraph{The partition, and its seed.} The three splits are substrate-disjoint and not
 molecule-disjoint, which the leakage audit records and the main text states. The repair that

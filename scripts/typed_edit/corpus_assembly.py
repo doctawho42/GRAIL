@@ -237,19 +237,36 @@ def source_overlap() -> dict:
     out = {"corpus_positive_pairs": len(corpus_pairs),
            "corpus_substrates": len(corpus_subs), "sources": {}}
 
+    def from_inchi(value):
+        """MetXBioDB keys its structures by InChI, so the skeleton comes from there."""
+        if not value or not isinstance(value, str) or not value.startswith("InChI="):
+            return None
+        mol = Chem.MolFromInchi(value)
+        if mol is None:
+            return None
+        try:
+            return Chem.MolToInchiKey(mol)[:14]
+        except Exception:
+            return None
+
     metx = ROOT / "artifacts/tier2/biotransformer/database/MetXBioDB-1-0.json"
     if metx.exists():
         blob = json.loads(metx.read_text())
-        rows = blob if isinstance(blob, list) else list(blob.values())
+        rows = list((blob.get("biotransformations") or {}).values()) \
+            if isinstance(blob, dict) and "biotransformations" in blob \
+            else (blob if isinstance(blob, list) else list(blob.values()))
         pairs = set()
         for row in rows:
             if not isinstance(row, dict):
                 continue
-            sub = row.get("substrate_smiles") or row.get("Substrate SMILES") or row.get("substrate")
-            prod = row.get("product_smiles") or row.get("Product SMILES") or row.get("product")
-            a, b = skeleton(sub), skeleton(prod)
-            if a and b:
-                pairs.add((a, b))
+            substrate = row.get("Substrate") or {}
+            a = from_inchi(substrate.get("InChI")) if isinstance(substrate, dict) else None
+            if not a:
+                continue
+            for product in (row.get("Products") or []):
+                b = from_inchi(product.get("InChI")) if isinstance(product, dict) else None
+                if b:
+                    pairs.add((a, b))
         out["sources"]["MetXBioDB"] = {
             "read_from": str(metx.relative_to(ROOT)),
             "distinct_pairs": len(pairs),
@@ -259,7 +276,14 @@ def source_overlap() -> dict:
 
     glory = ROOT / "docs/benchmark/data/gloryx_test.json"
     if glory.exists():
-        blob = json.loads(glory.read_text())
+        # SMILES carry backslashes for double-bond stereochemistry, and this file writes them
+        # raw, which is not valid JSON escaping. Strict parsing raises on it; the file is
+        # otherwise well formed, so the escapes are repaired rather than the file rejected.
+        text = glory.read_text()
+        try:
+            blob = json.loads(text)
+        except json.JSONDecodeError:
+            blob = json.loads(re.sub(r'\\(?!["\\/bfnrtu])', r"\\\\", text))
         rows = blob if isinstance(blob, list) else blob.get("parents") or list(blob.values())
         pairs, parents = set(), set()
         for row in rows:
