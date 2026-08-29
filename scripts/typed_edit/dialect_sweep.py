@@ -48,19 +48,31 @@ COMPARATORS = {
     "MetaPredictor": ("artifacts/tier2_1170/metapredictor_preds.json", None),
 }
 ARMS = {
-    "GRAIL exhaustive": ("results/widepools_implicit/w*.json", "results/widepools_std/w*.json"),
+    # The exhaustive arm's standardised pools come from the coarse shards where those completed
+    # and from a finer re-run of the same ranges where they did not. Both are the same
+    # measurement on the same substrates with the same checkpoints; the finer pieces exist only
+    # because a shard writes when it finishes, so two ranges holding the largest substrates had
+    # hours of work that nothing on disk could show.
+    "GRAIL exhaustive": ("results/widepools_implicit/w*.json",
+                         ["results/widepools_std/w*.json",
+                          "results/widepools_std_fine/p*.json"]),
     "GRAIL interactive": ("results/widepools_k30/all.json", "results/widepools_k30_std/all.json"),
 }
 
 
-def load(pattern: str):
+def load(pattern):
+    """One or several glob patterns, merged. A substrate present in more than one is taken once."""
+    patterns = [pattern] if isinstance(pattern, str) else list(pattern)
     pools, refs = {}, {}
-    for path in sorted(glob.glob(str(ROOT / pattern))):
-        blob = json.loads(Path(path).read_text())
-        pools.update(blob["pools"])
-        refs.update(blob.get("references") or {})
+    for spec in patterns:
+        for path in sorted(glob.glob(str(ROOT / spec))):
+            blob = json.loads(Path(path).read_text())
+            for substrate, pool in blob["pools"].items():
+                pools.setdefault(substrate, pool)
+            for substrate, r in (blob.get("references") or {}).items():
+                refs.setdefault(substrate, r)
     if not pools:
-        raise SystemExit(f"no pool matched {pattern}")
+        raise SystemExit(f"no pool matched {patterns}")
     return pools, refs
 
 
