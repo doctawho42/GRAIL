@@ -33,9 +33,14 @@ def variants(v):
         out.add(f"{v * 100:.1f}")
         out.add(f"{v * 100:.0f}")
         out.add(str(v))
-    else:
+    elif isinstance(v, int):
         out.add(str(v))
         out.add(f"{v:,}")
+    else:
+        # Not every entry of the register is a number. Some are the literal text a sentence
+        # prints -- a list of ranks, say -- and thousands-separating a string raises rather
+        # than returning something useless, which is how this was found.
+        out.add(str(v))
     return {x for x in out if x}
 
 

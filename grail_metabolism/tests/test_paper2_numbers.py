@@ -78,3 +78,23 @@ def test_the_figures_are_drawn_from_the_current_artifacts():
     want = (ROOT / "paper2/figures.sha256").read_text().strip()
     assert mod.digest() == want, (
         "the figures are behind their artifacts; re-run scripts/paper2_figures.py")
+
+
+def test_the_tracer_survives_a_non_numeric_register_entry():
+    """Not every entry of the number register is a number.
+
+    Some carry the literal text a sentence prints, such as the list of ranks the worked example
+    reports. The tracer formatted every value with a thousands separator, which raises on a
+    string rather than returning something useless, and the whole check died the first time such
+    an entry was added. The variants helper is the place that has to tolerate it.
+    """
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location(
+        "check_draft_numbers", ROOT / "scripts" / "check_draft_numbers.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    assert module.variants("8, 13, 16, 21") == {"8, 13, 16, 21"}
+    assert "1,170" in module.variants(1170)
+    assert "0.0035" in module.variants(0.0035)
