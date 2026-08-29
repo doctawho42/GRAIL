@@ -445,6 +445,24 @@ def build():
     n["case.exhdrawn.deamrank"] = next(c["rank"] for c in _drawn["candidates"]
                                        if c["is_reference"] and c["rule_source"] == "curated")
 
+    # What the annotation actually contains, which a recall figure is a statement about
+    ra = art("reference_audit.json")
+    n["refaudit.references"] = ra["population"]["references"]
+    n["refaudit.substrates"] = ra["population"]["substrates"]
+    n["refaudit.distinct"] = ra["distinct_reference_keys"]
+    n["refaudit.smaller"] = ra["counts"]["smaller_than_the_parent"]
+    n["refaudit.same"] = ra["counts"]["same_heavy_atom_count"]
+    n["refaudit.larger"] = ra["counts"]["larger_than_the_parent"]
+    n["refaudit.selfref"] = ra["counts"]["equal_to_their_own_substrate"]
+    n["refaudit.shared"] = ra["keys_shared_by_more_than_one_substrate"]
+    n["refaudit.unparsed"] = ra["counts"].get("unparsed", 0)
+    n["refaudit.deltamin"] = ra["heavy_atom_delta"]["min"]
+    n["refaudit.deltamax"] = ra["heavy_atom_delta"]["max"]
+    n["refaudit.deltamedian"] = ra["heavy_atom_delta"]["median"]
+    n["refaudit.deltalo"] = ra["heavy_atom_delta"]["p05"]
+    n["refaudit.deltahi"] = ra["heavy_atom_delta"]["p95"]
+    n["refaudit.elements"] = len(ra["elements"])
+
     # How the corpus draws its molecules, which decides which rules can fire on it. This is an
     # axis like the matching criterion and the output budget, and it was undeclared.
     dia = art("dialect_census.json")

@@ -1,0 +1,181 @@
+#!/usr/bin/env python3
+"""The comparison recomputed with the substrate drawn the other way.
+
+The corpus stores amides as imidic acids and cytosine as its lactim, and the rules are matched
+against that drawing. This paper sweeps the matching criterion and the output budget and reports
+the whole grid; the substrate's presentation is a choice of the same kind and was not swept. It is
+here.
+
+Both GRAIL arms are rebuilt on the identical substrates, presented as the declared standardiser
+draws them, with the same checkpoints, the same rule budgets, the same pool cap and the same
+ranking. The pools stay keyed by the corpus string, so the annotation is one annotation and the
+two dialects are paired substrate by substrate.
+
+The comparators cannot all move with them, and that is stated rather than hidden. SyGMa is
+re-runnable and is swept separately. MetaPredictor's predictions are a frozen delivery and
+MetaTox's come from a web service that is not re-runnable here, so both are held fixed; a
+difference against them therefore measures how much of our own margin was the drawing, which is
+the question that matters for reading the comparison.
+
+    python scripts/typed_edit/dialect_sweep.py
+"""
+from __future__ import annotations
+
+import argparse
+import glob
+import json
+import sys
+from pathlib import Path
+
+import numpy as np
+
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parents[1]
+for _p in (str(ROOT), str(ROOT / "scripts"), str(HERE)):
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
+
+from _provenance import stamp  # noqa: E402
+
+from _rrf import rrf_order  # noqa: E402
+
+KS = (1, 3, 5, 8, 10, 15, 20, 30, 50)
+CAP = 100
+N_BOOT, SEED = 10000, 0
+COMPARATORS = {
+    "MetaTox": ("results/metatox_smirks_preds.json", "predictions"),
+    "SyGMa": ("results/sygma_fulltest_predictions.json", None),
+    "MetaPredictor": ("artifacts/tier2_1170/metapredictor_preds.json", None),
+}
+ARMS = {
+    "GRAIL exhaustive": ("results/widepools_implicit/w*.json", "results/widepools_std/w*.json"),
+    "GRAIL interactive": ("results/widepools_k30/all.json", "results/widepools_k30_std/all.json"),
+}
+
+
+def load(pattern: str):
+    pools, refs = {}, {}
+    for path in sorted(glob.glob(str(ROOT / pattern))):
+        blob = json.loads(Path(path).read_text())
+        pools.update(blob["pools"])
+        refs.update(blob.get("references") or {})
+    if not pools:
+        raise SystemExit(f"no pool matched {pattern}")
+    return pools, refs
+
+
+def ranked(pool):
+    keep = sorted(pool, key=lambda c: -c["generator"])[:CAP]
+    return [c["key"] for c in rrf_order(keep) if c.get("key")]
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--out", default=str(ROOT / "results" / "dialect_sweep.json"))
+    args = ap.parse_args()
+
+    from bank_without_selection import _dedup, _key as tautkey
+
+    arms, refs = {}, {}
+    for name, (stored_pattern, drawn_pattern) in ARMS.items():
+        stored, r = load(stored_pattern)
+        refs.update(r)
+        drawn, _ = load(drawn_pattern)
+        arms[name] = {"stored": stored, "standardised": drawn}
+
+    subs = sorted(set.intersection(*[set(d[k]) for d in arms.values() for k in d])
+                  & {s for s in refs if refs[s]})
+    print(f"population: {len(subs)} substrates held by both dialects of both arms")
+
+    parent = {s: tautkey(s) for s in subs}
+    ordered = {}
+    for name, dialects in arms.items():
+        for dialect, pools in dialects.items():
+            ordered[(name, dialect)] = {
+                s: [k for k in ranked(pools[s]) if k != parent[s]] for s in subs}
+
+    for name, (rel, field) in COMPARATORS.items():
+        blob = json.loads((ROOT / rel).read_text())
+        preds = blob[field] if field else blob
+        ordered[(name, "stored")] = {
+            s: [k for k in _dedup(preds.get(s, []), max(KS) + 20) if k and k != parent[s]]
+            for s in subs}
+
+    truth = {s: set(refs[s]) for s in subs}
+    U = np.array([len(truth[s]) for s in subs], dtype=float)
+    rng = np.random.default_rng(SEED)
+    idx = rng.integers(0, len(subs), (N_BOOT, len(subs)))
+    den = np.maximum(U[idx].sum(axis=1), 1)
+
+    def hits(key, k):
+        return np.array([len(set(ordered[key][s][:k]) & truth[s]) for s in subs], dtype=float)
+
+    # 1. what the drawing does to each GRAIL arm, paired
+    effect = {}
+    for name in ARMS:
+        row = {}
+        for k in KS:
+            a, b = hits((name, "standardised"), k), hits((name, "stored"), k)
+            d = a - b
+            bt = d[idx].sum(axis=1) / den
+            lo, hi = np.percentile(bt, [2.5, 97.5])
+            row[str(k)] = {"stored": round(float(b.sum() / U.sum()), 4),
+                           "standardised": round(float(a.sum() / U.sum()), 4),
+                           "difference": round(float(d.sum() / U.sum()), 4),
+                           "ci95": [round(float(lo), 4), round(float(hi), 4)],
+                           "separates": bool(lo > 0 or hi < 0)}
+        effect[name] = row
+
+    # 2. what it does to every head-to-head verdict the paper claims
+    verdicts = {}
+    for name in ARMS:
+        for comparator in COMPARATORS:
+            row = {}
+            for k in KS:
+                out = {}
+                for dialect in ("stored", "standardised"):
+                    d = hits((name, dialect), k) - hits((comparator, "stored"), k)
+                    bt = d[idx].sum(axis=1) / den
+                    lo, hi = np.percentile(bt, [2.5, 97.5])
+                    out[dialect] = {"difference": round(float(d.sum() / U.sum()), 4),
+                                    "ci95": [round(float(lo), 4), round(float(hi), 4)],
+                                    "separates": bool(lo > 0 or hi < 0),
+                                    "sign": int(np.sign(d.sum()))}
+                out["verdict_moves"] = bool(
+                    out["stored"]["separates"] != out["standardised"]["separates"]
+                    or (out["stored"]["separates"] and out["standardised"]["separates"]
+                        and out["stored"]["sign"] != out["standardised"]["sign"]))
+                row[str(k)] = out
+            verdicts[f"{name} vs {comparator}"] = row
+
+    moved = sum(1 for r in verdicts.values() for k in r if r[k]["verdict_moves"])
+    cells = sum(len(r) for r in verdicts.values())
+
+    rep = {"provenance": stamp(__file__), "n": len(subs), "budgets": list(KS),
+           "match": "inchikey_tautomer", "cap": CAP, "n_boot": N_BOOT, "seed": SEED,
+           "effect_on_each_arm": effect,
+           "verdicts": verdicts,
+           "verdict_cells": cells, "verdict_cells_that_move": moved,
+           "comparators_held_fixed": ["MetaTox", "MetaPredictor", "SyGMa"],
+           "why_held_fixed": ("MetaTox is a web service and MetaPredictor a frozen delivery, so "
+                              "neither can be re-run here; SyGMa is swept separately in "
+                              "results/sygma_by_dialect.json"),
+           "reading": ("difference is standardised minus stored, so a positive value is recall "
+                       "the corpus's drawing was denying the arm")}
+    Path(args.out).write_text(json.dumps(rep, indent=1))
+
+    print(f"\n{'arm':<20}" + "".join(f"{k:>9}" for k in KS))
+    for name in ARMS:
+        cells_ = "".join(f"{effect[name][str(k)]['difference']:>+9.4f}" for k in KS)
+        print(f"{name:<20}{cells_}")
+    print(f"\nverdict cells that move: {moved} of {cells}")
+    for label, row in verdicts.items():
+        movers = [k for k in row if row[k]["verdict_moves"]]
+        if movers:
+            print(f"  {label}: k = {', '.join(movers)}")
+    print(f"\nwrote {args.out}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

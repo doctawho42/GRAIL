@@ -566,7 +566,12 @@ about eight.
 
 The \numCeilingNovel{} misses of absent type collapse into \numCensusTypes{} distinct types, of
 which \numCensusOnce{} occur once and carry \numCensusOnceShare{} of the mass. The objection that
-this is an artefact of how finely a type is defined is answered by varying the definition.
+this is an artefact of how finely a type is defined is answered by varying the definition. What
+that answer covers should be said exactly: it covers the \numCeilingNovel{} misses of absent
+type and not the other \numCeilingKnown{} plus \numCeilingUntypeable{} of the
+\numCeilingUncovered{}. A miss whose type the bank holds and whose rule did not fire is an
+implementation failure by construction, and three of the \numCeilingKnown{} were recovered by
+relaxing convention-dependent primitives, so that arm is not invariant to anything.
 
 \input{table_grain}
 
@@ -659,8 +664,11 @@ budget would have named a different winner depending on which budget its author 
 the argument for reporting the sweep rather than a cell.
 
 Two boundaries are as much of the result as the recall is. The rule bank misses
-\numCeilingUncovered{} of \numPopulationTestrefs{} references in one step, and that bound holds
-under every definition of a transformation type at which a type still determines a product. Type
+\numCeilingUncovered{} of \numPopulationTestrefs{} references in one step. The
+\numCeilingNovel{} of those that need a type the bank does not hold survive every definition of
+a transformation type at which a type still determines a product; the remaining
+\numCeilingKnown{} plus \numCeilingUntypeable{} are not covered by that argument and are not
+claimed to be. Type
 definition is a choice in the census of the gap rather than in the engine that produces it, so
 that invariance does not by itself make the bound implementation-free; the engine axis we can
 measure, the presentation of hydrogen, moves it by $\numHydResidual{}$ with an interval excluding

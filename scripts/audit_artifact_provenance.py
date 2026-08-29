@@ -113,6 +113,8 @@ PINNED = {
     "results/composite_instruments.json": f"{TE}/composite_instruments.py",
     # where the bank's templates come from, including the 492 carried as unattributed
     "results/curated_provenance.json": f"{TE}/curated_provenance.py",
+    # what the annotation contains, which every recall figure is a statement about
+    "results/reference_audit.json": f"{TE}/reference_audit.py",
     # what the generated-macro claim is true of, so the claim's own figures are generated
     "results/number_provenance.json": "scripts/check_paper2_numbers.py",
     # the rule budget: the curve's shape and the check on validation

@@ -1,0 +1,125 @@
+{
+ "provenance": {
+  "script": "reference_audit.py",
+  "script_path": "scripts/typed_edit/reference_audit.py",
+  "source_sha256": "408a7ce2dbb7e036834e674647c1b143a379a0576513b6a7ea832401d626e4f1",
+  "git_commit": "23b1213ff63ce9e1f2c1ca3b094e78a0707391ff",
+  "git_dirty": true
+ },
+ "population": {
+  "substrates": 1170,
+  "references": 2597,
+  "source": "results/test_references.json on the evaluated test set"
+ },
+ "counts": {
+  "references": 2597,
+  "smaller_than_the_parent": 790,
+  "larger_than_the_parent": 1524,
+  "same_heavy_atom_count": 283,
+  "equal_to_their_own_substrate": 8
+ },
+ "distinct_reference_keys": 2292,
+ "keys_shared_by_more_than_one_substrate": 226,
+ "references_collapsing_onto_another_within_one_substrate": 0,
+ "heavy_atom_delta": {
+  "min": -84,
+  "max": 50,
+  "p05": -13,
+  "median": 1,
+  "p95": 12,
+  "histogram_clipped_at_20": {
+   "-20": 50,
+   "-19": 4,
+   "-18": 9,
+   "-17": 8,
+   "-16": 16,
+   "-15": 15,
+   "-14": 17,
+   "-13": 20,
+   "-12": 15,
+   "-11": 22,
+   "-10": 28,
+   "-9": 45,
+   "-8": 47,
+   "-7": 35,
+   "-6": 28,
+   "-5": 23,
+   "-4": 55,
+   "-3": 59,
+   "-2": 92,
+   "-1": 202,
+   "0": 283,
+   "1": 778,
+   "2": 99,
+   "3": 62,
+   "4": 116,
+   "5": 15,
+   "6": 8,
+   "7": 9,
+   "8": 12,
+   "9": 13,
+   "10": 8,
+   "11": 8,
+   "12": 292,
+   "13": 12,
+   "14": 2,
+   "16": 3,
+   "17": 5,
+   "18": 4,
+   "19": 21,
+   "20": 57
+  }
+ },
+ "elements": {
+  "C": 45201,
+  "O": 12436,
+  "N": 4589,
+  "S": 679,
+  "Cl": 644,
+  "F": 610,
+  "P": 217,
+  "Br": 123,
+  "I": 3,
+  "Se": 2
+ },
+ "examples": {
+  "equal_to_their_own_substrate": [
+   {
+    "substrate": "CS(=O)(=O)c1ccc(C(CO)C(C(=O)O)c2ccccc2)cc1",
+    "reference": "CS(=O)(=O)c1ccc(C(CO)C(C(=O)O)c2ccccc2)cc1"
+   },
+   {
+    "substrate": "CC(C)Cc1ccc(C(C)C(=O)O)cc1",
+    "reference": "CC(C)Cc1ccc(C(C)C(=O)O)cc1"
+   },
+   {
+    "substrate": "C=c1c(N)c(O)c2c(COC(=N)O)c3n(c2c1O)CC(NC)C=3",
+    "reference": "C=c1c(N)c(O)c2c(COC(=N)O)c3n(c2c1O)CC(NC)C=3"
+   },
+   {
+    "substrate": "CNCCC=C1c2ccccc2COc2ccccc21",
+    "reference": "CNCCC=C1c2ccccc2COc2ccccc21"
+   },
+   {
+    "substrate": "CC(C)NCC(O)COc1cccc2ccccc12",
+    "reference": "CC(C)NCC(O)COc1cccc2ccccc12"
+   },
+   {
+    "substrate": "CC(N)C(O)c1ccccc1",
+    "reference": "CC(N)C(O)c1ccccc1"
+   },
+   {
+    "substrate": "NCC(CC(=O)O)c1ccc(Cl)cc1",
+    "reference": "NCC(CC(=O)O)c1ccc(Cl)cc1"
+   },
+   {
+    "substrate": "O=C(O)CCCCC1CCSS1",
+    "reference": "O=C(O)CCCCC1CCSS1"
+   }
+  ],
+  "unparsed": [],
+  "unkeyable": []
+ },
+ "classification": "a reference is read as a cleavage at a heavy-atom delta of -1 or below and as a conjugation at 1 or above, which are the bounds of a single hydroxylation and are not tuned",
+ "reading": "the annotation is positive-unlabelled: an absent pair is not a negative, which is why precision is reported and not used to order systems"
+}

@@ -147,6 +147,39 @@ knowledge overlaps our test substrates by construction. No prior benchmark in th
 this asymmetry, and neither do we; it is reported because a reader comparing these numbers to
 published ones should know that the rule-based figures are, in this respect, optimistic.
 
+\section{What the annotation contains}
+
+Every recall figure in this paper is a statement about this annotation, and the paper reported the
+figures at length without describing it. The census is here. Nothing in it is a model output; it
+is the corpus read back.
+
+The evaluated test set carries \numRefauditReferences{} annotated metabolites over
+\numRefauditSubstrates{} substrates, \numRefauditDistinct{} of them distinct under the paper's
+default key. All \numRefauditReferences{} parse and all are keyable, so no reference is dropped
+before scoring. \numRefauditShared{} keys are shared by more than one substrate, which is expected:
+a common metabolite of two related drugs is one molecule.
+
+By heavy-atom count against the parent, \numRefauditSmaller{} references are smaller,
+\numRefauditSame{} are the same size and \numRefauditLarger{} are larger. The median change is
+\numRefauditDeltamedian{} heavy atoms and the central ninety per cent runs from
+\numRefauditDeltalo{} to \numRefauditDeltahi{}, but the tails are long in both directions: the
+extremes are \numRefauditDeltamin{} and $+\numRefauditDeltamax{}$. A bank of single-template edits
+is not the natural instrument for either tail, and the coverage census in the main text is where
+that shows.
+
+Ten elements appear. Carbon, oxygen and nitrogen account for almost all of the atoms, with
+sulfur, chlorine, fluorine, phosphorus and bromine behind them and iodine and selenium in single
+figures. Nothing in the annotation is outside what the rule bank's chemistry addresses.
+
+Two properties bear directly on how the recall figures should be read.
+\numRefauditSelfref{} references are equal to their own substrate under the default key --- an
+annotation that names a molecule as its own metabolite --- and the parent-drop convention
+discards exactly those, which is why that convention's effect is negative for the substrates
+concerned rather than zero. And the annotation is positive-unlabelled throughout: a pair that
+does not appear is not a pair that was tested and rejected. That is why precision is reported and
+is not used to order systems, and why an absent prediction is never counted as a false positive
+anywhere in this paper.
+
 \section{The matching criteria}
 
 \input{si_table_criteria}
@@ -168,9 +201,10 @@ The arms behave very differently. SyGMa never returns the substrate;
 of \numPdropMedrankBank{}. The convention could therefore have flattered one arm and not another. It does not: the
 largest effect anywhere in the grid is \numPdropMaxEffect{}, no cell of
 \numPdropCells{} separates from zero, and the effect is at most eight per cent of the narrowest
-margin the paper claims. Where it is negative, the cause is the \numPdropSelfref{} substrates
-whose own tautomer key is among their annotated references, for which the convention discards a
-hit the annotation counts.
+margin the paper claims. Where it is negative, the cause is the \numPdropSelfref{} substrates of this population whose
+own tautomer key is among their annotated references, for which the convention discards a hit the
+annotation counts. Across the whole evaluated test set there are \numRefauditSelfref{} such
+substrates; the comparison set holds \numPdropSelfref{} of them.
 
 \section{Precision}
 
