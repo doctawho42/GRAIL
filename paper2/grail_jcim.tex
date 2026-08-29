@@ -41,8 +41,10 @@ papers leave unstated, so their numbers are not comparable. We present GRAIL, a 
 predictor that names the transformation rule and site behind every prediction and reports its
 performance under \numCritCriteria{} matching criteria and \numCritBudgets{} output budgets against every comparator with
 predictions on the same substrates. On \numPopulationN{} shared substrates the comparison divides
-by budget rather than resolving into an ordering, with SyGMa ahead at $k\le5$ and GRAIL ahead at
-$k=30$ and $k=50$, each with the paired interval excluding zero. We also bound the approach:
+by budget rather than resolving into an ordering: SyGMa is ahead of both GRAIL modes at
+$k\le5$, and GRAIL's exhaustive mode is ahead of all three comparators at $k=30$ and $k=50$,
+every one of those with the paired interval excluding zero. GRAIL's interactive mode trails
+MetaTox at those same budgets, and we name the mode wherever we name a lead. We also bound the approach:
 \numCeilingUncovered{} of \numPopulationTestrefs{} reference metabolites lie outside what the rule
 bank reaches in one step, and that bound moves by at most eight references across the hydrogen
 conventions our own instrument admits.

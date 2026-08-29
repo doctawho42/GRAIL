@@ -263,7 +263,11 @@ applied here to the two choices this literature leaves undeclared.
 \caption{Micro recall against output budget on the \numPopulationN{} substrates every method
 predicts on. Shading is read from the paired intervals and not by eye: lavender where GRAIL's better
 arm trails the strongest comparator with the interval excluding zero, green where it leads with the
-interval excluding zero, unshaded where neither separates.}
+interval excluding zero, unshaded where neither separates. Both maxima are taken per budget, so
+the shading is a summary that selects an arm on the population it is read on; the six curves are
+plotted individually above it and the un-maximised grid of every arm against every comparator at
+every budget, which is what the text's verdicts are read from, is
+Table~\ref{SI-tab:si-intervals}.}
 \label{fig:sweep}
 \end{figure}
 
@@ -347,9 +351,11 @@ restricted to the same rules, and we report it as such rather than as the stage'
 
 \subsection{A ranking that needs no training}
 
-Metabolism preserves the scaffold. A metabolite differs from its parent by an added oxygen, a
-cleaved bond or a conjugate, so it stays close to what it came from, and closeness is a
-fingerprint away. Any learned ranker over (substrate, candidate) pairs competes against that
+Metabolism usually leaves the scaffold recognisable. Many metabolites differ from their parent
+by an added oxygen, a cleaved bond or a conjugate, so they stay close to what they came from, and
+closeness is a fingerprint away. The premise is not universal --- a cleavage that removes most of
+the molecule, or a conjugate that doubles its heavy-atom count, moves a metabolite a long way from
+its parent --- but it holds often enough that similarity to the substrate is a real baseline. Any learned ranker over (substrate, candidate) pairs competes against that
 baseline whether or not the baseline is reported, and this literature does not report it.
 
 Re-ranking one pool four ways holds the pool, the matching rule and the budget fixed so that only
@@ -644,8 +650,11 @@ ranks, either of them more than any architectural change we tested: the form in 
 existing scores are combined mattered more than what produced them.
 
 The comparison against published predictors does not resolve into an ordering, and we do not
-present one. It divides by output budget, with SyGMa ahead at the tightest budgets and GRAIL ahead
-at the widest, each where the paired interval excludes zero. A single recall figure at a single
+present one. It divides by output budget: SyGMa is ahead of both GRAIL modes at the tightest budgets,
+and GRAIL's exhaustive mode is ahead of all three comparators at the widest, each where the
+paired interval excludes zero. Which of the two GRAIL modes is meant matters and is stated: the
+interactive mode trails MetaTox at $k \ge 20$ with the interval excluding zero, so a sentence
+saying only that GRAIL leads at wide budgets would be taking a maximum over our own arms. A single recall figure at a single
 budget would have named a different winner depending on which budget its author chose, which is
 the argument for reporting the sweep rather than a cell.
 
