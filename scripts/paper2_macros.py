@@ -73,7 +73,9 @@ def fmt(v, key: str = ""):
 # Numerals below ten read badly in a sentence, and the abstract had "under 5 matching criteria
 # and 9 output budgets". A word form is generated beside every small whole number so prose can
 # reach for it without anyone typing the word, which is the one way it could drift.
-WORDS = {0: "no", 1: "one", 2: "two", 3: "three", 4: "four", 5: "five",
+# 0 is "none" rather than "no": the word appears as the object of a preposition ("differ in
+# none of them"), where "no" is ungrammatical.
+WORDS = {0: "none", 1: "one", 2: "two", 3: "three", 4: "four", 5: "five",
          6: "six", 7: "seven", 8: "eight", 9: "nine", 10: "ten", 11: "eleven", 12: "twelve"}
 
 

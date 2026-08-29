@@ -73,11 +73,11 @@ which rule bank produced them is not recorded.
 of the InChI round-trip: \numDialectTrainRtequal{} of \numDialectTrainRtof{} train records,
 \numDialectValRtequal{} of \numDialectValRtof{} in validation and \numDialectTestRtequal{} of
 \numDialectTestRtof{} in test are exactly what their own stored InChI reads back to, and the
-\numDialectTrainRtdiffer{} exceptions are salts whose counter-ion the SMILES has lost and the
+\numDialectTrainRtdifferWord{} exceptions are salts whose counter-ion the SMILES has lost and the
 InChI kept. That round-trip places a mobile hydrogen on oxygen, so an amide arrives as the imidic
 acid and cytosine as its lactim. This is not the declared standardiser's output: run under
-\numDialectRdkitversions{} RDKit releases spanning four years, \texttt{standardize\_mol} returns
-the amide in \numDialectRdkitamide{} of \numDialectRdkitversions{}, from both the amide and the
+\numDialectRdkitversionsWord{} RDKit releases spanning four years, \texttt{standardize\_mol} returns
+the amide in \numDialectRdkitamideWord{} of \numDialectRdkitversionsWord{}, from both the amide and the
 imidic acid. The drawing therefore entered before the standardiser this work declares, and rules
 are matched against it. Section~\ref{sec:si-presentation} treats it as the axis it is.
 
@@ -85,7 +85,7 @@ are matched against it. Section~\ref{sec:si-presentation} treats it as the axis 
 code, and with the accession field empty there is no source field a conflict rule could have
 arbitrated on. The files show that none was needed. \numAssemblyDuplicated{} substrate
 structures appear under more than one index across the three splits, and the two annotation sets
-differ in \numAssemblyDisagreements{} of them; \numAssemblyBothways{}
+differ in \numAssemblyDisagreementsWord{} of them; \numAssemblyBothwaysWord{}
 pair in the whole corpus is listed both as positive and as negative. The effective rule is set
 union when the data is loaded, applied to structures after standardisation, with no precedence
 between sources because no source is recorded. This is also why the split table counts
