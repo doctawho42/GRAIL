@@ -20,17 +20,17 @@ def modes():
     mt = json.loads((ROOT / "results/mode_timings.json").read_text())
     i, e = mt["interactive"], mt["exhaustive"]
     return f"""\\begin{{table}}[t]
-\\centering\\small
+\\centering\\footnotesize
 \\begin{{tabular}}{{lrr}}
 \\toprule
  & interactive & exhaustive \\\\
 \\midrule
 rules applied & {i['top_k']} & {thousands(e['top_k'])} \\\\
-mean candidates emitted & \\numOutputTrained & \\numOutputBank \\\\
-median s per substrate & {i['median_s']} & {e['median_s']} \\\\
-mean s per substrate & {i['mean_s']} & --- \\\\
-90th percentile & {i['p90_s']} & --- \\\\
-slowest substrate & {i['max_s']} & did not finish \\\\
+candidates, mean & \\numOutputTrained & \\numOutputBank \\\\
+seconds, median & {i['median_s']} & {e['median_s']} \\\\
+seconds, mean & {i['mean_s']} & --- \\\\
+seconds, 90th pct & {i['p90_s']} & --- \\\\
+seconds, slowest & {i['max_s']} & did not finish \\\\
 \\bottomrule
 \\end{{tabular}}
 \\caption{{The two operating modes. Both medians are over the {i['n']} validation substrates and
@@ -52,13 +52,13 @@ def grain():
         yes = "yes" if g["determines_a_product"] else "\\textbf{no}"
         rows.append(f"{nm} & {g['types']} & {g['seen_once']} & "
                     f"{g['share_of_mass_in_singletons'] * 100:.1f}\\% & {yes} \\\\")
-    return ("\\begin{table}[t]\n\\centering\\small\n\\begin{tabular}{lrrrl}\n\\toprule\n"
+    return ("\\begin{table*}[t]\n\\centering\\small\n\\begin{tabular}{lrrrl}\n\\toprule\n"
             "definition of a type & types & once & mass & names a \\\\\n"
             " & & & & transf. \\\\\n\\midrule\n" + "\n".join(rows) +
             "\n\\bottomrule\n\\end{tabular}\n"
             "\\caption{The novel-type gap against the definition of a type. The tail is present "
             "wherever a type still names a transformation and collapses only below that.}\n"
-            "\\label{tab:grain}\n\\end{table}\n")
+            "\\label{tab:grain}\n\\end{table*}\n")
 
 
 def hypotheses():
@@ -85,14 +85,14 @@ def hypotheses():
         v = n[key]
         val = f"{v:+.4f}" if isinstance(v, float) and abs(v) < 1 else str(v)
         rows.append(f"P{i} & {what} & {thr} & ${val}$ & {pop} & {h} \\\\")
-    return ("\\begin{table}[t]\n\\centering\\small\n\\begin{tabular}{llllll}\n\\toprule\n"
+    return ("\\begin{table*}[t]\n\\centering\\small\n\\begin{tabular}{llllll}\n\\toprule\n"
             " & what was fixed & threshold & measured & tested on & register \\\\\n\\midrule\n" +
             "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n"
             "\\caption{Every deployed choice as a prediction fixed before it was checked, with the "
             "population it was checked on. P8's figure is a speed-up factor and P9's a median in "
             "seconds; the rest are differences in micro recall@15. The last column gives the "
             "identifier each carries in the released register, whose numbering records when each "
-            "was written rather than where it appears here.}\n\\label{tab:hyp}\n\\end{table}\n")
+            "was written rather than where it appears here.}\n\\label{tab:hyp}\n\\end{table*}\n")
 
 
 # The four annotated metabolites of the worked example, named so the table reads as chemistry
@@ -125,7 +125,7 @@ def case_study():
     body = " \\\\\n".join(rows)
 
     return (
-        "\\begin{table}[t]\n\\centering\\small\n\\begin{tabular}{lrrrr}\n\\toprule\n"
+        "\\begin{table*}[t]\n\\centering\\small\n\\begin{tabular}{lrrrr}\n\\toprule\n"
         " & \\multicolumn{2}{c}{interactive} & \\multicolumn{2}{c}{exhaustive} \\\\\n"
         "\\cmidrule(lr){2-3}\\cmidrule(lr){4-5}\n"
         "annotated metabolite & rank & rule & rank & rule \\\\\n\\midrule\n"
@@ -137,7 +137,7 @@ def case_study():
         f"micro recall {exh['recall_at']['15']:.2f} at $k=15$ and {exh['recall_at']['30']:.2f} at "
         "$k=30$. Rule is the index into the deployed bank; the atoms each one fired on are "
         "in Figure~\\ref{fig:case}.}\n"
-        "\\label{tab:case}\n\\end{table}\n")
+        "\\label{tab:case}\n\\end{table*}\n")
 
 
 if __name__ == "__main__":

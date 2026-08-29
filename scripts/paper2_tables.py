@@ -19,7 +19,7 @@ def table():
     rec, out = d["recall_micro"], d["mean_output_length"]
     ks = sorted(rec, key=int)
     arms = [a for a in LABEL if a in rec[ks[0]]]
-    L = ["\\begin{table}[t]", "\\centering", "\\small",
+    L = ["\\begin{table*}[t]", "\\centering", "\\small",
          "\\begin{tabular}{r" + "r" * len(arms) + "}", "\\toprule",
          "$k$ & " + " & ".join(LABEL[a] for a in arms) + " \\\\", "\\midrule"]
     for k in ks:
@@ -36,7 +36,7 @@ def table():
           "that budget. The last row is the mean number of candidates each method emits. A "
           "prediction equal to the substrate is dropped before the budget for every method alike. "
           "Paired-bootstrap intervals on every difference are in the released artifact.}",
-          "\\label{tab:sweep}", "\\end{table}"]
+          "\\label{tab:sweep}", "\\end{table*}"]
     return "\n".join(L)
 
 

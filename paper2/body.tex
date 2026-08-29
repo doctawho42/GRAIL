@@ -186,11 +186,11 @@ are reported for every comparison.
 Recall at cut-off $k$ for substrate $s$ with references $Y_s$ and the first $k$ predictions
 $\hat{Y}^{(k)}_s$ is $|Y_s \cap \hat{Y}^{(k)}_s| / |Y_s|$. Two aggregations are distinguished
 throughout and never mixed within a comparison,
-\begin{equation}
-\mathrm{macro} = \frac{1}{|S|}\sum_{s \in S} \frac{|Y_s \cap \hat{Y}^{(k)}_s|}{|Y_s|},
-\quad
-\mathrm{micro} = \frac{\sum_{s} |Y_s \cap \hat{Y}^{(k)}_s|}{\sum_{s} |Y_s|},
-\end{equation}
+\begin{align}
+\mathrm{macro} &= \frac{1}{|S|}\sum_{s \in S}
+                   \frac{|Y_s \cap \hat{Y}^{(k)}_s|}{|Y_s|}, \\
+\mathrm{micro} &= \frac{\sum_{s} |Y_s \cap \hat{Y}^{(k)}_s|}{\sum_{s} |Y_s|},
+\end{align}
 and every figure states which it is. Intervals are a paired bootstrap over substrates: for each of
 $B = 10\,000$ resamples $S^{(b)}$ drawn with replacement,
 \begin{equation}

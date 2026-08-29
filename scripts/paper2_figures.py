@@ -17,13 +17,46 @@ import numpy as np  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "paper2"
+
+# One categorical palette for every figure. It is not chosen by eye: the order below is the one
+# that passes all five checks of the validator shipped with the dataviz guidance -- lightness
+# band, chroma floor, adjacent-pair separation under simulated colour-vision deficiency, the
+# normal-vision floor, and contrast against a light surface. Two orders that looked reasonable
+# failed it: the ColorBrewer-style red/green pair separates by DeltaE 2.5 under deuteranopia, and
+# swapping slots 2 and 4 puts vermillion beside amber at DeltaE 0.9. Legends therefore follow
+# this order rather than any other.
+#
+# Adjacent luminances are as close as 0.01, so the palette is NOT sufficient in greyscale. Every
+# figure carries a second encoding -- distinct markers, line styles and direct labels -- so
+# identity is never colour alone, which is also what the guidance requires for a warning-band
+# pair.
+PALETTE = ["#0072B2", "#D55E00", "#009E73", "#B07A00", "#AD5A87"]
+
+# Polarity, for the outcome bands of the sweep. These are regions rather than entities, so
+# they must not wear a series hue: the first draft shaded "GRAIL leads" in the same blue as
+# the GRAIL exhaustive line, which makes one colour mean two things in one figure. Used at a
+# low alpha behind the marks and always with a text label, never as the only signal.
+BAND_TRAILS, BAND_LEADS = "#8c6bb1", "#41ab5d"
+
+# Ink, replacing the seven different greys these figures used to mix. Text and rules wear ink;
+# only marks wear a series colour.
+INK, INK_MUTED, INK_FAINT = "#1a1a1a", "#666666", "#c9c9c9"
+
 plt.rcParams.update({
-    "font.family": "serif", "font.serif": ["Times", "DejaVu Serif"],
+    # ACS asks for Helvetica or Arial in figure lettering, at no less than 4.5 pt final size and
+    # with no rule thinner than 0.5 pt
+    "font.family": "sans-serif",
+    "font.sans-serif": ["Helvetica", "Arial", "DejaVu Sans"],
     "font.size": 8, "axes.linewidth": 0.6, "xtick.major.width": 0.6,
     "ytick.major.width": 0.6, "legend.frameon": False, "savefig.bbox": "tight",
     "axes.spines.top": False, "axes.spines.right": False,
+    "text.color": INK, "axes.labelcolor": INK, "axes.edgecolor": INK_MUTED,
+    "xtick.color": INK_MUTED, "ytick.color": INK_MUTED,
 })
-W = 3.35          # one NAR column, inches
+
+# ACS: a single-column graphic is at most 240 pt (3.33 in) and a double-column one between 300
+# and 504 pt (4.167 and 7 in). W was 3.35 in, which is 241 pt and over the single-column limit.
+W = 3.33
 
 
 def art(name):
@@ -34,11 +67,11 @@ def fig_sweep():
     d = art("deployment_table.json")
     rec, con = d["recall_micro"], d["contrasts"]
     ks = sorted((int(k) for k in rec), key=int)
-    style = {"whole bank": ("GRAIL exhaustive", "-", "o", "#1b1b1b"),
-             "trained budget": ("GRAIL interactive", "-", "s", "#7a7a7a"),
-             "metatox": ("MetaTox", "--", "^", "#b2182b"),
-             "sygma": ("SyGMa", "--", "v", "#2166ac"),
-             "metapredictor": ("MetaPredictor", "--", "D", "#4d9221")}
+    style = {"whole bank": ("GRAIL exhaustive", "-", "o", PALETTE[0]),
+             "trained budget": ("GRAIL interactive", "-", "s", PALETTE[1]),
+             "metatox": ("MetaTox", "--", "^", PALETTE[2]),
+             "sygma": ("SyGMa", "--", "v", PALETTE[3]),
+             "metapredictor": ("MetaPredictor", "--", "D", PALETTE[4])}
     fig, ax = plt.subplots(figsize=(W, 2.5))
     for arm, (lab, ls, mk, col) in style.items():
         if arm not in rec[str(ks[0])]:
@@ -61,15 +94,21 @@ def fig_sweep():
         lo = ks[i - 1] if i else ks[0] - 0.5
         hi = ks[i + 1] if i < len(ks) - 1 else ks[-1] + 3
         if band[i] == "lose":
-            ax.axvspan((lo + k) / 2, (k + hi) / 2, color="#b2182b", alpha=0.06, lw=0, zorder=0)
+            ax.axvspan((lo + k) / 2, (k + hi) / 2, color=BAND_TRAILS, alpha=0.10, lw=0, zorder=0)
         elif band[i] == "win":
-            ax.axvspan((lo + k) / 2, (k + hi) / 2, color="#2166ac", alpha=0.06, lw=0, zorder=0)
+            ax.axvspan((lo + k) / 2, (k + hi) / 2, color=BAND_LEADS, alpha=0.10, lw=0, zorder=0)
     ax.set_xscale("log")
     ax.set_xticks(ks)
     ax.set_xticklabels([str(k) for k in ks])
     ax.minorticks_off()
     ax.set_xlabel("output budget $k$")
     ax.set_ylabel("micro recall@$k$")
+    # the bands are labelled, so the polarity never rests on colour alone
+    for lab, want in (("trails", "lose"), ("leads", "win")):
+        xs = [k for k, b in zip(ks, band) if b == want]
+        if xs:
+            ax.text((min(xs) * max(xs)) ** 0.5, 0.755, lab, ha="center", fontsize=6.2,
+                    color=INK_MUTED)
     ax.legend(loc="lower right", fontsize=6.4, handlelength=1.8)
     ax.set_ylim(0, 0.78)
     fig.savefig(OUT / "fig_sweep.pdf")
@@ -88,15 +127,15 @@ def fig_ceiling():
     g = cov["gap"]
     labels = ["type absent\nfrom the bank", "type present,\nrule did not fire", "not typeable"]
     vals = [g["novel_type"], g["known_type"], g["untypeable"]]
-    cols = ["#b2182b", "#f4a582", "#cccccc"]
+    cols = [PALETTE[1], PALETTE[3], INK_FAINT]
     left = 0
     for v, c, lab in zip(vals, cols, labels):
         a1.barh(0, v, left=left, color=c, height=0.5, edgecolor="white", lw=0.6)
         a1.text(left + v / 2, 0, str(v), ha="center", va="center", fontsize=7,
-                color="white" if c != "#cccccc" else "#333333")
+                color="white" if c != INK_FAINT else INK)
         left += v
     hit = usp["overlap"]["misses_those_types_carry"]
-    a1.barh(-0.75, hit, color="#2166ac", height=0.5)
+    a1.barh(-0.75, hit, color=PALETTE[0], height=0.5)
     a1.text(hit + 8, -0.75, f"{hit} recoverable from "
             f"{usp['uspto']['templates']:,} synthetic templates", va="center", fontsize=6.6)
     a1.set_yticks([0, -0.75])
@@ -111,7 +150,7 @@ def fig_ceiling():
     x = np.arange(len(cur))
     share = [c["share_of_mass_in_singletons"] for c in cur]
     usable = [c["determines_a_product"] for c in cur]
-    a2.bar(x, share, color=["#b2182b" if u else "#cccccc" for u in usable], width=0.6)
+    a2.bar(x, share, color=[PALETTE[1] if u else INK_FAINT for u in usable], width=0.6)
     for i, c in enumerate(cur):
         a2.text(i, share[i] + 0.02, f"{c['types']}", ha="center", fontsize=6.5)
     a2.set_xticks(x)
@@ -119,9 +158,9 @@ def fig_ceiling():
                        fontsize=6.5)
     a2.set_ylabel("share of misses in singleton types")
     a2.set_ylim(0, 1.0)
-    a2.axhline(0.5, color="#999999", lw=0.5, ls=":")
-    a2.text(3.35, 0.93, "type names a\ntransformation", fontsize=6.2, ha="right", color="#b2182b")
-    a2.text(3.35, 0.16, "it does not", fontsize=6.2, ha="right", color="#777777")
+    a2.axhline(0.5, color=INK_FAINT, lw=0.6, ls=":")
+    a2.text(3.35, 0.93, "type names a\ntransformation", fontsize=6.2, ha="right", color=PALETTE[1])
+    a2.text(3.35, 0.16, "it does not", fontsize=6.2, ha="right", color=INK_MUTED)
     fig.savefig(OUT / "fig_ceiling.pdf")
     plt.close(fig)
 
@@ -134,27 +173,38 @@ def fig_cost():
     fin = [r for r in env if r["finished"]]
     bad = [r for r in env if not r["finished"]]
     a1.scatter([r["heavy"] for r in fin], [r["t_generate"] for r in fin], s=9,
-               color="#1b1b1b", lw=0, label="finished")
+               color=PALETTE[0], lw=0, label="finished")
     dl = art("cost_envelope.json")["deadline_s"]
     a1.scatter([r["heavy"] for r in bad], [dl] * len(bad), s=22, marker="x",
-               color="#b2182b", lw=0.9, label=f"did not finish in {int(dl)} s")
+               color=PALETTE[1], lw=0.9, label=f"did not finish in {int(dl)} s")
     a1.set_yscale("log")
     a1.set_xlabel("heavy atoms in the substrate")
     a1.set_ylabel("generator seconds")
-    a1.legend(fontsize=6.4, loc="upper left")
+    a1.legend(fontsize=6.4, loc="lower right")
 
     i, e = mt["interactive"], mt["exhaustive"]
-    bars = [("interactive\nmedian", i["median_s"], "#7a7a7a"),
-            ("interactive\nmean", i["mean_s"], "#7a7a7a"),
-            ("interactive\np90", i["p90_s"], "#7a7a7a"),
-            ("exhaustive\nmedian", e["median_s"], "#1b1b1b"),
-            ("interactive\nslowest", i["max_s"], "#b2182b")]
+    # the four interactive statistics stay together so the bracket under them is true; the
+    # slowest substrate is interactive too, and sat outside that bracket in the first draft
+    bars = [("median", i["median_s"], PALETTE[0]),
+            ("mean", i["mean_s"], PALETTE[0]),
+            ("90th pct", i["p90_s"], PALETTE[0]),
+            ("slowest", i["max_s"], PALETTE[1]),
+            ("median", e["median_s"], PALETTE[2])]
     a2.bar(range(len(bars)), [b[1] for b in bars], color=[b[2] for b in bars], width=0.62)
     for j, b in enumerate(bars):
         a2.text(j, b[1] * 1.15, f"{b[1]}", ha="center", fontsize=6.4)
     a2.set_yscale("log")
     a2.set_xticks(range(len(bars)))
-    a2.set_xticklabels([b[0] for b in bars], fontsize=6.2)
+    a2.set_xticklabels([b[0] for b in bars], fontsize=6.4)
+    # the arm each bar belongs to, named once under the group rather than repeated on every tick
+    a2.text(1.5, -0.30, "interactive", ha="center", va="top", fontsize=6.6, color=INK_MUTED,
+            transform=a2.get_xaxis_transform())
+    a2.text(4, -0.30, "exhaustive", ha="center", va="top", fontsize=6.6, color=INK_MUTED,
+            transform=a2.get_xaxis_transform())
+    a2.plot([-0.35, 3.35], [-0.26, -0.26], color=INK_FAINT, lw=0.6, clip_on=False,
+            transform=a2.get_xaxis_transform())
+    a2.plot([3.65, 4.35], [-0.26, -0.26], color=INK_FAINT, lw=0.6, clip_on=False,
+            transform=a2.get_xaxis_transform())
     a2.set_ylabel("seconds per substrate")
     a2.set_ylim(0.2, 600)
     fig.savefig(OUT / "fig_cost.pdf")
@@ -164,7 +214,7 @@ def fig_cost():
 # The worked example's four annotated metabolites. Colour encodes the SITE, not the metabolite:
 # the three phosphorylations fire on the same two substrate atoms under three different rules,
 # which is the point the panel has to make, so giving each its own colour would hide it.
-DEAMINATION, PHOSPHORYLATION = "#b2182b", "#2166ac"
+DEAMINATION, PHOSPHORYLATION = PALETTE[1], PALETTE[0]
 CASE = [("FIRDBEQIJQERSE-UHFFFAOYSA-N", "dFdU", DEAMINATION),
         ("KNTREFQOVSMROS-UHFFFAOYSA-N", "dFdCMP", PHOSPHORYLATION),
         ("FRQISCZGNNXEMD-UHFFFAOYSA-N", "dFdCDP", PHOSPHORYLATION),
@@ -244,13 +294,13 @@ def fig_case():
         a1.add_patch(Circle((0.055, -0.055 - 0.075 * i), 0.018, transform=a1.transAxes,
                             color=col, clip_on=False))
         a1.text(0.095, -0.055 - 0.075 * i, text, transform=a1.transAxes, fontsize=7,
-                va="center", color="#333333")
+                va="center", color=INK)
 
     # the ranks: every candidate as a tick, the annotated ones marked and named
     rows = [("exhaustive", "e", exh, 1.0), ("interactive", "i", inter, 0.0)]
     for _, _, d, y in rows:
         a2.plot([c["rank"] for c in d["candidates"]], [y] * d["n_candidates"], "|",
-                color="#c4c4c4", ms=9, mew=0.8, zorder=2)
+                color=INK_FAINT, ms=9, mew=0.8, zorder=2)
     # labels are staggered by rank order so neighbouring ones cannot overprint
     for _, arm, d, y in rows:
         found = sorted((c for c in d["candidates"] if c["is_reference"]),
@@ -267,8 +317,8 @@ def fig_case():
                         arrowprops=dict(arrowstyle="-", lw=0.5, color=col,
                                         shrinkA=1, shrinkB=3) if y and j % 3 else None)
     for k in (15, 30):
-        a2.axvline(k, color="#bdbdbd", lw=0.7, ls=":", zorder=0)
-        a2.annotate(f"$k={k}$", (k, -0.62), ha="center", fontsize=6.5, color="#777777")
+        a2.axvline(k, color=INK_FAINT, lw=0.7, ls=":", zorder=0)
+        a2.annotate(f"$k={k}$", (k, -0.62), ha="center", fontsize=6.5, color=INK_MUTED)
     a2.set_yticks([0, 1])
     a2.set_yticklabels(
         [f"interactive\n{inter['configuration']['rule_budget']} rules, "
@@ -348,7 +398,7 @@ def fig_toc():
     sub = fig.add_axes([0.005, 0.20, 0.33, 0.62])
     sub.imshow(draw(d["substrate"], 620, 420))
     sub.set_axis_off()
-    ax.text(0.17, 0.14, "substrate", ha="center", fontsize=LABEL_PT, color="#333333", **sans)
+    ax.text(0.17, 0.14, "substrate", ha="center", fontsize=LABEL_PT, color=INK, **sans)
 
     for i, (key, name, col) in enumerate(shown):
         y = 0.70 - 0.42 * i
@@ -363,8 +413,8 @@ def fig_toc():
                 f"rule {hits[key]['rule_id']}", ha="center", fontsize=LABEL_PT, color=col, **sans)
         ax.text(0.755, y - 0.235, name, ha="center", fontsize=LABEL_PT, color=col, **sans)
         ax.text(0.945, y, str(i + 1), ha="center", va="center", fontsize=RANK_PT,
-                color="#333333", **sans)
-    ax.text(0.945, 0.14, "rank", ha="center", fontsize=LABEL_PT, color="#333333", **sans)
+                color=INK, **sans)
+    ax.text(0.945, 0.14, "rank", ha="center", fontsize=LABEL_PT, color=INK, **sans)
 
     # The rc_context is load-bearing. This module sets savefig.bbox to "tight" for the figures,
     # and tight adds savefig.pad_inches on every side: the first build came out 3.45 by 1.95,
