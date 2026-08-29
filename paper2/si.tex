@@ -600,9 +600,16 @@ changed, and those files support no number in the paper.
 
 A split manifest pins by digest the triple files, the substrate sets, the evaluated test set, the
 rule bank and every third-party artifact, and a verify mode recomputes and names any leaf that has
-moved. Every number in the paper reaches the page through a macro generated from a pinned
-artifact, and a checker refuses any numeric literal in the manuscript that is not on a short
-allow-list of constants published elsewhere.
+moved.
+
+Numbers reach the page through macros generated from pinned artifacts: \numProvMacrosbody{}
+distinct macros in the manuscript and \numProvMacrossi{} here. The claim is not that every
+number does. \numProvHandtyped{} measurements are typed by hand, all of them in this document,
+and they are enumerated in the checker itself rather than folded into a wildcard --- so a number
+typed by hand that is not already on that list still fails the check, and the list is the exact
+statement of what remains to be wired. A checker refuses any other numeric literal in either
+document, refuses any hand-typed pointer from one document into the other, and writes the three
+counts this paragraph quotes.
 
 The train and validation candidate pools are deposited at \ZenodoDoi{}. Every substrate and
 every annotated metabolite in them is replaced by its tautomer-canonical InChIKey before the

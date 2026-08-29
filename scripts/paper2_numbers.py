@@ -560,6 +560,13 @@ def build():
     if not sweep:
         raise SystemExit("results/artifact_provenance.json carries no directory sweep; "
                          "run: python scripts/audit_artifact_provenance.py --all")
+    # What the generated-macro claim is actually true of, counted rather than asserted. The
+    # claim was made unqualified and was false of the Supporting Information, where measurements
+    # were typed by hand and carried on the checker's allow-list.
+    np_ = art("number_provenance.json")
+    n["prov.macrosbody"] = np_["macros_cited_in_manuscript"]
+    n["prov.macrossi"] = np_["macros_cited_in_supporting_information"]
+    n["prov.handtyped"] = np_["hand_typed_measurements_on_the_allow_list"]
     n["prov.pinned"] = pv["n_pinned"]
     n["prov.files"] = pv["n_pinned"] + sum(sweep.values())
     n["prov.unstamped"] = sweep.get("unstamped", 0)

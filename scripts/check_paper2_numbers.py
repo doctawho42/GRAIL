@@ -8,11 +8,15 @@ on the small allow-list below fails the build.
 """
 from __future__ import annotations
 
+import json
 import re
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT / "scripts"))
+
+from _provenance import stamp as _stamp  # noqa: E402
 TEX = ROOT / "paper2/body.tex"
 NUMS = ROOT / "paper2/numbers.tex"
 
@@ -136,6 +140,27 @@ def main() -> int:
               f"{sorted(set(literals))[:15]}")
     if unused:
         print(f"note: {len(unused)} generated macros the manuscript does not cite")
+
+    # The paper claims every number reaches the page through a generated macro. That was not
+    # true of the Supporting Information, where measurements were typed by hand and carried on
+    # an allow-list. Rather than delete the claim or the list, the state is counted and the
+    # paper reports the count, so the sentence is true and its figures are themselves generated.
+    used_in_body = len(set(re.findall(r"\\(num[A-Za-z]+)", TEX.read_text()))
+                       | set(re.findall(r"\\(num[A-Za-z]+)", "".join(w.read_text()
+                                                                    for w in wrappers))))
+    used_in_si = len(set(re.findall(r"\\(num[A-Za-z]+)", si.read_text())))
+    report = {
+        "provenance": _stamp(__file__),
+        "macros_defined": len(defined),
+        "macros_cited": len(used),
+        "macros_cited_in_manuscript": used_in_body,
+        "macros_cited_in_supporting_information": used_in_si,
+        "hand_typed_measurements_on_the_allow_list": len(SI_BACKLOG),
+        "unexplained_literals": len(literals),
+        "note": ("the allow-list is enumerated in this file rather than folded away, so a number "
+                 "typed by hand that is not already on it still fails this check"),
+    }
+    (ROOT / "results" / "number_provenance.json").write_text(json.dumps(report, indent=1))
     print("check_paper2_numbers: " + ("OK" if ok else "FAIL"))
     return 0 if ok else 1
 
