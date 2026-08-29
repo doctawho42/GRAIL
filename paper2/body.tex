@@ -90,8 +90,9 @@ construction, in a direction that flatters them, and we report it rather than co
 \subsection{Overview}
 
 GRAIL predicts in three stages, each separately inspectable. A generator scores every rule in a bank of \numBankRules{} SMIRKS templates against the
-substrate. The selected rules are applied with RDKit 2022.09.5, and their products standardised
-\citep{Hahnke_2018, Mansouri_2024} and deduplicated. A filter then scores each
+substrate. The selected rules are applied with RDKit 2022.09.5 to the substrate exactly as the
+corpus draws it, which is a declared choice and is swept in Section~\ref{SI-sec:si-presentation};
+their products are standardised \citep{Hahnke_2018, Mansouri_2024} and deduplicated. A filter then scores each
 (substrate, candidate) pair, and candidates are ordered by a rank fusion of the filter and
 generator orderings. Every emitted candidate carries the identity of the rule that produced it and
 the site at which it fired.
@@ -111,10 +112,12 @@ hard case, and their treatment is not settled by the standard identifiers \citep
 \subsection{Rule bank}
 
 The bank holds \numBankRules{} templates spanning \numBankTypes{} distinct reaction types, where a
-type is the multiset of bonds that change between mapped atoms. It is the deduplicated union of four
-curated collections, \numCuratedTotal{} templates in all, together with \numMinedRules{} mined
-from the training split alone. The collections are itemised in the Supporting Information, where
-their external provenance is recorded as unresolved. The split is disjoint by substrate rather
+type is the multiset of bonds that change between mapped atoms. It is the deduplicated union of \numAttribNamed{} templates
+from three curated collections and \numMinedRules{} mined from the training split alone,
+together with \numAttribUnattributed{} that were carried as a fourth curated collection and are
+not one: they are an earlier machine extraction from the same annotated pairs, identified in the
+Supporting Information by three marks that agree. The bank therefore holds two extractions and
+one curated body, and the curated body is \numAttribNamed{} templates. The split is disjoint by substrate rather
 than by molecule, so a molecule that is a substrate in training may appear as a product in test;
 the counts are in Section~\ref{sec:populations}. For each annotated substrate--product pair a ring-aware maximum common substructure is
 located, the atoms and bonds that changed are flagged as the reaction centre, the centre is
