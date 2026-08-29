@@ -1270,3 +1270,49 @@ one, 615 at two, 75 at three, 31 at four, 3 at six and 1 at eight.
 
 ---
 
+
+## H16 — the composite share, measured a second way with the bar set first
+
+**Why a second instrument.** The first instrument counts the loci of a template's reaction
+centre: the centre of the pair the template was mined from, split into components joined only
+through centre atoms. It flags 8.9% of the mined bank. Its blind spot is a composite whose two
+edits are adjacent — a carbonyl reduction beside a hydroxylation shares centre atoms, arrives as
+one component, and is counted as one enzymatic step. A share measured by an instrument with a
+blind spot is a floor, not a bound, and the paper called it a bound.
+
+**The second instrument, defined before it is run.** On the same pair, take the
+maximum-common-substructure correspondence the mining route computes and let *core* be the
+matched atoms. Count
+
+- every bond between two core atoms whose presence or order differs between substrate and
+  product, and
+- every attachment point at which a substituent is gained or lost, meaning a bond from a core
+  atom to a non-core atom present in one molecule and absent in the other,
+
+each once. Call the total **E**, the core-incident edit count. Bonds internal to an added or
+removed fragment are not counted: a glucuronide brings twelve atoms and eleven internal bonds
+into the product, and none of them is an edit to the substrate.
+
+**The threshold, and the chemistry that fixes it.** The bond-changing single enzymatic steps of
+xenobiotic metabolism are bounded and can be enumerated in advance. A conjugation breaks one
+bond and forms one: E = 2. An epoxide hydrolysis breaks the C–O of the oxirane and forms a C–O
+and an O–H: E = 3. An aromatic hydroxylation proceeding through the arene oxide within one
+enzyme reaches E = 4 at its worst. Nothing one enzyme does in one turnover reaches five.
+**The threshold is therefore E ≥ 5, and it is fixed here before the instrument is written.**
+
+**Prediction.** Instrument 2 flags mined templates that instrument 1 misses, and the union of
+the two instruments puts the composite share of the mined bank at **at least 13.4%**, which is
+one and a half times the 8.9% the first instrument reports.
+
+**Failure:** the union share falls below 13.4%. That result says the disconnected-centre
+instrument was already close to the truth, that 8.9% was a near-bound rather than a floor, and
+that the paper's original description was closer to right than the correction is.
+
+**Family:** H16 alone, m = 1. The union share is the single quantity tested; the two
+instruments' individual shares are descriptive and carry no test.
+
+**What is fixed before the run.** The instrument as defined above, the threshold E ≥ 5, the bar
+of 13.4%, the population (the mined half of the deployed bank, one source pair per template, the
+same catalogue and the same MCS settings instrument 1 used), and the falsification condition.
+Nothing about the outcome is known at the time of writing: the core-incident edit count has not
+been computed for a single template.
