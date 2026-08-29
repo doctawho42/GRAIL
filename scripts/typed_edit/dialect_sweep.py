@@ -72,12 +72,21 @@ def ranked(pool):
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default=str(ROOT / "results" / "dialect_sweep.json"))
+    ap.add_argument("--null-control", action="store_true",
+                    help="point both dialects at the stored pools. Every difference must come "
+                         "out exactly zero and no verdict may move; anything else is a defect in "
+                         "the pairing rather than a result, and this is the only way to see it "
+                         "before the real numbers are there to be believed.")
     args = ap.parse_args()
+
+    arms_spec = dict(ARMS)
+    if args.null_control:
+        arms_spec = {name: (stored, stored) for name, (stored, _) in ARMS.items()}
 
     from bank_without_selection import _dedup, _key as tautkey
 
     arms, refs = {}, {}
-    for name, (stored_pattern, drawn_pattern) in ARMS.items():
+    for name, (stored_pattern, drawn_pattern) in arms_spec.items():
         stored, r = load(stored_pattern)
         refs.update(r)
         drawn, _ = load(drawn_pattern)
@@ -112,7 +121,7 @@ def main() -> int:
 
     # 1. what the drawing does to each GRAIL arm, paired
     effect = {}
-    for name in ARMS:
+    for name in arms_spec:
         row = {}
         for k in KS:
             a, b = hits((name, "standardised"), k), hits((name, "stored"), k)
@@ -128,7 +137,7 @@ def main() -> int:
 
     # 2. what it does to every head-to-head verdict the paper claims
     verdicts = {}
-    for name in ARMS:
+    for name in arms_spec:
         for comparator in COMPARATORS:
             row = {}
             for k in KS:
@@ -175,6 +184,17 @@ def main() -> int:
     moved = sum(1 for r in verdicts.values() for k in r if r[k]["verdict_moves"])
     cells = sum(len(r) for r in verdicts.values())
 
+    if args.null_control:
+        offenders = [(a, k) for a, row in effect.items() for k, v in row.items()
+                     if v["difference"] != 0.0]
+        moved_ = sum(1 for r in verdicts.values() for k in r if r[k]["verdict_moves"])
+        if offenders or moved_ or ceiling["difference"]["value"] != 0.0:
+            print(f"NULL CONTROL FAILED: {len(offenders)} non-zero cells, {moved_} verdicts "
+                  f"moved, ceiling difference {ceiling['difference']['value']}")
+            return 1
+        print("null control: every difference is exactly zero and no verdict moves")
+        return 0
+
     rep = {"provenance": stamp(__file__), "n": len(subs), "budgets": list(KS),
            "match": "inchikey_tautomer", "cap": CAP, "n_boot": N_BOOT, "seed": SEED,
            "effect_on_each_arm": effect,
@@ -190,7 +210,7 @@ def main() -> int:
     Path(args.out).write_text(json.dumps(rep, indent=1))
 
     print(f"\n{'arm':<20}" + "".join(f"{k:>9}" for k in KS))
-    for name in ARMS:
+    for name in arms_spec:
         cells_ = "".join(f"{effect[name][str(k)]['difference']:>+9.4f}" for k in KS)
         print(f"{name:<20}{cells_}")
     print(f"\ncoverage ceiling on this population: stored "
