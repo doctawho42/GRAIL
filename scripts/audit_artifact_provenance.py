@@ -104,6 +104,8 @@ PINNED = {
     # substrate-presentation axis and is cited beside the first two
     "results/case_study_drawn.json": f"{TE}/case_study.py",
     "results/case_study_exhaustive_drawn.json": f"{TE}/case_study.py",
+    # what the corpus's drawing cost the comparator whose rules can be re-run against it
+    "results/sygma_by_dialect.json": f"{TE}/sygma_by_dialect.py",
     # the axis itself, and what it did to the bank
     "results/dialect_census.json": f"{TE}/dialect_census.py",
     "results/standardiser_versions.json": f"{TE}/standardiser_versions.py",

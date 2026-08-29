@@ -1,0 +1,107 @@
+{
+ "provenance": {
+  "script": "sygma_by_dialect.py",
+  "script_path": "scripts/typed_edit/sygma_by_dialect.py",
+  "source_sha256": "fb0bdeffa6dfea93559bcac74ec269e6acfd68fda49ab9bf3f58dbfdc427ebcc",
+  "git_commit": "66f232b520292a654779e474619b6532d4369780",
+  "git_dirty": true
+ },
+ "n": 291,
+ "substrates_whose_drawing_changes": 81,
+ "match": "inchikey_tautomer",
+ "n_boot": 10000,
+ "seed": 0,
+ "by_budget": {
+  "1": {
+   "stored": 0.1534,
+   "standardised": 0.1519,
+   "difference": -0.0015,
+   "ci95": [
+    -0.0071,
+    0.0032
+   ],
+   "separates": false
+  },
+  "3": {
+   "stored": 0.2887,
+   "standardised": 0.2947,
+   "difference": 0.006,
+   "ci95": [
+    -0.003,
+    0.0156
+   ],
+   "separates": false
+  },
+  "5": {
+   "stored": 0.3744,
+   "standardised": 0.382,
+   "difference": 0.0075,
+   "ci95": [
+    -0.0032,
+    0.0196
+   ],
+   "separates": false
+  },
+  "8": {
+   "stored": 0.4271,
+   "standardised": 0.4361,
+   "difference": 0.009,
+   "ci95": [
+    -0.0017,
+    0.0218
+   ],
+   "separates": false
+  },
+  "10": {
+   "stored": 0.4556,
+   "standardised": 0.4632,
+   "difference": 0.0075,
+   "ci95": [
+    -0.0049,
+    0.0211
+   ],
+   "separates": false
+  },
+  "15": {
+   "stored": 0.4842,
+   "standardised": 0.4977,
+   "difference": 0.0135,
+   "ci95": [
+    0.0029,
+    0.0261
+   ],
+   "separates": true
+  },
+  "20": {
+   "stored": 0.4992,
+   "standardised": 0.5143,
+   "difference": 0.015,
+   "ci95": [
+    0.0041,
+    0.0282
+   ],
+   "separates": true
+  },
+  "30": {
+   "stored": 0.5068,
+   "standardised": 0.5263,
+   "difference": 0.0195,
+   "ci95": [
+    0.006,
+    0.0359
+   ],
+   "separates": true
+  },
+  "50": {
+   "stored": 0.5113,
+   "standardised": 0.5323,
+   "difference": 0.0211,
+   "ci95": [
+    0.0073,
+    0.0376
+   ],
+   "separates": true
+  }
+ },
+ "reading": "the difference is standardised minus stored, so a positive value is recall SyGMa was denied by being handed the corpus's drawing"
+}

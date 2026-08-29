@@ -528,6 +528,18 @@ def build():
                      - hyd["global_arms_paired"]["recovered_implicit"])
     n["hyd.residuallo"] = hyd["residual_ci95"][0]
     n["hyd.residualhi"] = hyd["residual_ci95"][1]
+    # What the corpus's drawing cost the one comparator whose rules can be re-run against the
+    # other. Its templates are written entirely in amide notation, so this is the arm the
+    # dialect should hurt, and it does.
+    sbd = art("sygma_by_dialect.json")
+    n["sygdial.n"] = sbd["n"]
+    n["sygdial.moved"] = sbd["substrates_whose_drawing_changes"]
+    for k in ("15", "30", "50"):
+        n[f"sygdial.diff{k}"] = sbd["by_budget"][k]["difference"]
+        n[f"sygdial.lo{k}"] = sbd["by_budget"][k]["ci95"][0]
+        n[f"sygdial.hi{k}"] = sbd["by_budget"][k]["ci95"][1]
+    n["sygdial.separating"] = sum(1 for v in sbd["by_budget"].values() if v["separates"])
+    n["sygdial.budgets"] = len(sbd["by_budget"])
     sv = art("standardiser_versions.json")
     n["dialect.rdkitversions"] = len(sv["versions_tested"])
     n["dialect.rdkitamide"] = len(sv["versions_returning_the_amide"])
