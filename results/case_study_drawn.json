@@ -1,0 +1,370 @@
+{
+ "provenance": {
+  "script": "case_study.py",
+  "script_path": "scripts/typed_edit/case_study.py",
+  "source_sha256": "60eeb31ff9f83d928fa27524ba9c5d40f9e92522a7c4a79a5becdc6028f6b65e",
+  "git_commit": "6dd64aac242b62ca23606b526e1b27e603935873",
+  "git_dirty": true
+ },
+ "substrate": "Nc1ccn(C2OC(CO)C(O)C2(F)F)c(=O)n1",
+ "corpus_substrate": "N=c1ccn(C2OC(CO)C(O)C2(F)F)c(O)n1",
+ "presentation": "standardised",
+ "substrate_heavy_atoms": 18,
+ "configuration": {
+  "mode": "interactive",
+  "rule_budget": 30,
+  "pool_cap": 100,
+  "substrate_presentation": "standardised",
+  "ranking": "reciprocal rank fusion of the filter and generator orderings, k=60",
+  "match": "inchikey_tautomer",
+  "generator_checkpoint": "artifacts/full5000_implicit/checkpoints/generator.pt",
+  "filter_checkpoint": "artifacts/full5000_priors/checkpoints/filter.pt"
+ },
+ "generator_seconds": 3.91,
+ "n_candidates": 16,
+ "n_references": 4,
+ "reference_ranks": [],
+ "references_not_in_pool": [
+  "FIRDBEQIJQERSE-UHFFFAOYSA-N",
+  "FRQISCZGNNXEMD-UHFFFAOYSA-N",
+  "KNTREFQOVSMROS-UHFFFAOYSA-N",
+  "YMOXEIOKAJSRQX-UHFFFAOYSA-N"
+ ],
+ "recall_at": {
+  "1": 0.0,
+  "5": 0.0,
+  "10": 0.0,
+  "15": 0.0,
+  "30": 0.0,
+  "50": 0.0
+ },
+ "note": "rule_id indexes the deployed bank and rule is its SMIRKS; firing_atoms are substrate atom indices, from the generator's per-product localisation, which the pool artifacts omit because they are built with compute_sites=False",
+ "candidates": [
+  {
+   "smiles": "Nc1cc[nH]c(=O)n1",
+   "key": "OPTASPLRGRRNAP-UHFFFAOYSA-N",
+   "generator": 0.9817,
+   "filter": 0.4536,
+   "rule_id": 4804,
+   "rule": "[#6:1]:[#7:4](:[#6:3](:[#7:2])=[#8:5])-[#6:6]>>[#6:1]:[#7:4]:[#6:3](-[#8:5]):[#7:2]",
+   "rule_source": "mined",
+   "firing_atoms": [
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17
+   ],
+   "is_reference": false,
+   "rank": 1
+  },
+  {
+   "smiles": "Nc1ccn(C2OC(CO)C(OC3OC(C(=O)O)C(O)C(O)C3O)C2(F)F)c(=O)n1",
+   "key": "LTDFZLIKDHVPIV-UHFFFAOYSA-N",
+   "generator": 0.8942,
+   "filter": 0.0596,
+   "rule_id": 1761,
+   "rule": "[#6:1]-[#8:2]>>[#6:1]-[#8:2]-[#6:3]1-[#8:4]-[#6:5](-[#6:6](=[#8:7])-[#8:8])-[#6:9](-[#8:10])-[#6:11](-[#8:12])-[#6:13]-1-[#8:14]",
+   "rule_source": "mined",
+   "firing_atoms": [
+    10,
+    11
+   ],
+   "is_reference": false,
+   "rank": 2
+  },
+  {
+   "smiles": "Nc1ccn(C2OC(CO)C(O)(O)C2(F)F)c(=O)n1",
+   "key": "VJDPMVINSVGXOL-UHFFFAOYSA-N",
+   "generator": 0.9602,
+   "filter": 0.0369,
+   "rule_id": 1753,
+   "rule": "[#6:1]-[#6:2]>>[#6:2]-[#6:1]-[#8:3]",
+   "rule_source": "mined",
+   "firing_atoms": [
+    7,
+    10,
+    11,
+    12
+   ],
+   "is_reference": false,
+   "rank": 3
+  },
+  {
+   "smiles": "Nc1ccn(C(O)C(F)F)c(=O)n1",
+   "key": "QBUAACZUEHPYLE-UHFFFAOYSA-N",
+   "generator": 0.9713,
+   "filter": 0.0219,
+   "rule_id": 1919,
+   "rule": "[#6:1]-[#8:2]-[#6:3]-[#6:4]-[#8:5]>>[#6:1]-[#8:2]",
+   "rule_source": "mined",
+   "firing_atoms": [
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14
+   ],
+   "is_reference": false,
+   "rank": 4
+  },
+  {
+   "smiles": "Nc1ccn(C2OC(COC3OC(C(=O)O)C(O)C(O)C3O)C(O)C2(F)F)c(=O)n1",
+   "key": "SSBKJHIUOCEUCX-UHFFFAOYSA-N",
+   "generator": 0.8942,
+   "filter": 0.0406,
+   "rule_id": 1761,
+   "rule": "[#6:1]-[#8:2]>>[#6:1]-[#8:2]-[#6:3]1-[#8:4]-[#6:5](-[#6:6](=[#8:7])-[#8:8])-[#6:9](-[#8:10])-[#6:11](-[#8:12])-[#6:13]-1-[#8:14]",
+   "rule_source": "mined",
+   "firing_atoms": [
+    8,
+    9
+   ],
+   "is_reference": false,
+   "rank": 5
+  },
+  {
+   "smiles": "OCCO",
+   "key": "LYCAIKOWRPUZTN-UHFFFAOYSA-N",
+   "generator": 0.9371,
+   "filter": 0.0348,
+   "rule_id": 6392,
+   "rule": "[#8:3]-[#6:4]-[#6:5]-[#6:6]-[#8:1]-[#6:2]>>[#8:1]-[#6:2]",
+   "rule_source": "mined",
+   "firing_atoms": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17
+   ],
+   "is_reference": false,
+   "rank": 6
+  },
+  {
+   "smiles": "Nc1ccn(C(O)C(F)(F)CO)c(=O)n1",
+   "key": "KAUWEBKHNJHLDY-UHFFFAOYSA-N",
+   "generator": 0.9965,
+   "filter": 0.0097,
+   "rule_id": 1919,
+   "rule": "[#6:1]-[#8:2]-[#6:3]-[#6:4]-[#8:5]>>[#6:1]-[#8:2]",
+   "rule_source": "mined",
+   "firing_atoms": [
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+   ],
+   "is_reference": false,
+   "rank": 7
+  },
+  {
+   "smiles": "Nc1ccn(CO)c(=O)n1",
+   "key": "MJEQLGCFPLHMNV-UHFFFAOYSA-N",
+   "generator": 0.7366,
+   "filter": 0.104,
+   "rule_id": 4661,
+   "rule": "[#6:1]-[#8:2]-[#6:3]-[#6:4]-[#6:5]>>[#6:1]-[#8:2]",
+   "rule_source": "mined",
+   "firing_atoms": [
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14
+   ],
+   "is_reference": false,
+   "rank": 8
+  },
+  {
+   "smiles": "Nc1ccn(C2OC(CO)C(OS(=O)(=O)O)C2(F)F)c(=O)n1",
+   "key": "WFDMOMROEXVSER-UHFFFAOYSA-N",
+   "generator": 0.8911,
+   "filter": 0.0207,
+   "rule_id": 1772,
+   "rule": "[#6:1]-[#8:2]>>[#6:1]-[#8:2]-[#16:3](=[#8:4])(=[#8:5])-[#8:6]",
+   "rule_source": "mined",
+   "firing_atoms": [
+    10,
+    11
+   ],
+   "is_reference": false,
+   "rank": 9
+  },
+  {
+   "smiles": "Nc1ccn(C2OC(O)(CO)C(O)C2(F)F)c(=O)n1",
+   "key": "IGNVKXKXOBGNQE-UHFFFAOYSA-N",
+   "generator": 0.9602,
+   "filter": 0.0047,
+   "rule_id": 1753,
+   "rule": "[#6:1]-[#6:2]>>[#6:2]-[#6:1]-[#8:3]",
+   "rule_source": "mined",
+   "firing_atoms": [
+    6,
+    7,
+    8,
+    10
+   ],
+   "is_reference": false,
+   "rank": 10
+  },
+  {
+   "smiles": "Nc1ccn(C2OC(C(=O)O)C(O)C2(F)F)c(=O)n1",
+   "key": "OZZNWSDMSAHGKH-UHFFFAOYSA-N",
+   "generator": 0.4719,
+   "filter": 0.0387,
+   "rule_id": 1209,
+   "rule": "[C:1][CH2:2][OH1]>>[C:1][C:2](=O)O",
+   "rule_source": "curated",
+   "firing_atoms": [
+    7,
+    8,
+    9
+   ],
+   "is_reference": false,
+   "rank": 11
+  },
+  {
+   "smiles": "OCC(O)CO",
+   "key": "PEDCQBHIVMGVHV-UHFFFAOYSA-N",
+   "generator": 0.88,
+   "filter": 0.0142,
+   "rule_id": 1744,
+   "rule": "[#6:3]-[#6:4]-[#8:2]-[#6:1]>>[#6:1]-[#8:2]",
+   "rule_source": "mined",
+   "firing_atoms": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17
+   ],
+   "is_reference": false,
+   "rank": 12
+  },
+  {
+   "smiles": "Nc1ccn(C2OC(COS(=O)(=O)O)C(O)C2(F)F)c(=O)n1",
+   "key": "XMFVQSWLFCLYLQ-UHFFFAOYSA-N",
+   "generator": 0.8911,
+   "filter": 0.008,
+   "rule_id": 1772,
+   "rule": "[#6:1]-[#8:2]>>[#6:1]-[#8:2]-[#16:3](=[#8:4])(=[#8:5])-[#8:6]",
+   "rule_source": "mined",
+   "firing_atoms": [
+    8,
+    9
+   ],
+   "is_reference": false,
+   "rank": 13
+  },
+  {
+   "smiles": "Nc1ccn(C2OC(C(O)O)C(O)C2(F)F)c(=O)n1",
+   "key": "KDTUVLFIEZMSPW-UHFFFAOYSA-N",
+   "generator": 0.8575,
+   "filter": 0.0129,
+   "rule_id": 1753,
+   "rule": "[#6:1]-[#6:2]>>[#6:2]-[#6:1]-[#8:3]",
+   "rule_source": "mined",
+   "firing_atoms": [
+    7,
+    8,
+    9
+   ],
+   "is_reference": false,
+   "rank": 14
+  },
+  {
+   "smiles": "OCC(O)C(O)C(F)F",
+   "key": "MJQKWEFSLIINMH-UHFFFAOYSA-N",
+   "generator": 0.8772,
+   "filter": 0.0105,
+   "rule_id": 1898,
+   "rule": "[#6:3]-[#8:1]-[#6:2]>>[#8:1]-[#6:2]",
+   "rule_source": "mined",
+   "firing_atoms": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    10,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17
+   ],
+   "is_reference": false,
+   "rank": 15
+  },
+  {
+   "smiles": "Nc1ccn(C2(O)OC(CO)C(O)C2(F)F)c(=O)n1",
+   "key": "SRRCASSCXPABTR-UHFFFAOYSA-N",
+   "generator": 0.8575,
+   "filter": 0.01,
+   "rule_id": 1753,
+   "rule": "[#6:1]-[#6:2]>>[#6:2]-[#6:1]-[#8:3]",
+   "rule_source": "mined",
+   "firing_atoms": [
+    4,
+    5,
+    6,
+    12
+   ],
+   "is_reference": false,
+   "rank": 16
+  }
+ ]
+}

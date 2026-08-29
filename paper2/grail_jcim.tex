@@ -11,6 +11,13 @@
 \usepackage{booktabs}
 \usepackage{graphicx}
 \usepackage{microtype}
+% Cross-references into the Supporting Information resolve through the SI's own .aux rather than
+% through hand-typed table numbers. Nine such pointers were typed by hand and all nine were
+% wrong: the SI's table order changed five times and each pointer was bumped one insertion
+% behind. A literal that is wrong compiles silently; a \ref that cannot resolve prints ?? and
+% fails the build gate, which is the difference that matters.
+\usepackage{xr}
+\externaldocument[SI-]{si}
 \SectionNumbersOn
 \input{numbers}
 \input{markers}

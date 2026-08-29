@@ -1,0 +1,273 @@
+{
+ "provenance": {
+  "script": "dialect_census.py",
+  "script_path": "scripts/typed_edit/dialect_census.py",
+  "source_sha256": "a5d927e144c28592356daf69122ca20dacba66a0bf3ba5e241453cf350db66d0",
+  "git_commit": "6dd64aac242b62ca23606b526e1b27e603935873",
+  "git_dirty": true
+ },
+ "splits": {
+  "train": {
+   "n": 9194,
+   "unparsed": 0,
+   "fixed_points": 6302,
+   "moved": 2892,
+   "moved_share": 0.314553,
+   "moved_pure_tautomer": 2887,
+   "moved_other": 5,
+   "carrying_imidic_amide": 1900,
+   "carrying_imidic_amide_share": 0.206657,
+   "carrying_aromatic_lactim": 200,
+   "carrying_amide": 1292,
+   "examples": [
+    {
+     "stored": "CC1C(=NC(=O)C(NOC(C)(C)C(=O)O)c2csc(=N)[nH]2)C(=O)N1S(=O)(=O)O",
+     "standardised": "CC1C(=NC(=O)C(NOC(C)(C)C(=O)O)c2csc(N)n2)C(=O)N1S(=O)(=O)O",
+     "pure_tautomer_move": true
+    },
+    {
+     "stored": "NC(CCC(O)=NC(CSC(O)=NC1CCC(O)CC1)C(O)=NCC(=O)O)C(=O)O",
+     "standardised": "NC(CCC(=O)NC(CSC(=O)NC1CCC(O)CC1)C(=O)NCC(=O)O)C(=O)O",
+     "pure_tautomer_move": true
+    },
+    {
+     "stored": "CCOc1ncc(C)c2c1C(c1ccc(C#N)cc1OC)C(C(=N)O)C(C)=N2",
+     "standardised": "CCOc1ncc(C)c2c1C(c1ccc(C#N)cc1OC)C(C(N)=O)C(C)=N2",
+     "pure_tautomer_move": true
+    },
+    {
+     "stored": "N=C(O)c1csc(C2OC(CO)C(O)C2O)n1",
+     "standardised": "NC(=O)c1csc(C2OC(CO)C(O)C2O)n1",
+     "pure_tautomer_move": true
+    },
+    {
+     "stored": "Cc1cccc(N=c2cc[nH]cc2S(=O)(=O)NC(O)=NC(C)C)c1",
+     "standardised": "Cc1cccc(Nc2ccncc2S(=O)(=O)NC(=O)NC(C)C)c1",
+     "pure_tautomer_move": true
+    },
+    {
+     "stored": "CC(C)N=C(O)NS(=O)(=O)c1c[nH]ccc1=Nc1cccc(CO)c1",
+     "standardised": "CC(C)NC(=O)NS(=O)(=O)c1cnccc1Nc1cccc(CO)c1",
+     "pure_tautomer_move": true
+    }
+   ]
+  },
+  "val": {
+   "n": 1063,
+   "unparsed": 0,
+   "fixed_points": 782,
+   "moved": 281,
+   "moved_share": 0.264346,
+   "moved_pure_tautomer": 281,
+   "moved_other": 0,
+   "carrying_imidic_amide": 170,
+   "carrying_imidic_amide_share": 0.159925,
+   "carrying_aromatic_lactim": 25,
+   "carrying_amide": 155,
+   "examples": [
+    {
+     "stored": "CC(N)C(O)=NC1(C(=O)O)CCC2C(C(=O)O)C21",
+     "standardised": "CC(N)C(=O)NC1(C(=O)O)CCC2C(C(=O)O)C21",
+     "pure_tautomer_move": true
+    },
+    {
+     "stored": "CCCCOC(=O)c1cc2c([nH]c3ccccc32)c(-c2ccc3c(O)cc(N=C(O)C=CC(=O)O)c(O)c3n2)n1",
+     "standardised": "CCCCOC(=O)c1cc2c([nH]c3ccccc32)c(-c2ccc3c(O)cc(NC(=O)C=CC(=O)O)c(O)c3n2)n1",
+     "pure_tautomer_move": true
+    },
+    {
+     "stored": "CN(C)CCC=C1c2ccccc2S(=O)c2ccc(Cl)cc21",
+     "standardised": "CN(C)CCC=C1c2ccccc2[S+]([O-])c2ccc(Cl)cc21",
+     "pure_tautomer_move": true
+    },
+    {
+     "stored": "CCCCCc1ccc(-c2cc3cn(C4CC(O)C(COC(=O)C(N=C(O)C5CCCN5C(=O)C(N)CC(=O)O)C(C)C)O4)c(=O)nc3o2)cc1",
+     "standardised": "CCCCCc1ccc(-c2cc3cn(C4CC(O)C(COC(=O)C(NC(=O)C5CCCN5C(=O)C(N)CC(=O)O)C(C)C)O4)c(=O)nc3o2)cc1",
+     "pure_tautomer_move": true
+    },
+    {
+     "stored": "N#CC(CC(F)C(=O)O)N=C(O)C(NC(=O)O)C(c1ccc(F)cc1)c1ccc(F)cc1",
+     "standardised": "N#CC(CC(F)C(=O)O)NC(=O)C(NC(=O)O)C(c1ccc(F)cc1)c1ccc(F)cc1",
+     "pure_tautomer_move": true
+    },
+    {
+     "stored": "CCC(C)C(N=C(O)C(Cc1ccccc1)N=C(O)C(CCC(=O)O)N=C(O)C(CCCCN=C(O)COCCOCCN=C(O)COCCOCCN=C(O)CCC(N=C(O)CCCCCCCCCCCCCCCCC(=O)O)C(=O)O)N=C(O)C(C)N=C(O)C(C)N=C(O)C(CCC(=N)O)N=C(O)CN=C(O)C(CCC(=O)O)N=C(O)C(CC(C)C)N=C(O)C(Cc1ccc(O)cc1)N=C(O)C(CO)N=C(O)C(CO)N=C(O)C(N=C(O)C(CC(=O)O)N=C(O)C(CO)N=C(O)C(N=C(O)C(Cc1ccccc1)N=C(O)C(N=C(O)CN=C(O)C(CCC(=O)O)N=C(O)C(C)(C)N=C(O)C(N)Cc1cnc[nH]1)C(C)O)C(C)O)C(C)C)C(O)=NC(C)C(O)=NC(Cc1c[nH]c2ccccc12)C(O)=NC(CC(C)C)C(O)=NC(C(O)=NC(CCCNC(=N)N)C(O)=NCC(O)=NC(CCCNC(=N)N)C(O)=NCC(=O)O)C(C)C",
+     "standardised": "CCC(C)C(N=C(O)C(Cc1ccccc1)N=C(O)C(CCC(=O)O)N=C(O)C(CCCCN=C(O)COCCOCCN=C(O)COCCOCCN=C(O)CCC(N=C(O)CCCCCCCCCCCCCCCCC(=O)O)C(=O)O)N=C(O)C(C)N=C(O)C(C)N=C(O)C(CCC(=N)O)N=C(O)CN=C(O)C(CCC(=O)O)N=C(O)C(CC(C)C)N=C(O)C(Cc1ccc(O)cc1)N=C(O)C(CO)N=C(O)C(CO)N=C(O)C(N=C(O)C(CC(=O)O)N=C(O)C(CO)N=C(O)C(N=C(O)C(Cc1ccccc1)N=C(O)C(N=C(O)CNC(=O)C(CCC(=O)O)NC(=O)C(C)(C)NC(=O)C(N)Cc1cnc[nH]1)C(C)O)C(C)O)C(C)C)C(=O)NC(C)C(O)=NC(Cc1c[nH]c2ccccc12)C(O)=NC(CC(C)C)C(O)=NC(C(O)=NC(CCCNC(=N)N)C(O)=NCC(O)=NC(CCCNC(=N)N)C(O)=NCC(=O)O)C(C)C",
+     "pure_tautomer_move": true
+    }
+   ]
+  },
+  "test": {
+   "n": 1200,
+   "unparsed": 0,
+   "fixed_points": 850,
+   "moved": 350,
+   "moved_share": 0.291667,
+   "moved_pure_tautomer": 350,
+   "moved_other": 0,
+   "carrying_imidic_amide": 232,
+   "carrying_imidic_amide_share": 0.193333,
+   "carrying_aromatic_lactim": 28,
+   "carrying_amide": 135,
+   "examples": [
+    {
+     "stored": "CN(CC(=O)N1CCOCC1)Cc1c(Cl)cccc1N=C(O)c1ccccc1",
+     "standardised": "CN(CC(=O)N1CCOCC1)Cc1c(Cl)cccc1NC(=O)c1ccccc1",
+     "pure_tautomer_move": true
+    },
+    {
+     "stored": "C=CCNc1c(O)cc2c(O)c1C=C(C)CC(OC)C(O)C(C)C=C(C)C(OC(=N)O)C(OC)C=CC=C(C)C(=O)N2",
+     "standardised": "C=CCNc1c(O)cc2c(O)c1C=C(C)CC(OC)C(O)C(C)C=C(C)C(OC(N)=O)C(OC)C=CC=C(C)C(=O)N2",
+     "pure_tautomer_move": true
+    },
+    {
+     "stored": "COC1C=CC=C(C)C(=O)Nc2cc(O)c(N)c(c2O)C=C(C)CC(OC)C(O)C(C)C=C(C)C1OC(=N)O",
+     "standardised": "COC1C=CC=C(C)C(=O)Nc2cc(O)c(N)c(c2O)C=C(C)CC(OC)C(O)C(C)C=C(C)C1OC(N)=O",
+     "pure_tautomer_move": true
+    },
+    {
+     "stored": "COC1C=CC=C(C)C(=O)Nc2cc(O)c(NCC3CO3)c(c2O)C=C(C)CC(OC)C(O)C(C)C=C(C)C1OC(=N)O",
+     "standardised": "COC1C=CC=C(C)C(=O)Nc2cc(O)c(NCC3CO3)c(c2O)C=C(C)CC(OC)C(O)C(C)C=C(C)C1OC(N)=O",
+     "pure_tautomer_move": true
+    },
+    {
+     "stored": "C=CCNc1c(O)cc2c(O)c1C=C(C)CC(OC)C(O)C(C)C=C(C)C(OC(=N)O)C(OC)C=CC=C(CO)C(=O)N2",
+     "standardised": "C=CCNc1c(O)cc2c(O)c1C=C(C)CC(OC)C(O)C(C)C=C(C)C(OC(N)=O)C(OC)C=CC=C(CO)C(=O)N2",
+     "pure_tautomer_move": true
+    },
+    {
+     "stored": "C=CC(O)Nc1c(O)cc2c(O)c1C=C(C)CC(OC)C(O)C(C)C=C(C)C(OC(=N)O)C(OC)C=CC=C(C)C(=O)N2",
+     "standardised": "C=CC(O)Nc1c(O)cc2c(O)c1C=C(C)CC(OC)C(O)C(C)C=C(C)C(OC(N)=O)C(OC)C=CC=C(C)C(=O)N2",
+     "pure_tautomer_move": true
+    }
+   ]
+  }
+ },
+ "normalisation": {
+  "train": {
+   "records_compared": 378238,
+   "equal_to_inchi_round_trip": 378228,
+   "differing": 10,
+   "inchi_unparsed": 3,
+   "share": 0.999974,
+   "examples_of_difference": [
+    {
+     "stored": "CCC1=C(CC)c2cc3nc(c[n-]c4cc(OCCOCCOCCOC)c(OCCOCCOCCOC)cc4ncc4nc(cc1n2)C(CCCO)=C4C)C(C)=C3CCCO",
+     "round_trip": "CC(=O)[O-].CC(=O)[O-].CCC1=C(CC)c2cc3nc(c[n-]c4cc(OCCOCCOCCOC)c(OCCOCCOCCOC)cc4ncc4nc(cc1n2)C(CCCO)=C4C)C(C)=C3CCCO.[Gd+3]"
+    },
+    {
+     "stored": "[c]1ccccc1",
+     "round_trip": "[Cl-].[Sn+].[c]1ccccc1.[c]1ccccc1.[c]1ccccc1"
+    },
+    {
+     "stored": "[c]1ccccc1",
+     "round_trip": "[Sn+2].[c]1ccccc1.[c]1ccccc1"
+    },
+    {
+     "stored": "[c]1ccccc1",
+     "round_trip": "[Sn+2].[c]1ccccc1.[c]1ccccc1"
+    },
+    {
+     "stored": "[c]1ccccc1",
+     "round_trip": "[Sn+3].[c]1ccccc1"
+    }
+   ]
+  },
+  "val": {
+   "records_compared": 41591,
+   "equal_to_inchi_round_trip": 41591,
+   "differing": 0,
+   "inchi_unparsed": 0,
+   "share": 1.0,
+   "examples_of_difference": []
+  },
+  "test": {
+   "records_compared": 45133,
+   "equal_to_inchi_round_trip": 45133,
+   "differing": 0,
+   "inchi_unparsed": 1,
+   "share": 1.0,
+   "examples_of_difference": []
+  }
+ },
+ "evaluated_test_subset": {
+  "n": 1170,
+  "unparsed": 0,
+  "fixed_points": 825,
+  "moved": 345,
+  "moved_share": 0.294872,
+  "moved_pure_tautomer": 345,
+  "moved_other": 0,
+  "carrying_imidic_amide": 229,
+  "carrying_imidic_amide_share": 0.195726,
+  "carrying_aromatic_lactim": 27,
+  "carrying_amide": 133,
+  "examples": [
+   {
+    "stored": "CN(CC(=O)N1CCOCC1)Cc1c(Cl)cccc1N=C(O)c1ccccc1",
+    "standardised": "CN(CC(=O)N1CCOCC1)Cc1c(Cl)cccc1NC(=O)c1ccccc1",
+    "pure_tautomer_move": true
+   },
+   {
+    "stored": "C=CCNc1c(O)cc2c(O)c1C=C(C)CC(OC)C(O)C(C)C=C(C)C(OC(=N)O)C(OC)C=CC=C(C)C(=O)N2",
+    "standardised": "C=CCNc1c(O)cc2c(O)c1C=C(C)CC(OC)C(O)C(C)C=C(C)C(OC(N)=O)C(OC)C=CC=C(C)C(=O)N2",
+    "pure_tautomer_move": true
+   },
+   {
+    "stored": "COC1C=CC=C(C)C(=O)Nc2cc(O)c(N)c(c2O)C=C(C)CC(OC)C(O)C(C)C=C(C)C1OC(=N)O",
+    "standardised": "COC1C=CC=C(C)C(=O)Nc2cc(O)c(N)c(c2O)C=C(C)CC(OC)C(O)C(C)C=C(C)C1OC(N)=O",
+    "pure_tautomer_move": true
+   },
+   {
+    "stored": "COC1C=CC=C(C)C(=O)Nc2cc(O)c(NCC3CO3)c(c2O)C=C(C)CC(OC)C(O)C(C)C=C(C)C1OC(=N)O",
+    "standardised": "COC1C=CC=C(C)C(=O)Nc2cc(O)c(NCC3CO3)c(c2O)C=C(C)CC(OC)C(O)C(C)C=C(C)C1OC(N)=O",
+    "pure_tautomer_move": true
+   },
+   {
+    "stored": "C=CCNc1c(O)cc2c(O)c1C=C(C)CC(OC)C(O)C(C)C=C(C)C(OC(=N)O)C(OC)C=CC=C(CO)C(=O)N2",
+    "standardised": "C=CCNc1c(O)cc2c(O)c1C=C(C)CC(OC)C(O)C(C)C=C(C)C(OC(N)=O)C(OC)C=CC=C(CO)C(=O)N2",
+    "pure_tautomer_move": true
+   },
+   {
+    "stored": "C=CC(O)Nc1c(O)cc2c(O)c1C=C(C)CC(OC)C(O)C(C)C=C(C)C(OC(=N)O)C(OC)C=CC=C(C)C(=O)N2",
+    "standardised": "C=CC(O)Nc1c(O)cc2c(O)c1C=C(C)CC(OC)C(O)C(C)C=C(C)C(OC(N)=O)C(OC)C=CC=C(C)C(=O)N2",
+    "pure_tautomer_move": true
+   }
+  ]
+ },
+ "bank": {
+  "templates": 7581,
+  "parsed": 7580,
+  "unparsed": 1,
+  "amide_requiring": {
+   "total": 798,
+   "curated": 170,
+   "mined": 628
+  },
+  "imidic_requiring": {
+   "total": 746,
+   "curated": 62,
+   "mined": 684
+  },
+  "aromatic_lactim_requiring": {
+   "total": 197,
+   "curated": 37,
+   "mined": 160
+  },
+  "imidic_or_lactim_and_not_amide": 665,
+  "amide_and_neither_imidic_nor_lactim": 627,
+  "example_imidic_only": [
+   516,
+   535,
+   553,
+   624,
+   674,
+   675,
+   677,
+   679
+  ],
+  "instrument": "reactant half parsed as SMARTS; a carbon double-bonded to oxygen and single or aromatic bonded to nitrogen is the amide motif, a carbon single or aromatic bonded to oxygen and double-bonded to nitrogen is the imidic motif, and a carbon bonded singly to both together with any carbon double-bonded to nitrogen is the aromatic lactim motif",
+  "path": "grail_metabolism/resources/extended_smirks.txt"
+ },
+ "reading": "every structure in the corpus is the InChI round-trip of its own record, and the round-trip places a mobile hydrogen on oxygen, so amides are stored as imidic acids and cytosine as its lactim; the substrate reaches the matcher in that drawing"
+}

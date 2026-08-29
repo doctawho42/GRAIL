@@ -54,8 +54,8 @@ differs, not how.
 
 A second limit on rebuilding: the annotated metabolites are released as tautomer-canonical
 InChIKeys rather than as structures. That key supports the default matching criterion and not the
-other four, which need the structures, so a third party can reproduce the tautomer column of
-Table~S4 and not the rest of it.
+other four, which need the structures, so a third party can reproduce the tautomer row of
+Table~\ref{tab:si-criterion} and not the rest of it.
 
 The corpus is divided by substrate, so no substrate of one split appears in another. Molecular overlap between splits is non-zero and expected, because a molecule
 that is a substrate in one split may appear as a product in another: \numLeakMolOverlap{}
@@ -147,7 +147,7 @@ with hits it did not earn and credits the comparators with more of them. Neither
 default, and the paper's argument is not that one criterion is right but that the choice has to be
 declared and its consequences shown.
 
-The reference column of Table~\ref{tab:si-criterion} reproduces the verdicts of the main text's
+The reference row of Table~\ref{tab:si-criterion} reproduces the verdicts of the main text's
 comparison exactly, though it is computed by a different script from the same frozen predictions.
 The number of references differs by one between criteria, at \numPopulationReferences{} for three
 of them and one fewer for two, and the two cases have different causes. Under the first block of

@@ -105,8 +105,24 @@ def main() -> int:
                 if t.replace("{,}", "") not in ALLOWED and t not in ALLOWED
                 and t.replace("{,}", "") not in SI_BACKLOG and t not in SI_BACKLOG]
 
+    # A pointer into the Supporting Information typed as a literal table number compiles
+    # silently when it is wrong. Nine were typed by hand and all nine were wrong, because the
+    # SI's table order moved five times under them; one of the nine sent a referee to the wrong
+    # table, and the finding he raised from it had to be withdrawn. The pointers now go through
+    # \ref and xr, where a wrong one cannot resolve and prints ??, and this gate keeps them
+    # there: a literal that reappears fails here, and an unresolved \ref fails the build.
+    pointers = []
+    for path in [TEX, si, *wrappers, *sorted((ROOT / "paper2").glob("table_*.tex")),
+                 *sorted((ROOT / "paper2").glob("si_table_*.tex"))]:
+        for hit in re.findall(r"(?:Table|Figure|Section|Equation)~?S\d+", path.read_text()):
+            pointers.append(f"{path.name}: {hit}")
+
     ok = True
     print(f"macros defined {len(defined)}, used {len(used)}")
+    if pointers:
+        ok = False
+        print(f"FAIL: {len(pointers)} hand-typed pointers into the Supporting Information; "
+              f"use \\ref through xr instead: {pointers[:6]}")
     if missing:
         ok = False
         print(f"FAIL: {len(missing)} macros used and not defined: {missing[:10]}")

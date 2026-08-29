@@ -1,0 +1,122 @@
+{
+ "provenance": {
+  "script": "curated_provenance.py",
+  "script_path": "scripts/typed_edit/curated_provenance.py",
+  "source_sha256": "1854e86e0e370decc6351bbbecaf6cae7fcbd8dd3b65cffbb8e4404e46f745d7",
+  "git_commit": "9863b0708cb7fd346d1aade290d9e35c0bfb8556",
+  "git_dirty": true
+ },
+ "bank": {
+  "templates": 7581,
+  "mined": 5856,
+  "curated": 1725,
+  "named": 1233,
+  "unattributed": 492,
+  "named_by_collection": {
+   "hydroxylation": 474,
+   "merged": 656,
+   "notebooks": 1051
+  }
+ },
+ "identification": {
+  "unattributed_verbatim_in_xtracted": 477,
+  "unattributed_total": 492,
+  "xtracted_total": 4534,
+  "xtracted_inside_bank": 655,
+  "xtracted_in_mined_half": 0,
+  "xtracted_in_named_half": 178,
+  "xtracted_commit": "f588cff  added extracted reaction rules"
+ },
+ "syntax": {
+  "curated_named": {
+   "n": 1233,
+   "atomic_number_notation": 0.6796,
+   "element_notation": 0.3155,
+   "multi_component_reactants": 0.0414,
+   "six_or_more_mapped_reactant_atoms": 0.5912
+  },
+  "curated_unattributed": {
+   "n": 492,
+   "atomic_number_notation": 0.0203,
+   "element_notation": 0.9797,
+   "multi_component_reactants": 0.1972,
+   "six_or_more_mapped_reactant_atoms": 0.4573
+  },
+  "mined": {
+   "n": 5856,
+   "atomic_number_notation": 1.0,
+   "element_notation": 0.0,
+   "multi_component_reactants": 0.0,
+   "six_or_more_mapped_reactant_atoms": 0.735
+  },
+  "xtracted_file": {
+   "n": 4534,
+   "atomic_number_notation": 0.0,
+   "element_notation": 1.0,
+   "multi_component_reactants": 0.2091,
+   "six_or_more_mapped_reactant_atoms": 0.4535
+  },
+  "sygma_published": {
+   "n": 175,
+   "atomic_number_notation": 0.3486,
+   "element_notation": 0.6343,
+   "multi_component_reactants": 0.0,
+   "six_or_more_mapped_reactant_atoms": 0.0914
+  }
+ },
+ "dialect": {
+  "curated_named": {
+   "parsed": 1232,
+   "amide_requiring": 114,
+   "imidic_requiring": 4,
+   "aromatic_lactim_requiring": 18,
+   "imidic_share": 0.0032
+  },
+  "curated_unattributed": {
+   "parsed": 492,
+   "amide_requiring": 54,
+   "imidic_requiring": 58,
+   "aromatic_lactim_requiring": 19,
+   "imidic_share": 0.1179
+  },
+  "mined": {
+   "parsed": 5856,
+   "amide_requiring": 630,
+   "imidic_requiring": 684,
+   "aromatic_lactim_requiring": 160,
+   "imidic_share": 0.1168
+  },
+  "xtracted_file": {
+   "parsed": 4534,
+   "amide_requiring": 456,
+   "imidic_requiring": 496,
+   "aromatic_lactim_requiring": 183,
+   "imidic_share": 0.1094
+  },
+  "sygma_published": {
+   "parsed": 175,
+   "amide_requiring": 6,
+   "imidic_requiring": 0,
+   "aromatic_lactim_requiring": 0,
+   "imidic_share": 0.0
+  }
+ },
+ "sygma_containment": {
+  "rules_read_from": "/Users/nikitapolomosnov/anaconda3/lib/python3.10/site-packages/sygma/rules",
+  "sygma_rules": 175,
+  "verbatim_in_bank": 152,
+  "share_of_sygma_inside": 0.8686,
+  "in_curated_half": 152,
+  "in_mined_half": 0,
+  "in_named_collections": 152,
+  "in_unattributed": 0,
+  "share_of_curated_half_that_is_sygma": 0.0881,
+  "by_named_collection": {
+   "hydroxylation": 75,
+   "merged": 75,
+   "notebooks": 152
+  },
+  "test": "verbatim string membership in extended_smirks.txt"
+ },
+ "reading": "the unattributed 492 are an earlier machine extraction from the same annotated pairs, not an expert collection: they sit verbatim in a file committed as extracted rules, they are written in that file's notation and in no hand-written collection's, and they carry the corpus's imidic drawing at the mined half's rate. The bank therefore holds two extractions and one curated body, and the curated body is 1,233 templates rather than 1,725. SyGMa's containment is a separate fact and does not touch the 492: every one of the contained SyGMa rules falls in the named collections."
+}

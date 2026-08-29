@@ -36,14 +36,26 @@ from _provenance import stamp  # noqa: E402
 
 from _rrf import rrf_order  # noqa: E402
 
-# gemcitabine, stereochemistry stripped as the corpus stores it: standardize_mol canonicalises
-# tautomers and writes SMILES with isomericSmiles=False, so the substrate carries no stereocentres
+# Gemcitabine exactly as the corpus stores it. That string is not the standardiser's output and
+# not how a chemist draws the drug: every corpus structure is the InChI round-trip of its own
+# record, and the round-trip places the mobile hydrogen on oxygen, so cytosine arrives as the
+# 4-imino-2-hydroxy lactim. Stereochemistry is absent for a separate reason -- InChI's standard
+# layer is written without it here, and the pipeline strips it anyway.
 GEMCITABINE = "N=c1ccn(C2OC(CO)C(O)C2(F)F)c(O)n1"
+# The same molecule as a chemist draws it, which is also the fixed point of the declared
+# standardiser: 4-amino-2-oxo.
+GEMCITABINE_DRAWN = "Nc1ccn(C2OC(CO)C(O)C2(F)F)c(=O)n1"
 
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--substrate", default=GEMCITABINE)
+    ap.add_argument("--substrate", default=GEMCITABINE,
+                    help="the corpus key: the string the annotation is filed under")
+    ap.add_argument("--present", choices=("stored", "standardised"), default="stored",
+                    help="how the substrate is handed to the matcher -- as the corpus stores it, "
+                         "or as the declared standardiser draws it. The references are looked up "
+                         "under the corpus key either way, so the two runs are scored against the "
+                         "same annotation.")
     ap.add_argument("--gen-ckpt", default=str(ROOT / "artifacts/full5000_implicit/checkpoints/generator.pt"))
     ap.add_argument("--filter-ckpt", default=str(ROOT / "artifacts/full5000_priors/checkpoints/filter.pt"))
     ap.add_argument("--top-k", type=int, default=30,
@@ -62,10 +74,15 @@ def main() -> int:
     from grail_metabolism.config import FilterConfig, GeneratorConfig
     from grail_metabolism.workflows.factory import build_filter, build_generator
 
-    s = args.substrate
+    corpus_key = args.substrate
+    if Chem.MolFromSmiles(corpus_key) is None:
+        raise SystemExit(f"unparseable substrate: {corpus_key}")
+    if args.present == "standardised":
+        from grail_metabolism.utils.preparation import standardize_mol
+        s = Chem.MolToSmiles(standardize_mol(Chem.MolFromSmiles(corpus_key)))
+    else:
+        s = corpus_key
     sub_mol = Chem.MolFromSmiles(s)
-    if sub_mol is None:
-        raise SystemExit(f"unparseable substrate: {s}")
 
     generator = _load(Path(args.gen_ckpt), lambda a, r: build_generator(GeneratorConfig(**a), r))
     filt = _load(Path(args.filter_ckpt), lambda a, r: build_filter(FilterConfig(**a)))
@@ -76,7 +93,9 @@ def main() -> int:
     refs = {}
     for f in sorted(glob.glob(str(ROOT / "results/widepools_implicit/w*.json"))):
         refs.update(json.loads(Path(f).read_text())["references"])
-    reference_keys = set(refs.get(s, []))
+    reference_keys = set(refs.get(corpus_key, []))
+    if not reference_keys:
+        raise SystemExit(f"no references filed under the corpus key {corpus_key}")
 
     t0 = time.perf_counter()
     det = generator.generate_scored_with_details(s, top_k=args.top_k, threshold=None,
@@ -123,9 +142,12 @@ def main() -> int:
     rep = {
         "provenance": stamp(__file__),
         "substrate": s,
+        "corpus_substrate": corpus_key,
+        "presentation": args.present,
         "substrate_heavy_atoms": sub_mol.GetNumHeavyAtoms(),
         "configuration": {
             "mode": "interactive", "rule_budget": args.top_k, "pool_cap": args.cap,
+            "substrate_presentation": args.present,
             "ranking": "reciprocal rank fusion of the filter and generator orderings, k=60",
             "match": "inchikey_tautomer",
             "generator_checkpoint": str(Path(args.gen_ckpt).relative_to(ROOT)),
@@ -145,7 +167,8 @@ def main() -> int:
     }
     Path(args.out).write_text(json.dumps(rep, indent=1))
 
-    print(f"substrate: {s}  ({rep['substrate_heavy_atoms']} heavy atoms)")
+    print(f"substrate: {s}  ({rep['substrate_heavy_atoms']} heavy atoms, "
+          f"presented {args.present}; filed under {corpus_key})")
     print(f"{len(ranked)} candidates from a budget of {args.top_k} rules in {gen_seconds:.1f}s; "
           f"{len(reference_keys)} annotated, found at ranks {found}"
           + (f"; {len(missing)} not in the pool" if missing else ""))

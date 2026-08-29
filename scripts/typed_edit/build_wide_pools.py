@@ -89,6 +89,11 @@ def main() -> int:
     ap.add_argument("--out", default=str(ROOT / "results" / "wide_pools.json"))
     ap.add_argument("--top-k", type=int, default=7581,
                     help="rule budget; 7581 is the whole bank, 30 is what the checkpoint records")
+    ap.add_argument("--present", choices=("stored", "standardised"), default="stored",
+                    help="how the substrate is handed to the matcher: as the corpus stores it, "
+                         "or as the declared standardiser draws it. The pool and the references "
+                         "stay keyed by the corpus string either way, so the two runs score "
+                         "against one annotation and are paired substrate by substrate.")
     args = ap.parse_args()
 
     if args.merge:
@@ -102,15 +107,26 @@ def main() -> int:
     generator = _load(Path(args.gen_ckpt), lambda a, r: build_generator(GeneratorConfig(**a), r))
     filt = _load(Path(args.filter_ckpt), lambda a, r: build_filter(FilterConfig(**a)))
 
+    presented = {}
+    if args.present == "standardised":
+        from rdkit import Chem
+        from grail_metabolism.utils.preparation import standardize_mol
+        for key in sl:
+            try:
+                presented[key] = Chem.MolToSmiles(standardize_mol(Chem.MolFromSmiles(key)))
+            except Exception:
+                presented[key] = key
+
     pools, refs, t = {}, {}, time.perf_counter()
     for i, s in enumerate(sl, 1):
         if i == 1 or i % 5 == 0 or i == len(sl):
             print(f"  {i}/{len(sl)} ({time.perf_counter() - t:.0f}s)", file=sys.stderr, flush=True)
-        det = generator.generate_scored_with_details(s, top_k=args.top_k, threshold=None,
+        shown = presented.get(s, s)
+        det = generator.generate_scored_with_details(shown, top_k=args.top_k, threshold=None,
                                                      compute_sites=False)
         det.sort(key=lambda d: (-d[1], d[0]))
         cands = [d[0] for d in det]
-        fs = filt.score_batch(s, cands) if cands else []
+        fs = filt.score_batch(shown, cands) if cands else []
         scored = sorted(({"smiles": c, "generator": float(g[1]), "filter": float(f),
                           "combined": float(f) * float(g[1])}
                          for c, g, f in zip(cands, det, fs)),
@@ -127,6 +143,7 @@ def main() -> int:
 
     Path(args.out).write_text(json.dumps(
         {"slice": [args.start, args.end or len(subs)], "top_k": args.top_k,
+         "present": args.present,
          "pools": pools, "references": refs},
         indent=1))
     print(f"wrote {args.out}", file=sys.stderr)

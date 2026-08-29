@@ -1,0 +1,162 @@
+{
+ "provenance": {
+  "script": "composite_instruments.py",
+  "script_path": "scripts/typed_edit/composite_instruments.py",
+  "source_sha256": "957539d1e9b8a0c5de8851f0cb5a444902705e623ec02f2e3f04754e8ca26bb1",
+  "git_commit": "9863b0708cb7fd346d1aade290d9e35c0bfb8556",
+  "git_dirty": true
+ },
+ "register": "H16",
+ "n_rules_considered": 5856,
+ "limit": 0,
+ "seed": 0,
+ "counts": {
+  "scored": 5855,
+  "instrument_1": 522,
+  "instrument_2": 903,
+  "union": 1295,
+  "both": 130,
+  "mcs_failed": 1
+ },
+ "shares": {
+  "instrument_1": 0.0892,
+  "instrument_2": 0.1542,
+  "union": 0.2212,
+  "both": 0.0222
+ },
+ "threshold_E": 5,
+ "registered_bar": 0.134,
+ "verdict": "confirmed",
+ "loci_histogram": {
+  "1": 5333,
+  "2": 448,
+  "3": 64,
+  "4": 8,
+  "5": 2
+ },
+ "E_histogram": {
+  "0": 994,
+  "1": 2572,
+  "2": 667,
+  "3": 600,
+  "4": 119,
+  "5": 110,
+  "6": 147,
+  "7": 184,
+  "8": 190,
+  "9": 124,
+  "10": 148
+ },
+ "flagged_by_instrument_2_only": 773,
+ "flagged_by_instrument_1_only": 392,
+ "examples_instrument_2_only": [
+  {
+   "loci": 1,
+   "E": 9,
+   "substrate": "Oc1cccc(C2Sc3cc(O)ccc3OC2c2ccc(OCCN3CCCC3)cc2)c1",
+   "product": "O=C1CC2=C(OC(c3ccc(OCCN4CCCC4)cc3)C(c3cccc(O)c3)S2)C2OC12",
+   "smirks": "[#16:1]-[#6:2]1:[#6:3]:[#6:4](-[#8:5]):[#6:6]:[#6:7]:[#6:8]:1-[#8:9]>>[#8:5]=[#6:4]1-[#6:3]-[#6:2](=[#6:8](-[#8:9])-[#6:7]2-[#8:10]-[#6:6]-1-2)-[#16:1]"
+  },
+  {
+   "loci": 1,
+   "E": 9,
+   "substrate": "CCCC1(CCc2ccccc2)CC(=O)C(C(CC)c2cccc(NS(=O)(=O)c3ccc(C#N)cn3)c2)C(=O)O1",
+   "product": "CCCC1(CCc2ccccc2)CC(=O)C(C(CC)c2cccc(NS(=O)(=O)C3(SCC(N=C(O)CCC(N)C(=O)O)C(O)=NCC(=O)O)C=CC(=C=N)C=N",
+   "smirks": "[#16:1]-[#6:2]1:[#6:3]:[#6:4]:[#6:5](-[#6:8]#[#7:9]):[#6:6]:[#7:7]:1>>[#16:1]-[#6:2]1(-[#16:10]-[#6:11]-[#6:12](-[#7:13]=[#6:14](-[#8:15])-[#6:16]-[#6:17]-[#6:1"
+  },
+  {
+   "loci": 1,
+   "E": 8,
+   "substrate": "CCC(O)=NS(=O)(=O)c1ccc(NC(=O)COc2ccc(Cl)cc2C(=O)c2cc(Cl)cc(C#N)c2)c(C)c1",
+   "product": "CCC(O)=NS(=O)(=O)C1=CC(=O)C(=NC(=O)COc2ccc(Cl)cc2C(=O)c2cc(Cl)cc(C#N)c2)C(C)=C1",
+   "smirks": "[#16:1]-[#6:2]1:[#6:3]:[#6:4]:[#6:5](-[#7:9]-[#6:10]):[#6:6](-[#6:8]):[#6:7]:1>>[#16:1]-[#6:2]1=[#6:3]-[#6:4](=[#8:11])-[#6:5](=[#7:9]-[#6:10])-[#6:6](-[#6:8])="
+  },
+  {
+   "loci": 1,
+   "E": 7,
+   "substrate": "CCSc1ncc(O)n1-c1cc(Cl)ccc1C",
+   "product": "CCSC1NC(=O)C(=O)N1c1cc(Cl)ccc1C",
+   "smirks": "[#16:1]-[#6:2]1:[#7:3]:[#6:4]:[#6:5](-[#8:8]):[#7:6]:1-[#6:7]>>[#16:1]-[#6:2]1-[#7:3]-[#6:4](=[#8:9])-[#6:5](=[#8:8])-[#7:6]-1-[#6:7]"
+  },
+  {
+   "loci": 1,
+   "E": 9,
+   "substrate": "NC(CCC(O)=NC(CSC1=CC(OCC2CNCCC2c2ccc(F)cc2)=CC(=O)C1=O)C(O)=NCC(=O)O)C(=O)O",
+   "product": "NC(CCC(O)=NC(CSc1cc(OCC2CNCCC2c2ccc(F)cc2)c(SCC(N=C(O)CCC(N)C(=O)O)C(O)=NCC(=O)O)c(O)c1O)C(O)=NCC(=O",
+   "smirks": "[#16:1]-[#6:2]1=[#6:3]-[#6:4](-[#8:5])=[#6:6]-[#6:7](=[#8:10])-[#6:8]-1=[#8:9]>>[#16:1]-[#6:2]1:[#6:3]:[#6:4](-[#8:5]):[#6:6](-[#16:11]-[#6:12]-[#6:13](-[#7:14]"
+  },
+  {
+   "loci": 1,
+   "E": 8,
+   "substrate": "CS(=O)(=O)Nc1ccc(N)cc1Oc1ccccc1",
+   "product": "CS(=O)(=O)N=C1C=CC(=N)C=C1Oc1ccccc1",
+   "smirks": "[#16:1]-[#7:2]-[#6:3]1:[#6:4]:[#6:5]:[#6:6](-[#7:10]):[#6:7]:[#6:8]:1-[#8:9]>>[#16:1]-[#7:2]=[#6:3]1-[#6:4]=[#6:5]-[#6:6](=[#7:10])-[#6:7]=[#6:8]-1-[#8:9]"
+  },
+  {
+   "loci": 1,
+   "E": 9,
+   "substrate": "CS(=O)(=O)N=C1C=CC(=N)C=C1Oc1ccccc1",
+   "product": "CS(=O)(=O)Nc1cc(SCC(N=C(O)CCC(N)C(=O)O)C(O)=NCC(=O)O)c(N)cc1Oc1ccccc1",
+   "smirks": "[#16:1]-[#7:2]=[#6:3]1-[#6:4]=[#6:5]-[#6:6](=[#7:10])-[#6:7]=[#6:8]-1-[#8:9]>>[#16:1]-[#7:2]-[#6:3]1:[#6:4]:[#6:5](-[#16:11]-[#6:12]-[#6:13](-[#7:14]=[#6:15](-["
+  },
+  {
+   "loci": 1,
+   "E": 9,
+   "substrate": "CS(=O)(=O)N=C1C=CC(=N)C=C1Oc1ccccc1",
+   "product": "CS(=O)(=O)Nc1ccc(N)c(SCC(N=C(O)CCC(N)C(=O)O)C(O)=NCC(=O)O)c1Oc1ccccc1",
+   "smirks": "[#16:1]-[#7:2]=[#6:3]1-[#6:4]=[#6:5]-[#6:6](=[#7:10])-[#6:7]=[#6:8]-1-[#8:9]>>[#16:1]-[#7:2]-[#6:3]1:[#6:4]:[#6:5]:[#6:6](-[#7:10]):[#6:7](-[#16:11]-[#6:12]-[#6"
+  },
+  {
+   "loci": 1,
+   "E": 9,
+   "substrate": "CS(=O)(=O)N=C1C=CC(=N)C=C1Oc1ccccc1",
+   "product": "CS(=O)(=O)Nc1c(Oc2ccccc2)cc(N)cc1SCC(N=C(O)CCC(N)C(=O)O)C(O)=NCC(=O)O",
+   "smirks": "[#16:1]-[#7:2]=[#6:3]1-[#6:4]=[#6:5]-[#6:6](=[#7:10])-[#6:7]=[#6:8]-1-[#8:9]>>[#16:1]-[#7:2]-[#6:3]1:[#6:8](-[#8:9]):[#6:7]:[#6:6](-[#7:10]):[#6:5]:[#6:4]:1-[#1"
+  },
+  {
+   "loci": 1,
+   "E": 9,
+   "substrate": "CS(=O)(=O)N=C1C=CC(=N)C=C1Oc1ccccc1",
+   "product": "CC(O)=NC(CSc1cc(N)cc(Oc2ccccc2)c1NS(C)(=O)=O)C(=O)O",
+   "smirks": "[#16:1]-[#7:2]=[#6:3]1-[#6:4]=[#6:5]-[#6:6](=[#7:10])-[#6:7]=[#6:8]-1-[#8:9]>>[#6:11]-[#6:12](-[#8:13])=[#7:14]-[#6:15](-[#6:16]-[#16:17]-[#6:4]1:[#6:5]:[#6:6]("
+  },
+  {
+   "loci": 1,
+   "E": 9,
+   "substrate": "CS(=O)(=O)N=C1C=CC(=N)C=C1Oc1ccccc1",
+   "product": "CC(O)=NC(CSc1cc(NS(C)(=O)=O)c(Oc2ccccc2)cc1N)C(=O)O",
+   "smirks": "[#16:1]-[#7:2]=[#6:3]1-[#6:4]=[#6:5]-[#6:6](=[#7:10])-[#6:7]=[#6:8]-1-[#8:9]>>[#6:11]-[#6:12](-[#8:13])=[#7:14]-[#6:15](-[#6:16]-[#16:17]-[#6:5]1:[#6:4]:[#6:3]("
+  },
+  {
+   "loci": 1,
+   "E": 9,
+   "substrate": "CS(=O)(=O)N=C1C=CC(=N)C=C1Oc1ccccc1",
+   "product": "CC(O)=NC(CSc1c(N)ccc(NS(C)(=O)=O)c1Oc1ccccc1)C(=O)O",
+   "smirks": "[#16:1]-[#7:2]=[#6:3]1-[#6:4]=[#6:5]-[#6:6](=[#7:10])-[#6:7]=[#6:8]-1-[#8:9]>>[#6:11]-[#6:12](-[#8:13])=[#7:14]-[#6:15](-[#6:16]-[#16:17]-[#6:7]1:[#6:6](-[#7:10"
+  },
+  {
+   "loci": 1,
+   "E": 7,
+   "substrate": "ClC1=C(Cl)C2OC2C(Cl)=C1c1c(Cl)ccc(Cl)c1Cl",
+   "product": "Oc1cc(Cl)c(Cl)c(-c2c(Cl)ccc(Cl)c2Cl)c1Cl",
+   "smirks": "[#17:10]-[#6:5]1=[#6:3](-[#17:4])-[#6:2]2-[#8:11]-[#6:1]-2-[#6:7](-[#17:8])=[#6:6]-1-[#6:9]>>[#8:12]-[#6:1]1:[#6:2]:[#6:3](-[#17:4]):[#6:5](-[#17:10]):[#6:6](-["
+  },
+  {
+   "loci": 1,
+   "E": 6,
+   "substrate": "ClC1C(Cl)C(Cl)C(Cl)C(Cl)C1Cl",
+   "product": "Clc1c(Cl)c(Cl)c(Cl)c(Cl)c1Cl",
+   "smirks": "[#17:1]-[#6:2]1-[#6:3](-[#17:4])-[#6:5](-[#17:6])-[#6:7](-[#17:12])-[#6:8](-[#17:11])-[#6:9]-1-[#17:10]>>[#17:1]-[#6:2]1:[#6:3](-[#17:4]):[#6:5](-[#17:6]):[#6:7"
+  },
+  {
+   "loci": 1,
+   "E": 8,
+   "substrate": "Clc1cc(Cl)c(-c2cc(Cl)c(Cl)c(Cl)c2Cl)cc1Cl",
+   "product": "ClC1=CC(c2cc(Cl)c(Cl)c(Cl)c2Cl)=C(Cl)C2OC12Cl",
+   "smirks": "[#17:1]-[#6:2]1:[#6:3]:[#6:4](-[#17:5]):[#6:6](-[#6:10]):[#6:7]:[#6:8]:1-[#17:9]>>[#17:9]-[#6:8]1=[#6:7]-[#6:6](-[#6:10])=[#6:4](-[#17:5])-[#6:3]2-[#8:11]-[#6:2"
+  }
+ ],
+ "instrument_1": "the reaction centre of the pair the template was mined from, split into components joined only through centre atoms; more than one component is more than one locus",
+ "instrument_2": "E, the core-incident edit count: bonds between matched atoms whose order or presence differs, plus attachment points gained or lost, each counted once and bonds internal to an added or removed fragment not counted; composite at E >= 5",
+ "caveat": "both instruments run under the mining MCS wall-clock timeout, so the counts are load-dependent at the margin, and a template is scored on one of its source pairs rather than all of them"
+}
