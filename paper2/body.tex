@@ -706,15 +706,15 @@ scores alone.
 Predictions are single-step in the sense that one template is applied once, which is not the same
 as one enzymatic step, and the gap between the two is larger than one instrument alone shows. The
 first counts the loci of the reaction centre of the pair a template was mined from and flags
-\numCompositeLoci{} of \numCompositeScored{} mined templates, \numCompositeLocishare{}. That is
+\numCompositeLoci{} of \numCompositeScored{} mined templates, \numCompositeLocisharePct{}. That is
 a floor and not a bound: two edits that share or neighbour centre atoms arrive as one locus and
 are counted once. A second instrument, whose threshold was registered before it was written,
 counts core-incident edits --- bonds between matched atoms whose order or presence moves, plus
 attachment points gained or lost, with bonds inside an added fragment not counted --- and calls a
 template composite at \numCompositeThreshold{} or more, above every single enzymatic turnover.
 It flags \numCompositeEdits{}, and the two instruments agree on only \numCompositeBoth{}, so
-their union is \numCompositeUnion{} templates, \numCompositeUnionshare{} of the mined templates.
-Registered prediction P10 set the bar at \numCompositeBar{} before either count existed and the
+their union is \numCompositeUnion{} templates, \numCompositeUnionsharePct{} of the mined templates.
+Registered prediction P10 set the bar at \numCompositeBarPct{} before either count existed and the
 union clears it.
 
 The corpus annotates metabolites several enzymatic steps from their parent, and a template mined

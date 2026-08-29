@@ -207,7 +207,7 @@ The arms behave very differently. SyGMa never returns the substrate;
 \numPdropReturnsBank{} of \numPopulationN{} exhaustive-mode lists contain it, at a median rank
 of \numPdropMedrankBank{}. The convention could therefore have flattered one arm and not another. It does not: the
 largest effect anywhere in the grid is \numPdropMaxEffect{}, no cell of
-\numPdropCells{} separates from zero, and the effect is at most \numPdropShareofmargin{} of the narrowest
+\numPdropCells{} separates from zero, and the effect is at most \numPdropShareofmarginPct{} of the narrowest
 separating margin anywhere in the comparison, which is \numPdropNarrowestmargin{}. Where it is negative, the cause is the \numPdropSelfref{} substrates of this population whose
 own tautomer key is among their annotated references, for which the convention discards a hit the
 annotation counts. Across the whole evaluated test set there are \numRefauditSelfref{} such
@@ -442,7 +442,7 @@ to molecules rather than to templates. Two instruments do so, and neither alone 
 \paragraph{The first instrument: how many loci.} The reaction centre of the source pair, located
 by the same maximum-common-substructure route the transformation types use, falls in more than one
 piece for \numCompositeLoci{} of the \numCompositeScored{} mined templates,
-\numCompositeLocishare{}. One mined template could not be scored, so the denominator throughout
+\numCompositeLocisharePct{}. One mined template could not be scored, so the denominator throughout
 this section is \numCompositeScored{} and not \numMinedRules{}. A centre in two pieces is one event when a bond appears or disappears
 between them, which is what a cleavage or a cyclisation looks like, and two independent edits
 otherwise; this instrument counts the pieces and does not separate the two cases. It has a blind
@@ -462,11 +462,11 @@ enzyme reaches $E=4$ at worst. Nothing one enzyme does in one turnover reaches f
 threshold is $E \ge \numCompositeThreshold{}$.
 
 \paragraph{What the two find together.} The second instrument flags \numCompositeEdits{}
-templates, \numCompositeEditshare{}. The two agree on only \numCompositeBoth{}, which is the
+templates, \numCompositeEditsharePct{}. The two agree on only \numCompositeBoth{}, which is the
 point of having both: each sees most of what the other misses. Their union is
-\numCompositeUnion{} templates, \numCompositeUnionshare{} of the mined templates. The registered bar
-was \numCompositeBar{} and the prediction is confirmed. The composite share of the mined bank is
-therefore about a fifth, not the \numCompositeLocishare{} one instrument reports, and both counts
+\numCompositeUnion{} templates, \numCompositeUnionsharePct{} of the mined templates. The registered bar
+was \numCompositeBarPct{} and the prediction is confirmed. The composite share of the mined bank is
+therefore about a fifth, not the \numCompositeLocisharePct{} one instrument reports, and both counts
 are reported here so a reader can see how much of the answer is the instrument.
 
 Inspection of the flagged pairs finds both kinds. Among the composites are a pair whose product
