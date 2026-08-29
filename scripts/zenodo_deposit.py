@@ -33,6 +33,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
+sys.path.insert(0, str(ROOT))
 
 from _provenance import stamp  # noqa: E402
 
@@ -42,12 +43,13 @@ MANIFEST = ROOT / "paper2" / "zenodo_manifest.json"
 GZIP_LEVEL = 9
 
 TITLE = "GRAIL candidate pools: per-substrate rule-application candidates with generator and filter scores"
-# NOT cc-by-4.0. ChEMBL 34 is CC BY-SA 3.0 and DrugBank 5.1.10 is CC BY-NC 4.0, and the
-# deposit holds substrate structures from both. CC BY permits commercial use, which the
-# DrugBank terms forbid, so the earlier value was wrong on its face. The two source
-# licences also do not combine, so no single value here is known to be correct: the
-# upload is blocked until the question is settled rather than published under a guess.
-LICENSE = None
+# ChEMBL 34 is CC BY-SA 3.0 and DrugBank 5.1.10 is CC BY-NC 4.0, and those do not combine: no
+# single licence can be correct for a derivative holding records from both. The question is
+# closed by not raising it. Every corpus structure -- substrates as well as annotated
+# metabolites -- is replaced by its tautomer-canonical InChIKey before the deposit is built, so
+# what is uploaded holds no source record. What remains is this work's own output, the candidate
+# structures and the two scores, and that carries CC BY 4.0.
+LICENSE = "cc-by-4.0"
 DESCRIPTION = """<p>Candidate pools for the train and validation populations of GRAIL, a
 rule-grounded predictor of xenobiotic metabolite structures. Each file records, for every
 substrate of its population, every candidate structure produced by applying the rule bank,
@@ -95,18 +97,64 @@ def counts(path: Path) -> dict:
     }
 
 
+def hash_keyed(src: Path, dst: Path) -> dict:
+    """Replace every corpus structure with its tautomer-canonical InChIKey.
+
+    The pools are keyed by the substrate's SMILES, and the reference lists beside them are
+    keyed the same way. A SMILES is the structure; an InChIKey is a hash of it. Keying by the
+    hash is what makes the deposit hold no source record, and it costs a reader nothing they
+    cannot recover: holding their own licences for the four sources, they compute the same key
+    from their own copy of the structure and join on it.
+
+    The candidate structures are left as they are. They are produced by applying this work's
+    rule bank and are not corpus records.
+    """
+    from grail_metabolism.metrics import _tautomer_inchikey as key_of
+
+    blob = json.loads(src.read_text())
+    pools, references = blob.get("pools") or {}, blob.get("references") or {}
+    keyed_pools, keyed_refs, collisions, unkeyable = {}, {}, 0, 0
+    for substrate, candidates in pools.items():
+        k = key_of(substrate)
+        if not k:
+            unkeyable += 1
+            continue
+        if k in keyed_pools:
+            collisions += 1
+            continue
+        keyed_pools[k] = candidates
+        if substrate in references:
+            keyed_refs[k] = references[substrate]
+    out = dict(blob)
+    out["pools"], out["references"] = keyed_pools, keyed_refs
+    out["substrate_keying"] = {
+        "key": "tautomer-canonical InChIKey of the substrate",
+        "why": ("the corpus records are drawn from sources whose licences do not combine, so no "
+                "source structure is redistributed; the key is a hash and the candidates beside "
+                "it are this work's output"),
+        "substrates_in": len(pools), "substrates_out": len(keyed_pools),
+        "unkeyable": unkeyable, "collisions_dropped": collisions,
+    }
+    dst.write_text(json.dumps(out, indent=1))
+    return out["substrate_keying"]
+
+
 def build() -> dict:
     BUNDLE.mkdir(parents=True, exist_ok=True)
     entries = []
     for rel in FILES:
-        src = ROOT / rel
-        if not src.exists():
+        raw = ROOT / rel
+        if not raw.exists():
             raise SystemExit(f"missing: {rel}. The pools are gitignored; build them first.")
+        src = raw.with_name(raw.stem + "_keyed.json")
+        keying = hash_keyed(raw, src)
         gz = BUNDLE / (src.name + ".gz")
         gzip_deterministic(src, gz)
         entries.append({
             "name": gz.name,
             "source": rel,
+            "derived": str(src.relative_to(ROOT)),
+            "substrate_keying": keying,
             "bytes_raw": src.stat().st_size,
             "bytes_gz": gz.stat().st_size,
             "sha256_raw": sha256(src),
@@ -139,7 +187,10 @@ def verify(where=None) -> int:
     bad = 0
     for e in rep["files"]:
         gz = where / e["name"]
-        raw = ROOT / e["source"]
+        # the digest is of the file that was compressed, which is the hash-keyed derivative and
+        # not the raw pool it came from; checking the raw pool here reported a mismatch on a
+        # bundle that was correct
+        raw = ROOT / (e.get("derived") or e["source"])
         for label, path, want in (("gz", gz, e["sha256_gz"]), ("raw", raw, e["sha256_raw"])):
             if not path.exists():
                 print(f"  {e['name']:<28} {label:<4} "
@@ -155,6 +206,16 @@ def verify(where=None) -> int:
 
 
 def upload() -> int:
+    # A published Zenodo record cannot be withdrawn, so the last gate before one is created is
+    # that the deposit holds no source structure. The manifest records the keying; if a file in
+    # it was built without one, this refuses regardless of the licence.
+    if MANIFEST.exists():
+        manifest = json.loads(MANIFEST.read_text())
+        unkeyed = [e["name"] for e in manifest.get("files", []) if not e.get("substrate_keying")]
+        if unkeyed:
+            raise SystemExit(
+                "These bundle files were built before substrate hash-keying and would "
+                f"redistribute corpus structures: {unkeyed}\nRebuild with --build first.")
     if LICENSE is None:
         raise SystemExit(
             "The deposit has no settled licence and will not be uploaded.\n"

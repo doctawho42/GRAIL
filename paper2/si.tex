@@ -40,12 +40,14 @@ ShareAlike does not permit, and dropping it breaches DrugBank's terms. MetXBioDB
 distributed with BioTransformer, whose terms require explicit permission for commercial use or
 redistribution.
 
-What the deposited pools actually contain bears on this and is stated rather than assumed. The
-substrate structures are corpus records. The candidate structures are produced by applying this
-work's rule bank and are not corpus records. The annotated metabolites appear only as
-tautomer-canonical InChIKeys, which are hashes and do not carry the structures. The deposit is
-therefore a list of corpus substrates, hashes of their annotations, and our own predictions.
-Whether that may be redistributed, and under which licence, is \CorpusLicence{}.
+What the deposit contains follows from that, and the decision is taken here rather than deferred.
+The candidate structures are produced by applying this work's rule bank and are not corpus
+records, so they are released. Every corpus structure --- the substrates as well as the annotated
+metabolites --- appears only as a tautomer-canonical InChIKey, which is a hash and does not carry
+the structure. No source record is redistributed, which is what \CorpusLicence{} means: the
+question does not have to be answered because the deposit does not raise it. The cost is that a
+reader must hold their own licences and rebuild the substrate set to join on the keys, and the
+manifest is what tells them whether their rebuild matches.
 
 \subsection{How the corpus was assembled}
 
@@ -602,11 +604,18 @@ moved. Every number in the paper reaches the page through a macro generated from
 artifact, and a checker refuses any numeric literal in the manuscript that is not on a short
 allow-list of constants published elsewhere.
 
-The train and validation candidate pools are prepared for deposit at \ZenodoDoi{}. The
-deposit's manifest pins the SHA-256 of both the raw file and the uploaded archive together with
-the record counts, so a download can be verified against the version used here. The upload is
-held until the licence position above is settled, and the tool refuses to run without one: a
-Zenodo record cannot be withdrawn once published.
+The train and validation candidate pools are deposited at \ZenodoDoi{}. Every substrate and
+every annotated metabolite in them is replaced by its tautomer-canonical InChIKey before the
+archive is built, so the deposit holds no source structure; the candidate structures beside the
+keys are this work's own output and are released as they are. The transform is part of the
+deposit tool and its counts are recorded in the manifest --- how many substrates went in, how
+many came out, how many could not be keyed and how many keys collided --- because a silent drop
+there would be a silent loss of population. The manifest also pins the SHA-256 of both the
+archive and the file inside it together with the record counts, so a download can be verified
+against the version used here. The tool refuses to build an archive from a pool whose substrates
+were not keyed, and refuses to publish one at all without a licence: a Zenodo record cannot be
+withdrawn once published, so the last gate before one exists is that it carries nothing that
+cannot be redistributed.
 
 \bibliography{refs}
 

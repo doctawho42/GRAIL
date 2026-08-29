@@ -2,13 +2,13 @@
  "provenance": {
   "script": "zenodo_deposit.py",
   "script_path": "scripts/zenodo_deposit.py",
-  "source_sha256": "6989b8d48f60f7db4717d0992e1bdea03983394caa6e001155d02c15efea78e8",
-  "git_commit": "e38994a7e10f2fcb4bf046710923b0fd96a797ce",
+  "source_sha256": "73a1f973742035f0ab6a9dec5ceed693e0b03ed63a83d563cf6baca173f1a65e",
+  "git_commit": "13d3cbb17741787813c101c5f0bff31dffc57c33",
   "git_dirty": true
  },
  "deposit": {
   "title": "GRAIL candidate pools: per-substrate rule-application candidates with generator and filter scores",
-  "license": null,
+  "license": "cc-by-4.0",
   "doi": null,
   "note": "doi is filled by --upload, or by hand from the Zenodo record"
  },
@@ -19,12 +19,21 @@
  },
  "files": [
   {
-   "name": "train_pools.json.gz",
+   "name": "train_pools_keyed.json.gz",
    "source": "results/train_pools.json",
-   "bytes_raw": 47178660,
-   "bytes_gz": 9542714,
-   "sha256_raw": "9ee3914c275d9468e0136ddd4c1ad7c0922a11c8f445d379a5b0d7496cef61fe",
-   "sha256_gz": "e9748b42b2936e76a76e569bd95d31fbfa681964b3b45aadba51fbf16828f096",
+   "derived": "results/train_pools_keyed.json",
+   "substrate_keying": {
+    "key": "tautomer-canonical InChIKey of the substrate",
+    "why": "the corpus records are drawn from sources whose licences do not combine, so no source structure is redistributed; the key is a hash and the candidates beside it are this work's output",
+    "substrates_in": 349,
+    "substrates_out": 349,
+    "unkeyable": 0,
+    "collisions_dropped": 0
+   },
+   "bytes_raw": 47169877,
+   "bytes_gz": 9541839,
+   "sha256_raw": "f9d124d9a3e7df8eca866e92a05a8bf6494594faf33c5a609a26538ec4935e33",
+   "sha256_gz": "760c6d4e6ec0a684fae8ec9b7ea98a8a436806ac05b693648551f9b18b800ebd",
    "split": "train",
    "match": null,
    "substrates": 349,
@@ -35,12 +44,21 @@
    "producer_commit": "e3fbb76d5c6679add2547a849a7d2b79353f3746"
   },
   {
-   "name": "val_pools.json.gz",
+   "name": "val_pools_keyed.json.gz",
    "source": "results/val_pools.json",
-   "bytes_raw": 48645807,
-   "bytes_gz": 9579514,
-   "sha256_raw": "3d1c715c8148139b47b7ad580267dc88df77f7261ffb6bfa8e1fc78328c297ae",
-   "sha256_gz": "b6c74e35261dccffcf01020a4a454b20c6728a9ecf829d67ba3edaa9c194b4a8",
+   "derived": "results/val_pools_keyed.json",
+   "substrate_keying": {
+    "key": "tautomer-canonical InChIKey of the substrate",
+    "why": "the corpus records are drawn from sources whose licences do not combine, so no source structure is redistributed; the key is a hash and the candidates beside it are this work's output",
+    "substrates_in": 293,
+    "substrates_out": 293,
+    "unkeyable": 0,
+    "collisions_dropped": 0
+   },
+   "bytes_raw": 48635654,
+   "bytes_gz": 9578638,
+   "sha256_raw": "d9559adfe84432c54966522fc8779d204c55ab873e8757ad6c084b720d3a00f0",
+   "sha256_gz": "c30d7ef8f8f6884220c84d5e0f207ef59c3e4f212bcddd0356977fa784ab91c9",
    "split": "validation",
    "match": "inchikey_tautomer",
    "substrates": 293,

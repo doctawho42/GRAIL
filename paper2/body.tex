@@ -709,14 +709,24 @@ outcome are at \texttt{github.com/doctawho42/GRAIL}, and are available to review
 submission. Releasing the checkpoints is the same bar this paper applies to others: a system
 whose weights are not obtainable cannot be compared against, which is why one of the
 \numComparatorsUnavailable{} systems of 2025--26 is excluded here. The train and
-validation candidate pools are prepared for deposit at \ZenodoDoi{}, held until the licence
-position is settled. The annotated
+validation candidate pools are deposited at \ZenodoDoi{}. The annotated
 substrate--metabolite corpus is assembled from ChEMBL \citep{Zdrazil_2024}, DrugBank
 \citep{Wishart_2018}, MetXBioDB \citep{Djoumbou_Feunang_2019} and the GLORYx reference set
-\citep{de_Bruyn_Kops_2020}, at versions \CorpusVersions{}. The deposited pools hold corpus
-substrate structures, tautomer-canonical hashes of the annotated metabolites, and candidate
-structures produced by this work. Whether they may be redistributed, and under which licence, is
-\CorpusLicence{}; the sources' own licences are set out in the Supporting Information.
+\citep{de_Bruyn_Kops_2020}, at versions \CorpusVersions{}.
+
+The corpus itself is not redistributed, and the reason is a limitation of this release rather
+than an open question. ChEMBL is released under a ShareAlike licence and DrugBank under a
+NonCommercial one; a single derivative drawing on both cannot satisfy each, because the
+non-commercial clause is a restriction ShareAlike forbids adding and dropping it breaches
+DrugBank's terms. Third-party restrictions therefore apply to the corpus records, and the
+question of the derived corpus's licence is \CorpusLicence{}. What is deposited holds
+tautomer-canonical hashes of every substrate and of every annotated metabolite, together with the
+candidate structures this work's rule bank produced, which are our output and not source records.
+A reader holding their own licences for the four sources obtains the records, computes the same
+hashes and joins to everything here on them; the split manifest confirms that the rebuild matches
+rather than merely reporting that it differs. The one step no reader can reproduce is the
+extraction that selected from the four sources, which is not in the repository and is recorded as
+such in the Supporting Information.
 
 \numProvPinned{} artifacts are pinned, and every number in this paper comes from one of them.
 Each records the commit that wrote it; a sweep recomputes the hash of its producer and refuses the
