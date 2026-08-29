@@ -104,8 +104,6 @@ PINNED = {
     # substrate-presentation axis and is cited beside the first two
     "results/case_study_drawn.json": f"{TE}/case_study.py",
     "results/case_study_exhaustive_drawn.json": f"{TE}/case_study.py",
-    # the substrate-presentation sweep on both GRAIL arms
-    "results/dialect_sweep.json": f"{TE}/dialect_sweep.py",
     # what the corpus's drawing cost the comparator whose rules can be re-run against it
     "results/sygma_by_dialect.json": f"{TE}/sygma_by_dialect.py",
     # the axis itself, and what it did to the bank
