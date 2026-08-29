@@ -171,6 +171,46 @@ def si_ranking():
             "\\label{tab:si-ranking}\n\\end{table}\n")
 
 
+def si_dialect():
+    """What the substrate's drawing does to each arm, and to each verdict.
+
+    Two blocks. The first is the paired effect of presenting the substrate as the declared
+    standardiser draws it rather than as the corpus stores it, per arm and per budget. The second
+    counts, over every arm-against-comparator cell, how many verdicts move.
+    """
+    d = art("dialect_sweep.json")
+    ks = [str(k) for k in d["budgets"]]
+    rows = []
+    for arm, row in d["effect_on_each_arm"].items():
+        rows.append(f"{arm} & " + " & ".join(
+            (f"{row[k]['difference']:+.4f}" + ("$^{*}$" if row[k]["separates"]
+                                               else "\\phantom{$^{*}$}"))
+            for k in ks) + " \\\\")
+    head = " & ".join(f"${k}$" for k in ks)
+    cover = d["coverage_ceiling"]
+    return ("\\begin{table}[h]\n\\centering\\small\n"
+            f"\\begin{{tabular}}{{l{'r' * len(ks)}}}\n\\toprule\n"
+            f"arm & \\multicolumn{{{len(ks)}}}{{c}}{{budget $k$}} \\\\\n"
+            f"\\cmidrule(lr){{2-{len(ks) + 1}}}\n & {head} \\\\\n\\midrule\n"
+            + "\n".join(rows)
+            + "\n\\bottomrule\n\\end{tabular}\n"
+            "\\caption{Micro recall with every substrate presented as the declared standardiser "
+            "draws it, minus the same quantity with the substrate as the corpus stores it, on the "
+            f"{d['n']} substrates of the comparison set. A positive value is recall the corpus's "
+            "drawing was denying the arm. $^{*}$ marks a paired interval excluding zero. The "
+            "annotation is looked up under the corpus string in both runs, so the two are scored "
+            "against one reference set and are paired substrate by substrate. On the same "
+            f"population the coverage ceiling is {cover['stored']['coverage']:.4f} under the "
+            f"stored drawing and {cover['standardised']['coverage']:.4f} under the standardiser's, "
+            f"a difference of {cover['difference']['value']:+.4f} "
+            f"$[{cover['difference']['ci95'][0]:+.4f}, {cover['difference']['ci95'][1]:+.4f}]$. "
+            f"Of {d['verdict_cells']} arm-against-comparator verdicts, "
+            f"{d['verdict_cells_that_move']} move. The three comparators are held at the corpus "
+            "drawing because MetaTox is a web service and MetaPredictor a frozen delivery; SyGMa, "
+            "which can be re-run, is swept separately.}\n"
+            "\\label{tab:si-dialect}\n\\end{table}\n")
+
+
 def si_intervals():
     """Every GRAIL-versus-comparator difference with its paired interval.
 
@@ -299,7 +339,8 @@ if __name__ == "__main__":
                      ("si_table_ranking", si_ranking),
                      ("si_table_intervals", si_intervals),
                      ("si_table_precision", si_precision),
-                     ("si_table_parentdrop", si_parentdrop)):
+                     ("si_table_parentdrop", si_parentdrop),
+                     ("si_table_dialect", si_dialect)):
         try:
             (OUT / f"{name}.tex").write_text(fn())
             print(f"  wrote paper2/{name}.tex")

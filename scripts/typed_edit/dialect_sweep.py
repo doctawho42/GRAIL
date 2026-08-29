@@ -148,12 +148,37 @@ def main() -> int:
                 row[str(k)] = out
             verdicts[f"{name} vs {comparator}"] = row
 
+    # 3. the coverage ceiling on this population, under both drawings. The exhaustive pool is the
+    # whole bank applied without a selector and is not capped, so the share of references that
+    # appear anywhere in it IS the ceiling on these substrates. It costs nothing extra here, and
+    # it is the same quantity the main text reports on the full split under one drawing.
+    ceiling = {}
+    for dialect in ("stored", "standardised"):
+        pools = arms["GRAIL exhaustive"][dialect]
+        reached = np.array([len({c["key"] for c in pools[s] if c.get("key")} & truth[s])
+                            for s in subs], dtype=float)
+        ceiling[dialect] = {"recovered": int(reached.sum()), "of": int(U.sum()),
+                            "coverage": round(float(reached.sum() / U.sum()), 4)}
+    a = np.array([len({c["key"] for c in arms["GRAIL exhaustive"]["standardised"][s]
+                       if c.get("key")} & truth[s]) for s in subs], dtype=float)
+    b = np.array([len({c["key"] for c in arms["GRAIL exhaustive"]["stored"][s]
+                       if c.get("key")} & truth[s]) for s in subs], dtype=float)
+    bt = (a - b)[idx].sum(axis=1) / den
+    lo, hi = np.percentile(bt, [2.5, 97.5])
+    ceiling["difference"] = {"value": round(float((a - b).sum() / U.sum()), 4),
+                             "ci95": [round(float(lo), 4), round(float(hi), 4)],
+                             "separates": bool(lo > 0 or hi < 0)}
+    ceiling["note"] = ("measured on the comparison set rather than the full evaluated split, "
+                       "because the uncapped exhaustive pool for this population exists in both "
+                       "drawings and the full split's does not in the second")
+
     moved = sum(1 for r in verdicts.values() for k in r if r[k]["verdict_moves"])
     cells = sum(len(r) for r in verdicts.values())
 
     rep = {"provenance": stamp(__file__), "n": len(subs), "budgets": list(KS),
            "match": "inchikey_tautomer", "cap": CAP, "n_boot": N_BOOT, "seed": SEED,
            "effect_on_each_arm": effect,
+           "coverage_ceiling": ceiling,
            "verdicts": verdicts,
            "verdict_cells": cells, "verdict_cells_that_move": moved,
            "comparators_held_fixed": ["MetaTox", "MetaPredictor", "SyGMa"],
@@ -168,6 +193,13 @@ def main() -> int:
     for name in ARMS:
         cells_ = "".join(f"{effect[name][str(k)]['difference']:>+9.4f}" for k in KS)
         print(f"{name:<20}{cells_}")
+    print(f"\ncoverage ceiling on this population: stored "
+          f"{ceiling['stored']['coverage']:.4f} ({ceiling['stored']['recovered']} of "
+          f"{ceiling['stored']['of']}), standardised {ceiling['standardised']['coverage']:.4f} "
+          f"({ceiling['standardised']['recovered']}); difference "
+          f"{ceiling['difference']['value']:+.4f} "
+          f"[{ceiling['difference']['ci95'][0]:+.4f}, {ceiling['difference']['ci95'][1]:+.4f}]"
+          + ("  separates" if ceiling["difference"]["separates"] else ""))
     print(f"\nverdict cells that move: {moved} of {cells}")
     for label, row in verdicts.items():
         movers = [k for k in row if row[k]["verdict_moves"]]
