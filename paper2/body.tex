@@ -625,8 +625,16 @@ scores alone.
 
 \section{Limitations}
 
-Predictions are single-step; applying the bank at depth two lifts the ceiling by about $0.012$ at
-$8.5$ times the candidate cost and is not deployed. Precision is bounded by annotation
+Predictions are single-step in the sense that one template is applied once, which is not the same
+as one enzymatic step. \numCascadeMulti{} of the \numCascadeScored{} mined templates,
+\numCascadeShare{}\%, were derived from an annotated pair whose reaction centre falls in more
+than one piece: the corpus annotates metabolites several enzymatic steps from their parent, and a
+template mined from such a pair performs those steps together. Some of these are one event with
+two loci, a cleavage or a cyclisation, and this measurement does not separate them; inspection of
+the rest finds genuine composites, among them a rule oxidising two ring positions at once and a
+rule that both substitutes and conjugates glutathione. The coverage ceiling this paper reports is
+therefore a one-template ceiling and not a one-enzyme one. Applying the bank at depth two lifts it
+by about $0.012$ at $8.5$ times the candidate cost and is not deployed. Precision is bounded by annotation
 completeness. The rule-budget threshold in P3 is a property of the requested budget rather than
 of the system. The group-ranking headroom is real and unreached by both registered
 compositions for structural reasons. Every method runs out of candidates at wide budgets, so the

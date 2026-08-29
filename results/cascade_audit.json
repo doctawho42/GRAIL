@@ -1,0 +1,207 @@
+{
+ "provenance": {
+  "script": "cascade_audit.py",
+  "script_path": "scripts/typed_edit/cascade_audit.py",
+  "source_sha256": "d5d38c4750d81fe67bc29a86f54c55043d30dcc55da6569749f6099645b9c473",
+  "git_commit": "5bea61a923a005679f6f86767138ade9f717adc4",
+  "git_dirty": true
+ },
+ "bank": "grail_metabolism/resources/extended_smirks.txt",
+ "n_templates": 7581,
+ "slack_bonds": 2,
+ "criterion": "a bond is changed when its order differs between mapped reactant and product or exists on one side only; changed bonds are projected onto the reactant graph and their connected components counted, joining components within `slack` bonds so one edit reported as two adjacent bond changes is not miscounted",
+ "counts": {
+  "regions_1": 7343,
+  "multi_region": 82,
+  "curated": 1572,
+  "regions_2": 69,
+  "multi_curated": 79,
+  "independent_edits": 82,
+  "no_change_detected": 155,
+  "regions_3": 11,
+  "regions_4": 2,
+  "unparseable": 1,
+  "mined": 5853,
+  "multi_mined": 3
+ },
+ "n_scored": 7425,
+ "multi_region_share": 0.011,
+ "examples": [
+  {
+   "index": 5,
+   "regions": 2,
+   "changed_bonds": 2,
+   "source": "curated",
+   "smirks": "[C$(C[#6!H3]):2](=[O:3])O[#6!H3:4]>>([C:2](=[O:3])O.O[*:4])"
+  },
+  {
+   "index": 141,
+   "regions": 2,
+   "changed_bonds": 3,
+   "source": "curated",
+   "smirks": "[#6:1][C:2](=O)O[C:5][C:6][OH1]>>[*:1][C:2](=O)O[C:6][C:5]O"
+  },
+  {
+   "index": 345,
+   "regions": 2,
+   "changed_bonds": 2,
+   "source": "curated",
+   "smirks": "[NH1;!$(NC=O):1]([H])[#6:2]~!@[*:3]~!@[*:4]~@[*:5]C(=O)-[OH1]>>[N:1]1[#6:2]~[*:3]~[*:4]~[*:5]C1=O"
+  },
+  {
+   "index": 358,
+   "regions": 2,
+   "changed_bonds": 2,
+   "source": "curated",
+   "smirks": "[NH1;!$(NC=O):1]([H])[#6:2]~!@[*:3]~!@[*:4]~!@[*:5]C(=O)-[OH1]>>[N:1]1[#6:2]~[*:3]~[*:4]~[*:5]C1=O"
+  },
+  {
+   "index": 518,
+   "regions": 3,
+   "changed_bonds": 3,
+   "source": "curated",
+   "smirks": "([C:1][C:2][C:3](:[C:4]):[C:5].[C:6]=[C:7][C:8][C:9].[C][C][C][C]([N])[C:10](O[C])=[O:11])>>([C:1]=[C:2][C:3](:[C:4]):[C:5].[C:6][C:7][C:8][C:9].[C:10][O:11])"
+  },
+  {
+   "index": 535,
+   "regions": 2,
+   "changed_bonds": 6,
+   "source": "curated",
+   "smirks": "([c]1[c][c]c(N=[C:2]([C:1])[O:3])[c][c]1.[C:5][C:6][C:7][C:14][C:13][C:12]=[C:10][C:9][C:8])>>([C:1][C:2]([O:3])=[O:4].[C:5][C:6][C:7][C:8][C:9][C:10]([O:11])[C:12]=[C:13][C:14])"
+  },
+  {
+   "index": 548,
+   "regions": 2,
+   "changed_bonds": 4,
+   "source": "curated",
+   "smirks": "([C:7].[C:1]([C:2])[C:3]=[C:4]([C:5])[C:6])>>([C:1][C:2]=[C:3][C:4]([C:5])[C:6].[C:7][O:8])"
+  },
+  {
+   "index": 555,
+   "regions": 2,
+   "changed_bonds": 3,
+   "source": "curated",
+   "smirks": "([C:1][C:2]=[C:3]([C:4])[C:5]([C:6])[C:7].[C]OC([C][C][C][C:8])=[O:9])>>([C:1][C:2][C:3]([C:4])=[C:5]([C:6])[C:7].[C:8][O:9])"
+  },
+  {
+   "index": 573,
+   "regions": 2,
+   "changed_bonds": 3,
+   "source": "curated",
+   "smirks": "([C:8].Cl[C:1][C:2][C:3]([C:4])=[C:5]([C:6])[C:7])>>([C:1][C:2]=[C:3]([C:4])[C:5]([C:6])[C:7].[C:8][O:9])"
+  },
+  {
+   "index": 592,
+   "regions": 3,
+   "changed_bonds": 14,
+   "source": "curated",
+   "smirks": "([C:1].[C:2]=[C:8][C:9].[C:12][C:17]=[C:16]:[C:14]([C:13]):[C:15].[C](\\\\[C:5](:[C:4][C:3]=[C:10][C:11]):[NH:6])=[C:21]1\\\\[N:20]=[C:19]([C:18])[C:26]([C:27])=[C:23]1[C:24][C:25])>>([C:1]=[C:2].[C:3][C:4]:[C:5](:[NH:6])[O:"
+  },
+  {
+   "index": 596,
+   "regions": 2,
+   "changed_bonds": 5,
+   "source": "curated",
+   "smirks": "([C:11].[C:2].[C:1][C:3][C:4]([C:5])[C:6]([C:7])=[C:8]([C:9])[C:10])>>([C:1][C:2].[C:3][C:4]([C:5])[C:6]([C:7])[C:8]([C:9])=[C:10].[C:11][O:12])"
+  },
+  {
+   "index": 620,
+   "regions": 3,
+   "changed_bonds": 4,
+   "source": "curated",
+   "smirks": "([C:13].[C:1][C:2]([C:3])=[C:4](:[C:5]):[N:6].[C:7][C:8][C:9]=[C:10](:[C:11]):[C:12])>>([C:1][C:2]([C:3])[C:4](:[C:5]):[N:6].[C:7][C:8]=[C:9][C:10](:[C:11]):[C:12].[C:13][O:14])"
+  },
+  {
+   "index": 626,
+   "regions": 2,
+   "changed_bonds": 2,
+   "source": "curated",
+   "smirks": "([C:1]=[C:2](:[C:3]):[C:4].[C:5][C:6]([C:7])=[C:8](:[C:9]):[C:10])>>([C:1][C:2](:[C:3]):[C:4].[C:5][C:6]([C:7])[C:8](:[C:9]):[C:10])"
+  },
+  {
+   "index": 629,
+   "regions": 2,
+   "changed_bonds": 4,
+   "source": "curated",
+   "smirks": "([C:1].[C:3][C:4][C:5]1=[C:6][C:7]=[C:8]([C:9])[C:10][C:11]1([C:12])[C:13])>>([C:1]=[O:2].[C:3][C:4][C:5]1[C:6]=[C:7][C:8]([C:9])[C:10][C:11]1([C:12])[C:13])"
+  },
+  {
+   "index": 630,
+   "regions": 2,
+   "changed_bonds": 11,
+   "source": "curated",
+   "smirks": "([C:11]:[C:15](:[C:13](:[C:12])[O:14])[O:16].[C:1]:[C:9]([C:4]([C:3])[C:5]([C:2])[C:6](:[C:7]):[C:8]):[C:10])>>([C:1]:[C:2]:[C:3][C:4](:[C:5][C:6](:[C:7]):[C:8]):[C:9]:[C:10].[C:11][C:12][C:13](=[O:14])[C:15][O:16])"
+  },
+  {
+   "index": 640,
+   "regions": 2,
+   "changed_bonds": 8,
+   "source": "curated",
+   "smirks": "([C:14].[C:2](=[C:3][C:4])[C:6].[C:5]=[C:7][C:8][C:9]=[C:10][C:15].[C:11][C:12][C:13])>>([O:1]=[C:2]1[C:3][C:4][C:5]=[C:6]1.[C:7][C:8][C:9]=[C:10].[C:11][C:12][C:13][C:14].[C:15][O:16])"
+  },
+  {
+   "index": 644,
+   "regions": 2,
+   "changed_bonds": 3,
+   "source": "curated",
+   "smirks": "([C:10].[C][C]=[C:2]([C])[C:1].[C:5][C:6][C:7]([C:8])[C:9])>>([C:1][C:2]([O:3])=[O:4].[C:5][C:6][C:7]([C:8])[C:9].[C:10][O:11])"
+  },
+  {
+   "index": 648,
+   "regions": 2,
+   "changed_bonds": 2,
+   "source": "curated",
+   "smirks": "(Cl[C:2]([C:1])([C:3])[C:4].Cl[C:7][C:6].[O:5])>>([C:1][C:2]([C:3])([C:4])[O:5].[C:6][C:7][O:8])"
+  },
+  {
+   "index": 654,
+   "regions": 2,
+   "changed_bonds": 2,
+   "source": "curated",
+   "smirks": "[*][C:1](=[O:2])-[O:3]-[*]>>[*][C:1](=[O:2])-[O:3].[O:4]-[*]"
+  },
+  {
+   "index": 658,
+   "regions": 2,
+   "changed_bonds": 3,
+   "source": "curated",
+   "smirks": "([C:1].[C:3]([C:4])[C:5])>>([C:1]=[O:2].[C:3][C:4]=[C:5])"
+  },
+  {
+   "index": 682,
+   "regions": 2,
+   "changed_bonds": 4,
+   "source": "curated",
+   "smirks": "([O:1]1[C:2][C:3]1.[C:6]1[C:7][O:8]1)>>([O:1][C:2][C:3][O:4].[O:5][C:6][C:7][O:8])"
+  },
+  {
+   "index": 684,
+   "regions": 2,
+   "changed_bonds": 6,
+   "source": "curated",
+   "smirks": "([C:10].[O:5]=[C:6]([C:7])[O:12][C:11].[C]C([C:4][C:2]([C:1])=[O:3])=[C:8][C:9])>>([C:1][C:2]([O:3])[C:4]1[O:5][C:6]1[C:7].[C:8][C:9][C:10].[C:11][O:12])"
+  },
+  {
+   "index": 697,
+   "regions": 2,
+   "changed_bonds": 5,
+   "source": "curated",
+   "smirks": "([C].[C:9].[C:4]([C:5])(=[O:6])[O:11][C:10].[C]([C:1]([C:2])=[C:8][C:7])[C:3])>>([C:1][C:2].[C:3][C:4]([C:5])[O:6].[C:7][C:8]=[C:9].[C:10][O:11])"
+  },
+  {
+   "index": 711,
+   "regions": 2,
+   "changed_bonds": 7,
+   "source": "curated",
+   "smirks": "([C:1]:[C:2](:[C:3])=[O:4].[O]C(:[O:8]:[C:6](:[C:5]):[C:9](=[O:7]):[C:10]):[C:14](:[C:11]):[C:15].[O][C:13](:[O]):[C:12])>>([C:1]:[C:2](:[C:3])[O:4].[C:5]:[C:6](=[O:7]):[O:8].[C:9]:[C:10]:[C:11].[C:12]:[C:13]:[C:14]:[C:1"
+  },
+  {
+   "index": 742,
+   "regions": 2,
+   "changed_bonds": 2,
+   "source": "curated",
+   "smirks": "([C:3][c:4]1[c:5][c:6][n:7][c:9][c:10]1.[S:2])>>([O:1]=[S:2].[C:3][c:4]1[c:5][c:6][n+:7]([O-:8])[c:9][c:10]1)"
+  }
+ ],
+ "reading": "a template with more than one region performs more than one independent edit, so one application of it is not one enzymatic step"
+}

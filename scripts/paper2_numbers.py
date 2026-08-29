@@ -365,6 +365,13 @@ def build():
     # so it is computed here rather than written in words.
     n["h8.design_share"] = round(abs(n["h8.design"]) / n["oracle.headroom"], 3)
 
+    # how many mined templates were derived from a pair whose reaction centre is in more than
+    # one piece, which bears on what "single-step" means
+    cb = art("cascade_by_pairs.json")
+    n["cascade.scored"] = cb["counts"]["scored"]
+    n["cascade.multi"] = cb["counts"]["multi_locus"]
+    n["cascade.share"] = round(100 * cb["multi_locus_share"], 1)
+
     # BioTransformer: obtained and measured, but for template reach rather than as a ranked
     # predictor, which is why it carries no column in the comparison
     bt = art("decompose_biotransformer.json")

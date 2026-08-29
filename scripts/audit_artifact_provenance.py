@@ -94,6 +94,7 @@ PINNED = {
     "results/similarity_baseline.json": f"{TE}/similarity_baseline.py",
     "results/ranking_ablation.json": f"{TE}/ranking_ablation.py",
     "results/precision_table.json": f"{TE}/precision_table.py",
+    "results/cascade_by_pairs.json": f"{TE}/cascade_by_pairs.py",
     "results/selection_ablation_deployed.json": f"{TE}/selection_verdict.py",
     "results/selection_pools_deployed.json": f"{TE}/selection_ablation_deployed.py",
     "results/case_study.json": f"{TE}/case_study.py",

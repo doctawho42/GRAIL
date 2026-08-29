@@ -220,6 +220,34 @@ does not occur \citep{Jain_2016}. The consequence for the reported metrics is th
 pessimistic by a bounded but unknown amount, which is why the paper reports it without using it to
 order systems.
 
+\section{What a single step is}
+
+The paper's predictions are single-step in the sense that one template is applied once. Whether
+that is also one enzymatic step depends on the templates, and it is not always.
+
+Every mined template comes from an annotated substrate--product pair. The reaction centre of that
+pair, located by the same maximum-common-substructure route the transformation types use, falls in
+more than one connected piece for \numCascadeMulti{} of the \numCascadeScored{} mined templates,
+\numCascadeShare{}\%. A centre in two pieces is one event when a bond appears or disappears
+between them, which is what a cleavage or a cyclisation looks like, and two independent edits
+otherwise; this measurement counts the pieces and does not separate the two cases, so
+\numCascadeShare{}\% is an upper bound on the composite share and not an estimate of it.
+
+Inspection of the flagged pairs finds both kinds. Among the composites are a pair whose product
+carries two new carbonyls on one piperazine ring, a pair in which a ketone is reduced and a
+pyridine nitrogen oxidised, and a pair gaining sixteen heavy atoms as a glutathione conjugate
+after a substitution. None of these is one enzyme acting once.
+
+The consequence for the paper is confined and stated where it bites: the coverage ceiling is a
+one-template ceiling. A rule that performs two edits can reach a metabolite two steps away in one
+application, so the ceiling is not the reach of one enzymatic step, and the depth-two experiment
+in the Limitations measures a second template application rather than a second enzymatic step.
+
+An earlier attempt read the templates themselves rather than the pairs and was abandoned: a
+cleavage whose bridging atom carries no map number is invisible to a comparison of mapped bonds,
+and a cyclisation joins two distant loci in a single event. Parsing partially mapped SMIRKS is the
+wrong instrument for this question and its answer disagreed with what the molecules show.
+
 \section{The registered predictions}
 
 The register is released in full at \texttt{github.com/doctawho42/GRAIL}, with every prediction as

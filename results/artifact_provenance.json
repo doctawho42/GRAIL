@@ -14,6 +14,12 @@
    "status": "current"
   },
   {
+   "artifact": "results/cascade_by_pairs.json",
+   "script": "cascade_by_pairs.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
    "artifact": "results/case_study.json",
    "script": "case_study.py",
    "how": "recorded source digest",
@@ -290,13 +296,13 @@
    "status": "current"
   }
  ],
- "n_pinned": 48,
+ "n_pinned": 49,
  "n_pinned_stale": 0,
  "sweep": {
   "unstamped": 117,
   "producer_changed": 39,
+  "current": 28,
   "producer_unknown": 27,
-  "current": 27,
   "cosmetic_only": 8
  },
  "sweep_not_current": [
