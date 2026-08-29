@@ -1,0 +1,19 @@
+{
+ "clusters": {
+  "extrapolation50k": {
+   "systems": [
+    "Chemformer",
+    "LocalRetro",
+    "MEGAN",
+    "GraphRetro",
+    "Molecular Transformer"
+   ],
+   "test_csv": "grail_metabolism/data/retro_extrapolation/extrapolation50k_test.csv",
+   "n_targets": 4948
+  }
+ },
+ "config": {
+  "source": "grail_metabolism/data/retro_extrapolation",
+  "note": "written by scripts/retro_extrapolation_ingest.py; the release is reshaped to the form robust_order.py and retro_leaderboard.py already read, so both score this board with the code that scored the others"
+ }
+}

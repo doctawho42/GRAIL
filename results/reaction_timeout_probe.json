@@ -1,0 +1,57 @@
+{
+ "provenance": {
+  "script": "reaction_timeout_probe.py",
+  "script_path": "scripts/typed_edit/reaction_timeout_probe.py",
+  "source_sha256": "e7ee3e50cc40e99f448b2ad4b31ed7f9981220eb861708bf32adc520a9aab757",
+  "git_commit": "4aeeabc571021a84ea36e7873baae29255ab9134",
+  "git_dirty": true
+ },
+ "n_rules": 7580,
+ "cap_seconds": 5.0,
+ "cap_products": 500,
+ "note": "times only rule application; normalisation of the products is not included, so these are a lower bound on the generator's cost",
+ "rows": [
+  {
+   "heavy": 109,
+   "smiles": "CC(C)C(N=C(O)C(CCC(=O)O)N=C(O)C(CC(=O)O)N=C(O)OCc1ccccc1)C(O)=NC(CC(=O)O)C(O)=Nc1ccc2c(c1)Oc1cc(N=C(O)C(CC(=O)O)N=C(O)C(",
+   "total_s": 5.2,
+   "n_products": 20655,
+   "per_rule_s": {
+    "mean": 0.0007,
+    "p50": 0.0,
+    "p99": 0.0103,
+    "max": 0.58
+   },
+   "applications_over_the_cap": 0,
+   "worst_offenders": []
+  },
+  {
+   "heavy": 95,
+   "smiles": "COc1ccc2c(CC(O)=NC(C(O)=NC(CC(=O)O)C(O)=NC(CCC(=N)O)C(O)=NC(C(O)=NC(CC(=O)O)C(O)=NCC(O)=NC(Cc3c[nH]c4ccccc34)C(O)=NC(CCC",
+   "total_s": 3.6,
+   "n_products": 17618,
+   "per_rule_s": {
+    "mean": 0.0005,
+    "p50": 0.0,
+    "p99": 0.0078,
+    "max": 0.329
+   },
+   "applications_over_the_cap": 0,
+   "worst_offenders": []
+  },
+  {
+   "heavy": 75,
+   "smiles": "CC(C)=CCCC(C)(OC1OC(COC2OCC(O)C(O)C2O)C(O)C(O)C1O)C1CCC2(C)C1C(O)CC1C3(C)CCC(OC4OC(CO)C(O)C(O)C4OC4OC(CO)C(O)C(O)C4O)C(C",
+   "total_s": 6.1,
+   "n_products": 41970,
+   "per_rule_s": {
+    "mean": 0.0008,
+    "p50": 0.0,
+    "p99": 0.0172,
+    "max": 0.543
+   },
+   "applications_over_the_cap": 0,
+   "worst_offenders": []
+  }
+ ]
+}

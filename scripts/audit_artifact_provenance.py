@@ -100,6 +100,19 @@ PINNED = {
     "results/selection_pools_deployed.json": f"{TE}/selection_ablation_deployed.py",
     "results/case_study.json": f"{TE}/case_study.py",
     "results/case_study_exhaustive.json": f"{TE}/case_study.py",
+    # the same example on the molecule as a chemist draws it, which is the other half of the
+    # substrate-presentation axis and is cited beside the first two
+    "results/case_study_drawn.json": f"{TE}/case_study.py",
+    "results/case_study_exhaustive_drawn.json": f"{TE}/case_study.py",
+    # the axis itself, and what it did to the bank
+    "results/dialect_census.json": f"{TE}/dialect_census.py",
+    "results/standardiser_versions.json": f"{TE}/standardiser_versions.py",
+    # what the corpus assembly can and cannot say about itself
+    "results/corpus_assembly.json": f"{TE}/corpus_assembly.py",
+    # the composite share, both instruments, the second one registered as H16
+    "results/composite_instruments.json": f"{TE}/composite_instruments.py",
+    # where the bank's templates come from, including the 492 carried as unattributed
+    "results/curated_provenance.json": f"{TE}/curated_provenance.py",
     # the rule budget: the curve's shape and the check on validation
     "results/h10_verdict.json": f"{TE}/h10_verdict.py",
     # the cap, its upper-bound table and the check that fixed it

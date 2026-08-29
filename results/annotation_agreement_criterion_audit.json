@@ -1,0 +1,84 @@
+{
+ "what": "Audit of the F.15 curator-agreement ladder: is the standardisation pipeline confounded with the equivalence relation, and is each rung the harness's own criterion?",
+ "n_pairs": 25,
+ "source_pairs": "GLORYx 37 drugs co-curated by this corpus; same construction as scripts/annotation_agreement.py",
+ "census": {
+  "gloryx_metabolites": {
+   "n": 205,
+   "multi_fragment": 0,
+   "nonzero_formal_charge": 8,
+   "assigned_stereo": 127
+  },
+  "corpus_positive_metabolites_all_splits": {
+   "n_train": 14313,
+   "n_val": 1841,
+   "n_test": 2292,
+   "multi_fragment": 0,
+   "assigned_stereo": 0
+  },
+  "corpus_positive_substrates_all_splits": {
+   "n_train": 8810,
+   "n_val": 994,
+   "n_test": 1170,
+   "multi_fragment": 0,
+   "assigned_stereo": 0
+  },
+  "note": "No salt/multi-fragment structure occurs on either side, so FragmentParent is inert here; the corpus records no stereocentre anywhere, so every stereo-rung gain is a configuration-unspecified vs configuration-specified match, never an enantiomer conflation."
+ },
+ "hygiene_held_fixed_factorial": {
+  "design": "Cleanup+FragmentParent+Uncharge applied to BOTH sides at every cell, vs applied at none; crossed with tautomer-canonicalisation on/off and stereo kept/dropped; InChIKey representation.",
+  "jaccard": {
+   "hygiene_on": {
+    "taut=0,stereo=1": 0.1452,
+    "taut=0,stereo=0": 0.3843,
+    "taut=1,stereo=1": 0.1541,
+    "taut=1,stereo=0": 0.4059
+   },
+   "hygiene_off": {
+    "taut=0,stereo=1": 0.1452,
+    "taut=0,stereo=0": 0.3843,
+    "taut=1,stereo=1": 0.1541,
+    "taut=1,stereo=0": 0.4059
+   }
+  },
+  "hygiene_effect_at_every_cell": 0.0,
+  "stereo_main_effect": {
+   "taut_off": 0.2391,
+   "taut_on": 0.2518
+  },
+  "tautomer_main_effect": {
+   "stereo_kept": 0.0089,
+   "stereo_dropped": 0.0216
+  },
+  "reading": "Salt-stripping and neutralisation change nothing at any rung, so they are effectively held fixed across all five criteria. The ladder's spread is stereo (~0.24), not hygiene (0.000); tautomer contributes ~0.01-0.02 on THIS set."
+ },
+ "criterion_consistency_defect": {
+  "finding": "Four of five rungs are identical between scripts/annotation_agreement.py and the paper's harness (grail_metabolism.metrics._match_keys). CANONICAL is not: the F.15 script uses Chem.MolToSmiles(mol) (stereo-AWARE) while the harness's _canonical_key uses isomericSmiles=False (stereo-BLIND), and every method table in the paper uses the harness.",
+  "ladder": {
+   "canonical": {
+    "as_published": 0.0746,
+    "harness": 0.2413
+   },
+   "inchikey": {
+    "as_published": 0.1452,
+    "harness": 0.1452
+   },
+   "tanimoto1": {
+    "as_published": 0.2392,
+    "harness": 0.2392
+   },
+   "inchi_no_stereo": {
+    "as_published": 0.3843,
+    "harness": 0.3843
+   },
+   "inchikey_tautomer": {
+    "as_published": 0.4059,
+    "harness": 0.4059
+   }
+  },
+  "factor_as_published": 5.44,
+  "factor_under_harness_criterion": 1.68,
+  "monotonicity": "Under the harness criterion the five rungs are NOT nested: canonical (0.2413) sits ABOVE full InChIKey (0.1452), so 'strictest to most tolerant' mis-describes the order."
+ },
+ "regenerate": "scripts/annotation_agreement.py, replacing its local key_of() with grail_metabolism.metrics._match_keys so the rung definitions match every other table."
+}

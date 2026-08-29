@@ -194,9 +194,13 @@ before deduplication (\numHOneZeroPoolTrained{} on the validation draw), the poo
 grid reads ($16.3$ on the same draw), and the list finally emitted on the comparison set
 (\numOutputTrained{}).
 
-The deployed emission is therefore $\hat{C}(s)$ itself, ordered by fusion and truncated by
-nothing, so $|\hat{Y}_s| = |\hat{C}(s)|$ is set by the rule budget and the substrate's chemistry
-and by no parameter of ours. Registered as prediction P4 with a criterion of zero lost cells over a grid of five matching
+The deployed emission is therefore $\hat{C}(s)$ itself, ordered by fusion and truncated by no
+threshold, so $|\hat{Y}_s| = |\hat{C}(s)|$. For the interactive mode that length is set by the
+rule budget and the substrate's chemistry, and its mean of \numOutputTrained{} sits well below
+any cap. The exhaustive mode is different and we do not claim otherwise: its pool is capped at
+100 by the cap prediction P2 registers, and its mean output of \numOutputBank{} is close enough
+to that cap that the cap is what sets its length on most substrates. The cap is ours, it is
+declared, and it applies to that arm and not to the comparators. Registered as prediction P4 with a criterion of zero lost cells over a grid of five matching
 criteria by eleven budgets: \numHOneOneLost{} of \numHOneOneCells{}.
 
 \subsection{Evaluation}
@@ -529,7 +533,8 @@ verified unchanged before the run.
 \subsection{The ceiling is a property of the corpus}
 
 Applying the whole bank to every test substrate recovers \numCeilingCoverage{} of references in
-one step. The remainder divides by the reaction-centre change it requires: \numCeilingNovel{} need
+one step, under the same tautomer-aware matching criterion the comparison defaults to and on the
+same evaluated test set. The remainder divides by the reaction-centre change it requires: \numCeilingNovel{} need
 a transformation type the bank does not hold, \numCeilingKnown{} need a type it holds whose rule
 did not fire, and \numCeilingUntypeable{} cannot be typed.
 
@@ -687,16 +692,20 @@ and not a random quarter of it.
 
 \begin{suppinfo}
 
-The Supporting Information is available free of charge at \ZenodoDoi{} and from the publisher.
+The Supporting Information is available free of charge on the ACS Publications website.
 
-Corpus sources with their versions and licence position, and the splits with the leakage audit;
-the stage ablations in full and the ties in the deployed ranking; when a ranking comparison can
-measure anything, and the choice of evaluation population; the five matching criteria defined; the sensitivity of
-the comparison to the choice among them; the rule bank and its mining procedure; the architecture
-and training of both learned stages; the fifteen registered predictions, including the six this
-paper does not report; the group-ranking oracle under four partitions with a
-granularity-matched control; runtime methodology; the worked example's full ranked list;
-comparator versions and digests; and the provenance and reproduction procedure.
+\texttt{grail\_si.pdf}: the corpus, how it was assembled and what of that is recoverable, its
+sources and licence position, and the splits with their leakage audit; the five matching criteria
+defined and the sensitivity of the comparison to the choice among them; the parent-drop
+convention measured per arm; precision at every budget; every comparison difference with its
+paired interval; how the substrate is drawn, and what that decides; the rule bank, its mining
+procedure, the provenance of each collection and its containment of a published rule set; the
+architecture and training of both learned stages; what a single step is, measured two ways; the
+sixteen registered predictions, including the six this paper does not report; the group-ranking
+oracle under four partitions with a granularity-matched control; the stage ablations in full;
+when a ranking comparison can measure anything; the choice of evaluation population; the worked
+example's full ranked list on both drawings of the substrate; runtime methodology; comparator
+versions and digests; and the provenance and reproduction procedure.
 
 \end{suppinfo}
 

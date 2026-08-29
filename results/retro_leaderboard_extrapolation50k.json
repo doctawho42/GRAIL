@@ -1,0 +1,751 @@
+{
+ "config": {
+  "script": "retro_leaderboard.py",
+  "git_commit": "73e81d95b8dda8e37f89280151612f5428dfbbfd",
+  "git_dirty": true,
+  "cluster": "extrapolation50k",
+  "systems": [
+   "Chemformer",
+   "LocalRetro",
+   "MEGAN",
+   "GraphRetro",
+   "Molecular Transformer"
+  ],
+  "n_reactions": 4948,
+  "max_rank": 10,
+  "modes": [
+   "canonical",
+   "nostereo",
+   "inchikey",
+   "tautomer"
+  ],
+  "ks": [
+   1,
+   3,
+   5,
+   10
+  ],
+  "n_boot": 10000,
+  "seed": 0,
+  "source": "grail_metabolism/data/retro_extrapolation",
+  "estimator": "paired bootstrap over reactions; the interaction is the claim"
+ },
+ "accuracy": {
+  "Chemformer": {
+   "canonical": {
+    "top1": 0.0198,
+    "top3": 0.0384,
+    "top5": 0.0459,
+    "top10": 0.0515
+   },
+   "nostereo": {
+    "top1": 0.0198,
+    "top3": 0.0384,
+    "top5": 0.0461,
+    "top10": 0.0517
+   },
+   "inchikey": {
+    "top1": 0.0198,
+    "top3": 0.0384,
+    "top5": 0.0459,
+    "top10": 0.0515
+   },
+   "tautomer": {
+    "top1": 0.0218,
+    "top3": 0.0426,
+    "top5": 0.0511,
+    "top10": 0.0574
+   }
+  },
+  "LocalRetro": {
+   "canonical": {
+    "top1": 0.0087,
+    "top3": 0.018,
+    "top5": 0.0232,
+    "top10": 0.0295
+   },
+   "nostereo": {
+    "top1": 0.0089,
+    "top3": 0.018,
+    "top5": 0.0234,
+    "top10": 0.0297
+   },
+   "inchikey": {
+    "top1": 0.0087,
+    "top3": 0.018,
+    "top5": 0.0232,
+    "top10": 0.0295
+   },
+   "tautomer": {
+    "top1": 0.0115,
+    "top3": 0.0245,
+    "top5": 0.0313,
+    "top10": 0.042
+   }
+  },
+  "MEGAN": {
+   "canonical": {
+    "top1": 0.0085,
+    "top3": 0.0218,
+    "top5": 0.0305,
+    "top10": 0.0432
+   },
+   "nostereo": {
+    "top1": 0.0087,
+    "top3": 0.0218,
+    "top5": 0.0305,
+    "top10": 0.0432
+   },
+   "inchikey": {
+    "top1": 0.0085,
+    "top3": 0.0218,
+    "top5": 0.0305,
+    "top10": 0.0432
+   },
+   "tautomer": {
+    "top1": 0.0115,
+    "top3": 0.0279,
+    "top5": 0.0394,
+    "top10": 0.0554
+   }
+  },
+  "GraphRetro": {
+   "canonical": {
+    "top1": 0.017,
+    "top3": 0.0309,
+    "top5": 0.0424,
+    "top10": 0.0578
+   },
+   "nostereo": {
+    "top1": 0.017,
+    "top3": 0.0311,
+    "top5": 0.0428,
+    "top10": 0.0586
+   },
+   "inchikey": {
+    "top1": 0.017,
+    "top3": 0.0309,
+    "top5": 0.0424,
+    "top10": 0.0578
+   },
+   "tautomer": {
+    "top1": 0.0188,
+    "top3": 0.036,
+    "top5": 0.0497,
+    "top10": 0.0683
+   }
+  },
+  "Molecular Transformer": {
+   "canonical": {
+    "top1": 0.0146,
+    "top3": 0.0291,
+    "top5": 0.0356,
+    "top10": 0.0368
+   },
+   "nostereo": {
+    "top1": 0.0146,
+    "top3": 0.0293,
+    "top5": 0.036,
+    "top10": 0.0372
+   },
+   "inchikey": {
+    "top1": 0.0146,
+    "top3": 0.0291,
+    "top5": 0.0356,
+    "top10": 0.0368
+   },
+   "tautomer": {
+    "top1": 0.0164,
+    "top3": 0.0335,
+    "top5": 0.042,
+    "top10": 0.0432
+   }
+  }
+ },
+ "orderings": {
+  "top1": {
+   "canonical": [
+    "Chemformer",
+    "GraphRetro",
+    "Molecular Transformer",
+    "LocalRetro",
+    "MEGAN"
+   ],
+   "nostereo": [
+    "Chemformer",
+    "GraphRetro",
+    "Molecular Transformer",
+    "LocalRetro",
+    "MEGAN"
+   ],
+   "inchikey": [
+    "Chemformer",
+    "GraphRetro",
+    "Molecular Transformer",
+    "LocalRetro",
+    "MEGAN"
+   ],
+   "tautomer": [
+    "Chemformer",
+    "GraphRetro",
+    "Molecular Transformer",
+    "LocalRetro",
+    "MEGAN"
+   ]
+  },
+  "top3": {
+   "canonical": [
+    "Chemformer",
+    "GraphRetro",
+    "Molecular Transformer",
+    "MEGAN",
+    "LocalRetro"
+   ],
+   "nostereo": [
+    "Chemformer",
+    "GraphRetro",
+    "Molecular Transformer",
+    "MEGAN",
+    "LocalRetro"
+   ],
+   "inchikey": [
+    "Chemformer",
+    "GraphRetro",
+    "Molecular Transformer",
+    "MEGAN",
+    "LocalRetro"
+   ],
+   "tautomer": [
+    "Chemformer",
+    "GraphRetro",
+    "Molecular Transformer",
+    "MEGAN",
+    "LocalRetro"
+   ]
+  },
+  "top5": {
+   "canonical": [
+    "Chemformer",
+    "GraphRetro",
+    "Molecular Transformer",
+    "MEGAN",
+    "LocalRetro"
+   ],
+   "nostereo": [
+    "Chemformer",
+    "GraphRetro",
+    "Molecular Transformer",
+    "MEGAN",
+    "LocalRetro"
+   ],
+   "inchikey": [
+    "Chemformer",
+    "GraphRetro",
+    "Molecular Transformer",
+    "MEGAN",
+    "LocalRetro"
+   ],
+   "tautomer": [
+    "Chemformer",
+    "GraphRetro",
+    "Molecular Transformer",
+    "MEGAN",
+    "LocalRetro"
+   ]
+  },
+  "top10": {
+   "canonical": [
+    "GraphRetro",
+    "Chemformer",
+    "MEGAN",
+    "Molecular Transformer",
+    "LocalRetro"
+   ],
+   "nostereo": [
+    "GraphRetro",
+    "Chemformer",
+    "MEGAN",
+    "Molecular Transformer",
+    "LocalRetro"
+   ],
+   "inchikey": [
+    "GraphRetro",
+    "Chemformer",
+    "MEGAN",
+    "Molecular Transformer",
+    "LocalRetro"
+   ],
+   "tautomer": [
+    "GraphRetro",
+    "Chemformer",
+    "MEGAN",
+    "Molecular Transformer",
+    "LocalRetro"
+   ]
+  }
+ },
+ "pairs_that_exchange": {
+  "top1": [],
+  "top3": [],
+  "top5": [],
+  "top10": []
+ },
+ "n_interaction_tests": 188,
+ "certified_interactions": {
+  "top1|Chemformer vs MEGAN|canonical vs tautomer": {
+   "delta": 0.001,
+   "ci95": [
+    0.0002,
+    0.002
+   ],
+   "p": 0.0625
+  },
+  "top1|Chemformer vs MEGAN|nostereo vs tautomer": {
+   "delta": 0.0008,
+   "ci95": [
+    0.0002,
+    0.0016
+   ],
+   "p": 0.125
+  },
+  "top1|Chemformer vs MEGAN|inchikey vs tautomer": {
+   "delta": 0.001,
+   "ci95": [
+    0.0002,
+    0.002
+   ],
+   "p": 0.0625
+  },
+  "top3|Chemformer vs LocalRetro|canonical vs tautomer": {
+   "delta": 0.0022,
+   "ci95": [
+    0.0008,
+    0.0038
+   ],
+   "p": 0.007385253906250016
+  },
+  "top3|Chemformer vs LocalRetro|nostereo vs tautomer": {
+   "delta": 0.0022,
+   "ci95": [
+    0.0008,
+    0.0038
+   ],
+   "p": 0.007385253906250016
+  },
+  "top3|Chemformer vs LocalRetro|inchikey vs tautomer": {
+   "delta": 0.0022,
+   "ci95": [
+    0.0008,
+    0.0038
+   ],
+   "p": 0.007385253906250016
+  },
+  "top3|Chemformer vs MEGAN|canonical vs tautomer": {
+   "delta": 0.0018,
+   "ci95": [
+    0.0004,
+    0.0032
+   ],
+   "p": 0.022460937499999993
+  },
+  "top3|Chemformer vs MEGAN|nostereo vs tautomer": {
+   "delta": 0.0018,
+   "ci95": [
+    0.0004,
+    0.0032
+   ],
+   "p": 0.022460937499999993
+  },
+  "top3|Chemformer vs MEGAN|inchikey vs tautomer": {
+   "delta": 0.0018,
+   "ci95": [
+    0.0004,
+    0.0032
+   ],
+   "p": 0.022460937499999993
+  },
+  "top3|LocalRetro vs Molecular Transformer|canonical vs tautomer": {
+   "delta": -0.002,
+   "ci95": [
+    -0.0038,
+    -0.0002
+   ],
+   "p": 0.052478790283203014
+  },
+  "top3|LocalRetro vs Molecular Transformer|nostereo vs tautomer": {
+   "delta": -0.0022,
+   "ci95": [
+    -0.004,
+    -0.0004
+   ],
+   "p": 0.026603698730468788
+  },
+  "top3|LocalRetro vs Molecular Transformer|inchikey vs tautomer": {
+   "delta": -0.002,
+   "ci95": [
+    -0.0038,
+    -0.0002
+   ],
+   "p": 0.052478790283203014
+  },
+  "top3|MEGAN vs Molecular Transformer|nostereo vs tautomer": {
+   "delta": -0.0018,
+   "ci95": [
+    -0.0034,
+    -0.0004
+   ],
+   "p": 0.03515625000000005
+  },
+  "top5|Chemformer vs LocalRetro|canonical vs tautomer": {
+   "delta": 0.0028,
+   "ci95": [
+    0.001,
+    0.0049
+   ],
+   "p": 0.004343509674072266
+  },
+  "top5|Chemformer vs LocalRetro|nostereo vs tautomer": {
+   "delta": 0.0028,
+   "ci95": [
+    0.0012,
+    0.0046
+   ],
+   "p": 0.002576828002929684
+  },
+  "top5|Chemformer vs LocalRetro|inchikey vs tautomer": {
+   "delta": 0.0028,
+   "ci95": [
+    0.001,
+    0.0049
+   ],
+   "p": 0.004343509674072266
+  },
+  "top5|Chemformer vs MEGAN|canonical vs tautomer": {
+   "delta": 0.0036,
+   "ci95": [
+    0.0016,
+    0.0057
+   ],
+   "p": 0.0005335211753845287
+  },
+  "top5|Chemformer vs MEGAN|nostereo vs tautomer": {
+   "delta": 0.0038,
+   "ci95": [
+    0.002,
+    0.0059
+   ],
+   "p": 0.00015652179718017478
+  },
+  "top5|Chemformer vs MEGAN|inchikey vs tautomer": {
+   "delta": 0.0036,
+   "ci95": [
+    0.0016,
+    0.0057
+   ],
+   "p": 0.0005335211753845287
+  },
+  "top5|MEGAN vs Molecular Transformer|canonical vs tautomer": {
+   "delta": -0.0024,
+   "ci95": [
+    -0.0046,
+    -0.0004
+   ],
+   "p": 0.03569813817739513
+  },
+  "top5|MEGAN vs Molecular Transformer|nostereo vs tautomer": {
+   "delta": -0.0028,
+   "ci95": [
+    -0.0049,
+    -0.0008
+   ],
+   "p": 0.009355306625366301
+  },
+  "top5|MEGAN vs Molecular Transformer|inchikey vs tautomer": {
+   "delta": -0.0024,
+   "ci95": [
+    -0.0046,
+    -0.0004
+   ],
+   "p": 0.03569813817739513
+  },
+  "top10|Chemformer vs LocalRetro|canonical vs tautomer": {
+   "delta": 0.0067,
+   "ci95": [
+    0.0042,
+    0.0093
+   ],
+   "p": 1.0258372640237088e-07
+  },
+  "top10|Chemformer vs LocalRetro|nostereo vs tautomer": {
+   "delta": 0.0067,
+   "ci95": [
+    0.0042,
+    0.0091
+   ],
+   "p": 3.608874976634993e-08
+  },
+  "top10|Chemformer vs LocalRetro|inchikey vs tautomer": {
+   "delta": 0.0067,
+   "ci95": [
+    0.0042,
+    0.0093
+   ],
+   "p": 1.0258372640237088e-07
+  },
+  "top10|Chemformer vs MEGAN|canonical vs tautomer": {
+   "delta": 0.0063,
+   "ci95": [
+    0.004,
+    0.0087
+   ],
+   "p": 1.2331292964518076e-07
+  },
+  "top10|Chemformer vs MEGAN|nostereo vs tautomer": {
+   "delta": 0.0065,
+   "ci95": [
+    0.0042,
+    0.0089
+   ],
+   "p": 1.941225491464129e-08
+  },
+  "top10|Chemformer vs MEGAN|inchikey vs tautomer": {
+   "delta": 0.0063,
+   "ci95": [
+    0.004,
+    0.0087
+   ],
+   "p": 1.2331292964518076e-07
+  },
+  "top10|Chemformer vs GraphRetro|canonical vs tautomer": {
+   "delta": 0.0046,
+   "ci95": [
+    0.002,
+    0.0073
+   ],
+   "p": 0.000824082359599744
+  },
+  "top10|Chemformer vs GraphRetro|nostereo vs tautomer": {
+   "delta": 0.004,
+   "ci95": [
+    0.0016,
+    0.0067
+   ],
+   "p": 0.0028872479742858975
+  },
+  "top10|Chemformer vs GraphRetro|inchikey vs tautomer": {
+   "delta": 0.0046,
+   "ci95": [
+    0.002,
+    0.0073
+   ],
+   "p": 0.000824082359599744
+  },
+  "top10|LocalRetro vs Molecular Transformer|canonical vs tautomer": {
+   "delta": -0.0061,
+   "ci95": [
+    -0.0085,
+    -0.0036
+   ],
+   "p": 1.3826120266457876e-06
+  },
+  "top10|LocalRetro vs Molecular Transformer|nostereo vs tautomer": {
+   "delta": -0.0063,
+   "ci95": [
+    -0.0087,
+    -0.0038
+   ],
+   "p": 3.3531614462845033e-07
+  },
+  "top10|LocalRetro vs Molecular Transformer|inchikey vs tautomer": {
+   "delta": -0.0061,
+   "ci95": [
+    -0.0085,
+    -0.0036
+   ],
+   "p": 1.3826120266457876e-06
+  },
+  "top10|MEGAN vs GraphRetro|canonical vs nostereo": {
+   "delta": 0.0008,
+   "ci95": [
+    0.0002,
+    0.0016
+   ],
+   "p": 0.125
+  },
+  "top10|MEGAN vs GraphRetro|nostereo vs inchikey": {
+   "delta": -0.0008,
+   "ci95": [
+    -0.0016,
+    -0.0002
+   ],
+   "p": 0.125
+  },
+  "top10|MEGAN vs Molecular Transformer|canonical vs tautomer": {
+   "delta": -0.0057,
+   "ci95": [
+    -0.0083,
+    -0.0032
+   ],
+   "p": 1.5097200957825567e-05
+  },
+  "top10|MEGAN vs Molecular Transformer|nostereo vs tautomer": {
+   "delta": -0.0061,
+   "ci95": [
+    -0.0087,
+    -0.0036
+   ],
+   "p": 1.3826120266457876e-06
+  },
+  "top10|MEGAN vs Molecular Transformer|inchikey vs tautomer": {
+   "delta": -0.0057,
+   "ci95": [
+    -0.0083,
+    -0.0032
+   ],
+   "p": 1.5097200957825567e-05
+  },
+  "top10|GraphRetro vs Molecular Transformer|canonical vs tautomer": {
+   "delta": -0.004,
+   "ci95": [
+    -0.0069,
+    -0.0012
+   ],
+   "p": 0.006600447966810997
+  },
+  "top10|GraphRetro vs Molecular Transformer|nostereo vs tautomer": {
+   "delta": -0.0036,
+   "ci95": [
+    -0.0065,
+    -0.001
+   ],
+   "p": 0.011351591436777931
+  },
+  "top10|GraphRetro vs Molecular Transformer|inchikey vs tautomer": {
+   "delta": -0.004,
+   "ci95": [
+    -0.0069,
+    -0.0012
+   ],
+   "p": 0.006600447966810997
+  }
+ },
+ "holm_survivors": {
+  "top10|Chemformer vs MEGAN|nostereo vs tautomer": {
+   "delta": 0.0065,
+   "ci95": [
+    0.0042,
+    0.0089
+   ],
+   "p": 1.941225491464129e-08,
+   "holm_threshold": 0.000266
+  },
+  "top10|Chemformer vs LocalRetro|nostereo vs tautomer": {
+   "delta": 0.0067,
+   "ci95": [
+    0.0042,
+    0.0091
+   ],
+   "p": 3.608874976634993e-08,
+   "holm_threshold": 0.000267
+  },
+  "top10|Chemformer vs LocalRetro|canonical vs tautomer": {
+   "delta": 0.0067,
+   "ci95": [
+    0.0042,
+    0.0093
+   ],
+   "p": 1.0258372640237088e-07,
+   "holm_threshold": 0.000269
+  },
+  "top10|Chemformer vs LocalRetro|inchikey vs tautomer": {
+   "delta": 0.0067,
+   "ci95": [
+    0.0042,
+    0.0093
+   ],
+   "p": 1.0258372640237088e-07,
+   "holm_threshold": 0.00027
+  },
+  "top10|Chemformer vs MEGAN|canonical vs tautomer": {
+   "delta": 0.0063,
+   "ci95": [
+    0.004,
+    0.0087
+   ],
+   "p": 1.2331292964518076e-07,
+   "holm_threshold": 0.000272
+  },
+  "top10|Chemformer vs MEGAN|inchikey vs tautomer": {
+   "delta": 0.0063,
+   "ci95": [
+    0.004,
+    0.0087
+   ],
+   "p": 1.2331292964518076e-07,
+   "holm_threshold": 0.000273
+  },
+  "top10|LocalRetro vs Molecular Transformer|nostereo vs tautomer": {
+   "delta": -0.0063,
+   "ci95": [
+    -0.0087,
+    -0.0038
+   ],
+   "p": 3.3531614462845033e-07,
+   "holm_threshold": 0.000275
+  },
+  "top10|LocalRetro vs Molecular Transformer|canonical vs tautomer": {
+   "delta": -0.0061,
+   "ci95": [
+    -0.0085,
+    -0.0036
+   ],
+   "p": 1.3826120266457876e-06,
+   "holm_threshold": 0.000276
+  },
+  "top10|LocalRetro vs Molecular Transformer|inchikey vs tautomer": {
+   "delta": -0.0061,
+   "ci95": [
+    -0.0085,
+    -0.0036
+   ],
+   "p": 1.3826120266457876e-06,
+   "holm_threshold": 0.000278
+  },
+  "top10|MEGAN vs Molecular Transformer|nostereo vs tautomer": {
+   "delta": -0.0061,
+   "ci95": [
+    -0.0087,
+    -0.0036
+   ],
+   "p": 1.3826120266457876e-06,
+   "holm_threshold": 0.000279
+  },
+  "top10|MEGAN vs Molecular Transformer|canonical vs tautomer": {
+   "delta": -0.0057,
+   "ci95": [
+    -0.0083,
+    -0.0032
+   ],
+   "p": 1.5097200957825567e-05,
+   "holm_threshold": 0.000281
+  },
+  "top10|MEGAN vs Molecular Transformer|inchikey vs tautomer": {
+   "delta": -0.0057,
+   "ci95": [
+    -0.0083,
+    -0.0032
+   ],
+   "p": 1.5097200957825567e-05,
+   "holm_threshold": 0.000282
+  },
+  "top5|Chemformer vs MEGAN|nostereo vs tautomer": {
+   "delta": 0.0038,
+   "ci95": [
+    0.002,
+    0.0059
+   ],
+   "p": 0.00015652179718017478,
+   "holm_threshold": 0.000284
+  }
+ }
+}

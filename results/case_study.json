@@ -2,22 +2,25 @@
  "provenance": {
   "script": "case_study.py",
   "script_path": "scripts/typed_edit/case_study.py",
-  "source_sha256": "599aaaf144463bba8c0ce6fd1c114c1a8ca554701c0e3a19bd1caf212180cc76",
-  "git_commit": "646540b501ebadace5c9b6dbcd6bf8d4c7a224ae",
+  "source_sha256": "60eeb31ff9f83d928fa27524ba9c5d40f9e92522a7c4a79a5becdc6028f6b65e",
+  "git_commit": "8635fce4b755ea0656b233fb887e406d78b09fdb",
   "git_dirty": true
  },
  "substrate": "N=c1ccn(C2OC(CO)C(O)C2(F)F)c(O)n1",
+ "corpus_substrate": "N=c1ccn(C2OC(CO)C(O)C2(F)F)c(O)n1",
+ "presentation": "stored",
  "substrate_heavy_atoms": 18,
  "configuration": {
   "mode": "interactive",
   "rule_budget": 30,
   "pool_cap": 100,
+  "substrate_presentation": "stored",
   "ranking": "reciprocal rank fusion of the filter and generator orderings, k=60",
   "match": "inchikey_tautomer",
   "generator_checkpoint": "artifacts/full5000_implicit/checkpoints/generator.pt",
   "filter_checkpoint": "artifacts/full5000_priors/checkpoints/filter.pt"
  },
- "generator_seconds": 3.34,
+ "generator_seconds": 3.44,
  "n_candidates": 18,
  "n_references": 4,
  "reference_ranks": [
@@ -41,11 +44,11 @@
   {
    "smiles": "Nc1ccn(C2OC(CO)C(O)(O)C2(F)F)c(=O)n1",
    "key": "VJDPMVINSVGXOL-UHFFFAOYSA-N",
-   "generator": 0.9656,
+   "generator": 0.9666,
    "filter": 0.0792,
-   "rule_id": 474,
-   "rule": "[C:1]>>[C:1][O:2]",
-   "rule_source": "curated",
+   "rule_id": 1753,
+   "rule": "[#6:1]-[#6:2]>>[#6:2]-[#6:1]-[#8:3]",
+   "rule_source": "mined",
    "firing_atoms": [
     7,
     10,
@@ -176,11 +179,11 @@
   {
    "smiles": "Nc1ccn(C2OC(O)(CO)C(O)C2(F)F)c(=O)n1",
    "key": "IGNVKXKXOBGNQE-UHFFFAOYSA-N",
-   "generator": 0.9656,
+   "generator": 0.9666,
    "filter": 0.0069,
-   "rule_id": 474,
-   "rule": "[C:1]>>[C:1][O:2]",
-   "rule_source": "curated",
+   "rule_id": 1753,
+   "rule": "[#6:1]-[#6:2]>>[#6:2]-[#6:1]-[#8:3]",
+   "rule_source": "mined",
    "firing_atoms": [
     6,
     7,
@@ -253,11 +256,11 @@
   {
    "smiles": "Nc1ccn(C2OC(C(O)O)C(O)C2(F)F)c(=O)n1",
    "key": "KDTUVLFIEZMSPW-UHFFFAOYSA-N",
-   "generator": 0.8184,
+   "generator": 0.8236,
    "filter": 0.0198,
-   "rule_id": 474,
-   "rule": "[C:1]>>[C:1][O:2]",
-   "rule_source": "curated",
+   "rule_id": 1753,
+   "rule": "[#6:1]-[#6:2]>>[#6:2]-[#6:1]-[#8:3]",
+   "rule_source": "mined",
    "firing_atoms": [
     7,
     8,
@@ -300,11 +303,11 @@
   {
    "smiles": "Nc1ccn(C2(O)OC(CO)C(O)C2(F)F)c(=O)n1",
    "key": "SRRCASSCXPABTR-UHFFFAOYSA-N",
-   "generator": 0.8184,
+   "generator": 0.8236,
    "filter": 0.0167,
-   "rule_id": 474,
-   "rule": "[C:1]>>[C:1][O:2]",
-   "rule_source": "curated",
+   "rule_id": 1753,
+   "rule": "[#6:1]-[#6:2]>>[#6:2]-[#6:1]-[#8:3]",
+   "rule_source": "mined",
    "firing_atoms": [
     4,
     5,

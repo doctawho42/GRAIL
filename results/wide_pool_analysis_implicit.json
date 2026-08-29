@@ -1,0 +1,69 @@
+{
+ "provenance": {
+  "script": "wide_pool_analysis.py",
+  "script_path": "scripts/typed_edit/wide_pool_analysis.py",
+  "source_sha256": "a55f9d02dbe2609751e1d5512b9e1e0590c5927acaa0f2b16fe27bb7b8372be7",
+  "git_commit": "d85ad690ec6a8919210a38a5e9e9072e5ffad5b9",
+  "git_dirty": true
+ },
+ "population": {
+  "n": 291,
+  "pool": "results/widepools_implicit/w*.json"
+ },
+ "aggregation": "macro, the mean of per-substrate recall; the _micro fields are the ratio of sums, which is what the MetaTox comparison reports",
+ "pool_ceiling_uncapped": 0.8458,
+ "pool_ceiling_uncapped_micro": 0.8105,
+ "n_references": 665,
+ "mean_pool": 588.7,
+ "mean_groups_per_substrate": 160.4,
+ "arms": {
+  "as_ranked": {
+   "recall@15": 0.3951,
+   "retention": 0.4671,
+   "recall@15_micro": 0.3549,
+   "retention_micro": 0.4379
+  },
+  "oracle_within": {
+   "recall@15": 0.4025,
+   "retention": 0.4759,
+   "recall@15_micro": 0.3654,
+   "retention_micro": 0.4508
+  },
+  "oracle_between": {
+   "recall@15": 0.7765,
+   "retention": 0.9181,
+   "recall@15_micro": 0.6692,
+   "retention_micro": 0.8256
+  },
+  "oracle_both": {
+   "recall@15": 0.7954,
+   "retention": 0.9404,
+   "recall@15_micro": 0.6887,
+   "retention_micro": 0.8497
+  }
+ },
+ "closes": {
+  "oracle_within": 0.0074,
+  "oracle_between": 0.3814,
+  "oracle_both": 0.4003
+ },
+ "within_group_rank": {
+  "n_cases_with_siblings": 300,
+  "mean_rank": 3.34,
+  "median_rank": 1.0,
+  "top1_share": 0.5233,
+  "mean_group_size": 14.61
+ },
+ "score_combinations_at_15": {
+  "product": 0.4401,
+  "filter": 0.2061,
+  "generator": 0.4616,
+  "rrf": 0.5492
+ },
+ "score_combinations_at_15_micro": {
+  "product": 0.3759,
+  "filter": 0.1549,
+  "generator": 0.4271,
+  "rrf": 0.5023
+ }
+}

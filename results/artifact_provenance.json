@@ -26,8 +26,32 @@
    "status": "current"
   },
   {
+   "artifact": "results/case_study_drawn.json",
+   "script": "case_study.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
    "artifact": "results/case_study_exhaustive.json",
    "script": "case_study.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
+   "artifact": "results/case_study_exhaustive_drawn.json",
+   "script": "case_study.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
+   "artifact": "results/composite_instruments.json",
+   "script": "composite_instruments.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
+   "artifact": "results/corpus_assembly.json",
+   "script": "corpus_assembly.py",
    "how": "recorded source digest",
    "status": "current"
   },
@@ -38,8 +62,20 @@
    "status": "current"
   },
   {
+   "artifact": "results/curated_provenance.json",
+   "script": "curated_provenance.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
    "artifact": "results/deployment_table.json",
    "script": "deployment_table.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
+   "artifact": "results/dialect_census.json",
+   "script": "dialect_census.py",
    "how": "recorded source digest",
    "status": "current"
   },
@@ -224,6 +260,12 @@
    "status": "current"
   },
   {
+   "artifact": "results/standardiser_versions.json",
+   "script": "standardiser_versions.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
    "artifact": "results/tautomer_budget.json",
    "script": "tautomer_budget.py",
    "how": "recorded source digest",
@@ -302,12 +344,12 @@
    "status": "current"
   }
  ],
- "n_pinned": 50,
+ "n_pinned": 57,
  "n_pinned_stale": 0,
  "sweep": {
   "unstamped": 117,
   "producer_changed": 39,
-  "current": 28,
+  "current": 30,
   "producer_unknown": 27,
   "cosmetic_only": 8
  },
@@ -1429,7 +1471,7 @@
    "script": "build_wide_pools.py",
    "how": "recorded source digest",
    "status": "producer_changed",
-   "detail": "producer was 9f3f5adca657, is now 0984dd65202b",
+   "detail": "producer was 9f3f5adca657, is now 6838186b1ca6",
    "diff_note": "scripts/typed_edit/build_wide_pools.py is not in commit 40df3a8496e9"
   },
   {

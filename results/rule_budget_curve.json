@@ -1,0 +1,117 @@
+{
+ "provenance": {
+  "script": "rule_budget_curve.py",
+  "script_path": "scripts/typed_edit/rule_budget_curve.py",
+  "source_sha256": "9053c9f48aa88176af2c20f2aac3dd1fe5c1f96cb32e85b2827678dd6d934730",
+  "git_commit": "769476fcf1aacda68504706a76bc7f22e812d712",
+  "git_dirty": true
+ },
+ "status": "EXPLORATORY. A curve, not a hypothesis. The operating point read off it must be fixed by a stated rule and checked where it was not chosen.",
+ "population": {
+  "n": 40,
+  "n_references": 92,
+  "seed": 0,
+  "drawn_from": "the 291 of results/four_method_291.json"
+ },
+ "aggregation": "micro, ratio of sums",
+ "pool_cap": 100,
+ "note": "the H9 cap is applied to every arm alike, so the arms differ only in the rule budget",
+ "by_rule_budget": {
+  "30": {
+   "recall_micro": {
+    "1": 0.087,
+    "5": 0.337,
+    "10": 0.4783,
+    "15": 0.5217,
+    "20": 0.5326,
+    "30": 0.5326,
+    "50": 0.5326
+   },
+   "t_generator_s": 71.4,
+   "t_filter_s": 2.6,
+   "s_per_substrate": 1.85,
+   "mean_pool_raw": 16.1,
+   "mean_pool_after_cap": 16.1
+  },
+  "100": {
+   "recall_micro": {
+    "1": 0.0761,
+    "5": 0.3261,
+    "10": 0.4783,
+    "15": 0.5652,
+    "20": 0.5978,
+    "30": 0.6413,
+    "50": 0.663
+   },
+   "t_generator_s": 2232.9,
+   "t_filter_s": 33.7,
+   "s_per_substrate": 56.67,
+   "mean_pool_raw": 51.6,
+   "mean_pool_after_cap": 41.8
+  },
+  "300": {
+   "recall_micro": {
+    "1": 0.0761,
+    "5": 0.2826,
+    "10": 0.4674,
+    "15": 0.5652,
+    "20": 0.6413,
+    "30": 0.6739,
+    "50": 0.7283
+   },
+   "t_generator_s": 7294.0,
+   "t_filter_s": 42.5,
+   "s_per_substrate": 183.41,
+   "mean_pool_raw": 212.1,
+   "mean_pool_after_cap": 95.3
+  },
+  "1000": {
+   "recall_micro": {
+    "1": 0.0652,
+    "5": 0.2935,
+    "10": 0.4674,
+    "15": 0.5761,
+    "20": 0.6413,
+    "30": 0.6739,
+    "50": 0.7174
+   },
+   "t_generator_s": 5349.6,
+   "t_filter_s": 10.1,
+   "s_per_substrate": 133.99,
+   "mean_pool_raw": 636.0,
+   "mean_pool_after_cap": 98.7
+  },
+  "3000": {
+   "recall_micro": {
+    "1": 0.0652,
+    "5": 0.2935,
+    "10": 0.4674,
+    "15": 0.5761,
+    "20": 0.6413,
+    "30": 0.6739,
+    "50": 0.7174
+   },
+   "t_generator_s": 6320.0,
+   "t_filter_s": 11.1,
+   "s_per_substrate": 158.28,
+   "mean_pool_raw": 636.0,
+   "mean_pool_after_cap": 98.7
+  },
+  "7581": {
+   "recall_micro": {
+    "1": 0.0652,
+    "5": 0.2935,
+    "10": 0.4674,
+    "15": 0.5761,
+    "20": 0.6413,
+    "30": 0.6739,
+    "50": 0.7174
+   },
+   "t_generator_s": 7146.3,
+   "t_filter_s": 10.9,
+   "s_per_substrate": 178.93,
+   "mean_pool_raw": 636.0,
+   "mean_pool_after_cap": 98.7
+  }
+ }
+}

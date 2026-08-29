@@ -1,0 +1,86 @@
+{
+ "match": "inchikey_tautomer",
+ "n_boot": 10000,
+ "seed": 0,
+ "bins": [
+  0.0,
+  0.3,
+  0.4,
+  0.5,
+  0.6,
+  1.01
+ ],
+ "estimand": "micro coverage_bank(GRAIL) - micro coverage_bank(SyGMa), paired on substrate, within stratum",
+ "all": {
+  "n": 1170,
+  "coverage_GRAIL": 0.7355,
+  "coverage_SyGMa": 0.5391,
+  "gap": 0.1964,
+  "gap_ci95": [
+   0.1776,
+   0.2154
+  ]
+ },
+ "strata": [
+  {
+   "lo": 0.0,
+   "hi": 0.3,
+   "n": 91,
+   "coverage_GRAIL": 0.6763,
+   "coverage_SyGMa": 0.4624,
+   "gap": 0.2139,
+   "gap_ci95": [
+    0.148,
+    0.2865
+   ]
+  },
+  {
+   "lo": 0.3,
+   "hi": 0.4,
+   "n": 167,
+   "coverage_GRAIL": 0.7813,
+   "coverage_SyGMa": 0.5277,
+   "gap": 0.2536,
+   "gap_ci95": [
+    0.2045,
+    0.3053
+   ]
+  },
+  {
+   "lo": 0.4,
+   "hi": 0.5,
+   "n": 157,
+   "coverage_GRAIL": 0.7192,
+   "coverage_SyGMa": 0.4795,
+   "gap": 0.2397,
+   "gap_ci95": [
+    0.1889,
+    0.2967
+   ]
+  },
+  {
+   "lo": 0.5,
+   "hi": 0.6,
+   "n": 154,
+   "coverage_GRAIL": 0.7558,
+   "coverage_SyGMa": 0.5349,
+   "gap": 0.2209,
+   "gap_ci95": [
+    0.1643,
+    0.2839
+   ]
+  },
+  {
+   "lo": 0.6,
+   "hi": 1.01,
+   "n": 601,
+   "coverage_GRAIL": 0.7301,
+   "coverage_SyGMa": 0.564,
+   "gap": 0.1661,
+   "gap_ci95": [
+    0.1409,
+    0.1912
+   ]
+  }
+ ]
+}

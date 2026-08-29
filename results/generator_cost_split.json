@@ -1,0 +1,195 @@
+{
+ "provenance": {
+  "script": "generator_cost_split.py",
+  "script_path": "scripts/typed_edit/generator_cost_split.py",
+  "source_sha256": "06ba59357774b61cd3333bf13da90af7b1b4d3934afc05cad7a590422ac98650",
+  "git_commit": "4aeeabc571021a84ea36e7873baae29255ab9134",
+  "git_dirty": true
+ },
+ "checkpoint": "artifacts/full5000_implicit/checkpoints/generator.pt",
+ "note": "forward is timed alone; normalize is timed by wrapping the function the enumeration calls; reactants is the remainder",
+ "rows": [
+  {
+   "heavy": 4,
+   "n_cands": 90,
+   "repeat": 2,
+   "t_total": 0.06,
+   "t_forward": 0.02,
+   "t_reactants": 0.02,
+   "t_normalize": 0.01,
+   "n_normalize_calls": 366,
+   "share_forward": 0.424,
+   "share_reactants": 0.331,
+   "share_normalize": 0.245,
+   "cold": {
+    "t_total": 0.894,
+    "t_forward": 0.044,
+    "t_normalize": 0.838,
+    "n_normalize_calls": 366
+   },
+   "warm": {
+    "t_total": 0.055,
+    "t_forward": 0.024,
+    "t_normalize": 0.014,
+    "n_normalize_calls": 366
+   },
+   "cold_over_warm": 16.3
+  },
+  {
+   "heavy": 13,
+   "n_cands": 230,
+   "repeat": 2,
+   "t_total": 0.6,
+   "t_forward": 0.03,
+   "t_reactants": 0.25,
+   "t_normalize": 0.31,
+   "n_normalize_calls": 2202,
+   "share_forward": 0.052,
+   "share_reactants": 0.424,
+   "share_normalize": 0.524,
+   "cold": {
+    "t_total": 25.122,
+    "t_forward": 0.059,
+    "t_normalize": 24.803,
+    "n_normalize_calls": 2202
+   },
+   "warm": {
+    "t_total": 0.599,
+    "t_forward": 0.031,
+    "t_normalize": 0.314,
+    "n_normalize_calls": 2202
+   },
+   "cold_over_warm": 41.9
+  },
+  {
+   "heavy": 18,
+   "n_cands": 273,
+   "repeat": 2,
+   "t_total": 0.82,
+   "t_forward": 0.03,
+   "t_reactants": 0.43,
+   "t_normalize": 0.36,
+   "n_normalize_calls": 3006,
+   "share_forward": 0.036,
+   "share_reactants": 0.522,
+   "share_normalize": 0.442,
+   "cold": {
+    "t_total": 32.175,
+    "t_forward": 0.079,
+    "t_normalize": 31.698,
+    "n_normalize_calls": 3006
+   },
+   "warm": {
+    "t_total": 0.823,
+    "t_forward": 0.03,
+    "t_normalize": 0.364,
+    "n_normalize_calls": 3006
+   },
+   "cold_over_warm": 39.1
+  },
+  {
+   "heavy": 22,
+   "n_cands": 251,
+   "repeat": 2,
+   "t_total": 0.95,
+   "t_forward": 0.03,
+   "t_reactants": 0.5,
+   "t_normalize": 0.42,
+   "n_normalize_calls": 3571,
+   "share_forward": 0.031,
+   "share_reactants": 0.53,
+   "share_normalize": 0.439,
+   "cold": {
+    "t_total": 16.772,
+    "t_forward": 0.076,
+    "t_normalize": 16.221,
+    "n_normalize_calls": 3571
+   },
+   "warm": {
+    "t_total": 0.948,
+    "t_forward": 0.029,
+    "t_normalize": 0.416,
+    "n_normalize_calls": 3571
+   },
+   "cold_over_warm": 17.7
+  },
+  {
+   "heavy": 25,
+   "n_cands": 659,
+   "repeat": 2,
+   "t_total": 1.16,
+   "t_forward": 0.06,
+   "t_reactants": 0.7,
+   "t_normalize": 0.4,
+   "n_normalize_calls": 4976,
+   "share_forward": 0.052,
+   "share_reactants": 0.605,
+   "share_normalize": 0.343,
+   "cold": {
+    "t_total": 24.144,
+    "t_forward": 0.076,
+    "t_normalize": 23.349,
+    "n_normalize_calls": 4976
+   },
+   "warm": {
+    "t_total": 1.163,
+    "t_forward": 0.06,
+    "t_normalize": 0.399,
+    "n_normalize_calls": 4976
+   },
+   "cold_over_warm": 20.8
+  },
+  {
+   "heavy": 29,
+   "n_cands": 347,
+   "repeat": 2,
+   "t_total": 1.36,
+   "t_forward": 0.04,
+   "t_reactants": 0.7,
+   "t_normalize": 0.61,
+   "n_normalize_calls": 3890,
+   "share_forward": 0.032,
+   "share_reactants": 0.517,
+   "share_normalize": 0.451,
+   "cold": {
+    "t_total": 63.437,
+    "t_forward": 0.073,
+    "t_normalize": 62.635,
+    "n_normalize_calls": 3890
+   },
+   "warm": {
+    "t_total": 1.361,
+    "t_forward": 0.043,
+    "t_normalize": 0.613,
+    "n_normalize_calls": 3890
+   },
+   "cold_over_warm": 46.6
+  },
+  {
+   "heavy": 34,
+   "n_cands": 498,
+   "repeat": 2,
+   "t_total": 1.41,
+   "t_forward": 0.05,
+   "t_reactants": 0.83,
+   "t_normalize": 0.53,
+   "n_normalize_calls": 4247,
+   "share_forward": 0.036,
+   "share_reactants": 0.586,
+   "share_normalize": 0.378,
+   "cold": {
+    "t_total": 58.456,
+    "t_forward": 0.084,
+    "t_normalize": 57.531,
+    "n_normalize_calls": 4247
+   },
+   "warm": {
+    "t_total": 1.412,
+    "t_forward": 0.051,
+    "t_normalize": 0.534,
+    "n_normalize_calls": 4247
+   },
+   "cold_over_warm": 41.4
+  }
+ ]
+}
