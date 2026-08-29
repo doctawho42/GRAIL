@@ -23,7 +23,10 @@ grail presets --export-dir configs/generated
 python scripts/measure_coverage.py                 # rule-bank recall ceiling + leakage report -> results/
 python scripts/run_benchmark.py [--sample N] [--with-phase2]   # GRAIL ceiling + SyGMa baseline, InChIKey matching
 python scripts/run_multiseed.py --preset paper_minimal_baseline --seeds 0 1 2   # mean±std headline numbers
-python scripts/fix_splits.py --molecule-disjoint   # regenerate leakage-free clean split triples
+python scripts/fix_splits.py               # repair the splits; substrate-level, the mode the
+                                           # shipped *_triples_clean.txt were produced in.
+                                           # --molecule-disjoint is a DIFFERENT partition and
+                                           # would invalidate every pinned artifact.
 ```
 
 Environment constraint: **`numpy<2`** is required with the RDKit / torch-geometric stack. `optuna` (tuning) and `streamlit` (app) are optional extras.

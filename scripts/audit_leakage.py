@@ -1,6 +1,6 @@
 """Read-only leakage audit of the committed clean splits -> results/leakage_fix_report.json.
 
-`fix_splits.py --molecule-disjoint` BUILDS the clean splits (and overwrites the *_triples_clean.txt
+`fix_splits.py` BUILDS the clean splits (and overwrites the *_triples_clean.txt
 files, which are gitignored symlinks into the shared dataset). This script is its read-only
 companion: it re-derives the canonical substrate/molecule/positive-pair sets from the ALREADY
 committed clean triples (via fix_splits' own functions) and verifies zero cross-split overlap,

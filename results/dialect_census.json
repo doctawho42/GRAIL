@@ -2,8 +2,8 @@
  "provenance": {
   "script": "dialect_census.py",
   "script_path": "scripts/typed_edit/dialect_census.py",
-  "source_sha256": "a5d927e144c28592356daf69122ca20dacba66a0bf3ba5e241453cf350db66d0",
-  "git_commit": "6dd64aac242b62ca23606b526e1b27e603935873",
+  "source_sha256": "3ee78899bf640d8d8e74e5553d9a0040cf7e2d71f72ea6f46aa7142b46354ea9",
+  "git_commit": "2a872cfb8c703d62ee08b7adb148992f04d1e779",
   "git_dirty": true
  },
  "splits": {
@@ -269,5 +269,17 @@
   "instrument": "reactant half parsed as SMARTS; a carbon double-bonded to oxygen and single or aromatic bonded to nitrogen is the amide motif, a carbon single or aromatic bonded to oxygen and double-bonded to nitrogen is the imidic motif, and a carbon bonded singly to both together with any carbon double-bonded to nitrogen is the aromatic lactim motif",
   "path": "grail_metabolism/resources/extended_smirks.txt"
  },
- "reading": "every structure in the corpus is the InChI round-trip of its own record, and the round-trip places a mobile hydrogen on oxygen, so amides are stored as imidic acids and cytosine as its lactim; the substrate reaches the matcher in that drawing"
+ "reading": "every structure in the corpus is the InChI round-trip of its own record, and the round-trip places a mobile hydrogen on oxygen, so amides are stored as imidic acids and cytosine as its lactim; the substrate reaches the matcher in that drawing",
+ "arm_presentation": {
+  "arms_given_the_corpus_string": {
+   "GRAIL exhaustive": "stored",
+   "GRAIL interactive": "stored",
+   "SyGMa": "stored",
+   "MetaPredictor": "stored"
+  },
+  "MetaTox": "re-tautomerised to the natural form before submission",
+  "metatox_substrates": 291,
+  "metatox_retautomerised": 79,
+  "source": "results/metatox_input/substrate_map.csv, written by scripts/make_metatox_input.py"
+ }
 }

@@ -427,6 +427,108 @@ def build():
         for k in ("15", "30"):
             n[f"case.{arm}.recall{k}"] = round(cs["recall_at"][k], 2)
     n["case.references"] = art("case_study.json")["n_references"]
+    # the same example on the molecule as a chemist draws it, which is what the corpus does not
+    for arm, fname in (("interdrawn", "case_study_drawn.json"),
+                       ("exhdrawn", "case_study_exhaustive_drawn.json")):
+        cs = art(fname)
+        n[f"case.{arm}.candidates"] = cs["n_candidates"]
+        n[f"case.{arm}.found"] = len(cs["reference_ranks"])
+        for k in ("15", "30", "50"):
+            n[f"case.{arm}.recall{k}"] = round(cs["recall_at"][k], 2)
+    n["case.exh.ranks"] = ", ".join(str(r) for r in art("case_study_exhaustive.json")["reference_ranks"])
+    n["case.exhdrawn.ranks"] = ", ".join(
+        str(r) for r in art("case_study_exhaustive_drawn.json")["reference_ranks"])
+    n["case.inter.rulehit"] = art("case_study.json")["candidates"][3]["rule_id"]
+    _drawn = art("case_study_exhaustive_drawn.json")
+    n["case.exhdrawn.deamrule"] = next(c["rule_id"] for c in _drawn["candidates"]
+                                       if c["is_reference"] and c["rule_source"] == "curated")
+    n["case.exhdrawn.deamrank"] = next(c["rank"] for c in _drawn["candidates"]
+                                       if c["is_reference"] and c["rule_source"] == "curated")
+
+    # How the corpus draws its molecules, which decides which rules can fire on it. This is an
+    # axis like the matching criterion and the output budget, and it was undeclared.
+    dia = art("dialect_census.json")
+    for split in ("train", "val", "test"):
+        row = dia["splits"][split]
+        n[f"dialect.{split}.n"] = row["n"]
+        n[f"dialect.{split}.moved"] = row["moved"]
+        n[f"dialect.{split}.movedshare"] = row["moved_share"]
+        n[f"dialect.{split}.imidic"] = row["carrying_imidic_amide"]
+        # counts, not the share: 378,228 of 378,238 rounds to 1 and would read as exact
+        n[f"dialect.{split}.rtequal"] = dia["normalisation"][split]["equal_to_inchi_round_trip"]
+        n[f"dialect.{split}.rtof"] = dia["normalisation"][split]["records_compared"]
+        n[f"dialect.{split}.rtdiffer"] = dia["normalisation"][split]["differing"]
+    ev = dia["evaluated_test_subset"]
+    n["dialect.eval.n"] = ev["n"]
+    n["dialect.eval.moved"] = ev["moved"]
+    n["dialect.eval.movedshare"] = ev["moved_share"]
+    n["dialect.eval.imidic"] = ev["carrying_imidic_amide"]
+    n["dialect.eval.puretautomer"] = ev["moved_pure_tautomer"]
+    n["dialect.bank.amide"] = dia["bank"]["amide_requiring"]["total"]
+    n["dialect.bank.imidic"] = dia["bank"]["imidic_requiring"]["total"]
+    n["dialect.bank.minedamide"] = dia["bank"]["amide_requiring"]["mined"]
+    n["dialect.bank.minedimidic"] = dia["bank"]["imidic_requiring"]["mined"]
+    n["dialect.bank.curatedamide"] = dia["bank"]["amide_requiring"]["curated"]
+    n["dialect.bank.curatedimidic"] = dia["bank"]["imidic_requiring"]["curated"]
+    if "arm_presentation" in dia:
+        n["dialect.metatoxretaut"] = dia["arm_presentation"]["metatox_retautomerised"]
+        n["dialect.metatoxn"] = dia["arm_presentation"]["metatox_substrates"]
+    sv = art("standardiser_versions.json")
+    n["dialect.rdkitversions"] = len(sv["versions_tested"])
+    n["dialect.rdkitamide"] = len(sv["versions_returning_the_amide"])
+
+    # What the corpus assembly can and cannot say about itself.
+    ca = art("corpus_assembly.json")
+    n["assembly.records"] = sum(ca["splits"][s]["records"] for s in ("train", "val", "test"))
+    n["assembly.accessions"] = sum(ca["splits"][s]["records_carrying_a_source_accession"]
+                                   for s in ("train", "val", "test"))
+    n["assembly.duplicated"] = sum(ca["splits"][s]["duplicated_substrate_structures"]
+                                   for s in ("train", "val", "test"))
+    n["assembly.disagreements"] = sum(
+        ca["splits"][s]["duplicated_structures_whose_annotations_disagree"]
+        for s in ("train", "val", "test"))
+    n["assembly.bothways"] = sum(ca["splits"][s]["pairs_listed_both_positive_and_negative"]
+                                 for s in ("train", "val", "test"))
+    n["assembly.testids"] = ca["splits"]["test"]["substrates_by_id"]
+    n["assembly.teststructures"] = ca["splits"]["test"]["substrates_by_structure"]
+    n["assembly.commits"] = ca["repository"]["commits_in_history"]
+    if "source_overlap" in ca:
+        so = ca["source_overlap"]
+        mx = so["sources"].get("MetXBioDB")
+        if mx:
+            n["assembly.metxpairs"] = mx["distinct_pairs"]
+            n["assembly.metxinside"] = mx["inside_the_corpus"]
+            n["assembly.metxshare"] = mx["share_inside"]
+
+    # The composite share, measured twice, the second time under a threshold registered first.
+    ci = art("composite_instruments.json")
+    n["composite.scored"] = ci["counts"]["scored"]
+    n["composite.loci"] = ci["counts"]["instrument_1"]
+    n["composite.locishare"] = ci["shares"]["instrument_1"]
+    n["composite.edits"] = ci["counts"]["instrument_2"]
+    n["composite.editshare"] = ci["shares"]["instrument_2"]
+    n["composite.union"] = ci["counts"]["union"]
+    n["composite.unionshare"] = ci["shares"]["union"]
+    n["composite.threshold"] = ci["threshold_E"]
+    n["composite.bar"] = ci["registered_bar"]
+
+    # Where the bank's templates come from, including the ones that were carried as unattributed.
+    cp = art("curated_provenance.json")
+    n["attrib.named"] = cp["bank"]["named"]
+    n["attrib.unattributed"] = cp["bank"]["unattributed"]
+    n["attrib.placed"] = cp["identification"]["unattributed_verbatim_in_xtracted"]
+    n["attrib.unattributedimidic"] = cp["dialect"]["curated_unattributed"]["imidic_share"]
+    n["attrib.namedimidic"] = cp["dialect"]["curated_named"]["imidic_share"]
+    n["attrib.minedimidic"] = cp["dialect"]["mined"]["imidic_share"]
+    if "sygma_containment" in cp:
+        sc = cp["sygma_containment"]
+        n["sygma.rules"] = sc["sygma_rules"]
+        n["sygma.inside"] = sc["verbatim_in_bank"]
+        n["sygma.share"] = sc["share_of_sygma_inside"]
+        n["sygma.incurated"] = sc["in_curated_half"]
+        n["sygma.inmined"] = sc["in_mined_half"]
+        n["sygma.ofcurated"] = sc["share_of_curated_half_that_is_sygma"]
+        n["sygma.outside"] = sc["sygma_rules"] - sc["verbatim_in_bank"]
 
     # Provenance, stated as the pinned set and not the directory. These four were literals here
     # once, inside the one generator whose contract is that no number is a literal: when the

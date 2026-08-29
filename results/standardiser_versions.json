@@ -1,0 +1,280 @@
+{
+ "provenance": {
+  "script": "standardiser_versions.py",
+  "script_path": "scripts/typed_edit/standardiser_versions.py",
+  "source_sha256": "005ad4d821e14094b797f13cbdb46b7a4ed9ece717e266fc028f029f3b68a1df",
+  "git_commit": "2a872cfb8c703d62ee08b7adb148992f04d1e779",
+  "git_dirty": true
+ },
+ "question": "could the corpus's imidic drawing be the declared standardiser's own output under a different RDKit release",
+ "probes": [
+  {
+   "name": "benzamide",
+   "drawn": "NC(=O)c1ccccc1",
+   "stored_by_the_corpus": "N=C(O)c1ccccc1"
+  },
+  {
+   "name": "gemcitabine",
+   "drawn": "Nc1ccn(C2OC(CO)C(O)C2(F)F)c(=O)n1",
+   "stored_by_the_corpus": "N=c1ccn(C2OC(CO)C(O)C2(F)F)c(O)n1"
+  },
+  {
+   "name": "N-methylacetamide",
+   "drawn": "CC(=O)NC",
+   "stored_by_the_corpus": "CN=C(C)O"
+  },
+  {
+   "name": "urea",
+   "drawn": "O=C(N)N",
+   "stored_by_the_corpus": "N=C(N)O"
+  }
+ ],
+ "versions_tested": [
+  "2022.09.5",
+  "2023.03.3",
+  "2024.03.5",
+  "2024.09.3",
+  "2024.09.6",
+  "2025.03.2",
+  "2025.03.3",
+  "2025.09.6",
+  "2026.03.1",
+  "2026.03.3"
+ ],
+ "versions_returning_the_amide": [
+  "2022.09.5",
+  "2023.03.3",
+  "2024.03.5",
+  "2024.09.3",
+  "2024.09.6",
+  "2025.03.2",
+  "2025.03.3",
+  "2025.09.6",
+  "2026.03.1",
+  "2026.03.3"
+ ],
+ "versions_returning_the_imidic_form": [],
+ "by_version": [
+  {
+   "rdkit": "2022.09.5",
+   "returns_the_amide_for_every_probe": true,
+   "probes": {
+    "benzamide": {
+     "from_drawn": "NC(=O)c1ccccc1",
+     "from_stored": "NC(=O)c1ccccc1"
+    },
+    "gemcitabine": {
+     "from_drawn": "Nc1ccn(C2OC(CO)C(O)C2(F)F)c(=O)n1",
+     "from_stored": "Nc1ccn(C2OC(CO)C(O)C2(F)F)c(=O)n1"
+    },
+    "N-methylacetamide": {
+     "from_drawn": "CNC(C)=O",
+     "from_stored": "CNC(C)=O"
+    },
+    "urea": {
+     "from_drawn": "NC(N)=O",
+     "from_stored": "NC(N)=O"
+    }
+   }
+  },
+  {
+   "rdkit": "2023.03.3",
+   "returns_the_amide_for_every_probe": true,
+   "probes": {
+    "benzamide": {
+     "from_drawn": "NC(=O)c1ccccc1",
+     "from_stored": "NC(=O)c1ccccc1"
+    },
+    "gemcitabine": {
+     "from_drawn": "Nc1ccn(C2OC(CO)C(O)C2(F)F)c(=O)n1",
+     "from_stored": "Nc1ccn(C2OC(CO)C(O)C2(F)F)c(=O)n1"
+    },
+    "N-methylacetamide": {
+     "from_drawn": "CNC(C)=O",
+     "from_stored": "CNC(C)=O"
+    },
+    "urea": {
+     "from_drawn": "NC(N)=O",
+     "from_stored": "NC(N)=O"
+    }
+   }
+  },
+  {
+   "rdkit": "2024.03.5",
+   "returns_the_amide_for_every_probe": true,
+   "probes": {
+    "benzamide": {
+     "from_drawn": "NC(=O)c1ccccc1",
+     "from_stored": "NC(=O)c1ccccc1"
+    },
+    "gemcitabine": {
+     "from_drawn": "Nc1ccn(C2OC(CO)C(O)C2(F)F)c(=O)n1",
+     "from_stored": "Nc1ccn(C2OC(CO)C(O)C2(F)F)c(=O)n1"
+    },
+    "N-methylacetamide": {
+     "from_drawn": "CNC(C)=O",
+     "from_stored": "CNC(C)=O"
+    },
+    "urea": {
+     "from_drawn": "NC(N)=O",
+     "from_stored": "NC(N)=O"
+    }
+   }
+  },
+  {
+   "rdkit": "2024.09.3",
+   "returns_the_amide_for_every_probe": true,
+   "probes": {
+    "benzamide": {
+     "from_drawn": "NC(=O)c1ccccc1",
+     "from_stored": "NC(=O)c1ccccc1"
+    },
+    "gemcitabine": {
+     "from_drawn": "Nc1ccn(C2OC(CO)C(O)C2(F)F)c(=O)n1",
+     "from_stored": "Nc1ccn(C2OC(CO)C(O)C2(F)F)c(=O)n1"
+    },
+    "N-methylacetamide": {
+     "from_drawn": "CNC(C)=O",
+     "from_stored": "CNC(C)=O"
+    },
+    "urea": {
+     "from_drawn": "NC(N)=O",
+     "from_stored": "NC(N)=O"
+    }
+   }
+  },
+  {
+   "rdkit": "2024.09.6",
+   "returns_the_amide_for_every_probe": true,
+   "probes": {
+    "benzamide": {
+     "from_drawn": "NC(=O)c1ccccc1",
+     "from_stored": "NC(=O)c1ccccc1"
+    },
+    "gemcitabine": {
+     "from_drawn": "Nc1ccn(C2OC(CO)C(O)C2(F)F)c(=O)n1",
+     "from_stored": "Nc1ccn(C2OC(CO)C(O)C2(F)F)c(=O)n1"
+    },
+    "N-methylacetamide": {
+     "from_drawn": "CNC(C)=O",
+     "from_stored": "CNC(C)=O"
+    },
+    "urea": {
+     "from_drawn": "NC(N)=O",
+     "from_stored": "NC(N)=O"
+    }
+   }
+  },
+  {
+   "rdkit": "2025.03.2",
+   "returns_the_amide_for_every_probe": true,
+   "probes": {
+    "benzamide": {
+     "from_drawn": "NC(=O)c1ccccc1",
+     "from_stored": "NC(=O)c1ccccc1"
+    },
+    "gemcitabine": {
+     "from_drawn": "Nc1ccn(C2OC(CO)C(O)C2(F)F)c(=O)n1",
+     "from_stored": "Nc1ccn(C2OC(CO)C(O)C2(F)F)c(=O)n1"
+    },
+    "N-methylacetamide": {
+     "from_drawn": "CNC(C)=O",
+     "from_stored": "CNC(C)=O"
+    },
+    "urea": {
+     "from_drawn": "NC(N)=O",
+     "from_stored": "NC(N)=O"
+    }
+   }
+  },
+  {
+   "rdkit": "2025.03.3",
+   "returns_the_amide_for_every_probe": true,
+   "probes": {
+    "benzamide": {
+     "from_drawn": "NC(=O)c1ccccc1",
+     "from_stored": "NC(=O)c1ccccc1"
+    },
+    "gemcitabine": {
+     "from_drawn": "Nc1ccn(C2OC(CO)C(O)C2(F)F)c(=O)n1",
+     "from_stored": "Nc1ccn(C2OC(CO)C(O)C2(F)F)c(=O)n1"
+    },
+    "N-methylacetamide": {
+     "from_drawn": "CNC(C)=O",
+     "from_stored": "CNC(C)=O"
+    },
+    "urea": {
+     "from_drawn": "NC(N)=O",
+     "from_stored": "NC(N)=O"
+    }
+   }
+  },
+  {
+   "rdkit": "2025.09.6",
+   "returns_the_amide_for_every_probe": true,
+   "probes": {
+    "benzamide": {
+     "from_drawn": "NC(=O)c1ccccc1",
+     "from_stored": "NC(=O)c1ccccc1"
+    },
+    "gemcitabine": {
+     "from_drawn": "Nc1ccn(C2OC(CO)C(O)C2(F)F)c(=O)n1",
+     "from_stored": "Nc1ccn(C2OC(CO)C(O)C2(F)F)c(=O)n1"
+    },
+    "N-methylacetamide": {
+     "from_drawn": "CNC(C)=O",
+     "from_stored": "CNC(C)=O"
+    },
+    "urea": {
+     "from_drawn": "NC(N)=O",
+     "from_stored": "NC(N)=O"
+    }
+   }
+  },
+  {
+   "rdkit": "2026.03.1",
+   "returns_the_amide_for_every_probe": true,
+   "probes": {
+    "benzamide": {
+     "from_drawn": "NC(=O)c1ccccc1",
+     "from_stored": "NC(=O)c1ccccc1"
+    },
+    "gemcitabine": {
+     "from_drawn": "Nc1ccn(C2OC(CO)C(O)C2(F)F)c(=O)n1",
+     "from_stored": "Nc1ccn(C2OC(CO)C(O)C2(F)F)c(=O)n1"
+    },
+    "N-methylacetamide": {
+     "from_drawn": "CNC(C)=O",
+     "from_stored": "CNC(C)=O"
+    },
+    "urea": {
+     "from_drawn": "NC(N)=O",
+     "from_stored": "NC(N)=O"
+    }
+   }
+  },
+  {
+   "rdkit": "2026.03.3",
+   "returns_the_amide_for_every_probe": true,
+   "probes": {
+    "benzamide": {
+     "from_drawn": "NC(=O)c1ccccc1",
+     "from_stored": "NC(=O)c1ccccc1"
+    },
+    "gemcitabine": {
+     "from_drawn": "Nc1ccn(C2OC(CO)C(O)C2(F)F)c(=O)n1",
+     "from_stored": "Nc1ccn(C2OC(CO)C(O)C2(F)F)c(=O)n1"
+    },
+    "N-methylacetamide": {
+     "from_drawn": "CNC(C)=O",
+     "from_stored": "CNC(C)=O"
+    },
+    "urea": {
+     "from_drawn": "NC(N)=O",
+     "from_stored": "NC(N)=O"
+    }
+   }
+  }
+ ],
+ "reading": "every RDKit release available here maps both the drawn amide and the stored imidic acid to the amide, so the corpus drawing is not this standardiser's output under any of them; the corpus files predate this repository's first commit by eight months and their producer is not in it, so what the assembly did can be bounded and not read"
+}

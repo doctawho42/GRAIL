@@ -1,0 +1,156 @@
+{
+ "provenance": {
+  "script": "corpus_assembly.py",
+  "script_path": "scripts/typed_edit/corpus_assembly.py",
+  "source_sha256": "f9e680d3db20aa222686e2c560ab1a1f1d8600e6ae1076d0c9a98b028c3c06bb",
+  "git_commit": "2a872cfb8c703d62ee08b7adb148992f04d1e779",
+  "git_dirty": true
+ },
+ "files": {
+  "train.sdf": {
+   "bytes": 1191859108,
+   "written": "2024-09-09T23:11:43.475569+00:00"
+  },
+  "train.triples": {
+   "bytes": 6042236,
+   "written": "2024-09-09T23:13:05.948435+00:00"
+  },
+  "train.clean": {
+   "bytes": 5316054,
+   "written": "2026-03-28T01:58:42.810142+00:00"
+  },
+  "val.sdf": {
+   "bytes": 134996965,
+   "written": "2024-09-09T23:16:22.316839+00:00"
+  },
+  "val.triples": {
+   "bytes": 585199,
+   "written": "2024-09-09T23:16:37.609958+00:00"
+  },
+  "val.clean": {
+   "bytes": 510413,
+   "written": "2026-03-28T01:58:42.821239+00:00"
+  },
+  "test.sdf": {
+   "bytes": 138891883,
+   "written": "2024-09-09T23:14:40.090127+00:00"
+  },
+  "test.triples": {
+   "bytes": 636521,
+   "written": "2024-09-09T23:15:27.359919+00:00"
+  },
+  "test.clean": {
+   "bytes": 636521,
+   "written": "2026-03-28T01:58:42.824492+00:00"
+  }
+ },
+ "repository": {
+  "sha": "2a872cf",
+  "committed": "2026-08-29T23:36:37+07:00",
+  "commits_in_history": 839
+ },
+ "splits": {
+  "train": {
+   "records": 378241,
+   "fields": {
+    "InChI": 378241,
+    "State": 378241,
+    "SMILES": 378241,
+    "Index": 378241
+   },
+   "records_carrying_a_source_accession": 0,
+   "state_histogram": {
+    "0": 339132,
+    "1": 29030,
+    "Substrate": 10079
+   },
+   "substrates_by_id": 9339,
+   "substrates_by_structure": 9011,
+   "duplicated_substrate_structures": 198,
+   "duplicated_structures_whose_annotations_disagree": 0,
+   "pairs_listed_both_positive_and_negative": 1,
+   "state_of_substrate_ids": {
+    "Substrate": 9339
+   },
+   "state_of_positive_product_ids": {
+    "1": 22061
+   },
+   "distinct_positive_pairs": 17454
+  },
+  "val": {
+   "records": 41591,
+   "fields": {
+    "InChI": 41591,
+    "State": 41591,
+    "SMILES": 41591,
+    "Index": 41591
+   },
+   "records_carrying_a_source_accession": 0,
+   "state_histogram": {
+    "0": 37219,
+    "1": 3261,
+    "Substrate": 1111
+   },
+   "substrates_by_id": 1028,
+   "substrates_by_structure": 1020,
+   "duplicated_substrate_structures": 6,
+   "duplicated_structures_whose_annotations_disagree": 0,
+   "pairs_listed_both_positive_and_negative": 0,
+   "state_of_substrate_ids": {
+    "Substrate": 1028
+   },
+   "state_of_positive_product_ids": {
+    "1": 2451
+   },
+   "distinct_positive_pairs": 2085
+  },
+  "test": {
+   "records": 45134,
+   "fields": {
+    "InChI": 45134,
+    "State": 45134,
+    "SMILES": 45134,
+    "Index": 45134
+   },
+   "records_carrying_a_source_accession": 0,
+   "state_histogram": {
+    "0": 40186,
+    "1": 3700,
+    "Substrate": 1248
+   },
+   "substrates_by_id": 1246,
+   "substrates_by_structure": 1198,
+   "duplicated_substrate_structures": 30,
+   "duplicated_structures_whose_annotations_disagree": 0,
+   "pairs_listed_both_positive_and_negative": 0,
+   "state_of_substrate_ids": {
+    "Substrate": 1246
+   },
+   "state_of_positive_product_ids": {
+    "1": 3700
+   },
+   "distinct_positive_pairs": 2597
+  }
+ },
+ "splitter": {
+  "splitter": "scripts/fix_splits.py",
+  "exists": true,
+  "test_triples_untouched": true,
+  "declared_digests": {
+   "train": {
+    "declared": "4fb611b62630e70d0e810d97a7447d29435149121bd98743833bbf2f0d884c66",
+    "matches_shipped": true
+   },
+   "val": {
+    "declared": "669a0346e9cc542ef888bfb08c01b48e1a55f0d9b924f7caf2bc7bc3d5e61215",
+    "matches_shipped": true
+   },
+   "test": {
+    "declared": "5989734ab81d45ad4c5fde99bd041c53ca17978b7ba37613135fabae9b2e0246",
+    "matches_shipped": true
+   }
+  },
+  "molecule_disjoint_recorded": false
+ },
+ "reading": "the corpus files were written in one run months before this repository's first commit and their producer is not in it, so the extraction cannot be read off code; the source accession field is empty in every record, so per-source counts cannot be recovered from the data either; what can be established is the standardisation the strings carry, the label convention, the absence of any cross-source disagreement to arbitrate, the fraction of each present source that is inside, and that the shipped clean triples come out of the repaired splitter in its substrate-level mode"
+}

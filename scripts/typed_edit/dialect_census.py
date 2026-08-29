@@ -323,6 +323,27 @@ def main() -> int:
           f"imidic-requiring {b['imidic_requiring'].get('total')}, "
           f"aromatic-lactim-requiring {b['aromatic_lactim_requiring'].get('total')}")
 
+    # Which drawing each arm of the comparison was handed. Four met the corpus string; the
+    # MetaTox submission re-tautomerises, on the stated ground that sending an unnatural imidic
+    # acid to an external service would be unfair to it.
+    arms = {"GRAIL exhaustive": "stored", "GRAIL interactive": "stored",
+            "SyGMa": "stored", "MetaPredictor": "stored"}
+    metatox = ROOT / "results" / "metatox_input" / "substrate_map.csv"
+    if metatox.exists():
+        import csv
+        rows = list(csv.DictReader(metatox.open()))
+        changed = sum(1 for r in rows
+                      if str(r.get("retautomerized", "")).strip().lower() in ("true", "1", "yes"))
+        report["arm_presentation"] = {
+            "arms_given_the_corpus_string": arms,
+            "MetaTox": "re-tautomerised to the natural form before submission",
+            "metatox_substrates": len(rows),
+            "metatox_retautomerised": changed,
+            "source": "results/metatox_input/substrate_map.csv, written by scripts/make_metatox_input.py",
+        }
+        print(f"MetaTox submission: {changed} of {len(rows)} substrates re-tautomerised; "
+              f"every other arm met the corpus string")
+
     report["reading"] = (
         "every structure in the corpus is the InChI round-trip of its own record, and the "
         "round-trip places a mobile hydrogen on oxygen, so amides are stored as imidic acids "

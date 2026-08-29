@@ -13,7 +13,7 @@ Given a parent (substrate) SMILES, predict the set of its metabolite **structure
 as a ranked list. This is de-novo structure prediction from a parent — **not** site-of-
 metabolism (FAME/SMARTCyp), **not** spectral annotation (CASMI), **not** retrosynthesis.
 
-## 2. Composition (clean, molecule-disjoint splits)
+## 2. Composition (clean, substrate-disjoint splits)
 
 Substrate→metabolite annotations as triples `substrate_id\tmetabolite_id\tis_real` over an
 SDF of indexed molecules; positives are annotated metabolites, negatives are rule-applicable
@@ -30,7 +30,7 @@ was measured on the parseable test subset: 1865/2597 reachable = **0.718**.)
 
 ## 3. Leakage control
 
-Splits are **molecule-disjoint**: no substrate in test/val appears in train, and no test
+Splits are **substrate-disjoint**: no substrate in test/val appears in train, and no test
 substrate appears in val. Built and audited by `scripts/fix_splits.py`, which canonicalizes
 SMILES, removes cross-split substrates, and verifies `zero_substrate_overlap_between_clean_
 splits` and `zero_positive_pair_overlap_train_test` (→ `leakage_fix_report.json`). Use
@@ -38,7 +38,7 @@ splits` and `zero_positive_pair_overlap_train_test` (→ `leakage_fix_report.jso
 
 **Fairness caveat (must be reported).** Rule-based tools (SyGMa, GLORYx, BioTransformer) have
 no ML "training set" — their fixed expert rules may encode knowledge overlapping any split,
-while learned models are held to molecule-disjoint splits. No prior benchmark controls this
+while learned models are held to substrate-disjoint splits. No prior benchmark controls this
 asymmetry; we surface it explicitly rather than hide it. Shared DrugBank/MetXBioDB provenance
 across tools is a further uncontrolled leakage source.
 

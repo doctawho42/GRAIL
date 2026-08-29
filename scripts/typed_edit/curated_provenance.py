@@ -149,7 +149,9 @@ def main() -> int:
     }
     if sygma:
         report["sygma_containment"] = {
-            "rules_read_from": sygma_path,
+            # the installed package, not the absolute path: a home directory neither reproduces
+            # on another machine nor survives anonymisation
+            "rules_read_from": "the installed sygma package, rules/{phase1,phase2}.txt",
             "sygma_rules": len(sygma),
             "verbatim_in_bank": len(sygma & bank),
             "share_of_sygma_inside": round(len(sygma & bank) / max(len(sygma), 1), 4),
