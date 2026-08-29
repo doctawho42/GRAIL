@@ -131,6 +131,31 @@ def main() -> int:
     def hits(key, k):
         return np.array([len(set(ordered[key][s][:k]) & truth[s]) for s in subs], dtype=float)
 
+    # Before anything is believed: the stored-dialect column has to reproduce the comparison
+    # table the paper prints. Both read the same pools through the same ranking and the same
+    # convention, so a difference is this script measuring something else -- which is the one
+    # failure a plausible-looking sweep would hide. Checked only at full coverage, because a
+    # subset legitimately differs.
+    deployed = json.loads((ROOT / "results" / "deployment_table.json").read_text())
+    if len(subs) == deployed["population"]["n"]:
+        names = {"GRAIL exhaustive": "whole bank", "GRAIL interactive": "trained budget",
+                 "MetaTox": "metatox", "SyGMa": "sygma", "MetaPredictor": "metapredictor"}
+        off = []
+        for name, column in names.items():
+            key = (name, "stored")
+            if key not in ordered:
+                continue
+            for k in KS:
+                mine = round(float(hits(key, k).sum() / U.sum()), 4)
+                theirs = deployed["recall_micro"][str(k)][column]
+                if abs(mine - theirs) > 5e-4:
+                    off.append(f"{name} k={k}: sweep {mine}, table {theirs}")
+        if off:
+            raise SystemExit("the stored dialect does not reproduce the comparison table:\n  "
+                             + "\n  ".join(off[:10]))
+        print(f"stored dialect reproduces the comparison table at all "
+              f"{len(names) * len(KS)} cells")
+
     # 1. what the drawing does to each GRAIL arm, paired
     effect = {}
     for name in arms_spec:
