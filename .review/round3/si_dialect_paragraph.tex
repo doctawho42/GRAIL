@@ -1,0 +1,28 @@
+\paragraph{What it does to the comparison.} The axis is swept like the others. Both GRAIL arms
+were rebuilt on the identical substrates, presented as the declared standardiser draws them, with
+the same checkpoints, the same rule budgets, the same pool cap and the same ranking; the pools stay
+keyed by the corpus string, so the annotation is one annotation and the two drawings are paired
+substrate by substrate. Table~\ref{tab:si-dialect} gives the paired effect on each arm at each
+budget. The largest anywhere is \numDsweepExhLargest{} for the exhaustive mode and
+\numDsweepInterLargest{} for the interactive one, and \numDsweepExhSeparating{} of
+\numDsweepExhBudgets{} and \numDsweepInterSeparating{} of \numDsweepInterBudgets{} cells separate
+from zero.
+
+Two properties of that measurement are worth stating before it is read. The stored column
+reproduces the comparison table of the main text at every one of its cells, which is the check
+that the sweep is measuring the same quantity and not a near neighbour of it; and pointing both
+dialects at the same pools returns exactly zero everywhere with every interval collapsed, which is
+the check that the pairing is right. A sweep that cannot show a non-difference as zero would hide
+its own defect inside a plausible number.
+
+Carried to the verdicts, the drawing moves \numDsweepMoved{} of \numDsweepCells{}
+arm-against-comparator cells. The coverage ceiling on this population is \numDsweepCeilingstored{}
+under the stored drawing and \numDsweepCeilingdrawn{} under the standardiser's, a difference of
+$\numDsweepCeilingdiff$, $95\%$ CI $[\numDsweepCeilinglo, \numDsweepCeilinghi]$. It is measured
+here rather than on the full evaluated split because the uncapped exhaustive pool exists in both
+drawings for this population and not for that one.
+
+Three comparators are held at the corpus drawing, because MetaTox is a web service and
+MetaPredictor a frozen delivery and neither can be re-run here. A difference against them
+therefore measures how much of our own margin was the drawing, which is the question that matters
+for reading the comparison; SyGMa, which can be re-run, is swept above.

@@ -16,15 +16,15 @@ pieces=()
 for a in $(seq 0 $STEP 72); do b=$((a+STEP)); [ $b -gt 73 ] && b=73; pieces+=("$a $b"); done
 for a in $(seq 146 $STEP 218); do b=$((a+STEP)); [ $b -gt 219 ] && b=219; pieces+=("$a $b"); done
 
-running=0
 for piece in "${pieces[@]}"; do
   set -- $piece
   out="results/widepools_std_fine/p$1_$2.json"
   [ -f "$out" ] && continue
   $PY scripts/typed_edit/build_wide_pools.py --start "$1" --end "$2" --present standardised \
       --gen-ckpt $GEN --filter-ckpt $FLT --top-k 7581 --out "$out" >/dev/null 2>&1 &
-  running=$((running+1))
-  if [ $running -ge $CONCURRENCY ]; then wait -n 2>/dev/null || wait; running=$((running-1)); fi
+  # `wait -n` is bash 4; macOS ships 3.2, where the fallback waits for ALL children and
+  # serialises the whole run on its slowest piece. Poll for a free slot instead.
+  while [ "$(jobs -rp | wc -l | tr -d ' ')" -ge "$CONCURRENCY" ]; do sleep 10; done
 done
 wait
 echo "fine pieces written: $(ls results/widepools_std_fine/ 2>/dev/null | wc -l | tr -d ' ')"
