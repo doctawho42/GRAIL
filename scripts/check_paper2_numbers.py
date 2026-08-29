@@ -122,8 +122,15 @@ def main() -> int:
                  # in the script that writes it comes straight back on the next run
                  *sorted((ROOT / "scripts").glob("paper2_*tables*.py")),
                  *sorted((ROOT / "scripts").glob("paper2_si_tables.py"))]:
-        for hit in re.findall(r"(?:Table|Figure|Section|Equation)~?S\d+", path.read_text()):
+        text = path.read_text()
+        for hit in re.findall(r"(?:Table|Figure|Section|Equation)~?S\d+", text):
             pointers.append(f"{path.name}: {hit}")
+        # and the other direction: a hand-typed float number in the Supporting Information
+        # pointing at the manuscript compiles just as silently when it is wrong. Both documents
+        # now resolve the other's numbering through xr, so neither needs a literal.
+        if path.name.startswith("si") or "si_table" in path.name:
+            for hit in re.findall(r"(?:Table|Figure|Equation)~?\d+", text):
+                pointers.append(f"{path.name}: {hit}")
 
     ok = True
     print(f"macros defined {len(defined)}, used {len(used)}")

@@ -250,7 +250,8 @@ def si_intervals():
             "set, in micro recall, with its paired bootstrap 95\\% interval; leading zeros are "
             "dropped. $^{*}$ marks an interval excluding zero, which is the condition under which "
             "the paper claims a lead or a trail, and the verdicts in the main text and in "
-            "Figure~1 are read from these and from nothing else. The estimator is Equation~6 at "
+            "Figure~\\ref{MS-fig:sweep} are read from these and from nothing else. The estimator is "
+            "Equation~\\ref{MS-eq:bootstrap} at "
             "$B = 10\\,000$ resamples, seed 0.}\n"
             "\\label{tab:si-intervals}\n\\end{table}\n")
 
@@ -267,7 +268,7 @@ def si_precision():
             f"$k$ & {head} \\\\\n\\midrule\n" + "\n".join(rows)
             + "\n\\bottomrule\n\\end{tabular}\n"
             "\\caption{Micro precision at each budget on the comparison set, with the parent-drop "
-            "convention of Table~2. Precision at $k$ is hits over the predictions inside the "
+            "convention of Table~\\ref{MS-tab:sweep}. Precision at $k$ is hits over the predictions inside the "
             "window, so an arm whose list is shorter than the budget is not charged for the empty "
             "slots, which is why MetaPredictor is flat from $k=15$. These figures order the "
             "systems differently from recall and we do not use them to do so: under incomplete "

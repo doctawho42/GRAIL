@@ -5,6 +5,12 @@
 \usepackage{booktabs}
 \usepackage{graphicx}
 \usepackage{microtype}
+% Pointers running the other way, from this document into the manuscript, resolve through the
+% manuscript's own .aux for the same reason its pointers into this one do: a hand-typed float
+% number compiles silently when it is wrong. Both documents are built twice, so each reads the
+% other's numbering.
+\usepackage{xr}
+\externaldocument[MS-]{grail_jcim}
 \SectionNumbersOn
 \input{numbers}
 \input{markers}
@@ -199,7 +205,7 @@ four in Section~\ref{sec:si-sensitivity}.
 
 \input{si_table_parentdrop}
 
-Table~2 declares that a prediction equal to the substrate is dropped before the budget, for every
+Table~\ref{MS-tab:sweep} declares that a prediction equal to the substrate is dropped before the budget, for every
 method alike. Every other declared choice in this paper is swept, and this one was declared and
 not measured, so Table~\ref{tab:si-parentdrop} measures it.
 
@@ -505,7 +511,7 @@ One weakness of the register is ours to state rather than a reader's to find. On
 adjudicating population as part of the pre-specification. The nine before it name a threshold and
 a falsification condition and leave the population implicit, and three of them --- P5, P6 and P7
 --- were in the event adjudicated on the comparison set, which is derived from the test split,
-while the rest were adjudicated on validation. Table~4 records the population each was checked on
+while the rest were adjudicated on validation. Table~\ref{MS-tab:hyp} records the population each was checked on
 so the reader can see which is which, but recording it after the fact is not the same as fixing
 it before, and for those three it was not fixed before. The register's later entries do fix it.
 
@@ -516,7 +522,7 @@ abstention; H4, a ranked prediction of intervention sizes; H5, the same null out
 H6, a negative control on graph automorphism. Each is stated with its threshold so that a later
 result on any of them cannot be a threshold chosen after the fact. None is reported in this paper
 because none was run for it, which is a different thing from a prediction that was run and did
-not hold; the three of those are P6, P7 and P8 and they are in Table~4 with their measured
+not hold; the three of those are P6, P7 and P8 and they are in Table~\ref{MS-tab:hyp} with their measured
 values.
 
 \section{Group ranking and its oracle}
@@ -680,10 +686,11 @@ number does. \numProvHandtyped{} measurements are typed by hand, most of them in
 and they are enumerated in the checker itself rather than folded into a wildcard --- so a number
 typed by hand that is not already on that list still fails the check, and the list is the exact
 statement of what remains to be wired. A checker refuses any other numeric literal in either
-document, refuses any hand-typed pointer from the manuscript into this one --- the manuscript
-resolves those through \texttt{xr} against this document's labels, while the few running the
-other way are typed, because this document cannot resolve the manuscript's numbering --- and
-writes the three counts this paragraph quotes.
+document, refuses any hand-typed pointer between the two documents in either direction, and
+writes the three counts this paragraph quotes. Every such pointer resolves through
+\texttt{xr} against the other document's own labels, so a wrong one prints \texttt{??} and
+fails the build rather than compiling silently. Nine were typed by hand in an earlier version
+and all nine were wrong, one of them badly enough to send a referee to the wrong table.
 
 The train and validation candidate pools are deposited at \ZenodoDoi{}. Every substrate and
 every annotated metabolite in them is replaced by its tautomer-canonical InChIKey before the

@@ -17,3 +17,9 @@ done
 bibtex grail_jcim >/dev/null 2>&1
 pdflatex -interaction=nonstopmode grail_jcim    >/dev/null 2>&1
 pdflatex -interaction=nonstopmode grail_jcim    >/dev/null 2>&1
+# The references run both ways now, so each document has to see the other's finished numbering.
+# One more round of each resolves the pointers this document makes into the other.
+pdflatex -interaction=nonstopmode si            >/dev/null 2>&1
+pdflatex -interaction=nonstopmode si            >/dev/null 2>&1
+pdflatex -interaction=nonstopmode grail_jcim    >/dev/null 2>&1
+pdflatex -interaction=nonstopmode grail_jcim    >/dev/null 2>&1
