@@ -528,6 +528,30 @@ def build():
                      - hyd["global_arms_paired"]["recovered_implicit"])
     n["hyd.residuallo"] = hyd["residual_ci95"][0]
     n["hyd.residualhi"] = hyd["residual_ci95"][1]
+    # The substrate-presentation sweep: what the drawing does to each arm, to every verdict, and
+    # to the coverage ceiling on the population where both drawings exist.
+    if (ROOT / "results" / "dialect_sweep.json").exists():
+        dsw = art("dialect_sweep.json")
+        n["dsweep.n"] = dsw["n"]
+        n["dsweep.cells"] = dsw["verdict_cells"]
+        n["dsweep.moved"] = dsw["verdict_cells_that_move"]
+        for arm, tag in (("GRAIL exhaustive", "exh"), ("GRAIL interactive", "inter")):
+            row = dsw["effect_on_each_arm"][arm]
+            worst = max(row.values(), key=lambda v: abs(v["difference"]))
+            n[f"dsweep.{tag}.largest"] = worst["difference"]
+            n[f"dsweep.{tag}.separating"] = sum(1 for v in row.values() if v["separates"])
+            n[f"dsweep.{tag}.budgets"] = len(row)
+            for k in ("15", "30", "50"):
+                n[f"dsweep.{tag}.diff{k}"] = row[k]["difference"]
+                n[f"dsweep.{tag}.lo{k}"] = row[k]["ci95"][0]
+                n[f"dsweep.{tag}.hi{k}"] = row[k]["ci95"][1]
+        cov = dsw["coverage_ceiling"]
+        n["dsweep.ceilingstored"] = cov["stored"]["coverage"]
+        n["dsweep.ceilingdrawn"] = cov["standardised"]["coverage"]
+        n["dsweep.ceilingdiff"] = cov["difference"]["value"]
+        n["dsweep.ceilinglo"] = cov["difference"]["ci95"][0]
+        n["dsweep.ceilinghi"] = cov["difference"]["ci95"][1]
+
     # What the corpus's drawing cost the one comparator whose rules can be re-run against the
     # other. Its templates are written entirely in amide notation, so this is the arm the
     # dialect should hurt, and it does.
