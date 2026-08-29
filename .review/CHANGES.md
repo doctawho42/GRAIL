@@ -34,8 +34,21 @@ releases spanning four years, `standardize_mol` returns the amide in ten of ten,
 Census: 345 of 1,170 evaluated substrates are not fixed points of the standardiser, every move a
 pure tautomer move; per split 2,892/9,194, 281/1,063, 350/1,200. Bank census: the mined half
 requires an imidic reactant 684 times against 628 for a real amide, the curated half 62 against
-170, and no SyGMa template requires it. The head-to-head sweep under both drawings is in SI
-Table S10 with the coverage ceiling on the same population beside it.
+170, and no SyGMa template requires it. The head-to-head sweep under both drawings is in SI Table S10 with the coverage ceiling on the
+same population beside it.
+
+The sweep itself, on all 291 substrates with both arms rebuilt: the largest effect is -0.0180 for
+each arm, two of nine cells separate from zero for the exhaustive mode and one of nine for the
+interactive, four of 54 arm-against-comparator verdicts move, and none of the four is a lead the
+paper claims — the exhaustive mode's at k=30 and k=50 and SyGMa's at k<=5 all stand under both
+drawings. The coverage ceiling on that population goes 0.8105 to 0.8030, a difference of -0.0075
+with the interval covering zero. So the axis decides an individual prediction — it decides the
+whole worked example — and barely moves the aggregate. That is reported as it came out.
+
+Two gates had to pass before any of it was believed. The stored column reproduces the comparison
+table of the main text at all 45 of its cells, which is the check that the sweep measures the same
+quantity and not a near neighbour of it. Pointing both dialects at the same pools returns exactly
+zero everywhere with every interval collapsed, which is the check that the pairing is right.
 
 ## The rest
 
