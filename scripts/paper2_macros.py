@@ -51,6 +51,8 @@ def pct(v) -> str:
 # exact. Differences keep four places; a registered threshold does not, because "0.05" is what
 # was registered and "0.0500" is not.
 MEASURED = re.compile(r"(?:gap|diff|effect|lo|hi)\d*$")
+# A rule index is a name, not a quantity: "template 4,913" is wrong the way "page 1,024" is.
+INDEX = re.compile(r"(?:rule|rulehit|deamrule|ruleid|index)$")
 
 
 def fmt(v, key: str = ""):
@@ -62,6 +64,8 @@ def fmt(v, key: str = ""):
         s = f"{v:.4f}".rstrip("0").rstrip(".")
         return s if s else "0"
     if isinstance(v, int) and abs(v) >= 1000:
+        if INDEX.search(key.split(".")[-1]):
+            return str(v)
         return f"{v:,}".replace(",", "{,}")
     return str(v)
 
