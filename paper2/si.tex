@@ -83,6 +83,16 @@ What counts as a hit is an axis with five declared settings, given in Table~\ref
 The paper reports its comparison under the tautomer-aware key and its sensitivity to the other
 four in Section~\ref{sec:si-sensitivity}.
 
+\section{The comparison's differences and their intervals}
+
+\input{si_table_intervals}
+
+The main text reports the level of each arm and the verdict at each budget. Table~\ref{tab:si-intervals}
+gives the quantity those verdicts are read from: the difference between each GRAIL arm and each
+comparator, with the paired interval. Two of them are worth seeing rather than inferring. The
+exhaustive mode's lead over MetaTox at $k=30$ excludes zero by little, and its two unresolved
+budgets, $k=15$ and $k=20$, sit either side of zero rather than far from it.
+
 \section{Sensitivity of the comparison to the matching criterion}
 \label{sec:si-sensitivity}
 
@@ -122,7 +132,17 @@ count is reported per criterion rather than once.
 
 The bank holds \numBankRules{} templates spanning \numBankTypes{} distinct reaction types, of
 which \numBankParses{} parse under RDKit 2022.09.5. It is the deduplicated union of four curated
-collections together with templates mined from the molecule-disjoint training split alone.
+collections together with templates mined from the training split alone, which is disjoint by
+substrate and not by molecule.
+
+The two halves are counted rather than described. \numCuratedTotal{} templates are curated and
+\numMinedRules{} are mined. Three of the curated collections ship with the code:
+\texttt{data/smirks.txt} (\numCuratedHydroxylation{}), \texttt{data/merged\_smirks.txt}
+(\numCuratedMerged{}) and \texttt{resources/notebooks\_rules.txt}
+(\numCuratedNotebooks{}), contributing \numCuratedNamed{} distinct rules to the bank after
+deduplication. The remaining \numCuratedUnnamed{} come from a fourth collection whose file is not
+in the repository. The published source of each collection, and the licence each carries, is
+\CuratedProvenance{}; a reader should treat the curated half as unattributed until it is.
 
 Mining locates a ring-aware maximum common substructure for each annotated substrate--product
 pair. Atoms whose element, formal charge, hydrogen count, aromaticity or degree changed, atom
@@ -306,11 +326,20 @@ without it.
 
 \section{Comparators}
 
-SyGMa 1.1.0 is taken from the installed module. BioTransformer is pinned by digest rather than by
-version string, because ``3.0'' names several builds: jar \texttt{c70cad91}, 115{,}415{,}197
-bytes, upstream commit \texttt{6432cf88} of 2023-05-25, its 994 templates loaded at freeze time
-rather than taken from a constant. MetaTox and MetaPredictor predictions are frozen per substrate
-and released with the code.
+SyGMa 1.1.0 is taken from the installed module. MetaTox and MetaPredictor predictions are frozen
+per substrate and released with the code.
+
+BioTransformer is pinned by digest rather than by version string, because ``3.0'' names several
+builds: jar \texttt{c70cad91}, 115{,}415{,}197 bytes, upstream commit \texttt{6432cf88} of
+2023-05-25, its \numBtTemplates{} templates loaded at freeze time rather than taken from a
+constant. It carries no column in the comparison, and the rule is the one that defines the
+comparison set: an arm is included where it supplies ranked per-substrate predictions on the
+\numPopulationN{} substrates. BioTransformer was obtained and measured, but for the reach of its
+template set rather than as a ranked predictor, and on the \numBtN{}-substrate subset shared with
+a further comparator: its templates reach \numBtReach{} of the references there,
+95\% CI $[\numBtLo, \numBtHi]$, against \numBankRules{} templates of ours reaching
+\numBtOurreach{} on the same substrates. A reach figure and a ranked recall are not the same quantity and
+we do not place them in one table.
 
 Four systems published in 2025--26 could not be run on our split as released. LAGOM
 \citep{Larsson_2025} releases training code under Apache-2.0 but no fine-tuned checkpoint, so

@@ -257,6 +257,28 @@ def build():
     n["mined.five_or_more"] = sum(1 for v in catalog.values() if v["count"] >= 5)
     bank = [ln for ln in (ROOT / "grail_metabolism/resources/extended_smirks.txt"
                           ).read_text().splitlines() if ln.strip()]
+
+    # The bank's composition, counted from the files rather than described. mined_only_v2.txt is
+    # the mined half that matches the catalog and the deployed bank; mined_only.txt is a
+    # superseded earlier cut of 5,866. Three curated collections ship with the code; the rest of
+    # the curated half comes from a fourth whose file is not in the repository.
+    def _rules(rel):
+        return {ln.strip() for ln in (ROOT / rel).read_text().splitlines() if ln.strip()}
+    bankset = set(bank)
+    minedset = _rules("grail_metabolism/resources/mined_only_v2.txt")
+    curated_files = {
+        "hydroxylation": "grail_metabolism/data/smirks.txt",
+        "merged": "grail_metabolism/data/merged_smirks.txt",
+        "notebooks": "grail_metabolism/resources/notebooks_rules.txt",
+    }
+    named = set()
+    for tag, rel in curated_files.items():
+        r = _rules(rel) & bankset
+        n[f"curated.{tag}"] = len(r)
+        named |= r
+    n["curated.total"] = len(bankset - minedset)
+    n["curated.named"] = len(named)
+    n["curated.unnamed"] = len(bankset - minedset - named)
     n["bank.rules"] = len(bank)
     from rdkit import RDLogger
     from rdkit.Chem import AllChem
@@ -284,6 +306,14 @@ def build():
         n[f"sel.vs{arm}lo"] = c["ci95"][0]
         n[f"sel.vs{arm}hi"] = c["ci95"][1]
     n["sel.vsprior.k5"] = sa["learned_minus"]["prior_applicable"]["5"]["gap"]
+
+    # P1 was registered and checked before the pool cap of P2 existed, so its figure is measured
+    # on the uncapped pool. The same contrast on the pool the system actually ranks is in the
+    # ranking ablation, and the paper has to carry both rather than the larger one alone.
+    ra0 = art("ranking_ablation.json")["by_population"]["validation draw"]
+    n["h7.deployed"] = ra0["fusion_minus"]["product"]["15"]["gap"]
+    n["h7.deployed.lo"] = ra0["fusion_minus"]["product"]["15"]["ci95"][0]
+    n["h7.deployed.hi"] = ra0["fusion_minus"]["product"]["15"]["ci95"][1]
 
     # what each learned scorer contributes to the ORDER, on the deployed configuration
     ra = art("ranking_ablation.json")
@@ -329,6 +359,16 @@ def build():
     n["seed.macro_std"] = round(ms["macro_recall_at_15"]["std"], 4)
     n["seed.micro_mean"] = round(ms["micro_recall_at_15"]["mean"], 4)
     n["seed.micro_std"] = round(ms["micro_recall_at_15"]["std"], 4)
+
+    # BioTransformer: obtained and measured, but for template reach rather than as a ranked
+    # predictor, which is why it carries no column in the comparison
+    bt = art("decompose_biotransformer.json")
+    n["bt.reach"] = bt["biotransformer"]["template_reach"]
+    n["bt.lo"] = bt["biotransformer"]["ci95"][0]
+    n["bt.hi"] = bt["biotransformer"]["ci95"][1]
+    n["bt.templates"] = bt["biotransformer"]["n_templates"]
+    n["bt.n"] = bt["n"]
+    n["bt.ourreach"] = bt["context"]["grail_bank_ceiling_on_shared"]
 
     # the criterion sweep: how much of the comparison's verdict is the criterion
     cs = art("criterion_sweep.json")

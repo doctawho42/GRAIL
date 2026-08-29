@@ -90,7 +90,9 @@ def hypotheses():
             "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n"
             "\\caption{Every deployed choice as a prediction fixed before it was checked, with the "
             "population it was checked on. P8's figure is a speed-up factor and P9's a median in "
-            "seconds; the rest are differences in micro recall@15. The last column gives the "
+            "seconds; the rest are differences in micro recall@15. P1 to P3 were fixed before the pool cap "
+            "of P2 was in place, so they are measured on the uncapped pool; the same contrast for "
+            "P1 on the deployed pool is in Table~S5. The last column gives the "
             "identifier each carries in the released register, whose numbering records when each "
             "was written rather than where it appears here.}\n\\label{tab:hyp}\n\\end{table*}\n")
 

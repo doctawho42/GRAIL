@@ -150,6 +150,50 @@ def si_ranking():
             "\\label{tab:si-ranking}\n\\end{table}\n")
 
 
+def si_intervals():
+    """Every GRAIL-versus-comparator difference with its paired interval.
+
+    One block per GRAIL arm, budgets as rows. The two transposes were 816 pt and 688 pt wide
+    against a 470 pt page; three comparator columns fit.
+    """
+    d = art("deployment_table.json")
+    con = d["contrasts"]
+    ks = sorted((int(k) for k in con), key=int)
+    comps = [("metatox", "MetaTox"), ("sygma", "SyGMa"), ("metapredictor", "MetaPredictor")]
+
+    def trim(x):
+        """+0.0496 -> +.050, so a cell is a number and not a paragraph."""
+        return ("$-$" if x < 0 else "+") + f"{abs(x):.3f}".lstrip("0")
+
+    blocks = []
+    for arm, label in (("whole bank", "exhaustive"), ("trained budget", "interactive")):
+        rows = []
+        for k in ks:
+            cells = []
+            for key, _ in comps:
+                c = con[str(k)].get(f"{arm} - {key}")
+                if c is None:
+                    cells.append("---"); continue
+                star = "$^{*}$" if c["excludes_zero"] else "\\phantom{$^{*}$}"
+                cells.append(f"{trim(c['gap'])}{star} [{trim(c['ci95'][0])}, {trim(c['ci95'][1])}]")
+            rows.append(f"${k}$ & " + " & ".join(cells) + " \\\\")
+        blocks.append(f"\\multicolumn{{4}}{{l}}{{\\emph{{GRAIL {label}}} minus}} \\\\\n"
+                      + "\n".join(rows))
+    head = " & ".join(lab for _, lab in comps)
+    return ("\\begin{table}[h]\n\\centering\\small\n"
+            "\\begin{tabular}{rlll}\n\\toprule\n"
+            f"$k$ & {head} \\\\\n\\midrule\n"
+            + "\n\\midrule\n".join(blocks)
+            + "\n\\bottomrule\n\\end{tabular}\n"
+            "\\caption{Every difference between a GRAIL arm and a comparator on the comparison "
+            "set, in micro recall, with its paired bootstrap 95\\% interval; leading zeros are "
+            "dropped. $^{*}$ marks an interval excluding zero, which is the condition under which "
+            "the paper claims a lead or a trail, and the verdicts in the main text and in "
+            "Figure~1 are read from these and from nothing else. The estimator is Equation~6 at "
+            "$B = 10\\,000$ resamples, seed 0.}\n"
+            "\\label{tab:si-intervals}\n\\end{table}\n")
+
+
 def si_case():
     d = art("case_study_exhaustive.json")
     i = art("case_study.json")
@@ -176,7 +220,8 @@ if __name__ == "__main__":
     for name, fn in (("si_table_splits", si_splits), ("si_table_criteria", si_criteria),
                      ("si_table_criterion", si_criterion_sweep), ("si_table_oracle", si_oracle),
                      ("si_table_case", si_case),
-                     ("si_table_ranking", si_ranking)):
+                     ("si_table_ranking", si_ranking),
+                     ("si_table_intervals", si_intervals)):
         try:
             (OUT / f"{name}.tex").write_text(fn())
             print(f"  wrote paper2/{name}.tex")

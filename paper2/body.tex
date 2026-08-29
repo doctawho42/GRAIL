@@ -30,12 +30,15 @@ than a single number, and the artifacts sufficient to recompute any cell are rel
 The design contribution is narrower than the evaluation contribution and we say so. The
 architecture is a rule bank, a learned rule selector and a learned pair filter, a familiar shape.
 What changed the outcome was neither a new network nor new chemistry but the form in which two
-existing scores are combined: replacing their product with a rank fusion is worth
-$+\numHSevenDiff$ of recall on held-out data, more than any architectural change we tested.
+existing scores are combined. Replacing their product with a rank fusion is worth
+$+\numHSevenDiff$ of recall on held-out data before the candidate pool is capped, and
+$+\numHSevenDeployed$ on the pool the deployed system ranks; either is larger than any
+architectural change we tested.
 
 \section{Materials and methods}
 
 \subsection{Which population carries which number}
+\label{sec:populations}
 
 The corpus divides into three substrate-disjoint splits: \numSplitTrainSubstrates{} training
 substrates carrying \numSplitTrainPairs{} annotated pairs, \numSplitValSubstrates{} validation
@@ -101,9 +104,12 @@ hard case, and their treatment is not settled by the standard identifiers \citep
 \subsection{Rule bank}
 
 The bank holds \numBankRules{} templates spanning \numBankTypes{} distinct reaction types, where a
-type is the multiset of bonds that change between mapped atoms. It is the deduplicated union of
-four curated collections together with templates mined from the molecule-disjoint training split
-alone. For each annotated substrate--product pair a ring-aware maximum common substructure is
+type is the multiset of bonds that change between mapped atoms. It is the deduplicated union of four
+curated collections, \numCuratedTotal{} templates in all, together with \numMinedRules{} mined
+from the training split alone. The collections are itemised in the Supporting Information, where
+their external provenance is recorded as unresolved. The split is disjoint by substrate rather
+than by molecule, so a molecule that is a substrate in training may appear as a product in test;
+the counts are in Section~\ref{sec:populations}. For each annotated substrate--product pair a ring-aware maximum common substructure is
 located, the atoms and bonds that changed are flagged as the reaction centre, the centre is
 expanded by one bond and emitted as a mapped SMIRKS. A template survives only if applying it to
 its own source substrate regenerates the annotated product after canonicalisation.
@@ -125,9 +131,16 @@ where $r_i(c)$ is the rank of $c$ under scorer $i$. Only positions enter, so the
 contribute equally whatever their scales.
 
 This was registered as prediction P1 with a threshold of $+\numHSevenThreshold$ and evaluated on
-the validation split, where it had not been selected: $+\numHSevenDiff$, 95\% CI
+the validation draw, where it had not been selected: $+\numHSevenDiff$, 95\% CI
 $[+\numHSevenLo, +\numHSevenHi]$. On the set where the variant was chosen among four it gives
 $+0.109$, and the shrinkage to two thirds is the measured cost of that selection.
+
+That figure is measured on the uncapped pool, because P1 was fixed and checked before the cap of
+P2 existed. On the pool the deployed system actually ranks the same contrast, same population and
+same budget, is $+\numHSevenDeployed$, 95\% CI
+$[+\numHSevenDeployedLo, +\numHSevenDeployedHi]$ (Table~S5). The cap and the fusion recover
+overlapping ground, so the deployed gain is the smaller one, and it clears the registered
+threshold by less than the figure P1 was registered against.
 
 \subsection{Pool cap}
 
@@ -228,7 +241,8 @@ interval excluding zero, unshaded where neither separates.}
 
 Figure~\ref{fig:sweep} and Table~\ref{tab:sweep} are the comparison on the \numPopulationN{} substrates every method predicts
 on. Read against the strongest comparator at each budget it divides in three rather than resolving
-into an ordering.
+into an ordering. Every difference behind that division, with its paired interval, is
+Table~S1.
 
 GRAIL trails with the interval excluding zero at $k=1$, $3$ and $5$, where SyGMa leads
 (\numSweepSygmaOne{} against \numSweepTrainedOne{} at $k=1$). Neither side separates at $k=8$ and
@@ -570,7 +584,8 @@ report it.
 GRAIL predicts metabolite structures by selecting rules from a bank of \numBankRules{} templates,
 applying them, and ranking the products by a reciprocal rank fusion of a pair filter and the rule
 selector. Replacing the product of the two scores with that fusion is worth $+\numHSevenDiff$ of
-recall on held-out data, more than any architectural change we tested: the form in which two
+recall on held-out data before the pool cap and $+\numHSevenDeployed$ on the pool the system
+ranks, either of them more than any architectural change we tested: the form in which two
 existing scores are combined mattered more than what produced them.
 
 The comparison against published predictors does not resolve into an ordering, and we do not
