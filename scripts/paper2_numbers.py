@@ -509,6 +509,10 @@ def build():
     # dispatch recovers this many more than the best single convention does
     n["hyd.residualrefs"] = hyd["recovered"] - hyd["global_arms_paired"][
         "recovered_explicit_completed"]
+    # the width of the band across the two conventions the instrument admits, which is what the
+    # abstract's claim about the bound is
+    n["hyd.band"] = (hyd["global_arms_paired"]["recovered_explicit_completed"]
+                     - hyd["global_arms_paired"]["recovered_implicit"])
     n["hyd.residuallo"] = hyd["residual_ci95"][0]
     n["hyd.residualhi"] = hyd["residual_ci95"][1]
     sv = art("standardiser_versions.json")

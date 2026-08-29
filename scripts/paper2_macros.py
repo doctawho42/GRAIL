@@ -49,6 +49,13 @@ def fmt(v):
     return str(v)
 
 
+# Numerals below ten read badly in a sentence, and the abstract had "under 5 matching criteria
+# and 9 output budgets". A word form is generated beside every small whole number so prose can
+# reach for it without anyone typing the word, which is the one way it could drift.
+WORDS = {0: "no", 1: "one", 2: "two", 3: "three", 4: "four", 5: "five",
+         6: "six", 7: "seven", 8: "eight", 9: "nine", 10: "ten", 11: "eleven", 12: "twelve"}
+
+
 def main() -> int:
     blob = json.loads((ROOT / "results/paper2_numbers.json").read_text())
     nums = blob["numbers"]
@@ -61,6 +68,13 @@ def main() -> int:
             raise SystemExit(f"macro collision: {k} and {seen[m]} both give \\{m}")
         seen[m] = k
         lines.append(f"\\newcommand{{\\{m}}}{{{fmt(nums[k])}}}  % {k}")
+        v = nums[k]
+        if isinstance(v, int) and not isinstance(v, bool) and v in WORDS:
+            word = m + "Word"
+            if word in seen:
+                raise SystemExit(f"macro collision on the word form of {k}")
+            seen[word] = k + " (word form)"
+            lines.append(f"\\newcommand{{\\{word}}}{{{WORDS[v]}}}  % {k}, spelled")
     (ROOT / "paper2" / "numbers.tex").write_text("\n".join(lines) + "\n")
     print(f"wrote paper2/numbers.tex with {len(seen)} macros")
     return 0
