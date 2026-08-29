@@ -134,8 +134,25 @@ def si_ranking():
         rows = "\n".join(
             f"{label[a]} & " + " & ".join(f"{r['recall_micro'][a][k]:.4f}" for k in ks) + " \\\\"
             for a in arms)
+        # The contrast P1 registers, with its paired interval on each population. Reporting only
+        # the levels made the selection penalty a difference of point estimates; the intervals
+        # are what say whether the two populations disagree.
+        gaps = r["fusion_minus"]["product"]
+        # the interval row at full size ran 112 pt past the page; it is set smaller and the
+        # bounds are given to three places, which is all the width the column has
+        def _b(x):
+            # a positive bound carries no sign here: at this size twelve plus signs were the
+            # difference between fitting the page and running 22 pt past it, and the caption
+            # says so
+            return f"{x:.3f}".replace("0.", ".").replace("-.", "$-$.")
+        interval = " & ".join(
+            "{\\scriptsize " + f"[{_b(gaps[k]['ci95'][0])},{_b(gaps[k]['ci95'][1])}]" + "}"
+            for k in ks)
+        gap_row = ("\\quad fusion $-$ product & "
+                   + " & ".join(f"{gaps[k]['gap']:+.4f}" for k in ks) + " \\\\\n"
+                   + "\\quad \\emph{interval} & " + interval + " \\\\")
         blocks.append(f"\\multicolumn{{{len(ks) + 1}}}{{l}}{{\\emph{{{pop}}}, "
-                      f"$n = {r['population']['n']}$}} \\\\\n{rows}")
+                      f"$n = {r['population']['n']}$}} \\\\\n{rows}\n{gap_row}")
     head = " & ".join(f"${k}$" for k in ks)
     return ("\\begin{table}[h]\n\\centering\\small\n"
             f"\\begin{{tabular}}{{l{'r' * len(ks)}}}\n\\toprule\n"
@@ -146,7 +163,11 @@ def si_ranking():
             "\\caption{Micro recall when the same candidate pool is ordered five ways. The pool "
             "is built by the deployed configuration and capped by rule score before any arm sees "
             "it, so the pool, the matching rule and the budget are fixed and only the order "
-            "varies. No model runs: the pools carry both component scores per candidate.}\n"
+            "varies. No model runs: the pools carry both component scores per candidate. The "
+            "fusion-minus-product row is the contrast prediction P1 registers, given on both "
+            "populations with its paired 95\\% interval, so the penalty for having selected the "
+            "fusion rule on the comparison set can be read as two intervals rather than as a "
+            "difference of point estimates. Interval bounds are unsigned when positive.}\n"
             "\\label{tab:si-ranking}\n\\end{table}\n")
 
 
