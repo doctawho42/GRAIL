@@ -162,6 +162,19 @@ def main() -> int:
         if i1 and i2:
             both.append(smk)
 
+    # Instrument 1 is a re-implementation of what cascade_by_pairs.py already measures, and a
+    # re-implementation that quietly disagrees with the original is worse than no cross-check:
+    # the union would inherit the disagreement without showing it. The two are held together.
+    original = ROOT / "results" / "cascade_by_pairs.json"
+    if original.exists() and not args.limit:
+        prior = json.loads(original.read_text())["counts"]
+        if prior.get("multi_locus") != stats["instrument_1"]:
+            raise SystemExit(
+                f"instrument 1 gives {stats['instrument_1']} multi-locus templates and "
+                f"cascade_by_pairs.py gives {prior.get('multi_locus')}. The two measure the same "
+                "thing on the same pairs, so a difference is a defect in one of them and not a "
+                "result. Reconcile before believing the union.")
+
     n = max(stats["scored"], 1)
     shares = {k: round(stats[k] / n, 4) for k in ("instrument_1", "instrument_2", "union", "both")}
     verdict = "confirmed" if shares["union"] >= UNION_BAR else "failed"
