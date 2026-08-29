@@ -212,6 +212,12 @@
    "status": "current"
   },
   {
+   "artifact": "results/number_provenance.json",
+   "script": "check_paper2_numbers.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
    "artifact": "results/oracle_by_grouping.json",
    "script": "oracle_by_grouping.py",
    "how": "recorded source digest",
@@ -238,6 +244,12 @@
   {
    "artifact": "results/ranking_ablation.json",
    "script": "ranking_ablation.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
+   "artifact": "results/reference_audit.json",
+   "script": "reference_audit.py",
    "how": "recorded source digest",
    "status": "current"
   },
@@ -344,7 +356,7 @@
    "status": "current"
   }
  ],
- "n_pinned": 57,
+ "n_pinned": 59,
  "n_pinned_stale": 0,
  "sweep": {
   "unstamped": 117,

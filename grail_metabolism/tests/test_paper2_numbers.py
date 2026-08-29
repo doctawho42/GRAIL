@@ -118,3 +118,14 @@ def test_every_registered_prediction_is_accounted_for_in_the_paper():
              "--text", "paper2/body.tex", "paper2/si.tex", "paper2/table_hypotheses.tex")
     assert r.returncode == 0, r.stdout + r.stderr
     assert "absent from the text" not in r.stdout, r.stdout
+
+
+def test_no_tracked_file_is_the_size_of_a_candidate_pool():
+    """results/ is gitignored in full, so every pinned artifact is force-added by name.
+
+    A force-add with a glob does not distinguish the artifacts from the two candidate pools,
+    which are 45 MB each and are the entire content of the Zenodo deposit. One such glob put
+    220 MB into the history and the only symptom was a push that hung up mid-transfer.
+    """
+    r = _run("check_tracked_sizes.py")
+    assert r.returncode == 0, r.stdout + r.stderr
