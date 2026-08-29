@@ -50,8 +50,10 @@ What the deposit contains follows from that, and the decision is taken here rath
 The candidate structures are produced by applying this work's rule bank and are not corpus
 records, so they are released. Every corpus structure --- the substrates as well as the annotated
 metabolites --- appears only as a tautomer-canonical InChIKey, which is a hash and does not carry
-the structure. No source record is redistributed, and the licence of the derived corpus is
-\CorpusLicence{}. The question does not have to be answered, because the deposit does not raise
+the structure. No source record is redistributed \emph{in the deposit}, and the licence of the
+derived corpus is \CorpusLicence{}. The repository is a separate channel and ships something
+narrower and deliberate: the evaluated test substrates and their annotated metabolites as
+structures, which is what makes every recall figure in this paper recomputable. The question does not have to be answered, because the deposit does not raise
 it. The cost is that a
 reader must hold their own licences and rebuild the substrate set to join on the keys, and the
 manifest is what tells them whether their rebuild matches.
@@ -127,10 +129,12 @@ deterministic and released, and the manifest's digests confirm a rebuild rather 
 report that one differs. The unrecoverable step is the first one, and it is the whole of what is
 missing.
 
-A second limit on rebuilding: the annotated metabolites are released as tautomer-canonical
-InChIKeys rather than as structures. That key supports the default matching criterion and not the
-other four, which need the structures, so a third party can reproduce the tautomer row of
-Table~\ref{tab:si-criterion} and not the rest of it.
+The annotated metabolites of the evaluated test set are released as structures, in
+\texttt{results/test\_references.json}, alongside every arm's per-substrate predictions. All five
+matching criteria are therefore recomputable on the comparison population, not only the default
+one: every row of Table~\ref{tab:si-criterion} can be rebuilt from what is released. An earlier
+version of this section claimed otherwise, on the strength of what the Zenodo deposit holds rather
+than what the repository ships.
 
 The corpus is divided by substrate, so no substrate of one split appears in another. Molecular overlap between splits is non-zero and expected, because a molecule
 that is a substrate in one split may appear as a product in another: \numLeakMolOverlap{}
@@ -218,6 +222,16 @@ separating margin anywhere in the comparison, which is \numPdropNarrowestmargin{
 own tautomer key is among their annotated references, for which the convention discards a hit the
 annotation counts. Across the whole evaluated test set there are \numRefauditSelfref{} such
 substrates; the comparison set holds \numPdropSelfref{} of them.
+
+\section{Where a method runs out of candidates}
+
+\input{si_table_short}
+
+At the widest budgets the comparison is partly measuring list length rather than ranking, and the
+counts that say by how much are here at every budget rather than only at the one the main text
+prints. They bear directly on the two leads claimed at $k=30$ and $k=50$: an arm that has run out
+of candidates cannot gain from a wider window, and the reader should weigh the leads against the
+number of substrates for which that is the case.
 
 \section{Precision}
 
@@ -416,6 +430,17 @@ The centre is expanded by one bond and emitted as a mapped SMIRKS template. A te
 only if applying it to its own source substrate regenerates the annotated product after
 canonicalisation, and a selectivity filter rejects templates producing more than 200 distinct
 products on average across a 50-substrate sample.
+
+That bar bounds how unspecific a template may be; it does not make the bank specific, and the
+distribution is worth reporting beside it. Counting the atoms on each template's reactant side,
+\numRsizeLetwo{} of \numRsizeParsed{} parseable templates, \numRsizeLetwosharePct{}, have two
+atoms or fewer and \numRsizeLethree{}, \numRsizeLethreesharePct{}, have three or fewer. A
+template of that size matches almost anywhere it can match at all, so for those the site
+discrimination is supplied by the learned stages rather than by the template --- which qualifies
+the claim that a prediction is rule-attributable, without withdrawing it: the rule and the firing
+atoms are still reported, and what is weaker is the rule's own selectivity. The tail is not
+marginal in practice: \numRsizeCasetop{} of the twenty highest-ranked candidates in the worked
+example come from templates with three reactant atoms or fewer.
 
 Support across mined templates is heavily skewed: \numMinedSingleton{} of \numMinedRules{} rest on
 a single training pair. Re-running the miner on the same split re-derives every template it
@@ -649,6 +674,14 @@ reference set and are paired.
 
 \section{Runtime methodology}
 
+Table~\ref{MS-tab:modes} prints ``did not finish'' for the exhaustive mode's slowest substrate and
+never gives the rate, in a paper that says a service must publish the tail as well as the median.
+The rate is \numCostUnfinished{} of \numCostSampled{} sampled validation substrates,
+\numCostUnfinishedsharePct{}, at a deadline of \numCostDeadline{} seconds. It is a
+validation-timing figure at that deadline and not a property of the comparison: on the test split
+the same arm records \numScoredFailed{} failures over \numScoredSubstrates{} substrates, so the
+comparison population is unaffected.
+
 Every timing in the paper is a cold measurement. A cache makes a repeated substrate run 16 to 47
 times faster, so any timing not taken cold measures a mixture of two regimes.
 
@@ -674,8 +707,18 @@ without it.
 
 \section{Comparators}
 
-SyGMa 1.1.0 is taken from the installed module. MetaTox and MetaPredictor predictions are frozen
-per substrate and released with the code.
+SyGMa 1.1.0 is taken from the installed module and run with the scenario
+\texttt{[[phase1,\,1],}\allowbreak\texttt{[phase2,\,1]]}, one cycle of each ruleset, which is
+the worked example in that version's own documentation. It is stated because it is the one comparator knob that sets how many candidates a
+system may emit, and a paper arguing that such a knob must be declared should declare it.
+MetaTox and MetaPredictor predictions are frozen per substrate and released with the code.
+
+GLORYx is not a column here, and the reason is the rule this paper wrote for itself rather than
+an oversight. Its reference set is one of the four sources this corpus is assembled from, so its
+development data sits inside our corpus; Section~\ref{MS-sec:populations} states that such
+overlap flatters the comparator, and we decline to take a comparison that our own criterion says
+is unfair to the other systems. It is a standard arm in this journal's recent benchmarks of this
+tool class \citep{Gao_2026}, and its absence would otherwise be conspicuous.
 
 BioTransformer is pinned by digest rather than by version string, because ``3.0'' names several
 builds: jar \texttt{c70cad91}, 115{,}415{,}197 bytes, upstream commit \texttt{6432cf88} of
@@ -702,12 +745,56 @@ first run.
 
 \section{Provenance and reproduction}
 
-\numProvPinned{} artifacts are pinned. Each records the script that wrote it, the SHA-256 of that
-script's source, and the commit it ran at; a sweep recomputes the hash of each producer and
-refuses the artifact if that producer has changed. All \numProvPinned{} are current. The guarantee
-covers the pinned set and not the directory: of \numProvFiles{} files under \texttt{results/},
-\numProvUnstamped{} carry no stamp and \numProvChanged{} were written by a producer that has since
-changed, and those files support no number in the paper.
+One pinned artifact needs a label rather than a correction.
+\texttt{results/four\_method\_291.json} defines the comparison population and gates the MetaTox
+column, and its comparator columns reproduce Table~\ref{MS-tab:sweep} exactly. Its GRAIL column
+is a superseded arm --- \numFourmethodGrailFiveZero{} at $k=50$ against the deployed arms'
+\numSweepBankFiveZero{} and \numSweepTrainedFiveZero{} --- and no number in this paper derives
+from it; Table~\ref{MS-tab:sweep} is supplied by \texttt{deployment\_table.json}, which carries a
+gate asserting the two agree on MetaTox. The consequence worth stating is that the file's own
+family-wise block is computed over a family in which this system trails at every budget, so it
+cannot speak to the leads the paper claims. The file now says so itself.
+
+\numProvPinned{} artifacts are pinned. Most record the script that wrote them, the SHA-256 of
+that script's source, and the commit it ran at; a sweep recomputes the hash of each producer and
+refuses the artifact if that producer has changed. All \numProvPinned{} are current.
+
+The guarantee that matters is narrower than the pinned set and is checked by a gate rather than
+asserted. The numbers in this paper come from \numProvSources{} of those artifacts, established
+by running the number generator with its artifact reader instrumented, so the count is of files
+actually opened and not of matches in the source. Of the \numProvSources{},
+\numProvSourcesunpinnedWord{} are unpinned and \numProvSourcesunverifiableWord{} carry a producer the
+sweep cannot identify. \numProvSourcesinferredWord{} of them predate stamping and are verified by
+recovering their producer's source from the history rather than from a recorded digest, which the
+sweep labels as inferred; that is a weaker check and is counted separately for that reason.
+\numProvSourcesexemptWord{} are exempt with a stated reason, each being an output of the checking
+apparatus itself, which cannot verify its own inputs without circularity. The gate fails the build
+if any of the first two counts is not zero, and unpinning one artifact makes it fail, which is how
+we know it can.
+
+Bringing those artifacts inside the guarantee meant re-running their producers, which is a rerun
+and not a relabel, so what moved is reported. One number moved. The train split's clean triple
+count is \numSplitTrainTriples{} where the committed artifact recorded three more: three records
+of \texttt{train.sdf} that the RDKit version used here no longer parses, which the loader reports
+and which affect no substrate, no annotated pair and no figure in this paper. Every other field of
+every re-run artifact is byte-identical to what was committed, including the leakage audit's
+overlap counts, the contamination audit and the population-defining comparison. That is the
+evidence that the unpinned state was harmless, and it is worth having in a form stronger than an
+assurance.
+
+Two limits of the apparatus are ours to state. First, and materially: the stamp digests the
+producer script's own bytes and nothing else, so a change anywhere in the package --- the code
+that computes the tautomer keys, the matcher, the recall --- invalidates no artifact and trips no
+gate. The split manifest pins the data and the sweep pins the producer; between them sits the
+library, and it is pinned by neither. Second, and narrowly: most stamped artifacts record a dirty
+working tree at write time. Verification resolves by the recorded source digest, which is
+independent of the commit, so the producer is identified regardless; what the flag says is that
+the surrounding tree was not clean, not that the producer is unknown.
+
+The guarantee also covers the pinned set and not the directory: of \numProvFiles{} files under
+\texttt{results/}, \numProvUnstamped{} carry no stamp and \numProvChanged{} were written by a
+producer that has since changed. None of those is among the \numProvSources{} the numbers come
+from, which the gate is what establishes.
 
 A split manifest pins by digest the triple files, the substrate sets, the evaluated test set, the
 rule bank and every third-party artifact, and a verify mode recomputes and names any leaf that has

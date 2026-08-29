@@ -1,0 +1,72 @@
+{
+ "provenance": {
+  "script": "reactant_size_census.py",
+  "script_path": "scripts/typed_edit/reactant_size_census.py",
+  "source_sha256": "852e79d00a2ea6365f0abeee20f9766b7ecf51c048ece5b7ac9f62aa40f0785b",
+  "git_commit": "0a58538392e69716cd2f6b07bbe87b846c49c47a",
+  "git_dirty": true
+ },
+ "bank": "grail_metabolism/resources/extended_smirks.txt",
+ "templates_parsed": 7580,
+ "unparsed": 1,
+ "reactant_atoms_at_most_two": 261,
+ "reactant_atoms_at_most_two_share": 0.0344,
+ "reactant_atoms_at_most_three": 818,
+ "reactant_atoms_at_most_three_share": 0.1079,
+ "histogram": {
+  "1": 18,
+  "2": 243,
+  "3": 557,
+  "4": 661,
+  "5": 577,
+  "6": 527,
+  "7": 488,
+  "8": 552,
+  "9": 531,
+  "10": 512,
+  "11": 435,
+  "12": 312,
+  "13": 317,
+  "14": 236,
+  "15": 171
+ },
+ "by_half": {
+  "mined": {
+   "1": 0,
+   "2": 192,
+   "3": 428,
+   "4": 496,
+   "5": 436,
+   "6": 411,
+   "7": 350,
+   "8": 423,
+   "9": 422,
+   "10": 423,
+   "11": 355,
+   "12": 265,
+   "13": 259,
+   "14": 190,
+   "15": 138
+  },
+  "curated": {
+   "1": 18,
+   "2": 51,
+   "3": 129,
+   "4": 165,
+   "5": 141,
+   "6": 116,
+   "7": 138,
+   "8": 129,
+   "9": 109,
+   "10": 89,
+   "11": 80,
+   "12": 47,
+   "13": 58,
+   "14": 46,
+   "15": 33
+  }
+ },
+ "worked_example_top20_from_three_or_fewer": 10,
+ "instrument": "atoms on the reactant side, summed over components, through the reaction parser so multi-component templates are counted whole",
+ "reading": "a template with two or three reactant atoms matches almost anywhere, so for those the site discrimination comes from the learned stages and not from the template; the selectivity bar in the mining procedure rejects templates producing more than 200 products on average, which bounds this but does not remove it"
+}

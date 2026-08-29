@@ -18,6 +18,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(ROOT / "scripts"))
+
+from _provenance import stamp  # noqa: E402
 
 from scripts.fix_splits import (
     CLEAN_TRIPLES,
@@ -66,7 +69,10 @@ def main() -> int:
 
     report = {
         "audit": "read-only verification of the committed clean splits",
-        "source_clean_triples": {k: str(v) for k, v in CLEAN_TRIPLES.items()},
+        # repository-relative: an absolute path names the machine the run happened on, resolves
+        # nowhere else, and makes a released verification report unusable as one
+        "source_clean_triples": {k: str(Path(v).relative_to(ROOT)) if Path(v).is_absolute()
+                                 else str(v) for k, v in CLEAN_TRIPLES.items()},
         "clean_split_stats": clean_stats,
         "clean_overlap": overlap,
         "substrate_disjoint": substrate_disjoint,
@@ -82,6 +88,7 @@ def main() -> int:
     }
     leak_free = substrate_disjoint and pair_disjoint
     RESULTS.parent.mkdir(parents=True, exist_ok=True)
+    report['provenance'] = stamp(__file__)
     RESULTS.write_text(json.dumps(report, indent=2))
     print(json.dumps({
         "substrate_disjoint": substrate_disjoint,

@@ -28,11 +28,10 @@ reported under all of them rather than under one. The claims below are therefore
 than a single number. What is released is stated precisely rather than generally: the source, both
 checkpoints, the rule bank, a digest-pinned split manifest, the frozen per-substrate predictions of
 every comparator, the evaluation harness and the preregistration. A reader holding those can
-recompute every cell of the comparison under the default matching criterion. Two things they
-cannot: the other four criteria, because the annotations are deposited as tautomer-canonical
-InChIKeys rather than structures, and the corpus itself, because the extraction that selected from
-the four sources is not in the repository. Both limits are set out in the Supporting Information
-with what they do and do not block.
+recompute every cell of the comparison, under any of the five matching criteria: the annotated
+references and every arm's predictions are released as structures. What they cannot rebuild is
+the corpus, because the extraction that selected from the four sources is not in the repository.
+That limit is set out in the Supporting Information with what it does and does not block.
 
 The design contribution is narrower than the evaluation contribution and we say so. The
 architecture is a rule bank, a learned rule selector and a learned pair filter, a familiar shape.
@@ -289,7 +288,11 @@ Table~\ref{SI-tab:si-intervals}.
 GRAIL trails with the interval excluding zero at $k=1$, $3$ and $5$, where SyGMa leads
 (\numSweepSygmaOne{} against \numSweepTrainedOne{} at $k=1$). Neither side separates at $k=8$ and
 $10$, where MetaPredictor leads, nor at $k=15$ and $20$. GRAIL's exhaustive mode leads all three
-comparators with the interval excluding zero at $k=30$ and $k=50$.
+comparators with the interval excluding zero at $k=30$ and $k=50$. One of those six cells is
+marginal, and it is named here rather than three sections later: the lead over MetaTox at $k=30$,
+$+\numMarginMarginalgap$ with the interval
+$[+\numMarginMarginallo, +\numMarginMarginalhi]$, is the only one of the six that a family-wise
+correction over the grid would remove. The other five sit far from that boundary.
 
 One fact about the SyGMa comparison belongs here rather than in a footnote, because it changes
 how the result should be read. \numSygmaInside{} of SyGMa's \numSygmaRules{} published rules,
@@ -760,19 +763,23 @@ versions and digests; and the provenance and reproduction procedure.
 \section{Data and software availability}
 
 Source code, the deployed generator and filter checkpoints, the \numBankRules{}-template rule
-bank, the split manifest, the frozen per-substrate predictions of every comparator, the
-evaluation harness, the provenance sweep and the preregistration with every hypothesis and its
-outcome are at \texttt{github.com/doctawho42/GRAIL}, and are available to reviewers at
-submission. Releasing the checkpoints is the same bar this paper applies to others: a system
+bank, the split manifest, the annotated references every recall figure in this paper is measured
+against, the frozen per-substrate predictions of every comparator, the evaluation harness, the
+provenance sweep and the preregistration with every hypothesis and its outcome are at
+\texttt{github.com/doctawho42/GRAIL}, and are available to reviewers at submission. The
+repository's licence is \RepoLicence{}. Releasing the checkpoints is the same bar this paper applies to others: a system
 whose weights are not obtainable cannot be compared against, which is why one of the
 \numComparatorsUnavailable{} systems of 2025--26 is excluded here. The train and
-validation candidate pools are deposited at \ZenodoDoi{}. The annotated
+validation candidate pools are deposited at \ZenodoDoi{}, minted on publishing the deposit. The annotated
 substrate--metabolite corpus is assembled from ChEMBL \citep{Zdrazil_2024}, DrugBank
 \citep{Wishart_2018}, MetXBioDB \citep{Djoumbou_Feunang_2019} and the GLORYx reference set
 \citep{de_Bruyn_Kops_2020}, at versions \CorpusVersions{}.
 
-The corpus itself is not redistributed, and the reason is a limitation of this release rather
-than an open question. ChEMBL is released under a ShareAlike licence and DrugBank under a
+The corpus is not redistributed as a corpus, and the reason is a limitation of this release
+rather than an open question. What is released is narrower and is named exactly: the evaluated
+test substrates and their annotated metabolites, as structures, so that every recall figure here
+can be recomputed under any of the five criteria; not the training and validation splits, not the
+negatives, and not the source records the corpus was selected from. ChEMBL is released under a ShareAlike licence and DrugBank under a
 NonCommercial one; a single derivative drawing on both cannot satisfy each, because the
 non-commercial clause is a restriction ShareAlike forbids adding and dropping it breaches
 DrugBank's terms. Third-party restrictions therefore apply to the corpus records, and the
@@ -785,7 +792,12 @@ rather than merely reporting that it differs. The one step no reader can reprodu
 extraction that selected from the four sources, which is not in the repository and is recorded as
 such in the Supporting Information.
 
-\numProvPinned{} artifacts are pinned, and every number in this paper comes from one of them.
+The numbers in this paper come from \numProvSources{} artifacts, and a build gate establishes
+that by running the number generator with its artifact reader instrumented rather than by anyone
+counting: \numProvSourcesunpinnedWord{} of the \numProvSources{} fall outside the pinned set and
+\numProvSourcesunverifiableWord{} carry a producer the provenance sweep cannot identify. Asked this
+question before the gate existed, five readers gave five different answers, which is the argument
+for the gate rather than for the count.
 Each records the commit that wrote it; a sweep recomputes the hash of its producer and refuses the
 artifact if that producer has changed, and all \numProvPinned{} are current. A split manifest
 pins by digest the triple files, the substrate sets, the evaluated test set, the rule bank and all

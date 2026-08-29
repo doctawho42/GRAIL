@@ -1,0 +1,20 @@
+\begin{table}[h]
+\centering\small
+\begin{tabular}{rrrrrr}
+\toprule
+$k$ & GRAIL exh. & GRAIL int. & MetaTox & SyGMa & MetaPred. \\
+\midrule
+$1$ & 0 & 0 & 0 & 1 & 1 \\
+$3$ & 0 & 1 & 0 & 1 & 2 \\
+$5$ & 0 & 6 & 0 & 2 & 3 \\
+$8$ & 0 & 53 & 3 & 8 & 18 \\
+$10$ & 0 & 92 & 7 & 11 & 84 \\
+$15$ & 0 & 181 & 34 & 15 & 273 \\
+$20$ & 0 & 237 & 63 & 26 & 291 \\
+$30$ & 0 & 272 & 140 & 66 & 291 \\
+$50$ & 2 & 282 & 249 & 134 & 291 \\
+\bottomrule
+\end{tabular}
+\caption{Substrates whose returned list is shorter than the budget, per arm and per budget, of the 291 in the comparison set. Where a method has run out of candidates the budget has stopped measuring ranking and is measuring list length, so these counts bear directly on how the leads at the widest budgets should be read. The main text gives the $k=50$ row; the rest is here.}
+\label{tab:si-short}
+\end{table}

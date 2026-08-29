@@ -225,12 +225,25 @@ def infer(artifact: str | Path, producer: str | Path) -> dict:
         return {**out, "status": UNKNOWN, "detail": "no commit adds this artifact"}
     intro = commits[-1]
     blob = _git("show", f"{intro}:{rel_p}")
+    how = "the commit that added the artifact"
+    if blob is None:
+        # An artifact can predate the script that now produces it: the first version was written
+        # by something else, or by hand. The artifact's CURRENT content was written at its last
+        # modification, so that commit is the better place to look for the producer at write
+        # time, and looking there is honest as long as the report says which was used.
+        touched = _git("log", "--format=%H", "--", rel_a)
+        for candidate in [c for c in (touched or "").split() if c]:
+            blob = _git("show", f"{candidate}:{rel_p}")
+            if blob is not None:
+                intro, how = candidate, ("the last commit touching the artifact at which the "
+                                         "producer existed")
+                break
     if blob is None:
         return {**out, "status": UNKNOWN,
                 "detail": f"{rel_p} does not exist at {intro[:12]}"}
     if not (ROOT / rel_p).exists():
         return {**out, "status": UNKNOWN, "detail": f"{rel_p} is not in this checkout"}
-    out["how"] = f"producer at {intro[:12]}, the commit that added the artifact"
+    out["how"] = f"producer at {intro[:12]}, {how}"
     return _finish(out, _digest(blob.encode()),
                    _digest((ROOT / rel_p).read_bytes()),
                    {"git_commit": intro}, ROOT / rel_p)

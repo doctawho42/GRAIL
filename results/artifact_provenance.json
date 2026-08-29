@@ -56,6 +56,19 @@
    "status": "current"
   },
   {
+   "artifact": "results/cost_envelope.json",
+   "script": "cost_envelope.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
+   "artifact": "results/coverage_gap_types.json",
+   "script": "coverage_gap_types.py",
+   "inferred": true,
+   "how": "producer at 60d838018709, the last commit touching the artifact at which the producer existed",
+   "status": "current"
+  },
+  {
    "artifact": "results/criterion_sweep.json",
    "script": "criterion_sweep.py",
    "how": "recorded source digest",
@@ -65,6 +78,13 @@
    "artifact": "results/curated_provenance.json",
    "script": "curated_provenance.py",
    "how": "recorded source digest",
+   "status": "current"
+  },
+  {
+   "artifact": "results/decompose_biotransformer.json",
+   "script": "decompose_biotransformer.py",
+   "how": "source at d89c2702ba04",
+   "dirty_when_written": true,
    "status": "current"
   },
   {
@@ -100,6 +120,18 @@
   {
    "artifact": "results/emission_rule_transfer.json",
    "script": "emission_rule_transfer.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
+   "artifact": "results/external_overlap_audit.json",
+   "script": "external_overlap_audit.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
+   "artifact": "results/four_method_291.json",
+   "script": "four_method_291.py",
    "how": "recorded source digest",
    "status": "current"
   },
@@ -206,9 +238,29 @@
    "status": "current"
   },
   {
+   "artifact": "results/hydrogen_dispatch__clean_test.json",
+   "script": "hydrogen_dispatch.py",
+   "how": "source at 95238192ab5e",
+   "dirty_when_written": true,
+   "status": "current"
+  },
+  {
+   "artifact": "results/leakage_fix_report.json",
+   "script": "audit_leakage.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
    "artifact": "results/mode_timings.json",
    "script": "mode_timings.py",
    "how": "recorded source digest",
+   "status": "current"
+  },
+  {
+   "artifact": "results/multiseed_micro.json",
+   "script": "multiseed_micro.py",
+   "inferred": true,
+   "how": "producer at f9cdaca21a89, the commit that added the artifact",
    "status": "current"
   },
   {
@@ -254,9 +306,29 @@
    "status": "current"
   },
   {
+   "artifact": "results/reactant_size_census.json",
+   "script": "reactant_size_census.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
    "artifact": "results/reference_audit.json",
    "script": "reference_audit.py",
    "how": "recorded source digest",
+   "status": "current"
+  },
+  {
+   "artifact": "results/scaffold_baseline.json",
+   "script": "scaffold_baseline.py",
+   "how": "source at a1b1d96ee9c0",
+   "dirty_when_written": true,
+   "status": "current"
+  },
+  {
+   "artifact": "results/scored_predictions.json",
+   "script": "dump_scored_predictions.py",
+   "inferred": true,
+   "how": "producer at c92ee386385b, the commit that added the artifact",
    "status": "current"
   },
   {
@@ -366,14 +438,20 @@
    "script": "vs_metatox.py",
    "how": "recorded source digest",
    "status": "current"
+  },
+  {
+   "artifact": "results/wide_pool_analysis_implicit.json",
+   "script": "wide_pool_analysis.py",
+   "how": "recorded source digest",
+   "status": "current"
   }
  ],
- "n_pinned": 61,
+ "n_pinned": 73,
  "n_pinned_stale": 0,
  "sweep": {
-  "unstamped": 117,
-  "producer_changed": 39,
-  "current": 30,
+  "unstamped": 113,
+  "producer_changed": 38,
+  "current": 25,
   "producer_unknown": 27,
   "cosmetic_only": 8
  },
@@ -614,11 +692,6 @@
    "detail": "no digest and no commit to recover one"
   },
   {
-   "artifact": "results/coverage_gap_types.json",
-   "status": "unstamped",
-   "detail": "no provenance block: nothing records which code wrote this"
-  },
-  {
    "artifact": "results/cross_method_decomposition.json",
    "status": "unstamped",
    "detail": "no provenance block: nothing records which code wrote this"
@@ -715,11 +788,6 @@
    "detail": "commit 1636323ce9dc does not carry scripts/external_exact_tests.py"
   },
   {
-   "artifact": "results/external_overlap_audit.json",
-   "status": "unstamped",
-   "detail": "no provenance block: nothing records which code wrote this"
-  },
-  {
    "artifact": "results/factorized_eval.json",
    "status": "unstamped",
    "detail": "no provenance block: nothing records which code wrote this"
@@ -759,16 +827,6 @@
    "detail": "producer was 8393ba5564ed, is now 8a573ade4907",
    "diff_recovered_by": "source at 1d56fb8c3272",
    "diff": "--- filter_vs_prior_ci.py (as recorded)\n+++ filter_vs_prior_ci.py (now)\n@@ -38,4 +38,19 @@\n     sys.path.insert(0, str(ROOT))\n \n+\n+\n+def _code_version() -> dict:\n+    \"\"\"Which code wrote this artifact. The published selection_ablation.json carried fields the\n+    current script no longer emits, so it was written by an earlier version -- and nothing in it\n+    said so. Cap and seed pin the data; this pins the analysis.\"\"\"\n+    import subprocess\n+    def _git(*a):\n+        try:\n+            return subprocess.run([\"git\", *a], cwd=ROOT, capture_output=True, text=True,\n+                                  timeout=10).stdout.strip() or None\n+        except Exception:\n+            return None\n+    return {\"script\": pathlib.Path(__file__).name, \"git_commit\": _git(\"rev-parse\", \"HEAD\"),\n+            \"git_dirty\": bool(_git(\"status\", \"--porcelain\"))}\n \n def _rel(p) -> str:\n@@ -160,5 +175,5 @@\n     # reproduced from it. Committing a result file is necessary for regenerability and not\n     # sufficient.\n-    rep = {\"config\": {\"max_substrates\": args.max_substrates, \"sampling_seed\": args.sampling_seed,\n+    rep = {\"config\": {**_code_version(), \"max_substrates\": args.max_substrates, \"sampling_seed\": args.sampling_seed,\n                       \"top_k\": args.top_k, \"prior_strength\": args.prior_strength,\n                       \"filter_cap\": args.filter_cap, \"max_output\": args.max_output,"
-  },
-  {
-   "artifact": "results/four_method_291.json",
-   "script": "four_method_291.py",
-   "how": "source at 8a7a6e56c516",
-   "dirty_when_written": true,
-   "status": "producer_changed",
-   "detail": "producer was a9a1a49d9afd, is now 720410949fd9",
-   "diff_recovered_by": "source at 8a7a6e56c516",
-   "diff": "--- four_method_291.py (as recorded)\n+++ four_method_291.py (now)\n@@ -216,4 +216,25 @@\n     # The same instrument as scripts/robust_order.py, on the budget axis alone: a pair survives\n     # when the method the field's budget ranks higher is ahead at every budget in the sweep.\n+    # Macro F1 at each budget, which recall alone cannot show: the method that leads at the field's\n+    # budget emits three times what the next one does, and F1 is where that is paid for.\n+    f1 = {}\n+    for name in rows:\n+        f1[name] = {}\n+        for k in KS:\n+            vals = []\n+            for i in range(len(rows[name][\"U\"])):\n+                u = rows[name][\"U\"][i]\n+                if not u:\n+                    continue\n+                h = rows[name][k][i]\n+                e = min(k, per[name][\"after_dedup_and_parent_drop\"] / max(len(rows[name][\"U\"]), 1))\n+                e = max(e, 1e-9)\n+                pr, rc = h / e, h / u\n+                vals.append(2 * pr * rc / (pr + rc) if (pr + rc) else 0.0)\n+            f1[name][k] = round(float(np.mean(vals)) if vals else 0.0, 4)\n+    print(\"\\n  macro F1 by budget:\")\n+    for name in sorted(f1):\n+        print(f\"    {name:15} \" + \"  \".join(f\"k{k}:{f1[name][k]:.3f}\" for k in (1, 5, 15, 50)))\n+\n     published = sorted(rows, key=lambda m: -per[m][\"recall\"][15])\n     prank = {m: i for i, m in enumerate(published)}\n@@ -256,4 +277,5 @@\n            \"pairwise_margins\": margins,\n            \"n_margins\": len(margins), \"n_separable\": n_sep,\n+           \"macro_f1_by_budget\": f1,\n            \"robust_order\": {\"published_order\": published, \"pairs\": robust,\n                             \"n_pairs\": n_p, \"n_dominating\": n_d, \"n_certified\": n_c,"
   },
   {
    "artifact": "results/fragility_from_table.json",
@@ -890,11 +948,6 @@
    "detail": "commit 822211935dc8 does not carry scripts/label_flip_inside_mask.py"
   },
   {
-   "artifact": "results/leakage_fix_report.json",
-   "status": "unstamped",
-   "detail": "no provenance block: nothing records which code wrote this"
-  },
-  {
    "artifact": "results/match_sensitivity.json",
    "status": "unstamped",
    "detail": "no provenance block: nothing records which code wrote this"
@@ -980,11 +1033,6 @@
    "detail": "no provenance block: nothing records which code wrote this"
   },
   {
-   "artifact": "results/multiseed_micro.json",
-   "status": "unstamped",
-   "detail": "no provenance block: nothing records which code wrote this"
-  },
-  {
    "artifact": "results/null_model_lift.json",
    "script": "null_model_lift.py",
    "how": "source at 033e9c81f112",
@@ -993,6 +1041,11 @@
    "detail": "producer was 6f4ec5073790, is now 6f47b34bab13",
    "diff_recovered_by": "source at 033e9c81f112",
    "diff": "--- null_model_lift.py (as recorded)\n+++ null_model_lift.py (now)\n@@ -20,7 +20,17 @@\n level of one, so a ranking factor near one is free there and earned only where the budget binds.\n \n-The demonstration is the sweep, not the number. Under recall the three methods take several orders\n-across the budget; the claim is that under lift they take fewer. The gate is that both aggregates\n-reproduce the committed micro recall at the field's $k=15$ before any of that is read.\n+That was the motivation, and half of it does not survive the measurement. Lift does NOT stabilise\n+the ordering: sweeping $k$ from 1 to 40, recall gives two orderings of the three methods and lift\n+also gives two. As a remedy for the budget confound this fails, and it is reported as a failure.\n+\n+What it does buy is a different split, and one that runs against us. Recall rewards a pool and an\n+ordering together; lift isolates the ordering. SyGMa's ranking recovers 2.9 times what a uniform\n+draw from its own 81-candidate pool would, while GRAIL reaches 1.06 and MetaPredictor 1.01 -- both\n+within a rounding of chance, because their pools are smaller than the budget and there is almost\n+nothing left to order. So a ranking factor near one is not evidence of ranking; it is evidence that\n+the budget never binds, and the two are indistinguishable in recall@$k$ but not here.\n+\n+The gate is that each method's micro recall@15 is reproduced from its own released pool before any\n+of this is read.\n \"\"\"\n from __future__ import annotations\n@@ -40,6 +50,12 @@\n \n KEYS = ROOT / \"results\" / \"key_tables\" / \"inchikey_tautomer.json\"\n-# committed micro recall@15 on the clean test split, each from its own artifact\n-GATES = {\"GRAIL\": (\"results/recall_factorization.json\", 0.2607),\n+# Micro recall@15 on the clean test split, recomputed from each method's released pool.\n+#\n+# GRAIL's gate is NOT results/recall_factorization.json's stored 0.2607. That figure is the deployed\n+# output's hit count after two monotonicity clamps pulled it down to a ceiling measured in a\n+# different hydrogen convention; a fresh run of the deployed pipeline returns 689 hits, 0.2653, and\n+# results/set_metrics_by_criterion.json -- computed from the same stored output by another script --\n+# agrees at 0.3395 macro. The gate is the reproducible number, not the published one.\n+GATES = {\"GRAIL\": (\"deployed pipeline re-run, results/clamp_verification.json\", 0.2653),\n          \"SyGMa\": (\"results/decompose_sygma.json\", 0.5137)}\n KS = tuple(range(1, 41))"
+  },
+  {
+   "artifact": "results/number_sources.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
   },
   {
    "artifact": "results/ordering_stability.json",
@@ -1305,11 +1358,6 @@
   },
   {
    "artifact": "results/rule_train_positives.json",
-   "status": "unstamped",
-   "detail": "no provenance block: nothing records which code wrote this"
-  },
-  {
-   "artifact": "results/scored_predictions.json",
    "status": "unstamped",
    "detail": "no provenance block: nothing records which code wrote this"
   },

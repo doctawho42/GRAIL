@@ -130,6 +130,23 @@ PINNED = {
     "results/val_pools.json": f"{TE}/build_val_pools.py",
     "results/h7_verdict.json": f"{TE}/h7_verdict.py",
     "paper2/split_manifest.json": f"{TE}/freeze_split.py",
+    # Everything else the number generator reads. These were outside the pinned set while the
+    # paper asserted that every number came from a pinned artifact, which made the assertion
+    # false of the coverage bound, the split counts, the leakage audit, the contamination claim
+    # and the multiseed spread. Several predate stamping and are verified by inference from the
+    # commit that added them, which the sweep reports as inferred rather than as current.
+    "results/coverage_gap_types.json": "scripts/coverage_gap_types.py",
+    "results/decompose_biotransformer.json": "scripts/decompose_biotransformer.py",
+    "results/external_overlap_audit.json": "scripts/external_overlap_audit.py",
+    "results/hydrogen_dispatch__clean_test.json": "scripts/hydrogen_dispatch.py",
+    "results/leakage_fix_report.json": "scripts/audit_leakage.py",
+    "results/multiseed_micro.json": "scripts/multiseed_micro.py",
+    "results/scaffold_baseline.json": "scripts/scaffold_baseline.py",
+    "results/cost_envelope.json": f"{TE}/cost_envelope.py",
+    "results/reactant_size_census.json": f"{TE}/reactant_size_census.py",
+    "results/four_method_291.json": "scripts/four_method_291.py",
+    "results/scored_predictions.json": "scripts/dump_scored_predictions.py",
+    "results/wide_pool_analysis_implicit.json": f"{TE}/wide_pool_analysis.py",
 }
 
 

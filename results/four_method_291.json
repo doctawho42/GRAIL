@@ -1,7 +1,7 @@
 {
  "config": {
   "script": "four_method_291.py",
-  "git_commit": "8a7a6e56c516492aa864cd4202ebd92a2283207a",
+  "git_commit": "0a58538392e69716cd2f6b07bbe87b846c49c47a",
   "git_dirty": true,
   "n_substrates": 291,
   "match": "inchikey_tautomer",
@@ -158,6 +158,14 @@
    30,
    50
   ]
+ },
+ "what_this_file_is_for": "It defines the 291-substrate comparison population and gates the MetaTox column. Its GRAIL column is a SUPERSEDED arm and no number in the paper derives from it; Table 2 is supplied by results/deployment_table.json, which carries the gate reproduces_four_method_291_metatox. The comparator columns here do match Table 2 exactly. In consequence the family-wise block below is computed over a family in which GRAIL trails at every budget, and it cannot speak to the leads the paper claims.",
+ "provenance": {
+  "script": "four_method_291.py",
+  "script_path": "scripts/four_method_291.py",
+  "source_sha256": "f7c559982c0322c0cfcb8f23d252159e9669f05c8a3f1ee8e88fa8a0bd39431c",
+  "git_commit": "0a58538392e69716cd2f6b07bbe87b846c49c47a",
+  "git_dirty": true
  },
  "pairwise_margins": {
   "GRAIL vs MetaPredictor @ 1": {

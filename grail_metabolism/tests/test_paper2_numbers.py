@@ -129,3 +129,16 @@ def test_no_tracked_file_is_the_size_of_a_candidate_pool():
     """
     r = _run("check_tracked_sizes.py")
     assert r.returncode == 0, r.stdout + r.stderr
+
+
+def test_every_artifact_the_numbers_come_from_is_pinned_and_verifiable():
+    """The provenance guarantee, checked by machine rather than maintained by hand.
+
+    The paper asserted that every printed number came from a pinned artifact. Asked how many fell
+    outside that, five readers produced five different counts, which is the argument for a gate
+    rather than for any one of the counts. The gate runs the number generator with its artifact
+    reader instrumented, so it counts files actually opened, and requires each to be pinned and to
+    have a producer the provenance sweep can identify.
+    """
+    r = _run("check_number_provenance.py")
+    assert r.returncode == 0, r.stdout + r.stderr

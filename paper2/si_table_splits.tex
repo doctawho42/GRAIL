@@ -4,9 +4,9 @@
 \toprule
 split & substrates & annotated pairs & triples \\
 \midrule
-train & 9{,}011 & 17{,}454 & 345{,}031 \\
+train & 9{,}011 & 17{,}454 & 345{,}028 \\
 validation & 1{,}020 & 2{,}085 & 37{,}959 \\
-test & 1{,}198 & 2{,}597 & 43{,}886 \\
+test & 1{,}198 & 2{,}597 & 43{,}885 \\
 \bottomrule
 \end{tabular}
 \caption{The three substrate-disjoint splits. Triples count every (substrate, product, label) row including the rule-applicable products that carry no annotation, which the objective treats as unlabelled rather than negative. A read-only audit verifies zero substrate overlap and zero annotated-pair overlap across all three pairs of splits; the comparison set contains 0 substrates seen in train or validation.}

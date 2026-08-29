@@ -62,6 +62,7 @@ def build():
     for split in ("train", "val", "test"):
         n[f"split.{split}.substrates"] = lk[split]["remaining_substrates"]
         n[f"split.{split}.pairs"] = lk[split]["remaining_positive_pairs"]
+        n[f"split.{split}.triples"] = lk[split]["remaining_triples"]
 
     # the validation draw is a sample and not the split; its cap and seed are what make the
     # population reproducible, and a figure that names neither is not checkable
@@ -629,6 +630,41 @@ def build():
         n["sygma.ofcurated"] = sc["share_of_curated_half_that_is_sygma"]
         n["sygma.outside"] = sc["sygma_rules"] - sc["verbatim_in_bank"]
 
+    # How specific the bank's templates are, which none of its other censuses says
+    rsc = art("reactant_size_census.json")
+    n["rsize.parsed"] = rsc["templates_parsed"]
+    n["rsize.letwo"] = rsc["reactant_atoms_at_most_two"]
+    n["rsize.letwoshare"] = rsc["reactant_atoms_at_most_two_share"]
+    n["rsize.lethree"] = rsc["reactant_atoms_at_most_three"]
+    n["rsize.lethreeshare"] = rsc["reactant_atoms_at_most_three_share"]
+    n["rsize.casetop"] = rsc["worked_example_top20_from_three_or_fewer"]
+
+    # And what the same arm does on the test split, which is the population the comparison uses
+    sp = art("scored_predictions.json")
+    n["scored.failed"] = sp["n_failed"]
+    n["scored.substrates"] = sp["n_substrates"]
+
+    # The marginal cell, so the sentence that names it does not type it
+    _m = dep["contrasts"]["30"]["whole bank - metatox"]
+    n["margin.marginalgap"] = _m["gap"]
+    n["margin.marginallo"] = _m["ci95"][0]
+    n["margin.marginalhi"] = _m["ci95"][1]
+
+    # The exhaustive mode's non-completion rate, which Table 1 prints as "did not finish" and
+    # never as a number, in a paper that says a service must publish the tail as well as the
+    # median.
+    ce = art("cost_envelope.json")
+    n["cost.sampled"] = ce["n_done"]
+    n["cost.unfinished"] = sum(1 for r in ce["rows"] if not r.get("finished"))
+    n["cost.unfinishedshare"] = round(n["cost.unfinished"] / max(n["cost.sampled"], 1), 4)
+    n["cost.deadline"] = int(ce["deadline_s"])
+
+    # The superseded GRAIL column of the population-defining artifact, so the SI can say what it
+    # is not without typing the figure.
+    fm = art("four_method_291.json")
+    n["fourmethod.grail50"] = fm["per_method"]["GRAIL"]["recall"]["50"]
+    n["fourmethod.grailemit"] = fm["per_method"]["GRAIL"]["mean_emitted_uncapped"]
+
     # Provenance, stated as the pinned set and not the directory. These four were literals here
     # once, inside the one generator whose contract is that no number is a literal: when the
     # pinned set grew, the paper went on reporting the old size. They are read from the sweep,
@@ -638,6 +674,15 @@ def build():
     if not sweep:
         raise SystemExit("results/artifact_provenance.json carries no directory sweep; "
                          "run: python scripts/audit_artifact_provenance.py --all")
+    # What the provenance guarantee is true of, counted by the gate rather than by hand. Five
+    # readers produced five different counts of this quantity before the gate existed.
+    ns = art("number_sources.json")
+    n["prov.sources"] = ns["artifacts_the_numbers_come_from"]
+    n["prov.sourcesunpinned"] = ns["n_unpinned"]
+    n["prov.sourcesunverifiable"] = ns["n_unstamped"]
+    n["prov.sourcesinferred"] = ns["n_verifiable_by_inference_only"]
+    n["prov.sourcesexempt"] = ns["exempt"]
+
     # What the generated-macro claim is actually true of, counted rather than asserted. The
     # claim was made unqualified and was false of the Supporting Information, where measurements
     # were typed by hand and carried on the checker's allow-list.

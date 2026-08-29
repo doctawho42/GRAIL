@@ -4,10 +4,15 @@
 % every journal wrapper, because a marker that lives in a layout preamble goes missing the moment
 % the target journal changes -- which is how \ZenodoDoi came to be undefined.
 \newcommand{\unresolved}[1]{\textbf{[#1]}}
-\newcommand{\ZenodoDoi}{\unresolved{ZENODO DOI, minted on publishing the deposit}}
+% The bracket has to break across a two-column line, so it carries explicit break points.
+\newcommand{\ZenodoDoi}{\unresolved{ZENODO DOI}}
 \newcommand{\CorpusVersions}{ChEMBL~34, DrugBank~5.1.10, MetXBioDB~1.0 and the GLORYx reference set released in 2020, published as \citet{de_Bruyn_Kops_2020}}
 % The licence conflict is a fact about ChEMBL's ShareAlike and DrugBank's NonCommercial
 % terms and does not resolve. What follows from it for this deposit is a release decision
 % and is taken rather than deferred: no source structure is redistributed.
 \newcommand{\CorpusLicence}{settled by not redistributing them: the deposit carries no source structure}
+% The repository's own licence is constrained rather than free: the bank redistributes 152
+% of SyGMa's GPL rules verbatim, so a permissive licence over the whole repository would
+% not be consistent with it. NOTICE.md sets out the constraint and the three ways out.
+\newcommand{\RepoLicence}{\unresolved{REPOSITORY LICENCE: constrained by the 152 SyGMa templates the bank redistributes; the options are set out in NOTICE.md}}
 \newcommand{\CuratedProvenance}{\unresolved{CURATED RULES: the published source, if any, of each of the three named curated collections, and the licence each carries}}

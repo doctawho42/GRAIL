@@ -1,0 +1,488 @@
+{
+ "artifacts_the_numbers_come_from": 52,
+ "exempt": 3,
+ "unpinned": [],
+ "unstamped": [],
+ "verifiable_by_inference_only": [
+  "results/coverage_gap_types.json",
+  "results/decompose_biotransformer.json",
+  "results/hydrogen_dispatch__clean_test.json",
+  "results/multiseed_micro.json",
+  "results/scaffold_baseline.json",
+  "results/scored_predictions.json"
+ ],
+ "n_unpinned": 0,
+ "n_unstamped": 0,
+ "n_verifiable_by_inference_only": 6,
+ "method": "paper2_numbers.build() is run with art() instrumented, so the count is of artifacts actually opened rather than of matches in the source",
+ "artifacts": [
+  {
+   "artifact": "results/artifact_provenance.json",
+   "pinned": false,
+   "stamped": false,
+   "verifiable": false,
+   "sweep_status": "unpinned",
+   "how": null,
+   "exempt": "the provenance sweep's own report; pinning it would make the check circular"
+  },
+  {
+   "artifact": "results/cascade_by_pairs.json",
+   "pinned": true,
+   "stamped": true,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "recorded source digest",
+   "exempt": null
+  },
+  {
+   "artifact": "results/case_study.json",
+   "pinned": true,
+   "stamped": true,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "recorded source digest",
+   "exempt": null
+  },
+  {
+   "artifact": "results/case_study_drawn.json",
+   "pinned": true,
+   "stamped": true,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "recorded source digest",
+   "exempt": null
+  },
+  {
+   "artifact": "results/case_study_exhaustive.json",
+   "pinned": true,
+   "stamped": true,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "recorded source digest",
+   "exempt": null
+  },
+  {
+   "artifact": "results/case_study_exhaustive_drawn.json",
+   "pinned": true,
+   "stamped": true,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "recorded source digest",
+   "exempt": null
+  },
+  {
+   "artifact": "results/composite_instruments.json",
+   "pinned": true,
+   "stamped": true,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "recorded source digest",
+   "exempt": null
+  },
+  {
+   "artifact": "results/corpus_assembly.json",
+   "pinned": true,
+   "stamped": true,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "recorded source digest",
+   "exempt": null
+  },
+  {
+   "artifact": "results/cost_envelope.json",
+   "pinned": true,
+   "stamped": true,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "recorded source digest",
+   "exempt": null
+  },
+  {
+   "artifact": "results/coverage_gap_types.json",
+   "pinned": true,
+   "stamped": false,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "producer at 60d838018709, the last commit touching the artifact at which the producer existed",
+   "exempt": null
+  },
+  {
+   "artifact": "results/criterion_sweep.json",
+   "pinned": true,
+   "stamped": true,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "recorded source digest",
+   "exempt": null
+  },
+  {
+   "artifact": "results/curated_provenance.json",
+   "pinned": true,
+   "stamped": true,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "recorded source digest",
+   "exempt": null
+  },
+  {
+   "artifact": "results/decompose_biotransformer.json",
+   "pinned": true,
+   "stamped": false,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "source at d89c2702ba04",
+   "exempt": null
+  },
+  {
+   "artifact": "results/deployment_table.json",
+   "pinned": true,
+   "stamped": true,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "recorded source digest",
+   "exempt": null
+  },
+  {
+   "artifact": "results/dialect_census.json",
+   "pinned": true,
+   "stamped": true,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "recorded source digest",
+   "exempt": null
+  },
+  {
+   "artifact": "results/dialect_sweep.json",
+   "pinned": true,
+   "stamped": true,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "recorded source digest",
+   "exempt": null
+  },
+  {
+   "artifact": "results/external_overlap_audit.json",
+   "pinned": true,
+   "stamped": true,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "recorded source digest",
+   "exempt": null
+  },
+  {
+   "artifact": "results/four_method_291.json",
+   "pinned": true,
+   "stamped": true,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "recorded source digest",
+   "exempt": null
+  },
+  {
+   "artifact": "results/group_decode.json",
+   "pinned": true,
+   "stamped": true,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "recorded source digest",
+   "exempt": null
+  },
+  {
+   "artifact": "results/h10_verdict.json",
+   "pinned": true,
+   "stamped": true,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "recorded source digest",
+   "exempt": null
+  },
+  {
+   "artifact": "results/h11_grid.json",
+   "pinned": true,
+   "stamped": true,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "recorded source digest",
+   "exempt": null
+  },
+  {
+   "artifact": "results/h12_verdict.json",
+   "pinned": true,
+   "stamped": true,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "recorded source digest",
+   "exempt": null
+  },
+  {
+   "artifact": "results/h13_verdict.json",
+   "pinned": true,
+   "stamped": true,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "recorded source digest",
+   "exempt": null
+  },
+  {
+   "artifact": "results/h14_verdict.json",
+   "pinned": true,
+   "stamped": true,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "recorded source digest",
+   "exempt": null
+  },
+  {
+   "artifact": "results/h15_verdict.json",
+   "pinned": true,
+   "stamped": true,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "recorded source digest",
+   "exempt": null
+  },
+  {
+   "artifact": "results/h7_verdict.json",
+   "pinned": true,
+   "stamped": true,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "recorded source digest",
+   "exempt": null
+  },
+  {
+   "artifact": "results/h8_verdict.json",
+   "pinned": true,
+   "stamped": true,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "recorded source digest",
+   "exempt": null
+  },
+  {
+   "artifact": "results/h9_verdict.json",
+   "pinned": true,
+   "stamped": true,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "recorded source digest",
+   "exempt": null
+  },
+  {
+   "artifact": "results/hydrogen_dispatch__clean_test.json",
+   "pinned": true,
+   "stamped": false,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "source at 95238192ab5e",
+   "exempt": null
+  },
+  {
+   "artifact": "results/leakage_fix_report.json",
+   "pinned": true,
+   "stamped": true,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "recorded source digest",
+   "exempt": null
+  },
+  {
+   "artifact": "results/mode_timings.json",
+   "pinned": true,
+   "stamped": true,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "recorded source digest",
+   "exempt": null
+  },
+  {
+   "artifact": "results/multiseed_micro.json",
+   "pinned": true,
+   "stamped": false,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "producer at f9cdaca21a89, the commit that added the artifact",
+   "exempt": null
+  },
+  {
+   "artifact": "results/novel_type_census.json",
+   "pinned": true,
+   "stamped": true,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "recorded source digest",
+   "exempt": null
+  },
+  {
+   "artifact": "results/number_provenance.json",
+   "pinned": true,
+   "stamped": true,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "recorded source digest",
+   "exempt": "written by the numeral checker that runs after this generator"
+  },
+  {
+   "artifact": "results/number_sources.json",
+   "pinned": false,
+   "stamped": false,
+   "verifiable": false,
+   "sweep_status": "unpinned",
+   "how": null,
+   "exempt": "this gate's own report, which the paper quotes and the generator therefore reads"
+  },
+  {
+   "artifact": "results/parent_drop_effect.json",
+   "pinned": true,
+   "stamped": true,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "recorded source digest",
+   "exempt": null
+  },
+  {
+   "artifact": "results/ranking_ablation.json",
+   "pinned": true,
+   "stamped": true,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "recorded source digest",
+   "exempt": null
+  },
+  {
+   "artifact": "results/reactant_size_census.json",
+   "pinned": true,
+   "stamped": true,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "recorded source digest",
+   "exempt": null
+  },
+  {
+   "artifact": "results/reference_audit.json",
+   "pinned": true,
+   "stamped": true,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "recorded source digest",
+   "exempt": null
+  },
+  {
+   "artifact": "results/scaffold_baseline.json",
+   "pinned": true,
+   "stamped": false,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "source at a1b1d96ee9c0",
+   "exempt": null
+  },
+  {
+   "artifact": "results/scored_predictions.json",
+   "pinned": true,
+   "stamped": false,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "producer at c92ee386385b, the commit that added the artifact",
+   "exempt": null
+  },
+  {
+   "artifact": "results/selection_ablation_deployed.json",
+   "pinned": true,
+   "stamped": true,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "recorded source digest",
+   "exempt": null
+  },
+  {
+   "artifact": "results/similarity_baseline.json",
+   "pinned": true,
+   "stamped": true,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "recorded source digest",
+   "exempt": null
+  },
+  {
+   "artifact": "results/standardiser_versions.json",
+   "pinned": true,
+   "stamped": true,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "recorded source digest",
+   "exempt": null
+  },
+  {
+   "artifact": "results/sygma_by_dialect.json",
+   "pinned": true,
+   "stamped": true,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "recorded source digest",
+   "exempt": null
+  },
+  {
+   "artifact": "results/tautomer_budget.json",
+   "pinned": true,
+   "stamped": true,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "recorded source digest",
+   "exempt": null
+  },
+  {
+   "artifact": "results/tautomer_near_miss.json",
+   "pinned": true,
+   "stamped": true,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "recorded source digest",
+   "exempt": null
+  },
+  {
+   "artifact": "results/typed_edit_known_type_recovery.json",
+   "pinned": true,
+   "stamped": true,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "recorded source digest",
+   "exempt": null
+  },
+  {
+   "artifact": "results/typed_edit_type_carriers.json",
+   "pinned": true,
+   "stamped": true,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "recorded source digest",
+   "exempt": null
+  },
+  {
+   "artifact": "results/uspto_type_overlap.json",
+   "pinned": true,
+   "stamped": true,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "recorded source digest",
+   "exempt": null
+  },
+  {
+   "artifact": "results/val_pools.json",
+   "pinned": true,
+   "stamped": true,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "recorded source digest",
+   "exempt": null
+  },
+  {
+   "artifact": "results/wide_pool_analysis_implicit.json",
+   "pinned": true,
+   "stamped": true,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "recorded source digest",
+   "exempt": null
+  }
+ ]
+}

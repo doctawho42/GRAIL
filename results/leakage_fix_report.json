@@ -7,7 +7,7 @@
   },
   "clean_split_stats": {
     "train": {
-      "remaining_triples": 345031,
+      "remaining_triples": 345028,
       "remaining_positive_triples": 22061,
       "remaining_substrates": 9011,
       "remaining_positive_pairs": 17454
@@ -19,7 +19,7 @@
       "remaining_positive_pairs": 2085
     },
     "test": {
-      "remaining_triples": 43886,
+      "remaining_triples": 43885,
       "remaining_positive_triples": 3700,
       "remaining_substrates": 1198,
       "remaining_positive_pairs": 2597
@@ -51,5 +51,12 @@
     "val_substrate_in_train_metabolites": 75,
     "test_substrate_in_train_metabolites": 115
   },
-  "note": "substrate_disjoint = no substrate appears in two splits (the primary leakage guard for substrate->metabolite prediction). positive_pair_disjoint = no identical (substrate, metabolite) pair recurs. molecule_disjoint would additionally require no molecule (incl. metabolites) to recur across splits; metabolites are shared across substrates so this is False and structure_leak quantifies whether any EVAL SUBSTRATE structure was seen in training."
+  "note": "substrate_disjoint = no substrate appears in two splits (the primary leakage guard for substrate->metabolite prediction). positive_pair_disjoint = no identical (substrate, metabolite) pair recurs. molecule_disjoint would additionally require no molecule (incl. metabolites) to recur across splits; metabolites are shared across substrates so this is False and structure_leak quantifies whether any EVAL SUBSTRATE structure was seen in training.",
+  "provenance": {
+    "script": "audit_leakage.py",
+    "script_path": "scripts/audit_leakage.py",
+    "source_sha256": "0976b6a698f4ff6e98ae70be11de7563182c8fc67f6ce606d856c2af47948f73",
+    "git_commit": "0a58538392e69716cd2f6b07bbe87b846c49c47a",
+    "git_dirty": true
+  }
 }

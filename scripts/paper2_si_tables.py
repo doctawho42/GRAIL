@@ -171,6 +171,34 @@ def si_ranking():
             "\\label{tab:si-ranking}\n\\end{table}\n")
 
 
+def si_short():
+    """How many of each arm's lists are shorter than the budget, at every budget.
+
+    The main text gives these at k=50 only, and they bear directly on how the two claimed leads
+    should be read: where a method has run out of candidates the budget has stopped measuring
+    ranking and is measuring list length instead.
+    """
+    d = art("deployment_table.json")
+    short = d["substrates_whose_list_is_shorter_than_the_budget"]
+    ks = sorted(short, key=int)
+    arms = list(short[ks[0]])
+    label = {"whole bank": "GRAIL exh.", "trained budget": "GRAIL int.", "metatox": "MetaTox",
+             "sygma": "SyGMa", "metapredictor": "MetaPred."}
+    rows = "\n".join(
+        f"${k}$ & " + " & ".join(str(short[k][a]) for a in arms) + " \\\\" for k in ks)
+    head = " & ".join(label.get(a, a) for a in arms)
+    return ("\\begin{table}[h]\n\\centering\\small\n"
+            f"\\begin{{tabular}}{{r{'r' * len(arms)}}}\n\\toprule\n"
+            f"$k$ & {head} \\\\\n\\midrule\n" + rows
+            + "\n\\bottomrule\n\\end{tabular}\n"
+            "\\caption{Substrates whose returned list is shorter than the budget, per arm and per "
+            f"budget, of the {d['population']['n']} in the comparison set. Where a method has run "
+            "out of candidates the budget has stopped measuring ranking and is measuring list "
+            "length, so these counts bear directly on how the leads at the widest budgets should "
+            "be read. The main text gives the $k=50$ row; the rest is here.}\n"
+            "\\label{tab:si-short}\n\\end{table}\n")
+
+
 def si_dialect():
     """What the substrate's drawing does to each arm, and to each verdict.
 
@@ -345,7 +373,8 @@ if __name__ == "__main__":
                      ("si_table_intervals", si_intervals),
                      ("si_table_precision", si_precision),
                      ("si_table_parentdrop", si_parentdrop),
-                     ("si_table_dialect", si_dialect)):
+                     ("si_table_dialect", si_dialect),
+                     ("si_table_short", si_short)):
         try:
             (OUT / f"{name}.tex").write_text(fn())
             print(f"  wrote paper2/{name}.tex")

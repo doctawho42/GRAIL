@@ -24,6 +24,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(ROOT / "scripts"))
+
+from _provenance import stamp  # noqa: E402
 
 from grail_metabolism.metrics import _tautomer_inchikey as _tk
 
@@ -274,6 +277,15 @@ def main() -> int:
            "parent_returned_by_method": parent_in_own,
            "per_method": per,
            "orderings": {" > ".join(o): ks for o, ks in seen_orders.items()},
+           "what_this_file_is_for": (
+               "It defines the 291-substrate comparison population and gates the MetaTox column. "
+               "Its GRAIL column is a SUPERSEDED arm and no number in the paper derives from it; "
+               "Table 2 is supplied by results/deployment_table.json, which carries the gate "
+               "reproduces_four_method_291_metatox. The comparator columns here do match Table 2 "
+               "exactly. In consequence the family-wise block below is computed over a family in "
+               "which GRAIL trails at every budget, and it cannot speak to the leads the paper "
+               "claims."),
+           "provenance": stamp(__file__),
            "pairwise_margins": margins,
            "n_margins": len(margins), "n_separable": n_sep,
            "macro_f1_by_budget": f1,
