@@ -41,6 +41,8 @@ from _provenance import stamp  # noqa: E402
 
 from _rrf import rrf_order  # noqa: E402
 
+from bank_without_selection import _key as _tautkey  # noqa: E402
+
 KS = (1, 5, 10, 15, 30, 50)
 CAP = 100
 N_BOOT, SEED = 10000, 0
@@ -86,10 +88,14 @@ def run(pools, refs, subs, label, k_report):
             "dissimilarity": sorted(range(len(fused)), key=lambda i: sims[i]),
             "random": list(rng.permutation(len(fused))),
         }
+        # the parent-drop convention of the comparison table, so every arm here sits on the
+        # same axis as the tables it is read beside
+        pk = _tautkey(s)
         for a, idx in order.items():
+            keys = [fused[i]["key"] for i in idx
+                    if fused[i].get("key") and fused[i]["key"] != pk]
             for k in KS:
-                got = {fused[i]["key"] for i in idx[:k] if fused[i].get("key")}
-                hits[a][k].append(len(real & got))
+                hits[a][k].append(len(real & set(keys[:k])))
 
     U = np.array(U, dtype=float)
     N = float(U.sum())

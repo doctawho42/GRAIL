@@ -1,0 +1,666 @@
+[
+ [
+  {
+   "severity": "fatal",
+   "where": "\u00a77 and SI \u00a7S1: \"The deposited pools hold corpus substrate structures, tautomer-canonical hashes of the annotated metabolites, and candidate structures produced by this work\"; \"The annotated metabolites appear only as tautomer-canonical InChIKeys, which are hashes and do not carry the structures\"",
+   "claim": "The reference metabolite structures are never released in any form, and the procedure that assembled the 22,136 annotated pairs out of ChEMBL 34, DrugBank 5.1.10, MetXBioDB 1.0 and the GLORYx set is nowhere described, so no third party can rebuild the evaluation set or recompute four of the paper's five declared matching criteria.",
+   "fix": "Either deposit the reference metabolite structures (as SMILES or InChI) for at least the 1,170-substrate evaluated test set and the 291-substrate comparison set \u2014 the subset needed to recompute Tables 2, S3 and S5 \u2014 or, if DrugBank's terms genuinely bar that, deposit them for the sources that permit it and give a fully specified, runnable assembly procedure (queries, field mappings, filters, de-duplication and conflict rules, per-source counts) so the remainder can be regenerated."
+  },
+  {
+   "severity": "fatal",
+   "where": "\u00a77 Data and software availability, enumerated list: \"Source code, the split manifest, the frozen per-substrate predictions of every comparator, the evaluation harness, the provenance sweep and the preregistration ... are at github.com/doctawho42/GRAIL\"; cf. \u00a74.3 \"Of 4 such systems, one releases training code without a checkpoint\"",
+   "claim": "The availability of the trained checkpoint from which every GRAIL number in the paper is computed is never stated, and it is absent from the enumerated release, while the paper excludes a comparator from the entire evaluation for exactly that omission.",
+   "fix": "State explicitly whether the trained checkpoint, the 7,581-template rule bank and GRAIL's own per-substrate predictions are released, and release them; if the checkpoint cannot be released, say so and say what that costs a reproducer, using the paper's own retraining spread as the scale."
+  },
+  {
+   "severity": "fatal",
+   "where": "Section 7, Data and software availability: \"The data and software underlying this article are publicly available.\" \u2026 \"prepared for deposit at [ZENODO DOI, minted on publishing the deposit], held until the licence position is settled\" \u2026 \"Whether they may be redistributed, and under which licence, is [CORPUS LICENCE: whether the derived corpus and the candidate pools may be redistributed, given DrugBank's terms]\"",
+   "claim": "The Data Availability Statement opens by asserting the underlying data are publicly available and then states, two sentences later, that the two largest pinned artifacts are undeposited and that whether they may be released at all is an open legal question left as an unresolved editorial bracket.",
+   "fix": "Settle the licence position before resubmission and rewrite the statement to say exactly what is and is not released: name the code and frozen per-substrate predictions as available now, state the deposit's status in the indicative rather than in a bracket, and point the Supporting Information Available paragraph at the ACS-hosted SI rather than at Zenodo. If the pools cannot be redistributed, say so and say what a third party can recompute without them."
+  },
+  {
+   "severity": "major",
+   "where": "Section 2.4, Section 2.5, Section 3.8, Section 3.7, Table 4 \u2014 P1 \"+0.0733, 95% CI [+0.0477, +0.102]\" against threshold +0.05; P2 \"+0.026, 95% CI [+0.0033, +0.0469]\" against +0.015; P5 \"+0.0286, 95% CI [+0.0085, +0.0502]\" against +0.02; \"six confirmed and three failed\"",
+   "claim": "Three of the six \"confirmed\" registered predictions are adjudicated on the point estimate when their own interval straddles the registered threshold, so what the data establish is only that the effect exceeds zero, not that it meets the threshold.",
+   "fix": "In Table 4, mark each prediction as confirmed / failed / unresolved by comparing the interval to the threshold, not the point estimate, and adjust the \"six confirmed and three failed\" tally in Section 3.7 accordingly."
+  },
+  {
+   "severity": "major",
+   "where": "Section 2.8, Section 3.5, Table S3, Figure 1 \u2014 \"A claim that the system leads is made for a cell only where that cell's interval excludes zero\"",
+   "claim": "Forty-five verdicts are each read from a per-cell nominal 95% interval with no multiplicity control anywhere, and the abstract's two claims are two cells picked from that grid.",
+   "fix": "State explicitly that all Table S3 / Figure 1 verdicts are per-cell nominal 95%, and add one simultaneous analysis for the cells the abstract claims \u2014 either a family-wise adjusted interval over the 45 cells or a pre-specified primary cell with the rest reported as descriptive."
+  },
+  {
+   "severity": "major",
+   "where": "Section 3.1 and Figure 1 caption \u2014 \"Read against the strongest comparator at each budget\"; \"red where GRAIL's better arm trails the strongest comparator with the interval excluding zero\"",
+   "claim": "Both sides of every verdict are maxima chosen by their point estimate on the same 291 substrates from which the interval is computed, so each verdict is anti-conservative in its own direction.",
+   "fix": "Either pre-specify one GRAIL arm and report the contrast against each comparator separately, or keep the max-selection and widen the intervals with a selection-aware procedure (e.g. a max-statistic bootstrap over the comparator set and the two arms)."
+  },
+  {
+   "severity": "major",
+   "where": "Section 3.9 \u2014 \"macro recall@15 is 0.3437 with a standard deviation of 0.0099, and micro 0.2686 with 0.0058\"; \"the rank fusion of P1 is an order of magnitude larger than retraining noise ... while the rule budget of P3 ... is within it\"",
+   "claim": "The training-variance yardstick is a standard deviation from three seeds, of a level rather than of the paired difference, measured on a different population at a different operating point, and it is then used to grade three effect sizes.",
+   "fix": "Report the seed-to-seed SD of each registered contrast itself (not of the level), on the population and operating point the contrast is measured on, and either raise the seed count or replace the graded verbal comparison with the interval on the difference."
+  },
+  {
+   "severity": "major",
+   "where": "Section 3.8 and Table 4 \u2014 \"block emission being worse than interleaved (0.4376 against 0.5023)\"; \"A binary group ordering entered as the third term reaches 0.5308, the same the trained scorer reaches\"; Table 4 caption \"Every deployed choice as a prediction fixed before it was checked\"",
+   "claim": "P5's +0.0286 is measured against an unnamed base of 0.5023, not against the deployed fusion's 0.5353, and the configuration it certifies (0.5308) is below the deployed system on the same population and budget.",
+   "fix": "Name the configuration all P5/P6/P7 contrasts are measured against, report P5's difference against the deployed fusion with its interval, and correct Table 4's caption so it does not describe failed or non-deployed variants as deployed choices."
+  }
+ ],
+ [
+  {
+   "severity": "major",
+   "where": "Section 6 Limitations versus Table S4 \u2014 \"The group-ranking headroom is real and unreached by both registered compositions for structural reasons\" against \"molecular formula does not separate (-0.0030, [-0.0396, +0.0332])\"",
+   "claim": "The Limitations assert as real a headroom that the SI's own granularity-matched control shows is indistinguishable from a random partition.",
+   "fix": "Move the control's result into Section 3.8, and restrict the Limitations claim to the transformation-type partition, which is the only one that separates from its control."
+  },
+  {
+   "severity": "major",
+   "where": "S9 versus Section 3.1 \u2014 \"a ranking comparison carries information only over the substrates whose pool exceeds the budget\" and \"the budget is narrower than the pool for every substrate\", against \"at k = 50, 291 of MetaPredictor's lists, 249 of MetaTox's and 282 of the interactive arm's are shorter than the budget\"",
+   "claim": "The paper states a rule for when a ranking comparison can measure anything and then makes its headline lead claim at the two budgets where the rule is violated for every comparator, while S9 asserts the opposite as a blanket fact.",
+   "fix": "Correct S9's sentence to name the arm it applies to, and report per-cell the number of substrates whose pool exceeds the budget for each arm alongside the k=30 and k=50 verdicts; qualify the abstract's lead claim accordingly."
+  },
+  {
+   "severity": "major",
+   "where": "Table 2 versus Table S5 \u2014 GRAIL exhaustive on the comparison set: k=10 \"0.4526\" against \"0.4496\", k=30 \"0.6391\" against \"0.6406\", k=50 \"0.7038\" against \"0.7068\"",
+   "claim": "Two tables give different values for what both describe as the deployed configuration on the same 291 substrates, disagreeing at three of the six shared budgets while agreeing exactly at the other three.",
+   "fix": "Reconcile the two artifacts, state which convention differs if the difference is intended, and make the caption of whichever table is not the headline configuration say so explicitly."
+  },
+  {
+   "severity": "major",
+   "where": "Section 2.8 \u2014 \"Precision is reported but is not used to order systems\"",
+   "claim": "No precision figure appears anywhere in the manuscript or the Supporting Information.",
+   "fix": "Add a precision (or precision-at-k) column to Table 2 with the same annotation-completeness caveat attached, or delete the claim that precision is reported."
+  },
+  {
+   "severity": "major",
+   "where": "Section 3.3 \u2014 \"the learned choice gains +0.0316 of micro recall at k = 15, [+0.0101, +0.0547], on a base of 0.4481\"",
+   "claim": "The section reports five effects and three intervals without naming its evaluation population, in a paper whose stated rule is that no figure is given without naming one.",
+   "fix": "Name the population and its n in the first sentence of Section 3.3, and add the base and n for each of the four selection arms."
+  },
+  {
+   "severity": "major",
+   "where": "Section 3.5 and Table S3 \u2014 \"the margin ... runs from -0.0692 under canonical SMILES equality to +0.0617 under the full InChIKey, a range of 0.1309, and the sign of the conclusion changes with it\"",
+   "claim": "The criterion-sensitivity conclusion is drawn by comparing thresholded verdicts and a range of point estimates, never by testing whether the criterion effect itself is distinguishable from noise.",
+   "fix": "Report, for at least k=15, the paired interval on the criterion contrast (e.g. margin under InChIKey minus margin under canonical), and phrase Section 3.5's conclusion from that interval rather than from the count of verdict changes."
+  },
+  {
+   "severity": "major",
+   "where": "Section 2.4 versus Section 3.8 \u2014 \"the shrinkage to two thirds is the measured cost of that selection\" against \"The effect is not selection: all twenty configurations beat the base on validation and 70% of that margin survived the move\"",
+   "claim": "The same statistic \u2014 a roughly 30% shrinkage on moving off the set where a variant was selected \u2014 is read as the cost of selection in one place and as proof of the absence of selection in the other.",
+   "fix": "Delete or reword the \"not selection\" argument in Section 3.8 and treat P5's shrinkage the way Section 2.4 treats P1's, or report a selection-adjusted interval for P5."
+  },
+  {
+   "severity": "major",
+   "where": "\u00a73.6 and Table 3: \"the three sequential 5\u2032 phosphorylations that activate it\"; dFdCTP found at rank 16 under rule 1745, dFdCDP at rank 21 under rule 2139; Limitations: \"Predictions are single-step\".",
+   "claim": "The bank contains templates that compress a multi-enzyme cascade into one rule \u2014 gemcitabine is converted directly to dFdCDP and dFdCTP by single templates \u2014 so the reported one-step behaviour, the one-step ceiling and the site attribution are not single-step in any chemical sense.",
+   "fix": "Quantify how many mined templates come from annotation pairs that are not a single enzymatic step (reaction-centre size or changed-bond count is a workable first proxy), report the coverage ceiling with and without them, and replace \"single-step\" with \"one rule application\" wherever the two are not the same thing."
+  }
+ ],
+ [
+  {
+   "severity": "major",
+   "where": "\u00a72.2: \"their products standardised 19,20 and deduplicated\" and \"the key under which two products are judged the same decides which scores are combined, and changing that key moves the ranking\"; SI Table S2: \"canonical tautomer on both sides, then a canonical SMILES without stereochemistry\".",
+   "claim": "Neither the standardisation procedure nor the tautomer canonicaliser that defines the default matching criterion is specified anywhere \u2014 no tool, no version, no ruleset, no list of operations.",
+   "fix": "Give standardisation as an ordered operation list with tool and version; name the tautomer canonicaliser with its scoring and enumeration settings; give the Morgan radius and chirality flag; and show the key mapping a short published list of tautomer pairs onto single keys."
+  },
+  {
+   "severity": "major",
+   "where": "\u00a72.8: \"because the references neither carry stereochemistry nor distinguish tautomers\"; SI Table S2 and the two InChIKey rows of Table S3.",
+   "claim": "That the references carry no stereochemistry is asserted about sources that do carry it, and the consequence for the one criterion that reads the stereo layer is never examined.",
+   "fix": "State whether stereochemistry was present in the sources and stripped, or genuinely absent; state per arm whether stereochemistry is emitted; and recompute the InChIKey column after stripping stereo from every arm alike."
+  },
+  {
+   "severity": "major",
+   "where": "\u00a74.2: \"Every prediction names the transformation rule that produced it and the site at which it fired, so a user can accept or reject a candidate on chemical grounds\"; SI Table S6.",
+   "claim": "The paper's principal non-recall claim is demonstrated entirely with opaque integer indices: not one SMIRKS, not one transformation name, and not one product structure appears in either document.",
+   "fix": "Print the SMIRKS and a chemical name for at least the four worked-example rules and the most frequent rules in the bank, and give the structures of the top ten candidates for the worked example with a short assessment of the unannotated ones."
+  },
+  {
+   "severity": "major",
+   "where": "\u00a74.4: \"human in vivo data on exactly the population predicted here\"; \u00a72.1 corpus assembly from ChEMBL, DrugBank, MetXBioDB and the GLORYx reference set.",
+   "claim": "The species, matrix, enzyme system and metabolic phase behind the reference metabolites are never declared, although the paper is scrupulous about naming its statistical populations.",
+   "fix": "Give a census of the 2,597 test references by source, species, matrix and biotransformation class (at minimum phase 1 / phase 2 and the major reaction classes), and repeat the coverage census within that stratification."
+  },
+  {
+   "severity": "major",
+   "where": "\u00a73.11: \"bank and library share 308 types, so the intersection measures real absence rather than two incomparable formalisms\"; \u00a74.4: \"synthetic corpora are excluded by measurement\".",
+   "claim": "A 308-type overlap between a 4,417-type bank and a 9,885-type library is far too small to serve as the control it is asked to serve.",
+   "fix": "Add a positive control \u2014 how many of the bank's own 4,417 types the library recovers when both are re-typed by one common procedure \u2014 and soften \"excluded by measurement\" to what that control supports."
+  },
+  {
+   "severity": "major",
+   "where": "Abstract: \"that bound is invariant to how a transformation type is defined, making it a property of the annotation corpus rather than of our implementation\"; Table 5 and its \"names a transf.\" column.",
+   "claim": "The invariance holds over two closely related definitions out of the four tested, the two that disagree are excluded by a criterion the authors apply by judgement, and the abstract states the conclusion without the qualifier.",
+   "fix": "State the inclusion criterion as a testable property, add at least one intermediate definition between \"counts dropped\" and \"element pairs\", and restate the abstract as what was measured: the novel-type gap is dominated by singleton types under every definition tested that names a transformation."
+  },
+  {
+   "severity": "major",
+   "where": "\u00a74.4: \"The bound applies to any predictor trained on a comparable corpus, including sequence-to-sequence systems, which do not report it.\"",
+   "claim": "A template-bank coverage ceiling does not bound a model that has no template bank.",
+   "fix": "Restrict the claim to rule-based predictors using a comparable template bank, or measure it \u2014 MetaPredictor's frozen per-substrate predictions are already in hand, so its recall on the 475 uncovered references could be reported directly."
+  },
+  {
+   "severity": "major",
+   "where": "Table 2 (GRAIL exh.: 0.4526, 0.6391, 0.7038 at k = 10, 30, 50) against SI Table S5 (\"fusion (deployed)\", comparison set: 0.4496, 0.6406, 0.7068); and \u00a73.2's \"a seeded permutation 0.1128\" against \u00a73.4's \"A seeded permutation of the same pool reaches 0.1173\".",
+   "claim": "The deployed arm's micro recall differs between the manuscript and the SI at three of the six shared budgets, and the seeded-permutation baseline differs between two sections of the main text.",
+   "fix": "Reconcile Table 2 and Table S5 from one artifact, or state explicitly which convention differs between them and why; and declare the seed and arm set behind each permutation control."
+  }
+ ],
+ [
+  {
+   "severity": "major",
+   "where": "SI Table S6 \u2014 rule 474 appears at ranks 2, 7, 17 and 18 with generator scores 1.000, 1.000, 1.000 and 0.994; rule 1919 appears at ranks 4 and 14 with identical listed sites (5,6,7,8,9,10) and scores 0.996 and 0.998. Against \u00a72.2 Eq. 1 and SI S5.1, \"The generator estimates P(r | s)\".",
+   "claim": "The generator column of the worked example contradicts the definition of the generator score under either reading, and Eq. 1's independence premise is not defensible for this bank.",
+   "fix": "State exactly what the generator column reports and reconcile it with Eq. 1 and S5.1; and report calibration of p(c) against observed hit rate together with the number of candidates tied at the cap boundary."
+  },
+  {
+   "severity": "major",
+   "where": "Section 2.1 (\"The comparison set is the 291 substrates on which every method predicts\"); Limitations (\"a quarter of the evaluated test split and not a random quarter of it\"); Figure 3 left (\"did not finish in 600 s\")",
+   "claim": "Coverage \u2014 how often each arm returns nothing \u2014 is conditioned away rather than reported, and the population is silently defined by the union of every arm's failures, including GRAIL exhaustive's own timeouts.",
+   "fix": "Add a coverage row to Table 2: for each arm, the number of the candidate substrates on which it returned at least one prediction, with GRAIL exhaustive's non-completions counted as failures and the wall-clock deadline stated; and report the headline sweep on the full evaluated test set with non-answers scored as zero recall alongside the intersection version."
+  },
+  {
+   "severity": "major",
+   "where": "Section 3.1 (\"the counts are reported for every arm: at k = 50, 291 of MetaPredictor's lists, 249 of MetaTox's and 282 of the interactive arm's are shorter than the budget\")",
+   "claim": "The sentence claims per-arm truncation counts for every arm and then gives three of five, omitting the two that bear on the lead claim, although the pinned artifact holds all of them at every budget.",
+   "fix": "Print the short-list count for all five arms at all nine budgets, as a companion panel to Table 2, and revise the k=30/50 lead sentences to name the truncation state of each arm at those budgets."
+  },
+  {
+   "severity": "major",
+   "where": "Section 3.1 (\"At a budget of 15, where MetaTox emits about what the interactive arm emits, its macro recall is 0.5406 against GRAIL's 0.5672. Both emit alike there\")",
+   "claim": "The single head-to-head presented as GRAIL beating MetaTox at matched output rests on a premise contradicted by the paper's own artifact, is the one aggregation under which GRAIL wins that pair, and carries no interval.",
+   "fix": "Give both aggregations and the paired interval for this pair, name the arm, replace \"both emit alike\" with the actual mean and truncated output lengths, and state that the comparison changes sign between macro and micro."
+  },
+  {
+   "severity": "major",
+   "where": "Table 2 caption (\"Paired-bootstrap intervals on every difference are in the released artifact.\"); Table S3 (signs only)",
+   "claim": "The intervals on which every comparison verdict rests are printed nowhere in the manuscript or the SI.",
+   "fix": "Add the paired difference and its 95% interval for GRAIL's reported arm against each comparator at each budget, as a table in the SI at minimum, and for the default criterion in the main text."
+  },
+  {
+   "severity": "major",
+   "where": "Figure 1 caption and Table S3 caption (\"GRAIL's better arm ... the strongest comparator\")",
+   "claim": "Every verdict cell selects the maximum of two GRAIL arms and compares it to the maximum of three comparators, then reads an unadjusted interval, across 45 cells with no multiplicity control.",
+   "fix": "Either pre-declare a single GRAIL arm per budget regime (or report both arms separately against each comparator), or state the selection explicitly and adjust for it \u2014 e.g. a multiplicity-controlled procedure over the 45 cells, or a max-statistic bootstrap that resamples the arm selection along with the substrates."
+  },
+  {
+   "severity": "major",
+   "where": "Section 2.1 (\"The comparison set carries no training contamination: 0 of its 291 substrates appear in train or validation under a canonical key.\") against SI S1 (\"2,408 molecules occur in both train and test, and 243 test substrates appear as molecules in train\")",
+   "claim": "The flat \"no training contamination\" claim is a substrate-role audit only; the molecule-role overlap that the SI reports for the test split is never reported for the 291.",
+   "fix": "Report, for the 291, the count of substrates occurring anywhere in train/validation as a molecule (not only in substrate position), and restate the contamination sentence as the role-specific claim the audit actually supports."
+  },
+  {
+   "severity": "major",
+   "where": "Section 2.1 (\"Rule-based comparators have no training set to hold out, and their expert rules may encode the same metabolism reported in these sources ... in a direction that flatters them\"); SI S1 same passage",
+   "claim": "The shared-provenance argument treats MetaPredictor as if it had no training set, and offers no control for the transformation-level overlap that substrate-disjoint splitting does not remove.",
+   "fix": "Audit MetaPredictor's released training set against the 291 and report the overlap alongside GRAIL's own; and add a stratified recall \u2014 references whose transformation type does occur in train versus those whose type does not \u2014 so the direction of the provenance advantage is measured rather than asserted."
+  }
+ ],
+ [
+  {
+   "severity": "major",
+   "where": "Section 3.2 and Table S5 caption (\"The pool is built by the deployed configuration and capped by rule score before any arm sees it, so the pool, the matching rule and the budget are fixed and only the order varies\")",
+   "claim": "The pool the five orderings share was itself selected by one of the arms, so \"pair filter alone\" is not the filter alone and the stage contributions are not separated as claimed.",
+   "fix": "Either run the filter-alone and permutation arms on the uncapped pool, or state plainly in the caption and text that the pool is generator-selected, so the single-scorer arms are not comparable to each other and only the fusion-versus-product contrast is a like-for-like ranking comparison."
+  },
+  {
+   "severity": "major",
+   "where": "Table 2 (\"GRAIL exh. ... 10  0.4526 ... 30  0.6391 ... 50  0.7038\") against Table S5 (\"fusion (deployed) ... 0.4496 ... 0.6406 ... 0.7068\")",
+   "claim": "Two tables that report the same configuration, on the same 291 substrates, under the same criterion, disagree at three of the six shared budgets.",
+   "fix": "Reconcile the two artifacts and state which convention differs; if the ablation harness does not apply the parent drop or applies a different tie-break, say so in the Table S5 caption and re-derive the ablation under the deployed convention so the two tables agree."
+  },
+  {
+   "severity": "major",
+   "where": "Section 3.3 (\"The comparison that decides is against the 30 applicable rules with the highest training frequency ... the learned choice gains +0.0316 of micro recall at k = 15\") against SI S9 (\"a ranking comparison carries information only over the substrates whose pool exceeds the budget, and the number of such substrates should be reported with the result\")",
+   "claim": "The ablation the paper calls decisive is read at a single budget, with the emission size of the baseline arm unreported and the paper's own pool-versus-budget rule not applied.",
+   "fix": "Report the mean pool size and the number of substrates whose pool exceeds the budget for each of the four selection arms, and give the full budget sweep for this ablation as is done for the ranking ablation in Table S5."
+  },
+  {
+   "severity": "major",
+   "where": "Abstract (\"five matching criteria and ten output budgets\"); Section 2.7 (\"a grid of five matching criteria by eleven budgets: 0 of 55\"); Table 4 (\"grid 5 \u00d7 10\"); Tables 2 and S3 (nine budgets)",
+   "claim": "The size of the paper's central declared axis is given four different ways, and the abstract's figure matches no table.",
+   "fix": "Fix the grid to one budget list, state it once, generate every mention from the same macro, and show the P4 grid (criteria x budgets) explicitly in the SI so the \"0 lost cells\" claim is checkable."
+  },
+  {
+   "severity": "major",
+   "where": "Section 2.2 (\"The selected rules are applied with RDKit 2022.09.5, and their products standardised and deduplicated\"); Table 2 caption (\"A prediction equal to the substrate is dropped before the budget for every method alike\")",
+   "claim": "Deduplication of the comparators' output lists before truncation to k is never specified, so the arms' budgets may not be the same quantity.",
+   "fix": "State that every arm's list is standardised and deduplicated under the matching key of the column before the budget is applied (or, if it is not, report the duplicate rate per arm and show the sweep both ways)."
+  },
+  {
+   "severity": "major",
+   "where": "Section 3.9 (\"macro recall@15 is 0.3437 with a standard deviation of 0.0099, and micro 0.2686 with 0.0058. That study ran on an earlier operating point than the one reported here\")",
+   "claim": "The seed study offered as a noise floor is measured on a different operating point, a different population, and on levels rather than on the paired differences it is used to calibrate.",
+   "fix": "Retrain at the deployed operating point over seeds and report the seed-to-seed standard deviation of each registered difference itself (P1, P2, P3) on the population each was checked on; or drop the \"order of magnitude larger than retraining noise\" reading and state only that training variance is unquantified for these effects."
+  },
+  {
+   "severity": "major",
+   "where": "Abstract (\"each with the paired interval excluding zero\"), Table 2 caption (\"Paired-bootstrap intervals on every difference are in the released artifact\"), Figure 1 caption (\"Shading is read from the paired intervals and not by eye\"), Table S3 (signs only).",
+   "claim": "Not one paired interval for the GRAIL-versus-comparator comparison appears anywhere in the manuscript or the SI, so the paper's central verdicts cannot be checked by a reader.",
+   "fix": "Add a table (SI is fine) of the paired difference and 95% CI between GRAIL's better arm and each comparator at each of the nine budgets under the default criterion, and at minimum give the intervals for the four cells the Abstract and Conclusions claim (k=1,3,5 trailing; k=30,50 leading)."
+  },
+  {
+   "severity": "major",
+   "where": "Abstract: \"against every comparator with predictions on the same substrates\"; SI \u00a7S13: \"BioTransformer is pinned by digest ... jar c70cad91 ... its 994 templates loaded at freeze time\"; SI \u00a7S13 rule: \"a comparator that could not be obtained is reported as unavailable with its reason, is not dropped silently\".",
+   "claim": "BioTransformer is obtained, pinned by digest and described as a comparator in the SI, but reports no number in any table or figure, and no reason for its absence is given.",
+   "fix": "Either report BioTransformer as an arm in Table 2 and Table S3, or state in \u00a7S13 and in \u00a73.1 why it emits no comparable predictions on these substrates, and say explicitly whether it was included in computing the 291-substrate intersection."
+  }
+ ],
+ [
+  {
+   "severity": "major",
+   "where": "Table 2 (GRAIL exh.) against Table S5 (SI \u00a7S8, comparison set, fusion (deployed)): k=10 0.4526 vs 0.4496; k=30 0.6391 vs 0.6406; k=50 0.7038 vs 0.7068.",
+   "claim": "The same quantity \u2014 micro recall of the deployed fusion on the 291-substrate comparison set \u2014 takes different values in the main text and the SI at three of the six shared budgets, with no reconciliation.",
+   "fix": "Identify which artifact is the deployed evaluation, regenerate the other from it, and state in the Table S5 caption any remaining difference in convention (e.g. parent-drop or tie-breaking) that makes the two legitimately distinct."
+  },
+  {
+   "severity": "major",
+   "where": "Abstract: \"reports its performance under five matching criteria and ten output budgets\"; \u00a72.7: \"a grid of five matching criteria by eleven budgets: 0 of 55\"; Table 4 row P4: \"grid 5 \u00d7 10\"; Tables 2, S3 and Figure 1: nine budgets.",
+   "claim": "The number of output budgets is given as ten in the Abstract, eleven in \u00a72.7, ten in Table 4 and nine everywhere results are actually reported.",
+   "fix": "Fix the Abstract to the number of budgets actually swept in Table 2 and Table S3 (nine), and reconcile \u00a72.7 with Table 4 so P4's grid dimensions and its 55-cell count agree."
+  },
+  {
+   "severity": "major",
+   "where": "\u00a73.1: \"At a budget of 15, where MetaTox emits about what the interactive arm emits, its macro recall is 0.5406 against GRAIL's 0.5672. Both emit alike there, so the annotation bias on precision does not explain the difference.\"",
+   "claim": "The \"both emit alike\" premise is contradicted by the paper's own numbers, the arm being compared is not named, and the population is not named.",
+   "fix": "Name the population and the arm, print both mean output lengths as measured on that population, and either drop the \"both emit alike\" defence or replace it with a comparison at a matched emission length; give the paired interval for the 0.5406 vs 0.5672 difference."
+  },
+  {
+   "severity": "major",
+   "where": "Abstract: \"that bound is invariant to how a transformation type is defined, making it a property of the annotation corpus rather than of our implementation\"; Conclusions: \"that bound holds under every definition of a transformation type at which a type still determines a product\"; Table 5.",
+   "claim": "The invariance actually demonstrated is of the singleton share of one sub-group, not of the 475 bound, and it holds across only two of four definitions, over which the reported quantity moves by fourteen percentage points.",
+   "fix": "State the claim as what Table 5 shows \u2014 the singleton-heavy shape of the novel-type gap persists under the two type definitions that still determine a product, moving from 87.2% to 73.3% \u2014 and drop \"invariant\" and the corpus-versus-implementation inference from the Abstract and Conclusions, or preregister the meaningfulness criterion and justify it independently of the outcome."
+  },
+  {
+   "severity": "major",
+   "where": "\u00a72.1: \"The comparison set carries no training contamination: 0 of its 291 substrates appear in train or validation under a canonical key.\" SI \u00a7S1: \"2,408 molecules occur in both train and test, and 243 test substrates appear as molecules in train.\"",
+   "claim": "The main text's contamination claim is stronger than the audit that supports it, and the qualifying count is confined to the SI.",
+   "fix": "In \u00a72.1 say \"0 of its 291 substrates appear as substrates in train or validation\", and add the SI's molecular-overlap counts (2,408 and 243) and how many of the 291 are among them, in the main text rather than only in \u00a7S1."
+  },
+  {
+   "severity": "major",
+   "where": "\u00a72.1: \"Every registered ranking and timing threshold is checked here [the validation draw], since a threshold checked where its rule was chosen is not a check.\" Table 4: P5, P6 and P7 are \"tested on: comparison set\".",
+   "claim": "The paper states a universal rule about where registered thresholds are checked and then breaks it for three of the nine predictions it reports.",
+   "fix": "Amend \u00a72.1 to say which predictions were checked on which population and why, and either re-run P5, P6 and P7 on the validation draw or state plainly that their verdicts rest on the test-derived comparison set and should be read accordingly."
+  },
+  {
+   "severity": "major",
+   "where": "Table S3 caption: \"Every cell is read from the interval and never from the point estimate.\" Against \u00a72.4 (P1 +0.0733, threshold +0.05, CI [+0.0477, +0.102]), \u00a72.5 (P2 +0.026, threshold +0.015, CI [+0.0033, +0.0469]) and \u00a73.8 (P5 +0.0286, threshold +0.02, CI [+0.0085, +0.0502]); \u00a73.7: \"six confirmed and three failed\".",
+   "claim": "All three registered gains counted as confirmed are confirmed on point estimates whose intervals include values below the registered threshold, which is the reading the paper elsewhere forbids.",
+   "fix": "Add the interval to every row of Table 4 and state the confirmation rule explicitly \u2014 whether a prediction passes when the point estimate clears the threshold or when the interval does \u2014 then re-report the six/three tally under whichever rule is adopted."
+  },
+  {
+   "severity": "major",
+   "where": "\u00a73.4: \"A seeded permutation of the same pool reaches 0.1173 against the fusion's 0.5353\"; \u00a73.2 and Table S5 (comparison set, k=15): \"a seeded permutation 0.1128\".",
+   "claim": "The seeded permutation of the same pool at the same budget on the same population is given two different values in adjacent Results subsections.",
+   "fix": "Either use one permutation artifact throughout, or say in \u00a73.4 that its four-way re-ranking uses a different pool or seed from \u00a73.2's five-way, and give the fusion and permutation values for that pool together."
+  }
+ ],
+ [
+  {
+   "severity": "major",
+   "where": "\u00a73.8: \"The deficit splits into -0.0647 from the design, block emission being worse than interleaved (0.4376 against 0.5023), and -0.0556 from the model.\" Table S5, comparison set, k=15: \"their product 0.4376\".",
+   "claim": "The decomposition of P6's failure rests on one number that appears nowhere else in the paper and one that Table S5 assigns to a different arm.",
+   "fix": "Add the blocked and interleaved arms as rows to Table S5 (or a companion SI table) so the -0.0647 and -0.0556 split can be read off, and fix whichever of the two labels is wrong."
+  },
+  {
+   "severity": "major",
+   "where": "Introduction and Conclusions: \"worth +0.0733 of recall on held-out data, more than any architectural change we tested\". Supporting evidence: SI \u00a7S5.2, the merged pair-graph filter variant, \"paired difference -0.0090, 95% CI [-0.017, -0.001], n = 1,170\".",
+   "claim": "The comparative claim \"more than any architectural change we tested\" is supported by exactly one reported architectural comparison, and that one is measured on a different population and metric.",
+   "fix": "List the architectural changes tested with their measured differences on one population and metric (an SI table suffices), or weaken the sentence to \"larger than the one architectural change we measured\" and cite \u00a7S5.2."
+  },
+  {
+   "severity": "major",
+   "where": "\u00a74.4: \"The bound applies to any predictor trained on a comparable corpus, including sequence-to-sequence systems, which do not report it.\"",
+   "claim": "A bound established for this rule bank on this corpus is generalised to a class of models the paper never ran, including ones not restricted to a rule bank at all.",
+   "fix": "Restrict the sentence to rule-based predictors mined from a comparable corpus, or delete it; if the generalisation is wanted, demonstrate it by measuring one runnable sequence-to-sequence comparator (MetaPredictor is already in the pipeline) against the same 475 references."
+  },
+  {
+   "severity": "major",
+   "where": "Limitations: \"applying the bank at depth two lifts the ceiling by about 0.012 at 8.5 times the candidate cost and is not deployed.\"",
+   "claim": "Two quantitative results appear only in the Limitations section, with no home anywhere in the Results, the SI or the register.",
+   "fix": "Add the depth-two experiment to \u00a73.11 or the SI with its population, its ceiling before and after, and its mean pool size, and route both figures through the artifact pipeline; the same applies to the other typed literals used as results (+0.109 in \u00a72.4, +0.0556 in \u00a72.6, 0.88/0.016 and 16.22/16.3 in \u00a72.7)."
+  },
+  {
+   "severity": "major",
+   "where": "\u00a73.11: \"bank and library share 308 types, so the intersection measures real absence rather than two incomparable formalisms\"; \u00a74.4: \"synthetic corpora are excluded by measurement\".",
+   "claim": "The commensurability control is weaker than the conclusion drawn from it, and its own numbers point the other way.",
+   "fix": "Report the intersection as a fraction of both vocabularies and state what the control does and does not establish, or strengthen it \u2014 for example by showing that types common to both are recovered at the expected rate, so that absence and mismatch can be told apart \u2014 before concluding that synthetic corpora are excluded."
+  },
+  {
+   "severity": "major",
+   "where": "\u00a73.10: \"Adding a tautomer enumeration budget of 200 (P9) passes both halves: median 49.85 s to 5.28 s\"; earlier in the same section P8 alone is reported as \"2.95x\" from the same 49.85 s baseline; \"the ratio of its medians, 1.73, measures load alone. Dividing it out leaves 2.52x attributable to the budget.\"",
+   "claim": "P9's speed-up is quoted against P8's pre-change baseline, so it credits the tautomer budget with the gain P8 already delivered, and the load-corrected attribution does not follow arithmetically from any published pair of medians.",
+   "fix": "State P9's baseline explicitly (against P8's arm if that is what it is), give the medians for both arms, and recompute the load-corrected attribution so that the stated factor follows from the printed medians."
+  },
+  {
+   "severity": "major",
+   "where": "\u00a74.2: \"The whole output is ranked, where the incumbent ranks part of its output and leaves the remainder in file order.\"",
+   "claim": "A factual claim about a competitor's output ordering is offered as one of three advantages over the incumbent, with no measurement, citation or SI support.",
+   "fix": "Support the claim from the frozen MetaTox predictions (e.g. report how many of its returned candidates carry a score and how many do not), or remove it."
+  },
+  {
+   "severity": "major",
+   "where": "\u00a77 and SI \u00a7S14: \"Every number in the paper reaches the page through a macro generated from a pinned artifact, and a checker refuses any numeric literal in the manuscript that is not on a short allow-list of constants published elsewhere\"",
+   "claim": "A number of substantive measured results are typed directly into the manuscript source as bare literals rather than reaching the page through an artifact-generated macro, so the provenance guarantee the paper states is not the guarantee it operates.",
+   "fix": "Route these figures through generated macros from pinned artifacts as the rest of the paper is, or publish the allow-list and state in \u00a77 exactly which classes of number are exempt and why; if S5.2's filter-variant ablation has no pinned artifact, say so where it is reported."
+  }
+ ],
+ [
+  {
+   "severity": "major",
+   "where": "Table 2 (\"GRAIL exh.\") against Table S5 (\"fusion (deployed)\", comparison set, n = 291); and \u00a73.2 \"a seeded permutation 0.1128\" against \u00a73.4 \"A seeded permutation of the same pool reaches 0.1173\"",
+   "claim": "Two pinned artifacts report different values for the same declared quantity, and the provenance apparatus did not catch it.",
+   "fix": "Reconcile the two artifacts and state which convention differs (the parent-drop rule and the pool-order/tie-breaking convention are the likely candidates, and Table 2's caption declares a parent-drop that Table S5's does not); report both permutation baselines with their seeds, or drop one; add a cross-artifact consistency check to the provenance sweep for quantities that appear in more than one table."
+  },
+  {
+   "severity": "major",
+   "where": "\u00a72.3 \"templates mined from the molecule-disjoint training split alone\" against SI \u00a7S1 \"Molecular overlap between splits is non-zero and expected ... 2,408 molecules occur in both train and test, and 243 test substrates appear as molecules in train\"; \u00a72.1 \"0 of its 291 substrates appear in train or validation under a canonical key\"",
+   "claim": "The split on which the rule bank is mined is called molecule-disjoint in the main text and shown not to be in the SI, and the leakage audit's identity key is never declared even though the paper's own thesis is that the choice of key changes the answer.",
+   "fix": "Correct \u00a72.3 to say substrate-disjoint (or demonstrate molecule-disjointness of the mining split); name the exact key the leakage audit uses and re-run it under the strictest of the five declared criteria as well; add a nearest-neighbour similarity audit between test substrates and training substrates and report the distribution, as refs 15\u201316 require."
+  },
+  {
+   "severity": "major",
+   "where": "SI \u00a7S13 Comparators: \"SyGMa 1.1.0 is taken from the installed module. BioTransformer is pinned by digest ... jar c70cad91, 115,415,197 bytes, upstream commit 6432cf88 of 2023-05-25 ... MetaTox and MetaPredictor predictions are frozen per substrate and released with the code\"; Table 2 columns; \u00a72.1 \"the 291 substrates on which every method predicts\"",
+   "claim": "Two of the three comparators carry no version, no access date and no run parameters, a fourth comparator is pinned to a byte-exact digest but never appears in any result, and the population definition 'every method' is never resolved to a list of methods.",
+   "fix": "Give version, build or commit, access date and full run parameters for MetaTox and MetaPredictor alongside the frozen predictions; name the methods that define the 291-substrate intersection; and either report BioTransformer as an arm or state in \u00a7S13 why a comparator that was obtained and pinned is not reported."
+  },
+  {
+   "severity": "major",
+   "where": "\u00a72.3 \"the deduplicated union of four curated collections together with templates mined from the ... training split\"; \u00a73.6 \"the half of the bank with no expert provenance\"; SI \u00a7S4 \"4,274 of 5,856 rest on a single training pair\"",
+   "claim": "The four curated collections that supply part of the 7,581-template bank are never named, cited or licensed, the bank is not listed among the released items, and the main text misstates the mined fraction.",
+   "fix": "Name and cite the four curated collections with their versions and licences, state the bank's own licence and list it explicitly among the released artifacts in \u00a77, and replace 'half' with the count that the SI's own numbers give."
+  },
+  {
+   "severity": "major",
+   "where": "Table 1 (\"seconds, median 0.39 ... slowest 231.01\"), \u00a73.10, Figure 3, SI \u00a7S12 \"Every timing in the paper is a cold measurement\" and \"Part of the speed-up is machine load\"",
+   "claim": "No hardware and no software environment are specified anywhere in the manuscript or SI, so none of the timing results is reproducible and the software stack cannot be reconstructed.",
+   "fix": "Add a short environment subsection to the SI: exact hardware, OS, Python and package versions (or a lockfile/container digest in the repository), and restate the P8/P9 outcomes and Table 1 as measured on that machine."
+  },
+  {
+   "severity": "major",
+   "where": "\u00a73.7 \"Every deployed choice is a registered hypothesis with a threshold and a falsification condition, tested where it was not selected\"; SI \u00a7S6 \"The register is released in full at github.com/doctawho42/GRAIL, with every prediction as it was written, the threshold and falsification condition fixed before the check\"",
+   "claim": "The preregistration has no independent timestamp: it lives in a repository the authors control, so the property the paper leans on \u2014 that thresholds were fixed before the checks \u2014 is asserted rather than attested.",
+   "fix": "Deposit the register in a venue that timestamps immutably (OSF registration, AsPredicted, or a dated Zenodo record) and cite that identifier in \u00a73.7 and \u00a7S6, or state plainly that the register is author-attested and not independently timestamped."
+  },
+  {
+   "severity": "major",
+   "where": "\u00a73.9 \"the generator and filter were retrained under 3 seeds and the whole pipeline re-evaluated on the full test split: macro recall@15 is 0.3437 with a standard deviation of 0.0099 ... That study ran on an earlier operating point than the one reported here, so its level is not comparable to the tables above; its spread is what it is offered for.\"",
+   "claim": "The only estimate of training variability in the paper comes from three seeds of a superseded configuration, and it is then used as the yardstick against which the registered effects of the deployed configuration are judged.",
+   "fix": "Re-run the seed study at the deployed operating point (five seeds or more), name the seeds, and report the spread for the quantity actually used (micro recall@15 on the populations the registered predictions were checked on); if that is infeasible, state explicitly that the spread is assumed rather than measured to transfer."
+  },
+  {
+   "severity": "major",
+   "where": "SI \u00a7S8.1 \"Ties in the deployed ranking\": \"for 14 of the 291 substrates the two best candidates receive identical fused scores ... moves micro recall at k = 1 from 0.1053 to 0.1068\"; against Table S5 where the deployed fusion at k = 1 on the comparison set is 0.0902",
+   "claim": "'The deployed configuration' is never resolved to one of the paper's two operating modes, and the tie analysis quotes a k = 1 recall that belongs to a different arm from the one in the table it sits beneath.",
+   "fix": "Define 'deployed' once, in \u00a72.7, as one of the two modes; in \u00a7S8.1 name the arm and population the tie figures are computed on and give the corresponding figure for the other arm."
+  }
+ ],
+ [
+  {
+   "severity": "major",
+   "where": "\u00a73.11 \"Typing 42,554 retrosynthetic templates in the metabolic direction gives 9,885 types, of which 14 are among the 312 missing\"; \u00a74.4 \"synthetic corpora are excluded by measurement\"; reference 26 \"Digital Discovery 2026,\" with no volume or pages",
+   "claim": "The 42,554-template synthetic library that supports the exclusion of synthetic corpora is not identified by name, version or persistent identifier, and one of the two citations attached to it is incomplete.",
+   "fix": "Name the template library with its version and DOI or download URL, state how the 42,554 templates were extracted and typed, deposit the typed set alongside the other artifacts, and complete reference 26."
+  },
+  {
+   "severity": "major",
+   "where": "\u00a77 \"Source code ... are at github.com/doctawho42/GRAIL, and are available to reviewers at submission\"",
+   "claim": "The code, evaluation harness, split manifest, frozen comparator predictions and register are offered only from a mutable GitHub URL with no archival snapshot or persistent identifier.",
+   "fix": "Archive the repository at the submission commit to Zenodo (or another DOI-issuing archive), cite that DOI and the commit hash in \u00a77, and keep GitHub as the development mirror."
+  },
+  {
+   "severity": "major",
+   "where": "Abstract: \"reports its performance under five matching criteria and ten output budgets\"; Section 2.7: \"a grid of five matching criteria by eleven budgets: 0 of 55\"; Table 4, row P4: \"grid 5 \u00d7 10\"; Table 2 and Table S3 both list nine budgets (1, 3, 5, 8, 10, 15, 20, 30, 50)",
+   "claim": "The size of the paper's own declared output-budget axis is stated four times and takes three different values \u2014 ten in the abstract, eleven in Section 2.7, ten again in Table 4, and nine in every table that actually prints it.",
+   "fix": "Fix on one number. If the grid P4 was checked on is 5 \u00d7 11, correct Table 4 to \"grid 5 \u00d7 11\" and change the abstract to \"eleven output budgets\", then add one clause saying which nine of the eleven are printed in Table 2 and Table S3 and why the other two are not."
+  },
+  {
+   "severity": "major",
+   "where": "Table S5 row \"fusion (deployed)\", comparison set, against Table 2 column \"GRAIL exh.\": 0.4496 vs 0.4526 at k = 10, 0.6406 vs 0.6391 at k = 30, 0.7068 vs 0.7038 at k = 50",
+   "claim": "The SI's deployed-fusion row and the main text's exhaustive-arm column disagree at three of the six budgets they share, on the same 291-substrate comparison set and the same stated configuration, while agreeing exactly at k = 1, 5 and 15.",
+   "fix": "Identify the convention that differs (most likely the parent-drop rule or the tie-break of Section S8.1, neither of which Table S5's caption mentions), state it in Table S5's caption, and either recompute one arm so the rows agree or add one sentence in Section 3.2 saying which convention each table uses and why they differ."
+  },
+  {
+   "severity": "major",
+   "where": "Figure 1 caption: \"red where GRAIL's better arm trails the strongest comparator with the interval excluding zero, blue where it leads with the interval excluding zero, unshaded where neither separates\"",
+   "claim": "The caption names two colours that are not in the figure: the trailing band renders as pale lavender and the leading band as pale mint green, and nothing in the plot is red or blue.",
+   "fix": "Either recolour the two bands to the red and blue the caption names, or change the caption to name the colours actually used, and choose a band colour for \"leads\" that is not the colour of one of the five plotted series."
+  },
+  {
+   "severity": "major",
+   "where": "Table 2 caption: \"Bold marks the leader at that budget\", with 0.5353 and 0.5789 bold at k = 15 and 20, against Section 4.3: \"At k = 15 and 20 no arm separates from the strongest comparator\"",
+   "claim": "The main comparison table asserts a leader at every budget by bolding the highest point estimate, including the four budgets (8, 10, 15, 20) where the paper's own text says no arm separates.",
+   "fix": "Restrict bold to the budgets where the paired interval excludes zero (k = 1, 3, 5 for SyGMa and k = 30, 50 for GRAIL exhaustive) and reword the caption to \"Bold marks the leader where the paired interval excludes zero; at the remaining budgets no arm separates.\" Alternatively drop bold entirely and carry the verdict in a separate row of signs, as Table S3 already does."
+  },
+  {
+   "severity": "major",
+   "where": "SI Section S13, Comparators: \"BioTransformer is pinned by digest rather than by version string, because \"3.0\" names several builds: jar c70cad91, 115,415,197 bytes, upstream commit 6432cf88 of 2023-05-25, its 994 templates loaded at freeze time\"; Section 2.1: \"BioTransformer is built on MetXBioDB\"; SI Section S10: \"the 150 substrates shared with a further comparator\"",
+   "claim": "BioTransformer is pinned, characterised down to the jar digest, and its knowledge overlap with the corpus is discussed in the main text, yet no BioTransformer result appears in Table 2, Figure 1, Table S3 or anywhere else, and neither document says why.",
+   "fix": "Add one sentence to Section S13 and one to Section 4.3 stating why BioTransformer is not an arm of the comparison (for example, that including it would reduce the shared set below 291), name it explicitly in Section S10 in place of \"a further comparator\", and give the size of the set it would have left."
+  },
+  {
+   "severity": "major",
+   "where": "Section 2, Materials and methods, Sections 2.2\u20132.8; the generator and filter appear only as \"A generator scores every rule in a bank of 7,581 SMIRKS templates\" and \"A filter then scores each (substrate, candidate) pair\"",
+   "claim": "The Materials and Methods section never describes the architecture, input features, training objective or optimisation of either learned stage; all of it is in SI Section S5, which the main text never cites.",
+   "fix": "Move a compact paragraph on each learned stage \u2014 encoder family and depth, the four logit terms, the objective and the optimiser \u2014 into Section 2 as a new subsection, and leave dimensions and hyperparameters in Section S5 with an explicit \"(Section S5)\" pointer from the main text."
+  }
+ ],
+ [
+  {
+   "severity": "major",
+   "where": "Main text: the only cross-reference to the Supporting Information anywhere is \"moves the verdict at up to 6 of 9 budgets (Table S3)\" in Section 3.5; the Supporting Information Available paragraph lists contents in prose (\"the stage ablations in full and the ties in the deployed ranking; when a ranking comparison can measure anything\u2026\") with no table or section numbers",
+   "claim": "The manuscript cites its Supporting Information exactly once; Tables S1, S2, S4, S5 and S6 and Sections S1, S2, S4\u2013S14 are never pointed to from the passages whose evidence they carry.",
+   "fix": "Add explicit \"(Table SN)\" / \"(Section SN)\" pointers at each of the roughly a dozen places where the main text uses SI evidence, and rewrite the Supporting Information Available paragraph as a numbered list keyed to the SI's own section and table numbers."
+  },
+  {
+   "severity": "major",
+   "where": "Section 3.8: \"block emission being worse than interleaved (0.4376 against 0.5023)\" and \"A binary group ordering entered as the third term reaches 0.5308, the same the trained scorer reaches\"; the deployed fusion on the same population and budget is 0.5353 (Table 2, Table S5)",
+   "claim": "Section 3.8 runs its three registered group-ranking results against an undeclared base of 0.5023, a value that appears nowhere else in either document and is neither the deployed fusion (0.5353) nor the product ordering (0.4376), and the section is not followable on one read.",
+   "fix": "Define 0.5023 where it first appears (which configuration, which population, which budget) and add one sentence relating it to the deployed 0.5353. Cite Table S4 from the paragraph that quotes +0.3143 and state in the main text that under the matched control molecular formula does not separate. Consider cutting the binary-ordering sentence, which adds a fourth number to a paragraph already carrying six."
+  },
+  {
+   "severity": "major",
+   "where": "Section 3.10 Runtime, Table 1 (\"seconds, median 0.39 \u2026 seconds, slowest 231.01\"), Figure 3, and registered predictions P8 (\"\u2265 10\u00d7\") and P9 (\"< 10 s\"); SI Section S12",
+   "claim": "Neither document states the hardware or the software environment on which any timing was measured.",
+   "fix": "Add two sentences to SI Section S12 giving the CPU model and core count, memory, whether inference ran on CPU or GPU, and the Python/PyTorch versions alongside the already-stated RDKit 2022.09.5, and state whether all timings in Table 1, Figure 3 and P8/P9 were taken on that one machine."
+  },
+  {
+   "severity": "major",
+   "where": "Abstract: \"reports its performance under five matching criteria and ten output budgets against every comparator\"; Table S3 reports only \"+\", \"\u2212\" and \"\u00b7\"; Table 2 caption: \"Paired-bootstrap intervals on every difference are in the released artifact\"",
+   "claim": "The full criterion-by-budget grid of recall the abstract promises is printed nowhere: Table 2 gives recall under one criterion only, Table S3 gives the sign of the interval and no numbers, and the intervals themselves are deferred to a released artifact.",
+   "fix": "Add one SI table giving micro recall for all five arms at all budgets under each of the five criteria, or at minimum a table of the GRAIL-minus-strongest-comparator difference with its 95% interval for each of the 45 cells behind Table S3. The main text's Section 3.5 should cite it."
+  },
+  {
+   "severity": "minor",
+   "where": "Section 3.2 \"a seeded permutation 0.1128\" (also Table S5) against Section 3.4 \"A seeded permutation of the same pool reaches 0.1173 against the fusion's 0.5353\"",
+   "claim": "The random-order baseline is given two different values for the same pool, population and budget, and no random baseline in the paper carries any statement of its Monte-Carlo variability.",
+   "fix": "Use one permutation artifact throughout, and report each random arm as a mean over several seeds with its spread (or state that a single seed is used and bound the draw-to-draw variability once)."
+  },
+  {
+   "severity": "minor",
+   "where": "Abstract \"five matching criteria and ten output budgets\"; Table 4 \"grid 5 x 10\"; Section 2.7 \"five matching criteria by eleven budgets: 0 of 55\"; Tables 2, S3 and Figure 1, which show nine",
+   "claim": "The declared budget axis is given four different cardinalities across the paper.",
+   "fix": "Fix the abstract and Table 4 to the nine budgets the tables actually report, and reconcile P4's 55-cell grid with them (or state that P4 was checked over a different, larger budget set and say which)."
+  },
+  {
+   "severity": "minor",
+   "where": "S10 \u2014 \"no population-by-method interaction separates from zero, and none survives a Holm correction\"",
+   "claim": "The Holm clause cannot fail given the clause before it, and the analysis is run on two nested populations, neither of which is the population whose non-randomness the Limitations flag.",
+   "fix": "Drop the Holm clause or report the adjusted p-values that make it non-vacuous; state that the two populations are nested and what that does to the interaction's power; and run the same check on the 291-substrate comparison set against the evaluated test set, which is the comparison the Limitations concede."
+  },
+  {
+   "severity": "minor",
+   "where": "Section 2.6 \u2014 \"On the comparison set the same quantity is +0.0556, past the ceiling. The discrepancy is reported rather than resolved and it has a reading: at k <= 10 the whole bank buys nothing on either population, and from k = 15 it buys more the wider the budget\"",
+   "claim": "A registered ceiling is declared breached, and a pattern across budgets is inferred, entirely from point estimates with no interval.",
+   "fix": "Report the comparison-set figure with its paired interval at each budget, and state the trend claim from those intervals."
+  }
+ ],
+ [
+  {
+   "severity": "minor",
+   "where": "Section 3.1 \u2014 \"At a budget of 15 ... its macro recall is 0.5406 against GRAIL's 0.5672. Both emit alike there, so the annotation bias on precision does not explain the difference.\"",
+   "claim": "The one macro comparison against a published system names neither the GRAIL arm nor the population nor an interval, and it is made at a budget where the paper's own micro verdict against the same comparator does not separate.",
+   "fix": "Name the arm and the population, give the paired interval on the macro difference, and say explicitly that the corresponding micro cell does not separate."
+  },
+  {
+   "severity": "minor",
+   "where": "Table 1 \"candidates, mean 15.6\"; Section 2.7 \"16.22 candidates from a pool of 16.3\"; Section 2.6 \"mean pool 669.9 to 17\"; Section 3.3 \"the learned arm's 16.3\"",
+   "claim": "The mean pool size of the 30-rule interactive arm is given as 15.6, 16.3 and 17 without distinguishing which population each is measured on.",
+   "fix": "Give one value per named population, and use the same one in Table 1, Section 2.6, Section 2.7 and Section 3.3."
+  },
+  {
+   "severity": "minor",
+   "where": "Section 3.2 \u2014 \"The validation draw gives the same ordering of arms\", against Table S5",
+   "claim": "The ordering of arms is not the same on the two populations, as the paper's next sentence concedes and Table S5 shows.",
+   "fix": "Restrict the claim to the arms whose order does transfer (fusion above product above the singletons above permutation), and give the paired interval behind \"the two do not separate\"."
+  },
+  {
+   "severity": "minor",
+   "where": "Section 3.11 and Table 5 / Figure 4 \u2014 \"the bound is invariant to the definition of a type across the whole range in which that definition is meaningful\"; Abstract \"that bound is invariant to how a transformation type is defined\"",
+   "claim": "The invariance claim rests on two points that differ by 14 percentage points, under a yes/no meaningfulness label the authors assign, and the abstract attaches the invariance to a quantity that does not depend on the type definition at all.",
+   "fix": "In the abstract, attach the invariance to the singleton-mass decomposition rather than to the 475 bound, and in Section 3.11 report the range (87.2% to 73.3%) rather than the word invariant, with the criterion for \"names a transformation\" stated before the table."
+  },
+  {
+   "severity": "minor",
+   "where": "SI S4: \"a selectivity filter rejects templates producing more than 200 distinct products on average across a 50-substrate sample\".",
+   "claim": "A template averaging up to 200 distinct products per substrate is retained in a bank whose advertised advantage is naming the site at which a rule fired.",
+   "fix": "Report the distribution of products-per-substrate across the bank and the number of templates this filter rejected, and show the headline numbers are stable under a tighter threshold."
+  },
+  {
+   "severity": "minor",
+   "where": "SI S3: \"The number of references differs by one between criteria, at 665 for three of them and one fewer for two ... Under Tanimoto similarity of one, four carboxychromanol metabolites of \u03b1-tocopherol collapse to one key, because they differ only in the length of a side chain\".",
+   "claim": "The stated cause does not produce the stated effect, and the chemistry as described does not fit these metabolites.",
+   "fix": "Report the reference count per criterion explicitly with the merges that produce each, and correct the \u03b1-tocopherol example or replace it with one whose chemistry matches the stated mechanism."
+  },
+  {
+   "severity": "minor",
+   "where": "\u00a73.11: \"337 need a transformation type the bank does not hold, 98 need a type it holds whose rule did not fire, and 40 cannot be typed\"; SI S7: typing \"runs a maximum common substructure search under a wall-clock timeout and treats a cancelled search as untypeable\".",
+   "claim": "The third bucket of the coverage census is never defined in the main text, and the SI's only description of typing makes it a compute artifact rather than a chemical category.",
+   "fix": "Say in the main text what makes a reference untypeable and whether the same typing procedure produced both the census and Table S4, and report the size distribution of the 40 and the timeout used."
+  },
+  {
+   "severity": "minor",
+   "where": "SI S8.1: \"for 14 of the 291 substrates the two best candidates receive identical fused scores ... moves micro recall at k = 1 from 0.1053 to 0.1068\".",
+   "claim": "The substrate count and the recall figure in this sentence come from two different populations.",
+   "fix": "Name the population the tie analysis ran on and correct whichever of the two figures does not belong to it."
+  }
+ ],
+ [
+  {
+   "severity": "minor",
+   "where": "\u00a73.11: \"Relaxing the convention-dependent primitives in the templates recovers three of the 98, moving the ceiling by +0.0012. A bound computed before the run predicted about eight.\"",
+   "claim": "The primitives are never named, so the second-largest miss bucket is left without a chemical diagnosis.",
+   "fix": "Name the primitives that were relaxed and give a short breakdown of the 98 by which primitive blocked the match."
+  },
+  {
+   "severity": "minor",
+   "where": "Section 3.4 (\"Against Tanimoto similarity to the substrate, which needs no training and no labels, the deployed fusion gains +0.2977 of micro recall at k = 15\")",
+   "claim": "The training-free baseline is specified too loosely to reproduce and is shown at a single budget, in a paper whose thesis is that a single cell must not be reported alone.",
+   "fix": "State the sort direction and the tie-break, add the similarity arm as a row of Table S5 so the full budget sweep is visible, and report at least one additional training-free ranking baseline (e.g. ordering by the training frequency prior over the same pool)."
+  },
+  {
+   "severity": "minor",
+   "where": "Table 2 caption (\"A prediction equal to the substrate is dropped before the budget for every method alike\")",
+   "claim": "The parent-drop convention is declared but its effect is not quantified per arm.",
+   "fix": "Report, per arm, the number and fraction of substrates for which a prediction was dropped as the parent, and confirm the k=1 and k=3 verdicts are unchanged if the drop is not applied."
+  },
+  {
+   "severity": "minor",
+   "where": "\u00a73.6: \"All four rules here are mined rather than curated, so the half of the bank with no expert provenance is the half carrying this molecule.\" SI \u00a7S4: \"4,274 of 5,856 rest on a single training pair\" out of a 7,581-template bank.",
+   "claim": "The mined share of the bank is described as half when the SI implies roughly three quarters.",
+   "fix": "Give the mined and curated counts explicitly in \u00a72.3 or \u00a73.6 and correct \"half\" to the measured share."
+  },
+  {
+   "severity": "minor",
+   "where": "\u00a73.8: \"Because the oracle is measured in blocked form, a third of the headroom it promises is the return of what the design spends\", against \"+0.3143\" headroom and \"-0.0647 from the design\".",
+   "claim": "The stated fraction does not follow from the numbers in the same paragraph.",
+   "fix": "Replace \"a third\" with the computed share, or state which two numbers the fraction is taken between if it is not 0.0647 over 0.3143."
+  },
+  {
+   "severity": "minor",
+   "where": "\u00a73.2: \"The validation draw gives the same ordering of arms.\" Immediately after: \"on the comparison set the generator's ordering beats the filter's, on validation the two do not separate.\" Table S5: comparison set rule 0.4271 > filter 0.3564; validation filter 0.3771 > rule 0.3649.",
+   "claim": "The paragraph asserts that the arm ordering replicates on validation and then, two sentences later, says it does not.",
+   "fix": "Change the sentence to say which comparisons replicate (fusion over product, over each single scorer) and which do not (the ordering of the two single scorers)."
+  },
+  {
+   "severity": "minor",
+   "where": "\u00a72.4: \"On the set where the variant was chosen among four it gives +0.109, and the shrinkage to two thirds is the measured cost of that selection.\"",
+   "claim": "A reported figure does not name its population, against the paper's own rule that no figure is given without naming one.",
+   "fix": "Name the population and its size, or add it to the list of declared populations in \u00a72.1."
+  },
+  {
+   "severity": "minor",
+   "where": "\u00a74.3: \"A reader therefore cannot presently verify any ranking in this literature\".",
+   "claim": "A universal claim that the paper's own Table 2 contradicts.",
+   "fix": "Restrict the sentence to the 2025-26 systems."
+  }
+ ],
+ [
+  {
+   "severity": "minor",
+   "where": "\u00a73.8: \"The effect is not selection: all twenty configurations beat the base on validation and 70% of that margin survived the move.\"",
+   "claim": "The evidence offered against a selection explanation for P5 appears in no table in the paper or the SI.",
+   "fix": "Add the twenty configurations and their validation values to the SI, or drop the sentence and report P5 with its interval alone."
+  },
+  {
+   "severity": "minor",
+   "where": "\u00a77 and SI \u00a7S1: the corpus licences are analysed in detail, but no licence is given for GRAIL itself, for the rule bank, or for the redistributed comparator outputs (\"MetaTox and MetaPredictor predictions are frozen per substrate and released with the code\", SI \u00a7S13)",
+   "claim": "The paper is scrupulous about the corpus licences and silent about the licence of everything it releases itself, including third-party predictions it redistributes.",
+   "fix": "State an explicit licence for the code, the rule bank and the released prediction files, and add one sentence on the terms under which the comparator predictions are redistributed."
+  },
+  {
+   "severity": "minor",
+   "where": "Reference 4 and SI reference S4: \"de Bruyn Kops, C.; \u0160\u00edcho, M.; Mazzolari, A.; Kirchmair, J. GLORYx ... Chemical Research in Toxicology 2020, 34, 286\u2013299\"; cited as the version identifier \"the GLORYx reference set of 2020\"",
+   "claim": "The year and volume of the GLORYx citation are inconsistent (volume 34 of Chemical Research in Toxicology is 2021), and this citation doubles as the version identifier for one of the four corpus sources.",
+   "fix": "Correct the citation, and identify the GLORYx reference set by its actual distribution (file, release or DOI) rather than by a year."
+  },
+  {
+   "severity": "minor",
+   "where": "Section 3.1: \"At a budget of 15, where MetaTox emits about what the interactive arm emits, its macro recall is 0.5406 against GRAIL's 0.5672. Both emit alike there\" \u2014 against Table 2's last row, MetaTox 30.9 and GRAIL int. 15.6",
+   "claim": "The paragraph's premise contradicts the table on the same page, and it does not say which GRAIL arm the 0.5672 belongs to.",
+   "fix": "Name the arm, and either state the two mean emitted-list lengths at k = 15 after truncation, which is presumably where the \"emit alike\" claim comes from, or drop the claim and keep only the macro figures with their interval."
+  },
+  {
+   "severity": "minor",
+   "where": "References (26): \"Tanovic, S.; Wieczorek, E.; Duarte, F. An exploration of dataset bias in single-step retrosynthesis prediction. Digital Discovery 2026,\"; (4) and (S4): \"Chemical Research in Toxicology 2020, 34, 286\u2013299\"; (11) and (S9): \"Chavan, S. Metabolite-Gen \u2026 2026; ChemRxiv preprint, posted 6 May 2026\"",
+   "claim": "Several reference entries are incomplete or internally inconsistent: reference 26 has no volume, pages or DOI and ends in a dangling comma; the GLORYx entry pairs year 2020 with volume 34, which is the 2021 volume of that journal; the ChemRxiv preprint carries no DOI.",
+   "fix": "Add volume, pages and DOI to reference 26 (or cite it as an accepted-article DOI), correct the GLORYx entry to the volume year, and add the ChemRxiv DOI to reference 11. While there, cite the BioTransformer 3.0 paper alongside reference 2, since Section S13 pins a 3.0 build but only the 2019 BioTransformer paper is in the list."
+  },
+  {
+   "severity": "minor",
+   "where": "SI Section S11, \"The worked example in full\", which contains Table S6 and no text; Tables S1 and S6 are never cited in the text of either document",
+   "claim": "One SI section consists of a table with no prose at all, and two of the six SI tables are never referred to from any sentence.",
+   "fix": "Add two sentences to Section S11 saying what the reader should look for in Table S6 (the curated/mined split among the top twenty, the separation of the two component scores), and cite Tables S1 and S6 from the sentences whose numbers they carry."
+  },
+  {
+   "severity": "minor",
+   "where": "Table 4 caption: \"P8's figure is a speed-up factor and P9's a median in seconds; the rest are differences in micro recall@15\", with row P4 reading \"0 cells | 0 | grid 5 \u00d7 10\"; row P3 reading \"\u2264 +0.05 | +0.0092 | validation\" against Section 2.6's \"On the comparison set the same quantity is +0.0556, past the ceiling\"",
+   "claim": "The caption's exception list omits P4, whose measured value is a count of lost cells and not a recall difference, and the table records only P3's passing population while the text reports it failing its ceiling on another.",
+   "fix": "Extend the caption's exception to \"P4's is a count of lost cells\", and give P3 two rows or a second measured entry so the comparison-set value of +0.0556 and its status against the ceiling appear in the register table."
+  },
+  {
+   "severity": "minor",
+   "where": "Figure 3, right panel: four bars for the interactive mode (median, mean, 90th pct, slowest) beside a single bar for the exhaustive mode (median 5.28), with three colours and no legend; caption: \"the cost of each operating mode on the validation split, log scale\"",
+   "claim": "The right panel puts four statistics of one mode next to one statistic of the other, uses a third colour for the \"slowest\" bar with nothing explaining it, and carries no legend or note that the exhaustive mode's mean and tail do not exist.",
+   "fix": "Add \"did not finish\" markers at the exhaustive mode's mean, 90th percentile and slowest positions so the two modes are drawn on the same four statistics, and add a one-line note explaining the colour of the slowest bar."
+  }
+ ],
+ [
+  {
+   "severity": "minor",
+   "where": "Figure 2, right panel; caption: \"where the four annotated metabolites fall in each arm's ranked list, every returned candidate drawn as a tick\"; axis labelled 1, 5, 10, 15, 20, 30, 50, 100",
+   "claim": "The rank axis is non-uniformly spaced without saying so, and past about rank 55 the exhaustive arm's individual ticks merge into a solid grey block, so the promise that every returned candidate is drawn as a tick is not readable.",
+   "fix": "State the axis scale in the caption, and either widen the panel, thin the ticks, or replace the compressed region with a count so the reader is not asked to read individual candidates out of a solid band."
+  },
+  {
+   "severity": "minor",
+   "where": "Section 6 Limitations (\"Precision is bounded by annotation completeness\u2026 Every method runs out of candidates at wide budgets, so the widest columns measure list length on all sides\") against Section 4.3 (\"Precision figures are bounded by annotation completeness. And the advantage at wide budgets is partly a statement about output length on all sides rather than about ranking\")",
+   "claim": "The Limitations section restates Section 4.3 nearly point for point, and both sit after a Conclusions section that restates the abstract.",
+   "fix": "Merge Section 6 into Section 4.3, keeping only the limitations that are not already there (the depth-two ceiling lift, the non-random comparison population), and move the merged section before Conclusions."
+  }
+ ]
+]

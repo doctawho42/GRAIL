@@ -182,6 +182,12 @@
    "status": "current"
   },
   {
+   "artifact": "results/precision_table.json",
+   "script": "precision_table.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
    "artifact": "results/ranking_ablation.json",
    "script": "ranking_ablation.py",
    "how": "recorded source digest",
@@ -284,7 +290,7 @@
    "status": "current"
   }
  ],
- "n_pinned": 47,
+ "n_pinned": 48,
  "n_pinned_stale": 0,
  "sweep": {
   "unstamped": 117,

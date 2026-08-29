@@ -138,9 +138,9 @@ $+0.109$, and the shrinkage to two thirds is the measured cost of that selection
 That figure is measured on the uncapped pool, because P1 was fixed and checked before the cap of
 P2 existed. On the pool the deployed system actually ranks the same contrast, same population and
 same budget, is $+\numHSevenDeployed$, 95\% CI
-$[+\numHSevenDeployedLo, +\numHSevenDeployedHi]$ (Table~S5). The cap and the fusion recover
-overlapping ground, so the deployed gain is the smaller one, and it clears the registered
-threshold by less than the figure P1 was registered against.
+$[+\numHSevenDeployedLo, +\numHSevenDeployedHi]$ (Table~S6). The cap and the fusion recover
+overlapping ground, so the deployed gain is the smaller one, and its point estimate clears the
+registered threshold of $+\numHSevenThreshold$ by four ten-thousandths.
 
 \subsection{Pool cap}
 
@@ -213,9 +213,15 @@ $B = 10\,000$ resamples $S^{(b)}$ drawn with replacement,
 with $h^A_s$ and $h^B_s$ the hits of the two arms, and the reported interval is the empirical
 $2.5$ and $97.5$ percentiles of $\{\delta^{(b)}\}$. Resampling substrates rather than
 predictions is what makes the interval one on the \emph{difference} between two arms read on the
-same items. Precision is reported but is not used to order systems:
-under incomplete annotation an unannotated but real metabolite counts as a false positive, so a
-system emitting fewer candidates is rewarded for reasons unrelated to its chemistry.
+same items. Precision is reported in Table~S2 but is not used to order systems: under incomplete
+annotation an unannotated but real metabolite counts as a false positive, so a system emitting
+fewer candidates is rewarded for reasons unrelated to its chemistry. It does order them
+differently, which is the point of printing it.
+
+Every interval in this paper is a per-comparison 95\% interval with no family-wise adjustment.
+The sweep is \numCritBudgets{} budgets wide and Table~S4 is \numCritCriteria{} criteria deep, so
+a reader treating the grid as a family should discount accordingly; the narrowest lead we claim,
+at $k=30$ against MetaTox, is the cell that would not survive such a correction.
 
 No single budget is privileged. A claim that the system leads is made for a cell only where that
 cell's interval excludes zero, and where an ordering is not established the table says so.
@@ -401,7 +407,11 @@ curated, so the half of the bank with no expert provenance is the half carrying 
 
 Every deployed choice is a registered hypothesis with a threshold and a falsification condition,
 tested where it was not selected. Of the fifteen registered, nine are checked here: six
-confirmed and three failed. The remaining six are registered against work this paper does not
+confirmed and three failed, on the falsification condition each was written with, which compares
+the point estimate to the threshold. Read instead against the interval, three of the six
+confirmations are unresolved rather than clear: P1, P2 and P5 each have a threshold inside their
+own interval, so the data establish that the effect exceeds zero and not that it exceeds the
+registered bar. We report both readings and change neither verdict after the fact. The remaining six are registered against work this paper does not
 report and are stated with their thresholds, so that a later result on any of them cannot be a
 threshold chosen after the fact.
 
@@ -630,10 +640,13 @@ comparator versions and digests; and the provenance and reproduction procedure.
 
 \section{Data and software availability}
 
-The data and software underlying this article are publicly available. Source code, the split
-manifest, the frozen per-substrate predictions of every comparator, the evaluation harness, the
-provenance sweep and the preregistration with every hypothesis and its outcome are at
-\texttt{github.com/doctawho42/GRAIL}, and are available to reviewers at submission. The train and
+Source code, the deployed generator and filter checkpoints, the \numBankRules{}-template rule
+bank, the split manifest, the frozen per-substrate predictions of every comparator, the
+evaluation harness, the provenance sweep and the preregistration with every hypothesis and its
+outcome are at \texttt{github.com/doctawho42/GRAIL}, and are available to reviewers at
+submission. Releasing the checkpoints is the same bar this paper applies to others: a system
+whose weights are not obtainable cannot be compared against, which is why one of the
+\numComparatorsUnavailable{} systems of 2025--26 is excluded here. The train and
 validation candidate pools are prepared for deposit at \ZenodoDoi{}, held until the licence
 position is settled. The annotated
 substrate--metabolite corpus is assembled from ChEMBL \citep{Zdrazil_2024}, DrugBank

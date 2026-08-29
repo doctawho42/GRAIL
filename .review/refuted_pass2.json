@@ -1,0 +1,684 @@
+{
+ "counts": {
+  "batches_returned": 14,
+  "judged": 106,
+  "survived": 84,
+  "fatal": 0,
+  "major": 43,
+  "minor": 41
+ },
+ "survived": [
+  {
+   "severity": "major",
+   "batch": 0,
+   "index": 0,
+   "claim": "Reference metabolite structures are released only as hashes and the procedure that assembled the 22,136 annotated pairs from the four sources is nowhere described, so no third party can rebuild the evaluation set or recompute four of the five matching criteria.",
+   "evidence": "Still current in both documents. \u00a77: \"The deposited pools hold corpus substrate structures, tautomer-canonical hashes of the annotated metabolites, and candidate structures produced by this work.\" SI \u00a7S1: \"The annotated metabolites appear only as tautomer-canonical InChIKeys, which are hashes and do not carry the structures. The deposit is therefore a list of corpus substrates, hashes of their annotations, and our own predictions.\" The entire account of assembly is the sentence \"The annotated substrate--metabolite pairs are assembled from four sources: ChEMBL, DrugBank, MetXBioDB and the GLORYx reference set\" plus the version list; no queries, fields, filters, standardisation, de-duplication, conflict rules, per-source counts, or splitting algorithm/seed appear anywhere in \u00a72.1, SI \u00a7S1 or elsewhere. This contradicts \u00a71: \"the artifacts sufficient to recompute any cell are released\" -- a hash supports only the tautomer key, not canonical SMILES, full InChIKey, first-block InChIKey or Tanimoto=1, i.e. four of the five criteria of Table S2 and four of the five rows of Table S4.",
+   "fix": "Add an SI subsection giving the per-source extraction and merge procedure (queries/fields, inclusion filters, structure standardisation, cross-source de-duplication and conflict resolution, per-source counts) and the splitting algorithm and seed, sufficient to regenerate the triple files against the pinned digests; and deposit reference structures for at least the 1,170-substrate evaluated test set and the 291-substrate comparison set, naming per source any that may not be redistributed."
+  },
+  {
+   "severity": "major",
+   "batch": 0,
+   "index": 1,
+   "claim": "Whether the trained checkpoint every GRAIL number comes from is released is never stated, and it is absent from the enumerated release, while the paper excludes a comparator from the evaluation for exactly that omission.",
+   "evidence": "The word \"checkpoint\" occurs four times in the manuscript and once in the SI, never in \u00a77. \u00a77 enumerates: \"Source code, the split manifest, the frozen per-substrate predictions of every comparator, the evaluation harness, the provenance sweep and the preregistration with every hypothesis and its outcome are at github.com/doctawho42/GRAIL\" -- no weights. Against \u00a73.9, \"Every recall figure in this paper comes from one trained checkpoint\", and \u00a74.3, \"Of 4 such systems, one releases training code without a checkpoint\", expanded in SI \u00a7S14: \"LAGOM releases training code under Apache-2.0 but no fine-tuned checkpoint, so comparing would mean comparing against our own reimplementation.\" The revision that added Table S3 and itemised the curated bank did not touch \u00a77.",
+   "fix": "Add one sentence to \u00a77 stating whether the deployed generator and filter checkpoints and the 7,581-template bank are released, and release them; if a checkpoint is withheld, say so, say what it costs a reproducer, and qualify the \u00a74.3 / S14 criticism of LAGOM so the same bar is applied to both."
+  },
+  {
+   "severity": "major",
+   "batch": 0,
+   "index": 2,
+   "claim": "The Data Availability Statement asserts blanket public availability and then, in the same paragraph, states the two largest pinned artifacts are undeposited and leaves whether they may be released at all as an unresolved bracketed placeholder.",
+   "evidence": "Unchanged in the current PDF. \u00a77 opens \"The data and software underlying this article are publicly available.\" Two sentences later: \"The train and validation candidate pools are prepared for deposit at [ZENODO DOI, minted on publishing the deposit], held until the licence position is settled\", and then \"Whether they may be redistributed, and under which licence, is [CORPUS LICENCE: whether the derived corpus and the candidate pools may be redistributed, given DrugBank's terms]\". \u00a77 itself identifies these as \"Two pinned artifacts ... too large to commit\". SI \u00a7S15 confirms the deposit cannot proceed: \"The upload is held until the licence position above is settled, and the tool refuses to run without one\". The Supporting Information Available paragraph also still points at \"[ZENODO DOI, minted on publishing the deposit] and from the publisher\", and a third bracket now appears in SI \u00a7S5 (\"[CURATED RULES: ...]\").",
+   "fix": "Settle the licence question before resubmission and replace all three brackets with determinations; state in the indicative what is available now (code, harness, register, frozen comparator predictions) and what is withheld and why; point Supporting Information Available at the ACS-hosted SI rather than at an unminted Zenodo DOI."
+  },
+  {
+   "severity": "major",
+   "batch": 0,
+   "index": 3,
+   "claim": "Three of the six \"confirmed\" registered predictions are adjudicated on the point estimate although their own intervals straddle the registered threshold, so the data establish only that the effect exceeds zero.",
+   "evidence": "Current text, unchanged: P1 \"threshold of +0.05 ... +0.0733, 95% CI [+0.0477, +0.102]\" (\u00a72.4); P2 \"a threshold of +0.015; measured +0.026, 95% CI [+0.0033, +0.0469]\" (\u00a72.5); P5 \"at a registered +0.02 ... Measured +0.0286, 95% CI [+0.0085, +0.0502]\" (\u00a73.8). Each lower bound sits below its threshold. \u00a73.7 nonetheless reports \"six confirmed and three failed\", and Table 4's six passes are P1-P5 and P9. The paper applies the opposite standard elsewhere -- Table S4 caption: \"Every cell is read from the interval and never from the point estimate.\" The revision made P1 worse, not better: \u00a72.3 now reports the deployed-pool contrast as \"+0.0519, 95% CI [+0.0246, +0.0812]\", which straddles +0.05 by more.",
+   "fix": "Adjudicate each registered prediction by comparing its interval to its threshold, as Table S4 already does for the comparison: mark P1, P2 and P5 unresolved and restate \u00a73.7's tally; or state explicitly that the registered falsification condition was written on the point estimate and give the interval verdict alongside it."
+  },
+  {
+   "severity": "minor",
+   "batch": 0,
+   "index": 4,
+   "claim": "The 45 comparison verdicts are each read from a per-cell nominal 95% interval with no multiplicity control anywhere, and the abstract's significance claims are cells selected from that grid.",
+   "evidence": "Table S4 is 5 criteria x 9 budgets = 45 verdicts, and the revision added 54 more intervals in Table S3 (\"Every difference between a GRAIL arm and a comparator on the comparison set, in micro recall, with its paired bootstrap 95% interval ... The estimator is Equation 6 at B = 10 000 resamples, seed 0\"). Neither caption, nor \u00a72.8 (\"A claim that the system leads is made for a cell only where that cell's interval excludes zero\"), states that these are per-comparison, unadjusted intervals; the only multiplicity control in either document is in a different analysis, SI \u00a7S11 (\"none survives a Holm correction\"). The abstract's \"GRAIL ahead at k = 30 and k = 50, each with the paired interval excluding zero\" rests at k=30 on the single narrowest cell in Table S3, +.038 [+.005, +.072], which SI \u00a7S3 itself flags: \"The exhaustive mode's lead over MetaTox at k = 30 excludes zero by little.\"",
+   "fix": "One sentence in \u00a72.8 stating that every interval in Table S3, Table S4 and Figure 1 is a per-comparison 95% interval with no family-wise adjustment, and a note that the k=30 lead is the one abstract cell that would not survive one."
+  },
+  {
+   "severity": "minor",
+   "batch": 0,
+   "index": 6,
+   "claim": "The training-variance yardstick is a 3-seed standard deviation of a level, not of the paired difference, measured on a different population at a different operating point, and it is then used to grade three effect sizes.",
+   "evidence": "\u00a73.9, unchanged: \"the generator and filter were retrained under 3 seeds and the whole pipeline re-evaluated on the full test split: macro recall@15 is 0.3437 with a standard deviation of 0.0099, and micro 0.2686 with 0.0058. That study ran on an earlier operating point than the one reported here ... Read against it, the rank fusion of P1 is an order of magnitude larger than retraining noise and the pool cap of P2 several times larger, while the rule budget of P3, at +0.0092 on validation, is within it.\" The three graded contrasts are measured on the validation draw (n=293) at k=15, not on the full test split, and each is a paired difference whose seed-to-seed spread is not the spread of a level. The paper discloses the operating-point mismatch but not the level-versus-difference one, and 3 seeds is a thin basis for either.",
+   "fix": "Report the seed-to-seed SD of each registered contrast itself, on the population and operating point that contrast is measured on; or drop the graded verbal comparison and let each prediction's own paired interval carry the argument, since P3's interval already covers zero."
+  },
+  {
+   "severity": "major",
+   "batch": 0,
+   "index": 7,
+   "claim": "P5's +0.0286 is measured against an unnamed base of 0.5023 rather than the deployed fusion's 0.5353, and the configuration it certifies (0.5308) is below the deployed system on the same population and budget; Table 4's caption calls failed and non-deployed variants deployed choices.",
+   "evidence": "Confirmed in results/h12_verdict.json, the artifact behind P5: population \"n\": 291, k 15, micro, with recall_micro[\"15\"] = {\"three_way\": 0.5308, \"two_way\": 0.5023} and primary_three_way_minus_two_way gap 0.0286. The deployed fusion on the same 291 substrates at k=15 is 0.5353 (Table 2; \\numRankCmpFusionOneFive). So the certified arm is 0.0045 *below* the deployed system, and its base is a configuration named nowhere in the paper -- 0.5023 appears in \u00a73.8 only as the unexplained \"interleaved\" figure (\"block emission being worse than interleaved (0.4376 against 0.5023)\"). \u00a73.8 then reports \"A binary group ordering entered as the third term reaches 0.5308, the same the trained scorer reaches\" without noting it is under the deployed number. Table 4's caption still reads \"Every deployed choice as a prediction fixed before it was checked\" while listing P6 (-0.1203, of which \u00a73.8 says \"That is not the deployed ranking\") and P7 (-0.0286), and a third fusion term is absent from the deployed system as described in \u00a72.2 and \u00a72.4.",
+   "fix": "Name the configuration P5, P6 and P7 are measured against (the two-term fusion at 0.5023, not the deployed 0.5353), state that the three-term arm at 0.5308 sits below the deployed system on the same population and budget, and reword Table 4's caption so it does not describe failed or non-deployed variants as deployed choices."
+  },
+  {
+   "severity": "minor",
+   "batch": 1,
+   "index": 1,
+   "claim": "The SI states a rule for when a ranking comparison carries information and then asserts, as a blanket fact, that the main-text comparison satisfies it, although every comparator's lists are shorter than the budget at k = 30 and 50, the budgets where the lead is claimed.",
+   "evidence": "SI S10: \"a ranking comparison carries information only over the substrates whose pool exceeds the budget, and the number of such substrates should be reported with the result. The comparison in the main text is run on the deployed pool, capped at 100, where the budget is narrower than the pool for every substrate.\" Section 3.1 says the opposite for the other arms: \"at k = 50, 291 of MetaPredictor's lists, 249 of MetaTox's and 282 of the interactive arm's are shorter than the budget.\" The artifact behind Table 2 (results/deployment_table.json, substrates_whose_list_is_shorter_than_the_budget) records at k = 30: 291 MetaPredictor, 140 MetaTox, 66 SyGMa, 272 GRAIL interactive; and at k = 50 it records 2 for GRAIL exhaustive itself, so the S10 sentence is not even true of the deployed pool. The substantive concession is already made three times (S3.1 \"Where a method runs out the budget has stopped measuring ranking\"; S4.3 \"the advantage at wide budgets is partly a statement about output length on all sides rather than about ranking\"; Limitations \"the widest columns measure list length on all sides\"), which is why this is a scoping defect rather than a claim defect.",
+   "fix": "Scope the last sentence of S10 to GRAIL's own arm and state its exception (\"GRAIL's deployed pool exceeds every budget reported, except for 2 substrates at k = 50\"), and add the k = 30 per-arm counts next to the k = 50 counts already in Section 3.1; both sets of counts are already in the pinned artifact."
+  },
+  {
+   "severity": "major",
+   "batch": 1,
+   "index": 2,
+   "claim": "Table 2 and the SI's ranking-ablation table give different micro recall for what both call the deployed configuration on the same 291 substrates, disagreeing at three of six shared budgets.",
+   "evidence": "Table 2, GRAIL exh.: 0.4526 (k=10), 0.6391 (k=30), 0.7038 (k=50). SI Table S6 (Table S5 as reviewed), \"fusion (deployed)\", comparison set n = 291: 0.4496, 0.6406, 0.7068 \u2014 while k=1, 5 and 15 are identical in both (0.0902, 0.3098, 0.5353). On 665 references those gaps are +2, -1 and -2 hits, i.e. in both directions, so the parent-drop convention named only in Table 2's caption (\"A prediction equal to the substrate is dropped before the budget for every method alike\") cannot account for them: dropping the parent can only raise recall at fixed k. The two rows come from different pinned artifacts (results/deployment_table.json vs results/pool_cap_cost.json, cap 100) and neither caption mentions the other or the difference.",
+   "fix": "Reconcile the two artifacts, or add one sentence to the SI table's caption naming the convention that differs from Table 2 and stating which of the two is the headline configuration. While there, fix the pointers: Section 2.4 and Table 4's footnote send the reader to \"Table S5\" for the deployed-pool P1 contrast, and Section 3.5 to \"Table S3\", but in the current SI those are the oracle table and the rule-bank section respectively (the ranking ablation is now S6, the criterion sweep S4)."
+  },
+  {
+   "severity": "minor",
+   "batch": 1,
+   "index": 3,
+   "claim": "Section 2.8 states that precision is reported, but no precision figure appears anywhere in the manuscript or the SI.",
+   "evidence": "Section 2.8: \"Precision is reported but is not used to order systems.\" Every other appearance of the word is qualitative \u2014 Section 3.1 \"the annotation bias on precision does not explain the difference\", Section 4.3 \"Precision figures are bounded by annotation completeness\", Limitations \"Precision is bounded by annotation completeness\", SI S6.3 \"precision is pessimistic by a bounded but unknown amount, which is why the paper reports it without using it to order systems\". Table 2 has no precision column, and paper2/numbers.tex \u2014 through which, per S14, \"Every number in the paper reaches the page through a macro generated from a pinned artifact\" \u2014 contains no precision macro at all (0 matches in 621 lines).",
+   "fix": "Replace \"Precision is reported\" with what is actually true, e.g. \"Precision is computed and released with the per-substrate predictions\", or add a precision-at-k column to Table 2 carrying the same annotation-completeness caveat."
+  },
+  {
+   "severity": "major",
+   "batch": 1,
+   "index": 4,
+   "claim": "Section 3.3 reports five effects and three intervals without naming its evaluation population, in a paper whose stated rule is that no figure is given without one.",
+   "evidence": "Section 3.3 names no population anywhere: \"the learned choice gains +0.4556 at k = 15\", \"the gain is +0.188 [+0.141, +0.2382]\", \"the learned choice gains +0.0316 of micro recall at k = 15, [+0.0101, +0.0547], on a base of 0.4481\", \"at k = 5 the gain is +0.015\". The rule it breaks is the paper's own: Section 2.1, \"Three evaluation populations appear here... and no figure is given without naming one\", and SI S1, \"every figure in the paper names one\". The adjacent Section 3.4 does comply (\"at k = 15 on the comparison set\", \"+0.2046 on the validation draw\"), which makes the omission read as an oversight rather than a convention. The backing artifact settles what it should say: results/selection_ablation_deployed.json records population/source \"the comparison set of results/four_method_291.json\", n = 291, 665 references, budget 30.",
+   "fix": "Add \"on the comparison set (n = 291, 665 references)\" to the first sentence of Section 3.3, and give the base recall for each of the four selection arms alongside their mean pool sizes."
+  },
+  {
+   "severity": "minor",
+   "batch": 1,
+   "index": 7,
+   "claim": "The bank holds templates that compress a multi-enzyme cascade into one rule, so \"Predictions are single-step\" and the one-step ceiling are not single-step in a chemical sense.",
+   "evidence": "Section 3.6 concedes the chemistry \u2014 \"the three sequential 5' phosphorylations that activate it\" \u2014 and Table 3 shows each reached from the parent by one template: dFdCMP rank 8 rule 2198, dFdCDP rank 21 rule 2139, dFdCTP rank 16 rule 1745. dFdCDP and dFdCTP are two and three kinase steps from gemcitabine, so rules 2139 and 1745 each encode a cascade. This follows from the mining procedure in Section 2.3 (\"For each annotated substrate-product pair a ring-aware maximum common substructure is located, the atoms and bonds that changed are flagged as the reaction centre\"), which types an annotated parent-metabolite pair however many enzymes separate them. Against that, the Limitations say \"Predictions are single-step\" and Section 3.11 \"Applying the whole bank to every test substrate recovers 0.8171 of references in one step\", and nowhere does the text say that \"step\" means one rule application rather than one enzymatic step. No reported number changes \u2014 the ceiling, the depth-two comparison and the recalls are all defined on annotated parent-metabolite pairs \u2014 so this is a naming defect, not a measurement one.",
+   "fix": "Write \"one rule application\" instead of \"single-step\" in the Limitations and Section 3.11, and add one sentence to Section 2.3 noting that templates are mined from annotated parent-metabolite pairs and so may compress several enzymatic steps, with the gemcitabine phosphorylations as the instance already in the paper."
+  },
+  {
+   "severity": "minor",
+   "batch": 2,
+   "index": 0,
+   "claim": "The standardisation procedure and the tautomer canonicaliser that defines the default matching criterion are never specified.",
+   "evidence": "\u00a72.2 gives standardisation only as two citations: \"The selected rules are applied with RDKit 2022.09.5, and their products standardised 19,20 and deduplicated.\" SI Table S2 defines the default key as \"canonical tautomer on both sides, then a canonical SMILES without stereochemistry\" without naming the canonicaliser; S12 mentions only that the enumerator \"lives in a module-level singleton\" with a budget of 200. The tanimoto1 row gives \"1024-bit Morgan fingerprints\" but no radius or chirality flag. Partly overstated \u2014 a tool and version (RDKit 2022.09.5) and two standardisation references are on the page \u2014 but the canonicaliser's identity and settings, and the Morgan radius, are genuinely absent from a paper titled \"under a fully declared evaluation\".",
+   "fix": "Name the tautomer canonicaliser with its scoring/enumeration settings, give the Morgan radius and chirality flag alongside the existing 1024-bit figure, and say in \u00a72.2 which of refs 19\u201320 the implementation follows (or give the ordered operation list)."
+  },
+  {
+   "severity": "major",
+   "batch": 2,
+   "index": 3,
+   "claim": "The species, matrix, enzyme system and metabolic phase behind the 2,597 reference metabolites are never declared.",
+   "evidence": "A full-text search of both documents for species/matrix/phase/enzyme terms returns only reference titles and one forward-looking sentence. \u00a72.1 and SI S1 declare sources and versions only: \"assembled from four sources: ChEMBL 17, DrugBank 18, MetXBioDB 2 and the GLORYx reference set 4 ... ChEMBL 34, DrugBank 5.1.10, MetXBioDB 1.0 and the GLORYx reference set of 2020.\" \u00a74.4 then contrasts a future source as \"human in vivo data on exactly the population predicted here\", which presupposes a characterisation of the present corpus that is nowhere given. In a paper whose stated discipline is that \"no figure is given without naming\" its population, the biological population is the one that goes unnamed.",
+   "fix": "Add a census of the 2,597 test references by source and, where the sources record it, by species, matrix (in vivo / in vitro) and biotransformation class (at minimum phase 1 vs phase 2); state explicitly where a source does not record it, and repeat the \u00a73.11 coverage split within that stratification."
+  },
+  {
+   "severity": "major",
+   "batch": 2,
+   "index": 5,
+   "claim": "The type-invariance claim holds over only two of four tested definitions, and the abstract states it without the qualifier the body applies.",
+   "evidence": "The abstract is unqualified: \"that bound is invariant to how a transformation type is defined, making it a property of the annotation corpus rather than of our implementation.\" The body qualifies it twice \u2014 \u00a73.11: \"the bound is invariant to the definition of a type across the whole range in which that definition is meaningful\"; Conclusions: \"under every definition of a transformation type at which a type still determines a product.\" Table 5 shows the singleton mass at 87.2%, 73.3%, 8.9%, 2.7% across the four definitions, with \"names a transf.\" yes/yes/no/no \u2014 so \"every definition\" generalises from n = 2, the two adjacent ones already erode by 14 points, and nothing is tested in the 284-to-69 gap where the claimed boundary is supposed to lie.",
+   "fix": "Carry the body's qualifier into the abstract (\"invariant across every definition at which a type still determines a product\"), and add at least one intermediate definition between \"counts dropped\" and \"element pairs\" so the claimed coincidence of collapse with loss of product-determination is tested rather than assumed."
+  },
+  {
+   "severity": "major",
+   "batch": 2,
+   "index": 6,
+   "claim": "A template-bank coverage ceiling is claimed to bound sequence-to-sequence predictors, which have no template bank.",
+   "evidence": "\u00a74.4 states without support or hedge: \"The bound applies to any predictor trained on a comparable corpus, including sequence-to-sequence systems, which do not report it.\" The bound is defined in \u00a73.11 by what the bank reaches \u2014 \"337 need a transformation type the bank does not hold, 98 need a type it holds whose rule did not fire, and 40 cannot be typed\" \u2014 and 138 of the 475 are properties of rule firing and typing, not of the corpus at all. A generative model is not restricted to a template vocabulary, and the bank is not purely corpus-derived (\u00a72.3: \"the deduplicated union of four curated collections together with templates mined from\" train). The measurement is also already in hand: SI S13 records that \"MetaTox and MetaPredictor predictions are frozen per substrate and released with the code.\"",
+   "fix": "Restrict the sentence to rule-based predictors drawing on a comparable template bank \u2014 or measure it, by reporting MetaPredictor's recall on the 475 uncovered references from the frozen per-substrate predictions already released."
+  },
+  {
+   "severity": "major",
+   "batch": 2,
+   "index": 7,
+   "claim": "The deployed arm's micro recall differs between Table 2 and Table S5 at three shared budgets, and the seeded-permutation baseline differs between \u00a73.2 and \u00a73.4.",
+   "evidence": "Table 2 gives GRAIL exh. 0.4526, 0.6391, 0.7038 at k = 10, 30, 50; SI Table S5 gives \"fusion (deployed)\" on the same 291-substrate comparison set as 0.4496, 0.6406, 0.7068. They agree exactly at k = 1, 5 and 15 (0.0902 / 0.3098 / 0.5353) and disagree at the other three. The macros confirm two separate sources: numbers.tex has sweep.bank.10 = 0.4526 while si_table_ranking.tex hardcodes 0.4496. The permutation is the same defect: \u00a73.2 reports \"a seeded permutation 0.1128\" and \u00a73.4 \"A seeded permutation of the same pool reaches 0.1173\", from rank.cmp.random15 = 0.1128 and sim.cmp.random15 = 0.1173 (validation: 0.1221 vs 0.1206). Neither document reconciles them, in a paper claiming \"every number in this paper comes from one of\" 47 pinned artifacts.",
+   "fix": "Regenerate Table 2 and Table S5 from a single artifact (Table S5 is currently hardcoded rather than macro-driven), or state in the S8 caption which convention differs and why; and declare the seed and arm set behind each permutation control so the two values are distinguishable."
+  },
+  {
+   "severity": "major",
+   "batch": 3,
+   "index": 1,
+   "claim": "Per-arm coverage - how often each method returns nothing - is conditioned away by the 291-substrate intersection rather than reported, and GRAIL exhaustive's own non-completions are among the failures that define the population.",
+   "evidence": "The population is an intersection and nothing reports what each arm contributed to it: \"The comparison set is the 291 substrates on which every method predicts, carrying 665 references\" (Sec. 2.1), and the only qualification is \"a quarter of the evaluated test split and not a random quarter of it\" (Limitations). The producer confirms the mechanism - scripts/four_method_291.py: `subs = sorted(set(truth) & set.intersection(*(set(p) for p in pools.values())))`. GRAIL exhaustive is one of the failing arms: results/cost_envelope.json records 11 of 106 sampled substrates not finishing at deadline_s 600.0 at the whole bank (about 10%), and that count appears nowhere in the paper - \\numEnvelopeUnfinished is defined in numbers.tex but never used in body.tex, which cites only \\numEnvelopeSmallestUnfinished. Table 2's last row is mean output length, not coverage.",
+   "fix": "Add one row to Table 2 giving, for each arm, the number of candidate substrates on which it returned at least one prediction, counting GRAIL exhaustive's 600 s non-completions as failures, and state the deadline in the text rather than only in the Figure 3 legend."
+  },
+  {
+   "severity": "minor",
+   "batch": 3,
+   "index": 2,
+   "claim": "Section 3.1 claims per-arm truncation counts \"for every arm\" and then gives three of five, omitting the two that bear on the k=50 lead, although the pinned artifact holds all of them at every budget.",
+   "evidence": "Current body.tex, unchanged: \"Where a method runs out the budget has stopped measuring ranking, and the counts are reported for every arm: at $k=50$, \\numShortMetapredictorFiveZero{} of MetaPredictor's lists, \\numShortMetatoxFiveZero{} of MetaTox's and \\numShortTrainedFiveZero{} of the interactive arm's are shorter than the budget.\" SyGMa and GRAIL exhaustive are absent, and they are the pair that explains the lead: results/deployment_table.json, key substrates_whose_list_is_shorter_than_the_budget, \"50\": {'whole bank': 2, 'trained budget': 282, 'metatox': 249, 'sygma': 134, 'metapredictor': 291}. The artifact holds all five arms at all nine budgets, and numbers.tex already carries macros for each (\\numShortSygmaFiveZero 134, \\numShortBankFiveZero 2).",
+   "fix": "Print all five counts at k=50 (bank 2, interactive 282, MetaTox 249, SyGMa 134, MetaPredictor 291) - or delete \"for every arm\" - and add the full nine-budget, five-arm table to the SI, since deployment_table.json already contains it."
+  },
+  {
+   "severity": "major",
+   "batch": 3,
+   "index": 3,
+   "claim": "The one head-to-head presented as GRAIL beating MetaTox at matched output rests on a premise its own artifact contradicts, does not name the arm, carries no interval, and reverses sign under the paper's default aggregation.",
+   "evidence": "Text unchanged: \"At a budget of $15$, where MetaTox emits about what the interactive arm emits, its macro recall is 0.5406 against GRAIL's 0.5672. Both emit alike there, so the annotation bias on precision does not explain the difference.\" The pinned artifact results/h11_grid.json defines the GRAIL arm as `\"rule\": \"the trained rule budget's pool, ordered by the H7 fusion, untruncated\"` - i.e. not at a budget of 15 - and records `mean_output: {'rule': 16.31, 'metatox': 36.34}` with `bias_note: \"...the rule emits 16.31 against MetaTox's 36.34, so F1 is biased toward the rule...\"`. Under the paper's own default aggregation the same pair goes the other way: Table 2 gives GRAIL int. 0.4797 against MetaTox 0.5143 at k=15, and SI Table S3 gives GRAIL interactive minus MetaTox at k=15 as -.035 [-.076, +.006]. The text notes only \"That pair is macro; every figure in Table 2 is micro.\"",
+   "fix": "Name the arm, state that its 0.5672 is the untruncated interactive pool (mean 16.31) against MetaTox truncated at 15, give the paired interval, and add that under the default micro aggregation the pair reverses to 0.4797 against 0.5143, -0.035 [-0.076, +0.006]."
+  },
+  {
+   "severity": "major",
+   "batch": 3,
+   "index": 5,
+   "claim": "Every verdict cell takes the maximum of two GRAIL arms against the maximum of three comparators and then reads an unadjusted interval, across 45 cells with no multiplicity control.",
+   "evidence": "Figure 1 caption: \"red where GRAIL's better arm trails the strongest comparator with the interval excluding zero, blue where it leads with the interval excluding zero\". SI Table S4 caption: \"+ marks a budget where GRAIL's better arm leads the strongest comparator with the paired interval excluding zero... Every cell is read from the interval and never from the point estimate\" - 5 criteria x 9 budgets = 45 cells. Grepping body.tex and si.tex for holm/multiplicity/Bonferroni returns one hit, and it is the unrelated population analysis in S11 (\"none survives a Holm correction\"). The family is 54 differences in Table S3, and the abstract's k=30 claim turns on its most marginal cell - the SI itself says \"The exhaustive mode's lead over MetaTox at k = 30 excludes zero by little\" (+.038 [+.005, +.072]).",
+   "fix": "State in Sec. 2.8 that the Figure 1 and Table S4 verdicts select the better GRAIL arm and the strongest comparator, and report a multiplicity-controlled verdict over the 54-cell family of Table S3 (Holm, or a max-statistic bootstrap resampling the arm selection with the substrates) beside the unadjusted one, flagging the k=30 lead over MetaTox as the cell that turns on it."
+  },
+  {
+   "severity": "major",
+   "batch": 3,
+   "index": 6,
+   "claim": "The flat \"no training contamination\" claim for the 291 rests on a substrate-role audit only; the molecule-role overlap the SI reports for the test split is never reported for the comparison set.",
+   "evidence": "Main text, unchanged: \"The comparison set carries no training contamination: 0 of its 291 substrates appear in train or validation under a canonical key\" (Sec. 2.1). The producing audit keys only substrates: scripts/external_overlap_audit.py builds `trained_keys()` from `a[0]` of each train/val triple line - the substrate id - so `seen` is the set of train/val substrates, not of all molecules. The SI reports the other role at split level: \"2,408 molecules occur in both train and test, and 243 test substrates appear as molecules in train\" (S1) - about 20% of test substrates, a rate the 291 cannot plausibly escape. Section 2.3 then sends the reader to Sec. 2.1 for exactly those counts (\"a molecule that is a substrate in training may appear as a product in test; the counts are in Section~\\ref{sec:populations}\"), where the only figure present is the flat 0.",
+   "fix": "Report, for the 291, the number occurring anywhere in train or validation as a molecule rather than only in substrate position, and restate the sentence as the role-specific claim the audit supports: no substrate of the comparison set is a training or validation substrate."
+  },
+  {
+   "severity": "major",
+   "batch": 4,
+   "index": 1,
+   "claim": "Table 2 and the SI stage-ablation table report the same deployed configuration on the same 291 substrates under the same criterion and disagree at three of the six shared budgets, with no reconciliation given.",
+   "evidence": "Table 2, GRAIL exh.: k=10 0.4526, k=30 0.6391, k=50 0.7038. SI Table S6 (was S5), \"fusion (deployed)\", comparison set n=291: 0.4496, 0.6406, 0.7068. The other three shared budgets agree exactly (k=1 0.0902, k=5 0.3098, k=15 0.5353), so this is not rounding: the gaps are 2, 1 and 2 references out of 665. The two pinned artifacts differ in a stated convention that no caption mentions - results/four_method_291.json records \"parent_and_duplicates\": \"dropped before the budget is applied\" and results/deployment_table.json records \"a prediction whose key equals the substrate's is dropped before the budget, for every arm alike\", while results/ranking_ablation.json records only \"every arm re-ranks one pool built by the deployed configuration\" with no parent/duplicate drop. Nor does the parent drop explain the signs: it would make Table 2 higher at every budget, but Table 2 is lower at k=30 and k=50. The Table S6 caption says only \"the pool, the matching rule and the budget are fixed\", and SI S9.1 shows the authors already track one-reference effects of this size (\"moves micro recall at k=1 from 0.1053 to 0.1068, a difference of 0.0015\") without connecting them to this discrepancy. In a paper that claims \"Every number in the paper reaches the page through a macro generated from a pinned artifact\", two pinned artifacts disagreeing about the flagship configuration is the failure the provenance machinery is advertised to prevent.",
+   "fix": "Add one sentence to the Table S6 caption naming the convention that differs from Table 2 (parent/duplicate drop, tie-break, or both), or re-derive the ablation under the deployed convention so the fusion row reproduces the GRAIL exh. row exactly at k = 1, 5, 10, 15, 30, 50."
+  },
+  {
+   "severity": "major",
+   "batch": 4,
+   "index": 3,
+   "claim": "The size of the paper's central declared axis - matching criteria by output budgets - is stated four different ways, and the Abstract's figure matches no table.",
+   "evidence": "Abstract: \"reports its performance under five matching criteria and ten output budgets against every comparator with predictions on the same substrates.\" Section 2.7: \"Registered as prediction P4 with a criterion of zero lost cells over a grid of five matching criteria by eleven budgets: 0 of 55.\" Table 4, row P4: \"grid 5 x 10\". Table 2 and SI Table S4 both sweep nine budgets (1, 3, 5, 8, 10, 15, 20, 30, 50), and Section 3.1 says \"leads at all nine budgets\". The pinned artifact settles it against two of the four: results/h11_grid.json has \"budgets\": [1, 3, 5, 8, 10, 15, 20, 32, 50, 74] (ten, and note 32 and 74, not 30), \"cells_declared\": 50, and 55 only as \"cells_including_metatox_own_emission\" - an uncapped own-emission column, not an eleventh budget. So \"eleven budgets\" is wrong on the artifact's own terms, and the Abstract's \"ten\" is attached to the comparator sweep, which is nine and uses a different budget list. A manuscript whose title is \"under a fully declared evaluation\" cannot state the size of its declared grid four ways.",
+   "fix": "Fix Section 2.7 to \"five matching criteria by ten budgets: 0 of 50\" (matching Table 4 and h11_grid.json, with the own-emission column described as a column rather than a budget), and correct the Abstract to the nine budgets of the comparator sweep, or say plainly that the P4 grid uses ten budgets while the comparison is reported at nine. Generate all three mentions from one macro."
+  },
+  {
+   "severity": "minor",
+   "batch": 4,
+   "index": 4,
+   "claim": "Deduplication of the comparators' output lists before truncation to k is never specified, so the arms' budgets may not be the same quantity.",
+   "evidence": "The only list-hygiene statement covering all arms is the Table 2 caption - \"A prediction equal to the substrate is dropped before the budget for every method alike\" - which names the parent drop and nothing else. Deduplication is declared only for GRAIL, in Section 2.2: \"The selected rules are applied with RDKit 2022.09.5, and their products standardised and deduplicated.\" SI S14 describes how each comparator was obtained (\"SyGMa 1.1.0 is taken from the installed module. MetaTox and MetaPredictor predictions are frozen per substrate and released with the code\") without saying whether their lists are collapsed under the matching key before k is applied. The harness in fact does it - results/four_method_291.json records \"parent_and_duplicates\": \"dropped before the budget is applied\" - so this is purely an omission from the page, but it is exactly the kind of undeclared choice the Introduction indicts others for (\"A system emitting seventy candidates and one emitting eight are not measured on the same axis\"), and it bears on the mean-list row and the wide-budget leads.",
+   "fix": "Change the Table 2 caption to match the artifact: \"A prediction equal to the substrate, and any duplicate under the matching key of the column, is dropped before the budget for every method alike.\""
+  },
+  {
+   "severity": "major",
+   "batch": 5,
+   "index": 0,
+   "claim": "Micro recall of the deployed fusion on the 291-substrate comparison set differs between Table 2 and the SI ablation table at three of six shared budgets, unreconciled.",
+   "evidence": "Current build, table_sweep.tex: \"10 & 0.4526 ... 30 & 0.6391 ... 50 & 0.7038\" for GRAIL exh. Current si_table_ranking.tex (now Table S6, renumbered from S5): \"comparison set, n = 291 / fusion (deployed) & 0.0902 & 0.3098 & 0.4496 & 0.5353 & 0.6406 & 0.7068\". k=1, 5 and 15 agree exactly; k=10, 30 and 50 disagree. The new Table S3 of intervals is computed off the Table 2 values (GRAIL exh. minus MetaTox at k=10 is \"+.065\" = 0.4526-0.3880; at k=30 \"+.038\" = 0.6391-0.6015), so Table S6 is the odd artifact out. Table 2's caption declares \"A prediction equal to the substrate is dropped before the budget for every method alike\" and Table S6's caption declares only \"capped by rule score before any arm sees it\" - but a parent-drop cannot explain the sign flip, since Table S6 is lower at k=10 and higher at k=30 and k=50. No sentence anywhere in body.tex or si.tex reconciles them.",
+   "fix": "Identify which artifact is the deployed evaluation, regenerate the other from it, and state in the Table S6 caption any remaining convention difference (parent-drop, tie-breaking) that makes the two legitimately distinct."
+  },
+  {
+   "severity": "major",
+   "batch": 5,
+   "index": 1,
+   "claim": "The number of output budgets is ten in the Abstract, eleven in section 2.7, ten in Table 4 and nine everywhere results are reported.",
+   "evidence": "grail_jcim.tex:34 \"performance under five matching criteria and ten output budgets\". body.tex:187-188 \"a grid of five matching criteria by eleven budgets: \\numHOneOneLost{} of \\numHOneOneCells{}\", with numbers.tex:340 \"\\numHOneOneCells{55}\" - so 5 x 11 = 55. table_hypotheses.tex, row P4: \"grid $5\\times10$\" (hardcoded, not a macro), which is 50 cells, not 55. Meanwhile numbers.tex:36 \"\\numCritBudgets{9}\", Table 2 has nine rows (1,3,5,8,10,15,20,30,50), Table S4 has nine columns, and body.tex:261 says \"the exhaustive mode leads at all nine budgets\". Three different figures for one grid dimension, in a paper whose thesis is that the budget axis must be declared.",
+   "fix": "Fix the Abstract to the number of budgets actually swept in Table 2 and Table S4 (nine), and reconcile section 2.7 with Table 4 so P4's grid dimensions and its 55-cell count agree."
+  },
+  {
+   "severity": "major",
+   "batch": 5,
+   "index": 2,
+   "claim": "The \"both emit alike\" premise behind the MetaTox comparison is contradicted by the paper's own artifact, and the GRAIL arm carrying 0.5672 is never named.",
+   "evidence": "body.tex:263-266, unchanged in the current build: \"At a budget of $15$, where MetaTox emits about what the interactive arm emits, its macro recall is \\numHOneOneRecallMetatoxOneFive{} against GRAIL's \\numHOneOneRecallRule{}. Both emit alike there, so the annotation bias on precision does not explain the difference.\" The same h11 artifact that supplies those two recalls also supplies the two emission lengths - numbers.tex:344-345, \"\\numHOneOneOutputMetatox{36.34}\" and \"\\numHOneOneOutputRule{16.31}\" - and neither macro is used anywhere in body.tex or si.tex. 36.34 against 16.31 is a factor of 2.2, and Table 2's own list row gives MetaTox 30.9 against the interactive arm's 15.6. The unnamed \"GRAIL's 0.5672\" is the interactive arm (its 16.31 matches numbers.tex:472 \\numSelLearnedPool{16.3}, the learned 30-rule arm), but the immediately preceding sentence is about the exhaustive mode, so a reader will attribute it to the wrong arm.",
+   "fix": "Name the arm (interactive) and print both mean output lengths as measured on that population - the 36.34 and 16.31 macros already exist - then either drop the \"both emit alike\" defence or replace it with a comparison at matched emission length, and give the paired interval for 0.5406 against 0.5672."
+  },
+  {
+   "severity": "major",
+   "batch": 5,
+   "index": 3,
+   "claim": "What Table 5 demonstrates is the singleton share of one sub-group under two of four type definitions, not invariance of the 475 bound; the reported quantity moves fourteen points across the two admitted definitions.",
+   "evidence": "Abstract, unchanged: \"475 of 2,597 reference metabolites lie outside what the rule bank reaches in one step, and that bound is invariant to how a transformation type is defined, making it a property of the annotation corpus rather than of our implementation.\" Table 5 varies nothing about the 475 - it reports the singleton share of the 337 novel-type subset: \"multiset of changed bonds, with counts | 312 | 294 | 87.2% | yes\" and \"the same, counts dropped | 284 | 247 | 73.3% | yes\", against \"element pairs | 8.9% | no\" and \"number of bonds | 2.7% | no\". So the quantity that actually varies moves 87.2% to 73.3%, 13.9 points, across the only two definitions admitted, and the admission criterion (\"names a transf.\") partitions exactly the two that support the claim from the two that refute it. The 475 is fixed by what our bank reaches, so the inference to \"a property of the annotation corpus rather than of our implementation\" does not follow from any column of Table 5. Conclusions repeats it: \"that bound holds under every definition of a transformation type at which a type still determines a product\".",
+   "fix": "State the claim as what Table 5 shows - the singleton-heavy shape of the novel-type gap persists under the two type definitions that still determine a product, moving from 87.2% to 73.3% - and drop \"invariant\" and the corpus-versus-implementation inference from the Abstract and Conclusions, or preregister the meaningfulness criterion and justify it independently of the outcome."
+  },
+  {
+   "severity": "major",
+   "batch": 5,
+   "index": 4,
+   "claim": "The main text's \"no training contamination\" claim is stronger than the audit behind it, and the qualifying molecular-overlap counts are still SI-only - now behind a dangling cross-reference.",
+   "evidence": "body.tex:70-71, unchanged: \"The comparison set carries no training contamination: \\numPopulationInTrainOrVal{} of its \\numPopulationN{} substrates appear in train or validation under a canonical key.\" SI section S1: \"2,408 molecules occur in both train and test, and 243 test substrates appear as molecules in train.\" The revision added a caveat to section 2.3 - body.tex:110-112, \"The split is disjoint by substrate rather than by molecule, so a molecule that is a substrate in training may appear as a product in test; the counts are in Section~\\ref{sec:populations}\" - but section 2.1 (sec:populations) contains no such counts; grep for 2,408 or 243 in the rendered manuscript returns nothing, and \\numLeakSubAsMol{243} (numbers.tex:400) is never used in body.tex. The pointer promises a count the main text does not carry, and how many of the 291 are among the 243 is nowhere stated.",
+   "fix": "In section 2.1 say \"0 of its 291 substrates appear as substrates in train or validation\", and put the molecular-overlap counts (2,408 and 243) plus how many of the 291 are among them into section 2.1, which section 2.3 already tells the reader to look there for."
+  },
+  {
+   "severity": "major",
+   "batch": 5,
+   "index": 5,
+   "claim": "Section 2.1 states a universal rule about where registered thresholds are checked and Table 4 breaks it for three of the nine reported predictions.",
+   "evidence": "body.tex, section 2.1, unchanged: \"Every registered ranking and timing threshold is checked here, since a threshold checked where its rule was chosen is not a check\" - \"here\" being the validation draw. table_hypotheses.tex: \"P5 & group score as a third ranking & $+0.02$ & $+0.0286$ & comparison set\", \"P6 & group score, groups emitted as blocks & $+0.05$ & $-0.1203$ & comparison set\", \"P7 & group score as a gate before fusion & $+0.02$ & $-0.0286$ & comparison set\". All three are ranking predictions, and the comparison set is drawn from the test split, so their verdicts rest on test data - the discipline the paper preaches elsewhere (\"Select on validation, never test\"). P4's \"grid $5\\times10$\" is a fourth cell that is neither. Section 3.8's mitigation for P5 alone (\"all twenty configurations beat the base on validation and 70% of that margin survived the move\") does not repair the universal statement or cover P6 and P7.",
+   "fix": "Amend section 2.1 to say which predictions were checked on which population and why, and either re-run P5, P6 and P7 on the validation draw or state plainly that their verdicts rest on the test-derived comparison set and should be read accordingly."
+  },
+  {
+   "severity": "major",
+   "batch": 5,
+   "index": 6,
+   "claim": "All three registered gains counted as confirmed are confirmed on point estimates whose intervals reach below the registered threshold, the reading the SI forbids elsewhere; the confirmation rule is never stated and Table 4 carries no intervals.",
+   "evidence": "Table S4 caption (renumbered from S3), unchanged: \"Every cell is read from the interval and never from the point estimate.\" Against P1 (threshold +0.05, measured +0.0733, \"95% CI [+0.0477, +0.102]\"), P2 (threshold +0.015, measured +0.026, \"95% CI [+0.0033, +0.0469]\") and P5 (threshold +0.02, measured +0.0286, \"95% CI [+0.0085, +0.0502]\") - every lower bound sits below its threshold. Section 3.7: \"Of the fifteen registered, nine are checked here: six confirmed and three failed.\" table_hypotheses.tex has a \"measured\" column and no interval column. The revision makes this sharper, not softer: section 2.4 now adds P1 on the deployed pool at \"+0.0519, 95% CI [+0.0246, +0.0812]\" and concedes \"it clears the registered threshold by less than the figure P1 was registered against\" - an interval running from +0.0246 against a +0.05 threshold.",
+   "fix": "Add the interval to every row of Table 4 and state the confirmation rule explicitly - whether a prediction passes when the point estimate clears the threshold or when the interval does - then re-report the six/three tally under whichever rule is adopted."
+  },
+  {
+   "severity": "minor",
+   "batch": 5,
+   "index": 7,
+   "claim": "The seeded permutation of the same pool at the same budget on the same population is given two different values in adjacent Results subsections.",
+   "evidence": "Section 3.2, unchanged: \"At k = 15 on the comparison set the fusion reaches 0.5353, the generator's score alone 0.4271, the filter's alone 0.3564, their product 0.4376 and a seeded permutation 0.1128\", matching si_table_ranking.tex (Table S6) \"seeded permutation & 0.0075 & 0.0436 & 0.0722 & 0.1128 ...\" on the comparison set. Section 3.4, unchanged: \"A seeded permutation of the same pool reaches 0.1173 against the fusion's 0.5353, so the pool alone is not what produces the result.\" The identical fusion value confirms it is the same pool at the same budget on the same population, as the text itself asserts with \"the same pool\", yet the permutation differs.",
+   "fix": "Either use one permutation artifact throughout, or say in section 3.4 that its four-way re-ranking uses a different seed from section 3.2's five-way, and give the fusion and permutation values for that pool together."
+  },
+  {
+   "severity": "major",
+   "batch": 6,
+   "index": 0,
+   "claim": "The P6 deficit decomposition (-0.0647 design / -0.0556 model) rests on 0.5023, which appears nowhere else, and 0.4376, which Table S6 assigns to a different arm.",
+   "evidence": "Current \u00a73.8 is unchanged: \"The deficit splits into -0.0647 from the design, block emission being worse than interleaved (0.4376 against 0.5023), and -0.0556 from the model.\" 0.5023 occurs exactly once in the manuscript (body.tex:419, \\numHEightInterleaved, unused elsewhere); 0.4376 also appears in \u00a73.2 and in SI Table S6 (comparison set, k=15) as \"their product\". The two are different quantities: results/h8_verdict.json at k=15 gives fusion 0.5023 and fusion_blocked 0.4376 on the uncapped pool, whereas Table S6's 0.4376 is the product ordering on the capped deployed pool, where the same fusion reads 0.5353. So \u00a73.8's pair is fusion-blocked vs fusion-interleaved, while the paragraph states its baseline as \"the product ordering with each group emitted as a block\", and the fusion's level differs from the 0.5353 the paper prints for the same arm, budget and population.",
+   "fix": "Give the two P6 arms their own SI row (fusion interleaved 0.5023 and fusion blocked 0.4376, k=15, n=291, uncapped pool) and say in \u00a73.8 that these are the fusion emitted two ways on the uncapped pool, not Table S6's product ordering, whose comparison-set k=15 value coincides to four decimals."
+  },
+  {
+   "severity": "major",
+   "batch": 6,
+   "index": 1,
+   "claim": "\"more than any architectural change we tested\" is supported by exactly one reported architectural comparison, measured on a different population and an unstated aggregation.",
+   "evidence": "The sentence survives the revision in both places. Introduction: \"+0.0733 of recall on held-out data before the candidate pool is capped, and +0.0519 on the pool the deployed system ranks; either is larger than any architectural change we tested.\" Conclusions: \"either of them more than any architectural change we tested\". The only architectural comparison anywhere in either document is SI \u00a7S6.2: \"A variant encoding one merged substrate-product graph ... loses on accuracy (recall@15 0.357 against 0.366, paired difference -0.0090, 95% CI [-0.017, -0.001], n = 1,170)\". That is the evaluated test set, n = 1,170, with the aggregation unstated; +0.0733 and +0.0519 are micro recall@15 on the validation draw (n = 293). Nothing else in \u00a73.2, \u00a73.3, S6.1 or S6.2 measures an architectural alternative.",
+   "fix": "Replace the superlative with \"larger than the one architectural variant we measured (Supporting Information \u00a7S6.2)\", or add an SI table listing the architectural variants tested with their differences on one population and one aggregation."
+  },
+  {
+   "severity": "minor",
+   "batch": 6,
+   "index": 2,
+   "claim": "A ceiling established for this rule bank on this corpus is generalised in \u00a74.4 to sequence-to-sequence systems the paper never ran.",
+   "evidence": "\u00a74.4 is unchanged (body.tex:578-580): \"The bound applies to any predictor trained on a comparable corpus, including sequence-to-sequence systems, which do not report it.\" The bound itself is defined by what the templates reach: \u00a73.11, \"Applying the whole bank to every test substrate recovers 0.8171 of references in one step\", with the remainder classified by transformation type. No sequence-to-sequence system was run against the 475 uncovered references; SI \u00a7S14 records that MetaPredictor enters only as frozen per-substrate predictions, and the four 2025-26 systems could not be run at all.",
+   "fix": "Restrict the sentence to rule-based predictors whose templates are mined from a comparable corpus, or delete it."
+  },
+  {
+   "severity": "major",
+   "batch": 6,
+   "index": 3,
+   "claim": "The depth-two figures live only in Limitations, with no population, criterion, or artifact behind them.",
+   "evidence": "Limitations, unchanged: \"applying the bank at depth two lifts the ceiling by about 0.012 at 8.5 times the candidate cost and is not deployed.\" Both are typed literals in body.tex:607-608 ($0.012$, $8.5$) and occur nowhere else in the manuscript or SI. They come from results/benchmark_report_depth2.json, which is not among the 47 pinned artifacts, and which records n_test_substrates 150, matching \"inchikey\", beam 10, node_budget 2500, recall_ceiling 0.7108 -> recall_ceiling_lower_bound 0.7231 (lift_over_depth1 0.0123), mean candidates 194.15 -> 1652.73 (ratio 8.51). So the figure is on a 150-substrate population that is not one of the three the paper declares, under the full InChIKey rather than the tautomer-aware default, and is a beam-limited lower bound rather than a ceiling \u2014 against \u00a72.1's own rule that \"no figure is given without naming one\".",
+   "fix": "Report the depth-two experiment in \u00a73.11 or the SI with its population (150 substrates), its matching criterion, its beam and node budget, its depth-1 and depth-2 values (0.7108 -> 0.7231) and its mean pool (194.1 -> 1652.7); pin benchmark_report_depth2.json and route both figures through macros."
+  },
+  {
+   "severity": "major",
+   "batch": 6,
+   "index": 4,
+   "claim": "The 308-shared-types control is a zero/non-zero sanity check, and it is used to conclude that synthetic corpora are excluded by measurement.",
+   "evidence": "\u00a73.11, unchanged: \"bank and library share 308 types, so the intersection measures real absence rather than two incomparable formalisms\"; \u00a74.4: \"synthetic corpora are excluded by measurement, leaving enzymatic and regulatory sources.\" 308 is 7.0% of the bank's 4,417 types and 3.1% of the library's 9,885 \u2014 the paper prints both denominators but never the fraction. The producing artifact states the control's actual reach: results/uspto_type_overlap.json, sanity.note \u2014 \"a zero here would mean the two type vocabularies do not meet and the intersection above measures incomparability rather than absence\". A non-zero intersection of 3-7% rules out total incomparability, not partial mismatch, which is the alternative the conclusion needs excluded.",
+   "fix": "Report 308 as a fraction of both vocabularies and state that it excludes only a null intersection; then either soften \u00a74.4 to \"the largest synthetic library we hold supplies 18 of the 337 misses\", or add a recovery-rate control on the 308 shared types so that absence and mismatch can be told apart."
+  },
+  {
+   "severity": "major",
+   "batch": 6,
+   "index": 5,
+   "claim": "P9's median is quoted against P8's pre-change baseline, and the load-corrected 2.52x does not follow from any printed pair of medians.",
+   "evidence": "\u00a73.10, unchanged: \"Adding a tautomer enumeration budget of 200 (P9) passes both halves: median 49.85 s to 5.28 s\". In numbers.tex the before-figure is \\numHOneThreeTimeBefore{} = 49.85, commented \"h13.time.before\" \u2014 H13 is P8's register identifier (Table 4), so the number is P8's own pre-change baseline and the printed drop spans both changes. The correction then does not close: \"the ratio of its medians, 1.73, measures load alone. Dividing it out leaves 2.52x attributable to the budget\", but 49.85 / 5.28 = 9.44 and 9.44 / 1.73 = 5.46, not 2.52; the next sentence's 9.12 s is 5.28 x 1.73, giving 49.85 / 9.12 = 5.47. A ratio of 2.52 after dividing out 1.73 implies a baseline near 23.0 s, which is printed nowhere.",
+   "fix": "State that 49.85 s is the pre-P8 baseline, print the P8-arm median that 5.28 s is actually compared against, and show the division that yields 2.52 from those two printed medians."
+  },
+  {
+   "severity": "minor",
+   "batch": 6,
+   "index": 6,
+   "claim": "The claim that MetaTox ranks only part of its output and leaves the rest in file order is offered as an advantage with no measurement, citation, or SI support.",
+   "evidence": "\u00a74.2, unchanged (body.tex:555-556): \"The whole output is ranked, where the incumbent ranks part of its output and leaves the remainder in file order.\" \"file order\" occurs once in the manuscript and never in the SI. SI \u00a7S14 says only \"MetaTox and MetaPredictor predictions are frozen per substrate and released with the code\", and states the comparison-set rule as \"an arm is included where it supplies ranked per-substrate predictions on the 291 substrates\" \u2014 which, taken at face value, sits awkwardly with the claim that part of MetaTox's output is unranked.",
+   "fix": "Support the claim from the frozen MetaTox predictions \u2014 e.g. how many of its returned candidates carry a score and how many do not \u2014 or delete the clause."
+  },
+  {
+   "severity": "major",
+   "batch": 6,
+   "index": 7,
+   "claim": "The stated provenance guarantee (every number via a macro from a pinned artifact, enforced by a literal checker) does not hold: substantive measured results are typed as bare literals.",
+   "evidence": "SI \u00a7S15, unchanged: \"Every number in the paper reaches the page through a macro generated from a pinned artifact, and a checker refuses any numeric literal in the manuscript that is not on a short allow-list of constants published elsewhere\"; \u00a77: \"47 artifacts are pinned, and every number in this paper comes from one of them.\" body.tex types measured results directly: $+0.109$ (line 136), $+0.0556$ (line 171), $0.88$ / $0.016$ / $16.22$ / $16.3$ (lines 181-183), $0.012$ / $8.5$ (lines 607-608). si.tex does the same for the whole filter-variant ablation \u2014 \"recall@15 $0.357$ against $0.366$, paired difference $-0.0090$, 95\\% CI $[-0.017, -0.001]$ ... ($34.0$~ms against $9.1$~ms per pair)\" (lines 195-196) \u2014 and for the runtime diagnosis ($5.2$~s, 20,655 products, $0.58$~s per rule, $64.7$~s, $13.9$, $2.95\\times$). The depth-two pair also comes from results/benchmark_report_depth2.json, which is absent from the 47 in results/artifact_provenance.json, so \u00a77's \"every number in this paper comes from one of them\" is false as stated.",
+   "fix": "Either route these figures through generated macros from pinned artifacts, or amend \u00a77 and \u00a7S15 to state exactly which classes of number are exempt and publish the allow-list; and record where the S6.2 filter-variant ablation and the depth-two run have no pinned artifact."
+  },
+  {
+   "severity": "major",
+   "batch": 7,
+   "index": 0,
+   "claim": "Two pinned artifacts give different values for the same declared quantity (Table 2 \"GRAIL exh.\" vs Table S6 \"fusion (deployed)\", and the two \"seeded permutation\" figures in \u00a73.2 and \u00a73.4), and the provenance sweep did not catch it.",
+   "evidence": "Still present after revision. Table 2 (paper2/table_sweep.tex): k=10 0.4526, k=30 0.6391, k=50 0.7038. Table S6 (paper2/si_table_ranking.tex), same arm, same 291-substrate comparison set: k=10 0.4496, k=30 0.6406, k=50 0.7068 \u2014 identical at k=1, 5, 15, divergent at the other three. The permutation case is sharper: numbers.tex line 436 \\numRankCmpRandomOneFive{0.1128} (% rank.cmp.random15) feeds \u00a73.2 \"their product 0.4376 and a seeded permutation 0.1128\", while line 544 \\numSimCmpRandomOneFive{0.1173} (% sim.cmp.random15) feeds \u00a73.4 \"A seeded permutation of the same pool reaches 0.1173 against the fusion's 0.5353\". results/ranking_ablation.json and results/similarity_baseline.json both declare \"seed\": 0, \"cap\": 100, and carry byte-identical fusion rows (0.0902/0.3098/0.4496/0.5353/0.6406/0.7068), yet their \"random\" rows differ at k=5, 10, 15 and 50. Same pool, same declared seed, two answers, no caption reconciling them.",
+   "fix": "Recompute both permutation arms from one generator with the seed and shuffle convention named in the caption, and reconcile Table 2 with Table S6 \u2014 state in Table S6's caption which convention (the parent-drop Table 2 declares, or the pre-cap pool order) differs, or regenerate both from one artifact. Add a cross-artifact equality check to the provenance sweep for any quantity that reaches the page from more than one artifact."
+  },
+  {
+   "severity": "major",
+   "batch": 7,
+   "index": 2,
+   "claim": "Comparators are under-specified: MetaTox and MetaPredictor carry no version, access date or run parameters; BioTransformer is pinned but never reported; \"every method\" is never resolved.",
+   "evidence": "The BioTransformer and population limbs are refuted \u2014 \u00a7S14 now says \"It carries no column in the comparison, and the rule is the one that defines the comparison set: an arm is included where it supplies ranked per-substrate predictions on the 291 substrates. BioTransformer was obtained and measured, but for the reach of its template set rather than as a ranked predictor ... its templates reach 0.4786 of the references there, 95% CI [0.4138, 0.5495].\" The first limb stands untouched. \u00a7S14 in full on two of the three reported comparators: \"SyGMa 1.1.0 is taken from the installed module. MetaTox and MetaPredictor predictions are frozen per substrate and released with the code.\" A grep of both documents for a version, commit, build or access date for either returns nothing \u2014 and MetaTox is a live web service the paper itself calls \"the incumbent web service this work set out to replace\" (\u00a73.1), whose rule set changes under the authors' feet.",
+   "fix": "In \u00a7S14, give MetaTox the date its predictions were retrieved and the submission settings used, and MetaPredictor its release or commit, checkpoint and decoding parameters \u2014 the same specificity already given to SyGMa and BioTransformer."
+  },
+  {
+   "severity": "minor",
+   "batch": 7,
+   "index": 3,
+   "claim": "The four curated collections are unnamed, uncited and unlicensed, the bank is not among the released artifacts, and the main text misstates the mined fraction.",
+   "evidence": "The first two limbs are refuted by the new \u00a7S5: \"Three of the curated collections ship with the code: data/smirks.txt (474), data/merged smirks.txt (656) and resources/notebooks rules.txt (1,051), contributing 1,233 distinct rules to the bank after deduplication. The remaining 492 come from a fourth collection whose file is not in the repository. The published source of each collection, and the licence each carries, is [CURATED RULES: ...]; a reader should treat the curated half as unattributed until it is.\" The fraction limb survives and is now sharper: \u00a72.3 states \"1,725 templates in all, together with 5,856 mined\", i.e. 77% mined, while \u00a73.6 still reads \"All four rules here are mined rather than curated, so the half of the bank with no expert provenance is the half carrying this molecule\" \u2014 and \u00a7S5 uses \"the curated half\" for the other 23%.",
+   "fix": "In \u00a73.6 replace \"the half of the bank with no expert provenance\" with the count \u00a72.3 gives (\"the 5,856 mined templates, three quarters of the bank\"), and drop \"half\" from \u00a7S5's \"the curated half\" for the same reason."
+  },
+  {
+   "severity": "major",
+   "batch": 7,
+   "index": 4,
+   "claim": "No hardware and no software environment is specified anywhere, so no timing result is reproducible.",
+   "evidence": "Substantially correct, with one narrowing: RDKit 2022.09.5 is pinned in \u00a72.2 and \u00a7S5. Beyond that, a case-insensitive grep of both documents for CPU, GPU, CUDA, cores, GHz, RAM, OS, Python, torch, conda, container or lockfile returns nothing. The only acknowledgement of a machine is \u00a73.10's \"Part of the speed-up is machine load\" and \u00a7S8's \"two runs on the same machine\" \u2014 the machine is never described. Yet Table 1 reports \"seconds, median 0.39 ... slowest 231.01\", Figure 3 plots seconds against substrate size, and two registered predictions are decided on wall clock: P8 \"\u2265 10\u00d7\" measured 2.95, P9 \"< 10 s\" measured 5.28. A referee cannot reproduce, or even bound, a 5.28 s median without knowing the machine.",
+   "fix": "Add a short environment paragraph to \u00a7S13: exact CPU, core count, RAM, OS, Python and package versions (or a container digest / lockfile in the repository), and state that Table 1, Figure 3 and the P8/P9 outcomes were measured on it."
+  },
+  {
+   "severity": "minor",
+   "batch": 7,
+   "index": 5,
+   "claim": "The preregistration has no independent timestamp; it lives in an author-controlled repository, so \"fixed before the check\" is asserted rather than attested.",
+   "evidence": "Unchanged. \u00a73.7: \"Every deployed choice is a registered hypothesis with a threshold and a falsification condition, tested where it was not selected.\" \u00a7S7: \"The register is released in full at github.com/doctawho42/GRAIL, with every prediction as it was written, the threshold and falsification condition fixed before the check, and the outcome as it was measured.\" No OSF, AsPredicted or dated Zenodo identifier appears anywhere in either document, and the repository's history is under the authors' control.",
+   "fix": "Either deposit the register where the timestamp is immutable (OSF registration, AsPredicted, or a dated Zenodo record) and cite that identifier in \u00a73.7 and \u00a7S7, or add one sentence to \u00a7S7 stating the register is author-attested and not independently timestamped."
+  },
+  {
+   "severity": "major",
+   "batch": 7,
+   "index": 6,
+   "claim": "The paper's only estimate of training variability comes from three seeds of a superseded configuration, and is then used as the yardstick for the registered effects of the deployed configuration.",
+   "evidence": "Unchanged. \u00a73.9: \"the generator and filter were retrained under 3 seeds and the whole pipeline re-evaluated on the full test split: macro recall@15 is 0.3437 with a standard deviation of 0.0099, and micro 0.2686 with 0.0058. That study ran on an earlier operating point than the one reported here, so its level is not comparable to the tables above; its spread is what it is offered for. Read against it, the rank fusion of P1 is an order of magnitude larger than retraining noise and the pool cap of P2 several times larger, while the rule budget of P3, at +0.0092 on validation, is within it.\" The paper disclaims the level but transfers the spread without argument, and the transfer crosses three axes at once: operating point, population (full test split vs the validation draw P1\u2013P3 were checked on), and quantity (an arm's recall level, not the paired difference the thresholds are stated in). Three seeds also gives an SD with roughly \u00b140% of its own uncertainty, so P3's \"within it\" verdict is not robust.",
+   "fix": "Re-run the seed study at the deployed operating point with five or more named seeds, and report the spread of the quantity actually used \u2014 the paired difference in micro recall@15 on the validation draw. If that is infeasible, replace \"Read against it\" with an explicit statement that the spread is assumed, not measured, to transfer across operating point, population and aggregation."
+  },
+  {
+   "severity": "major",
+   "batch": 7,
+   "index": 7,
+   "claim": "\"The deployed configuration\" is never resolved to one of the two operating modes, and \u00a7S9.1's tie analysis quotes a k = 1 recall belonging to a different arm from the table it sits beneath.",
+   "evidence": "Unchanged. \u00a7S9.1: \"for 14 of the 291 substrates the two best candidates receive identical fused scores ... Fusing the pool as stored instead of after the cap moves micro recall at k = 1 from 0.1053 to 0.1068.\" Table S6, immediately above and on the same 291 substrates, gives \"fusion (deployed)\" at k = 1 as 0.0902; 0.1053 is the interactive/30-rule arm. si.tex confirms the crossed sources in one sentence: it composes \\numPopulationN{} (= 291, the comparison set) with \\numSelLearnedOne{} (= 0.1053, whose sibling macros sel.learned15 = 0.4797 and sel.learned.pool = 16.3 are the 30-rule selection arm, i.e. Table 2's \"GRAIL int.\"). On the ambiguity: \u00a72.6 defines two modes and never designates one as deployed, and \u00a73.6 uses \"what the deployed configuration returns\" to introduce Table 3, which reports both modes.",
+   "fix": "Define \"deployed\" once in \u00a72.6 as the exhaustive mode (the one Table S6's \"fusion (deployed)\" row measures), and in \u00a7S9.1 name the arm and population the tie figures are computed on \u2014 recomputing them on the deployed arm if the tie claim is meant to apply to it."
+  },
+  {
+   "severity": "major",
+   "batch": 8,
+   "index": 0,
+   "claim": "The 42,554-template retrosynthetic library behind the \"synthetic corpora are excluded\" claim is never named, versioned or identified, and reference 26 is incomplete.",
+   "evidence": "\u00a73.11 (current PDF): \"Nor is the missing chemistry available in the largest reaction library we hold. Typing 42,554 retrosynthetic templates 25,26 in the metabolic direction gives 9,885 types, of which 14 are among the 312 missing, carrying 18 of the 337 misses.\" A grep of both documents for 'retrosynth|USPTO|Syntheseus|reaction library|42,554' returns only these lines, Figure 4's caption, and the titles of refs 25/26 \u2014 the library is never named, versioned or given a URL/DOI, and the SI has no section on it. \u00a74.4 then rests a Discussion claim on it: \"the census narrows the search: synthetic corpora are excluded by measurement, leaving enzymatic and regulatory sources.\" Reference 26 reads in full: \"Tanovic, S.; Wieczorek, E.; Duarte, F. An exploration of dataset bias in single-step retrosynthesis prediction. Digital Discovery 2026,\" \u2014 trailing comma, no volume, no pages, no DOI.",
+   "fix": "Name the library with its version and a DOI or download URL at the \u00a73.11 sentence, add two sentences (main text or a short SI subsection) on how the 42,554 templates were obtained and typed in the metabolic direction, and complete reference 26 with volume/pages or DOI."
+  },
+  {
+   "severity": "minor",
+   "batch": 8,
+   "index": 1,
+   "claim": "Code, harness, split manifest, frozen comparator predictions and register are offered only from a mutable GitHub URL with no archival snapshot, DOI or commit hash.",
+   "evidence": "\u00a77: \"Source code, the split manifest, the frozen per-substrate predictions of every comparator, the evaluation harness, the provenance sweep and the preregistration with every hypothesis and its outcome are at github.com/doctawho42/GRAIL, and are available to reviewers at submission.\" The two Zenodo placeholders in the paper cover only the SI (\"The Supporting Information is available free of charge at [ZENODO DOI...]\") and the candidate pools (\"The train and validation candidate pools are prepared for deposit at [ZENODO DOI...]\"). No DOI and no submission commit hash is given for the repository itself, in a paper whose \u00a77 otherwise pins 47 artifacts by producer hash.",
+   "fix": "Archive the repository at the submission commit to Zenodo or a comparable DOI-issuing archive and cite that DOI plus the commit hash in \u00a77, keeping the GitHub URL as the development mirror."
+  },
+  {
+   "severity": "major",
+   "batch": 8,
+   "index": 2,
+   "claim": "The size of the paper's own output-budget axis is stated as ten in the abstract, eleven in \u00a72.7, ten in Table 4, and nine in every table that prints it.",
+   "evidence": "Abstract: \"reports its performance under five matching criteria and ten output budgets against every comparator\". \u00a72.7: \"Registered as prediction P4 with a criterion of zero lost cells over a grid of five matching criteria by eleven budgets: 0 of 55.\" (numbers.tex: \\numHOneOneCells{55}, consistent with 5\u00d711.) Table 4, row P4: \"grid 5 \u00d7 10\" (table_hypotheses.tex line 10: `grid $5\\times10$`). Table 2 and SI Table S4 both enumerate nine budgets: 1, 3, 5, 8, 10, 15, 20, 30, 50.",
+   "fix": "Fix on the grid P4 was actually checked on. If it is 5\u00d711, correct Table 4 to \"grid 5 \u00d7 11\" and the abstract to \"eleven output budgets\", and add one clause naming which nine of the eleven the printed tables show and why."
+  },
+  {
+   "severity": "major",
+   "batch": 8,
+   "index": 3,
+   "claim": "The SI's deployed-fusion row and the main text's exhaustive-arm column disagree at three of six shared budgets on the same 291-substrate set and the same stated configuration.",
+   "evidence": "SI Table S6 (renumbered from S5 in the revision), row \"fusion (deployed)\", comparison set n = 291: 0.4496 / 0.6406 / 0.7068 at k = 10 / 30 / 50, against Table 2 column \"GRAIL exh.\": 0.4526 / 0.6391 / 0.7038 \u2014 differences of 1\u20132 hits out of 665 \u2014 while k = 1, 5, 15 agree exactly (0.0902, 0.3098, 0.5353). The cause is visible in the artifacts but in neither document: results/deployment_table.json records `convention: \"a prediction whose key equals the substrate's is dropped before the budget, for every arm alike\"`, whereas results/ranking_ablation.json's note records only the pool, cap and ordering and no parent-drop. Table S6's caption says only \"the pool, the matching rule and the budget are fixed and only the order varies\"; Table 2's says \"A prediction equal to the substrate is dropped before the budget for every method alike.\"",
+   "fix": "State the parent-drop convention in Table S6's caption as Table 2's caption does, and either recompute the ablation under it so the deployed row matches Table 2, or add one sentence in \u00a73.2 saying which convention each table uses and why the deployed row differs."
+  },
+  {
+   "severity": "minor",
+   "batch": 8,
+   "index": 4,
+   "claim": "Figure 1's caption names red and blue shading; the figure's bands are pale lavender and pale mint green, and neither red nor blue appears as a band.",
+   "evidence": "Figure 1 caption (body.tex ll. 236\u2013238, unchanged in the current PDF): \"Shading is read from the paired intervals and not by eye: red where GRAIL's better arm trails the strongest comparator with the interval excluding zero, blue where it leads with the interval excluding zero, unshaded where neither separates.\" The rendered fig_sweep.pdf contains no (1,0,0) and no (0,0,1) fill; its band fills are 0.549 0.4196 0.694 and 0.2549 0.6706 0.3647. scripts/paper2_figures.py sets `BAND_TRAILS, BAND_LEADS = \"#8c6bb1\", \"#41ab5d\"` drawn at `alpha=0.10`, with the comment \"the first draft shaded 'GRAIL leads' in the same blue as the GRAIL exhaustive line, which makes one colour mean two things in one figure\" \u2014 the art was corrected and the caption was not. The only blue in the figure, #0072B2, is the GRAIL exhaustive series line, so \"blue where it leads\" points the reader at a plotted series.",
+   "fix": "Change the caption to name the colours actually used (e.g. \"purple where ... trails, green where it leads\"), or recolour the two bands to red and blue \u2014 in which case pick a blue that is not the GRAIL exhaustive series hue."
+  },
+  {
+   "severity": "minor",
+   "batch": 8,
+   "index": 5,
+   "claim": "Table 2 bolds a leader at every budget, including the four where the paper's own text says no arm separates, against \u00a72.8's declared discipline.",
+   "evidence": "Table 2 caption: \"Bold marks the leader at that budget.\" table_sweep.tex bolds at all nine budgets, including k = 8 (0.4346), k = 10 (0.4707), k = 15 (0.5353) and k = 20 (0.5789). \u00a73.1: \"Neither side separates at k = 8 and 10, where MetaPredictor leads, nor at k = 15 and 20.\" \u00a74.3: \"At k = 15 and 20 no arm separates from the strongest comparator.\" \u00a72.8 states the rule the table does not follow: \"A claim that the system leads is made for a cell only where that cell's interval excludes zero, and where an ordering is not established the table says so.\" SI Table S4 does carry the +/\u2212/\u00b7 verdicts; Table 2 carries none.",
+   "fix": "Reword Table 2's caption to \"Bold marks the highest point estimate, which is not a verdict; the budgets where the paired interval excludes zero are Table S3\", or restrict bold to those budgets and say so in the caption."
+  },
+  {
+   "severity": "major",
+   "batch": 8,
+   "index": 7,
+   "claim": "Materials and Methods never describes the architecture, features, objective or optimisation of either learned stage, and the main text never points to the SI section that does.",
+   "evidence": "Across \u00a7\u00a72.2\u20132.8 the two learned stages appear only as \"A generator scores every rule in a bank of 7,581 SMIRKS templates against the substrate\" and \"A filter then scores each (substrate, candidate) pair\"; \u00a72.4\u20132.7 cover fusion, cap, budget and emission, \u00a72.8 covers evaluation, and no encoder family, feature set, loss or optimiser appears anywhere in the article. All of it is in SI Section S6 (GATv2 encoders, the four logit terms, the frequency-prior weight, multi-label training, Adam at 1e-4). The main text's only SI pointers are \"(Table S5)\", \"Table S1\" and \"(Table S3)\", none to the architecture section; the sole mention is in the Supporting Information Available list, \"the architecture and training of both learned stages\". (Separately, those three pointers now name the wrong tables after the SI renumbering \u2014 the differences table is S3, the criterion table S4, the ranking ablation S6.)",
+   "fix": "Add one compact subsection to Section 2 giving, for each learned stage, the encoder family and depth, the input features, the four logit terms, the training objective and the optimiser, with an explicit \"(Section S6)\" pointer for dimensions and hyperparameters."
+  },
+  {
+   "severity": "major",
+   "batch": 9,
+   "index": 1,
+   "claim": "Section 3.8 decomposes P6's -0.1203 against a baseline of 0.5023 that is defined nowhere and appears nowhere else in either document.",
+   "evidence": "Sec. 3.8: \"measured on the comparison set, -0.1203. The deficit splits into -0.0647 from the design, block emission being worse than interleaved (0.4376 against 0.5023), and -0.0556 from the model.\" 0.5023 occurs exactly once in the manuscript and zero times in the SI; numbers.tex defines it as \\numHEightInterleaved{0.5023} % h8.interleaved, with no configuration, population or budget stated in the text. The reader cannot reconstruct -0.1203, and 0.4376 collides with a second, unrelated macro (rank.cmp.product15 = 0.4376, Table S6).",
+   "fix": "State in one clause what 0.5023 is (interleaved emission of which ordering, on which pool and population, at k = 15) and that -0.1203 is measured from it; add the SI pointer for the oracle to the +0.3143 sentence (now Table S5)."
+  },
+  {
+   "severity": "major",
+   "batch": 9,
+   "index": 2,
+   "claim": "Neither document states the hardware or software environment on which any timing was measured.",
+   "evidence": "SI Section S13 \"Runtime methodology\" opens \"Every timing in the paper is a cold measurement\" and never names a machine; grepping both PDFs for CPU, GPU, cores, memory, Python or PyTorch returns nothing. The only environmental statement anywhere is Sec. 3.10's \"Part of the speed-up is machine load,\" and the only pinned software version is RDKit 2022.09.5. Table 1 (\"seconds, median 0.39 ... seconds, slowest 231.01\"), Figure 3, and P8 (\"\u2265 10x\") and P9 (\"< 10 s\") all rest on unstated hardware.",
+   "fix": "Add two sentences to Section S13 giving CPU model and core count, memory, whether inference ran on CPU or GPU, and the Python/PyTorch versions, and state whether Table 1, Figure 3 and P8/P9 were all measured on that one machine."
+  },
+  {
+   "severity": "minor",
+   "batch": 9,
+   "index": 3,
+   "claim": "The abstract promises performance under five matching criteria, but recall is tabulated for the default criterion only; the other four appear as signs alone.",
+   "evidence": "Abstract: \"reports its performance under five matching criteria and ten output budgets against every comparator.\" Table S4 gives only \"+\", \"\u2212\" and \"\u00b7\" for the non-default criteria; the only numeric trace of them in the whole paper is Sec. 3.5's k = 15 range, \"from -0.0692 under canonical SMILES equality to +0.0617 under the full InChIKey.\" (Two of the finding's three supporting clauses are now stale: the revision added Section S3, \"Every difference between a GRAIL arm and a comparator ... with its paired bootstrap 95% interval,\" so the intervals are printed - but only under the default criterion, and Table 2's caption still says \"Paired-bootstrap intervals on every difference are in the released artifact.\")",
+   "fix": "Give Table S4 a numeric companion - the GRAIL-minus-strongest-comparator margin with its interval for each of the 45 criterion-by-budget cells - and update Table 2's caption to point at Table S3 rather than at the released artifact."
+  },
+  {
+   "severity": "minor",
+   "batch": 9,
+   "index": 4,
+   "claim": "The seeded-permutation baseline is reported as 0.1128 in Section 3.2 and 0.1173 in Section 3.4 for the same pool, population and budget, with no statement of draw-to-draw variability.",
+   "evidence": "Sec. 3.2: \"At k = 15 on the comparison set the fusion reaches 0.5353 ... their product 0.4376 and a seeded permutation 0.1128\" (also Table S6). Sec. 3.4: \"A seeded permutation of the same pool reaches 0.1173 against the fusion's 0.5353.\" Both cite the same fusion level, so the pool, population and budget are identical; numbers.tex carries them as two artifacts, rank.cmp.random15 = 0.1128 and sim.cmp.random15 = 0.1173, and nothing in either document reconciles them.",
+   "fix": "Quote one permutation artifact in both places, or report the random arm as a mean over several seeds with its spread; if a single seed is kept, bound the draw-to-draw variability once."
+  },
+  {
+   "severity": "minor",
+   "batch": 9,
+   "index": 5,
+   "claim": "The number of output budgets is stated three different ways - ten, eleven and nine - across four places.",
+   "evidence": "Abstract: \"five matching criteria and ten output budgets\" (a hardcoded literal in grail_jcim.tex). Sec. 2.7: \"a grid of five matching criteria by eleven budgets: 0 of 55\" (numbers.tex h11.cells = 55). Table 4, same prediction P4: \"grid 5 \u00d7 10\". Table 2, Table S3, Table S4 and Figure 1 all use nine (numbers.tex crit.budgets = 9). Table 4 and Section 2.7 contradict each other outright on the same registered prediction.",
+   "fix": "Set the abstract and Table 4 to the nine budgets the tables report, and either correct P4's cell count to match or state that P4 was checked over a larger budget set and name it."
+  },
+  {
+   "severity": "minor",
+   "batch": 9,
+   "index": 6,
+   "claim": "Section S11's Holm clause cannot fail given the clause preceding it, the two populations are nested without saying so, and neither is the 291-substrate population the Limitations flag as non-random.",
+   "evidence": "S11: \"A separate analysis re-ran three methods, four metrics and five criteria on two populations of one split, the 150 substrates shared with a further comparator and the full 1,170 ... Of 60 pairwise comparisons, 10 reverse in point estimate, no population-by-method interaction separates from zero, and none survives a Holm correction.\" If no unadjusted interval excludes zero, no Holm-adjusted test can reach significance, so the last clause adds nothing. The 150 are a subset of the 1,170, which the text does not say, and the Limitations concede a different population: \"The comparison population is the 291 substrates on which all methods predict, a quarter of the evaluated test split and not a random quarter of it.\"",
+   "fix": "Drop the Holm clause or report the adjusted p-values that make it informative; state that the two populations are nested and what that costs the interaction's power; and run the same check on the 291-substrate comparison set against the evaluated test set."
+  },
+  {
+   "severity": "minor",
+   "batch": 9,
+   "index": 7,
+   "claim": "Section 2.6 declares a registered ceiling breached and infers a trend across budgets entirely from point estimates, with no interval, in a paper whose stated rule is to read every verdict from an interval.",
+   "evidence": "Sec. 2.6: \"on validation +0.0092, 95% CI [-0.0231, +0.0399] ... On the comparison set the same quantity is +0.0556, past the ceiling ... at k \u2264 10 the whole bank buys nothing on either population, and from k = 15 it buys more the wider the budget.\" The comparison-set figure carries no interval - it is a bare literal in body.tex - and no table gives exhaustive-minus-interactive differences with intervals (Table S3 covers only GRAIL-minus-comparator). This sits against Sec. 2.8, \"A claim that the system leads is made for a cell only where that cell's interval excludes zero,\" and Table S4, \"Every cell is read from the interval and never from the point estimate.\"",
+   "fix": "Report the comparison-set exhaustive-minus-interactive difference with its paired interval at each budget, and state the ceiling breach and the across-budget trend from those intervals rather than from the point estimates."
+  },
+  {
+   "severity": "major",
+   "batch": 10,
+   "index": 0,
+   "claim": "The single macro comparison against MetaTox (0.5406 vs GRAIL's 0.5672 at k=15) names no GRAIL arm, no interval, and sits at a budget where the paper's own micro test against the same comparator fails.",
+   "evidence": "Current \u00a73.1 is unchanged: \"Against MetaTox alone ... the exhaustive mode leads at all nine budgets ... At a budget of 15, where MetaTox emits about what the interactive arm emits, its macro recall is 0.5406 against GRAIL's 0.5672. Both emit alike there, so the annotation bias on precision does not explain the difference.\" The 0.5672 is the interactive arm (results/h11_grid.json: rule = \"the trained rule budget's pool, ordered by the H7 fusion, untruncated\", mean_output rule 16.31 vs metatox 36.34), but the arm is never named and the sentence follows one about the exhaustive mode. No interval is given for the 0.0266 macro gap, while \u00a72.8 states \"A claim that the system leads is made for a cell only where that cell's interval excludes zero.\" The revised SI now prints the contradicting cell itself, Table S3, \"GRAIL interactive minus\", k=15 vs MetaTox: \"\u2212.035 [\u2212.076, +.006]\" (deployment_table.json: gap \u22120.0346, ci95 [\u22120.0762, 0.0065], excludes_zero false) \u2014 the same arm at the same budget trails MetaTox in micro, and Table S3's caption calls the starred interval \"the condition under which the paper claims a lead or a trail\".",
+   "fix": "Write \"the interactive arm's 0.5672\", give the paired bootstrap interval on the macro difference, and add that the corresponding micro cell for that arm is \u22120.035 [\u22120.076, +0.006] (Table S3), i.e. does not separate."
+  },
+  {
+   "severity": "minor",
+   "batch": 10,
+   "index": 1,
+   "claim": "The interactive arm's mean candidate count appears as 15.6, 16.3 and 17 without a population attached to each.",
+   "evidence": "Only the 17 is labelled: \u00a72.6 \"on validation +0.0092 ... mean pool 669.9 to 17\". Table 1 prints \"candidates, mean 15.6\" under a caption reading \"Both medians are over the 294 validation substrates\" \u2014 the mean row is left unattributed, and the macro behind it (\\numOutputTrained, output.trained) comes from results/deployment_table.json, whose population block is {\"n\": 291, \"source\": \"the 291 of results/four_method_291.json\"}, i.e. the comparison set, not validation. \u00a72.7 \"the rule admits 16.22 candidates from a pool of 16.3\" and \u00a73.3 \"65.9 candidates against the learned arm's 16.3\" name no population at all; the 16.3 is mean_pool from results/selection_ablation_deployed.json (n = 291). This contradicts \u00a72.1: \"no figure is given without naming one.\"",
+   "fix": "Attach a population and a convention to each: say Table 1's 15.6 is the mean emitted list on the 291 comparison substrates after the parent drop (or recompute it on the 294), and label the 16.3 in \u00a72.7 and \u00a73.3 as the mean pool on the comparison set before that drop."
+  },
+  {
+   "severity": "minor",
+   "batch": 10,
+   "index": 2,
+   "claim": "\"The validation draw gives the same ordering of arms\" is contradicted by the SI table and by the paper's own next sentence.",
+   "evidence": "\u00a73.2 (unchanged in the current PDF): \"The validation draw gives the same ordering of arms. // Two qualifications belong with that. Which single scorer is better does not transfer: on the comparison set the generator's ordering beats the filter's, on validation the two do not separate.\" SI Table S6 (renumbered from S5) shows the swap at k=15 \u2014 comparison set: fusion 0.5353 > product 0.4376 > rule score 0.4271 > pair filter 0.3564 > permutation 0.1128; validation draw: fusion 0.4748 > product 0.4229 > pair filter 0.3771 > rule score 0.3649 > permutation 0.1221. Positions three and four exchange, so the orderings are not the same.",
+   "fix": "Replace with the claim that transfers \u2014 \"the validation draw preserves the order of the fusion, the product and the permutation; the two singletons exchange places and do not separate there\" \u2014 and give the paired interval behind \"do not separate\"."
+  },
+  {
+   "severity": "major",
+   "batch": 10,
+   "index": 3,
+   "claim": "The invariance claim spans two points differing by 14 points under an author-assigned meaningfulness label, and the abstract attaches the invariance to a bound that does not depend on the type definition.",
+   "evidence": "Abstract (unchanged): \"475 of 2,597 reference metabolites lie outside what the rule bank reaches in one step, and that bound is invariant to how a transformation type is defined, making it a property of the annotation corpus rather than of our implementation.\" The 475 is produced by applying the bank to the test substrates; nothing in Table 5 varies it. What varies with the definition is the singleton mass, and across the two rows the paper labels \"yes\" it moves from 87.2% (312 types, 294 once) to 73.3% (284 types, 247 once) \u2014 a 13.9 point change described in \u00a73.11 as \"the bound is invariant to the definition of a type across the whole range in which that definition is meaningful\". The meaningfulness criterion is only the yes/no \"names a transf.\" column plus the gloss \"a type still determines a product\", never defined ahead of the table.",
+   "fix": "In the abstract attach the invariance to the singleton-mass decomposition rather than to the 475, and drop the inference that the 475 is a corpus property from that argument; in \u00a73.11 report the range (87.2% to 73.3%) instead of the word invariant, and state the criterion for \"names a transformation\" before Table 5."
+  },
+  {
+   "severity": "minor",
+   "batch": 10,
+   "index": 5,
+   "claim": "The stated cause of the Tanimoto reference-count drop (four metabolites collapsing to one key) cannot produce the stated effect (one fewer reference).",
+   "evidence": "SI S4 (unchanged): \"The number of references differs by one between criteria, at 665 for three of them and one fewer for two ... Under Tanimoto similarity of one, four carboxychromanol metabolites of \u03b1-tocopherol collapse to one key\". Four references collapsing to a single key removes three, not one. The artifact agrees with the count and not with the explanation: results/criterion_sweep.json gives n_references 665.0 for canonical, inchikey and inchikey_tautomer and 664.0 for inchi_no_stereo and tanimoto1 \u2014 exactly one lost under Tanimoto, where the quoted merge implies 662.",
+   "fix": "Report the reference count per criterion with the merges that produce each; since the Tanimoto count falls by exactly one, name the single pair that merges, or correct the \u03b1-tocopherol example to the two structures that actually collapse."
+  },
+  {
+   "severity": "minor",
+   "batch": 10,
+   "index": 6,
+   "claim": "\"40 cannot be typed\" is never defined in the main text, and the SI's only account of typing makes untypeable a timeout outcome.",
+   "evidence": "\u00a73.11: \"337 need a transformation type the bank does not hold, 98 need a type it holds whose rule did not fire, and 40 cannot be typed\" \u2014 the third bucket, 8.4% of the 475 bound drawn in Figure 4, is nowhere defined. \"untypeable\" occurs exactly once across both documents, in SI S8 on the group-ranking oracle: \"Typing runs a maximum common substructure search under a wall-clock timeout and treats a cancelled search as untypeable\", with no statement of whether the coverage census used that same procedure or what timeout it ran under.",
+   "fix": "State in the main text what makes a reference untypeable, say whether the census and Table S5 share one typing procedure, and report the timeout and the size distribution of the 40."
+  },
+  {
+   "severity": "minor",
+   "batch": 11,
+   "index": 0,
+   "claim": "\u00a73.11 relaxes \"convention-dependent primitives\" without ever naming them, leaving the 98-miss bucket (the second-largest) without a chemical diagnosis.",
+   "evidence": "\u00a73.11 as it currently renders: \"Relaxing the convention-dependent primitives in the templates recovers three of the 98, moving the ceiling by +0.0012. A bound computed before the run predicted about eight.\" The string \"primitive\" occurs exactly once in the whole manuscript and zero times in the SI; the only place atom-level conventions are enumerated is the SI mining description (\"Atoms whose element, formal charge, hydrogen count, aromaticity or degree changed...\"), which describes reaction-centre detection, not the relaxation experiment, and is never linked to it. The bucket is 98 of 475 uncovered references and is the one part of the ceiling that is an implementation property rather than the corpus property the section's title claims.",
+   "fix": "In \u00a73.11 name the primitives relaxed (e.g. aromaticity perception, implicit-hydrogen count, degree) in the same sentence, and add one clause giving the residual: how many of the remaining 95 fail for a reason other than a convention primitive."
+  },
+  {
+   "severity": "minor",
+   "batch": 11,
+   "index": 2,
+   "claim": "The parent-drop convention in the Table 2 caption is declared but its effect is never quantified per arm, in a paper that sweeps every other declared evaluation choice.",
+   "evidence": "Table 2 caption: \"A prediction equal to the substrate is dropped before the budget for every method alike.\" Nowhere in the manuscript or SI is the drop counted: the SI mentions it only twice, as a thing held fixed \u2014 \"the same comparison, the same population, the same ranking, the same parent-drop convention, with only the criterion moving\" and \"The parent-drop convention is re-derived under each criterion so that it means the same thing in every column.\" This is the paper's own standard applied to itself: \"every evaluation choice is declared and the system is reported under all of them rather than under one\" (\u00a71). It bites hardest at k=1, where the paper's trailing verdict is established (SyGMa 0.1534 against GRAIL 0.1053) and where promoting a candidate past a dropped parent moves a one-item list, and methods differ in how often they emit the parent at all.",
+   "fix": "Add one sentence to the SI giving, per arm, the number of substrates for which a prediction was dropped as the parent, and stating that the k=1 and k=3 verdicts are unchanged when the drop is not applied."
+  },
+  {
+   "severity": "minor",
+   "batch": 11,
+   "index": 3,
+   "claim": "\u00a73.6 calls the mined portion \"the half of the bank with no expert provenance\" when the paper's own counts make it about three quarters.",
+   "evidence": "\u00a72.3 now prints the counts: \"It is the deduplicated union of four curated collections, 1,725 templates in all, together with 5,856 mined from the training split alone.\" 5,856 of 7,581 is 77.2%, not half. \u00a73.6 nonetheless still reads: \"All four rules here are mined rather than curated, so the half of the bank with no expert provenance is the half carrying this molecule.\" The SI compounds it: it calls them \"The two halves\" and then says \"1,725 templates are curated and 5,856 are mined\", and adds that the curated portion is unattributed too \u2014 \"a reader should treat the curated half as unattributed until it is\" \u2014 so the mined portion is not in fact the only part of the bank without expert provenance.",
+   "fix": "In \u00a73.6 replace \"the half of the bank with no expert provenance is the half carrying this molecule\" with the measured share (about three quarters), and drop or qualify the \"two halves\" phrasing in SI \u00a7S5 where it is immediately followed by 1,725 against 5,856."
+  },
+  {
+   "severity": "minor",
+   "batch": 11,
+   "index": 4,
+   "claim": "\u00a73.8's \"a third of the headroom\" does not follow from the two numbers printed with it.",
+   "evidence": "The same passage supplies both terms: the oracle \"is worth +0.3143 over the ranking it is measured against, which is the product ordering with each group emitted as a block on the uncapped pool\", and \"The deficit splits into \u22120.0647 from the design, block emission being worse than interleaved (0.4376 against 0.5023)\". Then: \"Because the oracle is measured in blocked form, a third of the headroom it promises is the return of what the design spends.\" 0.0647 / 0.3143 = 0.206, one fifth. No pairing in the paragraph yields a third; the SI's deployed-configuration oracle (Table S5, molecular formula +0.1248 over the deployed 0.5353) gives 0.0647 / 0.1248 = 0.52, a half. The only route to \"a third\" requires the reader to construct 0.4376+0.3143 = 0.7519 and subtract the capped-pool fusion 0.5353, mixing two different pools, and the paper does not do this.",
+   "fix": "Replace \"a third\" with the share the printed numbers give (about a fifth), or name the two quantities the fraction is taken between if it is not 0.0647 over 0.3143."
+  },
+  {
+   "severity": "minor",
+   "batch": 11,
+   "index": 5,
+   "claim": "\u00a73.2 states the arm ordering replicates on validation and then, two sentences later, states that it does not.",
+   "evidence": "\u00a73.2: \"The validation draw gives the same ordering of arms.\" Two sentences on: \"Which single scorer is better does not transfer: on the comparison set the generator's ordering beats the filter's, on validation the two do not separate.\" SI Table S6 confirms the ordering is not the same at k=15: comparison set rule score 0.4271 above pair filter 0.3564; validation draw pair filter 0.3771 above rule score 0.3649. The five arms rank fusion > product > rule > filter > permutation on the comparison set and fusion > product > filter > rule > permutation on validation.",
+   "fix": "Change the sentence to name what replicates \u2014 the fusion separating from each single scorer and from their product \u2014 rather than \"the same ordering of arms\", so the qualification that follows is a detail and not a reversal."
+  },
+  {
+   "severity": "minor",
+   "batch": 11,
+   "index": 6,
+   "claim": "\u00a72.4's +0.109 is reported without naming its population, against the paper's own rule in \u00a72.1.",
+   "evidence": "\u00a72.1 declares exactly three populations and the rule: \"Three evaluation populations appear here, each a stated subset of a split rather than a split itself, and no figure is given without naming one\" \u2014 the evaluated test set, the validation draw, and the comparison set. \u00a72.4 then reads: \"On the set where the variant was chosen among four it gives +0.109, and the shrinkage to two thirds is the measured cost of that selection.\" The selection set is described only by what was done on it and matches none of the three by name. The neighbouring sentence shows the paper knows how to do this: \"On the pool the deployed system actually ranks the same contrast, same population and same budget, is +0.0519\". +0.109 is also the one figure in this passage hardcoded in body.tex rather than reaching the page through a numbers.tex macro.",
+   "fix": "Name the selection population and its size in \u00a72.4, and if it is not one of the three, add it to the declared list in \u00a72.1 so the rule stated there still holds."
+  },
+  {
+   "severity": "minor",
+   "batch": 11,
+   "index": 7,
+   "claim": "\u00a74.3's \"A reader therefore cannot presently verify any ranking in this literature\" is a universal claim the paper's own Table 2 and availability statement contradict.",
+   "evidence": "\u00a74.3: \"Of 4 such systems, one releases training code without a checkpoint, one has a withdrawn module, one offers only a web form and one has no repository. A reader therefore cannot presently verify any ranking in this literature\". One page earlier, \u00a74.2 claims the opposite for this paper's own comparison: \"every evaluation choice is declared with every cell of the resulting grid reported, which is what makes the comparison reproducible by a third party\", and \u00a77 releases \"the frozen per-substrate predictions of every comparator, the evaluation harness\". Table 2 is a ranking in this literature (GRAIL, MetaTox, SyGMa, MetaPredictor at nine budgets) and is, by the paper's own account, verifiable.",
+   "fix": "Restrict the sentence to the systems it follows from \u2014 e.g. \"A reader therefore cannot presently verify any ranking involving the 2025-26 wave\" \u2014 leaving the case for per-item predictions intact."
+  },
+  {
+   "severity": "minor",
+   "batch": 12,
+   "index": 0,
+   "claim": "The \"twenty configurations\" offered as evidence that P5's +0.0286 is not a selection artefact appear in no table of the paper or the SI.",
+   "evidence": "Current \u00a73.8 still reads: \"P5 used the same model untrained further, entering its group score as a third ranking in the same fusion. Measured +0.0286, 95% CI [+0.0085, +0.0502]. The effect is not selection: all twenty configurations beat the base on validation and 70% of that margin survived the move.\" The current SI runs S1-S14 with Tables S1-S7 (splits, criteria, intervals, criterion sweep, oracle, ranking ablation, worked example); a grep for \"configuration\" across si.pdf returns only \"the released configuration\", \"the deployed configuration\" and the S9 heading. Neither the twenty configurations, their validation values, nor a definition of what a \"configuration\" is appears anywhere, and \"70% of that margin\" is not derivable from any released table in the two documents.",
+   "fix": "Either add a short SI table listing the twenty configurations with their validation values and the base (which makes both \"all twenty\" and \"70%\" checkable), or delete the sentence and let P5 stand on its measured +0.0286 [+0.0085, +0.0502]."
+  },
+  {
+   "severity": "minor",
+   "batch": 12,
+   "index": 1,
+   "claim": "The paper analyses the corpus licences in detail but states no licence for its own code, its rule bank, or the third-party comparator predictions it redistributes.",
+   "evidence": "\u00a77 as it now stands: \"Source code, the split manifest, the frozen per-substrate predictions of every comparator, the evaluation harness, the provenance sweep and the preregistration with every hypothesis and its outcome are at github.com/doctawho42/GRAIL\" - no licence is named for any of it. SI \u00a7S14: \"MetaTox and MetaPredictor predictions are frozen per substrate and released with the code\", again with no terms, while the same SI devotes a page to ChEMBL's CC BY-SA 3.0, DrugBank's CC BY-NC 4.0 and BioTransformer's redistribution clause. The rule bank is now flagged but still unlicensed: SI \u00a7S5 says \"The published source of each collection, and the licence each carries, is [CURATED RULES: the published source, if any, of each of the four curated collections, and the licence each carries]; a reader should treat the curated half as unattributed until it is.\"",
+   "fix": "Name a licence for the released code and for the rule bank in \u00a77, and add one sentence to \u00a7S14 on the terms under which the frozen MetaTox and MetaPredictor predictions are redistributed."
+  },
+  {
+   "severity": "minor",
+   "batch": 12,
+   "index": 2,
+   "claim": "The GLORYx citation pairs year 2020 with volume 34 (a 2021 volume), and that citation doubles as the version identifier for one of the four corpus sources.",
+   "evidence": "Reference 4 and SI reference S4 both still read \"GLORYx: Prediction of the Metabolites Resulting from Phase 1 and Phase 2 Biotransformations of Xenobiotics. Chemical Research in Toxicology 2020, 34, 286-299.\" Volume 34, pages 286-299 is Chem. Res. Toxicol. 2021, 34 (2) (DOI 10.1021/acs.chemrestox.0c00224, which paper2/refs.bib records as year={2020}, volume={34}, number={2}). The same \"2020\" is load-bearing as a version string: \u00a72.1 and \u00a77 say \"the GLORYx reference set of 2020\", and SI \u00a7S1 repeats \"MetXBioDB 1.0 and the GLORYx reference set of 2020\" - so a reader is asked to identify one of the four corpus sources by a year that does not match the cited volume.",
+   "fix": "Cite the issue version (Chem. Res. Toxicol. 2021, 34, 286-299) in both reference lists, and identify the GLORYx reference set by its distributed file, release or DOI rather than by a year."
+  },
+  {
+   "severity": "minor",
+   "batch": 12,
+   "index": 3,
+   "claim": "The k=15 MetaTox paragraph asserts that MetaTox and the interactive arm \"emit alike\" against a table on the same page showing 30.9 vs 15.6, and never says which GRAIL arm 0.5672 belongs to.",
+   "evidence": "\u00a73.1 is unchanged: \"At a budget of 15, where MetaTox emits about what the interactive arm emits, its macro recall is 0.5406 against GRAIL's 0.5672. Both emit alike there, so the annotation bias on precision does not explain the difference.\" Table 2 on the same page ends \"list | 98.1 | 15.6 | 30.9 | 40.5 | 10.7\", i.e. MetaTox emits twice the interactive arm; nothing in the text says the premise concerns lengths after truncation at k=15. The preceding paragraph is about the exhaustive mode (\"Against MetaTox alone ... the exhaustive mode leads at all nine budgets\"), so the unnamed arm reads as the exhaustive one, and it is not: results/h11_grid.json records rule = \"the trained rule budget's pool, ordered by the H7 fusion, untruncated\" with mean_output {rule: 16.31, metatox: 36.34}, so 0.5672 is the interactive arm untruncated.",
+   "fix": "Name the arm (\"GRAIL's interactive arm, 0.5672\") and give the two mean emitted-list lengths that the \"emit alike\" claim rests on - the interactive arm's 16.31 against MetaTox truncated at 15 - so the sentence can be reconciled with Table 2's list row."
+  },
+  {
+   "severity": "minor",
+   "batch": 12,
+   "index": 4,
+   "claim": "Several reference entries are incomplete or inconsistent: ref 26 has no volume/pages/DOI and a dangling comma, the GLORYx entry pairs 2020 with volume 34, and the ChemRxiv preprint carries no DOI.",
+   "evidence": "Reference 26 as printed: \"Tanovic, S.; Wieczorek, E.; Duarte, F. An exploration of dataset bias in single-step retrosynthesis prediction. Digital Discovery 2026,\" - the entry ends in a comma with no volume, pages or DOI (refs.bib has only journal and year). Reference 4/S4: \"Chemical Research in Toxicology 2020, 34, 286-299\" (volume 34 is the 2021 volume). Reference 11/S9: \"Chavan, S. Metabolite-Gen ... 2026; ChemRxiv preprint, posted 6 May 2026.\" - no locator on the page, although refs.bib carries doi = 10.26434/chemrxiv.15002775, so the DOI exists and is simply not printed for the one entry that has nothing else to locate it. And SI \u00a7S14 pins a BioTransformer 3.0 build (\"jar c70cad91 ... upstream commit 6432cf88 of 2023-05-25\") while the only BioTransformer entry in either list is the 2019 paper (ref 2 / S3).",
+   "fix": "Complete reference 26 with volume, pages and DOI (or cite the accepted-article DOI), correct the GLORYx entry to 2021, print the ChemRxiv DOI on reference 11, and add the BioTransformer 3.0 paper (Nucleic Acids Res. 2022) beside reference 2."
+  },
+  {
+   "severity": "minor",
+   "batch": 12,
+   "index": 5,
+   "claim": "One SI section is a bare table with no prose, and SI tables go uncited from any sentence.",
+   "evidence": "In the current SI the section has moved to S12 and the table to S7, but the defect is unchanged: si.tex has \"\\section{The worked example in full}\" followed immediately by \"\\input{si_table_case}\" and nothing else, so the rendered S12 is a heading with no sentence, and its table floats onto the following page under the S13 heading. Table S7 is referred to from no sentence in either document. Table S1 (the splits) is likewise described by no sentence; the only string \"Table S1\" now in the manuscript is \u00a73.1's \"Every difference behind that division, with its paired interval, is Table S1\", which points at the SI's intervals table - numbered S3 since the intervals table was added - so that pointer lands on the splits table instead. The manuscript's other hard-coded pointer, \"(Table S5)\" for the P1-on-deployed-pool contrast, lands on the oracle table rather than the ranking ablation, now S6.",
+   "fix": "Add two sentences to S12 saying what to look for in Table S7 (the curated/mined split among the top twenty, the separation of the two component scores) and citing it by number, cite Table S1 from the sentence in S1 that gives the split counts, and repair the manuscript's two SI table numbers so each cited number lands on the table it describes."
+  },
+  {
+   "severity": "minor",
+   "batch": 12,
+   "index": 6,
+   "claim": "Table 4's caption exception list omits P4, whose measured value is a count of lost cells, and the table gives only P3's passing population while the text reports it exceeding its ceiling on another.",
+   "evidence": "The caption still reads \"P8's figure is a speed-up factor and P9's a median in seconds; the rest are differences in micro recall@15\" (the only addition in the revision is the uncapped-pool sentence), while the P4 row reads \"emit the whole pool, no threshold | 0 cells | 0 | grid 5 x 10\" - a count over a 5 x 11 grid, not a recall difference. The P3 row reads \"rule budget of 30 from the checkpoint | <= +0.05 | +0.0092 | validation\", whereas \u00a72.6 says \"On the comparison set the same quantity is +0.0556, past the ceiling\", so a reader scanning the register table sees only the population on which P3 passed.",
+   "fix": "Extend the caption's exception to \"P4's is a count of lost cells\", and give P3 a second measured entry or a second row carrying the comparison-set +0.0556 and its status against the ceiling."
+  },
+  {
+   "severity": "minor",
+   "batch": 12,
+   "index": 7,
+   "claim": "Figure 3's right panel sets four statistics of the interactive mode beside one of the exhaustive mode, uses a third colour for the slowest bar with nothing explaining it, and carries no legend or note that the exhaustive mean and tail do not exist.",
+   "evidence": "The figure is unchanged (fig_cost.pdf predates the revision) and the caption still says only \"Right: the cost of each operating mode on the validation split, log scale. The interactive mode's mean is six times its median and its slowest substrate is three orders above it.\" The rendered panel shows bars median 0.39, mean 2.36, 90th pct 2.59, slowest 231.01 under a bracket labelled interactive and a single bar median 5.28 under exhaustive, in three colours with no legend. The slowest bar is drawn in the same orange the left panel's legend labels \"did not finish in 600 s\" (scripts/paper2_figures.py: PALETTE[1] for both), so on one figure the same colour marks a timeout on the left and a completed 231.01 s run on the right. Table 1 records the exhaustive mode's mean and 90th pct as \"-\" and its slowest as \"did not finish\", but the figure carries no such mark, so the missing bars read as an unexplained omission.",
+   "fix": "Draw \"did not finish\" markers at the exhaustive mode's mean, 90th percentile and slowest positions so both modes carry the same four statistics, and add a one-line note to the caption saying the orange bar is the interactive tail and not a timeout."
+  },
+  {
+   "severity": "minor",
+   "batch": 13,
+   "index": 0,
+   "claim": "Figure 2's right panel uses a non-uniformly spaced rank axis without declaring it, and beyond ~rank 55 the exhaustive arm's ticks merge into a solid grey block, so the caption's \"every returned candidate drawn as a tick\" cannot be read.",
+   "evidence": "The caption is silent on the scale: \"Right: where the four annotated metabolites fall in each arm's ranked list, every returned candidate drawn as a tick. The interactive budget never produces the phosphorylations, so its list is short and correct rather than long and wrong.\" The axis carries only bare labels \"1 5 10 15 20 30 50 100\" over \"rank in the returned list\", which is a symlog scale (linear to 30, logarithmic beyond). In the rendered fig_case.pdf the exhaustive row's ticks become contiguous from roughly rank 45 onward \u2014 at that spacing the gap between consecutive ranks falls below the 0.8 pt tick line width \u2014 and render as one uninterrupted grey band out to 100. The SI does not recover it: Table S6 gives only \"The first twenty of the 100 candidates the exhaustive mode returns\", with \"The complete ranked lists of both modes ... in the released artifacts.\"",
+   "fix": "Add one clause to the caption stating the scale (e.g. \"the rank axis is linear to 30 and logarithmic beyond\"), and either thin the ticks or label the compressed region with its count so the band beyond k=30 is read as a count rather than as individual candidates."
+  }
+ ]
+}

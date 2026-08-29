@@ -34,6 +34,8 @@ from _provenance import stamp  # noqa: E402
 
 from _rrf import rrf_order  # noqa: E402
 
+from bank_without_selection import _key as _tautkey  # noqa: E402
+
 KS = (1, 5, 10, 15, 30, 50)
 N_BOOT, SEED = 10000, 0
 
@@ -59,6 +61,7 @@ def main() -> int:
     for s in subs:
         real = set(refs[s])
         U.append(len(real))
+        pk = _tautkey(s)
         for a in arms:
             pool = pools[a].get(s, [])
             sizes[a].append(len(pool))
@@ -70,9 +73,11 @@ def main() -> int:
             # convention rather than the choice of rules.
             keep = sorted(pool, key=lambda c: -c["generator"])[:100]
             order = rrf_order(keep) if keep else []
+            # and the comparison table's parent-drop convention, so this arm is on the same axis
+            # as Table 2, which it is read against
+            keys = [c["key"] for c in order if c.get("key") and c["key"] != pk]
             for k in KS:
-                got = {c["key"] for c in order[:k] if c.get("key")}
-                hits[a][k].append(len(real & got))
+                hits[a][k].append(len(real & set(keys[:k])))
 
     U = np.array(U, dtype=float)
     N = float(U.sum())

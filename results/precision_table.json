@@ -1,0 +1,74 @@
+{
+ "provenance": {
+  "script": "precision_table.py",
+  "script_path": "scripts/typed_edit/precision_table.py",
+  "source_sha256": "0f484937757d69ae89f42c6b8a833570132ef11be0bd669aabdd4e22dfc25c23",
+  "git_commit": "3e9861a2c7c48188c238495c9c327286ece2577c",
+  "git_dirty": true
+ },
+ "population": {
+  "n": 291,
+  "source": "the comparison set"
+ },
+ "definition": "hits divided by the predictions inside the window, so an arm whose list is shorter than the budget is not charged for the empty slots",
+ "caveat": "under incomplete annotation an unannotated but real metabolite counts as a false positive, so every figure is pessimistic by an unknown amount and an arm emitting fewer candidates is flattered",
+ "parent_dropped": true,
+ "cap": 100,
+ "precision_micro": {
+  "GRAIL exhaustive": {
+   "1": 0.2062,
+   "3": 0.173,
+   "5": 0.1416,
+   "8": 0.1186,
+   "10": 0.1034,
+   "15": 0.0816,
+   "20": 0.0662,
+   "30": 0.0487,
+   "50": 0.0322
+  },
+  "GRAIL interactive": {
+   "1": 0.2405,
+   "3": 0.1835,
+   "5": 0.1474,
+   "8": 0.1207,
+   "10": 0.1095,
+   "15": 0.0951,
+   "20": 0.087,
+   "30": 0.0805,
+   "50": 0.0758
+  },
+  "MetaTox": {
+   "1": 0.0928,
+   "3": 0.1008,
+   "5": 0.0997,
+   "8": 0.0891,
+   "10": 0.0892,
+   "15": 0.0806,
+   "20": 0.0673,
+   "30": 0.0547,
+   "50": 0.0464
+  },
+  "SyGMa": {
+   "1": 0.3517,
+   "3": 0.2207,
+   "5": 0.172,
+   "8": 0.1232,
+   "10": 0.1056,
+   "15": 0.0756,
+   "20": 0.0591,
+   "30": 0.0419,
+   "50": 0.0289
+  },
+  "MetaPredictor": {
+   "1": 0.3207,
+   "3": 0.212,
+   "5": 0.1633,
+   "8": 0.1263,
+   "10": 0.1141,
+   "15": 0.1022,
+   "20": 0.102,
+   "30": 0.102,
+   "50": 0.102
+  }
+ }
+}

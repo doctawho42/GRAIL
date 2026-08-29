@@ -47,6 +47,16 @@ tautomer-canonical InChIKeys, which are hashes and do not carry the structures. 
 therefore a list of corpus substrates, hashes of their annotations, and our own predictions.
 Whether that may be redistributed, and under which licence, is \CorpusLicence{}.
 
+How the four sources were queried, filtered, standardised, de-duplicated against one another and
+split is \CorpusAssembly{}. Without it a reader can obtain the sources but cannot rebuild the
+triple files this work evaluates on, and the split manifest can only prove that a rebuilt corpus
+differs, not how.
+
+A second limit on rebuilding: the annotated metabolites are released as tautomer-canonical
+InChIKeys rather than as structures. That key supports the default matching criterion and not the
+other four, which need the structures, so a third party can reproduce the tautomer column of
+Table~S4 and not the rest of it.
+
 The corpus is divided by substrate, so no substrate of one split appears in another. Molecular overlap between splits is non-zero and expected, because a molecule
 that is a substrate in one split may appear as a product in another: \numLeakMolOverlap{}
 molecules occur in both train and test, and \numLeakSubAsMol{} test substrates appear as molecules
@@ -82,6 +92,10 @@ published ones should know that the rule-based figures are, in this respect, opt
 What counts as a hit is an axis with five declared settings, given in Table~\ref{tab:si-criteria}.
 The paper reports its comparison under the tautomer-aware key and its sensitivity to the other
 four in Section~\ref{sec:si-sensitivity}.
+
+\section{Precision}
+
+\input{si_table_precision}
 
 \section{The comparison's differences and their intervals}
 

@@ -194,6 +194,27 @@ def si_intervals():
             "\\label{tab:si-intervals}\n\\end{table}\n")
 
 
+def si_precision():
+    d = art("precision_table.json")
+    pr = d["precision_micro"]
+    arms = list(pr)
+    ks = sorted((int(k) for k in pr[arms[0]]), key=int)
+    rows = [f"${k}$ & " + " & ".join(f"{pr[a][str(k)]:.4f}" for a in arms) + " \\\\" for k in ks]
+    head = " & ".join(a.replace("GRAIL ", "GRAIL\\ ") for a in arms)
+    return ("\\begin{table}[h]\n\\centering\\small\n"
+            f"\\begin{{tabular}}{{r{'r' * len(arms)}}}\n\\toprule\n"
+            f"$k$ & {head} \\\\\n\\midrule\n" + "\n".join(rows)
+            + "\n\\bottomrule\n\\end{tabular}\n"
+            "\\caption{Micro precision at each budget on the comparison set, with the parent-drop "
+            "convention of Table~2. Precision at $k$ is hits over the predictions inside the "
+            "window, so an arm whose list is shorter than the budget is not charged for the empty "
+            "slots, which is why MetaPredictor is flat from $k=15$. These figures order the "
+            "systems differently from recall and we do not use them to do so: under incomplete "
+            "annotation an unannotated but real metabolite counts as a false positive, so every "
+            "value is pessimistic by an unknown amount and an arm emitting fewer candidates is "
+            "flattered.}\n\\label{tab:si-precision}\n\\end{table}\n")
+
+
 def si_case():
     d = art("case_study_exhaustive.json")
     i = art("case_study.json")
@@ -221,7 +242,8 @@ if __name__ == "__main__":
                      ("si_table_criterion", si_criterion_sweep), ("si_table_oracle", si_oracle),
                      ("si_table_case", si_case),
                      ("si_table_ranking", si_ranking),
-                     ("si_table_intervals", si_intervals)):
+                     ("si_table_intervals", si_intervals),
+                     ("si_table_precision", si_precision)):
         try:
             (OUT / f"{name}.tex").write_text(fn())
             print(f"  wrote paper2/{name}.tex")
