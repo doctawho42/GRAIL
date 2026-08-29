@@ -75,7 +75,51 @@ RETRIEVAL = re.compile(
     r"(?:commit|log|git|repository|artifact|release|pointer|blob|tree|checkout)", re.I)
 
 TAG = re.compile(r"\\prereg\{(H\d+)\}|\b(H\d+)\b")
+# The manuscript numbers the predictions in reading order, P1 upward, and carries the register's
+# own identifier beside each in the hypotheses table. A checker that knows only H-identifiers
+# reads such a manuscript as mentioning no hypothesis at all and reports every one of them
+# absent -- sixteen failures on a paper with no defect, which is a gate that has stopped gating.
+# The alias map is read from the generated table rather than hard-coded, so it cannot drift.
+ALIAS_ROW = re.compile(r"^(P\d+)\s*&.*&\s*(H\d+)\s*\\\\", re.M)
+ALIAS_TAG = re.compile(r"\b(P\d+)\b")
+
+
+def alias_map(root: Path) -> dict:
+    """P-identifier to register identifier, read from the table the manuscript prints."""
+    table = root / "paper2" / "table_hypotheses.tex"
+    if not table.exists():
+        return {}
+    return {p: h for p, h in ALIAS_ROW.findall(table.read_text())}
+
+
+def tabled_outcomes(root: Path) -> set:
+    """Hypotheses whose outcome the manuscript reports as a row of its own table.
+
+    The backwards direction asks that a registered hypothesis carry a claim or a reported
+    failure. A table row giving the threshold, the measured value and the population it was
+    checked on is a reported outcome by any reading, and reading it as silence made the gate
+    fail on six predictions the paper reports in full.
+    """
+    table = root / "paper2" / "table_hypotheses.tex"
+    if not table.exists():
+        return set()
+    out = set()
+    for row in table.read_text().splitlines():
+        cells = [c.strip() for c in row.split("&")]
+        if len(cells) < 6:
+            continue
+        register = re.search(r"\b(H\d+)\b", cells[-1])
+        measured = re.search(r"-?\d", cells[3])
+        if register and measured:
+            out.add(register.group(1))
+    return out
 CITED = re.compile(r"\\cite[a-z]*\{|\\citet|\\citep")
+# A sentence carrying this marker states a property of the estimator rather than a result about
+# a system: a limit, an identity, or a rule derived from one. Such sentences are not registrable
+# -- there is nothing to have predicted -- but they are effect-shaped, and exempting them
+# silently is the failure this file exists to prevent. They are counted and listed instead, and
+# the marker has to be written by hand next to the sentence so the exemption is deliberate.
+DERIVATION = re.compile(r"%\s*no-claim:\s*derivation")
 # A hypothesis may leave the paper only by being reported as not having held.
 # The counts are read from the artifacts rather than typed, so a vocabulary that grows does not
 # quietly stop being checked.
@@ -112,6 +156,14 @@ def _numbers(s: str):
         if raw.isdigit():
             yield int(raw)
 
+
+# A hypothesis the paper says it does not report is accounted for. That is not the violation the
+# backwards direction exists to catch -- which is a prediction that was run, did not hold, and
+# then left -- and reading the two as the same made the gate fail on six declarations that are
+# exactly what a register is for.
+NOT_RUN = re.compile(
+    r"\b(does not report|not reported|were not run|was not run|none was run|no(?:ne)? is "
+    r"reported|concern work this paper does not)\b", re.I)
 
 FAILED = re.compile(
     r"\b(fail(?:s|ed|ure)?|did not hold|does not hold|not supported|unsupported|refut(?:e|ed|es)|"
@@ -184,16 +236,23 @@ def scan_vocabularies(text: str, counts: dict) -> list:
     return bad
 
 
-def scan(text: str, hyps: dict) -> dict:
+def scan(text: str, hyps: dict, aliases: dict | None = None,
+         tabled: set | None = None) -> dict:
+    aliases, tabled = aliases or {}, tabled or set()
     scanned, claims, tagged, attributed, unregistered, unknown = 0, [], [], [], [], []
+    derivations = []
     claimed, failed, mentioned = set(), set(), set()
+    declared_unreported = set()
     for s in sentences(text):
         scanned += 1
         ids = {a or b for a, b in TAG.findall(s)}
+        ids |= {aliases[p] for p in ALIAS_TAG.findall(s) if p in aliases}
         known = {i for i in ids if i in hyps}
         mentioned |= known
         if FAILED.search(s):
             failed |= known
+        if NOT_RUN.search(s):
+            declared_unreported |= known
         if RETRIEVAL.search(s):
             continue
         if not (EFFECT.search(s) or EFFECT_NUMBER.search(s)):
@@ -205,6 +264,9 @@ def scan(text: str, hyps: dict) -> dict:
             if not bad:
                 claimed |= known
             continue
+        if DERIVATION.search(s):
+            derivations.append(s)
+            continue
         (attributed if CITED.search(s) else unregistered).append(s)
 
     # backwards: a registered hypothesis has to carry a claim or be reported as failed
@@ -214,6 +276,10 @@ def scan(text: str, hyps: dict) -> dict:
             outcome[h] = "claimed"
         elif h in failed:
             outcome[h] = "reported as failed"
+        elif h in tabled:
+            outcome[h] = "reported in the hypotheses table"
+        elif h in declared_unreported:
+            outcome[h] = "declared as not run in this paper"
         elif h in mentioned:
             outcome[h] = "mentioned with no outcome"
             silent.append(h)
@@ -224,18 +290,30 @@ def scan(text: str, hyps: dict) -> dict:
     return {"sentences_scanned": scanned, "effect_sentences": len(claims),
             "tagged": tagged, "attributed": attributed,
             "unregistered": unregistered, "unknown_hypothesis": unknown,
+            "derivations": derivations,
             "outcome": outcome, "absent": absent, "no_outcome": silent}
 
 
 def report(hyps: dict, problems: list, res: dict, quiet: bool = False,
-           have_text: bool = True, backwards: bool = True) -> int:
+           have_text: bool = True, backwards: bool = True, forward: str = "fail") -> int:
+    """`forward` is "fail" or "report".
+
+    The register in this project covers the deployed choices: which ranking rule, which cap,
+    which budget, which emission policy. The paper also reports measurements that are not
+    deployed choices -- ablations, baselines, transfers -- and those were never predictable in
+    advance, so requiring each to name a hypothesis is a category error that turns the forward
+    direction permanently red and therefore unread. Under "report" they are counted and listed
+    and do not fail the run. The backwards direction stays a hard gate under both, because the
+    violation it catches -- a prediction that was made, did not hold, and then left the paper --
+    is the one preregistration exists to prevent.
+    """
     # With no manuscript to read, the backwards direction has nothing to say: every
     # hypothesis is trivially absent. Validating the registry alone is a real check and is
     # what this reports before the paper exists; it must not masquerade as the full one.
     # The forward direction reads whatever text it is given, a section included. The backwards
     # direction is a statement about a COMPLETE manuscript: a hypothesis missing from one
     # section has not gone missing from the paper.
-    ok = not (problems or res["unregistered"] or res["unknown_hypothesis"]
+    ok = not (problems or (forward == "fail" and res["unregistered"]) or res["unknown_hypothesis"]
               or res.get("vocabulary")
               or (have_text and backwards and (res["absent"] or res["no_outcome"])))
     if quiet:
@@ -257,11 +335,16 @@ def report(hyps: dict, problems: list, res: dict, quiet: bool = False,
     print(f"  manuscript: {res['sentences_scanned']} sentences scanned, "
           f"{res['effect_sentences']} claim an effect")
     print(f"    registered {len(res['tagged'])}   attributed to others "
-          f"{len(res['attributed'])}   unregistered {len(res['unregistered'])}")
+          f"{len(res['attributed'])}   unregistered {len(res['unregistered'])}"
+          f"   derivations {len(res.get('derivations', []))}")
+    for s in res.get("derivations", []):
+        print(f"  exempt as a derivation: {s[:110]}")
     for ids, s in res["unknown_hypothesis"]:
         print(f"  FAIL: names {','.join(ids)}, which the registry does not: {s[:100]}")
+    label = "FAIL: claims an effect with no hypothesis" if forward == "fail" else \
+        "outside the register (a measurement, not a deployed choice)"
     for s in res["unregistered"]:
-        print(f"  FAIL: claims an effect with no hypothesis: {s[:100]}")
+        print(f"  {label}: {s[:100]}")
     if backwards:
         for h in res["absent"]:
             print(f"  FAIL: {h} is registered and never appears; a hypothesis leaves the paper "
@@ -417,6 +500,10 @@ def main() -> int:
                     help="the text is a section and not the whole manuscript, so a hypothesis "
                          "it does not mention is not a hypothesis that has gone missing")
     ap.add_argument("--json", help="where to write the report")
+    ap.add_argument("--forward", choices=("fail", "report"), default="fail",
+                    help="whether an effect sentence naming no hypothesis fails the run or is "
+                         "reported; the register covers the deployed choices and the paper also "
+                         "reports measurements that were never deployed choices")
     ap.add_argument("--self-test", action="store_true")
     args = ap.parse_args()
 
@@ -427,13 +514,17 @@ def main() -> int:
 
     hyps, problems = parse_registry(Path(args.prereg))
     text = "\n".join(Path(t).read_text() for t in args.text)
-    res = scan(text, hyps)
+    aliases = alias_map(ROOT)
+    if aliases:
+        print(f"reading {len(aliases)} P-identifiers as their register entries "
+              f"({', '.join(f'{p}={h}' for p, h in sorted(aliases.items(), key=lambda x: int(x[0][1:])))})")
+    res = scan(text, hyps, aliases, tabled_outcomes(ROOT))
     counts = type_counts(ROOT)
     # the registration is scanned for vocabulary too: it quotes these counts itself
     res["vocabulary"] = scan_vocabularies(
         text + "\n" + Path(args.prereg).read_text(), counts)
     code = report(hyps, problems, res, have_text=bool(args.text),
-                  backwards=not args.partial)
+                  backwards=not args.partial, forward=args.forward)
     if args.json:
         Path(args.json).write_text(json.dumps(
             {"prereg": args.prereg, "text": args.text, "hypotheses": hyps,

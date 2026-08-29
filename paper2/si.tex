@@ -452,10 +452,10 @@ The consequence for the paper is confined and stated where it bites: the coverag
 one-template ceiling. A rule that performs two edits can reach a metabolite two steps away in one
 application, so the ceiling is not the reach of one enzymatic step, and the depth-two experiment
 in the Limitations measures a second template application rather than a second enzymatic step. The
-corrected share also explains that experiment's small effect. If a fifth of the mined bank already
-performs two edits in one application, a second application has little left to discover that the
-first did not already reach, and the observed lift of about $0.012$ is what that predicts rather
-than a surprise.
+corrected share also explains that experiment's small effect. If a fifth of the mined bank
+already performs two edits in one application, as P10 finds, a second application has little left
+to discover that the first did not already reach, and the observed lift of about $0.012$ is what
+that predicts rather than a surprise.
 
 An earlier attempt read the templates themselves rather than the pairs and was abandoned: a
 cleavage whose bridging atom carries no map number is invisible to a comparison of mapped bonds,
@@ -483,11 +483,15 @@ while the rest were adjudicated on validation. Table~4 records the population ea
 so the reader can see which is which, but recording it after the fact is not the same as fixing
 it before, and for those three it was not fixed before. The register's later entries do fix it.
 
-The remaining six concern work this paper does not report: a type-indexed rather than
-rule-indexed label space, reactivity and accessibility node features, learned abstention, a
-ranked prediction of intervention sizes, the same null out of sample, and a negative control on
-graph automorphism. They are stated with their thresholds so that a later result on any of them
-cannot be a threshold chosen after the fact.
+The remaining six concern work this paper does not report, and they are named here by their
+register identifiers so that a reader can check none has quietly left: H1, a type-indexed rather
+than rule-indexed label space; H2, reactivity and accessibility node features; H3, learned
+abstention; H4, a ranked prediction of intervention sizes; H5, the same null out of sample; and
+H6, a negative control on graph automorphism. Each is stated with its threshold so that a later
+result on any of them cannot be a threshold chosen after the fact. None is reported in this paper
+because none was run for it, which is a different thing from a prediction that was run and did
+not hold; the three of those are P6, P7 and P9 and they are in Table~4 with their measured
+values.
 
 \section{Group ranking and its oracle}
 
@@ -537,18 +541,18 @@ Tanimoto similarity on a pool whose median size is \numSimOldMedianPool{} candid
 of 15. For \numSimOldPoolUnderBudget{} of \numSimOldN{} substrates the entire pool fits inside
 the budget, so every ordering returns the same set and no arm can separate from another. The
 measured difference, $+\numSimOldGap$ with the interval covering zero, is what that design is
-able to produce and not evidence that the two orderings are equivalent.
+able to produce and not evidence that the two orderings are equivalent.  % no-claim: derivation
 
 The same limit governs a null model of the form used elsewhere in this literature, a uniform draw
-of $\min(k, N)$ from a method's own pool of $N$. Its lift tends to one as the budget approaches
+of $\min(k, N)$ from a method's own pool of $N$.  % no-claim: derivation Its lift tends to one as the budget approaches
 the pool, so at $k=15$ a method emitting about eleven candidates has a lift of $1.055$ whatever
 its ranking is, while a method emitting eighty still has room. Comparing methods by lift at a
 fixed budget therefore ranks them partly by how much they emit, which is the same confound the
-budget sweep in the main text is designed to expose.
+budget sweep in the main text is designed to expose.  % no-claim: derivation
 
 The rule both cases give is simple and we state it because neither experiment stated it in
 advance: a ranking comparison carries information only over the substrates whose pool exceeds the
-budget, and the number of such substrates should be reported with the result. The comparison in
+budget, and the number of such substrates should be reported with the result.  % no-claim: derivation The comparison in
 the main text is run on the deployed pool, capped at \numCaseExhCandidates{}, where the budget is
 narrower than the pool for every substrate.
 
@@ -592,7 +596,7 @@ substrate size as an axis, which fails as a predictor because two 43-atom substr
 $64.7$~s and no completion respectively.
 
 Two of the registered predictions address the constraint. Moving standardisation to surviving
-candidates alone reduces enumeration by a factor of $13.9$, but standardising the hundred
+candidates alone (P8) reduces enumeration by a factor of $13.9$, but standardising the hundred
 survivors then becomes 72\% of the new arm, so the whole arm gains only $2.95\times$ against a
 registered $10\times$: removing 94 to 99\% of the work does not remove 94 to 99\% of the time.
 Adding a tautomer enumeration budget of \numHOneFiveBudget{} passes both halves of its

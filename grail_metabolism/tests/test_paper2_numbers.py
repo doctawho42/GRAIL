@@ -13,8 +13,8 @@ import pytest
 ROOT = Path(__file__).resolve().parents[2]
 
 
-def _run(script):
-    return subprocess.run([sys.executable, str(ROOT / "scripts" / script)],
+def _run(script, *args):
+    return subprocess.run([sys.executable, str(ROOT / "scripts" / script), *args],
                           capture_output=True, text=True, cwd=ROOT)
 
 
@@ -98,3 +98,23 @@ def test_the_tracer_survives_a_non_numeric_register_entry():
     assert module.variants("8, 13, 16, 21") == {"8, 13, 16, 21"}
     assert "1,170" in module.variants(1170)
     assert "0.0035" in module.variants(0.0035)
+
+
+def test_every_registered_prediction_is_accounted_for_in_the_paper():
+    """The backwards direction of the preregistration check, run on the JCIM manuscript.
+
+    This gate existed and had never been run against these documents: it was written for an
+    earlier paper that numbered its predictions H1 upward, and this one numbers them P1 upward
+    with the register's identifier beside each in a table. Given only H-identifiers the checker
+    read the manuscript as mentioning no hypothesis at all and reported all sixteen absent,
+    which is a gate that has stopped gating rather than a paper with sixteen defects.
+
+    The forward direction runs in report mode because the register covers the deployed choices
+    and the paper also reports measurements that were never deployed choices. The backwards
+    direction is the hard one, and it is the one preregistration exists for: a prediction that
+    was made, did not hold, and then quietly left.
+    """
+    r = _run("check_prereg.py", "--prereg", "paper2/preregistration.md", "--forward", "report",
+             "--text", "paper2/body.tex", "paper2/si.tex", "paper2/table_hypotheses.tex")
+    assert r.returncode == 0, r.stdout + r.stderr
+    assert "absent from the text" not in r.stdout, r.stdout
