@@ -136,9 +136,10 @@ The number of references differs by one between criteria, at \numPopulationRefer
 of them and one fewer for two, and the two cases have different causes. Under the first block of
 the InChIKey, the thiol and thiolate annotated for butyrylthiocholine merge, because that block is
 the skeleton hash and carries neither the protonation layer nor stereochemistry; the full InChIKey
-separates them in its final character. Under Tanimoto similarity of one, four carboxychromanol
-metabolites of $\alpha$-tocopherol collapse to one key, because they differ only in the length
-of a side chain and a 1024-bit Morgan fingerprint does not resolve homologues of that kind. Both
+separates them in its final character. Under Tanimoto similarity of one, two of the carboxychromanol
+metabolites of $\alpha$-tocopherol merge, because they differ by a single isoprenoid unit in the
+side chain and a Morgan fingerprint of fixed radius counts the substructures a repeating unit
+contains without counting how many times it repeats. Both
 merges are the criterion acting as declared rather than a defect, and both are the reason the
 count is reported per criterion rather than once.
 

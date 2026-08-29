@@ -22,20 +22,21 @@ def table():
     L = ["\\begin{table*}[t]", "\\centering", "\\small",
          "\\begin{tabular}{r" + "r" * len(arms) + "}", "\\toprule",
          "$k$ & " + " & ".join(LABEL[a] for a in arms) + " \\\\", "\\midrule"]
+    # Nothing is bolded. Marking the largest point estimate at every budget asserts a leader at
+    # the four budgets where the paper's own text says no arm separates, which is the discipline
+    # of Section 2.8 broken by typography. The levels are here; the verdicts are in Table S3.
     for k in ks:
-        best = max(arms, key=lambda a: rec[k][a])
-        cells = [(f"\\textbf{{{rec[k][a]:.4f}}}" if a == best else f"{rec[k][a]:.4f}")
-                 for a in arms]
-        L.append(f"{k} & " + " & ".join(cells) + " \\\\")
+        L.append(f"{k} & " + " & ".join(f"{rec[k][a]:.4f}" for a in arms) + " \\\\")
     L += ["\\midrule",
           "list & " + " & ".join(f"{out[a]}" for a in arms) + " \\\\",
           "\\bottomrule", "\\end{tabular}",
           "\\caption{Micro recall at each output budget on the "
           f"{d['population']['n']} substrates every method predicts on, carrying "
-          f"{int(d['population']['n_references'])} annotated metabolites. Bold marks the leader at "
-          "that budget. The last row is the mean number of candidates each method emits. A "
-          "prediction equal to the substrate is dropped before the budget for every method alike. "
-          "Paired-bootstrap intervals on every difference are in the released artifact.}",
+          f"{int(d['population']['n_references'])} annotated metabolites. No cell is marked as a "
+          "leader: at four of these budgets no arm separates from the strongest comparator, and "
+          "the verdicts are read from the paired intervals in Table~S3 rather than from these "
+          "levels. The last row is the mean number of candidates each method emits. A prediction "
+          "equal to the substrate is dropped before the budget for every method alike.}",
           "\\label{tab:sweep}", "\\end{table*}"]
     return "\n".join(L)
 

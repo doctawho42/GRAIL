@@ -46,6 +46,21 @@ N_BOOT, SEED = 10000, 0
 ARMS = ("fusion", "filter", "generator", "product", "random")
 
 
+def _perm(substrate, items):
+    """A random ordering of a pool that depends on the substrate and the pool, and nothing else.
+
+    Two scripts drawing from one seeded generator got different permutations because they consume
+    it in different orders, and permuting a generator-sorted list is not permuting a fusion-sorted
+    one even when the contents match. The pool is put in a canonical order by matching key before
+    the draw, so the control is identical wherever it is computed.
+    """
+    import numpy as _np
+    import zlib as _zlib
+    canon = sorted(items, key=lambda c: c.get("key") or c["smiles"])
+    rng = _np.random.default_rng(_zlib.crc32(substrate.encode()) ^ SEED)
+    return [canon[i] for i in rng.permutation(len(canon))]
+
+
 def load(spec):
     pools, refs = {}, {}
     for f in sorted(glob.glob(spec)) or [spec]:
@@ -67,7 +82,7 @@ def run(pools, refs, subs, label):
             "filter": sorted(keep, key=lambda c: -c["filter"]),
             "generator": sorted(keep, key=lambda c: -c["generator"]),
             "product": sorted(keep, key=lambda c: -(c["filter"] * c["generator"])),
-            "random": [keep[i] for i in rng.permutation(len(keep))],
+            "random": _perm(s, keep),
         }
         # The comparison table drops a prediction equal to the substrate before the budget bites,
         # for every method alike. An arm scored without that convention is not on the same axis:

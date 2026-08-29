@@ -48,6 +48,21 @@ CAP = 100
 N_BOOT, SEED = 10000, 0
 
 
+def _perm(substrate, items):
+    """A random ordering of a pool that depends on the substrate and the pool, and nothing else.
+
+    Two scripts drawing from one seeded generator got different permutations because they consume
+    it in different orders, and permuting a generator-sorted list is not permuting a fusion-sorted
+    one even when the contents match. The pool is put in a canonical order by matching key before
+    the draw, so the control is identical wherever it is computed.
+    """
+    import numpy as _np
+    import zlib as _zlib
+    canon = sorted(items, key=lambda c: c.get("key") or c["smiles"])
+    rng = _np.random.default_rng(_zlib.crc32(substrate.encode()) ^ SEED)
+    return [canon[i] for i in rng.permutation(len(canon))]
+
+
 def load(spec):
     pools, refs = {}, {}
     for f in sorted(glob.glob(spec)) or [spec]:
@@ -82,18 +97,20 @@ def run(pools, refs, subs, label, k_report):
         fs = fingerprint(s)
         sims = [DataStructs.TanimotoSimilarity(fs, fc) if (fs and fc) else 0.0
                 for fc in (fingerprint(c["smiles"]) for c in fused)]
+        # every arm is a list of candidates, not of indices, so the shared permutation and the
+        # score orderings are the same kind of object
+        by_sim = sorted(range(len(fused)), key=lambda i: -sims[i])
         order = {
-            "fusion": list(range(len(fused))),
-            "similarity": sorted(range(len(fused)), key=lambda i: -sims[i]),
-            "dissimilarity": sorted(range(len(fused)), key=lambda i: sims[i]),
-            "random": list(rng.permutation(len(fused))),
+            "fusion": list(fused),
+            "similarity": [fused[i] for i in by_sim],
+            "dissimilarity": [fused[i] for i in reversed(by_sim)],
+            "random": _perm(s, fused),
         }
         # the parent-drop convention of the comparison table, so every arm here sits on the
         # same axis as the tables it is read beside
         pk = _tautkey(s)
-        for a, idx in order.items():
-            keys = [fused[i]["key"] for i in idx
-                    if fused[i].get("key") and fused[i]["key"] != pk]
+        for a, seq in order.items():
+            keys = [c["key"] for c in seq if c.get("key") and c["key"] != pk]
             for k in KS:
                 hits[a][k].append(len(real & set(keys[:k])))
 

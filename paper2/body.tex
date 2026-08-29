@@ -133,7 +133,8 @@ contribute equally whatever their scales.
 This was registered as prediction P1 with a threshold of $+\numHSevenThreshold$ and evaluated on
 the validation draw, where it had not been selected: $+\numHSevenDiff$, 95\% CI
 $[+\numHSevenLo, +\numHSevenHi]$. On the set where the variant was chosen among four it gives
-$+0.109$, and the shrinkage to two thirds is the measured cost of that selection.
+$+0.109$ on the comparison set, and the shrinkage to two thirds is the measured cost of that
+selection.
 
 That figure is measured on the uncapped pool, because P1 was fixed and checked before the cap of
 P2 existed. On the pool the deployed system actually ranks the same contrast, same population and
@@ -163,8 +164,8 @@ The trained checkpoint records a rule budget of \numHOneZeroTopk{}, and the pool
 reports elsewhere apply the whole bank, so the two differ by a factor of \numBankRules{} to
 \numHOneZeroTopk{} in how much of the bank they consult. What the difference buys was registered
 as prediction P3 with a ceiling of $+\numHOneZeroThreshold$: on validation
-$+\numHOneZeroBought$, 95\% CI $[\numHOneZeroLo, +\numHOneZeroHi]$, mean pool
-\numHOneZeroPoolBank{} to \numHOneZeroPoolTrained{}.
+$+\numHOneZeroBought$, 95\% CI $[\numHOneZeroLo, +\numHOneZeroHi]$, mean pool on that draw
+\numHOneZeroPoolBank{} to \numHOneZeroPoolTrained{} candidates before deduplication.
 
 \input{table_modes}
 
@@ -180,7 +181,11 @@ Under the product combination the system emitted candidates scoring within $\alp
 leader. That rule does not transfer to a rank fusion, and the reason is structural: the worst
 candidate scores $0.88$ of the best under fusion against $0.016$ under the product, because a
 reciprocal-rank sum is a rank statistic without scale. At $\alpha = 0.5$ the rule admits
-$16.22$ candidates from a pool of $16.3$, truncating nothing.
+$16.22$ candidates from a pool of $16.3$ on the validation draw, truncating nothing. Three
+counts of the interactive arm's output appear in this paper and mean different things: the pool
+before deduplication (\numHOneZeroPoolTrained{} on the validation draw), the pool this emission
+grid reads ($16.3$ on the same draw), and the list finally emitted on the comparison set
+(\numOutputTrained{}).
 
 The deployed emission is therefore $\hat{C}(s)$ itself, ordered by fusion and truncated by
 nothing, so $|\hat{Y}_s| = |\hat{C}(s)|$ is set by the rule budget and the substrate's chemistry
@@ -239,8 +244,8 @@ applied here to the two choices this literature leaves undeclared.
 \centering
 \includegraphics[width=\columnwidth]{fig_sweep}
 \caption{Micro recall against output budget on the \numPopulationN{} substrates every method
-predicts on. Shading is read from the paired intervals and not by eye: red where GRAIL's better
-arm trails the strongest comparator with the interval excluding zero, blue where it leads with the
+predicts on. Shading is read from the paired intervals and not by eye: lavender where GRAIL's better
+arm trails the strongest comparator with the interval excluding zero, green where it leads with the
 interval excluding zero, unshaded where neither separates.}
 \label{fig:sweep}
 \end{figure}
@@ -266,10 +271,13 @@ MetaTox's and \numShortTrainedFiveZero{} of the interactive arm's are shorter th
 Against MetaTox alone, the incumbent web service this work set out to replace, the exhaustive mode
 leads at all nine budgets, with the interval excluding zero at seven of them.
 
-At a budget of $15$, where MetaTox emits about what the interactive arm emits, its macro recall is
-\numHOneOneRecallMetatoxOneFive{} against GRAIL's \numHOneOneRecallRule{}. Both emit alike there,
-so the annotation bias on precision does not explain the difference. That pair is macro; every
-figure in Table~\ref{tab:sweep} is micro.
+At a budget of $15$ MetaTox's macro recall is \numHOneOneRecallMetatoxOneFive{} against GRAIL's
+\numHOneOneRecallRule{}. The two do not emit alike: MetaTox returns
+\numOutputMetatox{} candidates on average against the interactive arm's \numOutputTrained{}, and
+at this budget \numShortMetatoxOneFive{} of \numPopulationN{} MetaTox lists fall short of it
+against \numShortTrainedOneFive{} of the interactive arm's. The annotation bias on precision
+therefore runs toward the arm emitting less, which is ours, so it does not explain a gap in the
+other direction. That pair is macro; every figure in Table~\ref{tab:sweep} is micro.
 
 \subsection{What each stage contributes to the order}
 
@@ -285,7 +293,8 @@ fusion separates from every one of them: $+\numRankCmpVsgenerator$
 $[+\numRankCmpVsgeneratorlo, +\numRankCmpVsgeneratorhi]$ over the generator alone,
 $+\numRankCmpVsfilter$ $[+\numRankCmpVsfilterlo, +\numRankCmpVsfilterhi]$ over the filter alone,
 and $+\numRankCmpVsproduct$ $[+\numRankCmpVsproductlo, +\numRankCmpVsproducthi]$ over their
-product. The validation draw gives the same ordering of arms.
+product. The validation draw ranks the arms in the same order by point estimate, with one
+difference noted below.
 
 Two qualifications belong with that. Which single scorer is better does not transfer: on the
 comparison set the generator's ordering beats the filter's, on validation the two do not separate.
@@ -401,7 +410,8 @@ The attribution is what a score cannot supply. All three phosphorylations fire a
 substrate atoms, the 5$^\prime$ hydroxymethyl, under three different rules, and the deamination
 fires on the pyrimidine ring; a user reading the output sees which transformation is claimed and
 where, and can reject a candidate on chemical grounds. All four rules here are mined rather than
-curated, so the half of the bank with no expert provenance is the half carrying this molecule.
+curated, so the three quarters of the bank with no expert provenance is the part carrying this
+molecule.
 
 \subsection{Where the design came from}
 
@@ -428,7 +438,8 @@ P6 trained a listwise group scorer applied to whole groups. Registered threshold
 on the comparison set, $\numHEightDiff$. The deficit splits into $\numHEightDesign$ from the
 design, block emission being worse than interleaved (\numHEightBlocked{} against
 \numHEightInterleaved{}), and $\numHEightModel$ from the model. Because the oracle is measured
-in blocked form, a third of the headroom it promises is the return of what the design spends.
+in blocked form, \numHEightDesignShare{} of the headroom it promises is the return of what the
+design spends.
 
 P5 used the same model untrained further, entering its group score as a third ranking in the same
 fusion. Measured $+\numHOneTwoDiff$, 95\% CI $[+\numHOneTwoLo, +\numHOneTwoHi]$. The effect is not

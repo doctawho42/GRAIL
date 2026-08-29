@@ -360,6 +360,11 @@ def build():
     n["seed.micro_mean"] = round(ms["micro_recall_at_15"]["mean"], 4)
     n["seed.micro_std"] = round(ms["micro_recall_at_15"]["std"], 4)
 
+    # what share of the oracle's headroom the blocked design gives back. This was "a third" while
+    # the headroom was believed to be 0.1729; the headroom is 0.3143 and the share moved with it,
+    # so it is computed here rather than written in words.
+    n["h8.design_share"] = round(abs(n["h8.design"]) / n["oracle.headroom"], 3)
+
     # BioTransformer: obtained and measured, but for template reach rather than as a ranked
     # predictor, which is why it carries no column in the comparison
     bt = art("decompose_biotransformer.json")
