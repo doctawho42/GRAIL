@@ -101,17 +101,13 @@ construction, in a direction that flatters them, and we report it rather than co
 
 \subsection{Overview}
 
-GRAIL predicts in three stages, each separately inspectable. A generator scores every rule in a bank of \numBankRules{} SMIRKS templates against the
-substrate. The selected rules are applied with RDKit 2022.09.5 to the substrate exactly as the
-corpus draws it, which is a declared choice and is swept in Section~\ref{SI-sec:si-presentation};
-their products are standardised \citep{Hahnke_2018, Mansouri_2024} and deduplicated. The corpus
-draws amides as imidic acids, so that choice is not neutral: rebuilding both arms with every
-substrate drawn as the standardiser would move \numDsweepMoved{} of \numDsweepCells{}
-arm-against-comparator verdicts, none of them a lead this paper claims, and the coverage ceiling
-on that population by $\numDsweepCeilingdiff$ with the interval covering zero. A filter then scores each
-(substrate, candidate) pair, and candidates are ordered by a rank fusion of the filter and
-generator orderings. Every emitted candidate carries the identity of the rule that produced it and
-the site at which it fired.
+GRAIL predicts in three stages, each separately inspectable. A generator scores every rule in a
+bank of \numBankRules{} SMIRKS templates against the substrate. The selected rules are then
+applied with RDKit 2022.09.5, and their products are
+standardised \citep{Hahnke_2018, Mansouri_2024} and deduplicated. A filter scores each
+(substrate, candidate) pair, and the candidates are ordered by a rank fusion of the filter's and
+the generator's orderings. Every emitted candidate carries the identity of the rule that produced
+it and the site at which it fired.
 
 A candidate reachable by several rules, or by one rule firing at several sites, receives a single
 score. Writing $R(c)$ for the rules that produce $c$ and $p_r$ for the generator's probability
@@ -157,18 +153,14 @@ The deployed combination is reciprocal rank fusion \citep{cormack2009},
 where $r_i(c)$ is the rank of $c$ under scorer $i$. Only positions enter, so the two opinions
 contribute equally whatever their scales.
 
-This was registered as prediction P1 with a threshold of $+\numHSevenThreshold$ and evaluated on
-the validation draw, where it had not been selected: $+\numHSevenDiff$, 95\% CI
-$[+\numHSevenLo, +\numHSevenHi]$. On the comparison set, where the variant was chosen among four,
-it gives $+0.109$, and the shrinkage to two thirds is the measured cost of that
-selection.
-
-That figure is measured on the uncapped pool, because P1 was fixed and checked before the cap of
-P2 existed. On the pool the deployed system actually ranks, the same contrast on the same
-population and at the same budget is $+\numHSevenDeployed$, 95\% CI
-$[+\numHSevenDeployedLo, +\numHSevenDeployedHi]$ (Table~\ref{SI-tab:si-ranking}). The cap and the fusion recover
-overlapping ground, so the deployed gain is the smaller one, and its point estimate clears the
-registered threshold of $+\numHSevenThreshold$ by four ten-thousandths.
+The change was registered as prediction P1, with a threshold of $+\numHSevenThreshold$ fixed
+before it was checked, and evaluated on a validation draw where the fusion had not been selected:
+$+\numHSevenDiff$ of recall, 95\% CI $[+\numHSevenLo, +\numHSevenHi]$. On the pool the deployed
+system ranks, which is capped, the same contrast is $+\numHSevenDeployed$
+(Table~\ref{SI-tab:si-ranking}): the cap and the fusion recover overlapping ground, so applying
+both gains less than the sum of the two. The Supporting Information gives the two figures on both
+populations with their intervals, and the cost of having selected the fusion rule on one of
+them.
 
 \subsection{Pool cap}
 
@@ -234,6 +226,13 @@ sides. The last is the
 default, because the references neither carry stereochemistry nor distinguish tautomers, and
 because standard identifiers normalise only a subset of tautomers \citep{Dhaked_2020}. All five
 are reported for every comparison.
+
+A third choice sits behind both: how the substrate itself is drawn. Templates are matched
+against the structure the corpus stores, and that corpus draws amides as imidic acids, so the
+choice is not neutral. Rebuilding both GRAIL arms with every substrate redrawn by the
+standardiser moves \numDsweepMoved{} of \numDsweepCells{} arm-against-comparator verdicts, none
+of them a lead claimed here, and the coverage ceiling on that population by
+$\numDsweepCeilingdiff$ with the interval covering zero.
 
 The number of candidates a system is permitted to return is the \emph{output budget}, written
 $k$, and it is the second declared axis. Recall at budget $k$ for substrate $s$ with references

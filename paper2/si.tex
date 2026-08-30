@@ -607,11 +607,19 @@ decimals, and the only cell that moved was the control at $k=1$, by $0.0015$.
 Table~\ref{tab:si-ranking} is the full budget sweep for the ranking ablation of the main text.
 Both learned scorers, their product, the deployed fusion and a seeded permutation order one pool.
 
-An earlier pair of ablations asked related questions of an earlier system: one compared the pair
-filter against the frequency prior and one measured the pool with rule selection switched off.
-Both ran on a 245-substrate subsample under the superseded product ordering, so their levels do
-not transfer to the configuration reported here, and they are superseded by this table and by the
-selection ablation below rather than repeated.
+Prediction P1 is the fusion-minus-product contrast in that table, and it is given on two
+populations. On the validation draw, where the fusion rule had not been selected, it is
+$+\numHSevenDeployed$ at a budget of 15. On the comparison set, where the rule was chosen among
+four candidates, the same contrast is larger; the difference between the two is the cost of that
+selection, and the intervals rather than the point estimates are what settle whether the two
+populations disagree. The figure quoted in the main text as $+\numHSevenDiff$ is measured on the
+uncapped pool, because P1 was fixed and checked before the pool cap of P2 existed; the capped
+figure is the smaller of the two because the cap and the fusion recover overlapping ground.
+
+Two earlier ablations of a superseded configuration, one comparing the pair filter against the
+frequency prior and one measuring the pool with rule selection switched off, ran on a
+245-substrate subsample under the product ordering. Their levels do not transfer to the
+configuration reported here. This table and the selection ablation below replace them.
 
 \subsection{Ties in the deployed ranking}
 
