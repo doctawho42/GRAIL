@@ -1,0 +1,41 @@
+\begin{table}[h]
+\centering\footnotesize
+\begin{tabular}{lll}
+\toprule
+ & generator & filter \\
+\midrule
+graph convolution & gatv2 & gatv2 \\
+encoder hidden dims & \texttt{[192, 256]} & \texttt{[192, 256, 128, 128, 64, 32]} \\
+rule encoder hidden dims & \texttt{[128, 192, 128]} & --- \\
+projection dim & 128 & --- \\
+scoring & retrieval & --- \\
+rule budget at training & 30 & --- \\
+unlabelled weight & 0.5 & --- \\
+ranking auxiliary weight & 0.25 & --- \\
+ranking margin & 0.45 & --- \\
+frequency prior weight & 0.4 & --- \\
+inapplicable-rule penalty & 7.5 & --- \\
+candidate aggregation & noisy\_or & --- \\
+optimiser & Adam & Adam \\
+learning rate & 0.0001 & 0.0001 \\
+batch size & 32 & 64 \\
+weight decay & 1e-06 & 1e-06 \\
+epochs requested & 8 & 8 \\
+epochs run & 8 & 8 \\
+early stopping patience & 7 & 7 \\
+non-negative PU risk & yes & no \\
+class prior & 0.75 & 0.75 \\
+decision threshold & 0.6 & 0.18 \\
+seed & 0 & 0 \\
+dropout & --- & 0.1 \\
+pairing mode & --- & single \\
+fingerprints & --- & yes \\
+\midrule
+training substrates & \multicolumn{2}{l}{5000} \\
+validation substrates & \multicolumn{2}{l}{300} \\
+sampling seed & \multicolumn{2}{l}{42} \\
+\bottomrule
+\end{tabular}
+\caption{The settings the two released checkpoints were trained under, read from the configuration each run recorded beside its weights. The two components come from different runs, named in the text.}
+\label{tab:si-hyperparameters}
+\end{table}

@@ -5,7 +5,7 @@
 # substrate against one annotation.
 set -euo pipefail
 cd "$(dirname "$0")/../.."
-PY=${PY:-/Users/nikitapolomosnov/anaconda3/envs/test_grail/bin/python}
+PY=${PY:-python}
 GEN=artifacts/full5000_implicit/checkpoints/generator.pt
 FLT=artifacts/full5000_priors/checkpoints/filter.pt
 N=${N:-291}

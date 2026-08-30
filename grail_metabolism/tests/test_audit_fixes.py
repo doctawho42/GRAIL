@@ -669,12 +669,13 @@ def test_contracting_an_expanded_product_never_leaves_an_unpaired_electron():
     instead of refilling the valence. A metabolite corpus contains no radicals, so such a product
     cannot match any reference and is lost silently.
 
-    How often that happens is a property of the installed RDKit, not of this code:
-    ``results/contraction_choice.json`` measured it at a fifth of all products under the release
-    ``requirements.txt`` pins, and it does not occur at all under 2024.09. So this asserts the
-    property that has to hold under every release -- the contraction that restores implicit
-    capacity never makes a radical -- and reports rather than requires the divergence, because a
-    test that demands a library bug fails when the library is fixed.
+    How often that happens is a property of the installed RDKit, not of this code. On the same
+    5,030 firings, 2022.09.5 -- the release ``requirements.txt`` pins -- strands a valence on 385
+    of the 2,157 products the one-call contraction parses, and 2024.09.6 strands none of 2,197:
+    the library was fixed in between. No number in the paper moves with it, because every reported
+    arm uses the contraction that restores capacity, which returns the same 2,206 products under
+    both. So this asserts the property that has to hold under every release, and reports rather
+    than requires the divergence, because a test demanding a library bug fails when it is fixed.
     """
     import sys
 

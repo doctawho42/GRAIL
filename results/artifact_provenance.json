@@ -50,6 +50,12 @@
    "status": "current"
   },
   {
+   "artifact": "results/comparator_provenance.json",
+   "script": "comparator_provenance.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
    "artifact": "results/composite_instruments.json",
    "script": "composite_instruments.py",
    "how": "recorded source digest",
@@ -251,6 +257,12 @@
    "status": "current"
   },
   {
+   "artifact": "results/hyperparameters.json",
+   "script": "hyperparameters.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
    "artifact": "results/leakage_fix_report.json",
    "script": "audit_leakage.py",
    "how": "recorded source digest",
@@ -259,6 +271,12 @@
   {
    "artifact": "results/mode_timings.json",
    "script": "mode_timings.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
+   "artifact": "results/multiplicity.json",
+   "script": "multiplicity.py",
    "how": "recorded source digest",
    "status": "current"
   },
@@ -452,7 +470,7 @@
    "status": "current"
   }
  ],
- "n_pinned": 74,
+ "n_pinned": 77,
  "n_pinned_stale": 0,
  "sweep": {
   "unstamped": 113,

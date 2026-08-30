@@ -482,8 +482,13 @@ log-odds that the rule yields a true metabolite estimated from training statisti
 $7.5$ is subtracted for rules whose SMARTS does not match, which masks inapplicable rules before
 the sigmoid.
 
-Training is multi-label rule classification with a margin-ranking auxiliary at weight $0.25$ and
-margin $0.45$. Optimisation uses Adam at $10^{-4}$ with early stopping on validation.
+Training is multi-label rule classification with a margin-ranking auxiliary. Every setting either
+component was trained under is in Table~\ref{tab:si-hyperparameters}, read from the configuration
+each run recorded beside its weights rather than transcribed. The two released checkpoints come
+from different runs: the generator from the run whose label matrix was built in the firing
+convention, the filter from the earlier run, whose filter settings the later one does not change.
+
+\input{si_table_hyperparameters}
 
 \subsection{Filter}
 
@@ -793,7 +798,19 @@ SyGMa 1.1.0 is taken from the installed module and run with the scenario
 \texttt{[[phase1,\,1],}\allowbreak\texttt{[phase2,\,1]]}, one cycle of each ruleset, which is
 the worked example in that version's own documentation. It is stated because it is the one comparator knob that sets how many candidates a
 system may emit, and a paper arguing that such a knob must be declared should declare it.
-MetaTox and MetaPredictor predictions are frozen per substrate and released with the code.
+
+Only \numComparatorsVersionedWord{} of the \numComparatorsNWord{} comparators expose a version
+string at all. SyGMa reports 1.1.0 from the installed package and BioTransformer 3.0 carries the
+build stamp \numComparatorsBiotransformerBuild{} in its jar, whose digest is pinned. MetaTox is a web service that publishes
+no version to a user, and MetaPredictor is a source checkout with no release tag. For those two
+the record is what can be pinned rather than what would be convenient to claim: the exact
+submission set, the returned predictions frozen per substrate, their digests, and the date each
+entered this repository, which bounds when the run happened. Those dates are
+\numComparatorsMetatoxDate{} for MetaTox and \numComparatorsMetapredictorDate{} for
+MetaPredictor, against \numComparatorsSygmaDate{} and \numComparatorsBiotransformerDate{} for the
+other two. A comparison against a service cannot be made reproducible by the party running the
+comparison; declaring what it can pin, and naming what it cannot, is the whole of what is
+available, and the shortfall belongs in the record rather than out of it.
 
 MetaTox is the one comparator whose configuration this work can say more about than a version
 string. Its first author \citep{Rudik_2017} is a co-author of this paper and reviewed the

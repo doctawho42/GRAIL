@@ -279,9 +279,12 @@ favour one over another. It does not: the largest effect on recall anywhere in t
 \numPdropMaxEffect{} and no cell separates from zero (Table~\ref{SI-tab:si-parentdrop}).
 
 Every interval in this paper is a per-comparison 95\% interval with no family-wise adjustment.
-The sweep is \numCritBudgets{} budgets wide and Table~\ref{SI-tab:si-criterion} is \numCritCriteria{} criteria deep, so
-treating the grid as a single family would require a corresponding discount; the narrowest lead
-claimed here, at $k=30$ against MetaTox, is the cell that would not survive such a correction.
+Both readings are reported. Treating the whole sweep as one family of \numHolmTests{} tests, two
+arms against three comparators at every budget, and applying Holm's correction to bootstrap
+$p$-values from the same resamples, \numHolmSurviving{} of the \numHolmSeparating{} cells that
+separate per comparison still separate; the \numHolmChangedWord{} that do not are marked in
+Table~\ref{SI-tab:si-intervals}. \numHolmLeadsremovedWord{} of them are leads, and among the leads
+claimed here only the narrowest, at $k=30$ against MetaTox, is one of them.
 
 No single budget is privileged. A claim that the system leads is made for a cell only where that
 cell's interval excludes zero, and where an ordering is not established the table says so.
@@ -317,8 +320,8 @@ $10$, where MetaPredictor leads, nor at $k=15$ and $20$. GRAIL's exhaustive mode
 comparators with the interval excluding zero at $k=30$ and $k=50$. One of those six cells is
 marginal, and it is named here rather than three sections later: the lead over MetaTox at $k=30$,
 $+\numMarginMarginalgap$ with the interval
-$[+\numMarginMarginallo, +\numMarginMarginalhi]$, is the only one of the six that a family-wise
-correction over the grid would remove. The other five sit far from that boundary.
+$[+\numMarginMarginallo, +\numMarginMarginalhi]$, is the only one of the six a family-wise
+correction over the sweep removes. The other five survive it.
 
 The two banks in this comparison are not independent. \numSygmaInside{} of SyGMa's
 \numSygmaRules{} published rules, \numSygmaSharePct{} of them, are present verbatim in the bank
@@ -663,8 +666,9 @@ $\numGapTrainedmetatoxThreeZero$
 $[\numGapTrainedmetatoxThreeZeroLo, \numGapTrainedmetatoxThreeZeroHi]$ at $30$, and
 $\numGapTrainedmetatoxFiveZero$
 $[\numGapTrainedmetatoxFiveZeroLo, \numGapTrainedmetatoxFiveZeroHi]$ at $50$. All three intervals
-exclude zero. A service deployed in this mode would recover less than the system it replaces
-wherever it answers with twenty candidates or more.
+exclude zero, and the two at $30$ and $50$ do so under a family-wise correction over the whole
+sweep as well; the one at $20$ does not. A service deployed in this mode would recover less than
+the system it replaces wherever it answers with thirty candidates or more.
 
 The cause is the pool and not the ranking. The interactive mode returns
 \numOutputTrained{} candidates on average against MetaTox's \numOutputMetatox, and at $k = 20$

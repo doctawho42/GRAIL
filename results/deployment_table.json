@@ -2,8 +2,8 @@
  "provenance": {
   "script": "deployment_table.py",
   "script_path": "scripts/typed_edit/deployment_table.py",
-  "source_sha256": "4a6fb99854bd6a1ad9179d64c6681f22020c9ff15334a61e87c2a7869c10eeae",
-  "git_commit": "a17dbadd7ef45b29dd9e50d62991b0886c101efb",
+  "source_sha256": "d255862fda89d3520a7f75e0152b4d28734b29eaf078ef2cab0dd0e4edb67170",
+  "git_commit": "5abbf8e2f9244314c67ac7a9541429b97adfcd4f",
   "git_dirty": true
  },
  "population": {
@@ -106,7 +106,8 @@
      -0.0074,
      0.0382
     ],
-    "excludes_zero": false
+    "excludes_zero": false,
+    "p_bootstrap": 0.21198
    },
    "whole bank - metatox": {
     "gap": 0.0496,
@@ -114,7 +115,8 @@
      0.0262,
      0.0743
     ],
-    "excludes_zero": true
+    "excludes_zero": true,
+    "p_bootstrap": 0.0002
    },
    "whole bank - sygma": {
     "gap": -0.0632,
@@ -122,7 +124,8 @@
      -0.093,
      -0.0344
     ],
-    "excludes_zero": true
+    "excludes_zero": true,
+    "p_bootstrap": 0.0002
    },
    "whole bank - metapredictor": {
     "gap": -0.0496,
@@ -130,7 +133,8 @@
      -0.0783,
      -0.0228
     ],
-    "excludes_zero": true
+    "excludes_zero": true,
+    "p_bootstrap": 0.0004
    },
    "trained budget - metatox": {
     "gap": 0.0647,
@@ -138,7 +142,8 @@
      0.0399,
      0.091
     ],
-    "excludes_zero": true
+    "excludes_zero": true,
+    "p_bootstrap": 0.0002
    },
    "trained budget - sygma": {
     "gap": -0.0481,
@@ -146,7 +151,8 @@
      -0.0761,
      -0.0207
     ],
-    "excludes_zero": true
+    "excludes_zero": true,
+    "p_bootstrap": 0.0006
    },
    "trained budget - metapredictor": {
     "gap": -0.0346,
@@ -154,7 +160,8 @@
      -0.0615,
      -0.0079
     ],
-    "excludes_zero": true
+    "excludes_zero": true,
+    "p_bootstrap": 0.0142
    }
   },
   "3": {
@@ -164,7 +171,8 @@
      -0.0163,
      0.0429
     ],
-    "excludes_zero": false
+    "excludes_zero": false,
+    "p_bootstrap": 0.38776
    },
    "whole bank - metatox": {
     "gap": 0.0947,
@@ -172,7 +180,8 @@
      0.0577,
      0.1335
     ],
-    "excludes_zero": true
+    "excludes_zero": true,
+    "p_bootstrap": 0.0002
    },
    "whole bank - sygma": {
     "gap": -0.0617,
@@ -180,7 +189,8 @@
      -0.0973,
      -0.0261
     ],
-    "excludes_zero": true
+    "excludes_zero": true,
+    "p_bootstrap": 0.0004
    },
    "whole bank - metapredictor": {
     "gap": -0.0496,
@@ -188,7 +198,8 @@
      -0.0864,
      -0.0137
     ],
-    "excludes_zero": true
+    "excludes_zero": true,
+    "p_bootstrap": 0.0086
    },
    "trained budget - metatox": {
     "gap": 0.1083,
@@ -196,7 +207,8 @@
      0.072,
      0.1461
     ],
-    "excludes_zero": true
+    "excludes_zero": true,
+    "p_bootstrap": 0.0002
    },
    "trained budget - sygma": {
     "gap": -0.0481,
@@ -204,7 +216,8 @@
      -0.082,
      -0.0155
     ],
-    "excludes_zero": true
+    "excludes_zero": true,
+    "p_bootstrap": 0.0042
    },
    "trained budget - metapredictor": {
     "gap": -0.0361,
@@ -212,7 +225,8 @@
      -0.0736,
      0.0
     ],
-    "excludes_zero": false
+    "excludes_zero": false,
+    "p_bootstrap": 0.05539
    }
   },
   "5": {
@@ -222,7 +236,8 @@
      -0.0207,
      0.0408
     ],
-    "excludes_zero": false
+    "excludes_zero": false,
+    "p_bootstrap": 0.52815
    },
    "whole bank - metatox": {
     "gap": 0.0917,
@@ -230,7 +245,8 @@
      0.0504,
      0.1341
     ],
-    "excludes_zero": true
+    "excludes_zero": true,
+    "p_bootstrap": 0.0002
    },
    "whole bank - sygma": {
     "gap": -0.0647,
@@ -238,7 +254,8 @@
      -0.1009,
      -0.0267
     ],
-    "excludes_zero": true
+    "excludes_zero": true,
+    "p_bootstrap": 0.001
    },
    "whole bank - metapredictor": {
     "gap": -0.0451,
@@ -246,7 +263,8 @@
      -0.0889,
      -0.0031
     ],
-    "excludes_zero": true
+    "excludes_zero": true,
+    "p_bootstrap": 0.0402
    },
    "trained budget - metatox": {
     "gap": 0.1023,
@@ -254,7 +272,8 @@
      0.062,
      0.1443
     ],
-    "excludes_zero": true
+    "excludes_zero": true,
+    "p_bootstrap": 0.0002
    },
    "trained budget - sygma": {
     "gap": -0.0541,
@@ -262,7 +281,8 @@
      -0.0899,
      -0.0199
     ],
-    "excludes_zero": true
+    "excludes_zero": true,
+    "p_bootstrap": 0.0028
    },
    "trained budget - metapredictor": {
     "gap": -0.0346,
@@ -270,7 +290,8 @@
      -0.0775,
      0.0066
     ],
-    "excludes_zero": false
+    "excludes_zero": false,
+    "p_bootstrap": 0.11399
    }
   },
   "8": {
@@ -280,7 +301,8 @@
      -0.0446,
      0.0171
     ],
-    "excludes_zero": false
+    "excludes_zero": false,
+    "p_bootstrap": 0.42876
    },
    "whole bank - metatox": {
     "gap": 0.1038,
@@ -288,7 +310,8 @@
      0.0619,
      0.1463
     ],
-    "excludes_zero": true
+    "excludes_zero": true,
+    "p_bootstrap": 0.0002
    },
    "whole bank - sygma": {
     "gap": -0.012,
@@ -296,7 +319,8 @@
      -0.0496,
      0.026
     ],
-    "excludes_zero": false
+    "excludes_zero": false,
+    "p_bootstrap": 0.56234
    },
    "whole bank - metapredictor": {
     "gap": -0.0195,
@@ -304,7 +328,8 @@
      -0.0636,
      0.023
     ],
-    "excludes_zero": false
+    "excludes_zero": false,
+    "p_bootstrap": 0.39276
    },
    "trained budget - metatox": {
     "gap": 0.0902,
@@ -312,7 +337,8 @@
      0.0488,
      0.1322
     ],
-    "excludes_zero": true
+    "excludes_zero": true,
+    "p_bootstrap": 0.0002
    },
    "trained budget - sygma": {
     "gap": -0.0256,
@@ -320,7 +346,8 @@
      -0.062,
      0.0113
     ],
-    "excludes_zero": false
+    "excludes_zero": false,
+    "p_bootstrap": 0.18298
    },
    "trained budget - metapredictor": {
     "gap": -0.0331,
@@ -328,7 +355,8 @@
      -0.0785,
      0.0112
     ],
-    "excludes_zero": false
+    "excludes_zero": false,
+    "p_bootstrap": 0.16098
    }
   },
   "10": {
@@ -338,7 +366,8 @@
      -0.0498,
      0.0117
     ],
-    "excludes_zero": false
+    "excludes_zero": false,
+    "p_bootstrap": 0.24458
    },
    "whole bank - metatox": {
     "gap": 0.0647,
@@ -346,7 +375,8 @@
      0.0232,
      0.1057
     ],
-    "excludes_zero": true
+    "excludes_zero": true,
+    "p_bootstrap": 0.002
    },
    "whole bank - sygma": {
     "gap": -0.003,
@@ -354,7 +384,8 @@
      -0.0413,
      0.0352
     ],
-    "excludes_zero": false
+    "excludes_zero": false,
+    "p_bootstrap": 0.89611
    },
    "whole bank - metapredictor": {
     "gap": -0.018,
@@ -362,7 +393,8 @@
      -0.0605,
      0.0232
     ],
-    "excludes_zero": false
+    "excludes_zero": false,
+    "p_bootstrap": 0.41736
    },
    "trained budget - metatox": {
     "gap": 0.0451,
@@ -370,7 +402,8 @@
      0.0031,
      0.086
     ],
-    "excludes_zero": true
+    "excludes_zero": true,
+    "p_bootstrap": 0.0406
    },
    "trained budget - sygma": {
     "gap": -0.0226,
@@ -378,7 +411,8 @@
      -0.0585,
      0.0137
     ],
-    "excludes_zero": false
+    "excludes_zero": false,
+    "p_bootstrap": 0.23398
    },
    "trained budget - metapredictor": {
     "gap": -0.0376,
@@ -386,7 +420,8 @@
      -0.0816,
      0.0071
     ],
-    "excludes_zero": false
+    "excludes_zero": false,
+    "p_bootstrap": 0.10619
    }
   },
   "15": {
@@ -396,7 +431,8 @@
      -0.0876,
      -0.0235
     ],
-    "excludes_zero": true
+    "excludes_zero": true,
+    "p_bootstrap": 0.0012
    },
    "whole bank - metatox": {
     "gap": 0.0211,
@@ -404,7 +440,8 @@
      -0.0185,
      0.0611
     ],
-    "excludes_zero": false
+    "excludes_zero": false,
+    "p_bootstrap": 0.31677
    },
    "whole bank - sygma": {
     "gap": 0.0511,
@@ -412,7 +449,8 @@
      0.016,
      0.0885
     ],
-    "excludes_zero": true
+    "excludes_zero": true,
+    "p_bootstrap": 0.0038
    },
    "whole bank - metapredictor": {
     "gap": 0.0556,
@@ -420,7 +458,8 @@
      0.0143,
      0.0956
     ],
-    "excludes_zero": true
+    "excludes_zero": true,
+    "p_bootstrap": 0.0114
    },
    "trained budget - metatox": {
     "gap": -0.0346,
@@ -428,7 +467,8 @@
      -0.0762,
      0.0065
     ],
-    "excludes_zero": false
+    "excludes_zero": false,
+    "p_bootstrap": 0.11339
    },
    "trained budget - sygma": {
     "gap": -0.0045,
@@ -436,7 +476,8 @@
      -0.0408,
      0.0326
     ],
-    "excludes_zero": false
+    "excludes_zero": false,
+    "p_bootstrap": 0.85851
    },
    "trained budget - metapredictor": {
     "gap": 0.0,
@@ -444,7 +485,8 @@
      -0.0452,
      0.0458
     ],
-    "excludes_zero": false
+    "excludes_zero": false,
+    "p_bootstrap": 1.0
    }
   },
   "20": {
@@ -454,7 +496,8 @@
      -0.1262,
      -0.0574
     ],
-    "excludes_zero": true
+    "excludes_zero": true,
+    "p_bootstrap": 0.0002
    },
    "whole bank - metatox": {
     "gap": 0.0271,
@@ -462,7 +505,8 @@
      -0.0103,
      0.0647
     ],
-    "excludes_zero": false
+    "excludes_zero": false,
+    "p_bootstrap": 0.16458
    },
    "whole bank - sygma": {
     "gap": 0.0797,
@@ -470,7 +514,8 @@
      0.0455,
      0.1162
     ],
-    "excludes_zero": true
+    "excludes_zero": true,
+    "p_bootstrap": 0.0002
    },
    "whole bank - metapredictor": {
     "gap": 0.0992,
@@ -478,7 +523,8 @@
      0.0571,
      0.1403
     ],
-    "excludes_zero": true
+    "excludes_zero": true,
+    "p_bootstrap": 0.0002
    },
    "trained budget - metatox": {
     "gap": -0.0647,
@@ -486,7 +532,8 @@
      -0.105,
      -0.0251
     ],
-    "excludes_zero": true
+    "excludes_zero": true,
+    "p_bootstrap": 0.0016
    },
    "trained budget - sygma": {
     "gap": -0.012,
@@ -494,7 +541,8 @@
      -0.0501,
      0.0272
     ],
-    "excludes_zero": false
+    "excludes_zero": false,
+    "p_bootstrap": 0.57314
    },
    "trained budget - metapredictor": {
     "gap": 0.0075,
@@ -502,7 +550,8 @@
      -0.0373,
      0.0526
     ],
-    "excludes_zero": false
+    "excludes_zero": false,
+    "p_bootstrap": 0.77932
    }
   },
   "30": {
@@ -512,7 +561,8 @@
      -0.1844,
      -0.114
     ],
-    "excludes_zero": true
+    "excludes_zero": true,
+    "p_bootstrap": 0.0002
    },
    "whole bank - metatox": {
     "gap": 0.0376,
@@ -520,7 +570,8 @@
      0.0046,
      0.0723
     ],
-    "excludes_zero": true
+    "excludes_zero": true,
+    "p_bootstrap": 0.0278
    },
    "whole bank - sygma": {
     "gap": 0.1323,
@@ -528,7 +579,8 @@
      0.0976,
      0.169
     ],
-    "excludes_zero": true
+    "excludes_zero": true,
+    "p_bootstrap": 0.0002
    },
    "whole bank - metapredictor": {
     "gap": 0.1594,
@@ -536,7 +588,8 @@
      0.117,
      0.201
     ],
-    "excludes_zero": true
+    "excludes_zero": true,
+    "p_bootstrap": 0.0002
    },
    "trained budget - metatox": {
     "gap": -0.1113,
@@ -544,7 +597,8 @@
      -0.1523,
      -0.0706
     ],
-    "excludes_zero": true
+    "excludes_zero": true,
+    "p_bootstrap": 0.0002
    },
    "trained budget - sygma": {
     "gap": -0.0165,
@@ -552,7 +606,8 @@
      -0.0556,
      0.0233
     ],
-    "excludes_zero": false
+    "excludes_zero": false,
+    "p_bootstrap": 0.43716
    },
    "trained budget - metapredictor": {
     "gap": 0.0105,
@@ -560,7 +615,8 @@
      -0.034,
      0.0555
     ],
-    "excludes_zero": false
+    "excludes_zero": false,
+    "p_bootstrap": 0.67513
    }
   },
   "50": {
@@ -570,7 +626,8 @@
      -0.2565,
      -0.1713
     ],
-    "excludes_zero": true
+    "excludes_zero": true,
+    "p_bootstrap": 0.0002
    },
    "whole bank - metatox": {
     "gap": 0.0767,
@@ -578,7 +635,8 @@
      0.0455,
      0.1084
     ],
-    "excludes_zero": true
+    "excludes_zero": true,
+    "p_bootstrap": 0.0002
    },
    "whole bank - sygma": {
     "gap": 0.1925,
@@ -586,7 +644,8 @@
      0.152,
      0.2336
     ],
-    "excludes_zero": true
+    "excludes_zero": true,
+    "p_bootstrap": 0.0002
    },
    "whole bank - metapredictor": {
     "gap": 0.2241,
@@ -594,7 +653,8 @@
      0.1734,
      0.2734
     ],
-    "excludes_zero": true
+    "excludes_zero": true,
+    "p_bootstrap": 0.0002
    },
    "trained budget - metatox": {
     "gap": -0.1368,
@@ -602,7 +662,8 @@
      -0.1846,
      -0.0917
     ],
-    "excludes_zero": true
+    "excludes_zero": true,
+    "p_bootstrap": 0.0002
    },
    "trained budget - sygma": {
     "gap": -0.0211,
@@ -610,7 +671,8 @@
      -0.0597,
      0.019
     ],
-    "excludes_zero": false
+    "excludes_zero": false,
+    "p_bootstrap": 0.31337
    },
    "trained budget - metapredictor": {
     "gap": 0.0105,
@@ -618,7 +680,8 @@
      -0.034,
      0.0555
     ],
-    "excludes_zero": false
+    "excludes_zero": false,
+    "p_bootstrap": 0.67513
    }
   }
  },

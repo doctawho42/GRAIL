@@ -137,6 +137,9 @@ PINNED = {
     # commit that added them, which the sweep reports as inferred rather than as current.
     "results/coverage_gap_types.json": "scripts/coverage_gap_types.py",
     "results/ceiling_instrument_agreement.json": "scripts/typed_edit/ceiling_instrument_agreement.py",
+    "results/comparator_provenance.json": "scripts/typed_edit/comparator_provenance.py",
+    "results/hyperparameters.json": "scripts/typed_edit/hyperparameters.py",
+    "results/multiplicity.json": "scripts/typed_edit/multiplicity.py",
     "results/decompose_biotransformer.json": "scripts/decompose_biotransformer.py",
     "results/external_overlap_audit.json": "scripts/external_overlap_audit.py",
     "results/hydrogen_dispatch__clean_test.json": "scripts/hydrogen_dispatch.py",

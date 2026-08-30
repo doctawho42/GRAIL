@@ -171,6 +171,44 @@ def si_ranking():
             "\\label{tab:si-ranking}\n\\end{table}\n")
 
 
+def si_hyperparameters():
+    """Every setting the two released checkpoints were trained under.
+
+    Read from results/hyperparameters.json, which reads the config each run wrote beside its
+    weights, so the table cannot drift from the checkpoints it describes.
+    """
+    d = art("hyperparameters.json")
+    gen, fil = d["components"]["generator"], d["components"]["filter"]
+    keys = [k for k in gen if k != "run"] + [k for k in fil if k != "run" and k not in gen]
+
+    def cell(row, key):
+        if key not in row:
+            return "---"
+        value = row[key]
+        if isinstance(value, bool):
+            return "yes" if value else "no"
+        if value is None:
+            return "---"
+        text = str(value).replace("_", "\\_")
+        return f"\\texttt{{{text}}}" if any(c in text for c in "[]") else text
+
+    lines = ["\\begin{table}[h]", "\\centering\\footnotesize",
+             "\\begin{tabular}{lll}", "\\toprule",
+             " & generator & filter \\\\", "\\midrule"]
+    for key in keys:
+        lines.append(f"{key} & {cell(gen, key)} & {cell(fil, key)} \\\\")
+    lines += ["\\midrule",
+              f"training substrates & \\multicolumn{{2}}{{l}}{{{d['data']['training substrates']}}} \\\\",
+              f"validation substrates & \\multicolumn{{2}}{{l}}{{{d['data']['validation substrates']}}} \\\\",
+              f"sampling seed & \\multicolumn{{2}}{{l}}{{{d['data']['sampling seed']}}} \\\\",
+              "\\bottomrule", "\\end{tabular}",
+              "\\caption{The settings the two released checkpoints were trained under, read from "
+              "the configuration each run recorded beside its weights. The two components come "
+              "from different runs, named in the text.}",
+              "\\label{tab:si-hyperparameters}", "\\end{table}", ""]
+    return "\n".join(lines)
+
+
 def si_short():
     """How many of each arm's lists are shorter than the budget, at every budget.
 
@@ -250,6 +288,7 @@ def si_intervals():
     against a 470 pt page; three comparator columns fit.
     """
     d = art("deployment_table.json")
+    mult = art("multiplicity.json")
     con = d["contrasts"]
     ks = sorted((int(k) for k in con), key=int)
     comps = [("metatox", "MetaTox"), ("sygma", "SyGMa"), ("metapredictor", "MetaPredictor")]
@@ -267,7 +306,15 @@ def si_intervals():
                 c = con[str(k)].get(f"{arm} - {key}")
                 if c is None:
                     cells.append("---"); continue
+                # A second mark for the family-wise reading: * separates per comparison,
+                # dagger says it does not survive Holm over the whole sweep.
+                key_cell = f"{arm} - {key} @ {k}"
+                holm = mult["cells"].get(key_cell, {})
                 star = "$^{*}$" if c["excludes_zero"] else "\\phantom{$^{*}$}"
+                if c["excludes_zero"] and holm.get("separates_after_holm") is False:
+                    star += "$^{\\dagger}$"
+                else:
+                    star += "\\phantom{$^{\\dagger}$}"
                 cells.append(f"{trim(c['gap'])}{star} [{trim(c['ci95'][0])}, {trim(c['ci95'][1])}]")
             rows.append(f"${k}$ & " + " & ".join(cells) + " \\\\")
         blocks.append(f"\\multicolumn{{4}}{{l}}{{\\emph{{GRAIL {label}}} minus}} \\\\\n"
@@ -284,7 +331,9 @@ def si_intervals():
             "the paper claims a lead or a trail, and the verdicts in the main text and in "
             "Figure~\\ref{MS-fig:sweep} are read from these and from nothing else. The estimator is "
             "Equation~\\ref{MS-eq:bootstrap} at "
-            "$B = 10\\,000$ resamples, seed 0.}\n"
+            "$B = 10\\,000$ resamples, seed 0. $^{\\dagger}$ marks a cell that separates per "
+            "comparison but not under Holm's correction over the whole sweep, a family of "
+            f"{mult['n_tests']} tests.}}\n"
             "\\label{tab:si-intervals}\n\\end{table}\n")
 
 
@@ -369,7 +418,8 @@ if __name__ == "__main__":
                      ("si_table_precision", si_precision),
                      ("si_table_parentdrop", si_parentdrop),
                      ("si_table_dialect", si_dialect),
-                     ("si_table_short", si_short)):
+                     ("si_table_short", si_short),
+                     ("si_table_hyperparameters", si_hyperparameters)):
         try:
             (OUT / f"{name}.tex").write_text(fn())
             print(f"  wrote paper2/{name}.tex")

@@ -116,9 +116,16 @@ def main() -> int:
         d = a - b
         bt = d[idx].sum(axis=1) / denom
         lo, hi = float(np.quantile(bt, .025)), float(np.quantile(bt, .975))
+        # A two-sided bootstrap p-value from the same replicates the interval is read from, so a
+        # family-wise correction over the grid can be computed rather than asserted. The +1 in
+        # numerator and denominator keeps it strictly positive at B resamples, which is what
+        # stops a Holm step from dividing by an exact zero.
+        below = float((bt <= 0).sum()); above = float((bt >= 0).sum())
+        pval = min(1.0, 2.0 * (min(below, above) + 1.0) / (len(bt) + 1.0))
         return {"gap": round(float(d.sum() / U.sum()), 4),
                 "ci95": [round(lo, 4), round(hi, 4)],
-                "excludes_zero": bool(lo > 0 or hi < 0)}
+                "excludes_zero": bool(lo > 0 or hi < 0),
+                "p_bootstrap": round(pval, 5)}
 
     table, contrasts, exhausted = {}, {}, {}
     for k in KS:

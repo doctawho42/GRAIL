@@ -187,6 +187,30 @@ def build():
     # Two loops measure the ceiling under the same hydrogen convention and return different
     # counts. The paper reports the deployed loop's; the audit loop's is what the two conventions
     # are compared with. The difference is small and is printed rather than chosen between.
+    # the family-wise reading of the same data, so the sentence about it is computed
+    mult = art("multiplicity.json")
+    n["holm.tests"] = mult["n_tests"]
+    n["holm.separating"] = mult["n_separating_per_comparison"]
+    n["holm.surviving"] = mult["n_separating_after_holm"]
+    n["holm.changed"] = len(mult["cells_whose_verdict_the_correction_changes"])
+    n["holm.leadsremoved"] = len(mult["leads_the_correction_removes"])
+    for tag, cell in (("bankmetatoxthirty", "whole bank - metatox @ 30"),
+                      ("trainedmetatoxtwenty", "trained budget - metatox @ 20"),
+                      ("trainedmetatoxthirty", "trained budget - metatox @ 30"),
+                      ("trainedmetatoxfifty", "trained budget - metatox @ 50")):
+        n[f"holm.{tag}"] = "yes" if mult["cells"][cell]["separates_after_holm"] else "no"
+
+    # what the repository can prove about each comparator, counted rather than asserted
+    cp = art("comparator_provenance.json")
+    n["comparators.n"] = cp["n_comparators"]
+    n["comparators.versioned"] = cp["n_carrying_a_version_string"]
+    for tag, name in (("sygma", "SyGMa"), ("metatox", "MetaTox"),
+                      ("metapredictor", "MetaPredictor"), ("biotransformer", "BioTransformer")):
+        row = cp["comparators"][name]
+        n[f"comparators.{tag}.date"] = row["predictions_first_in_the_repository"]
+        if row.get("build"):
+            n[f"comparators.{tag}.build"] = row["build"]
+
     agr = art("ceiling_instrument_agreement.json")
     n["ceilagree.disagreement"] = agr["disagreement_between_instruments_on_the_same_convention"]
     n["ceilagree.spread"] = agr["spread_across_all_four_counts"]

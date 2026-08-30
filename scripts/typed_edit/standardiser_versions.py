@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import argparse
 import glob
+import os
 import json
 import subprocess
 import sys
@@ -67,10 +68,16 @@ print(json.dumps({"rdkit": rdkit.__version__, "probes": out}))
 
 
 def interpreters() -> list[str]:
-    found = sorted(set(glob.glob("/Users/nikitapolomosnov/anaconda3/envs/*/bin/python")
-                       + glob.glob("/Users/nikitapolomosnov/anaconda3/bin/python")
-                       + glob.glob(str(Path(sys.executable)))))
-    return found
+    # Every interpreter this machine offers, found by expanding the usual conda layout under the
+    # running user's home rather than one hard-coded home. The interpreter running this script is
+    # always included, so the probe returns something on a machine with no conda at all.
+    roots = os.environ.get("GRAIL_INTERPRETER_GLOBS", "~/anaconda3/envs/*/bin/python:"
+                           "~/anaconda3/bin/python:~/miniconda3/envs/*/bin/python:"
+                           "~/miniconda3/bin/python")
+    found = {str(Path(sys.executable))}
+    for pattern in roots.split(":"):
+        found.update(glob.glob(os.path.expanduser(pattern)))
+    return sorted(found)
 
 
 def main() -> int:

@@ -17,11 +17,14 @@ import functools
 import glob
 import json
 import sys
+import os
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
-BASELINES = Path("/Users/nikitapolomosnov/PycharmProjects/GRAIL_baselines")
+# Where the comparator checkouts live. A sibling of the repository by default; set
+# GRAIL_BASELINES to point elsewhere. It was an absolute path into one machine.
+BASELINES = Path(os.environ.get("GRAIL_BASELINES", ROOT.parent / "GRAIL_baselines"))
 RECORD = ROOT / "results" / "comparator_acquisition.json"
 
 

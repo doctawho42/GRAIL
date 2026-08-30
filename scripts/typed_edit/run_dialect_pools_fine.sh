@@ -6,7 +6,7 @@
 # shards remain the preferred source where they land.
 set -uo pipefail
 cd "$(dirname "$0")/../.."
-PY=${PY:-/Users/nikitapolomosnov/anaconda3/envs/test_grail/bin/python}
+PY=${PY:-python}
 GEN=artifacts/full5000_implicit/checkpoints/generator.pt
 FLT=artifacts/full5000_priors/checkpoints/filter.pt
 STEP=${STEP:-12}
