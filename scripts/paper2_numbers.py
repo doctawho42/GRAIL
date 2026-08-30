@@ -278,6 +278,35 @@ def build():
     n["chem.cleavage.bestother"] = (max(v["15"] for k, v in _cleav["recall"].items()
                                         if not k.startswith("GRAIL")) if _cleav else None)
 
+    # The fusion constant, swept. It was left at the published default and the paper disclosed
+    # that; a sweep says whether the disclosure costs anything.
+    fk = art("fusion_knobs.json")
+    n["fusionk.deployed"] = fk["deployed_constant"]
+    n["fusionk.swept"] = len(fk["constants_swept"])
+    n["fusionk.separating"] = sum(
+        1 for r in fk["by_constant"].values()
+        if (r.get("against_the_deployed_constant_at_15") or {}).get("excludes_zero"))
+    _worst = max((abs(r["against_the_deployed_constant_at_15"]["gap"])
+                  for r in fk["by_constant"].values()
+                  if "against_the_deployed_constant_at_15" in r), default=0.0)
+    n["fusionk.worst"] = round(_worst, 4)
+    n["fusionk.flatfrom"] = min(
+        int(k) for k, r in fk["by_constant"].items()
+        if not (r.get("against_the_deployed_constant_at_15") or {}).get("excludes_zero"))
+
+    # Whether template discovery has saturated, which the manuscript asserted from a determinism
+    # check. The curve is measured by withholding training pairs from the catalog.
+    rar = art("mining_rarefaction.json")
+    n["rare.templates"] = rar["mined_templates"]
+    n["rare.pairs"] = rar["distinct_training_pairs"]
+    n["rare.singletons"] = rar["templates_resting_on_one_pair"]
+    n["rare.singletonshare"] = rar["singleton_share"]
+    n["rare.unseenmass"] = rar["good_turing_mass_of_unseen_types"]
+    n["rare.slope"] = rar["templates_gained_per_thousand_pairs_at_the_full_corpus"]
+    for frac in ("0.25", "0.5", "0.75", "1.0"):
+        tag = {"0.25": "quarter", "0.5": "half", "0.75": "threequarters", "1.0": "all"}[frac]
+        n[f"rare.{tag}"] = int(round(rar["rarefaction"][frac]["templates_mean"]))
+
     # The wide-budget leads with the length taken from the comparator rather than from the
     # experiment. A nominal budget is not a length, and this is the control that separates an
     # ordering result from a list-length one.

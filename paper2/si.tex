@@ -263,8 +263,8 @@ A class here is a change in molecular formula. That is what the annotation deter
 records a substrate and a product, not a mechanism, so a mechanism cannot be recovered from it
 without guessing. One added oxygen is aliphatic hydroxylation, aromatic hydroxylation,
 N-oxidation or S-oxidation, and nothing in the record separates them; the class is named for the
-change and the ambiguity is stated with it in the artifact. \numChemUnresolvedWord{} of the
-references failed to resolve to a structure.
+change and the ambiguity is stated with it in the artifact. Of the references, \numChemUnresolvedWord{} failed to resolve to a
+structure.
 
 Three things in the table are worth naming. The largest class is not a functionalisation at all
 but a cleavage losing two or more carbons, \numChemCleavageRefs{} references, and it is where the
@@ -288,7 +288,7 @@ with five references in it.
 A nominal budget is not a length. At $k = 50$ most comparator lists have already ended while the
 exhaustive arm is still at its cap, so declaring the budget does not control the thing the budget
 was introduced to control, and a difference read there is partly a difference in how much each
-system emits. Table~\ref{SI-tab:si-short} gives the exhaustion rates; this gives the comparison
+system emits. Table~\ref{tab:si-short} gives the exhaustion rates; this gives the comparison
 with the length removed as a variable.
 
 The design is deliberately hostile to this work. On each substrate both arms are cut to the number
@@ -605,6 +605,53 @@ there, the larger rule budget does buy something, because the pool it builds has
 deployment answering with thirty or fifty candidates should raise the rule budget for exactly the
 reason the Discussion gives for the interactive mode's deficit there, and pay the standardisation
 cost that follows.
+
+\section{Whether template discovery has saturated}
+\label{sec:si-rarefaction}
+
+An earlier version of this work said mining was saturated and offered, as evidence, that re-running
+the miner on the same split re-derives every template and none new. That is a determinism check.
+Saturation is a claim about what more data would yield, and it can be measured on files already
+held: the mining catalog records which training pairs each template was derived from, so pairs can
+be withheld and the templates that would still have been found counted.
+
+Of \numRareTemplates{} mined templates over \numRarePairs{} distinct training pairs,
+\numRareSingletons{} rest on a single pair, \numRareSingletonsharePct{}. A quarter of the pairs
+yields \numRareQuarter{} templates, half \numRareHalf{}, three quarters
+\numRareThreequarters{} and the whole set \numRareAll{}, so the curve is close to linear and at
+its right-hand end is still gaining \numRareSlope{} templates per thousand further pairs. Good and
+Turing's estimate of the probability mass belonging to types not yet seen is
+\numRareUnseenmass{}. On every one of those readings the population is undersampled rather than
+exhausted.
+
+What that does not establish is that mining harder would raise the ceiling. The shortfall
+Section~\ref{MS-sec:results} reports is transformation types the corpus does not contain, and no
+template mined from a corpus can supply a type absent from it. The two statements are
+compatible and only the first was measured; the manuscript claims only the first.
+
+\section{Two parameters of the ranking, and one that could not be measured}
+\label{sec:si-knobs}
+
+Two settings of the ranking were left at a default and this work's own argument makes them worth
+testing.
+
+The fusion constant is the first. Recomputing the fusion from the stored component scores costs no
+model run, so it is swept over \numFusionkSweptWord{} values spanning two orders of magnitude.
+Every constant of \numFusionkFlatfrom{} or more is indistinguishable from the deployed
+$K = \numFusionkDeployed$ at a budget of 15; the two smallest separate against it, by up to
+$\numFusionkWorst$. The published default sits on the flat part of that curve, so leaving it there
+costs nothing measurable, which is a stronger statement than disclosing that it was not varied.
+
+The second could not be answered from what is released, and naming which is part of the answer.
+Equation~\ref{MS-eq:noisyor} aggregates the rules that reach a candidate by noisy-or, which treats
+them as independent evidence. This bank does not satisfy that: it contains
+\numThirdpartyBiotransformerShipped{} of BioTransformer's published templates and
+\numSygmaInside{} of SyGMa's verbatim, and the mined half is full of near-duplicates, so a
+candidate that many templates reach is scored as though many witnesses had agreed. The natural
+alternative is a maximum, which ignores duplication. The released pools carry one aggregated
+generator score per candidate and not the per-rule scores a maximum needs, so making that
+comparison means re-running the generator over the comparison set. It is named here rather than
+answered with a different quantity, and it is the measurement this work would run next.
 
 \section{Model architectures and training}
 
@@ -1065,10 +1112,10 @@ asserted. The numbers in this paper come from \numProvSources{} of those artifac
 by running the number generator with its artifact reader instrumented, so the count is of files
 actually opened and not of matches in the source. Of the \numProvSources{},
 \numProvSourcesunpinnedWord{} are unpinned and \numProvSourcesunverifiableWord{} carry a producer the
-sweep cannot identify. \numProvSourcesinferredWord{} of them predate stamping and are verified by
+sweep cannot identify. Of the rest, \numProvSourcesinferredWord{} predate stamping and are verified by
 recovering their producer's source from the history rather than from a recorded digest, which the
 sweep labels as inferred; that is a weaker check and is counted separately for that reason.
-\numProvSourcesexemptWord{} are exempt with a stated reason, each being an output of the checking
+A further \numProvSourcesexemptWord{} are exempt with a stated reason, each an output of the checking
 apparatus itself, which cannot verify its own inputs without circularity. The gate fails the build
 if any of the first two counts is not zero, and unpinning one artifact makes it fail, which is how
 we know it can.

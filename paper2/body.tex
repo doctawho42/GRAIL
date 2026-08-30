@@ -89,15 +89,13 @@ the GLORYx reference set \citep{de_Bruyn_Kops_2020}. The versions used are \Corp
 licences do not combine into one redistributable derivative, which the Supporting Information sets
 out.
 
-One property of that assembly bears on everything downstream and is stated here rather than left to
-an appendix. The selection that drew records from the four sources is not recoverable: the corpus
-files were written before this repository's first commit, no script in it reads any of the four
-sources or writes them, and the field that would carry a source accession is empty in every record.
-The apparatus this paper builds on top, the pinned artifacts, the digests and the checks that
-refuse a stale file, makes every step from the corpus onwards reproducible and cannot make that
-step so.
-What can be checked instead is a rebuild: \texttt{scripts/verify\_rebuilt\_corpus.py} reports how a
-corpus assembled by a reader stands against this one, substrate by substrate.
+One property of that assembly bears on everything downstream. The selection that drew records from
+the four sources is not recoverable: the corpus files predate this repository's first commit, no
+script in it reads the four sources, and the accession field is empty in every record. The
+apparatus built on top makes every step from the corpus onwards reproducible and cannot make that
+step so. What can be checked instead is a rebuild, and
+\texttt{scripts/verify\_rebuilt\_corpus.py} reports how a reader's own corpus stands against this
+one, substrate by substrate.
 
 The comparison set carries no training contamination: \numPopulationInTrainOrVal{} of its
 \numPopulationN{} substrates appear as a substrate of train or validation under a canonicalised
@@ -135,7 +133,10 @@ that rule $r$ applies, the aggregation is noisy-or,
 p(c) = 1 - \prod_{r \in R(c)} \left( 1 - p_r \right),
 \label{eq:noisyor}
 \end{equation}
-so evidence from independent rules accumulates rather than competing. Equation~\ref{eq:noisyor}
+so evidence from independent rules accumulates rather than competing. The independence is an
+assumption this bank does not satisfy, since it holds published rule sets verbatim and the mined
+half is full of near-duplicates; what that costs is not measured here and the measurement it needs
+is named in Section~\ref{SI-sec:si-knobs}. Equation~\ref{eq:noisyor}
 is why deduplication is not a cosmetic step: the key under which two products are judged the same
 decides which scores are combined, and changing that key moves the ranking. Tautomers are the
 hard case, and their treatment is not settled by the standard identifiers \citep{Dhaked_2020}.
@@ -163,8 +164,10 @@ located, the atoms and bonds that changed are flagged as the reaction centre, th
 expanded by one bond and emitted as a mapped SMIRKS. A template survives only if applying it to
 its own source substrate regenerates the annotated product after canonicalisation.
 
-Support is heavily skewed and mining is saturated: re-running the miner on the same split
-re-derives every template it derived before and none new.
+Support is heavily skewed: \numRareSingletonsharePct{} of the mined templates rest on a single
+training pair. Withholding pairs and counting the templates that survive gives a rarefaction curve
+still climbing at \numRareSlope{} templates per thousand further pairs
+(Section~\ref{SI-sec:si-rarefaction}), so template discovery from this corpus is not finished.
 
 \subsection{Rank fusion}
 
@@ -177,9 +180,10 @@ The deployed combination is reciprocal rank fusion \citep{cormack2009},
 \mathrm{RRF}(c) = \sum_{i} \frac{1}{K + r_i(c)}, \qquad K = 60,
 \end{equation}
 where $r_i(c)$ is the rank of $c$ under scorer $i$. Only positions enter, so the two opinions
-contribute equally whatever their scales. $K = 60$ is the value the method was published with
-\citep{cormack2009} and it was not varied here; it is named because a paper arguing that silent
-parameters decide verdicts should say which of its own were left at a default.
+contribute equally whatever their scales. $K = \numFusionkDeployed$ is the value the method was
+published with \citep{cormack2009}, and it is swept rather than merely disclosed: every constant of
+\numFusionkFlatfrom{} or more is indistinguishable from it at a budget of 15
+(Section~\ref{SI-sec:si-knobs}).
 
 The change was registered as prediction P1, with a threshold of $+\numHSevenThreshold$ fixed
 before it was checked, and evaluated on a validation draw where the fusion had not been selected:
@@ -304,7 +308,7 @@ Both readings are reported. Treating the whole sweep as one family of \numHolmTe
 arms against three comparators at every budget, and applying Holm's correction to bootstrap
 $p$-values from the same resamples, \numHolmSurviving{} of the \numHolmSeparating{} cells that
 separate per comparison still separate; the \numHolmChangedWord{} that do not are marked in
-Table~\ref{SI-tab:si-intervals}. \numHolmLeadsremovedWord{} of them are leads, and among the leads
+Table~\ref{SI-tab:si-intervals}. Of those, \numHolmLeadsremovedWord{} are leads, and among the leads
 claimed here only the narrowest, at $k=30$ against MetaTox, is one of them.
 
 No single budget is privileged. A claim that the system leads is made for a cell only where that
@@ -720,7 +724,8 @@ oldest and by far the smallest method in the comparison, \numSygmaRules{} publis
 this bank's \numBankRules{}, and at every budget of five or fewer it recovers more of the
 annotated metabolites than any other method here, including two published since. A chemist
 reading a short list is working at exactly those budgets. That a rule set of this size is not
-beaten at the head of the list by anything released since is worth stating plainly, and it is
+beaten at the head of the list by any of the systems here, two of them released since, is worth
+stating plainly, and it is
 visible only because the budget is swept: at a budget of fifty the same table has this work's
 exhaustive arm ahead of SyGMa by $+\numGapBankmetatoxFiveZero$ or more against every comparator,
 and the ordering at the head of the list reverses.
@@ -796,9 +801,12 @@ wide budgets is partly a statement about output length on all sides rather than 
 
 The shortfall is mostly a property of the corpus the templates are mined from, established by
 invariance rather than asserted, though the hydrogen convention moves it by
-\numHydResidualrefs{} references. Mining is saturated. Extending coverage requires new reaction corpora,
-and the census narrows the search: synthetic corpora are excluded by measurement, leaving
-enzymatic and regulatory sources. Metabolite identifications from radiolabelled human ADME studies
+\numHydResidualrefs{} references. Template discovery from that corpus is not finished: the
+rarefaction curve is still climbing at \numRareSlope{} templates per thousand further pairs. What
+that does not say is that mining it harder would close the gap, because the gap is transformation
+types the corpus does not contain and no template mined from it can supply a type it lacks.
+Extending coverage therefore requires new reaction corpora, and the census narrows the search:
+synthetic corpora are excluded by measurement, leaving enzymatic and regulatory sources. Metabolite identifications from radiolabelled human ADME studies
 reported in regulatory submissions are human \emph{in vivo} data on exactly the population
 predicted here, have been used to benchmark this class of tool \citep{Gao_2026}, and are, to
 our knowledge, not systematically mined as a source of rules. The bound applies to any

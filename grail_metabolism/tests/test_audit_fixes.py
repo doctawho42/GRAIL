@@ -985,3 +985,35 @@ def test_every_producer_partitions_the_bank_on_the_same_mined_file():
     assert not wrong, (
         "these partition the bank on the superseded mined cut, which is ten templates larger "
         "and yields 1,715 curated where every other count says 1,725:\n  " + "\n  ".join(wrong))
+
+
+def test_the_build_gate_sees_an_undefined_reference_on_a_lettered_page():
+    """The Supporting Information numbers its pages S1, S2, and the gate required digits.
+
+    check_paper2_build.py counts undefined references from LaTeX's warnings. Its pattern asked for
+    `on page \\d+`, which no warning from the Supporting Information ever matches, so every broken
+    cross-reference in that document passed the check that exists to catch them. One printed ?? on
+    page S10 through several builds and a referee found it, in the document that describes the
+    checker as refusing exactly this.
+
+    The guard is on the pattern rather than on any particular document: a warning is synthesised
+    for a lettered page and the gate has to find it.
+    """
+    import importlib
+    import sys
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[2]
+    sys.path.insert(0, str(root / "scripts"))
+    module = importlib.import_module("check_paper2_build")
+    importlib.reload(module)
+
+    numbered = "LaTeX Warning: Reference `tab:x' on page 7 undefined on input line 12."
+    lettered = "LaTeX Warning: Reference `tab:y' on page S10 undefined on input line 12."
+    roman = "LaTeX Warning: Citation `ref:z' on page iv undefined on input line 12."
+
+    assert module.UNDEF.findall(numbered) == ["tab:x"], "the ordinary case regressed"
+    assert module.UNDEF.findall(lettered) == ["tab:y"], (
+        "a page number carrying a letter is invisible to the gate, which is how a ?? survived "
+        "in the Supporting Information")
+    assert module.UNDEF.findall(roman) == ["ref:z"]

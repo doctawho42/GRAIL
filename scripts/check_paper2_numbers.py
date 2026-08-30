@@ -78,6 +78,19 @@ SI_BACKLOG = {
 }
 
 
+SENTENCE_OPENS_WITH_A_MACRO = re.compile(r"[.!?]\s+\\num[A-Za-z]+Word\{\}")
+
+
+def sentences_opening_with_a_spelled_number(text: str) -> list:
+    """A macro spelling a number expands lower case, so a sentence cannot begin with one.
+
+    Four sentences in the two documents did, and they compiled without complaint and read as
+    though the previous one had never ended. LaTeX will not catch it and a proofreader reading
+    the source will not either, because the source shows a macro and not the word.
+    """
+    return [m.group(0).strip() for m in SENTENCE_OPENS_WITH_A_MACRO.finditer(text)]
+
+
 def main() -> int:
     # Every journal wrapper, not one named wrapper. The abstract lives in the wrapper, and when
     # the target journal changed the checker went on reading the old one: the new abstract, which
@@ -89,6 +102,8 @@ def main() -> int:
     si = ROOT / "paper2/si.tex"
     assert si.exists(), "paper2/si.tex is missing; the checker would silently stop covering it"
     body = TEX.read_text() + si.read_text() + "".join(w.read_text() for w in wrappers)
+
+    lower_case_openings = sentences_opening_with_a_spelled_number(body)
 
     defined = set(re.findall(r"\\newcommand\{\\(num[A-Za-z]+)\}", NUMS.read_text()))
     used = set(re.findall(r"\\(num[A-Za-z]+)", body))
@@ -143,6 +158,10 @@ def main() -> int:
         ok = False
         print(f"FAIL: {len(pointers)} hand-typed pointers into the Supporting Information; "
               f"use \\ref through xr instead: {pointers[:6]}")
+    if lower_case_openings:
+        ok = False
+        print(f"FAIL: {len(lower_case_openings)} sentences begin with a macro that spells a "
+              f"number, so they compile in lower case: {lower_case_openings[:4]}")
     if missing:
         ok = False
         print(f"FAIL: {len(missing)} macros used and not defined: {missing[:10]}")

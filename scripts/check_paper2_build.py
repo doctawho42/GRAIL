@@ -19,7 +19,10 @@ DOCS = ("si", "grail_jcim")
 SUFFIX = ".log"
 
 ERROR = re.compile(r"^! .*", re.M)
-UNDEF = re.compile(r"(?:Reference|Citation) `([^']+)' on page \d+ undefined")
+# The page number is not always digits: the Supporting Information numbers its pages S1, S2 and
+# so on, so a pattern requiring \d+ here matched nothing in that document and every undefined
+# reference in it passed. A referee found one printing ?? on page S10.
+UNDEF = re.compile(r"(?:Reference|Citation) `([^']+)' on page \S+ undefined")
 OVERFULL = re.compile(r"Overfull \\[hv]box")
 PAGES = re.compile(r"\((\d+) pages")
 

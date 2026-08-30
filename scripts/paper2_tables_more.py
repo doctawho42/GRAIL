@@ -19,6 +19,10 @@ def thousands(x):
 def modes():
     mt = json.loads((ROOT / "results/mode_timings.json").read_text())
     i, e = mt["interactive"], mt["exhaustive"]
+    # The bank holds 7,581 templates and 7,580 parse; what the mode applies is the second, which
+    # the reactant-size census counts on the same file.
+    rs = json.loads((ROOT / "results/reactant_size_census.json").read_text())
+    parseable = rs["templates_parsed"]
     ce = json.loads((ROOT / "results/cost_envelope.json").read_text())
     sampled = ce["n_done"]
     unfinished = sum(1 for r in ce["rows"] if not r.get("finished"))
@@ -28,7 +32,7 @@ def modes():
 \\toprule
  & interactive & exhaustive \\\\
 \\midrule
-rules applied & {i['top_k']} & {thousands(e['top_k'])} \\\\
+rules applied & {i['top_k']} & {thousands(parseable)} \\\\
 candidates, mean & {i['candidates']['mean']} & {e['candidates']['mean']} \\\\
 candidates, median & {i['candidates']['median']} & {e['candidates']['median']} \\\\
 seconds, median & {i['median_s']} & {e['median_s']} \\\\

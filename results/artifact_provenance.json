@@ -166,6 +166,12 @@
    "status": "current"
   },
   {
+   "artifact": "results/fusion_knobs.json",
+   "script": "fusion_knobs.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
    "artifact": "results/group_decode.json",
    "script": "group_decode.py",
    "how": "recorded source digest",
@@ -289,6 +295,12 @@
   {
    "artifact": "results/matched_length.json",
    "script": "matched_length.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
+   "artifact": "results/mining_rarefaction.json",
+   "script": "mining_rarefaction.py",
    "how": "recorded source digest",
    "status": "current"
   },
@@ -506,7 +518,7 @@
    "status": "current"
   }
  ],
- "n_pinned": 83,
+ "n_pinned": 85,
  "n_pinned_stale": 0,
  "sweep": {
   "unstamped": 112,
