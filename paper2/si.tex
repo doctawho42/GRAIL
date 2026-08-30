@@ -239,6 +239,17 @@ number of substrates for which that is the case.
 
 \section{Precision}
 
+Precision is reported because a reader is entitled to it and not because it decides anything here.
+Precision at $k$ is hits over the predictions inside the window, so an arm whose list is shorter
+than the budget is not charged for the empty slots; that is why MetaPredictor is flat from $k=15$
+onwards, having emitted its whole list by then.
+
+These figures order the systems differently from recall, and the ordering is not used. The
+annotation is incomplete, so a predicted metabolite that is real but unannotated is counted as a
+false positive. Every value below is therefore pessimistic by an unknown amount, and the amount is
+larger for an arm that emits more, which flatters the short lists. Recall carries the claims in
+this paper for that reason.
+
 \input{si_table_precision}
 
 \section{The comparison's differences and their intervals}
@@ -305,7 +316,10 @@ holds split by split, counted over the distinct structures each split marks as a
 than over the substrates that carry a clean triple, which is the population
 Table~\ref{tab:si-splits} counts: \numDialectTrainMoved{} of \numDialectTrainN{} in train,
 \numDialectValMoved{} of \numDialectValN{} in validation, \numDialectTestMoved{} of
-\numDialectTestN{} in test. Every one of the \numDialectEvalMoved{} moves is a pure tautomer move,
+\numDialectTestN{} in test. The two denominators differ for the reason just given and by the
+amount it predicts: test marks \numDialectTestN{} structures as substrates and
+Table~\ref{tab:si-splits} counts \numAssemblyTeststructures{}, the
+\numAssemblyTestmarkednotripleWord{} that differ carrying no clean triple. Every one of the \numDialectEvalMoved{} moves is a pure tautomer move,
 invisible to this paper's default matching criterion: the drawing changes which rules fire and
 does not change what molecule it is.
 
@@ -487,14 +501,20 @@ on accuracy (recall@15 $0.357$ against $0.366$, paired difference $-0.0090$, 95\
 $[-0.017, -0.001]$, $n = 1{,}170$) and on cost ($34.0$~ms against $9.1$~ms per pair), and is not
 deployed.
 
-\subsection{The objective is positive-unlabelled}
+\subsection{How the incomplete annotation is handled}
 
-Rules that match the substrate but carry no annotation are down-weighted by half rather than
-treated as negatives. An annotated metabolite is a positive and a rule-applicable product without
-an annotation is unlabelled, because a missing annotation does not establish that a transformation
-does not occur \citep{Jain_2016}. The consequence for the reported metrics is that precision is
-pessimistic by a bounded but unknown amount, which is why the paper reports it without using it to
-order systems.
+An annotated metabolite is a positive and a rule-applicable product without an annotation is
+unlabelled, not negative, because a missing annotation does not establish that a transformation
+does not occur \citep{Jain_2016}. The two learned components answer that differently, and the
+released configuration of each is what follows.
+
+The generator down-weights rules that match the substrate but carry no annotation, by half rather
+than treating them as negatives, so the label semantics reach the objective directly. The filter
+does not: it can be trained under a non-negative positive-unlabelled risk, and the released
+checkpoint is trained under cross-entropy instead, so its unlabelled pairs enter as negatives. The
+consequence is that its scores are conservative on exactly the candidates the annotation is silent
+about. The same silence makes precision pessimistic by a bounded but unknown amount, which is why
+the paper reports it without using it to order systems.
 
 \section{What a single step is}
 
@@ -658,18 +678,24 @@ Tanimoto similarity on a pool whose median size is \numSimOldMedianPool{} candid
 of 15. For \numSimOldPoolUnderBudget{} of \numSimOldN{} substrates the entire pool fits inside
 the budget, so every ordering returns the same set and no arm can separate from another. The
 measured difference, $+\numSimOldGap$ with the interval covering zero, is what that design is
-able to produce and not evidence that the two orderings are equivalent.  % no-claim: derivation
+able to produce and not evidence that the two orderings are equivalent.
+% no-claim: derivation
 
 The same limit governs a null model of the form used elsewhere in this literature, a uniform draw
-of $\min(k, N)$ from a method's own pool of $N$.  % no-claim: derivation Its lift tends to one as the budget approaches
+of $\min(k, N)$ from a method's own pool of $N$.
+% no-claim: derivation
+Its lift tends to one as the budget approaches
 the pool, so at $k=15$ a method emitting about eleven candidates has a lift of $1.055$ whatever
 its ranking is, while a method emitting eighty still has room. Comparing methods by lift at a
 fixed budget therefore ranks them partly by how much they emit, which is the same confound the
-budget sweep in the main text is designed to expose.  % no-claim: derivation
+budget sweep in the main text is designed to expose.
+% no-claim: derivation
 
 The rule both cases give is simple and we state it because neither experiment stated it in
 advance: a ranking comparison carries information only over the substrates whose pool exceeds the
-budget, and the number of such substrates should be reported with the result.  % no-claim: derivation The comparison in
+budget, and the number of such substrates should be reported with the result.
+% no-claim: derivation
+The comparison in
 the main text is run on the deployed pool, capped at \numCaseExhCandidates{}, where the budget is
 narrower than the pool for every substrate.
 

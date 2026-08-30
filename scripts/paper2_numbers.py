@@ -183,6 +183,21 @@ def build():
     n["ceiling.novel"] = cov["gap"]["novel_type"]
     n["ceiling.known"] = cov["gap"]["known_type"]
     n["ceiling.untypeable"] = cov["gap"]["untypeable"]
+
+    # Two loops measure the ceiling under the same hydrogen convention and return different
+    # counts. The paper reports the deployed loop's; the audit loop's is what the two conventions
+    # are compared with. The difference is small and is printed rather than chosen between.
+    agr = art("ceiling_instrument_agreement.json")
+    n["ceilagree.disagreement"] = agr["disagreement_between_instruments_on_the_same_convention"]
+    n["ceilagree.spread"] = agr["spread_across_all_four_counts"]
+    n["ceilagree.spreadshare"] = agr["spread_as_share_of_references"]
+    n["ceilagree.spreadofmargin"] = agr["spread_as_share_of_that_margin"]
+    for tag, name in (("deployed", "deployed loop, hydrogens implicit"),
+                      ("auditimplicit", "audit loop, hydrogens implicit"),
+                      ("auditcompleted", "audit loop, explicit and templates completed"),
+                      ("dispatch", "audit loop, convention chosen per template")):
+        n[f"ceilagree.{tag}.uncovered"] = agr["arms"][name]["uncovered"]
+        n[f"ceilagree.{tag}.reach"] = agr["arms"][name]["reach"]
     n["census.types"] = cen["distinct_types"]
     n["census.once"] = cen["types_seen_once"]
     n["census.once.share"] = cen["share_of_misses_in_types_seen_once"]
@@ -234,6 +249,13 @@ def build():
     n["mode.interactive.max"] = mt["interactive"]["max_s"]
     n["mode.interactive.n"] = mt["interactive"]["n"]
     n["mode.exhaustive.median"] = mt["exhaustive"]["median_s"]
+    # The candidate counts belong to the same population as the timings above. They used to be
+    # taken from the comparison set while the caption named the validation draw.
+    for mode in ("interactive", "exhaustive"):
+        cand = mt[mode].get("candidates") or {}
+        for stat in ("mean", "median", "n"):
+            if stat in cand:
+                n[f"mode.{mode}.candidates.{stat}"] = cand[stat]
     n["h15.median.underload"] = h15["time"]["load_correction"][
         "median_under_the_other_arms_load"]
 
@@ -583,6 +605,11 @@ def build():
                                  for s in ("train", "val", "test"))
     n["assembly.testids"] = ca["splits"]["test"]["substrates_by_id"]
     n["assembly.teststructures"] = ca["splits"]["test"]["substrates_by_structure"]
+    # The dialect census counts every structure the split marks as a substrate; the split table
+    # counts those that also carry a clean triple. The difference is the substrates with none,
+    # and it is derived rather than typed so the two cannot drift apart.
+    n["assembly.testmarkednotriple"] = (dia["splits"]["test"]["n"]
+                                        - ca["splits"]["test"]["substrates_by_structure"])
     n["assembly.commits"] = ca["repository"]["commits_in_history"]
     if "source_overlap" in ca:
         so = ca["source_overlap"]

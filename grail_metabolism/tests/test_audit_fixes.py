@@ -659,45 +659,61 @@ def test_the_expansion_breaks_and_over_matches_as_the_paper_says():
     assert matches("[c]~[*]", expanded) > matches("[c]~[*]", mol)
 
 
-def test_contracting_an_expanded_product_needs_more_than_removing_the_hydrogens():
-    """The two ways of contracting an expanded product are not the same, and one makes radicals.
+def test_contracting_an_expanded_product_never_leaves_an_unpaired_electron():
+    """Whichever way an expanded product is contracted, the result must carry no radical.
 
-    An arm that expands the substrate has to put the hydrogens back before the product is read.
-    Doing that with ``RemoveHs`` alone looks right on simple templates and is wrong in general:
-    ``AddHs`` marks every heavy atom as taking no implicit hydrogens, so when a template consumes a
-    mapped hydrogen and puts nothing in its place, removing the drawn ones leaves the atom one short
-    and RDKit records an unpaired electron instead of refilling the valence. A metabolite corpus
-    contains no radicals, so such a product cannot match any reference; it is lost silently.
+    An arm that expands the substrate has to put the hydrogens back before the product is read, and
+    the obvious way is wrong on some RDKit releases: ``AddHs`` marks every heavy atom as taking no
+    implicit hydrogens, so when a template consumes a mapped hydrogen and puts nothing in its place,
+    ``RemoveHs`` alone leaves the atom one short and the library records an unpaired electron
+    instead of refilling the valence. A metabolite corpus contains no radicals, so such a product
+    cannot match any reference and is lost silently.
 
-    Clearing the flag first restores the capacity ``AddHs`` suspended. This asserts the difference
-    rather than the equivalence, because the equivalence is what an earlier version of this file
-    asserted on eight hand-picked templates and it does not hold on the bank.
+    How often that happens is a property of the installed RDKit, not of this code:
+    ``results/contraction_choice.json`` measured it at a fifth of all products under the release
+    ``requirements.txt`` pins, and it does not occur at all under 2024.09. So this asserts the
+    property that has to hold under every release -- the contraction that restores implicit
+    capacity never makes a radical -- and reports rather than requires the divergence, because a
+    test that demands a library bug fails when the library is fixed.
     """
     import sys
 
+    import rdkit
     from rdkit import Chem
     from rdkit.Chem import AllChem
 
     sys.path.insert(0, "scripts")
     from _contract import contract, contract_by_removing_only
 
-    # a template that takes a hydrogen off a mapped carbon and puts nothing back
-    reaction = AllChem.ReactionFromSmarts("[C:1][C:2]=[C:3][C:4]>>[C:1][C:2][C:3][C:4]")
-    substrate = Chem.AddHs(Chem.MolFromSmiles("CC=CCO"))
-    radicals_one_call = radicals_reset = compared = 0
-    for products in reaction.RunReactants((substrate,)):
-        for product in products:
-            try:
-                a = contract_by_removing_only(product)
-                b = contract(product)
-            except Exception:
-                continue
-            compared += 1
-            radicals_one_call += sum(x.GetNumRadicalElectrons() for x in a.GetAtoms())
-            radicals_reset += sum(x.GetNumRadicalElectrons() for x in b.GetAtoms())
-    assert compared, "the template fired on nothing, so the test asserts nothing"
-    assert radicals_one_call > 0, "the one-call contraction is expected to strand a valence here"
-    assert radicals_reset == 0, "restoring implicit capacity must not leave an unpaired electron"
+    templates = ["[C:1][C:2]=[C:3][C:4]>>[C:1][C:2][C:3][C:4]",
+                 "[c:1][H]>>[c:1]",
+                 "[O:1][H]>>[O:1]"]
+    substrates = ["CC=CCO", "c1ccccc1O", "CC(=O)Nc1ccc(O)cc1"]
+    compared = diverged = 0
+    for smiles in substrates:
+        expanded = Chem.AddHs(Chem.MolFromSmiles(smiles))
+        for smarts in templates:
+            reaction = AllChem.ReactionFromSmarts(smarts)
+            for products in reaction.RunReactants((expanded,)):
+                for product in products:
+                    try:
+                        restored = contract(product)
+                    except Exception:
+                        continue
+                    compared += 1
+                    assert sum(a.GetNumRadicalElectrons() for a in restored.GetAtoms()) == 0, (
+                        f"restoring implicit capacity left an unpaired electron on {smiles} "
+                        f"under {smarts}, rdkit {rdkit.__version__}")
+                    try:
+                        naive = contract_by_removing_only(product)
+                    except Exception:
+                        continue
+                    if sum(a.GetNumRadicalElectrons() for a in naive.GetAtoms()):
+                        diverged += 1
+    assert compared, "no template fired, so the test asserts nothing"
+    # Not an assertion. The divergence is the library's behaviour and is recorded, not required.
+    print(f"rdkit {rdkit.__version__}: {diverged} of {compared} products strand a valence under "
+          f"the one-call contraction")
 
 
 def test_a_similarity_threshold_is_not_an_identity_relation():

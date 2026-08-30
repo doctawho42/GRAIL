@@ -5,14 +5,18 @@
  & interactive & exhaustive \\
 \midrule
 rules applied & 30 & 7{,}581 \\
-candidates, mean & \numOutputTrained & \numOutputBank \\
+candidates, mean & 16.5 & 98.0 \\
+candidates, median & 14.0 & 100 \\
 seconds, median & 0.39 & 5.28 \\
 seconds, mean & 2.36 & --- \\
 seconds, 90th pct & 2.59 & --- \\
 seconds, slowest & 231.01 & did not finish \\
 \bottomrule
 \end{tabular}
-\caption{The two operating modes: rules applied, candidates returned and wall-clock time.
-Medians are over the 294 validation substrates and cover everything before the filter.}
+\caption{The two operating modes: rules applied, candidates returned and wall-clock time. Every
+figure is measured on the validation draw, 294 substrates for the interactive mode and
+293 for the exhaustive one, which lacks a pool for one of them. Candidates are
+what a caller receives: deduplicated by matching key and capped at
+100. Times cover everything before the filter.}
 \label{tab:modes}
 \end{table}

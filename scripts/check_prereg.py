@@ -119,7 +119,12 @@ CITED = re.compile(r"\\cite[a-z]*\{|\\citet|\\citep")
 # -- there is nothing to have predicted -- but they are effect-shaped, and exempting them
 # silently is the failure this file exists to prevent. They are counted and listed instead, and
 # the marker has to be written by hand next to the sentence so the exemption is deliberate.
-DERIVATION = re.compile(r"%\s*no-claim:\s*derivation")
+# The marker is a LaTeX comment, so it must be lifted out of the comment syntax before comments
+# are stripped, or it disappears along with them. It exempts the sentence that follows it, which
+# is why it is written on its own line immediately above that sentence.
+DERIVATION_SOURCE = re.compile(r"%\s*no-claim:\s*derivation")
+DERIVATION_TOKEN = "NOCLAIMDERIVATION"
+DERIVATION = re.compile(DERIVATION_TOKEN)
 # A hypothesis may leave the paper only by being reported as not having held.
 # The counts are read from the artifacts rather than typed, so a vocabulary that grows does not
 # quietly stop being checked.
@@ -172,7 +177,8 @@ FAILED = re.compile(
 
 def sentences(text: str) -> list:
     """LaTeX split into sentences, with the constructs that fake a full stop neutralised."""
-    t = re.sub(r"(?m)^\s*%.*$", "", text)                    # comments
+    t = DERIVATION_SOURCE.sub(DERIVATION_TOKEN, text)        # keep the marker, lose the comment
+    t = re.sub(r"(?m)^\s*%.*$", "", t)                       # comments
     t = re.sub(r"\\(?:ref|eqref|label|cref)\{[^}]*\}", "REF", t)
     t = re.sub(r"\\begin\{(figure|table|tabular|equation|align|longtable)\*?\}.*?"
                r"\\end\{\1\*?\}", " ", t, flags=re.S)
@@ -513,6 +519,16 @@ def main() -> int:
         ap.error("--prereg is required (or --self-test)")
 
     hyps, problems = parse_registry(Path(args.prereg))
+    for name in args.text:
+        for i, line in enumerate(Path(name).read_text().splitlines(), 1):
+            hit = DERIVATION_SOURCE.search(line)
+            # A LaTeX comment runs to the end of its line. A marker written mid-line therefore
+            # deletes the prose after it from the compiled document, silently, and the source
+            # still reads correctly. Two sentences were lost that way before this was checked.
+            if hit and line[hit.end():].strip():
+                print(f"FAIL: {name}:{i} has text after the derivation marker, which LaTeX "
+                      f"will not typeset: {line[hit.end():].strip()[:60]}")
+                return 1
     text = "\n".join(Path(t).read_text() for t in args.text)
     aliases = alias_map(ROOT)
     if aliases:

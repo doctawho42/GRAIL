@@ -5,6 +5,11 @@ forty-substrate draw from the comparison set, and the exhaustive mode's 5.28 s i
 the 293 validation substrates: two statistics, two populations, printed as a pair. This measures
 both modes as medians on the same population and reports the tail, because the mean and the
 median differ by six times here and the difference is one peptide.
+
+The table this feeds also prints how many candidates each mode returns, and that row had the same
+defect one level down: it was carrying the mean over the 291 comparison substrates while its
+caption named the validation draw. The counts are measured here instead, on the population the
+rest of the table is measured on, from the pools each mode actually built.
 """
 from __future__ import annotations
 
@@ -34,14 +39,39 @@ def summarise(pattern):
             "p90_s": round(s[int(0.9 * len(s))], 2), "max_s": round(s[-1], 2)}
 
 
+def emitted(path: str, cap: int = 100):
+    """How many candidates a mode returns per substrate: deduplicated by key, then capped.
+
+    This is the emitted list, not the pool. The pool is what rule application produced; the
+    number a caller sees is what survives deduplication and the cap, which is what the table
+    means by candidates.
+    """
+    blob = json.loads((ROOT / path).read_text())
+    lengths = []
+    for candidates in blob["pools"].values():
+        seen = set()
+        for c in candidates:
+            key = c.get("key")
+            if key:
+                seen.add(key)
+        lengths.append(min(len(seen), cap))
+    if not lengths:
+        return None
+    return {"n": len(lengths), "cap": cap,
+            "mean": round(st.mean(lengths), 1), "median": round(st.median(lengths), 1),
+            "source": path}
+
+
 def main() -> int:
     inter = summarise("results/k30timed/s*.json")
     h15 = json.loads((ROOT / "results/h15_verdict.json").read_text())["time"]
     rep = {"provenance": stamp(__file__), "split": "validation",
            "measures": "seconds per substrate before the filter, the same boundary in both modes",
-           "interactive": {"top_k": 30, **(inter or {})},
+           "interactive": {"top_k": 30, **(inter or {}),
+                           "candidates": emitted("results/valpools_k30/all.json")},
            "exhaustive": {"top_k": 7581,
                           "median_s": h15["h15_median_s"],
+                          "candidates": emitted("results/val_pools.json"),
                           "note": "the survivors arm at tautomer budget 200; its median under "
                                   "the load the comparison arm ran at is "
                                   f"{h15['load_correction']['median_under_the_other_arms_load']} s"},

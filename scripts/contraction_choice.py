@@ -53,8 +53,12 @@ def _code_version() -> dict:
         except Exception:
             return None
 
+    import rdkit
+
+    # The divergence this script measures is the library's behaviour and it changed between
+    # releases, so a run that does not record the release records nothing that can be repeated.
     return {"script": pathlib.Path(__file__).name, "git_commit": _git("rev-parse", "HEAD"),
-            "git_dirty": bool(_git("status", "--porcelain"))}
+            "git_dirty": bool(_git("status", "--porcelain")), "rdkit": rdkit.__version__}
 
 
 def main() -> int:

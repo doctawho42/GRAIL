@@ -89,7 +89,10 @@ the GLORYx reference set \citep{de_Bruyn_Kops_2020}. The versions used are \Corp
 combine into one redistributable derivative, which the Supporting Information sets out.
 
 The comparison set carries no training contamination: \numPopulationInTrainOrVal{} of its
-\numPopulationN{} substrates appear in train or validation under a canonicalised structure key.
+\numPopulationN{} substrates appear as a substrate of train or validation under a canonicalised
+structure key. Molecular overlap of the other kind is expected and is reported in the Supporting
+Information: a molecule annotated as a product in one split can be a substrate in another, and
+\numLeakSubAsMol{} test substrates are molecules of train.
 
 No external evaluation set is reported, and the reason is the assembly rather than an audit
 finding. GLORYx is one of the four sources, so its \numGloryxN{} parent substrates are not
@@ -374,8 +377,8 @@ the combination is not a property of one population alone.
 The rule-budget prediction compared \numSelBudget{} templates against the whole bank, which asks
 about size. What the choice buys is a different question, and it is answered by picking
 \numSelBudget{} rules three other ways with the application, the standardisation, the filter and
-the fusion identical downstream. About \numSelApplicable{} of the \numBankRules{} templates match
-a given substrate, so the choice is made within a large applicable set rather than over the bank.
+the fusion identical downstream. On average \numSelApplicable{} of the \numBankRules{} templates
+match a given substrate, so the choice is made within a large applicable set rather than over the bank.
 
 Against \numSelBudget{} rules drawn at random from the whole bank, the learned choice gains
 $+\numSelVsrandom$ at $k=15$: most randomly chosen templates do not fire, and that arm
@@ -568,18 +571,27 @@ did not fire, and \numCeilingUntypeable{} cannot be typed.
 
 The presentation of hydrogen is part of that measurement and is named here rather than left to the
 code. Templates are matched against the substrate with hydrogens implicit, which is the convention
-every deployed firing path uses. Two conventions are defensible, and across them the uncovered
-count is \numHydUncoveredimplicit{} with hydrogens implicit and \numHydUncoveredcompleted{} with
-them made explicit and the templates completed to match; the figure reported here sits between the
-two, at the conservative end. A third arm, hydrogens made explicit without completing the
-templates, is an incomplete loop rather than a convention and reaches only
-\numHydUncoveredexpanded{}; the instrument's own record excludes it. The released public entry
-point defaults to that third presentation, so calling it without naming the convention
-returns \numHydUncoveredexpanded{} uncovered and not \numCeilingUncovered{}. The residual
-dependence of the bound on the convention, measured per template, is
-$\numHydResidual{}$, 95\% CI $[\numHydResiduallo{}, \numHydResidualhi{}]$, an interval that
-excludes zero: the bound is convention-dependent, by \numHydResidualrefs{} references in
-\numHydReferences{}.
+every deployed firing path uses, and \numCeilingUncovered{} is that convention measured through
+the loop a caller runs. Two conventions are defensible. Measured through the loop that audits
+them, so that both arms come from one code path, hydrogens implicit leave
+\numCeilagreeAuditimplicitUncovered{} uncovered and hydrogens made explicit with the templates
+completed to match leave \numCeilagreeAuditcompletedUncovered. Choosing the convention per
+template, which no caller can request, leaves \numCeilagreeDispatchUncovered. A fourth arm,
+hydrogens made explicit without completing the templates, is an incomplete loop rather than a
+convention and reaches only \numHydUncoveredexpanded{}; the instrument's own record excludes it.
+The released public entry point defaults to that fourth presentation, so calling it without naming
+the convention returns \numHydUncoveredexpanded{} uncovered and not \numCeilingUncovered{}.
+
+Two of those numbers describe the same convention and disagree, by
+\numCeilagreeDisagreementWord{} references: the deployed loop and the audit loop clean products
+differently. All four counts span \numCeilagreeSpread{} references,
+\numCeilagreeSpreadsharePct{} of the \numHydReferences{}, which is
+\numCeilagreeSpreadofmarginPct{} of the narrowest margin that separates anything in the
+comparison. The choice of instrument therefore cannot decide a claim in this paper, and the
+counts are printed together rather than reconciled to one. The residual dependence of the bound
+on the convention, measured per template, is $\numHydResidual{}$, 95\% CI
+$[\numHydResiduallo{}, \numHydResidualhi{}]$, an interval that excludes zero: the bound is
+convention-dependent, by \numHydResidualrefs{} references in \numHydReferences{}.
 
 Relaxing the convention-dependent primitives in the templates recovers three of the
 \numCeilingKnown{}, moving the ceiling by $+0.0012$. A bound computed before the run predicted
@@ -639,6 +651,39 @@ single budget would have named a different winner depending on which budget its 
 and each of those choices would have been defensible. That is the case for reporting the sweep
 rather than a single cell, and it is made here on this system's own numbers.
 
+\subsection{The mode that is cheap to run loses at wide budgets}
+
+The two operating modes do not fail in the same place, and the cheaper one is the weaker beyond a
+short list. Against MetaTox on the comparison set the interactive mode leads at $k = 10$,
+$+\numGapTrainedmetatoxOneZero$ with an interval of
+$[\numGapTrainedmetatoxOneZeroLo, \numGapTrainedmetatoxOneZeroHi]$, does not separate at $k=15$,
+and then trails at every wider budget: $\numGapTrainedmetatoxTwoZero$
+$[\numGapTrainedmetatoxTwoZeroLo, \numGapTrainedmetatoxTwoZeroHi]$ at $20$,
+$\numGapTrainedmetatoxThreeZero$
+$[\numGapTrainedmetatoxThreeZeroLo, \numGapTrainedmetatoxThreeZeroHi]$ at $30$, and
+$\numGapTrainedmetatoxFiveZero$
+$[\numGapTrainedmetatoxFiveZeroLo, \numGapTrainedmetatoxFiveZeroHi]$ at $50$. All three intervals
+exclude zero. A service deployed in this mode would recover less than the system it replaces
+wherever it answers with twenty candidates or more.
+
+The cause is the pool and not the ranking. The interactive mode returns
+\numOutputTrained{} candidates on average against MetaTox's \numOutputMetatox, and at $k = 20$
+already \numShortTrainedTwoZero{} of its \numPopulationN{} lists are shorter than the budget
+against MetaTox's \numShortMetatoxTwoZero. A list that has ended cannot gain a hit from a wider
+window, so the deficit grows with $k$ whatever the order within it. The exhaustive mode, which
+applies the whole bank and returns \numOutputBank{} candidates, leads MetaTox at the same two
+budgets, $+\numGapBankmetatoxThreeZero$
+$[\numGapBankmetatoxThreeZeroLo, \numGapBankmetatoxThreeZeroHi]$ at $30$ and
+$+\numGapBankmetatoxFiveZero$ $[\numGapBankmetatoxFiveZeroLo, \numGapBankmetatoxFiveZeroHi]$
+at $50$.
+
+What that leaves is a choice rather than a default. A service answering with ten candidates should
+run the interactive mode, which is the faster of the two by the margin Figure~\ref{fig:cost}
+reports. One answering with thirty or fifty has to run the exhaustive mode and pay for it. The
+rule budget of \numHOneZeroTopk{} is the parameter that draws that line. It is the value the
+released checkpoint was trained at, and a deployment willing to spend more can raise it and buy
+back the pool.
+
 \subsection{What the system offers that the incumbent does not}
 
 Three properties, none of them a recall figure. Every prediction names the transformation rule
@@ -650,8 +695,8 @@ reproducible.
 
 \subsection{What the numbers do not support}
 
-GRAIL does not lead at the tight budgets. At $k=15$ and $20$ no arm separates from the strongest
-comparator. The established lead is at $k=30$ and $50$. The system is not compared against the 2025--26 wave, because that wave cannot be run as
+GRAIL does not lead at the tight budgets. At $k=15$ neither arm separates from the strongest
+comparator, and at $k=20$ the interactive arm separates against it. The established lead is the exhaustive arm's, at $k=30$ and $50$. The system is not compared against the 2025--26 wave, because that wave cannot be run as
 released. Of \numComparatorsUnavailable{} such systems, one releases training code without a
 checkpoint \citep{Larsson_2025}, one has a withdrawn module \citep{Zhou_2025}, one offers only a
 web form \citep{Zhou_2026} and one has no repository \citep{Chavan_2026}. No ranking in this

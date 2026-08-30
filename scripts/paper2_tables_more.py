@@ -26,15 +26,19 @@ def modes():
  & interactive & exhaustive \\\\
 \\midrule
 rules applied & {i['top_k']} & {thousands(e['top_k'])} \\\\
-candidates, mean & \\numOutputTrained & \\numOutputBank \\\\
+candidates, mean & {i['candidates']['mean']} & {e['candidates']['mean']} \\\\
+candidates, median & {i['candidates']['median']} & {e['candidates']['median']} \\\\
 seconds, median & {i['median_s']} & {e['median_s']} \\\\
 seconds, mean & {i['mean_s']} & --- \\\\
 seconds, 90th pct & {i['p90_s']} & --- \\\\
 seconds, slowest & {i['max_s']} & did not finish \\\\
 \\bottomrule
 \\end{{tabular}}
-\\caption{{The two operating modes: rules applied, candidates returned and wall-clock time.
-Medians are over the {i['n']} validation substrates and cover everything before the filter.}}
+\\caption{{The two operating modes: rules applied, candidates returned and wall-clock time. Every
+figure is measured on the validation draw, {i['n']} substrates for the interactive mode and
+{e['candidates']['n']} for the exhaustive one, which lacks a pool for one of them. Candidates are
+what a caller receives: deduplicated by matching key and capped at
+{i['candidates']['cap']}. Times cover everything before the filter.}}
 \\label{{tab:modes}}
 \\end{{table}}
 """
@@ -78,7 +82,7 @@ def hypotheses():
          ("H14", "group score as a gate before fusion", "$+0.02$", "h14.diff", "comparison set"),
          ("H13", "standardise surviving candidates only", "$\\ge 10\\times$", "h13.factor", "validation"),
          ("H15", "survivors, tautomer budget 200", "$<10$ s", "h15.time", "validation"),
-         ("H16", "composite share, second instrument at $E\\ge5$", "$\\ge 0.134$",
+         ("H16", "composite share, the two instruments' union", "$\\ge 0.134$",
           "composite.unionshare", "mined bank")]
     rows = []
     for i, (h, what, thr, key, pop) in enumerate(H, 1):

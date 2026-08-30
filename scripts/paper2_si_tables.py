@@ -299,14 +299,9 @@ def si_precision():
             f"\\begin{{tabular}}{{r{'r' * len(arms)}}}\n\\toprule\n"
             f"$k$ & {head} \\\\\n\\midrule\n" + "\n".join(rows)
             + "\n\\bottomrule\n\\end{tabular}\n"
-            "\\caption{Micro precision at each budget on the comparison set, with the parent-drop "
-            "convention of Table~\\ref{MS-tab:sweep}. Precision at $k$ is hits over the predictions inside the "
-            "window, so an arm whose list is shorter than the budget is not charged for the empty "
-            "slots, which is why MetaPredictor is flat from $k=15$. These figures order the "
-            "systems differently from recall and we do not use them to do so: under incomplete "
-            "annotation an unannotated but real metabolite counts as a false positive, so every "
-            "value is pessimistic by an unknown amount and an arm emitting fewer candidates is "
-            "flattered.}\n\\label{tab:si-precision}\n\\end{table}\n")
+            "\\caption{Micro precision at each budget on the comparison set, under the parent-drop "
+            "convention of Table~\\ref{MS-tab:sweep}.}"
+            "\n\\label{tab:si-precision}\n\\end{table}\n")
 
 
 def si_parentdrop():

@@ -2,8 +2,8 @@
  "provenance": {
   "script": "mode_timings.py",
   "script_path": "scripts/typed_edit/mode_timings.py",
-  "source_sha256": "c4369d66df18265326b5463bf32dcc96f46c4edf0a1ff35e219fdf27f736634b",
-  "git_commit": "a17dbadd7ef45b29dd9e50d62991b0886c101efb",
+  "source_sha256": "331112300008c7a838c7518b56980679df3e31b475fd19f2b45af13f9e5ca322",
+  "git_commit": "29415d8dc99ace21970c5158ce05876f8517d96d",
   "git_dirty": true
  },
  "split": "validation",
@@ -14,11 +14,25 @@
   "median_s": 0.39,
   "mean_s": 2.36,
   "p90_s": 2.59,
-  "max_s": 231.01
+  "max_s": 231.01,
+  "candidates": {
+   "n": 294,
+   "cap": 100,
+   "mean": 16.5,
+   "median": 14.0,
+   "source": "results/valpools_k30/all.json"
+  }
  },
  "exhaustive": {
   "top_k": 7581,
   "median_s": 5.28,
+  "candidates": {
+   "n": 293,
+   "cap": 100,
+   "mean": 98.0,
+   "median": 100,
+   "source": "results/val_pools.json"
+  },
   "note": "the survivors arm at tautomer budget 200; its median under the load the comparison arm ran at is 9.12 s"
  },
  "why_the_mean_is_not_the_median": "the interactive mode's mean is 2.36 s against a median of 0.39 s, and its maximum is 231.01 s: one 291-heavy-atom peptide, which the exhaustive arm has never finished at any budget, moves the mean by six times"
