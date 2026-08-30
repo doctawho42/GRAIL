@@ -1,47 +1,59 @@
 \section{Introduction}
 
-When a drug or an environmental chemical enters an organism, enzymes convert it into other
-compounds. Which compounds, as structures and not merely as a count, matters for toxicology, for
-drug design and for environmental fate assessment, because a metabolite can be more toxic, more
-persistent or more active than the parent.
+A drug that reaches the bloodstream does not stay the compound that was administered. Enzymes,
+chiefly in the liver, convert it into a series of other compounds, and those compounds carry
+their own activity, their own toxicity and their own persistence. A metabolite can be the agent
+that makes a drug work, as with the antiviral prodrugs activated by phosphorylation; it can also
+be the agent that makes one fail, as with the reactive intermediates behind several
+withdrawals. The same question arises outside the clinic: what an environmental chemical becomes
+in an organism determines how far it travels and how long it lasts.
 
-Two families of predictor dominate. Rule-based systems, among them
-SyGMa \citep{Ridder_2008}, BioTransformer \citep{Djoumbou_Feunang_2019}, GLORY and
+Knowing which metabolites will form, as chemical structures rather than as a count or a rate, is
+therefore useful early, when a compound exists only on paper and no experiment has been run.
+Predicting them computationally has been attempted for three decades, and two families of method
+now dominate. Rule-based systems, among them SyGMa \citep{Ridder_2008},
+BioTransformer \citep{Djoumbou_Feunang_2019}, GLORY and
 GLORYx \citep{de_Bruyn_Kops_2019, de_Bruyn_Kops_2020} and MetaTox \citep{Rudik_2017}, encode
-biotransformations as reaction templates and enumerate products by applying them.
-Sequence-to-sequence systems, among them MetaTrans \citep{Litsa_2020} and
-MetaPredictor \citep{Zhu_2024}, translate the substrate's string representation into metabolite
-strings. A further wave has appeared recently: a chemical language
-model \citep{Larsson_2025}, a mechanistically informed graph framework \citep{Zhou_2025}, a
-server predicting pathway, site and product together \citep{Zhou_2026}, and a preprint
-predicting all three jointly \citep{Chavan_2026}.
+known biotransformations as reaction templates and enumerate the products of applying them to a
+query structure. Sequence-to-sequence systems, among them MetaTrans \citep{Litsa_2020} and
+MetaPredictor \citep{Zhu_2024}, treat the problem as translation, mapping a text representation
+of the substrate to text representations of its metabolites. Recent work extends both lines: a
+chemical language model \citep{Larsson_2025}, a mechanistically informed graph
+framework \citep{Zhou_2025}, a server predicting pathway, site and product
+together \citep{Zhou_2026}, and a preprint predicting all three jointly \citep{Chavan_2026}.
 
-Comparing any two of these is harder than it looks, and the difficulty is not effort. A recall
-figure depends on at least two settings that papers in this area report apart from their rankings
-or not at all: the rule deciding when a predicted structure counts as the reference, and the
-number of candidates a system may emit. A system emitting seventy candidates and one emitting
-eight are not measured on the same axis. Independent comparisons of these tools report the same
-obstacle \citep{Boyce_2022, Scholz_2023, Gao_2026}.
+What is missing is not another predictor but a way to tell these apart. The usual measure is
+recall: the fraction of the metabolites recorded for a compound that a system returns. That
+fraction depends on two decisions made outside the model. The first is what counts as a match,
+since two chemical structures can denote the same molecule while differing in how a hydrogen is
+placed or how a ring is drawn. The second is how many candidates the system is allowed to return,
+since any system recovers more of the answer if permitted to list more guesses. Published
+predictors differ on both and report them inconsistently, so a system returning seventy candidates
+and one returning eight are not measured on the same scale. Independent evaluations of these tools
+report the same obstacle \citep{Boyce_2022, Scholz_2023, Gao_2026}.
 
-GRAIL is built on the opposite premise: every evaluation choice is declared and the system is
-reported under all of them rather than under one. The claims below are therefore a sweep rather
-than a single number. What is released is stated precisely rather than generally: the source, both
-checkpoints, the rule bank, a digest-pinned split manifest, the frozen per-substrate predictions of
-every comparator, the evaluation harness and the preregistration. A reader holding those can
-recompute every cell of the comparison, under any of the five matching criteria: the annotated
-references and every arm's predictions are released as structures. What they cannot rebuild is
-the corpus, because the extraction that selected from the four sources is not in the repository.
-That limit is set out in the Supporting Information with what it does and does not block.
+This work addresses that. We present GRAIL, a metabolite structure predictor built from a bank of
+reaction templates, a learned model that selects which templates to apply, and a learned model
+that ranks the resulting candidates. Every prediction it emits carries the template that produced
+it and the atoms that template acted on, so a chemist can accept or reject a candidate on
+mechanistic grounds rather than on a score. We evaluate it with the two decisions above promoted
+to declared axes and varied across their full range, against every published predictor for which
+predictions on the same substrates could be obtained. The comparison does not produce a winner:
+which system leads depends on how many candidates it is allowed to return, and we report that
+dependence rather than a single figure. We further measure how much of the recorded chemistry
+lies outside the reach of any single template application, and find that most of it is chemistry
+the training corpus does not contain, which no enlargement of the bank would recover.
 
-The design contribution is narrower than the evaluation contribution and we say so. The
-architecture is a rule bank, a learned rule selector and a learned pair filter, a familiar shape.
-What changed the outcome was neither a new network nor new chemistry but the form in which two
-existing scores are combined. Replacing their product with a rank fusion is worth
-$+\numHSevenDiff$ of recall on held-out data before the candidate pool is capped, and
-$+\numHSevenDeployed$ on the pool the deployed system ranks; either is larger than any
-architectural change we tested.
+The article is organised as follows. Section~\ref{sec:methods} describes the corpus, the three
+stages of the system and the evaluation protocol. Section~\ref{sec:results} reports the
+comparison against published predictors, the contribution of each stage, the sensitivity of the
+result to the evaluation choices, a worked example, and the coverage bound.
+Section~\ref{sec:discussion} discusses where the advantage lies and what the measurements do not
+establish, Section~\ref{sec:conclusions} states the conclusions and
+Section~\ref{sec:limitations} the limitations. Procedures, ablations and supporting measurements are in the Supporting Information.
 
 \section{Materials and methods}
+\label{sec:methods}
 
 \subsection{Which population carries which number}
 \label{sec:populations}
@@ -205,23 +217,27 @@ grid reads ($16.3$ on the same draw), and the list finally emitted on the compar
 The deployed emission is therefore $\hat{C}(s)$ itself, ordered by fusion and truncated by no
 threshold, so $|\hat{Y}_s| = |\hat{C}(s)|$. For the interactive mode that length is set by the
 rule budget and the substrate's chemistry, and its mean of \numOutputTrained{} sits well below
-any cap. The exhaustive mode is different and we do not claim otherwise: its pool is capped at
-100 by the cap prediction P2 registers, and its mean output of \numOutputBank{} is close enough
-to that cap that the cap is what sets its length on most substrates. The cap is ours, it is
-declared, and it applies to that arm and not to the comparators. Registered as prediction P4 with a criterion of zero lost cells over a grid of five matching
-criteria by eleven budgets: \numHOneOneLost{} of \numHOneOneCells{}.
+any cap. The exhaustive mode differs: its pool is capped at 100 by the cap prediction P2 registers, and
+its mean output of \numOutputBank{} is close enough to that cap that the cap sets its length on
+most substrates. That cap is a parameter of this system, it is declared, and it applies to that
+arm and not to the comparators. Registered as prediction P4 with a criterion of zero lost cells
+over a grid of five matching criteria by eleven budgets: \numHOneOneLost{} of
+\numHOneOneCells{}.
 
 \subsection{Evaluation}
 
-What counts as a hit is a declared axis with five settings: canonical SMILES equality, the full
-InChIKey, its stereochemistry-blind first block, Tanimoto similarity of one over Morgan
-fingerprints, and a tautomer-aware key that canonicalises tautomers on both sides. The last is the
+The rule deciding when a predicted structure counts as one of the references is the
+\emph{matching criterion}. It is treated here as a declared axis with five settings: canonical
+SMILES equality, the full InChIKey, its stereochemistry-blind first block, Tanimoto similarity of
+one over Morgan fingerprints, and a tautomer-aware key that canonicalises tautomers on both
+sides. The last is the
 default, because the references neither carry stereochemistry nor distinguish tautomers, and
 because standard identifiers normalise only a subset of tautomers \citep{Dhaked_2020}. All five
 are reported for every comparison.
 
-Recall at cut-off $k$ for substrate $s$ with references $Y_s$ and the first $k$ predictions
-$\hat{Y}^{(k)}_s$ is $|Y_s \cap \hat{Y}^{(k)}_s| / |Y_s|$. Two aggregations are distinguished
+The number of candidates a system is permitted to return is the \emph{output budget}, written
+$k$, and it is the second declared axis. Recall at budget $k$ for substrate $s$ with references
+$Y_s$ and the first $k$ predictions $\hat{Y}^{(k)}_s$ is $|Y_s \cap \hat{Y}^{(k)}_s| / |Y_s|$. Two aggregations are distinguished
 throughout and never mixed within a comparison,
 \begin{align}
 \mathrm{macro} &= \frac{1}{|S|}\sum_{s \in S}
@@ -251,8 +267,8 @@ favour one over another. It does not: the largest effect on recall anywhere in t
 
 Every interval in this paper is a per-comparison 95\% interval with no family-wise adjustment.
 The sweep is \numCritBudgets{} budgets wide and Table~\ref{SI-tab:si-criterion} is \numCritCriteria{} criteria deep, so
-a reader treating the grid as a family should discount accordingly; the narrowest lead we claim,
-at $k=30$ against MetaTox, is the cell that would not survive such a correction.
+treating the grid as a single family would require a corresponding discount; the narrowest lead
+claimed here, at $k=30$ against MetaTox, is the cell that would not survive such a correction.
 
 No single budget is privileged. A claim that the system leads is made for a cell only where that
 cell's interval excludes zero, and where an ordering is not established the table says so.
@@ -261,6 +277,7 @@ cell is the multiverse and specification-curve discipline \citep{Steegen_2016, S
 applied here to the two choices this literature leaves undeclared.
 
 \section{Results}
+\label{sec:results}
 
 \subsection{Comparison with published predictors}
 
@@ -270,13 +287,9 @@ applied here to the two choices this literature leaves undeclared.
 \centering
 \includegraphics[width=\columnwidth]{fig_sweep}
 \caption{Micro recall against output budget on the \numPopulationN{} substrates every method
-predicts on. Shading is read from the paired intervals and not by eye: lavender where GRAIL's better
-arm trails the strongest comparator with the interval excluding zero, green where it leads with the
-interval excluding zero, unshaded where neither separates. Both maxima are taken per budget, so
-the shading is a summary that selects an arm on the population it is read on; the six curves are
-plotted individually above it and the un-maximised grid of every arm against every comparator at
-every budget, which is what the text's verdicts are read from, is
-Table~\ref{SI-tab:si-intervals}.}
+predicts on. Shading marks the budgets at which the better GRAIL arm trails the strongest
+comparator with the paired interval excluding zero (lavender) or leads on the same condition
+(green); budgets where neither separates are unshaded.}
 \label{fig:sweep}
 \end{figure}
 
@@ -428,16 +441,10 @@ supported almost any claim about which system is better.
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth]{fig_case}
-\caption{The worked example. Left: the substrate as a chemist draws it, with every atom a
-firing rule reported shaded in the colour of the transformation it belongs to. The three
-phosphorylations report the same two atoms under three different rules, so the sites collapse to
-two where the metabolites do not. Right: where the four annotated metabolites fall in each arm's
-ranked list, every returned candidate drawn as a tick, for both drawings of the substrate: the
-one the corpus stores and the one shown on the left. The interactive budget never produces the
-phosphorylations under either drawing, so its list is short rather than long and wrong; under the
-drawing on the left it produces none of the four, because the template its single hit came from
-requires the stored tautomer. The exhaustive arm reaches all four either way, at different
-ranks and, for the deamination, through a different template.}
+\caption{The worked example. Left: the substrate as a chemist draws it, with each atom a
+firing rule reported shaded in the colour of its transformation. Right: the rank of each of the
+four annotated metabolites in each arm's returned list, every returned candidate drawn as a tick,
+under both drawings of the substrate.}
 \label{fig:case}
 \end{figure*}
 
@@ -460,8 +467,8 @@ it emits and runs out, and the exhaustive mode keeps having candidates.
 
 The attribution is what a score cannot supply. All three phosphorylations fire at the same
 substrate atoms, the 5$^\prime$ hydroxymethyl, under three different rules, and the deamination
-fires on the pyrimidine ring; a user reading the output sees which transformation is claimed and
-where, and can reject a candidate on chemical grounds. On the stored drawing all four rules are
+fires on the pyrimidine ring, so the output states which transformation is claimed and where,
+and a candidate can be rejected on mechanistic grounds. On the stored drawing all four rules are
 mined, so the part of the bank with no expert provenance is what carries this molecule; on the
 drawing a chemist would use, the deamination is found instead by a curated template and thirty
 ranks lower. Which templates carry a molecule is itself a function of how the molecule is drawn,
@@ -475,7 +482,7 @@ confirmed and three failed, on the falsification condition each was written with
 the point estimate to the threshold. Read instead against the interval, three of the seven
 confirmations are unresolved rather than clear: P1, P2 and P5 each have a threshold inside their
 own interval, so the data establish that the effect exceeds zero and not that it exceeds the
-registered bar. We report both readings and change neither verdict after the fact. The remaining six are registered against work this paper does not
+registered bar. Both readings are reported and neither verdict is revised. The remaining six are registered against work this paper does not
 report and are stated with their thresholds, so that a later result on any of them cannot be a
 threshold chosen after the fact.
 
@@ -532,17 +539,14 @@ $+\numHOneZeroBought$ on validation, is within it.
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth]{fig_cost}
-\caption{Left: generator seconds against substrate size at the whole bank, with the substrates
-that did not finish inside the deadline marked at it. Size is a poor predictor: two substrates of
-equal size differ by two orders of magnitude, and the smallest failure carries
-\numEnvelopeSmallestUnfinished{} heavy atoms. Right: the cost of each operating mode on the
-validation split, log scale. The interactive mode's mean is six times its median and its slowest
-substrate is three orders above it.}
+\caption{Left: generator seconds against substrate size at the whole bank, with substrates
+that did not finish inside the deadline marked at it. Right: the cost of each operating mode on
+the validation split, log scale.}
 \label{fig:cost}
 \end{figure*}
 
-Standardisation was the binding constraint (Figure~\ref{fig:cost}) and its diagnosis was wrong twice before it was right.
-Three explanations were tested and rejected by measurement: the filter's maximum-common-substructure
+Standardisation is the binding constraint (Figure~\ref{fig:cost}).
+Three other explanations were tested and rejected by measurement: the filter's maximum-common-substructure
 step, rule application, and substrate size as an axis. The cause was product standardisation, at
 \numHOneThreeEnumeration{} times the remaining work, run once per product of every template. A
 cache had concealed it, a repeated substrate running many times faster.
@@ -558,17 +562,14 @@ Adding a tautomer enumeration budget of \numHOneFiveBudget{} (P9) passes both ha
 \numHOneFiveRecallDiff{} against a cap of $0.01$. Of \numHOneFiveCandidates{} candidates,
 \numHOneFiveMoved{} standardise to a different molecule under the bounded budget.
 
-Part of the speed-up is machine load, and the two arms did not run under the same. The
-enumeration step is identical between them, so the ratio of its medians, \numHOneFiveLoad{},
-measures load alone. Applying that correction to the step the budget actually changes
-(standardising the survivors, whose medians are \numHOneFiveStdunbounded~s unbounded against
-\numHOneFiveStdbounded~s under the budget) leaves \numHOneFiveAttributable$\times$
-attributable to the budget itself. Carried to the whole arm it puts the median at
-\numHOneFiveMedianUnderload~s under the other arm's load, still inside the target.
+The two arms did not run under the same machine load. Correcting for it leaves
+\numHOneFiveAttributable$\times$ attributable to the budget itself, still inside the target;
+the correction and the safeguard that kept the budget from moving what counts as a hit are in
+the Supporting Information.
 
-The budget lives in a module-level singleton shared with the matching key, so lowering it would
-silently have moved what counts as a hit. A private enumerator was introduced and the keys were
-verified unchanged before the run.
+Cost is reported at the tail as well as at the median, because a service is used at both. The
+interactive mode's mean is six times its median, and its slowest substrate is three orders of
+magnitude above it.
 
 \subsection{The ceiling, and how much of it is the corpus}
 
@@ -585,9 +586,8 @@ count is \numHydUncoveredimplicit{} with hydrogens implicit and \numHydUncovered
 them made explicit and the templates completed to match; the figure reported here sits between the
 two, at the conservative end. A third arm, hydrogens made explicit without completing the
 templates, is an incomplete loop rather than a convention and reaches only
-\numHydUncoveredexpanded{}; it is excluded, and it is excluded by the instrument's own record
-rather than by this paragraph. Readers reproducing through the released public entry point should
-note that its default is that third presentation, so calling it without naming the convention
+\numHydUncoveredexpanded{}; the instrument's own record excludes it. The released public entry
+point defaults to that third presentation, so calling it without naming the convention
 returns \numHydUncoveredexpanded{} uncovered and not \numCeilingUncovered{}. The residual
 dependence of the bound on the convention, measured per template, is
 $\numHydResidual{}$, 95\% CI $[\numHydResiduallo{}, \numHydResidualhi{}]$, an interval that
@@ -638,26 +638,28 @@ of the \numCeilingNovel{} misses. The control that makes this readable: bank and
 formalisms.
 
 \section{Discussion}
+\label{sec:discussion}
 
 \subsection{Where the advantage is, and where it is not}
 
-The comparison does not produce a winner and we do not present one. SyGMa recovers more at the
-head of the list and at $k \le 5$ the interval separates against us. What GRAIL does is keep
-improving where the others stop. A user reading three candidates is better served by SyGMa; a user
-reading fifty is better served here, and the paper says both.
+The comparison does not produce a winner. SyGMa recovers more at the head of the list, and at
+$k \le 5$ the interval separates against GRAIL. GRAIL continues to improve at budgets where the
+other systems stop. At a budget of three candidates SyGMa is the better choice; at fifty, GRAIL
+is.
 
 That division has a consequence for how such tools are compared. A single recall figure at a
-single budget would have named a different winner depending on which budget its author chose, and
-every one of those choices would have been defensible. This is the argument for reporting the
-sweep rather than a cell, made on our own numbers rather than about someone else's.
+single budget would have named a different winner depending on which budget its author chose,
+and each of those choices would have been defensible. That is the case for reporting the sweep
+rather than a single cell, and it is made here on this system's own numbers.
 
 \subsection{What the system offers that the incumbent does not}
 
-Three things, none a recall figure. Every prediction names the transformation rule that produced
-it and the site at which it fired, so a user can accept or reject a candidate on chemical grounds.
-The whole output is ranked, where the incumbent ranks part of its output and leaves the remainder
-in file order. And every evaluation choice is declared with every cell of the resulting grid
-reported, which is what makes the comparison reproducible by a third party.
+Three properties, none of them a recall figure. Every prediction names the transformation rule
+that produced it and the site at which it fired, which allows a candidate to be accepted or
+rejected on mechanistic grounds. The whole output is ranked, whereas the incumbent ranks part of
+its output and leaves the remainder in file order. And every evaluation choice is declared with
+every cell of the resulting grid reported, which is what makes the comparison independently
+reproducible.
 
 \subsection{What the numbers do not support}
 
@@ -665,9 +667,9 @@ GRAIL does not lead at the tight budgets. At $k=15$ and $20$ no arm separates fr
 comparator. The established lead is at $k=30$ and $50$. The system is not compared against the 2025--26 wave, because that wave cannot be run as
 released. Of \numComparatorsUnavailable{} such systems, one releases training code without a
 checkpoint \citep{Larsson_2025}, one has a withdrawn module \citep{Zhou_2025}, one offers only a
-web form \citep{Zhou_2026} and one has no repository \citep{Chavan_2026}. A reader therefore cannot presently verify any ranking in this
-literature, which is the concrete case for leaderboards releasing per-item predictions rather
-than aggregate scores \citep{Rodriguez_2021, Mishra_2021}. Precision figures are bounded by annotation completeness. And the advantage at
+web form \citep{Zhou_2026} and one has no repository \citep{Chavan_2026}. No ranking in this
+literature can presently be verified independently, which is the concrete case for leaderboards
+releasing per-item predictions rather than aggregate scores \citep{Rodriguez_2021, Mishra_2021}. Precision figures are bounded by annotation completeness. And the advantage at
 wide budgets is partly a statement about output length on all sides rather than about ranking.
 
 \subsection{The ceiling bounds this formulation, not the task}
@@ -684,38 +686,25 @@ predictor trained on a comparable corpus, including sequence-to-sequence systems
 report it.
 
 \section{Conclusions}
+\label{sec:conclusions}
 
-GRAIL predicts metabolite structures by selecting rules from a bank of \numBankRules{} templates,
-applying them, and ranking the products by a reciprocal rank fusion of a pair filter and the rule
-selector. Replacing the product of the two scores with that fusion is worth $+\numHSevenDiff$ of
-recall on held-out data before the pool cap and $+\numHSevenDeployed$ on the pool the system
-ranks, either of them more than any architectural change we tested: the form in which two
-existing scores are combined mattered more than what produced them.
+GRAIL predicts metabolite structures by selecting templates from a bank of \numBankRules{}
+reaction rules, applying them, and ranking the products by a reciprocal rank fusion of a pair
+filter and the rule selector. The form in which the two learned scores are combined mattered more
+than what produced them: replacing their product with the rank fusion gained more recall than any
+architectural change tested here. Every prediction carries the template that produced it and the
+atoms it acted on, and the whole output is ranked.
 
-The comparison against published predictors does not resolve into an ordering, and we do not
-present one. It divides by output budget: SyGMa is ahead of both GRAIL modes at the tightest budgets,
-and GRAIL's exhaustive mode is ahead of all three comparators at the widest, each where the
-paired interval excludes zero. Which of the two GRAIL modes is meant matters and is stated: the
-interactive mode trails MetaTox at $k \ge 20$ with the interval excluding zero, so a sentence
-saying only that GRAIL leads at wide budgets would be taking a maximum over our own arms. A single recall figure at a single
-budget would have named a different winner depending on which budget its author chose, which is
-the argument for reporting the sweep rather than a cell.
-
-Two boundaries are as much of the result as the recall is. The rule bank misses
-\numCeilingUncovered{} of \numPopulationTestrefs{} references in one step. The
-\numCeilingNovel{} of those that need a type the bank does not hold survive every definition of
-a transformation type at which a type still determines a product; the remaining
-\numCeilingKnown{} plus \numCeilingUntypeable{} are not covered by that argument and are not
-claimed to be. Type
-definition is a choice in the census of the gap rather than in the engine that produces it, so
-that invariance does not by itself make the bound implementation-free; the engine axis we can
-measure, the presentation of hydrogen, moves it by $\numHydResidual{}$ with an interval excluding
-zero, or \numHydResidualrefs{} references in \numHydReferences{}. And of
-\numComparatorsUnavailable{} systems published in 2025--26, none could be run on our split as
-released, which is why we release per-substrate predictions for every arm rather than aggregate
-scores alone.
+Measured against every published predictor that could be run on the same substrates, the
+comparison divides by output budget rather than resolving into an ordering, and the division is
+the result. Under the evaluation choices swept here, the verdict moves with the matching
+criterion and with the budget, so a single recall figure would have named a different leader
+depending on decisions its author never had to state. Reporting the grid is what makes the
+comparison checkable, and releasing every arm's per-substrate predictions is what lets a third
+party recompute it.
 
 \section{Limitations}
+\label{sec:limitations}
 
 Predictions are single-step in the sense that one template is applied once, which is not the same
 as one enzymatic step, and the gap between the two is larger than one instrument alone shows. The
@@ -794,18 +783,17 @@ DrugBank's terms. Third-party restrictions therefore apply to the corpus records
 question of the derived corpus's licence is \CorpusLicence{}. What is deposited holds
 tautomer-canonical hashes of every substrate and of every annotated metabolite, together with the
 candidate structures this work's rule bank produced, which are our output and not source records.
-A reader holding their own licences for the four sources obtains the records, computes the same
-hashes and joins to everything here on them; the split manifest confirms that the rebuild matches
-rather than merely reporting that it differs. The one step no reader can reproduce is the
+Holding licences for the four sources, the records can be obtained, the same hashes computed and
+joined to everything released here; the split manifest confirms that a rebuild matches rather
+than merely reporting that it differs. The one step that cannot be reproduced is the
 extraction that selected from the four sources, which is not in the repository and is recorded as
 such in the Supporting Information.
 
-The numbers in this paper come from \numProvSources{} artifacts, and a build gate establishes
-that by running the number generator with its artifact reader instrumented rather than by anyone
-counting: \numProvSourcesunpinnedWord{} of the \numProvSources{} fall outside the pinned set and
-\numProvSourcesunverifiableWord{} carry a producer the provenance sweep cannot identify. Asked this
-question before the gate existed, five readers gave five different answers, which is the argument
-for the gate rather than for the count.
+The numbers in this paper come from \numProvSources{} artifacts. A build gate establishes that
+by running the number generator with its artifact reader instrumented, so the count is of files
+opened rather than of matches in the source: \numProvSourcesunpinnedWord{} of the
+\numProvSources{} fall outside the pinned set and \numProvSourcesunverifiableWord{} carry a
+producer the provenance sweep cannot identify.
 Each records the commit that wrote it; a sweep recomputes the hash of its producer and refuses the
 artifact if that producer has changed, and all \numProvPinned{} are current. A split manifest
 pins by digest the triple files, the substrate sets, the evaluated test set, the rule bank and all

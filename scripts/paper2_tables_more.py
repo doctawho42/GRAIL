@@ -33,11 +33,8 @@ seconds, 90th pct & {i['p90_s']} & --- \\\\
 seconds, slowest & {i['max_s']} & did not finish \\\\
 \\bottomrule
 \\end{{tabular}}
-\\caption{{The two operating modes. Both medians are over the {i['n']} validation substrates and
-measure the same boundary, everything before the filter. The interactive mode's mean is six times
-its median because of one substrate, a 291-heavy-atom peptide taking {i['max_s']}~s that the
-exhaustive mode has never finished at any budget. A service must publish the tail as well as the
-median.}}
+\\caption{{The two operating modes: rules applied, candidates returned and wall-clock time.
+Medians are over the {i['n']} validation substrates and cover everything before the filter.}}
 \\label{{tab:modes}}
 \\end{{table}}
 """
@@ -94,16 +91,11 @@ def hypotheses():
     return ("\\begin{table*}[t]\n\\centering\\small\n\\begin{tabular}{llllll}\n\\toprule\n"
             " & what was fixed & threshold & measured & tested on & register \\\\\n\\midrule\n" +
             "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n"
-            "\\caption{Every deployed choice as a prediction fixed before it was checked, with the "
-            "population it was checked on. P8's figure is a speed-up factor, P9's a median in "
-            "seconds and P10's a share of the mined bank; the rest are differences in micro recall@15. P1 to P3 were fixed before the pool cap "
-            "of P2 was in place, so they are measured on the uncapped pool; the same contrast for "
-            "P1 on the deployed pool is in Table~\\ref{SI-tab:si-ranking}. Each verdict is the falsification "
-            "condition as written, which compares the point estimate to the threshold; "
-            "P1, P2 and P5 have their threshold inside their own interval and are "
-            "unresolved on the stricter reading. The last column gives the "
-            "identifier each carries in the released register, whose numbering records when each "
-            "was written rather than where it appears here.}\n\\label{tab:hyp}\n\\end{table*}\n")
+            "\\caption{Every deployed choice as a prediction fixed before it was checked: what "
+            "was fixed, the threshold, the value measured, the population it was checked on, and "
+            "the identifier it carries in the released register. P8's figure is a speed-up "
+            "factor, P9's a median in seconds and P10's a share of the mined bank; the rest are "
+            "differences in micro recall at a budget of 15.}\n\\label{tab:hyp}\n\\end{table*}\n")
 
 
 # The four annotated metabolites of the worked example, named so the table reads as chemistry
@@ -141,15 +133,9 @@ def case_study():
         "\\cmidrule(lr){2-3}\\cmidrule(lr){4-5}\n"
         "annotated metabolite & rank & rule & rank & rule \\\\\n\\midrule\n"
         f"{body} \\\\\n\\bottomrule\n\\end{{tabular}}\n"
-        "\\caption{The worked example: gemcitabine as the corpus draws it, its four annotated "
-        "metabolites, and where "
-        f"each is found. The interactive mode returns {inter['n_candidates']} candidates in "
-        f"{inter['generator_seconds']}~s and reaches only the deamination; the exhaustive mode "
-        f"returns {exh['n_candidates']} in {exh['generator_seconds']}~s and reaches all four, at "
-        f"micro recall {exh['recall_at']['15']:.2f} at $k=15$ and {exh['recall_at']['30']:.2f} at "
-        "$k=30$. Rule is the index into the deployed bank; the atoms each one fired on are "
-        "in Figure~\\ref{fig:case}. The same example on the molecule as a chemist draws it is in "
-        "the Supporting Information, where the interactive mode reaches none of the four.}\n"
+        "\\caption{The four annotated metabolites of gemcitabine and the rank each is returned "
+        "at by the two operating modes, with the bank template that produced it. Rule is the "
+        "index into the deployed bank. The substrate is drawn as the corpus stores it.}\n"
         "\\label{tab:case}\n\\end{table*}\n")
 
 

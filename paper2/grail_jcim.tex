@@ -41,18 +41,18 @@ Pogodinskaya Str. 10-8, Moscow 119121, Russia}
 \maketitle
 
 \begin{abstract}
-Tools that predict xenobiotic metabolite structures report recall under evaluation choices their
-papers leave unstated, so their numbers are not comparable. We present GRAIL, a rule-grounded
-predictor that names the transformation rule and site behind every prediction and reports its
-performance under \numCritCriteriaWord{} matching criteria and \numCritBudgetsWord{} output budgets against every comparator with
-predictions on the same substrates. On \numPopulationN{} shared substrates the comparison divides by
-budget rather than resolving into an ordering --- SyGMa ahead of both GRAIL modes at $k\le5$,
-GRAIL's exhaustive mode ahead of all three comparators at $k=30$ and $k=50$, each with the paired
-interval excluding zero and one of the six marginal under a family-wise correction, while GRAIL's
-interactive mode trails MetaTox at those same budgets, so we name the mode wherever we name a
-lead. We also bound the approach: \numCeilingUncovered{} of \numPopulationTestrefs{} reference
-metabolites lie outside what the rule bank reaches in one step, a bound that moves by at most
-\numHydBandWord{} references across the hydrogen conventions our own instrument admits.
+Predicting which metabolites an enzyme system will produce from a drug or an environmental
+chemical is central to toxicology, drug design and environmental fate assessment, yet published
+predictors cannot be compared with one another: recall depends on how a predicted structure is
+judged to match a reference and on how many candidates a system is allowed to emit, and papers in
+this area report neither consistently. We present GRAIL, a rule-grounded predictor that names the
+transformation rule and the site behind every prediction, and we evaluate it with those two
+choices promoted to declared axes and swept, against every published predictor with predictions on
+the same substrates. The comparison does not resolve into a single ordering: which system leads
+depends on how many candidates it is allowed to return, and we report the whole grid rather than
+a cell. We also bound the approach by measuring how much of the annotated chemistry the rule bank
+cannot reach in one template application. Most of that shortfall is transformation chemistry the
+training corpus never contains, so it is not removed by enlarging the bank.
 \end{abstract}
 
 % For Table of Contents Only. Written by scripts/paper2_figures.py at exactly 3.25 by 1.75

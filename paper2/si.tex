@@ -60,7 +60,7 @@ derived corpus is \CorpusLicence{}. The repository is a separate channel and shi
 narrower and deliberate: the evaluated test substrates and their annotated metabolites as
 structures, which is what makes every recall figure in this paper recomputable. The question does not have to be answered, because the deposit does not raise
 it. The cost is that a
-reader must hold their own licences and rebuild the substrate set to join on the keys, and the
+keys must be joined against a substrate set rebuilt under one's own licences, and the
 manifest is what tells them whether their rebuild matches.
 
 \subsection{How the corpus was assembled}
@@ -126,7 +126,7 @@ the repair is deterministic and draws on no random number generator, and the par
 has no producer in this repository. It is a fixed historical artifact carried forward by digest.
 
 \paragraph{What a third party can and cannot rebuild.} With their own licences for the four
-sources, a reader can obtain every source record. They cannot reconstruct the extraction and
+sources, every source record can be obtained. What cannot be reconstructed is the extraction and
 filtering that selected from them, because that step is not in the repository and the data
 carries no accession to reverse it by. They can, given the structure files, reproduce every step
 from there: the standardisation is declared, the label convention is checked above, the repair is
@@ -165,7 +165,7 @@ The same fact bounds the comparison. Rule-based comparators have no training set
 held out, and their rules may encode the metabolism reported in these sources: BioTransformer is
 built on MetXBioDB, and GLORYx was developed against the reference set of that name. Their
 knowledge overlaps our test substrates by construction. No prior benchmark in this area controls
-this asymmetry, and neither do we; it is reported because a reader comparing these numbers to
+this asymmetry, and neither does this work; it is reported because anyone comparing these numbers to
 published ones should know that the rule-based figures are, in this respect, optimistic.
 
 \section{What the annotation contains}
@@ -234,7 +234,7 @@ substrates; the comparison set holds \numPdropSelfref{} of them.
 At the widest budgets the comparison is partly measuring list length rather than ranking, and the
 counts that say by how much are here at every budget rather than only at the one the main text
 prints. They bear directly on the two leads claimed at $k=30$ and $k=50$: an arm that has run out
-of candidates cannot gain from a wider window, and the reader should weigh the leads against the
+of candidates cannot gain from a wider window, so the leads should be weighed against the
 number of substrates for which that is the case.
 
 \section{Precision}
@@ -381,7 +381,7 @@ intervals exclude zero, and they are the four widest budgets, which are the budg
 the main text claims a lead over SyGMa. The corpus's drawing was costing the comparator recall,
 and the amount is now on the record. It does not reverse the comparison: the exhaustive mode's
 lead over SyGMa at $k=30$ is several times this correction. It does mean the lead is over a SyGMa
-handed a drawing its rules were not written for, and a reader should subtract this before reading
+handed a drawing its rules were not written for, and this amount should be subtracted before reading
 it.
 
 \section{The rule bank}
@@ -418,8 +418,7 @@ verbatim: \numSygmaSharePct{} of SyGMa's rule set, and \numSygmaOfcuratedPct{} o
 All \numSygmaIncurated{} fall among the named collections and \numSygmaInmined{} in the mined
 half, so the containment is inherited from an expert collection rather than rediscovered by
 mining. Absorbing a published rule set is ordinary practice and is not the point. The point is
-that the two banks in the comparison are not independent objects, and the reader is entitled to
-know it before reading the result: SyGMa's lead at the tightest budgets is a ranking result over
+that the two banks in the comparison are not independent objects, which bears on how the result reads: SyGMa's lead at the tightest budgets is a ranking result over
 chemistry the two systems largely share, and this work's advantage at the wider ones is that
 shared chemistry plus the \numBankRules{} minus \numSygmaInside{} further templates around it.
 The \numSygmaOutside{} SyGMa rules that are absent are the second half of the same fact and are
@@ -533,7 +532,7 @@ point of having both: each sees most of what the other misses. Their union is
 \numCompositeUnion{} templates, \numCompositeUnionsharePct{} of the mined templates. The registered bar
 was \numCompositeBarPct{} and the prediction is confirmed. The composite share of the mined bank is
 therefore about a fifth, not the \numCompositeLocisharePct{} one instrument reports, and both counts
-are reported here so a reader can see how much of the answer is the instrument.
+are reported here, so that the contribution of the instrument itself is visible.
 
 Inspection of the flagged pairs finds both kinds. Among the composites are a pair whose product
 carries two new carbonyls on one piperazine ring, a pair in which a ketone is reduced and a
@@ -565,18 +564,18 @@ records when each was written rather than where it appears.
 P10 is the newest and its order is checkable rather than asserted. Its threshold, its population
 and its falsification condition were committed to the register in a commit of their own, and the
 instrument that measures it was written afterwards in a later commit. The two commits are in the
-released history, in that order, so a reader need not take the sequence on trust.
+released history, in that order, so the sequence is verifiable rather than asserted.
 
-One weakness of the register is ours to state rather than a reader's to find. Only P10 fixes its
+The register has one weakness, stated here. Only P10 fixes its
 adjudicating population as part of the pre-specification. The nine before it name a threshold and
 a falsification condition and leave the population implicit, and three of them, P5, P6 and P7,
 were in the event adjudicated on the comparison set, which is derived from the test split,
 while the rest were adjudicated on validation. Table~\ref{MS-tab:hyp} records the population each was checked on
-so the reader can see which is which, but recording it after the fact is not the same as fixing
+so which is which is on record, but recording it after the fact is not the same as fixing
 it before, and for those three it was not fixed before. The register's later entries do fix it.
 
 The remaining six concern work this paper does not report, and they are named here by their
-register identifiers so that a reader can check none has quietly left: H1, a type-indexed rather
+register identifiers, so that none can quietly leave unnoticed: H1, a type-indexed rather
 than rule-indexed label space; H2, reactivity and accessibility node features; H3, learned
 abstention; H4, a ranked prediction of intervention sizes; H5, the same null out of sample; and
 H6, a negative control on graph automorphism. Each is stated with its threshold so that a later
@@ -658,7 +657,7 @@ of methods changes with the population. Of 60 pairwise comparisons, 10 reverse i
 no population-by-method interaction separates from zero, and none survives a Holm correction. The
 design detects an interaction of $0.0661$ at 80\% power, so it excludes large population effects
 and not moderate ones. Two populations is a weak design and we do not offer it as a general
-claim; it is reported because the alternative is to say nothing about a population the reader can
+claim; it is reported because the alternative is to say nothing about a population anyone can
 see is not random.
 
 \section{The worked example in full}
@@ -675,6 +674,20 @@ reference set and are paired.
 \input{si_table_case}
 
 \section{Runtime methodology}
+
+\paragraph{Correcting the speed-up for machine load.} The bounded and unbounded arms did not run
+under the same load. The enumeration step is identical between them, so the ratio of its medians,
+\numHOneFiveLoad{}, measures load alone. Applying that correction to the step the budget changes,
+standardising the survivors, whose medians are \numHOneFiveStdunbounded~s unbounded against
+\numHOneFiveStdbounded~s under the budget, leaves \numHOneFiveAttributable$\times$ attributable
+to the budget itself. Carried to the whole arm it puts the median at
+\numHOneFiveMedianUnderload~s under the other arm's load, inside the registered target.
+
+\paragraph{A safeguard the budget needed.} The tautomer enumeration budget lives in a
+module-level singleton shared with the matching key, so lowering it would have moved what counts
+as a hit at the same time as it moved the cost. A private enumerator was introduced for the
+bounded arm and the match keys were verified unchanged before the run.
+
 
 Table~\ref{MS-tab:modes} prints ``did not finish'' for the exhaustive mode's slowest substrate and
 never gives the rate, in a paper that says a service must publish the tail as well as the median.
@@ -717,7 +730,7 @@ MetaTox and MetaPredictor predictions are frozen per substrate and released with
 
 MetaTox is the one comparator whose configuration this work can say more about than a version
 string. Its first author \citep{Rudik_2017} is a co-author of this paper and reviewed the
-comparison reported against it. The question a reader should ask of any comparison is whether
+comparison reported against it. The question to ask of any comparison is whether
 each comparator was run in a configuration its own authors would recognise; for the incumbent
 this work sets out to replace, one of them has read the arm. That is a fact about the method and
 not a disclosure: the paper argues for replacing MetaTox, so any interest the relationship could
@@ -820,7 +833,7 @@ document, refuses any hand-typed pointer between the two documents in either dir
 writes the three counts this paragraph quotes. Every such pointer resolves through
 \texttt{xr} against the other document's own labels, so a wrong one prints \texttt{??} and
 fails the build rather than compiling silently. Nine were typed by hand in an earlier version
-and all nine were wrong, one of them badly enough to send a referee to the wrong table.
+and all nine were wrong, one of them badly enough to direct a search to the wrong table.
 
 The train and validation candidate pools are deposited at \ZenodoDoi{}. Every substrate and
 every annotated metabolite in them is replaced by its tautomer-canonical InChIKey before the
