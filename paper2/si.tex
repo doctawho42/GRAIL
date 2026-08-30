@@ -593,6 +593,24 @@ of the registered predictions. Table~\ref{tab:si-oracle} recomputes that oracle 
 partitions of one candidate pool, on the deployed configuration rather than on the uncapped pool
 the original measurement used.
 
+\paragraph{How the two failures decompose.} The listwise scorer applied to whole groups (P6)
+measured $\numHEightDiff$ against a registered $+\numHEightThreshold$. The deficit splits into
+$\numHEightDesign$ from the design, block emission being worse than interleaved
+(\numHEightBlocked{} against \numHEightInterleaved{}), and $\numHEightModel$ from the model
+itself. Because the oracle above is measured in blocked form,
+\numHEightDesignShare{} of the headroom it promises is the return of what the design spends.
+The gate before fusion (P7) measured $\numHOneFourDiff$ against a registered
+$+\numHOneFourThreshold$ and separated against its hypothesis; a perfect group ranking through
+the gate gives \numHOneFourCeiling{}, worse than the generator cap it replaces.
+
+\paragraph{Why the oracle is not an upper bound on the signal.} A binary group ordering entered
+as the third term in the fusion reaches \numHOneTwoCeilingrecall{}, the same figure the trained
+scorer reaches, which invites reading the binary case as a ceiling. It is not one: a binary
+ordering leaves every reference-free group tied, and on validation the trained scorer exceeds it,
+$+\numHOneTwoVal$ against $+\numHOneTwoValceiling$. The gain from P5 is also not an artefact of
+selection, since all twenty configurations beat the base on validation and seventy per cent of
+that margin survived the move to the comparison set.
+
 The transformation type of a substrate--candidate pair is the multiset of bonds that change
 between mapped atoms, which is the vocabulary the rule bank's coverage is defined on. Typing runs
 a maximum common substructure search under a wall-clock timeout and treats a cancelled search as
@@ -680,6 +698,21 @@ annotation is looked up under the corpus string in both runs, so the two are sco
 reference set and are paired.
 
 \input{si_table_case}
+
+\section{What retraining moves}
+
+Every recall figure in the manuscript comes from one trained checkpoint, and the paired bootstrap
+intervals quantify the substrate population rather than the training. To give the registered
+effects a scale, the generator and the filter were retrained under \numSeedN{} seeds and the
+whole pipeline re-evaluated on the full test split: macro recall at a budget of 15 is
+\numSeedMacroMean{} with a standard deviation of \numSeedMacroStd{}, and micro
+\numSeedMicroMean{} with \numSeedMicroStd{}.
+
+That study ran at an earlier operating point than the configuration the manuscript reports, so
+its level is not comparable with those tables. Its spread is what it is offered for, and the
+spread is a property of the training rather than of the operating point. Read against it, the
+rank fusion of P1 is an order of magnitude above the training noise, the pool cap of P2 several
+times above it, and the rule budget of P3, at $+\numHOneZeroBought$ on validation, inside it.
 
 \section{Runtime methodology}
 

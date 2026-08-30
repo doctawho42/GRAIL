@@ -37,7 +37,8 @@ reaction templates, a learned model that selects which templates to apply, and a
 that ranks the resulting candidates. Every prediction it emits carries the template that produced
 it and the atoms that template acted on, so a chemist can accept or reject a candidate on
 mechanistic grounds rather than on a score. We evaluate it with the two decisions above promoted
-to declared axes and varied across their full range, against every published predictor for which
+to declared axes, meaning that each is stated and varied across its full range instead of being
+fixed silently, against every published predictor for which
 predictions on the same substrates could be obtained. The comparison does not produce a winner:
 which system leads depends on how many candidates it is allowed to return, and we report that
 dependence rather than a single figure. We further measure how much of the recorded chemistry
@@ -68,16 +69,19 @@ verifies zero substrate and zero positive-pair overlap across all three split pa
 Three evaluation populations appear here, each a stated subset of a split rather than a split
 itself, and no figure is given without naming one. The \emph{evaluated test set} is the
 \numPopulationTestsubs{} test substrates that carry at least one reference, holding all
-\numPopulationTestrefs{} references of that split; it is where the coverage ceiling and the type
-census are measured. The \emph{validation draw} is a declared sample of \numValdrawCap{} substrates at seed
+\numPopulationTestrefs{} references of that split. It is where the two corpus-level measurements
+are made: the \emph{coverage ceiling}, the share of annotated metabolites any single application
+of the rule bank can reach, and the census of the transformation chemistry the remainder needs. The \emph{validation draw} is a declared sample of \numValdrawCap{} substrates at seed
 \numValdrawSeed{} from the validation split. Of these, \numValdrawDeclared{} produced a candidate
-pool, and the \numValdrawPaired{} held by both arms of a paired comparison carry
+pool, and the \numValdrawPaired{} held by both operating modes of the system in a paired comparison carry
 \numHOneFiveNreferences{} references. Every registered ranking and timing threshold is checked
 here, since a threshold checked where its rule was chosen is not a check. Sampling is without replacement and the draws are not nested, so a different seed gives a
 different set of the same size and a different cap one that is not a subset of this one; cap and
-seed are recorded with every figure drawn from it. The
-\emph{comparison set} is the \numPopulationN{} substrates on which every method predicts,
-carrying \numPopulationReferences{} references.
+seed are recorded with every figure drawn from it. The \emph{comparison set} is a subset of the evaluated test set: the \numPopulationN{}
+substrates on which every method in the comparison predicts, carrying
+\numPopulationReferences{} references. It is not a random quarter of that split but the
+intersection of what five systems could be run on, and every comparison against a published
+predictor in this paper is measured on it.
 
 The annotated substrate--metabolite pairs are assembled from four sources: ChEMBL
 \citep{Zdrazil_2024}, DrugBank \citep{Wishart_2018}, MetXBioDB \citep{Djoumbou_Feunang_2019} and
@@ -85,7 +89,7 @@ the GLORYx reference set \citep{de_Bruyn_Kops_2020}. The versions used are \Corp
 combine into one redistributable derivative, which the Supporting Information sets out.
 
 The comparison set carries no training contamination: \numPopulationInTrainOrVal{} of its
-\numPopulationN{} substrates appear in train or validation under a canonical key.
+\numPopulationN{} substrates appear in train or validation under a canonicalised structure key.
 
 No external evaluation set is reported, and the reason is the assembly rather than an audit
 finding. GLORYx is one of the four sources, so its \numGloryxN{} parent substrates are not
@@ -96,13 +100,14 @@ sources overlap one another.
 That has a consequence for the comparison which no split can remove. Rule-based comparators have
 no training set to hold out, and their expert rules may encode the same metabolism reported in
 these sources; BioTransformer is built on MetXBioDB, and GLORYx was developed against the
-reference set of the same name. Their knowledge therefore overlaps our test substrates by
-construction, in a direction that flatters them, and we report it rather than control it.
+reference set of the same name. Their knowledge therefore overlaps the test substrates by construction, in a direction that
+favours them. The overlap is reported here and is not controlled for.
 
 \subsection{Overview}
 
 GRAIL predicts in three stages, each separately inspectable. A generator scores every rule in a
-bank of \numBankRules{} SMIRKS templates against the substrate. The selected rules are then
+bank of \numBankRules{} reaction templates, written as SMIRKS transformation patterns, against
+the substrate. The selected rules are then
 applied with RDKit 2022.09.5, and their products are
 standardised \citep{Hahnke_2018, Mansouri_2024} and deduplicated. A filter scores each
 (substrate, candidate) pair, and the candidates are ordered by a rank fusion of the filter's and
@@ -179,8 +184,12 @@ tautology.
 
 \subsection{Rule budget and two operating modes}
 
-The trained checkpoint records a rule budget of \numHOneZeroTopk{}, and the pools this paper
-reports elsewhere apply the whole bank, so the two differ by a factor of \numBankRules{} to
+How many templates the generator selects before any is applied is the \emph{rule budget}, and it
+sets both what the system can find and what it costs. Two settings are reported throughout. The
+\emph{interactive} mode applies the \numHOneZeroTopk{} templates the trained checkpoint records,
+and returns in about a second, which is what a user waiting at a web form requires. The
+\emph{exhaustive} mode applies the whole bank of \numBankRules{}, takes tens of seconds and is
+the setting for an offline query. The two therefore differ by a factor of \numBankRules{} to
 \numHOneZeroTopk{} in how much of the bank they consult. What the difference buys was registered
 as prediction P3 with a ceiling of $+\numHOneZeroThreshold$: on validation
 $+\numHOneZeroBought$, 95\% CI $[\numHOneZeroLo, +\numHOneZeroHi]$, mean pool on that draw
@@ -258,7 +267,9 @@ annotation an unannotated but real metabolite counts as a false positive, so a s
 fewer candidates is rewarded for reasons unrelated to its chemistry. It does order them
 differently, which is the point of printing it.
 
-The parent-drop convention of Table~\ref{tab:sweep} is swept like the other declared choices.
+Every method is prevented from returning the substrate itself as one of its own metabolites:
+a prediction equal to the substrate is discarded before the budget is applied, for all arms
+alike. That convention is swept like the other declared choices.
 The arms differ sharply in how often they return the substrate, from none of SyGMa's lists to
 \numPdropReturnsBank{} of the exhaustive mode's \numPopulationN{}, so the convention had room to
 favour one over another. It does not: the largest effect on recall anywhere in the grid is
@@ -306,16 +317,13 @@ $+\numMarginMarginalgap$ with the interval
 $[+\numMarginMarginallo, +\numMarginMarginalhi]$, is the only one of the six that a family-wise
 correction over the grid would remove. The other five sit far from that boundary.
 
-One fact about the SyGMa comparison belongs here rather than in a footnote, because it changes
-how the result should be read. \numSygmaInside{} of SyGMa's \numSygmaRules{} published rules,
-\numSygmaSharePct{} of them, are present verbatim in our rule bank; all \numSygmaIncurated{} sit in
-its curated collections and \numSygmaInmined{} among the mined templates. The two banks are therefore not
-independent objects. SyGMa's lead at the tightest budgets is a ranking result over chemistry the
-two systems largely share, and our advantage at the widest is that shared chemistry with
-\numBankRules{} minus \numSygmaInside{} further templates around it. Neither reading is worse
-for either system than the unstated version; both are more informative. Absorbing a published
-rule set is ordinary practice, and the \numSygmaOutside{} SyGMa rules the bank does not contain
-are the other half of the same fact.
+The two banks in this comparison are not independent. \numSygmaInside{} of SyGMa's
+\numSygmaRules{} published rules, \numSygmaSharePct{} of them, are present verbatim in the bank
+used here; all \numSygmaIncurated{} sit in its curated collections and \numSygmaInmined{} among
+the mined templates, and \numSygmaOutside{} of SyGMa's rules are absent from it. The comparison
+should be read accordingly: SyGMa's lead at the tightest budgets is a ranking result over
+chemistry the two systems largely share, and the advantage here at the widest budgets is that
+shared chemistry with \numBankRules{} minus \numSygmaInside{} further templates around it.
 
 The advantage is at depth rather than at the head of the list. MetaPredictor is flat from $k=15$
 because \numShortMetapredictorOneFive{} of its \numPopulationN{} lists are shorter than that
@@ -476,62 +484,42 @@ and Figure~\ref{fig:case} shows both.
 \subsection{Where the design came from}
 
 Every deployed choice is a registered hypothesis with a threshold and a falsification condition,
-tested where it was not selected (Table~\ref{tab:hyp}). Of the sixteen registered, ten are checked here: seven
-confirmed and three failed, on the falsification condition each was written with, which compares
-the point estimate to the threshold. Read instead against the interval, three of the seven
-confirmations are unresolved rather than clear: P1, P2 and P5 each have a threshold inside their
-own interval, so the data establish that the effect exceeds zero and not that it exceeds the
-registered bar. Both readings are reported and neither verdict is revised. The remaining six are registered against work this paper does not
-report and are stated with their thresholds, so that a later result on any of them cannot be a
-threshold chosen after the fact.
+tested where it was not selected (Table~\ref{tab:hyp}). Ten of the sixteen registered are checked
+here. Seven are confirmed and three failed, each on the falsification condition it was written
+with. The remaining six are registered against work this paper does not report and are stated
+with their thresholds, so that a later result on any of them cannot rest on a threshold chosen
+afterwards. Section~\ref{sec:limitations} states which of the seven confirmations a stricter
+reading leaves undecided.
 
 \input{table_hypotheses}
 
 \subsection{Group ranking, and two mechanisms that failed}
 
-Candidates group by molecular formula. An oracle ordering these groups by whether they contain a
-reference is worth $+\numOracleHeadroom$ over the ranking it is measured against, which is the
-product ordering with each group emitted as a block on the uncapped pool. That is not the deployed
-ranking, so the figure bounds a configuration that is not deployed.
+Candidate metabolites of one substrate fall into groups of the same molecular formula, and an
+ordering that knew which group contained a reference would gain $+\numOracleHeadroom$ over the
+ordering it is measured against. Two ways of using that signal were registered and both failed.
+Emitting whole groups as blocks, scored by a listwise model, cost $\numHEightDiff$ against a
+registered gain of $+\numHEightThreshold$ (P6); using the group signal as a gate before the
+fusion cost $\numHOneFourDiff$ against $+\numHOneFourThreshold$ (P7). The second failure is
+closed by an oracle rather than by model quality: even a perfect group ordering through the gate
+is worse than the generator cap it replaces, because the median substrate has one informative
+group and the gate must then spend its budget on groups its signal cannot separate.
 
-P6 trained a listwise group scorer applied to whole groups. Registered threshold $+\numHEightThreshold$; measured
-on the comparison set, $\numHEightDiff$. The deficit splits into $\numHEightDesign$ from the
-design, block emission being worse than interleaved (\numHEightBlocked{} against
-\numHEightInterleaved{}), and $\numHEightModel$ from the model. Because the oracle is measured
-in blocked form, \numHEightDesignShare{} of the headroom it promises is the return of what the
-design spends.
-
-P5 used the same model untrained further, entering its group score as a third ranking in the same
-fusion. Measured $+\numHOneTwoDiff$, 95\% CI $[+\numHOneTwoLo, +\numHOneTwoHi]$. The effect is not
-selection: all twenty configurations beat the base on validation and 70\% of that margin survived
-the move.
-
-P7 tested the converse, the group signal as a gate before fusion, at a registered
-$+\numHOneFourThreshold$. Measured $\numHOneFourDiff$,
-separated against the hypothesis, and the mechanism is closed by an oracle rather than by model
-quality: a perfect group ranking through the gate gives $\numHOneFourCeiling$, worse than the
-generator cap it replaces. The median substrate has one group containing a reference while filling
-the cap admits at least seven, so after the single informative group the gate spends its budget on
-groups its signal cannot separate. The two results are symmetric, $+\numHOneTwoDiff$ as a nudge on
-the generator's ordering and $\numHOneFourDiff$ as a replacement for it.
-
-A binary group ordering entered as the third term reaches \numHOneTwoCeilingrecall{}, the same the
-trained scorer reaches. That is not an upper bound and we do not use it as one: a binary ordering
-leaves every reference-free group tied and on validation the trained scorer exceeds it,
-$+\numHOneTwoVal$ against $+\numHOneTwoValceiling$.
+What did work was the same signal used weakly. Entering the untrained group score as a third
+ranking in the fusion gained $+\numHOneTwoDiff$, 95\% CI $[+\numHOneTwoLo, +\numHOneTwoHi]$
+(P5). The two outcomes are symmetric: the group signal helps as a nudge on the generator's
+ordering and fails as a replacement for it. The decomposition of both failures, and the reason
+the oracle figure is not an upper bound on what the signal can give, are in the Supporting
+Information.
 
 \subsection{What retraining moves}
 
-Every recall figure in this paper comes from one trained checkpoint, and the intervals throughout
-are paired bootstraps over substrates, which quantify the population and not the training. To
-give the registered effects a scale, the generator and filter were retrained under
-\numSeedN{} seeds and the whole pipeline re-evaluated on the full test split: macro recall@15 is
-\numSeedMacroMean{} with a standard deviation of \numSeedMacroStd{}, and micro
-\numSeedMicroMean{} with \numSeedMicroStd{}. That study ran on an earlier operating point than
-the one reported here, so its level is not comparable to the tables above; its spread is what it
-is offered for. Read against it, the rank fusion of P1 is an order of magnitude larger than
-retraining noise and the pool cap of P2 several times larger, while the rule budget of P3, at
-$+\numHOneZeroBought$ on validation, is within it.
+Every recall figure here comes from one trained checkpoint, and the intervals quantify the
+population rather than the training. Retraining both learned stages under \numSeedN{} seeds gives
+the size of the training noise, and the registered effects can be read against it: the rank
+fusion of P1 is an order of magnitude larger than that noise and the pool cap of P2 several times
+larger, while the gain from the rule budget of P3 is within it. The seed study and the reason its
+level does not transfer to the tables above are in the Supporting Information.
 
 \subsection{Runtime}
 
@@ -725,8 +713,11 @@ positions at once and a rule that both substitutes and conjugates glutathione. T
 ceiling this paper reports is therefore a one-template ceiling and not a one-enzyme one, and the
 corrected share explains why applying the bank at depth two lifts it by only about $0.012$ at
 $8.5$ times the candidate cost: a fifth of the mined bank already carries the compositions a
-second application would have to discover, so the second application mostly rediscovers them. Precision is bounded by annotation
-completeness. The rule-budget threshold in P3 is a property of the requested budget rather than
+second application would have to discover, so the second application mostly rediscovers them. Three of the seven confirmed predictions are confirmed on the falsification condition as
+written, which compares a point estimate to a threshold, and not on the stricter reading that
+requires the whole interval to clear it: P1, P2 and P5 each have their threshold inside their own
+interval, so what the data establish for those three is that the effect exceeds zero rather than
+that it exceeds the registered bar. Precision is bounded by annotation completeness. The rule-budget threshold in P3 is a property of the requested budget rather than
 of the system. The group-ranking headroom is real and unreached by both registered
 compositions for structural reasons. Every method runs out of candidates at wide budgets, so the
 widest columns measure list length on all sides. The comparison population is the
@@ -788,15 +779,14 @@ than merely reporting that it differs. The one step that cannot be reproduced is
 extraction that selected from the four sources, which is not in the repository and is recorded as
 such in the Supporting Information.
 
-The numbers in this paper come from \numProvSources{} artifacts. A build gate establishes that
-by running the number generator with its artifact reader instrumented, so the count is of files
-opened rather than of matches in the source: \numProvSourcesunpinnedWord{} of the
-\numProvSources{} fall outside the pinned set and \numProvSourcesunverifiableWord{} carry a
-producer the provenance sweep cannot identify.
-Each records the commit that wrote it; a sweep recomputes the hash of its producer and refuses the
-artifact if that producer has changed, and all \numProvPinned{} are current. A split manifest
-pins by digest the triple files, the substrate sets, the evaluated test set, the rule bank and all
-third-party artifacts, and a verify mode recomputes and names any leaf that has moved.
+Every figure printed in this paper is generated from a stored result file rather than typed.
+\numProvPinned{} such files are pinned, meaning that each records the script that wrote it and
+the version of that script, and an automated check refuses a file whose script has since changed.
+All \numProvPinned{} pass that check. Of them, \numProvSources{} are the ones the paper's
+figures are drawn from, and none of those falls outside the pinned set. A split manifest pins by
+digest the triple files, the substrate sets, the evaluated test set, the rule bank and every
+third-party artifact, and a verify mode recomputes and names any file that has moved. The
+Supporting Information describes the checks and states what they do not cover.
 
 Two pinned artifacts are too large to commit: the train and validation candidate pools, which
 hold every candidate the generator produced for every substrate of their population together with
