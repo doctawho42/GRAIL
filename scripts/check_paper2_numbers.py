@@ -96,9 +96,14 @@ def main() -> int:
     unused = sorted(defined - used)
 
     # a numeric literal in the body that is not inside a macro definition or an allowed constant
+    # The author block carries postal codes and street numbers, which are metadata and not
+    # measurements. They are stripped by name rather than added to the allow-list, because an
+    # allow-list entry for "119121" would also excuse that string anywhere else in the paper.
+    stripped = re.sub(r"\\(?:author|affiliation|altaffiliation|alsoaffiliation|email|phone|fax)"
+                      r"\s*(\{(?:[^{}]|\{[^}]*\})*\})", " ", body)
     stripped = re.sub(r"\\(?:vspace|hspace|setlength|documentclass|usepackage|captionsetup"
                       r"|titleformat|renewcommand|includegraphics)\s*(\[[^\]]*\])?"
-                      r"(\{[^}]*\})*", " ", body)
+                      r"(\{[^}]*\})*", " ", stripped)
     stripped = re.sub(r"\\\\\s*\[[^\]]*\]", " ", stripped)   # line-break kerns
     stripped = re.sub(r"\\num[A-Za-z]+", " ", stripped)
     stripped = re.sub(r"\\(?:label|ref|cite[a-z]*|input|includegraphics)\{[^}]*\}", " ", stripped)

@@ -773,7 +773,9 @@ bank, the split manifest, the annotated references every recall figure in this p
 against, the frozen per-substrate predictions of every comparator, the evaluation harness, the
 provenance sweep and the preregistration with every hypothesis and its outcome are at
 \texttt{github.com/doctawho42/GRAIL}, and are available to reviewers at submission. The
-repository's licence is \RepoLicence{}. Releasing the checkpoints is the same bar this paper applies to others: a system
+repository's licence is \RepoLicence{}. The released model is to be deployed as a service on
+\texttt{way2drug.ru}; that deployment is not a condition of anything reported here, and every
+figure in this paper is reproducible from the repository without it. Releasing the checkpoints is the same bar this paper applies to others: a system
 whose weights are not obtainable cannot be compared against, which is why one of the
 \numComparatorsUnavailable{} systems of 2025--26 is excluded here. The train and
 validation candidate pools are deposited at \ZenodoDoi{}, minted on publishing the deposit. The annotated
@@ -820,3 +822,22 @@ than merely available.
 The guarantee covers the pinned set and not the directory: of \numProvFiles{} files under
 \texttt{results/}, \numProvUnstamped{} carry no stamp and \numProvChanged{} were written by a
 producer that has since changed. Those files support no number in this paper.
+
+\section{Author contributions}
+
+N.L.P. designed the system, wrote the code, ran every experiment reported here and wrote the
+manuscript. A.V.R. reviewed the manuscript and will deploy the released model as a service on
+\texttt{way2drug.ru}.
+
+\section*{Notes}
+
+A.V.R. is a member of the Department of Bioinformatics of the Institute of Biomedical Chemistry,
+which develops and hosts the \texttt{way2drug} platform, and MetaTox --- the incumbent service
+this work sets out to replace and one of the three comparators in Table~\ref{tab:sweep} --- is a
+service of that platform. The comparison is therefore not made at arm's length from one of its
+arms, and we state it rather than leave it to be noticed. Two things bear on how much it matters.
+MetaTox's predictions were obtained by submitting our substrates through the public interface and
+are released per substrate, so any reader can recompute every cell we report for it. And where
+the comparison against MetaTox is closest, at $k=30$, we report the margin as the one that a
+family-wise correction over the grid would remove, which is the direction that tells against this
+work and not for it. The authors declare no competing financial interest.
