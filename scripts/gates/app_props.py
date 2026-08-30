@@ -685,7 +685,7 @@ def register(ctx) -> None:  # noqa: C901 -- one function per appendix file is th
     b.sentence(n,
                r"SyGMa reaches \$([\d.]+)\$ \$\[([\d.]+),([\d.]+)\]\$ at one step against "
                r"\$([\d.]+)\$ \$\[([\d.]+),([\d.]+)\]\$ deployed, composition worth \$\+([\d.]+)\$ "
-               r"\$\[\+([\d.]+),\+([\d.]+)\]\$, and the gap against that same expanded ceiling "
+               r"\$\[\+([\d.]+),\+([\d.]+)\]\$, and the gap against that same ceiling "
                r"widens from \$([\d.]+)\$ to \$([\d.]+)\$ \$\[([\d.]+),([\d.]+)\]\$",
                [("one-step reach", depthm["reach"]["sygma_depth1_matched"]["point"]),
                 ("one-step interval low", depthm["reach"]["sygma_depth1_matched"]["ci95"][0]),

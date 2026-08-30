@@ -1,4 +1,11 @@
 {
+ "provenance": {
+  "script": "sygma_depth_matched_reach.py",
+  "script_path": "scripts/sygma_depth_matched_reach.py",
+  "source_sha256": "fce225505fadcbe3b50d4e1ffdc04c1d24e73229d2d6c01c6937775521559ac1",
+  "git_commit": "2dadafce18888ef4d7565a987dd540123581ce77",
+  "git_dirty": true
+ },
  "match": "inchikey_tautomer",
  "n_substrates": 1170,
  "n_boot": 10000,
@@ -28,10 +35,10 @@
    "definition": "Scenario([[phase1,1],[phase2,1]]): phase II fires on phase I products"
   },
   "grail_depth1": {
-   "point": 0.7355,
+   "point": 0.8171,
    "ci95": [
-    0.7087,
-    0.7608
+    0.7948,
+    0.8389
    ],
    "definition": "full 7,581-rule bank, depth-1, uncapped"
   }
@@ -46,18 +53,18 @@
  },
  "gap": {
   "as_reported": {
-   "point": 0.1964,
+   "point": 0.278,
    "ci95": [
-    0.1777,
-    0.2158
+    0.258,
+    0.2983
    ],
-   "definition": "GRAIL depth-1 minus SyGMa two-step (the paper's 0.193)"
+   "definition": "GRAIL depth-1 minus SyGMa two-step, both as deployed"
   },
   "depth_matched": {
-   "point": 0.2029,
+   "point": 0.2846,
    "ci95": [
-    0.1847,
-    0.2217
+    0.2644,
+    0.3046
    ],
    "definition": "GRAIL depth-1 minus SyGMa depth-1"
   }

@@ -140,6 +140,8 @@ PINNED = {
     "results/comparator_provenance.json": "scripts/typed_edit/comparator_provenance.py",
     "results/hyperparameters.json": "scripts/typed_edit/hyperparameters.py",
     "results/multiplicity.json": "scripts/typed_edit/multiplicity.py",
+    "results/sygma_depth_matched_reach.json": "scripts/sygma_depth_matched_reach.py",
+    "results/error_by_chemistry.json": "scripts/typed_edit/error_by_chemistry.py",
     "results/decompose_biotransformer.json": "scripts/decompose_biotransformer.py",
     "results/external_overlap_audit.json": "scripts/external_overlap_audit.py",
     "results/hydrogen_dispatch__clean_test.json": "scripts/hydrogen_dispatch.py",

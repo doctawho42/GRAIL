@@ -209,6 +209,35 @@ def si_hyperparameters():
     return "\n".join(lines)
 
 
+def si_chemistry():
+    """Recall within each biotransformation class, for every arm.
+
+    Classes are formula deltas, which is what the annotation determines; the producer's own
+    record says what each name does not distinguish.
+    """
+    d = art("error_by_chemistry.json")
+    arms = [("GRAIL exhaustive", "GRAIL exh."), ("GRAIL interactive", "GRAIL int."),
+            ("metatox", "MetaTox"), ("sygma", "SyGMa"), ("metapredictor", "MetaPred.")]
+    budget = "15"
+    rows = []
+    for name, entry in d["classes"].items():
+        cells = " & ".join(f"{entry['recall'][key][budget]:.2f}".lstrip("0")
+                           for key, _ in arms)
+        rows.append(f"{name} & {entry['references']} & {cells} \\\\")
+    head = " & ".join(label for _, label in arms)
+    n = d["population"]["references_classified"]
+    return ("\\begin{table}[h]\n\\centering\\scriptsize\n"
+            "\\begin{tabular}{@{}lrrrrrr@{}}\n\\toprule\n"
+            f"transformation class & refs & {head} \\\\\n\\midrule\n"
+            + "\n".join(rows)
+            + "\n\\bottomrule\n\\end{tabular}\n"
+            "\\caption{Micro recall at a budget of 15 within each transformation class, on the "
+            f"comparison set's {n} annotated references; leading zeros are dropped. A class is a "
+            "change in molecular formula, so it groups mechanisms the annotation does not "
+            "separate.}\n"
+            "\\label{tab:si-chemistry}\n\\end{table}\n")
+
+
 def si_short():
     """How many of each arm's lists are shorter than the budget, at every budget.
 
@@ -419,7 +448,8 @@ if __name__ == "__main__":
                      ("si_table_parentdrop", si_parentdrop),
                      ("si_table_dialect", si_dialect),
                      ("si_table_short", si_short),
-                     ("si_table_hyperparameters", si_hyperparameters)):
+                     ("si_table_hyperparameters", si_hyperparameters),
+                     ("si_table_chemistry", si_chemistry)):
         try:
             (OUT / f"{name}.tex").write_text(fn())
             print(f"  wrote paper2/{name}.tex")

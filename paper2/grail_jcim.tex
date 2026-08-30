@@ -45,15 +45,16 @@ Predicting which metabolites an enzyme system will produce from a drug or an env
 chemical is central to toxicology, drug design and environmental fate assessment, yet published
 predictors cannot be compared with one another: recall depends on how a predicted structure is
 judged to match a reference and on how many candidates a system is allowed to emit, and papers in
-this area report neither consistently. We present GRAIL (Graph-scored Rule Application with Inspectable Localisation), a
-rule-grounded predictor that names the transformation rule and the site behind every
-prediction, and we evaluate it with those two
-choices promoted to declared axes and swept, against every published predictor with predictions on
-the same substrates. The comparison does not resolve into a single ordering: which system leads
-depends on how many candidates it is allowed to return, and we report the whole grid rather than
-a cell. We also bound the approach by measuring how much of the annotated chemistry the rule bank
-cannot reach in one template application. Most of that shortfall is transformation chemistry the
-training corpus never contains, so it is not removed by enlarging the bank.
+this area report neither consistently. We present GRAIL (Graph-scored Rule Application with
+Inspectable Localisation), a rule-grounded predictor that names the transformation rule and the
+site behind every prediction, evaluated with those two choices promoted to declared axes and
+swept, against every published predictor with predictions on the same substrates; the comparison
+does not resolve into a single ordering, so we report the whole grid rather than a cell. We then
+bound what this class of method can reach at all, by measuring how much of the annotated
+chemistry no single application of the rule bank recovers. Most of that shortfall is
+transformation chemistry the training corpus never contains, which makes it a property of the
+corpora this literature is built on rather than of any one bank, and enlarging the bank does not
+remove it.
 \end{abstract}
 
 % For Table of Contents Only. Written by scripts/paper2_figures.py at exactly 3.25 by 1.75

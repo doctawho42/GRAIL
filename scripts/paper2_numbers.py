@@ -187,6 +187,34 @@ def build():
     # Two loops measure the ceiling under the same hydrogen convention and return different
     # counts. The paper reports the deployed loop's; the audit loop's is what the two conventions
     # are compared with. The difference is small and is printed rather than chosen between.
+    # what each method recovers, split by the chemistry rather than by the budget
+    ebc = art("error_by_chemistry.json")
+    n["chem.references"] = ebc["population"]["references_classified"]
+    n["chem.classes"] = len(ebc["classes"])
+    n["chem.unresolved"] = ebc["population"]["references_whose_structure_could_not_be_recovered"]
+    _diol = ebc["classes"].get("oxidation, two oxygens added", {})
+    n["chem.diol.refs"] = _diol.get("references")
+    n["chem.diol.best"] = max(v["15"] for v in _diol["recall"].values()) if _diol else None
+    _other = ebc["classes"].get("other", {})
+    n["chem.other.refs"] = _other.get("references")
+    n["chem.other.best"] = max(v["15"] for v in _other["recall"].values()) if _other else None
+    _cleav = ebc["classes"].get("cleavage, two or more carbons lost", {})
+    n["chem.cleavage.refs"] = _cleav.get("references")
+    n["chem.cleavage.bank"] = _cleav["recall"]["GRAIL exhaustive"]["15"] if _cleav else None
+    n["chem.cleavage.bestother"] = (max(v["15"] for k, v in _cleav["recall"].items()
+                                        if not k.startswith("GRAIL")) if _cleav else None)
+
+    # SyGMa's own scenario knob, swept: what its engine's composition step buys over applying
+    # each ruleset once. The paper asks other work to declare such a knob and must sweep its own.
+    sdm = art("sygma_depth_matched_reach.json")
+    n["sygdepth.oncepass"] = sdm["reach"]["sygma_depth1_matched"]["point"]
+    n["sygdepth.deployed"] = sdm["reach"]["sygma_deployed_two_step"]["point"]
+    n["sygdepth.engine"] = sdm["engine_contribution"]["point"]
+    n["sygdepth.enginelo"] = sdm["engine_contribution"]["ci95"][0]
+    n["sygdepth.enginehi"] = sdm["engine_contribution"]["ci95"][1]
+    n["sygdepth.gapdeployed"] = sdm["gap"]["as_reported"]["point"]
+    n["sygdepth.gapmatched"] = sdm["gap"]["depth_matched"]["point"]
+
     # the family-wise reading of the same data, so the sentence about it is computed
     mult = art("multiplicity.json")
     n["holm.tests"] = mult["n_tests"]

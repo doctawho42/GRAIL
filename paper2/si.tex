@@ -237,6 +237,37 @@ prints. They bear directly on the two leads claimed at $k=30$ and $k=50$: an arm
 of candidates cannot gain from a wider window, so the leads should be weighed against the
 number of substrates for which that is the case.
 
+\section{Which chemistry each method recovers}
+\label{sec:si-chemistry}
+
+A recall figure aggregates over transformations of very different kinds, and a reader deciding
+whether any of these systems is usable on their compound class cannot read that off one number.
+Table~\ref{tab:si-chemistry} splits the comparison set's \numChemReferences{} references into
+\numChemClasses{} classes and reports recall within each.
+
+A class here is a change in molecular formula. That is what the annotation determines: the corpus
+records a substrate and a product, not a mechanism, so a mechanism cannot be recovered from it
+without guessing. One added oxygen is aliphatic hydroxylation, aromatic hydroxylation,
+N-oxidation or S-oxidation, and nothing in the record separates them; the class is named for the
+change and the ambiguity is stated with it in the artifact. \numChemUnresolvedWord{} of the
+references failed to resolve to a structure.
+
+Three things in the table are worth naming. The largest class is not a functionalisation at all
+but a cleavage losing two or more carbons, \numChemCleavageRefs{} references, and it is where the
+whole bank pays for its size: \numChemCleavageBank{} against \numChemCleavageBestother{} for the
+best comparator. The second largest, \numChemOtherRefs{} references, is the class of deltas this
+vocabulary does not name, and no method exceeds \numChemOtherBest{} on it, so a fifth of the
+annotated chemistry is transformation types none of these systems is built for. And of the
+\numChemDiolRefsWord{} references that add two oxygens, four of the five methods recover none and
+the fifth recovers \numChemDiolBest{}: a shared blind spot rather than a difference between
+systems.
+
+Recall within a class is over that class's references alone, so the small classes carry wide
+uncertainty. No intervals are quoted for them and none should be read into the ordering of a row
+with five references in it.
+
+\input{si_table_chemistry}
+
 \section{Precision}
 
 Precision is reported because a reader is entitled to it and not because it decides anything here.
@@ -798,6 +829,22 @@ SyGMa 1.1.0 is taken from the installed module and run with the scenario
 \texttt{[[phase1,\,1],}\allowbreak\texttt{[phase2,\,1]]}, one cycle of each ruleset, which is
 the worked example in that version's own documentation. It is stated because it is the one comparator knob that sets how many candidates a
 system may emit, and a paper arguing that such a knob must be declared should declare it.
+
+That scenario is a knob of exactly the kind this paper asks other work to declare, so it is swept
+rather than only stated. SyGMa's engine composes: phase II fires on the products of phase I, so
+the deployed scenario is a two-step run and not one application of each ruleset. Applying each
+ruleset once to the parent and composing nothing reaches \numSygdepthOncepass{} of the references
+against \numSygdepthDeployed{} for the deployed scenario, so the composition step buys
+$+\numSygdepthEngine$, 95\% CI $[\numSygdepthEnginelo, \numSygdepthEnginehi]$. Against this
+work's own uncapped single pass the difference is \numSygdepthGapdeployed{} at the deployed
+setting and \numSygdepthGapmatched{} depth-matched: the comparison of the two banks does not turn
+on which of the two SyGMa is run at.
+
+What is not swept is the other direction. A scenario with more cycles would emit more candidates
+and could move the verdicts at the widest budgets, where an arm that has run out of candidates
+cannot gain; the deployed setting is the one that version's own documentation gives, and this
+paper reports it rather than searching for the setting that suits it. A reader who wants the
+sweep has the frozen predictions and the scenario string to build it from.
 
 Only \numComparatorsVersionedWord{} of the \numComparatorsNWord{} comparators expose a version
 string at all. SyGMa reports 1.1.0 from the installed package and BioTransformer 3.0 carries the

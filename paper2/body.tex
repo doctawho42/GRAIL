@@ -323,6 +323,16 @@ $+\numMarginMarginalgap$ with the interval
 $[+\numMarginMarginallo, +\numMarginMarginalhi]$, is the only one of the six a family-wise
 correction over the sweep removes. The other five survive it.
 
+A recall figure aggregates over transformations of very different kinds, so the comparison is
+also read by chemistry. Splitting the \numChemReferences{} references into
+\numChemClasses{} classes of formula change (Table~\ref{SI-tab:si-chemistry}) shows where the
+whole bank earns its size and where nothing here works. The largest class is a cleavage losing two
+or more carbons, \numChemCleavageRefs{} references, and the exhaustive arm recovers
+\numChemCleavageBank{} of them against \numChemCleavageBestother{} for the best comparator. The
+second largest, \numChemOtherRefs{} references, is the set of changes this vocabulary does not
+name, and no method here exceeds \numChemOtherBest{} on it. Of the \numChemDiolRefsWord{}
+references that add two oxygens, four of the five methods recover none.
+
 The two banks in this comparison are not independent. \numSygmaInside{} of SyGMa's
 \numSygmaRules{} published rules, \numSygmaSharePct{} of them, are present verbatim in the bank
 used here; all \numSygmaIncurated{} sit in its curated collections and \numSygmaInmined{} among
@@ -649,7 +659,17 @@ $k \le 5$ the interval separates against GRAIL. GRAIL continues to improve at bu
 other systems stop. At a budget of three candidates SyGMa is the better choice; at fifty, GRAIL
 is.
 
-That division has a consequence for how such tools are compared. A single recall figure at a
+The first half of that is a result about the field and not about this system. SyGMa is the
+oldest and by far the smallest method in the comparison, \numSygmaRules{} published rules against
+this bank's \numBankRules{}, and at every budget of five or fewer it recovers more of the
+annotated metabolites than any other method here, including two published since. A chemist
+reading a short list is working at exactly those budgets. That a rule set of this size is not
+beaten at the head of the list by anything released since is worth stating plainly, and it is
+visible only because the budget is swept: at a budget of fifty the same table has this work's
+exhaustive arm ahead of SyGMa by $+\numGapBankmetatoxFiveZero$ or more against every comparator,
+and the ordering at the head of the list reverses.
+
+The division has a consequence for how such tools are compared. A single recall figure at a
 single budget would have named a different winner depending on which budget its author chose,
 and each of those choices would have been defensible. That is the case for reporting the sweep
 rather than a single cell, and it is made here on this system's own numbers.

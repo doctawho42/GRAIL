@@ -24,8 +24,11 @@ from pathlib import Path
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
+for _p in (str(ROOT), str(Path(__file__).resolve().parent)):
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
+
+from _provenance import stamp  # noqa: E402
 
 MATCH, N_BOOT, SEED = "inchikey_tautomer", 10000, 0
 OUT = ROOT / "results" / "sygma_depth_matched_reach.json"
@@ -126,6 +129,7 @@ def main() -> int:
     gap_matched, gap_matched_ci = stat(lambda i: (Cg[i].sum() - C1[i].sum()) / U[i].sum())
 
     rep = {
+        "provenance": stamp(__file__),
         "match": MATCH, "n_substrates": n, "n_boot": N_BOOT, "seed": SEED,
         "aggregation": "micro (pooled ratio of sums), as in factorize_recall.py and decompose_sygma.py",
         "gate": {"frozen_two_step_reach": frozen, "rerun_two_step_reach": deployed,
@@ -144,7 +148,7 @@ def main() -> int:
                                 "definition": "deployed two-step minus depth-1 matched, paired"},
         "gap": {
             "as_reported": {"point": gap_rep, "ci95": gap_rep_ci,
-                            "definition": "GRAIL depth-1 minus SyGMa two-step (the paper's 0.193)"},
+                            "definition": "GRAIL depth-1 minus SyGMa two-step, both as deployed"},
             "depth_matched": {"point": gap_matched, "ci95": gap_matched_ci,
                               "definition": "GRAIL depth-1 minus SyGMa depth-1"},
         },

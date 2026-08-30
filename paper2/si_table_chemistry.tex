@@ -1,0 +1,28 @@
+\begin{table}[h]
+\centering\scriptsize
+\begin{tabular}{@{}lrrrrrr@{}}
+\toprule
+transformation class & refs & GRAIL exh. & GRAIL int. & MetaTox & SyGMa & MetaPred. \\
+\midrule
+cleavage, two or more carbons lost & 151 & .61 & .56 & .40 & .43 & .48 \\
+other & 142 & .23 & .15 & .19 & .13 & .23 \\
+oxidation, one oxygen added & 140 & .71 & .62 & .75 & .63 & .49 \\
+glucuronidation & 59 & .76 & .69 & .76 & .76 & .75 \\
+demethylation & 36 & .81 & .92 & .94 & .97 & .81 \\
+dehydrogenation & 23 & .26 & .13 & .48 & .35 & .65 \\
+reduction & 20 & .70 & .65 & .65 & .70 & .55 \\
+sulfation & 19 & .58 & .79 & .89 & .79 & .47 \\
+oxidation to a carbonyl & 15 & .73 & .47 & .53 & .53 & .60 \\
+hydrolysis & 13 & .46 & .77 & .69 & .77 & .54 \\
+oxidation, two oxygens added & 11 & .00 & .00 & .00 & .00 & .09 \\
+methylation & 10 & .30 & .20 & .30 & .60 & .70 \\
+acetylation & 7 & .14 & .00 & .57 & .86 & .71 \\
+isomerisation, no formula change & 6 & .00 & .17 & .00 & .00 & .17 \\
+glutathione conjugation & 5 & .20 & .00 & .00 & .00 & .00 \\
+deamination & 5 & .40 & .20 & .60 & .00 & .80 \\
+glycine conjugation & 3 & 1.00 & .00 & 1.00 & 1.00 & 1.00 \\
+\bottomrule
+\end{tabular}
+\caption{Micro recall at a budget of 15 within each transformation class, on the comparison set's 665 annotated references; leading zeros are dropped. A class is a change in molecular formula, so it groups mechanisms the annotation does not separate.}
+\label{tab:si-chemistry}
+\end{table}
