@@ -1,6 +1,6 @@
 # GRAIL
 
-GRAIL is a research-oriented package for xenobiotic metabolism prediction. It combines:
+GRAIL (Graph-scored Rule Application with Inspectable Localisation) is a research-oriented package for xenobiotic metabolism prediction. It combines:
 
 1. A multi-label generator that scores biotransformation SMARTS rules for a substrate graph.
 2. Rule application with RDKit to enumerate candidate metabolites.

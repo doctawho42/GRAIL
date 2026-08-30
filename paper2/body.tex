@@ -32,8 +32,8 @@ predictors differ on both and report them inconsistently, so a system returning 
 and one returning eight are not measured on the same scale. Independent evaluations of these tools
 report the same obstacle \citep{Boyce_2022, Scholz_2023, Gao_2026}.
 
-This work addresses that. We present GRAIL, a metabolite structure predictor built from a bank of
-reaction templates, a learned model that selects which templates to apply, and a learned model
+This work addresses that. We present GRAIL (Graph-scored Rule Application with Inspectable Localisation), a metabolite
+structure predictor built from a bank of reaction templates, a learned model that selects which templates to apply, and a learned model
 that ranks the resulting candidates. Every prediction it emits carries the template that produced
 it and the atoms that template acted on, so a chemist can accept or reject a candidate on
 mechanistic grounds rather than on a score. We evaluate it with the two decisions above promoted
