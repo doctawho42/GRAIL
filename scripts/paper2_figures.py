@@ -49,6 +49,7 @@ plt.rcParams.update({
     "font.sans-serif": ["Helvetica", "Arial", "DejaVu Sans"],
     "font.size": 8, "axes.linewidth": 0.6, "xtick.major.width": 0.6,
     "ytick.major.width": 0.6, "legend.frameon": False, "savefig.bbox": "tight",
+    "savefig.dpi": 600, "figure.dpi": 600,
     "axes.spines.top": False, "axes.spines.right": False,
     "text.color": INK, "axes.labelcolor": INK, "axes.edgecolor": INK_MUTED,
     "xtick.color": INK_MUTED, "ytick.color": INK_MUTED,
@@ -57,6 +58,11 @@ plt.rcParams.update({
 # ACS: a single-column graphic is at most 240 pt (3.33 in) and a double-column one between 300
 # and 504 pt (4.167 and 7 in). W was 3.35 in, which is 241 pt and over the single-column limit.
 W = 3.33
+
+# ACS asks for 300 dpi on colour artwork and 1200 on line art. The figures are vector except for
+# the rendered structures, which are the one raster element; saving at 600 puts those comfortably
+# past the colour bar without making the files unwieldy.
+FIG_DPI = 600
 
 
 def art(name):
@@ -231,11 +237,18 @@ def _rgb(h, tint=0.0):
     return tuple(v + (1.0 - v) * tint for v in c)
 
 
-def _substrate_png(smiles, site_groups, width=900, height=520):
+def _substrate_png(smiles, site_groups, width=2600, height=1500):
     """The substrate with each firing site shaded in its colour.
 
     Drawn from the atom indices the pipeline reported, not from a hand-marked depiction: the
     panel's claim is that the localisation is a computed field of the prediction.
+
+    On resolution. Cairo rasterises, and matplotlib then resamples whatever it is given to the
+    figure's own dpi. The first version rendered 900 by 520 and saved at matplotlib's default
+    100 dpi, so what actually reached the PDF was a 211 by 122 bitmap at 100 ppi -- a third of
+    the 300 dpi ACS asks for colour artwork, and visibly soft at print size. The render is now
+    large enough that the figure's dpi, not the source, is the binding constraint, and the figure
+    is saved at FIG_DPI.
     """
     from rdkit import Chem, RDLogger
     RDLogger.DisableLog("rdApp.*")
@@ -250,9 +263,12 @@ def _substrate_png(smiles, site_groups, width=900, height=520):
                 colours[a] = rgb
     d = rdMolDraw2D.MolDraw2DCairo(width, height)
     o = d.drawOptions()
-    o.bondLineWidth = 2
+    # scaled with the canvas: these were tuned against a 900 px render and are proportions, not
+    # absolutes, so they have to grow with it or the structure prints hairline
+    o.bondLineWidth = max(2, round(2 * width / 900))
     o.highlightRadius = 0.36
-    o.fixedFontSize = 24
+    o.fixedFontSize = max(24, round(24 * width / 900))
+    o.clearBackground = False
     rdMolDraw2D.PrepareAndDrawMolecule(d, mol, highlightAtoms=highlight,
                                        highlightAtomColors=colours)
     d.FinishDrawing()
@@ -267,27 +283,34 @@ def fig_case():
     from matplotlib.patches import Circle
 
     inter, exh = art("case_study.json"), art("case_study_exhaustive.json")
+    inter_d, exh_d = art("case_study_drawn.json"), art("case_study_exhaustive_drawn.json")
     hits = {arm: {c["key"]: c for c in d["candidates"] if c["is_reference"]}
-            for arm, d in (("i", inter), ("e", exh))}
+            for arm, d in (("i", inter), ("e", exh), ("id", inter_d), ("ed", exh_d))}
 
-    # the two sites, taken from the exhaustive arm, which produces all four metabolites. The
-    # phosphorylation atoms are a set union over three rules and collapse to one site; that
-    # collapse is the observation, so it is computed here rather than asserted.
+    # The structure drawn is the one a chemist draws, which is not the one the corpus stores.
+    # An earlier version of this figure took the substrate from the stored artifact and so
+    # printed a named drug as its minor 4-imino-2-hydroxy tautomer, with its single interactive
+    # hit attributed to a template that cannot fire on the correct structure. The shading comes
+    # from the run on that same drawing, so the atoms and the molecule are one molecule.
     sites = {DEAMINATION: set(), PHOSPHORYLATION: set()}
     for key, _, col in CASE:
-        c = hits["e"].get(key)
+        c = hits["ed"].get(key)
         if c:
             sites[col] |= set(c["firing_atoms"])
-    n_phos_rules = len({hits["e"][k]["rule_id"] for k, _, col in CASE
-                        if col == PHOSPHORYLATION and k in hits["e"]})
+    n_phos_rules = len({hits["ed"][k]["rule_id"] for k, _, col in CASE
+                        if col == PHOSPHORYLATION and k in hits["ed"]})
 
-    fig, (a1, a2) = plt.subplots(1, 2, figsize=(W * 2.06, 2.7),
-                                 gridspec_kw={"width_ratios": [1.0, 1.3]})
-    png = _substrate_png(inter["substrate"],
+    # The right panel's row labels are three lines long and are drawn to the left of its axes,
+    # so the gap between the two panels has to hold them: at the default spacing the structure
+    # ran underneath them.
+    fig, (a1, a2) = plt.subplots(1, 2, figsize=(W * 2.12, 3.5),
+                                 gridspec_kw={"width_ratios": [0.92, 1.45], "wspace": 0.42})
+    png = _substrate_png(exh_d["substrate"],
                          [(sorted(atoms), _rgb(col, 0.68)) for col, atoms in sites.items()])
-    a1.imshow(mpimg.imread(io.BytesIO(png), format="png"))
+    a1.imshow(mpimg.imread(io.BytesIO(png), format="png"), interpolation="antialiased")
     a1.set_axis_off()
-    a1.set_title("substrate, shaded by the atoms the rules fired on", fontsize=7.5, pad=4)
+    a1.set_title("substrate as a chemist draws it,\nshaded by the atoms the rules fired on",
+                 fontsize=7.5, pad=4)
     for i, (col, text) in enumerate((
             (DEAMINATION, "deamination, 1 rule"),
             (PHOSPHORYLATION, f"phosphorylation, {n_phos_rules} rules"))):
@@ -296,46 +319,56 @@ def fig_case():
         a1.text(0.095, -0.055 - 0.075 * i, text, transform=a1.transAxes, fontsize=7,
                 va="center", color=INK)
 
-    # the ranks: every candidate as a tick, the annotated ones marked and named
-    rows = [("exhaustive", "e", exh, 1.0), ("interactive", "i", inter, 0.0)]
-    for _, _, d, y in rows:
-        a2.plot([c["rank"] for c in d["candidates"]], [y] * d["n_candidates"], "|",
-                color=INK_FAINT, ms=9, mew=0.8, zorder=2)
-    # labels are staggered by rank order so neighbouring ones cannot overprint
-    for _, arm, d, y in rows:
+    # The ranks, for both arms under both drawings of the substrate. The paper treats the
+    # drawing as a declared axis, and this is the axis at one molecule: the same system, the
+    # same annotation, two tautomers of one drug, different answers.
+    rows = [("exhaustive", exh_d, 3.0, "up"), ("exhaustive", exh, 2.0, "down"),
+            ("interactive", inter_d, 1.0, "up"), ("interactive", inter, 0.0, "down")]
+    for _, d, y, _ in rows:
+        if d["n_candidates"]:
+            a2.plot([c["rank"] for c in d["candidates"]], [y] * d["n_candidates"], "|",
+                    color=INK_FAINT, ms=8, mew=0.8, zorder=2)
+    # labels point away from the pair they belong to and are staggered by rank order, so
+    # neighbouring ones cannot overprint and no label crosses into the other drawing's row
+    for _, d, y, side in rows:
         found = sorted((c for c in d["candidates"] if c["is_reference"]),
                        key=lambda c: c["rank"])
         for j, c in enumerate(found):
             col = next(x for k, _, x in CASE if k == c["key"])
             name = next(x for k, x, _ in CASE if k == c["key"])
-            a2.plot([c["rank"]], [y], "o", ms=5.5, color=col, mec="white", mew=0.9, zorder=4)
-            off = (9, 26, 43)[j % 3] if y else -16
+            a2.plot([c["rank"]], [y], "o", ms=5.0, color=col, mec="white", mew=0.9, zorder=4)
+            step = (8, 21)[j % 2]
+            off = step if side == "up" else -step
             a2.annotate(f"{name}\nrule {c['rule_id']}", (c["rank"], y),
                         textcoords="offset points", xytext=(0, off),
-                        ha="center", va="bottom" if y else "top",
-                        fontsize=6.3, color=col, linespacing=1.15,
+                        ha="center", va="bottom" if side == "up" else "top",
+                        fontsize=6.0, color=col, linespacing=1.15,
                         arrowprops=dict(arrowstyle="-", lw=0.5, color=col,
-                                        shrinkA=1, shrinkB=3) if y and j % 3 else None)
+                                        shrinkA=1, shrinkB=3) if j % 2 else None)
     for k in (15, 30):
         a2.axvline(k, color=INK_FAINT, lw=0.7, ls=":", zorder=0)
-        a2.annotate(f"$k={k}$", (k, -0.62), ha="center", fontsize=6.5, color=INK_MUTED)
-    a2.set_yticks([0, 1])
-    a2.set_yticklabels(
-        [f"interactive\n{inter['configuration']['rule_budget']} rules, "
-         f"{inter['n_candidates']} returned\n{inter['n_references'] and len(inter['reference_ranks'])} of "
-         f"{inter['n_references']} found",
-         f"exhaustive\n{exh['configuration']['rule_budget']:,} rules, "
-         f"{exh['n_candidates']} returned\n{len(exh['reference_ranks'])} of "
-         f"{exh['n_references']} found"], fontsize=6.8)
+        a2.annotate(f"$k={k}$", (k, -1.02), ha="center", fontsize=6.5, color=INK_MUTED)
+
+    def _label(name, d, drawing):
+        found = len(d["reference_ranks"])
+        return (f"{name}, {drawing}\n{d['n_candidates']} returned, "
+                f"{found} of {d['n_references']} found")
+
+    a2.set_yticks([0, 1, 2, 3])
+    a2.set_yticklabels([_label("interactive", inter, "as stored"),
+                        _label("interactive", inter_d, "as drawn"),
+                        _label("exhaustive", exh, "as stored"),
+                        _label("exhaustive", exh_d, "as drawn")], fontsize=6.4)
     a2.set_xlabel("rank in the returned list")
     a2.set_xlim(0.3, max(exh["n_candidates"], 32) + 4)
-    a2.set_ylim(-0.9, 1.95)
+    a2.set_ylim(-1.25, 3.75)
     a2.set_xscale("symlog", linthresh=30, linscale=1.6)
     a2.set_xticks([1, 5, 10, 15, 20, 30, 50, 100])
     a2.set_xticklabels(["1", "5", "10", "15", "20", "30", "50", "100"])
     a2.spines["left"].set_visible(False)
     a2.tick_params(axis="y", length=0)
-    a2.set_title("where the four annotated metabolites land", fontsize=7.5, pad=10)
+    a2.set_title("where the four annotated metabolites land,\nunder each drawing of the substrate",
+                 fontsize=7.5, pad=8)
     fig.savefig(OUT / "fig_case.pdf")
     plt.close(fig)
 
@@ -364,24 +397,37 @@ def fig_toc():
     # against the same constant that produced it can only catch a process failure, never a wrong
     # constant, and would pass unchanged if someone widened the canvas.
     ACS_MAX_W, ACS_MAX_H, ACS_MIN_DPI, ACS_MIN_PT = 3.25, 1.75, 300, 6.0
-    TOC_W, TOC_H, DPI, MIN_PT = 3.25, 1.75, 300, 6.0
+    # 300 is the floor ACS states, not a target, and the two structures in this graphic are the
+    # same rendered chemistry as Figure 2. The assertion below still checks against the floor,
+    # which is the point of keeping the two constants apart.
+    TOC_W, TOC_H, DPI, MIN_PT = 3.25, 1.75, 600, 6.0
     LABEL_PT, RANK_PT = 7.5, 8.5
     FONTS_PT = (LABEL_PT, RANK_PT)
-    d = art("case_study_exhaustive.json")
+    # The drawn structure, not the stored one. The earlier version took the substrate from the
+    # stored artifact and the products from the same run, so the graphic showed gemcitabine as
+    # its lactim on the left and its own metabolites as amides on the right: one molecule in two
+    # dialects, inside three inches.
+    d = art("case_study_exhaustive_drawn.json")
     hits = {c["key"]: c for c in d["candidates"] if c["is_reference"]}
     # the two transformations that read as chemistry at this size: one deamination, one
     # phosphorylation, each labelled with the rule the pipeline reported for it
     shown = [("FIRDBEQIJQERSE-UHFFFAOYSA-N", "dFdU", DEAMINATION),
              ("KNTREFQOVSMROS-UHFFFAOYSA-N", "dFdCMP", PHOSPHORYLATION)]
+    # ordered by the rank the run actually returned, so the graphic reads down the list. The
+    # rank printed beside each was the loop index -- 1 and 2 whatever the data said, and in the
+    # wrong order for both drawings of the substrate. It is the returned rank now.
+    shown.sort(key=lambda t: hits[t[0]]["rank"])
 
     def draw(smiles, w, h):
         from rdkit import Chem, RDLogger
         RDLogger.DisableLog("rdApp.*")
         from rdkit.Chem.Draw import rdMolDraw2D
-        dr = rdMolDraw2D.MolDraw2DCairo(w, h)
+        # rendered at three times the placed size, so the 300 dpi the TOC specification demands
+        # is the floor rather than the ceiling
+        dr = rdMolDraw2D.MolDraw2DCairo(w * 3, h * 3)
         o = dr.drawOptions()
-        o.bondLineWidth = 3
-        o.fixedFontSize = 34
+        o.bondLineWidth = 9
+        o.fixedFontSize = 102
         rdMolDraw2D.PrepareAndDrawMolecule(dr, Chem.MolFromSmiles(smiles))
         dr.FinishDrawing()
         return mpimg.imread(io.BytesIO(dr.GetDrawingText()), format="png")
@@ -412,7 +458,7 @@ def fig_toc():
         ax.text(0.47, 0.50 + (0.16 if i == 0 else -0.155) * 1.05 + (y - 0.50) * 0.5,
                 f"rule {hits[key]['rule_id']}", ha="center", fontsize=LABEL_PT, color=col, **sans)
         ax.text(0.755, y - 0.235, name, ha="center", fontsize=LABEL_PT, color=col, **sans)
-        ax.text(0.945, y, str(i + 1), ha="center", va="center", fontsize=RANK_PT,
+        ax.text(0.945, y, str(hits[key]["rank"]), ha="center", va="center", fontsize=RANK_PT,
                 color=INK, **sans)
     ax.text(0.945, 0.14, "rank", ha="center", fontsize=LABEL_PT, color=INK, **sans)
 
@@ -470,9 +516,17 @@ def digest():
         "grain": cen["granularity_curve"], "gap": art("coverage_gap_types.json")["gap"],
         "uspto": usp["overlap"], "modes": {"i": mt["interactive"], "e": mt["exhaustive"]},
         "env": [(r["heavy"], r["finished"], r.get("t_generate")) for r in env["rows"]],
-        "case": {a: [(c["rank"], c["key"], c["rule_id"], c["firing_atoms"])
-                     for c in art(f)["candidates"] if c["is_reference"]]
-                 for a, f in (("i", "case_study.json"), ("e", "case_study_exhaustive.json"))},
+        # both drawings of the substrate, and the substrate string itself. The digest covered
+        # only the stored-dialect runs, so it could not see the staleness that mattered most:
+        # the figure went on drawing a named drug as its minor tautomer after the paper had
+        # stopped claiming that drawing was the right one, and the gate stayed green.
+        "case": {a: {"substrate": art(f)["substrate"],
+                     "refs": [(c["rank"], c["key"], c["rule_id"], c["firing_atoms"])
+                              for c in art(f)["candidates"] if c["is_reference"]]}
+                 for a, f in (("i", "case_study.json"),
+                              ("e", "case_study_exhaustive.json"),
+                              ("id", "case_study_drawn.json"),
+                              ("ed", "case_study_exhaustive_drawn.json"))},
     }, sort_keys=True).encode()
     return hashlib.sha256(payload).hexdigest()
 

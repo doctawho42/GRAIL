@@ -428,12 +428,16 @@ supported almost any claim about which system is better.
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth]{fig_case}
-\caption{The worked example. Left: the substrate, with every atom a firing rule reported shaded
-in the colour of the transformation it belongs to. The three phosphorylations report the same two
-atoms under three different rules, so the sites collapse to two where the metabolites do not.
-Right: where the four annotated metabolites fall in each arm's ranked list, every returned
-candidate drawn as a tick. The interactive budget never produces the phosphorylations, so its
-list is short and correct rather than long and wrong.}
+\caption{The worked example. Left: the substrate as a chemist draws it, with every atom a
+firing rule reported shaded in the colour of the transformation it belongs to. The three
+phosphorylations report the same two atoms under three different rules, so the sites collapse to
+two where the metabolites do not. Right: where the four annotated metabolites fall in each arm's
+ranked list, every returned candidate drawn as a tick, for both drawings of the substrate --- the
+one the corpus stores and the one shown on the left. The interactive budget never produces the
+phosphorylations under either drawing, so its list is short rather than long and wrong; under the
+drawing on the left it produces none of the four, because the template its single hit came from
+requires the stored tautomer. The exhaustive arm reaches all four either way, at different
+ranks and, for the deamination, through a different template.}
 \label{fig:case}
 \end{figure*}
 
@@ -457,9 +461,11 @@ it emits and runs out, and the exhaustive mode keeps having candidates.
 The attribution is what a score cannot supply. All three phosphorylations fire at the same
 substrate atoms, the 5$^\prime$ hydroxymethyl, under three different rules, and the deamination
 fires on the pyrimidine ring; a user reading the output sees which transformation is claimed and
-where, and can reject a candidate on chemical grounds. All four rules here are mined rather than
-curated, so the five sixths of the bank with no expert provenance is the part carrying this
-molecule.
+where, and can reject a candidate on chemical grounds. On the stored drawing all four rules are
+mined, so the part of the bank with no expert provenance is what carries this molecule; on the
+drawing a chemist would use, the deamination is found instead by a curated template and thirty
+ranks lower. Which templates carry a molecule is itself a function of how the molecule is drawn,
+and Figure~\ref{fig:case} shows both.
 
 \subsection{Where the design came from}
 
