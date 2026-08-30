@@ -15,15 +15,25 @@ measured in `results/curated_provenance.json` and described in the Supporting In
 | carried as curated, in fact extracted | 492 | an earlier machine extraction from the annotated pairs |
 | mined | 5,856 | mined from the training split by `scripts/mine_rules.py` |
 
-**152 of the 1,233 named templates are SyGMa's published rules, verbatim** — 86.9% of SyGMa's rule
-set, measured by string equality in `results/curated_provenance.json`. SyGMa 1.1.0 declares its
-licence as GPL. A file redistributing those 152 lines is to that extent a derivative of a GPL work,
-and a permissive licence over the whole repository would not be consistent with it.
+**763 of the 1,715 curated templates are somebody else's rules, verbatim** — 44.5% of the curated
+half, measured by string equality against the deployed bank in `results/curated_third_party.json`:
 
-This is the reason the repository carries no licence yet. It is a constraint to be resolved, not an
-oversight, and the resolution is the authors': relicense the repository compatibly, remove the 152
-templates and report what that costs the coverage ceiling, or obtain a different grant. The
-measurement needed for the second option is already in the repository.
+| source | templates in this bank | of the source's own set | terms |
+|---|---:|---:|---|
+| BioTransformer | 611 | 611 of 668 | distributed with BioTransformer; redistribution requires permission |
+| SyGMa 1.1.0 | 152 | 152 of 204 | GPL |
+
+String equality cannot trace a rule that was rewritten, so both counts are lower bounds and the
+remaining 952 curated templates are not thereby shown to be original.
+
+This is the reason the repository carries no licence yet. Redistributing 152 GPL lines makes the
+bank to that extent a derivative of a GPL work, and a permissive licence over the whole repository
+would not be consistent with it; the BioTransformer templates carry a separate obligation that a
+licence choice does not discharge, because permission is a thing to be obtained rather than
+declared. It is a constraint to be resolved, not an oversight, and the resolution is the authors':
+relicense compatibly and obtain BioTransformer's permission, remove the borrowed templates and
+report what that costs the coverage ceiling, or obtain different grants. Removal is measurable in
+the same instrument that found them.
 
 ## The corpus
 

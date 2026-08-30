@@ -187,6 +187,17 @@ def build():
     # Two loops measure the ceiling under the same hydrogen convention and return different
     # counts. The paper reports the deployed loop's; the audit loop's is what the two conventions
     # are compared with. The difference is small and is printed rather than chosen between.
+    # how much of the curated half is somebody else's rules verbatim, and under whose terms
+    ctp = art("curated_third_party.json")
+    n["thirdparty.curated"] = ctp["bank"]["curated"]
+    n["thirdparty.traceable"] = ctp["curated_templates_traceable_to_either_source"]
+    n["thirdparty.traceableshare"] = ctp["share_of_the_curated_half_so_traceable"]
+    for tag, src in (("sygma", "SyGMa"), ("biotransformer", "BioTransformer")):
+        row = ctp["third_party_in_the_curated_half"][src]
+        n[f"thirdparty.{tag}.shipped"] = row["of_them_in_the_bank"]
+        n[f"thirdparty.{tag}.read"] = row["third_party_rules_read"]
+        n[f"thirdparty.{tag}.shareofcurated"] = row["share_of_the_curated_half"]
+
     # what each method recovers, split by the chemistry rather than by the budget
     ebc = art("error_by_chemistry.json")
     n["chem.references"] = ebc["population"]["references_classified"]
