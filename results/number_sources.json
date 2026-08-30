@@ -1,5 +1,5 @@
 {
- "artifacts_the_numbers_come_from": 60,
+ "artifacts_the_numbers_come_from": 62,
  "exempt": 3,
  "unpinned": [],
  "unstamped": [],
@@ -197,6 +197,15 @@
    "exempt": null
   },
   {
+   "artifact": "results/emission_rule_transfer.json",
+   "pinned": true,
+   "stamped": true,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "recorded source digest",
+   "exempt": null
+  },
+  {
    "artifact": "results/error_by_chemistry.json",
    "pinned": true,
    "stamped": true,
@@ -384,6 +393,15 @@
    "sweep_status": "unpinned",
    "how": null,
    "exempt": "this gate's own report, which the paper quotes and the generator therefore reads"
+  },
+  {
+   "artifact": "results/oracle_by_grouping.json",
+   "pinned": true,
+   "stamped": true,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "recorded source digest",
+   "exempt": null
   },
   {
    "artifact": "results/parent_drop_effect.json",

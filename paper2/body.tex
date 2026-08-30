@@ -85,8 +85,18 @@ predictor in this paper is measured on it.
 
 The annotated substrate--metabolite pairs are assembled from four sources: ChEMBL
 \citep{Zdrazil_2024}, DrugBank \citep{Wishart_2018}, MetXBioDB \citep{Djoumbou_Feunang_2019} and
-the GLORYx reference set \citep{de_Bruyn_Kops_2020}. The versions used are \CorpusVersions{}. Their licences do not
-combine into one redistributable derivative, which the Supporting Information sets out.
+the GLORYx reference set \citep{de_Bruyn_Kops_2020}. The versions used are \CorpusVersions{}. Their
+licences do not combine into one redistributable derivative, which the Supporting Information sets
+out.
+
+One property of that assembly bears on everything downstream and is stated here rather than left to
+an appendix. The selection that drew records from the four sources is not recoverable: the corpus
+files were written before this repository's first commit, no script in it reads any of the four
+sources or writes them, and the field that would carry a source accession is empty in every record.
+The apparatus this paper builds on top --- the pinned artifacts, the digests, the checks that refuse
+a stale file --- makes every step from the corpus onwards reproducible and cannot make that step so.
+What can be checked instead is a rebuild: \texttt{scripts/verify\_rebuilt\_corpus.py} reports how a
+corpus assembled by a reader stands against this one, substrate by substrate.
 
 The comparison set carries no training contamination: \numPopulationInTrainOrVal{} of its
 \numPopulationN{} substrates appear as a substrate of train or validation under a canonicalised
@@ -159,7 +169,9 @@ The deployed combination is reciprocal rank fusion \citep{cormack2009},
 \mathrm{RRF}(c) = \sum_{i} \frac{1}{K + r_i(c)}, \qquad K = 60,
 \end{equation}
 where $r_i(c)$ is the rank of $c$ under scorer $i$. Only positions enter, so the two opinions
-contribute equally whatever their scales.
+contribute equally whatever their scales. $K = 60$ is the value the method was published with
+\citep{cormack2009} and it was not varied here; it is named because a paper arguing that silent
+parameters decide verdicts should say which of its own were left at a default.
 
 The change was registered as prediction P1, with a threshold of $+\numHSevenThreshold$ fixed
 before it was checked, and evaluated on a validation draw where the fusion had not been selected:
@@ -191,7 +203,8 @@ How many templates the generator selects before any is applied is the \emph{rule
 sets both what the system can find and what it costs. Two settings are reported throughout. The
 \emph{interactive} mode applies the \numHOneZeroTopk{} templates the trained checkpoint records,
 and returns in about a second, which is what a user waiting at a web form requires. The
-\emph{exhaustive} mode applies the whole bank of \numBankRules{}, takes tens of seconds and is
+\emph{exhaustive} mode applies the whole bank, the \numBankParses{} of \numBankRules{}
+templates that parse, takes tens of seconds and is
 the setting for an offline query. The two therefore differ by a factor of \numBankRules{} to
 \numHOneZeroTopk{} in how much of the bank they consult. What the difference buys was registered
 as prediction P3 with a ceiling of $+\numHOneZeroThreshold$: on validation
@@ -208,15 +221,15 @@ than of the system.
 
 \subsection{Emission}
 
-Under the product combination the system emitted candidates scoring within $\alpha = 0.5$ of the
-leader. That rule does not transfer to a rank fusion, and the reason is structural: the worst
-candidate scores $0.88$ of the best under fusion against $0.016$ under the product, because a
-reciprocal-rank sum is a rank statistic without scale. At $\alpha = 0.5$ the rule admits
-$16.22$ candidates from a pool of $16.3$ on the validation draw, truncating nothing. Three
-counts of the interactive arm's output appear in this paper and mean different things: the pool
-before deduplication (\numHOneZeroPoolTrained{} on the validation draw), the pool this emission
-grid reads ($16.3$ on the same draw), and the list finally emitted on the comparison set
-(\numOutputTrained{}).
+Under the product combination the system emitted candidates scoring within $\alpha =
+\numEmitAlpha$ of the leader. That rule does not transfer to a rank fusion, and the reason is
+structural: the worst candidate scores $\numEmitFusionmedian$ of the best under fusion against
+$\numEmitProductmedian$ under the product, because a reciprocal-rank sum is a rank statistic
+without scale. At that $\alpha$ the rule admits $\numEmitByfusion$ candidates from a pool of
+$\numEmitPool$ on the comparison set, truncating nothing. Several counts of the interactive arm's
+output appear in this paper and they are different quantities on different populations; each is
+named where it is used, and Table~\ref{SI-tab:si-counts} lists them together with the population
+and the stage each belongs to.
 
 The deployed emission is therefore $\hat{C}(s)$ itself, ordered by fusion and truncated by no
 threshold, so $|\hat{Y}_s| = |\hat{C}(s)|$. For the interactive mode that length is set by the
@@ -315,7 +328,10 @@ into an ordering. Every difference behind that division, with its paired interva
 Table~\ref{SI-tab:si-intervals}.
 
 GRAIL trails with the interval excluding zero at $k=1$, $3$ and $5$, where SyGMa leads
-(\numSweepSygmaOne{} against \numSweepTrainedOne{} at $k=1$). Neither side separates at $k=8$ and
+(\numSweepSygmaOne{} against \numSweepTrainedOne{} at $k=1$). The two banks are not independent
+and the reading depends on it: \numSygmaInside{} of SyGMa's \numSygmaRules{} published rules are
+present in this bank verbatim, so what separates at those budgets is an ordering over chemistry
+the two systems largely share. Neither side separates at $k=8$ and
 $10$, where MetaPredictor leads, nor at $k=15$ and $20$. GRAIL's exhaustive mode leads all three
 comparators with the interval excluding zero at $k=30$ and $k=50$. One of those six cells is
 marginal, and it is named here rather than three sections later: the lead over MetaTox at $k=30$,
@@ -458,6 +474,17 @@ the median: it gives \numCritLeadsDefault{} against the \numCritLeadsBest{} avai
 chosen because the references carry no stereochemistry and do not distinguish tautomers, not
 because of what it returns.
 
+The spread is not evenly earned across the five, and saying so is not a retreat from reporting it.
+Two of the criteria are not defensible as defaults and this paper says so where it defines them:
+canonical SMILES equality tests whether two pipelines standardise alike rather than whether two
+molecules are the same, and a Tanimoto of one on a folded fingerprint is a collision test. Those
+\numCritLeadsUnderNoIndefensibleWord{} are exactly the ones under which GRAIL leads at no budget.
+Restricted to the \numCritDefensibleWord{} that answer the question a chemist would ask, the
+verdict is stable: a lead at \numCritLeadsUnderEveryDefensibleWord{} budgets under every one of
+them, and a trail at the same \numCritTrailsUnderAnyDefensibleWord{} tight budgets under every one
+of them. Both readings belong in the record, and the wider one is the reason the whole grid is
+printed rather than a cell.
+
 Ranking is settled before any key is taken, so the criterion changes what counts as a hit and
 never what is ranked. A single cell from this grid, reported without its criterion, would have
 supported almost any claim about which system is better.
@@ -515,7 +542,7 @@ reading leaves undecided.
 \subsection{Group ranking, and two mechanisms that failed}
 
 Candidate metabolites of one substrate fall into groups of the same molecular formula, and an
-ordering that knew which group contained a reference would gain $+\numOracleHeadroom$ over the
+ordering that knew which group contained a reference would gain $+\numOracleHeadroomdeployed$ $[+\numOracleHeadroomdeployedlo, +\numOracleHeadroomdeployedhi]$ on the deployed configuration, and $+\numOracleHeadroom$ on the uncapped pool the measurement was first made on, over the
 ordering it is measured against. Two ways of using that signal were registered and both failed.
 Emitting whole groups as blocks, scored by a listwise model, cost $\numHEightDiff$ against a
 registered gain of $+\numHEightThreshold$ (P6); using the group signal as a gate before the
@@ -542,36 +569,30 @@ level does not transfer to the tables above are in the Supporting Information.
 
 \subsection{Runtime}
 
-\begin{figure*}[t]
+\begin{figure}[t]
 \centering
-\includegraphics[width=\textwidth]{fig_cost}
+\includegraphics[width=\columnwidth]{fig_cost}
 \caption{Left: generator seconds against substrate size at the whole bank, with substrates
 that did not finish inside the deadline marked at it. Right: the cost of each operating mode on
 the validation split, log scale.}
 \label{fig:cost}
-\end{figure*}
+\end{figure}
 
-Standardisation is the binding constraint (Figure~\ref{fig:cost}).
-Three other explanations were tested and rejected by measurement: the filter's maximum-common-substructure
-step, rule application, and substrate size as an axis. The cause was product standardisation, at
-\numHOneThreeEnumeration{} times the remaining work, run once per product of every template. A
+Standardisation is the binding constraint (Figure~\ref{fig:cost}). Three other explanations were
+tested and rejected by measurement: the filter's maximum-common-substructure step, rule
+application, and substrate size as an axis. The cause was product standardisation, at
+\numHOneThreeEnumeration{} times the remaining work, run once per product of every template; a
 cache had concealed it, a repeated substrate running many times faster.
 
-Moving standardisation to surviving candidates (P8) freed recall, $\numHOneThreeRecallDiff$
-against a cap of $0.01$, but failed on time, $\numHOneThreeFactor\times$ against a registered
-$10\times$. The mechanism was right and the arithmetic was not: enumeration collapsed, and
-standardising the survivors became the majority of the new arm. Removing most of the work does not
-remove most of the time once the remainder is the new majority.
-
-Adding a tautomer enumeration budget of \numHOneFiveBudget{} (P9) passes both halves: median
-\numHOneThreeTimeBefore~s to \numHOneFiveTime~s against a registered target below ten, recall loss
-\numHOneFiveRecallDiff{} against a cap of $0.01$. Of \numHOneFiveCandidates{} candidates,
-\numHOneFiveMoved{} standardise to a different molecule under the bounded budget.
-
-The two arms did not run under the same machine load. Correcting for it leaves
-\numHOneFiveAttributable$\times$ attributable to the budget itself, still inside the target;
-the correction and the safeguard that kept the budget from moving what counts as a hit are in
-the Supporting Information.
+Two registered predictions followed. Moving standardisation to surviving candidates (P8) freed
+recall but failed on time, \numHOneThreeFactor$\times$ against a registered $10\times$: removing
+most of the work does not remove most of the time once the remainder is the new majority. Adding a
+tautomer enumeration budget of \numHOneFiveBudget{} (P9) passes both halves, taking the median from
+\numHOneThreeTimeBefore~s to \numHOneFiveTime~s against a registered target below ten, at a recall
+loss of \numHOneFiveRecallDiff{} against a cap of $0.01$. The two arms ran under different machine
+loads; correcting for that puts the median at \numHOneFiveCorrectedmedian~s, still below the target.
+The correction, the safeguard that kept the budget from moving what counts as a hit, and the
+per-stage decomposition are in the Supporting Information.
 
 Cost is reported at the tail as well as at the median, because a service is used at both. The
 interactive mode's mean is six times its median, and its slowest substrate is three orders of
@@ -715,7 +736,10 @@ back the pool.
 
 Three properties, none of them a recall figure. Every prediction names the transformation rule
 that produced it and the site at which it fired, which allows a candidate to be accepted or
-rejected on mechanistic grounds. That second half is a claim and is measured: of
+rejected on mechanistic grounds. How much a chemist gets from that depends on the template:
+\numRsizeLethree{} of \numRsizeParsed{} parseable templates have three reactant atoms or fewer
+(\numRsizeLethreesharePct{}), and a template of that size is a pattern rather than a mechanism, so
+for those the site discrimination comes from the learned stages and not from the rule. That second half is a claim and is measured: of
 \numSiteScored{} correctly predicted metabolites, the site reported touches the atoms that
 actually differ from the substrate in \numSiteTouchingPct{}, against \numSiteNullPct{} for a set
 of atoms of the same size drawn at random from the same molecule
@@ -893,4 +917,8 @@ manuscript. A.V.R. reviewed the manuscript and will deploy the released model as
 
 \section*{Notes}
 
-The authors declare no competing financial interest.
+A.V.R. is an author of MetaTox \citep{Rudik_2017}, the incumbent system this work is
+compared against and sets out to replace, and will deploy the released model as a service on
+\texttt{way2drug.ru}, which also hosts MetaTox. The authors declare no other competing interest,
+financial or otherwise. Any interest that relationship could create runs against this work rather
+than for it, and the configuration MetaTox was run in is stated in the Supporting Information.

@@ -460,7 +460,12 @@ def fig_toc():
         ax.text(0.755, y - 0.235, name, ha="center", fontsize=LABEL_PT, color=col, **sans)
         ax.text(0.945, y, str(hits[key]["rank"]), ha="center", va="center", fontsize=RANK_PT,
                 color=INK, **sans)
+    # Which run these ranks come from. Table 3 of the manuscript reports the same four metabolites
+    # under the stored drawing and returns different ranks; without this label a reader comparing
+    # the two concludes one of them is wrong.
     ax.text(0.945, 0.14, "rank", ha="center", fontsize=LABEL_PT, color=INK, **sans)
+    ax.text(0.5, 0.965, "exhaustive mode, substrate as a chemist draws it",
+            ha="center", va="top", fontsize=MIN_PT, color=INK, **sans)
 
     # The rc_context is load-bearing. This module sets savefig.bbox to "tight" for the figures,
     # and tight adds savefig.pad_inches on every side: the first build came out 3.45 by 1.95,

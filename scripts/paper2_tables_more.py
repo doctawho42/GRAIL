@@ -77,9 +77,9 @@ def hypotheses():
          ("H10", "rule budget of 30 from the checkpoint", "$\\le +0.05$", "h10.bought", "validation"),
          # the grid is five criteria by eleven budgets, 55 cells, which is what the text reports
          ("H11", "emit the whole pool, no threshold", "0 cells", "h11.lost", "grid $5\\times11$"),
-         ("H12", "group score as a third ranking", "$+0.02$", "h12.diff", "comparison set"),
-         ("H8", "group score, groups emitted as blocks", "$+0.05$", "h8.diff", "comparison set"),
-         ("H14", "group score as a gate before fusion", "$+0.02$", "h14.diff", "comparison set"),
+         ("H12", "group score as a third ranking", "$+0.02$", "h12.diff", "comparison set$^{\\dagger}$"),
+         ("H8", "group score, groups emitted as blocks", "$+0.05$", "h8.diff", "comparison set$^{\\dagger}$"),
+         ("H14", "group score as a gate before fusion", "$+0.02$", "h14.diff", "comparison set$^{\\dagger}$"),
          ("H13", "standardise surviving candidates only", "$\\ge 10\\times$", "h13.factor", "validation"),
          ("H15", "survivors, tautomer budget 200", "$<10$ s", "h15.time", "validation"),
          ("H16", "composite share, the two instruments' union", "$\\ge 0.134$",
@@ -99,7 +99,10 @@ def hypotheses():
             "was fixed, the threshold, the value measured, the population it was checked on, and "
             "the identifier it carries in the released register. P8's figure is a speed-up "
             "factor, P9's a median in seconds and P10's a share of the mined bank; the rest are "
-            "differences in micro recall at a budget of 15.}\n\\label{tab:hyp}\n\\end{table*}\n")
+            "differences in micro recall at a budget of 15. $^{\\dagger}$ marks the three whose "
+            "threshold was fixed in advance but whose population was not: they were adjudicated "
+            "on the comparison set, which was recorded afterwards.}"
+            "\n\\label{tab:hyp}\n\\end{table*}\n")
 
 
 # The four annotated metabolites of the worked example, named so the table reads as chemistry

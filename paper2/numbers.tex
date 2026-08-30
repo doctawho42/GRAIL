@@ -205,16 +205,24 @@
 \newcommand{\numCritCriteriaWord}{five}  % crit.criteria, spelled
 \newcommand{\numCritDefaultRank}{3}  % crit.default_rank
 \newcommand{\numCritDefaultRankWord}{three}  % crit.default_rank, spelled
+\newcommand{\numCritDefensible}{3}  % crit.defensible
+\newcommand{\numCritDefensibleWord}{three}  % crit.defensible, spelled
 \newcommand{\numCritLeadsBest}{4}  % crit.leads_best
 \newcommand{\numCritLeadsBestWord}{four}  % crit.leads_best, spelled
 \newcommand{\numCritLeadsDefault}{2}  % crit.leads_default
 \newcommand{\numCritLeadsDefaultWord}{two}  % crit.leads_default, spelled
+\newcommand{\numCritLeadsUnderEveryDefensible}{2}  % crit.leads_under_every_defensible
+\newcommand{\numCritLeadsUnderEveryDefensibleWord}{two}  % crit.leads_under_every_defensible, spelled
+\newcommand{\numCritLeadsUnderNoIndefensible}{2}  % crit.leads_under_no_indefensible
+\newcommand{\numCritLeadsUnderNoIndefensibleWord}{two}  % crit.leads_under_no_indefensible, spelled
 \newcommand{\numCritMovedMax}{6}  % crit.moved_max
 \newcommand{\numCritMovedMaxWord}{six}  % crit.moved_max, spelled
 \newcommand{\numCritNeverLeads}{2}  % crit.never_leads
 \newcommand{\numCritNeverLeadsWord}{two}  % crit.never_leads, spelled
 \newcommand{\numCritSwingOneFive}{0.1309}  % crit.swing15
 \newcommand{\numCritSwingOneFivePct}{13.1\%}  % crit.swing15, as a percentage
+\newcommand{\numCritTrailsUnderAnyDefensible}{3}  % crit.trails_under_any_defensible
+\newcommand{\numCritTrailsUnderAnyDefensibleWord}{three}  % crit.trails_under_any_defensible, spelled
 \newcommand{\numCritWorstOneFive}{-0.0692}  % crit.worst15
 \newcommand{\numCuratedHydroxylation}{474}  % curated.hydroxylation
 \newcommand{\numCuratedMerged}{656}  % curated.merged
@@ -324,6 +332,16 @@
 \newcommand{\numDsweepMoved}{4}  % dsweep.moved
 \newcommand{\numDsweepMovedWord}{four}  % dsweep.moved, spelled
 \newcommand{\numDsweepN}{291}  % dsweep.n
+\newcommand{\numEmitAlpha}{0.5}  % emit.alpha
+\newcommand{\numEmitAlphaPct}{50\%}  % emit.alpha, as a percentage
+\newcommand{\numEmitByfusion}{16.22}  % emit.byfusion
+\newcommand{\numEmitByproduct}{2.31}  % emit.byproduct
+\newcommand{\numEmitFusionmedian}{0.8841}  % emit.fusionmedian
+\newcommand{\numEmitFusionmedianPct}{88.4\%}  % emit.fusionmedian, as a percentage
+\newcommand{\numEmitN}{291}  % emit.n
+\newcommand{\numEmitPool}{16.31}  % emit.pool
+\newcommand{\numEmitProductmedian}{0.0163}  % emit.productmedian
+\newcommand{\numEmitProductmedianPct}{1.6\%}  % emit.productmedian, as a percentage
 \newcommand{\numEnvelopeDeadline}{600}  % envelope.deadline
 \newcommand{\numEnvelopeN}{106}  % envelope.n
 \newcommand{\numEnvelopeSmallestUnfinished}{42}  % envelope.smallest_unfinished
@@ -761,6 +779,7 @@
 \newcommand{\numHOneFiveAttributable}{2.52}  % h15.attributable
 \newcommand{\numHOneFiveBudget}{200}  % h15.budget
 \newcommand{\numHOneFiveCandidates}{27{,}595}  % h15.candidates
+\newcommand{\numHOneFiveCorrectedmedian}{9.12}  % h15.correctedmedian
 \newcommand{\numHOneFiveLoad}{1.73}  % h15.load
 \newcommand{\numHOneFiveMedianUnderload}{9.12}  % h15.median.underload
 \newcommand{\numHOneFiveMoved}{263}  % h15.moved
@@ -881,6 +900,12 @@
 \newcommand{\numOracleBetweenPct}{66.9\%}  % oracle.between, as a percentage
 \newcommand{\numOracleHeadroom}{0.3143}  % oracle.headroom
 \newcommand{\numOracleHeadroomPct}{31.4\%}  % oracle.headroom, as a percentage
+\newcommand{\numOracleHeadroomdeployed}{0.1248}  % oracle.headroomdeployed
+\newcommand{\numOracleHeadroomdeployedPct}{12.5\%}  % oracle.headroomdeployed, as a percentage
+\newcommand{\numOracleHeadroomdeployedhi}{0.1654}  % oracle.headroomdeployedhi
+\newcommand{\numOracleHeadroomdeployedhiPct}{16.5\%}  % oracle.headroomdeployedhi, as a percentage
+\newcommand{\numOracleHeadroomdeployedlo}{0.0853}  % oracle.headroomdeployedlo
+\newcommand{\numOracleHeadroomdeployedloPct}{8.5\%}  % oracle.headroomdeployedlo, as a percentage
 \newcommand{\numOracleWithin}{0.3654}  % oracle.within
 \newcommand{\numOracleWithinPct}{36.5\%}  % oracle.within, as a percentage
 \newcommand{\numOutputBank}{98.1}  % output.bank
@@ -920,8 +945,8 @@
 \newcommand{\numProvChanged}{38}  % prov.changed
 \newcommand{\numProvFiles}{292}  % prov.files
 \newcommand{\numProvHandtyped}{37}  % prov.handtyped
-\newcommand{\numProvMacrosbody}{227}  % prov.macrosbody
-\newcommand{\numProvMacrossi}{245}  % prov.macrossi
+\newcommand{\numProvMacrosbody}{235}  % prov.macrosbody
+\newcommand{\numProvMacrossi}{249}  % prov.macrossi
 \newcommand{\numProvPinned}{82}  % prov.pinned
 \newcommand{\numProvSources}{60}  % prov.sources
 \newcommand{\numProvSourcesexempt}{3}  % prov.sourcesexempt
@@ -1348,7 +1373,7 @@
 \newcommand{\numTautInvarianceShippedPct}{96.5\%}  % taut.invariance.shipped, as a percentage
 \newcommand{\numThirdpartyBiotransformerRead}{668}  % thirdparty.biotransformer.read
 \newcommand{\numThirdpartyBiotransformerShipped}{611}  % thirdparty.biotransformer.shipped
-\newcommand{\numThirdpartyCurated}{1{,}715}  % thirdparty.curated
+\newcommand{\numThirdpartyCurated}{1{,}725}  % thirdparty.curated
 \newcommand{\numThirdpartyFiles}{5}  % thirdparty.files
 \newcommand{\numThirdpartyFilesWord}{five}  % thirdparty.files, spelled
 \newcommand{\numThirdpartyFilesunused}{2}  % thirdparty.filesunused
@@ -1358,9 +1383,9 @@
 \newcommand{\numThirdpartyHoldersWord}{three}  % thirdparty.holders, spelled
 \newcommand{\numThirdpartySygmaShipped}{273}  % thirdparty.sygma.shipped
 \newcommand{\numThirdpartyTraceable}{966}  % thirdparty.traceable
-\newcommand{\numThirdpartyTraceableshare}{0.5633}  % thirdparty.traceableshare
-\newcommand{\numThirdpartyTraceablesharePct}{56.3\%}  % thirdparty.traceableshare, as a percentage
-\newcommand{\numThirdpartyUntraceable}{749}  % thirdparty.untraceable
+\newcommand{\numThirdpartyTraceableshare}{0.56}  % thirdparty.traceableshare
+\newcommand{\numThirdpartyTraceablesharePct}{56\%}  % thirdparty.traceableshare, as a percentage
+\newcommand{\numThirdpartyUntraceable}{759}  % thirdparty.untraceable
 \newcommand{\numUsptoHit}{14}  % uspto.hit
 \newcommand{\numUsptoMass}{18}  % uspto.mass
 \newcommand{\numUsptoSanity}{308}  % uspto.sanity

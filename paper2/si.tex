@@ -29,7 +29,7 @@ Leninskie Gory 1-73, Moscow 119234, Russia}
 \affiliation{Department of Bioinformatics, Institute of Biomedical Chemistry,
 Pogodinskaya Str. 10-8, Moscow 119121, Russia}
 % achemso's suppinfo mode prepends "Supporting Information:" itself, so the title must not
-\title{GRAIL: rule-grounded metabolite prediction under a fully declared evaluation}
+\title{GRAIL: rule-grounded metabolite prediction under a declared evaluation}
 
 \begin{document}
 
@@ -226,6 +226,20 @@ separating margin anywhere in the comparison, which is \numPdropNarrowestmargin{
 own tautomer key is among their annotated references, for which the convention discards a hit the
 annotation counts. Across the whole evaluated test set there are \numRefauditSelfref{} such
 substrates; the comparison set holds \numPdropSelfref{} of them.
+
+\section{Every candidate count, and what each one is}
+\label{sec:si-counts}
+
+Several counts of how many candidates a mode returns appear in this work, and they differ because
+they are measured at different stages and on different populations rather than because any of them
+estimates the others. They are collected here so that a reader comparing two of them can see at
+once which is which.
+
+\input{si_table_counts}
+
+The pool is what rule application produced before duplicates are removed; the list is what a caller
+receives, deduplicated by matching key and capped. The emission rule reads the pool at its own
+stage, before the cap. The worked example is one substrate and carries no population at all.
 
 \section{Where a method runs out of candidates}
 
@@ -871,9 +885,11 @@ Table~\ref{MS-tab:modes} prints ``did not finish'' for the exhaustive mode's slo
 never gives the rate, in a paper that says a service must publish the tail as well as the median.
 The rate is \numCostUnfinished{} of \numCostSampled{} sampled validation substrates,
 \numCostUnfinishedsharePct{}, at a deadline of \numCostDeadline{} seconds. It is a
-validation-timing figure at that deadline and not a property of the comparison: on the test split
-the same arm records \numScoredFailed{} failures over \numScoredSubstrates{} substrates, so the
-comparison population is unaffected.
+validation-timing figure at that deadline and not a property of the comparison. The two are not
+in conflict: the timing sweep kills a worker that exceeds the deadline, and the run that produced
+the predictions imposes none, so on the test split the same arm was allowed to finish and records
+\numScoredFailed{} failures over \numScoredSubstrates{} substrates. What the rate says is how
+often the exhaustive mode would miss a ten-minute deadline, not how often it fails.
 
 Every timing in the paper is a cold measurement. A cache makes a repeated substrate run 16 to 47
 times faster, so any timing not taken cold measures a mixture of two regimes.

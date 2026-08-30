@@ -271,6 +271,52 @@ def si_budget():
             "\\label{tab:si-budget}\n\\end{table}\n")
 
 
+def si_counts():
+    """Every candidate count the paper prints, with the population and the stage it belongs to.
+
+    Six of them appear across the manuscript and the tables and they are different quantities. A
+    referee counted them and could not tell which was which, which is a fair complaint about a
+    paper whose argument is that a number without its configuration means nothing.
+    """
+    mt = art("mode_timings.json")
+    dep = art("deployment_table.json")
+    h10 = art("h10_verdict.json")
+    ert = art("emission_rule_transfer.json")
+    case = art("case_study.json")
+
+    rows = [
+        ("pool before deduplication", "interactive", "validation draw, 293",
+         h10["mean_pool"]["trained"]),
+        ("pool before deduplication", "exhaustive", "validation draw, 293",
+         h10["mean_pool"]["whole_bank"]),
+        ("pool the emission rule reads", "interactive",
+         f"comparison set, {ert['population']['n']}", ert["mean_pool"]),
+        ("list returned, deduplicated and capped", "interactive",
+         f"validation draw, {mt['interactive']['candidates']['n']}",
+         mt["interactive"]["candidates"]["mean"]),
+        ("list returned, deduplicated and capped", "exhaustive",
+         f"validation draw, {mt['exhaustive']['candidates']['n']}",
+         mt["exhaustive"]["candidates"]["mean"]),
+        ("list returned, deduplicated and capped", "interactive",
+         "comparison set, 291", dep["mean_output_length"]["trained budget"]),
+        ("list returned, deduplicated and capped", "exhaustive",
+         "comparison set, 291", dep["mean_output_length"]["whole bank"]),
+        ("list returned, one substrate", "interactive",
+         "the worked example", case["n_candidates"]),
+    ]
+    body = "\n".join(
+        f"{what} & {arm} & {pop} & {value} \\\\" for what, arm, pop, value in rows)
+    return ("\\begin{table}[h]\n\\centering\\small\n"
+            "\\begin{tabular}{llll}\n\\toprule\n"
+            "quantity & mode & population & mean \\\\\n\\midrule\n"
+            + body
+            + "\n\\bottomrule\n\\end{tabular}\n"
+            "\\caption{Every candidate count this work reports. They differ because they are "
+            "measured at different stages of the pipeline and on different populations, not "
+            "because any of them is an estimate of the others.}\n"
+            "\\label{tab:si-counts}\n\\end{table}\n")
+
+
 def si_short():
     """How many of each arm's lists are shorter than the budget, at every budget.
 
@@ -483,7 +529,8 @@ if __name__ == "__main__":
                      ("si_table_short", si_short),
                      ("si_table_hyperparameters", si_hyperparameters),
                      ("si_table_chemistry", si_chemistry),
-                     ("si_table_budget", si_budget)):
+                     ("si_table_budget", si_budget),
+                     ("si_table_counts", si_counts)):
         try:
             (OUT / f"{name}.tex").write_text(fn())
             print(f"  wrote paper2/{name}.tex")

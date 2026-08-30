@@ -43,7 +43,11 @@ for _p in (str(ROOT), str(ROOT / "scripts"), str(HERE)):
 from _provenance import stamp  # noqa: E402
 
 BANK = ROOT / "grail_metabolism/resources/extended_smirks.txt"
-MINED = ROOT / "grail_metabolism/resources/mined_only.txt"
+# The mined half is the v2 cut: it matches the mining catalog and the deployed bank, and is
+# what paper2_numbers.py and curated_provenance.py partition on. mined_only.txt is a
+# superseded earlier cut of 5,866, and reading it here put this file 10 templates out of
+# step with every other count of the same quantity.
+MINED = ROOT / "grail_metabolism/resources/mined_only_v2.txt"
 EXTERNAL = ROOT / "grail_metabolism/resources/external"
 COLLECTIONS = {
     "hydroxylation": "grail_metabolism/data/smirks.txt",

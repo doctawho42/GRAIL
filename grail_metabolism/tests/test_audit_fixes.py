@@ -941,3 +941,47 @@ def test_a_budget_curve_refuses_a_pool_that_is_still_being_written(tmp_path, mon
     assert report["substrates_each_complete_pool_holds"] == 4
     assert report["population"]["n_substrates"] == 4, (
         "the population narrowed to the partial pool's prefix, which is the defect this guards")
+
+
+def test_every_producer_partitions_the_bank_on_the_same_mined_file():
+    """Two cuts of the mined half exist and the counts diverge by ten templates.
+
+    `mined_only.txt` holds 5,866 templates and `mined_only_v2.txt` 5,856, the second a strict
+    subset of the first; both are entirely inside the bank. Partitioning on one gives 1,715 curated
+    templates and on the other 1,725, and the manuscript printed both, from two producers, for the
+    same quantity. A referee found it by dividing one number by the other.
+
+    The v2 cut is the one that matches the mining catalog and the deployed bank, so it is the one
+    every producer of a curated-versus-mined count must read. This asserts that, by inspecting the
+    sources rather than the outputs: an output can agree by luck on the day it is regenerated.
+    """
+    import re
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[2]
+    resources = root / "grail_metabolism" / "resources"
+    v1 = {ln.strip() for ln in (resources / "mined_only.txt").read_text().splitlines() if ln.strip()}
+    v2 = {ln.strip() for ln in (resources / "mined_only_v2.txt").read_text().splitlines()
+          if ln.strip()}
+    assert v2 < v1, "the premise has changed: v2 is no longer a strict subset of the earlier cut"
+
+    # Every producer whose output the manuscript reads as a curated-or-mined count.
+    producers = [
+        "scripts/paper2_numbers.py",
+        "scripts/typed_edit/curated_provenance.py",
+        "scripts/typed_edit/curated_third_party.py",
+        "scripts/typed_edit/reactant_size_census.py",
+    ]
+    wrong = []
+    for rel in producers:
+        text = (root / rel).read_text()
+        # the superseded cut, named other than inside a comment explaining that it is superseded
+        for line in text.splitlines():
+            stripped = line.strip()
+            if stripped.startswith("#"):
+                continue
+            if re.search(r"mined_only\.txt", stripped):
+                wrong.append(f"{rel}: {stripped[:80]}")
+    assert not wrong, (
+        "these partition the bank on the superseded mined cut, which is ten templates larger "
+        "and yields 1,715 curated where every other count says 1,725:\n  " + "\n  ".join(wrong))

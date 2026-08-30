@@ -354,8 +354,15 @@ def build():
         "median_under_the_other_arms_load"]
 
     # the ordering diagnosis, with the arm each figure belongs to
+    # The headroom on the uncapped pool the measurement was first made on. The same quantity on
+    # the deployed configuration is smaller by more than half, and the main text printed only this
+    # one, unlabelled; both are now carried so the text can say which it means.
     n["oracle.headroom"] = round(wide["arms"]["oracle_between"]["recall@15_micro"]
                                  - wide["arms"]["as_ranked"]["recall@15_micro"], 4)
+    _dep = art("oracle_by_grouping.json")["headroom_over_fusion"]["formula"]
+    n["oracle.headroomdeployed"] = _dep["gap"]
+    n["oracle.headroomdeployedlo"] = _dep["ci95"][0]
+    n["oracle.headroomdeployedhi"] = _dep["ci95"][1]
     n["h8.blocked"] = 0.4376
     n["h8.interleaved"] = 0.5023
     n["h12.ceilingrecall"] = h12["recall_micro"]["15"]["oracle_third"]
@@ -527,6 +534,20 @@ def build():
     n["bt.n"] = bt["n"]
     n["bt.ourreach"] = bt["context"]["grail_bank_ceiling_on_shared"]
 
+    # The emission-transfer figures. They were hand-typed and on the numeral gate's allow-list,
+    # and the population attached to them in the text was the wrong one: the artifact measures the
+    # comparison set, not the validation draw.
+    ert = art("emission_rule_transfer.json")
+    n["emit.pool"] = ert["mean_pool"]
+    n["emit.n"] = ert["population"]["n"]
+    n["emit.alpha"] = ert["registered_alpha"]
+    _a = str(ert["registered_alpha"])
+    n["emit.byfusion"] = ert["by_alpha"][_a]["emitted_by_fusion"]
+    n["emit.byproduct"] = ert["by_alpha"][_a]["emitted_by_product"]
+    n["emit.fusionmedian"] = ert["worst_over_best_score_in_a_pool"]["fusion"]["median"]
+    n["emit.productmedian"] = round(
+        ert["worst_over_best_score_in_a_pool"]["product"]["median"], 4)
+
     # the criterion sweep: how much of the comparison's verdict is the criterion
     cs = art("criterion_sweep.json")
     KSW = [1, 3, 5, 8, 10, 15, 20, 30, 50]
@@ -541,6 +562,23 @@ def build():
     n["crit.leads_best"] = max(lead.values())
     n["crit.never_leads"] = sum(1 for c in lead if lead[c] == 0)
     n["crit.default_rank"] = order.index(cs["reference_criterion"]) + 1
+
+    # The sweep's spread is driven by two criteria the paper itself declines to defend as defaults:
+    # canonical SMILES equality tests whether two pipelines standardise alike, and Tanimoto of one
+    # on a folded fingerprint is a collision test. Restricting to the three that answer "are these
+    # the same compound" is a different question from the multiverse and worth answering too, so
+    # the sub-region is counted rather than left for a reader to read off the table.
+    DEFENSIBLE = ("inchikey", "inchi_no_stereo", "inchikey_tautomer")
+    defensible = [c for c in cs["criteria"] if c in DEFENSIBLE]
+    n["crit.defensible"] = len(defensible)
+    n["crit.leads_under_every_defensible"] = sum(
+        1 for k in KSW
+        if all(cs["by_criterion"][c]["verdict_by_budget"][str(k)] == "leads" for c in defensible))
+    n["crit.trails_under_any_defensible"] = sum(
+        1 for k in KSW
+        if any(cs["by_criterion"][c]["verdict_by_budget"][str(k)] == "trails" for c in defensible))
+    n["crit.leads_under_no_indefensible"] = sum(
+        1 for c in cs["criteria"] if c not in DEFENSIBLE and lead[c] == 0)
     n["crit.swing15"] = round(gaps[-1] - gaps[0], 4)
     n["crit.worst15"] = gaps[0]
     n["crit.best15"] = gaps[-1]
@@ -779,6 +817,10 @@ def build():
     n["cost.unfinished"] = sum(1 for r in ce["rows"] if not r.get("finished"))
     n["cost.unfinishedshare"] = round(n["cost.unfinished"] / max(n["cost.sampled"], 1), 4)
     n["cost.deadline"] = int(ce["deadline_s"])
+    # The load-corrected median, which is the quantity the registered target is expressed in. The
+    # manuscript attached "inside the target" to a speed-up factor instead, which reads as though a
+    # factor were being compared with a target in seconds.
+    n["h15.correctedmedian"] = h15["time"]["load_correction"]["median_under_the_other_arms_load"]
 
     # The superseded GRAIL column of the population-defining artifact, so the SI can say what it
     # is not without typing the figure.
