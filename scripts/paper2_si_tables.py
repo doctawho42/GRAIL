@@ -317,6 +317,74 @@ def si_counts():
             "\\label{tab:si-counts}\n\\end{table}\n")
 
 
+def si_macro():
+    """The whole comparison under the other aggregation, with paired intervals.
+
+    The manuscript reports micro throughout and quoted one macro pair without an interval, at the
+    budget where micro does not separate. Aggregation is a choice like the other two and is swept
+    here rather than exercised once.
+    """
+    d = art("deployment_table.json")
+    macro, con = d["recall_macro"], d["contrasts_macro"]
+    ks = sorted((int(k) for k in macro), key=int)
+    arms = [("whole bank", "GRAIL exh."), ("trained budget", "GRAIL int."),
+            ("metatox", "MetaTox"), ("sygma", "SyGMa"), ("metapredictor", "MetaPred.")]
+    rows = []
+    for k in ks:
+        cells = " & ".join(f"{macro[str(k)][key]:.4f}".lstrip("0") for key, _ in arms
+                           if key in macro[str(k)])
+        cell = con[str(k)].get("whole bank - metatox")
+        mark = ""
+        if cell:
+            mark = (("$-$" if cell["gap"] < 0 else "+") + f"{abs(cell['gap']):.4f}".lstrip("0")
+                    + ("$^{*}$" if cell["excludes_zero"] else ""))
+        rows.append(f"${k}$ & {cells} & {mark} \\\\")
+    head = " & ".join(label for _, label in arms)
+    return ("\\begin{table}[h]\n\\centering\\small\n"
+            "\\begin{tabular}{rrrrrrr}\n\\toprule\n"
+            f"$k$ & {head} & exh.\\ $-$ MetaTox \\\\\n\\midrule\n"
+            + "\n".join(rows)
+            + "\n\\bottomrule\n\\end{tabular}\n"
+            "\\caption{The comparison under macro aggregation, the mean of per-substrate recall, "
+            "on the same population and with the same conventions as Table~\\ref{MS-tab:sweep}; "
+            "leading zeros are dropped. The last column is the paired difference against MetaTox, "
+            "with $^{*}$ marking an interval excluding zero. Macro weights a substrate carrying one "
+            "reference like one carrying twelve, so it answers a different question from micro and "
+            "is not an estimate of it.}\n"
+            "\\label{tab:si-macro}\n\\end{table}\n")
+
+
+def si_matched():
+    """Every arm against every comparator with the list length taken from the comparator."""
+    d = art("matched_length.json")
+    rows = []
+    for pair, c in d["contrasts"].items():
+        a, b = [x.strip() for x in pair.split(" - ")]
+        arm = {"whole bank": "exhaustive", "trained budget": "interactive"}.get(a, a)
+        name = {"metatox": "MetaTox", "sygma": "SyGMa",
+                "metapredictor": "MetaPredictor"}.get(b, b)
+        star = "$^{*}$" if c["excludes_zero"] else ""
+        gap = ("$-$" if c["gap"] < 0 else "+") + f"{abs(c['gap']):.4f}".lstrip("0")
+        lo = ("$-$" if c["ci95"][0] < 0 else "+") + f"{abs(c['ci95'][0]):.4f}".lstrip("0")
+        hi = ("$-$" if c["ci95"][1] < 0 else "+") + f"{abs(c['ci95'][1]):.4f}".lstrip("0")
+        ours = f"{c['recall_ours']:.4f}".lstrip("0")
+        thei = f"{c['recall_theirs']:.4f}".lstrip("0")
+        rows.append(f"{arm} & {name} & {c['mean_slots']} & {ours} & {thei} & "
+                    f"{gap}{star} [{lo}, {hi}] \\\\")
+    n = d["population"]["n_substrates"]
+    return ("\\begin{table}[h]\n\\centering\\small\n"
+            "\\begin{tabular}{llrrrl}\n\\toprule\n"
+            "arm & comparator & slots & ours & theirs & difference \\\\\n\\midrule\n"
+            + "\n".join(rows)
+            + "\n\\bottomrule\n\\end{tabular}\n"
+            f"\\caption{{The comparison with the output budget taken from the comparator instead of "
+            f"the experiment. On each of the {n} substrates both arms are cut to the number of "
+            "candidates that comparator returned there, so the two are read over the same slots on "
+            "every substrate and not on average; slots is the mean of those lengths. $^{*}$ marks "
+            "an interval excluding zero. Leading zeros are dropped.}\n"
+            "\\label{tab:si-matched}\n\\end{table}\n")
+
+
 def si_short():
     """How many of each arm's lists are shorter than the budget, at every budget.
 
@@ -530,7 +598,9 @@ if __name__ == "__main__":
                      ("si_table_hyperparameters", si_hyperparameters),
                      ("si_table_chemistry", si_chemistry),
                      ("si_table_budget", si_budget),
-                     ("si_table_counts", si_counts)):
+                     ("si_table_counts", si_counts),
+                     ("si_table_macro", si_macro),
+                     ("si_table_matched", si_matched)):
         try:
             (OUT / f"{name}.tex").write_text(fn())
             print(f"  wrote paper2/{name}.tex")

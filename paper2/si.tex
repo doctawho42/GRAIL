@@ -282,6 +282,54 @@ with five references in it.
 
 \input{si_table_chemistry}
 
+\section{The comparison at matched list length}
+\label{sec:si-matched}
+
+A nominal budget is not a length. At $k = 50$ most comparator lists have already ended while the
+exhaustive arm is still at its cap, so declaring the budget does not control the thing the budget
+was introduced to control, and a difference read there is partly a difference in how much each
+system emits. Table~\ref{SI-tab:si-short} gives the exhaustion rates; this gives the comparison
+with the length removed as a variable.
+
+The design is deliberately hostile to this work. On each substrate both arms are cut to the number
+of candidates that comparator returned on that substrate: where MetaPredictor returns two, the
+exhaustive arm is allowed two. The two are then read over the same slots on every substrate rather
+than on average, which is what a nominal budget cannot do.
+
+\input{si_table_matched}
+
+The result splits the wide-budget leads in two. Against SyGMa the exhaustive arm keeps
+$+\numMatchedBanksygma$ $[+\numMatchedBanksygmaLo, +\numMatchedBanksygmaHi]$ over
+\numMatchedBanksygmaSlots{} slots, which is an ordering result and the largest margin anywhere in
+this paper. Against MetaTox and MetaPredictor nothing survives:
+$\numMatchedBankmetatox$ $[\numMatchedBankmetatoxLo, +\numMatchedBankmetatoxHi]$ and
+$\numMatchedBankmetapredictor$
+$[\numMatchedBankmetapredictorLo, +\numMatchedBankmetapredictorHi]$, both covering zero and both
+pointing the other way. What the sweep reports as a lead over those two at wide budgets is
+therefore a statement about list length, and this work's own thesis requires saying so.
+
+The interactive arm loses to MetaTox at matched length by
+$\numMatchedTrainedmetatox$
+$[\numMatchedTrainedmetatoxLo, \numMatchedTrainedmetatoxHi]$, which is the same deficit the main
+text reports at fixed budgets and is not an artefact of either.
+
+\section{The comparison under the other aggregation}
+\label{sec:si-macro}
+
+Every figure in the main text's comparison is micro, the ratio of sums. Macro, the mean of
+per-substrate recall, weights a substrate carrying one annotated metabolite the same as one
+carrying twelve, and the two therefore answer different questions rather than estimating each
+other. Which one is used is a choice of the same kind as the matching criterion and the output
+budget, so the whole comparison is recomputed under it.
+
+\input{si_table_macro}
+
+The choice does not move the verdict at the budgets where the paper claims one. It does move the
+levels: macro is uniformly higher, because substrates with few references are easier and count for
+more under it. What it does not do is rescue a budget where micro fails to separate, which is worth
+saying because a reader who suspected the aggregation had been chosen to suit the result can check
+it here.
+
 \section{Precision}
 
 Precision is reported because a reader is entitled to it and not because it decides anything here.
@@ -423,10 +471,14 @@ $95\%$ CI $[\numDsweepCeilinglo, \numDsweepCeilinghi]$, which does not separate 
 measured here rather than on the full evaluated split because the uncapped exhaustive pool exists
 in both drawings for this population and not for that one.
 
-The three remaining comparators are held at the corpus drawing, because MetaTox is a web service
-and MetaPredictor a frozen delivery and neither can be re-run here. A difference against them
-therefore measures how much of our own margin was the drawing, which is the question that matters
-for reading the comparison.
+Only this system's own arms are swept: the comparators are held at whatever drawing they received,
+because MetaTox is a web service and MetaPredictor a frozen delivery and neither can be re-run
+here. A difference against them therefore measures how much of our own margin was the drawing,
+which is the question that matters for reading the comparison, and it leaves a residual on their
+side that is worth naming. SyGMa is the one comparator that can be re-run, and giving it the
+natural drawing raises its recall at every wide budget, by $+\numSygdialectThirty$
+$[\numSygdialectThirtyLo, \numSygdialectThirtyHi]$ at $k=30$. Where a comparator met the corpus
+drawing, that is the size of what it lost by it, and the loss favours us.
 
 \input{si_table_dialect}
 
@@ -469,9 +521,13 @@ extracted from these annotated pairs rather than written by a chemist.
 The bank therefore holds two machine extractions and one curated body, in two different template
 notations, and the curated body is \numAttribNamed{} templates rather than \numCuratedTotal{}.
 Where the named collections came from can be settled for most of them by measurement rather than
-recollection. \numThirdpartyTraceable{} of the \numThirdpartyCurated{} curated templates,
-\numThirdpartyTraceablesharePct{} of that half, are present character for character in a rule set
-somebody else published: \numThirdpartyBiotransformerShipped{} of BioTransformer's
+recollection, and the answer is sharper than the curated half's own total suggests. All
+\numThirdpartyInnamed{} of the borrowed templates fall inside the named body of
+\numThirdpartyNamed{} and \numThirdpartyInextractionWord{} among the
+\numAttribUnattributed{} of the earlier extraction, so the share to read is
+\numThirdpartyNamedsharePct{} of the collections described as curated chemistry rather than
+\numThirdpartyTraceablesharePct{} of the half they sit in. They are present character for
+character in a rule set somebody else published: \numThirdpartyBiotransformerShipped{} of BioTransformer's
 \numThirdpartyBiotransformerRead{} reaction templates; \numThirdpartySygmaShipped{} templates
 attributed to SyGMa, which is more than the \numSygmaInside{} of its own distribution counted below
 because GLORYx's rule file carries a further set of SyGMa rules in a notation that distribution does

@@ -112,6 +112,22 @@ def main() -> int:
     def hits(arm, k):
         return np.array([len(set(arms[arm][s][:k]) & real[s]) for s in subs], dtype=float)
 
+    # Aggregation is a third choice this comparison makes and the manuscript reports micro
+    # throughout, so the one place a macro figure was quoted had no interval and no grid behind it.
+    # Macro is the mean of per-substrate recall, which weights a substrate with one reference the
+    # same as one with twelve; the two answer different questions and neither is the other's
+    # estimate. Both are computed here so the choice can be swept like the other two.
+    def macro_contrast(a, b, per_sub):
+        d = (a - b) / per_sub
+        bt = d[idx].mean(axis=1)
+        lo, hi = float(np.quantile(bt, .025)), float(np.quantile(bt, .975))
+        below = float((bt <= 0).sum()); above = float((bt >= 0).sum())
+        pval = min(1.0, 2.0 * (min(below, above) + 1.0) / (len(bt) + 1.0))
+        return {"gap": round(float(np.mean(d)), 4),
+                "ci95": [round(lo, 4), round(hi, 4)],
+                "excludes_zero": bool(lo > 0 or hi < 0),
+                "p_bootstrap": round(pval, 5)}
+
     def contrast(a, b):
         d = a - b
         bt = d[idx].sum(axis=1) / denom
@@ -128,9 +144,18 @@ def main() -> int:
                 "p_bootstrap": round(pval, 5)}
 
     table, contrasts, exhausted = {}, {}, {}
+    macro_table, macro_contrasts = {}, {}
+    Usafe = np.maximum(U, 1)
     for k in KS:
         h = {a: hits(a, k) for a in arms}
         table[str(k)] = {a: round(float(v.sum() / N), 4) for a, v in h.items()}
+        macro_table[str(k)] = {a: round(float(np.mean(v / Usafe)), 4) for a, v in h.items()}
+        macro_row = {}
+        for a in ours:
+            for b in others:
+                if b in arms:
+                    macro_row[f"{a} - {b}"] = macro_contrast(h[a], h[b], Usafe)
+        macro_contrasts[str(k)] = macro_row
         row = {"trained budget - whole bank": contrast(h["trained budget"], h["whole bank"])}
         for a in ours:
             for b in others:
@@ -165,6 +190,10 @@ def main() -> int:
            "mean_output_length": mean_pool,
            "comparators_absent": absent,
            "recall_micro": table, "contrasts": contrasts,
+           "recall_macro": macro_table, "contrasts_macro": macro_contrasts,
+           "aggregation_note": ("micro is the ratio of sums and macro the mean of per-substrate "
+                                "recall; the manuscript reports micro and both are computed here "
+                                "so the aggregation can be swept like the other declared choices"),
            "substrates_whose_list_is_shorter_than_the_budget": exhausted,
            "status": "H10 was registered and checked on validation; this population is the "
                      "deployment report, not a second test of it.",

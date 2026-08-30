@@ -19,6 +19,9 @@ def thousands(x):
 def modes():
     mt = json.loads((ROOT / "results/mode_timings.json").read_text())
     i, e = mt["interactive"], mt["exhaustive"]
+    ce = json.loads((ROOT / "results/cost_envelope.json").read_text())
+    sampled = ce["n_done"]
+    unfinished = sum(1 for r in ce["rows"] if not r.get("finished"))
     return f"""\\begin{{table}}[t]
 \\centering\\footnotesize
 \\begin{{tabular}}{{lrr}}
@@ -38,7 +41,7 @@ seconds, slowest & {i['max_s']} & did not finish \\\\
 figure is measured on the validation draw, {i['n']} substrates for the interactive mode and
 {e['candidates']['n']} for the exhaustive one, which lacks a pool for one of them. Candidates are
 what a caller receives: deduplicated by matching key and capped at
-{i['candidates']['cap']}. Times cover everything before the filter.}}
+{i['candidates']['cap']}. Times cover everything before the filter. The exhaustive mode's slowest substrate did not finish inside a ten-minute deadline; on a sampled timing sweep it misses that deadline on {unfinished} of {sampled} substrates, and on the test split, where no deadline is imposed, it fails on none.}}
 \\label{{tab:modes}}
 \\end{{table}}
 """

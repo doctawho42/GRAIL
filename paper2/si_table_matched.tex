@@ -1,0 +1,17 @@
+\begin{table}[h]
+\centering\small
+\begin{tabular}{llrrrl}
+\toprule
+arm & comparator & slots & ours & theirs & difference \\
+\midrule
+exhaustive & MetaTox & 33.23 & .6286 & .6391 & $-$.0105 [$-$.0420, +.0210] \\
+interactive & MetaTox & 33.23 & .4887 & .6391 & $-$.1504$^{*}$ [$-$.1979, $-$.1057] \\
+exhaustive & SyGMa & 58.37 & .6887 & .5158 & +.1729$^{*}$ [+.1362, +.2111] \\
+interactive & SyGMa & 58.37 & .4842 & .5158 & $-$.0316 [$-$.0698, +.0085] \\
+exhaustive & MetaPredictor & 10.75 & .4662 & .4797 & $-$.0135 [$-$.0564, +.0283] \\
+interactive & MetaPredictor & 10.75 & .4436 & .4797 & $-$.0361 [$-$.0811, +.0094] \\
+\bottomrule
+\end{tabular}
+\caption{The comparison with the output budget taken from the comparator instead of the experiment. On each of the 291 substrates both arms are cut to the number of candidates that comparator returned there, so the two are read over the same slots on every substrate and not on average; slots is the mean of those lengths. $^{*}$ marks an interval excluding zero. Leading zeros are dropped.}
+\label{tab:si-matched}
+\end{table}

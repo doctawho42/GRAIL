@@ -93,8 +93,9 @@ One property of that assembly bears on everything downstream and is stated here 
 an appendix. The selection that drew records from the four sources is not recoverable: the corpus
 files were written before this repository's first commit, no script in it reads any of the four
 sources or writes them, and the field that would carry a source accession is empty in every record.
-The apparatus this paper builds on top --- the pinned artifacts, the digests, the checks that refuse
-a stale file --- makes every step from the corpus onwards reproducible and cannot make that step so.
+The apparatus this paper builds on top, the pinned artifacts, the digests and the checks that
+refuse a stale file, makes every step from the corpus onwards reproducible and cannot make that
+step so.
 What can be checked instead is a rebuild: \texttt{scripts/verify\_rebuilt\_corpus.py} reports how a
 corpus assembled by a reader stands against this one, substrate by substrate.
 
@@ -138,6 +139,13 @@ so evidence from independent rules accumulates rather than competing. Equation~\
 is why deduplication is not a cosmetic step: the key under which two products are judged the same
 decides which scores are combined, and changing that key moves the ranking. Tautomers are the
 hard case, and their treatment is not settled by the standard identifiers \citep{Dhaked_2020}.
+
+Both learned stages were trained on a subsample: \numTrainSubstrates{} of the split's
+\numSplitTrainSubstrates{} training substrates, drawn at a recorded seed, for
+\numTrainEpochsWord{} epochs, with early stopping that never engaged. The subsample was fixed when
+the run was configured and is not a consequence of anything measured here, so what the ablations
+below compare is the value of each stage at that training budget rather than at the split's full
+size. Every setting is in the Supporting Information.
 
 \subsection{Rule bank}
 
@@ -333,11 +341,13 @@ and the reading depends on it: \numSygmaInside{} of SyGMa's \numSygmaRules{} pub
 present in this bank verbatim, so what separates at those budgets is an ordering over chemistry
 the two systems largely share. Neither side separates at $k=8$ and
 $10$, where MetaPredictor leads, nor at $k=15$ and $20$. GRAIL's exhaustive mode leads all three
-comparators with the interval excluding zero at $k=30$ and $k=50$. One of those six cells is
-marginal, and it is named here rather than three sections later: the lead over MetaTox at $k=30$,
-$+\numMarginMarginalgap$ with the interval
-$[+\numMarginMarginallo, +\numMarginMarginalhi]$, is the only one of the six a family-wise
-correction over the sweep removes. The other five survive it.
+comparators with the interval excluding zero at $k=30$ and $k=50$. One of those six cells should not be read as a lead, and it is named here rather than three
+sections later. The margin over MetaTox at $k=30$ is $+\numMarginMarginalgap$ with the interval
+$[+\numMarginMarginallo, +\numMarginMarginalhi]$: it is the only one of the six a family-wise
+correction over the sweep removes, and its lower bound is smaller than the one drawing correction
+this work could measure on a comparator, $+\numSygdialectThirty$ for SyGMa at the same budget. The
+lead claimed at wide budgets is therefore the one at $k=50$, and the other four cells survive both
+tests.
 
 A recall figure aggregates over transformations of very different kinds, so the comparison is
 also read by chemistry. Splitting the \numChemReferences{} references into
@@ -348,6 +358,18 @@ or more carbons, \numChemCleavageRefs{} references, and the exhaustive arm recov
 second largest, \numChemOtherRefs{} references, is the set of changes this vocabulary does not
 name, and no method here exceeds \numChemOtherBest{} on it. Of the \numChemDiolRefsWord{}
 references that add two oxygens, four of the five methods recover none.
+
+A nominal budget is not a length, and the leads at wide budgets are read where most comparator
+lists have already ended. Removing length as a variable is possible and it is done: on each
+substrate both arms are cut to the number of candidates that comparator returned there, so the two
+are read over the same slots on every substrate (Table~\ref{SI-tab:si-matched}). The result splits
+the wide-budget leads in two. Against SyGMa the exhaustive arm keeps $+\numMatchedBanksygma$
+$[+\numMatchedBanksygmaLo, +\numMatchedBanksygmaHi]$, the largest margin anywhere in this work and
+an ordering result rather than an emission one. Against MetaTox and MetaPredictor nothing
+survives: $\numMatchedBankmetatox$ and $\numMatchedBankmetapredictor$, both intervals covering
+zero and both pointing the other way. What the sweep shows at $k=50$ against those two is a
+statement about how much each system emits, and this paper's own argument requires it to be
+called that.
 
 The two banks in this comparison are not independent. \numSygmaInside{} of SyGMa's
 \numSygmaRules{} published rules, \numSygmaSharePct{} of them, are present verbatim in the bank
@@ -372,13 +394,22 @@ comparator whose configuration this work can state rather than infer, because it
 \citep{Rudik_2017} is a co-author here and read the arm it is compared in; the configuration is in
 the Supporting Information.
 
-At a budget of $15$ MetaTox's macro recall is \numHOneOneRecallMetatoxOneFive{} against GRAIL's
-\numHOneOneRecallRule{}. The two do not emit alike: MetaTox returns
-\numOutputMetatox{} candidates on average against the interactive arm's \numOutputTrained{}, and
-at this budget \numShortMetatoxOneFive{} of \numPopulationN{} MetaTox lists fall short of it
-against \numShortTrainedOneFive{} of the interactive arm's. The annotation bias on precision
-therefore runs toward the arm emitting less, which is ours, so it does not explain a gap in the
-other direction. That pair is macro; every figure in Table~\ref{tab:sweep} is micro.
+How the per-substrate figures are pooled is a third choice, and it is swept rather than exercised
+once. Micro is the ratio of sums and macro the mean of per-substrate recall, which weights a
+substrate carrying one reference like one carrying twelve; every figure in
+Table~\ref{tab:sweep} is micro and the macro grid with its intervals is
+Table~\ref{SI-tab:si-macro}. The choice does not rescue the budget where micro fails to separate:
+at $k = 15$ the exhaustive arm's macro recall is \numMacroBankOneFive{} against MetaTox's
+\numMacroMetatoxOneFive{}, a difference of $+\numMacrogapBankmetatoxOneFive$
+$[\numMacrogapBankmetatoxOneFiveLo, +\numMacrogapBankmetatoxOneFiveHi]$, an interval covering
+zero as the micro one does.
+
+The two do not emit alike either: MetaTox returns \numOutputMetatox{} candidates on average
+against the interactive arm's \numOutputTrained{}, and at $k=15$
+\numShortMetatoxOneFive{} of \numPopulationN{} MetaTox lists fall short of the budget against
+\numShortTrainedOneFive{} of the interactive arm's. The annotation bias on precision therefore
+runs toward the arm emitting less, which is ours, so it does not explain a gap in the other
+direction.
 
 \subsection{What each stage contributes to the order}
 
@@ -680,8 +711,9 @@ formalisms.
 
 The comparison does not produce a winner. SyGMa recovers more at the head of the list, and at
 $k \le 5$ the interval separates against GRAIL. GRAIL continues to improve at budgets where the
-other systems stop. At a budget of three candidates SyGMa is the better choice; at fifty, GRAIL
-is.
+other systems stop. At a budget of three candidates SyGMa is the better choice; at fifty this
+work's exhaustive arm recovers more, and against SyGMa it does so for a reason that survives
+matching the two on list length, while against MetaTox and MetaPredictor it does not.
 
 The first half of that is a result about the field and not about this system. SyGMa is the
 oldest and by far the smallest method in the comparison, \numSygmaRules{} published rules against
@@ -742,8 +774,9 @@ rejected on mechanistic grounds. How much a chemist gets from that depends on th
 for those the site discrimination comes from the learned stages and not from the rule. That second half is a claim and is measured: of
 \numSiteScored{} correctly predicted metabolites, the site reported touches the atoms that
 actually differ from the substrate in \numSiteTouchingPct{}, against \numSiteNullPct{} for a set
-of atoms of the same size drawn at random from the same molecule
-(Section~\ref{SI-sec:si-site}). The whole output is ranked, whereas the incumbent ranks part of
+of atoms of the same size drawn at random from the same molecule, and lies wholly inside the
+change in \numSiteInsidePct{} (Section~\ref{SI-sec:si-site}). An agreement rate near nine in ten
+is not the size of the effect; the margin over chance is. The whole output is ranked, whereas the incumbent ranks part of
 its output and leaves the remainder in file order. And every evaluation choice is declared with
 every cell of the resulting grid reported, which is what makes the comparison independently
 reproducible.
@@ -786,7 +819,9 @@ Measured against every published predictor that could be run on the same substra
 comparison divides by output budget rather than resolving into an ordering, and the division is
 the result. Under the evaluation choices swept here, the verdict moves with the matching
 criterion and with the budget, so a single recall figure would have named a different leader
-depending on decisions its author never had to state. Reporting the grid is what makes the
+depending on decisions its author never had to state. Held to the stricter test the same argument
+demands, every arm cut to the comparator's own list length on every substrate, one of the
+wide-budget leads is an ordering result and two are statements about emission. Reporting the grid is what makes the
 comparison checkable, and releasing every arm's per-substrate predictions is what lets a third
 party recompute it.
 
@@ -823,6 +858,18 @@ compositions for structural reasons. Every method runs out of candidates at wide
 widest columns measure list length on all sides. The comparison population is the
 \numPopulationN{} substrates on which all methods predict, a quarter of the evaluated test split
 and not a random quarter of it.
+
+Nothing in this pipeline is stereochemistry-aware. The standardiser strips it before a template is
+matched and the default criterion is blind to it, which is defensible against an annotation that
+carries none and is a real limit on what a prediction can say: epoxide hydrolysis, sulfoxidation
+and most conjugative chemistry produce stereoisomers this system neither distinguishes nor ranks.
+
+No result here is external. Every figure is measured on one corpus assembled from four sources, of
+which the only published reference set is one of the four, so a held-out split of it is not an
+independent test of the chemistry. The set that would serve is named in
+Section~\ref{sec:discussion}: metabolite identifications from radiolabelled human ADME studies,
+already used to benchmark this class of tool \citep{Gao_2026}. Until a system here is measured on
+one, the comparison establishes an ordering within a corpus and not a ranking of the methods.
 
 \begin{suppinfo}
 

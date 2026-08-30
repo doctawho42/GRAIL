@@ -1,0 +1,20 @@
+\begin{table}[h]
+\centering\small
+\begin{tabular}{rrrrrrr}
+\toprule
+$k$ & GRAIL exh. & GRAIL int. & MetaTox & SyGMa & MetaPred. & exh.\ $-$ MetaTox \\
+\midrule
+$1$ & .1303 & .1415 & .0660 & .2090 & .1976 & +.0642$^{*}$ \\
+$3$ & .3062 & .3103 & .1665 & .3614 & .3478 & +.1397$^{*}$ \\
+$5$ & .3792 & .3922 & .2520 & .4375 & .4317 & +.1272$^{*}$ \\
+$8$ & .4773 & .4671 & .3504 & .4821 & .5159 & +.1268$^{*}$ \\
+$10$ & .5076 & .5035 & .4251 & .4969 & .5510 & +.0825$^{*}$ \\
+$15$ & .5812 & .5543 & .5492 & .5218 & .5545 & +.0319 \\
+$20$ & .6228 & .5632 & .5907 & .5331 & .5545 & +.0322 \\
+$30$ & .6830 & .5660 & .6441 & .5387 & .5545 & +.0389 \\
+$50$ & .7463 & .5660 & .6708 & .5429 & .5545 & +.0755$^{*}$ \\
+\bottomrule
+\end{tabular}
+\caption{The comparison under macro aggregation, the mean of per-substrate recall, on the same population and with the same conventions as Table~\ref{MS-tab:sweep}; leading zeros are dropped. The last column is the paired difference against MetaTox, with $^{*}$ marking an interval excluding zero. Macro weights a substrate carrying one reference like one carrying twelve, so it answers a different question from micro and is not an estimate of it.}
+\label{tab:si-macro}
+\end{table}

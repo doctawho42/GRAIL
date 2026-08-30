@@ -236,6 +236,16 @@ def main() -> int:
             row["templates_of_this_file_used_by_the_bank"] = len(
                 curated & set().union(*(v for k, v in pools.items() if k.startswith("GLORYx"))))
 
+    # The curated half splits again: a named body from three collections, and 492 templates that
+    # were carried as curated and are an earlier machine extraction. Reporting the borrowed share
+    # against the whole half understates it, because the borrowing is not spread evenly over the
+    # two: it is entirely in the named body, which is the part described as curated chemistry.
+    named = set()
+    for rel in COLLECTIONS.values():
+        named |= rules_of(ROOT / rel)
+    named &= curated
+    extracted = curated - named
+
     collections = {}
     for name, rel in COLLECTIONS.items():
         rules = rules_of(ROOT / rel)
@@ -251,6 +261,10 @@ def main() -> int:
         "bank": {"templates": len(bank), "mined": len(mined), "curated": len(curated)},
         "by_published_set": by_pool,
         "by_rightsholder": by_holder,
+        "curated_split": {"named_collections": len(named), "earlier_extraction": len(extracted)},
+        "borrowed_within_the_named_body": len(union & named),
+        "share_of_the_named_body_so_traceable": round(len(union & named) / max(len(named), 1), 4),
+        "borrowed_within_the_earlier_extraction": len(union & extracted),
         "curated_templates_traceable_to_a_published_set": len(union),
         "share_of_the_curated_half_so_traceable": round(len(union) / max(len(curated), 1), 4),
         "curated_templates_traceable_to_nothing_measured": len(curated) - len(union),

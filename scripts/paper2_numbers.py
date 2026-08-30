@@ -73,6 +73,26 @@ def build():
     n["valdraw.paired"] = vp["n"]
 
     # the deployed comparison, per arm and budget
+    # The macro grid, so the aggregation is a swept axis rather than a figure quoted once at the
+    # budget where the reported aggregation does not separate.
+    for k, row in dep["recall_macro"].items():
+        for arm, tag in (("whole bank", "bank"), ("trained budget", "trained"),
+                         ("metatox", "metatox"), ("sygma", "sygma"),
+                         ("metapredictor", "metapredictor")):
+            if arm in row:
+                n[f"macro.{tag}.{k}"] = row[arm]
+    for k, row in dep["contrasts_macro"].items():
+        for pair, c in row.items():
+            a, b = [x.strip() for x in pair.split(" - ")]
+            tag = {"whole bank": "bank", "trained budget": "trained"}.get(a)
+            tagb = {"metatox": "Metatox", "sygma": "Sygma",
+                    "metapredictor": "Metapredictor"}.get(b)
+            if tag and tagb:
+                n[f"macrogap.{tag}{tagb}.{k}"] = c["gap"]
+                n[f"macrogap.{tag}{tagb}.{k}.lo"] = c["ci95"][0]
+                n[f"macrogap.{tag}{tagb}.{k}.hi"] = c["ci95"][1]
+                n[f"macrogap.{tag}{tagb}.{k}.sep"] = c["excludes_zero"]
+
     ARMS = {"whole bank": "bank", "trained budget": "trained", "metatox": "metatox",
             "sygma": "sygma", "metapredictor": "metapredictor"}
     for k, row in dep["recall_micro"].items():
@@ -187,6 +207,14 @@ def build():
     # Two loops measure the ceiling under the same hydrogen convention and return different
     # counts. The paper reports the deployed loop's; the audit loop's is what the two conventions
     # are compared with. The difference is small and is printed rather than chosen between.
+    # What the released checkpoints were actually trained on. The manuscript described the split
+    # and never said that the run drew a subsample of it.
+    hyp = art("hyperparameters.json")
+    n["train.substrates"] = hyp["data"]["training substrates"]
+    n["train.valsubstrates"] = hyp["data"]["validation substrates"]
+    n["train.samplingseed"] = hyp["data"]["sampling seed"]
+    n["train.epochs"] = hyp["components"]["generator"]["epochs run"]
+
     # whether the site a prediction names is the site that changed, against a same-size null
     sag = art("site_agreement.json")
     n["site.scored"] = sag["counts"]["scored"]
@@ -216,6 +244,10 @@ def build():
     n["thirdparty.traceable"] = ctp["curated_templates_traceable_to_a_published_set"]
     n["thirdparty.traceableshare"] = ctp["share_of_the_curated_half_so_traceable"]
     n["thirdparty.untraceable"] = ctp["curated_templates_traceable_to_nothing_measured"]
+    n["thirdparty.named"] = ctp["curated_split"]["named_collections"]
+    n["thirdparty.innamed"] = ctp["borrowed_within_the_named_body"]
+    n["thirdparty.namedshare"] = ctp["share_of_the_named_body_so_traceable"]
+    n["thirdparty.inextraction"] = ctp["borrowed_within_the_earlier_extraction"]
     n["thirdparty.holders"] = sum(
         1 for r in ctp["by_rightsholder"].values() if r["templates_in_the_curated_half"])
     for tag, src in (("sygma", "SyGMa"), ("biotransformer", "BioTransformer"),
@@ -245,6 +277,33 @@ def build():
     n["chem.cleavage.bank"] = _cleav["recall"]["GRAIL exhaustive"]["15"] if _cleav else None
     n["chem.cleavage.bestother"] = (max(v["15"] for k, v in _cleav["recall"].items()
                                         if not k.startswith("GRAIL")) if _cleav else None)
+
+    # The wide-budget leads with the length taken from the comparator rather than from the
+    # experiment. A nominal budget is not a length, and this is the control that separates an
+    # ordering result from a list-length one.
+    ml = art("matched_length.json")
+    for pair, cell in ml["contrasts"].items():
+        a, b = [x.strip() for x in pair.split(" - ")]
+        tag = {"whole bank": "bank", "trained budget": "trained"}.get(a)
+        tagb = {"metatox": "Metatox", "sygma": "Sygma", "metapredictor": "Metapredictor"}.get(b)
+        if tag and tagb:
+            n[f"matched.{tag}{tagb}"] = cell["gap"]
+            n[f"matched.{tag}{tagb}.lo"] = cell["ci95"][0]
+            n[f"matched.{tag}{tagb}.hi"] = cell["ci95"][1]
+            n[f"matched.{tag}{tagb}.sep"] = cell["excludes_zero"]
+            n[f"matched.{tag}{tagb}.slots"] = cell["mean_slots"]
+    n["matched.separating"] = sum(1 for c in ml["contrasts"].values() if c["excludes_zero"])
+    n["matched.contrasts"] = len(ml["contrasts"])
+
+    # What the drawing cost the one comparator that can be re-run. It bounds the residual on the
+    # comparator columns that could not be, and it is the size the narrowest claimed lead has to
+    # clear before it can be read as one.
+    sbd = art("sygma_by_dialect.json")["by_budget"]
+    for k in ("15", "30", "50"):
+        word = {"15": "Fifteen", "30": "Thirty", "50": "Fifty"}[k]
+        n[f"sygdialect.{word.lower()}"] = sbd[k]["difference"]
+        n[f"sygdialect.{word.lower()}.lo"] = sbd[k]["ci95"][0]
+        n[f"sygdialect.{word.lower()}.hi"] = sbd[k]["ci95"][1]
 
     # SyGMa's own scenario knob, swept: what its engine's composition step buys over applying
     # each ruleset once. The paper asks other work to declare such a knob and must sweep its own.

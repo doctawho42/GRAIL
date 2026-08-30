@@ -866,12 +866,453 @@
 \newcommand{\numHydUncoveredimplicit}{477}  % hyd.uncoveredimplicit
 \newcommand{\numLeakMolOverlap}{2{,}408}  % leak.mol_overlap
 \newcommand{\numLeakSubAsMol}{243}  % leak.sub_as_mol
+\newcommand{\numMacroBankOne}{0.1303}  % macro.bank.1
+\newcommand{\numMacroBankOnePct}{13\%}  % macro.bank.1, as a percentage
+\newcommand{\numMacroBankOneZero}{0.5076}  % macro.bank.10
+\newcommand{\numMacroBankOneZeroPct}{50.8\%}  % macro.bank.10, as a percentage
+\newcommand{\numMacroBankOneFive}{0.5812}  % macro.bank.15
+\newcommand{\numMacroBankOneFivePct}{58.1\%}  % macro.bank.15, as a percentage
+\newcommand{\numMacroBankTwoZero}{0.6228}  % macro.bank.20
+\newcommand{\numMacroBankTwoZeroPct}{62.3\%}  % macro.bank.20, as a percentage
+\newcommand{\numMacroBankThree}{0.3062}  % macro.bank.3
+\newcommand{\numMacroBankThreePct}{30.6\%}  % macro.bank.3, as a percentage
+\newcommand{\numMacroBankThreeZero}{0.683}  % macro.bank.30
+\newcommand{\numMacroBankThreeZeroPct}{68.3\%}  % macro.bank.30, as a percentage
+\newcommand{\numMacroBankFive}{0.3792}  % macro.bank.5
+\newcommand{\numMacroBankFivePct}{37.9\%}  % macro.bank.5, as a percentage
+\newcommand{\numMacroBankFiveZero}{0.7463}  % macro.bank.50
+\newcommand{\numMacroBankFiveZeroPct}{74.6\%}  % macro.bank.50, as a percentage
+\newcommand{\numMacroBankEight}{0.4773}  % macro.bank.8
+\newcommand{\numMacroBankEightPct}{47.7\%}  % macro.bank.8, as a percentage
+\newcommand{\numMacroMetapredictorOne}{0.1976}  % macro.metapredictor.1
+\newcommand{\numMacroMetapredictorOnePct}{19.8\%}  % macro.metapredictor.1, as a percentage
+\newcommand{\numMacroMetapredictorOneZero}{0.551}  % macro.metapredictor.10
+\newcommand{\numMacroMetapredictorOneZeroPct}{55.1\%}  % macro.metapredictor.10, as a percentage
+\newcommand{\numMacroMetapredictorOneFive}{0.5545}  % macro.metapredictor.15
+\newcommand{\numMacroMetapredictorOneFivePct}{55.5\%}  % macro.metapredictor.15, as a percentage
+\newcommand{\numMacroMetapredictorTwoZero}{0.5545}  % macro.metapredictor.20
+\newcommand{\numMacroMetapredictorTwoZeroPct}{55.5\%}  % macro.metapredictor.20, as a percentage
+\newcommand{\numMacroMetapredictorThree}{0.3478}  % macro.metapredictor.3
+\newcommand{\numMacroMetapredictorThreePct}{34.8\%}  % macro.metapredictor.3, as a percentage
+\newcommand{\numMacroMetapredictorThreeZero}{0.5545}  % macro.metapredictor.30
+\newcommand{\numMacroMetapredictorThreeZeroPct}{55.5\%}  % macro.metapredictor.30, as a percentage
+\newcommand{\numMacroMetapredictorFive}{0.4317}  % macro.metapredictor.5
+\newcommand{\numMacroMetapredictorFivePct}{43.2\%}  % macro.metapredictor.5, as a percentage
+\newcommand{\numMacroMetapredictorFiveZero}{0.5545}  % macro.metapredictor.50
+\newcommand{\numMacroMetapredictorFiveZeroPct}{55.5\%}  % macro.metapredictor.50, as a percentage
+\newcommand{\numMacroMetapredictorEight}{0.5159}  % macro.metapredictor.8
+\newcommand{\numMacroMetapredictorEightPct}{51.6\%}  % macro.metapredictor.8, as a percentage
+\newcommand{\numMacroMetatoxOne}{0.066}  % macro.metatox.1
+\newcommand{\numMacroMetatoxOnePct}{6.6\%}  % macro.metatox.1, as a percentage
+\newcommand{\numMacroMetatoxOneZero}{0.4251}  % macro.metatox.10
+\newcommand{\numMacroMetatoxOneZeroPct}{42.5\%}  % macro.metatox.10, as a percentage
+\newcommand{\numMacroMetatoxOneFive}{0.5492}  % macro.metatox.15
+\newcommand{\numMacroMetatoxOneFivePct}{54.9\%}  % macro.metatox.15, as a percentage
+\newcommand{\numMacroMetatoxTwoZero}{0.5907}  % macro.metatox.20
+\newcommand{\numMacroMetatoxTwoZeroPct}{59.1\%}  % macro.metatox.20, as a percentage
+\newcommand{\numMacroMetatoxThree}{0.1665}  % macro.metatox.3
+\newcommand{\numMacroMetatoxThreePct}{16.7\%}  % macro.metatox.3, as a percentage
+\newcommand{\numMacroMetatoxThreeZero}{0.6441}  % macro.metatox.30
+\newcommand{\numMacroMetatoxThreeZeroPct}{64.4\%}  % macro.metatox.30, as a percentage
+\newcommand{\numMacroMetatoxFive}{0.252}  % macro.metatox.5
+\newcommand{\numMacroMetatoxFivePct}{25.2\%}  % macro.metatox.5, as a percentage
+\newcommand{\numMacroMetatoxFiveZero}{0.6708}  % macro.metatox.50
+\newcommand{\numMacroMetatoxFiveZeroPct}{67.1\%}  % macro.metatox.50, as a percentage
+\newcommand{\numMacroMetatoxEight}{0.3504}  % macro.metatox.8
+\newcommand{\numMacroMetatoxEightPct}{35\%}  % macro.metatox.8, as a percentage
+\newcommand{\numMacroSygmaOne}{0.209}  % macro.sygma.1
+\newcommand{\numMacroSygmaOnePct}{20.9\%}  % macro.sygma.1, as a percentage
+\newcommand{\numMacroSygmaOneZero}{0.4969}  % macro.sygma.10
+\newcommand{\numMacroSygmaOneZeroPct}{49.7\%}  % macro.sygma.10, as a percentage
+\newcommand{\numMacroSygmaOneFive}{0.5218}  % macro.sygma.15
+\newcommand{\numMacroSygmaOneFivePct}{52.2\%}  % macro.sygma.15, as a percentage
+\newcommand{\numMacroSygmaTwoZero}{0.5331}  % macro.sygma.20
+\newcommand{\numMacroSygmaTwoZeroPct}{53.3\%}  % macro.sygma.20, as a percentage
+\newcommand{\numMacroSygmaThree}{0.3614}  % macro.sygma.3
+\newcommand{\numMacroSygmaThreePct}{36.1\%}  % macro.sygma.3, as a percentage
+\newcommand{\numMacroSygmaThreeZero}{0.5387}  % macro.sygma.30
+\newcommand{\numMacroSygmaThreeZeroPct}{53.9\%}  % macro.sygma.30, as a percentage
+\newcommand{\numMacroSygmaFive}{0.4375}  % macro.sygma.5
+\newcommand{\numMacroSygmaFivePct}{43.8\%}  % macro.sygma.5, as a percentage
+\newcommand{\numMacroSygmaFiveZero}{0.5429}  % macro.sygma.50
+\newcommand{\numMacroSygmaFiveZeroPct}{54.3\%}  % macro.sygma.50, as a percentage
+\newcommand{\numMacroSygmaEight}{0.4821}  % macro.sygma.8
+\newcommand{\numMacroSygmaEightPct}{48.2\%}  % macro.sygma.8, as a percentage
+\newcommand{\numMacroTrainedOne}{0.1415}  % macro.trained.1
+\newcommand{\numMacroTrainedOnePct}{14.1\%}  % macro.trained.1, as a percentage
+\newcommand{\numMacroTrainedOneZero}{0.5035}  % macro.trained.10
+\newcommand{\numMacroTrainedOneZeroPct}{50.3\%}  % macro.trained.10, as a percentage
+\newcommand{\numMacroTrainedOneFive}{0.5543}  % macro.trained.15
+\newcommand{\numMacroTrainedOneFivePct}{55.4\%}  % macro.trained.15, as a percentage
+\newcommand{\numMacroTrainedTwoZero}{0.5632}  % macro.trained.20
+\newcommand{\numMacroTrainedTwoZeroPct}{56.3\%}  % macro.trained.20, as a percentage
+\newcommand{\numMacroTrainedThree}{0.3103}  % macro.trained.3
+\newcommand{\numMacroTrainedThreePct}{31\%}  % macro.trained.3, as a percentage
+\newcommand{\numMacroTrainedThreeZero}{0.566}  % macro.trained.30
+\newcommand{\numMacroTrainedThreeZeroPct}{56.6\%}  % macro.trained.30, as a percentage
+\newcommand{\numMacroTrainedFive}{0.3922}  % macro.trained.5
+\newcommand{\numMacroTrainedFivePct}{39.2\%}  % macro.trained.5, as a percentage
+\newcommand{\numMacroTrainedFiveZero}{0.566}  % macro.trained.50
+\newcommand{\numMacroTrainedFiveZeroPct}{56.6\%}  % macro.trained.50, as a percentage
+\newcommand{\numMacroTrainedEight}{0.4671}  % macro.trained.8
+\newcommand{\numMacroTrainedEightPct}{46.7\%}  % macro.trained.8, as a percentage
+\newcommand{\numMacrogapBankmetapredictorOne}{-0.0674}  % macrogap.bankMetapredictor.1
+\newcommand{\numMacrogapBankmetapredictorOneHi}{-0.0207}  % macrogap.bankMetapredictor.1.hi
+\newcommand{\numMacrogapBankmetapredictorOneLo}{-0.1140}  % macrogap.bankMetapredictor.1.lo
+\newcommand{\numMacrogapBankmetapredictorOneSep}{yes}  % macrogap.bankMetapredictor.1.sep
+\newcommand{\numMacrogapBankmetapredictorOneZero}{-0.0434}  % macrogap.bankMetapredictor.10
+\newcommand{\numMacrogapBankmetapredictorOneZeroHi}{0.0104}  % macrogap.bankMetapredictor.10.hi
+\newcommand{\numMacrogapBankmetapredictorOneZeroHiPct}{1\%}  % macrogap.bankMetapredictor.10.hi, as a percentage
+\newcommand{\numMacrogapBankmetapredictorOneZeroLo}{-0.0979}  % macrogap.bankMetapredictor.10.lo
+\newcommand{\numMacrogapBankmetapredictorOneZeroSep}{no}  % macrogap.bankMetapredictor.10.sep
+\newcommand{\numMacrogapBankmetapredictorOneFive}{0.0267}  % macrogap.bankMetapredictor.15
+\newcommand{\numMacrogapBankmetapredictorOneFivePct}{2.7\%}  % macrogap.bankMetapredictor.15, as a percentage
+\newcommand{\numMacrogapBankmetapredictorOneFiveHi}{0.0773}  % macrogap.bankMetapredictor.15.hi
+\newcommand{\numMacrogapBankmetapredictorOneFiveHiPct}{7.7\%}  % macrogap.bankMetapredictor.15.hi, as a percentage
+\newcommand{\numMacrogapBankmetapredictorOneFiveLo}{-0.0253}  % macrogap.bankMetapredictor.15.lo
+\newcommand{\numMacrogapBankmetapredictorOneFiveSep}{no}  % macrogap.bankMetapredictor.15.sep
+\newcommand{\numMacrogapBankmetapredictorTwoZero}{0.0683}  % macrogap.bankMetapredictor.20
+\newcommand{\numMacrogapBankmetapredictorTwoZeroPct}{6.8\%}  % macrogap.bankMetapredictor.20, as a percentage
+\newcommand{\numMacrogapBankmetapredictorTwoZeroHi}{0.1185}  % macrogap.bankMetapredictor.20.hi
+\newcommand{\numMacrogapBankmetapredictorTwoZeroHiPct}{11.8\%}  % macrogap.bankMetapredictor.20.hi, as a percentage
+\newcommand{\numMacrogapBankmetapredictorTwoZeroLo}{0.0184}  % macrogap.bankMetapredictor.20.lo
+\newcommand{\numMacrogapBankmetapredictorTwoZeroLoPct}{1.8\%}  % macrogap.bankMetapredictor.20.lo, as a percentage
+\newcommand{\numMacrogapBankmetapredictorTwoZeroSep}{yes}  % macrogap.bankMetapredictor.20.sep
+\newcommand{\numMacrogapBankmetapredictorThree}{-0.0416}  % macrogap.bankMetapredictor.3
+\newcommand{\numMacrogapBankmetapredictorThreeHi}{0.0143}  % macrogap.bankMetapredictor.3.hi
+\newcommand{\numMacrogapBankmetapredictorThreeHiPct}{1.4\%}  % macrogap.bankMetapredictor.3.hi, as a percentage
+\newcommand{\numMacrogapBankmetapredictorThreeLo}{-0.0982}  % macrogap.bankMetapredictor.3.lo
+\newcommand{\numMacrogapBankmetapredictorThreeSep}{no}  % macrogap.bankMetapredictor.3.sep
+\newcommand{\numMacrogapBankmetapredictorThreeZero}{0.1285}  % macrogap.bankMetapredictor.30
+\newcommand{\numMacrogapBankmetapredictorThreeZeroPct}{12.8\%}  % macrogap.bankMetapredictor.30, as a percentage
+\newcommand{\numMacrogapBankmetapredictorThreeZeroHi}{0.1786}  % macrogap.bankMetapredictor.30.hi
+\newcommand{\numMacrogapBankmetapredictorThreeZeroHiPct}{17.9\%}  % macrogap.bankMetapredictor.30.hi, as a percentage
+\newcommand{\numMacrogapBankmetapredictorThreeZeroLo}{0.0797}  % macrogap.bankMetapredictor.30.lo
+\newcommand{\numMacrogapBankmetapredictorThreeZeroLoPct}{8\%}  % macrogap.bankMetapredictor.30.lo, as a percentage
+\newcommand{\numMacrogapBankmetapredictorThreeZeroSep}{yes}  % macrogap.bankMetapredictor.30.sep
+\newcommand{\numMacrogapBankmetapredictorFive}{-0.0525}  % macrogap.bankMetapredictor.5
+\newcommand{\numMacrogapBankmetapredictorFiveHi}{0.0073}  % macrogap.bankMetapredictor.5.hi
+\newcommand{\numMacrogapBankmetapredictorFiveHiPct}{0.7\%}  % macrogap.bankMetapredictor.5.hi, as a percentage
+\newcommand{\numMacrogapBankmetapredictorFiveLo}{-0.1125}  % macrogap.bankMetapredictor.5.lo
+\newcommand{\numMacrogapBankmetapredictorFiveSep}{no}  % macrogap.bankMetapredictor.5.sep
+\newcommand{\numMacrogapBankmetapredictorFiveZero}{0.1918}  % macrogap.bankMetapredictor.50
+\newcommand{\numMacrogapBankmetapredictorFiveZeroPct}{19.2\%}  % macrogap.bankMetapredictor.50, as a percentage
+\newcommand{\numMacrogapBankmetapredictorFiveZeroHi}{0.2413}  % macrogap.bankMetapredictor.50.hi
+\newcommand{\numMacrogapBankmetapredictorFiveZeroHiPct}{24.1\%}  % macrogap.bankMetapredictor.50.hi, as a percentage
+\newcommand{\numMacrogapBankmetapredictorFiveZeroLo}{0.1419}  % macrogap.bankMetapredictor.50.lo
+\newcommand{\numMacrogapBankmetapredictorFiveZeroLoPct}{14.2\%}  % macrogap.bankMetapredictor.50.lo, as a percentage
+\newcommand{\numMacrogapBankmetapredictorFiveZeroSep}{yes}  % macrogap.bankMetapredictor.50.sep
+\newcommand{\numMacrogapBankmetapredictorEight}{-0.0386}  % macrogap.bankMetapredictor.8
+\newcommand{\numMacrogapBankmetapredictorEightHi}{0.0170}  % macrogap.bankMetapredictor.8.hi
+\newcommand{\numMacrogapBankmetapredictorEightHiPct}{1.7\%}  % macrogap.bankMetapredictor.8.hi, as a percentage
+\newcommand{\numMacrogapBankmetapredictorEightLo}{-0.0947}  % macrogap.bankMetapredictor.8.lo
+\newcommand{\numMacrogapBankmetapredictorEightSep}{no}  % macrogap.bankMetapredictor.8.sep
+\newcommand{\numMacrogapBankmetatoxOne}{0.0642}  % macrogap.bankMetatox.1
+\newcommand{\numMacrogapBankmetatoxOnePct}{6.4\%}  % macrogap.bankMetatox.1, as a percentage
+\newcommand{\numMacrogapBankmetatoxOneHi}{0.1053}  % macrogap.bankMetatox.1.hi
+\newcommand{\numMacrogapBankmetatoxOneHiPct}{10.5\%}  % macrogap.bankMetatox.1.hi, as a percentage
+\newcommand{\numMacrogapBankmetatoxOneLo}{0.0237}  % macrogap.bankMetatox.1.lo
+\newcommand{\numMacrogapBankmetatoxOneLoPct}{2.4\%}  % macrogap.bankMetatox.1.lo, as a percentage
+\newcommand{\numMacrogapBankmetatoxOneSep}{yes}  % macrogap.bankMetatox.1.sep
+\newcommand{\numMacrogapBankmetatoxOneZero}{0.0825}  % macrogap.bankMetatox.10
+\newcommand{\numMacrogapBankmetatoxOneZeroPct}{8.2\%}  % macrogap.bankMetatox.10, as a percentage
+\newcommand{\numMacrogapBankmetatoxOneZeroHi}{0.1407}  % macrogap.bankMetatox.10.hi
+\newcommand{\numMacrogapBankmetatoxOneZeroHiPct}{14.1\%}  % macrogap.bankMetatox.10.hi, as a percentage
+\newcommand{\numMacrogapBankmetatoxOneZeroLo}{0.0255}  % macrogap.bankMetatox.10.lo
+\newcommand{\numMacrogapBankmetatoxOneZeroLoPct}{2.5\%}  % macrogap.bankMetatox.10.lo, as a percentage
+\newcommand{\numMacrogapBankmetatoxOneZeroSep}{yes}  % macrogap.bankMetatox.10.sep
+\newcommand{\numMacrogapBankmetatoxOneFive}{0.0319}  % macrogap.bankMetatox.15
+\newcommand{\numMacrogapBankmetatoxOneFivePct}{3.2\%}  % macrogap.bankMetatox.15, as a percentage
+\newcommand{\numMacrogapBankmetatoxOneFiveHi}{0.0862}  % macrogap.bankMetatox.15.hi
+\newcommand{\numMacrogapBankmetatoxOneFiveHiPct}{8.6\%}  % macrogap.bankMetatox.15.hi, as a percentage
+\newcommand{\numMacrogapBankmetatoxOneFiveLo}{-0.0215}  % macrogap.bankMetatox.15.lo
+\newcommand{\numMacrogapBankmetatoxOneFiveSep}{no}  % macrogap.bankMetatox.15.sep
+\newcommand{\numMacrogapBankmetatoxTwoZero}{0.0322}  % macrogap.bankMetatox.20
+\newcommand{\numMacrogapBankmetatoxTwoZeroPct}{3.2\%}  % macrogap.bankMetatox.20, as a percentage
+\newcommand{\numMacrogapBankmetatoxTwoZeroHi}{0.0856}  % macrogap.bankMetatox.20.hi
+\newcommand{\numMacrogapBankmetatoxTwoZeroHiPct}{8.6\%}  % macrogap.bankMetatox.20.hi, as a percentage
+\newcommand{\numMacrogapBankmetatoxTwoZeroLo}{-0.0205}  % macrogap.bankMetatox.20.lo
+\newcommand{\numMacrogapBankmetatoxTwoZeroSep}{no}  % macrogap.bankMetatox.20.sep
+\newcommand{\numMacrogapBankmetatoxThree}{0.1397}  % macrogap.bankMetatox.3
+\newcommand{\numMacrogapBankmetatoxThreePct}{14\%}  % macrogap.bankMetatox.3, as a percentage
+\newcommand{\numMacrogapBankmetatoxThreeHi}{0.1957}  % macrogap.bankMetatox.3.hi
+\newcommand{\numMacrogapBankmetatoxThreeHiPct}{19.6\%}  % macrogap.bankMetatox.3.hi, as a percentage
+\newcommand{\numMacrogapBankmetatoxThreeLo}{0.0839}  % macrogap.bankMetatox.3.lo
+\newcommand{\numMacrogapBankmetatoxThreeLoPct}{8.4\%}  % macrogap.bankMetatox.3.lo, as a percentage
+\newcommand{\numMacrogapBankmetatoxThreeSep}{yes}  % macrogap.bankMetatox.3.sep
+\newcommand{\numMacrogapBankmetatoxThreeZero}{0.0389}  % macrogap.bankMetatox.30
+\newcommand{\numMacrogapBankmetatoxThreeZeroPct}{3.9\%}  % macrogap.bankMetatox.30, as a percentage
+\newcommand{\numMacrogapBankmetatoxThreeZeroHi}{0.0849}  % macrogap.bankMetatox.30.hi
+\newcommand{\numMacrogapBankmetatoxThreeZeroHiPct}{8.5\%}  % macrogap.bankMetatox.30.hi, as a percentage
+\newcommand{\numMacrogapBankmetatoxThreeZeroLo}{-0.0065}  % macrogap.bankMetatox.30.lo
+\newcommand{\numMacrogapBankmetatoxThreeZeroSep}{no}  % macrogap.bankMetatox.30.sep
+\newcommand{\numMacrogapBankmetatoxFive}{0.1272}  % macrogap.bankMetatox.5
+\newcommand{\numMacrogapBankmetatoxFivePct}{12.7\%}  % macrogap.bankMetatox.5, as a percentage
+\newcommand{\numMacrogapBankmetatoxFiveHi}{0.1838}  % macrogap.bankMetatox.5.hi
+\newcommand{\numMacrogapBankmetatoxFiveHiPct}{18.4\%}  % macrogap.bankMetatox.5.hi, as a percentage
+\newcommand{\numMacrogapBankmetatoxFiveLo}{0.0707}  % macrogap.bankMetatox.5.lo
+\newcommand{\numMacrogapBankmetatoxFiveLoPct}{7.1\%}  % macrogap.bankMetatox.5.lo, as a percentage
+\newcommand{\numMacrogapBankmetatoxFiveSep}{yes}  % macrogap.bankMetatox.5.sep
+\newcommand{\numMacrogapBankmetatoxFiveZero}{0.0755}  % macrogap.bankMetatox.50
+\newcommand{\numMacrogapBankmetatoxFiveZeroPct}{7.5\%}  % macrogap.bankMetatox.50, as a percentage
+\newcommand{\numMacrogapBankmetatoxFiveZeroHi}{0.1182}  % macrogap.bankMetatox.50.hi
+\newcommand{\numMacrogapBankmetatoxFiveZeroHiPct}{11.8\%}  % macrogap.bankMetatox.50.hi, as a percentage
+\newcommand{\numMacrogapBankmetatoxFiveZeroLo}{0.0336}  % macrogap.bankMetatox.50.lo
+\newcommand{\numMacrogapBankmetatoxFiveZeroLoPct}{3.4\%}  % macrogap.bankMetatox.50.lo, as a percentage
+\newcommand{\numMacrogapBankmetatoxFiveZeroSep}{yes}  % macrogap.bankMetatox.50.sep
+\newcommand{\numMacrogapBankmetatoxEight}{0.1268}  % macrogap.bankMetatox.8
+\newcommand{\numMacrogapBankmetatoxEightPct}{12.7\%}  % macrogap.bankMetatox.8, as a percentage
+\newcommand{\numMacrogapBankmetatoxEightHi}{0.1854}  % macrogap.bankMetatox.8.hi
+\newcommand{\numMacrogapBankmetatoxEightHiPct}{18.5\%}  % macrogap.bankMetatox.8.hi, as a percentage
+\newcommand{\numMacrogapBankmetatoxEightLo}{0.0689}  % macrogap.bankMetatox.8.lo
+\newcommand{\numMacrogapBankmetatoxEightLoPct}{6.9\%}  % macrogap.bankMetatox.8.lo, as a percentage
+\newcommand{\numMacrogapBankmetatoxEightSep}{yes}  % macrogap.bankMetatox.8.sep
+\newcommand{\numMacrogapBanksygmaOne}{-0.0787}  % macrogap.bankSygma.1
+\newcommand{\numMacrogapBanksygmaOneHi}{-0.0287}  % macrogap.bankSygma.1.hi
+\newcommand{\numMacrogapBanksygmaOneLo}{-0.1286}  % macrogap.bankSygma.1.lo
+\newcommand{\numMacrogapBanksygmaOneSep}{yes}  % macrogap.bankSygma.1.sep
+\newcommand{\numMacrogapBanksygmaOneZero}{0.0107}  % macrogap.bankSygma.10
+\newcommand{\numMacrogapBanksygmaOneZeroPct}{1.1\%}  % macrogap.bankSygma.10, as a percentage
+\newcommand{\numMacrogapBanksygmaOneZeroHi}{0.0652}  % macrogap.bankSygma.10.hi
+\newcommand{\numMacrogapBanksygmaOneZeroHiPct}{6.5\%}  % macrogap.bankSygma.10.hi, as a percentage
+\newcommand{\numMacrogapBanksygmaOneZeroLo}{-0.0434}  % macrogap.bankSygma.10.lo
+\newcommand{\numMacrogapBanksygmaOneZeroSep}{no}  % macrogap.bankSygma.10.sep
+\newcommand{\numMacrogapBanksygmaOneFive}{0.0594}  % macrogap.bankSygma.15
+\newcommand{\numMacrogapBanksygmaOneFivePct}{5.9\%}  % macrogap.bankSygma.15, as a percentage
+\newcommand{\numMacrogapBanksygmaOneFiveHi}{0.1114}  % macrogap.bankSygma.15.hi
+\newcommand{\numMacrogapBanksygmaOneFiveHiPct}{11.1\%}  % macrogap.bankSygma.15.hi, as a percentage
+\newcommand{\numMacrogapBanksygmaOneFiveLo}{0.0094}  % macrogap.bankSygma.15.lo
+\newcommand{\numMacrogapBanksygmaOneFiveLoPct}{0.9\%}  % macrogap.bankSygma.15.lo, as a percentage
+\newcommand{\numMacrogapBanksygmaOneFiveSep}{yes}  % macrogap.bankSygma.15.sep
+\newcommand{\numMacrogapBanksygmaTwoZero}{0.0897}  % macrogap.bankSygma.20
+\newcommand{\numMacrogapBanksygmaTwoZeroPct}{9\%}  % macrogap.bankSygma.20, as a percentage
+\newcommand{\numMacrogapBanksygmaTwoZeroHi}{0.1403}  % macrogap.bankSygma.20.hi
+\newcommand{\numMacrogapBanksygmaTwoZeroHiPct}{14\%}  % macrogap.bankSygma.20.hi, as a percentage
+\newcommand{\numMacrogapBanksygmaTwoZeroLo}{0.0405}  % macrogap.bankSygma.20.lo
+\newcommand{\numMacrogapBanksygmaTwoZeroLoPct}{4\%}  % macrogap.bankSygma.20.lo, as a percentage
+\newcommand{\numMacrogapBanksygmaTwoZeroSep}{yes}  % macrogap.bankSygma.20.sep
+\newcommand{\numMacrogapBanksygmaThree}{-0.0552}  % macrogap.bankSygma.3
+\newcommand{\numMacrogapBanksygmaThreeHi}{-0.0045}  % macrogap.bankSygma.3.hi
+\newcommand{\numMacrogapBanksygmaThreeLo}{-0.1053}  % macrogap.bankSygma.3.lo
+\newcommand{\numMacrogapBanksygmaThreeSep}{yes}  % macrogap.bankSygma.3.sep
+\newcommand{\numMacrogapBanksygmaThreeZero}{0.1443}  % macrogap.bankSygma.30
+\newcommand{\numMacrogapBanksygmaThreeZeroPct}{14.4\%}  % macrogap.bankSygma.30, as a percentage
+\newcommand{\numMacrogapBanksygmaThreeZeroHi}{0.1928}  % macrogap.bankSygma.30.hi
+\newcommand{\numMacrogapBanksygmaThreeZeroHiPct}{19.3\%}  % macrogap.bankSygma.30.hi, as a percentage
+\newcommand{\numMacrogapBanksygmaThreeZeroLo}{0.0960}  % macrogap.bankSygma.30.lo
+\newcommand{\numMacrogapBanksygmaThreeZeroLoPct}{9.6\%}  % macrogap.bankSygma.30.lo, as a percentage
+\newcommand{\numMacrogapBanksygmaThreeZeroSep}{yes}  % macrogap.bankSygma.30.sep
+\newcommand{\numMacrogapBanksygmaFive}{-0.0583}  % macrogap.bankSygma.5
+\newcommand{\numMacrogapBanksygmaFiveHi}{-0.0043}  % macrogap.bankSygma.5.hi
+\newcommand{\numMacrogapBanksygmaFiveLo}{-0.1102}  % macrogap.bankSygma.5.lo
+\newcommand{\numMacrogapBanksygmaFiveSep}{yes}  % macrogap.bankSygma.5.sep
+\newcommand{\numMacrogapBanksygmaFiveZero}{0.2035}  % macrogap.bankSygma.50
+\newcommand{\numMacrogapBanksygmaFiveZeroPct}{20.3\%}  % macrogap.bankSygma.50, as a percentage
+\newcommand{\numMacrogapBanksygmaFiveZeroHi}{0.2508}  % macrogap.bankSygma.50.hi
+\newcommand{\numMacrogapBanksygmaFiveZeroHiPct}{25.1\%}  % macrogap.bankSygma.50.hi, as a percentage
+\newcommand{\numMacrogapBanksygmaFiveZeroLo}{0.1570}  % macrogap.bankSygma.50.lo
+\newcommand{\numMacrogapBanksygmaFiveZeroLoPct}{15.7\%}  % macrogap.bankSygma.50.lo, as a percentage
+\newcommand{\numMacrogapBanksygmaFiveZeroSep}{yes}  % macrogap.bankSygma.50.sep
+\newcommand{\numMacrogapBanksygmaEight}{-0.0049}  % macrogap.bankSygma.8
+\newcommand{\numMacrogapBanksygmaEightHi}{0.0487}  % macrogap.bankSygma.8.hi
+\newcommand{\numMacrogapBanksygmaEightHiPct}{4.9\%}  % macrogap.bankSygma.8.hi, as a percentage
+\newcommand{\numMacrogapBanksygmaEightLo}{-0.0586}  % macrogap.bankSygma.8.lo
+\newcommand{\numMacrogapBanksygmaEightSep}{no}  % macrogap.bankSygma.8.sep
+\newcommand{\numMacrogapTrainedmetapredictorOne}{-0.0561}  % macrogap.trainedMetapredictor.1
+\newcommand{\numMacrogapTrainedmetapredictorOneHi}{-0.0092}  % macrogap.trainedMetapredictor.1.hi
+\newcommand{\numMacrogapTrainedmetapredictorOneLo}{-0.1006}  % macrogap.trainedMetapredictor.1.lo
+\newcommand{\numMacrogapTrainedmetapredictorOneSep}{yes}  % macrogap.trainedMetapredictor.1.sep
+\newcommand{\numMacrogapTrainedmetapredictorOneZero}{-0.0474}  % macrogap.trainedMetapredictor.10
+\newcommand{\numMacrogapTrainedmetapredictorOneZeroHi}{0.0044}  % macrogap.trainedMetapredictor.10.hi
+\newcommand{\numMacrogapTrainedmetapredictorOneZeroHiPct}{0.4\%}  % macrogap.trainedMetapredictor.10.hi, as a percentage
+\newcommand{\numMacrogapTrainedmetapredictorOneZeroLo}{-0.0986}  % macrogap.trainedMetapredictor.10.lo
+\newcommand{\numMacrogapTrainedmetapredictorOneZeroSep}{no}  % macrogap.trainedMetapredictor.10.sep
+\newcommand{\numMacrogapTrainedmetapredictorOneFive}{-0.0002}  % macrogap.trainedMetapredictor.15
+\newcommand{\numMacrogapTrainedmetapredictorOneFiveHi}{0.0518}  % macrogap.trainedMetapredictor.15.hi
+\newcommand{\numMacrogapTrainedmetapredictorOneFiveHiPct}{5.2\%}  % macrogap.trainedMetapredictor.15.hi, as a percentage
+\newcommand{\numMacrogapTrainedmetapredictorOneFiveLo}{-0.0523}  % macrogap.trainedMetapredictor.15.lo
+\newcommand{\numMacrogapTrainedmetapredictorOneFiveSep}{no}  % macrogap.trainedMetapredictor.15.sep
+\newcommand{\numMacrogapTrainedmetapredictorTwoZero}{0.0086}  % macrogap.trainedMetapredictor.20
+\newcommand{\numMacrogapTrainedmetapredictorTwoZeroPct}{0.9\%}  % macrogap.trainedMetapredictor.20, as a percentage
+\newcommand{\numMacrogapTrainedmetapredictorTwoZeroHi}{0.0615}  % macrogap.trainedMetapredictor.20.hi
+\newcommand{\numMacrogapTrainedmetapredictorTwoZeroHiPct}{6.2\%}  % macrogap.trainedMetapredictor.20.hi, as a percentage
+\newcommand{\numMacrogapTrainedmetapredictorTwoZeroLo}{-0.0426}  % macrogap.trainedMetapredictor.20.lo
+\newcommand{\numMacrogapTrainedmetapredictorTwoZeroSep}{no}  % macrogap.trainedMetapredictor.20.sep
+\newcommand{\numMacrogapTrainedmetapredictorThree}{-0.0375}  % macrogap.trainedMetapredictor.3
+\newcommand{\numMacrogapTrainedmetapredictorThreeHi}{0.0174}  % macrogap.trainedMetapredictor.3.hi
+\newcommand{\numMacrogapTrainedmetapredictorThreeHiPct}{1.7\%}  % macrogap.trainedMetapredictor.3.hi, as a percentage
+\newcommand{\numMacrogapTrainedmetapredictorThreeLo}{-0.0923}  % macrogap.trainedMetapredictor.3.lo
+\newcommand{\numMacrogapTrainedmetapredictorThreeSep}{no}  % macrogap.trainedMetapredictor.3.sep
+\newcommand{\numMacrogapTrainedmetapredictorThreeZero}{0.0115}  % macrogap.trainedMetapredictor.30
+\newcommand{\numMacrogapTrainedmetapredictorThreeZeroPct}{1.1\%}  % macrogap.trainedMetapredictor.30, as a percentage
+\newcommand{\numMacrogapTrainedmetapredictorThreeZeroHi}{0.0637}  % macrogap.trainedMetapredictor.30.hi
+\newcommand{\numMacrogapTrainedmetapredictorThreeZeroHiPct}{6.4\%}  % macrogap.trainedMetapredictor.30.hi, as a percentage
+\newcommand{\numMacrogapTrainedmetapredictorThreeZeroLo}{-0.0395}  % macrogap.trainedMetapredictor.30.lo
+\newcommand{\numMacrogapTrainedmetapredictorThreeZeroSep}{no}  % macrogap.trainedMetapredictor.30.sep
+\newcommand{\numMacrogapTrainedmetapredictorFive}{-0.0395}  % macrogap.trainedMetapredictor.5
+\newcommand{\numMacrogapTrainedmetapredictorFiveHi}{0.0163}  % macrogap.trainedMetapredictor.5.hi
+\newcommand{\numMacrogapTrainedmetapredictorFiveHiPct}{1.6\%}  % macrogap.trainedMetapredictor.5.hi, as a percentage
+\newcommand{\numMacrogapTrainedmetapredictorFiveLo}{-0.0951}  % macrogap.trainedMetapredictor.5.lo
+\newcommand{\numMacrogapTrainedmetapredictorFiveSep}{no}  % macrogap.trainedMetapredictor.5.sep
+\newcommand{\numMacrogapTrainedmetapredictorFiveZero}{0.0115}  % macrogap.trainedMetapredictor.50
+\newcommand{\numMacrogapTrainedmetapredictorFiveZeroPct}{1.1\%}  % macrogap.trainedMetapredictor.50, as a percentage
+\newcommand{\numMacrogapTrainedmetapredictorFiveZeroHi}{0.0637}  % macrogap.trainedMetapredictor.50.hi
+\newcommand{\numMacrogapTrainedmetapredictorFiveZeroHiPct}{6.4\%}  % macrogap.trainedMetapredictor.50.hi, as a percentage
+\newcommand{\numMacrogapTrainedmetapredictorFiveZeroLo}{-0.0395}  % macrogap.trainedMetapredictor.50.lo
+\newcommand{\numMacrogapTrainedmetapredictorFiveZeroSep}{no}  % macrogap.trainedMetapredictor.50.sep
+\newcommand{\numMacrogapTrainedmetapredictorEight}{-0.0488}  % macrogap.trainedMetapredictor.8
+\newcommand{\numMacrogapTrainedmetapredictorEightHi}{0.0073}  % macrogap.trainedMetapredictor.8.hi
+\newcommand{\numMacrogapTrainedmetapredictorEightHiPct}{0.7\%}  % macrogap.trainedMetapredictor.8.hi, as a percentage
+\newcommand{\numMacrogapTrainedmetapredictorEightLo}{-0.1040}  % macrogap.trainedMetapredictor.8.lo
+\newcommand{\numMacrogapTrainedmetapredictorEightSep}{no}  % macrogap.trainedMetapredictor.8.sep
+\newcommand{\numMacrogapTrainedmetatoxOne}{0.0755}  % macrogap.trainedMetatox.1
+\newcommand{\numMacrogapTrainedmetatoxOnePct}{7.5\%}  % macrogap.trainedMetatox.1, as a percentage
+\newcommand{\numMacrogapTrainedmetatoxOneHi}{0.1201}  % macrogap.trainedMetatox.1.hi
+\newcommand{\numMacrogapTrainedmetatoxOneHiPct}{12\%}  % macrogap.trainedMetatox.1.hi, as a percentage
+\newcommand{\numMacrogapTrainedmetatoxOneLo}{0.0322}  % macrogap.trainedMetatox.1.lo
+\newcommand{\numMacrogapTrainedmetatoxOneLoPct}{3.2\%}  % macrogap.trainedMetatox.1.lo, as a percentage
+\newcommand{\numMacrogapTrainedmetatoxOneSep}{yes}  % macrogap.trainedMetatox.1.sep
+\newcommand{\numMacrogapTrainedmetatoxOneZero}{0.0785}  % macrogap.trainedMetatox.10
+\newcommand{\numMacrogapTrainedmetatoxOneZeroPct}{7.8\%}  % macrogap.trainedMetatox.10, as a percentage
+\newcommand{\numMacrogapTrainedmetatoxOneZeroHi}{0.1325}  % macrogap.trainedMetatox.10.hi
+\newcommand{\numMacrogapTrainedmetatoxOneZeroHiPct}{13.2\%}  % macrogap.trainedMetatox.10.hi, as a percentage
+\newcommand{\numMacrogapTrainedmetatoxOneZeroLo}{0.0239}  % macrogap.trainedMetatox.10.lo
+\newcommand{\numMacrogapTrainedmetatoxOneZeroLoPct}{2.4\%}  % macrogap.trainedMetatox.10.lo, as a percentage
+\newcommand{\numMacrogapTrainedmetatoxOneZeroSep}{yes}  % macrogap.trainedMetatox.10.sep
+\newcommand{\numMacrogapTrainedmetatoxOneFive}{0.005}  % macrogap.trainedMetatox.15
+\newcommand{\numMacrogapTrainedmetatoxOneFivePct}{0.5\%}  % macrogap.trainedMetatox.15, as a percentage
+\newcommand{\numMacrogapTrainedmetatoxOneFiveHi}{0.0601}  % macrogap.trainedMetatox.15.hi
+\newcommand{\numMacrogapTrainedmetatoxOneFiveHiPct}{6\%}  % macrogap.trainedMetatox.15.hi, as a percentage
+\newcommand{\numMacrogapTrainedmetatoxOneFiveLo}{-0.0506}  % macrogap.trainedMetatox.15.lo
+\newcommand{\numMacrogapTrainedmetatoxOneFiveSep}{no}  % macrogap.trainedMetatox.15.sep
+\newcommand{\numMacrogapTrainedmetatoxTwoZero}{-0.0275}  % macrogap.trainedMetatox.20
+\newcommand{\numMacrogapTrainedmetatoxTwoZeroHi}{0.0272}  % macrogap.trainedMetatox.20.hi
+\newcommand{\numMacrogapTrainedmetatoxTwoZeroHiPct}{2.7\%}  % macrogap.trainedMetatox.20.hi, as a percentage
+\newcommand{\numMacrogapTrainedmetatoxTwoZeroLo}{-0.0835}  % macrogap.trainedMetatox.20.lo
+\newcommand{\numMacrogapTrainedmetatoxTwoZeroSep}{no}  % macrogap.trainedMetatox.20.sep
+\newcommand{\numMacrogapTrainedmetatoxThree}{0.1439}  % macrogap.trainedMetatox.3
+\newcommand{\numMacrogapTrainedmetatoxThreePct}{14.4\%}  % macrogap.trainedMetatox.3, as a percentage
+\newcommand{\numMacrogapTrainedmetatoxThreeHi}{0.1995}  % macrogap.trainedMetatox.3.hi
+\newcommand{\numMacrogapTrainedmetatoxThreeHiPct}{20\%}  % macrogap.trainedMetatox.3.hi, as a percentage
+\newcommand{\numMacrogapTrainedmetatoxThreeLo}{0.0879}  % macrogap.trainedMetatox.3.lo
+\newcommand{\numMacrogapTrainedmetatoxThreeLoPct}{8.8\%}  % macrogap.trainedMetatox.3.lo, as a percentage
+\newcommand{\numMacrogapTrainedmetatoxThreeSep}{yes}  % macrogap.trainedMetatox.3.sep
+\newcommand{\numMacrogapTrainedmetatoxThreeZero}{-0.0781}  % macrogap.trainedMetatox.30
+\newcommand{\numMacrogapTrainedmetatoxThreeZeroHi}{-0.0286}  % macrogap.trainedMetatox.30.hi
+\newcommand{\numMacrogapTrainedmetatoxThreeZeroLo}{-0.1269}  % macrogap.trainedMetatox.30.lo
+\newcommand{\numMacrogapTrainedmetatoxThreeZeroSep}{yes}  % macrogap.trainedMetatox.30.sep
+\newcommand{\numMacrogapTrainedmetatoxFive}{0.1402}  % macrogap.trainedMetatox.5
+\newcommand{\numMacrogapTrainedmetatoxFivePct}{14\%}  % macrogap.trainedMetatox.5, as a percentage
+\newcommand{\numMacrogapTrainedmetatoxFiveHi}{0.1959}  % macrogap.trainedMetatox.5.hi
+\newcommand{\numMacrogapTrainedmetatoxFiveHiPct}{19.6\%}  % macrogap.trainedMetatox.5.hi, as a percentage
+\newcommand{\numMacrogapTrainedmetatoxFiveLo}{0.0840}  % macrogap.trainedMetatox.5.lo
+\newcommand{\numMacrogapTrainedmetatoxFiveLoPct}{8.4\%}  % macrogap.trainedMetatox.5.lo, as a percentage
+\newcommand{\numMacrogapTrainedmetatoxFiveSep}{yes}  % macrogap.trainedMetatox.5.sep
+\newcommand{\numMacrogapTrainedmetatoxFiveZero}{-0.1048}  % macrogap.trainedMetatox.50
+\newcommand{\numMacrogapTrainedmetatoxFiveZeroHi}{-0.0558}  % macrogap.trainedMetatox.50.hi
+\newcommand{\numMacrogapTrainedmetatoxFiveZeroLo}{-0.1554}  % macrogap.trainedMetatox.50.lo
+\newcommand{\numMacrogapTrainedmetatoxFiveZeroSep}{yes}  % macrogap.trainedMetatox.50.sep
+\newcommand{\numMacrogapTrainedmetatoxEight}{0.1167}  % macrogap.trainedMetatox.8
+\newcommand{\numMacrogapTrainedmetatoxEightPct}{11.7\%}  % macrogap.trainedMetatox.8, as a percentage
+\newcommand{\numMacrogapTrainedmetatoxEightHi}{0.1715}  % macrogap.trainedMetatox.8.hi
+\newcommand{\numMacrogapTrainedmetatoxEightHiPct}{17.2\%}  % macrogap.trainedMetatox.8.hi, as a percentage
+\newcommand{\numMacrogapTrainedmetatoxEightLo}{0.0609}  % macrogap.trainedMetatox.8.lo
+\newcommand{\numMacrogapTrainedmetatoxEightLoPct}{6.1\%}  % macrogap.trainedMetatox.8.lo, as a percentage
+\newcommand{\numMacrogapTrainedmetatoxEightSep}{yes}  % macrogap.trainedMetatox.8.sep
+\newcommand{\numMacrogapTrainedsygmaOne}{-0.0674}  % macrogap.trainedSygma.1
+\newcommand{\numMacrogapTrainedsygmaOneHi}{-0.0215}  % macrogap.trainedSygma.1.hi
+\newcommand{\numMacrogapTrainedsygmaOneLo}{-0.1122}  % macrogap.trainedSygma.1.lo
+\newcommand{\numMacrogapTrainedsygmaOneSep}{yes}  % macrogap.trainedSygma.1.sep
+\newcommand{\numMacrogapTrainedsygmaOneZero}{0.0066}  % macrogap.trainedSygma.10
+\newcommand{\numMacrogapTrainedsygmaOneZeroPct}{0.7\%}  % macrogap.trainedSygma.10, as a percentage
+\newcommand{\numMacrogapTrainedsygmaOneZeroHi}{0.0544}  % macrogap.trainedSygma.10.hi
+\newcommand{\numMacrogapTrainedsygmaOneZeroHiPct}{5.4\%}  % macrogap.trainedSygma.10.hi, as a percentage
+\newcommand{\numMacrogapTrainedsygmaOneZeroLo}{-0.0413}  % macrogap.trainedSygma.10.lo
+\newcommand{\numMacrogapTrainedsygmaOneZeroSep}{no}  % macrogap.trainedSygma.10.sep
+\newcommand{\numMacrogapTrainedsygmaOneFive}{0.0325}  % macrogap.trainedSygma.15
+\newcommand{\numMacrogapTrainedsygmaOneFivePct}{3.2\%}  % macrogap.trainedSygma.15, as a percentage
+\newcommand{\numMacrogapTrainedsygmaOneFiveHi}{0.0794}  % macrogap.trainedSygma.15.hi
+\newcommand{\numMacrogapTrainedsygmaOneFiveHiPct}{7.9\%}  % macrogap.trainedSygma.15.hi, as a percentage
+\newcommand{\numMacrogapTrainedsygmaOneFiveLo}{-0.0149}  % macrogap.trainedSygma.15.lo
+\newcommand{\numMacrogapTrainedsygmaOneFiveSep}{no}  % macrogap.trainedSygma.15.sep
+\newcommand{\numMacrogapTrainedsygmaTwoZero}{0.03}  % macrogap.trainedSygma.20
+\newcommand{\numMacrogapTrainedsygmaTwoZeroPct}{3\%}  % macrogap.trainedSygma.20, as a percentage
+\newcommand{\numMacrogapTrainedsygmaTwoZeroHi}{0.0778}  % macrogap.trainedSygma.20.hi
+\newcommand{\numMacrogapTrainedsygmaTwoZeroHiPct}{7.8\%}  % macrogap.trainedSygma.20.hi, as a percentage
+\newcommand{\numMacrogapTrainedsygmaTwoZeroLo}{-0.0186}  % macrogap.trainedSygma.20.lo
+\newcommand{\numMacrogapTrainedsygmaTwoZeroSep}{no}  % macrogap.trainedSygma.20.sep
+\newcommand{\numMacrogapTrainedsygmaThree}{-0.051}  % macrogap.trainedSygma.3
+\newcommand{\numMacrogapTrainedsygmaThreeHi}{-0.0043}  % macrogap.trainedSygma.3.hi
+\newcommand{\numMacrogapTrainedsygmaThreeLo}{-0.0972}  % macrogap.trainedSygma.3.lo
+\newcommand{\numMacrogapTrainedsygmaThreeSep}{yes}  % macrogap.trainedSygma.3.sep
+\newcommand{\numMacrogapTrainedsygmaThreeZero}{0.0273}  % macrogap.trainedSygma.30
+\newcommand{\numMacrogapTrainedsygmaThreeZeroPct}{2.7\%}  % macrogap.trainedSygma.30, as a percentage
+\newcommand{\numMacrogapTrainedsygmaThreeZeroHi}{0.0755}  % macrogap.trainedSygma.30.hi
+\newcommand{\numMacrogapTrainedsygmaThreeZeroHiPct}{7.5\%}  % macrogap.trainedSygma.30.hi, as a percentage
+\newcommand{\numMacrogapTrainedsygmaThreeZeroLo}{-0.0215}  % macrogap.trainedSygma.30.lo
+\newcommand{\numMacrogapTrainedsygmaThreeZeroSep}{no}  % macrogap.trainedSygma.30.sep
+\newcommand{\numMacrogapTrainedsygmaFive}{-0.0453}  % macrogap.trainedSygma.5
+\newcommand{\numMacrogapTrainedsygmaFiveHi}{-0.0004}  % macrogap.trainedSygma.5.hi
+\newcommand{\numMacrogapTrainedsygmaFiveLo}{-0.0902}  % macrogap.trainedSygma.5.lo
+\newcommand{\numMacrogapTrainedsygmaFiveSep}{yes}  % macrogap.trainedSygma.5.sep
+\newcommand{\numMacrogapTrainedsygmaFiveZero}{0.0232}  % macrogap.trainedSygma.50
+\newcommand{\numMacrogapTrainedsygmaFiveZeroPct}{2.3\%}  % macrogap.trainedSygma.50, as a percentage
+\newcommand{\numMacrogapTrainedsygmaFiveZeroHi}{0.0721}  % macrogap.trainedSygma.50.hi
+\newcommand{\numMacrogapTrainedsygmaFiveZeroHiPct}{7.2\%}  % macrogap.trainedSygma.50.hi, as a percentage
+\newcommand{\numMacrogapTrainedsygmaFiveZeroLo}{-0.0262}  % macrogap.trainedSygma.50.lo
+\newcommand{\numMacrogapTrainedsygmaFiveZeroSep}{no}  % macrogap.trainedSygma.50.sep
+\newcommand{\numMacrogapTrainedsygmaEight}{-0.015}  % macrogap.trainedSygma.8
+\newcommand{\numMacrogapTrainedsygmaEightHi}{0.0330}  % macrogap.trainedSygma.8.hi
+\newcommand{\numMacrogapTrainedsygmaEightHiPct}{3.3\%}  % macrogap.trainedSygma.8.hi, as a percentage
+\newcommand{\numMacrogapTrainedsygmaEightLo}{-0.0627}  % macrogap.trainedSygma.8.lo
+\newcommand{\numMacrogapTrainedsygmaEightSep}{no}  % macrogap.trainedSygma.8.sep
 \newcommand{\numMarginMarginalgap}{0.0376}  % margin.marginalgap
 \newcommand{\numMarginMarginalgapPct}{3.8\%}  % margin.marginalgap, as a percentage
 \newcommand{\numMarginMarginalhi}{0.0723}  % margin.marginalhi
 \newcommand{\numMarginMarginalhiPct}{7.2\%}  % margin.marginalhi, as a percentage
 \newcommand{\numMarginMarginallo}{0.0046}  % margin.marginallo
 \newcommand{\numMarginMarginalloPct}{0.5\%}  % margin.marginallo, as a percentage
+\newcommand{\numMatchedBankmetapredictor}{-0.0135}  % matched.bankMetapredictor
+\newcommand{\numMatchedBankmetapredictorHi}{0.0283}  % matched.bankMetapredictor.hi
+\newcommand{\numMatchedBankmetapredictorHiPct}{2.8\%}  % matched.bankMetapredictor.hi, as a percentage
+\newcommand{\numMatchedBankmetapredictorLo}{-0.0564}  % matched.bankMetapredictor.lo
+\newcommand{\numMatchedBankmetapredictorSep}{no}  % matched.bankMetapredictor.sep
+\newcommand{\numMatchedBankmetapredictorSlots}{10.75}  % matched.bankMetapredictor.slots
+\newcommand{\numMatchedBankmetatox}{-0.0105}  % matched.bankMetatox
+\newcommand{\numMatchedBankmetatoxHi}{0.0210}  % matched.bankMetatox.hi
+\newcommand{\numMatchedBankmetatoxHiPct}{2.1\%}  % matched.bankMetatox.hi, as a percentage
+\newcommand{\numMatchedBankmetatoxLo}{-0.0420}  % matched.bankMetatox.lo
+\newcommand{\numMatchedBankmetatoxSep}{no}  % matched.bankMetatox.sep
+\newcommand{\numMatchedBankmetatoxSlots}{33.23}  % matched.bankMetatox.slots
+\newcommand{\numMatchedBanksygma}{0.1729}  % matched.bankSygma
+\newcommand{\numMatchedBanksygmaPct}{17.3\%}  % matched.bankSygma, as a percentage
+\newcommand{\numMatchedBanksygmaHi}{0.2111}  % matched.bankSygma.hi
+\newcommand{\numMatchedBanksygmaHiPct}{21.1\%}  % matched.bankSygma.hi, as a percentage
+\newcommand{\numMatchedBanksygmaLo}{0.1362}  % matched.bankSygma.lo
+\newcommand{\numMatchedBanksygmaLoPct}{13.6\%}  % matched.bankSygma.lo, as a percentage
+\newcommand{\numMatchedBanksygmaSep}{yes}  % matched.bankSygma.sep
+\newcommand{\numMatchedBanksygmaSlots}{58.37}  % matched.bankSygma.slots
+\newcommand{\numMatchedContrasts}{6}  % matched.contrasts
+\newcommand{\numMatchedContrastsWord}{six}  % matched.contrasts, spelled
+\newcommand{\numMatchedSeparating}{2}  % matched.separating
+\newcommand{\numMatchedSeparatingWord}{two}  % matched.separating, spelled
+\newcommand{\numMatchedTrainedmetapredictor}{-0.0361}  % matched.trainedMetapredictor
+\newcommand{\numMatchedTrainedmetapredictorHi}{0.0094}  % matched.trainedMetapredictor.hi
+\newcommand{\numMatchedTrainedmetapredictorHiPct}{0.9\%}  % matched.trainedMetapredictor.hi, as a percentage
+\newcommand{\numMatchedTrainedmetapredictorLo}{-0.0811}  % matched.trainedMetapredictor.lo
+\newcommand{\numMatchedTrainedmetapredictorSep}{no}  % matched.trainedMetapredictor.sep
+\newcommand{\numMatchedTrainedmetapredictorSlots}{10.75}  % matched.trainedMetapredictor.slots
+\newcommand{\numMatchedTrainedmetatox}{-0.1504}  % matched.trainedMetatox
+\newcommand{\numMatchedTrainedmetatoxHi}{-0.1057}  % matched.trainedMetatox.hi
+\newcommand{\numMatchedTrainedmetatoxLo}{-0.1979}  % matched.trainedMetatox.lo
+\newcommand{\numMatchedTrainedmetatoxSep}{yes}  % matched.trainedMetatox.sep
+\newcommand{\numMatchedTrainedmetatoxSlots}{33.23}  % matched.trainedMetatox.slots
+\newcommand{\numMatchedTrainedsygma}{-0.0316}  % matched.trainedSygma
+\newcommand{\numMatchedTrainedsygmaHi}{0.0085}  % matched.trainedSygma.hi
+\newcommand{\numMatchedTrainedsygmaHiPct}{0.9\%}  % matched.trainedSygma.hi, as a percentage
+\newcommand{\numMatchedTrainedsygmaLo}{-0.0698}  % matched.trainedSygma.lo
+\newcommand{\numMatchedTrainedsygmaSep}{no}  % matched.trainedSygma.sep
+\newcommand{\numMatchedTrainedsygmaSlots}{58.37}  % matched.trainedSygma.slots
 \newcommand{\numMinedFiveOrMore}{457}  % mined.five_or_more
 \newcommand{\numMinedRules}{5{,}856}  % mined.rules
 \newcommand{\numMinedSingleton}{4{,}274}  % mined.singleton
@@ -945,10 +1386,10 @@
 \newcommand{\numProvChanged}{38}  % prov.changed
 \newcommand{\numProvFiles}{292}  % prov.files
 \newcommand{\numProvHandtyped}{37}  % prov.handtyped
-\newcommand{\numProvMacrosbody}{235}  % prov.macrosbody
-\newcommand{\numProvMacrossi}{249}  % prov.macrossi
+\newcommand{\numProvMacrosbody}{243}  % prov.macrosbody
+\newcommand{\numProvMacrossi}{251}  % prov.macrossi
 \newcommand{\numProvPinned}{82}  % prov.pinned
-\newcommand{\numProvSources}{60}  % prov.sources
+\newcommand{\numProvSources}{62}  % prov.sources
 \newcommand{\numProvSourcesexempt}{3}  % prov.sourcesexempt
 \newcommand{\numProvSourcesexemptWord}{three}  % prov.sourcesexempt, spelled
 \newcommand{\numProvSourcesinferred}{6}  % prov.sourcesinferred
@@ -1357,6 +1798,24 @@
 \newcommand{\numSygdialN}{291}  % sygdial.n
 \newcommand{\numSygdialSeparating}{4}  % sygdial.separating
 \newcommand{\numSygdialSeparatingWord}{four}  % sygdial.separating, spelled
+\newcommand{\numSygdialectFifteen}{0.0135}  % sygdialect.fifteen
+\newcommand{\numSygdialectFifteenPct}{1.4\%}  % sygdialect.fifteen, as a percentage
+\newcommand{\numSygdialectFifteenHi}{0.0261}  % sygdialect.fifteen.hi
+\newcommand{\numSygdialectFifteenHiPct}{2.6\%}  % sygdialect.fifteen.hi, as a percentage
+\newcommand{\numSygdialectFifteenLo}{0.0029}  % sygdialect.fifteen.lo
+\newcommand{\numSygdialectFifteenLoPct}{0.3\%}  % sygdialect.fifteen.lo, as a percentage
+\newcommand{\numSygdialectFifty}{0.0211}  % sygdialect.fifty
+\newcommand{\numSygdialectFiftyPct}{2.1\%}  % sygdialect.fifty, as a percentage
+\newcommand{\numSygdialectFiftyHi}{0.0376}  % sygdialect.fifty.hi
+\newcommand{\numSygdialectFiftyHiPct}{3.8\%}  % sygdialect.fifty.hi, as a percentage
+\newcommand{\numSygdialectFiftyLo}{0.0073}  % sygdialect.fifty.lo
+\newcommand{\numSygdialectFiftyLoPct}{0.7\%}  % sygdialect.fifty.lo, as a percentage
+\newcommand{\numSygdialectThirty}{0.0195}  % sygdialect.thirty
+\newcommand{\numSygdialectThirtyPct}{1.9\%}  % sygdialect.thirty, as a percentage
+\newcommand{\numSygdialectThirtyHi}{0.0359}  % sygdialect.thirty.hi
+\newcommand{\numSygdialectThirtyHiPct}{3.6\%}  % sygdialect.thirty.hi, as a percentage
+\newcommand{\numSygdialectThirtyLo}{0.0060}  % sygdialect.thirty.lo
+\newcommand{\numSygdialectThirtyLoPct}{0.6\%}  % sygdialect.thirty.lo, as a percentage
 \newcommand{\numSygmaIncurated}{152}  % sygma.incurated
 \newcommand{\numSygmaInmined}{0}  % sygma.inmined
 \newcommand{\numSygmaInminedWord}{none}  % sygma.inmined, spelled
@@ -1381,11 +1840,22 @@
 \newcommand{\numThirdpartyGloryxShipped}{82}  % thirdparty.gloryx.shipped
 \newcommand{\numThirdpartyHolders}{3}  % thirdparty.holders
 \newcommand{\numThirdpartyHoldersWord}{three}  % thirdparty.holders, spelled
+\newcommand{\numThirdpartyInextraction}{0}  % thirdparty.inextraction
+\newcommand{\numThirdpartyInextractionWord}{none}  % thirdparty.inextraction, spelled
+\newcommand{\numThirdpartyInnamed}{966}  % thirdparty.innamed
+\newcommand{\numThirdpartyNamed}{1{,}233}  % thirdparty.named
+\newcommand{\numThirdpartyNamedshare}{0.7835}  % thirdparty.namedshare
+\newcommand{\numThirdpartyNamedsharePct}{78.3\%}  % thirdparty.namedshare, as a percentage
 \newcommand{\numThirdpartySygmaShipped}{273}  % thirdparty.sygma.shipped
 \newcommand{\numThirdpartyTraceable}{966}  % thirdparty.traceable
 \newcommand{\numThirdpartyTraceableshare}{0.56}  % thirdparty.traceableshare
 \newcommand{\numThirdpartyTraceablesharePct}{56\%}  % thirdparty.traceableshare, as a percentage
 \newcommand{\numThirdpartyUntraceable}{759}  % thirdparty.untraceable
+\newcommand{\numTrainEpochs}{8}  % train.epochs
+\newcommand{\numTrainEpochsWord}{eight}  % train.epochs, spelled
+\newcommand{\numTrainSamplingseed}{42}  % train.samplingseed
+\newcommand{\numTrainSubstrates}{5{,}000}  % train.substrates
+\newcommand{\numTrainValsubstrates}{300}  % train.valsubstrates
 \newcommand{\numUsptoHit}{14}  % uspto.hit
 \newcommand{\numUsptoMass}{18}  % uspto.mass
 \newcommand{\numUsptoSanity}{308}  % uspto.sanity

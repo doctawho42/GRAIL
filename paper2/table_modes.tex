@@ -17,6 +17,6 @@ seconds, slowest & 231.01 & did not finish \\
 figure is measured on the validation draw, 294 substrates for the interactive mode and
 293 for the exhaustive one, which lacks a pool for one of them. Candidates are
 what a caller receives: deduplicated by matching key and capped at
-100. Times cover everything before the filter.}
+100. Times cover everything before the filter. The exhaustive mode's slowest substrate did not finish inside a ten-minute deadline; on a sampled timing sweep it misses that deadline on 11 of 106 substrates, and on the test split, where no deadline is imposed, it fails on none.}
 \label{tab:modes}
 \end{table}
