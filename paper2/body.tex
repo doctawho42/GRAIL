@@ -378,9 +378,9 @@ restricted to the same rules, and we report it as such rather than as the stage'
 
 Metabolism usually leaves the scaffold recognisable. Many metabolites differ from their parent
 by an added oxygen, a cleaved bond or a conjugate, so they stay close to what they came from, and
-closeness is a fingerprint away. The premise is not universal --- a cleavage that removes most of
+closeness is a fingerprint away. The premise is not universal. A cleavage that removes most of
 the molecule, or a conjugate that doubles its heavy-atom count, moves a metabolite a long way from
-its parent --- but it holds often enough that similarity to the substrate is a real baseline. Any learned ranker over (substrate, candidate) pairs competes against that
+its parent. It holds often enough, though, that similarity to the substrate is a real baseline. Any learned ranker over (substrate, candidate) pairs competes against that
 baseline whether or not the baseline is reported, and this literature does not report it.
 
 Re-ranking one pool four ways holds the pool, the matching rule and the budget fixed so that only
@@ -432,7 +432,7 @@ supported almost any claim about which system is better.
 firing rule reported shaded in the colour of the transformation it belongs to. The three
 phosphorylations report the same two atoms under three different rules, so the sites collapse to
 two where the metabolites do not. Right: where the four annotated metabolites fall in each arm's
-ranked list, every returned candidate drawn as a tick, for both drawings of the substrate --- the
+ranked list, every returned candidate drawn as a tick, for both drawings of the substrate: the
 one the corpus stores and the one shown on the left. The interactive budget never produces the
 phosphorylations under either drawing, so its list is short rather than long and wrong; under the
 drawing on the left it produces none of the four, because the template its single hit came from
@@ -560,9 +560,9 @@ Adding a tautomer enumeration budget of \numHOneFiveBudget{} (P9) passes both ha
 
 Part of the speed-up is machine load, and the two arms did not run under the same. The
 enumeration step is identical between them, so the ratio of its medians, \numHOneFiveLoad{},
-measures load alone. Applying that correction to the step the budget actually changes ---
-standardising the survivors, whose medians are \numHOneFiveStdunbounded~s unbounded against
-\numHOneFiveStdbounded~s under the budget --- leaves \numHOneFiveAttributable$\times$
+measures load alone. Applying that correction to the step the budget actually changes
+(standardising the survivors, whose medians are \numHOneFiveStdunbounded~s unbounded against
+\numHOneFiveStdbounded~s under the budget) leaves \numHOneFiveAttributable$\times$
 attributable to the budget itself. Carried to the whole arm it puts the median at
 \numHOneFiveMedianUnderload~s under the other arm's load, still inside the target.
 
@@ -672,9 +672,9 @@ wide budgets is partly a statement about output length on all sides rather than 
 
 \subsection{The ceiling bounds this formulation, not the task}
 
-The shortfall is mostly a property of the corpus the templates are mined from --- established by
+The shortfall is mostly a property of the corpus the templates are mined from, established by
 invariance rather than asserted, though the hydrogen convention moves it by
-\numHydResidualrefs{} references --- and mining is saturated. Extending coverage requires new reaction corpora,
+\numHydResidualrefs{} references. Mining is saturated. Extending coverage requires new reaction corpora,
 and the census narrows the search: synthetic corpora are excluded by measurement, leaving
 enzymatic and regulatory sources. Metabolite identifications from radiolabelled human ADME studies
 reported in regulatory submissions are human \emph{in vivo} data on exactly the population
@@ -723,8 +723,8 @@ first counts the loci of the reaction centre of the pair a template was mined fr
 \numCompositeLoci{} of \numCompositeScored{} mined templates, \numCompositeLocisharePct{}. That is
 a floor and not a bound: two edits that share or neighbour centre atoms arrive as one locus and
 are counted once. A second instrument, whose threshold was registered before it was written,
-counts core-incident edits --- bonds between matched atoms whose order or presence moves, plus
-attachment points gained or lost, with bonds inside an added fragment not counted --- and calls a
+counts core-incident edits (bonds between matched atoms whose order or presence moves, plus
+attachment points gained or lost, with bonds inside an added fragment not counted) and calls a
 template composite at \numCompositeThreshold{} or more, above every single enzymatic turnover.
 It flags \numCompositeEdits{}, and the two instruments agree on only \numCompositeBoth{}, so
 their union is \numCompositeUnion{} templates, \numCompositeUnionsharePct{} of the mined templates.
@@ -736,7 +736,7 @@ from such a pair performs those steps together: inspection finds a rule oxidisin
 positions at once and a rule that both substitutes and conjugates glutathione. The coverage
 ceiling this paper reports is therefore a one-template ceiling and not a one-enzyme one, and the
 corrected share explains why applying the bank at depth two lifts it by only about $0.012$ at
-$8.5$ times the candidate cost --- a fifth of the mined bank already carries the compositions a
+$8.5$ times the candidate cost: a fifth of the mined bank already carries the compositions a
 second application would have to discover, so the second application mostly rediscovers them. Precision is bounded by annotation
 completeness. The rule-budget threshold in P3 is a property of the requested budget rather than
 of the system. The group-ranking headroom is real and unreached by both registered

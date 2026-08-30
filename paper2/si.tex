@@ -53,8 +53,8 @@ redistribution.
 
 What the deposit contains follows from that, and the decision is taken here rather than deferred.
 The candidate structures are produced by applying this work's rule bank and are not corpus
-records, so they are released. Every corpus structure --- the substrates as well as the annotated
-metabolites --- appears only as a tautomer-canonical InChIKey, which is a hash and does not carry
+records, so they are released. Every corpus structure, the substrates as well as the annotated
+metabolites, appears only as a tautomer-canonical InChIKey, which is a hash and does not carry
 the structure. No source record is redistributed \emph{in the deposit}, and the licence of the
 derived corpus is \CorpusLicence{}. The repository is a separate channel and ships something
 narrower and deliberate: the evaluated test substrates and their annotated metabolites as
@@ -104,8 +104,8 @@ union when the data is loaded, applied to structures after standardisation, with
 between sources because no source is recorded. This is also why the split table counts
 \numAssemblyTestids{} test substrates by index and \numAssemblyTeststructures{} by structure.
 
-\paragraph{What is inside, for the sources that can be checked.} Two of the four --- MetXBioDB
-and the GLORYx reference set --- are physically present here and can be intersected with the
+\paragraph{What is inside, for the sources that can be checked.} Two of the four, MetXBioDB
+and the GLORYx reference set, are physically present here and can be intersected with the
 corpus by structure skeleton. The corpus holds \numAssemblyCorpuspairs{} distinct annotated
 pairs. Of MetXBioDB's \numAssemblyMetxpairs{}, \numAssemblyMetxinside{} are inside it,
 \numAssemblyMetxshare{}; of the GLORYx set's \numAssemblyGloryxpairs{} pairs over
@@ -137,9 +137,8 @@ missing.
 The annotated metabolites of the evaluated test set are released as structures, in
 \texttt{results/test\_references.json}, alongside every arm's per-substrate predictions. All five
 matching criteria are therefore recomputable on the comparison population, not only the default
-one: every row of Table~\ref{tab:si-criterion} can be rebuilt from what is released. An earlier
-version of this section claimed otherwise, on the strength of what the Zenodo deposit holds rather
-than what the repository ships.
+one: every row of Table~\ref{tab:si-criterion} can be rebuilt from what is released. The
+repository and the Zenodo deposit differ in this, and the repository is the wider of the two.
 
 The corpus is divided by substrate, so no substrate of one split appears in another. Molecular overlap between splits is non-zero and expected, because a molecule
 that is a substrate in one split may appear as a product in another: \numLeakMolOverlap{}
@@ -194,8 +193,8 @@ sulfur, chlorine, fluorine, phosphorus and bromine behind them and iodine and se
 figures. Nothing in the annotation is outside what the rule bank's chemistry addresses.
 
 Two properties bear directly on how the recall figures should be read.
-\numRefauditSelfref{} references are equal to their own substrate under the default key --- an
-annotation that names a molecule as its own metabolite --- and the parent-drop convention
+\numRefauditSelfref{} references are equal to their own substrate under the default key, an
+annotation that names a molecule as its own metabolite, and the parent-drop convention
 discards exactly those, which is why that convention's effect is negative for the substrates
 concerned rather than zero. And the annotation is positive-unlabelled throughout: a pair that
 does not appear is not a pair that was tested and rejected. That is why precision is reported and
@@ -378,7 +377,7 @@ substrates and against the same annotation, its micro recall rises at every budg
 first: by $+\numSygdialDiffOneFive$ at $k=15$, $95\%$ CI
 $[+\numSygdialLoOneFive, +\numSygdialHiOneFive]$, $+\numSygdialDiffThreeZero$ at $k=30$ and
 $+\numSygdialDiffFiveZero$ at $k=50$. \numSygdialSeparating{} of the \numSygdialBudgets{}
-intervals exclude zero, and they are the four widest budgets --- which are the budgets at which
+intervals exclude zero, and they are the four widest budgets, which are the budgets at which
 the main text claims a lead over SyGMa. The corpus's drawing was costing the comparator recall,
 and the amount is now on the record. It does not reverse the comparison: the exhaustive mode's
 lead over SyGMa at $k=30$ is several times this correction. It does mean the lead is over a SyGMa
@@ -391,7 +390,6 @@ The bank holds \numBankRules{} templates spanning \numBankTypes{} distinct react
 which \numBankParses{} parse under RDKit 2022.09.5. It is the deduplicated union of three curated
 collections, a fourth that was carried as curated and is a second machine extraction, and the
 templates mined from the training split alone, which is disjoint by substrate and not by molecule.
-The paragraphs below count them.
 
 The two halves are counted rather than described, and the split between them turns out to be
 drawn in the wrong place. \numCuratedTotal{} templates are nominally curated and
@@ -399,17 +397,16 @@ drawn in the wrong place. \numCuratedTotal{} templates are nominally curated and
 \texttt{data/smirks.txt} (\numCuratedHydroxylation{}), \texttt{data/merged\_smirks.txt}
 (\numCuratedMerged{}) and \texttt{resources/notebooks\_rules.txt}
 (\numCuratedNotebooks{}), contributing \numAttribNamed{} distinct rules to the bank after
-deduplication. The remaining \numAttribUnattributed{} were carried as unattributed because no
-file in the repository was known to hold them.
+deduplication. The remaining \numAttribUnattributed{} match none of those three files.
 
-They are not curated. Three independent marks identify them, and all three agree.
-\numAttribPlaced{} of the \numAttribUnattributed{} are verbatim lines of a file whose one
-commit in the history describes it as extracted reaction rules. They are written in element
-notation with multi-component reactant groups, like that file and unlike every hand-written
-collection here. And they carry the corpus's imidic drawing at the rate the mined templates do,
-\numAttribUnattributedimidic{} against \numAttribMinedimidic{}, where the named expert
-collections carry it at \numAttribNamedimidic{} --- a factor of thirty-seven, and the
-fingerprint of a template extracted from these annotated pairs rather than written by a chemist.
+They are not curated, and three independent marks say so. \numAttribPlaced{} of the
+\numAttribUnattributed{} are verbatim lines of a file whose one commit in the history describes
+it as extracted reaction rules. They are written in element notation with multi-component
+reactant groups, like that file and unlike every hand-written collection here. And they carry the
+corpus's imidic drawing at the rate the mined templates do, \numAttribUnattributedimidic{}
+against \numAttribMinedimidic{}, where the named expert collections carry it at
+\numAttribNamedimidic{}, a factor of thirty-seven; that rate is the fingerprint of a template
+extracted from these annotated pairs rather than written by a chemist.
 The bank therefore holds two machine extractions and one curated body, in two different template
 notations, and the curated body is \numAttribNamed{} templates rather than \numCuratedTotal{}.
 The published source and licence of the three named collections is \CuratedProvenance{}.
@@ -441,8 +438,8 @@ distribution is worth reporting beside it. Counting the atoms on each template's
 \numRsizeLetwo{} of \numRsizeParsed{} parseable templates, \numRsizeLetwosharePct{}, have two
 atoms or fewer and \numRsizeLethree{}, \numRsizeLethreesharePct{}, have three or fewer. A
 template of that size matches almost anywhere it can match at all, so for those the site
-discrimination is supplied by the learned stages rather than by the template --- which qualifies
-the claim that a prediction is rule-attributable, without withdrawing it: the rule and the firing
+discrimination is supplied by the learned stages rather than by the template. That qualifies
+the claim that a prediction is rule-attributable without withdrawing it: the rule and the firing
 atoms are still reported, and what is weaker is the rule's own selectivity. The tail is not
 marginal in practice: \numRsizeCasetop{} of the twenty highest-ranked candidates in the worked
 example come from templates with three reactant atoms or fewer.
@@ -517,7 +514,7 @@ between them, which is what a cleavage or a cyclisation looks like, and two inde
 otherwise; this instrument counts the pieces and does not separate the two cases. It has a blind
 spot in the other direction as well, and the blind spot is the larger problem: two edits that
 share or neighbour centre atoms arrive as one piece and are counted once. This share is therefore
-a floor. An earlier version of this paper called it a bound, which it is not.
+a floor and not a bound.
 
 \paragraph{The second instrument, and its bar, fixed first.} The remedy is a second lens with no
 threshold chosen after the fact, so the threshold was registered as H16 before the instrument was
@@ -572,8 +569,8 @@ released history, in that order, so a reader need not take the sequence on trust
 
 One weakness of the register is ours to state rather than a reader's to find. Only P10 fixes its
 adjudicating population as part of the pre-specification. The nine before it name a threshold and
-a falsification condition and leave the population implicit, and three of them --- P5, P6 and P7
---- were in the event adjudicated on the comparison set, which is derived from the test split,
+a falsification condition and leave the population implicit, and three of them, P5, P6 and P7,
+were in the event adjudicated on the comparison set, which is derived from the test split,
 while the rest were adjudicated on validation. Table~\ref{MS-tab:hyp} records the population each was checked on
 so the reader can see which is which, but recording it after the fact is not the same as fixing
 it before, and for those three it was not fixed before. The register's later entries do fix it.
@@ -761,12 +758,12 @@ first run.
 One pinned artifact needs a label rather than a correction.
 \texttt{results/four\_method\_291.json} defines the comparison population and gates the MetaTox
 column, and its comparator columns reproduce Table~\ref{MS-tab:sweep} exactly. Its GRAIL column
-is a superseded arm --- \numFourmethodGrailFiveZero{} at $k=50$ against the deployed arms'
-\numSweepBankFiveZero{} and \numSweepTrainedFiveZero{} --- and no number in this paper derives
+is a superseded arm, \numFourmethodGrailFiveZero{} at $k=50$ against the deployed arms'
+\numSweepBankFiveZero{} and \numSweepTrainedFiveZero{}, and no number in this paper derives
 from it; Table~\ref{MS-tab:sweep} is supplied by \texttt{deployment\_table.json}, which carries a
 gate asserting the two agree on MetaTox. The consequence worth stating is that the file's own
 family-wise block is computed over a family in which this system trails at every budget, so it
-cannot speak to the leads the paper claims. The file now says so itself.
+cannot speak to the leads the paper claims, and the artifact records that.
 
 \numProvPinned{} artifacts are pinned. Most record the script that wrote them, the SHA-256 of
 that script's source, and the commit it ran at; a sweep recomputes the hash of each producer and
@@ -796,8 +793,8 @@ evidence that the unpinned state was harmless, and it is worth having in a form 
 assurance.
 
 Two limits of the apparatus are ours to state. First, and materially: the stamp digests the
-producer script's own bytes and nothing else, so a change anywhere in the package --- the code
-that computes the tautomer keys, the matcher, the recall --- invalidates no artifact and trips no
+producer script's own bytes and nothing else, so a change anywhere in the package (the code
+that computes the tautomer keys, the matcher, the recall) invalidates no artifact and trips no
 gate. The split manifest pins the data and the sweep pins the producer; between them sits the
 library, and it is pinned by neither. Second, and narrowly: most stamped artifacts record a dirty
 working tree at write time. Verification resolves by the recorded source digest, which is
@@ -816,7 +813,7 @@ moved.
 Numbers reach the page through macros generated from pinned artifacts: \numProvMacrosbody{}
 distinct macros in the manuscript and \numProvMacrossi{} here. The claim is not that every
 number does. \numProvHandtyped{} measurements are typed by hand, most of them in this document,
-and they are enumerated in the checker itself rather than folded into a wildcard --- so a number
+and they are enumerated in the checker itself rather than folded into a wildcard, so a number
 typed by hand that is not already on that list still fails the check, and the list is the exact
 statement of what remains to be wired. A checker refuses any other numeric literal in either
 document, refuses any hand-typed pointer between the two documents in either direction, and
@@ -829,8 +826,8 @@ The train and validation candidate pools are deposited at \ZenodoDoi{}. Every su
 every annotated metabolite in them is replaced by its tautomer-canonical InChIKey before the
 archive is built, so the deposit holds no source structure; the candidate structures beside the
 keys are this work's own output and are released as they are. The transform is part of the
-deposit tool and its counts are recorded in the manifest --- how many substrates went in, how
-many came out, how many could not be keyed and how many keys collided --- because a silent drop
+deposit tool and its counts are recorded in the manifest (how many substrates went in, how
+many came out, how many could not be keyed and how many keys collided) because a silent drop
 there would be a silent loss of population. The manifest also pins the SHA-256 of both the
 archive and the file inside it together with the record counts, so a download can be verified
 against the version used here. The tool refuses to build an archive from a pool whose substrates
