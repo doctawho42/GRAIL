@@ -1,5 +1,5 @@
 {
- "artifacts_the_numbers_come_from": 58,
+ "artifacts_the_numbers_come_from": 60,
  "exempt": 3,
  "unpinned": [],
  "unstamped": [],
@@ -24,6 +24,15 @@
    "sweep_status": "unpinned",
    "how": null,
    "exempt": "the provenance sweep's own report; pinning it would make the check circular"
+  },
+  {
+   "artifact": "results/budget_curve.json",
+   "pinned": true,
+   "stamped": true,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "recorded source digest",
+   "exempt": null
   },
   {
    "artifact": "results/cascade_by_pairs.json",
@@ -441,6 +450,15 @@
   },
   {
    "artifact": "results/similarity_baseline.json",
+   "pinned": true,
+   "stamped": true,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "recorded source digest",
+   "exempt": null
+  },
+  {
+   "artifact": "results/site_agreement.json",
    "pinned": true,
    "stamped": true,
    "verifiable": true,

@@ -715,7 +715,11 @@ back the pool.
 
 Three properties, none of them a recall figure. Every prediction names the transformation rule
 that produced it and the site at which it fired, which allows a candidate to be accepted or
-rejected on mechanistic grounds. The whole output is ranked, whereas the incumbent ranks part of
+rejected on mechanistic grounds. That second half is a claim and is measured: of
+\numSiteScored{} correctly predicted metabolites, the site reported touches the atoms that
+actually differ from the substrate in \numSiteTouchingPct{}, against \numSiteNullPct{} for a set
+of atoms of the same size drawn at random from the same molecule
+(Section~\ref{SI-sec:si-site}). The whole output is ranked, whereas the incumbent ranks part of
 its output and leaves the remainder in file order. And every evaluation choice is declared with
 every cell of the resulting grid reported, which is what makes the comparison independently
 reproducible.
@@ -806,8 +810,11 @@ annotation every recall figure is measured against; the five matching criteria
 defined and the sensitivity of the comparison to the choice among them; the parent-drop
 convention measured per arm; precision at every budget; every comparison difference with its
 paired interval; how the substrate is drawn, and what that decides; the rule bank, its mining
-procedure, the provenance of each collection and its containment of a published rule set; the
-architecture and training of both learned stages with every setting they were trained under; what each method recovers split by transformation class; what a single step is, measured two ways; the
+procedure, the provenance of each collection and how much of it is a published rule set verbatim;
+what the rule budget buys; the architecture and training of both learned stages with every setting
+they were trained under; whether the site a prediction names is the site that changed, against a
+null; what each method recovers split by transformation class; what a single step is, measured two
+ways; the
 sixteen registered predictions, including the six this paper does not report; the group-ranking
 oracle under four partitions with a granularity-matched control; the stage ablations in full;
 when a ranking comparison can measure anything; the choice of evaluation population; the worked

@@ -187,6 +187,29 @@ def build():
     # Two loops measure the ceiling under the same hydrogen convention and return different
     # counts. The paper reports the deployed loop's; the audit loop's is what the two conventions
     # are compared with. The difference is small and is printed rather than chosen between.
+    # whether the site a prediction names is the site that changed, against a same-size null
+    sag = art("site_agreement.json")
+    n["site.scored"] = sag["counts"]["scored"]
+    n["site.hit"] = sag["counts"]["centre_hit"]
+    n["site.touching"] = sag["share_of_scored_where_the_reported_site_touches_the_centre"]
+    n["site.inside"] = sag["share_of_scored_where_the_reported_site_lies_wholly_inside_it"]
+    n["site.null"] = sag["null"]["share_touching_the_centre"]
+    n["site.margin"] = sag["null"]["observed_minus_null"]
+
+    # what the rule budget buys on validation, so the deployed value is a chosen point
+    bc = art("budget_curve.json")
+    n["budget.substrates"] = bc["population"]["n_substrates"]
+    n["budget.deployed"] = bc["deployed_budget"]
+    n["budget.built"] = len(bc["budgets_built"])
+    for b in bc["budgets_built"]:
+        n[f"budget.k{b}.recall"] = bc["by_budget"][str(b)]["recall_micro"]["15"]
+        n[f"budget.k{b}.candidates"] = bc["by_budget"][str(b)]["mean_candidates"]
+    for b, cell in bc["against_the_deployed_budget_at_k15"].items():
+        n[f"budget.k{b}.gap"] = cell["gap_at_15"]
+        n[f"budget.k{b}.lo"] = cell["ci95"][0]
+        n[f"budget.k{b}.hi"] = cell["ci95"][1]
+    n["budget.beating"] = len(bc["budgets_that_beat_the_deployed_one"])
+
     # how much of the curated half is somebody else's rules verbatim, and under whose terms
     ctp = art("curated_third_party.json")
     n["thirdparty.curated"] = ctp["bank"]["curated"]

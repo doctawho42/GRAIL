@@ -1,0 +1,15 @@
+\begin{table}[h]
+\centering\small
+\begin{tabular}{rrrrrrr}
+\toprule
+rule budget & candidates & $r@1$ & $r@5$ & $r@15$ & $r@30$ & vs deployed at 15 \\
+\midrule
+10 & 8.49 & .1233 & .3044 & .3699 & .3775 & $-$.0944$^{*}$ \\
+20 & 12.51 & .1233 & .3120 & .4231 & .4444 & $-$.0411$^{*}$ \\
+\textbf{30} & 16.51 & .1065 & .3135 & .4642 & .4886 & --- \\
+50 & 25.65 & .1096 & .2831 & .4658 & .5373 & +.0015 \\
+\bottomrule
+\end{tabular}
+\caption{What the rule budget buys, on 294 validation substrates. Candidates is the mean number returned after deduplication and the pool cap; leading zeros are dropped. The last column is the paired difference in micro recall at a budget of 15 against the deployed rule budget, in bold, with $^{*}$ marking an interval that excludes zero.}
+\label{tab:si-budget}
+\end{table}

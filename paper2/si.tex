@@ -506,6 +506,32 @@ Support across mined templates is heavily skewed: \numMinedSingleton{} of \numMi
 a single training pair. Re-running the miner on the same split re-derives every template it
 derived before and none new.
 
+\section{What the rule budget buys}
+\label{sec:si-budget}
+
+The interactive mode applies \numHOneZeroTopk{} templates because that is the value the released
+checkpoint was trained at. That is a fact about how the run was configured and not an argument for
+the number, so the curve is measured: validation pools built at a range of budgets with the pool
+cap, the fusion, the filter and the matching criterion identical, on \numBudgetSubstrates{}
+substrates. Validation and not the comparison set, because a budget chosen on the population the
+comparison is reported on would be chosen on the test.
+
+\input{si_table_budget}
+
+The deployed value sits at the knee. Both smaller budgets lose to it at a budget of fifteen with
+the interval excluding zero, and the next larger one gains $+\numBudgetKFiveZeroGap$
+$[\numBudgetKFiveZeroLo, \numBudgetKFiveZeroHi]$, an interval covering zero, while returning
+\numBudgetKFiveZeroCandidates{} candidates against \numBudgetKThreeZeroCandidates{}. Every one of those
+candidates is standardised, which the runtime section identifies as the binding cost, so
+\numBudgetBeatingWord{} of the budgets measured is worth its price at the budget the headline is
+read at.
+
+That is not the whole story, and the row for a budget of thirty makes it plain: at a wider output
+budget the larger rule budget does buy something, because the pool it builds has not run out. A
+deployment answering with thirty or fifty candidates should raise the rule budget for exactly the
+reason the Discussion gives for the interactive mode's deficit there, and pay the standardisation
+cost that follows.
+
 \section{Model architectures and training}
 
 \subsection{Generator}
@@ -565,6 +591,37 @@ checkpoint is trained under cross-entropy instead, so its unlabelled pairs enter
 consequence is that its scores are conservative on exactly the candidates the annotation is silent
 about. The same silence makes precision pessimistic by a bounded but unknown amount, which is why
 the paper reports it without using it to order systems.
+
+\section{Whether the site a prediction names is the site that changed}
+\label{sec:si-site}
+
+Every prediction carries the template that produced it and the atoms that template fired on, and
+the main text offers that as a reason to prefer this system. A rule can reach the right product
+from the wrong place, so the claim is testable and had not been tested.
+
+For every candidate the generator produces whose key matches an annotated reference, the atoms
+fired on are compared with the atoms that differ between substrate and reference. The comparison
+is made before the filter and before any budget, so what is measured is localisation and not
+ranking. Of \numSiteScored{} such matches on the comparison set, the reported site touches the
+change in \numSiteTouchingPct{} and lies wholly inside it in \numSiteInsidePct{}. The second
+figure is lower for a reason that is not a failure: a template matches its whole pattern, which
+is larger than the part it alters.
+
+What the change is, exactly, is inferred and not annotated. The corpus records a substrate and a
+product and no site, so the reference centre here is derived: the common substructure of the two
+is computed, the substrate atoms it does not cover are taken as changed, the substrate atoms
+carrying a part of the product the substructure does not cover are added, and the neighbours of a
+removed atom with them. That is a structural inference. What this establishes is agreement between
+the site a prediction names and the change it claims to explain, not agreement with an
+experimentally determined site of metabolism, for which this corpus has no labels.
+
+The figure needs a floor, because both sets are subsets of the same molecule and on a small
+substrate with a large centre they would meet whatever the rule did. Drawing a set of atoms of the
+same size uniformly from the same substrate touches the centre \numSiteNullPct{} of the time, so
+the reported sites exceed chance by \numSiteMarginPct{}. The null is conservative: a real
+template match is connected and a connected draw would land on the centre more often than a
+uniform one, so the true margin is narrower than this. The honest reading is that the localisation
+carries real information and that a raw agreement rate near nine in ten is not the size of it.
 
 \section{What a single step is}
 

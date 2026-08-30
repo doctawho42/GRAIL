@@ -900,3 +900,44 @@ def test_firing_atoms_localises_a_raw_reaction_product():
                    "the sanitisation error again and every candidate reports an empty site")
     assert all(0 <= a < substrate.GetNumAtoms() for a in sites), (
         "a firing atom is outside the substrate, so the indices address the wrong molecule")
+
+
+def test_a_budget_curve_refuses_a_pool_that_is_still_being_written(tmp_path, monkeypatch):
+    """A partial pool must be named and dropped, not silently narrow every other budget.
+
+    The curve pairs its budgets by intersecting the substrates each pool holds. A pool still being
+    built holds a prefix, so the intersection shrinks the population for every budget at once and
+    the resulting curve is measured on that prefix without saying so. It happened: a four-point
+    curve came out on 83 of 294 substrates. The refusal has to fire on the count, and the count has
+    to reach the artifact, or the next reader cannot tell which budgets the curve is over.
+    """
+    import importlib
+    import json
+    import sys
+
+    sys.path.insert(0, "scripts")
+    sys.path.insert(0, "scripts/typed_edit")
+    module = importlib.import_module("budget_curve")
+
+    results = tmp_path / "results"
+    for budget, n_subs in ((10, 4), (30, 4), (50, 2)):
+        directory = results / f"valpools_k{budget}"
+        directory.mkdir(parents=True)
+        pools = {f"C{'C' * i}O": [{"generator": 1.0, "filter": 1.0, "key": f"K{i}"}]
+                 for i in range(n_subs)}
+        (directory / "all.json").write_text(json.dumps({
+            "pools": pools,
+            "references": {s: ["K%d" % i] for i, s in enumerate(pools)},
+        }))
+    monkeypatch.setattr(module, "ROOT", tmp_path)
+    monkeypatch.chdir(tmp_path)
+
+    assert module.pools_on_disk().keys() == {10, 30, 50}
+    module.main()
+    report = json.loads((results / "budget_curve.json").read_text())
+
+    assert report["budgets_built"] == [10, 30], "the partial pool was not dropped"
+    assert report["budgets_skipped_as_partial"] == {"50": 2}, "the drop was not reported"
+    assert report["substrates_each_complete_pool_holds"] == 4
+    assert report["population"]["n_substrates"] == 4, (
+        "the population narrowed to the partial pool's prefix, which is the defect this guards")

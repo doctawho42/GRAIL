@@ -238,6 +238,39 @@ def si_chemistry():
             "\\label{tab:si-chemistry}\n\\end{table}\n")
 
 
+def si_budget():
+    """Recall and cost at each rule budget built, on validation.
+
+    Budgets whose pool is still being written are excluded by the producer and named in its
+    artifact; this prints what was measured.
+    """
+    d = art("budget_curve.json")
+    ks = ["1", "5", "15", "30"]
+    rows = []
+    for budget in sorted(d["by_budget"], key=int):
+        row = d["by_budget"][budget]
+        cell = d["against_the_deployed_budget_at_k15"].get(budget)
+        if cell is None:
+            gap = "---"
+        else:
+            star = "$^{*}$" if cell["excludes_zero"] else ""
+            gap = (("$-$" if cell["gap_at_15"] < 0 else "+")
+                   + f"{abs(cell['gap_at_15']):.4f}".lstrip("0") + star)
+        marker = "\\textbf{" + budget + "}" if int(budget) == d["deployed_budget"] else budget
+        recalls = " & ".join(f"{row['recall_micro'][k]:.4f}".lstrip("0") for k in ks)
+        rows.append(f"{marker} & {row['mean_candidates']} & {recalls} & {gap} \\\\")
+    n = d["population"]["n_substrates"]
+    return ("\\begin{table}[h]\n\\centering\\small\n"
+            "\\begin{tabular}{rrrrrrr}\n\\toprule\n"
+            "rule budget & candidates & $r@1$ & $r@5$ & $r@15$ & $r@30$ & vs deployed at 15 \\\\\n"
+            "\\midrule\n" + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n"
+            f"\\caption{{What the rule budget buys, on {n} validation substrates. Candidates is the "
+            "mean number returned after deduplication and the pool cap; leading zeros are dropped. "
+            "The last column is the paired difference in micro recall at a budget of 15 against the "
+            "deployed rule budget, in bold, with $^{*}$ marking an interval that excludes zero.}\n"
+            "\\label{tab:si-budget}\n\\end{table}\n")
+
+
 def si_short():
     """How many of each arm's lists are shorter than the budget, at every budget.
 
@@ -449,7 +482,8 @@ if __name__ == "__main__":
                      ("si_table_dialect", si_dialect),
                      ("si_table_short", si_short),
                      ("si_table_hyperparameters", si_hyperparameters),
-                     ("si_table_chemistry", si_chemistry)):
+                     ("si_table_chemistry", si_chemistry),
+                     ("si_table_budget", si_budget)):
         try:
             (OUT / f"{name}.tex").write_text(fn())
             print(f"  wrote paper2/{name}.tex")
