@@ -351,7 +351,10 @@ ranking, and the counts are reported for every arm: at $k=50$,
 \numShortBankFiveZero{} of the exhaustive arm's are shorter than the budget.
 
 Against MetaTox alone, the incumbent web service this work set out to replace, the exhaustive mode
-leads at all nine budgets, with the interval excluding zero at seven of them.
+leads at all nine budgets, with the interval excluding zero at seven of them. It is also the one
+comparator whose configuration this work can state rather than infer, because its first author
+\citep{Rudik_2017} is a co-author here and read the arm it is compared in; the configuration is in
+the Supporting Information.
 
 At a budget of $15$ MetaTox's macro recall is \numHOneOneRecallMetatoxOneFive{} against GRAIL's
 \numHOneOneRecallRule{}. The two do not emit alike: MetaTox returns
@@ -721,7 +724,7 @@ reproducible.
 
 GRAIL does not lead at the tight budgets. At $k=15$ neither arm separates from the strongest
 comparator, and at $k=20$ the interactive arm separates against it. The established lead is the exhaustive arm's, at $k=30$ and $50$. The system is not compared against the 2025--26 wave, because that wave cannot be run as
-released. Of \numComparatorsUnavailable{} such systems, one releases training code without a
+released. Of \numComparatorsUnavailableWord{} such systems, one releases training code without a
 checkpoint \citep{Larsson_2025}, one has a withdrawn module \citep{Zhou_2025}, one offers only a
 web form \citep{Zhou_2026} and one has no repository \citep{Chavan_2026}. No ranking in this
 literature can presently be verified independently, which is the concrete case for leaderboards
@@ -804,7 +807,7 @@ defined and the sensitivity of the comparison to the choice among them; the pare
 convention measured per arm; precision at every budget; every comparison difference with its
 paired interval; how the substrate is drawn, and what that decides; the rule bank, its mining
 procedure, the provenance of each collection and its containment of a published rule set; the
-architecture and training of both learned stages; what a single step is, measured two ways; the
+architecture and training of both learned stages with every setting they were trained under; what each method recovers split by transformation class; what a single step is, measured two ways; the
 sixteen registered predictions, including the six this paper does not report; the group-ranking
 oracle under four partitions with a granularity-matched control; the stage ablations in full;
 when a ranking comparison can measure anything; the choice of evaluation population; the worked

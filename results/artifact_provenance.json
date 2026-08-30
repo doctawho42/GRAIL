@@ -492,8 +492,8 @@
  "n_pinned_stale": 0,
  "sweep": {
   "unstamped": 112,
-  "producer_changed": 38,
-  "current": 25,
+  "producer_changed": 39,
+  "current": 26,
   "producer_unknown": 27,
   "cosmetic_only": 8
  },
@@ -1472,6 +1472,15 @@
    "detail": "producer was cdd40c5cde65, is now db95da4ab126",
    "diff_recovered_by": "source at df40e6da66ab",
    "diff": "--- setsize_headroom.py (as recorded)\n+++ setsize_headroom.py (now)\n@@ -64,4 +64,25 @@\n     f = 2 * p * r / (p + r) if (p + r) else 0.0\n     return p, r, f\n+\n+\n+# The architectural question is not whether fewer is better but whether HOW MANY should depend on\n+# the substrate. A global constant answers no; a rule relative to the pool answers yes only if it\n+# beats the best constant. The gap rule emits while a candidate scores within a factor of the\n+# leader, which is what normalising over siblings does at inference. It is module level so that the\n+# cross-fitting check selects the same rule this script reports rather than a copy of it.\n+def gap_rule(alpha):\n+    def f(sub, row):\n+        cs = row[\"candidates\"]\n+        if not cs:\n+            return 1\n+        top = cs[0][\"combined\"]\n+        n_ = 1\n+        for c in cs[1:]:\n+            if c[\"combined\"] >= alpha * top:\n+                n_ += 1\n+            else:\n+                break\n+        return n_\n+    return f\n \n \n@@ -165,23 +186,4 @@\n         return int(round(min(max(float(x @ beta), 1.0), 15.0)))\n \n-    # The architectural question is not whether fewer is better but whether HOW MANY should depend\n-    # on the substrate. A global constant answers no; a rule relative to the pool answers yes only\n-    # if it beats the best constant. The gap rule emits while a candidate scores within a factor of\n-    # the leader, which is what normalising over siblings does at inference.\n-    def gap_rule(alpha):\n-        def f(sub, row):\n-            cs = row[\"candidates\"]\n-            if not cs:\n-                return 1\n  ... diff truncated"
+  },
+  {
+   "artifact": "results/site_agreement.json",
+   "script": "site_agreement.py",
+   "how": "recorded source digest",
+   "status": "producer_changed",
+   "detail": "producer was c4c042704915, is now 3d7dcb842316",
+   "diff_recovered_by": "source at c46f757579ea",
+   "diff": "--- site_agreement.py (as recorded)\n+++ site_agreement.py (now)\n@@ -29,4 +29,5 @@\n import glob\n import json\n+import random\n import sys\n import time\n@@ -41,4 +42,6 @@\n \n from _provenance import stamp  # noqa: E402\n+\n+NULL_DRAWS = 200\n \n \n@@ -91,5 +94,9 @@\n                     default=str(ROOT / \"artifacts/full5000_implicit/checkpoints/generator.pt\"))\n     ap.add_argument(\"--out\", default=str(ROOT / \"results\" / \"site_agreement.json\"))\n+    ap.add_argument(\"--null-draws\", type=int, default=200)\n     args = ap.parse_args()\n+\n+    global NULL_DRAWS\n+    NULL_DRAWS = args.null_draws\n \n     from rdkit import Chem, RDLogger\n@@ -157,5 +164,6 @@\n             tally[\"centre_hit\"] += hit\n             tally[\"fired_inside_centre\"] += inside\n-            rows.append({\"key\": key, \"fired\": sorted(fired), \"centre\": sorted(centre),\n+            rows.append({\"key\": key, \"n_atoms\": sub_mol.GetNumAtoms(),\n+                         \"fired\": sorted(fired), \"centre\": sorted(centre),\n                          \"intersects\": hit, \"contained\": inside})\n         if rows:\n@@ -166,5 +174,23 @@\n                   f\"matched {tally['matched']} agree {tally['centre_hit']}\", flush=True)\n \n+    # A site that touches the centre is only evidence if a site chosen at random would not. Both\n+    # sets are subsets of the same molecule, and on a small substrate with a large centre they\n+    # would intersect whatever the rule did. The null draws a set of the same size uniformly from\n+    # the same atoms, which is conservative: it ignores that a template's match is connected and a\n  ... diff truncated"
   },
   {
    "artifact": "results/som_prior_reeval.json",

@@ -28,6 +28,7 @@ from __future__ import annotations
 import argparse
 import glob
 import json
+import random
 import sys
 import time
 from collections import Counter
@@ -40,6 +41,8 @@ for _p in (str(ROOT), str(ROOT / "scripts"), str(HERE)):
         sys.path.insert(0, _p)
 
 from _provenance import stamp  # noqa: E402
+
+NULL_DRAWS = 200
 
 
 def reference_centre(sub_mol, ref_mol):
@@ -90,7 +93,11 @@ def main() -> int:
     ap.add_argument("--gen-ckpt",
                     default=str(ROOT / "artifacts/full5000_implicit/checkpoints/generator.pt"))
     ap.add_argument("--out", default=str(ROOT / "results" / "site_agreement.json"))
+    ap.add_argument("--null-draws", type=int, default=200)
     args = ap.parse_args()
+
+    global NULL_DRAWS
+    NULL_DRAWS = args.null_draws
 
     from rdkit import Chem, RDLogger
 
@@ -156,7 +163,8 @@ def main() -> int:
             inside = fired <= centre
             tally["centre_hit"] += hit
             tally["fired_inside_centre"] += inside
-            rows.append({"key": key, "fired": sorted(fired), "centre": sorted(centre),
+            rows.append({"key": key, "n_atoms": sub_mol.GetNumAtoms(),
+                         "fired": sorted(fired), "centre": sorted(centre),
                          "intersects": hit, "contained": inside})
         if rows:
             per_substrate.append({"substrate": s, "matches": rows})
@@ -165,7 +173,25 @@ def main() -> int:
             print(f"  {i}/{len(subs)} ({time.time() - t0:.0f}s)  "
                   f"matched {tally['matched']} agree {tally['centre_hit']}", flush=True)
 
+    # A site that touches the centre is only evidence if a site chosen at random would not. Both
+    # sets are subsets of the same molecule, and on a small substrate with a large centre they
+    # would intersect whatever the rule did. The null draws a set of the same size uniformly from
+    # the same atoms, which is conservative: it ignores that a template's match is connected and a
+    # connected draw would land on the centre more often than this does.
+    rng = random.Random(0)
+    draws, null_hits = 0, 0
+    for entry in per_substrate:
+        for row in entry["matches"]:
+            n_atoms, size = row["n_atoms"], len(row["fired"])
+            centre = set(row["centre"])
+            for _ in range(NULL_DRAWS):
+                draws += 1
+                pick = set(rng.sample(range(n_atoms), min(size, n_atoms)))
+                null_hits += bool(pick & centre)
+    null_rate = null_hits / max(draws, 1)
+
     scored = max(tally["scored"], 1)
+    observed = tally["centre_hit"] / scored
     report = {
         "provenance": stamp(__file__),
         "population": {"substrates_attempted": len(subs), "rule_budget": args.top_k,
@@ -179,6 +205,15 @@ def main() -> int:
             tally["centre_hit"] / scored, 4),
         "share_of_scored_where_the_reported_site_lies_wholly_inside_it": round(
             tally["fired_inside_centre"] / scored, 4),
+        "null": {
+            "draws_per_match": NULL_DRAWS,
+            "seed": 0,
+            "definition": ("a set of atoms of the same size drawn uniformly from the same "
+                           "substrate, which ignores that a real template match is connected and "
+                           "therefore understates what chance alone would achieve"),
+            "share_touching_the_centre": round(null_rate, 4),
+            "observed_minus_null": round(observed - null_rate, 4),
+        },
         "reading": (
             "A correct structure reached from the wrong atoms is a prediction whose explanation is "
             "wrong, and this is the rate at which that happens. The centre is inferred from "
@@ -192,6 +227,8 @@ def main() -> int:
           f"{report['share_of_scored_where_the_reported_site_touches_the_centre']:.4f}")
     print(f"  site lies wholly inside it       : "
           f"{report['share_of_scored_where_the_reported_site_lies_wholly_inside_it']:.4f}")
+    print(f"  same-size random atoms would touch: {null_rate:.4f} "
+          f"(observed exceeds it by {observed - null_rate:+.4f})")
     for key in ("centre_not_derivable", "no_site_reported", "reference_structure_absent",
                 "substrate_failed"):
         if tally[key]:
