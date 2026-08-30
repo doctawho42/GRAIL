@@ -213,13 +213,21 @@ def build():
     # how much of the curated half is somebody else's rules verbatim, and under whose terms
     ctp = art("curated_third_party.json")
     n["thirdparty.curated"] = ctp["bank"]["curated"]
-    n["thirdparty.traceable"] = ctp["curated_templates_traceable_to_either_source"]
+    n["thirdparty.traceable"] = ctp["curated_templates_traceable_to_a_published_set"]
     n["thirdparty.traceableshare"] = ctp["share_of_the_curated_half_so_traceable"]
-    for tag, src in (("sygma", "SyGMa"), ("biotransformer", "BioTransformer")):
-        row = ctp["third_party_in_the_curated_half"][src]
-        n[f"thirdparty.{tag}.shipped"] = row["of_them_in_the_bank"]
-        n[f"thirdparty.{tag}.read"] = row["third_party_rules_read"]
-        n[f"thirdparty.{tag}.shareofcurated"] = row["share_of_the_curated_half"]
+    n["thirdparty.untraceable"] = ctp["curated_templates_traceable_to_nothing_measured"]
+    n["thirdparty.holders"] = sum(
+        1 for r in ctp["by_rightsholder"].values() if r["templates_in_the_curated_half"])
+    for tag, src in (("sygma", "SyGMa"), ("biotransformer", "BioTransformer"),
+                     ("gloryx", "GLORYx")):
+        n[f"thirdparty.{tag}.shipped"] = (
+            ctp["by_rightsholder"][src]["templates_in_the_curated_half"])
+    n["thirdparty.biotransformer.read"] = (
+        ctp["by_published_set"]["BioTransformer core"]["rules_in_the_published_set"])
+    n["thirdparty.files"] = len(ctp["third_party_files_this_repository_tracks"])
+    n["thirdparty.filesunused"] = sum(
+        1 for r in ctp["third_party_files_this_repository_tracks"].values()
+        if not r.get("templates_of_this_file_used_by_the_bank"))
 
     # what each method recovers, split by the chemistry rather than by the budget
     ebc = art("error_by_chemistry.json")
