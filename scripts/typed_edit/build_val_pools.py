@@ -62,16 +62,20 @@ def merge(pattern, out, allow_absent=()):
     if not paths:
         print("no shard matched", file=sys.stderr)
         return 1
-    pools, refs, slices = {}, {}, []
+    pools, refs, slices, ckpts = {}, {}, [], []
     for p in paths:
         d = json.loads(Path(p).read_text())
         pools.update(d["pools"]); refs.update(d["references"]); slices.append(tuple(d["slice"]))
+        if d.get("checkpoints"):
+            ckpts.append(d["checkpoints"])
         print(f"  + {Path(p).name}: {d['slice']} {len(d['pools'])}", file=sys.stderr)
     subs, vmap = population()
-    covered = set()
-    for a, b in slices:
-        covered |= set(range(a, b))
-    absent = sorted(set(range(len(subs))) - covered)
+    # Absence is read off the pools, not off the slices. A shard may pass over a substrate inside
+    # its own range -- the whole bank does not finish the peptide at index 83 in any time worth
+    # spending -- and slice arithmetic calls that index covered, so the artifact would have
+    # recorded no absence while holding one substrate fewer than it declares.
+    held = set(pools)
+    absent = sorted(i for i, s in enumerate(subs) if s not in held)
     undeclared = [i for i in absent if i not in set(allow_absent)]
     if undeclared:
         print(f"FAIL: the shards do not tile the population; absent and undeclared: "
@@ -79,8 +83,17 @@ def merge(pattern, out, allow_absent=()):
         return 1
     if absent:
         print(f"absent by declaration: {absent}", file=sys.stderr)
+    # Which models scored the merged pool, and a refusal if the shards do not agree: a pool
+    # assembled from two runs is not one experiment and nothing downstream could tell.
+    distinct = {json.dumps(c, sort_keys=True) for c in ckpts}
+    if len(distinct) > 1:
+        print("FAIL: the shards were scored by different checkpoints; the merged pool would be "
+              "two experiments in one file", file=sys.stderr)
+        return 1
     Path(out).write_text(json.dumps(
         {"provenance": stamp(__file__), "match": "inchikey_tautomer", "split": "validation",
+         "checkpoints": json.loads(distinct.pop()) if distinct else None,
+         "shards_recording_no_checkpoint": len(paths) - len(ckpts),
          "population": {"cap": CAP, "seed": SEED, "declared_n": len(subs),
                         "n": len(pools),
                         "absent_indices": absent,
@@ -267,13 +280,10 @@ def main() -> int:
         refs[s] = sorted({k for k in (_key(p) for p in vmap[s]) if k})
         dump()
 
-    Path(args.out).write_text(json.dumps(
-        {"slice": [args.start, args.end or len(subs)], "top_k": args.top_k,
-         "standardise": args.standardise, "tautomer_budget": args.tautomer_budget or 1000,
-         "cap": args.cap if args.standardise == "survivors"
-         else None, "generator_seconds": timing,
-         "pools": pools, "references": refs},
-        indent=1))
+    # The same writer the loop uses. A second literal here once wrote the shard again without
+    # the checkpoint block, so the record of which models scored a pool survived only when the
+    # run was killed and was lost by every run that finished.
+    dump()
     print(f"wrote {args.out}", file=sys.stderr)
     return 0
 
