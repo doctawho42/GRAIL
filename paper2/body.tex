@@ -334,7 +334,9 @@ applied here to the two choices this literature leaves undeclared.
 \caption{Micro recall against output budget on the \numPopulationN{} substrates every method
 predicts on. Shading marks the budgets at which the better GRAIL arm trails the strongest
 comparator with the paired interval excluding zero (lavender) or leads on the same condition
-(green); budgets where neither separates are unshaded.}
+(green); budgets where neither separates are unshaded. The shading is read at a nominal budget,
+which is not a list length: of the three comparators the green region leads, two do not survive
+matching on realised length (Table~\ref{SI-tab:si-matched}).}
 \label{fig:sweep}
 \end{figure}
 
@@ -382,7 +384,11 @@ and the rest do. Under matched list length the margins against MetaTox and MetaP
 and the one against SyGMa does not. And SyGMa met the corpus's drawing, which cost it
 $+\numSygdialectFifty$ at $k=50$, so its margin should be read after deducting that. What is left
 after all three is one wide-budget lead: the exhaustive arm over SyGMa, an ordering result on a
-comparator whose own rules are largely inside this bank.
+comparator whose own rules are largely inside this bank. That lead also survives the one test the
+comparator's own settings allow. SyGMa's scenario is its emission knob, and running it deeper
+takes its mean output from \numSygscenDeployedemitted{} candidates to
+\numSygscenDeepemitted{}, five times what the exhaustive arm returns, without closing the gap:
+$+\numSygscenDeepGap$ $[+\numSygscenDeepLo, +\numSygscenDeepHi]$ at a budget of fifty.
 
 The two banks in this comparison are not independent. \numSygmaInside{} of SyGMa's
 \numSygmaRules{} published rules, \numSygmaSharePct{} of them, are present verbatim in the bank
@@ -456,17 +462,14 @@ about size. What the choice buys is a different question, and it is answered by 
 the fusion identical downstream. On average \numSelApplicable{} of the \numBankRules{} templates
 match a given substrate, so the choice is made within a large applicable set rather than over the bank.
 
-Against \numSelBudget{} rules drawn at random from the whole bank, the learned choice gains
-$+\numSelVsrandom$ at $k=15$: most randomly chosen templates do not fire, and that arm
-returns a mean pool of \numSelRandomPool{} candidates. Against \numSelBudget{} drawn at random
-from the applicable set the gain is $+\numSelVsrandomApplicable$
-$[+\numSelVsrandomApplicablelo, +\numSelVsrandomApplicablehi]$, and that arm returns
-\numSelRandomApplicablePool{} candidates against the learned arm's \numSelLearnedPool{}: choosing
-badly among applicable rules produces four times the candidates and recovers far less.
-
 The comparison that decides is against the \numSelBudget{} applicable rules with the highest
-training frequency, which uses the same applicability filter and no learning. There the learned
-choice gains $+\numSelVspriorApplicable$ of micro recall at $k=15$,
+training frequency, which uses the same applicability filter and no learning, and it is given
+first because the alternatives are weaker tests: drawing \numSelBudget{} rules from the whole bank
+gains the learned choice $+\numSelVsrandom$ only because most randomly chosen templates do not
+fire at all, and drawing them from the applicable set gains $+\numSelVsrandomApplicable$
+$[+\numSelVsrandomApplicablelo, +\numSelVsrandomApplicablehi]$ against an arm returning
+\numSelRandomApplicablePool{} candidates to the learned arm's \numSelLearnedPool{}. Against the
+frequency table the learned choice gains $+\numSelVspriorApplicable$ of micro recall at $k=15$,
 $[+\numSelVspriorApplicablelo, +\numSelVspriorApplicablehi]$, on a base of
 \numSelPriorApplicableOneFive{}. The interval excludes zero from $k=15$ but not below it: at
 $k=5$ the gain is $+\numSelVspriorKFive$ and the interval covers zero. The substrate-specific part
@@ -650,6 +653,14 @@ same evaluated test set. The remainder divides by the reaction-centre change it 
 a transformation type the bank does not hold, \numCeilingKnown{} need a type it holds whose rule
 did not fire, and \numCeilingUntypeable{} cannot be typed.
 
+It is a one-template ceiling and not a one-enzyme one, which matters for how the number reads. The
+annotation itself is not all single steps: applying the same two instruments to the references
+rather than to the templates, \numRefstepEither{} of the \numRefstepTyped{} that can be typed,
+\numRefstepEithersharePct{}, are transformations an enzyme system reached in more than one turnover
+and the corpus records as one pair. A hit on one of those is a single template standing in for
+several turnovers, so \numCeilingCoverage{} is not the share of annotated metabolism one enzymatic
+step reaches.
+
 The presentation of hydrogen is part of that measurement and is named here rather than left to the
 code. Templates are matched against the substrate with hydrogens implicit, which is the convention
 every deployed firing path uses, and \numCeilingUncovered{} is that convention measured through
@@ -771,7 +782,11 @@ at $50$.
 
 What that leaves is a choice rather than a default. A service answering with ten candidates should
 run the interactive mode, which is the faster of the two by the margin Figure~\ref{fig:cost}
-reports. One answering with thirty or fifty has to run the exhaustive mode and pay for it. The
+reports. One answering with thirty or fifty has to run the exhaustive mode and pay for it, in
+runtime and in what the reader is handed: at a budget of fifty that arm's precision is
+\numPrecBankFiveZero{}, so a chemist reading the whole list reads about thirty wrong structures
+for each right one. Precision under an incomplete annotation is a lower bound and is not used here
+to order systems, but a list of that length is what the wide-budget figures describe. The
 rule budget of \numHOneZeroTopk{} is the parameter that draws that line. It is the value the
 released checkpoint was trained at, and a deployment willing to spend more can raise it and buy
 back the pool.
@@ -903,10 +918,13 @@ defined and the sensitivity of the comparison to the choice among them; the pare
 convention measured per arm; precision at every budget; every comparison difference with its
 paired interval; how the substrate is drawn, and what that decides; the rule bank, its mining
 procedure, the provenance of each collection and how much of it is a published rule set verbatim;
-what the rule budget buys; the architecture and training of both learned stages with every setting
-they were trained under; whether the site a prediction names is the site that changed, against a
-null; what each method recovers split by transformation class; what a single step is, measured two
-ways; the
+what the rule budget buys; two parameters of the ranking and one that could not be measured; the
+architecture and training of both learned stages with every setting they were trained under;
+whether the site a prediction names is the site that changed, against a null; what each method
+recovers split by transformation class; the comparison at matched list length and under the other
+aggregation; whether the missing chemistry is the corpus's or the bank's; whether template
+discovery has saturated; what a single step is, measured on the templates and again on the
+references; the
 sixteen registered predictions, including the six this paper does not report; the group-ranking
 oracle under four partitions with a granularity-matched control; the stage ablations in full;
 when a ranking comparison can measure anything; the choice of evaluation population; the worked

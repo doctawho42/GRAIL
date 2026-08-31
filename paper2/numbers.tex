@@ -342,6 +342,11 @@
 \newcommand{\numEmitPool}{16.31}  % emit.pool
 \newcommand{\numEmitProductmedian}{0.0163}  % emit.productmedian
 \newcommand{\numEmitProductmedianPct}{1.6\%}  % emit.productmedian, as a percentage
+\newcommand{\numEmittedBank}{98.1}  % emitted.bank
+\newcommand{\numEmittedMetapredictor}{10.7}  % emitted.metapredictor
+\newcommand{\numEmittedMetatox}{33.6}  % emitted.metatox
+\newcommand{\numEmittedSygma}{73}  % emitted.sygma
+\newcommand{\numEmittedTrained}{15.6}  % emitted.trained
 \newcommand{\numEnvelopeDeadline}{600}  % envelope.deadline
 \newcommand{\numEnvelopeN}{106}  % envelope.n
 \newcommand{\numEnvelopeSmallestUnfinished}{42}  % envelope.smallest_unfinished
@@ -1412,21 +1417,29 @@
 \newcommand{\numPopulationReferences}{665}  % population.references
 \newcommand{\numPopulationTestrefs}{2{,}597}  % population.testrefs
 \newcommand{\numPopulationTestsubs}{1{,}170}  % population.testsubs
+\newcommand{\numPrecBankOneFive}{0.0816}  % prec.bank.15
+\newcommand{\numPrecBankOneFivePct}{8.2\%}  % prec.bank.15, as a percentage
+\newcommand{\numPrecBankFiveZero}{0.0322}  % prec.bank.50
+\newcommand{\numPrecBankFiveZeroPct}{3.2\%}  % prec.bank.50, as a percentage
+\newcommand{\numPrecTrainedOneFive}{0.0951}  % prec.trained.15
+\newcommand{\numPrecTrainedOneFivePct}{9.5\%}  % prec.trained.15, as a percentage
+\newcommand{\numPrecTrainedFiveZero}{0.0758}  % prec.trained.50
+\newcommand{\numPrecTrainedFiveZeroPct}{7.6\%}  % prec.trained.50, as a percentage
 \newcommand{\numProvChanged}{38}  % prov.changed
-\newcommand{\numProvFiles}{297}  % prov.files
+\newcommand{\numProvFiles}{298}  % prov.files
 \newcommand{\numProvHandtyped}{37}  % prov.handtyped
-\newcommand{\numProvMacrosbody}{256}  % prov.macrosbody
-\newcommand{\numProvMacrossi}{290}  % prov.macrossi
-\newcommand{\numProvPinned}{87}  % prov.pinned
-\newcommand{\numProvSources}{67}  % prov.sources
+\newcommand{\numProvMacrosbody}{263}  % prov.macrosbody
+\newcommand{\numProvMacrossi}{308}  % prov.macrossi
+\newcommand{\numProvPinned}{88}  % prov.pinned
+\newcommand{\numProvSources}{69}  % prov.sources
 \newcommand{\numProvSourcesexempt}{3}  % prov.sourcesexempt
 \newcommand{\numProvSourcesexemptWord}{three}  % prov.sourcesexempt, spelled
 \newcommand{\numProvSourcesinferred}{6}  % prov.sourcesinferred
 \newcommand{\numProvSourcesinferredWord}{six}  % prov.sourcesinferred, spelled
 \newcommand{\numProvSourcesunpinned}{0}  % prov.sourcesunpinned
 \newcommand{\numProvSourcesunpinnedWord}{none}  % prov.sourcesunpinned, spelled
-\newcommand{\numProvSourcesunverifiable}{0}  % prov.sourcesunverifiable
-\newcommand{\numProvSourcesunverifiableWord}{none}  % prov.sourcesunverifiable, spelled
+\newcommand{\numProvSourcesunverifiable}{1}  % prov.sourcesunverifiable
+\newcommand{\numProvSourcesunverifiableWord}{one}  % prov.sourcesunverifiable, spelled
 \newcommand{\numProvUnstamped}{112}  % prov.unstamped
 \newcommand{\numRankCmpFilterOneFive}{0.3594}  % rank.cmp.filter15
 \newcommand{\numRankCmpFilterOneFivePct}{35.9\%}  % rank.cmp.filter15, as a percentage
@@ -1519,6 +1532,12 @@
 \newcommand{\numRefauditSubstrates}{1{,}170}  % refaudit.substrates
 \newcommand{\numRefauditUnparsed}{0}  % refaudit.unparsed
 \newcommand{\numRefauditUnparsedWord}{none}  % refaudit.unparsed, spelled
+\newcommand{\numRefstepEdits}{192}  % refstep.edits
+\newcommand{\numRefstepEither}{404}  % refstep.either
+\newcommand{\numRefstepEithershare}{0.1569}  % refstep.eithershare
+\newcommand{\numRefstepEithersharePct}{15.7\%}  % refstep.eithershare, as a percentage
+\newcommand{\numRefstepLoci}{248}  % refstep.loci
+\newcommand{\numRefstepTyped}{2{,}575}  % refstep.typed
 \newcommand{\numRelaxCarriers}{385}  % relax.carriers
 \newcommand{\numRelaxPredicted}{8.5}  % relax.predicted
 \newcommand{\numRelaxRecovered}{3}  % relax.recovered
@@ -1867,6 +1886,28 @@
 \newcommand{\numSygmaRules}{175}  % sygma.rules
 \newcommand{\numSygmaShare}{0.8686}  % sygma.share
 \newcommand{\numSygmaSharePct}{86.9\%}  % sygma.share, as a percentage
+\newcommand{\numSygscenDeepGap}{0.1308}  % sygscen.deep.gap
+\newcommand{\numSygscenDeepGapPct}{13.1\%}  % sygscen.deep.gap, as a percentage
+\newcommand{\numSygscenDeepHi}{0.1782}  % sygscen.deep.hi
+\newcommand{\numSygscenDeepHiPct}{17.8\%}  % sygscen.deep.hi, as a percentage
+\newcommand{\numSygscenDeepLo}{0.0842}  % sygscen.deep.lo
+\newcommand{\numSygscenDeepLoPct}{8.4\%}  % sygscen.deep.lo, as a percentage
+\newcommand{\numSygscenDeepSep}{yes}  % sygscen.deep.sep
+\newcommand{\numSygscenDeepemitted}{517.2}  % sygscen.deepemitted
+\newcommand{\numSygscenDeeprecall}{0.5729}  % sygscen.deeprecall
+\newcommand{\numSygscenDeeprecallPct}{57.3\%}  % sygscen.deeprecall, as a percentage
+\newcommand{\numSygscenDeeprecallfifteen}{0.5068}  % sygscen.deeprecallfifteen
+\newcommand{\numSygscenDeeprecallfifteenPct}{50.7\%}  % sygscen.deeprecallfifteen, as a percentage
+\newcommand{\numSygscenDeployedGap}{0.1925}  % sygscen.deployed.gap
+\newcommand{\numSygscenDeployedGapPct}{19.2\%}  % sygscen.deployed.gap, as a percentage
+\newcommand{\numSygscenDeployedHi}{0.2336}  % sygscen.deployed.hi
+\newcommand{\numSygscenDeployedHiPct}{23.4\%}  % sygscen.deployed.hi, as a percentage
+\newcommand{\numSygscenDeployedLo}{0.1520}  % sygscen.deployed.lo
+\newcommand{\numSygscenDeployedLoPct}{15.2\%}  % sygscen.deployed.lo, as a percentage
+\newcommand{\numSygscenDeployedSep}{yes}  % sygscen.deployed.sep
+\newcommand{\numSygscenDeployedemitted}{73}  % sygscen.deployedemitted
+\newcommand{\numSygscenUnfinished}{7}  % sygscen.unfinished
+\newcommand{\numSygscenUnfinishedWord}{seven}  % sygscen.unfinished, spelled
 \newcommand{\numTautInvarianceTwoZeroZero}{0.9353}  % taut.invariance.200
 \newcommand{\numTautInvarianceTwoZeroZeroPct}{93.5\%}  % taut.invariance.200, as a percentage
 \newcommand{\numTautInvarianceShipped}{0.9652}  % taut.invariance.shipped

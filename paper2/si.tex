@@ -784,6 +784,7 @@ uniform one, so the true margin is narrower than this. The honest reading is tha
 carries real information and that a raw agreement rate near nine in ten is not the size of it.
 
 \section{What a single step is}
+\label{sec:si-singlestep}
 
 The paper's predictions are single-step in the sense that one template is applied once. Whether
 that is also one enzymatic step depends on the templates, and it is not always.
@@ -839,6 +840,28 @@ An earlier attempt read the templates themselves rather than the pairs and was a
 cleavage whose bridging atom carries no map number is invisible to a comparison of mapped bonds,
 and a cyclisation joins two distant loci in a single event. Parsing partially mapped SMIRKS is the
 wrong instrument for this question and its answer disagreed with what the molecules show.
+
+\section{How much of the annotation is one enzymatic step}
+\label{sec:si-refstep}
+
+Section~\ref{sec:si-singlestep} measures how many mined templates perform more than one enzymatic
+edit and draws the consequence for the coverage bound. That measurement is over templates. The
+question a reader of a recall figure has is about the references, because a corpus recording a
+metabolite several steps from its parent asks a predictor for something no single application can
+be, and counts a hit when one template stands in for the lot.
+
+The same two instruments are therefore applied to every annotated pair of the evaluated test set.
+Of the \numRefstepTyped{} pairs that can be typed, \numRefstepLoci{} have a reaction centre falling
+in more than one connected locus and \numRefstepEdits{} are composite by core-incident edit count
+at the registered threshold; their union is \numRefstepEither{},
+\numRefstepEithersharePct{} of the annotation.
+
+Nothing in that makes a composite reference unreachable, and it is worth being clear about why: a
+template mined from a composite pair performs the whole transformation in one application, which is
+how the bank reaches many of them and why the ceiling is as high as it is. What the figure settles
+is what a recall number means. Roughly one annotated metabolite in six is not a single enzymatic
+step, so the same is true of roughly one hit in six, and a reader who takes recall for the share of
+one-step chemistry a system finds will be wrong by about that much.
 
 \section{The registered predictions}
 
@@ -1073,11 +1096,20 @@ work's own uncapped single pass the difference is \numSygdepthGapdeployed{} at t
 setting and \numSygdepthGapmatched{} depth-matched: the comparison of the two banks does not turn
 on which of the two SyGMa is run at.
 
-What is not swept is the other direction. A scenario with more cycles would emit more candidates
-and could move the verdicts at the widest budgets, where an arm that has run out of candidates
-cannot gain; the deployed setting is the one that version's own documentation gives, and this
-paper reports it rather than searching for the setting that suits it. A reader who wants the
-sweep has the frozen predictions and the scenario string to build it from.
+The other direction is the one that bears on the only wide-budget lead this work still claims, and
+it is swept too. Running SyGMa at two cycles of phase I against one of phase II takes its mean
+emission from \numSygscenDeployedemitted{} candidates to \numSygscenDeepemitted{}, more than five
+times what this work's exhaustive arm returns, and its recall at a budget of 50 from
+\numSweepSygmaFiveZero{} to \numSygscenDeeprecall. The lead survives it:
+$+\numSygscenDeepGap$ $[+\numSygscenDeepLo, +\numSygscenDeepHi]$ against
+$+\numSygscenDeployedGap$ $[+\numSygscenDeployedLo, +\numSygscenDeployedHi]$ at the deployed
+setting, both intervals excluding zero. \numSygscenUnfinished{} substrates did not finish the
+deeper scenario inside a ninety-second deadline and keep their deployed lists, which can only
+favour SyGMa's arm in the comparison rather than harm it.
+
+The comparison is reported at the documentation default because that is the setting a user gets,
+and the sweep is reported because a paper asking others to declare an emission knob has to turn
+its own.
 
 Only \numComparatorsVersionedWord{} of the \numComparatorsNWord{} comparators expose a version
 string at all. SyGMa reports 1.1.0 from the installed package and BioTransformer 3.0 carries the
@@ -1124,8 +1156,12 @@ Four systems published in 2025--26 could not be run on our split as released. LA
 comparing would mean comparing against our own reimplementation. DeepMetab \citep{Zhou_2025}
 releases weights and site prediction but its reaction module was withdrawn by the author for
 copyright reasons, leaving only Python 3.7 bytecode. DeepCYP \citep{Zhou_2026} offers a web form
-and no models or API, so a comparison would mean submitting \numPopulationTestsubs{} substrates to
-a third-party server. Metabolite-Gen \citep{Chavan_2026} is a preprint with no repository we could
+and no models or API, so a comparison would mean submitting substrates one at a time through a
+form. MetaTox is also a service rather than a package and was run, so the difference deserves
+stating: MetaTox accepts a file of \numPopulationN{} structures and returns a file, and its
+configuration could be settled with someone who knows it, neither of which is true of a form
+without an API. That is a difference in what the interface allows and not a principle, and a
+reader who judges it insufficient should read DeepCYP's absence as unforced. Metabolite-Gen \citep{Chavan_2026} is a preprint with no repository we could
 find. The list is closed by a rule: a comparator that could not be obtained is reported as
 unavailable with its reason, is not dropped silently, and the list is not extended after the
 first run.

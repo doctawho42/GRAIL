@@ -150,6 +150,8 @@ PINNED = {
     "results/fusion_knobs.json": "scripts/typed_edit/fusion_knobs.py",
     "results/missing_types_in_train.json": "scripts/typed_edit/missing_types_in_train.py",
     "results/licence_removal_cost__clean_test.json": "scripts/typed_edit/licence_removal_cost.py",
+    "results/sygma_scenario_sweep.json": "scripts/typed_edit/sygma_scenario_sweep.py",
+    "results/references_are_multistep.json": "scripts/typed_edit/references_are_multistep.py",
     "results/decompose_biotransformer.json": "scripts/decompose_biotransformer.py",
     "results/external_overlap_audit.json": "scripts/external_overlap_audit.py",
     "results/hydrogen_dispatch__clean_test.json": "scripts/hydrogen_dispatch.py",

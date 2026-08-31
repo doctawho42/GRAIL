@@ -114,6 +114,10 @@ def build():
     for arm, tag in ARMS.items():
         if arm in dep["mean_output_length"]:
             n[f"output.{tag}"] = dep["mean_output_length"][arm]
+        # What each method actually emits, before the sweep truncates it at the widest budget.
+        # The two differ by nearly a factor of two for SyGMa and the table printed only the first.
+        if arm in dep.get("mean_emitted_untruncated", {}):
+            n[f"emitted.{tag}"] = dep["mean_emitted_untruncated"][arm]
     for k, row in dep["substrates_whose_list_is_shorter_than_the_budget"].items():
         for arm, tag in ARMS.items():
             if arm in row:
@@ -277,6 +281,38 @@ def build():
     n["chem.cleavage.bank"] = _cleav["recall"]["GRAIL exhaustive"]["15"] if _cleav else None
     n["chem.cleavage.bestother"] = (max(v["15"] for k, v in _cleav["recall"].items()
                                         if not k.startswith("GRAIL")) if _cleav else None)
+
+    # How much of the annotation is a single enzymatic step, measured on the references rather
+    # than on the templates mined from them.
+    ram = art("references_are_multistep.json")
+    n["refstep.typed"] = ram["population"]["typed"]
+    n["refstep.loci"] = ram["references_whose_centre_falls_in_more_than_one_locus"]
+    n["refstep.edits"] = ram["references_composite_by_edit_count"]
+    n["refstep.either"] = ram["references_composite_by_either_instrument"]
+    n["refstep.eithershare"] = ram["share_by_either"]
+
+    # What the wide budget costs a reader in precision. The paper declines to order systems on
+    # precision and that is right; it should still say what a list of 98 candidates is like.
+    prec = art("precision_table.json")["precision_micro"]
+    for tag, arm in (("bank", "GRAIL exhaustive"), ("trained", "GRAIL interactive")):
+        for k in ("15", "50"):
+            n[f"prec.{tag}.{k}"] = prec[arm][k]
+
+    # SyGMa's own emission knob swept upward, which is the direction that bears on the one
+    # wide-budget lead this work still claims.
+    sss = art("sygma_scenario_sweep.json")
+    _deep = [k for k in sss["by_scenario"] if k != sss["deployed_scenario"]][0]
+    n["sygscen.deployedemitted"] = sss["by_scenario"][sss["deployed_scenario"]]["mean_emitted"]
+    n["sygscen.deepemitted"] = sss["by_scenario"][_deep]["mean_emitted"]
+    n["sygscen.deeprecall"] = sss["by_scenario"][_deep]["recall"]["50"]
+    n["sygscen.deeprecallfifteen"] = sss["by_scenario"][_deep]["recall"]["15"]
+    n["sygscen.unfinished"] = sss["by_scenario"][_deep]["unfinished"]
+    for tag, key in (("deployed", sss["deployed_scenario"]), ("deep", _deep)):
+        cell = sss["by_scenario"][key]["exhaustive_minus_sygma_at_50"]
+        n[f"sygscen.{tag}.gap"] = cell["gap"]
+        n[f"sygscen.{tag}.lo"] = cell["ci95"][0]
+        n[f"sygscen.{tag}.hi"] = cell["ci95"][1]
+        n[f"sygscen.{tag}.sep"] = cell["excludes_zero"]
 
     # What removing the borrowed templates would cost the coverage ceiling. It prices one of the
     # licensing options rather than choosing it, and the answer differs sharply by source.

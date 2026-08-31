@@ -17,6 +17,9 @@ LABEL = {"whole bank": "GRAIL exh.", "trained budget": "GRAIL int.",
 def table():
     d = json.loads((ROOT / "results/deployment_table.json").read_text())
     rec, out = d["recall_micro"], d["mean_output_length"]
+    # What each method emits, not what survives truncation at the widest budget: the row had been
+    # printing the second under the first's name, understating SyGMa by nearly half.
+    emit = d.get("mean_emitted_untruncated", {})
     ks = sorted(rec, key=int)
     arms = [a for a in LABEL if a in rec[ks[0]]]
     L = ["\\begin{table*}[t]", "\\centering", "\\small",
@@ -28,12 +31,14 @@ def table():
     for k in ks:
         L.append(f"{k} & " + " & ".join(f"{rec[k][a]:.4f}" for a in arms) + " \\\\")
     L += ["\\midrule",
-          "list & " + " & ".join(f"{out[a]}" for a in arms) + " \\\\",
+          "emitted & " + " & ".join(f"{emit.get(a, out[a])}" for a in arms) + " \\\\",
           "\\bottomrule", "\\end{tabular}",
           "\\caption{Micro recall at each output budget on the "
           f"{d['population']['n']} substrates every method predicts on, carrying "
           f"{int(d['population']['n_references'])} annotated metabolites. The last row gives the "
-          "mean number of candidates each method emits. A prediction equal to the substrate is "
+          "mean number of candidates each method emits, before any budget is applied: it is a "
+          "property of the method and not of this table, and for two of the comparators it is "
+          "larger than the widest budget shown. A prediction equal to the substrate is "
           "dropped before the budget for every method alike.}",
           "\\label{tab:sweep}", "\\end{table*}"]
     return "\n".join(L)

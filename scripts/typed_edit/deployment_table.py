@@ -176,7 +176,25 @@ def main() -> int:
         mism += [f"{label} k={k}: {table[str(k)][arm]} vs committed {r[str(k)]}"
                  for k in KS if str(k) in r and abs(table[str(k)][arm] - r[str(k)]) > 1e-9]
 
+    # Two different quantities and the table had been printing one under the other's name. The
+    # lists in `arms` are truncated at the widest budget, so their mean is what each method
+    # contributes inside the sweep and not how much it emits: SyGMa's untruncated mean is nearly
+    # twice its truncated one. Both are reported and each is named.
     mean_pool = {a: round(float(np.mean([len(arms[a][s]) for s in subs])), 1) for a in arms}
+    untruncated = {}
+    for a in ours:
+        pools = big if a == "whole bank" else small
+        untruncated[a] = round(float(np.mean(
+            [len(drop_parent([c["key"] for c in rrf_order(
+                sorted(pools[s], key=lambda c: -c["generator"])[:CAP])], s)) for s in subs])), 1)
+    for name, (rel, key) in COMPARATORS.items():
+        path = ROOT / rel
+        if not path.exists():
+            continue
+        blob = json.loads(path.read_text())
+        preds = blob[key] if key else blob
+        untruncated[name] = round(float(np.mean(
+            [len(drop_parent(_dedup(preds.get(s, []), 10 ** 6), s)) for s in subs])), 1)
     rep = {"provenance": stamp(__file__),
            "population": {"n": len(subs), "n_references": N,
                           "source": "the 291 of results/four_method_291.json"},
@@ -188,6 +206,10 @@ def main() -> int:
                              "top_k": {"whole bank": tk_b, "trained budget": tk_s}},
            "gate": {"reproduces_four_method_291_metatox": not mism, "mismatches": mism},
            "mean_output_length": mean_pool,
+           "mean_output_length_note": ("the mean of the lists as the sweep reads them, truncated "
+                                       "at the widest budget; it is not how much each method "
+                                       "emits"),
+           "mean_emitted_untruncated": untruncated,
            "comparators_absent": absent,
            "recall_micro": table, "contrasts": contrasts,
            "recall_macro": macro_table, "contrasts_macro": macro_contrasts,

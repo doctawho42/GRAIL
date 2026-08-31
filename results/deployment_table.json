@@ -2,8 +2,8 @@
  "provenance": {
   "script": "deployment_table.py",
   "script_path": "scripts/typed_edit/deployment_table.py",
-  "source_sha256": "be45705a0bd252d452e5f6be3c60073ec8b504bb6dfbc80cc3c687d790616325",
-  "git_commit": "1352b06946af3ced54e372376da25f534322a9c7",
+  "source_sha256": "bedaf51c931173d66b1239c4cae8660b812201cf05fe6322b3a9bdcca04cf9d4",
+  "git_commit": "aa406d1d07d943339fb81fab49e094fcf7c821ea",
   "git_dirty": true
  },
  "population": {
@@ -30,6 +30,14 @@
   "trained budget": 15.6,
   "metatox": 30.9,
   "sygma": 40.5,
+  "metapredictor": 10.7
+ },
+ "mean_output_length_note": "the mean of the lists as the sweep reads them, truncated at the widest budget; it is not how much each method emits",
+ "mean_emitted_untruncated": {
+  "whole bank": 98.1,
+  "trained budget": 15.6,
+  "metatox": 33.6,
+  "sygma": 73.0,
   "metapredictor": 10.7
  },
  "comparators_absent": [],
