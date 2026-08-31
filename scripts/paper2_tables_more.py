@@ -79,18 +79,27 @@ def hypotheses():
     the audit trail survives the rename.
     """
     n = json.loads((ROOT / "results/paper2_numbers.json").read_text())["numbers"]
-    H = [("H7", "rank fusion instead of a product of scores", "$+0.05$", "h7.diff", "validation"),
+    H = [("H7", "rank fusion instead of a score product", "$+0.05$", "h7.diff", "validation"),
          ("H9", "candidate pool capped at 100", "$+0.015$", "h9.diff", "validation"),
-         ("H10", "rule budget of 30 from the checkpoint", "$\\le +0.05$", "h10.bought", "validation"),
+         ("H10", "rule budget of 30", "$\\le +0.05$", "h10.bought", "validation"),
          # the grid is five criteria by eleven budgets, 55 cells, which is what the text reports
          ("H11", "emit the whole pool, no threshold", "0 cells", "h11.lost", "grid $5\\times11$"),
          ("H12", "group score as a third ranking", "$+0.02$", "h12.diff", "comparison set$^{\\dagger}$"),
          ("H8", "group score, groups emitted as blocks", "$+0.05$", "h8.diff", "comparison set$^{\\dagger}$"),
          ("H14", "group score as a gate before fusion", "$+0.02$", "h14.diff", "comparison set$^{\\dagger}$"),
-         ("H13", "standardise surviving candidates only", "$\\ge 10\\times$", "h13.factor", "validation"),
+         ("H13", "standardise survivors only", "$\\ge 10\\times$", "h13.factor", "validation"),
          ("H15", "survivors, tautomer budget 200", "$<10$ s", "h15.time", "validation"),
-         ("H16", "composite share, the two instruments' union", "$\\ge 0.134$",
+         ("H16", "composite share, both instruments", "$\\ge 0.134$",
           "composite.unionshare", "mined bank")]
+    # The verdict, which the reader previously had to assemble from three sections: whether the
+    # measurement clears the threshold, and for the confirmations whether the whole interval does
+    # or only the point estimate. Held in one place so the table says what happened.
+    VERDICT = {
+        "H7": "confirmed$^{\\ddagger}$", "H9": "confirmed$^{\\ddagger}$",
+        "H10": "confirmed$^{\\S}$", "H11": "confirmed",
+        "H12": "confirmed$^{\\ddagger}$", "H8": "failed", "H14": "failed",
+        "H13": "failed", "H15": "confirmed", "H16": "confirmed",
+    }
     rows = []
     for i, (h, what, thr, key, pop) in enumerate(H, 1):
         v = n[key]
@@ -98,9 +107,10 @@ def hypotheses():
         signed = h != "H16"
         val = (f"{v:+.4f}" if signed else f"{v:.4f}") if isinstance(v, float) and abs(v) < 1 \
             else str(v)
-        rows.append(f"P{i} & {what} & {thr} & ${val}$ & {pop} & {h} \\\\")
-    return ("\\begin{table*}[t]\n\\centering\\small\n\\begin{tabular}{llllll}\n\\toprule\n"
-            " & what was fixed & threshold & measured & tested on & register \\\\\n\\midrule\n" +
+        rows.append(f"P{i} & {what} & {thr} & ${val}$ & {pop} & {VERDICT[h]} & {h} \\\\")
+    return ("\\begin{table*}[t]\n\\centering\\footnotesize\n\\begin{tabular}{@{}lllllll@{}}\n\\toprule\n"
+            " & what was fixed & threshold & measured & tested on & verdict & register "
+            "\\\\\n\\midrule\n" +
             "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n"
             "\\caption{Every deployed choice as a prediction fixed before it was checked: what "
             "was fixed, the threshold, the value measured, the population it was checked on, and "
@@ -108,7 +118,11 @@ def hypotheses():
             "factor, P9's a median in seconds and P10's a share of the mined bank; the rest are "
             "differences in micro recall at a budget of 15. $^{\\dagger}$ marks the three whose "
             "threshold was fixed in advance but whose population was not: they were adjudicated "
-            "on the comparison set, which was recorded afterwards.}"
+            "on the comparison set, which was recorded afterwards. $^{\\ddagger}$ marks a "
+            "confirmation whose registered threshold falls inside its own interval, so what the "
+            "data establish is that the effect exceeds zero rather than that it clears the bar. "
+            "$^{\\S}$ P3 is confirmed on the population it was registered against and not on "
+            "the comparison set, where the same quantity is $+0.0556$.}"
             "\n\\label{tab:hyp}\n\\end{table*}\n")
 
 

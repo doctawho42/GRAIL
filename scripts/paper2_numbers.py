@@ -278,6 +278,20 @@ def build():
     n["chem.cleavage.bestother"] = (max(v["15"] for k, v in _cleav["recall"].items()
                                         if not k.startswith("GRAIL")) if _cleav else None)
 
+    # What removing the borrowed templates would cost the coverage ceiling. It prices one of the
+    # licensing options rather than choosing it, and the answer differs sharply by source.
+    lrc = art("licence_removal_cost__clean_test.json")
+    for tag, name in (("all", "without every borrowed template"),
+                      ("bt", "without BioTransformer"),
+                      ("sygma", "without SyGMa")):
+        cell = lrc["against_the_whole_bank"][name]
+        n[f"lrc.{tag}.lost"] = cell["references_lost"]
+        n[f"lrc.{tag}.change"] = cell["ceiling_change"]
+        n[f"lrc.{tag}.lo"] = cell["ci95"][0]
+        n[f"lrc.{tag}.hi"] = cell["ci95"][1]
+        n[f"lrc.{tag}.sep"] = cell["excludes_zero"]
+    n["lrc.references"] = lrc["population"]["n_references"]
+
     # Whether the chemistry the bank misses is absent from the corpus or only from the bank. The
     # abstract asserted the first and only the second had been measured.
     mtt = art("missing_types_in_train.json")

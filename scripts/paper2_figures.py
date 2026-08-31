@@ -96,13 +96,17 @@ def fig_sweep():
         c = con[str(k)][f"{bu} - {bo}"]
         band.append("lose" if (c["gap"] < 0 and c["excludes_zero"])
                     else "win" if (c["gap"] > 0 and c["excludes_zero"]) else "tie")
+    # Geometric midpoints, because the axis is logarithmic. Arithmetic ones put a band's edge
+    # where the eye does not expect it: with budgets at 20 and 30 the arithmetic midpoint 25 sits
+    # past the visual centre, and a referee read the band as reaching a budget it does not cover.
     for i, k in enumerate(ks):
-        lo = ks[i - 1] if i else ks[0] - 0.5
-        hi = ks[i + 1] if i < len(ks) - 1 else ks[-1] + 3
+        lo = ks[i - 1] if i else ks[0] * 0.75
+        hi = ks[i + 1] if i < len(ks) - 1 else ks[-1] * 1.1
+        left, right = (lo * k) ** 0.5, (k * hi) ** 0.5
         if band[i] == "lose":
-            ax.axvspan((lo + k) / 2, (k + hi) / 2, color=BAND_TRAILS, alpha=0.10, lw=0, zorder=0)
+            ax.axvspan(left, right, color=BAND_TRAILS, alpha=0.10, lw=0, zorder=0)
         elif band[i] == "win":
-            ax.axvspan((lo + k) / 2, (k + hi) / 2, color=BAND_LEADS, alpha=0.10, lw=0, zorder=0)
+            ax.axvspan(left, right, color=BAND_LEADS, alpha=0.10, lw=0, zorder=0)
     ax.set_xscale("log")
     ax.set_xticks(ks)
     ax.set_xticklabels([str(k) for k in ks])

@@ -266,7 +266,11 @@ are reported for every comparison.
 
 A third choice sits behind both: how the substrate itself is drawn. Templates are matched
 against the structure the corpus stores, and that corpus draws amides as imidic acids, so the
-choice is not neutral. Rebuilding both GRAIL arms with every substrate redrawn by the
+choice is not neutral. It is a deployment question and not only an evaluation one, because a user
+submits the drawing a chemist would make. The worked example shows the size of it on one molecule:
+given gemcitabine as a chemist draws it, the interactive mode returns
+\numCaseInterdrawnCandidates{} candidates and none of the four annotated metabolites, against one
+of four on the stored drawing. Rebuilding both GRAIL arms with every substrate redrawn by the
 standardiser moves \numDsweepMoved{} of \numDsweepCells{} arm-against-comparator verdicts, none
 of them a lead claimed here, and the coverage ceiling on that population by
 $\numDsweepCeilingdiff$ with the interval covering zero.
@@ -371,6 +375,14 @@ survives: $\numMatchedBankmetatox$ and $\numMatchedBankmetapredictor$, both inte
 zero and both pointing the other way. What the sweep shows at $k=50$ against those two is a
 statement about how much each system emits, and this paper's own argument requires it to be
 called that.
+
+Three corrections apply to those two cells and it is worth carrying them through in one place.
+Under a family-wise correction over the sweep the $k=30$ margin against MetaTox does not survive
+and the rest do. Under matched list length the margins against MetaTox and MetaPredictor vanish
+and the one against SyGMa does not. And SyGMa met the corpus's drawing, which cost it
+$+\numSygdialectFifty$ at $k=50$, so its margin should be read after deducting that. What is left
+after all three is one wide-budget lead: the exhaustive arm over SyGMa, an ordering result on a
+comparator whose own rules are largely inside this bank.
 
 The two banks in this comparison are not independent. \numSygmaInside{} of SyGMa's
 \numSygmaRules{} published rules, \numSygmaSharePct{} of them, are present verbatim in the bank

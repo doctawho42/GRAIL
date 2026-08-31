@@ -1,21 +1,21 @@
 \begin{table*}[t]
-\centering\small
-\begin{tabular}{llllll}
+\centering\footnotesize
+\begin{tabular}{@{}lllllll@{}}
 \toprule
- & what was fixed & threshold & measured & tested on & register \\
+ & what was fixed & threshold & measured & tested on & verdict & register \\
 \midrule
-P1 & rank fusion instead of a product of scores & $+0.05$ & $+0.0733$ & validation & H7 \\
-P2 & candidate pool capped at 100 & $+0.015$ & $+0.0260$ & validation & H9 \\
-P3 & rule budget of 30 from the checkpoint & $\le +0.05$ & $+0.0092$ & validation & H10 \\
-P4 & emit the whole pool, no threshold & 0 cells & $0$ & grid $5\times11$ & H11 \\
-P5 & group score as a third ranking & $+0.02$ & $+0.0286$ & comparison set$^{\dagger}$ & H12 \\
-P6 & group score, groups emitted as blocks & $+0.05$ & $-0.1203$ & comparison set$^{\dagger}$ & H8 \\
-P7 & group score as a gate before fusion & $+0.02$ & $-0.0286$ & comparison set$^{\dagger}$ & H14 \\
-P8 & standardise surviving candidates only & $\ge 10\times$ & $2.95$ & validation & H13 \\
-P9 & survivors, tautomer budget 200 & $<10$ s & $5.28$ & validation & H15 \\
-P10 & composite share, the two instruments' union & $\ge 0.134$ & $0.2212$ & mined bank & H16 \\
+P1 & rank fusion instead of a score product & $+0.05$ & $+0.0733$ & validation & confirmed$^{\ddagger}$ & H7 \\
+P2 & candidate pool capped at 100 & $+0.015$ & $+0.0260$ & validation & confirmed$^{\ddagger}$ & H9 \\
+P3 & rule budget of 30 & $\le +0.05$ & $+0.0092$ & validation & confirmed$^{\S}$ & H10 \\
+P4 & emit the whole pool, no threshold & 0 cells & $0$ & grid $5\times11$ & confirmed & H11 \\
+P5 & group score as a third ranking & $+0.02$ & $+0.0286$ & comparison set$^{\dagger}$ & confirmed$^{\ddagger}$ & H12 \\
+P6 & group score, groups emitted as blocks & $+0.05$ & $-0.1203$ & comparison set$^{\dagger}$ & failed & H8 \\
+P7 & group score as a gate before fusion & $+0.02$ & $-0.0286$ & comparison set$^{\dagger}$ & failed & H14 \\
+P8 & standardise survivors only & $\ge 10\times$ & $2.95$ & validation & failed & H13 \\
+P9 & survivors, tautomer budget 200 & $<10$ s & $5.28$ & validation & confirmed & H15 \\
+P10 & composite share, both instruments & $\ge 0.134$ & $0.2212$ & mined bank & confirmed & H16 \\
 \bottomrule
 \end{tabular}
-\caption{Every deployed choice as a prediction fixed before it was checked: what was fixed, the threshold, the value measured, the population it was checked on, and the identifier it carries in the released register. P8's figure is a speed-up factor, P9's a median in seconds and P10's a share of the mined bank; the rest are differences in micro recall at a budget of 15. $^{\dagger}$ marks the three whose threshold was fixed in advance but whose population was not: they were adjudicated on the comparison set, which was recorded afterwards.}
+\caption{Every deployed choice as a prediction fixed before it was checked: what was fixed, the threshold, the value measured, the population it was checked on, and the identifier it carries in the released register. P8's figure is a speed-up factor, P9's a median in seconds and P10's a share of the mined bank; the rest are differences in micro recall at a budget of 15. $^{\dagger}$ marks the three whose threshold was fixed in advance but whose population was not: they were adjudicated on the comparison set, which was recorded afterwards. $^{\ddagger}$ marks a confirmation whose registered threshold falls inside its own interval, so what the data establish is that the effect exceeds zero rather than that it clears the bar. $^{\S}$ P3 is confirmed on the population it was registered against and not on the comparison set, where the same quantity is $+0.0556$.}
 \label{tab:hyp}
 \end{table*}

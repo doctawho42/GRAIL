@@ -11,13 +11,15 @@ the parts the bank never uses. Both are measured in `results/curated_third_party
 
 ## The rule bank
 
-`grail_metabolism/resources/extended_smirks.txt` holds 7,581 SMIRKS templates: 5,866 mined from the
-training split by `scripts/mine_rules.py` and 1,715 carried as curated. Of the curated portion,
+`grail_metabolism/resources/extended_smirks.txt` holds 7,581 SMIRKS templates: 5,856 mined from the
+training split by `scripts/mine_rules.py` and 1,725 carried as curated. Of the curated portion,
 1,233 come from three named collections and 492 from an earlier machine extraction that was carried
 as curated and is not (`results/curated_provenance.json`).
 
-**966 of the 1,715 curated templates — 56.3% — are somebody else's rules, verbatim.** Measured by
-string equality against every published rule set held on disk:
+**966 of the 1,725 curated templates are somebody else's rules, verbatim** — and every one of them
+falls inside the named 1,233, none among the 492. The share to read is therefore **78.3% of the
+collections described as curated chemistry**, not 56% of the half they sit in. Measured by string
+equality against every published rule set held on disk:
 
 | rightsholder | templates in the bank | terms, as its own distribution states them |
 |---|---:|---|
@@ -28,7 +30,7 @@ string equality against every published rule set held on disk:
 
 The SyGMa count is 273 and not 152 because GLORYx's own rule file attributes 178 of its 260 rules to
 SyGMa, in a notation the installed SyGMa package does not use. String equality cannot trace a
-template that was rewritten, so every count above is a lower bound, and the 749 curated templates
+template that was rewritten, so every count above is a lower bound, and the 759 curated templates
 that match nothing measured are not thereby shown to be original.
 
 ## The files this repository redistributes
@@ -94,13 +96,26 @@ conditions have to be met in fact: credit, links to the licences, an indication 
 were extracted and merged, and the upstream notices retained. This repository currently holds a
 licence text for only one of its four rightsholders, and no `LICENSE` file of its own.
 
-None of this is an oversight to be corrected by a note. It is a set of decisions, and the ones that
-cost nothing scientifically separate cleanly from the ones that cost something:
+None of this is an oversight to be corrected by a note. It is a set of decisions, and the cost of
+each is now measured rather than guessed (`results/licence_removal_cost__clean_test.json`, one
+uncapped pass of each bank variant over the 1,170 evaluated test substrates):
 
-- the ENVMICRO file and the RetroSim file can be untracked at no cost to the bank;
-- the standardisation file likewise;
-- the templates themselves are load-bearing, and what removing them costs is measured in
-  `results/licence_removal_cost.json`.
+| option | templates dropped | references lost of 2,597 | change in reach |
+|---|---:|---:|---|
+| drop BioTransformer's | 611 | **0** | 0.0000 |
+| drop SyGMa's | 152 | 14 | −0.0054 [−0.0086, −0.0026] |
+| drop every borrowed template | 763 | 14 | −0.0054 [−0.0086, −0.0026] |
+
+**The 611 BioTransformer templates cost nothing.** Every reference they reach is reached by
+something else in the bank, so the largest borrowing here is the one that can be given up for
+free. The whole obligation to BioTransformer — the templates and the three tracked files — can
+therefore be discharged by removal at no measurable cost to the science.
+
+SyGMa's 152 cost 14 references of 2,597, 0.54% of the reach. That is a real but small price, and
+it is the only one of these decisions where anything is being traded.
+
+The two unused files, ENVMICRO and RetroSim, can be untracked at no cost at all; the ENVMICRO one
+is the NonCommercial ShareAlike artifact and is the most urgent of the three.
 
 ## The corpus
 
