@@ -160,6 +160,15 @@ def main() -> int:
                 "sign_survives_both_ends": bool(
                     (point + excluded_refs) * (point - excluded_refs) > 0)}
 
+    # Which contrasts the absence could actually decide. A single boolean over all of them says
+    # only that some contrast is fragile, and the useful statement is which: a sign the absence
+    # could flip matters where the paper reads a verdict off it and not where the interval
+    # already covers zero.
+    fragile = sorted(b for b, c in contrasts.items()
+                     if not c.get("if_the_excluded_substrates_all_went_one_way",
+                                  {}).get("sign_survives_both_ends", True))
+    fragile_and_decided = [b for b in fragile if contrasts[b]["excludes_zero"]]
+
     better = [b for b, c in contrasts.items() if c["gap_at_15"] > 0 and c["excludes_zero"]]
     report = {
         "provenance": stamp(__file__),
@@ -176,6 +185,8 @@ def main() -> int:
         "most_a_pool_may_declare_absent_and_still_count": MAX_DECLARED_ABSENT,
         "substrates_outside_the_paired_population": len(excluded),
         "references_they_carry": excluded_refs,
+        "contrasts_whose_sign_the_absence_could_flip": fragile,
+        "of_those_any_the_paper_reads_a_verdict_from": fragile_and_decided,
         "deployed_budget": DEPLOYED,
         "pool_cap": CAP,
         "aggregation": "micro, ratio of sums",
@@ -208,10 +219,15 @@ def main() -> int:
               f"{row['recall_micro']['5']:.4f} {row['recall_micro']['15']:.4f} "
               f"{row['recall_micro']['30']:.4f}{tail}{mark}")
     if excluded:
-        print(f"\n{len(excluded)} substrate(s) carrying {excluded_refs} references sit outside the "
-              f"paired population because a budget could not finish them; every contrast above "
-              f"keeps its sign at both extremes of what they could have contributed: "
-              f"{all(c.get('if_the_excluded_substrates_all_went_one_way', {}).get('sign_survives_both_ends', True) for c in contrasts.values())}")
+        print(f"\n{len(excluded)} substrate(s) carrying {excluded_refs} references sit outside "
+              f"the paired population because a budget could not finish them.")
+        if not fragile:
+            print("  no contrast above changes sign at either extreme of what they could have "
+                  "contributed")
+        else:
+            print(f"  contrasts whose sign they could flip: {', '.join(fragile)}")
+            print(f"  of those, ones the paper reads a verdict from: "
+                  f"{', '.join(fragile_and_decided) or 'none'}")
     print(f"\nbudgets beating the deployed one at 15: {better or 'none'}")
     print("wrote results/budget_curve.json")
     return 0

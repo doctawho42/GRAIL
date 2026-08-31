@@ -262,6 +262,8 @@ def build():
     # far that could have moved any contrast; both are printed rather than left to a footnote.
     n["budget.excluded"] = bc["substrates_outside_the_paired_population"]
     n["budget.excludedrefs"] = bc["references_they_carry"]
+    n["budget.fragile"] = len(bc["contrasts_whose_sign_the_absence_could_flip"])
+    n["budget.fragiledecided"] = len(bc["of_those_any_the_paper_reads_a_verdict_from"])
     for b, cell in bc["against_the_deployed_budget_at_k15"].items():
         bound = cell.get("if_the_excluded_substrates_all_went_one_way")
         if bound:

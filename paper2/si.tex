@@ -648,18 +648,38 @@ comparison is reported on would be chosen on the test.
 
 \input{si_table_budget}
 
+The curve runs to the whole bank. Stopping it at a rule budget of fifty would have left the
+sweep short of the configuration the exhaustive mode actually applies, and the comparison between
+the two modes then rests on two points measured on different populations rather than on one curve.
+
 The deployed value sits at the knee. Both smaller budgets lose to it at a budget of fifteen with
 the interval excluding zero, and the next larger one gains $+\numBudgetKFiveZeroGap$
 $[\numBudgetKFiveZeroLo, \numBudgetKFiveZeroHi]$, an interval covering zero, while returning
-\numBudgetKFiveZeroCandidates{} candidates against \numBudgetKThreeZeroCandidates{}. Every one of
-those candidates is standardised, which the runtime section identifies as the binding cost, and no
-budget measured here beats the deployed one at the budget the headline is read at.
+\numBudgetKFiveZeroCandidates{} candidates against \numBudgetKThreeZeroCandidates{}. The whole
+bank gains $+\numBudgetKSevenFiveEightOneGap$ $[\numBudgetKSevenFiveEightOneLo,
+\numBudgetKSevenFiveEightOneHi]$ on the same terms, an interval that also covers zero, for
+\numBudgetKSevenFiveEightOneCandidates{} candidates, which is the pool cap. Every one of those
+candidates is standardised, which the runtime section identifies as the binding cost, and no rule
+budget up to and including the whole bank beats the deployed one at the budget the headline is
+read at.
 
 That is not the whole story, and the column for an output budget of thirty makes it plain: read
-there, the larger rule budget does buy something, because the pool it builds has not run out. A
-deployment answering with thirty or fifty candidates should raise the rule budget for exactly the
-reason the Discussion gives for the interactive mode's deficit there, and pay the standardisation
-cost that follows.
+there, the larger rule budget does buy something, because the pool it builds has not run out. The
+whole bank reaches \numBudgetKSevenFiveEightOneRecallthirty{} there against
+\numBudgetKThreeZeroRecallthirty{}, the largest single step in the column, which is the exhaustive
+mode's advantage measured as a point on this curve rather than as a separate design. A deployment
+answering with thirty or fifty candidates should raise the rule budget for exactly the reason the
+Discussion gives for the interactive mode's deficit there, and pay the standardisation cost that
+follows.
+
+One substrate of the validation draw does not finish the whole bank in any time worth spending,
+so the curve is paired on the \numBudgetSubstrates{} substrates every budget holds and that one
+sits outside it, carrying \numBudgetExcludedrefsWord{} references. What the absence could have
+done is bounded rather than noted: giving those references entirely to one arm and entirely to
+the other moves the whole-bank contrast between $+\numBudgetKSevenFiveEightOneBoundworst$ and
+$+\numBudgetKSevenFiveEightOneBoundbest$, and across the whole table it changes the sign of
+\numBudgetFragileWord{} contrast, the one at a rule budget of fifty, whose interval covers zero
+either way. No verdict read from this table turns on the substrate that is missing from it.
 
 \section{The drawing's effect where the drawing changes anything}
 \label{sec:si-dialcond}
