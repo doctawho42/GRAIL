@@ -26,6 +26,17 @@ def modes():
     ce = json.loads((ROOT / "results/cost_envelope.json").read_text())
     sampled = ce["n_done"]
     unfinished = sum(1 for r in ce["rows"] if not r.get("finished"))
+    # The exhaustive mode's mean, ninetieth percentile and slowest were printed as em-dashes,
+    # which tells a reader nothing about a cost the paper asks them to weigh. They are censored
+    # statistics, so they are printed as such: taken over the substrates that finished, marked,
+    # and with the censoring rate in the caption.
+    _fin = sorted(r["t_generate"] for r in ce["rows"] if r.get("finished"))
+    env = {"deadline": ce["deadline_s"], "n_finished": len(_fin),
+           "mean_finished": round(sum(_fin) / max(len(_fin), 1), 2),
+           "p90_finished": round(_fin[int(0.9 * (len(_fin) - 1))], 2) if _fin else None,
+           # The per cent sign has to reach LaTeX escaped, or it comments out the rest of the
+           # caption line including the closing brace, and the document stops compiling.
+           "censored_pct": f"{unfinished / max(sampled, 1):.1%}".replace("%", "\\%")}
     return f"""\\begin{{table}}[t]
 \\centering\\footnotesize
 \\begin{{tabular}}{{lrr}}
@@ -36,16 +47,16 @@ rules applied & {i['top_k']} & {thousands(parseable)} \\\\
 candidates, mean & {i['candidates']['mean']} & {e['candidates']['mean']} \\\\
 candidates, median & {i['candidates']['median']} & {e['candidates']['median']} \\\\
 seconds, median & {i['median_s']} & {e['median_s']} \\\\
-seconds, mean & {i['mean_s']} & --- \\\\
-seconds, 90th pct & {i['p90_s']} & --- \\\\
-seconds, slowest & {i['max_s']} & did not finish \\\\
+seconds, mean & {i['mean_s']} & {env['mean_finished']}$^{{\\dagger}}$ \\\\
+seconds, 90th pct & {i['p90_s']} & {env['p90_finished']}$^{{\\dagger}}$ \\\\
+seconds, slowest & {i['max_s']} & $>{int(env['deadline'])}$ \\\\
 \\bottomrule
 \\end{{tabular}}
 \\caption{{The two operating modes: rules applied, candidates returned and wall-clock time. Every
 figure is measured on the validation draw, {i['n']} substrates for the interactive mode and
 {e['candidates']['n']} for the exhaustive one, which lacks a pool for one of them. Candidates are
 what a caller receives: deduplicated by matching key and capped at
-{i['candidates']['cap']}. Times cover everything before the filter. The exhaustive mode's slowest substrate did not finish inside a ten-minute deadline; on a sampled timing sweep it misses that deadline on {unfinished} of {sampled} substrates, and on the test split, where no deadline is imposed, it fails on none.}}
+{i['candidates']['cap']}. Times cover everything before the filter. $^{{\\dagger}}$ marks a censored statistic: on a sampled timing sweep the exhaustive mode exceeds a {int(env['deadline'])}-second deadline on {unfinished} of {sampled} substrates, {env['censored_pct']}, so its mean and ninetieth percentile are taken over the {env['n_finished']} that finished and are lower bounds. Its slowest substrate is one of the censored ones. On the test split, where no deadline is imposed, it fails on none.}}
 \\label{{tab:modes}}
 \\end{{table}}
 """
