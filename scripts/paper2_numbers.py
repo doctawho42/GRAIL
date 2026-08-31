@@ -398,7 +398,10 @@ def build():
         n[f"lrc.{tag}.lo"] = cell["ci95"][0]
         n[f"lrc.{tag}.hi"] = cell["ci95"][1]
         n[f"lrc.{tag}.sep"] = cell["excludes_zero"]
-        n[f"lrc.{tag}.dropped"] = lrc["variants"][name]["templates"]
+        # How many templates the variant removes, not how many it keeps: the artifact records the
+        # size of each bank and the difference is what "dropped" means in the prose.
+        n[f"lrc.{tag}.dropped"] = (lrc["variants"]["whole bank"]["templates"]
+                                   - lrc["variants"][name]["templates"])
     n["lrc.references"] = lrc["population"]["n_references"]
     n["lrc.wholebanktemplates"] = lrc["variants"]["whole bank"]["templates"]
     n["lrc.rightsholders"] = sum(

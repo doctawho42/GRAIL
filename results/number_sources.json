@@ -16,8 +16,7 @@
  "exempt": 3,
  "unpinned": [],
  "unstamped": [
-  "results/aggregation_ablation.json",
-  "results/licence_removal_cost__clean_test.json"
+  "results/aggregation_ablation.json"
  ],
  "verifiable_by_inference_only": [
   "results/coverage_gap_types.json",
@@ -28,7 +27,7 @@
   "results/scored_predictions.json"
  ],
  "n_unpinned": 0,
- "n_unstamped": 2,
+ "n_unstamped": 1,
  "n_verifiable_by_inference_only": 6,
  "method": "paper2_numbers.build() is run with art() instrumented, so the count is of artifacts actually opened rather than of matches in the source",
  "artifacts": [
@@ -405,8 +404,8 @@
    "artifact": "results/licence_removal_cost__clean_test.json",
    "pinned": true,
    "stamped": true,
-   "verifiable": false,
-   "sweep_status": "producer_changed",
+   "verifiable": true,
+   "sweep_status": "current",
    "how": "recorded source digest",
    "exempt": null
   },

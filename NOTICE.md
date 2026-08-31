@@ -125,7 +125,7 @@ for the rightsholders rather than for a file in this repository: BioTransformer'
 requires explicit permission for *commercial* use or redistribution, and the released model is to
 be deployed as a service, which the authors should settle with its authors directly; and GLORYx's
 82 templates carry no licence text this repository holds, so the cost of removing them is measured
-below and the decision is stated rather than assumed.
+below, 7 references of 2,597, and the decision is stated rather than assumed.
 
 None of this is an oversight to be corrected by a note. It is a set of decisions, and the cost of
 each is measured rather than guessed (`results/licence_removal_cost__clean_test.json`, one
@@ -135,15 +135,23 @@ uncapped pass of each bank variant over the 1,170 evaluated test substrates):
 |---|---:|---:|---|
 | drop BioTransformer's | 611 | **0** | 0.0000 |
 | drop SyGMa's | 152 | 14 | −0.0054 [−0.0086, −0.0026] |
-| drop every borrowed template | 763 | 14 | −0.0054 [−0.0086, −0.0026] |
+| drop GLORYx's | 82 | 7 | −0.0027 [−0.0051, −0.0008] |
+| drop every borrowed template | 845 | 21 | −0.0081 [−0.0120, −0.0046] |
 
 **The 611 BioTransformer templates cost nothing.** Every reference they reach is reached by
 something else in the bank, so the largest borrowing here is the one that can be given up for
 free. The whole obligation to BioTransformer, the templates and the tracked files together, can
 therefore be discharged by removal at no measurable cost to the science.
 
-SyGMa's 152 cost 14 references of 2,597, 0.54% of the reach. That is a real but small price, and
-it is the only one of these decisions where anything is being traded.
+SyGMa's 152 cost 14 references of 2,597, 0.54% of the reach, and GLORYx's 82 cost 7, 0.27%. Those
+are the two decisions where anything is being traded, and both prices are real but small: dropping
+every borrowed template together costs 21 references, 0.81% of the reach, and the whole bank's
+ceiling falls from 0.8856 to 0.8776.
+
+Two readings follow, and they point the same way. A release that carries no borrowed template at
+all is available at a cost of under one point of reach, so the obligations above are not a
+constraint anyone is trapped by. And the one rightsholder whose terms are unsettled for the
+planned service, BioTransformer, is the one whose templates cost nothing at all.
 
 The unused files cost nothing to untrack and are untracked. What is kept is the LGPL core, whose
 611 templates the bank uses and whose redistribution the LGPL permits.

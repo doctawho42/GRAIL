@@ -313,10 +313,7 @@
    "artifact": "results/licence_removal_cost__clean_test.json",
    "script": "licence_removal_cost.py",
    "how": "recorded source digest",
-   "status": "producer_changed",
-   "detail": "producer was 9d41c1750fcb, is now 5cf9a2d03c00",
-   "diff_recovered_by": "source at 8839b2eabaa3",
-   "diff": "--- licence_removal_cost.py (as recorded)\n+++ licence_removal_cost.py (now)\n@@ -78,4 +78,21 @@\n     except Exception:\n         pass\n+\n+    # GLORYx's rule file, which is the third rightsholder in the bank and the only one whose terms\n+    # this repository holds no text for. Its own attribution column says most of its rules are\n+    # SyGMa's; the residue is GLORY's and its own, and those are the templates whose removal has\n+    # to be priced before a licence can be chosen.\n+    glory = ROOT / \"grail_metabolism/resources/external/gloryx_reactionrules.csv\"\n+    if glory.exists():\n+        import csv as _csv\n+\n+        own = set()\n+        with open(glory, newline=\"\") as handle:\n+            for row in _csv.DictReader(handle):\n+                smirks = (row.get(\"SMIRKS\") or \"\").strip()\n+                if smirks and (row.get(\"Rule source\") or \"\").strip() != \"SyGMa\":\n+                    own.add(smirks)\n+        if own:\n+            out[\"GLORYx\"] = own\n     return out\n "
+   "status": "current"
   },
   {
    "artifact": "results/matched_length.json",
@@ -605,11 +602,11 @@
   }
  ],
  "n_pinned": 98,
- "n_pinned_stale": 2,
+ "n_pinned_stale": 1,
  "sweep": {
-  "unstamped": 253,
-  "producer_changed": 40,
-  "current": 35,
+  "unstamped": 247,
+  "producer_changed": 39,
+  "current": 36,
   "producer_unknown": 27,
   "cosmetic_only": 8
  },
@@ -648,36 +645,6 @@
    "detail": "producer was 8b1d64f23b01, is now 7643b85c5f73",
    "diff_recovered_by": "source at cb1fa8a88a32",
    "diff": "--- aggregate_vs_output_size.py (as recorded)\n+++ aggregate_vs_output_size.py (now)\n@@ -161,4 +161,37 @@\n     print(f\"  monotone in output size: {monotone}\")\n \n+    # How much does the like-emitting null actually rule out? Counting verdicts says nothing on its\n+    # own -- the difference between a certified result and an uncertified one is not itself a\n+    # result, which is the reasoning this paper rejects elsewhere. So report the widest interval the\n+    # comparable pairs leave open: if it is wide relative to the reversals that do certify, the\n+    # partition is a description and not an identification, and the text must say so.\n+    widths = []\n+    for pop, p_ in rep[\"populations\"].items():\n+        for r in p_[\"pairs\"]:\n+            if not r[\"comparable\"]:\n+                continue\n+            for f in r[\"sign_flips\"]:\n+                for t in (\"1\", \"2\"):\n+                    ci = f[f\"ci_{t}\"]\n+                    if ci:\n+                        widths.append((round(ci[1] - ci[0], 4), pop, tuple(r[\"pair\"])))\n+    certified = [abs(f[\"delta_1\"]) for p_ in rep[\"populations\"].values() for r in p_[\"pairs\"]\n+                 for f in r[\"sign_flips\"] if f[\"certified_both_directions\"]]\n+    rep[\"power\"] = {\n+        \"widest_interval_among_comparable_pairs\": max(widths)[0] if widths else None,\n+        \"where\": {\"population\": max(widths)[1], \"pair\": list(max(widths)[2])} if widths else None,\n+        \"median_certified_reversal_size\": round(float(sorted(certified)[len(certified)//2]), 4)\n+                                          if certified else None,\n+        \"reading\": \"the like-emitting null is a failure to detect, not a demonstration of absence: \"\n+                   \"the widest interval it leaves open is of the same order as the reversals that \"\n+                   \"do certify\",\n+    }\n+    if widths:\n+        w, pop, pair = max(widths)\n+        print(f\"\\npower of the like-emitting null: widest interval {w} \"\n+              f\"({pop}, {pair[0]} vs {pair[1]})\")\n+        print(f\"  against a median certified reversal of {rep['power']['median_certified_reversal_size']}\")\n+        print(\"  -> the null cannot separate absence from lack of power\")\n+\n     tot_c = sum(v[\"certified_reversals_among_comparable\"] for _, v in verdicts)\n     tot_d = sum(v[\"certified_reversals_among_disparate\"] for _, v in verdicts)"
-  },
-  {
-   "artifact": "results/aggregation_shards/s0.json",
-   "status": "unstamped",
-   "detail": "no provenance block: nothing records which code wrote this"
-  },
-  {
-   "artifact": "results/aggregation_shards/s1.json",
-   "status": "unstamped",
-   "detail": "no provenance block: nothing records which code wrote this"
-  },
-  {
-   "artifact": "results/aggregation_shards/s2.json",
-   "status": "unstamped",
-   "detail": "no provenance block: nothing records which code wrote this"
-  },
-  {
-   "artifact": "results/aggregation_shards/s3.json",
-   "status": "unstamped",
-   "detail": "no provenance block: nothing records which code wrote this"
-  },
-  {
-   "artifact": "results/aggregation_shards/s4.json",
-   "status": "unstamped",
-   "detail": "no provenance block: nothing records which code wrote this"
-  },
-  {
-   "artifact": "results/aggregation_shards/s5.json",
-   "status": "unstamped",
-   "detail": "no provenance block: nothing records which code wrote this"
   },
   {
    "artifact": "results/anchor_certification.json",
@@ -1542,15 +1509,6 @@
    "script": "pair_cost_benchmark.py",
    "status": "producer_unknown",
    "detail": "commit 003cfcee3da5 does not carry scripts/pair_cost_benchmark.py"
-  },
-  {
-   "artifact": "results/paper2_numbers.json",
-   "script": "paper2_numbers.py",
-   "how": "recorded source digest",
-   "status": "producer_changed",
-   "detail": "producer was 2532e4f97501, is now b47d7f10c9b6",
-   "diff_recovered_by": "the tree was dirty when written, so the source at 92cc94b746d2 is the nearest committed version and not exactly what ran",
-   "diff": "--- paper2_numbers.py (as recorded)\n+++ paper2_numbers.py (now)\n@@ -15,4 +15,5 @@\n ROOT = Path(__file__).resolve().parent.parent\n sys.path.insert(0, str(ROOT / \"scripts\"))\n+sys.path.insert(0, str(ROOT))          # the package, for constants read from the code itself\n \n from _provenance import stamp  # noqa: E402\n@@ -1348,4 +1349,8 @@\n     n[\"prov.unstamped\"] = sweep.get(\"unstamped\", 0)\n     n[\"prov.changed\"] = sweep.get(\"producer_changed\", 0)\n+    # How far the guarantee reaches past the pinned set: files below the top level of results/\n+    # that a pinned artifact names as an input, and whose digest therefore is checked.\n+    n[\"prov.subdirfiles\"] = pv.get(\"files_below_the_top_level\", 0)\n+    n[\"prov.namedinputs\"] = pv.get(\"of_those_named_as_an_input_by_a_pinned_artifact\", 0)\n     return n\n "
   },
   {
    "artifact": "results/paper2_review.json",
@@ -2438,7 +2396,7 @@
    "detail": "no provenance block: nothing records which code wrote this"
   }
  ],
- "files_below_the_top_level": 150,
+ "files_below_the_top_level": 144,
  "of_those_named_as_an_input_by_a_pinned_artifact": 11,
  "named_inputs": [
   "results/valpool_shards/v0.json",
