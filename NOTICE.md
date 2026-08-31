@@ -132,8 +132,11 @@ annotated metabolites as SMILES, so that every recall figure in the paper can be
 
 ## Comparators
 
-Per-substrate predictions from SyGMa, MetaTox and MetaPredictor are tracked under `results/` so the
-comparison can be recomputed without re-running any of them. What can be pinned about each — a
+Per-substrate predictions from SyGMa, MetaTox, MetaPredictor and BioTransformer are tracked under
+`results/` so the comparison can be recomputed without re-running any of them. BioTransformer's are
+the output of its own jar on our substrates, at `allHuman` for one step and again on the natural
+tautomer; the jar is LGPL and redistributing what it produced on our own inputs is not a
+redistribution of the tool. What can be pinned about each — a
 version where one exists, the configuration, the frozen predictions with their digest, and the date
 each entered this repository — is recorded in `results/comparator_provenance.json`; BioTransformer's
 jar digest and SyGMa's version are additionally in `paper2/split_manifest.json`. Each remains the

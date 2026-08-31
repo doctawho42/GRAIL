@@ -217,7 +217,8 @@ def si_chemistry():
     """
     d = art("error_by_chemistry.json")
     arms = [("GRAIL exhaustive", "GRAIL exh."), ("GRAIL interactive", "GRAIL int."),
-            ("metatox", "MetaTox"), ("sygma", "SyGMa"), ("metapredictor", "MetaPred.")]
+            ("metatox", "MetaTox"), ("sygma", "SyGMa"), ("metapredictor", "MetaPred."),
+            ("biotransformer", "BioTrans.")]
     budget = "15"
     # A class with five references cannot support two decimals, and printing them there invites
     # an ordering to be read off noise. The small classes are marked rather than dropped, since
@@ -233,7 +234,7 @@ def si_chemistry():
     n = d["population"]["references_classified"]
     n_small = sum(1 for e in d["classes"].values() if e["references"] < SMALL)
     return ("\\begin{table}[h]\n\\centering\\scriptsize\n"
-            "\\begin{tabular}{@{}lrrrrrr@{}}\n\\toprule\n"
+            "\\begin{tabular}{@{}lrrrrrrr@{}}\n\\toprule\n"
             f"transformation class & refs & {head} \\\\\n\\midrule\n"
             + "\n".join(rows)
             + "\n\\bottomrule\n\\end{tabular}\n"

@@ -119,7 +119,9 @@ def main() -> int:
 
     comparators = {"metatox": ("results/metatox_smirks_preds.json", "predictions"),
                    "sygma": ("results/sygma_fulltest_predictions.json", None),
-                   "metapredictor": ("artifacts/tier2_1170/metapredictor_preds.json", None)}
+                   "metapredictor": ("artifacts/tier2_1170/metapredictor_preds.json", None),
+                   "biotransformer": ("results/biotransformer_allhuman_one_step_preds.json",
+                                      None)}
     arms = {}
     parent = {s: tautkey(s) for s in subs}
 
