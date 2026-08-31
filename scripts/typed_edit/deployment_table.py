@@ -193,20 +193,25 @@ def main() -> int:
     # contributes inside the sweep and not how much it emits: SyGMa's untruncated mean is nearly
     # twice its truncated one. Both are reported and each is named.
     mean_pool = {a: round(float(np.mean([len(arms[a][s]) for s in subs])), 1) for a in arms}
-    untruncated = {}
+    # One decimal place stopped being enough when two arms landed on the same rounded value from
+    # different means, which reads as a copy error in a table. The second place is kept beside
+    # the first rather than replacing it, so nothing that quotes the first moves.
+    untruncated, untruncated2 = {}, {}
     for a in ours:
         pools = big if a == "whole bank" else small
-        untruncated[a] = round(float(np.mean(
+        exact = float(np.mean(
             [len(drop_parent([c["key"] for c in rrf_order(
-                sorted(pools[s], key=lambda c: -c["generator"])[:CAP])], s)) for s in subs])), 1)
+                sorted(pools[s], key=lambda c: -c["generator"])[:CAP])], s)) for s in subs]))
+        untruncated[a], untruncated2[a] = round(exact, 1), round(exact, 2)
     for name, (rel, key) in COMPARATORS.items():
         path = ROOT / rel
         if not path.exists():
             continue
         blob = json.loads(path.read_text())
         preds = blob[key] if key else blob
-        untruncated[name] = round(float(np.mean(
-            [len(drop_parent(_dedup(preds.get(s, []), 10 ** 6), s)) for s in subs])), 1)
+        exact = float(np.mean(
+            [len(drop_parent(_dedup(preds.get(s, []), 10 ** 6), s)) for s in subs]))
+        untruncated[name], untruncated2[name] = round(exact, 1), round(exact, 2)
     rep = {"provenance": stamp(__file__),
            "population": {"n": len(subs), "n_references": N,
                           "source": "the 291 of results/four_method_291.json"},
@@ -223,6 +228,7 @@ def main() -> int:
                                        "at the widest budget; it is not how much each method "
                                        "emits"),
            "mean_emitted_untruncated": untruncated,
+           "mean_emitted_untruncated_2dp": untruncated2,
            "comparators_absent": absent,
            "recall_micro": table, "contrasts": contrasts,
            "recall_macro": macro_table, "contrasts_macro": macro_contrasts,

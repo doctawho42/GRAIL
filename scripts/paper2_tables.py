@@ -18,6 +18,7 @@ LABEL = {"whole bank": "GRAIL exh.", "trained budget": "GRAIL int.",
 def table():
     d = json.loads((ROOT / "results/deployment_table.json").read_text())
     rec, out = d["recall_micro"], d["mean_output_length"]
+    emit2 = d.get("mean_emitted_untruncated_2dp", {})
     # What each method emits, not what survives truncation at the widest budget: the row had been
     # printing the second under the first's name, understating SyGMa by nearly half.
     emit = d.get("mean_emitted_untruncated", {})
@@ -34,8 +35,9 @@ def table():
     # The last row is a different quantity from the nine above it -- a list length, not a recall
     # -- and sat under the same rule structure reading as a tenth budget. It says what it is.
     L += ["\\midrule",
-          "\\emph{mean emitted} & " + " & ".join(f"\\emph{{{emit.get(a, out[a])}}}"
-                                              for a in arms) + " \\\\",
+          "\\emph{mean emitted} & "
+          + " & ".join(f"\\emph{{{float(emit2.get(a, emit.get(a, out[a]))):.2f}}}"
+                       for a in arms) + " \\\\",
           "\\bottomrule", "\\end{tabular}",
           "\\caption{Micro recall at each output budget on the "
           f"{d['population']['n']} substrates of the comparison set, carrying "
