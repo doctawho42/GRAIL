@@ -618,6 +618,27 @@ deployment answering with thirty or fifty candidates should raise the rule budge
 reason the Discussion gives for the interactive mode's deficit there, and pay the standardisation
 cost that follows.
 
+\section{The drawing's effect where the drawing changes anything}
+\label{sec:si-dialcond}
+
+The sweep over how the substrate is drawn reports its effect pooled over the whole comparison set.
+That is the right number for reading the comparison, because the comparison is over the whole set,
+and it is the wrong number for a user, because most substrates in that set carry no amide: their
+two drawings are the same molecule and contribute a difference of exactly zero. The standardiser
+changes \numDialcondChanged{} of \numDialcondSubstrates{} substrates, so more than seven in ten of
+the pooled figure is made of guaranteed zeros.
+
+Conditioned on the substrates it changes, and on the same pools, the exhaustive arm loses
+\numDialcondConditional{} of micro recall at a budget of 15,
+$[\numDialcondConditionalLo, \numDialcondConditionalHi]$, against \numDialcondPooled{}
+$[\numDialcondPooledLo, \numDialcondPooledHi]$ pooled. The conditional effect is the larger by
+nearly three times and separates from zero, as the pooled one also does; at the other budgets it
+is larger in magnitude and does not separate, on a population a quarter the size.
+
+Both figures belong in the record and they answer different questions. A reader deciding whether
+the drawing moved a verdict wants the pooled one. A chemist submitting one substrate wants the
+conditional one, because their substrate is either affected or it is not.
+
 \section{Whether the missing chemistry is the corpus's or the bank's}
 \label{sec:si-typeoverlap}
 
@@ -661,9 +682,17 @@ Of the \numTypeoverlapBanklacks{} references whose type the bank does not hold,
 \numTypeoverlapMinerssharePct{} the miner's. That is the containment the manuscript's claim needs,
 measured rather than argued from magnitudes.
 
-One caution belongs with it. A type absent from the training annotation is absent from this
+Two cautions belong with it. A type absent from the training annotation is absent from this
 corpus's training half and not from chemistry; that is exactly the sense in which the claim is
 about corpora and not about metabolism.
+
+And the counts in this section are made by one instrument and are not interchangeable with the
+counts elsewhere. Typing by the radius-0 route leaves \numTypeoverlapUntypeable{} of the
+\numHydReferences{} references untyped; the composite instruments of
+Section~\ref{sec:si-refstep}, which need a reaction centre rather than a type, leave a different
+number; and the census of Section~\ref{MS-sec:results} reports its untypeable count within the
+uncovered subset rather than over the whole set. Three numbers describing three measurements,
+named here because printed side by side they read as one measurement disagreeing with itself.
 
 \section{Whether template discovery has saturated}
 \label{sec:si-rarefaction}

@@ -282,6 +282,19 @@ def build():
     n["chem.cleavage.bestother"] = (max(v["15"] for k, v in _cleav["recall"].items()
                                         if not k.startswith("GRAIL")) if _cleav else None)
 
+    # The drawing's effect on the substrates it changes, not diluted by the ones it cannot.
+    dc = art("dialect_conditional.json")["arms"]["GRAIL exhaustive"]
+    n["dialcond.changed"] = dc["substrates_the_drawing_changes"]
+    n["dialcond.substrates"] = dc["substrates"]
+    n["dialcond.share"] = dc["share_changed"]
+    for k in ("15",):
+        for tag in ("all", "changed_only"):
+            cell = dc["by_budget"][k][tag]
+            key = "pooled" if tag == "all" else "conditional"
+            n[f"dialcond.{key}"] = cell["difference"]
+            n[f"dialcond.{key}.lo"] = cell["ci95"][0]
+            n[f"dialcond.{key}.hi"] = cell["ci95"][1]
+
     # How much of the annotation is a single enzymatic step, measured on the references rather
     # than on the templates mined from them.
     ram = art("references_are_multistep.json")
@@ -340,6 +353,7 @@ def build():
     n["typeoverlap.absentshare"] = mtt[
         "share_of_test_references_whose_type_is_absent_from_train"]
     n["typeoverlap.typed"] = mtt["test"]["typed"]
+    n["typeoverlap.untypeable"] = mtt["test"]["pairs"] - mtt["test"]["typed"]
     # The direct measurement: of the references whose type the bank does not hold, how many have a
     # type the training annotation does not hold either. The manuscript had argued this by
     # comparing two magnitudes and its own Supporting Information said the two were not nested.

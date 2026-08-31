@@ -121,8 +121,9 @@ def hypotheses():
             "on the comparison set, which was recorded afterwards. $^{\\ddagger}$ marks a "
             "confirmation whose registered threshold falls inside its own interval, so what the "
             "data establish is that the effect exceeds zero rather than that it clears the bar. "
-            "$^{\\S}$ P3 is confirmed on the population it was registered against and not on "
-            "the comparison set, where the same quantity is $+0.0556$.}"
+            "$^{\\S}$ P3 is confirmed on the validation population it was registered against, "
+            "not on the comparison set, where the same quantity is $+0.0556$, and its effect is "
+            "inside the retraining spread.}"
             "\n\\label{tab:hyp}\n\\end{table*}\n")
 
 

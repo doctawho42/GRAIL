@@ -270,7 +270,10 @@ choice is not neutral. It is a deployment question and not only an evaluation on
 submits the drawing a chemist would make. The worked example shows the size of it on one molecule:
 given gemcitabine as a chemist draws it, the interactive mode returns
 \numCaseInterdrawnCandidates{} candidates and none of the four annotated metabolites, against one
-of four on the stored drawing. Rebuilding both GRAIL arms with every substrate redrawn by the
+of four on the stored drawing. Pooled over the comparison set the effect is small, because the standardiser changes only
+\numDialcondChanged{} of \numDialcondSubstrates{} substrates and the rest contribute zero. On the
+substrates it changes it is \numDialcondConditional{} at a budget of 15 against
+\numDialcondPooled{} pooled, nearly three times as large. Rebuilding both GRAIL arms with every substrate redrawn by the
 standardiser moves \numDsweepMoved{} of \numDsweepCells{} arm-against-comparator verdicts, none
 of them a lead claimed here, and the coverage ceiling on that population by
 $\numDsweepCeilingdiff$ with the interval covering zero.
@@ -654,10 +657,10 @@ a transformation type the bank does not hold, \numCeilingKnown{} need a type it 
 did not fire, and \numCeilingUntypeable{} cannot be typed.
 
 It is a one-template ceiling and not a one-enzyme one, which matters for how the number reads. The
-annotation itself is not all single steps: applying the same two instruments to the references
-rather than to the templates, \numRefstepEither{} of the \numRefstepTyped{} that can be typed,
-\numRefstepEithersharePct{}, are transformations an enzyme system reached in more than one turnover
-and the corpus records as one pair. A hit on one of those is a single template standing in for
+annotation itself is not all single steps: applying the composite instruments to the references
+rather than to the templates, \numRefstepEither{} of the \numRefstepTyped{} pairs those
+instruments can type, \numRefstepEithersharePct{}, are transformations an enzyme system reached in
+more than one turnover and the corpus records as one pair. A hit on one of those is a single template standing in for
 several turnovers, so \numCeilingCoverage{} is not the share of annotated metabolism one enzymatic
 step reaches.
 
@@ -814,9 +817,9 @@ reproducible.
 
 GRAIL does not lead at the tight budgets. At $k=15$ neither arm separates from the strongest
 comparator, and at $k=20$ the interactive arm separates against it. The established lead is the exhaustive arm's, at $k=30$ and $50$. The system is not compared against the 2025--26 wave, because that wave cannot be run as
-released: of \numComparatorsUnavailableWord{} such systems none ships weights a third party can
-run \citep{Larsson_2025, Zhou_2025, Zhou_2026, Chavan_2026}, and the Supporting Information says
-what each is missing. No ranking in this literature can presently be verified independently, which
+released: of \numComparatorsUnavailableWord{} such systems none ships a runnable metabolite
+predictor \citep{Larsson_2025, Zhou_2025, Zhou_2026, Chavan_2026}, one of them releasing weights
+whose reaction module was withdrawn, and the Supporting Information says what each is missing. No ranking in this literature can presently be verified independently, which
 is the concrete case for leaderboards releasing per-item predictions rather than aggregate scores
 \citep{Rodriguez_2021, Mishra_2021}. Precision figures are bounded by annotation completeness. And the advantage at
 wide budgets is partly a statement about output length on all sides rather than about ranking.
@@ -828,7 +831,10 @@ directly rather than argued from the bank's coverage. Of the \numTypeoverlapBank
 references whose transformation type the bank does not hold, \numTypeoverlapCorpuslackstoo{},
 \numTypeoverlapCorpussharePct{}, have a type the training annotation does not hold either; the
 remaining \numTypeoverlapMinerslost{} are chemistry the corpus contained and the miner did not
-carry across (Section~\ref{SI-sec:si-typeoverlap}). Template discovery from that
+carry across (Section~\ref{SI-sec:si-typeoverlap}). That count is larger than the
+\numCeilingNovel{} above and is not in conflict with it: a template can produce a product while
+being typed differently from the pair it produces, so a reference whose type the bank lacks can
+still be reached, and \numCeilingNovel{} counts only those that are not. Template discovery from that
 corpus is separately unfinished, its rarefaction curve still climbing, so mining harder would yield
 more templates and could not supply a type the corpus does not contain.
 Extending coverage therefore requires new reaction corpora, and the census narrows the search:
