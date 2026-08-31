@@ -326,11 +326,11 @@ configuration and this paper's argument is that a configuration left unstated is
 comparator's own list is deduplicated, has a prediction equal to the substrate dropped, and is
 then cut at \numMatchedCap{} candidates, five past the pool cap of \numHNineCap{}: beyond that
 neither of this work's arms has a candidate to put in the slot, so the comparison there would
-measure the pool cap rather than the ordering. The cut binds on \numMatchedBindsSygma{} of the
-\numPopulationN{} substrates for SyGMa and \numMatchedBindsMetatox{} for MetaTox, and on none
+measure the pool cap rather than the ordering. The cut binds on \numMatchedBindssygma{} of the
+\numPopulationN{} substrates for SyGMa and \numMatchedBindsmetatox{} for MetaTox, and on none
 for MetaPredictor. What it costs the comparators is measured rather than assumed: every contrast
 in Table~\ref{tab:si-matched} is identical with the cut removed, to four decimal places, because
-SyGMa places \numMatchedPastcutSygmaWord{} annotated metabolites past that rank on any substrate where
+SyGMa places \numMatchedPastcutsygmaWord{} annotated metabolites past that rank on any substrate where
 its list runs longer.
 
 \input{si_table_matched}
@@ -1546,9 +1546,16 @@ independent of the commit, so the producer is identified regardless; what the fl
 the surrounding tree was not clean, not that the producer is unknown.
 
 The guarantee also covers the pinned set and not the directory: of \numProvFiles{} files under
-\texttt{results/}, \numProvUnstamped{} carry no stamp and \numProvChanged{} were written by a
-producer that has since changed. None of those is among the \numProvSources{} the numbers come
-from, which the gate is what establishes.
+\texttt{results/} and everything below it, \numProvUnstamped{} carry no stamp and
+\numProvChanged{} were written by a producer that has since changed. None of those is among the
+\numProvSources{} the numbers come from, which the gate is what establishes. The sweep reaches
+below the top level because most of what a published number is actually made of lives there:
+the candidate pools are written one shard at a time into their own directories, and a sweep that
+did not enter them would leave the files a curve is assembled from outside every check it makes.
+An unstamped file there is not therefore unaccounted for. A producer records the files it read by
+path and digest, so the guarantee extends one hop past the pinned set: \numProvNamedinputs{} of
+the files below the top level are named as an input by a pinned artifact, and a change to any of
+them makes that artifact fail rather than pass.
 
 A split manifest pins by digest the triple files, the substrate sets, the evaluated test set, the
 rule bank and every third-party artifact, and a verify mode recomputes and names any leaf that has

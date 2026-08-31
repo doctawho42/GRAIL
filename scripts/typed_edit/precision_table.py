@@ -36,6 +36,10 @@ COMPARATORS = {
     "MetaTox": ("results/metatox_smirks_preds.json", "predictions"),
     "SyGMa": ("results/sygma_fulltest_predictions.json", None),
     "MetaPredictor": ("artifacts/tier2_1170/metapredictor_preds.json", None),
+    # A sixth arm of the comparison table, and it was absent from this analysis while the
+    # comparison counted it. An arm reported in one place and omitted in another is the kind of
+    # asymmetry this paper spends its introduction objecting to.
+    "BioTransformer": ("results/biotransformer_allhuman_one_step_preds.json", None),
 }
 
 

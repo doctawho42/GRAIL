@@ -2,8 +2,8 @@
  "provenance": {
   "script": "parent_drop_effect.py",
   "script_path": "scripts/typed_edit/parent_drop_effect.py",
-  "source_sha256": "fe53b32be12ae14892a807d74ec4f9d3e567301ad791420d12bcff6d84e73e3f",
-  "git_commit": "3e0f38b8ec943ae282ad714a8bf582060d25a954",
+  "source_sha256": "7ad1bfee8ce77a34eeabd9104c022c38b866f3d08f03d265bed7e11f6a129e3b",
+  "git_commit": "92cc94b746d2051428206eac95c24f1e0f504e42",
   "git_dirty": true
  },
  "population": {
@@ -51,6 +51,13 @@
    "share": 0.1787,
    "median_rank_when_returned": 6,
    "within_top_15": 51
+  },
+  "BioTransformer": {
+   "substrates_returning_the_parent": 0,
+   "of": 291,
+   "share": 0.0,
+   "median_rank_when_returned": null,
+   "within_top_15": 0
   }
  },
  "substrates_whose_own_key_is_a_reference": 2,
@@ -507,6 +514,98 @@
    "50": {
     "with_convention": 0.4797,
     "without": 0.4797,
+    "effect": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ],
+    "separates": false
+   }
+  },
+  "BioTransformer": {
+   "1": {
+    "with_convention": 0.0722,
+    "without": 0.0722,
+    "effect": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ],
+    "separates": false
+   },
+   "3": {
+    "with_convention": 0.194,
+    "without": 0.194,
+    "effect": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ],
+    "separates": false
+   },
+   "5": {
+    "with_convention": 0.2752,
+    "without": 0.2752,
+    "effect": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ],
+    "separates": false
+   },
+   "8": {
+    "with_convention": 0.3414,
+    "without": 0.3414,
+    "effect": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ],
+    "separates": false
+   },
+   "10": {
+    "with_convention": 0.3759,
+    "without": 0.3759,
+    "effect": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ],
+    "separates": false
+   },
+   "15": {
+    "with_convention": 0.4286,
+    "without": 0.4286,
+    "effect": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ],
+    "separates": false
+   },
+   "20": {
+    "with_convention": 0.4421,
+    "without": 0.4421,
+    "effect": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ],
+    "separates": false
+   },
+   "30": {
+    "with_convention": 0.4466,
+    "without": 0.4466,
+    "effect": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ],
+    "separates": false
+   },
+   "50": {
+    "with_convention": 0.4481,
+    "without": 0.4481,
     "effect": 0.0,
     "ci95": [
      0.0,

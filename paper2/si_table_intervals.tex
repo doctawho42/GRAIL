@@ -1,30 +1,31 @@
 \begin{table}[h]
-\centering\small
-\begin{tabular}{rlll}
+\centering\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{rllll}
 \toprule
-$k$ & MetaTox & SyGMa & MetaPredictor \\
+$k$ & MetaTox & SyGMa & MetaPredictor & BioTransformer \\
 \midrule
-\multicolumn{4}{l}{\emph{GRAIL exhaustive} minus} \\
-$1$ & +.050$^{*}$\phantom{$^{\dagger}$} [+.026, +.074] & $-$.063$^{*}$\phantom{$^{\dagger}$} [$-$.093, $-$.034] & $-$.050$^{*}$\phantom{$^{\dagger}$} [$-$.078, $-$.023] \\
-$3$ & +.095$^{*}$\phantom{$^{\dagger}$} [+.058, +.134] & $-$.062$^{*}$\phantom{$^{\dagger}$} [$-$.097, $-$.026] & $-$.050$^{*}$$^{\dagger}$ [$-$.086, $-$.014] \\
-$5$ & +.092$^{*}$\phantom{$^{\dagger}$} [+.050, +.134] & $-$.065$^{*}$\phantom{$^{\dagger}$} [$-$.101, $-$.027] & $-$.045$^{*}$$^{\dagger}$ [$-$.089, $-$.003] \\
-$8$ & +.104$^{*}$\phantom{$^{\dagger}$} [+.062, +.146] & $-$.012\phantom{$^{*}$}\phantom{$^{\dagger}$} [$-$.050, +.026] & $-$.019\phantom{$^{*}$}\phantom{$^{\dagger}$} [$-$.064, +.023] \\
-$10$ & +.065$^{*}$$^{\dagger}$ [+.023, +.106] & $-$.003\phantom{$^{*}$}\phantom{$^{\dagger}$} [$-$.041, +.035] & $-$.018\phantom{$^{*}$}\phantom{$^{\dagger}$} [$-$.060, +.023] \\
-$15$ & +.021\phantom{$^{*}$}\phantom{$^{\dagger}$} [$-$.018, +.061] & +.051$^{*}$$^{\dagger}$ [+.016, +.088] & +.056$^{*}$$^{\dagger}$ [+.014, +.096] \\
-$20$ & +.027\phantom{$^{*}$}\phantom{$^{\dagger}$} [$-$.010, +.065] & +.080$^{*}$\phantom{$^{\dagger}$} [+.045, +.116] & +.099$^{*}$\phantom{$^{\dagger}$} [+.057, +.140] \\
-$30$ & +.038$^{*}$$^{\dagger}$ [+.005, +.072] & +.132$^{*}$\phantom{$^{\dagger}$} [+.098, +.169] & +.159$^{*}$\phantom{$^{\dagger}$} [+.117, +.201] \\
-$50$ & +.077$^{*}$\phantom{$^{\dagger}$} [+.045, +.108] & +.193$^{*}$\phantom{$^{\dagger}$} [+.152, +.234] & +.224$^{*}$\phantom{$^{\dagger}$} [+.173, +.273] \\
+\multicolumn{5}{l}{\emph{GRAIL exhaustive} minus} \\
+$1$ & +.050$^{*}$\phantom{$^{\dagger}$} [+.026, +.074] & $-$.063$^{*}$\phantom{$^{\dagger}$} [$-$.093, $-$.034] & $-$.050$^{*}$\phantom{$^{\dagger}$} [$-$.078, $-$.023] & +.018\phantom{$^{*}$}\phantom{$^{\dagger}$} [$-$.007, +.044] \\
+$3$ & +.095$^{*}$\phantom{$^{\dagger}$} [+.058, +.134] & $-$.062$^{*}$\phantom{$^{\dagger}$} [$-$.097, $-$.026] & $-$.050$^{*}$$^{\dagger}$ [$-$.086, $-$.014] & +.033\phantom{$^{*}$}\phantom{$^{\dagger}$} [$-$.005, +.074] \\
+$5$ & +.092$^{*}$\phantom{$^{\dagger}$} [+.050, +.134] & $-$.065$^{*}$\phantom{$^{\dagger}$} [$-$.101, $-$.027] & $-$.045$^{*}$$^{\dagger}$ [$-$.089, $-$.003] & +.035\phantom{$^{*}$}\phantom{$^{\dagger}$} [$-$.008, +.080] \\
+$8$ & +.104$^{*}$\phantom{$^{\dagger}$} [+.062, +.146] & $-$.012\phantom{$^{*}$}\phantom{$^{\dagger}$} [$-$.050, +.026] & $-$.019\phantom{$^{*}$}\phantom{$^{\dagger}$} [$-$.064, +.023] & +.074$^{*}$\phantom{$^{\dagger}$} [+.034, +.116] \\
+$10$ & +.065$^{*}$$^{\dagger}$ [+.023, +.106] & $-$.003\phantom{$^{*}$}\phantom{$^{\dagger}$} [$-$.041, +.035] & $-$.018\phantom{$^{*}$}\phantom{$^{\dagger}$} [$-$.060, +.023] & +.077$^{*}$\phantom{$^{\dagger}$} [+.036, +.119] \\
+$15$ & +.021\phantom{$^{*}$}\phantom{$^{\dagger}$} [$-$.018, +.061] & +.051$^{*}$$^{\dagger}$ [+.016, +.088] & +.056$^{*}$$^{\dagger}$ [+.014, +.096] & +.107$^{*}$\phantom{$^{\dagger}$} [+.068, +.148] \\
+$20$ & +.027\phantom{$^{*}$}\phantom{$^{\dagger}$} [$-$.010, +.065] & +.080$^{*}$\phantom{$^{\dagger}$} [+.045, +.116] & +.099$^{*}$\phantom{$^{\dagger}$} [+.057, +.140] & +.137$^{*}$\phantom{$^{\dagger}$} [+.096, +.180] \\
+$30$ & +.038$^{*}$$^{\dagger}$ [+.005, +.072] & +.132$^{*}$\phantom{$^{\dagger}$} [+.098, +.169] & +.159$^{*}$\phantom{$^{\dagger}$} [+.117, +.201] & +.193$^{*}$\phantom{$^{\dagger}$} [+.150, +.237] \\
+$50$ & +.077$^{*}$\phantom{$^{\dagger}$} [+.045, +.108] & +.193$^{*}$\phantom{$^{\dagger}$} [+.152, +.234] & +.224$^{*}$\phantom{$^{\dagger}$} [+.173, +.273] & +.256$^{*}$\phantom{$^{\dagger}$} [+.218, +.296] \\
 \midrule
-\multicolumn{4}{l}{\emph{GRAIL interactive} minus} \\
-$1$ & +.065$^{*}$\phantom{$^{\dagger}$} [+.040, +.091] & $-$.048$^{*}$\phantom{$^{\dagger}$} [$-$.076, $-$.021] & $-$.035$^{*}$$^{\dagger}$ [$-$.061, $-$.008] \\
-$3$ & +.108$^{*}$\phantom{$^{\dagger}$} [+.072, +.146] & $-$.048$^{*}$$^{\dagger}$ [$-$.082, $-$.015] & $-$.036\phantom{$^{*}$}\phantom{$^{\dagger}$} [$-$.074, +.000] \\
-$5$ & +.102$^{*}$\phantom{$^{\dagger}$} [+.062, +.144] & $-$.054$^{*}$$^{\dagger}$ [$-$.090, $-$.020] & $-$.035\phantom{$^{*}$}\phantom{$^{\dagger}$} [$-$.077, +.007] \\
-$8$ & +.090$^{*}$\phantom{$^{\dagger}$} [+.049, +.132] & $-$.026\phantom{$^{*}$}\phantom{$^{\dagger}$} [$-$.062, +.011] & $-$.033\phantom{$^{*}$}\phantom{$^{\dagger}$} [$-$.079, +.011] \\
-$10$ & +.045$^{*}$$^{\dagger}$ [+.003, +.086] & $-$.023\phantom{$^{*}$}\phantom{$^{\dagger}$} [$-$.059, +.014] & $-$.038\phantom{$^{*}$}\phantom{$^{\dagger}$} [$-$.082, +.007] \\
-$15$ & $-$.035\phantom{$^{*}$}\phantom{$^{\dagger}$} [$-$.076, +.006] & $-$.004\phantom{$^{*}$}\phantom{$^{\dagger}$} [$-$.041, +.033] & +.000\phantom{$^{*}$}\phantom{$^{\dagger}$} [$-$.045, +.046] \\
-$20$ & $-$.065$^{*}$$^{\dagger}$ [$-$.105, $-$.025] & $-$.012\phantom{$^{*}$}\phantom{$^{\dagger}$} [$-$.050, +.027] & +.007\phantom{$^{*}$}\phantom{$^{\dagger}$} [$-$.037, +.053] \\
-$30$ & $-$.111$^{*}$\phantom{$^{\dagger}$} [$-$.152, $-$.071] & $-$.017\phantom{$^{*}$}\phantom{$^{\dagger}$} [$-$.056, +.023] & +.011\phantom{$^{*}$}\phantom{$^{\dagger}$} [$-$.034, +.056] \\
-$50$ & $-$.137$^{*}$\phantom{$^{\dagger}$} [$-$.185, $-$.092] & $-$.021\phantom{$^{*}$}\phantom{$^{\dagger}$} [$-$.060, +.019] & +.011\phantom{$^{*}$}\phantom{$^{\dagger}$} [$-$.034, +.056] \\
+\multicolumn{5}{l}{\emph{GRAIL interactive} minus} \\
+$1$ & +.065$^{*}$\phantom{$^{\dagger}$} [+.040, +.091] & $-$.048$^{*}$\phantom{$^{\dagger}$} [$-$.076, $-$.021] & $-$.035$^{*}$$^{\dagger}$ [$-$.061, $-$.008] & +.033$^{*}$\phantom{$^{\dagger}$} [+.007, +.059] \\
+$3$ & +.108$^{*}$\phantom{$^{\dagger}$} [+.072, +.146] & $-$.048$^{*}$$^{\dagger}$ [$-$.082, $-$.015] & $-$.036\phantom{$^{*}$}\phantom{$^{\dagger}$} [$-$.074, +.000] & +.047$^{*}$\phantom{$^{\dagger}$} [+.011, +.083] \\
+$5$ & +.102$^{*}$\phantom{$^{\dagger}$} [+.062, +.144] & $-$.054$^{*}$$^{\dagger}$ [$-$.090, $-$.020] & $-$.035\phantom{$^{*}$}\phantom{$^{\dagger}$} [$-$.077, +.007] & +.045$^{*}$\phantom{$^{\dagger}$} [+.005, +.087] \\
+$8$ & +.090$^{*}$\phantom{$^{\dagger}$} [+.049, +.132] & $-$.026\phantom{$^{*}$}\phantom{$^{\dagger}$} [$-$.062, +.011] & $-$.033\phantom{$^{*}$}\phantom{$^{\dagger}$} [$-$.079, +.011] & +.060$^{*}$\phantom{$^{\dagger}$} [+.019, +.103] \\
+$10$ & +.045$^{*}$$^{\dagger}$ [+.003, +.086] & $-$.023\phantom{$^{*}$}\phantom{$^{\dagger}$} [$-$.059, +.014] & $-$.038\phantom{$^{*}$}\phantom{$^{\dagger}$} [$-$.082, +.007] & +.057$^{*}$\phantom{$^{\dagger}$} [+.015, +.103] \\
+$15$ & $-$.035\phantom{$^{*}$}\phantom{$^{\dagger}$} [$-$.076, +.006] & $-$.004\phantom{$^{*}$}\phantom{$^{\dagger}$} [$-$.041, +.033] & +.000\phantom{$^{*}$}\phantom{$^{\dagger}$} [$-$.045, +.046] & +.051$^{*}$\phantom{$^{\dagger}$} [+.006, +.099] \\
+$20$ & $-$.065$^{*}$$^{\dagger}$ [$-$.105, $-$.025] & $-$.012\phantom{$^{*}$}\phantom{$^{\dagger}$} [$-$.050, +.027] & +.007\phantom{$^{*}$}\phantom{$^{\dagger}$} [$-$.037, +.053] & +.045\phantom{$^{*}$}\phantom{$^{\dagger}$} [$-$.005, +.097] \\
+$30$ & $-$.111$^{*}$\phantom{$^{\dagger}$} [$-$.152, $-$.071] & $-$.017\phantom{$^{*}$}\phantom{$^{\dagger}$} [$-$.056, +.023] & +.011\phantom{$^{*}$}\phantom{$^{\dagger}$} [$-$.034, +.056] & +.044\phantom{$^{*}$}\phantom{$^{\dagger}$} [$-$.008, +.097] \\
+$50$ & $-$.137$^{*}$\phantom{$^{\dagger}$} [$-$.185, $-$.092] & $-$.021\phantom{$^{*}$}\phantom{$^{\dagger}$} [$-$.060, +.019] & +.011\phantom{$^{*}$}\phantom{$^{\dagger}$} [$-$.034, +.056] & +.042\phantom{$^{*}$}\phantom{$^{\dagger}$} [$-$.011, +.096] \\
 \bottomrule
 \end{tabular}
 \caption{Every difference between a GRAIL arm and a comparator on the comparison set, in micro recall, with its paired bootstrap 95\% interval; leading zeros are dropped. $^{*}$ marks an interval excluding zero, which is the condition under which the paper claims a lead or a trail, and the verdicts in the main text and in Figure~\ref{MS-fig:sweep} are read from these and from nothing else. The estimator is Equation~\ref{MS-eq:bootstrap} at $B = 10\,000$ resamples, seed 0. $^{\dagger}$ marks a cell that separates per comparison but not under Holm's correction over the whole sweep, a family of 54 tests.}

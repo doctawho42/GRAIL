@@ -513,7 +513,8 @@ def si_intervals():
     mult = art("multiplicity.json")
     con = d["contrasts"]
     ks = sorted((int(k) for k in con), key=int)
-    comps = [("metatox", "MetaTox"), ("sygma", "SyGMa"), ("metapredictor", "MetaPredictor")]
+    comps = [("metatox", "MetaTox"), ("sygma", "SyGMa"), ("metapredictor", "MetaPredictor"),
+             ("biotransformer", "BioTransformer")]
 
     def trim(x):
         """+0.0496 -> +.050, so a cell is a number and not a paragraph."""
@@ -539,11 +540,12 @@ def si_intervals():
                     star += "\\phantom{$^{\\dagger}$}"
                 cells.append(f"{trim(c['gap'])}{star} [{trim(c['ci95'][0])}, {trim(c['ci95'][1])}]")
             rows.append(f"${k}$ & " + " & ".join(cells) + " \\\\")
-        blocks.append(f"\\multicolumn{{4}}{{l}}{{\\emph{{GRAIL {label}}} minus}} \\\\\n"
-                      + "\n".join(rows))
+        blocks.append(f"\\multicolumn{{{len(comps) + 1}}}{{l}}{{\\emph{{GRAIL {label}}} minus}}"
+                      " \\\\\n" + "\n".join(rows))
     head = " & ".join(lab for _, lab in comps)
-    return ("\\begin{table}[h]\n\\centering\\small\n"
-            "\\begin{tabular}{rlll}\n\\toprule\n"
+    return ("\\begin{table}[h]\n\\centering\\footnotesize\n"
+            "\\setlength{\\tabcolsep}{3pt}\n"
+            "\\begin{tabular}{r" + "l" * len(comps) + "}\n\\toprule\n"
             f"$k$ & {head} \\\\\n\\midrule\n"
             + "\n\\midrule\n".join(blocks)
             + "\n\\bottomrule\n\\end{tabular}\n"
@@ -564,14 +566,17 @@ def si_precision():
     pr = d["precision_micro"]
     arms = list(pr)
     ks = sorted((int(k) for k in pr[arms[0]]), key=int)
-    rows = [f"${k}$ & " + " & ".join(f"{pr[a][str(k)]:.4f}" for a in arms) + " \\\\" for k in ks]
+    rows = [f"${k}$ & " + " & ".join(f"{pr[a][str(k)]:.4f}".lstrip("0") for a in arms)
+            + " \\\\" for k in ks]
     head = " & ".join(a.replace("GRAIL ", "GRAIL\\ ") for a in arms)
-    return ("\\begin{table}[h]\n\\centering\\small\n"
+    return ("\\begin{table}[h]\n\\centering\\footnotesize\n"
+            "\\setlength{\\tabcolsep}{4pt}\n"
             f"\\begin{{tabular}}{{r{'r' * len(arms)}}}\n\\toprule\n"
             f"$k$ & {head} \\\\\n\\midrule\n" + "\n".join(rows)
             + "\n\\bottomrule\n\\end{tabular}\n"
             "\\caption{Micro precision at each budget on the comparison set, under the parent-drop "
-            "convention of Table~\\ref{MS-tab:sweep}.}"
+            "convention of Table~\\ref{MS-tab:sweep}. Precision under an incomplete annotation is a "
+            "lower bound and is not used here to order systems.}"
             "\n\\label{tab:si-precision}\n\\end{table}\n")
 
 

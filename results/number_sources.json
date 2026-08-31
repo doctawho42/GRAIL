@@ -1,7 +1,8 @@
 {
- "artifacts_the_numbers_come_from": 77,
+ "artifacts_the_numbers_come_from": 79,
  "naming_a_checkpoint_that_is_not_the_deployed_run": [],
  "n_naming_a_non_deployed_checkpoint": 0,
+ "n_reached_only_through_an_inputs_block": 12,
  "producer_loads_a_model_but_the_artifact_records_none": [
   "results/aggregation_ablation.json <- scripts/typed_edit/aggregation_ablation.py",
   "results/cost_envelope.json <- scripts/typed_edit/cost_envelope.py",
@@ -15,7 +16,8 @@
  "exempt": 3,
  "unpinned": [],
  "unstamped": [
-  "results/val_pools.json"
+  "results/aggregation_ablation.json",
+  "results/licence_removal_cost__clean_test.json"
  ],
  "verifiable_by_inference_only": [
   "results/coverage_gap_types.json",
@@ -26,7 +28,7 @@
   "results/scored_predictions.json"
  ],
  "n_unpinned": 0,
- "n_unstamped": 1,
+ "n_unstamped": 2,
  "n_verifiable_by_inference_only": 6,
  "method": "paper2_numbers.build() is run with art() instrumented, so the count is of artifacts actually opened rather than of matches in the source",
  "artifacts": [
@@ -34,8 +36,8 @@
    "artifact": "results/aggregation_ablation.json",
    "pinned": true,
    "stamped": true,
-   "verifiable": true,
-   "sweep_status": "current",
+   "verifiable": false,
+   "sweep_status": "producer_changed",
    "how": "recorded source digest",
    "exempt": null
   },
@@ -403,8 +405,8 @@
    "artifact": "results/licence_removal_cost__clean_test.json",
    "pinned": true,
    "stamped": true,
-   "verifiable": true,
-   "sweep_status": "current",
+   "verifiable": false,
+   "sweep_status": "producer_changed",
    "how": "recorded source digest",
    "exempt": null
   },
@@ -571,6 +573,15 @@
    "exempt": null
   },
   {
+   "artifact": "results/reference_charge.json",
+   "pinned": true,
+   "stamped": true,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "recorded source digest",
+   "exempt": null
+  },
+  {
    "artifact": "results/references_are_multistep.json",
    "pinned": true,
    "stamped": true,
@@ -626,6 +637,15 @@
   },
   {
    "artifact": "results/standardiser_versions.json",
+   "pinned": true,
+   "stamped": true,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "recorded source digest",
+   "exempt": null
+  },
+  {
+   "artifact": "results/stereo_headroom.json",
    "pinned": true,
    "stamped": true,
    "verifiable": true,
@@ -709,8 +729,8 @@
    "artifact": "results/val_pools.json",
    "pinned": true,
    "stamped": true,
-   "verifiable": false,
-   "sweep_status": "producer_changed",
+   "verifiable": true,
+   "sweep_status": "current",
    "how": "recorded source digest",
    "exempt": null
   },

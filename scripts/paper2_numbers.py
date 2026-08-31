@@ -14,6 +14,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
+sys.path.insert(0, str(ROOT))          # the package, for constants read from the code itself
 
 from _provenance import stamp  # noqa: E402
 
@@ -1347,6 +1348,10 @@ def build():
     n["prov.files"] = pv["n_pinned"] + sum(sweep.values())
     n["prov.unstamped"] = sweep.get("unstamped", 0)
     n["prov.changed"] = sweep.get("producer_changed", 0)
+    # How far the guarantee reaches past the pinned set: files below the top level of results/
+    # that a pinned artifact names as an input, and whose digest therefore is checked.
+    n["prov.subdirfiles"] = pv.get("files_below_the_top_level", 0)
+    n["prov.namedinputs"] = pv.get("of_those_named_as_an_input_by_a_pinned_artifact", 0)
     return n
 
 
