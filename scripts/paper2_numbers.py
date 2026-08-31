@@ -257,6 +257,16 @@ def build():
         n[f"budget.k{b}.lo"] = cell["ci95"][0]
         n[f"budget.k{b}.hi"] = cell["ci95"][1]
     n["budget.beating"] = len(bc["budgets_that_beat_the_deployed_one"])
+    # What the paired population costs. A budget that cannot finish every substrate leaves the
+    # curve measured on the ones every budget holds, and the references the rest carry bound how
+    # far that could have moved any contrast; both are printed rather than left to a footnote.
+    n["budget.excluded"] = bc["substrates_outside_the_paired_population"]
+    n["budget.excludedrefs"] = bc["references_they_carry"]
+    for b, cell in bc["against_the_deployed_budget_at_k15"].items():
+        bound = cell.get("if_the_excluded_substrates_all_went_one_way")
+        if bound:
+            n[f"budget.k{b}.boundbest"] = bound["best_for_this_budget"]
+            n[f"budget.k{b}.boundworst"] = bound["worst_for_this_budget"]
 
     # how much of the curated half is somebody else's rules verbatim, and under whose terms
     ctp = art("curated_third_party.json")
