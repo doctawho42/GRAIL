@@ -42,8 +42,9 @@ is a report of where the pattern matched rather than of a mechanism, and
 Section~\ref{sec:offers} measures both the size of that part and how often the named site is the
 site that changed. We evaluate it with the two decisions above promoted
 to declared axes, meaning that each is stated and varied across its full range instead of being
-fixed silently, against every published predictor for which
-predictions on the same substrates could be obtained. The comparison does not produce a winner:
+fixed silently, against the published predictors for which
+predictions on the same substrates could be obtained without contaminating the comparison, each
+absence named with its reason. The comparison does not produce a winner:
 which system leads depends on how many candidates it is allowed to return, and we report that
 dependence rather than a single figure. We further measure how much of the recorded chemistry
 lies outside the reach of any single template application, and find that most of it is chemistry
@@ -83,10 +84,12 @@ threshold is checked on this draw, because a threshold checked on the population
 chose is not a check. Sampling is without replacement and the draws are not nested, so a different seed gives a
 different set of the same size and a different cap one that is not a subset of this one; cap and
 seed are recorded with every figure drawn from it. The \emph{comparison set} is a subset of the evaluated test set: the \numPopulationN{}
-substrates on which every method in the comparison predicts, carrying
-\numPopulationReferences{} references. It is not a random quarter of that split but the
-intersection of what five systems could be run on, and every comparison against a published
-predictor in this paper is measured on it.
+substrates every method in the comparison has an entry for, carrying
+\numPopulationReferences{} references. Every comparison against a published predictor in this
+paper is measured on it. It is not a random quarter of that split: it is the submission list sent
+to the comparator that is a web service, and how those \numPopulationN{} were drawn from the
+split is not recorded anywhere in this repository, which is the same defect the corpus assembly
+carries. What can be checked about it is checked in Section~\ref{SI-sec:si-population}.
 
 The annotated substrate--metabolite pairs are assembled from four sources: ChEMBL
 \citep{Zdrazil_2024}, DrugBank \citep{Wishart_2018}, MetXBioDB \citep{Djoumbou_Feunang_2019} and
@@ -884,7 +887,7 @@ a short list, and the setting that leads returns about a hundred structures at a
 \numPrecBankFiveZero{} and takes tens of seconds. Neither is the system; both are, and which rule
 budget a service should run follows from the output budget it answers at.
 
-Measured against every published predictor that could be run on the same substrates, the
+Measured against the published predictors that could be run on the same substrates, the
 comparison divides by output budget rather than resolving into an ordering, and the division is
 the result. Under the evaluation choices swept here, the verdict moves with the matching
 criterion and with the budget, so a single recall figure would have named a different leader
@@ -925,11 +928,12 @@ that it exceeds the registered bar. Precision is bounded by annotation completen
 of the system. The group-ranking headroom is real and unreached by both registered
 compositions for structural reasons. Every method runs out of candidates at wide budgets, so the
 widest columns measure list length on all sides. The comparison population is the
-\numPopulationN{} substrates on which all methods predict, a quarter of the evaluated test split
-and not a random quarter of it. It is selected in two directions: a substrate enters only if every method emitted something, which
-removes the cases where a comparator produced nothing and a bank this size should win most
-clearly, while two comparators were built on sources this corpus is assembled from, which favours
-them. Neither is corrected and they do not cancel.
+\numPopulationN{} substrates every method has an entry for, a quarter of the evaluated test split
+and not a random quarter of it: it is the submission list sent to the comparator that is a web
+service, and how those substrates were drawn from the split is not recorded anywhere in this
+repository. Nothing was excluded for emitting nothing, and the population still contains
+substrates a method answers nothing for. Two comparators were built on sources this corpus is
+assembled from, which favours them, and that is not corrected.
 
 Nothing in this pipeline is stereochemistry-aware. The standardiser strips configuration, the
 matching criterion is chosen to ignore it, and the annotation carries none, so sulfoxidation,

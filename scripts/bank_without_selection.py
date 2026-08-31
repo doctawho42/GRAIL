@@ -160,7 +160,7 @@ def recall_at(pred_keys, ref_keys, k):
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--gen-ckpt", default=str(ROOT / "artifacts/full5000_priors/checkpoints/generator.pt"))
+    ap.add_argument("--gen-ckpt", default=str(ROOT / "artifacts/full5000_implicit/checkpoints/generator.pt"))
     ap.add_argument("--filter-ckpt", default=str(ROOT / "artifacts/full5000_single/checkpoints/filter.pt"))
     ap.add_argument("--max-substrates", type=int, default=250)
     ap.add_argument("--sampling-seed", type=int, default=42)

@@ -1061,3 +1061,34 @@ def test_the_default_presentation_is_the_one_every_firing_path_uses():
     assert not silent, (
         "these call sites take the hydrogen convention from a default instead of naming it, so "
         "what they measure changes when the default does: " + ", ".join(silent))
+
+
+def test_every_script_takes_its_generator_from_the_deployed_run():
+    """A default checkpoint that is not the deployed one is a trap for whoever reproduces this.
+
+    Five scripts defaulted to the checkpoint directory that holds the FILTER's training run and
+    took their generator from it. The pools in results/ were not built that way -- they came from
+    the deployed generator, passed explicitly -- so no published number moved, but a reader
+    running any of those scripts without arguments got a different model, and one analysis written
+    here did exactly that and trailed the published arm by nine points before the mismatch was
+    found. The pools recorded no checkpoint, so the only way to find it was to check a number
+    against another number.
+    """
+    import re
+    from pathlib import Path
+
+    from grail_metabolism.utils import preparation
+
+    root = Path(preparation.__file__).resolve().parents[2]
+    deployed = "artifacts/full5000_implicit/checkpoints/generator.pt"
+    pattern = re.compile(r"artifacts/[A-Za-z0-9_]+/checkpoints/generator\.pt")
+    wrong = []
+    for path in sorted((root / "scripts").rglob("*.py")):
+        for n, line in enumerate(path.read_text().splitlines(), 1):
+            if "modal" in path.name:
+                continue          # a remote training entry point, not an inference default
+            for match in pattern.findall(line):
+                if match != deployed:
+                    wrong.append(f"{path.relative_to(root)}:{n} -> {match}")
+    assert not wrong, (
+        "these name a generator checkpoint that is not the deployed one: " + ", ".join(wrong))

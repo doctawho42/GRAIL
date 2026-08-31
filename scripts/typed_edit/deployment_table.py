@@ -54,13 +54,18 @@ COMPARATORS = {
 
 
 def load(spec):
-    pools, refs, tk = {}, {}, set()
+    pools, refs, tk, ck = {}, {}, set(), {}
     for f in sorted(glob.glob(spec)) or [spec]:
         d = json.loads(Path(f).read_text())
         pools.update(d["pools"]); refs.update(d["references"])
         if d.get("top_k"):
             tk.add(d["top_k"])
-    return pools, refs, (sorted(tk) or [None])[0]
+        # Which checkpoints wrote the pool, where the pool says. The earlier shards say nothing,
+        # and the consequence of that silence was an analysis run against the wrong generator for
+        # an afternoon before a number disagreed with another number.
+        if d.get("checkpoints"):
+            ck = d["checkpoints"]
+    return pools, refs, (sorted(tk) or [None])[0], (ck or None)
 
 
 def main() -> int:
@@ -72,8 +77,8 @@ def main() -> int:
 
     from bank_without_selection import _dedup
 
-    big, refs_b, tk_b = load(args.whole_bank)
-    small, refs_s, tk_s = load(args.trained)
+    big, refs_b, tk_b, ck_b = load(args.whole_bank)
+    small, refs_s, tk_s, ck_s = load(args.trained)
     refs = {**refs_b, **refs_s}
     subs = sorted(s for s in set(big) & set(small) if refs.get(s))
     real = {s: set(refs[s]) for s in subs}
@@ -210,7 +215,8 @@ def main() -> int:
                          "budget, for every arm alike; results/four_method_291.json, which "
                          "defines this population, does the same",
            "configuration": {"cap": CAP, "fusion": "H7 reciprocal rank fusion, k=60",
-                             "top_k": {"whole bank": tk_b, "trained budget": tk_s}},
+                             "top_k": {"whole bank": tk_b, "trained budget": tk_s},
+                             "checkpoints": {"whole bank": ck_b, "trained budget": ck_s}},
            "gate": {"reproduces_four_method_291_metatox": not mism, "mismatches": mism},
            "mean_output_length": mean_pool,
            "mean_output_length_note": ("the mean of the lists as the sweep reads them, truncated "

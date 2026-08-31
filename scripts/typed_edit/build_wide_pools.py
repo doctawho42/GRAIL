@@ -40,7 +40,7 @@ from grail_metabolism.workflows.factory import build_filter, build_generator  # 
 from vs_metatox import population  # noqa: E402
 
 
-def merge(pattern, out):
+def merge(pattern, out, which="comparison"):
     paths = sorted(glob.glob(pattern))
     if not paths:
         print("no shard matched", file=sys.stderr)
@@ -52,7 +52,11 @@ def merge(pattern, out):
         refs.update(d["references"])
         slices.append(tuple(d["slice"]))
         print(f"  + {Path(p).name}: {d['slice']} {len(d['pools'])} substrates", file=sys.stderr)
-    subs, _, _ = population()
+    if which == "evaluated-test":
+        truth = json.loads((ROOT / "results/test_references.json").read_text())
+        subs = sorted(s for s in truth if truth[s])
+    else:
+        subs, _, _ = population()
     covered = set()
     for a, b in slices:
         covered |= set(range(a, b))
@@ -84,11 +88,15 @@ def main() -> int:
     ap.add_argument("--start", type=int, default=0)
     ap.add_argument("--end", type=int, default=0)
     ap.add_argument("--merge", default="")
-    ap.add_argument("--gen-ckpt", default=str(ROOT / "artifacts/full5000_priors/checkpoints/generator.pt"))
+    ap.add_argument("--gen-ckpt", default=str(ROOT / "artifacts/full5000_implicit/checkpoints/generator.pt"))
     ap.add_argument("--filter-ckpt", default=str(ROOT / "artifacts/full5000_single/checkpoints/filter.pt"))
     ap.add_argument("--out", default=str(ROOT / "results" / "wide_pools.json"))
     ap.add_argument("--top-k", type=int, default=7581,
                     help="rule budget; 7581 is the whole bank, 30 is what the checkpoint records")
+    ap.add_argument("--population", choices=("comparison", "evaluated-test"),
+                    default="comparison",
+                    help="the 291 the comparison is read on, or the 1,170 evaluated test "
+                         "substrates, which is the population nobody selected")
     ap.add_argument("--present", choices=("stored", "standardised"), default="stored",
                     help="how the substrate is handed to the matcher: as the corpus stores it, "
                          "or as the declared standardiser draws it. The pool and the references "
@@ -97,9 +105,15 @@ def main() -> int:
     args = ap.parse_args()
 
     if args.merge:
-        return merge(args.merge, args.out)
+        return merge(args.merge, args.out, args.population)
 
-    subs, truth, _ = population()
+    if args.population == "evaluated-test":
+        # Every test substrate carrying at least one reference, which is the population the
+        # coverage measurements are made on and the one the comparison set was drawn from.
+        truth = json.loads((ROOT / "results/test_references.json").read_text())
+        subs = sorted(s for s in truth if truth[s])
+    else:
+        subs, truth, _ = population()
     sl = subs[args.start:(args.end or None)]
     print(f"substrates [{args.start}:{args.end or len(subs)}] of {len(subs)}",
           file=sys.stderr, flush=True)
@@ -141,9 +155,25 @@ def main() -> int:
         pools[s] = out
         refs[s] = sorted({k for k in (_key(p) for p in truth[s]) if k})
 
+    # Which checkpoints built this pool, by digest. The earlier shards recorded none, and the
+    # only way to discover that one of them had been built with a different generator was to
+    # re-derive a score and find it did not match. A stamp is cheaper than that discovery.
+    import hashlib
+
+    def digest(path):
+        h = hashlib.sha256()
+        with open(path, "rb") as handle:
+            for block in iter(lambda: handle.read(1 << 20), b""):
+                h.update(block)
+        return h.hexdigest()[:16]
+
     Path(args.out).write_text(json.dumps(
         {"slice": [args.start, args.end or len(subs)], "top_k": args.top_k,
-         "present": args.present,
+         "present": args.present, "population": args.population,
+         "checkpoints": {"generator": {"path": str(Path(args.gen_ckpt).relative_to(ROOT)),
+                                       "sha256_16": digest(args.gen_ckpt)},
+                         "filter": {"path": str(Path(args.filter_ckpt).relative_to(ROOT)),
+                                    "sha256_16": digest(args.filter_ckpt)}},
          "pools": pools, "references": refs},
         indent=1))
     print(f"wrote {args.out}", file=sys.stderr)

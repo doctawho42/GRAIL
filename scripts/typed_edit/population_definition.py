@@ -31,6 +31,7 @@ which is stated rather than worked around.
 from __future__ import annotations
 
 import argparse
+import glob
 import json
 import sys
 from pathlib import Path
@@ -52,7 +53,12 @@ CAP = 100
 
 TRUTH = ROOT / "results/test_references.json"
 METATOX = ROOT / "results/metatox_smirks_preds.json"
-DEPLOYED = ROOT / "results/scored_predictions.json"
+# The deployed interactive arm, from the pools the comparison itself is read from. An earlier
+# version of this script took it from results/scored_predictions.json, which is a narrower dump
+# ranked by the product of the two component scores; that arm reaches half what the deployed one
+# does and would have made every contrast here meaningless.
+DEPLOYED_COMPARISON = ROOT / "results/widepools_k30/all.json"
+DEPLOYED_FULLTEST = ROOT / "results/widepools_k30_fulltest"
 WHOLE_TEST = {"sygma": ROOT / "results/sygma_fulltest_predictions.json",
               "metapredictor": ROOT / "artifacts/tier2_1170/metapredictor_preds.json"}
 
@@ -70,8 +76,9 @@ def main() -> int:
 
     truth = json.loads(TRUTH.read_text())
     metatox = json.loads(METATOX.read_text())["predictions"]
-    deployed_rows = {r["sub"]: r["candidates"]
-                     for r in json.loads(DEPLOYED.read_text())["rows"]}
+    deployed_rows = dict(json.loads(DEPLOYED_COMPARISON.read_text())["pools"])
+    for f in sorted(glob.glob(str(DEPLOYED_FULLTEST / "w*.json"))):
+        deployed_rows.update(json.loads(Path(f).read_text())["pools"])
     others = {name: json.loads(path.read_text()) for name, path in WHOLE_TEST.items()
               if path.exists()}
 
@@ -131,7 +138,8 @@ def main() -> int:
             parent = tautkey(s)
             seen, ranked = set(), []
             for c in rrf_order(keep):
-                k = tautkey(c["smiles"])
+                # the pools carry the match key already; recomputing it costs an hour here
+                k = c.get("key") or tautkey(c["smiles"])
                 if not k or k == parent or k in seen:
                     continue
                 seen.add(k)
@@ -143,7 +151,14 @@ def main() -> int:
         return {s: [k for k in _dedup(preds.get(s, []), CAP + 5) if k and k != tautkey(s)]
                 for s in subset}
 
-    populations = {"the whole evaluated test set": every, "the comparison set": inside}
+    populations = {"the comparison set": inside}
+    covered = [s for s in every if s in deployed_rows]
+    if len(covered) == len(every):
+        populations["the whole evaluated test set"] = every
+    else:
+        print(f"the deployed arm covers {len(covered)} of {len(every)} evaluated substrates; "
+              f"the whole-test-set row is omitted rather than computed on a subset",
+              file=sys.stderr)
     contrasts = {}
     for pop_label, subset in populations.items():
         real = {s: set(truth_keys) for s, truth_keys in
@@ -190,7 +205,8 @@ def main() -> int:
         "exchangeability": exchangeability,
         "contrasts": contrasts,
         "absent_arm": ("the exhaustive arm was built on the comparison set only, so the "
-                       "whole-test-set row carries the deployed arm and not it"),
+                       "whole-test-set row carries the deployed interactive arm and not it"),
+        "deployed_arm_covers_the_whole_test_set": len(covered) == len(every),
         "permutation": {"n": N_PERM, "seed": SEED},
         "bootstrap": {"n": N_BOOT, "seed": SEED},
         "reading": (

@@ -419,6 +419,45 @@ def build():
         "of_those_whose_type_this_source_dropped_counts_ignored"]
     n["metxdrop.recoverablecoarseshare"] = _rec["share_counts_ignored"]
 
+    # What actually defines the comparison population, and what the rest of the test set says.
+    # The manuscript described an emission rule the code does not apply.
+    pop = art("population_definition.json")
+    n["popdef.metatox"] = pop["emission"]["comparison_set"]["metatox"]
+    n["popdef.sygmainside"] = pop["emission"]["comparison_set"]["sygma"]
+    n["popdef.metapredictorinside"] = pop["emission"]["comparison_set"]["metapredictor"]
+    n["popdef.grailinside"] = pop["emission"]["comparison_set"]["grail_deployed"]
+    for name in ("sygma", "metapredictor"):
+        cell = pop["emission"]["whole_test_set"][name]
+        n[f"popdef.{name}silent"] = cell["substrates_with_no_prediction"]
+        n[f"popdef.{name}silentrefs"] = cell["references_they_carry"]
+    for label, short in (("annotated references", "refs"), ("heavy atoms", "heavy"),
+                         ("candidates the deployed system emits", "output")):
+        cell = pop["exchangeability"][label]
+        n[f"popdef.{short}in"] = cell["mean_in_the_comparison_set"]
+        n[f"popdef.{short}out"] = cell["mean_outside_it"]
+        n[f"popdef.{short}p"] = cell["permutation_p"]
+    n["popdef.permutations"] = pop["permutation"]["n"]
+    n["popdef.outside"] = pop["exchangeability"]["annotated references"]["n_out"]
+    _whole = pop["contrasts"].get("the whole evaluated test set")
+    if _whole:
+        n["popdef.wholesubs"] = _whole["n_substrates"]
+        n["popdef.wholerefs"] = _whole["n_references"]
+        for name in ("sygma", "metapredictor"):
+            for k in ("15", "30"):
+                c = _whole[name]["deployed_minus_comparator"][k]
+                n[f"popdef.whole.{name}.{k}"] = c["difference"]
+                n[f"popdef.whole.{name}.{k}.lo"] = c["ci95"][0]
+                n[f"popdef.whole.{name}.{k}.hi"] = c["ci95"][1]
+                n[f"popdef.whole.{name}.{k}.sep"] = c["excludes_zero"]
+        _comp = pop["contrasts"]["the comparison set"]
+        for name in ("sygma", "metapredictor"):
+            for k in ("15", "30"):
+                c = _comp[name]["deployed_minus_comparator"][k]
+                n[f"popdef.comp.{name}.{k}"] = c["difference"]
+                n[f"popdef.comp.{name}.{k}.lo"] = c["ci95"][0]
+                n[f"popdef.comp.{name}.{k}.hi"] = c["ci95"][1]
+                n[f"popdef.comp.{name}.{k}.sep"] = c["excludes_zero"]
+
     # What the corpus's drawing costs the comparator the manuscript could not re-run. It is a
     # source checkout, so it can be, and the asymmetry it left was the one running this work's way.
     mpd = art("metapredictor_drawing.json")

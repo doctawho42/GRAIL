@@ -89,7 +89,7 @@ def collect(shard: int, shards: int, out: Path) -> int:
     pools, refs = wide_pools()
     subs = sorted(s for s in pools if refs.get(s))
     mine = subs[shard::shards]
-    generator = _load(ROOT / "artifacts/full5000_priors/checkpoints/generator.pt",
+    generator = _load(ROOT / "artifacts/full5000_implicit/checkpoints/generator.pt",
                       lambda a, r: build_generator(GeneratorConfig(**a), r))
 
     rows, t0 = {}, time.perf_counter()
@@ -176,24 +176,32 @@ def merge(out: str) -> int:
     unjoined = sum(1 for s in subs for c in rows[s] if c not in filt[s])
     joined = sum(1 for s in subs for c in rows[s] if c in filt[s])
 
+    # The match key of a candidate does not depend on the aggregation rule, so it is computed
+    # once per candidate and not once per candidate per rule. The pools already carry it for
+    # every candidate they hold, which is every candidate this join keeps.
+    key_of = {s: {c["smiles"]: c["key"] for c in pools[s]} for s in subs}
+
     orders, sizes = {}, {}
     for rule in RULES:
         order = {}
         for s in subs:
             cands = [{"smiles": c, "generator": aggregate(rule, v), "filter": filt[s][c],
-                      "key": None}
+                      "key": key_of[s][c]}
                      for c, v in rows[s].items() if c in filt[s]]
+            # The deployed pipeline's order of operations, which is not interchangeable with any
+            # other: the pool is deduplicated by match key in descending order of the product of
+            # the two component scores, and only then capped by generator score and fused.
+            # Capping first lets duplicate keys consume slots, which costs recall and would have
+            # been charged to the aggregation rule rather than to the order of two steps.
+            cands.sort(key=lambda c: -(c["filter"] * c["generator"]))
+            seen_key, pool = set(), []
             for c in cands:
-                c["key"] = tautkey(c["smiles"])
-            keep = sorted(cands, key=lambda c: -c["generator"])[:CAP]
-            seen, ranked = set(), []
-            for c in rrf_order(keep):
-                k = c["key"]
-                if not k or k == parent[s] or k in seen:
+                if not c["key"] or c["key"] in seen_key:
                     continue
-                seen.add(k)
-                ranked.append(k)
-            order[s] = ranked
+                seen_key.add(c["key"])
+                pool.append(c)
+            keep = sorted(pool, key=lambda c: -c["generator"])[:CAP]
+            order[s] = [c["key"] for c in rrf_order(keep) if c["key"] != parent[s]]
         orders[rule] = order
         sizes[rule] = round(float(np.mean([len(order[s]) for s in subs])), 1)
 
@@ -216,6 +224,25 @@ def merge(out: str) -> int:
                     "excludes_zero": bool(lo > 0 or hi < 0)}
         by_rule[rule] = row
 
+    # The gate this ablation needs and did not have. The deployed rule, re-derived here from
+    # per-template scores, has to reproduce the arm the comparison table reports. It did not the
+    # first time this ran: the script took its generator from the checkpoint directory that holds
+    # the FILTER's run, and the arm it produced trailed the paper's by nine points at a budget of
+    # thirty. Nothing in the pools recorded which checkpoint wrote them, so the only way to find
+    # that was to check a number against another number, which is what this now does on every run.
+    reference = json.loads((ROOT / "results/deployment_table.json").read_text())
+    published = {k: v["whole bank"] for k, v in reference["recall_micro"].items()}
+    reproduces = {k: (abs(by_rule["noisy_or"]["recall"][k] - published[k]) <= 1e-4)
+                  for k in by_rule["noisy_or"]["recall"] if k in published}
+    if not all(reproduces.values()):
+        bad = [k for k, ok in reproduces.items() if not ok]
+        print("FAIL: the deployed aggregation does not reproduce the published arm at budgets "
+              + ", ".join(bad) + "; this re-run is not on the deployed model", file=sys.stderr)
+        for k in bad:
+            print(f"  k={k}: here {by_rule['noisy_or']['recall'][k]}, published {published[k]}",
+                  file=sys.stderr)
+        return 1
+
     separating = sorted(
         rule for rule in RULES if rule != "noisy_or"
         and any(c["excludes_zero"] for c in by_rule[rule]["minus_noisy_or"].values()))
@@ -236,6 +263,10 @@ def merge(out: str) -> int:
                     f"{CAP} by generator score, parent dropped, as everywhere else"),
         "bootstrap": {"n": N_BOOT, "seed": SEED},
         "deployed": "noisy_or",
+        "reproduces_the_published_arm": ("the deployed rule re-derived here matches the whole-bank "
+                                         "column of results/deployment_table.json at every budget, "
+                                         "which is what certifies the re-run is on the deployed "
+                                         "model and not a neighbouring checkpoint"),
         "by_rule": by_rule,
         "rules_that_separate_from_the_deployed_one_at_any_budget": separating,
         "reading": (

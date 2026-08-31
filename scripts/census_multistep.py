@@ -71,7 +71,7 @@ def main() -> None:
     ap.add_argument("--substrates", type=int, default=400)
     ap.add_argument("--top-k", type=int, default=200)
     ap.add_argument("--max-pool", type=int, default=150)
-    ap.add_argument("--gen-ckpt", default=str(ROOT / "artifacts/full5000_priors/checkpoints/generator.pt"))
+    ap.add_argument("--gen-ckpt", default=str(ROOT / "artifacts/full5000_implicit/checkpoints/generator.pt"))
     ap.add_argument("--out", default=str(ROOT / "results/census_multistep.json"))
     args = ap.parse_args()
 

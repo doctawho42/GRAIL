@@ -1100,9 +1100,41 @@ the main text is run on the deployed pool, capped at \numCaseExhCandidates{}, wh
 narrower than the pool for every substrate.
 
 \section{The choice of evaluation population}
+\label{sec:si-population}
 
-The comparison set is a quarter of the evaluated test split and not a random quarter, since it is
-fixed by which substrates every method returns predictions for. A separate analysis re-ran three
+The comparison set is a quarter of the evaluated test split and not a random quarter. An earlier
+version of this work described how it is fixed in a way the code does not support: that a
+substrate enters only if every method emitted something for it, which would remove the cases where
+a comparator produced nothing and a bank this size should win most clearly. That is not the rule.
+The population is the intersection of the substrates each method has an \emph{entry} for, and the
+binding constraint is one submission list: the comparator that is a web service was sent
+\numPopulationN{} substrates and returned all \numPopulationN{}. Nothing was removed for emitting
+nothing, and the set still contains substrates a method answers nothing for:
+\numPopdefSygmainsideWord{} for SyGMa, \numPopdefMetapredictorinsideWord{} for MetaPredictor and
+\numPopdefGrailinsideWord{} for the deployed arm.
+
+The rule as described would in any case have removed almost nothing. Over the whole evaluated test
+set, SyGMa answers nothing for \numPopdefSygmasilent{} of \numPopulationTestsubs{} substrates,
+carrying \numPopdefSygmasilentrefs{} references, and MetaPredictor for
+\numPopdefMetapredictorsilent{}, carrying \numPopdefMetapredictorsilentrefs{}.
+
+What the population does carry is an unrecorded draw, and that is tested rather than described.
+Against the \numPopdefOutside{} evaluated substrates outside it, the comparison set does not
+differ in the number of annotated references it carries
+(\numPopdefRefsin{} against \numPopdefRefsout{}, $p=\numPopdefRefsp$), in substrate size
+(\numPopdefHeavyin{} against \numPopdefHeavyout{} heavy atoms, $p=\numPopdefHeavyp$), or in how
+many candidates the deployed system emits on it (\numPopdefOutputin{} against
+\numPopdefOutputout{}, $p=\numPopdefOutputp$), each by a permutation test over
+\numPopdefPermutations{} shuffles. That does not make the draw random; it says the three
+properties most likely to have driven it did not.
+
+The comparison can also be read on the population nobody selected. The deployed arm and the two
+comparators that ran over the whole evaluated test set are contrasted there with a substrate a
+comparator answered nothing for scored as zero rather than removed, and beside the same contrast
+on the comparison set. The exhaustive arm was built on the comparison set only and is absent from
+that row.
+
+A separate analysis re-ran three
 methods, four metrics and five criteria on two populations of one split, the 150 substrates shared
 with a further comparator and the full \numPopulationTestsubs{}, and asked whether the ordering
 of methods changes with the population. Of 60 pairwise comparisons, 10 reverse in point estimate,
