@@ -1208,6 +1208,11 @@ def build():
     n["prov.macrossi"] = np_["macros_cited_in_supporting_information"]
     n["prov.handtyped"] = np_["hand_typed_measurements_on_the_allow_list"]
     n["prov.pinned"] = pv["n_pinned"]
+    # Currency as a count rather than as an adjective. The manuscript asserted that all pinned
+    # artifacts were current, which is a sentence that stays true-looking while the sweep says
+    # otherwise; it now prints how many of them the sweep found current.
+    n["prov.pinnedstale"] = pv.get("n_pinned_stale", 0)
+    n["prov.pinnedcurrent"] = pv["n_pinned"] - pv.get("n_pinned_stale", 0)
     n["prov.files"] = pv["n_pinned"] + sum(sweep.values())
     n["prov.unstamped"] = sweep.get("unstamped", 0)
     n["prov.changed"] = sweep.get("producer_changed", 0)

@@ -1395,7 +1395,8 @@ tell which arm they are looking at. Table~\ref{MS-tab:sweep} is supplied by
 
 \numProvPinned{} artifacts are pinned. Most record the script that wrote them, the SHA-256 of
 that script's source, and the commit it ran at; a sweep recomputes the hash of each producer and
-refuses the artifact if that producer has changed. All \numProvPinned{} are current.
+refuses the artifact if that producer has changed. \numProvPinnedcurrent{} of the
+\numProvPinned{} are current.
 
 A pinned producer is not the same as a pinned model. Candidate pools record both checkpoints that
 scored them with their digests; the pool sets frozen before that field existed carry no such
