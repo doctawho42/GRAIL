@@ -262,6 +262,10 @@ def build():
         n[f"budget.k{b}.gapthirty"] = cell["gap_at_30"]
         n[f"budget.k{b}.lothirty"] = cell["ci95"][0]
         n[f"budget.k{b}.hithirty"] = cell["ci95"][1]
+        bound = cell.get("if_the_excluded_substrates_all_went_one_way")
+        if bound:
+            n[f"budget.k{b}.boundbestthirty"] = bound["best_for_this_budget"]
+            n[f"budget.k{b}.boundworstthirty"] = bound["worst_for_this_budget"]
     n["budget.beating"] = len(bc["budgets_that_beat_the_deployed_one"])
     # What the paired population costs. A budget that cannot finish every substrate leaves the
     # curve measured on the ones every budget holds, and the references the rest carry bound how
