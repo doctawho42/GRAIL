@@ -140,10 +140,32 @@ def main() -> int:
         if runs and runs != {DEPLOYED_RUN}:
             wrong_model.append(f"{rel}: {', '.join(sorted(runs))}")
 
+    # The blind spot of the check above: an artifact that names no checkpoint passes it without
+    # being examined. Where the producer loads a model, silence is not evidence, so those are
+    # counted separately and reported. They are not failed on, because the defaults in every such
+    # producer are the deployed pair and a test holds them there; what is missing is the record in
+    # the artifact, and the count of that is the honest thing to print.
+    LOADS_A_MODEL = re.compile(r"build_generator\(|build_filter\(")
+    silent_model = []
+    for rel in reads:
+        path = ROOT / rel
+        if rel in CKPT_EXEMPT or not path.exists():
+            continue
+        if CKPT.search(path.read_text()):
+            continue
+        producer = audit.PINNED.get(rel)
+        if not producer:
+            continue
+        psrc = ROOT / producer
+        if psrc.exists() and LOADS_A_MODEL.search(psrc.read_text()):
+            silent_model.append(f"{rel} <- {producer}")
+
     report = {
         "artifacts_the_numbers_come_from": len(reads),
         "naming_a_checkpoint_that_is_not_the_deployed_run": sorted(wrong_model),
         "n_naming_a_non_deployed_checkpoint": len(wrong_model),
+        "producer_loads_a_model_but_the_artifact_records_none": sorted(silent_model),
+        "n_recording_no_checkpoint": len(silent_model),
         "exempt": len([r for r in rows if r["exempt"]]),
         "unpinned": sorted(unpinned),
         "unstamped": sorted(unstamped),
@@ -165,11 +187,14 @@ def main() -> int:
         print(f"  NOT VERIFIABLE  {rel}")
     for row in wrong_model:
         print(f"  NOT THE DEPLOYED MODEL  {row}")
+    for row in silent_model:
+        print(f"  RECORDS NO CHECKPOINT   {row}")
     ok = not unpinned and not unstamped and not wrong_model
     print(f"  {report['n_unpinned']} unpinned, {report['n_unstamped']} unstamped, "
           f"{report['n_naming_a_non_deployed_checkpoint']} scored with a model that is not the "
-          f"deployed one, {report['n_verifiable_by_inference_only']} verified by inference rather "
-          f"than by a recorded digest")
+          f"deployed one, {report['n_recording_no_checkpoint']} whose producer loads a model and "
+          f"which record none, {report['n_verifiable_by_inference_only']} verified by inference "
+          f"rather than by a recorded digest")
     print("check_number_provenance: " + ("OK" if ok else "FAIL"))
     return 0 if ok else 1
 

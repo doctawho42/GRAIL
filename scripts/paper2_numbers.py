@@ -1208,6 +1208,11 @@ def build():
     n["prov.sourcesunverifiable"] = ns["n_unstamped"]
     n["prov.sourcesinferred"] = ns["n_verifiable_by_inference_only"]
     n["prov.sourcesexempt"] = ns["exempt"]
+    # Two properties of the model behind an artifact, counted rather than assumed: how many name
+    # a checkpoint that is not the deployed one, and how many are silent where their producer
+    # loads a model at all. The second is the first check's blind spot and is reported beside it.
+    n["prov.sourceswrongmodel"] = ns["n_naming_a_non_deployed_checkpoint"]
+    n["prov.sourcesnocheckpoint"] = ns["n_recording_no_checkpoint"]
 
     # What the generated-macro claim is actually true of, counted rather than asserted. The
     # claim was made unqualified and was false of the Supporting Information, where measurements

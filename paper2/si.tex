@@ -1416,7 +1416,17 @@ sweep cannot identify. Of the rest, \numProvSourcesinferredWord{} predate stampi
 recovering their producer's source from the history rather than from a recorded digest, which the
 sweep labels as inferred; that is a weaker check and is counted separately for that reason.
 A further \numProvSourcesexemptWord{} are exempt with a stated reason, each an output of the checking
-apparatus itself, which cannot verify its own inputs without circularity. The gate fails the build
+apparatus itself, which cannot verify its own inputs without circularity.
+
+Which model produced an artifact is checked separately, because a producer whose source has not
+moved can still have been pointed at a checkpoint nobody deployed, and one was: the worked example
+was ranked by a filter from a neighbouring training run for as long as the example existed, and its
+own artifact said so in plain text. \numProvSourceswrongmodel{} of the \numProvSources{} now name
+a checkpoint outside the deployed run, and the gate fails on any that do. That check has a blind
+spot worth naming: an artifact that records no checkpoint passes it without being examined, and
+\numProvSourcesnocheckpoint{} of the \numProvSources{} are in that state while their producer
+loads a model. For those the assurance is weaker and is of a different kind, that every such
+producer's default is the deployed pair and a test refuses any that names another. The gate fails the build
 if any of the first two counts is not zero, and unpinning one artifact makes it fail, which is how
 we know it can.
 
