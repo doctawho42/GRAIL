@@ -179,6 +179,33 @@ def main() -> int:
     pools, refs, t = {}, {}, time.perf_counter()
     timing = []
 
+    # Persisting after every substrate is only half of surviving a kill; the other half is not
+    # starting the slice again. A shard that already holds pools for part of its slice keeps them
+    # and skips those substrates, so a run interrupted at hour two resumes at hour two.
+    resume = Path(args.out)
+    if resume.exists():
+        try:
+            prior = json.loads(resume.read_text())
+            if prior.get("slice") == [args.start, args.end or len(subs)] \
+                    and prior.get("top_k") == args.top_k \
+                    and prior.get("standardise") == args.standardise:
+                pools.update(prior.get("pools") or {})
+                refs.update(prior.get("references") or {})
+                timing.extend(prior.get("generator_seconds") or [])
+                print(f"  resuming with {len(pools)} substrates already built",
+                      file=sys.stderr, flush=True)
+        except Exception:
+            pass
+
+    import hashlib
+
+    def _digest(path):
+        h = hashlib.sha256()
+        with open(path, "rb") as handle:
+            for block in iter(lambda: handle.read(1 << 20), b""):
+                h.update(block)
+        return h.hexdigest()[:16]
+
     def dump():
         """Persist after every substrate. A shard killed on the peptide at index 83 used to
         take its other 48 with it, twice."""
@@ -186,10 +213,16 @@ def main() -> int:
             {"slice": [args.start, args.end or len(subs)], "top_k": args.top_k,
              "standardise": args.standardise, "tautomer_budget": args.tautomer_budget or 1000,
              "cap": args.cap if args.standardise == "survivors" else None,
+             "checkpoints": {"generator": {"path": str(Path(args.gen_ckpt).relative_to(ROOT)),
+                                           "sha256_16": _digest(args.gen_ckpt)},
+                             "filter": {"path": str(Path(args.filter_ckpt).relative_to(ROOT)),
+                                        "sha256_16": _digest(args.filter_ckpt)}},
              "generator_seconds": timing, "pools": pools, "references": refs}, indent=1))
     for i, s in enumerate(sl, 1):
         if i == 1 or i % 5 == 0 or i == len(sl):
             print(f"  {i}/{len(sl)} ({time.perf_counter() - t:.0f}s)", file=sys.stderr, flush=True)
+        if s in pools:
+            continue
         t_gen = time.perf_counter()
         det = generator.generate_scored_with_details(s, top_k=args.top_k, threshold=None,
                                                      compute_sites=False)

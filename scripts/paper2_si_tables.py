@@ -405,7 +405,7 @@ def si_short():
     ks = sorted(short, key=int)
     arms = list(short[ks[0]])
     label = {"whole bank": "GRAIL exh.", "trained budget": "GRAIL int.", "metatox": "MetaTox",
-             "sygma": "SyGMa", "metapredictor": "MetaPred."}
+             "sygma": "SyGMa", "metapredictor": "MetaPred.", "biotransformer": "BioTrans."}
     rows = "\n".join(
         f"${k}$ & " + " & ".join(str(short[k][a]) for a in arms) + " \\\\" for k in ks)
     head = " & ".join(label.get(a, a) for a in arms)

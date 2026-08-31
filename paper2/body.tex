@@ -326,12 +326,15 @@ favour one over another. It does not: the largest effect on recall anywhere in t
 \numPdropMaxEffect{} and no cell separates from zero (Table~\ref{SI-tab:si-parentdrop}).
 
 Every interval in this paper is a per-comparison 95\% interval with no family-wise adjustment.
-Both readings are reported. Treating the whole sweep as one family of \numHolmTests{} tests, two
-arms against three comparators at every budget, and applying Holm's correction to bootstrap
-$p$-values from the same resamples, \numHolmSurviving{} of the \numHolmSeparating{} cells that
-separate per comparison still separate; the \numHolmChangedWord{} that do not are marked in
-Table~\ref{SI-tab:si-intervals}. Of those, \numHolmLeadsremovedWord{} are leads, and among the leads
-claimed here only the narrowest, at $k=30$ against MetaTox, is one of them.
+Both readings are reported. Treating the sweep as one family of \numHolmTests{} tests, two
+arms against the three comparators the family was declared over at every budget, and applying
+Holm's correction to bootstrap $p$-values from the same resamples, \numHolmSurviving{} of the
+\numHolmSeparating{} cells that separate per comparison still separate; the \numHolmChangedWord{} that do not are marked in
+Table~\ref{SI-tab:si-intervals}. Of those, \numHolmLeadsremovedWord{} are leads, and among the
+leads claimed here only the narrowest, at $k=30$ against MetaTox, is one of them. The fourth
+comparator was obtained after that family was fixed, so its contrasts are reported with their own
+intervals and are not folded into a correction declared without them
+(Section~\ref{SI-sec:si-comparators}).
 
 No single budget is privileged. A claim that the system leads is made for a cell only where that
 cell's interval excludes zero, and where an ordering is not established the table says so.
@@ -374,13 +377,13 @@ budget, which is the arm a reader of the rule bank should look at hardest: it is
 \numThirdpartyBiotransformerShipped{} of this bank's templates, and cut to its own list length
 the exhaustive arm's lead over it is $+\numBtarmMatchedgap$ $[\numBtarmMatchedlo,
 +\numBtarmMatchedhi]$, an interval covering zero, so what separates the two at a wide budget is
-how much each emits (Section~\ref{SI-sec:si-comparators}). One of those six cells should not be read as a lead, and it is named here rather than three
-sections later. The margin over MetaTox at $k=30$ is $+\numMarginMarginalgap$ with the interval
-$[+\numMarginMarginallo, +\numMarginMarginalhi]$: it is the only one of the six a family-wise
-correction over the sweep removes, and its lower bound is smaller than the one drawing correction
-this work could measure on a comparator, $+\numSygdialectThirty$ for SyGMa at the same budget. The
-lead claimed at wide budgets is therefore the one at $k=50$, and the other four cells survive both
-tests.
+how much each emits (Section~\ref{SI-sec:si-comparators}). One of those eight cells should not be
+read as a lead, and it is named here rather than three sections later. The margin over MetaTox at
+$k=30$ is $+\numMarginMarginalgap$ with the interval
+$[+\numMarginMarginallo, +\numMarginMarginalhi]$: it is the only one a family-wise correction over
+the sweep removes, and its lower bound is smaller than the largest drawing correction measured on
+any comparator here, $+\numSygdialectThirty$ for SyGMa at the same budget. The lead claimed over
+MetaTox is therefore the one at $k=50$, and every other cell survives both tests.
 
 A recall figure aggregates over transformations of very different kinds, so the comparison is also
 read by chemistry (Table~\ref{SI-tab:si-chemistry}). The largest class is a cleavage losing two or
