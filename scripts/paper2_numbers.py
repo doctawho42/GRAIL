@@ -256,6 +256,12 @@ def build():
         n[f"budget.k{b}.gap"] = cell["gap_at_15"]
         n[f"budget.k{b}.lo"] = cell["ci95"][0]
         n[f"budget.k{b}.hi"] = cell["ci95"][1]
+    # The same contrast read at an output budget of thirty, which is where the Discussion
+    # recommends raising the rule budget. That recommendation used to rest on two point estimates.
+    for b, cell in bc["against_the_deployed_budget_at_k30"].items():
+        n[f"budget.k{b}.gapthirty"] = cell["gap_at_30"]
+        n[f"budget.k{b}.lothirty"] = cell["ci95"][0]
+        n[f"budget.k{b}.hithirty"] = cell["ci95"][1]
     n["budget.beating"] = len(bc["budgets_that_beat_the_deployed_one"])
     # What the paired population costs. A budget that cannot finish every substrate leaves the
     # curve measured on the ones every budget holds, and the references the rest carry bound how

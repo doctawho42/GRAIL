@@ -130,18 +130,28 @@ def main() -> int:
     # Every budget against the deployed one at the budget the paper reports its headline at, paired
     # on the same substrates, so the question "would a different budget have been better" is
     # answered with an interval rather than by comparing two point estimates.
-    contrasts = {}
-    if DEPLOYED in orders:
-        base = hits(DEPLOYED, 15)
+    # The contrast is computed at both output budgets the paper reads this curve at. Fifteen is
+    # where the headline sits and where the deployed rule budget is defended as the knee; thirty
+    # is where the Discussion recommends raising it, and a recommendation resting on two point
+    # estimates is the thing this paper asks other work not to do.
+    def contrast_at(k):
+        out = {}
+        if DEPLOYED not in orders:
+            return out
+        base = hits(DEPLOYED, k)
         for budget in sorted(orders):
             if budget == DEPLOYED:
                 continue
-            d = hits(budget, 15) - base
+            d = hits(budget, k) - base
             bt = d[idx].sum(axis=1) / denom
             lo, hi = float(np.quantile(bt, .025)), float(np.quantile(bt, .975))
-            contrasts[str(budget)] = {"gap_at_15": round(float(d.sum() / U.sum()), 4),
-                                      "ci95": [round(lo, 4), round(hi, 4)],
-                                      "excludes_zero": bool(lo > 0 or hi < 0)}
+            out[str(budget)] = {f"gap_at_{k}": round(float(d.sum() / U.sum()), 4),
+                                "ci95": [round(lo, 4), round(hi, 4)],
+                                "excludes_zero": bool(lo > 0 or hi < 0)}
+        return out
+
+    contrasts = contrast_at(15)
+    contrasts_thirty = contrast_at(30)
 
     # A substrate one budget could not finish leaves the paired population, and an absence that
     # is only footnoted cannot be told from one that decides the answer. Both extremes are
@@ -151,23 +161,31 @@ def main() -> int:
     everywhere = set().union(*(set(p) for p in per_budget.values()))
     excluded = sorted(s for s in everywhere - set(subs) if refs.get(s))
     excluded_refs = sum(len(set(refs[s])) for s in excluded)
-    if excluded and contrasts:
-        for budget, cell in contrasts.items():
-            point = cell["gap_at_15"] * float(U.sum())
-            cell["if_the_excluded_substrates_all_went_one_way"] = {
-                "best_for_this_budget": round((point + excluded_refs) / (U.sum() + excluded_refs), 4),
-                "worst_for_this_budget": round((point - excluded_refs) / (U.sum() + excluded_refs), 4),
-                "sign_survives_both_ends": bool(
-                    (point + excluded_refs) * (point - excluded_refs) > 0)}
+    if excluded:
+        for k, table in ((15, contrasts), (30, contrasts_thirty)):
+            for budget, cell in table.items():
+                point = cell[f"gap_at_{k}"] * float(U.sum())
+                cell["if_the_excluded_substrates_all_went_one_way"] = {
+                    "best_for_this_budget":
+                        round((point + excluded_refs) / (U.sum() + excluded_refs), 4),
+                    "worst_for_this_budget":
+                        round((point - excluded_refs) / (U.sum() + excluded_refs), 4),
+                    "sign_survives_both_ends": bool(
+                        (point + excluded_refs) * (point - excluded_refs) > 0)}
 
     # Which contrasts the absence could actually decide. A single boolean over all of them says
     # only that some contrast is fragile, and the useful statement is which: a sign the absence
     # could flip matters where the paper reads a verdict off it and not where the interval
     # already covers zero.
-    fragile = sorted(b for b, c in contrasts.items()
-                     if not c.get("if_the_excluded_substrates_all_went_one_way",
-                                  {}).get("sign_survives_both_ends", True))
-    fragile_and_decided = [b for b in fragile if contrasts[b]["excludes_zero"]]
+    fragile, fragile_and_decided = [], []
+    for k, table in ((15, contrasts), (30, contrasts_thirty)):
+        for budget, cell in sorted(table.items(), key=lambda kv: int(kv[0])):
+            if cell.get("if_the_excluded_substrates_all_went_one_way",
+                        {}).get("sign_survives_both_ends", True):
+                continue
+            fragile.append(f"rule budget {budget} read at {k}")
+            if cell["excludes_zero"]:
+                fragile_and_decided.append(f"rule budget {budget} read at {k}")
 
     better = [b for b, c in contrasts.items() if c["gap_at_15"] > 0 and c["excludes_zero"]]
     report = {
@@ -193,6 +211,7 @@ def main() -> int:
         "bootstrap": {"n": N_BOOT, "seed": SEED},
         "by_budget": rows,
         "against_the_deployed_budget_at_k15": contrasts,
+        "against_the_deployed_budget_at_k30": contrasts_thirty,
         "budgets_that_beat_the_deployed_one": better,
         "reading": (
             "The curve is what the budget buys and the cost column is what it costs. A budget that "
@@ -207,13 +226,19 @@ def main() -> int:
     for budget, n in sorted(partial.items()):
         print(f"  skipped budget {budget}: {n} of {full} substrates built, still incomplete")
     print()
-    print("budget  cand mean   r@5    r@15   r@30   vs deployed at 15")
+    print("budget  cand mean   r@5    r@15   r@30   vs deployed at 15"
+          "          vs deployed at 30")
     for budget in sorted(rows):
         row = rows[budget]
         c = contrasts.get(str(budget))
+        c30 = contrasts_thirty.get(str(budget))
         tail = "" if c is None else (f"  {c['gap_at_15']:+.4f} "
                                      f"[{c['ci95'][0]:+.4f}, {c['ci95'][1]:+.4f}]"
-                                     f"{'  separates' if c['excludes_zero'] else ''}")
+                                     f"{'*' if c['excludes_zero'] else ' '}")
+        if c30 is not None:
+            tail += (f"   {c30['gap_at_30']:+.4f} "
+                     f"[{c30['ci95'][0]:+.4f}, {c30['ci95'][1]:+.4f}]"
+                     f"{'*' if c30['excludes_zero'] else ''}")
         mark = "  <- deployed" if budget == DEPLOYED else ""
         print(f"{budget:6d}  {row['mean_candidates']:9.1f}  "
               f"{row['recall_micro']['5']:.4f} {row['recall_micro']['15']:.4f} "

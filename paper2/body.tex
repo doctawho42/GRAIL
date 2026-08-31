@@ -247,10 +247,11 @@ buys nothing on either population, and from $k=15$ it buys more the wider the bu
 interactive arm runs out of candidates. The threshold is therefore a property of the budget
 requested rather than of the system, and so is the deployed rule budget. Read at an output budget
 of fifteen the curve is flat past \numBudgetDeployed{}, which is why that value is deployed; read
-at thirty it is not, and the whole bank reaches \numBudgetKSevenFiveEightOneRecallthirty{} against
-\numBudgetKThreeZeroRecallthirty{} on the same substrates. The curve is swept to the whole bank
-and not merely past the deployed value, so the exhaustive mode is a point on it rather than a
-second design. A service answering with thirty candidates or more should be run at the larger
+at thirty it is not, and the whole bank gains $+\numBudgetKSevenFiveEightOneGapthirty$
+$[+\numBudgetKSevenFiveEightOneLothirty, +\numBudgetKSevenFiveEightOneHithirty]$ over the
+deployed budget on the same substrates, an interval excluding zero. The curve is swept to the
+whole bank and not merely past the deployed value, so the exhaustive mode is a point on it rather
+than a second design. A service answering with thirty candidates or more should be run at the larger
 budget and pay the standardisation cost that follows.
 
 \subsection{Emission}
@@ -851,12 +852,13 @@ for each right one. Precision under an incomplete annotation is a lower bound an
 to order systems, but a list of that length is what the wide-budget figures describe. The
 rule budget of \numHOneZeroTopk{} is the parameter that draws that line, and it is one setting of
 a continuous knob rather than a property of the cheap mode: it is the value the released
-checkpoint was trained at. On validation, raising it to the whole bank takes recall at an output
-budget of thirty from \numBudgetKThreeZeroRecallthirty{} to
-\numBudgetKSevenFiveEightOneRecallthirty{}, and at the budget the headline is read at it gains
-$+\numBudgetKSevenFiveEightOneGap$ $[\numBudgetKSevenFiveEightOneLo,
-\numBudgetKSevenFiveEightOneHi]$, an interval covering zero
-(Section~\ref{SI-sec:si-budget}). A service that answers with thirty candidates should therefore
+checkpoint was trained at. On validation, raising it to the whole bank is worth
+$+\numBudgetKSevenFiveEightOneGapthirty$ $[+\numBudgetKSevenFiveEightOneLothirty,
++\numBudgetKSevenFiveEightOneHithirty]$ at an output budget of thirty, an interval excluding
+zero, and $+\numBudgetKSevenFiveEightOneGap$ $[\numBudgetKSevenFiveEightOneLo,
+\numBudgetKSevenFiveEightOneHi]$ at fifteen, an interval covering it
+(Section~\ref{SI-sec:si-budget}). Which budget the service answers at decides whether the knob is
+worth turning, and the curve says so at both. A service that answers with thirty candidates should therefore
 raise the rule budget rather than accept the deficit, and pay the standardisation cost that
 follows; the deficit measured above is what the deployed setting costs, not what the design does.
 

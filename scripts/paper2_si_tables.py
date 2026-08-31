@@ -256,28 +256,33 @@ def si_budget():
     d = art("budget_curve.json")
     ks = ["1", "5", "15", "30"]
     rows = []
+    def cell_of(table, budget, key):
+        c = table.get(budget)
+        if c is None:
+            return "---"
+        star = "$^{*}$" if c["excludes_zero"] else ""
+        return (("$-$" if c[key] < 0 else "+") + f"{abs(c[key]):.4f}".lstrip("0") + star)
+
     for budget in sorted(d["by_budget"], key=int):
         row = d["by_budget"][budget]
-        cell = d["against_the_deployed_budget_at_k15"].get(budget)
-        if cell is None:
-            gap = "---"
-        else:
-            star = "$^{*}$" if cell["excludes_zero"] else ""
-            gap = (("$-$" if cell["gap_at_15"] < 0 else "+")
-                   + f"{abs(cell['gap_at_15']):.4f}".lstrip("0") + star)
+        gap = cell_of(d["against_the_deployed_budget_at_k15"], budget, "gap_at_15")
+        gap30 = cell_of(d["against_the_deployed_budget_at_k30"], budget, "gap_at_30")
         marker = "\\textbf{" + budget + "}" if int(budget) == d["deployed_budget"] else budget
         recalls = " & ".join(f"{row['recall_micro'][k]:.4f}".lstrip("0") for k in ks)
-        rows.append(f"{marker} & {row['mean_candidates']} & {recalls} & {gap} \\\\")
+        rows.append(f"{marker} & {row['mean_candidates']} & {recalls} & {gap} & {gap30} \\\\")
     n = d["population"]["n_substrates"]
     return ("\\begin{table}[h]\n\\centering\\small\n"
-            "\\begin{tabular}{rrrrrrr}\n\\toprule\n"
-            "rule budget & candidates & $r@1$ & $r@5$ & $r@15$ & $r@30$ & vs deployed at 15 \\\\\n"
+            "\\begin{tabular}{rrrrrrrr}\n\\toprule\n"
+            "rule budget & candidates & $r@1$ & $r@5$ & $r@15$ & $r@30$ & vs deployed at 15 "
+            "& at 30 \\\\\n"
             "\\midrule\n" + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n"
             f"\\caption{{What the rule budget buys, on the {n} validation substrates every budget "
             "holds. Candidates is the "
             "mean number returned after deduplication and the pool cap; leading zeros are dropped. "
-            "The last column is the paired difference in micro recall at a budget of 15 against the "
-            "deployed rule budget, in bold, with $^{*}$ marking an interval that excludes zero.}\n"
+            "The last two columns are the paired difference in micro recall against the deployed "
+            "rule budget, in bold, read at output budgets of 15 and of 30, with $^{*}$ marking an "
+            "interval that excludes zero. The two are reported because the paper reads this curve "
+            "at both and they do not agree.}\n"
             "\\label{tab:si-budget}\n\\end{table}\n")
 
 
