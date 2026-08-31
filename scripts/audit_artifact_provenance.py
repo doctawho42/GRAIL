@@ -175,6 +175,7 @@ PINNED = {
     "results/reactant_size_census.json": f"{TE}/reactant_size_census.py",
     "results/four_method_291.json": "scripts/four_method_291.py",
     "results/scored_predictions.json": "scripts/dump_scored_predictions.py",
+    "results/aggregation_ablation_validation.json": f"{TE}/aggregation_ablation.py",
     "results/reference_charge.json": f"{TE}/reference_charge.py",
     "results/pool_checkpoints.json": f"{TE}/pool_checkpoints.py",
     "results/wide_pool_analysis_implicit.json": f"{TE}/wide_pool_analysis.py",

@@ -1018,7 +1018,16 @@ quarter of the evaluated test split and not a random quarter of it: it is the su
 to the comparator that is a web service, and how those substrates were drawn from the split is not
 recorded anywhere in this repository. Nothing was excluded for emitting nothing, and the population
 still contains substrates a method answers nothing for. One comparator, BioTransformer, is built on a source
-this corpus is assembled from, which favours it, and that is not corrected. A second system in the
+this corpus is assembled from, which favours it, and that is not corrected.
+
+The deployed configuration is not the best one this work knows of. The rule that combines the
+templates reaching a candidate treats them as independent evidence, and this bank does not satisfy
+that; a blend that discounts duplication beats the deployed rule on the validation draw at every
+budget from one to \numAggvalHybridwinsmax{}, with the interval excluding zero
+(Section~\ref{SI-sec:si-aggregation}), which includes the budget the headline here is read at.
+Every number in this paper is measured under the deployed rule, so the release keeps it and the
+better setting is reported rather than substituted; a reader deploying this system should know
+that the shipped aggregation is not the one a selection on validation prefers for a short list. A second system in the
 same position, GLORYx, is absent from the comparison, and its absence is not licensed by that
 overlap, since a system with a comparable one carries a column: it is absent because its
 predictions could not be obtained here.

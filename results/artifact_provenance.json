@@ -10,10 +10,13 @@
    "artifact": "results/aggregation_ablation.json",
    "script": "aggregation_ablation.py",
    "how": "recorded source digest",
-   "status": "producer_changed",
-   "detail": "producer was 6670cb5d3d79, is now 7ce063c61f9a",
-   "diff_recovered_by": "source at 821adf95a989",
-   "diff": "--- aggregation_ablation.py (as recorded)\n+++ aggregation_ablation.py (now)\n@@ -42,5 +42,17 @@\n N_BOOT, SEED = 10000, 0\n CAP = 100\n-SHARD_DIR = ROOT / \"results\" / \"aggregation_shards\"\n+# Two populations. The comparison set answers whether the deployed rule costs anything where the\n+# paper reads its leads; the validation draw is the only place a different rule could legitimately\n+# be selected, since selecting on the comparison set is the one thing this work forbids elsewhere.\n+POPULATIONS = {\n+    \"comparison\": {\"pools\": \"results/widepools_implicit/w*.json\",\n+                   \"shards\": ROOT / \"results\" / \"aggregation_shards\",\n+                   \"out\": ROOT / \"results\" / \"aggregation_ablation.json\",\n+                   \"reference\": \"results/deployment_table.json\"},\n+    \"validation\": {\"pools\": \"results/val_pools.json\",\n+                   \"shards\": ROOT / \"results\" / \"aggregation_shards_val\",\n+                   \"out\": ROOT / \"results\" / \"aggregation_ablation_validation.json\",\n+                   \"reference\": None},\n+}\n \n # The rules compared. \"noisy_or\" is what the released checkpoint runs and what Equation 1 states;\n@@ -68,7 +80,8 @@\n \n \n-def wide_pools():\n+def wide_pools(population=\"comparison\"):\n+    spec = POPULATIONS[population][\"pools\"]\n     pools, refs = {}, {}\n-    for f in sorted(glob.glob(str(ROOT / \"results/widepools_implicit/w*.json\"))):\n+    for f in sorted(glob.glob(str(ROOT / spec))) or [str(ROOT / spec)]:\n         blob = json.loads(Path(f).read_text())\n         pools.update(blob[\"pools\"]); refs.update(blob[\"references\"])\n@@ -76,5 +89,5 @@\n \n \n-def collect(shard: int, shards: int, out: Path) -> int:\n+def collect(shard: int, shards: int, out: Path, population=\"comparison\") -> int:\n     \"\"\"Per-template scores for every candidate of one shard of the comparison set.\"\"\"\n     from rdkit import Chem, RDLogger\n@@ -87,5 +100,5 @@\n  ... diff truncated"
+   "status": "current"
+  },
+  {
+   "artifact": "results/aggregation_ablation_validation.json",
+   "script": "aggregation_ablation.py",
+   "how": "recorded source digest",
+   "status": "current"
   },
   {
    "artifact": "results/biotransformer_arm.json",
@@ -601,12 +604,12 @@
    "status": "current"
   }
  ],
- "n_pinned": 98,
- "n_pinned_stale": 1,
+ "n_pinned": 99,
+ "n_pinned_stale": 0,
  "sweep": {
-  "unstamped": 252,
-  "producer_changed": 40,
-  "current": 35,
+  "unstamped": 259,
+  "producer_changed": 39,
+  "current": 36,
   "producer_unknown": 27,
   "cosmetic_only": 8
  },
@@ -652,6 +655,16 @@
    "detail": "no provenance block: nothing records which code wrote this"
   },
   {
+   "artifact": "results/aggregation_shards/s1.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/aggregation_shards/s2.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
    "artifact": "results/aggregation_shards/s3.json",
    "status": "unstamped",
    "detail": "no provenance block: nothing records which code wrote this"
@@ -662,12 +675,37 @@
    "detail": "no provenance block: nothing records which code wrote this"
   },
   {
+   "artifact": "results/aggregation_shards/s5.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
    "artifact": "results/aggregation_shards_val/s0.json",
    "status": "unstamped",
    "detail": "no provenance block: nothing records which code wrote this"
   },
   {
    "artifact": "results/aggregation_shards_val/s1.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/aggregation_shards_val/s2.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/aggregation_shards_val/s3.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/aggregation_shards_val/s4.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/aggregation_shards_val/s5.json",
    "status": "unstamped",
    "detail": "no provenance block: nothing records which code wrote this"
   },
@@ -1534,15 +1572,6 @@
    "script": "pair_cost_benchmark.py",
    "status": "producer_unknown",
    "detail": "commit 003cfcee3da5 does not carry scripts/pair_cost_benchmark.py"
-  },
-  {
-   "artifact": "results/paper2_numbers.json",
-   "script": "paper2_numbers.py",
-   "how": "recorded source digest",
-   "status": "producer_changed",
-   "detail": "producer was 4dceeaf487a2, is now cd1c6632085f",
-   "diff_recovered_by": "the tree was dirty when written, so the source at 2a766ab05904 is the nearest committed version and not exactly what ran",
-   "diff": "--- paper2_numbers.py (as recorded)\n+++ paper2_numbers.py (now)\n@@ -399,5 +399,8 @@\n         n[f\"lrc.{tag}.hi\"] = cell[\"ci95\"][1]\n         n[f\"lrc.{tag}.sep\"] = cell[\"excludes_zero\"]\n-        n[f\"lrc.{tag}.dropped\"] = lrc[\"variants\"][name][\"templates\"]\n+        # How many templates the variant removes, not how many it keeps: the artifact records the\n+        # size of each bank and the difference is what \"dropped\" means in the prose.\n+        n[f\"lrc.{tag}.dropped\"] = (lrc[\"variants\"][\"whole bank\"][\"templates\"]\n+                                   - lrc[\"variants\"][name][\"templates\"])\n     n[\"lrc.references\"] = lrc[\"population\"][\"n_references\"]\n     n[\"lrc.wholebanktemplates\"] = lrc[\"variants\"][\"whole bank\"][\"templates\"]\n@@ -732,4 +735,8 @@\n     n[\"ceilagree.spreadshare\"] = agr[\"spread_as_share_of_references\"]\n     n[\"ceilagree.spreadofmargin\"] = agr[\"spread_as_share_of_that_margin\"]\n+    # The denominator itself, because a share of an unprinted quantity cannot be checked. It is\n+    # the same minimum the parent-drop section divides by, and the two used to disagree because\n+    # one artifact predated an arm the other already held.\n+    n[\"ceilagree.narrowestmargin\"] = agr[\"narrowest_separating_margin_in_the_comparison\"]\n     for tag, name in ((\"deployed\", \"deployed loop, hydrogens implicit\"),\n                       (\"auditimplicit\", \"audit loop, hydrogens implicit\"),"
   },
   {
    "artifact": "results/paper2_review.json",
@@ -2430,7 +2459,7 @@
    "detail": "no provenance block: nothing records which code wrote this"
   }
  ],
- "files_below_the_top_level": 149,
+ "files_below_the_top_level": 156,
  "of_those_named_as_an_input_by_a_pinned_artifact": 11,
  "named_inputs": [
   "results/valpool_shards/v0.json",

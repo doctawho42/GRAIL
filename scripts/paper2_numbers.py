@@ -487,6 +487,29 @@ def build():
     n["aggregation.separating"] = len(
         agg["rules_that_separate_from_the_deployed_one_at_any_budget"])
 
+    # The same sweep on validation, which is the only population a different rule could be
+    # selected on without selecting on the population the comparison is reported over.
+    aggv = art("aggregation_ablation_validation.json")
+    n["aggval.substrates"] = aggv["population"]["n_substrates"]
+    n["aggval.references"] = aggv["population"]["n_references"]
+    for rule in ("max", "mean", "hybrid"):
+        tag = rule.replace("_", "")
+        for k in ("1", "3", "5", "10", "15", "20", "30", "50"):
+            cell = aggv["by_rule"][rule]["minus_noisy_or"][k]
+            n[f"aggval.{tag}{k}"] = cell["difference"]
+            n[f"aggval.{tag}{k}.lo"] = cell["ci95"][0]
+            n[f"aggval.{tag}{k}.hi"] = cell["ci95"][1]
+            n[f"aggval.{tag}{k}.sep"] = cell["excludes_zero"]
+        # The budgets at which the rule beats the deployed one with the interval excluding
+        # zero, which is what a selection on validation would be entitled to act on.
+        wins = [k for k, c in aggv["by_rule"][rule]["minus_noisy_or"].items()
+                if c["difference"] > 0 and c["excludes_zero"]]
+        n[f"aggval.{tag}wins"] = len(wins)
+        n[f"aggval.{tag}winsmax"] = max((int(k) for k in wins), default=0)
+        n[f"aggval.{tag}recallfive"] = aggv["by_rule"][rule]["recall"]["5"]
+    n["aggval.deployedrecallfive"] = aggv["by_rule"]["noisy_or"]["recall"]["5"]
+    n["aggval.deployedrecallthirty"] = aggv["by_rule"]["noisy_or"]["recall"]["30"]
+
     # What actually defines the comparison population, and what the rest of the test set says.
     # The manuscript described an emission rule the code does not apply.
     pop = art("population_definition.json")

@@ -353,6 +353,7 @@ $[\numMatchedTrainedmetatoxLo, \numMatchedTrainedmetatoxHi]$, which is the same 
 text reports at fixed budgets and is not an artefact of either.
 
 \section{The comparison under the other aggregation}
+\label{sec:si-aggregation}
 \label{sec:si-macro}
 
 Every figure in the main text's comparison is micro, the ratio of sums. Macro, the mean of
@@ -916,11 +917,31 @@ turns on it is the head of the list rather than the wide budgets this work reads
 where a duplicate-blind rule helps, it helps a chemist reading the first three candidates.
 Nothing claimed here changes, because the two rules the violation argues for are indistinguishable
 from the deployed one at every budget a lead is claimed at, and the rule that does separate there
-is worse. And the deployed rule stays as it is: this sweep was run on the comparison set after the
+is worse. And this sweep alone cannot move the deployed rule: it was run on the comparison set after the
 comparison, so adopting the blend on the strength of it would be selecting a parameter on the
-population the paper reports, which is the one thing this work's own discipline forbids. What the
-measurement licenses is a registered prediction and a selection on validation, not a substitution
-here.
+population the paper reports, which is the one thing this work's own discipline forbids. What it
+licenses is a selection on validation, and that selection was made.
+
+\paragraph{The same sweep on validation.} The four rules are compared again on the validation
+draw, \numAggvalSubstrates{} substrates carrying \numAggvalReferences{} references, with
+everything but the rule held as before. The two populations agree on the direction and validation
+is the stronger of the two. The blend beats the deployed rule with the interval excluding zero at
+\numAggvalHybridwinsWord{} budgets, every one from $1$ to \numAggvalHybridwinsmax{}, by as much
+as $+\numAggvalHybridOneZero$ $[+\numAggvalHybridOneZeroLo, +\numAggvalHybridOneZeroHi]$ at ten,
+and it is indistinguishable from it at $30$ and $50$. Recall at a budget of five goes from
+\numAggvalDeployedrecallfive{} to \numAggvalHybridrecallfive{}. The maximum separates over the
+same head of the list and the mean is worse almost everywhere, both as on the comparison set.
+
+Two things follow and they should be stated together. The deployed aggregation is not the one a
+selection on validation would choose for a service answering with a short list: on the population
+where such a choice is legitimate, the blend is better through a budget of
+\numAggvalHybridwinsmax{}, which includes the budget this paper reads its headline at. And every
+number in this paper is measured under the deployed rule, so the release keeps it and the finding
+is reported rather than acted on here; substituting the blend would mean re-measuring the whole
+comparison, the ceiling and the worked example under a configuration this paper has not evaluated.
+What the measurement establishes is that the independence assumption is false, that something
+turns on it, and that the correction it argues for is worth an amount this work can now state
+instead of guess.
 
 \section{Model architectures and training}
 \label{sec:si-arch}
