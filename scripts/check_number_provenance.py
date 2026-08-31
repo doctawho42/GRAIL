@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -32,6 +33,13 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 # Artifacts a number legitimately comes from that cannot themselves be pinned, each with the
 # reason. The list is short and every entry is an argument, not an exemption.
+# Artifacts that legitimately name more than one checkpoint: the provenance sweep lists every
+# artifact and therefore every checkpoint any of them mentions, and a comparison of training runs
+# is about the runs. Each is here because it was looked at.
+CKPT_EXEMPT = {
+    "results/artifact_provenance.json",
+}
+
 EXEMPT = {
     # The provenance sweep's own output. Pinning it would ask the sweep to verify itself, and its
     # numbers are counts of the sweep's result rather than measurements of the system.
@@ -117,8 +125,25 @@ def main() -> int:
                      "verifiable": verifiable, "sweep_status": verdict.get("status"),
                      "how": verdict.get("how"), "exempt": EXEMPT.get(rel)})
 
+    # A producer whose source has not moved can still have been pointed at a model nobody
+    # deployed. Every artifact the numbers come from that names a checkpoint has to name the
+    # deployed one; the worked example named a neighbouring filter for three weeks and nothing
+    # here looked, though the artifact said so in plain text.
+    CKPT = re.compile(r"artifacts/([A-Za-z0-9_]+)/checkpoints/(?:generator|filter)\.pt")
+    DEPLOYED_RUN = "full5000_implicit"
+    wrong_model = []
+    for rel in reads:
+        path = ROOT / rel
+        if rel in CKPT_EXEMPT or not path.exists():
+            continue
+        runs = set(CKPT.findall(path.read_text()))
+        if runs and runs != {DEPLOYED_RUN}:
+            wrong_model.append(f"{rel}: {', '.join(sorted(runs))}")
+
     report = {
         "artifacts_the_numbers_come_from": len(reads),
+        "naming_a_checkpoint_that_is_not_the_deployed_run": sorted(wrong_model),
+        "n_naming_a_non_deployed_checkpoint": len(wrong_model),
         "exempt": len([r for r in rows if r["exempt"]]),
         "unpinned": sorted(unpinned),
         "unstamped": sorted(unstamped),
@@ -138,10 +163,13 @@ def main() -> int:
         print(f"  NOT PINNED    {rel}")
     for rel in unstamped:
         print(f"  NOT VERIFIABLE  {rel}")
-    ok = not unpinned and not unstamped
+    for row in wrong_model:
+        print(f"  NOT THE DEPLOYED MODEL  {row}")
+    ok = not unpinned and not unstamped and not wrong_model
     print(f"  {report['n_unpinned']} unpinned, {report['n_unstamped']} unstamped, "
-          f"{report['n_verifiable_by_inference_only']} verified by inference rather than "
-          f"by a recorded digest")
+          f"{report['n_naming_a_non_deployed_checkpoint']} scored with a model that is not the "
+          f"deployed one, {report['n_verifiable_by_inference_only']} verified by inference rather "
+          f"than by a recorded digest")
     print("check_number_provenance: " + ("OK" if ok else "FAIL"))
     return 0 if ok else 1
 

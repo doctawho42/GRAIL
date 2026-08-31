@@ -3,7 +3,7 @@
   "script": "reactant_size_census.py",
   "script_path": "scripts/typed_edit/reactant_size_census.py",
   "source_sha256": "852e79d00a2ea6365f0abeee20f9766b7ecf51c048ece5b7ac9f62aa40f0785b",
-  "git_commit": "0a58538392e69716cd2f6b07bbe87b846c49c47a",
+  "git_commit": "b9667cdef926d64b7b90bb4b4a35acc9a57afe0f",
   "git_dirty": true
  },
  "bank": "grail_metabolism/resources/extended_smirks.txt",
@@ -66,7 +66,7 @@
    "15": 33
   }
  },
- "worked_example_top20_from_three_or_fewer": 10,
+ "worked_example_top20_from_three_or_fewer": 11,
  "instrument": "atoms on the reactant side, summed over components, through the reaction parser so multi-component templates are counted whole",
  "reading": "a template with two or three reactant atoms matches almost anywhere, so for those the site discrimination comes from the learned stages and not from the template; the selectivity bar in the mining procedure rejects templates producing more than 200 products on average, which bounds this but does not remove it"
 }

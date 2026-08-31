@@ -582,10 +582,10 @@ it, with the transformation behind every hit.
 
 The interactive mode applies its \numCaseInterBudget{}-rule budget in
 \numCaseInterSeconds{}~s and returns \numCaseInterCandidates{} candidates, of which the
-deamination is ranked fourth; the three phosphorylations are not among the rules that budget
-selects, so no ranking could have recovered them. The exhaustive mode applies the whole bank in
-\numCaseExhSeconds{}~s, returns \numCaseExhCandidates{} candidates and produces all
-\numCaseExhFound{}, reaching every one of them by $k=30$. Both timings are one substrate on one
+deamination is ranked \numCaseInterRank{}; the three phosphorylations are not among the rules
+that budget selects, so no ranking could have recovered them. The exhaustive mode applies the
+whole bank in \numCaseExhSeconds{}~s, returns \numCaseExhCandidates{} candidates and produces all
+\numCaseExhFound{}, reaching every one of them by rank \numCaseExhDeepest{}. Both timings are one substrate on one
 run rather than the medians of Table~\ref{tab:modes}. The division the sweep shows across
 \numPopulationN{} substrates is visible on this one molecule: the interactive mode is right about what
 it emits and runs out, and the exhaustive mode keeps having candidates.
@@ -595,8 +595,9 @@ substrate atoms, the 5$^\prime$ hydroxymethyl, under three different rules, and 
 fires on the pyrimidine ring, so the output states which transformation is claimed and where,
 and a candidate can be rejected on mechanistic grounds. On the stored drawing all four rules are
 mined, so the part of the bank with no expert provenance is what carries this molecule; on the
-drawing a chemist would use, the deamination is found instead by a curated template and thirty
-ranks lower. Which templates carry a molecule is itself a function of how the molecule is drawn,
+drawing a chemist would use, the deamination is found instead by a curated template, rule
+\numCaseExhdrawnDeamrule{}, and at rank \numCaseExhdrawnDeamrank{} rather than
+\numCaseExhDeamrank{}. Which templates carry a molecule is itself a function of how the molecule is drawn,
 and Figure~\ref{fig:case} shows both.
 
 \subsection{Which design choices were selected on which population}
@@ -780,8 +781,8 @@ rather than a single cell, and it is made here on this system's own numbers.
 
 \subsection{The mode that is cheap to run loses at wide budgets}
 
-The two operating modes do not fail in the same place, and the cheaper one is the weaker beyond a
-short list. Against MetaTox on the comparison set the interactive mode leads at $k = 10$,
+The two operating modes are two settings of one rule budget and they do not fail in the same
+place: the cheaper setting is the weaker beyond a short list. Against MetaTox on the comparison set the interactive mode leads at $k = 10$,
 $+\numGapTrainedmetatoxOneZero$ with an interval of
 $[\numGapTrainedmetatoxOneZeroLo, \numGapTrainedmetatoxOneZeroHi]$, does not separate at $k=15$,
 and then trails at every wider budget: $\numGapTrainedmetatoxTwoZero$
@@ -812,9 +813,13 @@ runtime and in what the reader is handed: at a budget of fifty that arm's precis
 \numPrecBankFiveZero{}, so a chemist reading the whole list reads about thirty wrong structures
 for each right one. Precision under an incomplete annotation is a lower bound and is not used here
 to order systems, but a list of that length is what the wide-budget figures describe. The
-rule budget of \numHOneZeroTopk{} is the parameter that draws that line. It is the value the
-released checkpoint was trained at, and a deployment willing to spend more can raise it and buy
-back the pool.
+rule budget of \numHOneZeroTopk{} is the parameter that draws that line, and it is one setting of
+a continuous knob rather than a property of the cheap mode: it is the value the released
+checkpoint was trained at. On validation, raising it to $50$ takes recall at an output budget of
+thirty from \numBudgetKThreeZeroRecallthirty{} to \numBudgetKFiveZeroRecallthirty{}
+(Section~\ref{SI-sec:si-budget}). A service that answers with thirty candidates should therefore
+raise the rule budget rather than accept the deficit, and pay the standardisation cost that
+follows; the deficit measured above is what the deployed setting costs, not what the design does.
 
 \subsection{What the system offers that the incumbent does not}
 \label{sec:offers}
@@ -826,7 +831,8 @@ it: \numRsizeLethree{} of \numRsizeParsed{} parseable templates have three react
 (\numRsizeLethreesharePct{}), but \numRsizeCasetop{} of the twenty highest-ranked candidates in the
 worked example come from templates that small. A template of that size is a pattern rather than a
 mechanism, so for those the site discrimination comes from the learned stages and not from the
-rule, and half of what a reader of the example sees is attributed to one. That second half is a claim and is measured: of
+rule, and more than half of what a reader of the example sees is attributed to one. That the site
+is the site that changed is a claim, and it is measured: of
 \numSiteScored{} correctly predicted metabolites, the site reported touches the atoms that
 actually differ from the substrate in \numSiteTouchingPct{}, against \numSiteConnectednullPct{}
 for a connected fragment of the same size grown at random from the same molecule, and lies wholly

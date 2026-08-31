@@ -2,8 +2,8 @@
  "provenance": {
   "script": "case_study.py",
   "script_path": "scripts/typed_edit/case_study.py",
-  "source_sha256": "60eeb31ff9f83d928fa27524ba9c5d40f9e92522a7c4a79a5becdc6028f6b65e",
-  "git_commit": "8635fce4b755ea0656b233fb887e406d78b09fdb",
+  "source_sha256": "38de672a31b2e3f2e565f39044caa7111e5534bf660a0b9977f7ce777af7cadb",
+  "git_commit": "b9667cdef926d64b7b90bb4b4a35acc9a57afe0f",
   "git_dirty": true
  },
  "substrate": "N=c1ccn(C2OC(CO)C(O)C2(F)F)c(O)n1",
@@ -18,13 +18,13 @@
   "ranking": "reciprocal rank fusion of the filter and generator orderings, k=60",
   "match": "inchikey_tautomer",
   "generator_checkpoint": "artifacts/full5000_implicit/checkpoints/generator.pt",
-  "filter_checkpoint": "artifacts/full5000_priors/checkpoints/filter.pt"
+  "filter_checkpoint": "artifacts/full5000_implicit/checkpoints/filter.pt"
  },
- "generator_seconds": 3.44,
+ "generator_seconds": 3.84,
  "n_candidates": 18,
  "n_references": 4,
  "reference_ranks": [
-  4
+  5
  ],
  "references_not_in_pool": [
   "FRQISCZGNNXEMD-UHFFFAOYSA-N",
@@ -44,11 +44,11 @@
   {
    "smiles": "Nc1ccn(C2OC(CO)C(O)(O)C2(F)F)c(=O)n1",
    "key": "VJDPMVINSVGXOL-UHFFFAOYSA-N",
-   "generator": 0.9666,
-   "filter": 0.0792,
-   "rule_id": 1753,
-   "rule": "[#6:1]-[#6:2]>>[#6:2]-[#6:1]-[#8:3]",
-   "rule_source": "mined",
+   "generator": 0.9656,
+   "filter": 0.1791,
+   "rule_id": 474,
+   "rule": "[C:1]>>[C:1][O:2]",
+   "rule_source": "curated",
    "firing_atoms": [
     7,
     10,
@@ -62,7 +62,7 @@
    "smiles": "Nc1ccn(C(O)C(F)F)c(=O)n1",
    "key": "QBUAACZUEHPYLE-UHFFFAOYSA-N",
    "generator": 0.9776,
-   "filter": 0.0577,
+   "filter": 0.1251,
    "rule_id": 1919,
    "rule": "[#6:1]-[#8:2]-[#6:3]-[#6:4]-[#8:5]>>[#6:1]-[#8:2]",
    "rule_source": "mined",
@@ -85,7 +85,7 @@
    "smiles": "Nc1ccn(C2OC(CO)C(OC3OC(C(=O)O)C(O)C(O)C3O)C2(F)F)c(=O)n1",
    "key": "LTDFZLIKDHVPIV-UHFFFAOYSA-N",
    "generator": 0.8701,
-   "filter": 0.0896,
+   "filter": 0.1629,
    "rule_id": 1761,
    "rule": "[#6:1]-[#8:2]>>[#6:1]-[#8:2]-[#6:3]1-[#8:4]-[#6:5](-[#6:6](=[#8:7])-[#8:8])-[#6:9](-[#8:10])-[#6:11](-[#8:12])-[#6:13]-1-[#8:14]",
    "rule_source": "mined",
@@ -97,10 +97,25 @@
    "rank": 3
   },
   {
+   "smiles": "Nc1ccn(C2OC(COC3OC(C(=O)O)C(O)C(O)C3O)C(O)C2(F)F)c(=O)n1",
+   "key": "SSBKJHIUOCEUCX-UHFFFAOYSA-N",
+   "generator": 0.8701,
+   "filter": 0.1585,
+   "rule_id": 1761,
+   "rule": "[#6:1]-[#8:2]>>[#6:1]-[#8:2]-[#6:3]1-[#8:4]-[#6:5](-[#6:6](=[#8:7])-[#8:8])-[#6:9](-[#8:10])-[#6:11](-[#8:12])-[#6:13]-1-[#8:14]",
+   "rule_source": "mined",
+   "firing_atoms": [
+    8,
+    9
+   ],
+   "is_reference": false,
+   "rank": 4
+  },
+  {
    "smiles": "O=c1ccn(C2OC(CO)C(O)C2(F)F)c(=O)[nH]1",
    "key": "FIRDBEQIJQERSE-UHFFFAOYSA-N",
    "generator": 0.9295,
-   "filter": 0.058,
+   "filter": 0.0766,
    "rule_id": 4913,
    "rule": "[#7:1]:[#6:5](:[#7:4]:[#6:3](:[#6:2])=[#7:7])-[#8:6]>>[#7:1]:[#6:5](:[#7:4]:[#6:3](:[#6:2])-[#8:8])=[#8:6]",
    "rule_source": "mined",
@@ -114,13 +129,13 @@
     17
    ],
    "is_reference": true,
-   "rank": 4
+   "rank": 5
   },
   {
    "smiles": "Nc1ccn(C(O)C(F)(F)CO)c(=O)n1",
    "key": "KAUWEBKHNJHLDY-UHFFFAOYSA-N",
    "generator": 0.9943,
-   "filter": 0.0179,
+   "filter": 0.0266,
    "rule_id": 1919,
    "rule": "[#6:1]-[#8:2]-[#6:3]-[#6:4]-[#8:5]>>[#6:1]-[#8:2]",
    "rule_source": "mined",
@@ -135,28 +150,45 @@
     12
    ],
    "is_reference": false,
-   "rank": 5
+   "rank": 6
   },
   {
-   "smiles": "Nc1ccn(C2OC(COC3OC(C(=O)O)C(O)C(O)C3O)C(O)C2(F)F)c(=O)n1",
-   "key": "SSBKJHIUOCEUCX-UHFFFAOYSA-N",
+   "smiles": "Nc1ccn(C2OC(O)(CO)C(O)C2(F)F)c(=O)n1",
+   "key": "IGNVKXKXOBGNQE-UHFFFAOYSA-N",
+   "generator": 0.9656,
+   "filter": 0.0242,
+   "rule_id": 474,
+   "rule": "[C:1]>>[C:1][O:2]",
+   "rule_source": "curated",
+   "firing_atoms": [
+    6,
+    7,
+    8,
+    10
+   ],
+   "is_reference": false,
+   "rank": 7
+  },
+  {
+   "smiles": "N=c1ccn(C2OC(CO)C(O)C2(F)F)c(OC2OC(C(=O)O)C(O)C(O)C2O)n1",
+   "key": "UHGNVRQQTULGTJ-UHFFFAOYSA-N",
    "generator": 0.8701,
-   "filter": 0.0629,
+   "filter": 0.0361,
    "rule_id": 1761,
    "rule": "[#6:1]-[#8:2]>>[#6:1]-[#8:2]-[#6:3]1-[#8:4]-[#6:5](-[#6:6](=[#8:7])-[#8:8])-[#6:9](-[#8:10])-[#6:11](-[#8:12])-[#6:13]-1-[#8:14]",
    "rule_source": "mined",
    "firing_atoms": [
-    8,
-    9
+    15,
+    16
    ],
    "is_reference": false,
-   "rank": 6
+   "rank": 8
   },
   {
    "smiles": "Nc1ccn(CO)c(=O)n1",
    "key": "MJEQLGCFPLHMNV-UHFFFAOYSA-N",
    "generator": 0.704,
-   "filter": 0.2547,
+   "filter": 0.3754,
    "rule_id": 4661,
    "rule": "[#6:1]-[#8:2]-[#6:3]-[#6:4]-[#6:5]>>[#6:1]-[#8:2]",
    "rule_source": "mined",
@@ -174,30 +206,13 @@
     14
    ],
    "is_reference": false,
-   "rank": 7
-  },
-  {
-   "smiles": "Nc1ccn(C2OC(O)(CO)C(O)C2(F)F)c(=O)n1",
-   "key": "IGNVKXKXOBGNQE-UHFFFAOYSA-N",
-   "generator": 0.9666,
-   "filter": 0.0069,
-   "rule_id": 1753,
-   "rule": "[#6:1]-[#6:2]>>[#6:2]-[#6:1]-[#8:3]",
-   "rule_source": "mined",
-   "firing_atoms": [
-    6,
-    7,
-    8,
-    10
-   ],
-   "is_reference": false,
-   "rank": 8
+   "rank": 9
   },
   {
    "smiles": "OCCO",
    "key": "LYCAIKOWRPUZTN-UHFFFAOYSA-N",
    "generator": 0.9173,
-   "filter": 0.0153,
+   "filter": 0.0137,
    "rule_id": 6392,
    "rule": "[#8:3]-[#6:4]-[#6:5]-[#6:6]-[#8:1]-[#6:2]>>[#8:1]-[#6:2]",
    "rule_source": "mined",
@@ -221,13 +236,13 @@
     17
    ],
    "is_reference": false,
-   "rank": 9
+   "rank": 10
   },
   {
    "smiles": "Nc1ccn(C2OC(CO)C(OS(=O)(=O)O)C2(F)F)c(=O)n1",
    "key": "WFDMOMROEXVSER-UHFFFAOYSA-N",
    "generator": 0.8616,
-   "filter": 0.0194,
+   "filter": 0.0248,
    "rule_id": 2142,
    "rule": "[#6:1]-[#8:2]>>[#8:3]=[#16:4](=[#8:5])(-[#8:6])-[#8:2]-[#6:1]",
    "rule_source": "mined",
@@ -236,31 +251,16 @@
     11
    ],
    "is_reference": false,
-   "rank": 10
-  },
-  {
-   "smiles": "N=c1ccn(C2OC(CO)C(O)C2(F)F)c(OC2OC(C(=O)O)C(O)C(O)C2O)n1",
-   "key": "UHGNVRQQTULGTJ-UHFFFAOYSA-N",
-   "generator": 0.8701,
-   "filter": 0.009,
-   "rule_id": 1761,
-   "rule": "[#6:1]-[#8:2]>>[#6:1]-[#8:2]-[#6:3]1-[#8:4]-[#6:5](-[#6:6](=[#8:7])-[#8:8])-[#6:9](-[#8:10])-[#6:11](-[#8:12])-[#6:13]-1-[#8:14]",
-   "rule_source": "mined",
-   "firing_atoms": [
-    15,
-    16
-   ],
-   "is_reference": false,
    "rank": 11
   },
   {
    "smiles": "Nc1ccn(C2OC(C(O)O)C(O)C2(F)F)c(=O)n1",
    "key": "KDTUVLFIEZMSPW-UHFFFAOYSA-N",
-   "generator": 0.8236,
-   "filter": 0.0198,
-   "rule_id": 1753,
-   "rule": "[#6:1]-[#6:2]>>[#6:2]-[#6:1]-[#8:3]",
-   "rule_source": "mined",
+   "generator": 0.8184,
+   "filter": 0.0486,
+   "rule_id": 474,
+   "rule": "[C:1]>>[C:1][O:2]",
+   "rule_source": "curated",
    "firing_atoms": [
     7,
     8,
@@ -273,7 +273,7 @@
    "smiles": "Nc1ccn(C2OC(COS(=O)(=O)O)C(O)C2(F)F)c(=O)n1",
    "key": "XMFVQSWLFCLYLQ-UHFFFAOYSA-N",
    "generator": 0.8616,
-   "filter": 0.0082,
+   "filter": 0.0207,
    "rule_id": 2142,
    "rule": "[#6:1]-[#8:2]>>[#8:3]=[#16:4](=[#8:5])(-[#8:6])-[#8:2]-[#6:1]",
    "rule_source": "mined",
@@ -288,7 +288,7 @@
    "smiles": "Nc1ccn(C2OC(C(=O)O)C(O)C2(F)F)c(=O)n1",
    "key": "OZZNWSDMSAHGKH-UHFFFAOYSA-N",
    "generator": 0.4333,
-   "filter": 0.031,
+   "filter": 0.0741,
    "rule_id": 1209,
    "rule": "[C:1][CH2:2][OH1]>>[C:1][C:2](=O)O",
    "rule_source": "curated",
@@ -303,11 +303,11 @@
   {
    "smiles": "Nc1ccn(C2(O)OC(CO)C(O)C2(F)F)c(=O)n1",
    "key": "SRRCASSCXPABTR-UHFFFAOYSA-N",
-   "generator": 0.8236,
-   "filter": 0.0167,
-   "rule_id": 1753,
-   "rule": "[#6:1]-[#6:2]>>[#6:2]-[#6:1]-[#8:3]",
-   "rule_source": "mined",
+   "generator": 0.8184,
+   "filter": 0.0316,
+   "rule_id": 474,
+   "rule": "[C:1]>>[C:1][O:2]",
+   "rule_source": "curated",
    "firing_atoms": [
     4,
     5,
@@ -321,7 +321,7 @@
    "smiles": "N=c1ccn(C2OC(CO)C(O)C2(F)F)c(OS(=O)(=O)O)n1",
    "key": "YZXOUHOWNSMASP-UHFFFAOYSA-N",
    "generator": 0.8616,
-   "filter": 0.0015,
+   "filter": 0.0042,
    "rule_id": 2142,
    "rule": "[#6:1]-[#8:2]>>[#8:3]=[#16:4](=[#8:5])(-[#8:6])-[#8:2]-[#6:1]",
    "rule_source": "mined",
@@ -336,7 +336,7 @@
    "smiles": "OCC(O)CO",
    "key": "PEDCQBHIVMGVHV-UHFFFAOYSA-N",
    "generator": 0.8574,
-   "filter": 0.0068,
+   "filter": 0.0066,
    "rule_id": 1744,
    "rule": "[#6:3]-[#6:4]-[#8:2]-[#6:1]>>[#6:1]-[#8:2]",
    "rule_source": "mined",
@@ -365,7 +365,7 @@
    "smiles": "OCC(O)C(O)C(F)F",
    "key": "MJQKWEFSLIINMH-UHFFFAOYSA-N",
    "generator": 0.8529,
-   "filter": 0.0055,
+   "filter": 0.0085,
    "rule_id": 1898,
    "rule": "[#6:3]-[#8:1]-[#6:2]>>[#8:1]-[#6:2]",
    "rule_source": "mined",

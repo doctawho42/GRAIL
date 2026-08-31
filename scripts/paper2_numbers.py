@@ -938,12 +938,28 @@ def build():
     n["case.exh.ranks"] = ", ".join(str(r) for r in art("case_study_exhaustive.json")["reference_ranks"])
     n["case.exhdrawn.ranks"] = ", ".join(
         str(r) for r in art("case_study_exhaustive_drawn.json")["reference_ranks"])
-    n["case.inter.rulehit"] = art("case_study.json")["candidates"][3]["rule_id"]
+    # The interactive arm's one hit, by its own rank rather than by a position in the list. The
+    # rank was hard-coded as the fourth element, so a re-run that moved the hit reported the rule
+    # of whatever had taken its place.
+    _inter = art("case_study.json")
+    _interhit = next((c for c in _inter["candidates"] if c["is_reference"]), None)
+    n["case.inter.rulehit"] = _interhit["rule_id"] if _interhit else None
+    n["case.inter.rank"] = _interhit["rank"] if _interhit else None
+    # The widest rank the exhaustive arm needs to reach every annotated metabolite, which the
+    # prose stated as a round number and which moves whenever the ranking does.
+    _exh = art("case_study_exhaustive.json")
+    n["case.exh.deepest"] = max(_exh["reference_ranks"]) if _exh["reference_ranks"] else None
     _drawn = art("case_study_exhaustive_drawn.json")
     n["case.exhdrawn.deamrule"] = next(c["rule_id"] for c in _drawn["candidates"]
                                        if c["is_reference"] and c["rule_source"] == "curated")
     n["case.exhdrawn.deamrank"] = next(c["rank"] for c in _drawn["candidates"]
                                        if c["is_reference"] and c["rule_source"] == "curated")
+    # The same metabolite's rank under the other drawing, so the comparison in the prose is
+    # between two ranks of one structure rather than between a rank and a list depth.
+    _deamkey = next(c["key"] for c in _drawn["candidates"]
+                    if c["is_reference"] and c["rule_source"] == "curated")
+    n["case.exh.deamrank"] = next((c["rank"] for c in _exh["candidates"]
+                                   if c.get("key") == _deamkey), None)
 
     # What the annotation actually contains, which a recall figure is a statement about
     ra = art("reference_audit.json")
