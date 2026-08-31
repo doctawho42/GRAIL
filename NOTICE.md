@@ -8,7 +8,7 @@ templates are in the bank, and what removing them would cost is measured below r
 
 Two separate obligations run through what follows and they are easy to conflate. The **bank**
 contains other people's templates, which puts the bank under their terms. The **repository** tracked
-other people's files, which would put the release under the terms of everything inside them —
+other people's files, which would put the release under the terms of everything inside them,
 including the parts the bank never uses. Both are measured in `results/curated_third_party.json`.
 The second obligation is now discharged: of the five third-party rule files, one remains tracked and
 four do not.
@@ -28,7 +28,7 @@ training split by `scripts/mine_rules.py` and 1,725 carried as curated. Of the c
 1,233 come from three named collections and 492 from an earlier machine extraction that was carried
 as curated and is not (`results/curated_provenance.json`).
 
-**966 of the 1,725 curated templates are somebody else's rules, verbatim** — and every one of them
+**966 of the 1,725 curated templates are somebody else's rules, verbatim**, and every one of them
 falls inside the named 1,233, none among the 492. The share to read is therefore **78.3% of the
 collections described as curated chemistry**, not 56% of the half they sit in. Measured by string
 equality against every published rule set held on disk:
@@ -69,7 +69,7 @@ on it.
 The one that remains is the LGPL core, and it stays for a reason beyond permission: it is the
 evidence for the largest single attribution this bank owes, 611 templates, and a reader checking
 that claim needs the file the claim is made against. The other four were an obligation with no such
-return — two contribute no template at all, and GLORYx's own attribution column says 178 of its 260
+return: two contribute no template at all, and GLORYx's own attribution column says 178 of its 260
 rules are SyGMa's, which the installed SyGMa package supplies directly.
 
 `scripts/convention_census.py` reads all five when they are present, which is a use and not a
@@ -139,7 +139,7 @@ uncapped pass of each bank variant over the 1,170 evaluated test substrates):
 
 **The 611 BioTransformer templates cost nothing.** Every reference they reach is reached by
 something else in the bank, so the largest borrowing here is the one that can be given up for
-free. The whole obligation to BioTransformer — the templates and the three tracked files — can
+free. The whole obligation to BioTransformer, the templates and the tracked files together, can
 therefore be discharged by removal at no measurable cost to the science.
 
 SyGMa's 152 cost 14 references of 2,597, 0.54% of the reach. That is a real but small price, and
@@ -191,8 +191,8 @@ annotation rather than the compound list that is the corpora's contribution.
 
 What this costs a reader who does not hold the source licences: they can recompute every recall
 figure and every cell of the criterion sweep, and they cannot re-run the structure-level analyses
-in the Supporting Information — the transformation-class split, the composite-step instruments, the
-stereochemistry census — because those read the reference structure itself. Those need the corpus,
+in the Supporting Information, the transformation-class split, the composite-step instruments and
+the stereochemistry census, because those read the reference structure itself. Those need the corpus,
 which such a reader already needed.
 
 ## Comparators
@@ -201,9 +201,9 @@ Per-substrate predictions from SyGMa, MetaTox, MetaPredictor and BioTransformer 
 `results/` so the comparison can be recomputed without re-running any of them. BioTransformer's are
 the output of its own jar on our substrates, at `allHuman` for one step and again on the natural
 tautomer; the jar is LGPL and redistributing what it produced on our own inputs is not a
-redistribution of the tool. What can be pinned about each — a
-version where one exists, the configuration, the frozen predictions with their digest, and the date
-each entered this repository — is recorded in `results/comparator_provenance.json`; BioTransformer's
+redistribution of the tool. What can be pinned about each, a
+version where one exists, the configuration, the frozen predictions with their digest and the date
+each entered this repository, is recorded in `results/comparator_provenance.json`; BioTransformer's
 jar digest and SyGMa's version are additionally in `paper2/split_manifest.json`. Each remains the
 property of its authors and is redistributed here only as the frozen output of a run on our
 substrates.

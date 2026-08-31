@@ -57,12 +57,19 @@ The candidate structures are produced by applying this work's rule bank and are 
 records, so they are released. Every corpus structure, the substrates as well as the annotated
 metabolites, appears only as a tautomer-canonical InChIKey, which is a hash and does not carry
 the structure. No source record is redistributed \emph{in the deposit}, and the licence of the
-derived corpus is \CorpusLicence{}. The repository is a separate channel and ships something
-narrower and deliberate: the evaluated test substrates and their annotated metabolites as
-structures, which is what makes every recall figure in this paper recomputable. The question does not have to be answered, because the deposit does not raise
-it. The cost is that a
-keys must be joined against a substrate set rebuilt under one's own licences, and the
-manifest is what tells them whether their rebuild matches.
+derived corpus is \CorpusLicence{}. The repository is a separate channel and it is settled the same
+way, by a substitution rather than by an answer to a question that does not resolve. It ships the
+evaluated test substrates as structures, because reproducing the comparison means running a
+predictor on one, and their annotated metabolites as the descriptors the matching criteria are
+decided by: a hash of the canonical SMILES, the InChIKey, the tautomer key and the on-bits of a
+folded Morgan fingerprint. A hash decides string equality exactly and a folded fingerprint decides
+Tanimoto of one exactly, so all \numCritCriteria{} declared criteria survive the substitution and
+none of the metabolites survives it; a check compares each criterion's verdict on the descriptors
+with its verdict on the structures and reports no disagreement. What a reader without the source
+licences loses is not a recall figure or a criterion but the structure-level analyses of this
+document, which read the reference itself, and those need the corpus that reader already needed.
+The deposit's keys must still be joined against a substrate set rebuilt under one's own licences,
+and the manifest is what tells them whether their rebuild matches.
 
 \subsection{How the corpus was assembled}
 
@@ -135,11 +142,12 @@ deterministic and released, and the manifest's digests confirm a rebuild rather 
 report that one differs. The unrecoverable step is the first one, and it is the whole of what is
 missing.
 
-The annotated metabolites of the evaluated test set are released as structures, in
-\texttt{results/test\_references.json}, alongside every arm's per-substrate predictions. All five
-matching criteria are therefore recomputable on the comparison population, not only the default
-one: every row of Table~\ref{MS-tab:criterion} can be rebuilt from what is released. The
-repository and the Zenodo deposit differ in this, and the repository is the wider of the two.
+The annotated metabolites of the evaluated test set are released as matching descriptors, in
+\texttt{results/test\_reference\_descriptors.json}, alongside every arm's per-substrate
+predictions. All \numCritCriteria{} matching criteria are therefore recomputable on the comparison
+population, not only the default one: every row of Table~\ref{MS-tab:criterion} can be rebuilt
+from what is released, and none of the metabolites can. The repository and the Zenodo deposit
+differ in this, and the repository is the wider of the two.
 
 The corpus is divided by substrate, so no substrate of one split appears in another. Molecular overlap between splits is non-zero and expected, because a molecule
 that is a substrate in one split may appear as a product in another: \numLeakMolOverlap{}
