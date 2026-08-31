@@ -1549,10 +1549,14 @@ moved can still have been pointed at a checkpoint nobody deployed, and one was: 
 was ranked by a filter from a neighbouring training run for as long as the example existed, and its
 own artifact said so in plain text. \numProvSourceswrongmodel{} of the \numProvSources{} now name
 a checkpoint outside the deployed run, and the gate fails on any that do. That check has a blind
-spot worth naming: an artifact that records no checkpoint passes it without being examined, and
-\numProvSourcesnocheckpoint{} of the \numProvSources{} are in that state while their producer
-loads a model. For those the assurance is weaker and is of a different kind, that every such
-producer's default is the deployed pair and a test refuses any that names another. The gate fails the build
+spot worth naming: an artifact that records no checkpoint passes it without being examined. For
+\numProvSourcesestablishedWord{} of the \numProvSources{} the identity is on the record even
+though that file does not carry it, established the way the deployed pair itself was: scoring the
+artifact's own candidates with every trained checkpoint held here and finding that one reproduces
+them exactly and no other reproduces them at all. \numProvSourcesnocheckpoint{} remain in the
+blind spot, their producer loading a model and nothing recording which; for those the assurance is
+weaker and is of a different kind, that every such producer's default is the deployed pair and a
+test refuses any that names another. The gate fails the build
 if any of the first two counts is not zero, and unpinning one artifact makes it fail, which is how
 we know it can.
 

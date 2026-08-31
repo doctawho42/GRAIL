@@ -170,7 +170,25 @@ def main() -> int:
     # Files reached only through an inputs block are counted separately, so the reach of the
     # check is a number rather than an impression.
     n_followed = len(followed)
-    silent_model = []
+    # An artifact that records no checkpoint is not necessarily one whose model is unknown. Where
+    # pool_checkpoints.py has established the models by reproduction -- scoring the artifact's own
+    # candidates with every trained checkpoint and finding a unique perfect match -- the identity
+    # is on the record, just not in that file. Those are counted apart from the ones nothing
+    # establishes at all, because the two are different situations and only the second is a gap.
+    established = {}
+    pc = ROOT / "results" / "pool_checkpoints.json"
+    if pc.exists():
+        try:
+            blob = json.loads(pc.read_text())
+            for row in blob.get("pools", {}).values():
+                names = {row.get(stage, {}).get("identified_as")
+                         for stage in ("generator", "filter")} - {None}
+                if names:
+                    established[row["path"]] = sorted(names)
+        except Exception:
+            pass
+
+    silent_model, silent_but_established = [], []
     for rel in reads:
         path = ROOT / rel
         if rel in CKPT_EXEMPT or not path.exists():
@@ -182,7 +200,10 @@ def main() -> int:
             continue
         psrc = ROOT / producer
         if psrc.exists() and LOADS_A_MODEL.search(psrc.read_text()):
-            silent_model.append(f"{rel} <- {producer}")
+            if rel in established:
+                silent_but_established.append(f"{rel} -> {', '.join(established[rel])}")
+            else:
+                silent_model.append(f"{rel} <- {producer}")
 
     report = {
         "artifacts_the_numbers_come_from": len(reads),
@@ -190,6 +211,8 @@ def main() -> int:
         "n_naming_a_non_deployed_checkpoint": len(wrong_model),
         "n_reached_only_through_an_inputs_block": n_followed,
         "producer_loads_a_model_but_the_artifact_records_none": sorted(silent_model),
+        "records_none_but_established_by_reproduction": sorted(silent_but_established),
+        "n_established_by_reproduction": len(silent_but_established),
         "n_recording_no_checkpoint": len(silent_model),
         "exempt": len([r for r in rows if r["exempt"]]),
         "unpinned": sorted(unpinned),
@@ -212,6 +235,8 @@ def main() -> int:
         print(f"  NOT VERIFIABLE  {rel}")
     for row in wrong_model:
         print(f"  NOT THE DEPLOYED MODEL  {row}")
+    for row in silent_but_established:
+        print(f"  RECORDS NONE, ESTABLISHED BY REPRODUCTION   {row}")
     for row in silent_model:
         print(f"  RECORDS NO CHECKPOINT   {row}")
     ok = not unpinned and not unstamped and not wrong_model
@@ -219,7 +244,9 @@ def main() -> int:
           f"{report['n_reached_only_through_an_inputs_block']} reached only because an artifact "
           f"records what it read, "
           f"{report['n_naming_a_non_deployed_checkpoint']} scored with a model that is not the "
-          f"deployed one, {report['n_recording_no_checkpoint']} whose producer loads a model and "
+          f"deployed one, {report['n_established_by_reproduction']} recording none whose models "
+          f"reproduction establishes, "
+          f"{report['n_recording_no_checkpoint']} whose producer loads a model and "
           f"which record none, {report['n_verifiable_by_inference_only']} verified by inference "
           f"rather than by a recorded digest")
     print("check_number_provenance: " + ("OK" if ok else "FAIL"))

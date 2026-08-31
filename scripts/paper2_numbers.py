@@ -1338,6 +1338,9 @@ def build():
     # loads a model at all. The second is the first check's blind spot and is reported beside it.
     n["prov.sourceswrongmodel"] = ns["n_naming_a_non_deployed_checkpoint"]
     n["prov.sourcesnocheckpoint"] = ns["n_recording_no_checkpoint"]
+    # Those that record no checkpoint but whose models reproduction has established. The blind
+    # spot is real for the rest and smaller than the raw count suggests.
+    n["prov.sourcesestablished"] = ns.get("n_established_by_reproduction", 0)
 
     # What the generated-macro claim is actually true of, counted rather than asserted. The
     # claim was made unqualified and was false of the Supporting Information, where measurements

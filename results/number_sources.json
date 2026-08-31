@@ -9,10 +9,13 @@
   "results/h12_verdict.json <- scripts/typed_edit/h12_verdict.py",
   "results/h14_verdict.json <- scripts/typed_edit/h14_verdict.py",
   "results/h8_verdict.json <- scripts/typed_edit/h8_verdict.py",
-  "results/site_agreement.json <- scripts/typed_edit/site_agreement.py",
-  "results/val_pools.json <- scripts/typed_edit/build_val_pools.py"
+  "results/site_agreement.json <- scripts/typed_edit/site_agreement.py"
  ],
- "n_recording_no_checkpoint": 7,
+ "records_none_but_established_by_reproduction": [
+  "results/val_pools.json -> full5000_implicit"
+ ],
+ "n_established_by_reproduction": 1,
+ "n_recording_no_checkpoint": 6,
  "exempt": 3,
  "unpinned": [],
  "unstamped": [
