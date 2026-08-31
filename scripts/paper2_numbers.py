@@ -1352,7 +1352,11 @@ def build():
     # otherwise; it now prints how many of them the sweep found current.
     n["prov.pinnedstale"] = pv.get("n_pinned_stale", 0)
     n["prov.pinnedcurrent"] = pv["n_pinned"] - pv.get("n_pinned_stale", 0)
-    n["prov.files"] = pv["n_pinned"] + sum(sweep.values())
+    # Files under results/ and below it. One pinned artifact, the split manifest, lives beside the
+    # manuscript instead, and counting it here made the printed total one larger than the
+    # directory the sentence names.
+    n["prov.files"] = (sum(1 for r in pv["pinned"] if r["artifact"].startswith("results/"))
+                       + sum(sweep.values()))
     n["prov.unstamped"] = sweep.get("unstamped", 0)
     n["prov.changed"] = sweep.get("producer_changed", 0)
     # How far the guarantee reaches past the pinned set: files below the top level of results/
