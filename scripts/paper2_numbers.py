@@ -734,6 +734,10 @@ def build():
     n["ceilagree.spread"] = agr["spread_across_all_four_counts"]
     n["ceilagree.spreadshare"] = agr["spread_as_share_of_references"]
     n["ceilagree.spreadofmargin"] = agr["spread_as_share_of_that_margin"]
+    # The denominator itself, because a share of an unprinted quantity cannot be checked. It is
+    # the same minimum the parent-drop section divides by, and the two used to disagree because
+    # one artifact predated an arm the other already held.
+    n["ceilagree.narrowestmargin"] = agr["narrowest_separating_margin_in_the_comparison"]
     for tag, name in (("deployed", "deployed loop, hydrogens implicit"),
                       ("auditimplicit", "audit loop, hydrogens implicit"),
                       ("auditcompleted", "audit loop, explicit and templates completed"),

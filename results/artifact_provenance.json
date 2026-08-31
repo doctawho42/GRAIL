@@ -604,9 +604,9 @@
  "n_pinned": 98,
  "n_pinned_stale": 1,
  "sweep": {
-  "unstamped": 247,
-  "producer_changed": 39,
-  "current": 36,
+  "unstamped": 252,
+  "producer_changed": 40,
+  "current": 35,
   "producer_unknown": 27,
   "cosmetic_only": 8
  },
@@ -645,6 +645,31 @@
    "detail": "producer was 8b1d64f23b01, is now 7643b85c5f73",
    "diff_recovered_by": "source at cb1fa8a88a32",
    "diff": "--- aggregate_vs_output_size.py (as recorded)\n+++ aggregate_vs_output_size.py (now)\n@@ -161,4 +161,37 @@\n     print(f\"  monotone in output size: {monotone}\")\n \n+    # How much does the like-emitting null actually rule out? Counting verdicts says nothing on its\n+    # own -- the difference between a certified result and an uncertified one is not itself a\n+    # result, which is the reasoning this paper rejects elsewhere. So report the widest interval the\n+    # comparable pairs leave open: if it is wide relative to the reversals that do certify, the\n+    # partition is a description and not an identification, and the text must say so.\n+    widths = []\n+    for pop, p_ in rep[\"populations\"].items():\n+        for r in p_[\"pairs\"]:\n+            if not r[\"comparable\"]:\n+                continue\n+            for f in r[\"sign_flips\"]:\n+                for t in (\"1\", \"2\"):\n+                    ci = f[f\"ci_{t}\"]\n+                    if ci:\n+                        widths.append((round(ci[1] - ci[0], 4), pop, tuple(r[\"pair\"])))\n+    certified = [abs(f[\"delta_1\"]) for p_ in rep[\"populations\"].values() for r in p_[\"pairs\"]\n+                 for f in r[\"sign_flips\"] if f[\"certified_both_directions\"]]\n+    rep[\"power\"] = {\n+        \"widest_interval_among_comparable_pairs\": max(widths)[0] if widths else None,\n+        \"where\": {\"population\": max(widths)[1], \"pair\": list(max(widths)[2])} if widths else None,\n+        \"median_certified_reversal_size\": round(float(sorted(certified)[len(certified)//2]), 4)\n+                                          if certified else None,\n+        \"reading\": \"the like-emitting null is a failure to detect, not a demonstration of absence: \"\n+                   \"the widest interval it leaves open is of the same order as the reversals that \"\n+                   \"do certify\",\n+    }\n+    if widths:\n+        w, pop, pair = max(widths)\n+        print(f\"\\npower of the like-emitting null: widest interval {w} \"\n+              f\"({pop}, {pair[0]} vs {pair[1]})\")\n+        print(f\"  against a median certified reversal of {rep['power']['median_certified_reversal_size']}\")\n+        print(\"  -> the null cannot separate absence from lack of power\")\n+\n     tot_c = sum(v[\"certified_reversals_among_comparable\"] for _, v in verdicts)\n     tot_d = sum(v[\"certified_reversals_among_disparate\"] for _, v in verdicts)"
+  },
+  {
+   "artifact": "results/aggregation_shards/s0.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/aggregation_shards/s3.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/aggregation_shards/s4.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/aggregation_shards_val/s0.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/aggregation_shards_val/s1.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
   },
   {
    "artifact": "results/anchor_certification.json",
@@ -1509,6 +1534,15 @@
    "script": "pair_cost_benchmark.py",
    "status": "producer_unknown",
    "detail": "commit 003cfcee3da5 does not carry scripts/pair_cost_benchmark.py"
+  },
+  {
+   "artifact": "results/paper2_numbers.json",
+   "script": "paper2_numbers.py",
+   "how": "recorded source digest",
+   "status": "producer_changed",
+   "detail": "producer was 4dceeaf487a2, is now cd1c6632085f",
+   "diff_recovered_by": "the tree was dirty when written, so the source at 2a766ab05904 is the nearest committed version and not exactly what ran",
+   "diff": "--- paper2_numbers.py (as recorded)\n+++ paper2_numbers.py (now)\n@@ -399,5 +399,8 @@\n         n[f\"lrc.{tag}.hi\"] = cell[\"ci95\"][1]\n         n[f\"lrc.{tag}.sep\"] = cell[\"excludes_zero\"]\n-        n[f\"lrc.{tag}.dropped\"] = lrc[\"variants\"][name][\"templates\"]\n+        # How many templates the variant removes, not how many it keeps: the artifact records the\n+        # size of each bank and the difference is what \"dropped\" means in the prose.\n+        n[f\"lrc.{tag}.dropped\"] = (lrc[\"variants\"][\"whole bank\"][\"templates\"]\n+                                   - lrc[\"variants\"][name][\"templates\"])\n     n[\"lrc.references\"] = lrc[\"population\"][\"n_references\"]\n     n[\"lrc.wholebanktemplates\"] = lrc[\"variants\"][\"whole bank\"][\"templates\"]\n@@ -732,4 +735,8 @@\n     n[\"ceilagree.spreadshare\"] = agr[\"spread_as_share_of_references\"]\n     n[\"ceilagree.spreadofmargin\"] = agr[\"spread_as_share_of_that_margin\"]\n+    # The denominator itself, because a share of an unprinted quantity cannot be checked. It is\n+    # the same minimum the parent-drop section divides by, and the two used to disagree because\n+    # one artifact predated an arm the other already held.\n+    n[\"ceilagree.narrowestmargin\"] = agr[\"narrowest_separating_margin_in_the_comparison\"]\n     for tag, name in ((\"deployed\", \"deployed loop, hydrogens implicit\"),\n                       (\"auditimplicit\", \"audit loop, hydrogens implicit\"),"
   },
   {
    "artifact": "results/paper2_review.json",
@@ -2396,7 +2430,7 @@
    "detail": "no provenance block: nothing records which code wrote this"
   }
  ],
- "files_below_the_top_level": 144,
+ "files_below_the_top_level": 149,
  "of_those_named_as_an_input_by_a_pinned_artifact": 11,
  "named_inputs": [
   "results/valpool_shards/v0.json",

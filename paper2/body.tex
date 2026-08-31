@@ -43,8 +43,9 @@ Section~\ref{sec:offers} measures both the size of that part and how often the n
 site that changed. We evaluate it with the two decisions above promoted
 to declared axes, meaning that each is stated and varied across its full range instead of being
 fixed silently, against every published predictor whose
-predictions on the same substrates we could obtain and run, with each absence named and each
-comparator's overlap with this corpus measured rather than assumed away. The comparison does not produce a winner:
+predictions on the same substrates we could obtain and run, with each absence named, and with the
+one comparator whose knowledge is built on a source of this corpus named and its overlap
+measured. The comparison does not produce a winner:
 which system leads depends on how many candidates it is allowed to return, and we report that
 dependence rather than a single figure. We further measure how much of the recorded chemistry
 lies outside the reach of any single template application, and find that most of it is chemistry
@@ -126,6 +127,9 @@ difference is what could be run here rather than a difference in how much either
 overlaps are measured in Section~\ref{SI-sec:si-corpus} and neither is corrected for. The
 comparison therefore contains one arm whose development sources this corpus draws on, its
 advantage stated and uncorrected, and omits another that would have been in the same position.
+The remaining three arms are not measured against this corpus and are not thereby cleared:
+MetaTox and MetaPredictor publish no development set that could be intersected with it. What is
+reported is the one overlap that could be computed, not a survey of all four.
 
 \subsection{Overview}
 
@@ -430,7 +434,8 @@ lists have already ended. Removing length as a variable is possible and it is do
 substrate both arms are cut to the number of candidates that comparator returned there, so the two
 are read over the same slots on every substrate (Table~\ref{SI-tab:si-matched}). The result splits
 the wide-budget leads in two. Against SyGMa the exhaustive arm keeps $+\numMatchedBanksygma$
-$[+\numMatchedBanksygmaLo, +\numMatchedBanksygmaHi]$, the largest margin anywhere in this work and
+$[+\numMatchedBanksygmaLo, +\numMatchedBanksygmaHi]$, the largest margin that survives this
+control and
 an ordering result rather than an emission one. Against MetaTox and MetaPredictor nothing
 survives: $\numMatchedBankmetatox$ and $\numMatchedBankmetapredictor$, both intervals covering
 zero and both pointing the other way. What the sweep shows at $k=50$ against those two is a
@@ -468,9 +473,9 @@ ranking, and the counts are reported for every arm: at $k=50$,
 
 Against MetaTox alone, the incumbent web service this work set out to replace, the exhaustive mode
 leads at all nine budgets, with the interval excluding zero at seven of them. It is also the one
-comparator whose configuration this work can state rather than infer, because its first author
-\citep{Rudik_2017} is a co-author here and read the arm it is compared in; the configuration is in
-the Supporting Information.
+comparator whose arm one of its own authors has read, because its first author \citep{Rudik_2017}
+is a co-author here. What the arm consists of, and what about the service's settings cannot be
+recovered from it, is in the Supporting Information.
 
 How the per-substrate figures are pooled is a third choice, and it is swept rather than exercised
 once. Micro is the ratio of sums and macro the mean of per-substrate recall, which weights a
@@ -750,8 +755,9 @@ excludes it.
 
 The first two are the same convention measured through two different loops, and they disagree by
 \numCeilagreeDisagreementWord{} references because the two loops clean products differently. All four span \numCeilagreeSpread{} references,
-\numCeilagreeSpreadofmarginPct{} of the narrowest margin that separates anything in this paper,
-so the choice of instrument cannot decide a claim here. The residual dependence of the bound on the convention, measured per template, is
+\numCeilagreeSpreadofmarginPct{} of \numCeilagreeNarrowestmargin{}, which is the narrowest
+margin that separates from zero anywhere in the comparison table, so the choice of instrument
+cannot decide a claim here. The residual dependence of the bound on the convention, measured per template, is
 $\numHydResidual{}$, 95\% CI $[\numHydResiduallo{}, \numHydResidualhi{}]$, an interval excluding
 zero: the bound is convention-dependent, by \numHydResidualrefs{} references in
 \numHydReferences{}.
@@ -1165,4 +1171,5 @@ A.V.R. is an author of MetaTox \citep{Rudik_2017}, the incumbent system this wor
 compared against and sets out to replace, and will deploy the released model as a service on
 \texttt{way2drug.ru}, which also hosts MetaTox. The authors declare no other competing interest,
 financial or otherwise. Any interest that relationship could create runs against this work rather
-than for it, and the configuration MetaTox was run in is stated in the Supporting Information.
+than for it, and what the MetaTox arm consists of, together with what the service does not expose
+to a submitter, is stated in the Supporting Information.
