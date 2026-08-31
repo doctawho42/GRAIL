@@ -392,13 +392,13 @@ method & emitted & r@$5$ & r@$10$ & r@$15$ & r@$30$ & r@$50$ \\
 SyGMa          & $72.98$ & $0.3744$ & $0.4556$ & $0.4842$ & $0.5068$ & $0.5113$ \\
 MetaTox        & $33.6$ & $0.218$ & $0.388$ & $0.5143$ & $0.6015$ & $0.6271$ \\
 MetaPredictor  & $10.75$ & $0.3549$ & $0.4707$ & $0.4797$ & $0.4797$ & $0.4797$ \\
-GRAIL          & $10.04$ & $0.2286$ & $0.2526$ & $0.2647$ & $0.2677$ & $0.2677$ \\
+GRAIL          & $15.63$ & $0.3203$ & $0.4331$ & $0.4797$ & $0.4902$ & $0.4902$ \\
 \bottomrule
 \end{tabular}
 \end{center}
 
 The four methods take three distinct orderings across the sweep, and the method that moves
-furthest is the new one: MetaTox is last of the four at every budget up to $5$ and first of them
+furthest is the new one: MetaTox is last of the four at every budget up to $10$ and first of them
 from $15$ on, which is the budget this field reports at. Nothing about the chemistry changes
 between those columns. At $k=5$ it has been truncated to a seventh of what it emits, and at $k=30$
 it has not. Its predictions are ranked by its own metabolite-likeness score, the quantity the
@@ -406,11 +406,11 @@ delivery is named for; PASS writes that score only for the $5{,}177$ of $10{,}60
 declares above its own threshold, and the rest keep the order the file gives them, since PASS
 expresses no preference among predictions it declines to score.
 
-Each method's own parent is dropped from its ranked list before the budget applies, and the choice runs in favour of this system and not against it. GRAIL returns the substrate itself on $80$ of the $291$,
-MetaPredictor on $52$ and MetaTox on $14$; SyGMa's zero is a property of the released artifact
+Each method's own parent is dropped from its ranked list before the budget applies, and the choice does not run in favour of this system. GRAIL returns the substrate itself on $26$ of the $291$, MetaPredictor on
+$52$ and MetaTox on $14$; SyGMa's zero is a property of the released artifact
 rather than of SyGMa, whose tree is rooted at the substrate and whose parent was stripped when those
 predictions were frozen. A slot spent on the parent cannot score, so dropping it helps whichever
-method spends one, which is ours most of all. It does not carry the result: with the parent left in,
+method spends one, which is MetaPredictor twice over before it is ours. It does not carry the result: with the parent left in,
 the four methods take the same three orderings at the same budgets and GRAIL's recall@$15$ moves
 from $0.265$ to $0.263$.
 

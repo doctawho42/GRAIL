@@ -2334,8 +2334,12 @@ def main() -> int:
     if fm2.exists():
         Q = json.loads(fm2.read_text())
         flat = re.sub(r"\s+", " ", whole)
+        # Two quantities, not one. How many sign changes are certified at both ends and how many
+        # of those survive the family-wise correction are different counts, and the sentence used
+        # to be read as if one word answered both; it did while they happened to agree.
         mb = re.search(r"(four|three|five|six) of the six pairs change sign along that\s*sweep and "
-                       r"(three|two|four|one) do so between margins that each separate from zero",
+                       r"(three|two|four|one) do so between margins that each separate from zero, "
+                       r"of which (three|two|four|one) survive Holm",
                        flat)
         checks.append((bool(mb), "the budget-reversal sentence parses", "present",
                        "matched" if mb else "not matched", ""))
@@ -2349,9 +2353,9 @@ def main() -> int:
             if H:
                 check("the declared family for the sweep", 54, H["family_size"],
                       str(fm2.relative_to(ROOT)))
-                checks.append((H["n_sign_changes_certified_both_ends"] == words[mb.group(2).lower()],
+                checks.append((H["n_sign_changes_certified_both_ends"] == words[mb.group(3).lower()],
                                "sign changes surviving Holm at both ends",
-                               str(words[mb.group(2).lower()]),
+                               str(words[mb.group(3).lower()]),
                                str(H["n_sign_changes_certified_both_ends"]),
                                str(fm2.relative_to(ROOT))))
             checks.append((Q["n_certified_both_ends"] >= 1,
@@ -2423,7 +2427,11 @@ def main() -> int:
         flat_a = re.sub(r"\s+", " ", whole)
         # the budget result moved to the case study with the rest of the chemistry; the claim is
         # checked where it now lives rather than dropped
-        said = ("MetaTox at $33.6$ candidates is last at $k\\le5$ and first from $k=15$")
+        # The budget at which the mover stops being last is derived from the artifact rather than
+        # written into the check, so a re-run that moves it fails the manuscript and not the gate.
+        _tight = max(int(k) for k in rec["MetaTox"]
+                     if rec["MetaTox"][k] == min(rec[x][k] for x in P))
+        said = (f"MetaTox at $33.6$ candidates is last at $k\\le{_tight}$ and first from $k=15$")
         checks.append((said in re.sub(r"\s+", " ", whole),
                        "the case study says what the sweep shows",
                        "present", "present" if said in flat_a else "not matched", ""))
