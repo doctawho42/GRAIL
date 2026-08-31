@@ -745,8 +745,8 @@ reading a short list is working at exactly those budgets. That a rule set of thi
 beaten at the head of the list by any of the systems here, two of them released since, is worth
 stating plainly, and it is
 visible only because the budget is swept: at a budget of fifty the same table has this work's
-exhaustive arm ahead of SyGMa by $+\numGapBankmetatoxFiveZero$ or more against every comparator,
-and the ordering at the head of the list reverses.
+exhaustive arm ahead of SyGMa by $+\numGapBanksygmaFiveZero$, and ahead of every comparator by at
+least $+\numGapBankmetatoxFiveZero$, so the ordering at the head of the list reverses.
 
 The division has a consequence for how such tools are compared. A single recall figure at a
 single budget would have named a different winner depending on which budget its author chose,
@@ -823,11 +823,12 @@ wide budgets is partly a statement about output length on all sides rather than 
 
 \subsection{The ceiling bounds this formulation, not the task}
 
-The shortfall is mostly a property of the corpus the templates are mined from, measured separately
-rather than inferred from the bank's coverage: \numTypeoverlapAbsentrefs{} of the
-\numTypeoverlapTyped{} typed test references, \numTypeoverlapAbsentsharePct{}, need a
-transformation type occurring nowhere in the training annotation, which is more references than
-the bank fails to cover at all (Section~\ref{SI-sec:si-typeoverlap}). Template discovery from that
+The shortfall is a property of the corpus the templates are mined from, and this is measured
+directly rather than argued from the bank's coverage. Of the \numTypeoverlapBanklacks{} test
+references whose transformation type the bank does not hold, \numTypeoverlapCorpuslackstoo{},
+\numTypeoverlapCorpussharePct{}, have a type the training annotation does not hold either; the
+remaining \numTypeoverlapMinerslost{} are chemistry the corpus contained and the miner did not
+carry across (Section~\ref{SI-sec:si-typeoverlap}). Template discovery from that
 corpus is separately unfinished, its rarefaction curve still climbing, so mining harder would yield
 more templates and could not supply a type the corpus does not contain.
 Extending coverage therefore requires new reaction corpora, and the census narrows the search:
@@ -847,6 +848,12 @@ filter and the rule selector. The form in which the two learned scores are combi
 than what produced them: replacing their product with the rank fusion gained more recall than any
 architectural change tested here. Every prediction carries the template that produced it and the
 atoms it acted on, and the whole output is ranked.
+
+The two operating modes divide the same way, and the division is a trade rather than a ranking:
+the mode cheap enough to answer a web form is beaten by the incumbent beyond a short list, and the
+mode that leads returns about a hundred structures at a precision near \numPrecBankFiveZero{} and
+takes tens of seconds. Neither is the system; both are, and which one a service should run follows
+from the budget it answers at.
 
 Measured against every published predictor that could be run on the same substrates, the
 comparison divides by output budget rather than resolving into an ordering, and the division is
@@ -967,6 +974,13 @@ joined to everything released here; the split manifest confirms that a rebuild m
 than merely reporting that it differs. The one step that cannot be reproduced is the
 extraction that selected from the four sources, which is not in the repository and is recorded as
 such in the Supporting Information.
+
+One caveat belongs with the software rather than with the measurement. The public entry point
+defaults to a hydrogen presentation the coverage instrument's own record excludes as an
+unfinished loop, so calling it without naming the convention returns \numHydUncoveredexpanded{}
+uncovered references and not \numCeilingUncovered{}. The convention is an argument to that entry
+point and the paper's figures are measured at the one every deployed firing path uses; a reader
+reproducing the census should set it.
 
 Every figure printed in this paper is generated from a stored result file rather than typed.
 \numProvPinned{} such files are pinned, meaning that each records the script that wrote it and

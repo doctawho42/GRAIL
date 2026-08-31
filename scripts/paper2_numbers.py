@@ -340,6 +340,19 @@ def build():
     n["typeoverlap.absentshare"] = mtt[
         "share_of_test_references_whose_type_is_absent_from_train"]
     n["typeoverlap.typed"] = mtt["test"]["typed"]
+    # The direct measurement: of the references whose type the bank does not hold, how many have a
+    # type the training annotation does not hold either. The manuscript had argued this by
+    # comparing two magnitudes and its own Supporting Information said the two were not nested.
+    n["typeoverlap.banktypes"] = mtt["bank_types"]
+    n["typeoverlap.inboth"] = mtt["references_by_cell"]["in the bank and in training"]
+    n["typeoverlap.inbankonly"] = mtt["references_by_cell"]["in the bank, not in training"]
+    n["typeoverlap.banklacks"] = mtt["references_whose_type_the_bank_lacks"]
+    n["typeoverlap.corpuslackstoo"] = mtt["of_those_the_corpus_lacks_too"]
+    n["typeoverlap.minersshare"] = round(
+        1 - mtt["share_of_the_bank_s_type_gap_the_corpus_also_lacks"], 4)
+    n["typeoverlap.corpusshare"] = mtt["share_of_the_bank_s_type_gap_the_corpus_also_lacks"]
+    n["typeoverlap.minerslost"] = (mtt["references_whose_type_the_bank_lacks"]
+                                   - mtt["of_those_the_corpus_lacks_too"])
 
     # The fusion constant, swept. It was left at the published default and the paper disclosed
     # that; a sweep says whether the disclosure costs anything.

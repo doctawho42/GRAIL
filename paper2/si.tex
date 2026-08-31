@@ -637,13 +637,33 @@ type carrying many references matters more than one carrying a single reference,
 \numTypeoverlapAbsentrefs{} do not, \numTypeoverlapAbsentsharePct{} of the
 \numTypeoverlapTyped{} that could be typed.
 
-That is more references than the bank fails to cover at all, so on this evidence the corpus's own
-limit is at least as large as the bank's, which is what the manuscript's claim requires. Two
-cautions belong with it. The counts come from different instruments on different questions and are
-not nested, so the \numTypeoverlapAbsentrefs{} are not a subset of the uncovered references and
-neither number bounds the other. And a type absent from the training annotation is absent from
-this corpus's training half, not from chemistry; that is exactly the sense in which the claim is
-about corpora.
+Those two counts are not nested and neither bounds the other, so the question is settled by
+crossing them with a third set rather than by comparing their sizes. A template can be typed
+without being applied to anything, so the bank's own \numTypeoverlapBanktypes{} types are cheap to
+obtain, and every test reference falls into one of four cells:
+
+\begin{center}
+\begin{tabular}{lr}
+\toprule
+ & references \\
+\midrule
+type in the bank and in training & \numTypeoverlapInboth{} \\
+type in the bank, not in training & \numTypeoverlapInbankonly{} \\
+type not in the bank, in training & \numTypeoverlapMinerslost{} \\
+type in neither & \numTypeoverlapCorpuslackstoo{} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Of the \numTypeoverlapBanklacks{} references whose type the bank does not hold,
+\numTypeoverlapCorpuslackstoo{} have a type the training annotation does not hold either:
+\numTypeoverlapCorpussharePct{} of the bank's type gap is the corpus's and
+\numTypeoverlapMinerssharePct{} the miner's. That is the containment the manuscript's claim needs,
+measured rather than argued from magnitudes.
+
+One caution belongs with it. A type absent from the training annotation is absent from this
+corpus's training half and not from chemistry; that is exactly the sense in which the claim is
+about corpora and not about metabolism.
 
 \section{Whether template discovery has saturated}
 \label{sec:si-rarefaction}

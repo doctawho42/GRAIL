@@ -390,6 +390,12 @@
    "status": "current"
   },
   {
+   "artifact": "results/references_are_multistep.json",
+   "script": "references_are_multistep.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
    "artifact": "results/scaffold_baseline.json",
    "script": "scaffold_baseline.py",
    "how": "source at a1b1d96ee9c0",
@@ -449,9 +455,7 @@
    "artifact": "results/sygma_scenario_sweep.json",
    "script": "sygma_scenario_sweep.py",
    "how": "recorded source digest",
-   "status": "producer_changed",
-   "detail": "producer was 45884d7b64f5, is now a429026f7577",
-   "diff_note": "scripts/typed_edit/sygma_scenario_sweep.py is not in commit aa406d1d07d9"
+   "status": "current"
   },
   {
    "artifact": "results/tautomer_budget.json",
@@ -538,8 +542,8 @@
    "status": "current"
   }
  ],
- "n_pinned": 88,
- "n_pinned_stale": 1,
+ "n_pinned": 89,
+ "n_pinned_stale": 0,
  "sweep": {
   "unstamped": 112,
   "producer_changed": 38,

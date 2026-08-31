@@ -128,6 +128,20 @@ def main() -> int:
     train = types_of("train")
     test = types_of("test")
 
+    # The bank's own types, from the templates rather than from anything they produce.
+    from coverage_gap_types import canonical_type
+    from grail_metabolism.utils.preparation import load_default_rules
+
+    bank_types = set()
+    for rule in load_default_rules():
+        try:
+            bt = canonical_type(rule)
+        except Exception:
+            continue
+        if bt is not None:
+            bank_types.add(json.dumps(bt, sort_keys=True))
+    print(f"bank: {len(bank_types)} distinct types", flush=True)
+
     train_types = set(train["types"])
     test_types = set(test["types"])
     shared = test_types & train_types
@@ -136,6 +150,21 @@ def main() -> int:
     # a single reference, and the singleton tail is where most of the missing mass sits.
     refs_shared = sum(test["types"][k] for k in shared)
     refs_only_test = sum(test["types"][k] for k in only_test)
+
+    # The four cells the argument turns on, counted by reference.
+    cells = {"in the bank and in training": 0, "in the bank, not in training": 0,
+             "not in the bank, in training": 0, "not in the bank, nor in training": 0}
+    for key, count in test["types"].items():
+        in_bank, in_train = key in bank_types, key in train_types
+        if in_bank and in_train:
+            cells["in the bank and in training"] += count
+        elif in_bank:
+            cells["in the bank, not in training"] += count
+        elif in_train:
+            cells["not in the bank, in training"] += count
+        else:
+            cells["not in the bank, nor in training"] += count
+    outside = cells["not in the bank, in training"] + cells["not in the bank, nor in training"]
 
     report = {
         "provenance": stamp(__file__),
@@ -154,6 +183,12 @@ def main() -> int:
         "test_references_whose_type_is_absent_from_train": refs_only_test,
         "share_of_test_references_whose_type_is_absent_from_train": round(
             refs_only_test / max(refs_shared + refs_only_test, 1), 4),
+        "bank_types": len(bank_types),
+        "references_by_cell": cells,
+        "references_whose_type_the_bank_lacks": outside,
+        "of_those_the_corpus_lacks_too": cells["not in the bank, nor in training"],
+        "share_of_the_bank_s_type_gap_the_corpus_also_lacks": round(
+            cells["not in the bank, nor in training"] / max(outside, 1), 4),
         "reading": (
             "A test reference whose type occurs in the training annotation is chemistry the "
             "corpus contains, so a bank that misses it misses something the corpus could have "
@@ -170,6 +205,12 @@ def main() -> int:
     print(f"  test references by type in train : {refs_shared}")
     print(f"  test references by type absent   : {refs_only_test} "
           f"({report['share_of_test_references_whose_type_is_absent_from_train']:.1%})")
+    print("\nreferences by cell:")
+    for name, count in cells.items():
+        print(f"  {name:34s} {count}")
+    print(f"  of the {outside} whose type the bank lacks, "
+          f"{cells['not in the bank, nor in training']} are absent from training too "
+          f"({report['share_of_the_bank_s_type_gap_the_corpus_also_lacks']:.1%})")
     print(f"wrote {args.out}")
     return 0
 
