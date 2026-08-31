@@ -797,7 +797,7 @@ per-template scores kept rather than collapsed, so any aggregation rule can be e
 another pass; the filter is not re-run, because a filter score is a function of the substrate and
 the product and does not depend on how the generator combined its templates, so the frozen scores
 are joined by structure. \numAggregationJoined{} candidates join and
-\numAggregationUnjoinedWord{} do not, and those are dropped from every arm alike. The deployed
+\numAggregationUnjoined{} do not, and those are dropped from every arm alike. The deployed
 rule re-derived this way reproduces the whole-bank column of Table~\ref{MS-tab:sweep} at every
 budget, which is what certifies that the re-run is on the deployed model; the artifact refuses to
 report if it does not.
@@ -805,13 +805,25 @@ report if it does not.
 \input{si_table_aggregation}
 
 The alternative the violation argues for is a maximum, which counts a candidate once however many
-near-duplicate templates restate it. It is worse, by \numAggregationMaxThreeZero{}
-$[\numAggregationMaxThreeZeroLo, \numAggregationMaxThreeZeroHi]$ at a budget of thirty, an
-interval excluding zero. So do the other two the implementation offers. The independence
-assumption is false and nothing this work claims turns on it being true: the rule that ignores
-duplication loses recall rather than gaining it, which says the templates reaching a candidate
-carry more than one template's worth of evidence even when they are near-duplicates of one
-another.
+near-duplicate templates restate it. It moves the ordering, and where it moves it is where the
+violation predicts. At a budget of one it gains $+\numAggregationMaxOne$
+$[+\numAggregationMaxOneLo, +\numAggregationMaxOneHi]$, an interval excluding zero; from a budget
+of eight upward every interval covers zero, including
+\numAggregationMaxThreeZero{} $[\numAggregationMaxThreeZeroLo,
++\numAggregationMaxThreeZeroHi]$ at thirty. The blend of the two the implementation also offers
+gains at every budget through ten, by as much as $+\numAggregationHybridThree$
+$[+\numAggregationHybridThreeLo, +\numAggregationHybridThreeHi]$, and is indistinguishable from
+the deployed rule at every wider one. The mean is worse at every budget from eight upward.
+
+Three things follow. The independence assumption is false, something does turn on it, and what
+turns on it is the head of the list rather than the wide budgets this work reads its leads at:
+where a duplicate-blind rule helps, it helps a chemist reading the first three candidates.
+Nothing claimed here changes, because every wide-budget cell is indistinguishable under all four
+rules. And the deployed rule stays as it is: this sweep was run on the comparison set after the
+comparison, so adopting the blend on the strength of it would be selecting a parameter on the
+population the paper reports, which is the one thing this work's own discipline forbids. What the
+measurement licenses is a registered prediction and a selection on validation, not a substitution
+here.
 
 \section{Model architectures and training}
 
@@ -1149,9 +1161,15 @@ properties most likely to have driven it did not.
 
 The comparison can also be read on the population nobody selected. The deployed arm and the two
 comparators that ran over the whole evaluated test set are contrasted there with a substrate a
-comparator answered nothing for scored as zero rather than removed, and beside the same contrast
-on the comparison set. The exhaustive arm was built on the comparison set only and is absent from
-that row.
+comparator answered nothing for scored as zero rather than removed. Against SyGMa the deployed arm
+is \numPopdefWholeSygmaOneFive{} $[\numPopdefWholeSygmaOneFiveLo,
+\numPopdefWholeSygmaOneFiveHi]$ at a budget of fifteen over the whole set, against
+\numPopdefCompSygmaOneFive{} $[\numPopdefCompSygmaOneFiveLo, +\numPopdefCompSygmaOneFiveHi]$ on
+the comparison set: the wider population turns a tie into a small deficit that separates. Against
+MetaPredictor it is \numPopdefWholeMetapredictorOneFive{} against
+\numPopdefCompMetapredictorOneFive{}, both covering zero. The exhaustive arm was built on the
+comparison set only and is absent from that row, so what this shows is that the population does
+not rescue the cheap setting rather than that it changes a lead.
 
 A separate analysis re-ran three
 methods, four metrics and five criteria on two populations of one split, the 150 substrates shared

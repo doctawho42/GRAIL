@@ -608,31 +608,38 @@ def si_aggregation():
     for rule in order:
         row = d["by_rule"][rule]
         cells = " & ".join(f"{row['recall'][k]:.4f}".lstrip("0") for k in ks)
+        # The difference is shown at a tight budget and a wide one, because that is where the
+        # rules disagree: a rule that discounts duplication helps the head of the list and does
+        # nothing measurable at the budgets this work reads its leads at.
         if rule == d["deployed"]:
-            gap = "---"
+            gaps = ["---", "---"]
             label = f"\\textbf{{{NAME[rule]}}}"
         else:
-            cell = row["minus_noisy_or"]["30"]
-            star = "$^{*}$" if cell["excludes_zero"] else ""
-            gap = (("$-$" if cell["difference"] < 0 else "+")
-                   + f"{abs(cell['difference']):.4f}"[1:] + star)
+            gaps = []
+            for at in ("5", "30"):
+                cell = row["minus_noisy_or"][at]
+                star = "$^{*}$" if cell["excludes_zero"] else ""
+                gaps.append(("$-$" if cell["difference"] < 0 else "+")
+                            + f"{abs(cell['difference']):.4f}"[1:] + star)
             label = NAME[rule]
-        rows.append(f"{label} & {row['mean_ranked']:.1f} & {cells} & {gap} \\\\")
+        rows.append(f"{label} & {row['mean_ranked']:.1f} & {cells} & "
+                    + " & ".join(gaps) + " \\\\")
     head = " & ".join(f"$r@{k}$" for k in ks)
     n = d["population"]["n_substrates"]
     refs = d["population"]["n_references"]
     return ("\\begin{table}[h]\n\\centering\\small\n"
-            "\\begin{tabular}{@{}lrrrrrr@{}}\n\\toprule\n"
-            f"aggregation & candidates & {head} & vs deployed at 30 \\\\\n\\midrule\n"
+            "\\begin{tabular}{@{}lrrrrrrr@{}}\n\\toprule\n"
+            f"aggregation & candidates & {head} & at 5 & at 30 \\\\\n\\midrule\n"
             + "\n".join(rows)
             + "\n\\bottomrule\n\\end{tabular}\n"
             f"\\caption{{Micro recall under each rule for combining the templates that reach one "
             f"candidate, on the {n} substrates of the comparison set carrying {refs} annotated "
             "metabolites; leading zeros are dropped. Candidates is the mean number ranked after "
             "deduplication and the pool cap. The deployed rule is in bold and reproduces the "
-            "whole-bank column of the comparison table at every budget. The last column is the "
-            "paired difference in micro recall at a budget of 30 against it, with $^{*}$ marking "
-            "an interval that excludes zero.}\n"
+            "whole-bank column of the comparison table at every budget. The last two columns are "
+            "the paired difference against it in micro recall at a tight budget and a wide one, "
+            "with $^{*}$ marking an interval that excludes zero; the rules disagree at the head "
+            "of the list and not at the budgets this work reads its leads at.}\n"
             "\\label{tab:si-aggregation}\n\\end{table}\n")
 
 

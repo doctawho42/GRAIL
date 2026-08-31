@@ -56,6 +56,11 @@ PINNED = {
     # the pool the target function is derived from, measured on the split
     "results/bank_without_selection_full.json": "scripts/bank_without_selection.py",
     # the comparison that decides the release, and the pools it wrote
+    "results/aggregation_ablation.json": f"{TE}/aggregation_ablation.py",
+    "results/biotransformer_arm.json": f"{TE}/biotransformer_arm.py",
+    "results/metapredictor_drawing.json": f"{TE}/metapredictor_drawing.py",
+    "results/metxbiodb_drop_set.json": f"{TE}/metxbiodb_drop_set.py",
+    "results/population_definition.json": f"{TE}/population_definition.py",
     "results/vs_metatox.json": f"{TE}/vs_metatox.py",
     "results/vs_metatox_pools.json": f"{TE}/vs_metatox.py",
     # the negative result that closes the cheap route to the between-group headroom

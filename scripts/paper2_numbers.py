@@ -425,12 +425,13 @@ def build():
     n["aggregation.joined"] = agg["join"]["candidates_scored_by_both"]
     n["aggregation.unjoined"] = agg["join"]["candidates_the_pool_does_not_carry"]
     for rule in ("max", "mean", "hybrid"):
-        cell = agg["by_rule"][rule]["minus_noisy_or"]["30"]
         tag = rule.replace("_", "")
-        n[f"aggregation.{tag}30"] = cell["difference"]
-        n[f"aggregation.{tag}30.lo"] = cell["ci95"][0]
-        n[f"aggregation.{tag}30.hi"] = cell["ci95"][1]
-        n[f"aggregation.{tag}30.sep"] = cell["excludes_zero"]
+        for k in ("1", "3", "5", "10", "15", "30", "50"):
+            cell = agg["by_rule"][rule]["minus_noisy_or"][k]
+            n[f"aggregation.{tag}{k}"] = cell["difference"]
+            n[f"aggregation.{tag}{k}.lo"] = cell["ci95"][0]
+            n[f"aggregation.{tag}{k}.hi"] = cell["ci95"][1]
+            n[f"aggregation.{tag}{k}.sep"] = cell["excludes_zero"]
         n[f"aggregation.{tag}recall30"] = agg["by_rule"][rule]["recall"]["30"]
     n["aggregation.deployedrecall30"] = agg["by_rule"]["noisy_or"]["recall"]["30"]
     n["aggregation.separating"] = len(

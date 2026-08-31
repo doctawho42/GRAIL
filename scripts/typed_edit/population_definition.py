@@ -77,8 +77,24 @@ def main() -> int:
     truth = json.loads(TRUTH.read_text())
     metatox = json.loads(METATOX.read_text())["predictions"]
     deployed_rows = dict(json.loads(DEPLOYED_COMPARISON.read_text())["pools"])
+    # The whole-test pools were built later and cover the comparison set too. Two builds of the
+    # same configuration should agree candidate for candidate and score for score; where they do
+    # not, one of them was scored by a different model and neither population can be trusted.
+    disagree = 0
     for f in sorted(glob.glob(str(DEPLOYED_FULLTEST / "w*.json"))):
-        deployed_rows.update(json.loads(Path(f).read_text())["pools"])
+        for sub, pool in json.loads(Path(f).read_text())["pools"].items():
+            if sub in deployed_rows:
+                a = [(c["smiles"], round(c["generator"], 9), round(c["filter"], 9))
+                     for c in deployed_rows[sub]]
+                b = [(c["smiles"], round(c["generator"], 9), round(c["filter"], 9))
+                     for c in pool]
+                if a != b:
+                    disagree += 1
+            deployed_rows[sub] = pool
+    if disagree:
+        print(f"FAIL: {disagree} substrates are scored differently by the two builds of the "
+              f"deployed arm; they are not the same configuration", file=sys.stderr)
+        return 1
     others = {name: json.loads(path.read_text()) for name, path in WHOLE_TEST.items()
               if path.exists()}
 

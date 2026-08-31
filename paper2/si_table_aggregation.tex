@@ -1,0 +1,15 @@
+\begin{table}[h]
+\centering\small
+\begin{tabular}{@{}lrrrrrrr@{}}
+\toprule
+aggregation & candidates & $r@5$ & $r@15$ & $r@30$ & $r@50$ & at 5 & at 30 \\
+\midrule
+\textbf{noisy-or} & 98.1 & .3098 & .5353 & .6391 & .7038 & --- & --- \\
+maximum & 98.1 & .3368 & .5323 & .6211 & .6767 & +.0271 & $-$.0180 \\
+mean & 98.1 & .2857 & .4917 & .5970 & .6617 & $-$.0241 & $-$.0421$^{*}$ \\
+hybrid & 98.1 & .3534 & .5444 & .6406 & .7113 & +.0436$^{*}$ & +.0015 \\
+\bottomrule
+\end{tabular}
+\caption{Micro recall under each rule for combining the templates that reach one candidate, on the 291 substrates of the comparison set carrying 665 annotated metabolites; leading zeros are dropped. Candidates is the mean number ranked after deduplication and the pool cap. The deployed rule is in bold and reproduces the whole-bank column of the comparison table at every budget. The last two columns are the paired difference against it in micro recall at a tight budget and a wide one, with $^{*}$ marking an interval that excludes zero; the rules disagree at the head of the list and not at the budgets this work reads its leads at.}
+\label{tab:si-aggregation}
+\end{table}

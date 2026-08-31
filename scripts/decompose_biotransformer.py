@@ -15,8 +15,10 @@ realise -- and it is reported as that rather than as BioTransformer's coverage f
 recall comes from the frozen predictions used everywhere else in this paper, so the conversion
 ratio below is exactly what its shipped configuration converts of what its templates could reach.
 
-Scored on the 150 shared substrates, the only population where BioTransformer's predictions exist,
-with GRAIL and SyGMa recomputed on the same substrates so the three rows are comparable.
+Scored on the 150 shared substrates, with GRAIL and SyGMa recomputed on the same substrates so the
+three rows are comparable. The population is the one this decomposition was written for and not a
+statement about where BioTransformer can be run: it carries a ranked column on the whole
+comparison set elsewhere in this work.
 """
 from __future__ import annotations
 

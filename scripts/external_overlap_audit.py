@@ -67,10 +67,16 @@ def metatox_291():
     set here. They are read from the pool artifact rather than recomputed, so the audited set is
     the one the comparison actually ran on.
     """
-    f = R/'results/vs_metatox_pools.json'
-    if not f.exists():
-        return []
-    return list(json.loads(f.read_text())['ranked'])
+    import glob
+
+    # Read from the pools every comparison in this paper is read off, not from a superseded run
+    # of an earlier script that happened to hold the same keys. The two agreed; depending on the
+    # superseded one meant this audit could only be re-run by rebuilding it.
+    subs = []
+    for shard in sorted(glob.glob(str(R/'results/widepools_implicit/w*.json'))):
+        blob = json.loads(Path(shard).read_text())
+        subs.extend(s for s in blob['pools'] if blob['references'].get(s))
+    return sorted(set(subs))
 
 
 def main():

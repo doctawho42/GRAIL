@@ -32,37 +32,25 @@
    "artifact": "results/case_study.json",
    "script": "case_study.py",
    "how": "recorded source digest",
-   "status": "producer_changed",
-   "detail": "producer was 60eeb31ff9f8, is now 38de672a31b2",
-   "diff_recovered_by": "source at 8635fce4b755",
-   "diff": "--- case_study.py (as recorded)\n+++ case_study.py (now)\n@@ -58,5 +58,5 @@\n                          \"same annotation.\")\n     ap.add_argument(\"--gen-ckpt\", default=str(ROOT / \"artifacts/full5000_implicit/checkpoints/generator.pt\"))\n-    ap.add_argument(\"--filter-ckpt\", default=str(ROOT / \"artifacts/full5000_priors/checkpoints/filter.pt\"))\n+    ap.add_argument(\"--filter-ckpt\", default=str(ROOT / \"artifacts/full5000_implicit/checkpoints/filter.pt\"))\n     ap.add_argument(\"--top-k\", type=int, default=30,\n                     help=\"the interactive mode's rule budget, which the checkpoint records\")"
+   "status": "current"
   },
   {
    "artifact": "results/case_study_drawn.json",
    "script": "case_study.py",
    "how": "recorded source digest",
-   "status": "producer_changed",
-   "detail": "producer was 60eeb31ff9f8, is now 38de672a31b2",
-   "diff_recovered_by": "the tree was dirty when written, so the source at 6dd64aac242b is the nearest committed version and not exactly what ran",
-   "diff": "--- case_study.py (as recorded)\n+++ case_study.py (now)\n@@ -37,14 +37,26 @@\n from _rrf import rrf_order  # noqa: E402\n \n-# gemcitabine, stereochemistry stripped as the corpus stores it: standardize_mol canonicalises\n-# tautomers and writes SMILES with isomericSmiles=False, so the substrate carries no stereocentres\n+# Gemcitabine exactly as the corpus stores it. That string is not the standardiser's output and\n+# not how a chemist draws the drug: every corpus structure is the InChI round-trip of its own\n+# record, and the round-trip places the mobile hydrogen on oxygen, so cytosine arrives as the\n+# 4-imino-2-hydroxy lactim. Stereochemistry is absent for a separate reason -- InChI's standard\n+# layer is written without it here, and the pipeline strips it anyway.\n GEMCITABINE = \"N=c1ccn(C2OC(CO)C(O)C2(F)F)c(O)n1\"\n+# The same molecule as a chemist draws it, which is also the fixed point of the declared\n+# standardiser: 4-amino-2-oxo.\n+GEMCITABINE_DRAWN = \"Nc1ccn(C2OC(CO)C(O)C2(F)F)c(=O)n1\"\n \n \n def main() -> int:\n     ap = argparse.ArgumentParser()\n-    ap.add_argument(\"--substrate\", default=GEMCITABINE)\n+    ap.add_argument(\"--substrate\", default=GEMCITABINE,\n+                    help=\"the corpus key: the string the annotation is filed under\")\n+    ap.add_argument(\"--present\", choices=(\"stored\", \"standardised\"), default=\"stored\",\n+                    help=\"how the substrate is handed to the matcher -- as the corpus stores it, \"\n+                         \"or as the declared standardiser draws it. The references are looked up \"\n+                         \"under the corpus key either way, so the two runs are scored against the \"\n+                         \"same annotation.\")\n     ap.add_argument(\"--gen-ckpt\", default=str(ROOT / \"artifacts/full5000_implicit/checkpoints/generator.pt\"))\n-    ap.add_argument(\"--filter-ckpt\", default=str(ROOT / \"artifacts/full5000_priors/checkpoints/filter.pt\"))\n+    ap.add_argument(\"--filter-ckpt\", default=str(ROOT / \"artifacts/full5000_implicit/checkpoints/filter.pt\"))\n     ap.add_argument(\"--top-k\", type=int, default=30,\n                     help=\"the interactive mode's rule budget, which the checkpoint records\")\n@@ -63,8 +75,13 @@\n     from grail_metabolism.workflows.factory import build_filter, build_generator\n \n-    s = args.substrate\n+    corpus_key = args.substrate\n+    if Chem.MolFromSmiles(corpus_key) is None:\n+        raise SystemExit(f\"unparseable substrate: {corpus_key}\")\n  ... diff truncated"
+   "status": "current"
   },
   {
    "artifact": "results/case_study_exhaustive.json",
    "script": "case_study.py",
    "how": "recorded source digest",
-   "status": "producer_changed",
-   "detail": "producer was 60eeb31ff9f8, is now 38de672a31b2",
-   "diff_recovered_by": "source at 8635fce4b755",
-   "diff": "--- case_study.py (as recorded)\n+++ case_study.py (now)\n@@ -58,5 +58,5 @@\n                          \"same annotation.\")\n     ap.add_argument(\"--gen-ckpt\", default=str(ROOT / \"artifacts/full5000_implicit/checkpoints/generator.pt\"))\n-    ap.add_argument(\"--filter-ckpt\", default=str(ROOT / \"artifacts/full5000_priors/checkpoints/filter.pt\"))\n+    ap.add_argument(\"--filter-ckpt\", default=str(ROOT / \"artifacts/full5000_implicit/checkpoints/filter.pt\"))\n     ap.add_argument(\"--top-k\", type=int, default=30,\n                     help=\"the interactive mode's rule budget, which the checkpoint records\")"
+   "status": "current"
   },
   {
    "artifact": "results/case_study_exhaustive_drawn.json",
    "script": "case_study.py",
    "how": "recorded source digest",
-   "status": "producer_changed",
-   "detail": "producer was 60eeb31ff9f8, is now 38de672a31b2",
-   "diff_recovered_by": "the tree was dirty when written, so the source at 6dd64aac242b is the nearest committed version and not exactly what ran",
-   "diff": "--- case_study.py (as recorded)\n+++ case_study.py (now)\n@@ -37,14 +37,26 @@\n from _rrf import rrf_order  # noqa: E402\n \n-# gemcitabine, stereochemistry stripped as the corpus stores it: standardize_mol canonicalises\n-# tautomers and writes SMILES with isomericSmiles=False, so the substrate carries no stereocentres\n+# Gemcitabine exactly as the corpus stores it. That string is not the standardiser's output and\n+# not how a chemist draws the drug: every corpus structure is the InChI round-trip of its own\n+# record, and the round-trip places the mobile hydrogen on oxygen, so cytosine arrives as the\n+# 4-imino-2-hydroxy lactim. Stereochemistry is absent for a separate reason -- InChI's standard\n+# layer is written without it here, and the pipeline strips it anyway.\n GEMCITABINE = \"N=c1ccn(C2OC(CO)C(O)C2(F)F)c(O)n1\"\n+# The same molecule as a chemist draws it, which is also the fixed point of the declared\n+# standardiser: 4-amino-2-oxo.\n+GEMCITABINE_DRAWN = \"Nc1ccn(C2OC(CO)C(O)C2(F)F)c(=O)n1\"\n \n \n def main() -> int:\n     ap = argparse.ArgumentParser()\n-    ap.add_argument(\"--substrate\", default=GEMCITABINE)\n+    ap.add_argument(\"--substrate\", default=GEMCITABINE,\n+                    help=\"the corpus key: the string the annotation is filed under\")\n+    ap.add_argument(\"--present\", choices=(\"stored\", \"standardised\"), default=\"stored\",\n+                    help=\"how the substrate is handed to the matcher -- as the corpus stores it, \"\n+                         \"or as the declared standardiser draws it. The references are looked up \"\n+                         \"under the corpus key either way, so the two runs are scored against the \"\n+                         \"same annotation.\")\n     ap.add_argument(\"--gen-ckpt\", default=str(ROOT / \"artifacts/full5000_implicit/checkpoints/generator.pt\"))\n-    ap.add_argument(\"--filter-ckpt\", default=str(ROOT / \"artifacts/full5000_priors/checkpoints/filter.pt\"))\n+    ap.add_argument(\"--filter-ckpt\", default=str(ROOT / \"artifacts/full5000_implicit/checkpoints/filter.pt\"))\n     ap.add_argument(\"--top-k\", type=int, default=30,\n                     help=\"the interactive mode's rule budget, which the checkpoint records\")\n@@ -63,8 +75,13 @@\n     from grail_metabolism.workflows.factory import build_filter, build_generator\n \n-    s = args.substrate\n+    corpus_key = args.substrate\n+    if Chem.MolFromSmiles(corpus_key) is None:\n+        raise SystemExit(f\"unparseable substrate: {corpus_key}\")\n  ... diff truncated"
+   "status": "current"
   },
   {
    "artifact": "results/ceiling_instrument_agreement.json",
@@ -122,12 +110,12 @@
   {
    "artifact": "results/decompose_biotransformer.json",
    "script": "decompose_biotransformer.py",
-   "how": "source at d89c2702ba04",
+   "how": "source at 821adf95a989",
    "dirty_when_written": true,
-   "status": "producer_changed",
-   "detail": "producer was c53b89c31961, is now f11b340d1a18",
-   "diff_recovered_by": "source at d89c2702ba04",
-   "diff": "--- decompose_biotransformer.py (as recorded)\n+++ decompose_biotransformer.py (now)\n@@ -101,5 +101,6 @@\n     if mol is None or not trues:\n         return (sub, 0, 0)\n-    prods = list(apply_rules_to_molecule(mol, _RULES, normalization_mode=\"canonical\").keys())\n+    prods = list(apply_rules_to_molecule(mol, _RULES, normalization_mode=\"canonical\",\n+                                    presentation=\"expanded\").keys())\n     u, c, _ = _tautomer_recovered(trues, prods, audit=False)\n     return (sub, int(u), int(c))"
+   "status": "cosmetic_only",
+   "detail": "the producer changed only in comments, docstrings or layout: the parse tree with docstrings removed is identical, so the numbers cannot have moved",
+   "diff_recovered_by": "source at 821adf95a989",
+   "diff": "--- decompose_biotransformer.py (as recorded)\n+++ decompose_biotransformer.py (now)\n@@ -16,6 +16,8 @@\n ratio below is exactly what its shipped configuration converts of what its templates could reach.\n \n-Scored on the 150 shared substrates, the only population where BioTransformer's predictions exist,\n-with GRAIL and SyGMa recomputed on the same substrates so the three rows are comparable.\n+Scored on the 150 shared substrates, with GRAIL and SyGMa recomputed on the same substrates so the\n+three rows are comparable. The population is the one this decomposition was written for and not a\n+statement about where BioTransformer can be run: it carries a ranked column on the whole\n+comparison set elsewhere in this work.\n \"\"\"\n from __future__ import annotations"
   },
   {
    "artifact": "results/deployment_table.json",
@@ -582,7 +570,7 @@
   }
  ],
  "n_pinned": 90,
- "n_pinned_stale": 11,
+ "n_pinned_stale": 6,
  "sweep": {
   "unstamped": 115,
   "producer_changed": 40,
@@ -1230,9 +1218,9 @@
    "script": "paper2_numbers.py",
    "how": "recorded source digest",
    "status": "producer_changed",
-   "detail": "producer was b8824653d82d, is now 7cecdba26501",
+   "detail": "producer was b8824653d82d, is now 07485cd5c35d",
    "diff_recovered_by": "the tree was dirty when written, so the source at 0ca475b61b35 is the nearest committed version and not exactly what ran",
-   "diff": "--- paper2_numbers.py (as recorded)\n+++ paper2_numbers.py (now)\n@@ -95,5 +95,6 @@\n \n     ARMS = {\"whole bank\": \"bank\", \"trained budget\": \"trained\", \"metatox\": \"metatox\",\n-            \"sygma\": \"sygma\", \"metapredictor\": \"metapredictor\"}\n+            \"sygma\": \"sygma\", \"metapredictor\": \"metapredictor\",\n+            \"biotransformer\": \"biotransformer\"}\n     for k, row in dep[\"recall_micro\"].items():\n         for arm, tag in ARMS.items():\n@@ -395,4 +396,124 @@\n     n[\"typeoverlap.coarseshare\"] = _bg[\n         \"set of changed-bond classes, counts dropped\"][\"share\"]\n+\n+    # Whether the unrecoverable selection that assembled the corpus removed a class of chemistry,\n+    # which would manufacture the shortfall above rather than measure it. Only one of the four\n+    # sources is on disk in full, so this is a bound from one source and is reported as such.\n+    drop = art(\"metxbiodb_drop_set.json\")\n+    n[\"metxdrop.pairs\"] = drop[\"source\"][\"distinct_pairs\"]\n+    n[\"metxdrop.inside\"] = drop[\"source\"][\"inside_the_corpus\"]\n+    n[\"metxdrop.dropped\"] = drop[\"source\"][\"dropped\"]\n+    n[\"metxdrop.typedkept\"] = drop[\"typed\"][\"kept\"]\n+    n[\"metxdrop.typeddropped\"] = drop[\"typed\"][\"dropped\"]\n+    n[\"metxdrop.tv\"] = drop[\"total_variation_distance\"]\n+    n[\"metxdrop.p\"] = drop[\"permutation\"][\"p_value\"]\n+    n[\"metxdrop.perm\"] = drop[\"permutation\"][\"n\"]\n+    n[\"metxdrop.droppedtypesabsent\"] = drop[\n+        \"dropped_references_whose_type_is_absent_from_the_kept_half\"]\n+    n[\"metxdrop.droppedtypesabsentshare\"] = drop[\"share_of_dropped_whose_type_the_kept_half_lacks\"]\n+    _rec = drop[\"recoverable_from_the_dropped_half\"]\n+    n[\"metxdrop.absentcell\"] = _rec[\"references_whose_type_neither_the_bank_nor_training_holds\"]\n+    n[\"metxdrop.recoverable\"] = _rec[\"of_those_whose_type_this_source_dropped\"]\n+    n[\"metxdrop.recoverableshare\"] = _rec[\"share\"]\n+    n[\"metxdrop.recoverablecoarse\"] = _rec[\n+        \"of_those_whose_type_this_source_dropped_counts_ignored\"]\n+    n[\"metxdrop.recoverablecoarseshare\"] = _rec[\"share_counts_ignored\"]\n+\n+    # The aggregation rule, swept. The manuscript named the violated independence assumption and\n+    # left it, on the ground that the released pools carry the aggregate and not its parts.\n+    agg = art(\"aggregation_ablation.json\")\n  ... diff truncated"
+   "diff": "--- paper2_numbers.py (as recorded)\n+++ paper2_numbers.py (now)\n@@ -95,5 +95,6 @@\n \n     ARMS = {\"whole bank\": \"bank\", \"trained budget\": \"trained\", \"metatox\": \"metatox\",\n-            \"sygma\": \"sygma\", \"metapredictor\": \"metapredictor\"}\n+            \"sygma\": \"sygma\", \"metapredictor\": \"metapredictor\",\n+            \"biotransformer\": \"biotransformer\"}\n     for k, row in dep[\"recall_micro\"].items():\n         for arm, tag in ARMS.items():\n@@ -396,4 +397,124 @@\n         \"set of changed-bond classes, counts dropped\"][\"share\"]\n \n+    # Whether the unrecoverable selection that assembled the corpus removed a class of chemistry,\n+    # which would manufacture the shortfall above rather than measure it. Only one of the four\n+    # sources is on disk in full, so this is a bound from one source and is reported as such.\n+    drop = art(\"metxbiodb_drop_set.json\")\n+    n[\"metxdrop.pairs\"] = drop[\"source\"][\"distinct_pairs\"]\n+    n[\"metxdrop.inside\"] = drop[\"source\"][\"inside_the_corpus\"]\n+    n[\"metxdrop.dropped\"] = drop[\"source\"][\"dropped\"]\n+    n[\"metxdrop.typedkept\"] = drop[\"typed\"][\"kept\"]\n+    n[\"metxdrop.typeddropped\"] = drop[\"typed\"][\"dropped\"]\n+    n[\"metxdrop.tv\"] = drop[\"total_variation_distance\"]\n+    n[\"metxdrop.p\"] = drop[\"permutation\"][\"p_value\"]\n+    n[\"metxdrop.perm\"] = drop[\"permutation\"][\"n\"]\n+    n[\"metxdrop.droppedtypesabsent\"] = drop[\n+        \"dropped_references_whose_type_is_absent_from_the_kept_half\"]\n+    n[\"metxdrop.droppedtypesabsentshare\"] = drop[\"share_of_dropped_whose_type_the_kept_half_lacks\"]\n+    _rec = drop[\"recoverable_from_the_dropped_half\"]\n+    n[\"metxdrop.absentcell\"] = _rec[\"references_whose_type_neither_the_bank_nor_training_holds\"]\n+    n[\"metxdrop.recoverable\"] = _rec[\"of_those_whose_type_this_source_dropped\"]\n+    n[\"metxdrop.recoverableshare\"] = _rec[\"share\"]\n+    n[\"metxdrop.recoverablecoarse\"] = _rec[\n+        \"of_those_whose_type_this_source_dropped_counts_ignored\"]\n+    n[\"metxdrop.recoverablecoarseshare\"] = _rec[\"share_counts_ignored\"]\n+\n+    # The aggregation rule, swept. The manuscript named the violated independence assumption and\n+    # left it, on the ground that the released pools carry the aggregate and not its parts.\n+    agg = art(\"aggregation_ablation.json\")\n+    n[\"aggregation.joined\"] = agg[\"join\"][\"candidates_scored_by_both\"]\n  ... diff truncated"
   },
   {
    "artifact": "results/paper2_review.json",
