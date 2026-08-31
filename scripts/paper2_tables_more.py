@@ -100,11 +100,11 @@ def hypotheses():
     # was registered against and not on the other. A reader who reads only this column should
     # reach the same reading as one who reads the footnotes.
     VERDICT = {
-        "H7": "confirmed, threshold inside the interval",
-        "H9": "confirmed, threshold inside the interval",
-        "H10": "confirmed on validation, not on the comparison set",
+        "H7": "confirmed; threshold inside interval",
+        "H9": "confirmed; threshold inside interval",
+        "H10": "confirmed on validation only",
         "H11": "confirmed",
-        "H12": "confirmed, threshold inside the interval",
+        "H12": "confirmed; threshold inside interval",
         "H8": "failed", "H14": "failed", "H13": "failed",
         "H15": "confirmed", "H16": "confirmed",
     }
@@ -116,7 +116,7 @@ def hypotheses():
         val = (f"{v:+.4f}" if signed else f"{v:.4f}") if isinstance(v, float) and abs(v) < 1 \
             else str(v)
         rows.append(f"P{i} & {what} & {thr} & ${val}$ & {pop} & {VERDICT[h]} & {h} \\\\")
-    return ("\\begin{table*}[t]\n\\centering\\footnotesize\n\\begin{tabular}{@{}lllllp{0.235\\textwidth}l@{}}\n\\toprule\n"
+    return ("\\begin{table*}[t]\n\\centering\\footnotesize\n\\begin{tabular}{@{}lllllp{0.125\\textwidth}l@{}}\n\\toprule\n"
             " & what was fixed & threshold & measured & tested on & verdict & register "
             "\\\\\n\\midrule\n" +
             "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n"

@@ -27,12 +27,31 @@ OVERFULL = re.compile(r"Overfull \\[hv]box")
 PAGES = re.compile(r"\((\d+) pages")
 
 
+def _sources_newer_than(record: Path) -> list:
+    """Any source the record claims to describe that has changed since it was written.
+
+    This file reads a log rather than running a build, which makes it a check that passes on a
+    record from an hour ago while the sources it describes have moved underneath. That happened:
+    several rounds of edits were reported clean against a log written before any of them.
+    """
+    when = record.stat().st_mtime
+    watched = sorted((ROOT / "paper2").glob("*.tex")) + sorted((ROOT / "paper2").glob("*.pdf"))
+    return [str(f.relative_to(ROOT)) for f in watched
+            if f.suffix == ".tex" and f.stat().st_mtime > when]
+
+
 def main() -> int:
     ok = True
     for name in DOCS:
         record = ROOT / "paper2" / (name + SUFFIX)
         if not record.exists():
             print(f"FAIL: the build record for {name} is missing; run scripts/build_paper2.sh")
+            return 1
+        stale = _sources_newer_than(record)
+        if stale:
+            print(f"FAIL: {name}'s build record predates {len(stale)} of its sources "
+                  f"({', '.join(stale[:4])}{'...' if len(stale) > 4 else ''}); "
+                  f"run scripts/build_paper2.sh")
             return 1
         text = record.read_text(errors="replace")
         errors = ERROR.findall(text)
