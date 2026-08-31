@@ -1063,16 +1063,15 @@ def test_the_default_presentation_is_the_one_every_firing_path_uses():
         "what they measure changes when the default does: " + ", ".join(silent))
 
 
-def test_every_script_takes_its_generator_from_the_deployed_run():
+def test_every_script_takes_its_checkpoints_from_the_deployed_run():
     """A default checkpoint that is not the deployed one is a trap for whoever reproduces this.
 
-    Five scripts defaulted to the checkpoint directory that holds the FILTER's training run and
-    took their generator from it. The pools in results/ were not built that way -- they came from
-    the deployed generator, passed explicitly -- so no published number moved, but a reader
+    Thirteen scripts named a neighbouring run: five for the generator and eight for the filter.
+    The released pools were not built that way, so almost no published number moved, but a reader
     running any of those scripts without arguments got a different model, and one analysis written
     here did exactly that and trailed the published arm by nine points before the mismatch was
     found. The pools recorded no checkpoint, so the only way to find it was to check a number
-    against another number.
+    against another number, twice.
     """
     import re
     from pathlib import Path
@@ -1080,15 +1079,21 @@ def test_every_script_takes_its_generator_from_the_deployed_run():
     from grail_metabolism.utils import preparation
 
     root = Path(preparation.__file__).resolve().parents[2]
-    deployed = "artifacts/full5000_implicit/checkpoints/generator.pt"
-    pattern = re.compile(r"artifacts/[A-Za-z0-9_]+/checkpoints/generator\.pt")
+    # Both stages come from one run, which is established by reproduction: the released pools'
+    # generator and filter scores are reproduced exactly by this run's checkpoints and by no
+    # other pair in the repository.
+    deployed = "artifacts/full5000_implicit/checkpoints"
+    pattern = re.compile(r"artifacts/[A-Za-z0-9_]+/checkpoints/(?:generator|filter)\.pt")
+    # Scripts that train a checkpoint, or launch training elsewhere, name a destination rather
+    # than an inference default and are not held to it.
+    TRAINERS = {"modal_m2.py", "train_filter_subset.py"}
     wrong = []
     for path in sorted((root / "scripts").rglob("*.py")):
+        if path.name in TRAINERS:
+            continue
         for n, line in enumerate(path.read_text().splitlines(), 1):
-            if "modal" in path.name:
-                continue          # a remote training entry point, not an inference default
             for match in pattern.findall(line):
-                if match != deployed:
+                if not match.startswith(deployed):
                     wrong.append(f"{path.relative_to(root)}:{n} -> {match}")
     assert not wrong, (
-        "these name a generator checkpoint that is not the deployed one: " + ", ".join(wrong))
+        "these name a checkpoint that is not the deployed one: " + ", ".join(wrong))

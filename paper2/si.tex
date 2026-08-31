@@ -1378,6 +1378,13 @@ Table~\ref{MS-tab:sweep} in every cell of both. Table~\ref{MS-tab:sweep} is supp
 that script's source, and the commit it ran at; a sweep recomputes the hash of each producer and
 refuses the artifact if that producer has changed. All \numProvPinned{} are current.
 
+A pinned producer is not the same as a pinned model, and the candidate pools now record both
+checkpoints that scored them with their digests. Both stages of the released system come from one
+training run; that is established by reproduction rather than by recollection, since the released
+pools' generator and filter scores are reproduced exactly by that run's checkpoints and by no
+other pair held here. The analysis scripts default to it, and a test refuses any that names
+another, because a default that is not the deployed setting reproduces something nobody ran.
+
 The guarantee that matters is narrower than the pinned set and is checked by a gate rather than
 asserted. The numbers in this paper come from \numProvSources{} of those artifacts, established
 by running the number generator with its artifact reader instrumented, so the count is of files

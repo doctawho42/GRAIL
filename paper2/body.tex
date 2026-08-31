@@ -1026,8 +1026,11 @@ the version of that script, and an automated check refuses a file whose script h
 All \numProvPinned{} pass that check. Of them, \numProvSources{} are the ones the paper's
 figures are drawn from, and none of those falls outside the pinned set. A split manifest pins by
 digest the triple files, the substrate sets, the evaluated test set, the rule bank and every
-third-party artifact, and a verify mode recomputes and names any file that has moved. The
-Supporting Information describes the checks and states what they do not cover.
+third-party artifact, and a verify mode recomputes and names any file that has moved. Candidate
+pools additionally record, by digest, the two checkpoints that scored them; both stages of the
+released system come from one training run, and which run that is is a property of the artifact
+rather than of anyone's recollection. The Supporting Information describes the checks and states
+what they do not cover.
 
 Two pinned artifacts are too large to commit: the train and validation candidate pools, which
 hold every candidate the generator produced for every substrate of their population together with
