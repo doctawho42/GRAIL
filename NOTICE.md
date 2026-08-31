@@ -184,6 +184,11 @@ asserting it: on every pair it compares, each criterion's verdict on the descrip
 verdict on the structures, and it reports **0 disagreements**. The file reconstructs no metabolite:
 a cryptographic hash and a folded 1,024-bit fingerprint are not the molecule.
 
+`scripts/typed_edit/reproduce_from_descriptors.py` goes further and rebuilds the whole comparison
+from what is released, under all five criteria, reading no corpus structure at any point. Its
+default-criterion column for the whole bank matches the one the manuscript prints at every budget.
+That is the property the substitution was made for, checked rather than claimed.
+
 The substrates stay as structures, for a reason that has nothing to do with licences: reproducing
 the comparison means running a predictor on a substrate, and a hash cannot be run on. They are 1,170
 drug and xenobiotic structures, each individually a published fact obtainable by name, and it is the

@@ -145,9 +145,12 @@ missing.
 The annotated metabolites of the evaluated test set are released as matching descriptors, in
 \texttt{results/test\_reference\_descriptors.json}, alongside every arm's per-substrate
 predictions. All \numCritCriteria{} matching criteria are therefore recomputable on the comparison
-population, not only the default one: every row of Table~\ref{MS-tab:criterion} can be rebuilt
-from what is released, and none of the metabolites can. The repository and the Zenodo deposit
-differ in this, and the repository is the wider of the two.
+population, not only the default one, and none of the metabolites is. That is checked rather than
+asserted: \texttt{reproduce\_from\_descriptors.py} rebuilds the whole comparison under all
+\numCritCriteria{} from the released descriptors and the released predictions, reading no corpus
+structure, and its default-criterion column for the whole bank matches Table~\ref{MS-tab:sweep} at
+every budget. The repository and the Zenodo deposit differ in this, and the repository is the wider
+of the two.
 
 The corpus is divided by substrate, so no substrate of one split appears in another. Molecular overlap between splits is non-zero and expected, because a molecule
 that is a substrate in one split may appear as a product in another: \numLeakMolOverlap{}
