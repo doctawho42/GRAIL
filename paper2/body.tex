@@ -962,6 +962,17 @@ corrected share explains why applying the bank at depth two lifts it by only abo
 $8.5$ times the candidate cost: a fifth of the mined bank already carries the compositions a
 second application would have to discover, so the second application mostly rediscovers them.
 
+Both learned stages are trained short of what the split allows, and the spread that would say how
+much of any effect is noise was not measured at this configuration. The stages saw
+\numTrainSubstrates{} of \numSplitTrainSubstrates{} training substrates for
+\numTrainEpochsWord{} epochs with early stopping that never engaged, which is an underfitting
+signature and not a converged run; the three-seed study that gives the retraining spread ran at an
+earlier operating point, so its level is not comparable with the tables here
+(Section~\ref{SI-sec:si-retrain}). Every headline figure is therefore one checkpoint of a
+deliberately truncated run, read against a spread measured on a different system. Retraining on the
+full split under several seeds at the deployed configuration is the experiment that would settle
+it, and it is not reported here.
+
 The register is weaker than its count of confirmations suggests. Three of the seven confirmed
 predictions clear the falsification condition as written, which compares a point estimate to a
 threshold, and not the stricter reading that asks the whole interval to clear it: P1, P2 and P5
