@@ -1019,12 +1019,12 @@ extraction that selected from the four sources, which is not in the repository a
 such in the Supporting Information.
 
 The hydrogen convention is an argument to the rule-application entry point rather than a
-constant, and its default is the presentation every deployed firing path uses, which is the one
-the paper's figures are measured at. It was the other presentation until this work measured the
-difference: a reader reproducing the census through that entry point without naming a convention
-would have obtained \numHydUncoveredexpanded{} uncovered references and not
-\numCeilingUncovered{}. No stored figure moved when the default changed, because every call site
-that produced one now names the convention it was measured under.
+constant, and its default is the presentation every deployed firing path uses, which is the one the
+paper's figures are measured at. The choice is consequential and the entry point should not make it
+silently: reproducing the census through it under the other presentation gives
+\numHydUncoveredexpanded{} uncovered references and not \numCeilingUncovered{}. Every call site
+that produced a figure here names the convention it was measured under rather than taking it from
+a default.
 
 Every figure printed in this paper is generated from a stored result file rather than typed.
 \numProvPinned{} such files are pinned, meaning that each records the script that wrote it and
@@ -1033,9 +1033,9 @@ All \numProvPinned{} pass that check. Of them, \numProvSources{} are the ones th
 figures are drawn from, and none of those falls outside the pinned set. A split manifest pins by
 digest the triple files, the substrate sets, the evaluated test set, the rule bank and every
 third-party artifact, and a verify mode recomputes and names any file that has moved. Candidate
-pools additionally record, by digest, the two checkpoints that scored them; both stages of the
-released system come from one training run, and which run that is is a property of the artifact
-rather than of anyone's recollection. The Supporting Information describes the checks and states
+pools record, by digest, the two checkpoints that scored them; both stages of the released system
+come from one training run, and for the pools frozen before that field existed the run is
+established by reproduction rather than by recollection. The Supporting Information describes the checks and states
 what they do not cover.
 
 Two pinned artifacts are too large to commit: the train and validation candidate pools, which

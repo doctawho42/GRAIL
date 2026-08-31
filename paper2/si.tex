@@ -498,13 +498,12 @@ lead over SyGMa at $k=30$ is several times this correction. It does mean the lea
 handed a drawing its rules were not written for, and this amount should be subtracted before reading
 it.
 
-An earlier version of this work reported that correction for SyGMa alone and said the other
-comparators could not be re-run. MetaPredictor could: it is a source checkout with its weights on
-disk. The asymmetry mattered because MetaPredictor is one of the two comparators the wide-budget
-lead does not survive against, so a correction it never received was the one correction running
-this work's way. It is measured now, on the \numMpdrawRerun{} substrates whose two drawings are
-different molecules, the rest keeping their frozen predictions because they contribute a paired
-difference of exactly zero. The natural drawing raises MetaPredictor's recall by
+MetaPredictor is a source checkout with its weights on disk, so the same correction is measured
+for it. That matters because it is one of the two comparators the wide-budget lead does not survive
+against, so a correction it did not receive would be the one correction running this work's way.
+It is measured on the \numMpdrawRerun{} substrates whose two drawings are different molecules, the
+rest keeping their frozen predictions because they contribute a paired difference of exactly
+zero. The natural drawing raises MetaPredictor's recall by
 $+\numMpdrawAllDiffThreeZero$ $[\numMpdrawAllLoThreeZero, +\numMpdrawAllHiThreeZero]$ at $k=30$
 over the whole comparison set, an interval covering zero, and by
 $+\numMpdrawMovedDiffThreeZero$ $[\numMpdrawMovedLoThreeZero, +\numMpdrawMovedHiThreeZero]$
@@ -750,11 +749,11 @@ named here because printed side by side they read as one measurement disagreeing
 \section{Whether template discovery has saturated}
 \label{sec:si-rarefaction}
 
-An earlier version of this work said mining was saturated and offered, as evidence, that re-running
-the miner on the same split re-derives every template and none new. That is a determinism check.
-Saturation is a claim about what more data would yield, and it can be measured on files already
-held: the mining catalog records which training pairs each template was derived from, so pairs can
-be withheld and the templates that would still have been found counted.
+Re-running the miner on the same split re-derives every template and none new, which is a
+determinism check and not a saturation one. Saturation is a claim about what more data would
+yield, and it can be measured on files already held: the mining catalog records which training
+pairs each template was derived from, so pairs can be withheld and the templates that would still
+have been found counted.
 
 Of \numRareTemplates{} mined templates over \numRarePairs{} distinct training pairs,
 \numRareSingletons{} rest on a single pair, \numRareSingletonsharePct{}. A quarter of the pairs
@@ -788,9 +787,8 @@ reach a candidate by noisy-or, which treats them as independent evidence. This b
 satisfy that: it contains \numThirdpartyBiotransformerShipped{} of BioTransformer's published
 templates and \numSygmaInside{} of SyGMa's verbatim, and the mined half is full of
 near-duplicates, so a candidate that many templates reach is scored as though many witnesses had
-agreed. An earlier version of this work named that violation and left it, because the released
-pools carry one aggregated score per candidate and not the per-template scores a different rule
-needs.
+agreed. The released pools carry one aggregated score per candidate and not the per-template
+scores a different rule needs, so the question cannot be answered from them.
 
 They are re-derived here. The generator side is run again over the comparison set with the
 per-template scores kept rather than collapsed, so any aggregation rule can be evaluated without
@@ -813,13 +811,17 @@ of eight upward every interval covers zero, including
 +\numAggregationMaxThreeZeroHi]$ at thirty. The blend of the two the implementation also offers
 gains at every budget through ten, by as much as $+\numAggregationHybridThree$
 $[+\numAggregationHybridThreeLo, +\numAggregationHybridThreeHi]$, and is indistinguishable from
-the deployed rule at every wider one. The mean is worse at every budget from eight upward.
+the deployed rule at every wider one. The mean is the one rule that is worse at the wide budgets,
+by \numAggregationMeanThreeZero{} $[\numAggregationMeanThreeZeroLo,
+\numAggregationMeanThreeZeroHi]$ at thirty, with an interval excluding zero at every budget from
+fifteen upward.
 
 Three things follow. The independence assumption is false, something does turn on it, and what
 turns on it is the head of the list rather than the wide budgets this work reads its leads at:
 where a duplicate-blind rule helps, it helps a chemist reading the first three candidates.
-Nothing claimed here changes, because every wide-budget cell is indistinguishable under all four
-rules. And the deployed rule stays as it is: this sweep was run on the comparison set after the
+Nothing claimed here changes, because the two rules the violation argues for are indistinguishable
+from the deployed one at every budget a lead is claimed at, and the rule that does separate there
+is worse. And the deployed rule stays as it is: this sweep was run on the comparison set after the
 comparison, so adopting the blend on the strength of it would be selecting a parameter on the
 population the paper reports, which is the one thing this work's own discipline forbids. What the
 measurement licenses is a registered prediction and a selection on validation, not a substitution
@@ -976,10 +978,10 @@ already performs two edits in one application, as P10 finds, a second applicatio
 to discover that the first did not already reach, and the observed lift of about $0.012$ is what
 that predicts rather than a surprise.
 
-An earlier attempt read the templates themselves rather than the pairs and was abandoned: a
-cleavage whose bridging atom carries no map number is invisible to a comparison of mapped bonds,
-and a cyclisation joins two distant loci in a single event. Parsing partially mapped SMIRKS is the
-wrong instrument for this question and its answer disagreed with what the molecules show.
+The instrument reads the source pairs and not the templates, and that is deliberate: a cleavage
+whose bridging atom carries no map number is invisible to a comparison of mapped bonds, and a
+cyclisation joins two distant loci in a single event, so parsing partially mapped SMIRKS answers a
+different question from the one asked and answers it differently from what the molecules show.
 
 \section{How much of the annotation is one enzymatic step}
 \label{sec:si-refstep}
@@ -1133,18 +1135,18 @@ narrower than the pool for every substrate.
 \section{The choice of evaluation population}
 \label{sec:si-population}
 
-The comparison set is a quarter of the evaluated test split and not a random quarter. An earlier
-version of this work described how it is fixed in a way the code does not support: that a
-substrate enters only if every method emitted something for it, which would remove the cases where
-a comparator produced nothing and a bank this size should win most clearly. That is not the rule.
-The population is the intersection of the substrates each method has an \emph{entry} for, and the
-binding constraint is one submission list: the comparator that is a web service was sent
+The comparison set is a quarter of the evaluated test split and not a random quarter. What fixes
+it is worth stating precisely, because the obvious reading is wrong: it is not that a substrate
+enters only where every method emitted something, a rule that would remove the cases where a
+comparator produced nothing and a bank this size should win most clearly. The population is the
+intersection of the substrates each method has an \emph{entry} for, and the binding constraint is
+one submission list: the comparator that is a web service was sent
 \numPopulationN{} substrates and returned all \numPopulationN{}. Nothing was removed for emitting
 nothing, and the set still contains substrates a method answers nothing for:
 \numPopdefSygmainsideWord{} for SyGMa, \numPopdefMetapredictorinsideWord{} for MetaPredictor and
 \numPopdefGrailinsideWord{} for the deployed arm.
 
-The rule as described would in any case have removed almost nothing. Over the whole evaluated test
+That emission rule would in any case have removed almost nothing. Over the whole evaluated test
 set, SyGMa answers nothing for \numPopdefSygmasilent{} of \numPopulationTestsubs{} substrates,
 carrying \numPopdefSygmasilentrefs{} references, and MetaPredictor for
 \numPopdefMetapredictorsilent{}, carrying \numPopdefMetapredictorsilentrefs{}.
@@ -1157,7 +1159,7 @@ differ in the number of annotated references it carries
 many candidates the deployed system emits on it (\numPopdefOutputin{} against
 \numPopdefOutputout{}, $p=\numPopdefOutputp$), each by a permutation test over
 \numPopdefPermutations{} shuffles. That does not make the draw random; it says the three
-properties most likely to have driven it did not.
+properties most likely to have driven such a draw did not drive this one.
 
 The comparison can also be read on the population nobody selected. The deployed arm and the two
 comparators that ran over the whole evaluated test set are contrasted there with a substrate a
@@ -1324,15 +1326,14 @@ builds: jar \texttt{c70cad91}, 115{,}415{,}197 bytes, upstream commit \texttt{64
 2023-05-25, its \numBtTemplates{} templates loaded at freeze time rather than taken from a
 constant.
 
-It carries a column, and an earlier version of this work said it could not. The reason given was
-that an arm is included where it supplies ranked per-substrate predictions, and that
-BioTransformer supplies none. That rule does not separate it from MetaPredictor, which is in the
-comparison and whose list is also unranked and shorter than the budget on nearly every substrate,
-and it was the wrong diagnosis: the tool runs. It failed on this machine because the native InChI
-library its distribution caches is built for one processor architecture and this machine is
-another, which an x86-64 Java 8 runtime resolves. It is also the comparator a reader of the rule
-bank most wants, since \numThirdpartyBiotransformerShipped{} of its templates are inside that bank, so its
-column measures how much of this work's reach is BioTransformer's reach under another name.
+It carries a column. Supplying no ranked predictions would not have excluded it, since that
+does not separate it from MetaPredictor, whose list is also unranked and shorter than the budget on
+nearly every substrate. Running it takes one thing worth recording for anyone who tries: the
+native InChI library its distribution caches is built for one processor architecture, so on
+another the tool aborts at load, and an x86-64 Java 8 runtime resolves it. It is the comparator a
+reader of the rule bank most wants, since \numThirdpartyBiotransformerShipped{} of its templates
+are inside that bank, so its column measures how much of this work's reach is BioTransformer's
+reach under another name.
 
 It is run at \texttt{allHuman} for one step, the setting that gives it what every other arm here
 is allowed, a single enzymatic application, and its file order is its ranking, which is the
@@ -1383,25 +1384,27 @@ first run.
 
 \section{Provenance and reproduction}
 
-\texttt{results/four\_method\_291.json} defines the comparison population and gates the MetaTox
-column. Its GRAIL column was an early dump ranked by the product of the two component scores over
-a narrower pool, an arm nobody would run, which reached \numFourmethodSupersededFiveZero{} at $k=50$;
-no number in this paper derived from it, but a file whose purpose is to define the population is
-the wrong place to leave an arm a reproducer might read as ours. It now carries the deployed
-interactive arm from the pools the comparison itself is read from, and reproduces
-Table~\ref{MS-tab:sweep} in every cell of both. Table~\ref{MS-tab:sweep} is supplied by
+\texttt{results/four\_method\_291.json} defines the comparison population, gates the MetaTox
+column and carries the deployed interactive arm from the pools the comparison itself is read from,
+reproducing Table~\ref{MS-tab:sweep} in every cell of both. It also records, beside that arm, the
+one it replaced: an early dump ranked by the product of the two component scores over a narrower
+pool, which reached \numFourmethodSupersededFiveZero{} at $k=50$. No number in this paper derives
+from that column, and it is kept rather than deleted so a reader who meets it in an older copy can
+tell which arm they are looking at. Table~\ref{MS-tab:sweep} is supplied by
 \texttt{deployment\_table.json}, which carries a gate asserting the two agree on MetaTox.
 
 \numProvPinned{} artifacts are pinned. Most record the script that wrote them, the SHA-256 of
 that script's source, and the commit it ran at; a sweep recomputes the hash of each producer and
 refuses the artifact if that producer has changed. All \numProvPinned{} are current.
 
-A pinned producer is not the same as a pinned model, and the candidate pools now record both
-checkpoints that scored them with their digests. Both stages of the released system come from one
-training run; that is established by reproduction rather than by recollection, since the released
-pools' generator and filter scores are reproduced exactly by that run's checkpoints and by no
-other pair held here. The analysis scripts default to it, and a test refuses any that names
-another, because a default that is not the deployed setting reproduces something nobody ran.
+A pinned producer is not the same as a pinned model. Candidate pools record both checkpoints that
+scored them with their digests; the pool sets frozen before that field existed carry no such
+record, and for those the run is established by reproduction: their generator and filter scores
+are reproduced exactly by one run's checkpoints and by no other pair held here, so both stages of
+the released system come from one run. The analysis scripts default to it, a test refuses any that
+names another, and the gate over the artifacts the manuscript's numbers come from fails on any
+that names a checkpoint outside it, because a default that is not the deployed setting reproduces
+something nobody ran.
 
 The guarantee that matters is narrower than the pinned set and is checked by a gate rather than
 asserted. The numbers in this paper come from \numProvSources{} of those artifacts, established
@@ -1453,8 +1456,9 @@ statement of what remains to be wired. A checker refuses any other numeric liter
 document, refuses any hand-typed pointer between the two documents in either direction, and
 writes the three counts this paragraph quotes. Every such pointer resolves through
 \texttt{xr} against the other document's own labels, so a wrong one prints \texttt{??} and
-fails the build rather than compiling silently. Nine were typed by hand in an earlier version
-and all nine were wrong, one of them badly enough to direct a search to the wrong table.
+fails the build rather than compiling silently. A hand-typed pointer cannot: nine of them here
+were wrong at once when the tables were reordered, one badly enough to direct a search to the
+wrong table, which is why none is permitted.
 
 The train and validation candidate pools are deposited at \ZenodoDoi{}. Every substrate and
 every annotated metabolite in them is replaced by its tautomer-canonical InChIKey before the
