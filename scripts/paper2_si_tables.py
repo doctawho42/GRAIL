@@ -71,24 +71,53 @@ def si_criterion_sweep():
              "inchi_no_stereo": "InChIKey, no stereo", "tanimoto1": "Tanimoto $=1$",
              "inchikey_tautomer": "tautomer (default)"}
     mark = {"leads": "$+$", "trails": "$-$", "neither": "$\\cdot$"}
-    rows = []
+    # Which comparator each verdict is read against. It is not the same one at every budget, nor
+    # the same one under every criterion -- a sign at k = 20 stands against SyGMa under one
+    # criterion and MetaTox under another -- and a grid that prints only the sign cannot be read
+    # without it.
+    tag = {"MetaTox": "M", "SyGMa": "S", "MetaPredictor": "P", "BioTransformer": "B",
+           "metatox": "M", "sygma": "S", "metapredictor": "P", "biotransformer": "B"}
+    rows, arms_by_k = [], {}
     for c in crits:
         v = d["by_criterion"][c]["verdict_by_budget"]
-        cells = " & ".join(mark[v[str(k)]] for k in ks)
-        rows.append(f"{short.get(c, c)} & {cells} \\\\")
+        m = d["by_criterion"][c].get("margin_by_budget", {})
+        cells = []
+        for k in ks:
+            cell = mark[v[str(k)]]
+            row = m.get(str(k)) or {}
+            who = row.get("theirs")
+            if who:
+                cell += "\\textsuperscript{" + tag.get(who, who[:1]) + "}"
+                arms_by_k.setdefault(str(k), set()).add(row.get("ours", ""))
+            cells.append(cell)
+        rows.append(f"{short.get(c, c)} & " + " & ".join(cells) + " \\\\")
     head = " & ".join(f"${k}$" for k in ks)
+    arm_row = ""
+    if arms_by_k:
+        def arm_label(k):
+            names = {a for a in arms_by_k.get(str(k), set()) if a}
+            if len(names) != 1:
+                return "--"
+            only = names.pop()
+            return "exh." if "exhaustive" in only else "int."
+        arm_row = ("\\midrule\nGRAIL arm & "
+                   + " & ".join(arm_label(k) for k in ks) + " \\\\\n")
     moved = d["n_budgets_moving"]
     worst = max(moved, key=lambda c: moved[c])
     return ("\\begin{table*}[t]\n\\centering\\small\n"
             f"\\begin{{tabular}}{{l{'c' * len(ks)}}}\n\\toprule\n"
             f"criterion & \\multicolumn{{{len(ks)}}}{{c}}{{output budget $k$}} \\\\\n"
             f"\\cmidrule(lr){{2-{len(ks) + 1}}}\n & {head} \\\\\n\\midrule\n"
-            + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n"
+            + "\n".join(rows) + "\n" + arm_row + "\\bottomrule\n\\end{tabular}\n"
             "\\caption{The verdict of the comparison under each declared matching criterion. "
             "$+$ marks a budget where GRAIL's better arm leads the strongest comparator with the "
             "paired interval excluding zero, $-$ one where it trails on the same terms, and "
             "$\\cdot$ one where the interval covers zero. Every cell is read from the interval "
-            "and never from the point estimate. Against the default criterion the verdict moves "
+            "and never from the point estimate. The superscript names the comparator the cell is "
+            "read against, M for MetaTox, S for SyGMa, P for MetaPredictor and B for "
+            "BioTransformer, and the last row names the GRAIL arm: neither is constant across "
+            "the grid, so a sign on its own does not say what was compared with what. Against "
+            "the default criterion the verdict moves "
             f"at {moved[worst]} of {len(ks)} budgets under \\texttt{{{worst}}}.}}\n"
             "\\label{tab:criterion}\n\\end{table*}\n")
 
