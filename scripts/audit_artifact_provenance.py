@@ -65,6 +65,7 @@ PINNED = {
     "results/biotransformer_arm.json": f"{TE}/biotransformer_arm.py",
     "results/metapredictor_drawing.json": f"{TE}/metapredictor_drawing.py",
     "results/metxbiodb_drop_set.json": f"{TE}/metxbiodb_drop_set.py",
+    "results/stereo_headroom.json": f"{TE}/stereo_headroom.py",
     "results/population_definition.json": f"{TE}/population_definition.py",
     # the negative result that closes the cheap route to the between-group headroom
     "results/group_decode.json": f"{TE}/group_decode.py",

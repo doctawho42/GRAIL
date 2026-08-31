@@ -491,6 +491,41 @@ def build():
             n[f"mpdraw.{short}.hi{k}"] = c["ci95"][1]
             n[f"mpdraw.{short}.sep{k}"] = c["excludes_zero"]
 
+    # What a configuration-aware matching criterion could distinguish at all, which the criterion
+    # sweep cannot bound: two of its five settings differ only in the stereochemistry layer and
+    # return the identical verdict at every budget, because the annotation carries none.
+    sh = art("stereo_headroom.json")
+    n["stereo.pairs"] = sh["population"]["typed"]
+    n["stereo.centre"] = sh["references_gaining_a_tetrahedral_centre"]
+    n["stereo.double"] = sh["references_gaining_a_stereogenic_double_bond"]
+    n["stereo.either"] = sh["references_gaining_either"]
+    n["stereo.share"] = sh["share_gaining_either"]
+
+    # The classes where this system is not the best arm, which the main text reported only where
+    # it was. The names and the margins come from the artifact rather than from a reading of it.
+    ch = art("error_by_chemistry.json")["classes"]
+    _arms = ("GRAIL exhaustive", "GRAIL interactive", "metatox", "sygma", "metapredictor",
+             "biotransformer")
+    _behind, _int_ahead = [], []
+    for _name, _e in ch.items():
+        _r = {a: _e["recall"][a]["15"] for a in _arms}
+        if _r["GRAIL exhaustive"] < max(_r.values()) - 1e-9:
+            _behind.append((_e["references"], _name))
+        if _r["GRAIL interactive"] > _r["GRAIL exhaustive"] + 1e-9:
+            _int_ahead.append((_e["references"], _name))
+    n["chem.classes"] = len(ch)
+    n["chem.behind"] = len(_behind)
+    n["chem.intahead"] = len(_int_ahead)
+    n["chem.behindrefs"] = sum(r for r, _ in _behind)
+    n["chem.oxygenbank"] = ch["oxidation, one oxygen added"]["recall"]["GRAIL exhaustive"]["15"]
+    n["chem.oxygenbest"] = max(
+        ch["oxidation, one oxygen added"]["recall"][a]["15"] for a in _arms)
+    n["chem.oxygenrefs"] = ch["oxidation, one oxygen added"]["references"]
+    n["chem.demethbank"] = ch["demethylation"]["recall"]["GRAIL exhaustive"]["15"]
+    n["chem.demethinter"] = ch["demethylation"]["recall"]["GRAIL interactive"]["15"]
+    n["chem.demethbest"] = max(ch["demethylation"]["recall"][a]["15"] for a in _arms)
+    n["chem.demethrefs"] = ch["demethylation"]["references"]
+
     # BioTransformer, run rather than excluded. Both drawings of the substrate, and the same
     # matched-length control every other comparator receives.
     bt = art("biotransformer_arm.json")

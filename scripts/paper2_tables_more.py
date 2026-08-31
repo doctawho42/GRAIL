@@ -102,7 +102,7 @@ def hypotheses():
     VERDICT = {
         "H7": "confirmed; threshold inside interval",
         "H9": "confirmed; threshold inside interval",
-        "H10": "confirmed on validation only",
+        "H10": "confirmed on validation; not on the comparison set",
         "H11": "confirmed",
         "H12": "confirmed; threshold inside interval",
         "H8": "failed", "H14": "failed", "H13": "failed",

@@ -280,6 +280,16 @@ annotated chemistry is transformation types none of these systems is built for. 
 the sixth recovers \numChemDiolBest{}: a shared blind spot rather than a difference between
 systems.
 
+Two more are worth naming because they run the other way. The exhaustive arm is not the best arm
+on \numChemBehind{} of the \numChemClasses{} classes, and on
+\numChemIntahead{} of them it is below the interactive arm, which returns a sixth as many
+candidates. Demethylation is the clearest: \numChemDemethbank{} exhaustive against
+\numChemDemethinter{} interactive and \numChemDemethbest{} for the best comparator, on
+\numChemDemethrefs{} references. A wider pool cannot lose coverage, so what is lost there is
+position: candidates the smaller rule budget never produced are ranked above the correct answer
+and push it past fifteen. That is the same mechanism the ranking ablation measures in aggregate,
+seen on the class where it costs most.
+
 Recall within a class is over that class's references alone, so the small classes carry wide
 uncertainty. No intervals are quoted for them and none should be read into the ordering of a row
 with five references in it.
@@ -828,6 +838,7 @@ measurement licenses is a registered prediction and a selection on validation, n
 here.
 
 \section{Model architectures and training}
+\label{sec:si-arch}
 
 \subsection{Generator}
 
@@ -1087,7 +1098,7 @@ populations disagree. The figure quoted in the main text as $+\numHSevenDiff$ is
 uncapped pool, because P1 was fixed and checked before the pool cap of P2 existed; the capped
 figure is the smaller of the two because the cap and the fusion recover overlapping ground.
 
-Two earlier ablations of a superseded configuration, one comparing the pair filter against the
+Two earlier ablations of a superseded configuration, one comparing the candidate scorer against the
 frequency prior and one measuring the pool with rule selection switched off, ran on a
 245-substrate subsample under the product ordering. Their levels do not transfer to the
 configuration reported here. This table and the selection ablation below replace them.

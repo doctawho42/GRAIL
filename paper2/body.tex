@@ -129,9 +129,11 @@ GRAIL predicts in three stages, each separately inspectable. A generator scores 
 bank of \numBankRules{} reaction templates, written as SMIRKS transformation patterns, against
 the substrate. The selected rules are then
 applied with RDKit 2022.09.5, and their products are
-standardised \citep{Hahnke_2018, Mansouri_2024} and deduplicated. A filter scores each
-(substrate, candidate) pair, and the candidates are ordered by a rank fusion of the filter's and
-the generator's orderings. Every emitted candidate carries the identity of the rule that produced
+standardised \citep{Hahnke_2018, Mansouri_2024} and deduplicated. A scorer scores each
+(substrate, candidate) pair, encoding the two molecules as separate graphs rather than as one
+merged graph, and the candidates are ordered by a rank fusion of that scorer's and the generator's
+orderings. The merged variant, which joins the two graphs along their maximum common substructure,
+was built and measured and is not what ships (Section~\ref{SI-sec:si-arch}). Every emitted candidate carries the identity of the rule that produced
 it and the site at which it fired.
 
 A candidate reachable by several rules, or by one rule firing at several sites, receives a single
@@ -211,7 +213,10 @@ is built:
 \begin{equation}
 \hat{C}(s) = \operatorname*{arg\,top}_{c \in C(s)}{}^{\,\numHNineCap} \; p(c),
 \end{equation}
-where $C(s)$ is everything the applied rules enumerate. Registered as prediction P2 with a threshold of
+where $C(s)$ is everything the applied rules enumerate. A cap before a fusion is not a filter: the
+fusion ranks over whatever survives, so removing a candidate changes the rank every other candidate
+receives from both orderings. That is why truncation can raise recall rather than only bound it.
+Registered as prediction P2 with a threshold of
 $+\numHNineThreshold$; measured $+\numHNineDiff$, 95\% CI $[+\numHNineLo, +\numHNineHi]$, mean
 pool \numHNinePoolBefore{} to \numHNinePoolAfter{}. The cap was registered to gain and it gains:
 it removes a few candidates that were a substrate's only correct answer and many more that were
@@ -395,6 +400,18 @@ largest, \numChemOtherRefs{} references, is the set of changes this vocabulary d
 no method here exceeds \numChemOtherBest{} on it: a fifth of the annotated chemistry falls in a
 class none of the six systems is built for, which is what a reader deciding whether any of them
 is usable on their own compounds needs before they read a headline number.
+
+The rest of that table does not run this system's way, and it belongs beside the part that does.
+The exhaustive arm is not the best arm on \numChemBehind{} of the \numChemClasses{} classes,
+carrying \numChemBehindrefs{} of the \numChemReferences{} references, and the classes it trails
+on are classical ones: on the largest functionalisation, one oxygen added, \numChemOxygenrefs{}
+references, it reaches \numChemOxygenbank{} against \numChemOxygenbest{} for the best arm, and it
+is behind on demethylation, sulfation, methylation and acetylation. The aggregate advantage is
+carried by unusual cleavages and by the unnamed residue. The exhaustive arm is also below the
+interactive one on \numChemIntahead{} classes, demethylation among them
+(\numChemDemethbank{} against \numChemDemethinter{} on \numChemDemethrefs{} references). That is
+not a coverage limit but a ranking one: the wider pool contains candidates the smaller budget never
+produced, and on those classes they displace correct answers out of the window.
 
 A nominal budget is not a length, and the leads at wide budgets are read where most comparator
 lists have already ended. Removing length as a variable is possible and it is done: on each
@@ -887,8 +904,8 @@ from the corpus, which is a property of the training data rather than of the met
 \label{sec:conclusions}
 
 GRAIL predicts metabolite structures by selecting templates from a bank of \numBankRules{}
-reaction rules, applying them, and ranking the products by a reciprocal rank fusion of a pair
-filter and the rule selector. The form in which the two learned scores are combined mattered more
+reaction rules, applying them, and ranking the products by a reciprocal rank fusion of a
+candidate scorer and the rule selector. The form in which the two learned scores are combined mattered more
 than what produced them: replacing their product with the rank fusion gained more recall than any
 architectural change tested here. Every prediction carries the template that produced it and the
 atoms it acted on, and the whole output is ranked.
@@ -959,9 +976,16 @@ matching criterion is chosen to ignore it, and the annotation carries none, so s
 epoxide hydrolysis and most conjugation are predicted and scored as constitutions. For a
 metabolite structure predictor that is a real restriction and not a technicality: sulfoxide and
 epoxide configuration carry the pharmacology of several drug classes, and a system that cannot
-represent them cannot be asked which enantiomer an enzyme makes. What is reported here is
-therefore recall over constitutions, and the criterion sweep in Section~\ref{SI-sec:si-sensitivity}
-bounds what a stereochemistry-aware criterion would cost rather than supplying one.
+represent them cannot be asked which enantiomer an enzyme makes. What is reported here is therefore
+recall over constitutions. The criterion sweep does not bound what a configuration-aware criterion
+would cost, and cannot: two of its five settings differ only in the stereochemistry layer and
+return the identical verdict at every one of the nine budgets, because the annotation has no
+configuration for them to disagree about. What can be bounded is the size of the question, and it
+is: \numStereoEither{} of the \numStereoPairs{} annotated pairs, \numStereoSharePct{}, produce a
+metabolite carrying a stereogenic element its substrate does not have
+(\numStereoCentre{} a tetrahedral centre, \numStereoDouble{} a stereogenic double bond). That is
+a ceiling on how many references such a criterion could ever separate, not an estimate of what it
+would cost, and nothing here assigns a configuration to any of them.
 
 No result here is external. Every figure is measured on one corpus assembled from four sources, of
 which the only published reference set is one of the four, so a held-out split of it is not an

@@ -125,7 +125,7 @@ def si_ranking():
     d = art("ranking_ablation.json")
     arms = d["arms"]
     ks = ["1", "5", "10", "15", "30", "50"]
-    label = {"fusion": "fusion (deployed)", "filter": "pair filter alone",
+    label = {"fusion": "fusion (deployed)", "filter": "candidate scorer alone",
              "generator": "rule score alone", "product": "their product",
              "random": "seeded permutation"}
     blocks = []
