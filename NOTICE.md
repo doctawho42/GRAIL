@@ -208,6 +208,13 @@ jar digest and SyGMa's version are additionally in `paper2/split_manifest.json`.
 property of its authors and is redistributed here only as the frozen output of a run on our
 substrates.
 
+The terms held for each, where they are held: BioTransformer's LGPL at
+`artifacts/tier2/biotransformer/LICENSE.md`, MetaPredictor's MIT at
+`artifacts/tier2/metapredictor_src/LICENSE`, SyGMa's `License: GPL` in the installed package's
+metadata with no text and no version, and nothing for MetaTox, which is a web service that
+publishes no terms to a user. The one this repository redistributes source for is MetaPredictor,
+under MIT, which permits it.
+
 ## RDKit and the rest
 
 RDKit is BSD-3-Clause. The remaining Python dependencies are listed in `requirements.txt` and are
