@@ -943,6 +943,69 @@ def test_a_budget_curve_refuses_a_pool_that_is_still_being_written(tmp_path, mon
         "the population narrowed to the partial pool's prefix, which is the defect this guards")
 
 
+def test_a_declared_absence_buys_one_substrate_and_not_a_missing_build(tmp_path, monkeypatch):
+    """The whole bank cannot finish one peptide, and the curve must admit that without admitting more.
+
+    Counting the substrates a pool names as absent towards its coverage is the only way a
+    whole-bank point can join a curve whose other points finished everything. It also hands the
+    artifact a sentence that buys its way past the completeness test, and a planted pool holding
+    200 of 294 substrates while declaring the other 94 did exactly that: the paired population
+    collapsed to 200 and the curve said nothing. The declaration therefore buys a handful of
+    substrates and no more, and what it does buy is priced rather than footnoted.
+    """
+    import importlib
+    import json
+    import sys
+
+    sys.path.insert(0, "scripts")
+    sys.path.insert(0, "scripts/typed_edit")
+    module = importlib.import_module("budget_curve")
+
+    def write(results, budget, n_subs, absent=None):
+        directory = results / f"valpools_k{budget}"
+        directory.mkdir(parents=True)
+        pools = {f"C{'C' * i}O": [{"generator": 1.0, "filter": 1.0, "key": f"K{i}"}]
+                 for i in range(n_subs)}
+        blob = {"pools": pools,
+                "references": {f"C{'C' * i}O": [f"K{i}"] for i in range(8)}}
+        if absent is not None:
+            blob["population"] = {"absent_indices": absent}
+        (directory / "all.json").write_text(json.dumps(blob))
+
+    # One substrate short, and it says which: the point joins the curve and the population is
+    # the paired seven rather than the eight the other budgets hold.
+    results = tmp_path / "one" / "results"
+    for budget, n_subs, absent in ((10, 8, None), (30, 8, None), (7581, 7, [7])):
+        write(results, budget, n_subs, absent)
+    monkeypatch.setattr(module, "ROOT", tmp_path / "one")
+    monkeypatch.chdir(tmp_path / "one")
+    module.main()
+    report = json.loads((results / "budget_curve.json").read_text())
+    assert report["budgets_built"] == [10, 30, 7581], (
+        "a pool that named the one substrate it could not build was still refused, so no "
+        "whole-bank point can ever join the curve")
+    assert report["population"]["n_substrates"] == 7, "the curve is not paired"
+    assert report["substrates_outside_the_paired_population"] == 1
+    assert report["references_they_carry"] == 1, (
+        "what the paired population lost was not priced, which is the difference between an "
+        "absence that is bounded and one that is footnoted")
+
+    # Most of the population declared absent is an unfinished build wearing a declaration, and
+    # the tolerance has to refuse it whatever the artifact says about itself.
+    results = tmp_path / "many" / "results"
+    for budget, n_subs, absent in ((10, 8, None), (30, 8, None), (7581, 2, list(range(2, 8)))):
+        write(results, budget, n_subs, absent)
+    monkeypatch.setattr(module, "ROOT", tmp_path / "many")
+    monkeypatch.chdir(tmp_path / "many")
+    module.main()
+    report = json.loads((results / "budget_curve.json").read_text())
+    assert report["budgets_built"] == [10, 30], (
+        "a pool declaring most of the population absent bought its way past the completeness "
+        "test, which is how a curve comes to be measured on a quarter of its substrates")
+    assert report["budgets_skipped_as_partial"] == {"7581": 2}
+    assert report["population"]["n_substrates"] == 8, "the paired population narrowed anyway"
+
+
 def test_every_producer_partitions_the_bank_on_the_same_mined_file():
     """Two cuts of the mined half exist and the counts diverge by ten templates.
 

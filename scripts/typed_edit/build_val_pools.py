@@ -99,6 +99,12 @@ def main() -> int:
     ap.add_argument("--start", type=int, default=0)
     ap.add_argument("--end", type=int, default=0)
     ap.add_argument("--merge", default="")
+    # One substrate of this draw, a 515-character peptide at index 83, does not finish the whole
+    # bank in any time worth spending; the committed artifact records it as absent for the same
+    # reason. Naming it here rather than waiting on it keeps a shard from blocking the rest.
+    ap.add_argument("--skip", default="",
+                    help="comma-separated population indices this shard will not attempt; they "
+                         "must then be declared to --absent at merge time or the merge refuses")
     ap.add_argument("--absent", default="",
                     help="comma-separated population indices the merge may lack")
     ap.add_argument("--gen-ckpt", default=str(ROOT / "artifacts/full5000_implicit/checkpoints/generator.pt"))
@@ -218,9 +224,13 @@ def main() -> int:
                              "filter": {"path": str(Path(args.filter_ckpt).relative_to(ROOT)),
                                         "sha256_16": _digest(args.filter_ckpt)}},
              "generator_seconds": timing, "pools": pools, "references": refs}, indent=1))
+    skip = {int(x) for x in args.skip.split(",") if x.strip()}
     for i, s in enumerate(sl, 1):
         if i == 1 or i % 5 == 0 or i == len(sl):
             print(f"  {i}/{len(sl)} ({time.perf_counter() - t:.0f}s)", file=sys.stderr, flush=True)
+        if args.start + i - 1 in skip:
+            print(f"  skipping index {args.start + i - 1} by request", file=sys.stderr, flush=True)
+            continue
         if s in pools:
             continue
         t_gen = time.perf_counter()

@@ -32,6 +32,10 @@ from _provenance import stamp  # noqa: E402
 
 CAP = 100
 KS = (1, 5, 10, 15, 30, 50)
+# How many substrates a pool may name as absent and still count as covering the population. One
+# substrate of this draw, a 515-character peptide, does not finish the whole bank in any time
+# worth spending; anything beyond a handful is an unfinished build wearing a declaration.
+MAX_DECLARED_ABSENT = 3
 DEPLOYED = 30
 N_BOOT, SEED = 10000, 0
 
@@ -57,11 +61,25 @@ def main() -> int:
 
     # One population for every budget, so the curve is paired: the substrates every built pool
     # holds. A budget measured on its own substrates would be a different experiment per point.
-    per_budget, refs, sizes = {}, {}, {}
+    per_budget, refs, sizes, declared = {}, {}, {}, {}
     for budget, path in built.items():
         blob = json.loads(path.read_text())
         per_budget[budget] = blob["pools"]
-        sizes[budget] = len(blob["pools"])
+        # A pool that names the substrates it did not attempt has accounted for the whole
+        # population; one that is merely short has not. The completeness test is over both,
+        # so a declared absence does not read as an unfinished build and an unfinished build
+        # cannot be waved through by declaring nothing.
+        #
+        # The declaration is not taken on trust past a point. An artifact that declares most of
+        # the population absent has accounted for it in the same sense that an empty file has:
+        # a planted pool holding 200 of 294 substrates and declaring the other 94 passed an
+        # earlier version of this test and shrank the paired population to 200 without a word.
+        # Past the tolerance the artifact is refused as partial whatever it says about itself.
+        absent = blob.get("population", {}).get("absent_indices", [])
+        if len(absent) > MAX_DECLARED_ABSENT:
+            absent = []
+        declared[budget] = list(absent)
+        sizes[budget] = len(blob["pools"]) + len(absent)
         refs.update(blob["references"])
 
     # A pool still being built holds a prefix of the population, and intersecting it with the
@@ -125,6 +143,23 @@ def main() -> int:
                                       "ci95": [round(lo, 4), round(hi, 4)],
                                       "excludes_zero": bool(lo > 0 or hi < 0)}
 
+    # A substrate one budget could not finish leaves the paired population, and an absence that
+    # is only footnoted cannot be told from one that decides the answer. Both extremes are
+    # computed instead: every excluded reference found by the budget under test and none by the
+    # deployed one, and the reverse. A sign that survives both ends is one the absence provably
+    # could not have changed, which is a stronger statement than naming the gap and moving on.
+    everywhere = set().union(*(set(p) for p in per_budget.values()))
+    excluded = sorted(s for s in everywhere - set(subs) if refs.get(s))
+    excluded_refs = sum(len(set(refs[s])) for s in excluded)
+    if excluded and contrasts:
+        for budget, cell in contrasts.items():
+            point = cell["gap_at_15"] * float(U.sum())
+            cell["if_the_excluded_substrates_all_went_one_way"] = {
+                "best_for_this_budget": round((point + excluded_refs) / (U.sum() + excluded_refs), 4),
+                "worst_for_this_budget": round((point - excluded_refs) / (U.sum() + excluded_refs), 4),
+                "sign_survives_both_ends": bool(
+                    (point + excluded_refs) * (point - excluded_refs) > 0)}
+
     better = [b for b, c in contrasts.items() if c["gap_at_15"] > 0 and c["excludes_zero"]]
     report = {
         "provenance": stamp(__file__),
@@ -134,6 +169,10 @@ def main() -> int:
         "budgets_built": sorted(orders),
         "budgets_skipped_as_partial": {str(b): n for b, n in sorted(partial.items())},
         "substrates_each_complete_pool_holds": full,
+        "substrates_declared_absent_by_budget": {str(b): v for b, v in sorted(declared.items()) if v},
+        "most_a_pool_may_declare_absent_and_still_count": MAX_DECLARED_ABSENT,
+        "substrates_outside_the_paired_population": len(excluded),
+        "references_they_carry": excluded_refs,
         "deployed_budget": DEPLOYED,
         "pool_cap": CAP,
         "aggregation": "micro, ratio of sums",
@@ -165,6 +204,11 @@ def main() -> int:
         print(f"{budget:6d}  {row['mean_candidates']:9.1f}  "
               f"{row['recall_micro']['5']:.4f} {row['recall_micro']['15']:.4f} "
               f"{row['recall_micro']['30']:.4f}{tail}{mark}")
+    if excluded:
+        print(f"\n{len(excluded)} substrate(s) carrying {excluded_refs} references sit outside the "
+              f"paired population because a budget could not finish them; every contrast above "
+              f"keeps its sign at both extremes of what they could have contributed: "
+              f"{all(c.get('if_the_excluded_substrates_all_went_one_way', {}).get('sign_survives_both_ends', True) for c in contrasts.values())}")
     print(f"\nbudgets beating the deployed one at 15: {better or 'none'}")
     print("wrote results/budget_curve.json")
     return 0
