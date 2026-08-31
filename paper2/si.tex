@@ -682,6 +682,14 @@ Of the \numTypeoverlapBanklacks{} references whose type the bank does not hold,
 \numTypeoverlapMinerssharePct{} the miner's. That is the containment the manuscript's claim needs,
 measured rather than argued from magnitudes.
 
+The definition of a type is itself a choice, and this is the claim that reaches the Conclusions, so
+it is varied the way the singleton tail is varied in Section~\ref{MS-sec:results}. Under the
+\numTypeoverlapGranularitiesWord{} definitions the share is
+\numTypeoverlapCorpussharePct{} at the exact multiset,
+\numTypeoverlapCoarsesharePct{} with counts dropped, and does not fall below
+\numTypeoverlapSharemin{} at either coarser level, where a type no longer determines a product.
+The conclusion does not turn on the granularity.
+
 Two cautions belong with it. A type absent from the training annotation is absent from this
 corpus's training half and not from chemistry; that is exactly the sense in which the claim is
 about corpora and not about metabolism.
@@ -825,12 +833,19 @@ the site a prediction names and the change it claims to explain, not agreement w
 experimentally determined site of metabolism, for which this corpus has no labels.
 
 The figure needs a floor, because both sets are subsets of the same molecule and on a small
-substrate with a large centre they would meet whatever the rule did. Drawing a set of atoms of the
-same size uniformly from the same substrate touches the centre \numSiteNullPct{} of the time, so
-the reported sites exceed chance by \numSiteMarginPct{}. The null is conservative: a real
-template match is connected and a connected draw would land on the centre more often than a
-uniform one, so the true margin is narrower than this. The honest reading is that the localisation
-carries real information and that a raw agreement rate near nine in ten is not the size of it.
+substrate with a large centre they would meet whatever the rule did. Two floors are measured. A
+set of atoms of the same size drawn uniformly touches the centre \numSiteNullPct{} of the time, so
+the reported sites exceed it by \numSiteMarginPct{}. That null is the wrong shape: a template match
+is a connected fragment, not a scatter. Growing a fragment of the same size along bonds from a
+random seed atom touches the centre \numSiteConnectednullPct{} of the time, and the reported sites
+exceed that by \numSiteConnectedmarginPct{}.
+
+The connected null is the lower of the two, which is the opposite of what we expected and worth
+saying: a scattered set of atoms reaches into more of the molecule than a fragment clustered in one
+place, so it meets a given centre more often. Against the null the comparison actually needs, the
+margin is wider than the uniform one suggested. The reading remains that a raw agreement rate near
+nine in ten is not the size of the effect; the size is the margin, and it is
+\numSiteConnectedmargin{}.
 
 \section{What a single step is}
 \label{sec:si-singlestep}

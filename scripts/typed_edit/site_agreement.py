@@ -175,20 +175,39 @@ def main() -> int:
 
     # A site that touches the centre is only evidence if a site chosen at random would not. Both
     # sets are subsets of the same molecule, and on a small substrate with a large centre they
-    # would intersect whatever the rule did. The null draws a set of the same size uniformly from
-    # the same atoms, which is conservative: it ignores that a template's match is connected and a
-    # connected draw would land on the centre more often than this does.
+    # would intersect whatever the rule did.
+    #
+    # Two nulls, because the first is the wrong one and saying so is not the same as fixing it. A
+    # uniform draw ignores that a template's match is a connected fragment, and a connected draw
+    # lands on the centre more often, so the uniform margin flatters the result. The connected
+    # draw grows a fragment from a random seed atom along bonds, which is the shape a match has.
     rng = random.Random(0)
-    draws, null_hits = 0, 0
+    draws, uniform_hits, connected_hits = 0, 0, 0
     for entry in per_substrate:
+        mol = Chem.MolFromSmiles(entry["substrate"])
+        neighbours = ([[nb.GetIdx() for nb in a.GetNeighbors()] for a in mol.GetAtoms()]
+                      if mol is not None else None)
         for row in entry["matches"]:
             n_atoms, size = row["n_atoms"], len(row["fired"])
             centre = set(row["centre"])
+            want = min(size, n_atoms)
             for _ in range(NULL_DRAWS):
                 draws += 1
-                pick = set(rng.sample(range(n_atoms), min(size, n_atoms)))
-                null_hits += bool(pick & centre)
-    null_rate = null_hits / max(draws, 1)
+                uniform_hits += bool(set(rng.sample(range(n_atoms), want)) & centre)
+                if neighbours is None:
+                    continue
+                # grow a connected fragment of the same size from a random atom
+                start = rng.randrange(n_atoms)
+                grown, frontier = {start}, list(neighbours[start])
+                while len(grown) < want and frontier:
+                    pick = frontier.pop(rng.randrange(len(frontier)))
+                    if pick in grown:
+                        continue
+                    grown.add(pick)
+                    frontier.extend(n for n in neighbours[pick] if n not in grown)
+                connected_hits += bool(grown & centre)
+    null_rate = uniform_hits / max(draws, 1)
+    connected_rate = connected_hits / max(draws, 1)
 
     scored = max(tally["scored"], 1)
     observed = tally["centre_hit"] / scored
@@ -209,10 +228,17 @@ def main() -> int:
             "draws_per_match": NULL_DRAWS,
             "seed": 0,
             "definition": ("a set of atoms of the same size drawn uniformly from the same "
-                           "substrate, which ignores that a real template match is connected and "
-                           "therefore understates what chance alone would achieve"),
+                           "substrate; it ignores that a real template match is connected and so "
+                           "understates what chance alone achieves"),
             "share_touching_the_centre": round(null_rate, 4),
             "observed_minus_null": round(observed - null_rate, 4),
+        },
+        "connected_null": {
+            "definition": ("a connected fragment of the same size grown along bonds from a random "
+                           "seed atom, which is the shape a template match has and the null the "
+                           "comparison actually needs"),
+            "share_touching_the_centre": round(connected_rate, 4),
+            "observed_minus_null": round(observed - connected_rate, 4),
         },
         "reading": (
             "A correct structure reached from the wrong atoms is a prediction whose explanation is "
@@ -229,6 +255,8 @@ def main() -> int:
           f"{report['share_of_scored_where_the_reported_site_lies_wholly_inside_it']:.4f}")
     print(f"  same-size random atoms would touch: {null_rate:.4f} "
           f"(observed exceeds it by {observed - null_rate:+.4f})")
+    print(f"  same-size connected fragment      : {connected_rate:.4f} "
+          f"(observed exceeds it by {observed - connected_rate:+.4f})")
     for key in ("centre_not_derivable", "no_site_reported", "reference_structure_absent",
                 "substrate_failed"):
         if tally[key]:

@@ -187,8 +187,8 @@ published with \citep{cormack2009}, and it is swept rather than merely disclosed
 
 The change was registered as prediction P1, with a threshold of $+\numHSevenThreshold$ fixed
 before it was checked, and evaluated on a validation draw where the fusion had not been selected:
-$+\numHSevenDiff$ of recall, 95\% CI $[+\numHSevenLo, +\numHSevenHi]$. On the pool the deployed
-system ranks, which is capped, the same contrast is $+\numHSevenDeployed$
+$+\numHSevenDiff$ of recall, 95\% CI $[+\numHSevenLo, +\numHSevenHi]$. On the capped validation
+pool the deployed system ranks, the same contrast is $+\numHSevenDeployed$
 (Table~\ref{SI-tab:si-ranking}): the cap and the fusion recover overlapping ground, so applying
 both gains less than the sum of the two. The Supporting Information gives the two figures on both
 populations with their intervals, and the cost of having selected the fusion rule on one of
@@ -261,19 +261,20 @@ SMILES equality, the full InChIKey, its stereochemistry-blind first block, Tanim
 one over Morgan fingerprints, and a tautomer-aware key that canonicalises tautomers on both
 sides. The last is the
 default, because the references neither carry stereochemistry nor distinguish tautomers, and
-because standard identifiers normalise only a subset of tautomers \citep{Dhaked_2020}. All five
+because standard identifiers normalise only a subset of tautomers \citep{Dhaked_2020}. That the
+annotation carries no stereochemistry is also a limit on what any of these systems can be asked
+for: nothing in this pipeline is stereochemistry-aware, so sulfoxidation, epoxide hydrolysis and
+most conjugation are predicted as constitutions and not as configurations. All five
 are reported for every comparison.
 
 A third choice sits behind both: how the substrate itself is drawn. Templates are matched
 against the structure the corpus stores, and that corpus draws amides as imidic acids, so the
-choice is not neutral. It is a deployment question and not only an evaluation one, because a user
-submits the drawing a chemist would make. The worked example shows the size of it on one molecule:
-given gemcitabine as a chemist draws it, the interactive mode returns
+choice is not neutral. It is a deployment question and not only an evaluation one, because a user submits the drawing a
+chemist would make: given gemcitabine as a chemist draws it, the interactive mode returns
 \numCaseInterdrawnCandidates{} candidates and none of the four annotated metabolites, against one
-of four on the stored drawing. Pooled over the comparison set the effect is small, because the standardiser changes only
-\numDialcondChanged{} of \numDialcondSubstrates{} substrates and the rest contribute zero. On the
-substrates it changes it is \numDialcondConditional{} at a budget of 15 against
-\numDialcondPooled{} pooled, nearly three times as large. Rebuilding both GRAIL arms with every substrate redrawn by the
+of four on the stored drawing. Pooled over the comparison set the effect is small because the
+standardiser changes only \numDialcondChanged{} of \numDialcondSubstrates{} substrates; on those it
+changes it is \numDialcondConditional{} at a budget of 15 against \numDialcondPooled{} pooled. Rebuilding both GRAIL arms with every substrate redrawn by the
 standardiser moves \numDsweepMoved{} of \numDsweepCells{} arm-against-comparator verdicts, none
 of them a lead claimed here, and the coverage ceiling on that population by
 $\numDsweepCeilingdiff$ with the interval covering zero.
@@ -479,7 +480,7 @@ $k=5$ the gain is $+\numSelVspriorKFive$ and the interval covers zero. The subst
 of stage one is therefore worth a small and budget-dependent amount over a frequency table
 restricted to the same rules, and we report it as such rather than as the stage's justification.
 
-\subsection{A ranking that needs no training}
+\subsection{A ranking baseline that needs no training}
 
 Metabolism usually leaves the scaffold recognisable. Many metabolites differ from their parent
 by an added oxygen, a cleaved bond or a conjugate, so they stay close to what they came from, and
@@ -577,7 +578,7 @@ drawing a chemist would use, the deamination is found instead by a curated templ
 ranks lower. Which templates carry a molecule is itself a function of how the molecule is drawn,
 and Figure~\ref{fig:case} shows both.
 
-\subsection{Where the design came from}
+\subsection{Which design choices were selected on which population}
 
 Every deployed choice is a registered hypothesis with a threshold and a falsification condition,
 tested where it was not selected (Table~\ref{tab:hyp}). Ten of the sixteen registered are checked
@@ -805,10 +806,11 @@ worked example come from templates that small. A template of that size is a patt
 mechanism, so for those the site discrimination comes from the learned stages and not from the
 rule, and half of what a reader of the example sees is attributed to one. That second half is a claim and is measured: of
 \numSiteScored{} correctly predicted metabolites, the site reported touches the atoms that
-actually differ from the substrate in \numSiteTouchingPct{}, against \numSiteNullPct{} for a set
-of atoms of the same size drawn at random from the same molecule, and lies wholly inside the
-change in \numSiteInsidePct{} (Section~\ref{SI-sec:si-site}). An agreement rate near nine in ten
-is not the size of the effect; the margin over chance is. The whole output is ranked, whereas the incumbent ranks part of
+actually differ from the substrate in \numSiteTouchingPct{}, against \numSiteConnectednullPct{}
+for a connected fragment of the same size grown at random from the same molecule, and lies wholly
+inside the change in \numSiteInsidePct{} (Section~\ref{SI-sec:si-site}). An agreement rate near
+nine in ten is not the size of the effect; the margin over that null is, and it is
+\numSiteConnectedmargin{}. The whole output is ranked, whereas the incumbent ranks part of
 its output and leaves the remainder in file order. And every evaluation choice is declared with
 every cell of the resulting grid reported, which is what makes the comparison independently
 reproducible.
@@ -841,9 +843,9 @@ Extending coverage therefore requires new reaction corpora, and the census narro
 synthetic corpora are excluded by measurement, leaving enzymatic and regulatory sources. Metabolite identifications from radiolabelled human ADME studies
 reported in regulatory submissions are human \emph{in vivo} data on exactly the population
 predicted here, have been used to benchmark this class of tool \citep{Gao_2026}, and are, to
-our knowledge, not systematically mined as a source of rules. The bound applies to any
-predictor trained on a comparable corpus, including sequence-to-sequence systems, which do not
-report it.
+our knowledge, not systematically mined as a source of rules. Whether the same bound binds a predictor that
+applies no templates at all is not measured here; what is measured is that the chemistry is absent
+from the corpus, which is a property of the training data rather than of the method reading it.
 
 \section{Conclusions}
 \label{sec:conclusions}
@@ -907,11 +909,6 @@ and not a random quarter of it. It is selected in two directions: a substrate en
 removes the cases where a comparator produced nothing and a bank this size should win most
 clearly, while two comparators were built on sources this corpus is assembled from, which favours
 them. Neither is corrected and they do not cancel.
-
-Nothing in this pipeline is stereochemistry-aware: the standardiser strips it and the default
-criterion is blind to it. That is consistent with an annotation carrying none and is a real limit,
-since epoxide hydrolysis, sulfoxidation and most conjugative chemistry produce stereoisomers this
-system neither distinguishes nor ranks.
 
 No result here is external. Every figure is measured on one corpus assembled from four sources, of
 which the only published reference set is one of the four, so a held-out split of it is not an

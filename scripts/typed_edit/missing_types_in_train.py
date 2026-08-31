@@ -26,6 +26,7 @@ import multiprocessing
 import os
 import sys
 import time
+from collections import Counter
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -52,6 +53,30 @@ def _worker(pair):
     except Exception:
         return None
     return json.dumps(t, sort_keys=True) if t is not None else None
+
+
+# The same coarsenings the novel-type census varies its tail claim over. The containment claim is
+# the one that reaches the Conclusions, so it is varied the same way rather than being reported at
+# one definition and defended by a neighbour's sensitivity analysis.
+def _coarsenings():
+    # A type survives a JSON round trip as nested lists, so tuples have to be rebuilt all the way
+    # down before anything can go in a set.
+    def deep(x):
+        return tuple(deep(i) for i in x) if isinstance(x, list) else x
+
+    def bond_classes(ty):
+        return frozenset(deep(e[0]) for e in ty)
+
+    def elements_only(ty):
+        return frozenset(deep(e[0][0]) for e in ty)
+
+    return [
+        ("exact multiset, with counts", lambda ty: json.dumps(ty, sort_keys=True)),
+        ("set of changed-bond classes, counts dropped",
+         lambda ty: str(sorted(bond_classes(ty)))),
+        ("element pairs involved", lambda ty: str(sorted(elements_only(ty)))),
+        ("number of bonds changed", lambda ty: str(sum(e[1] for e in ty))),
+    ]
 
 
 def annotated_pairs(split: str, limit: int | None):
@@ -166,6 +191,34 @@ def main() -> int:
             cells["not in the bank, nor in training"] += count
     outside = cells["not in the bank, in training"] + cells["not in the bank, nor in training"]
 
+    # The same four cells under each coarsening. A type key is a JSON dump of the structure, so
+    # the structure is recovered and re-keyed rather than re-typed.
+    by_granularity = {}
+    for name, coarsen in _coarsenings():
+        def recoded(counts):
+            out = Counter()
+            for key, count in counts.items():
+                try:
+                    out[coarsen(json.loads(key))] += count
+                except Exception:
+                    continue
+            return out
+
+        bank_c = {coarsen(json.loads(k)) for k in bank_types}
+        train_c = set(recoded(train["types"]))
+        test_c = recoded(test["types"])
+        lacks = sum(c for k, c in test_c.items() if k not in bank_c)
+        lacks_both = sum(c for k, c in test_c.items()
+                         if k not in bank_c and k not in train_c)
+        by_granularity[name] = {
+            "distinct_types_in_test": len(test_c),
+            "references_whose_type_the_bank_lacks": lacks,
+            "of_those_the_corpus_lacks_too": lacks_both,
+            "share": round(lacks_both / max(lacks, 1), 4) if lacks else None,
+            "determines_a_product": name in ("exact multiset, with counts",
+                                             "set of changed-bond classes, counts dropped"),
+        }
+
     report = {
         "provenance": stamp(__file__),
         "question": ("whether the transformation types of the test annotation occur in the "
@@ -189,6 +242,7 @@ def main() -> int:
         "of_those_the_corpus_lacks_too": cells["not in the bank, nor in training"],
         "share_of_the_bank_s_type_gap_the_corpus_also_lacks": round(
             cells["not in the bank, nor in training"] / max(outside, 1), 4),
+        "by_granularity": by_granularity,
         "reading": (
             "A test reference whose type occurs in the training annotation is chemistry the "
             "corpus contains, so a bank that misses it misses something the corpus could have "
@@ -211,6 +265,12 @@ def main() -> int:
     print(f"  of the {outside} whose type the bank lacks, "
           f"{cells['not in the bank, nor in training']} are absent from training too "
           f"({report['share_of_the_bank_s_type_gap_the_corpus_also_lacks']:.1%})")
+    print("\nthe same share under each definition of a type:")
+    for name, row in by_granularity.items():
+        mark = "" if row["determines_a_product"] else "   (does not determine a product)"
+        share = "n/a" if row["share"] is None else f"{row['share']:.1%}"
+        print(f"  {name:44s} {row['of_those_the_corpus_lacks_too']:5d} of "
+              f"{row['references_whose_type_the_bank_lacks']:5d}  {share}{mark}")
     print(f"wrote {args.out}")
     return 0
 

@@ -227,6 +227,12 @@ def build():
     n["site.inside"] = sag["share_of_scored_where_the_reported_site_lies_wholly_inside_it"]
     n["site.null"] = sag["null"]["share_touching_the_centre"]
     n["site.margin"] = sag["null"]["observed_minus_null"]
+    # The null the comparison actually needs, since a template match is a connected fragment. It
+    # is lower than the uniform one, not higher: a scattered set of atoms touches a given centre
+    # more often than a fragment clustered in one place, so the caution the manuscript printed
+    # about this had the sign the wrong way round.
+    n["site.connectednull"] = sag["connected_null"]["share_touching_the_centre"]
+    n["site.connectedmargin"] = sag["connected_null"]["observed_minus_null"]
 
     # what the rule budget buys on validation, so the deployed value is a chosen point
     bc = art("budget_curve.json")
@@ -367,6 +373,18 @@ def build():
     n["typeoverlap.corpusshare"] = mtt["share_of_the_bank_s_type_gap_the_corpus_also_lacks"]
     n["typeoverlap.minerslost"] = (mtt["references_whose_type_the_bank_lacks"]
                                    - mtt["of_those_the_corpus_lacks_too"])
+    # The same share under each definition of a type, because this is the claim that reaches the
+    # Conclusions and it was reported at one granularity while its neighbour was varied over four.
+    _bg = mtt["by_granularity"]
+    n["typeoverlap.granularities"] = len(_bg)
+    _determining = [v["share"] for v in _bg.values()
+                    if v["determines_a_product"] and v["share"] is not None]
+    _all = [v["share"] for v in _bg.values() if v["share"] is not None]
+    n["typeoverlap.sharemin"] = min(_all)
+    n["typeoverlap.sharemax"] = max(_all)
+    n["typeoverlap.determiningmin"] = min(_determining)
+    n["typeoverlap.coarseshare"] = _bg[
+        "set of changed-bond classes, counts dropped"]["share"]
 
     # The fusion constant, swept. It was left at the published default and the paper disclosed
     # that; a sweep says whether the disclosure costs anything.
