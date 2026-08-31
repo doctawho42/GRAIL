@@ -37,6 +37,13 @@ from _provenance import COSMETIC, CURRENT, infer, verify  # noqa: E402
 OK = (CURRENT, COSMETIC)
 
 TE = "scripts/typed_edit"
+# Three artifacts were removed rather than re-run, and what replaced each is named here so the
+# removal is a record and not a gap. results/vs_metatox.json and results/vs_metatox_pools.json
+# were an earlier route to the comparison the paper reports; every figure now comes from
+# results/widepools_implicit/ and results/deployment_table.json, and the one audit that still read
+# the older pair reads the live pools instead. results/bank_without_selection_full.json was scored
+# with a filter checkpoint the system does not deploy and no figure in either manuscript is drawn
+# from it. Keeping a stale pin would have been a gate that reports currency it cannot check.
 PINNED = {
     # the type vocabulary the H1 stratum and the appendix's counts are keyed to
     "results/typed_edit_type_curve.json": f"{TE}/type_curve.py",
@@ -53,16 +60,12 @@ PINNED = {
     # the emission comparison, its grid, and the freeze itself
     "results/emission_leaderboard.json": f"{TE}/emission_leaderboard.py",
     "results/emission_grid.json": f"{TE}/emission_grid.py",
-    # the pool the target function is derived from, measured on the split
-    "results/bank_without_selection_full.json": "scripts/bank_without_selection.py",
     # the comparison that decides the release, and the pools it wrote
     "results/aggregation_ablation.json": f"{TE}/aggregation_ablation.py",
     "results/biotransformer_arm.json": f"{TE}/biotransformer_arm.py",
     "results/metapredictor_drawing.json": f"{TE}/metapredictor_drawing.py",
     "results/metxbiodb_drop_set.json": f"{TE}/metxbiodb_drop_set.py",
     "results/population_definition.json": f"{TE}/population_definition.py",
-    "results/vs_metatox.json": f"{TE}/vs_metatox.py",
-    "results/vs_metatox_pools.json": f"{TE}/vs_metatox.py",
     # the negative result that closes the cheap route to the between-group headroom
     "results/group_decode.json": f"{TE}/group_decode.py",
     # what the matching's tautomer canonicalisation costs, measured on the data

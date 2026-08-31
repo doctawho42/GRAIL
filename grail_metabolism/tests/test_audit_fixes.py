@@ -1087,9 +1087,12 @@ def test_every_script_takes_its_checkpoints_from_the_deployed_run():
     # Scripts that train a checkpoint, or launch training elsewhere, name a destination rather
     # than an inference default and are not held to it.
     TRAINERS = {"modal_m2.py", "train_filter_subset.py"}
+    # This one's subject is the rule prior, so it needs the generator that carries one, and it
+    # asserts as much at load. Naming the deployed generator there would break it.
+    PRIOR_ARM = {"bank_without_selection.py"}
     wrong = []
     for path in sorted((root / "scripts").rglob("*.py")):
-        if path.name in TRAINERS:
+        if path.name in TRAINERS or path.name in PRIOR_ARM:
             continue
         for n, line in enumerate(path.read_text().splitlines(), 1):
             for match in pattern.findall(line):

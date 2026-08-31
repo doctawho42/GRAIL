@@ -160,7 +160,10 @@ def recall_at(pred_keys, ref_keys, k):
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--gen-ckpt", default=str(ROOT / "artifacts/full5000_implicit/checkpoints/generator.pt"))
+    # This script's subject is the frequency prior, so it needs the generator that carries one.
+    # That is the priors run and not the deployed one, and the assertion below refuses anything
+    # else. Every other analysis here loads the deployed pair; this is the stated exception.
+    ap.add_argument("--gen-ckpt", default=str(ROOT / "artifacts/full5000_priors/checkpoints/generator.pt"))
     ap.add_argument("--filter-ckpt", default=str(ROOT / "artifacts/full5000_implicit/checkpoints/filter.pt"))
     ap.add_argument("--max-substrates", type=int, default=250)
     ap.add_argument("--sampling-seed", type=int, default=42)

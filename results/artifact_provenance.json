@@ -7,14 +7,16 @@
    "status": "current"
   },
   {
-   "artifact": "results/bank_without_selection_full.json",
-   "script": "bank_without_selection.py",
-   "how": "source at a5297aa72deb",
-   "dirty_when_written": true,
-   "status": "producer_changed",
-   "detail": "producer was 20bae6e867c6, is now 97c1af0850da",
-   "diff_recovered_by": "source at a5297aa72deb",
-   "diff": "--- bank_without_selection.py (as recorded)\n+++ bank_without_selection.py (now)\n@@ -161,6 +161,6 @@\n def main() -> int:\n     ap = argparse.ArgumentParser()\n-    ap.add_argument(\"--gen-ckpt\", default=str(ROOT / \"artifacts/full5000_priors/checkpoints/generator.pt\"))\n-    ap.add_argument(\"--filter-ckpt\", default=str(ROOT / \"artifacts/full5000_single/checkpoints/filter.pt\"))\n+    ap.add_argument(\"--gen-ckpt\", default=str(ROOT / \"artifacts/full5000_implicit/checkpoints/generator.pt\"))\n+    ap.add_argument(\"--filter-ckpt\", default=str(ROOT / \"artifacts/full5000_implicit/checkpoints/filter.pt\"))\n     ap.add_argument(\"--max-substrates\", type=int, default=250)\n     ap.add_argument(\"--sampling-seed\", type=int, default=42)"
+   "artifact": "results/aggregation_ablation.json",
+   "script": "aggregation_ablation.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
+   "artifact": "results/biotransformer_arm.json",
+   "script": "biotransformer_arm.py",
+   "how": "recorded source digest",
+   "status": "current"
   },
   {
    "artifact": "results/budget_curve.json",
@@ -121,10 +123,7 @@
    "artifact": "results/deployment_table.json",
    "script": "deployment_table.py",
    "how": "recorded source digest",
-   "status": "producer_changed",
-   "detail": "producer was 60796e35cb99, is now 3f2291e39c86",
-   "diff_recovered_by": "the tree was dirty when written, so the source at 0ca475b61b35 is the nearest committed version and not exactly what ran",
-   "diff": "--- deployment_table.py (as recorded)\n+++ deployment_table.py (now)\n@@ -44,9 +44,16 @@\n     \"sygma\": (\"results/sygma_fulltest_predictions.json\", None),\n     \"metapredictor\": (\"artifacts/tier2_1170/metapredictor_preds.json\", None),\n+    # BioTransformer entered the comparison after the multiplicity family was declared. It is a\n+    # column here because the rule that kept it out -- that an arm supplies ranked per-substrate\n+    # predictions -- does not distinguish it from MetaPredictor, whose list is also unranked and\n+    # shorter than the budget on nearly every substrate. The declared family in multiplicity.py\n+    # names its three comparators explicitly and is unchanged by this addition, so the corrected\n+    # verdicts the paper reports are still computed over the family that was declared.\n+    \"biotransformer\": (\"results/biotransformer_allhuman_one_step_preds.json\", None),\n }\n \n \n def load(spec):\n-    pools, refs, tk = {}, {}, set()\n+    pools, refs, tk, ck = {}, {}, set(), {}\n     for f in sorted(glob.glob(spec)) or [spec]:\n         d = json.loads(Path(f).read_text())\n@@ -54,5 +61,10 @@\n         if d.get(\"top_k\"):\n             tk.add(d[\"top_k\"])\n-    return pools, refs, (sorted(tk) or [None])[0]\n+        # Which checkpoints wrote the pool, where the pool says. The earlier shards say nothing,\n+        # and the consequence of that silence was an analysis run against the wrong generator for\n+        # an afternoon before a number disagreed with another number.\n+        if d.get(\"checkpoints\"):\n+            ck = d[\"checkpoints\"]\n+    return pools, refs, (sorted(tk) or [None])[0], (ck or None)\n \n \n@@ -66,6 +78,6 @@\n     from bank_without_selection import _dedup\n \n-    big, refs_b, tk_b = load(args.whole_bank)\n-    small, refs_s, tk_s = load(args.trained)\n+    big, refs_b, tk_b, ck_b = load(args.whole_bank)\n+    small, refs_s, tk_s, ck_s = load(args.trained)\n     refs = {**refs_b, **refs_s}\n  ... diff truncated"
+   "status": "current"
   },
   {
    "artifact": "results/dialect_census.json",
@@ -320,6 +319,18 @@
    "status": "current"
   },
   {
+   "artifact": "results/metapredictor_drawing.json",
+   "script": "metapredictor_drawing.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
+   "artifact": "results/metxbiodb_drop_set.json",
+   "script": "metxbiodb_drop_set.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
    "artifact": "results/mining_rarefaction.json",
    "script": "mining_rarefaction.py",
    "how": "recorded source digest",
@@ -381,6 +392,12 @@
    "status": "current"
   },
   {
+   "artifact": "results/population_definition.json",
+   "script": "population_definition.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
    "artifact": "results/precision_table.json",
    "script": "precision_table.py",
    "how": "recorded source digest",
@@ -434,10 +451,7 @@
    "artifact": "results/selection_pools_deployed.json",
    "script": "selection_ablation_deployed.py",
    "how": "recorded source digest",
-   "status": "producer_changed",
-   "detail": "producer was 9c9726575c5a, is now 52908cbfbf31",
-   "diff_recovered_by": "source at 47f302d79417",
-   "diff": "--- selection_ablation_deployed.py (as recorded)\n+++ selection_ablation_deployed.py (now)\n@@ -45,5 +45,5 @@\n     ap = argparse.ArgumentParser()\n     ap.add_argument(\"--gen-ckpt\", default=str(ROOT / \"artifacts/full5000_implicit/checkpoints/generator.pt\"))\n-    ap.add_argument(\"--filter-ckpt\", default=str(ROOT / \"artifacts/full5000_priors/checkpoints/filter.pt\"))\n+    ap.add_argument(\"--filter-ckpt\", default=str(ROOT / \"artifacts/full5000_implicit/checkpoints/filter.pt\"))\n     ap.add_argument(\"--arms\", nargs=\"+\",\n                     default=[\"prior_applicable\", \"random_applicable\", \"random\"])"
+   "status": "current"
   },
   {
    "artifact": "results/similarity_baseline.json",
@@ -545,36 +559,18 @@
    "diff": "--- build_val_pools.py (as recorded)\n+++ build_val_pools.py (now)\n@@ -103,5 +103,5 @@\n                     help=\"comma-separated population indices the merge may lack\")\n     ap.add_argument(\"--gen-ckpt\", default=str(ROOT / \"artifacts/full5000_implicit/checkpoints/generator.pt\"))\n-    ap.add_argument(\"--filter-ckpt\", default=str(ROOT / \"artifacts/full5000_priors/checkpoints/filter.pt\"))\n+    ap.add_argument(\"--filter-ckpt\", default=str(ROOT / \"artifacts/full5000_implicit/checkpoints/filter.pt\"))\n     ap.add_argument(\"--out\", default=str(ROOT / \"results\" / \"val_pools.json\"))\n     ap.add_argument(\"--standardise\", choices=(\"every-product\", \"survivors\"),\n@@ -111,4 +111,9 @@\n                          \"canonical form during enumeration and standardise only the candidates \"\n                          \"that survive the H9 cap, which is where the filter sees them.\")\n+    ap.add_argument(\"--tautomer-budget\", type=int, default=0,\n+                    help=\"H15: standardise the survivors with a private enumerator at this \"\n+                         \"budget. 0 keeps the shipped 1000. The matching key never uses it: \"\n+                         \"_tautomer_inchikey and this share preparation's cache and its global \"\n+                         \"enumerator, so lowering that would move the keys, which H15 forbids.\")\n     ap.add_argument(\"--cap\", type=int, default=100,\n                     help=\"the H9 cap, applied before the filter because the generator score is \"\n@@ -138,6 +143,49 @@\n     from grail_metabolism.utils.preparation import _standardize_smiles_cached\n \n+    def make_bounded_standardiser(budget):\n+        \"\"\"standardize_mol's pipeline with an enumerator of its own.\n+\n+        preparation's `_TAUTOMER_ENUMERATOR` is a module singleton and `_standardize_smiles_cached`\n+        memoises on the SMILES alone, so lowering the budget there would silently re-key every\n+        match: `_tautomer_inchikey` calls the same cached function. This keeps a private\n+        enumerator and a private cache, and the global pair is left exactly as it ships.\n+        \"\"\"\n+        from functools import lru_cache\n+\n+        from rdkit import Chem\n+        from rdkit.Chem.MolStandardize import rdMolStandardize\n+\n+        enum = rdMolStandardize.TautomerEnumerator()\n+        enum.SetMaxTautomers(budget)\n+        enum.SetMaxTransforms(budget)\n+        uncharger = rdMolStandardize.Uncharger()\n+\n  ... diff truncated"
   },
   {
-   "artifact": "results/vs_metatox.json",
-   "script": "vs_metatox.py",
-   "how": "recorded source digest",
-   "status": "producer_changed",
-   "detail": "producer was 5ec14bf59225, is now 3981c1b019ac",
-   "diff_recovered_by": "the tree was dirty when written, so the source at da7879e345be is the nearest committed version and not exactly what ran",
-   "diff": "--- vs_metatox.py (as recorded)\n+++ vs_metatox.py (now)\n@@ -16,7 +16,15 @@\n is itself a selector, ranked by filter times generator.\n \n-The gate is the population. The MetaTox recall this reproduces has to match\n-`results/four_method_291.json` at every budget, or this is a different set of substrates or a\n-different matcher and the comparison means nothing.\n+The gate is the population AND the aggregation. The MetaTox recall this reproduces has to match\n+`results/four_method_291.json` at every budget, or this is a different set of substrates, a\n+different matcher, or a different way of averaging. A first run failed it by exactly that last\n+route: it averaged recall per substrate where the committed table takes a ratio of sums, and the\n+two differ most where references are unevenly spread. Both are computed here and the micro one\n+is gated.\n+\n+The ranked pools are written out. Building them costs eight hours, and a metric that has to\n+change afterwards should not cost eight hours again -- the same pools are what the retention\n+decomposition and the score probe need on the wide pool, where the isomers the selector removes\n+still exist.\n \"\"\"\n from __future__ import annotations\n@@ -68,6 +76,6 @@\n def main() -> int:\n     ap = argparse.ArgumentParser()\n-    ap.add_argument(\"--gen-ckpt\", default=str(ROOT / \"artifacts/full5000_priors/checkpoints/generator.pt\"))\n-    ap.add_argument(\"--filter-ckpt\", default=str(ROOT / \"artifacts/full5000_single/checkpoints/filter.pt\"))\n+    ap.add_argument(\"--gen-ckpt\", default=str(ROOT / \"artifacts/full5000_implicit/checkpoints/generator.pt\"))\n+    ap.add_argument(\"--filter-ckpt\", default=str(ROOT / \"artifacts/full5000_implicit/checkpoints/filter.pt\"))\n     ap.add_argument(\"--threads\", type=int, default=4)\n     ap.add_argument(\"--limit\", type=int, default=0)\n@@ -105,16 +113,25 @@\n     rng = np.random.default_rng(SEED)\n     idx = rng.integers(0, len(subs), (N_BOOT, len(subs)))\n+    U = np.array([len(refs[s]) for s in subs], dtype=float)   # references per substrate\n+    denom = U[idx].sum(axis=1)\n     by_budget = {}\n     for b in BUDGETS:\n-        g = np.array([recall_at(ranked[s], refs[s], b) for s in subs])\n-        m = np.array([recall_at(mt[s], refs[s], b) for s in subs])\n-        d = g - m\n  ... diff truncated"
-  },
-  {
-   "artifact": "results/vs_metatox_pools.json",
-   "script": "vs_metatox.py",
-   "how": "recorded source digest",
-   "status": "producer_changed",
-   "detail": "producer was 5ec14bf59225, is now 3981c1b019ac",
-   "diff_recovered_by": "the tree was dirty when written, so the source at da7879e345be is the nearest committed version and not exactly what ran",
-   "diff": "--- vs_metatox.py (as recorded)\n+++ vs_metatox.py (now)\n@@ -16,7 +16,15 @@\n is itself a selector, ranked by filter times generator.\n \n-The gate is the population. The MetaTox recall this reproduces has to match\n-`results/four_method_291.json` at every budget, or this is a different set of substrates or a\n-different matcher and the comparison means nothing.\n+The gate is the population AND the aggregation. The MetaTox recall this reproduces has to match\n+`results/four_method_291.json` at every budget, or this is a different set of substrates, a\n+different matcher, or a different way of averaging. A first run failed it by exactly that last\n+route: it averaged recall per substrate where the committed table takes a ratio of sums, and the\n+two differ most where references are unevenly spread. Both are computed here and the micro one\n+is gated.\n+\n+The ranked pools are written out. Building them costs eight hours, and a metric that has to\n+change afterwards should not cost eight hours again -- the same pools are what the retention\n+decomposition and the score probe need on the wide pool, where the isomers the selector removes\n+still exist.\n \"\"\"\n from __future__ import annotations\n@@ -68,6 +76,6 @@\n def main() -> int:\n     ap = argparse.ArgumentParser()\n-    ap.add_argument(\"--gen-ckpt\", default=str(ROOT / \"artifacts/full5000_priors/checkpoints/generator.pt\"))\n-    ap.add_argument(\"--filter-ckpt\", default=str(ROOT / \"artifacts/full5000_single/checkpoints/filter.pt\"))\n+    ap.add_argument(\"--gen-ckpt\", default=str(ROOT / \"artifacts/full5000_implicit/checkpoints/generator.pt\"))\n+    ap.add_argument(\"--filter-ckpt\", default=str(ROOT / \"artifacts/full5000_implicit/checkpoints/filter.pt\"))\n     ap.add_argument(\"--threads\", type=int, default=4)\n     ap.add_argument(\"--limit\", type=int, default=0)\n@@ -105,16 +113,25 @@\n     rng = np.random.default_rng(SEED)\n     idx = rng.integers(0, len(subs), (N_BOOT, len(subs)))\n+    U = np.array([len(refs[s]) for s in subs], dtype=float)   # references per substrate\n+    denom = U[idx].sum(axis=1)\n     by_budget = {}\n     for b in BUDGETS:\n-        g = np.array([recall_at(ranked[s], refs[s], b) for s in subs])\n-        m = np.array([recall_at(mt[s], refs[s], b) for s in subs])\n-        d = g - m\n  ... diff truncated"
-  },
-  {
    "artifact": "results/wide_pool_analysis_implicit.json",
    "script": "wide_pool_analysis.py",
    "how": "recorded source digest",
    "status": "current"
   }
  ],
- "n_pinned": 90,
- "n_pinned_stale": 6,
+ "n_pinned": 92,
+ "n_pinned_stale": 1,
  "sweep": {
   "unstamped": 115,
-  "producer_changed": 40,
-  "current": 26,
+  "producer_changed": 39,
+  "current": 24,
   "producer_unknown": 27,
   "cosmetic_only": 8
  },
@@ -665,9 +661,9 @@
    "how": "source at cb1fa8a88a32",
    "dirty_when_written": true,
    "status": "producer_changed",
-   "detail": "producer was 4c47daaa3969, is now 97c1af0850da",
+   "detail": "producer was 4c47daaa3969, is now f780cfb7fcad",
    "diff_recovered_by": "source at cb1fa8a88a32",
-   "diff": "--- bank_without_selection.py (as recorded)\n+++ bank_without_selection.py (now)\n@@ -48,5 +48,18 @@\n \n N_BOOT, SEED = 10000, 0\n-CEILING_SUBSET = 0.7284  # measured on these same 245 from recall_factorization.json\n+def ceiling_subset(subs) -> dict:\n+    \"\"\"The committed ceiling restricted to exactly these substrates, both aggregations.\n+\n+    Read from the artifact rather than frozen here. A literal is a snapshot of the answer at the\n+    moment it was written; this one sat at 0.7284 through a correction that took the same quantity\n+    to 0.8007, and the value it reported went on looking committed.\n+    \"\"\"\n+    rows = {r[\"sub\"]: r for r in\n+            json.loads((ROOT / \"results/recall_factorization.json\").read_text())[\"per_substrate\"]}\n+    hit = [rows[s] for s in subs if s in rows]\n+    micro = sum(r[\"Cfull\"] for r in hit) / max(sum(r[\"U\"] for r in hit), 1)\n+    macro = sum(r[\"Cfull\"] / r[\"U\"] for r in hit if r[\"U\"]) / max(len(hit), 1)\n+    return {\"n_matched\": len(hit), \"micro\": round(micro, 4), \"macro\": round(macro, 4),\n+            \"source\": \"results/recall_factorization.json, restricted to these substrates\"}\n \n \n@@ -148,6 +161,6 @@\n def main() -> int:\n     ap = argparse.ArgumentParser()\n-    ap.add_argument(\"--gen-ckpt\", default=str(ROOT / \"artifacts/full5000_priors/checkpoints/generator.pt\"))\n-    ap.add_argument(\"--filter-ckpt\", default=str(ROOT / \"artifacts/full5000_single/checkpoints/filter.pt\"))\n+    ap.add_argument(\"--gen-ckpt\", default=str(ROOT / \"artifacts/full5000_implicit/checkpoints/generator.pt\"))\n+    ap.add_argument(\"--filter-ckpt\", default=str(ROOT / \"artifacts/full5000_implicit/checkpoints/filter.pt\"))\n     ap.add_argument(\"--max-substrates\", type=int, default=250)\n     ap.add_argument(\"--sampling-seed\", type=int, default=42)\n@@ -203,5 +216,5 @@\n                       \"filter_ckpt\": _rel(args.filter_ckpt)},\n            \"n\": len(items), \"match\": \"inchikey_tautomer\",\n-           \"ceiling_on_this_subset\": CEILING_SUBSET, \"arms\": {}}\n+           \"ceiling_on_this_subset\": ceiling_subset([s for s, _ in items]), \"arms\": {}}\n \n     rng = np.random.default_rng(SEED)"
+   "diff": "--- bank_without_selection.py (as recorded)\n+++ bank_without_selection.py (now)\n@@ -48,5 +48,18 @@\n \n N_BOOT, SEED = 10000, 0\n-CEILING_SUBSET = 0.7284  # measured on these same 245 from recall_factorization.json\n+def ceiling_subset(subs) -> dict:\n+    \"\"\"The committed ceiling restricted to exactly these substrates, both aggregations.\n+\n+    Read from the artifact rather than frozen here. A literal is a snapshot of the answer at the\n+    moment it was written; this one sat at 0.7284 through a correction that took the same quantity\n+    to 0.8007, and the value it reported went on looking committed.\n+    \"\"\"\n+    rows = {r[\"sub\"]: r for r in\n+            json.loads((ROOT / \"results/recall_factorization.json\").read_text())[\"per_substrate\"]}\n+    hit = [rows[s] for s in subs if s in rows]\n+    micro = sum(r[\"Cfull\"] for r in hit) / max(sum(r[\"U\"] for r in hit), 1)\n+    macro = sum(r[\"Cfull\"] / r[\"U\"] for r in hit if r[\"U\"]) / max(len(hit), 1)\n+    return {\"n_matched\": len(hit), \"micro\": round(micro, 4), \"macro\": round(macro, 4),\n+            \"source\": \"results/recall_factorization.json, restricted to these substrates\"}\n \n \n@@ -148,6 +161,9 @@\n def main() -> int:\n     ap = argparse.ArgumentParser()\n+    # This script's subject is the frequency prior, so it needs the generator that carries one.\n+    # That is the priors run and not the deployed one, and the assertion below refuses anything\n+    # else. Every other analysis here loads the deployed pair; this is the stated exception.\n     ap.add_argument(\"--gen-ckpt\", default=str(ROOT / \"artifacts/full5000_priors/checkpoints/generator.pt\"))\n-    ap.add_argument(\"--filter-ckpt\", default=str(ROOT / \"artifacts/full5000_single/checkpoints/filter.pt\"))\n+    ap.add_argument(\"--filter-ckpt\", default=str(ROOT / \"artifacts/full5000_implicit/checkpoints/filter.pt\"))\n     ap.add_argument(\"--max-substrates\", type=int, default=250)\n     ap.add_argument(\"--sampling-seed\", type=int, default=42)\n@@ -203,5 +219,5 @@\n                       \"filter_ckpt\": _rel(args.filter_ckpt)},\n            \"n\": len(items), \"match\": \"inchikey_tautomer\",\n-           \"ceiling_on_this_subset\": CEILING_SUBSET, \"arms\": {}}\n+           \"ceiling_on_this_subset\": ceiling_subset([s for s, _ in items]), \"arms\": {}}\n \n     rng = np.random.default_rng(SEED)"
   },
   {
    "artifact": "results/benchmark_report.json",
@@ -1212,15 +1208,6 @@
    "script": "pair_cost_benchmark.py",
    "status": "producer_unknown",
    "detail": "commit 003cfcee3da5 does not carry scripts/pair_cost_benchmark.py"
-  },
-  {
-   "artifact": "results/paper2_numbers.json",
-   "script": "paper2_numbers.py",
-   "how": "recorded source digest",
-   "status": "producer_changed",
-   "detail": "producer was b8824653d82d, is now 07485cd5c35d",
-   "diff_recovered_by": "the tree was dirty when written, so the source at 0ca475b61b35 is the nearest committed version and not exactly what ran",
-   "diff": "--- paper2_numbers.py (as recorded)\n+++ paper2_numbers.py (now)\n@@ -95,5 +95,6 @@\n \n     ARMS = {\"whole bank\": \"bank\", \"trained budget\": \"trained\", \"metatox\": \"metatox\",\n-            \"sygma\": \"sygma\", \"metapredictor\": \"metapredictor\"}\n+            \"sygma\": \"sygma\", \"metapredictor\": \"metapredictor\",\n+            \"biotransformer\": \"biotransformer\"}\n     for k, row in dep[\"recall_micro\"].items():\n         for arm, tag in ARMS.items():\n@@ -396,4 +397,124 @@\n         \"set of changed-bond classes, counts dropped\"][\"share\"]\n \n+    # Whether the unrecoverable selection that assembled the corpus removed a class of chemistry,\n+    # which would manufacture the shortfall above rather than measure it. Only one of the four\n+    # sources is on disk in full, so this is a bound from one source and is reported as such.\n+    drop = art(\"metxbiodb_drop_set.json\")\n+    n[\"metxdrop.pairs\"] = drop[\"source\"][\"distinct_pairs\"]\n+    n[\"metxdrop.inside\"] = drop[\"source\"][\"inside_the_corpus\"]\n+    n[\"metxdrop.dropped\"] = drop[\"source\"][\"dropped\"]\n+    n[\"metxdrop.typedkept\"] = drop[\"typed\"][\"kept\"]\n+    n[\"metxdrop.typeddropped\"] = drop[\"typed\"][\"dropped\"]\n+    n[\"metxdrop.tv\"] = drop[\"total_variation_distance\"]\n+    n[\"metxdrop.p\"] = drop[\"permutation\"][\"p_value\"]\n+    n[\"metxdrop.perm\"] = drop[\"permutation\"][\"n\"]\n+    n[\"metxdrop.droppedtypesabsent\"] = drop[\n+        \"dropped_references_whose_type_is_absent_from_the_kept_half\"]\n+    n[\"metxdrop.droppedtypesabsentshare\"] = drop[\"share_of_dropped_whose_type_the_kept_half_lacks\"]\n+    _rec = drop[\"recoverable_from_the_dropped_half\"]\n+    n[\"metxdrop.absentcell\"] = _rec[\"references_whose_type_neither_the_bank_nor_training_holds\"]\n+    n[\"metxdrop.recoverable\"] = _rec[\"of_those_whose_type_this_source_dropped\"]\n+    n[\"metxdrop.recoverableshare\"] = _rec[\"share\"]\n+    n[\"metxdrop.recoverablecoarse\"] = _rec[\n+        \"of_those_whose_type_this_source_dropped_counts_ignored\"]\n+    n[\"metxdrop.recoverablecoarseshare\"] = _rec[\"share_counts_ignored\"]\n+\n+    # The aggregation rule, swept. The manuscript named the violated independence assumption and\n+    # left it, on the ground that the released pools carry the aggregate and not its parts.\n+    agg = art(\"aggregation_ablation.json\")\n+    n[\"aggregation.joined\"] = agg[\"join\"][\"candidates_scored_by_both\"]\n  ... diff truncated"
   },
   {
    "artifact": "results/paper2_review.json",
