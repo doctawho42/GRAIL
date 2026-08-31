@@ -91,6 +91,33 @@ def sentences_opening_with_a_spelled_number(text: str) -> list:
     return [m.group(0).strip() for m in SENTENCE_OPENS_WITH_A_MACRO.finditer(text)]
 
 
+NEGATIVE_MACRO = re.compile(r"\\newcommand\{\\(num[A-Za-z]+)\}\{(-[\d.]+)\}")
+ANY_MACRO = re.compile(r"\\(num[A-Za-z]+)")
+
+
+def negative_macros_outside_math(text: str, negative: set) -> list:
+    """A macro whose value is negative sets a text hyphen unless it is in math mode.
+
+    Sixteen of them were, across the two documents. A hyphen is narrower than a minus, sits at a
+    different height, and is a legal line-break point, so one of them broke across a line and the
+    reader met a lone dash at the end of one line and a positive-looking number at the start of
+    the next. Nothing else catches it: the macro expands to a correct value and LaTeX is content.
+    """
+    # Math mode is tracked across lines and not within them: an interval written
+    # $[\\numFooLo, +\\numFooHi]$ routinely opens on one line and closes on the next, and a
+    # line-local check calls both halves text mode and reports two defects that are not there.
+    bad, in_math, line_no = [], False, 1
+    for n, line in enumerate(text.splitlines(), 1):
+        pos = 0
+        for tok in re.finditer(r"\$|\\(num[A-Za-z]+)", line):
+            if tok.group(0) == "$":
+                in_math = not in_math
+                continue
+            if not in_math and tok.group(1) in negative:
+                bad.append(f"line {n}: \\{tok.group(1)}")
+    return bad
+
+
 def main() -> int:
     # Every journal wrapper, not one named wrapper. The abstract lives in the wrapper, and when
     # the target journal changed the checker went on reading the old one: the new abstract, which
@@ -104,6 +131,10 @@ def main() -> int:
     body = TEX.read_text() + si.read_text() + "".join(w.read_text() for w in wrappers)
 
     lower_case_openings = sentences_opening_with_a_spelled_number(body)
+
+    negative = {m.group(1) for m in NEGATIVE_MACRO.finditer(NUMS.read_text())}
+    hyphenated = (negative_macros_outside_math(TEX.read_text(), negative)
+                  + negative_macros_outside_math(si.read_text(), negative))
 
     defined = set(re.findall(r"\\newcommand\{\\(num[A-Za-z]+)\}", NUMS.read_text()))
     used = set(re.findall(r"\\(num[A-Za-z]+)", body))
@@ -162,6 +193,10 @@ def main() -> int:
         ok = False
         print(f"FAIL: {len(lower_case_openings)} sentences begin with a macro that spells a "
               f"number, so they compile in lower case: {lower_case_openings[:4]}")
+    if hyphenated:
+        ok = False
+        print(f"FAIL: {len(hyphenated)} macros with a negative value are set outside math mode, "
+              f"so they print a hyphen and may break across a line: {hyphenated[:6]}")
     if missing:
         ok = False
         print(f"FAIL: {len(missing)} macros used and not defined: {missing[:10]}")
