@@ -1453,9 +1453,11 @@ reader of the rule bank most wants, since \numThirdpartyBiotransformerShipped{} 
 are inside that bank, so its column measures how much of this work's reach is BioTransformer's
 reach under another name.
 
-It is run at \texttt{allHuman} for one step, the setting that gives it what every other arm here
-is allowed, a single enzymatic application, and its file order is its ranking, which is the
-treatment MetaPredictor's unranked list already receives. It emits \numBtarmEmitted{} candidates
+It is run at \texttt{allHuman} for one step, which is one application of its own rules and the
+closest counterpart to what this work's arms do; it is not a claim that every arm is allowed the
+same enzymatic depth, since SyGMa's deployed scenario composes a phase-one and a phase-two ruleset
+and a mined template may itself perform more than one edit. Its file order is its ranking, which
+is the treatment MetaPredictor's unranked list already receives. It emits \numBtarmEmitted{} candidates
 per substrate and returns nothing for \numBtarmSilent{} of \numPopulationN{}. The exhaustive arm
 leads it by $+\numBtarmGapThreeZero$ $[+\numBtarmGapThreeZeroLo, +\numBtarmGapThreeZeroHi]$ at a
 budget of thirty. Cut to BioTransformer's own list length on every substrate, the same control the
