@@ -1487,6 +1487,17 @@ fails the build rather than compiling silently. A hand-typed pointer cannot: nin
 were wrong at once when the tables were reordered, one badly enough to direct a search to the
 wrong table, which is why none is permitted.
 
+One file in the repository holds source structures rather than keys, and that is a choice this
+work's own contribution forces. The evaluated test substrates and their annotated metabolites are
+released as SMILES so that every recall figure can be recomputed; keying them the way the deposit
+is keyed would fix the matching criterion at that key, and canonical SMILES equality, the
+stereochemistry-blind first block and Tanimoto similarity all need the reference structure, so four
+of the \numCritCriteria{} criteria would become uncomputable and the sweep this paper is largely
+about could not be reproduced by anyone. The choice is between releasing those structures and
+releasing a comparison that can be re-derived under one criterion only. The corpus's four sources
+carry terms that do not combine, so the choice is stated here rather than settled by the file's
+existence.
+
 The train and validation candidate pools are deposited at \ZenodoDoi{}. Every substrate and
 every annotated metabolite in them is replaced by its tautomer-canonical InChIKey before the
 archive is built, so the deposit holds no source structure; the candidate structures beside the

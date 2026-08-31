@@ -127,8 +127,27 @@ in it is replaced by a tautomer-canonical InChIKey before the archive is built.
 
 The corpus files themselves (`grail_metabolism/data/*.sdf`, `*_triples*.txt`) are **not** tracked
 here; they are gitignored and are obtained from the sources under the reader's own licences.
-`results/test_references.json` **is** tracked and holds the evaluated test substrates and their
-annotated metabolites as SMILES, so that every recall figure in the paper can be recomputed.
+
+`results/test_references.json` **is** tracked, and it is the one place where this repository holds
+source structures rather than keys: the evaluated test substrates and their annotated metabolites,
+as SMILES. That is 1,170 substrates and 2,597 metabolites of a corpus assembled from four sources
+whose licences do not combine, so it carries the same conflict the Zenodo deposit was keyed to
+avoid, and the same question of whether ChEMBL's ShareAlike and DrugBank's NonCommercial terms can
+both be met by one file.
+
+**Keying it is not available, and the reason is the paper's own contribution.** The candidate pools
+could be keyed because a recall figure is computed on keys. The reference set cannot: the paper
+sweeps five matching criteria, and canonical SMILES equality, the stereochemistry-blind InChIKey
+first block and Tanimoto similarity on Morgan fingerprints all need the reference *structure*.
+Replacing the SMILES with one key fixes the criterion axis at that key and makes four of the five
+criteria uncomputable, which removes the demonstration the paper is largely about. The choice is
+therefore between releasing these structures and releasing a comparison a reader cannot re-derive
+under any criterion but ours, and it is a choice rather than an oversight.
+
+The substrate side has a cheaper answer than the metabolite side: the 1,170 substrates are drug and
+xenobiotic structures obtainable by name from any of the four sources, so a reader who holds the
+licences can rebuild that half from a list of identifiers. The 2,597 annotated metabolites are the
+annotation itself and cannot be rebuilt that way.
 
 ## Comparators
 
