@@ -266,12 +266,29 @@ def build():
         if bound:
             n[f"budget.k{b}.boundbestthirty"] = bound["best_for_this_budget"]
             n[f"budget.k{b}.boundworstthirty"] = bound["worst_for_this_budget"]
-    n["budget.beating"] = len(bc["budgets_that_beat_the_deployed_one"])
+    # A count of budgets beating the deployed one is meaningless without the output budget it
+    # was read at: the same curve answers none at fifteen and two at thirty.
+    n["budget.beatingfifteen"] = len(bc["budgets_that_beat_the_deployed_one_at_k15"])
+    n["budget.beatingthirty"] = len(bc["budgets_that_beat_the_deployed_one_at_k30"])
     # What the paired population costs. A budget that cannot finish every substrate leaves the
     # curve measured on the ones every budget holds, and the references the rest carry bound how
     # far that could have moved any contrast; both are printed rather than left to a footnote.
     n["budget.excluded"] = bc["substrates_outside_the_paired_population"]
     n["budget.excludedrefs"] = bc["references_they_carry"]
+    # Read from the code rather than typed: the floor a disconnected product component must clear
+    # to enter the pool at all, which is part of what the emission rule is.
+    from grail_metabolism.utils import preparation as _prep
+    n["fragment.floor"] = _prep._MIN_FRAGMENT_HEAVY_ATOMS
+
+    # The protonation counterpart of the stereochemistry bound: how much of the annotation a
+    # criterion that kept the protonation layer could in principle resolve differently.
+    rc = art("reference_charge.json")
+    n["charge.refs"] = rc["references_carrying_a_formal_charge"]
+    n["charge.share"] = rc["share"]
+    n["charge.zwitterions"] = rc["of_those_net_neutral_zwitterions"]
+    n["charge.netcharged"] = rc["of_those_net_charged"]
+    n["charge.substrates"] = rc["substrates_with_at_least_one"]
+    n["charge.typed"] = rc["population"]["typed"]
     n["budget.fragile"] = len(bc["contrasts_whose_sign_the_absence_could_flip"])
     n["budget.fragiledecided"] = len(bc["of_those_any_the_paper_reads_a_verdict_from"])
     for b, cell in bc["against_the_deployed_budget_at_k15"].items():
@@ -370,14 +387,21 @@ def build():
     lrc = art("licence_removal_cost__clean_test.json")
     for tag, name in (("all", "without every borrowed template"),
                       ("bt", "without BioTransformer"),
-                      ("sygma", "without SyGMa")):
-        cell = lrc["against_the_whole_bank"][name]
+                      ("sygma", "without SyGMa"),
+                      ("gloryx", "without GLORYx")):
+        cell = lrc["against_the_whole_bank"].get(name)
+        if cell is None:                                  # a rightsholder's file not held here
+            continue
         n[f"lrc.{tag}.lost"] = cell["references_lost"]
         n[f"lrc.{tag}.change"] = cell["ceiling_change"]
         n[f"lrc.{tag}.lo"] = cell["ci95"][0]
         n[f"lrc.{tag}.hi"] = cell["ci95"][1]
         n[f"lrc.{tag}.sep"] = cell["excludes_zero"]
+        n[f"lrc.{tag}.dropped"] = lrc["variants"][name]["templates"]
     n["lrc.references"] = lrc["population"]["n_references"]
+    n["lrc.wholebanktemplates"] = lrc["variants"]["whole bank"]["templates"]
+    n["lrc.rightsholders"] = sum(
+        1 for k in lrc["variants"] if k.startswith("without ") and k != "without every borrowed template")
 
     # Whether the chemistry the bank misses is absent from the corpus or only from the bank. The
     # abstract asserted the first and only the second had been measured.
@@ -627,6 +651,25 @@ def build():
             n[f"matched.{tag}{tagb}.hi"] = cell["ci95"][1]
             n[f"matched.{tag}{tagb}.sep"] = cell["excludes_zero"]
             n[f"matched.{tag}{tagb}.slots"] = cell["mean_slots"]
+    # The cut this work applies to the comparator's own list, and what it costs. A slot count is
+    # a configuration, so the bound on it is printed and so is the measurement that it is free.
+    n["matched.cap"] = ml["cap_on_the_comparator_list"]
+    for pair, cell in ml["contrasts"].items():
+        u = cell.get("without_the_cap_on_the_comparator")
+        if not u:
+            continue
+        b = pair.split(" - ")[1].strip()
+        tagb = {"metatox": "Metatox", "sygma": "Sygma",
+                "metapredictor": "Metapredictor"}.get(b)
+        if tagb:
+            n[f"matched.binds{tagb}"] = u["substrates_the_cap_binds_on"]
+            n[f"matched.pastcut{tagb}"] = \
+                u["annotated_metabolites_the_comparator_placed_past_the_cut"]
+            n[f"matched.uncappedslots{tagb}"] = u["mean_slots_uncapped"]
+    n["matched.pastcut"] = sum(
+        (c.get("without_the_cap_on_the_comparator") or {}).get(
+            "annotated_metabolites_the_comparator_placed_past_the_cut", 0)
+        for c in ml["contrasts"].values())
     n["matched.separating"] = sum(1 for c in ml["contrasts"].values() if c["excludes_zero"])
     n["matched.contrasts"] = len(ml["contrasts"])
 
@@ -658,6 +701,13 @@ def build():
     n["holm.surviving"] = mult["n_separating_after_holm"]
     n["holm.changed"] = len(mult["cells_whose_verdict_the_correction_changes"])
     n["holm.leadsremoved"] = len(mult["leads_the_correction_removes"])
+    # The same correction over every contrast the paper prints, which is more than the declared
+    # family covers. Reported as a sensitivity: what the wider family would cost the verdicts the
+    # declared one licenses.
+    _w = mult["over_every_contrast_the_paper_prints"]
+    n["holm.widetests"] = _w["n_tests"]
+    n["holm.widesurviving"] = _w["n_separating_after_holm"]
+    n["holm.wideremoves"] = len(_w["declared_family_cells_it_would_remove"])
     for tag, cell in (("bankmetatoxthirty", "whole bank - metatox @ 30"),
                       ("trainedmetatoxtwenty", "trained budget - metatox @ 20"),
                       ("trainedmetatoxthirty", "trained budget - metatox @ 30"),

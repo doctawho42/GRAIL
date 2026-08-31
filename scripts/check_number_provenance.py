@@ -131,14 +131,35 @@ def main() -> int:
     # here looked, though the artifact said so in plain text.
     CKPT = re.compile(r"artifacts/([A-Za-z0-9_]+)/checkpoints/(?:generator|filter)\.pt")
     DEPLOYED_RUN = "full5000_implicit"
+    # The scan follows an artifact's own `inputs` block one hop. An artifact that records what it
+    # read names files this list would otherwise never open -- the validation pools are a
+    # subdirectory away and are what a published curve is actually made of, and three of them were
+    # scored by a checkpoint nobody deploys while every artifact above them read as current.
+    def one_hop(rel):
+        path = ROOT / rel
+        if not path.exists():
+            return []
+        try:
+            blob = json.loads(path.read_text())
+        except Exception:
+            return []
+        return [row["path"] for row in (blob.get("inputs") or [])
+                if isinstance(row, dict) and row.get("path")]
+
+    followed = {}
+    for rel in list(reads):
+        for dep in one_hop(rel):
+            followed.setdefault(dep, rel)
+
     wrong_model = []
-    for rel in reads:
+    for rel in list(reads) + sorted(followed):
         path = ROOT / rel
         if rel in CKPT_EXEMPT or not path.exists():
             continue
         runs = set(CKPT.findall(path.read_text()))
         if runs and runs != {DEPLOYED_RUN}:
-            wrong_model.append(f"{rel}: {', '.join(sorted(runs))}")
+            via = f" (read by {followed[rel]})" if rel in followed else ""
+            wrong_model.append(f"{rel}{via}: {', '.join(sorted(runs))}")
 
     # The blind spot of the check above: an artifact that names no checkpoint passes it without
     # being examined. Where the producer loads a model, silence is not evidence, so those are
@@ -146,6 +167,9 @@ def main() -> int:
     # producer are the deployed pair and a test holds them there; what is missing is the record in
     # the artifact, and the count of that is the honest thing to print.
     LOADS_A_MODEL = re.compile(r"build_generator\(|build_filter\(")
+    # Files reached only through an inputs block are counted separately, so the reach of the
+    # check is a number rather than an impression.
+    n_followed = len(followed)
     silent_model = []
     for rel in reads:
         path = ROOT / rel
@@ -164,6 +188,7 @@ def main() -> int:
         "artifacts_the_numbers_come_from": len(reads),
         "naming_a_checkpoint_that_is_not_the_deployed_run": sorted(wrong_model),
         "n_naming_a_non_deployed_checkpoint": len(wrong_model),
+        "n_reached_only_through_an_inputs_block": n_followed,
         "producer_loads_a_model_but_the_artifact_records_none": sorted(silent_model),
         "n_recording_no_checkpoint": len(silent_model),
         "exempt": len([r for r in rows if r["exempt"]]),
@@ -191,6 +216,8 @@ def main() -> int:
         print(f"  RECORDS NO CHECKPOINT   {row}")
     ok = not unpinned and not unstamped and not wrong_model
     print(f"  {report['n_unpinned']} unpinned, {report['n_unstamped']} unstamped, "
+          f"{report['n_reached_only_through_an_inputs_block']} reached only because an artifact "
+          f"records what it read, "
           f"{report['n_naming_a_non_deployed_checkpoint']} scored with a model that is not the "
           f"deployed one, {report['n_recording_no_checkpoint']} whose producer loads a model and "
           f"which record none, {report['n_verifiable_by_inference_only']} verified by inference "

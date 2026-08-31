@@ -321,6 +321,18 @@ of candidates that comparator returned on that substrate: where MetaPredictor re
 exhaustive arm is allowed two. The two are then read over the same slots on every substrate rather
 than on average, which is what a nominal budget cannot do.
 
+One bound on that length is this work's and has to be declared, because a slot count is a
+configuration and this paper's argument is that a configuration left unstated is the defect. The
+comparator's own list is deduplicated, has a prediction equal to the substrate dropped, and is
+then cut at \numMatchedCap{} candidates, five past the pool cap of \numHNineCap{}: beyond that
+neither of this work's arms has a candidate to put in the slot, so the comparison there would
+measure the pool cap rather than the ordering. The cut binds on \numMatchedBindsSygma{} of the
+\numPopulationN{} substrates for SyGMa and \numMatchedBindsMetatox{} for MetaTox, and on none
+for MetaPredictor. What it costs the comparators is measured rather than assumed: every contrast
+in Table~\ref{tab:si-matched} is identical with the cut removed, to four decimal places, because
+SyGMa places \numMatchedPastcutSygmaWord{} annotated metabolites past that rank on any substrate where
+its list runs longer.
+
 \input{si_table_matched}
 
 The result splits the wide-budget leads in two. Against SyGMa the exhaustive arm keeps
@@ -463,9 +475,9 @@ drawing, and the deamination it had attributed to a mined template is found inst
 template \numCaseExhdrawnDeamrule{} at rank \numCaseExhdrawnDeamrank{}. Both drawings are reported
 in Section~\ref{sec:si-case} for that reason.
 
-\paragraph{The arms did not all meet the same drawing.} Three of the five arms of the comparison
-were handed the substrate exactly as the corpus stores it: both modes of this system, and SyGMa
-and MetaPredictor. MetaTox was not. Its submission file re-tautomerises the substrate to the
+\paragraph{The arms did not all meet the same drawing.} Five of the six arms of the comparison
+were handed the substrate exactly as the corpus stores it: both modes of this system, and SyGMa,
+MetaPredictor and BioTransformer. MetaTox was not. Its submission file re-tautomerises the substrate to the
 natural form for \numDialectMetatoxretaut{} of the \numDialectMetatoxn{}, on the stated ground that sending an unnatural
 imidic acid to an external service would be unfair to that service. The reasoning is right and the
 asymmetry it leaves is real, and it runs against the arm that took the trouble: MetaTox met the
@@ -584,8 +596,22 @@ measuring it. It also carries an obligation: these rule sets are distributed und
 own, which a bank containing them verbatim inherits, and which differ between the
 \numThirdpartyHoldersWord{} rightsholders involved. The repository additionally tracks
 \numThirdpartyFilesWord{} of their files verbatim, \numThirdpartyFilesunusedWord{} of which
-contribute no template the bank uses. What each set permits, what remains unsettled in its own
-distribution, and what each option costs are set out in \texttt{NOTICE.md}.
+contribute no template the bank uses.
+
+The terms, per rightsholder, are these. BioTransformer's distribution is LGPL, and its own README
+additionally requires explicit permission for commercial use or redistribution; that permission
+has not been sought, and the released model is intended to run as a service, so it is an open
+obligation to its authors and not a settled one. SyGMa's installed distribution records
+\texttt{License: GPL} with no version and ships no licence text, which is read here the way a
+version-less GPL offer is conventionally read, as any version at the recipient's choice; if the
+upstream repository names a version, that version governs and this reading is wrong. GLORYx's rule
+file carries no licence text this repository holds. Of the four rule files taken from other
+projects, \numThirdpartyFilesunusedWord{} are no longer tracked here, including one under a
+NonCommercial ShareAlike licence that no GPL release can carry; the templates themselves remain in
+the bank and the obligations above run with them. The repository is released under
+\RepoLicence{}, which is what a bank containing GPL and LGPL templates permits: a permissive
+release was never available, and this is recorded as a consequence rather than a preference.
+\texttt{NOTICE.md} carries the same decisions in full, with the file-by-file table.
 
 What removal costs is measurable in the instrument that found the borrowing, and it separates the
 two obligations sharply. Applying each variant of the bank on the same substrates under the same
@@ -658,10 +684,11 @@ $[\numBudgetKFiveZeroLo, \numBudgetKFiveZeroHi]$, an interval covering zero, whi
 \numBudgetKFiveZeroCandidates{} candidates against \numBudgetKThreeZeroCandidates{}. The whole
 bank gains $+\numBudgetKSevenFiveEightOneGap$ $[\numBudgetKSevenFiveEightOneLo,
 \numBudgetKSevenFiveEightOneHi]$ on the same terms, an interval that also covers zero, for
-\numBudgetKSevenFiveEightOneCandidates{} candidates, which is the pool cap. Every one of those
+\numBudgetKSevenFiveEightOneCandidates{} candidates, close enough to the pool cap of
+\numHNineCap{} that the cap sets the list length on most substrates. Every one of those
 candidates is standardised, which the runtime section identifies as the binding cost, and no rule
-budget up to and including the whole bank beats the deployed one at the budget the headline is
-read at.
+budget up to and including the whole bank beats the deployed one at an output budget of fifteen,
+which is where the headline is read.
 
 That is not the whole story, and the column for an output budget of thirty makes it plain: read
 there, the larger rule budget does buy something, because the pool it builds has not run out. The
@@ -901,9 +928,11 @@ the sigmoid.
 
 Training is multi-label rule classification with a margin-ranking auxiliary. Every setting either
 component was trained under is in Table~\ref{tab:si-hyperparameters}, read from the configuration
-each run recorded beside its weights rather than transcribed. The two released checkpoints come
-from different runs: the generator from the run whose label matrix was built in the firing
-convention, the filter from the earlier run, whose filter settings the later one does not change.
+each run recorded beside its weights rather than transcribed. Both released checkpoints come from
+one run, the one whose label matrix was built in the firing convention, and that is established
+rather than recalled: scoring a pool's own candidates with every trained checkpoint held here
+reproduces its generator scores under that run's generator and no other, and its filter scores
+under that run's filter and no other (Section~\ref{sec:si-prov}).
 
 \input{si_table_hyperparameters}
 
@@ -1366,12 +1395,20 @@ this work sets out to replace, one of them has read the arm. That is a fact abou
 not a disclosure: the paper argues for replacing MetaTox, so any interest the relationship could
 create runs against this work rather than for it.
 
-GLORYx is not a column here, and the reason is the rule this paper wrote for itself rather than
-an oversight. Its reference set is one of the four sources this corpus is assembled from, so its
-development data sits inside our corpus; Section~\ref{MS-sec:populations} states that such
-overlap flatters the comparator, and we decline to take a comparison that our own criterion says
-is unfair to the other systems. It is a standard arm in this journal's recent benchmarks of this
-tool class \citep{Gao_2026}, and its absence would otherwise be conspicuous.
+GLORYx is not a column here, and the honest reason is that its predictions could not be obtained
+on these substrates: no distribution of it is held here and it offers no interface that takes a
+file of \numPopulationN{} structures and returns one, which is what running MetaTox required.
+Its reference set is also one of the four sources this corpus is assembled from, so its
+development data sits inside our corpus, and Section~\ref{MS-sec:populations} states that such
+overlap flatters a comparator. That second fact is not what excludes it. BioTransformer stands in
+the same relation to MetXBioDB, \numAssemblyMetxsharePct{} of whose pairs are inside this
+corpus, and it carries a column with its advantage stated and uncorrected; excluding one system
+for an overlap while seating another with a comparable one would be a rule applied in whichever
+direction suited the result. The overlap is therefore reported for both and corrected for
+neither, and GLORYx's absence stands on obtainability alone. It is a standard arm in this
+journal's recent benchmarks of this tool class \citep{Gao_2026}, so the absence is a real
+weakness of this comparison rather than a neutral one, and it is recorded as such in the
+manuscript's Limitations.
 
 BioTransformer is pinned by digest rather than by version string, because ``3.0'' names several
 builds: jar \texttt{c70cad91}, 115{,}415{,}197 bytes, upstream commit \texttt{6432cf88} of
@@ -1401,7 +1438,11 @@ is what a bank sharing \numThirdpartyBiotransformerShipped{} of its templates sh
 Two things follow for the reading of the rest. The declared family the family-wise correction is
 computed over names its three comparators and was fixed before this arm existed, so it is
 unchanged: BioTransformer's contrasts are reported with their own intervals and are not folded
-into a correction declared without them. And the deeper scenario is not swept for this comparator
+into a correction declared without them. A family fixed in advance is not widened after the fact,
+which is the whole of what declaring one buys, and the objection that the paper then prints more
+tests than its correction covers is answered by measurement rather than by the argument: running
+the same Holm procedure over all \numHolmWidetests{} contrasts the paper prints removes
+\numHolmWideremovesWord{} of the cells the declared family licenses. And the deeper scenario is not swept for this comparator
 as it is for SyGMa. That asymmetry was decided after the matched-length control had been read,
 which is worth stating because it is exactly the kind of choice this work asks other papers to
 declare: the control removes list length as a variable and finds no separation, so a scenario that
@@ -1437,6 +1478,7 @@ unavailable with its reason, is not dropped silently, and the list is not extend
 first run.
 
 \section{Provenance and reproduction}
+\label{sec:si-prov}
 
 \texttt{results/four\_method\_291.json} defines the comparison population, gates the MetaTox
 column and carries the deployed interactive arm from the pools the comparison itself is read from,

@@ -42,9 +42,9 @@ is a report of where the pattern matched rather than of a mechanism, and
 Section~\ref{sec:offers} measures both the size of that part and how often the named site is the
 site that changed. We evaluate it with the two decisions above promoted
 to declared axes, meaning that each is stated and varied across its full range instead of being
-fixed silently, against the published predictors for which
-predictions on the same substrates could be obtained without contaminating the comparison, each
-absence named with its reason. The comparison does not produce a winner:
+fixed silently, against every published predictor whose
+predictions on the same substrates we could obtain and run, with each absence named and each
+comparator's overlap with this corpus measured rather than assumed away. The comparison does not produce a winner:
 which system leads depends on how many candidates it is allowed to return, and we report that
 dependence rather than a single figure. We further measure how much of the recorded chemistry
 lies outside the reach of any single template application, and find that most of it is chemistry
@@ -121,7 +121,11 @@ That has a consequence for the comparison which no split can remove. Rule-based 
 no training set to hold out, and their expert rules may encode the same metabolism reported in
 these sources; BioTransformer is built on MetXBioDB, and GLORYx was developed against the
 reference set of the same name. Their knowledge therefore overlaps the test substrates by construction, in a direction that
-favours them. The overlap is reported here and is not controlled for.
+favours them. Of the two, BioTransformer is a column of the comparison and GLORYx is not, and the
+difference is what could be run here rather than a difference in how much either overlaps: both
+overlaps are measured in Section~\ref{SI-sec:si-corpus} and neither is corrected for. The
+comparison therefore contains one arm whose development sources this corpus draws on, its
+advantage stated and uncorrected, and omits another that would have been in the same position.
 
 \subsection{Overview}
 
@@ -129,7 +133,13 @@ GRAIL predicts in three stages, each separately inspectable. A generator scores 
 bank of \numBankRules{} reaction templates, written as SMIRKS transformation patterns, against
 the substrate. The selected rules are then
 applied with RDKit 2022.09.5, and their products are
-standardised \citep{Hahnke_2018, Mansouri_2024} and deduplicated. A scorer scores each
+standardised \citep{Hahnke_2018, Mansouri_2024} and deduplicated. A template that breaks a bond
+returns more than one species, and each is treated as a candidate in its own right: every product
+of an application, and every disconnected component of every product, enters the pool separately,
+provided it has at least \numFragmentFloorWord{} heavy atoms, which drops a lone leaving group
+such as water or a halide and keeps a small metabolite such as formate. No annotated metabolite in
+the evaluated test set is a multi-component species, so the convention decides what is offered and
+cannot decide whether a reference is reached. A scorer scores each
 (substrate, candidate) pair, encoding the two molecules as separate graphs rather than as one
 merged graph, and the candidates are ordered by a rank fusion of that scorer's and the generator's
 orderings. The merged variant, which joins the two graphs along their maximum common substructure,
@@ -246,8 +256,8 @@ discrepancy is reported rather than resolved and it has a reading: at $k \le 10$
 buys nothing on either population, and from $k=15$ it buys more the wider the budget, because the
 interactive arm runs out of candidates. The threshold is therefore a property of the budget
 requested rather than of the system, and so is the deployed rule budget. Read at an output budget
-of fifteen the curve is flat past \numBudgetDeployed{}, which is why that value is deployed; read
-at thirty it is not, and the whole bank gains $+\numBudgetKSevenFiveEightOneGapthirty$
+of fifteen the curve is flat past \numBudgetDeployed{}, which is where the trained value happens
+to sit; read at thirty it is not, and the whole bank gains $+\numBudgetKSevenFiveEightOneGapthirty$
 $[+\numBudgetKSevenFiveEightOneLothirty, +\numBudgetKSevenFiveEightOneHithirty]$ over the
 deployed budget on the same substrates, an interval excluding zero. The curve is swept to the
 whole bank and not merely past the deployed value, so the exhaustive mode is a point on it rather
@@ -268,9 +278,9 @@ and the stage each belongs to.
 
 The deployed emission is therefore $\hat{C}(s)$ itself, ordered by fusion and truncated by no
 threshold, so $|\hat{Y}_s| = |\hat{C}(s)|$. For the interactive mode that length is set by the
-rule budget and the substrate's chemistry, and its mean of \numOutputTrained{} sits well below
+rule budget and the substrate's chemistry, and its mean of \numEmittedTrained{} sits well below
 any cap. The exhaustive mode differs: its pool is capped at 100 by the cap prediction P2 registers, and
-its mean output of \numOutputBank{} is close enough to that cap that the cap sets its length on
+its mean output of \numEmittedBank{} is close enough to that cap that the cap sets its length on
 most substrates. That cap is a parameter of this system, it is declared, and it applies to that
 arm and not to the comparators. Registered as prediction P4 with a criterion of zero lost cells
 over a grid of five matching criteria by eleven budgets: \numHOneOneLost{} of
@@ -472,8 +482,8 @@ at $k = 15$ the exhaustive arm's macro recall is \numMacroBankOneFive{} against 
 $[\numMacrogapBankmetatoxOneFiveLo, +\numMacrogapBankmetatoxOneFiveHi]$, an interval covering
 zero as the micro one does.
 
-The two do not emit alike either: MetaTox returns \numOutputMetatox{} candidates on average
-against the interactive arm's \numOutputTrained{}, and at $k=15$
+The two do not emit alike either: MetaTox returns \numEmittedMetatox{} candidates on average
+against the interactive arm's \numEmittedTrained{}, and at $k=15$
 \numShortMetatoxOneFive{} of \numPopulationN{} MetaTox lists fall short of the budget against
 \numShortTrainedOneFive{} of the interactive arm's. The annotation bias on precision therefore
 runs toward the arm emitting less, which is ours, so it does not explain a gap in the other
@@ -833,11 +843,11 @@ sweep as well; the one at $20$ does not. A service deployed in this mode would r
 the system it replaces wherever it answers with thirty candidates or more.
 
 The cause is the pool and not the ranking. The interactive mode returns
-\numOutputTrained{} candidates on average against MetaTox's \numOutputMetatox, and at $k = 20$
+\numEmittedTrained{} candidates on average against MetaTox's \numEmittedMetatox{}, and at $k = 20$
 already \numShortTrainedTwoZero{} of its \numPopulationN{} lists are shorter than the budget
 against MetaTox's \numShortMetatoxTwoZero. A list that has ended cannot gain a hit from a wider
 window, so the deficit grows with $k$ whatever the order within it. The exhaustive mode, which
-applies the whole bank and returns \numOutputBank{} candidates, leads MetaTox at the same two
+applies the whole bank and returns \numEmittedBank{} candidates, leads MetaTox at the same two
 budgets, $+\numGapBankmetatoxThreeZero$
 $[\numGapBankmetatoxThreeZeroLo, \numGapBankmetatoxThreeZeroHi]$ at $30$ and
 $+\numGapBankmetatoxFiveZero$ $[\numGapBankmetatoxFiveZeroLo, \numGapBankmetatoxFiveZeroHi]$
@@ -1001,8 +1011,11 @@ The comparison population is the \numPopulationN{} substrates every method has a
 quarter of the evaluated test split and not a random quarter of it: it is the submission list sent
 to the comparator that is a web service, and how those substrates were drawn from the split is not
 recorded anywhere in this repository. Nothing was excluded for emitting nothing, and the population
-still contains substrates a method answers nothing for. Two comparators were built on sources this
-corpus is assembled from, which favours them, and that is not corrected.
+still contains substrates a method answers nothing for. One comparator, BioTransformer, is built on a source
+this corpus is assembled from, which favours it, and that is not corrected. A second system in the
+same position, GLORYx, is absent from the comparison, and its absence is not licensed by that
+overlap, since a system with a comparable one carries a column: it is absent because its
+predictions could not be obtained here.
 
 Nothing in this pipeline is stereochemistry-aware. The standardiser strips configuration, the
 matching criterion is chosen to ignore it, and the annotation carries none, so sulfoxidation,
@@ -1011,9 +1024,15 @@ metabolite structure predictor that is a real restriction and not a technicality
 epoxide configuration carry the pharmacology of several drug classes, and a system that cannot
 represent them cannot be asked which enantiomer an enzyme makes. What is reported here is therefore
 recall over constitutions. The criterion sweep does not bound what a configuration-aware criterion
-would cost, and cannot: two of its five settings differ only in the stereochemistry layer and
-return the identical verdict at every one of the nine budgets, because the annotation has no
-configuration for them to disagree about. What can be bounded is the size of the question, and it
+would cost, and cannot: two of its five settings return the identical verdict at every one of the
+nine budgets, because the annotation has no configuration for them to disagree about. Those two
+differ in more than configuration. The first block of an InChIKey is the skeleton hash, so it
+drops the protonation and isotope layers along with stereochemistry, and under it a thiol and its
+thiolate are one structure (Section~\ref{SI-sec:si-criterion}). That layer has its own ceiling
+and it is measured on the same population: \numChargeRefs{} of the \numChargeTyped{} annotated
+metabolites, \numChargeSharePct{}, carry a formal charge on some atom, \numChargeZwitterions{}
+of them as net-neutral zwitterions and \numChargeNetcharged{} net-charged. Neither layer moves a
+verdict in the sweep; both bound how much a criterion that kept them could ever move. What can be bounded is the size of the question, and it
 is: \numStereoEither{} of the \numStereoPairs{} annotated pairs, \numStereoSharePct{}, produce a
 metabolite carrying a stereogenic element its substrate does not have
 (\numStereoCentre{} a tetrahedral centre, \numStereoDouble{} a stereogenic double bond). That is
@@ -1035,7 +1054,8 @@ The Supporting Information is available free of charge on the ACS Publications w
 sources and licence position, and the splits with their leakage audit; a census of the
 annotation every recall figure is measured against; the five matching criteria
 defined and the sensitivity of the comparison to the choice among them; the parent-drop
-convention measured per arm; precision at every budget; every comparison difference with its
+convention measured per arm; every candidate count the paper prints and what each one is; where
+each method runs out of candidates; precision at every budget; every comparison difference with its
 paired interval; how the substrate is drawn, and what that decides; the rule bank, its mining
 procedure, the provenance of each collection and how much of it is a published rule set verbatim;
 what the rule budget buys; two parameters of the ranking, both swept; the
@@ -1049,7 +1069,7 @@ sixteen registered predictions, including the six this paper does not report; th
 oracle under four partitions with a granularity-matched control; the stage ablations in full;
 when a ranking comparison can measure anything; the choice of evaluation population; the worked
 example on both drawings of the substrate, with the head of the exhaustive mode's ranked list;
-runtime methodology; comparator
+what retraining moves; runtime methodology; comparator
 versions and digests; and the provenance and reproduction procedure.
 
 \end{suppinfo}

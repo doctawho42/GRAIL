@@ -79,18 +79,40 @@ def main() -> int:
 
     ours = {"whole bank": {s: ranked(big[s], s) for s in subs},
             "trained budget": {s: ranked(small[s], s) for s in subs}}
-    theirs = {}
+    theirs, uncapped = {}, {}
     for name, (rel, key) in COMPARATORS.items():
         path = ROOT / rel
         if not path.exists():
             continue
         blob = json.loads(path.read_text())
         preds = blob[key] if key else blob
+        # Two readings of "the length the comparator chose". The capped one truncates the
+        # comparator's list at CAP + 5 before the slot count is taken, which matters because a
+        # comparator that emits more candidates than this work's pool cap allows would otherwise
+        # be given slots this work could never fill: SyGMa's uncapped mean is a fifth longer than
+        # its capped one. The capped reading is the one the control is run at, because beyond the
+        # cap the comparison measures the pool cap and not the ordering; the uncapped reading is
+        # run beside it so that choice is priced instead of being a number nobody stated.
         theirs[name] = {s: drop_parent(_dedup(preds.get(s, []), CAP + 5), s) for s in subs}
+        uncapped[name] = {s: drop_parent(_dedup(preds.get(s, []), 10 ** 6), s) for s in subs}
 
     rng = np.random.default_rng(SEED)
     idx = rng.integers(0, len(subs), (N_BOOT, len(subs)))
     denom = np.maximum(U[idx].sum(axis=1), 1)
+
+    def contrast(clists, oname, olists):
+        """One arm against one comparator over the comparator's own per-substrate length."""
+        lengths = np.array([len(clists[s]) for s in subs], dtype=int)
+        their_hits = np.array([len(set(clists[s]) & real[s]) for s in subs], dtype=float)
+        our_hits = np.array([len(set(olists[s][:len(clists[s])]) & real[s]) for s in subs],
+                            dtype=float)
+        d = our_hits - their_hits
+        bt = d[idx].sum(axis=1) / denom
+        lo, hi = float(np.quantile(bt, .025)), float(np.quantile(bt, .975))
+        return {"gap": round(float(d.sum() / U.sum()), 4),
+                "ci95": [round(lo, 4), round(hi, 4)],
+                "excludes_zero": bool(lo > 0 or hi < 0),
+                "mean_slots": round(float(lengths.mean()), 2)}
 
     rows = {}
     for cname, clists in theirs.items():
@@ -115,14 +137,40 @@ def main() -> int:
                 "median_slots": int(np.median(lengths)),
                 "substrates_where_the_comparator_returned_nothing": int((lengths == 0).sum()),
             }
+            # The same contrast over the comparator's list with no cap on it, so the cap the
+            # control applies is a measured choice rather than an undeclared one.
+            if cname in uncapped:
+                ulen = np.array([len(uncapped[cname][s]) for s in subs], dtype=int)
+                cell = contrast(uncapped[cname], oname, olists)
+                # What the cut actually costs the comparator: annotated metabolites it placed
+                # past the cut and that the capped reading therefore never counted. The claim
+                # that the cut is free rests on this being zero, so it is stored rather than
+                # inferred from two gaps that happen to agree.
+                past = sum(len(set(uncapped[cname][s][len(clists[s]):]) & real[s]) for s in subs)
+                rows[f"{oname} - {cname}"]["without_the_cap_on_the_comparator"] = {
+                    **cell,
+                    "mean_slots_uncapped": round(float(ulen.mean()), 2),
+                    "substrates_the_cap_binds_on": int((ulen > CAP + 5).sum()),
+                    "annotated_metabolites_the_comparator_placed_past_the_cut": int(past),
+                    "verdict_unchanged": bool(
+                        cell["excludes_zero"]
+                        == rows[f"{oname} - {cname}"]["excludes_zero"]
+                        and cell["gap"] * rows[f"{oname} - {cname}"]["gap"] > 0)}
 
     report = {
         "provenance": stamp(__file__),
         "population": {"n_substrates": len(subs), "n_references": int(U.sum()),
                        "note": "the comparison set, as everywhere else"},
         "design": ("for each substrate, both arms are truncated to the number of candidates the "
-                   "comparator returned on that substrate, so the two are read over the same "
-                   "number of slots on every substrate and not on average"),
+                   "comparator returned on that substrate, after deduplication, after dropping a "
+                   "prediction equal to the substrate, and after truncating the comparator's own "
+                   "list at " + str(CAP + 5) + "; so the two are read over the same number of "
+                   "slots on every substrate and not on average"),
+        "cap_on_the_comparator_list": CAP + 5,
+        "why_the_cap": ("this work's pool is capped at " + str(CAP) + ", so slots beyond that "
+                        "could not be filled by either of its arms and the comparison there "
+                        "would measure the pool cap rather than the ordering; the contrast "
+                        "without the cap is reported for every pair so the choice is priced"),
         "aggregation": "micro, ratio of sums",
         "bootstrap": {"n": N_BOOT, "seed": SEED},
         "contrasts": rows,

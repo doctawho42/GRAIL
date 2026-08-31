@@ -29,7 +29,14 @@ from _provenance import stamp  # noqa: E402
 
 ALPHA = 0.05
 ARMS = ("whole bank", "trained budget")
+# The family as declared, before the BioTransformer arm existed. A family fixed in advance is
+# not widened after the fact, which is the whole of what declaring one buys.
 COMPARATORS = ("metatox", "sygma", "metapredictor")
+# Every comparator the sweep now reports a contrast against. The paper prints more tests than the
+# declared family covers, and a correction over part of what is printed controls less than it
+# appears to, so the wider family is computed beside the declared one and neither is hidden behind
+# the other. The declared family is the one the paper's verdicts are read from.
+COMPARATORS_REPORTED = ("metatox", "sygma", "metapredictor", "biotransformer")
 
 
 def holm(pairs, alpha=ALPHA):
@@ -52,22 +59,33 @@ def main() -> int:
     contrasts = dep["contrasts"]
     budgets = sorted(contrasts, key=int)
 
-    cells, missing_p = {}, []
-    for k in budgets:
-        for arm in ARMS:
-            for comp in COMPARATORS:
-                cell = contrasts[k].get(f"{arm} - {comp}")
-                if cell is None:
-                    continue
-                if "p_bootstrap" not in cell:
-                    missing_p.append(f"{arm} - {comp} at {k}")
-                    continue
-                cells[f"{arm} - {comp} @ {k}"] = cell
-    if missing_p:
-        raise SystemExit("re-run deployment_table.py: no bootstrap p-value for "
-                         + ", ".join(missing_p[:3]))
+    def collect(comparators):
+        out, missing = {}, []
+        for k in budgets:
+            for arm in ARMS:
+                for comp in comparators:
+                    cell = contrasts[k].get(f"{arm} - {comp}")
+                    if cell is None:
+                        continue
+                    if "p_bootstrap" not in cell:
+                        missing.append(f"{arm} - {comp} at {k}")
+                        continue
+                    out[f"{arm} - {comp} @ {k}"] = cell
+        if missing:
+            raise SystemExit("re-run deployment_table.py: no bootstrap p-value for "
+                             + ", ".join(missing[:3]))
+        return out
 
+    cells = collect(COMPARATORS)
     survives, thresholds = holm([(n, c["p_bootstrap"]) for n, c in cells.items()])
+
+    # The same procedure over every contrast the paper prints. Only the count of surviving cells
+    # and the ones the wider family costs are kept: this is a sensitivity on the declared family,
+    # not a second set of verdicts.
+    wide = collect(COMPARATORS_REPORTED)
+    wide_survives, _ = holm([(n, c["p_bootstrap"]) for n, c in wide.items()])
+    lost_to_the_wider_family = sorted(
+        n for n in cells if survives.get(n) and not wide_survives.get(n))
 
     rows, changed, claimed_and_lost = {}, [], []
     for name, cell in cells.items():
@@ -93,6 +111,15 @@ def main() -> int:
         "n_separating_after_holm": sum(1 for r in rows.values() if r["separates_after_holm"]),
         "cells_whose_verdict_the_correction_changes": sorted(changed),
         "leads_the_correction_removes": sorted(claimed_and_lost),
+        "over_every_contrast_the_paper_prints": {
+            "comparators": list(COMPARATORS_REPORTED),
+            "n_tests": len(wide),
+            "n_separating_after_holm": sum(1 for v in wide_survives.values() if v),
+            "declared_family_cells_it_would_remove": lost_to_the_wider_family,
+            "note": ("a sensitivity on the declared family and not a second set of verdicts: the "
+                     "family was fixed before the BioTransformer arm existed and is not widened "
+                     "after the fact, but the paper prints more tests than it covers and what "
+                     "that costs is counted rather than left to the reader")},
         "cells": rows,
         "reading": (
             "The paper reads its verdicts from per-comparison intervals and says so. This says "
@@ -102,6 +129,10 @@ def main() -> int:
     }
     (ROOT / "results/multiplicity.json").write_text(json.dumps(report, indent=1))
     print(f"family of {report['n_tests']} tests at alpha {ALPHA}, Holm")
+    w = report["over_every_contrast_the_paper_prints"]
+    print(f"  over every printed contrast ({w['n_tests']} tests): "
+          f"{w['n_separating_after_holm']} separate; it would remove "
+          f"{len(w['declared_family_cells_it_would_remove'])} of the declared family's cells")
     print(f"  separate per comparison : {report['n_separating_per_comparison']}")
     print(f"  separate after Holm     : {report['n_separating_after_holm']}")
     for name in sorted(changed):

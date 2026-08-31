@@ -25,7 +25,7 @@ for _p in (str(ROOT), str(ROOT / "scripts"), str(HERE)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from _provenance import stamp  # noqa: E402
+from _provenance import record_inputs, stamp  # noqa: E402
 
 from bank_without_selection import _key, _load  # noqa: E402
 from grail_metabolism.config import DatasetConfig, FilterConfig, GeneratorConfig  # noqa: E402
@@ -62,12 +62,20 @@ def merge(pattern, out, allow_absent=()):
     if not paths:
         print("no shard matched", file=sys.stderr)
         return 1
-    pools, refs, slices, ckpts = {}, {}, [], []
+    pools, refs, slices, ckpts, budgets = {}, {}, [], [], set()
     for p in paths:
         d = json.loads(Path(p).read_text())
         pools.update(d["pools"]); refs.update(d["references"]); slices.append(tuple(d["slice"]))
         if d.get("checkpoints"):
             ckpts.append(d["checkpoints"])
+        budgets.add(d.get("top_k"))
+    # The rule budget is the merged pool's defining parameter and it was recorded nowhere: a
+    # reader of the merged file, and the budget curve that reads it, took the budget from the
+    # directory name. Shards built at different budgets are not one pool and are refused.
+    if len(budgets) > 1:
+        print(f"FAIL: the shards were built at different rule budgets {sorted(budgets)}; the "
+              f"merged pool would not have one", file=sys.stderr)
+        return 1
         print(f"  + {Path(p).name}: {d['slice']} {len(d['pools'])}", file=sys.stderr)
     subs, vmap = population()
     # Absence is read off the pools, not off the slices. A shard may pass over a substrate inside
@@ -94,6 +102,8 @@ def merge(pattern, out, allow_absent=()):
         {"provenance": stamp(__file__), "match": "inchikey_tautomer", "split": "validation",
          "checkpoints": json.loads(distinct.pop()) if distinct else None,
          "shards_recording_no_checkpoint": len(paths) - len(ckpts),
+         "top_k": budgets.pop() if len(budgets) == 1 else None,
+         "inputs": record_inputs(paths),
          "population": {"cap": CAP, "seed": SEED, "declared_n": len(subs),
                         "n": len(pools),
                         "absent_indices": absent,
@@ -229,7 +239,8 @@ def main() -> int:
         """Persist after every substrate. A shard killed on the peptide at index 83 used to
         take its other 48 with it, twice."""
         Path(args.out).write_text(json.dumps(
-            {"slice": [args.start, args.end or len(subs)], "top_k": args.top_k,
+            {"provenance": stamp(__file__),
+             "slice": [args.start, args.end or len(subs)], "top_k": args.top_k,
              "standardise": args.standardise, "tautomer_budget": args.tautomer_budget or 1000,
              "cap": args.cap if args.standardise == "survivors" else None,
              "checkpoints": {"generator": {"path": str(Path(args.gen_ckpt).relative_to(ROOT)),

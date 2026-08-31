@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import pandas as pd
+import pytest
 import torch
 from rdkit import Chem
 from torch_geometric.data import Batch
@@ -904,6 +905,33 @@ def test_firing_atoms_localises_a_raw_reaction_product():
         "a firing atom is outside the substrate, so the indices address the wrong molecule")
 
 
+def _pool_checkpoints_fixture(results, budgets, deployed=True):
+    """The measurement budget_curve's checkpoint gate reads, for a synthetic sweep.
+
+    The gate refuses when it is absent, which is the point of it: a curve assembled from pools
+    scored by different models measures the model as much as the rule budget. A test that wants
+    the curve has to say what scored the pools, exactly as a real sweep does.
+    """
+    import json
+
+    results.mkdir(parents=True, exist_ok=True)
+    pools = {}
+    for budget in budgets:
+        pools[f"valpools_k{budget}"] = {
+            "path": f"results/valpools_k{budget}/all.json",
+            "rule_budget": budget,
+            "generator": {"identified_as": "full5000_implicit", "matches": "40 of 40",
+                          "is_the_deployed_run": True},
+            "filter": {"identified_as": "full5000_implicit" if deployed else "full5000_priors",
+                       "matches": "40 of 40",
+                       "is_the_deployed_run": bool(deployed)},
+        }
+    (results / "pool_checkpoints.json").write_text(json.dumps({
+        "deployed_run": "full5000_implicit",
+        "method": "reproduction against every trained checkpoint in the tree",
+        "pools": pools}))
+
+
 def test_a_budget_curve_refuses_a_pool_that_is_still_being_written(tmp_path, monkeypatch):
     """A partial pool must be named and dropped, not silently narrow every other budget.
 
@@ -931,6 +959,7 @@ def test_a_budget_curve_refuses_a_pool_that_is_still_being_written(tmp_path, mon
             "pools": pools,
             "references": {s: ["K%d" % i] for i, s in enumerate(pools)},
         }))
+    _pool_checkpoints_fixture(results, (10, 30, 50))
     monkeypatch.setattr(module, "ROOT", tmp_path)
     monkeypatch.chdir(tmp_path)
 
@@ -979,6 +1008,7 @@ def test_a_declared_absence_buys_one_substrate_and_not_a_missing_build(tmp_path,
     results = tmp_path / "one" / "results"
     for budget, n_subs, absent in ((10, 8, None), (30, 8, None), (7581, 7, [7])):
         write(results, budget, n_subs, absent)
+    _pool_checkpoints_fixture(results, (10, 30, 7581))
     monkeypatch.setattr(module, "ROOT", tmp_path / "one")
     monkeypatch.chdir(tmp_path / "one")
     module.main()
@@ -997,6 +1027,7 @@ def test_a_declared_absence_buys_one_substrate_and_not_a_missing_build(tmp_path,
     results = tmp_path / "many" / "results"
     for budget, n_subs, absent in ((10, 8, None), (30, 8, None), (7581, 2, list(range(2, 8)))):
         write(results, budget, n_subs, absent)
+    _pool_checkpoints_fixture(results, (10, 30, 7581))
     monkeypatch.setattr(module, "ROOT", tmp_path / "many")
     monkeypatch.chdir(tmp_path / "many")
     module.main()
@@ -1051,6 +1082,64 @@ def test_an_artifact_written_from_an_input_that_is_gone_does_not_read_as_current
     assert check_inputs(curve) == [], (
         "the committed budget curve names an input that is gone or has moved: "
         + "; ".join(check_inputs(curve)))
+
+
+def test_a_budget_curve_refuses_pools_scored_by_a_model_nobody_deploys(tmp_path, monkeypatch):
+    """A curve across pools varies the model unless something checks that it does not.
+
+    Three of the five points of the published rule-budget curve were scored by
+    artifacts/full5000_priors/checkpoints/filter.pt and two by the deployed
+    artifacts/full5000_implicit; the pools recorded no checkpoint, every producer was pinned and
+    current, and the contrast between a budget of ten and the deployed thirty was therefore a
+    contrast between two filters as much as between two budgets. Nothing in the pipeline could
+    have said so. The curve now reads the reproduction measurement and refuses three ways: when it
+    is missing, when it does not cover a pool being read, and when a pool it covers was scored by
+    something other than the deployed run.
+    """
+    import importlib
+    import json
+    import sys
+
+    sys.path.insert(0, "scripts")
+    sys.path.insert(0, "scripts/typed_edit")
+    module = importlib.import_module("budget_curve")
+
+    results = tmp_path / "results"
+    for budget in (10, 30):
+        directory = results / f"valpools_k{budget}"
+        directory.mkdir(parents=True)
+        pools = {f"C{'C' * i}O": [{"generator": 1.0, "filter": 1.0, "key": f"K{i}"}]
+                 for i in range(4)}
+        (directory / "all.json").write_text(json.dumps(
+            {"pools": pools, "references": {s: [f"K{i}"] for i, s in enumerate(pools)}}))
+    monkeypatch.setattr(module, "ROOT", tmp_path)
+    monkeypatch.chdir(tmp_path)
+    built = module.pools_on_disk()
+
+    # 1. no measurement at all
+    with pytest.raises(SystemExit) as excinfo:
+        module.checkpoint_gate(built)
+    assert "pool_checkpoints.json" in str(excinfo.value), (
+        "a missing measurement passed the gate, which makes it a gate that cannot fail")
+
+    # 2. a measurement that does not cover one of the pools being read
+    _pool_checkpoints_fixture(results, (10,))
+    with pytest.raises(SystemExit) as excinfo:
+        module.checkpoint_gate(built)
+    assert "valpools_k30" in str(excinfo.value), (
+        "a pool nothing establishes the provenance of was read anyway")
+
+    # 3. a pool scored by a run that is not the deployed one, which is the real defect
+    _pool_checkpoints_fixture(results, (10, 30), deployed=False)
+    with pytest.raises(SystemExit) as excinfo:
+        module.checkpoint_gate(built)
+    assert "not scored by the deployed run" in str(excinfo.value)
+
+    # and it passes when every pool is the deployed pair
+    _pool_checkpoints_fixture(results, (10, 30))
+    gate = module.checkpoint_gate(built)
+    assert gate["every_pool_scored_by"] == "full5000_implicit"
+    assert sorted(gate["pools_checked"]) == ["valpools_k10", "valpools_k30"]
 
 
 def test_every_producer_partitions_the_bank_on_the_same_mined_file():

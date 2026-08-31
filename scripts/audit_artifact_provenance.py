@@ -175,6 +175,8 @@ PINNED = {
     "results/reactant_size_census.json": f"{TE}/reactant_size_census.py",
     "results/four_method_291.json": "scripts/four_method_291.py",
     "results/scored_predictions.json": "scripts/dump_scored_predictions.py",
+    "results/reference_charge.json": f"{TE}/reference_charge.py",
+    "results/pool_checkpoints.json": f"{TE}/pool_checkpoints.py",
     "results/wide_pool_analysis_implicit.json": f"{TE}/wide_pool_analysis.py",
 }
 
@@ -232,7 +234,11 @@ def main() -> int:
     # anyone ran the audit the plain way. --all now controls the printing and nothing else.
     sweep = Counter()
     others = []
-    for p in sorted(glob.glob(str(ROOT / "results" / "*.json"))):
+    # Recursive. It used to glob the top level only, which left every sharded pool outside the
+    # sweep -- including the validation pools a published curve is read from, three of which then
+    # turned out to have been scored by a checkpoint nobody deploys. A directory the sweep does
+    # not enter is a directory whose contents nothing checks.
+    for p in sorted(glob.glob(str(ROOT / "results" / "**" / "*.json"), recursive=True)):
         rel = str(Path(p).relative_to(ROOT))
         if rel in PINNED:
             continue
@@ -240,6 +246,25 @@ def main() -> int:
         sweep[v["status"]] += 1
         if v["status"] not in OK:
             others.append(v)
+
+    # An unstamped file in a subdirectory is not necessarily unaccounted for: a pinned artifact
+    # that records what it read names those files by digest, so the guarantee reaches one hop
+    # past the pinned set. How far it reaches is counted rather than asserted.
+    named = set()
+    for rel in PINNED:
+        path = ROOT / rel
+        if not path.exists():
+            continue
+        try:
+            blob = json.loads(path.read_text())
+        except Exception:
+            continue
+        for row in (blob.get("inputs") or []):
+            named.add(row.get("path"))
+    in_subdirs = [str(Path(p).relative_to(ROOT))
+                  for p in glob.glob(str(ROOT / "results" / "**" / "*.json"), recursive=True)
+                  if Path(p).parent != ROOT / "results"]
+    reached = sorted(f for f in in_subdirs if f in named)
     if args.all:
         print(f"\nthe other {sum(sweep.values())} artifacts: " +
               ", ".join(f"{k} {v}" for k, v in sweep.most_common()))
@@ -250,7 +275,10 @@ def main() -> int:
                 print(f"    {o['artifact']:<46}{o.get('detail','')[:44]}")
 
     rep = {"pinned": pinned, "n_pinned": len(pinned), "n_pinned_stale": len(bad),
-           "sweep": dict(sweep), "sweep_not_current": others}
+           "sweep": dict(sweep), "sweep_not_current": others,
+           "files_below_the_top_level": len(in_subdirs),
+           "of_those_named_as_an_input_by_a_pinned_artifact": len(reached),
+           "named_inputs": reached}
     Path(args.out).write_text(json.dumps(rep, indent=1))
 
     if bad:
@@ -258,6 +286,9 @@ def main() -> int:
         for r in bad:
             print(f"  {r['artifact']}: {r['status']} -- {r.get('detail','')}")
         return 1
+    print(f"{len(in_subdirs)} of the swept files sit below the top level of results/; "
+          f"{len(reached)} of those are named as an input by a pinned artifact, so their digest "
+          f"is checked even where the file carries no stamp of its own")
     cos = [r for r in pinned if r["status"] == COSMETIC]
     print(f"\nall {len(pinned)} pinned artifacts trace to the code that wrote them"
           + (f"; {len(cos)} of them through a change proved cosmetic" if cos else ""))

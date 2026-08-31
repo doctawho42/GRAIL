@@ -319,6 +319,34 @@ def si_counts():
         ("list returned, one substrate", "interactive",
          "the worked example", case["n_candidates"]),
     ]
+
+    # Every arm, not only this work's two. The table's own caption promises every candidate count
+    # the paper reports, and a comparator's is a candidate count: MetaTox alone appears as three
+    # different numbers across the manuscript and the supporting information, each a different
+    # stage, none of them saying which. A count that names its stage cannot be mistaken for one
+    # that does not, and that is the whole of the difference.
+    ARMS = [("metatox", "MetaTox"), ("sygma", "SyGMa"),
+            ("metapredictor", "MetaPredictor"), ("biotransformer", "BioTransformer")]
+    emitted = dep.get("mean_emitted_untruncated_2dp") or dep["mean_emitted_untruncated"]
+    widest = max(int(k) for k in dep["recall_micro"]) if "recall_micro" in dep else 50
+    for key, label in ARMS:
+        if key in emitted:
+            rows.append(("list as the comparator emits it", label, "comparison set, 291",
+                         emitted[key]))
+    for key, label in ARMS:
+        if key in dep["mean_output_length"]:
+            rows.append((f"the same list truncated at $k={widest}$", label,
+                         "comparison set, 291", dep["mean_output_length"][key]))
+    try:
+        matched = art("matched_length.json")
+        slots = matched.get("mean_slots") or {}
+        for key, label in ARMS:
+            if key in slots:
+                rows.append(("slots the matched-length control allows", label,
+                             "comparison set, 291", round(float(slots[key]), 2)))
+    except Exception:
+        pass
+
     body = "\n".join(
         f"{what} & {arm} & {pop} & {value} \\\\" for what, arm, pop, value in rows)
     return ("\\begin{table}[h]\n\\centering\\small\n"
@@ -326,9 +354,12 @@ def si_counts():
             "quantity & mode & population & mean \\\\\n\\midrule\n"
             + body
             + "\n\\bottomrule\n\\end{tabular}\n"
-            "\\caption{Every candidate count this work reports. They differ because they are "
-            "measured at different stages of the pipeline and on different populations, not "
-            "because any of them is an estimate of the others.}\n"
+            "\\caption{Every candidate count this work reports, for every arm. They differ "
+            "because they are measured at different stages of the pipeline and on different "
+            "populations, not because any of them is an estimate of the others: a list as a "
+            "system emits it, the same list truncated at the widest budget the sweep reads, and "
+            "the slots the matched-length control allows are three quantities and the first is "
+            "the one that describes what a user is handed.}\n"
             "\\label{tab:si-counts}\n\\end{table}\n")
 
 
