@@ -770,6 +770,15 @@ def build():
         n[f"sel.vs{arm}lo"] = c["ci95"][0]
         n[f"sel.vs{arm}hi"] = c["ci95"][1]
     n["sel.vsprior.k5"] = sa["learned_minus"]["prior_applicable"]["5"]["gap"]
+    # The tightest budget at which the learned choice separates from the frequency table, and the
+    # count of budgets that do, so the prose cannot state a boundary the artifact has moved.
+    _pa = sa["learned_minus"]["prior_applicable"]
+    _sep = [k for k in sorted(_pa, key=int) if _pa[k]["separates"]]
+    n["sel.vsprior.separating"] = len(_sep)
+    n["sel.vsprior.budgets"] = len(_pa)
+    n["sel.vsprior.k5lo"], n["sel.vsprior.k5hi"] = _pa["5"]["ci95"]
+    n["sel.vsprior.k1"] = _pa["1"]["gap"]
+    n["sel.vsprior.k1lo"], n["sel.vsprior.k1hi"] = _pa["1"]["ci95"]
 
     # P1 was registered and checked before the pool cap of P2 existed, so its figure is measured
     # on the uncapped pool. The same contrast on the pool the system actually ranks is in the
