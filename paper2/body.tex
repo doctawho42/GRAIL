@@ -220,9 +220,9 @@ Registered as prediction P2 with a threshold of
 $+\numHNineThreshold$; measured $+\numHNineDiff$, 95\% CI $[+\numHNineLo, +\numHNineHi]$, mean
 pool \numHNinePoolBefore{} to \numHNinePoolAfter{}. The cap was registered to gain and it gains:
 it removes a few candidates that were a substrate's only correct answer and many more that were
-occupying the middle of the list. The value was fixed by a rule rather than by search, the
-smallest round cap at twice the largest reported budget, so that the widest column is not a
-tautology.
+occupying the middle of the list. The value was fixed by a rule rather than by a search. The rule is
+that the cap must be at least twice the widest budget reported, so that the widest column is never
+just the whole pool; 100 is the smallest round number that satisfies it.
 
 \subsection{Rule budget and two operating modes}
 
@@ -380,11 +380,11 @@ present in this bank verbatim, so what separates at those budgets is an ordering
 the two systems largely share. Neither side separates at $k=8$ and
 $10$, where MetaPredictor leads, nor at $k=15$ and $20$. GRAIL's exhaustive mode leads every
 comparator with the interval excluding zero at $k=30$ and $k=50$. BioTransformer trails at every
-budget, which is the arm a reader of the rule bank should look at hardest: it is the source of
-\numThirdpartyBiotransformerShipped{} of this bank's templates, and cut to its own list length
-the exhaustive arm's lead over it is $+\numBtarmMatchedgap$ $[\numBtarmMatchedlo,
-+\numBtarmMatchedhi]$, an interval covering zero, so what separates the two at a wide budget is
-how much each emits (Section~\ref{SI-sec:si-comparators}). One of those eight cells should not be
+budget, and it is the arm a reader of the rule bank should look at hardest, because it supplies
+\numThirdpartyBiotransformerShipped{} of this bank's templates. Cut to its own list length the
+exhaustive arm's lead over it is $+\numBtarmMatchedgap$ $[\numBtarmMatchedlo,
++\numBtarmMatchedhi]$, an interval covering zero: what separates the two at a wide budget is how
+much each emits (Section~\ref{SI-sec:si-comparators}). One of those eight cells should not be
 read as a lead, and it is named here rather than three sections later. The margin over MetaTox at
 $k=30$ is $+\numMarginMarginalgap$ with the interval
 $[+\numMarginMarginallo, +\numMarginMarginalhi]$: it is the only one a family-wise correction over
@@ -510,10 +510,10 @@ the fusion identical downstream. On average \numSelApplicable{} of the \numBankR
 match a given substrate, so the choice is made within a large applicable set rather than over the bank.
 
 The comparison that decides is against the \numSelBudget{} applicable rules with the highest
-training frequency, which uses the same applicability filter and no learning, and it is given
-first because the alternatives are weaker tests: drawing \numSelBudget{} rules from the whole bank
-gains the learned choice $+\numSelVsrandom$ only because most randomly chosen templates do not
-fire at all, and drawing them from the applicable set gains $+\numSelVsrandomApplicable$
+training frequency. That arm uses the same applicability filter and no learning, and it comes first
+because the two alternatives are weaker tests. Drawing \numSelBudget{} rules from the whole bank
+gains the learned choice $+\numSelVsrandom$, but only because most randomly chosen templates do
+not fire at all; drawing them from the applicable set gains $+\numSelVsrandomApplicable$
 $[+\numSelVsrandomApplicablelo, +\numSelVsrandomApplicablehi]$ against an arm returning
 \numSelRandomApplicablePool{} candidates to the learned arm's \numSelLearnedPool{}. Against the
 frequency table the learned choice gains $+\numSelVspriorApplicable$ of micro recall at $k=15$,
@@ -736,9 +736,8 @@ fourth arm, hydrogens made explicit without completing the templates, is an inco
 than a convention and reaches only \numHydUncoveredexpanded{}; the instrument's own record
 excludes it.
 
-The first two of those describe one convention through two loops and disagree by
-\numCeilagreeDisagreementWord{} references, which is the two loops cleaning products
-differently. All four span \numCeilagreeSpread{} references,
+The first two are the same convention measured through two different loops, and they disagree by
+\numCeilagreeDisagreementWord{} references because the two loops clean products differently. All four span \numCeilagreeSpread{} references,
 \numCeilagreeSpreadofmarginPct{} of the narrowest margin that separates anything in this paper,
 so the choice of instrument cannot decide a claim here. The residual dependence of the bound on the convention, measured per template, is
 $\numHydResidual{}$, 95\% CI $[\numHydResiduallo{}, \numHydResidualhi{}]$, an interval excluding
