@@ -210,6 +210,53 @@ def main() -> int:
 
     dropped_types_absent_from_kept = sum(c for t, c in dropped.items() if t not in kept)
 
+    # The question the containment claim actually raises. Of the test references whose type
+    # neither the bank nor the training annotation holds -- the cell the Conclusions rest on --
+    # how many have a type that IS present among the pairs this source held and the corpus
+    # dropped? That mass is not chemistry the literature lacks. It is chemistry a file in this
+    # repository holds and the assembly step did not carry across, so it is recoverable by
+    # re-deriving the corpus rather than by finding a new one.
+    recoverable = None
+    absent_path = ROOT / "results/missing_types_in_train.json"
+    if absent_path.exists():
+        blob = json.loads(absent_path.read_text())
+        per_type = blob.get("references_per_absent_type") or {}
+        in_dropped = {ty: n for ty, n in per_type.items() if ty in dropped}
+        in_kept_only = {ty: n for ty, n in per_type.items()
+                        if ty not in dropped and ty in kept}
+        # The same question one granularity coarser. A type key this strict can miss an overlap
+        # that a chemist would call the same transformation, and the containment claim it feeds
+        # is varied over four definitions, so this is varied too rather than reported at one.
+        def deep(x):
+            return tuple(deep(i) for i in x) if isinstance(x, list) else x
+
+        def coarse(key):
+            return str(sorted(frozenset(deep(e[0]) for e in json.loads(key))))
+
+        dropped_coarse = {coarse(ty) for ty in dropped}
+        in_dropped_coarse = {ty: n for ty, n in per_type.items()
+                             if coarse(ty) in dropped_coarse}
+
+        recoverable = {
+            "source_of_the_absent_cell": str(absent_path.relative_to(ROOT)),
+            "references_whose_type_neither_the_bank_nor_training_holds":
+                int(sum(per_type.values())),
+            "of_those_whose_type_this_source_dropped": int(sum(in_dropped.values())),
+            "share": round(sum(in_dropped.values()) / max(sum(per_type.values()), 1), 4),
+            "of_those_whose_type_this_source_kept_but_the_splits_lack":
+                int(sum(in_kept_only.values())),
+            "distinct_types_recoverable": len(in_dropped),
+            "of_those_whose_type_this_source_dropped_counts_ignored":
+                int(sum(in_dropped_coarse.values())),
+            "share_counts_ignored": round(
+                sum(in_dropped_coarse.values()) / max(sum(per_type.values()), 1), 4),
+            "reading": ("a test reference in this count needs a transformation type that one of "
+                        "the corpus's own four sources records and the assembly step did not "
+                        "carry across; it bounds from below how much of the shortfall is the "
+                        "assembly's rather than the literature's, since only one source of four "
+                        "can be measured this way"),
+        }
+
     report = {
         "provenance": stamp(__file__),
         "question": ("whether the unrecoverable selection that assembled the corpus removed a "
@@ -233,6 +280,7 @@ def main() -> int:
             dropped_types_absent_from_kept / max(nd, 1), 4),
         "top_types_kept": [[t, c] for t, c in kept.most_common(8)],
         "top_types_dropped": [[t, c] for t, c in dropped.most_common(8)],
+        "recoverable_from_the_dropped_half": recoverable,
         "reading": (
             "A filter selecting on transformation type would leave the two halves with different "
             "type distributions. The distance between them and the chance of seeing a distance "
@@ -250,6 +298,15 @@ def main() -> int:
     print(f"  permutation p       : {p:.4f} over {N_PERM} shuffles")
     print(f"  dropped pairs whose type the kept half never shows: "
           f"{dropped_types_absent_from_kept} ({dropped_types_absent_from_kept / max(nd,1):.1%})")
+    if recoverable:
+        print(f"\nof the "
+              f"{recoverable['references_whose_type_neither_the_bank_nor_training_holds']} test "
+              f"references whose type neither the bank nor training holds, "
+              f"{recoverable['of_those_whose_type_this_source_dropped']} "
+              f"({recoverable['share']:.1%}) have a type this one source held and the corpus "
+              f"dropped; with bond counts ignored, "
+              f"{recoverable['of_those_whose_type_this_source_dropped_counts_ignored']} "
+              f"({recoverable['share_counts_ignored']:.1%})")
     print(f"wrote {args.out}")
     return 0
 

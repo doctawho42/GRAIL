@@ -43,6 +43,13 @@ COMPARATORS = {
     "metatox": ("results/metatox_smirks_preds.json", "predictions"),
     "sygma": ("results/sygma_fulltest_predictions.json", None),
     "metapredictor": ("artifacts/tier2_1170/metapredictor_preds.json", None),
+    # BioTransformer entered the comparison after the multiplicity family was declared. It is a
+    # column here because the rule that kept it out -- that an arm supplies ranked per-substrate
+    # predictions -- does not distinguish it from MetaPredictor, whose list is also unranked and
+    # shorter than the budget on nearly every substrate. The declared family in multiplicity.py
+    # names its three comparators explicitly and is unchanged by this addition, so the corrected
+    # verdicts the paper reports are still computed over the family that was declared.
+    "biotransformer": ("results/biotransformer_allhuman_one_step_preds.json", None),
 }
 
 

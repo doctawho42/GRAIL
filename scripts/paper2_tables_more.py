@@ -175,7 +175,9 @@ def case_study():
         f"{body} \\\\\n\\bottomrule\n\\end{{tabular}}\n"
         "\\caption{The four annotated metabolites of gemcitabine and the rank each is returned "
         "at by the two operating modes, with the bank template that produced it. Rule is the "
-        "index into the deployed bank. The substrate is drawn as the corpus stores it.}\n"
+        "index into the deployed bank. The substrate is drawn as the corpus stores it; the "
+        "graphic for the table of contents shows two of these metabolites under the drawing a "
+        "chemist would submit, where the same run returns different ranks.}\n"
         "\\label{tab:case}\n\\end{table*}\n")
 
 

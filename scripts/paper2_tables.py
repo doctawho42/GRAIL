@@ -11,7 +11,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 LABEL = {"whole bank": "GRAIL exh.", "trained budget": "GRAIL int.",
-         "metatox": "MetaTox", "sygma": "SyGMa", "metapredictor": "MetaPred."}
+         "metatox": "MetaTox", "sygma": "SyGMa", "metapredictor": "MetaPred.",
+         "biotransformer": "BioTrans."}
 
 
 def table():
@@ -37,7 +38,7 @@ def table():
                                               for a in arms) + " \\\\",
           "\\bottomrule", "\\end{tabular}",
           "\\caption{Micro recall at each output budget on the "
-          f"{d['population']['n']} substrates every method predicts on, carrying "
+          f"{d['population']['n']} substrates of the comparison set, carrying "
           f"{int(d['population']['n_references'])} annotated metabolites. The last row gives the "
           "mean number of candidates each method emits, before any budget is applied: it is a "
           "property of the method and not of this table, and for two of the comparators it is "

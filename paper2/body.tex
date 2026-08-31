@@ -346,18 +346,18 @@ applied here to the two choices this literature leaves undeclared.
 \begin{figure}[t]
 \centering
 \includegraphics[width=\columnwidth]{fig_sweep}
-\caption{Micro recall against output budget on the \numPopulationN{} substrates every method
-predicts on. Shading marks the budgets at which the better GRAIL arm trails the strongest
+\caption{Micro recall against output budget on the \numPopulationN{} substrates of the
+comparison set. Shading marks the budgets at which the better GRAIL arm trails the strongest
 comparator with the paired interval excluding zero (lavender) or leads on the same condition
 (green); budgets where neither separates are unshaded. The shading is read at a nominal budget,
-which is not a list length: of the three comparators the green region leads, two do not survive
+which is not a list length: of the comparators the green region leads, most do not survive
 matching on realised length (Table~\ref{SI-tab:si-matched}).}
 \label{fig:sweep}
 \end{figure}
 
-Figure~\ref{fig:sweep} and Table~\ref{tab:sweep} are the comparison on the \numPopulationN{} substrates every method predicts
-on. Read against the strongest comparator at each budget it divides in three rather than resolving
-into an ordering. Every difference behind that division, with its paired interval, is
+Figure~\ref{fig:sweep} and Table~\ref{tab:sweep} are the comparison on the \numPopulationN{}
+substrates of the comparison set. Read against the strongest comparator at each budget it divides
+in three rather than resolving into an ordering. Every difference behind that division, with its paired interval, is
 Table~\ref{SI-tab:si-intervals}.
 
 GRAIL trails with the interval excluding zero at $k=1$, $3$ and $5$, where SyGMa leads
@@ -365,8 +365,13 @@ GRAIL trails with the interval excluding zero at $k=1$, $3$ and $5$, where SyGMa
 and the reading depends on it: \numSygmaInside{} of SyGMa's \numSygmaRules{} published rules are
 present in this bank verbatim, so what separates at those budgets is an ordering over chemistry
 the two systems largely share. Neither side separates at $k=8$ and
-$10$, where MetaPredictor leads, nor at $k=15$ and $20$. GRAIL's exhaustive mode leads all three
-comparators with the interval excluding zero at $k=30$ and $k=50$. One of those six cells should not be read as a lead, and it is named here rather than three
+$10$, where MetaPredictor leads, nor at $k=15$ and $20$. GRAIL's exhaustive mode leads every
+comparator with the interval excluding zero at $k=30$ and $k=50$. BioTransformer trails at every
+budget, which is the arm a reader of the rule bank should look at hardest: it is the source of
+\numThirdpartyBiotransformerShipped{} of this bank's templates, and cut to its own list length
+the exhaustive arm's lead over it is $+\numBtarmMatchedgap$ $[\numBtarmMatchedlo,
++\numBtarmMatchedhi]$, an interval covering zero, so what separates the two at a wide budget is
+how much each emits (Section~\ref{SI-sec:si-comparators}). One of those six cells should not be read as a lead, and it is named here rather than three
 sections later. The margin over MetaTox at $k=30$ is $+\numMarginMarginalgap$ with the interval
 $[+\numMarginMarginallo, +\numMarginMarginalhi]$: it is the only one of the six a family-wise
 correction over the sweep removes, and its lower bound is smaller than the one drawing correction

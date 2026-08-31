@@ -30,7 +30,7 @@ OUT = ROOT / "paper2"
 # figure carries a second encoding -- distinct markers, line styles and direct labels -- so
 # identity is never colour alone, which is also what the guidance requires for a warning-band
 # pair.
-PALETTE = ["#0072B2", "#D55E00", "#009E73", "#B07A00", "#AD5A87"]
+PALETTE = ["#0072B2", "#D55E00", "#009E73", "#B07A00", "#AD5A87", "#56514C"]
 
 # Polarity, for the outcome bands of the sweep. These are regions rather than entities, so
 # they must not wear a series hue: the first draft shaded "GRAIL leads" in the same blue as
@@ -77,7 +77,8 @@ def fig_sweep():
              "trained budget": ("GRAIL interactive", "-", "s", PALETTE[1]),
              "metatox": ("MetaTox", "--", "^", PALETTE[2]),
              "sygma": ("SyGMa", "--", "v", PALETTE[3]),
-             "metapredictor": ("MetaPredictor", "--", "D", PALETTE[4])}
+             "metapredictor": ("MetaPredictor", "--", "D", PALETTE[4]),
+             "biotransformer": ("BioTransformer", "--", "*", PALETTE[5])}
     fig, ax = plt.subplots(figsize=(W, 2.5))
     for arm, (lab, ls, mk, col) in style.items():
         if arm not in rec[str(ks[0])]:

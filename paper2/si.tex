@@ -36,6 +36,7 @@ Pogodinskaya Str. 10-8, Moscow 119121, Russia}
 \maketitle
 
 \section{The corpus and its splits}
+\label{sec:si-corpus}
 
 \input{si_table_splits}
 
@@ -474,14 +475,13 @@ $95\%$ CI $[\numDsweepCeilinglo, \numDsweepCeilinghi]$, which does not separate 
 measured here rather than on the full evaluated split because the uncapped exhaustive pool exists
 in both drawings for this population and not for that one.
 
-Only this system's own arms are swept: the comparators are held at whatever drawing they received,
-because MetaTox is a web service and MetaPredictor a frozen delivery and neither can be re-run
-here. A difference against them therefore measures how much of our own margin was the drawing,
-which is the question that matters for reading the comparison, and it leaves a residual on their
-side that is worth naming. SyGMa is the one comparator that can be re-run, and giving it the
-natural drawing raises its recall at every wide budget, by $+\numSygdialectThirty$
-$[\numSygdialectThirtyLo, \numSygdialectThirtyHi]$ at $k=30$. Where a comparator met the corpus
-drawing, that is the size of what it lost by it, and the loss favours us.
+Only this system's own arms are swept in that table: a difference against a comparator held at
+one drawing measures how much of our own margin was the drawing, which is the question that
+matters for reading the comparison. What it leaves is a residual on the comparators' side, and
+three of the four can now be re-run, so that residual is measured rather than named. Giving SyGMa
+the natural drawing raises its recall at every wide budget, by $+\numSygdialectThirty$
+$[\numSygdialectThirtyLo, \numSygdialectThirtyHi]$ at $k=30$. Only MetaTox cannot be re-run, and
+it is the one comparator that was handed the natural drawing to begin with.
 
 \input{si_table_dialect}
 
@@ -497,6 +497,24 @@ and the amount is now on the record. It does not reverse the comparison: the exh
 lead over SyGMa at $k=30$ is several times this correction. It does mean the lead is over a SyGMa
 handed a drawing its rules were not written for, and this amount should be subtracted before reading
 it.
+
+An earlier version of this work reported that correction for SyGMa alone and said the other
+comparators could not be re-run. MetaPredictor could: it is a source checkout with its weights on
+disk. The asymmetry mattered because MetaPredictor is one of the two comparators the wide-budget
+lead does not survive against, so a correction it never received was the one correction running
+this work's way. It is measured now, on the \numMpdrawRerun{} substrates whose two drawings are
+different molecules, the rest keeping their frozen predictions because they contribute a paired
+difference of exactly zero. The natural drawing raises MetaPredictor's recall by
+$+\numMpdrawAllDiffThreeZero$ $[\numMpdrawAllLoThreeZero, +\numMpdrawAllHiThreeZero]$ at $k=30$
+over the whole comparison set, an interval covering zero, and by
+$+\numMpdrawMovedDiffThreeZero$ $[\numMpdrawMovedLoThreeZero, +\numMpdrawMovedHiThreeZero]$
+over the \numMpdrawMovedN{} substrates it affects.
+
+BioTransformer, the fourth, is the case that shows why a proxy would have been the wrong
+instrument. The natural drawing changes its recall by $\numBtarmDrawingdelta$ at $k=30$, in the
+opposite direction: what costs SyGMa recall costs it nothing, which is what a tool that
+standardises its own input before matching would do. Three rule-based comparators, three
+different answers, and no one of them bounds another.
 
 \section{The rule bank}
 
@@ -695,7 +713,31 @@ The conclusion does not turn on the granularity.
 
 Two cautions belong with it. A type absent from the training annotation is absent from this
 corpus's training half and not from chemistry; that is exactly the sense in which the claim is
-about corpora and not about metabolism.
+about a corpus and not about metabolism.
+
+That raises the question the corpus's own assembly puts to this section. The selection that drew
+records from the four sources is unrecoverable (Section~\ref{sec:si-corpus}), and it dropped
+rather more than a third of one source. If it dropped a \emph{class} of chemistry, it would
+manufacture this shortfall rather than reveal it, and the claim above would be about a filter
+nobody can read. One of the four sources is on disk in full, so the question can be put to it.
+Both halves of MetXBioDB are typed under the same instrument: of its \numMetxdropPairs{} distinct
+pairs, \numMetxdropInside{} are inside the corpus and \numMetxdropDropped{} are not, and
+\numMetxdropTypedkept{} and \numMetxdropTypeddropped{} of them respectively can be typed.
+
+The filter was not blind to chemistry. The total variation distance between the two type
+distributions is \numMetxdropTv{}, and a permutation test over \numMetxdropPerm{} shuffles of
+the kept and dropped labels puts the chance of a distance that large at
+$p=\numMetxdropP$. \numMetxdropDroppedtypesabsent{} of the dropped pairs,
+\numMetxdropDroppedtypesabsentsharePct{}, carry a type the kept half never shows.
+
+It nonetheless does not explain the shortfall, and that is the number that decides the question.
+Of the \numMetxdropAbsentcell{} test references whose type neither the bank nor the training
+annotation holds, \numMetxdropRecoverableWord{} has a type this source held and the corpus
+dropped, \numMetxdropRecoverablesharePct{}; with bond counts ignored,
+\numMetxdropRecoverablecoarse{}, \numMetxdropRecoverablecoarsesharePct{}. The selection removed
+chemistry, and it did not remove this chemistry. What bounds the answer is that only one source of
+four can be read this way, so this closes the alternative for a quarter of the corpus's provenance
+and not for all of it.
 
 And the counts in this section are made by one instrument and are not interchangeable with the
 counts elsewhere. Typing by the radius-0 route leaves \numTypeoverlapUntypeable{} of the
@@ -1148,6 +1190,7 @@ instead: the global setting is untouched, and matching keys on 96 molecules are 
 without it.
 
 \section{Comparators}
+\label{sec:si-comparators}
 
 SyGMa 1.1.0 is taken from the installed module and run with the scenario
 \texttt{[[phase1,\,1],}\allowbreak\texttt{[phase2,\,1]]}, one cycle of each ruleset, which is
@@ -1210,14 +1253,49 @@ tool class \citep{Gao_2026}, and its absence would otherwise be conspicuous.
 BioTransformer is pinned by digest rather than by version string, because ``3.0'' names several
 builds: jar \texttt{c70cad91}, 115{,}415{,}197 bytes, upstream commit \texttt{6432cf88} of
 2023-05-25, its \numBtTemplates{} templates loaded at freeze time rather than taken from a
-constant. It carries no column in the comparison, and the rule is the one that defines the
-comparison set: an arm is included where it supplies ranked per-substrate predictions on the
-\numPopulationN{} substrates. BioTransformer was obtained and measured, but for the reach of its
-template set rather than as a ranked predictor, and on the \numBtN{}-substrate subset shared with
-a further comparator: its templates reach \numBtReach{} of the references there,
-95\% CI $[\numBtLo, \numBtHi]$, against \numBankRules{} templates of ours reaching
-\numBtOurreach{} on the same substrates. A reach figure and a ranked recall are not the same quantity and
-we do not place them in one table.
+constant.
+
+It carries a column, and an earlier version of this work said it could not. The reason given was
+that an arm is included where it supplies ranked per-substrate predictions, and that
+BioTransformer supplies none. That rule does not separate it from MetaPredictor, which is in the
+comparison and whose list is also unranked and shorter than the budget on nearly every substrate,
+and it was the wrong diagnosis: the tool runs. It failed on this machine because the native InChI
+library its distribution caches is built for one processor architecture and this machine is
+another, which an x86-64 Java 8 runtime resolves. It is also the comparator a reader of the rule
+bank most wants, since \numThirdpartyBiotransformerShipped{} of its templates are inside that bank, so its
+column measures how much of this work's reach is BioTransformer's reach under another name.
+
+It is run at \texttt{allHuman} for one step, the setting that gives it what every other arm here
+is allowed, a single enzymatic application, and its file order is its ranking, which is the
+treatment MetaPredictor's unranked list already receives. It emits \numBtarmEmitted{} candidates
+per substrate and returns nothing for \numBtarmSilent{} of \numPopulationN{}. The exhaustive arm
+leads it by $+\numBtarmGapThreeZero$ $[+\numBtarmGapThreeZeroLo, +\numBtarmGapThreeZeroHi]$ at a
+budget of thirty. Cut to BioTransformer's own list length on every substrate, the same control the
+other comparators receive, the lead is $+\numBtarmMatchedgap$ $[\numBtarmMatchedlo,
++\numBtarmMatchedhi]$ over \numBtarmMatchedslots{} slots, an interval covering zero. The
+wide-budget gap against BioTransformer is therefore an emission gap and not an ordering one, which
+is what a bank sharing \numThirdpartyBiotransformerShipped{} of its templates should produce.
+
+Two things follow for the reading of the rest. The declared family the family-wise correction is
+computed over names its three comparators and was fixed before this arm existed, so it is
+unchanged: BioTransformer's contrasts are reported with their own intervals and are not folded
+into a correction declared without them. And the deeper scenario is not swept for this comparator
+as it is for SyGMa; the matched-length control already removes list length as a variable and finds
+no separation, so a scenario that emits more would narrow a gap the paper does not claim as an
+ordering result.
+
+Its templates were also measured for reach, before it carried a column, on the
+\numBtN{}-substrate subset shared with a further comparator: they reach \numBtReach{} of the
+references there, 95\% CI $[\numBtLo, \numBtHi]$, against \numBankRules{} templates of ours
+reaching \numBtOurreach{}. A reach figure and a ranked recall are not the same quantity and they
+are not placed in one table.
+
+The substrate was handed to BioTransformer as the corpus stores it, as it was to SyGMa and
+MetaPredictor. Handed the natural tautomer instead, the same arm reaches
+\numBtarmDrawnrecallThreeZero{} against \numBtarmRecallThreeZero{}, a difference of
+$\numBtarmDrawingdelta$ at a budget of thirty. That is the second comparator for which both
+drawings could be run and the two disagree in direction: the drawing that costs SyGMa recall costs
+BioTransformer nothing, which is what a tool that standardises its own input would do.
 
 Four systems published in 2025--26 could not be run on our split as released. LAGOM
 \citep{Larsson_2025} releases training code under Apache-2.0 but no fine-tuned checkpoint, so

@@ -124,7 +124,9 @@ def main() -> int:
         label, path = spec.split("=", 1)
         raw = parse_csv(Path(path), index_map, set(subs))
         lists = {s: drop_parent(_dedup(raw.get(s, []), CAP + 5), s) for s in subs}
-        slug = label.replace(" ", "_").lower()
+        slug = "".join(c if c.isalnum() else "_" for c in label.lower()).strip("_")
+        while "__" in slug:
+            slug = slug.replace("__", "_")
         target = Path(args.preds_dir) / f"biotransformer_{slug}_preds.json"
         target.write_text(json.dumps({s: raw.get(s, []) for s in subs}, indent=1))
         written[label] = str(target.relative_to(ROOT))

@@ -94,7 +94,8 @@ def build():
                 n[f"macrogap.{tag}{tagb}.{k}.sep"] = c["excludes_zero"]
 
     ARMS = {"whole bank": "bank", "trained budget": "trained", "metatox": "metatox",
-            "sygma": "sygma", "metapredictor": "metapredictor"}
+            "sygma": "sygma", "metapredictor": "metapredictor",
+            "biotransformer": "biotransformer"}
     for k, row in dep["recall_micro"].items():
         for arm, tag in ARMS.items():
             if arm in row:
@@ -394,6 +395,70 @@ def build():
     n["typeoverlap.determiningmin"] = min(_determining)
     n["typeoverlap.coarseshare"] = _bg[
         "set of changed-bond classes, counts dropped"]["share"]
+
+    # Whether the unrecoverable selection that assembled the corpus removed a class of chemistry,
+    # which would manufacture the shortfall above rather than measure it. Only one of the four
+    # sources is on disk in full, so this is a bound from one source and is reported as such.
+    drop = art("metxbiodb_drop_set.json")
+    n["metxdrop.pairs"] = drop["source"]["distinct_pairs"]
+    n["metxdrop.inside"] = drop["source"]["inside_the_corpus"]
+    n["metxdrop.dropped"] = drop["source"]["dropped"]
+    n["metxdrop.typedkept"] = drop["typed"]["kept"]
+    n["metxdrop.typeddropped"] = drop["typed"]["dropped"]
+    n["metxdrop.tv"] = drop["total_variation_distance"]
+    n["metxdrop.p"] = drop["permutation"]["p_value"]
+    n["metxdrop.perm"] = drop["permutation"]["n"]
+    n["metxdrop.droppedtypesabsent"] = drop[
+        "dropped_references_whose_type_is_absent_from_the_kept_half"]
+    n["metxdrop.droppedtypesabsentshare"] = drop["share_of_dropped_whose_type_the_kept_half_lacks"]
+    _rec = drop["recoverable_from_the_dropped_half"]
+    n["metxdrop.absentcell"] = _rec["references_whose_type_neither_the_bank_nor_training_holds"]
+    n["metxdrop.recoverable"] = _rec["of_those_whose_type_this_source_dropped"]
+    n["metxdrop.recoverableshare"] = _rec["share"]
+    n["metxdrop.recoverablecoarse"] = _rec[
+        "of_those_whose_type_this_source_dropped_counts_ignored"]
+    n["metxdrop.recoverablecoarseshare"] = _rec["share_counts_ignored"]
+
+    # What the corpus's drawing costs the comparator the manuscript could not re-run. It is a
+    # source checkout, so it can be, and the asymmetry it left was the one running this work's way.
+    mpd = art("metapredictor_drawing.json")
+    n["mpdraw.rerun"] = mpd["substrates_re_run"]
+    for tag, short in (("the whole comparison set", "all"),
+                       ("only the substrates the drawing changes", "moved")):
+        cell = mpd["by_population"][tag]
+        n[f"mpdraw.{short}.n"] = cell["n_substrates"]
+        for k in ("15", "30"):
+            c = cell["by_budget"][k]
+            n[f"mpdraw.{short}.diff{k}"] = c["difference"]
+            n[f"mpdraw.{short}.lo{k}"] = c["ci95"][0]
+            n[f"mpdraw.{short}.hi{k}"] = c["ci95"][1]
+            n[f"mpdraw.{short}.sep{k}"] = c["excludes_zero"]
+
+    # BioTransformer, run rather than excluded. Both drawings of the substrate, and the same
+    # matched-length control every other comparator receives.
+    bt = art("biotransformer_arm.json")
+    _stored = bt["by_setting"]["allHuman one step"]
+    _drawn = bt["by_setting"]["allHuman one step, natural drawing"]
+    n["btarm.emitted"] = _stored["mean_emitted"]
+    n["btarm.silent"] = _stored["substrates_with_no_prediction"]
+    for k in ("15", "30", "50"):
+        n[f"btarm.recall{k}"] = _stored["recall"][k]
+        n[f"btarm.drawnrecall{k}"] = _drawn["recall"][k]
+    for k in ("15", "30", "50"):
+        cell = _stored[f"exhaustive_minus_biotransformer_at_{k}"]
+        n[f"btarm.gap{k}"] = cell["gap"]
+        n[f"btarm.gap{k}.lo"], n[f"btarm.gap{k}.hi"] = cell["ci95"]
+        n[f"btarm.gap{k}.sep"] = cell["excludes_zero"]
+    _m = _stored["matched_length"]
+    n["btarm.matchedgap"] = _m["gap"]
+    n["btarm.matchedlo"], n["btarm.matchedhi"] = _m["ci95"]
+    n["btarm.matchedsep"] = _m["excludes_zero"]
+    n["btarm.matchedslots"] = _m["mean_slots"]
+    n["btarm.matchedours"] = _m["recall_ours"]
+    n["btarm.matchedtheirs"] = _m["recall_theirs"]
+    # What the drawing costs this comparator, which is the second measured case of a correction
+    # the manuscript could previously report for one comparator only.
+    n["btarm.drawingdelta"] = round(_drawn["recall"]["30"] - _stored["recall"]["30"], 4)
 
     # The fusion constant, swept. It was left at the published default and the paper disclosed
     # that; a sweep says whether the disclosure costs anything.

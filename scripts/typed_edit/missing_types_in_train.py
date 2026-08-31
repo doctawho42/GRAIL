@@ -191,6 +191,12 @@ def main() -> int:
             cells["not in the bank, nor in training"] += count
     outside = cells["not in the bank, in training"] + cells["not in the bank, nor in training"]
 
+    # The type keys of the cell the containment claim rests on, written out so another instrument
+    # can ask where that chemistry might be found rather than only how much of it there is. A
+    # count cannot be intersected with anything; a key list can.
+    absent_keys = sorted(k for k in test["types"]
+                         if k not in bank_types and k not in train_types)
+
     # The same four cells under each coarsening. A type key is a JSON dump of the structure, so
     # the structure is recovered and re-keyed rather than re-typed.
     by_granularity = {}
@@ -243,6 +249,8 @@ def main() -> int:
         "share_of_the_bank_s_type_gap_the_corpus_also_lacks": round(
             cells["not in the bank, nor in training"] / max(outside, 1), 4),
         "by_granularity": by_granularity,
+        "types_absent_from_both": absent_keys,
+        "references_per_absent_type": {k: test["types"][k] for k in absent_keys},
         "reading": (
             "A test reference whose type occurs in the training annotation is chemistry the "
             "corpus contains, so a bank that misses it misses something the corpus could have "
