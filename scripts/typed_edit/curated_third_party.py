@@ -286,7 +286,7 @@ def main() -> int:
     print(f"  {'union':16s} {len(union):4d} = "
           f"{report['share_of_the_curated_half_so_traceable']:.1%} of the curated half; "
           f"{report['curated_templates_traceable_to_nothing_measured']} trace to nothing measured")
-    print("\nfiles this repository redistributes:")
+    print("\nthird-party rule files on disk, and whether this repository redistributes them:")
     for rel, row in files.items():
         used = row.get("templates_of_this_file_used_by_the_bank")
         print(f"  {'tracked ' if row['tracked_by_git'] else 'untracked'} "

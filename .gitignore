@@ -87,3 +87,14 @@ paper2/zenodo_bundle/
 # review packet: extracted text is a build product, the findings are the record
 .review/manuscript.txt
 .review/si.txt
+
+# Third-party rule files, kept locally so the provenance audit can run and NOT redistributed here.
+# The ENVMICRO file is CC BY-NC-SA 4.0, which no GPL release can carry; the RetroSim and GLORYx
+# files carry no licence text this repository holds. Each is obtainable from its own project, and
+# scripts/typed_edit/curated_third_party.py reports which of them it found rather than assuming.
+grail_metabolism/resources/external/bt_database_ENVMICRO_metabolicReactions.json
+grail_metabolism/resources/external/retrosim_templates_general.json
+grail_metabolism/resources/external/gloryx_reactionrules.csv
+# and the standardisation file, which is LGPL and so redistributable, but contributes no
+# template the bank uses: an obligation with no scientific return.
+grail_metabolism/resources/external/bt_database_standardizationReactions.json

@@ -41,7 +41,19 @@ from _provenance import stamp  # noqa: E402
 KS = (1, 3, 5, 8, 10, 15, 20, 30, 50)
 N_BOOT, SEED = 10000, 0
 CAP = 100
-SHARD_DIR = ROOT / "results" / "aggregation_shards"
+# Two populations. The comparison set answers whether the deployed rule costs anything where the
+# paper reads its leads; the validation draw is the only place a different rule could legitimately
+# be selected, since selecting on the comparison set is the one thing this work forbids elsewhere.
+POPULATIONS = {
+    "comparison": {"pools": "results/widepools_implicit/w*.json",
+                   "shards": ROOT / "results" / "aggregation_shards",
+                   "out": ROOT / "results" / "aggregation_ablation.json",
+                   "reference": "results/deployment_table.json"},
+    "validation": {"pools": "results/val_pools.json",
+                   "shards": ROOT / "results" / "aggregation_shards_val",
+                   "out": ROOT / "results" / "aggregation_ablation_validation.json",
+                   "reference": None},
+}
 
 # The rules compared. "noisy_or" is what the released checkpoint runs and what Equation 1 states;
 # "max" is the one a bank of near-duplicates argues for, since it counts a candidate once however
@@ -67,15 +79,16 @@ def aggregate(rule: str, scores: list[float]) -> float:
 RULES = ("noisy_or", "max", "mean", "hybrid")
 
 
-def wide_pools():
+def wide_pools(population="comparison"):
+    spec = POPULATIONS[population]["pools"]
     pools, refs = {}, {}
-    for f in sorted(glob.glob(str(ROOT / "results/widepools_implicit/w*.json"))):
+    for f in sorted(glob.glob(str(ROOT / spec))) or [str(ROOT / spec)]:
         blob = json.loads(Path(f).read_text())
         pools.update(blob["pools"]); refs.update(blob["references"])
     return pools, refs
 
 
-def collect(shard: int, shards: int, out: Path) -> int:
+def collect(shard: int, shards: int, out: Path, population="comparison") -> int:
     """Per-template scores for every candidate of one shard of the comparison set."""
     from rdkit import Chem, RDLogger
 
@@ -86,7 +99,7 @@ def collect(shard: int, shards: int, out: Path) -> int:
     from grail_metabolism.model.generator import _normalize_smiles_cached
     from grail_metabolism.workflows.factory import build_generator
 
-    pools, refs = wide_pools()
+    pools, refs = wide_pools(population)
     subs = sorted(s for s in pools if refs.get(s))
     mine = subs[shard::shards]
     generator = _load(ROOT / "artifacts/full5000_implicit/checkpoints/generator.pt",
@@ -136,11 +149,11 @@ def collect(shard: int, shards: int, out: Path) -> int:
     return 0
 
 
-def merge(out: str) -> int:
+def merge(out: str, population="comparison") -> int:
     from _rrf import rrf_order
     from bank_without_selection import _key as tautkey
 
-    shard_files = sorted(glob.glob(str(SHARD_DIR / "s*.json")))
+    shard_files = sorted(glob.glob(str(POPULATIONS[population]["shards"] / "s*.json")))
     if not shard_files:
         print("no shard written yet", file=sys.stderr)
         return 1
@@ -154,7 +167,7 @@ def merge(out: str) -> int:
               f"collection would silently narrow the population", file=sys.stderr)
         return 1
 
-    pools, refs = wide_pools()
+    pools, refs = wide_pools(population)
     subs = sorted(s for s in pools if refs.get(s))
     missing = [s for s in subs if s not in rows]
     if missing:
@@ -230,18 +243,20 @@ def merge(out: str) -> int:
     # the FILTER's run, and the arm it produced trailed the paper's by nine points at a budget of
     # thirty. Nothing in the pools recorded which checkpoint wrote them, so the only way to find
     # that was to check a number against another number, which is what this now does on every run.
-    reference = json.loads((ROOT / "results/deployment_table.json").read_text())
-    published = {k: v["whole bank"] for k, v in reference["recall_micro"].items()}
-    reproduces = {k: (abs(by_rule["noisy_or"]["recall"][k] - published[k]) <= 1e-4)
-                  for k in by_rule["noisy_or"]["recall"] if k in published}
-    if not all(reproduces.values()):
-        bad = [k for k, ok in reproduces.items() if not ok]
-        print("FAIL: the deployed aggregation does not reproduce the published arm at budgets "
-              + ", ".join(bad) + "; this re-run is not on the deployed model", file=sys.stderr)
-        for k in bad:
-            print(f"  k={k}: here {by_rule['noisy_or']['recall'][k]}, published {published[k]}",
-                  file=sys.stderr)
-        return 1
+    ref_path = POPULATIONS[population]["reference"]
+    if ref_path:
+        reference = json.loads((ROOT / ref_path).read_text())
+        published = {k: v["whole bank"] for k, v in reference["recall_micro"].items()}
+        reproduces = {k: (abs(by_rule["noisy_or"]["recall"][k] - published[k]) <= 1e-4)
+                      for k in by_rule["noisy_or"]["recall"] if k in published}
+        if not all(reproduces.values()):
+            bad = [k for k, ok in reproduces.items() if not ok]
+            print("FAIL: the deployed aggregation does not reproduce the published arm at budgets "
+                  + ", ".join(bad) + "; this re-run is not on the deployed model", file=sys.stderr)
+            for k in bad:
+                print(f"  k={k}: here {by_rule['noisy_or']['recall'][k]}, "
+                      f"published {published[k]}", file=sys.stderr)
+            return 1
 
     separating = sorted(
         rule for rule in RULES if rule != "noisy_or"
@@ -252,7 +267,9 @@ def merge(out: str) -> int:
         "question": ("whether the deployed noisy-or aggregation, whose independence assumption "
                      "this bank violates by construction, changes the comparison against the "
                      "alternatives the implementation offers"),
-        "population": {"n_substrates": len(subs), "n_references": int(U.sum())},
+        "population": {"name": population, "n_substrates": len(subs),
+                       "n_references": int(U.sum()),
+                       "pools": POPULATIONS[population]["pools"]},
         "join": {"candidates_scored_by_both": joined,
                  "candidates_the_pool_does_not_carry": unjoined,
                  "note": ("the filter is a function of substrate and product and does not depend "
@@ -296,14 +313,20 @@ def main() -> int:
     ap.add_argument("--shard", type=int, default=-1)
     ap.add_argument("--shards", type=int, default=8)
     ap.add_argument("--merge", action="store_true")
-    ap.add_argument("--out", default=str(ROOT / "results" / "aggregation_ablation.json"))
+    ap.add_argument("--population", choices=tuple(POPULATIONS), default="comparison",
+                    help="the comparison set answers whether the deployed rule costs anything "
+                         "where the leads are read; the validation draw is the only population "
+                         "on which a different rule could legitimately be selected")
+    ap.add_argument("--out", default="")
     args = ap.parse_args()
     if args.merge:
-        return merge(args.out)
+        return merge(args.out or str(POPULATIONS[args.population]["out"]), args.population)
     if args.shard < 0:
         print("give --shard N (with --shards M), or --merge", file=sys.stderr)
         return 2
-    return collect(args.shard, args.shards, SHARD_DIR / f"s{args.shard}.json")
+    return collect(args.shard, args.shards,
+                   POPULATIONS[args.population]["shards"] / f"s{args.shard}.json",
+                   args.population)
 
 
 if __name__ == "__main__":

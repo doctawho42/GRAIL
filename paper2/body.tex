@@ -669,14 +669,16 @@ level does not transfer to the tables above are in the Supporting Information.
 
 \subsection{Runtime}
 
-\begin{figure}[t]
+\begin{figure*}[t]
 \centering
-\includegraphics[width=\columnwidth]{fig_cost}
-\caption{Left: generator seconds against substrate size at the whole bank, with substrates
-that did not finish inside the deadline marked at it. Right: the cost of each operating mode on
-the validation split, log scale.}
+\includegraphics[width=\textwidth]{fig_cost}
+\caption{Left: generator seconds against substrate size at the whole bank, both axes logarithmic,
+with the substrates that did not finish inside the \numCostDeadline{}-second deadline drawn on the
+dashed line marking it. Right: wall-clock seconds per substrate for each operating mode on the
+validation split, log scale; the first four bars are the interactive mode's median, mean, ninetieth
+percentile and slowest substrate, the fifth the exhaustive mode's median.}
 \label{fig:cost}
-\end{figure}
+\end{figure*}
 
 Standardisation is the binding constraint (Figure~\ref{fig:cost}). Three other explanations were
 tested and rejected by measurement: the filter's maximum-common-substructure step, rule
@@ -1050,7 +1052,12 @@ bank, the split manifest, the annotated references every recall figure in this p
 against, the frozen per-substrate predictions of every comparator, the evaluation harness, the
 provenance sweep and the preregistration with every hypothesis and its outcome are at
 \texttt{github.com/doctawho42/GRAIL}, and are available to reviewers at submission. The
-repository's licence is \RepoLicence{}. The released model is to be deployed as a service on
+repository's licence is \RepoLicence{}, and \texttt{NOTICE.md} records what each rightsholder is
+owed and what dropping their templates would have cost, measured on the evaluated test set. The
+annotated references are released as the descriptors the matching criteria are decided by rather
+than as structures, so that every recall figure and every cell of the criterion sweep can be
+recomputed by a reader who does not hold the corpus sources' licences; a check reports zero
+disagreements between the two. The released model is to be deployed as a service on
 \texttt{way2drug.ru}; that deployment is not a condition of anything reported here, and every
 figure in this paper is reproducible from the repository without it. Releasing the checkpoints is the same bar this paper applies to others: a system
 whose weights are not obtainable cannot be compared against, which is why one of the

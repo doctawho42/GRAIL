@@ -199,7 +199,10 @@ def fig_cost():
     # Taller than the other two-panel figures and with the scatter given more of the width: at
     # the previous size the left panel's points were below the resolution a printed page gives a
     # scatter of this density, which is a legibility failure and not a taste one.
-    fig, (a1, a2) = plt.subplots(1, 2, figsize=(W * 2.06, 2.5),
+    # Placed across both columns rather than in one, so the scatter is read at about twice the
+    # width it had. A two-panel figure at a single column's width put this one below the size a
+    # printed page can resolve, which a referee reported as illegible.
+    fig, (a1, a2) = plt.subplots(1, 2, figsize=(W * 2.06, 2.35),
                                  gridspec_kw={"width_ratios": [1.45, 1]})
     fin = [r for r in env if r["finished"]]
     bad = [r for r in env if not r["finished"]]

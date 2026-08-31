@@ -1,13 +1,25 @@
-# Third-party content in this repository, and what it constrains
+# Third-party content in this repository, the terms it carries, and the licence that follows
 
-This file records what this repository holds that it did not write, and the terms each carries. It
-is not a licence. The repository's own licence is a decision the authors have not yet recorded, and
-this file exists because that decision is constrained rather than free.
+This file records what this repository holds that it did not write, the terms each carries, and how
+the repository's own licence follows from them. **The licence is GPLv3** (`LICENSE`), and it is not
+a preference: the bank redistributes reaction templates published under the GPL and the LGPL, and
+the GPL is the licence that satisfies both. A permissive release is not available while those
+templates are in the bank, and what removing them would cost is measured below rather than guessed.
 
 Two separate obligations run through what follows and they are easy to conflate. The **bank**
-contains other people's templates, which puts the bank under their terms. The **repository** tracks
-other people's files, which puts the release under the terms of everything inside them — including
-the parts the bank never uses. Both are measured in `results/curated_third_party.json`.
+contains other people's templates, which puts the bank under their terms. The **repository** tracked
+other people's files, which would put the release under the terms of everything inside them —
+including the parts the bank never uses. Both are measured in `results/curated_third_party.json`.
+The second obligation is now discharged: of the five third-party rule files, one remains tracked and
+four do not.
+
+Three decisions were taken and each is stated with what it cost:
+
+| decision | why | measured cost |
+|---|---|---|
+| GPLv3 for the code and the bank | SyGMa's templates are GPL, BioTransformer's are LGPL, and GPLv3 satisfies both | none; a permissive licence was never available |
+| stop tracking four of the five third-party rule files | one is CC BY-NC-SA and no GPL release can carry it; two carry no licence text held here; one is redistributable but contributes no template the bank uses | none: the bank is unchanged, and the files stay obtainable from their own projects |
+| do not distribute the corpus | its four sources' terms do not combine and the assembly recorded no per-record provenance, so no subset can be shown free of either | stated below, and it is not zero |
 
 ## The rule bank
 
@@ -33,30 +45,36 @@ SyGMa, in a notation the installed SyGMa package does not use. String equality c
 template that was rewritten, so every count above is a lower bound, and the 759 curated templates
 that match nothing measured are not thereby shown to be original.
 
-## The files this repository redistributes
+## The files, and which of them this repository still redistributes
 
-`grail_metabolism/resources/external/` holds five files tracked by git. Three are byte-identical to
-a file in the BioTransformer distribution. Redistributing a file carries the terms of everything in
-it, whatever the bank uses:
+`grail_metabolism/resources/external/` holds five third-party rule files on disk. Redistributing a
+file carries the terms of everything in it, whatever the bank uses, so four of the five are no
+longer tracked. They stay on disk for anyone who has them, `results/curated_third_party.json`
+records which were found, and each is obtainable from its own project:
 
-| file | size | templates the bank uses | terms |
-|---|---:|---:|---|
-| `bt_database_metabolicReactions.json` | 779 KB | 611 | LGPL |
-| `bt_database_ENVMICRO_metabolicReactions.json` | 172 KB | **2** | **CC BY-NC-SA 4.0** |
-| `bt_database_standardizationReactions.json` | 11 KB | **0** | LGPL |
-| `gloryx_reactionrules.csv` | 37 KB | 260 | not stated here |
-| `retrosim_templates_general.json` | 120 KB | **0** | not stated here |
+| file | size | templates the bank uses | terms | tracked |
+|---|---:|---:|---|---|
+| `bt_database_metabolicReactions.json` | 779 KB | 611 | LGPL, redistribution permitted | **yes** |
+| `bt_database_ENVMICRO_metabolicReactions.json` | 172 KB | 2 | **CC BY-NC-SA 4.0** | no |
+| `bt_database_standardizationReactions.json` | 11 KB | 0 | LGPL | no |
+| `gloryx_reactionrules.csv` | 37 KB | 260 | none held here | no |
+| `retrosim_templates_general.json` | 120 KB | 0 | none held here | no |
 
-The ENVMICRO file is the sharp one. Its own header, and the `LICENSE` beside it upstream, put the
-EAWAG data it holds under CC BY-NC-SA 4.0, licensed by EnviPath: NonCommercial and ShareAlike. Those
-terms cannot be absorbed into a GPL release or a permissive one, and the file is redistributed here
-verbatim. Its two templates that reach the bank are both also present in the LGPL core file, so the
-bank does not depend on it.
+The ENVMICRO file was the sharp one and it is the reason the rule was drawn this way. Its own
+header, and the `LICENSE` beside it upstream, put the EAWAG data it holds under CC BY-NC-SA 4.0,
+licensed by EnviPath: NonCommercial and ShareAlike, which no GPL release can carry. Its two
+templates that reach the bank are both also present in the LGPL core file, so nothing here depends
+on it.
 
-Three of the five files contribute 2, 0 and 0 templates. `scripts/convention_census.py` reads all
-five for a template-convention census reported in the companion manuscript, which is a use and not a
-reason to redistribute: that census already reads SyGMa's rules from the installed package rather
-than from a copy, and can read these the same way.
+The one that remains is the LGPL core, and it stays for a reason beyond permission: it is the
+evidence for the largest single attribution this bank owes, 611 templates, and a reader checking
+that claim needs the file the claim is made against. The other four were an obligation with no such
+return — two contribute no template at all, and GLORYx's own attribution column says 178 of its 260
+rules are SyGMa's, which the installed SyGMa package supplies directly.
+
+`scripts/convention_census.py` reads all five when they are present, which is a use and not a
+reason to redistribute: it already reads SyGMa's rules from the installed package rather than from
+a copy, and reads these the same way.
 
 ## BioTransformer's terms, exactly
 
@@ -82,22 +100,35 @@ question.
 ## SyGMa's terms
 
 The installed distribution's metadata says `License: GPL` and nothing more; no licence text ships
-with it and no version is named anywhere on disk. Which GPL version governs is therefore not settled
-by anything in this checkout, and it decides whether a GPLv3 release is available. The upstream
-repository is `https://github.com/ridderl/sygma`; checking whether it carries a `LICENSE` is the
-cheapest way to close this.
+with it and no version is named anywhere on disk. A program offered under "the GPL" with no version
+is conventionally read as offered under any version, at the recipient's choice, which is how it is
+read here and why GPLv3 is available. That reading is a convention and not a statement by SyGMa's
+authors: the upstream repository is `https://github.com/ridderl/sygma`, and if it carries a
+`LICENSE` naming a version, that version governs and this file should be corrected to it. The
+reading is recorded rather than assumed so that a correction has something to correct.
 
-## What this constrains
+## What this constrained, and the licence that follows
 
-A permissive licence over the whole repository is not available while the bank contains GPL
-templates. A GPL release is available only if SyGMa's version permits it, and it cannot include the
-ENVMICRO file, whose NonCommercial and ShareAlike terms no GPL satisfies. In every case the LGPL
-conditions have to be met in fact: credit, links to the licences, an indication that the templates
-were extracted and merged, and the upstream notices retained. This repository currently holds a
-licence text for only one of its four rightsholders, and no `LICENSE` file of its own.
+A permissive licence over the whole repository was never available while the bank contains GPL
+templates. A GPL release is available: SyGMa's distribution says "GPL" without naming a version,
+which is read here the way the Free Software Foundation reads it, as any version at the recipient's
+choice, and BioTransformer's LGPL is compatible in this direction. What a GPL release cannot carry
+is the ENVMICRO file, whose NonCommercial and ShareAlike terms no GPL satisfies, and that file is
+no longer tracked.
+
+**The licence is therefore GPLv3**, in `LICENSE`, covering the code and the rule bank. The LGPL
+conditions are met in fact and not only in principle: credit is given above and in `LICENSE`, the
+licence text for BioTransformer is at `artifacts/tier2/biotransformer/LICENSE.md`, this file states
+that templates were extracted from those distributions and merged into one bank, and the upstream
+notices are retained. Two obligations are recorded and not discharged, because they are questions
+for the rightsholders rather than for a file in this repository: BioTransformer's own README
+requires explicit permission for *commercial* use or redistribution, and the released model is to
+be deployed as a service, which the authors should settle with its authors directly; and GLORYx's
+82 templates carry no licence text this repository holds, so the cost of removing them is measured
+below and the decision is stated rather than assumed.
 
 None of this is an oversight to be corrected by a note. It is a set of decisions, and the cost of
-each is now measured rather than guessed (`results/licence_removal_cost__clean_test.json`, one
+each is measured rather than guessed (`results/licence_removal_cost__clean_test.json`, one
 uncapped pass of each bank variant over the 1,170 evaluated test substrates):
 
 | option | templates dropped | references lost of 2,597 | change in reach |
@@ -114,8 +145,8 @@ therefore be discharged by removal at no measurable cost to the science.
 SyGMa's 152 cost 14 references of 2,597, 0.54% of the reach. That is a real but small price, and
 it is the only one of these decisions where anything is being traded.
 
-The two unused files, ENVMICRO and RetroSim, can be untracked at no cost at all; the ENVMICRO one
-is the NonCommercial ShareAlike artifact and is the most urgent of the three.
+The unused files cost nothing to untrack and are untracked. What is kept is the LGPL core, whose
+611 templates the bank uses and whose redistribution the LGPL permits.
 
 ## The corpus
 
@@ -128,26 +159,41 @@ in it is replaced by a tautomer-canonical InChIKey before the archive is built.
 The corpus files themselves (`grail_metabolism/data/*.sdf`, `*_triples*.txt`) are **not** tracked
 here; they are gitignored and are obtained from the sources under the reader's own licences.
 
-`results/test_references.json` **is** tracked, and it is the one place where this repository holds
-source structures rather than keys: the evaluated test substrates and their annotated metabolites,
-as SMILES. That is 1,170 substrates and 2,597 metabolites of a corpus assembled from four sources
-whose licences do not combine, so it carries the same conflict the Zenodo deposit was keyed to
-avoid, and the same question of whether ChEMBL's ShareAlike and DrugBank's NonCommercial terms can
-both be met by one file.
+`results/test_references.json` held the evaluated test substrates and their annotated metabolites
+as SMILES: 1,170 substrates and 2,597 metabolites of that same corpus. It is no longer tracked, and
+what replaced it is `results/test_reference_descriptors.json`.
 
-**Keying it is not available, and the reason is the paper's own contribution.** The candidate pools
-could be keyed because a recall figure is computed on keys. The reference set cannot: the paper
-sweeps five matching criteria, and canonical SMILES equality, the stereochemistry-blind InChIKey
-first block and Tanimoto similarity on Morgan fingerprints all need the reference *structure*.
-Replacing the SMILES with one key fixes the criterion axis at that key and makes four of the five
-criteria uncomputable, which removes the demonstration the paper is largely about. The choice is
-therefore between releasing these structures and releasing a comparison a reader cannot re-derive
-under any criterion but ours, and it is a choice rather than an oversight.
+**Keying it with one hash was not available, and the reason is this work's own contribution.** The
+candidate pools could be keyed because a recall figure is computed on keys. Fixing the reference to
+a single key fixes the *matching criterion* with it, and this work sweeps five, so four of them
+would become uncomputable and the demonstration the paper is largely about would go with them.
 
-The substrate side has a cheaper answer than the metabolite side: the 1,170 substrates are drug and
-xenobiotic structures obtainable by name from any of the four sources, so a reader who holds the
-licences can rebuild that half from a list of identifiers. The 2,597 annotated metabolites are the
-annotation itself and cannot be rebuilt that way.
+Every one of the five is nonetheless decided by something that is not a structure, which is what
+the replacement carries per reference:
+
+| criterion | decided by | in the file |
+|---|---|---|
+| canonical SMILES equality | equality of a string | its SHA-256 |
+| full InChIKey | a hash | the InChIKey |
+| stereochemistry-blind first block | a hash | the InChIKey's first 14 characters |
+| tautomer-aware key (the default) | a hash | the key |
+| Tanimoto = 1 on Morgan fingerprints | the fingerprint, a lossy irreversible descriptor | its on-bits |
+
+`scripts/typed_edit/reference_descriptors.py --verify` checks the substitution rather than
+asserting it: on every pair it compares, each criterion's verdict on the descriptors matches its
+verdict on the structures, and it reports **0 disagreements**. The file reconstructs no metabolite:
+a cryptographic hash and a folded 1,024-bit fingerprint are not the molecule.
+
+The substrates stay as structures, for a reason that has nothing to do with licences: reproducing
+the comparison means running a predictor on a substrate, and a hash cannot be run on. They are 1,170
+drug and xenobiotic structures, each individually a published fact obtainable by name, and it is the
+annotation rather than the compound list that is the corpora's contribution.
+
+What this costs a reader who does not hold the source licences: they can recompute every recall
+figure and every cell of the criterion sweep, and they cannot re-run the structure-level analyses
+in the Supporting Information — the transformation-class split, the composite-step instruments, the
+stereochemistry census — because those read the reference structure itself. Those need the corpus,
+which such a reader already needed.
 
 ## Comparators
 

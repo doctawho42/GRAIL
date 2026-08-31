@@ -77,6 +77,23 @@ def borrowed_sets() -> dict:
         out["SyGMa"] = {r for r in found if ">>" in r}
     except Exception:
         pass
+
+    # GLORYx's rule file, which is the third rightsholder in the bank and the only one whose terms
+    # this repository holds no text for. Its own attribution column says most of its rules are
+    # SyGMa's; the residue is GLORY's and its own, and those are the templates whose removal has
+    # to be priced before a licence can be chosen.
+    glory = ROOT / "grail_metabolism/resources/external/gloryx_reactionrules.csv"
+    if glory.exists():
+        import csv as _csv
+
+        own = set()
+        with open(glory, newline="") as handle:
+            for row in _csv.DictReader(handle):
+                smirks = (row.get("SMIRKS") or "").strip()
+                if smirks and (row.get("Rule source") or "").strip() != "SyGMa":
+                    own.add(smirks)
+        if own:
+            out["GLORYx"] = own
     return out
 
 
