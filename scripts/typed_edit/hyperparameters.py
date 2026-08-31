@@ -28,7 +28,12 @@ for _p in (str(ROOT), str(ROOT / "scripts"), str(HERE)):
 
 from _provenance import stamp  # noqa: E402
 
-RUNS = {"generator": "artifacts/full5000_implicit", "filter": "artifacts/full5000_priors"}
+# Both stages come from one run. This said the filter came from a neighbouring one, and the
+# table it feeds therefore reported that run's training settings for a filter it did not train.
+# Which checkpoint the released pools were scored with is now a matter of record rather than of
+# recollection: their filter scores are reproduced exactly by artifacts/full5000_implicit and by
+# no other checkpoint in this repository.
+RUNS = {"generator": "artifacts/full5000_implicit", "filter": "artifacts/full5000_implicit"}
 
 
 def load(run: str) -> dict:

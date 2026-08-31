@@ -419,6 +419,23 @@ def build():
         "of_those_whose_type_this_source_dropped_counts_ignored"]
     n["metxdrop.recoverablecoarseshare"] = _rec["share_counts_ignored"]
 
+    # The aggregation rule, swept. The manuscript named the violated independence assumption and
+    # left it, on the ground that the released pools carry the aggregate and not its parts.
+    agg = art("aggregation_ablation.json")
+    n["aggregation.joined"] = agg["join"]["candidates_scored_by_both"]
+    n["aggregation.unjoined"] = agg["join"]["candidates_the_pool_does_not_carry"]
+    for rule in ("max", "mean", "hybrid"):
+        cell = agg["by_rule"][rule]["minus_noisy_or"]["30"]
+        tag = rule.replace("_", "")
+        n[f"aggregation.{tag}30"] = cell["difference"]
+        n[f"aggregation.{tag}30.lo"] = cell["ci95"][0]
+        n[f"aggregation.{tag}30.hi"] = cell["ci95"][1]
+        n[f"aggregation.{tag}30.sep"] = cell["excludes_zero"]
+        n[f"aggregation.{tag}recall30"] = agg["by_rule"][rule]["recall"]["30"]
+    n["aggregation.deployedrecall30"] = agg["by_rule"]["noisy_or"]["recall"]["30"]
+    n["aggregation.separating"] = len(
+        agg["rules_that_separate_from_the_deployed_one_at_any_budget"])
+
     # What actually defines the comparison population, and what the rest of the test set says.
     # The manuscript described an emission rule the code does not apply.
     pop = art("population_definition.json")

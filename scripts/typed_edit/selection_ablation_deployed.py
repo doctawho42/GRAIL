@@ -44,7 +44,7 @@ SEED = 0
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--gen-ckpt", default=str(ROOT / "artifacts/full5000_implicit/checkpoints/generator.pt"))
-    ap.add_argument("--filter-ckpt", default=str(ROOT / "artifacts/full5000_priors/checkpoints/filter.pt"))
+    ap.add_argument("--filter-ckpt", default=str(ROOT / "artifacts/full5000_implicit/checkpoints/filter.pt"))
     ap.add_argument("--arms", nargs="+",
                     default=["prior_applicable", "random_applicable", "random"])
     ap.add_argument("--budget", type=int, default=BUDGET)

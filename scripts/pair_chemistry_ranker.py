@@ -71,7 +71,7 @@ def load_filter(path: Path):
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--filter-ckpt", default="artifacts/full5000_single/checkpoints/filter.pt")
+    ap.add_argument("--filter-ckpt", default="artifacts/full5000_implicit/checkpoints/filter.pt")
     ap.add_argument("--out", default=str(ROOT / "results" / "pair_chemistry_ranker.json"))
     args = ap.parse_args()
 

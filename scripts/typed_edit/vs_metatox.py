@@ -76,7 +76,7 @@ def population():
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--gen-ckpt", default=str(ROOT / "artifacts/full5000_implicit/checkpoints/generator.pt"))
-    ap.add_argument("--filter-ckpt", default=str(ROOT / "artifacts/full5000_single/checkpoints/filter.pt"))
+    ap.add_argument("--filter-ckpt", default=str(ROOT / "artifacts/full5000_implicit/checkpoints/filter.pt"))
     ap.add_argument("--threads", type=int, default=4)
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--out", default=str(ROOT / "results" / "vs_metatox.json"))

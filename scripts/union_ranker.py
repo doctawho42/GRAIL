@@ -125,7 +125,7 @@ def main() -> int:
     import torch
     from grail_metabolism.config import FilterConfig
     from grail_metabolism.workflows.factory import build_filter
-    state = torch.load(ROOT / "artifacts/full5000_single/checkpoints/filter.pt",
+    state = torch.load(ROOT / "artifacts/full5000_implicit/checkpoints/filter.pt",
                        map_location="cpu", weights_only=False)
     filt = build_filter(FilterConfig(**state["arch"]))
     filt.load_state_dict(state["state_dict"], strict=False)

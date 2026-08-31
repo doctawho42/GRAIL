@@ -593,6 +593,49 @@ def si_case():
             "\\label{tab:si-case}\n\\end{table}\n")
 
 
+def si_aggregation():
+    """Recall under each aggregation rule the implementation offers, against the deployed one.
+
+    The levels here are the deployed arm's own, which is the point: the deployed rule re-derived
+    from per-template scores has to reproduce the published column or the re-run is on a different
+    model, and the producer refuses to write the artifact when it does not.
+    """
+    d = art("aggregation_ablation.json")
+    ks = ["5", "15", "30", "50"]
+    order = ["noisy_or", "max", "mean", "hybrid"]
+    NAME = {"noisy_or": "noisy-or", "max": "maximum", "mean": "mean", "hybrid": "hybrid"}
+    rows = []
+    for rule in order:
+        row = d["by_rule"][rule]
+        cells = " & ".join(f"{row['recall'][k]:.4f}".lstrip("0") for k in ks)
+        if rule == d["deployed"]:
+            gap = "---"
+            label = f"\\textbf{{{NAME[rule]}}}"
+        else:
+            cell = row["minus_noisy_or"]["30"]
+            star = "$^{*}$" if cell["excludes_zero"] else ""
+            gap = (("$-$" if cell["difference"] < 0 else "+")
+                   + f"{abs(cell['difference']):.4f}"[1:] + star)
+            label = NAME[rule]
+        rows.append(f"{label} & {row['mean_ranked']:.1f} & {cells} & {gap} \\\\")
+    head = " & ".join(f"$r@{k}$" for k in ks)
+    n = d["population"]["n_substrates"]
+    refs = d["population"]["n_references"]
+    return ("\\begin{table}[h]\n\\centering\\small\n"
+            "\\begin{tabular}{@{}lrrrrrr@{}}\n\\toprule\n"
+            f"aggregation & candidates & {head} & vs deployed at 30 \\\\\n\\midrule\n"
+            + "\n".join(rows)
+            + "\n\\bottomrule\n\\end{tabular}\n"
+            f"\\caption{{Micro recall under each rule for combining the templates that reach one "
+            f"candidate, on the {n} substrates of the comparison set carrying {refs} annotated "
+            "metabolites; leading zeros are dropped. Candidates is the mean number ranked after "
+            "deduplication and the pool cap. The deployed rule is in bold and reproduces the "
+            "whole-bank column of the comparison table at every budget. The last column is the "
+            "paired difference in micro recall at a budget of 30 against it, with $^{*}$ marking "
+            "an interval that excludes zero.}\n"
+            "\\label{tab:si-aggregation}\n\\end{table}\n")
+
+
 if __name__ == "__main__":
     for name, fn in (("si_table_splits", si_splits), ("si_table_criteria", si_criteria),
                      ("si_table_criterion", si_criterion_sweep), ("si_table_oracle", si_oracle),
@@ -608,7 +651,8 @@ if __name__ == "__main__":
                      ("si_table_budget", si_budget),
                      ("si_table_counts", si_counts),
                      ("si_table_macro", si_macro),
-                     ("si_table_matched", si_matched)):
+                     ("si_table_matched", si_matched),
+                     ("si_table_aggregation", si_aggregation)):
         try:
             (OUT / f"{name}.tex").write_text(fn())
             print(f"  wrote paper2/{name}.tex")

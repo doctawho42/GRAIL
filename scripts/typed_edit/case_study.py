@@ -57,7 +57,7 @@ def main() -> int:
                          "under the corpus key either way, so the two runs are scored against the "
                          "same annotation.")
     ap.add_argument("--gen-ckpt", default=str(ROOT / "artifacts/full5000_implicit/checkpoints/generator.pt"))
-    ap.add_argument("--filter-ckpt", default=str(ROOT / "artifacts/full5000_priors/checkpoints/filter.pt"))
+    ap.add_argument("--filter-ckpt", default=str(ROOT / "artifacts/full5000_implicit/checkpoints/filter.pt"))
     ap.add_argument("--top-k", type=int, default=30,
                     help="the interactive mode's rule budget, which the checkpoint records")
     ap.add_argument("--cap", type=int, default=100, help="the H9 pool cap")

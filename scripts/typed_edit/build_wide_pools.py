@@ -89,7 +89,7 @@ def main() -> int:
     ap.add_argument("--end", type=int, default=0)
     ap.add_argument("--merge", default="")
     ap.add_argument("--gen-ckpt", default=str(ROOT / "artifacts/full5000_implicit/checkpoints/generator.pt"))
-    ap.add_argument("--filter-ckpt", default=str(ROOT / "artifacts/full5000_single/checkpoints/filter.pt"))
+    ap.add_argument("--filter-ckpt", default=str(ROOT / "artifacts/full5000_implicit/checkpoints/filter.pt"))
     ap.add_argument("--out", default=str(ROOT / "results" / "wide_pools.json"))
     ap.add_argument("--top-k", type=int, default=7581,
                     help="rule budget; 7581 is the whole bank, 30 is what the checkpoint records")

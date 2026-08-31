@@ -102,7 +102,7 @@ def main() -> int:
     ap.add_argument("--absent", default="",
                     help="comma-separated population indices the merge may lack")
     ap.add_argument("--gen-ckpt", default=str(ROOT / "artifacts/full5000_implicit/checkpoints/generator.pt"))
-    ap.add_argument("--filter-ckpt", default=str(ROOT / "artifacts/full5000_priors/checkpoints/filter.pt"))
+    ap.add_argument("--filter-ckpt", default=str(ROOT / "artifacts/full5000_implicit/checkpoints/filter.pt"))
     ap.add_argument("--out", default=str(ROOT / "results" / "val_pools.json"))
     ap.add_argument("--standardise", choices=("every-product", "survivors"),
                     default="every-product",

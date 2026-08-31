@@ -783,16 +783,35 @@ $K = \numFusionkDeployed$ at a budget of 15; the two smallest separate against i
 $\numFusionkWorst$. The published default sits on the flat part of that curve, so leaving it there
 costs nothing measurable, which is a stronger statement than disclosing that it was not varied.
 
-The second could not be answered from what is released, and naming which is part of the answer.
-Equation~\ref{MS-eq:noisyor} aggregates the rules that reach a candidate by noisy-or, which treats
-them as independent evidence. This bank does not satisfy that: it contains
-\numThirdpartyBiotransformerShipped{} of BioTransformer's published templates and
-\numSygmaInside{} of SyGMa's verbatim, and the mined half is full of near-duplicates, so a
-candidate that many templates reach is scored as though many witnesses had agreed. The natural
-alternative is a maximum, which ignores duplication. The released pools carry one aggregated
-generator score per candidate and not the per-rule scores a maximum needs, so making that
-comparison means re-running the generator over the comparison set. It is named here rather than
-answered with a different quantity, and it is the measurement this work would run next.
+The second is the aggregation rule. Equation~\ref{MS-eq:noisyor} combines the templates that
+reach a candidate by noisy-or, which treats them as independent evidence. This bank does not
+satisfy that: it contains \numThirdpartyBiotransformerShipped{} of BioTransformer's published
+templates and \numSygmaInside{} of SyGMa's verbatim, and the mined half is full of
+near-duplicates, so a candidate that many templates reach is scored as though many witnesses had
+agreed. An earlier version of this work named that violation and left it, because the released
+pools carry one aggregated score per candidate and not the per-template scores a different rule
+needs.
+
+They are re-derived here. The generator side is run again over the comparison set with the
+per-template scores kept rather than collapsed, so any aggregation rule can be evaluated without
+another pass; the filter is not re-run, because a filter score is a function of the substrate and
+the product and does not depend on how the generator combined its templates, so the frozen scores
+are joined by structure. \numAggregationJoined{} candidates join and
+\numAggregationUnjoinedWord{} do not, and those are dropped from every arm alike. The deployed
+rule re-derived this way reproduces the whole-bank column of Table~\ref{MS-tab:sweep} at every
+budget, which is what certifies that the re-run is on the deployed model; the artifact refuses to
+report if it does not.
+
+\input{si_table_aggregation}
+
+The alternative the violation argues for is a maximum, which counts a candidate once however many
+near-duplicate templates restate it. It is worse, by \numAggregationMaxThreeZero{}
+$[\numAggregationMaxThreeZeroLo, \numAggregationMaxThreeZeroHi]$ at a budget of thirty, an
+interval excluding zero. So do the other two the implementation offers. The independence
+assumption is false and nothing this work claims turns on it being true: the rule that ignores
+duplication loses recall rather than gaining it, which says the templates reaching a candidate
+carry more than one template's worth of evidence even when they are near-duplicates of one
+another.
 
 \section{Model architectures and training}
 
