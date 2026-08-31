@@ -578,8 +578,12 @@ marginal in practice: \numRsizeCasetop{} of the twenty highest-ranked candidates
 example come from templates with three reactant atoms or fewer.
 
 Support across mined templates is heavily skewed: \numMinedSingleton{} of \numMinedRules{} rest on
-a single training pair. Re-running the miner on the same split re-derives every template it
-derived before and none new.
+a single distinct training pair, and \numMinedSingletonoccurrence{} on a single occurrence of one,
+the difference being templates whose catalog entry lists the same pair more than once. The first is
+the count that bears on saturation, because withholding a pair withholds every occurrence of it,
+and it is the one Section~\ref{sec:si-rarefaction} uses. Re-running the miner on the same split
+re-derives every template it derived before and none new, which shows it is deterministic and
+nothing more.
 
 \section{What the rule budget buys}
 \label{sec:si-budget}
@@ -605,6 +609,33 @@ there, the larger rule budget does buy something, because the pool it builds has
 deployment answering with thirty or fifty candidates should raise the rule budget for exactly the
 reason the Discussion gives for the interactive mode's deficit there, and pay the standardisation
 cost that follows.
+
+\section{Whether the missing chemistry is the corpus's or the bank's}
+\label{sec:si-typeoverlap}
+
+Section~\ref{MS-sec:results} measures that most uncovered references need a transformation type the
+bank does not hold, and the manuscript states that the shortfall is a property of the corpus. Those
+are two propositions. The bank is mined from the training split and a template survives only if it
+regenerates its own product and passes a selectivity filter, so a type can sit in the training
+annotation and never reach the bank; a shortfall of that kind is the miner's.
+
+They separate by typing both halves of the annotation under the definition the census uses and
+intersecting the results, which needs no record of which references were uncovered. The training
+split's \numTypeoverlapTraintypes{} distinct types are set against the evaluated test set's
+\numTypeoverlapTesttypes: \numTypeoverlapShared{} occur in both and
+\numTypeoverlapAbsenttypes{} only in test. Counted by reference rather than by type, because a
+type carrying many references matters more than one carrying a single reference,
+\numTypeoverlapPresentrefs{} test references have a type the training annotation contains and
+\numTypeoverlapAbsentrefs{} do not, \numTypeoverlapAbsentsharePct{} of the
+\numTypeoverlapTyped{} that could be typed.
+
+That is more references than the bank fails to cover at all, so on this evidence the corpus's own
+limit is at least as large as the bank's, which is what the manuscript's claim requires. Two
+cautions belong with it. The counts come from different instruments on different questions and are
+not nested, so the \numTypeoverlapAbsentrefs{} are not a subset of the uncovered references and
+neither number bounds the other. And a type absent from the training annotation is absent from
+this corpus's training half, not from chemistry; that is exactly the sense in which the claim is
+about corpora.
 
 \section{Whether template discovery has saturated}
 \label{sec:si-rarefaction}

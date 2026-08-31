@@ -305,6 +305,12 @@
    "status": "current"
   },
   {
+   "artifact": "results/missing_types_in_train.json",
+   "script": "missing_types_in_train.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
    "artifact": "results/mode_timings.json",
    "script": "mode_timings.py",
    "how": "recorded source digest",
@@ -518,7 +524,7 @@
    "status": "current"
   }
  ],
- "n_pinned": 85,
+ "n_pinned": 86,
  "n_pinned_stale": 0,
  "sweep": {
   "unstamped": 112,

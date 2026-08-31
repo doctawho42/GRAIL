@@ -217,7 +217,7 @@ sets both what the system can find and what it costs. Two settings are reported 
 and returns in about a second, which is what a user waiting at a web form requires. The
 \emph{exhaustive} mode applies the whole bank, the \numBankParses{} of \numBankRules{}
 templates that parse, takes tens of seconds and is
-the setting for an offline query. The two therefore differ by a factor of \numBankRules{} to
+the setting for an offline query. The two therefore differ by a factor of \numBankParses{} to
 \numHOneZeroTopk{} in how much of the bank they consult. What the difference buys was registered
 as prediction P3 with a ceiling of $+\numHOneZeroThreshold$: on validation
 $+\numHOneZeroBought$, 95\% CI $[\numHOneZeroLo, +\numHOneZeroHi]$, mean pool on that draw
@@ -353,15 +353,12 @@ this work could measure on a comparator, $+\numSygdialectThirty$ for SyGMa at th
 lead claimed at wide budgets is therefore the one at $k=50$, and the other four cells survive both
 tests.
 
-A recall figure aggregates over transformations of very different kinds, so the comparison is
-also read by chemistry. Splitting the \numChemReferences{} references into
-\numChemClasses{} classes of formula change (Table~\ref{SI-tab:si-chemistry}) shows where the
-whole bank earns its size and where nothing here works. The largest class is a cleavage losing two
-or more carbons, \numChemCleavageRefs{} references, and the exhaustive arm recovers
-\numChemCleavageBank{} of them against \numChemCleavageBestother{} for the best comparator. The
-second largest, \numChemOtherRefs{} references, is the set of changes this vocabulary does not
-name, and no method here exceeds \numChemOtherBest{} on it. Of the \numChemDiolRefsWord{}
-references that add two oxygens, four of the five methods recover none.
+A recall figure aggregates over transformations of very different kinds, so the comparison is also
+read by chemistry (Table~\ref{SI-tab:si-chemistry}). The largest class is a cleavage losing two or
+more carbons, \numChemCleavageRefs{} references, where the whole bank earns its size:
+\numChemCleavageBank{} against \numChemCleavageBestother{} for the best comparator. The second
+largest, \numChemOtherRefs{} references, is the set of changes this vocabulary does not name, and
+no method here exceeds \numChemOtherBest{} on it.
 
 A nominal budget is not a length, and the leads at wide budgets are read where most comparator
 lists have already ended. Removing length as a variable is possible and it is done: on each
@@ -630,8 +627,8 @@ The correction, the safeguard that kept the budget from moving what counts as a 
 per-stage decomposition are in the Supporting Information.
 
 Cost is reported at the tail as well as at the median, because a service is used at both. The
-interactive mode's mean is six times its median, and its slowest substrate is three orders of
-magnitude above it.
+interactive mode's mean is six times its median, and its slowest substrate is nearly six hundred
+times it.
 
 \subsection{The ceiling, and how much of it is the corpus}
 
@@ -654,16 +651,14 @@ convention and reaches only \numHydUncoveredexpanded{}; the instrument's own rec
 The released public entry point defaults to that fourth presentation, so calling it without naming
 the convention returns \numHydUncoveredexpanded{} uncovered and not \numCeilingUncovered{}.
 
-Two of those numbers describe the same convention and disagree, by
-\numCeilagreeDisagreementWord{} references: the deployed loop and the audit loop clean products
-differently. All four counts span \numCeilagreeSpread{} references,
-\numCeilagreeSpreadsharePct{} of the \numHydReferences{}, which is
-\numCeilagreeSpreadofmarginPct{} of the narrowest margin that separates anything in the
-comparison. The choice of instrument therefore cannot decide a claim in this paper, and the
-counts are printed together rather than reconciled to one. The residual dependence of the bound
-on the convention, measured per template, is $\numHydResidual{}$, 95\% CI
-$[\numHydResiduallo{}, \numHydResidualhi{}]$, an interval that excludes zero: the bound is
-convention-dependent, by \numHydResidualrefs{} references in \numHydReferences{}.
+Two of those numbers describe the same convention and disagree by
+\numCeilagreeDisagreementWord{} references, the two loops cleaning products differently, and all
+four span \numCeilagreeSpread{} references, \numCeilagreeSpreadofmarginPct{} of the narrowest
+margin that separates anything here. The choice of instrument therefore cannot decide a claim in
+this paper. The residual dependence of the bound on the convention, measured per template, is
+$\numHydResidual{}$, 95\% CI $[\numHydResiduallo{}, \numHydResidualhi{}]$, an interval excluding
+zero: the bound is convention-dependent, by \numHydResidualrefs{} references in
+\numHydReferences{}.
 
 Relaxing the convention-dependent primitives in the templates recovers three of the
 \numCeilingKnown{}, moving the ceiling by $+0.0012$. A bound computed before the run predicted
@@ -773,10 +768,12 @@ back the pool.
 
 Three properties, none of them a recall figure. Every prediction names the transformation rule
 that produced it and the site at which it fired, which allows a candidate to be accepted or
-rejected on mechanistic grounds. How much a chemist gets from that depends on the template:
-\numRsizeLethree{} of \numRsizeParsed{} parseable templates have three reactant atoms or fewer
-(\numRsizeLethreesharePct{}), and a template of that size is a pattern rather than a mechanism, so
-for those the site discrimination comes from the learned stages and not from the rule. That second half is a claim and is measured: of
+rejected on mechanistic grounds. How much a chemist gets from that depends on the template, and the share of the bank understates
+it: \numRsizeLethree{} of \numRsizeParsed{} parseable templates have three reactant atoms or fewer
+(\numRsizeLethreesharePct{}), but \numRsizeCasetop{} of the twenty highest-ranked candidates in the
+worked example come from templates that small. A template of that size is a pattern rather than a
+mechanism, so for those the site discrimination comes from the learned stages and not from the
+rule, and half of what a reader of the example sees is attributed to one. That second half is a claim and is measured: of
 \numSiteScored{} correctly predicted metabolites, the site reported touches the atoms that
 actually differ from the substrate in \numSiteTouchingPct{}, against \numSiteNullPct{} for a set
 of atoms of the same size drawn at random from the same molecule, and lies wholly inside the
@@ -790,21 +787,22 @@ reproducible.
 
 GRAIL does not lead at the tight budgets. At $k=15$ neither arm separates from the strongest
 comparator, and at $k=20$ the interactive arm separates against it. The established lead is the exhaustive arm's, at $k=30$ and $50$. The system is not compared against the 2025--26 wave, because that wave cannot be run as
-released. Of \numComparatorsUnavailableWord{} such systems, one releases training code without a
-checkpoint \citep{Larsson_2025}, one has a withdrawn module \citep{Zhou_2025}, one offers only a
-web form \citep{Zhou_2026} and one has no repository \citep{Chavan_2026}. No ranking in this
-literature can presently be verified independently, which is the concrete case for leaderboards
-releasing per-item predictions rather than aggregate scores \citep{Rodriguez_2021, Mishra_2021}. Precision figures are bounded by annotation completeness. And the advantage at
+released: of \numComparatorsUnavailableWord{} such systems none ships weights a third party can
+run \citep{Larsson_2025, Zhou_2025, Zhou_2026, Chavan_2026}, and the Supporting Information says
+what each is missing. No ranking in this literature can presently be verified independently, which
+is the concrete case for leaderboards releasing per-item predictions rather than aggregate scores
+\citep{Rodriguez_2021, Mishra_2021}. Precision figures are bounded by annotation completeness. And the advantage at
 wide budgets is partly a statement about output length on all sides rather than about ranking.
 
 \subsection{The ceiling bounds this formulation, not the task}
 
-The shortfall is mostly a property of the corpus the templates are mined from, established by
-invariance rather than asserted, though the hydrogen convention moves it by
-\numHydResidualrefs{} references. Template discovery from that corpus is not finished: the
-rarefaction curve is still climbing at \numRareSlope{} templates per thousand further pairs. What
-that does not say is that mining it harder would close the gap, because the gap is transformation
-types the corpus does not contain and no template mined from it can supply a type it lacks.
+The shortfall is mostly a property of the corpus the templates are mined from, measured separately
+rather than inferred from the bank's coverage: \numTypeoverlapAbsentrefs{} of the
+\numTypeoverlapTyped{} typed test references, \numTypeoverlapAbsentsharePct{}, need a
+transformation type occurring nowhere in the training annotation, which is more references than
+the bank fails to cover at all (Section~\ref{SI-sec:si-typeoverlap}). Template discovery from that
+corpus is separately unfinished, its rarefaction curve still climbing, so mining harder would yield
+more templates and could not supply a type the corpus does not contain.
 Extending coverage therefore requires new reaction corpora, and the census narrows the search:
 synthetic corpora are excluded by measurement, leaving enzymatic and regulatory sources. Metabolite identifications from radiolabelled human ADME studies
 reported in regulatory submissions are human \emph{in vivo} data on exactly the population
@@ -865,12 +863,15 @@ of the system. The group-ranking headroom is real and unreached by both register
 compositions for structural reasons. Every method runs out of candidates at wide budgets, so the
 widest columns measure list length on all sides. The comparison population is the
 \numPopulationN{} substrates on which all methods predict, a quarter of the evaluated test split
-and not a random quarter of it.
+and not a random quarter of it. It is selected in two directions: a substrate enters only if every method emitted something, which
+removes the cases where a comparator produced nothing and a bank this size should win most
+clearly, while two comparators were built on sources this corpus is assembled from, which favours
+them. Neither is corrected and they do not cancel.
 
-Nothing in this pipeline is stereochemistry-aware. The standardiser strips it before a template is
-matched and the default criterion is blind to it, which is defensible against an annotation that
-carries none and is a real limit on what a prediction can say: epoxide hydrolysis, sulfoxidation
-and most conjugative chemistry produce stereoisomers this system neither distinguishes nor ranks.
+Nothing in this pipeline is stereochemistry-aware: the standardiser strips it and the default
+criterion is blind to it. That is consistent with an annotation carrying none and is a real limit,
+since epoxide hydrolysis, sulfoxidation and most conjugative chemistry produce stereoisomers this
+system neither distinguishes nor ranks.
 
 No result here is external. Every figure is measured on one corpus assembled from four sources, of
 which the only published reference set is one of the four, so a held-out split of it is not an

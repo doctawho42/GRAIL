@@ -278,6 +278,19 @@ def build():
     n["chem.cleavage.bestother"] = (max(v["15"] for k, v in _cleav["recall"].items()
                                         if not k.startswith("GRAIL")) if _cleav else None)
 
+    # Whether the chemistry the bank misses is absent from the corpus or only from the bank. The
+    # abstract asserted the first and only the second had been measured.
+    mtt = art("missing_types_in_train.json")
+    n["typeoverlap.traintypes"] = mtt["train"]["distinct_types"]
+    n["typeoverlap.testtypes"] = mtt["test"]["distinct_types"]
+    n["typeoverlap.shared"] = mtt["test_types_also_in_train"]
+    n["typeoverlap.absenttypes"] = mtt["test_types_absent_from_train"]
+    n["typeoverlap.absentrefs"] = mtt["test_references_whose_type_is_absent_from_train"]
+    n["typeoverlap.presentrefs"] = mtt["test_references_whose_type_is_in_train"]
+    n["typeoverlap.absentshare"] = mtt[
+        "share_of_test_references_whose_type_is_absent_from_train"]
+    n["typeoverlap.typed"] = mtt["test"]["typed"]
+
     # The fusion constant, swept. It was left at the published default and the paper disclosed
     # that; a sweep says whether the disclosure costs anything.
     fk = art("fusion_knobs.json")
@@ -471,7 +484,14 @@ def build():
     n["mined.rules"] = len(catalog)
     # the value is a record, not a count; "count" is the number of training pairs the template
     # was derived from, and a naive len() over the record silently gave zero singletons
-    n["mined.singleton"] = sum(1 for v in catalog.values() if v["count"] == 1)
+    # Two counts of the same idea and they differ: a template can list one pair more than once.
+    # The distinct-pair count is the one saturation is about, because withholding a pair withholds
+    # every occurrence of it, and printing the other beside it without saying so put 73.0% in one
+    # section and 79.5% in another.
+    n["mined.singleton"] = sum(
+        1 for v in catalog.values()
+        if len({tuple(p) for p in v.get("source_pairs", [])}) == 1)
+    n["mined.singletonoccurrence"] = sum(1 for v in catalog.values() if v["count"] == 1)
     n["mined.five_or_more"] = sum(1 for v in catalog.values() if v["count"] >= 5)
     bank = [ln for ln in (ROOT / "grail_metabolism/resources/extended_smirks.txt"
                           ).read_text().splitlines() if ln.strip()]

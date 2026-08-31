@@ -148,6 +148,7 @@ PINNED = {
     "results/matched_length.json": "scripts/typed_edit/matched_length.py",
     "results/mining_rarefaction.json": "scripts/typed_edit/mining_rarefaction.py",
     "results/fusion_knobs.json": "scripts/typed_edit/fusion_knobs.py",
+    "results/missing_types_in_train.json": "scripts/typed_edit/missing_types_in_train.py",
     "results/decompose_biotransformer.json": "scripts/decompose_biotransformer.py",
     "results/external_overlap_audit.json": "scripts/external_overlap_audit.py",
     "results/hydrogen_dispatch__clean_test.json": "scripts/hydrogen_dispatch.py",
