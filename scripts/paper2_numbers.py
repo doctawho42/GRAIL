@@ -491,6 +491,16 @@ def build():
             n[f"mpdraw.{short}.hi{k}"] = c["ci95"][1]
             n[f"mpdraw.{short}.sep{k}"] = c["excludes_zero"]
 
+    # The two headrooms side by side on one population, which the manuscript never put together:
+    # what ranking could still recover inside the pool the bank builds, and what no ranking can
+    # because the bank never produces it.
+    _ds = art("dialect_sweep.json")["coverage_ceiling"]["stored"]["coverage"]
+    n["headroom.ceiling"] = _ds
+    n["headroom.reached"] = dep["recall_micro"]["50"]["whole bank"]
+    n["headroom.ranking"] = round(_ds - dep["recall_micro"]["50"]["whole bank"], 4)
+    n["headroom.coverage"] = round(1.0 - _ds, 4)
+    n["headroom.share"] = round(dep["recall_micro"]["50"]["whole bank"] / _ds, 4)
+
     # What a configuration-aware matching criterion could distinguish at all, which the criterion
     # sweep cannot bound: two of its five settings differ only in the stereochemistry layer and
     # return the identical verdict at every budget, because the annotation carries none.

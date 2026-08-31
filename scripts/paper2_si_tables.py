@@ -79,7 +79,7 @@ def si_criterion_sweep():
     head = " & ".join(f"${k}$" for k in ks)
     moved = d["n_budgets_moving"]
     worst = max(moved, key=lambda c: moved[c])
-    return ("\\begin{table}[h]\n\\centering\\small\n"
+    return ("\\begin{table*}[t]\n\\centering\\small\n"
             f"\\begin{{tabular}}{{l{'c' * len(ks)}}}\n\\toprule\n"
             f"criterion & \\multicolumn{{{len(ks)}}}{{c}}{{output budget $k$}} \\\\\n"
             f"\\cmidrule(lr){{2-{len(ks) + 1}}}\n & {head} \\\\\n\\midrule\n"
@@ -90,7 +90,7 @@ def si_criterion_sweep():
             "$\\cdot$ one where the interval covers zero. Every cell is read from the interval "
             "and never from the point estimate. Against the default criterion the verdict moves "
             f"at {moved[worst]} of {len(ks)} budgets under \\texttt{{{worst}}}.}}\n"
-            "\\label{tab:si-criterion}\n\\end{table}\n")
+            "\\label{tab:criterion}\n\\end{table*}\n")
 
 
 def si_oracle():
@@ -646,7 +646,7 @@ def si_aggregation():
 
 if __name__ == "__main__":
     for name, fn in (("si_table_splits", si_splits), ("si_table_criteria", si_criteria),
-                     ("si_table_criterion", si_criterion_sweep), ("si_table_oracle", si_oracle),
+                     ("si_table_oracle", si_oracle),
                      ("si_table_case", si_case),
                      ("si_table_ranking", si_ranking),
                      ("si_table_intervals", si_intervals),
@@ -660,7 +660,11 @@ if __name__ == "__main__":
                      ("si_table_counts", si_counts),
                      ("si_table_macro", si_macro),
                      ("si_table_matched", si_matched),
-                     ("si_table_aggregation", si_aggregation)):
+                     ("si_table_aggregation", si_aggregation),
+                     # The verdict grid is printed in the manuscript rather than the Supporting
+                     # Information: it is the evidence the title advertises. One generator, one
+                     # label, two documents pointing at the same object.
+                     ("table_criterion", si_criterion_sweep)):
         try:
             (OUT / f"{name}.tex").write_text(fn())
             print(f"  wrote paper2/{name}.tex")

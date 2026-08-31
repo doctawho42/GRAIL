@@ -555,7 +555,9 @@ The argument above is that a recall figure depends on evaluation choices this li
 unstated. It is an argument about published numbers, and it applies to ours. Recomputing the whole
 comparison under each of the \numCritCriteria{} declared criteria, holding the population, the
 arms, the ranking and the parent-drop convention fixed, moves the verdict at up to
-\numCritMovedMax{} of \numCritBudgets{} budgets (Table~\ref{SI-tab:si-criterion}).
+\numCritMovedMax{} of \numCritBudgets{} budgets (Table~\ref{tab:criterion}).
+
+\input{table_criterion}
 
 At $k=15$ the margin between GRAIL's better arm and the strongest comparator runs from
 $\numCritWorstOneFive$ under canonical SMILES equality to $+\numCritBestOneFive$ under the full
@@ -648,8 +650,10 @@ is worse than the generator cap it replaces, because the median substrate has on
 group and the gate must then spend its budget on groups its signal cannot separate.
 
 What did work was the same signal used weakly. Entering the untrained group score as a third
-ranking in the fusion gained $+\numHOneTwoDiff$, 95\% CI $[+\numHOneTwoLo, +\numHOneTwoHi]$
-(P5). The two outcomes are symmetric: the group signal helps as a nudge on the generator's
+ranking in the fusion gained $+\numHOneTwoVal$ on validation and $+\numHOneTwoDiff$, 95\% CI
+$[+\numHOneTwoLo, +\numHOneTwoHi]$, on the comparison set (P5). The validation figure is the one
+to read: P5's threshold was fixed in advance but its population was not, so the comparison-set
+number is adjudicated where this paper's own rule says a choice should not be. The two outcomes are symmetric: the group signal helps as a nudge on the generator's
 ordering and fails as a replacement for it. The decomposition of both failures, and the reason
 the oracle figure is not an upper bound on what the signal can give, are in the Supporting
 Information.
@@ -701,6 +705,13 @@ one step, under the same tautomer-aware matching criterion the comparison defaul
 same evaluated test set. The remainder divides by the reaction-centre change it requires: \numCeilingNovel{} need
 a transformation type the bank does not hold, \numCeilingKnown{} need a type it holds whose rule
 did not fire, and \numCeilingUntypeable{} cannot be typed.
+
+That number is what orients the two directions this work could go next, so it is worth putting
+beside the recall. On the comparison set the ceiling is \numHeadroomCeiling{} and the exhaustive
+arm at a budget of fifty reaches \numHeadroomReached{}, which is \numHeadroomSharePct{} of what
+the bank can reach. The headroom a better ranking could take is \numHeadroomRanking{}; the
+headroom no ranking can take, because the bank does not produce those structures at all, is
+\numHeadroomCoverage{}. The census below is about the second and the larger.
 
 It is a one-template ceiling and not a one-enzyme one, which matters for how the number reads. The
 annotation itself is not all single steps: applying the composite instruments to the references

@@ -138,7 +138,7 @@ missing.
 The annotated metabolites of the evaluated test set are released as structures, in
 \texttt{results/test\_references.json}, alongside every arm's per-substrate predictions. All five
 matching criteria are therefore recomputable on the comparison population, not only the default
-one: every row of Table~\ref{tab:si-criterion} can be rebuilt from what is released. The
+one: every row of Table~\ref{MS-tab:criterion} can be rebuilt from what is released. The
 repository and the Zenodo deposit differ in this, and the repository is the wider of the two.
 
 The corpus is divided by substrate, so no substrate of one split appears in another. Molecular overlap between splits is non-zero and expected, because a molecule
@@ -373,10 +373,12 @@ it.
 \section{Sensitivity of the comparison to the matching criterion}
 \label{sec:si-sensitivity}
 
-\input{si_table_criterion}
+The verdict grid itself is Table~\ref{MS-tab:criterion} of the manuscript, since it is the
+evidence the paper's title advertises and belongs where the argument is made. What follows is what
+the grid does not show on its face.
 
 The paper argues that a recall figure depends on evaluation choices that this literature leaves
-unstated. The argument is made about published numbers, and Table~\ref{tab:si-criterion} applies
+unstated. The argument is made about published numbers, and Table~\ref{MS-tab:criterion} applies
 it to our own: the same comparison, the same population, the same ranking, the same parent-drop
 convention, with only the criterion moving.
 
@@ -393,7 +395,7 @@ with hits it did not earn and credits the comparators with more of them. Neither
 default, and the paper's argument is not that one criterion is right but that the choice has to be
 declared and its consequences shown.
 
-The reference row of Table~\ref{tab:si-criterion} reproduces the verdicts of the main text's
+The reference row of Table~\ref{MS-tab:criterion} reproduces the verdicts of the main text's
 comparison exactly, though it is computed by a different script from the same frozen predictions.
 The number of references differs by one between criteria, at \numPopulationReferences{} for three
 of them and one fewer for two, and the two cases have different causes. Under the first block of
@@ -1361,9 +1363,11 @@ Two things follow for the reading of the rest. The declared family the family-wi
 computed over names its three comparators and was fixed before this arm existed, so it is
 unchanged: BioTransformer's contrasts are reported with their own intervals and are not folded
 into a correction declared without them. And the deeper scenario is not swept for this comparator
-as it is for SyGMa; the matched-length control already removes list length as a variable and finds
-no separation, so a scenario that emits more would narrow a gap the paper does not claim as an
-ordering result.
+as it is for SyGMa. That asymmetry was decided after the matched-length control had been read,
+which is worth stating because it is exactly the kind of choice this work asks other papers to
+declare: the control removes list length as a variable and finds no separation, so a scenario that
+emits more would narrow a gap this paper does not claim as an ordering result and would change no
+verdict here. A reader who judges that insufficient should read the absence as unforced.
 
 Its templates are also measured for reach, which is a different quantity from its recall, on the
 \numBtN{}-substrate subset shared with a further comparator: they reach \numBtReach{} of the
