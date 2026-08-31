@@ -1,0 +1,230 @@
+#!/usr/bin/env python3
+"""What actually defines the comparison population, and what the rest of the test set says.
+
+The manuscript states that a substrate enters the comparison only if every method emitted
+something for it, and names the cost: that rule would remove the cases where a comparator produced
+nothing and a bank this size should win most clearly. The rule is not what the code does. The
+population is the intersection of the substrates each method has an entry for, and the binding
+constraint is one submission list: the comparator that is a web service was queried for 291
+substrates and returned all 291. Nothing was dropped for emitting nothing, and the population
+still contains substrates where a comparator's list is empty.
+
+That correction changes what has to be measured. Three things are settled here.
+
+First, the emission rule the manuscript describes, applied to the data: how many substrates each
+comparator returns nothing for, inside the comparison set and over the whole evaluated test set.
+
+Second, whether the 291 differ from the 879 they were drawn from. How the draw was made is not
+recorded anywhere in this repository, which is the same defect the corpus assembly carries, so the
+draw is not defended by its description but tested: the two halves are compared on the count of
+annotated references, the size of the substrate, and the number of candidates the deployed system
+emits, each by a permutation test.
+
+Third, the comparison itself on the whole test set, for the three arms that have it. The deployed
+system and two of the comparators ran over all 1,170 evaluated substrates, so their contrast can
+be read on the population nobody selected, with a substrate a comparator answered nothing for
+scored as zero rather than removed. The exhaustive arm exists only on the 291 and is absent here,
+which is stated rather than worked around.
+
+    python scripts/typed_edit/population_definition.py
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import sys
+from pathlib import Path
+
+import numpy as np
+
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parents[1]
+for _p in (str(ROOT), str(ROOT / "scripts"), str(HERE)):
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
+
+from _provenance import stamp  # noqa: E402
+
+KS = (5, 10, 15, 30, 50)
+N_BOOT, SEED = 10000, 0
+N_PERM = 10000
+CAP = 100
+
+TRUTH = ROOT / "results/test_references.json"
+METATOX = ROOT / "results/metatox_smirks_preds.json"
+DEPLOYED = ROOT / "results/scored_predictions.json"
+WHOLE_TEST = {"sygma": ROOT / "results/sygma_fulltest_predictions.json",
+              "metapredictor": ROOT / "artifacts/tier2_1170/metapredictor_preds.json"}
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--out", default=str(ROOT / "results" / "population_definition.json"))
+    args = ap.parse_args()
+
+    from rdkit import Chem, RDLogger
+
+    RDLogger.DisableLog("rdApp.*")
+    from _rrf import rrf_order
+    from bank_without_selection import _dedup, _key as tautkey
+
+    truth = json.loads(TRUTH.read_text())
+    metatox = json.loads(METATOX.read_text())["predictions"]
+    deployed_rows = {r["sub"]: r["candidates"]
+                     for r in json.loads(DEPLOYED.read_text())["rows"]}
+    others = {name: json.loads(path.read_text()) for name, path in WHOLE_TEST.items()
+              if path.exists()}
+
+    every = sorted(truth)
+    inside = sorted(set(every) & set(metatox))
+    outside = sorted(set(every) - set(metatox))
+
+    # --- what the emission rule the manuscript describes would actually have done ---
+    emission = {"comparison_set": {}, "whole_test_set": {}}
+    for name, preds in others.items():
+        emission["comparison_set"][name] = int(sum(1 for s in inside if not preds.get(s)))
+        empty = [s for s in every if not preds.get(s)]
+        emission["whole_test_set"][name] = {
+            "substrates_with_no_prediction": len(empty),
+            "references_they_carry": int(sum(len(truth[s]) for s in empty))}
+    emission["comparison_set"]["metatox"] = int(sum(1 for s in inside if not metatox.get(s)))
+    emission["comparison_set"]["grail_deployed"] = int(
+        sum(1 for s in inside if not deployed_rows.get(s)))
+
+    # --- are the 291 exchangeable with the 879 they were drawn from ---
+    def heavy(s):
+        mol = Chem.MolFromSmiles(s)
+        return float(mol.GetNumHeavyAtoms()) if mol is not None else float("nan")
+
+    features = {"annotated references": lambda s: float(len(truth[s])),
+                "heavy atoms": heavy,
+                "candidates the deployed system emits":
+                    lambda s: float(len(deployed_rows.get(s, [])))}
+    rng = np.random.default_rng(SEED)
+    exchangeability = {}
+    for label, fn in features.items():
+        a = np.array([fn(s) for s in inside], dtype=float)
+        b = np.array([fn(s) for s in outside], dtype=float)
+        keep_a, keep_b = ~np.isnan(a), ~np.isnan(b)
+        a, b = a[keep_a], b[keep_b]
+        pooled = np.concatenate([a, b])
+        observed = float(a.mean() - b.mean())
+        n_a = len(a)
+        ge = 0
+        for _ in range(N_PERM):
+            perm = rng.permutation(pooled)
+            if abs(perm[:n_a].mean() - perm[n_a:].mean()) >= abs(observed):
+                ge += 1
+        exchangeability[label] = {
+            "mean_in_the_comparison_set": round(float(a.mean()), 3),
+            "mean_outside_it": round(float(b.mean()), 3),
+            "difference": round(observed, 3),
+            "permutation_p": round((ge + 1) / (N_PERM + 1), 4),
+            "n_in": int(n_a), "n_out": int(len(b))}
+
+    # --- the same contrast on the population nobody selected ---
+    def deployed_order(subset):
+        out = {}
+        for s in subset:
+            cands = deployed_rows.get(s) or []
+            keep = sorted(cands, key=lambda c: -c["generator"])[:CAP]
+            parent = tautkey(s)
+            seen, ranked = set(), []
+            for c in rrf_order(keep):
+                k = tautkey(c["smiles"])
+                if not k or k == parent or k in seen:
+                    continue
+                seen.add(k)
+                ranked.append(k)
+            out[s] = ranked
+        return out
+
+    def comparator_order(preds, subset):
+        return {s: [k for k in _dedup(preds.get(s, []), CAP + 5) if k and k != tautkey(s)]
+                for s in subset}
+
+    populations = {"the whole evaluated test set": every, "the comparison set": inside}
+    contrasts = {}
+    for pop_label, subset in populations.items():
+        real = {s: set(truth_keys) for s, truth_keys in
+                ((s, [k for k in (tautkey(p) for p in truth[s]) if k]) for s in subset)}
+        U = np.array([len(real[s]) for s in subset], dtype=float)
+        ours = deployed_order(subset)
+        boot = np.random.default_rng(SEED)
+        idx = boot.integers(0, len(subset), (N_BOOT, len(subset)))
+        denom = np.maximum(U[idx].sum(axis=1), 1)
+
+        def hits(order, k):
+            return np.array([len(set(order[s][:k]) & real[s]) for s in subset], dtype=float)
+
+        row = {"n_substrates": len(subset), "n_references": int(U.sum()),
+               "grail_deployed_recall": {str(k): round(float(hits(ours, k).sum() / U.sum()), 4)
+                                         for k in KS}}
+        for name, preds in others.items():
+            theirs = comparator_order(preds, subset)
+            cell = {"recall": {str(k): round(float(hits(theirs, k).sum() / U.sum()), 4)
+                               for k in KS},
+                    "substrates_with_no_prediction":
+                        int(sum(1 for s in subset if not theirs[s]))}
+            for k in KS:
+                d = hits(ours, k) - hits(theirs, k)
+                bt = d[idx].sum(axis=1) / denom
+                lo, hi = float(np.quantile(bt, .025)), float(np.quantile(bt, .975))
+                cell.setdefault("deployed_minus_comparator", {})[str(k)] = {
+                    "difference": round(float(d.sum() / U.sum()), 4),
+                    "ci95": [round(lo, 4), round(hi, 4)],
+                    "excludes_zero": bool(lo > 0 or hi < 0)}
+            row[name] = cell
+        contrasts[pop_label] = row
+
+    report = {
+        "provenance": stamp(__file__),
+        "what_defines_the_comparison_set": (
+            "the intersection of the substrates each method has an entry for; the binding "
+            "constraint is the 291-substrate submission list sent to the web-service comparator, "
+            "which returned all 291. No substrate was removed for emitting nothing."),
+        "how_the_291_were_drawn": (
+            "not recorded: no script in this repository selects them and the submission "
+            "directory documents the file format rather than the draw"),
+        "emission": emission,
+        "exchangeability": exchangeability,
+        "contrasts": contrasts,
+        "absent_arm": ("the exhaustive arm was built on the comparison set only, so the "
+                       "whole-test-set row carries the deployed arm and not it"),
+        "permutation": {"n": N_PERM, "seed": SEED},
+        "bootstrap": {"n": N_BOOT, "seed": SEED},
+        "reading": (
+            "The emission rule the manuscript describes is not the rule the code applies, and "
+            "applying it would have removed almost nothing: over the whole test set the two "
+            "comparators that ran on it answer nothing for a handful of substrates. The "
+            "population's real defect is that the draw is unrecorded, which is tested here "
+            "rather than described."),
+    }
+    Path(args.out).write_text(json.dumps(report, indent=1))
+
+    print(f"comparison set {len(inside)} of {len(every)} evaluated substrates")
+    print("\nsubstrates a method answers nothing for:")
+    for name, n in emission["comparison_set"].items():
+        print(f"  {name:16s} {n} inside the comparison set")
+    for name, cell in emission["whole_test_set"].items():
+        print(f"  {name:16s} {cell['substrates_with_no_prediction']} of {len(every)} over the "
+              f"whole test set, carrying {cell['references_they_carry']} references")
+    print("\nthe 291 against the 879 they were drawn from:")
+    for label, cell in exchangeability.items():
+        print(f"  {label:38s} {cell['mean_in_the_comparison_set']:8.3f} vs "
+              f"{cell['mean_outside_it']:8.3f}  p={cell['permutation_p']:.4f}")
+    print("\nthe deployed arm minus each comparator at 15 and 30:")
+    for pop_label, row in contrasts.items():
+        print(f"  {pop_label} ({row['n_substrates']} substrates, {row['n_references']} refs)")
+        for name in others:
+            for k in (15, 30):
+                c = row[name]["deployed_minus_comparator"][str(k)]
+                print(f"    {name:16s} k={k:<3d} {c['difference']:+.4f} "
+                      f"[{c['ci95'][0]:+.4f}, {c['ci95'][1]:+.4f}]"
+                      f"{'  separates' if c['excludes_zero'] else ''}")
+    print(f"\nwrote {args.out}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

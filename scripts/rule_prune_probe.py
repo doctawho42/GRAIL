@@ -71,7 +71,7 @@ def main() -> int:
         mol = Chem.MolFromSmiles(sub)
         if mol is None:
             continue
-        generated = apply_rules_to_molecule(mol, rules, "canonical")  # {canon_product: {rule_idx}}
+        generated = apply_rules_to_molecule(mol, rules, "canonical", presentation="expanded")  # {canon_product: {rule_idx}}
         for product, idxs in generated.items():
             is_true = product in true_can
             for r in idxs:

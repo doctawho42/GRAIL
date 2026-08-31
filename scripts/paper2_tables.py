@@ -30,8 +30,11 @@ def table():
     # of Section 2.8 broken by typography. The levels are here; the verdicts are in Table S3.
     for k in ks:
         L.append(f"{k} & " + " & ".join(f"{rec[k][a]:.4f}" for a in arms) + " \\\\")
+    # The last row is a different quantity from the nine above it -- a list length, not a recall
+    # -- and sat under the same rule structure reading as a tenth budget. It says what it is.
     L += ["\\midrule",
-          "emitted & " + " & ".join(f"{emit.get(a, out[a])}" for a in arms) + " \\\\",
+          "\\emph{mean emitted} & " + " & ".join(f"\\emph{{{emit.get(a, out[a])}}}"
+                                              for a in arms) + " \\\\",
           "\\bottomrule", "\\end{tabular}",
           "\\caption{Micro recall at each output budget on the "
           f"{d['population']['n']} substrates every method predicts on, carrying "

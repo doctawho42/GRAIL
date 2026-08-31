@@ -31,6 +31,7 @@ from _provenance import stamp  # noqa: E402
 from grail_metabolism.metrics import _tautomer_inchikey as _tk
 
 KEYS = ROOT / "results" / "key_tables" / "inchikey_tautomer.json"
+POOL_CAP = 100  # the cap registered as P2, applied here as everywhere else
 N_BOOT, SEED = 10000, 0
 KS = (1, 3, 5, 8, 10, 15, 20, 30, 50)
 
@@ -48,8 +49,24 @@ def _code_version() -> dict:
 
 
 def load_pools() -> dict:
-    grail = {r["sub"]: [c["smiles"] for c in r["candidates"]]
-             for r in json.loads((ROOT / "results/scored_predictions.json").read_text())["rows"]}
+    """The four prediction sets, each ordered the way its own paper orders it.
+
+    The GRAIL column used to be an early dump ranked by the product of the two component scores,
+    a narrower pool than the deployed arm builds and no fusion, and it trailed every comparator at
+    every budget. A file whose purpose is to define the comparison population carried an arm
+    nobody would run, which is an invitation to a wrong reproduction. It is now the deployed
+    interactive arm, from the pools the paper's own comparison is read from, ranked as everywhere
+    else: reciprocal rank fusion of the two component scores over the pool capped by generator
+    score, with a prediction equal to the substrate dropped in the scoring loop below.
+    """
+    sys.path.insert(0, str(ROOT / "scripts" / "typed_edit"))
+    from _rrf import rrf_order
+
+    grail = {}
+    for sub, pool in json.loads(
+            (ROOT / "results/widepools_k30/all.json").read_text())["pools"].items():
+        keep = sorted(pool, key=lambda c: -c["generator"])[:POOL_CAP]
+        grail[sub] = [c["smiles"] for c in rrf_order(keep)]
     return {
         "GRAIL": grail,
         "MetaPredictor": json.loads((ROOT / "artifacts/tier2_1170/metapredictor_preds.json").read_text()),
@@ -268,6 +285,36 @@ def main() -> int:
     print(f"  of those involving the mover, {sum(v['separable'] for v in mover_rows.values())} "
           f"of {len(mover_rows)} are separable")
 
+    # What this file used to carry in its GRAIL column, kept so the correction is a record rather
+    # than a disappearance: an early dump ranked by the product of the two component scores over a
+    # narrower pool, scored here on the same population under the same rule as everything else.
+    superseded = {"what_it_was": ("results/scored_predictions.json in its own order, the product "
+                                  "of the two component scores, no pool cap, no fusion"),
+                  "why_it_was_replaced": ("it is not an arm this paper reports, and a file whose "
+                                          "purpose is to define the population is the wrong place "
+                                          "to leave one a reproducer might read as ours"),
+                  "recall": {}, "mean_emitted_uncapped": None}
+    old_pool = {r["sub"]: [c["smiles"] for c in r["candidates"]]
+                for r in json.loads((ROOT / "results/scored_predictions.json").read_text())["rows"]}
+    old_U, old_hits, old_emit = 0, {k: 0 for k in KS}, []
+    for s in subs:
+        refs = {key(y) for y in truth.get(s, [])} - {None}
+        if not refs:
+            continue
+        old_U += len(refs)
+        seq, seen_keys = [], set()
+        for cand in old_pool.get(s, []):
+            kk = key(cand)
+            if kk is None or kk in seen_keys or kk == key(s):
+                continue
+            seen_keys.add(kk)
+            seq.append(kk)
+        old_emit.append(len(seq))
+        for k in KS:
+            old_hits[k] += len(set(seq[:k]) & refs)
+    superseded["recall"] = {str(k): round(old_hits[k] / max(old_U, 1), 4) for k in KS}
+    superseded["mean_emitted_uncapped"] = round(sum(old_emit) / max(len(old_emit), 1), 2)
+
     rep = {"config": {**_code_version(), "n_substrates": len(subs), "match": "inchikey_tautomer",
                       "n_boot": N_BOOT, "seed": SEED,
                       "aggregation": "micro, ratio of sums", "k_sweep": list(KS),
@@ -279,12 +326,11 @@ def main() -> int:
            "orderings": {" > ".join(o): ks for o, ks in seen_orders.items()},
            "what_this_file_is_for": (
                "It defines the 291-substrate comparison population and gates the MetaTox column. "
-               "Its GRAIL column is a SUPERSEDED arm and no number in the paper derives from it; "
-               "Table 2 is supplied by results/deployment_table.json, which carries the gate "
-               "reproduces_four_method_291_metatox. The comparator columns here do match Table 2 "
-               "exactly. In consequence the family-wise block below is computed over a family in "
-               "which GRAIL trails at every budget, and it cannot speak to the leads the paper "
-               "claims."),
+               "Every column is the arm its own paper reports, so the family-wise block below is "
+               "computed over the family the paper claims its leads in. Table 2 is supplied by "
+               "results/deployment_table.json, which carries the gate "
+               "reproduces_four_method_291_metatox."),
+           "superseded_grail_column": superseded,
            "provenance": stamp(__file__),
            "pairwise_margins": margins,
            "n_margins": len(margins), "n_separable": n_sep,

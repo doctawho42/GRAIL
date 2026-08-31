@@ -361,12 +361,14 @@ def _clean_product_smiles(smiles: str) -> List[str]:
 
 # How a substrate is presented to the matcher. Every deployed firing path -- ModelWrapper.generate,
 # Generator.generate, factorized_infer with FACTORIZED_EXPANDS False -- passes the molecule as
-# parsed, hydrogens implicit, while this function has always expanded it. That mismatch is what
-# LABEL_PRESENTATION exists to correct, and it is deliberately NOT applied globally: every artifact
-# in results/ was produced through the historical default, so flipping one constant would change
-# what a dozen unrelated scripts measure without any of them saying so. The default therefore stays
-# where it was and the label path asks for the other presentation by name.
-DEFAULT_APPLICATION_PRESENTATION: Literal["implicit", "expanded"] = "expanded"
+# parsed, hydrogens implicit, and this function expanded it, so a caller who did not name a
+# convention got a reach this system never delivers. The default is now the deployed convention.
+#
+# The old default is not gone, it is written down: every call site that produced a published
+# artifact under it now asks for "expanded" by name, so no stored number moves and the convention
+# each one was measured under is visible at the call rather than in a constant a dozen scripts
+# away. That is the whole change -- a silent default became an explicit argument.
+DEFAULT_APPLICATION_PRESENTATION: Literal["implicit", "expanded"] = "implicit"
 LABEL_PRESENTATION: Literal["implicit", "expanded"] = "implicit"
 
 
@@ -405,7 +407,8 @@ def metaboliser(
     normalization_mode: Literal["standardize", "canonical"] = "standardize",
 ) -> DefaultDict[str, Set[int]]:
     selected_rules = list(rules) if rules is not None else load_default_rules()
-    return apply_rules_to_molecule(mol, selected_rules, normalization_mode=normalization_mode)
+    return apply_rules_to_molecule(mol, selected_rules, normalization_mode=normalization_mode,
+                                   presentation="expanded")
 
 
 def generate_vectors(
@@ -889,7 +892,9 @@ class MolFrame:
         for substrate, mol in tqdm(self.mol_structs.items(), desc="Applying rules"):
             if substrate not in self.map:
                 continue
-            generated = apply_rules_to_molecule(mol, list(rules), normalization_mode=self.normalization_mode)
+            generated = apply_rules_to_molecule(mol, list(rules),
+                                                normalization_mode=self.normalization_mode,
+                                                presentation="expanded")
             for product, indexes in generated.items():
                 self.gen_map[substrate].add(product)
                 self.mol_structs.setdefault(product, _smiles_to_mol(product))

@@ -126,7 +126,8 @@ def main() -> int:
         if not rk:
             continue
         mol = Chem.MolFromSmiles(s)
-        prod_ik = _ik_set(apply_rules_to_molecule(mol, rules, normalization_mode="canonical")) if mol else set()
+        prod_ik = _ik_set(apply_rules_to_molecule(mol, rules, normalization_mode="canonical",
+                                         presentation="expanded")) if mol else set()
         covered += len(prod_ik & rk)
         total += len(rk)
     grail_bank_ceiling = covered / total if total else 0.0

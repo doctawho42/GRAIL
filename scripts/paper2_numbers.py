@@ -149,6 +149,11 @@ def build():
     n["h10.pool.bank"] = h10["mean_pool"]["whole_bank"]
     n["h10.pool.trained"] = h10["mean_pool"]["trained"]
     n["h10.topk"] = h10["top_k"]["trained"]
+    # The same quantity on the other population, in the direction P3 was registered in: what the
+    # whole bank buys over the trained budget. The sweep records it as trained minus bank, so the
+    # sign is turned here rather than in the prose, which is where it was a literal.
+    if "gap.trainedBank.15" in n:
+        n["h10.comparison"] = round(-n["gap.trainedBank.15"], 4)
 
     n["h11.cells"] = h11["cells_including_metatox_own_emission"]
     n["h11.lost"] = h11["cells_lost_including_own_emission"]
@@ -241,6 +246,10 @@ def build():
     n["budget.built"] = len(bc["budgets_built"])
     for b in bc["budgets_built"]:
         n[f"budget.k{b}.recall"] = bc["by_budget"][str(b)]["recall_micro"]["15"]
+        # The same curve read at an output budget of thirty. At fifteen the deployed rule budget
+        # is the knee and the curve is flat past it; at thirty it is not, which is the reading
+        # the Discussion needs and the reason the two modes are one curve and not two designs.
+        n[f"budget.k{b}.recallthirty"] = bc["by_budget"][str(b)]["recall_micro"]["30"]
         n[f"budget.k{b}.candidates"] = bc["by_budget"][str(b)]["mean_candidates"]
     for b, cell in bc["against_the_deployed_budget_at_k15"].items():
         n[f"budget.k{b}.gap"] = cell["gap_at_15"]
@@ -1030,6 +1039,10 @@ def build():
     fm = art("four_method_291.json")
     n["fourmethod.grail50"] = fm["per_method"]["GRAIL"]["recall"]["50"]
     n["fourmethod.grailemit"] = fm["per_method"]["GRAIL"]["mean_emitted_uncapped"]
+    # What the file used to carry there, kept as a macro so the correction can be described with
+    # its own number instead of the number that replaced it.
+    n["fourmethod.superseded50"] = fm["superseded_grail_column"]["recall"]["50"]
+    n["fourmethod.supersededemit"] = fm["superseded_grail_column"]["mean_emitted_uncapped"]
 
     # Provenance, stated as the pinned set and not the directory. These four were literals here
     # once, inside the one generator whose contract is that no number is a literal: when the

@@ -217,9 +217,12 @@ Table~\ref{MS-tab:sweep} declares that a prediction equal to the substrate is dr
 method alike. Every other declared choice in this paper is swept, and this one was declared and
 not measured, so Table~\ref{tab:si-parentdrop} measures it.
 
-The arms behave very differently. SyGMa never returns the substrate;
-\numPdropReturnsBank{} of \numPopulationN{} exhaustive-mode lists contain it, at a median rank
-of \numPdropMedrankBank{}. The convention could therefore have flattered one arm and not another. It does not: the
+The arms behave very differently, which is what makes this a strong test rather than a formality.
+SyGMa never returns the substrate, in none of \numPopulationN{} lists, while
+\numPdropReturnsBank{} exhaustive-mode lists contain it at a median rank of
+\numPdropMedrankBank{}. A convention applied uniformly to arms that differ that far in how often
+it bites has the maximum opportunity to move one and not the others, so a null result here is
+informative and not merely the absence of an effect. It does not move them: the
 largest effect anywhere in the grid is \numPdropMaxEffect{}, no cell of
 \numPdropCells{} separates from zero, and the effect is at most \numPdropShareofmarginPct{} of the narrowest
 separating margin anywhere in the comparison, which is \numPdropNarrowestmargin{}. Where it is negative, the cause is the \numPdropSelfref{} substrates of this population whose
@@ -928,6 +931,7 @@ step, so the same is true of roughly one hit in six, and a reader who takes reca
 one-step chemistry a system finds will be wrong by about that much.
 
 \section{The registered predictions}
+\label{sec:si-register}
 
 The register is released in full at \texttt{github.com/doctawho42/GRAIL}, with every prediction as
 it was written, the threshold and falsification condition fixed before the check, and the outcome
@@ -1232,15 +1236,14 @@ first run.
 
 \section{Provenance and reproduction}
 
-One pinned artifact needs a label rather than a correction.
 \texttt{results/four\_method\_291.json} defines the comparison population and gates the MetaTox
-column, and its comparator columns reproduce Table~\ref{MS-tab:sweep} exactly. Its GRAIL column
-is a superseded arm, \numFourmethodGrailFiveZero{} at $k=50$ against the deployed arms'
-\numSweepBankFiveZero{} and \numSweepTrainedFiveZero{}, and no number in this paper derives
-from it; Table~\ref{MS-tab:sweep} is supplied by \texttt{deployment\_table.json}, which carries a
-gate asserting the two agree on MetaTox. The consequence worth stating is that the file's own
-family-wise block is computed over a family in which this system trails at every budget, so it
-cannot speak to the leads the paper claims, and the artifact records that.
+column. Its GRAIL column was an early dump ranked by the product of the two component scores over
+a narrower pool, an arm nobody would run, which reached \numFourmethodSupersededFiveZero{} at $k=50$;
+no number in this paper derived from it, but a file whose purpose is to define the population is
+the wrong place to leave an arm a reproducer might read as ours. It now carries the deployed
+interactive arm from the pools the comparison itself is read from, and reproduces
+Table~\ref{MS-tab:sweep} in every cell of both. Table~\ref{MS-tab:sweep} is supplied by
+\texttt{deployment\_table.json}, which carries a gate asserting the two agree on MetaTox.
 
 \numProvPinned{} artifacts are pinned. Most record the script that wrote them, the SHA-256 of
 that script's source, and the commit it ran at; a sweep recomputes the hash of each producer and

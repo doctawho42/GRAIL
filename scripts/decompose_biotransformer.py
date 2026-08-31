@@ -100,7 +100,8 @@ def _worker(item):
     mol = Chem.MolFromSmiles(sub)
     if mol is None or not trues:
         return (sub, 0, 0)
-    prods = list(apply_rules_to_molecule(mol, _RULES, normalization_mode="canonical").keys())
+    prods = list(apply_rules_to_molecule(mol, _RULES, normalization_mode="canonical",
+                                    presentation="expanded").keys())
     u, c, _ = _tautomer_recovered(trues, prods, audit=False)
     return (sub, int(u), int(c))
 

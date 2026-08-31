@@ -119,8 +119,18 @@ def fig_sweep():
         if xs:
             ax.text((min(xs) * max(xs)) ** 0.5, 0.755, lab, ha="center", fontsize=6.2,
                     color=INK_MUTED)
-    ax.legend(loc="lower right", fontsize=6.4, handlelength=1.8)
+    # The legend is ordered by where the curves finish, so its top-to-bottom order is the order
+    # of the lines at the right-hand edge. Declaration order matched no budget on the plot and a
+    # reader checking the legend against the curves found neither in the other.
+    handles, labels = ax.get_legend_handles_labels()
+    by_label = {lab: (arm, h) for (arm, (lab, *_)), h in
+                zip([(a, style[a]) for a in style if a in rec[str(ks[0])]], handles)}
+    order = sorted(labels, key=lambda lab: -rec[str(ks[-1])][by_label[lab][0]])
+    ax.legend([by_label[lab][1] for lab in order], order,
+              loc="lower right", fontsize=6.4, handlelength=1.8)
     ax.set_ylim(0, 0.78)
+    # Nine budgets on a logarithmic axis crowd where they are closest together, at 8 and 10.
+    ax.tick_params(axis="x", labelsize=6.0)
     fig.savefig(OUT / "fig_sweep.pdf")
     plt.close(fig)
     return band
@@ -161,10 +171,17 @@ def fig_ceiling():
     share = [c["share_of_mass_in_singletons"] for c in cur]
     usable = [c["determines_a_product"] for c in cur]
     a2.bar(x, share, color=[PALETTE[1] if u else INK_FAINT for u in usable], width=0.6)
+    # The label above a bar is the bar's own value. It used to be the number of distinct types at
+    # that granularity, which is a different quantity on a different scale sitting in the place
+    # the eye reads the height from; the type count now rides under the tick where it names the
+    # axis position rather than the height.
     for i, c in enumerate(cur):
-        a2.text(i, share[i] + 0.02, f"{c['types']}", ha="center", fontsize=6.5)
+        a2.text(i, share[i] + 0.02, f"{share[i]:.2f}", ha="center", fontsize=6.5)
     a2.set_xticks(x)
-    a2.set_xticklabels(["exact\nmultiset", "counts\ndropped", "element\npairs", "bond\ncount"],
+    a2.set_xticklabels([f"exact\nmultiset\n{cur[0]['types']} types",
+                        f"counts\ndropped\n{cur[1]['types']} types",
+                        f"element\npairs\n{cur[2]['types']} types",
+                        f"bond\ncount\n{cur[3]['types']} types"],
                        fontsize=6.5)
     a2.set_ylabel("share of misses in singleton types")
     a2.set_ylim(0, 1.0)
@@ -178,19 +195,30 @@ def fig_ceiling():
 def fig_cost():
     env = art("cost_envelope.json")["rows"]
     mt = art("mode_timings.json")
-    fig, (a1, a2) = plt.subplots(1, 2, figsize=(W * 2.06, 2.1),
-                                 gridspec_kw={"width_ratios": [1.3, 1]})
+    # Taller than the other two-panel figures and with the scatter given more of the width: at
+    # the previous size the left panel's points were below the resolution a printed page gives a
+    # scatter of this density, which is a legibility failure and not a taste one.
+    fig, (a1, a2) = plt.subplots(1, 2, figsize=(W * 2.06, 2.5),
+                                 gridspec_kw={"width_ratios": [1.45, 1]})
     fin = [r for r in env if r["finished"]]
     bad = [r for r in env if not r["finished"]]
-    a1.scatter([r["heavy"] for r in fin], [r["t_generate"] for r in fin], s=9,
-               color=PALETTE[0], lw=0, label="finished")
     dl = art("cost_envelope.json")["deadline_s"]
-    a1.scatter([r["heavy"] for r in bad], [dl] * len(bad), s=22, marker="x",
-               color=PALETTE[1], lw=0.9, label=f"did not finish in {int(dl)} s")
+    a1.axhline(dl, color=INK_FAINT, lw=0.6, ls="--", zorder=0)
+    a1.scatter([r["heavy"] for r in fin], [r["t_generate"] for r in fin], s=13, alpha=0.75,
+               color=PALETTE[0], lw=0, label="finished")
+    a1.scatter([r["heavy"] for r in bad], [dl] * len(bad), s=26, marker="x",
+               color=PALETTE[1], lw=1.0, label=f"did not finish in {int(dl)} s")
     a1.set_yscale("log")
+    # Both axes are logarithmic. On a linear x the substrates run 4 to 291 heavy atoms with one
+    # peptide at the top, so nine tenths of the points were squeezed into the left fifth of the
+    # panel and the trend they carry could not be read at print size.
+    a1.set_xscale("log")
+    a1.set_xticks([5, 10, 20, 50, 100, 200])
+    a1.set_xticklabels(["5", "10", "20", "50", "100", "200"])
+    a1.minorticks_off()
     a1.set_xlabel("heavy atoms in the substrate")
     a1.set_ylabel("generator seconds")
-    a1.legend(fontsize=6.4, loc="lower right")
+    a1.legend(fontsize=6.4, loc="upper left")
 
     i, e = mt["interactive"], mt["exhaustive"]
     # the four interactive statistics stay together so the bracket under them is true; the
@@ -202,10 +230,12 @@ def fig_cost():
             ("median", e["median_s"], PALETTE[2])]
     a2.bar(range(len(bars)), [b[1] for b in bars], color=[b[2] for b in bars], width=0.62)
     for j, b in enumerate(bars):
-        a2.text(j, b[1] * 1.15, f"{b[1]}", ha="center", fontsize=6.4)
+        a2.text(j, b[1] * 1.18, f"{b[1]}", ha="center", fontsize=6.2)
     a2.set_yscale("log")
     a2.set_xticks(range(len(bars)))
-    a2.set_xticklabels([b[0] for b in bars], fontsize=6.4)
+    # Five ticks in a narrow panel collide at any size that keeps them readable, so they lean.
+    a2.set_xticklabels([b[0] for b in bars], fontsize=6.2, rotation=25, ha="right",
+                       rotation_mode="anchor")
     # the arm each bar belongs to, named once under the group rather than repeated on every tick
     a2.text(1.5, -0.30, "interactive", ha="center", va="top", fontsize=6.6, color=INK_MUTED,
             transform=a2.get_xaxis_transform())

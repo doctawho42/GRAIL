@@ -34,7 +34,7 @@ ALLOWED = {
     "0.88", "0.016", "16.22", "16.3",      # the emission-transfer figures, cited with the artifact
     "0.5", "0.109", "0.0012", "0.012", "8.5", "0.01", "70", "2022.09", "2025", "26",
     "291",                                 # the peptide's heavy-atom count, named in prose
-    "0.0556", "10",
+    "10",
     "256",                                 # SHA-256, the name of a hash function, and a layer width
     "4.0",                                 # CC BY 4.0, the name of a licence
     # The Supporting Information came under this check late, and these are the numerals in it

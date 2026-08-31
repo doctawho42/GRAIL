@@ -1017,3 +1017,47 @@ def test_the_build_gate_sees_an_undefined_reference_on_a_lettered_page():
         "a page number carrying a letter is invisible to the gate, which is how a ?? survived "
         "in the Supporting Information")
     assert module.UNDEF.findall(roman) == ["ref:z"]
+
+
+def test_the_default_presentation_is_the_one_every_firing_path_uses():
+    """A caller who names no convention gets the reach the deployed system delivers.
+
+    The function used to expand the substrate with hydrogens while ModelWrapper.generate,
+    Generator.generate and factorized_infer all pass it as parsed, so a reader reproducing the
+    coverage census through the public entry point got a different number from the paper's and
+    nothing said so. Flipping the default is only half of the fix: the call sites that produced
+    published artifacts under the old convention have to ask for it by name, or the artifacts
+    move. Both halves are checked here, since either alone is a defect.
+    """
+    import ast
+    from pathlib import Path
+
+    from grail_metabolism.utils import preparation
+
+    assert preparation.DEFAULT_APPLICATION_PRESENTATION == "implicit"
+    assert preparation.LABEL_PRESENTATION == "implicit"
+
+    root = Path(preparation.__file__).resolve().parents[2]
+    silent = []
+    for path in sorted(list((root / "scripts").rglob("*.py"))
+                       + list((root / "grail_metabolism").rglob("*.py"))):
+        if path.name == "test_audit_fixes.py":
+            continue
+        try:
+            tree = ast.parse(path.read_text())
+        except SyntaxError:
+            continue
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.Call):
+                continue
+            func = node.func
+            name = (func.id if isinstance(func, ast.Name)
+                    else func.attr if isinstance(func, ast.Attribute) else None)
+            if name != "apply_rules_to_molecule":
+                continue
+            named = {kw.arg for kw in node.keywords}
+            if "presentation" not in named and len(node.args) < 4:
+                silent.append(f"{path.relative_to(root)}:{node.lineno}")
+    assert not silent, (
+        "these call sites take the hydrogen convention from a default instead of naming it, so "
+        "what they measure changes when the default does: " + ", ".join(silent))

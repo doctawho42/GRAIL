@@ -97,7 +97,7 @@ def compute_signatures(pool, rules):
         mol = Chem.MolFromSmiles(smi)
         if mol is None:
             continue
-        prods = apply_rules_to_molecule(mol, rules, "canonical")  # {canonical_product_smiles: {rule_idx}}
+        prods = apply_rules_to_molecule(mol, rules, "canonical", presentation="expanded")  # {canonical_product_smiles: {rule_idx}}
         for prod_smi, rule_idxs in prods.items():
             pid = pk_to_id.get(prod_smi)
             if pid is None:

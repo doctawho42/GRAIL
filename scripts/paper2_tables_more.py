@@ -94,11 +94,19 @@ def hypotheses():
     # The verdict, which the reader previously had to assemble from three sections: whether the
     # measurement clears the threshold, and for the confirmations whether the whole interval does
     # or only the point estimate. Held in one place so the table says what happened.
+    # The verdict says what happened, in the cell, rather than deferring it to a symbol. Three
+    # of the seven confirmations are clean; three establish only that the effect exceeds zero,
+    # because the registered threshold falls inside the interval; one holds on the population it
+    # was registered against and not on the other. A reader who reads only this column should
+    # reach the same reading as one who reads the footnotes.
     VERDICT = {
-        "H7": "confirmed$^{\\ddagger}$", "H9": "confirmed$^{\\ddagger}$",
-        "H10": "confirmed$^{\\S}$", "H11": "confirmed",
-        "H12": "confirmed$^{\\ddagger}$", "H8": "failed", "H14": "failed",
-        "H13": "failed", "H15": "confirmed", "H16": "confirmed",
+        "H7": "confirmed, threshold inside the interval",
+        "H9": "confirmed, threshold inside the interval",
+        "H10": "confirmed on validation, not on the comparison set",
+        "H11": "confirmed",
+        "H12": "confirmed, threshold inside the interval",
+        "H8": "failed", "H14": "failed", "H13": "failed",
+        "H15": "confirmed", "H16": "confirmed",
     }
     rows = []
     for i, (h, what, thr, key, pop) in enumerate(H, 1):
@@ -108,22 +116,25 @@ def hypotheses():
         val = (f"{v:+.4f}" if signed else f"{v:.4f}") if isinstance(v, float) and abs(v) < 1 \
             else str(v)
         rows.append(f"P{i} & {what} & {thr} & ${val}$ & {pop} & {VERDICT[h]} & {h} \\\\")
-    return ("\\begin{table*}[t]\n\\centering\\footnotesize\n\\begin{tabular}{@{}lllllll@{}}\n\\toprule\n"
+    return ("\\begin{table*}[t]\n\\centering\\footnotesize\n\\begin{tabular}{@{}lllllp{0.235\\textwidth}l@{}}\n\\toprule\n"
             " & what was fixed & threshold & measured & tested on & verdict & register "
             "\\\\\n\\midrule\n" +
             "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n"
             "\\caption{Every deployed choice as a prediction fixed before it was checked: what "
             "was fixed, the threshold, the value measured, the population it was checked on, and "
-            "the identifier it carries in the released register. P8's figure is a speed-up "
+            "what the check returned. P8's figure is a speed-up "
             "factor, P9's a median in seconds and P10's a share of the mined bank; the rest are "
             "differences in micro recall at a budget of 15. $^{\\dagger}$ marks the three whose "
             "threshold was fixed in advance but whose population was not: they were adjudicated "
-            "on the comparison set, which was recorded afterwards. $^{\\ddagger}$ marks a "
-            "confirmation whose registered threshold falls inside its own interval, so what the "
-            "data establish is that the effect exceeds zero rather than that it clears the bar. "
-            "$^{\\S}$ P3 is confirmed on the validation population it was registered against, "
-            "not on the comparison set, where the same quantity is $+0.0556$, and its effect is "
-            "inside the retraining spread.}"
+            "on the comparison set, which was recorded afterwards. Where the verdict says the "
+            "threshold falls inside the interval, what the data establish is that the effect "
+            "exceeds zero rather than that it clears the bar. P3 is confirmed on the validation "
+            "population it was registered against; on the comparison set the same quantity is "
+            "$+\\numHOneZeroComparison$, past its ceiling, and its effect is inside the "
+            "retraining spread. Each row carries its identifier in the released register in "
+            "the last column, which numbers them in the order they were written rather than the "
+            "order they are read; the register itself is Supporting Information "
+            "Section~\\ref{SI-sec:si-register}.}"
             "\n\\label{tab:hyp}\n\\end{table*}\n")
 
 

@@ -184,7 +184,8 @@ def grail_ceiling(test_map: Dict[str, Set[str]], rules: List[str], audit_tautome
             tt, _tr, _ = _tautomer_recovered(true_prods, [], audit=False)
             total_t += tt
             continue
-        products = apply_rules_to_molecule(mol, rules, normalization_mode="canonical")
+        products = apply_rules_to_molecule(mol, rules, normalization_mode="canonical",
+                                           presentation="expanded")
         prod_keys = list(products.keys())
         gen_ik = ik_set(prod_keys)
         cand_sizes.append(len(gen_ik))
@@ -266,7 +267,8 @@ def grail_ceiling_depth(
                 if m is None:
                     continue
                 expansions += 1
-                for p_smi in apply_rules_to_molecule(m, rules, normalization_mode="canonical").keys():
+                for p_smi in apply_rules_to_molecule(m, rules, normalization_mode="canonical",
+                                            presentation="expanded").keys():
                     p_ik = _inchikey(p_smi)
                     if p_ik not in visited_ik:
                         visited_ik.add(p_ik)
@@ -307,8 +309,10 @@ def grail_ceiling_delta(test_map: Dict[str, Set[str]], base_rules: List[str], ph
         mol = Chem.MolFromSmiles(sub)
         if mol is None:
             continue
-        base_ik = ik_set(apply_rules_to_molecule(mol, base_rules, normalization_mode="canonical").keys())
-        p2_ik = ik_set(apply_rules_to_molecule(mol, phase2_rules, normalization_mode="canonical").keys())
+        base_ik = ik_set(apply_rules_to_molecule(mol, base_rules, normalization_mode="canonical",
+                                          presentation="expanded").keys())
+        p2_ik = ik_set(apply_rules_to_molecule(mol, phase2_rules, normalization_mode="canonical",
+                                        presentation="expanded").keys())
         comb_ik = base_ik | p2_ik
         bh, ch = len(true_ik & base_ik), len(true_ik & comb_ik)
         base_rec += bh
@@ -380,7 +384,8 @@ def gap_analysis(test_map: Dict[str, Set[str]], rules: List[str]) -> Dict[str, o
         if mol is None:
             continue
         sub_mw = Descriptors.MolWt(mol)
-        gen_ik = ik_set(apply_rules_to_molecule(mol, rules, normalization_mode="canonical").keys())
+        gen_ik = ik_set(apply_rules_to_molecule(mol, rules, normalization_mode="canonical",
+                                         presentation="expanded").keys())
         for prod in true_prods:
             n_total += 1
             if _inchikey(prod) in gen_ik:

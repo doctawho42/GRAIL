@@ -219,13 +219,19 @@ def si_chemistry():
     arms = [("GRAIL exhaustive", "GRAIL exh."), ("GRAIL interactive", "GRAIL int."),
             ("metatox", "MetaTox"), ("sygma", "SyGMa"), ("metapredictor", "MetaPred.")]
     budget = "15"
+    # A class with five references cannot support two decimals, and printing them there invites
+    # an ordering to be read off noise. The small classes are marked rather than dropped, since
+    # what they show -- a blind spot every arm shares -- is the reason the split is here at all.
+    SMALL = 10
     rows = []
     for name, entry in d["classes"].items():
         cells = " & ".join(f"{entry['recall'][key][budget]:.2f}".lstrip("0")
                            for key, _ in arms)
-        rows.append(f"{name} & {entry['references']} & {cells} \\\\")
+        mark = "$^{\\dagger}$" if entry["references"] < SMALL else ""
+        rows.append(f"{name}{mark} & {entry['references']} & {cells} \\\\")
     head = " & ".join(label for _, label in arms)
     n = d["population"]["references_classified"]
+    n_small = sum(1 for e in d["classes"].values() if e["references"] < SMALL)
     return ("\\begin{table}[h]\n\\centering\\scriptsize\n"
             "\\begin{tabular}{@{}lrrrrrr@{}}\n\\toprule\n"
             f"transformation class & refs & {head} \\\\\n\\midrule\n"
@@ -234,7 +240,9 @@ def si_chemistry():
             "\\caption{Micro recall at a budget of 15 within each transformation class, on the "
             f"comparison set's {n} annotated references; leading zeros are dropped. A class is a "
             "change in molecular formula, so it groups mechanisms the annotation does not "
-            "separate.}\n"
+            f"separate. $^{{\\dagger}}$ marks the {n_small} classes holding fewer than {SMALL} "
+            "references, where one hit moves a cell by more than a tenth and no ordering across a "
+            "row should be read.}\n"
             "\\label{tab:si-chemistry}\n\\end{table}\n")
 
 

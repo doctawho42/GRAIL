@@ -104,7 +104,8 @@ def _worker(item):
         return (0, 0, 0, 0, 0)
     pools = {
         "A": list(apply_rules_to_molecule(mol, _CTX["contained"],
-                                          normalization_mode="canonical").keys()),
+                                          normalization_mode="canonical",
+                                          presentation="expanded").keys()),
         "B": _sygma_pool(mol, _CTX["paths_152"], False),
         "C": _sygma_pool(mol, _CTX["paths_all"], False),
         "D": _sygma_pool(mol, _CTX["paths_all"], True),

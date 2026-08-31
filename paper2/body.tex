@@ -36,7 +36,11 @@ This work addresses that. We present GRAIL (Graph-scored Rule Application with I
 structure predictor built from a bank of reaction templates, a learned model that selects which templates to apply, and a learned model
 that ranks the resulting candidates. Every prediction it emits carries the template that produced
 it and the atoms that template acted on, so a chemist can accept or reject a candidate on
-mechanistic grounds rather than on a score. We evaluate it with the two decisions above promoted
+mechanistic grounds rather than on a score. How much mechanism that carries depends on the
+template: a large part of the bank is patterns of three atoms or fewer, for which the named site
+is a report of where the pattern matched rather than of a mechanism, and
+Section~\ref{sec:offers} measures both the size of that part and how often the named site is the
+site that changed. We evaluate it with the two decisions above promoted
 to declared axes, meaning that each is stated and varied across its full range instead of being
 fixed silently, against every published predictor for which
 predictions on the same substrates could be obtained. The comparison does not produce a winner:
@@ -74,8 +78,9 @@ are made: the \emph{coverage ceiling}, the share of annotated metabolites any si
 of the rule bank can reach, and the census of the transformation chemistry the remainder needs. The \emph{validation draw} is a declared sample of \numValdrawCap{} substrates at seed
 \numValdrawSeed{} from the validation split. Of these, \numValdrawDeclared{} produced a candidate
 pool, and the \numValdrawPaired{} held by both operating modes of the system in a paired comparison carry
-\numHOneFiveNreferences{} references. Every registered ranking and timing threshold is checked
-here, since a threshold checked where its rule was chosen is not a check. Sampling is without replacement and the draws are not nested, so a different seed gives a
+\numHOneFiveNreferences{} references. Every registered ranking and timing
+threshold is checked on this draw, because a threshold checked on the population whose rule it
+chose is not a check. Sampling is without replacement and the draws are not nested, so a different seed gives a
 different set of the same size and a different cap one that is not a subset of this one; cap and
 seed are recorded with every figure drawn from it. The \emph{comparison set} is a subset of the evaluated test set: the \numPopulationN{}
 substrates on which every method in the comparison predicts, carrying
@@ -211,25 +216,31 @@ tautology.
 
 \subsection{Rule budget and two operating modes}
 
-How many templates the generator selects before any is applied is the \emph{rule budget}, and it
-sets both what the system can find and what it costs. Two settings are reported throughout. The
-\emph{interactive} mode applies the \numHOneZeroTopk{} templates the trained checkpoint records,
-and returns in about a second, which is what a user waiting at a web form requires. The
-\emph{exhaustive} mode applies the whole bank, the \numBankParses{} of \numBankRules{}
-templates that parse, takes tens of seconds and is
-the setting for an offline query. The two therefore differ by a factor of \numBankParses{} to
-\numHOneZeroTopk{} in how much of the bank they consult. What the difference buys was registered
-as prediction P3 with a ceiling of $+\numHOneZeroThreshold$: on validation
-$+\numHOneZeroBought$, 95\% CI $[\numHOneZeroLo, +\numHOneZeroHi]$, mean pool on that draw
-\numHOneZeroPoolBank{} to \numHOneZeroPoolTrained{} candidates before deduplication.
+How many templates the generator selects before any is applied is the \emph{rule budget}. It is
+one continuous setting, and the two modes reported throughout are two points on it rather than two
+designs. The \emph{interactive} mode applies the \numHOneZeroTopk{} templates the trained
+checkpoint records and returns in about a second, which is what a user waiting at a web form
+requires; the \emph{exhaustive} mode applies the whole bank, the \numBankParses{} of
+\numBankRules{} templates that parse, and takes tens of seconds. The interactive value is where
+the released checkpoint was trained, which is a fact about how the run was configured and not an
+argument for the number, so the curve either side of it is measured on validation
+(Section~\ref{SI-sec:si-budget}). What the difference buys was registered as prediction P3 with a
+ceiling of $+\numHOneZeroThreshold$: on validation $+\numHOneZeroBought$, 95\% CI
+$[\numHOneZeroLo, +\numHOneZeroHi]$, mean pool on that draw \numHOneZeroPoolBank{} to
+\numHOneZeroPoolTrained{} candidates before deduplication.
 
 \input{table_modes}
 
-On the comparison set the same quantity is $+0.0556$, past the ceiling. The discrepancy is
-reported rather than resolved and it has a reading: at $k \le 10$ the whole bank buys nothing on
-either population, and from $k=15$ it buys more the wider the budget, because the interactive arm
-runs out of candidates. The threshold is therefore a property of the budget requested rather
-than of the system.
+On the comparison set the same quantity is $+\numHOneZeroComparison$, past the ceiling. The
+discrepancy is reported rather than resolved and it has a reading: at $k \le 10$ the whole bank
+buys nothing on either population, and from $k=15$ it buys more the wider the budget, because the
+interactive arm runs out of candidates. The threshold is therefore a property of the budget
+requested rather than of the system, and so is the deployed rule budget. Read at an output budget
+of fifteen the curve is flat past \numBudgetDeployed{}, which is why that value is deployed; read
+at thirty it is not, and a rule budget of $50$ reaches \numBudgetKFiveZeroRecallthirty{} against
+\numBudgetKThreeZeroRecallthirty{} on the same substrates. A service answering with thirty
+candidates or more should be run at the larger budget and pay the standardisation cost that
+follows.
 
 \subsection{Emission}
 
@@ -368,7 +379,9 @@ read by chemistry (Table~\ref{SI-tab:si-chemistry}). The largest class is a clea
 more carbons, \numChemCleavageRefs{} references, where the whole bank earns its size:
 \numChemCleavageBank{} against \numChemCleavageBestother{} for the best comparator. The second
 largest, \numChemOtherRefs{} references, is the set of changes this vocabulary does not name, and
-no method here exceeds \numChemOtherBest{} on it.
+no method here exceeds \numChemOtherBest{} on it: a fifth of the annotated chemistry falls in a
+class none of the five systems is built for, which is what a reader deciding whether any of them
+is usable on their own compounds needs before they read a headline number.
 
 A nominal budget is not a length, and the leads at wide budgets are read where most comparator
 lists have already ended. Removing length as a variable is possible and it is done: on each
@@ -665,24 +678,24 @@ more than one turnover and the corpus records as one pair. A hit on one of those
 several turnovers, so \numCeilingCoverage{} is not the share of annotated metabolism one enzymatic
 step reaches.
 
-The presentation of hydrogen is part of that measurement and is named here rather than left to the
-code. Templates are matched against the substrate with hydrogens implicit, which is the convention
-every deployed firing path uses, and \numCeilingUncovered{} is that convention measured through
-the loop a caller runs. Two conventions are defensible. Measured through the loop that audits
-them, so that both arms come from one code path, hydrogens implicit leave
-\numCeilagreeAuditimplicitUncovered{} uncovered and hydrogens made explicit with the templates
-completed to match leave \numCeilagreeAuditcompletedUncovered. Choosing the convention per
-template, which no caller can request, leaves \numCeilagreeDispatchUncovered. A fourth arm,
-hydrogens made explicit without completing the templates, is an incomplete loop rather than a
-convention and reaches only \numHydUncoveredexpanded{}; the instrument's own record excludes it.
-The released public entry point defaults to that fourth presentation, so calling it without naming
-the convention returns \numHydUncoveredexpanded{} uncovered and not \numCeilingUncovered{}.
+How hydrogen is presented to a template changes what fires, so the convention is named here
+rather than left to the code. The bound reported above, \numCeilingUncovered{} uncovered, is
+measured with hydrogens implicit through the loop a caller runs, which is the convention every
+deployed firing path uses. Three other counts of the same quantity exist and all four are given,
+because a bound whose value depends on the instrument has to be read with the spread beside it.
+Measured instead through the loop that audits both conventions from one code path, implicit
+hydrogens leave \numCeilagreeAuditimplicitUncovered{} uncovered and hydrogens made explicit with
+the templates completed to match leave \numCeilagreeAuditcompletedUncovered. Choosing the
+convention per template, which no caller can request, leaves \numCeilagreeDispatchUncovered. A
+fourth arm, hydrogens made explicit without completing the templates, is an incomplete loop rather
+than a convention and reaches only \numHydUncoveredexpanded{}; the instrument's own record
+excludes it.
 
-Two of those numbers describe the same convention and disagree by
-\numCeilagreeDisagreementWord{} references, the two loops cleaning products differently, and all
-four span \numCeilagreeSpread{} references, \numCeilagreeSpreadofmarginPct{} of the narrowest
-margin that separates anything here. The choice of instrument therefore cannot decide a claim in
-this paper. The residual dependence of the bound on the convention, measured per template, is
+The first two of those describe one convention through two loops and disagree by
+\numCeilagreeDisagreementWord{} references, which is the two loops cleaning products
+differently. All four span \numCeilagreeSpread{} references,
+\numCeilagreeSpreadofmarginPct{} of the narrowest margin that separates anything in this paper,
+so the choice of instrument cannot decide a claim here. The residual dependence of the bound on the convention, measured per template, is
 $\numHydResidual{}$, 95\% CI $[\numHydResiduallo{}, \numHydResidualhi{}]$, an interval excluding
 zero: the bound is convention-dependent, by \numHydResidualrefs{} references in
 \numHydReferences{}.
@@ -707,9 +720,9 @@ relaxing convention-dependent primitives, so that arm is not invariant to anythi
 \includegraphics[width=\textwidth]{fig_ceiling}
 \caption{Left: where the \numCeilingUncovered{} uncovered references go, and how many of them a
 library of \numUsptoTemplates{} synthetic templates could supply. Right: the share of the
-novel-type gap sitting in types seen exactly once, against four definitions of a type, with the
-number of distinct types above each bar. Red marks the definitions under which a type still names
-a transformation.}
+novel-type gap sitting in types seen exactly once, against four definitions of a type; the label
+above each bar is that share and the count under each tick is how many distinct types the
+definition yields. Red marks the definitions under which a type still names a transformation.}
 \label{fig:ceiling}
 \end{figure*}
 
@@ -796,6 +809,7 @@ released checkpoint was trained at, and a deployment willing to spend more can r
 back the pool.
 
 \subsection{What the system offers that the incumbent does not}
+\label{sec:offers}
 
 Three properties, none of them a recall figure. Every prediction names the transformation rule
 that produced it and the site at which it fired, which allows a candidate to be accepted or
@@ -833,10 +847,12 @@ directly rather than argued from the bank's coverage. Of the \numTypeoverlapBank
 references whose transformation type the bank does not hold, \numTypeoverlapCorpuslackstoo{},
 \numTypeoverlapCorpussharePct{}, have a type the training annotation does not hold either; the
 remaining \numTypeoverlapMinerslost{} are chemistry the corpus contained and the miner did not
-carry across (Section~\ref{SI-sec:si-typeoverlap}). That count is larger than the
-\numCeilingNovel{} above and is not in conflict with it: a template can produce a product while
-being typed differently from the pair it produces, so a reference whose type the bank lacks can
-still be reached, and \numCeilingNovel{} counts only those that are not. Template discovery from that
+carry across. The two counts here are different quantities and the larger is not a correction of
+the smaller: \numTypeoverlapBanklacks{} counts every test reference whose type the bank does not
+hold, reached or not, while \numCeilingNovel{}, above, counts only those the bank also fails to
+reach, and a template can reach a product while being typed differently from the pair that product
+comes from. The four cells that separate the two, by type and by reach, are in
+Section~\ref{SI-sec:si-typeoverlap}. Template discovery from that
 corpus is separately unfinished, its rarefaction curve still climbing, so mining harder would yield
 more templates and could not supply a type the corpus does not contain.
 Extending coverage therefore requires new reaction corpora, and the census narrows the search:
@@ -857,11 +873,11 @@ than what produced them: replacing their product with the rank fusion gained mor
 architectural change tested here. Every prediction carries the template that produced it and the
 atoms it acted on, and the whole output is ranked.
 
-The two operating modes divide the same way, and the division is a trade rather than a ranking:
-the mode cheap enough to answer a web form is beaten by the incumbent beyond a short list, and the
-mode that leads returns about a hundred structures at a precision near \numPrecBankFiveZero{} and
-takes tens of seconds. Neither is the system; both are, and which one a service should run follows
-from the budget it answers at.
+The two operating modes divide the same way, and they are two settings of one rule budget rather
+than two designs: the setting cheap enough to answer a web form is beaten by the incumbent beyond
+a short list, and the setting that leads returns about a hundred structures at a precision near
+\numPrecBankFiveZero{} and takes tens of seconds. Neither is the system; both are, and which rule
+budget a service should run follows from the output budget it answers at.
 
 Measured against every published predictor that could be run on the same substrates, the
 comparison divides by output budget rather than resolving into an ordering, and the division is
@@ -909,6 +925,15 @@ and not a random quarter of it. It is selected in two directions: a substrate en
 removes the cases where a comparator produced nothing and a bank this size should win most
 clearly, while two comparators were built on sources this corpus is assembled from, which favours
 them. Neither is corrected and they do not cancel.
+
+Nothing in this pipeline is stereochemistry-aware. The standardiser strips configuration, the
+matching criterion is chosen to ignore it, and the annotation carries none, so sulfoxidation,
+epoxide hydrolysis and most conjugation are predicted and scored as constitutions. For a
+metabolite structure predictor that is a real restriction and not a technicality: sulfoxide and
+epoxide configuration carry the pharmacology of several drug classes, and a system that cannot
+represent them cannot be asked which enantiomer an enzyme makes. What is reported here is
+therefore recall over constitutions, and the criterion sweep in Section~\ref{SI-sec:si-sensitivity}
+bounds what a stereochemistry-aware criterion would cost rather than supplying one.
 
 No result here is external. Every figure is measured on one corpus assembled from four sources, of
 which the only published reference set is one of the four, so a held-out split of it is not an
@@ -978,12 +1003,13 @@ than merely reporting that it differs. The one step that cannot be reproduced is
 extraction that selected from the four sources, which is not in the repository and is recorded as
 such in the Supporting Information.
 
-One caveat belongs with the software rather than with the measurement. The public entry point
-defaults to a hydrogen presentation the coverage instrument's own record excludes as an
-unfinished loop, so calling it without naming the convention returns \numHydUncoveredexpanded{}
-uncovered references and not \numCeilingUncovered{}. The convention is an argument to that entry
-point and the paper's figures are measured at the one every deployed firing path uses; a reader
-reproducing the census should set it.
+The hydrogen convention is an argument to the rule-application entry point rather than a
+constant, and its default is the presentation every deployed firing path uses, which is the one
+the paper's figures are measured at. It was the other presentation until this work measured the
+difference: a reader reproducing the census through that entry point without naming a convention
+would have obtained \numHydUncoveredexpanded{} uncovered references and not
+\numCeilingUncovered{}. No stored figure moved when the default changed, because every call site
+that produced one now names the convention it was measured under.
 
 Every figure printed in this paper is generated from a stored result file rather than typed.
 \numProvPinned{} such files are pinned, meaning that each records the script that wrote it and

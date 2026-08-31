@@ -145,7 +145,8 @@ def _apply_ceiling(mol, rules):
     published figures were produced with it True.
     """
     if CEILING_EXPANDS:
-        return apply_rules_to_molecule(mol, rules, normalization_mode="canonical")
+        return apply_rules_to_molecule(mol, rules, normalization_mode="canonical",
+                                   presentation="expanded")
     from collections import defaultdict
     out = defaultdict(set)
     # drop_invalid=False matches the deployed pool: generator.generate_scored splits products on
