@@ -28,7 +28,7 @@ for _p in (str(ROOT), str(ROOT / "scripts"), str(HERE)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from _provenance import stamp  # noqa: E402
+from _provenance import record_inputs, stamp  # noqa: E402
 
 CAP = 100
 KS = (1, 5, 10, 15, 30, 50)
@@ -163,6 +163,9 @@ def main() -> int:
     better = [b for b, c in contrasts.items() if c["gap_at_15"] > 0 and c["excludes_zero"]]
     report = {
         "provenance": stamp(__file__),
+        # Which pools this curve was actually read from, so an artifact written against a pool
+        # that has since gone -- a planted one, a renamed one -- can be told from a current one.
+        "inputs": record_inputs(built[b] for b in sorted(built)),
         "split": "validation",
         "population": {"n_substrates": len(subs), "n_references": int(U.sum()),
                        "note": "the substrates every built pool holds, so the curve is paired"},

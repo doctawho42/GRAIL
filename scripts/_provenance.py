@@ -123,6 +123,44 @@ def stamp(file: str | Path) -> dict:
     return out
 
 
+def record_inputs(paths) -> list:
+    """The files a producer read, by path and digest, for the artifact to carry.
+
+    A stamp says which script wrote a file and a verify says whether that script has changed
+    since. Neither can say what the script was pointed at. A perturbation test run against the
+    real results directory once planted a pool, wrote a real artifact from it, and left the
+    artifact in place: the stamp matched, the sweep passed, and the recorded curve held a budget
+    that does not exist. An artifact that names its inputs can be checked against them, and one
+    whose input has vanished says so instead of reading as current.
+    """
+    out = []
+    for path in paths:
+        path = Path(path)
+        try:
+            rel = str(path.resolve().relative_to(ROOT))
+        except ValueError:
+            rel = str(path)
+        row = {"path": rel, "exists": path.exists()}
+        if path.exists():
+            row["sha256_16"] = _digest(path.read_bytes())[:16]
+            row["bytes"] = path.stat().st_size
+        out.append(row)
+    return out
+
+
+def check_inputs(rec: dict) -> list:
+    """Every input an artifact names that has since vanished or moved, as readable lines."""
+    problems = []
+    for row in (rec.get("inputs") or []):
+        path = ROOT / row["path"]
+        if not path.exists():
+            problems.append(f"input gone: {row['path']}")
+            continue
+        if "sha256_16" in row and _digest(path.read_bytes())[:16] != row["sha256_16"]:
+            problems.append(f"input moved: {row['path']}")
+    return problems
+
+
 def _find_stamp(obj, depth=0):
     """Locate a provenance block wherever a writer put it: top level, or under `config`."""
     if depth > 2 or not isinstance(obj, dict):

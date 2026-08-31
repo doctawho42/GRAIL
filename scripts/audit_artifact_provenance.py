@@ -32,7 +32,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
 
-from _provenance import COSMETIC, CURRENT, infer, verify  # noqa: E402
+from _provenance import COSMETIC, CURRENT, check_inputs, infer, verify  # noqa: E402
 
 OK = (CURRENT, COSMETIC)
 
@@ -184,10 +184,20 @@ def check(rel: str, producer: str | None) -> dict:
     if not path.exists():
         return {"artifact": rel, "status": "absent", "detail": "not in this checkout"}
     v = verify(path)
-    if v["status"] in OK or producer is None:
-        return v
-    if v["status"] == "unstamped":
-        return infer(path, producer)
+    if v["status"] not in OK and producer is not None and v["status"] == "unstamped":
+        v = infer(path, producer)
+    # A stamp says which script wrote the file; it cannot say what that script was pointed at.
+    # An artifact that names its inputs is checked against them, and one written from an input
+    # that has since vanished or moved is not current however clean its producer is. This is the
+    # case a perturbation run against the real results directory produces, and the one the
+    # producer check is blind to by construction.
+    if v["status"] in OK:
+        try:
+            gone = check_inputs(json.loads(path.read_text()))
+        except Exception:
+            gone = []
+        if gone:
+            return {**v, "status": "input_changed", "detail": "; ".join(gone)}
     return v
 
 

@@ -763,9 +763,11 @@ def test_a_label_matrix_cannot_be_read_back_under_the_other_presentation():
     would_be_read_under_the_other = f"{stem}.{other}.pt"
     assert written != would_be_read_under_the_other
 
-    # and the presentation is an argument, not a global: flipping it must not change what every
-    # other caller of apply_rules_to_molecule measures
-    assert preparation.DEFAULT_APPLICATION_PRESENTATION == "expanded"
+    # That the presentation is an argument rather than a global, and that every call site names
+    # it, is checked in full by test_the_default_presentation_is_the_one_every_firing_path_uses.
+    # This assertion used to pin the application default to "expanded" alongside it; when the
+    # default flipped to the convention the deployed firing paths use, the two guards began
+    # asserting opposite values of the same constant and the suite carried the contradiction.
     assert preparation.LABEL_PRESENTATION == "implicit"
 
 
@@ -1004,6 +1006,51 @@ def test_a_declared_absence_buys_one_substrate_and_not_a_missing_build(tmp_path,
         "test, which is how a curve comes to be measured on a quarter of its substrates")
     assert report["budgets_skipped_as_partial"] == {"7581": 2}
     assert report["population"]["n_substrates"] == 8, "the paired population narrowed anyway"
+
+
+def test_an_artifact_written_from_an_input_that_is_gone_does_not_read_as_current(tmp_path):
+    """The stamp says which script wrote a file. It cannot say what that script was pointed at.
+
+    A perturbation run planted a pool directory, ran the real budget curve against the real
+    results directory to confirm the completeness guard fired, and removed the plant. The
+    artifact left behind recorded a four-point curve as a five-point one over a budget that does
+    not exist, its stamp matched the producer exactly, and the sweep called it current. The
+    producer check is blind to this by construction, so the artifact has to name what it read.
+    """
+    import json
+    import sys
+    from pathlib import Path
+
+    sys.path.insert(0, "scripts")
+    from _provenance import check_inputs, record_inputs
+
+    real = tmp_path / "kept.json"
+    real.write_text('{"a": 1}')
+    gone = tmp_path / "planted.json"
+    gone.write_text('{"a": 2}')
+
+    rec = {"inputs": record_inputs([real, gone])}
+    assert all(row["exists"] for row in rec["inputs"])
+    assert check_inputs(rec) == [], "two inputs that are both present read as a problem"
+
+    gone.unlink()
+    problems = check_inputs(rec)
+    assert len(problems) == 1 and "planted.json" in problems[0], (
+        "an artifact whose input has vanished still reads as current, which is the case a "
+        "perturbation run against the real results directory leaves behind")
+
+    gone.write_text('{"a": 3}')
+    problems = check_inputs(rec)
+    assert len(problems) == 1 and "moved" in problems[0], (
+        "an input that was replaced under the same name reads as unchanged, so the digest is "
+        "doing nothing and the check is a file-exists test wearing a hash")
+
+    # and the artifact this was found on carries the block, or the check guards nothing
+    curve = json.loads(Path("results/budget_curve.json").read_text())
+    assert curve.get("inputs"), "the budget curve stopped naming the pools it was read from"
+    assert check_inputs(curve) == [], (
+        "the committed budget curve names an input that is gone or has moved: "
+        + "; ".join(check_inputs(curve)))
 
 
 def test_every_producer_partitions_the_bank_on_the_same_mined_file():
