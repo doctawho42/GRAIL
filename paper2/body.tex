@@ -143,8 +143,10 @@ p(c) = 1 - \prod_{r \in R(c)} \left( 1 - p_r \right),
 \end{equation}
 so evidence from independent rules accumulates rather than competing. The independence is an
 assumption this bank does not satisfy, since it holds published rule sets verbatim and the mined
-half is full of near-duplicates; what that costs is not measured here and the measurement it needs
-is named in Section~\ref{SI-sec:si-knobs}. Equation~\ref{eq:noisyor}
+half is full of near-duplicates. What that costs is swept over the four rules the implementation
+offers (Section~\ref{SI-sec:si-knobs}): a rule that ignores duplication is better at the head of
+the list, by up to $+\numAggregationHybridThree$ at a budget of three, and indistinguishable from
+this one at every budget a lead is claimed at. Equation~\ref{eq:noisyor}
 is why deduplication is not a cosmetic step: the key under which two products are judged the same
 decides which scores are combined, and changing that key moves the ranking. Tautomers are the
 hard case, and their treatment is not settled by the standard identifiers \citep{Dhaked_2020}.
@@ -979,7 +981,7 @@ defined and the sensitivity of the comparison to the choice among them; the pare
 convention measured per arm; precision at every budget; every comparison difference with its
 paired interval; how the substrate is drawn, and what that decides; the rule bank, its mining
 procedure, the provenance of each collection and how much of it is a published rule set verbatim;
-what the rule budget buys; two parameters of the ranking and one that could not be measured; the
+what the rule budget buys; two parameters of the ranking, both swept; the
 architecture and training of both learned stages with every setting they were trained under;
 whether the site a prediction names is the site that changed, against a null; what each method
 recovers split by transformation class; the comparison at matched list length and under the other
