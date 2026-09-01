@@ -130,7 +130,17 @@ def main() -> int:
     # deployed one; the worked example named a neighbouring filter for three weeks and nothing
     # here looked, though the artifact said so in plain text.
     CKPT = re.compile(r"artifacts/([A-Za-z0-9_]+)/checkpoints/(?:generator|filter)\.pt")
-    DEPLOYED_RUN = "full5000_implicit"
+    # What the release is, read from what this repository tracks rather than named here. The two
+    # came apart once: a constant said one run and the tree tracked a generator from one run and a
+    # filter from another, so this gate would have failed an artifact scored by the very filter
+    # that ships. One source of truth, and changing what is released changes what this demands.
+    sys.path.insert(0, str(ROOT / "scripts" / "typed_edit"))
+    try:
+        from pool_checkpoints import deployed_runs
+
+        DEPLOYED_RUNS = set(deployed_runs().values()) or {"full5000_implicit"}
+    except Exception:
+        DEPLOYED_RUNS = {"full5000_implicit"}
     # The scan follows an artifact's own `inputs` block one hop. An artifact that records what it
     # read names files this list would otherwise never open -- the validation pools are a
     # subdirectory away and are what a published curve is actually made of, and three of them were
@@ -157,7 +167,7 @@ def main() -> int:
         if rel in CKPT_EXEMPT or not path.exists():
             continue
         runs = set(CKPT.findall(path.read_text()))
-        if runs and runs != {DEPLOYED_RUN}:
+        if runs and not runs <= DEPLOYED_RUNS:
             via = f" (read by {followed[rel]})" if rel in followed else ""
             wrong_model.append(f"{rel}{via}: {', '.join(sorted(runs))}")
 

@@ -32,9 +32,36 @@ for _p in (str(ROOT), str(ROOT / "scripts"), str(HERE)):
 
 from _provenance import record_inputs, stamp  # noqa: E402
 
-# The deployed pair, which is what a pool is expected to have been scored by. Both stages come
-# from one run; the checkpoint-verification gate in check_number_provenance.py names the same one.
-DEPLOYED = "full5000_implicit"
+def deployed_runs() -> dict:
+    """{stage: run} for what this repository actually releases, read from git rather than named.
+
+    "Deployed" is not a fact about a directory on this machine, it is a fact about what ships, and
+    naming it in a constant is how the two came apart: a constant said both stages were one run
+    while the tree tracked a generator from one and a filter from another, and the artifact the
+    comparison is read from matched the tracked pair rather than the named one. Reading the answer
+    out of `git ls-files` makes the gate follow the release instead of a recollection of it, so
+    changing what is released changes what every check here demands, in one place.
+    """
+    import subprocess
+
+    out = {}
+    try:
+        tracked = subprocess.run(["git", "ls-files", "artifacts/"], cwd=ROOT,
+                                 capture_output=True, text=True, timeout=30).stdout.splitlines()
+    except Exception:
+        tracked = []
+    for rel in tracked:
+        parts = rel.split("/")
+        if len(parts) >= 4 and parts[-2] == "checkpoints" and parts[-1].endswith(".pt"):
+            stage = parts[-1][:-3]
+            if stage in ("generator", "filter"):
+                out.setdefault(stage, parts[1])
+    return out
+
+
+DEPLOYED_BY_STAGE = deployed_runs()
+# Kept for the printed header only; where the two stages differ this is not a single answer.
+DEPLOYED = DEPLOYED_BY_STAGE.get("generator") or "full5000_implicit"
 # Every trained run whose checkpoints could plausibly have scored a pool. A candidate that is not
 # in this list cannot be identified, so an unidentified pool is reported as such and never as the
 # deployed one by default.
@@ -177,7 +204,9 @@ def main() -> int:
                 "next_best_with_a_different_file": f"{runner} {runner_n}" if runner else None,
                 "margin": (f"{best_n}/{best_of} against {runner_n}/{counts[runner]['comparable']}"
                            if runner else None),
-                "is_the_deployed_run": bool(identified and DEPLOYED in tied),
+                "is_the_deployed_run": bool(
+                    identified and DEPLOYED_BY_STAGE.get(stage) in tied),
+                "the_released_run_for_this_stage": DEPLOYED_BY_STAGE.get(stage),
                 "counts": counts}
         rows[name] = entry
 
@@ -208,6 +237,11 @@ def main() -> int:
                    f"checkpoint in the tree and count exact agreements; the model that wrote them "
                    f"matches all of them and every other matches none"),
         "deployed_run": DEPLOYED,
+        "released_runs_by_stage": DEPLOYED_BY_STAGE,
+        "how_the_release_is_determined": (
+            "read from `git ls-files artifacts/`: the checkpoint a stage ships is the one this "
+            "repository tracks for it, so the gate follows what is released rather than a name "
+            "written beside it"),
         "candidates_considered": list(CANDIDATES),
         "pools": rows,
         "stages_whose_checkpoint_is_not_the_same_across_pools": disagreeing,
