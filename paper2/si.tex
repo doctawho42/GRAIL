@@ -1298,17 +1298,36 @@ many candidates the deployed system emits on it (\numPopdefOutputin{} against
 \numPopdefPermutations{} shuffles. That does not make the draw random; it says the three
 properties most likely to have driven such a draw did not drive this one.
 
-The comparison can also be read on the population nobody selected. The deployed arm and the two
-comparators that ran over the whole evaluated test set are contrasted there with a substrate a
-comparator answered nothing for scored as zero rather than removed. Against SyGMa the deployed arm
-is $\numPopdefWholeSygmaOneFive$ $[\numPopdefWholeSygmaOneFiveLo,
+The comparison is also read on the population nobody selected: the whole evaluated test set,
+\numPopdefWholesubstrates{} substrates carrying \numPopdefWholereferences{} references, against
+the two comparators that ran over all of it, with a substrate a comparator answered nothing for
+scored as zero rather than removed. Both arms are read there, which matters because the wide-budget
+leads this work claims are the exhaustive arm's and that arm existed only on the comparison set
+until its pools were built for the whole split.
+
+The interactive arm does not improve on the wider population. Against SyGMa it is
+$\numPopdefWholeSygmaOneFive$ $[\numPopdefWholeSygmaOneFiveLo,
 \numPopdefWholeSygmaOneFiveHi]$ at a budget of fifteen over the whole set, against
 $\numPopdefCompSygmaOneFive$ $[\numPopdefCompSygmaOneFiveLo, +\numPopdefCompSygmaOneFiveHi]$ on
 the comparison set: the wider population turns a tie into a small deficit that separates. Against
-MetaPredictor neither population separates: $\numPopdefWholeMetapredictorOneFive$ over the whole
-set, and a difference of zero on the comparison set. The exhaustive arm was built on the
-comparison set only and is absent from that row, so what this shows is that the population does
-not rescue the cheap setting rather than that it changes a lead.
+MetaPredictor neither population separates.
+
+The exhaustive arm's leads mostly survive the move, and the exception is named. Of the
+\numPopdefLeadskeptWord{} separating leads it holds on the comparison set at the budgets read
+here, \numPopdefLeadskeptWord{} still separate over the whole set and
+\numPopdefLeadslostWord{} does not. What survives is the wide-budget result the paper claims:
+against SyGMa $+\numPopdefExhWholesygmaThreeZero$ $[+\numPopdefExhWholesygmaThreeZeroLo,
++\numPopdefExhWholesygmaThreeZeroHi]$ at thirty and $+\numPopdefExhWholesygmaFiveZero$
+$[+\numPopdefExhWholesygmaFiveZeroLo, +\numPopdefExhWholesygmaFiveZeroHi]$ at fifty, against
+MetaPredictor $+\numPopdefExhWholemetapredictorThreeZero$ and
+$+\numPopdefExhWholemetapredictorFiveZero$ at the same two. What does not survive is the
+narrower one: the lead over SyGMa at a budget of fifteen is
+$+\numPopdefExhCompsygmaOneFive$ $[+\numPopdefExhCompsygmaOneFiveLo,
++\numPopdefExhCompsygmaOneFiveHi]$ on the comparison set and
+$+\numPopdefExhWholesygmaOneFive$ $[\numPopdefExhWholesygmaOneFiveLo,
++\numPopdefExhWholesygmaOneFiveHi]$ over the whole set, an interval covering zero. That claim is
+therefore restricted to the comparison set wherever it appears, and the two trails at a budget of
+ten that separate only on the wider population are reported for the same reason.
 
 A separate analysis re-ran three
 methods, four metrics and five criteria on two populations of one split, and asked whether the

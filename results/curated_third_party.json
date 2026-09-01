@@ -1,0 +1,154 @@
+{
+ "provenance": {
+  "script": "curated_third_party.py",
+  "script_path": "scripts/typed_edit/curated_third_party.py",
+  "source_sha256": "d8fc57f765826a78ddbe90e3deaf24f495803dd3cacab0358d84f4e48259e0f3",
+  "git_commit": "36be051eb4af5d7caab1ccbec22644dbf5393566",
+  "git_dirty": true
+ },
+ "instrument": "verbatim string equality against the deployed bank for templates, and git tracking plus SHA-256 for files; a rewritten template cannot be traced, so every template count is a lower bound",
+ "bank": {
+  "templates": 7581,
+  "mined": 5856,
+  "curated": 1725
+ },
+ "by_published_set": {
+  "BioTransformer core": {
+   "rules_in_the_published_set": 668,
+   "of_them_in_the_curated_half": 611,
+   "also_among_the_mined_templates": 0,
+   "share_of_the_curated_half": 0.3542
+  },
+  "BioTransformer ENVMICRO": {
+   "rules_in_the_published_set": 298,
+   "of_them_in_the_curated_half": 2,
+   "also_among_the_mined_templates": 0,
+   "share_of_the_curated_half": 0.0012
+  },
+  "BioTransformer standardisation": {
+   "rules_in_the_published_set": 28,
+   "of_them_in_the_curated_half": 0,
+   "also_among_the_mined_templates": 0,
+   "share_of_the_curated_half": 0.0
+  },
+  "SyGMa": {
+   "rules_in_the_published_set": 204,
+   "of_them_in_the_curated_half": 152,
+   "also_among_the_mined_templates": 0,
+   "share_of_the_curated_half": 0.0881
+  },
+  "RetroSim": {
+   "rules_in_the_published_set": 1351,
+   "of_them_in_the_curated_half": 0,
+   "also_among_the_mined_templates": 0,
+   "share_of_the_curated_half": 0.0
+  },
+  "GLORYx file, attributed to SyGMa": {
+   "rules_in_the_published_set": 178,
+   "of_them_in_the_curated_half": 178,
+   "also_among_the_mined_templates": 0,
+   "share_of_the_curated_half": 0.1032
+  },
+  "GLORYx file, attributed to GLORY": {
+   "rules_in_the_published_set": 73,
+   "of_them_in_the_curated_half": 73,
+   "also_among_the_mined_templates": 0,
+   "share_of_the_curated_half": 0.0423
+  },
+  "GLORYx file, attributed to Current work": {
+   "rules_in_the_published_set": 9,
+   "of_them_in_the_curated_half": 9,
+   "also_among_the_mined_templates": 0,
+   "share_of_the_curated_half": 0.0052
+  }
+ },
+ "by_rightsholder": {
+  "BioTransformer": {
+   "templates_in_the_curated_half": 611,
+   "terms": "LGPL, per artifacts/tier2/biotransformer/LICENSE.md; its prose says version 2.1 and the text appended to it is version 3, which the distribution does not reconcile. Copying and redistribution are granted with credit, a link to the licence, an indication of changes and the notices retained. Commercial use or redistribution needs the authors' permission."
+  },
+  "SyGMa": {
+   "templates_in_the_curated_half": 273,
+   "terms": "GPL, unversioned: the installed distribution's metadata says only 'License: GPL' and ships no licence text, so which version governs is not settled on disk."
+  },
+  "GLORYx": {
+   "templates_in_the_curated_half": 82,
+   "terms": "no licence text for it is held in this repository."
+  },
+  "RetroSim": {
+   "templates_in_the_curated_half": 0,
+   "terms": "no licence text for it is held in this repository."
+  }
+ },
+ "curated_split": {
+  "named_collections": 1233,
+  "earlier_extraction": 492
+ },
+ "borrowed_within_the_named_body": 966,
+ "share_of_the_named_body_so_traceable": 0.7835,
+ "borrowed_within_the_earlier_extraction": 0,
+ "curated_templates_traceable_to_a_published_set": 966,
+ "share_of_the_curated_half_so_traceable": 0.56,
+ "curated_templates_traceable_to_nothing_measured": 759,
+ "third_party_files_this_repository_tracks": {
+  "grail_metabolism/resources/external/bt_database_ENVMICRO_metabolicReactions.json": {
+   "bytes": 171982,
+   "tracked_by_git": false,
+   "sha256": "f586471d0f3674cda4577d95af73c19f5c779b9267fd663484be34ece3521836",
+   "identical_to_an_upstream_copy_in_this_checkout": true,
+   "upstream": "artifacts/tier2/biotransformer/database/ENVMICRO/metabolicReactions.json",
+   "templates_of_this_file_used_by_the_bank": 2
+  },
+  "grail_metabolism/resources/external/bt_database_metabolicReactions.json": {
+   "bytes": 779284,
+   "tracked_by_git": true,
+   "sha256": "9bbfa5b8c0fd3d06539381714ca95fc5ff73fc3da821ce96d3f7bfb58915c04d",
+   "identical_to_an_upstream_copy_in_this_checkout": true,
+   "upstream": "artifacts/tier2/biotransformer/database/metabolicReactions.json",
+   "templates_of_this_file_used_by_the_bank": 611
+  },
+  "grail_metabolism/resources/external/bt_database_standardizationReactions.json": {
+   "bytes": 11040,
+   "tracked_by_git": false,
+   "sha256": "749c16a0a0471b18a00cebda01b460839e5d7e10e5e7a8e7d7447f20f51804a8",
+   "identical_to_an_upstream_copy_in_this_checkout": true,
+   "upstream": "artifacts/tier2/biotransformer/database/standardizationReactions.json",
+   "templates_of_this_file_used_by_the_bank": 0
+  },
+  "grail_metabolism/resources/external/gloryx_reactionrules.csv": {
+   "bytes": 36664,
+   "tracked_by_git": false,
+   "sha256": "8e481bb1336b82b23dc0db8842572c0affaa694516856c46ccf6a88b9e297758",
+   "identical_to_an_upstream_copy_in_this_checkout": null,
+   "templates_of_this_file_used_by_the_bank": 260
+  },
+  "grail_metabolism/resources/external/retrosim_templates_general.json": {
+   "bytes": 119702,
+   "tracked_by_git": false,
+   "sha256": "f7a18437a9b659c6a34ae829a81373df3508189f860aecaeedd29e482e1c88c4",
+   "identical_to_an_upstream_copy_in_this_checkout": null,
+   "templates_of_this_file_used_by_the_bank": 0
+  }
+ },
+ "collections": {
+  "hydroxylation": {
+   "file": "grail_metabolism/data/smirks.txt",
+   "n": 474,
+   "in_the_deployed_bank": 474,
+   "traceable_to_a_published_set": 434
+  },
+  "merged": {
+   "file": "grail_metabolism/data/merged_smirks.txt",
+   "n": 656,
+   "in_the_deployed_bank": 656,
+   "traceable_to_a_published_set": 434
+  },
+  "notebooks": {
+   "file": "grail_metabolism/resources/notebooks_rules.txt",
+   "n": 1051,
+   "in_the_deployed_bank": 1051,
+   "traceable_to_a_published_set": 966
+  }
+ },
+ "reading": "Two obligations, not one. The templates put the bank under the terms of four rightsholders; the tracked files put the repository under the terms of everything inside them, including a NonCommercial ShareAlike set whose templates the bank barely uses. A file that is redistributed and not used is the cheapest of these to resolve, and the report says which those are."
+}

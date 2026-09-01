@@ -1,0 +1,39 @@
+{
+ "provenance": {
+  "script": "reference_charge.py",
+  "script_path": "scripts/typed_edit/reference_charge.py",
+  "source_sha256": "420bdfe750ed0223d7c90b0c6a9c2dd9b6812fa105521c0554f97da7599cfd7e",
+  "git_commit": "d1a4c47ea73e0adc09a3c3e826f0ff1000db6f36",
+  "git_dirty": true
+ },
+ "inputs": [
+  {
+   "path": "results/test_references.json",
+   "exists": true,
+   "sha256_16": "f0add6b4b0b32b9f",
+   "bytes": 182834
+  }
+ ],
+ "question": "how much of the annotation a criterion sensitive to the protonation layer could separate, which is the protonation counterpart of the stereochemistry bound the Limitations already give",
+ "population": {
+  "annotated_pairs": 2597,
+  "typed": 2597,
+  "substrates": 1170,
+  "source": "results/test_references.json, the evaluated test set"
+ },
+ "references_carrying_a_formal_charge": 202,
+ "share": 0.0778,
+ "of_those_net_neutral_zwitterions": 165,
+ "of_those_net_charged": 37,
+ "substrates_with_at_least_one": 134,
+ "charged_atoms_by_element": {
+  "N+": 220,
+  "O-": 171,
+  "N-": 17,
+  "O+": 4,
+  "S-": 1,
+  "S+": 1,
+  "C+": 1
+ },
+ "reading": "A ceiling and not an estimate. These are the references whose identity a criterion that kept the protonation layer could in principle resolve differently from one that drops it; whether any verdict would move is a separate question the criterion sweep answers, and it answers no."
+}

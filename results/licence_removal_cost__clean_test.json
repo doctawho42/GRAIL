@@ -1,0 +1,97 @@
+{
+ "provenance": {
+  "script": "licence_removal_cost.py",
+  "script_path": "scripts/typed_edit/licence_removal_cost.py",
+  "source_sha256": "5cf9a2d03c008c56937efda25e5c7e1b31ac1dcd4891cd4006f3fc1f19917f5a",
+  "git_commit": "2a766ab05904ae46062c6e9c4f1ffa0e963b4167",
+  "git_dirty": true
+ },
+ "population": {
+  "name": "clean_test",
+  "n_substrates": 1170,
+  "n_references": 2597
+ },
+ "substrates_the_remainder_was_run_on": 699,
+ "substrates_skipped_because_no_borrowed_template_recovered_anything": 471,
+ "instrument": "one uncapped depth-1 pass of each bank variant, hydrogens implicit, tautomer-aware matching; the same conventions as the reported ceiling",
+ "borrowed": {
+  "BioTransformer": 611,
+  "GLORYx": 82,
+  "SyGMa": 152
+ },
+ "borrowed_distinct": 845,
+ "variants": {
+  "whole bank": {
+   "templates": 7581,
+   "references_recovered": 2300,
+   "ceiling": 0.8856
+  },
+  "without every borrowed template": {
+   "templates": 6736,
+   "references_recovered": 2279,
+   "ceiling": 0.8776
+  },
+  "without BioTransformer": {
+   "templates": 6970,
+   "references_recovered": 2300,
+   "ceiling": 0.8856
+  },
+  "without SyGMa": {
+   "templates": 7429,
+   "references_recovered": 2286,
+   "ceiling": 0.8802
+  },
+  "without GLORYx": {
+   "templates": 7499,
+   "references_recovered": 2293,
+   "ceiling": 0.8829
+  }
+ },
+ "against_the_whole_bank": {
+  "without every borrowed template": {
+   "references_lost": 21,
+   "substrates_that_lose_at_least_one": 19,
+   "ceiling_change": -0.0081,
+   "ci95": [
+    -0.012,
+    -0.0046
+   ],
+   "excludes_zero": true
+  },
+  "without BioTransformer": {
+   "references_lost": 0,
+   "substrates_that_lose_at_least_one": 0,
+   "ceiling_change": 0.0,
+   "ci95": [
+    0.0,
+    0.0
+   ],
+   "excludes_zero": false
+  },
+  "without SyGMa": {
+   "references_lost": 14,
+   "substrates_that_lose_at_least_one": 13,
+   "ceiling_change": -0.0054,
+   "ci95": [
+    -0.0086,
+    -0.0026
+   ],
+   "excludes_zero": true
+  },
+  "without GLORYx": {
+   "references_lost": 7,
+   "substrates_that_lose_at_least_one": 6,
+   "ceiling_change": -0.0027,
+   "ci95": [
+    -0.0051,
+    -0.0008
+   ],
+   "excludes_zero": true
+  }
+ },
+ "bootstrap": {
+  "n": 10000,
+  "seed": 0
+ },
+ "reading": "This prices one option and does not choose it. A template that is borrowed and whose chemistry another template also reaches costs nothing to remove; the references lost are the ones no remaining template recovers, which is the quantity a licensing decision turns on."
+}

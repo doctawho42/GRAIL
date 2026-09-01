@@ -1,0 +1,88 @@
+{
+ "provenance": {
+  "script": "sygma_scenario_sweep.py",
+  "script_path": "scripts/typed_edit/sygma_scenario_sweep.py",
+  "source_sha256": "a429026f75779bd2c4162afeef78286051875f39e41d1658172c7383892f6f79",
+  "git_commit": "98053977a54738f9c1082374fa6a116233cb278c",
+  "git_dirty": true
+ },
+ "population": {
+  "n_substrates": 291,
+  "n_references": 665
+ },
+ "deployed_scenario": "phase1 x1, phase2 x1",
+ "criterion": "tautomer-aware InChIKey, as everywhere else",
+ "convention": "a prediction equal to the substrate is dropped, for both arms",
+ "by_scenario": {
+  "phase1 x1, phase2 x1": {
+   "mean_emitted": 73.0,
+   "recall": {
+    "1": 0.1534,
+    "3": 0.2887,
+    "5": 0.3744,
+    "8": 0.4271,
+    "10": 0.4556,
+    "15": 0.4842,
+    "20": 0.4992,
+    "30": 0.5068,
+    "50": 0.5113
+   },
+   "source": "results/sygma_fulltest_predictions.json, the frozen deployed run",
+   "unfinished": 0,
+   "exhaustive_minus_sygma_at_30": {
+    "gap": 0.1323,
+    "ci95": [
+     0.0976,
+     0.169
+    ],
+    "excludes_zero": true
+   },
+   "exhaustive_minus_sygma_at_50": {
+    "gap": 0.1925,
+    "ci95": [
+     0.152,
+     0.2336
+    ],
+    "excludes_zero": true
+   }
+  },
+  "phase1 x2, phase2 x1": {
+   "mean_emitted": 526.1,
+   "recall": {
+    "1": 0.1534,
+    "3": 0.2887,
+    "5": 0.3789,
+    "8": 0.4316,
+    "10": 0.4662,
+    "15": 0.5068,
+    "20": 0.5278,
+    "30": 0.5534,
+    "50": 0.5729
+   },
+   "unfinished": 5,
+   "unfinished_note": "substrates the deeper scenario did not finish inside the deadline keep the deployed scenario's list, so this arm is never handicapped by the timeout",
+   "seconds": 7762.8,
+   "exhaustive_minus_sygma_at_30": {
+    "gap": 0.0857,
+    "ci95": [
+     0.0466,
+     0.1254
+    ],
+    "excludes_zero": true
+   },
+   "exhaustive_minus_sygma_at_50": {
+    "gap": 0.1308,
+    "ci95": [
+     0.0842,
+     0.1782
+    ],
+    "excludes_zero": true
+   }
+  }
+ },
+ "scenarios_at_which_the_lead_at_50_still_separates": [
+  "phase1 x1, phase2 x1",
+  "phase1 x2, phase2 x1"
+ ],
+ "reading": "The scenario is SyGMa's own emission knob and this work asks other papers to declare such a knob. Sweeping it upward is the test of whether the remaining wide-budget lead is a property of the two systems or of the setting one of them was run at."
+}

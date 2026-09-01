@@ -1,0 +1,314 @@
+{
+ "provenance": {
+  "script": "aggregation_ablation.py",
+  "script_path": "scripts/typed_edit/aggregation_ablation.py",
+  "source_sha256": "7ce063c61f9a3ff766f87c204b62723b1ad9828d7e16134a86d231df4460c76a",
+  "git_commit": "6b11b6998424b3b7450c27c2acc07f37619f6b79",
+  "git_dirty": true
+ },
+ "question": "whether the deployed noisy-or aggregation, whose independence assumption this bank violates by construction, changes the comparison against the alternatives the implementation offers",
+ "population": {
+  "name": "comparison",
+  "n_substrates": 291,
+  "n_references": 665,
+  "pools": "results/widepools_implicit/w*.json"
+ },
+ "join": {
+  "candidates_scored_by_both": 171299,
+  "candidates_the_pool_does_not_carry": 358,
+  "note": "the filter is a function of substrate and product and does not depend on the aggregation, so its frozen scores are joined by structure rather than recomputed; a candidate absent from the pool is dropped from every arm alike"
+ },
+ "ranking": "reciprocal rank fusion of the two component scores over the pool capped at 100 by generator score, parent dropped, as everywhere else",
+ "bootstrap": {
+  "n": 10000,
+  "seed": 0
+ },
+ "deployed": "noisy_or",
+ "reproduces_the_published_arm": "the deployed rule re-derived here matches the whole-bank column of results/deployment_table.json at every budget, which is what certifies the re-run is on the deployed model and not a neighbouring checkpoint",
+ "by_rule": {
+  "noisy_or": {
+   "mean_ranked": 98.1,
+   "recall": {
+    "1": 0.0902,
+    "3": 0.2271,
+    "5": 0.3098,
+    "8": 0.415,
+    "10": 0.4526,
+    "15": 0.5353,
+    "20": 0.5789,
+    "30": 0.6391,
+    "50": 0.7038
+   }
+  },
+  "max": {
+   "mean_ranked": 98.1,
+   "recall": {
+    "1": 0.1188,
+    "3": 0.2526,
+    "5": 0.3368,
+    "8": 0.418,
+    "10": 0.4556,
+    "15": 0.5323,
+    "20": 0.5699,
+    "30": 0.6211,
+    "50": 0.6767
+   },
+   "minus_noisy_or": {
+    "1": {
+     "difference": 0.0286,
+     "ci95": [
+      0.0085,
+      0.0498
+     ],
+     "excludes_zero": true
+    },
+    "3": {
+     "difference": 0.0256,
+     "ci95": [
+      -0.0015,
+      0.0529
+     ],
+     "excludes_zero": false
+    },
+    "5": {
+     "difference": 0.0271,
+     "ci95": [
+      -0.0034,
+      0.0583
+     ],
+     "excludes_zero": false
+    },
+    "8": {
+     "difference": 0.003,
+     "ci95": [
+      -0.0244,
+      0.0303
+     ],
+     "excludes_zero": false
+    },
+    "10": {
+     "difference": 0.003,
+     "ci95": [
+      -0.0232,
+      0.0301
+     ],
+     "excludes_zero": false
+    },
+    "15": {
+     "difference": -0.003,
+     "ci95": [
+      -0.0308,
+      0.0241
+     ],
+     "excludes_zero": false
+    },
+    "20": {
+     "difference": -0.009,
+     "ci95": [
+      -0.0369,
+      0.0184
+     ],
+     "excludes_zero": false
+    },
+    "30": {
+     "difference": -0.018,
+     "ci95": [
+      -0.0432,
+      0.0058
+     ],
+     "excludes_zero": false
+    },
+    "50": {
+     "difference": -0.0271,
+     "ci95": [
+      -0.0614,
+      0.0
+     ],
+     "excludes_zero": false
+    }
+   }
+  },
+  "mean": {
+   "mean_ranked": 98.1,
+   "recall": {
+    "1": 0.0857,
+    "3": 0.2045,
+    "5": 0.2857,
+    "8": 0.3789,
+    "10": 0.4241,
+    "15": 0.4917,
+    "20": 0.5338,
+    "30": 0.597,
+    "50": 0.6617
+   },
+   "minus_noisy_or": {
+    "1": {
+     "difference": -0.0045,
+     "ci95": [
+      -0.0257,
+      0.0164
+     ],
+     "excludes_zero": false
+    },
+    "3": {
+     "difference": -0.0226,
+     "ci95": [
+      -0.0517,
+      0.0064
+     ],
+     "excludes_zero": false
+    },
+    "5": {
+     "difference": -0.0241,
+     "ci95": [
+      -0.0562,
+      0.0085
+     ],
+     "excludes_zero": false
+    },
+    "8": {
+     "difference": -0.0361,
+     "ci95": [
+      -0.0662,
+      -0.0056
+     ],
+     "excludes_zero": true
+    },
+    "10": {
+     "difference": -0.0286,
+     "ci95": [
+      -0.06,
+      0.0032
+     ],
+     "excludes_zero": false
+    },
+    "15": {
+     "difference": -0.0436,
+     "ci95": [
+      -0.075,
+      -0.0137
+     ],
+     "excludes_zero": true
+    },
+    "20": {
+     "difference": -0.0451,
+     "ci95": [
+      -0.0797,
+      -0.0121
+     ],
+     "excludes_zero": true
+    },
+    "30": {
+     "difference": -0.0421,
+     "ci95": [
+      -0.0741,
+      -0.0128
+     ],
+     "excludes_zero": true
+    },
+    "50": {
+     "difference": -0.0421,
+     "ci95": [
+      -0.0794,
+      -0.0134
+     ],
+     "excludes_zero": true
+    }
+   }
+  },
+  "hybrid": {
+   "mean_ranked": 98.1,
+   "recall": {
+    "1": 0.1188,
+    "3": 0.2737,
+    "5": 0.3534,
+    "8": 0.4481,
+    "10": 0.4887,
+    "15": 0.5444,
+    "20": 0.5895,
+    "30": 0.6406,
+    "50": 0.7113
+   },
+   "minus_noisy_or": {
+    "1": {
+     "difference": 0.0286,
+     "ci95": [
+      0.0084,
+      0.0495
+     ],
+     "excludes_zero": true
+    },
+    "3": {
+     "difference": 0.0466,
+     "ci95": [
+      0.0217,
+      0.0723
+     ],
+     "excludes_zero": true
+    },
+    "5": {
+     "difference": 0.0436,
+     "ci95": [
+      0.017,
+      0.0706
+     ],
+     "excludes_zero": true
+    },
+    "8": {
+     "difference": 0.0331,
+     "ci95": [
+      0.0106,
+      0.0566
+     ],
+     "excludes_zero": true
+    },
+    "10": {
+     "difference": 0.0361,
+     "ci95": [
+      0.015,
+      0.059
+     ],
+     "excludes_zero": true
+    },
+    "15": {
+     "difference": 0.009,
+     "ci95": [
+      -0.0119,
+      0.0306
+     ],
+     "excludes_zero": false
+    },
+    "20": {
+     "difference": 0.0105,
+     "ci95": [
+      -0.0091,
+      0.0314
+     ],
+     "excludes_zero": false
+    },
+    "30": {
+     "difference": 0.0015,
+     "ci95": [
+      -0.0168,
+      0.0202
+     ],
+     "excludes_zero": false
+    },
+    "50": {
+     "difference": 0.0075,
+     "ci95": [
+      -0.007,
+      0.0223
+     ],
+     "excludes_zero": false
+    }
+   }
+  }
+ },
+ "rules_that_separate_from_the_deployed_one_at_any_budget": [
+  "hybrid",
+  "max",
+  "mean"
+ ],
+ "reading": "The independence the deployed rule assumes is false in this bank, so the question is not whether the assumption holds but whether anything turns on it. A maximum counts a candidate once however many near-duplicate templates restate it, which is the correction the violation argues for."
+}

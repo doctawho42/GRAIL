@@ -1,0 +1,29 @@
+{
+ "provenance": {
+  "script": "stereo_headroom.py",
+  "script_path": "scripts/typed_edit/stereo_headroom.py",
+  "source_sha256": "e8d0a9631a2f0d6c2e2e6f101f019afda17c9b1247f0141f4c76a342ca176b31",
+  "git_commit": "0313732d4d4b44ae571169761c998fe3e9eeed01",
+  "git_dirty": true
+ },
+ "question": "how many annotated metabolites acquire a stereogenic element their substrate does not have, which bounds from above what a configuration-aware matching criterion could distinguish on this annotation",
+ "population": {
+  "pairs": 2597,
+  "typed": 2597,
+  "source": "results/test_references.json, the evaluated test set"
+ },
+ "counting": "tetrahedral centres by FindMolChiralCenters with unassigned included, and stereogenic double bonds; potential rather than assigned, because the corpus stores no configuration and an assigned-only count would be zero everywhere",
+ "references_gaining_a_tetrahedral_centre": 832,
+ "references_gaining_a_stereogenic_double_bond": 198,
+ "references_gaining_either": 938,
+ "share_gaining_either": 0.3612,
+ "centres_gained_histogram": {
+  "0": 1765,
+  "1": 330,
+  "2": 139,
+  "3": 25,
+  "4": 32,
+  "5": 306
+ },
+ "reading": "This is a ceiling on the question and not an estimate of the cost. A criterion that distinguished configurations could separate a prediction from a reference only where the reference has a configuration to carry; on the rest it would return exactly what the constitutional criteria return. Nothing here assigns a configuration."
+}

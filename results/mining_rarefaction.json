@@ -1,0 +1,70 @@
+{
+ "provenance": {
+  "script": "mining_rarefaction.py",
+  "script_path": "scripts/typed_edit/mining_rarefaction.py",
+  "source_sha256": "440651a7a4f14665629a81f6aa1f8df06bfd8a3c5c2b438ca193058a79ceca30",
+  "git_commit": "f31b2516673e1c449685794aa2b97bb8c2287dbd",
+  "git_dirty": true
+ },
+ "catalog": "results/mined_rule_catalog_v2.json",
+ "mined_templates": 5856,
+ "distinct_training_pairs": 15747,
+ "templates_resting_on_one_pair": 4655,
+ "singleton_share": 0.7949,
+ "good_turing_mass_of_unseen_types": 0.2956,
+ "support_histogram_head": {
+  "1": 4655,
+  "2": 581,
+  "3": 188,
+  "4": 105,
+  "5": 68,
+  "6": 41,
+  "7": 29,
+  "8": 14,
+  "9": 13,
+  "10": 19
+ },
+ "rarefaction": {
+  "0.1": {
+   "pairs": 1575,
+   "templates_mean": 877.1,
+   "templates_sd": 19.0,
+   "draws": 40
+  },
+  "0.25": {
+   "pairs": 3937,
+   "templates_mean": 1892.2,
+   "templates_sd": 26.9,
+   "draws": 40
+  },
+  "0.5": {
+   "pairs": 7874,
+   "templates_mean": 3345.7,
+   "templates_sd": 29.1,
+   "draws": 40
+  },
+  "0.75": {
+   "pairs": 11810,
+   "templates_mean": 4652.6,
+   "templates_sd": 23.6,
+   "draws": 40
+  },
+  "0.9": {
+   "pairs": 14172,
+   "templates_mean": 5385.4,
+   "templates_sd": 15.3,
+   "draws": 40
+  },
+  "1.0": {
+   "pairs": 15747,
+   "templates_mean": 5856.0,
+   "templates_sd": 0.0,
+   "draws": 1
+  }
+ },
+ "templates_gained_per_thousand_pairs_at_the_full_corpus": 298.8,
+ "draws_per_point": 40,
+ "seed": 0,
+ "scope": "rarefaction within the pairs this corpus holds. It answers whether more data of the same kind would find more templates and says nothing about a different corpus, which is the question the manuscript's claim was about",
+ "reading": "A saturated curve is flat at its right-hand end and has few singletons. This one is neither, so what the determinism check established is that the miner is deterministic, not that mining is finished."
+}

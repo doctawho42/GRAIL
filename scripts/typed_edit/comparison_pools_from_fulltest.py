@@ -71,28 +71,53 @@ def main() -> int:
             f"population rather than rescore it. Let the build finish.")
 
     # The enumeration must agree, or the two builds differ in more than the filter.
+    # Compared as a mapping, not as a list. A pool is stored in rank order and the rank is
+    # filter x generator, so replacing the filter reorders it: comparing the stored sequences
+    # calls every substrate a mismatch precisely when the only thing that changed is the thing
+    # being changed. What has to agree is which candidates were enumerated and what the
+    # generator said about each.
+    # What must agree is what the measurement is made of: the matching keys, since recall is
+    # computed on those, and the generator's score on every candidate both builds carry. What is
+    # allowed to differ is the rank order, which is filter x generator, and which candidate
+    # represents a key where two share one, since the survivor of that tie is chosen by the same
+    # product. Comparing stored SMILES sequences instead calls all 291 substrates a mismatch and
+    # comparing SMILES sets calls 12 of them one, in both cases for the reason the substitution
+    # exists.
     enum_mismatch, filter_moved, moved_max = [], 0, 0.0
+    reordered = representative_swaps = 0
     for s in sorted(old):
-        a = [(c["smiles"], round(c["generator"], 9)) for c in old[s]]
-        b = [(c["smiles"], round(c["generator"], 9)) for c in new[s]]
-        if a != b:
+        if sorted(c.get("key") for c in old[s]) != sorted(c.get("key") for c in new[s]):
             enum_mismatch.append(s)
             continue
+        ga = {c["smiles"]: round(float(c["generator"]), 9) for c in old[s]}
+        gb = {c["smiles"]: round(float(c["generator"]), 9) for c in new[s]}
+        shared = set(ga) & set(gb)
+        if any(ga[k] != gb[k] for k in shared):
+            enum_mismatch.append(s)
+            continue
+        if set(ga) != set(gb):
+            representative_swaps += 1
+        if [c["smiles"] for c in old[s]] != [c["smiles"] for c in new[s]]:
+            reordered += 1
         fa = {c["smiles"]: float(c["filter"]) for c in old[s]}
         for c in new[s]:
-            d = abs(float(c["filter"]) - fa[c["smiles"]])
-            if d > 1e-9:
-                filter_moved += 1
-                moved_max = max(moved_max, d)
+            if c["smiles"] in fa:
+                d = abs(float(c["filter"]) - fa[c["smiles"]])
+                if d > 1e-9:
+                    filter_moved += 1
+                    moved_max = max(moved_max, d)
     if enum_mismatch:
         raise SystemExit(
-            f"{len(enum_mismatch)} substrates enumerate different candidates in the two builds, "
-            f"so they are not the same configuration and one cannot stand for the other; "
-            f"first: {enum_mismatch[0][:60]}")
+            f"{len(enum_mismatch)} substrates differ in their matching keys or in a generator "
+            f"score, so the two builds are not the same configuration and one cannot stand for "
+            f"the other; first: {enum_mismatch[0][:60]}")
 
     total = sum(len(v) for v in old.values())
     print(f"{len(old)} comparison substrates, {total} candidates")
-    print(f"  candidate sets identical on every substrate")
+    print(f"  matching keys and generator scores identical on every substrate")
+    print(f"  substrates the new filter reorders: {reordered} of {len(old)}")
+    print(f"  substrates where it picks a different representative of one key: "
+          f"{representative_swaps}")
     print(f"  filter scores that move: {filter_moved} of {total}, largest {moved_max:.4f}")
     print(f"  released pair: {json.dumps(meta.get('checkpoints', {}))[:120]}")
     if args.dry_run:

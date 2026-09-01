@@ -90,7 +90,11 @@ substrates every method in the comparison has an entry for, carrying
 paper is measured on it. It is not a random quarter of that split: it is the submission list sent
 to the comparator that is a web service, and how those \numPopulationN{} were drawn from the
 split is not recorded anywhere in this repository, which is the same defect the corpus assembly
-carries. What can be checked about it is checked in Section~\ref{SI-sec:si-population}.
+carries. What can be checked about it is checked in Section~\ref{SI-sec:si-population}, and the
+comparison is read again there on the whole evaluated test set, \numPopdefWholesubstrates{}
+substrates, against the two comparators that ran over all of it. The wide-budget leads this paper
+claims survive that move; the narrower lead over SyGMa at a budget of fifteen does not, and is
+restricted to the comparison set wherever it is stated.
 
 The annotated substrate--metabolite pairs are assembled from four sources: ChEMBL
 \citep{Zdrazil_2024}, DrugBank \citep{Wishart_2018}, MetXBioDB \citep{Djoumbou_Feunang_2019} and
@@ -399,8 +403,9 @@ present in this bank verbatim, so what separates at those budgets is an ordering
 the two systems largely share. Neither side separates at $k=8$ and
 $10$, where MetaPredictor leads, nor at $k=15$ and $20$. GRAIL's exhaustive mode leads every
 comparator with the interval excluding zero at $k=30$ and $k=50$. BioTransformer trails the exhaustive
-arm with the interval excluding zero from $k=8$ upward and is indistinguishable from it below
-that; it is not the lowest arm at the tight budgets, where MetaTox is. It is the arm a reader of
+arm with the interval excluding zero at $k=1$ and from $k=8$ upward, and is indistinguishable from
+it at $3$ and $5$; the pattern is not monotone in the budget and is reported as it falls. It is not
+the lowest arm at the tight budgets, where MetaTox is. It is the arm a reader of
 the rule bank should look at hardest, because it supplies
 \numThirdpartyBiotransformerShipped{} of this bank's templates. Cut to its own list length the
 exhaustive arm's lead over it is $+\numBtarmMatchedgap$ $[\numBtarmMatchedlo,

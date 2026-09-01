@@ -561,6 +561,37 @@ def build():
     # What actually defines the comparison population, and what the rest of the test set says.
     # The manuscript described an emission rule the code does not apply.
     pop = art("population_definition.json")
+    # The exhaustive arm on both populations. It is the arm that carries every wide-budget lead
+    # this work claims, and until it existed on the whole evaluated test set those leads had been
+    # read only off the 291 nobody can reconstruct the draw of.
+    for pop_key, tag in (("the comparison set", "Comp"), ("the whole evaluated test set", "Whole")):
+        row = pop["contrasts"].get(pop_key, {})
+        for comp in ("sygma", "metapredictor"):
+            cell = (row.get(comp) or {}).get("exhaustive_minus_comparator") or {}
+            for k in ("5", "10", "15", "30", "50"):
+                if k in cell:
+                    n[f"popdef.exh{tag}{comp}{k}"] = cell[k]["difference"]
+                    n[f"popdef.exh{tag}{comp}{k}.lo"] = cell[k]["ci95"][0]
+                    n[f"popdef.exh{tag}{comp}{k}.hi"] = cell[k]["ci95"][1]
+                    n[f"popdef.exh{tag}{comp}{k}.sep"] = cell[k]["excludes_zero"]
+    _whole = pop["contrasts"].get("the whole evaluated test set", {})
+    n["popdef.wholesubstrates"] = _whole.get("n_substrates")
+    n["popdef.wholereferences"] = _whole.get("n_references")
+    # How many of the exhaustive arm's separating leads on the 291 still separate on all 1170.
+    _kept = _lost = 0
+    for comp in ("sygma", "metapredictor"):
+        a = ((pop["contrasts"]["the comparison set"].get(comp) or {})
+             .get("exhaustive_minus_comparator") or {})
+        b = ((_whole.get(comp) or {}).get("exhaustive_minus_comparator") or {})
+        for k, cell in a.items():
+            if cell["difference"] > 0 and cell["excludes_zero"]:
+                if b.get(k, {}).get("excludes_zero") and b[k]["difference"] > 0:
+                    _kept += 1
+                else:
+                    _lost += 1
+    n["popdef.leadskept"] = _kept
+    n["popdef.leadslost"] = _lost
+
     n["popdef.metatox"] = pop["emission"]["comparison_set"]["metatox"]
     n["popdef.sygmainside"] = pop["emission"]["comparison_set"]["sygma"]
     n["popdef.metapredictorinside"] = pop["emission"]["comparison_set"]["metapredictor"]

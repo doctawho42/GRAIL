@@ -1,0 +1,181 @@
+{
+ "provenance": {
+  "script": "matched_length.py",
+  "script_path": "scripts/typed_edit/matched_length.py",
+  "source_sha256": "2f144d9288b5947ddf2e5b81e6b081b45d97f46cb4a5ecd603b9895392e858a2",
+  "git_commit": "33f72aa1923c32bc9b9723ce0b94a0c53e13a590",
+  "git_dirty": true
+ },
+ "population": {
+  "n_substrates": 291,
+  "n_references": 665,
+  "note": "the comparison set, as everywhere else"
+ },
+ "design": "for each substrate, both arms are truncated to the number of candidates the comparator returned on that substrate, after deduplication, after dropping a prediction equal to the substrate, and after truncating the comparator's own list at 105; so the two are read over the same number of slots on every substrate and not on average",
+ "cap_on_the_comparator_list": 105,
+ "why_the_cap": "this work's pool is capped at 100, so slots beyond that could not be filled by either of its arms and the comparison there would measure the pool cap rather than the ordering; the contrast without the cap is reported for every pair so the choice is priced",
+ "aggregation": "micro, ratio of sums",
+ "bootstrap": {
+  "n": 10000,
+  "seed": 0
+ },
+ "contrasts": {
+  "whole bank - metatox": {
+   "recall_ours": 0.6406,
+   "recall_theirs": 0.6391,
+   "gap": 0.0015,
+   "ci95": [
+    -0.0309,
+    0.0349
+   ],
+   "excludes_zero": false,
+   "mean_slots": 33.23,
+   "median_slots": 31,
+   "substrates_where_the_comparator_returned_nothing": 0,
+   "without_the_cap_on_the_comparator": {
+    "gap": 0.0015,
+    "ci95": [
+     -0.0309,
+     0.0349
+    ],
+    "excludes_zero": false,
+    "mean_slots": 33.6,
+    "mean_slots_uncapped": 33.6,
+    "substrates_the_cap_binds_on": 6,
+    "annotated_metabolites_the_comparator_placed_past_the_cut": 0,
+    "verdict_unchanged": true
+   }
+  },
+  "trained budget - metatox": {
+   "recall_ours": 0.4887,
+   "recall_theirs": 0.6391,
+   "gap": -0.1504,
+   "ci95": [
+    -0.1979,
+    -0.1057
+   ],
+   "excludes_zero": true,
+   "mean_slots": 33.23,
+   "median_slots": 31,
+   "substrates_where_the_comparator_returned_nothing": 0,
+   "without_the_cap_on_the_comparator": {
+    "gap": -0.1504,
+    "ci95": [
+     -0.1979,
+     -0.1057
+    ],
+    "excludes_zero": true,
+    "mean_slots": 33.6,
+    "mean_slots_uncapped": 33.6,
+    "substrates_the_cap_binds_on": 6,
+    "annotated_metabolites_the_comparator_placed_past_the_cut": 0,
+    "verdict_unchanged": true
+   }
+  },
+  "whole bank - sygma": {
+   "recall_ours": 0.6977,
+   "recall_theirs": 0.5158,
+   "gap": 0.182,
+   "ci95": [
+    0.1446,
+    0.2208
+   ],
+   "excludes_zero": true,
+   "mean_slots": 58.37,
+   "median_slots": 54,
+   "substrates_where_the_comparator_returned_nothing": 1,
+   "without_the_cap_on_the_comparator": {
+    "gap": 0.182,
+    "ci95": [
+     0.1446,
+     0.2208
+    ],
+    "excludes_zero": true,
+    "mean_slots": 72.98,
+    "mean_slots_uncapped": 72.98,
+    "substrates_the_cap_binds_on": 45,
+    "annotated_metabolites_the_comparator_placed_past_the_cut": 0,
+    "verdict_unchanged": true
+   }
+  },
+  "trained budget - sygma": {
+   "recall_ours": 0.4842,
+   "recall_theirs": 0.5158,
+   "gap": -0.0316,
+   "ci95": [
+    -0.0698,
+    0.0085
+   ],
+   "excludes_zero": false,
+   "mean_slots": 58.37,
+   "median_slots": 54,
+   "substrates_where_the_comparator_returned_nothing": 1,
+   "without_the_cap_on_the_comparator": {
+    "gap": -0.0316,
+    "ci95": [
+     -0.0698,
+     0.0085
+    ],
+    "excludes_zero": false,
+    "mean_slots": 72.98,
+    "mean_slots_uncapped": 72.98,
+    "substrates_the_cap_binds_on": 45,
+    "annotated_metabolites_the_comparator_placed_past_the_cut": 0,
+    "verdict_unchanged": true
+   }
+  },
+  "whole bank - metapredictor": {
+   "recall_ours": 0.4602,
+   "recall_theirs": 0.4797,
+   "gap": -0.0195,
+   "ci95": [
+    -0.0616,
+    0.0212
+   ],
+   "excludes_zero": false,
+   "mean_slots": 10.75,
+   "median_slots": 11,
+   "substrates_where_the_comparator_returned_nothing": 1,
+   "without_the_cap_on_the_comparator": {
+    "gap": -0.0195,
+    "ci95": [
+     -0.0616,
+     0.0212
+    ],
+    "excludes_zero": false,
+    "mean_slots": 10.75,
+    "mean_slots_uncapped": 10.75,
+    "substrates_the_cap_binds_on": 0,
+    "annotated_metabolites_the_comparator_placed_past_the_cut": 0,
+    "verdict_unchanged": true
+   }
+  },
+  "trained budget - metapredictor": {
+   "recall_ours": 0.4436,
+   "recall_theirs": 0.4797,
+   "gap": -0.0361,
+   "ci95": [
+    -0.0811,
+    0.0094
+   ],
+   "excludes_zero": false,
+   "mean_slots": 10.75,
+   "median_slots": 11,
+   "substrates_where_the_comparator_returned_nothing": 1,
+   "without_the_cap_on_the_comparator": {
+    "gap": -0.0361,
+    "ci95": [
+     -0.0811,
+     0.0094
+    ],
+    "excludes_zero": false,
+    "mean_slots": 10.75,
+    "mean_slots_uncapped": 10.75,
+    "substrates_the_cap_binds_on": 0,
+    "annotated_metabolites_the_comparator_placed_past_the_cut": 0,
+    "verdict_unchanged": true
+   }
+  }
+ },
+ "reading": "A nominal budget is not a length. This asks the question the budget axis was introduced to ask, with the length taken from the comparator rather than from the experiment: what remains is ordering, and what disappears was list length."
+}

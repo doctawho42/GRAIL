@@ -1,0 +1,428 @@
+{
+ "provenance": {
+  "script": "multiplicity.py",
+  "script_path": "scripts/typed_edit/multiplicity.py",
+  "source_sha256": "4adcd505343b8a700a83dd598feed58cce913e5d1655b7de8ad99a1d00b0a456",
+  "git_commit": "d1a4c47ea73e0adc09a3c3e826f0ff1000db6f36",
+  "git_dirty": true
+ },
+ "family": "every GRAIL-arm-against-comparator contrast in the sweep: 2 arms by 3 comparators by 9 budgets",
+ "n_tests": 54,
+ "alpha": 0.05,
+ "procedure": "Holm step-down on two-sided bootstrap p-values, B and seed as the intervals",
+ "n_separating_per_comparison": 33,
+ "n_separating_after_holm": 22,
+ "cells_whose_verdict_the_correction_changes": [
+  "trained budget - metapredictor @ 1",
+  "trained budget - metatox @ 10",
+  "trained budget - metatox @ 20",
+  "trained budget - sygma @ 3",
+  "trained budget - sygma @ 5",
+  "whole bank - metapredictor @ 15",
+  "whole bank - metapredictor @ 3",
+  "whole bank - metapredictor @ 5",
+  "whole bank - metatox @ 10",
+  "whole bank - metatox @ 30",
+  "whole bank - sygma @ 15"
+ ],
+ "leads_the_correction_removes": [
+  "trained budget - metatox @ 10",
+  "whole bank - metapredictor @ 15",
+  "whole bank - metatox @ 10",
+  "whole bank - metatox @ 30",
+  "whole bank - sygma @ 15"
+ ],
+ "over_every_contrast_the_paper_prints": {
+  "comparators": [
+   "metatox",
+   "sygma",
+   "metapredictor",
+   "biotransformer"
+  ],
+  "n_tests": 72,
+  "n_separating_after_holm": 28,
+  "declared_family_cells_it_would_remove": [],
+  "note": "a sensitivity on the declared family and not a second set of verdicts: the family was fixed before the BioTransformer arm existed and is not widened after the fact, but the paper prints more tests than it covers and what that costs is counted rather than left to the reader"
+ },
+ "cells": {
+  "whole bank - metatox @ 1": {
+   "gap": 0.0496,
+   "p": 0.0002,
+   "holm_threshold": 0.000926,
+   "separates_per_comparison": true,
+   "separates_after_holm": true
+  },
+  "whole bank - sygma @ 1": {
+   "gap": -0.0632,
+   "p": 0.0002,
+   "holm_threshold": 0.000943,
+   "separates_per_comparison": true,
+   "separates_after_holm": true
+  },
+  "whole bank - metapredictor @ 1": {
+   "gap": -0.0496,
+   "p": 0.0004,
+   "holm_threshold": 0.001389,
+   "separates_per_comparison": true,
+   "separates_after_holm": true
+  },
+  "trained budget - metatox @ 1": {
+   "gap": 0.0647,
+   "p": 0.0002,
+   "holm_threshold": 0.000962,
+   "separates_per_comparison": true,
+   "separates_after_holm": true
+  },
+  "trained budget - sygma @ 1": {
+   "gap": -0.0481,
+   "p": 0.0006,
+   "holm_threshold": 0.001471,
+   "separates_per_comparison": true,
+   "separates_after_holm": true
+  },
+  "trained budget - metapredictor @ 1": {
+   "gap": -0.0346,
+   "p": 0.0142,
+   "holm_threshold": 0.002,
+   "separates_per_comparison": true,
+   "separates_after_holm": false
+  },
+  "whole bank - metatox @ 3": {
+   "gap": 0.0947,
+   "p": 0.0002,
+   "holm_threshold": 0.00098,
+   "separates_per_comparison": true,
+   "separates_after_holm": true
+  },
+  "whole bank - sygma @ 3": {
+   "gap": -0.0617,
+   "p": 0.0004,
+   "holm_threshold": 0.001429,
+   "separates_per_comparison": true,
+   "separates_after_holm": true
+  },
+  "whole bank - metapredictor @ 3": {
+   "gap": -0.0496,
+   "p": 0.0086,
+   "holm_threshold": 0.001852,
+   "separates_per_comparison": true,
+   "separates_after_holm": false
+  },
+  "trained budget - metatox @ 3": {
+   "gap": 0.1083,
+   "p": 0.0002,
+   "holm_threshold": 0.001,
+   "separates_per_comparison": true,
+   "separates_after_holm": true
+  },
+  "trained budget - sygma @ 3": {
+   "gap": -0.0481,
+   "p": 0.0042,
+   "holm_threshold": 0.001786,
+   "separates_per_comparison": true,
+   "separates_after_holm": false
+  },
+  "trained budget - metapredictor @ 3": {
+   "gap": -0.0361,
+   "p": 0.05539,
+   "holm_threshold": 0.002381,
+   "separates_per_comparison": false,
+   "separates_after_holm": false
+  },
+  "whole bank - metatox @ 5": {
+   "gap": 0.0917,
+   "p": 0.0002,
+   "holm_threshold": 0.00102,
+   "separates_per_comparison": true,
+   "separates_after_holm": true
+  },
+  "whole bank - sygma @ 5": {
+   "gap": -0.0647,
+   "p": 0.001,
+   "holm_threshold": 0.001515,
+   "separates_per_comparison": true,
+   "separates_after_holm": true
+  },
+  "whole bank - metapredictor @ 5": {
+   "gap": -0.0451,
+   "p": 0.0402,
+   "holm_threshold": 0.002174,
+   "separates_per_comparison": true,
+   "separates_after_holm": false
+  },
+  "trained budget - metatox @ 5": {
+   "gap": 0.1023,
+   "p": 0.0002,
+   "holm_threshold": 0.001042,
+   "separates_per_comparison": true,
+   "separates_after_holm": true
+  },
+  "trained budget - sygma @ 5": {
+   "gap": -0.0541,
+   "p": 0.0028,
+   "holm_threshold": 0.001667,
+   "separates_per_comparison": true,
+   "separates_after_holm": false
+  },
+  "trained budget - metapredictor @ 5": {
+   "gap": -0.0346,
+   "p": 0.11399,
+   "holm_threshold": 0.002778,
+   "separates_per_comparison": false,
+   "separates_after_holm": false
+  },
+  "whole bank - metatox @ 8": {
+   "gap": 0.1038,
+   "p": 0.0002,
+   "holm_threshold": 0.001064,
+   "separates_per_comparison": true,
+   "separates_after_holm": true
+  },
+  "whole bank - sygma @ 8": {
+   "gap": -0.012,
+   "p": 0.56234,
+   "holm_threshold": 0.00625,
+   "separates_per_comparison": false,
+   "separates_after_holm": false
+  },
+  "whole bank - metapredictor @ 8": {
+   "gap": -0.0195,
+   "p": 0.39276,
+   "holm_threshold": 0.004545,
+   "separates_per_comparison": false,
+   "separates_after_holm": false
+  },
+  "trained budget - metatox @ 8": {
+   "gap": 0.0902,
+   "p": 0.0002,
+   "holm_threshold": 0.001087,
+   "separates_per_comparison": true,
+   "separates_after_holm": true
+  },
+  "trained budget - sygma @ 8": {
+   "gap": -0.0256,
+   "p": 0.18298,
+   "holm_threshold": 0.003333,
+   "separates_per_comparison": false,
+   "separates_after_holm": false
+  },
+  "trained budget - metapredictor @ 8": {
+   "gap": -0.0331,
+   "p": 0.16098,
+   "holm_threshold": 0.002941,
+   "separates_per_comparison": false,
+   "separates_after_holm": false
+  },
+  "whole bank - metatox @ 10": {
+   "gap": 0.0647,
+   "p": 0.002,
+   "holm_threshold": 0.001613,
+   "separates_per_comparison": true,
+   "separates_after_holm": false
+  },
+  "whole bank - sygma @ 10": {
+   "gap": -0.003,
+   "p": 0.89611,
+   "holm_threshold": 0.025,
+   "separates_per_comparison": false,
+   "separates_after_holm": false
+  },
+  "whole bank - metapredictor @ 10": {
+   "gap": -0.018,
+   "p": 0.41736,
+   "holm_threshold": 0.005,
+   "separates_per_comparison": false,
+   "separates_after_holm": false
+  },
+  "trained budget - metatox @ 10": {
+   "gap": 0.0451,
+   "p": 0.0406,
+   "holm_threshold": 0.002273,
+   "separates_per_comparison": true,
+   "separates_after_holm": false
+  },
+  "trained budget - sygma @ 10": {
+   "gap": -0.0226,
+   "p": 0.23398,
+   "holm_threshold": 0.003571,
+   "separates_per_comparison": false,
+   "separates_after_holm": false
+  },
+  "trained budget - metapredictor @ 10": {
+   "gap": -0.0376,
+   "p": 0.10619,
+   "holm_threshold": 0.0025,
+   "separates_per_comparison": false,
+   "separates_after_holm": false
+  },
+  "whole bank - metatox @ 15": {
+   "gap": 0.0211,
+   "p": 0.31677,
+   "holm_threshold": 0.004167,
+   "separates_per_comparison": false,
+   "separates_after_holm": false
+  },
+  "whole bank - sygma @ 15": {
+   "gap": 0.0511,
+   "p": 0.0038,
+   "holm_threshold": 0.001724,
+   "separates_per_comparison": true,
+   "separates_after_holm": false
+  },
+  "whole bank - metapredictor @ 15": {
+   "gap": 0.0556,
+   "p": 0.0114,
+   "holm_threshold": 0.001923,
+   "separates_per_comparison": true,
+   "separates_after_holm": false
+  },
+  "trained budget - metatox @ 15": {
+   "gap": -0.0346,
+   "p": 0.11339,
+   "holm_threshold": 0.002632,
+   "separates_per_comparison": false,
+   "separates_after_holm": false
+  },
+  "trained budget - sygma @ 15": {
+   "gap": -0.0045,
+   "p": 0.85851,
+   "holm_threshold": 0.016667,
+   "separates_per_comparison": false,
+   "separates_after_holm": false
+  },
+  "trained budget - metapredictor @ 15": {
+   "gap": 0.0,
+   "p": 1.0,
+   "holm_threshold": 0.05,
+   "separates_per_comparison": false,
+   "separates_after_holm": false
+  },
+  "whole bank - metatox @ 20": {
+   "gap": 0.0271,
+   "p": 0.16458,
+   "holm_threshold": 0.003125,
+   "separates_per_comparison": false,
+   "separates_after_holm": false
+  },
+  "whole bank - sygma @ 20": {
+   "gap": 0.0797,
+   "p": 0.0002,
+   "holm_threshold": 0.001111,
+   "separates_per_comparison": true,
+   "separates_after_holm": true
+  },
+  "whole bank - metapredictor @ 20": {
+   "gap": 0.0992,
+   "p": 0.0002,
+   "holm_threshold": 0.001136,
+   "separates_per_comparison": true,
+   "separates_after_holm": true
+  },
+  "trained budget - metatox @ 20": {
+   "gap": -0.0647,
+   "p": 0.0016,
+   "holm_threshold": 0.001563,
+   "separates_per_comparison": true,
+   "separates_after_holm": false
+  },
+  "trained budget - sygma @ 20": {
+   "gap": -0.012,
+   "p": 0.57314,
+   "holm_threshold": 0.007143,
+   "separates_per_comparison": false,
+   "separates_after_holm": false
+  },
+  "trained budget - metapredictor @ 20": {
+   "gap": 0.0075,
+   "p": 0.77932,
+   "holm_threshold": 0.0125,
+   "separates_per_comparison": false,
+   "separates_after_holm": false
+  },
+  "whole bank - metatox @ 30": {
+   "gap": 0.0376,
+   "p": 0.0278,
+   "holm_threshold": 0.002083,
+   "separates_per_comparison": true,
+   "separates_after_holm": false
+  },
+  "whole bank - sygma @ 30": {
+   "gap": 0.1323,
+   "p": 0.0002,
+   "holm_threshold": 0.001163,
+   "separates_per_comparison": true,
+   "separates_after_holm": true
+  },
+  "whole bank - metapredictor @ 30": {
+   "gap": 0.1594,
+   "p": 0.0002,
+   "holm_threshold": 0.00119,
+   "separates_per_comparison": true,
+   "separates_after_holm": true
+  },
+  "trained budget - metatox @ 30": {
+   "gap": -0.1113,
+   "p": 0.0002,
+   "holm_threshold": 0.00122,
+   "separates_per_comparison": true,
+   "separates_after_holm": true
+  },
+  "trained budget - sygma @ 30": {
+   "gap": -0.0165,
+   "p": 0.43716,
+   "holm_threshold": 0.005556,
+   "separates_per_comparison": false,
+   "separates_after_holm": false
+  },
+  "trained budget - metapredictor @ 30": {
+   "gap": 0.0105,
+   "p": 0.67513,
+   "holm_threshold": 0.008333,
+   "separates_per_comparison": false,
+   "separates_after_holm": false
+  },
+  "whole bank - metatox @ 50": {
+   "gap": 0.0767,
+   "p": 0.0002,
+   "holm_threshold": 0.00125,
+   "separates_per_comparison": true,
+   "separates_after_holm": true
+  },
+  "whole bank - sygma @ 50": {
+   "gap": 0.1925,
+   "p": 0.0002,
+   "holm_threshold": 0.001282,
+   "separates_per_comparison": true,
+   "separates_after_holm": true
+  },
+  "whole bank - metapredictor @ 50": {
+   "gap": 0.2241,
+   "p": 0.0002,
+   "holm_threshold": 0.001316,
+   "separates_per_comparison": true,
+   "separates_after_holm": true
+  },
+  "trained budget - metatox @ 50": {
+   "gap": -0.1368,
+   "p": 0.0002,
+   "holm_threshold": 0.001351,
+   "separates_per_comparison": true,
+   "separates_after_holm": true
+  },
+  "trained budget - sygma @ 50": {
+   "gap": -0.0211,
+   "p": 0.31337,
+   "holm_threshold": 0.003846,
+   "separates_per_comparison": false,
+   "separates_after_holm": false
+  },
+  "trained budget - metapredictor @ 50": {
+   "gap": 0.0105,
+   "p": 0.67513,
+   "holm_threshold": 0.01,
+   "separates_per_comparison": false,
+   "separates_after_holm": false
+  }
+ },
+ "reading": "The paper reads its verdicts from per-comparison intervals and says so. This says what the same data give under a correction over the whole family, so a reader who prefers that reading has it without recomputing anything. A verdict that changes is named; the rest stand under both."
+}

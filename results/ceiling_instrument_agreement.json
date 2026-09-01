@@ -1,0 +1,51 @@
+{
+ "provenance": {
+  "script": "ceiling_instrument_agreement.py",
+  "script_path": "scripts/typed_edit/ceiling_instrument_agreement.py",
+  "source_sha256": "f532053478e03cf1f46d03f09c9aa659d51e00320a76e7d00c5597d6e395e72e",
+  "git_commit": "47c78750a05ad66e3d34ba76ea167636393d36af",
+  "git_dirty": true
+ },
+ "population": {
+  "n_references": 2597,
+  "n_substrates": 1170,
+  "split": "the evaluated test set"
+ },
+ "arms": {
+  "deployed loop, hydrogens implicit": {
+   "recovered": 2122,
+   "instrument": "coverage_gap_types.py",
+   "note": "the count the paper reports as the ceiling",
+   "uncovered": 475,
+   "reach": 0.8171
+  },
+  "audit loop, hydrogens implicit": {
+   "recovered": 2120,
+   "instrument": "hydrogen_dispatch.py",
+   "note": "the same convention through the loop that audits the convention",
+   "uncovered": 477,
+   "reach": 0.8163
+  },
+  "audit loop, explicit and templates completed": {
+   "recovered": 2128,
+   "instrument": "hydrogen_dispatch.py",
+   "note": "the other defensible convention",
+   "uncovered": 469,
+   "reach": 0.8194
+  },
+  "audit loop, convention chosen per template": {
+   "recovered": 2137,
+   "instrument": "hydrogen_dispatch.py",
+   "note": "not a convention a caller can request; the upper bound of the audit",
+   "uncovered": 460,
+   "reach": 0.8229
+  }
+ },
+ "disagreement_between_instruments_on_the_same_convention": 2,
+ "disagreement_as_share_of_references": 0.0008,
+ "spread_across_all_four_counts": 17,
+ "spread_as_share_of_references": 0.0065,
+ "narrowest_separating_margin_in_the_comparison": 0.0331,
+ "spread_as_share_of_that_margin": 0.1978,
+ "reading": "Two loops measuring the same convention on the same references differ by 2 of 2597. The paper reports the deployed loop's count, because that is the loop a caller runs. The audit loop's number is the one to compare conventions with, because both of its arms come from the same code. Neither the disagreement nor the full spread across all four counts reaches the size of any margin the comparison turns on, so the choice of instrument changes no conclusion in this paper; it is reported because it was found by reading two artifacts against each other and would otherwise be found by a reader doing the same."
+}

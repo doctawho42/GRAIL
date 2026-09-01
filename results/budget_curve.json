@@ -1,0 +1,340 @@
+{
+ "provenance": {
+  "script": "budget_curve.py",
+  "script_path": "scripts/typed_edit/budget_curve.py",
+  "source_sha256": "51911a0713c87d2a31d0f126506a14caa6784a301c3831f0c0df9dd9a4d711d2",
+  "git_commit": "92cc94b746d2051428206eac95c24f1e0f504e42",
+  "git_dirty": true
+ },
+ "inputs": [
+  {
+   "path": "results/valpools_k10/all.json",
+   "exists": true,
+   "sha256_16": "590f1fec13d4988a",
+   "bytes": 651599
+  },
+  {
+   "path": "results/valpools_k20/all.json",
+   "exists": true,
+   "sha256_16": "e83b1f4633e55503",
+   "bytes": 954761
+  },
+  {
+   "path": "results/valpools_k30/all.json",
+   "exists": true,
+   "sha256_16": "59508dfd64cffc81",
+   "bytes": 1194917
+  },
+  {
+   "path": "results/valpools_k50/all.json",
+   "exists": true,
+   "sha256_16": "331604d40f040dde",
+   "bytes": 1899037
+  },
+  {
+   "path": "results/valpools_k7581/all.json",
+   "exists": true,
+   "sha256_16": "b8a8c204834a2f70",
+   "bytes": 48646521
+  }
+ ],
+ "checkpoints": {
+  "source": "results/pool_checkpoints.json",
+  "every_pool_scored_by": "full5000_implicit",
+  "established_by": "score each pool's own candidates on 3 substrates with every trained checkpoint in the tree and count exact agreements; the model that wrote them matches all of them and every other matches none",
+  "pools_checked": [
+   "valpools_k10",
+   "valpools_k20",
+   "valpools_k30",
+   "valpools_k50",
+   "valpools_k7581"
+  ]
+ },
+ "split": "validation",
+ "population": {
+  "n_substrates": 293,
+  "n_references": 655,
+  "note": "the substrates every built pool holds, so the curve is paired"
+ },
+ "budgets_built": [
+  10,
+  20,
+  30,
+  50,
+  7581
+ ],
+ "budgets_skipped_as_partial": {},
+ "substrates_each_complete_pool_holds": 294,
+ "substrates_declared_absent_by_budget": {
+  "7581": [
+   83
+  ]
+ },
+ "most_a_pool_may_declare_absent_and_still_count": 3,
+ "substrates_outside_the_paired_population": 1,
+ "references_they_carry": 2,
+ "contrasts_whose_sign_the_absence_could_flip": [
+  "rule budget 50 read at 15"
+ ],
+ "of_those_any_the_paper_reads_a_verdict_from": [],
+ "deployed_budget": 30,
+ "pool_cap": 100,
+ "aggregation": "micro, ratio of sums",
+ "bootstrap": {
+  "n": 10000,
+  "seed": 0
+ },
+ "by_budget": {
+  "10": {
+   "recall_micro": {
+    "1": 0.1282,
+    "5": 0.3053,
+    "10": 0.3542,
+    "15": 0.3588,
+    "30": 0.3695,
+    "50": 0.3695
+   },
+   "mean_candidates": 7.87,
+   "median_candidates": 6.0,
+   "substrates_with_an_empty_pool": 2
+  },
+  "20": {
+   "recall_micro": {
+    "1": 0.1053,
+    "5": 0.3115,
+    "10": 0.4046,
+    "15": 0.4321,
+    "30": 0.4473,
+    "50": 0.4519
+   },
+   "mean_candidates": 12.23,
+   "median_candidates": 10.0,
+   "substrates_with_an_empty_pool": 1
+  },
+  "30": {
+   "recall_micro": {
+    "1": 0.1069,
+    "5": 0.3145,
+    "10": 0.4137,
+    "15": 0.4656,
+    "30": 0.4901,
+    "50": 0.4992
+   },
+   "mean_candidates": 16.42,
+   "median_candidates": 14.0,
+   "substrates_with_an_empty_pool": 0
+  },
+  "50": {
+   "recall_micro": {
+    "1": 0.0992,
+    "5": 0.3008,
+    "10": 0.426,
+    "15": 0.4672,
+    "30": 0.5359,
+    "50": 0.5481
+   },
+   "mean_candidates": 24.72,
+   "median_candidates": 21.0,
+   "substrates_with_an_empty_pool": 0
+  },
+  "7581": {
+   "recall_micro": {
+    "1": 0.1053,
+    "5": 0.287,
+    "10": 0.3939,
+    "15": 0.4748,
+    "30": 0.6015,
+    "50": 0.6855
+   },
+   "mean_candidates": 97.99,
+   "median_candidates": 100.0,
+   "substrates_with_an_empty_pool": 0
+  }
+ },
+ "against_the_deployed_budget_at_k15": {
+  "10": {
+   "gap_at_15": -0.1069,
+   "ci95": [
+    -0.1389,
+    -0.0772
+   ],
+   "excludes_zero": true,
+   "if_the_excluded_substrates_all_went_one_way": {
+    "best_for_this_budget": -0.1035,
+    "worst_for_this_budget": -0.1096,
+    "best_ci95": [
+     -0.1367,
+     -0.073
+    ],
+    "worst_ci95": [
+     -0.1424,
+     -0.0791
+    ],
+    "sign_survives_both_ends": true,
+    "verdict_survives_both_ends": true
+   }
+  },
+  "20": {
+   "gap_at_15": -0.0336,
+   "ci95": [
+    -0.0552,
+    -0.0132
+   ],
+   "excludes_zero": true,
+   "if_the_excluded_substrates_all_went_one_way": {
+    "best_for_this_budget": -0.0304,
+    "worst_for_this_budget": -0.0365,
+    "best_ci95": [
+     -0.0525,
+     -0.0092
+    ],
+    "worst_ci95": [
+     -0.0592,
+     -0.0156
+    ],
+    "sign_survives_both_ends": true,
+    "verdict_survives_both_ends": true
+   }
+  },
+  "50": {
+   "gap_at_15": 0.0015,
+   "ci95": [
+    -0.0164,
+    0.0196
+   ],
+   "excludes_zero": false,
+   "if_the_excluded_substrates_all_went_one_way": {
+    "best_for_this_budget": 0.0046,
+    "worst_for_this_budget": -0.0015,
+    "best_ci95": [
+     -0.014,
+     0.0239
+    ],
+    "worst_ci95": [
+     -0.0202,
+     0.0173
+    ],
+    "sign_survives_both_ends": false,
+    "verdict_survives_both_ends": false
+   }
+  },
+  "7581": {
+   "gap_at_15": 0.0092,
+   "ci95": [
+    -0.0231,
+    0.0399
+   ],
+   "excludes_zero": false,
+   "if_the_excluded_substrates_all_went_one_way": {
+    "best_for_this_budget": 0.0122,
+    "worst_for_this_budget": 0.0061,
+    "best_ci95": [
+     -0.0207,
+     0.0429
+    ],
+    "worst_ci95": [
+     -0.0277,
+     0.0371
+    ],
+    "sign_survives_both_ends": true,
+    "verdict_survives_both_ends": true
+   }
+  }
+ },
+ "against_the_deployed_budget_at_k30": {
+  "10": {
+   "gap_at_30": -0.1206,
+   "ci95": [
+    -0.158,
+    -0.0843
+   ],
+   "excludes_zero": true,
+   "if_the_excluded_substrates_all_went_one_way": {
+    "best_for_this_budget": -0.1172,
+    "worst_for_this_budget": -0.1233,
+    "best_ci95": [
+     -0.1555,
+     -0.0813
+    ],
+    "worst_ci95": [
+     -0.1612,
+     -0.087
+    ],
+    "sign_survives_both_ends": true,
+    "verdict_survives_both_ends": true
+   }
+  },
+  "20": {
+   "gap_at_30": -0.0427,
+   "ci95": [
+    -0.0629,
+    -0.0249
+   ],
+   "excludes_zero": true,
+   "if_the_excluded_substrates_all_went_one_way": {
+    "best_for_this_budget": -0.0396,
+    "worst_for_this_budget": -0.0457,
+    "best_ci95": [
+     -0.0602,
+     -0.0204
+    ],
+    "worst_ci95": [
+     -0.067,
+     -0.0269
+    ],
+    "sign_survives_both_ends": true,
+    "verdict_survives_both_ends": true
+   }
+  },
+  "50": {
+   "gap_at_30": 0.0458,
+   "ci95": [
+    0.0305,
+    0.0635
+   ],
+   "excludes_zero": true,
+   "if_the_excluded_substrates_all_went_one_way": {
+    "best_for_this_budget": 0.0487,
+    "worst_for_this_budget": 0.0426,
+    "best_ci95": [
+     0.0324,
+     0.0674
+    ],
+    "worst_ci95": [
+     0.0256,
+     0.0613
+    ],
+    "sign_survives_both_ends": true,
+    "verdict_survives_both_ends": true
+   }
+  },
+  "7581": {
+   "gap_at_30": 0.1115,
+   "ci95": [
+    0.0802,
+    0.1431
+   ],
+   "excludes_zero": true,
+   "if_the_excluded_substrates_all_went_one_way": {
+    "best_for_this_budget": 0.1142,
+    "worst_for_this_budget": 0.1081,
+    "best_ci95": [
+     0.0822,
+     0.1458
+    ],
+    "worst_ci95": [
+     0.0751,
+     0.14
+    ],
+    "sign_survives_both_ends": true,
+    "verdict_survives_both_ends": true
+   }
+  }
+ },
+ "budgets_that_beat_the_deployed_one_at_k15": [],
+ "budgets_that_beat_the_deployed_one_at_k30": [
+  "50",
+  "7581"
+ ],
+ "reading": "The curve is what the budget buys and the cost column is what it costs. A budget that beats the deployed one with the interval excluding zero would say the deployed value is not on the frontier at that output budget, and the two lists above are that answer at the two the paper reads this curve at: they do not agree, which is the point. Both are computed on validation so that choosing from them is not selection on the reported population."
+}

@@ -1,0 +1,85 @@
+{
+ "provenance": {
+  "script": "hyperparameters.py",
+  "script_path": "scripts/typed_edit/hyperparameters.py",
+  "source_sha256": "7d63717cbc2cd694d326e22ef40ea7786849755dfd11b0c76139a390bbc4979d",
+  "git_commit": "2a2221c32e9cec709c4a6ca67daec20f5a618781",
+  "git_dirty": true
+ },
+ "source": "the config.yaml and training reports each run wrote beside its weights",
+ "runs": {
+  "generator": "artifacts/full5000_implicit",
+  "filter": "artifacts/full5000_implicit"
+ },
+ "components": {
+  "generator": {
+   "run": "artifacts/full5000_implicit",
+   "graph convolution": "gatv2",
+   "encoder hidden dims": [
+    192,
+    256
+   ],
+   "rule encoder hidden dims": [
+    128,
+    192,
+    128
+   ],
+   "projection dim": 128,
+   "scoring": "retrieval",
+   "rule budget at training": 30,
+   "unlabelled weight": 0.5,
+   "ranking auxiliary weight": 0.25,
+   "ranking margin": 0.45,
+   "frequency prior weight": 0.4,
+   "inapplicable-rule penalty": 7.5,
+   "candidate aggregation": "noisy_or",
+   "optimiser": "Adam",
+   "learning rate": 0.0001,
+   "batch size": 32,
+   "weight decay": 1e-06,
+   "epochs requested": 8,
+   "epochs run": 8,
+   "early stopping patience": 7,
+   "non-negative PU risk": true,
+   "class prior": 0.75,
+   "decision threshold": 0.6,
+   "seed": 0
+  },
+  "filter": {
+   "run": "artifacts/full5000_implicit",
+   "graph convolution": "gatv2",
+   "encoder hidden dims": [
+    192,
+    256,
+    128,
+    128,
+    64,
+    32
+   ],
+   "dropout": 0.1,
+   "pairing mode": "single",
+   "fingerprints": true,
+   "optimiser": "Adam",
+   "learning rate": 0.0001,
+   "batch size": 64,
+   "weight decay": 1e-06,
+   "epochs requested": 8,
+   "epochs run": 8,
+   "early stopping patience": 7,
+   "non-negative PU risk": false,
+   "class prior": 0.75,
+   "decision threshold": 0.16,
+   "seed": 0
+  }
+ },
+ "data": {
+  "training substrates": 5000,
+  "validation substrates": 300,
+  "sampling seed": 42,
+  "clean splits": true,
+  "rule bank": "grail_metabolism/resources/extended_smirks.txt",
+  "pretraining": false
+ },
+ "config_blocks_that_differ_between_the_two_runs": [],
+ "reading": "The generator's row is read from the run its released checkpoint comes from and the filter's from the run its own comes from. The filter is trained under cross-entropy and the generator under a non-negative positive-unlabelled risk; that difference is a setting here rather than a claim in prose."
+}

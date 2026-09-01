@@ -1,0 +1,51 @@
+{
+ "provenance": {
+  "script": "comparator_provenance.py",
+  "script_path": "scripts/typed_edit/comparator_provenance.py",
+  "source_sha256": "3388bbb28328e3ba8ceb4792f3780482935002c18f9dbfc82fb233aba8ac903a",
+  "git_commit": "5abbf8e2f9244314c67ac7a9541429b97adfcd4f",
+  "git_dirty": true
+ },
+ "comparators": {
+  "SyGMa": {
+   "kind": "installed Python package",
+   "version": "1.1.0",
+   "configuration": "scenario [[phase1, 1], [phase2, 1]], one cycle of each ruleset",
+   "predictions": "results/sygma_fulltest_predictions.json",
+   "version_note": "read from the installed module at run time",
+   "predictions_sha256": "b012db873a24bb87cddfdbee6b92daa1c95bab4470d3d9c815e058ffc783dfd6",
+   "predictions_first_in_the_repository": "2026-07-27"
+  },
+  "MetaTox": {
+   "kind": "web service",
+   "version": null,
+   "configuration": "layer 1 only, without the SMIRKS-rule variant, per the supplier's note",
+   "predictions": "results/metatox_preds.json",
+   "version_note": "the service publishes no version string to a user, so none can be recorded; the submission set and the returned predictions are pinned instead, and the service is the one running at way2drug.ru on the date below",
+   "predictions_sha256": "dbd9390da3cd2c89a2956f69ac4627b46ee8d5379278fdab95ec6efa061074f7",
+   "predictions_first_in_the_repository": "2026-07-25"
+  },
+  "MetaPredictor": {
+   "kind": "source checkout, run locally",
+   "version": null,
+   "configuration": "two-stage translation on CPU, the repository's own predict script",
+   "predictions": "artifacts/tier2/metapredictor_preds.json",
+   "version_note": "the upstream release carries no version string; the checkout used is in the repository under artifacts/tier2/metapredictor_src",
+   "predictions_sha256": "6250fbcf1701d06db927d7cabf0010dbd514468ffd130f1431012856e50d0f7f",
+   "predictions_first_in_the_repository": "2026-07-13"
+  },
+  "BioTransformer": {
+   "kind": "jar",
+   "version": "3.0",
+   "build": "20230525",
+   "configuration": "the shipped metabolic reaction database, unmodified",
+   "predictions": "artifacts/tier2/biotransformer_preds.json",
+   "version_note": "the jar's own build stamp, with its digest in paper2/split_manifest.json",
+   "predictions_sha256": "28e6c684945275cfce2422ee4a810e2b3b0633e660ba23042b3a711b8e324b71",
+   "predictions_first_in_the_repository": "2026-07-13"
+  }
+ },
+ "n_comparators": 4,
+ "n_carrying_a_version_string": 2,
+ "reading": "2 of 4 comparators expose a version string. For the others the record is the frozen predictions, their digest, and the date they entered this repository, which bounds the run. A service that publishes no version cannot be pinned by one, and reporting the bound is the honest alternative to inventing it."
+}

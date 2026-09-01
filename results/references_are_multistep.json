@@ -1,0 +1,49 @@
+{
+ "provenance": {
+  "script": "references_are_multistep.py",
+  "script_path": "scripts/typed_edit/references_are_multistep.py",
+  "source_sha256": "6c36fa637269d3a2250e62df17a8b96399de948f15af40fa706186620a7e805a",
+  "git_commit": "aa406d1d07d943339fb81fab49e094fcf7c821ea",
+  "git_dirty": true
+ },
+ "population": {
+  "pairs": 2597,
+  "typed": 2575,
+  "source": "results/test_references.json, the evaluated test set"
+ },
+ "instruments": "loci of the reaction centre, and core-incident edits called composite at E >= 5; the same two the mined templates were measured with",
+ "threshold_E": 5,
+ "references_whose_centre_falls_in_more_than_one_locus": 248,
+ "share_by_loci": 0.0963,
+ "references_composite_by_edit_count": 192,
+ "share_by_edits": 0.0746,
+ "loci_histogram": {
+  "1": 2327,
+  "2": 216,
+  "3": 29,
+  "4": 3
+ },
+ "edit_histogram": {
+  "0": 252,
+  "1": 1669,
+  "2": 262,
+  "3": 160,
+  "4": 40,
+  "5": 28,
+  "6": 23,
+  "7": 51,
+  "8": 35,
+  "9": 25,
+  "10": 4,
+  "11": 12,
+  "12": 8,
+  "14": 2,
+  "15": 2,
+  "16": 1,
+  "20": 1
+ },
+ "references_composite_by_either_instrument": 404,
+ "share_by_either": 0.1569,
+ "references_composite_by_both": 36,
+ "reading": "A composite reference is one an enzyme system reached in more than one turnover and the corpus records as a single substrate-product pair. It is not unreachable: a template mined from such a pair performs the whole transformation at once. What it settles is what a recall figure means, and it is the reference-side counterpart of the template-side measurement the manuscript already reports."
+}

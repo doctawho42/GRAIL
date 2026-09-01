@@ -151,6 +151,35 @@ def test_the_manuscript_describes_every_section_of_its_supporting_information():
         "list: " + "; ".join(undescribed))
 
 
+def test_every_artifact_a_number_comes_from_is_released_or_named_as_the_deposit():
+    """The paper says the evaluation harness and its results are released; 25 were not there.
+
+    results/ is ignored wholesale and its artifacts are tracked one at a time, so an analysis
+    added later is released only if somebody remembers to force-add it. Twenty-five of the eighty
+    artifacts the printed numbers come from had not been, including the matched-length control and
+    the comparison table's own multiplicity accounting. A reader cloning the repository could not
+    see them. The one artifact that legitimately stays out is the candidate pool, which is too
+    large to commit and is the Zenodo deposit the availability statement names.
+    """
+    import json
+    import subprocess
+    from pathlib import Path
+
+    sources = json.loads(Path("results/number_sources.json").read_text())
+    srcs = sources if isinstance(sources, list) else sources.get("artifacts") or list(sources)
+    names = {s if isinstance(s, str) else s.get("artifact") for s in srcs}
+    names = {n for n in names if n}
+    tracked = set(subprocess.run(["git", "ls-files", "results/", "paper2/"],
+                                 capture_output=True, text=True).stdout.split())
+    # Too large to commit, and named in the availability statement as the deposit.
+    DEPOSITED = {"results/val_pools.json"}
+    missing = sorted(n for n in names - tracked - DEPOSITED if Path(n).exists())
+    assert not missing, (
+        "these artifacts carry numbers the paper prints and are not in the repository, so the "
+        "release does not contain what the availability statement says it does: "
+        + ", ".join(missing))
+
+
 def test_no_tracked_file_is_the_size_of_a_candidate_pool():
     """results/ is gitignored in full, so every pinned artifact is force-added by name.
 

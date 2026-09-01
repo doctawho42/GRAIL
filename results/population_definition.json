@@ -1,0 +1,488 @@
+{
+ "provenance": {
+  "script": "population_definition.py",
+  "script_path": "scripts/typed_edit/population_definition.py",
+  "source_sha256": "d350e3ad451d51f117faae76ce15e2f63411212cda408db50e85d34b74c22a45",
+  "git_commit": "33f72aa1923c32bc9b9723ce0b94a0c53e13a590",
+  "git_dirty": true
+ },
+ "what_defines_the_comparison_set": "the intersection of the substrates each method has an entry for; the binding constraint is the 291-substrate submission list sent to the web-service comparator, which returned all 291. No substrate was removed for emitting nothing.",
+ "how_the_291_were_drawn": "not recorded: no script in this repository selects them and the submission directory documents the file format rather than the draw",
+ "emission": {
+  "comparison_set": {
+   "sygma": 1,
+   "metapredictor": 1,
+   "metatox": 0,
+   "grail_deployed": 0
+  },
+  "whole_test_set": {
+   "sygma": {
+    "substrates_with_no_prediction": 5,
+    "references_they_carry": 9
+   },
+   "metapredictor": {
+    "substrates_with_no_prediction": 3,
+    "references_they_carry": 3
+   }
+  }
+ },
+ "exchangeability": {
+  "annotated references": {
+   "mean_in_the_comparison_set": 2.285,
+   "mean_outside_it": 2.198,
+   "difference": 0.087,
+   "permutation_p": 0.6052,
+   "n_in": 291,
+   "n_out": 879
+  },
+  "heavy atoms": {
+   "mean_in_the_comparison_set": 25.12,
+   "mean_outside_it": 25.582,
+   "difference": -0.462,
+   "permutation_p": 0.6122,
+   "n_in": 291,
+   "n_out": 879
+  },
+  "candidates the deployed system emits": {
+   "mean_in_the_comparison_set": 16.313,
+   "mean_outside_it": 18.044,
+   "difference": -1.732,
+   "permutation_p": 0.1658,
+   "n_in": 291,
+   "n_out": 879
+  }
+ },
+ "contrasts": {
+  "the comparison set": {
+   "n_substrates": 291,
+   "n_references": 665,
+   "arms_present": [
+    "deployed",
+    "exhaustive"
+   ],
+   "grail_deployed_recall": {
+    "5": 0.3203,
+    "10": 0.4331,
+    "15": 0.4797,
+    "30": 0.4902,
+    "50": 0.4902
+   },
+   "grail_exhaustive_recall": {
+    "5": 0.3113,
+    "10": 0.4556,
+    "15": 0.5353,
+    "30": 0.6526,
+    "50": 0.7023
+   },
+   "sygma": {
+    "recall": {
+     "5": 0.3744,
+     "10": 0.4556,
+     "15": 0.4842,
+     "30": 0.5068,
+     "50": 0.5113
+    },
+    "substrates_with_no_prediction": 1,
+    "deployed_minus_comparator": {
+     "5": {
+      "difference": -0.0541,
+      "ci95": [
+       -0.0899,
+       -0.0199
+      ],
+      "excludes_zero": true
+     },
+     "10": {
+      "difference": -0.0226,
+      "ci95": [
+       -0.0585,
+       0.0137
+      ],
+      "excludes_zero": false
+     },
+     "15": {
+      "difference": -0.0045,
+      "ci95": [
+       -0.0408,
+       0.0326
+      ],
+      "excludes_zero": false
+     },
+     "30": {
+      "difference": -0.0165,
+      "ci95": [
+       -0.0556,
+       0.0233
+      ],
+      "excludes_zero": false
+     },
+     "50": {
+      "difference": -0.0211,
+      "ci95": [
+       -0.0597,
+       0.019
+      ],
+      "excludes_zero": false
+     }
+    },
+    "exhaustive_minus_comparator": {
+     "5": {
+      "difference": -0.0632,
+      "ci95": [
+       -0.1,
+       -0.0268
+      ],
+      "excludes_zero": true
+     },
+     "10": {
+      "difference": 0.0,
+      "ci95": [
+       -0.0396,
+       0.0401
+      ],
+      "excludes_zero": false
+     },
+     "15": {
+      "difference": 0.0511,
+      "ci95": [
+       0.0134,
+       0.0908
+      ],
+      "excludes_zero": true
+     },
+     "30": {
+      "difference": 0.1459,
+      "ci95": [
+       0.1091,
+       0.1841
+      ],
+      "excludes_zero": true
+     },
+     "50": {
+      "difference": 0.191,
+      "ci95": [
+       0.1518,
+       0.2308
+      ],
+      "excludes_zero": true
+     }
+    }
+   },
+   "metapredictor": {
+    "recall": {
+     "5": 0.3549,
+     "10": 0.4707,
+     "15": 0.4797,
+     "30": 0.4797,
+     "50": 0.4797
+    },
+    "substrates_with_no_prediction": 1,
+    "deployed_minus_comparator": {
+     "5": {
+      "difference": -0.0346,
+      "ci95": [
+       -0.0775,
+       0.0066
+      ],
+      "excludes_zero": false
+     },
+     "10": {
+      "difference": -0.0376,
+      "ci95": [
+       -0.0816,
+       0.0071
+      ],
+      "excludes_zero": false
+     },
+     "15": {
+      "difference": 0.0,
+      "ci95": [
+       -0.0452,
+       0.0458
+      ],
+      "excludes_zero": false
+     },
+     "30": {
+      "difference": 0.0105,
+      "ci95": [
+       -0.034,
+       0.0555
+      ],
+      "excludes_zero": false
+     },
+     "50": {
+      "difference": 0.0105,
+      "ci95": [
+       -0.034,
+       0.0555
+      ],
+      "excludes_zero": false
+     }
+    },
+    "exhaustive_minus_comparator": {
+     "5": {
+      "difference": -0.0436,
+      "ci95": [
+       -0.0861,
+       -0.0041
+      ],
+      "excludes_zero": true
+     },
+     "10": {
+      "difference": -0.015,
+      "ci95": [
+       -0.0596,
+       0.0268
+      ],
+      "excludes_zero": false
+     },
+     "15": {
+      "difference": 0.0556,
+      "ci95": [
+       0.0149,
+       0.0955
+      ],
+      "excludes_zero": true
+     },
+     "30": {
+      "difference": 0.1729,
+      "ci95": [
+       0.1263,
+       0.2188
+      ],
+      "excludes_zero": true
+     },
+     "50": {
+      "difference": 0.2226,
+      "ci95": [
+       0.1724,
+       0.2717
+      ],
+      "excludes_zero": true
+     }
+    }
+   }
+  },
+  "the whole evaluated test set": {
+   "n_substrates": 1170,
+   "n_references": 2597,
+   "arms_present": [
+    "deployed",
+    "exhaustive"
+   ],
+   "grail_deployed_recall": {
+    "5": 0.3285,
+    "10": 0.4394,
+    "15": 0.4875,
+    "30": 0.5144,
+    "50": 0.5156
+   },
+   "grail_exhaustive_recall": {
+    "5": 0.3057,
+    "10": 0.439,
+    "15": 0.5295,
+    "30": 0.6484,
+    "50": 0.7174
+   },
+   "sygma": {
+    "recall": {
+     "5": 0.4016,
+     "10": 0.4813,
+     "15": 0.5137,
+     "30": 0.5341,
+     "50": 0.536
+    },
+    "substrates_with_no_prediction": 5,
+    "deployed_minus_comparator": {
+     "5": {
+      "difference": -0.0732,
+      "ci95": [
+       -0.0908,
+       -0.0558
+      ],
+      "excludes_zero": true
+     },
+     "10": {
+      "difference": -0.042,
+      "ci95": [
+       -0.0602,
+       -0.0235
+      ],
+      "excludes_zero": true
+     },
+     "15": {
+      "difference": -0.0262,
+      "ci95": [
+       -0.0459,
+       -0.006
+      ],
+      "excludes_zero": true
+     },
+     "30": {
+      "difference": -0.0196,
+      "ci95": [
+       -0.0401,
+       0.0015
+      ],
+      "excludes_zero": false
+     },
+     "50": {
+      "difference": -0.0204,
+      "ci95": [
+       -0.0412,
+       0.0008
+      ],
+      "excludes_zero": false
+     }
+    },
+    "exhaustive_minus_comparator": {
+     "5": {
+      "difference": -0.0959,
+      "ci95": [
+       -0.1153,
+       -0.0766
+      ],
+      "excludes_zero": true
+     },
+     "10": {
+      "difference": -0.0424,
+      "ci95": [
+       -0.0627,
+       -0.0224
+      ],
+      "excludes_zero": true
+     },
+     "15": {
+      "difference": 0.0158,
+      "ci95": [
+       -0.0049,
+       0.0361
+      ],
+      "excludes_zero": false
+     },
+     "30": {
+      "difference": 0.1144,
+      "ci95": [
+       0.0948,
+       0.1341
+      ],
+      "excludes_zero": true
+     },
+     "50": {
+      "difference": 0.1814,
+      "ci95": [
+       0.162,
+       0.2013
+      ],
+      "excludes_zero": true
+     }
+    }
+   },
+   "metapredictor": {
+    "recall": {
+     "5": 0.3939,
+     "10": 0.484,
+     "15": 0.4975,
+     "30": 0.4979,
+     "50": 0.4979
+    },
+    "substrates_with_no_prediction": 3,
+    "deployed_minus_comparator": {
+     "5": {
+      "difference": -0.0655,
+      "ci95": [
+       -0.0872,
+       -0.0446
+      ],
+      "excludes_zero": true
+     },
+     "10": {
+      "difference": -0.0447,
+      "ci95": [
+       -0.0663,
+       -0.0224
+      ],
+      "excludes_zero": true
+     },
+     "15": {
+      "difference": -0.01,
+      "ci95": [
+       -0.0324,
+       0.0129
+      ],
+      "excludes_zero": false
+     },
+     "30": {
+      "difference": 0.0166,
+      "ci95": [
+       -0.0066,
+       0.0404
+      ],
+      "excludes_zero": false
+     },
+     "50": {
+      "difference": 0.0177,
+      "ci95": [
+       -0.0056,
+       0.0414
+      ],
+      "excludes_zero": false
+     }
+    },
+    "exhaustive_minus_comparator": {
+     "5": {
+      "difference": -0.0882,
+      "ci95": [
+       -0.1106,
+       -0.0663
+      ],
+      "excludes_zero": true
+     },
+     "10": {
+      "difference": -0.0451,
+      "ci95": [
+       -0.0677,
+       -0.0231
+      ],
+      "excludes_zero": true
+     },
+     "15": {
+      "difference": 0.032,
+      "ci95": [
+       0.0101,
+       0.0539
+      ],
+      "excludes_zero": true
+     },
+     "30": {
+      "difference": 0.1506,
+      "ci95": [
+       0.1276,
+       0.1732
+      ],
+      "excludes_zero": true
+     },
+     "50": {
+      "difference": 0.2195,
+      "ci95": [
+       0.196,
+       0.2431
+      ],
+      "excludes_zero": true
+     }
+    }
+   }
+  }
+ },
+ "absent_arm": "the exhaustive arm was built on the comparison set only, so the whole-test-set row carries the deployed interactive arm and not it",
+ "deployed_arm_covers_the_whole_test_set": true,
+ "permutation": {
+  "n": 10000,
+  "seed": 0
+ },
+ "bootstrap": {
+  "n": 10000,
+  "seed": 0
+ },
+ "reading": "The emission rule the manuscript describes is not the rule the code applies, and applying it would have removed almost nothing: over the whole test set the two comparators that ran on it answer nothing for a handful of substrates. The population's real defect is that the draw is unrecorded, which is tested here rather than described."
+}

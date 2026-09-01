@@ -1,0 +1,123 @@
+{
+ "provenance": {
+  "script": "fusion_knobs.py",
+  "script_path": "scripts/typed_edit/fusion_knobs.py",
+  "source_sha256": "a8057cf6109c7568205fffeea2ff4e57dcdbde5c6f0f892c6dac8552241c7027",
+  "git_commit": "33f72aa1923c32bc9b9723ce0b94a0c53e13a590",
+  "git_dirty": true
+ },
+ "population": {
+  "n_substrates": 291,
+  "n_references": 665
+ },
+ "cap": 100,
+ "deployed_constant": 60,
+ "constants_swept": [
+  1,
+  10,
+  30,
+  60,
+  120,
+  300
+ ],
+ "by_constant": {
+  "1": {
+   "recall": {
+    "5": 0.2391,
+    "15": 0.4857,
+    "30": 0.6241,
+    "50": 0.7008
+   },
+   "against_the_deployed_constant_at_15": {
+    "gap": -0.0556,
+    "ci95": [
+     -0.0797,
+     -0.0308
+    ],
+    "excludes_zero": true
+   }
+  },
+  "10": {
+   "recall": {
+    "5": 0.2977,
+    "15": 0.5128,
+    "30": 0.6301,
+    "50": 0.7023
+   },
+   "against_the_deployed_constant_at_15": {
+    "gap": -0.0286,
+    "ci95": [
+     -0.047,
+     -0.0096
+    ],
+    "excludes_zero": true
+   }
+  },
+  "30": {
+   "recall": {
+    "5": 0.3143,
+    "15": 0.5248,
+    "30": 0.6406,
+    "50": 0.7038
+   },
+   "against_the_deployed_constant_at_15": {
+    "gap": -0.0165,
+    "ci95": [
+     -0.0302,
+     -0.0032
+    ],
+    "excludes_zero": true
+   }
+  },
+  "60": {
+   "recall": {
+    "5": 0.3143,
+    "15": 0.5414,
+    "30": 0.6511,
+    "50": 0.7023
+   }
+  },
+  "120": {
+   "recall": {
+    "5": 0.3098,
+    "15": 0.5414,
+    "30": 0.6526,
+    "50": 0.7023
+   },
+   "against_the_deployed_constant_at_15": {
+    "gap": 0.0,
+    "ci95": [
+     -0.0111,
+     0.0112
+    ],
+    "excludes_zero": false
+   }
+  },
+  "300": {
+   "recall": {
+    "5": 0.3113,
+    "15": 0.5444,
+    "30": 0.6511,
+    "50": 0.7023
+   },
+   "against_the_deployed_constant_at_15": {
+    "gap": 0.003,
+    "ci95": [
+     -0.0107,
+     0.0168
+    ],
+    "excludes_zero": false
+   }
+  }
+ },
+ "aggregation": {
+  "status": "not measurable from the released pools",
+  "why": "the pools carry one aggregated generator score per candidate, not the per-rule scores a maximum would need; recomputing them requires re-running the generator over the comparison set",
+  "what_it_would_test": "whether noisy-or inflates candidates reachable by many near-duplicate templates, which this bank contains by construction"
+ },
+ "bootstrap": {
+  "n": 10000,
+  "seed": 0
+ },
+ "reading": "The constant was left at the value the method was published with. If recall is flat across two orders of magnitude of it then leaving it there costs nothing and the paper can say so; if it is not, the deployed value is a choice that had to be declared like the others."
+}

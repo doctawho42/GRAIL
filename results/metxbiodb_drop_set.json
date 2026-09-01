@@ -1,0 +1,113 @@
+{
+ "provenance": {
+  "script": "metxbiodb_drop_set.py",
+  "script_path": "scripts/typed_edit/metxbiodb_drop_set.py",
+  "source_sha256": "620e6ed424df4c8909827895a06c97f0b446bae885002a03143a0123c89c5f3f",
+  "git_commit": "0ca475b61b35613ce4f221dd00964e20d3a51b11",
+  "git_dirty": true
+ },
+ "question": "whether the unrecoverable selection that assembled the corpus removed a class of chemistry, which would manufacture the novel-type shortfall this work reports rather than measure it",
+ "source": {
+  "file": "artifacts/tier2/biotransformer/database/MetXBioDB-1-0.json",
+  "distinct_pairs": 2035,
+  "inside_the_corpus": 1248,
+  "dropped": 787
+ },
+ "typing": "radius-0 reaction type by the mining route, the same instrument the census and the containment claim use",
+ "typed": {
+  "kept": 1243,
+  "dropped": 773,
+  "distinct_types": 330
+ },
+ "distinct_types_kept": 201,
+ "distinct_types_dropped": 182,
+ "total_variation_distance": 0.3163,
+ "permutation": {
+  "n": 10000,
+  "seed": 0,
+  "p_value": 0.0001,
+  "null": "the kept/dropped label shuffled over the same typed pairs"
+ },
+ "dropped_references_whose_type_is_absent_from_the_kept_half": 154,
+ "share_of_dropped_whose_type_the_kept_half_lacks": 0.1992,
+ "top_types_kept": [
+  [
+   "[[[[6, 8], 0.0, 1.0], 1]]",
+   400
+  ],
+  [
+   "[[[[6, 6], 0.0, 1.0], 5], [[[6, 8], 0.0, 1.0], 7], [[[6, 8], 0.0, 2.0], 1]]",
+   207
+  ],
+  [
+   "[[[[6, 8], 1.0, 0.0], 1], [[[6, 8], 1.0, 1.0], 1]]",
+   92
+  ],
+  [
+   "[[[[8, 16], 0.0, 1.0], 2], [[[8, 16], 0.0, 2.0], 2]]",
+   43
+  ],
+  [
+   "[[[[8, 16], 0.0, 2.0], 1]]",
+   31
+  ],
+  [
+   "[[[[6, 7], 1.0, 0.0], 1], [[[6, 7], 1.0, 1.0], 1]]",
+   31
+  ],
+  [
+   "[[[[6, 7], 1.0, 0.0], 1]]",
+   28
+  ],
+  [
+   "[[[[6, 6], 0.0, 1.0], 5], [[[6, 8], 0.0, 1.0], 7], [[[6, 8], 0.0, 2.0], 1], [[[6, 8], 1.0, 1.0], 1]]",
+   24
+  ]
+ ],
+ "top_types_dropped": [
+  [
+   "[[[[6, 8], 0.0, 1.0], 1]]",
+   213
+  ],
+  [
+   "[[[[6, 6], 0.0, 1.0], 5], [[[6, 8], 0.0, 1.0], 7], [[[6, 8], 0.0, 2.0], 1]]",
+   122
+  ],
+  [
+   "[[[[8, 16], 0.0, 1.0], 2], [[[8, 16], 0.0, 2.0], 2]]",
+   39
+  ],
+  [
+   "[[[[7, 8], 0.0, 1.0], 1]]",
+   29
+  ],
+  [
+   "[[[[6, 8], 1.0, 0.0], 1], [[[6, 8], 1.0, 1.0], 1]]",
+   24
+  ],
+  [
+   "[[[[6, 7], 1.0, 0.0], 1]]",
+   23
+  ],
+  [
+   "[[[[6, 7], 1.0, 0.0], 1], [[[6, 7], 1.0, 1.0], 1]]",
+   22
+  ],
+  [
+   "[[[[6, 8], 0.0, 1.0], 2]]",
+   15
+  ]
+ ],
+ "recoverable_from_the_dropped_half": {
+  "source_of_the_absent_cell": "results/missing_types_in_train.json",
+  "references_whose_type_neither_the_bank_nor_training_holds": 567,
+  "of_those_whose_type_this_source_dropped": 1,
+  "share": 0.0018,
+  "of_those_whose_type_this_source_kept_but_the_splits_lack": 5,
+  "distinct_types_recoverable": 1,
+  "of_those_whose_type_this_source_dropped_counts_ignored": 29,
+  "share_counts_ignored": 0.0511,
+  "reading": "a test reference in this count needs a transformation type that one of the corpus's own four sources records and the assembly step did not carry across; it bounds from below how much of the shortfall is the assembly's rather than the literature's, since only one source of four can be measured this way"
+ },
+ "reading": "A filter selecting on transformation type would leave the two halves with different type distributions. The distance between them and the chance of seeing a distance that large under a shuffled label are reported, so the alternative explanation for the novel-type shortfall is decided by measurement. A large p-value does not prove the filter was blind to chemistry; it bounds how strongly this source can show that it was not."
+}

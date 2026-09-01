@@ -1,0 +1,159 @@
+{
+ "provenance": {
+  "script": "metapredictor_drawing.py",
+  "script_path": "scripts/typed_edit/metapredictor_drawing.py",
+  "source_sha256": "ddd5e9236751c55396ae315612558b544acffc2340fc255743070f024a753b98",
+  "git_commit": "0ca475b61b35613ce4f221dd00964e20d3a51b11",
+  "git_dirty": true
+ },
+ "difference": "MetaPredictor's recall with the substrate as a chemist draws it, minus its recall with the substrate as the corpus stores it",
+ "design": "only the substrates whose two drawings are different molecules were re-run; the rest keep their frozen predictions and contribute exactly zero to the paired difference, which is why re-running them would add nothing",
+ "substrates_re_run": 79,
+ "budgets": [
+  5,
+  10,
+  15,
+  20,
+  30,
+  50
+ ],
+ "bootstrap": {
+  "n": 10000,
+  "seed": 0
+ },
+ "by_population": {
+  "the whole comparison set": {
+   "n_substrates": 291,
+   "n_references": 665,
+   "by_budget": {
+    "5": {
+     "recall_as_stored": 0.3549,
+     "recall_as_drawn": 0.3594,
+     "difference": 0.0045,
+     "ci95": [
+      -0.0093,
+      0.0191
+     ],
+     "excludes_zero": false
+    },
+    "10": {
+     "recall_as_stored": 0.4707,
+     "recall_as_drawn": 0.4827,
+     "difference": 0.012,
+     "ci95": [
+      -0.0016,
+      0.0264
+     ],
+     "excludes_zero": false
+    },
+    "15": {
+     "recall_as_stored": 0.4797,
+     "recall_as_drawn": 0.4887,
+     "difference": 0.009,
+     "ci95": [
+      -0.0031,
+      0.0223
+     ],
+     "excludes_zero": false
+    },
+    "20": {
+     "recall_as_stored": 0.4797,
+     "recall_as_drawn": 0.4887,
+     "difference": 0.009,
+     "ci95": [
+      -0.0031,
+      0.0223
+     ],
+     "excludes_zero": false
+    },
+    "30": {
+     "recall_as_stored": 0.4797,
+     "recall_as_drawn": 0.4887,
+     "difference": 0.009,
+     "ci95": [
+      -0.0031,
+      0.0223
+     ],
+     "excludes_zero": false
+    },
+    "50": {
+     "recall_as_stored": 0.4797,
+     "recall_as_drawn": 0.4887,
+     "difference": 0.009,
+     "ci95": [
+      -0.0031,
+      0.0223
+     ],
+     "excludes_zero": false
+    }
+   }
+  },
+  "only the substrates the drawing changes": {
+   "n_substrates": 79,
+   "n_references": 195,
+   "by_budget": {
+    "5": {
+     "recall_as_stored": 0.3077,
+     "recall_as_drawn": 0.3231,
+     "difference": 0.0154,
+     "ci95": [
+      -0.0319,
+      0.0688
+     ],
+     "excludes_zero": false
+    },
+    "10": {
+     "recall_as_stored": 0.4051,
+     "recall_as_drawn": 0.4462,
+     "difference": 0.041,
+     "ci95": [
+      -0.0048,
+      0.0878
+     ],
+     "excludes_zero": false
+    },
+    "15": {
+     "recall_as_stored": 0.4205,
+     "recall_as_drawn": 0.4513,
+     "difference": 0.0308,
+     "ci95": [
+      -0.0104,
+      0.0746
+     ],
+     "excludes_zero": false
+    },
+    "20": {
+     "recall_as_stored": 0.4205,
+     "recall_as_drawn": 0.4513,
+     "difference": 0.0308,
+     "ci95": [
+      -0.0104,
+      0.0746
+     ],
+     "excludes_zero": false
+    },
+    "30": {
+     "recall_as_stored": 0.4205,
+     "recall_as_drawn": 0.4513,
+     "difference": 0.0308,
+     "ci95": [
+      -0.0104,
+      0.0746
+     ],
+     "excludes_zero": false
+    },
+    "50": {
+     "recall_as_stored": 0.4205,
+     "recall_as_drawn": 0.4513,
+     "difference": 0.0308,
+     "ci95": [
+      -0.0104,
+      0.0746
+     ],
+     "excludes_zero": false
+    }
+   }
+  }
+ },
+ "reading": "The correction this comparator never received is now measured rather than bounded by a proxy, which matters because the one proxy available disagrees in direction with the other comparator for which both drawings could be run."
+}
