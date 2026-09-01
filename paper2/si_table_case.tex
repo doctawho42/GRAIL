@@ -1,31 +1,31 @@
 \begin{table}[h]
 \centering\footnotesize
-\begin{tabular}{rlrlrrr}
+\begin{tabular}{rlrlrlrr}
 \toprule
-rank & ref & rule & source & sites & generator & filter \\
+rank & ref & rule & source & atoms & sites & generator & filter \\
 \midrule
-1 &  & 2210 & mined & 3,4,5,6,7,8 & 0.990 & 0.815 \\
-2 &  & 474 & curated & 7,10,11,12 & 1.000 & 0.179 \\
-3 & $\star$ & 2198 & mined & 8,9 & 0.718 & 0.559 \\
-4 &  & 1166 & curated & 1,2,3 & 1.000 & 0.088 \\
-5 &  & 1919 & mined & 5,6,7,8,9,10 & 0.996 & 0.125 \\
-6 &  & 1209 & curated & 7,8,9 & 0.996 & 0.074 \\
-7 &  & 4661 & mined & 4,5,6,7,8,9 & 0.704 & 0.375 \\
-8 &  & 474 & curated & 4,5,6,12 & 1.000 & 0.032 \\
-9 &  & 2198 & mined & 10,11 & 0.718 & 0.276 \\
-10 &  & 1761 & mined & 10,11 & 0.879 & 0.163 \\
-11 &  & 1003 & curated & 6,7,8,9,10 & 0.570 & 0.448 \\
-12 &  & 474 & curated & 6,7,8,10 & 1.000 & 0.024 \\
-13 &  & 488 & curated & 5,10,12,13,14 & 0.458 & 0.704 \\
-14 &  & 1761 & mined & 8,9 & 0.879 & 0.159 \\
-15 &  & 1801 & mined & 7,10,11,12 & 1.000 & 0.023 \\
-16 & $\star$ & 1745 & mined & 8,9 & 0.345 & 0.859 \\
-17 &  & 474 & curated & 7,8,9 & 0.994 & 0.049 \\
-18 & $\star$ & 4913 & mined & 0,1,2,4,15,16 & 0.929 & 0.077 \\
-19 &  & 1919 & mined & 5,6,7,8,9,10 & 0.998 & 0.027 \\
-20 & $\star$ & 2139 & mined & 8,9 & 0.271 & 0.820 \\
+1 &  & 2210 & mined & 8 & 3,4,5,6,7,8 & 0.990 & 0.815 \\
+2 &  & 474 & curated & 1 & 7,10,11,12 & 1.000 & 0.179 \\
+3 & $\star$ & 2198 & mined & 2 & 8,9 & 0.718 & 0.559 \\
+4 &  & 1166 & curated & 7 & 1,2,3 & 1.000 & 0.088 \\
+5 &  & 1919 & mined & 5 & 5,6,7,8,9,10 & 0.996 & 0.125 \\
+6 &  & 1209 & curated & 3 & 7,8,9 & 0.996 & 0.074 \\
+7 &  & 4661 & mined & 5 & 4,5,6,7,8,9 & 0.704 & 0.375 \\
+8 &  & 474 & curated & 1 & 4,5,6,12 & 1.000 & 0.032 \\
+9 &  & 2198 & mined & 2 & 10,11 & 0.718 & 0.276 \\
+10 &  & 1761 & mined & 2 & 10,11 & 0.879 & 0.163 \\
+11 &  & 1003 & curated & 4 & 6,7,8,9,10 & 0.570 & 0.448 \\
+12 &  & 474 & curated & 1 & 6,7,8,10 & 1.000 & 0.024 \\
+13 &  & 488 & curated & 4 & 5,10,12,13,14 & 0.458 & 0.704 \\
+14 &  & 1761 & mined & 2 & 8,9 & 0.879 & 0.159 \\
+15 &  & 1801 & mined & 4 & 7,10,11,12 & 1.000 & 0.023 \\
+16 & $\star$ & 1745 & mined & 2 & 8,9 & 0.345 & 0.859 \\
+17 &  & 474 & curated & 1 & 7,8,9 & 0.994 & 0.049 \\
+18 & $\star$ & 4913 & mined & 7 & 0,1,2,4,15,16 & 0.929 & 0.077 \\
+19 &  & 1919 & mined & 5 & 5,6,7,8,9,10 & 0.998 & 0.027 \\
+20 & $\star$ & 2139 & mined & 2 & 8,9 & 0.271 & 0.820 \\
 \bottomrule
 \end{tabular}
-\caption{The first twenty of the 100 candidates the exhaustive mode returns for the worked example, with the rule that produced each, whether that rule was curated or mined, and the substrate atoms it fired on. $\star$ marks an annotated metabolite. The interactive mode returns 18 candidates for the same substrate. The complete ranked lists of both modes are in the released artifacts.}
+\caption{The first twenty of the 100 candidates the exhaustive mode returns for the worked example, with the rule that produced each, whether that rule was curated or mined, and the number of atoms on its reactant side and the substrate atoms it fired on. $\star$ marks an annotated metabolite. 11 of the twenty come from a template of three reactant atoms or fewer, which is the count the manuscript quotes and which this column is here to let a reader check. The interactive mode returns 18 candidates for the same substrate. The complete ranked lists of both modes are in the released artifacts.}
 \label{tab:si-case}
 \end{table}

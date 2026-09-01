@@ -652,20 +652,47 @@ def si_parentdrop():
 def si_case():
     d = art("case_study_exhaustive.json")
     i = art("case_study.json")
-    rows = []
+    # Atoms on the template's reactant side, so the claim that most of this list comes from very
+    # small templates can be checked against the table it is made beside rather than taken. The
+    # count is RDKit's over the parsed reactant templates, which is the definition the census
+    # behind that claim uses; counting bracket atoms in the SMIRKS string instead gives a
+    # different answer on this very list, 12 against 11.
+    def reactant_atoms(smirks):
+        from rdkit import RDLogger
+        from rdkit.Chem import AllChem
+
+        RDLogger.DisableLog("rdApp.*")
+        try:
+            rxn = AllChem.ReactionFromSmarts(str(smirks))
+        except Exception:
+            return None
+        if rxn is None or rxn.GetNumReactantTemplates() == 0:
+            return None
+        return sum(rxn.GetReactantTemplate(i).GetNumAtoms()
+                   for i in range(rxn.GetNumReactantTemplates()))
+
+    rows, small = [], 0
     for c in d["candidates"][:20]:
         star = "$\\star$" if c["is_reference"] else ""
         sites = ",".join(str(a) for a in c["firing_atoms"][:6]) or "---"
-        rows.append(f"{c['rank']} & {star} & {c['rule_id']} & {c['rule_source']} & {sites} & "
+        n_at = reactant_atoms(c.get("rule", ""))
+        small += bool(n_at and n_at <= 3)
+        rows.append(f"{c['rank']} & {star} & {c['rule_id']} & {c['rule_source']} & "
+                    f"{n_at if n_at else '---'} & {sites} & "
                     f"{c['generator']:.3f} & {c['filter']:.3f} \\\\")
     return ("\\begin{table}[h]\n\\centering\\footnotesize\n"
-            "\\begin{tabular}{rlrlrrr}\n\\toprule\n"
-            "rank & ref & rule & source & sites & generator & filter \\\\\n\\midrule\n"
+            "\\begin{tabular}{rlrlrlrr}\n\\toprule\n"
+            "rank & ref & rule & source & atoms & sites & generator & filter \\\\\n"
+            "\\midrule\n"
             + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n"
             "\\caption{The first twenty of the "
             f"{d['n_candidates']} candidates the exhaustive mode returns for the worked example, "
             "with the rule that produced each, whether that rule was curated or mined, and the "
-            "substrate atoms it fired on. $\\star$ marks an annotated metabolite. The interactive "
+            "number of atoms on its reactant side and the "
+            "substrate atoms it fired on. $\\star$ marks an annotated metabolite. "
+            f"{small} of the twenty come from a template of three reactant atoms or fewer, which "
+            "is the count the manuscript quotes and which this column is here to let a reader "
+            "check. The interactive "
             f"mode returns {i['n_candidates']} candidates for the same substrate. The complete "
             "ranked lists of both modes are in the released artifacts.}\n"
             "\\label{tab:si-case}\n\\end{table}\n")
