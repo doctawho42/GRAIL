@@ -1142,6 +1142,36 @@ def test_a_budget_curve_refuses_pools_scored_by_a_model_nobody_deploys(tmp_path,
     assert sorted(gate["pools_checked"]) == ["valpools_k10", "valpools_k30"]
 
 
+def test_the_checkpoint_summary_is_computed_in_the_mode_that_computes_everything():
+    """The stage filter skipped every stage in --stage both, which is the default.
+
+    pool_checkpoints.py selected which stages to summarise with `s in (args.stage, "both")`. With
+    --stage both that tuple is ("both", "both"), so neither stage is in it, the disagreement and
+    off-deployed lists came out empty, and the artifact reported every pool in agreement while
+    holding per-pool evidence that one was not. budget_curve.py's gate reads those lists, so it
+    passed on a curve whose pools were scored by two different filters. A run restricted to one
+    stage behaved correctly, which is why the defect survived being used.
+    """
+    def stages_for(stage):
+        return [s for s in ("generator", "filter") if stage in (s, "both")]
+
+    assert stages_for("both") == ["generator", "filter"], (
+        "the default mode summarises no stage, so its verdict is vacuous")
+    assert stages_for("filter") == ["filter"]
+    assert stages_for("generator") == ["generator"]
+
+    # and the shipped producer uses that form rather than the one that inverts under "both"
+    import re
+    from pathlib import Path
+
+    src = Path("scripts/typed_edit/pool_checkpoints.py").read_text()
+    line = re.search(r"stages = \[s for s in \([^)]*\) if ([^\]]*)\]", src)
+    assert line, "the stage selection moved; this guard needs to follow it"
+    assert "args.stage in (s," in line.group(1), (
+        "the stage selection reads `s in (args.stage, ...)`, which selects nothing when the "
+        "stage is 'both': " + line.group(1))
+
+
 def test_every_producer_partitions_the_bank_on_the_same_mined_file():
     """Two cuts of the mined half exist and the counts diverge by ten templates.
 

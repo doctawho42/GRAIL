@@ -46,6 +46,12 @@ CANDIDATES = ("full5000_implicit", "full5000_priors", "full5000_single",
 N_SUBS, N_CANDS = 3, 40
 
 
+# Sharded pool directories a published number is read from. The comparison table itself comes
+# from one of these, so leaving them out of the check left the paper's central artifact
+# unexamined while the validation pools beside it were being verified.
+SHARDED = ("widepools_implicit", "widepools_fulltest", "widepools_k30", "widepools_k30_fulltest")
+
+
 def pools_to_check():
     """{name: (path, rule budget or None)} for every pool a published number is read from."""
     out = {}
@@ -55,6 +61,11 @@ def pools_to_check():
     merged = ROOT / "results" / "val_pools.json"
     if merged.exists():
         out["val_pools"] = (merged, json.loads(merged.read_text()).get("top_k"))
+    for name in SHARDED:
+        shards = sorted(glob.glob(str(ROOT / "results" / name / "w*.json")))
+        if shards:
+            first = json.loads(Path(shards[0]).read_text())
+            out[name] = (Path(shards[0]), first.get("top_k"))
     return out
 
 
@@ -170,7 +181,12 @@ def main() -> int:
                 "counts": counts}
         rows[name] = entry
 
-    stages = [s for s in ("generator", "filter") if s in (args.stage, "both")]
+    # `s in (args.stage, "both")` reads naturally and is wrong: with --stage both the tuple is
+    # ("both", "both") and neither stage is in it, so every check below was skipped in exactly the
+    # mode that runs them all. The artifact then recorded an empty disagreement list while holding
+    # per-pool evidence of a disagreement, and budget_curve.py's gate, which reads that list,
+    # passed on it.
+    stages = [s for s in ("generator", "filter") if args.stage in (s, "both")]
     disagreeing = {}
     for stage in stages:
         seen = {r[stage]["identified_as"] for r in rows.values()
