@@ -507,6 +507,17 @@ def build():
         n[f"aggval.{tag}wins"] = len(wins)
         n[f"aggval.{tag}winsmax"] = max((int(k) for k in wins), default=0)
         n[f"aggval.{tag}recallfive"] = aggv["by_rule"][rule]["recall"]["5"]
+    # The validation sweep has no reproduction gate of its own, because there is no published
+    # column for it to reproduce. It can still be checked against one: the budget curve reads the
+    # same pools at the whole bank, so the re-derived deployed rule and that curve should agree.
+    _curve = bc["by_budget"][str(max(bc["budgets_built"]))]["recall_micro"]
+    _shared = sorted(set(_curve) & set(aggv["by_rule"]["noisy_or"]["recall"]), key=int)
+    _same = [k for k in _shared
+             if abs(_curve[k] - aggv["by_rule"]["noisy_or"]["recall"][k]) < 5e-5]
+    n["aggval.checkbudgets"] = len(_shared)
+    n["aggval.checkagree"] = len(_same)
+    n["aggval.checkworst"] = round(max(
+        abs(_curve[k] - aggv["by_rule"]["noisy_or"]["recall"][k]) for k in _shared), 4)
     n["aggval.deployedrecallfive"] = aggv["by_rule"]["noisy_or"]["recall"]["5"]
     n["aggval.deployedrecallthirty"] = aggv["by_rule"]["noisy_or"]["recall"]["30"]
 
