@@ -59,6 +59,11 @@ METATOX = ROOT / "results/metatox_smirks_preds.json"
 # does and would have made every contrast here meaningless.
 DEPLOYED_COMPARISON = ROOT / "results/widepools_k30/all.json"
 DEPLOYED_FULLTEST = ROOT / "results/widepools_k30_fulltest"
+# The exhaustive arm on the whole evaluated test set. It existed only on the comparison set, so
+# the one ordering result this work still claims had never been read off the population nobody
+# selected; these pools are that population.
+EXHAUSTIVE_COMPARISON = ROOT / "results/widepools_implicit"
+EXHAUSTIVE_FULLTEST = ROOT / "results/widepools_fulltest"
 WHOLE_TEST = {"sygma": ROOT / "results/sygma_fulltest_predictions.json",
               "metapredictor": ROOT / "artifacts/tier2_1170/metapredictor_preds.json"}
 
@@ -95,6 +100,26 @@ def main() -> int:
         print(f"FAIL: {disagree} substrates are scored differently by the two builds of the "
               f"deployed arm; they are not the same configuration", file=sys.stderr)
         return 1
+    # The exhaustive arm, assembled the same way and gated the same way: where the two builds
+    # cover a substrate in common they must agree candidate for candidate, or they are not one
+    # configuration and neither population can be read.
+    exhaustive_rows, exh_disagree = {}, 0
+    for pattern in (EXHAUSTIVE_COMPARISON / "w*.json", EXHAUSTIVE_FULLTEST / "w*.json"):
+        for f in sorted(glob.glob(str(pattern))):
+            for sub, pool in json.loads(Path(f).read_text())["pools"].items():
+                if sub in exhaustive_rows:
+                    a = [(c["smiles"], round(c["generator"], 9), round(c["filter"], 9))
+                         for c in exhaustive_rows[sub]]
+                    b = [(c["smiles"], round(c["generator"], 9), round(c["filter"], 9))
+                         for c in pool]
+                    if a != b:
+                        exh_disagree += 1
+                exhaustive_rows[sub] = pool
+    if exh_disagree:
+        print(f"FAIL: {exh_disagree} substrates are scored differently by the two builds of the "
+              f"exhaustive arm; they are not the same configuration", file=sys.stderr)
+        return 1
+
     others = {name: json.loads(path.read_text()) for name, path in WHOLE_TEST.items()
               if path.exists()}
 
@@ -146,10 +171,10 @@ def main() -> int:
             "n_in": int(n_a), "n_out": int(len(b))}
 
     # --- the same contrast on the population nobody selected ---
-    def deployed_order(subset):
+    def order_from(rows, subset):
         out = {}
         for s in subset:
-            cands = deployed_rows.get(s) or []
+            cands = rows.get(s) or []
             keep = sorted(cands, key=lambda c: -c["generator"])[:CAP]
             parent = tautkey(s)
             seen, ranked = set(), []
@@ -162,6 +187,12 @@ def main() -> int:
                 ranked.append(k)
             out[s] = ranked
         return out
+
+    def deployed_order(subset):
+        return order_from(deployed_rows, subset)
+
+    def exhaustive_order(subset):
+        return order_from(exhaustive_rows, subset)
 
     def comparator_order(preds, subset):
         return {s: [k for k in _dedup(preds.get(s, []), CAP + 5) if k and k != tautkey(s)]
@@ -188,23 +219,42 @@ def main() -> int:
         def hits(order, k):
             return np.array([len(set(order[s][:k]) & real[s]) for s in subset], dtype=float)
 
+        # Both arms, where both cover the population. The exhaustive one carries the ordering
+        # result this work claims, so reading it off the population nobody selected is the whole
+        # point of this section.
+        arms = {"deployed": ours}
+        exh_covered = [s for s in subset if s in exhaustive_rows]
+        if len(exh_covered) == len(subset):
+            arms["exhaustive"] = exhaustive_order(subset)
+        else:
+            print(f"the exhaustive arm covers {len(exh_covered)} of {len(subset)} substrates of "
+                  f"{pop_label}; its row is omitted rather than computed on a subset",
+                  file=sys.stderr)
+
         row = {"n_substrates": len(subset), "n_references": int(U.sum()),
+               "arms_present": sorted(arms),
                "grail_deployed_recall": {str(k): round(float(hits(ours, k).sum() / U.sum()), 4)
                                          for k in KS}}
+        if "exhaustive" in arms:
+            row["grail_exhaustive_recall"] = {
+                str(k): round(float(hits(arms["exhaustive"], k).sum() / U.sum()), 4) for k in KS}
         for name, preds in others.items():
             theirs = comparator_order(preds, subset)
             cell = {"recall": {str(k): round(float(hits(theirs, k).sum() / U.sum()), 4)
                                for k in KS},
                     "substrates_with_no_prediction":
                         int(sum(1 for s in subset if not theirs[s]))}
-            for k in KS:
-                d = hits(ours, k) - hits(theirs, k)
-                bt = d[idx].sum(axis=1) / denom
-                lo, hi = float(np.quantile(bt, .025)), float(np.quantile(bt, .975))
-                cell.setdefault("deployed_minus_comparator", {})[str(k)] = {
-                    "difference": round(float(d.sum() / U.sum()), 4),
-                    "ci95": [round(lo, 4), round(hi, 4)],
-                    "excludes_zero": bool(lo > 0 or hi < 0)}
+            for arm_name, arm in arms.items():
+                key = ("deployed_minus_comparator" if arm_name == "deployed"
+                       else "exhaustive_minus_comparator")
+                for k in KS:
+                    d = hits(arm, k) - hits(theirs, k)
+                    bt = d[idx].sum(axis=1) / denom
+                    lo, hi = float(np.quantile(bt, .025)), float(np.quantile(bt, .975))
+                    cell.setdefault(key, {})[str(k)] = {
+                        "difference": round(float(d.sum() / U.sum()), 4),
+                        "ci95": [round(lo, 4), round(hi, 4)],
+                        "excludes_zero": bool(lo > 0 or hi < 0)}
             row[name] = cell
         contrasts[pop_label] = row
 
