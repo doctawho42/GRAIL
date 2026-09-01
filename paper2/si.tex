@@ -353,7 +353,6 @@ $[\numMatchedTrainedmetatoxLo, \numMatchedTrainedmetatoxHi]$, which is the same 
 text reports at fixed budgets and is not an artefact of either.
 
 \section{The comparison under the other aggregation}
-\label{sec:si-aggregation}
 \label{sec:si-macro}
 
 Every figure in the main text's comparison is micro, the ratio of sums. Macro, the mean of
@@ -866,6 +865,7 @@ template mined from a corpus can supply a type absent from it. The two statement
 compatible and only the first was measured; the manuscript claims only the first.
 
 \section{Two parameters of the ranking, swept}
+\label{sec:si-aggregation}
 \label{sec:si-knobs}
 
 Two settings of the ranking are at a default that no measurement here chose, and this work's own
@@ -1476,7 +1476,10 @@ manuscript's Limitations.
 BioTransformer is pinned by digest rather than by version string, because ``3.0'' names several
 builds: jar \texttt{c70cad91}, 115{,}415{,}197 bytes, upstream commit \texttt{6432cf88} of
 2023-05-25, its \numBtTemplates{} templates loaded at freeze time rather than taken from a
-constant.
+constant. That count is every template the jar loads across all its rule databases and is not the
+one Section~\ref{sec:si-bank} partitions on: the core rule file this repository reads holds
+\numThirdpartyBiotransformerRead{} of them, and \numThirdpartyBiotransformerShipped{} of those
+are in this bank character for character.
 
 It carries a column. Supplying no ranked predictions would not have excluded it, since that
 does not separate it from MetaPredictor, whose list is also unranked and shorter than the budget on
