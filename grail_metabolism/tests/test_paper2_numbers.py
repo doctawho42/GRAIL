@@ -120,6 +120,37 @@ def test_every_registered_prediction_is_accounted_for_in_the_paper():
     assert "absent from the text" not in r.stdout, r.stdout
 
 
+def test_the_manuscript_describes_every_section_of_its_supporting_information():
+    """The contents list is what a reader uses to find an argument, and it went stale silently.
+
+    ACS requires the manuscript to say what the supporting information contains. Three sections
+    were absent from that list, one of which the body twice sends the reader to, because a section
+    can be added to the supporting information without anything noticing. A section whose title
+    words are largely absent from the list is not described by it.
+    """
+    import re
+    from pathlib import Path
+
+    si = Path("paper2/si.tex").read_text()
+    body = Path("paper2/body.tex").read_text()
+    block = re.search(r"\\begin\{suppinfo\}(.*?)\\end\{suppinfo\}", body, re.S)
+    assert block, "the manuscript has no suppinfo block"
+    # Compare on word stems, so a section called Comparators is matched by "comparator versions".
+    listing = {w[:6] for w in re.findall(r"[a-z]{4,}", block.group(1).lower())}
+
+    undescribed = []
+    for title in re.findall(r"\\section\{([^}]*)\}", si):
+        stems = {w[:6] for w in re.findall(r"[a-z]{4,}", title.lower())}
+        if not stems:
+            continue
+        hit = len(stems & listing)
+        if hit < max(1, len(stems) // 2):
+            undescribed.append(f"{title!r} ({hit} of {len(stems)} words in the list)")
+    assert not undescribed, (
+        "these supporting-information sections are not described in the manuscript's contents "
+        "list: " + "; ".join(undescribed))
+
+
 def test_no_tracked_file_is_the_size_of_a_candidate_pool():
     """results/ is gitignored in full, so every pinned artifact is force-added by name.
 
