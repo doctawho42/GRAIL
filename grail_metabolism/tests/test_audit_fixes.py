@@ -1172,6 +1172,37 @@ def test_the_checkpoint_summary_is_computed_in_the_mode_that_computes_everything
         "stage is 'both': " + line.group(1))
 
 
+def test_the_hyperparameter_table_names_the_runs_the_repository_ships():
+    """The table said which runs the released checkpoints come from, and nothing checked it.
+
+    The runs were a constant in the producer and the release was whatever git happened to track.
+    They disagreed for a week: the constant named one run for both stages while the tree tracked a
+    generator from one and a filter from another, the artifact the comparison table is read from
+    matched the tree, and the supporting information printed the constant. Two sources of truth
+    about the same fact, and the reader was shown the wrong one.
+    """
+    import json
+    import sys
+    from pathlib import Path
+
+    sys.path.insert(0, "scripts")
+    sys.path.insert(0, "scripts/typed_edit")
+    from pool_checkpoints import deployed_runs
+
+    released = deployed_runs()
+    assert set(released) == {"generator", "filter"}, (
+        "the repository does not track exactly one generator and one filter checkpoint, so what "
+        f"it releases is not determined: {released}")
+
+    described = json.loads(Path("results/hyperparameters.json").read_text()).get("runs", {})
+    assert described, "the hyperparameter artifact records no runs"
+    for stage, run in released.items():
+        named = str(described.get(stage, "")).replace("artifacts/", "")
+        assert named == run, (
+            f"the {stage} the paper describes comes from {named!r} and the one the repository "
+            f"ships comes from {run!r}")
+
+
 def test_every_producer_partitions_the_bank_on_the_same_mined_file():
     """Two cuts of the mined half exist and the counts diverge by ten templates.
 
