@@ -759,7 +759,12 @@ conditional one, because their substrate is either affected or it is not.
 
 Section~\ref{MS-sec:results} measures that most uncovered references need a transformation type the
 bank does not hold, and the manuscript states that the shortfall is a property of the corpus. Those
-are two propositions. The bank is mined from the training split and a template survives only if it
+are two propositions. Both are counted over types, and typing is not byte-reproducible for the
+reason Section~\ref{sec:si-oracle} gives: the maximum common substructure search runs under a
+wall-clock timeout and a cancelled search is untypeable, so repeated runs differ in a small number
+of typings. The share this section reports is stable to four decimals across the four coarsenings
+it is varied over, which is a wider perturbation than that instability, but the counts here should
+be read with the same tolerance. The bank is mined from the training split and a template survives only if it
 regenerates its own product and passes a selectivity filter, so a type can sit in the training
 annotation and never reach the bank; a shortfall of that kind is the miner's.
 
