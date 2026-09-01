@@ -333,6 +333,13 @@ def build():
     ebc = art("error_by_chemistry.json")
     n["chem.references"] = ebc["population"]["references_classified"]
     n["chem.classes"] = len(ebc["classes"])
+    # The four classical classes the main text says the arm trails on, and how many references
+    # they carry between them. The sentence is a direction and not a measurement, and the count
+    # is what tells a reader which.
+    n["chem.smallrowsrefs"] = sum(
+        ebc["classes"][c]["references"]
+        for c in ("demethylation", "sulfation", "methylation", "acetylation")
+        if c in ebc["classes"])
     n["chem.unresolved"] = ebc["population"]["references_whose_structure_could_not_be_recovered"]
     _diol = ebc["classes"].get("oxidation, two oxygens added", {})
     n["chem.diol.refs"] = _diol.get("references")
