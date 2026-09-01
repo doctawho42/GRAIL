@@ -42,6 +42,35 @@ for _p in (str(ROOT), str(ROOT / "scripts"), str(HERE)):
 
 from _provenance import stamp  # noqa: E402
 
+# The mined half of the bank, the v2 cut every other producer partitions on. A template mined
+# from an annotated pair had its reaction centre located by the same routine this analysis uses
+# to derive the reference centre, so the two are not independent for those; a curated template
+# was written by hand and they are.
+_MINED_FILE = ROOT / "grail_metabolism/resources/mined_only_v2.txt"
+_ORIGIN = None
+
+
+def provenance_of(rule) -> str:
+    """"mined" or "curated" for one template, by membership in the mined cut.
+
+    The generator reports a template by its index in the bank, not by its SMIRKS, so the index is
+    resolved through the bank before membership is tested. Testing the index against a file of
+    SMIRKS strings matches nothing and reports every template as curated, which is what the first
+    run of this did: 327 of 327 curated, against a bank that is three-quarters mined.
+    """
+    global _ORIGIN
+    if _ORIGIN is None:
+        from grail_metabolism.utils.preparation import load_default_rules
+
+        mined = ({line.strip() for line in _MINED_FILE.read_text().splitlines() if line.strip()}
+                 if _MINED_FILE.exists() else set())
+        _ORIGIN = ["mined" if str(r).strip() in mined else "curated"
+                   for r in load_default_rules()]
+    try:
+        return _ORIGIN[int(rule)]
+    except (ValueError, TypeError, IndexError):
+        return "unresolved"
+
 NULL_DRAWS = 200
 
 
@@ -141,6 +170,11 @@ def main() -> int:
             continue
         seen, rows = set(), []
         for smiles, _score, _rule, sites in det:
+            # Which template fired, kept so the agreement can be split by where the template came
+            # from. For a mined template the firing atoms and the reference centre are two
+            # applications of one maximum-common-substructure routine to one pair, so agreement
+            # there is partly a self-consistency check; for a curated template the two are
+            # independent and the number tests the claim.
             key = _key(smiles)
             if not key or key in seen or key not in wanted:
                 continue
@@ -163,7 +197,11 @@ def main() -> int:
             inside = fired <= centre
             tally["centre_hit"] += hit
             tally["fired_inside_centre"] += inside
+            origin = provenance_of(_rule)
+            tally[f"scored_{origin}"] += 1
+            tally[f"centre_hit_{origin}"] += hit
             rows.append({"key": key, "n_atoms": sub_mol.GetNumAtoms(),
+                         "rule": _rule, "template_origin": origin,
                          "fired": sorted(fired), "centre": sorted(centre),
                          "intersects": hit, "contained": inside})
         if rows:
@@ -224,6 +262,18 @@ def main() -> int:
             tally["centre_hit"] / scored, 4),
         "share_of_scored_where_the_reported_site_lies_wholly_inside_it": round(
             tally["fired_inside_centre"] / scored, 4),
+        # Split by where the template came from. The mined figure is close to a self-consistency
+        # check, because the firing atoms and the reference centre are two applications of one
+        # routine to one pair; the curated figure is the one that tests the claim.
+        "by_template_origin": {
+            origin: {
+                "scored": tally[f"scored_{origin}"],
+                "centre_hit": tally[f"centre_hit_{origin}"],
+                "share": (round(tally[f"centre_hit_{origin}"] / tally[f"scored_{origin}"], 4)
+                          if tally[f"scored_{origin}"] else None),
+                "independent_of_the_instrument": origin == "curated",
+            }
+            for origin in ("curated", "mined", "unresolved")},
         "null": {
             "draws_per_match": NULL_DRAWS,
             "seed": 0,
@@ -249,6 +299,13 @@ def main() -> int:
     }
     Path(args.out).write_text(json.dumps(report, indent=1))
     print(f"\nmatched {tally['matched']} references, scored {tally['scored']}")
+    for origin in ("curated", "mined", "unresolved"):
+        n_o = tally[f"scored_{origin}"]
+        if n_o:
+            print(f"  {origin:8s}: {tally[f'centre_hit_{origin}']}/{n_o} "
+                  f"({tally[f'centre_hit_{origin}'] / n_o:.1%})"
+                  + ("" if origin == "curated" else
+                     "   <- shares its routine with the reference centre"))
     print(f"  site touches the inferred centre : "
           f"{report['share_of_scored_where_the_reported_site_touches_the_centre']:.4f}")
     print(f"  site lies wholly inside it       : "

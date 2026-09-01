@@ -240,6 +240,13 @@ def build():
     # more often than a fragment clustered in one place, so the caution the manuscript printed
     # about this had the sign the wrong way round.
     n["site.connectednull"] = sag["connected_null"]["share_touching_the_centre"]
+    # Split by where the template came from. For a mined template the firing atoms and the
+    # reference centre come from one routine applied to one pair, so agreement there is partly
+    # guaranteed; the curated figure is the one that tests the claim independently.
+    for origin in ("curated", "mined"):
+        cell = sag["by_template_origin"][origin]
+        n[f"site.{origin}"] = cell["share"]
+        n[f"site.{origin}scored"] = cell["scored"]
     n["site.connectedmargin"] = sag["connected_null"]["observed_minus_null"]
 
     # what the rule budget buys on validation, so the deployed value is a chosen point

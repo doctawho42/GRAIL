@@ -908,7 +908,12 @@ actually differ from the substrate in \numSiteTouchingPct{}, against \numSiteCon
 for a connected fragment of the same size grown at random from the same molecule, and lies wholly
 inside the change in \numSiteInsidePct{} (Section~\ref{SI-sec:si-site}). An agreement rate near
 nine in ten is not the size of the effect; the margin over that null is, and it is
-\numSiteConnectedmargin{}. The whole output is ranked, whereas the incumbent ranks part of
+\numSiteConnectedmargin{}. The reference centre is derived by the same routine that located the
+reaction centre when a template was mined, so for a mined template the two are not independent
+and the agreement is partly a self-consistency check. Split by where the template came from, the
+\numSiteCuratedscored{} matches carried by a hand-written template, for which the two are
+independent, agree at \numSiteCuratedPct{} against \numSiteMinedPct{} for the mined ones: the
+claim does not rest on the templates whose provenance would guarantee it. The whole output is ranked, whereas the incumbent ranks part of
 its output and leaves the remainder in file order. And every evaluation choice is declared with
 every cell of the resulting grid reported, which is what makes the comparison independently
 reproducible.
