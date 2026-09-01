@@ -656,9 +656,18 @@ reading leaves undecided.
 
 \subsection{Group ranking, and two mechanisms that failed}
 
-Candidate metabolites of one substrate fall into groups of the same molecular formula, and an
-ordering that knew which group contained a reference would gain $+\numOracleHeadroomdeployed$ $[+\numOracleHeadroomdeployedlo, +\numOracleHeadroomdeployedhi]$ on the deployed configuration, and $+\numOracleHeadroom$ on the uncapped pool the measurement was first made on, over the
-ordering it is measured against. Two ways of using that signal were registered and both failed.
+Candidate metabolites of one substrate fall into groups, and an ordering that knew which group
+contained a reference would gain over the ordering it is measured against. How much depends
+entirely on how the groups are drawn, and most of it is not information. Grouping by molecular
+formula gains $+\numOracleHeadroomdeployed$
+$[+\numOracleHeadroomdeployedlo, +\numOracleHeadroomdeployedhi]$ on the deployed configuration,
+but a random partition with the same group sizes on every substrate gains
+$+\numOracleHeadroomrandom$, and against that control the formula grouping is worth
+$\numOracleFormulavsrandom$ $[\numOracleFormulavsrandomlo, +\numOracleFormulavsrandomhi]$, an
+interval covering zero: the gain is granularity and not chemistry. Grouping by transformation type
+gains $+\numOracleHeadroomtype$ and beats the matched control by $+\numOracleTypevsrandom$
+$[+\numOracleTypevsrandomlo, +\numOracleTypevsrandomhi]$, which is the headroom that survives a
+control and the only one worth chasing (Section~\ref{SI-sec:si-oracle}). Two ways of using that signal were registered and both failed.
 Emitting whole groups as blocks, scored by a listwise model, cost $\numHEightDiff$ against a
 registered gain of $+\numHEightThreshold$ (P6); using the group signal as a gate before the
 fusion cost $\numHOneFourDiff$ against $+\numHOneFourThreshold$ (P7). The second failure is
@@ -1005,8 +1014,10 @@ predictions clear the falsification condition as written, which compares a point
 threshold, and not the stricter reading that asks the whole interval to clear it: P1, P2 and P5
 each have their threshold inside their own interval, so what the data establish for those three is
 that the effect exceeds zero and not that it exceeds the registered bar. P3's threshold is in any
-case a property of the budget requested rather than of the system. The group-ranking headroom is
-real and unreached by both registered compositions, for structural reasons.
+case a property of the budget requested rather than of the system. The group-ranking headroom is smaller than the
+uncontrolled figure suggests: over a partition of matched granularity, only the transformation-type
+grouping carries anything, and what it carries is unreached by both registered compositions, for
+structural reasons.
 
 Two of the reported quantities are bounded by things outside the system. Precision is bounded by
 how completely the corpus annotates, so every precision figure here is a lower bound of unknown
@@ -1022,8 +1033,10 @@ this corpus is assembled from, which favours it, and that is not corrected.
 
 The deployed configuration is not the best one this work knows of. The rule that combines the
 templates reaching a candidate treats them as independent evidence, and this bank does not satisfy
-that; a blend that discounts duplication beats the deployed rule on the validation draw at every
-budget from one to \numAggvalHybridwinsmax{}, with the interval excluding zero
+that; a blend that discounts duplication, weighting the largest single template's probability
+\numAggregationBlendmax{} against \numAggregationBlendor{} for the noisy-or of all of them
+(Equation~\ref{SI-eq:blend}), beats the deployed rule on the validation draw at every budget from
+one to \numAggvalHybridwinsmax{}, with the interval excluding zero
 (Section~\ref{SI-sec:si-aggregation}), which includes the budget the headline here is read at.
 Every number in this paper is measured under the deployed rule, so the release keeps it and the
 better setting is reported rather than substituted; a reader deploying this system should know

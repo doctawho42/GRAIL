@@ -207,6 +207,9 @@ def si_hyperparameters():
     weights, so the table cannot drift from the checkpoints it describes.
     """
     d = art("hyperparameters.json")
+    # The run each checkpoint came from, read from the artifact rather than described. Both are
+    # one run; the caption used to say they were two.
+    runs = d.get("runs", {})
     gen, fil = d["components"]["generator"], d["components"]["filter"]
     keys = [k for k in gen if k != "run"] + [k for k in fil if k != "run" and k not in gen]
 
@@ -232,8 +235,11 @@ def si_hyperparameters():
               f"sampling seed & \\multicolumn{{2}}{{l}}{{{d['data']['sampling seed']}}} \\\\",
               "\\bottomrule", "\\end{tabular}",
               "\\caption{The settings the two released checkpoints were trained under, read from "
-              "the configuration each run recorded beside its weights. The two components come "
-              "from different runs, named in the text.}",
+              "the configuration each run recorded beside its weights. Both come from one run, "
+              f"\\texttt{{{runs.get('generator', '').replace('artifacts/', '').replace('_', chr(92) + '_')}}}, "
+              "which is established by reproduction rather than by recollection "
+              "(Section~\\ref{sec:si-prov}); the two columns differ because the two stages were "
+              "configured differently within it.}",
               "\\label{tab:si-hyperparameters}", "\\end{table}", ""]
     return "\n".join(lines)
 

@@ -9,6 +9,7 @@ not in this file may not appear in the paper.
 from __future__ import annotations
 
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -472,6 +473,28 @@ def build():
     # The aggregation rule, swept. The manuscript named the violated independence assumption and
     # left it, on the ground that the released pools carry the aggregate and not its parts.
     agg = art("aggregation_ablation.json")
+    # The blend's weights, read from the implementation rather than typed, because the paper now
+    # prints the rule as an equation and recommends it to a deployer.
+    import importlib.util as _ilu
+    _spec = _ilu.spec_from_file_location(
+        "_aggmod", ROOT / "scripts" / "typed_edit" / "aggregation_ablation.py")
+    try:
+        import inspect as _inspect
+        _src = (ROOT / "scripts/typed_edit/aggregation_ablation.py").read_text()
+        _m = re.search(r"return float\((0?\.\d+) \* float\(arr\.max\(\)\) \+ (0?\.\d+) \* noisy_or\)", _src)
+        if _m:
+            n["aggregation.blendmax"] = float(_m.group(1))
+            n["aggregation.blendor"] = float(_m.group(2))
+    except Exception:
+        pass
+    # The blend's weights, read out of the implementation rather than typed, because the paper
+    # now prints the rule as an equation and the Limitations recommend it to a deployer.
+    _src = (ROOT / "scripts/typed_edit/aggregation_ablation.py").read_text()
+    _m = re.search(r"return float\((0?\.\d+) \* float\(arr\.max\(\)\) \+ (0?\.\d+) \* noisy_or\)",
+                   _src)
+    if _m:
+        n["aggregation.blendmax"] = float(_m.group(1))
+        n["aggregation.blendor"] = float(_m.group(2))
     n["aggregation.joined"] = agg["join"]["candidates_scored_by_both"]
     n["aggregation.unjoined"] = agg["join"]["candidates_the_pool_does_not_carry"]
     for rule in ("max", "mean", "hybrid"):
@@ -849,6 +872,19 @@ def build():
     n["oracle.headroomdeployed"] = _dep["gap"]
     n["oracle.headroomdeployedlo"] = _dep["ci95"][0]
     n["oracle.headroomdeployedhi"] = _dep["ci95"][1]
+    # The same oracle against a partition with the group sizes matched, which is the control that
+    # says whether the grouping carries anything beyond its granularity. Formula does not; the
+    # transformation type does, and that contrast is the headroom that survives.
+    _og = art("oracle_by_grouping.json")
+    n["oracle.headroomrandom"] = _og["headroom_over_fusion"]["random_matched"]["gap"]
+    n["oracle.headroomtype"] = _og["headroom_over_fusion"]["type"]["gap"]
+    for tag, key in (("formulavsrandom", "formula-random_matched"),
+                     ("typevsrandom", "type-random_matched")):
+        _c = _og["contrasts_between_arms"][key]
+        n[f"oracle.{tag}"] = _c["gap"]
+        n[f"oracle.{tag}lo"] = _c["ci95"][0]
+        n[f"oracle.{tag}hi"] = _c["ci95"][1]
+        n[f"oracle.{tag}sep"] = _c["excludes_zero"]
     n["h8.blocked"] = 0.4376
     n["h8.interleaved"] = 0.5023
     n["h12.ceilingrecall"] = h12["recall_micro"]["15"]["oracle_third"]

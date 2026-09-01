@@ -904,8 +904,14 @@ violation predicts. At a budget of one it gains $+\numAggregationMaxOne$
 $[+\numAggregationMaxOneLo, +\numAggregationMaxOneHi]$, an interval excluding zero; from a budget
 of eight upward every interval covers zero, including
 $\numAggregationMaxThreeZero$ $[\numAggregationMaxThreeZeroLo,
-+\numAggregationMaxThreeZeroHi]$ at thirty. The blend of the two the implementation also offers
-gains at every budget through ten, by as much as $+\numAggregationHybridThree$
++\numAggregationMaxThreeZeroHi]$ at thirty. The implementation also offers a blend of the two,
+\begin{equation}
+  p_c^{\mathrm{blend}} = \numAggregationBlendmax{}\,\max_{r \in R(c)} p_r
+  + \numAggregationBlendor{}\Bigl(1 - \prod_{r \in R(c)}(1 - p_r)\Bigr),
+  \label{eq:blend}
+\end{equation}
+with $R(c)$ and $p_r$ as in Equation~\ref{MS-eq:noisyor} and the two weights fixed in the
+implementation rather than fitted here. It gains at every budget through ten, by as much as $+\numAggregationHybridThree$
 $[+\numAggregationHybridThreeLo, +\numAggregationHybridThreeHi]$, and is indistinguishable from
 the deployed rule at every wider one. The mean is the one rule that is worse at the wide budgets,
 by $\numAggregationMeanThreeZero$ $[\numAggregationMeanThreeZeroLo,
@@ -1163,6 +1169,7 @@ not hold; the three of those are P6, P7 and P8 and they are in Table~\ref{MS-tab
 values.
 
 \section{Group ranking and its oracle}
+\label{sec:si-oracle}
 
 \input{si_table_oracle}
 
@@ -1564,9 +1571,9 @@ something nobody ran.
 The guarantee that matters is narrower than the pinned set and is checked by a gate rather than
 asserted. The numbers in this paper come from \numProvSources{} of those artifacts, established
 by running the number generator with its artifact reader instrumented, so the count is of files
-actually opened and not of matches in the source. Of the \numProvSources{},
-\numProvSourcesunpinnedWord{} are unpinned and \numProvSourcesunverifiableWord{} carry a producer the
-sweep cannot identify. Of the rest, \numProvSourcesinferredWord{} predate stamping and are verified by
+actually opened and not of matches in the source. Of the \numProvSources{}, the sweep finds
+\numProvSourcesunpinnedWord{} unpinned and \numProvSourcesunverifiableWord{} whose producer it
+cannot identify. Of the rest, \numProvSourcesinferredWord{} predate stamping and are verified by
 recovering their producer's source from the history rather than from a recorded digest, which the
 sweep labels as inferred; that is a weaker check and is counted separately for that reason.
 A further \numProvSourcesexemptWord{} are exempt with a stated reason, each an output of the checking
@@ -1636,16 +1643,19 @@ fails the build rather than compiling silently. A hand-typed pointer cannot: nin
 were wrong at once when the tables were reordered, one badly enough to direct a search to the
 wrong table, which is why none is permitted.
 
-One file in the repository holds source structures rather than keys, and that is a choice this
-work's own contribution forces. The evaluated test substrates and their annotated metabolites are
-released as SMILES so that every recall figure can be recomputed; keying them the way the deposit
-is keyed would fix the matching criterion at that key, and canonical SMILES equality, the
-stereochemistry-blind first block and Tanimoto similarity all need the reference structure, so four
-of the \numCritCriteria{} criteria would become uncomputable and the sweep this paper is largely
-about could not be reproduced by anyone. The choice is between releasing those structures and
-releasing a comparison that can be re-derived under one criterion only. The corpus's four sources
-carry terms that do not combine, so the choice is stated here rather than settled by the file's
-existence.
+One file in the repository holds source structures rather than keys: the evaluated test
+substrates, released as SMILES because reproducing the comparison means running a predictor on
+one. Their annotated metabolites are not released that way. A single key would have fixed the
+matching criterion at that key, since canonical equality, the stereochemistry-blind first block
+and Tanimoto similarity each need the reference structure, and the sweep this paper is largely
+about could then be reproduced under one criterion only. What is released instead is the set of
+descriptors those criteria are decided by, one per reference, which is enough for all
+\numCritCriteria{} of them and is not the structure
+(Section~\ref{sec:si-corpus}). \texttt{reproduce\_from\_descriptors.py} rebuilds the whole
+comparison from them under every criterion, reading no corpus structure at any point, and its
+default-criterion column matches the one the manuscript prints at every budget. The substrates are
+the residue of the problem and the choice to ship them is stated here rather than settled by the
+file's existence.
 
 The train and validation candidate pools are deposited at \ZenodoDoi{}. Every substrate and
 every annotated metabolite in them is replaced by its tautomer-canonical InChIKey before the
