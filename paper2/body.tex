@@ -395,13 +395,17 @@ and the reading depends on it: \numSygmaInside{} of SyGMa's \numSygmaRules{} pub
 present in this bank verbatim, so what separates at those budgets is an ordering over chemistry
 the two systems largely share. Neither side separates at $k=8$ and
 $10$, where MetaPredictor leads, nor at $k=15$ and $20$. GRAIL's exhaustive mode leads every
-comparator with the interval excluding zero at $k=30$ and $k=50$. BioTransformer trails at every
-budget, and it is the arm a reader of the rule bank should look at hardest, because it supplies
+comparator with the interval excluding zero at $k=30$ and $k=50$. BioTransformer trails the exhaustive
+arm with the interval excluding zero from $k=8$ upward and is indistinguishable from it below
+that; it is not the lowest arm at the tight budgets, where MetaTox is. It is the arm a reader of
+the rule bank should look at hardest, because it supplies
 \numThirdpartyBiotransformerShipped{} of this bank's templates. Cut to its own list length the
 exhaustive arm's lead over it is $+\numBtarmMatchedgap$ $[\numBtarmMatchedlo,
 +\numBtarmMatchedhi]$, an interval covering zero: what separates the two at a wide budget is how
-much each emits (Section~\ref{SI-sec:si-comparators}). One of those eight cells should not be
-read as a lead, and it is named here rather than three sections later. The margin over MetaTox at
+much each emits (Section~\ref{SI-sec:si-comparators}). One of those eight cells does not survive a
+family-wise correction over the sweep, and it is named here rather than three sections later; a
+different control removes more: cut to each comparator's own list length, substrate by substrate,
+only the lead over SyGMa survives of the four, and that is reported below. The margin over MetaTox at
 $k=30$ is $+\numMarginMarginalgap$ with the interval
 $[+\numMarginMarginallo, +\numMarginMarginalhi]$: it is the only one a family-wise correction over
 the sweep removes, and its lower bound is smaller than the largest drawing correction measured on
