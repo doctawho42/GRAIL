@@ -83,8 +83,15 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--csv", action="append", default=[],
                     help="label=path, repeatable; the label names the setting in the report")
-    ap.add_argument("--index-map", required=True,
-                    help="JSON of SDF title -> substrate SMILES, as the input was written")
+    ap.add_argument("--index-map", default=None,
+                    help="JSON of SDF title -> substrate SMILES, as the input was written; "
+                         "required only when parsing a CSV")
+    # The predictions this arm was built from are frozen and released, so the arm can be scored
+    # again without the CSV the Java run produced. It has to be: the pools it is scored against
+    # are rebuilt when the released checkpoints change, and a comparator column left on the old
+    # pools while every other column moves is the mixed state this whole exercise removed.
+    ap.add_argument("--predictions", action="append", default=[],
+                    help="label=path to a frozen prediction file written by an earlier run")
     ap.add_argument("--preds-dir", default=str(ROOT / "results"))
     ap.add_argument("--out", default=str(ROOT / "results" / "biotransformer_arm.json"))
     args = ap.parse_args()
@@ -100,7 +107,13 @@ def main() -> int:
     real = {s: set(refs[s]) for s in subs}
     U = np.array([len(real[s]) for s in subs], dtype=float)
     parent = {s: tautkey(s) for s in subs}
-    index_map = json.loads(Path(args.index_map).read_text())
+    index_map = json.loads(Path(args.index_map).read_text()) if args.index_map else {}
+    if args.csv and not index_map:
+        print("--csv needs --index-map to turn SDF titles back into substrates", file=sys.stderr)
+        return 2
+    if not args.csv and not args.predictions:
+        print("nothing to score: give --csv or --predictions", file=sys.stderr)
+        return 2
 
     def drop_parent(keys, s):
         return [k for k in keys if k and k != parent[s]]
@@ -117,6 +130,53 @@ def main() -> int:
                          for s in subs], dtype=float)
 
     settings, written = {}, {}
+
+    def score(label, lists, source, target_rel):
+        """One setting's row, whether the predictions came from a CSV or from a frozen file.
+
+        Both routes go through here so the two cannot drift: the first cut of this duplicated the
+        contrast loop and omitted the length control, and the artifact came out missing a block
+        the printer and the manuscript's macros both read.
+        """
+        row = {"source_csv": source, "predictions": target_rel,
+               "mean_emitted": round(float(np.mean([len(lists[s]) for s in subs])), 1),
+               "substrates_with_no_prediction": int(sum(1 for s in subs if not lists[s])),
+               "recall": {str(k): round(float(hits(lists, k).sum() / U.sum()), 4) for k in KS}}
+        for k in (15, 30, 50):
+            d = hits(ours, k) - hits(lists, k)
+            bt = d[idx].sum(axis=1) / denom
+            lo, hi = float(np.quantile(bt, .025)), float(np.quantile(bt, .975))
+            row[f"exhaustive_minus_biotransformer_at_{k}"] = {
+                "gap": round(float(d.sum() / U.sum()), 4),
+                "ci95": [round(lo, 4), round(hi, 4)],
+                "excludes_zero": bool(lo > 0 or hi < 0)}
+        # The length control every other comparator receives: both arms cut to the number of
+        # candidates BioTransformer returned on that substrate.
+        matched = np.array([len(set(ours[s][:len(lists[s])]) & real[s]) for s in subs],
+                           dtype=float)
+        theirs = hits(lists)
+        d = matched - theirs
+        bt = d[idx].sum(axis=1) / denom
+        lo, hi = float(np.quantile(bt, .025)), float(np.quantile(bt, .975))
+        row["matched_length"] = {
+            "recall_ours": round(float(matched.sum() / U.sum()), 4),
+            "recall_theirs": round(float(theirs.sum() / U.sum()), 4),
+            "gap": round(float(d.sum() / U.sum()), 4), "ci95": [round(lo, 4), round(hi, 4)],
+            "excludes_zero": bool(lo > 0 or hi < 0),
+            "mean_slots": round(float(np.mean([len(lists[s]) for s in subs])), 2)}
+        return row
+
+    for spec in args.predictions:
+        if "=" not in spec:
+            print(f"--predictions wants label=path, got {spec!r}", file=sys.stderr)
+            return 2
+        label, path = spec.split("=", 1)
+        raw = json.loads(Path(path).read_text())
+        lists = {s: drop_parent(_dedup(raw.get(s, []), CAP + 5), s) for s in subs}
+        rel = str(Path(path).resolve().relative_to(ROOT))
+        written[label] = rel
+        settings[label] = score(label, lists, "frozen predictions, not re-parsed", rel)
+
     for spec in args.csv:
         if "=" not in spec:
             print(f"--csv wants label=path, got {spec!r}", file=sys.stderr)
@@ -131,33 +191,7 @@ def main() -> int:
         target.write_text(json.dumps({s: raw.get(s, []) for s in subs}, indent=1))
         written[label] = str(target.relative_to(ROOT))
 
-        row = {"source_csv": Path(path).name,
-               "predictions": written[label],
-               "mean_emitted": round(float(np.mean([len(lists[s]) for s in subs])), 1),
-               "substrates_with_no_prediction": int(sum(1 for s in subs if not lists[s])),
-               "recall": {str(k): round(float(hits(lists, k).sum() / U.sum()), 4) for k in KS}}
-        for k in (15, 30, 50):
-            d = hits(ours, k) - hits(lists, k)
-            bt = d[idx].sum(axis=1) / denom
-            lo, hi = float(np.quantile(bt, .025)), float(np.quantile(bt, .975))
-            row[f"exhaustive_minus_biotransformer_at_{k}"] = {
-                "gap": round(float(d.sum() / U.sum()), 4), "ci95": [round(lo, 4), round(hi, 4)],
-                "excludes_zero": bool(lo > 0 or hi < 0)}
-        # The length control this work applies to every other comparator: both arms cut to the
-        # number of candidates BioTransformer returned on that substrate.
-        matched = np.array([len(set(ours[s][:len(lists[s])]) & real[s]) for s in subs],
-                           dtype=float)
-        theirs = hits(lists)
-        d = matched - theirs
-        bt = d[idx].sum(axis=1) / denom
-        lo, hi = float(np.quantile(bt, .025)), float(np.quantile(bt, .975))
-        row["matched_length"] = {
-            "recall_ours": round(float(matched.sum() / U.sum()), 4),
-            "recall_theirs": round(float(theirs.sum() / U.sum()), 4),
-            "gap": round(float(d.sum() / U.sum()), 4), "ci95": [round(lo, 4), round(hi, 4)],
-            "excludes_zero": bool(lo > 0 or hi < 0),
-            "mean_slots": round(float(np.mean([len(lists[s]) for s in subs])), 2)}
-        settings[label] = row
+        settings[label] = score(label, lists, Path(path).name, written[label])
 
     if not settings:
         print("no --csv given", file=sys.stderr)

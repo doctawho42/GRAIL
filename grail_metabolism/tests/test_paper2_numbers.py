@@ -180,6 +180,47 @@ def test_every_artifact_a_number_comes_from_is_released_or_named_as_the_deposit(
         + ", ".join(missing))
 
 
+def test_no_artifact_a_number_comes_from_is_older_than_the_pools_it_is_read_from():
+    """A producer that fails silently leaves last week's answer sitting where this week's belongs.
+
+    The comparison pools were rebuilt and one comparator's producer was invoked without a
+    required argument, so it exited at once, its output went to /dev/null, and its artifact stayed
+    at the previous week's date. Every other column moved to the new pools and that one did not,
+    which is the mixed state the rebuild existed to remove. Nothing noticed, because an artifact
+    that is stale is still stamped, still pinned, and still parses.
+    """
+    import glob
+    import json
+    import os
+    from pathlib import Path
+
+    pools = sorted(glob.glob("results/widepools_implicit/w*.json"))
+    if not pools:
+        return
+    pool_time = max(os.path.getmtime(f) for f in pools)
+
+    sources = json.loads(Path("results/number_sources.json").read_text())
+    srcs = sources if isinstance(sources, list) else sources.get("artifacts") or list(sources)
+    names = {s if isinstance(s, str) else s.get("artifact") for s in srcs}
+
+    stale = []
+    for name in sorted(n for n in names if n):
+        path = Path(name)
+        if not path.exists():
+            continue
+        try:
+            reads_pools = "widepools_implicit" in Path(
+                json.loads(path.read_text())["provenance"]["script_path"]).read_text()
+        except Exception:
+            continue
+        if reads_pools and os.path.getmtime(path) < pool_time:
+            stale.append(name)
+    assert not stale, (
+        "these artifacts are read from the comparison pools and are older than the pools "
+        "themselves, so they answer a question about a build that no longer exists: "
+        + ", ".join(stale))
+
+
 def test_no_tracked_file_is_the_size_of_a_candidate_pool():
     """results/ is gitignored in full, so every pinned artifact is force-added by name.
 

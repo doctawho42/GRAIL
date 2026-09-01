@@ -3,7 +3,7 @@
   "script": "deployment_table.py",
   "script_path": "scripts/typed_edit/deployment_table.py",
   "source_sha256": "48d8d799d09835364dc42916fc8861672e97757a84a875a6a423f0690d171e48",
-  "git_commit": "5df59f03c2a0a19fb35c3c43a10123f508183d21",
+  "git_commit": "33f72aa1923c32bc9b9723ce0b94a0c53e13a590",
   "git_dirty": true
  },
  "population": {
@@ -17,11 +17,20 @@
   "cap": 100,
   "fusion": "H7 reciprocal rank fusion, k=60",
   "top_k": {
-   "whole bank": null,
+   "whole bank": 7581,
    "trained budget": 30
   },
   "checkpoints": {
-   "whole bank": null,
+   "whole bank": {
+    "generator": {
+     "path": "artifacts/full5000_implicit/checkpoints/generator.pt",
+     "sha256_16": "c694af18b5be9a0e"
+    },
+    "filter": {
+     "path": "artifacts/full5000_implicit/checkpoints/filter.pt",
+     "sha256_16": "651fbb6a9da84ba5"
+    }
+   },
    "trained budget": null
   }
  },
@@ -57,7 +66,7 @@
  "comparators_absent": [],
  "recall_micro": {
   "1": {
-   "whole bank": 0.0902,
+   "whole bank": 0.0992,
    "trained budget": 0.1053,
    "metatox": 0.0406,
    "sygma": 0.1534,
@@ -65,7 +74,7 @@
    "biotransformer": 0.0722
   },
   "3": {
-   "whole bank": 0.2271,
+   "whole bank": 0.2301,
    "trained budget": 0.2406,
    "metatox": 0.1323,
    "sygma": 0.2887,
@@ -73,7 +82,7 @@
    "biotransformer": 0.194
   },
   "5": {
-   "whole bank": 0.3098,
+   "whole bank": 0.3113,
    "trained budget": 0.3203,
    "metatox": 0.218,
    "sygma": 0.3744,
@@ -81,7 +90,7 @@
    "biotransformer": 0.2752
   },
   "8": {
-   "whole bank": 0.415,
+   "whole bank": 0.4165,
    "trained budget": 0.4015,
    "metatox": 0.3113,
    "sygma": 0.4271,
@@ -89,7 +98,7 @@
    "biotransformer": 0.3414
   },
   "10": {
-   "whole bank": 0.4526,
+   "whole bank": 0.4556,
    "trained budget": 0.4331,
    "metatox": 0.388,
    "sygma": 0.4556,
@@ -105,7 +114,7 @@
    "biotransformer": 0.4286
   },
   "20": {
-   "whole bank": 0.5789,
+   "whole bank": 0.5865,
    "trained budget": 0.4872,
    "metatox": 0.5519,
    "sygma": 0.4992,
@@ -113,7 +122,7 @@
    "biotransformer": 0.4421
   },
   "30": {
-   "whole bank": 0.6391,
+   "whole bank": 0.6526,
    "trained budget": 0.4902,
    "metatox": 0.6015,
    "sygma": 0.5068,
@@ -121,7 +130,7 @@
    "biotransformer": 0.4466
   },
   "50": {
-   "whole bank": 0.7038,
+   "whole bank": 0.7023,
    "trained budget": 0.4902,
    "metatox": 0.6271,
    "sygma": 0.5113,
@@ -132,49 +141,49 @@
  "contrasts": {
   "1": {
    "trained budget - whole bank": {
-    "gap": 0.015,
+    "gap": 0.006,
     "ci95": [
-     -0.0074,
-     0.0382
+     -0.0132,
+     0.0253
     ],
     "excludes_zero": false,
-    "p_bootstrap": 0.21198
+    "p_bootstrap": 0.60674
    },
    "whole bank - metatox": {
-    "gap": 0.0496,
+    "gap": 0.0586,
     "ci95": [
-     0.0262,
-     0.0743
+     0.0334,
+     0.0854
     ],
     "excludes_zero": true,
     "p_bootstrap": 0.0002
    },
    "whole bank - sygma": {
-    "gap": -0.0632,
+    "gap": -0.0541,
     "ci95": [
-     -0.093,
-     -0.0344
+     -0.0849,
+     -0.0248
     ],
     "excludes_zero": true,
-    "p_bootstrap": 0.0002
+    "p_bootstrap": 0.0006
    },
    "whole bank - metapredictor": {
-    "gap": -0.0496,
+    "gap": -0.0406,
     "ci95": [
-     -0.0783,
-     -0.0228
+     -0.0689,
+     -0.0126
     ],
     "excludes_zero": true,
-    "p_bootstrap": 0.0004
+    "p_bootstrap": 0.0042
    },
    "whole bank - biotransformer": {
-    "gap": 0.018,
+    "gap": 0.0271,
     "ci95": [
-     -0.0074,
-     0.0438
+     0.0015,
+     0.0537
     ],
-    "excludes_zero": false,
-    "p_bootstrap": 0.18118
+    "excludes_zero": true,
+    "p_bootstrap": 0.0438
    },
    "trained budget - metatox": {
     "gap": 0.0647,
@@ -215,49 +224,49 @@
   },
   "3": {
    "trained budget - whole bank": {
-    "gap": 0.0135,
+    "gap": 0.0105,
     "ci95": [
-     -0.0163,
-     0.0429
+     -0.0169,
+     0.0385
     ],
     "excludes_zero": false,
-    "p_bootstrap": 0.38776
+    "p_bootstrap": 0.48475
    },
    "whole bank - metatox": {
-    "gap": 0.0947,
+    "gap": 0.0977,
     "ci95": [
-     0.0577,
-     0.1335
+     0.0638,
+     0.1334
     ],
     "excludes_zero": true,
     "p_bootstrap": 0.0002
    },
    "whole bank - sygma": {
-    "gap": -0.0617,
+    "gap": -0.0586,
     "ci95": [
-     -0.0973,
-     -0.0261
+     -0.0948,
+     -0.0234
     ],
     "excludes_zero": true,
-    "p_bootstrap": 0.0004
+    "p_bootstrap": 0.001
    },
    "whole bank - metapredictor": {
-    "gap": -0.0496,
+    "gap": -0.0466,
     "ci95": [
-     -0.0864,
-     -0.0137
+     -0.0829,
+     -0.0112
     ],
     "excludes_zero": true,
-    "p_bootstrap": 0.0086
+    "p_bootstrap": 0.0122
    },
    "whole bank - biotransformer": {
-    "gap": 0.0331,
+    "gap": 0.0361,
     "ci95": [
-     -0.0051,
-     0.0742
+     -0.0017,
+     0.0741
     ],
     "excludes_zero": false,
-    "p_bootstrap": 0.10059
+    "p_bootstrap": 0.06759
    },
    "trained budget - metatox": {
     "gap": 0.1083,
@@ -298,49 +307,49 @@
   },
   "5": {
    "trained budget - whole bank": {
-    "gap": 0.0105,
+    "gap": 0.009,
     "ci95": [
-     -0.0207,
-     0.0408
+     -0.018,
+     0.0362
     ],
     "excludes_zero": false,
-    "p_bootstrap": 0.52815
+    "p_bootstrap": 0.54935
    },
    "whole bank - metatox": {
-    "gap": 0.0917,
+    "gap": 0.0932,
     "ci95": [
-     0.0504,
-     0.1341
+     0.0526,
+     0.1343
     ],
     "excludes_zero": true,
     "p_bootstrap": 0.0002
    },
    "whole bank - sygma": {
-    "gap": -0.0647,
+    "gap": -0.0632,
     "ci95": [
-     -0.1009,
-     -0.0267
+     -0.1,
+     -0.0268
     ],
     "excludes_zero": true,
-    "p_bootstrap": 0.001
+    "p_bootstrap": 0.0012
    },
    "whole bank - metapredictor": {
-    "gap": -0.0451,
+    "gap": -0.0436,
     "ci95": [
-     -0.0889,
-     -0.0031
+     -0.0861,
+     -0.0041
     ],
     "excludes_zero": true,
-    "p_bootstrap": 0.0402
+    "p_bootstrap": 0.0358
    },
    "whole bank - biotransformer": {
-    "gap": 0.0346,
+    "gap": 0.0361,
     "ci95": [
-     -0.0082,
-     0.0804
+     -0.0059,
+     0.0786
     ],
     "excludes_zero": false,
-    "p_bootstrap": 0.12639
+    "p_bootstrap": 0.09539
    },
    "trained budget - metatox": {
     "gap": 0.1023,
@@ -381,46 +390,46 @@
   },
   "8": {
    "trained budget - whole bank": {
-    "gap": -0.0135,
+    "gap": -0.015,
     "ci95": [
-     -0.0446,
-     0.0171
+     -0.044,
+     0.015
     ],
     "excludes_zero": false,
-    "p_bootstrap": 0.42876
+    "p_bootstrap": 0.33297
    },
    "whole bank - metatox": {
-    "gap": 0.1038,
+    "gap": 0.1053,
     "ci95": [
-     0.0619,
-     0.1463
+     0.062,
+     0.1488
     ],
     "excludes_zero": true,
     "p_bootstrap": 0.0002
    },
    "whole bank - sygma": {
-    "gap": -0.012,
+    "gap": -0.0105,
     "ci95": [
-     -0.0496,
-     0.026
+     -0.0508,
+     0.0303
     ],
     "excludes_zero": false,
-    "p_bootstrap": 0.56234
+    "p_bootstrap": 0.63454
    },
    "whole bank - metapredictor": {
-    "gap": -0.0195,
+    "gap": -0.018,
     "ci95": [
-     -0.0636,
-     0.023
+     -0.0642,
+     0.025
     ],
     "excludes_zero": false,
-    "p_bootstrap": 0.39276
+    "p_bootstrap": 0.44396
    },
    "whole bank - biotransformer": {
-    "gap": 0.0737,
+    "gap": 0.0752,
     "ci95": [
-     0.0336,
-     0.1163
+     0.0361,
+     0.1152
     ],
     "excludes_zero": true,
     "p_bootstrap": 0.0002
@@ -464,49 +473,49 @@
   },
   "10": {
    "trained budget - whole bank": {
-    "gap": -0.0195,
+    "gap": -0.0226,
     "ci95": [
-     -0.0498,
-     0.0117
+     -0.0534,
+     0.0089
     ],
     "excludes_zero": false,
-    "p_bootstrap": 0.24458
+    "p_bootstrap": 0.16958
    },
    "whole bank - metatox": {
-    "gap": 0.0647,
+    "gap": 0.0677,
     "ci95": [
-     0.0232,
-     0.1057
+     0.0275,
+     0.1083
     ],
     "excludes_zero": true,
-    "p_bootstrap": 0.002
+    "p_bootstrap": 0.001
    },
    "whole bank - sygma": {
-    "gap": -0.003,
+    "gap": 0.0,
     "ci95": [
-     -0.0413,
-     0.0352
+     -0.0396,
+     0.0401
     ],
     "excludes_zero": false,
-    "p_bootstrap": 0.89611
+    "p_bootstrap": 1.0
    },
    "whole bank - metapredictor": {
-    "gap": -0.018,
+    "gap": -0.015,
     "ci95": [
-     -0.0605,
-     0.0232
+     -0.0596,
+     0.0268
     ],
     "excludes_zero": false,
-    "p_bootstrap": 0.41736
+    "p_bootstrap": 0.52435
    },
    "whole bank - biotransformer": {
-    "gap": 0.0767,
+    "gap": 0.0797,
     "ci95": [
-     0.0363,
-     0.1195
+     0.0399,
+     0.1213
     ],
     "excludes_zero": true,
-    "p_bootstrap": 0.0004
+    "p_bootstrap": 0.0002
    },
    "trained budget - metatox": {
     "gap": 0.0451,
@@ -549,43 +558,43 @@
    "trained budget - whole bank": {
     "gap": -0.0556,
     "ci95": [
-     -0.0876,
-     -0.0235
+     -0.0893,
+     -0.0214
     ],
     "excludes_zero": true,
-    "p_bootstrap": 0.0012
+    "p_bootstrap": 0.002
    },
    "whole bank - metatox": {
     "gap": 0.0211,
     "ci95": [
-     -0.0185,
-     0.0611
+     -0.0214,
+     0.063
     ],
     "excludes_zero": false,
-    "p_bootstrap": 0.31677
+    "p_bootstrap": 0.34237
    },
    "whole bank - sygma": {
     "gap": 0.0511,
     "ci95": [
-     0.016,
-     0.0885
+     0.0134,
+     0.0908
     ],
     "excludes_zero": true,
-    "p_bootstrap": 0.0038
+    "p_bootstrap": 0.007
    },
    "whole bank - metapredictor": {
     "gap": 0.0556,
     "ci95": [
-     0.0143,
-     0.0956
+     0.0149,
+     0.0955
     ],
     "excludes_zero": true,
-    "p_bootstrap": 0.0114
+    "p_bootstrap": 0.011
    },
    "whole bank - biotransformer": {
     "gap": 0.1068,
     "ci95": [
-     0.0675,
+     0.0672,
      0.1481
     ],
     "excludes_zero": true,
@@ -630,46 +639,46 @@
   },
   "20": {
    "trained budget - whole bank": {
-    "gap": -0.0917,
+    "gap": -0.0992,
     "ci95": [
-     -0.1262,
-     -0.0574
+     -0.1336,
+     -0.0649
     ],
     "excludes_zero": true,
     "p_bootstrap": 0.0002
    },
    "whole bank - metatox": {
-    "gap": 0.0271,
+    "gap": 0.0346,
     "ci95": [
-     -0.0103,
-     0.0647
+     -0.0044,
+     0.0733
     ],
     "excludes_zero": false,
-    "p_bootstrap": 0.16458
+    "p_bootstrap": 0.08519
    },
    "whole bank - sygma": {
-    "gap": 0.0797,
+    "gap": 0.0872,
     "ci95": [
-     0.0455,
-     0.1162
+     0.052,
+     0.1241
     ],
     "excludes_zero": true,
     "p_bootstrap": 0.0002
    },
    "whole bank - metapredictor": {
-    "gap": 0.0992,
+    "gap": 0.1068,
     "ci95": [
-     0.0571,
-     0.1403
+     0.0658,
+     0.1471
     ],
     "excludes_zero": true,
     "p_bootstrap": 0.0002
    },
    "whole bank - biotransformer": {
-    "gap": 0.1368,
+    "gap": 0.1444,
     "ci95": [
-     0.0964,
-     0.1799
+     0.1006,
+     0.189
     ],
     "excludes_zero": true,
     "p_bootstrap": 0.0002
@@ -713,46 +722,46 @@
   },
   "30": {
    "trained budget - whole bank": {
-    "gap": -0.1489,
+    "gap": -0.1624,
     "ci95": [
-     -0.1844,
-     -0.114
+     -0.2026,
+     -0.1242
     ],
     "excludes_zero": true,
     "p_bootstrap": 0.0002
    },
    "whole bank - metatox": {
-    "gap": 0.0376,
+    "gap": 0.0511,
     "ci95": [
-     0.0046,
-     0.0723
+     0.0175,
+     0.0858
     ],
     "excludes_zero": true,
-    "p_bootstrap": 0.0278
+    "p_bootstrap": 0.0032
    },
    "whole bank - sygma": {
-    "gap": 0.1323,
+    "gap": 0.1459,
     "ci95": [
-     0.0976,
-     0.169
+     0.1091,
+     0.1841
     ],
     "excludes_zero": true,
     "p_bootstrap": 0.0002
    },
    "whole bank - metapredictor": {
-    "gap": 0.1594,
+    "gap": 0.1729,
     "ci95": [
-     0.117,
-     0.201
+     0.1263,
+     0.2188
     ],
     "excludes_zero": true,
     "p_bootstrap": 0.0002
    },
    "whole bank - biotransformer": {
-    "gap": 0.1925,
+    "gap": 0.206,
     "ci95": [
-     0.1503,
-     0.2369
+     0.1678,
+     0.2478
     ],
     "excludes_zero": true,
     "p_bootstrap": 0.0002
@@ -796,46 +805,46 @@
   },
   "50": {
    "trained budget - whole bank": {
-    "gap": -0.2135,
+    "gap": -0.212,
     "ci95": [
-     -0.2565,
-     -0.1713
+     -0.2556,
+     -0.1698
     ],
     "excludes_zero": true,
     "p_bootstrap": 0.0002
    },
    "whole bank - metatox": {
-    "gap": 0.0767,
+    "gap": 0.0752,
     "ci95": [
-     0.0455,
-     0.1084
+     0.045,
+     0.1053
     ],
     "excludes_zero": true,
     "p_bootstrap": 0.0002
    },
    "whole bank - sygma": {
-    "gap": 0.1925,
+    "gap": 0.191,
     "ci95": [
-     0.152,
-     0.2336
+     0.1518,
+     0.2308
     ],
     "excludes_zero": true,
     "p_bootstrap": 0.0002
    },
    "whole bank - metapredictor": {
-    "gap": 0.2241,
+    "gap": 0.2226,
     "ci95": [
-     0.1734,
-     0.2734
+     0.1724,
+     0.2717
     ],
     "excludes_zero": true,
     "p_bootstrap": 0.0002
    },
    "whole bank - biotransformer": {
-    "gap": 0.2556,
+    "gap": 0.2541,
     "ci95": [
-     0.2179,
-     0.2962
+     0.2166,
+     0.2944
     ],
     "excludes_zero": true,
     "p_bootstrap": 0.0002
@@ -880,7 +889,7 @@
  },
  "recall_macro": {
   "1": {
-   "whole bank": 0.1303,
+   "whole bank": 0.145,
    "trained budget": 0.1415,
    "metatox": 0.066,
    "sygma": 0.209,
@@ -888,7 +897,7 @@
    "biotransformer": 0.103
   },
   "3": {
-   "whole bank": 0.3062,
+   "whole bank": 0.2872,
    "trained budget": 0.3103,
    "metatox": 0.1665,
    "sygma": 0.3614,
@@ -896,7 +905,7 @@
    "biotransformer": 0.2335
   },
   "5": {
-   "whole bank": 0.3792,
+   "whole bank": 0.3687,
    "trained budget": 0.3922,
    "metatox": 0.252,
    "sygma": 0.4375,
@@ -904,7 +913,7 @@
    "biotransformer": 0.3034
   },
   "8": {
-   "whole bank": 0.4773,
+   "whole bank": 0.4606,
    "trained budget": 0.4671,
    "metatox": 0.3504,
    "sygma": 0.4821,
@@ -912,7 +921,7 @@
    "biotransformer": 0.3618
   },
   "10": {
-   "whole bank": 0.5076,
+   "whole bank": 0.5064,
    "trained budget": 0.5035,
    "metatox": 0.4251,
    "sygma": 0.4969,
@@ -920,7 +929,7 @@
    "biotransformer": 0.3842
   },
   "15": {
-   "whole bank": 0.5812,
+   "whole bank": 0.5831,
    "trained budget": 0.5543,
    "metatox": 0.5492,
    "sygma": 0.5218,
@@ -928,7 +937,7 @@
    "biotransformer": 0.437
   },
   "20": {
-   "whole bank": 0.6228,
+   "whole bank": 0.6372,
    "trained budget": 0.5632,
    "metatox": 0.5907,
    "sygma": 0.5331,
@@ -936,7 +945,7 @@
    "biotransformer": 0.4412
   },
   "30": {
-   "whole bank": 0.683,
+   "whole bank": 0.6943,
    "trained budget": 0.566,
    "metatox": 0.6441,
    "sygma": 0.5387,
@@ -944,7 +953,7 @@
    "biotransformer": 0.4466
   },
   "50": {
-   "whole bank": 0.7463,
+   "whole bank": 0.7461,
    "trained budget": 0.566,
    "metatox": 0.6708,
    "sygma": 0.5429,
@@ -955,40 +964,40 @@
  "contrasts_macro": {
   "1": {
    "whole bank - metatox": {
-    "gap": 0.0642,
+    "gap": 0.079,
     "ci95": [
-     0.0237,
-     0.1053
+     0.0354,
+     0.1244
     ],
     "excludes_zero": true,
-    "p_bootstrap": 0.0022
+    "p_bootstrap": 0.0006
    },
    "whole bank - sygma": {
-    "gap": -0.0787,
+    "gap": -0.0639,
     "ci95": [
-     -0.1286,
-     -0.0287
+     -0.115,
+     -0.0121
     ],
     "excludes_zero": true,
-    "p_bootstrap": 0.003
+    "p_bootstrap": 0.0188
    },
    "whole bank - metapredictor": {
-    "gap": -0.0674,
+    "gap": -0.0526,
     "ci95": [
-     -0.114,
-     -0.0207
+     -0.1019,
+     -0.0022
     ],
     "excludes_zero": true,
-    "p_bootstrap": 0.0046
+    "p_bootstrap": 0.0392
    },
    "whole bank - biotransformer": {
-    "gap": 0.0273,
+    "gap": 0.042,
     "ci95": [
-     -0.0169,
-     0.0729
+     -0.0015,
+     0.0867
     ],
     "excludes_zero": false,
-    "p_bootstrap": 0.23598
+    "p_bootstrap": 0.05999
    },
    "trained budget - metatox": {
     "gap": 0.0755,
@@ -1029,40 +1038,40 @@
   },
   "3": {
    "whole bank - metatox": {
-    "gap": 0.1397,
+    "gap": 0.1207,
     "ci95": [
-     0.0839,
-     0.1957
+     0.0673,
+     0.1739
     ],
     "excludes_zero": true,
     "p_bootstrap": 0.0002
    },
    "whole bank - sygma": {
-    "gap": -0.0552,
+    "gap": -0.0742,
     "ci95": [
-     -0.1053,
-     -0.0045
+     -0.1236,
+     -0.0236
     ],
     "excludes_zero": true,
-    "p_bootstrap": 0.0344
+    "p_bootstrap": 0.0054
    },
    "whole bank - metapredictor": {
-    "gap": -0.0416,
+    "gap": -0.0606,
     "ci95": [
-     -0.0982,
-     0.0143
-    ],
-    "excludes_zero": false,
-    "p_bootstrap": 0.14359
-   },
-   "whole bank - biotransformer": {
-    "gap": 0.0727,
-    "ci95": [
-     0.0187,
-     0.1271
+     -0.1153,
+     -0.0051
     ],
     "excludes_zero": true,
-    "p_bootstrap": 0.01
+    "p_bootstrap": 0.0324
+   },
+   "whole bank - biotransformer": {
+    "gap": 0.0537,
+    "ci95": [
+     0.001,
+     0.1068
+    ],
+    "excludes_zero": true,
+    "p_bootstrap": 0.0462
    },
    "trained budget - metatox": {
     "gap": 0.1439,
@@ -1103,40 +1112,40 @@
   },
   "5": {
    "whole bank - metatox": {
-    "gap": 0.1272,
+    "gap": 0.1167,
     "ci95": [
-     0.0707,
-     0.1838
+     0.0613,
+     0.172
     ],
     "excludes_zero": true,
     "p_bootstrap": 0.0002
    },
    "whole bank - sygma": {
-    "gap": -0.0583,
+    "gap": -0.0688,
     "ci95": [
-     -0.1102,
-     -0.0043
+     -0.1186,
+     -0.0186
     ],
     "excludes_zero": true,
-    "p_bootstrap": 0.0338
+    "p_bootstrap": 0.007
    },
    "whole bank - metapredictor": {
-    "gap": -0.0525,
+    "gap": -0.063,
     "ci95": [
-     -0.1125,
-     0.0073
-    ],
-    "excludes_zero": false,
-    "p_bootstrap": 0.08539
-   },
-   "whole bank - biotransformer": {
-    "gap": 0.0757,
-    "ci95": [
-     0.0193,
-     0.134
+     -0.1196,
+     -0.0074
     ],
     "excludes_zero": true,
-    "p_bootstrap": 0.008
+    "p_bootstrap": 0.0278
+   },
+   "whole bank - biotransformer": {
+    "gap": 0.0652,
+    "ci95": [
+     0.0096,
+     0.1205
+    ],
+    "excludes_zero": true,
+    "p_bootstrap": 0.0222
    },
    "trained budget - metatox": {
     "gap": 0.1402,
@@ -1177,40 +1186,40 @@
   },
   "8": {
    "whole bank - metatox": {
-    "gap": 0.1268,
+    "gap": 0.1102,
     "ci95": [
-     0.0689,
-     0.1854
+     0.0511,
+     0.17
     ],
     "excludes_zero": true,
-    "p_bootstrap": 0.0002
+    "p_bootstrap": 0.0004
    },
    "whole bank - sygma": {
-    "gap": -0.0049,
+    "gap": -0.0216,
     "ci95": [
-     -0.0586,
-     0.0487
+     -0.0745,
+     0.0326
     ],
     "excludes_zero": false,
-    "p_bootstrap": 0.84812
+    "p_bootstrap": 0.42536
    },
    "whole bank - metapredictor": {
-    "gap": -0.0386,
+    "gap": -0.0553,
     "ci95": [
-     -0.0947,
-     0.017
+     -0.1116,
+     0.0004
     ],
     "excludes_zero": false,
-    "p_bootstrap": 0.18498
+    "p_bootstrap": 0.05239
    },
    "whole bank - biotransformer": {
-    "gap": 0.1154,
+    "gap": 0.0988,
     "ci95": [
-     0.0605,
-     0.1731
+     0.0437,
+     0.1548
     ],
     "excludes_zero": true,
-    "p_bootstrap": 0.0002
+    "p_bootstrap": 0.0008
    },
    "trained budget - metatox": {
     "gap": 0.1167,
@@ -1251,37 +1260,37 @@
   },
   "10": {
    "whole bank - metatox": {
-    "gap": 0.0825,
+    "gap": 0.0813,
     "ci95": [
-     0.0255,
-     0.1407
+     0.0258,
+     0.1382
     ],
     "excludes_zero": true,
-    "p_bootstrap": 0.0028
+    "p_bootstrap": 0.0034
    },
    "whole bank - sygma": {
-    "gap": 0.0107,
+    "gap": 0.0095,
     "ci95": [
-     -0.0434,
-     0.0652
+     -0.043,
+     0.0622
     ],
     "excludes_zero": false,
-    "p_bootstrap": 0.69813
+    "p_bootstrap": 0.72193
    },
    "whole bank - metapredictor": {
-    "gap": -0.0434,
+    "gap": -0.0446,
     "ci95": [
-     -0.0979,
-     0.0104
+     -0.0994,
+     0.0092
     ],
     "excludes_zero": false,
-    "p_bootstrap": 0.11339
+    "p_bootstrap": 0.11119
    },
    "whole bank - biotransformer": {
-    "gap": 0.1234,
+    "gap": 0.1222,
     "ci95": [
-     0.0667,
-     0.1817
+     0.066,
+     0.1801
     ],
     "excludes_zero": true,
     "p_bootstrap": 0.0002
@@ -1325,37 +1334,37 @@
   },
   "15": {
    "whole bank - metatox": {
-    "gap": 0.0319,
+    "gap": 0.0339,
     "ci95": [
-     -0.0215,
-     0.0862
+     -0.0221,
+     0.0882
     ],
     "excludes_zero": false,
-    "p_bootstrap": 0.24218
+    "p_bootstrap": 0.22538
    },
    "whole bank - sygma": {
-    "gap": 0.0594,
+    "gap": 0.0613,
     "ci95": [
-     0.0094,
-     0.1114
+     0.0125,
+     0.1116
     ],
     "excludes_zero": true,
-    "p_bootstrap": 0.0208
+    "p_bootstrap": 0.0148
    },
    "whole bank - metapredictor": {
-    "gap": 0.0267,
+    "gap": 0.0286,
     "ci95": [
-     -0.0253,
-     0.0773
+     -0.0229,
+     0.0801
     ],
     "excludes_zero": false,
-    "p_bootstrap": 0.29957
+    "p_bootstrap": 0.27557
    },
    "whole bank - biotransformer": {
-    "gap": 0.1442,
+    "gap": 0.1461,
     "ci95": [
-     0.09,
-     0.2002
+     0.0911,
+     0.2032
     ],
     "excludes_zero": true,
     "p_bootstrap": 0.0002
@@ -1399,37 +1408,37 @@
   },
   "20": {
    "whole bank - metatox": {
-    "gap": 0.0322,
+    "gap": 0.0465,
     "ci95": [
-     -0.0205,
-     0.0856
+     -0.0069,
+     0.0991
     ],
     "excludes_zero": false,
-    "p_bootstrap": 0.23078
+    "p_bootstrap": 0.08859
    },
    "whole bank - sygma": {
-    "gap": 0.0897,
+    "gap": 0.1041,
     "ci95": [
-     0.0405,
-     0.1403
+     0.0544,
+     0.1551
     ],
     "excludes_zero": true,
-    "p_bootstrap": 0.0004
+    "p_bootstrap": 0.0002
    },
    "whole bank - metapredictor": {
-    "gap": 0.0683,
+    "gap": 0.0827,
     "ci95": [
-     0.0184,
-     0.1185
+     0.0309,
+     0.1341
     ],
     "excludes_zero": true,
-    "p_bootstrap": 0.008
+    "p_bootstrap": 0.0022
    },
    "whole bank - biotransformer": {
-    "gap": 0.1816,
+    "gap": 0.196,
     "ci95": [
-     0.1305,
-     0.2343
+     0.1429,
+     0.2497
     ],
     "excludes_zero": true,
     "p_bootstrap": 0.0002
@@ -1473,37 +1482,37 @@
   },
   "30": {
    "whole bank - metatox": {
-    "gap": 0.0389,
+    "gap": 0.0502,
     "ci95": [
-     -0.0065,
-     0.0849
+     0.0054,
+     0.0958
     ],
-    "excludes_zero": false,
-    "p_bootstrap": 0.09039
+    "excludes_zero": true,
+    "p_bootstrap": 0.0288
    },
    "whole bank - sygma": {
-    "gap": 0.1443,
+    "gap": 0.1556,
     "ci95": [
-     0.096,
-     0.1928
+     0.1089,
+     0.2041
     ],
     "excludes_zero": true,
     "p_bootstrap": 0.0002
    },
    "whole bank - metapredictor": {
-    "gap": 0.1285,
+    "gap": 0.1398,
     "ci95": [
-     0.0797,
-     0.1786
+     0.0906,
+     0.1895
     ],
     "excludes_zero": true,
     "p_bootstrap": 0.0002
    },
    "whole bank - biotransformer": {
-    "gap": 0.2364,
+    "gap": 0.2478,
     "ci95": [
-     0.1872,
-     0.2871
+     0.1983,
+     0.2984
     ],
     "excludes_zero": true,
     "p_bootstrap": 0.0002
@@ -1547,37 +1556,37 @@
   },
   "50": {
    "whole bank - metatox": {
-    "gap": 0.0755,
+    "gap": 0.0753,
     "ci95": [
-     0.0336,
-     0.1182
+     0.0338,
+     0.1167
     ],
     "excludes_zero": true,
-    "p_bootstrap": 0.0006
+    "p_bootstrap": 0.0008
    },
    "whole bank - sygma": {
-    "gap": 0.2035,
+    "gap": 0.2033,
     "ci95": [
-     0.157,
-     0.2508
+     0.1581,
+     0.2491
     ],
     "excludes_zero": true,
     "p_bootstrap": 0.0002
    },
    "whole bank - metapredictor": {
-    "gap": 0.1918,
+    "gap": 0.1916,
     "ci95": [
-     0.1419,
-     0.2413
+     0.1425,
+     0.2401
     ],
     "excludes_zero": true,
     "p_bootstrap": 0.0002
    },
    "whole bank - biotransformer": {
-    "gap": 0.2995,
+    "gap": 0.2993,
     "ci95": [
-     0.2499,
-     0.3494
+     0.2494,
+     0.3493
     ],
     "excludes_zero": true,
     "p_bootstrap": 0.0002

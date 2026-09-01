@@ -3,7 +3,7 @@
   "script": "h14_verdict.py",
   "script_path": "scripts/typed_edit/h14_verdict.py",
   "source_sha256": "937cea99da4c7834f70c791c1e1d45f7f2520c36d152439993899fe0025ff9e0",
-  "git_commit": "40af4de4951fbae8a2caa0ce2e265632bad1cbbd",
+  "git_commit": "33f72aa1923c32bc9b9723ce0b94a0c53e13a590",
   "git_dirty": true
  },
  "hypothesis": "H14",
@@ -26,71 +26,71 @@
  },
  "recall_micro": {
   "1": {
-   "gate": 0.0887,
-   "cap": 0.0902,
-   "gate_oracle": 0.0977,
-   "three_way": 0.1188
+   "gate": 0.0992,
+   "cap": 0.0992,
+   "gate_oracle": 0.0992,
+   "three_way": 0.1068
   },
   "5": {
-   "gate": 0.3128,
-   "cap": 0.3098,
-   "gate_oracle": 0.3203,
-   "three_way": 0.3353
+   "gate": 0.3143,
+   "cap": 0.3113,
+   "gate_oracle": 0.3173,
+   "three_way": 0.3323
   },
   "10": {
-   "gate": 0.4421,
-   "cap": 0.4496,
-   "gate_oracle": 0.4301,
-   "three_way": 0.4511
+   "gate": 0.4406,
+   "cap": 0.4556,
+   "gate_oracle": 0.4451,
+   "three_way": 0.4586
   },
   "15": {
-   "gate": 0.5068,
+   "gate": 0.5158,
    "cap": 0.5353,
-   "gate_oracle": 0.4992,
-   "three_way": 0.5308
+   "gate_oracle": 0.5173,
+   "three_way": 0.5293
   },
   "20": {
-   "gate": 0.5534,
-   "cap": 0.5789,
-   "gate_oracle": 0.5579,
-   "three_way": 0.5865
+   "gate": 0.5519,
+   "cap": 0.5835,
+   "gate_oracle": 0.5459,
+   "three_way": 0.582
   },
   "30": {
-   "gate": 0.5925,
-   "cap": 0.6406,
-   "gate_oracle": 0.615,
-   "three_way": 0.6421
+   "gate": 0.6105,
+   "cap": 0.6526,
+   "gate_oracle": 0.606,
+   "three_way": 0.6496
   },
   "50": {
-   "gate": 0.6436,
-   "cap": 0.7068,
-   "gate_oracle": 0.6887,
-   "three_way": 0.6917
+   "gate": 0.6571,
+   "cap": 0.7053,
+   "gate_oracle": 0.6917,
+   "three_way": 0.6977
   }
  },
  "primary_gate_minus_cap": {
-  "gap": -0.0286,
+  "gap": -0.0195,
   "ci95": [
-   -0.0558,
-   -0.0044
+   -0.0389,
+   -0.0029
   ],
   "excludes_zero": true
  },
  "ceiling_of_this_gate": {
-  "gap": -0.0361,
+  "gap": -0.018,
   "ci95": [
-   -0.0576,
-   -0.0147
+   -0.0388,
+   0.0028
   ],
-  "excludes_zero": true
+  "excludes_zero": false
  },
  "gate_minus_three_way": {
-  "gap": -0.0241,
+  "gap": -0.0135,
   "ci95": [
-   -0.0494,
-   -0.0014
+   -0.0373,
+   0.0092
   ],
-  "excludes_zero": true
+  "excludes_zero": false
  },
  "share_of_ceiling_taken": null,
  "ceiling_is_negative": true,

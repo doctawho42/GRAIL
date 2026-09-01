@@ -3,7 +3,7 @@
   "script": "dialect_sweep.py",
   "script_path": "scripts/typed_edit/dialect_sweep.py",
   "source_sha256": "e192f61eae0daecd687317b89966b011426b762df7c9d71c04da9ab513b4ed70",
-  "git_commit": "cfad5c9b78a079b276418993944892f3e151be0a",
+  "git_commit": "bddec01d653106e1829737fc83d7b3278d24db9c",
   "git_dirty": true
  },
  "n": 291,
@@ -25,52 +25,52 @@
  "effect_on_each_arm": {
   "GRAIL exhaustive": {
    "1": {
-    "stored": 0.0902,
+    "stored": 0.0992,
     "standardised": 0.0902,
-    "difference": 0.0,
+    "difference": -0.009,
     "ci95": [
-     -0.0085,
-     0.0083
-    ],
-    "separates": false
-   },
-   "3": {
-    "stored": 0.2271,
-    "standardised": 0.2195,
-    "difference": -0.0075,
-    "ci95": [
-     -0.021,
+     -0.0252,
      0.0061
     ],
     "separates": false
    },
-   "5": {
-    "stored": 0.3098,
-    "standardised": 0.3083,
-    "difference": -0.0015,
+   "3": {
+    "stored": 0.2301,
+    "standardised": 0.2195,
+    "difference": -0.0105,
     "ci95": [
-     -0.0157,
-     0.0127
+     -0.0311,
+     0.0105
+    ],
+    "separates": false
+   },
+   "5": {
+    "stored": 0.3113,
+    "standardised": 0.3083,
+    "difference": -0.003,
+    "ci95": [
+     -0.0275,
+     0.0219
     ],
     "separates": false
    },
    "8": {
-    "stored": 0.415,
+    "stored": 0.4165,
     "standardised": 0.409,
-    "difference": -0.006,
+    "difference": -0.0075,
     "ci95": [
-     -0.0198,
-     0.0079
+     -0.0308,
+     0.0164
     ],
     "separates": false
    },
    "10": {
-    "stored": 0.4526,
+    "stored": 0.4556,
     "standardised": 0.4541,
-    "difference": 0.0015,
+    "difference": -0.0015,
     "ci95": [
-     -0.011,
-     0.0149
+     -0.0233,
+     0.0206
     ],
     "separates": false
    },
@@ -79,38 +79,38 @@
     "standardised": 0.5173,
     "difference": -0.018,
     "ci95": [
-     -0.0326,
-     -0.0045
+     -0.0375,
+     0.0016
     ],
-    "separates": true
+    "separates": false
    },
    "20": {
-    "stored": 0.5789,
+    "stored": 0.5865,
     "standardised": 0.5654,
-    "difference": -0.0135,
+    "difference": -0.0211,
     "ci95": [
-     -0.0244,
-     -0.0033
+     -0.0399,
+     -0.003
     ],
     "separates": true
    },
    "30": {
-    "stored": 0.6391,
+    "stored": 0.6526,
     "standardised": 0.6376,
-    "difference": -0.0015,
+    "difference": -0.015,
     "ci95": [
-     -0.0112,
-     0.0081
+     -0.0304,
+     0.0
     ],
     "separates": false
    },
    "50": {
-    "stored": 0.7038,
+    "stored": 0.7023,
     "standardised": 0.6992,
-    "difference": -0.0045,
+    "difference": -0.003,
     "ci95": [
-     -0.0134,
-     0.0044
+     -0.0149,
+     0.009
     ],
     "separates": false
    }
@@ -233,10 +233,10 @@
   "GRAIL exhaustive vs MetaTox": {
    "1": {
     "stored": {
-     "difference": 0.0496,
+     "difference": 0.0586,
      "ci95": [
-      0.0262,
-      0.0743
+      0.0334,
+      0.0854
      ],
      "separates": true,
      "sign": 1
@@ -254,10 +254,10 @@
    },
    "3": {
     "stored": {
-     "difference": 0.0947,
+     "difference": 0.0977,
      "ci95": [
-      0.0577,
-      0.1335
+      0.0638,
+      0.1334
      ],
      "separates": true,
      "sign": 1
@@ -275,10 +275,10 @@
    },
    "5": {
     "stored": {
-     "difference": 0.0917,
+     "difference": 0.0932,
      "ci95": [
-      0.0504,
-      0.1341
+      0.0526,
+      0.1343
      ],
      "separates": true,
      "sign": 1
@@ -296,10 +296,10 @@
    },
    "8": {
     "stored": {
-     "difference": 0.1038,
+     "difference": 0.1053,
      "ci95": [
-      0.0619,
-      0.1463
+      0.062,
+      0.1488
      ],
      "separates": true,
      "sign": 1
@@ -317,10 +317,10 @@
    },
    "10": {
     "stored": {
-     "difference": 0.0647,
+     "difference": 0.0677,
      "ci95": [
-      0.0232,
-      0.1057
+      0.0275,
+      0.1083
      ],
      "separates": true,
      "sign": 1
@@ -340,8 +340,8 @@
     "stored": {
      "difference": 0.0211,
      "ci95": [
-      -0.0185,
-      0.0611
+      -0.0214,
+      0.063
      ],
      "separates": false,
      "sign": 1
@@ -359,10 +359,10 @@
    },
    "20": {
     "stored": {
-     "difference": 0.0271,
+     "difference": 0.0346,
      "ci95": [
-      -0.0103,
-      0.0647
+      -0.0044,
+      0.0733
      ],
      "separates": false,
      "sign": 1
@@ -380,10 +380,10 @@
    },
    "30": {
     "stored": {
-     "difference": 0.0376,
+     "difference": 0.0511,
      "ci95": [
-      0.0046,
-      0.0723
+      0.0175,
+      0.0858
      ],
      "separates": true,
      "sign": 1
@@ -401,10 +401,10 @@
    },
    "50": {
     "stored": {
-     "difference": 0.0767,
+     "difference": 0.0752,
      "ci95": [
-      0.0455,
-      0.1084
+      0.045,
+      0.1053
      ],
      "separates": true,
      "sign": 1
@@ -424,10 +424,10 @@
   "GRAIL exhaustive vs SyGMa": {
    "1": {
     "stored": {
-     "difference": -0.0632,
+     "difference": -0.0541,
      "ci95": [
-      -0.093,
-      -0.0344
+      -0.0849,
+      -0.0248
      ],
      "separates": true,
      "sign": -1
@@ -445,10 +445,10 @@
    },
    "3": {
     "stored": {
-     "difference": -0.0617,
+     "difference": -0.0586,
      "ci95": [
-      -0.0973,
-      -0.0261
+      -0.0948,
+      -0.0234
      ],
      "separates": true,
      "sign": -1
@@ -466,10 +466,10 @@
    },
    "5": {
     "stored": {
-     "difference": -0.0647,
+     "difference": -0.0632,
      "ci95": [
-      -0.1009,
-      -0.0267
+      -0.1,
+      -0.0268
      ],
      "separates": true,
      "sign": -1
@@ -487,10 +487,10 @@
    },
    "8": {
     "stored": {
-     "difference": -0.012,
+     "difference": -0.0105,
      "ci95": [
-      -0.0496,
-      0.026
+      -0.0508,
+      0.0303
      ],
      "separates": false,
      "sign": -1
@@ -508,13 +508,13 @@
    },
    "10": {
     "stored": {
-     "difference": -0.003,
+     "difference": 0.0,
      "ci95": [
-      -0.0413,
-      0.0352
+      -0.0396,
+      0.0401
      ],
      "separates": false,
-     "sign": -1
+     "sign": 0
     },
     "standardised": {
      "difference": -0.0015,
@@ -531,8 +531,8 @@
     "stored": {
      "difference": 0.0511,
      "ci95": [
-      0.016,
-      0.0885
+      0.0134,
+      0.0908
      ],
      "separates": true,
      "sign": 1
@@ -550,10 +550,10 @@
    },
    "20": {
     "stored": {
-     "difference": 0.0797,
+     "difference": 0.0872,
      "ci95": [
-      0.0455,
-      0.1162
+      0.052,
+      0.1241
      ],
      "separates": true,
      "sign": 1
@@ -571,10 +571,10 @@
    },
    "30": {
     "stored": {
-     "difference": 0.1323,
+     "difference": 0.1459,
      "ci95": [
-      0.0976,
-      0.169
+      0.1091,
+      0.1841
      ],
      "separates": true,
      "sign": 1
@@ -592,10 +592,10 @@
    },
    "50": {
     "stored": {
-     "difference": 0.1925,
+     "difference": 0.191,
      "ci95": [
-      0.152,
-      0.2336
+      0.1518,
+      0.2308
      ],
      "separates": true,
      "sign": 1
@@ -615,10 +615,10 @@
   "GRAIL exhaustive vs MetaPredictor": {
    "1": {
     "stored": {
-     "difference": -0.0496,
+     "difference": -0.0406,
      "ci95": [
-      -0.0783,
-      -0.0228
+      -0.0689,
+      -0.0126
      ],
      "separates": true,
      "sign": -1
@@ -636,10 +636,10 @@
    },
    "3": {
     "stored": {
-     "difference": -0.0496,
+     "difference": -0.0466,
      "ci95": [
-      -0.0864,
-      -0.0137
+      -0.0829,
+      -0.0112
      ],
      "separates": true,
      "sign": -1
@@ -657,10 +657,10 @@
    },
    "5": {
     "stored": {
-     "difference": -0.0451,
+     "difference": -0.0436,
      "ci95": [
-      -0.0889,
-      -0.0031
+      -0.0861,
+      -0.0041
      ],
      "separates": true,
      "sign": -1
@@ -678,10 +678,10 @@
    },
    "8": {
     "stored": {
-     "difference": -0.0195,
+     "difference": -0.018,
      "ci95": [
-      -0.0636,
-      0.023
+      -0.0642,
+      0.025
      ],
      "separates": false,
      "sign": -1
@@ -699,10 +699,10 @@
    },
    "10": {
     "stored": {
-     "difference": -0.018,
+     "difference": -0.015,
      "ci95": [
-      -0.0605,
-      0.0232
+      -0.0596,
+      0.0268
      ],
      "separates": false,
      "sign": -1
@@ -722,8 +722,8 @@
     "stored": {
      "difference": 0.0556,
      "ci95": [
-      0.0143,
-      0.0956
+      0.0149,
+      0.0955
      ],
      "separates": true,
      "sign": 1
@@ -741,10 +741,10 @@
    },
    "20": {
     "stored": {
-     "difference": 0.0992,
+     "difference": 0.1068,
      "ci95": [
-      0.0571,
-      0.1403
+      0.0658,
+      0.1471
      ],
      "separates": true,
      "sign": 1
@@ -762,10 +762,10 @@
    },
    "30": {
     "stored": {
-     "difference": 0.1594,
+     "difference": 0.1729,
      "ci95": [
-      0.117,
-      0.201
+      0.1263,
+      0.2188
      ],
      "separates": true,
      "sign": 1
@@ -783,10 +783,10 @@
    },
    "50": {
     "stored": {
-     "difference": 0.2241,
+     "difference": 0.2226,
      "ci95": [
-      0.1734,
-      0.2734
+      0.1724,
+      0.2717
      ],
      "separates": true,
      "sign": 1

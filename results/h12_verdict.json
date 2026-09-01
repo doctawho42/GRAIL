@@ -3,7 +3,7 @@
   "script": "h12_verdict.py",
   "script_path": "scripts/typed_edit/h12_verdict.py",
   "source_sha256": "96ebd258c044e896f93003be540d2a0b4321689d8e14d4d1c313d44029614c0f",
-  "git_commit": "7c4469449156a7fd73c913fc90a55bdf8037a8ad",
+  "git_commit": "33f72aa1923c32bc9b9723ce0b94a0c53e13a590",
   "git_dirty": true
  },
  "hypothesis": "H12",
@@ -25,74 +25,74 @@
  },
  "recall_micro": {
   "1": {
-   "three_way": 0.1188,
-   "two_way": 0.1128,
-   "oracle_third": 0.1263,
+   "three_way": 0.1068,
+   "two_way": 0.1038,
+   "oracle_third": 0.1143,
    "metatox": 0.0406
   },
   "5": {
-   "three_way": 0.3353,
-   "two_way": 0.3038,
-   "oracle_third": 0.3353,
+   "three_way": 0.3323,
+   "two_way": 0.3188,
+   "oracle_third": 0.3474,
    "metatox": 0.218
   },
   "10": {
-   "three_way": 0.4511,
-   "two_way": 0.4421,
-   "oracle_third": 0.4707,
+   "three_way": 0.4586,
+   "two_way": 0.4436,
+   "oracle_third": 0.4692,
    "metatox": 0.388
   },
   "15": {
-   "three_way": 0.5308,
-   "two_way": 0.5023,
-   "oracle_third": 0.5308,
+   "three_way": 0.5293,
+   "two_way": 0.5038,
+   "oracle_third": 0.5233,
    "metatox": 0.5143
   },
   "20": {
-   "three_way": 0.5865,
-   "two_way": 0.5429,
-   "oracle_third": 0.5729,
+   "three_way": 0.582,
+   "two_way": 0.5383,
+   "oracle_third": 0.5699,
    "metatox": 0.5519
   },
   "30": {
-   "three_way": 0.6421,
-   "two_way": 0.5985,
-   "oracle_third": 0.6195,
+   "three_way": 0.6496,
+   "two_way": 0.597,
+   "oracle_third": 0.6211,
    "metatox": 0.6015
   },
   "50": {
-   "three_way": 0.6917,
-   "two_way": 0.6571,
-   "oracle_third": 0.6827,
+   "three_way": 0.6977,
+   "two_way": 0.6632,
+   "oracle_third": 0.6932,
    "metatox": 0.6271
   }
  },
  "primary_three_way_minus_two_way": {
-  "gap": 0.0286,
+  "gap": 0.0256,
   "ci95": [
-   0.0085,
-   0.0502
+   0.0095,
+   0.0421
   ],
   "excludes_zero": true
  },
  "three_way_minus_metatox": {
-  "gap": 0.0165,
+  "gap": 0.015,
   "ci95": [
-   -0.0238,
-   0.0586
+   -0.0272,
+   0.0573
   ],
   "excludes_zero": false
  },
  "metatox_substrates_covered": 291,
  "ceiling_of_this_composition": {
-  "gap": 0.0286,
+  "gap": 0.0195,
   "ci95": [
-   0.0156,
-   0.0431
+   0.0098,
+   0.0298
   ],
   "excludes_zero": true
  },
- "share_of_ceiling_taken": 1.0,
+ "share_of_ceiling_taken": 1.3128,
  "ceiling_note": "oracle_third ranks groups binarily, so it orders nothing among the groups holding no reference; a graded ranking can and does exceed it, and a share above one means that rather than the model beating an upper bound",
  "verdict": "supported"
 }

@@ -3,7 +3,7 @@
   "script": "rrf_vs_metatox.py",
   "script_path": "scripts/typed_edit/rrf_vs_metatox.py",
   "source_sha256": "bc511083b292b3f7fc4305195c108584815cba51d04276243b5b7012c2737b1e",
-  "git_commit": "d85ad690ec6a8919210a38a5e9e9072e5ffad5b9",
+  "git_commit": "33f72aa1923c32bc9b9723ce0b94a0c53e13a590",
   "git_dirty": true
  },
  "arm": "new generator + rank fusion",
@@ -19,12 +19,12 @@
  },
  "by_budget": {
   "1": {
-   "ours": 0.1128,
+   "ours": 0.1038,
    "metatox": 0.0406,
-   "gap": 0.0722,
+   "gap": 0.0632,
    "ci95": [
-    0.0483,
-    0.0982
+    0.0399,
+    0.0885
    ],
    "excludes_zero": true
   },
@@ -33,78 +33,78 @@
    "metatox": 0.1323,
    "gap": 0.1008,
    "ci95": [
-    0.0654,
-    0.1379
+    0.0677,
+    0.135
    ],
    "excludes_zero": true
   },
   "5": {
-   "ours": 0.3038,
+   "ours": 0.3188,
    "metatox": 0.218,
-   "gap": 0.0857,
+   "gap": 0.1008,
    "ci95": [
-    0.0469,
-    0.1248
+    0.0608,
+    0.1409
    ],
    "excludes_zero": true
   },
   "8": {
-   "ours": 0.409,
+   "ours": 0.4165,
    "metatox": 0.3113,
-   "gap": 0.0977,
+   "gap": 0.1053,
    "ci95": [
-    0.0549,
-    0.1422
+    0.063,
+    0.1489
    ],
    "excludes_zero": true
   },
   "10": {
-   "ours": 0.4421,
+   "ours": 0.4436,
    "metatox": 0.388,
-   "gap": 0.0541,
+   "gap": 0.0556,
    "ci95": [
-    0.0098,
+    0.0126,
     0.0991
    ],
    "excludes_zero": true
   },
   "15": {
-   "ours": 0.5023,
+   "ours": 0.5038,
    "metatox": 0.5143,
-   "gap": -0.012,
+   "gap": -0.0105,
    "ci95": [
-    -0.0551,
-    0.0312
+    -0.0533,
+    0.0325
    ],
    "excludes_zero": false
   },
   "20": {
-   "ours": 0.5429,
+   "ours": 0.5383,
    "metatox": 0.5519,
-   "gap": -0.009,
+   "gap": -0.0135,
    "ci95": [
-    -0.0494,
-    0.0322
+    -0.0538,
+    0.0266
    ],
    "excludes_zero": false
   },
   "30": {
-   "ours": 0.5985,
+   "ours": 0.597,
    "metatox": 0.6015,
-   "gap": -0.003,
+   "gap": -0.0045,
    "ci95": [
-    -0.0397,
-    0.0355
+    -0.0417,
+    0.0344
    ],
    "excludes_zero": false
   },
   "50": {
-   "ours": 0.6571,
+   "ours": 0.6632,
    "metatox": 0.6271,
-   "gap": 0.0301,
+   "gap": 0.0361,
    "ci95": [
-    -0.0081,
-    0.0684
+    0.0,
+    0.0729
    ],
    "excludes_zero": false
   }

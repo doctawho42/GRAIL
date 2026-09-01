@@ -2,8 +2,8 @@
  "provenance": {
   "script": "biotransformer_arm.py",
   "script_path": "scripts/typed_edit/biotransformer_arm.py",
-  "source_sha256": "5dd57f12db875290fa202572341f9b66e956d489003759a4b841433a97826a75",
-  "git_commit": "0ca475b61b35613ce4f221dd00964e20d3a51b11",
+  "source_sha256": "2b33ac8372ae464a358a9b79c9098d2e0f22ca59a1469df0828ca6905be7eda0",
+  "git_commit": "999d6858f292e54e1e9e074212cf3e1c0be530d2",
   "git_dirty": true
  },
  "population": {
@@ -21,7 +21,7 @@
  },
  "by_setting": {
   "allHuman one step": {
-   "source_csv": "bt_allhuman_s1.csv",
+   "source_csv": "frozen predictions, not re-parsed",
    "predictions": "results/biotransformer_allhuman_one_step_preds.json",
    "mean_emitted": 10.7,
    "substrates_with_no_prediction": 7,
@@ -39,41 +39,41 @@
    "exhaustive_minus_biotransformer_at_15": {
     "gap": 0.1068,
     "ci95": [
-     0.0675,
+     0.0672,
      0.1481
     ],
     "excludes_zero": true
    },
    "exhaustive_minus_biotransformer_at_30": {
-    "gap": 0.1925,
+    "gap": 0.206,
     "ci95": [
-     0.1503,
-     0.2369
+     0.1678,
+     0.2478
     ],
     "excludes_zero": true
    },
    "exhaustive_minus_biotransformer_at_50": {
-    "gap": 0.2556,
+    "gap": 0.2541,
     "ci95": [
-     0.2179,
-     0.2962
+     0.2166,
+     0.2944
     ],
     "excludes_zero": true
    },
    "matched_length": {
-    "recall_ours": 0.4632,
+    "recall_ours": 0.4436,
     "recall_theirs": 0.4481,
-    "gap": 0.015,
+    "gap": -0.0045,
     "ci95": [
-     -0.02,
-     0.0507
+     -0.0402,
+     0.0315
     ],
     "excludes_zero": false,
     "mean_slots": 10.7
    }
   },
   "allHuman one step, natural drawing": {
-   "source_csv": "bt_allhuman_s1_natural.csv",
+   "source_csv": "frozen predictions, not re-parsed",
    "predictions": "results/biotransformer_allhuman_one_step_natural_drawing_preds.json",
    "mean_emitted": 10.7,
    "substrates_with_no_prediction": 10,
@@ -91,34 +91,34 @@
    "exhaustive_minus_biotransformer_at_15": {
     "gap": 0.1083,
     "ci95": [
-     0.0677,
-     0.1502
+     0.0676,
+     0.1497
     ],
     "excludes_zero": true
    },
    "exhaustive_minus_biotransformer_at_30": {
-    "gap": 0.194,
+    "gap": 0.2075,
     "ci95": [
-     0.1517,
-     0.2382
+     0.1683,
+     0.249
     ],
     "excludes_zero": true
    },
    "exhaustive_minus_biotransformer_at_50": {
-    "gap": 0.2571,
+    "gap": 0.2556,
     "ci95": [
-     0.219,
-     0.2972
+     0.2182,
+     0.2951
     ],
     "excludes_zero": true
    },
    "matched_length": {
-    "recall_ours": 0.4556,
+    "recall_ours": 0.4361,
     "recall_theirs": 0.4466,
-    "gap": 0.009,
+    "gap": -0.0105,
     "ci95": [
-     -0.0259,
-     0.0441
+     -0.0456,
+     0.0249
     ],
     "excludes_zero": false,
     "mean_slots": 10.69

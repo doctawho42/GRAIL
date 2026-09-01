@@ -3,7 +3,7 @@
   "script": "sygma_scenario_sweep.py",
   "script_path": "scripts/typed_edit/sygma_scenario_sweep.py",
   "source_sha256": "a429026f75779bd2c4162afeef78286051875f39e41d1658172c7383892f6f79",
-  "git_commit": "98053977a54738f9c1082374fa6a116233cb278c",
+  "git_commit": "999d6858f292e54e1e9e074212cf3e1c0be530d2",
   "git_dirty": true
  },
  "population": {
@@ -30,24 +30,24 @@
    "source": "results/sygma_fulltest_predictions.json, the frozen deployed run",
    "unfinished": 0,
    "exhaustive_minus_sygma_at_30": {
-    "gap": 0.1323,
+    "gap": 0.1459,
     "ci95": [
-     0.0976,
-     0.169
+     0.1091,
+     0.1841
     ],
     "excludes_zero": true
    },
    "exhaustive_minus_sygma_at_50": {
-    "gap": 0.1925,
+    "gap": 0.191,
     "ci95": [
-     0.152,
-     0.2336
+     0.1518,
+     0.2308
     ],
     "excludes_zero": true
    }
   },
   "phase1 x2, phase2 x1": {
-   "mean_emitted": 526.1,
+   "mean_emitted": 522.6,
    "recall": {
     "1": 0.1534,
     "3": 0.2887,
@@ -59,22 +59,22 @@
     "30": 0.5534,
     "50": 0.5729
    },
-   "unfinished": 5,
+   "unfinished": 6,
    "unfinished_note": "substrates the deeper scenario did not finish inside the deadline keep the deployed scenario's list, so this arm is never handicapped by the timeout",
-   "seconds": 7762.8,
+   "seconds": 8793.8,
    "exhaustive_minus_sygma_at_30": {
-    "gap": 0.0857,
+    "gap": 0.0992,
     "ci95": [
-     0.0466,
-     0.1254
+     0.0573,
+     0.1418
     ],
     "excludes_zero": true
    },
    "exhaustive_minus_sygma_at_50": {
-    "gap": 0.1308,
+    "gap": 0.1293,
     "ci95": [
-     0.0842,
-     0.1782
+     0.0837,
+     0.1755
     ],
     "excludes_zero": true
    }

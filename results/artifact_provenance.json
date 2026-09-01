@@ -401,13 +401,19 @@
    "artifact": "results/pool_checkpoints.json",
    "script": "pool_checkpoints.py",
    "how": "recorded source digest",
-   "status": "current"
+   "status": "producer_changed",
+   "detail": "producer was ed8a26b7cd04, is now cedbd925c331",
+   "diff_recovered_by": "source at 4496d1bd7a4d",
+   "diff": "--- pool_checkpoints.py (as recorded)\n+++ pool_checkpoints.py (now)\n@@ -45,5 +45,5 @@\n     import subprocess\n \n-    out = {}\n+    found = {}\n     try:\n         tracked = subprocess.run([\"git\", \"ls-files\", \"artifacts/\"], cwd=ROOT,\n@@ -56,6 +56,14 @@\n             stage = parts[-1][:-3]\n             if stage in (\"generator\", \"filter\"):\n-                out.setdefault(stage, parts[1])\n-    return out\n+                found.setdefault(stage, set()).add(parts[1])\n+    # Exactly one checkpoint per stage, or there is no answer to give. Taking the first of several\n+    # would make the release depend on the order git happens to list files in, and this whole\n+    # question arose because a release was inferred rather than read.\n+    ambiguous = {s: sorted(runs) for s, runs in found.items() if len(runs) > 1}\n+    if ambiguous:\n+        raise SystemExit(\n+            \"the repository tracks more than one checkpoint for a stage, so what it releases is \"\n+            f\"not determined: {ambiguous}. Track one per stage.\")\n+    return {s: sorted(runs)[0] for s, runs in found.items()}\n \n "
   },
   {
    "artifact": "results/population_definition.json",
    "script": "population_definition.py",
    "how": "recorded source digest",
-   "status": "current"
+   "status": "producer_changed",
+   "detail": "producer was 4938becbdf29, is now d350e3ad451d",
+   "diff_recovered_by": "the tree was dirty when written, so the source at 821adf95a989 is the nearest committed version and not exactly what ran",
+   "diff": "--- population_definition.py (as recorded)\n+++ population_definition.py (now)\n@@ -60,4 +60,9 @@\n DEPLOYED_COMPARISON = ROOT / \"results/widepools_k30/all.json\"\n DEPLOYED_FULLTEST = ROOT / \"results/widepools_k30_fulltest\"\n+# The exhaustive arm on the whole evaluated test set. It existed only on the comparison set, so\n+# the one ordering result this work still claims had never been read off the population nobody\n+# selected; these pools are that population.\n+EXHAUSTIVE_COMPARISON = ROOT / \"results/widepools_implicit\"\n+EXHAUSTIVE_FULLTEST = ROOT / \"results/widepools_fulltest\"\n WHOLE_TEST = {\"sygma\": ROOT / \"results/sygma_fulltest_predictions.json\",\n               \"metapredictor\": ROOT / \"artifacts/tier2_1170/metapredictor_preds.json\"}\n@@ -78,6 +83,42 @@\n     metatox = json.loads(METATOX.read_text())[\"predictions\"]\n     deployed_rows = dict(json.loads(DEPLOYED_COMPARISON.read_text())[\"pools\"])\n+    # The whole-test pools were built later and cover the comparison set too. Two builds of the\n+    # same configuration should agree candidate for candidate and score for score; where they do\n+    # not, one of them was scored by a different model and neither population can be trusted.\n+    disagree = 0\n     for f in sorted(glob.glob(str(DEPLOYED_FULLTEST / \"w*.json\"))):\n-        deployed_rows.update(json.loads(Path(f).read_text())[\"pools\"])\n+        for sub, pool in json.loads(Path(f).read_text())[\"pools\"].items():\n+            if sub in deployed_rows:\n+                a = [(c[\"smiles\"], round(c[\"generator\"], 9), round(c[\"filter\"], 9))\n+                     for c in deployed_rows[sub]]\n+                b = [(c[\"smiles\"], round(c[\"generator\"], 9), round(c[\"filter\"], 9))\n+                     for c in pool]\n+                if a != b:\n+                    disagree += 1\n+            deployed_rows[sub] = pool\n+    if disagree:\n+        print(f\"FAIL: {disagree} substrates are scored differently by the two builds of the \"\n+              f\"deployed arm; they are not the same configuration\", file=sys.stderr)\n+        return 1\n+    # The exhaustive arm, assembled the same way and gated the same way: where the two builds\n+    # cover a substrate in common they must agree candidate for candidate, or they are not one\n+    # configuration and neither population can be read.\n+    exhaustive_rows, exh_disagree = {}, 0\n+    for pattern in (EXHAUSTIVE_COMPARISON / \"w*.json\", EXHAUSTIVE_FULLTEST / \"w*.json\"):\n+        for f in sorted(glob.glob(str(pattern))):\n  ... diff truncated"
   },
   {
    "artifact": "results/precision_table.json",
@@ -605,9 +611,9 @@
   }
  ],
  "n_pinned": 99,
- "n_pinned_stale": 0,
+ "n_pinned_stale": 2,
  "sweep": {
-  "unstamped": 259,
+  "unstamped": 265,
   "producer_changed": 39,
   "current": 36,
   "producer_unknown": 27,
@@ -2264,6 +2270,36 @@
    "detail": "no provenance block: nothing records which code wrote this"
   },
   {
+   "artifact": "results/widepools_fulltest/w0.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/widepools_fulltest/w1.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/widepools_fulltest/w2.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/widepools_fulltest/w3.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/widepools_fulltest/w4.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/widepools_fulltest/w5.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
    "artifact": "results/widepools_implicit/w0.json",
    "status": "unstamped",
    "detail": "no provenance block: nothing records which code wrote this"
@@ -2459,8 +2495,8 @@
    "detail": "no provenance block: nothing records which code wrote this"
   }
  ],
- "files_below_the_top_level": 156,
- "of_those_named_as_an_input_by_a_pinned_artifact": 11,
+ "files_below_the_top_level": 162,
+ "of_those_named_as_an_input_by_a_pinned_artifact": 14,
  "named_inputs": [
   "results/valpool_shards/v0.json",
   "results/valpool_shards/v1.json",
@@ -2472,6 +2508,9 @@
   "results/valpools_k20/all.json",
   "results/valpools_k30/all.json",
   "results/valpools_k50/all.json",
-  "results/valpools_k7581/all.json"
+  "results/valpools_k7581/all.json",
+  "results/widepools_fulltest/w2.json",
+  "results/widepools_implicit/w0.json",
+  "results/widepools_k30_fulltest/w0.json"
  ]
 }

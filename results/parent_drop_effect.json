@@ -3,7 +3,7 @@
   "script": "parent_drop_effect.py",
   "script_path": "scripts/typed_edit/parent_drop_effect.py",
   "source_sha256": "7ad1bfee8ce77a34eeabd9104c022c38b866f3d08f03d265bed7e11f6a129e3b",
-  "git_commit": "92cc94b746d2051428206eac95c24f1e0f504e42",
+  "git_commit": "33f72aa1923c32bc9b9723ce0b94a0c53e13a590",
   "git_dirty": true
  },
  "population": {
@@ -21,8 +21,8 @@
    "substrates_returning_the_parent": 239,
    "of": 291,
    "share": 0.8213,
-   "median_rank_when_returned": 37,
-   "within_top_15": 27
+   "median_rank_when_returned": 33,
+   "within_top_15": 26
   },
   "GRAIL interactive": {
    "substrates_returning_the_parent": 26,
@@ -64,8 +64,8 @@
  "effect": {
   "GRAIL exhaustive": {
    "1": {
-    "with_convention": 0.0902,
-    "without": 0.0902,
+    "with_convention": 0.0992,
+    "without": 0.0992,
     "effect": 0.0,
     "ci95": [
      0.0,
@@ -74,8 +74,8 @@
     "separates": false
    },
    "3": {
-    "with_convention": 0.2271,
-    "without": 0.2271,
+    "with_convention": 0.2301,
+    "without": 0.2301,
     "effect": 0.0,
     "ci95": [
      0.0,
@@ -84,8 +84,8 @@
     "separates": false
    },
    "5": {
-    "with_convention": 0.3098,
-    "without": 0.3098,
+    "with_convention": 0.3113,
+    "without": 0.3113,
     "effect": 0.0,
     "ci95": [
      0.0,
@@ -94,22 +94,22 @@
     "separates": false
    },
    "8": {
-    "with_convention": 0.415,
+    "with_convention": 0.4165,
     "without": 0.4135,
-    "effect": 0.0015,
-    "ci95": [
-     0.0,
-     0.0049
-    ],
-    "separates": false
-   },
-   "10": {
-    "with_convention": 0.4526,
-    "without": 0.4496,
     "effect": 0.003,
     "ci95": [
      0.0,
      0.0078
+    ],
+    "separates": false
+   },
+   "10": {
+    "with_convention": 0.4556,
+    "without": 0.4541,
+    "effect": 0.0015,
+    "ci95": [
+     0.0,
+     0.0048
     ],
     "separates": false
    },
@@ -124,8 +124,18 @@
     "separates": false
    },
    "20": {
-    "with_convention": 0.5789,
-    "without": 0.5789,
+    "with_convention": 0.5865,
+    "without": 0.5835,
+    "effect": 0.003,
+    "ci95": [
+     0.0,
+     0.0077
+    ],
+    "separates": false
+   },
+   "30": {
+    "with_convention": 0.6526,
+    "without": 0.6526,
     "effect": 0.0,
     "ci95": [
      0.0,
@@ -133,19 +143,9 @@
     ],
     "separates": false
    },
-   "30": {
-    "with_convention": 0.6391,
-    "without": 0.6406,
-    "effect": -0.0015,
-    "ci95": [
-     -0.0046,
-     0.0
-    ],
-    "separates": false
-   },
    "50": {
-    "with_convention": 0.7038,
-    "without": 0.7068,
+    "with_convention": 0.7023,
+    "without": 0.7053,
     "effect": -0.003,
     "ci95": [
      -0.0075,
