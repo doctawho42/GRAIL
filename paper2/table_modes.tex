@@ -17,6 +17,6 @@ seconds, slowest & 231.01 & $>600$ \\
 figure is measured on the validation draw, 294 substrates for the interactive mode and
 293 for the exhaustive one, which lacks a pool for one of them. Candidates are
 what a caller receives: deduplicated by matching key and capped at
-100. Times cover everything before the filter. $^{\dagger}$ marks a censored statistic: on a sampled timing sweep the exhaustive mode exceeds a 600-second deadline on 11 of 106 substrates, 10.4\%, so its mean and ninetieth percentile are taken over the 95 that finished and are lower bounds. Its slowest substrate is one of the censored ones. On the test split, where no deadline is imposed, it fails on none.}
+100. Times cover everything before the filter. $^{\dagger}$ marks a censored statistic: on a sampled timing sweep the exhaustive mode exceeds a 600-second deadline on 11 of 106 substrates, 10.4\%, so its mean and ninetieth percentile are taken over the 95 that finished and are lower bounds. Its slowest substrate is one of the censored ones. On the test split, where no deadline is imposed, it fails on none. Every time here is measured on an unloaded machine and one substrate at a time; the same medians measured while the other arm runs are in Section~\ref{SI-sec:si-runtime} and are larger. The interactive mode's own slowest substrate, 231.01~s, is far above its median, so a service answering a form should impose a deadline and fall back rather than assume the median.}
 \label{tab:modes}
 \end{table}

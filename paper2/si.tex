@@ -1306,9 +1306,11 @@ comparison set only and is absent from that row, so what this shows is that the 
 not rescue the cheap setting rather than that it changes a lead.
 
 A separate analysis re-ran three
-methods, four metrics and five criteria on two populations of one split, the 150 substrates shared
-with a further comparator and the full \numPopulationTestsubs{}, and asked whether the ordering
-of methods changes with the population. Of 60 pairwise comparisons, 10 reverse in point estimate,
+methods, four metrics and five criteria on two populations of one split, and asked whether the
+ordering of methods changes with the population. The two are the full \numPopulationTestsubs{}
+and a \numBtN{}-substrate subset drawn for an earlier evaluation against MetaTrans
+\citep{Litsa_2020}, which is not a column of the comparison here; that subset is named because a
+population no reader can identify is the defect this section is about. Of 60 pairwise comparisons, 10 reverse in point estimate,
 no population-by-method interaction separates from zero, and none survives a Holm correction. The
 design detects an interaction of $0.0661$ at 80\% power, so it excludes large population effects
 and not moderate ones. Two populations is a weak design and we do not offer it as a general
@@ -1345,6 +1347,7 @@ rank fusion of P1 is an order of magnitude above the training noise, the pool ca
 times above it, and the rule budget of P3, at $+\numHOneZeroBought$ on validation, inside it.
 
 \section{Runtime methodology}
+\label{sec:si-runtime}
 
 \paragraph{Correcting the speed-up for machine load.} The bounded and unbounded arms did not run
 under the same load. The enumeration step is identical between them, so the ratio of its medians,
@@ -1518,7 +1521,8 @@ emits more would narrow a gap this paper does not claim as an ordering result an
 verdict here. A reader who judges that insufficient should read the absence as unforced.
 
 Its templates are also measured for reach, which is a different quantity from its recall, on the
-\numBtN{}-substrate subset shared with a further comparator: they reach \numBtReach{} of the
+same \numBtN{}-substrate subset drawn for the earlier MetaTrans evaluation
+(Section~\ref{sec:si-population}): they reach \numBtReach{} of the
 references there, 95\% CI $[\numBtLo, \numBtHi]$, against \numBankRules{} templates of ours
 reaching \numBtOurreach{}. A reach figure and a ranked recall are not the same quantity and they
 are not placed in one table.

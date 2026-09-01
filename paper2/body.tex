@@ -735,6 +735,7 @@ interactive mode's mean is six times its median, and its slowest substrate is ne
 times it.
 
 \subsection{The ceiling, and how much of it is the corpus}
+\label{sec:ceiling}
 
 Applying the whole bank to every test substrate recovers \numCeilingCoverage{} of references in
 one step, under the same tautomer-aware matching criterion the comparison defaults to and on the
@@ -1160,7 +1161,11 @@ The hydrogen convention is an argument to the rule-application entry point rathe
 constant, and its default is the presentation every deployed firing path uses, which is the one the
 paper's figures are measured at. The choice is consequential and the entry point should not make it
 silently: reproducing the census through it under the other presentation gives
-\numHydUncoveredexpanded{} uncovered references and not \numCeilingUncovered{}. Every call site
+\numHydUncoveredexpanded{} uncovered references and not \numCeilingUncovered{}. That other
+presentation is not an alternative reading of the bound. It expands the substrate's hydrogens
+without completing the templates to match, which Section~\ref{sec:ceiling} disqualifies as an
+incomplete loop rather than a convention; the number is quoted here only to show how far a silent
+default could move a figure. Every call site
 that produced a figure here names the convention it was measured under rather than taking it from
 a default.
 

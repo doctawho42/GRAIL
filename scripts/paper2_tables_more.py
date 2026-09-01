@@ -56,7 +56,7 @@ seconds, slowest & {i['max_s']} & $>{int(env['deadline'])}$ \\\\
 figure is measured on the validation draw, {i['n']} substrates for the interactive mode and
 {e['candidates']['n']} for the exhaustive one, which lacks a pool for one of them. Candidates are
 what a caller receives: deduplicated by matching key and capped at
-{i['candidates']['cap']}. Times cover everything before the filter. $^{{\\dagger}}$ marks a censored statistic: on a sampled timing sweep the exhaustive mode exceeds a {int(env['deadline'])}-second deadline on {unfinished} of {sampled} substrates, {env['censored_pct']}, so its mean and ninetieth percentile are taken over the {env['n_finished']} that finished and are lower bounds. Its slowest substrate is one of the censored ones. On the test split, where no deadline is imposed, it fails on none.}}
+{i['candidates']['cap']}. Times cover everything before the filter. $^{{\\dagger}}$ marks a censored statistic: on a sampled timing sweep the exhaustive mode exceeds a {int(env['deadline'])}-second deadline on {unfinished} of {sampled} substrates, {env['censored_pct']}, so its mean and ninetieth percentile are taken over the {env['n_finished']} that finished and are lower bounds. Its slowest substrate is one of the censored ones. On the test split, where no deadline is imposed, it fails on none. Every time here is measured on an unloaded machine and one substrate at a time; the same medians measured while the other arm runs are in Section~\\ref{{SI-sec:si-runtime}} and are larger. The interactive mode's own slowest substrate, {i['max_s']}~s, is far above its median, so a service answering a form should impose a deadline and fall back rather than assume the median.}}
 \\label{{tab:modes}}
 \\end{{table}}
 """
