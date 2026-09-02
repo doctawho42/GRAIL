@@ -97,7 +97,8 @@ carries. What can be checked about it is checked in Section~\ref{SI-sec:si-popul
 comparison is read again there on the whole evaluated test set, \numPopdefWholesubstrates{}
 substrates, against the two comparators that ran over all of it. The wide-budget leads this paper
 claims survive that move; the narrower lead over SyGMa at a budget of fifteen does not, and is
-restricted to the comparison set wherever it is stated.
+restricted to the comparison set wherever it is stated. That cell is also one of the four a
+family-wise correction removes, so it is doubly qualified and is not a lead this paper rests on.
 
 The annotated substrate--metabolite pairs are assembled from four sources: ChEMBL
 \citep{Zdrazil_2024}, DrugBank \citep{Wishart_2018}, MetXBioDB \citep{Djoumbou_Feunang_2019} and
@@ -365,10 +366,12 @@ deployed scenario composes a phase-one and a phase-two ruleset, BioTransformer i
 step, MetaTox's depth is not a setting we chose or can read, and a mined template may perform
 more than one enzymatic edit in a single application:
 \numCompositeUnionsharePct{} of this bank's mined templates do
-(Section~\ref{SI-sec:si-singlestep}). The depth is swept for the one comparator whose knob is
-ours to turn and the lead survives it (Section~\ref{SI-sec:si-comparators}); for the others it is
-a difference between the arms that is stated rather than removed, and the wide-budget cells
-should be read with it in view.
+(Section~\ref{SI-sec:si-singlestep}). The depth is swept for SyGMa, whose scenario is a documented
+setting, and the lead survives it. BioTransformer's step count is also ours to turn and was not
+swept, a decision taken after the matched-length control had been read and stated as such;
+MetaTox's depth is neither ours to turn nor readable (Section~\ref{SI-sec:si-comparators}). For
+those two the difference between the arms is stated rather than removed, and the wide-budget
+cells should be read with it in view.
 
 The number of candidates a system is permitted to return is the \emph{output budget}, written
 $k$, and it is the second declared axis. Recall at budget $k$ for substrate $s$ with references
@@ -407,8 +410,10 @@ Both readings are reported. Treating the sweep as one family of \numHolmTests{} 
 arms against the three comparators the family was declared over at every budget, and applying
 Holm's correction to bootstrap $p$-values from the same resamples, \numHolmSurviving{} of the
 \numHolmSeparating{} cells that separate per comparison still separate; the \numHolmChangedWord{} that do not are marked in
-Table~\ref{SI-tab:si-intervals}. Of those, \numHolmLeadsremovedWord{} are leads, and among the
-leads claimed here only the narrowest, at $k=30$ against MetaTox, is one of them. The fourth
+Table~\ref{SI-tab:si-intervals}. Of those, \numHolmLeadsremovedWord{} are leads, and every one of the
+\numHolmLeadsremovedWord{} is a lead this paper claims somewhere: the exhaustive arm over
+MetaTox at $k=30$, over SyGMa and over MetaPredictor at $k=15$, and the interactive arm over
+MetaTox at $k=10$. Each is marked where it is claimed. The fourth
 comparator was obtained after that family was fixed, so its contrasts are reported with their own
 intervals and are not folded into a correction declared without them
 (Section~\ref{SI-sec:si-comparators}).
@@ -471,8 +476,9 @@ family-wise correction over the sweep, and it is named here rather than three se
 different control removes more: cut to each comparator's own list length, substrate by substrate,
 only the lead over SyGMa survives of the four, and that is reported below. The margin over MetaTox at
 $k=30$ is $+\numMarginMarginalgap$ with the interval
-$[+\numMarginMarginallo, +\numMarginMarginalhi]$: it is the only one a family-wise correction over
-the sweep removes, and its lower bound is smaller than the largest drawing correction measured on
+$[+\numMarginMarginallo, +\numMarginMarginalhi]$: it is the only one of those eight a
+family-wise correction over the sweep removes, though not the only lead in this paper that it
+removes, and the others are named where they are claimed. and its lower bound is smaller than the largest drawing correction measured on
 any comparator here, $+\numSygdialectThirty$ for SyGMa at the same budget. The two controls do not remove the
 same cells and neither leaves the MetaTox column standing: the correction removes the cell at
 $k=30$, and the matched-length cut removes the one at $k=50$, where over
@@ -940,7 +946,8 @@ rather than a single cell, and it is made here on this system's own numbers.
 The two operating modes are two settings of one rule budget and they do not fail in the same
 place: the cheaper setting is the weaker beyond a short list. Against MetaTox on the comparison set the interactive mode leads at $k = 10$,
 $+\numGapTrainedmetatoxOneZero$ with an interval of
-$[\numGapTrainedmetatoxOneZeroLo, \numGapTrainedmetatoxOneZeroHi]$, does not separate at $k=15$,
+$[\numGapTrainedmetatoxOneZeroLo, \numGapTrainedmetatoxOneZeroHi]$, which is one of the four
+leads a family-wise correction over the sweep removes; it does not separate at $k=15$,
 and then trails at every wider budget: $\numGapTrainedmetatoxTwoZero$
 $[\numGapTrainedmetatoxTwoZeroLo, \numGapTrainedmetatoxTwoZeroHi]$ at $20$,
 $\numGapTrainedmetatoxThreeZero$
@@ -1028,6 +1035,18 @@ whose reaction module was withdrawn, and the Supporting Information says what ea
 is the concrete case for leaderboards releasing per-item predictions rather than aggregate scores
 \citep{Rodriguez_2021, Mishra_2021}. Precision figures are bounded by annotation completeness. And the advantage at
 wide budgets is partly a statement about output length on all sides rather than about ranking.
+
+The argument made here about other people's figures was turned on this work's own release, and it
+found settings that decide a number and were not declared. The rule that combines the
+templates reaching one candidate is one, and a selection on validation prefers a different one.
+The fusion constant is a second, left at the value the method was published with. A rule gate the
+released checkpoint carries is a third, and no figure in this paper was measured under it. A set
+of candidate pools scored by a checkpoint this repository no longer ships is a fourth, and the
+drawing of the substrate and the pool cap are two more of the same kind, both now declared and
+one of them swept. Each is declared and measured here rather than described, and a reader may take that either way: as the
+discipline doing its work, or as a measure of how easily an undeclared setting survives even in a
+paper whose subject is undeclared settings. The second reading is why the first is worth
+reporting.
 
 \subsection{The ceiling bounds this formulation, not the task}
 
@@ -1266,7 +1285,9 @@ default could move a figure. Every call site
 that produced a figure here names the convention it was measured under rather than taking it from
 a default.
 
-Every figure printed in this paper is generated from a stored result file rather than typed.
+Almost every figure printed in this paper reaches the page from a stored result file through a
+generated macro rather than typed; \numProvHandtyped{} measurements do not, they are enumerated
+in the checker rather than covered by a wildcard, and the Supporting Information says which.
 \numProvPinned{} such files are pinned, meaning that each records the script that wrote it and
 the version of that script, and an automated check refuses a file whose script has since changed.
 \numProvPinnedcurrent{} of the \numProvPinned{} pass that check. Of them, \numProvSources{} are the ones the paper's

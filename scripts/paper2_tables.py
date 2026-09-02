@@ -38,6 +38,20 @@ def blend_column():
     return by["noisy_or"]["recall"], by["hybrid"]["recall"], a["join"]
 
 
+def _emitted_note(emitted, out, arms, ks) -> str:
+    """Which arms emit more than the widest budget, read from the row rather than remembered."""
+    widest = max(int(k) for k in ks)
+    over = [LABEL[a] for a in arms
+            if float(emitted.get(a, out.get(a, 0))) > widest and a in LABEL]
+    if not over:
+        return f"No arm's mean emission exceeds the widest budget shown, {widest}."
+    if len(over) == 1:
+        return (f"One arm emits more than the widest budget shown, {widest}: {over[0]}, "
+                f"whose column at that budget is therefore still a truncation.")
+    return ("These arms emit more than the widest budget shown, "
+            f"{widest}: " + ", ".join(over) + ".")
+
+
 def table():
     d = json.loads((ROOT / "results/deployment_table.json").read_text())
     rec, out = d["recall_micro"], d["mean_output_length"]
@@ -76,8 +90,12 @@ def table():
           f"{d['population']['n']} substrates of the comparison set, carrying "
           f"{int(d['population']['n_references'])} annotated metabolites. The last row gives the "
           "mean number of candidates each method emits, before any budget is applied: it is a "
-          "property of the method and not of this table, and for two of the comparators it is "
-          "larger than the widest budget shown. A prediction equal to the substrate is "
+          "property of the method and not of this table. "
+          # Counted rather than asserted. The caption said two comparators emit more than the
+          # widest budget; at a widest budget of 50 only one does, and the sentence had been
+          # written when the widest was narrower.
+          + _emitted_note(emit2 or emit, out, arms, ks) +
+          " A prediction equal to the substrate is "
           "dropped before the budget for every method alike."
           + ("" if not blend else
              " The last column, \\emph{blend}, re-ranks the exhaustive arm's own pool under the aggregation a "
