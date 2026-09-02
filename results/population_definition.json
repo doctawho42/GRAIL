@@ -2,8 +2,8 @@
  "provenance": {
   "script": "population_definition.py",
   "script_path": "scripts/typed_edit/population_definition.py",
-  "source_sha256": "d350e3ad451d51f117faae76ce15e2f63411212cda408db50e85d34b74c22a45",
-  "git_commit": "33f72aa1923c32bc9b9723ce0b94a0c53e13a590",
+  "source_sha256": "70560978404d3a7bb1260efe1af36c50c952d4f8f2e053cde94d078c96d35089",
+  "git_commit": "619c7dec51e976341a5b6d68eba4dbb56365ee3f",
   "git_dirty": true
  },
  "what_defines_the_comparison_set": "the intersection of the substrates each method has an entry for; the binding constraint is the 291-substrate submission list sent to the web-service comparator, which returned all 291. No substrate was removed for emitting nothing.",
@@ -12,6 +12,7 @@
   "comparison_set": {
    "sygma": 1,
    "metapredictor": 1,
+   "biotransformer": 21,
    "metatox": 0,
    "grail_deployed": 0
   },
@@ -23,6 +24,10 @@
    "metapredictor": {
     "substrates_with_no_prediction": 3,
     "references_they_carry": 3
+   },
+   "biotransformer": {
+    "substrates_with_no_prediction": 107,
+    "references_they_carry": 183
    }
   }
  },
@@ -261,6 +266,100 @@
       "excludes_zero": true
      }
     }
+   },
+   "biotransformer": {
+    "recall": {
+     "5": 0.2647,
+     "10": 0.3684,
+     "15": 0.4271,
+     "30": 0.4541,
+     "50": 0.4556
+    },
+    "substrates_with_no_prediction": 21,
+    "deployed_minus_comparator": {
+     "5": {
+      "difference": 0.0556,
+      "ci95": [
+       0.0154,
+       0.0991
+      ],
+      "excludes_zero": true
+     },
+     "10": {
+      "difference": 0.0647,
+      "ci95": [
+       0.0218,
+       0.1098
+      ],
+      "excludes_zero": true
+     },
+     "15": {
+      "difference": 0.0526,
+      "ci95": [
+       0.0083,
+       0.0993
+      ],
+      "excludes_zero": true
+     },
+     "30": {
+      "difference": 0.0361,
+      "ci95": [
+       -0.0159,
+       0.089
+      ],
+      "excludes_zero": false
+     },
+     "50": {
+      "difference": 0.0346,
+      "ci95": [
+       -0.019,
+       0.0887
+      ],
+      "excludes_zero": false
+     }
+    },
+    "exhaustive_minus_comparator": {
+     "5": {
+      "difference": 0.0466,
+      "ci95": [
+       0.0046,
+       0.0901
+      ],
+      "excludes_zero": true
+     },
+     "10": {
+      "difference": 0.0872,
+      "ci95": [
+       0.0478,
+       0.1291
+      ],
+      "excludes_zero": true
+     },
+     "15": {
+      "difference": 0.1083,
+      "ci95": [
+       0.069,
+       0.1501
+      ],
+      "excludes_zero": true
+     },
+     "30": {
+      "difference": 0.1985,
+      "ci95": [
+       0.1588,
+       0.2422
+      ],
+      "excludes_zero": true
+     },
+     "50": {
+      "difference": 0.2466,
+      "ci95": [
+       0.209,
+       0.2883
+      ],
+      "excludes_zero": true
+     }
+    }
    }
   },
   "the whole evaluated test set": {
@@ -467,6 +566,100 @@
       "ci95": [
        0.196,
        0.2431
+      ],
+      "excludes_zero": true
+     }
+    }
+   },
+   "biotransformer": {
+    "recall": {
+     "5": 0.2349,
+     "10": 0.3489,
+     "15": 0.4162,
+     "30": 0.4563,
+     "50": 0.4575
+    },
+    "substrates_with_no_prediction": 107,
+    "deployed_minus_comparator": {
+     "5": {
+      "difference": 0.0936,
+      "ci95": [
+       0.0727,
+       0.1152
+      ],
+      "excludes_zero": true
+     },
+     "10": {
+      "difference": 0.0905,
+      "ci95": [
+       0.0683,
+       0.1137
+      ],
+      "excludes_zero": true
+     },
+     "15": {
+      "difference": 0.0712,
+      "ci95": [
+       0.0477,
+       0.0955
+      ],
+      "excludes_zero": true
+     },
+     "30": {
+      "difference": 0.0581,
+      "ci95": [
+       0.0322,
+       0.0842
+      ],
+      "excludes_zero": true
+     },
+     "50": {
+      "difference": 0.0581,
+      "ci95": [
+       0.0316,
+       0.0846
+      ],
+      "excludes_zero": true
+     }
+    },
+    "exhaustive_minus_comparator": {
+     "5": {
+      "difference": 0.0709,
+      "ci95": [
+       0.0497,
+       0.0923
+      ],
+      "excludes_zero": true
+     },
+     "10": {
+      "difference": 0.0901,
+      "ci95": [
+       0.0676,
+       0.113
+      ],
+      "excludes_zero": true
+     },
+     "15": {
+      "difference": 0.1132,
+      "ci95": [
+       0.0906,
+       0.1361
+      ],
+      "excludes_zero": true
+     },
+     "30": {
+      "difference": 0.1921,
+      "ci95": [
+       0.1669,
+       0.2172
+      ],
+      "excludes_zero": true
+     },
+     "50": {
+      "difference": 0.2599,
+      "ci95": [
+       0.2343,
+       0.285
       ],
       "excludes_zero": true
      }

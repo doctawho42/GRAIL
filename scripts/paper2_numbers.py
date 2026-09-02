@@ -591,8 +591,13 @@ def build():
     n["popdef.wholesubstrates"] = _whole.get("n_substrates")
     n["popdef.wholereferences"] = _whole.get("n_references")
     # How many of the exhaustive arm's separating leads on the 291 still separate on all 1170.
+    # The comparator list follows what the wider population actually holds rather than being
+    # named here, because a comparator added to that population and not to this loop would be
+    # measured on it and left out of the count the paper quotes.
     _kept = _lost = 0
-    for comp in ("sygma", "metapredictor"):
+    _comps = [c for c in ("sygma", "metapredictor", "biotransformer") if c in _whole]
+    n["popdef.wholearms"] = len(_comps)
+    for comp in _comps:
         a = ((pop["contrasts"]["the comparison set"].get(comp) or {})
              .get("exhaustive_minus_comparator") or {})
         b = ((_whole.get(comp) or {}).get("exhaustive_minus_comparator") or {})

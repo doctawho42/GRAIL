@@ -1439,15 +1439,14 @@ properties most likely to have driven such a draw did not drive this one.
 
 The comparison is also read on the population nobody selected: the whole evaluated test set,
 \numPopdefWholesubstrates{} substrates carrying \numPopdefWholereferences{} references, against
-the two comparators that ran over all of it, with a substrate a comparator answered nothing for
-scored as zero rather than removed. The other two are not there for reasons that differ.
-MetaTox is a web service, and taking its arm to the whole evaluated test set means a second
-submission of the substrates outside the comparison set. It was not made, and the reason is the
-cost of a submission rather than an inability: this paper counts two other absences as unforced
-for the same reason and this one is the third. BioTransformer is a jar
-this repository holds and it runs here, under the x86\_64 Java 8 runtime its bundled InChI
-artefact is built for; what kept it off the wider population was the cost of that run and not an
-impossibility, and it is named as a cost. Both arms are read there, which matters because the wide-budget
+the \numPopdefWholearmsWord{} comparators that ran over all of it, with a substrate a comparator
+answered nothing for scored as zero rather than removed. BioTransformer is one of the three: it
+is a jar this repository holds and it runs here under the x86\_64 Java 8 runtime its bundled
+InChI artefact is built for, so what had kept it off this population was the cost of the run and
+that cost was paid. MetaTox is the one arm that is not here. Taking it to this population means a
+second submission of the substrates outside the comparison set, it was not made, and the reason
+is the cost of a submission rather than an inability: this paper counts two other absences as
+unforced for the same reason and this one is the third. Both arms are read there, which matters because the wide-budget
 leads this work claims are the exhaustive arm's and that arm existed only on the comparison set
 until its pools were built for the whole split.
 
@@ -1459,17 +1458,21 @@ the comparison set: the wider population turns a tie into a small deficit that s
 MetaPredictor neither population separates.
 
 The exhaustive arm's leads mostly survive the move, and the exception is named. Of the
-\numPopdefLeadstotalWord{} separating leads it holds on the comparison set at the budgets read
-here, \numPopdefLeadskeptWord{} still separate over the whole set and
-\numPopdefLeadslostWord{} does not. The six are the exhaustive arm against each
-comparator at fifteen, thirty and fifty, and five of them survive:
+\numPopdefLeadstotalWord{} separating leads it holds on the comparison set against the
+\numPopdefWholearmsWord{} comparators that reach the wider population,
+\numPopdefLeadskeptWord{} still separate over the whole set and
+\numPopdefLeadslostWord{} does not. The \numPopdefLeadstotalWord{} are the exhaustive arm against SyGMa
+and MetaPredictor at fifteen, thirty and fifty and against BioTransformer at five and upward, and
+\numPopdefLeadskeptWord{} of them survive:
 against SyGMa $+\numPopdefExhwholesygmaThreeZero$ $[+\numPopdefExhwholesygmaThreeZeroLo,
 +\numPopdefExhwholesygmaThreeZeroHi]$ at thirty and $+\numPopdefExhwholesygmaFiveZero$
 $[+\numPopdefExhwholesygmaFiveZeroLo, +\numPopdefExhwholesygmaFiveZeroHi]$ at fifty, against
 MetaPredictor $+\numPopdefExhwholemetapredictorOneFive$
 $[+\numPopdefExhwholemetapredictorOneFiveLo, +\numPopdefExhwholemetapredictorOneFiveHi]$ at
 fifteen, $+\numPopdefExhwholemetapredictorThreeZero$ and
-$+\numPopdefExhwholemetapredictorFiveZero$ at thirty and fifty. What does not survive is the
+$+\numPopdefExhwholemetapredictorFiveZero$ at thirty and fifty, and against BioTransformer at
+every budget from five upward, where the wider population separates the two more strongly than
+the comparison set does. What does not survive is the
 narrower one: the lead over SyGMa at a budget of fifteen is
 $+\numPopdefExhcompsygmaOneFive$ $[+\numPopdefExhcompsygmaOneFiveLo,
 +\numPopdefExhcompsygmaOneFiveHi]$ on the comparison set and

@@ -45,13 +45,30 @@ def merge(pattern, out, which="comparison"):
     if not paths:
         print("no shard matched", file=sys.stderr)
         return 1
-    pools, refs, slices = {}, {}, []
+    pools, refs, slices, stamps, shown = {}, {}, [], [], set()
     for p in paths:
         d = json.loads(Path(p).read_text())
         pools.update(d["pools"])
         refs.update(d["references"])
         slices.append(tuple(d["slice"]))
+        stamps.append(d.get("checkpoints"))
+        shown.add(d.get("present", "stored"))
         print(f"  + {Path(p).name}: {d['slice']} {len(d['pools'])} substrates", file=sys.stderr)
+    # Shards built by different models, or from different presentations of the substrate, must
+    # not merge into one pool. Nothing downstream can see the seam: a merged file records one
+    # set of checkpoints and the reader takes it for the whole.
+    def key(c):
+        return None if not c else tuple(sorted((k, (v or {}).get("sha256_16"))
+                                               for k, v in c.items()))
+    distinct = {key(c) for c in stamps}
+    if len(distinct) > 1:
+        print(f"FAIL: the shards were not all scored by one pair of checkpoints: {distinct}",
+              file=sys.stderr)
+        return 1
+    if len(shown) > 1:
+        print(f"FAIL: the shards do not agree on how the substrate was presented: {shown}",
+              file=sys.stderr)
+        return 1
     if which == "evaluated-test":
         truth = json.loads((ROOT / "results/test_references.json").read_text())
         subs = sorted(s for s in truth if truth[s])
@@ -74,6 +91,9 @@ def merge(pattern, out, which="comparison"):
          "note": "whole bank, no selector, no calibrated threshold, uncapped; candidates in "
                  "rank order by filter x generator, deduplicated by match key, first SMILES kept",
          "slices": [list(s) for s in sorted(slices)],
+         "present": next(iter(shown)),
+         "population": which,
+         "checkpoints": stamps[0],
          "n_substrates": len(pools), "pools": pools, "references": refs}, indent=1))
     import statistics as st
     sizes = [len(v) for v in pools.values()]
