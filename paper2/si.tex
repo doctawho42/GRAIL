@@ -1733,10 +1733,14 @@ A pinned producer is not the same as a pinned model. Candidate pools record both
 scored them with their digests; the pool sets frozen before that field existed carry no such
 record, and for those the run is established by reproduction: their generator and filter scores
 are reproduced exactly by one run's checkpoints and by no other pair held here, so both stages of
-the released system come from one run. The analysis scripts default to it, a test refuses any that
-names another, and the gate over the artifacts the manuscript's numbers come from fails on any
-that names a checkpoint outside it, because a default that is not the deployed setting reproduces
-something nobody ran.
+the released system come from one run. The analysis scripts default to it, a test refuses any
+producer of a pinned artifact that names another, and the gate over the artifacts the
+manuscript's numbers come from fails on any that names a checkpoint outside it, because a default
+that is not the deployed setting reproduces something nobody ran. That test reads the shell
+scripts too, and the two ways a path is written in them, which is how it now sees the one that
+built the standardised pools: it named the filter of a run this repository no longer ships, so
+the sweep over how the substrate is drawn compared two models rather than two drawings, and its
+figures here are from the rebuild.
 
 The guarantee that matters is narrower than the pinned set and is checked by a gate rather than
 asserted. The numbers in this paper come from \numProvSources{} of those artifacts, established
@@ -1764,6 +1768,17 @@ weaker and is of a different kind, that every such producer's default is the dep
 test refuses any that names another. The gate fails the build
 if any of the first two counts is not zero, and unpinning one artifact makes it fail, which is how
 we know it can.
+
+The identification itself had a blind spot of a different kind, and it is the one that let the
+standardised pools through. It enumerated pool directories by a filename pattern and reported on
+whichever ones matched, saying nothing about those that did not, so four of the thirteen a
+published number is read from were never examined -- among them the pool the interactive arm's
+whole column comes from, and both standardised pools. A check that reports on what it finds and
+is silent about what is missing cannot fail on the thing that is missing. It now refuses when a
+declared directory yields no shard it can read, the readers of those pools refuse a shard that
+does not record the released pair, and the invariant that exposed it is checked on every run: a
+substrate the standardiser does not move is the same molecule in both arms, so the two must
+return the same list on it.
 
 Bringing those artifacts inside the guarantee meant re-running their producers, which is a rerun
 and not a relabel, so what moved is reported. One number moved. The train split's clean triple

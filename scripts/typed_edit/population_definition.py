@@ -64,8 +64,13 @@ DEPLOYED_FULLTEST = ROOT / "results/widepools_k30_fulltest"
 # selected; these pools are that population.
 EXHAUSTIVE_COMPARISON = ROOT / "results/widepools_implicit"
 EXHAUSTIVE_FULLTEST = ROOT / "results/widepools_fulltest"
+# The comparators that ran over the whole evaluated test set. BioTransformer joined them when it
+# was run there: it is a jar this repository holds, and what had kept it on the comparison set
+# was the cost of the run rather than an impossibility. MetaTox is the one that cannot follow,
+# because a second submission to a web service is not ours to make.
 WHOLE_TEST = {"sygma": ROOT / "results/sygma_fulltest_predictions.json",
-              "metapredictor": ROOT / "artifacts/tier2_1170/metapredictor_preds.json"}
+              "metapredictor": ROOT / "artifacts/tier2_1170/metapredictor_preds.json",
+              "biotransformer": ROOT / "results/biotransformer_fulltest_preds.json"}
 
 
 def main() -> int:
@@ -122,6 +127,15 @@ def main() -> int:
 
     others = {name: json.loads(path.read_text()) for name, path in WHOLE_TEST.items()
               if path.exists()}
+    # A comparator whose file is present but covers a fraction of the population would be read as
+    # answering nothing on the rest, which is a recall of its own making. It is dropped with a
+    # line rather than scored, and the artifact records which arms reached this population.
+    for name in list(others):
+        covered = len(set(others[name]) & set(truth))
+        if covered < 0.99 * len(truth):
+            print(f"  {name}: covers {covered} of {len(truth)} substrates, not enough to be "
+                  f"read on this population; dropped", file=sys.stderr)
+            others.pop(name)
 
     every = sorted(truth)
     inside = sorted(set(every) & set(metatox))
