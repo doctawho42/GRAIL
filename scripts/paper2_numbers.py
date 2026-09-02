@@ -885,6 +885,16 @@ def build():
     n["defaultgate.binds"] = rdt["substrates_where_the_gate_binds"]
     n["defaultgate.bindshare"] = rdt["share_where_the_gate_binds"]
 
+    # The comparison with every arm that can be re-run on the drawing a user submits.
+    eq = art("drawing_equalised.json")
+    n["equalised.moved"] = len(eq["budgets_whose_verdict_moves"])
+    n["equalised.substrates"] = eq["population"]["n_substrates"]
+    n["equalised.movedsubs"] = eq["population"]["substrates_the_standardiser_moves"]
+    _wo = eq.get("verdicts_equalised_without_metatox") or {}
+    n["equalised.differswithoutmetatox"] = sum(
+        1 for k, v in _wo.items()
+        if v["verdict"] != eq["verdicts_equalised"][k]["verdict"])
+
     agr = art("ceiling_instrument_agreement.json")
     n["ceilagree.disagreement"] = agr["disagreement_between_instruments_on_the_same_convention"]
     n["ceilagree.spread"] = agr["spread_across_all_four_counts"]

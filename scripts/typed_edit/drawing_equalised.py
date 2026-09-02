@@ -102,11 +102,17 @@ def main() -> int:
     from rdkit import Chem, RDLogger
 
     RDLogger.DisableLog("rdApp.*")
+    import multiprocessing
+    import os
+
     from _rrf import rrf_order
-    from bank_without_selection import _key as tautkey
+    from bank_without_selection import _key as tautkey, _keys_parallel
     from grail_metabolism.utils.preparation import standardize_mol
     from sygma_by_dialect import _enumerate
     from vs_metatox import population
+
+    workers = max(1, (os.cpu_count() or 4) - 2)
+    keypool = multiprocessing.get_context("spawn").Pool(workers)
 
     subs, truth, _ = population()
     subs = sorted(s for s in subs if truth.get(s))
@@ -129,12 +135,20 @@ def main() -> int:
     print(f"the standardiser moves {len(moved)} of them", flush=True)
 
     def keyed(lists):
-        """One arm's per-substrate key lists, deduplicated, with the parent dropped."""
+        """One arm's per-substrate key lists, deduplicated, with the parent dropped.
+
+        Keys are computed in one batch across every arm and substrate, because tautomer
+        canonicalisation is a search rather than a lookup and dominates this script: keying
+        serially took the run past two hours before a single number was computed, and the pool
+        this project already shares farms the misses out.
+        """
+        flat = [s2 for s in subs for s2 in lists.get(s, [])]
+        table = dict(zip(flat, _keys_parallel(flat, keypool)))
         out = {}
         for s in subs:
             ks, seen = [], set()
             for smiles in lists.get(s, []):
-                k = tautkey(smiles)
+                k = table.get(smiles)
                 if k and k != parent[s] and k not in seen:
                     seen.add(k)
                     ks.append(k)
@@ -286,6 +300,8 @@ def main() -> int:
             "run in. MetaTox's column is unchanged in both, which is the residue this work "
             "cannot remove."),
     }
+    keypool.close()
+    keypool.join()
     Path(args.out).write_text(json.dumps(report, indent=1))
 
     print(f"\n{'k':>4s}  {'stored':>34s}  {'equalised':>34s}")
