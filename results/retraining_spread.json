@@ -1,0 +1,242 @@
+{
+ "provenance": {
+  "script": "retraining_spread.py",
+  "script_path": "scripts/typed_edit/retraining_spread.py",
+  "source_sha256": "ed2996a367a80d560b1efef6f776f261058e0dbcf14f4cfd4b4de14f91ab898f",
+  "git_commit": "2961f747de122d9250e18c084c861c1b24755c1f",
+  "git_dirty": true
+ },
+ "inputs": [
+  {
+   "path": "results/seedpools/interactive_seed0.json",
+   "exists": true,
+   "sha256_16": "883567a9866d1135",
+   "bytes": 1115245
+  },
+  {
+   "path": "results/seedpools/interactive_seed1.json",
+   "exists": true,
+   "sha256_16": "dcff24d889e13fff",
+   "bytes": 1077408
+  },
+  {
+   "path": "results/seedpools/interactive_seed2.json",
+   "exists": true,
+   "sha256_16": "9516ab14226b39b6",
+   "bytes": 1244513
+  }
+ ],
+ "question": "how much of a reported margin retraining alone could move, measured at the configuration the manuscript reports rather than at an earlier one",
+ "seeds": [
+  "seed0",
+  "seed1",
+  "seed2"
+ ],
+ "population": "the comparison set, as everywhere else",
+ "ranking": "reciprocal rank fusion over the pool capped at 100, parent dropped",
+ "criterion": "tautomer-aware InChIKey",
+ "the_three_runs": {
+  "seed0": {
+   "generator": {
+    "sha256_16": "c694af18b5be9a0e",
+    "is_the_released_one": true
+   },
+   "filter": {
+    "sha256_16": "45a0728af1ab9050",
+    "is_the_released_one": false
+   }
+  },
+  "seed1": {
+   "generator": {
+    "sha256_16": "82549a1679e5ae06",
+    "is_the_released_one": false
+   },
+   "filter": {
+    "sha256_16": "526fab4822c2c668",
+    "is_the_released_one": false
+   }
+  },
+  "seed2": {
+   "generator": {
+    "sha256_16": "b8429dc65d75336a",
+    "is_the_released_one": false
+   },
+   "filter": {
+    "sha256_16": "6e749318cf238a8e",
+    "is_the_released_one": false
+   }
+  }
+ },
+ "the_released_pair": {
+  "filter": "651fbb6a9da84ba5",
+  "generator": "c694af18b5be9a0e"
+ },
+ "what_the_three_runs_are": "three training runs at this configuration. The released generator is byte-identical to one of them; the released filter is a fourth checkpoint and matches none. So the released pair is not one of the three points this spread is over, and at a fixed seed the generator reproduces exactly where the filter does not",
+ "by_arm": {
+  "interactive": {
+   "seeds": {
+    "interactive_seed0": {
+     "n_substrates": 291,
+     "n_references": 665,
+     "recall": {
+      "1": 0.0947,
+      "3": 0.2331,
+      "5": 0.3233,
+      "8": 0.3955,
+      "10": 0.4376,
+      "15": 0.4797,
+      "20": 0.4872,
+      "30": 0.4902,
+      "50": 0.4902
+     }
+    },
+    "interactive_seed1": {
+     "n_substrates": 291,
+     "n_references": 665,
+     "recall": {
+      "1": 0.0977,
+      "3": 0.2301,
+      "5": 0.3098,
+      "8": 0.394,
+      "10": 0.4331,
+      "15": 0.4722,
+      "20": 0.4857,
+      "30": 0.4872,
+      "50": 0.4887
+     }
+    },
+    "interactive_seed2": {
+     "n_substrates": 291,
+     "n_references": 665,
+     "recall": {
+      "1": 0.1008,
+      "3": 0.2316,
+      "5": 0.3248,
+      "8": 0.403,
+      "10": 0.4301,
+      "15": 0.4782,
+      "20": 0.4962,
+      "30": 0.5008,
+      "50": 0.5008
+     }
+    }
+   },
+   "by_budget": {
+    "1": {
+     "seeds": [
+      0.0947,
+      0.0977,
+      0.1008
+     ],
+     "mean": 0.0977,
+     "sd": 0.0031,
+     "released": 0.1053,
+     "released_inside_the_seed_range": false
+    },
+    "3": {
+     "seeds": [
+      0.2331,
+      0.2301,
+      0.2316
+     ],
+     "mean": 0.2316,
+     "sd": 0.0015,
+     "released": 0.2406,
+     "released_inside_the_seed_range": false
+    },
+    "5": {
+     "seeds": [
+      0.3233,
+      0.3098,
+      0.3248
+     ],
+     "mean": 0.3193,
+     "sd": 0.0083,
+     "released": 0.3203,
+     "released_inside_the_seed_range": true
+    },
+    "8": {
+     "seeds": [
+      0.3955,
+      0.394,
+      0.403
+     ],
+     "mean": 0.3975,
+     "sd": 0.0048,
+     "released": 0.4015,
+     "released_inside_the_seed_range": true
+    },
+    "10": {
+     "seeds": [
+      0.4376,
+      0.4331,
+      0.4301
+     ],
+     "mean": 0.4336,
+     "sd": 0.0038,
+     "released": 0.4331,
+     "released_inside_the_seed_range": true
+    },
+    "15": {
+     "seeds": [
+      0.4797,
+      0.4722,
+      0.4782
+     ],
+     "mean": 0.4767,
+     "sd": 0.004,
+     "released": 0.4797,
+     "released_inside_the_seed_range": true
+    },
+    "20": {
+     "seeds": [
+      0.4872,
+      0.4857,
+      0.4962
+     ],
+     "mean": 0.4897,
+     "sd": 0.0057,
+     "released": 0.4872,
+     "released_inside_the_seed_range": true
+    },
+    "30": {
+     "seeds": [
+      0.4902,
+      0.4872,
+      0.5008
+     ],
+     "mean": 0.4927,
+     "sd": 0.0071,
+     "released": 0.4902,
+     "released_inside_the_seed_range": true
+    },
+    "50": {
+     "seeds": [
+      0.4902,
+      0.4887,
+      0.5008
+     ],
+     "mean": 0.4932,
+     "sd": 0.0066,
+     "released": 0.4902,
+     "released_inside_the_seed_range": true
+    }
+   },
+   "released_column": "trained budget",
+   "seed_0_minus_the_release": {
+    "1": -0.0106,
+    "3": -0.0075,
+    "5": 0.003,
+    "8": -0.006,
+    "10": 0.0045,
+    "15": 0.0,
+    "20": 0.0,
+    "30": 0.0,
+    "50": 0.0
+   },
+   "what_that_contrast_is": "seed 0 shares the released generator and carries a different filter, so this difference is a filter retraining with the generator held fixed"
+  }
+ },
+ "margins_at_thirty_in_units_of_the_seed_spread": {},
+ "what_this_is_not": "a spread over training-set size or over the full split: every seed here sees the same 5,000 training substrates the released run saw, so this measures the seed and not the data"
+}

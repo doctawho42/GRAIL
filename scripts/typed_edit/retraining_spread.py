@@ -70,13 +70,19 @@ def main() -> int:
     # released pair is not one of the three points this spread is over. At a fixed seed the
     # generator reproduces exactly and the filter does not, which is a fact about where the
     # training nondeterminism lives and is worth reporting beside the spread.
-    released = {stage: digest(ROOT / rel) for stage, rel in released_pair().items()}
+    # Named apart from the released recall column below, which was called `released` too and
+    # overwrote this one, so the artifact reported a table of recalls where its own field says
+    # digests. The comparison against it had already been made, so no verdict was wrong; the
+    # record of what the comparison was against was.
+    released_digests = {stage: digest(ROOT / rel)
+                        for stage, rel in released_pair().items()}
     runs = {}
     for seed in (0, 1, 2):
         base = ROOT / f"artifacts/multiseed_full5000_implicit_seed{seed}/checkpoints"
         runs[f"seed{seed}"] = {
             stage: {"sha256_16": digest(base / f"{stage}.pt"),
-                    "is_the_released_one": digest(base / f"{stage}.pt") == released.get(stage)}
+                    "is_the_released_one":
+                        digest(base / f"{stage}.pt") == released_digests.get(stage)}
             for stage in ("generator", "filter")}
 
     deployed = json.loads((ROOT / "results/deployment_table.json").read_text())
@@ -157,7 +163,7 @@ def main() -> int:
         "ranking": "reciprocal rank fusion over the pool capped at 100, parent dropped",
         "criterion": "tautomer-aware InChIKey",
         "the_three_runs": runs,
-        "the_released_pair": released,
+        "the_released_pair": released_digests,
         "what_the_three_runs_are": (
             "three training runs at this configuration. The released generator is byte-identical "
             "to one of them; the released filter is a fourth checkpoint and matches none. So the "
