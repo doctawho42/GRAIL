@@ -28,9 +28,11 @@ fraction depends on two decisions made outside the model. The first is what coun
 since two chemical structures can denote the same molecule while differing in how a hydrogen is
 placed or how a ring is drawn. The second is how many candidates the system is allowed to return,
 since any system recovers more of the answer if permitted to list more guesses. Published
-predictors differ on both and report them inconsistently, so a system returning seventy candidates
-and one returning eight are not measured on the same scale. Independent evaluations of these tools
-report the same obstacle \citep{Boyce_2022, Scholz_2023, Gao_2026}.
+predictors differ on both and report them inconsistently, and the difference is not small: the
+four compared here emit between \numEmittedBiotransformer{} and \numEmittedSygma{} candidates
+per substrate by default, so a recall figure quoted for one is not on the scale of a recall
+figure quoted for another. Independent evaluations of these tools report the same obstacle
+\citep{Boyce_2022, Scholz_2023, Gao_2026}.
 
 This work addresses that. We present GRAIL (Graph-scored Rule Application with Inspectable Localisation), a metabolite
 structure predictor built from a bank of reaction templates, a learned model that selects which templates to apply, and a learned model
