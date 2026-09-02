@@ -209,11 +209,23 @@ def test_no_artifact_a_number_comes_from_is_older_than_the_pools_it_is_read_from
         if not path.exists():
             continue
         try:
-            reads_pools = "widepools_implicit" in Path(
-                json.loads(path.read_text())["provenance"]["script_path"]).read_text()
+            blob = json.loads(path.read_text())
+            source = Path(blob["provenance"]["script_path"]).read_text()
         except Exception:
             continue
-        if reads_pools and os.path.getmtime(path) < pool_time:
+        # What the producer could read is not what this artifact did read. A producer serving two
+        # populations mentions both, and the validation sweep is not stale because the comparison
+        # pools moved: it reads the validation pools, which did not. The artifact's own record of
+        # its inputs wins over the producer's source wherever it has one.
+        named = " ".join(str(row.get("path", "")) for row in (blob.get("inputs") or []))
+        recorded = json.dumps(blob.get("population", ""))
+        if named:
+            depends = "widepools_implicit" in named
+        elif "widepools_implicit" in recorded or "val_pools" in recorded:
+            depends = "widepools_implicit" in recorded
+        else:
+            depends = "widepools_implicit" in source
+        if depends and os.path.getmtime(path) < pool_time:
             stale.append(name)
     assert not stale, (
         "these artifacts are read from the comparison pools and are older than the pools "

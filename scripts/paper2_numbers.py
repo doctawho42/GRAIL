@@ -591,6 +591,7 @@ def build():
                     _lost += 1
     n["popdef.leadskept"] = _kept
     n["popdef.leadslost"] = _lost
+    n["popdef.leadstotal"] = _kept + _lost
 
     n["popdef.metatox"] = pop["emission"]["comparison_set"]["metatox"]
     n["popdef.sygmainside"] = pop["emission"]["comparison_set"]["sygma"]

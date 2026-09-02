@@ -3,7 +3,7 @@
   "script": "wide_pool_analysis.py",
   "script_path": "scripts/typed_edit/wide_pool_analysis.py",
   "source_sha256": "a55f9d02dbe2609751e1d5512b9e1e0590c5927acaa0f2b16fe27bb7b8372be7",
-  "git_commit": "d85ad690ec6a8919210a38a5e9e9072e5ffad5b9",
+  "git_commit": "02fab0200a1a47104ea9a4c8df86c345d5036916",
   "git_dirty": true
  },
  "population": {
@@ -18,52 +18,52 @@
  "mean_groups_per_substrate": 160.4,
  "arms": {
   "as_ranked": {
-   "recall@15": 0.3951,
-   "retention": 0.4671,
-   "recall@15_micro": 0.3549,
-   "retention_micro": 0.4379
+   "recall@15": 0.4026,
+   "retention": 0.476,
+   "recall@15_micro": 0.3459,
+   "retention_micro": 0.4267
   },
   "oracle_within": {
-   "recall@15": 0.4025,
-   "retention": 0.4759,
-   "recall@15_micro": 0.3654,
-   "retention_micro": 0.4508
+   "recall@15": 0.4219,
+   "retention": 0.4988,
+   "recall@15_micro": 0.3699,
+   "retention_micro": 0.4564
   },
   "oracle_between": {
-   "recall@15": 0.7765,
-   "retention": 0.9181,
-   "recall@15_micro": 0.6692,
-   "retention_micro": 0.8256
+   "recall@15": 0.7722,
+   "retention": 0.913,
+   "recall@15_micro": 0.6466,
+   "retention_micro": 0.7978
   },
   "oracle_both": {
-   "recall@15": 0.7954,
-   "retention": 0.9404,
-   "recall@15_micro": 0.6887,
-   "retention_micro": 0.8497
+   "recall@15": 0.7918,
+   "retention": 0.9362,
+   "recall@15_micro": 0.6662,
+   "retention_micro": 0.8219
   }
  },
  "closes": {
-  "oracle_within": 0.0074,
-  "oracle_between": 0.3814,
-  "oracle_both": 0.4003
+  "oracle_within": 0.0193,
+  "oracle_between": 0.3696,
+  "oracle_both": 0.3892
  },
  "within_group_rank": {
   "n_cases_with_siblings": 300,
-  "mean_rank": 3.34,
+  "mean_rank": 3.27,
   "median_rank": 1.0,
-  "top1_share": 0.5233,
+  "top1_share": 0.5433,
   "mean_group_size": 14.61
  },
  "score_combinations_at_15": {
-  "product": 0.4401,
-  "filter": 0.2061,
+  "product": 0.4528,
+  "filter": 0.2001,
   "generator": 0.4616,
-  "rrf": 0.5492
+  "rrf": 0.5515
  },
  "score_combinations_at_15_micro": {
-  "product": 0.3759,
-  "filter": 0.1549,
+  "product": 0.3925,
+  "filter": 0.1594,
   "generator": 0.4271,
-  "rrf": 0.5023
+  "rrf": 0.5038
  }
 }

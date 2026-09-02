@@ -3,7 +3,7 @@
   "script": "aggregation_ablation.py",
   "script_path": "scripts/typed_edit/aggregation_ablation.py",
   "source_sha256": "7ce063c61f9a3ff766f87c204b62723b1ad9828d7e16134a86d231df4460c76a",
-  "git_commit": "6b11b6998424b3b7450c27c2acc07f37619f6b79",
+  "git_commit": "02fab0200a1a47104ea9a4c8df86c345d5036916",
   "git_dirty": true
  },
  "question": "whether the deployed noisy-or aggregation, whose independence assumption this bank violates by construction, changes the comparison against the alternatives the implementation offers",
@@ -29,100 +29,100 @@
   "noisy_or": {
    "mean_ranked": 98.1,
    "recall": {
-    "1": 0.0902,
-    "3": 0.2271,
-    "5": 0.3098,
-    "8": 0.415,
-    "10": 0.4526,
+    "1": 0.0992,
+    "3": 0.2301,
+    "5": 0.3113,
+    "8": 0.4165,
+    "10": 0.4556,
     "15": 0.5353,
-    "20": 0.5789,
-    "30": 0.6391,
-    "50": 0.7038
+    "20": 0.5865,
+    "30": 0.6526,
+    "50": 0.7023
    }
   },
   "max": {
    "mean_ranked": 98.1,
    "recall": {
-    "1": 0.1188,
-    "3": 0.2526,
-    "5": 0.3368,
-    "8": 0.418,
-    "10": 0.4556,
-    "15": 0.5323,
+    "1": 0.1233,
+    "3": 0.2617,
+    "5": 0.3429,
+    "8": 0.4271,
+    "10": 0.4662,
+    "15": 0.5263,
     "20": 0.5699,
-    "30": 0.6211,
-    "50": 0.6767
+    "30": 0.6226,
+    "50": 0.6782
    },
    "minus_noisy_or": {
     "1": {
-     "difference": 0.0286,
+     "difference": 0.0241,
      "ci95": [
-      0.0085,
-      0.0498
+      0.0029,
+      0.0464
      ],
      "excludes_zero": true
     },
     "3": {
-     "difference": 0.0256,
+     "difference": 0.0316,
      "ci95": [
-      -0.0015,
-      0.0529
+      0.0031,
+      0.0607
      ],
-     "excludes_zero": false
+     "excludes_zero": true
     },
     "5": {
-     "difference": 0.0271,
+     "difference": 0.0316,
      "ci95": [
-      -0.0034,
-      0.0583
+      0.0016,
+      0.0623
      ],
-     "excludes_zero": false
+     "excludes_zero": true
     },
     "8": {
-     "difference": 0.003,
+     "difference": 0.0105,
      "ci95": [
-      -0.0244,
-      0.0303
+      -0.0195,
+      0.0405
      ],
      "excludes_zero": false
     },
     "10": {
-     "difference": 0.003,
+     "difference": 0.0105,
      "ci95": [
-      -0.0232,
-      0.0301
+      -0.0172,
+      0.0383
      ],
      "excludes_zero": false
     },
     "15": {
-     "difference": -0.003,
+     "difference": -0.009,
      "ci95": [
-      -0.0308,
-      0.0241
+      -0.0339,
+      0.0162
      ],
      "excludes_zero": false
     },
     "20": {
-     "difference": -0.009,
+     "difference": -0.0165,
      "ci95": [
-      -0.0369,
-      0.0184
+      -0.0416,
+      0.0084
      ],
      "excludes_zero": false
     },
     "30": {
-     "difference": -0.018,
+     "difference": -0.0301,
      "ci95": [
-      -0.0432,
-      0.0058
+      -0.0601,
+      -0.0032
      ],
-     "excludes_zero": false
+     "excludes_zero": true
     },
     "50": {
-     "difference": -0.0271,
+     "difference": -0.0241,
      "ci95": [
-      -0.0614,
-      0.0
+      -0.0542,
+      0.0016
      ],
      "excludes_zero": false
     }
@@ -131,86 +131,86 @@
   "mean": {
    "mean_ranked": 98.1,
    "recall": {
-    "1": 0.0857,
-    "3": 0.2045,
-    "5": 0.2857,
-    "8": 0.3789,
-    "10": 0.4241,
-    "15": 0.4917,
-    "20": 0.5338,
-    "30": 0.597,
-    "50": 0.6617
+    "1": 0.0917,
+    "3": 0.203,
+    "5": 0.2947,
+    "8": 0.385,
+    "10": 0.4256,
+    "15": 0.4932,
+    "20": 0.5474,
+    "30": 0.5985,
+    "50": 0.6586
    },
    "minus_noisy_or": {
     "1": {
-     "difference": -0.0045,
+     "difference": -0.0075,
      "ci95": [
-      -0.0257,
-      0.0164
+      -0.0289,
+      0.0131
      ],
      "excludes_zero": false
     },
     "3": {
-     "difference": -0.0226,
+     "difference": -0.0271,
      "ci95": [
-      -0.0517,
-      0.0064
+      -0.0574,
+      0.003
      ],
      "excludes_zero": false
     },
     "5": {
-     "difference": -0.0241,
+     "difference": -0.0165,
      "ci95": [
-      -0.0562,
-      0.0085
+      -0.0476,
+      0.0161
      ],
      "excludes_zero": false
     },
     "8": {
-     "difference": -0.0361,
+     "difference": -0.0316,
      "ci95": [
-      -0.0662,
-      -0.0056
+      -0.0652,
+      0.0016
      ],
-     "excludes_zero": true
+     "excludes_zero": false
     },
     "10": {
-     "difference": -0.0286,
+     "difference": -0.0301,
      "ci95": [
-      -0.06,
-      0.0032
+      -0.0637,
+      0.0018
      ],
      "excludes_zero": false
     },
     "15": {
-     "difference": -0.0436,
+     "difference": -0.0421,
      "ci95": [
-      -0.075,
-      -0.0137
+      -0.0772,
+      -0.0087
      ],
      "excludes_zero": true
     },
     "20": {
-     "difference": -0.0451,
+     "difference": -0.0391,
      "ci95": [
-      -0.0797,
-      -0.0121
+      -0.0731,
+      -0.0075
      ],
      "excludes_zero": true
     },
     "30": {
-     "difference": -0.0421,
+     "difference": -0.0541,
      "ci95": [
-      -0.0741,
-      -0.0128
+      -0.0892,
+      -0.0242
      ],
      "excludes_zero": true
     },
     "50": {
-     "difference": -0.0421,
+     "difference": -0.0436,
      "ci95": [
-      -0.0794,
-      -0.0134
+      -0.0795,
+      -0.0157
      ],
      "excludes_zero": true
     }
@@ -219,86 +219,86 @@
   "hybrid": {
    "mean_ranked": 98.1,
    "recall": {
-    "1": 0.1188,
-    "3": 0.2737,
-    "5": 0.3534,
-    "8": 0.4481,
-    "10": 0.4887,
-    "15": 0.5444,
-    "20": 0.5895,
-    "30": 0.6406,
-    "50": 0.7113
+    "1": 0.1278,
+    "3": 0.2692,
+    "5": 0.3639,
+    "8": 0.4556,
+    "10": 0.4842,
+    "15": 0.5474,
+    "20": 0.5955,
+    "30": 0.6391,
+    "50": 0.7008
    },
    "minus_noisy_or": {
     "1": {
      "difference": 0.0286,
      "ci95": [
-      0.0084,
-      0.0495
+      0.0097,
+      0.0483
      ],
      "excludes_zero": true
     },
     "3": {
-     "difference": 0.0466,
+     "difference": 0.0391,
      "ci95": [
-      0.0217,
-      0.0723
+      0.0161,
+      0.064
      ],
      "excludes_zero": true
     },
     "5": {
-     "difference": 0.0436,
+     "difference": 0.0526,
      "ci95": [
-      0.017,
-      0.0706
+      0.0271,
+      0.0787
      ],
      "excludes_zero": true
     },
     "8": {
-     "difference": 0.0331,
+     "difference": 0.0391,
      "ci95": [
-      0.0106,
-      0.0566
+      0.017,
+      0.0628
      ],
      "excludes_zero": true
     },
     "10": {
-     "difference": 0.0361,
+     "difference": 0.0286,
      "ci95": [
-      0.015,
-      0.059
+      0.0064,
+      0.0519
      ],
      "excludes_zero": true
     },
     "15": {
-     "difference": 0.009,
+     "difference": 0.012,
      "ci95": [
-      -0.0119,
-      0.0306
-     ],
-     "excludes_zero": false
-    },
-    "20": {
-     "difference": 0.0105,
-     "ci95": [
-      -0.0091,
+      -0.0066,
       0.0314
      ],
      "excludes_zero": false
     },
-    "30": {
-     "difference": 0.0015,
+    "20": {
+     "difference": 0.009,
      "ci95": [
-      -0.0168,
-      0.0202
+      -0.0103,
+      0.0284
+     ],
+     "excludes_zero": false
+    },
+    "30": {
+     "difference": -0.0135,
+     "ci95": [
+      -0.0317,
+      0.0048
      ],
      "excludes_zero": false
     },
     "50": {
-     "difference": 0.0075,
+     "difference": -0.0015,
      "ci95": [
-      -0.007,
-      0.0223
+      -0.0121,
+      0.0093
      ],
      "excludes_zero": false
     }

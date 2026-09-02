@@ -905,11 +905,12 @@ report if it does not.
 
 The alternative the violation argues for is a maximum, which counts a candidate once however many
 near-duplicate templates restate it. It moves the ordering, and where it moves it is where the
-violation predicts. At a budget of one it gains $+\numAggregationMaxOne$
-$[+\numAggregationMaxOneLo, +\numAggregationMaxOneHi]$, an interval excluding zero; from a budget
-of eight upward every interval covers zero, including
+violation predicts. It gains at the head of the list, $+\numAggregationMaxOne$
+$[+\numAggregationMaxOneLo, +\numAggregationMaxOneHi]$ at a budget of one and
+$+\numAggregationMaxFive$ $[+\numAggregationMaxFiveLo, +\numAggregationMaxFiveHi]$ at five,
+both intervals excluding zero, and it is worse where this work reads its leads: at thirty it is
 $\numAggregationMaxThreeZero$ $[\numAggregationMaxThreeZeroLo,
-+\numAggregationMaxThreeZeroHi]$ at thirty. The implementation also offers a blend of the two,
+\numAggregationMaxThreeZeroHi]$, an interval excluding zero on the other side. The implementation also offers a blend of the two,
 \begin{equation}
   p_c^{\mathrm{blend}} = \numAggregationBlendmax{}\,\max_{r \in R(c)} p_r
   + \numAggregationBlendor{}\Bigl(1 - \prod_{r \in R(c)}(1 - p_r)\Bigr),
@@ -926,9 +927,9 @@ fifteen upward.
 Three things follow. The independence assumption is false, something does turn on it, and what
 turns on it is the head of the list rather than the wide budgets this work reads its leads at:
 where a duplicate-blind rule helps, it helps a chemist reading the first three candidates.
-Nothing claimed here changes, because the two rules the violation argues for are indistinguishable
-from the deployed one at every budget a lead is claimed at, and the rule that does separate there
-is worse. And this sweep alone cannot move the deployed rule: it was run on the comparison set after the
+Nothing claimed here changes, because neither rule the violation argues for is better than the
+deployed one where a lead is claimed: the blend is indistinguishable from it at every such budget
+and the maximum is worse at thirty with the interval excluding zero. And this sweep alone cannot move the deployed rule: it was run on the comparison set after the
 comparison, so adopting the blend on the strength of it would be selecting a parameter on the
 population the paper reports, which is the one thing this work's own discipline forbids. What it
 licenses is a selection on validation, and that selection was made.
@@ -1313,7 +1314,7 @@ the comparison set: the wider population turns a tie into a small deficit that s
 MetaPredictor neither population separates.
 
 The exhaustive arm's leads mostly survive the move, and the exception is named. Of the
-\numPopdefLeadskeptWord{} separating leads it holds on the comparison set at the budgets read
+\numPopdefLeadstotalWord{} separating leads it holds on the comparison set at the budgets read
 here, \numPopdefLeadskeptWord{} still separate over the whole set and
 \numPopdefLeadslostWord{} does not. What survives is the wide-budget result the paper claims:
 against SyGMa $+\numPopdefExhwholesygmaThreeZero$ $[+\numPopdefExhwholesygmaThreeZeroLo,
@@ -1537,7 +1538,8 @@ into a correction declared without them. A family fixed in advance is not widene
 which is the whole of what declaring one buys, and the objection that the paper then prints more
 tests than its correction covers is answered by measurement rather than by the argument: running
 the same Holm procedure over all \numHolmWidetests{} contrasts the paper prints removes
-\numHolmWideremovesWord{} of the cells the declared family licenses. And the deeper scenario is not swept for this comparator
+\numHolmWideremovesWord{} of the cells the declared family licenses, the exhaustive arm's trail
+against SyGMa at a budget of five, which is a trail and not a lead and is reported either way. And the deeper scenario is not swept for this comparator
 as it is for SyGMa. That asymmetry was decided after the matched-length control had been read,
 which is worth stating because it is exactly the kind of choice this work asks other papers to
 declare: the control removes list length as a variable and finds no separation, so a scenario that
