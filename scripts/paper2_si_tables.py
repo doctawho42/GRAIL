@@ -658,6 +658,25 @@ def si_macro():
     """
     d = art("deployment_table.json")
     macro, con = d["recall_macro"], d["contrasts_macro"]
+    # Which cells the aggregation actually moves, counted rather than asserted. The section said
+    # the choice does not move a verdict where the paper claims one, and it moves five, one of
+    # them a claimed lead. Only one contrast column is printed here, so a reader cannot check the
+    # sentence against the table; the caption therefore carries the cells.
+    micro = d.get("contrasts", {})
+    moved = []
+    for k, cells in con.items():
+        for name, cell in cells.items():
+            other = micro.get(k, {}).get(name)
+            if other and other["excludes_zero"] != cell["excludes_zero"]:
+                moved.append((int(k), name, other["excludes_zero"]))
+    moved.sort()
+    LONG = {"whole bank": "the exhaustive arm", "trained budget": "the interactive arm"}
+    def phrase(k, name, micro_sep):
+        a, b = [x.strip() for x in name.split(" - ")]
+        who = {"metatox": "MetaTox", "sygma": "SyGMa", "metapredictor": "MetaPredictor",
+               "biotransformer": "BioTransformer"}.get(b, b)
+        return (f"{LONG.get(a, a)} against {who} at $k={k}$, which separates under "
+                + ("micro and not macro" if micro_sep else "macro and not micro"))
     ks = sorted((int(k) for k in macro), key=int)
     # The fourth comparator arrived after this table was first written and the column was never
     # added, so a table captioned as the whole comparison under the other aggregation was five
@@ -675,16 +694,27 @@ def si_macro():
         cell = con[str(k)].get("whole bank - metatox")
         mark = ""
         if cell:
+            # The interval, not only the point and a star. The main text promises the macro grid
+            # with its intervals and this column carried neither, so the promise was read off a
+            # table that did not keep it.
+            lo, hi = cell["ci95"]
             mark = (("$-$" if cell["gap"] < 0 else "+") + f"{abs(cell['gap']):.4f}".lstrip("0")
-                    + ("$^{*}$" if cell["excludes_zero"] else ""))
+                    + ("$^{*}$" if cell["excludes_zero"] else "")
+                    + " {\\scriptsize [" + ("$-$" if lo < 0 else "+") + f"{abs(lo):.3f}".lstrip("0")
+                    + ", " + ("$-$" if hi < 0 else "+") + f"{abs(hi):.3f}".lstrip("0") + "]}")
         rows.append(f"${k}$ & {cells} & {mark} \\\\")
     head = " & ".join(label for _, label in arms)
     return ("\\begin{table}[h]\n\\centering\\footnotesize\n"
-            f"\\begin{{tabular}}{{r{'r' * (len(arms) + 1)}}}\n\\toprule\n"
+            f"\\begin{{tabular}}{{r{'r' * len(arms)}l}}\n\\toprule\n"
             f"$k$ & {head} & exh.\\ $-$ MetaTox \\\\\n\\midrule\n"
             + "\n".join(rows)
             + "\n\\bottomrule\n\\end{tabular}\n"
-            "\\caption{The comparison under macro aggregation, the mean of per-substrate recall, "
+            "\\caption{"
+            + (f"The aggregation moves {len(moved)} verdicts of the "
+               f"{sum(len(v) for v in con.values())} contrasts computed under both: "
+               + "; ".join(phrase(*m) for m in moved) + ". " if moved else
+               "No verdict differs between the two aggregations. ")
+            + "The comparison under macro aggregation, the mean of per-substrate recall, "
             "on the same population and with the same conventions as Table~\\ref{MS-tab:sweep}; "
             "leading zeros are dropped. The last column is the paired difference against MetaTox, "
             "with $^{*}$ marking an interval excluding zero. Macro weights a substrate carrying one "

@@ -74,8 +74,11 @@ substrates carrying \numSplitValPairs{}, and \numSplitTestSubstrates{} test subs
 a held-out figure is to mean anything \citep{Joeres_2025, Kretschmer_2025}, and a read-only audit
 verifies zero substrate and zero positive-pair overlap across all three split pairs.
 
-Three evaluation populations appear here, each a stated subset of a split rather than a split
-itself, and no figure is given without naming one. The \emph{evaluated test set} is the
+Three evaluation populations carry the figures here, each a stated subset of a split rather than
+a split itself, and no figure is given without naming one. A fourth appears twice in the
+Supporting Information and carries no figure of this comparison: a \numBtN{}-substrate subset
+drawn for an earlier evaluation against another method, used there to ask whether the ordering of
+methods changes with the population and to measure one bank's reach against another's. The \emph{evaluated test set} is the
 \numPopulationTestsubs{} test substrates that carry at least one reference, holding all
 \numPopulationTestrefs{} references of that split. It is where the two corpus-level measurements
 are made: the \emph{coverage ceiling}, the share of annotated metabolites any single application
@@ -564,8 +567,10 @@ recovered from it, is in the Supporting Information.
 How the per-substrate figures are pooled is a third choice, and it is swept rather than exercised
 once. Micro is the ratio of sums and macro the mean of per-substrate recall, which weights a
 substrate carrying one reference like one carrying twelve; every figure in
-Table~\ref{tab:sweep} is micro and the macro grid with its intervals is
-Table~\ref{SI-tab:si-macro}. The choice does not rescue the budget where micro fails to separate:
+Table~\ref{tab:sweep} is micro and the macro grid is
+Table~\ref{SI-tab:si-macro}, whose caption names the eight verdicts of seventy-two that the two
+aggregations disagree on, one of them a lead claimed here. The choice does not rescue the budget
+where micro fails to separate:
 at $k = 15$ the exhaustive arm's macro recall is \numMacroBankOneFive{} against MetaTox's
 \numMacroMetatoxOneFive{}, a difference of $+\numMacrogapBankmetatoxOneFive$
 $[\numMacrogapBankmetatoxOneFiveLo, +\numMacrogapBankmetatoxOneFiveHi]$, an interval covering
