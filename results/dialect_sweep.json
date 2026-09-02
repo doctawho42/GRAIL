@@ -2,8 +2,8 @@
  "provenance": {
   "script": "dialect_sweep.py",
   "script_path": "scripts/typed_edit/dialect_sweep.py",
-  "source_sha256": "e192f61eae0daecd687317b89966b011426b762df7c9d71c04da9ab513b4ed70",
-  "git_commit": "566eedfa98d700e23573cf353340a85239f7ecfa",
+  "source_sha256": "acd5c728aa464ed694a65fef99723bffe0be8e3ef6e4cbcf3a391fe1423211a6",
+  "git_commit": "1793d8447325714e6053bedef3131978ba0a2c3d",
   "git_dirty": true
  },
  "n": 291,
@@ -26,21 +26,21 @@
   "GRAIL exhaustive": {
    "1": {
     "stored": 0.0992,
-    "standardised": 0.0917,
-    "difference": -0.0075,
+    "standardised": 0.1008,
+    "difference": 0.0015,
     "ci95": [
-     -0.0215,
-     0.0049
+     -0.0063,
+     0.0093
     ],
     "separates": false
    },
    "3": {
     "stored": 0.2301,
-    "standardised": 0.2271,
-    "difference": -0.003,
+    "standardised": 0.2286,
+    "difference": -0.0015,
     "ci95": [
-     -0.0187,
-     0.0128
+     -0.0108,
+     0.0074
     ],
     "separates": false
    },
@@ -49,68 +49,68 @@
     "standardised": 0.3053,
     "difference": -0.006,
     "ci95": [
-     -0.0243,
-     0.0127
+     -0.0145,
+     0.0017
     ],
     "separates": false
    },
    "8": {
     "stored": 0.4165,
-    "standardised": 0.4165,
-    "difference": 0.0,
+    "standardised": 0.409,
+    "difference": -0.0075,
     "ci95": [
-     -0.021,
-     0.0209
+     -0.0192,
+     0.0033
     ],
     "separates": false
    },
    "10": {
     "stored": 0.4556,
-    "standardised": 0.4586,
-    "difference": 0.003,
+    "standardised": 0.4511,
+    "difference": -0.0045,
     "ci95": [
-     -0.0147,
-     0.0211
+     -0.0134,
+     0.0045
     ],
     "separates": false
    },
    "15": {
     "stored": 0.5353,
-    "standardised": 0.5173,
-    "difference": -0.018,
+    "standardised": 0.5248,
+    "difference": -0.0105,
     "ci95": [
-     -0.0334,
-     -0.0028
+     -0.0215,
+     0.0
     ],
-    "separates": true
+    "separates": false
    },
    "20": {
     "stored": 0.5865,
-    "standardised": 0.5714,
-    "difference": -0.015,
+    "standardised": 0.5835,
+    "difference": -0.003,
     "ci95": [
-     -0.0296,
-     -0.0014
+     -0.0102,
+     0.0042
     ],
-    "separates": true
+    "separates": false
    },
    "30": {
     "stored": 0.6526,
-    "standardised": 0.6376,
-    "difference": -0.015,
+    "standardised": 0.6436,
+    "difference": -0.009,
     "ci95": [
-     -0.0286,
-     -0.0016
+     -0.0165,
+     -0.0029
     ],
     "separates": true
    },
    "50": {
     "stored": 0.7023,
-    "standardised": 0.7008,
-    "difference": -0.0015,
+    "standardised": 0.6977,
+    "difference": -0.0045,
     "ci95": [
-     -0.0111,
-     0.0087
+     -0.0125,
+     0.0032
     ],
     "separates": false
    }
@@ -118,51 +118,51 @@
   "GRAIL interactive": {
    "1": {
     "stored": 0.1053,
-    "standardised": 0.0872,
-    "difference": -0.018,
+    "standardised": 0.1008,
+    "difference": -0.0045,
     "ci95": [
-     -0.0335,
-     -0.0043
+     -0.0128,
+     0.0031
     ],
-    "separates": true
+    "separates": false
    },
    "3": {
     "stored": 0.2406,
-    "standardised": 0.2241,
-    "difference": -0.0165,
+    "standardised": 0.2391,
+    "difference": -0.0015,
     "ci95": [
-     -0.0374,
-     0.0035
+     -0.0124,
+     0.009
     ],
     "separates": false
    },
    "5": {
     "stored": 0.3203,
-    "standardised": 0.3128,
-    "difference": -0.0075,
+    "standardised": 0.3203,
+    "difference": 0.0,
     "ci95": [
-     -0.0286,
-     0.0133
+     -0.0126,
+     0.0126
     ],
     "separates": false
    },
    "8": {
     "stored": 0.4015,
-    "standardised": 0.403,
-    "difference": 0.0015,
+    "standardised": 0.3955,
+    "difference": -0.006,
     "ci95": [
-     -0.0194,
-     0.0234
+     -0.0205,
+     0.0069
     ],
     "separates": false
    },
    "10": {
     "stored": 0.4331,
-    "standardised": 0.4376,
-    "difference": 0.0045,
+    "standardised": 0.4301,
+    "difference": -0.003,
     "ci95": [
-     -0.0148,
-     0.0255
+     -0.0149,
+     0.0084
     ],
     "separates": false
    },
@@ -171,38 +171,38 @@
     "standardised": 0.4767,
     "difference": -0.003,
     "ci95": [
-     -0.0166,
-     0.0112
+     -0.014,
+     0.0079
     ],
     "separates": false
    },
    "20": {
     "stored": 0.4872,
-    "standardised": 0.4887,
-    "difference": 0.0015,
+    "standardised": 0.4857,
+    "difference": -0.0015,
     "ci95": [
-     -0.0097,
-     0.0134
+     -0.012,
+     0.0093
     ],
     "separates": false
    },
    "30": {
     "stored": 0.4902,
-    "standardised": 0.4902,
-    "difference": 0.0,
+    "standardised": 0.4887,
+    "difference": -0.0015,
     "ci95": [
-     -0.0109,
-     0.0114
+     -0.012,
+     0.0093
     ],
     "separates": false
    },
    "50": {
     "stored": 0.4902,
-    "standardised": 0.4917,
-    "difference": 0.0015,
+    "standardised": 0.4887,
+    "difference": -0.0015,
     "ci95": [
-     -0.0091,
-     0.0127
+     -0.012,
+     0.0093
     ],
     "separates": false
    }
@@ -242,10 +242,10 @@
      "sign": 1
     },
     "standardised": {
-     "difference": 0.0511,
+     "difference": 0.0602,
      "ci95": [
-      0.0275,
-      0.0758
+      0.0354,
+      0.0861
      ],
      "separates": true,
      "sign": 1
@@ -263,10 +263,10 @@
      "sign": 1
     },
     "standardised": {
-     "difference": 0.0947,
+     "difference": 0.0962,
      "ci95": [
-      0.0597,
-      0.1312
+      0.0627,
+      0.1314
      ],
      "separates": true,
      "sign": 1
@@ -286,8 +286,8 @@
     "standardised": {
      "difference": 0.0872,
      "ci95": [
-      0.0474,
-      0.1282
+      0.047,
+      0.1284
      ],
      "separates": true,
      "sign": 1
@@ -305,10 +305,10 @@
      "sign": 1
     },
     "standardised": {
-     "difference": 0.1053,
+     "difference": 0.0977,
      "ci95": [
-      0.0642,
-      0.1472
+      0.0562,
+      0.1394
      ],
      "separates": true,
      "sign": 1
@@ -326,10 +326,10 @@
      "sign": 1
     },
     "standardised": {
-     "difference": 0.0707,
+     "difference": 0.0632,
      "ci95": [
-      0.0304,
-      0.1116
+      0.0227,
+      0.1028
      ],
      "separates": true,
      "sign": 1
@@ -347,10 +347,10 @@
      "sign": 1
     },
     "standardised": {
-     "difference": 0.003,
+     "difference": 0.0105,
      "ci95": [
-      -0.0391,
-      0.0438
+      -0.0318,
+      0.0512
      ],
      "separates": false,
      "sign": 1
@@ -368,10 +368,10 @@
      "sign": 1
     },
     "standardised": {
-     "difference": 0.0195,
+     "difference": 0.0316,
      "ci95": [
-      -0.0182,
-      0.0575
+      -0.0051,
+      0.0686
      ],
      "separates": false,
      "sign": 1
@@ -389,10 +389,10 @@
      "sign": 1
     },
     "standardised": {
-     "difference": 0.0361,
+     "difference": 0.0421,
      "ci95": [
-      0.0032,
-      0.0698
+      0.01,
+      0.0759
      ],
      "separates": true,
      "sign": 1
@@ -410,10 +410,10 @@
      "sign": 1
     },
     "standardised": {
-     "difference": 0.0737,
+     "difference": 0.0707,
      "ci95": [
-      0.0449,
-      0.1036
+      0.0417,
+      0.1003
      ],
      "separates": true,
      "sign": 1
@@ -433,10 +433,10 @@
      "sign": -1
     },
     "standardised": {
-     "difference": -0.0617,
+     "difference": -0.0526,
      "ci95": [
-      -0.0917,
-      -0.0333
+      -0.0835,
+      -0.023
      ],
      "separates": true,
      "sign": -1
@@ -454,10 +454,10 @@
      "sign": -1
     },
     "standardised": {
-     "difference": -0.0617,
+     "difference": -0.0602,
      "ci95": [
-      -0.0977,
-      -0.0263
+      -0.0967,
+      -0.0251
      ],
      "separates": true,
      "sign": -1
@@ -477,8 +477,8 @@
     "standardised": {
      "difference": -0.0692,
      "ci95": [
-      -0.1063,
-      -0.0321
+      -0.1067,
+      -0.032
      ],
      "separates": true,
      "sign": -1
@@ -496,10 +496,10 @@
      "sign": -1
     },
     "standardised": {
-     "difference": -0.0105,
+     "difference": -0.018,
      "ci95": [
-      -0.0486,
-      0.0275
+      -0.057,
+      0.0212
      ],
      "separates": false,
      "sign": -1
@@ -517,13 +517,13 @@
      "sign": 0
     },
     "standardised": {
-     "difference": 0.003,
+     "difference": -0.0045,
      "ci95": [
-      -0.0348,
-      0.0414
+      -0.0429,
+      0.0341
      ],
      "separates": false,
-     "sign": 1
+     "sign": -1
     },
     "verdict_moves": false
    },
@@ -538,15 +538,15 @@
      "sign": 1
     },
     "standardised": {
-     "difference": 0.0331,
+     "difference": 0.0406,
      "ci95": [
-      -0.0029,
-      0.0706
+      0.0035,
+      0.0783
      ],
-     "separates": false,
+     "separates": true,
      "sign": 1
     },
-    "verdict_moves": true
+    "verdict_moves": false
    },
    "20": {
     "stored": {
@@ -559,10 +559,10 @@
      "sign": 1
     },
     "standardised": {
-     "difference": 0.0722,
+     "difference": 0.0842,
      "ci95": [
-      0.0373,
-      0.1095
+      0.0493,
+      0.121
      ],
      "separates": true,
      "sign": 1
@@ -580,10 +580,10 @@
      "sign": 1
     },
     "standardised": {
-     "difference": 0.1308,
+     "difference": 0.1368,
      "ci95": [
-      0.096,
-      0.1674
+      0.1009,
+      0.1741
      ],
      "separates": true,
      "sign": 1
@@ -601,10 +601,10 @@
      "sign": 1
     },
     "standardised": {
-     "difference": 0.1895,
+     "difference": 0.1865,
      "ci95": [
-      0.1495,
-      0.2311
+      0.1473,
+      0.2271
      ],
      "separates": true,
      "sign": 1
@@ -624,10 +624,10 @@
      "sign": -1
     },
     "standardised": {
-     "difference": -0.0481,
+     "difference": -0.0391,
      "ci95": [
-      -0.0772,
-      -0.0206
+      -0.0678,
+      -0.0114
      ],
      "separates": true,
      "sign": -1
@@ -645,10 +645,10 @@
      "sign": -1
     },
     "standardised": {
-     "difference": -0.0496,
+     "difference": -0.0481,
      "ci95": [
-      -0.0855,
-      -0.014
+      -0.0845,
+      -0.0131
      ],
      "separates": true,
      "sign": -1
@@ -668,8 +668,8 @@
     "standardised": {
      "difference": -0.0496,
      "ci95": [
-      -0.0906,
-      -0.0089
+      -0.0918,
+      -0.0094
      ],
      "separates": true,
      "sign": -1
@@ -687,10 +687,10 @@
      "sign": -1
     },
     "standardised": {
-     "difference": -0.018,
+     "difference": -0.0256,
      "ci95": [
-      -0.0603,
-      0.0237
+      -0.0706,
+      0.017
      ],
      "separates": false,
      "sign": -1
@@ -708,10 +708,10 @@
      "sign": -1
     },
     "standardised": {
-     "difference": -0.012,
+     "difference": -0.0195,
      "ci95": [
-      -0.0533,
-      0.029
+      -0.0632,
+      0.0223
      ],
      "separates": false,
      "sign": -1
@@ -729,15 +729,15 @@
      "sign": 1
     },
     "standardised": {
-     "difference": 0.0376,
+     "difference": 0.0451,
      "ci95": [
-      -0.0033,
-      0.0784
+      0.0043,
+      0.0855
      ],
-     "separates": false,
+     "separates": true,
      "sign": 1
     },
-    "verdict_moves": true
+    "verdict_moves": false
    },
    "20": {
     "stored": {
@@ -750,10 +750,10 @@
      "sign": 1
     },
     "standardised": {
-     "difference": 0.0917,
+     "difference": 0.1038,
      "ci95": [
-      0.0497,
-      0.1334
+      0.0624,
+      0.1443
      ],
      "separates": true,
      "sign": 1
@@ -771,10 +771,10 @@
      "sign": 1
     },
     "standardised": {
-     "difference": 0.1579,
+     "difference": 0.1639,
      "ci95": [
-      0.1143,
-      0.2009
+      0.118,
+      0.2098
      ],
      "separates": true,
      "sign": 1
@@ -792,10 +792,10 @@
      "sign": 1
     },
     "standardised": {
-     "difference": 0.2211,
+     "difference": 0.218,
      "ci95": [
-      0.1701,
-      0.2708
+      0.1679,
+      0.2672
      ],
      "separates": true,
      "sign": 1
@@ -815,10 +815,10 @@
      "sign": 1
     },
     "standardised": {
-     "difference": 0.0466,
+     "difference": 0.0602,
      "ci95": [
-      0.0231,
-      0.0707
+      0.0358,
+      0.0862
      ],
      "separates": true,
      "sign": 1
@@ -836,10 +836,10 @@
      "sign": 1
     },
     "standardised": {
-     "difference": 0.0917,
+     "difference": 0.1068,
      "ci95": [
-      0.0546,
-      0.1294
+      0.0708,
+      0.1446
      ],
      "separates": true,
      "sign": 1
@@ -857,10 +857,10 @@
      "sign": 1
     },
     "standardised": {
-     "difference": 0.0947,
+     "difference": 0.1023,
      "ci95": [
-      0.0552,
-      0.1356
+      0.0627,
+      0.1433
      ],
      "separates": true,
      "sign": 1
@@ -878,10 +878,10 @@
      "sign": 1
     },
     "standardised": {
-     "difference": 0.0917,
+     "difference": 0.0842,
      "ci95": [
-      0.0526,
-      0.1308
+      0.0438,
+      0.1248
      ],
      "separates": true,
      "sign": 1
@@ -899,10 +899,10 @@
      "sign": 1
     },
     "standardised": {
-     "difference": 0.0496,
+     "difference": 0.0421,
      "ci95": [
-      0.0097,
-      0.0902
+      0.0017,
+      0.0809
      ],
      "separates": true,
      "sign": 1
@@ -922,8 +922,8 @@
     "standardised": {
      "difference": -0.0376,
      "ci95": [
-      -0.0766,
-      0.0015
+      -0.0776,
+      0.0017
      ],
      "separates": false,
      "sign": -1
@@ -941,10 +941,10 @@
      "sign": -1
     },
     "standardised": {
-     "difference": -0.0632,
+     "difference": -0.0662,
      "ci95": [
-      -0.1014,
-      -0.0255
+      -0.1043,
+      -0.0285
      ],
      "separates": true,
      "sign": -1
@@ -962,10 +962,10 @@
      "sign": -1
     },
     "standardised": {
-     "difference": -0.1113,
+     "difference": -0.1128,
      "ci95": [
-      -0.1506,
-      -0.0711
+      -0.1522,
+      -0.0732
      ],
      "separates": true,
      "sign": -1
@@ -983,10 +983,10 @@
      "sign": -1
     },
     "standardised": {
-     "difference": -0.1353,
+     "difference": -0.1383,
      "ci95": [
-      -0.1815,
-      -0.0916
+      -0.1846,
+      -0.0941
      ],
      "separates": true,
      "sign": -1
@@ -1006,10 +1006,10 @@
      "sign": -1
     },
     "standardised": {
-     "difference": -0.0662,
+     "difference": -0.0526,
      "ci95": [
-      -0.0951,
-      -0.0384
+      -0.081,
+      -0.0244
      ],
      "separates": true,
      "sign": -1
@@ -1027,10 +1027,10 @@
      "sign": -1
     },
     "standardised": {
-     "difference": -0.0647,
+     "difference": -0.0496,
      "ci95": [
-      -0.1003,
-      -0.031
+      -0.0828,
+      -0.0178
      ],
      "separates": true,
      "sign": -1
@@ -1048,10 +1048,10 @@
      "sign": -1
     },
     "standardised": {
-     "difference": -0.0617,
+     "difference": -0.0541,
      "ci95": [
-      -0.0978,
-      -0.0261
+      -0.0895,
+      -0.0199
      ],
      "separates": true,
      "sign": -1
@@ -1069,10 +1069,10 @@
      "sign": -1
     },
     "standardised": {
-     "difference": -0.0241,
+     "difference": -0.0316,
      "ci95": [
-      -0.0586,
-      0.0113
+      -0.0674,
+      0.0045
      ],
      "separates": false,
      "sign": -1
@@ -1090,10 +1090,10 @@
      "sign": -1
     },
     "standardised": {
-     "difference": -0.018,
+     "difference": -0.0256,
      "ci95": [
-      -0.0541,
-      0.0195
+      -0.0604,
+      0.0103
      ],
      "separates": false,
      "sign": -1
@@ -1113,7 +1113,7 @@
     "standardised": {
      "difference": -0.0075,
      "ci95": [
-      -0.0437,
+      -0.0438,
       0.0296
      ],
      "separates": false,
@@ -1132,10 +1132,10 @@
      "sign": -1
     },
     "standardised": {
-     "difference": -0.0105,
+     "difference": -0.0135,
      "ci95": [
-      -0.0482,
-      0.0286
+      -0.052,
+      0.0258
      ],
      "separates": false,
      "sign": -1
@@ -1153,10 +1153,10 @@
      "sign": -1
     },
     "standardised": {
-     "difference": -0.0165,
+     "difference": -0.018,
      "ci95": [
-      -0.0556,
-      0.0238
+      -0.0571,
+      0.0221
      ],
      "separates": false,
      "sign": -1
@@ -1174,10 +1174,10 @@
      "sign": -1
     },
     "standardised": {
-     "difference": -0.0195,
+     "difference": -0.0226,
      "ci95": [
-      -0.0582,
-      0.0206
+      -0.0613,
+      0.0176
      ],
      "separates": false,
      "sign": -1
@@ -1197,10 +1197,10 @@
      "sign": -1
     },
     "standardised": {
-     "difference": -0.0526,
+     "difference": -0.0391,
      "ci95": [
-      -0.0806,
-      -0.0261
+      -0.0672,
+      -0.0121
      ],
      "separates": true,
      "sign": -1
@@ -1218,10 +1218,10 @@
      "sign": -1
     },
     "standardised": {
-     "difference": -0.0526,
+     "difference": -0.0376,
      "ci95": [
-      -0.0893,
-      -0.0168
+      -0.0738,
+      -0.0015
      ],
      "separates": true,
      "sign": -1
@@ -1239,15 +1239,15 @@
      "sign": -1
     },
     "standardised": {
-     "difference": -0.0421,
+     "difference": -0.0346,
      "ci95": [
-      -0.0835,
-      -0.0028
+      -0.0773,
+      0.0062
      ],
-     "separates": true,
+     "separates": false,
      "sign": -1
     },
-    "verdict_moves": true
+    "verdict_moves": false
    },
    "8": {
     "stored": {
@@ -1260,10 +1260,10 @@
      "sign": -1
     },
     "standardised": {
-     "difference": -0.0316,
+     "difference": -0.0391,
      "ci95": [
-      -0.0759,
-      0.0127
+      -0.0835,
+      0.0041
      ],
      "separates": false,
      "sign": -1
@@ -1281,10 +1281,10 @@
      "sign": -1
     },
     "standardised": {
-     "difference": -0.0331,
+     "difference": -0.0406,
      "ci95": [
-      -0.0772,
-      0.0114
+      -0.0837,
+      0.0027
      ],
      "separates": false,
      "sign": -1
@@ -1304,8 +1304,8 @@
     "standardised": {
      "difference": -0.003,
      "ci95": [
-      -0.0475,
-      0.042
+      -0.0482,
+      0.0421
      ],
      "separates": false,
      "sign": -1
@@ -1323,10 +1323,10 @@
      "sign": 1
     },
     "standardised": {
-     "difference": 0.009,
+     "difference": 0.006,
      "ci95": [
-      -0.0351,
-      0.0539
+      -0.0383,
+      0.0508
      ],
      "separates": false,
      "sign": 1
@@ -1344,10 +1344,10 @@
      "sign": 1
     },
     "standardised": {
-     "difference": 0.0105,
+     "difference": 0.009,
      "ci95": [
-      -0.0333,
-      0.055
+      -0.0351,
+      0.0536
      ],
      "separates": false,
      "sign": 1
@@ -1365,10 +1365,10 @@
      "sign": 1
     },
     "standardised": {
-     "difference": 0.012,
+     "difference": 0.009,
      "ci95": [
-      -0.0322,
-      0.0568
+      -0.0351,
+      0.0536
      ],
      "separates": false,
      "sign": 1
@@ -1378,7 +1378,7 @@
   }
  },
  "verdict_cells": 54,
- "verdict_cells_that_move": 4,
+ "verdict_cells_that_move": 1,
  "comparators_held_fixed": [
   "MetaTox",
   "MetaPredictor",

@@ -181,7 +181,22 @@ def main() -> int:
     for name, (path, budget) in pools.items():
         blob = json.loads(path.read_text())
         subs = sorted(blob["pools"])[:N_SUBS]
+        # A pool built on the standardiser's drawing was generated from a different structure
+        # than the one it is keyed by, so scoring the key reproduces nothing and the pool reads
+        # as unidentified. The presentation is recorded in the file; the substrate is presented
+        # the same way here before it is scored.
+        presented = dict.fromkeys(subs)
+        if blob.get("present") == "standardised":
+            from rdkit import Chem
+            from grail_metabolism.utils.preparation import standardize_mol
+            for s in subs:
+                try:
+                    presented[s] = Chem.MolToSmiles(standardize_mol(Chem.MolFromSmiles(s)))
+                except Exception:
+                    presented[s] = s
+        show = {s: (presented[s] or s) for s in subs}
         entry = {"path": str(path.relative_to(ROOT)), "rule_budget": budget,
+                 "presentation": blob.get("present", "stored"),
                  "records_its_own_checkpoints": bool(blob.get("checkpoints")),
                  "recorded": blob.get("checkpoints")}
 
@@ -197,10 +212,10 @@ def main() -> int:
                         continue
                     if stage == "filter":
                         got = dict(zip((c["smiles"] for c in stored),
-                                       model.score_batch(s, [c["smiles"] for c in stored])))
+                                       model.score_batch(show[s], [c["smiles"] for c in stored])))
                     else:
                         det = model.generate_scored_with_details(
-                            s, top_k=budget or 7581, threshold=None, compute_sites=False)
+                            show[s], top_k=budget or 7581, threshold=None, compute_sites=False)
                         got = {d[0]: float(d[1]) for d in det}
                     for c in stored:
                         if c["smiles"] in got:

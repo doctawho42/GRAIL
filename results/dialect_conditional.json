@@ -3,7 +3,7 @@
   "script": "dialect_conditional.py",
   "script_path": "scripts/typed_edit/dialect_conditional.py",
   "source_sha256": "e79ec08eb35d2eecbc3a9ef15d7a585c648672d7f9f4f888cd339dfaca4b3200",
-  "git_commit": "566eedfa98d700e23573cf353340a85239f7ecfa",
+  "git_commit": "1793d8447325714e6053bedef3131978ba0a2c3d",
   "git_dirty": true
  },
  "difference": "recall with the substrate as the declared standardiser draws it, minus recall with it as the corpus stores it",
@@ -27,17 +27,17 @@
      "all": {
       "difference": -0.006,
       "ci95": [
-       -0.0243,
-       0.0127
+       -0.0145,
+       0.0017
       ],
       "excludes_zero": false,
       "n": 291
      },
      "changed_only": {
-      "difference": -0.0101,
+      "difference": -0.0202,
       "ci95": [
-       -0.0413,
-       0.0221
+       -0.049,
+       0.0058
       ],
       "excludes_zero": false,
       "n": 81
@@ -45,39 +45,39 @@
     },
     "15": {
      "all": {
-      "difference": -0.018,
+      "difference": -0.0105,
       "ci95": [
-       -0.0334,
-       -0.0028
+       -0.0215,
+       0.0
       ],
-      "excludes_zero": true,
-      "n": 291
-     },
-     "changed_only": {
-      "difference": -0.0404,
-      "ci95": [
-       -0.0736,
-       -0.0069
-      ],
-      "excludes_zero": true,
-      "n": 81
-     }
-    },
-    "30": {
-     "all": {
-      "difference": -0.015,
-      "ci95": [
-       -0.0286,
-       -0.0016
-      ],
-      "excludes_zero": true,
+      "excludes_zero": false,
       "n": 291
      },
      "changed_only": {
       "difference": -0.0354,
       "ci95": [
-       -0.0648,
-       -0.0056
+       -0.0706,
+       0.0
+      ],
+      "excludes_zero": false,
+      "n": 81
+     }
+    },
+    "30": {
+     "all": {
+      "difference": -0.009,
+      "ci95": [
+       -0.0165,
+       -0.0029
+      ],
+      "excludes_zero": true,
+      "n": 291
+     },
+     "changed_only": {
+      "difference": -0.0303,
+      "ci95": [
+       -0.0524,
+       -0.0107
       ],
       "excludes_zero": true,
       "n": 81
@@ -85,19 +85,19 @@
     },
     "50": {
      "all": {
-      "difference": -0.0015,
+      "difference": -0.0045,
       "ci95": [
-       -0.0111,
-       0.0087
+       -0.0125,
+       0.0032
       ],
       "excludes_zero": false,
       "n": 291
      },
      "changed_only": {
-      "difference": -0.0101,
+      "difference": -0.0152,
       "ci95": [
-       -0.0386,
-       0.0173
+       -0.0417,
+       0.0109
       ],
       "excludes_zero": false,
       "n": 81
@@ -112,19 +112,19 @@
    "by_budget": {
     "5": {
      "all": {
-      "difference": -0.0075,
+      "difference": 0.0,
       "ci95": [
-       -0.0286,
-       0.0133
+       -0.0126,
+       0.0126
       ],
       "excludes_zero": false,
       "n": 291
      },
      "changed_only": {
-      "difference": -0.0051,
+      "difference": 0.0,
       "ci95": [
-       -0.0535,
-       0.0461
+       -0.0442,
+       0.0412
       ],
       "excludes_zero": false,
       "n": 81
@@ -134,17 +134,17 @@
      "all": {
       "difference": -0.003,
       "ci95": [
-       -0.0166,
-       0.0112
+       -0.014,
+       0.0079
       ],
       "excludes_zero": false,
       "n": 291
      },
      "changed_only": {
-      "difference": 0.0101,
+      "difference": -0.0101,
       "ci95": [
-       -0.0299,
-       0.0513
+       -0.0481,
+       0.0273
       ],
       "excludes_zero": false,
       "n": 81
@@ -152,19 +152,19 @@
     },
     "30": {
      "all": {
-      "difference": 0.0,
+      "difference": -0.0015,
       "ci95": [
-       -0.0109,
-       0.0114
+       -0.012,
+       0.0093
       ],
       "excludes_zero": false,
       "n": 291
      },
      "changed_only": {
-      "difference": 0.0051,
+      "difference": -0.0051,
       "ci95": [
-       -0.0312,
-       0.0419
+       -0.0421,
+       0.0316
       ],
       "excludes_zero": false,
       "n": 81
@@ -172,19 +172,19 @@
     },
     "50": {
      "all": {
-      "difference": 0.0015,
+      "difference": -0.0015,
       "ci95": [
-       -0.0091,
-       0.0127
+       -0.012,
+       0.0093
       ],
       "excludes_zero": false,
       "n": 291
      },
      "changed_only": {
-      "difference": 0.0051,
+      "difference": -0.0051,
       "ci95": [
-       -0.0312,
-       0.0419
+       -0.0421,
+       0.0316
       ],
       "excludes_zero": false,
       "n": 81
