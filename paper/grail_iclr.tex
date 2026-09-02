@@ -1,5 +1,5 @@
 \documentclass{article}
-\usepackage{iclr2026_conference,times}
+\usepackage{iclr2027_conference,times}
 
 \usepackage{amsmath,amssymb}
 \usepackage{booktabs}
@@ -125,24 +125,22 @@ more vulnerable as its leading methods converge.
 
 \paragraph{Contributions.}
 \begin{itemize}\itemsep2pt \parskip0pt
-\item \textbf{The instrument.} The part of a published ranking that no declared choice can
-  contradict is a partial order: the intersection of the per-cell total orders. We compute it and
-  its longest chain from released prediction files alone. Because it is an intersection it can only
-  fall as a grid widens, so we report it as a curve over the declared axes, never as one number. A
-  pair that fails it fails in one of two ways, and we count them apart.
-\item \textbf{The survey.} We run the instrument on $24$ leaderboards and $1{,}932$ pairs in four
-  domains: retrosynthesis, metabolite prediction, protein--ligand docking and two editions of one
-  machine translation task. They publish $298$ places, and what survives supports $170$. The share
-  runs from none of three to nine tenths, and does not replicate between two editions of the same
-  task on the same language pair. So it is a property of a table and its grid rather than of a
-  benchmark.
+\item \textbf{The instrument.} What no declared choice can contradict in a published ranking is a
+  partial order: the intersection of the per-cell total orders, computed with its longest chain from
+  released prediction files alone. It can only fall as a grid widens, so we report a curve over the
+  declared axes rather than one number, and count a pair's two ways of failing apart.
+\item \textbf{The survey.} We run it on $24$ leaderboards and $1{,}932$ pairs across
+  retrosynthesis, metabolite prediction, protein--ligand docking and two editions of one machine
+  translation task. They publish $298$ places, and what survives supports $170$. The share runs from none
+  of three to nine tenths and does not replicate across two editions of the same task and language
+  pair, so it is a property of a table and its grid, not of a benchmark.
 \item \textbf{What the gap is made of, which is mostly not the choices.} Requiring only a
-  leaderboard's own cell to separate a pair takes $298$ places to $139$. So $159$ ranks go to a
-  benchmark's own power before any convention is varied and $40$ more to the grid. On none of
-  the $24$ boards does the matching criterion certify a reversal of an ordering a published cell had
-  separated. Each board's verdict is corrected by Holm over the cell-level tests its own grid
-  creates. Of the $23$ certified reversals of every kind, $15$ survive one correction over the union
-  of all twenty-four grids. The criterion exchanges positions a benchmark never established.
+  leaderboard's own cell to separate a pair takes $298$ places to $139$: $159$ ranks go to a
+  benchmark's own power before any convention is varied and $40$ more to the grid. On none of the $24$
+  boards does the matching criterion certify a reversal of an ordering a published cell had
+  separated. Verdicts are corrected by Holm over the cell-level tests each grid creates. Of the $23$
+  certified reversals of every kind, $15$ survive one correction over the union of all twenty-four
+  grids. The criterion exchanges positions a benchmark never established.
 \item \textbf{The arithmetic.} A pair's ordering survives a change of criterion unless the change
   moves the two apart by more than the larger of the margins it connects. That identity is why every
   dominance verdict follows from $n$ scorings per cell with no pairwise statistic. A resample enters
@@ -159,9 +157,9 @@ more vulnerable as its leading methods converge.
   Expanding hydrogens costs that library $82\%$ of the template--product pairs it can match, though
   only $11$ of $500$ products lose every applicable template.
 \item \textbf{The case study and the release.} The four choices were found by measuring one
-  predictor in one domain, and that case study is reported in full. The
-  output budget reorders a metabolite leaderboard with every ranking held fixed. The population a
-  dataset name refers to is ambiguous, but reorders nothing that survives correction. We release the
+  predictor in one domain, and that case study is reported in full: the output budget reorders a
+  metabolite leaderboard with every ranking held fixed, while the population a dataset name refers
+  to is ambiguous but reorders nothing that survives correction. We release the
   protocol, the audited split, the frozen predictions of every method compared, a checker that
   reports these choices from released files alone, and the analysis code.
 \end{itemize}
@@ -181,9 +179,8 @@ templates. It scores products by how often each template yields an observed meta
 BioTransformer \citep{Djoumbou_Feunang_2019} extends templates to microbial and environmental
 transformations. MetaTrans \citep{Litsa_2020} and MetaPredictor \citep{Zhu_2024} dispense with
 templates altogether. A further wave has appeared since: a chemical language model
-\citep{Larsson_2025} and a mechanistically informed graph framework \citep{Zhou_2025}. A web server
-predicts pathway, site and product together \citep{Zhou_2026}. A preprint predicts all three jointly
-\citep{Chavan_2026}. None is on the board below, because that board carries the methods this work
+\citep{Larsson_2025}, a mechanistically informed graph framework \citep{Zhou_2025}, and a web server
+\citep{Zhou_2026} and a preprint \citep{Chavan_2026} that predict pathway, site and product jointly. None is on the board below, because that board carries the methods this work
 could run and freeze on this split rather than the methods the field has. The board is therefore a
 weak sample of the field even where the instrument reading it is not. Comparative studies recover
 the same coverage-precision trade-off on 85 agrochemical parents \citep{Scholz_2023}. It recurs on
@@ -293,24 +290,16 @@ length of the longest sequence of systems each of which dominates the next.
 
 This relation is not new. It is the unanimity, or Pareto, relation on a profile of preorders, which
 social choice has studied since \citet{Arrow_1951} and \citet{Sen_1970}. The two facts below are its
-standard properties. They are stated because the survey quantifies over them. This paper contributes
-the measurement, not the relation.
+standard properties. They are stated because the survey quantifies over them, and both
+proofs are two lines and are given in Appendix~\ref{app:robust}. This paper contributes the
+measurement, not the relation.
 
 \begin{quote}
 \textbf{Proposition 1.} $\prec_{\!*}$ is a strict partial order, and it is the finest relation on
 $S$ that no cell of $C$ can contradict.
 
-\emph{Proof.} An intersection of transitive, irreflexive relations is transitive and irreflexive.
-Any relation not contained in some $\prec_c$ contains a pair that cell orders the other way.
-\hfill$\square$
-\end{quote}
-
-\begin{quote}
 \textbf{Proposition 2.} If $C \subseteq C'$ then $\prec_{\!*}^{C'} \subseteq \prec_{\!*}^{C}$: the
 dominating set is monotone non-increasing in the grid, and so is the number of tiers.
-
-\emph{Proof.} Immediate from the definition as an intersection; the tier count is the longest chain
-of a smaller relation. \hfill$\square$
 \end{quote}
 
 Proposition~2 has a consequence for reporting. A share is not a property of a leaderboard but of the
@@ -471,14 +460,9 @@ the criteria alone at the published post-processing, which leaves $18$ of the $2
 rather than $17$. The pair the grid loses to that axis is named in the tables below rather than
 absorbed into the total.
 
-The released table forces three conventions, which are declared rather than chosen. Its two flatness
-checks are recorded only in the un-minimised arm, so a criterion using them would not exist in half
-the grid. They are dropped from every cell rather than from one, which keeps each criterion the same
-object in each cell. Including them changes the published cell by $0.0000$. A row with no
-scorable pose counts as a miss and not as an absent observation, because dropping those rows would
-score each program on the subset it managed to produce output for. The crystal ligand ships as an
-eighth row. It is the reference re-scored through the same pipeline rather than a method, and it is
-excluded.
+The released table forces three conventions, which are declared rather than chosen: which flatness
+checks a criterion may use, how a row with no scorable pose counts, and what to do with the crystal
+ligand. Each is stated with its effect on the published cell in Appendix~\ref{app:dockingconv}.
 \subsection{Which axis moves what, and what the gap is made of}
 \label{sec:decomp}
 
@@ -601,20 +585,17 @@ selection is therefore conditioned on a mismatch of about half the rule--substra
 (Appendix~\ref{app:enginereach}).
 
 \looseness=-2
-The cross-domain numbers come from files produced elsewhere. The reordering there is a top-1
-phenomenon. The robust order rests on twenty-four leaderboards in four domains. Two results are
-bounded nulls.
+The cross-domain numbers come from files produced elsewhere, the reordering there is a top-1
+phenomenon, and two results are bounded nulls.
 \section{Conclusion}
 \label{sec:conclusion}
 
 \looseness=-2
 Four choices are settled before any model is compared, and none is routinely declared. A published
-ranking entitles a reader to quote fewer ranks than it prints. It falls short in two ways of
-different sizes. Most of its pairs were never resolved, and a few that were are reversed by a choice
-no paper reports. Two of the four choices change a published ordering. The budget reverses margins
-that an interval separates from zero, and the criterion exchanges systems a mature benchmark never
-separated. Which pairs either choice reaches follows from an equivalence. Declaring is not the whole
-remedy, as the one bank of mixed provenance here shows.
+ranking entitles a reader to quote fewer ranks than it prints, and falls short in two ways of very
+different sizes: most of its pairs were never resolved, and a few that were are reversed by a choice
+no paper reports. Which pairs a choice reaches follows from an equivalence. Declaring is not the
+whole remedy, as the one bank of mixed provenance here shows.
 
 \looseness=-1
 \paragraph{What to declare, and what to do with a partial order.} A leaderboard whose ordering is
@@ -627,6 +608,53 @@ the form ``ours is first'' is available only when no other system shares its top
 does, the statement that the data support names the tier instead. The share itself should not be
 compared between papers. By Proposition~2 it falls as a grid widens, so a paper declaring fewer
 choices reports a larger one. A quantity that rewards declaring less is not one to compete on.
+\subsubsection*{AI use statement}
+
+Generative AI was used for several of the tasks ICLR requires disclosed, and the division below is
+by task rather than by section. It was used to implement methods: most of the analysis code, the
+evaluation harness and the checking scripts released with this paper were written with an
+AI coding assistant. It was used to clean and reformat data, in the parsers that read each
+leaderboard's released prediction files into the common form the harness scores. It was used to
+propose and refine hypotheses and to give feedback on methodology: several of the checks reported
+here, including the ones that found defects in earlier drafts of this work, were suggested in that
+way. It was used to interpret results, in the sense that readings of a measurement were drafted
+with assistance and then checked against the artifact. It was used for the recommended tasks of
+code editing, figure creation, literature analysis, brainstorming and paper editing, and most of
+this manuscript's prose was drafted with assistance and revised by the authors.
+
+It was not used to generate synthetic data: every number here comes from a released prediction
+file or from a run of a released model, and nothing in the study is simulated. It was not used to
+assist in writing proofs. Developing theoretical models, formulating mathematical claims and
+providing ingredients for proofs apply only to the propositions of
+Appendix~\ref{app:formal}, whose statements and proofs are the authors' and were checked line by
+line against the definitions they quantify over. Translation is not applicable to this work.
+
+We have reviewed all AI-assisted work. The review is not an assurance but a mechanism: every
+number printed in this paper is generated from a stored result file by a script rather than typed,
+a checker refuses any numeric literal in the manuscript that is not on a declared list, and the
+audit in the released archive records seventeen checks the authors ran against the manuscript's
+claims about itself, several of which failed and are documented with what they found. Code written
+with assistance is covered by the same gates as the rest: a released check refuses to write its
+artifact unless it first reproduces a figure the deployed path produced. The defects this process
+caught are reported rather than quietly repaired, and the ones it did not catch are named in
+Section~\ref{sec:limitations}. We take responsibility for the final content of this work,
+including text, claims and artifacts produced with the aid of generative AI.
+
+\subsubsection*{Ethics statement}
+
+This work re-scores predictions that other groups released, and reports that a published ranking
+supports fewer of its own pairwise claims than it prints. No human subjects are involved and no
+new data are collected from people. Every prediction file re-scored here is one its authors chose
+to release, is used for the purpose it was released for, and is cited; the licences under which
+each was released are recorded in the archive, and no file is redistributed against its terms.
+
+The finding is critical of published work, and two things follow. Named systems and named
+benchmarks are compared under choices those papers did not state, so the results say what a
+reader may quote and not that any author erred; where a reversal is reported it is reported with
+the interval that establishes it and with the cell it belongs to. And the paper's own conduct is
+held to the standard it asks of others: the choices this work makes are declared, the grid is
+swept rather than fixed at a favourable cell, and its own negative results are released.
+
 \subsubsection*{Reproducibility statement}
 
 Every quantity reported here derives from a committed artifact and regenerates from the released
@@ -668,7 +696,7 @@ validation substrates. The GLORYx set overlaps on $24$ of its $37$ drugs, and \S
 reports GRAIL on the $13$ that do not overlap. The $\nshared$-substrate shared subset overlaps on
 none of its $150$. The audit is released as a script.
 
-\bibliographystyle{iclr2026_conference}
+\bibliographystyle{iclr2027_conference}
 \bibliography{refs}
 
 \appendix

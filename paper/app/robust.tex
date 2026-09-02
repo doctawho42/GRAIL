@@ -279,3 +279,18 @@ grid: it resamples items with the grid held fixed, so it reports how much of the
 sample. The grid's contribution is what Proposition 2 and the curve below report.
 
 \input{app/robust_tables}
+
+\subsection{The three conventions the docking table forces}
+\label{app:dockingconv}
+
+The released table forces three conventions, which are declared rather than chosen. Its two flatness
+checks are recorded only in the un-minimised arm, so a criterion using them would not exist in half
+the grid. They are dropped from every cell rather than from one, which keeps each criterion the same
+object in each cell. Including them changes the published cell by $0.0000$. A row with no
+scorable pose counts as a miss and not as an absent observation, because dropping those rows would
+score each program on the subset it managed to produce output for. The crystal ligand ships as an
+eighth row. It is the reference re-scored through the same pipeline rather than a method, and it is
+excluded.
+
+None of the three is a cell of the grid. Each is a property of the released table that any re-scoring
+of it inherits, which is why they are stated here rather than swept.

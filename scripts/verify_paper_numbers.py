@@ -1186,12 +1186,22 @@ def main() -> int:
         checks.append((min(_sh) == 0.0 and 0.9 <= max(_sh) < 1.0,
                        "the range the prose gives in words", "0 to nine tenths",
                        f"{min(_sh)} to {max(_sh)}", "results/robust_order_*.json"))
-        # and the figure's own label, which is generated from the same numbers
-        _fig = (ROOT / "paper/app/share_figure.tex")
-        if _fig.exists():
-            _fm = re.search(r"median \$([\d.]+)\$", _fig.read_text())
-            check("the figure's median label", _fm and _fm.group(1), _med,
-                  "paper/app/share_figure.tex")
+        # and the figure's own label, which is generated from the same numbers. It is read out of
+        # the flattened manuscript rather than out of the figure's source file, because the
+        # manuscript is what ships and because a check that reads a source file leaves the label
+        # outside every span check_coverage.py records --- so the number was verified while
+        # reporting as unread, which is the same blind spot in the other direction.
+        _fm = re.search(r"median \$([\d.]+)\$\}; \\end\{tikzpicture\}", flat) or \
+              re.search(r"\{median \$([\d.]+)\$\}", flat)
+        check("the figure's median label", _fm and _fm.group(1), _med, "paper/app/share_figure.tex")
+
+        # The axis the shares are read on. These five labels are the only numerals in the drawing
+        # that are not data, and leaving them unread meant nothing would notice an axis that had
+        # silently changed scale, which would misplace every dot on it.
+        _ticks = re.findall(r"inner sep=1pt\] at \([\d.]+,-0\.26\) \{\$([\d.]+)\$\}", flat)
+        checks.append((_ticks == ["0.00", "0.25", "0.50", "0.75", "1.00"],
+                       "the share axis runs 0 to 1 in quarters", "0.00 .. 1.00",
+                       ", ".join(_ticks) or "no ticks found", "paper/app/share_figure.tex"))
 
     # 10c-9b. The shape-free check on the boards whose scores are continuous.
     pcj = ROOT / "results/permutation_check.json"
@@ -1253,6 +1263,16 @@ def main() -> int:
         m = re.search(r"union of the grids: \$([\d,{}]+)\$ cell-level tests", flat)
         check("union, family size", m and m.group(1).replace("{,}", ""), UN["union_family_size"],
               "results/union_multiplicity.json")
+        # The claim-words table restates that family beside the claim it corrects, and is written
+        # by a different script from a different pass over the manuscript. Both printings are held
+        # against the artifact, so the two scripts cannot drift apart quietly.
+        _restated = re.findall(r"the correction over every grid at once & \$([\d,{}]+)\$ & cutoff",
+                               flat)
+        checks.append((len(_restated) == 2, "both restatements of the union family are found", "2",
+                       str(len(_restated)), "paper/app/claimwords.tex"))
+        for _i, _v in enumerate(_restated, 1):
+            check(f"union family, restatement {_i}", _v.replace("{,}", ""),
+                  UN["union_family_size"], "results/union_multiplicity.json")
         m = re.search(r"rejects \$([\d,{}]+)\$ of them at a cutoff of \$p=([\d.]+)"
                       r"\\times10\^\{-(\d+)\}\$", flat)
         checks.append((bool(m), "the union sentence parses", "present",

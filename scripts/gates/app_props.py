@@ -101,12 +101,41 @@ class _Binder:
                 self.check(f"{name}, printing {i}, {label}", _plain(g), computed, note)
 
 
+def register_mass_difference(ctx) -> None:
+    """The one numeral in this appendix that is chemistry rather than a measurement.
+
+    The sentence argues that a mass difference does not identify a transformation, and rests the
+    argument on two transformations sharing a shift. Nothing read it, which left the appendix
+    printing an unchecked number inside the sentence that carries the point. It is checkable: both
+    shifts follow from nominal atomic masses, so the figure is derived here rather than asserted,
+    and a sentence naming two transformations that do not in fact collide would fail.
+    """
+    nominal = {"C": 12, "H": 1, "N": 14, "O": 16}
+    # N-methylation substitutes a methyl for a hydrogen on nitrogen, a net CH2.
+    methylation = nominal["C"] + 2 * nominal["H"]
+    # Oxidising a methylene to a carbonyl trades the two methylene hydrogens for one oxygen.
+    oxidation = nominal["O"] - 2 * nominal["H"]
+    m = re.search(r"a mass difference does not identify a transformation: the same \$\+(\d+)\$ is "
+                  r"produced by an N-methylation and by an oxidation of a methylene to a carbonyl",
+                  ctx.flat)
+    ctx.checks.append((bool(m), "props, the mass-collision sentence parses", "present",
+                       "matched" if m else "not matched", "scripts/gates/app_props.py"))
+    if not m:
+        return
+    ctx.checks.append((methylation == oxidation,
+                       "props, the two transformations do share one nominal shift",
+                       f"{methylation}", f"{oxidation}", "nominal atomic masses"))
+    ctx.check("props, the shift the sentence prints", m.group(1), methylation,
+              "nominal atomic masses")
+
+
 def register(ctx) -> None:  # noqa: C901 -- one function per appendix file is the contract
     b = _Binder(ctx)
     note_gate = "scripts/gates/app_props.py"
     register_som_prior(ctx)
     register_decode_arithmetic(ctx)
     register_training_size(ctx)
+    register_mass_difference(ctx)
 
     need = {
         "prior_vs_learned.json": None,
