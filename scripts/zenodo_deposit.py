@@ -50,7 +50,7 @@ TITLE = "GRAIL candidate pools: per-substrate rule-application candidates with g
 # what is uploaded holds no source record. What remains is this work's own output, the candidate
 # structures and the two scores, and that carries CC BY 4.0.
 LICENSE = "cc-by-4.0"
-DESCRIPTION = """<p>Candidate pools for the train and validation populations of GRAIL, a
+DESCRIPTION_TEMPLATE = """<p>Candidate pools for the train and validation populations of GRAIL, a
 rule-grounded predictor of xenobiotic metabolite structures. Each file records, for every
 substrate of its population, every candidate structure produced by applying the rule bank,
 together with the generator's probability for the rule that produced it and the filter's score
@@ -59,12 +59,30 @@ for the (substrate, candidate) pair.</p>
 <p>These two files are the only artifacts the accompanying manuscript pins that are too large to
 commit; the remaining pinned artifacts, the evaluation harness, the split manifest, the frozen
 predictions of every comparator and the preregistration are in the repository at
-<a href="https://github.com/doctawho42/GRAIL">github.com/doctawho42/GRAIL</a>.</p>
+<a href="{repo_url}">{repo_display}</a>.</p>
 
 <p>Each file carries its own provenance stamp: the producing script, the SHA-256 of that
 script's source, and the commit it ran at. <code>paper2/zenodo_manifest.json</code> in the
 repository pins the SHA-256 of both the raw JSON and the uploaded gzip, so a download can be
 verified against the version the paper used.</p>"""
+
+def _repo_url() -> str:
+    """The public repository this deposit supplements.
+
+    It was written into this file as a literal, which put the author's account handle in a tracked
+    file. A deposit genuinely needs the URL, so it is read from the environment rather than removed,
+    and there is no default: depositing under a guessed remote would be worse than refusing.
+    """
+    url = os.environ.get("GRAIL_REPO_URL", "").rstrip("/").removesuffix(".git")
+    if not url:
+        raise SystemExit("set GRAIL_REPO_URL to the public repository this deposit supplements")
+    return url
+
+
+def _description() -> str:
+    url = _repo_url()
+    return DESCRIPTION_TEMPLATE.format(repo_url=url, repo_display=url.split("//", 1)[-1])
+
 
 
 def sha256(path: Path) -> str:
@@ -255,8 +273,8 @@ def upload() -> int:
 
     meta = {"metadata": {
         "title": rep["deposit"]["title"], "upload_type": "dataset",
-        "description": DESCRIPTION, "license": rep["deposit"]["license"],
-        "related_identifiers": [{"identifier": "https://github.com/doctawho42/GRAIL",
+        "description": _description(), "license": rep["deposit"]["license"],
+        "related_identifiers": [{"identifier": _repo_url(),
                                  "relation": "isSupplementTo", "scheme": "url"}]}}
     requests.put(f"{api}/deposit/depositions/{dep_id}", params=auth, json=meta).raise_for_status()
 

@@ -440,6 +440,18 @@ def main() -> int:
                   sum(b["n_systems"] for b in survey_boards), src)
             check("survey, tiers supported", mc.group(4),
                   sum(b["tiers_distinguished"] for b in survey_boards), src)
+        # The abstract states the survey's scale, and stated it in the wrong unit: "rank 298
+        # systems" reads as 298 methods, where 298 is the number of rank slots those tables print
+        # and the distinct systems number 73, because the translation systems recur across boards.
+        # The unit is what this check holds, since the figure was right and the noun was not.
+        _abs = re.search(r"Together those tables (\w+) \$(\d+)\$ (\w+)\.", flat)
+        checks.append((bool(_abs) and _abs.group(3) == "places",
+                       "the abstract states the survey's scale in places, not systems", "places",
+                       (_abs.group(3) if _abs else "no match"), "the manuscript"))
+        if _abs:
+            check("the abstract's place count", _abs.group(2),
+                  sum(b["n_systems"] for b in survey_boards), "results/robust_order_*.json")
+
         # The same pair of numbers is printed in the abstract, the contributions and Section 5.
         # A gate on one of three printings is what let an arm be printed three ways once already,
         # so every printing is found and checked, and the count of them is held too: dropping one
@@ -1631,7 +1643,7 @@ def main() -> int:
         # the abstract states the same ladder in its own words and closes it, which is the sentence
         # a reader reconciles 293-167 against; both of its figures are held here rather than left
         # to the reader, because the two ladders differ and an unread number is how they drifted
-        mab = re.search(r"Together those tables rank \$(\d+)\$ systems\..*?and \$(\d+)\$ ranks "
+        mab = re.search(r"Together those tables print \$(\d+)\$ places\..*?and \$(\d+)\$ ranks "
                         r"stand\..*?and \$(\d+)\$ survive\..*?\$(\d+)\$ ranks\s*go to resolving "
                         r"power a benchmark never had, before any convention is varied, and "
                         r"\$(\d+)\$ to the grid", flat)
@@ -2858,15 +2870,28 @@ def main() -> int:
     if pp.exists():
         PP = json.loads(pp.read_text())["totals"]
         flat = re.sub(r"\s+", " ", whole)
-        mpp = re.search(r"twenty-four tables that leaves \$(\d+)\$ of \$([\d,{}]+)\$ pairs "
-                        r"failing to dominate, (?:which are )?exactly the pairs some cell reverses", flat)
+        # The sentence used to print the screen's own count of failures beside a table showing one
+        # more. The screen does not count a pair that merely ties as failing; the dominance relation
+        # does, so the two differ by exactly failed_on_a_tie_alone. The sentence now prints both and
+        # this reads both, which is what makes the two instruments agree rather than coexist.
+        mpp = re.search(r"twenty-four tables that leaves \$([\d,{}]+)\$ of \$([\d,{}]+)\$ pairs "
+                        r"failing to dominate, of which \$([\d,{}]+)\$ are the pairs some cell "
+                        r"reverses and one fails on an exact tie", flat)
         checks.append((bool(mpp), "the screen-predicts-order sentence parses", "present",
                        "matched" if mpp else "not matched", ""))
         if mpp:
             src = str(pp.relative_to(ROOT))
-            check("screen, flagged", mpp.group(1), PP["flagged"], src)
+            _nondom = int(mpp.group(1).replace("{,}", ""))
             check("screen, pairs", mpp.group(2).replace("{,}", ""), PP["n_pairs"], src)
-            check("screen, flagged and failed", mpp.group(1), PP["flagged_and_failed"], src)
+            check("screen, flagged", mpp.group(3).replace("{,}", ""), PP["flagged"], src)
+            check("screen, flagged and failed", mpp.group(3).replace("{,}", ""),
+                  PP["flagged_and_failed"], src)
+            checks.append((_nondom == PP["failed"] + PP["failed_on_a_tie_alone"],
+                           "the non-dominating count is the reversed pairs plus the tie",
+                           str(PP["failed"] + PP["failed_on_a_tie_alone"]), str(_nondom), src))
+            checks.append((PP["failed_on_a_tie_alone"] == 1,
+                           "exactly one pair fails on a tie, as the sentence says", "1",
+                           str(PP["failed_on_a_tie_alone"]), src))
             checks.append((PP["failed_but_not_flagged"] == 0,
                            "the screen misses nothing, as the arithmetic requires", "0",
                            str(PP["failed_but_not_flagged"]), src))

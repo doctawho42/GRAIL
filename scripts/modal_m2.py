@@ -31,9 +31,17 @@ FETCH RESULTS when done (check `modal app list` / the dashboard for completion):
     python scripts/aggregate_seeds.py results/gflownet_m2_test_seed*.json
 ------------------------------------------------------------------------------------
 """
+import os
+
 import modal
 
-REPO = "https://github.com/doctawho42/GRAIL.git"
+# The remote is deployment configuration, not a constant. It was written in, which put the
+# author's account handle in a tracked file of a repository being prepared as a double-blind
+# archive; the same repair was applied a round earlier to how bank_overlap_sygma.py finds
+# SyGMa's rules. There is no default: a clone URL nobody supplied cannot be guessed.
+REPO = os.environ.get("GRAIL_REPO_URL", "")
+if not REPO:
+    raise SystemExit("set GRAIL_REPO_URL to the clone URL this job should build from")
 BRANCH = "metabench-reranker"
 
 # Code comes from git (my pushed commits incl. --logz-lr); data/checkpoints/caches come

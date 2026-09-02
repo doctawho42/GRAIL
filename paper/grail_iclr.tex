@@ -65,7 +65,7 @@ predictions, re-score them in every cell of a declared grid, and ask what part o
 survives.
 
 We do this for $24$ leaderboards in four domains, retraining nothing and reimplementing no method.
-Together those tables rank $298$ systems. Read permissively, a pair stands unless some cell
+Together those tables print $298$ places. Read permissively, a pair stands unless some cell
 contradicts it, and $170$ ranks stand. Read strictly, a pair stands only where every cell separates
 it, and $99$ survive. The distance between the two readings is mostly not the choices: $159$ ranks
 go to resolving power a benchmark never had, before any convention is varied, and $40$ to the grid.
@@ -522,9 +522,9 @@ The sign survives iff $|\delta_a-\delta_b|\le\max(|d|,|d'|)$. This is an identit
 says only that a difference changes sign when the movement exceeds both margins. It is stated for
 what follows from it, not as a result. Scoring the $n$ systems once in each cell fixes every one of
 the $n(n-1)/2$ dominance verdicts, with no pairwise statistic anywhere. A resample enters only to
-tell a contested pair from an unresolved one. On the twenty-four tables that leaves $319$ of
-$1{,}932$ pairs failing to dominate, which are exactly the pairs some cell reverses, computed from
-$n$ numbers per cell rather than from $1{,}932$ paired bootstraps.
+tell a contested pair from an unresolved one. On the twenty-four tables that leaves $320$ of
+$1{,}932$ pairs failing to dominate, of which $319$ are the pairs some cell reverses and one fails
+on an exact tie, computed from $n$ numbers per cell rather than from $1{,}932$ paired bootstraps.
 
 The arithmetic does not say where those pairs are, and that answer is a ratio rather than a level.
 The question can be asked of twenty-four leaderboards: the twenty-three plus a molecular-generation
@@ -611,34 +611,44 @@ choices reports a larger one. A quantity that rewards declaring less is not one 
 \subsubsection*{AI use statement}
 
 Generative AI was used for several of the tasks ICLR requires disclosed, and the division below is
-by task rather than by section. It was used to implement methods: most of the analysis code, the
-evaluation harness and the checking scripts released with this paper were written with an
-AI coding assistant. It was used to clean and reformat data, in the parsers that read each
-leaderboard's released prediction files into the common form the harness scores. It was used to
-propose and refine hypotheses and to give feedback on methodology: several of the checks reported
-here, including the ones that found defects in earlier drafts of this work, were suggested in that
-way. It was used to interpret results, in the sense that readings of a measurement were drafted
-with assistance and then checked against the artifact. It was used for the recommended tasks of
-code editing, figure creation, literature analysis, brainstorming and paper editing, and most of
-this manuscript's prose was drafted with assistance and revised by the authors.
+by task rather than by section. Each task is given a verdict rather than a location.
 
-It was not used to generate synthetic data: every number here comes from a released prediction
-file or from a run of a released model, and nothing in the study is simulated. It was not used to
-assist in writing proofs. Developing theoretical models, formulating mathematical claims and
-providing ingredients for proofs apply only to the propositions of
-Appendix~\ref{app:formal}, whose statements and proofs are the authors' and were checked line by
-line against the definitions they quantify over. Translation is not applicable to this work.
+It was used to implement methods: most of the analysis code, the evaluation harness and the
+checking scripts released with this paper were written with an AI coding assistant. It was used to
+clean and reformat data, in the parsers that read each leaderboard's released prediction files into
+the common form the harness scores. It was used to propose and refine hypotheses and to give
+feedback on methodology: several of the checks reported here, including the ones that found defects
+in earlier drafts of this work, were suggested in that way. It was used to interpret results, in
+the sense that readings of a measurement were drafted with assistance and then checked against the
+artifact. It was used to support qualitative analysis, in the eligibility screen over candidate
+leaderboards recorded in Appendix~\ref{app:boardsearch} and in reducing review findings to
+structured records. It was used for the recommended tasks of code editing, figure creation,
+literature analysis, brainstorming and paper editing, and most of this manuscript's prose was
+drafted with assistance and revised by the authors.
 
-We have reviewed all AI-assisted work. The review is not an assurance but a mechanism: every
-number printed in this paper is generated from a stored result file by a script rather than typed,
-a checker refuses any numeric literal in the manuscript that is not on a declared list, and the
-audit in the released archive records seventeen checks the authors ran against the manuscript's
-claims about itself, several of which failed and are documented with what they found. Code written
-with assistance is covered by the same gates as the rest: a released check refuses to write its
-artifact unless it first reproduces a figure the deployed path produced. The defects this process
-caught are reported rather than quietly repaired, and the ones it did not catch are named in
-Section~\ref{sec:limitations}. We take responsibility for the final content of this work,
-including text, claims and artifacts produced with the aid of generative AI.
+It was not used to generate synthetic data: every number here comes from a released prediction file
+or from a run of a released model, and nothing in the study is simulated. It was used to develop
+conceptual frameworks: the intersection order, the three verdicts and the five terms of
+\S\ref{sec:instrument} were arrived at in discussion with an assistant, and the relation itself is
+not new, being the unanimity relation this paper cites rather than introduces. It was not used to
+develop theoretical models or to formulate mathematical claims, and it was not used to write proofs
+or to provide ingredients for them: the propositions of Appendix~\ref{app:formal} and the two
+stated in \S\ref{sec:instrument} are the authors', and were checked line by line against the
+definitions they quantify over. Translation is not applicable to this work.
+
+We have reviewed all AI-assisted work. The review is not an assurance but a mechanism, and the
+mechanism is that numbers are typed into this manuscript and then checked against the record rather
+than generated into it. One released script recomputes each named quantity from the artifact it
+comes from and exits non-zero on any disagreement, and it exits clean. A second reports every
+numeral in the manuscript that no check reads, which is how four of the figures now bound were
+found unbound, and it reports none. The audit in the
+released archive records twenty-one checks the authors ran against the manuscript's claims about
+itself, seventeen of them with a runnable command, several of which failed and are documented with
+what they found. Code written with assistance is covered by the same gates as the rest: a released
+check refuses to write its artifact unless it first reproduces a figure the deployed path produced.
+The defects this process caught are reported rather than quietly repaired, and the ones it did not
+catch are named in Section~\ref{sec:limitations}. We take responsibility for the final content of
+this work, including text, claims and artifacts produced with the aid of generative AI.
 
 \subsubsection*{Ethics statement}
 

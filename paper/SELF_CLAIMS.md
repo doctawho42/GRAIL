@@ -328,24 +328,85 @@ live; done naively that is exactly what breaks this row. Neither check catches i
 a config block and passes, this row saw only `paper/*.tex` and passed. A check narrower than its
 claim, again.
 
-## 8. Main body within the page limit
-
-**Check:** everything through the Conclusion must fit in 9 pages. The ICLR 2026 author guide sets
-the submission limit at 9 pages of main text, raised to 10 at camera-ready, and excludes references
-and an optional reproducibility or ethics statement from the count. The appendix is unlimited, and
-the same guide states that reviewers are not required to read it, which is the reason every
-load-bearing claim is stated in the nine pages rather than pointed at.
+**The fifth round replaced the grep with a gate, because four rounds of widening a pattern by hand
+is itself the finding.** What a venue receives is a PDF and a supplementary archive, not this
+repository, so the scan runs over exactly those two and refuses rather than reports:
 
 ```bash
-pdftotext -layout paper/grail_iclr.pdf - | awk 'BEGIN{RS="\f"} NR==8' | tail -3
-pdftotext -layout paper/grail_iclr.pdf - | awk 'BEGIN{RS="\f"} NR==9' | head -4
+python scripts/build_anonymous_archive.py --check-only
 ```
 
-**Status: PASS, at the limit.** The Conclusion and the reproducibility statement both complete on
-page 9 and page 10 opens the references, so the main text is nine of the nine pages allowed. The
-margin that was there was spent deliberately: the instrument's schematic, the dominance order, the
-definition the propositions quantify over and the numbered subsections are all in the body now,
-because a reviewer is not required to read an appendix.
+Without `--check-only` it writes `dist/supplementary.zip` after the same scan passes. It assembles the archive from
+an allowlist, scans every byte of the staged copy, and declines to write anything if a pattern
+matches. It does not strip what it finds: stripping would leave the next unanticipated form of the
+leak in place, which is the failure mode of all four rounds above.
+
+**Two patterns had to be narrowed, and narrowing them is the point.** `\bClaude\b` matched 517
+times in one artifact, because Claude-3.5 is a system on the WMT24 board and every match is a row of
+the leaderboard being re-scored; `github\.com/\w+` matched the WMT organisers' repository, which is
+where those predictions come from. A pattern that fires on the data is not a strict gate. It is a
+gate somebody writes a blanket exemption for, and the exemption is what lets the next real leak
+through. Both now match the shape of a leak rather than a token the data shares with one: an
+attribution line rather than a model name, and a repository owner nobody declared rather than any
+owner at all. Ten synthetic leaks, one per class, are caught; three legitimate lines pass.
+
+**The PDF hides its own leak, and that is the finding of this round.** Probing the gate with an
+`\author` line naming a person, an institution and an address produced a PDF that scanned *clean*.
+The style is why: without `\iclrfinalcopy` it prints "Anonymous authors / Paper under double-blind
+review" and ignores `\author` entirely. A manuscript can therefore name its authors in the source,
+scan clean as a PDF, and de-anonymise itself the moment that one switch is set. The switch is what
+the gate checks, through the running head it changes — a submission reads "Under review as a
+conference paper", a camera-ready reads "Published as" — and it refuses on the second even when the
+author block still says Anonymous. Verified by building both.
+
+The PDF's document information dictionary is scanned too, since pdfTeX writes `/Author` and
+`/Creator` there and no grep over the sources reaches them. It currently carries `/Author()`, empty.
+
+The repository-wide grep above still matters for the day this repository is opened, and it is not
+clean: `LICENSE` names its copyright holder, `paper2/` is a signed manuscript for a different venue,
+and the two scanning scripts contain the patterns they search for. None of the four is in the
+archive. The archive's allowlist is what decides that, so **re-run the gate after adding a file to
+it**, which is the same instruction the third round wrote about `git add`.
+
+## 8. Main body within the page limit
+
+**Check:** everything through the Conclusion must fit in 9 pages. `iclr2027_conference.tex` sets a
+"strict upper limit of 9 pages for the main text of the initial submission, with unlimited
+additional pages for citations", raised to 10 for rebuttal and camera-ready. The AI use statement is
+required and exempt from the count; the ethics and reproducibility statements are recommended and
+exempt. The appendix is unlimited, and reviewers are not required to read it, which is the reason
+every load-bearing claim is stated in the nine pages rather than pointed at.
+
+```bash
+python scripts/check_page_limit.py
+```
+
+**Status: PASS, at the limit, and the limit is a gate now rather than a reading.** The main text ends
+on page 9 and the AI use statement opens page 10. Page 9 carries 49 lines of prose against a median
+of 51 across pages 2--8, so it is full: any addition pushes the text over, and the checker says so
+on every run.
+
+**Porting from the 2026 style left the paper a page over,** and the ten lines came back by moving
+material rather than deleting it. The two propositions keep their statements in the body, which the
+argument quantifies over, and cite Appendix D for the proofs — which that appendix already carried
+word for word, so the body had been printing them twice. The docking table's three forced
+conventions move to an appendix section of their own. They could not simply go: a paper whose thesis
+is that evaluation choices must be declared cannot drop its own declaration to save a page, and they
+appear in no other file.
+
+**Two things that looked like slack were not.** `\looseness=-1` applied to all seventeen long
+paragraphs that lacked it changed the typeset length by zero lines, because these paragraphs are
+already set as tightly as the measure allows and TeX cannot find a shorter solution within
+tolerance. And the first count of the overflow was one line too high: the style prints a line number
+in the margin of every line and `pdftotext` returns those as text, so a page carrying nothing but
+exempt statements still yields a token that reads as prose. The checker strips the margin number
+before counting a line.
+
+**Compressing prose broke three number-provenance checks, which is the interaction to remember.**
+Row 11's checks bind to the sentence around a figure, so replacing ", and" with ";" in the
+contributions list decoupled three published numbers from the artifacts that verify them — a
+cosmetic edit worth four characters that turned three checks red. The wording the checks read is
+restored. **Run row 11 after any edit made for length.**
 
 ## 9. Every citation resolves and supports what is attributed to it
 

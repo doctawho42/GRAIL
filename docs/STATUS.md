@@ -186,8 +186,8 @@ ranking decomposition, P2-as-XMC in brief, the honest anchor, limitations. *Appe
 architecture (§3), formal framework (§4), proposition witnesses, the rule-granularity negative
 results, the GFlowNet negative result, external-validity regression, cross-domain probe.
 
-**Practical constraints to handle:** (i) ICLR is **double-blind** and the repository is public
-(`github.com/doctawho42/GRAIL`) — an anonymized artifact link is required at submission; (ii) the
+**Practical constraints to handle:** (i) ICLR is **double-blind** and the repository is public and carries the author's account handle in its URL, so an
+anonymised artifact link is required at submission and the public remote must not be cited; (ii) the
 275-word abstract needs no trimming (ICLR has no JCIM-style 250-word cap); (iii) the MetaTox
 decision (§0b) resolves by deadline — include as a 6th method only if the SMIRKS variant arrives and
 is re-scored in time, otherwise keep the leaderboard at five and cite the comparison as external

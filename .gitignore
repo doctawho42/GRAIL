@@ -84,9 +84,11 @@ paper2/acs-*.bib
 # the Zenodo bundle is a build product; the manifest that pins it is committed
 paper2/zenodo_bundle/
 
-# review packet: extracted text is a build product, the findings are the record
-.review/manuscript.txt
-.review/si.txt
+# review packet: internal correspondence about the manuscripts, not part of any release.
+# It was tracked, and an audit found the author's home path in three of its files and the
+# account handle in four more -- in a repository being prepared as a double-blind archive.
+# Nothing outside it reads it and no paper cites it, so it stays local.
+.review/
 
 # Third-party rule files, kept locally so the provenance audit can run and NOT redistributed here.
 # The ENVMICRO file is CC BY-NC-SA 4.0, which no GPL release can carry; the RetroSim and GLORYx

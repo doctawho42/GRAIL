@@ -1,7 +1,7 @@
 {
  "config": {
   "script": "recover_subsample_config.py",
-  "git_commit": "164acc9359c71d5b1d5d547011875302e9fa91d2",
+  "git_commit": "c64411de58e77d7de599e238e8b0f2c8dd0cbaf2",
   "git_dirty": true
  },
  "validated_against": {
@@ -40,11 +40,29 @@
    "population": "the whole clean val split",
    "candidates": []
   },
+  "bank_overlap_sygma.json": {
+   "n": 245,
+   "status": "population undeclared",
+   "candidates": [],
+   "note": "no cap searched: a size alone is not evidence of a draw"
+  },
   "budget_matched_frontier.json": {
    "n": 150,
    "status": "not a seeded subsample",
    "population": "artifacts/tier2/substrates.json",
    "candidates": []
+  },
+  "comparison_set_members.json": {
+   "n": 291,
+   "status": "population undeclared",
+   "candidates": [],
+   "note": "no cap searched: a size alone is not evidence of a draw"
+  },
+  "dialect_sweep.json": {
+   "n": 291,
+   "status": "population undeclared",
+   "candidates": [],
+   "note": "no cap searched: a size alone is not evidence of a draw"
   },
   "gloryx_criterion_ladder.json": {
    "n": 37,
@@ -57,6 +75,24 @@
    "status": "not a seeded subsample",
    "population": "the whole GLORYx set",
    "candidates": []
+  },
+  "h10_verdict.json": {
+   "n": 293,
+   "status": "population undeclared",
+   "candidates": [],
+   "note": "no cap searched: a size alone is not evidence of a draw"
+  },
+  "h7_verdict.json": {
+   "n": 293,
+   "status": "population undeclared",
+   "candidates": [],
+   "note": "no cap searched: a size alone is not evidence of a draw"
+  },
+  "h9_verdict.json": {
+   "n": 293,
+   "status": "population undeclared",
+   "candidates": [],
+   "note": "no cap searched: a size alone is not evidence of a draw"
   },
   "hybrid_rerank.json": {
    "n": 400,
@@ -139,6 +175,12 @@
    "population": "artifacts/tier2/substrates.json",
    "candidates": []
   },
+  "reach_engine_vs_bank.json": {
+   "n": 245,
+   "status": "population undeclared",
+   "candidates": [],
+   "note": "no cap searched: a size alone is not evidence of a draw"
+  },
   "retro_transfer.json": {
    "n": 500,
    "status": "not a seeded subsample",
@@ -161,6 +203,30 @@
     }
    ],
    "n_candidates": 2
+  },
+  "selection_pools_deployed.json": {
+   "n": 291,
+   "status": "population undeclared",
+   "candidates": [],
+   "note": "no cap searched: a size alone is not evidence of a draw"
+  },
+  "sygma_by_dialect.json": {
+   "n": 291,
+   "status": "population undeclared",
+   "candidates": [],
+   "note": "no cap searched: a size alone is not evidence of a draw"
+  },
+  "typed_edit_recovery_partial.json": {
+   "n": 46,
+   "status": "population undeclared",
+   "candidates": [],
+   "note": "no cap searched: a size alone is not evidence of a draw"
+  },
+  "wide_pools.json": {
+   "n": 291,
+   "status": "population undeclared",
+   "candidates": [],
+   "note": "no cap searched: a size alone is not evidence of a draw"
   },
   "xdomain_retro_protocol.json": {
    "n": 200,

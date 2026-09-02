@@ -26,6 +26,7 @@ import hashlib
 import json
 import re
 import shutil
+import subprocess
 import zipfile
 from pathlib import Path
 
@@ -204,6 +205,37 @@ def main() -> int:
 
     # The scan runs over the staged copy, not over the source tree: what ships is what is checked.
     problems = scan(sorted(stage.rglob("*")), stage)
+
+    # The archive is half of what ships. The other half is the PDF, and its identity can leak
+    # somewhere no grep over the sources reaches: pdfTeX writes an /Author and a /Creator into
+    # the document information dictionary, and a figure included from disk leaves its path in
+    # the file. Both are read here out of the bytes that would be uploaded.
+    pdf = ROOT / "paper" / "grail_iclr.pdf"
+    if pdf.exists():
+        raw = pdf.read_bytes().decode("latin-1")
+        text = subprocess.run(["pdftotext", "-layout", str(pdf), "-"],
+                              capture_output=True, text=True).stdout
+        for label, blob in (("the PDF's metadata", raw), ("the PDF's rendered text", text)):
+            for pattern, what in IDENTITY:
+                for m in re.finditer(pattern, blob):
+                    problems.append(f"{label}  {what}: {m.group(0)[:60]!r}")
+            for _, hit in unexpected_owners(blob):
+                problems.append(f"{label}  an undeclared repository owner: {hit!r}")
+        # \iclrfinalcopy is the switch that un-anonymises the paper. Without it the style prints
+        # "Anonymous authors" and ignores \author entirely, which is why an \author line naming
+        # someone is invisible in a submission build and a scan of the PDF alone reports clean.
+        # The switch is what to check, and it also changes the running head, so the head is the
+        # evidence: a submission says "Under review", a final copy says "Published as".
+        if "Published as a conference paper" in text:
+            problems.append("the PDF's running head  the camera-ready switch is on: "
+                            "\\iclrfinalcopy un-anonymises the paper and changes the head from "
+                            "\"Under review\" to \"Published as\"")
+        elif "Under review as a conference paper" not in text:
+            problems.append("the PDF's running head  neither the submission nor the camera-ready "
+                            "head is present, so the style may not be in use at all")
+        print(f"scanned {pdf.name} ({pdf.stat().st_size / 1e6:.1f} MB), its metadata and its head")
+    else:
+        print(f"NOTE: {pdf} is not built, so only the archive was scanned")
     print(f"{len(files)} files staged, {sum(p.stat().st_size for p in files) / 1e6:.1f} MB")
     if problems:
         print(f"\nREFUSING: {len(problems)} identity matches in what would ship")
