@@ -302,3 +302,38 @@ def test_no_sentence_writes_a_sign_its_macro_contradicts():
     """
     r = _run("check_macro_signs.py")
     assert r.returncode == 0, r.stdout + r.stderr
+
+
+@pytest.mark.skipif(not (ROOT / "results/criterion_sweep.json").exists(),
+                    reason="the criterion sweep has not been run in this checkout")
+def test_the_verdict_grid_follows_from_the_levels_it_is_read_from():
+    """Every sign in the verdict grid follows from the recall table printed beside it.
+
+    The manuscript prints a grid of signs and the Supporting Information now prints the levels
+    behind it, so a referee can reconstruct one from the other and will. Three things have to
+    hold in every cell: the sign agrees with the margin, the comparator named is the strongest
+    one at that budget, and the arm named is this work's better one. Rounding may move a
+    difference by one in the last digit and does not count.
+    """
+    d = json.loads((ROOT / "results/criterion_sweep.json").read_text())
+    wrong = []
+    for crit in d["criteria"]:
+        rec = d["by_criterion"][crit]["recall_micro"]
+        verdicts = d["by_criterion"][crit]["verdict_by_budget"]
+        margins = d["by_criterion"][crit]["margin_by_budget"]
+        for k, verdict in verdicts.items():
+            cell = margins[k]
+            ours, theirs, gap = cell["ours"], cell["theirs"], cell["gap"]
+            if verdict == "leads" and gap <= 0:
+                wrong.append(f"{crit} k={k}: a lead with a margin of {gap:+.4f}")
+            if verdict == "trails" and gap >= 0:
+                wrong.append(f"{crit} k={k}: a trail with a margin of {gap:+.4f}")
+            others = {a: rec[a][k] for a in rec if not a.startswith("GRAIL")}
+            if rec[theirs][k] < max(others.values()) - 1e-9:
+                wrong.append(f"{crit} k={k}: read against {theirs}, not the strongest comparator")
+            mine = {a: rec[a][k] for a in rec if a.startswith("GRAIL")}
+            if rec[ours][k] < max(mine.values()) - 1e-9:
+                wrong.append(f"{crit} k={k}: read on {ours}, not this work's better arm")
+            if abs(round(rec[ours][k] - rec[theirs][k], 4) - gap) > 2e-4:
+                wrong.append(f"{crit} k={k}: the levels do not reproduce the margin")
+    assert not wrong, "the grid does not follow from the levels: " + "; ".join(wrong)

@@ -169,7 +169,10 @@ def si_criterion_levels():
             "the paired interval, so a sign can move either because a level moved or because the "
             "arms reordered, and both are visible here. Ranking is settled before the key is "
             "taken, so a criterion changes what counts as a hit and never what is ranked, and "
-            "the parent-drop convention is re-derived under each criterion." + note + "}\n"
+            "the parent-drop convention is re-derived under each criterion. A difference taken "
+            "between two columns here can disagree with the margin behind the verdict by one in "
+            "the last digit: the margin is computed from the hits and rounded once, and these "
+            "levels are rounded before anything is subtracted." + note + "}\n"
             "\\label{tab:si-criterion-levels}\n\\end{table*}\n")
 
 
