@@ -2,10 +2,36 @@
  "provenance": {
   "script": "matched_length.py",
   "script_path": "scripts/typed_edit/matched_length.py",
-  "source_sha256": "2f144d9288b5947ddf2e5b81e6b081b45d97f46cb4a5ecd603b9895392e858a2",
-  "git_commit": "33f72aa1923c32bc9b9723ce0b94a0c53e13a590",
+  "source_sha256": "b4a626c980eb83c65f1c7374da70812981faca4605da0fc3973a47de9ed5ce26",
+  "git_commit": "94ba9b985358f7546524164d864029f2e0e9b05e",
   "git_dirty": true
  },
+ "inputs": [
+  {
+   "path": "results/metatox_smirks_preds.json",
+   "exists": true,
+   "sha256_16": "136d4bdc323a7372",
+   "bytes": 1989212
+  },
+  {
+   "path": "results/sygma_fulltest_predictions.json",
+   "exists": true,
+   "sha256_16": "b012db873a24bb87",
+   "bytes": 8324075
+  },
+  {
+   "path": "artifacts/tier2_1170/metapredictor_preds.json",
+   "exists": true,
+   "sha256_16": "8e30e383c99e655b",
+   "bytes": 869435
+  },
+  {
+   "path": "results/biotransformer_allhuman_one_step_preds.json",
+   "exists": true,
+   "sha256_16": "1cdc5ab9898e0f99",
+   "bytes": 291972
+  }
+ ],
  "population": {
   "n_substrates": 291,
   "n_references": 665,
@@ -171,6 +197,58 @@
     "excludes_zero": false,
     "mean_slots": 10.75,
     "mean_slots_uncapped": 10.75,
+    "substrates_the_cap_binds_on": 0,
+    "annotated_metabolites_the_comparator_placed_past_the_cut": 0,
+    "verdict_unchanged": true
+   }
+  },
+  "whole bank - biotransformer": {
+   "recall_ours": 0.4436,
+   "recall_theirs": 0.4481,
+   "gap": -0.0045,
+   "ci95": [
+    -0.0402,
+    0.0315
+   ],
+   "excludes_zero": false,
+   "mean_slots": 10.7,
+   "median_slots": 10,
+   "substrates_where_the_comparator_returned_nothing": 7,
+   "without_the_cap_on_the_comparator": {
+    "gap": -0.0045,
+    "ci95": [
+     -0.0402,
+     0.0315
+    ],
+    "excludes_zero": false,
+    "mean_slots": 10.7,
+    "mean_slots_uncapped": 10.7,
+    "substrates_the_cap_binds_on": 0,
+    "annotated_metabolites_the_comparator_placed_past_the_cut": 0,
+    "verdict_unchanged": true
+   }
+  },
+  "trained budget - biotransformer": {
+   "recall_ours": 0.406,
+   "recall_theirs": 0.4481,
+   "gap": -0.0421,
+   "ci95": [
+    -0.09,
+    0.0044
+   ],
+   "excludes_zero": false,
+   "mean_slots": 10.7,
+   "median_slots": 10,
+   "substrates_where_the_comparator_returned_nothing": 7,
+   "without_the_cap_on_the_comparator": {
+    "gap": -0.0421,
+    "ci95": [
+     -0.09,
+     0.0044
+    ],
+    "excludes_zero": false,
+    "mean_slots": 10.7,
+    "mean_slots_uncapped": 10.7,
     "substrates_the_cap_binds_on": 0,
     "annotated_metabolites_the_comparator_placed_past_the_cut": 0,
     "verdict_unchanged": true

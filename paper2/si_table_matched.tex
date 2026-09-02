@@ -1,4 +1,4 @@
-\begin{table}[h]
+\begin{table*}[t]
 \centering\small
 \begin{tabular}{llrrrl}
 \toprule
@@ -10,8 +10,10 @@ exhaustive & SyGMa & 58.37 & .6977 & .5158 & +.1820$^{*}$ [+.1446, +.2208] \\
 interactive & SyGMa & 58.37 & .4842 & .5158 & $-$.0316 [$-$.0698, +.0085] \\
 exhaustive & MetaPredictor & 10.75 & .4602 & .4797 & $-$.0195 [$-$.0616, +.0212] \\
 interactive & MetaPredictor & 10.75 & .4436 & .4797 & $-$.0361 [$-$.0811, +.0094] \\
+exhaustive & biotransformer & 10.7 & .4436 & .4481 & $-$.0045 [$-$.0402, +.0315] \\
+interactive & biotransformer & 10.7 & .4060 & .4481 & $-$.0421 [$-$.0900, +.0044] \\
 \bottomrule
 \end{tabular}
 \caption{The comparison with the output budget taken from the comparator instead of the experiment. On each of the 291 substrates both arms are cut to the number of candidates that comparator returned there, so the two are read over the same slots on every substrate and not on average; slots is the mean of those lengths. $^{*}$ marks an interval excluding zero. Leading zeros are dropped.}
 \label{tab:si-matched}
-\end{table}
+\end{table*}

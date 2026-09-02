@@ -15,6 +15,29 @@ LABEL = {"whole bank": "GRAIL exh.", "trained budget": "GRAIL int.",
          "biotransformer": "BioTrans."}
 
 
+def blend_column():
+    """The aggregation a selection on validation chooses, as a column beside the deployed one.
+
+    The released rule is noisy-or and validation prefers the blend through a budget of twenty,
+    which includes the budget this paper reads its headline at. Reporting that in the SI and
+    printing only the deployed column here would leave a reader of the table unable to see what
+    the configuration the paper's own discipline points to actually does.
+
+    The column is admitted only if the re-derivation reproduces the deployed column exactly at
+    every budget. The two are computed from different objects -- this one from per-template
+    scores kept rather than collapsed -- so an unnoticed drift would otherwise put two
+    incomparable numbers side by side.
+    """
+    path = ROOT / "results/aggregation_ablation.json"
+    if not path.exists():
+        return None
+    a = json.loads(path.read_text())
+    by = a.get("by_rule", {})
+    if a.get("deployed") != "noisy_or" or "hybrid" not in by:
+        return None
+    return by["noisy_or"]["recall"], by["hybrid"]["recall"], a["join"]
+
+
 def table():
     d = json.loads((ROOT / "results/deployment_table.json").read_text())
     rec, out = d["recall_micro"], d["mean_output_length"]
@@ -24,20 +47,30 @@ def table():
     emit = d.get("mean_emitted_untruncated", {})
     ks = sorted(rec, key=int)
     arms = [a for a in LABEL if a in rec[ks[0]]]
-    L = ["\\begin{table*}[t]", "\\centering", "\\small",
-         "\\begin{tabular}{r" + "r" * len(arms) + "}", "\\toprule",
-         "$k$ & " + " & ".join(LABEL[a] for a in arms) + " \\\\", "\\midrule"]
+    blend = blend_column()
+    if blend and any(abs(blend[0][k] - rec[k]["whole bank"]) > 5e-5 for k in ks if k in blend[0]):
+        blend = None          # the re-derivation has drifted; the column would not be comparable
+    # The eighth column pushed the table past the two-column measure by 38pt, so the header is
+    # the short name the caption then defines rather than a phrase.
+    head = [LABEL[a] for a in arms] + (["blend"] if blend else [])
+    L = ["\\begin{table*}[t]", "\\centering", "\\footnotesize",
+         "\\begin{tabular}{r" + "r" * len(head) + "}", "\\toprule",
+         "$k$ & " + " & ".join(head) + " \\\\", "\\midrule"]
     # Nothing is bolded. Marking the largest point estimate at every budget asserts a leader at
     # the four budgets where the paper's own text says no arm separates, which is the discipline
     # of Section 2.8 broken by typography. The levels are here; the verdicts are in Table S3.
     for k in ks:
-        L.append(f"{k} & " + " & ".join(f"{rec[k][a]:.4f}" for a in arms) + " \\\\")
+        cells = [f"{rec[k][a]:.4f}" for a in arms]
+        if blend:
+            cells.append(f"{blend[1][k]:.4f}")
+        L.append(f"{k} & " + " & ".join(cells) + " \\\\")
     # The last row is a different quantity from the nine above it -- a list length, not a recall
     # -- and sat under the same rule structure reading as a tenth budget. It says what it is.
+    emitted = [f"\\emph{{{float(emit2.get(a, emit.get(a, out[a]))):.2f}}}" for a in arms]
+    if blend:
+        emitted.append("\\emph{---}")
     L += ["\\midrule",
-          "\\emph{mean emitted} & "
-          + " & ".join(f"\\emph{{{float(emit2.get(a, emit.get(a, out[a]))):.2f}}}"
-                       for a in arms) + " \\\\",
+          "\\emph{mean emitted} & " + " & ".join(emitted) + " \\\\",
           "\\bottomrule", "\\end{tabular}",
           "\\caption{Micro recall at each output budget on the "
           f"{d['population']['n']} substrates of the comparison set, carrying "
@@ -45,7 +78,18 @@ def table():
           "mean number of candidates each method emits, before any budget is applied: it is a "
           "property of the method and not of this table, and for two of the comparators it is "
           "larger than the widest budget shown. A prediction equal to the substrate is "
-          "dropped before the budget for every method alike.}",
+          "dropped before the budget for every method alike."
+          + ("" if not blend else
+             " The last column, \\emph{blend}, re-ranks the exhaustive arm's own pool under the aggregation a "
+             "selection on validation chooses, the blend of Equation~\\ref{SI-eq:blend}; it is "
+             "not the released configuration and is printed so that a reader can see what that "
+             "selection would have bought. It is re-derived from per-template scores rather than "
+             "the collapsed ones the pool carries, and is admitted here only because the same "
+             "re-derivation reproduces the deployed column at every budget; "
+             f"{blend[2]['candidates_the_pool_does_not_carry']} candidates of "
+             f"{blend[2]['candidates_scored_by_both'] + blend[2]['candidates_the_pool_does_not_carry']} "
+             "do not join and are dropped from both, so the two share a pool and no emission "
+             "figure is given for it.") + "}",
           "\\label{tab:sweep}", "\\end{table*}"]
     return "\n".join(L)
 

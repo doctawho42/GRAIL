@@ -751,7 +751,8 @@ def build():
     for pair, cell in ml["contrasts"].items():
         a, b = [x.strip() for x in pair.split(" - ")]
         tag = {"whole bank": "bank", "trained budget": "trained"}.get(a)
-        tagb = {"metatox": "Metatox", "sygma": "Sygma", "metapredictor": "Metapredictor"}.get(b)
+        tagb = {"metatox": "Metatox", "sygma": "Sygma", "metapredictor": "Metapredictor",
+                "biotransformer": "Biotransformer"}.get(b)
         if tag and tagb:
             n[f"matched.{tag}{tagb}"] = cell["gap"]
             n[f"matched.{tag}{tagb}.lo"] = cell["ci95"][0]
@@ -766,8 +767,8 @@ def build():
         if not u:
             continue
         b = pair.split(" - ")[1].strip()
-        tagb = {"metatox": "Metatox", "sygma": "Sygma",
-                "metapredictor": "Metapredictor"}.get(b)
+        tagb = {"metatox": "Metatox", "sygma": "Sygma", "metapredictor": "Metapredictor",
+                "biotransformer": "Biotransformer"}.get(b)
         if tagb:
             n[f"matched.binds{tagb}"] = u["substrates_the_cap_binds_on"]
             n[f"matched.pastcut{tagb}"] = \
@@ -831,6 +832,45 @@ def build():
         n[f"comparators.{tag}.date"] = row["predictions_first_in_the_repository"]
         if row.get("build"):
             n[f"comparators.{tag}.build"] = row["build"]
+
+    # what each arm hands back, read from the files this repository holds rather than asserted:
+    # the manuscript had claimed the incumbent leaves part of its output in file order, and every
+    # structure in the file it returned carries the service's own score
+    ret = art("what_each_arm_returns.json")
+    for tag, name in (("metatox", "MetaTox"), ("sygma", "SyGMa"),
+                      ("metapredictor", "MetaPredictor"), ("biotransformer", "BioTransformer")):
+        row = ret["by_arm"][name]
+        n[f"armreturn.{tag}returned"] = row["structures_returned"]
+        n[f"armreturn.{tag}scored"] = row["structures_carrying_a_score"]
+    n["armreturn.ordering"] = len(ret["comparators_that_order_their_whole_output"])
+    n["armreturn.attributing"] = len(
+        ret["comparators_whose_held_output_names_a_transformation_or_a_site"])
+
+    # The untraced curated templates, divided. 759 is the whole untraced body, and most of it is
+    # the second machine extraction whose source file the history does name; what nothing here
+    # accounts for is the remainder inside the three named collections.
+    ctp = art("curated_third_party.json")
+    n["thirdparty.unaccounted"] = (ctp["curated_split"]["named_collections"]
+                                   - ctp["borrowed_within_the_named_body"])
+    n["thirdparty.extraction"] = ctp["curated_split"]["earlier_extraction"]
+
+    # what the substrates are, so the manuscript's motivation can be read against them
+    ad = art("applicability_domain.json")
+    _ev = ad["populations"]["the evaluated test set"]
+    n["adomain.eval.mw"] = _ev["descriptors"]["molecular weight"]["quantiles"]["0.5"]
+    n["adomain.eval.logp"] = _ev["descriptors"]["calculated logP"]["quantiles"]["0.5"]
+    n["adomain.eval.scaffolds"] = _ev["bemis_murcko_scaffolds"]
+    n["adomain.eval.singletons"] = _ev["scaffolds_carried_by_one_substrate"]
+
+    # The gate the released checkpoint carries, against the selection every arm here was
+    # measured under. It is not a hyperparameter the paper chose; it is one the release applied
+    # and the measurement did not.
+    rdt = art("released_default_threshold.json")
+    n["defaultgate.threshold"] = rdt["calibrated_threshold"]
+    n["defaultgate.budget"] = rdt["rule_budget"]
+    n["defaultgate.clearing"] = rdt["rules_clearing_the_threshold"]["median"]
+    n["defaultgate.binds"] = rdt["substrates_where_the_gate_binds"]
+    n["defaultgate.bindshare"] = rdt["share_where_the_gate_binds"]
 
     agr = art("ceiling_instrument_agreement.json")
     n["ceilagree.disagreement"] = agr["disagreement_between_instruments_on_the_same_convention"]

@@ -34,7 +34,7 @@ for _p in (str(ROOT), str(ROOT / "scripts"), str(HERE)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from _provenance import stamp  # noqa: E402
+from _provenance import record_inputs, stamp  # noqa: E402
 
 CAP = 100
 N_BOOT, SEED = 10000, 0
@@ -42,6 +42,11 @@ COMPARATORS = {
     "metatox": ("results/metatox_smirks_preds.json", "predictions"),
     "sygma": ("results/sygma_fulltest_predictions.json", None),
     "metapredictor": ("artifacts/tier2_1170/metapredictor_preds.json", None),
+    # The fourth arrived after this control was written, and its matched-length figure lived in
+    # its own section while the table captioned as every arm against every comparator carried
+    # three. It is the arm the control matters most for: what separates it at a wide budget is
+    # how much each side emits, which is the one thing matching lengths removes.
+    "biotransformer": ("results/biotransformer_allhuman_one_step_preds.json", None),
 }
 
 
@@ -159,6 +164,7 @@ def main() -> int:
 
     report = {
         "provenance": stamp(__file__),
+        "inputs": record_inputs([ROOT / rel for rel, _ in COMPARATORS.values()]),
         "population": {"n_substrates": len(subs), "n_references": int(U.sum()),
                        "note": "the comparison set, as everywhere else"},
         "design": ("for each substrate, both arms are truncated to the number of candidates the "

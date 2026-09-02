@@ -255,3 +255,17 @@ def test_every_artifact_the_numbers_come_from_is_pinned_and_verifiable():
     """
     r = _run("check_number_provenance.py")
     assert r.returncode == 0, r.stdout + r.stderr
+
+
+@pytest.mark.skipif(not (ROOT / "paper2/grail_jcim.aux").exists(),
+                    reason="the manuscript has not been built in this checkout")
+def test_every_cited_reference_can_be_found():
+    """A reader can locate every reference the two documents cite.
+
+    Round thirteen's referee found two incomplete entries by eye, which is the instrument this
+    project replaced everywhere else. An entry passes if it carries a DOI, URL or eprint, or is
+    a complete journal citation; an article missing a volume or a locator is reported as
+    incomplete without failing, since a DOI already makes it findable.
+    """
+    r = _run("check_bibliography.py")
+    assert r.returncode == 0, r.stdout + r.stderr

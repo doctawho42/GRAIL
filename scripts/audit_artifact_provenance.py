@@ -156,6 +156,14 @@ PINNED = {
     "results/error_by_chemistry.json": "scripts/typed_edit/error_by_chemistry.py",
     "results/curated_third_party.json": "scripts/typed_edit/curated_third_party.py",
     "results/site_agreement.json": "scripts/typed_edit/site_agreement.py",
+    # the comparison population written out under the key everything is scored by
+    "results/comparison_set_members.json": f"{TE}/comparison_set_members.py",
+    # what kind of molecules the numbers were measured on
+    "results/applicability_domain.json": f"{TE}/applicability_domain.py",
+    # the rule gate the released checkpoint carries, against the one the paper measured
+    "results/released_default_threshold.json": f"{TE}/released_default_threshold.py",
+    # which arms return an ordering and which return an attribution, from the held files
+    "results/what_each_arm_returns.json": "scripts/typed_edit/what_each_arm_returns.py",
     "results/budget_curve.json": "scripts/typed_edit/budget_curve.py",
     "results/matched_length.json": "scripts/typed_edit/matched_length.py",
     "results/mining_rarefaction.json": "scripts/typed_edit/mining_rarefaction.py",

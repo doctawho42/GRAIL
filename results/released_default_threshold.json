@@ -1,0 +1,45 @@
+{
+ "provenance": {
+  "script": "released_default_threshold.py",
+  "script_path": "scripts/typed_edit/released_default_threshold.py",
+  "source_sha256": "6db9d1c3bb9436745e564c2615e7393e3ed562336db927490c1027c39c5629ee",
+  "git_commit": "94ba9b985358f7546524164d864029f2e0e9b05e",
+  "git_dirty": true
+ },
+ "inputs": [
+  {
+   "path": "artifacts/full5000_implicit/checkpoints/generator.pt",
+   "exists": true,
+   "sha256_16": "c694af18b5be9a0e",
+   "bytes": 8900602
+  }
+ ],
+ "question": "whether the threshold the released checkpoint carries changes the rule set from the one every number in this paper was measured on",
+ "checkpoint": "artifacts/full5000_implicit/checkpoints/generator.pt",
+ "calibrated_threshold": 0.6,
+ "rule_budget": 30,
+ "population": {
+  "n_substrates": 291,
+  "source": "the comparison set, as everywhere else"
+ },
+ "applicable_rules": {
+  "median": 508.0,
+  "mean": 517.7
+ },
+ "rules_clearing_the_threshold": {
+  "median": 6.0,
+  "mean": 29.5
+ },
+ "rules_the_evaluated_arm_uses": {
+  "median": 30.0,
+  "mean": 30.0
+ },
+ "rules_the_released_default_uses": {
+  "median": 6.0,
+  "mean": 13.6
+ },
+ "substrates_where_the_gate_binds": 185,
+ "share_where_the_gate_binds": 0.6357,
+ "direction": "the gated set is a prefix of the evaluated one whenever the gate binds, since both order by the same score, so the released default can only remove candidates the evaluated arm had and never add one",
+ "reading": "The gate is not inert. On most substrates fewer rules clear it than the budget admits, so a caller who passes no threshold runs a narrower selection than any arm reported here. The paper's numbers describe the evaluated configuration, and the release has to be that configuration rather than a neighbouring one."
+}

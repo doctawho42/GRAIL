@@ -21,6 +21,13 @@
 \newcommand{\Funding}{\unresolved{FUNDING: the grants supporting this work, or a statement that it received no external funding}}
 % Most of the curated half is now traced by measurement: results/curated_third_party.json finds
 % 966 of the 1,725 curated templates verbatim in a set published by BioTransformer, SyGMa or
-% GLORYx. The remainder is 759, and the two numbers printed for it disagreed until this was fixed;
-% where those came from only the authors can say.
-\newcommand{\CuratedProvenance}{\unresolved{CURATED RULES: where the remaining \numThirdpartyUntraceable{} templates came from}}
+% GLORYx. The remainder is 759, and the two numbers printed for it disagreed until this was fixed.
+% That remainder is not one body. 492 of it is the second machine extraction whose source file
+% the history does name, so what nothing here accounts for is the 267 inside the three named
+% collections; the marker asks for those and states the rest, because a marker covering a number
+% four fifths of which is already answered is a question nobody can act on.
+\newcommand{\CuratedProvenance}{Of the \numThirdpartyUntraceable{} curated templates that match
+no published set measured here, \numThirdpartyExtraction{} are the second machine extraction
+above, whose origin file the history names. The remaining \numThirdpartyUnaccounted{} sit in the
+three named collections and this repository records nothing about where they came from.
+\unresolved{CURATED RULES: the origin of those \numThirdpartyUnaccounted{} templates}}

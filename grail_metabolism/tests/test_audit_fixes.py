@@ -1360,3 +1360,26 @@ def test_every_script_takes_its_checkpoints_from_the_deployed_run():
                     wrong.append(f"{path.relative_to(root)}:{n} -> {match}")
     assert not wrong, (
         "these name a checkpoint that is not the deployed one: " + ", ".join(wrong))
+
+
+def test_the_released_default_is_the_evaluated_configuration():
+    """A caller who names no rule threshold gets the configuration the paper measured.
+
+    The released generator checkpoint carries ``calibrated_threshold = 0.6``. Every pool the
+    paper is scored on was built with ``threshold=None``, and on the comparison set a median of
+    six rules clear 0.6 against a rule budget of thirty, so falling back to the checkpoint's
+    value handed a user a much narrower selection than any arm that was ever measured. The
+    fallback is gone; this fails if it returns.
+    """
+    from grail_metabolism.model.wrapper import ModelWrapper
+
+    class _Gen:
+        calibrated_threshold = 0.6
+
+    wrapper = ModelWrapper.__new__(ModelWrapper)
+    wrapper.generator = _Gen()
+    assert wrapper._rule_threshold(None) is None, (
+        "an unspecified rule threshold must mean the evaluated configuration, not the "
+        "checkpoint's calibrated gate")
+    # An explicit gate still reaches the generator, so the choice stays available.
+    assert wrapper._rule_threshold(0.42) == 0.42

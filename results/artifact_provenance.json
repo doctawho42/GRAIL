@@ -19,6 +19,12 @@
    "status": "current"
   },
   {
+   "artifact": "results/applicability_domain.json",
+   "script": "applicability_domain.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
    "artifact": "results/biotransformer_arm.json",
    "script": "biotransformer_arm.py",
    "how": "recorded source digest",
@@ -69,6 +75,12 @@
   {
    "artifact": "results/comparator_provenance.json",
    "script": "comparator_provenance.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
+   "artifact": "results/comparison_set_members.json",
+   "script": "comparison_set_members.py",
    "how": "recorded source digest",
    "status": "current"
   },
@@ -452,6 +464,12 @@
    "status": "current"
   },
   {
+   "artifact": "results/released_default_threshold.json",
+   "script": "released_default_threshold.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
    "artifact": "results/reproduce_from_descriptors.json",
    "script": "reproduce_from_descriptors.py",
    "how": "recorded source digest",
@@ -598,17 +616,23 @@
    "status": "current"
   },
   {
+   "artifact": "results/what_each_arm_returns.json",
+   "script": "what_each_arm_returns.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
    "artifact": "results/wide_pool_analysis_implicit.json",
    "script": "wide_pool_analysis.py",
    "how": "recorded source digest",
    "status": "current"
   }
  ],
- "n_pinned": 99,
+ "n_pinned": 103,
  "n_pinned_stale": 0,
  "sweep": {
   "unstamped": 259,
-  "producer_changed": 39,
+  "producer_changed": 40,
   "current": 42,
   "producer_unknown": 27,
   "cosmetic_only": 8
@@ -953,6 +977,14 @@
    "detail": "producer was 059dab2750df, is now 14a6821898a6",
    "diff_recovered_by": "source at 9630e586ab71",
    "diff": "--- dispatch_paired_ci.py (as recorded)\n+++ dispatch_paired_ci.py (now)\n@@ -156,5 +156,7 @@\n     # population and no other. Asserting them against a run on the full split would be a comparison\n     # across populations -- the defect this paper names -- dressed as a reproducibility check.\n-    if args.population == \"subsample245\":\n+    # ...and the whole bank only: the committed pair is a whole-bank measurement, so asserting it\n+    # against a subset arm compares two different rule sets as well as, possibly, two populations.\n+    if args.population == \"subsample245\" and args.subset == \"full\":\n         print(f\"\\ngate: dispatch {reach_d} against committed {COMMITTED['dispatch']}, \"\n               f\"implicit {reach_i} against {COMMITTED['implicit']}\")"
+  },
+  {
+   "artifact": "results/drawing_equalised.json",
+   "script": "drawing_equalised.py",
+   "how": "recorded source digest",
+   "status": "producer_changed",
+   "detail": "producer was 2bf5417bad64, is now 4838873cc9a1",
+   "diff_note": "scripts/typed_edit/drawing_equalised.py is not in commit 94ba9b985358"
   },
   {
    "artifact": "results/emission_crossfit.json",

@@ -1,0 +1,151 @@
+{
+ "provenance": {
+  "script": "applicability_domain.py",
+  "script_path": "scripts/typed_edit/applicability_domain.py",
+  "source_sha256": "c1c272bbc92e272283fc122a2aea6e5ffee3f5d8d859d5755a4baa7a51cacd25",
+  "git_commit": "94ba9b985358f7546524164d864029f2e0e9b05e",
+  "git_dirty": true
+ },
+ "inputs": [
+  {
+   "path": "results/test_references.json",
+   "exists": true,
+   "sha256_16": "f0add6b4b0b32b9f",
+   "bytes": 182834
+  }
+ ],
+ "question": "what kind of molecules the evaluated test set and the comparison set hold, so a reader can judge whether these numbers speak to their own compounds",
+ "populations": {
+  "the evaluated test set": {
+   "n_substrates": 1170,
+   "unparsed": 0,
+   "descriptors": {
+    "molecular weight": {
+     "n": 1170,
+     "mean": 366.41,
+     "quantiles": {
+      "0.05": 138.64,
+      "0.25": 252.54,
+      "0.5": 333.9,
+      "0.75": 445.05,
+      "0.95": 662.77
+     }
+    },
+    "calculated logP": {
+     "n": 1170,
+     "mean": 3.04,
+     "quantiles": {
+      "0.05": -0.53,
+      "0.25": 1.68,
+      "0.5": 3.01,
+      "0.75": 4.28,
+      "0.95": 6.42
+     }
+    },
+    "heavy atoms": {
+     "n": 1170,
+     "mean": 25.47,
+     "quantiles": {
+      "0.05": 9.0,
+      "0.25": 17.0,
+      "0.5": 23.5,
+      "0.75": 31.0,
+      "0.95": 46.55
+     }
+    },
+    "rings": {
+     "n": 1170,
+     "mean": 2.84,
+     "quantiles": {
+      "0.05": 0.0,
+      "0.25": 2.0,
+      "0.5": 3.0,
+      "0.75": 4.0,
+      "0.95": 6.0
+     }
+    },
+    "rotatable bonds": {
+     "n": 1170,
+     "mean": 5.39,
+     "quantiles": {
+      "0.05": 0.0,
+      "0.25": 2.0,
+      "0.5": 4.0,
+      "0.75": 7.0,
+      "0.95": 14.0
+     }
+    }
+   },
+   "bemis_murcko_scaffolds": 579,
+   "acyclic_substrates": 68,
+   "scaffolds_carried_by_one_substrate": 399,
+   "largest_scaffold_share": 0.1034
+  },
+  "the comparison set": {
+   "n_substrates": 291,
+   "unparsed": 0,
+   "descriptors": {
+    "molecular weight": {
+     "n": 291,
+     "mean": 359.28,
+     "quantiles": {
+      "0.05": 138.14,
+      "0.25": 252.3,
+      "0.5": 342.35,
+      "0.75": 435.24,
+      "0.95": 613.1
+     }
+    },
+    "calculated logP": {
+     "n": 291,
+     "mean": 3.01,
+     "quantiles": {
+      "0.05": 0.12,
+      "0.25": 1.77,
+      "0.5": 2.9,
+      "0.75": 4.14,
+      "0.95": 6.04
+     }
+    },
+    "heavy atoms": {
+     "n": 291,
+     "mean": 25.12,
+     "quantiles": {
+      "0.05": 10.0,
+      "0.25": 17.0,
+      "0.5": 24.0,
+      "0.75": 31.0,
+      "0.95": 42.0
+     }
+    },
+    "rings": {
+     "n": 291,
+     "mean": 2.92,
+     "quantiles": {
+      "0.05": 0.5,
+      "0.25": 2.0,
+      "0.5": 3.0,
+      "0.75": 4.0,
+      "0.95": 6.0
+     }
+    },
+    "rotatable bonds": {
+     "n": 291,
+     "mean": 5.15,
+     "quantiles": {
+      "0.05": 0.0,
+      "0.25": 2.0,
+      "0.5": 4.0,
+      "0.75": 7.0,
+      "0.95": 11.5
+     }
+    }
+   },
+   "bemis_murcko_scaffolds": 207,
+   "acyclic_substrates": 15,
+   "scaffolds_carried_by_one_substrate": 173,
+   "largest_scaffold_share": 0.0962
+  }
+ },
+ "reading": "The corpus is assembled from four drug-centric sources and the introduction motivates the problem with environmental chemicals as well. The distribution here is what a reader should hold that motivation against; it is a description and not a claim of applicability."
+}

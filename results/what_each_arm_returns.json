@@ -1,0 +1,137 @@
+{
+ "provenance": {
+  "script": "what_each_arm_returns.py",
+  "script_path": "scripts/typed_edit/what_each_arm_returns.py",
+  "source_sha256": "1c0f54ab18005648947b27a2c75d2ce40ddfd02be003761c8c228348475fcf7e",
+  "git_commit": "94ba9b985358f7546524164d864029f2e0e9b05e",
+  "git_dirty": true
+ },
+ "inputs": [
+  {
+   "path": "results/metatox_smirks_preds.json",
+   "exists": true,
+   "sha256_16": "136d4bdc323a7372",
+   "bytes": 1989212
+  },
+  {
+   "path": "results/sygma_fulltest_predictions.json",
+   "exists": true,
+   "sha256_16": "b012db873a24bb87",
+   "bytes": 8324075
+  },
+  {
+   "path": "artifacts/tier2_1170/metapredictor_preds.json",
+   "exists": true,
+   "sha256_16": "8e30e383c99e655b",
+   "bytes": 869435
+  },
+  {
+   "path": "artifacts/tier2/bt_out.csv",
+   "exists": true,
+   "sha256_16": "8705f67b31af29f7",
+   "bytes": 1528113
+  }
+ ],
+ "question": "which arms return an ordering over their whole output, and which return an attribution with it, read from the files this repository holds",
+ "by_arm": {
+  "GRAIL": {
+   "file": "results/widepools_implicit/w*.json",
+   "structures_returned": 171299,
+   "structures_carrying_a_score": 171299,
+   "score_channel": "both component scores, on every candidate",
+   "ordered": true,
+   "names_the_transformation": true,
+   "names_an_enzyme": false,
+   "names_a_site": true,
+   "attribution_read_from": "results/site_agreement.json",
+   "matches_the_site_instrument_could_attribute": "327 of 327",
+   "from_the_method": "the rule index and the matched atoms are carried with the candidate",
+   "share_carrying_a_score": 1.0
+  },
+  "MetaTox": {
+   "file": "results/metatox_smirks_preds.json",
+   "structures_returned": 10601,
+   "structures_carrying_a_score": 10601,
+   "score_channel": "the method's own Pa for the Metabolite class, descending",
+   "names_the_transformation": false,
+   "names_an_enzyme": false,
+   "names_a_site": false,
+   "from_the_method": "its publication reports a biotransformation type and a site of metabolism; the file returned to this submission carries neither",
+   "share_carrying_a_score": 1.0,
+   "ordered": true
+  },
+  "SyGMa": {
+   "file": "results/sygma_fulltest_predictions.json",
+   "structures_returned": 94571,
+   "structures_carrying_a_score": 0,
+   "score_channel": "the engine's own score, applied as an order and not retained",
+   "ordered": true,
+   "names_the_transformation": false,
+   "names_an_enzyme": false,
+   "names_a_site": false,
+   "from_the_method": "its rule set names each transformation, and the engine exposes the applied rule per node; this run kept the ordered structures only",
+   "share_carrying_a_score": 0.0
+  },
+  "MetaPredictor": {
+   "file": "artifacts/tier2_1170/metapredictor_preds.json",
+   "structures_returned": 16051,
+   "structures_carrying_a_score": 0,
+   "score_channel": null,
+   "ordered": false,
+   "names_the_transformation": false,
+   "names_an_enzyme": false,
+   "names_a_site": false,
+   "from_the_method": "a sequence-to-sequence translation; it emits structures and no rule",
+   "share_carrying_a_score": 0.0
+  },
+  "BioTransformer": {
+   "file": "artifacts/tier2/bt_out.csv",
+   "structures_returned": 2326,
+   "structures_carrying_a_score": 0,
+   "score_channel": null,
+   "ordered": false,
+   "names_the_transformation": true,
+   "names_an_enzyme": true,
+   "names_a_site": false,
+   "columns": [
+    "inchi",
+    "inchikey",
+    "smiles",
+    "synonyms",
+    "pubchem_cid",
+    "molecular formula",
+    "major isotope mass",
+    "alogp",
+    "lipinski_violations",
+    "insecticide_likeness_violations",
+    "post_em_herbicide_likeness_violations",
+    "metabolite id",
+    "cdk:title",
+    "reaction",
+    "reaction id",
+    "enzyme(s)",
+    "biosystem",
+    "precursor id",
+    "precursor smiles",
+    "precursor inchi",
+    "precursor inchikey",
+    "precursor alogp",
+    "precursor major isotope mass"
+   ],
+   "from_the_method": "its output names the reaction and the enzyme, and no atom indices",
+   "share_carrying_a_score": 0.0
+  }
+ },
+ "comparators_that_order_their_whole_output": [
+  "MetaTox",
+  "SyGMa"
+ ],
+ "comparators_that_do_not": [
+  "BioTransformer",
+  "MetaPredictor"
+ ],
+ "comparators_whose_held_output_names_a_transformation_or_a_site": [
+  "BioTransformer"
+ ],
+ "reading": "Ordering is not what separates this work from the incumbent: MetaTox scores every structure it returns and SyGMa orders its list, while MetaPredictor returns an unranked list and BioTransformer's file order is the only order it gives. Attribution is not a differentiator either, since BioTransformer's own output names the reaction and the enzyme. What is unusual is not that a rule and a site are reported but that the site is checked against the atoms that changed."
+}

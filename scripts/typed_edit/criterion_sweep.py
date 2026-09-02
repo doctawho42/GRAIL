@@ -35,7 +35,7 @@ for _p in (str(ROOT), str(ROOT / "scripts"), str(HERE)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from _provenance import stamp  # noqa: E402
+from _provenance import record_inputs, stamp  # noqa: E402
 
 from _rrf import rrf_order  # noqa: E402
 
@@ -47,6 +47,11 @@ COMPARATORS = {
     "MetaTox": ("results/metatox_smirks_preds.json", "predictions"),
     "SyGMa": ("results/sygma_fulltest_predictions.json", None),
     "MetaPredictor": ("artifacts/tier2_1170/metapredictor_preds.json", None),
+    # The fourth comparator was added after this sweep was first written, and for a while the
+    # grid carried five arms while the comparison table carried six. A verdict cell reads the
+    # strongest comparator, so an arm missing from here cannot change a sign it never entered --
+    # which is exactly why its absence was invisible.
+    "BioTransformer": ("results/biotransformer_allhuman_one_step_preds.json", None),
 }
 
 
@@ -160,6 +165,7 @@ def main() -> int:
                 for c in CRITERIA if c != "inchikey_tautomer"}
     rep = {
         "provenance": stamp(__file__),
+        "inputs": record_inputs([ROOT / rel for rel, _ in COMPARATORS.values()]),
         "population": {"n": len(subs), "source": "the comparison set of results/four_method_291.json"},
         "aggregation": "micro, ratio of sums",
         "cap": CAP, "n_boot": N_BOOT, "seed": SEED,

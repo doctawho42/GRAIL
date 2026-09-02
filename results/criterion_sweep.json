@@ -2,10 +2,36 @@
  "provenance": {
   "script": "criterion_sweep.py",
   "script_path": "scripts/typed_edit/criterion_sweep.py",
-  "source_sha256": "e858981a63c63f183a4e89c0be6333e52cca00e0e90cd9af0ac0732324f49210",
-  "git_commit": "33f72aa1923c32bc9b9723ce0b94a0c53e13a590",
+  "source_sha256": "f416eb31b1bc9840dc056d01da2095f5ea94fbf79edd1c576177f2ab3a59a685",
+  "git_commit": "94ba9b985358f7546524164d864029f2e0e9b05e",
   "git_dirty": true
  },
+ "inputs": [
+  {
+   "path": "results/metatox_smirks_preds.json",
+   "exists": true,
+   "sha256_16": "136d4bdc323a7372",
+   "bytes": 1989212
+  },
+  {
+   "path": "results/sygma_fulltest_predictions.json",
+   "exists": true,
+   "sha256_16": "b012db873a24bb87",
+   "bytes": 8324075
+  },
+  {
+   "path": "artifacts/tier2_1170/metapredictor_preds.json",
+   "exists": true,
+   "sha256_16": "8e30e383c99e655b",
+   "bytes": 869435
+  },
+  {
+   "path": "results/biotransformer_allhuman_one_step_preds.json",
+   "exists": true,
+   "sha256_16": "1cdc5ab9898e0f99",
+   "bytes": 291972
+  }
+ ],
  "population": {
   "n": 291,
   "source": "the comparison set of results/four_method_291.json"
@@ -81,6 +107,17 @@
      "20": 0.4496,
      "30": 0.4496,
      "50": 0.4496
+    },
+    "BioTransformer": {
+     "1": 0.0496,
+     "3": 0.1534,
+     "5": 0.2195,
+     "8": 0.2737,
+     "10": 0.2992,
+     "15": 0.3368,
+     "20": 0.3444,
+     "30": 0.3459,
+     "50": 0.3459
     }
    },
    "verdict_by_budget": {
@@ -235,6 +272,17 @@
      "20": 0.4571,
      "30": 0.4571,
      "50": 0.4571
+    },
+    "BioTransformer": {
+     "1": 0.0692,
+     "3": 0.188,
+     "5": 0.2647,
+     "8": 0.3293,
+     "10": 0.3609,
+     "15": 0.409,
+     "20": 0.415,
+     "30": 0.4165,
+     "50": 0.4165
     }
    },
    "verdict_by_budget": {
@@ -389,6 +437,17 @@
      "20": 0.4729,
      "30": 0.4729,
      "50": 0.4729
+    },
+    "BioTransformer": {
+     "1": 0.0693,
+     "3": 0.1913,
+     "5": 0.2696,
+     "8": 0.3373,
+     "10": 0.372,
+     "15": 0.4277,
+     "20": 0.4398,
+     "30": 0.4428,
+     "50": 0.4443
     }
    },
    "verdict_by_budget": {
@@ -543,6 +602,17 @@
      "20": 0.4503,
      "30": 0.4503,
      "50": 0.4503
+    },
+    "BioTransformer": {
+     "1": 0.0497,
+     "3": 0.1551,
+     "5": 0.2199,
+     "8": 0.2756,
+     "10": 0.3012,
+     "15": 0.3373,
+     "20": 0.3449,
+     "30": 0.3464,
+     "50": 0.3464
     }
    },
    "verdict_by_budget": {
@@ -697,6 +767,17 @@
      "20": 0.4797,
      "30": 0.4797,
      "50": 0.4797
+    },
+    "BioTransformer": {
+     "1": 0.0722,
+     "3": 0.194,
+     "5": 0.2752,
+     "8": 0.3414,
+     "10": 0.3759,
+     "15": 0.4286,
+     "20": 0.4421,
+     "30": 0.4466,
+     "50": 0.4481
     }
    },
    "verdict_by_budget": {

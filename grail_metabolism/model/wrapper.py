@@ -92,6 +92,19 @@ class ModelWrapper:
         self.filter.fit(data, lr=filter_lr, eps=filter_epochs, verbose=verbose)
         return self
 
+    def _rule_threshold(self, threshold: Optional[float]) -> Optional[float]:
+        """The rule gate to run under when the caller did not name one.
+
+        The released generator checkpoint carries ``calibrated_threshold = 0.6`` and this path
+        used to fall back to it. Every pool the paper reports was built with ``threshold=None``,
+        the top of the score ranking cut at the rule budget and no gate, and on the comparison
+        set a median of six rules clear 0.6 against a budget of thirty, binding on 185 of 291
+        substrates. So the fallback handed a caller a much narrower selection than any arm that
+        was ever measured. The default is now the evaluated configuration; a caller who wants the
+        gate passes it, and the checkpoint keeps the value so that choice stays available.
+        """
+        return threshold
+
     def generate_multistep(
         self,
         sub: str,
@@ -101,7 +114,7 @@ class ModelWrapper:
     ) -> List[str]:
         from .multistep import MetabolicTree
 
-        rule_threshold = threshold if threshold is not None else getattr(self.generator, "calibrated_threshold", None)
+        rule_threshold = self._rule_threshold(threshold)
         tree = MetabolicTree(self.generator, self.filter, config, rule_threshold=rule_threshold)
         return [smiles for smiles, _ in tree.beam_search(sub, max_output=max_output)]
 
@@ -130,7 +143,7 @@ class ModelWrapper:
         # Normalize with the SAME mode the generator emits (and was trained on), so the
         # filter scores candidates in the model's distribution and matching stays consistent.
         gen_mode = getattr(self.generator, "gen_normalization", "standardize")
-        rule_threshold = threshold if threshold is not None else getattr(self.generator, "calibrated_threshold", None)
+        rule_threshold = self._rule_threshold(threshold)
         effective_filter_threshold = (
             float(filter_threshold)
             if filter_threshold is not None

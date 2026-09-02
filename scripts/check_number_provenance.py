@@ -166,7 +166,12 @@ def main() -> int:
         path = ROOT / rel
         if rel in CKPT_EXEMPT or not path.exists():
             continue
-        runs = set(CKPT.findall(path.read_text()))
+        # An artifact may record a checkpoint among its inputs, and a checkpoint is not text.
+        # Its own path is the run it names, which is the thing this check is asking about.
+        if path.suffix == ".pt":
+            runs = set(CKPT.findall(rel))
+        else:
+            runs = set(CKPT.findall(path.read_text(errors="replace")))
         if runs and not runs <= DEPLOYED_RUNS:
             via = f" (read by {followed[rel]})" if rel in followed else ""
             wrong_model.append(f"{rel}{via}: {', '.join(sorted(runs))}")

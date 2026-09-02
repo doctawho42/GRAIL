@@ -1,0 +1,17 @@
+\begin{table}[h]
+\centering\small
+\begin{tabular}{lrrrrl}
+\toprule
+$K$ & $k=5$ & $k=15$ & $k=30$ & $k=50$ & against the deployed $K$ at $k=15$ \\
+\midrule
+$1$ & 0.2391 & 0.4857 & 0.6241 & 0.7008 & $-0.0556$$^{*}$ {\scriptsize [-0.080,-0.031]} \\
+$10$ & 0.2977 & 0.5128 & 0.6301 & 0.7023 & $-0.0286$$^{*}$ {\scriptsize [-0.047,-0.010]} \\
+$30$ & 0.3143 & 0.5248 & 0.6406 & 0.7038 & $-0.0165$$^{*}$ {\scriptsize [-0.030,-0.003]} \\
+$60$$\;\leftarrow$ & 0.3143 & 0.5414 & 0.6511 & 0.7023 & \emph{deployed} \\
+$120$ & 0.3098 & 0.5414 & 0.6526 & 0.7023 & $+0.0000$\phantom{$^{*}$} {\scriptsize [-0.011,+0.011]} \\
+$300$ & 0.3113 & 0.5444 & 0.6511 & 0.7023 & $+0.0030$\phantom{$^{*}$} {\scriptsize [-0.011,+0.017]} \\
+\bottomrule
+\end{tabular}
+\caption{Micro recall under each value of the reciprocal-rank-fusion constant $K$, on the 291 substrates of the comparison set carrying 665 references, with the paired difference against the deployed $K=60$ at a budget of 15 and its 95\% interval; $^{*}$ marks an interval excluding zero. Recomputing the fusion from the stored component scores costs no model run, which is why this knob could be swept and the aggregation rule had to be re-derived. The deployed value is the one the method was published with and was not chosen here.}
+\label{tab:si-fusion-k}
+\end{table}

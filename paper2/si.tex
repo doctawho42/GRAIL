@@ -5,6 +5,8 @@
 \usepackage{booktabs}
 \usepackage{graphicx}
 \usepackage{microtype}
+% The comparison population is 291 rows and has to break across pages.
+\usepackage{longtable}
 % Pointers running the other way, from this document into the manuscript, resolve through the
 % manuscript's own .aux for the same reason its pointers into this one do: a hand-typed float
 % number compiles silently when it is wrong. Both documents are built twice, so each reads the
@@ -242,6 +244,35 @@ own tautomer key is among their annotated references, for which the convention d
 annotation counts. Across the whole evaluated test set there are \numRefauditSelfref{} such
 substrates; the comparison set holds \numPdropSelfref{} of them.
 
+\section{What kind of molecules these are}
+\label{sec:si-applicability}
+
+The corpus is assembled from four drug-centric sources and the manuscript motivates the problem
+with environmental chemicals as well, so what the substrates actually are belongs on the record
+beside the annotation, which is characterised elsewhere by heavy-atom change and element
+composition. Table~\ref{tab:si-applicability} describes them.
+
+They are drug-like. Median molecular weight is \numAdomainEvalMw{} on the evaluated test set with
+a calculated logP of \numAdomainEvalLogp{}, and the comparison set sits in the same place, which
+is one more reading on whether that draw is unlike the split it came from. The
+\numPopulationTestsubs{} substrates carry \numAdomainEvalScaffolds{} Bemis--Murcko scaffolds and
+\numAdomainEvalSingletons{} of those are carried by a single substrate, so the population is
+diverse in skeleton rather than a few series sampled repeatedly.
+
+What that does not establish is an applicability domain. A domain is a statement about where
+performance holds, and it would need recall measured against these axes rather than the axes
+described; the table says what was measured on, and a reader whose compounds sit outside this
+range should read every figure here as untested for them.
+
+\input{si_table_applicability}
+
+The members are Table~\ref{tab:si-population-list}, under the key every comparison here is
+scored by. How those \numPopulationN{} were drawn from the split is not recorded anywhere and
+that is stated where the population is defined; naming them at least makes the draw checkable
+against anything a reader wants to check it against.
+
+\input{si_table_population_list}
+
 \section{Every candidate count, and what each one is}
 \label{sec:si-counts}
 
@@ -328,24 +359,28 @@ then cut at \numMatchedCap{} candidates, five past the pool cap of \numHNineCap{
 neither of this work's arms has a candidate to put in the slot, so the comparison there would
 measure the pool cap rather than the ordering. The cut binds on \numMatchedBindssygma{} of the
 \numPopulationN{} substrates for SyGMa and \numMatchedBindsmetatox{} for MetaTox, and on none
-for MetaPredictor. What it costs the comparators is measured rather than assumed: every contrast
-in Table~\ref{tab:si-matched} is identical with the cut removed, to four decimal places, because
+for either of the two arms whose lists are shorter than the cut everywhere, MetaPredictor and
+BioTransformer. What it costs the comparators is measured rather than assumed: every contrast
+in Table~\ref{MS-tab:si-matched} is identical with the cut removed, to four decimal places, because
 SyGMa places \numMatchedPastcutsygmaWord{} of the annotated metabolites past that rank, on any
 substrate where its list runs longer.
 
-\input{si_table_matched}
 
 The result splits the wide-budget leads in two. Against SyGMa the exhaustive arm keeps
 $+\numMatchedBanksygma$ $[+\numMatchedBanksygmaLo, +\numMatchedBanksygmaHi]$ over
 \numMatchedBanksygmaSlots{} slots, which is an ordering result and the largest margin that
 survives this control. Larger differences are printed elsewhere in these documents, at nominal
 budgets where list length is not held; those are the ones this control exists to discount, so the
-comparison is between the margins in this table and not with them. Against MetaTox and MetaPredictor nothing survives:
-$\numMatchedBankmetatox$ $[\numMatchedBankmetatoxLo, +\numMatchedBankmetatoxHi]$ and
-$\numMatchedBankmetapredictor$
-$[\numMatchedBankmetapredictorLo, +\numMatchedBankmetapredictorHi]$, both covering zero and both
-pointing the other way. What the sweep reports as a lead over those two at wide budgets is
-therefore a statement about list length, and this work's own thesis requires saying so.
+comparison is between the margins in this table and not with them. Against the other three nothing survives:
+$+\numMatchedBankmetatox$ $[\numMatchedBankmetatoxLo, +\numMatchedBankmetatoxHi]$ against
+MetaTox, $\numMatchedBankmetapredictor$
+$[\numMatchedBankmetapredictorLo, +\numMatchedBankmetapredictorHi]$ against MetaPredictor and
+$\numMatchedBankbiotransformer$ $[\numMatchedBankbiotransformerLo,
++\numMatchedBankbiotransformerHi]$ against BioTransformer, every interval covering zero and two
+of the three pointing the other way. What the sweep reports as a lead over those three at wide
+budgets is therefore a statement about list length, and this work's own thesis requires saying so.
+BioTransformer's row reproduces the figure its own section reports from a different instrument,
+which is the check that the two agree rather than a second reading of the same number.
 
 The interactive arm loses to MetaTox at matched length by
 $\numMatchedTrainedmetatox$
@@ -399,8 +434,12 @@ it.
 \label{sec:si-sensitivity}
 
 The verdict grid itself is Table~\ref{MS-tab:criterion} of the manuscript, since it is the
-evidence the paper's title advertises and belongs where the argument is made. What follows is what
-the grid does not show on its face.
+evidence the paper's title advertises and belongs where the argument is made. The levels it is
+read from are Table~\ref{tab:si-criterion-levels}: every arm at every budget under every
+criterion, which is what lets a reader see whether a sign moved because a level moved or because
+the arms reordered. What follows is what the grid does not show on its face.
+
+\input{si_table_criterion_levels}
 
 The paper argues that a recall figure depends on evaluation choices that this literature leaves
 unstated. The argument is made about published numbers, and Table~\ref{MS-tab:criterion} applies
@@ -419,6 +458,16 @@ the loosest, and it merges structures a fingerprint cannot separate, which credi
 with hits it did not earn and credits the comparators with more of them. Neither is a defensible
 default, and the paper's argument is not that one criterion is right but that the choice has to be
 declared and its consequences shown.
+
+The strict end carries a second entanglement that a reader should have before the column is read
+as strictness alone. The references are stored in the corpus's drawing, which writes amides as
+imidic acids (Section~\ref{sec:si-presentation}), and every method's output passes through a
+standardiser that writes the amide. Canonical SMILES equality between the two is therefore partly
+a test of whether a method reproduces the corpus's own tautomer rather than of whether it found
+the molecule, and it is the one criterion under which no arm's advantage separates at any budget.
+The tautomer-aware key exists because that is not the question a comparison should be asking, and
+the canonical column is reported because declaring a criterion means printing what it does, not
+only the one whose behaviour suits the argument.
 
 The reference row of Table~\ref{MS-tab:criterion} reproduces the verdicts of the main text's
 comparison exactly, though it is computed by a different script from the same frozen predictions.
@@ -521,6 +570,15 @@ $[\numSygdialectThirtyLo, \numSygdialectThirtyHi]$ at $k=30$. Only MetaTox canno
 it is the one comparator that was handed the natural drawing to begin with.
 
 \input{si_table_dialect}
+
+Each of those measurements holds the other arms fixed, and none of them answers the question a
+reader of the comparison table has: what the comparison reads when everything that can move is on
+one drawing. Table~\ref{tab:si-equalised} is that reading. Both of this work's arms are rebuilt on
+the standardiser's output, MetaPredictor and BioTransformer are scored from their re-runs on the
+natural drawing, and SyGMa is re-run here; MetaTox cannot be moved and is carried unchanged and
+marked, since it is also the one arm that received the natural drawing to begin with.
+
+\input{si_table_equalised}
 
 SyGMa is the one comparator that can be re-run, so what that cost it is measured rather than
 supposed. Given the substrate as the declared standardiser draws it, on the same \numSygdialN{}
@@ -882,6 +940,9 @@ Every constant of \numFusionkFlatfrom{} or more is indistinguishable from the de
 $K = \numFusionkDeployed$ at a budget of 15; the two smallest separate against it, by up to
 $\numFusionkWorst$. The published default sits on the flat part of that curve, so leaving it there
 costs nothing measurable, which is a stronger statement than disclosing that it was not varied.
+The values and the levels are Table~\ref{tab:si-fusion-k} rather than a description of them.
+
+\input{si_table_fusion_k}
 
 The second is the aggregation rule. Equation~\ref{MS-eq:noisyor} combines the templates that
 reach a candidate by noisy-or, which treats them as independent evidence. This bank does not
@@ -993,6 +1054,27 @@ under that run's filter and no other (Section~\ref{sec:si-prov}).
 
 \input{si_table_hyperparameters}
 
+\subsection{The gate the release applied and the measurement did not}
+
+One of those settings was doing something the paper had not measured. The released generator
+checkpoint carries a calibrated rule threshold of \numDefaultgateThreshold{}, and the inference
+path took it whenever a caller named none, so a rule scoring below it was dropped before the rule
+budget was applied. Every pool any number here is scored on was built with no such gate: the
+selection is the top of the score ranking cut at the budget, and nothing else.
+
+The two are not the same selection. On the comparison set a median of \numDefaultgateClearing{}
+rules clear the gate against a budget of \numDefaultgateBudget{}, and it binds on
+\numDefaultgateBinds{} of \numPopulationN{} substrates, \numDefaultgateBindsharePct{}. Because
+both orderings are by the same score, the gated set is a prefix of the evaluated one wherever the
+gate binds, so what it does is remove candidates the measured arm had and never add one. A user
+calling the released model without naming a threshold was therefore running a narrower
+configuration than any arm reported in this paper, and no number here describes it.
+
+The release is now the evaluated configuration: an unspecified rule threshold means no gate, the
+checkpoint keeps the value so a caller who wants it can pass it, and a regression test fails if
+the fallback returns. This is recorded rather than quietly corrected because the defect is the
+one this paper argues about, an undeclared configuration difference, found in its own release.
+
 \subsection{Filter}
 
 The filter scores a (substrate, candidate) pair. Substrate and candidate are embedded
@@ -1023,6 +1105,14 @@ checkpoint is trained under cross-entropy instead, so its unlabelled pairs enter
 consequence is that its scores are conservative on exactly the candidates the annotation is silent
 about. The same silence makes precision pessimistic by a bounded but unknown amount, which is why
 the paper reports it without using it to order systems.
+
+That leaves an ablation this work's own framing asks for and does not report: the same filter
+trained under the positive-unlabelled risk instead, scored the same way. It is not a re-ranking
+of stored scores, which is why it is absent rather than deferred; it needs a training run at the
+deployed configuration and a re-scoring of every pool from it. That is the same run the
+retraining spread needs (Section~\ref{MS-sec:limitations}), so one campaign would settle both,
+and neither is settled here. What can be said without it is which estimator the release uses and
+in which direction its bias runs, and both are stated above.
 
 \section{Whether the site a prediction names is the site that changed}
 \label{sec:si-site}
@@ -1302,7 +1392,12 @@ properties most likely to have driven such a draw did not drive this one.
 The comparison is also read on the population nobody selected: the whole evaluated test set,
 \numPopdefWholesubstrates{} substrates carrying \numPopdefWholereferences{} references, against
 the two comparators that ran over all of it, with a substrate a comparator answered nothing for
-scored as zero rather than removed. Both arms are read there, which matters because the wide-budget
+scored as zero rather than removed. The other two could not be taken there and the reasons
+differ. MetaTox is a web service and a second submission is not ours to make. BioTransformer is
+a jar this repository holds, so it looked like the one that could be re-run, and it cannot: its
+InChI native library does not resolve on the machine this work runs on, and the jar exits before
+it predicts anything. Its arm is therefore the frozen predictions and nothing else, which is a
+harder limit than a cost and is named as one. Both arms are read there, which matters because the wide-budget
 leads this work claims are the exhaustive arm's and that arm existed only on the comparison set
 until its pools were built for the whole split.
 
@@ -1316,19 +1411,27 @@ MetaPredictor neither population separates.
 The exhaustive arm's leads mostly survive the move, and the exception is named. Of the
 \numPopdefLeadstotalWord{} separating leads it holds on the comparison set at the budgets read
 here, \numPopdefLeadskeptWord{} still separate over the whole set and
-\numPopdefLeadslostWord{} does not. What survives is the wide-budget result the paper claims:
+\numPopdefLeadslostWord{} does not. The six are the exhaustive arm against each
+comparator at fifteen, thirty and fifty, and five of them survive:
 against SyGMa $+\numPopdefExhwholesygmaThreeZero$ $[+\numPopdefExhwholesygmaThreeZeroLo,
 +\numPopdefExhwholesygmaThreeZeroHi]$ at thirty and $+\numPopdefExhwholesygmaFiveZero$
 $[+\numPopdefExhwholesygmaFiveZeroLo, +\numPopdefExhwholesygmaFiveZeroHi]$ at fifty, against
-MetaPredictor $+\numPopdefExhwholemetapredictorThreeZero$ and
-$+\numPopdefExhwholemetapredictorFiveZero$ at the same two. What does not survive is the
+MetaPredictor $+\numPopdefExhwholemetapredictorOneFive$
+$[+\numPopdefExhwholemetapredictorOneFiveLo, +\numPopdefExhwholemetapredictorOneFiveHi]$ at
+fifteen, $+\numPopdefExhwholemetapredictorThreeZero$ and
+$+\numPopdefExhwholemetapredictorFiveZero$ at thirty and fifty. What does not survive is the
 narrower one: the lead over SyGMa at a budget of fifteen is
 $+\numPopdefExhcompsygmaOneFive$ $[+\numPopdefExhcompsygmaOneFiveLo,
 +\numPopdefExhcompsygmaOneFiveHi]$ on the comparison set and
 $+\numPopdefExhwholesygmaOneFive$ $[\numPopdefExhwholesygmaOneFiveLo,
 +\numPopdefExhwholesygmaOneFiveHi]$ over the whole set, an interval covering zero. That claim is
-therefore restricted to the comparison set wherever it appears, and the two trails at a budget of
-ten that separate only on the wider population are reported for the same reason.
+therefore restricted to the comparison set wherever it appears. Two cells move the other way for
+the same reason and are reported here rather than passed over: at a budget of ten the exhaustive
+arm trails SyGMa by $\numPopdefExhwholesygmaOneZero$ $[\numPopdefExhwholesygmaOneZeroLo,
+\numPopdefExhwholesygmaOneZeroHi]$ and MetaPredictor by
+$\numPopdefExhwholemetapredictorOneZero$ $[\numPopdefExhwholemetapredictorOneZeroLo,
+\numPopdefExhwholemetapredictorOneZeroHi]$ over the whole set, both intervals excluding zero,
+where on the comparison set neither separates.
 
 A separate analysis re-ran three
 methods, four metrics and five criteria on two populations of one split, and asked whether the
@@ -1526,8 +1629,9 @@ is the treatment MetaPredictor's unranked list already receives. It emits \numBt
 per substrate and returns nothing for \numBtarmSilent{} of \numPopulationN{}. The exhaustive arm
 leads it by $+\numBtarmGapThreeZero$ $[+\numBtarmGapThreeZeroLo, +\numBtarmGapThreeZeroHi]$ at a
 budget of thirty. Cut to BioTransformer's own list length on every substrate, the same control the
-other comparators receive, the lead is $+\numBtarmMatchedgap$ $[\numBtarmMatchedlo,
-+\numBtarmMatchedhi]$ over \numBtarmMatchedslots{} slots, an interval covering zero. The
+other comparators receive, the difference is $\numBtarmMatchedgap$ $[\numBtarmMatchedlo,
++\numBtarmMatchedhi]$ over \numBtarmMatchedslots{} slots, an interval covering zero and running
+the other way. The
 wide-budget gap against BioTransformer is therefore an emission gap and not an ordering one, which
 is what a bank sharing \numThirdpartyBiotransformerShipped{} of its templates should produce.
 

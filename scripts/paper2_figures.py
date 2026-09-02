@@ -7,6 +7,7 @@ results/ on every build, so a figure cannot outlive the run it describes.
 from __future__ import annotations
 
 import json
+import math
 import sys
 from pathlib import Path
 
@@ -171,7 +172,12 @@ def fig_ceiling():
     x = np.arange(len(cur))
     share = [c["share_of_mass_in_singletons"] for c in cur]
     usable = [c["determines_a_product"] for c in cur]
-    a2.bar(x, share, color=[PALETTE[1] if u else INK_FAINT for u in usable], width=0.6)
+    # Colour alone carried this distinction, which is the one thing a figure must not ask of a
+    # reader who cannot see the difference or is holding a greyscale print. The bars that
+    # determine a product are hatched as well as coloured.
+    for xi, (s, u) in enumerate(zip(share, usable)):
+        a2.bar(xi, s, width=0.6, color=PALETTE[1] if u else INK_FAINT,
+               hatch="//" if u else None, edgecolor="white" if u else "none", lw=0.0)
     # The label above a bar is the bar's own value. It used to be the number of distinct types at
     # that granularity, which is a different quantity on a different scale sitting in the place
     # the eye reads the height from; the type count now rides under the tick where it names the
@@ -187,8 +193,9 @@ def fig_ceiling():
     a2.set_ylabel("share of misses in singleton types")
     a2.set_ylim(0, 1.0)
     a2.axhline(0.5, color=INK_FAINT, lw=0.6, ls=":")
-    a2.text(3.35, 0.93, "type names a\ntransformation", fontsize=6.2, ha="right", color=PALETTE[1])
-    a2.text(3.35, 0.16, "it does not", fontsize=6.2, ha="right", color=INK_MUTED)
+    a2.text(3.35, 0.93, "hatched: the type names\na transformation", fontsize=6.2, ha="right",
+            color=PALETTE[1])
+    a2.text(3.35, 0.16, "plain: it does not", fontsize=6.2, ha="right", color=INK_MUTED)
     fig.savefig(OUT / "fig_ceiling.pdf")
     plt.close(fig)
 
@@ -341,7 +348,7 @@ def fig_case():
     # The right panel's row labels are three lines long and are drawn to the left of its axes,
     # so the gap between the two panels has to hold them: at the default spacing the structure
     # ran underneath them.
-    fig, (a1, a2) = plt.subplots(1, 2, figsize=(W * 2.12, 3.5),
+    fig, (a1, a2) = plt.subplots(1, 2, figsize=(W * 2.12, 3.9),
                                  gridspec_kw={"width_ratios": [0.92, 1.45], "wspace": 0.42})
     png = _substrate_png(exh_d["substrate"],
                          [(sorted(atoms), _rgb(col, 0.68)) for col, atoms in sites.items()])
@@ -366,23 +373,46 @@ def fig_case():
         if d["n_candidates"]:
             a2.plot([c["rank"] for c in d["candidates"]], [y] * d["n_candidates"], "|",
                     color=INK_FAINT, ms=8, mew=0.8, zorder=2)
-    # labels point away from the pair they belong to and are staggered by rank order, so
-    # neighbouring ones cannot overprint and no label crosses into the other drawing's row
+    # Labels point away from the pair they belong to and are lifted onto whichever height is
+    # free. Alternating two heights by position was not enough: on the stored exhaustive row the
+    # hits at ranks 16 and 20 landed on the same height and their two-line labels overprinted.
+    # A level is taken only if the last label on it is far enough away along the axis, measured
+    # in the axis's own log-ish coordinate rather than in ranks, since the scale is symlog.
+    # Two heights, and a sideways nudge when both are taken. Alternating two heights by position
+    # was not enough on its own: on the stored exhaustive row the hits at ranks 16, 18 and 20
+    # overprinted each other. A third height is not the answer either, because the rows are one
+    # data unit apart and a label lifted that far reads as belonging to the row below.
+    LEVELS = (9, 23)
+    MIN_SEPARATION = 0.115
+    NUDGE = 20
+
+    def axis_position(rank):
+        return math.log10(max(rank, 1)) if rank <= 30 else 1.48 + (rank - 30) / 140.0
+
     for _, d, y, side in rows:
         found = sorted((c for c in d["candidates"] if c["is_reference"]),
                        key=lambda c: c["rank"])
-        for j, c in enumerate(found):
+        occupied, nudged = [None] * len(LEVELS), 0
+        for c in found:
             col = next(x for k, _, x in CASE if k == c["key"])
             name = next(x for k, x, _ in CASE if k == c["key"])
             a2.plot([c["rank"]], [y], "o", ms=5.0, color=col, mec="white", mew=0.9, zorder=4)
-            step = (8, 21)[j % 2]
-            off = step if side == "up" else -step
+            here = axis_position(c["rank"])
+            free = [i for i, last in enumerate(occupied)
+                    if last is None or here - last >= MIN_SEPARATION]
+            level = free[0] if free else len(LEVELS) - 1
+            dx = 0
+            if not free:
+                nudged += 1
+                dx = NUDGE if nudged % 2 else -NUDGE
+            occupied[level] = here
+            off = LEVELS[level] if side == "up" else -LEVELS[level]
             a2.annotate(f"{name}\nrule {c['rule_id']}", (c["rank"], y),
-                        textcoords="offset points", xytext=(0, off),
+                        textcoords="offset points", xytext=(dx, off),
                         ha="center", va="bottom" if side == "up" else "top",
                         fontsize=6.0, color=col, linespacing=1.15,
                         arrowprops=dict(arrowstyle="-", lw=0.5, color=col,
-                                        shrinkA=1, shrinkB=3) if j % 2 else None)
+                                        shrinkA=1, shrinkB=3) if (level or dx) else None)
     for k in (15, 30):
         a2.axvline(k, color=INK_FAINT, lw=0.7, ls=":", zorder=0)
         a2.annotate(f"$k={k}$", (k, -1.02), ha="center", fontsize=6.5, color=INK_MUTED)

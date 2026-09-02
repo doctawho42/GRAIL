@@ -1,18 +1,18 @@
 \begin{table}[h]
-\centering\small
-\begin{tabular}{rrrrrrr}
+\centering\footnotesize
+\begin{tabular}{rrrrrrrr}
 \toprule
-$k$ & GRAIL exh. & GRAIL int. & MetaTox & SyGMa & MetaPred. & exh.\ $-$ MetaTox \\
+$k$ & GRAIL exh. & GRAIL int. & MetaTox & SyGMa & MetaPred. & BioTrans. & exh.\ $-$ MetaTox \\
 \midrule
-$1$ & .1450 & .1415 & .0660 & .2090 & .1976 & +.0790$^{*}$ \\
-$3$ & .2872 & .3103 & .1665 & .3614 & .3478 & +.1207$^{*}$ \\
-$5$ & .3687 & .3922 & .2520 & .4375 & .4317 & +.1167$^{*}$ \\
-$8$ & .4606 & .4671 & .3504 & .4821 & .5159 & +.1102$^{*}$ \\
-$10$ & .5064 & .5035 & .4251 & .4969 & .5510 & +.0813$^{*}$ \\
-$15$ & .5831 & .5543 & .5492 & .5218 & .5545 & +.0339 \\
-$20$ & .6372 & .5632 & .5907 & .5331 & .5545 & +.0465 \\
-$30$ & .6943 & .5660 & .6441 & .5387 & .5545 & +.0502$^{*}$ \\
-$50$ & .7461 & .5660 & .6708 & .5429 & .5545 & +.0753$^{*}$ \\
+$1$ & .1450 & .1415 & .0660 & .2090 & .1976 & .1030 & +.0790$^{*}$ \\
+$3$ & .2872 & .3103 & .1665 & .3614 & .3478 & .2335 & +.1207$^{*}$ \\
+$5$ & .3687 & .3922 & .2520 & .4375 & .4317 & .3034 & +.1167$^{*}$ \\
+$8$ & .4606 & .4671 & .3504 & .4821 & .5159 & .3618 & +.1102$^{*}$ \\
+$10$ & .5064 & .5035 & .4251 & .4969 & .5510 & .3842 & +.0813$^{*}$ \\
+$15$ & .5831 & .5543 & .5492 & .5218 & .5545 & .4370 & +.0339 \\
+$20$ & .6372 & .5632 & .5907 & .5331 & .5545 & .4412 & +.0465 \\
+$30$ & .6943 & .5660 & .6441 & .5387 & .5545 & .4466 & +.0502$^{*}$ \\
+$50$ & .7461 & .5660 & .6708 & .5429 & .5545 & .4468 & +.0753$^{*}$ \\
 \bottomrule
 \end{tabular}
 \caption{The comparison under macro aggregation, the mean of per-substrate recall, on the same population and with the same conventions as Table~\ref{MS-tab:sweep}; leading zeros are dropped. The last column is the paired difference against MetaTox, with $^{*}$ marking an interval excluding zero. Macro weights a substrate carrying one reference like one carrying twelve, so it answers a different question from micro and is not an estimate of it.}
