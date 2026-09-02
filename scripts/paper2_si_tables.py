@@ -687,27 +687,48 @@ def si_macro():
              ("metatox", "MetaTox"), ("sygma", "SyGMa"), ("metapredictor", "MetaPred."),
              ("biotransformer", "BioTrans."))
             if key in macro[str(ks[0])]]
-    rows = []
+    # One block of levels and two of contrasts, the same shape as the micro table so the two can
+    # be read against each other. Printing one contrast of eight -- and the one this work wins --
+    # is what made the robustness claim uncheckable from the page it was stated on.
+    def trim(x):
+        return ("$-$" if x < 0 else "+") + f"{abs(x):.3f}".lstrip("0")
+
+    comps = [("metatox", "MetaTox"), ("sygma", "SyGMa"), ("metapredictor", "MetaPredictor"),
+             ("biotransformer", "BioTransformer")]
+    level_rows = []
     for k in ks:
         cells = " & ".join(f"{macro[str(k)][key]:.4f}".lstrip("0") for key, _ in arms
                            if key in macro[str(k)])
-        cell = con[str(k)].get("whole bank - metatox")
-        mark = ""
-        if cell:
-            # The interval, not only the point and a star. The main text promises the macro grid
-            # with its intervals and this column carried neither, so the promise was read off a
-            # table that did not keep it.
-            lo, hi = cell["ci95"]
-            mark = (("$-$" if cell["gap"] < 0 else "+") + f"{abs(cell['gap']):.4f}".lstrip("0")
-                    + ("$^{*}$" if cell["excludes_zero"] else "")
-                    + " {\\scriptsize [" + ("$-$" if lo < 0 else "+") + f"{abs(lo):.3f}".lstrip("0")
-                    + ", " + ("$-$" if hi < 0 else "+") + f"{abs(hi):.3f}".lstrip("0") + "]}")
-        rows.append(f"${k}$ & {cells} & {mark} \\\\")
+        level_rows.append(f"${k}$ & {cells} \\\\")
+    contrast_blocks = []
+    for arm, label in (("whole bank", "exhaustive"), ("trained budget", "interactive")):
+        rows = []
+        for k in ks:
+            cells = []
+            for key, _ in comps:
+                c = con[str(k)].get(f"{arm} - {key}")
+                if c is None:
+                    cells.append("---")
+                    continue
+                star = "$^{*}$" if c["excludes_zero"] else "\\phantom{$^{*}$}"
+                cells.append(f"{trim(c['gap'])}{star} [{trim(c['ci95'][0])}, "
+                             f"{trim(c['ci95'][1])}]")
+            rows.append(f"${k}$ & " + " & ".join(cells) + " \\\\")
+        contrast_blocks.append(
+            f"\\multicolumn{{{len(comps) + 1}}}{{l}}{{\\emph{{GRAIL {label}}} minus, under macro}}"
+            " \\\\\n" + "\n".join(rows))
     head = " & ".join(label for _, label in arms)
+    chead = " & ".join(lab for _, lab in comps)
     return ("\\begin{table}[h]\n\\centering\\footnotesize\n"
-            f"\\begin{{tabular}}{{r{'r' * len(arms)}l}}\n\\toprule\n"
-            f"$k$ & {head} & exh.\\ $-$ MetaTox \\\\\n\\midrule\n"
-            + "\n".join(rows)
+            "\\setlength{\\tabcolsep}{3pt}\n"
+            f"\\begin{{tabular}}{{r{'r' * len(arms)}}}\n\\toprule\n"
+            f"$k$ & {head} \\\\\n\\midrule\n"
+            + "\n".join(level_rows)
+            + "\n\\bottomrule\n\\end{tabular}\n\n"
+            "\\vspace{4pt}\n\n"
+            "\\begin{tabular}{r" + "l" * len(comps) + "}\n\\toprule\n"
+            f"$k$ & {chead} \\\\\n\\midrule\n"
+            + "\n\\midrule\n".join(contrast_blocks)
             + "\n\\bottomrule\n\\end{tabular}\n"
             "\\caption{"
             + (f"The aggregation moves {len(moved)} verdicts of the "

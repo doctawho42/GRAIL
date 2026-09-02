@@ -1,18 +1,49 @@
 \begin{table}[h]
 \centering\footnotesize
-\begin{tabular}{rrrrrrrl}
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{rrrrrrr}
 \toprule
-$k$ & GRAIL exh. & GRAIL int. & MetaTox & SyGMa & MetaPred. & BioTrans. & exh.\ $-$ MetaTox \\
+$k$ & GRAIL exh. & GRAIL int. & MetaTox & SyGMa & MetaPred. & BioTrans. \\
 \midrule
-$1$ & .1450 & .1415 & .0660 & .2090 & .1976 & .1030 & +.0790$^{*}$ {\scriptsize [+.035, +.124]} \\
-$3$ & .2872 & .3103 & .1665 & .3614 & .3478 & .2335 & +.1207$^{*}$ {\scriptsize [+.067, +.174]} \\
-$5$ & .3687 & .3922 & .2520 & .4375 & .4317 & .3034 & +.1167$^{*}$ {\scriptsize [+.061, +.172]} \\
-$8$ & .4606 & .4671 & .3504 & .4821 & .5159 & .3618 & +.1102$^{*}$ {\scriptsize [+.051, +.170]} \\
-$10$ & .5064 & .5035 & .4251 & .4969 & .5510 & .3842 & +.0813$^{*}$ {\scriptsize [+.026, +.138]} \\
-$15$ & .5831 & .5543 & .5492 & .5218 & .5545 & .4370 & +.0339 {\scriptsize [$-$.022, +.088]} \\
-$20$ & .6372 & .5632 & .5907 & .5331 & .5545 & .4412 & +.0465 {\scriptsize [$-$.007, +.099]} \\
-$30$ & .6943 & .5660 & .6441 & .5387 & .5545 & .4466 & +.0502$^{*}$ {\scriptsize [+.005, +.096]} \\
-$50$ & .7461 & .5660 & .6708 & .5429 & .5545 & .4468 & +.0753$^{*}$ {\scriptsize [+.034, +.117]} \\
+$1$ & .1450 & .1415 & .0660 & .2090 & .1976 & .1030 \\
+$3$ & .2872 & .3103 & .1665 & .3614 & .3478 & .2335 \\
+$5$ & .3687 & .3922 & .2520 & .4375 & .4317 & .3034 \\
+$8$ & .4606 & .4671 & .3504 & .4821 & .5159 & .3618 \\
+$10$ & .5064 & .5035 & .4251 & .4969 & .5510 & .3842 \\
+$15$ & .5831 & .5543 & .5492 & .5218 & .5545 & .4370 \\
+$20$ & .6372 & .5632 & .5907 & .5331 & .5545 & .4412 \\
+$30$ & .6943 & .5660 & .6441 & .5387 & .5545 & .4466 \\
+$50$ & .7461 & .5660 & .6708 & .5429 & .5545 & .4468 \\
+\bottomrule
+\end{tabular}
+
+\vspace{4pt}
+
+\begin{tabular}{rllll}
+\toprule
+$k$ & MetaTox & SyGMa & MetaPredictor & BioTransformer \\
+\midrule
+\multicolumn{5}{l}{\emph{GRAIL exhaustive} minus, under macro} \\
+$1$ & +.079$^{*}$ [+.035, +.124] & $-$.064$^{*}$ [$-$.115, $-$.012] & $-$.053$^{*}$ [$-$.102, $-$.002] & +.042\phantom{$^{*}$} [$-$.002, +.087] \\
+$3$ & +.121$^{*}$ [+.067, +.174] & $-$.074$^{*}$ [$-$.124, $-$.024] & $-$.061$^{*}$ [$-$.115, $-$.005] & +.054$^{*}$ [+.001, +.107] \\
+$5$ & +.117$^{*}$ [+.061, +.172] & $-$.069$^{*}$ [$-$.119, $-$.019] & $-$.063$^{*}$ [$-$.120, $-$.007] & +.065$^{*}$ [+.010, +.120] \\
+$8$ & +.110$^{*}$ [+.051, +.170] & $-$.022\phantom{$^{*}$} [$-$.074, +.033] & $-$.055\phantom{$^{*}$} [$-$.112, +.000] & +.099$^{*}$ [+.044, +.155] \\
+$10$ & +.081$^{*}$ [+.026, +.138] & +.009\phantom{$^{*}$} [$-$.043, +.062] & $-$.045\phantom{$^{*}$} [$-$.099, +.009] & +.122$^{*}$ [+.066, +.180] \\
+$15$ & +.034\phantom{$^{*}$} [$-$.022, +.088] & +.061$^{*}$ [+.013, +.112] & +.029\phantom{$^{*}$} [$-$.023, +.080] & +.146$^{*}$ [+.091, +.203] \\
+$20$ & +.046\phantom{$^{*}$} [$-$.007, +.099] & +.104$^{*}$ [+.054, +.155] & +.083$^{*}$ [+.031, +.134] & +.196$^{*}$ [+.143, +.250] \\
+$30$ & +.050$^{*}$ [+.005, +.096] & +.156$^{*}$ [+.109, +.204] & +.140$^{*}$ [+.091, +.190] & +.248$^{*}$ [+.198, +.298] \\
+$50$ & +.075$^{*}$ [+.034, +.117] & +.203$^{*}$ [+.158, +.249] & +.192$^{*}$ [+.142, +.240] & +.299$^{*}$ [+.249, +.349] \\
+\midrule
+\multicolumn{5}{l}{\emph{GRAIL interactive} minus, under macro} \\
+$1$ & +.075$^{*}$ [+.032, +.120] & $-$.067$^{*}$ [$-$.112, $-$.021] & $-$.056$^{*}$ [$-$.101, $-$.009] & +.038$^{*}$ [+.000, +.077] \\
+$3$ & +.144$^{*}$ [+.088, +.200] & $-$.051$^{*}$ [$-$.097, $-$.004] & $-$.037\phantom{$^{*}$} [$-$.092, +.017] & +.077$^{*}$ [+.029, +.125] \\
+$5$ & +.140$^{*}$ [+.084, +.196] & $-$.045$^{*}$ [$-$.090, $-$.000] & $-$.040\phantom{$^{*}$} [$-$.095, +.016] & +.089$^{*}$ [+.036, +.142] \\
+$8$ & +.117$^{*}$ [+.061, +.172] & $-$.015\phantom{$^{*}$} [$-$.063, +.033] & $-$.049\phantom{$^{*}$} [$-$.104, +.007] & +.105$^{*}$ [+.049, +.162] \\
+$10$ & +.079$^{*}$ [+.024, +.133] & +.007\phantom{$^{*}$} [$-$.041, +.054] & $-$.047\phantom{$^{*}$} [$-$.099, +.004] & +.119$^{*}$ [+.063, +.178] \\
+$15$ & +.005\phantom{$^{*}$} [$-$.051, +.060] & +.033\phantom{$^{*}$} [$-$.015, +.079] & $-$.000\phantom{$^{*}$} [$-$.052, +.052] & +.117$^{*}$ [+.061, +.175] \\
+$20$ & $-$.028\phantom{$^{*}$} [$-$.084, +.027] & +.030\phantom{$^{*}$} [$-$.019, +.078] & +.009\phantom{$^{*}$} [$-$.043, +.061] & +.122$^{*}$ [+.066, +.178] \\
+$30$ & $-$.078$^{*}$ [$-$.127, $-$.029] & +.027\phantom{$^{*}$} [$-$.021, +.075] & +.011\phantom{$^{*}$} [$-$.040, +.064] & +.119$^{*}$ [+.064, +.175] \\
+$50$ & $-$.105$^{*}$ [$-$.155, $-$.056] & +.023\phantom{$^{*}$} [$-$.026, +.072] & +.011\phantom{$^{*}$} [$-$.040, +.064] & +.119$^{*}$ [+.064, +.174] \\
 \bottomrule
 \end{tabular}
 \caption{The aggregation moves 8 verdicts of the 72 contrasts computed under both: the exhaustive arm against BioTransformer at $k=1$, which separates under micro and not macro; the exhaustive arm against BioTransformer at $k=3$, which separates under macro and not micro; the exhaustive arm against BioTransformer at $k=5$, which separates under macro and not micro; the exhaustive arm against MetaPredictor at $k=15$, which separates under micro and not macro; the interactive arm against BioTransformer at $k=20$, which separates under macro and not micro; the interactive arm against MetaTox at $k=20$, which separates under micro and not macro; the interactive arm against BioTransformer at $k=30$, which separates under macro and not micro; the interactive arm against BioTransformer at $k=50$, which separates under macro and not micro. The comparison under macro aggregation, the mean of per-substrate recall, on the same population and with the same conventions as Table~\ref{MS-tab:sweep}; leading zeros are dropped. The last column is the paired difference against MetaTox, with $^{*}$ marking an interval excluding zero. Macro weights a substrate carrying one reference like one carrying twelve, so it answers a different question from micro and is not an estimate of it.}

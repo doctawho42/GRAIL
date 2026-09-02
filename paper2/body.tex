@@ -465,7 +465,9 @@ the two systems largely share. Neither side separates at $k=8$ and
 $10$, where MetaPredictor leads, nor at $k=15$ and $20$. GRAIL's exhaustive mode leads every
 comparator with the interval excluding zero at $k=30$ and $k=50$. BioTransformer trails the exhaustive
 arm with the interval excluding zero at $k=1$ and from $k=8$ upward, and is indistinguishable from
-it at $3$ and $5$; the pattern is not monotone in the budget and is reported as it falls. It is not
+it at $3$ and $5$; the pattern is not monotone in the budget and is reported as it falls. The
+cell at $k=1$ is one of the three the other aggregation moves
+(Table~\ref{SI-tab:si-macro}), and does not separate under it. It is not
 the lowest arm at the tight budgets, where MetaTox is. It is the arm a reader of
 the rule bank should look at hardest, because it supplies
 \numThirdpartyBiotransformerShipped{} of this bank's templates. Cut to its own list length the
@@ -960,7 +962,8 @@ $[\numGapTrainedmetatoxThreeZeroLo, \numGapTrainedmetatoxThreeZeroHi]$ at $30$, 
 $\numGapTrainedmetatoxFiveZero$
 $[\numGapTrainedmetatoxFiveZeroLo, \numGapTrainedmetatoxFiveZeroHi]$ at $50$. All three intervals
 exclude zero, and the two at $30$ and $50$ do so under a family-wise correction over the whole
-sweep as well; the one at $20$ does not. A service deployed in this mode would recover less than
+sweep as well; the one at $20$ does not, and it is also one of the three cells the other
+aggregation moves. A service deployed in this mode would recover less than
 the system it replaces wherever it answers with thirty candidates or more.
 
 The cause is the pool and not the ranking. The interactive mode returns
@@ -1128,9 +1131,12 @@ The corpus annotates metabolites several enzymatic steps from their parent, and 
 from such a pair performs those steps together: inspection finds a rule oxidising two ring
 positions at once and a rule that both substitutes and conjugates glutathione. The coverage
 ceiling this paper reports is therefore a one-template ceiling and not a one-enzyme one, and the
-corrected share explains why applying the bank at depth two lifts it by only about $0.012$ at
-$8.5$ times the candidate cost: a fifth of the mined bank already carries the compositions a
-second application would have to discover, so the second application mostly rediscovers them.
+corrected share is why a second application of the bank buys so little: a fifth of the mined
+bank already carries the compositions a second application would have to discover, so it mostly
+rediscovers them. A depth-two probe run earlier put the lift in the low percent at several times
+the candidate cost, and no figure from it is quoted here, because its result file names no
+producer and predates the provenance apparatus the rest of this work is held to. The direction is
+what the composite measurement above establishes; the size is not on this paper's footing.
 
 Both learned stages are trained short of what the split allows, and the spread that would say how
 much of any effect is noise was not measured at this configuration. The stages saw
