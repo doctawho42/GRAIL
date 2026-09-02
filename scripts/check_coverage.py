@@ -152,20 +152,29 @@ def main() -> int:
         rows.append({"value": m.group(1), "where": "body" if in_body else "appendix",
                      "context": flat[max(0, start - args.context):start + args.context]})
 
+    # The denominator has to match the scope the numerator ranges over. It did not: with
+    # --appendix the unread count included appendix numerals while the total stayed the body's,
+    # so five appendix misses printed as "5 of 172" and read as five misses out of the body.
     total_body = sum(1 for m in re.finditer(r"\$([+-]?\d[\d.,{}]*)\$", flat)
                      if m.start() < body_end)
+    total_all = sum(1 for _ in re.finditer(r"\$([+-]?\d[\d.,{}]*)\$", flat))
+    total_scanned = total_all if args.appendix else total_body
+    scope = "body and appendix" if args.appendix else "body"
     rep = {"config": {**_code_version(),
                       "note": "a numeral inside a matched span is not thereby verified; a numeral "
                               "outside every span is certainly unread by any check",
                       "checker_regex_calls_recorded": len(rec.spans),
                       "characters_covered": sum(b - a for a, b in covered)},
+           "scope": scope,
            "n_body_numerals": total_body,
+           "n_appendix_numerals": total_all - total_body,
+           "n_scanned": total_scanned,
            "n_unread": len(rows),
            "unread": rows}
     Path(args.out).write_text(json.dumps(rep, indent=1))
 
     print(f"  {len(rec.spans)} regex matches recorded over the manuscript")
-    print(f"  {len(rows)} of {total_body} body numerals fall outside every one of them")
+    print(f"  {len(rows)} of {total_scanned} {scope} numerals fall outside every one of them")
     for r in rows[:40]:
         print(f"     ${r['value']}$  ...{r['context'][args.context - 34:args.context + 34]}...")
     print(f"\nwrote {args.out}")

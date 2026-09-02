@@ -36,18 +36,49 @@ POPULATIONS = ("subsample245", "clean_test")
 NAMES = POPULATIONS
 
 
+# The structural reference set is no longer released: it was replaced by matching descriptors so
+# that every declared criterion stays computable by a reader who cannot be given the structures.
+# The structures remain necessary for anything that runs a predictor, and are kept locally and
+# untracked. Membership and counts, which is all a population needs, come from either file.
+DESCRIPTORS = ROOT / "results" / "test_reference_descriptors.json"
+
+
 def _references() -> dict:
+    """Substrate to its reference structures. Requires the structural file."""
+    if not REFERENCES.exists():
+        raise SystemExit(
+            f"{REFERENCES.relative_to(ROOT)} is not present. It holds the reference structures and "
+            f"is deliberately not released; {DESCRIPTORS.relative_to(ROOT)} carries the matching "
+            f"descriptors instead. Anything that runs a predictor against the references needs the "
+            f"structural file, which is rebuilt from the split by scripts/freeze_split.py.")
     return json.loads(REFERENCES.read_text())
+
+
+def _reference_counts() -> dict:
+    """Substrate to how many references it has, from whichever file is present.
+
+    A population is defined by which substrates carry a reference and how many, never by what the
+    references are. Reading the structural file for that made every population unloadable when the
+    release stopped shipping it, and the failure surfaced as a swallowed exception in a gate that
+    then reported "recomputation failed" without saying what had failed.
+    """
+    if REFERENCES.exists():
+        return {k: len(v) for k, v in json.loads(REFERENCES.read_text()).items()}
+    if DESCRIPTORS.exists():
+        return {k: len(v) for k, v in
+                json.loads(DESCRIPTORS.read_text())["references"].items()}
+    raise SystemExit(f"neither {REFERENCES.name} nor {DESCRIPTORS.name} is present, so no "
+                     f"population can be defined")
 
 
 def load_population(name: str) -> list[str]:
     """The substrates of a named population, sorted, each carrying at least one reference."""
     if name not in NAMES:
         raise SystemExit(f"unknown population {name!r}; expected one of {NAMES}")
-    refs = _references()
+    refs = _reference_counts()
     if name == "clean_test":
         subs = sorted(s for s, v in refs.items() if v)
-        n, u = len(subs), sum(len(refs[s]) for s in subs)
+        n, u = len(subs), sum(refs[s] for s in subs)
         if (n, u) != CLEAN_TEST_SIZE:
             raise SystemExit(f"clean_test is {n} substrates / {u} references against the committed "
                              f"{CLEAN_TEST_SIZE[0]} / {CLEAN_TEST_SIZE[1]} -- this is not the split "

@@ -22,6 +22,7 @@ the code that produces them from a local copy.
 from __future__ import annotations
 
 import argparse
+import fnmatch
 import hashlib
 import json
 import re
@@ -65,6 +66,25 @@ ALLOW = [
     "results/stopping_rule.json",
     # the paper's own pre-submission audit, which the reproducibility statement points at
     "paper/SELF_CLAIMS.md",
+
+    # The reproducibility statement says the archive holds the trained checkpoints, the frozen
+    # predictions of every method compared, the audits, the evaluation harness and the split
+    # construction. It is a promise a reviewer can check by opening the file, so these are the
+    # entries that keep it. All are tracked, which is what bounds them to a few tens of megabytes
+    # against the eleven gigabytes the working tree holds.
+    "artifacts/*",
+    "artifacts/*/*",
+    "artifacts/*/*/*",
+    "grail_metabolism/*.py",
+    "grail_metabolism/*/*.py",
+    "grail_metabolism/resources/*",
+    "configs/*.yaml",
+    "scripts/fix_splits.py",
+    "scripts/verify_paper_numbers.py",
+    "scripts/check_coverage.py",
+    "scripts/check_page_limit.py",
+    "scripts/verify_citations.py",
+    "scripts/gates/*.py",
 ]
 
 # Anything that could name a person, a machine or an account. Wider than the four rounds recorded
@@ -83,7 +103,16 @@ ALLOW = [
 IDENTITY = [
     (r"doctawho", "the author's account name"),
     (r"[Pp]olomoshnov|[Nn]ikita\s+[A-Z]|[Rr]udik", "an author surname or given name"),
-    (r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}", "a mail address"),
+    # RFC 2606 reserves example.com, .test, .invalid and .localhost so that they can never
+    # resolve to anyone. An address at one of them is a placeholder by construction, and the
+    # anonymous contact this repository gives Crossref is exactly that. Excluding them narrows
+    # the pattern to addresses that could name a person, which is the thing being looked for.
+    # The reserved suffix has to END the domain, not merely appear in it: an exclusion anchored at
+    # the start lets sub.example.org through, and one that is not end-anchored would wave past
+    # example.com.somewhere-real.ru, which is a domain somebody owns.
+    (r"[A-Za-z0-9._%+-]+@"
+     r"(?![A-Za-z0-9.-]*?(?:example\.(?:com|net|org)|\.(?:test|invalid|localhost))(?![A-Za-z0-9.-]))"
+     r"[A-Za-z0-9.-]+\.[A-Za-z]{2,}", "a mail address"),
     (r"/Users/[a-z]|/home/[a-z]|C:\\\\Users\\\\", "an absolute home directory"),
     (r"orcid\.org/\d", "an ORCID"),
     (r"fbb\.msu\.ru|msu\.ru|Lomonosov|Moscow State", "an institution"),
@@ -112,18 +141,26 @@ SKIP_BINARY = {".pt", ".pdf", ".png", ".jpg", ".zip", ".gz", ".pyc", ".sdf"}
 
 
 def collect() -> list:
-    """Every file the archive should carry, with a hard error on a glob that matches nothing."""
+    """Every file the archive should carry, with a hard error on a pattern that matches nothing.
+
+    Patterns are matched against what git tracks, not against the working tree. The working tree
+    holds eleven gigabytes of untracked checkpoints and pools beside the twenty artifact files the
+    repository actually releases, and a directory glob over it would sweep them in. Tracked is also
+    the honest scope: it is what a reader would get by cloning.
+    """
+    tracked = [n for n in subprocess.run(["git", "ls-files", "-z"], cwd=ROOT, capture_output=True,
+                                         text=True, check=True).stdout.split("\0") if n]
     out, empty = [], []
     for pattern in ALLOW:
-        hits = sorted(ROOT.glob(pattern))
+        hits = [n for n in tracked if fnmatch.fnmatch(n, pattern)]
         if not hits:
             empty.append(pattern)
             continue
-        out.extend(p for p in hits if p.is_file())
+        out.extend(ROOT / n for n in hits)
     if empty:
-        raise SystemExit("these entries match nothing, so the archive would silently omit them:\n  "
-                         + "\n  ".join(empty))
-    return sorted(set(out))
+        raise SystemExit("these entries match nothing git tracks, so the archive would silently "
+                         "omit them:\n  " + "\n  ".join(empty))
+    return sorted(set(p for p in out if p.is_file()))
 
 
 def scan(paths, base: Path) -> list:

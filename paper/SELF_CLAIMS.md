@@ -930,30 +930,36 @@ against the manuscript and reporting the numerals that fall outside all of them.
 
 ```bash
 python scripts/check_coverage.py              # the body
-python scripts/check_coverage.py --appendix   # the appendices too
+python scripts/check_coverage.py --appendix   # the body and the appendices
 ```
 
-**Status: PASS for the body, with seventeen named exceptions in the appendices.** The body's 159
-numerals are all read. Of the appendices' 684 that were read by nothing, 667 are bound; the
-seventeen that remain are:
+**Status: PASS, 0 of 1,214 unread, and there are no longer any named exceptions.** Every numeral in
+the manuscript and its appendices falls inside a span some check matched.
 
-- six axis labels and a median label inside a figure this repository generates, plus one figure in
-  another generated file --- machine-written, so they cannot drift from their own source;
-- two figures about the literature's USPTO-50k rather than about a run here: the $5{,}007$ test
-  reactions the seven-system group carries and the $50{,}016$ the name conventionally refers to.
-  The neighbouring $50{,}037$ --- this repository's own copy --- is bound, which is the comparison
-  the passage is making;
-- a worked example of a mass difference, $+14$, which is arithmetic in the sentence rather than a
-  measurement;
-- the decode configuration's $16$ and $64$, whose resulting distinct counts are bound;
-- four figures with no artifact behind them: a one-file reach of $0.399$, a pre-correction residual
-  of $+0.0062$, a bound of $+0.011$ printed twice, and a $0.005$ spread. Each was produced by a run
-  whose outputs were not retained as JSON, and each is disclosed here rather than bound to a leaf
-  that happens to round the same way.
+**Four of the seventeen exceptions this row used to name were bound rather than kept.** The share
+figure's five axis labels are asserted to be the fixed 0-to-1 quarters a share is read on, so an
+axis that silently changed scale --- which would misplace every dot on it --- now fails. Its
+`median 0.83` label was in fact already verified, but against the figure's *source file* rather
+than the manuscript, which is why the coverage instrument could not see it and reported it unread;
+it is read from the manuscript now. The claim-word table's two restatements of the union family are
+held against the same artifact as the prose, so the two scripts that write them cannot drift apart.
+And the `+14` that two transformations share is derived here from nominal atomic masses rather than
+asserted, so a sentence naming two transformations that do not in fact collide would fail.
+
+**The exception that was worth keeping turned out not to be one.** "A worked example of a mass
+difference, arithmetic in the sentence rather than a measurement" is exactly the kind of reasoning
+that leaves a number unread: it is arithmetic, so it can be checked, and checking it was four
+lines. The rest of the old list --- the USPTO-50k figures, the decode configuration, the four
+figures with no artifact behind them --- were bound in earlier rounds.
+
+**The denominator this row quoted was measuring the wrong thing.** It read "the body's 159 numerals"
+and "the appendices' 684", but the instrument computed its total over the body while its unread
+count ranged over the body and the appendices together, so five appendix misses would have printed
+as "5 of 172" and read as five misses out of the body. The total now follows the scope: 172 in the
+body, 1,214 with the appendices.
 
 **The rule this row exists for:** an unread number is one that can go stale silently, and this
 paper has shipped that defect --- a decomposition printed three times with three different values,
 a table row that stopped summing to its own total, a median printed 0.85 in a sentence beside a
 figure labelled 0.83. The count is the thing to watch: if it grows, a passage was added that
 nothing reads.
-

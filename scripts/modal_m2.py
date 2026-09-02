@@ -39,9 +39,14 @@ import modal
 # author's account handle in a tracked file of a repository being prepared as a double-blind
 # archive; the same repair was applied a round earlier to how bank_overlap_sygma.py finds
 # SyGMa's rules. There is no default: a clone URL nobody supplied cannot be guessed.
-REPO = os.environ.get("GRAIL_REPO_URL", "")
-if not REPO:
-    raise SystemExit("set GRAIL_REPO_URL to the clone URL this job should build from")
+#
+# The image definition is evaluated at import, so refusing here would make the module unimportable
+# and a test asserts it imports without live Modal credentials. Unset, the value becomes a shell
+# expression that fails the build with the same message: the refusal moves to the moment the URL is
+# actually needed, rather than being softened into a default nobody chose.
+REPO = os.environ.get(
+    "GRAIL_REPO_URL",
+    '"$(echo set GRAIL_REPO_URL to the clone URL this job should build from >&2; exit 1)"')
 BRANCH = "metabench-reranker"
 
 # Code comes from git (my pushed commits incl. --logz-lr); data/checkpoints/caches come

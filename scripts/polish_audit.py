@@ -63,12 +63,51 @@ SLOP = [
 ]
 
 
+# The manuscripts this gate is about. Anything else under paper/ belongs to a venue's style
+# package or is scratch, and neither is prose anyone here wrote.
+DOCUMENTS = ("paper/grail_iclr.tex",)
+
+
 def texts() -> dict:
-    out = {}
-    for p in sorted((ROOT / "paper").rglob("*.tex")):
-        if "iclr2026_conference" in p.name:
+    """Each manuscript and every file it \\input{}s, followed transitively.
+
+    This used to be every .tex under paper/ with the venue's template excluded by its exact
+    filename. Renaming that template from iclr2026_conference.tex to the 2027 edition slipped
+    straight past the exclusion, and the gate began reporting six findings in ICLR's own example
+    prose --- an exemption outliving the name it was pinned to. What the gate is about is the text
+    these authors wrote, and that set is the documents plus what they include, which no rename
+    or new venue file can change.
+    """
+    out, seen = {}, set()
+    stack = [ROOT / d for d in DOCUMENTS]
+    doc_root = (ROOT / DOCUMENTS[0]).parent
+    while stack:
+        path = stack.pop()
+        if not path.exists() or path in seen:
             continue
-        out[str(p.relative_to(ROOT))] = p.read_text(errors="ignore")
+        seen.add(path)
+        text = path.read_text(errors="ignore")
+        out[str(path.relative_to(ROOT))] = text
+        for m in re.finditer(r"\\(?:input|include)\{([^}]+)\}", text):
+            name = m.group(1).strip()
+            name = name if name.endswith(".tex") else name + ".tex"
+            # LaTeX resolves \input against the directory the document is compiled in, not against
+            # the including file. app/robust.tex says \input{app/robust_tables}, so resolving it
+            # relative to its own parent looks for paper/app/app/ and finds nothing --- which is
+            # how two files of the manuscript went unscanned while the count looked plausible.
+            for candidate in (doc_root / name, path.parent / name):
+                if candidate.exists():
+                    stack.append(candidate)
+                    break
+
+    # A scope derived by following includes is silent about what it did not reach, which is the
+    # failure this rewrite was fixing. Everything in the appendix directory is part of a document
+    # by construction, so anything there that no \input reached is reported rather than skipped.
+    orphans = sorted(str(q.relative_to(ROOT)) for q in (ROOT / "paper" / "app").glob("*.tex")
+                     if str(q.relative_to(ROOT)) not in out)
+    if orphans:
+        raise SystemExit("these appendix files are not reached from any document, so this gate "
+                         "would pass without reading them:\n  " + "\n  ".join(orphans))
     return out
 
 

@@ -928,16 +928,22 @@ def register(ctx) -> None:  # noqa: C901 -- one function per appendix file is th
     _sp = str(ctx.root / "scripts")
     if _sp not in _sys.path:
         _sys.path.insert(0, _sp)
+    # The reason is carried, not swallowed. A bare `except Exception: None` here reported
+    # "recomputation failed" for three weeks while the actual cause was a FileNotFoundError on a
+    # reference file the release had deliberately stopped shipping -- a one-line diagnosis hidden
+    # behind a check that only knew the recomputation had not produced a number.
+    _recomputed, _why = None, ""
     try:
         from _population import ceiling_target as _ct, load_population as _lp
         _recomputed = _ct(_lp("subsample245"))
-    except Exception:                                          # noqa: BLE001
-        _recomputed = None
+    except Exception as exc:                                   # noqa: BLE001
+        _why = f"{type(exc).__name__}: {str(exc)[:120]}"
     b.holds("the reimplemented loop reproduces the ceiling recomputed from the factorization "
             "artifact",
             _recomputed is not None
             and abs(norm["ceiling_gate"]["reproduced"] - _recomputed) <= 1e-4,
-            _recomputed if _recomputed is not None else "recomputation failed",
+            _recomputed if _recomputed is not None
+            else f"recomputation failed -- {_why}",
             norm["ceiling_gate"]["reproduced"],
             "results/recall_factorization.json against results/ceiling_norm_check.json")
 
