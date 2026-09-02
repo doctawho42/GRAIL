@@ -1272,6 +1272,49 @@ def main() -> int:
                        str(UN["certified_pairs"]["quoted_in_the_paper"]),
                        str(UN["certified_pairs"]["per_board"]),
                        "results/union_multiplicity.json"))
+        # The excluded generation board is justified by a property of its gaps, and the property
+        # first stated was the opposite of the measurement: its median gap is the SMALLEST of the
+        # twenty-four, not the largest. What is largest is the gap relative to the movement, and
+        # that is what the sentences say now, so that is what is checked.
+        _pv = ROOT / "results/packing_vs_differential.json"
+        if _pv.exists():
+            _rows = json.loads(_pv.read_text())["per_leaderboard"]
+            _rows = _rows if isinstance(_rows, list) else list(_rows.values())
+            _ratio = sorted(((r["median_gap"] / max(r["median_differential"], 1e-9), r)
+                             for r in _rows), key=lambda x: -x[0])
+            _top, _r = _ratio[0]
+            checks.append((_r["domain"] == "generation",
+                           "the excluded board is the one with the widest gap-to-movement ratio",
+                           "generation", _r["domain"], "results/packing_vs_differential.json"))
+            checks.append((_r["median_gap"] == min(x["median_gap"] for x in _rows),
+                           "and its absolute gap is the smallest, which is why 'furthest apart' "
+                           "alone was wrong", str(min(x["median_gap"] for x in _rows)),
+                           str(_r["median_gap"]), "results/packing_vs_differential.json"))
+            _m = re.search(r"median gap is the smallest of any board at \$([\d.]+)\$ and its "
+                           r"median movement smaller still at \$([\d.]+)\$, a ratio of \$(\d+)\$ "
+                           r"against \$(\d+)\$ for the next board", flat)
+            checks.append((bool(_m), "the exclusion's justification parses", "present",
+                           "matched" if _m else "not matched", ""))
+            if _m:
+                check("the excluded board's gap", _m.group(1), _r["median_gap"],
+                      "results/packing_vs_differential.json")
+                check("the excluded board's movement", _m.group(2), _r["median_differential"],
+                      "results/packing_vs_differential.json")
+                check("the excluded board's ratio", _m.group(3), round(_top),
+                      "results/packing_vs_differential.json")
+                check("the next board's ratio", _m.group(4), round(_ratio[1][0]),
+                      "results/packing_vs_differential.json")
+            _m20 = re.search(r"for the next board and under \$(\d+)\$ for every other", flat)
+            checks.append((bool(_m20), "the bound on the remaining boards parses", "present",
+                           "matched" if _m20 else "not matched", ""))
+            if _m20:
+                _bound = int(_m20.group(1))
+                _rest = max(r for r, _ in _ratio[2:])
+                checks.append((_rest < _bound,
+                               "every board past the first two is under the bound the text gives",
+                               f"< {_bound}", f"{_rest:.1f}",
+                               "results/packing_vs_differential.json"))
+
         m = re.search(r"union of the grids: \$([\d,{}]+)\$ cell-level tests", flat)
         check("union, family size", m and m.group(1).replace("{,}", ""), UN["union_family_size"],
               "results/union_multiplicity.json")

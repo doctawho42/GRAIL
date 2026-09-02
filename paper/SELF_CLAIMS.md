@@ -410,7 +410,48 @@ restored. **Run row 11 after any edit made for length.**
 
 ## 9. Every citation resolves and supports what is attributed to it
 
-**Status: PASS**, `results/citations_verified.json`. Re-run after any citation is added.
+**Check:** every key the manuscript cites resolves to a work whose title, first author and year the
+bibliography states correctly.
+
+```bash
+python scripts/verify_citations.py            # resolve every cited key and write the record
+python scripts/verify_citations.py --check    # non-zero if a cited key has no record
+```
+
+**Status: PASS for resolution, and the row was previously PASS on a fifth of its subject.** The
+record behind the old PASS covered twenty keys and was written when the paper surveyed one domain.
+The bibliography grew to fifty when the survey grew to twenty-four leaderboards in four domains,
+and nothing re-ran. `check_bibliography.py` stayed green throughout because it asks whether an
+entry carries the fields a reader needs, not whether the work those fields name exists: two checks,
+neither of which is this row's claim. The instruction "re-run after any citation is added" was the
+whole of the mechanism, and it is the kind of instruction that is not followed.
+
+All fifty resolve now: thirty-five verified against an identifier, fifteen matched by title. No
+entry disagrees with its registry record on title, first author or year.
+
+**Every step of building it produced a false report, and each is worth keeping.** A first pass read
+zero DOI fields from a file carrying thirty-one, because the field pattern was anchored on the end
+of a line and this bibliography writes `volume`, `number` and `year` on one; everything was then
+resolved by title search that could have been resolved by identifier. Two entries were reported as
+citation errors that were not: `J{\"a}rvelin` against Järvelin, where stripping the braces left the
+accent behind as a word boundary, and `Buttensch{\"o}n` against Buttenschoen, where a German umlaut
+is correctly written both ways. And Crossref indexes the peer reviews of an article as works of
+their own, titled `Review for "<title>"`, which score just below the acceptance threshold against
+the article: a slightly looser threshold would have resolved a citation to a review of the work
+rather than the work, so the type is checked instead of the threshold being tuned.
+
+**Five works reported as not existing were rate limiting.** They are NeurIPS, ICLR, MLSys and ACL
+Anthology papers with no DOI, which Crossref does not index; DBLP has all five, and throttles a
+loop hard enough that the first run recorded every one as an absence. A throttled request and a
+citation that does not exist are indistinguishable in a record that says only "not found", so the
+resolver retries with long backoff and the record says which registry answered.
+
+**What this row does not establish is the second half of its own title.** Whether a work supports
+what the manuscript attributes to it is a reading, not a lookup. Four entries carry that judgement,
+made by hand in an earlier round and carried forward verbatim beside the lookup, so the two are
+visible separately. The other forty-six are verified to exist and to be described correctly, which
+is the weaker claim, and the record says so per entry rather than leaving the stronger one to be
+inferred.
 
 ## 10. A re-run reproduces the artifact, not just the point estimate
 

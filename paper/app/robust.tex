@@ -67,7 +67,12 @@ criterion is not a parameter of the evaluation but part of the definition of wha
 and re-scoring it under another criterion changes the metric rather than the convention. The
 generation results are therefore reported in Appendix~\ref{app:xdomain} as a criterion sensitivity
 and not as a row here. Both rules were fixed before the shares below were read, and the second
-excludes the one leaderboard whose pairs are furthest apart, which would have raised the shares.
+excludes the one leaderboard whose pairs stand furthest apart relative to the movement a change of
+criterion produces on it, which would have raised the shares. Its median gap is the smallest of
+any board at $0.0094$ and its median movement smaller still at $0.0001$, a ratio of $94$ against
+$43$ for the next board and under $20$ for every other. The exclusion is therefore self-penalising
+in the sense that matters: the criterion has almost no purchase there, so nearly every pair would
+have survived.
 
 
 \paragraph{A leaderboard from outside chemistry, whose convention ships as a function.} The two
