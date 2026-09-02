@@ -49,8 +49,35 @@ def main() -> int:
     ap.add_argument("--out", default=str(ROOT / "results" / "retraining_spread.json"))
     args = ap.parse_args()
 
+    import hashlib
+
     from _rrf import rrf_order
+    from _pools import released_pair
     from bank_without_selection import _key as tautkey
+
+    def digest(path):
+        if not Path(path).exists():
+            return None
+        h = hashlib.sha256()
+        with open(path, "rb") as handle:
+            for chunk in iter(lambda: handle.read(1 << 20), b""):
+                h.update(chunk)
+        return h.hexdigest()[:16]
+
+    # What the three runs actually are, by digest rather than by directory name. Calling them
+    # three retrainings would be loose in a way a reader cannot check: the released generator is
+    # byte-identical to one of them and the released filter is a fourth checkpoint, so the
+    # released pair is not one of the three points this spread is over. At a fixed seed the
+    # generator reproduces exactly and the filter does not, which is a fact about where the
+    # training nondeterminism lives and is worth reporting beside the spread.
+    released = {stage: digest(ROOT / rel) for stage, rel in released_pair().items()}
+    runs = {}
+    for seed in (0, 1, 2):
+        base = ROOT / f"artifacts/multiseed_full5000_implicit_seed{seed}/checkpoints"
+        runs[f"seed{seed}"] = {
+            stage: {"sha256_16": digest(base / f"{stage}.pt"),
+                    "is_the_released_one": digest(base / f"{stage}.pt") == released.get(stage)}
+            for stage in ("generator", "filter")}
 
     deployed = json.loads((ROOT / "results/deployment_table.json").read_text())
     released = deployed["recall_micro"]
@@ -91,21 +118,22 @@ def main() -> int:
                     None if released_here is None
                     else bool(min(values) <= released_here <= max(values))),
             }
-        # The released checkpoint is one of these seeds: artifacts/full5000_implicit and
-        # artifacts/multiseed_full5000_implicit_seed0 are byte-identical. Its pool must therefore
-        # reproduce the released column exactly, and if it does not, this build differs from the
-        # one the comparison was scored on in some way other than the seed, which would make the
-        # spread a spread of two things at once.
-        agree = None
+        # How far seed 0 sits from the released column. Only its generator is the released one;
+        # its filter is not, so this is not a reproduction check and is not treated as one. What
+        # it measures is what a different filter alone does, with the generator held fixed, which
+        # is the one contrast these runs happen to isolate.
         seed0 = next((v for k, v in per_seed.items() if k.endswith("seed0")), None)
+        filter_only = None
         if seed0 is not None:
-            off = {str(k): round(seed0["recall"][str(k)] - released[str(k)][column], 4)
-                   for k in KS if released.get(str(k), {}).get(column) is not None}
-            agree = {"budgets_that_differ": {k: v for k, v in off.items() if abs(v) > 5e-5}}
-            agree["reproduces_the_released_column"] = not agree["budgets_that_differ"]
+            filter_only = {
+                str(k): round(seed0["recall"][str(k)] - released[str(k)][column], 4)
+                for k in KS if released.get(str(k), {}).get(column) is not None}
         rows[arm] = {"seeds": per_seed, "by_budget": by_budget,
                      "released_column": column,
-                     "the_released_checkpoint_is_seed_0": agree}
+                     "seed_0_minus_the_release": filter_only,
+                     "what_that_contrast_is": (
+                         "seed 0 shares the released generator and carries a different filter, so "
+                         "this difference is a filter retraining with the generator held fixed")}
 
     # What the spread is for: a margin smaller than it is a margin the training noise could have
     # produced, and the manuscript reads several margins at k = 30.
@@ -128,6 +156,13 @@ def main() -> int:
         "population": "the comparison set, as everywhere else",
         "ranking": "reciprocal rank fusion over the pool capped at 100, parent dropped",
         "criterion": "tautomer-aware InChIKey",
+        "the_three_runs": runs,
+        "the_released_pair": released,
+        "what_the_three_runs_are": (
+            "three training runs at this configuration. The released generator is byte-identical "
+            "to one of them; the released filter is a fourth checkpoint and matches none. So the "
+            "released pair is not one of the three points this spread is over, and at a fixed "
+            "seed the generator reproduces exactly where the filter does not"),
         "by_arm": rows,
         "margins_at_thirty_in_units_of_the_seed_spread": against,
         "what_this_is_not": (

@@ -319,8 +319,16 @@ def si_drawing_equalised():
     for a in arms:
         rows.append(f"{label[a]} & " + " & ".join(f"{rec[a][str(k)]:.4f}" for k in ks) + " \\\\")
     rows.append("\\midrule")
-    for name, grid in (("verdict, equalised", d["verdicts_equalised"]),
-                       ("verdict, as stored", d["verdicts_as_stored"])):
+    # Three verdict rows, not two. The middle one is the honest reading of this table: MetaTox is
+    # the strongest comparator at the wide budgets and it is the one arm that did not move, so a
+    # cell read against it is not a cell of an equalised comparison. Leaving it out of the grid
+    # says what the other five arms give on one drawing.
+    for name, grid in (("verdict, as stored", d["verdicts_as_stored"]),
+                       ("verdict, equalised", d["verdicts_equalised"]),
+                       ("verdict, equalised, MetaTox set aside",
+                        d.get("verdicts_equalised_without_metatox") or {})):
+        if not grid:
+            continue
         rows.append(f"\\emph{{{name}}} & "
                     + " & ".join(mark[grid[str(k)]["verdict"]] for k in ks) + " \\\\")
     head = " & ".join(f"${k}$" for k in ks)
@@ -340,7 +348,10 @@ def si_drawing_equalised():
             "$^{\\dagger}$MetaTox is a web service with no re-run available to us, so its column "
             "is the same as in Table~\\ref{MS-tab:sweep} and is the one arm still on its own "
             "input: it received the natural tautomer for part of the submission to begin with, "
-            "which is the asymmetry this table removes from the other five. The two verdict rows "
+            "which is the asymmetry this table removes from the other five. It is also the "
+            "strongest comparator at the wide budgets, so a verdict read against it is not a "
+            "verdict of an equalised comparison, and the last row is the grid with it set aside. "
+            "The verdict rows "
             "read the better arm of this work against the strongest comparator at each budget, "
             "$+$ where the paired interval excludes zero in this work's favour, $-$ where it "
             f"excludes zero against, $\\cdot$ where it covers zero; {moved_text}. References are "
