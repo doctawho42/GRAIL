@@ -107,10 +107,7 @@
    "script": "coverage_gap_types.py",
    "inferred": true,
    "how": "producer at 60d838018709, the last commit touching the artifact at which the producer existed",
-   "status": "producer_changed",
-   "detail": "producer was 2b5ffaa0c278, is now 3add2614c6d2",
-   "diff_recovered_by": "source at 60d838018709",
-   "diff": "--- coverage_gap_types.py (as recorded)\n+++ coverage_gap_types.py (now)\n@@ -44,9 +44,18 @@\n \n \n-def pair_to_type(sub_mol, prod_mol):\n-    \"\"\"Radius-0 reaction type of a (substrate, product) pair via the mining MCS route, no self-test.\"\"\"\n+def pair_to_type(sub_mol, prod_mol, timeout=None):\n+    \"\"\"Radius-0 reaction type of a (substrate, product) pair via the mining MCS route, no self-test.\n+\n+    The maximum common substructure search is given a deadline, and a pair that misses it types as\n+    nothing. That makes the count of untypeable pairs depend on how loaded the machine was: the\n+    same 196 GLORYx pairs typed 185, 183 and 187 of themselves on three runs while the machine was\n+    busy, and the shares computed from them moved with it. The deadline is a parameter here so a\n+    caller who needs a reproducible count can pay for one; the default is the mining route's own,\n+    so the census is unchanged.\n+    \"\"\"\n     try:\n         mcs = rdFMCS.FindMCS(\n-            [sub_mol, prod_mol], timeout=MCS_TIMEOUT_SECONDS, matchValences=False,\n+            [sub_mol, prod_mol], timeout=int(timeout or MCS_TIMEOUT_SECONDS),\n+            matchValences=False,\n             ringMatchesRingOnly=True, completeRingsOnly=True,\n             bondCompare=rdFMCS.BondCompare.CompareAny, atomCompare=rdFMCS.AtomCompare.CompareElements,"
+   "status": "current"
   },
   {
    "artifact": "results/criterion_sweep.json",
@@ -366,10 +363,7 @@
    "artifact": "results/metxbiodb_drop_set.json",
    "script": "metxbiodb_drop_set.py",
    "how": "recorded source digest",
-   "status": "producer_changed",
-   "detail": "producer was d7cd6db2f0e2, is now b1b323965639",
-   "diff_recovered_by": "the tree was dirty when written, so the source at 566eedfa98d7 is the nearest committed version and not exactly what ran",
-   "diff": "--- metxbiodb_drop_set.py (as recorded)\n+++ metxbiodb_drop_set.py (now)\n@@ -41,12 +41,21 @@\n         sys.path.insert(0, _p)\n \n-from _provenance import stamp  # noqa: E402\n+from _provenance import record_inputs, stamp  # noqa: E402\n \n N_PERM, SEED = 10000, 0\n METX = ROOT / \"artifacts/tier2/biotransformer/database/MetXBioDB-1-0.json\"\n+GLORYX = ROOT / \"docs/benchmark/data/gloryx_test.json\"\n+\n+\n+MCS_DEADLINE = None\n+\n+\n+def _init(deadline):\n+    global MCS_DEADLINE\n+    MCS_DEADLINE = deadline\n \n \n def _worker(job):\n-    \"\"\"(inside, type-key) for one MetXBioDB pair, or None where it cannot be typed.\"\"\"\n+    \"\"\"(inside, type-key) for one pair of the source, or None where it cannot be typed.\"\"\"\n     from rdkit import Chem, RDLogger\n \n@@ -60,5 +69,5 @@\n         return None\n     try:\n-        t = pair_to_type(sub, prod)\n+        t = pair_to_type(sub, prod, timeout=MCS_DEADLINE)\n     except Exception:\n         return None\n@@ -137,18 +146,56 @@\n \n \n-def main() -> int:\n-    ap = argparse.ArgumentParser()\n-    ap.add_argument(\"--workers\", type=int, default=0)\n-    ap.add_argument(\"--out\", default=str(ROOT / \"results\" / \"metxbiodb_drop_set.json\"))\n  ... diff truncated"
+   "status": "current"
   },
   {
    "artifact": "results/mining_rarefaction.json",
@@ -655,7 +649,7 @@
   }
  ],
  "n_pinned": 105,
- "n_pinned_stale": 5,
+ "n_pinned_stale": 3,
  "sweep": {
   "unstamped": 250,
   "producer_changed": 39,

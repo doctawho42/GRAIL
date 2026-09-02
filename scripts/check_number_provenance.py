@@ -60,23 +60,48 @@ EXEMPT = {
 
 
 def instrumented_reads() -> list[str]:
-    """Run the number generator and record every artifact it opens."""
+    """Run both generators and record every artifact they open.
+
+    The macro generator was the only one instrumented, and it is not the only thing that puts a
+    number on the page: the Supporting Information's tables are written straight from artifacts
+    by their own generator, which reads through its own `art`. An artifact reaching the page that
+    way was outside this guarantee entirely, and one was.
+    """
     import paper2_numbers
+    import paper2_si_tables
 
     seen: list[str] = []
-    original = paper2_numbers.art
 
-    def watched(name):
-        rel = f"results/{name}"
-        if rel not in seen:
-            seen.append(rel)
-        return original(name)
+    def watcher(module):
+        original = module.art
 
-    paper2_numbers.art = watched
+        def watched(name):
+            rel = f"results/{name}"
+            if rel not in seen:
+                seen.append(rel)
+            return original(name)
+
+        return original, watched
+
+    original_numbers, watched_numbers = watcher(paper2_numbers)
+    paper2_numbers.art = watched_numbers
     try:
         paper2_numbers.build()
     finally:
-        paper2_numbers.art = original
+        paper2_numbers.art = original_numbers
+
+    original_tables, watched_tables = watcher(paper2_si_tables)
+    paper2_si_tables.art = watched_tables
+    try:
+        for name, fn in paper2_si_tables.generators():
+            try:
+                fn()
+            except FileNotFoundError:
+                # A generator that refuses is not a provenance failure; the build gate fails on
+                # the missing table instead, which is a different check with a different message.
+                continue
+    finally:
+        paper2_si_tables.art = original_tables
     return sorted(seen)
 
 

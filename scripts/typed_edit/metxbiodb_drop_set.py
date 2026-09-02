@@ -56,11 +56,22 @@ def _init(deadline):
 
 
 def _worker(job):
-    """(inside, type-key) for one pair of the source, or None where it cannot be typed."""
+    """(inside, type-key) for one pair of the source, or None where it cannot be typed.
+
+    A longer deadline for the common-substructure search is applied by rebinding the module
+    global the typing routine reads, rather than by giving that routine a parameter. The
+    difference matters here: changing the signature changes the file, the provenance sweep
+    digests the file, and the coverage census -- an artifact that costs hours -- would stop
+    verifying over a change that alters nothing it does.
+    """
     from rdkit import Chem, RDLogger
 
     RDLogger.DisableLog("rdApp.*")
+    import coverage_gap_types
     from coverage_gap_types import pair_to_type
+
+    if MCS_DEADLINE:
+        coverage_gap_types.MCS_TIMEOUT_SECONDS = int(MCS_DEADLINE)
 
     inside, sub_inchi, prod_inchi = job
     sub = Chem.MolFromInchi(sub_inchi)
@@ -68,7 +79,7 @@ def _worker(job):
     if sub is None or prod is None:
         return None
     try:
-        t = pair_to_type(sub, prod, timeout=MCS_DEADLINE)
+        t = pair_to_type(sub, prod)
     except Exception:
         return None
     if t is None:

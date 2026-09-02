@@ -1005,8 +1005,14 @@ def si_aggregation():
             "\\label{tab:si-aggregation}\n\\end{table}\n")
 
 
-if __name__ == "__main__":
-    for name, fn in (("si_table_splits", si_splits), ("si_table_criteria", si_criteria),
+def generators():
+    """Every table this module writes, as (name, callable).
+
+    Lifted out of the entry point so a checker can enumerate what the tables read. The macro
+    generator was instrumented for that and this one was not, which left every artifact reaching
+    the page through a table outside the guarantee.
+    """
+    return (("si_table_splits", si_splits), ("si_table_criteria", si_criteria),
                      ("si_table_oracle", si_oracle),
                      ("si_table_case", si_case),
                      ("si_table_ranking", si_ranking),
@@ -1030,7 +1036,11 @@ if __name__ == "__main__":
                      ("si_table_applicability", si_applicability),
                      ("si_table_population_list", si_population_list),
                      ("si_table_equalised", si_drawing_equalised),
-                     ("table_criterion", si_criterion_sweep)):
+                     ("table_criterion", si_criterion_sweep))
+
+
+if __name__ == "__main__":
+    for name, fn in generators():
         try:
             (OUT / f"{name}.tex").write_text(fn())
             print(f"  wrote paper2/{name}.tex")
