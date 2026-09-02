@@ -2,12 +2,21 @@
  "provenance": {
   "script": "metxbiodb_drop_set.py",
   "script_path": "scripts/typed_edit/metxbiodb_drop_set.py",
-  "source_sha256": "620e6ed424df4c8909827895a06c97f0b446bae885002a03143a0123c89c5f3f",
-  "git_commit": "0ca475b61b35613ce4f221dd00964e20d3a51b11",
+  "source_sha256": "d7cd6db2f0e2fa4d7414b5ed9a2eab9a312d346d766d33cba942dcb2b62ff731",
+  "git_commit": "566eedfa98d700e23573cf353340a85239f7ecfa",
   "git_dirty": true
  },
+ "inputs": [
+  {
+   "path": "artifacts/tier2/biotransformer/database/MetXBioDB-1-0.json",
+   "exists": true,
+   "sha256_16": "2234afede6e74fe9",
+   "bytes": 4428720
+  }
+ ],
  "question": "whether the unrecoverable selection that assembled the corpus removed a class of chemistry, which would manufacture the novel-type shortfall this work reports rather than measure it",
  "source": {
+  "name": "metxbiodb",
   "file": "artifacts/tier2/biotransformer/database/MetXBioDB-1-0.json",
   "distinct_pairs": 2035,
   "inside_the_corpus": 1248,
@@ -48,11 +57,11 @@
    43
   ],
   [
-   "[[[[8, 16], 0.0, 2.0], 1]]",
+   "[[[[6, 7], 1.0, 0.0], 1], [[[6, 7], 1.0, 1.0], 1]]",
    31
   ],
   [
-   "[[[[6, 7], 1.0, 0.0], 1], [[[6, 7], 1.0, 1.0], 1]]",
+   "[[[[8, 16], 0.0, 2.0], 1]]",
    31
   ],
   [

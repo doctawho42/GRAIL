@@ -66,10 +66,11 @@ class MetabolicTree:
         self.generator = generator
         self.filter = filter
         self.config = config
-        # Per-expansion generator threshold; default to the generator's calibrated one.
-        self.rule_threshold = (
-            rule_threshold if rule_threshold is not None else getattr(generator, "calibrated_threshold", None)
-        )
+        # Per-expansion generator threshold. An unspecified one means no gate, which is the
+        # configuration every number this project reports was measured under; the checkpoint's
+        # calibrated value gates most substrates down to a handful of rules and no arm was ever
+        # evaluated that way. A caller who wants the gate passes it.
+        self.rule_threshold = rule_threshold
 
     def _normalize(self, smiles: str) -> Optional[str]:
         try:

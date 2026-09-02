@@ -6,8 +6,14 @@
 set -euo pipefail
 cd "$(dirname "$0")/../.."
 PY=${PY:-python}
-GEN=artifacts/full5000_implicit/checkpoints/generator.pt
-FLT=artifacts/full5000_priors/checkpoints/filter.pt
+# The released pair, read from the pool builder's own defaults rather than repeated here. This
+# script used to name full5000_priors' filter, which is the run the repository once shipped and
+# no longer does, so the standardised pools were scored by one model and the pools they are
+# compared against by another, and the difference read as an effect of the drawing.
+GEN=$($PY -c "import re,pathlib;print(re.search(r'--gen-ckpt\", default=str\(ROOT / \"([^\"]+)', pathlib.Path('scripts/typed_edit/build_wide_pools.py').read_text()).group(1))")
+FLT=$($PY -c "import re,pathlib;print(re.search(r'--filter-ckpt\", default=str\(ROOT / \"([^\"]+)', pathlib.Path('scripts/typed_edit/build_wide_pools.py').read_text()).group(1))")
+echo "generator: $GEN"
+echo "filter:    $FLT"
 N=${N:-291}
 SHARDS=${SHARDS:-4}
 mkdir -p results/widepools_std results/widepools_k30_std

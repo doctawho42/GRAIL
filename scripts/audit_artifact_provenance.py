@@ -156,6 +156,10 @@ PINNED = {
     "results/error_by_chemistry.json": "scripts/typed_edit/error_by_chemistry.py",
     "results/curated_third_party.json": "scripts/typed_edit/curated_third_party.py",
     "results/site_agreement.json": "scripts/typed_edit/site_agreement.py",
+    # the comparison with every arm that can be re-run on one drawing
+    "results/drawing_equalised.json": f"{TE}/drawing_equalised.py",
+    # the same kept-against-dropped test on the second source this repository holds
+    "results/gloryx_drop_set.json": f"{TE}/metxbiodb_drop_set.py",
     # the comparison population written out under the key everything is scored by
     "results/comparison_set_members.json": f"{TE}/comparison_set_members.py",
     # what kind of molecules the numbers were measured on

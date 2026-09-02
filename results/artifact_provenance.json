@@ -107,7 +107,10 @@
    "script": "coverage_gap_types.py",
    "inferred": true,
    "how": "producer at 60d838018709, the last commit touching the artifact at which the producer existed",
-   "status": "current"
+   "status": "producer_changed",
+   "detail": "producer was 2b5ffaa0c278, is now 3add2614c6d2",
+   "diff_recovered_by": "source at 60d838018709",
+   "diff": "--- coverage_gap_types.py (as recorded)\n+++ coverage_gap_types.py (now)\n@@ -44,9 +44,18 @@\n \n \n-def pair_to_type(sub_mol, prod_mol):\n-    \"\"\"Radius-0 reaction type of a (substrate, product) pair via the mining MCS route, no self-test.\"\"\"\n+def pair_to_type(sub_mol, prod_mol, timeout=None):\n+    \"\"\"Radius-0 reaction type of a (substrate, product) pair via the mining MCS route, no self-test.\n+\n+    The maximum common substructure search is given a deadline, and a pair that misses it types as\n+    nothing. That makes the count of untypeable pairs depend on how loaded the machine was: the\n+    same 196 GLORYx pairs typed 185, 183 and 187 of themselves on three runs while the machine was\n+    busy, and the shares computed from them moved with it. The deadline is a parameter here so a\n+    caller who needs a reproducible count can pay for one; the default is the mining route's own,\n+    so the census is unchanged.\n+    \"\"\"\n     try:\n         mcs = rdFMCS.FindMCS(\n-            [sub_mol, prod_mol], timeout=MCS_TIMEOUT_SECONDS, matchValences=False,\n+            [sub_mol, prod_mol], timeout=int(timeout or MCS_TIMEOUT_SECONDS),\n+            matchValences=False,\n             ringMatchesRingOnly=True, completeRingsOnly=True,\n             bondCompare=rdFMCS.BondCompare.CompareAny, atomCompare=rdFMCS.AtomCompare.CompareElements,"
   },
   {
    "artifact": "results/criterion_sweep.json",
@@ -159,7 +162,18 @@
    "artifact": "results/dialect_sweep.json",
    "script": "dialect_sweep.py",
    "how": "recorded source digest",
-   "status": "current"
+   "status": "producer_changed",
+   "detail": "producer was e192f61eae0d, is now acd5c728aa46",
+   "diff_recovered_by": "source at 566eedfa98d7",
+   "diff": "--- dialect_sweep.py (as recorded)\n+++ dialect_sweep.py (now)\n@@ -36,4 +36,5 @@\n         sys.path.insert(0, _p)\n \n+from _pools import assert_released  # noqa: E402\n from _provenance import stamp  # noqa: E402\n \n@@ -62,9 +63,16 @@\n \n def load(pattern):\n-    \"\"\"One or several glob patterns, merged. A substrate present in more than one is taken once.\"\"\"\n+    \"\"\"One or several glob patterns, merged. A substrate present in more than one is taken once.\n+\n+    Every source file must record the released checkpoints. Merging shards by `setdefault` cannot\n+    see that some of them were scored by a superseded model, and that is precisely what happened\n+    here: the standardised pools were built by a script naming a filter the repository no longer\n+    ships, so this sweep compared two models and reported the difference as a drawing effect.\n+    \"\"\"\n     patterns = [pattern] if isinstance(pattern, str) else list(pattern)\n-    pools, refs = {}, {}\n+    pools, refs, sources = {}, {}, []\n     for spec in patterns:\n         for path in sorted(glob.glob(str(ROOT / spec))):\n+            sources.append(path)\n             blob = json.loads(Path(path).read_text())\n             for substrate, pool in blob[\"pools\"].items():\n@@ -74,4 +82,5 @@\n     if not pools:\n         raise SystemExit(f\"no pool matched {patterns}\")\n+    assert_released(sources)\n     return pools, refs\n "
+  },
+  {
+   "artifact": "results/drawing_equalised.json",
+   "script": "drawing_equalised.py",
+   "how": "recorded source digest",
+   "status": "producer_changed",
+   "detail": "producer was 2bf5417bad64, is now 30c4eb8b0e29",
+   "diff_note": "scripts/typed_edit/drawing_equalised.py is not in commit 94ba9b985358"
   },
   {
    "artifact": "results/emission_grid.json",
@@ -200,6 +214,12 @@
   {
    "artifact": "results/fusion_knobs.json",
    "script": "fusion_knobs.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
+   "artifact": "results/gloryx_drop_set.json",
+   "script": "metxbiodb_drop_set.py",
    "how": "recorded source digest",
    "status": "current"
   },
@@ -346,7 +366,10 @@
    "artifact": "results/metxbiodb_drop_set.json",
    "script": "metxbiodb_drop_set.py",
    "how": "recorded source digest",
-   "status": "current"
+   "status": "producer_changed",
+   "detail": "producer was d7cd6db2f0e2, is now b1b323965639",
+   "diff_recovered_by": "the tree was dirty when written, so the source at 566eedfa98d7 is the nearest committed version and not exactly what ran",
+   "diff": "--- metxbiodb_drop_set.py (as recorded)\n+++ metxbiodb_drop_set.py (now)\n@@ -41,12 +41,21 @@\n         sys.path.insert(0, _p)\n \n-from _provenance import stamp  # noqa: E402\n+from _provenance import record_inputs, stamp  # noqa: E402\n \n N_PERM, SEED = 10000, 0\n METX = ROOT / \"artifacts/tier2/biotransformer/database/MetXBioDB-1-0.json\"\n+GLORYX = ROOT / \"docs/benchmark/data/gloryx_test.json\"\n+\n+\n+MCS_DEADLINE = None\n+\n+\n+def _init(deadline):\n+    global MCS_DEADLINE\n+    MCS_DEADLINE = deadline\n \n \n def _worker(job):\n-    \"\"\"(inside, type-key) for one MetXBioDB pair, or None where it cannot be typed.\"\"\"\n+    \"\"\"(inside, type-key) for one pair of the source, or None where it cannot be typed.\"\"\"\n     from rdkit import Chem, RDLogger\n \n@@ -60,5 +69,5 @@\n         return None\n     try:\n-        t = pair_to_type(sub, prod)\n+        t = pair_to_type(sub, prod, timeout=MCS_DEADLINE)\n     except Exception:\n         return None\n@@ -137,18 +146,56 @@\n \n \n-def main() -> int:\n-    ap = argparse.ArgumentParser()\n-    ap.add_argument(\"--workers\", type=int, default=0)\n-    ap.add_argument(\"--out\", default=str(ROOT / \"results\" / \"metxbiodb_drop_set.json\"))\n  ... diff truncated"
   },
   {
    "artifact": "results/mining_rarefaction.json",
@@ -413,7 +436,10 @@
    "artifact": "results/pool_checkpoints.json",
    "script": "pool_checkpoints.py",
    "how": "recorded source digest",
-   "status": "current"
+   "status": "producer_changed",
+   "detail": "producer was cedbd925c331, is now b3525f3d8541",
+   "diff_recovered_by": "source at 02fab0200a1a",
+   "diff": "--- pool_checkpoints.py (as recorded)\n+++ pool_checkpoints.py (now)\n@@ -85,10 +85,23 @@\n # from one of these, so leaving them out of the check left the paper's central artifact\n # unexamined while the validation pools beside it were being verified.\n-SHARDED = (\"widepools_implicit\", \"widepools_fulltest\", \"widepools_k30\", \"widepools_k30_fulltest\")\n+# Pool directories a published number is read from. The comparison table itself comes from these,\n+# so leaving them out of the check left the paper's central artifact unexamined while the\n+# validation pools beside it were being verified. Two of them, the standardised pair, were built\n+# by a script naming a filter the repository no longer ships, and the check could not say so\n+# because its own glob asked only for `w*.json` and they hold `all.json` and `p*.json`.\n+DIRECTORIES = (\"widepools_implicit\", \"widepools_fulltest\", \"widepools_k30\",\n+               \"widepools_k30_fulltest\", \"widepools_std\", \"widepools_std_fine\",\n+               \"widepools_k30_std\")\n+SHARD_GLOBS = (\"w*.json\", \"p*.json\", \"all.json\")\n \n \n def pools_to_check():\n-    \"\"\"{name: (path, rule budget or None)} for every pool a published number is read from.\"\"\"\n-    out = {}\n+    \"\"\"{name: (path, rule budget or None)} for every pool a published number is read from.\n+\n+    A directory that is declared here and matches nothing is an error rather than a silent skip:\n+    a check that reports on whatever it happens to find cannot fail on the pool that is missing,\n+    which is how the interactive arm's comparison pool went unverified.\n+    \"\"\"\n+    out, missing = {}, []\n     for path in sorted(glob.glob(str(ROOT / \"results\" / \"valpools_k*\" / \"all.json\"))):\n         blob = json.loads(Path(path).read_text())\n@@ -97,9 +110,17 @@\n     if merged.exists():\n         out[\"val_pools\"] = (merged, json.loads(merged.read_text()).get(\"top_k\"))\n-    for name in SHARDED:\n-        shards = sorted(glob.glob(str(ROOT / \"results\" / name / \"w*.json\")))\n-        if shards:\n-            first = json.loads(Path(shards[0]).read_text())\n-            out[name] = (Path(shards[0]), first.get(\"top_k\"))\n+    for name in DIRECTORIES:\n+        directory = ROOT / \"results\" / name\n+        shards = [f for pattern in SHARD_GLOBS\n  ... diff truncated"
   },
   {
    "artifact": "results/population_definition.json",
@@ -628,11 +654,11 @@
    "status": "current"
   }
  ],
- "n_pinned": 103,
- "n_pinned_stale": 0,
+ "n_pinned": 105,
+ "n_pinned_stale": 5,
  "sweep": {
-  "unstamped": 259,
-  "producer_changed": 40,
+  "unstamped": 250,
+  "producer_changed": 39,
   "current": 42,
   "producer_unknown": 27,
   "cosmetic_only": 8
@@ -814,6 +840,11 @@
    "detail": "no provenance block: nothing records which code wrote this"
   },
   {
+   "artifact": "results/biotransformer_fulltest_preds.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
    "artifact": "results/budget_curves.json",
    "status": "unstamped",
    "detail": "no provenance block: nothing records which code wrote this"
@@ -977,14 +1008,6 @@
    "detail": "producer was 059dab2750df, is now 14a6821898a6",
    "diff_recovered_by": "source at 9630e586ab71",
    "diff": "--- dispatch_paired_ci.py (as recorded)\n+++ dispatch_paired_ci.py (now)\n@@ -156,5 +156,7 @@\n     # population and no other. Asserting them against a run on the full split would be a comparison\n     # across populations -- the defect this paper names -- dressed as a reproducibility check.\n-    if args.population == \"subsample245\":\n+    # ...and the whole bank only: the committed pair is a whole-bank measurement, so asserting it\n+    # against a subset arm compares two different rule sets as well as, possibly, two populations.\n+    if args.population == \"subsample245\" and args.subset == \"full\":\n         print(f\"\\ngate: dispatch {reach_d} against committed {COMMITTED['dispatch']}, \"\n               f\"implicit {reach_i} against {COMMITTED['implicit']}\")"
-  },
-  {
-   "artifact": "results/drawing_equalised.json",
-   "script": "drawing_equalised.py",
-   "how": "recorded source digest",
-   "status": "producer_changed",
-   "detail": "producer was 2bf5417bad64, is now 4838873cc9a1",
-   "diff_note": "scripts/typed_edit/drawing_equalised.py is not in commit 94ba9b985358"
   },
   {
    "artifact": "results/emission_crossfit.json",
@@ -1892,6 +1915,11 @@
    "detail": "no provenance block: nothing records which code wrote this"
   },
   {
+   "artifact": "results/seedpools/interactive_seed0.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
    "artifact": "results/selection_ablation.json",
    "script": "selection_ablation.py",
    "how": "source at 1d56fb8c3272",
@@ -2262,7 +2290,7 @@
    "script": "build_wide_pools.py",
    "how": "recorded source digest",
    "status": "producer_changed",
-   "detail": "producer was 9f3f5adca657, is now 31bf46957010",
+   "detail": "producer was 9f3f5adca657, is now 74fd826531ed",
    "diff_note": "scripts/typed_edit/build_wide_pools.py is not in commit 40df3a8496e9"
   },
   {
@@ -2396,17 +2424,7 @@
    "detail": "no provenance block: nothing records which code wrote this"
   },
   {
-   "artifact": "results/widepools_std/w0.json",
-   "status": "unstamped",
-   "detail": "no provenance block: nothing records which code wrote this"
-  },
-  {
    "artifact": "results/widepools_std/w1.json",
-   "status": "unstamped",
-   "detail": "no provenance block: nothing records which code wrote this"
-  },
-  {
-   "artifact": "results/widepools_std/w2.json",
    "status": "unstamped",
    "detail": "no provenance block: nothing records which code wrote this"
   },
@@ -2426,52 +2444,7 @@
    "detail": "no provenance block: nothing records which code wrote this"
   },
   {
-   "artifact": "results/widepools_std_fine/p146_158.json",
-   "status": "unstamped",
-   "detail": "no provenance block: nothing records which code wrote this"
-  },
-  {
-   "artifact": "results/widepools_std_fine/p158_170.json",
-   "status": "unstamped",
-   "detail": "no provenance block: nothing records which code wrote this"
-  },
-  {
-   "artifact": "results/widepools_std_fine/p170_182.json",
-   "status": "unstamped",
-   "detail": "no provenance block: nothing records which code wrote this"
-  },
-  {
-   "artifact": "results/widepools_std_fine/p182_194.json",
-   "status": "unstamped",
-   "detail": "no provenance block: nothing records which code wrote this"
-  },
-  {
-   "artifact": "results/widepools_std_fine/p194_206.json",
-   "status": "unstamped",
-   "detail": "no provenance block: nothing records which code wrote this"
-  },
-  {
-   "artifact": "results/widepools_std_fine/p206_218.json",
-   "status": "unstamped",
-   "detail": "no provenance block: nothing records which code wrote this"
-  },
-  {
-   "artifact": "results/widepools_std_fine/p218_219.json",
-   "status": "unstamped",
-   "detail": "no provenance block: nothing records which code wrote this"
-  },
-  {
    "artifact": "results/widepools_std_fine/p36_48.json",
-   "status": "unstamped",
-   "detail": "no provenance block: nothing records which code wrote this"
-  },
-  {
-   "artifact": "results/widepools_std_fine/p60_72.json",
-   "status": "unstamped",
-   "detail": "no provenance block: nothing records which code wrote this"
-  },
-  {
-   "artifact": "results/widepools_std_fine/p72_73.json",
    "status": "unstamped",
    "detail": "no provenance block: nothing records which code wrote this"
   },
@@ -2491,8 +2464,8 @@
    "detail": "no provenance block: nothing records which code wrote this"
   }
  ],
- "files_below_the_top_level": 162,
- "of_those_named_as_an_input_by_a_pinned_artifact": 14,
+ "files_below_the_top_level": 152,
+ "of_those_named_as_an_input_by_a_pinned_artifact": 16,
  "named_inputs": [
   "results/valpool_shards/v0.json",
   "results/valpool_shards/v1.json",
@@ -2507,6 +2480,8 @@
   "results/valpools_k7581/all.json",
   "results/widepools_fulltest/w0.json",
   "results/widepools_implicit/w0.json",
-  "results/widepools_k30_fulltest/w0.json"
+  "results/widepools_k30/all.json",
+  "results/widepools_k30_fulltest/w0.json",
+  "results/widepools_k30_std/all.json"
  ]
 }

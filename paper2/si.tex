@@ -464,10 +464,15 @@ as strictness alone. The references are stored in the corpus's drawing, which wr
 imidic acids (Section~\ref{sec:si-presentation}), and every method's output passes through a
 standardiser that writes the amide. Canonical SMILES equality between the two is therefore partly
 a test of whether a method reproduces the corpus's own tautomer rather than of whether it found
-the molecule, and it is the one criterion under which no arm's advantage separates at any budget.
-The tautomer-aware key exists because that is not the question a comparison should be asking, and
-the canonical column is reported because declaring a criterion means printing what it does, not
-only the one whose behaviour suits the argument.
+the molecule. What that does not explain is the shape of the column, because the loosest
+criterion produces the same one: under Tanimoto similarity of one the verdicts are identical to
+canonical's at every budget, and those are the two criteria under which no advantage of this
+work separates anywhere. Whatever the two ends share, it is not strictness and it is not the
+dialect, and the entanglement is stated here as something a reader of the strict column should
+know rather than as the reason it reads as it does. The tautomer-aware key exists because
+reproducing a corpus's tautomer is not the question a comparison should be asking, and the
+canonical column is reported because declaring a criterion means printing what it does, not only
+the one whose behaviour suits the argument.
 
 The reference row of Table~\ref{MS-tab:criterion} reproduces the verdicts of the main text's
 comparison exactly, though it is computed by a different script from the same frozen predictions.
@@ -892,9 +897,30 @@ Of the \numMetxdropAbsentcell{} test references whose type neither the bank nor 
 annotation holds, \numMetxdropRecoverableWord{} has a type this source held and the corpus
 dropped, \numMetxdropRecoverablesharePct{}; with bond counts ignored,
 \numMetxdropRecoverablecoarse{}, \numMetxdropRecoverablecoarsesharePct{}. The selection removed
-chemistry, and it did not remove this chemistry. What bounds the answer is that only one source of
-four can be read this way, so this closes the alternative for a quarter of the corpus's provenance
-and not for all of it.
+chemistry, and it did not remove this chemistry.
+
+Two of the four sources can be read this way, not one, and the second is the smaller and the
+weaker. Of the GLORYx reference set's \numGloryxdropPairs{} distinct pairs
+\numGloryxdropInside{} are inside the corpus, and the two halves are further apart than
+MetXBioDB's: a total variation distance of \numGloryxdropTv{} with
+\numGloryxdropAbsentsharePct{} of the dropped pairs carrying a type the kept half never shows.
+The same permutation test returns $p=\numGloryxdropP$ and does not separate, and the reason is
+the size of the set rather than the size of the effect: \numGloryxdropKeptp{} typed pairs on one
+side and \numGloryxdropDroppedp{} on the other spread over \numGloryxdropTypes{} types leave
+almost every type a singleton, so a shuffled label reaches nearly that distance too. It points
+the same way as the first source and settles nothing on its own.
+
+One thing had to change to measure it at all. The common-substructure search the typing runs
+carries a five-second deadline, and on a source of drug-sized molecules a pair that misses it
+types as nothing, so the counts moved with how loaded the machine was: three runs of this source
+typed different numbers of its pairs and moved the shares computed from them with it. The deadline is a
+parameter here and this measurement is taken at \numGloryxdropDeadline{} seconds, at which two
+independent runs agree in every field. MetXBioDB is unaffected: at the mining route's own
+deadline it reproduces every figure above exactly.
+
+What bounds the answer is that two sources of four can be read this way, so this closes the
+alternative for half of the corpus's provenance and not for all of it. ChEMBL and DrugBank are
+the other two and neither is held here.
 
 And the counts in this section are made by one instrument and are not interchangeable with the
 counts elsewhere. Typing by the radius-0 route leaves \numTypeoverlapUntypeable{} of the
@@ -937,8 +963,8 @@ argument makes both worth turning.
 The fusion constant is the first. Recomputing the fusion from the stored component scores costs no
 model run, so it is swept over \numFusionkSweptWord{} values spanning two orders of magnitude.
 Every constant of \numFusionkFlatfrom{} or more is indistinguishable from the deployed
-$K = \numFusionkDeployed$ at a budget of 15; the two smallest separate against it, by up to
-$\numFusionkWorst$. The published default sits on the flat part of that curve, so leaving it there
+$K = \numFusionkDeployed$ at a budget of 15; the \numFusionkSeparatingWord{} smallest separate
+against it, by up to $\numFusionkWorst$. The published default sits on the flat part of that curve, so leaving it there
 costs nothing measurable, which is a stronger statement than disclosing that it was not varied.
 The values and the levels are Table~\ref{tab:si-fusion-k} rather than a description of them.
 
@@ -1394,12 +1420,11 @@ properties most likely to have driven such a draw did not drive this one.
 The comparison is also read on the population nobody selected: the whole evaluated test set,
 \numPopdefWholesubstrates{} substrates carrying \numPopdefWholereferences{} references, against
 the two comparators that ran over all of it, with a substrate a comparator answered nothing for
-scored as zero rather than removed. The other two could not be taken there and the reasons
-differ. MetaTox is a web service and a second submission is not ours to make. BioTransformer is
-a jar this repository holds, which makes it the one that ought to be re-runnable, and it is not:
-its InChI native library does not resolve on the machine this work runs on and the jar exits
-before it predicts anything. Its arm is therefore the frozen predictions and nothing else, which is a
-harder limit than a cost and is named as one. Both arms are read there, which matters because the wide-budget
+scored as zero rather than removed. The other two are not there for reasons that differ.
+MetaTox is a web service and a second submission is not ours to make. BioTransformer is a jar
+this repository holds and it runs here, under the x86\_64 Java 8 runtime its bundled InChI
+artefact is built for; what kept it off the wider population was the cost of that run and not an
+impossibility, and it is named as a cost. Both arms are read there, which matters because the wide-budget
 leads this work claims are the exhaustive arm's and that arm existed only on the comparison set
 until its pools were built for the whole split.
 

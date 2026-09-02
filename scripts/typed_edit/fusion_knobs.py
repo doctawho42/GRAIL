@@ -34,6 +34,7 @@ for _p in (str(ROOT), str(ROOT / "scripts"), str(HERE)):
         sys.path.insert(0, _p)
 
 from _provenance import stamp  # noqa: E402
+from _rrf import rrf_order  # noqa: E402
 
 CAP = 100
 KS_BUDGET = (5, 15, 30, 50)
@@ -42,22 +43,19 @@ DEPLOYED_K = 60
 N_BOOT, SEED = 10000, 0
 
 
-def fuse(pool, k_const):
-    """Reciprocal rank fusion of the two component orderings at a given constant."""
-    by_gen = sorted(range(len(pool)), key=lambda i: -pool[i]["generator"])
-    by_fil = sorted(range(len(pool)), key=lambda i: -pool[i]["filter"])
-    rank = defaultdict(float)
-    for r, i in enumerate(by_gen, 1):
-        rank[i] += 1.0 / (k_const + r)
-    for r, i in enumerate(by_fil, 1):
-        rank[i] += 1.0 / (k_const + r)
-    return sorted(range(len(pool)), key=lambda i: -rank[i])
+def keys_in_order(pool, k_const, parent):
+    """The pool's keys under the fusion at one constant, deduplicated, parent dropped.
 
-
-def keys_in_order(pool, order, parent):
+    The fusion comes from _rrf, which is the one implementation of the rule the register fixes.
+    This script used to write its own, ordering by position in a sorted list rather than by
+    competition rank, and _rrf's own docstring says what that costs: the same pool gives 0.4992
+    one way and 0.5023 the other. The sweep's anchor point therefore did not reproduce the
+    deployed column it was supposed to sit on, which is why the artifact now refuses to be
+    written unless it does.
+    """
     out, seen = [], set()
-    for i in order:
-        key = pool[i].get("key")
+    for cand in rrf_order(pool, k=k_const):
+        key = cand.get("key")
         if key and key != parent and key not in seen:
             seen.add(key)
             out.append(key)
@@ -98,9 +96,23 @@ def main() -> int:
                 "excludes_zero": bool(lo > 0 or hi < 0)}
 
     # The fusion constant.
-    orders_by_k = {k: {s: keys_in_order(capped[s], fuse(capped[s], k), parent[s]) for s in subs}
+    orders_by_k = {k: {s: keys_in_order(capped[s], k, parent[s]) for s in subs}
                    for k in K_VALUES}
     base = orders_by_k[DEPLOYED_K]
+
+    # The deployed constant's row is the anchor the whole sweep is read against, so it has to be
+    # the deployed configuration and not a neighbouring one. It is checked against the published
+    # column rather than assumed to match it: a re-derivation that drifts turns a flat curve into
+    # a claim about a system nobody ran, and the drift here was four references at one budget.
+    published = json.loads((ROOT / "results/deployment_table.json").read_text())["recall_micro"]
+    anchor = {str(b): round(float(hits(base, b).sum() / U.sum()), 4) for b in KS_BUDGET}
+    off = {b: (v, published[b]["whole bank"]) for b, v in anchor.items()
+           if b in published and abs(v - published[b]["whole bank"]) > 5e-5}
+    if off:
+        raise SystemExit(
+            "the deployed constant's row does not reproduce the published whole-bank column: "
+            + ", ".join(f"k={b}: {mine} against {theirs}" for b, (mine, theirs) in off.items()))
+
     k_rows = {}
     for k in K_VALUES:
         row = {"recall": {str(b): round(float(hits(orders_by_k[k], b).sum() / U.sum()), 4)
@@ -129,6 +141,7 @@ def main() -> int:
         "provenance": stamp(__file__),
         "population": {"n_substrates": len(subs), "n_references": int(U.sum())},
         "cap": CAP,
+        "anchor_reproduces_the_published_column": True,
         "deployed_constant": DEPLOYED_K,
         "constants_swept": list(K_VALUES),
         "by_constant": k_rows,

@@ -40,14 +40,23 @@ for _p in (str(ROOT), str(ROOT / "scripts"), str(HERE)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from _provenance import stamp  # noqa: E402
+from _provenance import record_inputs, stamp  # noqa: E402
 
 N_PERM, SEED = 10000, 0
 METX = ROOT / "artifacts/tier2/biotransformer/database/MetXBioDB-1-0.json"
+GLORYX = ROOT / "docs/benchmark/data/gloryx_test.json"
+
+
+MCS_DEADLINE = None
+
+
+def _init(deadline):
+    global MCS_DEADLINE
+    MCS_DEADLINE = deadline
 
 
 def _worker(job):
-    """(inside, type-key) for one MetXBioDB pair, or None where it cannot be typed."""
+    """(inside, type-key) for one pair of the source, or None where it cannot be typed."""
     from rdkit import Chem, RDLogger
 
     RDLogger.DisableLog("rdApp.*")
@@ -59,7 +68,7 @@ def _worker(job):
     if sub is None or prod is None:
         return None
     try:
-        t = pair_to_type(sub, prod)
+        t = pair_to_type(sub, prod, timeout=MCS_DEADLINE)
     except Exception:
         return None
     if t is None:
@@ -136,20 +145,58 @@ def skeleton_from_inchi(value):
         return None
 
 
-def main() -> int:
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--workers", type=int, default=0)
-    ap.add_argument("--out", default=str(ROOT / "results" / "metxbiodb_drop_set.json"))
-    args = ap.parse_args()
+def gloryx_jobs(inside_corpus):
+    """(inside, substrate InChI, product InChI) for every annotated pair of the GLORYx set.
 
-    from rdkit import RDLogger
+    Two of the corpus's four sources are on disk, not one, and for a long time only the first was
+    put through this test. The GLORYx reference set is the second, and it is the smaller and the
+    more interesting of the two: it is also a comparator's development data, so what the assembly
+    dropped from it is chemistry a published system was built against.
 
-    RDLogger.DisableLog("rdApp.*")
+    The file nests generation-2 metabolites under generation-1 ones, and a pair is a parent with
+    any of its descendants, which is how the corpus itself counts them.
+    """
+    import re
 
-    inside_corpus = corpus_pairs()
+    from rdkit import Chem
+
+    raw = GLORYX.read_text()
+    blob = json.loads(re.sub(r'\\(?!["\\/bfnrtu])', r"\\\\", raw))
+
+    def to_inchi(smiles):
+        mol = Chem.MolFromSmiles(smiles) if smiles else None
+        if mol is None:
+            return None, None
+        try:
+            return Chem.MolToInchi(mol), Chem.MolToInchiKey(mol)[:14]
+        except Exception:
+            return None, None
+
+    def walk(node):
+        out = []
+        for met in (node.get("metabolites") or []):
+            out.append(met)
+            out.extend(walk(met))
+        return out
+
+    jobs, seen = [], set()
+    for parent in blob:
+        sub_inchi, sub_key = to_inchi(parent.get("smiles"))
+        if not sub_inchi:
+            continue
+        for met in walk(parent):
+            prod_inchi, prod_key = to_inchi(met.get("smiles"))
+            if not prod_inchi or (sub_key, prod_key) in seen:
+                continue
+            seen.add((sub_key, prod_key))
+            jobs.append(((sub_key, prod_key) in inside_corpus, sub_inchi, prod_inchi))
+    return jobs
+
+
+def metxbiodb_jobs(inside_corpus):
+    """(inside, substrate InChI, product InChI) for every annotated pair MetXBioDB records."""
     blob = json.loads(METX.read_text())
     rows = list((blob.get("biotransformations") or {}).values())
-
     jobs, seen = [], set()
     for row in rows:
         substrate = row.get("Substrate") or {}
@@ -164,16 +211,42 @@ def main() -> int:
                 continue
             seen.add((a, b))
             jobs.append(((a, b) in inside_corpus, sub_inchi, prod_inchi))
+    return jobs
+
+
+SOURCES = {"metxbiodb": metxbiodb_jobs, "gloryx": gloryx_jobs}
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--workers", type=int, default=0)
+    ap.add_argument("--source", choices=tuple(SOURCES), default="metxbiodb",
+                    help="which of the two sources this repository holds to test")
+    ap.add_argument("--mcs-timeout", type=float, default=0,
+                    help="deadline for the common-substructure search, in seconds. 0 keeps the "
+                         "mining route's own, which is what the census uses; a larger one buys a "
+                         "count that does not move with the machine's load, which matters on a "
+                         "small source where a handful of pairs decides a share")
+    ap.add_argument("--out", default="")
+    args = ap.parse_args()
+    out = args.out or str(ROOT / "results" / f"{args.source}_drop_set.json")
+
+    from rdkit import RDLogger
+
+    RDLogger.DisableLog("rdApp.*")
+
+    inside_corpus = corpus_pairs()
+    jobs = SOURCES[args.source](inside_corpus)
 
     kept_n = sum(1 for j in jobs if j[0])
-    print(f"{len(jobs)} distinct MetXBioDB pairs; {kept_n} inside the corpus, "
+    print(f"{len(jobs)} distinct {args.source} pairs; {kept_n} inside the corpus, "
           f"{len(jobs) - kept_n} dropped", flush=True)
 
     workers = args.workers if args.workers > 0 else max(1, (os.cpu_count() or 4) - 2)
     ctx = multiprocessing.get_context("spawn")
     kept, dropped = Counter(), Counter()
     typed, t0 = 0, time.perf_counter()
-    with ctx.Pool(workers) as pool:
+    with ctx.Pool(workers, initializer=_init, initargs=(args.mcs_timeout or None,)) as pool:
         for n, res in enumerate(pool.imap_unordered(_worker, jobs, 16), 1):
             if res is not None:
                 typed += 1
@@ -181,6 +254,14 @@ def main() -> int:
             if n % 250 == 0 or n == len(jobs):
                 print(f"  {n}/{len(jobs)} ({time.perf_counter() - t0:.0f}s) typed {typed}",
                       flush=True)
+
+    # A typing routine that returns nothing for every pair looks exactly like a source with no
+    # chemistry in it, and it happened here: the deadline was passed through as a float and the
+    # search rejects a float, so every call raised inside a try/except and typed nothing.
+    if typed < 0.5 * len(jobs):
+        print(f"FAIL: only {typed} of {len(jobs)} pairs typed, which is not a property of this "
+              f"source", file=sys.stderr)
+        return 1
 
     universe = sorted(set(kept) | set(dropped))
     nk, nd = sum(kept.values()), sum(dropped.values())
@@ -259,15 +340,22 @@ def main() -> int:
 
     report = {
         "provenance": stamp(__file__),
+        "inputs": record_inputs([{"metxbiodb": METX, "gloryx": GLORYX}[args.source]]),
         "question": ("whether the unrecoverable selection that assembled the corpus removed a "
                      "class of chemistry, which would manufacture the novel-type shortfall this "
                      "work reports rather than measure it"),
-        "source": {"file": str(METX.relative_to(ROOT)),
+        # The file this run actually read. It was the MetXBioDB path unconditionally, so a run
+        # over the other source would have recorded the wrong input in an artifact whose whole
+        # subject is which records a selection kept and which it dropped.
+        "source": {"name": args.source,
+                   "file": str({"metxbiodb": METX, "gloryx": GLORYX}[args.source]
+                               .relative_to(ROOT)),
                    "distinct_pairs": len(jobs),
                    "inside_the_corpus": kept_n,
                    "dropped": len(jobs) - kept_n},
         "typing": ("radius-0 reaction type by the mining route, the same instrument the census "
                    "and the containment claim use"),
+        "mcs_deadline_seconds": args.mcs_timeout or "the mining route's own",
         "typed": {"kept": nk, "dropped": nd, "distinct_types": len(universe)},
         "distinct_types_kept": len(kept),
         "distinct_types_dropped": len(dropped),
@@ -289,7 +377,7 @@ def main() -> int:
             "the filter was blind to chemistry; it bounds how strongly this source can show that "
             "it was not."),
     }
-    Path(args.out).write_text(json.dumps(report, indent=1))
+    Path(out).write_text(json.dumps(report, indent=1))
 
     print(f"\ntyped {typed} of {len(jobs)} pairs: {nk} kept, {nd} dropped")
     print(f"  distinct types      : {len(kept)} kept, {len(dropped)} dropped, "
@@ -307,7 +395,7 @@ def main() -> int:
               f"dropped; with bond counts ignored, "
               f"{recoverable['of_those_whose_type_this_source_dropped_counts_ignored']} "
               f"({recoverable['share_counts_ignored']:.1%})")
-    print(f"wrote {args.out}")
+    print(f"wrote {out}")
     return 0
 
 

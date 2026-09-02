@@ -84,23 +84,44 @@ N_SUBS, N_CANDS = 3, 40
 # Sharded pool directories a published number is read from. The comparison table itself comes
 # from one of these, so leaving them out of the check left the paper's central artifact
 # unexamined while the validation pools beside it were being verified.
-SHARDED = ("widepools_implicit", "widepools_fulltest", "widepools_k30", "widepools_k30_fulltest")
+# Pool directories a published number is read from. The comparison table itself comes from these,
+# so leaving them out of the check left the paper's central artifact unexamined while the
+# validation pools beside it were being verified. Two of them, the standardised pair, were built
+# by a script naming a filter the repository no longer ships, and the check could not say so
+# because its own glob asked only for `w*.json` and they hold `all.json` and `p*.json`.
+DIRECTORIES = ("widepools_implicit", "widepools_fulltest", "widepools_k30",
+               "widepools_k30_fulltest", "widepools_std", "widepools_std_fine",
+               "widepools_k30_std")
+SHARD_GLOBS = ("w*.json", "p*.json", "all.json")
 
 
 def pools_to_check():
-    """{name: (path, rule budget or None)} for every pool a published number is read from."""
-    out = {}
+    """{name: (path, rule budget or None)} for every pool a published number is read from.
+
+    A directory that is declared here and matches nothing is an error rather than a silent skip:
+    a check that reports on whatever it happens to find cannot fail on the pool that is missing,
+    which is how the interactive arm's comparison pool went unverified.
+    """
+    out, missing = {}, []
     for path in sorted(glob.glob(str(ROOT / "results" / "valpools_k*" / "all.json"))):
         blob = json.loads(Path(path).read_text())
         out[Path(path).parent.name] = (Path(path), blob.get("top_k"))
     merged = ROOT / "results" / "val_pools.json"
     if merged.exists():
         out["val_pools"] = (merged, json.loads(merged.read_text()).get("top_k"))
-    for name in SHARDED:
-        shards = sorted(glob.glob(str(ROOT / "results" / name / "w*.json")))
-        if shards:
-            first = json.loads(Path(shards[0]).read_text())
-            out[name] = (Path(shards[0]), first.get("top_k"))
+    for name in DIRECTORIES:
+        directory = ROOT / "results" / name
+        shards = [f for pattern in SHARD_GLOBS
+                  for f in sorted(glob.glob(str(directory / pattern)))]
+        if not shards:
+            if directory.exists():
+                missing.append(name)
+            continue
+        first = json.loads(Path(shards[0]).read_text())
+        out[name] = (Path(shards[0]), first.get("top_k"))
+    if missing:
+        raise SystemExit(f"declared pool directories hold no shard this check can read: "
+                         f"{', '.join(missing)}")
     return out
 
 

@@ -7,8 +7,10 @@
 set -uo pipefail
 cd "$(dirname "$0")/../.."
 PY=${PY:-python}
-GEN=artifacts/full5000_implicit/checkpoints/generator.pt
-FLT=artifacts/full5000_priors/checkpoints/filter.pt
+# The released pair, read from the pool builder's own defaults rather than repeated here, for
+# the reason its sibling script gives: a filter named by hand goes stale when the release moves.
+GEN=$($PY -c "import re,pathlib;print(re.search(r'--gen-ckpt\", default=str\(ROOT / \"([^\"]+)', pathlib.Path('scripts/typed_edit/build_wide_pools.py').read_text()).group(1))")
+FLT=$($PY -c "import re,pathlib;print(re.search(r'--filter-ckpt\", default=str\(ROOT / \"([^\"]+)', pathlib.Path('scripts/typed_edit/build_wide_pools.py').read_text()).group(1))")
 STEP=${STEP:-12}
 CONCURRENCY=${CONCURRENCY:-3}
 

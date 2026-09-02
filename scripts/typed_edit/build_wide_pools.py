@@ -83,6 +83,19 @@ def merge(pattern, out, which="comparison"):
     return 0
 
 
+def _rel(path) -> str:
+    """A checkpoint's path relative to the repository, whether it was given absolute or not.
+
+    A relative --gen-ckpt reached `Path.relative_to(ROOT)` and raised after the pools were built
+    but before they were written, which throws away the whole run at the last line.
+    """
+    p = Path(path)
+    try:
+        return str((p if p.is_absolute() else (ROOT / p)).resolve().relative_to(ROOT))
+    except ValueError:
+        return str(p)
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--start", type=int, default=0)
@@ -170,9 +183,9 @@ def main() -> int:
     Path(args.out).write_text(json.dumps(
         {"slice": [args.start, args.end or len(subs)], "top_k": args.top_k,
          "present": args.present, "population": args.population,
-         "checkpoints": {"generator": {"path": str(Path(args.gen_ckpt).relative_to(ROOT)),
+         "checkpoints": {"generator": {"path": _rel(args.gen_ckpt),
                                        "sha256_16": digest(args.gen_ckpt)},
-                         "filter": {"path": str(Path(args.filter_ckpt).relative_to(ROOT)),
+                         "filter": {"path": _rel(args.filter_ckpt),
                                     "sha256_16": digest(args.filter_ckpt)}},
          "pools": pools, "references": refs},
         indent=1))

@@ -4,6 +4,18 @@
   291
  ],
  "top_k": 30,
+ "present": "stored",
+ "population": "comparison",
+ "checkpoints": {
+  "generator": {
+   "path": "artifacts/full5000_implicit/checkpoints/generator.pt",
+   "sha256_16": "c694af18b5be9a0e"
+  },
+  "filter": {
+   "path": "artifacts/full5000_implicit/checkpoints/filter.pt",
+   "sha256_16": "651fbb6a9da84ba5"
+  }
+ },
  "pools": {
   "C#CC(CC(=O)OCC)N=C(O)CN1CCc2ccc(N3CCNCC3)cc2C1=O": [
    {

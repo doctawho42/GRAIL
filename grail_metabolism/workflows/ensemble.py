@@ -32,7 +32,10 @@ def generate_filter_training_data(
     n_candidates = 0
     n_positives = 0
     n_missed_positives = 0
-    generator_threshold = getattr(generator, "calibrated_threshold", None)
+    # The filter is trained on what the generator emits, so it has to be what the deployed
+    # generator emits. Taking the checkpoint's calibrated gate here trained the filter on a
+    # narrower candidate distribution than any deployed path produces.
+    generator_threshold = None
 
     substrates = list(train_data.map.keys())
     for index, sub_smi in enumerate(substrates):

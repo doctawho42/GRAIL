@@ -464,6 +464,19 @@ def build():
     # Whether the unrecoverable selection that assembled the corpus removed a class of chemistry,
     # which would manufacture the shortfall above rather than measure it. Only one of the four
     # sources is on disk in full, so this is a bound from one source and is reported as such.
+    # The same test on the other source this repository holds. Two of the four are here, not
+    # one, and testing only the larger left the second unexamined while the claim generalised.
+    gdrop = art("gloryx_drop_set.json")
+    n["gloryxdrop.pairs"] = gdrop["source"]["distinct_pairs"]
+    n["gloryxdrop.inside"] = gdrop["source"]["inside_the_corpus"]
+    n["gloryxdrop.keptp"] = gdrop["typed"]["kept"]
+    n["gloryxdrop.droppedp"] = gdrop["typed"]["dropped"]
+    n["gloryxdrop.tv"] = gdrop["total_variation_distance"]
+    n["gloryxdrop.p"] = gdrop["permutation"]["p_value"]
+    n["gloryxdrop.absentshare"] = gdrop["share_of_dropped_whose_type_the_kept_half_lacks"]
+    n["gloryxdrop.types"] = gdrop["typed"]["distinct_types"]
+    n["gloryxdrop.deadline"] = gdrop["mcs_deadline_seconds"]
+
     drop = art("metxbiodb_drop_set.json")
     n["metxdrop.pairs"] = drop["source"]["distinct_pairs"]
     n["metxdrop.inside"] = drop["source"]["inside_the_corpus"]

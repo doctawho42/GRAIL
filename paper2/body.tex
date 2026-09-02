@@ -118,10 +118,15 @@ MetXBioDB that entered the corpus and those that did not, the transformation-typ
 differ by a total variation distance of \numMetxdropTv{}, with a permutation test over
 \numMetxdropPerm{} shuffles putting the chance of a distance that large at
 $p=\numMetxdropP$, and \numMetxdropDroppedtypesabsent{} of the dropped pairs carry a type the
-kept half never shows. MetXBioDB is one of the four sources and the only one this repository
-holds. ChEMBL and DrugBank are two of the others, and nothing here tests whether the same is true
-of them. Every statement below about what the corpus does and does not contain is a statement
-about a corpus assembled that way.
+kept half never shows. The second source this repository holds points the same way
+without settling it: of the GLORYx reference set's \numGloryxdropPairs{} pairs,
+\numGloryxdropInside{} are inside the corpus, the distance between the two type distributions is
+\numGloryxdropTv{} and \numGloryxdropAbsentsharePct{} of the dropped pairs carry a type the kept
+half never shows, but with \numGloryxdropKeptp{} typed pairs on one side and
+\numGloryxdropDroppedp{} on the other the same permutation test returns $p=\numGloryxdropP$ and
+does not separate. ChEMBL and DrugBank are the other two sources, neither is held here, and
+nothing tests them. Every statement below about what the corpus does and does not contain is a
+statement about a corpus assembled that way.
 
 The comparison set carries no training contamination: \numPopulationInTrainOrVal{} of its
 \numPopulationN{} substrates appear as a substrate of train or validation under a canonicalised
@@ -506,11 +511,12 @@ are read over the same slots on every substrate (Table~\ref{tab:si-matched}). Th
 the wide-budget leads in two. Against SyGMa the exhaustive arm keeps $+\numMatchedBanksygma$
 $[+\numMatchedBanksygmaLo, +\numMatchedBanksygmaHi]$, the largest margin that survives this
 control and
-an ordering result rather than an emission one. Against MetaTox and MetaPredictor nothing
-survives: $\numMatchedBankmetatox$ and $\numMatchedBankmetapredictor$, both intervals covering
-zero and both pointing the other way. What the sweep shows at $k=50$ against those two is a
-statement about how much each system emits, and this paper's own argument requires it to be
-called that.
+an ordering result rather than an emission one. Against the other three nothing
+survives: $+\numMatchedBankmetatox$ against MetaTox, $\numMatchedBankmetapredictor$ against
+MetaPredictor and $\numMatchedBankbiotransformer$ against BioTransformer, every interval
+covering zero and two of the three pointing the other way. What the sweep shows at $k=50$
+against those three is a statement about how much each system emits, and this paper's own
+argument requires it to be called that.
 
 Three corrections apply to those two cells and it is worth carrying them through in one place.
 Under a family-wise correction over the sweep the $k=30$ margin against MetaTox does not survive

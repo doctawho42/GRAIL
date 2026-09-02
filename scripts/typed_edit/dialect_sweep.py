@@ -35,6 +35,7 @@ for _p in (str(ROOT), str(ROOT / "scripts"), str(HERE)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
+from _pools import assert_released  # noqa: E402
 from _provenance import stamp  # noqa: E402
 
 from _rrf import rrf_order  # noqa: E402
@@ -61,11 +62,18 @@ ARMS = {
 
 
 def load(pattern):
-    """One or several glob patterns, merged. A substrate present in more than one is taken once."""
+    """One or several glob patterns, merged. A substrate present in more than one is taken once.
+
+    Every source file must record the released checkpoints. Merging shards by `setdefault` cannot
+    see that some of them were scored by a superseded model, and that is precisely what happened
+    here: the standardised pools were built by a script naming a filter the repository no longer
+    ships, so this sweep compared two models and reported the difference as a drawing effect.
+    """
     patterns = [pattern] if isinstance(pattern, str) else list(pattern)
-    pools, refs = {}, {}
+    pools, refs, sources = {}, {}, []
     for spec in patterns:
         for path in sorted(glob.glob(str(ROOT / spec))):
+            sources.append(path)
             blob = json.loads(Path(path).read_text())
             for substrate, pool in blob["pools"].items():
                 pools.setdefault(substrate, pool)
@@ -73,6 +81,7 @@ def load(pattern):
                 refs.setdefault(substrate, r)
     if not pools:
         raise SystemExit(f"no pool matched {patterns}")
+    assert_released(sources)
     return pools, refs
 
 

@@ -289,3 +289,16 @@ def test_the_equalised_comparison_records_what_its_re_runs_cover():
     assert disagree is not None, "the artifact does not record the agreement check"
     assert not {k: v for k, v in disagree.items() if v}, (
         f"two runs disagree on substrates the drawing does not move: {disagree}")
+
+
+@pytest.mark.skipif(not (ROOT / "paper2/body.tex").exists(),
+                    reason="the manuscript is not in this checkout")
+def test_no_sentence_writes_a_sign_its_macro_contradicts():
+    """A hand-written sign has to agree with the value beside it.
+
+    A difference printed as `$+\\numX$` reads as a lead. When the macro turns negative the prose
+    does not follow, and the page prints a trail with a plus in front of it, which happened in
+    both documents at once and passed every other gate here.
+    """
+    r = _run("check_macro_signs.py")
+    assert r.returncode == 0, r.stdout + r.stderr

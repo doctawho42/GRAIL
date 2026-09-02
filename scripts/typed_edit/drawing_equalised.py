@@ -38,6 +38,7 @@ for _p in (str(ROOT), str(ROOT / "scripts"), str(HERE)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
+from _pools import assert_released  # noqa: E402
 from _provenance import record_inputs, stamp  # noqa: E402
 
 KS = (1, 3, 5, 8, 10, 15, 20, 30, 50)
@@ -64,12 +65,18 @@ OURS = ("GRAIL exhaustive", "GRAIL interactive")
 
 
 def load_pools(patterns):
-    """Candidate pools keyed by substrate, merged over shards; a repeat is taken once."""
-    pools = {}
+    """Candidate pools keyed by substrate, merged over shards; a repeat is taken once.
+
+    Every shard has to record the released checkpoints, for the reason the drawing sweep gives:
+    a merge cannot see that some of its sources were scored by a superseded model.
+    """
+    pools, sources = {}, []
     for spec in patterns:
         for path in sorted(glob.glob(str(ROOT / spec))):
+            sources.append(path)
             for substrate, pool in json.loads(Path(path).read_text())["pools"].items():
                 pools.setdefault(substrate, pool)
+    assert_released(sources)
     return pools
 
 
@@ -182,6 +189,18 @@ def main() -> int:
     disagreeing = {name: sum(1 for s in unmoved if s in covered[name]
                              and equalised[name][s] != stored[name][s])
                    for name in DRAWN}
+    # The agreement count above cannot fire on an arm whose re-run deliberately covers only the
+    # substrates the drawing moves, because the two sets are then disjoint. MetaPredictor is such
+    # an arm, and it is the one whose join failed. The bound that does bite is on coverage: every
+    # substrate a re-run does not cover has to be one the drawing does not move, or the arm is
+    # being read on a mixture of the two drawings without saying so.
+    moved_set = set(moved)
+    uncovered_moved = {name: sorted(moved_set - covered[name]) for name in DRAWN}
+    for name, missing in uncovered_moved.items():
+        if missing:
+            print(f"  {name}: {len(missing)} substrates the drawing moves are absent from its "
+                  f"re-run, so its equalised column is part one drawing and part the other",
+                  flush=True)
     for name, n_bad in disagreeing.items():
         if n_bad:
             print(f"  {name}: {n_bad} of {len(unmoved)} unmoved substrates differ between the "
@@ -247,6 +266,8 @@ def main() -> int:
                                                             if s not in covered[name]])
                                                  for name in DRAWN},
         "unmoved_substrates_where_the_two_runs_disagree": disagreeing,
+        "substrates_the_drawing_moves_that_a_re_run_does_not_cover": {
+            name: len(v) for name, v in uncovered_moved.items()},
         "why_that_matters": ("a substrate the standardiser does not move is the same molecule in "
                              "both runs, so a disagreement there is not a drawing effect"),
         "why": ("MetaTox is a web service with no re-run available to us, and it is the one arm "

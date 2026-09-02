@@ -43,11 +43,20 @@ from scripts.mine_rules import MCS_TIMEOUT_SECONDS, build_smirks, expand_center,
 from scripts.run_benchmark import load_test_map
 
 
-def pair_to_type(sub_mol, prod_mol):
-    """Radius-0 reaction type of a (substrate, product) pair via the mining MCS route, no self-test."""
+def pair_to_type(sub_mol, prod_mol, timeout=None):
+    """Radius-0 reaction type of a (substrate, product) pair via the mining MCS route, no self-test.
+
+    The maximum common substructure search is given a deadline, and a pair that misses it types as
+    nothing. That makes the count of untypeable pairs depend on how loaded the machine was: the
+    same 196 GLORYx pairs typed 185, 183 and 187 of themselves on three runs while the machine was
+    busy, and the shares computed from them moved with it. The deadline is a parameter here so a
+    caller who needs a reproducible count can pay for one; the default is the mining route's own,
+    so the census is unchanged.
+    """
     try:
         mcs = rdFMCS.FindMCS(
-            [sub_mol, prod_mol], timeout=MCS_TIMEOUT_SECONDS, matchValences=False,
+            [sub_mol, prod_mol], timeout=int(timeout or MCS_TIMEOUT_SECONDS),
+            matchValences=False,
             ringMatchesRingOnly=True, completeRingsOnly=True,
             bondCompare=rdFMCS.BondCompare.CompareAny, atomCompare=rdFMCS.AtomCompare.CompareElements,
         )

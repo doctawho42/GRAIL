@@ -294,6 +294,11 @@ def si_drawing_equalised():
     # comparator's recall at a quarter of its real value and looked like an enormous drawing
     # effect. The instrument now records what its re-runs cover and whether the two runs agree on
     # the substrates the drawing does not move; a table is refused unless both are on record.
+    missed = d.get("substrates_the_drawing_moves_that_a_re_run_does_not_cover")
+    if missed is None or any(missed.values()):
+        raise FileNotFoundError(
+            "results/drawing_equalised.json does not show every re-run covering the substrates "
+            f"the drawing moves: {missed}")
     if "unmoved_substrates_where_the_two_runs_disagree" not in d:
         raise FileNotFoundError(
             "results/drawing_equalised.json predates the coverage record; re-run it")
@@ -1030,4 +1035,13 @@ if __name__ == "__main__":
             (OUT / f"{name}.tex").write_text(fn())
             print(f"  wrote paper2/{name}.tex")
         except FileNotFoundError as e:
-            print(f"  SKIP {name}: {e}")
+            # A refusal must not leave the previous table standing. Skipping and exiting zero
+            # means a stale .tex survives, LaTeX compiles it, and the document carries numbers
+            # from an artifact the generator has just declined to use. Removing it makes the
+            # build fail on a missing \input, which is the loudest failure available here.
+            stale = OUT / f"{name}.tex"
+            if stale.exists():
+                stale.unlink()
+                print(f"  SKIP {name}, and removed the table it would have replaced: {e}")
+            else:
+                print(f"  SKIP {name}: {e}")

@@ -2,8 +2,8 @@
  "provenance": {
   "script": "fusion_knobs.py",
   "script_path": "scripts/typed_edit/fusion_knobs.py",
-  "source_sha256": "a8057cf6109c7568205fffeea2ff4e57dcdbde5c6f0f892c6dac8552241c7027",
-  "git_commit": "33f72aa1923c32bc9b9723ce0b94a0c53e13a590",
+  "source_sha256": "def99de39b1c8aa9bd35a30733ca4fd1ad790443924c738dd95a4a8d8b87a080",
+  "git_commit": "566eedfa98d700e23573cf353340a85239f7ecfa",
   "git_dirty": true
  },
  "population": {
@@ -11,6 +11,7 @@
   "n_references": 665
  },
  "cap": 100,
+ "anchor_reproduces_the_published_column": true,
  "deployed_constant": 60,
  "constants_swept": [
   1,
@@ -23,88 +24,88 @@
  "by_constant": {
   "1": {
    "recall": {
-    "5": 0.2391,
+    "5": 0.2316,
     "15": 0.4857,
-    "30": 0.6241,
-    "50": 0.7008
+    "30": 0.6211,
+    "50": 0.7023
    },
    "against_the_deployed_constant_at_15": {
-    "gap": -0.0556,
+    "gap": -0.0496,
     "ci95": [
-     -0.0797,
-     -0.0308
+     -0.0726,
+     -0.0255
     ],
     "excludes_zero": true
    }
   },
   "10": {
    "recall": {
-    "5": 0.2977,
-    "15": 0.5128,
-    "30": 0.6301,
-    "50": 0.7023
+    "5": 0.2887,
+    "15": 0.5113,
+    "30": 0.6241,
+    "50": 0.7038
    },
    "against_the_deployed_constant_at_15": {
-    "gap": -0.0286,
+    "gap": -0.0241,
     "ci95": [
-     -0.047,
-     -0.0096
+     -0.0421,
+     -0.0057
     ],
     "excludes_zero": true
    }
   },
   "30": {
    "recall": {
-    "5": 0.3143,
+    "5": 0.3113,
     "15": 0.5248,
-    "30": 0.6406,
+    "30": 0.6376,
     "50": 0.7038
    },
    "against_the_deployed_constant_at_15": {
-    "gap": -0.0165,
+    "gap": -0.0105,
     "ci95": [
-     -0.0302,
-     -0.0032
+     -0.0222,
+     0.0
     ],
-    "excludes_zero": true
+    "excludes_zero": false
    }
   },
   "60": {
    "recall": {
-    "5": 0.3143,
-    "15": 0.5414,
-    "30": 0.6511,
+    "5": 0.3113,
+    "15": 0.5353,
+    "30": 0.6526,
     "50": 0.7023
    }
   },
   "120": {
    "recall": {
-    "5": 0.3098,
+    "5": 0.3053,
     "15": 0.5414,
     "30": 0.6526,
     "50": 0.7023
    },
    "against_the_deployed_constant_at_15": {
-    "gap": 0.0,
+    "gap": 0.006,
     "ci95": [
-     -0.0111,
-     0.0112
+     -0.0049,
+     0.0173
     ],
     "excludes_zero": false
    }
   },
   "300": {
    "recall": {
-    "5": 0.3113,
-    "15": 0.5444,
-    "30": 0.6511,
-    "50": 0.7023
+    "5": 0.3083,
+    "15": 0.5429,
+    "30": 0.6496,
+    "50": 0.7008
    },
    "against_the_deployed_constant_at_15": {
-    "gap": 0.003,
+    "gap": 0.0075,
     "ci95": [
-     -0.0107,
-     0.0168
+     -0.0066,
+     0.0217
     ],
     "excludes_zero": false
    }

@@ -362,6 +362,7 @@ def test_factorized_reranker_reshapes_rank_but_never_gates():
     """The factorized re-ranker multiplies a per-candidate type*site factor into the rank (the
     §10 hybrid re-rank, deployable form) without ever gating a candidate out; a uniform multiplier
     leaves the filter*generator order unchanged, and factorized=None is byte-identical."""
+    import re
     from pathlib import Path
 
     from grail_metabolism.model.wrapper import ModelWrapper
@@ -1345,21 +1346,39 @@ def test_every_script_takes_its_checkpoints_from_the_deployed_run():
     # generator and filter scores are reproduced exactly by this run's checkpoints and by no
     # other pair in the repository.
     deployed = "artifacts/full5000_implicit/checkpoints"
-    pattern = re.compile(r"artifacts/[A-Za-z0-9_]+/checkpoints/(?:generator|filter)\.pt")
+    # Two ways a path is written here, and the check used to see only the first. A shell script
+    # naming the superseded filter as a slash-joined literal was invisible for the second reason
+    # and a Python file joining Path pieces was invisible for the first, so the pools the dialect
+    # sweep compares were built by one model and the pools they were compared against by another.
+    LITERAL = re.compile(r"artifacts/[A-Za-z0-9_]+/checkpoints/(?:generator|filter)\.pt")
+    JOINED = re.compile(r'"artifacts"\s*/\s*"([A-Za-z0-9_]+)"\s*/\s*"checkpoints"')
     # Scripts that train a checkpoint, or launch training elsewhere, name a destination rather
     # than an inference default and are not held to it.
     TRAINERS = {"modal_m2.py", "train_filter_subset.py"}
-    # This one's subject is the rule prior, so it needs the generator that carries one, and it
-    # asserts as much at load. Naming the deployed generator there would break it.
-    PRIOR_ARM = {"bank_without_selection.py"}
+    # These take the rule prior as their subject, so they need the generator that carries one and
+    # assert as much at load. Naming the deployed generator there would break them.
+    PRIOR_ARM = {"bank_without_selection.py", "selection_ablation.py", "prior_vs_learned.py",
+                 "probe_rule_embeddings.py", "reranker_predict.py", "run_reranker_gate.py",
+                 "eval_on_gloryx.py"}
+    # The scope is what feeds the paper: every producer of a pinned artifact, plus the shell
+    # scripts that build pools, since one of those was the file that named the wrong filter.
+    import sys as _sys
+    _sys.path.insert(0, str(root / "scripts"))
+    import audit_artifact_provenance as audit
+
+    files = {root / producer for producer in audit.PINNED.values()}
+    files |= set((root / "scripts").rglob("*.sh"))
     wrong = []
-    for path in sorted((root / "scripts").rglob("*.py")):
+    for path in sorted(f for f in files if f.exists()):
         if path.name in TRAINERS or path.name in PRIOR_ARM:
             continue
-        for n, line in enumerate(path.read_text().splitlines(), 1):
-            for match in pattern.findall(line):
+        for n, line in enumerate(path.read_text(errors="replace").splitlines(), 1):
+            for match in LITERAL.findall(line):
                 if not match.startswith(deployed):
                     wrong.append(f"{path.relative_to(root)}:{n} -> {match}")
+            for run in JOINED.findall(line):
+                if f"artifacts/{run}/checkpoints" != deployed:
+                    wrong.append(f"{path.relative_to(root)}:{n} -> artifacts/{run}/checkpoints")
     assert not wrong, (
         "these name a checkpoint that is not the deployed one: " + ", ".join(wrong))
 
@@ -1373,6 +1392,7 @@ def test_the_released_default_is_the_evaluated_configuration():
     value handed a user a much narrower selection than any arm that was ever measured. The
     fallback is gone; this fails if it returns.
     """
+    import re
     from pathlib import Path
 
     from grail_metabolism.model.wrapper import ModelWrapper
@@ -1388,10 +1408,40 @@ def test_the_released_default_is_the_evaluated_configuration():
     # An explicit gate still reaches the generator, so the choice stays available.
     assert wrapper._rule_threshold(0.42) == 0.42
 
-    # The evaluation path selects configurations, so it has to evaluate the one that ships.
-    source = (Path(__file__).resolve().parents[2]
-              / "grail_metabolism/workflows/evaluation.py").read_text()
-    assert 'getattr(generator, "calibrated_threshold"' not in source, (
-        "the evaluation path falls back to the checkpoint's gate, so it would select on a "
-        "configuration the release does not run")
-    assert 'getattr(model.generator, "calibrated_threshold"' not in source
+    # The multi-step path takes the same threshold one call later, and asserting on the
+    # wrapper alone could not see it: a caller who names none still ran the gate there.
+    from grail_metabolism.config import MultiStepConfig
+    from grail_metabolism.model.multistep import MetabolicTree
+
+    tree = MetabolicTree(_Gen(), object(), MultiStepConfig(), rule_threshold=None)
+    assert tree.rule_threshold is None, (
+        "the multi-step path re-applies the checkpoint's gate, so an unspecified threshold "
+        "still runs a configuration nobody measured")
+    assert MetabolicTree(_Gen(), object(), MultiStepConfig(),
+                         rule_threshold=0.42).rule_threshold == 0.42
+
+    # And nowhere else in the package may a rule threshold fall back to the checkpoint's. The
+    # first version of this checked two exact strings in one file, which is a string assertion
+    # rather than a check: it could not see the multi-step path and would not survive a rewrite
+    # to single quotes. This asks the package.
+    root = Path(__file__).resolve().parents[2] / "grail_metabolism"
+    fallback = re.compile(
+        r"""(?:rule_)?threshold[^\n]{0,40}(?:if|or)[^\n]{0,60}"""
+        r"""calibrated_threshold|calibrated_threshold[^\n]{0,30}\)\s*$""")
+    ALLOWED = {
+        # The filter's own decision threshold, which is a parameter of a classifier and not the
+        # generator's rule gate. The deployed emission is rank-only, so it is inert there.
+        "filter.py", "preparation.py", "wrapper.py",
+        # Where the value is read off a checkpoint or written to one.
+        "inference.py", "training.py", "grail.py", "generator.py",
+    }
+    offenders = []
+    for path in sorted(root.rglob("*.py")):
+        if path.name in ALLOWED or "tests" in path.parts:
+            continue
+        for n, line in enumerate(path.read_text().splitlines(), 1):
+            if "calibrated_threshold" in line and fallback.search(line):
+                offenders.append(f"{path.relative_to(root)}:{n}")
+    assert not offenders, (
+        "these fall back to the checkpoint's gate when a caller names none: "
+        + ", ".join(offenders))
