@@ -1001,13 +1001,12 @@ not what distinguishes this system: BioTransformer's own output names the reacti
 enzyme behind each structure it returns, and MetaTox's method reports a biotransformation type
 and a site of metabolism \citep{Rudik_2017}. What is unusual is the paragraph above, which
 checks the reported site against the atoms that changed rather than offering it as a feature.
-Ordering is not a differentiator either, and the earlier claim that the incumbent leaves part of
-its output in file order was wrong: every one of the \numArmreturnMetatoxreturned{} structures
-MetaTox returned to this comparison carries the service's own score, and SyGMa's list arrives in
-its engine's order, while MetaPredictor returns an unranked list and BioTransformer's file order
-is the only order it gives: the file it wrote carries a reaction and an enzyme for every row and
-no score at all. That makes \numArmreturnOrderingWord{} of the
-\numComparatorsNWord{} comparators arms that order their whole output, with this system a third. What is
+Ordering is not a differentiator either. Every one of the \numArmreturnMetatoxreturned{}
+structures MetaTox returned to this comparison carries the service's own score and SyGMa's list
+arrives in its engine's order, while MetaPredictor returns an unranked list and BioTransformer
+gives file order alone, its output carrying a reaction and an enzyme for every row and no score.
+That leaves \numArmreturnOrderingWord{} of the \numComparatorsNWord{} comparators ordering
+their whole output, with this system a third that does. What is
 left, and it is the property this paper rests on, is that every evaluation choice is declared
 with every cell of the resulting grid reported, which is what makes the comparison independently
 reproducible.

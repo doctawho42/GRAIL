@@ -20,7 +20,11 @@ def _apply_prior_strength(generator, config: EvaluationConfig) -> None:
 
 def _generator_predictions(generator: Generator, frame, config: EvaluationConfig) -> List[Dict[str, object]]:
     _apply_prior_strength(generator, config)
-    threshold = config.threshold if config.threshold is not None else getattr(generator, "calibrated_threshold", None)
+    # An unnamed rule threshold means no gate here for the same reason it does at inference: a
+    # checkpoint's calibrated value gates most substrates down to a handful of rules, and no
+    # figure this project reports was measured that way. Selecting on a configuration the
+    # release does not run is the defect this project's own argument is about.
+    threshold = config.threshold
     predictions = []
     for substrate, products in frame.map.items():
         ranked = generator.generate(substrate, top_k=config.candidate_top_k, threshold=threshold)
@@ -30,7 +34,7 @@ def _generator_predictions(generator: Generator, frame, config: EvaluationConfig
 
 def _ensemble_predictions(model: ModelWrapper, frame, config: EvaluationConfig) -> List[Dict[str, object]]:
     _apply_prior_strength(model.generator, config)
-    threshold = config.threshold if config.threshold is not None else getattr(model.generator, "calibrated_threshold", None)
+    threshold = config.threshold
     ms = getattr(config, "multistep", None)
     multistep = ms if (ms is not None and ms.enabled and ms.max_depth > 1) else None
     # Headline metric is recall@k, so default to rank-only (no hard filter gate). The

@@ -1056,24 +1056,26 @@ under that run's filter and no other (Section~\ref{sec:si-prov}).
 
 \subsection{The gate the release applied and the measurement did not}
 
-One of those settings was doing something the paper had not measured. The released generator
-checkpoint carries a calibrated rule threshold of \numDefaultgateThreshold{}, and the inference
-path took it whenever a caller named none, so a rule scoring below it was dropped before the rule
-budget was applied. Every pool any number here is scored on was built with no such gate: the
+One of the settings in that table describes a selection no number here is measured under, and it
+is worth separating from the ones that are. The generator checkpoint carries a calibrated rule
+threshold of \numDefaultgateThreshold{}, a gate that drops a rule scoring below it before the
+rule budget is applied. Every pool this paper is scored on is built with no such gate: the
 selection is the top of the score ranking cut at the budget, and nothing else.
 
 The two are not the same selection. On the comparison set a median of \numDefaultgateClearing{}
 rules clear the gate against a budget of \numDefaultgateBudget{}, and it binds on
 \numDefaultgateBinds{} of \numPopulationN{} substrates, \numDefaultgateBindsharePct{}. Because
-both orderings are by the same score, the gated set is a prefix of the evaluated one wherever the
-gate binds, so what it does is remove candidates the measured arm had and never add one. A user
-calling the released model without naming a threshold was therefore running a narrower
-configuration than any arm reported in this paper, and no number here describes it.
+both orderings are by the same score, the gated set is a prefix of the ungated one wherever the
+gate binds, so it removes candidates the evaluated arm has and never adds one. A caller who ran
+under the gate would therefore be running a narrower configuration than any arm reported here,
+and no number in this paper describes it.
 
-The release is now the evaluated configuration: an unspecified rule threshold means no gate, the
-checkpoint keeps the value so a caller who wants it can pass it, and a regression test fails if
-the fallback returns. This is recorded rather than quietly corrected because the defect is the
-one this paper argues about, an undeclared configuration difference, found in its own release.
+The release is the evaluated configuration: an unspecified rule threshold means no gate, and the
+checkpoint keeps the value so a caller who wants the gate can pass it. The same holds for the
+evaluation path a reader would use to select a configuration of their own, since selecting on a
+setting the release does not run is the same defect one layer up. A regression test holds all
+three together, because a released default that differs from an evaluated one is invisible to
+every other check here and is the defect this paper argues about.
 
 \subsection{Filter}
 
@@ -1394,9 +1396,9 @@ The comparison is also read on the population nobody selected: the whole evaluat
 the two comparators that ran over all of it, with a substrate a comparator answered nothing for
 scored as zero rather than removed. The other two could not be taken there and the reasons
 differ. MetaTox is a web service and a second submission is not ours to make. BioTransformer is
-a jar this repository holds, so it looked like the one that could be re-run, and it cannot: its
-InChI native library does not resolve on the machine this work runs on, and the jar exits before
-it predicts anything. Its arm is therefore the frozen predictions and nothing else, which is a
+a jar this repository holds, which makes it the one that ought to be re-runnable, and it is not:
+its InChI native library does not resolve on the machine this work runs on and the jar exits
+before it predicts anything. Its arm is therefore the frozen predictions and nothing else, which is a
 harder limit than a cost and is named as one. Both arms are read there, which matters because the wide-budget
 leads this work claims are the exhaustive arm's and that arm existed only on the comparison set
 until its pools were built for the whole split.

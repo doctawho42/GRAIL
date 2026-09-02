@@ -362,6 +362,8 @@ def test_factorized_reranker_reshapes_rank_but_never_gates():
     """The factorized re-ranker multiplies a per-candidate type*site factor into the rank (the
     §10 hybrid re-rank, deployable form) without ever gating a candidate out; a uniform multiplier
     leaves the filter*generator order unchanged, and factorized=None is byte-identical."""
+    from pathlib import Path
+
     from grail_metabolism.model.wrapper import ModelWrapper
 
     class _Gen:
@@ -1371,6 +1373,8 @@ def test_the_released_default_is_the_evaluated_configuration():
     value handed a user a much narrower selection than any arm that was ever measured. The
     fallback is gone; this fails if it returns.
     """
+    from pathlib import Path
+
     from grail_metabolism.model.wrapper import ModelWrapper
 
     class _Gen:
@@ -1383,3 +1387,11 @@ def test_the_released_default_is_the_evaluated_configuration():
         "checkpoint's calibrated gate")
     # An explicit gate still reaches the generator, so the choice stays available.
     assert wrapper._rule_threshold(0.42) == 0.42
+
+    # The evaluation path selects configurations, so it has to evaluate the one that ships.
+    source = (Path(__file__).resolve().parents[2]
+              / "grail_metabolism/workflows/evaluation.py").read_text()
+    assert 'getattr(generator, "calibrated_threshold"' not in source, (
+        "the evaluation path falls back to the checkpoint's gate, so it would select on a "
+        "configuration the release does not run")
+    assert 'getattr(model.generator, "calibrated_threshold"' not in source

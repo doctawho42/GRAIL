@@ -4,6 +4,7 @@ Prose is the only part of this project that passes through no gate, and writing 
 wrong figures in an hour the last time it was checked afterwards. The manuscript therefore reaches
 its numbers only through macros generated from results, and these hold that arrangement together.
 """
+import json
 import subprocess
 import sys
 from pathlib import Path
@@ -269,3 +270,22 @@ def test_every_cited_reference_can_be_found():
     """
     r = _run("check_bibliography.py")
     assert r.returncode == 0, r.stdout + r.stderr
+
+
+@pytest.mark.skipif(not (ROOT / "results/drawing_equalised.json").exists(),
+                    reason="the drawing-equalised comparison has not been run in this checkout")
+def test_the_equalised_comparison_records_what_its_re_runs_cover():
+    """A partial re-run cannot be read as an arm returning nothing.
+
+    MetaPredictor was re-run only on the substrates whose two drawings are different molecules,
+    so its file holds 79 of the 291. Reading it without filling the rest from the frozen run put
+    that arm's recall at a quarter of its real value and would have printed a drawing effect four
+    times larger than any measured anywhere. The instrument records what each re-run covers and
+    whether the two runs agree where the drawing changes nothing; both have to be on record.
+    """
+    d = json.loads((ROOT / "results/drawing_equalised.json").read_text())
+    assert "substrates_the_re_run_does_not_cover" in d
+    disagree = d.get("unmoved_substrates_where_the_two_runs_disagree")
+    assert disagree is not None, "the artifact does not record the agreement check"
+    assert not {k: v for k, v in disagree.items() if v}, (
+        f"two runs disagree on substrates the drawing does not move: {disagree}")
