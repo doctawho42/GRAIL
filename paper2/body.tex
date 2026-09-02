@@ -1035,19 +1035,20 @@ directly rather than argued from the bank's coverage. Of the \numTypeoverlapBank
 references whose transformation type the bank does not hold, \numTypeoverlapCorpuslackstoo{},
 \numTypeoverlapCorpussharePct{}, have a type the training annotation does not hold either; the
 remaining \numTypeoverlapMinerslost{} are chemistry the corpus contained and the miner did not
-carry across. The two counts here are different quantities and the larger is not a correction of
-the smaller: \numTypeoverlapBanklacks{} counts every test reference whose type the bank does not
-hold, reached or not, while \numCeilingNovel{}, above, counts only those the bank also fails to
-reach, and a template can reach a product while being typed differently from the pair that product
-comes from. The four cells that separate the two, by type and by reach, are in
+carry across. Two counts appear in that sentence and they measure different things.
+\numTypeoverlapBanklacks{} counts every test reference whose type the bank does not hold, whether
+or not the bank reaches it. \numCeilingNovel{}, above, counts only those it also fails to reach.
+The gap between them is not an error in either: a template can reach a product while being typed
+differently from the pair that product came from. The four cells that separate the two, by type and by reach, are in
 Section~\ref{SI-sec:si-typeoverlap}. Template discovery from that
 corpus is separately unfinished, its rarefaction curve still climbing, so mining harder would yield
 more templates and could not supply a type the corpus does not contain.
-Extending coverage therefore requires new reaction corpora, and the census narrows the search:
-synthetic corpora are excluded by measurement, leaving enzymatic and regulatory sources. Metabolite identifications from radiolabelled human ADME studies
-reported in regulatory submissions are human \emph{in vivo} data on exactly the population
-predicted here, have been used to benchmark this class of tool \citep{Gao_2026}, and are, to
-our knowledge, not systematically mined as a source of rules. Whether the same bound binds a predictor that
+Extending coverage therefore requires new reaction corpora, and the census narrows the search.
+Synthetic corpora are excluded by measurement, which leaves enzymatic and regulatory sources. The
+regulatory ones are the interesting half: metabolite identifications from radiolabelled human
+ADME studies are human \emph{in vivo} data on exactly the population predicted here, they have
+been used to benchmark this class of tool \citep{Gao_2026}, and they are, to our knowledge, not
+systematically mined as a source of rules. Whether the same bound binds a predictor that
 applies no templates at all is not measured here; what is measured is that the chemistry is absent
 from the corpus, which is a property of the training data rather than of the method reading it.
 
