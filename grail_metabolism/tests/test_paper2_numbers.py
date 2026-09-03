@@ -181,57 +181,68 @@ def test_every_artifact_a_number_comes_from_is_released_or_named_as_the_deposit(
         + ", ".join(missing))
 
 
-def test_no_artifact_a_number_comes_from_is_older_than_the_pools_it_is_read_from():
+def test_every_artifact_read_from_the_comparison_pools_records_which_pools_it_read():
     """A producer that fails silently leaves last week's answer sitting where this week's belongs.
 
-    The comparison pools were rebuilt and one comparator's producer was invoked without a
-    required argument, so it exited at once, its output went to /dev/null, and its artifact stayed
-    at the previous week's date. Every other column moved to the new pools and that one did not,
-    which is the mixed state the rebuild existed to remove. Nothing noticed, because an artifact
-    that is stale is still stamped, still pinned, and still parses.
+    The comparison pools were rebuilt and one comparator's producer was invoked without a required
+    argument, so it exited at once, its output went to /dev/null, and its artifact stayed at the
+    previous week's date. Every other column moved to the new pools and that one did not, which is
+    the mixed state the rebuild existed to remove. Nothing noticed, because an artifact that is
+    stale is still stamped, still pinned, and still parses.
+
+    This used to be checked by comparing modification times, which cannot do it. mtime belongs to
+    the working tree rather than to the artifact: a clone, a checkout or a stash apply rewrites
+    every file's mtime in whatever order the filesystem chooses. Restoring this worktree set the
+    pools and the artifacts reading them to the same second in arbitrary order, and the check
+    reported twenty-three artifacts as stale while every one was byte-identical to the commit.
+
+    The question is a content question, so it is asked of content. A producer that calls
+    record_inputs() writes the path and digest of every file it read, and
+    audit_artifact_provenance.py already fails an artifact whose recorded input has moved. What is
+    checked here is that the record exists at all for anything reading the comparison pools,
+    because an artifact with no record is one no digest check can ever reach.
     """
-    import glob
     import json
-    import os
-    from pathlib import Path
+    import re
+    from pathlib import Path as _P
 
-    pools = sorted(glob.glob("results/widepools_implicit/w*.json"))
-    if not pools:
-        return
-    pool_time = max(os.path.getmtime(f) for f in pools)
-
-    sources = json.loads(Path("results/number_sources.json").read_text())
+    sources = json.loads(_P("results/number_sources.json").read_text())
     srcs = sources if isinstance(sources, list) else sources.get("artifacts") or list(sources)
     names = {s if isinstance(s, str) else s.get("artifact") for s in srcs}
 
-    stale = []
+    unrecorded = []
     for name in sorted(n for n in names if n):
-        path = Path(name)
+        path = _P(name)
         if not path.exists():
             continue
         try:
             blob = json.loads(path.read_text())
-            source = Path(blob["provenance"]["script_path"]).read_text()
+            producer = _P(blob["provenance"]["script_path"])
+            source = producer.read_text()
         except Exception:
             continue
         # What the producer could read is not what this artifact did read. A producer serving two
-        # populations mentions both, and the validation sweep is not stale because the comparison
-        # pools moved: it reads the validation pools, which did not. The artifact's own record of
-        # its inputs wins over the producer's source wherever it has one.
-        named = " ".join(str(row.get("path", "")) for row in (blob.get("inputs") or []))
-        recorded = json.dumps(blob.get("population", ""))
+        # populations mentions both, and the validation sweep does not depend on the comparison
+        # pools: it reads the validation pools. The artifact's own record wins where it has one.
+        rows = blob.get("inputs") or []
+        named = " ".join(str(r.get("path", "")) for r in rows)
         if named:
-            depends = "widepools_implicit" in named
-        elif "widepools_implicit" in recorded or "val_pools" in recorded:
-            depends = "widepools_implicit" in recorded
+            continue                       # it records its inputs; the digest gate covers it
+        recorded = json.dumps(blob.get("population", ""))
+        if "widepools_implicit" in recorded:
+            depends = True
+        elif "val_pools" in recorded:
+            depends = False
         else:
-            depends = "widepools_implicit" in source
-        if depends and os.path.getmtime(path) < pool_time:
-            stale.append(name)
-    assert not stale, (
-        "these artifacts are read from the comparison pools and are older than the pools "
-        "themselves, so they answer a question about a build that no longer exists: "
-        + ", ".join(stale))
+            depends = bool(re.search(r"widepools_implicit", source))
+        if depends:
+            unrecorded.append(f"{name} (from {producer.name})")
+
+    assert not unrecorded, (
+        "these artifacts are read from the comparison pools and record no inputs, so nothing can "
+        "tell whether they were built from the pools that are here now: their producers do not "
+        "call record_inputs(), and the paper's one-hop guarantee does not reach them.\n  "
+        + "\n  ".join(unrecorded))
 
 
 def test_no_tracked_file_is_the_size_of_a_candidate_pool():
