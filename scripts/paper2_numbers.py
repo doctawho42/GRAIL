@@ -671,10 +671,17 @@ def build():
     n["popdef.sygmainside"] = pop["emission"]["comparison_set"]["sygma"]
     n["popdef.metapredictorinside"] = pop["emission"]["comparison_set"]["metapredictor"]
     n["popdef.grailinside"] = pop["emission"]["comparison_set"]["grail_deployed"]
-    for name in ("sygma", "metapredictor"):
+    # BioTransformer is in the sweep and was in neither enumeration. It is the arm the emission
+    # rule would actually have bitten: on the whole test set it answers nothing for nearly a tenth
+    # of the substrates, which is not the "almost nothing" the section claimed.
+    n["popdef.btinside"] = pop["emission"]["comparison_set"]["biotransformer"]
+    for name in ("sygma", "metapredictor", "biotransformer"):
         cell = pop["emission"]["whole_test_set"][name]
-        n[f"popdef.{name}silent"] = cell["substrates_with_no_prediction"]
-        n[f"popdef.{name}silentrefs"] = cell["references_they_carry"]
+        short = "bt" if name == "biotransformer" else name
+        n[f"popdef.{short}silent"] = cell["substrates_with_no_prediction"]
+        n[f"popdef.{short}silentrefs"] = cell["references_they_carry"]
+    n["popdef.btsilentshare"] = round(
+        n["popdef.btsilent"] / pop["contrasts"]["the whole evaluated test set"]["n_substrates"], 4)
     for label, short in (("annotated references", "refs"), ("heavy atoms", "heavy"),
                          ("candidates the deployed system emits", "output")):
         cell = pop["exchangeability"][label]

@@ -1448,13 +1448,17 @@ intersection of the substrates each method has an \emph{entry} for, and the bind
 one submission list: the comparator that is a web service was sent
 \numPopulationN{} substrates and returned all \numPopulationN{}. Nothing was removed for emitting
 nothing, and the set still contains substrates a method answers nothing for:
-\numPopdefSygmainsideWord{} for SyGMa, \numPopdefMetapredictorinsideWord{} for MetaPredictor and
-\numPopdefGrailinsideWord{} for the deployed arm.
+\numPopdefSygmainsideWord{} for SyGMa, \numPopdefMetapredictorinsideWord{} for MetaPredictor,
+\numPopdefBtinside{} for BioTransformer and \numPopdefGrailinsideWord{} for the deployed arm.
 
-That emission rule would in any case have removed almost nothing. Over the whole evaluated test
-set, SyGMa answers nothing for \numPopdefSygmasilent{} of \numPopulationTestsubs{} substrates,
-carrying \numPopdefSygmasilentrefs{} references, and MetaPredictor for
-\numPopdefMetapredictorsilent{}, carrying \numPopdefMetapredictorsilentrefs{}.
+What that emission rule would have removed depends on which arm is counted. Over the whole
+evaluated test set, SyGMa answers nothing for \numPopdefSygmasilent{} of
+\numPopulationTestsubs{} substrates, carrying \numPopdefSygmasilentrefs{} references, and
+MetaPredictor for \numPopdefMetapredictorsilent{}, carrying
+\numPopdefMetapredictorsilentrefs{}. For those two the rule would have removed almost nothing.
+BioTransformer is the arm it would have bitten: \numPopdefBtsilent{} substrates carrying
+\numPopdefBtsilentrefs{} references, which is \numPopdefBtsilentsharePct{} of the population, and
+the rule would have taken that much of the set out of every comparison it appears in.
 
 What the population does carry is an unrecorded draw, and that is tested rather than described.
 Against the \numPopdefOutside{} evaluated substrates outside it, the comparison set does not
