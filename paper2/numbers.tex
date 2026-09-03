@@ -4,6 +4,59 @@
 \newcommand{\numAdomainEvalMw}{333.9}  % adomain.eval.mw
 \newcommand{\numAdomainEvalScaffolds}{579}  % adomain.eval.scaffolds
 \newcommand{\numAdomainEvalSingletons}{399}  % adomain.eval.singletons
+\newcommand{\numAggCmpHybridMax}{0.0526}  % agg.cmp.hybrid.max
+\newcommand{\numAggCmpHybridMaxPct}{5.3\%}  % agg.cmp.hybrid.max, as a percentage
+\newcommand{\numAggCmpHybridMaxHi}{0.0787}  % agg.cmp.hybrid.max.hi
+\newcommand{\numAggCmpHybridMaxHiPct}{7.9\%}  % agg.cmp.hybrid.max.hi, as a percentage
+\newcommand{\numAggCmpHybridMaxLo}{0.0271}  % agg.cmp.hybrid.max.lo
+\newcommand{\numAggCmpHybridMaxLoPct}{2.7\%}  % agg.cmp.hybrid.max.lo, as a percentage
+\newcommand{\numAggCmpHybridMaxk}{5}  % agg.cmp.hybrid.maxk
+\newcommand{\numAggCmpHybridMaxkWord}{five}  % agg.cmp.hybrid.maxk, spelled
+\newcommand{\numAggCmpHybridNsep}{5}  % agg.cmp.hybrid.nsep
+\newcommand{\numAggCmpHybridNsepWord}{five}  % agg.cmp.hybrid.nsep, spelled
+\newcommand{\numAggCmpHybridSepfrom}{1}  % agg.cmp.hybrid.sepfrom
+\newcommand{\numAggCmpHybridSepfromWord}{one}  % agg.cmp.hybrid.sepfrom, spelled
+\newcommand{\numAggCmpHybridSepto}{10}  % agg.cmp.hybrid.septo
+\newcommand{\numAggCmpHybridSeptoWord}{ten}  % agg.cmp.hybrid.septo, spelled
+\newcommand{\numAggCmpMaxMax}{0.0316}  % agg.cmp.max.max
+\newcommand{\numAggCmpMaxMaxPct}{3.2\%}  % agg.cmp.max.max, as a percentage
+\newcommand{\numAggCmpMaxMaxHi}{0.0607}  % agg.cmp.max.max.hi
+\newcommand{\numAggCmpMaxMaxHiPct}{6.1\%}  % agg.cmp.max.max.hi, as a percentage
+\newcommand{\numAggCmpMaxMaxLo}{0.0031}  % agg.cmp.max.max.lo
+\newcommand{\numAggCmpMaxMaxLoPct}{0.3\%}  % agg.cmp.max.max.lo, as a percentage
+\newcommand{\numAggCmpMaxMaxk}{3}  % agg.cmp.max.maxk
+\newcommand{\numAggCmpMaxMaxkWord}{three}  % agg.cmp.max.maxk, spelled
+\newcommand{\numAggCmpMaxNsep}{4}  % agg.cmp.max.nsep
+\newcommand{\numAggCmpMaxNsepWord}{four}  % agg.cmp.max.nsep, spelled
+\newcommand{\numAggCmpMaxSepfrom}{1}  % agg.cmp.max.sepfrom
+\newcommand{\numAggCmpMaxSepfromWord}{one}  % agg.cmp.max.sepfrom, spelled
+\newcommand{\numAggCmpMaxSepto}{30}  % agg.cmp.max.septo
+\newcommand{\numAggValHybridMax}{0.0702}  % agg.val.hybrid.max
+\newcommand{\numAggValHybridMaxPct}{7\%}  % agg.val.hybrid.max, as a percentage
+\newcommand{\numAggValHybridMaxHi}{0.1028}  % agg.val.hybrid.max.hi
+\newcommand{\numAggValHybridMaxHiPct}{10.3\%}  % agg.val.hybrid.max.hi, as a percentage
+\newcommand{\numAggValHybridMaxLo}{0.0412}  % agg.val.hybrid.max.lo
+\newcommand{\numAggValHybridMaxLoPct}{4.1\%}  % agg.val.hybrid.max.lo, as a percentage
+\newcommand{\numAggValHybridMaxk}{8}  % agg.val.hybrid.maxk
+\newcommand{\numAggValHybridMaxkWord}{eight}  % agg.val.hybrid.maxk, spelled
+\newcommand{\numAggValHybridNsep}{7}  % agg.val.hybrid.nsep
+\newcommand{\numAggValHybridNsepWord}{seven}  % agg.val.hybrid.nsep, spelled
+\newcommand{\numAggValHybridSepfrom}{1}  % agg.val.hybrid.sepfrom
+\newcommand{\numAggValHybridSepfromWord}{one}  % agg.val.hybrid.sepfrom, spelled
+\newcommand{\numAggValHybridSepto}{20}  % agg.val.hybrid.septo
+\newcommand{\numAggValMaxMax}{0.0473}  % agg.val.max.max
+\newcommand{\numAggValMaxMaxPct}{4.7\%}  % agg.val.max.max, as a percentage
+\newcommand{\numAggValMaxMaxHi}{0.0824}  % agg.val.max.max.hi
+\newcommand{\numAggValMaxMaxHiPct}{8.2\%}  % agg.val.max.max.hi, as a percentage
+\newcommand{\numAggValMaxMaxLo}{0.0153}  % agg.val.max.max.lo
+\newcommand{\numAggValMaxMaxLoPct}{1.5\%}  % agg.val.max.max.lo, as a percentage
+\newcommand{\numAggValMaxMaxk}{5}  % agg.val.max.maxk
+\newcommand{\numAggValMaxMaxkWord}{five}  % agg.val.max.maxk, spelled
+\newcommand{\numAggValMaxNsep}{6}  % agg.val.max.nsep
+\newcommand{\numAggValMaxNsepWord}{six}  % agg.val.max.nsep, spelled
+\newcommand{\numAggValMaxSepfrom}{1}  % agg.val.max.sepfrom
+\newcommand{\numAggValMaxSepfromWord}{one}  % agg.val.max.sepfrom, spelled
+\newcommand{\numAggValMaxSepto}{50}  % agg.val.max.septo
 \newcommand{\numAggregationBlendmax}{0.65}  % aggregation.blendmax
 \newcommand{\numAggregationBlendmaxPct}{65\%}  % aggregation.blendmax, as a percentage
 \newcommand{\numAggregationBlendor}{0.35}  % aggregation.blendor
@@ -712,15 +765,26 @@
 \newcommand{\numDefaultgateClearing}{6}  % defaultgate.clearing
 \newcommand{\numDefaultgateThreshold}{0.6}  % defaultgate.threshold
 \newcommand{\numDefaultgateThresholdPct}{60\%}  % defaultgate.threshold, as a percentage
+\newcommand{\numDialcondBothsepat}{30}  % dialcond.bothsepat
 \newcommand{\numDialcondChanged}{81}  % dialcond.changed
 \newcommand{\numDialcondConditional}{-0.0354}  % dialcond.conditional
 \newcommand{\numDialcondConditionalHi}{0.0000}  % dialcond.conditional.hi
 \newcommand{\numDialcondConditionalHiPct}{0\%}  % dialcond.conditional.hi, as a percentage
 \newcommand{\numDialcondConditionalLo}{-0.0706}  % dialcond.conditional.lo
+\newcommand{\numDialcondConditionalSep}{no}  % dialcond.conditional.sep
+\newcommand{\numDialcondConditionalThreeZeroSep}{yes}  % dialcond.conditional30.sep
+\newcommand{\numDialcondConditionalFiveSep}{no}  % dialcond.conditional5.sep
+\newcommand{\numDialcondConditionalFiveZeroSep}{no}  % dialcond.conditional50.sep
+\newcommand{\numDialcondNbudgets}{4}  % dialcond.nbudgets
+\newcommand{\numDialcondNbudgetsWord}{four}  % dialcond.nbudgets, spelled
 \newcommand{\numDialcondPooled}{-0.0105}  % dialcond.pooled
 \newcommand{\numDialcondPooledHi}{0.0000}  % dialcond.pooled.hi
 \newcommand{\numDialcondPooledHiPct}{0\%}  % dialcond.pooled.hi, as a percentage
 \newcommand{\numDialcondPooledLo}{-0.0215}  % dialcond.pooled.lo
+\newcommand{\numDialcondPooledSep}{no}  % dialcond.pooled.sep
+\newcommand{\numDialcondPooledThreeZeroSep}{yes}  % dialcond.pooled30.sep
+\newcommand{\numDialcondPooledFiveSep}{no}  % dialcond.pooled5.sep
+\newcommand{\numDialcondPooledFiveZeroSep}{no}  % dialcond.pooled50.sep
 \newcommand{\numDialcondShare}{0.2784}  % dialcond.share
 \newcommand{\numDialcondSharePct}{27.8\%}  % dialcond.share, as a percentage
 \newcommand{\numDialcondSubstrates}{291}  % dialcond.substrates
@@ -2423,14 +2487,14 @@
 \newcommand{\numProvChanged}{38}  % prov.changed
 \newcommand{\numProvFiles}{508}  % prov.files
 \newcommand{\numProvHandtyped}{37}  % prov.handtyped
-\newcommand{\numProvMacrosbody}{370}  % prov.macrosbody
-\newcommand{\numProvMacrossi}{522}  % prov.macrossi
+\newcommand{\numProvMacrosbody}{387}  % prov.macrosbody
+\newcommand{\numProvMacrossi}{542}  % prov.macrossi
 \newcommand{\numProvNamedinputs}{65}  % prov.namedinputs
-\newcommand{\numProvPinned}{106}  % prov.pinned
-\newcommand{\numProvPinnedcurrent}{105}  % prov.pinnedcurrent
+\newcommand{\numProvPinned}{107}  % prov.pinned
+\newcommand{\numProvPinnedcurrent}{106}  % prov.pinnedcurrent
 \newcommand{\numProvPinnedstale}{1}  % prov.pinnedstale
 \newcommand{\numProvPinnedstaleWord}{one}  % prov.pinnedstale, spelled
-\newcommand{\numProvSources}{86}  % prov.sources
+\newcommand{\numProvSources}{87}  % prov.sources
 \newcommand{\numProvSourcesestablished}{1}  % prov.sourcesestablished
 \newcommand{\numProvSourcesestablishedWord}{one}  % prov.sourcesestablished, spelled
 \newcommand{\numProvSourcesexempt}{3}  % prov.sourcesexempt
@@ -2441,8 +2505,8 @@
 \newcommand{\numProvSourcesnocheckpointWord}{seven}  % prov.sourcesnocheckpoint, spelled
 \newcommand{\numProvSourcesunpinned}{0}  % prov.sourcesunpinned
 \newcommand{\numProvSourcesunpinnedWord}{none}  % prov.sourcesunpinned, spelled
-\newcommand{\numProvSourcesunverifiable}{1}  % prov.sourcesunverifiable
-\newcommand{\numProvSourcesunverifiableWord}{one}  % prov.sourcesunverifiable, spelled
+\newcommand{\numProvSourcesunverifiable}{0}  % prov.sourcesunverifiable
+\newcommand{\numProvSourcesunverifiableWord}{none}  % prov.sourcesunverifiable, spelled
 \newcommand{\numProvSourceswrongmodel}{0}  % prov.sourceswrongmodel
 \newcommand{\numProvSourceswrongmodelWord}{none}  % prov.sourceswrongmodel, spelled
 \newcommand{\numProvSubdirfiles}{186}  % prov.subdirfiles

@@ -29,6 +29,8 @@ GATES = [
     ("audit_artifact_provenance.py", []),
     # a swept row whose numbers move with the clock names which ones, and the SI says so
     ("check_wallclock_fields.py", []),
+    # the word around a number makes a claim too: superlatives and separation verdicts
+    ("check_quantifiers.py", []),
 ]
 
 

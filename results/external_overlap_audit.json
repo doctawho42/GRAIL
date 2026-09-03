@@ -20,8 +20,46 @@
  "provenance": {
   "script": "external_overlap_audit.py",
   "script_path": "scripts/external_overlap_audit.py",
-  "source_sha256": "1d3256c7f602d6db2cc13e81b537f466dc3547e966cf399712ab2269c63da365",
-  "git_commit": "6d7dbbfe957ac4fe5800b9bfaf8290c4a0dd7fdf",
-  "git_dirty": false
- }
+  "source_sha256": "5f63e8dd41afa1a6b70eb7ca5041148f173ac418582139086ef46471bf426b99",
+  "git_commit": "4c56ce7539005dedf36d68939488e1904f5b690d",
+  "git_dirty": true
+ },
+ "inputs": [
+  {
+   "path": "results/widepools_implicit/w0.json",
+   "exists": true,
+   "sha256_16": "6a90b7bcc2b82562",
+   "bytes": 10103608
+  },
+  {
+   "path": "results/widepools_implicit/w1.json",
+   "exists": true,
+   "sha256_16": "dcb34d6ca5a7c690",
+   "bytes": 9923282
+  },
+  {
+   "path": "results/widepools_implicit/w2.json",
+   "exists": true,
+   "sha256_16": "2f7440497f05cd4a",
+   "bytes": 5621821
+  },
+  {
+   "path": "results/widepools_implicit/w3.json",
+   "exists": true,
+   "sha256_16": "c194bbb0bd7ec69e",
+   "bytes": 8229360
+  },
+  {
+   "path": "results/widepools_implicit/w4.json",
+   "exists": true,
+   "sha256_16": "504576d634e4bdb8",
+   "bytes": 5126437
+  },
+  {
+   "path": "results/widepools_implicit/w5.json",
+   "exists": true,
+   "sha256_16": "7f4c7cee307a726c",
+   "bytes": 3561735
+  }
+ ]
 }

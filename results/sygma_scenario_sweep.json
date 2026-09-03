@@ -2,9 +2,9 @@
  "provenance": {
   "script": "sygma_scenario_sweep.py",
   "script_path": "scripts/typed_edit/sygma_scenario_sweep.py",
-  "source_sha256": "b076d5695c08e6d39c2493a62c64f682162eebbdcb8dcc8b7ea035258f9152e2",
-  "git_commit": "249f1cdb8f05e4571331cbc2e21ae4085771e9bd",
-  "git_dirty": true
+  "source_sha256": "afc30598133c1508c63a92a65b93d65cf833751ddb3c84bd633193669f65d8cc",
+  "git_commit": "4c56ce7539005dedf36d68939488e1904f5b690d",
+  "git_dirty": false
  },
  "inputs": [
   {
@@ -105,7 +105,12 @@
    },
    "unfinished": 5,
    "unfinished_note": "substrates the deeper scenario did not finish inside the deadline keep the deployed scenario's list, so this arm is never handicapped by the timeout",
-   "seconds": 7663.3,
+   "wall_clock_dependent": [
+    "mean_emitted",
+    "unfinished",
+    "seconds"
+   ],
+   "seconds": 9467.4,
    "exhaustive_minus_sygma_at_30": {
     "gap": 0.0992,
     "ci95": [

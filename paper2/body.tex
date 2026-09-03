@@ -196,9 +196,15 @@ p(c) = 1 - \prod_{r \in R(c)} \left( 1 - p_r \right),
 so evidence from independent rules accumulates rather than competing. The independence is an
 assumption this bank does not satisfy, since it holds published rule sets verbatim and the mined
 half is full of near-duplicates. What that costs is swept over the four rules the implementation
-offers (Section~\ref{SI-sec:si-knobs}): a rule that ignores duplication is better at the head of
-the list, by up to $+\numAggregationHybridThree$ at a budget of three, and indistinguishable from
-this one at every budget a lead is claimed at. Equation~\ref{eq:noisyor}
+offers (Section~\ref{SI-sec:si-knobs}): the blend of Equation~\ref{SI-eq:blend} is better at the
+head of the list, by at most $+\numAggCmpHybridMax$ $[+\numAggCmpHybridMaxLo,
++\numAggCmpHybridMaxHi]$ at a budget of \numAggCmpHybridMaxkWord{}, and the rule that ignores
+duplication by at most $+\numAggCmpMaxMax$ $[+\numAggCmpMaxMaxLo, +\numAggCmpMaxMaxHi]$ at
+\numAggCmpMaxMaxkWord{}. On this population the blend is indistinguishable from the deployed rule
+at every budget a lead is claimed at, separating only from \numAggCmpHybridSepfromWord{} to
+\numAggCmpHybridSeptoWord{}; on the validation draw it separates as far as
+\numAggValHybridSepto{}, which includes two budgets where leads are claimed, and that reading is
+in Section~\ref{sec:limitations}. Equation~\ref{eq:noisyor}
 is why deduplication is not a cosmetic step: the key under which two products are judged the same
 decides which scores are combined, and changing that key moves the ranking. Tautomers are the
 hard case, and their treatment is not settled by the standard identifiers \citep{Dhaked_2020}.

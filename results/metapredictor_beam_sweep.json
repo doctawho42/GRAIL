@@ -1,0 +1,122 @@
+{
+ "provenance": {
+  "script": "metapredictor_beam_sweep.py",
+  "script_path": "scripts/typed_edit/metapredictor_beam_sweep.py",
+  "source_sha256": "5cef82339bed9de00114f5de19496393c0382919e1143a2061b7f7090962663b",
+  "git_commit": "6d7dbbfe957ac4fe5800b9bfaf8290c4a0dd7fdf",
+  "git_dirty": true
+ },
+ "inputs": [
+  {
+   "path": "artifacts/tier2_1170/metapredictor_preds.json",
+   "exists": true,
+   "sha256_16": "8e30e383c99e655b",
+   "bytes": 869435
+  },
+  {
+   "path": "results/metapredictor_wide_beam_preds.json",
+   "exists": true,
+   "sha256_16": "ca246c7f5f84df2e",
+   "bytes": 747066
+  }
+ ],
+ "question": "whether the lead over MetaPredictor at wide budgets is a property of the two systems or of the beam the comparator was run at",
+ "population": {
+  "n_substrates": 291,
+  "n_references": 665
+ },
+ "settings": {
+  "deployed beam": "n_best 8 / beam 8, then 2 / 8, sixteen candidates",
+  "wide beam": "n_best 16 / beam 16, then 4 / 16, sixty-four candidates"
+ },
+ "substrates_the_wide_decode_did_not_produce": 0,
+ "criterion": "tautomer-aware InChIKey, as everywhere else",
+ "convention": "a prediction equal to the substrate is dropped, for both arms",
+ "bootstrap": {
+  "n": 10000,
+  "seed": 0
+ },
+ "by_setting": {
+  "deployed beam": {
+   "mean_emitted": 10.7,
+   "recall": {
+    "1": 0.1398,
+    "3": 0.2767,
+    "5": 0.3549,
+    "8": 0.4346,
+    "10": 0.4707,
+    "15": 0.4797,
+    "20": 0.4797,
+    "30": 0.4797,
+    "50": 0.4797
+   },
+   "exhaustive_minus_metapredictor_at_15": {
+    "gap": 0.0556,
+    "ci95": [
+     0.0149,
+     0.0955
+    ],
+    "excludes_zero": true
+   },
+   "exhaustive_minus_metapredictor_at_30": {
+    "gap": 0.1729,
+    "ci95": [
+     0.1263,
+     0.2188
+    ],
+    "excludes_zero": true
+   },
+   "exhaustive_minus_metapredictor_at_50": {
+    "gap": 0.2226,
+    "ci95": [
+     0.1724,
+     0.2717
+    ],
+    "excludes_zero": true
+   }
+  },
+  "wide beam": {
+   "mean_emitted": 34.2,
+   "recall": {
+    "1": 0.1398,
+    "3": 0.2391,
+    "5": 0.3053,
+    "8": 0.391,
+    "10": 0.4376,
+    "15": 0.5158,
+    "20": 0.5474,
+    "30": 0.5925,
+    "50": 0.603
+   },
+   "exhaustive_minus_metapredictor_at_15": {
+    "gap": 0.0195,
+    "ci95": [
+     -0.0243,
+     0.0625
+    ],
+    "excludes_zero": false
+   },
+   "exhaustive_minus_metapredictor_at_30": {
+    "gap": 0.0602,
+    "ci95": [
+     0.0184,
+     0.1024
+    ],
+    "excludes_zero": true
+   },
+   "exhaustive_minus_metapredictor_at_50": {
+    "gap": 0.0992,
+    "ci95": [
+     0.0557,
+     0.1421
+    ],
+    "excludes_zero": true
+   }
+  }
+ },
+ "settings_at_which_the_lead_at_thirty_still_separates": [
+  "deployed beam",
+  "wide beam"
+ ],
+ "reading": "The beam is MetaPredictor's emission knob and this work asks other papers to declare such a knob. Turning it upward is the test of whether a lead read at a budget its deployed list never reaches is a statement about the systems or about the setting."
+}

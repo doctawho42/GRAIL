@@ -358,6 +358,22 @@ def build():
     n["dialcond.changed"] = dc["substrates_the_drawing_changes"]
     n["dialcond.substrates"] = dc["substrates"]
     n["dialcond.share"] = dc["share_changed"]
+    # Every budget, and each cell's own verdict, because the section states which budgets separate
+    # and had them backwards: at fifteen neither the pooled nor the conditional effect excludes
+    # zero, and at thirty both do. Printing the verdict from the artifact is what stops a sentence
+    # asserting the opposite of the cell beside it.
+    for k in sorted(dc["by_budget"], key=int):
+        for tag in ("all", "changed_only"):
+            cell = dc["by_budget"][k].get(tag)
+            if not cell:
+                continue
+            key = ("pooled" if tag == "all" else "conditional") + ("" if k == "15" else k)
+            n[f"dialcond.{key}.sep"] = bool(cell.get("excludes_zero"))
+    _sepk = sorted(int(k) for k, v in dc["by_budget"].items()
+                   if v.get("all", {}).get("excludes_zero") and
+                   v.get("changed_only", {}).get("excludes_zero"))
+    n["dialcond.bothsepat"] = _sepk[0] if _sepk else 0
+    n["dialcond.nbudgets"] = len(dc["by_budget"])
     for k in ("15",):
         for tag in ("all", "changed_only"):
             cell = dc["by_budget"][k][tag]
@@ -518,6 +534,25 @@ def build():
     # The aggregation rule, swept. The manuscript named the violated independence assumption and
     # left it, on the ground that the released pools carry the aggregate and not its parts.
     agg = art("aggregation_ablation.json")
+    # The extremum of each swept rule, and the budgets at which it separates, on both populations.
+    # A sentence saying "up to X" claims the maximum over a series; naming a member of that series
+    # was the defect round 14 found twice, and generating the extremum here means the sentence can
+    # be held against it instead of against whichever member was handy.
+    _aggval = art("aggregation_ablation_validation.json")
+    for _tag, _blob in (("cmp", agg), ("val", _aggval)):
+        for _rule in ("hybrid", "max"):
+            _rows = {int(k): v for k, v in _blob["by_rule"][_rule]["minus_noisy_or"].items()
+                     if str(k).isdigit()}
+            _best = max(_rows.items(), key=lambda kv: kv[1]["difference"])
+            n[f"agg.{_tag}.{_rule}.maxk"] = _best[0]
+            n[f"agg.{_tag}.{_rule}.max"] = _best[1]["difference"]
+            n[f"agg.{_tag}.{_rule}.max.lo"] = _best[1]["ci95"][0]
+            n[f"agg.{_tag}.{_rule}.max.hi"] = _best[1]["ci95"][1]
+            _sep = sorted(k for k, v in _rows.items() if v.get("excludes_zero"))
+            n[f"agg.{_tag}.{_rule}.sepfrom"] = min(_sep) if _sep else 0
+            n[f"agg.{_tag}.{_rule}.septo"] = max(_sep) if _sep else 0
+            n[f"agg.{_tag}.{_rule}.nsep"] = len(_sep)
+
     # The blend's weights, read from the implementation rather than typed, because the paper now
     # prints the rule as an equation and recommends it to a deployer.
     import importlib.util as _ilu

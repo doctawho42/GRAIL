@@ -20,6 +20,9 @@
 \renewcommand{\thepage}{S\arabic{page}}
 \renewcommand{\thesection}{S\arabic{section}}
 \renewcommand{\thetable}{S\arabic{table}}
+% The one equation here is numbered S1 rather than 1, because the manuscript's own
+% Equation 1 is the rule this one replaces, and two pages apart the same string named both.
+\renewcommand{\theequation}{S\arabic{equation}}
 \renewcommand{\thefigure}{S\arabic{figure}}
 
 \author{Nikita L. Polomoshnov}
@@ -830,8 +833,10 @@ Conditioned on the substrates it changes, and on the same pools, the exhaustive 
 $\numDialcondConditional$ of micro recall at a budget of 15,
 $[\numDialcondConditionalLo, \numDialcondConditionalHi]$, against $\numDialcondPooled$
 $[\numDialcondPooledLo, \numDialcondPooledHi]$ pooled. The conditional effect is the larger by
-nearly three times and separates from zero, as the pooled one also does; at the other budgets it
-is larger in magnitude and does not separate, on a population a quarter the size.
+nearly three times, on a population a quarter the size. Neither separates from zero at this budget:
+both intervals close on zero rather than near it, and the artifact records that verdict itself
+rather than leaving it to be read off a bound that rounds to nothing. Of the \numDialcondNbudgetsWord{} budgets swept, the two
+effects separate together at \numDialcondBothsepat{} and at no other.
 
 Both figures belong in the record and they answer different questions. A reader deciding whether
 the drawing moved a verdict wants the pooled one. A chemist submitting one substrate wants the
@@ -1024,9 +1029,16 @@ $\numAggregationMaxThreeZero$ $[\numAggregationMaxThreeZeroLo,
   \label{eq:blend}
 \end{equation}
 with $R(c)$ and $p_r$ as in Equation~\ref{MS-eq:noisyor} and the two weights fixed in the
-implementation rather than fitted here. It gains at every budget through ten, by as much as $+\numAggregationHybridThree$
-$[+\numAggregationHybridThreeLo, +\numAggregationHybridThreeHi]$, and is indistinguishable from
-the deployed rule at every wider one. The mean is the one rule that is worse at the wide budgets,
+implementation rather than fitted here. It gains at every budget through ten, by at most
+$+\numAggCmpHybridMax$ $[+\numAggCmpHybridMaxLo, +\numAggCmpHybridMaxHi]$ at a budget of
+\numAggCmpHybridMaxkWord{}, and is indistinguishable from the deployed rule at every wider one.
+That last clause is a statement about this population and not about the rule. On the validation
+draw the same blend separates at every budget from \numAggValHybridSepfromWord{} to
+\numAggValHybridSepto{}, reaching $+\numAggValHybridMax$ $[+\numAggValHybridMaxLo,
++\numAggValHybridMaxHi]$ at \numAggValHybridMaxkWord{}, so it is distinguishable there at two of
+the budgets at which this work claims a lead. The two populations disagree about the deployed rule,
+which is the reason Section~\ref{MS-sec:limitations} recommends the blend to a deployer rather than
+reporting it as a settled improvement. The mean is the one rule that is worse at the wide budgets,
 by $\numAggregationMeanThreeZero$ $[\numAggregationMeanThreeZeroLo,
 \numAggregationMeanThreeZeroHi]$ at thirty, with an interval excluding zero at every budget from
 fifteen upward.

@@ -77,14 +77,17 @@ def metatox_291():
     for shard in read_from:
         blob = json.loads(Path(shard).read_text())
         subs.extend(s for s in blob['pools'] if blob['references'].get(s))
-    return sorted(set(subs))
+    # The shard list is returned rather than left in this frame, so the artifact records the files
+    # this run opened instead of a re-glob at stamping time.
+    return sorted(set(subs)), read_from
 
 
 def main():
     seen = trained_keys()
     print(f'{len(seen)} substrates seen in training or validation\n')
+    metatox_subs, pool_shards = metatox_291()
     sets = {'GLORYx external set': gloryx(), 'shared 150-substrate subset': shared_subset(),
-            'MetaTox 291-substrate comparison set': metatox_291()}
+            'MetaTox 291-substrate comparison set': metatox_subs}
     out = {}
     for name, subs in sets.items():
         if not subs:
@@ -98,7 +101,7 @@ def main():
     out['provenance'] = stamp(__file__)
     # Which pools this run actually read, so an artifact written against a pool that has
     # since gone can be told from a current one.
-    out['inputs'] = record_inputs(read_from)
+    out['inputs'] = record_inputs(pool_shards)
     (R/'results/external_overlap_audit.json').write_text(json.dumps(out, indent=1))
     print('\nwrote results/external_overlap_audit.json')
 

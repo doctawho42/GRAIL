@@ -64,12 +64,29 @@ def main() -> int:
             continue
 
         for label, row in rows.items():
-            declared = set(row.get("wall_clock_dependent") or [])
-            if not declared:
-                bad.append(f"{name} [{label}]: declares no wall-clock-dependent fields. Its "
-                           f"producer applies a per-substrate deadline, so it has some; if the "
-                           f"producer has changed, re-run it rather than deleting the claim.")
+            # A row read from a frozen prediction file never invokes the tool, so no deadline
+            # applies and nothing in it moves. That is a property the row already records -- it
+            # names its frozen source and carries no timing -- so it is read rather than assumed,
+            # and such a row is required to declare an empty list rather than omit the key: an
+            # absent key cannot be told from a key nobody thought about.
+            frozen = str(row.get("source", "")).startswith("results/") and "seconds" not in row
+            if frozen:
+                # Determinism is verified from the row rather than taken on trust, and the two
+                # halves of it are checked: it names a frozen prediction file as its source and it
+                # records no elapsed time, so no deadline ran and nothing in it can move. A row
+                # that started invoking the tool would lose both properties and fall through to
+                # the branch below, which demands the declaration.
+                if row.get("wall_clock_dependent") not in (None, []):
+                    bad.append(f"{name} [{label}]: reads a frozen file yet declares "
+                               f"{row['wall_clock_dependent']} as load-dependent")
+                checked += 1
                 continue
+            if "wall_clock_dependent" not in row:
+                bad.append(f"{name} [{label}]: ran the tool under a deadline and does not say "
+                           f"which of its fields a re-run may move; expected {sorted(fields)}. "
+                           f"Re-run the producer rather than writing the key by hand.")
+                continue
+            declared = set(row["wall_clock_dependent"])
             if declared != fields:
                 bad.append(f"{name} [{label}]: declares {sorted(declared)}, expected "
                            f"{sorted(fields)}")
