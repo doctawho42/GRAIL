@@ -33,7 +33,7 @@ for _p in (str(ROOT), str(ROOT / "scripts"), str(HERE)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from _provenance import stamp  # noqa: E402
+from _provenance import record_inputs, stamp  # noqa: E402
 
 from _rrf import rrf_order  # noqa: E402
 from bank_without_selection import _dedup, _load  # noqa: E402
@@ -58,8 +58,9 @@ def main() -> int:
     ap.add_argument("--k", type=int, default=15)
     args = ap.parse_args()
 
-    pools, refs = {}, {}
+    pools, refs, pool_files = {}, {}, []
     for f in sorted(glob.glob(args.pools)) or [args.pools]:
+        pool_files.append(f)
         d = json.loads(Path(f).read_text())
         pools.update(d["pools"]); refs.update(d["references"])
 
@@ -138,7 +139,12 @@ def main() -> int:
 
     verdict = "supported" if (primary["gap"] >= THRESHOLD and primary["excludes_zero"]) \
         else "failed"
-    out = {"provenance": stamp(__file__), "hypothesis": "H12",
+    out = {"provenance": stamp(__file__),
+           # Which pool shards this verdict was actually read from, so an artifact written
+           # against a pool that has since gone -- a planted one, a renamed one -- can be told
+           # from a current one.
+           "inputs": record_inputs(pool_files),
+           "hypothesis": "H12",
            "registered_threshold": THRESHOLD, "k": kk,
            "population": {"n": len(subs), "n_references": N,
                           "source": "the 291 of results/four_method_291.json"},

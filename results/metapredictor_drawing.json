@@ -2,10 +2,48 @@
  "provenance": {
   "script": "metapredictor_drawing.py",
   "script_path": "scripts/typed_edit/metapredictor_drawing.py",
-  "source_sha256": "ddd5e9236751c55396ae315612558b544acffc2340fc255743070f024a753b98",
-  "git_commit": "bddec01d653106e1829737fc83d7b3278d24db9c",
+  "source_sha256": "9807211fa7633e64cb13a5c8a1b88d39a226f6f89a87c79b06ba2dd9e28eba3f",
+  "git_commit": "895718aef04ed1892500a49e3c3d29139474bd3e",
   "git_dirty": true
  },
+ "inputs": [
+  {
+   "path": "results/widepools_implicit/w0.json",
+   "exists": true,
+   "sha256_16": "6a90b7bcc2b82562",
+   "bytes": 10103608
+  },
+  {
+   "path": "results/widepools_implicit/w1.json",
+   "exists": true,
+   "sha256_16": "dcb34d6ca5a7c690",
+   "bytes": 9923282
+  },
+  {
+   "path": "results/widepools_implicit/w2.json",
+   "exists": true,
+   "sha256_16": "2f7440497f05cd4a",
+   "bytes": 5621821
+  },
+  {
+   "path": "results/widepools_implicit/w3.json",
+   "exists": true,
+   "sha256_16": "c194bbb0bd7ec69e",
+   "bytes": 8229360
+  },
+  {
+   "path": "results/widepools_implicit/w4.json",
+   "exists": true,
+   "sha256_16": "504576d634e4bdb8",
+   "bytes": 5126437
+  },
+  {
+   "path": "results/widepools_implicit/w5.json",
+   "exists": true,
+   "sha256_16": "7f4c7cee307a726c",
+   "bytes": 3561735
+  }
+ ],
  "difference": "MetaPredictor's recall with the substrate as a chemist draws it, minus its recall with the substrate as the corpus stores it",
  "design": "only the substrates whose two drawings are different molecules were re-run; the rest keep their frozen predictions and contribute exactly zero to the paired difference, which is why re-running them would add nothing",
  "substrates_re_run": 79,
@@ -28,61 +66,61 @@
    "by_budget": {
     "5": {
      "recall_as_stored": 0.3549,
-     "recall_as_drawn": 0.3594,
-     "difference": 0.0045,
+     "recall_as_drawn": 0.3579,
+     "difference": 0.003,
      "ci95": [
-      -0.0093,
-      0.0191
+      -0.0113,
+      0.0179
      ],
      "excludes_zero": false
     },
     "10": {
      "recall_as_stored": 0.4707,
-     "recall_as_drawn": 0.4827,
-     "difference": 0.012,
+     "recall_as_drawn": 0.4812,
+     "difference": 0.0105,
      "ci95": [
-      -0.0016,
-      0.0264
+      -0.0032,
+      0.0251
      ],
      "excludes_zero": false
     },
     "15": {
      "recall_as_stored": 0.4797,
-     "recall_as_drawn": 0.4887,
-     "difference": 0.009,
+     "recall_as_drawn": 0.4872,
+     "difference": 0.0075,
      "ci95": [
-      -0.0031,
-      0.0223
+      -0.0049,
+      0.0211
      ],
      "excludes_zero": false
     },
     "20": {
      "recall_as_stored": 0.4797,
-     "recall_as_drawn": 0.4887,
-     "difference": 0.009,
+     "recall_as_drawn": 0.4872,
+     "difference": 0.0075,
      "ci95": [
-      -0.0031,
-      0.0223
+      -0.0049,
+      0.0211
      ],
      "excludes_zero": false
     },
     "30": {
      "recall_as_stored": 0.4797,
-     "recall_as_drawn": 0.4887,
-     "difference": 0.009,
+     "recall_as_drawn": 0.4872,
+     "difference": 0.0075,
      "ci95": [
-      -0.0031,
-      0.0223
+      -0.0049,
+      0.0211
      ],
      "excludes_zero": false
     },
     "50": {
      "recall_as_stored": 0.4797,
-     "recall_as_drawn": 0.4887,
-     "difference": 0.009,
+     "recall_as_drawn": 0.4872,
+     "difference": 0.0075,
      "ci95": [
-      -0.0031,
-      0.0223
+      -0.0049,
+      0.0211
      ],
      "excludes_zero": false
     }

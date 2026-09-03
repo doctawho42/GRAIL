@@ -32,7 +32,7 @@ for _p in (str(ROOT), str(ROOT / "scripts"), str(HERE)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from _provenance import stamp  # noqa: E402
+from _provenance import record_inputs, stamp  # noqa: E402
 
 from _rrf import rrf_order  # noqa: E402
 
@@ -90,8 +90,9 @@ def main() -> int:
     # the references, read from the frozen pools rather than recomputed, so the example is scored
     # against the same annotation the comparison table is scored against
     import glob
+    pool_shards = sorted(glob.glob(str(ROOT / "results/widepools_implicit/w*.json")))
     refs = {}
-    for f in sorted(glob.glob(str(ROOT / "results/widepools_implicit/w*.json"))):
+    for f in pool_shards:
         refs.update(json.loads(Path(f).read_text())["references"])
     reference_keys = set(refs.get(corpus_key, []))
     if not reference_keys:
@@ -141,6 +142,9 @@ def main() -> int:
 
     rep = {
         "provenance": stamp(__file__),
+        # Which pools the annotation in this example came from, so a run scored against a pool
+        # that has since gone -- a planted one, a renamed one -- can be told from a current one.
+        "inputs": record_inputs(pool_shards),
         "substrate": s,
         "corpus_substrate": corpus_key,
         "presentation": args.present,

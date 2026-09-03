@@ -2,10 +2,48 @@
  "provenance": {
   "script": "case_study.py",
   "script_path": "scripts/typed_edit/case_study.py",
-  "source_sha256": "38de672a31b2e3f2e565f39044caa7111e5534bf660a0b9977f7ce777af7cadb",
-  "git_commit": "999d6858f292e54e1e9e074212cf3e1c0be530d2",
+  "source_sha256": "4499d5a659f17043f18e9292d95f1bc19c9c5602fccf2e73a1867c46733852a6",
+  "git_commit": "85f8a68ee0d74ba5db9971ecea1ce368449bd2cb",
   "git_dirty": true
  },
+ "inputs": [
+  {
+   "path": "results/widepools_implicit/w0.json",
+   "exists": true,
+   "sha256_16": "6a90b7bcc2b82562",
+   "bytes": 10103608
+  },
+  {
+   "path": "results/widepools_implicit/w1.json",
+   "exists": true,
+   "sha256_16": "dcb34d6ca5a7c690",
+   "bytes": 9923282
+  },
+  {
+   "path": "results/widepools_implicit/w2.json",
+   "exists": true,
+   "sha256_16": "2f7440497f05cd4a",
+   "bytes": 5621821
+  },
+  {
+   "path": "results/widepools_implicit/w3.json",
+   "exists": true,
+   "sha256_16": "c194bbb0bd7ec69e",
+   "bytes": 8229360
+  },
+  {
+   "path": "results/widepools_implicit/w4.json",
+   "exists": true,
+   "sha256_16": "504576d634e4bdb8",
+   "bytes": 5126437
+  },
+  {
+   "path": "results/widepools_implicit/w5.json",
+   "exists": true,
+   "sha256_16": "7f4c7cee307a726c",
+   "bytes": 3561735
+  }
+ ],
  "substrate": "N=c1ccn(C2OC(CO)C(O)C2(F)F)c(O)n1",
  "corpus_substrate": "N=c1ccn(C2OC(CO)C(O)C2(F)F)c(O)n1",
  "presentation": "stored",
@@ -20,7 +58,7 @@
   "generator_checkpoint": "artifacts/full5000_implicit/checkpoints/generator.pt",
   "filter_checkpoint": "artifacts/full5000_implicit/checkpoints/filter.pt"
  },
- "generator_seconds": 11.33,
+ "generator_seconds": 6.12,
  "n_candidates": 18,
  "n_references": 4,
  "reference_ranks": [

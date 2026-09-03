@@ -32,7 +32,7 @@ for _p in (str(ROOT), str(ROOT / "scripts"), str(HERE)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from _provenance import stamp  # noqa: E402
+from _provenance import record_inputs, stamp  # noqa: E402
 
 CAP = 100
 BUDGETS = (5, 15, 30)
@@ -105,10 +105,13 @@ def main() -> int:
 
     refs_by_smiles = json.loads((ROOT / "results/test_references.json").read_text())
 
+    read_from = []
+
     def load(spec):
         pools, refs = {}, {}
         for f in sorted(glob.glob(str(ROOT / spec))) or [str(ROOT / spec)]:
             blob = json.loads(Path(f).read_text())
+            read_from.append(f)
             pools.update(blob["pools"]); refs.update(blob["references"])
         return pools, refs
 
@@ -190,6 +193,9 @@ def main() -> int:
     total = sum(v["references"] for v in table.values())
     report = {
         "provenance": stamp(__file__),
+        # Which pool shards this split was actually read from, so a table written against pools
+        # that have since been rebuilt or planted can be told from one built on what is on disk.
+        "inputs": record_inputs(read_from),
         "population": {"substrates": len(subs), "references_classified": total,
                        "references_whose_structure_could_not_be_recovered": unresolved,
                        "note": "the comparison set, the population every other comparison uses"},

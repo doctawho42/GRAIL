@@ -38,7 +38,7 @@ for _p in (str(ROOT), str(ROOT / "scripts"), str(HERE)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from _provenance import stamp  # noqa: E402
+from _provenance import record_inputs, stamp  # noqa: E402
 
 from _rrf import rrf_order  # noqa: E402
 
@@ -65,8 +65,9 @@ def main() -> int:
 
     from coverage_gap_types import pair_to_type
 
-    pools, refs = {}, {}
+    pools, refs, pool_files = {}, {}, []
     for f in sorted(glob.glob(args.pools)):
+        pool_files.append(f)
         d = json.loads(Path(f).read_text())
         pools.update(d["pools"]); refs.update(d["references"])
     subs = sorted(s for s in pools if refs.get(s))
@@ -168,6 +169,10 @@ def main() -> int:
                (("type", "random_matched"), ("formula", "random_matched"),
                 ("type", "formula"), ("both", "type"))}
     rep = {"provenance": stamp(__file__),
+           # Which pool shards this oracle was actually read from, so an artifact written
+           # against a pool that has since been rebuilt or renamed can be told from a current
+           # one; a comparison of modification times cannot answer that.
+           "inputs": record_inputs(pool_files),
            "population": {"n": len(subs), "n_references": N,
                           "source": "the 291 of results/four_method_291.json"},
            "aggregation": "micro, ratio of sums", "k": kk, "cap": args.cap,

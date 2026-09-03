@@ -37,7 +37,7 @@ for _p in (str(ROOT), str(ROOT / "scripts")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from _provenance import stamp  # noqa: E402
+from _provenance import record_inputs, stamp  # noqa: E402
 
 from _rrf import rrf_order  # noqa: E402  (the one implementation of the registered rule)
 
@@ -104,7 +104,8 @@ def main() -> int:
     args = ap.parse_args()
 
     pools, refs = {}, {}
-    for p in sorted(glob.glob(args.pools)):
+    shards = sorted(glob.glob(args.pools))
+    for p in shards:
         d = json.loads(Path(p).read_text())
         pools.update(d["pools"]); refs.update(d["references"])
     subs = sorted(s for s in pools if refs.get(s))
@@ -155,6 +156,10 @@ def main() -> int:
             and abs(table[str(b)]["metatox"] - four[str(b)]) > 1e-9]
 
     rep = {"provenance": stamp(__file__),
+           # Which pool shards this decoding was actually read from, so a table written against a
+           # pool that has since been rebuilt or replaced can be told from one written against the
+           # shards on disk now. The glob is what the run walked, not a path repeated at write time.
+           "inputs": record_inputs(shards),
            "population": {"n": len(subs), "source": "the 291 of results/four_method_291.json"},
            "aggregation": "micro, ratio of sums",
            "status": "UPPER BOUND. The round-robin rule was chosen after reading the oracle "

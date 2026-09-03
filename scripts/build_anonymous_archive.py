@@ -84,6 +84,7 @@ ALLOW = [
     "scripts/check_coverage.py",
     "scripts/check_page_limit.py",
     "scripts/verify_citations.py",
+    "scripts/check_ai_statement.py",
     "scripts/gates/*.py",
 ]
 

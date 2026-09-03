@@ -30,7 +30,7 @@ for _p in (str(ROOT), str(ROOT / "scripts"), str(HERE)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from _provenance import stamp  # noqa: E402
+from _provenance import record_inputs, stamp  # noqa: E402
 
 from _rrf import rrf_order  # noqa: E402
 
@@ -56,10 +56,14 @@ def main() -> int:
     from bank_without_selection import _dedup, _key as tautkey
 
     pools, refs = {}, {}
+    read = []
     for f in sorted(glob.glob(str(ROOT / "results/widepools_implicit/w*.json"))):
+        read.append(f)
         d = json.loads(Path(f).read_text())
         pools.update(d["pools"]); refs.update(d["references"])
-    small = json.loads((ROOT / "results/widepools_k30/all.json").read_text())["pools"]
+    small_path = ROOT / "results/widepools_k30/all.json"
+    read.append(small_path)
+    small = json.loads(small_path.read_text())["pools"]
     subs = sorted(s for s in pools if refs.get(s) and s in small)
     parent = {s: tautkey(s) for s in subs}
 
@@ -72,6 +76,7 @@ def main() -> int:
         arms.setdefault("GRAIL exhaustive", {})[s] = ranked(pools[s], s)
         arms.setdefault("GRAIL interactive", {})[s] = ranked(small[s], s)
     for name, (rel, key) in COMPARATORS.items():
+        read.append(ROOT / rel)
         blob = json.loads((ROOT / rel).read_text())
         preds = blob[key] if key else blob
         for s in subs:
@@ -123,6 +128,10 @@ def main() -> int:
         out[a] = row
 
     rep = {"provenance": stamp(__file__),
+           # Which pools and which comparator prediction files this effect was measured over, so
+           # an artifact written against a shard that has since been replaced or has gone missing
+           # can be told from one written against the files on disk now.
+           "inputs": record_inputs(read),
            "population": {"n": len(subs), "n_references": N, "source": "the comparison set"},
            "aggregation": "micro, ratio of sums", "cap": CAP, "n_boot": N_BOOT, "seed": SEED,
            "convention": ("a prediction whose tautomer key equals the substrate's is removed "

@@ -2,10 +2,48 @@
  "provenance": {
   "script": "biotransformer_arm.py",
   "script_path": "scripts/typed_edit/biotransformer_arm.py",
-  "source_sha256": "2b33ac8372ae464a358a9b79c9098d2e0f22ca59a1469df0828ca6905be7eda0",
-  "git_commit": "999d6858f292e54e1e9e074212cf3e1c0be530d2",
+  "source_sha256": "e774f4ddf5d2e21048afd19985e383454460faeff47a34b437b36bca8e9bbbec",
+  "git_commit": "85f8a68ee0d74ba5db9971ecea1ce368449bd2cb",
   "git_dirty": true
  },
+ "inputs": [
+  {
+   "path": "results/widepools_implicit/w0.json",
+   "exists": true,
+   "sha256_16": "6a90b7bcc2b82562",
+   "bytes": 10103608
+  },
+  {
+   "path": "results/widepools_implicit/w1.json",
+   "exists": true,
+   "sha256_16": "dcb34d6ca5a7c690",
+   "bytes": 9923282
+  },
+  {
+   "path": "results/widepools_implicit/w2.json",
+   "exists": true,
+   "sha256_16": "2f7440497f05cd4a",
+   "bytes": 5621821
+  },
+  {
+   "path": "results/widepools_implicit/w3.json",
+   "exists": true,
+   "sha256_16": "c194bbb0bd7ec69e",
+   "bytes": 8229360
+  },
+  {
+   "path": "results/widepools_implicit/w4.json",
+   "exists": true,
+   "sha256_16": "504576d634e4bdb8",
+   "bytes": 5126437
+  },
+  {
+   "path": "results/widepools_implicit/w5.json",
+   "exists": true,
+   "sha256_16": "7f4c7cee307a726c",
+   "bytes": 3561735
+  }
+ ],
  "population": {
   "n_substrates": 291,
   "n_references": 665

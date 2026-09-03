@@ -36,7 +36,7 @@ for _p in (str(ROOT), str(ROOT / "scripts"), str(HERE)):
         sys.path.insert(0, _p)
 
 from _pools import assert_released  # noqa: E402
-from _provenance import stamp  # noqa: E402
+from _provenance import record_inputs, stamp  # noqa: E402
 
 from _rrf import rrf_order  # noqa: E402
 
@@ -61,6 +61,12 @@ ARMS = {
 }
 
 
+# Every pool shard any call to `load` opened, in the order it was opened. The exhaustive arm's
+# standardised dialect is assembled from whichever shards happen to be on disk, so which files a
+# run read is a fact about that run and cannot be recovered by globbing afterwards.
+READ_SHARDS: list = []
+
+
 def load(pattern):
     """One or several glob patterns, merged. A substrate present in more than one is taken once.
 
@@ -74,6 +80,7 @@ def load(pattern):
     for spec in patterns:
         for path in sorted(glob.glob(str(ROOT / spec))):
             sources.append(path)
+            READ_SHARDS.append(path)
             blob = json.loads(Path(path).read_text())
             for substrate, pool in blob["pools"].items():
                 pools.setdefault(substrate, pool)
@@ -241,7 +248,13 @@ def main() -> int:
         print("null control: every difference is exactly zero and no verdict moves")
         return 0
 
-    rep = {"provenance": stamp(__file__), "n": len(subs), "budgets": list(KS),
+    # Which pool shards this sweep was actually built from, so an artifact written against a set
+    # of shards that has since changed -- a finer re-run added, a coarse one replaced -- can be
+    # told from one built from what is on disk now. The stamp says which script wrote this; only
+    # this says what it was pointed at.
+    rep = {"provenance": stamp(__file__),
+           "inputs": record_inputs(dict.fromkeys(READ_SHARDS)),
+           "n": len(subs), "budgets": list(KS),
            "match": "inchikey_tautomer", "cap": CAP, "n_boot": N_BOOT, "seed": SEED,
            "effect_on_each_arm": effect,
            "coverage_ceiling": ceiling,

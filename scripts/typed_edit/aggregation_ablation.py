@@ -36,7 +36,7 @@ for _p in (str(ROOT), str(ROOT / "scripts"), str(HERE)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from _provenance import stamp  # noqa: E402
+from _provenance import record_inputs, stamp  # noqa: E402
 
 KS = (1, 3, 5, 8, 10, 15, 20, 30, 50)
 N_BOOT, SEED = 10000, 0
@@ -80,12 +80,14 @@ RULES = ("noisy_or", "max", "mean", "hybrid")
 
 
 def wide_pools(population="comparison"):
+    """The pools, the references, and the files they were read from, in that order."""
     spec = POPULATIONS[population]["pools"]
     pools, refs = {}, {}
-    for f in sorted(glob.glob(str(ROOT / spec))) or [str(ROOT / spec)]:
+    files = sorted(glob.glob(str(ROOT / spec))) or [str(ROOT / spec)]
+    for f in files:
         blob = json.loads(Path(f).read_text())
         pools.update(blob["pools"]); refs.update(blob["references"])
-    return pools, refs
+    return pools, refs, files
 
 
 def collect(shard: int, shards: int, out: Path, population="comparison") -> int:
@@ -99,7 +101,7 @@ def collect(shard: int, shards: int, out: Path, population="comparison") -> int:
     from grail_metabolism.model.generator import _normalize_smiles_cached
     from grail_metabolism.workflows.factory import build_generator
 
-    pools, refs = wide_pools(population)
+    pools, refs, _ = wide_pools(population)
     subs = sorted(s for s in pools if refs.get(s))
     mine = subs[shard::shards]
     generator = _load(ROOT / "artifacts/full5000_implicit/checkpoints/generator.pt",
@@ -167,7 +169,7 @@ def merge(out: str, population="comparison") -> int:
               f"collection would silently narrow the population", file=sys.stderr)
         return 1
 
-    pools, refs = wide_pools(population)
+    pools, refs, pool_files = wide_pools(population)
     subs = sorted(s for s in pools if refs.get(s))
     missing = [s for s in subs if s not in rows]
     if missing:
@@ -264,6 +266,11 @@ def merge(out: str, population="comparison") -> int:
 
     report = {
         "provenance": stamp(__file__),
+        # The pools whose filter scores this join used and the shards whose per-template scores it
+        # ranked, named and digested. A stamp says which script ran; it cannot say what the script
+        # was pointed at, so an arm built from a pool that has since been replaced or has gone
+        # would otherwise read as current.
+        "inputs": record_inputs([*pool_files, *shard_files]),
         "question": ("whether the deployed noisy-or aggregation, whose independence assumption "
                      "this bank violates by construction, changes the comparison against the "
                      "alternatives the implementation offers"),

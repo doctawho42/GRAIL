@@ -649,9 +649,9 @@
  "n_pinned": 106,
  "n_pinned_stale": 0,
  "sweep": {
-  "unstamped": 281,
+  "unstamped": 282,
   "producer_changed": 38,
-  "current": 47,
+  "current": 48,
   "producer_unknown": 26,
   "cosmetic_only": 8
  },
@@ -1500,6 +1500,11 @@
   },
   {
    "artifact": "results/metapredictor_natural_drawing_preds.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/metapredictor_wide_beam_preds.json",
    "status": "unstamped",
    "detail": "no provenance block: nothing records which code wrote this"
   },

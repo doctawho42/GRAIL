@@ -44,7 +44,7 @@ for _p in (str(ROOT), str(ROOT / "scripts"), str(HERE)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from _provenance import stamp  # noqa: E402
+from _provenance import record_inputs, stamp  # noqa: E402
 
 KS = (5, 10, 15, 30, 50)
 N_BOOT, SEED = 10000, 0
@@ -84,6 +84,11 @@ def main() -> int:
     from _rrf import rrf_order
     from bank_without_selection import _dedup, _key as tautkey
 
+    # Every file this run reads, collected where it is opened. A stamp says which code wrote the
+    # artifact; it cannot say which pools the code was pointed at, and a pool that has since been
+    # rebuilt, renamed or planted would leave the numbers here reading as current. Recorded so the
+    # artifact can be checked against the files that produced it.
+    read_paths = [TRUTH, METATOX, DEPLOYED_COMPARISON]
     truth = json.loads(TRUTH.read_text())
     metatox = json.loads(METATOX.read_text())["predictions"]
     deployed_rows = dict(json.loads(DEPLOYED_COMPARISON.read_text())["pools"])
@@ -92,6 +97,7 @@ def main() -> int:
     # not, one of them was scored by a different model and neither population can be trusted.
     disagree = 0
     for f in sorted(glob.glob(str(DEPLOYED_FULLTEST / "w*.json"))):
+        read_paths.append(Path(f))
         for sub, pool in json.loads(Path(f).read_text())["pools"].items():
             if sub in deployed_rows:
                 a = [(c["smiles"], round(c["generator"], 9), round(c["filter"], 9))
@@ -111,6 +117,7 @@ def main() -> int:
     exhaustive_rows, exh_disagree = {}, 0
     for pattern in (EXHAUSTIVE_COMPARISON / "w*.json", EXHAUSTIVE_FULLTEST / "w*.json"):
         for f in sorted(glob.glob(str(pattern))):
+            read_paths.append(Path(f))
             for sub, pool in json.loads(Path(f).read_text())["pools"].items():
                 if sub in exhaustive_rows:
                     a = [(c["smiles"], round(c["generator"], 9), round(c["filter"], 9))
@@ -125,8 +132,11 @@ def main() -> int:
               f"exhaustive arm; they are not the same configuration", file=sys.stderr)
         return 1
 
-    others = {name: json.loads(path.read_text()) for name, path in WHOLE_TEST.items()
-              if path.exists()}
+    others = {}
+    for name, path in WHOLE_TEST.items():
+        if path.exists():
+            read_paths.append(path)
+            others[name] = json.loads(path.read_text())
     # A comparator whose file is present but covers a fraction of the population would be read as
     # answering nothing on the rest, which is a recall of its own making. It is dropped with a
     # line rather than scored, and the artifact records which arms reached this population.
@@ -274,6 +284,9 @@ def main() -> int:
 
     report = {
         "provenance": stamp(__file__),
+        # The pools and prediction files this run was actually pointed at, so an artifact written
+        # against a pool that has since been rebuilt or removed can be told from a current one.
+        "inputs": record_inputs(read_paths),
         "what_defines_the_comparison_set": (
             "the intersection of the substrates each method has an entry for; the binding "
             "constraint is the 291-substrate submission list sent to the web-service comparator, "

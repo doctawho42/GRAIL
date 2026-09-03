@@ -34,7 +34,7 @@ for _p in (str(ROOT), str(ROOT / "scripts"), str(HERE)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from _provenance import stamp  # noqa: E402
+from _provenance import record_inputs, stamp  # noqa: E402
 
 from _rrf import rrf_order  # noqa: E402
 
@@ -62,11 +62,12 @@ def _perm(substrate, items):
 
 
 def load(spec):
-    pools, refs = {}, {}
+    pools, refs, read = {}, {}, []
     for f in sorted(glob.glob(spec)) or [spec]:
         d = json.loads(Path(f).read_text())
         pools.update(d["pools"]); refs.update(d["references"])
-    return pools, refs
+        read.append(f)
+    return pools, refs, read
 
 
 def run(pools, refs, subs, label):
@@ -121,18 +122,24 @@ def main() -> int:
     args = ap.parse_args()
 
     out = {}
+    read_paths = []
     for label, spec in (("comparison set", "results/widepools_implicit/w*.json"),
                         ("validation draw", "results/val_pools.json")):
         path = spec if "*" in spec else str(ROOT / spec)
         if not (glob.glob(path) or Path(path).exists()):
             print(f"  {label}: no pool at {spec}, skipped", file=sys.stderr)
             continue
-        pools, refs = load(path)
+        pools, refs, read = load(path)
+        read_paths.extend(read)
         subs = sorted(s for s in pools if refs.get(s))
         print(f"  {label}: {len(subs)} substrates", file=sys.stderr, flush=True)
         out[label] = run(pools, refs, subs, label)
 
-    rep = {"provenance": stamp(__file__), "aggregation": "micro, ratio of sums",
+    rep = {"provenance": stamp(__file__),
+           # Which pool shards these orderings were actually read from, so an artifact built on a
+           # pool that has since been replaced or renamed can be told from a current one.
+           "inputs": record_inputs(read_paths),
+           "aggregation": "micro, ratio of sums",
            "cap": CAP, "n_boot": N_BOOT, "seed": SEED, "arms": list(ARMS),
            "note": ("every arm re-ranks one pool built by the deployed configuration, so pool, "
                     "matching and budget are fixed and only the order varies; the pool cap is "

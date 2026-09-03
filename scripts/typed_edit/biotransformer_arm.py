@@ -40,7 +40,7 @@ for _p in (str(ROOT), str(ROOT / "scripts"), str(HERE)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from _provenance import stamp  # noqa: E402
+from _provenance import record_inputs, stamp  # noqa: E402
 
 KS = (1, 3, 5, 8, 10, 15, 20, 30, 50)
 CAP = 100
@@ -100,7 +100,8 @@ def main() -> int:
     from bank_without_selection import _dedup, _key as tautkey
 
     pools, refs = {}, {}
-    for f in sorted(glob.glob(str(ROOT / "results/widepools_implicit/w*.json"))):
+    pool_files = sorted(glob.glob(str(ROOT / "results/widepools_implicit/w*.json")))
+    for f in pool_files:
         blob = json.loads(Path(f).read_text())
         pools.update(blob["pools"]); refs.update(blob["references"])
     subs = sorted(s for s in pools if refs.get(s))
@@ -200,6 +201,9 @@ def main() -> int:
     best = max(settings, key=lambda lab: settings[lab]["recall"]["30"])
     report = {
         "provenance": stamp(__file__),
+        # The shards this arm was actually scored against, so a comparator column written on a
+        # pool set that has since been rebuilt or removed can be told from a current one.
+        "inputs": record_inputs(pool_files),
         "population": {"n_substrates": len(subs), "n_references": int(U.sum())},
         "version": "BioTransformer 3.0.0, the distribution whose templates this bank carries",
         "runtime_note": ("the bundled JNI InChI artefact is cached for MAC-X86_64 and this "

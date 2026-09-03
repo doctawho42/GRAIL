@@ -25,7 +25,7 @@ for _p in (str(ROOT), str(ROOT / "scripts"), str(HERE)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from _provenance import stamp  # noqa: E402
+from _provenance import record_inputs, stamp  # noqa: E402
 
 from _rrf import rrf_order  # noqa: E402
 
@@ -54,8 +54,9 @@ COMPARATORS = {
 
 
 def load(spec):
-    pools, refs, tk, ck = {}, {}, set(), {}
+    pools, refs, tk, ck, read = {}, {}, set(), {}, []
     for f in sorted(glob.glob(spec)) or [spec]:
+        read.append(f)
         d = json.loads(Path(f).read_text())
         pools.update(d["pools"]); refs.update(d["references"])
         if d.get("top_k"):
@@ -65,7 +66,7 @@ def load(spec):
         # an afternoon before a number disagreed with another number.
         if d.get("checkpoints"):
             ck = d["checkpoints"]
-    return pools, refs, (sorted(tk) or [None])[0], (ck or None)
+    return pools, refs, (sorted(tk) or [None])[0], (ck or None), read
 
 
 def main() -> int:
@@ -77,8 +78,8 @@ def main() -> int:
 
     from bank_without_selection import _dedup
 
-    big, refs_b, tk_b, ck_b = load(args.whole_bank)
-    small, refs_s, tk_s, ck_s = load(args.trained)
+    big, refs_b, tk_b, ck_b, read_b = load(args.whole_bank)
+    small, refs_s, tk_s, ck_s, read_s = load(args.trained)
     refs = {**refs_b, **refs_s}
     subs = sorted(s for s in set(big) & set(small) if refs.get(s))
     real = {s: set(refs[s]) for s in subs}
@@ -213,6 +214,11 @@ def main() -> int:
             [len(drop_parent(_dedup(preds.get(s, []), 10 ** 6), s)) for s in subs]))
         untruncated[name], untruncated2[name] = round(exact, 1), round(exact, 2)
     rep = {"provenance": stamp(__file__),
+           # Which pool shards the two GRAIL arms were actually read from, so a table written
+           # against a shard that has since been rebuilt, renamed or planted can be told from one
+           # written against the pools on disk now. A modification time cannot say this: it
+           # belongs to the working tree, and any clone or checkout rewrites it.
+           "inputs": record_inputs(read_b + read_s),
            "population": {"n": len(subs), "n_references": N,
                           "source": "the 291 of results/four_method_291.json"},
            "aggregation": "micro, ratio of sums",

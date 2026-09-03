@@ -963,3 +963,46 @@ paper has shipped that defect --- a decomposition printed three times with three
 a table row that stopped summing to its own total, a median printed 0.85 in a sentence beside a
 figure labelled 0.83. The count is the thing to watch: if it grows, a passage was added that
 nothing reads.
+
+## 17. Every task the AI use statement must place carries a verdict, and no verdict moves unnoticed
+
+**Check:** the AI use statement is the one section of the paper no number gate can reach, and it is
+the section most likely to be edited under pressure to sound better. This document opens by saying
+that what was never checked is the manuscript's claims about itself; this statement is exactly such
+a claim, and it has been wrong twice.
+
+```bash
+python scripts/check_ai_statement.py           # non-zero if a task is unplaced or a verdict moved
+python scripts/check_ai_statement.py --list    # the declared list and each verdict
+```
+
+**Status: PASS, 15 tasks placed — 8 used, 6 not used, 1 not applicable.**
+
+**The first failure was a description of a mechanism this repository does not implement.** The
+statement said every number in the paper is generated from a stored result file by a script rather
+than typed, and that a checker refuses any numeric literal not on a declared list. The macros are
+hand-typed `\newcommand` literals, and the second checker reports what no check reads rather than
+refusing against a list. Both were falsifiable from the released archive in a minute, in the one
+paragraph whose job is to say how the AI-assisted work was reviewed.
+
+**The second failure ran in the more dangerous direction and is why this row has a gate rather than
+an instruction.** A pass that shortened the statement from 543 words to 292 removed two verdicts
+outright: *developing conceptual frameworks* and *giving feedback on methodology*. Neither removal
+was visible. The paragraph they left behind is a run of denials, so the default reading of a missing
+item is "not used", and the archive carries the revision history, so a reviewer diffing revisions
+would have found an admission being withdrawn. That is worse than either version alone.
+
+**What the gate does that a reading does not.** It holds each task's verdict against
+`results/ai_statement_verdicts.json`, so a verdict cannot move without the record moving in the same
+commit. Flipping one is legitimate and has happened for a good reason: the claim that AI proposed
+and refined hypotheses was an over-claim, since the four evaluation choices this paper is about were
+found by measuring one predictor in one domain. What is not legitimate is flipping one silently.
+Both failure modes were perturbed to confirm the gate catches them: deleting the conceptual-frameworks
+clause and reversing the methodology verdict each exit non-zero.
+
+**One residual uncertainty, stated rather than hidden.** The venue's own instruction file supplies
+only the four-slot frame and defers the enumeration to its policy page, which is not in this
+repository. The fifteen tasks are therefore this paper's standard, not a transcription of the
+venue's. `--list` prints them so they can be checked against the live policy before submitting, and
+one item was added that neither earlier version placed at all: whether AI ran the experiments.
+

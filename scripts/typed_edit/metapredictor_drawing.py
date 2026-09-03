@@ -34,7 +34,7 @@ for _p in (str(ROOT), str(ROOT / "scripts"), str(HERE)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from _provenance import stamp  # noqa: E402
+from _provenance import record_inputs, stamp  # noqa: E402
 
 KS = (5, 10, 15, 20, 30, 50)
 CAP = 100
@@ -55,7 +55,8 @@ def main() -> int:
     from bank_without_selection import _dedup, _key as tautkey
 
     refs = {}
-    for f in sorted(glob.glob(str(ROOT / "results/widepools_implicit/w*.json"))):
+    shards = sorted(glob.glob(str(ROOT / "results/widepools_implicit/w*.json")))
+    for f in shards:
         blob = json.loads(Path(f).read_text())
         refs.update(blob["references"])
     subs = sorted(s for s in refs if refs[s])
@@ -113,6 +114,11 @@ def main() -> int:
 
     report = {
         "provenance": stamp(__file__),
+        # Which comparison pools supplied the substrates and their references, so an artifact
+        # written against a shard that has since been rebuilt or removed can be told from a
+        # current one. A modification time cannot answer that: it belongs to the working tree
+        # and any clone or checkout rewrites it.
+        "inputs": record_inputs(shards),
         "difference": ("MetaPredictor's recall with the substrate as a chemist draws it, minus "
                        "its recall with the substrate as the corpus stores it"),
         "design": ("only the substrates whose two drawings are different molecules were re-run; "

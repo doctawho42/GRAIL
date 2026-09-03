@@ -32,7 +32,7 @@ for _p in (str(ROOT), str(ROOT / "scripts"), str(HERE)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from _provenance import stamp  # noqa: E402
+from _provenance import record_inputs, stamp  # noqa: E402
 
 from _rrf import rrf_order  # noqa: E402
 
@@ -71,12 +71,14 @@ def main() -> int:
     if args.pools:
         import glob as _glob
         pools, refs, src = {}, {}, args.pools
-        for f in sorted(_glob.glob(args.pools)):
-            d = json.loads(Path(f).read_text())
+        read = [Path(f) for f in sorted(_glob.glob(args.pools))]
+        for f in read:
+            d = json.loads(f.read_text())
             pools.update(d["pools"]); refs.update(d["references"])
     else:
         blob = json.loads(POOLS.read_text())
         pools, refs, src = blob["pools"], blob["references"], str(POOLS)
+        read = [POOLS]
     subs = sorted(s for s in pools if refs.get(s))
     print(f"{len(subs)} substrates, pool mean "
           f"{st.mean([len(pools[s]) for s in subs]):.1f}", file=sys.stderr, flush=True)
@@ -146,6 +148,11 @@ def main() -> int:
             for a in ARMS}
     rep = {
         "provenance": stamp(__file__),
+        # The glob above names a pattern, and a pattern is not a population: shards can be
+        # added, rebuilt or removed under it and the artifact would read the same. These are the
+        # shards this run opened, so a later reader can tell whether the pools on disk are the
+        # ones these numbers came from.
+        "inputs": record_inputs(read),
         "population": {"n": len(subs), "pool": src},
         "aggregation": "macro, the mean of per-substrate recall; the _micro fields are the "
                        "ratio of sums, which is what the MetaTox comparison reports",

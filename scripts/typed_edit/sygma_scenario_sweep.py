@@ -34,7 +34,7 @@ for _p in (str(ROOT), str(ROOT / "scripts"), str(HERE)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from _provenance import stamp  # noqa: E402
+from _provenance import record_inputs, stamp  # noqa: E402
 
 KS = (1, 3, 5, 8, 10, 15, 20, 30, 50)
 N_BOOT, SEED = 10000, 0
@@ -91,7 +91,8 @@ def main() -> int:
     from bank_without_selection import _dedup, _key as tautkey
 
     pools, refs = {}, {}
-    for f in sorted(glob.glob(str(ROOT / "results/widepools_implicit/w*.json"))):
+    read_paths = sorted(glob.glob(str(ROOT / "results/widepools_implicit/w*.json")))
+    for f in read_paths:
         blob = json.loads(Path(f).read_text())
         pools.update(blob["pools"]); refs.update(blob["references"])
     subs = sorted(s for s in pools if refs.get(s))
@@ -117,7 +118,9 @@ def main() -> int:
         return np.array([len(set(order[s][:k]) & real[s]) for s in subs], dtype=float)
 
     # The deployed scenario is already frozen and does not need re-running.
-    frozen = json.loads((ROOT / "results/sygma_fulltest_predictions.json").read_text())
+    frozen_path = ROOT / "results/sygma_fulltest_predictions.json"
+    read_paths.append(str(frozen_path))
+    frozen = json.loads(frozen_path.read_text())
     rows = {}
     base_label = f"phase1 x{1}, phase2 x{1}"
     base = {s: drop_parent(_dedup(frozen.get(s, []), 10 ** 6), s) for s in subs}
@@ -183,6 +186,9 @@ def main() -> int:
 
     report = {
         "provenance": stamp(__file__),
+        # Which shards the comparison arm was actually built from, so a sweep written against a
+        # pool that has since gone -- a planted one, a renamed one -- can be told from a current one.
+        "inputs": record_inputs(read_paths),
         "population": {"n_substrates": len(subs), "n_references": int(U.sum())},
         "deployed_scenario": base_label,
         "criterion": "tautomer-aware InChIKey, as everywhere else",
