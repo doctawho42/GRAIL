@@ -1670,7 +1670,18 @@ def build():
     n["prov.files"] = (sum(1 for r in pv["pinned"] if r["artifact"].startswith("results/"))
                        + sum(sweep.values()))
     n["prov.unstamped"] = sweep.get("unstamped", 0)
+    # The partition the count closes on, so a reader can add it up rather than take 508 on trust.
+    # It was quoted as a total with three of its six parts named, and the two words it is built
+    # from were used interchangeably: pinned is membership of a hand-maintained list, stamped is a
+    # property of the file.
+    n["prov.pinnedinresults"] = sum(1 for r in pv["pinned"] if r["artifact"].startswith("results/"))
+    n["prov.producerunknown"] = sweep.get("producer_unknown", 0)
+    n["prov.cosmetic"] = sweep.get("cosmetic_only", 0)
+    n["prov.currentunpinned"] = sweep.get("current", 0)
     n["prov.changed"] = sweep.get("producer_changed", 0)
+    n["prov.partitioncloses"] = (n["prov.unstamped"] + n["prov.changed"] + n["prov.currentunpinned"]
+                                 + n["prov.producerunknown"] + n["prov.cosmetic"]
+                                 + n["prov.pinnedinresults"]) == n["prov.files"]
     # How far the guarantee reaches past the pinned set: files below the top level of results/
     # that a pinned artifact names as an input, and whose digest therefore is checked.
     n["prov.subdirfiles"] = pv.get("files_below_the_top_level", 0)

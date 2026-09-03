@@ -1104,8 +1104,12 @@ carry across. Two counts appear in that sentence and they measure different thin
 \numTypeoverlapBanklacks{} counts every test reference whose type the bank does not hold, whether
 or not the bank reaches it. \numCeilingNovel{}, above, counts only those it also fails to reach.
 The gap between them is not an error in either: a template can reach a product while being typed
-differently from the pair that product came from. The four cells that separate the two, by type and by reach, are in
-Section~\ref{SI-sec:si-typeoverlap}. Template discovery from that
+differently from the pair that product came from. The two are not cross-tabulated anywhere in this
+work, so the size of that gap is reported and its composition is not.
+Section~\ref{SI-sec:si-typeoverlap} cross-tabulates a different pair, whether a type is in the bank
+against whether it is in the training annotation, and the containment of
+\numTypeoverlapCorpussharePct{} is computed over the \numTypeoverlapBanklacks{} references of the
+first kind rather than over the \numCeilingNovel{} of the second. Template discovery from that
 corpus is separately unfinished, its rarefaction curve still climbing, so mining harder would yield
 more templates and could not supply a type the corpus does not contain.
 Extending coverage therefore requires new reaction corpora, and the census narrows the search.
@@ -1336,10 +1340,19 @@ a default.
 Almost every figure printed in this paper reaches the page from a stored result file through a
 generated macro rather than typed; \numProvHandtyped{} measurements do not, they are enumerated
 in the checker rather than covered by a wildcard, and the Supporting Information says which.
-\numProvPinned{} such files are pinned, meaning that each records the script that wrote it and
-the version of that script, and an automated check refuses a file whose script has since changed.
-\numProvPinnedcurrent{} of the \numProvPinned{} pass that check. Of them, \numProvSources{} are the ones the paper's
-figures are drawn from, and none of those falls outside the pinned set. A split manifest pins by
+Two properties are involved and they are not the same one. A file is \emph{stamped} when it
+records the script that wrote it and the version of that script; it is \emph{pinned} when it is on
+the list this work maintains of the artifacts a check must find current. \numProvPinned{} files are
+pinned, and \numProvPinnedcurrent{} of them pass the currency check. Of the pinned set,
+\numProvSources{} are the ones this paper's figures are drawn from, and none of those figures comes
+from outside it.
+
+The wider sweep is over \numProvFiles{} files and its parts are worth printing, since a total is
+easier to accept than to add up: \numProvUnstamped{} carry no stamp, \numProvChanged{} have a
+producer that has changed since, \numProvProducerunknown{} have a producer the sweep cannot
+identify, \numProvCosmetic{} changed only cosmetically, \numProvCurrentunpinned{} are stamped and
+current without being pinned, and \numProvPinnedinresults{} are the pinned files that live under
+the results directory the total names. Those six add to the total. A split manifest pins by
 digest the triple files, the substrate sets, the evaluated test set, the rule bank and every
 third-party artifact, and a verify mode recomputes and names any file that has moved. Candidate
 pools record, by digest, the two checkpoints that scored them; both stages of the released system
