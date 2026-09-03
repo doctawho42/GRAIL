@@ -674,6 +674,46 @@ def build():
     # BioTransformer is in the sweep and was in neither enumeration. It is the arm the emission
     # rule would actually have bitten: on the whole test set it answers nothing for nearly a tenth
     # of the substrates, which is not the "almost nothing" the section claimed.
+    # The exhaustive arm's separating leads over the three comparators that reach the whole test
+    # set, enumerated from the table rather than counted by eye. S29 audits which of them survive
+    # the move to the wider population, and its enumeration listed thirteen: it included a cell the
+    # table leaves unstarred, omitted one that does separate, and omitted the two at a budget of
+    # twenty. A count over a table is a claim about a set, so it is generated from the set.
+    # Which budgets the population move can be audited at, and which the deployment table has
+    # besides. S29 counts leads over the five budgets its own sweep measures on both populations;
+    # Table S11 sweeps nine, and the four it adds have no whole-test-set counterpart, so a lead at
+    # one of them cannot be followed across the move. The audit's denominator is its own sweep.
+    _popcmp = pop["contrasts"]["the comparison set"]["sygma"]["exhaustive_minus_comparator"]
+    _dep = art("deployment_table.json")["contrasts"]
+    n["s29.budgets"] = len(_popcmp)
+    n["s29.tablebudgets"] = len(_dep)
+    n["s29.budgetsunaudited"] = ", ".join(sorted((set(_dep) - set(_popcmp)), key=int))
+    # The one cell on which the two artifacts disagree, because they read two runs of the same
+    # comparator: S29 uses the run that also covers the whole test set, so that the move varies the
+    # population and nothing else, and Table S11 uses the declared arm.
+    _dis = []
+    for _k in sorted(_popcmp, key=int):
+        _a = pop["contrasts"]["the comparison set"]["biotransformer"]["exhaustive_minus_comparator"].get(_k)
+        _b = _dep.get(_k, {}).get("whole bank - biotransformer")
+        if _a and _b and _a["excludes_zero"] != _b["excludes_zero"]:
+            _dis.append(int(_k))
+    n["s29.btdisagreeat"] = _dis[0] if _dis else 0
+    n["s29.btdisagreements"] = len(_dis)
+    _wide = ("sygma", "metapredictor", "biotransformer")
+    _leads = {c: [] for c in _wide}
+    for _k in sorted(_dep, key=int):
+        for _c in _wide:
+            _cell = _dep[_k].get(f"whole bank - {_c}")
+            if _cell and _cell["gap"] > 0 and _cell["excludes_zero"]:
+                _leads[_c].append(int(_k))
+    for _c in _wide:
+        n[f"s29.leads.{_c}"] = len(_leads[_c])
+        n[f"s29.leadsat.{_c}"] = ", ".join(str(x) for x in _leads[_c])
+    n["s29.leads"] = sum(len(v) for v in _leads.values())
+    _bt = _leads["biotransformer"]
+    n["s29.btfirst"] = _bt[0] if _bt else 0
+    n["s29.btrunfrom"] = next((b for b in _bt if b > (_bt[0] if _bt else 0)), 0)
+
     n["popdef.btinside"] = pop["emission"]["comparison_set"]["biotransformer"]
     for name in ("sygma", "metapredictor", "biotransformer"):
         cell = pop["emission"]["whole_test_set"][name]

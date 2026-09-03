@@ -1494,9 +1494,9 @@ The exhaustive arm's leads mostly survive the move, and the exception is named. 
 \numPopdefLeadstotalWord{} separating leads it holds on the comparison set against the
 \numPopdefWholearmsWord{} comparators that reach the wider population,
 \numPopdefLeadskeptWord{} still separate over the whole set and
-\numPopdefLeadslostWord{} does not. The \numPopdefLeadstotalWord{} are the exhaustive arm against SyGMa
-and MetaPredictor at fifteen, thirty and fifty and against BioTransformer at five and upward, and
-\numPopdefLeadskeptWord{} of them survive:
+\numPopdefLeadslostWord{} does not. The \numPopdefLeadstotalWord{} are the exhaustive arm against
+SyGMa and MetaPredictor at fifteen, thirty and fifty and against BioTransformer at every budget
+this section sweeps, and \numPopdefLeadskeptWord{} of them survive:
 against SyGMa $+\numPopdefExhwholesygmaThreeZero$ $[+\numPopdefExhwholesygmaThreeZeroLo,
 +\numPopdefExhwholesygmaThreeZeroHi]$ at thirty and $+\numPopdefExhwholesygmaFiveZero$
 $[+\numPopdefExhwholesygmaFiveZeroLo, +\numPopdefExhwholesygmaFiveZeroHi]$ at fifty, against
@@ -1504,8 +1504,24 @@ MetaPredictor $+\numPopdefExhwholemetapredictorOneFive$
 $[+\numPopdefExhwholemetapredictorOneFiveLo, +\numPopdefExhwholemetapredictorOneFiveHi]$ at
 fifteen, $+\numPopdefExhwholemetapredictorThreeZero$ and
 $+\numPopdefExhwholemetapredictorFiveZero$ at thirty and fifty, and against BioTransformer at
-every budget from five upward, where the wider population separates the two more strongly than
-the comparison set does. What does not survive is the
+every budget this section sweeps, where the wider population separates the two more strongly than
+the comparison set does.
+
+Two things bound that count and neither is visible from the table. This section sweeps
+\numSTwoNineBudgets{} budgets and Table~\ref{tab:si-intervals} sweeps
+\numSTwoNineTablebudgets{}; the four it adds, at \numSTwoNineBudgetsunaudited{}, have no
+whole-test-set counterpart, so a lead at one of them cannot be followed across the move and is not
+in this denominator. Counted over the table's nine instead, the arm holds \numSTwoNineLeads{}
+separating leads rather than \numPopdefLeadstotal{}, and that larger figure answers a different
+question.
+
+The second is a difference between two runs of one comparator. The columns here are read from the
+predictions that also cover the whole test set, so that the move varies the population and nothing
+else; Table~\ref{tab:si-intervals} reads the declared arm, which exists on the comparison set only.
+For SyGMa and MetaPredictor the two agree. For BioTransformer they do not, and at a budget of
+\numSTwoNineBtdisagreeat{} the disagreement is large enough to change whether the cell
+separates. Each choice is right for its own purpose and neither is the other's, so a figure from
+this section may not be read against one from that table. What does not survive is the
 narrower one: the lead over SyGMa at a budget of fifteen is
 $+\numPopdefExhcompsygmaOneFive$ $[+\numPopdefExhcompsygmaOneFiveLo,
 +\numPopdefExhcompsygmaOneFiveHi]$ on the comparison set and
