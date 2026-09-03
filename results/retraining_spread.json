@@ -3,7 +3,7 @@
   "script": "retraining_spread.py",
   "script_path": "scripts/typed_edit/retraining_spread.py",
   "source_sha256": "ed2996a367a80d560b1efef6f776f261058e0dbcf14f4cfd4b4de14f91ab898f",
-  "git_commit": "2961f747de122d9250e18c084c861c1b24755c1f",
+  "git_commit": "6d7dbbfe957ac4fe5800b9bfaf8290c4a0dd7fdf",
   "git_dirty": true
  },
  "inputs": [
@@ -24,6 +24,24 @@
    "exists": true,
    "sha256_16": "9516ab14226b39b6",
    "bytes": 1244513
+  },
+  {
+   "path": "results/seedpools/exhaustive_seed0.json",
+   "exists": true,
+   "sha256_16": "103a5ab006c9d85e",
+   "bytes": 42547624
+  },
+  {
+   "path": "results/seedpools/exhaustive_seed1.json",
+   "exists": true,
+   "sha256_16": "c1557e52c95d24a8",
+   "bytes": 42534581
+  },
+  {
+   "path": "results/seedpools/exhaustive_seed2.json",
+   "exists": true,
+   "sha256_16": "193d9a4e173ae7a9",
+   "bytes": 42531331
   }
  ],
  "question": "how much of a reported margin retraining alone could move, measured at the configuration the manuscript reports rather than at an earlier one",
@@ -235,8 +253,188 @@
     "50": 0.0
    },
    "what_that_contrast_is": "seed 0 shares the released generator and carries a different filter, so this difference is a filter retraining with the generator held fixed"
+  },
+  "exhaustive": {
+   "seeds": {
+    "exhaustive_seed0": {
+     "n_substrates": 291,
+     "n_references": 665,
+     "recall": {
+      "1": 0.0872,
+      "3": 0.2316,
+      "5": 0.3068,
+      "8": 0.406,
+      "10": 0.4451,
+      "15": 0.5489,
+      "20": 0.594,
+      "30": 0.6556,
+      "50": 0.6977
+     }
+    },
+    "exhaustive_seed1": {
+     "n_substrates": 291,
+     "n_references": 665,
+     "recall": {
+      "1": 0.1008,
+      "3": 0.2226,
+      "5": 0.3143,
+      "8": 0.403,
+      "10": 0.4466,
+      "15": 0.5278,
+      "20": 0.582,
+      "30": 0.6421,
+      "50": 0.7098
+     }
+    },
+    "exhaustive_seed2": {
+     "n_substrates": 291,
+     "n_references": 665,
+     "recall": {
+      "1": 0.0992,
+      "3": 0.212,
+      "5": 0.2992,
+      "8": 0.4045,
+      "10": 0.4541,
+      "15": 0.5353,
+      "20": 0.585,
+      "30": 0.6526,
+      "50": 0.7113
+     }
+    }
+   },
+   "by_budget": {
+    "1": {
+     "seeds": [
+      0.0872,
+      0.1008,
+      0.0992
+     ],
+     "mean": 0.0957,
+     "sd": 0.0074,
+     "released": 0.0992,
+     "released_inside_the_seed_range": true
+    },
+    "3": {
+     "seeds": [
+      0.2316,
+      0.2226,
+      0.212
+     ],
+     "mean": 0.2221,
+     "sd": 0.0098,
+     "released": 0.2301,
+     "released_inside_the_seed_range": true
+    },
+    "5": {
+     "seeds": [
+      0.3068,
+      0.3143,
+      0.2992
+     ],
+     "mean": 0.3068,
+     "sd": 0.0076,
+     "released": 0.3113,
+     "released_inside_the_seed_range": true
+    },
+    "8": {
+     "seeds": [
+      0.406,
+      0.403,
+      0.4045
+     ],
+     "mean": 0.4045,
+     "sd": 0.0015,
+     "released": 0.4165,
+     "released_inside_the_seed_range": false
+    },
+    "10": {
+     "seeds": [
+      0.4451,
+      0.4466,
+      0.4541
+     ],
+     "mean": 0.4486,
+     "sd": 0.0048,
+     "released": 0.4556,
+     "released_inside_the_seed_range": false
+    },
+    "15": {
+     "seeds": [
+      0.5489,
+      0.5278,
+      0.5353
+     ],
+     "mean": 0.5373,
+     "sd": 0.0107,
+     "released": 0.5353,
+     "released_inside_the_seed_range": true
+    },
+    "20": {
+     "seeds": [
+      0.594,
+      0.582,
+      0.585
+     ],
+     "mean": 0.587,
+     "sd": 0.0062,
+     "released": 0.5865,
+     "released_inside_the_seed_range": true
+    },
+    "30": {
+     "seeds": [
+      0.6556,
+      0.6421,
+      0.6526
+     ],
+     "mean": 0.6501,
+     "sd": 0.0071,
+     "released": 0.6526,
+     "released_inside_the_seed_range": true
+    },
+    "50": {
+     "seeds": [
+      0.6977,
+      0.7098,
+      0.7113
+     ],
+     "mean": 0.7063,
+     "sd": 0.0075,
+     "released": 0.7023,
+     "released_inside_the_seed_range": true
+    }
+   },
+   "released_column": "whole bank",
+   "seed_0_minus_the_release": {
+    "1": -0.012,
+    "3": 0.0015,
+    "5": -0.0045,
+    "8": -0.0105,
+    "10": -0.0105,
+    "15": 0.0136,
+    "20": 0.0075,
+    "30": 0.003,
+    "50": -0.0046
+   },
+   "what_that_contrast_is": "seed 0 shares the released generator and carries a different filter, so this difference is a filter retraining with the generator held fixed"
   }
  },
- "margins_at_thirty_in_units_of_the_seed_spread": {},
+ "margins_at_thirty_in_units_of_the_seed_spread": {
+  "whole bank - metatox": {
+   "gap": 0.0511,
+   "in_units_of_the_seed_sd": 7.2
+  },
+  "whole bank - sygma": {
+   "gap": 0.1459,
+   "in_units_of_the_seed_sd": 20.5
+  },
+  "whole bank - metapredictor": {
+   "gap": 0.1729,
+   "in_units_of_the_seed_sd": 24.4
+  },
+  "whole bank - biotransformer": {
+   "gap": 0.206,
+   "in_units_of_the_seed_sd": 29.0
+  }
+ },
  "what_this_is_not": "a spread over training-set size or over the full split: every seed here sees the same 5,000 training substrates the released run saw, so this measures the seed and not the data"
 }

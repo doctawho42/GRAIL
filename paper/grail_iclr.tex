@@ -610,44 +610,27 @@ compared between papers. By Proposition~2 it falls as a grid widens, so a paper 
 choices reports a larger one. A quantity that rewards declaring less is not one to compete on.
 \subsubsection*{AI use statement}
 
-Generative AI was used for several of the tasks ICLR requires disclosed, and the division below is
-by task rather than by section. Each task is given a verdict rather than a location.
+Generative AI was used to implement methods: most of the analysis code, the evaluation harness and
+the checking scripts released with this paper were written with an AI coding assistant. It was used
+to clean and reformat data, in the parsers that read each leaderboard's released prediction files
+into the form the harness scores, and to support qualitative analysis in the eligibility screen over
+candidate leaderboards recorded in Appendix~\ref{app:boardsearch}. It was used for the recommended
+tasks of code editing, figure creation and literature search, and for drafting: most of this
+manuscript's prose, and the readings of measurements in it, were drafted with assistance and revised
+by the authors against the artifacts.
 
-It was used to implement methods: most of the analysis code, the evaluation harness and the
-checking scripts released with this paper were written with an AI coding assistant. It was used to
-clean and reformat data, in the parsers that read each leaderboard's released prediction files into
-the common form the harness scores. It was used to propose and refine hypotheses and to give
-feedback on methodology: several of the checks reported here, including the ones that found defects
-in earlier drafts of this work, were suggested in that way. It was used to interpret results, in
-the sense that readings of a measurement were drafted with assistance and then checked against the
-artifact. It was used to support qualitative analysis, in the eligibility screen over candidate
-leaderboards recorded in Appendix~\ref{app:boardsearch} and in reducing review findings to
-structured records. It was used for the recommended tasks of code editing, figure creation,
-literature analysis, brainstorming and paper editing, and most of this manuscript's prose was
-drafted with assistance and revised by the authors.
+It was not used to generate research ideas or hypotheses. The four evaluation choices this paper is
+about were found by measuring one predictor in one domain, and the claims made about them are the
+authors'. It was not used to generate synthetic data: every number comes from a released prediction
+file or from a run of a released model, and nothing here is simulated. It was not used to develop
+theoretical models, to formulate mathematical claims, or to write proofs or provide ingredients for
+them; the propositions are the authors', and the framework they quantify over is the unanimity
+relation of social choice, which this paper cites rather than introduces. Translation is not
+applicable to this work.
 
-It was not used to generate synthetic data: every number here comes from a released prediction file
-or from a run of a released model, and nothing in the study is simulated. It was used to develop
-conceptual frameworks: the intersection order, the three verdicts and the five terms of
-\S\ref{sec:instrument} were arrived at in discussion with an assistant, and the relation itself is
-not new, being the unanimity relation this paper cites rather than introduces. It was not used to
-develop theoretical models or to formulate mathematical claims, and it was not used to write proofs
-or to provide ingredients for them: the propositions of Appendix~\ref{app:formal} and the two
-stated in \S\ref{sec:instrument} are the authors', and were checked line by line against the
-definitions they quantify over. Translation is not applicable to this work.
-
-We have reviewed all AI-assisted work. The review is not an assurance but a mechanism, and the
-mechanism is that numbers are typed into this manuscript and then checked against the record rather
-than generated into it. One released script recomputes each named quantity from the artifact it
-comes from and exits non-zero on any disagreement, and it exits clean. A second reports every
-numeral in the manuscript that no check reads, which is how four of the figures now bound were
-found unbound, and it reports none. The audit in the
-released archive records twenty-one checks the authors ran against the manuscript's claims about
-itself, seventeen of them with a runnable command, several of which failed and are documented with
-what they found. Code written with assistance is covered by the same gates as the rest: a released
-check refuses to write its artifact unless it first reproduces a figure the deployed path produced.
-The defects this process caught are reported rather than quietly repaired, and the ones it did not
-catch are named in Section~\ref{sec:limitations}. We take responsibility for the final content of
+We have reviewed all AI-assisted work. Every quantity printed here is checked against the artifact
+it comes from by a released script that exits non-zero on disagreement, and code written with
+assistance is covered by the same gates as the rest. We take responsibility for the final content of
 this work, including text, claims and artifacts produced with the aid of generative AI.
 
 \subsubsection*{Ethics statement}

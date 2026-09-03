@@ -425,10 +425,7 @@
    "artifact": "results/pool_checkpoints.json",
    "script": "pool_checkpoints.py",
    "how": "recorded source digest",
-   "status": "producer_changed",
-   "detail": "producer was b3525f3d8541, is now 80b8f426f5ce",
-   "diff_recovered_by": "source at 1793d8447325",
-   "diff": "--- pool_checkpoints.py (as recorded)\n+++ pool_checkpoints.py (now)\n@@ -182,5 +182,20 @@\n         blob = json.loads(path.read_text())\n         subs = sorted(blob[\"pools\"])[:N_SUBS]\n+        # A pool built on the standardiser's drawing was generated from a different structure\n+        # than the one it is keyed by, so scoring the key reproduces nothing and the pool reads\n+        # as unidentified. The presentation is recorded in the file; the substrate is presented\n+        # the same way here before it is scored.\n+        presented = dict.fromkeys(subs)\n+        if blob.get(\"present\") == \"standardised\":\n+            from rdkit import Chem\n+            from grail_metabolism.utils.preparation import standardize_mol\n+            for s in subs:\n+                try:\n+                    presented[s] = Chem.MolToSmiles(standardize_mol(Chem.MolFromSmiles(s)))\n+                except Exception:\n+                    presented[s] = s\n+        show = {s: (presented[s] or s) for s in subs}\n         entry = {\"path\": str(path.relative_to(ROOT)), \"rule_budget\": budget,\n+                 \"presentation\": blob.get(\"present\", \"stored\"),\n                  \"records_its_own_checkpoints\": bool(blob.get(\"checkpoints\")),\n                  \"recorded\": blob.get(\"checkpoints\")}\n@@ -198,8 +213,8 @@\n                     if stage == \"filter\":\n                         got = dict(zip((c[\"smiles\"] for c in stored),\n-                                       model.score_batch(s, [c[\"smiles\"] for c in stored])))\n+                                       model.score_batch(show[s], [c[\"smiles\"] for c in stored])))\n                     else:\n                         det = model.generate_scored_with_details(\n-                            s, top_k=budget or 7581, threshold=None, compute_sites=False)\n+                            show[s], top_k=budget or 7581, threshold=None, compute_sites=False)\n                         got = {d[0]: float(d[1]) for d in det}\n                     for c in stored:"
+   "status": "current"
   },
   {
    "artifact": "results/population_definition.json",
@@ -650,11 +647,11 @@
   }
  ],
  "n_pinned": 106,
- "n_pinned_stale": 1,
+ "n_pinned_stale": 0,
  "sweep": {
-  "unstamped": 269,
-  "producer_changed": 39,
-  "current": 44,
+  "unstamped": 281,
+  "producer_changed": 38,
+  "current": 47,
   "producer_unknown": 26,
   "cosmetic_only": 8
  },
@@ -925,16 +922,6 @@
    "script": "ceiling_seen_vs_unseen.py",
    "status": "producer_unknown",
    "detail": "commit 6e9e3908a43a does not carry scripts/ceiling_seen_vs_unseen.py"
-  },
-  {
-   "artifact": "results/check_coverage.json",
-   "script": "check_coverage.py",
-   "how": "source at 63d9c5cc3f2c",
-   "dirty_when_written": true,
-   "status": "producer_changed",
-   "detail": "producer was 3767cd63e75e, is now bd53b5dea74e",
-   "diff_recovered_by": "source at 63d9c5cc3f2c",
-   "diff": "--- check_coverage.py (as recorded)\n+++ check_coverage.py (now)\n@@ -153,6 +153,12 @@\n                      \"context\": flat[max(0, start - args.context):start + args.context]})\n \n+    # The denominator has to match the scope the numerator ranges over. It did not: with\n+    # --appendix the unread count included appendix numerals while the total stayed the body's,\n+    # so five appendix misses printed as \"5 of 172\" and read as five misses out of the body.\n     total_body = sum(1 for m in re.finditer(r\"\\$([+-]?\\d[\\d.,{}]*)\\$\", flat)\n                      if m.start() < body_end)\n+    total_all = sum(1 for _ in re.finditer(r\"\\$([+-]?\\d[\\d.,{}]*)\\$\", flat))\n+    total_scanned = total_all if args.appendix else total_body\n+    scope = \"body and appendix\" if args.appendix else \"body\"\n     rep = {\"config\": {**_code_version(),\n                       \"note\": \"a numeral inside a matched span is not thereby verified; a numeral \"\n@@ -160,5 +166,8 @@\n                       \"checker_regex_calls_recorded\": len(rec.spans),\n                       \"characters_covered\": sum(b - a for a, b in covered)},\n+           \"scope\": scope,\n            \"n_body_numerals\": total_body,\n+           \"n_appendix_numerals\": total_all - total_body,\n+           \"n_scanned\": total_scanned,\n            \"n_unread\": len(rows),\n            \"unread\": rows}\n@@ -166,5 +175,5 @@\n \n     print(f\"  {len(rec.spans)} regex matches recorded over the manuscript\")\n-    print(f\"  {len(rows)} of {total_body} body numerals fall outside every one of them\")\n+    print(f\"  {len(rows)} of {total_scanned} {scope} numerals fall outside every one of them\")\n     for r in rows[:40]:\n         print(f\"     ${r['value']}$  ...{r['context'][args.context - 34:args.context + 34]}...\")"
   },
   {
    "artifact": "results/citations_verified.json",
@@ -1951,6 +1938,66 @@
    "detail": "no provenance block: nothing records which code wrote this"
   },
   {
+   "artifact": "results/seedpools/exhaustive_seed1/w0.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/seedpools/exhaustive_seed1/w1.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/seedpools/exhaustive_seed1/w2.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/seedpools/exhaustive_seed1/w3.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/seedpools/exhaustive_seed1/w4.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/seedpools/exhaustive_seed1/w5.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/seedpools/exhaustive_seed2/w0.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/seedpools/exhaustive_seed2/w1.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/seedpools/exhaustive_seed2/w2.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/seedpools/exhaustive_seed2/w3.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/seedpools/exhaustive_seed2/w4.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/seedpools/exhaustive_seed2/w5.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
    "artifact": "results/seedpools/interactive_seed0.json",
    "status": "unstamped",
    "detail": "no provenance block: nothing records which code wrote this"
@@ -2549,9 +2596,12 @@
    "detail": "no provenance block: nothing records which code wrote this"
   }
  ],
- "files_below_the_top_level": 172,
- "of_those_named_as_an_input_by_a_pinned_artifact": 21,
+ "files_below_the_top_level": 186,
+ "of_those_named_as_an_input_by_a_pinned_artifact": 24,
  "named_inputs": [
+  "results/seedpools/exhaustive_seed0.json",
+  "results/seedpools/exhaustive_seed1.json",
+  "results/seedpools/exhaustive_seed2.json",
   "results/seedpools/interactive_seed0.json",
   "results/seedpools/interactive_seed1.json",
   "results/seedpools/interactive_seed2.json",
