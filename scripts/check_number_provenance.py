@@ -40,6 +40,14 @@ CKPT_EXEMPT = {
     "results/artifact_provenance.json",
 }
 
+# A study of what retraining moves must read checkpoints that are not the deployed one; that is
+# what it measures. So the reader is named here with the run series its inputs are allowed to
+# name, and the allowance is checked rather than granted: a pool read by this artifact passes only
+# if every run it names belongs to that series, and a pool scored by some other model still fails.
+SEED_STUDIES = {
+    "results/retraining_spread.json": "multiseed_full5000_implicit_seed",
+}
+
 EXEMPT = {
     # The provenance sweep's own output. Pinning it would ask the sweep to verify itself, and its
     # numbers are counts of the sweep's result rather than measurements of the system.
@@ -198,7 +206,11 @@ def main() -> int:
         else:
             runs = set(CKPT.findall(path.read_text(errors="replace")))
         if runs and not runs <= DEPLOYED_RUNS:
-            via = f" (read by {followed[rel]})" if rel in followed else ""
+            reader = followed.get(rel)
+            series = SEED_STUDIES.get(reader)
+            if series and all(r.startswith(series) for r in runs):
+                continue
+            via = f" (read by {reader})" if rel in followed else ""
             wrong_model.append(f"{rel}{via}: {', '.join(sorted(runs))}")
 
     # The blind spot of the check above: an artifact that names no checkpoint passes it without
