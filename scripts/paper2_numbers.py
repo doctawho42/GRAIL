@@ -714,6 +714,25 @@ def build():
     n["s29.btfirst"] = _bt[0] if _bt else 0
     n["s29.btrunfrom"] = next((b for b in _bt if b > (_bt[0] if _bt else 0)), 0)
 
+    # The retraining spread at the configuration the manuscript reports, which the registered
+    # effects are read against. The earlier seed study ran at a superseded operating point, so its
+    # spread could only be offered as indicative; this one is measured where the numbers are.
+    _rs = art("retraining_spread.json")["by_arm"]
+    for _arm in ("interactive", "exhaustive"):
+        _cell = _rs[_arm]["by_budget"]["15"]
+        n[f"spread.{_arm}.sd"] = _cell["sd"]
+        n[f"spread.{_arm}.mean"] = _cell["mean"]
+        _all = [v["sd"] for v in _rs[_arm]["by_budget"].values()]
+        n[f"spread.{_arm}.sdmin"] = min(_all)
+        n[f"spread.{_arm}.sdmax"] = max(_all)
+    n["spread.seeds"] = len(_rs["interactive"]["by_budget"]["15"]["seeds"])
+    # Each registered effect in units of the spread of the arm whose knob it is. The rule budget
+    # defines the interactive arm, and against the spread measured there it is not inside the
+    # noise, which the earlier operating point's figure had suggested.
+    for _tag, _key in (("p1", "h7.diff"), ("p2", "h9.diff"), ("p3", "h10.bought")):
+        if _key in n:
+            n[f"spread.{_tag}.insd"] = round(abs(n[_key]) / n["spread.interactive.sd"], 1)
+
     n["popdef.btinside"] = pop["emission"]["comparison_set"]["biotransformer"]
     for name in ("sygma", "metapredictor", "biotransformer"):
         cell = pop["emission"]["whole_test_set"][name]

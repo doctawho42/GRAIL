@@ -1571,10 +1571,24 @@ whole pipeline re-evaluated on the full test split: macro recall at a budget of 
 \numSeedMicroMean{} with \numSeedMicroStd{}.
 
 That study ran at an earlier operating point than the configuration the manuscript reports, so
-its level is not comparable with those tables. Its spread is what it is offered for, and the
-spread is a property of the training rather than of the operating point. Read against it, the
-rank fusion of P1 is an order of magnitude above the training noise, the pool cap of P2 several
-times above it, and the rule budget of P3, at $+\numHOneZeroBought$ on validation, inside it.
+its level is not comparable with those tables, and whether its spread carries across operating
+points was assumed rather than shown. It does not: retraining the generator and the filter under
+the same \numSpreadSeeds{} seeds at the configuration the manuscript does report gives a standard
+deviation of \numSpreadInteractiveSd{} for the interactive arm at a budget of fifteen, on a mean of
+\numSpreadInteractiveMean{}, and \numSpreadExhaustiveSd{} for the exhaustive arm on
+\numSpreadExhaustiveMean{}, ranging from \numSpreadInteractiveSdmin{} to
+\numSpreadExhaustiveSdmax{} across budgets. Two arms at one operating point are further apart than
+the two operating points were, so the spread is a property of the arm and the budget as much as of
+the training.
+
+Read against the arm whose knob each effect is, the rank fusion of P1 is \numSpreadPOneInsd{} times
+the interactive arm's spread, the pool cap of P2 \numSpreadPTwoInsd{} times it, and the rule budget
+of P3, at $+\numHOneZeroBought$ on validation, \numSpreadPThreeInsd{} times it rather than inside
+it, which is what the earlier operating point's figure had suggested. That last reading is the one
+running this work's way and is bounded accordingly: the effect is measured on the validation draw
+and the spread on the comparison set, so the ratio is indicative and not a test. Against the
+exhaustive arm's spread the same effect would sit inside the noise, which is the other reason to
+read it as indicative.
 
 \section{Runtime methodology}
 \label{sec:si-runtime}
