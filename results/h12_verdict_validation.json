@@ -2,10 +2,18 @@
  "provenance": {
   "script": "h12_verdict.py",
   "script_path": "scripts/typed_edit/h12_verdict.py",
-  "source_sha256": "96ebd258c044e896f93003be540d2a0b4321689d8e14d4d1c313d44029614c0f",
-  "git_commit": "7c4469449156a7fd73c913fc90a55bdf8037a8ad",
+  "source_sha256": "0225553d31475660e21cc09290c0d7a75133edc661f3c13c735eb04eee0c2114",
+  "git_commit": "249f1cdb8f05e4571331cbc2e21ae4085771e9bd",
   "git_dirty": true
  },
+ "inputs": [
+  {
+   "path": "results/val_pools.json",
+   "exists": true,
+   "sha256_16": "b8a8c204834a2f70",
+   "bytes": 48646521
+  }
+ ],
  "hypothesis": "H12",
  "registered_threshold": 0.02,
  "k": 15,

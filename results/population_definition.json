@@ -2,10 +2,156 @@
  "provenance": {
   "script": "population_definition.py",
   "script_path": "scripts/typed_edit/population_definition.py",
-  "source_sha256": "70560978404d3a7bb1260efe1af36c50c952d4f8f2e053cde94d078c96d35089",
-  "git_commit": "619c7dec51e976341a5b6d68eba4dbb56365ee3f",
+  "source_sha256": "b8fd111330b72ca1f18188e85a743ba0340524d9b0a3b01205c6e4700e4e42cb",
+  "git_commit": "249f1cdb8f05e4571331cbc2e21ae4085771e9bd",
   "git_dirty": true
  },
+ "inputs": [
+  {
+   "path": "results/test_references.json",
+   "exists": true,
+   "sha256_16": "95a7411e9b5a5ae9",
+   "bytes": 182834
+  },
+  {
+   "path": "results/metatox_smirks_preds.json",
+   "exists": true,
+   "sha256_16": "136d4bdc323a7372",
+   "bytes": 1989212
+  },
+  {
+   "path": "results/widepools_k30/all.json",
+   "exists": true,
+   "sha256_16": "10c1e00851597eb3",
+   "bytes": 1115215
+  },
+  {
+   "path": "results/widepools_k30_fulltest/w0.json",
+   "exists": true,
+   "sha256_16": "0eb221c4b68d78c2",
+   "bytes": 1032390
+  },
+  {
+   "path": "results/widepools_k30_fulltest/w1.json",
+   "exists": true,
+   "sha256_16": "3786a6f8c7b1c44b",
+   "bytes": 1141480
+  },
+  {
+   "path": "results/widepools_k30_fulltest/w2.json",
+   "exists": true,
+   "sha256_16": "703be33e3c4415bc",
+   "bytes": 594996
+  },
+  {
+   "path": "results/widepools_k30_fulltest/w3.json",
+   "exists": true,
+   "sha256_16": "49fad37503c0d337",
+   "bytes": 757238
+  },
+  {
+   "path": "results/widepools_k30_fulltest/w4.json",
+   "exists": true,
+   "sha256_16": "0816b5d8cd932f8a",
+   "bytes": 647824
+  },
+  {
+   "path": "results/widepools_k30_fulltest/w5.json",
+   "exists": true,
+   "sha256_16": "b192abd95c81b3d5",
+   "bytes": 655904
+  },
+  {
+   "path": "results/widepools_implicit/w0.json",
+   "exists": true,
+   "sha256_16": "6a90b7bcc2b82562",
+   "bytes": 10103608
+  },
+  {
+   "path": "results/widepools_implicit/w1.json",
+   "exists": true,
+   "sha256_16": "dcb34d6ca5a7c690",
+   "bytes": 9923282
+  },
+  {
+   "path": "results/widepools_implicit/w2.json",
+   "exists": true,
+   "sha256_16": "2f7440497f05cd4a",
+   "bytes": 5621821
+  },
+  {
+   "path": "results/widepools_implicit/w3.json",
+   "exists": true,
+   "sha256_16": "c194bbb0bd7ec69e",
+   "bytes": 8229360
+  },
+  {
+   "path": "results/widepools_implicit/w4.json",
+   "exists": true,
+   "sha256_16": "504576d634e4bdb8",
+   "bytes": 5126437
+  },
+  {
+   "path": "results/widepools_implicit/w5.json",
+   "exists": true,
+   "sha256_16": "7f4c7cee307a726c",
+   "bytes": 3561735
+  },
+  {
+   "path": "results/widepools_fulltest/w0.json",
+   "exists": true,
+   "sha256_16": "ed662e8726ac76e9",
+   "bytes": 43757389
+  },
+  {
+   "path": "results/widepools_fulltest/w1.json",
+   "exists": true,
+   "sha256_16": "419bf41f39b3fed2",
+   "bytes": 52949285
+  },
+  {
+   "path": "results/widepools_fulltest/w2.json",
+   "exists": true,
+   "sha256_16": "602da3c00ae89c49",
+   "bytes": 29961988
+  },
+  {
+   "path": "results/widepools_fulltest/w3.json",
+   "exists": true,
+   "sha256_16": "1aa19bcfbe959b52",
+   "bytes": 32901245
+  },
+  {
+   "path": "results/widepools_fulltest/w4.json",
+   "exists": true,
+   "sha256_16": "e83d855ab49737c0",
+   "bytes": 18906244
+  },
+  {
+   "path": "results/widepools_fulltest/w5.json",
+   "exists": true,
+   "sha256_16": "c57af5fc143e2e4e",
+   "bytes": 16394235
+  },
+  {
+   "path": "results/sygma_fulltest_predictions.json",
+   "exists": true,
+   "sha256_16": "b012db873a24bb87",
+   "bytes": 8324075
+  },
+  {
+   "path": "artifacts/tier2_1170/metapredictor_preds.json",
+   "exists": true,
+   "sha256_16": "8e30e383c99e655b",
+   "bytes": 869435
+  },
+  {
+   "path": "results/biotransformer_fulltest_preds.json",
+   "exists": true,
+   "sha256_16": "380c63453f55b4ea",
+   "bytes": 1289962
+  }
+ ],
  "what_defines_the_comparison_set": "the intersection of the substrates each method has an entry for; the binding constraint is the 291-substrate submission list sent to the web-service comparator, which returned all 291. No substrate was removed for emitting nothing.",
  "how_the_291_were_drawn": "not recorded: no script in this repository selects them and the submission directory documents the file format rather than the draw",
  "emission": {

@@ -2,10 +2,48 @@
  "provenance": {
   "script": "precision_table.py",
   "script_path": "scripts/typed_edit/precision_table.py",
-  "source_sha256": "d378192a3e683e6cc33d0119f9af6132b1fc7b16131788be7fa7c54498043a71",
-  "git_commit": "85f8a68ee0d74ba5db9971ecea1ce368449bd2cb",
+  "source_sha256": "235c788c6210610cdb4a27c1e1848d992f09b049accdc9ba048886c11ac62277",
+  "git_commit": "249f1cdb8f05e4571331cbc2e21ae4085771e9bd",
   "git_dirty": true
  },
+ "inputs": [
+  {
+   "path": "results/widepools_implicit/w0.json",
+   "exists": true,
+   "sha256_16": "6a90b7bcc2b82562",
+   "bytes": 10103608
+  },
+  {
+   "path": "results/widepools_implicit/w1.json",
+   "exists": true,
+   "sha256_16": "dcb34d6ca5a7c690",
+   "bytes": 9923282
+  },
+  {
+   "path": "results/widepools_implicit/w2.json",
+   "exists": true,
+   "sha256_16": "2f7440497f05cd4a",
+   "bytes": 5621821
+  },
+  {
+   "path": "results/widepools_implicit/w3.json",
+   "exists": true,
+   "sha256_16": "c194bbb0bd7ec69e",
+   "bytes": 8229360
+  },
+  {
+   "path": "results/widepools_implicit/w4.json",
+   "exists": true,
+   "sha256_16": "504576d634e4bdb8",
+   "bytes": 5126437
+  },
+  {
+   "path": "results/widepools_implicit/w5.json",
+   "exists": true,
+   "sha256_16": "7f4c7cee307a726c",
+   "bytes": 3561735
+  }
+ ],
  "population": {
   "n": 291,
   "source": "the comparison set"

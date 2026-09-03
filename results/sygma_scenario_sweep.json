@@ -2,10 +2,54 @@
  "provenance": {
   "script": "sygma_scenario_sweep.py",
   "script_path": "scripts/typed_edit/sygma_scenario_sweep.py",
-  "source_sha256": "a429026f75779bd2c4162afeef78286051875f39e41d1658172c7383892f6f79",
-  "git_commit": "999d6858f292e54e1e9e074212cf3e1c0be530d2",
+  "source_sha256": "b076d5695c08e6d39c2493a62c64f682162eebbdcb8dcc8b7ea035258f9152e2",
+  "git_commit": "249f1cdb8f05e4571331cbc2e21ae4085771e9bd",
   "git_dirty": true
  },
+ "inputs": [
+  {
+   "path": "results/widepools_implicit/w0.json",
+   "exists": true,
+   "sha256_16": "6a90b7bcc2b82562",
+   "bytes": 10103608
+  },
+  {
+   "path": "results/widepools_implicit/w1.json",
+   "exists": true,
+   "sha256_16": "dcb34d6ca5a7c690",
+   "bytes": 9923282
+  },
+  {
+   "path": "results/widepools_implicit/w2.json",
+   "exists": true,
+   "sha256_16": "2f7440497f05cd4a",
+   "bytes": 5621821
+  },
+  {
+   "path": "results/widepools_implicit/w3.json",
+   "exists": true,
+   "sha256_16": "c194bbb0bd7ec69e",
+   "bytes": 8229360
+  },
+  {
+   "path": "results/widepools_implicit/w4.json",
+   "exists": true,
+   "sha256_16": "504576d634e4bdb8",
+   "bytes": 5126437
+  },
+  {
+   "path": "results/widepools_implicit/w5.json",
+   "exists": true,
+   "sha256_16": "7f4c7cee307a726c",
+   "bytes": 3561735
+  },
+  {
+   "path": "results/sygma_fulltest_predictions.json",
+   "exists": true,
+   "sha256_16": "b012db873a24bb87",
+   "bytes": 8324075
+  }
+ ],
  "population": {
   "n_substrates": 291,
   "n_references": 665
@@ -47,7 +91,7 @@
    }
   },
   "phase1 x2, phase2 x1": {
-   "mean_emitted": 522.6,
+   "mean_emitted": 526.1,
    "recall": {
     "1": 0.1534,
     "3": 0.2887,
@@ -59,9 +103,9 @@
     "30": 0.5534,
     "50": 0.5729
    },
-   "unfinished": 6,
+   "unfinished": 5,
    "unfinished_note": "substrates the deeper scenario did not finish inside the deadline keep the deployed scenario's list, so this arm is never handicapped by the timeout",
-   "seconds": 8793.8,
+   "seconds": 7663.3,
    "exhaustive_minus_sygma_at_30": {
     "gap": 0.0992,
     "ci95": [

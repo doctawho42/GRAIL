@@ -10,7 +10,7 @@ import json, re, sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from _provenance import stamp  # noqa: E402
+from _provenance import record_inputs, stamp  # noqa: E402
 from rdkit import Chem, RDLogger
 from grail_metabolism.metrics import _tautomer_inchikey
 RDLogger.DisableLog('rdApp.*')
@@ -73,7 +73,8 @@ def metatox_291():
     # of an earlier script that happened to hold the same keys. The two agreed; depending on the
     # superseded one meant this audit could only be re-run by rebuilding it.
     subs = []
-    for shard in sorted(glob.glob(str(R/'results/widepools_implicit/w*.json'))):
+    read_from = sorted(glob.glob(str(R/'results/widepools_implicit/w*.json')))
+    for shard in read_from:
         blob = json.loads(Path(shard).read_text())
         subs.extend(s for s in blob['pools'] if blob['references'].get(s))
     return sorted(set(subs))
@@ -95,6 +96,9 @@ def main():
                      'fraction': round(hit/n_ok, 3) if n_ok else None}
         print(f'{name}: {hit}/{n_ok} substrates were in training or validation ({hit/n_ok:.1%})')
     out['provenance'] = stamp(__file__)
+    # Which pools this run actually read, so an artifact written against a pool that has
+    # since gone can be told from a current one.
+    out['inputs'] = record_inputs(read_from)
     (R/'results/external_overlap_audit.json').write_text(json.dumps(out, indent=1))
     print('\nwrote results/external_overlap_audit.json')
 

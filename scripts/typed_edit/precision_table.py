@@ -26,7 +26,7 @@ for _p in (str(ROOT), str(ROOT / "scripts"), str(HERE)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from _provenance import stamp  # noqa: E402
+from _provenance import record_inputs, stamp  # noqa: E402
 
 from _rrf import rrf_order  # noqa: E402
 
@@ -51,7 +51,8 @@ def main() -> int:
     from bank_without_selection import _dedup, _key as tautkey
 
     pools, refs = {}, {}
-    for f in sorted(glob.glob(str(ROOT / "results/widepools_implicit/w*.json"))):
+    read_from = sorted(glob.glob(str(ROOT / "results/widepools_implicit/w*.json")))
+    for f in read_from:
         d = json.loads(Path(f).read_text())
         pools.update(d["pools"]); refs.update(d["references"])
     small = json.loads((ROOT / "results/widepools_k30/all.json").read_text())["pools"]
@@ -86,6 +87,9 @@ def main() -> int:
         out[a] = row
 
     rep = {"provenance": stamp(__file__),
+           # Which pools this run actually read, so an artifact written against a pool
+           # that has since gone can be told from a current one.
+           "inputs": record_inputs(read_from),
            "population": {"n": len(subs), "source": "the comparison set"},
            "definition": ("hits divided by the predictions inside the window, so an arm whose "
                           "list is shorter than the budget is not charged for the empty slots"),

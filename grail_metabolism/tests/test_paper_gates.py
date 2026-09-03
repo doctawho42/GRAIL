@@ -27,6 +27,8 @@ GATES = [
     ("polish_audit.py", []),           # no injected instruction, reader address or diary prose
     # every number the registration leans on still traces to the code that wrote it
     ("audit_artifact_provenance.py", []),
+    # a swept row whose numbers move with the clock names which ones, and the SI says so
+    ("check_wallclock_fields.py", []),
 ]
 
 

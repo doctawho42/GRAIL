@@ -559,7 +559,10 @@
    "artifact": "results/sygma_scenario_sweep.json",
    "script": "sygma_scenario_sweep.py",
    "how": "recorded source digest",
-   "status": "current"
+   "status": "producer_changed",
+   "detail": "producer was b076d5695c08, is now afc30598133c",
+   "diff_recovered_by": "source at 249f1cdb8f05",
+   "diff": "--- sygma_scenario_sweep.py (as recorded)\n+++ sygma_scenario_sweep.py (now)\n@@ -170,4 +170,13 @@\n                                    \"deadline keep the deployed scenario's list, so this arm is \"\n                                    \"never handicapped by the timeout\"),\n+               # Which of this row's fields a re-run may legitimately move. The deadline is\n+               # wall-clock, so how many substrates meet it depends on how loaded the machine is:\n+               # a re-run on a quieter machine finished one more substrate, which took unfinished\n+               # from 6 to 5 and mean_emitted from 522.6 to 526.1, because a substrate that\n+               # finishes contributes the deeper scenario's longer list instead of falling back.\n+               # Every recall, every gap and every interval was bit-identical across both runs.\n+               # Naming the three here is what lets a check hold the rest to equality rather than\n+               # treating any movement as noise.\n+               \"wall_clock_dependent\": [\"mean_emitted\", \"unfinished\", \"seconds\"],\n                \"seconds\": round(time.perf_counter() - t0, 1)}\n         for k in (30, 50):"
   },
   {
    "artifact": "results/tautomer_budget.json",
@@ -647,9 +650,9 @@
   }
  ],
  "n_pinned": 106,
- "n_pinned_stale": 0,
+ "n_pinned_stale": 1,
  "sweep": {
-  "unstamped": 282,
+  "unstamped": 283,
   "producer_changed": 38,
   "current": 48,
   "producer_unknown": 26,
@@ -748,6 +751,11 @@
   },
   {
    "artifact": "results/aggregation_shards_val/s5.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/ai_statement_verdicts.json",
    "status": "unstamped",
    "detail": "no provenance block: nothing records which code wrote this"
   },
@@ -2363,9 +2371,9 @@
    "script": "wide_pool_analysis.py",
    "how": "recorded source digest",
    "status": "producer_changed",
-   "detail": "producer was ed476b264a7e, is now a55f9d02dbe2",
+   "detail": "producer was ed476b264a7e, is now 76bcbdc069a0",
    "diff_recovered_by": "the tree was dirty when written, so the source at e56560b587b1 is the nearest committed version and not exactly what ran",
-   "diff": "--- wide_pool_analysis.py (as recorded)\n+++ wide_pool_analysis.py (now)\n@@ -35,4 +35,6 @@\n from _provenance import stamp  # noqa: E402\n \n+from _rrf import rrf_order  # noqa: E402\n+\n from rdkit import Chem, RDLogger  # noqa: E402\n from rdkit.Chem.rdMolDescriptors import CalcMolFormula  # noqa: E402\n@@ -51,6 +53,11 @@\n \n \n+def hits(keys, real, k=None):\n+    \"\"\"Number of references recovered in the first k, which micro and macro both need.\"\"\"\n+    return len(set(keys[:k] if k else keys) & real)\n+\n+\n def rec(keys, real, k=None):\n-    return len(set(keys[:k] if k else keys) & real) / len(real) if real else 0.0\n+    return hits(keys, real, k) / len(real) if real else 0.0\n \n \n@@ -58,8 +65,17 @@\n     ap = argparse.ArgumentParser()\n     ap.add_argument(\"--out\", default=str(ROOT / \"results\" / \"wide_pool_analysis.json\"))\n+    ap.add_argument(\"--pools\", default=\"\",\n+                    help=\"glob of pool shards; empty reads the single merged POOLS file\")\n     args = ap.parse_args()\n \n-    blob = json.loads(POOLS.read_text())\n-    pools, refs = blob[\"pools\"], blob[\"references\"]\n+    if args.pools:\n+        import glob as _glob\n+        pools, refs, src = {}, {}, args.pools\n+        for f in sorted(_glob.glob(args.pools)):\n+            d = json.loads(Path(f).read_text())\n+            pools.update(d[\"pools\"]); refs.update(d[\"references\"])\n+    else:\n+        blob = json.loads(POOLS.read_text())\n+        pools, refs, src = blob[\"pools\"], blob[\"references\"], str(POOLS)\n  ... diff truncated"
+   "diff": "--- wide_pool_analysis.py (as recorded)\n+++ wide_pool_analysis.py (now)\n@@ -33,5 +33,7 @@\n         sys.path.insert(0, _p)\n \n-from _provenance import stamp  # noqa: E402\n+from _provenance import record_inputs, stamp  # noqa: E402\n+\n+from _rrf import rrf_order  # noqa: E402\n \n from rdkit import Chem, RDLogger  # noqa: E402\n@@ -51,6 +53,11 @@\n \n \n+def hits(keys, real, k=None):\n+    \"\"\"Number of references recovered in the first k, which micro and macro both need.\"\"\"\n+    return len(set(keys[:k] if k else keys) & real)\n+\n+\n def rec(keys, real, k=None):\n-    return len(set(keys[:k] if k else keys) & real) / len(real) if real else 0.0\n+    return hits(keys, real, k) / len(real) if real else 0.0\n \n \n@@ -58,8 +65,19 @@\n     ap = argparse.ArgumentParser()\n     ap.add_argument(\"--out\", default=str(ROOT / \"results\" / \"wide_pool_analysis.json\"))\n+    ap.add_argument(\"--pools\", default=\"\",\n+                    help=\"glob of pool shards; empty reads the single merged POOLS file\")\n     args = ap.parse_args()\n \n-    blob = json.loads(POOLS.read_text())\n-    pools, refs = blob[\"pools\"], blob[\"references\"]\n+    if args.pools:\n+        import glob as _glob\n+        pools, refs, src = {}, {}, args.pools\n+        read = [Path(f) for f in sorted(_glob.glob(args.pools))]\n+        for f in read:\n+            d = json.loads(f.read_text())\n+            pools.update(d[\"pools\"]); refs.update(d[\"references\"])\n  ... diff truncated"
   },
   {
    "artifact": "results/wide_pools.json",
@@ -2602,8 +2610,20 @@
   }
  ],
  "files_below_the_top_level": 186,
- "of_those_named_as_an_input_by_a_pinned_artifact": 24,
+ "of_those_named_as_an_input_by_a_pinned_artifact": 65,
  "named_inputs": [
+  "results/aggregation_shards/s0.json",
+  "results/aggregation_shards/s1.json",
+  "results/aggregation_shards/s2.json",
+  "results/aggregation_shards/s3.json",
+  "results/aggregation_shards/s4.json",
+  "results/aggregation_shards/s5.json",
+  "results/aggregation_shards_val/s0.json",
+  "results/aggregation_shards_val/s1.json",
+  "results/aggregation_shards_val/s2.json",
+  "results/aggregation_shards_val/s3.json",
+  "results/aggregation_shards_val/s4.json",
+  "results/aggregation_shards_val/s5.json",
   "results/seedpools/exhaustive_seed0.json",
   "results/seedpools/exhaustive_seed1.json",
   "results/seedpools/exhaustive_seed2.json",
@@ -2622,11 +2642,40 @@
   "results/valpools_k50/all.json",
   "results/valpools_k7581/all.json",
   "results/widepools_fulltest/w0.json",
+  "results/widepools_fulltest/w1.json",
+  "results/widepools_fulltest/w2.json",
+  "results/widepools_fulltest/w3.json",
+  "results/widepools_fulltest/w4.json",
+  "results/widepools_fulltest/w5.json",
   "results/widepools_implicit/w0.json",
+  "results/widepools_implicit/w1.json",
+  "results/widepools_implicit/w2.json",
+  "results/widepools_implicit/w3.json",
+  "results/widepools_implicit/w4.json",
+  "results/widepools_implicit/w5.json",
   "results/widepools_k30/all.json",
   "results/widepools_k30_fulltest/w0.json",
+  "results/widepools_k30_fulltest/w1.json",
+  "results/widepools_k30_fulltest/w2.json",
+  "results/widepools_k30_fulltest/w3.json",
+  "results/widepools_k30_fulltest/w4.json",
+  "results/widepools_k30_fulltest/w5.json",
   "results/widepools_k30_std/all.json",
   "results/widepools_std/w1.json",
-  "results/widepools_std_fine/p0_12.json"
+  "results/widepools_std/w3.json",
+  "results/widepools_std_fine/p0_12.json",
+  "results/widepools_std_fine/p12_24.json",
+  "results/widepools_std_fine/p146_158.json",
+  "results/widepools_std_fine/p158_170.json",
+  "results/widepools_std_fine/p170_182.json",
+  "results/widepools_std_fine/p182_194.json",
+  "results/widepools_std_fine/p194_206.json",
+  "results/widepools_std_fine/p206_218.json",
+  "results/widepools_std_fine/p218_219.json",
+  "results/widepools_std_fine/p24_36.json",
+  "results/widepools_std_fine/p36_48.json",
+  "results/widepools_std_fine/p48_60.json",
+  "results/widepools_std_fine/p60_72.json",
+  "results/widepools_std_fine/p72_73.json"
  ]
 }

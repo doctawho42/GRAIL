@@ -2,10 +2,48 @@
  "provenance": {
   "script": "oracle_by_grouping.py",
   "script_path": "scripts/typed_edit/oracle_by_grouping.py",
-  "source_sha256": "f599cbeddcf08dede915ea6d98b24c457edcf68b7c214b581122b3a60dbae2d7",
-  "git_commit": "33f72aa1923c32bc9b9723ce0b94a0c53e13a590",
-  "git_dirty": true
+  "source_sha256": "d831c504c06569cc6b6a15389d4df4480b3334f19038fc66a3a2fad206f74a9a",
+  "git_commit": "249f1cdb8f05e4571331cbc2e21ae4085771e9bd",
+  "git_dirty": false
  },
+ "inputs": [
+  {
+   "path": "results/widepools_implicit/w0.json",
+   "exists": true,
+   "sha256_16": "6a90b7bcc2b82562",
+   "bytes": 10103608
+  },
+  {
+   "path": "results/widepools_implicit/w1.json",
+   "exists": true,
+   "sha256_16": "dcb34d6ca5a7c690",
+   "bytes": 9923282
+  },
+  {
+   "path": "results/widepools_implicit/w2.json",
+   "exists": true,
+   "sha256_16": "2f7440497f05cd4a",
+   "bytes": 5621821
+  },
+  {
+   "path": "results/widepools_implicit/w3.json",
+   "exists": true,
+   "sha256_16": "c194bbb0bd7ec69e",
+   "bytes": 8229360
+  },
+  {
+   "path": "results/widepools_implicit/w4.json",
+   "exists": true,
+   "sha256_16": "504576d634e4bdb8",
+   "bytes": 5126437
+  },
+  {
+   "path": "results/widepools_implicit/w5.json",
+   "exists": true,
+   "sha256_16": "7f4c7cee307a726c",
+   "bytes": 3561735
+  }
+ ],
  "population": {
   "n": 291,
   "n_references": 665.0,
@@ -16,7 +54,7 @@
  "cap": 100,
  "cap_note": "every arm including the fusion baseline is computed on the capped pool, so the three partitions are compared on the set the deployed configuration actually ranks",
  "note": "every arm blocks its groups, which is what the oracle over a partition means; the fusion arm interleaves and is the baseline all three are read against",
- "untyped_candidates": 1149,
+ "untyped_candidates": 1179,
  "groups_per_substrate": {
   "formula": 41.5,
   "type": 51.4,

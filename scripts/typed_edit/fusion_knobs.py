@@ -33,7 +33,7 @@ for _p in (str(ROOT), str(ROOT / "scripts"), str(HERE)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from _provenance import stamp  # noqa: E402
+from _provenance import record_inputs, stamp  # noqa: E402
 from _rrf import rrf_order  # noqa: E402
 
 CAP = 100
@@ -71,7 +71,8 @@ def main() -> int:
     from bank_without_selection import _key as tautkey
 
     pools, refs = {}, {}
-    for f in sorted(glob.glob(str(ROOT / args.pools))) or [str(ROOT / args.pools)]:
+    read_from = sorted(glob.glob(str(ROOT / args.pools))) or [str(ROOT / args.pools)]
+    for f in read_from:
         blob = json.loads(Path(f).read_text())
         pools.update(blob["pools"]); refs.update(blob["references"])
     subs = sorted(s for s in pools if refs.get(s))
@@ -139,6 +140,9 @@ def main() -> int:
 
     report = {
         "provenance": stamp(__file__),
+        # Which pools this run actually read, so an artifact written against a pool
+        # that has since gone can be told from a current one.
+        "inputs": record_inputs(read_from),
         "population": {"n_substrates": len(subs), "n_references": int(U.sum())},
         "cap": CAP,
         "anchor_reproduces_the_published_column": True,

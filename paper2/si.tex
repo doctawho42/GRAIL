@@ -1604,7 +1604,13 @@ $+\numSygscenDeepGap$ $[+\numSygscenDeepLo, +\numSygscenDeepHi]$ against
 $+\numSygscenDeployedGap$ $[+\numSygscenDeployedLo, +\numSygscenDeployedHi]$ at the deployed
 setting, both intervals excluding zero. \numSygscenUnfinished{} substrates did not finish the
 deeper scenario inside a ninety-second deadline and keep their deployed lists, which can only
-favour SyGMa's arm in the comparison rather than harm it.
+favour SyGMa's arm in the comparison rather than harm it. That deadline is wall-clock, so this
+count and the mean emission it produces depend on how loaded the machine is: a re-run on a quieter
+machine finished a substrate that had previously timed out, which lowers the count and raises the
+mean emission, since that substrate then contributes the deeper scenario's longer list. Every
+recall, every gap and every interval in this sweep was identical across the two runs. The fields a
+re-run may move are named in the artifact, so a check holds the rest to equality rather than
+reading any movement as noise.
 
 The comparison is reported at the documentation default because that is the setting a user gets,
 and the sweep is reported because a paper asking others to declare an emission knob has to turn

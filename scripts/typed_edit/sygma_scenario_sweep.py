@@ -169,6 +169,15 @@ def main() -> int:
                "unfinished_note": ("substrates the deeper scenario did not finish inside the "
                                    "deadline keep the deployed scenario's list, so this arm is "
                                    "never handicapped by the timeout"),
+               # Which of this row's fields a re-run may legitimately move. The deadline is
+               # wall-clock, so how many substrates meet it depends on how loaded the machine is:
+               # a re-run on a quieter machine finished one more substrate, which took unfinished
+               # from 6 to 5 and mean_emitted from 522.6 to 526.1, because a substrate that
+               # finishes contributes the deeper scenario's longer list instead of falling back.
+               # Every recall, every gap and every interval was bit-identical across both runs.
+               # Naming the three here is what lets a check hold the rest to equality rather than
+               # treating any movement as noise.
+               "wall_clock_dependent": ["mean_emitted", "unfinished", "seconds"],
                "seconds": round(time.perf_counter() - t0, 1)}
         for k in (30, 50):
             d = hits(ours, k) - hits(out, k)
