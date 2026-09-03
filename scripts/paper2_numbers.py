@@ -230,6 +230,9 @@ def build():
     # whether the site a prediction names is the site that changed, against a same-size null
     sag = art("site_agreement.json")
     n["site.scored"] = sag["counts"]["scored"]
+    # The budget the audit ran at, so the section can name the arm rather than leave a
+    # reader to infer it: the whole bank is not a budget of thirty rules.
+    n["site.rulebudget"] = sag["population"]["rule_budget"]
     n["site.hit"] = sag["counts"]["centre_hit"]
     n["site.touching"] = sag["share_of_scored_where_the_reported_site_touches_the_centre"]
     n["site.inside"] = sag["share_of_scored_where_the_reported_site_lies_wholly_inside_it"]
@@ -704,6 +707,9 @@ def build():
     # source checkout, so it can be, and the asymmetry it left was the one running this work's way.
     mpd = art("metapredictor_drawing.json")
     n["mpdraw.rerun"] = mpd["substrates_re_run"]
+    # Both counts of the moved set, so the reconciliation in S14 is read from the artifact
+    # that measured it rather than typed beside the sentence.
+    n["mpdraw.rerun.old"] = mpd["substrates_the_string_test_scored"]
     for tag, short in (("the whole comparison set", "all"),
                        ("only the substrates the drawing changes", "moved")):
         cell = mpd["by_population"][tag]

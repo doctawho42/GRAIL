@@ -61,9 +61,36 @@ def main() -> int:
         refs.update(blob["references"])
     subs = sorted(s for s in refs if refs[s])
 
-    natural = {r["substrate_smiles"]: r["submission_smiles"]
-               for r in csv.DictReader(open(MAP))}
-    moved = [s for s in subs if natural.get(s, s) != s]
+    # Which substrates the drawing changes, asked of the molecule rather than of a CSV built for
+    # another submission. The CSV's two columns agree on two substrates whose drawings differ only
+    # in how a charge is written, so a string test scores them as unmoved and leaves them on their
+    # stored predictions; results/dialect_conditional.json asks the standardiser directly and gets
+    # two more. One question, asked once, or the two artifacts disagree about their own population.
+    from grail_metabolism.utils.preparation import standardize_mol
+    from rdkit import Chem
+
+    moved = []
+    for _s in subs:
+        _mol = Chem.MolFromSmiles(_s)
+        if _mol is None:
+            continue
+        try:
+            if Chem.MolToSmiles(standardize_mol(_mol)) != _s:
+                moved.append(_s)
+        except Exception:                                   # noqa: BLE001
+            continue
+
+    # The count the superseded test produced, recorded beside the one in force so the two numbers
+    # the documents print can be reconciled from the artifact instead of from a memory of why they
+    # differ. The map was prepared for the incumbent service's submission and its two columns agree
+    # on substrates whose drawings differ only in how a charge is written.
+    _map_moved = 0
+    try:
+        _natural = {r["substrate_smiles"]: r["submission_smiles"]
+                    for r in csv.DictReader(open(MAP))}
+        _map_moved = sum(1 for _s in subs if _natural.get(_s, _s) != _s)
+    except Exception:                                       # noqa: BLE001
+        _map_moved = 0
 
     stored = json.loads(STORED.read_text())
     redrawn = json.loads(REDRAWN.read_text())
@@ -125,6 +152,7 @@ def main() -> int:
                    "the rest keep their frozen predictions and contribute exactly zero to the "
                    "paired difference, which is why re-running them would add nothing"),
         "substrates_re_run": len(moved),
+        "substrates_the_string_test_scored": _map_moved,
         "budgets": list(KS),
         "bootstrap": {"n": N_BOOT, "seed": SEED},
         "by_population": rows,

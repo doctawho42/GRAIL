@@ -123,7 +123,10 @@ corpus by structure skeleton. The corpus holds \numAssemblyCorpuspairs{} distinc
 pairs. Of MetXBioDB's \numAssemblyMetxpairs{}, \numAssemblyMetxinside{} are inside it,
 \numAssemblyMetxshare{}; of the GLORYx set's \numAssemblyGloryxpairs{} pairs over
 \numAssemblyGloryxparents{} parents, \numAssemblyGloryxpairsinside{} pairs and
-\numAssemblyGloryxparentsinside{} parents are. So the assembly ingested neither source
+\numAssemblyGloryxparentsinside{} parents are. Those pairs are counted distinct on the InChIKey
+skeleton, which is the key this assembly step uses; Section~\ref{sec:si-typeoverlap} counts the same
+set distinct on the typed pair and reaches a larger number, and the two fractions are not
+comparable with each other. So the assembly ingested neither source
 wholesale: a filter of unknown shape dropped nearly two fifths of MetXBioDB, and the measurement
 bounds that filter without recovering it. What it does not do is attribute any pair to a source,
 because a pair in MetXBioDB may equally have entered through DrugBank. ChEMBL and DrugBank are
@@ -626,7 +629,13 @@ for it. That matters because it is one of the two comparators the wide-budget le
 against, so a correction it did not receive would be the one correction running this work's way.
 It is measured on the \numMpdrawRerun{} substrates whose two drawings are different molecules, the
 rest keeping their frozen predictions because they contribute a paired difference of exactly
-zero. The natural drawing raises MetaPredictor's recall by
+zero. Which substrates those are is asked of the standardiser, not of the submission file: an
+earlier pass compared the two columns of the map prepared for the incumbent service and scored
+\numMpdrawRerunOld{} of them, missing two whose drawings differ only in how a charge is written, a
+sulfoxide against its charge-separated form and a phenol against its phenolate. A string test does
+not see those and a molecule test does. Including them lowers the conditional correction rather
+than raising it, which is the direction that matters here, since this is the one correction that
+would otherwise run this work's way. The natural drawing raises MetaPredictor's recall by
 $+\numMpdrawAllDiffThreeZero$ $[\numMpdrawAllLoThreeZero, +\numMpdrawAllHiThreeZero]$ at $k=30$
 over the whole comparison set, an interval covering zero, and by
 $+\numMpdrawMovedDiffThreeZero$ $[\numMpdrawMovedLoThreeZero, +\numMpdrawMovedHiThreeZero]$
@@ -925,7 +934,7 @@ dropped, \numMetxdropRecoverablesharePct{}; with bond counts ignored,
 chemistry, and it did not remove this chemistry.
 
 Two of the four sources can be read this way, not one, and the second is the smaller and the
-weaker. Of the GLORYx reference set's \numGloryxdropPairs{} distinct pairs
+weaker. Of the GLORYx reference set's \numGloryxdropPairs{} distinct typed pairs
 \numGloryxdropInside{} are inside the corpus, and the two halves are further apart than
 MetXBioDB's: a total variation distance of \numGloryxdropTv{} with
 \numGloryxdropAbsentsharePct{} of the dropped pairs carrying a type the kept half never shows.
@@ -934,6 +943,14 @@ the size of the set rather than the size of the effect: \numGloryxdropKeptp{} ty
 side and \numGloryxdropDroppedp{} on the other spread over \numGloryxdropTypes{} types leave
 almost every type a singleton, so a shuffled label reaches nearly that distance too. It points
 the same way as the first source and settles nothing on its own.
+
+The two counts of this set are counted differently and neither fraction may be read against the
+other. Section~\ref{sec:si-corpus} keys a pair on the InChIKey skeleton and finds
+\numAssemblyGloryxpairsinside{} of \numAssemblyGloryxpairs{} inside; the typing used here keys it
+on the transformation type and finds \numGloryxdropInside{} of \numGloryxdropPairs{}. A reader
+would not otherwise suspect two instruments, because the source that can be checked against both
+gives one answer either way: MetXBioDB returns \numMetxdropPairs{} pairs with
+\numMetxdropInside{} inside under each.
 
 One thing had to change to measure it at all. The common-substructure search the typing runs
 carries a five-second deadline, and on a source of drug-sized molecules a pair that misses it

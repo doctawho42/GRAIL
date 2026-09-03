@@ -2,8 +2,8 @@
  "provenance": {
   "script": "metapredictor_drawing.py",
   "script_path": "scripts/typed_edit/metapredictor_drawing.py",
-  "source_sha256": "9807211fa7633e64cb13a5c8a1b88d39a226f6f89a87c79b06ba2dd9e28eba3f",
-  "git_commit": "895718aef04ed1892500a49e3c3d29139474bd3e",
+  "source_sha256": "b8a008abc35f05105b3671657bc063ae4c8a6c215c163e00e7d771a8ac690bf4",
+  "git_commit": "87f65e66cdeb4644a91e67b0f720949939fcc30a",
   "git_dirty": true
  },
  "inputs": [
@@ -46,7 +46,8 @@
  ],
  "difference": "MetaPredictor's recall with the substrate as a chemist draws it, minus its recall with the substrate as the corpus stores it",
  "design": "only the substrates whose two drawings are different molecules were re-run; the rest keep their frozen predictions and contribute exactly zero to the paired difference, which is why re-running them would add nothing",
- "substrates_re_run": 79,
+ "substrates_re_run": 81,
+ "substrates_the_string_test_scored": 79,
  "budgets": [
   5,
   10,
@@ -127,66 +128,66 @@
    }
   },
   "only the substrates the drawing changes": {
-   "n_substrates": 79,
-   "n_references": 195,
+   "n_substrates": 81,
+   "n_references": 198,
    "by_budget": {
     "5": {
-     "recall_as_stored": 0.3077,
-     "recall_as_drawn": 0.3231,
-     "difference": 0.0154,
+     "recall_as_stored": 0.3081,
+     "recall_as_drawn": 0.3182,
+     "difference": 0.0101,
      "ci95": [
-      -0.0319,
-      0.0688
+      -0.037,
+      0.0621
      ],
      "excludes_zero": false
     },
     "10": {
-     "recall_as_stored": 0.4051,
-     "recall_as_drawn": 0.4462,
-     "difference": 0.041,
+     "recall_as_stored": 0.404,
+     "recall_as_drawn": 0.4394,
+     "difference": 0.0354,
      "ci95": [
-      -0.0048,
-      0.0878
+      -0.0104,
+      0.0829
      ],
      "excludes_zero": false
     },
     "15": {
-     "recall_as_stored": 0.4205,
-     "recall_as_drawn": 0.4513,
-     "difference": 0.0308,
+     "recall_as_stored": 0.4192,
+     "recall_as_drawn": 0.4444,
+     "difference": 0.0253,
      "ci95": [
-      -0.0104,
-      0.0746
+      -0.0162,
+      0.0706
      ],
      "excludes_zero": false
     },
     "20": {
-     "recall_as_stored": 0.4205,
-     "recall_as_drawn": 0.4513,
-     "difference": 0.0308,
+     "recall_as_stored": 0.4192,
+     "recall_as_drawn": 0.4444,
+     "difference": 0.0253,
      "ci95": [
-      -0.0104,
-      0.0746
+      -0.0162,
+      0.0706
      ],
      "excludes_zero": false
     },
     "30": {
-     "recall_as_stored": 0.4205,
-     "recall_as_drawn": 0.4513,
-     "difference": 0.0308,
+     "recall_as_stored": 0.4192,
+     "recall_as_drawn": 0.4444,
+     "difference": 0.0253,
      "ci95": [
-      -0.0104,
-      0.0746
+      -0.0162,
+      0.0706
      ],
      "excludes_zero": false
     },
     "50": {
-     "recall_as_stored": 0.4205,
-     "recall_as_drawn": 0.4513,
-     "difference": 0.0308,
+     "recall_as_stored": 0.4192,
+     "recall_as_drawn": 0.4444,
+     "difference": 0.0253,
      "ci95": [
-      -0.0104,
-      0.0746
+      -0.0162,
+      0.0706
      ],
      "excludes_zero": false
     }

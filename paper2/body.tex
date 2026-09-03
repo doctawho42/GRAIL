@@ -39,8 +39,9 @@ structure predictor built from a bank of reaction templates, a learned model tha
 that ranks the resulting candidates. Every prediction it emits carries the template that produced
 it and the atoms that template acted on, so a chemist can accept or reject a candidate on
 mechanistic grounds rather than on a score. How much mechanism that carries depends on the
-template: a large part of the bank is patterns of three atoms or fewer, for which the named site
-is a report of where the pattern matched rather than of a mechanism, and
+template: \numRsizeLethreesharePct{} of the bank, \numRsizeLethree{} of \numRsizeParsed{}
+parseable templates, is patterns of three atoms or fewer, for which the named site is a report of
+where the pattern matched rather than of a mechanism, and
 Section~\ref{sec:offers} measures both the size of that part and how often the named site is the
 site that changed. We evaluate it with the two decisions above promoted
 to declared axes, meaning that each is stated and varied across its full range instead of being
@@ -492,8 +493,11 @@ only the lead over SyGMa survives of the four, and that is reported below. The m
 $k=30$ is $+\numMarginMarginalgap$ with the interval
 $[+\numMarginMarginallo, +\numMarginMarginalhi]$: it is the only one of those eight a
 family-wise correction over the sweep removes, though not the only lead in this paper that it
-removes, and the others are named where they are claimed. and its lower bound is smaller than the largest drawing correction measured on
-any comparator here, $+\numSygdialectThirty$ for SyGMa at the same budget. The two controls do not remove the
+removes, and the others are named where they are claimed. Two of the eight were never in the
+corrected family in any case, being BioTransformer's cells at $k=30$ and $k=50$, which the
+declaration of that family excludes; the correction is reported over the family it was declared
+over and not over the eight. The margin's lower bound is also smaller than the largest drawing
+correction measured on any comparator here, $+\numSygdialectThirty$ for SyGMa at the same budget. The two controls do not remove the
 same cells and neither leaves the MetaTox column standing: the correction removes the cell at
 $k=30$, and the matched-length cut removes the one at $k=50$, where over
 \numMatchedBankmetatoxSlots{} slots the difference is $+\numMatchedBankmetatox$
@@ -1031,15 +1035,18 @@ it: \numRsizeLethree{} of \numRsizeParsed{} parseable templates have three react
 worked example come from templates that small. A template of that size is a pattern rather than a
 mechanism, so for those the site discrimination comes from the learned stages and not from the
 rule, and more than half of what a reader of the example sees is attributed to one. That the site
-is the site that changed is a claim, and it is measured: of
+is the site that changed is a claim, and it is measured on the interactive arm, whose rule budget
+of \numSiteRulebudget{} the audit records: of
 \numSiteScored{} correctly predicted metabolites, the site reported touches the atoms that
 actually differ from the substrate in \numSiteTouchingPct{}, against \numSiteConnectednullPct{}
 for a connected fragment of the same size grown at random from the same molecule, and lies wholly
 inside the change in \numSiteInsidePct{} (Section~\ref{SI-sec:si-site}). An agreement rate near
 nine in ten is not the size of the effect; the margin over that null is, and it is
-\numSiteConnectedmargin{}. The reference centre is derived by the same routine that located the
-reaction centre when a template was mined, so for a mined template the two are not independent
-and the agreement is partly a self-consistency check. Split by where the template came from, the
+\numSiteConnectedmargin{}. The exhaustive arm is not audited this way: it applies the whole bank rather than a
+budget of \numSiteRulebudget{} rules, so the population of scored matches would be a different one,
+and the figure above may not be read as its. The reference centre is derived by the same routine
+that located the reaction centre when a template was mined, so for a mined template the two are not
+independent and the agreement is partly a self-consistency check. Split by where the template came from, the
 \numSiteCuratedscored{} matches carried by a hand-written template, for which the two are
 independent, agree at \numSiteCuratedPct{} against \numSiteMinedPct{} for the mined ones: the
 claim does not rest on the templates whose provenance would guarantee it. Attribution of that kind is
