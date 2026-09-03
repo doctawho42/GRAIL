@@ -1,8 +1,8 @@
 {
- "artifacts_the_numbers_come_from": 86,
+ "artifacts_the_numbers_come_from": 87,
  "naming_a_checkpoint_that_is_not_the_deployed_run": [],
  "n_naming_a_non_deployed_checkpoint": 0,
- "n_reached_only_through_an_inputs_block": 72,
+ "n_reached_only_through_an_inputs_block": 73,
  "producer_loads_a_model_but_the_artifact_records_none": [
   "results/aggregation_ablation.json <- scripts/typed_edit/aggregation_ablation.py",
   "results/aggregation_ablation_validation.json <- scripts/typed_edit/aggregation_ablation.py",
@@ -20,6 +20,7 @@
  "exempt": 3,
  "unpinned": [],
  "unstamped": [
+  "results/external_overlap_audit.json",
   "results/sygma_scenario_sweep.json"
  ],
  "verifiable_by_inference_only": [
@@ -31,7 +32,7 @@
   "results/scored_predictions.json"
  ],
  "n_unpinned": 0,
- "n_unstamped": 1,
+ "n_unstamped": 2,
  "n_verifiable_by_inference_only": 6,
  "method": "paper2_numbers.build() is run with art() instrumented, so the count is of artifacts actually opened rather than of matches in the source",
  "artifacts": [
@@ -300,8 +301,8 @@
    "artifact": "results/external_overlap_audit.json",
    "pinned": true,
    "stamped": true,
-   "verifiable": true,
-   "sweep_status": "current",
+   "verifiable": false,
+   "sweep_status": "producer_changed",
    "how": "recorded source digest",
    "exempt": null
   },
@@ -460,6 +461,15 @@
   },
   {
    "artifact": "results/matched_length.json",
+   "pinned": true,
+   "stamped": true,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "recorded source digest",
+   "exempt": null
+  },
+  {
+   "artifact": "results/metapredictor_beam_sweep.json",
    "pinned": true,
    "stamped": true,
    "verifiable": true,

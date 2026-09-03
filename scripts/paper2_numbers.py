@@ -382,6 +382,24 @@ def build():
         for k in ("15", "50"):
             n[f"prec.{tag}.{k}"] = prec[arm][k]
 
+    # MetaPredictor's emission knob swept upward. The manuscript reads its flatness from k=15 off
+    # the length of its lists, which infers the cause; turning the beam up tests it, and reaches
+    # the same verdict the matched-length control reaches by truncating instead.
+    mpb = art("metapredictor_beam_sweep.json")
+    _dep, _wide = "deployed beam", "wide beam"
+    n["mpbeam.deployedemitted"] = mpb["by_setting"][_dep]["mean_emitted"]
+    n["mpbeam.wideemitted"] = mpb["by_setting"][_wide]["mean_emitted"]
+    for _k in ("15", "30", "50"):
+        n[f"mpbeam.widerecall{_k}"] = mpb["by_setting"][_wide]["recall"][_k]
+    for _tag, _key in (("deployed", _dep), ("wide", _wide)):
+        for _k in (15, 30):
+            cell = mpb["by_setting"][_key][f"exhaustive_minus_metapredictor_at_{_k}"]
+            n[f"mpbeam.{_tag}.{_k}.gap"] = cell["gap"]
+            n[f"mpbeam.{_tag}.{_k}.lo"] = cell["ci95"][0]
+            n[f"mpbeam.{_tag}.{_k}.hi"] = cell["ci95"][1]
+            n[f"mpbeam.{_tag}.{_k}.sep"] = cell["excludes_zero"]
+    n["mpbeam.widemissing"] = mpb["substrates_the_wide_decode_did_not_produce"]
+
     # SyGMa's own emission knob swept upward, which is the direction that bears on the one
     # wide-budget lead this work still claims.
     sss = art("sygma_scenario_sweep.json")

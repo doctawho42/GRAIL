@@ -562,6 +562,21 @@ ranking, and the counts are reported for every arm: at $k=50$,
 \numShortMetatoxFiveZero{} of MetaTox's, \numShortTrainedFiveZero{} of the interactive arm's and
 \numShortBankFiveZero{} of the exhaustive arm's are shorter than the budget.
 
+Reading that flatness off list length infers the cause; MetaPredictor's beam is the knob that tests
+it, and turning it up is the same question this work asks of other papers. Decoded on the same
+substrates at a wider beam, with \numMpbeamWidemissingWord{} of them failing to decode, its mean
+output rises from \numMpbeamDeployedemitted{} candidates to \numMpbeamWideemitted{} and its recall
+at thirty from \numSweepMetapredictorThreeZero{} to \numMpbeamWiderecallThreeZero{}. The margin at
+thirty falls from $+\numMpbeamDeployedThreeZeroGap$ $[+\numMpbeamDeployedThreeZeroLo,
++\numMpbeamDeployedThreeZeroHi]$ to $+\numMpbeamWideThreeZeroGap$ $[+\numMpbeamWideThreeZeroLo,
++\numMpbeamWideThreeZeroHi]$ and still excludes zero. At fifteen it does not:
+$+\numMpbeamWideOneFiveGap$ $[\numMpbeamWideOneFiveLo, +\numMpbeamWideOneFiveHi]$ against
+$+\numMpbeamDeployedOneFiveGap$ $[+\numMpbeamDeployedOneFiveLo, +\numMpbeamDeployedOneFiveHi]$ at
+the deployed beam. Both rows are reported because the deployed one is what a user gets and the wide
+one is what the comparator can do, and neither alone answers the question. The verdict is the one
+the matched-length control already reaches by truncating the longer list, arrived at here by
+lengthening the shorter one instead.
+
 Against MetaTox alone, the incumbent web service this work set out to replace, the exhaustive mode
 leads at all nine budgets, with the interval excluding zero at seven of them, and none of those
 seven survives the matched-length control above. It is also the one

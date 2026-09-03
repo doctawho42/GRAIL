@@ -1612,6 +1612,34 @@ recall, every gap and every interval in this sweep was identical across the two 
 re-run may move are named in the artifact, so a check holds the rest to equality rather than
 reading any movement as noise.
 
+\paragraph{MetaPredictor's beam, swept the same way.} The other comparator whose emission is a
+declared setting is MetaPredictor, and its flatness from $k=15$ is the clearest case in this work of
+a budget that has stopped measuring ranking: \numShortMetapredictorOneFive{} of its
+\numPopulationN{} lists are shorter than that budget. Decoding the same substrates at a wider beam
+takes its mean output from \numMpbeamDeployedemitted{} candidates to \numMpbeamWideemitted{} and
+its recall from \numSweepMetapredictorThreeZero{} at both thirty and fifty to
+\numMpbeamWiderecallThreeZero{} and \numMpbeamWiderecallFiveZero{}; at fifteen it reaches
+\numMpbeamWiderecallOneFive{}. Decoding at the wider setting lost \numMpbeamWidemissingWord{} of the
+substrates, so the two rows are scored on the same population under the same criterion, and the
+prediction equal to the substrate is dropped from both.
+
+What that does to the margin is the point of running it. At thirty the exhaustive arm leads by
+$+\numMpbeamDeployedThreeZeroGap$ $[+\numMpbeamDeployedThreeZeroLo,
++\numMpbeamDeployedThreeZeroHi]$ at the deployed beam and by $+\numMpbeamWideThreeZeroGap$
+$[+\numMpbeamWideThreeZeroLo, +\numMpbeamWideThreeZeroHi]$ at the wide one, both excluding zero.
+At fifteen the deployed reading is $+\numMpbeamDeployedOneFiveGap$
+$[+\numMpbeamDeployedOneFiveLo, +\numMpbeamDeployedOneFiveHi]$ and the wide one is
+$+\numMpbeamWideOneFiveGap$ $[\numMpbeamWideOneFiveLo, +\numMpbeamWideOneFiveHi]$, which does not
+exclude zero. So the head-of-list margin against MetaPredictor is a statement about the beam it was
+run at, and the depth margin is not.
+
+Both rows are printed rather than the one that favours this work. A paper arguing that an
+undeclared emission budget reorders a published table cannot report its own comparison at one
+budget and call the ordering a property of the systems, and the matched-length control reaches the
+same verdict from the other direction by truncating the longer list rather than lengthening the
+shorter one. The two settings are the tool's own documented decode configurations, not settings
+invented here.
+
 The comparison is reported at the documentation default because that is the setting a user gets,
 and the sweep is reported because a paper asking others to declare an emission knob has to turn
 its own.

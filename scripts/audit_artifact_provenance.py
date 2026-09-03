@@ -158,6 +158,8 @@ PINNED = {
     "results/site_agreement.json": "scripts/typed_edit/site_agreement.py",
     # what retraining moves, at the configuration the manuscript reports
     "results/retraining_spread.json": f"{TE}/retraining_spread.py",
+    # the comparator's own emission knob turned up, which the manuscript prints both rows of
+    "results/metapredictor_beam_sweep.json": f"{TE}/metapredictor_beam_sweep.py",
     # the comparison with every arm that can be re-run on one drawing
     "results/drawing_equalised.json": f"{TE}/drawing_equalised.py",
     # the same kept-against-dropped test on the second source this repository holds

@@ -195,7 +195,10 @@
    "artifact": "results/external_overlap_audit.json",
    "script": "external_overlap_audit.py",
    "how": "recorded source digest",
-   "status": "current"
+   "status": "producer_changed",
+   "detail": "producer was 1d3256c7f602, is now 9f81e2d97cfd",
+   "diff_recovered_by": "source at 6d7dbbfe957a",
+   "diff": "--- external_overlap_audit.py (as recorded)\n+++ external_overlap_audit.py (now)\n@@ -11,5 +11,5 @@\n sys.path.insert(0, str(Path(__file__).resolve().parents[1]))\n sys.path.insert(0, str(Path(__file__).resolve().parent))\n-from _provenance import stamp  # noqa: E402\n+from _provenance import record_inputs, stamp  # noqa: E402\n from rdkit import Chem, RDLogger\n from grail_metabolism.metrics import _tautomer_inchikey\n@@ -74,5 +74,6 @@\n     # superseded one meant this audit could only be re-run by rebuilding it.\n     subs = []\n-    for shard in sorted(glob.glob(str(R/'results/widepools_implicit/w*.json'))):\n+    read_from = sorted(glob.glob(str(R/'results/widepools_implicit/w*.json')))\n+    for shard in read_from:\n         blob = json.loads(Path(shard).read_text())\n         subs.extend(s for s in blob['pools'] if blob['references'].get(s))\n@@ -96,4 +97,7 @@\n         print(f'{name}: {hit}/{n_ok} substrates were in training or validation ({hit/n_ok:.1%})')\n     out['provenance'] = stamp(__file__)\n+    # Which pools this run actually read, so an artifact written against a pool that has\n+    # since gone can be told from a current one.\n+    out['inputs'] = record_inputs(read_from)\n     (R/'results/external_overlap_audit.json').write_text(json.dumps(out, indent=1))\n     print('\\nwrote results/external_overlap_audit.json')"
   },
   {
    "artifact": "results/four_method_291.json",
@@ -345,6 +348,12 @@
   {
    "artifact": "results/matched_length.json",
    "script": "matched_length.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
+   "artifact": "results/metapredictor_beam_sweep.json",
+   "script": "metapredictor_beam_sweep.py",
    "how": "recorded source digest",
    "status": "current"
   },
@@ -649,12 +658,12 @@
    "status": "current"
   }
  ],
- "n_pinned": 106,
- "n_pinned_stale": 1,
+ "n_pinned": 107,
+ "n_pinned_stale": 2,
  "sweep": {
   "unstamped": 283,
   "producer_changed": 38,
-  "current": 48,
+  "current": 47,
   "producer_unknown": 26,
   "cosmetic_only": 8
  },
