@@ -521,6 +521,23 @@ def build():
     # fails to reach, so the difference between the two populations is printed rather than left to
     # be worked out from two numbers three paragraphs apart.
     n["typeoverlap.reached"] = mtt["references_whose_type_the_bank_lacks"] - n["ceiling.novel"]
+
+    # The restricted claim, bounded by these two marginals rather than left unmeasured. The
+    # uncovered references of absent type are a subset of the references of absent type, and only
+    # one cell of the cross-tabulation holds an absent-type reference whose type the training
+    # annotation does have. So at most that many of the subset can, whatever the join would say.
+    #
+    # That cell is references_by_cell["not in the bank, in training"], which this file already
+    # carries as typeoverlap.minerslost. It is 40, and so is ceiling.untypeable, which counts
+    # something else entirely; the bound is derived from the cell and never from the coincidence.
+    _cell = mtt["references_by_cell"]["not in the bank, in training"]
+    assert _cell == (mtt["references_whose_type_the_bank_lacks"]
+                     - mtt["of_those_the_corpus_lacks_too"]), (
+        "the cross-tabulation's cell and its marginals disagree, so the bound has no basis")
+    n["bound.corpusabsentmin"] = n["ceiling.novel"] - _cell
+    n["bound.corpusabsentsharemin"] = round(n["bound.corpusabsentmin"] / n["ceiling.novel"], 4)
+    n["bound.shortfallsharemin"] = round(n["bound.corpusabsentmin"] / n["ceiling.uncovered"], 4)
+    n["bound.shortfallsharemax"] = round(n["ceiling.novel"] / n["ceiling.uncovered"], 4)
     n["typeoverlap.minersshare"] = round(
         1 - mtt["share_of_the_bank_s_type_gap_the_corpus_also_lacks"], 4)
     n["typeoverlap.corpusshare"] = mtt["share_of_the_bank_s_type_gap_the_corpus_also_lacks"]

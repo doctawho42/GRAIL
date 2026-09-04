@@ -872,7 +872,8 @@ def si_matched():
     # Where the cut actually binds, per comparator, so the caption names it rather than gesturing
     # at it. A comparator absent from this map has no substrate whose list runs past the cut.
     LABEL = {"metatox": "MetaTox", "sygma": "SyGMa", "metapredictor": "MetaPredictor",
-             "biotransformer": "BioTransformer"}
+             "biotransformer": "BioTransformer",
+             "sygma on the standardised drawing": "SyGMa on the standardised drawing"}
     bound = {}
     for name, c in d["contrasts"].items():
         arm, _, comp = name.partition(" - ")
@@ -905,7 +906,7 @@ def si_matched():
             f"{n} substrates, and on none for the other two, whose lists are shorter "
             "than the cut everywhere. What it costs is measured and not assumed: every contrast "
             "here is identical to four decimal places with the cut removed "
-            "(Section~\\ref{sec:si-matched}). The last two rows are the same control against "
+            "(Section~\\ref{SI-sec:si-matched}). The last two rows are the same control against "
             "SyGMa re-run on the drawing the declared standardiser produces rather than the one "
             "the corpus stores, which is the form in which that correction can be applied to a "
             "margin measured over slots. $^{*}$ marks "

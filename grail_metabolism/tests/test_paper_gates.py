@@ -31,6 +31,11 @@ GATES = [
     ("check_wallclock_fields.py", []),
     # the word around a number makes a claim too: superlatives and separation verdicts
     ("check_quantifiers.py", []),
+    # Both documents compile, resolve every reference and overrun no column. This gate was
+    # written, was correct, and was not on this list, so a manuscript shipped a cross-reference
+    # that printed ?? through a green suite: three referees found it and the checker that would
+    # have caught it had never been run. A gate nothing invokes is not a gate.
+    ("check_paper2_build.py", []),
 ]
 
 
