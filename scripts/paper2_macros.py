@@ -50,7 +50,11 @@ def pct(v) -> str:
 # trailing zeros made one read as "+0.2" next to "+0.2932", which looks truncated rather than
 # exact. Differences keep four places; a registered threshold does not, because "0.05" is what
 # was registered and "0.0500" is not.
-MEASURED = re.compile(r"(?:gap|diff|effect|lo|hi|stored|drawn|coverage)\d*$")
+# A recall level printed beside another recall level should carry the same number of
+# decimals: 0.5430 read against 0.4768, not 0.543. Recalls of a four-reference case study
+# are deliberately not in here, where four decimals would be precision the count cannot
+# carry.
+MEASURED = re.compile(r"(?:gap|diff|effect|lo|hi|stored|drawn|coverage|bank|other)\d*$")
 # A rule index is a name, not a quantity: "template 4,913" is wrong the way "page 1,024" is.
 INDEX = re.compile(r"(?:rule|rulehit|deamrule|ruleid|index)$")
 
