@@ -2,8 +2,8 @@
  "provenance": {
   "script": "matched_length.py",
   "script_path": "scripts/typed_edit/matched_length.py",
-  "source_sha256": "b4a626c980eb83c65f1c7374da70812981faca4605da0fc3973a47de9ed5ce26",
-  "git_commit": "94ba9b985358f7546524164d864029f2e0e9b05e",
+  "source_sha256": "07bbb64c27a51dc5be997ca82028d6132c7ea01eb3f6bdd6425483956246e019",
+  "git_commit": "5b87e57bb55d54a1c1a4c2b225cc85a9c598fb9e",
   "git_dirty": true
  },
  "inputs": [
@@ -30,6 +30,12 @@
    "exists": true,
    "sha256_16": "1cdc5ab9898e0f99",
    "bytes": 291972
+  },
+  {
+   "path": "results/sygma_standardised_predictions.json",
+   "exists": true,
+   "sha256_16": "864eaa25466d839f",
+   "bytes": 706150
   }
  ],
  "population": {
@@ -250,6 +256,58 @@
     "mean_slots": 10.7,
     "mean_slots_uncapped": 10.7,
     "substrates_the_cap_binds_on": 0,
+    "annotated_metabolites_the_comparator_placed_past_the_cut": 0,
+    "verdict_unchanged": true
+   }
+  },
+  "whole bank - sygma on the standardised drawing": {
+   "recall_ours": 0.6962,
+   "recall_theirs": 0.5353,
+   "gap": 0.1609,
+   "ci95": [
+    0.1246,
+    0.197
+   ],
+   "excludes_zero": true,
+   "mean_slots": 57.48,
+   "median_slots": 54,
+   "substrates_where_the_comparator_returned_nothing": 1,
+   "without_the_cap_on_the_comparator": {
+    "gap": 0.1609,
+    "ci95": [
+     0.1246,
+     0.197
+    ],
+    "excludes_zero": true,
+    "mean_slots": 69.71,
+    "mean_slots_uncapped": 69.71,
+    "substrates_the_cap_binds_on": 41,
+    "annotated_metabolites_the_comparator_placed_past_the_cut": 0,
+    "verdict_unchanged": true
+   }
+  },
+  "trained budget - sygma on the standardised drawing": {
+   "recall_ours": 0.4842,
+   "recall_theirs": 0.5353,
+   "gap": -0.0511,
+   "ci95": [
+    -0.0898,
+    -0.0125
+   ],
+   "excludes_zero": true,
+   "mean_slots": 57.48,
+   "median_slots": 54,
+   "substrates_where_the_comparator_returned_nothing": 1,
+   "without_the_cap_on_the_comparator": {
+    "gap": -0.0511,
+    "ci95": [
+     -0.0898,
+     -0.0125
+    ],
+    "excludes_zero": true,
+    "mean_slots": 69.71,
+    "mean_slots_uncapped": 69.71,
+    "substrates_the_cap_binds_on": 41,
     "annotated_metabolites_the_comparator_placed_past_the_cut": 0,
     "verdict_unchanged": true
    }

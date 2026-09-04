@@ -346,10 +346,7 @@
    "artifact": "results/matched_length.json",
    "script": "matched_length.py",
    "how": "recorded source digest",
-   "status": "producer_changed",
-   "detail": "producer was b4a626c980eb, is now 07bbb64c27a5",
-   "diff_recovered_by": "the tree was dirty when written, so the source at 94ba9b985358 is the nearest committed version and not exactly what ran",
-   "diff": "--- matched_length.py (as recorded)\n+++ matched_length.py (now)\n@@ -35,5 +35,5 @@\n         sys.path.insert(0, _p)\n \n-from _provenance import stamp  # noqa: E402\n+from _provenance import record_inputs, stamp  # noqa: E402\n \n CAP = 100\n@@ -43,4 +43,17 @@\n     \"sygma\": (\"results/sygma_fulltest_predictions.json\", None),\n     \"metapredictor\": (\"artifacts/tier2_1170/metapredictor_preds.json\", None),\n+    # The fourth arrived after this control was written, and its matched-length figure lived in\n+    # its own section while the table captioned as every arm against every comparator carried\n+    # three. It is the arm the control matters most for: what separates it at a wide budget is\n+    # how much each side emits, which is the one thing matching lengths removes.\n+    \"biotransformer\": (\"results/biotransformer_allhuman_one_step_preds.json\", None),\n+    # SyGMa a second time, on the drawing the declared standardiser produces rather than the one\n+    # the corpus stores. Being handed the corpus's drawing costs it recall, and the manuscript used\n+    # to tell the reader to deduct that cost from this table's margin. It cannot be deducted: the\n+    # correction is measured at a fixed budget of fifty and the margin over a comparator's own slot\n+    # count, which on this comparator averages fifty-eight. So the control is run on the corrected\n+    # arm instead of the margin being adjusted by hand.\n+    \"sygma on the standardised drawing\":\n+        (\"results/sygma_standardised_predictions.json\", \"predictions\"),\n }\n \n@@ -160,4 +173,5 @@\n     report = {\n         \"provenance\": stamp(__file__),\n+        \"inputs\": record_inputs([ROOT / rel for rel, _ in COMPARATORS.values()]),\n         \"population\": {\"n_substrates\": len(subs), \"n_references\": int(U.sum()),\n                        \"note\": \"the comparison set, as everywhere else\"},"
+   "status": "current"
   },
   {
    "artifact": "results/metapredictor_beam_sweep.json",
@@ -562,10 +559,7 @@
    "artifact": "results/sygma_by_dialect.json",
    "script": "sygma_by_dialect.py",
    "how": "recorded source digest",
-   "status": "producer_changed",
-   "detail": "producer was fb0bdeffa6df, is now 475cda37cb8b",
-   "diff_recovered_by": "source at b9945bc00a26",
-   "diff": "--- sygma_by_dialect.py (as recorded)\n+++ sygma_by_dialect.py (now)\n@@ -70,4 +70,6 @@\n     ap = argparse.ArgumentParser()\n     ap.add_argument(\"--out\", default=str(ROOT / \"results\" / \"sygma_by_dialect.json\"))\n+    ap.add_argument(\"--preds-out\",\n+                    default=str(ROOT / \"results\" / \"sygma_standardised_predictions.json\"))\n     args = ap.parse_args()\n \n@@ -146,4 +148,16 @@\n     Path(args.out).write_text(json.dumps(rep, indent=1))\n \n+    # The per-substrate lists this run produced on the drawing the declared standardiser gives,\n+    # written out rather than summarised away. Without them the drawing correction can only be\n+    # applied to a pooled number by subtraction, and a correction measured at a fixed budget of 50\n+    # cannot be subtracted from a margin measured over a comparator's own slot count. With them\n+    # the matched-length control can be run on the corrected arm directly.\n+    Path(args.preds_out).write_text(json.dumps(\n+        {\"what_this_is\": \"SyGMa's predictions on the drawing standardize_mol produces, as \"\n+                         \"tautomer-aware keys, one list per substrate of the comparison set\",\n+         \"produced_by\": \"scripts/typed_edit/sygma_by_dialect.py, the same run that wrote \"\n+                        + Path(args.out).name,\n+         \"n\": len(subs), \"predictions\": arms[\"standardised\"]}, indent=1))\n+\n     print(f\"\\n{'k':>4}{'stored':>10}{'standardised':>14}{'difference':>12}   interval\")\n     for k in KS:"
+   "status": "current"
   },
   {
    "artifact": "results/sygma_depth_matched_reach.json",
@@ -665,9 +659,9 @@
   }
  ],
  "n_pinned": 108,
- "n_pinned_stale": 2,
+ "n_pinned_stale": 0,
  "sweep": {
-  "unstamped": 285,
+  "unstamped": 286,
   "producer_changed": 38,
   "current": 47,
   "producer_unknown": 26,
@@ -2137,6 +2131,11 @@
   },
   {
    "artifact": "results/sygma_robust.json",
+   "status": "unstamped",
+   "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/sygma_standardised_predictions.json",
    "status": "unstamped",
    "detail": "no provenance block: nothing records which code wrote this"
   },

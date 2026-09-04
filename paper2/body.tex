@@ -564,10 +564,19 @@ argument requires it to be called that.
 Three corrections apply to those two cells and it is worth carrying them through in one place.
 Under a family-wise correction over the sweep the $k=30$ margin against MetaTox does not survive
 and the rest do. Under matched list length the margins against MetaTox and MetaPredictor vanish
-and the one against SyGMa does not. And SyGMa met the corpus's drawing, which cost it
-$+\numSygdialectFifty$ at $k=50$, so its margin should be read after deducting that. What is left
-after all three is one wide-budget lead: the exhaustive arm over SyGMa, an ordering result on a
-comparator whose own rules are largely inside this bank. That lead also survives the one test the
+and the one against SyGMa does not. And SyGMa met the corpus's drawing rather than the one the
+declared standardiser produces, so the third correction is to run the same control against SyGMa
+re-run on that drawing. Over \numMatchedBanksygmastdSlots{} slots the exhaustive arm keeps
+$+\numMatchedBanksygmastd$ $[+\numMatchedBanksygmastdLo, +\numMatchedBanksygmastdHi]$, a margin
+$\numMatchedSygmadrawingcost$ narrower than on the stored drawing. It is measured here rather
+than deducted: a correction of the same size measured at a fixed budget of 50 cannot be subtracted
+from a margin taken over a comparator's own slot count, though on this pair the two happen to agree
+to four decimal places. The correction also moves a cell the other way, and the cell is not one of
+this work's leads: against the corrected SyGMa the interactive arm's deficit separates,
+$\numMatchedTrainedsygmastd$ $[\numMatchedTrainedsygmastdLo, \numMatchedTrainedsygmastdHi]$,
+where against the stored drawing it did not. What is left after all three is one wide-budget lead:
+the exhaustive arm over SyGMa, an ordering result on a comparator whose own rules are largely
+inside this bank. That lead also survives the one test the
 comparator's own settings allow. SyGMa's scenario is its emission knob, and running it deeper
 takes its mean output from \numSygscenDeployedemitted{} candidates to
 \numSygscenDeepemitted{}, five times what the exhaustive arm returns, without closing the gap:

@@ -961,13 +961,23 @@ def build():
         a, b = [x.strip() for x in pair.split(" - ")]
         tag = {"whole bank": "bank", "trained budget": "trained"}.get(a)
         tagb = {"metatox": "Metatox", "sygma": "Sygma", "metapredictor": "Metapredictor",
-                "biotransformer": "Biotransformer"}.get(b)
+                "biotransformer": "Biotransformer",
+                # The same comparator on the drawing the declared standardiser produces. The
+                # manuscript used to tell the reader to deduct a fixed-budget correction from
+                # this table's margin; the corrected arm is measured through the control instead.
+                "sygma on the standardised drawing": "Sygmastd"}.get(b)
         if tag and tagb:
             n[f"matched.{tag}{tagb}"] = cell["gap"]
             n[f"matched.{tag}{tagb}.lo"] = cell["ci95"][0]
             n[f"matched.{tag}{tagb}.hi"] = cell["ci95"][1]
             n[f"matched.{tag}{tagb}.sep"] = cell["excludes_zero"]
             n[f"matched.{tag}{tagb}.slots"] = cell["mean_slots"]
+    # What the drawing costs this margin, measured through the control rather than deducted from
+    # it. The two are not the same operation: the deduction the manuscript instructed was of a
+    # correction measured at a fixed budget of fifty, and this margin is over the comparator's own
+    # slot count. Both are printed so the difference between them is visible.
+    if "matched.bankSygma" in n and "matched.bankSygmastd" in n:
+        n["matched.sygmadrawingcost"] = round(n["matched.bankSygma"] - n["matched.bankSygmastd"], 4)
     # The cut this work applies to the comparator's own list, and what it costs. A slot count is
     # a configuration, so the bound on it is printed and so is the measurement that it is free.
     n["matched.cap"] = ml["cap_on_the_comparator_list"]
