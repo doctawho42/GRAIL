@@ -367,7 +367,7 @@ def si_drawing_equalised():
     moved_text = ("no budget's verdict moves between the two" if not moved else
                   "the verdict moves at $k=" + "$, $k=".join(moved) + "$")
     pop = d["population"]
-    return ("\\begin{table*}[t]\n\\centering\\footnotesize\n"
+    return ("\\begin{table*}[t]\n\\centering\\scriptsize\n"
             f"\\begin{{tabular}}{{l{'r' * len(ks)}}}\n\\toprule\n"
             f"arm & \\multicolumn{{{len(ks)}}}{{c}}{{output budget $k$}} \\\\\n"
             f"\\cmidrule(lr){{2-{len(ks) + 1}}}\n & {head} \\\\\n\\midrule\n"

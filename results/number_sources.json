@@ -19,7 +19,10 @@
  "n_recording_no_checkpoint": 7,
  "exempt": 3,
  "unpinned": [],
- "unstamped": [],
+ "unstamped": [
+  "results/matched_length.json",
+  "results/sygma_by_dialect.json"
+ ],
  "verifiable_by_inference_only": [
   "results/coverage_gap_types.json",
   "results/decompose_biotransformer.json",
@@ -29,7 +32,7 @@
   "results/scored_predictions.json"
  ],
  "n_unpinned": 0,
- "n_unstamped": 0,
+ "n_unstamped": 2,
  "n_verifiable_by_inference_only": 6,
  "method": "paper2_numbers.build() is run with art() instrumented, so the count is of artifacts actually opened rather than of matches in the source",
  "artifacts": [
@@ -460,8 +463,8 @@
    "artifact": "results/matched_length.json",
    "pinned": true,
    "stamped": true,
-   "verifiable": true,
-   "sweep_status": "current",
+   "verifiable": false,
+   "sweep_status": "producer_changed",
    "how": "recorded source digest",
    "exempt": null
   },
@@ -739,8 +742,8 @@
    "artifact": "results/sygma_by_dialect.json",
    "pinned": true,
    "stamped": true,
-   "verifiable": true,
-   "sweep_status": "current",
+   "verifiable": false,
+   "sweep_status": "producer_changed",
    "how": "recorded source digest",
    "exempt": null
   },
