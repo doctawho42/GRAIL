@@ -48,8 +48,10 @@ to declared axes, meaning that each is stated and varied across its full range i
 fixed silently, against four published predictors we obtained
 and ran on the same substrates, and with the one comparator whose knowledge is built on a source
 of this corpus named and its overlap measured. Two others are absent and neither absence was
-forced: GLORYx, the closest modern counterpart to this system, was not sought, and DeepCYP was
-not run, both for the cost of submission rather than for want of availability
+forced. No distribution of GLORYx, the closest modern counterpart to this system, is held here and
+none was sought; whether it could have been run is a question about effort and about its interface
+that we did not settle, so its absence is not defended as unavoidable. DeepCYP was not run for the
+cost of submission, its interface taking one substrate at a time
 (Section~\ref{SI-sec:si-comparators}). The comparison does not produce a winner:
 which system leads depends on how many candidates it is allowed to return, and we report that
 dependence rather than a single figure. We further measure how much of the recorded chemistry
@@ -110,8 +112,11 @@ $\numPopdefExhwholesygmaOneZero$ $[\numPopdefExhwholesygmaOneZeroLo,
 \numPopdefExhwholesygmaOneZeroHi]$ and MetaPredictor by
 $\numPopdefExhwholemetapredictorOneZero$ $[\numPopdefExhwholemetapredictorOneZeroLo,
 \numPopdefExhwholemetapredictorOneZeroHi]$ over the whole set, both intervals excluding zero, where
-on the comparison set neither cell separates at all. That cell is also one of the four a
-family-wise correction removes, so it is doubly qualified and is not a lead this paper rests on.
+on the comparison set neither cell separates at all. That is the whole of the qualification those
+two carry, and it is a qualification about which population they are read on rather than about
+multiplicity: neither separates on the comparison set, so neither is among the
+\numHolmSeparating{} cells the family-wise correction is applied to, and the
+\numHolmLeadsremovedWord{} that correction removes are leads of this work's.
 
 The annotated substrate--metabolite pairs are assembled from four sources: ChEMBL
 \citep{Zdrazil_2024}, DrugBank \citep{Wishart_2018}, MetXBioDB \citep{Djoumbou_Feunang_2019} and
@@ -1289,8 +1294,9 @@ Every number in this paper is measured under the deployed rule, so the release k
 better setting is reported rather than substituted; a reader deploying this system should know
 that the shipped aggregation is not the one a selection on validation prefers for a short list. A second system in the
 same position, GLORYx, is absent from the comparison, and its absence is not licensed by that
-overlap, since a system with a comparable one carries a column: it is absent because its
-predictions could not be obtained here.
+overlap, since a system with a comparable one carries a column. Its predictions were not obtained:
+no distribution of it is held here and none was sought, and whether it could have been run was not
+settled, so the absence is a weakness of this comparison and not a fact about the system.
 
 Nothing in this pipeline is stereochemistry-aware. The standardiser strips configuration, the
 matching criterion is chosen to ignore it, and the annotation carries none, so sulfoxidation,

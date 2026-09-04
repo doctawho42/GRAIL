@@ -14,9 +14,10 @@ seconds, slowest & 231.01 & $>600$ \\
 \bottomrule
 \end{tabular}
 \caption{The two operating modes: rules applied, candidates returned and wall-clock time. Every
-figure is measured on the validation draw, 294 substrates for the interactive mode and
-293 for the exhaustive one, which lacks a pool for one of them. Candidates are
+row but the two marked $^{\dagger}$ is measured on the validation draw, 294 substrates for
+the interactive mode and 293 for the exhaustive one, which lacks a pool for one
+of them; the median seconds are over those populations. Candidates are
 what a caller receives: deduplicated by matching key and capped at
-100. Times cover everything before the filter. $^{\dagger}$ marks a censored statistic: on a sampled timing sweep the exhaustive mode exceeds a 600-second deadline on 11 of 106 substrates, 10.4\%, so its mean and ninetieth percentile are taken over the 95 that finished and are lower bounds. Its slowest substrate is one of the censored ones. On the test split, where no deadline is imposed, it fails on none. Every time here is measured on an unloaded machine and one substrate at a time; the same medians measured while the other arm runs are in Section~\ref{SI-sec:si-runtime} and are larger. The interactive mode's own slowest substrate, 231.01~s, is far above its median, so a service answering a form should impose a deadline and fall back rather than assume the median.}
+100. Times cover everything before the filter. $^{\dagger}$ marks a statistic that is both censored and measured on a different population: a sampled timing sweep of 106 substrates, on which the exhaustive mode exceeds a 600-second deadline for 11, 10.4\%, so its mean and ninetieth percentile are taken over the 95 that finished and are lower bounds. That sweep is drawn as every 3rd substrate of that draw by heavy-atom count plus the largest 12 outright, so it over-represents the sizes where the deadline bites: 9 of the 11 non-completions are among those 12, and the rate the whole draw would show is about 15 in 294, 5.1\%. Its slowest substrate is one of the censored ones. On the test split, where no deadline is imposed, it fails on none. Every time here is measured on an unloaded machine and one substrate at a time; the exhaustive median measured under the load the comparison arm ran at is larger, and is in Section~\ref{SI-sec:si-runtime}. The interactive mode's own slowest substrate, 231.01~s, is far above its median, so a service answering a form should impose a deadline and fall back rather than assume the median.}
 \label{tab:modes}
 \end{table}

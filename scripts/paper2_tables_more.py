@@ -37,6 +37,32 @@ def modes():
            # The per cent sign has to reach LaTeX escaped, or it comments out the rest of the
            # caption line including the closing brace, and the document stops compiling.
            "censored_pct": f"{unfinished / max(sampled, 1):.1%}".replace("%", "\\%")}
+    # The timing sweep is not a draw from the validation set: it orders substrates by heavy-atom
+    # count, takes every nth, and adds the largest twelve outright, because that is where the
+    # non-completions live. Two rows of this table therefore have a different population from the
+    # rest, and a caption saying "every figure" over both is wrong at the row that matters most to
+    # a deployer. The bias and the population rate it implies are printed rather than left to S32.
+    every = int(ce["sample_every"])
+    tail = 12
+    _rows = sorted(ce["rows"], key=lambda r: r["heavy"])
+    tail_unfinished = sum(1 for r in _rows[-tail:] if not r.get("finished"))
+    rest = _rows[:-tail]
+    rest_unfinished = sum(1 for r in rest if not r.get("finished"))
+    population = tail_unfinished + every * rest_unfinished
+    # The draw's own size, read from the artifact that defines it rather than typed, and required
+    # to reproduce the sample size the timing artifact recorded before it is used.
+    n_draw = json.loads(
+        (ROOT / "results/val_pools.json").read_text())["population"]["declared_n"]
+    overlap = sum(1 for _i in range(n_draw - tail, n_draw) if _i % every == 0)
+    if -(-n_draw // every) + tail - overlap != sampled:
+        raise SystemExit(f"the timing sample of {sampled} is not what a draw of every {every}th "
+                         f"of {n_draw} plus the largest {tail} produces")
+    share = f"{population / n_draw:.1%}".replace("%", "\\%")
+    env["bias"] = (f"every {every}rd substrate of that draw by heavy-atom count plus the largest "
+                   f"{tail} outright, so it over-represents the sizes where the deadline bites: "
+                   f"{tail_unfinished} of the {unfinished} non-completions are among those {tail}, "
+                   f"and the rate the whole draw would show is about {population} in {n_draw}, "
+                   f"{share}")
     return f"""\\begin{{table}}[t]
 \\centering\\footnotesize
 \\begin{{tabular}}{{lrr}}
@@ -53,10 +79,11 @@ seconds, slowest & {i['max_s']} & $>{int(env['deadline'])}$ \\\\
 \\bottomrule
 \\end{{tabular}}
 \\caption{{The two operating modes: rules applied, candidates returned and wall-clock time. Every
-figure is measured on the validation draw, {i['n']} substrates for the interactive mode and
-{e['candidates']['n']} for the exhaustive one, which lacks a pool for one of them. Candidates are
+row but the two marked $^{{\\dagger}}$ is measured on the validation draw, {i['n']} substrates for
+the interactive mode and {e['candidates']['n']} for the exhaustive one, which lacks a pool for one
+of them; the median seconds are over those populations. Candidates are
 what a caller receives: deduplicated by matching key and capped at
-{i['candidates']['cap']}. Times cover everything before the filter. $^{{\\dagger}}$ marks a censored statistic: on a sampled timing sweep the exhaustive mode exceeds a {int(env['deadline'])}-second deadline on {unfinished} of {sampled} substrates, {env['censored_pct']}, so its mean and ninetieth percentile are taken over the {env['n_finished']} that finished and are lower bounds. Its slowest substrate is one of the censored ones. On the test split, where no deadline is imposed, it fails on none. Every time here is measured on an unloaded machine and one substrate at a time; the same medians measured while the other arm runs are in Section~\\ref{{SI-sec:si-runtime}} and are larger. The interactive mode's own slowest substrate, {i['max_s']}~s, is far above its median, so a service answering a form should impose a deadline and fall back rather than assume the median.}}
+{i['candidates']['cap']}. Times cover everything before the filter. $^{{\\dagger}}$ marks a statistic that is both censored and measured on a different population: a sampled timing sweep of {sampled} substrates, on which the exhaustive mode exceeds a {int(env['deadline'])}-second deadline for {unfinished}, {env['censored_pct']}, so its mean and ninetieth percentile are taken over the {env['n_finished']} that finished and are lower bounds. That sweep is drawn as {env['bias']}. Its slowest substrate is one of the censored ones. On the test split, where no deadline is imposed, it fails on none. Every time here is measured on an unloaded machine and one substrate at a time; the exhaustive median measured under the load the comparison arm ran at is larger, and is in Section~\\ref{{SI-sec:si-runtime}}. The interactive mode's own slowest substrate, {i['max_s']}~s, is far above its median, so a service answering a form should impose a deadline and fall back rather than assume the median.}}
 \\label{{tab:modes}}
 \\end{{table}}
 """
