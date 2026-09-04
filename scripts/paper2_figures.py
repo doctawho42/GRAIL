@@ -46,6 +46,10 @@ INK, INK_MUTED, INK_FAINT = "#1a1a1a", "#666666", "#c9c9c9"
 plt.rcParams.update({
     # ACS asks for Helvetica or Arial in figure lettering, at no less than 4.5 pt final size and
     # with no rule thinner than 0.5 pt
+    # Type 3 is matplotlib's default for PDF text and ACS production returns it: the glyphs are
+    # embedded as drawing programs with no ToUnicode map, so a figure label is neither searchable
+    # nor extractable. 42 is TrueType, which embeds a real font with a character map.
+    "pdf.fonttype": 42, "ps.fonttype": 42,
     "font.family": "sans-serif",
     "font.sans-serif": ["Helvetica", "Arial", "DejaVu Sans"],
     "font.size": 8, "axes.linewidth": 0.6, "xtick.major.width": 0.6,

@@ -1663,7 +1663,13 @@ under the same load. The enumeration step is identical between them, so the rati
 standardising the survivors, whose medians are \numHOneFiveStdunbounded~s unbounded against
 \numHOneFiveStdbounded~s under the budget, leaves \numHOneFiveAttributable$\times$ attributable
 to the budget itself. Carried to the whole arm it puts the median at
-\numHOneFiveMedianUnderload~s under the other arm's load, inside the registered target.
+\numHOneFiveMedianUnderload~s under the other arm's load, inside the registered target. That
+figure is Table~\ref{MS-tab:modes}'s exhaustive median carried to this load and not a second
+measurement: it is that median multiplied by \numHOneFiveLoad{}, and it is the only load-corrected
+timing in this work. The arms it is derived between are the bounded and unbounded standardisation
+arms of this paragraph, not the two operating modes, so a reader should take it as what the
+exhaustive mode's median becomes under a comparable load rather than as a measurement of the two
+modes running side by side, which was not made.
 
 \paragraph{A safeguard the budget needed.} The tautomer enumeration budget lives in a
 module-level singleton shared with the matching key, so lowering it would have moved what counts
@@ -2021,10 +2027,29 @@ typed by hand that is not already on that list still fails the check, and the li
 statement of what remains to be wired. A checker refuses any other numeric literal in either
 document, refuses any hand-typed pointer between the two documents in either direction, and
 writes the three counts this paragraph quotes. Every such pointer resolves through
-\texttt{xr} against the other document's own labels, so a wrong one prints \texttt{??} and
-fails the build rather than compiling silently. A hand-typed pointer cannot: nine of them here
+\texttt{xr} against the other document's own labels. A hand-typed pointer cannot: nine of them here
 were wrong at once when the tables were reordered, one badly enough to direct a search to the
 wrong table, which is why none is permitted.
+
+What makes a wrong pointer fail is worth stating exactly, because the obvious reading of the
+previous sentence is wrong and this work has shipped a document that proved it. The build runs
+\texttt{pdflatex} under \texttt{-interaction=nonstopmode} with its output discarded, so an
+unresolved reference does not stop the compile: the page is produced with \texttt{??} on it. The
+failure comes from a separate checker that counts undefined references in the log, and that checker
+is only as good as its pattern and its list. Its pattern once required a numeric page number and so
+matched nothing in a document whose pages are numbered S1, S2 and onward, which is how an
+unresolved pointer reached page S10; and until recently it was not among the checks the test suite
+runs, which is how a manuscript shipped a pointer printing \texttt{??} through a green suite. Both
+are closed, and the checker now also refuses a Type~3 font in either compiled document.
+
+Three things it still does not see. It counts overfull horizontal boxes, so a table that overruns
+its text block \emph{vertically} passes: one did, and its page folio printed on top of a data cell.
+It compares the digest of every source against what the build recorded, which catches an edit but
+says nothing about whether the numbers in that source are right, since that is a different
+checker's job. And it reads the compiled log rather than the rendered page, so anything that goes
+wrong in the geometry rather than in the references is outside it. The guarantee this paragraph
+offers is therefore narrow: no pointer between these documents is hand-typed, and none that fails
+to resolve reaches a released build.
 
 One file in the repository holds source structures rather than keys: the evaluated test
 substrates, released as SMILES because reproducing the comparison means running a predictor on

@@ -13,6 +13,8 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+import shutil
+import subprocess
 import sys
 from pathlib import Path
 
@@ -85,6 +87,19 @@ def main() -> int:
                   f"describe ({', '.join(stale[:4])}{'...' if len(stale) > 4 else ''}); "
                   f"run scripts/build_paper2.sh")
             return 1
+        # ACS production returns a PDF whose figure text is Type 3: the glyphs are drawing
+        # programs with no character map, so a label is neither searchable nor extractable. The
+        # build gate is where that is caught, because nothing else looks at the compiled file.
+        pdf = ROOT / "paper2" / (name + ".pdf")
+        if pdf.exists() and shutil.which("pdffonts"):
+            fonts = subprocess.run(["pdffonts", str(pdf)], capture_output=True, text=True).stdout
+            bad = [l.split()[0] for l in fonts.splitlines() if "Type 3" in l]
+            if bad:
+                print(f"FAIL: {name}.pdf embeds {len(bad)} Type 3 font(s) "
+                      f"({', '.join(sorted(set(bad))[:3])}); regenerate the figures with "
+                      f"matplotlib's pdf.fonttype set to 42")
+                return 1
+
         text = record.read_text(errors="replace")
         errors = ERROR.findall(text)
         undefined = UNDEF.findall(text)

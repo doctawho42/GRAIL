@@ -1172,7 +1172,11 @@ def si_aggregation():
     model, and the producer refuses to write the artifact when it does not.
     """
     d = art("aggregation_ablation.json")
-    ks = ["5", "15", "30", "50"]
+    # Three is here because the manuscript quotes the maximum rule's extremum at it, the extremum
+    # is a tie between three and five with different intervals, and until this column existed a
+    # reader following the manuscript's own pointer found only the five cell and read the pair as
+    # a contradiction. Every budget a document names has to be printed somewhere.
+    ks = ["3", "5", "15", "30", "50"]
     order = ["noisy_or", "max", "mean", "hybrid"]
     NAME = {"noisy_or": "noisy-or", "max": "maximum", "mean": "mean", "hybrid": "hybrid"}
     rows = []
@@ -1183,11 +1187,11 @@ def si_aggregation():
         # rules disagree: a rule that discounts duplication helps the head of the list and does
         # nothing measurable at the budgets this work reads its leads at.
         if rule == d["deployed"]:
-            gaps = ["---", "---"]
+            gaps = ["---", "---", "---"]
             label = f"\\textbf{{{NAME[rule]}}}"
         else:
             gaps = []
-            for at in ("5", "30"):
+            for at in ("3", "5", "30"):
                 cell = row["minus_noisy_or"][at]
                 star = "$^{*}$" if cell["excludes_zero"] else ""
                 gaps.append(("$-$" if cell["difference"] < 0 else "+")
@@ -1199,8 +1203,8 @@ def si_aggregation():
     n = d["population"]["n_substrates"]
     refs = d["population"]["n_references"]
     return ("\\begin{table}[h]\n\\centering\\small\n"
-            "\\begin{tabular}{@{}lrrrrrrr@{}}\n\\toprule\n"
-            f"aggregation & candidates & {head} & at 5 & at 30 \\\\\n\\midrule\n"
+            "\\begin{tabular}{@{}lrrrrrrrrr@{}}\n\\toprule\n"
+            f"aggregation & candidates & {head} & at 3 & at 5 & at 30 \\\\\n\\midrule\n"
             + "\n".join(rows)
             + "\n\\bottomrule\n\\end{tabular}\n"
             f"\\caption{{Micro recall under each rule for combining the templates that reach one "
@@ -1208,7 +1212,7 @@ def si_aggregation():
             "metabolites; leading zeros are dropped. Candidates is the mean number ranked after "
             "deduplication and the pool cap. The deployed rule is in bold and reproduces the "
             "whole-bank column of the comparison table at every budget. The last two columns are "
-            "the paired difference against it in micro recall at a tight budget and a wide one, "
+            "the paired difference against it in micro recall at the two tight budgets a document of this work names and at a wide one, "
             "with $^{*}$ marking an interval that excludes zero; the rules disagree at the head "
             "of the list and not at the budgets this work reads its leads at.}\n"
             "\\label{tab:si-aggregation}\n\\end{table}\n")

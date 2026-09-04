@@ -75,7 +75,7 @@ candidates, median & {i['candidates']['median']} & {e['candidates']['median']} \
 seconds, median & {i['median_s']} & {e['median_s']} \\\\
 seconds, mean & {i['mean_s']} & {env['mean_finished']}$^{{\\dagger}}$ \\\\
 seconds, 90th pct & {i['p90_s']} & {env['p90_finished']}$^{{\\dagger}}$ \\\\
-seconds, slowest & {i['max_s']} & $>{int(env['deadline'])}$ \\\\
+seconds, slowest & {i['max_s']} & $>{int(env['deadline'])}$$^{{\\dagger}}$ \\\\
 \\bottomrule
 \\end{{tabular}}
 \\caption{{The two operating modes: rules applied, candidates returned and wall-clock time. Every
@@ -83,7 +83,7 @@ row but the two marked $^{{\\dagger}}$ is measured on the validation draw, {i['n
 the interactive mode and {e['candidates']['n']} for the exhaustive one, which lacks a pool for one
 of them; the median seconds are over those populations. Candidates are
 what a caller receives: deduplicated by matching key and capped at
-{i['candidates']['cap']}. Times cover everything before the filter. $^{{\\dagger}}$ marks a statistic that is both censored and measured on a different population: a sampled timing sweep of {sampled} substrates, on which the exhaustive mode exceeds a {int(env['deadline'])}-second deadline for {unfinished}, {env['censored_pct']}, so its mean and ninetieth percentile are taken over the {env['n_finished']} that finished and are lower bounds. That sweep is drawn as {env['bias']}. Its slowest substrate is one of the censored ones. On the test split, where no deadline is imposed, it fails on none. Every time here is measured on an unloaded machine and one substrate at a time; the exhaustive median measured under the load the comparison arm ran at is larger, and is in Section~\\ref{{SI-sec:si-runtime}}. The interactive mode's own slowest substrate, {i['max_s']}~s, is far above its median, so a service answering a form should impose a deadline and fall back rather than assume the median.}}
+{i['candidates']['cap']}. Times cover everything before the filter. $^{{\\dagger}}$ marks a statistic that is both censored and measured on a different population: a sampled timing sweep of {sampled} substrates, on which the exhaustive mode exceeds a {int(env['deadline'])}-second deadline for {unfinished}, {env['censored_pct']}, so its mean and ninetieth percentile are taken over the {env['n_finished']} that finished. Those two are lower bounds against that sweep, where censoring removes the slowest; against the whole draw the sweep's design pushes the other way, since it over-represents large substrates on purpose, and the net of the two is not established here. That sweep is drawn as {env['bias']}. Its slowest substrate is one of the censored ones, which is why that cell carries the mark as well: a deadline is defined only for the sweep, so a $>$ entry can come from nowhere else, and the two arms' slowest cells are therefore not on the same substrates. On the test split, where no deadline is imposed, it fails on none. Every time here is measured on an unloaded machine and one substrate at a time; the exhaustive median carried to the load of a second arm is larger, and Section~\\ref{{SI-sec:si-runtime}} gives it, derives it from this median rather than measuring it again, and says between which arms the load ratio was taken. The interactive mode's own slowest substrate, {i['max_s']}~s, is far above its median, so a service answering a form should impose a deadline and fall back rather than assume the median.}}
 \\label{{tab:modes}}
 \\end{{table}}
 """

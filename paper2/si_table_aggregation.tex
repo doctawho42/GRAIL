@@ -1,15 +1,15 @@
 \begin{table}[h]
 \centering\small
-\begin{tabular}{@{}lrrrrrrr@{}}
+\begin{tabular}{@{}lrrrrrrrrr@{}}
 \toprule
-aggregation & candidates & $r@5$ & $r@15$ & $r@30$ & $r@50$ & at 5 & at 30 \\
+aggregation & candidates & $r@3$ & $r@5$ & $r@15$ & $r@30$ & $r@50$ & at 3 & at 5 & at 30 \\
 \midrule
-\textbf{noisy-or} & 98.1 & .3113 & .5353 & .6526 & .7023 & --- & --- \\
-maximum & 98.1 & .3429 & .5263 & .6226 & .6782 & +.0316$^{*}$ & $-$.0301$^{*}$ \\
-mean & 98.1 & .2947 & .4932 & .5985 & .6586 & $-$.0165 & $-$.0541$^{*}$ \\
-hybrid & 98.1 & .3639 & .5474 & .6391 & .7008 & +.0526$^{*}$ & $-$.0135 \\
+\textbf{noisy-or} & 98.1 & .2301 & .3113 & .5353 & .6526 & .7023 & --- & --- & --- \\
+maximum & 98.1 & .2617 & .3429 & .5263 & .6226 & .6782 & +.0316$^{*}$ & +.0316$^{*}$ & $-$.0301$^{*}$ \\
+mean & 98.1 & .2030 & .2947 & .4932 & .5985 & .6586 & $-$.0271 & $-$.0165 & $-$.0541$^{*}$ \\
+hybrid & 98.1 & .2692 & .3639 & .5474 & .6391 & .7008 & +.0391$^{*}$ & +.0526$^{*}$ & $-$.0135 \\
 \bottomrule
 \end{tabular}
-\caption{Micro recall under each rule for combining the templates that reach one candidate, on the 291 substrates of the comparison set carrying 665 annotated metabolites; leading zeros are dropped. Candidates is the mean number ranked after deduplication and the pool cap. The deployed rule is in bold and reproduces the whole-bank column of the comparison table at every budget. The last two columns are the paired difference against it in micro recall at a tight budget and a wide one, with $^{*}$ marking an interval that excludes zero; the rules disagree at the head of the list and not at the budgets this work reads its leads at.}
+\caption{Micro recall under each rule for combining the templates that reach one candidate, on the 291 substrates of the comparison set carrying 665 annotated metabolites; leading zeros are dropped. Candidates is the mean number ranked after deduplication and the pool cap. The deployed rule is in bold and reproduces the whole-bank column of the comparison table at every budget. The last two columns are the paired difference against it in micro recall at the two tight budgets a document of this work names and at a wide one, with $^{*}$ marking an interval that excludes zero; the rules disagree at the head of the list and not at the budgets this work reads its leads at.}
 \label{tab:si-aggregation}
 \end{table}
