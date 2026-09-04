@@ -953,6 +953,15 @@ def build():
         tag = {"0.25": "quarter", "0.5": "half", "0.75": "threequarters", "1.0": "all"}[frac]
         n[f"rare.{tag}"] = int(round(rar["rarefaction"][frac]["templates_mean"]))
 
+    # The cells the correction paragraph is about. It used to call them "those eight" directly
+    # after a table that has ten rows, so the count is derived from the sweep it belongs to and
+    # the budgets are named where it is used.
+    WIDE = ("30", "50")
+    n["sweep.wideleads"] = sum(
+        1 for b in WIDE for pair, c in dep["contrasts"][b].items()
+        if pair.startswith("whole bank - ") and c["gap"] > 0 and c["excludes_zero"])
+    n["sweep.widebudgets"] = len(WIDE)
+
     # The wide-budget leads with the length taken from the comparator rather than from the
     # experiment. A nominal budget is not a length, and this is the control that separates an
     # ordering result from a list-length one.

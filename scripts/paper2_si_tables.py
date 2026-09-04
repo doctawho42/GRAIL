@@ -851,8 +851,14 @@ def si_matched():
     for pair, c in d["contrasts"].items():
         a, b = [x.strip() for x in pair.split(" - ")]
         arm = {"whole bank": "exhaustive", "trained budget": "interactive"}.get(a, a)
+        # BioTransformer arrived after this map was written and printed lowercase for two
+        # revisions; the corrected SyGMa arrived after that and did the same.
         name = {"metatox": "MetaTox", "sygma": "SyGMa",
-                "metapredictor": "MetaPredictor"}.get(b, b)
+                "metapredictor": "MetaPredictor", "biotransformer": "BioTransformer",
+                "sygma on the standardised drawing": "SyGMa, standardised"}.get(b)
+        if name is None:
+            raise SystemExit(f"matched_length.json names a comparator this table has no label "
+                             f"for: {b}")
         star = "$^{*}$" if c["excludes_zero"] else ""
         gap = ("$-$" if c["gap"] < 0 else "+") + f"{abs(c['gap']):.4f}".lstrip("0")
         lo = ("$-$" if c["ci95"][0] < 0 else "+") + f"{abs(c['ci95'][0]):.4f}".lstrip("0")
@@ -899,7 +905,10 @@ def si_matched():
             f"{n} substrates, and on none for the other two, whose lists are shorter "
             "than the cut everywhere. What it costs is measured and not assumed: every contrast "
             "here is identical to four decimal places with the cut removed "
-            "(Section~\\ref{sec:si-matched}). $^{*}$ marks "
+            "(Section~\\ref{sec:si-matched}). The last two rows are the same control against "
+            "SyGMa re-run on the drawing the declared standardiser produces rather than the one "
+            "the corpus stores, which is the form in which that correction can be applied to a "
+            "margin measured over slots. $^{*}$ marks "
             "an interval excluding zero. Leading zeros are dropped.}\n"
             "\\label{tab:si-matched}\n\\end{table*}\n")
 
