@@ -36,6 +36,9 @@ GATES = [
     # that printed ?? through a green suite: three referees found it and the checker that would
     # have caught it had never been run. A gate nothing invokes is not a gate.
     ("check_paper2_build.py", []),
+    # LICENSE, NOTICE.md and the package configuration describe the bank that ships, not
+    # the one the paper measures. Both files went on describing the wrong one for a week.
+    ("check_licence_files.py", []),
 ]
 
 

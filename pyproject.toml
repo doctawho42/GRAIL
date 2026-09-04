@@ -2,7 +2,11 @@
 name = "grail_metabolism"
 version = "0.2.0"
 description = "Graph neural networks and rule-based drug metabolism prediction"
-authors = ["Anonymous <anonymous@example.com>"]  # de-anonymise at camera-ready
+authors = [
+  "Nikita L. Polomoshnov <nikitapol@fbb.msu.ru>",
+  "Anastasia V. Rudik",
+]
+license = "GPL-3.0-or-later"
 readme = "README.md"
 keywords = ["chemoinformatics", "drug-metabolism", "gnn", "rdkit", "smirks"]
 classifiers = [
@@ -13,11 +17,26 @@ classifiers = [
   "Programming Language :: Python :: 3.11",
   "Topic :: Scientific/Engineering :: Chemistry",
   "Topic :: Scientific/Engineering :: Artificial Intelligence",
+  "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
 ]
 packages = [{ include = "grail_metabolism" }]
-include = ["grail_metabolism/resources/*.txt"]
+# Named one by one rather than globbed. A glob over this directory would put the measured bank
+# into a wheel built in a checkout that happens to hold it, and the measured bank is exactly
+# what the licence work removed: it carries 611 templates BioTransformer's published set
+# also contains, which this project has no permission to redistribute. The released bank is
+# the one that ships.
+include = [
+  "grail_metabolism/resources/extended_smirks_released.txt",
+  "grail_metabolism/resources/example_rules.txt",
+  "grail_metabolism/resources/mined_only.txt",
+  "grail_metabolism/resources/mined_only_v2.txt",
+  "grail_metabolism/resources/notebooks_rules.txt",
+  "grail_metabolism/resources/slow_substrates.txt",
+]
 exclude = [
   ".DS_Store",
+  # the measured bank, never distributed: see NOTICE.md
+  "grail_metabolism/resources/extended_smirks.txt",
   "AUDIT_REPORT.md",
   "RESULTS.md",
   "artifacts/**",

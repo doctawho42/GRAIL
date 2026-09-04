@@ -107,3 +107,9 @@ grail_metabolism/resources/external/gloryx_reactionrules.csv
 # and the standardisation file, which is LGPL and so redistributable, but contributes no
 # template the bank uses: an obligation with no scientific return.
 grail_metabolism/resources/external/bt_database_standardizationReactions.json
+
+# Session-tool state, not the project's. These directories are written by editor plugins and
+# assistants working in this checkout and say nothing about the method or its results.
+.idea/
+.remember/
+.superpowers/

@@ -1,3 +1,11 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+# GRAIL: metabolite structure prediction from a bank of reaction templates.
+# Copyright (C) 2026 Nikita L. Polomoshnov and Anastasia V. Rudik.
+#
+# The licence is not a preference: the rule bank redistributes templates whose own terms
+# require it. LICENSE gives the reason and NOTICE.md the per-rightsholder counts, including
+# which templates the released bank does not carry.
 from __future__ import annotations
 
 from importlib import import_module

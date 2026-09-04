@@ -225,3 +225,28 @@ Legacy one-off research helpers live under `scripts/legacy/` and are not part of
 ## Notes on pretrained assets
 
 `PretrainedGrail` will try to load local weights if they exist in the repository, but the package does not ship giant checkpoints by default. For publication, weights should be versioned separately, for example via Zenodo or a model registry.
+
+## Licence
+
+GRAIL is released under the GNU General Public License, version 3 or later. The full text, and the
+reason this licence and not a permissive one, are in [`LICENSE`](LICENSE).
+
+The short reason is that the rule bank redistributes other people's templates and their terms
+decide ours: 273 of SyGMa's templates are in the bank that ships and SyGMa's distribution states
+"GPL".
+
+**The bank that ships is not the bank the paper measures.** The measured bank holds 7,581
+templates; 611 of them are present verbatim in BioTransformer's published reaction set, whose
+README requires explicit permission to redistribute, and that permission was not sought. Those are
+removed, so `grail_metabolism/resources/extended_smirks_released.txt` ships with 6,970 and
+`extended_smirks.txt` is not distributed. The removal costs nothing measurable: every reference
+those templates reach on the evaluated test set is reached by another template in the bank.
+
+[`NOTICE.md`](NOTICE.md) carries the per-rightsholder counts for both banks, the attribution each
+rightsholder requires, and what removing each one's templates would cost. `scripts/build_released_bank.py`
+builds the released bank and records both digests; `scripts/check_licence_files.py` holds these
+files and the package configuration to what the release actually contains.
+
+The annotated corpus is **not** covered by this licence and is not distributed: its sources' terms
+do not combine, and the assembly recorded no per-record provenance, so no subset of it can be shown
+free of either. `NOTICE.md` states what is released instead.

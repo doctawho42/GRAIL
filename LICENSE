@@ -17,12 +17,17 @@ WHY THIS LICENCE, AND WHAT IT DOES NOT COVER
 --------------------------------------------
 The rule bank redistributed here contains reaction templates published by
 others, and their terms decide this one.  SyGMa's distribution states "GPL"
-without naming a version; BioTransformer grants the LGPL, which is compatible
-with the GPL in this direction.  A permissive licence is therefore not
-available for the bank, and the GPL is the licence that satisfies both.  The
-attribution each of them requires is given in NOTICE.md, which also records how
-many of each rightsholder's templates are present and what removing them would
-cost, measured rather than estimated.
+without naming a version, and 273 of its templates are in the bank that ships,
+so a permissive licence is not available and the GPL is what those templates
+admit.
+
+The bank that ships is not the bank the paper measures.  BioTransformer's 611
+templates are removed from it: its distribution grants the LGPL, but its README
+additionally requires explicit permission to redistribute, and that permission
+was not sought.  What the removal costs is measured rather than assumed and it
+is zero references on the evaluated test set.  NOTICE.md gives the per-
+rightsholder counts for both banks, the attribution each rightsholder requires,
+and what removing each one's templates would cost.
 
 This licence covers the code and the rule bank.  It does NOT cover the
 annotated corpus.  That corpus is assembled from sources whose terms do not

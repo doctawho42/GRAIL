@@ -17,8 +17,9 @@ Three decisions were taken and each is stated with what it cost:
 
 | decision | why | measured cost |
 |---|---|---|
-| GPLv3 for the code and the bank | SyGMa's templates are GPL, BioTransformer's are LGPL, and GPLv3 satisfies both | none; a permissive licence was never available |
-| stop tracking four of the five third-party rule files | one is CC BY-NC-SA and no GPL release can carry it; two carry no licence text held here; one is redistributable but contributes no template the bank uses | none: the bank is unchanged, and the files stay obtainable from their own projects |
+| GPLv3 for the code and the bank | SyGMa's templates are GPL and the released bank still contains them, so a permissive licence was never available | none |
+| stop tracking four of the five third-party rule files | one is CC BY-NC-SA and no GPL release can carry it; two carry no licence text held here; one is redistributable but contributes no template the bank uses | none: the files stay obtainable from their own projects |
+| **release a bank without BioTransformer's templates** | its README requires explicit permission for redistribution, which was not sought, and one of its files is CC BY-NC-SA, which no GPL release can carry; neither is settleable here | **zero references** on the evaluated test set, measured in `results/licence_removal_cost__clean_test.json` |
 | do not distribute the corpus | its four sources' terms do not combine and the assembly recorded no per-record provenance, so no subset can be shown free of either | stated below, and it is not zero |
 
 ## The rule bank
@@ -33,12 +34,19 @@ falls inside the named 1,233, none among the 492. The share to read is therefore
 collections described as curated chemistry**, not 56% of the half they sit in. Measured by string
 equality against every published rule set held on disk:
 
-| rightsholder | templates in the bank | terms, as its own distribution states them |
-|---|---:|---|
-| BioTransformer | 611 | LGPL (see below) |
-| SyGMa 1.1.0 | 273 | "GPL", no version given |
-| GLORYx | 82 | no licence text for it is held here |
-| RetroSim | 0 | no licence text for it is held here |
+| rightsholder | in the measured bank | in the released bank | terms, as its own distribution states them |
+|---|---:|---:|---|
+| BioTransformer | 611 | **0** | LGPL, but its README also requires permission to redistribute (see below) |
+| SyGMa 1.1.0 | 273 | 273 | "GPL", no version given |
+| GLORYx | 82 | 82 | no licence text for it is held here |
+| RetroSim | 0 | 0 | no licence text for it is held here |
+
+The two banks are `grail_metabolism/resources/extended_smirks.txt`, which every figure in the paper
+is measured on and which is **not distributed**, and
+`grail_metabolism/resources/extended_smirks_released.txt`, which is. The second is the first with
+every template BioTransformer's published set also contains removed:
+`scripts/build_released_bank.py` writes it, records both digests, and can check the shipped file
+against them: 6,970 templates ship of the 7,581 measured.
 
 The SyGMa count is 273 and not 152 because GLORYx's own rule file attributes 178 of its 260 rules to
 SyGMa, in a notation the installed SyGMa package does not use. String equality cannot trace a
