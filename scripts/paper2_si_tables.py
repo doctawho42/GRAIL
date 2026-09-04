@@ -156,7 +156,12 @@ def si_criterion_levels():
     missing = [a for a in label if a not in arms]
     note = ("" if not missing else
             " " + " and ".join(label[a] for a in missing) + " is absent from this grid.")
-    return ("\\begin{table*}[t]\n\\centering\\small\n"
+    # Five criterion blocks of six arms plus rules and a caption do not fit a page at \small: the
+    # last rows ran under the folio, which printed over a data cell -- a referee could not read
+    # MetaPredictor at a budget of eight. The type is smaller and the rows tighter so the table
+    # ends above the footer.
+    return ("\\begin{table*}[t]\n\\centering\\scriptsize\n\\setlength{\\tabcolsep}{4pt}\n"
+            "\\renewcommand{\\arraystretch}{0.92}\n"
             f"\\begin{{tabular}}{{l{'r' * len(ks)}}}\n\\toprule\n"
             f"arm & \\multicolumn{{{len(ks)}}}{{c}}{{output budget $k$}} \\\\\n"
             f"\\cmidrule(lr){{2-{len(ks) + 1}}}\n & {head} \\\\\n"

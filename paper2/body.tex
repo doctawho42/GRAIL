@@ -929,8 +929,11 @@ headroom no ranking can take, because the bank does not produce those structures
 It is a one-template ceiling and not a one-enzyme one, which matters for how the number reads. The
 annotation itself is not all single steps: applying the composite instruments to the references
 rather than to the templates, \numRefstepEither{} of the \numRefstepTyped{} pairs those
-instruments can type, \numRefstepEithersharePct{}, are transformations an enzyme system reached in
-more than one turnover and the corpus records as one pair. A hit on one of those is a single template standing in for
+instruments can type, \numRefstepEithersharePct{}, are flagged as reached in more than one
+turnover and recorded by the corpus as one pair. That is what the instruments flag rather than a
+count of such transformations: the union includes the locus instrument, whose error is unmeasured
+in both directions (Section~\ref{sec:limitations}), and the registered instrument alone flags
+\numRefstepEdits{}. A hit on one of those is a single template standing in for
 several turnovers, so \numCeilingCoverage{} is not the share of annotated metabolism one enzymatic
 step reaches.
 
@@ -1230,16 +1233,22 @@ chemistry, which is a statement about the corpus and about no particular bank.
 Predictions are single-step in the sense that one template is applied once, which is not the same
 as one enzymatic step, and the gap between the two is larger than one instrument alone shows. The
 first counts the loci of the reaction centre of the pair a template was mined from and flags
-\numCompositeLoci{} of \numCompositeScored{} mined templates, \numCompositeLocisharePct{}. That is
-a floor and not a bound: two edits that share or neighbour centre atoms arrive as one locus and
-are counted once. A second instrument, whose threshold was registered before it was written,
+\numCompositeLoci{} of \numCompositeScored{} mined templates, \numCompositeLocisharePct{}. It errs
+in both directions and neither is measured: two edits that share or neighbour centre atoms arrive as
+one locus and are counted once, and a centre in two pieces with a bond appearing or disappearing
+between them is one event, which is what a cleavage or a cyclisation looks like, and is counted as
+two. The largest transformation class in this comparison set is a cleavage
+(Table~\ref{SI-tab:si-chemistry}), so the second direction is not a remote possibility here, and
+this instrument's share is therefore neither a floor nor a bound. A second instrument, whose
+threshold was registered before it was written,
 counts core-incident edits (bonds between matched atoms whose order or presence moves, plus
 attachment points gained or lost, with bonds inside an added fragment not counted) and calls a
 template composite at \numCompositeThreshold{} or more, above every single enzymatic turnover.
-It flags \numCompositeEdits{}, and the two instruments agree on only \numCompositeBoth{}, so
-their union is \numCompositeUnion{} templates, \numCompositeUnionsharePct{} of the mined templates.
-Registered prediction P10 set the bar at \numCompositeBarPct{} before either count existed and the
-union clears it.
+It flags \numCompositeEdits{}, \numCompositeEditsharePct{}, and the two instruments agree on only
+\numCompositeBoth{}, so their union is \numCompositeUnion{} templates,
+\numCompositeUnionsharePct{}. Registered prediction P10 set the bar at \numCompositeBarPct{} before
+either count existed, and the registered instrument clears it on its own, without the union and
+without the instrument whose error is unmeasured in both directions.
 
 The corpus annotates metabolites several enzymatic steps from their parent, and a template mined
 from such a pair performs those steps together: inspection finds a rule oxidising two ring

@@ -1365,9 +1365,13 @@ at the registered threshold; their union is \numRefstepEither{},
 Nothing in that makes a composite reference unreachable, and it is worth being clear about why: a
 template mined from a composite pair performs the whole transformation in one application, which is
 how the bank reaches many of them and why the ceiling is as high as it is. What the figure settles
-is what a recall number means. Roughly one annotated metabolite in six is not a single enzymatic
-step, so the same is true of roughly one hit in six, and a reader who takes recall for the share of
-one-step chemistry a system finds will be wrong by about that much.
+is what a recall number means. Roughly one annotated metabolite in six is flagged as more than a
+single enzymatic step, so a reader who takes recall for the share of one-step chemistry a system
+finds is reading a number over a population that is not all one-step. How far wrong that reading is
+depends on the share among hits rather than among references, and this work does not measure it: the
+sentence above gives the reason to expect the two to differ, since a template mined from a composite
+pair performs the whole transformation in one application, so composites should be enriched among
+hits rather than equally represented. The direction is stated and the size is not.
 
 \section{The registered predictions}
 \label{sec:si-register}
