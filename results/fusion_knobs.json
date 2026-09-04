@@ -2,8 +2,8 @@
  "provenance": {
   "script": "fusion_knobs.py",
   "script_path": "scripts/typed_edit/fusion_knobs.py",
-  "source_sha256": "6cbfd0cb782c660f2b56e34545a4e1d7c976816b65e836172ba993aeb2ff7bc7",
-  "git_commit": "249f1cdb8f05e4571331cbc2e21ae4085771e9bd",
+  "source_sha256": "e75cce5af72e1dee08b10e63aacc450986099dedad2ba778fbaa606c446578fe",
+  "git_commit": "bbd16e0861bbf6388f6b33f55f133b961b004161",
   "git_dirty": true
  },
  "inputs": [
@@ -67,6 +67,40 @@
     "30": 0.6211,
     "50": 0.7023
    },
+   "against_the_deployed_constant": {
+    "5": {
+     "gap": -0.0797,
+     "ci95": [
+      -0.1116,
+      -0.0472
+     ],
+     "excludes_zero": true
+    },
+    "15": {
+     "gap": -0.0496,
+     "ci95": [
+      -0.0726,
+      -0.0255
+     ],
+     "excludes_zero": true
+    },
+    "30": {
+     "gap": -0.0316,
+     "ci95": [
+      -0.0479,
+      -0.0159
+     ],
+     "excludes_zero": true
+    },
+    "50": {
+     "gap": 0.0,
+     "ci95": [
+      -0.0061,
+      0.006
+     ],
+     "excludes_zero": false
+    }
+   },
    "against_the_deployed_constant_at_15": {
     "gap": -0.0496,
     "ci95": [
@@ -83,6 +117,40 @@
     "30": 0.6241,
     "50": 0.7038
    },
+   "against_the_deployed_constant": {
+    "5": {
+     "gap": -0.0226,
+     "ci95": [
+      -0.0447,
+      0.0
+     ],
+     "excludes_zero": false
+    },
+    "15": {
+     "gap": -0.0241,
+     "ci95": [
+      -0.0421,
+      -0.0057
+     ],
+     "excludes_zero": true
+    },
+    "30": {
+     "gap": -0.0286,
+     "ci95": [
+      -0.0445,
+      -0.0134
+     ],
+     "excludes_zero": true
+    },
+    "50": {
+     "gap": 0.0015,
+     "ci95": [
+      -0.005,
+      0.0079
+     ],
+     "excludes_zero": false
+    }
+   },
    "against_the_deployed_constant_at_15": {
     "gap": -0.0241,
     "ci95": [
@@ -98,6 +166,40 @@
     "15": 0.5248,
     "30": 0.6376,
     "50": 0.7038
+   },
+   "against_the_deployed_constant": {
+    "5": {
+     "gap": 0.0,
+     "ci95": [
+      -0.0074,
+      0.0075
+     ],
+     "excludes_zero": false
+    },
+    "15": {
+     "gap": -0.0105,
+     "ci95": [
+      -0.0222,
+      0.0
+     ],
+     "excludes_zero": false
+    },
+    "30": {
+     "gap": -0.015,
+     "ci95": [
+      -0.0275,
+      -0.0044
+     ],
+     "excludes_zero": true
+    },
+    "50": {
+     "gap": 0.0015,
+     "ci95": [
+      0.0,
+      0.0049
+     ],
+     "excludes_zero": false
+    }
    },
    "against_the_deployed_constant_at_15": {
     "gap": -0.0105,
@@ -123,6 +225,40 @@
     "30": 0.6526,
     "50": 0.7023
    },
+   "against_the_deployed_constant": {
+    "5": {
+     "gap": -0.006,
+     "ci95": [
+      -0.0156,
+      0.003
+     ],
+     "excludes_zero": false
+    },
+    "15": {
+     "gap": 0.006,
+     "ci95": [
+      -0.0049,
+      0.0173
+     ],
+     "excludes_zero": false
+    },
+    "30": {
+     "gap": 0.0,
+     "ci95": [
+      -0.0088,
+      0.01
+     ],
+     "excludes_zero": false
+    },
+    "50": {
+     "gap": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ],
+     "excludes_zero": false
+    }
+   },
    "against_the_deployed_constant_at_15": {
     "gap": 0.006,
     "ci95": [
@@ -139,6 +275,40 @@
     "30": 0.6496,
     "50": 0.7008
    },
+   "against_the_deployed_constant": {
+    "5": {
+     "gap": -0.003,
+     "ci95": [
+      -0.0141,
+      0.0081
+     ],
+     "excludes_zero": false
+    },
+    "15": {
+     "gap": 0.0075,
+     "ci95": [
+      -0.0066,
+      0.0217
+     ],
+     "excludes_zero": false
+    },
+    "30": {
+     "gap": -0.003,
+     "ci95": [
+      -0.0141,
+      0.0084
+     ],
+     "excludes_zero": false
+    },
+    "50": {
+     "gap": -0.0015,
+     "ci95": [
+      -0.0068,
+      0.0032
+     ],
+     "excludes_zero": false
+    }
+   },
    "against_the_deployed_constant_at_15": {
     "gap": 0.0075,
     "ci95": [
@@ -148,6 +318,40 @@
     "excludes_zero": false
    }
   }
+ },
+ "null_bound": {
+  "constants": [
+   30,
+   60,
+   120,
+   300
+  ],
+  "what_the_null_bounds": "no constant at or above 30 differs from the deployed value by more than these, on this population and metric",
+  "by_budget": {
+   "5": {
+    "widest_interval_endpoint": 0.0156,
+    "at_constant": 120
+   },
+   "15": {
+    "widest_interval_endpoint": 0.0222,
+    "at_constant": 30
+   },
+   "30": {
+    "widest_interval_endpoint": 0.0141,
+    "at_constant": 300
+   },
+   "50": {
+    "widest_interval_endpoint": 0.0068,
+    "at_constant": 300
+   }
+  },
+  "separating_cells": [
+   {
+    "constant": 30,
+    "budget": 30,
+    "gap": -0.015
+   }
+  ]
  },
  "aggregation": {
   "status": "not measurable from the released pools",

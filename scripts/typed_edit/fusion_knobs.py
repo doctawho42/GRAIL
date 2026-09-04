@@ -119,9 +119,44 @@ def main() -> int:
         row = {"recall": {str(b): round(float(hits(orders_by_k[k], b).sum() / U.sum()), 4)
                           for b in KS_BUDGET}}
         if k != DEPLOYED_K:
-            row["against_the_deployed_constant_at_15"] = contrast(
-                hits(orders_by_k[k], 15), hits(base, 15))
+            # Every budget, not only the one the table prints. A null stated at one budget is a
+            # null about that budget, and the constant is deployed at all of them.
+            row["against_the_deployed_constant"] = {
+                str(b): contrast(hits(orders_by_k[k], b), hits(base, b)) for b in KS_BUDGET}
+            row["against_the_deployed_constant_at_15"] = row["against_the_deployed_constant"]["15"]
         k_rows[str(k)] = row
+
+    # What the null actually asserts, computed rather than read off the table by eye. "Every
+    # constant of 30 or more is indistinguishable from the deployed one" is a statement about an
+    # interval, and its content is the widest bound that interval admits: over the constants at or
+    # above 30 and at each budget, the largest absolute endpoint of any interval that covers zero.
+    # A reader can then see what the null excludes instead of only what it fails to detect.
+    flat_from = 30
+    band = {}
+    for b in KS_BUDGET:
+        widest, where = 0.0, None
+        for k in K_VALUES:
+            if k == DEPLOYED_K or k < flat_from:
+                continue
+            c = k_rows[str(k)]["against_the_deployed_constant"][str(b)]
+            if c["excludes_zero"]:
+                continue
+            for e in c["ci95"]:
+                if abs(e) > widest:
+                    widest, where = abs(e), k
+        band[str(b)] = {"widest_interval_endpoint": round(widest, 4), "at_constant": where}
+    null_bound = {
+        "constants": [k for k in K_VALUES if k >= flat_from],
+        "what_the_null_bounds": ("no constant at or above %d differs from the deployed value by "
+                                 "more than these, on this population and metric" % flat_from),
+        "by_budget": band,
+        "separating_cells": [
+            {"constant": k, "budget": b,
+             "gap": k_rows[str(k)]["against_the_deployed_constant"][str(b)]["gap"]}
+            for k in K_VALUES if k >= flat_from and k != DEPLOYED_K
+            for b in KS_BUDGET
+            if k_rows[str(k)]["against_the_deployed_constant"][str(b)]["excludes_zero"]],
+    }
 
     # The other question cannot be answered from these files, and saying which is part of the
     # answer. Noisy-or over the rules that reach a candidate assumes those rules are independent
@@ -149,6 +184,7 @@ def main() -> int:
         "deployed_constant": DEPLOYED_K,
         "constants_swept": list(K_VALUES),
         "by_constant": k_rows,
+        "null_bound": null_bound,
         "aggregation": agg,
         "bootstrap": {"n": N_BOOT, "seed": SEED},
         "reading": (

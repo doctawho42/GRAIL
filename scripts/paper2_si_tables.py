@@ -201,18 +201,46 @@ def si_fusion_k():
         mark = "$\\;\\leftarrow$" if c == dep else ""
         rows.append(f"${c}${mark} & " + " & ".join(cells) + f" & {gap} \\\\")
     head = " & ".join(f"$k={k}$" for k in ks)
+
+    # The second panel. A null stated at one budget was read as a null at every budget, so the
+    # contrast is printed at each of them for the constants the null is about, which are the ones
+    # at or above the value where the sweep goes flat.
+    flat = d["null_bound"]["constants"]
+    panel = []
+    for c in [str(x) for x in flat if str(x) != dep]:
+        cells = []
+        for k in ks:
+            cell = d["by_constant"][c]["against_the_deployed_constant"][str(k)]
+            star = "$^{*}$" if cell["excludes_zero"] else "\\phantom{$^{*}$}"
+            cells.append(f"${cell['gap']:+.4f}${star} {{\\tiny [{cell['ci95'][0]:+.3f},"
+                         f"{cell['ci95'][1]:+.3f}]}}")
+        panel.append(f"${c}$ & " + " & ".join(cells) + " \\\\")
+    bound = ", ".join(
+        f"{d['null_bound']['by_budget'][str(k)]['widest_interval_endpoint']:.4f} at $k={k}$"
+        for k in ks)
+
     return ("\\begin{table}[h]\n\\centering\\small\n"
             f"\\begin{{tabular}}{{l{'r' * len(ks)}l}}\n\\toprule\n"
             f"$K$ & {head} & against the deployed $K$ at $k=15$ \\\\\n\\midrule\n"
-            + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n"
+            + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n\n"
+            "\\vspace{4pt}\n\\scriptsize\n"
+            f"\\begin{{tabular}}{{l{'l' * len(ks)}}}\n\\toprule\n"
+            f"$K$ & {head} \\\\\n\\midrule\n"
+            + "\n".join(panel) + "\n\\bottomrule\n\\end{tabular}\n"
+            "\\normalsize\n"
             "\\caption{Micro recall under each value of the reciprocal-rank-fusion constant $K$, "
             f"on the {d['population']['n_substrates']} substrates of the comparison set carrying "
             f"{d['population']['n_references']} references, with the paired difference against the "
             f"deployed $K={dep}$ at a budget of 15 and its 95\\% interval; $^{{*}}$ marks an "
-            "interval excluding zero. Recomputing the fusion from the stored component scores "
-            "costs no model run, which is why this knob could be swept and the aggregation rule "
-            "had to be re-derived. The deployed value is the one the method was published with "
-            "and was not chosen here.}\n"
+            "interval excluding zero. The lower panel gives the same paired difference at every "
+            f"budget for the constants at or above {min(flat)}, which are the ones the flatness "
+            "claim is about; the widest endpoint any of those intervals reaches is "
+            f"{bound}, and one cell separates. Recomputing the fusion from the stored component "
+            "scores costs no model run, which is why this knob could be swept and the aggregation "
+            "rule had to be re-derived. The deployed value is the one the method was published "
+            "with and was not chosen here, so sweeping it on this population adopts nothing: the "
+            "objection Section~\\ref{sec:si-aggregation} raises against selecting a parameter here "
+            "applies to a parameter that would be changed, and this one is not.}\n"
             "\\label{tab:si-fusion-k}\n\\end{table}\n")
 
 

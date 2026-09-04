@@ -256,9 +256,15 @@ The deployed combination is reciprocal rank fusion \citep{cormack2009},
 \end{equation}
 where $r_i(c)$ is the rank of $c$ under scorer $i$. Only positions enter, so the two opinions
 contribute equally whatever their scales. $K = \numFusionkDeployed$ is the value the method was
-published with \citep{cormack2009}, and it is swept rather than merely disclosed: every constant of
-\numFusionkFlatfrom{} or more is indistinguishable from it at a budget of 15
-(Section~\ref{SI-sec:si-knobs}).
+published with \citep{cormack2009}, and it is swept rather than merely disclosed. On the
+\numFusionkSubstrates{} substrates of the comparison set, every constant of
+\numFusionkFlatfrom{} or more is indistinguishable from it at budgets of 5, 15 and 50, and the
+null is a bound rather than an absence: no such constant differs from the deployed value by more
+than $\numFusionkBandOneFive$ at fifteen, or $\numFusionkBandFive$, $\numFusionkBandThreeZero$ and
+$\numFusionkBandFiveZero$ at the other three. At a budget of 30 it is not a null:
+$K=\numFusionkBreakconstant$ falls $\numFusionkBreakgap$
+$[\numFusionkBreaklo, \numFusionkBreakhi]$ short of the deployed value, so flatness holds at three
+of the four budgets and not at all of them (Section~\ref{SI-sec:si-knobs}).
 
 The change was registered as prediction P1, with a threshold of $+\numHSevenThreshold$ fixed
 before it was checked, and evaluated on a validation draw where the fusion had not been selected:
@@ -756,8 +762,15 @@ The interactive mode applies its \numCaseInterBudget{}-rule budget in
 deamination is ranked \numCaseInterRank{}; the three phosphorylations are not among the rules
 that budget selects, so no ranking could have recovered them. The exhaustive mode applies the
 whole bank in \numCaseExhSeconds{}~s, returns \numCaseExhCandidates{} candidates and produces all
-\numCaseExhFound{}, reaching every one of them by rank \numCaseExhDeepest{}. Both timings are one substrate on one
-run rather than the medians of Table~\ref{tab:modes}. The division the sweep shows across
+\numCaseExhFound{}, reaching every one of them by rank \numCaseExhDeepest{}. That last figure is
+past the budget this paper reports: \numCaseExhPastfifteenWord{} of the \numCaseExhFound{} are
+recovered only beyond $k=15$, so at the reported budget this molecule is one hit and not four. The
+class it illustrates is the one the bank is weakest on. Deamination has
+\numChemDeamRefs{} references in Table~\ref{SI-tab:si-chemistry} and the exhaustive arm scores
+$\numChemDeamExhfifteen$ on it at fifteen against $\numChemDeamBestfifteen$ for the best
+comparator, rising to $\numChemDeamExhthirty$ at thirty, which is the same rank effect this
+molecule shows. Both timings are one substrate on one run rather than the medians of
+Table~\ref{tab:modes}. The division the sweep shows across
 \numPopulationN{} substrates is visible on this one molecule: the interactive mode is right about what
 it emits and runs out, and the exhaustive mode keeps having candidates.
 

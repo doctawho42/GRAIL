@@ -569,6 +569,8 @@
 \newcommand{\numCaseExhDeepest}{20}  % case.exh.deepest
 \newcommand{\numCaseExhFound}{4}  % case.exh.found
 \newcommand{\numCaseExhFoundWord}{four}  % case.exh.found, spelled
+\newcommand{\numCaseExhPastfifteen}{3}  % case.exh.pastfifteen
+\newcommand{\numCaseExhPastfifteenWord}{three}  % case.exh.pastfifteen, spelled
 \newcommand{\numCaseExhRanks}{3, 16, 18, 20}  % case.exh.ranks
 \newcommand{\numCaseExhRecallOneFive}{0.25}  % case.exh.recall15
 \newcommand{\numCaseExhRecallOneFivePct}{25\%}  % case.exh.recall15, as a percentage
@@ -658,6 +660,14 @@
 \newcommand{\numChemCleavageBestother}{0.4768}  % chem.cleavage.bestother
 \newcommand{\numChemCleavageBestotherPct}{47.7\%}  % chem.cleavage.bestother, as a percentage
 \newcommand{\numChemCleavageRefs}{151}  % chem.cleavage.refs
+\newcommand{\numChemDeamBestfifteen}{0.8}  % chem.deam.bestfifteen
+\newcommand{\numChemDeamBestfifteenPct}{80\%}  % chem.deam.bestfifteen, as a percentage
+\newcommand{\numChemDeamExhfifteen}{0}  % chem.deam.exhfifteen
+\newcommand{\numChemDeamExhfifteenPct}{0\%}  % chem.deam.exhfifteen, as a percentage
+\newcommand{\numChemDeamExhthirty}{0.4}  % chem.deam.exhthirty
+\newcommand{\numChemDeamExhthirtyPct}{40\%}  % chem.deam.exhthirty, as a percentage
+\newcommand{\numChemDeamRefs}{5}  % chem.deam.refs
+\newcommand{\numChemDeamRefsWord}{five}  % chem.deam.refs, spelled
 \newcommand{\numChemDemethbank}{0.8333}  % chem.demethbank
 \newcommand{\numChemDemethbankPct}{83.3\%}  % chem.demethbank, as a percentage
 \newcommand{\numChemDemethbest}{0.9722}  % chem.demethbest
@@ -710,7 +720,22 @@
 \newcommand{\numCompositeUnionshare}{0.2212}  % composite.unionshare
 \newcommand{\numCompositeUnionsharePct}{22.1\%}  % composite.unionshare, as a percentage
 \newcommand{\numCostDeadline}{600}  % cost.deadline
+\newcommand{\numCostEstimated}{15}  % cost.estimated
+\newcommand{\numCostEstimatedshare}{0.051}  % cost.estimatedshare
+\newcommand{\numCostEstimatedsharePct}{5.1\%}  % cost.estimatedshare, as a percentage
+\newcommand{\numCostEvery}{3}  % cost.every
+\newcommand{\numCostEveryWord}{three}  % cost.every, spelled
+\newcommand{\numCostPopulation}{294}  % cost.population
 \newcommand{\numCostSampled}{106}  % cost.sampled
+\newcommand{\numCostSystematic}{94}  % cost.systematic
+\newcommand{\numCostSystematicshare}{0.0213}  % cost.systematicshare
+\newcommand{\numCostSystematicsharePct}{2.1\%}  % cost.systematicshare, as a percentage
+\newcommand{\numCostSystematicunfinished}{2}  % cost.systematicunfinished
+\newcommand{\numCostSystematicunfinishedWord}{two}  % cost.systematicunfinished, spelled
+\newcommand{\numCostTail}{12}  % cost.tail
+\newcommand{\numCostTailWord}{twelve}  % cost.tail, spelled
+\newcommand{\numCostTailunfinished}{9}  % cost.tailunfinished
+\newcommand{\numCostTailunfinishedWord}{nine}  % cost.tailunfinished, spelled
 \newcommand{\numCostUnfinished}{11}  % cost.unfinished
 \newcommand{\numCostUnfinishedWord}{eleven}  % cost.unfinished, spelled
 \newcommand{\numCostUnfinishedshare}{0.1038}  % cost.unfinishedshare
@@ -913,10 +938,29 @@
 \newcommand{\numFourmethodSupersededemit}{10.04}  % fourmethod.supersededemit
 \newcommand{\numFragmentFloor}{2}  % fragment.floor
 \newcommand{\numFragmentFloorWord}{two}  % fragment.floor, spelled
+\newcommand{\numFusionkBandOneFive}{0.0222}  % fusionk.band15
+\newcommand{\numFusionkBandOneFivePct}{2.2\%}  % fusionk.band15, as a percentage
+\newcommand{\numFusionkBandThreeZero}{0.0141}  % fusionk.band30
+\newcommand{\numFusionkBandThreeZeroPct}{1.4\%}  % fusionk.band30, as a percentage
+\newcommand{\numFusionkBandFive}{0.0156}  % fusionk.band5
+\newcommand{\numFusionkBandFivePct}{1.6\%}  % fusionk.band5, as a percentage
+\newcommand{\numFusionkBandFiveZero}{0.0068}  % fusionk.band50
+\newcommand{\numFusionkBandFiveZeroPct}{0.7\%}  % fusionk.band50, as a percentage
+\newcommand{\numFusionkBreakbudget}{30}  % fusionk.breakbudget
+\newcommand{\numFusionkBreakconstant}{30}  % fusionk.breakconstant
+\newcommand{\numFusionkBreakgap}{-0.0150}  % fusionk.breakgap
+\newcommand{\numFusionkBreakgapabs}{0.015}  % fusionk.breakgapabs
+\newcommand{\numFusionkBreakgapabsPct}{1.5\%}  % fusionk.breakgapabs, as a percentage
+\newcommand{\numFusionkBreakhi}{-0.0044}  % fusionk.breakhi
+\newcommand{\numFusionkBreaklo}{-0.0275}  % fusionk.breaklo
 \newcommand{\numFusionkDeployed}{60}  % fusionk.deployed
 \newcommand{\numFusionkFlatfrom}{30}  % fusionk.flatfrom
+\newcommand{\numFusionkNullbreaks}{1}  % fusionk.nullbreaks
+\newcommand{\numFusionkNullbreaksWord}{one}  % fusionk.nullbreaks, spelled
+\newcommand{\numFusionkReferences}{665}  % fusionk.references
 \newcommand{\numFusionkSeparating}{2}  % fusionk.separating
 \newcommand{\numFusionkSeparatingWord}{two}  % fusionk.separating, spelled
+\newcommand{\numFusionkSubstrates}{291}  % fusionk.substrates
 \newcommand{\numFusionkSwept}{6}  % fusionk.swept
 \newcommand{\numFusionkSweptWord}{six}  % fusionk.swept, spelled
 \newcommand{\numFusionkWorst}{0.0496}  % fusionk.worst
@@ -2496,17 +2540,17 @@
 \newcommand{\numProvCurrentunpinned}{47}  % prov.currentunpinned
 \newcommand{\numProvFiles}{509}  % prov.files
 \newcommand{\numProvHandtyped}{37}  % prov.handtyped
-\newcommand{\numProvMacrosbody}{408}  % prov.macrosbody
-\newcommand{\numProvMacrossi}{572}  % prov.macrossi
+\newcommand{\numProvMacrosbody}{411}  % prov.macrosbody
+\newcommand{\numProvMacrossi}{575}  % prov.macrossi
 \newcommand{\numProvNamedinputs}{65}  % prov.namedinputs
 \newcommand{\numProvPartitioncloses}{yes}  % prov.partitioncloses
-\newcommand{\numProvPinned}{107}  % prov.pinned
-\newcommand{\numProvPinnedcurrent}{107}  % prov.pinnedcurrent
-\newcommand{\numProvPinnedinresults}{106}  % prov.pinnedinresults
+\newcommand{\numProvPinned}{108}  % prov.pinned
+\newcommand{\numProvPinnedcurrent}{108}  % prov.pinnedcurrent
+\newcommand{\numProvPinnedinresults}{107}  % prov.pinnedinresults
 \newcommand{\numProvPinnedstale}{0}  % prov.pinnedstale
 \newcommand{\numProvPinnedstaleWord}{none}  % prov.pinnedstale, spelled
 \newcommand{\numProvProducerunknown}{26}  % prov.producerunknown
-\newcommand{\numProvSources}{88}  % prov.sources
+\newcommand{\numProvSources}{89}  % prov.sources
 \newcommand{\numProvSourcesestablished}{1}  % prov.sourcesestablished
 \newcommand{\numProvSourcesestablishedWord}{one}  % prov.sourcesestablished, spelled
 \newcommand{\numProvSourcesexempt}{3}  % prov.sourcesexempt
@@ -2522,7 +2566,7 @@
 \newcommand{\numProvSourceswrongmodel}{0}  % prov.sourceswrongmodel
 \newcommand{\numProvSourceswrongmodelWord}{none}  % prov.sourceswrongmodel, spelled
 \newcommand{\numProvSubdirfiles}{186}  % prov.subdirfiles
-\newcommand{\numProvUnstamped}{284}  % prov.unstamped
+\newcommand{\numProvUnstamped}{283}  % prov.unstamped
 \newcommand{\numRankCmpFilterOneFive}{0.3895}  % rank.cmp.filter15
 \newcommand{\numRankCmpFilterOneFivePct}{39\%}  % rank.cmp.filter15, as a percentage
 \newcommand{\numRankCmpFusionOneFive}{0.5353}  % rank.cmp.fusion15

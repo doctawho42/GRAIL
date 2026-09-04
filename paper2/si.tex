@@ -1006,12 +1006,34 @@ Two settings of the ranking are at a default that no measurement here chose, and
 argument makes both worth turning.
 
 The fusion constant is the first. Recomputing the fusion from the stored component scores costs no
-model run, so it is swept over \numFusionkSweptWord{} values spanning two orders of magnitude.
-Every constant of \numFusionkFlatfrom{} or more is indistinguishable from the deployed
-$K = \numFusionkDeployed$ at a budget of 15; the \numFusionkSeparatingWord{} smallest separate
-against it, by up to $\numFusionkWorst$. The published default sits on the flat part of that curve, so leaving it there
-costs nothing measurable, which is a stronger statement than disclosing that it was not varied.
-The values and the levels are Table~\ref{tab:si-fusion-k} rather than a description of them.
+model run, so it is swept over \numFusionkSweptWord{} values spanning two orders of magnitude, on
+the \numFusionkSubstrates{} substrates of the comparison set carrying \numFusionkReferences{}
+references. The \numFusionkSeparatingWord{} smallest constants separate against the deployed
+$K = \numFusionkDeployed$ at a budget of 15, by up to $\numFusionkWorst$; every constant of
+\numFusionkFlatfrom{} or more does not.
+
+That last is a null, and this work states a null as the bound it is rather than as an absence. Over
+the constants at or above \numFusionkFlatfrom{}, no paired difference against the deployed value
+reaches beyond $\numFusionkBandOneFive$ at a budget of 15, $\numFusionkBandFive$ at 5,
+$\numFusionkBandThreeZero$ at 30 or $\numFusionkBandFiveZero$ at 50. The band at fifteen is
+of the same size as the smaller effects this paper reports as real, so what the sweep establishes
+is that the constant is not worth a percentage point, not that it does nothing.
+
+At one budget it is not a null at all. $K = \numFusionkBreakconstant$ falls
+$\numFusionkBreakgap$ $[\numFusionkBreaklo, \numFusionkBreakhi]$ short of the deployed value at a
+budget of 30, which is \numFusionkNullbreaksWord{} separating cell of the twelve in the lower
+panel of Table~\ref{tab:si-fusion-k}. It runs in the deployed value's favour, so the published
+default sits on the flat part of the curve where the curve is flat and above it where it is not,
+and leaving it there costs nothing measurable at three of the four budgets and gains
+$\numFusionkBreakgapabs$ at the fourth. That is a weaker claim than the one this section used to
+make and a checkable one.
+
+Measuring the sweep on the population this paper reports is not the objection
+Section~\ref{sec:si-aggregation} raises against the aggregation blend. That objection is against
+\emph{adopting} a parameter chosen here; this sweep adopts nothing, since the constant stays at
+the value the method was published with and the sweep found no reason to move it. Had it found one,
+the same validation re-run the blend required would have been owed. The values and the levels are
+Table~\ref{tab:si-fusion-k} rather than a description of them.
 
 \input{si_table_fusion_k}
 
@@ -1610,11 +1632,22 @@ as a hit at the same time as it moved the cost. A private enumerator was introdu
 bounded arm and the match keys were verified unchanged before the run.
 
 
-Table~\ref{MS-tab:modes} prints ``did not finish'' for the exhaustive mode's slowest substrate and
-never gives the rate, in a paper that says a service must publish the tail as well as the median.
-The rate is \numCostUnfinished{} of \numCostSampled{} sampled validation substrates,
-\numCostUnfinishedsharePct{}, at a deadline of \numCostDeadline{} seconds. It is a
-validation-timing figure at that deadline and not a property of the comparison. The two are not
+Table~\ref{MS-tab:modes} gives the exhaustive mode's non-completion rate as \numCostUnfinished{} of
+\numCostSampled{} sampled validation substrates, \numCostUnfinishedsharePct{}, at a deadline of
+\numCostDeadline{} seconds, in a paper that says a service must publish the tail as well as the
+median. Those \numCostSampled{} are not a random sample of the \numCostPopulation{}, and the draw
+matters to how the rate reads: the substrates are ordered by heavy-atom count, every
+\numCostEvery{}rd is taken, and the largest \numCostTail{} are then added outright, because the
+non-completions live at the top of the size range. They do:
+\numCostTailunfinished{} of the \numCostUnfinished{} are among those \numCostTail{}, and over the
+\numCostSystematic{} sampled substrates outside them the rate is \numCostSystematicunfinished{},
+\numCostSystematicsharePct{}. So \numCostUnfinishedsharePct{} is an upper bound built on purpose
+rather than an estimate of the population's rate. The systematic part is an exact one-in-%
+\numCostEvery{} sample of everything outside the largest \numCostTail{}, which are measured
+entire, so the population figure follows without a model: about \numCostEstimated{} of
+\numCostPopulation{}, \numCostEstimatedsharePct{}. Both are reported because the sampled rate is
+the one Table~\ref{MS-tab:modes} prints and the population rate is the one a service would meet.
+Either way it is a validation-timing figure at that deadline and not a property of the comparison. The two are not
 in conflict: the timing sweep kills a worker that exceeds the deadline, and the run that produced
 the predictions imposes none, so on the test split the same arm was allowed to finish and records
 \numScoredFailed{} failures over \numScoredSubstrates{} substrates. What the rate says is how

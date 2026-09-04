@@ -355,6 +355,14 @@ def build():
     n["chem.cleavage.bank"] = _cleav["recall"]["GRAIL exhaustive"]["15"] if _cleav else None
     n["chem.cleavage.bestother"] = (max(v["15"] for k, v in _cleav["recall"].items()
                                         if not k.startswith("GRAIL")) if _cleav else None)
+    # The class the case study illustrates, which is also the one this bank is weakest on. It is
+    # printed here so the case cannot be read as representative of the class it belongs to.
+    _deam = ebc["classes"].get("deamination", {})
+    n["chem.deam.refs"] = _deam.get("references")
+    n["chem.deam.exhfifteen"] = _deam["recall"]["GRAIL exhaustive"]["15"] if _deam else None
+    n["chem.deam.exhthirty"] = _deam["recall"]["GRAIL exhaustive"]["30"] if _deam else None
+    n["chem.deam.bestfifteen"] = (max(v["15"] for k, v in _deam["recall"].items()
+                                      if not k.startswith("GRAIL")) if _deam else None)
 
     # The drawing's effect on the substrates it changes, not diluted by the ones it cannot.
     dc = art("dialect_conditional.json")["arms"]["GRAIL exhaustive"]
@@ -880,6 +888,29 @@ def build():
     n["fusionk.flatfrom"] = min(
         int(k) for k, r in fk["by_constant"].items()
         if not (r.get("against_the_deployed_constant_at_15") or {}).get("excludes_zero"))
+    # The population the sweep is measured on, which the manuscript stated the null over without
+    # naming, and the budgets it was never asked about.
+    n["fusionk.substrates"] = fk["population"]["n_substrates"]
+    n["fusionk.references"] = fk["population"]["n_references"]
+    _nb = fk["null_bound"]
+    for _b in ("5", "15", "30", "50"):
+        n[f"fusionk.band{_b}"] = _nb["by_budget"][_b]["widest_interval_endpoint"]
+    # And the cell that is not a null at all. The claim of flatness was made at one budget and
+    # read as though it held at every one; at a budget of thirty the smallest constant in the flat
+    # range separates from the deployed value, in the deployed value's favour.
+    _sep = _nb["separating_cells"]
+    n["fusionk.nullbreaks"] = len(_sep)
+    if _sep:
+        _c = fk["by_constant"][str(_sep[0]["constant"])]["against_the_deployed_constant"][
+            str(_sep[0]["budget"])]
+        n["fusionk.breakconstant"] = _sep[0]["constant"]
+        n["fusionk.breakbudget"] = _sep[0]["budget"]
+        n["fusionk.breakgap"] = _c["gap"]
+        n["fusionk.breaklo"] = _c["ci95"][0]
+        n["fusionk.breakhi"] = _c["ci95"][1]
+        # The same gap without its sign, for the sentence that says what leaving the constant
+        # where it is buys rather than what moving it would cost.
+        n["fusionk.breakgapabs"] = abs(_c["gap"])
 
     # Whether template discovery has saturated, which the manuscript asserted from a determinism
     # check. The curve is measured by withholding training pairs from the catalog.
@@ -1400,6 +1431,9 @@ def build():
     # prose stated as a round number and which moves whenever the ranking does.
     _exh = art("case_study_exhaustive.json")
     n["case.exh.deepest"] = max(_exh["reference_ranks"]) if _exh["reference_ranks"] else None
+    # How many of the illustrated molecule's metabolites the reported budget does not reach. The
+    # case is offered as what the system does well, and this is the half of it the budget misses.
+    n["case.exh.pastfifteen"] = sum(1 for r in _exh["reference_ranks"] if r > 15)
     _drawn = art("case_study_exhaustive_drawn.json")
     n["case.exhdrawn.deamrule"] = next(c["rule_id"] for c in _drawn["candidates"]
                                        if c["is_reference"] and c["rule_source"] == "curated")
@@ -1617,6 +1651,36 @@ def build():
     n["cost.unfinished"] = sum(1 for r in ce["rows"] if not r.get("finished"))
     n["cost.unfinishedshare"] = round(n["cost.unfinished"] / max(n["cost.sampled"], 1), 4)
     n["cost.deadline"] = int(ce["deadline_s"])
+
+    # How those substrates were drawn, and what the draw does to the rate. The sample is not random:
+    # the producer sorts the validation draw by heavy-atom count, takes every nth, and then adds the
+    # twelve largest outright, because that is where the non-completions live. So the sampled rate is
+    # an upper bound on the population's and not an estimate of it, and both halves are printed.
+    #
+    # The population size is read from the pool artifact rather than asserted, and the arithmetic of
+    # the draw is then required to reproduce the sample size the timing artifact recorded: with N
+    # substrates the systematic part has ceil(N / every) members, the tail adds twelve, and the two
+    # overlap in exactly those tail indices divisible by every. If the two runs had been over
+    # different populations this would not close, and the numbers would not build.
+    n["cost.every"] = int(ce["sample_every"])
+    n["cost.tail"] = 12
+    n["cost.population"] = n["valdraw.declared"]
+    _N, _e = n["cost.population"], n["cost.every"]
+    _systematic = -(-_N // _e)
+    _overlap = sum(1 for _i in range(_N - n["cost.tail"], _N) if _i % _e == 0)
+    assert _systematic + n["cost.tail"] - _overlap == n["cost.sampled"], (
+        f"the timing sample of {n['cost.sampled']} is not what a draw of every {_e}th of "
+        f"{_N} plus the largest {n['cost.tail']} produces")
+    # Everything outside the twelve largest is an exact one-in-every_th systematic sample of the
+    # rest, so the population count scales by that factor without a model.
+    _rows = sorted(ce["rows"], key=lambda r: r["heavy"])
+    _tail, _rest = _rows[-n["cost.tail"]:], _rows[:-n["cost.tail"]]
+    n["cost.tailunfinished"] = sum(1 for r in _tail if not r.get("finished"))
+    n["cost.systematic"] = len(_rest)
+    n["cost.systematicunfinished"] = sum(1 for r in _rest if not r.get("finished"))
+    n["cost.systematicshare"] = round(n["cost.systematicunfinished"] / max(len(_rest), 1), 4)
+    n["cost.estimated"] = n["cost.tailunfinished"] + _e * n["cost.systematicunfinished"]
+    n["cost.estimatedshare"] = round(n["cost.estimated"] / n["cost.population"], 4)
     # The load-corrected median, which is the quantity the registered target is expressed in. The
     # manuscript attached "inside the target" to a speed-up factor instead, which reads as though a
     # factor were being compared with a target in seconds.
