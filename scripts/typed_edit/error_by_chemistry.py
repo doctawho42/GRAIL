@@ -124,7 +124,9 @@ def main() -> int:
                    "sygma": ("results/sygma_fulltest_predictions.json", None),
                    "metapredictor": ("artifacts/tier2_1170/metapredictor_preds.json", None),
                    "biotransformer": ("results/biotransformer_allhuman_one_step_preds.json",
-                                      None)}
+                                      None),
+                   # obtained from the service its authors operate; see gloryx_via_service.py
+                   "gloryx": ("results/gloryx_service_preds.json", "predictions")}
     arms = {}
     parent = {s: tautkey(s) for s in subs}
 

@@ -710,7 +710,8 @@ def si_counts():
     # stage, none of them saying which. A count that names its stage cannot be mistaken for one
     # that does not, and that is the whole of the difference.
     ARMS = [("metatox", "MetaTox"), ("sygma", "SyGMa"),
-            ("metapredictor", "MetaPredictor"), ("biotransformer", "BioTransformer")]
+            ("metapredictor", "MetaPredictor"), ("biotransformer", "BioTransformer"),
+            ("gloryx", "GLORYx")]
     emitted = dep.get("mean_emitted_untruncated_2dp") or dep["mean_emitted_untruncated"]
     widest = max(int(k) for k in dep["recall_micro"]) if "recall_micro" in dep else 50
     for key, label in ARMS:
@@ -860,6 +861,7 @@ def si_matched():
         # revisions; the corrected SyGMa arrived after that and did the same.
         name = {"metatox": "MetaTox", "sygma": "SyGMa",
                 "metapredictor": "MetaPredictor", "biotransformer": "BioTransformer",
+                "gloryx": "GLORYx",
                 "sygma on the standardised drawing": "SyGMa, standardised"}.get(b)
         if name is None:
             raise SystemExit(f"matched_length.json names a comparator this table has no label "
@@ -877,7 +879,7 @@ def si_matched():
     # Where the cut actually binds, per comparator, so the caption names it rather than gesturing
     # at it. A comparator absent from this map has no substrate whose list runs past the cut.
     LABEL = {"metatox": "MetaTox", "sygma": "SyGMa", "metapredictor": "MetaPredictor",
-             "biotransformer": "BioTransformer",
+             "biotransformer": "BioTransformer", "gloryx": "GLORYx",
              "sygma on the standardised drawing": "SyGMa on the standardised drawing"}
     bound = {}
     for name, c in d["contrasts"].items():
@@ -1057,7 +1059,7 @@ def si_precision():
     rows = [f"${k}$ & " + " & ".join(f"{pr[a][str(k)]:.4f}".lstrip("0") for a in arms)
             + " \\\\" for k in ks]
     head = " & ".join(a.replace("GRAIL ", "GRAIL\\ ") for a in arms)
-    return ("\\begin{table}[h]\n\\centering\\footnotesize\n"
+    return ("\\begin{table}[h]\n\\centering\\scriptsize\n"
             "\\setlength{\\tabcolsep}{4pt}\n"
             f"\\begin{{tabular}}{{r{'r' * len(arms)}}}\n\\toprule\n"
             f"$k$ & {head} \\\\\n\\midrule\n" + "\n".join(rows)

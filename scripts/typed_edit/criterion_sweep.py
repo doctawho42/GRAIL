@@ -52,6 +52,9 @@ COMPARATORS = {
     # strongest comparator, so an arm missing from here cannot change a sign it never entered --
     # which is exactly why its absence was invisible.
     "BioTransformer": ("results/biotransformer_allhuman_one_step_preds.json", None),
+    # GLORYx, from the service its authors operate: see gloryx_via_service.py for why a
+    # local build is not possible here.
+    "GLORYx": ("results/gloryx_service_preds.json", "predictions"),
 }
 
 

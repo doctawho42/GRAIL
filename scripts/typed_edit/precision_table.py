@@ -40,6 +40,9 @@ COMPARATORS = {
     # comparison counted it. An arm reported in one place and omitted in another is the kind of
     # asymmetry this paper spends its introduction objecting to.
     "BioTransformer": ("results/biotransformer_allhuman_one_step_preds.json", None),
+    # GLORYx, from the service its authors operate: see gloryx_via_service.py for why a
+    # local build is not possible here.
+    "GLORYx": ("results/gloryx_service_preds.json", "predictions"),
 }
 
 

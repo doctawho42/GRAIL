@@ -95,9 +95,12 @@ def build():
                 n[f"macrogap.{tag}{tagb}.{k}.hi"] = c["ci95"][1]
                 n[f"macrogap.{tag}{tagb}.{k}.sep"] = c["excludes_zero"]
 
+    # "gxarm" and not "gloryx": this file already carries gloryx.* for the overlap between this
+    # corpus and GLORYx's published reference set, which is a different quantity about the same
+    # system, and one prefix for two of those is how a number ends up in the wrong sentence.
     ARMS = {"whole bank": "bank", "trained budget": "trained", "metatox": "metatox",
             "sygma": "sygma", "metapredictor": "metapredictor",
-            "biotransformer": "biotransformer"}
+            "biotransformer": "biotransformer", "gloryx": "gxarm"}
     for k, row in dep["recall_micro"].items():
         for arm, tag in ARMS.items():
             if arm in row:
@@ -114,6 +117,21 @@ def build():
             n[f"gap.{tag}.{k}.lo"] = c["ci95"][0]
             n[f"gap.{tag}.{k}.hi"] = c["ci95"][1]
             n[f"gap.{tag}.{k}.sep"] = c["excludes_zero"]
+    # How many published predictors carry a column, counted from the table rather than written as
+    # a word. It was four for three revisions and is five now, and a count in prose that nothing
+    # generates is a count that goes stale on the day an arm is added.
+    n["comparators.columns"] = sum(1 for a in ARMS if a not in ("whole bank", "trained budget")
+                                   and a in dep["recall_micro"]["15"])
+
+    # The one arm not run on this machine, and what the run that produced it recorded: the module
+    # version the service reported and how many jobs the submission took.
+    _gx = art("gloryx_service_preds.json")
+    _got = _gx["obtained_from"]
+    n["comparators.gloryxarm.version"] = _got["module_version"]
+    n["gxarm.jobs"] = len(_got["jobs"])
+    n["gxarm.substrates"] = _gx["n_substrates"]
+    n["gxarm.answered"] = _gx["n_with_at_least_one_prediction"]
+
     for arm, tag in ARMS.items():
         if arm in dep["mean_output_length"]:
             n[f"output.{tag}"] = dep["mean_output_length"][arm]
@@ -1087,7 +1105,8 @@ def build():
     n["comparators.n"] = cp["n_comparators"]
     n["comparators.versioned"] = cp["n_carrying_a_version_string"]
     for tag, name in (("sygma", "SyGMa"), ("metatox", "MetaTox"),
-                      ("metapredictor", "MetaPredictor"), ("biotransformer", "BioTransformer")):
+                      ("metapredictor", "MetaPredictor"), ("biotransformer", "BioTransformer"),
+                      ("gloryxarm", "GLORYx")):
         row = cp["comparators"][name]
         n[f"comparators.{tag}.date"] = row["predictions_first_in_the_repository"]
         if row.get("build"):

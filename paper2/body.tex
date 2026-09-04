@@ -45,14 +45,11 @@ where the pattern matched rather than of a mechanism, and
 Section~\ref{sec:offers} measures both the size of that part and how often the named site is the
 site that changed. We evaluate it with the two decisions above promoted
 to declared axes, meaning that each is stated and varied across its full range instead of being
-fixed silently, against four published predictors we obtained
-and ran on the same substrates, and with the one comparator whose knowledge is built on a source
-of this corpus named and its overlap measured. Two others are absent and neither absence was
-forced. No distribution of GLORYx, the closest modern counterpart to this system, is held here and
-none was sought; whether it could have been run is a question about effort and about its interface
-that we did not settle, so its absence is not defended as unavoidable. DeepCYP was not run for the
-cost of submission, its interface taking one substrate at a time
-(Section~\ref{SI-sec:si-comparators}). The comparison does not produce a winner:
+fixed silently, against \numComparatorsColumnsWord{} published predictors we obtained
+and ran on the same substrates, and with the two comparators whose knowledge is built on a source
+of this corpus named and their overlap measured. One system is absent and its absence was not
+forced: DeepCYP was not run for the cost of submission, its interface taking one substrate at a
+time (Section~\ref{SI-sec:si-comparators}). The comparison does not produce a winner:
 which system leads depends on how many candidates it is allowed to return, and we report that
 dependence rather than a single figure. We further measure how much of the recorded chemistry
 lies outside the reach of any single template application, and bound how much of it is chemistry
@@ -164,11 +161,12 @@ That has a consequence for the comparison which no split can remove. Rule-based 
 no training set to hold out, and their expert rules may encode the same metabolism reported in
 these sources; BioTransformer is built on MetXBioDB, and GLORYx was developed against the
 reference set of the same name. Their knowledge therefore overlaps the test substrates by construction, in a direction that
-favours them. Of the two, BioTransformer is a column of the comparison and GLORYx is not, and the
-difference is what could be run here rather than a difference in how much either overlaps: both
-overlaps are measured in Section~\ref{SI-sec:si-corpus} and neither is corrected for. The
-comparison therefore contains one arm whose development sources this corpus draws on, its
-advantage stated and uncorrected, and omits another that would have been in the same position.
+favours them. Both are columns of the comparison, both overlaps are measured in
+Section~\ref{SI-sec:si-corpus}, and neither is corrected for: a correction would need a model of
+how much of a rule set a reference set produced, which nothing here supplies. The comparison
+therefore contains two arms whose development sources this corpus draws on, with the advantage
+stated and left in place, and a reader who wants the comparison without them can read the other
+three columns.
 The remaining three arms are not measured against this corpus and are not thereby cleared:
 MetaTox and MetaPredictor publish no development set that could be intersected with it. What is
 reported is the one overlap that could be computed, not a survey of all four.
@@ -742,14 +740,14 @@ range is the claim. The cell-by-cell verdicts in the table are read from per-com
 with no correction across the grid, so the count of budgets at which a verdict moves is the weaker
 of the two readings and is given as an illustration; the range of the margin at one budget is a
 property of the point estimates and does not depend on any multiplicity convention. Under
-two of the \numCritCriteria{} criteria GRAIL leads at no budget at all; under two others it leads
-at four.
+\numCritNeverLeadsWord{} of the \numCritCriteria{} criteria GRAIL leads at no budget at all, and
+the most any criterion yields is \numCritLeadsBestWord{}.
 
 The criterion this paper reports is not the one that flatters it. Ordered by how many budgets each
-yields a lead, the tautomer-aware key sits \numCritDefaultRank{} of \numCritCriteria{}, exactly
-the median: it gives \numCritLeadsDefault{} against the \numCritLeadsBest{} available. It was
-chosen because the references carry no stereochemistry and do not distinguish tautomers, not
-because of what it returns.
+yields a lead, the tautomer-aware key sits \numCritDefaultRank{} of \numCritCriteria{}: it gives
+\numCritLeadsDefaultWord{} against the \numCritLeadsBestWord{} available, so the reported
+criterion is nearer the bottom of that order than the top. It was chosen because the references
+carry no stereochemistry and do not distinguish tautomers, not because of what it returns.
 
 The spread is not evenly earned across the five, and saying so is not a retreat from reporting it.
 Two of the criteria are not defensible as defaults and this paper says so where it defines them:
@@ -1289,8 +1287,8 @@ The comparison population is the \numPopulationN{} substrates every method has a
 quarter of the evaluated test split and not a random quarter of it: it is the submission list sent
 to the comparator that is a web service, and how those substrates were drawn from the split is not
 recorded anywhere in this repository. Nothing was excluded for emitting nothing, and the population
-still contains substrates a method answers nothing for. One comparator, BioTransformer, is built on a source
-this corpus is assembled from, which favours it, and that is not corrected.
+still contains substrates a method answers nothing for. Two comparators, BioTransformer and GLORYx, are built on
+sources this corpus is assembled from, which favours both, and that is not corrected for either.
 
 The deployed configuration is not the best one this work knows of. The rule that combines the
 templates reaching a candidate treats them as independent evidence, and this bank does not satisfy
@@ -1301,11 +1299,11 @@ one to \numAggvalHybridwinsmax{}, with the interval excluding zero
 (Section~\ref{SI-sec:si-aggregation}), which includes the budget the headline here is read at.
 Every number in this paper is measured under the deployed rule, so the release keeps it and the
 better setting is reported rather than substituted; a reader deploying this system should know
-that the shipped aggregation is not the one a selection on validation prefers for a short list. A second system in the
-same position, GLORYx, is absent from the comparison, and its absence is not licensed by that
-overlap, since a system with a comparable one carries a column. Its predictions were not obtained:
-no distribution of it is held here and none was sought, and whether it could have been run was not
-settled, so the absence is a weakness of this comparison and not a fact about the system.
+that the shipped aggregation is not the one a selection on validation prefers for a short list. GLORYx stands in the same relation to its own
+reference set and carries a column on the same terms, with the overlap stated and uncorrected. It
+is the one arm not run on this machine: the models it needs are not distributed with its source, so
+its column comes from the service its authors operate, at the module version and on the dates
+Section~\ref{SI-sec:si-comparators} records.
 
 Nothing in this pipeline is stereochemistry-aware. The standardiser strips configuration, the
 matching criterion is chosen to ignore it, and the annotation carries none, so sulfoxidation,

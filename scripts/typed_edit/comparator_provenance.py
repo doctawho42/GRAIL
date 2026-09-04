@@ -87,6 +87,20 @@ COMPARATORS = {
         "predictions": "artifacts/tier2/biotransformer_preds.json",
         "version_note": "the jar's own build stamp, with its digest in paper2/split_manifest.json",
     },
+    "GLORYx": {
+        "kind": "web service, the one its own authors operate",
+        "version": None,          # the module version the service reports, read at run time
+        "configuration": "phase 1 and phase 2, the service's default",
+        "predictions": "results/gloryx_service_preds.json",
+        "version_note": ("this is the only arm not run on this machine. Its source is public and "
+                         "GPL-3 and its command line takes an SDF in batch, so submission cost is "
+                         "not what kept it out; what does is that the FAME 3 models it needs are "
+                         "not distributed with it and its README directs a user to the FAME 3 "
+                         "authors for them. The successor GLORYxR installs but ships no "
+                         "production model. So the column comes from the service, which reports a "
+                         "module version, and that version is recorded beside the job identifiers "
+                         "the run used"),
+    },
 }
 
 
@@ -107,6 +121,19 @@ def main() -> int:
     if match:
         COMPARATORS["BioTransformer"]["version"] = match.group(1)
         COMPARATORS["BioTransformer"]["build"] = match.group(2)
+
+    # GLORYx's version is whatever the service reported to the run that produced its column, which
+    # the artifact of that run records. Reading it from there rather than asking the service again
+    # keeps the version and the predictions the same event.
+    gx_path = ROOT / "results/gloryx_service_preds.json"
+    if gx_path.exists():
+        gx = json.loads(gx_path.read_text())
+        got = gx.get("obtained_from") or {}
+        COMPARATORS["GLORYx"]["version"] = got.get("module_version")
+        COMPARATORS["GLORYx"]["service"] = got.get("service")
+        COMPARATORS["GLORYx"]["jobs"] = got.get("jobs")
+    else:
+        COMPARATORS["GLORYx"]["version_note"] += "; that run's artifact is not in this checkout"
 
     rows = {}
     for name, row in COMPARATORS.items():

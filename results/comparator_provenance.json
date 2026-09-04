@@ -2,8 +2,8 @@
  "provenance": {
   "script": "comparator_provenance.py",
   "script_path": "scripts/typed_edit/comparator_provenance.py",
-  "source_sha256": "3388bbb28328e3ba8ceb4792f3780482935002c18f9dbfc82fb233aba8ac903a",
-  "git_commit": "5abbf8e2f9244314c67ac7a9541429b97adfcd4f",
+  "source_sha256": "d24d53fe7bd95813ba51de18f725663cf8b53bc1e4632b745ff3e9a0dbbad688",
+  "git_commit": "6c947921438e46c0002b09650144580460b719fb",
   "git_dirty": true
  },
  "comparators": {
@@ -43,9 +43,33 @@
    "version_note": "the jar's own build stamp, with its digest in paper2/split_manifest.json",
    "predictions_sha256": "28e6c684945275cfce2422ee4a810e2b3b0633e660ba23042b3a711b8e324b71",
    "predictions_first_in_the_repository": "2026-07-13"
+  },
+  "GLORYx": {
+   "kind": "web service, the one its own authors operate",
+   "version": "0.0.26",
+   "configuration": "phase 1 and phase 2, the service's default",
+   "predictions": "results/gloryx_service_preds.json",
+   "version_note": "this is the only arm not run on this machine. Its source is public and GPL-3 and its command line takes an SDF in batch, so submission cost is not what kept it out; what does is that the FAME 3 models it needs are not distributed with it and its README directs a user to the FAME 3 authors for them. The successor GLORYxR installs but ships no production model. So the column comes from the service, which reports a module version, and that version is recorded beside the job identifiers the run used",
+   "service": "https://nerdd.univie.ac.at/api/gloryx",
+   "jobs": [
+    "b842a8ad-eece-4c24-b855-abc80b91e6a5",
+    "c6af2508-2856-434a-a60b-ca5232191cdc",
+    "8aba1a37-c1b6-4bc9-aafc-87befe681538",
+    "c599fc84-b895-4e3e-9a2b-66903dc3ea29",
+    "476a63e1-fe32-414b-ab02-6f2bde18bb26",
+    "26fa2ea0-a730-4a75-9d49-65e121622972",
+    "46491698-866b-4921-9cf2-c541186e043c",
+    "58d868bf-c6d2-48fe-8bff-d0573e9f0110",
+    "667a85a7-825b-434d-94a6-dd73ff52e6a8",
+    "40a65710-e760-41dd-b350-ae2a35122d18",
+    "55d0adbe-9719-440e-9ade-fb057a0823db",
+    "52a3fa1d-fa2a-46f1-8131-1a2e923888ec"
+   ],
+   "predictions_sha256": "61383272c0066045743a374c9215d4ab3a734649150a6ce7bd53cf033b184cd3",
+   "predictions_first_in_the_repository": null
   }
  },
- "n_comparators": 4,
- "n_carrying_a_version_string": 2,
- "reading": "2 of 4 comparators expose a version string. For the others the record is the frozen predictions, their digest, and the date they entered this repository, which bounds the run. A service that publishes no version cannot be pinned by one, and reporting the bound is the honest alternative to inventing it."
+ "n_comparators": 5,
+ "n_carrying_a_version_string": 3,
+ "reading": "3 of 5 comparators expose a version string. For the others the record is the frozen predictions, their digest, and the date they entered this repository, which bounds the run. A service that publishes no version cannot be pinned by one, and reporting the bound is the honest alternative to inventing it."
 }

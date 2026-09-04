@@ -1,19 +1,19 @@
 \begin{table}[h]
-\centering\footnotesize
+\centering\scriptsize
 \setlength{\tabcolsep}{4pt}
-\begin{tabular}{rrrrrrr}
+\begin{tabular}{rrrrrrrr}
 \toprule
-$k$ & GRAIL\ exhaustive & GRAIL\ interactive & MetaTox & SyGMa & MetaPredictor & BioTransformer \\
+$k$ & GRAIL\ exhaustive & GRAIL\ interactive & MetaTox & SyGMa & MetaPredictor & BioTransformer & GLORYx \\
 \midrule
-$1$ & .2268 & .2405 & .0928 & .3517 & .3207 & .1690 \\
-$3$ & .1753 & .1835 & .1008 & .2207 & .2120 & .1541 \\
-$5$ & .1423 & .1474 & .0997 & .1720 & .1633 & .1348 \\
-$8$ & .1190 & .1207 & .0891 & .1232 & .1263 & .1125 \\
-$10$ & .1041 & .1095 & .0892 & .1056 & .1141 & .1062 \\
-$15$ & .0816 & .0951 & .0806 & .0756 & .1022 & .0997 \\
-$20$ & .0670 & .0870 & .0673 & .0591 & .1020 & .0970 \\
-$30$ & .0497 & .0805 & .0547 & .0419 & .1020 & .0960 \\
-$50$ & .0321 & .0758 & .0464 & .0289 & .1020 & .0957 \\
+$1$ & .2268 & .2405 & .0928 & .3517 & .3207 & .1690 & .1512 \\
+$3$ & .1753 & .1835 & .1008 & .2207 & .2120 & .1541 & .1443 \\
+$5$ & .1423 & .1474 & .0997 & .1720 & .1633 & .1348 & .1313 \\
+$8$ & .1190 & .1207 & .0891 & .1232 & .1263 & .1125 & .1138 \\
+$10$ & .1041 & .1095 & .0892 & .1056 & .1141 & .1062 & .1018 \\
+$15$ & .0816 & .0951 & .0806 & .0756 & .1022 & .0997 & .0836 \\
+$20$ & .0670 & .0870 & .0673 & .0591 & .1020 & .0970 & .0709 \\
+$30$ & .0497 & .0805 & .0547 & .0419 & .1020 & .0960 & .0580 \\
+$50$ & .0321 & .0758 & .0464 & .0289 & .1020 & .0957 & .0509 \\
 \bottomrule
 \end{tabular}
 \caption{Micro precision at each budget on the comparison set, under the parent-drop convention of Table~\ref{MS-tab:sweep}. Precision under an incomplete annotation is a lower bound and is not used here to order systems.}

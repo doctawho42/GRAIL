@@ -47,6 +47,11 @@ COMPARATORS = {
     # three. It is the arm the control matters most for: what separates it at a wide budget is
     # how much each side emits, which is the one thing matching lengths removes.
     "biotransformer": ("results/biotransformer_allhuman_one_step_preds.json", None),
+    # GLORYx, obtained from the service its own authors operate because the FAME 3 models a
+    # local build needs are not distributed with its source. It entered the comparison after
+    # the multiplicity family was declared, as BioTransformer did, so the correction is still
+    # computed over the family that was declared and this column is read outside it.
+    "gloryx": ("results/gloryx_service_preds.json", "predictions"),
     # SyGMa a second time, on the drawing the declared standardiser produces rather than the one
     # the corpus stores. Being handed the corpus's drawing costs it recall, and the manuscript used
     # to tell the reader to deduct that cost from this table's margin. It cannot be deducted: the

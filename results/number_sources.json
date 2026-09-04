@@ -1,8 +1,8 @@
 {
- "artifacts_the_numbers_come_from": 89,
+ "artifacts_the_numbers_come_from": 90,
  "naming_a_checkpoint_that_is_not_the_deployed_run": [],
  "n_naming_a_non_deployed_checkpoint": 0,
- "n_reached_only_through_an_inputs_block": 82,
+ "n_reached_only_through_an_inputs_block": 83,
  "producer_loads_a_model_but_the_artifact_records_none": [
   "results/aggregation_ablation.json <- scripts/typed_edit/aggregation_ablation.py",
   "results/aggregation_ablation_validation.json <- scripts/typed_edit/aggregation_ablation.py",
@@ -323,6 +323,15 @@
   },
   {
    "artifact": "results/gloryx_drop_set.json",
+   "pinned": true,
+   "stamped": true,
+   "verifiable": true,
+   "sweep_status": "current",
+   "how": "recorded source digest",
+   "exempt": null
+  },
+  {
+   "artifact": "results/gloryx_service_preds.json",
    "pinned": true,
    "stamped": true,
    "verifiable": true,

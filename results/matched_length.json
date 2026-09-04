@@ -2,8 +2,8 @@
  "provenance": {
   "script": "matched_length.py",
   "script_path": "scripts/typed_edit/matched_length.py",
-  "source_sha256": "07bbb64c27a51dc5be997ca82028d6132c7ea01eb3f6bdd6425483956246e019",
-  "git_commit": "5b87e57bb55d54a1c1a4c2b225cc85a9c598fb9e",
+  "source_sha256": "c6c80439f8ac98f873317cd4d469f8a90e4a32108816e182ec610df157406bd7",
+  "git_commit": "6c947921438e46c0002b09650144580460b719fb",
   "git_dirty": true
  },
  "inputs": [
@@ -30,6 +30,12 @@
    "exists": true,
    "sha256_16": "1cdc5ab9898e0f99",
    "bytes": 291972
+  },
+  {
+   "path": "results/gloryx_service_preds.json",
+   "exists": true,
+   "sha256_16": "61383272c0066045",
+   "bytes": 1605631
   },
   {
    "path": "results/sygma_standardised_predictions.json",
@@ -256,6 +262,58 @@
     "mean_slots": 10.7,
     "mean_slots_uncapped": 10.7,
     "substrates_the_cap_binds_on": 0,
+    "annotated_metabolites_the_comparator_placed_past_the_cut": 0,
+    "verdict_unchanged": true
+   }
+  },
+  "whole bank - gloryx": {
+   "recall_ours": 0.6226,
+   "recall_theirs": 0.609,
+   "gap": 0.0135,
+   "ci95": [
+    -0.0217,
+    0.0491
+   ],
+   "excludes_zero": false,
+   "mean_slots": 28.61,
+   "median_slots": 27,
+   "substrates_where_the_comparator_returned_nothing": 0,
+   "without_the_cap_on_the_comparator": {
+    "gap": 0.0135,
+    "ci95": [
+     -0.0217,
+     0.0491
+    ],
+    "excludes_zero": false,
+    "mean_slots": 28.69,
+    "mean_slots_uncapped": 28.69,
+    "substrates_the_cap_binds_on": 2,
+    "annotated_metabolites_the_comparator_placed_past_the_cut": 0,
+    "verdict_unchanged": true
+   }
+  },
+  "trained budget - gloryx": {
+   "recall_ours": 0.4887,
+   "recall_theirs": 0.609,
+   "gap": -0.1203,
+   "ci95": [
+    -0.1685,
+    -0.0754
+   ],
+   "excludes_zero": true,
+   "mean_slots": 28.61,
+   "median_slots": 27,
+   "substrates_where_the_comparator_returned_nothing": 0,
+   "without_the_cap_on_the_comparator": {
+    "gap": -0.1203,
+    "ci95": [
+     -0.1685,
+     -0.0754
+    ],
+    "excludes_zero": true,
+    "mean_slots": 28.69,
+    "mean_slots_uncapped": 28.69,
+    "substrates_the_cap_binds_on": 2,
     "annotated_metabolites_the_comparator_placed_past_the_cut": 0,
     "verdict_unchanged": true
    }

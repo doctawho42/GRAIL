@@ -2,8 +2,8 @@
  "provenance": {
   "script": "error_by_chemistry.py",
   "script_path": "scripts/typed_edit/error_by_chemistry.py",
-  "source_sha256": "159470916b86797566cd875158e4d4c3ca6fe7cc4309a69fe6b555d9674bbaa8",
-  "git_commit": "09e3ae89f727d8031d286ad297b1e3decb30b04c",
+  "source_sha256": "ad9fa414c84e6d586a8a0ad8033f8b521357d315a52fc7109105d784814e787c",
+  "git_commit": "6c947921438e46c0002b09650144580460b719fb",
   "git_dirty": true
  },
  "inputs": [
@@ -95,6 +95,11 @@
      "5": 0.2583,
      "15": 0.3576,
      "30": 0.3709
+    },
+    "gloryx": {
+     "5": 0.0993,
+     "15": 0.3642,
+     "30": 0.4967
     }
    },
    "what_the_name_does_not_distinguish": null,
@@ -118,6 +123,11 @@
      "GRAIL exhaustive": 0.5298,
      "GRAIL interactive": 0.5166,
      "biotransformer": 0.3709
+    },
+    "gloryx": {
+     "GRAIL exhaustive": 0.6556,
+     "GRAIL interactive": 0.5762,
+     "gloryx": 0.5166
     }
    }
   },
@@ -153,6 +163,11 @@
      "5": 0.0634,
      "15": 0.0704,
      "30": 0.0704
+    },
+    "gloryx": {
+     "5": 0.0986,
+     "15": 0.1831,
+     "30": 0.1972
     }
    },
    "what_the_name_does_not_distinguish": null,
@@ -176,6 +191,11 @@
      "GRAIL exhaustive": 0.1479,
      "GRAIL interactive": 0.1197,
      "biotransformer": 0.0704
+    },
+    "gloryx": {
+     "GRAIL exhaustive": 0.2676,
+     "GRAIL interactive": 0.1479,
+     "gloryx": 0.2113
     }
    }
   },
@@ -211,6 +231,11 @@
      "5": 0.5143,
      "15": 0.7643,
      "30": 0.8
+    },
+    "gloryx": {
+     "5": 0.3714,
+     "15": 0.8,
+     "30": 0.9
     }
    },
    "what_the_name_does_not_distinguish": "aliphatic or aromatic hydroxylation, N-oxidation or S-oxidation; these are not distinguished",
@@ -234,6 +259,11 @@
      "GRAIL exhaustive": 0.6571,
      "GRAIL interactive": 0.5214,
      "biotransformer": 0.8
+    },
+    "gloryx": {
+     "GRAIL exhaustive": 0.8714,
+     "GRAIL interactive": 0.6429,
+     "gloryx": 0.9429
     }
    }
   },
@@ -269,6 +299,11 @@
      "5": 0.1864,
      "15": 0.6271,
      "30": 0.678
+    },
+    "gloryx": {
+     "5": 0.6441,
+     "15": 0.7627,
+     "30": 0.7797
     }
    },
    "what_the_name_does_not_distinguish": "addition of glucuronic acid, at any acceptor",
@@ -292,6 +327,11 @@
      "GRAIL exhaustive": 0.6949,
      "GRAIL interactive": 0.6271,
      "biotransformer": 0.6949
+    },
+    "gloryx": {
+     "GRAIL exhaustive": 0.8983,
+     "GRAIL interactive": 0.7119,
+     "gloryx": 0.7797
     }
    }
   },
@@ -327,6 +367,11 @@
      "5": 0.7778,
      "15": 0.9722,
      "30": 0.9722
+    },
+    "gloryx": {
+     "5": 0.7222,
+     "15": 0.9444,
+     "30": 0.9722
     }
    },
    "what_the_name_does_not_distinguish": "N-, O- or S-demethylation; these are not distinguished",
@@ -350,6 +395,11 @@
      "GRAIL exhaustive": 0.7778,
      "GRAIL interactive": 0.8889,
      "biotransformer": 0.9722
+    },
+    "gloryx": {
+     "GRAIL exhaustive": 0.9444,
+     "GRAIL interactive": 0.9167,
+     "gloryx": 0.9722
     }
    }
   },
@@ -385,6 +435,11 @@
      "5": 0.3478,
      "15": 0.3913,
      "30": 0.4348
+    },
+    "gloryx": {
+     "5": 0.2174,
+     "15": 0.5217,
+     "30": 0.7826
     }
    },
    "what_the_name_does_not_distinguish": "alcohol to carbonyl, or an introduced double bond",
@@ -408,6 +463,11 @@
      "GRAIL exhaustive": 0.087,
      "GRAIL interactive": 0.0,
      "biotransformer": 0.4348
+    },
+    "gloryx": {
+     "GRAIL exhaustive": 0.4783,
+     "GRAIL interactive": 0.087,
+     "gloryx": 0.7826
     }
    }
   },
@@ -443,6 +503,11 @@
      "5": 0.45,
      "15": 0.6,
      "30": 0.65
+    },
+    "gloryx": {
+     "5": 0.55,
+     "15": 0.65,
+     "30": 0.7
     }
    },
    "what_the_name_does_not_distinguish": "carbonyl to alcohol, or a reduced double bond",
@@ -466,6 +531,11 @@
      "GRAIL exhaustive": 0.6,
      "GRAIL interactive": 0.55,
      "biotransformer": 0.65
+    },
+    "gloryx": {
+     "GRAIL exhaustive": 0.75,
+     "GRAIL interactive": 0.65,
+     "gloryx": 0.7
     }
    }
   },
@@ -501,6 +571,11 @@
      "5": 0.1053,
      "15": 0.4737,
      "30": 0.4737
+    },
+    "gloryx": {
+     "5": 0.7895,
+     "15": 0.9474,
+     "30": 0.9474
     }
    },
    "what_the_name_does_not_distinguish": "addition of a sulfo group, at any acceptor",
@@ -524,6 +599,11 @@
      "GRAIL exhaustive": 0.2105,
      "GRAIL interactive": 0.4211,
      "biotransformer": 0.4737
+    },
+    "gloryx": {
+     "GRAIL exhaustive": 0.6316,
+     "GRAIL interactive": 0.7895,
+     "gloryx": 0.9474
     }
    }
   },
@@ -559,6 +639,11 @@
      "5": 0.0,
      "15": 0.0,
      "30": 0.0
+    },
+    "gloryx": {
+     "5": 0.2,
+     "15": 0.4667,
+     "30": 0.5333
     }
    },
    "what_the_name_does_not_distinguish": "hydroxylation followed by dehydrogenation, counted as one step",
@@ -582,6 +667,11 @@
      "GRAIL exhaustive": 0.4,
      "GRAIL interactive": 0.2667,
      "biotransformer": 0.0
+    },
+    "gloryx": {
+     "GRAIL exhaustive": 0.7333,
+     "GRAIL interactive": 0.5333,
+     "gloryx": 0.5333
     }
    }
   },
@@ -617,6 +707,11 @@
      "5": 0.0769,
      "15": 0.2308,
      "30": 0.2308
+    },
+    "gloryx": {
+     "5": 0.2308,
+     "15": 0.7692,
+     "30": 0.7692
     }
    },
    "what_the_name_does_not_distinguish": "amide, ester or epoxide hydrolysis; these are not distinguished",
@@ -640,6 +735,11 @@
      "GRAIL exhaustive": 0.3846,
      "GRAIL interactive": 0.6154,
      "biotransformer": 0.2308
+    },
+    "gloryx": {
+     "GRAIL exhaustive": 0.6154,
+     "GRAIL interactive": 0.7692,
+     "gloryx": 0.7692
     }
    }
   },
@@ -675,6 +775,11 @@
      "5": 0.0,
      "15": 0.0,
      "30": 0.0
+    },
+    "gloryx": {
+     "5": 0.0,
+     "15": 0.0,
+     "30": 0.0
     }
    },
    "what_the_name_does_not_distinguish": "two of the above, or a dihydrodiol",
@@ -698,6 +803,11 @@
      "GRAIL exhaustive": 0.0,
      "GRAIL interactive": 0.0,
      "biotransformer": 0.0
+    },
+    "gloryx": {
+     "GRAIL exhaustive": 0.0,
+     "GRAIL interactive": 0.0,
+     "gloryx": 0.0
     }
    }
   },
@@ -733,6 +843,11 @@
      "5": 0.2,
      "15": 0.5,
      "30": 0.5
+    },
+    "gloryx": {
+     "5": 0.3,
+     "15": 0.7,
+     "30": 0.7
     }
    },
    "what_the_name_does_not_distinguish": "addition of a methyl group",
@@ -756,6 +871,11 @@
      "GRAIL exhaustive": 0.2,
      "GRAIL interactive": 0.1,
      "biotransformer": 0.5
+    },
+    "gloryx": {
+     "GRAIL exhaustive": 0.5,
+     "GRAIL interactive": 0.2,
+     "gloryx": 0.7
     }
    }
   },
@@ -791,6 +911,11 @@
      "5": 0.2857,
      "15": 0.2857,
      "30": 0.2857
+    },
+    "gloryx": {
+     "5": 0.8571,
+     "15": 0.8571,
+     "30": 0.8571
     }
    },
    "what_the_name_does_not_distinguish": "addition of an acetyl group",
@@ -814,6 +939,11 @@
      "GRAIL exhaustive": 0.1429,
      "GRAIL interactive": 0.0,
      "biotransformer": 0.2857
+    },
+    "gloryx": {
+     "GRAIL exhaustive": 0.1429,
+     "GRAIL interactive": 0.0,
+     "gloryx": 0.8571
     }
    }
   },
@@ -849,6 +979,11 @@
      "5": 0.0,
      "15": 0.0,
      "30": 0.0
+    },
+    "gloryx": {
+     "5": 0.0,
+     "15": 0.0,
+     "30": 0.0
     }
    },
    "what_the_name_does_not_distinguish": null,
@@ -872,6 +1007,11 @@
      "GRAIL exhaustive": 0.0,
      "GRAIL interactive": 0.0,
      "biotransformer": 0.0
+    },
+    "gloryx": {
+     "GRAIL exhaustive": 0.0,
+     "GRAIL interactive": 0.1667,
+     "gloryx": 0.0
     }
    }
   },
@@ -907,6 +1047,11 @@
      "5": 0.0,
      "15": 0.0,
      "30": 0.0
+    },
+    "gloryx": {
+     "5": 0.0,
+     "15": 0.0,
+     "30": 0.0
     }
    },
    "what_the_name_does_not_distinguish": "addition of glutathione",
@@ -930,6 +1075,11 @@
      "GRAIL exhaustive": 0.0,
      "GRAIL interactive": 0.0,
      "biotransformer": 0.0
+    },
+    "gloryx": {
+     "GRAIL exhaustive": 0.0,
+     "GRAIL interactive": 0.0,
+     "gloryx": 0.0
     }
    }
   },
@@ -965,6 +1115,11 @@
      "5": 0.0,
      "15": 0.0,
      "30": 0.0
+    },
+    "gloryx": {
+     "5": 0.0,
+     "15": 0.0,
+     "30": 0.0
     }
    },
    "what_the_name_does_not_distinguish": "amine to carbonyl or alcohol",
@@ -988,6 +1143,11 @@
      "GRAIL exhaustive": 0.0,
      "GRAIL interactive": 0.2,
      "biotransformer": 0.0
+    },
+    "gloryx": {
+     "GRAIL exhaustive": 0.4,
+     "GRAIL interactive": 0.2,
+     "gloryx": 0.0
     }
    }
   },
@@ -1023,6 +1183,11 @@
      "5": 0.0,
      "15": 0.6667,
      "30": 0.6667
+    },
+    "gloryx": {
+     "5": 0.0,
+     "15": 1.0,
+     "30": 1.0
     }
    },
    "what_the_name_does_not_distinguish": "addition of glycine, minus water",
@@ -1046,6 +1211,11 @@
      "GRAIL exhaustive": 0.3333,
      "GRAIL interactive": 0.0,
      "biotransformer": 0.6667
+    },
+    "gloryx": {
+     "GRAIL exhaustive": 1.0,
+     "GRAIL interactive": 0.0,
+     "gloryx": 1.0
     }
    }
   }

@@ -160,6 +160,8 @@ PINNED = {
     "results/retraining_spread.json": f"{TE}/retraining_spread.py",
     # the bank the repository ships, which is the measured bank minus what it may not carry
     "results/released_bank.json": "scripts/build_released_bank.py",
+    # the one comparator column obtained from a service rather than run here
+    "results/gloryx_service_preds.json": f"{TE}/gloryx_via_service.py",
     # the comparator's own emission knob turned up, which the manuscript prints both rows of
     "results/metapredictor_beam_sweep.json": f"{TE}/metapredictor_beam_sweep.py",
     # the comparison with every arm that can be re-run on one drawing

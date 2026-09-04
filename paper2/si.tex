@@ -1819,10 +1819,26 @@ incumbent this work sets out to replace. That is a fact about the method and not
 the paper argues for replacing MetaTox, so any interest the relationship could create runs
 against this work rather than for it.
 
-GLORYx is not a column here, and the honest reason is that its predictions on these substrates
-were not obtained: no distribution of it is held in this repository and none was sought. Whether
-it could have been run is a question about effort and about its interface that we did not settle,
-so the absence is not defended as unavoidable.
+GLORYx carries a column, and how it was obtained is worth setting out, because it is the only arm
+not run on this machine and a comparator whose provenance is vague is the defect this paper is
+about.
+
+Its source is public and GPL-3, and its command line takes an SDF in batch, so the cost of
+submission was never the obstacle for this system. What blocks a local build is stated in its own
+repository: the FAME 3 models it needs for site prediction are not distributed with it, and a user
+is directed to the authors of FAME 3 for them, free of charge for non-profit use. Its successor,
+GLORYxR, installs and runs, but ships no production model either; the model dumps its documentation
+points to are, at the time of writing, unpublished, and the model it does ship is one its own
+tutorial says is not trained on the full dataset. So a local build is possible only after a request
+this work has not made.
+
+What remains is the service the authors themselves operate, which runs the real system. It is used
+here, at module version \numComparatorsGloryxarmVersion{}, over the same
+\numPopulationN{} substrates as every other arm and on the drawing the corpus stores, in
+\numGxarmJobsWord{} jobs whose identifiers the artifact records; the service's published anonymous
+quota is far above what this needed. That is a weaker provenance than the other four arms have and
+it is stated rather than smoothed over: what is pinned is the submission, the returned predictions
+and the version the service reported, and not a binary anyone can re-run offline.
 Its reference set is also one of the four sources this corpus is assembled from, so its
 development data sits inside our corpus, and Section~\ref{MS-sec:populations} states that such
 overlap flatters a comparator. That second fact is not what excludes it. BioTransformer stands in

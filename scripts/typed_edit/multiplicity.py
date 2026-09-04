@@ -36,7 +36,11 @@ COMPARATORS = ("metatox", "sygma", "metapredictor")
 # declared family covers, and a correction over part of what is printed controls less than it
 # appears to, so the wider family is computed beside the declared one and neither is hidden behind
 # the other. The declared family is the one the paper's verdicts are read from.
-COMPARATORS_REPORTED = ("metatox", "sygma", "metapredictor", "biotransformer")
+COMPARATORS_REPORTED = ("metatox", "sygma", "metapredictor", "biotransformer", "gloryx")
+# GLORYx joined after the family was declared, as BioTransformer did. It is in the wider
+# family computed here and not in the declared one, which names its three comparators and
+# does not move; the verdicts the paper reports as corrected are still corrected over what
+# was declared, and every cell outside it is read without a correction and said to be.
 
 
 def holm(pairs, alpha=ALPHA):

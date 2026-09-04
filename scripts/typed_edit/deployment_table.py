@@ -50,6 +50,11 @@ COMPARATORS = {
     # names its three comparators explicitly and is unchanged by this addition, so the corrected
     # verdicts the paper reports are still computed over the family that was declared.
     "biotransformer": ("results/biotransformer_allhuman_one_step_preds.json", None),
+    # GLORYx, obtained from the service its own authors operate because the FAME 3 models a
+    # local build needs are not distributed with its source. It entered the comparison after
+    # the multiplicity family was declared, as BioTransformer did, so the correction is still
+    # computed over the family that was declared and this column is read outside it.
+    "gloryx": ("results/gloryx_service_preds.json", "predictions"),
 }
 
 

@@ -2,8 +2,8 @@
  "provenance": {
   "script": "multiplicity.py",
   "script_path": "scripts/typed_edit/multiplicity.py",
-  "source_sha256": "4adcd505343b8a700a83dd598feed58cce913e5d1655b7de8ad99a1d00b0a456",
-  "git_commit": "02fab0200a1a47104ea9a4c8df86c345d5036916",
+  "source_sha256": "cc8f7f19f3569a30954551d6d029cfa8972c7caa75b2366defe21c810bcd873e",
+  "git_commit": "6c947921438e46c0002b09650144580460b719fb",
   "git_dirty": true
  },
  "family": "every GRAIL-arm-against-comparator contrast in the sweep: 2 arms by 3 comparators by 9 budgets",
@@ -36,11 +36,14 @@
    "metatox",
    "sygma",
    "metapredictor",
-   "biotransformer"
+   "biotransformer",
+   "gloryx"
   ],
-  "n_tests": 72,
-  "n_separating_after_holm": 27,
+  "n_tests": 90,
+  "n_separating_after_holm": 29,
   "declared_family_cells_it_would_remove": [
+   "whole bank - metatox @ 10",
+   "whole bank - sygma @ 3",
    "whole bank - sygma @ 5"
   ],
   "note": "a sensitivity on the declared family and not a second set of verdicts: the family was fixed before the BioTransformer arm existed and is not widened after the fact, but the paper prints more tests than it covers and what that costs is counted rather than left to the reader"
