@@ -69,6 +69,8 @@ def _enumerate(shown: str) -> list[str]:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default=str(ROOT / "results" / "sygma_by_dialect.json"))
+    ap.add_argument("--preds-out",
+                    default=str(ROOT / "results" / "sygma_standardised_predictions.json"))
     args = ap.parse_args()
 
     from rdkit import Chem, RDLogger
@@ -144,6 +146,18 @@ def main() -> int:
            "reading": ("the difference is standardised minus stored, so a positive value is "
                        "recall SyGMa was denied by being handed the corpus's drawing")}
     Path(args.out).write_text(json.dumps(rep, indent=1))
+
+    # The per-substrate lists this run produced on the drawing the declared standardiser gives,
+    # written out rather than summarised away. Without them the drawing correction can only be
+    # applied to a pooled number by subtraction, and a correction measured at a fixed budget of 50
+    # cannot be subtracted from a margin measured over a comparator's own slot count. With them
+    # the matched-length control can be run on the corrected arm directly.
+    Path(args.preds_out).write_text(json.dumps(
+        {"what_this_is": "SyGMa's predictions on the drawing standardize_mol produces, as "
+                         "tautomer-aware keys, one list per substrate of the comparison set",
+         "produced_by": "scripts/typed_edit/sygma_by_dialect.py, the same run that wrote "
+                        + Path(args.out).name,
+         "n": len(subs), "predictions": arms["standardised"]}, indent=1))
 
     print(f"\n{'k':>4}{'stored':>10}{'standardised':>14}{'difference':>12}   interval")
     for k in KS:

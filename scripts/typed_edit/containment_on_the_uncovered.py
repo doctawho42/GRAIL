@@ -79,25 +79,69 @@ def train_type_keys(limit=None):
             print(f"  train {i}/{len(pairs)}, {typed} typed, {len(keys)} types", flush=True)
 
     published = json.loads((ROOT / "results/missing_types_in_train.json").read_text())["train"]
-    off = [f"{k}: {mine} against {published[k]}" for k, mine in
-           (("pairs", len(pairs)), ("typed", typed), ("distinct_types", len(keys)))
-           if published[k] != mine]
-    if off:
-        raise SystemExit("this typing of the training split does not reproduce the published one, "
-                         "so nothing measured against it would be comparable: " + ", ".join(off))
     TRAIN_CACHE.write_text(json.dumps(
         {"what_this_is": "the training annotation's transformation types, typed once in one "
                          "process because the typing route's MCS timeout is load-sensitive",
-         "reproduces_missing_types_in_train": True,
-         "pairs": len(pairs), "typed": typed, "keys": sorted(keys)}))
+         "pairs": len(pairs), "typed": typed, "distinct_types": len(keys),
+         "the_published_typing": {k: published[k] for k in ("pairs", "typed", "distinct_types")},
+         "agrees_with_the_published_typing": all(
+             published[k] == mine for k, mine in (("pairs", len(pairs)), ("typed", typed),
+                                                  ("distinct_types", len(keys)))),
+         "why_it_may_not": ("the published typing ran on a pool of workers and the route cancels "
+                            "an MCS that exceeds a wall-clock timeout, so under load it types "
+                            "fewer pairs and finds fewer types; fewer training types is the "
+                            "direction that inflates a containment share"),
+         "keys": sorted(keys)}))
     return keys, len(pairs), typed
 
 
-def sweep(items, rules, bank_types, train_keys):
-    """The census and the typing over one shard of test substrates, in one pass."""
+TEST_CACHE = ROOT / "results" / "containment_test_types.json"
+
+
+def test_type_keys(items):
+    """The type of every annotated test pair, typed once in one process and cached.
+
+    Same reason as the training side: the route cancels an MCS on a wall-clock timeout, so a pair
+    typed inside a parallel shard can come back untypeable purely because the machine was busy.
+    Typing here and applying rules there keeps the only load-sensitive step off the parallel path.
+    """
+    if TEST_CACHE.exists():
+        blob = json.loads(TEST_CACHE.read_text())
+        return {tuple(k.split("\t", 1)): v for k, v in blob["types"].items()}, blob["typed"]
+
+    from rdkit import Chem
+    from coverage_gap_types import pair_to_type
+
+    out, typed, n = {}, 0, 0
+    for i, (sub, mets) in enumerate(items, 1):
+        sub_mol = Chem.MolFromSmiles(sub)
+        for met in mets:
+            n += 1
+            met_mol = Chem.MolFromSmiles(met) if sub_mol is not None else None
+            if met_mol is None:
+                out[(sub, met)] = None
+                continue
+            try:
+                t = pair_to_type(sub_mol, met_mol)
+            except Exception:
+                t = None
+            out[(sub, met)] = json.dumps(t, sort_keys=True) if t is not None else None
+            typed += t is not None
+        if i % 100 == 0 or i == len(items):
+            print(f"  test {i}/{len(items)} substrates, {typed}/{n} pairs typed", flush=True)
+
+    TEST_CACHE.write_text(json.dumps(
+        {"what_this_is": "the transformation type of every annotated test pair, typed once in "
+                         "one process so a parallel shard cannot change it",
+         "pairs": n, "typed": typed,
+         "types": {f"{a}\t{b}": v for (a, b), v in out.items()}}))
+    return out, typed
+
+
+def sweep(items, rules, bank_types, train_keys, test_types):
+    """The census over one shard of test substrates, with the typing already fixed."""
     from rdkit import Chem
     from grail_metabolism.metrics import _tautomer_inchikey
-    from coverage_gap_types import pair_to_type
     from engine_knobs import apply_with
 
     cov, gap, novel = Counter(), Counter(), Counter()
@@ -122,19 +166,11 @@ def sweep(items, rules, bank_types, train_keys):
                 cov["covered"] += 1
                 continue
             cov["uncovered"] += 1
-            met_mol = Chem.MolFromSmiles(met)
-            if met_mol is None:
+            key = test_types.get((sub, met))
+            if key is None:
                 gap["untypeable"] += 1
                 continue
-            try:
-                t = pair_to_type(sub_mol, met_mol)
-            except Exception:
-                t = None
-            if t is None:
-                gap["untypeable"] += 1
-                continue
-            key = json.dumps(t, sort_keys=True)
-            if t in bank_types:
+            if key in bank_types:
                 gap["known_type"] += 1
             else:
                 gap["novel_type"] += 1
@@ -148,14 +184,37 @@ def sweep(items, rules, bank_types, train_keys):
     return cov, gap, novel
 
 
+def merge(paths, out) -> int:
+    """Add the shards up and write the one artifact, with the gate applied to the total."""
+    from collections import Counter as C
+
+    cov, gap, novel, subs = C(), C(), C(), 0
+    head = None
+    for f in paths:
+        blob = json.loads(Path(f).read_text())
+        cov.update(blob["cov"]); gap.update(blob["gap"]); novel.update(blob["novel"])
+        subs += blob["substrates"]
+        head = head or blob
+    return write({"substrates": subs, "cov": dict(cov), "gap": dict(gap), "novel": dict(novel),
+                  "n_train_pairs": head["n_train_pairs"], "n_train_types": head["n_train_types"],
+                  "n_train_typed": head["n_train_typed"],
+                  "all_test_cells": head.get("all_test_cells", {}),
+                  "n_rules": head["n_rules"], "n_bank_types": head["n_bank_types"]}, out)
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
+    ap.add_argument("--merge", nargs="*", default=None,
+                    help="shard files to add up and write as the artifact")
     ap.add_argument("--shard", type=int, default=0)
     ap.add_argument("--shards", type=int, default=1)
     ap.add_argument("--out-shard", default="")
     ap.add_argument("--train-pairs", type=int, default=0)
     ap.add_argument("--out", default=str(ROOT / "results" / "containment_on_the_uncovered.json"))
     args = ap.parse_args()
+
+    if args.merge:
+        return merge(args.merge, args.out)
 
     from rdkit import RDLogger
     RDLogger.DisableLog("rdApp.*")
@@ -164,7 +223,10 @@ def main() -> int:
     from run_benchmark import load_test_map
 
     rules = load_default_rules()
-    bank_types = {t for t in (canonical_type(r) for r in rules) if t is not None}
+    # As key strings, because everything else here compares key strings and a type that
+    # survives a JSON round trip is a list where the fresh one is a tuple.
+    bank_types = {json.dumps(t, sort_keys=True)
+                  for t in (canonical_type(r) for r in rules) if t is not None}
     print(f"bank: {len(rules)} rules, {len(bank_types)} types", flush=True)
 
     train_keys, n_train, n_typed = train_type_keys(args.train_pairs or None)
@@ -172,24 +234,39 @@ def main() -> int:
           flush=True)
 
     items = sorted(load_test_map(None, 0).items())
+    test_types, n_test_typed = test_type_keys(items)
+    print(f"test: {n_test_typed} of {len(test_types)} annotated pairs typed", flush=True)
+
+    # The published cross-tabulation, restated under this typing. It is the same four cells
+    # missing_types_in_train.json reports, over every annotated test reference rather than over
+    # the uncovered ones, so the two populations can be read side by side under one instrument.
+    cells = Counter()
+    for key in test_types.values():
+        if key is None:
+            continue
+        cells["in the bank and in training" if key in bank_types and key in train_keys else
+              "in the bank, not in training" if key in bank_types else
+              "not in the bank, in training" if key in train_keys else
+              "not in the bank, nor in training"] += 1
+
     mine = [it for i, it in enumerate(items) if i % args.shards == args.shard]
     print(f"shard {args.shard}/{args.shards}: {len(mine)} of {len(items)} substrates", flush=True)
 
-    cov, gap, novel = sweep(mine, rules, bank_types, train_keys)
+    cov, gap, novel = sweep(mine, rules, bank_types, train_keys, test_types)
 
     if args.out_shard:
         Path(args.out_shard).write_text(json.dumps(
             {"shard": args.shard, "shards": args.shards, "substrates": len(mine),
              "cov": dict(cov), "gap": dict(gap), "novel": dict(novel),
              "n_train_pairs": n_train, "n_train_types": len(train_keys),
-             "n_train_typed": n_typed, "n_rules": len(rules), "n_bank_types": len(bank_types)}))
+             "n_train_typed": n_typed, "all_test_cells": dict(cells), "n_rules": len(rules), "n_bank_types": len(bank_types)}))
         print(f"wrote {args.out_shard}", flush=True)
         return 0
 
     return write(
         {"substrates": len(mine), "cov": dict(cov), "gap": dict(gap), "novel": dict(novel),
          "n_train_pairs": n_train, "n_train_types": len(train_keys),
-         "n_train_typed": n_typed, "n_rules": len(rules), "n_bank_types": len(bank_types)}, args.out)
+         "n_train_typed": n_typed, "all_test_cells": dict(cells), "n_rules": len(rules), "n_bank_types": len(bank_types)}, args.out)
 
 
 def write(merged, out) -> int:
@@ -222,8 +299,14 @@ def write(merged, out) -> int:
         "population": {"substrates": merged["substrates"], "uncovered": computed["uncovered"],
                        "of_absent_type": total},
         "training_annotation": {"pairs": merged["n_train_pairs"],
+                                "typed": merged["n_train_typed"],
                                 "distinct_types": merged["n_train_types"]},
         "bank": {"rules": merged["n_rules"], "distinct_types": merged["n_bank_types"]},
+        "the_published_cross_tabulation_restated": {
+            "what_this_is": ("the four cells missing_types_in_train.json reports, recomputed here "
+                             "under a typing that does not depend on machine load"),
+            "cells": merged.get("all_test_cells", {}),
+        },
         "absent_from_training": absent,
         "present_in_training": present,
         "share_absent_from_training": round(absent / total, 4) if total else None,

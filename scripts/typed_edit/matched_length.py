@@ -47,6 +47,14 @@ COMPARATORS = {
     # three. It is the arm the control matters most for: what separates it at a wide budget is
     # how much each side emits, which is the one thing matching lengths removes.
     "biotransformer": ("results/biotransformer_allhuman_one_step_preds.json", None),
+    # SyGMa a second time, on the drawing the declared standardiser produces rather than the one
+    # the corpus stores. Being handed the corpus's drawing costs it recall, and the manuscript used
+    # to tell the reader to deduct that cost from this table's margin. It cannot be deducted: the
+    # correction is measured at a fixed budget of fifty and the margin over a comparator's own slot
+    # count, which on this comparator averages fifty-eight. So the control is run on the corrected
+    # arm instead of the margin being adjusted by hand.
+    "sygma on the standardised drawing":
+        ("results/sygma_standardised_predictions.json", "predictions"),
 }
 
 
