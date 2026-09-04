@@ -1136,13 +1136,17 @@ remaining \numTypeoverlapMinerslost{} are chemistry the corpus contained and the
 carry across. Two counts appear in that sentence and they measure different things.
 \numTypeoverlapBanklacks{} counts every test reference whose type the bank does not hold, whether
 or not the bank reaches it. \numCeilingNovel{}, above, counts only those it also fails to reach.
-The gap between them is not an error in either: a template can reach a product while being typed
-differently from the pair that product came from. The two are not cross-tabulated anywhere in this
-work, so the size of that gap is reported and its composition is not.
-Section~\ref{SI-sec:si-typeoverlap} cross-tabulates a different pair, whether a type is in the bank
-against whether it is in the training annotation, and the containment of
-\numTypeoverlapCorpussharePct{} is computed over the \numTypeoverlapBanklacks{} references of the
-first kind rather than over the \numCeilingNovel{} of the second. Template discovery from that
+The gap between them is \numTypeoverlapReached{} references: chemistry of a type the bank does not
+hold that the bank nonetheless reaches. That is not an error in either count, because a template can
+reach a product while being typed differently from the pair that product came from.
+Section~\ref{SI-sec:si-typeoverlap} cross-tabulates a different pair again, whether a type is in the
+bank against whether it is in the training annotation, and its four cells carry no reach dimension
+at all. So the containment of \numTypeoverlapCorpussharePct{} is computed over the
+\numTypeoverlapBanklacks{} references of the first kind and not over the \numCeilingNovel{} of the
+second, and it is that first population the Abstract's claim about corpora is stated over. What it
+supports is the proposition that the chemistry the bank cannot type is chemistry the corpus does not
+contain; what it does not establish on its own is the same proposition restricted to the references
+the bank also misses, since the two populations differ by the \numTypeoverlapReached{} above. Template discovery from that
 corpus is separately unfinished, its rarefaction curve still climbing, so mining harder would yield
 more templates and could not supply a type the corpus does not contain.
 Extending coverage therefore requires new reaction corpora, and the census narrows the search.
@@ -1183,6 +1187,15 @@ functionalisations this system is not the best arm and is sometimes beaten by it
 setting. Reporting the grid is what makes the comparison checkable, and releasing every arm's
 per-substrate predictions, with the references as the descriptors the criteria are decided by, is
 what lets a third party recompute it.
+
+What one application of one template bank cannot reach is mostly chemistry the corpus does not
+contain. Of the \numTypeoverlapBanklacks{} test references whose transformation type the bank does
+not hold, \numTypeoverlapCorpussharePct{} have a type the training annotation does not hold either.
+That population is every reference of absent type, including the \numTypeoverlapReached{} the bank
+reaches by a template typed differently from the pair; it is not the \numCeilingNovel{} uncovered
+references of absent type, and the two are not cross-tabulated here. What the figure supports is
+that enlarging this bank from this corpus would not supply the missing chemistry, which is a
+statement about the corpus and about no particular bank.
 
 \section{Limitations}
 \label{sec:limitations}

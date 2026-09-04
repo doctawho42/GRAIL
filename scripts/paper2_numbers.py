@@ -516,6 +516,11 @@ def build():
     n["typeoverlap.inbankonly"] = mtt["references_by_cell"]["in the bank, not in training"]
     n["typeoverlap.banklacks"] = mtt["references_whose_type_the_bank_lacks"]
     n["typeoverlap.corpuslackstoo"] = mtt["of_those_the_corpus_lacks_too"]
+    # The part of that population the bank reaches anyway. The containment share is computed over
+    # every reference of absent type, and the claim it supports is about the ones the bank also
+    # fails to reach, so the difference between the two populations is printed rather than left to
+    # be worked out from two numbers three paragraphs apart.
+    n["typeoverlap.reached"] = mtt["references_whose_type_the_bank_lacks"] - n["ceiling.novel"]
     n["typeoverlap.minersshare"] = round(
         1 - mtt["share_of_the_bank_s_type_gap_the_corpus_also_lacks"], 4)
     n["typeoverlap.corpusshare"] = mtt["share_of_the_bank_s_type_gap_the_corpus_also_lacks"]
