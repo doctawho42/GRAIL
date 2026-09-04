@@ -476,7 +476,12 @@ def _default_rule_bank_candidates() -> List[Path]:
     resources = _resources_dir()
     data = _local_data_dir()
     return [
+        # The measured bank first, where a checkout has it. It is not redistributed: 611 of its
+        # templates are BioTransformer's verbatim, whose README requires a permission nobody here
+        # has sought, so what ships is the released bank without them. Removing them costs zero
+        # references, and scripts/build_released_bank.py rebuilds either from the other.
         resources / "extended_smirks.txt",
+        resources / "extended_smirks_released.txt",
         resources / "mined_only.txt",
         resources / "notebooks_rules.txt",
         data / "merged_smirks.txt",

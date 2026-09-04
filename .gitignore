@@ -94,6 +94,13 @@ paper2/zenodo_bundle/
 # The ENVMICRO file is CC BY-NC-SA 4.0, which no GPL release can carry; the RetroSim and GLORYx
 # files carry no licence text this repository holds. Each is obtainable from its own project, and
 # scripts/typed_edit/curated_third_party.py reports which of them it found rather than assuming.
+# BioTransformer's reaction database, and the bank that holds 611 of its templates verbatim. Its
+# README requires explicit permission for redistribution and that permission has not been sought,
+# so neither is shipped. grail_metabolism/resources/extended_smirks_released.txt is the bank this
+# repository releases; scripts/build_released_bank.py rebuilds one from the other and prices the
+# removal at zero references lost.
+grail_metabolism/resources/extended_smirks.txt
+grail_metabolism/resources/external/bt_database_metabolicReactions.json
 grail_metabolism/resources/external/bt_database_ENVMICRO_metabolicReactions.json
 grail_metabolism/resources/external/retrosim_templates_general.json
 grail_metabolism/resources/external/gloryx_reactionrules.csv

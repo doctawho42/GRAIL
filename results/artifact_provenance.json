@@ -482,6 +482,12 @@
    "status": "current"
   },
   {
+   "artifact": "results/released_bank.json",
+   "script": "build_released_bank.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
    "artifact": "results/released_default_threshold.json",
    "script": "released_default_threshold.py",
    "how": "recorded source digest",
@@ -652,7 +658,7 @@
    "status": "current"
   }
  ],
- "n_pinned": 107,
+ "n_pinned": 108,
  "n_pinned_stale": 0,
  "sweep": {
   "unstamped": 283,

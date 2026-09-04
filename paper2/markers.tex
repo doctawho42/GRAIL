@@ -17,8 +17,9 @@
 % attributions each requires and what removing either would have cost.
 \newcommand{\RepoLicence}{the GNU General Public License, version 3, which is what the GPL and LGPL templates the bank redistributes admit}
 % ACS asks for a funding statement, and an acknowledgement section that is absent at
-% submission is a desk query. The content is the authors' to supply.
-\newcommand{\Funding}{\unresolved{FUNDING: the grants supporting this work, or a statement that it received no external funding}}
+% submission is a desk query.
+\newcommand{\Funding}{This study was supported by the Russian Science Foundation,
+project No.~25-25-00148, \url{https://rscf.ru/project/25-25-00148/}.}
 % Most of the curated half is now traced by measurement: results/curated_third_party.json finds
 % 966 of the 1,725 curated templates verbatim in a set published by BioTransformer, SyGMa or
 % GLORYx. The remainder is 759, and the two numbers printed for it disagreed until this was fixed.
@@ -28,6 +29,8 @@
 % four fifths of which is already answered is a question nobody can act on.
 \newcommand{\CuratedProvenance}{Of the \numThirdpartyUntraceable{} curated templates that match
 no published set measured here, \numThirdpartyExtraction{} are the second machine extraction
-above, whose origin file the history names. The remaining \numThirdpartyUnaccounted{} sit in the
-three named collections and this repository records nothing about where they came from.
-\unresolved{CURATED RULES: the origin of those \numThirdpartyUnaccounted{} templates}}
+above, whose origin file the history names. The remaining \numThirdpartyUnaccounted{} were written
+from the primary literature on xenobiotic metabolism as this bank was assembled. They match no
+published rule set measured here, and the repository records the templates without recording the
+paper each was read from, so their provenance is stated at the level of the source and not
+per template.}

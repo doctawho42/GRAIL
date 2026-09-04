@@ -1286,15 +1286,32 @@ versions and digests; and the provenance and reproduction procedure.
 
 \section{Data and software availability}
 
-Source code, the deployed generator and filter checkpoints, the \numBankRules{}-template rule
-bank, the split manifest, the annotated references every recall figure in this paper is measured
-against, the frozen per-substrate predictions of every comparator, the evaluation harness, the
-provenance sweep and the preregistration with every hypothesis and its outcome are at
-\texttt{github.com/doctawho42/GRAIL}, and are available to reviewers at submission. The
-repository's licence is \RepoLicence{}, which is what a bank containing GPL and LGPL templates
-permits rather than a preference; Section~\ref{SI-sec:si-bank} states the terms per rightsholder
-and what dropping each one's templates costs, and \texttt{NOTICE.md} carries the same decisions
-file by file. The
+Source code, the deployed generator and filter checkpoints, the released rule bank, the split
+manifest, the annotated references every recall figure in this paper is measured against, the
+frozen per-substrate predictions of every comparator, the evaluation harness, the provenance sweep
+and the preregistration with every hypothesis and its outcome are at
+\texttt{github.com/doctawho42/GRAIL}, and are available to reviewers at submission.
+
+The released bank is not the measured bank, and the difference is a licence rather than a
+correction. This paper's figures are measured on \numRelbankMeasured{} templates, of which
+\numRelbankRemoved{} are present verbatim in BioTransformer's published reaction set. That
+distribution is LGPL, but its own README additionally requires explicit permission for commercial
+use or redistribution; the permission has not been sought and this system is intended to run as a
+service, so those templates are not redistributed. What ships is the remaining
+\numRelbankReleased{}. The removal is free: every reference those templates reach is reached by
+another template in the bank, so the change in reach is exactly zero, which
+Section~\ref{SI-sec:si-bank} prices alongside what dropping each other rightsholder's templates
+would cost. A reader who wants the measured bank can rebuild it by obtaining BioTransformer's
+reaction set from its own project and re-adding the templates
+\texttt{scripts/build\_released\_bank.py} names, whose digest that script records.
+
+Two obligations are therefore open rather than settled, and both are named because neither is ours
+to close. BioTransformer's permission is the authors' to grant. Its environmental-microbial file is
+CC BY-NC-SA 4.0, which no release under \RepoLicence{} can carry; that file is not held here, and
+the two templates of it this bank contains cannot be identified without it, so they remain in the
+released bank and are declared rather than removed. The repository's licence is \RepoLicence{},
+which is what the remaining GPL templates permit rather than a preference, and
+\texttt{NOTICE.md} carries the same decisions file by file. The
 annotated references are released as the descriptors the matching criteria are decided by rather
 than as structures, so that every recall figure and every cell of the criterion sweep can be
 recomputed by a reader who does not hold the corpus sources' licences; a check reports zero

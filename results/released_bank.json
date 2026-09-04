@@ -1,0 +1,39 @@
+{
+ "provenance": {
+  "script": "build_released_bank.py",
+  "script_path": "scripts/build_released_bank.py",
+  "source_sha256": "481ad683b8e4e6717c7001f00c46a54e16340e1b8946f2ae5fc5e41b0428d8ae",
+  "git_commit": "ebbe018ce35106d6935d85830ff1ab6d9028716d",
+  "git_dirty": true
+ },
+ "inputs": [
+  {
+   "path": "grail_metabolism/resources/extended_smirks.txt",
+   "exists": true,
+   "sha256_16": "40643d60de93f4db",
+   "bytes": 1321831
+  },
+  {
+   "path": "grail_metabolism/resources/external/bt_database_metabolicReactions.json",
+   "exists": true,
+   "sha256_16": "9bbfa5b8c0fd3d06",
+   "bytes": 779284
+  }
+ ],
+ "what_this_is": "the rule bank with every template BioTransformer's published set also contains removed, which is the bank this repository redistributes",
+ "why": "BioTransformer's README requires explicit permission for redistribution and that permission has not been sought; one of its files is CC BY-NC-SA 4.0, which no GPL release can carry. Neither is settleable here.",
+ "measured_bank": {
+  "path": "grail_metabolism/resources/extended_smirks.txt",
+  "templates": 7581,
+  "sha256_16": "40643d60de93f4db"
+ },
+ "released_bank": {
+  "path": "grail_metabolism/resources/extended_smirks_released.txt",
+  "templates": 6970,
+  "sha256_16": "2b1af7118cee2104"
+ },
+ "removed": 611,
+ "cost": "zero references on the evaluated test set; every reference these templates reach is reached by another template in the bank, priced in results/licence_removal_cost__clean_test.json",
+ "not_identifiable_here": "BioTransformer's environmental-microbial file contributes two further templates and its standardisation file none; the first is CC BY-NC-SA 4.0 and neither is held here, so those two templates remain in the released bank and are declared rather than removed",
+ "how_to_rebuild_the_measured_bank": "obtain BioTransformer's reaction database from its own project and re-add every template of it that this bank contained; the measured bank's digest above confirms the result"
+}

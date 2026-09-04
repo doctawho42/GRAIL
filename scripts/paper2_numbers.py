@@ -733,6 +733,13 @@ def build():
         if _key in n:
             n[f"spread.{_tag}.insd"] = round(abs(n[_key]) / n["spread.interactive.sd"], 1)
 
+    # What the release actually carries, as against what the paper measures. The two differ by
+    # the templates BioTransformer's published set also contains, which are not redistributed.
+    _rb = art("released_bank.json")
+    n["relbank.measured"] = _rb["measured_bank"]["templates"]
+    n["relbank.released"] = _rb["released_bank"]["templates"]
+    n["relbank.removed"] = _rb["removed"]
+
     n["popdef.btinside"] = pop["emission"]["comparison_set"]["biotransformer"]
     for name in ("sygma", "metapredictor", "biotransformer"):
         cell = pop["emission"]["whole_test_set"][name]
