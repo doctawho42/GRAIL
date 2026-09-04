@@ -346,6 +346,27 @@ with five references in it.
 
 \input{si_table_chemistry}
 
+A budget of fifteen is where that table is read, and at fifteen the six arms are not emitting the
+same amount. \numChemExhaustedMetapredictor{} of the \numPopulationN{} MetaPredictor lists have
+ended by then, \numChemExhaustedBiotransformer{} of BioTransformer's and
+\numChemExhaustedMetatox{} of MetaTox's, against \numChemExhaustedBank{} of the exhaustive arm's;
+the interactive arm's have ended on \numChemExhaustedInteractive{}. So a row of that table
+compares orderings where the lists are still running and lengths where they are not, and the two
+cannot be separated by reading it.
+
+The same control the pooled comparison uses answers this per class. Each comparator's own
+per-substrate list length becomes the budget for this work's two arms as well, under the
+construction of Section~\ref{sec:si-matched}, and the result is
+Table~\ref{tab:si-chemistry-matched}. The largest class moves the way the confound predicts: the
+exhaustive arm's lead over the strongest comparator falls from $+\numChemCleavageBudgetmargin$ at
+the budget to $+\numChemCleavageMatchedmin$ at that comparator's own length, and the lead survives
+against all \numChemCleavageMatchedarmsWord{} comparators, widest against SyGMa at
+$+\numChemCleavageMatchedmax$. A block's two cells are read against each other and not against
+another block's, because each block has its own slot count; the classes under ten references carry
+the same warning here as there.
+
+\input{si_table_chemistry_matched}
+
 \section{The comparison at matched list length}
 \label{sec:si-matched}
 

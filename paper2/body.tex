@@ -517,9 +517,16 @@ $[\numMatchedBankmetatoxLo, +\numMatchedBankmetatoxHi]$. The lead over SyGMa is 
 survives both.
 
 A recall figure aggregates over transformations of very different kinds, so the comparison is also
-read by chemistry (Table~\ref{SI-tab:si-chemistry}). The largest class is a cleavage losing two or
-more carbons, \numChemCleavageRefs{} references, where the whole bank earns its size:
-\numChemCleavageBank{} against \numChemCleavageBestother{} for the best comparator. The second
+read by chemistry (Table~\ref{SI-tab:si-chemistry}). That table is read at a budget of fifteen,
+where the arms differ in how much of their list they have left, so it is read here at the
+comparator's own length as well (Table~\ref{SI-tab:si-chemistry-matched}). The largest class is a
+cleavage losing two or more carbons, \numChemCleavageRefs{} references, where the whole bank earns
+its size: \numChemCleavageBank{} against \numChemCleavageBestother{} for the best comparator at
+that budget, a margin of $+\numChemCleavageBudgetmargin$. Held to each comparator's own length the
+lead survives against all \numChemCleavageMatchedarmsWord{} of them and shrinks, from
+$+\numChemCleavageMatchedmax$ at the widest to $+\numChemCleavageMatchedmin$ at the narrowest,
+where \numChemCleavageMatchedminbank{} is read against \numChemCleavageMatchedminother{}. What
+the budget comparison adds to that class is length; what remains is ordering. The second
 largest, \numChemOtherRefs{} references, is the set of changes this vocabulary does not name, and
 no method here exceeds \numChemOtherBest{} on it: a fifth of the annotated chemistry falls in a
 class none of the six systems is built for, which is what a reader deciding whether any of them

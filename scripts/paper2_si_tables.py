@@ -547,6 +547,20 @@ def si_chemistry():
     head = " & ".join(label for _, label in arms)
     n = d["population"]["references_classified"]
     n_small = sum(1 for e in d["classes"].values() if e["references"] < SMALL)
+    # Which arms have nothing left to add at this budget, from the table that measures it.
+    _dep = art("deployment_table.json")
+    short = _dep["substrates_whose_list_is_shorter_than_the_budget"]["15"]
+    n_subs = _dep["population"]["n"]
+    # Every arm, and the count of those past half rather than an adjective. An earlier draft of
+    # this caption said four of six run out "on most substrates" when two of the four run out on
+    # 34 and 15 of 291, and left out the interactive arm, which runs out on 181.
+    ORDER = [("whole bank", "the exhaustive arm"), ("trained budget", "the interactive arm"),
+             ("metatox", "MetaTox"), ("sygma", "SyGMa"),
+             ("metapredictor", "MetaPredictor"), ("biotransformer", "BioTransformer")]
+    exhausted = ", ".join(f"{lab} on {short[k]}" for k, lab in ORDER if k in short)
+    exhausted += f", of {n_subs}"
+    WORDS = {0: "None", 1: "One", 2: "Two", 3: "Three", 4: "Four", 5: "Five", 6: "Six"}
+    most_word = WORDS[sum(1 for k, _ in ORDER if k in short and short[k] * 2 > n_subs)]
     return ("\\begin{table}[h]\n\\centering\\scriptsize\n"
             "\\begin{tabular}{@{}lrrrrrrr@{}}\n\\toprule\n"
             f"transformation class & refs & {head} \\\\\n\\midrule\n"
@@ -557,8 +571,59 @@ def si_chemistry():
             "change in molecular formula, so it groups mechanisms the annotation does not "
             f"separate. $^{{\\dagger}}$ marks the {n_small} classes holding fewer than {SMALL} "
             "references, where one hit moves a cell by more than a tenth and no ordering across a "
-            "row should be read.}\n"
+            "row should be read. At this budget the arms differ in how often they have anything "
+            f"left to emit, so a row is in part a comparison of list lengths: {exhausted} "
+            f"(Table~\\ref{{tab:si-short}}). {most_word} of the six run out on more than half of "
+            f"the {n_subs}. Table~\\ref{{tab:si-chemistry-matched}} repeats the split with each "
+            "comparator\'s own length held instead of the budget.}\n"
             "\\label{tab:si-chemistry}\n\\end{table}\n")
+
+
+def si_chemistry_matched():
+    """The class split with list length held instead of the budget.
+
+    Table S8 is read at a budget of fifteen, where four of the six arms have already emitted
+    everything they are going to emit on most substrates. A row of that table is therefore partly
+    a comparison of how long each list is, which is the same confound the pooled comparison
+    answers with a matched-length control; this is that control applied per class. Each block cuts
+    both of this work\'s arms to the comparator\'s own list length on each substrate, so the three
+    cells of a block are read over the same slots.
+    """
+    d = art("error_by_chemistry.json")
+    LABEL = {"metatox": "MetaTox", "sygma": "SyGMa", "metapredictor": "MetaPred.",
+             "biotransformer": "BioTrans."}
+    comps = [c for c in LABEL if c in next(iter(d["classes"].values()))["recall_at_matched_length"]]
+    if not comps:
+        raise SystemExit("error_by_chemistry.json carries no matched-length block, so the class "
+                         "split cannot be read with length held")
+    SMALL = 10
+    rows = []
+    for name, entry in d["classes"].items():
+        cells = []
+        for c in comps:
+            cell = entry["recall_at_matched_length"][c]
+            cells += [f"{cell['GRAIL exhaustive']:.2f}".lstrip("0"),
+                      f"{cell[c]:.2f}".lstrip("0")]
+        mark = "$^{\\dagger}$" if entry["references"] < SMALL else ""
+        rows.append(f"{name}{mark} & {entry['references']} & " + " & ".join(cells) + " \\\\")
+    head = " & ".join(f"\\multicolumn{{2}}{{c}}{{{LABEL[c]}}}" for c in comps)
+    sub = " & ".join("ours & theirs" for _ in comps)
+    n = d["population"]["references_classified"]
+    return ("\\begin{table}[h]\n\\centering\\scriptsize\n"
+            "\\begin{tabular}{@{}lr" + "rr" * len(comps) + "@{}}\n\\toprule\n"
+            f"transformation class & refs & {head} \\\\\n"
+            f" & & {sub} \\\\\n\\midrule\n"
+            + "\n".join(rows)
+            + "\n\\bottomrule\n\\end{tabular}\n"
+            "\\caption{The class split of Table~\\ref{tab:si-chemistry} with list length held "
+            "instead of the budget. Within each block both arms are cut, substrate by substrate, "
+            "to the number of candidates that comparator returned there, under the same "
+            "construction as Table~\\ref{MS-tab:si-matched}; \\emph{ours} is the exhaustive "
+            f"arm. On the comparison set\'s {n} classified references; leading zeros are dropped, "
+            "and $^{\\dagger}$ marks the classes under ten references, where no ordering should "
+            "be read. A block\'s two cells are comparable with each other and not with another "
+            "block\'s, since each block has its own slot count.}\n"
+            "\\label{tab:si-chemistry-matched}\n\\end{table}\n")
 
 
 def si_budget():
@@ -651,15 +716,22 @@ def si_counts():
         if key in dep["mean_output_length"]:
             rows.append((f"the same list truncated at $k={widest}$", label,
                          "comparison set, 291", dep["mean_output_length"][key]))
-    try:
-        matched = art("matched_length.json")
-        slots = matched.get("mean_slots") or {}
-        for key, label in ARMS:
-            if key in slots:
-                rows.append(("slots the matched-length control allows", label,
-                             "comparison set, 291", round(float(slots[key]), 2)))
-    except Exception:
-        pass
+    # The caption promises three quantities and this is the third. It used to read a top-level
+    # "mean_slots" key that the artifact does not have, so the loop found nothing, added no rows,
+    # and a bare except swallowed the silence: the table promised a quantity it never printed.
+    # The slots live inside each contrast, and a missing one is now an error rather than a gap.
+    matched = art("matched_length.json")
+    slots = {}
+    for name, c in matched["contrasts"].items():
+        arm, _, comparator = name.partition(" - ")
+        if arm == "whole bank" and "mean_slots" in c:
+            slots[comparator] = c["mean_slots"]
+    for key, label in ARMS:
+        if key not in slots:
+            raise SystemExit(f"matched_length.json carries no slot count for {key}, so the "
+                             f"caption's third quantity cannot be printed for it")
+        rows.append(("slots the matched-length control allows", label,
+                     "comparison set, 291", round(float(slots[key]), 2)))
 
     body = "\n".join(
         f"{what} & {arm} & {pop} & {value} \\\\" for what, arm, pop, value in rows)
@@ -790,6 +862,25 @@ def si_matched():
         rows.append(f"{arm} & {name} & {c['mean_slots']} & {ours} & {thei} & "
                     f"{gap}{star} [{lo}, {hi}] \\\\")
     n = d["population"]["n_substrates"]
+    cap = d["cap_on_the_comparator_list"]
+    # Where the cut actually binds, per comparator, so the caption names it rather than gesturing
+    # at it. A comparator absent from this map has no substrate whose list runs past the cut.
+    LABEL = {"metatox": "MetaTox", "sygma": "SyGMa", "metapredictor": "MetaPredictor",
+             "biotransformer": "BioTransformer"}
+    bound = {}
+    for name, c in d["contrasts"].items():
+        arm, _, comp = name.partition(" - ")
+        u = c.get("without_the_cap_on_the_comparator") or {}
+        hit = u.get("substrates_the_cap_binds_on")
+        if arm == "whole bank" and hit:
+            bound[LABEL.get(comp, comp)] = hit
+    if not bound:
+        raise SystemExit("matched_length.json records no substrate where the comparator cut "
+                         "binds, so the caption cannot say where it does")
+    # Per comparator, and not added up: the counts are of different lists, and a substrate can be
+    # past the cut for one comparator and inside it for another, so a total would not be a count
+    # of anything.
+    detail = " and ".join(f"{v} for {k}" for k, v in sorted(bound.items(), key=lambda kv: -kv[1]))
     return ("\\begin{table*}[t]\n\\centering\\small\n"
             "\\begin{tabular}{llrrrl}\n\\toprule\n"
             "arm & comparator & slots & ours & theirs & difference \\\\\n\\midrule\n"
@@ -798,7 +889,17 @@ def si_matched():
             f"\\caption{{The comparison with the output budget taken from the comparator instead of "
             f"the experiment. On each of the {n} substrates both arms are cut to the number of "
             "candidates that comparator returned there, so the two are read over the same slots on "
-            "every substrate and not on average; slots is the mean of those lengths. $^{*}$ marks "
+            "every substrate and not on average; slots is the mean of those lengths. That number "
+            "is not the comparator\'s mean emission, because the comparator\'s list first has its "
+            "duplicates removed, a prediction equal to the substrate dropped, and is then "
+            f"truncated at {cap} candidates. The truncation is this work\'s choice and not the "
+            f"comparator\'s: it sits five past this work\'s own pool cap, beyond which neither of "
+            "its arms has a candidate to put in a slot, so a comparison there would measure that "
+            f"cap rather than the ordering. It binds on {detail}, of the "
+            f"{n} substrates, and on none for the other two, whose lists are shorter "
+            "than the cut everywhere. What it costs is measured and not assumed: every contrast "
+            "here is identical to four decimal places with the cut removed "
+            "(Section~\\ref{sec:si-matched}). $^{*}$ marks "
             "an interval excluding zero. Leading zeros are dropped.}\n"
             "\\label{tab:si-matched}\n\\end{table*}\n")
 
@@ -1116,6 +1217,7 @@ def generators():
                      ("si_table_short", si_short),
                      ("si_table_hyperparameters", si_hyperparameters),
                      ("si_table_chemistry", si_chemistry),
+                     ("si_table_chemistry_matched", si_chemistry_matched),
                      ("si_table_budget", si_budget),
                      ("si_table_counts", si_counts),
                      ("si_table_macro", si_macro),

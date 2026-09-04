@@ -180,6 +180,54 @@ def main() -> int:
                     if key in set(got[:k]):
                         hits_in_class[(name, arm)][k] += 1
 
+    # The same split, with list length held instead of the budget. At a budget of fifteen four of
+    # the six arms have already run out of candidates on most substrates -- MetaPredictor on 273 of
+    # 291, BioTransformer on 220 -- so a class-level comparison at that budget is partly a
+    # comparison of list lengths. Here each comparator's own per-substrate length is the budget for
+    # both of this work's arms as well, which is the control Table S9 applies to the pooled
+    # figures, applied to the classes. The cut on the comparator's list is the same one that table
+    # uses, so the two cannot disagree about what a slot is.
+    #
+    # The comparator lists above are truncated at the widest budget this table reads, which is not
+    # the length the matched control means. Here they are rebuilt at the same cut Table S9 uses,
+    # CAP + 5, so a comparator that emits more than this work's pool cap is not handed slots
+    # neither of its arms could fill, and the slot counts agree with that table's.
+    matched_lists = dict(arms)
+    for name, (rel, key) in comparators.items():
+        path = ROOT / rel
+        if not path.exists():
+            continue
+        blob = json.loads(path.read_text())
+        preds = blob[key] if key else blob
+        matched_lists[name] = {s: drop_parent(_dedup(preds.get(s, []), CAP + 5), s) for s in subs}
+
+    matched_hits = defaultdict(Counter)     # (class, comparator, arm) -> hits
+    for s in subs:
+        sub_mol = Chem.MolFromSmiles(s)
+        if sub_mol is None:
+            continue
+        structures = {}
+        for met in refs_by_smiles.get(s, []):
+            met_mol = Chem.MolFromSmiles(met)
+            if met_mol is None:
+                continue
+            try:
+                structures[tautkey(met)] = met_mol
+            except Exception:
+                continue
+        for key in refs[s]:
+            met_mol = structures.get(key)
+            if met_mol is None:
+                continue
+            cname, _ = classify(sub_mol, met_mol)
+            for comp in comparators:
+                if comp not in arms:
+                    continue
+                slots = len(matched_lists[comp][s])
+                for arm in ("GRAIL exhaustive", "GRAIL interactive", comp):
+                    if key in set(matched_lists[arm][s][:slots]):
+                        matched_hits[(cname, comp, arm)] += Counter({"hits": 1})
+
     table = {}
     for name, n_refs in sorted(refs_in_class.items(), key=lambda kv: -kv[1]):
         entry = {"references": n_refs, "recall": {}}
@@ -188,6 +236,10 @@ def main() -> int:
             entry["recall"][arm] = {str(k): round(hits[k] / n_refs, 4) for k in BUDGETS}
         entry["what_the_name_does_not_distinguish"] = next(
             (note for cname, _, note in CLASSES if cname == name), None)
+        entry["recall_at_matched_length"] = {
+            comp: {arm: round(matched_hits[(name, comp, arm)]["hits"] / n_refs, 4)
+                   for arm in ("GRAIL exhaustive", "GRAIL interactive", comp)}
+            for comp in comparators if comp in arms}
         table[name] = entry
 
     total = sum(v["references"] for v in table.values())

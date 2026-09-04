@@ -355,6 +355,34 @@ def build():
     n["chem.cleavage.bank"] = _cleav["recall"]["GRAIL exhaustive"]["15"] if _cleav else None
     n["chem.cleavage.bestother"] = (max(v["15"] for k, v in _cleav["recall"].items()
                                         if not k.startswith("GRAIL")) if _cleav else None)
+    # The same class with list length held instead of the budget. At fifteen the comparator this
+    # class's figure is read against has run out of candidates on most substrates, so part of that
+    # margin is length. Read against each comparator over its own slots the lead survives on all
+    # four and is smaller, and the extremes are printed rather than the flattering one.
+    _cm = _cleav.get("recall_at_matched_length", {})
+    _margins = {c: round(cell["GRAIL exhaustive"] - cell[c], 4) for c, cell in _cm.items()}
+    n["chem.cleavage.matchedarms"] = len(_margins)
+    n["chem.cleavage.matchedwins"] = sum(1 for v in _margins.values() if v > 0)
+    if _margins:
+        _lo = min(_margins, key=_margins.get)
+        _hi = max(_margins, key=_margins.get)
+        n["chem.cleavage.matchedmin"] = _margins[_lo]
+        n["chem.cleavage.matchedmax"] = _margins[_hi]
+        n["chem.cleavage.matchedminbank"] = _cm[_lo]["GRAIL exhaustive"]
+        n["chem.cleavage.matchedminother"] = _cm[_lo][_lo]
+        # The margin the budget comparison shows against the strongest comparator at fifteen,
+        # printed beside them so the two readings can be compared rather than swapped.
+        n["chem.cleavage.budgetmargin"] = round(
+            n["chem.cleavage.bank"] - n["chem.cleavage.bestother"], 4)
+    # Which arms have nothing left to add at the budget the class table is read at, which is what
+    # makes that table a comparison of lengths as much as of orderings.
+    _short = art("deployment_table.json")["substrates_whose_list_is_shorter_than_the_budget"]["15"]
+    n["chem.exhausted.metapredictor"] = _short["metapredictor"]
+    n["chem.exhausted.biotransformer"] = _short["biotransformer"]
+    n["chem.exhausted.metatox"] = _short["metatox"]
+    n["chem.exhausted.sygma"] = _short["sygma"]
+    n["chem.exhausted.bank"] = _short["whole bank"]
+    n["chem.exhausted.interactive"] = _short["trained budget"]
     # The class the case study illustrates, which is also the one this bank is weakest on. It is
     # printed here so the case cannot be read as representative of the class it belongs to.
     _deam = ebc["classes"].get("deamination", {})
