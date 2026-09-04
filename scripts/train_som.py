@@ -5,7 +5,7 @@ Node-level BCE over substrate atoms; labels = reacting atoms (+1-hop) of the ann
 (substrate, metabolite) pairs (see grail_metabolism/model/som.py). Cheap (one forward per
 substrate per epoch). Saves som.pt with arch+state_dict for reeval_ranking.py --som-ckpt.
 
-See docs/superpowers/specs/2026-06-21-som-prior-design.md.
+See docs/design/specs/2026-06-21-som-prior-design.md.
 """
 from __future__ import annotations
 

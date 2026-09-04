@@ -7,8 +7,8 @@ feeding RDKit rule application feeding the frozen filter -- NOT the val-only typ
 comparison `scripts/train_factorized.py` runs (that measures the heads in isolation against
 a live-reapplied ground truth; this measures what a user actually gets out).
 
-Committed test-set baselines to compare against (see docs/superpowers/plans/
-2026-07-14-grail-factorized-generator.md and .superpowers/sdd/task-6-brief.md):
+Committed test-set baselines to compare against (see
+docs/design/specs/2026-07-14-grail-factorized-generator-design.md):
   deployed generator x filter        recall@15 = 0.330  (results/recall_factorization.json,
                                                           full 1170-substrate clean test)
   broad rule selection (top_k=300)

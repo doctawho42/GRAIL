@@ -45,6 +45,12 @@ GATES = [
 ]
 
 
+# What a gate reads that a fresh clone may not have. A missing input is a skip, not a failure.
+NEEDS = {
+    "check_paper2_build.py": ("paper2/si.log", "paper2/grail_jcim.log"),
+}
+
+
 @pytest.mark.parametrize("script,args", GATES,
                          ids=[f"{g[0]}{'-' + g[1][0].lstrip('-') if g[1] else ''}"
                               for g in GATES])
@@ -55,6 +61,13 @@ def test_paper_gate_exits_zero(script, args):
     for a in args:
         if a.endswith(".md") and not (ROOT / a).exists():
             pytest.skip(f"{a} is not in this checkout")
+    # Some gates read a build the repository does not carry: the manuscripts' LaTeX logs are not
+    # committed, so a clone that has never compiled them has nothing for the build gate to check.
+    # Skipping there is right -- the gate has no input, it has not passed -- and failing there
+    # would make continuous integration red for a reason that says nothing about the code.
+    for needed in NEEDS.get(script, ()):
+        if not (ROOT / needed).exists():
+            pytest.skip(f"{script} needs {needed}, which this checkout has not built")
     run = subprocess.run([sys.executable, str(path), *args], cwd=ROOT,
                          capture_output=True, text=True, timeout=600)
     assert run.returncode == 0, (

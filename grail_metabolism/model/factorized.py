@@ -6,7 +6,7 @@ GraphEncoder: `type_logits` predicts *which reaction type* applies to the substr
 applies (per-atom). Factoring type and site lets the model reuse the SoM-style localization
 signal instead of re-encoding every candidate rule graph per substrate.
 
-See docs/superpowers/specs (factorized dense-MLE generator redesign) for the full design.
+See docs/design/specs (factorized dense-MLE generator redesign) for the full design.
 """
 from __future__ import annotations
 

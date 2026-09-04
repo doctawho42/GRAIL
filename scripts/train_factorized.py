@@ -22,8 +22,7 @@ Ground truth for the val gate:
     ~7,581-rule bank.
   - Site labels (both splits): `model.som.derive_som_labels`, independent of catalog/rule_to_type.
 
-See docs/superpowers/plans/2026-07-14-grail-factorized-generator.md (Task 4) and
-.superpowers/sdd/task-4-brief.md.
+See docs/design/specs/2026-07-14-grail-factorized-generator-design.md (Task 4) and
 """
 from __future__ import annotations
 

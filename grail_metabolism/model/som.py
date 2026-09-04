@@ -13,7 +13,7 @@ environment (bonding/H-count/charge/aromaticity) changes between substrate and p
 plus its 1-hop neighbors. The SAME `_reacting_atoms` routine localizes sites at inference,
 so there is no train/inference skew.
 
-See docs/superpowers/specs/2026-06-21-som-prior-design.md.
+See docs/design/specs/2026-06-21-som-prior-design.md.
 """
 from __future__ import annotations
 

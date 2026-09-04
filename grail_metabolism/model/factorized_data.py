@@ -13,7 +13,7 @@ Type labels come from the mining catalog's `source_pairs` (the exact train (subs
 product) pairs each SMIRKS was mined from), NOT a full-bank RDKit re-apply -- reusing that
 recorded provenance avoids re-running the ~90-minute ceiling pass.
 
-See `.superpowers/sdd/task-2-brief.md`.
+See docs/design/specs/2026-07-14-grail-factorized-generator-design.md.
 """
 from __future__ import annotations
 

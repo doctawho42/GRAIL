@@ -1,6 +1,6 @@
 """Multi-step Set-GFlowNet over the rule forest. Terminal = a set of metabolites;
 reward = PU set-coverage; forward policy = the Stage-2a reranker; backward = analytic
-1/#leaves. See docs/superpowers/specs/2026-07-01-set-gflownet-stage2b-design.md."""
+1/#leaves. See docs/design/specs/2026-07-01-set-gflownet-stage2b-design.md."""
 from __future__ import annotations
 import math
 import multiprocessing as _mp

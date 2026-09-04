@@ -10,8 +10,7 @@ rank the resulting candidate pool by `P(type) * site_plausibility * filter_score
 dedup by tautomer-InChIKey (the recall-correct match convention this codebase uses
 throughout, see `metrics._tautomer_inchikey`).
 
-See docs/superpowers/plans/2026-07-14-grail-factorized-generator.md (Task 6) and
-.superpowers/sdd/task-6-brief.md.
+See docs/design/specs/2026-07-14-grail-factorized-generator-design.md.
 """
 from __future__ import annotations
 

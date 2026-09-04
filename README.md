@@ -1,18 +1,23 @@
 # GRAIL
 
-GRAIL (Graph-scored Rule Application with Inspectable Localisation) is a research-oriented package for xenobiotic metabolism prediction. It combines:
+GRAIL (Graph-scored Rule Application with Inspectable Localisation) predicts the **structures** of
+the metabolites a xenobiotic will produce, and says which reaction template produced each one and
+which atoms it acted on. It runs in three stages:
 
-1. A multi-label generator that scores biotransformation SMARTS rules for a substrate graph.
-2. Rule application with RDKit to enumerate candidate metabolites.
-3. A binary filter that ranks substrate-metabolite pairs.
+1. a multi-label generator scores biotransformation SMIRKS templates against the substrate graph
+   and selects which to apply;
+2. RDKit applies the selected templates and enumerates candidate products;
+3. a binary filter scores each (substrate, product) pair, and the two scores are combined by
+   reciprocal rank fusion into the ranking a caller receives.
 
-The repository originally mixed models, datasets, notebooks and local virtual environments in one tree. The refactor now turns it into:
+Every prediction therefore arrives with its provenance: not a score alone but the template and the
+site, so a chemist can reject a candidate on mechanistic grounds.
 
-- a usable Python package
-- a reproducible experiment shell
-- a preset-based ablation framework
-- a CLI for train / eval / infer
-- lightweight notebooks for reviewers and exploratory work
+This is research code backing two manuscripts, and it is organised for that: the numbers in those
+papers are generated from artifacts, the artifacts record the script and source digest that wrote
+them, and a suite of checks refuses a manuscript whose figures have drifted from the code. See
+[`scripts/README.md`](scripts/README.md) for how that chain is arranged and
+[docs/REPRODUCIBILITY.md](docs/REPRODUCIBILITY.md) for how to re-run it.
 
 ## What is included
 
@@ -27,7 +32,9 @@ The repository originally mixed models, datasets, notebooks and local virtual en
 - Project structure notes in [docs/PROJECT_LAYOUT.md](docs/PROJECT_LAYOUT.md).
 - Curated lightweight notebooks in `examples/notebooks/`.
 
-Large training artefacts are intentionally not packaged. The 36 GB local dataset in `grail_metabolism/data` is treated as external research data.
+Large training data is not packaged: the corpus under `grail_metabolism/data/` is external
+research data, and it is not redistributed here for the licence reason [`NOTICE.md`](NOTICE.md)
+sets out.
 
 ## Installation
 
@@ -204,23 +211,20 @@ Useful references:
 - [docs/REPRODUCIBILITY.md](docs/REPRODUCIBILITY.md)
 - [docs/WORKFLOWS.md](docs/WORKFLOWS.md)
 
-## Repository hygiene
+## Where things are
 
-Tracked source lives in:
+| path | what is in it |
+|---|---|
+| `grail_metabolism/` | the package: models, featurisation, workflows, config tree, CLI, tests |
+| `scripts/` | gates, artifact producers and research probes, mapped in [`scripts/README.md`](scripts/README.md) |
+| `results/`, `artifacts/` | the deposited artifacts every published number is drawn from |
+| `paper2/`, `paper/` | the two manuscripts, their tables and figures generated from those artifacts |
+| `configs/` | YAML experiment configurations |
+| `docs/` | architecture, reproduction, and the design notes for the newer model components |
 
-- `grail_metabolism/`
-- `scripts/`
-- `configs/`
-- `docs/`
-
-Generated or local-only content is ignored:
-
-- `artifacts/`
-- `results/`
-- `notebooks/`
-- heavyweight files under `grail_metabolism/data/`
-
-Legacy one-off research helpers live under `scripts/legacy/` and are not part of the tested package surface.
+`results/` and `artifacts/` are ignored wholesale and the deposited files are re-included one by
+one, so `git status` shows a new artifact that ought to be deposited rather than hiding it;
+`scripts/sync_tracked_artifacts.py --check` keeps that list honest.
 
 ## Notes on pretrained assets
 
