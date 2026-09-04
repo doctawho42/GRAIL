@@ -329,6 +329,16 @@ def build():
 
     # how much of the curated half is somebody else's rules verbatim, and under whose terms
     ctp = art("curated_third_party.json")
+    # How much of the collection the manuscript calls curated is somebody else's rule verbatim.
+    # This lived only in the supporting information while the body said "curated" unqualified,
+    # and a referee who reached that section felt the body had softened it.
+    n["thirdparty.borrowed"] = ctp["borrowed_within_the_named_body"]
+    n["thirdparty.borrowedshare"] = ctp["share_of_the_named_body_so_traceable"]
+    n["thirdparty.sygmanamed"] = (ctp["by_rightsholder"].get("SyGMa 1.1.0")
+                                  or ctp["by_rightsholder"].get("SyGMa")
+                                  or {}).get("templates_in_the_curated_half")
+    n["thirdparty.gloryxnamed"] = (ctp["by_rightsholder"].get("GLORYx")
+                                   or {}).get("templates_in_the_curated_half")
     n["thirdparty.curated"] = ctp["bank"]["curated"]
     n["thirdparty.traceable"] = ctp["curated_templates_traceable_to_a_published_set"]
     n["thirdparty.traceableshare"] = ctp["share_of_the_curated_half_so_traceable"]
@@ -1091,6 +1101,14 @@ def build():
     # family covers. Reported as a sensitivity: what the wider family would cost the verdicts the
     # declared one licenses.
     _w = mult["over_every_contrast_the_paper_prints"]
+    # What the correction would do over everything the paper prints rather than over the family it
+    # declared. The answer belongs in the body: a statistically minded reader asks it immediately,
+    # and it was answered on page S63.
+    _wide = mult["over_every_contrast_the_paper_prints"]
+    n["holm.wideremovesdeclared"] = len(_wide["declared_family_cells_it_would_remove"])
+    n["holm.wideleadsremoved"] = sum(
+        1 for c in _wide["declared_family_cells_it_would_remove"]
+        if mult["cells"].get(c, {}).get("gap", 0) > 0)
     n["holm.widetests"] = _w["n_tests"]
     n["holm.widesurviving"] = _w["n_separating_after_holm"]
     n["holm.wideremoves"] = len(_w["declared_family_cells_it_would_remove"])

@@ -237,7 +237,14 @@ from three curated collections and \numMinedRules{} mined from the training spli
 together with \numAttribUnattributed{} that were carried as a fourth curated collection and are
 not one: they are an earlier machine extraction from the same annotated pairs, identified in the
 Supporting Information by three marks that agree. The bank therefore holds two extractions and
-one curated body, and the curated body is \numAttribNamed{} templates. The split is disjoint by substrate rather
+one curated body, and the curated body is \numAttribNamed{} templates. Most of that body is not this
+work's chemistry: \numThirdpartyBorrowed{} of the \numAttribNamed{},
+\numThirdpartyBorrowedsharePct{}, appear verbatim in rule sets published by others,
+\numThirdpartyBiotransformerShipped{} of BioTransformer's, \numThirdpartySygmanamed{} attributed
+to SyGMa and \numThirdpartyGloryxnamed{} to GLORYx. That is a lower bound, because string equality
+cannot trace a template somebody rewrote. What is this work's own is the mining, the ranking and
+the measurement, not the writing of the templates, and Section~\ref{SI-sec:si-bank} gives the
+counts per rightsholder with the terms each requires. The split is disjoint by substrate rather
 than by molecule, so a molecule that is a substrate in training may appear as a product in test;
 the split counts are in Section~\ref{sec:populations} and the molecular overlap between splits is
 in the Supporting Information. For each annotated substrate--product pair a ring-aware maximum common substructure is
@@ -444,10 +451,20 @@ Holm's correction to bootstrap $p$-values from the same resamples, \numHolmSurvi
 Table~\ref{SI-tab:si-intervals}. Of those, \numHolmLeadsremovedWord{} are leads, and every one of the
 \numHolmLeadsremovedWord{} is a lead this paper claims somewhere: the exhaustive arm over
 MetaTox at $k=30$, over SyGMa and over MetaPredictor at $k=15$, and the interactive arm over
-MetaTox at $k=10$. Each is marked where it is claimed. The fourth
-comparator was obtained after that family was fixed, so its contrasts are reported with their own
-intervals and are not folded into a correction declared without them
+MetaTox at $k=10$. Each is marked where it is claimed. Two
+comparators were obtained after that family was fixed, so their contrasts are reported with their
+own intervals and are not folded into a correction declared without them
 (Section~\ref{SI-sec:si-comparators}).
+
+That leaves the obvious objection, which is that this paper prints more contrasts than the family
+covers, and it is answered by measurement rather than by the declaration. Applying the same
+correction to every contrast printed anywhere here, \numHolmWidetests{} of them,
+\numHolmWidesurviving{} still separate, and it removes \numHolmWideremovesdeclaredWord{} cells the
+declared family keeps. Of those \numHolmWideremovesdeclaredWord{},
+\numHolmWideleadsremovedWord{} is a lead of this work's, over MetaTox at $k=10$, and the other two
+run against it. So the wider
+reading costs this paper one cell and gains it two, and neither reading changes the wide-budget
+result.
 
 No single budget is privileged. A claim that the system leads is made for a cell only where that
 cell's interval excludes zero, and where an ordering is not established the table says so.
@@ -1272,7 +1289,11 @@ The register is weaker than its count of confirmations suggests. Three of the se
 predictions clear the falsification condition as written, which compares a point estimate to a
 threshold, and not the stricter reading that asks the whole interval to clear it: P1, P2 and P5
 each have their threshold inside their own interval, so what the data establish for those three is
-that the effect exceeds zero and not that it exceeds the registered bar. P3's threshold is in any
+that the effect exceeds zero and not that it exceeds the registered bar. P5 is weaker again, and
+the register is what shows it: its threshold was fixed in advance but its population was not, and
+it was adjudicated on the comparison set, which is derived from the test split and was recorded
+afterwards. A confirmation whose population became visible before it was chosen is a measurement,
+and Table~\ref{tab:hyp} calls it one. P3's threshold is in any
 case a property of the budget requested rather than of the system. The group-ranking headroom is smaller than the
 uncontrolled figure suggests: over a partition of matched granularity, only the transformation-type
 grouping carries anything, and what it carries is unreached by both registered compositions, for

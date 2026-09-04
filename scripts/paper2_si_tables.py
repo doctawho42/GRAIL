@@ -894,7 +894,15 @@ def si_matched():
     # Per comparator, and not added up: the counts are of different lists, and a substrate can be
     # past the cut for one comparator and inside it for another, so a total would not be a count
     # of anything.
-    detail = " and ".join(f"{v} for {k}" for k, v in sorted(bound.items(), key=lambda kv: -kv[1]))
+    def _phrase(name, n):
+        # "45 for SyGMa and 41 for SyGMa on the standardised drawing" reads as a typo on first
+        # pass, so the second mention says what it is rather than repeating the name.
+        if name.startswith("SyGMa on "):
+            return f"{n} substrates for the SyGMa re-run on the standardised drawing"
+        return f"{n} substrates for {name}"
+
+    _items = [_phrase(k, v) for k, v in sorted(bound.items(), key=lambda kv: -kv[1])]
+    detail = (", ".join(_items[:-1]) + " and " + _items[-1]) if len(_items) > 1 else _items[0]
     return ("\\begin{table*}[t]\n\\centering\\small\n"
             "\\begin{tabular}{llrrrl}\n\\toprule\n"
             "arm & comparator & slots & ours & theirs & difference \\\\\n\\midrule\n"
@@ -909,8 +917,8 @@ def si_matched():
             f"truncated at {cap} candidates. The truncation is this work\'s choice and not the "
             f"comparator\'s: it sits five past this work\'s own pool cap, beyond which neither of "
             "its arms has a candidate to put in a slot, so a comparison there would measure that "
-            f"cap rather than the ordering. It binds on {detail}, of the "
-            f"{n} substrates, and on none for the other two, whose lists are shorter "
+            f"cap rather than the ordering. Of the {n} substrates it binds on {detail}, "
+            f"and on none for the others, whose lists are shorter "
             "than the cut everywhere. What it costs is measured and not assumed: every contrast "
             "here is identical to four decimal places with the cut removed "
             "(Section~\\ref{SI-sec:si-matched}). The last two rows are the same control against "

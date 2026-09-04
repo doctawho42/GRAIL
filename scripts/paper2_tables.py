@@ -12,7 +12,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 LABEL = {"whole bank": "GRAIL exh.", "trained budget": "GRAIL int.",
          "metatox": "MetaTox", "sygma": "SyGMa", "metapredictor": "MetaPred.",
-         "biotransformer": "BioTrans."}
+         "biotransformer": "BioTrans.", "gloryx": "GLORYx"}
 
 
 def blend_column():
@@ -61,13 +61,21 @@ def table():
     emit = d.get("mean_emitted_untruncated", {})
     ks = sorted(rec, key=int)
     arms = [a for a in LABEL if a in rec[ks[0]]]
+    # A comparator the artifact carries and this map does not would be a column the sweep computes
+    # and the paper does not print, while the abstract counts it: that happened, and a referee
+    # found the fifth method missing from the table where a reader looks for all of them.
+    missing = [a for a in rec[ks[0]] if a not in LABEL]
+    if missing:
+        raise SystemExit(f"deployment_table.json carries arms this table has no label for: "
+                         f"{', '.join(missing)}; the abstract counts them")
     blend = blend_column()
     if blend and any(abs(blend[0][k] - rec[k]["whole bank"]) > 5e-5 for k in ks if k in blend[0]):
         blend = None          # the re-derivation has drifted; the column would not be comparable
     # The eighth column pushed the table past the two-column measure by 38pt, so the header is
     # the short name the caption then defines rather than a phrase.
     head = [LABEL[a] for a in arms] + (["blend"] if blend else [])
-    L = ["\\begin{table*}[t]", "\\centering", "\\footnotesize",
+    L = ["\\begin{table*}[t]", "\\centering", "\\scriptsize",
+         "\\setlength{\\tabcolsep}{4.5pt}",
          "\\begin{tabular}{r" + "r" * len(head) + "}", "\\toprule",
          "$k$ & " + " & ".join(head) + " \\\\", "\\midrule"]
     # Nothing is bolded. Marking the largest point estimate at every budget asserts a leader at

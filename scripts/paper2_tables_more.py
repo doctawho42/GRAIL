@@ -142,7 +142,12 @@ def hypotheses():
         "H9": "confirmed; threshold inside interval",
         "H10": "confirmed on validation; not on the comparison set",
         "H11": "confirmed",
-        "H12": "confirmed; threshold inside interval",
+        # P5/H12 is the one confirmation whose population was fixed after the result was visible:
+        # it was adjudicated on the comparison set, which is derived from the test split, and S25
+        # says so. A confirmation chosen that way is a measurement, and the table says the weaker
+        # of the two words rather than leaving a reader to find the qualification three sections
+        # later. The threshold also falls inside the interval, which is the second weakening.
+        "H12": "measured, not adjudicated in advance; threshold inside interval",
         "H8": "failed", "H14": "failed", "H13": "failed",
         "H15": "confirmed", "H16": "confirmed",
     }
