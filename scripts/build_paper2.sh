@@ -4,7 +4,8 @@
 # prints ?? and is caught by the undefined-reference count, which is the property a hand-typed
 # table number does not have.
 set -uo pipefail
-cd "$(dirname "$0")/../paper2"
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$ROOT/paper2"
 for pass in 1 2; do
   pdflatex -interaction=nonstopmode si          >/dev/null 2>&1
 done
@@ -23,3 +24,7 @@ pdflatex -interaction=nonstopmode si            >/dev/null 2>&1
 pdflatex -interaction=nonstopmode si            >/dev/null 2>&1
 pdflatex -interaction=nonstopmode grail_jcim    >/dev/null 2>&1
 pdflatex -interaction=nonstopmode grail_jcim    >/dev/null 2>&1
+
+# Record what these logs describe, by content rather than by modification time: a generator that
+# rewrites a file with identical bytes must not read as an edit.
+python "${ROOT}/scripts/check_paper2_build.py" --stamp
