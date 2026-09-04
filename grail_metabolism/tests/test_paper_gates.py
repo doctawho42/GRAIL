@@ -39,6 +39,9 @@ GATES = [
     # LICENSE, NOTICE.md and the package configuration describe the bank that ships, not
     # the one the paper measures. Both files went on describing the wrong one for a week.
     ("check_licence_files.py", []),
+    # the ignore rules name what the repository deposits, instead of being overridden by a
+    # flag 372 times, which is how a released artifact goes missing from a release
+    ("sync_tracked_artifacts.py", ["--check"]),
 ]
 
 
