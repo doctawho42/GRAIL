@@ -63,11 +63,20 @@ def _sources_changed_since_build() -> list:
 
 def write_stamp() -> None:
     """Record what the build just compiled, called by scripts/build_paper2.sh."""
+    # The compiled documents' own digests go in beside the sources, because a submission has to be
+    # a fixed pair: three distinct builds of the manuscript stood at this path during one round of
+    # review and three referees reported against different files. These are the digests to quote.
+    built = {}
+    for name in DOCS:
+        pdf = ROOT / "paper2" / (name + ".pdf")
+        if pdf.exists():
+            built[f"paper2/{name}.pdf"] = hashlib.sha256(pdf.read_bytes()).hexdigest()
     STAMP.write_text(json.dumps({
         "what_this_is": "the digest of every .tex source at the moment the documents were built, "
                         "so a later check can tell a real edit from a rewrite that changed "
-                        "nothing",
-        "sources": _source_digests()}, indent=1))
+                        "nothing, and the digest of each document this build produced",
+        "sources": _source_digests(),
+        "built": built}, indent=1))
 
 
 def main() -> int:
