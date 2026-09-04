@@ -215,7 +215,7 @@ substitution in others. So the claim is stated as it falls:
 > Against sygma, the trained budget leads at no budget and separates nowhere. It trails with the interval excluding zero at k = 1, 3 and 5.
 > Against metapredictor, the whole bank leads at k = 15, 20, 30 and 50, separating at k = 15, 20, 30 and 50. It trails with the interval excluding zero at k = 1, 3 and 5.
 > Against metapredictor, the trained budget leads at k = 20, 30 and 50 and separates nowhere. It trails with the interval excluding zero at k = 1.
-> Mean list length: whole bank 98.1, trained budget 15.6, metatox 30.9, sygma 40.5, metapredictor 10.7, biotransformer 10.7, on 291 substrates.
+> Mean list length: whole bank 98.1, trained budget 15.6, metatox 30.9, sygma 40.5, metapredictor 10.7, biotransformer 10.7, gloryx 27.2, on 291 substrates.
 
 That block is generated from `results/deployment_table.json` by `scripts/sweep_claim.py` and a
 test holds this file to containing exactly what it produces. Written by hand it was wrong within
