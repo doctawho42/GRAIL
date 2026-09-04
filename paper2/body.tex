@@ -207,8 +207,10 @@ half is full of near-duplicates. What that costs is swept over the four rules th
 offers (Section~\ref{SI-sec:si-knobs}): the blend of Equation~\ref{SI-eq:blend} is better at the
 head of the list, by at most $+\numAggCmpHybridMax$ $[+\numAggCmpHybridMaxLo,
 +\numAggCmpHybridMaxHi]$ at a budget of \numAggCmpHybridMaxkWord{}, and the rule that ignores
-duplication by at most $+\numAggCmpMaxMax$ $[+\numAggCmpMaxMaxLo, +\numAggCmpMaxMaxHi]$ at
-\numAggCmpMaxMaxkWord{}. On this population the blend is indistinguishable from the deployed rule
+duplication by at most $+\numAggCmpMaxMax$, which it reaches at
+\numAggCmpMaxMaxkWord{} with the interval $[+\numAggCmpMaxMaxLo, +\numAggCmpMaxMaxHi]$ and again
+at \numAggCmpMaxMaxtieotherWord{}, where the same difference carries a wider one and is the cell
+Table~\ref{SI-tab:si-aggregation} prints. On this population the blend is indistinguishable from the deployed rule
 at every budget a lead is claimed at, separating only from \numAggCmpHybridSepfromWord{} to
 \numAggCmpHybridSeptoWord{}; on the validation draw it separates as far as
 \numAggValHybridSepto{}, which includes two budgets where leads are claimed, and that reading is

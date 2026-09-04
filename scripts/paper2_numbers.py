@@ -605,6 +605,16 @@ def build():
             _rows = {int(k): v for k, v in _blob["by_rule"][_rule]["minus_noisy_or"].items()
                      if str(k).isdigit()}
             _best = max(_rows.items(), key=lambda kv: kv[1]["difference"])
+            # An extremum attained at more than one budget is a tie, and naming one of them makes
+            # the sentence unverifiable against the other document: the maximum rule gains the
+            # same +0.0316 at three and at five with different intervals, the manuscript quoted
+            # three, the supporting information tabulated five, and three referees read that as a
+            # contradiction. The budgets that attain it are generated so the prose can say so.
+            _ties = sorted(k for k, v in _rows.items()
+                           if v["difference"] == _best[1]["difference"])
+            n[f"agg.{_tag}.{_rule}.maxties"] = len(_ties)
+            n[f"agg.{_tag}.{_rule}.maxtieother"] = (
+                max(k for k in _ties if k != _best[0]) if len(_ties) > 1 else 0)
             n[f"agg.{_tag}.{_rule}.maxk"] = _best[0]
             n[f"agg.{_tag}.{_rule}.max"] = _best[1]["difference"]
             n[f"agg.{_tag}.{_rule}.max.lo"] = _best[1]["ci95"][0]

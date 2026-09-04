@@ -103,6 +103,63 @@ def flat(path: Path) -> str:
     return re.sub(r"[ \t]+", " ", path.read_text())
 
 
+# Words the documents spell budgets with, so a tie named in prose can be recognised as named.
+_SPELLED = {1: "one", 3: "three", 5: "five", 8: "eight", 10: "ten", 15: "fifteen",
+            20: "twenty", 30: "thirty", 50: "fifty", 60: "sixty"}
+
+
+def _budget_named_anywhere(span: str, budget: int) -> bool:
+    """Whether this span names that budget, in digits or in words."""
+    if re.search(rf"\b{budget}\b", span):
+        return True
+    word = _SPELLED.get(budget)
+    return bool(word and re.search(rf"\b{word}\b", span, re.I))
+
+
+def check_extremum_ties(numbers: dict, keys: dict) -> list:
+    """An extremum attained at two budgets must name both, or a reader reaches the wrong interval.
+
+    The superlative check above ranges over a series recovered from key names, so it only sees
+    macros whose key ends in a budget. An extremum the generator computed lands in a key ending in
+    ".max", has no series behind its name, and is therefore trusted -- correctly, since it is the
+    extremum. What it does not carry is that the extremum is a tie: the maximum rule gains the same
+    +0.0316 at three and at five with intervals that differ, the manuscript named three, the
+    supporting information tabulated five, and three referees read the pair as a contradiction.
+
+    Wherever the generator records more than one budget attaining an extremum, the prose using that
+    extremum has to name the other one. The tie counts come from the same producer as the extremum,
+    so this cannot drift from what is true.
+    """
+    bad = []
+    for doc in DOCS:
+        text = flat(ROOT / doc)
+        for macro, key in keys.items():
+            if not key.endswith(".max"):
+                continue
+            ties = numbers.get(key[:-4] + ".maxties")
+            other = numbers.get(key[:-4] + ".maxtieother")
+            if not isinstance(ties, int) or ties < 2 or not other:
+                continue
+            # The other budget counts as named whether the prose spells it, prints it, or reaches
+            # it through the macro the generator writes for exactly this purpose. Only the last
+            # form should be used, but a check that refuses the correct fix is worse than none.
+            tie_macros = [mm for mm, kk in keys.items() if kk == key[:-4] + ".maxtieother"]
+            for m in re.finditer(re.escape("\\" + macro) + r"(?![A-Za-z])", text):
+                span = text[max(0, m.start() - 200):m.start() + 320]
+                if _budget_named_anywhere(span, other):
+                    continue
+                if any(re.search(re.escape("\\" + mm) + r"(?![A-Za-z])", span)
+                       for mm in tie_macros):
+                    continue
+                line = text.count("\n", 0, m.start()) + 1
+                bad.append(
+                    f"{doc}:{line}  \\{macro} is an extremum attained at {ties} budgets and the "
+                    f"sentence names only one; {other} attains the same value with a different "
+                    f"interval, so a reader following the pointer finds a figure that does not "
+                    f"match")
+    return bad
+
+
 def check_superlatives(numbers: dict, keys: dict) -> list:
     bad = []
     for doc in DOCS:
@@ -154,6 +211,8 @@ def check_superlatives(numbers: dict, keys: dict) -> list:
                     f"{'largest' if want_max else 'smallest'} of that series"
                     f"{f' through {limit}' if limit else ''} is {extreme[1]} at {extreme[0]} "
                     f"({re.sub(r'[0-9]+$', '', key)}{extreme[0]})")
+                continue
+
     return bad
 
 
@@ -285,7 +344,8 @@ def main() -> int:
 
     numbers = json.loads(NUMBERS.read_text())["numbers"]
     keys = macro_keys()
-    bad = check_superlatives(numbers, keys) + check_separations(numbers, keys)
+    bad = (check_superlatives(numbers, keys) + check_separations(numbers, keys)
+           + check_extremum_ties(numbers, keys))
     if bad:
         print(f"REFUSING: {len(bad)} sentence(s) make a claim their own artifact does not support:")
         for line in bad:
