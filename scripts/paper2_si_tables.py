@@ -537,8 +537,17 @@ def si_chemistry():
     d = art("error_by_chemistry.json")
     arms = [("GRAIL exhaustive", "GRAIL exh."), ("GRAIL interactive", "GRAIL int."),
             ("metatox", "MetaTox"), ("sygma", "SyGMa"), ("metapredictor", "MetaPred."),
-            ("biotransformer", "BioTrans.")]
+            ("biotransformer", "BioTrans."), ("gloryx", "GLORYx")]
     budget = "15"
+    # An arm the artifact scores and this list omits is a column the paper computed and did not
+    # print. That happened three times with one comparator, in this table, in the sweep table and
+    # in the sweep figure, because each kept its own list of names.
+    _known = {k for k, _ in arms}
+    _first = next(iter(d["classes"].values()))["recall"]
+    _absent = [a for a in _first if a not in _known]
+    if _absent:
+        raise SystemExit(f"error_by_chemistry.json scores arms this table has no column for: "
+                         f"{', '.join(_absent)}")
     # A class with five references cannot support two decimals, and printing them there invites
     # an ordering to be read off noise. The small classes are marked rather than dropped, since
     # what they show -- a blind spot every arm shares -- is the reason the split is here at all.
@@ -566,8 +575,10 @@ def si_chemistry():
     exhausted += f", of {n_subs}"
     WORDS = {0: "None", 1: "One", 2: "Two", 3: "Three", 4: "Four", 5: "Five", 6: "Six"}
     most_word = WORDS[sum(1 for k, _ in ORDER if k in short and short[k] * 2 > n_subs)]
-    return ("\\begin{table}[h]\n\\centering\\scriptsize\n"
-            "\\begin{tabular}{@{}lrrrrrrr@{}}\n\\toprule\n"
+    return ("\\begin{table*}[t]\n\\centering\\scriptsize\n"
+            # the column spec follows the arm list rather than being written out, so adding
+            # an arm cannot leave the table one column narrower than its own header
+            "\\begin{tabular}{@{}lr" + "r" * len(arms) + "@{}}\n\\toprule\n"
             f"transformation class & refs & {head} \\\\\n\\midrule\n"
             + "\n".join(rows)
             + "\n\\bottomrule\n\\end{tabular}\n"
@@ -578,10 +589,13 @@ def si_chemistry():
             "references, where one hit moves a cell by more than a tenth and no ordering across a "
             "row should be read. At this budget the arms differ in how often they have anything "
             f"left to emit, so a row is in part a comparison of list lengths: {exhausted} "
-            f"(Table~\\ref{{tab:si-short}}). {most_word} of the six run out on more than half of "
-            f"the {n_subs}. Table~\\ref{{tab:si-chemistry-matched}} repeats the split with each "
+            # this table is typeset into the manuscript, so its pointers into the supporting
+            # information are cross-document and carry the prefix the wrapper resolves
+            f"(Table~\\ref{{SI-tab:si-short}}). {most_word} of the {len(arms)} run out on more "
+            f"than half of "
+            f"the {n_subs}. Table~\\ref{{SI-tab:si-chemistry-matched}} repeats the split with each "
             "comparator\'s own length held instead of the budget.}\n"
-            "\\label{tab:si-chemistry}\n\\end{table}\n")
+            "\\label{tab:si-chemistry}\n\\end{table*}\n")
 
 
 def si_chemistry_matched():
@@ -620,7 +634,7 @@ def si_chemistry_matched():
             f" & & {sub} \\\\\n\\midrule\n"
             + "\n".join(rows)
             + "\n\\bottomrule\n\\end{tabular}\n"
-            "\\caption{The class split of Table~\\ref{tab:si-chemistry} with list length held "
+            "\\caption{The class split of Table~\\ref{MS-tab:si-chemistry} with list length held "
             "instead of the budget. Within each block both arms are cut, substrate by substrate, "
             "to the number of candidates that comparator returned there, under the same "
             "construction as Table~\\ref{MS-tab:si-matched}; \\emph{ours} is the exhaustive "
