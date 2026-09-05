@@ -968,6 +968,22 @@ def build():
     # the manuscript could previously report for one comparator only.
     n["btarm.drawingdelta"] = round(_drawn["recall"]["30"] - _stored["recall"]["30"], 4)
 
+    # The one external check in this paper: whether an independent benchmark's ordering is a
+    # budget ordering, computed from that benchmark's own published recall and precision. No
+    # measurement of ours enters it, which is the point.
+    ebc2 = art("external_budget_confound.json")
+    n["extbudget.drugs"] = len(ebc2["reference_set_sizes"])
+    n["extbudget.references"] = sum(ebc2["reference_set_sizes"].values())
+    n["extbudget.arms"] = len(ebc2["by_tool"])
+    n["extbudget.cells"] = ebc2["n_cells"]
+    n["extbudget.rho"] = ebc2["spearman_recall_against_log_emitted"]
+    n["extbudget.withinpositive"] = ebc2["within_drug_positive"]
+    n["extbudget.withinn"] = ebc2["within_drug_n"]
+    n["extbudget.widest"] = max(v["mean_emitted"] for v in ebc2["by_tool"].values())
+    n["extbudget.narrowest"] = min(v["mean_emitted"] for v in ebc2["by_tool"].values())
+    n["extbudget.ratio"] = round(n["extbudget.widest"] / n["extbudget.narrowest"], 1)
+    n["extbudget.orderingsagree"] = ebc2["orderings_agree"]
+
     # The fusion constant, swept. It was left at the published default and the paper disclosed
     # that; a sweep says whether the disclosure costs anything.
     fk = art("fusion_knobs.json")

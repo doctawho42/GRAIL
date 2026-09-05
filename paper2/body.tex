@@ -1348,12 +1348,35 @@ metabolite carrying a stereogenic element its substrate does not have
 a ceiling on how many references such a criterion could ever separate, not an estimate of what it
 would cost, and nothing here assigns a configuration to any of them.
 
-No result here is external. Every figure is measured on one corpus assembled from four sources, of
-which the only published reference set is one of the four, so a held-out split of it is not an
-independent test of the chemistry. The set that would serve is named in
+No measurement of a system here is external. Every figure is measured on one corpus assembled from
+four sources, of which the only published reference set is one of the four, so a held-out split of
+it is not an independent test of the chemistry. The set that would serve is named in
 Section~\ref{sec:discussion}: metabolite identifications from radiolabelled human ADME studies,
-already used to benchmark this class of tool \citep{Gao_2026}. Until a system here is measured on
-one, the comparison establishes an ordering within a corpus and not a ranking of the methods.
+already used to benchmark this class of tool \citep{Gao_2026}. Measuring a system here on one is
+not possible from what that benchmark publishes, because its reference structures appear only as
+drawings; until it is, the comparison establishes an ordering within a corpus and not a ranking of
+the methods.
+
+The claim about evaluation is a different matter, and it can be checked outside this corpus. What
+that benchmark does publish is recall and precision for every one of its tools on every one of its
+drugs, and those two numbers carry the third: precision is hits over what was emitted, so what was
+emitted is hits over precision. Recovering it that way over
+\numExtbudgetDrugs{} drugs and \numExtbudgetArms{} arms gives
+\numExtbudgetCells{} cells whose output sizes span a factor of \numExtbudgetRatio{}, from
+\numExtbudgetNarrowest{} candidates per drug to \numExtbudgetWidest{}. Recall rises with that
+span: the rank correlation between recall and log output size is
+$\numExtbudgetRho$ across the cells, and within a drug, where the reference set is fixed and the
+comparison is therefore clean, it is positive for \numExtbudgetWithinpositive{} of
+\numExtbudgetWithinn{}. That is the pattern this paper's own budget axis was introduced to expose,
+present in an independent benchmark, on drugs and references this work never touched, and derived
+from that benchmark's published table rather than from any re-run
+(Section~\ref{SI-sec:si-external}).
+
+It is not the whole story and this paper's argument does not need it to be. Ordering the arms by
+what they emit does not reproduce ordering them by recall: one arm returns fewer candidates than
+another and recovers more. So output size is a confound in that benchmark rather than its content,
+which is the same thing this paper says about its own budget axis, and the remedy is the same, to
+declare the axis and vary it.
 
 \begin{suppinfo}
 

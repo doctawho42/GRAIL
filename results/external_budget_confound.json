@@ -1,0 +1,709 @@
+{
+ "provenance": {
+  "script": "external_budget_confound.py",
+  "script_path": "scripts/typed_edit/external_budget_confound.py",
+  "source_sha256": "9b9ec1c1843694fc4924c0085af60605f5c3ad7eb45dd9b637aab7b31152a98b",
+  "git_commit": "8048eb33529e8bb7411b56b2e13ca9ca54e552ff",
+  "git_dirty": true
+ },
+ "question": "whether the ordering an independent benchmark reports is a property of the tools or of how many candidates each was allowed to emit",
+ "source": {
+  "citation": "Gao, L.; Yan, S.; Feng, K.; Liu, H.; Zhang, Z.; Diao, X. Benchmarking In Silico Metabolite Prediction Tools against Human Radiolabeled ADME Data for Small-Molecule Drugs. J. Chem. Inf. Model. 2026, 66, 2918-2928",
+  "doi": "10.1021/acs.jcim.5c03045",
+  "tables": "Supporting Information Tables S12 (recall) and S13 (precision), pages S28-S29",
+  "supporting_information": "openly deposited by ACS under CC BY-NC 4.0, DOI 10.1021/acs.jcim.5c03045.s001; sha256 of the PDF transcribed from is recorded below",
+  "si_sha256_16": "907aef9adad03660"
+ },
+ "nothing_was_re_run": "recall and precision are the published values; the reference-set sizes and the emitted counts follow from them by arithmetic",
+ "reference_set_sizes": {
+  "Sotorasib": 5,
+  "Pamiparib": 8,
+  "Encorafenib": 12,
+  "Fovinaciclib": 10,
+  "Rezafungin": 3,
+  "Isavuconazole": 7,
+  "LY3202626": 6,
+  "Iberdomide": 12,
+  "Opicapone": 16,
+  "Tinengotinib": 11,
+  "Nemiralisib": 7
+ },
+ "reference_set_recovery_checked_against": {
+  "Pamiparib": 8
+ },
+ "cells": [
+  {
+   "tool": "SyGMa",
+   "code": "SM",
+   "drug": "Sotorasib",
+   "reference_set": 5,
+   "recall": 0.4,
+   "precision": 0.009,
+   "hits": 2,
+   "emitted": 222.2
+  },
+  {
+   "tool": "SyGMa",
+   "code": "SM",
+   "drug": "Pamiparib",
+   "reference_set": 8,
+   "recall": 0.5,
+   "precision": 0.095,
+   "hits": 4,
+   "emitted": 42.1
+  },
+  {
+   "tool": "SyGMa",
+   "code": "SM",
+   "drug": "Encorafenib",
+   "reference_set": 12,
+   "recall": 0.333,
+   "precision": 0.041,
+   "hits": 4,
+   "emitted": 97.5
+  },
+  {
+   "tool": "SyGMa",
+   "code": "SM",
+   "drug": "Fovinaciclib",
+   "reference_set": 10,
+   "recall": 0.4,
+   "precision": 0.024,
+   "hits": 4,
+   "emitted": 166.7
+  },
+  {
+   "tool": "SyGMa",
+   "code": "SM",
+   "drug": "Rezafungin",
+   "reference_set": 3,
+   "recall": 1.0,
+   "precision": 0.004,
+   "hits": 3,
+   "emitted": 750.0
+  },
+  {
+   "tool": "SyGMa",
+   "code": "SM",
+   "drug": "Isavuconazole",
+   "reference_set": 7,
+   "recall": 0.429,
+   "precision": 0.015,
+   "hits": 3,
+   "emitted": 200.2
+  },
+  {
+   "tool": "SyGMa",
+   "code": "SM",
+   "drug": "LY3202626",
+   "reference_set": 6,
+   "recall": 0.833,
+   "precision": 0.044,
+   "hits": 5,
+   "emitted": 113.6
+  },
+  {
+   "tool": "SyGMa",
+   "code": "SM",
+   "drug": "Iberdomide",
+   "reference_set": 12,
+   "recall": 0.417,
+   "precision": 0.064,
+   "hits": 5,
+   "emitted": 78.2
+  },
+  {
+   "tool": "SyGMa",
+   "code": "SM",
+   "drug": "Opicapone",
+   "reference_set": 16,
+   "recall": 0.25,
+   "precision": 0.037,
+   "hits": 4,
+   "emitted": 108.1
+  },
+  {
+   "tool": "SyGMa",
+   "code": "SM",
+   "drug": "Tinengotinib",
+   "reference_set": 11,
+   "recall": 0.455,
+   "precision": 0.046,
+   "hits": 5,
+   "emitted": 108.8
+  },
+  {
+   "tool": "SyGMa",
+   "code": "SM",
+   "drug": "Nemiralisib",
+   "reference_set": 7,
+   "recall": 0.571,
+   "precision": 0.035,
+   "hits": 4,
+   "emitted": 114.2
+  },
+  {
+   "tool": "GLORYx",
+   "code": "GX",
+   "drug": "Sotorasib",
+   "reference_set": 5,
+   "recall": 0.6,
+   "precision": 0.057,
+   "hits": 3,
+   "emitted": 52.6
+  },
+  {
+   "tool": "GLORYx",
+   "code": "GX",
+   "drug": "Pamiparib",
+   "reference_set": 8,
+   "recall": 0.375,
+   "precision": 0.136,
+   "hits": 3,
+   "emitted": 22.1
+  },
+  {
+   "tool": "GLORYx",
+   "code": "GX",
+   "drug": "Encorafenib",
+   "reference_set": 12,
+   "recall": 0.583,
+   "precision": 0.149,
+   "hits": 7,
+   "emitted": 47.0
+  },
+  {
+   "tool": "GLORYx",
+   "code": "GX",
+   "drug": "Fovinaciclib",
+   "reference_set": 10,
+   "recall": 0.4,
+   "precision": 0.07,
+   "hits": 4,
+   "emitted": 57.1
+  },
+  {
+   "tool": "GLORYx",
+   "code": "GX",
+   "drug": "Rezafungin",
+   "reference_set": 3,
+   "recall": 0.667,
+   "precision": 0.012,
+   "hits": 2,
+   "emitted": 166.8
+  },
+  {
+   "tool": "GLORYx",
+   "code": "GX",
+   "drug": "Isavuconazole",
+   "reference_set": 7,
+   "recall": 0.571,
+   "precision": 0.061,
+   "hits": 4,
+   "emitted": 65.5
+  },
+  {
+   "tool": "GLORYx",
+   "code": "GX",
+   "drug": "LY3202626",
+   "reference_set": 6,
+   "recall": 0.5,
+   "precision": 0.081,
+   "hits": 3,
+   "emitted": 37.0
+  },
+  {
+   "tool": "GLORYx",
+   "code": "GX",
+   "drug": "Iberdomide",
+   "reference_set": 12,
+   "recall": 0.417,
+   "precision": 0.109,
+   "hits": 5,
+   "emitted": 45.9
+  },
+  {
+   "tool": "GLORYx",
+   "code": "GX",
+   "drug": "Opicapone",
+   "reference_set": 16,
+   "recall": 0.25,
+   "precision": 0.148,
+   "hits": 4,
+   "emitted": 27.0
+  },
+  {
+   "tool": "GLORYx",
+   "code": "GX",
+   "drug": "Tinengotinib",
+   "reference_set": 11,
+   "recall": 0.364,
+   "precision": 0.121,
+   "hits": 4,
+   "emitted": 33.1
+  },
+  {
+   "tool": "GLORYx",
+   "code": "GX",
+   "drug": "Nemiralisib",
+   "reference_set": 7,
+   "recall": 0.429,
+   "precision": 0.077,
+   "hits": 3,
+   "emitted": 39.0
+  },
+  {
+   "tool": "BioTransformer",
+   "code": "BT",
+   "drug": "Sotorasib",
+   "reference_set": 5,
+   "recall": 0.2,
+   "precision": 0.05,
+   "hits": 1,
+   "emitted": 20.0
+  },
+  {
+   "tool": "BioTransformer",
+   "code": "BT",
+   "drug": "Pamiparib",
+   "reference_set": 8,
+   "recall": 0.25,
+   "precision": 0.222,
+   "hits": 2,
+   "emitted": 9.0
+  },
+  {
+   "tool": "BioTransformer",
+   "code": "BT",
+   "drug": "Encorafenib",
+   "reference_set": 12,
+   "recall": 0.417,
+   "precision": 0.278,
+   "hits": 5,
+   "emitted": 18.0
+  },
+  {
+   "tool": "BioTransformer",
+   "code": "BT",
+   "drug": "Fovinaciclib",
+   "reference_set": 10,
+   "recall": 0.3,
+   "precision": 0.115,
+   "hits": 3,
+   "emitted": 26.1
+  },
+  {
+   "tool": "BioTransformer",
+   "code": "BT",
+   "drug": "Rezafungin",
+   "reference_set": 3,
+   "recall": 0.667,
+   "precision": 0.043,
+   "hits": 2,
+   "emitted": 46.5
+  },
+  {
+   "tool": "BioTransformer",
+   "code": "BT",
+   "drug": "Isavuconazole",
+   "reference_set": 7,
+   "recall": 0.429,
+   "precision": 0.143,
+   "hits": 3,
+   "emitted": 21.0
+  },
+  {
+   "tool": "BioTransformer",
+   "code": "BT",
+   "drug": "LY3202626",
+   "reference_set": 6,
+   "recall": 0.167,
+   "precision": 0.053,
+   "hits": 1,
+   "emitted": 18.9
+  },
+  {
+   "tool": "BioTransformer",
+   "code": "BT",
+   "drug": "Opicapone",
+   "reference_set": 16,
+   "recall": 0.063,
+   "precision": 0.125,
+   "hits": 1,
+   "emitted": 8.1
+  },
+  {
+   "tool": "BioTransformer",
+   "code": "BT",
+   "drug": "Tinengotinib",
+   "reference_set": 11,
+   "recall": 0.273,
+   "precision": 0.3,
+   "hits": 3,
+   "emitted": 10.0
+  },
+  {
+   "tool": "BioTransformer",
+   "code": "BT",
+   "drug": "Nemiralisib",
+   "reference_set": 7,
+   "recall": 0.429,
+   "precision": 0.143,
+   "hits": 3,
+   "emitted": 21.0
+  },
+  {
+   "tool": "MetaPredictor",
+   "code": "MP",
+   "drug": "Pamiparib",
+   "reference_set": 8,
+   "recall": 0.25,
+   "precision": 0.286,
+   "hits": 2,
+   "emitted": 7.0
+  },
+  {
+   "tool": "MetaPredictor",
+   "code": "MP",
+   "drug": "Encorafenib",
+   "reference_set": 12,
+   "recall": 0.25,
+   "precision": 0.375,
+   "hits": 3,
+   "emitted": 8.0
+  },
+  {
+   "tool": "MetaPredictor",
+   "code": "MP",
+   "drug": "Fovinaciclib",
+   "reference_set": 10,
+   "recall": 0.1,
+   "precision": 0.143,
+   "hits": 1,
+   "emitted": 7.0
+  },
+  {
+   "tool": "MetaPredictor",
+   "code": "MP",
+   "drug": "Isavuconazole",
+   "reference_set": 7,
+   "recall": 0.286,
+   "precision": 0.2,
+   "hits": 2,
+   "emitted": 10.0
+  },
+  {
+   "tool": "MetaPredictor",
+   "code": "MP",
+   "drug": "LY3202626",
+   "reference_set": 6,
+   "recall": 0.333,
+   "precision": 0.286,
+   "hits": 2,
+   "emitted": 7.0
+  },
+  {
+   "tool": "MetaPredictor",
+   "code": "MP",
+   "drug": "Iberdomide",
+   "reference_set": 12,
+   "recall": 0.167,
+   "precision": 0.286,
+   "hits": 2,
+   "emitted": 7.0
+  },
+  {
+   "tool": "MetaPredictor",
+   "code": "MP",
+   "drug": "Opicapone",
+   "reference_set": 16,
+   "recall": 0.063,
+   "precision": 0.143,
+   "hits": 1,
+   "emitted": 7.0
+  },
+  {
+   "tool": "MetaPredictor",
+   "code": "MP",
+   "drug": "Tinengotinib",
+   "reference_set": 11,
+   "recall": 0.182,
+   "precision": 0.154,
+   "hits": 2,
+   "emitted": 13.0
+  },
+  {
+   "tool": "MetaTrans",
+   "code": "MT",
+   "drug": "Pamiparib",
+   "reference_set": 8,
+   "recall": 0.25,
+   "precision": 0.1,
+   "hits": 2,
+   "emitted": 20.0
+  },
+  {
+   "tool": "MetaTrans",
+   "code": "MT",
+   "drug": "Encorafenib",
+   "reference_set": 12,
+   "recall": 0.083,
+   "precision": 0.048,
+   "hits": 1,
+   "emitted": 20.8
+  },
+  {
+   "tool": "MetaTrans",
+   "code": "MT",
+   "drug": "Fovinaciclib",
+   "reference_set": 10,
+   "recall": 0.3,
+   "precision": 0.091,
+   "hits": 3,
+   "emitted": 33.0
+  },
+  {
+   "tool": "MetaTrans",
+   "code": "MT",
+   "drug": "Isavuconazole",
+   "reference_set": 7,
+   "recall": 0.143,
+   "precision": 0.03,
+   "hits": 1,
+   "emitted": 33.4
+  },
+  {
+   "tool": "MetaTrans",
+   "code": "MT",
+   "drug": "LY3202626",
+   "reference_set": 6,
+   "recall": 0.167,
+   "precision": 0.038,
+   "hits": 1,
+   "emitted": 26.4
+  },
+  {
+   "tool": "MetaTrans",
+   "code": "MT",
+   "drug": "Iberdomide",
+   "reference_set": 12,
+   "recall": 0.167,
+   "precision": 0.056,
+   "hits": 2,
+   "emitted": 35.8
+  },
+  {
+   "tool": "MetaTrans",
+   "code": "MT",
+   "drug": "Opicapone",
+   "reference_set": 16,
+   "recall": 0.125,
+   "precision": 0.053,
+   "hits": 2,
+   "emitted": 37.7
+  },
+  {
+   "tool": "MetaTrans",
+   "code": "MT",
+   "drug": "Tinengotinib",
+   "reference_set": 11,
+   "recall": 0.273,
+   "precision": 0.115,
+   "hits": 3,
+   "emitted": 26.1
+  },
+  {
+   "tool": "MetaTrans",
+   "code": "MT",
+   "drug": "Nemiralisib",
+   "reference_set": 7,
+   "recall": 0.143,
+   "precision": 0.048,
+   "hits": 1,
+   "emitted": 20.9
+  },
+  {
+   "tool": "consensus of the five",
+   "code": "CM",
+   "drug": "Sotorasib",
+   "reference_set": 5,
+   "recall": 0.2,
+   "precision": 0.063,
+   "hits": 1,
+   "emitted": 15.9
+  },
+  {
+   "tool": "consensus of the five",
+   "code": "CM",
+   "drug": "Pamiparib",
+   "reference_set": 8,
+   "recall": 0.375,
+   "precision": 0.333,
+   "hits": 3,
+   "emitted": 9.0
+  },
+  {
+   "tool": "consensus of the five",
+   "code": "CM",
+   "drug": "Encorafenib",
+   "reference_set": 12,
+   "recall": 0.417,
+   "precision": 0.625,
+   "hits": 5,
+   "emitted": 8.0
+  },
+  {
+   "tool": "consensus of the five",
+   "code": "CM",
+   "drug": "Fovinaciclib",
+   "reference_set": 10,
+   "recall": 0.3,
+   "precision": 0.188,
+   "hits": 3,
+   "emitted": 16.0
+  },
+  {
+   "tool": "consensus of the five",
+   "code": "CM",
+   "drug": "Rezafungin",
+   "reference_set": 3,
+   "recall": 0.667,
+   "precision": 0.111,
+   "hits": 2,
+   "emitted": 18.0
+  },
+  {
+   "tool": "consensus of the five",
+   "code": "CM",
+   "drug": "Isavuconazole",
+   "reference_set": 7,
+   "recall": 0.429,
+   "precision": 0.214,
+   "hits": 3,
+   "emitted": 14.0
+  },
+  {
+   "tool": "consensus of the five",
+   "code": "CM",
+   "drug": "LY3202626",
+   "reference_set": 6,
+   "recall": 0.333,
+   "precision": 0.182,
+   "hits": 2,
+   "emitted": 11.0
+  },
+  {
+   "tool": "consensus of the five",
+   "code": "CM",
+   "drug": "Iberdomide",
+   "reference_set": 12,
+   "recall": 0.333,
+   "precision": 0.571,
+   "hits": 4,
+   "emitted": 7.0
+  },
+  {
+   "tool": "consensus of the five",
+   "code": "CM",
+   "drug": "Opicapone",
+   "reference_set": 16,
+   "recall": 0.063,
+   "precision": 0.125,
+   "hits": 1,
+   "emitted": 8.1
+  },
+  {
+   "tool": "consensus of the five",
+   "code": "CM",
+   "drug": "Tinengotinib",
+   "reference_set": 11,
+   "recall": 0.364,
+   "precision": 0.4,
+   "hits": 4,
+   "emitted": 10.0
+  },
+  {
+   "tool": "consensus of the five",
+   "code": "CM",
+   "drug": "Nemiralisib",
+   "reference_set": 7,
+   "recall": 0.429,
+   "precision": 0.2,
+   "hits": 3,
+   "emitted": 15.0
+  }
+ ],
+ "by_tool": {
+  "SyGMa": {
+   "cells": 11,
+   "mean_emitted": 182.0,
+   "mean_recall": 0.508,
+   "mean_precision": 0.0376
+  },
+  "GLORYx": {
+   "cells": 11,
+   "mean_emitted": 53.9,
+   "mean_recall": 0.4687,
+   "mean_precision": 0.0928
+  },
+  "BioTransformer": {
+   "cells": 10,
+   "mean_emitted": 19.9,
+   "mean_recall": 0.3195,
+   "mean_precision": 0.1472
+  },
+  "MetaPredictor": {
+   "cells": 8,
+   "mean_emitted": 8.2,
+   "mean_recall": 0.2039,
+   "mean_precision": 0.2341
+  },
+  "MetaTrans": {
+   "cells": 9,
+   "mean_emitted": 28.2,
+   "mean_recall": 0.1834,
+   "mean_precision": 0.0643
+  },
+  "consensus of the five": {
+   "cells": 11,
+   "mean_emitted": 12.0,
+   "mean_recall": 0.3555,
+   "mean_precision": 0.2738
+  }
+ },
+ "ordering_by_mean_emission": [
+  "SyGMa",
+  "GLORYx",
+  "MetaTrans",
+  "BioTransformer",
+  "consensus of the five",
+  "MetaPredictor"
+ ],
+ "ordering_by_mean_recall": [
+  "SyGMa",
+  "GLORYx",
+  "consensus of the five",
+  "BioTransformer",
+  "MetaPredictor",
+  "MetaTrans"
+ ],
+ "orderings_agree": false,
+ "spearman_recall_against_log_emitted": 0.5413,
+ "n_cells": 60,
+ "within_drug_spearman": [
+  0.7379,
+  0.7045,
+  0.1029,
+  0.9258,
+  0.7746,
+  0.3947,
+  0.5002,
+  0.73,
+  0.8454,
+  0.5075,
+  0.6708
+ ],
+ "within_drug_positive": 11,
+ "within_drug_n": 11,
+ "reading": "A benchmark that does not hold output size fixed orders methods partly by output size. This does not correct their measurement and does not need their reference structures, which are published only as drawings; it says what their published numbers already contain."
+}

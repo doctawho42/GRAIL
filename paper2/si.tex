@@ -1726,6 +1726,42 @@ it globally would silently move what counts as a hit. It is applied through a pr
 instead: the global setting is untouched, and matching keys on 96 molecules are identical with and
 without it.
 
+\section{The evaluation claim, checked outside this corpus}
+\label{sec:si-external}
+
+Every measurement of a system in this work is on one corpus, and the manuscript's limitations say
+so. The claim about evaluation is separable from that, and this section checks it against a
+benchmark nobody here ran.
+
+\citet{Gao_2026} evaluate \numExtbudgetArms{} predictors against human radiolabelled ADME data for
+\numExtbudgetDrugs{} drugs carrying \numExtbudgetReferences{} identified metabolites, and report a
+trade-off between coverage and balanced accuracy. Their supporting information prints recall and
+precision per drug per tool, and those two determine the quantity their design does not hold fixed.
+Recall is hits over the reference set and precision is hits over what was emitted, so the size of
+each reference set is the smallest denominator under which every tool's recall on that drug is a
+whole number of hits, and what a tool emitted is then its hits over its precision. The recovery is
+checked rather than assumed: their Table S2 lists Pamiparib's eight metabolites by name, and the
+recovery returns eight, or the artifact is not written.
+
+The resulting \numExtbudgetCells{} cells span a factor of \numExtbudgetRatio{} in output size,
+from \numExtbudgetNarrowest{} candidates per drug to \numExtbudgetWidest{}. Recall tracks it: the
+rank correlation of recall against log output size is $\numExtbudgetRho$ over the cells, and
+within a drug, where the reference set is fixed, it is positive in
+\numExtbudgetWithinpositive{} of \numExtbudgetWithinn{}. Unanimity within drugs is the stronger
+half, because a correlation pooled across drugs could be produced by drugs differing in difficulty
+rather than by arms differing in what they emit.
+
+What this does not establish is that output size is all there is. Ordering those arms by mean
+emission does not reproduce ordering them by mean recall: one arm emits fewer candidates than
+another and recovers more, so they differ in more than their budgets. The conclusion is the narrow
+one, and it is the conclusion this work reaches about its own comparison: a benchmark that leaves
+output size undeclared has an axis running through its results that its ordering partly measures,
+and the remedy is to declare that axis and sweep it rather than to correct for it afterwards.
+
+Nothing was re-run for this, no reference structure was needed and none was available: that
+benchmark publishes its reference metabolites as drawings, which is why this section checks the
+claim about evaluation and not this system's recall on those drugs.
+
 \section{Comparators}
 \label{sec:si-comparators}
 
