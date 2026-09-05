@@ -166,6 +166,8 @@ PINNED = {
     "results/external_budget_confound.json": f"{TE}/external_budget_confound.py",
     # the compounds the manuscript names, as structures, for the submission checklist
     "results/worked_example_structures.json": f"{TE}/worked_example_structures.py",
+    # what a retraining under an unpinnable RDKit would standardise differently
+    "results/rdkit_version_drift.json": f"{TE}/rdkit_version_drift.py",
     # the comparator's own emission knob turned up, which the manuscript prints both rows of
     "results/metapredictor_beam_sweep.json": f"{TE}/metapredictor_beam_sweep.py",
     # the comparison with every arm that can be re-run on one drawing

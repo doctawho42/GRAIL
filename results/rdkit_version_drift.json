@@ -1,0 +1,50 @@
+{
+ "provenance": {
+  "script": "rdkit_version_drift.py",
+  "script_path": "scripts/typed_edit/rdkit_version_drift.py",
+  "source_sha256": "804bd70eeab6e9c972fb8fb97910ea681d4da0979df979d86e20bb8e7da409e3",
+  "git_commit": "ea1abf83425f610852f9e3056f3915c099a24847",
+  "git_dirty": true
+ },
+ "question": "what a retraining under a different RDKit would standardise differently, since the pinned version is not installable on the platform that has the GPU",
+ "pinned_version": "2022.09.5",
+ "other_version": "2026.03.6",
+ "population": {
+  "substrates_compared": 3000,
+  "drawn_from": "the training split",
+  "seed": 0
+ },
+ "replica_checked_against_the_pipeline_on": 200,
+ "standardised_structure": {
+  "comparable": 3000,
+  "agree": 2997,
+  "differ": 3,
+  "share_differing": 0.001,
+  "unavailable_on_one_side": 0
+ },
+ "matching_key": {
+  "comparable": 3000,
+  "agree": 2999,
+  "differ": 1,
+  "share_differing": 0.000333,
+  "unavailable_on_one_side": 0
+ },
+ "examples": [
+  {
+   "input": "COC1C=COC2(C)Oc3c(C)c(=O)c4c(O)c(c5oc6cc(N7CCN(CC(C)C)CC7)cc(O)c6nc5c4c3C2=O)N=C(O)C(C)=CC=CC(C)C(O)C(C)C(O)C(C)C(OC(C)=O)C1C",
+   "pinned": "COC1C=COC2(C)Oc3c(C)c(O)c4c(=O)c(c5oc6cc(N7CCN(CC(C)C)CC7)cc(=O)c6nc5c4c3C2=O)=NC(=O)C(C)CC=CC(C)C(O)C(C)C(O)C(C)C(OC(C)=O)C1C",
+   "other": "COC1C=COC2(C)Oc3c(C)c(=O)c4c(O)c(c5oc6cc(N7CCN(CC(C)C)CC7)cc(O)c6nc5c4c3C2=O)NC(=O)C(C)=CC=CC(C)C(O)C(C)C(O)C(C)C(OC(C)=O)C1C"
+  },
+  {
+   "input": "CC[Ge]1(C(C)O)CCC2(CCN(CCCN(C)C)C2)CC1",
+   "pinned": "CC[Ge]1(C(C)O)CCC2(CCN(CCCN(C)C)C2)CC1",
+   "other": "C[CH2][Ge]1([CH](C)O)[CH2]CC2(CCN(CCCN(C)C)C2)C[CH2]1"
+  },
+  {
+   "input": "COc1ccc2c(CC(=O)N3CCCC3C(O)=NC(CC(C)C)C(O)=NCC(O)=NC(CC(C)C)C(O)=NC(CNc3ccc([N+](=O)[O-])cc3[N+](=O)[O-])C(O)=NC(C)C(O)=NC(CCCNC(=N)N)C(=N)O)cc(=O)oc2c1",
+   "pinned": "COc1ccc2c(CC(=O)N3CCCC3C(=O)NC(CC(C)C)C(=O)NCC(=O)NC(CC(C)C)C(=O)NC(CNc3ccc([N+](=O)[O-])cc3[N+](=O)[O-])C(O)=NC(C)C(O)=NC(CCCNC(=N)N)C(N)=O)cc(=O)oc2c1",
+   "other": "COc1ccc2c(CC(=O)N3CCCC3C(=O)NC(CC(C)C)C(=O)NCC(=O)NC(CC(C)C)C(O)=NC(CNc3ccc([N+](=O)[O-])cc3[N+](=O)[O-])C(O)=NC(C)C(O)=NC(CCCNC(=N)N)C(N)=O)cc(=O)oc2c1"
+  }
+ ],
+ "reading": "A share near zero means a retraining elsewhere is comparable with what this paper reports and the difference can be declared as a bound rather than argued about; a share that is not near zero means the platform is unusable for this and no amount of declaring fixes it."
+}

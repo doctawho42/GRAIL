@@ -464,6 +464,12 @@
    "status": "current"
   },
   {
+   "artifact": "results/rdkit_version_drift.json",
+   "script": "rdkit_version_drift.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
    "artifact": "results/reactant_size_census.json",
    "script": "reactant_size_census.py",
    "how": "recorded source digest",
@@ -676,7 +682,7 @@
    "status": "current"
   }
  ],
- "n_pinned": 111,
+ "n_pinned": 112,
  "n_pinned_stale": 0,
  "sweep": {
   "unstamped": 286,
