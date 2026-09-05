@@ -975,14 +975,23 @@ def build():
     n["extbudget.drugs"] = len(ebc2["reference_set_sizes"])
     n["extbudget.references"] = sum(ebc2["reference_set_sizes"].values())
     n["extbudget.arms"] = len(ebc2["by_tool"])
-    n["extbudget.cells"] = ebc2["n_cells"]
-    n["extbudget.rho"] = ebc2["spearman_recall_against_log_emitted"]
-    n["extbudget.withinpositive"] = ebc2["within_drug_positive"]
-    n["extbudget.withinn"] = ebc2["within_drug_n"]
-    n["extbudget.widest"] = max(v["mean_emitted"] for v in ebc2["by_tool"].values())
-    n["extbudget.narrowest"] = min(v["mean_emitted"] for v in ebc2["by_tool"].values())
-    n["extbudget.ratio"] = round(n["extbudget.widest"] / n["extbudget.narrowest"], 1)
+    n["extbudget.cells"] = ebc2["reconstructed_axis"]["n_cells"]
+    # The axis is counted from the authors' own deposited predictions rather than reconstructed
+    # through recall, because the reconstruction puts recall on both sides of the correlation.
+    n["extbudget.countedcells"] = ebc2["n_counted_cells"]
+    n["extbudget.widest"] = ebc2["counted_widest"]
+    n["extbudget.narrowest"] = ebc2["counted_narrowest"]
+    n["extbudget.ratio"] = ebc2["counted_spread"]
+    n["extbudget.rho"] = ebc2["spearman_recall_against_counted_emission"]
+    n["extbudget.permp"] = ebc2["permutation_p"]
+    n["extbudget.permutations"] = ebc2["permutations"]
+    n["extbudget.withinpositive"] = ebc2["within_drug_counted_positive"]
+    n["extbudget.withinn"] = ebc2["within_drug_counted_n"]
     n["extbudget.orderingsagree"] = ebc2["orderings_agree"]
+    # The reconstructed axis, printed so a reader can see why it is not the one used.
+    n["extbudget.rhoreconstructed"] = \
+        ebc2["reconstructed_axis"]["spearman_recall_against_log_emitted"]
+    n["extbudget.reconstructedp"] = ebc2["reconstructed_axis"]["permutation_p"]
 
     # The fusion constant, swept. It was left at the published default and the paper disclosed
     # that; a sweep says whether the disclosure costs anything.

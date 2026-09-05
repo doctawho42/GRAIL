@@ -1331,19 +1331,22 @@ not possible from what that benchmark publishes, because its reference structure
 drawings; until it is, the comparison establishes an ordering within a corpus and not a ranking of
 the methods.
 
-The claim about evaluation is a different matter, and it can be checked outside this corpus. What
-that benchmark does publish is recall and precision for every one of its tools on every one of its
-drugs, and those two numbers carry the third: precision is hits over what was emitted, so what was
-emitted is hits over precision. Recovering it that way over
-\numExtbudgetDrugs{} drugs and \numExtbudgetArms{} arms gives
-\numExtbudgetCells{} cells whose output sizes span a factor of \numExtbudgetRatio{}, from
-\numExtbudgetNarrowest{} candidates per drug to \numExtbudgetWidest{}. Recall rises with that
-span: the rank correlation between recall and log output size is
-$\numExtbudgetRho$ across the cells, and within a drug, where the reference set is fixed and the
-comparison is therefore clean, it is positive for \numExtbudgetWithinpositive{} of
-\numExtbudgetWithinn{}. That is the pattern this paper's own budget axis was introduced to expose,
-present in an independent benchmark, on drugs and references this work never touched, and derived
-from that benchmark's published table rather than from any re-run
+The claim about evaluation is a different matter, and it can be checked outside this corpus. Those
+authors deposited the prediction files their tools returned, so what each emitted can be counted
+rather than inferred. Counted, the axis their design leaves undeclared spans a factor of
+\numExtbudgetRatio{} across \numExtbudgetDrugs{} drugs, from \numExtbudgetNarrowest{} candidates
+per drug to \numExtbudgetWidest{}. That alone carries the argument: an undeclared quantity that
+varies twelvefold between the arms of a comparison is part of what the comparison measures.
+
+Recall rises with it. Over the \numExtbudgetCountedcells{} cells where both the count and the
+published recall are available, the rank correlation is $\numExtbudgetRho$, and within a drug,
+where the reference set is fixed, it is positive for \numExtbudgetWithinpositive{} of
+\numExtbudgetWithinn{}. Shuffling emission among the arms of a drug, which preserves both
+marginals and breaks only that association, reproduces the correlation in fewer than one
+permutation in \numExtbudgetPermutations{}. The axis is counted from the deposited files and not
+reconstructed from recall, which matters: emitted candidates can also be recovered as hits over
+precision, and since hits are recall times the reference set, recall would then enter the axis by
+construction and the same correlation would arise with nothing behind it
 (Section~\ref{SI-sec:si-external}).
 
 It is not the whole story and this paper's argument does not need it to be. Ordering the arms by

@@ -1737,31 +1737,49 @@ benchmark nobody here ran.
 \citet{Gao_2026} evaluate \numExtbudgetArms{} predictors against human radiolabelled ADME data for
 \numExtbudgetDrugs{} drugs carrying \numExtbudgetReferences{} identified metabolites, and report a
 trade-off between coverage and balanced accuracy. Their supporting information prints recall and
-precision per drug per tool, and those two determine the quantity their design does not hold fixed.
-Recall is hits over the reference set and precision is hits over what was emitted, so the size of
-each reference set is the smallest denominator under which every tool's recall on that drug is a
-whole number of hits, and what a tool emitted is then its hits over its precision. The recovery is
-checked rather than assumed: their Table S2 lists Pamiparib's eight metabolites by name, and the
-recovery returns eight, or the artifact is not written.
+precision per drug per tool. Separately they deposit the prediction files themselves, so what each
+tool returned is a count rather than an inference.
 
-The resulting \numExtbudgetCells{} cells span a factor of \numExtbudgetRatio{} in output size,
-from \numExtbudgetNarrowest{} candidates per drug to \numExtbudgetWidest{}. Recall tracks it: the
-rank correlation of recall against log output size is $\numExtbudgetRho$ over the cells, and
-within a drug, where the reference set is fixed, it is positive in
-\numExtbudgetWithinpositive{} of \numExtbudgetWithinn{}. Unanimity within drugs is the stronger
-half, because a correlation pooled across drugs could be produced by drugs differing in difficulty
-rather than by arms differing in what they emit.
+\paragraph{What is counted.} Deduplicating each deposited file gives the number of distinct
+structures that tool offered for that drug. Averaged per tool the emission spans a factor of
+\numExtbudgetRatio{}, from \numExtbudgetNarrowest{} candidates to \numExtbudgetWidest{}. No model
+stands behind that number and no correlation is needed to read it: a quantity their design never
+declares varies twelvefold between the arms whose recall figures are then compared.
 
-What this does not establish is that output size is all there is. Ordering those arms by mean
-emission does not reproduce ordering them by mean recall: one arm emits fewer candidates than
-another and recovers more, so they differ in more than their budgets. The conclusion is the narrow
-one, and it is the conclusion this work reaches about its own comparison: a benchmark that leaves
-output size undeclared has an axis running through its results that its ordering partly measures,
-and the remedy is to declare that axis and sweep it rather than to correct for it afterwards.
+\paragraph{The association, and the null it is tested against.} Over the
+\numExtbudgetCountedcells{} cells carrying both a count and a published recall the rank correlation
+between recall and log emission is $\numExtbudgetRho$, positive within a drug in
+\numExtbudgetWithinpositive{} of \numExtbudgetWithinn{}. A sign is not a result, so it is tested:
+shuffling emission among the arms of a drug preserves how hard each drug is and how much each tool
+emits overall, and breaks only the association under test. In
+\numExtbudgetPermutations{} such shuffles the observed correlation is not reached.
 
-Nothing was re-run for this, no reference structure was needed and none was available: that
-benchmark publishes its reference metabolites as drawings, which is why this section checks the
-claim about evaluation and not this system's recall on those drugs.
+\paragraph{Why the axis is counted and not reconstructed.} Emission can also be recovered
+arithmetically. Precision is hits over what was emitted, so emitted is hits over precision, and
+hits are recall times the reference-set size, which is itself recoverable as the smallest
+denominator under which every tool's recall on a drug is a whole number of hits. That recovery
+works, and it is checked: their Table S2 lists Pamiparib's eight metabolites by name and the
+recovery returns eight. But the reconstructed axis is
+\[
+  \log(\text{emitted}) = \log(\text{recall}) + \log R - \log(\text{precision}),
+\]
+so recall enters it explicitly and positively, and correlating recall against it correlates recall
+partly with itself. On these numbers that reconstruction gives a rank correlation of
+$\numExtbudgetRhoreconstructed$, which a permutation of precision within a drug reproduces with
+$p = \numExtbudgetReconstructedp$: nothing. The reconstruction is kept here because it agrees with
+the count for three of the four tools it can be computed for, which is what certifies the
+reference-set recovery, and it is not used as evidence for anything.
+
+\paragraph{What this does not establish.} Not that output size is all there is. Ordering those arms
+by mean emission does not reproduce ordering them by mean recall: one arm emits fewer candidates
+than another and recovers more. The conclusion is the narrow one, and it is the conclusion this
+work reaches about its own comparison: a benchmark that leaves output size undeclared has an axis
+running through its results that its ordering partly measures, and the remedy is to declare that
+axis and sweep it rather than to correct for it afterwards.
+
+Nothing was re-run for this and no reference structure was needed. That benchmark publishes its
+reference metabolites as drawings, which is why this section checks the claim about evaluation and
+not this system's recall on those drugs.
 
 \section{Comparators}
 \label{sec:si-comparators}

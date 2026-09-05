@@ -47,6 +47,10 @@ NOT_OURS = {
     "artifacts/tier2/biotransformer/":
         "BioTransformer's distribution: its README requires permission to redistribute, which was "
         "not sought. Obtainable from its own project; paper2/split_manifest.json pins the digest.",
+    "artifacts/external/gao2026/":
+        "the prediction files Gao et al. deposited on Zenodo (DOI 10.5281/zenodo.17878495, "
+        "CC BY 4.0). Read to count what each tool emitted; not redistributed here, and the "
+        "producer records each file's digest so a reader can check the copy they fetch.",
     "artifacts/tier2/metapredictor_src/":
         "MetaPredictor's own source checkout, carrying no licence text this repository can point "
         "at. Obtainable from its own project.",
