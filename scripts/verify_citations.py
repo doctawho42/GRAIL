@@ -66,9 +66,22 @@ def _words(s: str) -> set:
     return set(_norm(s).split())
 
 
+# Both manuscripts, not one. This read only the first paper's sources for three revisions, so the
+# second paper's bibliography grew by five entries that nothing here had ever resolved: a checker
+# that covers half of what it is pointed at reports a clean run either way.
+SOURCES = ("paper/grail_iclr.tex", "paper/app/*.tex",
+           "paper2/grail_jcim.tex", "paper2/body.tex", "paper2/si.tex")
+
+
 def cited_keys() -> set:
     keys = set()
-    for f in [ROOT / "paper/grail_iclr.tex"] + sorted(ROOT.glob("paper/app/*.tex")):
+    files = []
+    for pat in SOURCES:
+        files += sorted(ROOT.glob(pat)) if "*" in pat else ([ROOT / pat] if (ROOT / pat).exists()
+                                                            else [])
+    if not files:
+        raise SystemExit("no manuscript source found to read citations from")
+    for f in files:
         for m in re.finditer(r"\\cite[a-z]*\*?(?:\[[^\]]*\])*\{([^}]*)\}", f.read_text()):
             keys |= {k.strip() for k in m.group(1).split(",") if k.strip()}
     return keys
@@ -105,10 +118,16 @@ def _split_fields(body: str) -> dict:
 
 
 def bib_entries() -> dict:
-    """Every entry of this paper's own bibliography, as {key: {field: value}}."""
+    """Every entry of both manuscripts' bibliographies, as {key: {field: value}}.
+
+    The second paper keeps its own file, and reading only the first paper's left ten of its keys
+    unresolvable for want of an entry rather than for want of a record: the checker was reporting
+    a clean run over half the citations it was pointed at.
+    """
     out = {}
-    for path in sorted(ROOT.glob("paper/*.bib")):
-        if path.name == TEMPLATE_BIB:
+    paths = sorted(ROOT.glob("paper/*.bib")) + sorted(ROOT.glob("paper2/*.bib"))
+    for path in paths:
+        if path.name == TEMPLATE_BIB or path.name.startswith("acs-"):
             continue
         text = path.read_text()
         # Brace matching, not a "\n}" anchor: an entry whose last field closes on the same line

@@ -28,11 +28,23 @@ fraction depends on two decisions made outside the model. The first is what coun
 since two chemical structures can denote the same molecule while differing in how a hydrogen is
 placed or how a ring is drawn. The second is how many candidates the system is allowed to return,
 since any system recovers more of the answer if permitted to list more guesses. Published
-predictors differ on both and report them inconsistently, and the difference is not small: the
-four compared here emit between \numEmittedBiotransformer{} and \numEmittedSygma{} candidates
+predictors differ on both and report them inconsistently, and the difference is not small: the ones
+compared here emit between \numEmittedBiotransformer{} and \numEmittedSygma{} candidates
 per substrate by default, so a recall figure quoted for one is not on the scale of a recall
 figure quoted for another. Independent evaluations of these tools report the same obstacle
 \citep{Boyce_2022, Scholz_2023, Gao_2026}.
+
+That a comparison can turn on an undeclared choice is not new, and two recent statements of it
+bound what this paper adds. \citet{Ash_2025} give a protocol for method comparison in small-molecule
+drug discovery, arguing that a difference should be shown practically significant rather than
+merely significant, and prescribing how a comparison ought to be set up. \citet{Ozcelik_2025} show
+what happens when it is not, in generative design: the size of the library and the choice of metric
+reorder the models. The gap between the two is where this work sits. A protocol tells an author
+what to declare; a demonstration on generative metrics does not transfer to recall against an
+incomplete annotation, where the axis that reorders methods is how many candidates each may emit
+and no analogue of it exists in distributional metrics. What is offered here is the measurement in
+that setting: the axes swept, the whole grid printed, and a bound on what any bank mined from this
+corpus could reach.
 
 This work addresses that. We present GRAIL (Graph-scored Rule Application with Inspectable Localisation), a metabolite
 structure predictor built from a bank of reaction templates, a learned model that selects which templates to apply, and a learned model
@@ -773,8 +785,12 @@ supported almost any claim about which system is better.
 \label{sec:site}
 
 Every prediction names the transformation rule that produced it and the site at which it fired,
-which lets a candidate be rejected on mechanistic grounds instead of on a score. That the named
-site is the site that changed is a claim, and it is measured. On the interactive arm, whose rule
+which lets a candidate be rejected on mechanistic grounds instead of on a score. Predicting the
+site alone is a task with its own literature and its own tools \citep{Sicho_2019,
+Jacob_2025_uncertainty}, and that literature has recently had to confront how its own labels are
+derived \citep{Jacob_2025_autosom}; the claim here is narrower and is about consistency rather than
+about site prediction, namely that the site this system names is the site that changed. It is
+measured. On the interactive arm, whose rule
 budget of \numSiteRulebudget{} the audit records, of \numSiteScored{} correctly predicted
 metabolites the reported site touches the atoms that actually differ from the substrate in
 \numSiteTouchingPct{}, against \numSiteConnectednullPct{} for a connected fragment of the same
