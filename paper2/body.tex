@@ -268,34 +268,27 @@ still climbing at \numRareSlope{} templates per thousand further pairs
 
 \subsection{Rank fusion}
 
-Both learned stages produce an opinion about each candidate. The obvious way to combine two such
-scores is their product, and a product is scale-sensitive: if one scorer occupies a narrow range
-and the other a wide one, the wide one determines the order.
-
-The deployed combination is reciprocal rank fusion \citep{cormack2009},
+Both learned stages produce an opinion about each candidate, and their product is scale-sensitive:
+if one scorer occupies a narrow range and the other a wide one, the wide one decides the order. The
+deployed combination is reciprocal rank fusion \citep{cormack2009},
 \begin{equation}
 \mathrm{RRF}(c) = \sum_{i} \frac{1}{K + r_i(c)}, \qquad K = 60,
 \end{equation}
 where $r_i(c)$ is the rank of $c$ under scorer $i$. Only positions enter, so the two opinions
 contribute equally whatever their scales. $K = \numFusionkDeployed$ is the value the method was
-published with \citep{cormack2009}, and it is swept rather than merely disclosed. On the
-\numFusionkSubstrates{} substrates of the comparison set, every constant of
-\numFusionkFlatfrom{} or more is indistinguishable from it at budgets of 5, 15 and 50, and the
-null is a bound rather than an absence: no such constant differs from the deployed value by more
-than $\numFusionkBandOneFive$ at fifteen, or $\numFusionkBandFive$, $\numFusionkBandThreeZero$ and
-$\numFusionkBandFiveZero$ at the other three. At a budget of 30 it is not a null:
+published with, and it is swept rather than merely disclosed. Every constant of
+\numFusionkFlatfrom{} or more is indistinguishable from it at budgets of 5, 15 and 50, and the null
+is stated as the bound it is: no such constant differs from the deployed value by more than
+$\numFusionkBandOneFive$ at fifteen. At a budget of 30 it is not a null, where
 $K=\numFusionkBreakconstant$ falls $\numFusionkBreakgap$
-$[\numFusionkBreaklo, \numFusionkBreakhi]$ short of the deployed value, so flatness holds at three
-of the four budgets and not at all of them (Section~\ref{SI-sec:si-knobs}).
+$[\numFusionkBreaklo, \numFusionkBreakhi]$ short, so flatness holds at three of the four budgets
+and not at all of them (Section~\ref{SI-sec:si-knobs}).
 
-The change was registered as prediction P1, with a threshold of $+\numHSevenThreshold$ fixed
-before it was checked, and evaluated on a validation draw where the fusion had not been selected:
-$+\numHSevenDiff$ of recall, 95\% CI $[+\numHSevenLo, +\numHSevenHi]$. On the capped validation
-pool the deployed system ranks, the same contrast is $+\numHSevenDeployed$
-(Table~\ref{SI-tab:si-ranking}): the cap and the fusion recover overlapping ground, so applying
-both gains less than the sum of the two. The Supporting Information gives the two figures on both
-populations with their intervals, and the cost of having selected the fusion rule on one of
-them.
+The change was registered as prediction P1, threshold $+\numHSevenThreshold$ fixed before it was
+checked, and evaluated on a validation draw where the fusion had not been selected:
+$+\numHSevenDiff$ $[+\numHSevenLo, +\numHSevenHi]$. On the capped pool the deployed system ranks
+the same contrast is $+\numHSevenDeployed$, because the cap and the fusion recover overlapping
+ground (Table~\ref{SI-tab:si-ranking}).
 
 \subsection{Pool cap}
 
@@ -305,15 +298,13 @@ is built:
 \hat{C}(s) = \operatorname*{arg\,top}_{c \in C(s)}{}^{\,\numHNineCap} \; p(c),
 \end{equation}
 where $C(s)$ is everything the applied rules enumerate. A cap before a fusion is not a filter: the
-fusion ranks over whatever survives, so removing a candidate changes the rank every other candidate
-receives from both orderings. That is why truncation can raise recall rather than only bound it.
-Registered as prediction P2 with a threshold of
-$+\numHNineThreshold$; measured $+\numHNineDiff$, 95\% CI $[+\numHNineLo, +\numHNineHi]$, mean
-pool \numHNinePoolBefore{} to \numHNinePoolAfter{}. The cap was registered to gain and it gains:
-it removes a few candidates that were a substrate's only correct answer and many more that were
-occupying the middle of the list. The value was fixed by a rule rather than by a search. The rule is
-that the cap must be at least twice the widest budget reported, so that the widest column is never
-just the whole pool; 100 is the smallest round number that satisfies it.
+fusion ranks over whatever survives, so removing a candidate changes the rank every other receives,
+which is why truncation can raise recall rather than only bound it. Registered as prediction P2 with
+a threshold of $+\numHNineThreshold$ and measured $+\numHNineDiff$
+$[+\numHNineLo, +\numHNineHi]$, mean pool \numHNinePoolBefore{} to \numHNinePoolAfter{}. The
+value was fixed by a rule rather than by a search: the cap must be at least twice the widest budget
+reported, so the widest column is never just the whole pool, and 100 is the smallest round number
+that satisfies it.
 
 \subsection{Rule budget and two operating modes}
 
@@ -352,12 +343,7 @@ Under the product combination the system emitted candidates scoring within $\alp
 structural: the worst candidate scores $\numEmitFusionmedian$ of the best under fusion against
 $\numEmitProductmedian$ under the product, because a reciprocal-rank sum is a rank statistic
 without scale. At that $\alpha$ the rule admits $\numEmitByfusion$ candidates from a pool of
-$\numEmitPool$ on the comparison set, truncating nothing. Several counts of the interactive arm's
-output appear in this paper and they are different quantities on different populations; each is
-named where it is used, and Table~\ref{SI-tab:si-counts} lists them together with the population
-and the stage each belongs to.
-
-The deployed emission is therefore $\hat{C}(s)$ itself, ordered by fusion and truncated by no
+$\numEmitPool$ on the comparison set, truncating nothing. The deployed emission is therefore $\hat{C}(s)$ itself, ordered by fusion and truncated by no
 threshold, so $|\hat{Y}_s| = |\hat{C}(s)|$. For the interactive mode that length is set by the
 rule budget and the substrate's chemistry, and its mean of \numEmittedTrained{} on the comparison
 set sits well below any cap. That figure is not the one Table~\ref{tab:modes} prints, which is
@@ -673,77 +659,39 @@ against the interactive arm's \numEmittedTrained{}, and at $k=15$
 runs toward the arm emitting less, which is ours, so it does not explain a gap in the other
 direction.
 
-\subsection{What each stage contributes to the order}
+\subsection{What the ranking is worth, and what did not work}
 
-The two learned scorers are combined, and neither has been reported alone. Re-ranking one pool
-five ways, with the pool, the matching rule and the budget fixed, separates the contribution of
-each from the contribution of the form in which they are combined. No model runs: the pools carry
-both component scores for every candidate.
+Re-ranking one pool several ways, with the pool, the matching rule and the budget fixed, separates
+what each learned stage contributes from what the form of their combination contributes; no model
+runs, because the pools carry both component scores. At $k=15$ the deployed fusion separates from
+the generator's ordering alone, from the filter's alone and from their product, by
+$+\numRankCmpVsgenerator$, $+\numRankCmpVsfilter$ and $+\numRankCmpVsproduct$. It also separates
+from a baseline this literature does not report and every learned ranker over (substrate, candidate)
+pairs competes with whether or not it is reported: similarity to the substrate, which needs no
+training and no labels, and which the fusion beats by $+\numSimCmpGapOneFive$
+$[+\numSimCmpLoOneFive, +\numSimCmpHiOneFive]$ at every budget on both populations. The
+substrate-specific part of the rule choice is worth less than either: against the same number of
+applicable rules picked by training frequency it gains $+\numSelVspriorApplicable$
+$[+\numSelVspriorApplicablelo, +\numSelVspriorApplicablehi]$, small at every budget and separating
+at all of them, and it is reported as that rather than as the stage's justification
+(Section~\ref{SI-sec:si-ablations}).
 
-At $k=15$ on the comparison set the fusion reaches \numRankCmpFusionOneFive{}, the generator's
-score alone \numRankCmpGeneratorOneFive{}, the filter's alone \numRankCmpFilterOneFive{}, their
-product \numRankCmpProductOneFive{} and a seeded permutation \numRankCmpRandomOneFive{}. The
-fusion separates from every one of them: $+\numRankCmpVsgenerator$
-$[+\numRankCmpVsgeneratorlo, +\numRankCmpVsgeneratorhi]$ over the generator alone,
-$+\numRankCmpVsfilter$ $[+\numRankCmpVsfilterlo, +\numRankCmpVsfilterhi]$ over the filter alone,
-and $+\numRankCmpVsproduct$ $[+\numRankCmpVsproductlo, +\numRankCmpVsproducthi]$ over their
-product. The validation draw ranks the arms in the same order by point estimate, with one
-difference noted below.
+Two registered mechanisms failed and are reported as failures. Emitting whole groups of candidates
+as blocks cost $\numHEightDiff$ against a registered gain of $+\numHEightThreshold$ (P6), and using
+the same group signal as a gate before the fusion cost $\numHOneFourDiff$ against
+$+\numHOneFourThreshold$ (P7). The second is closed by an oracle rather than by model quality: even
+a perfect group ordering through that gate is worse than the generator cap it replaces. The signal
+helps only where it adjusts an order that already exists, which is what P5 does and why P5 is a
+measurement rather than a confirmation (Section~\ref{SI-sec:si-oracle}).
 
-Two qualifications belong with that. Which single scorer is better does not transfer: on the
-comparison set the generator's ordering beats the filter's, on validation the two do not separate.
-And the fusion's advantage over the product is a property of depth rather than of the head: at
-$k=1$ the difference is $\numRankCmpVsproductkOne$ on the comparison set and
-$+\numRankValVsproductkOne$ on validation, and the interval covers zero on both. Neither stage is sufficient alone, and the gain this paper attributes to the form of
-the combination is not a property of one population alone.
-
-\subsection{What the learned rule choice contributes}
-
-The rule-budget prediction compared \numSelBudget{} templates against the whole bank, which asks
-about size. What the choice buys is a different question, and it is answered by picking
-\numSelBudget{} rules three other ways with the application, the standardisation, the filter and
-the fusion identical downstream. On average \numSelApplicable{} of the \numBankRules{} templates
-match a given substrate, so the choice is made within a large applicable set rather than over the bank.
-
-The comparison that decides is against the \numSelBudget{} applicable rules with the highest
-training frequency. That arm uses the same applicability filter and no learning, and it comes first
-because the two alternatives are weaker tests. Drawing \numSelBudget{} rules from the whole bank
-gains the learned choice $+\numSelVsrandom$, but only because most randomly chosen templates do
-not fire at all; drawing them from the applicable set gains $+\numSelVsrandomApplicable$
-$[+\numSelVsrandomApplicablelo, +\numSelVsrandomApplicablehi]$ against an arm returning
-\numSelRandomApplicablePool{} candidates to the learned arm's \numSelLearnedPool{}. Against the
-frequency table the learned choice gains $+\numSelVspriorApplicable$ of micro recall at $k=15$,
-$[+\numSelVspriorApplicablelo, +\numSelVspriorApplicablehi]$, on a base of
-\numSelPriorApplicableOneFive{}. The gain is small at every budget and its interval excludes zero
-at all \numSelVspriorSeparatingWord{} of them, from $+\numSelVspriorKOne$
-$[+\numSelVspriorKOneLo, +\numSelVspriorKOneHi]$ at $k=1$ to the figure above at $k=15$. The
-substrate-specific part of stage one is therefore worth a small amount over a frequency table
-restricted to the same rules, and we report it as such rather than as the stage's justification.
-
-\subsection{A ranking baseline that needs no training}
-
-Metabolism usually leaves the scaffold recognisable. Many metabolites differ from their parent
-by an added oxygen, a cleaved bond or a conjugate, so they stay close to what they came from, and
-closeness is a fingerprint away. The premise is not universal. A cleavage that removes most of
-the molecule, or a conjugate that doubles its heavy-atom count, moves a metabolite a long way from
-its parent. It holds often enough, though, that similarity to the substrate is a real baseline. Any learned ranker over (substrate, candidate) pairs competes against that
-baseline whether or not the baseline is reported, and this literature does not report it.
-
-Re-ranking one pool four ways holds the pool, the matching rule and the budget fixed so that only
-the order varies. Against Tanimoto similarity to the substrate, which needs no training and no
-labels, the deployed fusion gains $+\numSimCmpGapOneFive$ of micro recall at $k=15$ on the
-comparison set, 95\% CI $[+\numSimCmpLoOneFive, +\numSimCmpHiOneFive]$, and
-$+\numSimValGapOneFive$ on the validation draw, $[+\numSimValLoOneFive, +\numSimValHiOneFive]$.
-The interval excludes zero at every budget on both populations. A seeded permutation of the same
-pool reaches \numSimCmpRandomOneFive{} against the fusion's \numSimCmpFusionOneFive{}, so the
-pool alone is not what produces the result.
-
-Asking the same question of the product ordering this paper replaced gives a different answer,
-$+\numSimOldGap$ with the interval covering zero, and the reason is a property of that experiment
-rather than of the two rankings. It ran on a pool whose median size is \numSimOldMedianPool{}
-candidates, where \numSimOldPoolUnderBudget{} of \numSimOldN{} substrates hold no more
-candidates than the budget admits. A ranking comparison run at a budget wider than the pool has
-nothing to order and cannot separate anything.
+Every figure here comes from one trained checkpoint, so the intervals quantify the population and
+not the training. Retraining both stages under \numSpreadSeedsWord{} seeds at the configuration
+these tables report gives the training noise, \numSpreadInteractiveSd{} for the interactive arm at
+a budget of fifteen and \numSpreadExhaustiveSd{} for the exhaustive one. Read against the arm whose
+knob each is, the rank fusion of P1 is \numSpreadPOneInsd{} times that spread, the pool cap of P2
+\numSpreadPTwoInsd{} times it and the rule budget of P3 \numSpreadPThreeInsd{} times it. The last
+runs this work's way and is bounded where it is given: the effect is measured on the validation draw
+and the spread on the comparison set, so the ratio is indicative and not a test.
 
 \subsection{How much of the verdict is the criterion}
 
@@ -873,53 +821,6 @@ afterwards. Section~\ref{sec:limitations} states which of the seven confirmation
 reading leaves undecided.
 
 \input{table_hypotheses}
-
-\subsection{Group ranking, and two mechanisms that failed}
-
-Candidate metabolites of one substrate fall into groups, and an ordering that knew which group
-contained a reference would gain over the ordering it is measured against. How much depends
-entirely on how the groups are drawn, and most of it is not information. Grouping by molecular
-formula gains $+\numOracleHeadroomdeployed$
-$[+\numOracleHeadroomdeployedlo, +\numOracleHeadroomdeployedhi]$ on the deployed configuration,
-but a random partition with the same group sizes on every substrate gains
-$+\numOracleHeadroomrandom$, and against that control the formula grouping is worth
-$\numOracleFormulavsrandom$ $[\numOracleFormulavsrandomlo, +\numOracleFormulavsrandomhi]$, an
-interval covering zero: the gain is granularity and not chemistry. Grouping by transformation type
-gains $+\numOracleHeadroomtype$ and beats the matched control by $+\numOracleTypevsrandom$
-$[+\numOracleTypevsrandomlo, +\numOracleTypevsrandomhi]$, which is the headroom that survives a
-control and the only one worth chasing (Section~\ref{SI-sec:si-oracle}). Two ways of using that signal were registered and both failed.
-Emitting whole groups as blocks, scored by a listwise model, cost $\numHEightDiff$ against a
-registered gain of $+\numHEightThreshold$ (P6); using the group signal as a gate before the
-fusion cost $\numHOneFourDiff$ against $+\numHOneFourThreshold$ (P7). The second failure is
-closed by an oracle rather than by model quality: even a perfect group ordering through the gate
-is worse than the generator cap it replaces, because the median substrate has one informative
-group and the gate must then spend its budget on groups its signal cannot separate.
-
-What did work was the same signal used weakly. Entering the untrained group score as a third
-ranking in the fusion gained $+\numHOneTwoVal$ on validation and $+\numHOneTwoDiff$, 95\% CI
-$[+\numHOneTwoLo, +\numHOneTwoHi]$, on the comparison set (P5). The validation figure is the one
-to read: P5's threshold was fixed in advance but its population was not, so the comparison-set
-number is adjudicated where this paper's own rule says a choice should not be. The three results agree on one thing. The group
-signal helps when it adjusts an order that already exists, and fails when it is asked to replace
-one. The decomposition of both failures, and the reason
-the oracle figure is not an upper bound on what the signal can give, are in the Supporting
-Information.
-
-\subsection{What retraining moves}
-
-Every recall figure here comes from one trained checkpoint, and the intervals quantify the
-population rather than the training. Retraining both learned stages under \numSpreadSeedsWord{}
-seeds at the configuration these tables report gives the size of the training noise:
-\numSpreadInteractiveSd{} for the interactive arm at a budget of fifteen and
-\numSpreadExhaustiveSd{} for the exhaustive one. The registered effects read against the arm whose
-knob each is: the rank fusion of P1 is \numSpreadPOneInsd{} times the interactive arm's spread, the
-pool cap of P2 \numSpreadPTwoInsd{} times it, and the rule budget of P3
-\numSpreadPThreeInsd{} times it. That last is the reading that runs this work's way and is
-bounded where it is given: the effect is measured on the validation draw and the spread on the
-comparison set, so the ratio is indicative and not a test, and against the exhaustive arm's spread
-the same effect would sit inside the noise. An earlier three-seed study at a superseded operating
-point had put it inside the noise outright; that study, and why its level does not transfer, are in
-the Supporting Information.
 
 \subsection{Runtime}
 
