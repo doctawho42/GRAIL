@@ -46,6 +46,13 @@ RECORD = ROOT / "results" / "released_bank.json"
 # The one file of BioTransformer's that this repository still holds. The other two contribute two
 # templates and nothing, and are named in the record so their absence is stated rather than implied.
 BT_CORE = ROOT / "grail_metabolism" / "resources" / "external" / "bt_database_metabolicReactions.json"
+# The environmental-microbial file, which is the one under CC BY-NC-SA and therefore the one no GPL
+# release can carry at all. It is not held in resources/, but BioTransformer's own distribution in
+# this tree contains it, so the templates it contributes can be identified rather than declared.
+BT_ENVMICRO = ROOT / "artifacts" / "tier2" / "biotransformer" / "database" / "ENVMICRO" / \
+    "metabolicReactions.json"
+BT_STANDARD = ROOT / "artifacts" / "tier2" / "biotransformer" / "database" / \
+    "standardizationReactions.json"
 
 
 def smirks(path: Path) -> set:
@@ -80,7 +87,23 @@ def main() -> int:
         return 2
 
     full = [l.rstrip("\n") for l in FULL.read_text().split("\n") if l.strip()]
-    borrowed = smirks(BT_CORE)
+    # Every BioTransformer file this tree can read, not just the core one. The supporting
+    # information had said the environmental-microbial templates "remain in the released bank and
+    # are declared rather than removed", which was a statement about a file nobody had opened. Both
+    # of them turn out to sit in the core set as well, so the core removal already took them; the
+    # union is computed rather than assumed so that stays true if either file changes.
+    per_file = {}
+    borrowed = set()
+    for label, path in (("core", BT_CORE), ("ENVMICRO", BT_ENVMICRO),
+                        ("standardisation", BT_STANDARD)):
+        if not path.exists():
+            per_file[label] = {"present": False, "templates_in_the_bank": None}
+            continue
+        here = smirks(path)
+        hit = {t.strip() for t in full if t.strip() in here}
+        per_file[label] = {"present": True, "templates_in_the_bank": len(hit),
+                           "of_them_only_in_this_file": len(hit - borrowed)}
+        borrowed |= here
     kept = [t for t in full if t.strip() not in borrowed]
     removed = len(full) - len(kept)
 
@@ -99,14 +122,15 @@ def main() -> int:
         "released_bank": {"path": str(RELEASED.relative_to(ROOT)), "templates": len(kept),
                           "sha256_16": hashlib.sha256(text.encode()).hexdigest()[:16]},
         "removed": removed,
+        "per_published_file": per_file,
+        "the_noncommercial_file": (
+            "BioTransformer's environmental-microbial set is CC BY-NC-SA 4.0, which no GPL release "
+            "can carry. Its templates in this bank are identified here rather than declared, and "
+            "all of them are also in the core set, so the core removal already takes them: nothing "
+            "under that licence reaches the released bank."),
         "cost": "zero references on the evaluated test set; every reference these templates reach "
                 "is reached by another template in the bank, priced in "
                 "results/licence_removal_cost__clean_test.json",
-        "not_identifiable_here": "BioTransformer's environmental-microbial file contributes two "
-                                 "further templates and its standardisation file none; the first "
-                                 "is CC BY-NC-SA 4.0 and neither is held here, so those two "
-                                 "templates remain in the released bank and are declared rather "
-                                 "than removed",
         "how_to_rebuild_the_measured_bank": "obtain BioTransformer's reaction database from its own "
                                             "project and re-add every template of it that this "
                                             "bank contained; the measured bank's digest above "

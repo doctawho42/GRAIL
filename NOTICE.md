@@ -19,7 +19,7 @@ Three decisions were taken and each is stated with what it cost:
 |---|---|---|
 | GPLv3 for the code and the bank | SyGMa's templates are GPL and the released bank still contains them, so a permissive licence was never available | none |
 | stop tracking four of the five third-party rule files | one is CC BY-NC-SA and no GPL release can carry it; two carry no licence text held here; one is redistributable but contributes no template the bank uses | none: the files stay obtainable from their own projects |
-| **release a bank without BioTransformer's templates** | its README requires explicit permission for redistribution, which was not sought, and one of its files is CC BY-NC-SA, which no GPL release can carry; neither is settleable here | **zero references** on the evaluated test set, measured in `results/licence_removal_cost__clean_test.json` |
+| **release a bank without BioTransformer's templates** | its README requires explicit permission for redistribution, which was not sought. The same removal also settles the CC BY-NC-SA file: both of the templates it contributes are in the core set, so neither reaches the released bank | **zero references** on the evaluated test set, measured in `results/licence_removal_cost__clean_test.json` |
 | do not distribute the corpus | its four sources' terms do not combine and the assembly recorded no per-record provenance, so no subset can be shown free of either | stated below, and it is not zero |
 
 ## The rule bank

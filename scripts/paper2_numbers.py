@@ -834,6 +834,13 @@ def build():
     _rb = art("released_bank.json")
     n["relbank.measured"] = _rb["measured_bank"]["templates"]
     n["relbank.released"] = _rb["released_bank"]["templates"]
+    # The environmental-microbial file, whose licence is the one no GPL release can carry. Its
+    # templates are identified rather than declared: the paper had said they could not be, on the
+    # strength of a file nobody had opened, and all of them are in the core set the release already
+    # removes.
+    _pf = _rb["per_published_file"]
+    n["relbank.envmicro"] = _pf["ENVMICRO"]["templates_in_the_bank"]
+    n["relbank.envmicroonly"] = _pf["ENVMICRO"]["of_them_only_in_this_file"]
     n["relbank.removed"] = _rb["removed"]
 
     n["popdef.btinside"] = pop["emission"]["comparison_set"]["biotransformer"]
