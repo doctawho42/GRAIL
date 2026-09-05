@@ -359,8 +359,11 @@ and the stage each belongs to.
 
 The deployed emission is therefore $\hat{C}(s)$ itself, ordered by fusion and truncated by no
 threshold, so $|\hat{Y}_s| = |\hat{C}(s)|$. For the interactive mode that length is set by the
-rule budget and the substrate's chemistry, and its mean of \numEmittedTrained{} sits well below
-any cap. The exhaustive mode differs: its pool is capped at 100 by the cap prediction P2 registers, and
+rule budget and the substrate's chemistry, and its mean of \numEmittedTrained{} on the comparison
+set sits well below any cap. That figure is not the one Table~\ref{tab:modes} prints, which is
+measured on the validation draw; every candidate count in this paper is listed with the stage and
+the population it belongs to in Table~\ref{SI-tab:si-counts}, because the same words name
+different quantities at different points of the pipeline. The exhaustive mode differs: its pool is capped at 100 by the cap prediction P2 registers, and
 its mean output of \numEmittedBank{} is close enough to that cap that the cap sets its length on
 most substrates. That cap is a parameter of this system, it is declared, and it applies to that
 arm and not to the comparators. Registered as prediction P4 with a criterion of zero lost cells
@@ -1235,7 +1238,8 @@ chemistry, which is a statement about the corpus and about no particular bank.
 Applying one template once is not the same as one enzymatic step, and two instruments measure the
 gap. The registered one counts core-incident edits and calls a template composite at
 \numCompositeThreshold{} or more, above every single enzymatic turnover; it flags
-\numCompositeEdits{} of \numCompositeScored{} mined templates, \numCompositeEditsharePct{}, and
+\numCompositeEdits{} of the \numCompositeScored{} mined templates it can score, one short of the
+\numMinedRules{} in the bank because one does not parse for this purpose, \numCompositeEditsharePct{}, and
 clears the bar registered prediction P10 set at \numCompositeBarPct{} before either count existed.
 The other counts reaction-centre loci and flags \numCompositeLocisharePct{}, but it errs in both
 directions and neither error is measured, so its share is neither a floor nor a bound; the two agree

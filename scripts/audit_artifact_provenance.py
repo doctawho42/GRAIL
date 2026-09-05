@@ -164,6 +164,8 @@ PINNED = {
     "results/gloryx_service_preds.json": f"{TE}/gloryx_via_service.py",
     # this work's thesis read off an independent benchmark's own published tables
     "results/external_budget_confound.json": f"{TE}/external_budget_confound.py",
+    # the compounds the manuscript names, as structures, for the submission checklist
+    "results/worked_example_structures.json": f"{TE}/worked_example_structures.py",
     # the comparator's own emission knob turned up, which the manuscript prints both rows of
     "results/metapredictor_beam_sweep.json": f"{TE}/metapredictor_beam_sweep.py",
     # the comparison with every arm that can be re-run on one drawing

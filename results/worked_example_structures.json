@@ -1,0 +1,55 @@
+{
+ "provenance": {
+  "script": "worked_example_structures.py",
+  "script_path": "scripts/typed_edit/worked_example_structures.py",
+  "source_sha256": "e1eacaf8f268b4a071b3a087b9d9c05a1982ab07d276202e3f45047658010316",
+  "git_commit": "7f5a3858c5df6baf8db8c37cda8217e5e9d6abc9",
+  "git_dirty": true
+ },
+ "inputs": [
+  {
+   "path": "results/case_study_exhaustive.json",
+   "exists": true,
+   "sha256_16": "949b44e11b49577a",
+   "bytes": 41671
+  }
+ ],
+ "what_this_is": "the compounds the manuscript represents individually, as SMILES, for the submission checklist that asks for them",
+ "why_only_these": "every other compound in this paper is a member of a population, and those are released as matching descriptors rather than as structures for the licence reason the availability section states",
+ "substrate": {
+  "smiles": "N=c1ccn(C2OC(CO)C(O)C2(F)F)c(O)n1",
+  "as_the_corpus_stores_it": "N=c1ccn(C2OC(CO)C(O)C2(F)F)c(O)n1",
+  "name": "gemcitabine"
+ },
+ "annotated_metabolites": [
+  {
+   "rank": 3,
+   "smiles": "Nc1ccn(C2OC(COP(=O)(O)O)C(O)C2(F)F)c(=O)n1",
+   "inchikey": "KNTREFQOVSMROS-UHFFFAOYSA-N",
+   "rule_id": 2198,
+   "rule_source": "mined"
+  },
+  {
+   "rank": 16,
+   "smiles": "Nc1ccn(C2OC(COP(=O)(O)OP(=O)(O)OP(=O)(O)O)C(O)C2(F)F)c(=O)n1",
+   "inchikey": "YMOXEIOKAJSRQX-UHFFFAOYSA-N",
+   "rule_id": 1745,
+   "rule_source": "mined"
+  },
+  {
+   "rank": 18,
+   "smiles": "O=c1ccn(C2OC(CO)C(O)C2(F)F)c(=O)[nH]1",
+   "inchikey": "FIRDBEQIJQERSE-UHFFFAOYSA-N",
+   "rule_id": 4913,
+   "rule_source": "mined"
+  },
+  {
+   "rank": 20,
+   "smiles": "Nc1ccn(C2OC(COP(=O)(O)OP(=O)(O)O)C(O)C2(F)F)c(=O)n1",
+   "inchikey": "FRQISCZGNNXEMD-UHFFFAOYSA-N",
+   "rule_id": 2139,
+   "rule_source": "mined"
+  }
+ ],
+ "note": "the metabolite structures are the candidates at the ranks the case-study artifact records as reference hits, so they are the run's own output and not a transcription"
+}

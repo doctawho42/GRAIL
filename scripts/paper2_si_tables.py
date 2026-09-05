@@ -287,6 +287,41 @@ def si_applicability():
             "\\label{tab:si-applicability}\n\\end{table}\n")
 
 
+def si_worked_structures():
+    """The compounds the manuscript names, as SMILES.
+
+    The submission checklist asks for structures for the compounds a manuscript represents, and
+    Table S5 gives the comparison set as tautomer-aware keys, which are hashes. These five are the
+    only compounds the paper represents individually.
+    """
+    d = art("worked_example_structures.json")
+    # A SMILES offers a paragraph no break points, so breaks are allowed at bond symbols and the
+    # column is set ragged; without that the triphosphate ran ten points past the measure.
+    def _breakable(smi):
+        for ch in ("(", ")", "="):
+            smi = smi.replace(ch, ch + "\\allowbreak{}")
+        return smi
+
+    rows = [f"gemcitabine, the substrate & --- & "
+            f"\\texttt{{{_breakable(d['substrate']['smiles'])}}} \\\\"]
+    for h in d["annotated_metabolites"]:
+        rows.append(f"annotated metabolite & {h['rank']} & "
+                    f"\\texttt{{{_breakable(h['smiles'])}}} \\\\")
+    return ("\\begin{table}[h]\n\\centering\\scriptsize\n"
+            "\\begin{tabular}{@{}llp{0.50\\textwidth}@{}}\n\\toprule\n"
+            "compound & rank & SMILES \\\\\n\\midrule\n"
+            + "\n".join(rows)
+            + "\n\\bottomrule\n\\end{tabular}\n"
+            "\\caption{The compounds the manuscript represents individually, as structures. The "
+            "substrate is drawn as the corpus stores it, which is the drawing "
+            "Section~\\ref{sec:si-presentation} is about. Each metabolite is the candidate at the rank "
+            "the worked example records as a reference hit, so these are the run's own output "
+            "rather than a transcription. Every other compound in this paper is a member of a "
+            "population, and those populations are released as the matching descriptors the "
+            "criteria are decided by.}\n"
+            "\\label{tab:si-worked-structures}\n\\end{table}\n")
+
+
 def si_population_list():
     """The comparison set itself, so the Supporting Information names its own population.
 
@@ -1273,6 +1308,7 @@ def generators():
                      ("si_table_fusion_k", si_fusion_k),
                      ("si_table_applicability", si_applicability),
                      ("si_table_population_list", si_population_list),
+                     ("si_table_worked_structures", si_worked_structures),
                      ("si_table_equalised", si_drawing_equalised),
                      ("table_criterion", si_criterion_sweep))
 
