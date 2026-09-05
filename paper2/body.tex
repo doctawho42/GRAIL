@@ -1189,6 +1189,17 @@ systematically mined as a source of rules. Whether the same bound binds a predic
 applies no templates at all is not measured here; what is measured is that the chemistry is absent
 from the corpus, which is a property of the training data rather than of the method reading it.
 
+It is worth saying plainly what that licenses, because the corpus it is a property of has two
+defects this paper also reports. Its assembly cannot be reconstructed, and the one source held on
+disk shows the selection was not blind to chemistry. So the bound says: extending the bank by
+mining \emph{this} corpus harder cannot close the shortfall, because the chemistry is not in it. It
+does not say what fraction of human metabolism is of a type no corpus contains, and it cannot,
+because that would need a corpus whose assembly is recoverable and whose selection is documented.
+What makes the narrower statement worth having anyway is that this corpus is assembled from the
+four sources this field trains on, so a bank mined from any of them inherits the same absence
+unless the assembly is changed. The claim is about a training corpus and about the practice of
+mining it, not about metabolism.
+
 \section{Conclusions}
 \label{sec:conclusions}
 
@@ -1348,7 +1359,7 @@ The Supporting Information is available free of charge on the ACS Publications w
 \texttt{grail\_si.pdf}: the corpus and what kind of molecules these are, with the splits and their leakage audit; the five matching criteria and the comparison's sensitivity to the choice among them; the parent-drop convention measured per arm; every candidate count the paper prints and what each one is; precision at every budget; every comparison difference with its paired interval, at matched list length and under the other aggregation; how the substrate is drawn, and the drawing's effect where the drawing changes anything; the rule bank, its mining, the provenance of each collection and how much of it is a published rule set verbatim; what the rule budget buys, and two parameters of the ranking, both swept; the architecture, training and every setting of both learned stages; whether the site a prediction names is the site that changed; what each method recovers split by transformation class; whether the missing chemistry is the corpus's or the bank's, and whether template discovery has saturated; how much of the annotation is one enzymatic step; the sixteen registered predictions including the six not reported here; group ranking and its oracle, and when a ranking comparison can measure anything; the stage ablations; the choice of evaluation population; the worked example on both drawings; runtime methodology; comparator versions and digests; the evaluation claim checked against an independent benchmark; and the provenance and reproduction procedure.
 \end{suppinfo}
 
-\section{Data and software availability}
+\section{Data and Software Availability}
 
 Source code, the deployed generator and filter checkpoints, the released rule bank, the split
 manifest, the annotated references every recall figure in this paper is measured against, the
