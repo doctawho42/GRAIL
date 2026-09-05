@@ -2,13 +2,13 @@
  "config": {
   "script": "verify_citations.py",
   "note": "Each cited key resolved against Crossref by DOI, against arXiv by identifier, or searched for by title. A title search is recorded as matched-by-title and never as verified: a search returning something is not evidence it is the right something. Whether a work supports what the manuscript attributes to it is a reading and is not established here; the entries carrying that were read by hand and are listed in the previous record's source field.",
-  "seconds": 145.5
+  "seconds": 129.6
  },
  "counts": {
   "matched-by-title": 14,
-  "verified": 46
+  "verified": 48
  },
- "n_cited": 60,
+ "n_cited": 62,
  "prior_source": "",
  "citations": [
   {
@@ -121,10 +121,20 @@
               "venue": "",
               "note": "year: entry says 1951, registry says 2017 (resolved by title; likely a different edition or printing)",
               "hand_checked": {
-               "status": "unresolved",
+               "status": "matched-by-title",
                "how": "crossref-title-search",
-               "title": "Social Choice and Individual Values",
-               "note": "no registry record found; not guessed"
+               "doi": "10.12987/9780300186987",
+               "registry_title": "Social Choice and Individual Values",
+               "registry_first_author": "Arrow",
+               "registry_year": 2017,
+               "venue": "",
+               "note": "year: entry says 1951, registry says 2017 (resolved by title; likely a different edition or printing)",
+               "hand_checked": {
+                "status": "unresolved",
+                "how": "crossref-title-search",
+                "title": "Social Choice and Individual Values",
+                "note": "no registry record found; not guessed"
+               }
               }
              }
             }
@@ -156,9 +166,18 @@
     "registry_year": 2025,
     "venue": "Journal of Chemical Information and Modeling",
     "hand_checked": {
-     "status": "unresolved",
-     "how": "none",
-     "note": "cited but absent from this paper's bibliography"
+     "status": "verified",
+     "how": "crossref-doi",
+     "doi": "10.1021/acs.jcim.5c01609",
+     "registry_title": "Practically Significant Method Comparison Protocols for Machine Learning in Small Molecule Drug Discovery",
+     "registry_first_author": "Ash",
+     "registry_year": 2025,
+     "venue": "Journal of Chemical Information and Modeling",
+     "hand_checked": {
+      "status": "unresolved",
+      "how": "none",
+      "note": "cited but absent from this paper's bibliography"
+     }
     }
    }
   },
@@ -236,10 +255,19 @@
            "registry_year": 2021,
            "venue": "MLSys",
            "hand_checked": {
-            "status": "unresolved",
+            "status": "matched-by-title",
             "how": "dblp-title-search",
-            "title": "Accounting for Variance in Machine Learning Benchmarks",
-            "note": "no registry record found; not guessed"
+            "doi": "",
+            "registry_title": "Accounting for Variance in Machine Learning Benchmarks.",
+            "registry_first_author": "Bouthillier",
+            "registry_year": 2021,
+            "venue": "MLSys",
+            "hand_checked": {
+             "status": "unresolved",
+             "how": "dblp-title-search",
+             "title": "Accounting for Variance in Machine Learning Benchmarks",
+             "note": "no registry record found; not guessed"
+            }
            }
           }
          }
@@ -362,7 +390,16 @@
                 "registry_title": "Comparing the performance and coverage of selected in silico (liver) metabolism tools relative to reported studies in the literature to inform analogue selection in read-across: A ",
                 "registry_first_author": "Boyce",
                 "registry_year": 2022,
-                "venue": "Computational Toxicology"
+                "venue": "Computational Toxicology",
+                "hand_checked": {
+                 "status": "verified",
+                 "how": "crossref-doi",
+                 "doi": "10.1016/j.comtox.2021.100208",
+                 "registry_title": "Comparing the performance and coverage of selected in silico (liver) metabolism tools relative to reported studies in the literature to inform analogue selection in read-across: A ",
+                 "registry_first_author": "Boyce",
+                 "registry_year": 2022,
+                 "venue": "Computational Toxicology"
+                }
                }
               }
              }
@@ -492,10 +529,19 @@
                 "venue": "Proceedings of the 27th annual international ACM SIGIR conference on Research and developm",
                 "hand_checked": {
                  "status": "verified",
+                 "how": "crossref-doi",
                  "doi": "10.1145/1008992.1009000",
-                 "citation": "Buckley C, Voorhees EM (2004). Retrieval evaluation with incomplete information. SIGIR '04, 25-32.",
-                 "attributed": "scored it under incomplete relevance judgements",
-                 "supports": "yes -- this is the paper's subject, and bpref is its proposed measure"
+                 "registry_title": "Retrieval evaluation with incomplete information",
+                 "registry_first_author": "Buckley",
+                 "registry_year": 2004,
+                 "venue": "Proceedings of the 27th annual international ACM SIGIR conference on Research and developm",
+                 "hand_checked": {
+                  "status": "verified",
+                  "doi": "10.1145/1008992.1009000",
+                  "citation": "Buckley C, Voorhees EM (2004). Retrieval evaluation with incomplete information. SIGIR '04, 25-32.",
+                  "attributed": "scored it under incomplete relevance judgements",
+                  "supports": "yes -- this is the paper's subject, and bpref is its proposed measure"
+                 }
                 }
                }
               }
@@ -601,24 +647,24 @@
              "registry_year": 2024,
              "venue": "Chemical Science",
              "hand_checked": {
-              "status": "disagrees",
+              "status": "matched-by-title",
               "how": "crossref-title-search",
               "doi": "10.1039/d3sc04185a",
               "registry_title": "PoseBusters: AI-based docking methods fail to generate physically valid poses or generalise to novel sequences",
               "registry_first_author": "Buttenschoen",
               "registry_year": 2024,
               "venue": "Chemical Science",
-              "disagreements": [
-               "first author: entry says 'Buttensch{\\\\\"o}n', registry says 'Buttenschoen'"
-              ],
               "hand_checked": {
-               "status": "matched-by-title",
+               "status": "disagrees",
                "how": "crossref-title-search",
-               "doi": "10.1039/d3sc04185a/v1/review1",
-               "registry_title": "Review for \"PoseBusters: AI-based docking methods fail to generate physically valid poses or generalise to novel sequences\"",
-               "registry_first_author": "",
-               "registry_year": 2023,
-               "venue": "",
+               "doi": "10.1039/d3sc04185a",
+               "registry_title": "PoseBusters: AI-based docking methods fail to generate physically valid poses or generalise to novel sequences",
+               "registry_first_author": "Buttenschoen",
+               "registry_year": 2024,
+               "venue": "Chemical Science",
+               "disagreements": [
+                "first author: entry says 'Buttensch{\\\\\"o}n', registry says 'Buttenschoen'"
+               ],
                "hand_checked": {
                 "status": "matched-by-title",
                 "how": "crossref-title-search",
@@ -626,7 +672,16 @@
                 "registry_title": "Review for \"PoseBusters: AI-based docking methods fail to generate physically valid poses or generalise to novel sequences\"",
                 "registry_first_author": "",
                 "registry_year": 2023,
-                "venue": ""
+                "venue": "",
+                "hand_checked": {
+                 "status": "matched-by-title",
+                 "how": "crossref-title-search",
+                 "doi": "10.1039/d3sc04185a/v1/review1",
+                 "registry_title": "Review for \"PoseBusters: AI-based docking methods fail to generate physically valid poses or generalise to novel sequences\"",
+                 "registry_first_author": "",
+                 "registry_year": 2023,
+                 "venue": ""
+                }
                }
               }
              }
@@ -753,7 +808,16 @@
                 "registry_title": "Metabolite-Gen: Joint Prediction of Sites of Metabolism, Reaction Class, and Metabolite Structures Using Graph Neural Networks",
                 "registry_first_author": "Chavan",
                 "registry_year": 2026,
-                "venue": ""
+                "venue": "",
+                "hand_checked": {
+                 "status": "matched-by-title",
+                 "how": "crossref-title-search",
+                 "doi": "10.26434/chemrxiv.15002775/v1",
+                 "registry_title": "Metabolite-Gen: Joint Prediction of Sites of Metabolism, Reaction Class, and Metabolite Structures Using Graph Neural Networks",
+                 "registry_first_author": "Chavan",
+                 "registry_year": 2026,
+                 "venue": ""
+                }
                }
               }
              }
@@ -883,10 +947,19 @@
                 "venue": "Proceedings of the 10th ACM Conference on Recommender Systems",
                 "hand_checked": {
                  "status": "verified",
+                 "how": "crossref-doi",
                  "doi": "10.1145/2959100.2959190",
-                 "citation": "Covington P, Adams J, Sargin E (2016). Deep Neural Networks for YouTube Recommendations. RecSys '16, 191-198.",
-                 "attributed": "the two-stage candidate-generation-then-ranking evaluation standard in recommender systems",
-                 "supports": "yes -- the system is explicitly split into candidate generation and ranking, and the two stages are evaluated separately"
+                 "registry_title": "Deep Neural Networks for YouTube Recommendations",
+                 "registry_first_author": "Covington",
+                 "registry_year": 2016,
+                 "venue": "Proceedings of the 10th ACM Conference on Recommender Systems",
+                 "hand_checked": {
+                  "status": "verified",
+                  "doi": "10.1145/2959100.2959190",
+                  "citation": "Covington P, Adams J, Sargin E (2016). Deep Neural Networks for YouTube Recommendations. RecSys '16, 191-198.",
+                  "attributed": "the two-stage candidate-generation-then-ranking evaluation standard in recommender systems",
+                  "supports": "yes -- the system is explicitly split into candidate generation and ranking, and the two stages are evaluated separately"
+                 }
                 }
                }
               }
@@ -1014,7 +1087,16 @@
                 "registry_title": "Toward a Comprehensive Treatment of Tautomerism in Chemoinformatics Including in InChI V2",
                 "registry_first_author": "Dhaked",
                 "registry_year": 2020,
-                "venue": "Journal of Chemical Information and Modeling"
+                "venue": "Journal of Chemical Information and Modeling",
+                "hand_checked": {
+                 "status": "verified",
+                 "how": "crossref-doi",
+                 "doi": "10.1021/acs.jcim.9b01080",
+                 "registry_title": "Toward a Comprehensive Treatment of Tautomerism in Chemoinformatics Including in InChI V2",
+                 "registry_first_author": "Dhaked",
+                 "registry_year": 2020,
+                 "venue": "Journal of Chemical Information and Modeling"
+                }
                }
               }
              }
@@ -1141,7 +1223,16 @@
                 "registry_title": "BioTransformer: a comprehensive computational tool for small molecule metabolism prediction and metabolite identification",
                 "registry_first_author": "Djoumbou-Feunang",
                 "registry_year": 2019,
-                "venue": "Journal of Cheminformatics"
+                "venue": "Journal of Cheminformatics",
+                "hand_checked": {
+                 "status": "verified",
+                 "how": "crossref-doi",
+                 "doi": "10.1186/s13321-018-0324-5",
+                 "registry_title": "BioTransformer: a comprehensive computational tool for small molecule metabolism prediction and metabolite identification",
+                 "registry_first_author": "Djoumbou-Feunang",
+                 "registry_year": 2019,
+                 "venue": "Journal of Cheminformatics"
+                }
                }
               }
              }
@@ -1268,7 +1359,16 @@
                 "registry_title": "Replicability Analysis for Natural Language Processing: Testing                     Significance with Multiple Datasets",
                 "registry_first_author": "Dror",
                 "registry_year": 2017,
-                "venue": "Transactions of the Association for Computational Linguistics"
+                "venue": "Transactions of the Association for Computational Linguistics",
+                "hand_checked": {
+                 "status": "matched-by-title",
+                 "how": "crossref-title-search",
+                 "doi": "10.1162/tacl_a_00074",
+                 "registry_title": "Replicability Analysis for Natural Language Processing: Testing                     Significance with Multiple Datasets",
+                 "registry_first_author": "Dror",
+                 "registry_year": 2017,
+                 "venue": "Transactions of the Association for Computational Linguistics"
+                }
                }
               }
              }
@@ -1357,10 +1457,19 @@
            "registry_year": 2025,
            "venue": "ICLR",
            "hand_checked": {
-            "status": "unresolved",
+            "status": "matched-by-title",
             "how": "dblp-title-search",
-            "title": "Reframing Structure-Based Drug Design Model Evaluation via Metrics Correlated to Practical Needs",
-            "note": "no registry record found; not guessed"
+            "doi": "",
+            "registry_title": "Reframing Structure-Based Drug Design Model Evaluation via Metrics Correlated to Practical Needs.",
+            "registry_first_author": "Gao",
+            "registry_year": 2025,
+            "venue": "ICLR",
+            "hand_checked": {
+             "status": "unresolved",
+             "how": "dblp-title-search",
+             "title": "Reframing Structure-Based Drug Design Model Evaluation via Metrics Correlated to Practical Needs",
+             "note": "no registry record found; not guessed"
+            }
            }
           }
          }
@@ -1483,7 +1592,16 @@
                 "registry_title": "Benchmarking\n                    <i>In Silico</i>\n                    Metabolite Prediction Tools against Human Radiolabeled ADME Data for Small-Molecule Drugs",
                 "registry_first_author": "Gao",
                 "registry_year": 2026,
-                "venue": "Journal of Chemical Information and Modeling"
+                "venue": "Journal of Chemical Information and Modeling",
+                "hand_checked": {
+                 "status": "verified",
+                 "how": "crossref-doi",
+                 "doi": "10.1021/acs.jcim.5c03045",
+                 "registry_title": "Benchmarking\n                    <i>In Silico</i>\n                    Metabolite Prediction Tools against Human Radiolabeled ADME Data for Small-Molecule Drugs",
+                 "registry_first_author": "Gao",
+                 "registry_year": 2026,
+                 "venue": "Journal of Chemical Information and Modeling"
+                }
                }
               }
              }
@@ -1610,7 +1728,16 @@
                 "registry_title": "PubChem chemical structure standardization",
                 "registry_first_author": "H\u00e4hnke",
                 "registry_year": 2018,
-                "venue": "Journal of Cheminformatics"
+                "venue": "Journal of Cheminformatics",
+                "hand_checked": {
+                 "status": "verified",
+                 "how": "crossref-doi",
+                 "doi": "10.1186/s13321-018-0293-8",
+                 "registry_title": "PubChem chemical structure standardization",
+                 "registry_first_author": "H\u00e4hnke",
+                 "registry_year": 2018,
+                 "venue": "Journal of Cheminformatics"
+                }
                }
               }
              }
@@ -1737,7 +1864,16 @@
                 "registry_title": "Investigating the reliability and interpretability of machine learning frameworks for chemical retrosynthesis",
                 "registry_first_author": "Hastedt",
                 "registry_year": 2024,
-                "venue": "Digital Discovery"
+                "venue": "Digital Discovery",
+                "hand_checked": {
+                 "status": "verified",
+                 "how": "crossref-doi",
+                 "doi": "10.1039/d4dd00007b",
+                 "registry_title": "Investigating the reliability and interpretability of machine learning frameworks for chemical retrosynthesis",
+                 "registry_first_author": "Hastedt",
+                 "registry_year": 2024,
+                 "venue": "Digital Discovery"
+                }
                }
               }
              }
@@ -1770,9 +1906,18 @@
     "registry_year": 2025,
     "venue": "Journal of Chemical Information and Modeling",
     "hand_checked": {
-     "status": "unresolved",
-     "how": "none",
-     "note": "cited but absent from this paper's bibliography"
+     "status": "verified",
+     "how": "crossref-doi",
+     "doi": "10.1021/acs.jcim.5c00819",
+     "registry_title": "Automated Annotation of Sites of Metabolism from Biotransformation Data",
+     "registry_first_author": "Jacob",
+     "registry_year": 2025,
+     "venue": "Journal of Chemical Information and Modeling",
+     "hand_checked": {
+      "status": "unresolved",
+      "how": "none",
+      "note": "cited but absent from this paper's bibliography"
+     }
     }
    }
   },
@@ -1794,9 +1939,18 @@
     "registry_year": 2025,
     "venue": "Journal of Chemical Information and Modeling",
     "hand_checked": {
-     "status": "unresolved",
-     "how": "none",
-     "note": "cited but absent from this paper's bibliography"
+     "status": "verified",
+     "how": "crossref-doi",
+     "doi": "10.1021/acs.jcim.5c00762",
+     "registry_title": "Site-of-Metabolism Prediction with Aleatoric and Epistemic Uncertainty Quantification",
+     "registry_first_author": "Jacob",
+     "registry_year": 2025,
+     "venue": "Journal of Chemical Information and Modeling",
+     "hand_checked": {
+      "status": "unresolved",
+      "how": "none",
+      "note": "cited but absent from this paper's bibliography"
+     }
     }
    }
   },
@@ -1912,7 +2066,16 @@
                 "registry_title": "Extreme Multi-label Loss Functions for Recommendation, Tagging, Ranking &amp; Other Missing Label Applications",
                 "registry_first_author": "Jain",
                 "registry_year": 2016,
-                "venue": "Proceedings of the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Dat"
+                "venue": "Proceedings of the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Dat",
+                "hand_checked": {
+                 "status": "verified",
+                 "how": "crossref-doi",
+                 "doi": "10.1145/2939672.2939756",
+                 "registry_title": "Extreme Multi-label Loss Functions for Recommendation, Tagging, Ranking &amp; Other Missing Label Applications",
+                 "registry_first_author": "Jain",
+                 "registry_year": 2016,
+                 "venue": "Proceedings of the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Dat"
+                }
                }
               }
              }
@@ -2033,22 +2196,31 @@
                "registry_year": 2002,
                "venue": "ACM Transactions on Information Systems",
                "hand_checked": {
-                "status": "disagrees",
+                "status": "verified",
                 "how": "crossref-doi",
                 "doi": "10.1145/582415.582418",
                 "registry_title": "Cumulated gain-based evaluation of IR techniques",
                 "registry_first_author": "J\u00e4rvelin",
                 "registry_year": 2002,
                 "venue": "ACM Transactions on Information Systems",
-                "disagreements": [
-                 "first author: entry says 'J{\\\\\"a}rvelin', registry says 'J\u00e4rvelin'"
-                ],
                 "hand_checked": {
-                 "status": "verified",
+                 "status": "disagrees",
+                 "how": "crossref-doi",
                  "doi": "10.1145/582415.582418",
-                 "citation": "Jarvelin K, Kekalainen J (2002). Cumulated gain-based evaluation of IR techniques. ACM Transactions on Information Systems 20(4):422-446.",
-                 "attributed": "retrieval and recommendation have long evaluated ranked output at a declared cut-off",
-                 "supports": "yes -- nDCG is defined at a rank cut-off"
+                 "registry_title": "Cumulated gain-based evaluation of IR techniques",
+                 "registry_first_author": "J\u00e4rvelin",
+                 "registry_year": 2002,
+                 "venue": "ACM Transactions on Information Systems",
+                 "disagreements": [
+                  "first author: entry says 'J{\\\\\"a}rvelin', registry says 'J\u00e4rvelin'"
+                 ],
+                 "hand_checked": {
+                  "status": "verified",
+                  "doi": "10.1145/582415.582418",
+                  "citation": "Jarvelin K, Kekalainen J (2002). Cumulated gain-based evaluation of IR techniques. ACM Transactions on Information Systems 20(4):422-446.",
+                  "attributed": "retrieval and recommendation have long evaluated ranked output at a declared cut-off",
+                  "supports": "yes -- nDCG is defined at a rank cut-off"
+                 }
                 }
                }
               }
@@ -2170,13 +2342,22 @@
                "registry_year": 2026,
                "venue": "arXiv",
                "hand_checked": {
-                "status": "matched-by-title",
-                "how": "crossref-title-search",
-                "doi": "10.14778/3796195.3796206",
+                "status": "verified",
+                "how": "arxiv-id",
+                "doi": "",
                 "registry_title": "Pervasive Annotation Errors Break Text-to-SQL Benchmarks and Leaderboards",
                 "registry_first_author": "Jin",
                 "registry_year": 2026,
-                "venue": "Proceedings of the VLDB Endowment"
+                "venue": "arXiv",
+                "hand_checked": {
+                 "status": "matched-by-title",
+                 "how": "crossref-title-search",
+                 "doi": "10.14778/3796195.3796206",
+                 "registry_title": "Pervasive Annotation Errors Break Text-to-SQL Benchmarks and Leaderboards",
+                 "registry_first_author": "Jin",
+                 "registry_year": 2026,
+                 "venue": "Proceedings of the VLDB Endowment"
+                }
                }
               }
              }
@@ -2306,10 +2487,19 @@
                 "venue": "Proceedings of the Tenth ACM International Conference on Web Search and Data Mining",
                 "hand_checked": {
                  "status": "verified",
+                 "how": "crossref-doi",
                  "doi": "10.1145/3018661.3018699",
-                 "citation": "Joachims T, Swaminathan A, Schnabel T (2017). Unbiased Learning-to-Rank with Biased Feedback. WSDM '17, 781-789.",
-                 "attributed": "corrected it for the propensity with which a relevant item is recorded",
-                 "supports": "yes -- propensity-weighted estimation from biased click feedback"
+                 "registry_title": "Unbiased Learning-to-Rank with Biased Feedback",
+                 "registry_first_author": "Joachims",
+                 "registry_year": 2017,
+                 "venue": "Proceedings of the Tenth ACM International Conference on Web Search and Data Mining",
+                 "hand_checked": {
+                  "status": "verified",
+                  "doi": "10.1145/3018661.3018699",
+                  "citation": "Joachims T, Swaminathan A, Schnabel T (2017). Unbiased Learning-to-Rank with Biased Feedback. WSDM '17, 781-789.",
+                  "attributed": "corrected it for the propensity with which a relevant item is recorded",
+                  "supports": "yes -- propensity-weighted estimation from biased click feedback"
+                 }
                 }
                }
               }
@@ -2437,7 +2627,16 @@
                 "registry_title": "Data splitting to avoid information leakage with DataSAIL",
                 "registry_first_author": "Joeres",
                 "registry_year": 2025,
-                "venue": "Nature Communications"
+                "venue": "Nature Communications",
+                "hand_checked": {
+                 "status": "verified",
+                 "how": "crossref-doi",
+                 "doi": "10.1038/s41467-025-58606-8",
+                 "registry_title": "Data splitting to avoid information leakage with DataSAIL",
+                 "registry_first_author": "Joeres",
+                 "registry_year": 2025,
+                 "venue": "Nature Communications"
+                }
                }
               }
              }
@@ -2564,7 +2763,16 @@
                 "registry_title": "Evaluating Open-Domain Question Answering in the Era of Large Language Models",
                 "registry_first_author": "Kamalloo",
                 "registry_year": 2023,
-                "venue": "Proceedings of the 61st Annual Meeting of the Association for Computational Linguistics (V"
+                "venue": "Proceedings of the 61st Annual Meeting of the Association for Computational Linguistics (V",
+                "hand_checked": {
+                 "status": "matched-by-title",
+                 "how": "crossref-title-search",
+                 "doi": "10.18653/v1/2023.acl-long.307",
+                 "registry_title": "Evaluating Open-Domain Question Answering in the Era of Large Language Models",
+                 "registry_first_author": "Kamalloo",
+                 "registry_year": 2023,
+                 "venue": "Proceedings of the 61st Annual Meeting of the Association for Computational Linguistics (V"
+                }
                }
               }
              }
@@ -2694,10 +2902,19 @@
                 "venue": "Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing (EM",
                 "hand_checked": {
                  "status": "verified",
+                 "how": "crossref-doi",
                  "doi": "10.18653/v1/2020.emnlp-main.550",
-                 "citation": "Karpukhin V, Oguz B, Min S, Lewis P, Wu L, Edunov S, Chen D, Yih W (2020). Dense Passage Retrieval for Open-Domain Question Answering. EMNLP 2020, 6769-6781.",
-                 "attributed": "that open-domain question answering routinely reports retriever recall@k separately from end-task accuracy",
-                 "supports": "yes -- top-k retrieval accuracy is reported as its own endpoint alongside end-to-end answer accuracy"
+                 "registry_title": "Dense Passage Retrieval for Open-Domain Question Answering",
+                 "registry_first_author": "Karpukhin",
+                 "registry_year": 2020,
+                 "venue": "Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing (EM",
+                 "hand_checked": {
+                  "status": "verified",
+                  "doi": "10.18653/v1/2020.emnlp-main.550",
+                  "citation": "Karpukhin V, Oguz B, Min S, Lewis P, Wu L, Edunov S, Chen D, Yih W (2020). Dense Passage Retrieval for Open-Domain Question Answering. EMNLP 2020, 6769-6781.",
+                  "attributed": "that open-domain question answering routinely reports retriever recall@k separately from end-task accuracy",
+                  "supports": "yes -- top-k retrieval accuracy is reported as its own endpoint alongside end-to-end answer accuracy"
+                 }
                 }
                }
               }
@@ -2787,10 +3004,19 @@
            "registry_year": 2021,
            "venue": "WMT@EMNLP",
            "hand_checked": {
-            "status": "unresolved",
+            "status": "matched-by-title",
             "how": "dblp-title-search",
-            "title": "On the Stability of System Rankings at {WMT}",
-            "note": "no registry record found; not guessed"
+            "doi": "",
+            "registry_title": "On the Stability of System Rankings at WMT.",
+            "registry_first_author": "Knowles",
+            "registry_year": 2021,
+            "venue": "WMT@EMNLP",
+            "hand_checked": {
+             "status": "unresolved",
+             "how": "dblp-title-search",
+             "title": "On the Stability of System Rankings at {WMT}",
+             "note": "no registry record found; not guessed"
+            }
            }
           }
          }
@@ -2913,7 +3139,16 @@
                 "registry_title": "Coverage bias in small molecule machine learning",
                 "registry_first_author": "Kretschmer",
                 "registry_year": 2025,
-                "venue": "Nature Communications"
+                "venue": "Nature Communications",
+                "hand_checked": {
+                 "status": "matched-by-title",
+                 "how": "crossref-title-search",
+                 "doi": "10.1038/s41467-024-55462-w",
+                 "registry_title": "Coverage bias in small molecule machine learning",
+                 "registry_first_author": "Kretschmer",
+                 "registry_year": 2025,
+                 "venue": "Nature Communications"
+                }
                }
               }
              }
@@ -3043,10 +3278,19 @@
                 "venue": "Proceedings of the 26th ACM SIGKDD International Conference on Knowledge Discovery &amp; D",
                 "hand_checked": {
                  "status": "verified",
+                 "how": "crossref-doi",
                  "doi": "10.1145/3394486.3403226",
-                 "citation": "Krichene W, Rendle S (2020). On Sampled Metrics for Item Recommendation. KDD '20, 1748-1757.",
-                 "attributed": "shown a cut-off metric's winner changing with how the candidates entering it are counted",
-                 "supports": "yes -- sampled metrics are shown inconsistent with their exact versions and do not preserve the relative statement 'algorithm A is better than B', not even in expectation"
+                 "registry_title": "On Sampled Metrics for Item Recommendation",
+                 "registry_first_author": "Krichene",
+                 "registry_year": 2020,
+                 "venue": "Proceedings of the 26th ACM SIGKDD International Conference on Knowledge Discovery &amp; D",
+                 "hand_checked": {
+                  "status": "verified",
+                  "doi": "10.1145/3394486.3403226",
+                  "citation": "Krichene W, Rendle S (2020). On Sampled Metrics for Item Recommendation. KDD '20, 1748-1757.",
+                  "attributed": "shown a cut-off metric's winner changing with how the candidates entering it are counted",
+                  "supports": "yes -- sampled metrics are shown inconsistent with their exact versions and do not preserve the relative statement 'algorithm A is better than B', not even in expectation"
+                 }
                 }
                }
               }
@@ -3174,7 +3418,16 @@
                 "registry_title": "LAGOM: A transformer-based chemical language model for drug metabolite prediction",
                 "registry_first_author": "Larsson",
                 "registry_year": 2025,
-                "venue": "Artificial Intelligence in the Life Sciences"
+                "venue": "Artificial Intelligence in the Life Sciences",
+                "hand_checked": {
+                 "status": "verified",
+                 "how": "crossref-doi",
+                 "doi": "10.1016/j.ailsci.2025.100142",
+                 "registry_title": "LAGOM: A transformer-based chemical language model for drug metabolite prediction",
+                 "registry_first_author": "Larsson",
+                 "registry_year": 2025,
+                 "venue": "Artificial Intelligence in the Life Sciences"
+                }
                }
               }
              }
@@ -3295,10 +3548,19 @@
                "registry_year": 2022,
                "venue": "arXiv",
                "hand_checked": {
-                "status": "unresolved",
-                "how": "crossref-title-search",
-                "title": "Holistic Evaluation of Language Models",
-                "note": "no registry record found; not guessed"
+                "status": "verified",
+                "how": "arxiv-id",
+                "doi": "",
+                "registry_title": "Holistic Evaluation of Language Models",
+                "registry_first_author": "Liang",
+                "registry_year": 2022,
+                "venue": "arXiv",
+                "hand_checked": {
+                 "status": "unresolved",
+                 "how": "crossref-title-search",
+                 "title": "Holistic Evaluation of Language Models",
+                 "note": "no registry record found; not guessed"
+                }
                }
               }
              }
@@ -3387,10 +3649,19 @@
            "registry_year": 2025,
            "venue": "ICLR",
            "hand_checked": {
-            "status": "unresolved",
+            "status": "matched-by-title",
             "how": "dblp-title-search",
-            "title": "{CBGBench}: Fill in the Blank of Protein-Molecule Complex Binding Graph",
-            "note": "no registry record found; not guessed"
+            "doi": "",
+            "registry_title": "CBGBench: Fill in the Blank of Protein-Molecule Complex Binding Graph.",
+            "registry_first_author": "Lin",
+            "registry_year": 2025,
+            "venue": "ICLR",
+            "hand_checked": {
+             "status": "unresolved",
+             "how": "dblp-title-search",
+             "title": "{CBGBench}: Fill in the Blank of Protein-Molecule Complex Binding Graph",
+             "note": "no registry record found; not guessed"
+            }
            }
           }
          }
@@ -3513,7 +3784,16 @@
                 "registry_title": "Prediction of drug metabolites using neural machine translation",
                 "registry_first_author": "Litsa",
                 "registry_year": 2020,
-                "venue": "Chemical Science"
+                "venue": "Chemical Science",
+                "hand_checked": {
+                 "status": "verified",
+                 "how": "crossref-doi",
+                 "doi": "10.1039/d0sc02639e",
+                 "registry_title": "Prediction of drug metabolites using neural machine translation",
+                 "registry_first_author": "Litsa",
+                 "registry_year": 2020,
+                 "venue": "Chemical Science"
+                }
                }
               }
              }
@@ -3640,7 +3920,16 @@
                 "registry_title": "Free and open-source QSAR-ready workflow for automated standardization of chemical structures in support of QSAR modeling",
                 "registry_first_author": "Mansouri",
                 "registry_year": 2024,
-                "venue": "Journal of Cheminformatics"
+                "venue": "Journal of Cheminformatics",
+                "hand_checked": {
+                 "status": "verified",
+                 "how": "crossref-doi",
+                 "doi": "10.1186/s13321-024-00814-3",
+                 "registry_title": "Free and open-source QSAR-ready workflow for automated standardization of chemical structures in support of QSAR modeling",
+                 "registry_first_author": "Mansouri",
+                 "registry_year": 2024,
+                 "venue": "Journal of Cheminformatics"
+                }
                }
               }
              }
@@ -3767,7 +4056,16 @@
                 "registry_title": "Re-evaluating retrosynthesis algorithms with Syntheseus",
                 "registry_first_author": "Maziarz",
                 "registry_year": 2025,
-                "venue": "Faraday Discussions"
+                "venue": "Faraday Discussions",
+                "hand_checked": {
+                 "status": "verified",
+                 "how": "crossref-doi",
+                 "doi": "10.1039/d4fd00093e",
+                 "registry_title": "Re-evaluating retrosynthesis algorithms with Syntheseus",
+                 "registry_first_author": "Maziarz",
+                 "registry_year": 2025,
+                 "venue": "Faraday Discussions"
+                }
                }
               }
              }
@@ -3781,6 +4079,16 @@
      }
     }
    }
+  },
+  {
+   "key": "Mazzolari_2019",
+   "status": "verified",
+   "how": "crossref-doi",
+   "doi": "10.1021/acsmedchemlett.8b00603",
+   "registry_title": "Prediction of UGT-mediated Metabolism Using the Manually Curated MetaQSAR Database",
+   "registry_first_author": "Mazzolari",
+   "registry_year": 2019,
+   "venue": "ACS Medicinal Chemistry Letters"
   },
   {
    "key": "Mishra_2021",
@@ -3894,7 +4202,16 @@
                 "registry_title": "How Robust are Model Rankings : A Leaderboard Customization Approach for Equitable Evaluation",
                 "registry_first_author": "Mishra",
                 "registry_year": 2021,
-                "venue": "Proceedings of the AAAI Conference on Artificial Intelligence"
+                "venue": "Proceedings of the AAAI Conference on Artificial Intelligence",
+                "hand_checked": {
+                 "status": "verified",
+                 "how": "crossref-doi",
+                 "doi": "10.1609/aaai.v35i15.17599",
+                 "registry_title": "How Robust are Model Rankings : A Leaderboard Customization Approach for Equitable Evaluation",
+                 "registry_first_author": "Mishra",
+                 "registry_year": 2021,
+                 "venue": "Proceedings of the AAAI Conference on Artificial Intelligence"
+                }
                }
               }
              }
@@ -3927,9 +4244,18 @@
     "registry_year": 2025,
     "venue": "Journal of Cheminformatics",
     "hand_checked": {
-     "status": "unresolved",
-     "how": "none",
-     "note": "cited but absent from this paper's bibliography"
+     "status": "verified",
+     "how": "crossref-doi",
+     "doi": "10.1186/s13321-025-01108-y",
+     "registry_title": "How evaluation choices distort the outcome of generative drug discovery",
+     "registry_first_author": "\u00d6z\u00e7elik",
+     "registry_year": 2025,
+     "venue": "Journal of Cheminformatics",
+     "hand_checked": {
+      "status": "unresolved",
+      "how": "none",
+      "note": "cited but absent from this paper's bibliography"
+     }
     }
    }
   },
@@ -4045,7 +4371,16 @@
                 "registry_title": "Molecular Sets (MOSES): A Benchmarking Platform for Molecular Generation Models",
                 "registry_first_author": "Polykovskiy",
                 "registry_year": 2020,
-                "venue": "Frontiers in Pharmacology"
+                "venue": "Frontiers in Pharmacology",
+                "hand_checked": {
+                 "status": "verified",
+                 "how": "crossref-doi",
+                 "doi": "10.3389/fphar.2020.565644",
+                 "registry_title": "Molecular Sets (MOSES): A Benchmarking Platform for Molecular Generation Models",
+                 "registry_first_author": "Polykovskiy",
+                 "registry_year": 2020,
+                 "venue": "Frontiers in Pharmacology"
+                }
                }
               }
              }
@@ -4172,7 +4507,16 @@
                 "registry_title": "SyGMa: Combining Expert Knowledge and Empirical Scoring in the Prediction of Metabolites",
                 "registry_first_author": "Ridder",
                 "registry_year": 2008,
-                "venue": "ChemMedChem"
+                "venue": "ChemMedChem",
+                "hand_checked": {
+                 "status": "verified",
+                 "how": "crossref-doi",
+                 "doi": "10.1002/cmdc.200700312",
+                 "registry_title": "SyGMa: Combining Expert Knowledge and Empirical Scoring in the Prediction of Metabolites",
+                 "registry_first_author": "Ridder",
+                 "registry_year": 2008,
+                 "venue": "ChemMedChem"
+                }
                }
               }
              }
@@ -4299,7 +4643,16 @@
                 "registry_title": "Evaluation Examples are not Equally Informative: How should that change NLP Leaderboards?",
                 "registry_first_author": "Rodriguez",
                 "registry_year": 2021,
-                "venue": "Proceedings of the 59th Annual Meeting of the Association for Computational Linguistics an"
+                "venue": "Proceedings of the 59th Annual Meeting of the Association for Computational Linguistics an",
+                "hand_checked": {
+                 "status": "verified",
+                 "how": "crossref-doi",
+                 "doi": "10.18653/v1/2021.acl-long.346",
+                 "registry_title": "Evaluation Examples are not Equally Informative: How should that change NLP Leaderboards?",
+                 "registry_first_author": "Rodriguez",
+                 "registry_year": 2021,
+                 "venue": "Proceedings of the 59th Annual Meeting of the Association for Computational Linguistics an"
+                }
                }
               }
              }
@@ -4332,11 +4685,30 @@
     "registry_year": 2017,
     "venue": "Journal of Chemical Information and Modeling",
     "hand_checked": {
-     "status": "unresolved",
-     "how": "none",
-     "note": "cited but absent from this paper's bibliography"
+     "status": "verified",
+     "how": "crossref-doi",
+     "doi": "10.1021/acs.jcim.6b00662",
+     "registry_title": "MetaTox: Web Application for Predicting Structure and Toxicity of Xenobiotics\u2019 Metabolites",
+     "registry_first_author": "Rudik",
+     "registry_year": 2017,
+     "venue": "Journal of Chemical Information and Modeling",
+     "hand_checked": {
+      "status": "unresolved",
+      "how": "none",
+      "note": "cited but absent from this paper's bibliography"
+     }
     }
    }
+  },
+  {
+   "key": "Rydberg_2010",
+   "status": "verified",
+   "how": "crossref-doi",
+   "doi": "10.1021/ml100016x",
+   "registry_title": "SMARTCyp: A 2D Method for Prediction of Cytochrome P450-Mediated Drug Metabolism",
+   "registry_first_author": "Rydberg",
+   "registry_year": 2010,
+   "venue": "ACS Medicinal Chemistry Letters"
   },
   {
    "key": "Sakai_2014",
@@ -4450,7 +4822,16 @@
                 "registry_title": "Statistical reform in information retrieval?",
                 "registry_first_author": "Sakai",
                 "registry_year": 2014,
-                "venue": "ACM SIGIR Forum"
+                "venue": "ACM SIGIR Forum",
+                "hand_checked": {
+                 "status": "matched-by-title",
+                 "how": "crossref-title-search",
+                 "doi": "10.1145/2641383.2641385",
+                 "registry_title": "Statistical reform in information retrieval?",
+                 "registry_first_author": "Sakai",
+                 "registry_year": 2014,
+                 "venue": "ACM SIGIR Forum"
+                }
                }
               }
              }
@@ -4577,7 +4958,16 @@
                 "registry_title": "Computational prediction of the metabolites of agrochemicals formed in rats",
                 "registry_first_author": "Scholz",
                 "registry_year": 2023,
-                "venue": "Science of The Total Environment"
+                "venue": "Science of The Total Environment",
+                "hand_checked": {
+                 "status": "verified",
+                 "how": "crossref-doi",
+                 "doi": "10.1016/j.scitotenv.2023.165039",
+                 "registry_title": "Computational prediction of the metabolites of agrochemicals formed in rats",
+                 "registry_first_author": "Scholz",
+                 "registry_year": 2023,
+                 "venue": "Science of The Total Environment"
+                }
                }
               }
              }
@@ -4711,16 +5101,26 @@
                "venue": "",
                "note": "year: entry says 1970, registry says 1979 (resolved by title; likely a different edition or printing)",
                "hand_checked": {
-                "status": "disagrees",
+                "status": "matched-by-title",
                 "how": "crossref-title-search",
                 "doi": "10.1016/c2009-0-12011-1",
                 "registry_title": "Collective Choice and Social Welfare",
                 "registry_first_author": "",
                 "registry_year": 1979,
                 "venue": "",
-                "disagreements": [
-                 "year: entry says 1970, registry says 1979"
-                ]
+                "note": "year: entry says 1970, registry says 1979 (resolved by title; likely a different edition or printing)",
+                "hand_checked": {
+                 "status": "disagrees",
+                 "how": "crossref-title-search",
+                 "doi": "10.1016/c2009-0-12011-1",
+                 "registry_title": "Collective Choice and Social Welfare",
+                 "registry_first_author": "",
+                 "registry_year": 1979,
+                 "venue": "",
+                 "disagreements": [
+                  "year: entry says 1970, registry says 1979"
+                 ]
+                }
                }
               }
              }
@@ -4745,20 +5145,29 @@
    "registry_year": 2019,
    "venue": "Journal of Chemical Information and Modeling",
    "hand_checked": {
-    "status": "disagrees",
+    "status": "verified",
     "how": "crossref-doi",
     "doi": "10.1021/acs.jcim.9b00376",
     "registry_title": "FAME 3: Predicting the Sites of Metabolism in Synthetic Compounds and Natural Products for Phase 1 and Phase 2 Metabolic Enzymes",
     "registry_first_author": "\u0160\u00edcho",
     "registry_year": 2019,
     "venue": "Journal of Chemical Information and Modeling",
-    "disagreements": [
-     "title: entry says '{FAME} 3: Predicting the Sites of Metabolism in Sy', registry says 'FAME 3: Predicting the Sites of Metabolism in Synt'"
-    ],
     "hand_checked": {
-     "status": "unresolved",
-     "how": "none",
-     "note": "cited but absent from this paper's bibliography"
+     "status": "disagrees",
+     "how": "crossref-doi",
+     "doi": "10.1021/acs.jcim.9b00376",
+     "registry_title": "FAME 3: Predicting the Sites of Metabolism in Synthetic Compounds and Natural Products for Phase 1 and Phase 2 Metabolic Enzymes",
+     "registry_first_author": "\u0160\u00edcho",
+     "registry_year": 2019,
+     "venue": "Journal of Chemical Information and Modeling",
+     "disagreements": [
+      "title: entry says '{FAME} 3: Predicting the Sites of Metabolism in Sy', registry says 'FAME 3: Predicting the Sites of Metabolism in Synt'"
+     ],
+     "hand_checked": {
+      "status": "unresolved",
+      "how": "none",
+      "note": "cited but absent from this paper's bibliography"
+     }
     }
    }
   },
@@ -4874,7 +5283,16 @@
                 "registry_title": "Specification curve analysis",
                 "registry_first_author": "Simonsohn",
                 "registry_year": 2020,
-                "venue": "Nature Human Behaviour"
+                "venue": "Nature Human Behaviour",
+                "hand_checked": {
+                 "status": "verified",
+                 "how": "crossref-doi",
+                 "doi": "10.1038/s41562-020-0912-z",
+                 "registry_title": "Specification curve analysis",
+                 "registry_first_author": "Simonsohn",
+                 "registry_year": 2020,
+                 "venue": "Nature Human Behaviour"
+                }
                }
               }
              }
@@ -4995,13 +5413,22 @@
                "registry_year": 2025,
                "venue": "arXiv",
                "hand_checked": {
-                "status": "matched-by-title",
-                "how": "crossref-title-search",
-                "doi": "10.52202/085713-2620",
+                "status": "verified",
+                "how": "arxiv-id",
+                "doi": "",
                 "registry_title": "The Leaderboard Illusion",
                 "registry_first_author": "Singh",
                 "registry_year": 2025,
-                "venue": "Advances in Neural Information Processing Systems 38"
+                "venue": "arXiv",
+                "hand_checked": {
+                 "status": "matched-by-title",
+                 "how": "crossref-title-search",
+                 "doi": "10.52202/085713-2620",
+                 "registry_title": "The Leaderboard Illusion",
+                 "registry_first_author": "Singh",
+                 "registry_year": 2025,
+                 "venue": "Advances in Neural Information Processing Systems 38"
+                }
                }
               }
              }
@@ -5128,7 +5555,16 @@
                 "registry_title": "Increasing Transparency Through a Multiverse Analysis",
                 "registry_first_author": "Steegen",
                 "registry_year": 2016,
-                "venue": "Perspectives on Psychological Science"
+                "venue": "Perspectives on Psychological Science",
+                "hand_checked": {
+                 "status": "verified",
+                 "how": "crossref-doi",
+                 "doi": "10.1177/1745691616658637",
+                 "registry_title": "Increasing Transparency Through a Multiverse Analysis",
+                 "registry_first_author": "Steegen",
+                 "registry_year": 2016,
+                 "venue": "Perspectives on Psychological Science"
+                }
                }
               }
              }
@@ -5161,13 +5597,13 @@
     "registry_year": 2026,
     "venue": "Digital Discovery",
     "hand_checked": {
-     "status": "matched-by-title",
-     "how": "crossref-title-search",
-     "doi": "10.26434/chemrxiv-2025-5fcj6",
+     "status": "verified",
+     "how": "crossref-doi",
+     "doi": "10.1039/d5dd00358j",
      "registry_title": "An exploration of dataset bias in single-step retrosynthesis prediction",
      "registry_first_author": "Tanovic",
-     "registry_year": 2025,
-     "venue": "",
+     "registry_year": 2026,
+     "venue": "Digital Discovery",
      "hand_checked": {
       "status": "matched-by-title",
       "how": "crossref-title-search",
@@ -5241,10 +5677,19 @@
               "registry_year": 2025,
               "venue": "",
               "hand_checked": {
-               "status": "unresolved",
+               "status": "matched-by-title",
                "how": "crossref-title-search",
-               "title": "An exploration of dataset bias in single-step retrosynthesis prediction",
-               "note": "no registry record found; not guessed"
+               "doi": "10.26434/chemrxiv-2025-5fcj6",
+               "registry_title": "An exploration of dataset bias in single-step retrosynthesis prediction",
+               "registry_first_author": "Tanovic",
+               "registry_year": 2025,
+               "venue": "",
+               "hand_checked": {
+                "status": "unresolved",
+                "how": "crossref-title-search",
+                "title": "An exploration of dataset bias in single-step retrosynthesis prediction",
+                "note": "no registry record found; not guessed"
+               }
               }
              }
             }
@@ -5332,10 +5777,19 @@
            "registry_year": 2021,
            "venue": "NeurIPS Datasets and Benchmarks",
            "hand_checked": {
-            "status": "unresolved",
+            "status": "matched-by-title",
             "how": "dblp-title-search",
-            "title": "{BEIR}: A Heterogeneous Benchmark for Zero-shot Evaluation of Information Retrieval Models",
-            "note": "no registry record found; not guessed"
+            "doi": "",
+            "registry_title": "BEIR: A Heterogeneous Benchmark for Zero-shot Evaluation of Information Retrieval Models.",
+            "registry_first_author": "Thakur",
+            "registry_year": 2021,
+            "venue": "NeurIPS Datasets and Benchmarks",
+            "hand_checked": {
+             "status": "unresolved",
+             "how": "dblp-title-search",
+             "title": "{BEIR}: A Heterogeneous Benchmark for Zero-shot Evaluation of Information Retrieval Models",
+             "note": "no registry record found; not guessed"
+            }
            }
           }
          }
@@ -5461,10 +5915,19 @@
                 "venue": "Proceedings of the 34th international ACM SIGIR conference on Research and development in ",
                 "hand_checked": {
                  "status": "verified",
+                 "how": "crossref-doi",
                  "doi": "10.1145/2009916.2009934",
-                 "citation": "Wang L, Lin J, Metzler D (2011). A Cascade Ranking Model for Efficient Ranked Retrieval. SIGIR '11, 105-114.",
-                 "attributed": "that retrieval stages a ranked pipeline, an early stage fixing the candidate set a later stage can only reorder",
-                 "supports": "yes -- the paper defines a cascade of ranking stages in which each stage prunes the candidate set passed to the next, so recall of an earlier stage bounds the final ranking"
+                 "registry_title": "A cascade ranking model for efficient ranked retrieval",
+                 "registry_first_author": "Wang",
+                 "registry_year": 2011,
+                 "venue": "Proceedings of the 34th international ACM SIGIR conference on Research and development in ",
+                 "hand_checked": {
+                  "status": "verified",
+                  "doi": "10.1145/2009916.2009934",
+                  "citation": "Wang L, Lin J, Metzler D (2011). A Cascade Ranking Model for Efficient Ranked Retrieval. SIGIR '11, 105-114.",
+                  "attributed": "that retrieval stages a ranked pipeline, an early stage fixing the candidate set a later stage can only reorder",
+                  "supports": "yes -- the paper defines a cascade of ranking stages in which each stage prunes the candidate set passed to the next, so recall of an earlier stage bounds the final ranking"
+                 }
                 }
                }
               }
@@ -5498,9 +5961,18 @@
     "registry_year": 2017,
     "venue": "Nucleic Acids Research",
     "hand_checked": {
-     "status": "unresolved",
-     "how": "none",
-     "note": "cited but absent from this paper's bibliography"
+     "status": "verified",
+     "how": "crossref-doi",
+     "doi": "10.1093/nar/gkx1037",
+     "registry_title": "DrugBank 5.0: a major update to the DrugBank database for 2018",
+     "registry_first_author": "Wishart",
+     "registry_year": 2017,
+     "venue": "Nucleic Acids Research",
+     "hand_checked": {
+      "status": "unresolved",
+      "how": "none",
+      "note": "cited but absent from this paper's bibliography"
+     }
     }
    }
   },
@@ -5522,9 +5994,18 @@
     "registry_year": 2023,
     "venue": "Nucleic Acids Research",
     "hand_checked": {
-     "status": "unresolved",
-     "how": "none",
-     "note": "cited but absent from this paper's bibliography"
+     "status": "verified",
+     "how": "crossref-doi",
+     "doi": "10.1093/nar/gkad1004",
+     "registry_title": "The ChEMBL Database in 2023: a drug discovery platform spanning multiple bioactivity data types and time periods",
+     "registry_first_author": "Zdrazil",
+     "registry_year": 2023,
+     "venue": "Nucleic Acids Research",
+     "hand_checked": {
+      "status": "unresolved",
+      "how": "none",
+      "note": "cited but absent from this paper's bibliography"
+     }
     }
    }
   },
@@ -5640,7 +6121,16 @@
                 "registry_title": "Semantic Evaluation for Text-to-SQL with Distilled Test Suites",
                 "registry_first_author": "Zhong",
                 "registry_year": 2020,
-                "venue": "Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing (EM"
+                "venue": "Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing (EM",
+                "hand_checked": {
+                 "status": "matched-by-title",
+                 "how": "crossref-title-search",
+                 "doi": "10.18653/v1/2020.emnlp-main.29",
+                 "registry_title": "Semantic Evaluation for Text-to-SQL with Distilled Test Suites",
+                 "registry_first_author": "Zhong",
+                 "registry_year": 2020,
+                 "venue": "Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing (EM"
+                }
                }
               }
              }
@@ -5767,7 +6257,16 @@
                 "registry_title": "DeepMetab: a comprehensive and mechanistically informed graph learning framework for end-to-end drug metabolism prediction",
                 "registry_first_author": "Zhou",
                 "registry_year": 2025,
-                "venue": "Chemical Science"
+                "venue": "Chemical Science",
+                "hand_checked": {
+                 "status": "verified",
+                 "how": "crossref-doi",
+                 "doi": "10.1039/d5sc04631a",
+                 "registry_title": "DeepMetab: a comprehensive and mechanistically informed graph learning framework for end-to-end drug metabolism prediction",
+                 "registry_first_author": "Zhou",
+                 "registry_year": 2025,
+                 "venue": "Chemical Science"
+                }
                }
               }
              }
@@ -5894,7 +6393,16 @@
                 "registry_title": "DeepCYP: an integrated deep learning web server for the holistic \u201cpathway-site product\u201d prediction of CYP450 metabolism",
                 "registry_first_author": "Zhou",
                 "registry_year": 2026,
-                "venue": "Nucleic Acids Research"
+                "venue": "Nucleic Acids Research",
+                "hand_checked": {
+                 "status": "verified",
+                 "how": "crossref-doi",
+                 "doi": "10.1093/nar/gkag478",
+                 "registry_title": "DeepCYP: an integrated deep learning web server for the holistic \u201cpathway-site product\u201d prediction of CYP450 metabolism",
+                 "registry_first_author": "Zhou",
+                 "registry_year": 2026,
+                 "venue": "Nucleic Acids Research"
+                }
                }
               }
              }
@@ -6021,7 +6529,16 @@
                 "registry_title": "MetaPredictor: <i>in silico</i> prediction of drug metabolites based on deep language models with prompt engineering",
                 "registry_first_author": "Zhu",
                 "registry_year": 2024,
-                "venue": "Briefings in Bioinformatics"
+                "venue": "Briefings in Bioinformatics",
+                "hand_checked": {
+                 "status": "verified",
+                 "how": "crossref-doi",
+                 "doi": "10.1093/bib/bbae374",
+                 "registry_title": "MetaPredictor: <i>in silico</i> prediction of drug metabolites based on deep language models with prompt engineering",
+                 "registry_first_author": "Zhu",
+                 "registry_year": 2024,
+                 "venue": "Briefings in Bioinformatics"
+                }
                }
               }
              }
@@ -6142,10 +6659,19 @@
                "registry_year": 2026,
                "venue": "arXiv",
                "hand_checked": {
-                "status": "unresolved",
-                "how": "crossref-title-search",
-                "title": "The Metric Picks the Winner: Evaluation Choice Flips Model Rankings for Drug-Response Prediction in Unseen Chemistry",
-                "note": "no registry record found; not guessed"
+                "status": "verified",
+                "how": "arxiv-id",
+                "doi": "",
+                "registry_title": "The Metric Picks the Winner: Evaluation Choice Flips Model Rankings for Drug-Response Prediction in Unseen Chemistry",
+                "registry_first_author": "Agarwal",
+                "registry_year": 2026,
+                "venue": "arXiv",
+                "hand_checked": {
+                 "status": "unresolved",
+                 "how": "crossref-title-search",
+                 "title": "The Metric Picks the Winner: Evaluation Choice Flips Model Rankings for Drug-Response Prediction in Unseen Chemistry",
+                 "note": "no registry record found; not guessed"
+                }
                }
               }
              }
@@ -6178,9 +6704,18 @@
     "registry_year": 2009,
     "venue": "Proceedings of the 32nd international ACM SIGIR conference on Research and development in ",
     "hand_checked": {
-     "status": "unresolved",
-     "how": "none",
-     "note": "cited but absent from this paper's bibliography"
+     "status": "verified",
+     "how": "crossref-doi",
+     "doi": "10.1145/1571941.1572114",
+     "registry_title": "Reciprocal rank fusion outperforms condorcet and individual rank learning methods",
+     "registry_first_author": "Cormack",
+     "registry_year": 2009,
+     "venue": "Proceedings of the 32nd international ACM SIGIR conference on Research and development in ",
+     "hand_checked": {
+      "status": "unresolved",
+      "how": "none",
+      "note": "cited but absent from this paper's bibliography"
+     }
     }
    }
   },
@@ -6202,9 +6737,18 @@
     "registry_year": 2019,
     "venue": "Frontiers in Chemistry",
     "hand_checked": {
-     "status": "unresolved",
-     "how": "none",
-     "note": "cited but absent from this paper's bibliography"
+     "status": "verified",
+     "how": "crossref-doi",
+     "doi": "10.3389/fchem.2019.00402",
+     "registry_title": "GLORY: Generator of the Structures of Likely Cytochrome P450 Metabolites Based on Predicted Sites of Metabolism",
+     "registry_first_author": "de Bruyn Kops",
+     "registry_year": 2019,
+     "venue": "Frontiers in Chemistry",
+     "hand_checked": {
+      "status": "unresolved",
+      "how": "none",
+      "note": "cited but absent from this paper's bibliography"
+     }
     }
    }
   },
@@ -6320,7 +6864,16 @@
                 "registry_title": "GLORYx: Prediction of the Metabolites Resulting from Phase 1 and Phase 2 Biotransformations of Xenobiotics",
                 "registry_first_author": "de Bruyn Kops",
                 "registry_year": 2020,
-                "venue": "Chemical Research in Toxicology"
+                "venue": "Chemical Research in Toxicology",
+                "hand_checked": {
+                 "status": "verified",
+                 "how": "crossref-doi",
+                 "doi": "10.1021/acs.chemrestox.0c00224",
+                 "registry_title": "GLORYx: Prediction of the Metabolites Resulting from Phase 1 and Phase 2 Biotransformations of Xenobiotics",
+                 "registry_first_author": "de Bruyn Kops",
+                 "registry_year": 2020,
+                 "venue": "Chemical Research in Toxicology"
+                }
                }
               }
              }
@@ -6441,10 +6994,19 @@
                "registry_year": 2026,
                "venue": "arXiv",
                "hand_checked": {
-                "status": "unresolved",
-                "how": "crossref-title-search",
-                "title": "MassSpecGym in the Wild: Uncovering and Correcting Evaluation Pitfalls in AI-Driven Molecule Discovery",
-                "note": "no registry record found; not guessed"
+                "status": "verified",
+                "how": "arxiv-id",
+                "doi": "",
+                "registry_title": "MassSpecGym in the Wild: Uncovering and Correcting Evaluation Pitfalls in AI-Driven Molecule Discovery",
+                "registry_first_author": "Liu",
+                "registry_year": 2026,
+                "venue": "arXiv",
+                "hand_checked": {
+                 "status": "unresolved",
+                 "how": "crossref-title-search",
+                 "title": "MassSpecGym in the Wild: Uncovering and Correcting Evaluation Pitfalls in AI-Driven Molecule Discovery",
+                 "note": "no registry record found; not guessed"
+                }
                }
               }
              }

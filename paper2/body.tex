@@ -739,9 +739,10 @@ supported almost any claim about which system is better.
 
 Every prediction names the transformation rule that produced it and the site at which it fired,
 which lets a candidate be rejected on mechanistic grounds instead of on a score. Predicting the
-site alone is a task with its own literature and its own tools \citep{Sicho_2019,
-Jacob_2025_uncertainty}, and that literature has recently had to confront how its own labels are
-derived \citep{Jacob_2025_autosom}; the claim here is narrower and is about consistency rather than
+site alone is a task with its own literature and its own tools, reactivity-based
+\citep{Rydberg_2010} and learned \citep{Sicho_2019, Jacob_2025_uncertainty}, resting on
+annotation curated for the purpose \citep{Mazzolari_2019}, and that literature has recently had to
+confront how its own labels are derived \citep{Jacob_2025_autosom}; the claim here is narrower and is about consistency rather than
 about site prediction, namely that the site this system names is the site that changed. It is
 measured. On the interactive arm, whose rule
 budget of \numSiteRulebudget{} the audit records, of \numSiteScored{} correctly predicted
@@ -1018,10 +1019,12 @@ the recall figure does.
 
 \subsection{What is and is not distinctive}
 
-Attribution is not what distinguishes this system. BioTransformer's output names the reaction and
-the enzyme behind each structure it returns, and MetaTox's method reports a biotransformation type
-and a site of metabolism \citep{Rudik_2017}; what is unusual here is checking the reported site
-against the atoms that changed rather than offering it as a feature. Ordering is not a
+What distinguishes this system is not that it reports a site but that the site is audited.
+BioTransformer's output names the reaction and the enzyme behind each structure it returns, and
+MetaTox's method reports a biotransformation type and a site of metabolism \citep{Rudik_2017}, so
+reporting one is the norm rather than a contribution. Checking it against the atoms that actually
+changed, against a null of the same size, is not done anywhere in this literature that we can find,
+and Section~\ref{sec:site} is that check. Ordering is not a
 differentiator either: \numArmreturnOrderingWord{} of the \numComparatorsNWord{} comparators order
 their whole output, with this system a third that does. What is left, and it is the property this
 paper rests on, is that every evaluation choice is declared with every cell of the resulting grid

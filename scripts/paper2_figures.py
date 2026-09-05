@@ -192,6 +192,10 @@ def fig_ceiling():
     for xi, (s, u) in enumerate(zip(share, usable)):
         a2.bar(xi, s, width=0.6, color=PALETTE[1] if u else INK_FAINT,
                hatch="//" if u else None, edgecolor="white" if u else "none", lw=0.0)
+    # The four bars are one sequence and not four categories: the definition of a type widens from
+    # left to right and the share falls with it. Two referees in a row read them as independent,
+    # so the reading is drawn rather than left to the axis order.
+    a2.plot(x, share, "-", color=INK_MUTED, lw=0.8, marker="o", ms=2.2, zorder=4)
     # The label above a bar is the bar's own value. It used to be the number of distinct types at
     # that granularity, which is a different quantity on a different scale sitting in the place
     # the eye reads the height from; the type count now rides under the tick where it names the
@@ -207,6 +211,8 @@ def fig_ceiling():
     a2.set_ylabel("share of misses in singleton types")
     a2.set_ylim(0, 1.0)
     a2.axhline(0.5, color=INK_FAINT, lw=0.6, ls=":")
+    a2.text(-0.35, 0.985, "the type definition widens $\\rightarrow$", fontsize=6.2, ha="left",
+            va="top", color=INK_MUTED)
     a2.text(3.35, 0.93, "hatched: the type names\na transformation", fontsize=6.2, ha="right",
             color=PALETTE[1])
     a2.text(3.35, 0.16, "plain: it does not", fontsize=6.2, ha="right", color=INK_MUTED)
