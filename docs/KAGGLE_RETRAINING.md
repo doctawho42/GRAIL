@@ -50,12 +50,25 @@ python scripts/pack_for_kaggle.py --out ~/kaggle_upload
 
 Two archives and a manifest with their digests, so what arrives can be checked against what left:
 
-- `grail-code.tar.gz`, about 1.6 MB. The package, the converged config and the measured rule bank,
-  with the corpus filtered out of `grail_metabolism/data` and only the featurisation files kept.
+- `grail-code.tar.gz`, about 1.4 MB. The package, the converged config, the runner and the measured
+  rule bank, with the corpus filtered out of `grail_metabolism/data` and only the featurisation
+  files kept.
 - `grail-corpus.tar.gz`, about 78 MB. The three splits and their clean triples. This is the archive
   the decision above is about.
 
-Upload each as a private Kaggle dataset.
+Upload each as a private Kaggle dataset. Both are already uploaded:
+
+| dataset | holds |
+|---|---|
+| `polomoshnov/grail-corpus` | the six corpus files, already extracted by Kaggle |
+| `polomoshnov/grail-pkg-v2` | the package, extracted, 88 modules |
+
+One thing about the archive is worth knowing before making another. Kaggle extracts what it is
+given and refuses a collision: an archive holding two members at one path fails to create, and the
+API reports the upload as successful and then never produces the dataset. The packer used to add the
+rule bank twice, once by walking the package it lives in and once by name, and three uploads failed
+silently before the web interface finally printed the reason. The packer now refuses to write an
+archive with a duplicate member rather than leaving that to be discovered.
 
 ## The notebook
 
@@ -70,13 +83,21 @@ matching key every recall figure is scored under is a tautomer-canonical InChIKe
 on graphs a different RDKit built is not the model this paper reports. `numpy<2` is what the stack
 pins.
 
-The second unpacks:
+The second puts the package where Python can import it and the corpus where the loader looks. Kaggle
+has already extracted both datasets, so nothing is unpacked here: the corpus files are linked rather
+than copied, because they are 1.4 GB and the working directory is not.
 
 ```python
-!tar xzf /kaggle/input/<code-dataset>/grail-code.tar.gz -C /kaggle/working
-!tar xzf /kaggle/input/<corpus-dataset>/grail-corpus.tar.gz \
-     -C /kaggle/working/grail_metabolism/data
-%cd /kaggle/working
+import os, shutil, pathlib
+shutil.copytree("/kaggle/input/grail-pkg-v2", "/kaggle/working/grail", dirs_exist_ok=True)
+os.chdir("/kaggle/working/grail")
+data = pathlib.Path("grail_metabolism/data")
+for f in ["train.sdf", "val.sdf", "test.sdf", "train_triples_clean.txt",
+          "val_triples_clean.txt", "test_triples_clean.txt"]:
+    dst = data / f
+    if dst.exists() or dst.is_symlink():
+        dst.unlink()
+    dst.symlink_to(f"/kaggle/input/grail-corpus/{f}")
 !pip install -q -e .
 ```
 

@@ -35,7 +35,10 @@ ROOT = Path(__file__).resolve().parents[1]
 
 # Everything the training entry point imports or reads, and nothing else.
 CODE = ["grail_metabolism", "configs/paper_full_converged.yaml", "requirements.txt",
-        "pyproject.toml", "README.md", "LICENSE", "NOTICE.md"]
+        "pyproject.toml", "README.md", "LICENSE", "NOTICE.md",
+        # the runner travels inside the archive rather than beside it: a dataset carrying a bare
+        # .py alongside its data was accepted by the upload and then never created
+        "scripts/kaggle_b1.py"]
 CORPUS = ["train.sdf", "val.sdf", "test.sdf",
           "train_triples_clean.txt", "val_triples_clean.txt", "test_triples_clean.txt"]
 DATA = ROOT / "grail_metabolism" / "data"
@@ -84,16 +87,44 @@ def main() -> int:
     def _code_filter(t):
         if "__pycache__" in t.name or t.name.endswith(".pyc"):
             return None
+        # Kaggle extracts an uploaded archive and refuses to finish creating a dataset that
+        # contains a pickle, without saying so: the upload reports success and the dataset never
+        # appears. These four are PCA featurisation and the converged config runs with pca:false,
+        # so they are not needed; if they ever are, they cannot travel this way.
+        if t.name.endswith(".pkl"):
+            return None
         parts = Path(t.name).parts
         if len(parts) > 2 and parts[:2] == ("grail_metabolism", "data"):
             return t if parts[-1] in KEEP_IN_DATA else None
         return t
 
+    # The bank sits inside grail_metabolism/resources, so walking the package already carries it
+    # whenever it is present on disk. Adding it a second time put two members at one path, and an
+    # archive with a duplicate member is not a harmless curiosity: an extractor that refuses
+    # collisions rejects the whole thing, which is what happened here and what cost three silent
+    # upload failures before the error surfaced. It is added only when the walk did not find it.
+    bank_arc = "grail_metabolism/resources/extended_smirks.txt"
     code_tar = out / "grail-code.tar.gz"
+    written = []
     with tarfile.open(code_tar, "w:gz") as tf:
+        def _record(t):
+            t = _code_filter(t)
+            if t is not None:
+                written.append(t.name)
+            return t
+
         for rel in CODE:
-            tf.add(ROOT / rel, arcname=rel, filter=_code_filter)
-        tf.add(BANK, arcname="grail_metabolism/resources/extended_smirks.txt")
+            tf.add(ROOT / rel, arcname=rel, filter=_record)
+        if bank_arc not in written:
+            tf.add(BANK, arcname=bank_arc)
+            written.append(bank_arc)
+
+    dupes = sorted({n for n in written if written.count(n) > 1})
+    if dupes:
+        code_tar.unlink()
+        print(f"REFUSING: the archive would hold two members at one path: {', '.join(dupes)}",
+              file=sys.stderr)
+        return 1
     manifest["code"] = {"archive": code_tar.name, "sha256": _sha(code_tar),
                         "bytes": code_tar.stat().st_size}
     print(f"  {code_tar.name}  {code_tar.stat().st_size / 1e6:.1f} MB")
