@@ -77,43 +77,36 @@ substrates carrying \numSplitValPairs{}, and \numSplitTestSubstrates{} test subs
 a held-out figure is to mean anything \citep{Joeres_2025, Kretschmer_2025}, and a read-only audit
 verifies zero substrate and zero positive-pair overlap across all three split pairs.
 
-Three evaluation populations carry the figures here, each a stated subset of a split rather than
-a split itself, and no figure is given without naming one. A fourth appears twice in the
-Supporting Information and carries no figure of this comparison: a \numBtN{}-substrate subset
-drawn for an earlier evaluation against another method, used there to ask whether the ordering of
-methods changes with the population and to measure one bank's reach against another's. The \emph{evaluated test set} is the
-\numPopulationTestsubs{} test substrates that carry at least one reference, holding all
-\numPopulationTestrefs{} references of that split. It is where the two corpus-level measurements
-are made: the \emph{coverage ceiling}, the share of annotated metabolites any single application
-of the rule bank can reach, and the census of the transformation chemistry the remainder needs. The \emph{validation draw} is a declared sample of \numValdrawCap{} substrates at seed
-\numValdrawSeed{} from the validation split. Of these, \numValdrawDeclared{} produced a candidate
-pool, and the \numValdrawPaired{} held by both operating modes of the system in a paired comparison carry
-\numHOneFiveNreferences{} references. Most registered ranking and timing
-thresholds are checked on this draw, because a threshold checked on the population whose rule it
-chose is not a check; three of the ten reported predictions, P5, P6 and P7, were in the event
-adjudicated on the comparison set instead, and Table~\ref{tab:hyp} marks which row is which. Sampling is without replacement and the draws are not nested, so a different seed gives a
-different set of the same size and a different cap one that is not a subset of this one; cap and
-seed are recorded with every figure drawn from it. The \emph{comparison set} is a subset of the evaluated test set: the \numPopulationN{}
-substrates every method in the comparison has an entry for, carrying
-\numPopulationReferences{} references. Every comparison against a published predictor in this
-paper is measured on it. It is not a random quarter of that split: it is the submission list sent
-to the comparator that is a web service, and how those \numPopulationN{} were drawn from the
-split is not recorded anywhere in this repository, which is the same defect the corpus assembly
-carries. What can be checked about it is checked in Section~\ref{SI-sec:si-population}, and the
-comparison is read again there on the whole evaluated test set, \numPopdefWholesubstrates{}
-substrates, against the \numPopdefWholearmsWord{} comparators that ran over all of it. The wide-budget leads this paper
-claims survive that move; the narrower lead over SyGMa at a budget of fifteen does not, and is
-restricted to the comparison set wherever it is stated. The move runs the other way as well, and
-costs more than it takes: at a budget of ten the exhaustive arm trails SyGMa by
-$\numPopdefExhwholesygmaOneZero$ $[\numPopdefExhwholesygmaOneZeroLo,
+Three populations carry the figures here, and no figure is given without naming one.
+
+The \emph{evaluated test set} is the \numPopulationTestsubs{} test substrates carrying at least
+one reference, holding all \numPopulationTestrefs{} references of that split. Both corpus-level
+measurements are made on it: the coverage ceiling and the census of the chemistry the remainder
+needs. The \emph{validation draw} is a declared sample of \numValdrawCap{} substrates at seed
+\numValdrawSeed{} from the validation split, of which \numValdrawPaired{} are held by both
+operating modes in a paired comparison. Registered ranking and timing thresholds are checked here,
+because a threshold checked on the population whose rule it chose is not a check; three of the ten
+reported predictions were in the event adjudicated on the comparison set instead, and
+Table~\ref{tab:hyp} marks which. The \emph{comparison set} is the \numPopulationN{} substrates
+every method has an entry for, carrying \numPopulationReferences{} references, and every comparison
+against a published predictor is measured on it.
+
+That third population has a defect worth stating before any number is read on it. It is not a
+random quarter of the test split: it is the submission list sent to the comparator that is a web
+service, and how those \numPopulationN{} were drawn is recorded nowhere in this repository, which
+is the same defect the corpus assembly carries. So the comparison is read again on the whole
+evaluated test set, \numPopdefWholesubstrates{} substrates, against the
+\numPopdefWholearmsWord{} comparators that ran over all of it
+(Section~\ref{SI-sec:si-population}). The wide-budget leads survive that move and the narrower
+lead over SyGMa at a budget of fifteen does not, so that one is restricted to the comparison set
+wherever it is stated. The move also costs more than it takes: at a budget of ten the exhaustive
+arm trails SyGMa by $\numPopdefExhwholesygmaOneZero$ $[\numPopdefExhwholesygmaOneZeroLo,
 \numPopdefExhwholesygmaOneZeroHi]$ and MetaPredictor by
 $\numPopdefExhwholemetapredictorOneZero$ $[\numPopdefExhwholemetapredictorOneZeroLo,
 \numPopdefExhwholemetapredictorOneZeroHi]$ over the whole set, both intervals excluding zero, where
-on the comparison set neither cell separates at all. That is the whole of the qualification those
-two carry, and it is a qualification about which population they are read on rather than about
-multiplicity: neither separates on the comparison set, so neither is among the
+on the comparison set neither cell separates at all. Neither is therefore among the
 \numHolmSeparating{} cells the family-wise correction is applied to, and the
-\numHolmLeadsremovedWord{} that correction removes are leads of this work's.
+\numHolmLeadsremovedWord{} it removes are leads of this work's.
 
 The annotated substrate--metabolite pairs are assembled from four sources: ChEMBL
 \citep{Zdrazil_2024}, DrugBank \citep{Wishart_2018}, MetXBioDB \citep{Djoumbou_Feunang_2019} and
@@ -170,6 +163,18 @@ three columns.
 The remaining three arms are not measured against this corpus and are not thereby cleared:
 MetaTox and MetaPredictor publish no development set that could be intersected with it. What is
 reported is the one overlap that could be computed, not a survey of all four.
+
+\subsection{What this system does not represent}
+\label{sec:methods-scope}
+
+Nothing in this pipeline is stereochemistry-aware. The standardiser strips configuration, the
+matching criterion is chosen to ignore it, and the annotation carries none, so sulfoxidation,
+epoxide hydrolysis and most conjugation are predicted and scored as constitutions. For a predictor
+of metabolite structures that is a restriction on what may be asked of it rather than a
+technicality: sulfoxide and epoxide configuration carry the pharmacology of several drug classes,
+and a system that cannot represent configuration cannot be asked which enantiomer an enzyme makes.
+Every recall figure in this paper is therefore recall over constitutions, and the size of what that
+sets aside is bounded in Section~\ref{sec:limitations}.
 
 \subsection{Overview}
 
@@ -1245,25 +1250,15 @@ chemistry, which is a statement about the corpus and about no particular bank.
 \section{Limitations}
 \label{sec:limitations}
 
-Predictions are single-step in the sense that one template is applied once, which is not the same
-as one enzymatic step, and the gap between the two is larger than one instrument alone shows. The
-first counts the loci of the reaction centre of the pair a template was mined from and flags
-\numCompositeLoci{} of \numCompositeScored{} mined templates, \numCompositeLocisharePct{}. It errs
-in both directions and neither is measured: two edits that share or neighbour centre atoms arrive as
-one locus and are counted once, and a centre in two pieces with a bond appearing or disappearing
-between them is one event, which is what a cleavage or a cyclisation looks like, and is counted as
-two. The largest transformation class in this comparison set is a cleavage
-(Table~\ref{SI-tab:si-chemistry}), so the second direction is not a remote possibility here, and
-this instrument's share is therefore neither a floor nor a bound. A second instrument, whose
-threshold was registered before it was written,
-counts core-incident edits (bonds between matched atoms whose order or presence moves, plus
-attachment points gained or lost, with bonds inside an added fragment not counted) and calls a
-template composite at \numCompositeThreshold{} or more, above every single enzymatic turnover.
-It flags \numCompositeEdits{}, \numCompositeEditsharePct{}, and the two instruments agree on only
-\numCompositeBoth{}, so their union is \numCompositeUnion{} templates,
-\numCompositeUnionsharePct{}. Registered prediction P10 set the bar at \numCompositeBarPct{} before
-either count existed, and the registered instrument clears it on its own, without the union and
-without the instrument whose error is unmeasured in both directions.
+Applying one template once is not the same as one enzymatic step, and two instruments measure the
+gap. The registered one counts core-incident edits and calls a template composite at
+\numCompositeThreshold{} or more, above every single enzymatic turnover; it flags
+\numCompositeEdits{} of \numCompositeScored{} mined templates, \numCompositeEditsharePct{}, and
+clears the bar registered prediction P10 set at \numCompositeBarPct{} before either count existed.
+The other counts reaction-centre loci and flags \numCompositeLocisharePct{}, but it errs in both
+directions and neither error is measured, so its share is neither a floor nor a bound; the two agree
+on only \numCompositeBoth{} templates and their union is \numCompositeUnionsharePct{}
+(Section~\ref{SI-sec:si-singlestep}).
 
 The corpus annotates metabolites several enzymatic steps from their parent, and a template mined
 from such a pair performs those steps together: inspection finds a rule oxidising two ring
@@ -1311,42 +1306,24 @@ recorded anywhere in this repository. Nothing was excluded for emitting nothing,
 still contains substrates a method answers nothing for. Two comparators, BioTransformer and GLORYx, are built on
 sources this corpus is assembled from, which favours both, and that is not corrected for either.
 
-The deployed configuration is not the best one this work knows of. The rule that combines the
-templates reaching a candidate treats them as independent evidence, and this bank does not satisfy
-that; a blend that discounts duplication, weighting the largest single template's probability
-\numAggregationBlendmax{} against \numAggregationBlendor{} for the noisy-or of all of them
-(Equation~\ref{SI-eq:blend}), beats the deployed rule on the validation draw at every budget from
-one to \numAggvalHybridwinsmax{}, with the interval excluding zero
-(Section~\ref{SI-sec:si-aggregation}), which includes the budget the headline here is read at.
-Every number in this paper is measured under the deployed rule, so the release keeps it and the
-better setting is reported rather than substituted; a reader deploying this system should know
-that the shipped aggregation is not the one a selection on validation prefers for a short list. GLORYx stands in the same relation to its own
-reference set and carries a column on the same terms, with the overlap stated and uncorrected. It
-is the one arm not run on this machine: the models it needs are not distributed with its source, so
-its column comes from the service its authors operate, at the module version and on the dates
-Section~\ref{SI-sec:si-comparators} records.
+The deployed configuration is not the best one this work knows of. A blend that discounts
+duplication beats the released noisy-or on the validation draw at every budget from one to
+\numAggvalHybridwinsmax{}, with the interval excluding zero
+(Section~\ref{SI-sec:si-aggregation}), which includes the budget the headline is read at. The
+release keeps the noisy-or because every number in this paper is measured under it and switching
+would leave the paper describing a system nobody ran; the choice is a parameter rather than a
+retraining, so a reader who prefers the blend can make it. GLORYx is the one arm not run on this
+machine: the models it needs are not distributed with its source, so its column comes from the
+service its authors operate, at the version Section~\ref{SI-sec:si-comparators} records.
 
-Nothing in this pipeline is stereochemistry-aware. The standardiser strips configuration, the
-matching criterion is chosen to ignore it, and the annotation carries none, so sulfoxidation,
-epoxide hydrolysis and most conjugation are predicted and scored as constitutions. For a
-metabolite structure predictor that is a real restriction and not a technicality: sulfoxide and
-epoxide configuration carry the pharmacology of several drug classes, and a system that cannot
-represent them cannot be asked which enantiomer an enzyme makes. What is reported here is therefore
-recall over constitutions. The criterion sweep does not bound what a configuration-aware criterion
-would cost, and cannot: two of its five settings return the identical verdict at every one of the
-nine budgets, because the annotation has no configuration for them to disagree about. Those two
-differ in more than configuration. The first block of an InChIKey is the skeleton hash, so it
-drops the protonation and isotope layers along with stereochemistry, and under it a thiol and its
-thiolate are one structure (Section~\ref{SI-sec:si-sensitivity}). That layer has its own ceiling
-and it is measured on the same population: \numChargeRefs{} of the \numChargeTyped{} annotated
-metabolites, \numChargeSharePct{}, carry a formal charge on some atom, \numChargeZwitterions{}
-of them as net-neutral zwitterions and \numChargeNetcharged{} net-charged. Neither layer moves a
-verdict in the sweep; both bound how much a criterion that kept them could ever move. What can be bounded is the size of the question, and it
-is: \numStereoEither{} of the \numStereoPairs{} annotated pairs, \numStereoSharePct{}, produce a
-metabolite carrying a stereogenic element its substrate does not have
-(\numStereoCentre{} a tetrahedral centre, \numStereoDouble{} a stereogenic double bond). That is
-a ceiling on how many references such a criterion could ever separate, not an estimate of what it
-would cost, and nothing here assigns a configuration to any of them.
+The scope statement in Section~\ref{sec:methods-scope} bounds how much stereochemistry could
+matter, and the bound is the size of the question rather than an estimate of what it would cost:
+\numStereoEither{} of the \numStereoPairs{} annotated pairs, \numStereoSharePct{}, produce a
+metabolite carrying a stereogenic element its substrate does not have. The criterion sweep cannot
+price a configuration-aware criterion, because two of its five settings return the identical verdict
+at every budget: the annotation has no configuration for them to disagree about. Protonation is in
+the same position and is bounded the same way, at \numChargeSharePct{} of the annotated metabolites
+carrying a formal charge (Section~\ref{SI-sec:si-sensitivity}).
 
 No measurement of a system here is external. Every figure is measured on one corpus assembled from
 four sources, of which the only published reference set is one of the four, so a held-out split of
@@ -1382,29 +1359,7 @@ declare the axis and vary it.
 
 The Supporting Information is available free of charge on the ACS Publications website.
 
-\texttt{grail\_si.pdf}: the corpus, how it was assembled and what of that is recoverable, its
-sources and licence position, and the splits with their leakage audit; a census of the
-annotation every recall figure is measured against; the five matching criteria
-defined and the sensitivity of the comparison to the choice among them; the parent-drop
-convention measured per arm; what kind of molecules these are, and the members of the comparison
-set; every candidate count the paper prints and what each one is; where
-each method runs out of candidates; precision at every budget; every comparison difference with its
-paired interval; how the substrate is drawn, and what that decides; the rule bank, its mining
-procedure, the provenance of each collection and how much of it is a published rule set verbatim;
-what the rule budget buys; two parameters of the ranking, both swept; the
-architecture and training of both learned stages with every setting they were trained under;
-whether the site a prediction names is the site that changed, against a null; what each method
-recovers split by transformation class; the comparison at matched list length and under the other
-aggregation; whether the missing chemistry is the corpus's or the bank's; whether template
-discovery has saturated; what a single step is, measured on the templates and again on the
-references; the
-sixteen registered predictions, including the six this paper does not report; the group-ranking
-oracle under four partitions with a granularity-matched control; the stage ablations in full;
-when a ranking comparison can measure anything; the choice of evaluation population; the worked
-example on both drawings of the substrate, with the head of the exhaustive mode's ranked list;
-what retraining moves; runtime methodology; comparator
-versions and digests; and the provenance and reproduction procedure.
-
+\texttt{grail\_si.pdf}: the corpus and what of its assembly is recoverable, with the splits and their leakage audit; the five matching criteria and the comparison's sensitivity to the choice among them; every candidate count the paper prints and what each one is; every comparison difference with its paired interval, at matched list length and under the other aggregation; how the substrate is drawn and what that decides; the rule bank, its mining, the provenance of each collection and how much of it is a published rule set verbatim; the architecture, training and every setting of both learned stages; what each method recovers split by transformation class; whether the missing chemistry is the corpus's or the bank's, and whether template discovery has saturated; the sixteen registered predictions including the six not reported here; the stage ablations; the worked example on both drawings; comparator versions and digests; the evaluation claim checked against an independent benchmark; and the provenance and reproduction procedure.
 \end{suppinfo}
 
 \section{Data and software availability}
@@ -1428,44 +1383,36 @@ would cost. A reader who wants the measured bank can rebuild it by obtaining Bio
 reaction set from its own project and re-adding the templates
 \texttt{scripts/build\_released\_bank.py} names, whose digest that script records.
 
-One obligation is therefore open rather than settled, and it is named because it is not ours to
-close: BioTransformer's permission to redistribute is the authors' to grant, and until it is, its
-templates stay out of the release. The second obligation is closed. Its environmental-microbial
-file is CC BY-NC-SA 4.0, which no release under \RepoLicence{} can carry, and this bank contains
-\numRelbankEnvmicroWord{} of its templates; \numRelbankEnvmicroonly{} of the
-\numRelbankEnvmicroWord{} are unique to it, so both are also in the core set the release already
-removes, and nothing under that licence reaches the released bank. The repository's licence is \RepoLicence{},
-which is what the remaining GPL templates permit rather than a preference, and
-\texttt{NOTICE.md} carries the same decisions file by file. The
-annotated references are released as the descriptors the matching criteria are decided by rather
-than as structures, so that every recall figure and every cell of the criterion sweep can be
-recomputed by a reader who does not hold the corpus sources' licences; a check reports zero
-disagreements between the two. The released model is to be deployed as a service on
-\texttt{way2drug.ru}; that deployment is not a condition of anything reported here, and every
-figure in this paper is reproducible from the repository without it. Releasing the checkpoints is the same bar this paper applies to others: a system
-whose weights are not obtainable cannot be compared against, which is why one of the
-\numComparatorsUnavailable{} systems of 2025--26 is excluded here. The train and
-validation candidate pools are deposited at \ZenodoDoi{}, minted on publishing the deposit. The annotated
-substrate--metabolite corpus is assembled from ChEMBL \citep{Zdrazil_2024}, DrugBank
-\citep{Wishart_2018}, MetXBioDB \citep{Djoumbou_Feunang_2019} and the GLORYx reference set
-\citep{de_Bruyn_Kops_2020}, at versions \CorpusVersions{}.
+One obligation is open rather than settled, and it is named because it is not ours to close:
+BioTransformer's permission to redistribute is the authors' to grant, and until it is, its templates
+stay out of the release. The second is closed. Its environmental-microbial file is CC BY-NC-SA 4.0,
+which no release under \RepoLicence{} can carry, and \numRelbankEnvmicroonly{} of the
+\numRelbankEnvmicroWord{} templates of it this bank holds are unique to that file, so the removal
+above already takes both. The repository's licence is \RepoLicence{}, which is what the remaining
+GPL templates permit rather than a preference, and \texttt{NOTICE.md} carries the decisions file by
+file.
 
-The corpus is not redistributed as a corpus, and the reason is a limitation of this release
-rather than an open question. What is released is narrower and is named exactly: the evaluated
-test substrates and their annotated metabolites, as structures, so that every recall figure here
-can be recomputed under any of the five criteria; not the training and validation splits, not the
-negatives, and not the source records the corpus was selected from. ChEMBL is released under a ShareAlike licence and DrugBank under a
-NonCommercial one; a single derivative drawing on both cannot satisfy each, because the
-non-commercial clause is a restriction ShareAlike forbids adding and dropping it breaches
-DrugBank's terms. Third-party restrictions therefore apply to the corpus records, and the
-question of the derived corpus's licence is \CorpusLicence{}. What is deposited holds
-tautomer-canonical hashes of every substrate and of every annotated metabolite, together with the
-candidate structures this work's rule bank produced, which are our output and not source records.
-Holding licences for the four sources, the records can be obtained, the same hashes computed and
-joined to everything released here; the split manifest confirms that a rebuild matches rather
-than merely reporting that it differs. The one step that cannot be reproduced is the
-extraction that selected from the four sources, which is not in the repository and is recorded as
-such in the Supporting Information.
+The annotated references are released as the descriptors the matching criteria are decided by rather
+than as structures, so a reader who does not hold the corpus sources' licences can still recompute
+every recall figure and every cell of the criterion sweep; a check reports zero disagreements
+between the two. Releasing the checkpoints is the bar this paper applies to others: a system whose
+weights cannot be obtained cannot be compared against, which is why one of the
+\numComparatorsUnavailable{} systems of 2025--26 is excluded here. The train and validation
+candidate pools are deposited at \ZenodoDoi{}. The corpus is assembled from ChEMBL
+\citep{Zdrazil_2024}, DrugBank \citep{Wishart_2018}, MetXBioDB \citep{Djoumbou_Feunang_2019} and
+the GLORYx reference set \citep{de_Bruyn_Kops_2020}, at versions \CorpusVersions{}.
+
+The corpus is not redistributed as a corpus, and the reason is a limitation of this release rather
+than an open question. ChEMBL is released under a ShareAlike licence and DrugBank under a
+NonCommercial one, and a single derivative drawing on both cannot satisfy each: the non-commercial
+clause is a restriction ShareAlike forbids adding, and dropping it breaches DrugBank's terms. So the
+question of the derived corpus's licence is \CorpusLicence{}, and what is released is narrower and
+named exactly: the evaluated test substrates and their annotated metabolites as structures, not the
+training and validation splits, not the negatives, and not the source records. A reader holding the
+four sources' licences can obtain the records, compute the same tautomer-canonical hashes and join
+them to everything released here, and the split manifest confirms a rebuild matches rather than
+merely reporting that it differs. The one step that cannot be reproduced is the extraction that
+selected from the four sources, which is not in the repository and is recorded as such.
 
 The hydrogen convention is an argument to the rule-application entry point rather than a
 constant, and its default is the presentation every deployed firing path uses, which is the one the
