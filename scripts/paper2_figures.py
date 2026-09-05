@@ -456,104 +456,77 @@ def fig_case():
 
 
 def fig_toc():
-    """The ACS table-of-contents graphic.
+    """The graphic for the table of contents: the thesis, not the system.
 
-    The specification constrains this more than the figures do, and two of its rules changed the
-    design. It must give the essence "without providing specific results", so the sweep with its
-    recall values is out; and it must avoid artwork that already appears in the text, so the
-    substrate-with-sites panel of Figure~3 cannot be reused. What is left is the essence stated as
-    chemistry: a substrate, the rules that act on it named on their arrows, the products they
-    produce, and the fact that the output is ordered.
+    The specification constrains this more than the figures do. It must give the essence "without
+    providing specific results", and it must avoid artwork that already appears in the text. An
+    earlier version drew one substrate and two of its metabolites, which is a picture of the
+    instrument; under a title about what undeclared choices do to an ordering, the essence is the
+    ordering itself changing. So this draws the verdict grid: the same pair of systems compared on
+    the same substrates, read under five ways of deciding whether a prediction matches and nine
+    budgets, with the sign of the verdict in each cell. No recall value is printed, which is what
+    the specification asks, and no artwork from the text is reused, since Table~4 is a table.
 
     Hard requirements, from the ACS guidelines of 2024-02-28: at most 3.25 by 1.75 inches at the
     size submitted, sans-serif type at 8 pt and never below 6, and TIFF at 300 dpi or EPS with
-    fonts embedded -- PDF is not an accepted format for this one graphic, so both are written.
+    fonts embedded, so both are written.
     """
-    import io
-
-    import matplotlib.image as mpimg
-    from matplotlib.patches import FancyArrowPatch
-
     # The specification, stated once and never used to build anything. The canvas below is sized
     # from it today, but the two must stay separate names: an assertion that compares the output
     # against the same constant that produced it can only catch a process failure, never a wrong
     # constant, and would pass unchanged if someone widened the canvas.
     ACS_MAX_W, ACS_MAX_H, ACS_MIN_DPI, ACS_MIN_PT = 3.25, 1.75, 300, 6.0
-    # 300 is the floor ACS states, not a target, and the two structures in this graphic are the
-    # same rendered chemistry as Figure 2. The assertion below still checks against the floor,
-    # which is the point of keeping the two constants apart.
     TOC_W, TOC_H, DPI, MIN_PT = 3.25, 1.75, 600, 6.0
-    LABEL_PT, RANK_PT = 7.5, 8.5
-    FONTS_PT = (LABEL_PT, RANK_PT)
-    # The drawn structure, not the stored one. The earlier version took the substrate from the
-    # stored artifact and the products from the same run, so the graphic showed gemcitabine as
-    # its lactim on the left and its own metabolites as amides on the right: one molecule in two
-    # dialects, inside three inches.
-    d = art("case_study_exhaustive_drawn.json")
-    hits = {c["key"]: c for c in d["candidates"] if c["is_reference"]}
-    # the two transformations that read as chemistry at this size: one deamination, one
-    # phosphorylation, each labelled with the rule the pipeline reported for it
-    shown = [("FIRDBEQIJQERSE-UHFFFAOYSA-N", "dFdU", DEAMINATION),
-             ("KNTREFQOVSMROS-UHFFFAOYSA-N", "dFdCMP", PHOSPHORYLATION)]
-    # ordered by the rank the run actually returned, so the graphic reads down the list. The
-    # rank printed beside each was the loop index -- 1 and 2 whatever the data said, and in the
-    # wrong order for both drawings of the substrate. It is the returned rank now.
-    shown.sort(key=lambda t: hits[t[0]]["rank"])
+    CELL_PT, AXIS_PT, TITLE_PT = 7.0, 6.5, 8.0
+    FONTS_PT = (CELL_PT, AXIS_PT, TITLE_PT)
 
-    def draw(smiles, w, h):
-        from rdkit import Chem, RDLogger
-        RDLogger.DisableLog("rdApp.*")
-        from rdkit.Chem.Draw import rdMolDraw2D
-        # rendered at three times the placed size, so the 300 dpi the TOC specification demands
-        # is the floor rather than the ceiling
-        dr = rdMolDraw2D.MolDraw2DCairo(w * 3, h * 3)
-        o = dr.drawOptions()
-        o.bondLineWidth = 9
-        o.fixedFontSize = 102
-        rdMolDraw2D.PrepareAndDrawMolecule(dr, Chem.MolFromSmiles(smiles))
-        dr.FinishDrawing()
-        return mpimg.imread(io.BytesIO(dr.GetDrawingText()), format="png")
+    d = art("criterion_sweep.json")
+    order = ["canonical", "inchikey", "inchi_no_stereo", "tanimoto1", "inchikey_tautomer"]
+    label = {"canonical": "canonical SMILES", "inchikey": "InChIKey",
+             "inchi_no_stereo": "InChIKey, no stereo", "tanimoto1": "Tanimoto $=1$",
+             "inchikey_tautomer": "tautomer-aware key"}
+    missing = [c for c in order if c not in d["by_criterion"]]
+    if missing:
+        raise SystemExit(f"criterion_sweep.json has no column for {', '.join(missing)}")
 
-    fig = plt.figure(figsize=(TOC_W, TOC_H))
-    fig.patch.set_facecolor("white")
-    sans = {"family": "DejaVu Sans"}
+    budgets = sorted((int(k) for k in d["by_criterion"][order[0]]["verdict_by_budget"]), key=int)
 
-    ax = fig.add_axes([0, 0, 1, 1])
-    ax.set_xlim(0, 1)
-    ax.set_ylim(0, 1)
-    ax.set_axis_off()
+    # The verdicts the artifact records, which are the ones Table 4 prints. Recomputing them from
+    # the recall values would put a second definition of "leads" in the paper, and the two pictures
+    # of one grid would then be free to disagree.
+    CODE = {"trails": -1, "neither": 0, "leads": 1}
+    grid = []
+    for crit in order:
+        v = d["by_criterion"][crit]["verdict_by_budget"]
+        unknown = {x for x in v.values()} - set(CODE)
+        if unknown:
+            raise SystemExit(f"criterion_sweep.json records verdicts this figure cannot draw: "
+                             f"{', '.join(sorted(unknown))}")
+        grid.append([CODE[v[str(b)]] for b in budgets])
 
-    sub = fig.add_axes([0.005, 0.20, 0.33, 0.62])
-    sub.imshow(draw(d["substrate"], 620, 420))
-    sub.set_axis_off()
-    ax.text(0.17, 0.14, "substrate", ha="center", fontsize=LABEL_PT, color=INK, **sans)
+    import numpy as np
+    from matplotlib.colors import ListedColormap
 
-    for i, (key, name, col) in enumerate(shown):
-        y = 0.70 - 0.42 * i
-        pan = fig.add_axes([0.60, y - 0.20, 0.30, 0.40])
-        pan.imshow(draw(hits[key]["smiles"], 620, 400))
-        pan.set_axis_off()
-        ax.add_patch(FancyArrowPatch((0.355, 0.50), (0.585, y), arrowstyle="-|>",
-                                     mutation_scale=11, lw=1.5, color=col,
-                                     shrinkA=0, shrinkB=2,
-                                     connectionstyle="arc3,rad=%.2f" % (0.16 if i == 0 else -0.16)))
-        ax.text(0.47, 0.50 + (0.16 if i == 0 else -0.155) * 1.05 + (y - 0.50) * 0.5,
-                f"rule {hits[key]['rule_id']}", ha="center", fontsize=LABEL_PT, color=col, **sans)
-        ax.text(0.755, y - 0.235, name, ha="center", fontsize=LABEL_PT, color=col, **sans)
-        ax.text(0.945, y, str(hits[key]["rank"]), ha="center", va="center", fontsize=RANK_PT,
-                color=INK, **sans)
-    # Which run these ranks come from. Table 3 of the manuscript reports the same four metabolites
-    # under the stored drawing and returns different ranks; without this label a reader comparing
-    # the two concludes one of them is wrong.
-    ax.text(0.945, 0.14, "rank", ha="center", fontsize=LABEL_PT, color=INK, **sans)
-    ax.text(0.5, 0.965, "exhaustive mode, substrate as a chemist draws it",
-            ha="center", va="top", fontsize=MIN_PT, color=INK, **sans)
+    fig, ax = plt.subplots(figsize=(TOC_W, TOC_H))
+    # three regions, not three series: a muted diverging triple, readable in grey
+    cmap = ListedColormap(["#C7DCEA", "#F2F2F0", "#EBCDB4"])
+    ax.imshow(np.array(grid), cmap=cmap, vmin=-1, vmax=1, aspect="auto")
+    for r, row in enumerate(grid):
+        for c, v in enumerate(row):
+            ax.text(c, r, {-1: "$-$", 0: "$\\cdot$", 1: "$+$"}[v], ha="center", va="center",
+                    fontsize=CELL_PT, color=INK)
+    ax.set_xticks(range(len(budgets)))
+    ax.set_xticklabels([str(b) for b in budgets], fontsize=AXIS_PT)
+    ax.set_yticks(range(len(order)))
+    ax.set_yticklabels([label[c] for c in order], fontsize=AXIS_PT)
+    ax.set_xlabel("candidates a system may return", fontsize=AXIS_PT, labelpad=1.5)
+    ax.set_title("one comparison, five ways of judging a match",
+                 fontsize=TITLE_PT, pad=3.0, color=INK)
+    for spine in ax.spines.values():
+        spine.set_visible(False)
+    ax.tick_params(length=0, pad=1.5)
+    fig.tight_layout(pad=0.25)
 
-    # The rc_context is load-bearing. This module sets savefig.bbox to "tight" for the figures,
-    # and tight adds savefig.pad_inches on every side: the first build came out 3.45 by 1.95,
-    # which is 3.25 by 1.75 plus 0.1 twice. Passing bbox_inches=None does not help, because None
-    # means "read the rcParam". The limit is a maximum at the size submitted, so the canvas has
-    # to be written as it is.
     with matplotlib.rc_context({"savefig.bbox": "standard", "savefig.pad_inches": 0.0}):
         # tif and eps are what ACS accepts for this graphic; the pdf exists only so pdflatex can
         # place it in the manuscript, since pdflatex reads neither of the other two
