@@ -24,7 +24,49 @@ def art(name):
     return json.loads((ROOT / "results" / name).read_text())
 
 
+# Numbers that are DECLARED rather than measured, each with the reason it cannot come from an
+# artifact and, where one exists, the place it is really defined.
+#
+# The distinction earns its keep. Four numbers reached the page as bare literals here, and they
+# were not one kind of thing: two were a stale measurement that the artifact had moved away from
+# underneath, two were dead and printed nowhere, and two are genuine constants of a design. A
+# literal that looks like every other literal makes those indistinguishable, so the constants are
+# named as constants and everything else must come from a read.
+DECLARED = {
+    # A count of published systems, from the literature survey rather than from any run of ours.
+    # Nothing in results/ measures how many metabolite predictors of 2025-26 ship no runnable
+    # implementation, because the question is answered by looking for one and failing.
+    "comparators.unavailable": 4,
+    # The sampling scheme's tail: the largest N substrates are timed outright instead of being
+    # sampled, because a cost envelope that misses its own worst cases is not an envelope. The
+    # value is defined in the producer, and _check_declared below holds the two to each other so
+    # they cannot drift the way the h8 pair did.
+    "cost.tail": 12,
+}
+
+
+def _check_declared():
+    """Hold a declared constant to the place it is really defined, where such a place exists.
+
+    A declared constant is honest and a duplicated one is not. The cost envelope's tail lives in
+    its producer as a slice; if that slice changes and this dictionary does not, the SI describes a
+    sampling scheme nobody ran. Reading the producer's source is enough to catch that, and costs
+    nothing.
+    """
+    src = (ROOT / "scripts" / "typed_edit" / "cost_envelope.py").read_text()
+    m = re.search(r"sized\[::args\.every\]\s*\+\s*sized\[-(\d+):\]", src)
+    if not m:
+        raise SystemExit(
+            "REFUSING: cost_envelope.py no longer builds its sample as a stride plus a tail, so "
+            "the tail size declared here describes a scheme that is not the one it runs.")
+    if int(m.group(1)) != DECLARED["cost.tail"]:
+        raise SystemExit(
+            f"REFUSING: cost_envelope.py takes the largest {m.group(1)} outright and this file "
+            f"declares {DECLARED['cost.tail']}. The SI would describe a sampling scheme nobody ran.")
+
+
 def build():
+    _check_declared()
     dep = art("deployment_table.json")
     h7 = art("h7_verdict.json")
     h9 = art("h9_verdict.json")
@@ -199,7 +241,7 @@ def build():
 
     n["h14.threshold"] = h14["registered_threshold"]
     n["h14.diff"] = h14["primary_gate_minus_cap"]["gap"]
-    n["comparators.unavailable"] = 4
+    n["comparators.unavailable"] = DECLARED["comparators.unavailable"]
     n["h14.ceiling"] = h14["ceiling_of_this_gate"]["gap"]
 
     n["h13.time.before"] = h13["time"]["every_product_median_s"]
@@ -1344,11 +1386,27 @@ def build():
         n[f"oracle.{tag}lo"] = _c["ci95"][0]
         n[f"oracle.{tag}hi"] = _c["ci95"][1]
         n[f"oracle.{tag}sep"] = _c["excludes_zero"]
-    n["h8.blocked"] = 0.4376
-    n["h8.interleaved"] = 0.5023
+    # The two recalls the design gap is the difference of. They were typed here rather than read,
+    # and the artifact was re-run underneath them: the pair went on printing the value it had
+    # before, so the SI glossed a gap of -0.0902 with a pair differing by -0.0647. A gap and the
+    # two numbers it is the difference of must come from one read of one file, or the sentence
+    # that prints all three can contradict itself.
+    n["h8.blocked"] = h8["recall_micro"]["15"]["fusion_blocked"]
+    n["h8.interleaved"] = h8["recall_micro"]["15"]["fusion"]
     n["h12.ceilingrecall"] = h12["recall_micro"]["15"]["oracle_third"]
-    n["h12.val"] = 0.0412
-    n["h12.valceiling"] = 0.0260
+    # The validation-side pair the SI compares: what the trained scorer gains over the two-way base
+    # and what a binary group ordering gains over the same base. Both were typed here rather than
+    # read, and the file they belong to was in the tree the whole time. The trained gain rounded to
+    # the same value; the binary one was printed a digit high.
+    h12v = art("h12_verdict_validation.json")
+    _v15 = h12v["recall_micro"]["15"]
+    n["h12.val"] = round(_v15["three_way"] - _v15["two_way"], 4)
+    n["h12.valceiling"] = round(_v15["oracle_third"] - _v15["two_way"], 4)
+    if not (n["h12.val"] > n["h12.valceiling"] > 0):
+        raise SystemExit(
+            f"REFUSING: the SI says the trained scorer exceeds the binary ordering on validation, "
+            f"and the artifact gives {n['h12.val']} against {n['h12.valceiling']}. One of the two "
+            f"is wrong and the sentence would assert the opposite of what was measured.")
 
     # the relaxation ladder and its a-priori bound
     n["relax.recovered"] = rel["phase_b"]["arms"]["no_H_no_deg"]["recovered_count"] \
@@ -1845,7 +1903,7 @@ def build():
     # overlap in exactly those tail indices divisible by every. If the two runs had been over
     # different populations this would not close, and the numbers would not build.
     n["cost.every"] = int(ce["sample_every"])
-    n["cost.tail"] = 12
+    n["cost.tail"] = DECLARED["cost.tail"]
     n["cost.population"] = n["valdraw.declared"]
     _N, _e = n["cost.population"], n["cost.every"]
     _systematic = -(-_N // _e)
