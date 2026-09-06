@@ -39,6 +39,14 @@ GATES = [
     # LICENSE, NOTICE.md and the package configuration describe the bank that ships, not
     # the one the paper measures. Both files went on describing the wrong one for a week.
     ("check_licence_files.py", []),
+    # An input digest has to be the digest a READER computes. git normalises line endings on
+    # commit and reports nothing, so eight tracked data files carried bytes here that no clone
+    # would ever have, and three artifacts verified in this tree and reported a moved input in a
+    # fresh one. The guarantee the manuscript quotes has to hold on the reader's side.
+    ("check_working_tree_matches_index.py", []),
+    # no document may claim the withheld templates are not redistributed while a tracked file
+    # carries them
+    ("check_no_withheld_templates.py", []),
     # the ignore rules name what the repository deposits, instead of being overridden by a
     # flag 372 times, which is how a released artifact goes missing from a release
     ("sync_tracked_artifacts.py", ["--check"]),

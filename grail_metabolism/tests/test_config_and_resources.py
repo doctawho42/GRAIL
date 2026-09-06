@@ -8,9 +8,22 @@ from grail_metabolism.experiments.presets import _default_rules_path, get_experi
 
 
 def test_default_rules_path_points_to_existing_resource():
+    """The resolved bank must be one the resolver offers, whichever of them a checkout has.
+
+    The allowed names were listed here by hand and the list went stale: it never gained
+    extended_smirks_released.txt, which is the bank a CLONE resolves to, because the measured one
+    is not redistributed. So this failed in the only tree that matters for a reader -- a fresh
+    clone -- while passing in every tree that holds a file the release withholds. The set now comes
+    from the resolver, so a bank the resolver offers cannot be one this test rejects.
+    """
+    from grail_metabolism.utils.preparation import _default_rule_bank_candidates
+
     path = Path(_default_rules_path())
-    assert path.exists()
-    assert path.name in {"extended_smirks.txt", "notebooks_rules.txt", "merged_smirks.txt"}
+    assert path.exists(), f"{path} does not exist; no bank in the resolver's list is present"
+    offered = {c.name for c in _default_rule_bank_candidates()}
+    assert path.name in offered, (
+        f"the default bank resolved to {path.name}, which _default_rule_bank_candidates() does "
+        f"not offer: {sorted(offered)}")
 
 
 def test_default_preset_uses_clean_splits_and_packaged_rules():

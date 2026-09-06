@@ -7,6 +7,11 @@ from rdkit import Chem
 from rdkit.Chem import rdChemReactions
 from torch import nn
 
+# The fusion constant the manuscript registers and sweeps: Cormack, Clarke and Buettcher 2009,
+# not tuned here. scripts/typed_edit/_rrf.py holds the same value for the analysis path, and the
+# two must not drift; grail_metabolism/tests/test_audit_fixes.py holds them to each other.
+RRF_K = 60
+
 if TYPE_CHECKING:
     from grail_metabolism.utils.preparation import MolFrame
     from grail_metabolism.config import MultiStepConfig
@@ -222,19 +227,65 @@ class ModelWrapper:
             evaluated.append((normalized, combined, filter_score, generator_score))
             if filter_score >= effective_filter_threshold:
                 accepted.append((normalized, combined, filter_score, generator_score))
-        sort_key = lambda item: (-item[1], -item[2], -item[3], item[0])
+        # Reciprocal rank fusion, which is what the manuscript says the deployed combination is
+        # and what every measurement in it was made under. This path ranked by the product of the
+        # two scores instead, so the released software ordered its output by the arrangement the
+        # manuscript reports as the WORSE one -- and no reader could have found the difference,
+        # because it is not in any number: every reported figure comes from pools re-ranked by
+        # scripts/typed_edit/_rrf.py, and no producer of a reported figure calls this method.
+        #
+        # Only the ORDER changes. The scores handed back stay the filter's, the generator's and
+        # their product, because an RRF score is about a fortieth of one and is not a probability;
+        # a caller reading `combined` as a confidence would be handed a different kind of thing.
+        def _rrf_rank(items):
+            """1-based competition ranks fused as sum 1/(K + rank); ties share the lower rank.
+
+            The same rule and the same K as the analysis path, and ranks rather than positions for
+            the reason recorded there: a position depends on how the sort broke ties, so two runs
+            over one pool can disagree, and on the comparison set they did.
+            """
+            def ranks(score):
+                order = sorted(range(len(items)), key=lambda i: -score(items[i]))
+                out, prev, cur = [0] * len(items), None, 1
+                for pos, i in enumerate(order, 1):
+                    v = score(items[i])
+                    if v != prev:
+                        prev, cur = v, pos
+                    out[i] = cur
+                return out
+            rf = ranks(lambda it: it[2])   # filter
+            rg = ranks(lambda it: it[3])   # generator
+            return {id(items[i]): 1.0 / (RRF_K + rf[i]) + 1.0 / (RRF_K + rg[i])
+                    for i in range(len(items))}
+
+        def _ordered(items):
+            """Fuse the two LEARNED scores by rank, then apply the re-rankers on top of that.
+
+            The fusion replaces the product of the filter's and the generator's opinions, which is
+            what the manuscript describes and what the scale argument is about. It does not replace
+            the site and factorized multipliers: those are separate re-rankings applied to the
+            combination, and a first version of this ordered by the fusion alone, which silently
+            took both of them out of the ranking entirely. A uniform multiplier must leave the
+            order alone and a non-uniform one must reshape it.
+            """
+            fused = _rrf_rank(items)
+            mult = {id(it): (it[1] / (it[2] * it[3]) if it[2] and it[3] else 1.0) for it in items}
+            return sorted(items, key=lambda it: (-(fused[id(it)] * mult[id(it)]),
+                                                 -it[1], -it[2], -it[3], it[0]))
+
+        sort_key = lambda item: (-item[1], -item[2], -item[3], item[0])  # noqa: E731
         if not gate_by_filter:
-            # rank-only: keep every candidate, ordered by filter*generator score, and let
-            # max_output do the truncation. The hard gate discards plausible-but-sub-
-            # threshold hits and measurably hurts recall@k; ranking keeps them in reach.
-            ranked_candidates = sorted(evaluated, key=sort_key)
+            # rank-only: keep every candidate, ordered by the rank fusion, and let max_output do
+            # the truncation. The hard gate discards plausible-but-sub-threshold hits and
+            # measurably hurts recall@k; ranking keeps them in reach.
+            ranked_candidates = _ordered(evaluated)
         elif accepted:
-            ranked_candidates = sorted(accepted, key=sort_key)
+            ranked_candidates = _ordered(accepted)
         elif evaluated:
             # gated, but nothing cleared the threshold: surface a few best-ranked anyway
             # so a substrate is never silently empty.
             fallback_limit = max(1, min(top_k or 3, 3, len(evaluated)))
-            ranked_candidates = sorted(evaluated, key=sort_key)[:fallback_limit]
+            ranked_candidates = _ordered(evaluated)[:fallback_limit]
         else:
             ranked_candidates = []
         # Dedup the output by the SAME tautomer-invariant key the structure metrics match

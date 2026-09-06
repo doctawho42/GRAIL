@@ -7,8 +7,10 @@ which atoms it acted on. It runs in three stages:
 1. a multi-label generator scores biotransformation SMIRKS templates against the substrate graph
    and selects which to apply;
 2. RDKit applies the selected templates and enumerates candidate products;
-3. a binary filter scores each (substrate, product) pair, and the two scores are combined by
-   reciprocal rank fusion into the ranking a caller receives.
+3. a binary filter scores each (substrate, product) pair, and the candidates are ordered by a
+   reciprocal rank fusion of the two scores (K = 60), which is the ranking a caller receives.
+   The scores handed back stay the filter's, the generator's and their product: a fusion score is
+   about a fortieth of one and is not a confidence.
 
 Every prediction therefore arrives with its provenance: not a score alone but the template and the
 site, so a chemist can reject a candidate on mechanistic grounds.

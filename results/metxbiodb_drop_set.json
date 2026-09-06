@@ -3,7 +3,7 @@
   "script": "metxbiodb_drop_set.py",
   "script_path": "scripts/typed_edit/metxbiodb_drop_set.py",
   "source_sha256": "ac33616abd07a035483be148d027a9157a02997f4452ba75c2ae9b749b7d8e4d",
-  "git_commit": "f072016e96ceabfe8d230c0a50bf6d959edf2768",
+  "git_commit": "4afcc5e4464883b0b490801ebc3d61b8175c6cd4",
   "git_dirty": true
  },
  "inputs": [
@@ -25,13 +25,13 @@
  "typing": "radius-0 reaction type by the mining route, the same instrument the census and the containment claim use",
  "mcs_deadline_seconds": "the mining route's own",
  "typed": {
-  "kept": 1244,
+  "kept": 1245,
   "dropped": 775,
-  "distinct_types": 332
+  "distinct_types": 333
  },
- "distinct_types_kept": 201,
+ "distinct_types_kept": 202,
  "distinct_types_dropped": 184,
- "total_variation_distance": 0.317,
+ "total_variation_distance": 0.3171,
  "permutation": {
   "n": 10000,
   "seed": 0,
@@ -58,11 +58,11 @@
    43
   ],
   [
-   "[[[[8, 16], 0.0, 2.0], 1]]",
+   "[[[[6, 7], 1.0, 0.0], 1], [[[6, 7], 1.0, 1.0], 1]]",
    31
   ],
   [
-   "[[[[6, 7], 1.0, 0.0], 1], [[[6, 7], 1.0, 1.0], 1]]",
+   "[[[[8, 16], 0.0, 2.0], 1]]",
    31
   ],
   [

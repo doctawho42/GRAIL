@@ -110,7 +110,9 @@ def build():
 
     # the validation draw is a sample and not the split; its cap and seed are what make the
     # population reproducible, and a figure that names neither is not checkable
-    vp = art("val_pools.json")["population"]
+    # Split out of the 46 MB pool it lives in, because the pool is not tracked and reading it
+    # here is what stopped the number chain from running in a fresh clone at all.
+    vp = art("val_pool_population.json")["population"]
     n["valdraw.cap"] = vp["cap"]
     n["valdraw.seed"] = vp["seed"]
     n["valdraw.declared"] = vp["declared_n"]
@@ -1493,42 +1495,17 @@ def build():
         if len({tuple(p) for p in v.get("source_pairs", [])}) == 1)
     n["mined.singletonoccurrence"] = sum(1 for v in catalog.values() if v["count"] == 1)
     n["mined.five_or_more"] = sum(1 for v in catalog.values() if v["count"] >= 5)
-    bank = [ln for ln in (ROOT / "grail_metabolism/resources/extended_smirks.txt"
-                          ).read_text().splitlines() if ln.strip()]
-
-    # The bank's composition, counted from the files rather than described. mined_only_v2.txt is
-    # the mined half that matches the catalog and the deployed bank; mined_only.txt is a
-    # superseded earlier cut of 5,866. Three curated collections ship with the code; the rest of
-    # the curated half comes from a fourth whose file is not in the repository.
-    def _rules(rel):
-        return {ln.strip() for ln in (ROOT / rel).read_text().splitlines() if ln.strip()}
-    bankset = set(bank)
-    minedset = _rules("grail_metabolism/resources/mined_only_v2.txt")
-    curated_files = {
-        "hydroxylation": "grail_metabolism/data/smirks.txt",
-        "merged": "grail_metabolism/data/merged_smirks.txt",
-        "notebooks": "grail_metabolism/resources/notebooks_rules.txt",
-    }
-    named = set()
-    for tag, rel in curated_files.items():
-        r = _rules(rel) & bankset
-        n[f"curated.{tag}"] = len(r)
-        named |= r
-    n["curated.total"] = len(bankset - minedset)
-    n["curated.named"] = len(named)
-    n["curated.unnamed"] = len(bankset - minedset - named)
-    n["bank.rules"] = len(bank)
-    from rdkit import RDLogger
-    from rdkit.Chem import AllChem
-    RDLogger.DisableLog("rdApp.*")
-    def _parses(smirks):
-        # ReactionFromSmarts raises on a malformed template rather than returning None, so the
-        # count has to catch as well as test; one template in the bank does exactly this
-        try:
-            return AllChem.ReactionFromSmarts(smirks.strip()) is not None
-        except Exception:
-            return False
-    n["bank.parses"] = sum(1 for r in bank if _parses(r))
+    # The bank's composition, counted by scripts/bank_composition.py where the bank is. Counting
+    # it here opened the measured bank, which the release does not carry, so the whole chain from
+    # artifacts to macros raised in a clone and took five tests with it.
+    _bc = art("bank_composition.json")
+    for tag, count in _bc["curated_by_collection"].items():
+        n[f"curated.{tag}"] = count
+    n["curated.total"] = _bc["curated_total"]
+    n["curated.named"] = _bc["curated_named"]
+    n["curated.unnamed"] = _bc["curated_unnamed"]
+    n["bank.rules"] = _bc["rules"]
+    n["bank.parses"] = _bc["parses"]
 
     # what the learned rule CHOICE contributes, against unlearned choices of the same size
     sa = art("selection_ablation_deployed.json")

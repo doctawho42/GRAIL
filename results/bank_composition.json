@@ -1,0 +1,53 @@
+{
+ "provenance": {
+  "script": "bank_composition.py",
+  "script_path": "scripts/bank_composition.py",
+  "source_sha256": "b5eb75564de997cee43acd9be31218dce89a0aec7691371458450c75c68e5b52",
+  "git_commit": "906ae24088c531c46d35ca153cb41135597c721e",
+  "git_dirty": true
+ },
+ "inputs": [
+  {
+   "path": "grail_metabolism/resources/extended_smirks.txt",
+   "exists": true,
+   "sha256_16": "40643d60de93f4db",
+   "bytes": 1321831
+  },
+  {
+   "path": "grail_metabolism/resources/mined_only_v2.txt",
+   "exists": true,
+   "sha256_16": "a0e419249dd4121e",
+   "bytes": 887244
+  },
+  {
+   "path": "grail_metabolism/data/smirks.txt",
+   "exists": true,
+   "sha256_16": "2221073df06b6740",
+   "bytes": 98944
+  },
+  {
+   "path": "grail_metabolism/data/merged_smirks.txt",
+   "exists": true,
+   "sha256_16": "082f5540f7827532",
+   "bytes": 118554
+  },
+  {
+   "path": "grail_metabolism/resources/notebooks_rules.txt",
+   "exists": true,
+   "sha256_16": "6d8c3275ab92294f",
+   "bytes": 361936
+  }
+ ],
+ "question": "what the measured bank is made of, counted where the bank is rather than where the numbers are printed",
+ "rules": 7581,
+ "parses": 7580,
+ "curated_total": 1725,
+ "curated_named": 1233,
+ "curated_unnamed": 492,
+ "curated_by_collection": {
+  "hydroxylation": 474,
+  "merged": 656,
+  "notebooks": 1051
+ },
+ "why_this_is_separate": "the bank is not redistributed, so a number generator that opened it could not run in a clone; these counts are about a withheld file and are traceable to it by digest"
+}

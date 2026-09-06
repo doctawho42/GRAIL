@@ -2107,6 +2107,23 @@ working tree at write time. Verification resolves by the recorded source digest,
 independent of the commit, so the producer is identified regardless; what the flag says is that
 the surrounding tree was not clean, not that the producer is unknown.
 
+A reader gets the checks that a clone can run, and is told about the ones it cannot. Neither the
+measured bank nor the candidate pools are redistributed, so a handful of these checks have nothing
+to read; each names the file it wants and says the release withholds it, rather than reporting the
+release as stale, which is what they used to do. Two quantities the manuscript took straight out of
+a withheld file, the validation draw and the bank's composition, are deposited as small artifacts
+that record that file by digest, so the chain from artifact to printed macro runs end to end for a
+reader and both counts stay traceable to what they were counted from.
+
+One thing had to be repaired before any of that meant anything. An input's digest is taken over the
+bytes on disk, and git normalises line endings when a file is committed without reporting the
+working copy as modified, so eight tracked data files here carried bytes no clone would ever
+materialise. Three artifacts therefore verified in this checkout and reported a moved input in a
+fresh one: the guarantee was reproducible only for us. The files were re-materialised from the
+repository, the artifacts that named them re-run, and a check now compares every tracked file's
+bytes against the committed ones, since a digest that means one thing here and another for a reader
+is not a guarantee at all.
+
 Third, and it bounds the hop described below: naming a file as an input, by digest, is a guarantee
 about fixity and not about provenance. It establishes that the file has not moved since it was
 read, and says nothing about what wrote it. Asking the second question of every JSON input a

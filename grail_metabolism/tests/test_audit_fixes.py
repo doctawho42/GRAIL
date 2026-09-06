@@ -555,6 +555,11 @@ def test_the_released_checker_and_the_paper_census_cannot_disagree():
     from explicit_h_mechanism import hydrogen_convention
     from bank_engine_replication import load_bank
 
+    from grail_metabolism.tests._withheld import requires
+    # The census is over the measured bank, which is not what the release ships. A clone cannot
+    # run this comparison and it is not a defect there that it cannot.
+    requires("grail_metabolism/resources/extended_smirks.txt")
+
     census = hydrogen_convention()
     for bank in ("grail_full", "sygma_175", "biotransformer"):
         rules = load_bank(bank)
@@ -1082,6 +1087,11 @@ def test_an_artifact_written_from_an_input_that_is_gone_does_not_read_as_current
     # and the artifact this was found on carries the block, or the check guards nothing
     curve = json.loads(Path("results/budget_curve.json").read_text())
     assert curve.get("inputs"), "the budget curve stopped naming the pools it was read from"
+    # The block above is checked on a temporary file and always runs. THIS half reads the pools
+    # the curve was built from, and those are not redistributed, so in a clone it is not a defect
+    # that they are gone -- it is the release working as documented.
+    from grail_metabolism.tests._withheld import requires
+    requires(*[i["path"] for i in curve["inputs"]])
     assert check_inputs(curve) == [], (
         "the committed budget curve names an input that is gone or has moved: "
         + "; ".join(check_inputs(curve)))
@@ -1577,3 +1587,74 @@ def test_input_provenance_audit_can_actually_fail():
         "EXPECTED_CONSUMERS deliberately")
     assert sum(report["distinct_inputs_by_class"].values()) > 0, (
         "the census found no inputs at all, which means it is walking nothing")
+
+
+def test_the_package_and_the_analysis_fuse_ranks_the_same_way():
+    """One registered formula, two implementations, held to each other.
+
+    The manuscript says the deployed combination is reciprocal rank fusion and reports that
+    replacing the product with it gained more recall than any architectural change tested. The
+    package ranked by the product. Nothing caught it because no number in either manuscript comes
+    through this path: every reported figure is scored from pools re-ranked by
+    scripts/typed_edit/_rrf.py, and no producer of a reported figure calls ModelWrapper.generate.
+    So the released software could order its output by the arrangement the paper argues against,
+    and the paper's own numbers would never notice.
+
+    Two implementations of a registered formula are one drift away from meaning different things,
+    which is what _rrf.py's own docstring says about ranks against positions. This asserts they
+    agree on a pool where the product and the fusion disagree, so a change to either that changes
+    an order fails here.
+    """
+    import sys
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[2]
+    for p in (str(root), str(root / "scripts" / "typed_edit")):
+        if p not in sys.path:
+            sys.path.insert(0, p)
+
+    from _rrf import RRF_K as ANALYSIS_K, rrf_order
+    from grail_metabolism.model.wrapper import RRF_K as PACKAGE_K
+
+    assert PACKAGE_K == ANALYSIS_K, (
+        f"the package fuses at K={PACKAGE_K} and the analysis at K={ANALYSIS_K}; the manuscript "
+        f"registers one constant and sweeps it, so two values mean two different experiments")
+
+    # A pool where ranking by the product and ranking by the fusion give different orders, so the
+    # assertion below cannot pass by the two agreeing on everything.
+    items = [("A", 0.90 * 0.10, 0.90, 0.10),
+             ("B", 0.50 * 0.50, 0.50, 0.50),
+             ("C", 0.10 * 0.95, 0.10, 0.95)]
+
+    def _ranks(score):
+        order = sorted(range(len(items)), key=lambda i: -score(items[i]))
+        out, prev, cur = [0] * len(items), None, 1
+        for pos, i in enumerate(order, 1):
+            v = score(items[i])
+            if v != prev:
+                prev, cur = v, pos
+            out[i] = cur
+        return out
+
+    rf, rg = _ranks(lambda it: it[2]), _ranks(lambda it: it[3])
+    fused = {items[i][0]: 1.0 / (PACKAGE_K + rf[i]) + 1.0 / (PACKAGE_K + rg[i])
+             for i in range(len(items))}
+    by_product = [it[0] for it in sorted(items, key=lambda it: -it[1])]
+    by_fusion = [it[0] for it in sorted(items, key=lambda it: -fused[it[0]])]
+    assert by_product != by_fusion, (
+        "the fixture no longer separates the two rules, so this test would pass on a package that "
+        "ranks by the product")
+
+    cands = [{"smiles": s, "filter": f, "generator": g} for s, _, f, g in items]
+    assert [c["smiles"] for c in rrf_order(cands)] == by_fusion, (
+        "the analysis path and the package's fusion disagree on the order of one pool")
+
+    # and the shipped path must not have gone back to the product
+    import inspect
+
+    from grail_metabolism.model import wrapper
+
+    src = inspect.getsource(wrapper.ModelWrapper.generate)
+    assert "_ordered(" in src, (
+        "ModelWrapper.generate no longer orders by the rank fusion, so the released software "
+        "ranks by something the manuscript does not describe")

@@ -59,11 +59,18 @@ def _tracked() -> list:
 
 
 def _withheld() -> set:
-    if not MEASURED.exists() or not RELEASED.exists():
+    if not MEASURED.exists():
+        # The measured bank is exactly what the release does not carry, so a clone reaches this
+        # every time. Refusing there would report the release as broken for working as documented;
+        # passing silently would look as though the check had run. It says which, and stops.
+        print("  not checkable in this tree: the measured bank "
+              f"({MEASURED.relative_to(ROOT)}) is not redistributed, so what the released bank "
+              "withholds cannot be computed here. This is a clone of the release, not a defect.")
+        raise SystemExit(0)
+    if not RELEASED.exists():
         raise SystemExit(
-            f"REFUSING: this check needs both banks to know what is withheld, and "
-            f"{'the measured one' if not MEASURED.exists() else 'the released one'} is absent. "
-            f"A check that cannot see the withheld set would pass on anything.")
+            "REFUSING: the measured bank is here and the released one is not, so the release was "
+            "never built. Run scripts/build_released_bank.py.")
     measured = {l.strip() for l in MEASURED.read_text().splitlines() if l.strip()}
     released = {l.strip() for l in RELEASED.read_text().splitlines() if l.strip()}
     return measured - released

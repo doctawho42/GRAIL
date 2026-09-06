@@ -24,6 +24,7 @@ from __future__ import annotations
 
 import re
 from decimal import Decimal, ROUND_HALF_UP
+from pathlib import Path
 
 HERE = "scripts/gates/app_small.py"
 
@@ -838,15 +839,23 @@ def _arch(ctx) -> None:
                   "results/mined_rule_catalog_v2.json")
         _cmp(ctx, "arch, templates the re-run produced", m.group(2).replace("{,}", ""), len(cat),
                   "results/mined_rule_catalog_v2.json")
-        bank = ctx.root / "grail_metabolism" / "resources" / "extended_smirks.txt"
-        if bank.exists():
-            shipped = {ln.strip() for ln in bank.read_text().splitlines() if ln.strip()}
+        # The check is that no re-derived template is new to the bank, and it named the MEASURED
+        # bank as "the shipped bank". That file is precisely the one not shipped: 611 of its
+        # templates are BioTransformer's and what ships is the released bank beside it. So in a
+        # clone this reported the release as broken, when the release was working as documented.
+        # The bank is resolved the way every entry point resolves it, and a tree carrying the
+        # measured one still checks against that.
+        from grail_metabolism.utils.preparation import resolve_default_rule_bank
+
+        bank = resolve_default_rule_bank()
+        if bank is not None and Path(bank).exists():
+            shipped = {ln.strip() for ln in Path(bank).read_text().splitlines() if ln.strip()}
             new = sum(1 for r in cat if r not in shipped)
             _cmp(ctx, "arch, none of the re-derived templates is new", 0, new,
-                      "mined_rule_catalog_v2.json keys against resources/extended_smirks.txt")
+                      f"mined_rule_catalog_v2.json keys against resources/{Path(bank).name}")
         else:
-            ctx.checks.append((False, "arch, the shipped bank is readable",
-                              "resources/extended_smirks.txt", "missing", HERE))
+            ctx.checks.append((False, "arch, a rule bank resolves",
+                              "one of the banks the resolver offers", "none present", HERE))
 
 
 def register_pair_cost(ctx) -> None:

@@ -25,6 +25,7 @@ from __future__ import annotations
 import argparse
 import glob
 import json
+import subprocess
 import sys
 from collections import Counter
 from pathlib import Path
@@ -34,7 +35,11 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 from _provenance import COSMETIC, CURRENT, check_inputs, infer, verify  # noqa: E402
 
-OK = (CURRENT, COSMETIC)
+# not_checkable_here is not a pass: it says the tree cannot answer, and the reason is that
+# the release withholds the file. It must not fail a clone and must not be mistaken for a
+# verification, so it is counted and named separately wherever the totals are printed.
+NOT_CHECKABLE = "not_checkable_here"
+OK = (CURRENT, COSMETIC, NOT_CHECKABLE)
 
 TE = "scripts/typed_edit"
 # Three artifacts were removed rather than re-run, and what replaced each is named here so the
@@ -166,6 +171,11 @@ PINNED = {
     # Which tracked files carry a template the released bank drops, which is the difference
     # between what the bank ships and what the repository holds.
     "results/withheld_template_carriers.json": "scripts/check_no_withheld_templates.py",
+    # The validation draw's four scalars, split out of a 46 MB pool that is not tracked so that
+    # the number chain runs in a clone.
+    "results/val_pool_population.json": "scripts/val_pool_population.py",
+    # The measured bank's composition, counted where the bank is because the bank is not shipped.
+    "results/bank_composition.json": "scripts/bank_composition.py",
     # the bank the repository ships, which is the measured bank minus what it may not carry
     "results/released_bank.json": "scripts/build_released_bank.py",
     # the one comparator column obtained from a service rather than run here
@@ -216,9 +226,31 @@ PINNED = {
 }
 
 
+def _withheld_by_design(rel: str) -> bool:
+    """Whether a path is absent because the release does not carry it.
+
+    A file the ignore rules cover and the index does not hold is one the release deliberately
+    withholds -- the measured bank, a candidate pool, the corpus. A file that IS tracked and still
+    missing is a broken checkout and stays a failure. Asking git rather than keeping a list here
+    means a newly withheld artifact is classified correctly without this file being edited.
+    """
+    tracked = subprocess.run(["git", "ls-files", "--error-unmatch", rel], cwd=ROOT,
+                             capture_output=True).returncode == 0
+    if tracked:
+        return False
+    return subprocess.run(["git", "check-ignore", "-q", rel], cwd=ROOT,
+                          capture_output=True).returncode == 0
+
+
 def check(rel: str, producer: str | None) -> dict:
     path = ROOT / rel
     if not path.exists():
+        # Absent because the release withholds it is not the same as absent because something
+        # broke. A clone reaches the first for every untracked pool, and reporting the release as
+        # stale there told a reader the software was wrong when it was working as documented.
+        if _withheld_by_design(rel):
+            return {"artifact": rel, "status": "not_checkable_here",
+                    "detail": "not redistributed; absent from a clone by design"}
         return {"artifact": rel, "status": "absent", "detail": "not in this checkout"}
     v = verify(path)
     if v["status"] not in OK and producer is not None and v["status"] == "unstamped":
@@ -234,6 +266,15 @@ def check(rel: str, producer: str | None) -> dict:
         except Exception:
             gone = []
         if gone:
+            # An input that is gone BECAUSE it is not redistributed is the same case one level
+            # down: the digest cannot be recomputed in a clone and its absence is not evidence
+            # that anything moved. An input that is present and differs still fails.
+            withheld = [g for g in gone
+                        if g.startswith("input gone: ")
+                        and _withheld_by_design(g[len("input gone: "):])]
+            if withheld and len(withheld) == len(gone):
+                return {**v, "status": "not_checkable_here",
+                        "detail": "input not redistributed: " + "; ".join(withheld)}
             return {**v, "status": "input_changed", "detail": "; ".join(gone)}
     return v
 
@@ -325,8 +366,19 @@ def main() -> int:
           f"{len(reached)} of those are named as an input by a pinned artifact, so their digest "
           f"is checked even where the file carries no stamp of its own")
     cos = [r for r in pinned if r["status"] == COSMETIC]
-    print(f"\nall {len(pinned)} pinned artifacts trace to the code that wrote them"
+    nck = [r for r in pinned if r["status"] == NOT_CHECKABLE]
+    # A tree that cannot answer must not print that it did. The count of artifacts this checkout
+    # could actually verify leads, and the ones it could not are named with the reason.
+    print(f"\n{len(pinned) - len(nck)} of {len(pinned)} pinned artifacts trace to the code that "
+          f"wrote them"
           + (f"; {len(cos)} of them through a change proved cosmetic" if cos else ""))
+    if nck:
+        print(f"  {len(nck)} could not be checked in this checkout, because the release does not "
+              f"carry the file or an input it names:")
+        for r in nck:
+            print(f"    {r['artifact']}: {r['detail']}")
+        print("  That is the release working as documented. In a checkout holding the withheld "
+              "files every one of them is verified.")
     return 0
 
 

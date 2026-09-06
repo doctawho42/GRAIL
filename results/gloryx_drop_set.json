@@ -3,15 +3,15 @@
   "script": "metxbiodb_drop_set.py",
   "script_path": "scripts/typed_edit/metxbiodb_drop_set.py",
   "source_sha256": "ac33616abd07a035483be148d027a9157a02997f4452ba75c2ae9b749b7d8e4d",
-  "git_commit": "f072016e96ceabfe8d230c0a50bf6d959edf2768",
+  "git_commit": "4afcc5e4464883b0b490801ebc3d61b8175c6cd4",
   "git_dirty": true
  },
  "inputs": [
   {
    "path": "docs/benchmark/data/gloryx_test.json",
    "exists": true,
-   "sha256_16": "dc419adb44942815",
-   "bytes": 41958
+   "sha256_16": "5e8df962a373eda0",
+   "bytes": 40564
   }
  ],
  "question": "whether the unrecoverable selection that assembled the corpus removed a class of chemistry, which would manufacture the novel-type shortfall this work reports rather than measure it",
@@ -23,23 +23,23 @@
   "dropped": 128
  },
  "typing": "radius-0 reaction type by the mining route, the same instrument the census and the containment claim use",
- "mcs_deadline_seconds": 60.0,
+ "mcs_deadline_seconds": "the mining route's own",
  "typed": {
   "kept": 68,
-  "dropped": 126,
-  "distinct_types": 137
+  "dropped": 124,
+  "distinct_types": 135
  },
  "distinct_types_kept": 44,
- "distinct_types_dropped": 100,
- "total_variation_distance": 0.796,
+ "distinct_types_dropped": 98,
+ "total_variation_distance": 0.7932,
  "permutation": {
   "n": 10000,
   "seed": 0,
-  "p_value": 0.0792,
+  "p_value": 0.0791,
   "null": "the kept/dropped label shuffled over the same typed pairs"
  },
- "dropped_references_whose_type_is_absent_from_the_kept_half": 98,
- "share_of_dropped_whose_type_the_kept_half_lacks": 0.7778,
+ "dropped_references_whose_type_is_absent_from_the_kept_half": 96,
+ "share_of_dropped_whose_type_the_kept_half_lacks": 0.7742,
  "top_types_kept": [
   [
    "[[[[6, 8], 0.0, 1.0], 1]]",
@@ -115,8 +115,8 @@
   "share": 0.0,
   "of_those_whose_type_this_source_kept_but_the_splits_lack": 2,
   "distinct_types_recoverable": 0,
-  "of_those_whose_type_this_source_dropped_counts_ignored": 22,
-  "share_counts_ignored": 0.0388,
+  "of_those_whose_type_this_source_dropped_counts_ignored": 21,
+  "share_counts_ignored": 0.037,
   "reading": "a test reference in this count needs a transformation type that one of the corpus's own four sources records and the assembly step did not carry across; it bounds from below how much of the shortfall is the assembly's rather than the literature's, since only one source of four can be measured this way"
  },
  "reading": "A filter selecting on transformation type would leave the two halves with different type distributions. The distance between them and the chance of seeing a distance that large under a shuffled label are reported, so the alternative explanation for the novel-type shortfall is decided by measurement. A large p-value does not prove the filter was blind to chemistry; it bounds how strongly this source can show that it was not."

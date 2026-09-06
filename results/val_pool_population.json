@@ -1,0 +1,28 @@
+{
+ "provenance": {
+  "script": "val_pool_population.py",
+  "script_path": "scripts/val_pool_population.py",
+  "source_sha256": "2c8786dab224e70fb19d6e6a1677c319bfa4d4fb431f3f25c9b53d9b90e17b01",
+  "git_commit": "7c2b96701f8a6b602c889e5717e1c8bd946c2c4f",
+  "git_dirty": true
+ },
+ "inputs": [
+  {
+   "path": "results/val_pools.json",
+   "exists": true,
+   "sha256_16": "b8a8c204834a2f70",
+   "bytes": 48646521
+  }
+ ],
+ "question": "what the validation draw was: the cap it was made under, the seed, and how many substrates it declared against how many were paired",
+ "split": "validation",
+ "match": "inchikey_tautomer",
+ "population": {
+  "cap": 300,
+  "seed": 0,
+  "declared_n": 294,
+  "n": 293
+ },
+ "why_this_is_separate": "the pool it comes from is 46 MB and is not tracked, so a manuscript number taken straight out of it could not be read in a clone and the number chain would not run there at all",
+ "reading": "the draw is a sample and not the whole validation split; a figure quoted on it that names neither the cap nor the seed is not checkable"
+}
