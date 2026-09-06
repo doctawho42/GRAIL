@@ -1445,3 +1445,73 @@ def test_the_released_default_is_the_evaluated_configuration():
     assert not offenders, (
         "these fall back to the checkpoint's gate when a caller names none: "
         + ", ".join(offenders))
+
+
+def test_full_split_retraining_refuses_a_spread_that_is_not_one():
+    """The reader of the converged retraining must refuse the three ways its spread can be fake.
+
+    A mean +/- std quoted over runs that differ in more than their seed is not a spread over
+    training seeds, and each of these three ways of not being one has a cost the number hides:
+    two RDKit versions mix two tautomer canonicalisations into one interval, a changed config
+    averages two experiments, and a single run reported with a std of 0.0 asserts a precision
+    nobody measured. The refusals are asserted by PROVOKING them; a refusal nothing triggers is
+    decoration.
+    """
+    import importlib.util
+    import statistics
+    import sys as _sys
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[2]
+    spec = importlib.util.spec_from_file_location(
+        "_fsr", root / "scripts" / "full_split_retraining.py")
+    fsr = importlib.util.module_from_spec(spec)
+    _sys.modules["_fsr"] = fsr
+    spec.loader.exec_module(fsr)
+
+    def _row(seed, rdkit="2026.03.6"):
+        return {"seed": seed, "session": {"exit_code": 0, "seconds": 1.0,
+                                          "environment": {"rdkit": rdkit, "device": "cuda"}}}
+
+    # One version across the seeds is the readable case, and the ledger records which one.
+    ledger = fsr._environment_ledger([_row(0), _row(1)])
+    assert ledger["rdkit"] == "2026.03.6" and ledger["seeds_with_a_session_record"] == 2
+
+    # Two versions is the case that must stop, because the recalls were scored under keys built
+    # by different canonicalisations.
+    with pytest.raises(SystemExit) as caught:
+        fsr._environment_ledger([_row(0), _row(1, rdkit="2022.09.5")])
+    assert "different RDKit" in str(caught.value)
+
+    # The fingerprint must drop the fields that are SUPPOSED to differ and keep everything else,
+    # or a changed epoch budget between sessions would be averaged instead of refused.
+    cfg = {"seed": 0, "name": "a", "output_dir": "x", "description": "d",
+           "generator_optim": {"epochs": 40}, "dataset": {"rules_path": "extended"}}
+    fingerprint = fsr._config_fingerprint(cfg)
+    assert set(fingerprint) == {"generator_optim", "dataset"}, (
+        "the fingerprint must drop exactly seed/name/output_dir/description; dropping more would "
+        "let two different experiments compare equal")
+    assert fsr._config_fingerprint({**cfg, "seed": 1}) == fingerprint
+    assert fsr._config_fingerprint({**cfg, "generator_optim": {"epochs": 8}}) != fingerprint
+
+    # A single run has no interval. Reporting 0.0 would be an interval nobody measured.
+    one = fsr._spread([{"ensemble": {"top_15_recall": 0.5}}], "ensemble")
+    assert one["top_15_recall"]["std"] is None and one["top_15_recall"]["n"] == 1
+    two = fsr._spread([{"ensemble": {"top_15_recall": 0.5}},
+                       {"ensemble": {"top_15_recall": 0.6}}], "ensemble")
+    # Stored rounded, because the artifact is read by a manuscript that quotes three decimals.
+    assert two["top_15_recall"]["std"] == round(statistics.stdev([0.5, 0.6]), 6)
+    assert two["top_15_recall"]["mean"] == round(statistics.fmean([0.5, 0.6]), 6)
+
+    # Convergence is a reported result, not a refusal: the released signature (budget exhausted,
+    # early stopping never engaged) must survive the reader and be visible in the output.
+    def _conv(stopped, epochs, reason):
+        return {"convergence": {"generator": {"early_stopped_epoch": stopped,
+                                              "epochs_trained": epochs, "stop_reason": reason},
+                                "filter": {"early_stopped_epoch": stopped,
+                                           "epochs_trained": epochs, "stop_reason": reason}}}
+    never = fsr._converged([_conv(None, 8, "completed"), _conv(None, 8, "completed")])
+    assert never["generator"]["early_stopping_engaged_in"] == 0
+    assert never["generator"]["epochs_trained"] == [8, 8]
+    engaged = fsr._converged([_conv(23, 23, "early_stopping")])
+    assert engaged["generator"]["early_stopping_engaged_in"] == 1
