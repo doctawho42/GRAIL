@@ -2097,7 +2097,7 @@ overlap counts, the contamination audit and the population-defining comparison. 
 evidence that the unpinned state was harmless, and it is worth having in a form stronger than an
 assurance.
 
-Two limits of the apparatus are ours to state. First, and materially: the stamp digests the
+Three limits of the apparatus are ours to state. First, and materially: the stamp digests the
 producer script's own bytes and nothing else, so a change anywhere in the package (the code
 that computes the tautomer keys, the matcher, the recall) invalidates no artifact and trips no
 gate. The split manifest pins the data and the sweep pins the producer; between them sits the
@@ -2105,6 +2105,22 @@ library, and it is pinned by neither. Second, and narrowly: most stamped artifac
 working tree at write time. Verification resolves by the recorded source digest, which is
 independent of the commit, so the producer is identified regardless; what the flag says is that
 the surrounding tree was not clean, not that the producer is unknown.
+
+Third, and it bounds the hop described below: naming a file as an input, by digest, is a guarantee
+about fixity and not about provenance. It establishes that the file has not moved since it was
+read, and says nothing about what wrote it. Asking the second question of every JSON input a
+tracked artifact records gives three answers. \numInprovStamped{} inputs carry a producer of their
+own and the sweep already covers them. \numInprovHalf{} record what they read, by digest, and not
+what wrote it. \numInprovBare{} are mappings from substrate to predictions with no header, so a
+producer has nowhere to live in them without a change of format. A further
+\numInprovNotoursWord{} are third-party files whose provenance is a citation rather than a stamp.
+\numInprovConsumers{} tracked artifacts read at least one input in the second or third class,
+among them the deployed recall table, the criterion sweep and the seed spread. None of those
+artifacts is thereby wrong, and each is unverifiable one step back: its own producer can be
+checked and the step that produced its inputs cannot. The candidate pools are the case that
+matters, and for them the gap is narrow rather than open: they record by digest both checkpoints
+that scored them, the script that writes them stamps itself, and the pools behind the seed spread
+reproduce from those checkpoints under the recorded rule budget.
 
 The guarantee also covers the pinned set and not the directory: of \numProvFiles{} files under
 \texttt{results/} and everything below it, \numProvUnstamped{} carry no stamp and

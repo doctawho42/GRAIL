@@ -158,6 +158,11 @@ PINNED = {
     "results/site_agreement.json": "scripts/typed_edit/site_agreement.py",
     # what retraining moves, at the configuration the manuscript reports
     "results/retraining_spread.json": f"{TE}/retraining_spread.py",
+    # How the pools that spread is computed from were made, which for a while nothing recorded.
+    "results/seedpool_recipe.json": f"{TE}/seedpool_recipe.py",
+    # The census of which inputs can say what produced them, which is the question this sweep
+    # does not ask of the level below itself.
+    "results/input_provenance.json": "scripts/audit_input_provenance.py",
     # the bank the repository ships, which is the measured bank minus what it may not carry
     "results/released_bank.json": "scripts/build_released_bank.py",
     # the one comparator column obtained from a service rather than run here

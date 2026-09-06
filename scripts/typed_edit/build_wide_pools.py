@@ -200,8 +200,18 @@ def main() -> int:
                 h.update(block)
         return h.hexdigest()[:16]
 
+    # A shard is stamped for the same reason the merge is. It was not, and the asymmetry was
+    # invisible because a merged pool inherits the merge's stamp: only the shards that are USED
+    # unmerged carry the gap forward, and those are exactly the single-shard runs that produce a
+    # whole population at once. Three of them feed the seed spread, and until this line existed
+    # no file in the tree recorded that this script had made them.
     Path(args.out).write_text(json.dumps(
-        {"slice": [args.start, args.end or len(subs)], "top_k": args.top_k,
+        {"provenance": stamp(__file__),
+         "match": "inchikey_tautomer",
+         "note": ("one shard; candidates in rank order by filter x generator, deduplicated by "
+                  "match key, first SMILES kept. top_k is the rule budget: the whole bank is the "
+                  "selector-free arm, the value the checkpoint records is the trained one"),
+         "slice": [args.start, args.end or len(subs)], "top_k": args.top_k,
          "present": args.present, "population": args.population,
          "checkpoints": {"generator": {"path": _rel(args.gen_ckpt),
                                        "sha256_16": digest(args.gen_ckpt)},

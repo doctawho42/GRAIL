@@ -1,0 +1,95 @@
+{
+ "provenance": {
+  "script": "seedpool_recipe.py",
+  "script_path": "scripts/typed_edit/seedpool_recipe.py",
+  "source_sha256": "5480c07f370c569b63f242ff0a94f2c232c0afea46d71354ee50fd3dd87ca291",
+  "git_commit": "838270b325f00dbb1f22525b751d43d03c106719",
+  "git_dirty": true
+ },
+ "question": "how results/seedpools/interactive_seed*.json were produced, which nothing recorded and which retraining_spread.json depends on",
+ "builder": "scripts/typed_edit/build_wide_pools.py",
+ "command": "python scripts/typed_edit/build_wide_pools.py --start 0 --end 291 --top-k 30 --population comparison --present stored --gen-ckpt artifacts/multiseed_full5000_implicit_seed<N>/checkpoints/generator.pt --filter-ckpt artifacts/multiseed_full5000_implicit_seed<N>/checkpoints/filter.pt --out results/seedpools/interactive_seed<N>.json",
+ "arguments": {
+  "top_k": 30,
+  "population": "comparison",
+  "present": "stored",
+  "slice": [
+   0,
+   291
+  ]
+ },
+ "seeds": [
+  0,
+  1,
+  2
+ ],
+ "archived": {
+  "0": {
+   "present": true,
+   "sha256_16": "883567a9866d1135",
+   "bytes": 1115245,
+   "checkpoints": {
+    "generator": {
+     "path": "artifacts/multiseed_full5000_implicit_seed0/checkpoints/generator.pt",
+     "sha256_16": "c694af18b5be9a0e"
+    },
+    "filter": {
+     "path": "artifacts/multiseed_full5000_implicit_seed0/checkpoints/filter.pt",
+     "sha256_16": "45a0728af1ab9050"
+    }
+   },
+   "header_matches_the_recipe": true,
+   "mismatched": null,
+   "records_its_own_producer": false
+  },
+  "1": {
+   "present": true,
+   "sha256_16": "dcff24d889e13fff",
+   "bytes": 1077408,
+   "checkpoints": {
+    "generator": {
+     "path": "artifacts/multiseed_full5000_implicit_seed1/checkpoints/generator.pt",
+     "sha256_16": "82549a1679e5ae06"
+    },
+    "filter": {
+     "path": "artifacts/multiseed_full5000_implicit_seed1/checkpoints/filter.pt",
+     "sha256_16": "526fab4822c2c668"
+    }
+   },
+   "header_matches_the_recipe": true,
+   "mismatched": null,
+   "records_its_own_producer": false
+  },
+  "2": {
+   "present": true,
+   "sha256_16": "9516ab14226b39b6",
+   "bytes": 1244513,
+   "checkpoints": {
+    "generator": {
+     "path": "artifacts/multiseed_full5000_implicit_seed2/checkpoints/generator.pt",
+     "sha256_16": "b8429dc65d75336a"
+    },
+    "filter": {
+     "path": "artifacts/multiseed_full5000_implicit_seed2/checkpoints/filter.pt",
+     "sha256_16": "6e749318cf238a8e"
+    }
+   },
+   "header_matches_the_recipe": true,
+   "mismatched": null,
+   "records_its_own_producer": false
+  }
+ },
+ "reproduced": {
+  "seed": 0,
+  "compared": "the whole file, as bytes",
+  "sha256_16": "883567a9866d1135",
+  "identical": true,
+  "substrates": 291,
+  "identical_key_sets": 291,
+  "identical_rank_order": 291,
+  "identical_component_scores": 291,
+  "builder_at_the_time": "before the shard path stamped itself, so the formats matched exactly"
+ },
+ "why_this_file_exists": "the producer existed but did not name itself: build_wide_pools.py stamped its merge path and not its shard path, and these pools are single-shard runs. The shard path stamps now; this records the recipe for the pools written before it did",
+ "adding_a_seed": "train a run at the deployed configuration, then run the command above with its checkpoints and --out results/seedpools/interactive_seed<N>.json. retraining_spread.py globs the directory, so it picks the new seed up with no change. A seed built any other way does not belong in the same spread"
+}

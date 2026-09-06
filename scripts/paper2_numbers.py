@@ -1939,6 +1939,17 @@ def build():
     # that a pinned artifact names as an input, and whose digest therefore is checked.
     n["prov.subdirfiles"] = pv.get("files_below_the_top_level", 0)
     n["prov.namedinputs"] = pv.get("of_those_named_as_an_input_by_a_pinned_artifact", 0)
+
+    # Being named as an input, by digest, is a fixity guarantee and not a provenance one: it says
+    # the file has not moved since it was read, and nothing about what wrote it. This census asks
+    # the second question of every input a tracked artifact records.
+    ip = art("input_provenance.json")
+    _cls = ip["distinct_inputs_by_class"]
+    n["inprov.stamped"] = _cls["stamped"]
+    n["inprov.half"] = _cls["half"]
+    n["inprov.bare"] = _cls["bare"]
+    n["inprov.notours"] = _cls["not_ours"]
+    n["inprov.consumers"] = ip["consumers_reading_an_input_without_a_producer"]
     return n
 
 

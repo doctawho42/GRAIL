@@ -343,6 +343,12 @@
    "status": "current"
   },
   {
+   "artifact": "results/input_provenance.json",
+   "script": "audit_input_provenance.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
    "artifact": "results/leakage_fix_report.json",
    "script": "audit_leakage.py",
    "how": "recorded source digest",
@@ -538,6 +544,12 @@
    "status": "current"
   },
   {
+   "artifact": "results/seedpool_recipe.json",
+   "script": "seedpool_recipe.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
    "artifact": "results/selection_ablation_deployed.json",
    "script": "selection_verdict.py",
    "how": "recorded source digest",
@@ -682,12 +694,12 @@
    "status": "current"
   }
  ],
- "n_pinned": 112,
+ "n_pinned": 114,
  "n_pinned_stale": 0,
  "sweep": {
   "unstamped": 286,
-  "producer_changed": 38,
-  "current": 47,
+  "producer_changed": 41,
+  "current": 44,
   "producer_unknown": 26,
   "cosmetic_only": 8
  },
@@ -1964,6 +1976,15 @@
    "detail": "no provenance block: nothing records which code wrote this"
   },
   {
+   "artifact": "results/seedpools/exhaustive_seed0.json",
+   "script": "build_wide_pools.py",
+   "how": "recorded source digest",
+   "status": "producer_changed",
+   "detail": "producer was 9b6f17965d4a, is now 5ec39f72c745",
+   "diff_recovered_by": "source at 7bbcdeeecf0d",
+   "diff": "--- build_wide_pools.py (as recorded)\n+++ build_wide_pools.py (now)\n@@ -201,6 +201,16 @@\n         return h.hexdigest()[:16]\n \n+    # A shard is stamped for the same reason the merge is. It was not, and the asymmetry was\n+    # invisible because a merged pool inherits the merge's stamp: only the shards that are USED\n+    # unmerged carry the gap forward, and those are exactly the single-shard runs that produce a\n+    # whole population at once. Three of them feed the seed spread, and until this line existed\n+    # no file in the tree recorded that this script had made them.\n     Path(args.out).write_text(json.dumps(\n-        {\"slice\": [args.start, args.end or len(subs)], \"top_k\": args.top_k,\n+        {\"provenance\": stamp(__file__),\n+         \"match\": \"inchikey_tautomer\",\n+         \"note\": (\"one shard; candidates in rank order by filter x generator, deduplicated by \"\n+                  \"match key, first SMILES kept. top_k is the rule budget: the whole bank is the \"\n+                  \"selector-free arm, the value the checkpoint records is the trained one\"),\n+         \"slice\": [args.start, args.end or len(subs)], \"top_k\": args.top_k,\n          \"present\": args.present, \"population\": args.population,\n          \"checkpoints\": {\"generator\": {\"path\": _rel(args.gen_ckpt),"
+  },
+  {
    "artifact": "results/seedpools/exhaustive_seed0/w0.json",
    "status": "unstamped",
    "detail": "no provenance block: nothing records which code wrote this"
@@ -1994,6 +2015,15 @@
    "detail": "no provenance block: nothing records which code wrote this"
   },
   {
+   "artifact": "results/seedpools/exhaustive_seed1.json",
+   "script": "build_wide_pools.py",
+   "how": "recorded source digest",
+   "status": "producer_changed",
+   "detail": "producer was 9b6f17965d4a, is now 5ec39f72c745",
+   "diff_recovered_by": "source at 6d7dbbfe957a",
+   "diff": "--- build_wide_pools.py (as recorded)\n+++ build_wide_pools.py (now)\n@@ -201,6 +201,16 @@\n         return h.hexdigest()[:16]\n \n+    # A shard is stamped for the same reason the merge is. It was not, and the asymmetry was\n+    # invisible because a merged pool inherits the merge's stamp: only the shards that are USED\n+    # unmerged carry the gap forward, and those are exactly the single-shard runs that produce a\n+    # whole population at once. Three of them feed the seed spread, and until this line existed\n+    # no file in the tree recorded that this script had made them.\n     Path(args.out).write_text(json.dumps(\n-        {\"slice\": [args.start, args.end or len(subs)], \"top_k\": args.top_k,\n+        {\"provenance\": stamp(__file__),\n+         \"match\": \"inchikey_tautomer\",\n+         \"note\": (\"one shard; candidates in rank order by filter x generator, deduplicated by \"\n+                  \"match key, first SMILES kept. top_k is the rule budget: the whole bank is the \"\n+                  \"selector-free arm, the value the checkpoint records is the trained one\"),\n+         \"slice\": [args.start, args.end or len(subs)], \"top_k\": args.top_k,\n          \"present\": args.present, \"population\": args.population,\n          \"checkpoints\": {\"generator\": {\"path\": _rel(args.gen_ckpt),"
+  },
+  {
    "artifact": "results/seedpools/exhaustive_seed1/w0.json",
    "status": "unstamped",
    "detail": "no provenance block: nothing records which code wrote this"
@@ -2022,6 +2052,15 @@
    "artifact": "results/seedpools/exhaustive_seed1/w5.json",
    "status": "unstamped",
    "detail": "no provenance block: nothing records which code wrote this"
+  },
+  {
+   "artifact": "results/seedpools/exhaustive_seed2.json",
+   "script": "build_wide_pools.py",
+   "how": "recorded source digest",
+   "status": "producer_changed",
+   "detail": "producer was 9b6f17965d4a, is now 5ec39f72c745",
+   "diff_recovered_by": "source at 6d7dbbfe957a",
+   "diff": "--- build_wide_pools.py (as recorded)\n+++ build_wide_pools.py (now)\n@@ -201,6 +201,16 @@\n         return h.hexdigest()[:16]\n \n+    # A shard is stamped for the same reason the merge is. It was not, and the asymmetry was\n+    # invisible because a merged pool inherits the merge's stamp: only the shards that are USED\n+    # unmerged carry the gap forward, and those are exactly the single-shard runs that produce a\n+    # whole population at once. Three of them feed the seed spread, and until this line existed\n+    # no file in the tree recorded that this script had made them.\n     Path(args.out).write_text(json.dumps(\n-        {\"slice\": [args.start, args.end or len(subs)], \"top_k\": args.top_k,\n+        {\"provenance\": stamp(__file__),\n+         \"match\": \"inchikey_tautomer\",\n+         \"note\": (\"one shard; candidates in rank order by filter x generator, deduplicated by \"\n+                  \"match key, first SMILES kept. top_k is the rule budget: the whole bank is the \"\n+                  \"selector-free arm, the value the checkpoint records is the trained one\"),\n+         \"slice\": [args.start, args.end or len(subs)], \"top_k\": args.top_k,\n          \"present\": args.present, \"population\": args.population,\n          \"checkpoints\": {\"generator\": {\"path\": _rel(args.gen_ckpt),"
   },
   {
    "artifact": "results/seedpools/exhaustive_seed2/w0.json",
@@ -2428,7 +2467,7 @@
    "script": "build_wide_pools.py",
    "how": "recorded source digest",
    "status": "producer_changed",
-   "detail": "producer was 9f3f5adca657, is now 9b6f17965d4a",
+   "detail": "producer was 9f3f5adca657, is now 5ec39f72c745",
    "diff_note": "scripts/typed_edit/build_wide_pools.py is not in commit 40df3a8496e9"
   },
   {
