@@ -44,6 +44,10 @@ GATES = [
     # would ever have, and three artifacts verified in this tree and reported a moved input in a
     # fresh one. The guarantee the manuscript quotes has to hold on the reader's side.
     ("check_working_tree_matches_index.py", []),
+    # The manuscript's voice packs a claim, its qualification and its evidence into one sentence,
+    # which is why it read heavily; splitting them cost nothing and does not stay done, because
+    # every new paragraph is written in the same voice and no single edit ever looks wrong.
+    ("check_prose_density.py", []),
     # no document may claim the withheld templates are not redistributed while a tracked file
     # carries them
     ("check_no_withheld_templates.py", []),

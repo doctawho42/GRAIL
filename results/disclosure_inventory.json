@@ -3,7 +3,7 @@
   "script": "disclosure_inventory.py",
   "script_path": "scripts/disclosure_inventory.py",
   "source_sha256": "f3187b4f867cc7570b771b0b2a1c6ddde31da7fb66276177cfc66627e6774494",
-  "git_commit": "66b6821cd05b425924b1f197d7090793d1f3bc77",
+  "git_commit": "5ca9a1d191875965f7ad1c72b80630fefbc8e6af",
   "git_dirty": true
  },
  "reviewed_and_accepted": [
@@ -202,6 +202,76 @@
     "paper2/body.tex"
    ],
    "reason": "two sentences recast so they do not open with a lower-case number macro; same content, reordered"
+  },
+  {
+   "text": "The corpus files predate this repository's first commit, no script in it reads the four sources, and the accession field is empty in every record, so the apparatus built on top makes every step from the corpus onwards reproducible and cannot make that one so; what can be checked instead is a rebuild",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "readability pass: long sentences split; every flagged sentence located verbatim or as its two halves, and the macro, citation and reference multisets are unchanged"
+  },
+  {
+   "text": "The one source held on disk says the selection was not blind to chemistry: between the MetXBioDB pairs that entered the corpus and those that did not, the transformation-type distributions differ by a total variation distance of N at p= N over N shuffles, and N of the dropped pairs carry a type the ",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "readability pass: long sentences split; every flagged sentence located verbatim or as its two halves, and the macro, citation and reference multisets are unchanged"
+  },
+  {
+   "text": "A cap before a fusion is not a filter: the fusion ranks over whatever survives, so removing a candidate changes the rank every other receives, which is why truncation can raise recall rather than only bound it",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "readability pass: long sentences split; every flagged sentence located verbatim or as its two halves, and the macro, citation and reference multisets are unchanged"
+  },
+  {
+   "text": "The exhaustive arm is not the best arm on N of the N classes, carrying N of the N references, and the classes it trails on are classical ones: on the largest functionalisation, one oxygen added, N references, it reaches N against N for the best arm, and it is behind on demethylation, sulfation, meth",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "readability pass: long sentences split; every flagged sentence located verbatim or as its two halves, and the macro, citation and reference multisets are unchanged"
+  },
+  {
+   "text": "The cell-by-cell verdicts in the table are read from per-comparison intervals with no correction across the grid, so the count of budgets at which a verdict moves is the weaker of the two readings and is given as an illustration; the range of the margin at one budget is a property of the point estim",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "readability pass: long sentences split; every flagged sentence located verbatim or as its two halves, and the macro, citation and reference multisets are unchanged"
+  },
+  {
+   "text": "An agreement rate near nine in ten is not the size of the effect; the margin over that null is, and it is N . Two things bound that reading",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "readability pass: long sentences split; every flagged sentence located verbatim or as its two halves, and the macro, citation and reference multisets are unchanged"
+  },
+  {
+   "text": "What that answer covers should be said exactly: it covers the N misses of absent type and not the other N plus N of the N . A miss whose type the bank holds and whose rule did not fire is an implementation failure by construction, and three of the N were recovered by relaxing convention-dependent pr",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "readability pass: long sentences split; every flagged sentence located verbatim or as its two halves, and the macro, citation and reference multisets are unchanged"
+  },
+  {
+   "text": "So a service answering with thirty or fifty must either run the exhaustive mode, which leads MetaTox at both, or raise the rule budget, which is the same knob: on validation, raising it to the whole bank is worth + N [+ N , + N ] at a budget of thirty and nothing that separates at fifteen (Section )",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "readability pass: long sentences split; every flagged sentence located verbatim or as its two halves, and the macro, citation and reference multisets are unchanged"
+  },
+  {
+   "text": "Stereochemistry and protonation are bounded rather than priced: N of annotated pairs produce a metabolite carrying a stereogenic element its substrate does not have, and N of annotated metabolites carry a formal charge, but the criterion sweep cannot price a configuration-aware criterion, because tw",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "readability pass: long sentences split; every flagged sentence located verbatim or as its two halves, and the macro, citation and reference multisets are unchanged"
+  },
+  {
+   "text": "The comparison does not resolve into an ordering: the verdict moves with the matching criterion at N of N budgets, and cutting every arm to the comparator's own list length retires the leads the sweep produces at wide budgets against all but one of the N comparators",
+   "was_in": [
+    "paper2/grail_jcim.tex"
+   ],
+   "reason": "readability pass: long sentences split; every flagged sentence located verbatim or as its two halves, and the macro, citation and reference multisets are unchanged"
   }
  ],
  "question": "every sentence in which this work concedes something, recorded before a cut so that what a cut costs is visible rather than invisible",
@@ -210,7 +280,7 @@
   "paper2/si.tex",
   "paper2/grail_jcim.tex"
  ],
- "n": 208,
+ "n": 209,
  "reading": "a disclosure counts as present if it survives in ANY of the sources: moving one to the Supporting Information shortens the manuscript without retracting anything, and deleting one shortens it by retracting something",
  "disclosures": {
   "a protocol tells an author what to declare a demonstration on generative metrics does not transfer to recall against an incomplete annotation where the axis that reorders methods is how many candidates each may emit and no analogue of it exists in distributional metrics": {
@@ -243,14 +313,20 @@
     "paper2/body.tex"
    ]
   },
-  "the corpus files predate this repository s first commit no script in it reads the four sources and the accession field is empty in every record so the apparatus built on top makes every step from the corpus onwards reproducible and cannot make that one so what can be checked instead is a rebuild which scripts verify rebuilt corpus py reports substrate by substrate": {
-   "text": "The corpus files predate this repository's first commit, no script in it reads the four sources, and the accession field is empty in every record, so the apparatus built on top makes every step from the corpus onwards reproducible and cannot make that one so; what can be checked instead is a rebuild",
+  "the apparatus built on top therefore makes every step from the corpus onwards reproducible and cannot make that one so": {
+   "text": "The apparatus built on top therefore makes every step from the corpus onwards reproducible and cannot make that one so",
    "in": [
     "paper2/body.tex"
    ]
   },
-  "the one source held on disk says the selection was not blind to chemistry between the metxbiodb pairs that entered the corpus and those that did not the transformation type distributions differ by a total variation distance of at p over shuffles and of the dropped pairs carry a type the kept half never shows": {
-   "text": "The one source held on disk says the selection was not blind to chemistry: between the MetXBioDB pairs that entered the corpus and those that did not, the transformation-type distributions differ by a total variation distance of N at p= N over N shuffles, and N of the dropped pairs carry a type the ",
+  "the one source held on disk says the selection was not blind to chemistry": {
+   "text": "The one source held on disk says the selection was not blind to chemistry",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "between the metxbiodb pairs that entered the corpus and those that did not the transformation type distributions differ by a total variation distance of at p over shuffles": {
+   "text": "Between the MetXBioDB pairs that entered the corpus and those that did not, the transformation-type distributions differ by a total variation distance of N at p= N over N shuffles",
    "in": [
     "paper2/body.tex"
    ]
@@ -305,12 +381,6 @@
   },
   "at a budget of it is not a null where k falls short so flatness holds at three of the four budgets and not at all of them section": {
    "text": "At a budget of 30 it is not a null, where K= N falls N [ N , N ] short, so flatness holds at three of the four budgets and not at all of them (Section )",
-   "in": [
-    "paper2/body.tex"
-   ]
-  },
-  "a cap before a fusion is not a filter the fusion ranks over whatever survives so removing a candidate changes the rank every other receives which is why truncation can raise recall rather than only bound it": {
-   "text": "A cap before a fusion is not a filter: the fusion ranks over whatever survives, so removing a candidate changes the rank every other receives, which is why truncation can raise recall rather than only bound it",
    "in": [
     "paper2/body.tex"
    ]
@@ -387,8 +457,8 @@
     "paper2/body.tex"
    ]
   },
-  "the exhaustive arm is not the best arm on of the classes carrying of the references and the classes it trails on are classical ones on the largest functionalisation one oxygen added references it reaches against for the best arm and it is behind on demethylation sulfation methylation and acetylation": {
-   "text": "The exhaustive arm is not the best arm on N of the N classes, carrying N of the N references, and the classes it trails on are classical ones: on the largest functionalisation, one oxygen added, N references, it reaches N against N for the best arm, and it is behind on demethylation, sulfation, meth",
+  "the exhaustive arm is not the best arm on of the classes carrying of the references and the classes it trails on are classical ones": {
+   "text": "The exhaustive arm is not the best arm on N of the N classes, carrying N of the N references, and the classes it trails on are classical ones",
    "in": [
     "paper2/body.tex"
    ]
@@ -423,8 +493,14 @@
     "paper2/body.tex"
    ]
   },
-  "the cell by cell verdicts in the table are read from per comparison intervals with no correction across the grid so the count of budgets at which a verdict moves is the weaker of the two readings and is given as an illustration the range of the margin at one budget is a property of the point estimates and does not depend on any multiplicity convention": {
-   "text": "The cell-by-cell verdicts in the table are read from per-comparison intervals with no correction across the grid, so the count of budgets at which a verdict moves is the weaker of the two readings and is given as an illustration; the range of the margin at one budget is a property of the point estim",
+  "the cell by cell verdicts in the table are read from per comparison intervals with no correction across the grid": {
+   "text": "The cell-by-cell verdicts in the table are read from per-comparison intervals with no correction across the grid",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "the count of budgets at which a verdict moves is therefore the weaker of the two readings and is given as an illustration": {
+   "text": "The count of budgets at which a verdict moves is therefore the weaker of the two readings, and is given as an illustration",
    "in": [
     "paper2/body.tex"
    ]
@@ -441,8 +517,8 @@
     "paper2/body.tex"
    ]
   },
-  "an agreement rate near nine in ten is not the size of the effect the margin over that null is and it is two things bound that reading": {
-   "text": "An agreement rate near nine in ten is not the size of the effect; the margin over that null is, and it is N . Two things bound that reading",
+  "the null is a connected fragment of the same size grown at random from the same molecule which agrees at an agreement rate near nine in ten is not the size of the effect": {
+   "text": "The null is a connected fragment of the same size grown at random from the same molecule, which agrees at N . An agreement rate near nine in ten is not the size of the effect",
    "in": [
     "paper2/body.tex"
    ]
@@ -483,8 +559,8 @@
     "paper2/body.tex"
    ]
   },
-  "what that answer covers should be said exactly it covers the misses of absent type and not the other plus of the a miss whose type the bank holds and whose rule did not fire is an implementation failure by construction and three of the were recovered by relaxing convention dependent primitives so that arm is not invariant to anything": {
-   "text": "What that answer covers should be said exactly: it covers the N misses of absent type and not the other N plus N of the N . A miss whose type the bank holds and whose rule did not fire is an implementation failure by construction, and three of the N were recovered by relaxing convention-dependent pr",
+  "what that answer covers should be said exactly it covers the misses of absent type and not the other plus of the a miss whose type the bank holds and whose rule did not fire is an implementation failure by construction": {
+   "text": "What that answer covers should be said exactly: it covers the N misses of absent type and not the other N plus N of the N . A miss whose type the bank holds and whose rule did not fire is an implementation failure by construction",
    "in": [
     "paper2/body.tex"
    ]
@@ -507,8 +583,8 @@
     "paper2/body.tex"
    ]
   },
-  "so a service answering with thirty or fifty must either run the exhaustive mode which leads metatox at both or raise the rule budget which is the same knob on validation raising it to the whole bank is worth at a budget of thirty and nothing that separates at fifteen section": {
-   "text": "So a service answering with thirty or fifty must either run the exhaustive mode, which leads MetaTox at both, or raise the rule budget, which is the same knob: on validation, raising it to the whole bank is worth + N [+ N , + N ] at a budget of thirty and nothing that separates at fifteen (Section )",
+  "on validation raising it to the whole bank is worth at a budget of thirty and nothing that separates at fifteen section": {
+   "text": "On validation, raising it to the whole bank is worth + N [+ N , + N ] at a budget of thirty, and nothing that separates at fifteen (Section )",
    "in": [
     "paper2/body.tex"
    ]
@@ -615,8 +691,8 @@
     "paper2/body.tex"
    ]
   },
-  "stereochemistry and protonation are bounded rather than priced of annotated pairs produce a metabolite carrying a stereogenic element its substrate does not have and of annotated metabolites carry a formal charge but the criterion sweep cannot price a configuration aware criterion because two of its five settings return the identical verdict at every budget the annotation has no configuration for them to disagree about section": {
-   "text": "Stereochemistry and protonation are bounded rather than priced: N of annotated pairs produce a metabolite carrying a stereogenic element its substrate does not have, and N of annotated metabolites carry a formal charge, but the criterion sweep cannot price a configuration-aware criterion, because tw",
+  "the criterion sweep cannot price a configuration aware criterion because two of its five settings return the identical verdict at every budget the annotation has no configuration for them to disagree about section": {
+   "text": "The criterion sweep cannot price a configuration-aware criterion, because two of its five settings return the identical verdict at every budget: the annotation has no configuration for them to disagree about (Section )",
    "in": [
     "paper2/body.tex"
    ]
@@ -1455,8 +1531,8 @@
     "paper2/grail_jcim.tex"
    ]
   },
-  "the comparison does not resolve into an ordering the verdict moves with the matching criterion at of budgets and cutting every arm to the comparator s own list length retires the leads the sweep produces at wide budgets against all but one of the comparators": {
-   "text": "The comparison does not resolve into an ordering: the verdict moves with the matching criterion at N of N budgets, and cutting every arm to the comparator's own list length retires the leads the sweep produces at wide budgets against all but one of the N comparators",
+  "the comparison does not resolve into an ordering": {
+   "text": "The comparison does not resolve into an ordering",
    "in": [
     "paper2/grail_jcim.tex"
    ]
