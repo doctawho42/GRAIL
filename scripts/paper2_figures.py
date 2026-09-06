@@ -483,8 +483,10 @@ def fig_toc():
     # constant, and would pass unchanged if someone widened the canvas.
     ACS_MAX_W, ACS_MAX_H, ACS_MIN_DPI, ACS_MIN_PT = 3.25, 1.75, 300, 6.0
     TOC_W, TOC_H, DPI, MIN_PT = 3.25, 1.75, 600, 6.0
-    CELL_PT, AXIS_PT, TITLE_PT = 7.0, 6.5, 8.0
-    FONTS_PT = (CELL_PT, AXIS_PT, TITLE_PT)
+    # The guideline prefers 8 pt and forbids below 6. Nothing here now sits at the floor: the
+    # smallest type is the key, and it is a full point above it.
+    CELL_PT, AXIS_PT, TITLE_PT, KEY_PT = 7.5, 7.0, 8.0, 7.0
+    FONTS_PT = (CELL_PT, AXIS_PT, TITLE_PT, KEY_PT)
 
     d = art("criterion_sweep.json")
     order = ["canonical", "inchikey", "inchi_no_stereo", "tanimoto1", "inchikey_tautomer"]
@@ -531,6 +533,18 @@ def fig_toc():
     for spine in ax.spines.values():
         spine.set_visible(False)
     ax.tick_params(length=0, pad=1.5)
+
+    # A key, because three colours carrying signs are not self-describing: a reader met this
+    # graphic with blue and orange cells marked "$-$" and "$+$" and nothing saying which way round
+    # they ran. The labels are the artifact's own vocabulary, so the picture and Table 4 cannot
+    # drift apart in what a cell is called.
+    from matplotlib.patches import Patch
+
+    key = [Patch(facecolor=cmap(i), edgecolor="none", label=t) for i, t in
+           enumerate(("GRAIL trails", "neither", "GRAIL leads"))]
+    ax.legend(handles=key, loc="upper center", bbox_to_anchor=(0.5, -0.26), ncol=3,
+              frameon=False, fontsize=KEY_PT, handlelength=1.0, handleheight=0.9,
+              handletextpad=0.35, columnspacing=1.2, borderpad=0.0, borderaxespad=0.0)
     fig.tight_layout(pad=0.25)
 
     with matplotlib.rc_context({"savefig.bbox": "standard", "savefig.pad_inches": 0.0}):
