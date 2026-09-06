@@ -1747,13 +1747,33 @@ structures that tool offered for that drug. Averaged per tool the emission spans
 stands behind that number and no correlation is needed to read it: a quantity their design never
 declares varies twelvefold between the arms whose recall figures are then compared.
 
+\paragraph{Which cells carry a count.} The grid is \numExtbudgetGrid{} cells, and
+\numExtbudgetCountedcells{} of them carry both a counted emission and a published recall.
+\numExtbudgetAbsentnodeposit{} belong to the \numExtbudgetArmsnotdepositedWord{} arms whose
+prediction files are not in the deposit, so their emission cannot be counted at all;
+\numExtbudgetAbsentnorecallWord{} are counted from a deposited file but have no recall in the
+published tables, so they enter the spread and not the correlation. The per-arm means over the
+correlated cells and over every counted cell differ in the third significant figure and the spread
+is the same to one decimal either way; the artifact carries both.
+
 \paragraph{The association, and the null it is tested against.} Over the
 \numExtbudgetCountedcells{} cells carrying both a count and a published recall the rank correlation
 between recall and log emission is $\numExtbudgetRho$, positive within a drug in
 \numExtbudgetWithinpositive{} of \numExtbudgetWithinn{}. A sign is not a result, so it is tested:
-shuffling emission among the arms of a drug preserves how hard each drug is and how much each tool
-emits overall, and breaks only the association under test. In
+shuffling emission among the arms of a drug preserves every drug's set of emissions and every
+recall in the table, and breaks only which arm is paired with which emission. In
 \numExtbudgetPermutations{} such shuffles the observed correlation is not reached.
+
+What that null does not preserve is an arm's emission profile, because the shuffles are independent
+across drugs: an arm that emits the most everywhere lands anywhere afterwards, and over
+\numExtbudgetProfilepermutations{} shuffles the permuted profile agrees with the observed one at a
+rank correlation of $\numExtbudgetProfileagreement$ rather than at unity. So the test is a test of
+pairing within a drug, and it cannot separate an effect that lives inside an arm from one that
+lives between arms. That separation is reported rather than assumed: with the additive arm and drug
+effects removed from recall and from log emission, the rank correlation of the residuals is
+$\numExtbudgetResidual$. Most of the association is therefore between the arms, and a positive part
+survives inside them. Neither reading weakens the claim, because a benchmark orders arms, and an
+ordering in which the arms that emit more rank higher measures emission at exactly that level.
 
 \paragraph{Why the axis is counted and not reconstructed.} Emission can also be recovered
 arithmetically. Precision is hits over what was emitted, so emitted is hits over precision, and
@@ -1767,9 +1787,15 @@ recovery returns eight. But the reconstructed axis is
 so recall enters it explicitly and positively, and correlating recall against it correlates recall
 partly with itself. On these numbers that reconstruction gives a rank correlation of
 $\numExtbudgetRhoreconstructed$, which a permutation of precision within a drug reproduces with
-$p = \numExtbudgetReconstructedp$: nothing. The reconstruction is kept here because it agrees with
-the count for three of the four tools it can be computed for, which is what certifies the
-reference-set recovery, and it is not used as evidence for anything.
+$p = \numExtbudgetReconstructedp$: nothing. The reconstruction is kept here because it certifies
+the reference-set recovery, and it is not used as evidence for anything. It reproduces the counted
+mean emission to within a fifth for \numExtbudgetAgreeingarmsWord{} of the
+\numExtbudgetCountedarmsWord{} arms it can be computed alongside a count for, and fails on
+MetaPredictor, where it returns \numExtbudgetWorstratio{} of the counted value: that arm is the one
+missing \numExtbudgetWorstarmabsentWord{} of its cells, so the mean it is compared against rests on
+the fewest. The counted association does not rest on that arm either. Dropping it leaves
+$\numExtbudgetRhowithoutworst$ over \numExtbudgetCellswithoutworst{} cells at
+$p = \numExtbudgetPwithoutworst$.
 
 \paragraph{What this does not establish.} Not that output size is all there is. Ordering those arms
 by mean emission does not reproduce ordering them by mean recall: one arm emits fewer candidates

@@ -2,8 +2,8 @@
  "provenance": {
   "script": "external_budget_confound.py",
   "script_path": "scripts/typed_edit/external_budget_confound.py",
-  "source_sha256": "cac7666c562bcdec2b1258b69b36f4f5ffc188dbb892491354f620da1f42f3c3",
-  "git_commit": "9d10ca64d115b1ea05af766d9e9009c8c3c028d1",
+  "source_sha256": "69027778438a38bebd23709906506ed681737225f4021ffad061a1c02e6319b7",
+  "git_commit": "7b543a0c7a3d8a193f4c9099b022c4e197fe6f01",
   "git_dirty": true
  },
  "question": "whether the ordering an independent benchmark reports is a property of the tools or of how many candidates each was allowed to emit",
@@ -757,12 +757,437 @@
   "MetaPredictor": 15.8
  },
  "counted_spread": 11.9,
+ "counted_spread_grain": "ratio of the largest to the smallest per-arm MEAN counted emission, over the arms whose predictions were deposited; an earlier version of this analysis quoted a cell-level spread, which is a different quantity",
  "counted_widest": 187.3,
  "counted_narrowest": 15.8,
  "n_counted_cells": 40,
+ "counted_emission_per_tool_over_the_correlated_cells": {
+  "SyGMa": 187.3,
+  "BioTransformer": 18.8,
+  "GLORYx": 53.6,
+  "MetaPredictor": 15.9
+ },
+ "counted_spread_over_the_correlated_cells": 11.8,
+ "counted_cell_census": {
+  "grid": 66,
+  "counted_and_correlatable": 40,
+  "absent": [
+   {
+    "drug": "Iberdomide",
+    "arm": "BioTransformer",
+    "reason": "the deposit holds this arm's file for this drug, so the emission IS counted, but the published tables report no recall for the pair, so it cannot enter a correlation"
+   },
+   {
+    "drug": "Sotorasib",
+    "arm": "consensus of the five",
+    "reason": "this arm's predictions are not in the deposit, so its emission cannot be counted"
+   },
+   {
+    "drug": "Pamiparib",
+    "arm": "consensus of the five",
+    "reason": "this arm's predictions are not in the deposit, so its emission cannot be counted"
+   },
+   {
+    "drug": "Encorafenib",
+    "arm": "consensus of the five",
+    "reason": "this arm's predictions are not in the deposit, so its emission cannot be counted"
+   },
+   {
+    "drug": "Fovinaciclib",
+    "arm": "consensus of the five",
+    "reason": "this arm's predictions are not in the deposit, so its emission cannot be counted"
+   },
+   {
+    "drug": "Rezafungin",
+    "arm": "consensus of the five",
+    "reason": "this arm's predictions are not in the deposit, so its emission cannot be counted"
+   },
+   {
+    "drug": "Isavuconazole",
+    "arm": "consensus of the five",
+    "reason": "this arm's predictions are not in the deposit, so its emission cannot be counted"
+   },
+   {
+    "drug": "LY3202626",
+    "arm": "consensus of the five",
+    "reason": "this arm's predictions are not in the deposit, so its emission cannot be counted"
+   },
+   {
+    "drug": "Iberdomide",
+    "arm": "consensus of the five",
+    "reason": "this arm's predictions are not in the deposit, so its emission cannot be counted"
+   },
+   {
+    "drug": "Opicapone",
+    "arm": "consensus of the five",
+    "reason": "this arm's predictions are not in the deposit, so its emission cannot be counted"
+   },
+   {
+    "drug": "Tinengotinib",
+    "arm": "consensus of the five",
+    "reason": "this arm's predictions are not in the deposit, so its emission cannot be counted"
+   },
+   {
+    "drug": "Nemiralisib",
+    "arm": "consensus of the five",
+    "reason": "this arm's predictions are not in the deposit, so its emission cannot be counted"
+   },
+   {
+    "drug": "Sotorasib",
+    "arm": "MetaPredictor",
+    "reason": "the deposit holds this arm's file for this drug, so the emission IS counted, but the published tables report no recall for the pair, so it cannot enter a correlation"
+   },
+   {
+    "drug": "Rezafungin",
+    "arm": "MetaPredictor",
+    "reason": "the deposit holds this arm's file for this drug, so the emission IS counted, but the published tables report no recall for the pair, so it cannot enter a correlation"
+   },
+   {
+    "drug": "Nemiralisib",
+    "arm": "MetaPredictor",
+    "reason": "the deposit holds this arm's file for this drug, so the emission IS counted, but the published tables report no recall for the pair, so it cannot enter a correlation"
+   },
+   {
+    "drug": "Sotorasib",
+    "arm": "MetaTrans",
+    "reason": "this arm's predictions are not in the deposit, so its emission cannot be counted"
+   },
+   {
+    "drug": "Pamiparib",
+    "arm": "MetaTrans",
+    "reason": "this arm's predictions are not in the deposit, so its emission cannot be counted"
+   },
+   {
+    "drug": "Encorafenib",
+    "arm": "MetaTrans",
+    "reason": "this arm's predictions are not in the deposit, so its emission cannot be counted"
+   },
+   {
+    "drug": "Fovinaciclib",
+    "arm": "MetaTrans",
+    "reason": "this arm's predictions are not in the deposit, so its emission cannot be counted"
+   },
+   {
+    "drug": "Rezafungin",
+    "arm": "MetaTrans",
+    "reason": "this arm's predictions are not in the deposit, so its emission cannot be counted"
+   },
+   {
+    "drug": "Isavuconazole",
+    "arm": "MetaTrans",
+    "reason": "this arm's predictions are not in the deposit, so its emission cannot be counted"
+   },
+   {
+    "drug": "LY3202626",
+    "arm": "MetaTrans",
+    "reason": "this arm's predictions are not in the deposit, so its emission cannot be counted"
+   },
+   {
+    "drug": "Iberdomide",
+    "arm": "MetaTrans",
+    "reason": "this arm's predictions are not in the deposit, so its emission cannot be counted"
+   },
+   {
+    "drug": "Opicapone",
+    "arm": "MetaTrans",
+    "reason": "this arm's predictions are not in the deposit, so its emission cannot be counted"
+   },
+   {
+    "drug": "Tinengotinib",
+    "arm": "MetaTrans",
+    "reason": "this arm's predictions are not in the deposit, so its emission cannot be counted"
+   },
+   {
+    "drug": "Nemiralisib",
+    "arm": "MetaTrans",
+    "reason": "this arm's predictions are not in the deposit, so its emission cannot be counted"
+   }
+  ],
+  "absent_because_the_arm_was_never_deposited": 22,
+  "absent_because_the_file_is_missing": 0,
+  "absent_because_no_recall_is_published": 4,
+  "arms_never_deposited": [
+   "MetaTrans",
+   "consensus of the five"
+  ],
+  "counted_cells_in_total": 44
+ },
+ "counted_cells": [
+  {
+   "drug": "Encorafenib",
+   "tool": "BioTransformer",
+   "recall": 0.417,
+   "counted_emitted": 18
+  },
+  {
+   "drug": "Encorafenib",
+   "tool": "GLORYx",
+   "recall": 0.583,
+   "counted_emitted": 47
+  },
+  {
+   "drug": "Encorafenib",
+   "tool": "MetaPredictor",
+   "recall": 0.25,
+   "counted_emitted": 15
+  },
+  {
+   "drug": "Encorafenib",
+   "tool": "SyGMa",
+   "recall": 0.333,
+   "counted_emitted": 99
+  },
+  {
+   "drug": "Fovinaciclib",
+   "tool": "BioTransformer",
+   "recall": 0.3,
+   "counted_emitted": 21
+  },
+  {
+   "drug": "Fovinaciclib",
+   "tool": "GLORYx",
+   "recall": 0.4,
+   "counted_emitted": 57
+  },
+  {
+   "drug": "Fovinaciclib",
+   "tool": "MetaPredictor",
+   "recall": 0.1,
+   "counted_emitted": 17
+  },
+  {
+   "drug": "Fovinaciclib",
+   "tool": "SyGMa",
+   "recall": 0.4,
+   "counted_emitted": 171
+  },
+  {
+   "drug": "Iberdomide",
+   "tool": "GLORYx",
+   "recall": 0.417,
+   "counted_emitted": 46
+  },
+  {
+   "drug": "Iberdomide",
+   "tool": "MetaPredictor",
+   "recall": 0.167,
+   "counted_emitted": 16
+  },
+  {
+   "drug": "Iberdomide",
+   "tool": "SyGMa",
+   "recall": 0.417,
+   "counted_emitted": 79
+  },
+  {
+   "drug": "Isavuconazole",
+   "tool": "BioTransformer",
+   "recall": 0.429,
+   "counted_emitted": 21
+  },
+  {
+   "drug": "Isavuconazole",
+   "tool": "GLORYx",
+   "recall": 0.571,
+   "counted_emitted": 66
+  },
+  {
+   "drug": "Isavuconazole",
+   "tool": "MetaPredictor",
+   "recall": 0.286,
+   "counted_emitted": 16
+  },
+  {
+   "drug": "Isavuconazole",
+   "tool": "SyGMa",
+   "recall": 0.429,
+   "counted_emitted": 207
+  },
+  {
+   "drug": "LY3202626",
+   "tool": "BioTransformer",
+   "recall": 0.167,
+   "counted_emitted": 18
+  },
+  {
+   "drug": "LY3202626",
+   "tool": "GLORYx",
+   "recall": 0.5,
+   "counted_emitted": 37
+  },
+  {
+   "drug": "LY3202626",
+   "tool": "MetaPredictor",
+   "recall": 0.333,
+   "counted_emitted": 16
+  },
+  {
+   "drug": "LY3202626",
+   "tool": "SyGMa",
+   "recall": 0.833,
+   "counted_emitted": 114
+  },
+  {
+   "drug": "Nemiralisib",
+   "tool": "BioTransformer",
+   "recall": 0.429,
+   "counted_emitted": 18
+  },
+  {
+   "drug": "Nemiralisib",
+   "tool": "GLORYx",
+   "recall": 0.429,
+   "counted_emitted": 39
+  },
+  {
+   "drug": "Nemiralisib",
+   "tool": "SyGMa",
+   "recall": 0.571,
+   "counted_emitted": 114
+  },
+  {
+   "drug": "Opicapone",
+   "tool": "BioTransformer",
+   "recall": 0.063,
+   "counted_emitted": 8
+  },
+  {
+   "drug": "Opicapone",
+   "tool": "GLORYx",
+   "recall": 0.25,
+   "counted_emitted": 27
+  },
+  {
+   "drug": "Opicapone",
+   "tool": "MetaPredictor",
+   "recall": 0.063,
+   "counted_emitted": 15
+  },
+  {
+   "drug": "Opicapone",
+   "tool": "SyGMa",
+   "recall": 0.25,
+   "counted_emitted": 109
+  },
+  {
+   "drug": "Pamiparib",
+   "tool": "BioTransformer",
+   "recall": 0.25,
+   "counted_emitted": 9
+  },
+  {
+   "drug": "Pamiparib",
+   "tool": "GLORYx",
+   "recall": 0.375,
+   "counted_emitted": 22
+  },
+  {
+   "drug": "Pamiparib",
+   "tool": "MetaPredictor",
+   "recall": 0.25,
+   "counted_emitted": 16
+  },
+  {
+   "drug": "Pamiparib",
+   "tool": "SyGMa",
+   "recall": 0.5,
+   "counted_emitted": 43
+  },
+  {
+   "drug": "Rezafungin",
+   "tool": "BioTransformer",
+   "recall": 0.667,
+   "counted_emitted": 47
+  },
+  {
+   "drug": "Rezafungin",
+   "tool": "GLORYx",
+   "recall": 0.667,
+   "counted_emitted": 163
+  },
+  {
+   "drug": "Rezafungin",
+   "tool": "SyGMa",
+   "recall": 1.0,
+   "counted_emitted": 787
+  },
+  {
+   "drug": "Sotorasib",
+   "tool": "BioTransformer",
+   "recall": 0.2,
+   "counted_emitted": 19
+  },
+  {
+   "drug": "Sotorasib",
+   "tool": "GLORYx",
+   "recall": 0.6,
+   "counted_emitted": 53
+  },
+  {
+   "drug": "Sotorasib",
+   "tool": "SyGMa",
+   "recall": 0.4,
+   "counted_emitted": 227
+  },
+  {
+   "drug": "Tinengotinib",
+   "tool": "BioTransformer",
+   "recall": 0.273,
+   "counted_emitted": 9
+  },
+  {
+   "drug": "Tinengotinib",
+   "tool": "GLORYx",
+   "recall": 0.364,
+   "counted_emitted": 33
+  },
+  {
+   "drug": "Tinengotinib",
+   "tool": "MetaPredictor",
+   "recall": 0.182,
+   "counted_emitted": 16
+  },
+  {
+   "drug": "Tinengotinib",
+   "tool": "SyGMa",
+   "recall": 0.455,
+   "counted_emitted": 110
+  }
+ ],
  "spearman_recall_against_counted_emission": 0.7058,
  "permutation_p": 0.0,
  "permutations": 10000,
+ "permutation_null_and_the_arm_profile": {
+  "tools": [
+   "BioTransformer",
+   "GLORYx",
+   "MetaPredictor",
+   "SyGMa"
+  ],
+  "observed_mean_emission": [
+   18.8,
+   53.6,
+   15.9,
+   187.3
+  ],
+  "one_permutation_mean_emission": [
+   107.9,
+   46.5,
+   89.0,
+   60.2
+  ],
+  "mean_rank_correlation_with_the_observed_profile": 0.331,
+  "permutations": 200,
+  "reading": "a null that preserved the tool marginal would return the observed profile every time and a rank correlation of 1; this does not, which is why the manuscript must not say the permutation preserves both marginals"
+ },
+ "association_within_the_arms": {
+  "spearman_raw": 0.7058,
+  "spearman_after_removing_the_arm_effect_and_the_drug_effect": 0.1891,
+  "n_cells": 40,
+  "arms": 4,
+  "drugs": 11,
+  "how": "additive arm and drug effects removed from recall and from log emission by alternating demeaning, then Spearman of the residuals"
+ },
  "within_drug_spearman_counted": [
   0.5,
   0.9487,
@@ -798,7 +1223,35 @@
   ],
   "within_drug_positive": 11,
   "within_drug_n": 11,
-  "agreement_with_the_count": "the reconstruction reproduces the counted mean emission for SyGMa, GLORYx and BioTransformer and not for MetaPredictor, whose precision is not computable on two drugs"
+  "agreement_with_the_count": {
+   "SyGMa": {
+    "counted_mean": 187.3,
+    "reconstructed_mean": 182.0,
+    "ratio": 0.97
+   },
+   "BioTransformer": {
+    "counted_mean": 17.2,
+    "reconstructed_mean": 19.9,
+    "ratio": 1.16
+   },
+   "GLORYx": {
+    "counted_mean": 53.6,
+    "reconstructed_mean": 53.9,
+    "ratio": 1.01
+   },
+   "MetaPredictor": {
+    "counted_mean": 15.8,
+    "reconstructed_mean": 8.2,
+    "ratio": 0.52
+   }
+  },
+  "agreement_worst_arm": "MetaPredictor",
+  "counted_association_without_the_worst_arm": {
+   "spearman": 0.5481,
+   "permutation_p": 0.0061,
+   "n_cells": 32,
+   "why": "the reconstruction and the count disagree most on this arm, so the association is recomputed without it: if the counted figure depends on the arm the reconstruction cannot reproduce, that dependence is the result rather than the association"
+  }
  },
  "reading": "A benchmark that does not hold output size fixed orders methods partly by output size. The spread is a count and stands on its own; the association is measured against emission counted from the authors' deposited predictions, so recall does not enter the axis, and it is tested against a permutation null rather than read off a positive sign."
 }

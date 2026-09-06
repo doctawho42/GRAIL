@@ -23,13 +23,25 @@ times the reference-set size, so
 
 and recall enters the reconstructed axis explicitly and positively. Correlating recall against that
 axis correlates recall partly with itself: on these numbers a permutation of precision within a
-drug, which breaks the association and preserves both marginals, returns the observed rank
-correlation with p = 0.28. The reconstruction is kept here, but only as a check on the reference-set
-recovery, and the association is measured against emission counted from the deposited files, where
-recall does not enter the axis at all.
+drug returns the observed rank correlation with p = 0.28. The reconstruction is kept here, but only
+as a check on the reference-set recovery, and the association is measured against emission counted
+from the deposited files, where recall does not enter the axis at all.
 
-Both are reported. If the counted association survives its own permutation null, their ordering is a
-budget ordering, established independently of this work and on data this work never touched.
+What the permutation preserves is worth stating exactly, because an earlier version of this
+docstring and of the manuscript said "both marginals" and that is false. Shuffling emission
+independently within each drug preserves every drug's multiset of emissions and every recall in the
+table. It does not preserve a tool's emission profile: on this grid the observed per-tool means run
+from 15.8 to 187.3 and one permutation returns a set of means with no relation to them. The null is
+therefore "within a drug, which arm emitted what is arbitrary", which is the association under
+test, and nothing more.
+
+That null cannot separate a within-tool effect from a between-tool one, and with six arms most of
+the emission variance is between them. So a second statistic is reported beside it: the rank
+correlation of recall against log emission after the additive tool and drug effects are removed
+from both. If it is near zero the association lives between the arms rather than inside them, and
+that is the level a benchmark orders at, so the claim does not need the separation; if it is not
+near zero the association survives inside the arms as well. Either answer is reportable, and the
+number is printed rather than the conclusion assumed.
 
     python scripts/typed_edit/external_budget_confound.py
 """
@@ -195,7 +207,13 @@ def permutation_p(rows, n_perm=10000, seed=0):
 
     Within a drug rather than across: drugs differ in how hard they are and in how large their
     reference set is, and a shuffle across drugs would break that too and answer a question nobody
-    asked. This preserves both marginals and breaks only the association under test.
+    asked.
+
+    What survives the shuffle is each drug's multiset of emissions and every recall in the table.
+    What does NOT survive is a tool's emission profile, since the permutations are independent
+    across drugs: a tool that emits the most everywhere lands anywhere afterwards. Calling this
+    "preserving both marginals" was wrong and `permutation_destroys_the_tool_profile` below
+    measures how wrong. The null is that within a drug, which arm emitted what is arbitrary.
     """
     import random
 
@@ -217,6 +235,104 @@ def permutation_p(rows, n_perm=10000, seed=0):
         if spearman(rec, shuffled) >= obs:
             hits += 1
     return obs, hits / n_perm
+
+
+def permutation_destroys_the_tool_profile(rows, n_perm=200, seed=0):
+    """How far the within-drug shuffle moves each tool's mean emission, since it does move it.
+
+    The observed per-tool means are the thing a reader would assume a null "preserving both
+    marginals" holds fixed. It does not: the permutations are independent across drugs, so under
+    the null every tool's expected mean emission is the same grand mean. This reports the observed
+    profile, the profile after permutation, and the rank correlation between them, so the corrected
+    sentence in the manuscript rests on a number rather than on an argument.
+    """
+    import random
+
+    tools = sorted({t for _d, t, _r, _e in rows})
+    by_drug = {}
+    for i, (drug, _t, _r, _e) in enumerate(rows):
+        by_drug.setdefault(drug, []).append(i)
+    emi = [e for _d, _t, _r, e in rows]
+
+    def profile(vec):
+        return [sum(vec[i] for i, (_d, t, _r, _e) in enumerate(rows) if t == tool)
+                / max(1, sum(1 for _d, t, _r, _e in rows if t == tool)) for tool in tools]
+
+    observed = profile(emi)
+    rng = random.Random(seed)
+    agreements, permuted_example = [], None
+    for n in range(n_perm):
+        shuffled = list(emi)
+        for idx in by_drug.values():
+            vals = [emi[i] for i in idx]
+            rng.shuffle(vals)
+            for i, v in zip(idx, vals):
+                shuffled[i] = v
+        if permuted_example is None:
+            permuted_example = profile(shuffled)
+        agreements.append(spearman(observed, profile(shuffled)))
+    return {
+        "tools": tools,
+        "observed_mean_emission": [round(v, 1) for v in observed],
+        "one_permutation_mean_emission": [round(v, 1) for v in permuted_example],
+        "mean_rank_correlation_with_the_observed_profile": round(
+            sum(agreements) / len(agreements), 4),
+        "permutations": n_perm,
+        "reading": ("a null that preserved the tool marginal would return the observed profile "
+                    "every time and a rank correlation of 1; this does not, which is why the "
+                    "manuscript must not say the permutation preserves both marginals"),
+    }
+
+
+def _two_way_residuals(values, keys_a, keys_b, iterations=200, tol=1e-12):
+    """Remove additive row and column effects from an unbalanced grid, by alternating demeaning.
+
+    An unbalanced two-way additive fit has no closed form in one pass, but subtracting group means
+    alternately converges to the least-squares one, and on a grid this size it converges in a few
+    dozen sweeps. Written without numpy so this script keeps the dependency profile it had.
+    """
+    res = list(values)
+    for _ in range(iterations):
+        before = list(res)
+        for keys in (keys_a, keys_b):
+            groups = {}
+            for i, k in enumerate(keys):
+                groups.setdefault(k, []).append(i)
+            for idx in groups.values():
+                m = sum(res[i] for i in idx) / len(idx)
+                for i in idx:
+                    res[i] -= m
+        if max(abs(a - b) for a, b in zip(before, res)) < tol:
+            break
+    return res
+
+
+def residual_association(rows):
+    """The association that is left once the arms and the drugs differ only in what they are.
+
+    A rank correlation over a grid of six arms and eleven drugs is dominated by whichever axis
+    varies most, and here that is the arm: the arms differ in mean emission by more than a factor
+    of ten. Removing the additive arm and drug effects from both recall and log emission leaves the
+    part of the association that lives INSIDE an arm. Near zero means the association is between
+    the arms, which is the level at which a benchmark orders and therefore still the level the
+    claim is about; away from zero means it survives inside them as well.
+    """
+    rec = [r for _d, _t, r, _e in rows]
+    emi = [math.log(e) for _d, _t, _r, e in rows]
+    tools = [t for _d, t, _r, _e in rows]
+    drugs = [d for d, _t, _r, _e in rows]
+    r_res = _two_way_residuals(rec, tools, drugs)
+    e_res = _two_way_residuals(emi, tools, drugs)
+    return {
+        "spearman_raw": round(spearman(rec, emi), 4),
+        "spearman_after_removing_the_arm_effect_and_the_drug_effect": round(
+            spearman(r_res, e_res), 4),
+        "n_cells": len(rows),
+        "arms": len(set(tools)),
+        "drugs": len(set(drugs)),
+        "how": ("additive arm and drug effects removed from recall and from log emission by "
+                "alternating demeaning, then Spearman of the residuals"),
+    }
 
 
 def recover_reference_sizes():
@@ -307,6 +423,50 @@ def main() -> int:
                 for (d, t), v in sorted(counted.items()) if (d, t) in rec_by]
     rho_counted, p_counted = permutation_p(measured)
     p_reconstructed = permutation_p_reconstructed(cells, sizes)
+    profile_effect = permutation_destroys_the_tool_profile(measured)
+    residual = residual_association(measured)
+
+    # Which of the full grid's cells carry a counted emission, and why the others do not. Two
+    # reasons, and they are different: an arm whose predictions were never deposited cannot be
+    # counted at all, while an arm that was deposited can still be missing one drug's file.
+    arms_all = sorted({c["code"] for c in cells})
+    have = {(d, t) for d, t, _r, _e in measured}
+    NO_ARM = "this arm's predictions are not in the deposit, so its emission cannot be counted"
+    NO_FILE = "the arm is in the deposit but has no file for this drug"
+    NO_RECALL = ("the deposit holds this arm's file for this drug, so the emission IS counted, but "
+                 "the published tables report no recall for the pair, so it cannot enter a "
+                 "correlation")
+    census = {"grid": len(arms_all) * len(DRUGS), "counted_and_correlatable": len(measured),
+              "absent": []}
+    for code in arms_all:
+        name = TOOL[code]
+        for drug in DRUGS:
+            if (drug, name) in have:
+                continue
+            if name not in COUNTERS:
+                reason = NO_ARM
+            elif (drug, name) in counted:
+                reason = NO_RECALL
+            else:
+                reason = NO_FILE
+            census["absent"].append({"drug": drug, "arm": name, "reason": reason})
+    for tag, reason in (("absent_because_the_arm_was_never_deposited", NO_ARM),
+                        ("absent_because_the_file_is_missing", NO_FILE),
+                        ("absent_because_no_recall_is_published", NO_RECALL)):
+        census[tag] = sum(1 for a in census["absent"] if a["reason"] == reason)
+    census["arms_never_deposited"] = sorted({a["arm"] for a in census["absent"]
+                                             if a["reason"] == NO_ARM})
+    census["counted_cells_in_total"] = len(counted)
+
+    # The spread and the correlation are over different cell sets, and quoting them side by side
+    # without saying so is the defect this paper is about. The spread is a count and can use every
+    # counted cell; the correlation needs a published recall too. Both grains are reported.
+    per_tool_correlatable = {}
+    for tool in COUNTERS:
+        vals = [e for _d, t, _r, e in measured if t == tool]
+        if vals:
+            per_tool_correlatable[tool] = round(sum(vals) / len(vals), 1)
+
 
     # And the plain observation, which needs no correlation at all.
     per_tool_counted = {}
@@ -339,6 +499,21 @@ def main() -> int:
     order_by_emission = sorted(by_tool, key=lambda k: -by_tool[k]["mean_emitted"])
     order_by_recall = sorted(by_tool, key=lambda k: -by_tool[k]["mean_recall"])
 
+    # Does the reconstruction reproduce the count, per arm, with numbers rather than a verdict --
+    # and does the arm it fails on carry the association?
+    agreement = {}
+    for tool, counted_mean in per_tool_counted.items():
+        recon = by_tool.get(tool, {}).get("mean_emitted")
+        if recon is None:
+            continue
+        agreement[tool] = {"counted_mean": counted_mean, "reconstructed_mean": recon,
+                           "ratio": round(recon / counted_mean, 2) if counted_mean else None}
+    worst = (max(agreement, key=lambda k: abs(math.log(agreement[k]["ratio"] or 1)))
+             if agreement else None)
+    without_worst = [row for row in measured if row[1] != worst]
+    rho_without, p_without = (permutation_p(without_worst) if len(without_worst) >= 6
+                              else (None, None))
+
     # Within a drug the reference set is fixed, so the comparison across tools there is clean.
     within = []
     for drug in DRUGS:
@@ -365,18 +540,41 @@ def main() -> int:
         "ordering_by_mean_recall": order_by_recall,
         "orderings_agree": order_by_emission == order_by_recall,
 
-        # The plain observation, which is a count and needs no model.
+        # The plain observation, which is a count and needs no model. The spread is over ARM MEANS,
+        # not over cells: an earlier version of this analysis quoted a cell-level spread and the two
+        # are different quantities, so the grain is named here rather than left to the reader.
         "counted_emission_per_tool": per_tool_counted,
         "counted_spread": round(widest / narrowest, 1),
+        "counted_spread_grain": ("ratio of the largest to the smallest per-arm MEAN counted "
+                                 "emission, over the arms whose predictions were deposited; an "
+                                 "earlier version of this analysis quoted a cell-level spread, "
+                                 "which is a different quantity"),
         "counted_widest": widest,
         "counted_narrowest": narrowest,
         "n_counted_cells": len(measured),
+        # The same means over exactly the cells the correlation uses, since one counted cell has no
+        # published recall and so sits in the spread but not in the association.
+        "counted_emission_per_tool_over_the_correlated_cells": per_tool_correlatable,
+        "counted_spread_over_the_correlated_cells": round(
+            max(per_tool_correlatable.values()) / min(per_tool_correlatable.values()), 1),
+
+        # Which cells of the full grid carry a counted emission, and why the rest do not. A
+        # correlation over 40 of 66 cells is only readable if the 26 are accounted for.
+        "counted_cell_census": census,
+        # And the cells themselves, so the correlation below is recomputable from this file rather
+        # than only by re-running the counter against the deposit.
+        "counted_cells": [{"drug": d, "tool": t, "recall": r, "counted_emitted": e}
+                          for d, t, r, e in measured],
 
         # The association, measured on the counted axis and tested against a null that shuffles
         # emission within a drug.
         "spearman_recall_against_counted_emission": round(rho_counted, 4),
         "permutation_p": round(p_counted, 4),
         "permutations": 10000,
+        # What that null does and does not hold fixed, measured rather than asserted.
+        "permutation_null_and_the_arm_profile": profile_effect,
+        # The association that survives once the arms and the drugs differ only in what they are.
+        "association_within_the_arms": residual,
         "within_drug_spearman_counted": [round(v, 4) for v in within_counted],
         "within_drug_counted_positive": sum(1 for v in within_counted if v > 0),
         "within_drug_counted_n": len(within_counted),
@@ -394,10 +592,17 @@ def main() -> int:
             "within_drug_spearman": [round(v, 4) for v in within],
             "within_drug_positive": positive,
             "within_drug_n": len(within),
-            "agreement_with_the_count": ("the reconstruction reproduces the counted mean emission "
-                                         "for SyGMa, GLORYx and BioTransformer and not for "
-                                         "MetaPredictor, whose precision is not computable on two "
-                                         "drugs"),
+            "agreement_with_the_count": agreement,
+            "agreement_worst_arm": worst,
+            "counted_association_without_the_worst_arm": {
+                "spearman": None if rho_without is None else round(rho_without, 4),
+                "permutation_p": None if p_without is None else round(p_without, 4),
+                "n_cells": len(without_worst),
+                "why": ("the reconstruction and the count disagree most on this arm, so the "
+                        "association is recomputed without it: if the counted figure depends on "
+                        "the arm the reconstruction cannot reproduce, that dependence is the "
+                        "result rather than the association"),
+            },
         },
         "reading": ("A benchmark that does not hold output size fixed orders methods partly by "
                     "output size. The spread is a count and stands on its own; the association is "

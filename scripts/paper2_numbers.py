@@ -992,6 +992,40 @@ def build():
     n["extbudget.rhoreconstructed"] = \
         ebc2["reconstructed_axis"]["spearman_recall_against_log_emitted"]
     n["extbudget.reconstructedp"] = ebc2["reconstructed_axis"]["permutation_p"]
+    # The level the association lives at. A rank correlation over a grid of arms and drugs is
+    # dominated by whichever axis varies more, and here that is the arm. With the additive arm and
+    # drug effects removed from both sides, what is left is the part inside an arm.
+    n["extbudget.residual"] = \
+        ebc2["association_within_the_arms"]["spearman_after_removing_the_arm_effect_and_the_drug_effect"]
+    # The arms that carry a counted emission, which is the grid the residual is computed over and
+    # is NOT the number of arms in the benchmark's recall table.
+    n["extbudget.residualarms"] = ebc2["association_within_the_arms"]["arms"]
+    # What the within-drug null does to an arm's emission profile, which is the half of "preserves
+    # both marginals" that was false: a null preserving it would return the observed profile every
+    # time and a rank correlation of one.
+    _prof = ebc2["permutation_null_and_the_arm_profile"]
+    n["extbudget.profilepermutations"] = _prof["permutations"]
+    n["extbudget.profileagreement"] = \
+        _prof["mean_rank_correlation_with_the_observed_profile"]
+    # The full grid and what is missing from it, so a correlation over forty cells is readable.
+    _cen = ebc2["counted_cell_census"]
+    n["extbudget.grid"] = _cen["grid"]
+    n["extbudget.absentnodeposit"] = _cen["absent_because_the_arm_was_never_deposited"]
+    n["extbudget.absentnorecall"] = _cen["absent_because_no_recall_is_published"]
+    n["extbudget.armsnotdeposited"] = len(_cen["arms_never_deposited"])
+    # Whether the counted association depends on the one arm the reconstruction cannot reproduce.
+    _wo = ebc2["reconstructed_axis"]["counted_association_without_the_worst_arm"]
+    n["extbudget.rhowithoutworst"] = _wo["spearman"]
+    n["extbudget.pwithoutworst"] = _wo["permutation_p"]
+    n["extbudget.cellswithoutworst"] = _wo["n_cells"]
+    _agree = ebc2["reconstructed_axis"]["agreement_with_the_count"]
+    _worst = ebc2["reconstructed_axis"]["agreement_worst_arm"]
+    n["extbudget.agreeingarms"] = sum(1 for k, v in _agree.items()
+                                      if k != _worst and abs(v["ratio"] - 1) <= 0.2)
+    n["extbudget.countedarms"] = len(_agree)
+    n["extbudget.worstratio"] = _agree[_worst]["ratio"]
+    # How many of that arm's cells are missing, which is why the reconstruction fails on it.
+    n["extbudget.worstarmabsent"] = sum(1 for a in _cen["absent"] if a["arm"] == _worst)
 
     # The fusion constant, swept. It was left at the published default and the paper disclosed
     # that; a sweep says whether the disclosure costs anything.
