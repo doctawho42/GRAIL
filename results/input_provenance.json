@@ -1,0 +1,809 @@
+{
+ "provenance": {
+  "script": "audit_input_provenance.py",
+  "script_path": "scripts/audit_input_provenance.py",
+  "source_sha256": "8d0f08c8dde0a6cdc00e3489cd6c98f8ecfac54a7746e02277aad1d35b097295",
+  "git_commit": "48c2010bdeb1c87df7760b83787c7181e9c09cf1",
+  "git_dirty": true
+ },
+ "question": "whether the artifacts a manuscript number is computed from can themselves say what produced them, which the existing audit never asks",
+ "how": "every tracked results/*.json that records its inputs is walked, each JSON input is classified by what it records about its own origin, and inputs this project does not write are declared rather than counted",
+ "classes": {
+  "stamped": "carries a producer; the existing audit covers it",
+  "half": "records what it read, by digest, but not what wrote it",
+  "bare": "no header at all, so provenance has nowhere to live without a format change",
+  "not_ours": "a third party's file; its provenance is a citation"
+ },
+ "distinct_inputs_by_class": {
+  "stamped": 16,
+  "half": 34,
+  "bare": 22,
+  "unreadable": 0,
+  "not_ours": 3
+ },
+ "consumers_reading_an_input_without_a_producer": 24,
+ "expected": 24,
+ "consumers": [
+  {
+   "artifact": "results/dialect_sweep.json",
+   "inputs_recorded": 24,
+   "inputs_without_a_producer": 18,
+   "which": [
+    {
+     "input": "results/widepools_std/w1.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_std/w3.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_std_fine/p0_12.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_std_fine/p12_24.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_std_fine/p146_158.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_std_fine/p158_170.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_std_fine/p170_182.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_std_fine/p182_194.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_std_fine/p194_206.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_std_fine/p206_218.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_std_fine/p218_219.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_std_fine/p24_36.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_std_fine/p36_48.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_std_fine/p48_60.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_std_fine/p60_72.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_std_fine/p72_73.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_k30/all.json",
+     "records": "half",
+     "tracked": true
+    },
+    {
+     "input": "results/widepools_k30_std/all.json",
+     "records": "half",
+     "tracked": true
+    }
+   ]
+  },
+  {
+   "artifact": "results/population_definition.json",
+   "inputs_recorded": 24,
+   "inputs_without_a_producer": 18,
+   "which": [
+    {
+     "input": "results/test_references.json",
+     "records": "bare",
+     "tracked": false
+    },
+    {
+     "input": "results/metatox_smirks_preds.json",
+     "records": "half",
+     "tracked": true
+    },
+    {
+     "input": "results/widepools_k30/all.json",
+     "records": "half",
+     "tracked": true
+    },
+    {
+     "input": "results/widepools_k30_fulltest/w0.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_k30_fulltest/w1.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_k30_fulltest/w2.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_k30_fulltest/w3.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_k30_fulltest/w4.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_k30_fulltest/w5.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_fulltest/w0.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_fulltest/w1.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_fulltest/w2.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_fulltest/w3.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_fulltest/w4.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_fulltest/w5.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/sygma_fulltest_predictions.json",
+     "records": "bare",
+     "tracked": true
+    },
+    {
+     "input": "artifacts/tier2_1170/metapredictor_preds.json",
+     "records": "bare",
+     "tracked": true
+    },
+    {
+     "input": "results/biotransformer_fulltest_preds.json",
+     "records": "bare",
+     "tracked": true
+    }
+   ]
+  },
+  {
+   "artifact": "results/drawing_equalised.json",
+   "inputs_recorded": 8,
+   "inputs_without_a_producer": 8,
+   "which": [
+    {
+     "input": "results/widepools_k30/all.json",
+     "records": "half",
+     "tracked": true
+    },
+    {
+     "input": "artifacts/tier2_1170/metapredictor_preds.json",
+     "records": "bare",
+     "tracked": true
+    },
+    {
+     "input": "results/biotransformer_allhuman_one_step_preds.json",
+     "records": "bare",
+     "tracked": true
+    },
+    {
+     "input": "results/sygma_fulltest_predictions.json",
+     "records": "bare",
+     "tracked": true
+    },
+    {
+     "input": "results/metatox_smirks_preds.json",
+     "records": "half",
+     "tracked": true
+    },
+    {
+     "input": "results/widepools_k30_std/all.json",
+     "records": "half",
+     "tracked": true
+    },
+    {
+     "input": "results/metapredictor_natural_drawing_preds.json",
+     "records": "bare",
+     "tracked": true
+    },
+    {
+     "input": "results/biotransformer_allhuman_one_step_natural_drawing_preds.json",
+     "records": "bare",
+     "tracked": true
+    }
+   ]
+  },
+  {
+   "artifact": "results/aggregation_ablation.json",
+   "inputs_recorded": 12,
+   "inputs_without_a_producer": 6,
+   "which": [
+    {
+     "input": "results/aggregation_shards/s0.json",
+     "records": "bare",
+     "tracked": false
+    },
+    {
+     "input": "results/aggregation_shards/s1.json",
+     "records": "bare",
+     "tracked": false
+    },
+    {
+     "input": "results/aggregation_shards/s2.json",
+     "records": "bare",
+     "tracked": false
+    },
+    {
+     "input": "results/aggregation_shards/s3.json",
+     "records": "bare",
+     "tracked": false
+    },
+    {
+     "input": "results/aggregation_shards/s4.json",
+     "records": "bare",
+     "tracked": false
+    },
+    {
+     "input": "results/aggregation_shards/s5.json",
+     "records": "bare",
+     "tracked": false
+    }
+   ]
+  },
+  {
+   "artifact": "results/aggregation_ablation_validation.json",
+   "inputs_recorded": 7,
+   "inputs_without_a_producer": 6,
+   "which": [
+    {
+     "input": "results/aggregation_shards_val/s0.json",
+     "records": "bare",
+     "tracked": false
+    },
+    {
+     "input": "results/aggregation_shards_val/s1.json",
+     "records": "bare",
+     "tracked": false
+    },
+    {
+     "input": "results/aggregation_shards_val/s2.json",
+     "records": "bare",
+     "tracked": false
+    },
+    {
+     "input": "results/aggregation_shards_val/s3.json",
+     "records": "bare",
+     "tracked": false
+    },
+    {
+     "input": "results/aggregation_shards_val/s4.json",
+     "records": "bare",
+     "tracked": false
+    },
+    {
+     "input": "results/aggregation_shards_val/s5.json",
+     "records": "bare",
+     "tracked": false
+    }
+   ]
+  },
+  {
+   "artifact": "results/widepools_implicit/w0.json",
+   "inputs_recorded": 6,
+   "inputs_without_a_producer": 6,
+   "which": [
+    {
+     "input": "results/widepools_fulltest/w0.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_fulltest/w1.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_fulltest/w2.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_fulltest/w3.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_fulltest/w4.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_fulltest/w5.json",
+     "records": "half",
+     "tracked": false
+    }
+   ]
+  },
+  {
+   "artifact": "results/widepools_implicit/w1.json",
+   "inputs_recorded": 6,
+   "inputs_without_a_producer": 6,
+   "which": [
+    {
+     "input": "results/widepools_fulltest/w0.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_fulltest/w1.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_fulltest/w2.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_fulltest/w3.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_fulltest/w4.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_fulltest/w5.json",
+     "records": "half",
+     "tracked": false
+    }
+   ]
+  },
+  {
+   "artifact": "results/widepools_implicit/w2.json",
+   "inputs_recorded": 6,
+   "inputs_without_a_producer": 6,
+   "which": [
+    {
+     "input": "results/widepools_fulltest/w0.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_fulltest/w1.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_fulltest/w2.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_fulltest/w3.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_fulltest/w4.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_fulltest/w5.json",
+     "records": "half",
+     "tracked": false
+    }
+   ]
+  },
+  {
+   "artifact": "results/widepools_implicit/w3.json",
+   "inputs_recorded": 6,
+   "inputs_without_a_producer": 6,
+   "which": [
+    {
+     "input": "results/widepools_fulltest/w0.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_fulltest/w1.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_fulltest/w2.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_fulltest/w3.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_fulltest/w4.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_fulltest/w5.json",
+     "records": "half",
+     "tracked": false
+    }
+   ]
+  },
+  {
+   "artifact": "results/widepools_implicit/w4.json",
+   "inputs_recorded": 6,
+   "inputs_without_a_producer": 6,
+   "which": [
+    {
+     "input": "results/widepools_fulltest/w0.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_fulltest/w1.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_fulltest/w2.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_fulltest/w3.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_fulltest/w4.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_fulltest/w5.json",
+     "records": "half",
+     "tracked": false
+    }
+   ]
+  },
+  {
+   "artifact": "results/widepools_implicit/w5.json",
+   "inputs_recorded": 6,
+   "inputs_without_a_producer": 6,
+   "which": [
+    {
+     "input": "results/widepools_fulltest/w0.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_fulltest/w1.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_fulltest/w2.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_fulltest/w3.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_fulltest/w4.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/widepools_fulltest/w5.json",
+     "records": "half",
+     "tracked": false
+    }
+   ]
+  },
+  {
+   "artifact": "results/matched_length.json",
+   "inputs_recorded": 6,
+   "inputs_without_a_producer": 5,
+   "which": [
+    {
+     "input": "results/metatox_smirks_preds.json",
+     "records": "half",
+     "tracked": true
+    },
+    {
+     "input": "results/sygma_fulltest_predictions.json",
+     "records": "bare",
+     "tracked": true
+    },
+    {
+     "input": "artifacts/tier2_1170/metapredictor_preds.json",
+     "records": "bare",
+     "tracked": true
+    },
+    {
+     "input": "results/biotransformer_allhuman_one_step_preds.json",
+     "records": "bare",
+     "tracked": true
+    },
+    {
+     "input": "results/sygma_standardised_predictions.json",
+     "records": "bare",
+     "tracked": false
+    }
+   ]
+  },
+  {
+   "artifact": "results/parent_drop_effect.json",
+   "inputs_recorded": 11,
+   "inputs_without_a_producer": 5,
+   "which": [
+    {
+     "input": "results/widepools_k30/all.json",
+     "records": "half",
+     "tracked": true
+    },
+    {
+     "input": "results/metatox_smirks_preds.json",
+     "records": "half",
+     "tracked": true
+    },
+    {
+     "input": "results/sygma_fulltest_predictions.json",
+     "records": "bare",
+     "tracked": true
+    },
+    {
+     "input": "artifacts/tier2_1170/metapredictor_preds.json",
+     "records": "bare",
+     "tracked": true
+    },
+    {
+     "input": "results/biotransformer_allhuman_one_step_preds.json",
+     "records": "bare",
+     "tracked": true
+    }
+   ]
+  },
+  {
+   "artifact": "results/criterion_sweep.json",
+   "inputs_recorded": 5,
+   "inputs_without_a_producer": 4,
+   "which": [
+    {
+     "input": "results/metatox_smirks_preds.json",
+     "records": "half",
+     "tracked": true
+    },
+    {
+     "input": "results/sygma_fulltest_predictions.json",
+     "records": "bare",
+     "tracked": true
+    },
+    {
+     "input": "artifacts/tier2_1170/metapredictor_preds.json",
+     "records": "bare",
+     "tracked": true
+    },
+    {
+     "input": "results/biotransformer_allhuman_one_step_preds.json",
+     "records": "bare",
+     "tracked": true
+    }
+   ]
+  },
+  {
+   "artifact": "results/retraining_spread.json",
+   "inputs_recorded": 6,
+   "inputs_without_a_producer": 3,
+   "which": [
+    {
+     "input": "results/seedpools/interactive_seed0.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/seedpools/interactive_seed1.json",
+     "records": "half",
+     "tracked": false
+    },
+    {
+     "input": "results/seedpools/interactive_seed2.json",
+     "records": "half",
+     "tracked": false
+    }
+   ]
+  },
+  {
+   "artifact": "results/what_each_arm_returns.json",
+   "inputs_recorded": 4,
+   "inputs_without_a_producer": 3,
+   "which": [
+    {
+     "input": "results/metatox_smirks_preds.json",
+     "records": "half",
+     "tracked": true
+    },
+    {
+     "input": "results/sygma_fulltest_predictions.json",
+     "records": "bare",
+     "tracked": true
+    },
+    {
+     "input": "artifacts/tier2_1170/metapredictor_preds.json",
+     "records": "bare",
+     "tracked": true
+    }
+   ]
+  },
+  {
+   "artifact": "results/metapredictor_beam_sweep.json",
+   "inputs_recorded": 2,
+   "inputs_without_a_producer": 2,
+   "which": [
+    {
+     "input": "artifacts/tier2_1170/metapredictor_preds.json",
+     "records": "bare",
+     "tracked": true
+    },
+    {
+     "input": "results/metapredictor_wide_beam_preds.json",
+     "records": "bare",
+     "tracked": false
+    }
+   ]
+  },
+  {
+   "artifact": "results/applicability_domain.json",
+   "inputs_recorded": 1,
+   "inputs_without_a_producer": 1,
+   "which": [
+    {
+     "input": "results/test_references.json",
+     "records": "bare",
+     "tracked": false
+    }
+   ]
+  },
+  {
+   "artifact": "results/budget_curve.json",
+   "inputs_recorded": 5,
+   "inputs_without_a_producer": 1,
+   "which": [
+    {
+     "input": "results/valpools_k30/all.json",
+     "records": "bare",
+     "tracked": false
+    }
+   ]
+  },
+  {
+   "artifact": "results/comparison_set_members.json",
+   "inputs_recorded": 1,
+   "inputs_without_a_producer": 1,
+   "which": [
+    {
+     "input": "results/test_references.json",
+     "records": "bare",
+     "tracked": false
+    }
+   ]
+  },
+  {
+   "artifact": "results/deployment_table.json",
+   "inputs_recorded": 7,
+   "inputs_without_a_producer": 1,
+   "which": [
+    {
+     "input": "results/widepools_k30/all.json",
+     "records": "half",
+     "tracked": true
+    }
+   ]
+  },
+  {
+   "artifact": "results/error_by_chemistry.json",
+   "inputs_recorded": 7,
+   "inputs_without_a_producer": 1,
+   "which": [
+    {
+     "input": "results/widepools_k30/all.json",
+     "records": "half",
+     "tracked": true
+    }
+   ]
+  },
+  {
+   "artifact": "results/reference_charge.json",
+   "inputs_recorded": 1,
+   "inputs_without_a_producer": 1,
+   "which": [
+    {
+     "input": "results/test_references.json",
+     "records": "bare",
+     "tracked": false
+    }
+   ]
+  },
+  {
+   "artifact": "results/sygma_scenario_sweep.json",
+   "inputs_recorded": 7,
+   "inputs_without_a_producer": 1,
+   "which": [
+    {
+     "input": "results/sygma_fulltest_predictions.json",
+     "records": "bare",
+     "tracked": true
+    }
+   ]
+  }
+ ],
+ "not_ours": {
+  "grail_metabolism/resources/external/": "third-party rule and reaction databases, redistributed under their own terms or read in place; NOTICE.md carries the attribution and the producer records each digest",
+  "artifacts/tier2/biotransformer/": "BioTransformer's own distribution, obtainable from its project",
+  "artifacts/tier2/metapredictor_src/": "MetaPredictor's own source checkout",
+  "artifacts/external/gao2026/": "the prediction files Gao et al. deposited on Zenodo (10.5281/zenodo.17878495, CC BY 4.0)",
+  "docs/benchmark/data/": "published benchmark test sets, read as distributed"
+ },
+ "reading": "A consumer on this list is not wrong. It is unverifiable one step back: its own producer can be checked and the step that made its inputs cannot. The ones that matter most are the ones whose numbers reach the manuscript."
+}

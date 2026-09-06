@@ -1515,3 +1515,65 @@ def test_full_split_retraining_refuses_a_spread_that_is_not_one():
     assert never["generator"]["epochs_trained"] == [8, 8]
     engaged = fsr._converged([_conv(23, 23, "early_stopping")])
     assert engaged["generator"]["early_stopping_engaged_in"] == 1
+
+
+def test_input_provenance_audit_can_actually_fail():
+    """The recursive provenance check must distinguish the three answers, or its census is noise.
+
+    A classifier that called everything stamped would report a clean tree and be worthless, and
+    that failure is invisible from the census alone: zero findings reads the same whether the tree
+    is clean or the detector is blind. So the classes are asserted by construction, on files
+    written here with each shape, including the two that a loose implementation gets wrong: a bare
+    JSON list, which has no place for a header, and a provenance block that exists but names no
+    script, which records nothing while looking like it does.
+    """
+    import importlib.util
+    import json as _json
+    import sys as _sys
+    import tempfile
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[2]
+    spec = importlib.util.spec_from_file_location(
+        "_aip", root / "scripts" / "audit_input_provenance.py")
+    aip = importlib.util.module_from_spec(spec)
+    _sys.modules["_aip"] = aip
+    spec.loader.exec_module(aip)
+
+    with tempfile.TemporaryDirectory() as td:
+        td = Path(td)
+
+        def wrote(name, blob, raw=None):
+            p = td / f"{name}.json"
+            p.write_text(raw if raw is not None else _json.dumps(blob))
+            return p
+
+        assert aip._classify(wrote(
+            "a", {"provenance": {"script_path": "scripts/x.py"}, "v": 1})) == "stamped"
+        assert aip._classify(wrote(
+            "b", {"checkpoints": {"generator": {"sha256_16": "abc"}}, "pools": {}})) == "half"
+        assert aip._classify(wrote("c", {"CCO": ["CCO"], "CCC": ["CCC"]})) == "bare"
+        # A list has nowhere to put a header at all, and must not be mistaken for a stamped dict.
+        assert aip._classify(wrote("d", [1, 2, 3])) == "bare"
+        # A stamp that names no producer records nothing; counting it as stamped would let the
+        # census fall to zero while the tree got worse.
+        assert aip._classify(wrote("e", {"provenance": {}})) == "bare"
+        assert aip._classify(wrote("f", None, raw="{not json")) == "unreadable"
+
+    # The declared third-party prefixes must match those paths and nothing else, or the census
+    # either inflates with files nobody here can stamp or hides ones that should be stamped.
+    for path, expected in ((("artifacts/external/gao2026/x.json"), True),
+                           (("docs/benchmark/data/gloryx_test.json"), True),
+                           (("results/widepools_k30/all.json"), False),
+                           (("results/seedpools/interactive_seed0.json"), False)):
+        assert (aip._why_not_ours(path) is not None) is expected, path
+
+    # And the strict mode has to be a comparison against a number, not a constant that can only
+    # ever be met: a tree with one more unprovenanced consumer than declared must fail.
+    assert aip.EXPECTED_CONSUMERS >= 0
+    report = aip.build()
+    assert report["consumers_reading_an_input_without_a_producer"] <= aip.EXPECTED_CONSUMERS, (
+        "a tracked artifact acquired an input with no producer; stamp it, or raise "
+        "EXPECTED_CONSUMERS deliberately")
+    assert sum(report["distinct_inputs_by_class"].values()) > 0, (
+        "the census found no inputs at all, which means it is walking nothing")
