@@ -2,7 +2,7 @@
 
 **To the Editors, *Journal of Chemical Information and Modeling***
 
-**Manuscript:** Undeclared Choices Reorder Metabolite Predictors, and the Corpus Bounds Them All
+**Manuscript:** Undeclared Choices Reorder Metabolite Predictors, and the Corpus Bounds Any Bank Mined From It
 
 **Authors:** Nikita L. Polomoshnov (corresponding, nikitapol@fbb.msu.ru), Anastasia V. Rudik
 

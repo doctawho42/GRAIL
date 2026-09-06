@@ -716,8 +716,8 @@
  "n_pinned_stale": 0,
  "sweep": {
   "unstamped": 286,
-  "producer_changed": 41,
-  "current": 44,
+  "producer_changed": 40,
+  "current": 45,
   "producer_unknown": 26,
   "cosmetic_only": 8
  },
@@ -2361,15 +2361,6 @@
    "script": "union_ranker.py",
    "status": "producer_unknown",
    "detail": "commit aca41d0beee8 does not carry scripts/union_ranker.py"
-  },
-  {
-   "artifact": "results/val_pools_keyed.json",
-   "script": "build_val_pools.py",
-   "how": "recorded source digest",
-   "status": "producer_changed",
-   "detail": "producer was 77f16e504221, is now 75aeda4064fd",
-   "diff_recovered_by": "the tree was dirty when written, so the source at 6be57306c1cf is the nearest committed version and not exactly what ran",
-   "diff": "--- build_val_pools.py (as recorded)\n+++ build_val_pools.py (now)\n@@ -26,5 +26,5 @@\n         sys.path.insert(0, _p)\n \n-from _provenance import stamp  # noqa: E402\n+from _provenance import record_inputs, stamp  # noqa: E402\n \n from bank_without_selection import _key, _load  # noqa: E402\n@@ -63,14 +63,26 @@\n         print(\"no shard matched\", file=sys.stderr)\n         return 1\n-    pools, refs, slices = {}, {}, []\n+    pools, refs, slices, ckpts, budgets = {}, {}, [], [], set()\n     for p in paths:\n         d = json.loads(Path(p).read_text())\n         pools.update(d[\"pools\"]); refs.update(d[\"references\"]); slices.append(tuple(d[\"slice\"]))\n+        if d.get(\"checkpoints\"):\n+            ckpts.append(d[\"checkpoints\"])\n+        budgets.add(d.get(\"top_k\"))\n+    # The rule budget is the merged pool's defining parameter and it was recorded nowhere: a\n+    # reader of the merged file, and the budget curve that reads it, took the budget from the\n+    # directory name. Shards built at different budgets are not one pool and are refused.\n+    if len(budgets) > 1:\n+        print(f\"FAIL: the shards were built at different rule budgets {sorted(budgets)}; the \"\n+              f\"merged pool would not have one\", file=sys.stderr)\n+        return 1\n         print(f\"  + {Path(p).name}: {d['slice']} {len(d['pools'])}\", file=sys.stderr)\n     subs, vmap = population()\n-    covered = set()\n-    for a, b in slices:\n-        covered |= set(range(a, b))\n-    absent = sorted(set(range(len(subs))) - covered)\n+    # Absence is read off the pools, not off the slices. A shard may pass over a substrate inside\n+    # its own range -- the whole bank does not finish the peptide at index 83 in any time worth\n+    # spending -- and slice arithmetic calls that index covered, so the artifact would have\n+    # recorded no absence while holding one substrate fewer than it declares.\n+    held = set(pools)\n+    absent = sorted(i for i, s in enumerate(subs) if s not in held)\n     undeclared = [i for i in absent if i not in set(allow_absent)]\n  ... diff truncated"
   },
   {
    "artifact": "results/valpool_shards/v0.json",

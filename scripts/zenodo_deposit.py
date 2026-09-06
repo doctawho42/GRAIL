@@ -145,6 +145,29 @@ def hash_keyed(src: Path, dst: Path) -> dict:
             keyed_refs[k] = references[substrate]
     out = dict(blob)
     out["pools"], out["references"] = keyed_pools, keyed_refs
+
+    # Everything else the input carries rides along untouched, and one of those things was a
+    # corpus structure: the validation pool's population block records the substrates its draw
+    # declared but could not pair, by SMILES, and names their references by the same SMILES. So a
+    # deposit whose whole licence rests on holding no source record held one, 515 characters of it.
+    pop = dict(out.get("population") or {})
+    if pop.get("absent_substrates"):
+        pop["absent_substrates"] = [key_of(x) or None for x in pop["absent_substrates"]]
+        pop["absent_substrates_note"] = ("keyed like every other corpus structure here; the draw "
+                                         "declared these and could not pair them")
+    if pop.get("absent_references"):
+        pop["absent_references"] = {(key_of(k) or k): v
+                                    for k, v in pop["absent_references"].items()}
+    if pop:
+        out["population"] = pop
+
+    leaked = _structures_outside_the_candidates(out)
+    if leaked:
+        raise SystemExit(
+            f"REFUSING: {len(leaked)} value(s) outside the candidate pools parse as a structure, "
+            f"and the deposit's licence rests on it holding no source record. The first is "
+            f"{leaked[0][0]} at {leaked[0][1]}. Key it, or drop the field.")
+
     out["substrate_keying"] = {
         "key": "tautomer-canonical InChIKey of the substrate",
         "why": ("the corpus records are drawn from sources whose licences do not combine, so no "
@@ -155,6 +178,60 @@ def hash_keyed(src: Path, dst: Path) -> dict:
     }
     dst.write_text(json.dumps(out, indent=1))
     return out["substrate_keying"]
+
+
+
+def _structures_outside_the_candidates(blob) -> list:
+    """Anything that parses as a molecule, anywhere but the candidate pools.
+
+    The candidates ARE structures and belong here: they are produced by applying this work's rule
+    bank and are not corpus records. Everything else in the file is metadata, and a structure in
+    metadata is a source record the deposit says it does not carry. Keying the two fields that held
+    one is not enough on its own -- the next field to carry a structure would ride along exactly
+    the same way -- so this asks the question of the whole file instead of of a list of fields.
+    """
+    from rdkit import Chem, RDLogger
+    RDLogger.DisableLog("rdApp.*")
+
+    import re as _re
+    INCHIKEY = _re.compile(r"^[A-Z]{14}-[A-Z]{10}-[A-Z]$")
+    found = []
+
+    def walk(node, path):
+        if isinstance(node, dict):
+            for k, v in node.items():
+                if path == "" and k == "pools":
+                    continue  # this work's own output, and the reason the deposit exists
+                if isinstance(k, str) and len(k) > 12 and not INCHIKEY.match(k) and _is_mol(k):
+                    found.append((k[:60] + "...", f"{path}/{k[:20]}... (as a key)"))
+                walk(v, f"{path}/{k}")
+        elif isinstance(node, list):
+            for i, v in enumerate(node):
+                walk(v, f"{path}[{i}]")
+        elif isinstance(node, str) and not INCHIKEY.match(node):
+            if len(node) > 12 and _is_mol(node):
+                found.append((node[:60] + "...", path))
+            elif " " in node:
+                # A structure quoted inside a sentence reaches a reader as readily as one in a
+                # field of its own, so prose is read token by token. On the real deposit this
+                # matches nothing, which is what makes it usable: an English word does not parse
+                # as six heavy atoms.
+                for tok in node.split():
+                    tok = tok.strip(".,;:()\"'")
+                    if len(tok) > 12 and not INCHIKEY.match(tok) and _is_mol(tok):
+                        found.append((tok[:60] + "...", f"{path} (inside prose)"))
+
+    def _is_mol(text):
+        if " " in text or ("/" in text and text.count("/") > 3):
+            return False
+        try:
+            m = Chem.MolFromSmiles(text, sanitize=False)
+        except Exception:
+            return False
+        return m is not None and m.GetNumHeavyAtoms() >= 6
+
+    walk(blob, "")
+    return found
 
 
 def build() -> dict:

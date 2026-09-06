@@ -348,3 +348,92 @@ def test_the_verdict_grid_follows_from_the_levels_it_is_read_from():
             if abs(round(rec[ours][k] - rec[theirs][k], 4) - gap) > 2e-4:
                 wrong.append(f"{crit} k={k}: the levels do not reproduce the margin")
     assert not wrong, "the grid does not follow from the levels: " + "; ".join(wrong)
+
+
+def test_the_cover_letter_names_the_manuscript_it_accompanies():
+    """An editor reads the letter's title first, and it was not the submission's.
+
+    The letter said "...and the Corpus Bounds Them All" while the manuscript says "...and the
+    Corpus Bounds Any Bank Mined From It": the title was retyped when it changed in one place and
+    not the other, which is the first thing a desk editor would notice and the last thing anything
+    here was checking.
+    """
+    import re
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[2]
+    letter = root / "paper2" / "cover_letter.md"
+    tex = root / "paper2" / "grail_jcim.tex"
+    if not letter.exists() or not tex.exists():
+        pytest.skip("the cover letter or the manuscript is not in this checkout")
+
+    m = re.search(r"\\title\[[^\]]*\]\s*\n?\s*\{([^}]*)\}", tex.read_text())
+    assert m, "the manuscript's \\title could not be read, so nothing can be checked against it"
+    title = " ".join(m.group(1).split())
+
+    stated = [l for l in letter.read_text().splitlines() if l.startswith("**Manuscript:**")]
+    assert len(stated) == 1, (
+        f"the cover letter names its manuscript {len(stated)} times; exactly one line must")
+    named = stated[0].split("**Manuscript:**", 1)[1].strip()
+    assert named == title, (
+        f"the cover letter and the manuscript give different titles:\n"
+        f"  letter: {named}\n  paper : {title}")
+
+
+def test_the_deposit_holds_no_corpus_structure():
+    """The deposit's licence rests on it carrying no source record, so this reads the files.
+
+    The claim is categorical: every corpus structure, substrates as well as annotated metabolites,
+    appears only as a tautomer-canonical InChIKey. The builder keyed the pools and the reference
+    lists and copied everything else through, and the validation pool's population block records
+    the substrates its draw declared and could not pair BY SMILES, and names their references by
+    the same SMILES. One 515-character corpus structure therefore sat in a deposit whose whole
+    licence argument is that none does.
+
+    This reads the shipped bundle rather than trusting the builder's own refusal, so a bug in that
+    refusal cannot make this pass. The candidate pools are excluded because they ARE structures and
+    are meant to be: they come from applying this work's rule bank and are not corpus records.
+    """
+    import gzip
+    import json
+    import re
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[2]
+    bundle = sorted((root / "paper2" / "zenodo_bundle").glob("*.json.gz"))
+    if not bundle:
+        pytest.skip("the deposit bundle is not in this checkout")
+
+    from rdkit import Chem, RDLogger
+    RDLogger.DisableLog("rdApp.*")
+    INCHIKEY = re.compile(r"^[A-Z]{14}-[A-Z]{10}-[A-Z]$")
+    found = []
+
+    def looks_like_a_structure(text):
+        if len(text) <= 12 or INCHIKEY.match(text) or " " in text:
+            return False
+        try:
+            m = Chem.MolFromSmiles(text, sanitize=False)
+        except Exception:
+            return False
+        return m is not None and m.GetNumHeavyAtoms() >= 6
+
+    def walk(node, path, where):
+        if isinstance(node, dict):
+            for k, v in node.items():
+                if isinstance(k, str) and looks_like_a_structure(k):
+                    found.append(f"{where}{path}/{k[:32]}... (as a key)")
+                walk(v, f"{path}/{k}", where)
+        elif isinstance(node, list):
+            for i, v in enumerate(node):
+                walk(v, f"{path}[{i}]", where)
+        elif isinstance(node, str) and looks_like_a_structure(node):
+            found.append(f"{where}{path}: {node[:40]}...")
+
+    for f in bundle:
+        blob = json.loads(gzip.open(f, "rt").read())
+        walk({k: v for k, v in blob.items() if k != "pools"}, "", f.name)
+
+    assert not found, (
+        "the deposit carries a corpus structure outside the candidate pools, which is what its "
+        "CC BY 4.0 licence says it does not:\n  " + "\n  ".join(found[:8]))
