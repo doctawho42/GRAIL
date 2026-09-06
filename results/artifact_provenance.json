@@ -688,13 +688,19 @@
    "status": "current"
   },
   {
+   "artifact": "results/withheld_template_carriers.json",
+   "script": "check_no_withheld_templates.py",
+   "how": "recorded source digest",
+   "status": "current"
+  },
+  {
    "artifact": "results/worked_example_structures.json",
    "script": "worked_example_structures.py",
    "how": "recorded source digest",
    "status": "current"
   }
  ],
- "n_pinned": 114,
+ "n_pinned": 115,
  "n_pinned_stale": 0,
  "sweep": {
   "unstamped": 286,

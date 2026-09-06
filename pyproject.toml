@@ -35,7 +35,9 @@ include = [
 ]
 exclude = [
   ".DS_Store",
-  # the measured bank, never distributed: see NOTICE.md
+  # the measured bank: this FILE is kept out of the wheel, which is not the same as the
+  # templates being absent from the repository -- see NOTICE.md and
+  # scripts/check_no_withheld_templates.py
   "grail_metabolism/resources/extended_smirks.txt",
   "AUDIT_REPORT.md",
   "RESULTS.md",

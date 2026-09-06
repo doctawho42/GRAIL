@@ -10,16 +10,47 @@ Two separate obligations run through what follows and they are easy to conflate.
 contains other people's templates, which puts the bank under their terms. The **repository** tracked
 other people's files, which would put the release under the terms of everything inside them,
 including the parts the bank never uses. Both are measured in `results/curated_third_party.json`.
-The second obligation is now discharged: of the five third-party rule files, one remains tracked and
-four do not.
+The second obligation is discharged: **none of the five third-party rule files is tracked**, and
+four of them are not in the tree at all. That has a cost worth stating, because it is not zero:
+`scripts/build_released_bank.py` reads them to verify the removal below, so it cannot run in a
+clone, and the verification is offered as a recorded result rather than as something a reader can
+re-run without first obtaining the files from their own projects.
+
+### What BioTransformer's licence actually says
+
+The templates the bank carries from BioTransformer sit under the terms in
+`artifacts/tier2/biotransformer/LICENSE.md`, which grants redistribution:
+
+> Users are free to copy and redistribute the material in any medium or format. Moreover, they
+> could modify, and build upon the material under the condition that they must give appropriate
+> credit, provide links to the license, and indicate if changes were made. Furthermore, the above
+> copyright notice and this permission notice must be included. Use and re-distribution of the
+> these resources, in whole or in part, for commercial purposes requires explicit permission of the
+> authors.
+
+Redistribution is therefore permitted on four conditions, and it is **commercial** use or
+redistribution that needs the authors' permission. Those four conditions are discharged here:
+credit is given below and in the manuscript, the licence is linked, the changes made to the
+templates are indicated, and the copyright and permission notice are reproduced above.
+
+Two things about that licence are the distribution's own and are recorded rather than resolved. Its
+prose names LGPL version 2.1 while the text appended to it is version 3; either is satisfied by
+this repository's GPLv3. And the commercial restriction stated in the prose is not one the LGPL
+itself permits a redistributor to add, so which of the two governs a commercial user is a question
+for its authors and not one this file can settle.
+
+**Copyright (c) 2017- Yannick Djoumbou Feunang, PhD.** BioTransformer is offered under the GNU
+Lesser General Public License; see `artifacts/tier2/biotransformer/LICENSE.md` for the full text.
+Changes made here: the templates were extracted from the reaction database into SMIRKS, deduplicated
+against the rest of the bank, and normalised to the bank's own drawing convention.
 
 Three decisions were taken and each is stated with what it cost:
 
 | decision | why | measured cost |
 |---|---|---|
 | GPLv3 for the code and the bank | SyGMa's templates are GPL and the released bank still contains them, so a permissive licence was never available | none |
-| stop tracking four of the five third-party rule files | one is CC BY-NC-SA and no GPL release can carry it; two carry no licence text held here; one is redistributable but contributes no template the bank uses | none: the files stay obtainable from their own projects |
-| **release a bank without BioTransformer's templates** | its README requires explicit permission for redistribution, which was not sought. The same removal also settles the CC BY-NC-SA file: both of the templates it contributes are in the core set, so neither reaches the released bank | **zero references** on the evaluated test set, measured in `results/licence_removal_cost__clean_test.json` |
+| stop tracking the third-party rule files | one is CC BY-NC-SA and no GPL release can carry it; two carry no licence text held here; the remaining two are redistributable, and are untracked only because the bank does not need them tracked | the removal verification cannot be re-run in a clone without first obtaining them |
+| **release a bank without BioTransformer's templates** | a **courtesy, not an obligation**. The licence grants redistribution with attribution, as quoted below; the removal predates a careful reading of it and is kept because it costs nothing and narrows what a commercial user of this release would have to check for themselves. The CC BY-NC-SA file is settled independently of it: both of the templates it contributes are also in the LGPL core set, so they can be carried on the core's terms | **zero references** on the evaluated test set, measured in `results/licence_removal_cost__clean_test.json` |
 | do not distribute the corpus | its four sources' terms do not combine and the assembly recorded no per-record provenance, so no subset can be shown free of either | stated below, and it is not zero |
 
 ## The rule bank
@@ -55,18 +86,26 @@ that match nothing measured are not thereby shown to be original.
 
 ## The files, and which of them this repository still redistributes
 
-`grail_metabolism/resources/external/` holds five third-party rule files on disk. Redistributing a
-file carries the terms of everything in it, whatever the bank uses, so four of the five are no
-longer tracked. They stay on disk for anyone who has them, `results/curated_third_party.json`
-records which were found, and each is obtainable from its own project:
+`grail_metabolism/resources/external/` is where five third-party rule files belong. Redistributing a
+file carries the terms of everything in it, whatever the bank uses, so **none of the five is
+tracked**, and four are not in this tree at all. `results/curated_third_party.json` records which
+were found when the bank was built, and each is obtainable from its own project:
 
-| file | size | templates the bank uses | terms | tracked |
-|---|---:|---:|---|---|
-| `bt_database_metabolicReactions.json` | 779 KB | 611 | LGPL, redistribution permitted | **yes** |
-| `bt_database_ENVMICRO_metabolicReactions.json` | 172 KB | 2 | **CC BY-NC-SA 4.0** | no |
-| `bt_database_standardizationReactions.json` | 11 KB | 0 | LGPL | no |
-| `gloryx_reactionrules.csv` | 37 KB | 260 | none held here | no |
-| `retrosim_templates_general.json` | 120 KB | 0 | none held here | no |
+| file | size | templates the bank uses | terms | tracked | in this tree |
+|---|---:|---:|---|---|---|
+| `bt_database_metabolicReactions.json` | 779 KB | 611 | LGPL, redistribution permitted with attribution | no | yes |
+| `bt_database_ENVMICRO_metabolicReactions.json` | 172 KB | 2 | **CC BY-NC-SA 4.0** | no | no |
+| `bt_database_standardizationReactions.json` | 11 KB | 0 | LGPL | no | no |
+| `gloryx_reactionrules.csv` | 37 KB | 260 | none held here | no | no |
+| `retrosim_templates_general.json` | 120 KB | 0 | none held here | no | no |
+
+The GLORYx row is the unresolved one and is stated as such rather than assumed benign. Two hundred
+and sixty of the bank's templates are in that file, but the file attributes most of them elsewhere:
+178 to SyGMa, 73 to GLORY and 9 to its own authors, so 82 are GLORYx's rather than 260. All of them
+reach the released bank, because the removal above targets BioTransformer's core set and nothing
+else. No licence text for GLORYx is held in this repository, so the terms those 82 carry are not
+established here. Nothing in the release depends on their being permissive; what is claimed is only
+that the question is open, and it is recorded rather than answered by assumption.
 
 The ENVMICRO file was the sharp one and it is the reason the rule was drawn this way. Its own
 header, and the `LICENSE` beside it upstream, put the EAWAG data it holds under CC BY-NC-SA 4.0,

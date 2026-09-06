@@ -1284,13 +1284,19 @@ frozen per-substrate predictions of every comparator, the evaluation harness, th
 and the preregistration with every hypothesis and its outcome are at
 \texttt{github.com/doctawho42/GRAIL}, and are available to reviewers at submission.
 
-The released bank is not the measured bank, and the difference is a licence rather than a
+The released bank is not the measured bank, and the difference is a courtesy rather than a
 correction. This paper's figures are measured on \numRelbankMeasured{} templates, of which
 \numRelbankRemoved{} are present verbatim in BioTransformer's published reaction set. That
-distribution is LGPL, but its own README additionally requires explicit permission for commercial
-use or redistribution; the permission has not been sought and this system is intended to run as a
-service, so those templates are not redistributed. What ships is the remaining
-\numRelbankReleased{}. The removal is free: every reference those templates reach is reached by
+distribution is LGPL and grants redistribution with credit, a link to the licence, an indication of
+changes and the notices retained, all of which the repository's \texttt{NOTICE} provides; what it
+reserves is \emph{commercial} use or redistribution, and this system is intended to run as a
+service, so the shipped bank drops those templates to narrow what a commercial user would have to
+establish. What ships is the remaining \numRelbankReleased{}. Dropping them from the bank is not
+the same as not carrying them, and the distinction is checked rather than asserted: of
+\numRelbankCarrierscanned{} tracked files, \numRelbankCarriersWord{} hold at least one of the
+\numRelbankRemoved{}, a trained checkpoint that persists the bank it was built against and the
+three curated collections the bank was mined from
+(\texttt{scripts/check\_no\_withheld\_templates.py}). The removal is free: every reference those templates reach is reached by
 another template in the bank, so the change in reach is exactly zero, which
 Section~\ref{SI-sec:si-bank} prices alongside what dropping each other rightsholder's templates
 would cost. A reader who wants the measured bank can rebuild it by obtaining BioTransformer's

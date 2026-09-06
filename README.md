@@ -240,11 +240,20 @@ decide ours: 273 of SyGMa's templates are in the bank that ships and SyGMa's dis
 "GPL".
 
 **The bank that ships is not the bank the paper measures.** The measured bank holds 7,581
-templates; 611 of them are present verbatim in BioTransformer's published reaction set, whose
-README requires explicit permission to redistribute, and that permission was not sought. Those are
-removed, so `grail_metabolism/resources/extended_smirks_released.txt` ships with 6,970 and
-`extended_smirks.txt` is not distributed. The removal costs nothing measurable: every reference
+templates; 611 of them are present verbatim in BioTransformer's published reaction set. That
+distribution is LGPL and grants redistribution with credit, a link to the licence, an indication of
+changes and the notices retained, all of which [`NOTICE.md`](NOTICE.md) provides; what it reserves
+is *commercial* use or redistribution. Those 611 are dropped from the shipped bank as a courtesy
+rather than an obligation, to narrow what a commercial user would have to establish, so
+`grail_metabolism/resources/extended_smirks_released.txt` ships with 6,970 and the file
+`extended_smirks.txt` is not in the package. The removal costs nothing measurable: every reference
 those templates reach on the evaluated test set is reached by another template in the bank.
+
+Dropping them from the bank is not the same as not carrying them, and the repository says which it
+means. Four tracked files hold at least one of the 611 -- a trained checkpoint, which persists the
+bank it was built against so a loader can refuse a mismatched pair, and three curated collections
+the bank was mined from. `scripts/check_no_withheld_templates.py` counts them and refuses if any
+document claims otherwise.
 
 [`NOTICE.md`](NOTICE.md) carries the per-rightsholder counts for both banks, the attribution each
 rightsholder requires, and what removing each one's templates would cost. `scripts/build_released_bank.py`

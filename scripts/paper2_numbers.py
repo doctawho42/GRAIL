@@ -873,6 +873,13 @@ def build():
 
     # What the release actually carries, as against what the paper measures. The two differ by
     # the templates BioTransformer's published set also contains, which are not redistributed.
+    # Which tracked files carry a template the released bank drops. Removing the bank's own file
+    # from the index does not remove what a checkpoint or a curated collection also holds, and the
+    # availability statement has to say what the repository actually carries.
+    _wc = art("withheld_template_carriers.json")
+    n["relbank.carriers"] = _wc["n_carriers"]
+    n["relbank.carrierscanned"] = _wc["tracked_files_scanned"]
+
     _rb = art("released_bank.json")
     n["relbank.measured"] = _rb["measured_bank"]["templates"]
     n["relbank.released"] = _rb["released_bank"]["templates"]

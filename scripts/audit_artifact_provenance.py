@@ -163,6 +163,9 @@ PINNED = {
     # The census of which inputs can say what produced them, which is the question this sweep
     # does not ask of the level below itself.
     "results/input_provenance.json": "scripts/audit_input_provenance.py",
+    # Which tracked files carry a template the released bank drops, which is the difference
+    # between what the bank ships and what the repository holds.
+    "results/withheld_template_carriers.json": "scripts/check_no_withheld_templates.py",
     # the bank the repository ships, which is the measured bank minus what it may not carry
     "results/released_bank.json": "scripts/build_released_bank.py",
     # the one comparator column obtained from a service rather than run here
