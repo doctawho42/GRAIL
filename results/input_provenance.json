@@ -3,7 +3,7 @@
   "script": "audit_input_provenance.py",
   "script_path": "scripts/audit_input_provenance.py",
   "source_sha256": "8d0f08c8dde0a6cdc00e3489cd6c98f8ecfac54a7746e02277aad1d35b097295",
-  "git_commit": "838270b325f00dbb1f22525b751d43d03c106719",
+  "git_commit": "892692baa5ace8cd363d804d403fee61a6f78541",
   "git_dirty": true
  },
  "question": "whether the artifacts a manuscript number is computed from can themselves say what produced them, which the existing audit never asks",
@@ -220,7 +220,7 @@
   },
   {
    "artifact": "results/drawing_equalised.json",
-   "inputs_recorded": 8,
+   "inputs_recorded": 9,
    "inputs_without_a_producer": 8,
    "which": [
     {
@@ -676,7 +676,7 @@
   },
   {
    "artifact": "results/what_each_arm_returns.json",
-   "inputs_recorded": 4,
+   "inputs_recorded": 5,
    "inputs_without_a_producer": 3,
    "which": [
     {

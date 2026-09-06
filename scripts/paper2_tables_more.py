@@ -102,8 +102,12 @@ def grain():
             "definition of a type & types & once & mass & names a \\\\\n"
             " & & & & transf. \\\\\n\\midrule\n" + "\n".join(rows) +
             "\n\\bottomrule\n\\end{tabular}\n"
-            "\\caption{The novel-type gap against the definition of a type. The tail is present "
-            "wherever a type still names a transformation and collapses only below that.}\n"
+            "\\caption{The novel-type gap against the definition of a type. Each row is one "
+            "definition, coarsening downward. \\emph{types} is how many distinct types the misses of "
+            "absent type collapse into under it, \\emph{once} how many of those are seen exactly "
+            "once, and \\emph{mass} the share of the gap those once-only types carry. The last "
+            "column says whether a type under that definition still determines a product. The tail "
+            "is present wherever it does and collapses only below that.}\n"
             "\\label{tab:grain}\n\\end{table*}\n")
 
 

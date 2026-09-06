@@ -3,12 +3,12 @@
   "script": "check_no_withheld_templates.py",
   "script_path": "scripts/check_no_withheld_templates.py",
   "source_sha256": "ecad3e59c80733e6ed6f8e92ecb7289999c585698a910f110ceeaa2e9d1a8b46",
-  "git_commit": "5ca9a1d191875965f7ad1c72b80630fefbc8e6af",
+  "git_commit": "892692baa5ace8cd363d804d403fee61a6f78541",
   "git_dirty": true
  },
  "question": "which tracked files carry a template the released bank removes, since removing the bank's own file does not remove what other files hold",
  "withheld": 611,
- "tracked_files_scanned": 1065,
+ "tracked_files_scanned": 1066,
  "carriers": [
   {
    "path": "artifacts/full5000_implicit/checkpoints/generator.pt",

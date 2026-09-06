@@ -3,7 +3,7 @@
   "script": "disclosure_inventory.py",
   "script_path": "scripts/disclosure_inventory.py",
   "source_sha256": "f3187b4f867cc7570b771b0b2a1c6ddde31da7fb66276177cfc66627e6774494",
-  "git_commit": "5ca9a1d191875965f7ad1c72b80630fefbc8e6af",
+  "git_commit": "892692baa5ace8cd363d804d403fee61a6f78541",
   "git_dirty": true
  },
  "reviewed_and_accepted": [
@@ -272,6 +272,34 @@
     "paper2/grail_jcim.tex"
    ],
    "reason": "readability pass: long sentences split; every flagged sentence located verbatim or as its two halves, and the macro, citation and reference multisets are unchanged"
+  },
+  {
+   "text": "The subsample was fixed when the run was configured and is not a consequence of anything measured here, so what the ablations below compare is the value of each stage at that training budget rather than at the split's full size",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "reworded in the readability pass, each still present: the ablations pointer now names the SI section instead of saying 'below', 'a budget of 30' is now 'an output budget of 30' because two different budgets take that value, the matched-length control is glossed where it is first named, and the output-size sentence moved only because the SI listing was relocated to the back matter"
+  },
+  {
+   "text": "At a budget of 30 it is not a null, where K= N falls N [ N , N ] short, so flatness holds at three of the four budgets and not at all of them (Section )",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "reworded in the readability pass, each still present: the ablations pointer now names the SI section instead of saying 'below', 'a budget of 30' is now 'an output budget of 30' because two different budgets take that value, the matched-length control is glossed where it is first named, and the output-size sentence moved only because the SI listing was relocated to the back matter"
+  },
+  {
+   "text": "BioTransformer's step count is also ours to turn and was not swept, a decision taken after the matched-length control had been read and stated as such (Section )",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "reworded in the readability pass, each still present: the ablations pointer now names the SI section instead of saying 'below', 'a budget of 30' is now 'an output budget of 30' because two different budgets take that value, the matched-length control is glossed where it is first named, and the output-size sentence moved only because the SI listing was relocated to the back matter"
+  },
+  {
+   "text": "So output size is a confound in that benchmark rather than its content, which is the same thing this paper says about its own budget axis, and the remedy is the same, to declare the axis and vary it. suppinfo The Supporting Information is available free of charge on the ACS Publications website. gra",
+   "was_in": [
+    "paper2/body.tex"
+   ],
+   "reason": "reworded in the readability pass, each still present: the ablations pointer now names the SI section instead of saying 'below', 'a budget of 30' is now 'an output budget of 30' because two different budgets take that value, the matched-length control is glossed where it is first named, and the output-size sentence moved only because the SI listing was relocated to the back matter"
   }
  ],
  "question": "every sentence in which this work concedes something, recorded before a cut so that what a cut costs is visible rather than invisible",
@@ -280,7 +308,7 @@
   "paper2/si.tex",
   "paper2/grail_jcim.tex"
  ],
- "n": 209,
+ "n": 210,
  "reading": "a disclosure counts as present if it survives in ANY of the sources: moving one to the Supporting Information shortens the manuscript without retracting anything, and deleting one shortens it by retracting something",
  "disclosures": {
   "a protocol tells an author what to declare a demonstration on generative metrics does not transfer to recall against an incomplete annotation where the axis that reorders methods is how many candidates each may emit and no analogue of it exists in distributional metrics": {
@@ -343,6 +371,18 @@
     "paper2/body.tex"
    ]
   },
+  "the blend of equation is better at the head of the list by at most at a budget of on this population it is indistinguishable from the deployed rule at every budget a lead is claimed at on the validation draw it separates as far as which includes two of them and that reading is in section equation is why deduplication is not a cosmetic step the key under which two products are judged the same decides which scores are combined and changing that key moves the ranking": {
+   "text": "The blend of Equation is better at the head of the list, by at most + N [+ N , + N ] at a budget of N . On this population it is indistinguishable from the deployed rule at every budget a lead is claimed at; on the validation draw it separates as far as N , which includes two of them, and that readi",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "the subsample was fixed when the run was configured and is not a consequence of anything measured here so what the ablations compare section is the value of each stage at that training budget rather than at the split s full size": {
+   "text": "The subsample was fixed when the run was configured and is not a consequence of anything measured here, so what the ablations compare (Section ) is the value of each stage at that training budget rather than at the split's full size",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
   "what this system does not represent nothing in this pipeline is stereochemistry aware": {
    "text": "What this system does not represent Nothing in this pipeline is stereochemistry-aware",
    "in": [
@@ -351,18 +391,6 @@
   },
   "for a predictor of metabolite structures that is a restriction on what may be asked of it rather than a technicality sulfoxide and epoxide configuration carry the pharmacology of several drug classes and a system that cannot represent configuration cannot be asked which enantiomer an enzyme makes": {
    "text": "For a predictor of metabolite structures that is a restriction on what may be asked of it rather than a technicality: sulfoxide and epoxide configuration carry the pharmacology of several drug classes, and a system that cannot represent configuration cannot be asked which enantiomer an enzyme makes",
-   "in": [
-    "paper2/body.tex"
-   ]
-  },
-  "the blend of equation is better at the head of the list by at most at a budget of on this population it is indistinguishable from the deployed rule at every budget a lead is claimed at on the validation draw it separates as far as which includes two of them and that reading is in section equation is why deduplication is not a cosmetic step the key under which two products are judged the same decides which scores are combined and changing that key moves the ranking": {
-   "text": "The blend of Equation is better at the head of the list, by at most + N [+ N , + N ] at a budget of N . On this population it is indistinguishable from the deployed rule at every budget a lead is claimed at; on the validation draw it separates as far as N , which includes two of them, and that readi",
-   "in": [
-    "paper2/body.tex"
-   ]
-  },
-  "the subsample was fixed when the run was configured and is not a consequence of anything measured here so what the ablations below compare is the value of each stage at that training budget rather than at the split s full size": {
-   "text": "The subsample was fixed when the run was configured and is not a consequence of anything measured here, so what the ablations below compare is the value of each stage at that training budget rather than at the split's full size",
    "in": [
     "paper2/body.tex"
    ]
@@ -379,8 +407,14 @@
     "paper2/body.tex"
    ]
   },
-  "at a budget of it is not a null where k falls short so flatness holds at three of the four budgets and not at all of them section": {
-   "text": "At a budget of 30 it is not a null, where K= N falls N [ N , N ] short, so flatness holds at three of the four budgets and not at all of them (Section )",
+  "at an output budget of it is not a null where k falls short so flatness holds at three of the four budgets and not at all of them section": {
+   "text": "At an output budget of 30 it is not a null, where K= N falls N [ N , N ] short, so flatness holds at three of the four budgets and not at all of them (Section )",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "rule budget and two operating modes how many templates the generator selects before any is applied is the rule budget it is not the output budget of section which is how many candidates a system may return where this paper writes budget unqualified it means that one": {
+   "text": "Rule budget and two operating modes How many templates the generator selects before any is applied is the rule budget . It is not the output budget of Section , which is how many candidates a system may return; where this paper writes budget unqualified it means that one",
    "in": [
     "paper2/body.tex"
    ]
@@ -421,8 +455,8 @@
     "paper2/body.tex"
    ]
   },
-  "biotransformer s step count is also ours to turn and was not swept a decision taken after the matched length control had been read and stated as such section": {
-   "text": "BioTransformer's step count is also ours to turn and was not swept, a decision taken after the matched-length control had been read and stated as such (Section )",
+  "biotransformer s step count is also ours to turn and was not swept a decision taken after the matched length control which cuts every arm to the comparator s own list length substrate by substrate had been read and stated as such section": {
+   "text": "BioTransformer's step count is also ours to turn and was not swept, a decision taken after the matched-length control, which cuts every arm to the comparator's own list length substrate by substrate, had been read, and stated as such (Section )",
    "in": [
     "paper2/body.tex"
    ]
@@ -637,18 +671,6 @@
     "paper2/body.tex"
    ]
   },
-  "the class by class reading says the same from the other side the aggregate advantage is carried by unusual cleavages and by transformations this vocabulary cannot name and on several classical functionalisations this system is not the best arm and is sometimes beaten by its own cheaper setting": {
-   "text": "The class-by-class reading says the same from the other side: the aggregate advantage is carried by unusual cleavages and by transformations this vocabulary cannot name, and on several classical functionalisations this system is not the best arm and is sometimes beaten by its own cheaper setting",
-   "in": [
-    "paper2/body.tex"
-   ]
-  },
-  "what one application of one template bank cannot reach is mostly chemistry the corpus does not contain between and of the reference shortfall is of a type the training annotation never holds": {
-   "text": "What one application of one template bank cannot reach is mostly chemistry the corpus does not contain: between N and N of the N -reference shortfall is of a type the training annotation never holds",
-   "in": [
-    "paper2/body.tex"
-   ]
-  },
   "limitations applying one template once is not the same as one enzymatic step": {
    "text": "Limitations Applying one template once is not the same as one enzymatic step",
    "in": [
@@ -715,8 +737,20 @@
     "paper2/body.tex"
    ]
   },
-  "so output size is a confound in that benchmark rather than its content which is the same thing this paper says about its own budget axis and the remedy is the same to declare the axis and vary it suppinfo the supporting information is available free of charge on the acs publications website grail si pdf the corpus and what kind of molecules these are with the splits and their leakage audit the five matching criteria and the comparison s sensitivity to the choice among them the parent drop convention measured per arm every candidate count the paper prints and what each one is precision at every budget every comparison difference with its paired interval at matched list length and under the other aggregation how the substrate is drawn and the drawing s effect where the drawing changes anything the rule bank its mining the provenance of each collection and how much of it is a published rule set verbatim what the rule budget buys and two parameters of the ranking both swept the architecture training and every setting of both learned stages whether the site a prediction names is the site that changed what each method recovers split by transformation class whether the missing chemistry is the corpus s or the bank s and whether template discovery has saturated how much of the annotation is one enzymatic step the sixteen registered predictions including the six not reported here group ranking and its oracle and when a ranking comparison can measure anything the stage ablations the choice of evaluation population the worked example on both drawings runtime methodology comparator versions and digests the evaluation claim checked against an independent benchmark and the provenance and reproduction procedure suppinfo data and software availability source code the deployed checkpoints the released rule bank the split manifest the annotated references every recall figure is measured against the frozen per substrate predictions of every comparator the evaluation harness the provenance sweep and the preregistration with every hypothesis and its outcome are at github com doctawho grail and are available to reviewers at submission": {
-   "text": "So output size is a confound in that benchmark rather than its content, which is the same thing this paper says about its own budget axis, and the remedy is the same, to declare the axis and vary it. suppinfo The Supporting Information is available free of charge on the ACS Publications website. gra",
+  "the class by class reading says the same from the other side the aggregate advantage is carried by unusual cleavages and by transformations this vocabulary cannot name and on several classical functionalisations this system is not the best arm and is sometimes beaten by its own cheaper setting": {
+   "text": "The class-by-class reading says the same from the other side: the aggregate advantage is carried by unusual cleavages and by transformations this vocabulary cannot name, and on several classical functionalisations this system is not the best arm and is sometimes beaten by its own cheaper setting",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "what one application of one template bank cannot reach is mostly chemistry the corpus does not contain between and of the reference shortfall is of a type the training annotation never holds": {
+   "text": "What one application of one template bank cannot reach is mostly chemistry the corpus does not contain: between N and N of the N -reference shortfall is of a type the training annotation never holds",
+   "in": [
+    "paper2/body.tex"
+   ]
+  },
+  "what the figures support is that enlarging this bank from this corpus would not supply the missing chemistry which is a statement about the corpus and about no particular bank suppinfo the supporting information is available free of charge on the acs publications website grail si pdf the corpus and what kind of molecules these are with the splits and their leakage audit the five matching criteria and the comparison s sensitivity to the choice among them the parent drop convention measured per arm every candidate count the paper prints and what each one is precision at every budget every comparison difference with its paired interval at matched list length and under the other aggregation how the substrate is drawn and the drawing s effect where the drawing changes anything the rule bank its mining the provenance of each collection and how much of it is a published rule set verbatim what the rule budget buys and two parameters of the ranking both swept the architecture training and every setting of both learned stages whether the site a prediction names is the site that changed what each method recovers split by transformation class whether the missing chemistry is the corpus s or the bank s and whether template discovery has saturated how much of the annotation is one enzymatic step the sixteen registered predictions including the six not reported here group ranking and its oracle and when a ranking comparison can measure anything the stage ablations the choice of evaluation population the worked example on both drawings runtime methodology comparator versions and digests the evaluation claim checked against an independent benchmark and the provenance and reproduction procedure suppinfo data and software availability source code the deployed checkpoints the released rule bank the split manifest the annotated references every recall figure is measured against the frozen per substrate predictions of every comparator the evaluation harness the provenance sweep and the preregistration with every hypothesis and its outcome are at github com doctawho grail and are available to reviewers at submission": {
+   "text": "What the figures support is that enlarging this bank from this corpus would not supply the missing chemistry, which is a statement about the corpus and about no particular bank. suppinfo The Supporting Information is available free of charge on the ACS Publications website. grail si.pdf : the corpus",
    "in": [
     "paper2/body.tex"
    ]

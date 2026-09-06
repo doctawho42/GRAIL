@@ -49,7 +49,7 @@ it and the atoms that template acted on, so a chemist can accept or reject a can
 mechanistic grounds rather than on a score. How much mechanism that carries depends on the template. \numRsizeLethreesharePct{} of the bank,
 \numRsizeLethree{} of \numRsizeParsed{} parseable templates, is patterns of three atoms or fewer,
 for which the named site reports where the pattern matched rather than a mechanism.
-Section~\ref{sec:offers} measures both the size of that part and how often the named site is the
+Section~\ref{sec:site} measures both the size of that part and how often the named site is the
 site that changed. We evaluate it with the two decisions above promoted to declared axes: each is stated and varied
 across its full range instead of being fixed silently. The comparison is against
 \numComparatorsColumnsWord{} published predictors we obtained and ran on the same substrates, with
@@ -67,8 +67,8 @@ stages of the system and the evaluation protocol. Section~\ref{sec:results} repo
 comparison against published predictors, the contribution of each stage, the sensitivity of the
 result to the evaluation choices, a worked example, and the coverage bound.
 Section~\ref{sec:discussion} discusses where the advantage lies and what the measurements do not
-establish, Section~\ref{sec:conclusions} states the conclusions and
-Section~\ref{sec:limitations} the limitations. Procedures, ablations and supporting measurements are in the Supporting Information.
+establish, Section~\ref{sec:limitations} the limitations and
+Section~\ref{sec:conclusions} the conclusions. Procedures, ablations and supporting measurements are in the Supporting Information.
 
 \section{Materials and methods}
 \label{sec:methods}
@@ -88,9 +88,10 @@ assembled from ChEMBL \citep{Zdrazil_2024}, DrugBank \citep{Wishart_2018}, MetXB
 
 Three populations carry the figures here, and no figure is given without naming one. The
 \emph{evaluated test set} is the \numPopulationTestsubs{} test substrates carrying at least one
-reference, holding all \numPopulationTestrefs{} references of that split; both corpus-level
-measurements, the coverage ceiling and the census of the chemistry the remainder needs, are made on
-it. The \emph{validation draw} is a declared sample of \numValdrawCap{} substrates at seed
+reference, holding all \numPopulationTestrefs{} references of that split. Both corpus-level
+measurements are made on it: the \emph{coverage ceiling}, which is the share of the annotated
+references any application of the rule bank could reach at all, and the census of the chemistry the
+remainder needs. The \emph{validation draw} is a declared sample of \numValdrawCap{} substrates at seed
 \numValdrawSeed{}, of which \numValdrawPaired{} are held by both operating modes in a paired
 comparison; registered ranking and timing thresholds are checked here, because a threshold checked
 on the population whose rule it chose is not a check, and three of the ten reported predictions
@@ -107,8 +108,11 @@ evaluated test set, \numPopdefWholesubstrates{} substrates, against the
 \numPopdefWholearmsWord{} comparators that ran over all of it
 (Section~\ref{SI-sec:si-population}). The wide-budget leads survive that move and the narrower lead
 over SyGMa at a budget of fifteen does not, so that one is restricted to the comparison set wherever
-it is stated. The move also costs more than it takes: at a budget of ten the exhaustive arm trails
-SyGMa by $\numPopdefExhwholesygmaOneZero$ and MetaPredictor by
+it is stated. The move also costs more than it takes. An \emph{arm} here is one column of the comparison, and
+this system contributes two of them: the \emph{exhaustive} arm, which applies the whole bank, and
+the \emph{interactive} arm, which applies a fixed number of the highest-scoring rules
+(Section~\ref{sec:modes}). At a budget of ten the exhaustive arm trails SyGMa by
+$\numPopdefExhwholesygmaOneZero$ and MetaPredictor by
 $\numPopdefExhwholemetapredictorOneZero$ over the whole set, both intervals excluding zero, where on
 the comparison set neither cell separates at all. Neither is therefore among the
 \numHolmSeparating{} cells the family-wise correction is applied to, and the
@@ -126,10 +130,10 @@ shows. The
 GLORYx reference set points the same way without settling it, at a distance of \numGloryxdropTv{}
 but $p=\numGloryxdropP$ on \numGloryxdropKeptp{} typed pairs against \numGloryxdropDroppedp{}.
 ChEMBL and DrugBank are the other two sources, neither is held here, and nothing tests them. Every
-statement below about what the corpus does and does not contain is a statement about a corpus
-assembled that way.
+statement in this paper about what the corpus does and does not contain is a statement about a
+corpus assembled that way.
 
-That has a consequence for the comparison which no split can remove. Rule-based comparators have
+How the corpus was assembled has a consequence for the comparison which no split can remove. Rule-based comparators have
 no training set to hold out, and their expert rules may encode the same metabolism reported in
 these sources; BioTransformer is built on MetXBioDB, and GLORYx was developed against the
 reference set of the same name. Their knowledge therefore overlaps the test substrates by construction, in a direction that
@@ -143,24 +147,14 @@ The remaining three arms are not measured against this corpus and are not thereb
 MetaTox and MetaPredictor publish no development set that could be intersected with it. What is
 reported is the one overlap that could be computed, not a survey of all four.
 
-\subsection{What this system does not represent}
-\label{sec:methods-scope}
-
-Nothing in this pipeline is stereochemistry-aware. The standardiser strips configuration, the
-matching criterion is chosen to ignore it, and the annotation carries none, so sulfoxidation,
-epoxide hydrolysis and most conjugation are predicted and scored as constitutions. For a predictor
-of metabolite structures that is a restriction on what may be asked of it rather than a
-technicality: sulfoxide and epoxide configuration carry the pharmacology of several drug classes,
-and a system that cannot represent configuration cannot be asked which enantiomer an enzyme makes.
-Every recall figure in this paper is therefore recall over constitutions, and the size of what that
-sets aside is bounded in Section~\ref{sec:limitations}.
-
 \subsection{Overview}
 
-Each design choice below is stated with the measurement that decided it and the prediction it was
-registered as, rather than with a pointer forward to Results: a configuration and the evidence for
-it are one object, and separating them is what lets a configuration be reported without its
-evidence.
+Each design choice in this section is stated with the measurement that decided it and the
+prediction it was registered as, rather than with a pointer forward to Results: a configuration
+and the evidence for it are one object, and separating them is what lets a configuration be
+reported without its evidence. Those predictions, each carrying a threshold and a falsification
+condition fixed before it was checked, are together the \emph{register}
+(Table~\ref{tab:hyp}).
 
 GRAIL predicts in three stages, each separately inspectable. A generator scores every rule in a
 bank of \numBankRules{} reaction templates, written as SMIRKS transformation patterns, against
@@ -201,13 +195,27 @@ Both learned stages were trained on a subsample: \numTrainSubstrates{} of the sp
 \numSplitTrainSubstrates{} training substrates, drawn at a recorded seed, for
 \numTrainEpochsWord{} epochs, with early stopping that never engaged. The subsample was fixed when
 the run was configured and is not a consequence of anything measured here, so what the ablations
-below compare is the value of each stage at that training budget rather than at the split's full
-size. Every setting is in the Supporting Information.
+compare (Section~\ref{SI-sec:si-ablations}) is the value of each stage at that training budget
+rather than at the split's full size. Every setting is in the Supporting Information.
+
+\subsection{What this system does not represent}
+\label{sec:methods-scope}
+
+Nothing in this pipeline is stereochemistry-aware. The standardiser strips configuration, the
+matching criterion is chosen to ignore it, and the annotation carries none, so sulfoxidation,
+epoxide hydrolysis and most conjugation are predicted and scored as constitutions. For a predictor
+of metabolite structures that is a restriction on what may be asked of it rather than a
+technicality: sulfoxide and epoxide configuration carry the pharmacology of several drug classes,
+and a system that cannot represent configuration cannot be asked which enantiomer an enzyme makes.
+Every recall figure in this paper is therefore recall over constitutions, and the size of what that
+sets aside is bounded in Section~\ref{sec:limitations}.
 
 \subsection{Rule bank}
 
 The bank holds \numBankRules{} templates spanning \numBankTypes{} distinct reaction types, where a
-type is the multiset of bonds that change between mapped atoms. It is the deduplicated union of \numAttribNamed{} templates
+type is the multiset of bonds that change between mapped atoms. A template is a mapped SMIRKS,
+and \emph{rule} names the same object here and in the released files. The bank is the
+deduplicated union of \numAttribNamed{} templates
 from three curated collections and \numMinedRules{} mined from the training split alone,
 together with \numAttribUnattributed{} that were carried as a fourth curated collection and are
 not one: they are an earlier machine extraction from the same annotated pairs, identified in the
@@ -245,7 +253,7 @@ contribute equally whatever their scales. $K = \numFusionkDeployed$ is the value
 published with, and it is swept rather than merely disclosed. Every constant of
 \numFusionkFlatfrom{} or more is indistinguishable from it at budgets of 5, 15 and 50, and the null
 is stated as the bound it is: no such constant differs from the deployed value by more than
-$\numFusionkBandOneFive$ at fifteen. At a budget of 30 it is not a null, where
+$\numFusionkBandOneFive$ at fifteen. At an output budget of 30 it is not a null, where
 $K=\numFusionkBreakconstant$ falls $\numFusionkBreakgap$
 $[\numFusionkBreaklo, \numFusionkBreakhi]$ short, so flatness holds at three of the four budgets
 and not at all of them (Section~\ref{SI-sec:si-knobs}).
@@ -269,13 +277,16 @@ and truncation can therefore raise recall rather than only bound it. It was regi
 prediction P2 with a threshold of $+\numHNineThreshold$ and measured $+\numHNineDiff$
 $[+\numHNineLo, +\numHNineHi]$, taking the mean pool from \numHNinePoolBefore{} to
 \numHNinePoolAfter{}. The value was fixed by a rule rather than by a search. The cap must be at
-least twice the widest budget reported, so that the widest column is never simply the whole pool,
+least twice the widest output budget reported, so that the widest column is never simply the whole pool,
 and 100 is the smallest round number that satisfies it.
 
 \subsection{Rule budget and two operating modes}
+\label{sec:modes}
 
 How many templates the generator selects before any is applied is the \emph{rule budget}. It is
-one continuous setting, and the two modes reported throughout are two points on it rather than two
+not the output budget of Section~\ref{sec:evaluation}, which is how many candidates a system may
+return; where this paper writes \emph{budget} unqualified it means that one. The rule budget is one
+continuous setting, and the two modes reported throughout are two points on it rather than two
 designs. The \emph{interactive} mode applies the \numHOneZeroTopk{} templates the trained
 checkpoint records and returns in about a second, which is what a user waiting at a web form
 requires; the \emph{exhaustive} mode applies the whole bank, the \numBankParses{} of
@@ -325,6 +336,7 @@ nine budgets read everywhere else here; it is released with the register and wit
 adjudicated on.
 
 \subsection{Evaluation}
+\label{sec:evaluation}
 
 The rule deciding when a predicted structure counts as one of the references is the
 \emph{matching criterion}. It is treated here as a declared axis with five settings: canonical
@@ -368,7 +380,8 @@ ours to turn nor readable, and a mined template may perform more than one enzyma
 application, as \numCompositeUnionsharePct{} of this bank's mined templates do
 (Section~\ref{SI-sec:si-singlestep}). The depth is swept for SyGMa, whose scenario is a documented
 setting, and the lead survives it. BioTransformer's step count is also ours to turn and was not
-swept, a decision taken after the matched-length control had been read and stated as such
+swept, a decision taken after the matched-length control, which cuts every arm to the comparator's own
+list length substrate by substrate, had been read, and stated as such
 (Section~\ref{SI-sec:si-comparators}). For those two the difference between the arms is stated
 rather than removed, and the wide-budget cells should be read with it in view.
 
@@ -398,7 +411,8 @@ differently, which is the point of printing it.
 
 Every method is prevented from returning the substrate itself as one of its own metabolites:
 a prediction equal to the substrate is discarded before the budget is applied, for all arms
-alike. That convention is swept like the other declared choices.
+alike. That is the \emph{parent-drop} convention, and it is swept like the other declared
+choices.
 The arms differ sharply in how often they return the substrate, from none of SyGMa's lists to
 \numPdropReturnsBank{} of the exhaustive mode's \numPopulationN{}, so the convention had room to
 favour one over another. It does not: the largest effect on recall anywhere in the grid is
@@ -461,7 +475,7 @@ it is printed because that selection went against the rule this work released
 (Section~\ref{SI-sec:si-aggregation}). Every other number in this paper is the released rule's.
 
 GRAIL trails with the interval excluding zero at $k=1$, $3$ and $5$, where SyGMa leads:
-\numSweepSygmaOne{} against \numSweepTrainedOne{} at $k=1$. Two of those three, at $3$ and $5$, do
+\numSweepTrainedOne{} against SyGMa's \numSweepSygmaOne{} at $k=1$. Two of those three, at $3$ and $5$, do
 not survive the family-wise correction either. That is marked in
 Table~\ref{SI-tab:si-intervals} and stated here rather than later, because the correction is
 applied to the leads below and should be applied to the trails in the same breath. The two banks
@@ -476,7 +490,8 @@ cell at $k=1$ is one of the three the other aggregation moves
 (Table~\ref{SI-tab:si-macro}), and does not separate under it. It is not
 the lowest arm at the tight budgets, where MetaTox is. It is the arm a reader of
 the rule bank should look at hardest, because it supplies
-\numThirdpartyBiotransformerShipped{} of this bank's templates. Cut to its own list length, the exhaustive arm does not lead it at all: the difference is
+\numThirdpartyBiotransformerShipped{} of this bank's templates. Held to BioTransformer's own list length the exhaustive arm does not lead it at all: the
+difference is
 $\numBtarmMatchedgap$ $[\numBtarmMatchedlo, +\numBtarmMatchedhi]$, an interval covering zero. What
 separates the two at a wide budget is how much each emits
 (Section~\ref{SI-sec:si-comparators}).
@@ -489,9 +504,9 @@ never in the corrected family, which was declared over \numSweepFamilycomparator
 comparators, so the correction is reported over the \numSweepWideleadsinfamilyWord{} it covers; of
 those it removes one, the margin over MetaTox at $k=30$, $+\numMarginMarginalgap$
 $[+\numMarginMarginallo, +\numMarginMarginalhi]$. It is not the only lead in this paper the
-correction removes, and the others are named where they are claimed. A second control removes
-more: cut to each comparator's own list length, substrate by substrate, and of the
-\numMatchedComparatorsWord{} comparators led against, only the lead over SyGMa survives.
+correction removes, and the others are named where they are claimed. The second control, matched length, removes
+more: of the \numMatchedComparatorsWord{} comparators led against, only the lead over SyGMa
+survives it.
 The margin's lower bound is also smaller than the largest drawing
 correction measured on any comparator here, $+\numSygdialectThirty$ for SyGMa at the same budget. The two controls do not remove the
 same cells and neither leaves the MetaTox column standing: the correction removes the cell at
@@ -512,8 +527,8 @@ that budget, a margin of $+\numChemCleavageBudgetmargin$. Held to each comparato
 lead survives against all \numChemCleavageMatchedarmsWord{} of them and shrinks, from
 $+\numChemCleavageMatchedmax$ at the widest to $+\numChemCleavageMatchedmin$ at the narrowest,
 where \numChemCleavageMatchedminbank{} is read against \numChemCleavageMatchedminother{}. What
-the budget comparison adds to that class is length; what remains is ordering. The second largest, \numChemOtherRefs{} references, is the set of changes this vocabulary does not
-name, and no method here exceeds \numChemOtherBest{} on it. A fifth of the annotated chemistry
+the budget comparison adds to that class is length; what remains is ordering. The second largest, \numChemOtherRefs{} of the \numChemReferences{} references, is the set of
+changes this vocabulary does not name, and no method here exceeds \numChemOtherBest{} on it. A fifth of the annotated chemistry
 therefore falls in a class none of the six systems is built for. That is what a reader deciding
 whether any of them is usable on their own compounds needs before they read a headline number.
 
@@ -651,8 +666,8 @@ and the spread on the comparison set, so the ratio is indicative and not a test.
 
 \subsection{How much of the verdict is the criterion}
 
-The argument above is that a recall figure depends on evaluation choices this literature leaves
-unstated. It is an argument about published numbers, and it applies to ours. The whole comparison is recomputed under each of the \numCritCriteria{} declared criteria, holding
+The argument this paper opens with is that a recall figure depends on evaluation choices this
+literature leaves unstated. It is an argument about published numbers, and it applies to ours. The whole comparison is recomputed under each of the \numCritCriteria{} declared criteria, holding
 the population, the arms, the ranking and the parent-drop convention fixed. The verdict moves at up
 to \numCritMovedMax{} of \numCritBudgets{} budgets (Table~\ref{tab:criterion}).
 
@@ -701,7 +716,8 @@ curated for the purpose \citep{Mazzolari_2019}; that literature has recently had
 its own labels are derived \citep{Jacob_2025_autosom}. The claim here is narrower, and it is about
 consistency rather than about site prediction: the site this system names is the site that changed.
 
-It is measured on the interactive arm, whose rule budget of \numSiteRulebudget{} the audit records.
+That consistency is measured on the interactive arm, whose rule budget of
+\numSiteRulebudget{} the audit records.
 Of \numSiteScored{} correctly predicted metabolites, the reported site touches the atoms that
 actually differ from the substrate in \numSiteTouchingPct{}, and lies wholly inside the change in
 \numSiteInsidePct{} (Section~\ref{SI-sec:si-site}). The null is a connected fragment of the same
@@ -715,8 +731,8 @@ the agreement is partly a self-consistency check. Split by provenance, the
 \numSiteCuratedscored{} matches carried by a hand-written template, for which they are independent,
 agree at \numSiteCuratedPct{} against \numSiteMinedPct{} for the mined ones. The claim therefore
 does not rest on the templates whose provenance would guarantee it. The exhaustive arm is not
-audited this way, because it applies the whole bank rather than a budget of \numSiteRulebudget{}
-rules, and the population of scored matches would be a different one.
+audited this way, because it applies the whole bank rather than a rule budget of
+\numSiteRulebudget{}, and the population of scored matches would be a different one.
 
 How much a chemist gets from an attribution also depends on the template.
 \numRsizeLethreesharePct{} of the parseable templates have three reactant atoms or fewer, and
@@ -830,14 +846,15 @@ across instruments and not across resamples. The remainder divides by the reacti
 a transformation type the bank does not hold, \numCeilingKnown{} need a type it holds whose rule
 did not fire, and \numCeilingUntypeable{} cannot be typed.
 
-That number is what orients the two directions this work could go next, so it is worth putting
-beside the recall. On the comparison set the ceiling is \numHeadroomCeiling{} and the exhaustive
+The coverage figure is what orients the two directions this work could go next, so it is worth
+putting beside the recall. On the comparison set the ceiling is \numHeadroomCeiling{} and the exhaustive
 arm at a budget of fifty reaches \numHeadroomReached{}, which is \numHeadroomSharePct{} of what
 the bank can reach. The headroom a better ranking could take is \numHeadroomRanking{}; the
 headroom no ranking can take, because the bank does not produce those structures at all, is
 \numHeadroomCoverage{}. The census below is about the second and the larger.
 
-It is a one-template ceiling and not a one-enzyme one, which matters for how the number reads. The
+What the ceiling counts is one application of one template and not one enzymatic step, which
+matters for how the number reads. The
 annotation itself is not all single steps: applying the composite instruments to the references
 rather than to the templates, \numRefstepEither{} of the \numRefstepTyped{} pairs those
 instruments can type, \numRefstepEithersharePct{}, are flagged as reached in more than one
@@ -1032,7 +1049,7 @@ systematically mined as a source of rules. Whether the same bound binds a predic
 applies no templates at all is not measured here; what is measured is that the chemistry is absent
 from the corpus, which is a property of the training data rather than of the method reading it.
 
-It is worth saying plainly what that licenses, because the corpus it is a property of has two
+What the bound licenses is worth saying plainly, because the corpus it is a property of has two
 defects this paper also reports. Its assembly cannot be reconstructed, and the one source held on
 disk shows the selection was not blind to chemistry. So the bound says: extending the bank by
 mining \emph{this} corpus harder cannot close the shortfall, because the chemistry is not in it. It
@@ -1042,37 +1059,6 @@ What makes the narrower statement worth having anyway is that this corpus is ass
 four sources this field trains on, so a bank mined from any of them inherits the same absence
 unless the assembly is changed. The claim is about a training corpus and about the practice of
 mining it, not about metabolism.
-
-\section{Conclusions}
-\label{sec:conclusions}
-
-GRAIL predicts metabolite structures by selecting templates from a bank of \numBankRules{} reaction
-rules, applying them, and ranking the products by a reciprocal rank fusion of the generator's score
-and the filter's. The form in which the two learned scores are combined mattered more than what
-produced them: replacing their product with the rank fusion gained more recall than any
-architectural change tested here. Every prediction carries the template that produced it and the
-atoms it acted on. Its two operating modes are two settings of one rule budget rather than two
-designs, the cheap one beaten by the incumbent beyond a short list and the wide one returning about
-a hundred structures at a precision near \numPrecBankFiveZero{}; which a service should run follows
-from the output budget it answers at.
-
-Measured against the published predictors that could be run on the same substrates, the comparison
-divides by output budget rather than resolving into an ordering, and the division is the result.
-The verdict moves with the matching criterion and with the budget, so a single recall figure would
-have named a different leader depending on decisions its author never had to state. Held to the
-stricter test the same argument demands, every arm cut to the comparator's own list length on every
-substrate, one of the wide-budget leads is an ordering result and the rest are statements about
-emission. The class-by-class reading says the same from the other side: the aggregate advantage is
-carried by unusual cleavages and by transformations this vocabulary cannot name, and on several
-classical functionalisations this system is not the best arm and is sometimes beaten by its own
-cheaper setting. Reporting the grid is what makes the comparison checkable, and releasing every
-arm's per-substrate predictions is what lets a third party recompute it.
-
-What one application of one template bank cannot reach is mostly chemistry the corpus does not
-contain: between \numBoundShortfallsharemin{} and \numBoundShortfallsharemax{} of the
-\numCeilingUncovered{}-reference shortfall is of a type the training annotation never holds. What
-the figures support is that enlarging this bank from this corpus would not supply the missing
-chemistry, which is a statement about the corpus and about no particular bank.
 
 \section{Limitations}
 \label{sec:limitations}
@@ -1166,6 +1152,37 @@ reproduce ordering them by recall, one arm returning fewer candidates than anoth
 more. So output size is a confound in that benchmark rather than its content, which is the same
 thing this paper says about its own budget axis, and the remedy is the same, to declare the axis
 and vary it.
+
+\section{Conclusions}
+\label{sec:conclusions}
+
+GRAIL predicts metabolite structures by selecting templates from a bank of \numBankRules{} reaction
+rules, applying them, and ranking the products by a reciprocal rank fusion of the generator's score
+and the filter's. The form in which the two learned scores are combined mattered more than what
+produced them: replacing their product with the rank fusion gained more recall than any
+architectural change tested here. Every prediction carries the template that produced it and the
+atoms it acted on. Its two operating modes are two settings of one rule budget rather than two
+designs, the cheap one beaten by the incumbent beyond a short list and the wide one returning about
+a hundred structures at a precision near \numPrecBankFiveZero{}; which a service should run follows
+from the output budget it answers at.
+
+Measured against the published predictors that could be run on the same substrates, the comparison
+divides by output budget rather than resolving into an ordering, and the division is the result.
+The verdict moves with the matching criterion and with the budget, so a single recall figure would
+have named a different leader depending on decisions its author never had to state. Held to the
+stricter test the same argument demands, every arm cut to the comparator's own list length on every
+substrate, one of the wide-budget leads is an ordering result and the rest are statements about
+emission. The class-by-class reading says the same from the other side: the aggregate advantage is
+carried by unusual cleavages and by transformations this vocabulary cannot name, and on several
+classical functionalisations this system is not the best arm and is sometimes beaten by its own
+cheaper setting. Reporting the grid is what makes the comparison checkable, and releasing every
+arm's per-substrate predictions is what lets a third party recompute it.
+
+What one application of one template bank cannot reach is mostly chemistry the corpus does not
+contain: between \numBoundShortfallsharemin{} and \numBoundShortfallsharemax{} of the
+\numCeilingUncovered{}-reference shortfall is of a type the training annotation never holds. What
+the figures support is that enlarging this bank from this corpus would not supply the missing
+chemistry, which is a statement about the corpus and about no particular bank.
 
 \begin{suppinfo}
 
